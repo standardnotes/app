@@ -30,7 +30,6 @@ import ComponentView from '@/Components/ComponentView/ComponentView'
 import PanelResizer, { PanelSide, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import { ElementIds } from '@/Constants/ElementIDs'
 import ChangeEditorButton from '@/Components/ChangeEditor/ChangeEditorButton'
-import AttachedFilesButton from '@/Components/AttachedFilesPopover/AttachedFilesButton'
 import EditingDisabledBanner from './EditingDisabledBanner'
 import {
   transactionForAssociateComponentWithCurrentNote,
@@ -46,6 +45,7 @@ import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContaine
 import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
+import NoteViewFileDropTarget from './NoteViewFileDropTarget'
 
 const MinimumStatusDuration = 400
 const TextareaDebounce = 100
@@ -118,6 +118,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
   private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null
 
+  private noteViewElementRef: RefObject<HTMLDivElement>
   private editorContentRef: RefObject<HTMLDivElement>
 
   constructor(props: NoteViewProps) {
@@ -159,6 +160,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       noteType: this.controller.item.noteType,
     }
 
+    this.noteViewElementRef = createRef<HTMLDivElement>()
     this.editorContentRef = createRef<HTMLDivElement>()
 
     window.addEventListener('scroll', this.handleWindowScroll)
@@ -949,7 +951,15 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     }
 
     return (
-      <div aria-label="Note" className="section editor sn-component">
+      <div aria-label="Note" className="section editor sn-component" ref={this.noteViewElementRef}>
+        {this.note && (
+          <NoteViewFileDropTarget
+            note={this.note}
+            linkingController={this.viewControllerManager.linkingController}
+            noteViewElement={this.noteViewElementRef.current}
+          />
+        )}
+
         {this.state.noteLocked && (
           <EditingDisabledBanner
             onMouseLeave={() => {
@@ -1013,16 +1023,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                     filesController={this.viewControllerManager.filesController}
                     linkingController={this.viewControllerManager.linkingController}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                  />
-                  <AttachedFilesButton
-                    application={this.application}
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                    featuresController={this.viewControllerManager.featuresController}
-                    filePreviewModalController={this.viewControllerManager.filePreviewModalController}
-                    filesController={this.viewControllerManager.filesController}
-                    navigationController={this.viewControllerManager.navigationController}
-                    notesController={this.viewControllerManager.notesController}
-                    selectionController={this.viewControllerManager.selectionController}
                   />
                   <ChangeEditorButton
                     application={this.application}

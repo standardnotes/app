@@ -1,7 +1,7 @@
 import { KeyboardKey, KeyboardModifier } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NOTES } from '@/Constants/Constants'
-import { PrefKey, SystemViewId } from '@standardnotes/snjs'
+import { FileItem, PrefKey, SystemViewId } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef } from 'react'
 import ContentList from '@/Components/ContentListView/ContentList'
@@ -24,6 +24,8 @@ import SearchBar from '../SearchBar/SearchBar'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
+import { LinkingController } from '@/Controllers/LinkingController'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -35,6 +37,7 @@ type Props = {
   notesController: NotesController
   selectionController: SelectedItemsController
   searchOptionsController: SearchOptionsController
+  linkingController: LinkingController
 }
 
 const ContentListView: FunctionComponent<Props> = ({
@@ -47,11 +50,53 @@ const ContentListView: FunctionComponent<Props> = ({
   notesController,
   selectionController,
   searchOptionsController,
+  linkingController,
 }) => {
   const { isNotesListVisibleOnTablets, toggleAppPane } = useResponsiveAppPane()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
+
+  const { addDragTarget, removeDragTarget } = useFileDragNDrop()
+
+  const fileDropCallback = useCallback(
+    async (files: FileItem[]) => {
+      const currentTag = navigationController.selected
+
+      if (!currentTag) {
+        return
+      }
+
+      if (navigationController.isInAnySystemView() || navigationController.isInSmartView()) {
+        console.error('Trying to link uploaded files to smart view')
+        return
+      }
+
+      files.forEach(async (file) => {
+        await linkingController.linkItems(file, currentTag)
+      })
+    },
+    [navigationController, linkingController],
+  )
+
+  useEffect(() => {
+    const target = itemsViewPanelRef.current
+    const currentTag = navigationController.selected
+    const shouldAddDropTarget = !navigationController.isInAnySystemView() && !navigationController.isInSmartView()
+
+    if (target && shouldAddDropTarget && currentTag) {
+      addDragTarget(target, {
+        tooltipText: `Drop your files to upload and link them to tag "${currentTag.title}"`,
+        callback: fileDropCallback,
+      })
+    }
+
+    return () => {
+      if (target) {
+        removeDragTarget(target)
+      }
+    }
+  }, [addDragTarget, fileDropCallback, navigationController, navigationController.selected, removeDragTarget])
 
   const {
     completedFullSync,

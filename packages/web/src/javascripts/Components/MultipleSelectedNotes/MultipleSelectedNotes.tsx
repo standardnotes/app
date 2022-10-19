@@ -5,10 +5,6 @@ import { WebApplication } from '@/Application/Application'
 import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
 import Button from '../Button/Button'
 import { useCallback } from 'react'
-import AttachedFilesButton from '../AttachedFilesPopover/AttachedFilesButton'
-import { FeaturesController } from '@/Controllers/FeaturesController'
-import { FilePreviewModalController } from '@/Controllers/FilePreviewModalController'
-import { FilesController } from '@/Controllers/FilesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { NotesController } from '@/Controllers/NotesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
@@ -17,9 +13,6 @@ import { LinkingController } from '@/Controllers/LinkingController'
 
 type Props = {
   application: WebApplication
-  featuresController: FeaturesController
-  filePreviewModalController: FilePreviewModalController
-  filesController: FilesController
   navigationController: NavigationController
   notesController: NotesController
   selectionController: SelectedItemsController
@@ -29,9 +22,6 @@ type Props = {
 
 const MultipleSelectedNotes = ({
   application,
-  featuresController,
-  filePreviewModalController,
-  filesController,
   navigationController,
   notesController,
   linkingController,
@@ -49,17 +39,6 @@ const MultipleSelectedNotes = ({
       <div className="flex w-full items-center justify-between p-4">
         <h1 className="m-0 text-lg font-bold">{count} selected notes</h1>
         <div className="flex">
-          <div className="mr-3">
-            <AttachedFilesButton
-              application={application}
-              featuresController={featuresController}
-              filePreviewModalController={filePreviewModalController}
-              filesController={filesController}
-              navigationController={navigationController}
-              notesController={notesController}
-              selectionController={selectionController}
-            />
-          </div>
           <div className="mr-3">
             <PinNoteButton notesController={notesController} />
           </div>
