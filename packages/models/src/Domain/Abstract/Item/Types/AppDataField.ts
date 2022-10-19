@@ -8,6 +8,6 @@ export enum AppDataField {
   NotAvailableOnMobile = 'notAvailableOnMobile',
   MobileActive = 'mobileActive',
   LastSize = 'lastSize',
-  PrefersPlainEditor = 'prefersPlainEditor',
+  LegacyPrefersPlainEditor = 'prefersPlainEditor',
   ComponentInstallError = 'installError',
 }

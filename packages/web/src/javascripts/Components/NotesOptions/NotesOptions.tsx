@@ -18,6 +18,7 @@ import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { getNoteBlob, getNoteFileName } from '@/Utils/NoteExportUtils'
 import { shareSelectedNotes } from '@/NativeMobileWeb/ShareSelectedNotes'
 import { downloadSelectedNotesOnAndroid } from '@/NativeMobileWeb/DownloadSelectedNotesOnAndroid'
+import ProtectedUnauthorizedLabel from '../ProtectedItemOverlay/ProtectedUnauthorizedLabel'
 
 type DeletePermanentlyButtonProps = {
   onClick: () => void
@@ -266,6 +267,11 @@ const NotesOptions = ({
   const openRevisionHistoryModal = useCallback(() => {
     historyModalController.openModal(notesController.firstSelectedNote)
   }, [historyModalController, notesController.firstSelectedNote])
+
+  const unauthorized = notes.some((note) => !application.isAuthorizedToRenderItem(note))
+  if (unauthorized) {
+    return <ProtectedUnauthorizedLabel />
+  }
 
   return (
     <>

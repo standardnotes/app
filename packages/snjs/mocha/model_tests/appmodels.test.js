@@ -356,14 +356,13 @@ describe('app models', () => {
   })
 
   it('maintains editor reference when duplicating note', async function () {
-    const note = await Factory.createMappedNote(this.application)
     const editor = await this.application.itemManager.createItem(
       ContentType.Component,
-      { area: ComponentArea.Editor },
+      { area: ComponentArea.Editor, package_info: { identifier: 'foo-editor' } },
       true,
     )
-    await this.application.itemManager.changeComponent(editor, (mutator) => {
-      mutator.associateWithItem(note.uuid)
+    const note = await Factory.insertItemWithOverride(this.application, ContentType.Note, {
+      editorIdentifier: 'foo-editor',
     })
 
     expect(this.application.componentManager.editorForNote(note).uuid).to.equal(editor.uuid)

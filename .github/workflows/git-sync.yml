@@ -36,12 +36,23 @@ jobs:
         run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
         id: extract_branch
 
+      - name: Find open PR
+        uses: juliangruber/find-pull-request-action@v1
+        id: find-pull-request
+        with:
+          branch: ${{ steps.extract_branch.outputs.branch }}
+      - run: echo "Pull Request ${number} (${sha})"
+        env:
+          number: ${{ steps.find-pull-request.outputs.number }}
+          sha: ${{ steps.find-pull-request.outputs.head-sha }}
+
       - uses: peter-evans/create-pull-request@v4
-        if: "${{ github.actor != 'dependabot' }}"
+        if: startsWith(github.event.head_commit.message, 'chore(deps)') == false && startsWith(github.event.head_commit.message, 'chore(deps-dev)') == false
         with:
           token: ${{ secrets.CI_PAT_TOKEN }}
           branch: ${{ github.ref }}
           base: main
           title: ${{ steps.extract_branch.outputs.branch }}
+          body: "Public PR: https://github.com/standardnotes/app/pull/${{ steps.find-pull-request.outputs.number }}"
           assignees: ${{ github.actor }}
           reviewers: ${{ github.actor }}

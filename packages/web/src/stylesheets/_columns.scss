@@ -25,6 +25,11 @@
       }
     }
 
+    #editor-content {
+      width: 100% !important;
+      left: 0 !important;
+    }
+
     &:not(.selected) {
       min-height: 0;
       height: auto;

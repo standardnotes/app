@@ -37,6 +37,10 @@ const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
     return null
   }
 
+  if (!application.isAuthorizedToRenderItem(historyModalController.note)) {
+    return null
+  }
+
   return (
     <HistoryModalDialog onDismiss={historyModalController.dismissModal}>
       <HistoryModalDialogContent
