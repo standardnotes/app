@@ -4,7 +4,6 @@ import { WebApplication } from '@/Application/Application'
 import MultipleSelectedNotes from '@/Components/MultipleSelectedNotes/MultipleSelectedNotes'
 import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFiles'
 import { ElementIds } from '@/Constants/ElementIDs'
-import { FileDnDContext } from '@/Components/FileDragNDropProvider/FileDragNDropProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
 import FileView from '../FileView/FileView'
@@ -24,9 +23,6 @@ type Props = {
 }
 
 class NoteGroupView extends PureComponent<Props, State> {
-  static override contextType = FileDnDContext
-  declare context: React.ContextType<typeof FileDnDContext>
-
   private removeChangeObserver!: () => void
 
   constructor(props: Props) {

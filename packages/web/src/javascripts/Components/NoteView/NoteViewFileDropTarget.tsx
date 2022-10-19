@@ -10,7 +10,7 @@ type Props = {
 }
 
 const NoteViewFileDropTarget = ({ note, linkingController, noteViewElement }: Props) => {
-  const { addDragTarget, removeDragTarget } = useFileDragNDrop()
+  const { isDraggingFiles, addDragTarget, removeDragTarget } = useFileDragNDrop()
 
   useEffect(() => {
     const target = noteViewElement
@@ -33,7 +33,9 @@ const NoteViewFileDropTarget = ({ note, linkingController, noteViewElement }: Pr
     }
   }, [addDragTarget, linkingController, note, noteViewElement, removeDragTarget])
 
-  return null
+  return isDraggingFiles ? (
+    <div id="file-drag-iframe-overlay" className="absolute top-0 left-0 z-dropdown-menu h-full w-full" />
+  ) : null
 }
 
 export default NoteViewFileDropTarget
