@@ -38,7 +38,7 @@ type Props = {
 }
 
 const FileDragOverlayClassName =
-  'overlay pointer-events-none absolute top-0 left-0 z-panel-resizer h-full w-full border-2 border-info before:block before:h-full before:w-full before:bg-info before:opacity-20'
+  'overlay pointer-events-none absolute top-0 left-0 z-footer-bar h-full w-full border-2 border-info before:block before:h-full before:w-full before:bg-info before:opacity-20'
 
 const MemoizedChildren = memo(({ children }: { children: ReactNode }) => {
   return <>{children}</>
@@ -47,7 +47,6 @@ const MemoizedChildren = memo(({ children }: { children: ReactNode }) => {
 const FileDragNDropProvider = ({ application, children, featuresController, filesController }: Props) => {
   const premiumModal = usePremiumModal()
   const [isDraggingFiles, setIsDraggingFiles] = useState(false)
-  const [isDraggingOverDragTarget, setIsDraggingOverDragTarget] = useState(false)
   const [tooltipText, setTooltipText] = useState('')
 
   const fileDragOverlayRef = useRef<HTMLDivElement>(null)
@@ -55,10 +54,12 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
   const addOverlayToElement = useCallback((target: Element) => {
     if (fileDragOverlayRef.current) {
       const targetBoundingRect = target.getBoundingClientRect()
+      console.log(target, targetBoundingRect)
       fileDragOverlayRef.current.style.width = `${targetBoundingRect.width}px`
       fileDragOverlayRef.current.style.height = `${targetBoundingRect.height}px`
       fileDragOverlayRef.current.style.top = `${targetBoundingRect.y}px`
       fileDragOverlayRef.current.style.left = `${targetBoundingRect.x}px`
+      console.log(fileDragOverlayRef.current.style)
     }
   }, [])
 
@@ -87,7 +88,6 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
 
   const resetState = useCallback(() => {
     setIsDraggingFiles(false)
-    setIsDraggingOverDragTarget(false)
     setTooltipText('')
     removeOverlayFromElement()
   }, [removeOverlayFromElement])
@@ -124,7 +124,6 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
       if (event.dataTransfer?.items.length) {
         setIsDraggingFiles(true)
         if (closestDragTarget) {
-          setIsDraggingOverDragTarget(true)
           addOverlayToElement(closestDragTarget)
           const tooltipText = dragTargets.current.get(closestDragTarget)?.tooltipText
           if (tooltipText) {
@@ -132,7 +131,6 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
           }
         } else {
           setTooltipText('')
-          setIsDraggingOverDragTarget(false)
           removeOverlayFromElement()
         }
       }
@@ -245,13 +243,9 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
           <div className="pointer-events-none absolute bottom-8 left-1/2 z-dropdown-menu -translate-x-1/2 rounded bg-info px-5 py-3 text-info-contrast shadow-main">
             {tooltipText.length ? tooltipText : 'Drop your files to upload them'}
           </div>
-          {isDraggingOverDragTarget ? (
-            <Portal>
-              <div className={FileDragOverlayClassName} ref={fileDragOverlayRef} />
-            </Portal>
-          ) : (
+          <Portal>
             <div className={FileDragOverlayClassName} ref={fileDragOverlayRef} />
-          )}
+          </Portal>
         </>
       ) : null}
     </FileDnDContext.Provider>
