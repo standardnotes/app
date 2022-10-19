@@ -1,5 +1,5 @@
 import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
-import { sanitizeHtmlString, SNNote } from '@standardnotes/snjs'
+import { isFile, sanitizeHtmlString, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useRef } from 'react'
 import Icon from '@/Components/Icon/Icon'
@@ -32,7 +32,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   const editorForNote = application.componentManager.editorForNote(item as SNNote)
   const editorName = editorForNote?.name ?? PLAIN_EDITOR_NAME
   const [icon, tint] = application.iconsController.getIconAndTintForNoteType(editorForNote?.package_info.note_type)
-  const hasFiles = application.items.getSortedFilesLinkingToItem(item).length > 0
+  const hasFiles = application.items.itemsReferencingItem(item).filter(isFile).length > 0
 
   const openNoteContextMenu = (posX: number, posY: number) => {
     notesController.setContextMenuOpen(false)
