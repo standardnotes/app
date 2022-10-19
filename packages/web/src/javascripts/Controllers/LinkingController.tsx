@@ -299,30 +299,38 @@ export class LinkingController extends AbstractViewController {
     }
   }
 
-  linkItemToSelectedItem = async (itemToLink: LinkableItem) => {
-    await this.ensureActiveItemIsInserted()
-    const activeItem = this.activeItem
-
-    if (activeItem && itemToLink instanceof SNTag) {
-      await this.addTagToItem(itemToLink, activeItem)
-    }
-
-    if (activeItem instanceof SNNote) {
+  linkItems = async (item: LinkableItem, itemToLink: LinkableItem) => {
+    if (item instanceof SNNote) {
       if (itemToLink instanceof FileItem) {
-        await this.application.items.associateFileWithNote(itemToLink, activeItem)
+        await this.application.items.associateFileWithNote(itemToLink, item)
       } else if (itemToLink instanceof SNNote && this.isEntitledToNoteLinking) {
-        await this.application.items.linkNoteToNote(activeItem, itemToLink)
+        await this.application.items.linkNoteToNote(item, itemToLink)
+      } else if (itemToLink instanceof SNTag) {
+        await this.addTagToItem(itemToLink, item)
       }
-    } else if (activeItem instanceof FileItem) {
+    } else if (item instanceof FileItem) {
       if (itemToLink instanceof SNNote) {
-        await this.application.items.associateFileWithNote(activeItem, itemToLink)
+        await this.application.items.associateFileWithNote(item, itemToLink)
       } else if (itemToLink instanceof FileItem) {
-        await this.application.items.linkFileToFile(activeItem, itemToLink)
+        await this.application.items.linkFileToFile(item, itemToLink)
+      } else if (itemToLink instanceof SNTag) {
+        await this.addTagToItem(itemToLink, item)
       }
     }
 
     void this.application.sync.sync()
     this.reloadAllLinks()
+  }
+
+  linkItemToSelectedItem = async (itemToLink: LinkableItem) => {
+    await this.ensureActiveItemIsInserted()
+    const activeItem = this.activeItem
+
+    if (!activeItem) {
+      return
+    }
+
+    await this.linkItems(activeItem, itemToLink)
   }
 
   createAndAddNewTag = async (title: string) => {

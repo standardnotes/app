@@ -5,12 +5,13 @@ import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { isHandlingFileDrag } from '@/Utils/DragTypeCheck'
 import { StreamingFileReader } from '@standardnotes/filepicker'
+import { FileItem } from '@standardnotes/snjs'
 import { useMemo, useState, createContext, ReactNode, useRef, useCallback, useEffect, useContext, memo } from 'react'
 import Portal from '../Portal/Portal'
 
 type FileDragTargetData = {
   tooltipText: string
-  callback: (files: File[]) => void
+  callback: (files: FileItem[]) => void
 }
 
 type FileDnDContextData = {
@@ -55,12 +56,10 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
   const addOverlayToElement = useCallback((target: Element) => {
     if (fileDragOverlayRef.current) {
       const targetBoundingRect = target.getBoundingClientRect()
-      console.log(target, targetBoundingRect)
       fileDragOverlayRef.current.style.width = `${targetBoundingRect.width}px`
       fileDragOverlayRef.current.style.height = `${targetBoundingRect.height}px`
       fileDragOverlayRef.current.style.top = `${targetBoundingRect.y}px`
       fileDragOverlayRef.current.style.left = `${targetBoundingRect.x}px`
-      console.log(fileDragOverlayRef.current.style)
     }
   }, [])
 
@@ -171,13 +170,13 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
 
       resetState()
 
-      /* if (!featuresController.hasFiles) {
+      if (!featuresController.hasFiles) {
         premiumModal.activate('Files')
         return
-      } */
+      }
 
       if (event.dataTransfer?.items.length) {
-        /* Array.from(event.dataTransfer.items).forEach(async (item) => {
+        Array.from(event.dataTransfer.items).forEach(async (item) => {
           const fileOrHandle = StreamingFileReader.available()
             ? ((await item.getAsFileSystemHandle()) as FileSystemFileHandle)
             : item.getAsFile()
@@ -191,27 +190,23 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
           if (!uploadedFiles) {
             return
           }
-        }) */
 
-        const files = Array.from(event.dataTransfer.items)
-          .map((item) => item.getAsFile())
-          .filter((item) => !!item) as File[]
+          let closestDragTarget: Element | null = null
 
-        let closestDragTarget: Element | null = null
+          if (event.target instanceof HTMLElement) {
+            closestDragTarget = event.target.closest('[data-file-drag-target]')
+          }
 
-        if (event.target instanceof HTMLElement) {
-          closestDragTarget = event.target.closest('[data-file-drag-target]')
-        }
-
-        if (closestDragTarget && dragTargets.current.has(closestDragTarget)) {
-          dragTargets.current.get(closestDragTarget)?.callback(files)
-        }
+          if (closestDragTarget && dragTargets.current.has(closestDragTarget)) {
+            dragTargets.current.get(closestDragTarget)?.callback(uploadedFiles)
+          }
+        })
 
         event.dataTransfer.clearData()
         dragCounter.current = 0
       }
     },
-    [application, resetState],
+    [application, featuresController.hasFiles, filesController, premiumModal, resetState],
   )
 
   useEffect(() => {

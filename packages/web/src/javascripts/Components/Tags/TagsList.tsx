@@ -51,6 +51,7 @@ const TagsList: FunctionComponent<Props> = ({ viewControllerManager }: Props) =>
                 tag={tag}
                 tagsState={tagsState}
                 features={viewControllerManager.featuresController}
+                linkingController={viewControllerManager.linkingController}
                 onContextMenu={onContextMenu}
               />
             )
