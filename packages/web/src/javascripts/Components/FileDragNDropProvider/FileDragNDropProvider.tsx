@@ -7,9 +7,13 @@ import { StreamingFileReader } from '@standardnotes/filepicker'
 import { useMemo, useState, createContext, ReactNode, useRef, useCallback, useEffect, useContext, memo } from 'react'
 import Portal from '../Portal/Portal'
 
+type FileDragTargetData = {
+  callback: (files: File[]) => void
+}
+
 type FileDnDContextData = {
   isDraggingFiles: boolean
-  addDragTarget: (target: HTMLElement) => void
+  addDragTarget: (target: HTMLElement, data: FileDragTargetData) => void
   removeDragTarget: (target: HTMLElement) => void
 }
 
@@ -65,11 +69,11 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
     }
   }, [])
 
-  const dragTargets = useRef<Set<HTMLElement>>(new Set())
+  const dragTargets = useRef<Map<Element, FileDragTargetData>>(new Map())
 
-  const addDragTarget = useCallback((target: HTMLElement) => {
+  const addDragTarget = useCallback((target: HTMLElement, data: FileDragTargetData) => {
     target.setAttribute('data-file-drag-target', '')
-    dragTargets.current.add(target)
+    dragTargets.current.set(target, data)
   }, [])
 
   const removeDragTarget = useCallback((target: HTMLElement) => {
@@ -160,10 +164,10 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
 
       resetState()
 
-      if (!featuresController.hasFiles) {
+      /* if (!featuresController.hasFiles) {
         premiumModal.activate('Files')
         return
-      }
+      } */
 
       if (event.dataTransfer?.items.length) {
         /* Array.from(event.dataTransfer.items).forEach(async (item) => {
@@ -182,11 +186,25 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
           }
         }) */
 
+        const files = Array.from(event.dataTransfer.items)
+          .map((item) => item.getAsFile())
+          .filter((item) => !!item) as File[]
+
+        let closestDragTarget: Element | null = null
+
+        if (event.target instanceof HTMLElement) {
+          closestDragTarget = event.target.closest('[data-file-drag-target]')
+        }
+
+        if (closestDragTarget && dragTargets.current.has(closestDragTarget)) {
+          dragTargets.current.get(closestDragTarget)?.callback(files)
+        }
+
         event.dataTransfer.clearData()
         dragCounter.current = 0
       }
     },
-    [application, featuresController.hasFiles, premiumModal, resetState],
+    [application, resetState],
   )
 
   useEffect(() => {

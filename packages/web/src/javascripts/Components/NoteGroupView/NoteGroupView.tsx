@@ -9,6 +9,7 @@ import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
 import FileView from '../FileView/FileView'
 import NoteView from '../NoteView/NoteView'
+import { createRef } from 'react'
 
 type State = {
   showMultipleSelectedNotes: boolean
@@ -26,6 +27,7 @@ type Props = {
 class NoteGroupView extends PureComponent<Props, State> {
   static override contextType = FileDnDContext
   declare context: React.ContextType<typeof FileDnDContext>
+  fileDragTargetRef: React.RefObject<HTMLDivElement>
 
   private removeChangeObserver!: () => void
 
@@ -37,6 +39,7 @@ class NoteGroupView extends PureComponent<Props, State> {
       controllers: [],
       selectedFile: undefined,
     }
+    this.fileDragTargetRef = createRef<HTMLDivElement>()
   }
 
   override componentDidMount(): void {
@@ -84,6 +87,16 @@ class NoteGroupView extends PureComponent<Props, State> {
         })
       }
     })
+
+    const fileDragNDropContext = this.context
+
+    if (fileDragNDropContext && this.fileDragTargetRef.current) {
+      fileDragNDropContext.addDragTarget(this.fileDragTargetRef.current, {
+        callback(files) {
+          console.log('ngv', files)
+        },
+      })
+    }
   }
 
   override deinit() {
@@ -107,6 +120,7 @@ class NoteGroupView extends PureComponent<Props, State> {
       <div
         id={ElementIds.EditorColumn}
         className="app-column app-column-third flex min-h-screen flex-col pt-safe-top md:h-full md:min-h-0"
+        ref={this.fileDragTargetRef}
       >
         <ResponsivePaneContent paneId={AppPaneId.Editor} className="flex-grow">
           {this.state.showMultipleSelectedNotes && (

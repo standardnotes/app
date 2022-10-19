@@ -210,7 +210,11 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
     const target = tagRef.current
 
     if (target) {
-      addDragTarget(target)
+      addDragTarget(target, {
+        callback(files) {
+          console.log('tag', tag.uuid, files)
+        },
+      })
     }
 
     return () => {
@@ -218,7 +222,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
         removeDragTarget(target)
       }
     }
-  }, [addDragTarget, removeDragTarget])
+  }, [addDragTarget, removeDragTarget, tag.uuid])
 
   return (
     <>

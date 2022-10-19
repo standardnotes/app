@@ -60,7 +60,11 @@ const ContentListView: FunctionComponent<Props> = ({
     const target = itemsViewPanelRef.current
 
     if (target) {
-      addDragTarget(target)
+      addDragTarget(target, {
+        callback(files) {
+          console.log('content', files)
+        },
+      })
     }
 
     return () => {
