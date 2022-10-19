@@ -262,16 +262,6 @@ export class LinkingController extends AbstractViewController {
     return undefined
   }
 
-  itemRelationshipWithSelectedItem = (item: LinkableItem) => {
-    const activeItem = this.activeItem
-
-    if (!activeItem) {
-      throw new Error('No active item available')
-    }
-
-    return this.application.items.relationshipDirectionBetweenItems(activeItem, item)
-  }
-
   unlinkItemFromSelectedItem = async (itemToUnlink: ItemLink) => {
     const selectedItem = this.selectionController.firstSelectedItem
 
