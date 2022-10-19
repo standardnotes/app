@@ -155,18 +155,23 @@ export class LinkingController extends AbstractViewController {
       return
     }
 
-    const filesLinkedByItem = naturalSort(
+    const referencesOfActiveItem = naturalSort(
       this.application.items.referencesForItem(this.activeItem).filter(isFile),
       'title',
     )
 
-    const filesLinkingToItem = naturalSort(
+    const referencingActiveItem = naturalSort(
       this.application.items.itemsReferencingItem(this.activeItem).filter(isFile),
       'title',
     )
 
-    this.linkedFiles = filesLinkingToItem.map((item) => this.createLinkFromItem(item, 'linked'))
-    this.filesLinkingToActiveItem = filesLinkedByItem.map((item) => this.createLinkFromItem(item, 'linked-by'))
+    if (this.activeItem.content_type === ContentType.File) {
+      this.linkedFiles = referencesOfActiveItem.map((item) => this.createLinkFromItem(item, 'linked'))
+      this.filesLinkingToActiveItem = referencingActiveItem.map((item) => this.createLinkFromItem(item, 'linked-by'))
+    } else {
+      this.linkedFiles = referencingActiveItem.map((item) => this.createLinkFromItem(item, 'linked'))
+      this.filesLinkingToActiveItem = referencesOfActiveItem.map((item) => this.createLinkFromItem(item, 'linked-by'))
+    }
   }
 
   reloadLinkedTags() {
@@ -191,12 +196,14 @@ export class LinkingController extends AbstractViewController {
   }
 
   reloadNotesLinkingToItem() {
-    if (this.activeItem) {
-      this.notesLinkingToActiveItem = naturalSort(
-        this.application.items.itemsReferencingItem(this.activeItem).filter(isNote),
-        'title',
-      ).map((item) => this.createLinkFromItem(item, 'linked-by'))
+    if (!this.activeItem) {
+      return
     }
+
+    this.notesLinkingToActiveItem = naturalSort(
+      this.application.items.itemsReferencingItem(this.activeItem).filter(isNote),
+      'title',
+    ).map((item) => this.createLinkFromItem(item, 'linked-by'))
   }
 
   getTitleForLinkedTag = (item: LinkableItem) => {
