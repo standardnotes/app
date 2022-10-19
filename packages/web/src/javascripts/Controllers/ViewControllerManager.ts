@@ -288,26 +288,20 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
     this.persistenceService.persistValues(values)
   }
 
-  hydrateFromPersistedValues = (): void => {
-    const values = this.persistenceService.getPersistedValues()
-
-    if (!values) {
-      return
-    }
-
-    const itemListState = values[PersistenceKey.ItemListController] as ItemListControllerPersistableValue
+  hydrateFromPersistedValues = (values: MasterPersistedValue | undefined): void => {
+    const itemListState = values?.[PersistenceKey.ItemListController] as ItemListControllerPersistableValue
     this.itemListController.hydrateFromPersistedValue(itemListState)
 
-    const selectedItemsState = values[PersistenceKey.SelectedItemsController] as SelectionControllerPersistableValue
+    const selectedItemsState = values?.[PersistenceKey.SelectedItemsController] as SelectionControllerPersistableValue
     this.selectionController.hydrateFromPersistedValue(selectedItemsState)
 
-    const navigationState = values[PersistenceKey.NavigationController] as NavigationControllerPersistableValue
+    const navigationState = values?.[PersistenceKey.NavigationController] as NavigationControllerPersistableValue
     this.navigationController.hydrateFromPersistedValue(navigationState)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === CrossControllerEvent.HydrateFromPersistedValues) {
-      this.hydrateFromPersistedValues()
+      this.hydrateFromPersistedValues(event.payload as MasterPersistedValue | undefined)
     } else if (event.type === CrossControllerEvent.RequestValuePersistence) {
       this.persistValues()
     }

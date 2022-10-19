@@ -5,7 +5,7 @@ import { SwitchProps } from '@/Components/Switch/SwitchProps'
 import { IconType } from '@standardnotes/snjs'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { MenuItemType } from './MenuItemType'
-import RadioIndicator from '../RadioIndicator/RadioIndicator'
+import RadioIndicator from '../Radio/RadioIndicator'
 
 type MenuItemProps = {
   children: ReactNode

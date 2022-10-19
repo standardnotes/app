@@ -176,7 +176,7 @@ export class NavigationController
     }
 
     if (!this.selectedUuid) {
-      this.setSelectedTagInstance(this.smartViews[0])
+      void this.selectHomeNavigationView()
     }
   }
 
@@ -188,6 +188,7 @@ export class NavigationController
 
   hydrateFromPersistedValue = (state: NavigationControllerPersistableValue | undefined) => {
     if (!state) {
+      void this.selectHomeNavigationView()
       return
     }
     if (state.selectedTagUuid) {

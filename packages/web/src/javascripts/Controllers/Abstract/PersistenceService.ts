@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/Application'
+import { ShouldPersistNoteStateKey } from '@/Components/Preferences/Panes/General/Persistence'
 import { ApplicationEvent, InternalEventBus } from '@standardnotes/snjs'
 import { CrossControllerEvent } from '../CrossControllerEvent'
 
@@ -27,9 +28,16 @@ export class PersistenceService {
 
   async onAppEvent(eventName: ApplicationEvent) {
     if (eventName === ApplicationEvent.LocalDataLoaded) {
+      let shouldHydrateState = this.application.getValue(ShouldPersistNoteStateKey)
+
+      if (typeof shouldHydrateState === 'undefined') {
+        this.application.setValue(ShouldPersistNoteStateKey, true)
+        shouldHydrateState = true
+      }
+
       this.eventBus.publish({
         type: CrossControllerEvent.HydrateFromPersistedValues,
-        payload: undefined,
+        payload: shouldHydrateState ? this.getPersistedValues() : undefined,
       })
     }
   }
