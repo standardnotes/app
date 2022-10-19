@@ -117,7 +117,6 @@ export class NavigationController
           const currentSelectedTag = this.selected_
 
           if (!currentSelectedTag) {
-            this.selectHydratedTagOrDefault()
             return
           }
 
@@ -192,7 +191,8 @@ export class NavigationController
       return
     }
     if (state.selectedTagUuid) {
-      this.findAndSetTag(state.selectedTagUuid)
+      this.selectedUuid = state.selectedTagUuid
+      this.selectHydratedTagOrDefault()
     }
   }
 

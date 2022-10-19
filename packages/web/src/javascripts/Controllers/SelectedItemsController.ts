@@ -72,7 +72,7 @@ export class SelectedItemsController
     if (!state) {
       return
     }
-    if (state.selectedUuids.length > 0) {
+    if (!this.selectedUuids.size && state.selectedUuids.length > 0) {
       void this.selectUuids(state.selectedUuids)
     }
   }
