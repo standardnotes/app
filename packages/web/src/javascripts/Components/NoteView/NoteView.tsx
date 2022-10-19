@@ -44,6 +44,7 @@ import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContaine
 import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
+import NoteViewFileDropTarget from './NoteViewFileDropTarget'
 
 const MinimumStatusDuration = 400
 const TextareaDebounce = 100
@@ -113,6 +114,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
   private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null
 
+  private noteViewElementRef: RefObject<HTMLDivElement>
   private editorContentRef: RefObject<HTMLDivElement>
 
   constructor(props: NoteViewProps) {
@@ -152,6 +154,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       shouldStickyHeader: false,
     }
 
+    this.noteViewElementRef = createRef<HTMLDivElement>()
     this.editorContentRef = createRef<HTMLDivElement>()
 
     window.addEventListener('scroll', this.handleWindowScroll)
@@ -938,7 +941,15 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     }
 
     return (
-      <div aria-label="Note" className="section editor sn-component">
+      <div aria-label="Note" className="section editor sn-component" ref={this.noteViewElementRef}>
+        {this.note && (
+          <NoteViewFileDropTarget
+            note={this.note}
+            linkingController={this.viewControllerManager.linkingController}
+            noteViewElement={this.noteViewElementRef.current}
+          />
+        )}
+
         {this.state.noteLocked && (
           <EditingDisabledBanner
             onMouseLeave={() => {
