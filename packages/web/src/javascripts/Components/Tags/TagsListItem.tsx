@@ -211,6 +211,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
 
     if (target) {
       addDragTarget(target, {
+        tooltipText: `Upload & link files to tag "${tag.title}"`,
         callback(files) {
           console.log('tag', tag.uuid, files)
         },
@@ -222,7 +223,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(({ tag, features,
         removeDragTarget(target)
       }
     }
-  }, [addDragTarget, removeDragTarget, tag.uuid])
+  }, [addDragTarget, removeDragTarget, tag.title, tag.uuid])
 
   return (
     <>

@@ -8,6 +8,7 @@ import { useMemo, useState, createContext, ReactNode, useRef, useCallback, useEf
 import Portal from '../Portal/Portal'
 
 type FileDragTargetData = {
+  tooltipText: string
   callback: (files: File[]) => void
 }
 
@@ -47,6 +48,7 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
   const premiumModal = usePremiumModal()
   const [isDraggingFiles, setIsDraggingFiles] = useState(false)
   const [isDraggingOverDragTarget, setIsDraggingOverDragTarget] = useState(false)
+  const [tooltipText, setTooltipText] = useState('')
 
   const fileDragOverlayRef = useRef<HTMLDivElement>(null)
 
@@ -86,6 +88,7 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
   const resetState = useCallback(() => {
     setIsDraggingFiles(false)
     setIsDraggingOverDragTarget(false)
+    setTooltipText('')
     removeOverlayFromElement()
   }, [removeOverlayFromElement])
 
@@ -123,7 +126,12 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
         if (closestDragTarget) {
           setIsDraggingOverDragTarget(true)
           addOverlayToElement(closestDragTarget)
+          const tooltipText = dragTargets.current.get(closestDragTarget)?.tooltipText
+          if (tooltipText) {
+            setTooltipText(tooltipText)
+          }
         } else {
+          setTooltipText('')
           setIsDraggingOverDragTarget(false)
           removeOverlayFromElement()
         }
@@ -233,13 +241,18 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
     <FileDnDContext.Provider value={contextValue}>
       <MemoizedChildren children={children} />
       {isDraggingFiles ? (
-        isDraggingOverDragTarget ? (
-          <Portal>
+        <>
+          <div className="absolute bottom-8 left-1/2 z-dropdown-menu -translate-x-1/2 rounded bg-info px-5 py-3 text-info-contrast shadow-main">
+            {tooltipText.length ? tooltipText : 'Drop your files to upload them'}
+          </div>
+          {isDraggingOverDragTarget ? (
+            <Portal>
+              <div className={FileDragOverlayClassName} ref={fileDragOverlayRef} />
+            </Portal>
+          ) : (
             <div className={FileDragOverlayClassName} ref={fileDragOverlayRef} />
-          </Portal>
-        ) : (
-          <div className={FileDragOverlayClassName} ref={fileDragOverlayRef} />
-        )
+          )}
+        </>
       ) : null}
     </FileDnDContext.Provider>
   )

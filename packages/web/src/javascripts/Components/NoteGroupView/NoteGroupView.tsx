@@ -92,6 +92,7 @@ class NoteGroupView extends PureComponent<Props, State> {
 
     if (fileDragNDropContext && this.fileDragTargetRef.current) {
       fileDragNDropContext.addDragTarget(this.fileDragTargetRef.current, {
+        tooltipText: 'Upload & link files to current note',
         callback(files) {
           console.log('ngv', files)
         },
@@ -107,8 +108,6 @@ class NoteGroupView extends PureComponent<Props, State> {
   }
 
   override render() {
-    const fileDragNDropContext = this.context
-
     const shouldNotShowMultipleSelectedItems =
       !this.state.showMultipleSelectedNotes && !this.state.showMultipleSelectedFiles
 
@@ -138,11 +137,6 @@ class NoteGroupView extends PureComponent<Props, State> {
               filesController={this.viewControllerManager.filesController}
               selectionController={this.viewControllerManager.selectionController}
             />
-          )}
-          {this.viewControllerManager.navigationController.isInFilesView && fileDragNDropContext?.isDraggingFiles && (
-            <div className="absolute bottom-8 left-1/2 z-dropdown-menu -translate-x-1/2 rounded bg-info px-5 py-3 text-info-contrast shadow-main">
-              Drop your files to upload them
-            </div>
           )}
           {shouldNotShowMultipleSelectedItems && hasControllers && canRenderEditorView && (
             <>

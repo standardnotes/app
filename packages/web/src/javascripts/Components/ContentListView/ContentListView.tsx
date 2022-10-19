@@ -61,6 +61,7 @@ const ContentListView: FunctionComponent<Props> = ({
 
     if (target) {
       addDragTarget(target, {
+        tooltipText: 'Upload & link files to current tag',
         callback(files) {
           console.log('content', files)
         },
