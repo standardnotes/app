@@ -63,14 +63,6 @@ export class NotesController extends AbstractViewController {
     this.itemListController = itemListController
 
     this.disposers.push(
-      this.application.streamItems<SNNote>(ContentType.Note, ({ removed }) => {
-        runInAction(() => {
-          for (const removedNote of removed) {
-            this.selectionController.deselectItem(removedNote)
-          }
-        })
-      }),
-
       this.application.itemControllerGroup.addActiveControllerChangeObserver(() => {
         const controllers = this.application.itemControllerGroup.itemControllers
 
