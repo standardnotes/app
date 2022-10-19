@@ -1,3 +1,5 @@
+/* istanbul ignore file */
+
 import { ContentType, Uuid } from '@standardnotes/common'
 import {
   SNNote,
@@ -76,9 +78,9 @@ export interface ItemsClientInterface {
   linkNoteToNote(note: SNNote, otherNote: SNNote): Promise<SNNote>
   linkFileToFile(file: FileItem, otherFile: FileItem): Promise<FileItem>
 
-  unlinkItem(
-    item: DecryptedItemInterface<ItemContent>,
-    itemToUnlink: DecryptedItemInterface<ItemContent>,
+  unlinkItems(
+    itemOne: DecryptedItemInterface<ItemContent>,
+    itemTwo: DecryptedItemInterface<ItemContent>,
   ): Promise<DecryptedItemInterface<ItemContent>>
 
   /**
@@ -115,12 +117,6 @@ export interface ItemsClientInterface {
    */
   getSortedTagsForItem(item: DecryptedItemInterface<ItemContent>): SNTag[]
 
-  getSortedLinkedFilesForItem(item: DecryptedItemInterface<ItemContent>): FileItem[]
-  getSortedFilesLinkingToItem(item: DecryptedItemInterface<ItemContent>): FileItem[]
-
-  getSortedLinkedNotesForItem(item: DecryptedItemInterface<ItemContent>): SNNote[]
-  getSortedNotesLinkingToItem(item: DecryptedItemInterface<ItemContent>): SNNote[]
-
   isSmartViewTitle(title: string): boolean
 
   getSmartViews(): SmartView[]
@@ -152,12 +148,4 @@ export interface ItemsClientInterface {
    * @returns Whether the item is a template (unmanaged)
    */
   isTemplateItem(item: DecryptedItemInterface): boolean
-
-  /**
-   * @returns `'direct'` if `itemOne` has the reference to `itemTwo`, `'indirect'` if `itemTwo` has the reference to `itemOne`, `'unlinked'` if neither reference each other
-   */
-  relationshipTypeForItems(
-    itemOne: DecryptedItemInterface,
-    itemTwo: DecryptedItemInterface,
-  ): 'direct' | 'indirect' | 'unlinked'
 }
