@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.79.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.78.1...@standardnotes/web@3.79.0) (2022-10-19)
+
+### Features
+
+* improved file drag-n-drop experience ([#1848](https://github.com/standardnotes/app/issues/1848)) ([e99c7b7](https://github.com/standardnotes/app/commit/e99c7b7c516b0c822f0e663843146c7f5cf1fb86))
+
 ## [3.78.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.78.0...@standardnotes/web@3.78.1) (2022-10-19)
 
 ### Bug Fixes
