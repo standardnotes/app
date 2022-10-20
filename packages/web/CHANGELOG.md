@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.80.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.79.0...@standardnotes/web@3.80.0) (2022-10-20)
+
+### Bug Fixes
+
+* file not linking to note when uploaded by dragging on note ([d333d4f](https://github.com/standardnotes/app/commit/d333d4f1887672b526a5d8fc659e6dd2b1b12e21))
+* help & feedback links on mobile ([#1849](https://github.com/standardnotes/app/issues/1849)) ([fb72c2f](https://github.com/standardnotes/app/commit/fb72c2fdae277cb4e348ce5ee550f0545f281dcd))
+* links for template notes ([60a8e8b](https://github.com/standardnotes/app/commit/60a8e8b92b1e5c0f4c4c007591aa115fce51930b))
+* make tags non-tabbable ([a8535cf](https://github.com/standardnotes/app/commit/a8535cfa2380a4ddd648d5d099701c0b5e8f3a22))
+* remove tinted border from change note type button ([27bb4eb](https://github.com/standardnotes/app/commit/27bb4ebdae259718c0e13134c2ffdce7c681f0da))
+
+### Features
+
+* make sans-serif font default ([050fa9c](https://github.com/standardnotes/app/commit/050fa9cabca65bba4845fc9b315c81ce524e8b0d))
+
 # [3.79.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.78.1...@standardnotes/web@3.79.0) (2022-10-19)
 
 ### Features
