@@ -14,6 +14,7 @@ import {
   SystemViewId,
   InternalEventBus,
   InternalEventPublishStrategy,
+  TagIconType,
 } from '@standardnotes/snjs'
 import { action, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -472,6 +473,17 @@ export class NavigationController
     this.application.mutator
       .changeAndSaveItem<TagMutator>(tag, (mutator) => {
         mutator.expanded = expanded
+      })
+      .catch(console.error)
+  }
+
+  public setIcon(tag: SNTag, type: TagIconType, icon: string) {
+    console.log('setIcon > icon', icon)
+    console.log('setIcon > type', type)
+    this.application.mutator
+      .changeAndSaveItem<TagMutator>(tag, (mutator) => {
+        mutator.iconString = icon
+        mutator.iconType = type
       })
       .catch(console.error)
   }

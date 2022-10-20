@@ -1,17 +1,18 @@
 import { observer } from 'mobx-react-lite'
-import { useCallback, useRef, useMemo } from 'react'
+import { useCallback, useRef, useMemo, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { SNTag } from '@standardnotes/snjs'
+import { IconType, SNTag, TagIconType } from '@standardnotes/snjs'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import Popover from '../Popover/Popover'
+import IconPicker from '../Icon/IconPicker'
 
 type ContextMenuProps = {
   navigationController: NavigationController
@@ -20,6 +21,7 @@ type ContextMenuProps = {
 }
 
 const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag }: ContextMenuProps) => {
+  const [changeIcon, setChangeIcon] = useState(false)
   const premiumModal = usePremiumModal()
 
   const { contextMenuOpen, contextMenuClickLocation } = navigationController
@@ -51,6 +53,11 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
     [selectedTag.userModifiedDate],
   )
 
+  const handleIconChange = (type: TagIconType, value: string) => {
+    navigationController.setIcon(selectedTag, type, value)
+    setChangeIcon(false)
+  }
+
   const tagCreatedAt = useMemo(() => formatDateForContextMenu(selectedTag.created_at), [selectedTag.created_at])
 
   return (
@@ -62,6 +69,28 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
     >
       <div ref={contextMenuRef}>
         <Menu a11yLabel="Tag context menu" isOpen={contextMenuOpen}>
+          {!changeIcon && (
+            <MenuItem onClick={() => setChangeIcon(true)}>
+              <div className="flex items-center">
+                <Icon
+                  type={selectedTag.iconType === 'emoji' ? 'emoji' : (selectedTag.iconString as IconType)}
+                  emoji={selectedTag.iconType === 'emoji' ? selectedTag.iconString : undefined}
+                  className="mr-2 text-neutral"
+                />
+                Change icon
+              </div>
+            </MenuItem>
+          )}
+          {changeIcon && (
+            <MenuItem>
+              <IconPicker
+                key={'icon-picker'}
+                onIconChange={handleIconChange}
+                initialType="icon"
+                selectedValue={selectedTag.iconString}
+              />
+            </MenuItem>
+          )}
           <MenuItem type={MenuItemType.IconButton} className={'justify-between py-1.5'} onClick={onClickAddSubtag}>
             <div className="flex items-center">
               <Icon type="add" className="mr-2 text-neutral" />

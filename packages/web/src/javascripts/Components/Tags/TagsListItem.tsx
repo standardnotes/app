@@ -5,7 +5,7 @@ import { KeyboardKey } from '@standardnotes/ui-services'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import '@reach/tooltip/styles.css'
-import { SNTag } from '@standardnotes/snjs'
+import { IconType, SNTag } from '@standardnotes/snjs'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react-lite'
 import {
@@ -262,7 +262,11 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               </div>
             )}
             <div className={'tag-icon draggable mr-2'} ref={dragRef}>
-              <Icon type="hashtag" className={`${isSelected ? 'text-info' : 'text-neutral'}`} />
+              <Icon
+                type={tag.iconType === 'emoji' ? 'emoji' : (tag.iconString as IconType)}
+                emoji={tag.iconType === 'emoji' ? tag.iconString : undefined}
+                className={`${isSelected ? 'text-info' : 'text-neutral'}`}
+              />
             </div>
             {isEditing ? (
               <input

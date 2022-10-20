@@ -7093,6 +7093,7 @@ __metadata:
     css-loader: "*"
     dayjs: ^1.11.5
     dotenv: ^16.0.2
+    emoji-picker-react: ^4.4.3
     eslint: ^8.23.1
     eslint-config-prettier: ^8.5.0
     eslint-plugin-react: ^7.31.8
@@ -12695,7 +12696,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^1.1.1":
+"clsx@npm:^1.1.1, clsx@npm:^1.2.1":
   version: 1.2.1
   resolution: "clsx@npm:1.2.1"
   checksum: 30befca8019b2eb7dbad38cff6266cf543091dae2825c856a62a8ccf2c3ab9c2907c4d12b288b73101196767f66812365400a227581484a05f968b0307cfaf12
@@ -16408,6 +16409,17 @@ __metadata:
   version: 0.8.1
   resolution: "emittery@npm:0.8.1"
   checksum: 2457e8c7b0688bb006126f2c025b2655abe682f66b184954122a8a065b5277f9813d49d627896a10b076b81c513ec5f491fd9c14fbd42c04b95ca3c9f3c365ee
+  languageName: node
+  linkType: hard
+
+"emoji-picker-react@npm:^4.4.3":
+  version: 4.4.3
+  resolution: "emoji-picker-react@npm:4.4.3"
+  dependencies:
+    clsx: ^1.2.1
+  peerDependencies:
+    react: ">=16"
+  checksum: 24081f1bf07d7f549a9b2084efe7bc8ced4a2597db30ddc45f64088b85146cd98b38762e933846715799e79e4fc9c3f8aa0739194ab82fdaff37b59739670f7c
   languageName: node
   linkType: hard
 

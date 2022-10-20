@@ -8,10 +8,17 @@ import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/Dec
 
 export const TagFolderDelimitter = '.'
 
+export type TagIconType = 'icon' | 'emoji'
+
 interface TagInterface {
   title: string
   expanded: boolean
+  iconType: TagIconType
+  iconString: string
 }
+
+const DefaultIconType: TagIconType = 'icon'
+const DefaultIconName = 'hashtag'
 
 export type TagContent = TagInterface & ItemContent
 
@@ -19,6 +26,8 @@ export const isTag = (x: ItemInterface): x is SNTag => x.content_type === Conten
 
 export class SNTag extends DecryptedItem<TagContent> implements TagInterface {
   public readonly title: string
+  public readonly iconType: TagIconType
+  public readonly iconString: string
 
   /** Whether to render child tags in view hierarchy. Opposite of collapsed. */
   public readonly expanded: boolean
@@ -27,6 +36,8 @@ export class SNTag extends DecryptedItem<TagContent> implements TagInterface {
     super(payload)
     this.title = this.payload.content.title || ''
     this.expanded = this.payload.content.expanded != undefined ? this.payload.content.expanded : true
+    this.iconType = this.payload.content.iconType || DefaultIconType
+    this.iconString = this.payload.content.iconString || DefaultIconName
   }
 
   get noteReferences(): ContentReference[] {
