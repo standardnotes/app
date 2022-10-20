@@ -1,6 +1,6 @@
 import { FunctionComponent, MouseEventHandler } from 'react'
 import Icon from '@/Components/Icon/Icon'
-import { IconType } from '@standardnotes/snjs'
+import { IconType } from '@standardnotes/icons'
 
 type Props = {
   onClick: () => void

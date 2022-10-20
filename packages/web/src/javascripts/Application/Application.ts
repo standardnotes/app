@@ -1,3 +1,4 @@
+import { IconsController } from './../Controllers/IconsController/IconsController'
 import { WebCrypto } from '@/Application/Crypto'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { WebOrDesktopDevice } from '@/Application/Device/WebOrDesktopDevice'
@@ -7,7 +8,6 @@ import {
   SNApplication,
   ItemGroupController,
   removeFromArray,
-  IconsController,
   DesktopDeviceInterface,
   isDesktopDevice,
   DeinitMode,

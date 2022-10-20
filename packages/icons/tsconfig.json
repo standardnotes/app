@@ -3,9 +3,8 @@
   "compilerOptions": {
     "baseUrl": ".",
     "rootDir": "src",
-    "outDir": "dist",
-    "emitDeclarationOnly": true
+    "outDir": "dist"
   },
   "include": ["src"],
-  "exclude": ["dist", "node_modules"]
+  "exclude": ["**/*.spec.ts", "dist", "node_modules", "src/Icons"]
 }

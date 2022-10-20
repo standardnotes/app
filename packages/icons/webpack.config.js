@@ -1,36 +1,24 @@
-module.exports = () => {
-  return {
-    entry: './src/index.ts',
-    mode: 'production',
-    devtool: 'source-map',
-    optimization: {
-      minimize: false,
-    },
-    output: {
-      filename: 'index.js',
-      libraryTarget: 'umd',
-      umdNamedDefine: true,
-    },
-    resolve: {
-      fallback: {
-        crypto: false,
-        path: false,
+const path = require('path')
+
+module.exports = (_, { mode }) => ({
+  entry: path.resolve(__dirname, 'src/Icons/index.ts'),
+  output: {
+    filename: 'icons.js',
+    libraryTarget: 'umd',
+    umdNamedDefine: true,
+  },
+  optimization: {
+    minimize: false,
+  },
+  module: {
+    rules: [
+      {
+        loader: 'babel-loader',
       },
-      extensions: ['.js', '.jsx', '.ts'],
-    },
-    module: {
-      rules: [
-        {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],
-          },
-        },
-        {
-          test: /\.svg$/i,
-          use: [{ loader: '@svgr/webpack', options: { babel: false } }],
-        },
-      ],
-    },
-  }
-}
+      {
+        test: /\.svg$/i,
+        use: [{ loader: '@svgr/webpack', options: { babel: false } }],
+      },
+    ],
+  },
+})

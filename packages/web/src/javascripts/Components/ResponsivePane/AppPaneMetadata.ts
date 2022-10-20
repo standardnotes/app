@@ -1,4 +1,4 @@
-import { IconType } from '@standardnotes/snjs'
+import { IconType } from '@standardnotes/icons'
 
 export enum AppPaneId {
   Navigation = 'NavigationColumn',

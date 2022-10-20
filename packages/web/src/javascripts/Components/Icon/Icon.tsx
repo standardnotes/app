@@ -1,6 +1,6 @@
 import { FunctionComponent, useMemo } from 'react'
-import { IconType } from '@standardnotes/snjs'
-import * as icons from '@standardnotes/icons'
+import { IconType } from '@standardnotes/icons'
+import * as icons from '@standardnotes/icons/dist/icons'
 
 export const ICONS = {
   'account-circle': icons.AccountCircleIcon,

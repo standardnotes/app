@@ -1,6 +1,6 @@
 import Icon from '@/Components/Icon/Icon'
 import { FunctionComponent } from 'react'
-import { IconType } from '@standardnotes/snjs'
+import { IconType } from '@standardnotes/icons'
 
 interface Props {
   iconType: IconType

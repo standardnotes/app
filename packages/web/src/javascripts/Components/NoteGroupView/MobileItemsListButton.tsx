@@ -2,7 +2,7 @@ import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import Icon from '../Icon/Icon'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { useMediaQuery, MediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
-import { IconType } from '@standardnotes/snjs'
+import { IconType } from '@standardnotes/icons'
 
 const MobileItemsListButton = () => {
   const { toggleAppPane, isNotesListVisibleOnTablets, toggleNotesListOnTablets } = useResponsiveAppPane()

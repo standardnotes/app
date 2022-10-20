@@ -1,4 +1,4 @@
-import { IconType } from '@standardnotes/snjs'
+import { IconType } from '@standardnotes/icons'
 import { FunctionComponent, useRef, useState } from 'react'
 import IconButton from '../Button/IconButton'
 

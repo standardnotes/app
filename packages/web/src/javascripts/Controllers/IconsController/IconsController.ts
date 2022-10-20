@@ -1,5 +1,5 @@
 import { NoteType } from '@standardnotes/features'
-import { IconType } from '@Lib/Types/IconType'
+import { IconType } from '@standardnotes/icons'
 
 export class IconsController {
   getIconForFileType(type: string): IconType {

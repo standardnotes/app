@@ -1,7 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { FunctionComponent, useState, useRef, useEffect, MouseEventHandler } from 'react'
-import { IconType } from '@standardnotes/snjs'
+import { IconType } from '@standardnotes/icons'
 
 type Props = {
   className?: string
