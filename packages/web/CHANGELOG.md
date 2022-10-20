@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.82.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.81.0...@standardnotes/web@3.82.0) (2022-10-20)
+
+### Bug Fixes
+
+* mobx warnings and react render phase set state error ([76f23e1](https://github.com/standardnotes/app/commit/76f23e13ecc8795b4e6cbbb37c32db262c0084c2))
+
+### Features
+
+* ability to favorite tags ([#1852](https://github.com/standardnotes/app/issues/1852)) ([4f3b258](https://github.com/standardnotes/app/commit/4f3b258363ded1a340bd1a7702da7cfd6415b954))
+
 # [3.81.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.80.1...@standardnotes/web@3.81.0) (2022-10-20)
 
 ### Features
