@@ -15,20 +15,29 @@ import {
   InternalEventBus,
   InternalEventPublishStrategy,
 } from '@standardnotes/snjs'
-import { action, computed, makeAutoObservable, makeObservable, observable, runInAction } from 'mobx'
+import { action, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
 import { FeaturesController } from '../FeaturesController'
-import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { destroyAllObjectProperties } from '@/Utils'
 import { isValidFutureSiblings, rootTags, tagSiblings } from './Utils'
 import { AnyTag } from './AnyTagType'
 import { CrossControllerEvent } from '../CrossControllerEvent'
+import { AbstractViewController } from '../Abstract/AbstractViewController'
+import { Persistable } from '../Abstract/Persistable'
 
-export class NavigationController extends AbstractViewController {
+export type NavigationControllerPersistableValue = {
+  selectedTagUuid: AnyTag['uuid']
+}
+
+export class NavigationController
+  extends AbstractViewController
+  implements Persistable<NavigationControllerPersistableValue>
+{
   tags: SNTag[] = []
   smartViews: SmartView[] = []
   starredTags: SNTag[] = []
   allNotesCount_ = 0
+  selectedUuid: AnyTag['uuid'] | undefined = undefined
   selected_: AnyTag | undefined
   previouslySelected_: AnyTag | undefined
   editing_: SNTag | SmartView | undefined
@@ -65,12 +74,12 @@ export class NavigationController extends AbstractViewController {
       allNotesCount: computed,
       setAllNotesCount: action,
 
-      selected_: observable.ref,
+      selected_: observable,
       previouslySelected_: observable.ref,
       previouslySelected: computed,
       editing_: observable.ref,
       selected: computed,
-      selectedUuid: computed,
+      selectedUuid: observable,
       editingTag: computed,
 
       addingSubtagTo: observable,
@@ -96,6 +105,8 @@ export class NavigationController extends AbstractViewController {
       setContextMenuMaxHeight: action,
 
       isInFilesView: computed,
+
+      hydrateFromPersistedValue: action,
     })
 
     this.disposers.push(
@@ -105,25 +116,23 @@ export class NavigationController extends AbstractViewController {
           this.starredTags = this.tags.filter((tag) => tag.starred)
           this.smartViews = this.application.items.getSmartViews()
 
-          const currrentSelectedTag = this.selected_
+          const currentSelectedTag = this.selected_
 
-          if (!currrentSelectedTag) {
-            this.setSelectedTagInstance(this.smartViews[0])
-
+          if (!currentSelectedTag) {
             return
           }
 
           const updatedReference =
-            FindItem(changed, currrentSelectedTag.uuid) || FindItem(this.smartViews, currrentSelectedTag.uuid)
+            FindItem(changed, currentSelectedTag.uuid) || FindItem(this.smartViews, currentSelectedTag.uuid)
           if (updatedReference) {
             this.setSelectedTagInstance(updatedReference as AnyTag)
           }
 
-          if (isSystemView(currrentSelectedTag as SmartView)) {
+          if (isSystemView(currentSelectedTag as SmartView)) {
             return
           }
 
-          if (FindItem(removed, currrentSelectedTag.uuid)) {
+          if (FindItem(removed, currentSelectedTag.uuid)) {
             this.setSelectedTagInstance(this.smartViews[0])
           }
         })
@@ -142,6 +151,52 @@ export class NavigationController extends AbstractViewController {
         }
       }),
     )
+
+    this.disposers.push(
+      reaction(
+        () => this.selectedUuid,
+        () => {
+          eventBus.publish({
+            type: CrossControllerEvent.RequestValuePersistence,
+            payload: undefined,
+          })
+        },
+      ),
+    )
+  }
+
+  findAndSetTag = (uuid: UuidString) => {
+    const tagToSelect = [...this.tags, ...this.smartViews].find((tag) => tag.uuid === uuid)
+    if (tagToSelect) {
+      void this.setSelectedTag(tagToSelect)
+    }
+  }
+
+  selectHydratedTagOrDefault = () => {
+    if (this.selectedUuid && !this.selected_) {
+      this.findAndSetTag(this.selectedUuid)
+    }
+
+    if (!this.selectedUuid) {
+      void this.selectHomeNavigationView()
+    }
+  }
+
+  getPersistableValue = (): NavigationControllerPersistableValue => {
+    return {
+      selectedTagUuid: this.selectedUuid ? this.selectedUuid : SystemViewId.AllNotes,
+    }
+  }
+
+  hydrateFromPersistedValue = (state: NavigationControllerPersistableValue | undefined) => {
+    if (!state) {
+      void this.selectHomeNavigationView()
+      return
+    }
+    if (state.selectedTagUuid) {
+      this.selectedUuid = state.selectedTagUuid
+      this.selectHydratedTagOrDefault()
+    }
   }
 
   override deinit() {
@@ -360,7 +415,7 @@ export class NavigationController extends AbstractViewController {
     return this.selected_
   }
 
-  public async setSelectedTag(tag: AnyTag | undefined) {
+  public async setSelectedTag(tag: AnyTag | undefined, { userTriggered } = { userTriggered: false }) {
     if (tag && tag.conflictOf) {
       this.application.mutator
         .changeAndSaveItem(tag, (mutator) => {
@@ -386,7 +441,7 @@ export class NavigationController extends AbstractViewController {
     await this.eventBus.publishSync(
       {
         type: CrossControllerEvent.TagChanged,
-        payload: { tag, previousTag: this.previouslySelected_ },
+        payload: { tag, previousTag: this.previouslySelected_, userTriggered: userTriggered },
       },
       InternalEventPublishStrategy.SEQUENCE,
     )
@@ -409,7 +464,10 @@ export class NavigationController extends AbstractViewController {
   }
 
   private setSelectedTagInstance(tag: AnyTag | undefined): void {
-    runInAction(() => (this.selected_ = tag))
+    runInAction(() => {
+      this.selected_ = tag
+      this.selectedUuid = tag ? tag.uuid : undefined
+    })
   }
 
   public setExpanded(tag: SNTag, expanded: boolean) {
@@ -426,10 +484,6 @@ export class NavigationController extends AbstractViewController {
         mutator.starred = favorite
       })
       .catch(console.error)
-  }
-
-  public get selectedUuid(): UuidString | undefined {
-    return this.selected_?.uuid
   }
 
   public get editingTag(): SNTag | SmartView | undefined {

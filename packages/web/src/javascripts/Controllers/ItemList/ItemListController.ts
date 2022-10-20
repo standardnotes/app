@@ -22,7 +22,6 @@ import {
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
-import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { WebDisplayOptions } from './WebDisplayOptions'
 import { NavigationController } from '../Navigation/NavigationController'
 import { CrossControllerEvent } from '../CrossControllerEvent'
@@ -33,6 +32,8 @@ import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import dayjs from 'dayjs'
 import { LinkingController } from '../LinkingController'
+import { AbstractViewController } from '../Abstract/AbstractViewController'
+import { Persistable } from '../Abstract/Persistable'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -45,10 +46,18 @@ enum ItemsReloadSource {
   DisplayOptionsChange,
   Pagination,
   TagChange,
+  UserTriggeredTagChange,
   FilterTextChange,
 }
 
-export class ItemListController extends AbstractViewController implements InternalEventHandlerInterface {
+export type ItemListControllerPersistableValue = {
+  displayOptions: DisplayOptions
+}
+
+export class ItemListController
+  extends AbstractViewController
+  implements Persistable<ItemListControllerPersistableValue>, InternalEventHandlerInterface
+{
   completedFullSync = false
   noteFilterText = ''
   notes: SNNote[] = []
@@ -204,6 +213,7 @@ export class ItemListController extends AbstractViewController implements Intern
       handleFilterTextChanged: action,
 
       optionsSubtitle: computed,
+      activeControllerItem: computed,
     })
 
     window.onresize = () => {
@@ -211,9 +221,25 @@ export class ItemListController extends AbstractViewController implements Intern
     }
   }
 
+  getPersistableValue = (): ItemListControllerPersistableValue => {
+    return {
+      displayOptions: this.displayOptions,
+    }
+  }
+
+  hydrateFromPersistedValue = (state: ItemListControllerPersistableValue | undefined) => {
+    if (!state) {
+      return
+    }
+    if (state.displayOptions) {
+      this.displayOptions = state.displayOptions
+    }
+  }
+
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === CrossControllerEvent.TagChanged) {
-      this.handleTagChange()
+      const payload = event.payload as { userTriggered: boolean }
+      this.handleTagChange(payload.userTriggered)
     } else if (event.type === CrossControllerEvent.ActiveEditorChanged) {
       this.handleEditorChange().catch(console.error)
     }
@@ -335,8 +361,10 @@ export class ItemListController extends AbstractViewController implements Intern
     )
   }
 
-  private shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource, activeItem: SNNote | FileItem | undefined) => {
-    return itemsReloadSource === ItemsReloadSource.TagChange || !activeItem
+  private shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource) => {
+    return (
+      itemsReloadSource === ItemsReloadSource.UserTriggeredTagChange || !this.selectionController.selectedUuids.size
+    )
   }
 
   private shouldCloseActiveItem = (activeItem: SNNote | FileItem | undefined) => {
@@ -359,7 +387,7 @@ export class ItemListController extends AbstractViewController implements Intern
   }
 
   private shouldSelectActiveItem = (activeItem: SNNote | FileItem | undefined) => {
-    return activeItem && !this.selectionController.selectedItems[activeItem.uuid]
+    return activeItem && !this.selectionController.isItemSelected(activeItem)
   }
 
   private async recomputeSelectionAfterItemsReload(itemsReloadSource: ItemsReloadSource) {
@@ -371,7 +399,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     const activeItem = activeController?.item
 
-    if (this.shouldSelectFirstItem(itemsReloadSource, activeItem)) {
+    if (this.shouldSelectFirstItem(itemsReloadSource)) {
       await this.selectFirstItem()
     } else if (this.shouldCloseActiveItem(activeItem) && activeController) {
       this.closeItemController(activeController)
@@ -500,6 +528,11 @@ export class ItemListController extends AbstractViewController implements Intern
     if (newDisplayOptions.sortBy !== currentSortBy) {
       await this.selectFirstItem()
     }
+
+    this.eventBus.publish({
+      type: CrossControllerEvent.RequestValuePersistence,
+      payload: undefined,
+    })
   }
 
   async createNewNoteController(title?: string) {
@@ -664,7 +697,7 @@ export class ItemListController extends AbstractViewController implements Intern
     this.application.itemControllerGroup.closeItemController(controller)
   }
 
-  handleTagChange = () => {
+  handleTagChange = (userTriggered: boolean) => {
     const activeNoteController = this.getActiveItemController()
     if (activeNoteController instanceof NoteViewController && activeNoteController.isTemplateNote) {
       this.closeItemController(activeNoteController)
@@ -682,7 +715,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.reloadNotesDisplayOptions()
 
-    void this.reloadItems(ItemsReloadSource.TagChange)
+    void this.reloadItems(userTriggered ? ItemsReloadSource.UserTriggeredTagChange : ItemsReloadSource.TagChange)
   }
 
   onFilterEnter = () => {

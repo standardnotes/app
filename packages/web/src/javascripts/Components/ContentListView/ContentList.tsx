@@ -1,6 +1,5 @@
 import { WebApplication } from '@/Application/Application'
 import { KeyboardKey } from '@standardnotes/ui-services'
-import { UuidString } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, KeyboardEventHandler, UIEventHandler, useCallback } from 'react'
 import { FOCUSABLE_BUT_NOT_TABBABLE, NOTES_LIST_SCROLL_THRESHOLD } from '@/Constants/Constants'
@@ -22,7 +21,7 @@ type Props = {
   navigationController: NavigationController
   notesController: NotesController
   selectionController: SelectedItemsController
-  selectedItems: Record<UuidString, ListableContentItem>
+  selectedUuids: SelectedItemsController['selectedUuids']
   paginate: () => void
 }
 
@@ -34,7 +33,7 @@ const ContentList: FunctionComponent<Props> = ({
   navigationController,
   notesController,
   selectionController,
-  selectedItems,
+  selectedUuids,
   paginate,
 }) => {
   const { selectPreviousItem, selectNextItem } = selectionController
@@ -82,7 +81,7 @@ const ContentList: FunctionComponent<Props> = ({
           key={item.uuid}
           application={application}
           item={item}
-          selected={!!selectedItems[item.uuid]}
+          selected={selectedUuids.has(item.uuid)}
           hideDate={hideDate}
           hidePreview={hideNotePreview}
           hideTags={hideTags}
