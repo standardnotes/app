@@ -1,5 +1,5 @@
 import Icon from '@/Components/Icon/Icon'
-import { TAG_FOLDERS_FEATURE_NAME } from '@/Constants/Constants'
+import { FOCUSABLE_BUT_NOT_TABBABLE, TAG_FOLDERS_FEATURE_NAME } from '@/Constants/Constants'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { FeaturesController } from '@/Controllers/FeaturesController'
@@ -234,12 +234,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       <>
         <div
           role="button"
-          tabIndex={0}
-          className={classNames(
-            'tag py-2 px-3.5 focus:shadow-inner md:py-1',
-            isSelected && 'selected',
-            readyToDrop && 'is-drag-over',
-          )}
+          tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
+          className={classNames('tag py-2 px-3.5 md:py-1', isSelected && 'selected', readyToDrop && 'is-drag-over')}
           onClick={selectCurrentTag}
           ref={mergeRefs([dragRef, tagRef])}
           style={{

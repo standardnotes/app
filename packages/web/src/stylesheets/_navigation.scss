@@ -61,6 +61,12 @@ $content-horizontal-padding: 16px;
     transition: height 0.1s ease-in-out;
     width: 100%;
 
+    &:focus {
+      border: 0;
+      outline: 0;
+      box-shadow: none;
+    }
+
     > .tag-info {
       display: flex;
       flex-direction: row;
