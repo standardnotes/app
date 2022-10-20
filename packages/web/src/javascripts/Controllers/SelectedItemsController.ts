@@ -7,6 +7,7 @@ import {
   SNNote,
   UuidString,
   InternalEventBus,
+  isFile,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
@@ -285,7 +286,7 @@ export class SelectedItemsController
     if (itemsForUuids.length < 1) {
       return
     }
-    if (!userTriggered && itemsForUuids.some((item) => item.protected)) {
+    if (!userTriggered && itemsForUuids.some((item) => item.protected && isFile(item))) {
       return
     }
     this.setSelectedUuids(new Set(uuids))
