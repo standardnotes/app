@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.81.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.80.1...@standardnotes/web@3.81.0) (2022-10-20)
+
+### Features
+
+* persist selected tag & note locally ([#1851](https://github.com/standardnotes/app/issues/1851)) ([4432f1c](https://github.com/standardnotes/app/commit/4432f1cb4cfc2042ddfb7bd574d53270626ebe0d))
+
 ## [3.80.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.80.0...@standardnotes/web@3.80.1) (2022-10-20)
 
 ### Bug Fixes
