@@ -5,7 +5,7 @@ import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import Switch from '@/Components/Switch/Switch'
 import { ThemeItem } from './ThemeItem'
-import RadioIndicator from '../RadioIndicator/RadioIndicator'
+import RadioIndicator from '../Radio/RadioIndicator'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import { isMobileScreen } from '@/Utils'
 

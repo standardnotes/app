@@ -1,6 +1,6 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { FunctionComponent, ReactNode } from 'react'
-import RadioIndicator from '../RadioIndicator/RadioIndicator'
+import RadioIndicator from '../Radio/RadioIndicator'
 
 type HistoryListItemProps = {
   isSelected: boolean

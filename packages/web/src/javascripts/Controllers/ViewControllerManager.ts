@@ -11,13 +11,15 @@ import {
   ItemCounterInterface,
   ItemCounter,
   SubscriptionClientInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
 } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 import { ActionsMenuController } from './ActionsMenuController'
 import { FeaturesController } from './FeaturesController'
 import { FilesController } from './FilesController'
 import { NotesController } from './NotesController'
-import { ItemListController } from './ItemList/ItemListController'
+import { ItemListController, ItemListControllerPersistableValue } from './ItemList/ItemListController'
 import { NoAccountWarningController } from './NoAccountWarningController'
 import { PreferencesController } from './PreferencesController'
 import { PurchaseFlowController } from './PurchaseFlow/PurchaseFlowController'
@@ -25,14 +27,16 @@ import { QuickSettingsController } from './QuickSettingsController'
 import { SearchOptionsController } from './SearchOptionsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
 import { SyncStatusController } from './SyncStatusController'
-import { NavigationController } from './Navigation/NavigationController'
+import { NavigationController, NavigationControllerPersistableValue } from './Navigation/NavigationController'
 import { FilePreviewModalController } from './FilePreviewModalController'
-import { SelectedItemsController } from './SelectedItemsController'
+import { SelectedItemsController, SelectionControllerPersistableValue } from './SelectedItemsController'
 import { HistoryModalController } from './NoteHistory/HistoryModalController'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 import { LinkingController } from './LinkingController'
+import { MasterPersistedValue, PersistenceKey, PersistenceService } from './Abstract/PersistenceService'
+import { CrossControllerEvent } from './CrossControllerEvent'
 
-export class ViewControllerManager {
+export class ViewControllerManager implements InternalEventHandlerInterface {
   readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
 
   private unsubAppEventObserver!: () => void
@@ -65,9 +69,15 @@ export class ViewControllerManager {
   private eventBus: InternalEventBus
   private itemCounter: ItemCounterInterface
   private subscriptionManager: SubscriptionClientInterface
+  private persistenceService: PersistenceService
 
   constructor(public application: WebApplication, private device: WebOrDesktopDeviceInterface) {
     this.eventBus = new InternalEventBus()
+
+    this.persistenceService = new PersistenceService(application, this.eventBus)
+
+    this.eventBus.addEventHandler(this, CrossControllerEvent.HydrateFromPersistedValues)
+    this.eventBus.addEventHandler(this, CrossControllerEvent.RequestValuePersistence)
 
     this.itemCounter = new ItemCounter()
 
@@ -173,6 +183,9 @@ export class ViewControllerManager {
     ;(this.quickSettingsMenuController as unknown) = undefined
     ;(this.syncStatusController as unknown) = undefined
 
+    this.persistenceService.deinit()
+    ;(this.persistenceService as unknown) = undefined
+
     this.actionsMenuController.reset()
     ;(this.actionsMenuController as unknown) = undefined
 
@@ -263,5 +276,34 @@ export class ViewControllerManager {
           break
       }
     })
+  }
+
+  persistValues = (): void => {
+    const values: MasterPersistedValue = {
+      [PersistenceKey.SelectedItemsController]: this.selectionController.getPersistableValue(),
+      [PersistenceKey.NavigationController]: this.navigationController.getPersistableValue(),
+      [PersistenceKey.ItemListController]: this.itemListController.getPersistableValue(),
+    }
+
+    this.persistenceService.persistValues(values)
+  }
+
+  hydrateFromPersistedValues = (values: MasterPersistedValue | undefined): void => {
+    const itemListState = values?.[PersistenceKey.ItemListController] as ItemListControllerPersistableValue
+    this.itemListController.hydrateFromPersistedValue(itemListState)
+
+    const selectedItemsState = values?.[PersistenceKey.SelectedItemsController] as SelectionControllerPersistableValue
+    this.selectionController.hydrateFromPersistedValue(selectedItemsState)
+
+    const navigationState = values?.[PersistenceKey.NavigationController] as NavigationControllerPersistableValue
+    this.navigationController.hydrateFromPersistedValue(navigationState)
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === CrossControllerEvent.HydrateFromPersistedValues) {
+      this.hydrateFromPersistedValues(event.payload as MasterPersistedValue | undefined)
+    } else if (event.type === CrossControllerEvent.RequestValuePersistence) {
+      this.persistValues()
+    }
   }
 }
