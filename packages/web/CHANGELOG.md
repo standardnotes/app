@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.80.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.80.0...@standardnotes/web@3.80.1) (2022-10-20)
+
+### Bug Fixes
+
+* "Forgot passcode" and "Switch workspace" lock screen options not working on mobile ([#1850](https://github.com/standardnotes/app/issues/1850)) ([57fab4f](https://github.com/standardnotes/app/commit/57fab4f670faeaa0018d9d1a678e50d1e90052aa))
+
 # [3.80.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.79.0...@standardnotes/web@3.80.0) (2022-10-20)
 
 ### Bug Fixes
