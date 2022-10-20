@@ -80,12 +80,11 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     const toggleChildren: MouseEventHandler = useCallback(
       (e) => {
         e.stopPropagation()
-        setShowChildren((x) => {
-          tagsState.setExpanded(tag, !x)
-          return !x
-        })
+        const shouldShowChildren = !showChildren
+        setShowChildren(shouldShowChildren)
+        tagsState.setExpanded(tag, !shouldShowChildren)
       },
-      [setShowChildren, tag, tagsState],
+      [showChildren, tag, tagsState],
     )
 
     const selectCurrentTag = useCallback(async () => {

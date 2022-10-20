@@ -192,7 +192,7 @@ export class SelectedItemsController
 
   private replaceSelection = (item: ListableContentItem): void => {
     this.deselectAll()
-    this.setSelectedUuids(this.selectedUuids.add(item.uuid))
+    runInAction(() => this.setSelectedUuids(this.selectedUuids.add(item.uuid)))
 
     this.lastSelectedItem = item
   }

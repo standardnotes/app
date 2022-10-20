@@ -214,6 +214,8 @@ export class ItemListController
 
       optionsSubtitle: computed,
       activeControllerItem: computed,
+
+      hydrateFromPersistedValue: action,
     })
 
     window.onresize = () => {
