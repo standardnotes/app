@@ -27,6 +27,7 @@ import { CrossControllerEvent } from '../CrossControllerEvent'
 export class NavigationController extends AbstractViewController {
   tags: SNTag[] = []
   smartViews: SmartView[] = []
+  starredTags: SNTag[] = []
   allNotesCount_ = 0
   selected_: AnyTag | undefined
   previouslySelected_: AnyTag | undefined
@@ -57,6 +58,7 @@ export class NavigationController extends AbstractViewController {
 
     makeObservable(this, {
       tags: observable,
+      starredTags: observable,
       smartViews: observable.ref,
       hasAtLeastOneFolder: computed,
       allNotesCount_: observable,
@@ -100,7 +102,7 @@ export class NavigationController extends AbstractViewController {
       this.application.streamItems([ContentType.Tag, ContentType.SmartView], ({ changed, removed }) => {
         runInAction(() => {
           this.tags = this.application.items.getDisplayableTags()
-
+          this.starredTags = this.tags.filter((tag) => tag.starred)
           this.smartViews = this.application.items.getSmartViews()
 
           const currrentSelectedTag = this.selected_
@@ -414,6 +416,14 @@ export class NavigationController extends AbstractViewController {
     this.application.mutator
       .changeAndSaveItem<TagMutator>(tag, (mutator) => {
         mutator.expanded = expanded
+      })
+      .catch(console.error)
+  }
+
+  public async setFavorite(tag: SNTag, favorite: boolean) {
+    return this.application.mutator
+      .changeAndSaveItem<TagMutator>(tag, (mutator) => {
+        mutator.starred = favorite
       })
       .catch(console.error)
   }
