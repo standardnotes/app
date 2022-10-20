@@ -39,7 +39,6 @@ import { reloadFont } from './FontFunctions'
 import { NoteViewProps } from './NoteViewProps'
 import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import AutoresizingNoteViewTextarea from './AutoresizingTextarea'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
@@ -50,7 +49,6 @@ import NoteViewFileDropTarget from './NoteViewFileDropTarget'
 const MinimumStatusDuration = 400
 const TextareaDebounce = 100
 const NoteEditingDisabledText = 'Note editing disabled.'
-const StickyHeaderScrollThresholdInPx = 20
 
 function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
@@ -82,8 +80,6 @@ type State = {
   leftResizerOffset: number
   rightResizerWidth: number
   rightResizerOffset: number
-
-  shouldStickyHeader: boolean
 
   monospaceFont?: boolean
   lineHeight?: EditorLineHeight
@@ -134,8 +130,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     this.textAreaChangeDebounceSave = debounce(this.textAreaChangeDebounceSave, TextareaDebounce)
 
-    this.handleWindowScroll = debounce(this.handleWindowScroll, 10)
-
     this.state = {
       availableStackComponents: [],
       editorStateDidLoad: false,
@@ -155,22 +149,17 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       leftResizerOffset: 0,
       rightResizerWidth: 0,
       rightResizerOffset: 0,
-      shouldStickyHeader: false,
       editorFeatureIdentifier: this.controller.item.editorIdentifier,
       noteType: this.controller.item.noteType,
     }
 
     this.noteViewElementRef = createRef<HTMLDivElement>()
     this.editorContentRef = createRef<HTMLDivElement>()
-
-    window.addEventListener('scroll', this.handleWindowScroll)
   }
 
   override deinit() {
     super.deinit()
     ;(this.controller as unknown) = undefined
-
-    window.removeEventListener('scroll', this.handleWindowScroll)
 
     this.removeComponentStreamObserver?.()
     ;(this.removeComponentStreamObserver as unknown) = undefined
@@ -932,12 +921,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     }
   }
 
-  handleWindowScroll = () => {
-    this.setState({
-      shouldStickyHeader: window.scrollY > StickyHeaderScrollThresholdInPx,
-    })
-  }
-
   override render() {
     if (this.state.showProtectedWarning || !this.application.isAuthorizedToRenderItem(this.note)) {
       return (
@@ -951,7 +934,11 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     }
 
     return (
-      <div aria-label="Note" className="section editor sn-component" ref={this.noteViewElementRef}>
+      <div
+        aria-label="Note"
+        className="section editor sn-component max-h-screen md:max-h-full"
+        ref={this.noteViewElementRef}
+      >
         {this.note && (
           <NoteViewFileDropTarget
             note={this.note}
@@ -985,12 +972,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
             id="editor-title-bar"
             className={classNames(
               'content-title-bar section-title-bar z-editor-title-bar w-full bg-default',
-              this.state.shouldStickyHeader && 'fixed top-0',
-              this.state.shouldStickyHeader
-                ? isIOS() || this.application.platform === Platform.Ios
-                  ? 'pt-safe-top'
-                  : 'pt-4'
-                : '',
+              isIOS() || this.application.platform === Platform.Ios ? 'pt-safe-top' : 'pt-4',
             )}
           >
             <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-4 xl:items-center">
@@ -1017,36 +999,32 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                   updateSavingIndicator={this.state.updateSavingIndicator}
                 />
               </div>
-              {!this.state.shouldStickyHeader && (
-                <div className="flex items-center gap-3">
-                  <LinkedItemsButton
-                    filesController={this.viewControllerManager.filesController}
-                    linkingController={this.viewControllerManager.linkingController}
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                  />
-                  <ChangeEditorButton
-                    application={this.application}
-                    viewControllerManager={this.viewControllerManager}
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                  />
-                  <PinNoteButton
-                    notesController={this.viewControllerManager.notesController}
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                  />
-                  <NotesOptionsPanel
-                    application={this.application}
-                    navigationController={this.viewControllerManager.navigationController}
-                    notesController={this.viewControllerManager.notesController}
-                    linkingController={this.viewControllerManager.linkingController}
-                    historyModalController={this.viewControllerManager.historyModalController}
-                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                  />
-                </div>
-              )}
+              <div className="flex items-center gap-3">
+                <LinkedItemsButton
+                  filesController={this.viewControllerManager.filesController}
+                  linkingController={this.viewControllerManager.linkingController}
+                  onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                />
+                <ChangeEditorButton
+                  application={this.application}
+                  viewControllerManager={this.viewControllerManager}
+                  onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                />
+                <PinNoteButton
+                  notesController={this.viewControllerManager.notesController}
+                  onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                />
+                <NotesOptionsPanel
+                  application={this.application}
+                  navigationController={this.viewControllerManager.navigationController}
+                  notesController={this.viewControllerManager.notesController}
+                  linkingController={this.viewControllerManager.linkingController}
+                  historyModalController={this.viewControllerManager.historyModalController}
+                  onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                />
+              </div>
             </div>
-            {!this.state.shouldStickyHeader && (
-              <LinkedItemBubblesContainer linkingController={this.viewControllerManager.linkingController} />
-            )}
+            <LinkedItemBubblesContainer linkingController={this.viewControllerManager.linkingController} />
           </div>
         )}
 
@@ -1082,12 +1060,8 @@ class NoteView extends PureComponent<NoteViewProps, State> {
           )}
 
           {this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading && (
-            <AutoresizingNoteViewTextarea
+            <textarea
               autoComplete="off"
-              className={classNames(
-                this.state.lineHeight && `leading-${this.state.lineHeight.toLowerCase()}`,
-                this.state.fontSize && PlaintextFontSizeMapping[this.state.fontSize],
-              )}
               dir="auto"
               id={ElementIds.NoteTextEditor}
               onChange={this.onTextAreaChange}
@@ -1096,7 +1070,12 @@ class NoteView extends PureComponent<NoteViewProps, State> {
               ref={(ref) => ref && this.onSystemEditorLoad(ref)}
               spellCheck={this.state.spellcheck}
               value={this.state.editorText}
-            />
+              className={classNames(
+                'editable font-editor flex-grow',
+                this.state.lineHeight && `leading-${this.state.lineHeight.toLowerCase()}`,
+                this.state.fontSize && PlaintextFontSizeMapping[this.state.fontSize],
+              )}
+            ></textarea>
           )}
 
           {this.state.marginResizersEnabled && this.editorContentRef.current ? (
