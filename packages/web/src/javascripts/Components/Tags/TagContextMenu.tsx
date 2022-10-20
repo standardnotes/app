@@ -48,6 +48,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
 
   const onClickStar = useCallback(() => {
     navigationController.setFavorite(selectedTag, !selectedTag.starred).catch(console.error)
+    navigationController.setContextMenuOpen(false)
   }, [navigationController, selectedTag])
 
   const tagLastModified = useMemo(
