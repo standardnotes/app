@@ -46,6 +46,11 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
     navigationController.remove(selectedTag, true).catch(console.error)
   }, [navigationController, selectedTag])
 
+  const onClickStar = useCallback(() => {
+    navigationController.setFavorite(selectedTag, !selectedTag.starred).catch(console.error)
+    navigationController.setContextMenuOpen(false)
+  }, [navigationController, selectedTag])
+
   const tagLastModified = useMemo(
     () => formatDateForContextMenu(selectedTag.userModifiedDate),
     [selectedTag.userModifiedDate],
@@ -62,6 +67,12 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
     >
       <div ref={contextMenuRef}>
         <Menu a11yLabel="Tag context menu" isOpen={contextMenuOpen}>
+          <MenuItem type={MenuItemType.IconButton} className={'justify-between py-1.5'} onClick={onClickStar}>
+            <div className="flex items-center">
+              <Icon type="star" className="mr-2 text-neutral" />
+              {selectedTag.starred ? 'Unfavorite' : 'Favorite'}
+            </div>
+          </MenuItem>
           <MenuItem type={MenuItemType.IconButton} className={'justify-between py-1.5'} onClick={onClickAddSubtag}>
             <div className="flex items-center">
               <Icon type="add" className="mr-2 text-neutral" />
