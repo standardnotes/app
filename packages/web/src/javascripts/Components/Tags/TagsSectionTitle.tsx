@@ -6,13 +6,12 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback } from 'react'
 
 type Props = {
-  title: string
   features: FeaturesController
   hasMigration: boolean
   onClickMigration: () => void
 }
 
-const TagsSectionTitle: FunctionComponent<Props> = ({ title, features, hasMigration, onClickMigration }) => {
+const TagsSectionTitle: FunctionComponent<Props> = ({ features, hasMigration, onClickMigration }) => {
   const entitledToFolders = features.hasFolders
   const modal = usePremiumModal()
 
@@ -24,7 +23,7 @@ const TagsSectionTitle: FunctionComponent<Props> = ({ title, features, hasMigrat
     return (
       <>
         <div className="title text-sm">
-          <span className="font-bold">{title}</span>
+          <span className="font-bold">Folders</span>
           {hasMigration && (
             <label className="ml-1 cursor-pointer font-bold text-info" onClick={onClickMigration}>
               Migration Available
@@ -41,7 +40,7 @@ const TagsSectionTitle: FunctionComponent<Props> = ({ title, features, hasMigrat
         <span className="font-bold">Tags</span>
         <Tooltip label={TAG_FOLDERS_FEATURE_TOOLTIP}>
           <label className="ml-1 cursor-pointer font-bold text-passive-2" onClick={showPremiumAlert}>
-            {title}
+            Folders
           </label>
         </Tooltip>
       </div>

@@ -57,12 +57,9 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
         <section>
           <div className={'section-title-bar'}>
             <div className="section-title-bar-header">
-              <TagsSectionTitle
-                title="Favorites"
-                features={viewControllerManager.featuresController}
-                hasMigration={hasMigration}
-                onClickMigration={runMigration}
-              />
+              <div className="title text-sm">
+                <span className="font-bold">Favorites</span>
+              </div>
             </div>
           </div>
           <TagsList type="favorites" viewControllerManager={viewControllerManager} />
@@ -73,7 +70,6 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
         <div className={'section-title-bar'}>
           <div className="section-title-bar-header">
             <TagsSectionTitle
-              title="Folders"
               features={viewControllerManager.featuresController}
               hasMigration={hasMigration}
               onClickMigration={runMigration}
