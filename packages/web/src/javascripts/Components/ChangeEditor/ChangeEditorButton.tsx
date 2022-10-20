@@ -5,7 +5,6 @@ import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import ChangeEditorMenu from './ChangeEditorMenu'
 import Popover from '../Popover/Popover'
-import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   application: WebApplication
@@ -40,10 +39,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
   return (
     <div ref={containerRef}>
       <button
-        className={classNames(
-          'bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid text-neutral hover:bg-contrast focus:bg-contrast',
-          `border-accessory-tint-${selectedEditorIconTint}`,
-        )}
+        className="bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-border text-neutral hover:bg-contrast focus:bg-contrast"
         title="Change note type"
         aria-label="Change note type"
         onClick={toggleMenu}
