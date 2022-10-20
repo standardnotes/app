@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.82.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.0...@standardnotes/web@3.82.1) (2022-10-20)
+
+### Reverts
+
+* Revert "feat: ability to favorite tags (#1852)" ([5d202a8](https://github.com/standardnotes/app/commit/5d202a823e2a89c5e6fe7e07306957f2b2ea68b1)), closes [#1852](https://github.com/standardnotes/app/issues/1852)
+
 # [3.82.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.81.0...@standardnotes/web@3.82.0) (2022-10-20)
 
 ### Bug Fixes
