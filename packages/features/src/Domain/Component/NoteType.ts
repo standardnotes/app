@@ -5,4 +5,5 @@ export enum NoteType {
   RichText = 'rich-text',
   Spreadsheet = 'spreadsheet',
   Task = 'task',
+  Plain = 'plain-text',
 }

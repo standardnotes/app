@@ -29,14 +29,9 @@ describe('SNNote Tests', () => {
     expect(note.preview_html).toBeFalsy()
   })
 
-  it('should set mobilePrefersPlainEditor when given a valid choice', () => {
-    const selected = createNote({
-      mobilePrefersPlainEditor: true,
-    })
+  it('should not set default value for note type if none is provided', () => {
+    const note = createNote({})
 
-    const unselected = createNote()
-
-    expect(selected.mobilePrefersPlainEditor).toBeTruthy()
-    expect(unselected.mobilePrefersPlainEditor).toBe(undefined)
+    expect(note.noteType).toBe(undefined)
   })
 })

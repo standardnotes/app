@@ -1,5 +1,5 @@
 import { ContentType } from '@standardnotes/common'
-import { InternalEventBusInterface } from '@standardnotes/services'
+import { InternalEventBusInterface, ItemRelationshipDirection } from '@standardnotes/services'
 import { ItemManager } from './ItemManager'
 import { PayloadManager } from '../Payloads/PayloadManager'
 import { UuidGenerator } from '@standardnotes/utils'
@@ -14,6 +14,7 @@ import {
   SmartView,
   SystemViewId,
 } from '@standardnotes/models'
+import { createNoteWithTitle } from '../../Spec/SpecUtils'
 
 const setupRandomUuid = () => {
   UuidGenerator.SetGenerator(() => String(Math.random()))
@@ -76,19 +77,6 @@ describe('itemManager', () => {
         uuid: String(Math.random()),
         content_type: ContentType.Tag,
         content: Models.FillItemContent<Models.TagContent>({
-          title: title,
-        }),
-        ...PayloadTimestampDefaults(),
-      }),
-    )
-  }
-
-  const createNote = (title: string) => {
-    return new Models.SNNote(
-      new Models.DecryptedPayload({
-        uuid: String(Math.random()),
-        content_type: ContentType.Note,
-        content: Models.FillItemContent<Models.NoteContent>({
           title: title,
         }),
         ...PayloadTimestampDefaults(),
@@ -168,7 +156,7 @@ describe('itemManager', () => {
     it('viewing notes with tag', async () => {
       itemManager = createService()
       const tag = createTag('parent')
-      const note = createNote('note')
+      const note = createNoteWithTitle('note')
       await itemManager.insertItems([tag, note])
       await itemManager.addTagToNote(note, tag, false)
 
@@ -185,9 +173,9 @@ describe('itemManager', () => {
     it('viewing trashed notes smart view should include archived notes', async () => {
       itemManager = createService()
 
-      const archivedNote = createNote('archived')
-      const trashedNote = createNote('trashed')
-      const archivedAndTrashedNote = createNote('archived&trashed')
+      const archivedNote = createNoteWithTitle('archived')
+      const trashedNote = createNoteWithTitle('trashed')
+      const archivedAndTrashedNote = createNoteWithTitle('archived&trashed')
 
       await itemManager.insertItems([archivedNote, trashedNote, archivedAndTrashedNote])
 
@@ -389,8 +377,8 @@ describe('itemManager', () => {
       await itemManager.insertItems([parentTag, childTag])
       await itemManager.setTagParent(parentTag, childTag)
 
-      const parentNote = createNote('parentNote')
-      const childNote = createNote('childNote')
+      const parentNote = createNoteWithTitle('parentNote')
+      const childNote = createNoteWithTitle('childNote')
       await itemManager.insertItems([parentNote, childNote])
 
       await itemManager.addTagToNote(parentNote, parentTag, false)
@@ -477,7 +465,7 @@ describe('itemManager', () => {
       const fooDelimiter = await itemManager.createTag('bar.foo')
       const barFooDelimiter = await itemManager.createTag('baz.bar.foo')
       const fooAttached = await itemManager.createTag('Foo')
-      const note = createNote('note')
+      const note = createNoteWithTitle('note')
       await itemManager.insertItems([foo, foobar, bar, barfoo, fooDelimiter, barFooDelimiter, fooAttached, note])
       await itemManager.addTagToNote(note, fooAttached, false)
 
@@ -501,8 +489,8 @@ describe('itemManager', () => {
       await itemManager.insertItems([parentTag, childTag])
       await itemManager.setTagParent(parentTag, childTag)
 
-      const parentNote = createNote('parentNote')
-      const childNote = createNote('childNote')
+      const parentNote = createNoteWithTitle('parentNote')
+      const childNote = createNoteWithTitle('childNote')
       await itemManager.insertItems([parentNote, childNote])
 
       await itemManager.addTagToNote(parentNote, parentTag, false)
@@ -519,8 +507,8 @@ describe('itemManager', () => {
       const tag1 = createTag('tag 1')
       await itemManager.insertItems([tag1])
 
-      const note1 = createNote('note 1')
-      const note2 = createNote('note 2')
+      const note1 = createNoteWithTitle('note 1')
+      const note2 = createNoteWithTitle('note 2')
       await itemManager.insertItems([note1, note2])
 
       await itemManager.addTagToNote(note1, tag1, false)
@@ -654,8 +642,8 @@ describe('itemManager', () => {
     const view = itemManager.untaggedNotesSmartView
 
     const tag = createTag('tag')
-    const untaggedNote = createNote('note')
-    const taggedNote = createNote('taggedNote')
+    const untaggedNote = createNoteWithTitle('note')
+    const taggedNote = createNoteWithTitle('taggedNote')
     await itemManager.insertItems([tag, untaggedNote, taggedNote])
 
     expect(itemManager.notesMatchingSmartView(view)).toHaveLength(2)
@@ -704,7 +692,7 @@ describe('itemManager', () => {
       itemManager = createService()
       const parentTag = createTag('parent')
       const childTag = createTag('child')
-      const note = createNote('note')
+      const note = createNoteWithTitle('note')
 
       await itemManager.insertItems([parentTag, childTag, note])
       await itemManager.setTagParent(parentTag, childTag)
@@ -722,7 +710,7 @@ describe('itemManager', () => {
       itemManager = createService()
       const parentTag = createTag('parent')
       const childTag = createTag('child')
-      const note = createNote('note')
+      const note = createNoteWithTitle('note')
 
       await itemManager.insertItems([parentTag, childTag, note])
       await itemManager.setTagParent(parentTag, childTag)
@@ -772,7 +760,7 @@ describe('itemManager', () => {
 
     it('should link file with note', async () => {
       itemManager = createService()
-      const note = createNote('invoices')
+      const note = createNoteWithTitle('invoices')
       const file = createFile('invoice_1.pdf')
       await itemManager.insertItems([note, file])
 
@@ -785,7 +773,7 @@ describe('itemManager', () => {
 
     it('should unlink file from note', async () => {
       itemManager = createService()
-      const note = createNote('invoices')
+      const note = createNoteWithTitle('invoices')
       const file = createFile('invoice_1.pdf')
       await itemManager.insertItems([note, file])
 
@@ -796,25 +784,10 @@ describe('itemManager', () => {
       expect(references).toHaveLength(0)
     })
 
-    it('should get files linked with note', async () => {
-      itemManager = createService()
-      const note = createNote('invoices')
-      const file = createFile('invoice_1.pdf')
-      const secondFile = createFile('unrelated-file.xlsx')
-      await itemManager.insertItems([note, file, secondFile])
-
-      await itemManager.associateFileWithNote(file, note)
-
-      const filesAssociatedWithNote = itemManager.getSortedFilesLinkingToItem(note)
-
-      expect(filesAssociatedWithNote).toHaveLength(1)
-      expect(filesAssociatedWithNote[0].uuid).toBe(file.uuid)
-    })
-
     it('should link note to note', async () => {
       itemManager = createService()
-      const note = createNote('research')
-      const note2 = createNote('citation')
+      const note = createNoteWithTitle('research')
+      const note2 = createNoteWithTitle('citation')
       await itemManager.insertItems([note, note2])
 
       const resultingNote = await itemManager.linkNoteToNote(note, note2)
@@ -839,108 +812,56 @@ describe('itemManager', () => {
 
     it('should get the relationship type for two items', async () => {
       itemManager = createService()
-      const firstNote = createNote('First note')
-      const secondNote = createNote('Second note')
-      const unlinkedNote = createNote('Unlinked note')
+      const firstNote = createNoteWithTitle('First note')
+      const secondNote = createNoteWithTitle('Second note')
+      const unlinkedNote = createNoteWithTitle('Unlinked note')
       await itemManager.insertItems([firstNote, secondNote, unlinkedNote])
 
       const firstNoteLinkedToSecond = await itemManager.linkNoteToNote(firstNote, secondNote)
 
-      const relationshipOfFirstNoteToSecond = itemManager.relationshipTypeForItems(firstNoteLinkedToSecond, secondNote)
-      const relationshipOfSecondNoteToFirst = itemManager.relationshipTypeForItems(secondNote, firstNoteLinkedToSecond)
-      const relationshipOfFirstNoteToUnlinked = itemManager.relationshipTypeForItems(
+      const relationshipOfFirstNoteToSecond = itemManager.relationshipDirectionBetweenItems(
+        firstNoteLinkedToSecond,
+        secondNote,
+      )
+      const relationshipOfSecondNoteToFirst = itemManager.relationshipDirectionBetweenItems(
+        secondNote,
+        firstNoteLinkedToSecond,
+      )
+      const relationshipOfFirstNoteToUnlinked = itemManager.relationshipDirectionBetweenItems(
         firstNoteLinkedToSecond,
         unlinkedNote,
       )
 
-      expect(relationshipOfFirstNoteToSecond).toBe('direct')
-      expect(relationshipOfSecondNoteToFirst).toBe('indirect')
-      expect(relationshipOfFirstNoteToUnlinked).toBe('unlinked')
+      expect(relationshipOfFirstNoteToSecond).toBe(ItemRelationshipDirection.AReferencesB)
+      expect(relationshipOfSecondNoteToFirst).toBe(ItemRelationshipDirection.BReferencesA)
+      expect(relationshipOfFirstNoteToUnlinked).toBe(ItemRelationshipDirection.NoRelationship)
     })
 
-    it('should unlink itemToUnlink from item', async () => {
+    it('should unlink itemOne from itemTwo if relation is direct', async () => {
       itemManager = createService()
-      const note = createNote('Note 1')
-      const note2 = createNote('Note 2')
+      const note = createNoteWithTitle('Note 1')
+      const note2 = createNoteWithTitle('Note 2')
       await itemManager.insertItems([note, note2])
 
       const linkedItem = await itemManager.linkNoteToNote(note, note2)
-      const unlinkedItem = await itemManager.unlinkItem(linkedItem, note2)
+      const unlinkedItem = await itemManager.unlinkItems(linkedItem, note2)
       const references = unlinkedItem.references
 
+      expect(unlinkedItem.uuid).toBe(note.uuid)
       expect(references).toHaveLength(0)
     })
 
-    it('should get all linked files for item', async () => {
+    it('should unlink itemTwo from itemOne if relation is indirect', async () => {
       itemManager = createService()
-      const file = createFile('A1')
-      const file2 = createFile('B2')
-      const file3 = createFile('C3')
+      const note = createNoteWithTitle('Note 1')
+      const note2 = createNoteWithTitle('Note 2')
+      await itemManager.insertItems([note, note2])
 
-      await itemManager.insertItems([file, file2, file3])
+      const linkedItem = await itemManager.linkNoteToNote(note, note2)
+      const changedItem = await itemManager.unlinkItems(linkedItem, note2)
 
-      await itemManager.linkFileToFile(file, file3)
-      await itemManager.linkFileToFile(file, file2)
-
-      const sortedFilesForItem = itemManager.getSortedLinkedFilesForItem(file)
-
-      expect(sortedFilesForItem).toHaveLength(2)
-      expect(sortedFilesForItem[0].uuid).toEqual(file2.uuid)
-      expect(sortedFilesForItem[1].uuid).toEqual(file3.uuid)
-    })
-
-    it('should get all files linking to item', async () => {
-      itemManager = createService()
-      const baseFile = createFile('file')
-      const fileToLink1 = createFile('A1')
-      const fileToLink2 = createFile('B2')
-
-      await itemManager.insertItems([baseFile, fileToLink1, fileToLink2])
-
-      await itemManager.linkFileToFile(fileToLink2, baseFile)
-      await itemManager.linkFileToFile(fileToLink1, baseFile)
-
-      const sortedFilesForItem = itemManager.getSortedFilesLinkingToItem(baseFile)
-
-      expect(sortedFilesForItem).toHaveLength(2)
-      expect(sortedFilesForItem[0].uuid).toEqual(fileToLink1.uuid)
-      expect(sortedFilesForItem[1].uuid).toEqual(fileToLink2.uuid)
-    })
-
-    it('should get all linked notes for item', async () => {
-      itemManager = createService()
-      const baseNote = createNote('note')
-      const noteToLink1 = createNote('A1')
-      const noteToLink2 = createNote('B2')
-
-      await itemManager.insertItems([baseNote, noteToLink1, noteToLink2])
-
-      await itemManager.linkNoteToNote(baseNote, noteToLink2)
-      await itemManager.linkNoteToNote(baseNote, noteToLink1)
-
-      const sortedFilesForItem = itemManager.getSortedLinkedNotesForItem(baseNote)
-
-      expect(sortedFilesForItem).toHaveLength(2)
-      expect(sortedFilesForItem[0].uuid).toEqual(noteToLink1.uuid)
-      expect(sortedFilesForItem[1].uuid).toEqual(noteToLink2.uuid)
-    })
-
-    it('should get all notes linking to item', async () => {
-      itemManager = createService()
-      const baseNote = createNote('note')
-      const noteToLink1 = createNote('A1')
-      const noteToLink2 = createNote('B2')
-
-      await itemManager.insertItems([baseNote, noteToLink1, noteToLink2])
-
-      await itemManager.linkNoteToNote(noteToLink2, baseNote)
-      await itemManager.linkNoteToNote(noteToLink1, baseNote)
-
-      const sortedFilesForItem = itemManager.getSortedNotesLinkingToItem(baseNote)
-
-      expect(sortedFilesForItem).toHaveLength(2)
-      expect(sortedFilesForItem[0].uuid).toEqual(noteToLink1.uuid)
-      expect(sortedFilesForItem[1].uuid).toEqual(noteToLink2.uuid)
+      expect(changedItem.uuid).toBe(note.uuid)
+      expect(changedItem.references).toHaveLength(0)
     })
   })
 })

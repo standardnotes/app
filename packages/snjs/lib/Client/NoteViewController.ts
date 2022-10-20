@@ -1,3 +1,4 @@
+import { NoteType } from '@standardnotes/features'
 import {
   NoteMutator,
   SNNote,
@@ -66,9 +67,12 @@ export class NoteViewController implements ItemViewControllerInterface {
 
   async initialize(addTagHierarchy: boolean): Promise<void> {
     if (!this.item) {
+      const editor = this.application.componentManager.getDefaultEditor()
       const note = this.application.mutator.createTemplateItem<NoteContent, SNNote>(ContentType.Note, {
         text: '',
         title: this.defaultTitle || '',
+        noteType: editor?.noteType || NoteType.Plain,
+        editorIdentifier: editor?.identifier,
         references: [],
       })
 

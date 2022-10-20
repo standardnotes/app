@@ -3,6 +3,57 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.80.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.79.0...@standardnotes/web@3.80.0) (2022-10-20)
+
+### Bug Fixes
+
+* file not linking to note when uploaded by dragging on note ([d333d4f](https://github.com/standardnotes/app/commit/d333d4f1887672b526a5d8fc659e6dd2b1b12e21))
+* help & feedback links on mobile ([#1849](https://github.com/standardnotes/app/issues/1849)) ([fb72c2f](https://github.com/standardnotes/app/commit/fb72c2fdae277cb4e348ce5ee550f0545f281dcd))
+* links for template notes ([60a8e8b](https://github.com/standardnotes/app/commit/60a8e8b92b1e5c0f4c4c007591aa115fce51930b))
+* make tags non-tabbable ([a8535cf](https://github.com/standardnotes/app/commit/a8535cfa2380a4ddd648d5d099701c0b5e8f3a22))
+* remove tinted border from change note type button ([27bb4eb](https://github.com/standardnotes/app/commit/27bb4ebdae259718c0e13134c2ffdce7c681f0da))
+
+### Features
+
+* make sans-serif font default ([050fa9c](https://github.com/standardnotes/app/commit/050fa9cabca65bba4845fc9b315c81ce524e8b0d))
+
+# [3.79.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.78.1...@standardnotes/web@3.79.0) (2022-10-19)
+
+### Features
+
+* improved file drag-n-drop experience ([#1848](https://github.com/standardnotes/app/issues/1848)) ([e99c7b7](https://github.com/standardnotes/app/commit/e99c7b7c516b0c822f0e663843146c7f5cf1fb86))
+
+## [3.78.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.78.0...@standardnotes/web@3.78.1) (2022-10-19)
+
+### Bug Fixes
+
+* issue with not being able to unlink a file from a note ([#1836](https://github.com/standardnotes/app/issues/1836)) ([4030953](https://github.com/standardnotes/app/commit/4030953b00ad609dc2b0f5b66cfd971d449f6121))
+
+# [3.78.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.77.1...@standardnotes/web@3.78.0) (2022-10-18)
+
+### Bug Fixes
+
+* context menu opening when swiping up from bottom on iOS ([5ffd37d](https://github.com/standardnotes/app/commit/5ffd37d4478aec638392962f45d3a4428a8da86a))
+* editor width on mobile ([361f773](https://github.com/standardnotes/app/commit/361f773f2c3c65255e0d5cc8d991fac0f4521fff))
+* hide dynamic panels & focused mode options on mobile ([e4de9c1](https://github.com/standardnotes/app/commit/e4de9c1be76c758f36e5068a8395bb3abd19069a))
+* use mobx action for setting state ([eec7ae1](https://github.com/standardnotes/app/commit/eec7ae1589f7eae36ba810942911ccb3b8d863ee))
+
+### Features
+
+* authorize notes for listed ([#1823](https://github.com/standardnotes/app/issues/1823)) ([9954bdc](https://github.com/standardnotes/app/commit/9954bdc29f9de2a42c4539d55749991d86a72943))
+
+## [3.77.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.77.0...@standardnotes/web@3.77.1) (2022-10-18)
+
+### Bug Fixes
+
+* remove switch to classic mx option ([e40cd15](https://github.com/standardnotes/app/commit/e40cd157b6d1683cf9eb9548714c604649134971))
+
+# [3.77.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.76.2...@standardnotes/web@3.77.0) (2022-10-17)
+
+### Features
+
+* starred notes ([#1813](https://github.com/standardnotes/app/issues/1813)) ([d52fdae](https://github.com/standardnotes/app/commit/d52fdae0b359b4768855ae030ac13d1c16f2312a))
+
 ## [3.76.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.76.1...@standardnotes/web@3.76.2) (2022-10-17)
 
 **Note:** Version bump only for package @standardnotes/web

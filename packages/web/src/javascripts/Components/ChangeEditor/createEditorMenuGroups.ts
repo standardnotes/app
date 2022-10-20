@@ -12,15 +12,13 @@ import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
 import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 
-type EditorGroup = NoteType | 'plain' | 'others'
+type EditorGroup = NoteType | 'others'
 
 const getEditorGroup = (featureDescription: FeatureDescription): EditorGroup => {
   if (featureDescription.note_type) {
     return featureDescription.note_type
   } else if (featureDescription.file_type) {
     switch (featureDescription.file_type) {
-      case 'txt':
-        return 'plain'
       case 'html':
         return NoteType.RichText
       case 'md':
@@ -34,7 +32,7 @@ const getEditorGroup = (featureDescription: FeatureDescription): EditorGroup => 
 
 export const createEditorMenuGroups = (application: WebApplication, editors: SNComponent[]) => {
   const editorItems: Record<EditorGroup, EditorMenuItem[]> = {
-    plain: [
+    'plain-text': [
       {
         name: PLAIN_EDITOR_NAME,
         isEntitled: true,
@@ -79,7 +77,7 @@ export const createEditorMenuGroups = (application: WebApplication, editors: SNC
       icon: 'plain-text',
       iconClassName: 'text-accessory-tint-1',
       title: 'Plain text',
-      items: editorItems.plain,
+      items: editorItems['plain-text'],
     },
     {
       icon: 'rich-text',

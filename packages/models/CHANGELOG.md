@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.29.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.29.0...@standardnotes/models@1.29.1) (2022-10-19)
+
+### Bug Fixes
+
+* issue with not being able to unlink a file from a note ([#1836](https://github.com/standardnotes/app/issues/1836)) ([4030953](https://github.com/standardnotes/app/commit/4030953b00ad609dc2b0f5b66cfd971d449f6121))
+
+# [1.29.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.28.0...@standardnotes/models@1.29.0) (2022-10-18)
+
+### Features
+
+* authorize notes for listed ([#1823](https://github.com/standardnotes/app/issues/1823)) ([9954bdc](https://github.com/standardnotes/app/commit/9954bdc29f9de2a42c4539d55749991d86a72943))
+
+# [1.28.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.27.1...@standardnotes/models@1.28.0) (2022-10-17)
+
+### Features
+
+* starred notes ([#1813](https://github.com/standardnotes/app/issues/1813)) ([d52fdae](https://github.com/standardnotes/app/commit/d52fdae0b359b4768855ae030ac13d1c16f2312a))
+
 ## [1.27.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.27.0...@standardnotes/models@1.27.1) (2022-10-13)
 
 **Note:** Version bump only for package @standardnotes/models

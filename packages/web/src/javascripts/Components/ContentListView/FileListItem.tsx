@@ -1,7 +1,7 @@
 import { FileItem } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useRef } from 'react'
-import { getFileIconComponent } from '../AttachedFilesPopover/getFileIconComponent'
+import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
 import ListItemConflictIndicator from './ListItemConflictIndicator'
 import ListItemFlagIcons from './ListItemFlagIcons'
 import ListItemTags from './ListItemTags'

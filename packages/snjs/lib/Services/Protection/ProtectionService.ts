@@ -219,13 +219,18 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
     return this.authorizeAction(ChallengeReason.RevokeSession)
   }
 
+  async authorizeListedPublishing(): Promise<boolean> {
+    return this.authorizeAction(ChallengeReason.AuthorizeNoteForListed, { forcePrompt: true })
+  }
+
   async authorizeAction(
     reason: ChallengeReason,
-    { fallBackToAccountPassword = true, requireAccountPassword = false } = {},
+    { fallBackToAccountPassword = true, requireAccountPassword = false, forcePrompt = false } = {},
   ): Promise<boolean> {
     return this.validateOrRenewSession(reason, {
       requireAccountPassword,
       fallBackToAccountPassword,
+      forcePrompt,
     })
   }
 
@@ -295,9 +300,9 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
 
   private async validateOrRenewSession(
     reason: ChallengeReason,
-    { fallBackToAccountPassword = true, requireAccountPassword = false } = {},
+    { fallBackToAccountPassword = true, requireAccountPassword = false, forcePrompt = false } = {},
   ): Promise<boolean> {
-    if (this.getSessionExpiryDate() > new Date()) {
+    if (this.getSessionExpiryDate() > new Date() && !forcePrompt) {
       return true
     }
 

@@ -5,7 +5,7 @@ export const PrefDefaults = {
   [PrefKey.NotesPanelWidth]: 350,
   [PrefKey.EditorWidth]: null,
   [PrefKey.EditorLeft]: null,
-  [PrefKey.EditorMonospaceEnabled]: true,
+  [PrefKey.EditorMonospaceEnabled]: false,
   [PrefKey.EditorSpellcheck]: true,
   [PrefKey.EditorResizersEnabled]: true,
   [PrefKey.EditorLineHeight]: EditorLineHeight.Normal,

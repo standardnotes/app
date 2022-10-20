@@ -1,5 +1,5 @@
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { FunctionComponent, ReactNode } from 'react'
+import { FunctionComponent, MouseEventHandler, ReactNode } from 'react'
 
 type Props = {
   className?: string
@@ -31,8 +31,9 @@ export const LinkButton: FunctionComponent<{
   label: string
   link: string
   className?: string
-}> = ({ label, link, className }) => (
-  <a target="_blank" className={`${className} ${buttonClasses}`} href={link}>
+  onClick?: MouseEventHandler<HTMLAnchorElement>
+}> = ({ label, link, className, onClick }) => (
+  <a target="_blank" className={`${className} ${buttonClasses}`} href={link} onClick={onClick}>
     {label}
   </a>
 )

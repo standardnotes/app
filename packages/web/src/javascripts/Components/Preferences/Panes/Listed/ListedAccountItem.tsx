@@ -18,7 +18,7 @@ const ListedAccountItem: FunctionComponent<Props> = ({ account, showSeparator, a
   useEffect(() => {
     const loadAccount = async () => {
       setIsLoading(true)
-      const info = await application.getListedAccountInfo(account)
+      const info = await application.listed.getListedAccountInfo(account)
       setAccountInfo(info)
       setIsLoading(false)
     }

@@ -1,11 +1,12 @@
 {
   "name": "@standardnotes/components-meta",
-  "version": "2.7.20",
+  "version": "2.7.21",
   "private": true,
   "author": "Standard Notes.",
   "main": "dist",
   "workspaces": {
     "packages": [
+      "src/Packages/Deprecated/*",
       "src/Packages/Editors/*",
       "src/Packages/Themes/*"
     ]

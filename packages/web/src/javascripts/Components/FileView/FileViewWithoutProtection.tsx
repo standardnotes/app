@@ -1,6 +1,6 @@
 import { ElementIds } from '@/Constants/ElementIDs'
 import { observer } from 'mobx-react-lite'
-import { ChangeEventHandler, useCallback, useRef, useState } from 'react'
+import { ChangeEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import FileOptionsPanel from '@/Components/FileContextMenu/FileOptionsPanel'
 import FilePreview from '@/Components/FilePreview/FilePreview'
 import { FileViewProps } from './FileViewProps'
@@ -10,6 +10,7 @@ import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContaine
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import FilePreviewInfoPanel from '../FilePreview/FilePreviewInfoPanel'
+import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
 
 const SyncTimeoutNoDebounceMs = 100
 const SyncTimeoutDebounceMs = 350
@@ -40,8 +41,33 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
     [application, file],
   )
 
+  const fileDragTargetRef = useRef<HTMLDivElement>(null)
+
+  const { addDragTarget, removeDragTarget } = useFileDragNDrop()
+
+  useEffect(() => {
+    const target = fileDragTargetRef.current
+
+    if (target) {
+      addDragTarget(target, {
+        tooltipText: 'Drop your files to upload and link them to the current file',
+        callback(files) {
+          files.forEach(async (uploadedFile) => {
+            await viewControllerManager.linkingController.linkItems(uploadedFile, file)
+          })
+        },
+      })
+    }
+
+    return () => {
+      if (target) {
+        removeDragTarget(target)
+      }
+    }
+  }, [addDragTarget, file, removeDragTarget, viewControllerManager.linkingController])
+
   return (
-    <div className="sn-component section editor" aria-label="File">
+    <div className="sn-component section editor" aria-label="File" ref={fileDragTargetRef}>
       <div className="flex flex-col">
         <div
           className="content-title-bar section-title-bar section-title-bar z-editor-title-bar w-full"

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<base target="_blank">
+	<meta charset="UTF-8">
+	<title>Markdown Math</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="dist/dist.css">
+</head>
+
+<body>
+	<div class="header">
+		<div class="header-item open-control">
+			<input type="file" id="fileElem" style="display:none">
+			<button class="toolbar-button _upload-source" title="Upload a file">⇑</button>
+			<button class="toolbar-button _download-source" title="Download source">⇓</button>
+		</div>
+		<div class="header-item demo-control">
+			<input class="control-input" id="id_html" type="radio" name="source_type" checked="checked"><label
+				class="control-item" for="id_html" title="Example of rendered HTML" data-result-as="html">preview</label>
+			<input class="control-input" id="id_src" type="radio" name="source_type"><label class="control-item" for="id_src"
+				title="HTML with rendered equations" data-result-as="src">html</label>
+			<input class="control-input" id="id_htmltex" type="radio" name="source_type"><label class="control-item"
+				for="id_htmltex" title="HTML with raw LaTeX equations" data-result-as="htmltex">html-tex</label>
+			<input class="control-input" id="id_md" type="radio" name="source_type"><label class="control-item" for="id_md"
+				title="Markdown with rendered equations" data-result-as="md">md</label>
+			<button class="toolbar-button _download-result" title="Download result">⇓</button>
+		</div>
+	</div>
+	<div class="container full-height" id="container-block">
+		<!--
+		-->
+		<div class="half-width full-height source-wrap" id="source-block"><textarea id="editor-source"
+				class="source full-height"></textarea></div>
+		<!--
+		-->
+		<div class="slider full-height" id="slider"></div>
+		<!--
+		-->
+		<div class="half-width full-height" id="result-block">
+			<div class="result-html full-height"></div>
+			<pre class="result-src full-height"><code class="result-src-content"></code></pre>
+		</div>
+		<!--
+	-->
+	</div>
+	<script src="dist/dist.js"></script>
+</body>
+
+</html>

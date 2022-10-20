@@ -1,7 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { FunctionComponent, KeyboardEventHandler, useCallback, useMemo, useRef, useState } from 'react'
-import { getFileIconComponent } from '@/Components/AttachedFilesPopover/getFileIconComponent'
+import { getFileIconComponent } from './getFileIconComponent'
 import Icon from '@/Components/Icon/Icon'
 import FilePreviewInfoPanel from './FilePreviewInfoPanel'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
@@ -19,6 +19,10 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
   const { currentFile, setCurrentFile, otherFiles, dismiss } = viewControllerManager.filePreviewModalController
 
   if (!currentFile) {
+    return null
+  }
+
+  if (!application.isAuthorizedToRenderItem(currentFile)) {
     return null
   }
 

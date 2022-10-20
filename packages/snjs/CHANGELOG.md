@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.142.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.142.0...@standardnotes/snjs@2.142.1) (2022-10-19)
+
+### Bug Fixes
+
+* issue with not being able to unlink a file from a note ([#1836](https://github.com/standardnotes/app/issues/1836)) ([4030953](https://github.com/standardnotes/app/commit/4030953b00ad609dc2b0f5b66cfd971d449f6121))
+
+# [2.142.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.141.1...@standardnotes/snjs@2.142.0) (2022-10-18)
+
+### Features
+
+* authorize notes for listed ([#1823](https://github.com/standardnotes/app/issues/1823)) ([9954bdc](https://github.com/standardnotes/app/commit/9954bdc29f9de2a42c4539d55749991d86a72943))
+
+## [2.141.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.141.0...@standardnotes/snjs@2.141.1) (2022-10-17)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
 # [2.141.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.140.0...@standardnotes/snjs@2.141.0) (2022-10-17)
 
 ### Features

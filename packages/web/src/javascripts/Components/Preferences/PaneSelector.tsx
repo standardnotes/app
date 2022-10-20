@@ -50,7 +50,7 @@ const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu
     case 'get-free-month':
       return null
     case 'help-feedback':
-      return <HelpAndFeedback />
+      return <HelpAndFeedback application={application} />
     default:
       return (
         <General

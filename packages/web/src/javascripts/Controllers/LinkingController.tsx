@@ -10,12 +10,13 @@ import {
   IconType,
   InternalEventBus,
   ItemContent,
-  ItemsClientInterface,
   naturalSort,
   NoteViewController,
   PrefKey,
   SNNote,
   SNTag,
+  isFile,
+  isNote,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
@@ -27,12 +28,10 @@ import { SubscriptionController } from './Subscription/SubscriptionController'
 
 export type LinkableItem = DecryptedItemInterface<ItemContent>
 
-type RelationWithSelectedItem = ReturnType<ItemsClientInterface['relationshipTypeForItems']>
-
 export type ItemLink<ItemType extends LinkableItem = LinkableItem> = {
   id: string
   item: ItemType
-  relationWithSelectedItem: RelationWithSelectedItem
+  type: 'linked' | 'linked-by'
 }
 
 export class LinkingController extends AbstractViewController {
@@ -143,68 +142,72 @@ export class LinkingController extends AbstractViewController {
     this.reloadNotesLinkingToItem()
   }
 
-  createLinkFromItem = <ItemType extends LinkableItem = LinkableItem>(
-    item: ItemType,
-    relation?: RelationWithSelectedItem,
-  ): ItemLink<ItemType> => {
-    const relationWithSelectedItem = relation ? relation : this.itemRelationshipWithSelectedItem(item)
-
+  createLinkFromItem = <I extends LinkableItem = LinkableItem>(itemA: I, type: 'linked' | 'linked-by'): ItemLink<I> => {
     return {
-      id: `${item.uuid}-${relationWithSelectedItem}`,
-      item,
-      relationWithSelectedItem,
+      id: `${itemA.uuid}-${type}`,
+      item: itemA,
+      type,
     }
   }
 
   reloadLinkedFiles() {
-    if (!this.activeItem) {
+    if (!this.activeItem || this.application.items.isTemplateItem(this.activeItem)) {
+      this.linkedFiles = []
+      this.filesLinkingToActiveItem = []
       return
     }
 
-    const isActiveItemAFile = this.activeItem instanceof FileItem
+    const referencesOfActiveItem = naturalSort(
+      this.application.items.referencesForItem(this.activeItem).filter(isFile),
+      'title',
+    )
 
-    const linkedFiles = this.application.items
-      .getSortedLinkedFilesForItem(this.activeItem)
-      .map((item) => this.createLinkFromItem(item, isActiveItemAFile ? 'direct' : 'indirect'))
+    const referencingActiveItem = naturalSort(
+      this.application.items.itemsReferencingItem(this.activeItem).filter(isFile),
+      'title',
+    )
 
-    const filesLinkingToActiveItem = this.application.items
-      .getSortedFilesLinkingToItem(this.activeItem)
-      .map((item) => this.createLinkFromItem(item, isActiveItemAFile ? 'indirect' : 'direct'))
-
-    if (isActiveItemAFile) {
-      this.linkedFiles = linkedFiles
-      this.filesLinkingToActiveItem = filesLinkingToActiveItem
+    if (this.activeItem.content_type === ContentType.File) {
+      this.linkedFiles = referencesOfActiveItem.map((item) => this.createLinkFromItem(item, 'linked'))
+      this.filesLinkingToActiveItem = referencingActiveItem.map((item) => this.createLinkFromItem(item, 'linked-by'))
     } else {
-      this.linkedFiles = filesLinkingToActiveItem
-      this.filesLinkingToActiveItem = linkedFiles
+      this.linkedFiles = referencingActiveItem.map((item) => this.createLinkFromItem(item, 'linked'))
+      this.filesLinkingToActiveItem = referencesOfActiveItem.map((item) => this.createLinkFromItem(item, 'linked-by'))
     }
   }
 
   reloadLinkedTags() {
-    if (this.activeItem) {
-      const tags = this.application.items
-        .getSortedTagsForItem(this.activeItem)
-        .map((item) => this.createLinkFromItem(item))
-      this.tags = tags
+    if (!this.activeItem) {
+      return
     }
+
+    this.tags = this.application.items
+      .getSortedTagsForItem(this.activeItem)
+      .map((item) => this.createLinkFromItem(item, 'linked'))
   }
 
   reloadLinkedNotes() {
-    if (this.activeItem) {
-      const notes = this.application.items
-        .getSortedLinkedNotesForItem(this.activeItem)
-        .map((item) => this.createLinkFromItem(item, 'direct'))
-      this.notesLinkedToItem = notes
+    if (!this.activeItem || this.application.items.isTemplateItem(this.activeItem)) {
+      this.notesLinkedToItem = []
+      return
     }
+
+    this.notesLinkedToItem = naturalSort(
+      this.application.items.referencesForItem(this.activeItem).filter(isNote),
+      'title',
+    ).map((item) => this.createLinkFromItem(item, 'linked'))
   }
 
   reloadNotesLinkingToItem() {
-    if (this.activeItem) {
-      const notes = this.application.items
-        .getSortedNotesLinkingToItem(this.activeItem)
-        .map((item) => this.createLinkFromItem(item, 'indirect'))
-      this.notesLinkingToActiveItem = notes
+    if (!this.activeItem) {
+      this.notesLinkingToActiveItem = []
+      return
     }
+
+    this.notesLinkingToActiveItem = naturalSort(
+      this.application.items.itemsReferencingItem(this.activeItem).filter(isNote),
+      'title',
+    ).map((item) => this.createLinkFromItem(item, 'linked-by'))
   }
 
   getTitleForLinkedTag = (item: LinkableItem) => {
@@ -263,16 +266,6 @@ export class LinkingController extends AbstractViewController {
     return undefined
   }
 
-  itemRelationshipWithSelectedItem = (item: LinkableItem) => {
-    const activeItem = this.activeItem
-
-    if (!activeItem) {
-      throw new Error('No active item available')
-    }
-
-    return this.application.items.relationshipTypeForItems(activeItem, item)
-  }
-
   unlinkItemFromSelectedItem = async (itemToUnlink: ItemLink) => {
     const selectedItem = this.selectionController.firstSelectedItem
 
@@ -280,13 +273,7 @@ export class LinkingController extends AbstractViewController {
       return
     }
 
-    const selectedItemReferencesItemToUnlink = itemToUnlink.relationWithSelectedItem === 'direct'
-
-    if (selectedItemReferencesItemToUnlink) {
-      await this.application.items.unlinkItem(selectedItem, itemToUnlink.item)
-    } else {
-      await this.application.items.unlinkItem(itemToUnlink.item, selectedItem)
-    }
+    await this.application.items.unlinkItems(selectedItem, itemToUnlink.item)
 
     void this.application.sync.sync()
     this.reloadAllLinks()
@@ -299,30 +286,38 @@ export class LinkingController extends AbstractViewController {
     }
   }
 
-  linkItemToSelectedItem = async (itemToLink: LinkableItem) => {
-    await this.ensureActiveItemIsInserted()
-    const activeItem = this.activeItem
-
-    if (activeItem && itemToLink instanceof SNTag) {
-      await this.addTagToItem(itemToLink, activeItem)
-    }
-
-    if (activeItem instanceof SNNote) {
+  linkItems = async (item: LinkableItem, itemToLink: LinkableItem) => {
+    if (item instanceof SNNote) {
       if (itemToLink instanceof FileItem) {
-        await this.application.items.associateFileWithNote(itemToLink, activeItem)
+        await this.application.items.associateFileWithNote(itemToLink, item)
       } else if (itemToLink instanceof SNNote && this.isEntitledToNoteLinking) {
-        await this.application.items.linkNoteToNote(activeItem, itemToLink)
+        await this.application.items.linkNoteToNote(item, itemToLink)
+      } else if (itemToLink instanceof SNTag) {
+        await this.addTagToItem(itemToLink, item)
       }
-    } else if (activeItem instanceof FileItem) {
+    } else if (item instanceof FileItem) {
       if (itemToLink instanceof SNNote) {
-        await this.application.items.associateFileWithNote(activeItem, itemToLink)
+        await this.application.items.associateFileWithNote(item, itemToLink)
       } else if (itemToLink instanceof FileItem) {
-        await this.application.items.linkFileToFile(activeItem, itemToLink)
+        await this.application.items.linkFileToFile(item, itemToLink)
+      } else if (itemToLink instanceof SNTag) {
+        await this.addTagToItem(itemToLink, item)
       }
     }
 
     void this.application.sync.sync()
     this.reloadAllLinks()
+  }
+
+  linkItemToSelectedItem = async (itemToLink: LinkableItem) => {
+    await this.ensureActiveItemIsInserted()
+    const activeItem = this.activeItem
+
+    if (!activeItem) {
+      return
+    }
+
+    await this.linkItems(activeItem, itemToLink)
   }
 
   createAndAddNewTag = async (title: string) => {
@@ -404,9 +399,11 @@ export class LinkingController extends AbstractViewController {
     const linkedResults = searchResults
       .filter(isAlreadyLinked)
       .slice(0, 20)
-      .map((item) => this.createLinkFromItem(item))
+      .map((item) => this.createLinkFromItem(item, 'linked'))
+
     const isResultExistingTag = (result: DecryptedItemInterface<ItemContent>) =>
       result.content_type === ContentType.Tag && result.title === searchQuery
+
     const shouldShowCreateTag =
       !linkedResults.find((link) => isResultExistingTag(link.item)) && !unlinkedResults.find(isResultExistingTag)
 

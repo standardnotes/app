@@ -16,6 +16,7 @@ import {
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 
 type Props = {
   view: SmartView
@@ -117,7 +118,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
     <>
       <div
         role="button"
-        tabIndex={0}
+        tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
         className={classNames('tag py-2 px-3.5 md:py-1', isSelected && 'selected', isFaded && 'opacity-50')}
         onClick={selectCurrentTag}
         style={{

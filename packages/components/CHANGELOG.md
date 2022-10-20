@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.7.21](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.20...@standardnotes/components-meta@2.7.21) (2022-10-18)
+
+### Reverts
+
+* Revert "chore: remove deprecated editors folder" ([fc00b5c](https://github.com/standardnotes/app/commit/fc00b5c4996045750589c3e08c139d5d39bf4140))
+* Revert "chore: fix code editor build" ([bb8ac49](https://github.com/standardnotes/app/commit/bb8ac49052136b3f688f19df5c71c2c32a85ed51))
+
 ## [2.7.20](https://github.com/standardnotes/app/compare/@standardnotes/components-meta@2.7.19...@standardnotes/components-meta@2.7.20) (2022-10-13)
 
 **Note:** Version bump only for package @standardnotes/components-meta

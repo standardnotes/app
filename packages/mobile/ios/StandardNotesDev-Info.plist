@@ -52,6 +52,7 @@
 	<array>
 		<string>http</string>
 		<string>https</string>
+		<string>mailto</string>
 	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>

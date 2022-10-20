@@ -9,6 +9,7 @@ import {
   ComponentArea,
   ItemMutator,
   NoteMutator,
+  NoteType,
   PrefKey,
   SNComponent,
   SNNote,
@@ -19,10 +20,6 @@ import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
 import { createEditorMenuGroups } from './createEditorMenuGroups'
 import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
-import {
-  transactionForAssociateComponentWithCurrentNote,
-  transactionForDisassociateComponentWithCurrentNote,
-} from '../NoteView/TransactionFunctions'
 import { reloadFont } from '../NoteView/FontFunctions'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 
@@ -97,42 +94,28 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
       }
 
       if (!component) {
-        if (!note.prefersPlainEditor) {
-          transactions.push({
-            itemUuid: note.uuid,
-            mutate: (m: ItemMutator) => {
-              const noteMutator = m as NoteMutator
-              noteMutator.prefersPlainEditor = true
-            },
-          })
-        }
-        const currentEditor = application.componentManager.editorForNote(note)
-        if (currentEditor?.isExplicitlyEnabledForItem(note.uuid)) {
-          transactions.push(transactionForDisassociateComponentWithCurrentNote(currentEditor, note))
-        }
+        transactions.push({
+          itemUuid: note.uuid,
+          mutate: (m: ItemMutator) => {
+            const noteMutator = m as NoteMutator
+            noteMutator.noteType = NoteType.Plain
+            noteMutator.editorIdentifier = undefined
+          },
+        })
         reloadFont(application.getPreference(PrefKey.EditorMonospaceEnabled))
-      } else if (component.area === ComponentArea.Editor) {
-        const currentEditor = application.componentManager.editorForNote(note)
-        if (currentEditor && component.uuid !== currentEditor.uuid) {
-          transactions.push(transactionForDisassociateComponentWithCurrentNote(currentEditor, note))
-        }
-        const prefersPlain = note.prefersPlainEditor
-        if (prefersPlain) {
-          transactions.push({
-            itemUuid: note.uuid,
-            mutate: (m: ItemMutator) => {
-              const noteMutator = m as NoteMutator
-              noteMutator.prefersPlainEditor = false
-            },
-          })
-        }
-        transactions.push(transactionForAssociateComponentWithCurrentNote(component, note))
+      } else {
+        transactions.push({
+          itemUuid: note.uuid,
+          mutate: (m: ItemMutator) => {
+            const noteMutator = m as NoteMutator
+            noteMutator.noteType = component.noteType
+            noteMutator.editorIdentifier = component.identifier
+          },
+        })
       }
 
       await application.mutator.runTransactionalMutations(transactions)
-      /** Dirtying can happen above */
       application.sync.sync().catch(console.error)
-
       setCurrentEditor(application.componentManager.editorForNote(note))
     },
     [application],
