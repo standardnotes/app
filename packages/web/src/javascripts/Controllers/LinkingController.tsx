@@ -152,6 +152,8 @@ export class LinkingController extends AbstractViewController {
 
   reloadLinkedFiles() {
     if (!this.activeItem || this.application.items.isTemplateItem(this.activeItem)) {
+      this.linkedFiles = []
+      this.filesLinkingToActiveItem = []
       return
     }
 
@@ -175,7 +177,7 @@ export class LinkingController extends AbstractViewController {
   }
 
   reloadLinkedTags() {
-    if (!this.activeItem || this.application.items.isTemplateItem(this.activeItem)) {
+    if (!this.activeItem) {
       return
     }
 
@@ -186,6 +188,7 @@ export class LinkingController extends AbstractViewController {
 
   reloadLinkedNotes() {
     if (!this.activeItem || this.application.items.isTemplateItem(this.activeItem)) {
+      this.notesLinkedToItem = []
       return
     }
 
@@ -197,6 +200,7 @@ export class LinkingController extends AbstractViewController {
 
   reloadNotesLinkingToItem() {
     if (!this.activeItem) {
+      this.notesLinkingToActiveItem = []
       return
     }
 
