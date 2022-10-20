@@ -13,12 +13,11 @@ import {
   NoteViewController,
   PayloadEmitSource,
   WebAppEvent,
-  Platform,
   EditorLineHeight,
   EditorFontSize,
   NoteType,
 } from '@standardnotes/snjs'
-import { debounce, isDesktopApplication, isIOS } from '@/Utils'
+import { debounce, isDesktopApplication } from '@/Utils'
 import { EditorEventSource } from '../../Types/EditorEventSource'
 import { confirmDialog, KeyboardModifier, KeyboardKey } from '@standardnotes/ui-services'
 import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, StringDeleteNote } from '@/Constants/Strings'
@@ -970,10 +969,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
         {this.note && (
           <div
             id="editor-title-bar"
-            className={classNames(
-              'content-title-bar section-title-bar z-editor-title-bar w-full bg-default',
-              isIOS() || this.application.platform === Platform.Ios ? 'pt-safe-top' : 'pt-4',
-            )}
+            className="content-title-bar section-title-bar z-editor-title-bar w-full bg-default pt-4"
           >
             <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-4 xl:items-center">
               <div className={classNames(this.state.noteLocked && 'locked', 'flex flex-grow items-center')}>
