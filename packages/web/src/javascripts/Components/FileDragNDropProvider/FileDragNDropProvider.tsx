@@ -166,6 +166,12 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
       event.preventDefault()
       event.stopPropagation()
 
+      let closestDragTarget: Element | null = null
+
+      if (event.target instanceof HTMLElement) {
+        closestDragTarget = event.target.closest('[data-file-drag-target]')
+      }
+
       resetState()
 
       if (!featuresController.hasFiles) {
@@ -187,12 +193,6 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
 
           if (!uploadedFiles) {
             return
-          }
-
-          let closestDragTarget: Element | null = null
-
-          if (event.target instanceof HTMLElement) {
-            closestDragTarget = event.target.closest('[data-file-drag-target]')
           }
 
           if (closestDragTarget && dragTargets.current.has(closestDragTarget)) {
