@@ -68,7 +68,6 @@ export const ICONS = {
   eye: icons.EyeIcon,
   file: icons.FileIcon,
   folder: icons.FolderIcon,
-  fullscreen: icons.FullscreenIcon,
   hashtag: icons.HashtagIcon,
   help: icons.HelpIcon,
   history: icons.HistoryIcon,

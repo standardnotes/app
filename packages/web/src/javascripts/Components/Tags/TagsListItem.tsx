@@ -29,7 +29,6 @@ import { LinkingController } from '@/Controllers/LinkingController'
 
 type Props = {
   tag: SNTag
-  type: 'all' | 'favorites'
   tagsState: NavigationController
   features: FeaturesController
   linkingController: LinkingController
@@ -41,7 +40,7 @@ const PADDING_BASE_PX = 14
 const PADDING_PER_LEVEL_PX = 21
 
 export const TagsListItem: FunctionComponent<Props> = observer(
-  ({ tag, type, features, tagsState, level, onContextMenu, linkingController }) => {
+  ({ tag, features, tagsState, level, onContextMenu, linkingController }) => {
     const { toggleAppPane } = useResponsiveAppPane()
 
     const [title, setTitle] = useState(tag.title || '')
@@ -263,18 +262,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               </div>
             )}
             <div className={'tag-icon draggable mr-2'} ref={dragRef}>
-              <Icon
-                type="hashtag"
-                className={`${
-                  type === 'favorites'
-                    ? isSelected
-                      ? 'text-warning'
-                      : 'text-info'
-                    : isSelected
-                    ? 'text-info'
-                    : 'text-neutral'
-                }`}
-              />
+              <Icon type="hashtag" className={`${isSelected ? 'text-info' : 'text-neutral'}`} />
             </div>
             {isEditing ? (
               <input
@@ -346,7 +334,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                   level={level + 1}
                   key={tag.uuid}
                   tag={tag}
-                  type={type}
                   tagsState={tagsState}
                   features={features}
                   linkingController={linkingController}
