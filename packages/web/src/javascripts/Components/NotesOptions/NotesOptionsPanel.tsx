@@ -1,4 +1,3 @@
-import Icon from '@/Components/Icon/Icon'
 import { useCallback, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import NotesOptions from './NotesOptions'
@@ -8,6 +7,7 @@ import { NavigationController } from '@/Controllers/Navigation/NavigationControl
 import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 import Popover from '../Popover/Popover'
 import { LinkingController } from '@/Controllers/LinkingController'
+import RoundIconButton from '../Button/RoundIconButton'
 
 type Props = {
   application: WebApplication
@@ -39,15 +39,7 @@ const NotesOptionsPanel = ({
 
   return (
     <>
-      <button
-        className="bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast"
-        title="Note options menu"
-        aria-label="Note options menu"
-        onClick={toggleMenu}
-        ref={buttonRef}
-      >
-        <Icon type="more" />
-      </button>
+      <RoundIconButton label="Note options menu" onClick={toggleMenu} ref={buttonRef} icon="more" />
       <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="select-none py-2">
         <NotesOptions
           application={application}

@@ -2,7 +2,7 @@ import { FilesController } from '@/Controllers/FilesController'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { observer } from 'mobx-react-lite'
 import { useRef, useCallback } from 'react'
-import Icon from '../Icon/Icon'
+import RoundIconButton from '../Button/RoundIconButton'
 import Popover from '../Popover/Popover'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import LinkedItemsPanel from './LinkedItemsPanel'
@@ -28,14 +28,7 @@ const LinkedItemsButton = ({ linkingController, filesController, onClickPreproce
   return (
     <>
       <StyledTooltip label="Linked items panel">
-        <button
-          className="bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast"
-          aria-label="Linked items panel"
-          onClick={toggleMenu}
-          ref={buttonRef}
-        >
-          <Icon type="link" />
-        </button>
+        <RoundIconButton label="Linked items panel" onClick={toggleMenu} ref={buttonRef} icon="link" />
       </StyledTooltip>
       <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isLinkingPanelOpen} className="pb-2">
         <LinkedItemsPanel
