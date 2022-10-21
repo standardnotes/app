@@ -2,9 +2,9 @@ import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'
-import Icon from '@/Components/Icon/Icon'
 import ChangeEditorMenu from './ChangeEditorMenu'
 import Popover from '../Popover/Popover'
+import RoundIconButton from '../Button/RoundIconButton'
 
 type Props = {
   application: WebApplication
@@ -38,15 +38,13 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
 
   return (
     <div ref={containerRef}>
-      <button
-        className="bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-border text-neutral hover:bg-contrast focus:bg-contrast"
-        title="Change note type"
-        aria-label="Change note type"
+      <RoundIconButton
+        label="Change note type"
         onClick={toggleMenu}
         ref={buttonRef}
-      >
-        <Icon type={selectedEditorIcon} className={`text-accessory-tint-${selectedEditorIconTint}`} />
-      </button>
+        icon={selectedEditorIcon}
+        iconClassName={`text-accessory-tint-${selectedEditorIconTint}`}
+      />
       <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="pt-2 md:pt-0">
         <ChangeEditorMenu
           application={application}

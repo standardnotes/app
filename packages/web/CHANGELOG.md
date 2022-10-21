@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.83.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.6...@standardnotes/web@3.83.0) (2022-10-21)
+
+### Features
+
+* "create new note" floating button on mobile ([#1857](https://github.com/standardnotes/app/issues/1857)) ([21f725b](https://github.com/standardnotes/app/commit/21f725bb2a8d7d9be3f879cc078dd0f8134c2365))
+
+## [3.82.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.5...@standardnotes/web@3.82.6) (2022-10-21)
+
+### Bug Fixes
+
+* refactor application event observing on web ([9fb85cd](https://github.com/standardnotes/app/commit/9fb85cd77a627364738a9c21706431d2a01e9c44))
+* **web:** event observer interface import ([c503d78](https://github.com/standardnotes/app/commit/c503d781aefcc1a15d3a8da1ee09294d176e4b89))
+
+## [3.82.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.4...@standardnotes/web@3.82.5) (2022-10-21)
+
+### Bug Fixes
+
+* item selection/unselection on deleting ([4a1612c](https://github.com/standardnotes/app/commit/4a1612c7dc8ba2af0d28ac71d5dfcdf059cd5ea0))
+* template note getting unselected after typing ([d3ed439](https://github.com/standardnotes/app/commit/d3ed4391b7f6b77ced485884a97190449a1b5507))
+
 ## [3.82.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.3...@standardnotes/web@3.82.4) (2022-10-21)
 
 **Note:** Version bump only for package @standardnotes/web

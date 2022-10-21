@@ -1,10 +1,9 @@
 import { PaneController } from './PaneController'
-import { RouteType, storage, StorageKey } from '@standardnotes/ui-services'
+import { storage, StorageKey } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { destroyAllObjectProperties } from '@/Utils'
 import {
-  ApplicationEvent,
   DeinitSource,
   WebOrDesktopDeviceInterface,
   InternalEventBus,
@@ -31,10 +30,11 @@ import { NavigationController, NavigationControllerPersistableValue } from './Na
 import { FilePreviewModalController } from './FilePreviewModalController'
 import { SelectedItemsController, SelectionControllerPersistableValue } from './SelectedItemsController'
 import { HistoryModalController } from './NoteHistory/HistoryModalController'
-import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 import { LinkingController } from './LinkingController'
 import { MasterPersistedValue, PersistenceKey, PersistenceService } from './Abstract/PersistenceService'
 import { CrossControllerEvent } from './CrossControllerEvent'
+import { EventObserverInterface } from '@/Event/EventObserverInterface'
+import { ApplicationEventObserver } from '@/Event/ApplicationEventObserver'
 
 export class ViewControllerManager implements InternalEventHandlerInterface {
   readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
@@ -70,6 +70,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   private itemCounter: ItemCounterInterface
   private subscriptionManager: SubscriptionClientInterface
   private persistenceService: PersistenceService
+  private applicationEventObserver: EventObserverInterface
 
   constructor(public application: WebApplication, private device: WebOrDesktopDeviceInterface) {
     this.eventBus = new InternalEventBus()
@@ -144,6 +145,16 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
     )
 
     this.historyModalController = new HistoryModalController(this.application, this.eventBus)
+
+    this.applicationEventObserver = new ApplicationEventObserver(
+      application.routeService,
+      this.purchaseFlowController,
+      this.accountMenuController,
+      this.preferencesController,
+      this.syncStatusController,
+      application.sync,
+      application.sessions,
+    )
 
     this.addAppEventObserver()
 
@@ -240,42 +251,9 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   }
 
   addAppEventObserver() {
-    this.unsubAppEventObserver = this.application.addEventObserver(async (eventName) => {
-      switch (eventName) {
-        case ApplicationEvent.Launched:
-          {
-            const route = this.application.routeService.getRoute()
-            if (route.type === RouteType.Purchase) {
-              this.purchaseFlowController.openPurchaseFlow()
-            }
-            if (route.type === RouteType.Settings) {
-              const user = this.application.getUser()
-              if (user === undefined) {
-                this.accountMenuController.setShow(true)
-                this.accountMenuController.setCurrentPane(AccountMenuPane.SignIn)
-
-                break
-              }
-
-              this.preferencesController.openPreferences()
-              this.preferencesController.setCurrentPane(route.settingsParams.panel)
-            }
-          }
-          break
-        case ApplicationEvent.SignedIn:
-          {
-            const route = this.application.routeService.getRoute()
-            if (route.type === RouteType.Settings) {
-              this.preferencesController.openPreferences()
-              this.preferencesController.setCurrentPane(route.settingsParams.panel)
-            }
-          }
-          break
-        case ApplicationEvent.SyncStatusChanged:
-          this.syncStatusController.update(this.application.sync.getSyncStatus())
-          break
-      }
-    })
+    this.unsubAppEventObserver = this.application.addEventObserver(
+      this.applicationEventObserver.handle.bind(this.applicationEventObserver),
+    )
   }
 
   persistValues = (): void => {

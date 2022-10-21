@@ -7,10 +7,10 @@ import { FileViewProps } from './FileViewProps'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
-import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import FilePreviewInfoPanel from '../FilePreview/FilePreviewInfoPanel'
 import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
+import RoundIconButton from '../Button/RoundIconButton'
 
 const SyncTimeoutNoDebounceMs = 100
 const SyncTimeoutDebounceMs = 350
@@ -95,15 +95,12 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
                 filesController={viewControllerManager.filesController}
                 linkingController={viewControllerManager.linkingController}
               />
-              <button
-                className="bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast"
-                title="File information panel"
-                aria-label="File information panel"
+              <RoundIconButton
+                label="File information panel"
                 onClick={toggleFileInfoPanel}
                 ref={fileInfoButtonRef}
-              >
-                <Icon type="info" />
-              </button>
+                icon="info"
+              />
               <Popover
                 open={isFileInfoPanelOpen}
                 togglePopover={toggleFileInfoPanel}

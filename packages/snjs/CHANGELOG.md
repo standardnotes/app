@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.142.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.142.2...@standardnotes/snjs@2.142.3) (2022-10-21)
+
+### Bug Fixes
+
+* refactor application event observing on web ([9fb85cd](https://github.com/standardnotes/app/commit/9fb85cd77a627364738a9c21706431d2a01e9c44))
+
 ## [2.142.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.142.1...@standardnotes/snjs@2.142.2) (2022-10-21)
 
 **Note:** Version bump only for package @standardnotes/snjs

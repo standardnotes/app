@@ -71,8 +71,8 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
           onClick={() => {
             closePreferences()
           }}
-          type="normal"
           icon="close"
+          label="Close preferences"
         />
       </div>
       <PreferencesCanvas

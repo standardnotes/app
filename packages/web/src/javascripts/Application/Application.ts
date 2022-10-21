@@ -31,6 +31,7 @@ import {
   AutolockService,
   IOService,
   RouteService,
+  RouteServiceInterface,
   ThemeManager,
   WebAlertService,
 } from '@standardnotes/ui-services'
@@ -50,7 +51,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   private onVisibilityChange: () => void
   private mobileWebReceiver?: MobileWebReceiver
   private androidBackHandler?: AndroidBackHandler
-  public readonly routeService: RouteService
+  public readonly routeService: RouteServiceInterface
 
   constructor(
     deviceInterface: WebOrDesktopDevice,
