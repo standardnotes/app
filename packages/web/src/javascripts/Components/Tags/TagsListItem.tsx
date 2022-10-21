@@ -97,7 +97,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       })
       toggleChildren()
       toggleAppPane(AppPaneId.Items)
-    }, [navigationController, tag, toggleAppPane])
+    }, [navigationController, tag, toggleAppPane, toggleChildren])
 
     const onBlur = useCallback(() => {
       navigationController.save(tag, title).catch(console.error)

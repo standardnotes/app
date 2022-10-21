@@ -17,8 +17,6 @@ import {
   SNTag,
   isFile,
   isNote,
-  isTag,
-  SmartView,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'

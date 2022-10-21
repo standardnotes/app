@@ -1,7 +1,7 @@
 import { KeyboardKey, KeyboardModifier } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NOTES } from '@/Constants/Constants'
-import { FileItem, IconType, PrefKey, SystemViewId } from '@standardnotes/snjs'
+import { FileItem, PrefKey, SystemViewId } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef } from 'react'
 import ContentList from '@/Components/ContentListView/ContentList'
