@@ -81,22 +81,24 @@ const IconPicker = ({ selectedValue, onIconChange, platform }: Props) => {
     }
   }
 
-  const CurrentTabList = () => {
-    switch (currentType) {
-      case 'icon':
-        return (
-          <>
-            <Dropdown
-              id="change-tag-icon-dropdown"
-              label="Change the icon for a tag"
-              items={iconOptions}
-              value={selectedValue}
-              onChange={handleIconChange}
-            />
-          </>
-        )
-      case 'emoji':
-        return (
+  return (
+    <div className={'flex h-full flex-grow flex-col overflow-auto'}>
+      <div className="flex">
+        <TabButton label="Icon" type={'icon'} />
+        <TabButton label="Emoji" type={'emoji'} />
+        <TabButton label="Reset" type={'reset'} />
+      </div>
+      <div className={'mt-2 h-full min-h-0 overflow-auto'}>
+        {currentType === 'icon' && (
+          <Dropdown
+            id="change-tag-icon-dropdown"
+            label="Change the icon for a tag"
+            items={iconOptions}
+            value={selectedValue}
+            onChange={handleIconChange}
+          />
+        )}
+        {currentType === 'emoji' && (
           <>
             <div>
               <input
@@ -119,19 +121,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform }: Props) => {
               <div className="mt-2 text-xs text-passive-0">On Windows: Windows key + . to bring up emoji picker.</div>
             )}
           </>
-        )
-    }
-  }
-
-  return (
-    <div className={'flex h-full flex-grow flex-col overflow-auto'}>
-      <div className="flex">
-        <TabButton label="Icon" type={'icon'} />
-        <TabButton label="Emoji" type={'emoji'} />
-        <TabButton label="Reset" type={'reset'} />
-      </div>
-      <div className={'mt-2 h-full min-h-0 overflow-auto'}>
-        <CurrentTabList />
+        )}
       </div>
     </div>
   )
