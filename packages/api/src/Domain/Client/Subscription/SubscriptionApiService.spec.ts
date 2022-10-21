@@ -1,5 +1,6 @@
 import { Invitation } from '@standardnotes/models'
 
+import { SubscriptionInviteAcceptResponse } from '../../Response/Subscription/SubscriptionInviteAcceptResponse'
 import { SubscriptionInviteCancelResponse } from '../../Response/Subscription/SubscriptionInviteCancelResponse'
 import { SubscriptionInviteListResponse } from '../../Response/Subscription/SubscriptionInviteListResponse'
 import { SubscriptionInviteResponse } from '../../Response/Subscription/SubscriptionInviteResponse'
@@ -24,6 +25,9 @@ describe('SubscriptionApiService', () => {
     subscriptionServer.listInvites = jest.fn().mockReturnValue({
       data: { invitations: [{} as jest.Mocked<Invitation>] },
     } as jest.Mocked<SubscriptionInviteListResponse>)
+    subscriptionServer.acceptInvite = jest.fn().mockReturnValue({
+      data: { success: true },
+    } as jest.Mocked<SubscriptionInviteAcceptResponse>)
   })
 
   it('should invite a user', async () => {
@@ -154,6 +158,50 @@ describe('SubscriptionApiService', () => {
     let error = null
     try {
       await createService().listInvites()
+    } catch (caughtError) {
+      error = caughtError
+    }
+
+    expect(error).not.toBeNull()
+  })
+
+  it('should accept an invite', async () => {
+    const response = await createService().acceptInvite('1-2-3')
+
+    expect(response).toEqual({
+      data: {
+        success: true,
+      },
+    })
+    expect(subscriptionServer.acceptInvite).toHaveBeenCalledWith({
+      inviteUuid: '1-2-3',
+    })
+  })
+
+  it('should not accept an invite if it is already accepting', async () => {
+    const service = createService()
+    Object.defineProperty(service, 'operationsInProgress', {
+      get: () => new Map([[SubscriptionApiOperations.AcceptingInvite, true]]),
+    })
+
+    let error = null
+    try {
+      await service.acceptInvite('1-2-3')
+    } catch (caughtError) {
+      error = caughtError
+    }
+
+    expect(error).not.toBeNull()
+  })
+
+  it('should not accept an invite if the server fails', async () => {
+    subscriptionServer.acceptInvite = jest.fn().mockImplementation(() => {
+      throw new Error('Oops')
+    })
+
+    let error = null
+    try {
+      await createService().acceptInvite('1-2-3')
     } catch (caughtError) {
       error = caughtError
     }

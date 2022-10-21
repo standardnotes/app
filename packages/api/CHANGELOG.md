@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.17.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.16.5...@standardnotes/api@1.17.0) (2022-10-21)
+
+### Features
+
+* **api:** add accepting invites by the client ([4f0805d](https://github.com/standardnotes/app/commit/4f0805d5b078e5a3524f5d6699b45dfd7e3456f3))
+
 ## [1.16.5](https://github.com/standardnotes/app/compare/@standardnotes/api@1.16.4...@standardnotes/api@1.16.5) (2022-10-19)
 
 **Note:** Version bump only for package @standardnotes/api

@@ -6,9 +6,11 @@ import { SubscriptionServerInterface } from '../../Server/Subscription/Subscript
 import { SubscriptionInviteResponse } from '../../Response/Subscription/SubscriptionInviteResponse'
 import { SubscriptionInviteListResponse } from '../../Response/Subscription/SubscriptionInviteListResponse'
 import { SubscriptionInviteCancelResponse } from '../../Response/Subscription/SubscriptionInviteCancelResponse'
+import { SubscriptionInviteAcceptResponse } from '../../Response/Subscription/SubscriptionInviteAcceptResponse'
 
 import { SubscriptionApiServiceInterface } from './SubscriptionApiServiceInterface'
 import { SubscriptionApiOperations } from './SubscriptionApiOperations'
+import { Uuid } from '@standardnotes/common'
 
 export class SubscriptionApiService implements SubscriptionApiServiceInterface {
   private operationsInProgress: Map<SubscriptionApiOperations, boolean>
@@ -72,6 +74,26 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
       })
 
       this.operationsInProgress.set(SubscriptionApiOperations.Inviting, false)
+
+      return response
+    } catch (error) {
+      throw new ApiCallError(ErrorMessage.GenericFail)
+    }
+  }
+
+  async acceptInvite(inviteUuid: Uuid): Promise<SubscriptionInviteAcceptResponse> {
+    if (this.operationsInProgress.get(SubscriptionApiOperations.AcceptingInvite)) {
+      throw new ApiCallError(ErrorMessage.GenericInProgress)
+    }
+
+    this.operationsInProgress.set(SubscriptionApiOperations.AcceptingInvite, true)
+
+    try {
+      const response = await this.subscriptionServer.acceptInvite({
+        inviteUuid,
+      })
+
+      this.operationsInProgress.set(SubscriptionApiOperations.AcceptingInvite, false)
 
       return response
     } catch (error) {

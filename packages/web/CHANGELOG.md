@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.82.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.3...@standardnotes/web@3.82.4) (2022-10-21)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.82.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.2...@standardnotes/web@3.82.3) (2022-10-21)
+
+### Bug Fixes
+
+* default auto-dark theme ([1addaf4](https://github.com/standardnotes/app/commit/1addaf4c3941364f695545669158f09f4c012dea))
+* tag collapse/expand not persisting ([c6e3580](https://github.com/standardnotes/app/commit/c6e3580678dbed6562041ce5afed47563276843a))
+
+## [3.82.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.1...@standardnotes/web@3.82.2) (2022-10-21)
+
+### Bug Fixes
+
+* improve plaintext editor performance on mobile ([#1855](https://github.com/standardnotes/app/issues/1855)) ([f71e6fe](https://github.com/standardnotes/app/commit/f71e6fe70397cf9ab2c109cad52780088337fc47))
+
 ## [3.82.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.0...@standardnotes/web@3.82.1) (2022-10-20)
 
 ### Reverts

@@ -48,4 +48,12 @@ describe('route parser', () => {
 
     expect(() => parser.onboardingParams).toThrowError('Accessing invalid params')
   })
+
+  it('routes to subscription sharing', () => {
+    const url = 'https://app.standardnotes.com/?accept-subscription-invite=1-2-3'
+    const parser = new RouteParser(url)
+
+    expect(parser.type).toEqual(RouteType.AcceptSubscriptionInvite)
+    expect(parser.subscriptionInviteParams.inviteUuid).toEqual('1-2-3')
+  })
 })

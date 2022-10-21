@@ -1,4 +1,5 @@
 import { PrefKey, CollectionSort, NewNoteTitleFormat, EditorLineHeight, EditorFontSize } from '@standardnotes/models'
+import { FeatureIdentifier } from '@standardnotes/snjs'
 
 export const PrefDefaults = {
   [PrefKey.TagsPanelWidth]: 220,
@@ -22,7 +23,7 @@ export const PrefDefaults = {
   [PrefKey.NotesHideEditorIcon]: false,
   [PrefKey.UseSystemColorScheme]: false,
   [PrefKey.AutoLightThemeIdentifier]: 'Default',
-  [PrefKey.AutoDarkThemeIdentifier]: 'Dark',
+  [PrefKey.AutoDarkThemeIdentifier]: FeatureIdentifier.DarkTheme,
   [PrefKey.NoteAddToParentFolders]: true,
   [PrefKey.NewNoteTitleFormat]: NewNoteTitleFormat.CurrentDateAndTime,
   [PrefKey.CustomNoteTitleFormat]: 'YYYY-MM-DD [at] hh:mm A',
