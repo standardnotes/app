@@ -1,51 +1,18 @@
-import EmojiPicker, { EmojiClickData } from 'emoji-picker-react'
+import { EmojiString, Platform, VectorIconNameOrEmoji } from '@standardnotes/snjs'
 import { FunctionComponent, useMemo, useState } from 'react'
 import Dropdown from '../Dropdown/Dropdown'
 import { DropdownItem } from '../Dropdown/DropdownItem'
+import { isIconEmoji } from './Icon'
 import { IconNameToSvgMapping } from './IconNameToSvgMapping'
 import { IconPickerType } from './IconPickerType'
 
 type Props = {
-  initialType: IconPickerType
-  selectedValue: string
-  onIconChange: (value: string) => void
+  selectedValue: VectorIconNameOrEmoji
+  onIconChange: (value?: string) => void
+  platform: Platform
 }
 
-const IconPicker = ({ initialType, selectedValue, onIconChange }: Props) => {
-  const [currentType, setCurrentType] = useState<IconPickerType>(initialType)
-
-  const selectTab = (type: IconPickerType) => {
-    setCurrentType(type)
-  }
-
-  const TabButton: FunctionComponent<{
-    label: string
-    type: IconPickerType
-  }> = ({ type, label }) => {
-    const isSelected = currentType === type
-
-    return (
-      <button
-        className={`relative cursor-pointer border-0 bg-default px-3 pb-1.5 text-sm focus:shadow-inner ${
-          isSelected ? 'font-medium text-info shadow-bottom' : 'text-text'
-        }`}
-        onClick={() => {
-          selectTab(type)
-        }}
-      >
-        {label}
-      </button>
-    )
-  }
-
-  const handleIconChange = (value: string) => {
-    onIconChange(value)
-  }
-
-  const handleEmojiChange = (value: EmojiClickData) => {
-    onIconChange(value.emoji)
-  }
-
+const IconPicker = ({ selectedValue, onIconChange, platform }: Props) => {
   const iconOptions = useMemo(
     () =>
       [...Object.keys(IconNameToSvgMapping)].map(
@@ -59,13 +26,62 @@ const IconPicker = ({ initialType, selectedValue, onIconChange }: Props) => {
     [],
   )
 
+  const isSelectedEmoji = isIconEmoji(selectedValue)
+  const isMacOS = platform === Platform.MacWeb || platform === Platform.MacDesktop
+  const isWindows = platform === Platform.WindowsWeb || platform === Platform.WindowsDesktop
+
+  const [currentType, setCurrentType] = useState<IconPickerType>(isSelectedEmoji ? 'emoji' : 'icon')
+  const [emojiInputValue, setEmojiInputValue] = useState(isSelectedEmoji ? selectedValue : '')
+
+  const selectTab = (type: IconPickerType | 'reset') => {
+    if (type === 'reset') {
+      onIconChange(undefined)
+      setEmojiInputValue('')
+    } else {
+      setCurrentType(type)
+    }
+  }
+
+  const TabButton: FunctionComponent<{
+    label: string
+    type: IconPickerType | 'reset'
+  }> = ({ type, label }) => {
+    const isSelected = currentType === type
+
+    return (
+      <div
+        className={`relative mr-2 cursor-pointer border-0 bg-default pb-1.5 text-sm focus:shadow-none ${
+          isSelected ? 'font-medium text-info' : 'text-text'
+        }`}
+        onClick={() => {
+          selectTab(type)
+        }}
+      >
+        {label}
+      </div>
+    )
+  }
+
+  const handleIconChange = (value: string) => {
+    onIconChange(value)
+  }
+
+  const handleEmojiChange = (value: EmojiString) => {
+    setEmojiInputValue(value)
+
+    const emojiLength = [...value].length
+    if (emojiLength === 1) {
+      onIconChange(value)
+    }
+  }
+
   const CurrentTabList = () => {
     switch (currentType) {
       case 'icon':
         return (
           <>
             <Dropdown
-              id="change-tag-icon"
+              id="change-tag-icon-dropdown"
               label="Change the icon for a tag"
               items={iconOptions}
               value={selectedValue}
@@ -75,21 +91,37 @@ const IconPicker = ({ initialType, selectedValue, onIconChange }: Props) => {
         )
       case 'emoji':
         return (
-          <EmojiPicker
-            key={'emoji-picker'}
-            onEmojiClick={handleEmojiChange}
-            width={300}
-            previewConfig={{ defaultCaption: '', defaultEmoji: '' }}
-          />
+          <>
+            <div>
+              <input
+                autoComplete="off"
+                autoFocus
+                className="w-full flex-grow rounded border border-solid border-passive-3 bg-default px-2 py-1 text-base font-bold text-text focus:shadow-none focus:outline-none"
+                type="text"
+                value={emojiInputValue}
+                onChange={({ target: input }) => handleEmojiChange((input as HTMLInputElement)?.value)}
+              />
+            </div>
+            <div className="mt-2 text-xs text-passive-0">
+              Use your keyboard to enter or paste in an emoji character.
+            </div>
+            {isMacOS && (
+              <div className="mt-2 text-xs text-passive-0">On macOS: ⌘ + ⌃ + Space bar to bring up emoji picker.</div>
+            )}
+            {isWindows && (
+              <div className="mt-2 text-xs text-passive-0">On Windows: Windows key + . to bring up emoji picker.</div>
+            )}
+          </>
         )
     }
   }
 
   return (
     <div className={'flex h-full flex-grow flex-col overflow-auto'}>
-      <div className="flex border-b border-solid border-border">
+      <div className="flex">
         <TabButton label="Icon" type={'icon'} />
         <TabButton label="Emoji" type={'emoji'} />
+        <TabButton label="Reset" type={'reset'} />
       </div>
       <div className={'mt-2 h-full min-h-0 overflow-auto'}>
         <CurrentTabList />

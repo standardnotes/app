@@ -1,9 +1,9 @@
 import { FunctionComponent } from 'react'
-import { IconType } from '@standardnotes/snjs'
+import { VectorIconNameOrEmoji } from '@standardnotes/snjs'
 import { IconNameToSvgMapping } from './IconNameToSvgMapping'
 
 type Props = {
-  type: IconType | string
+  type: VectorIconNameOrEmoji
   className?: string
   ariaLabel?: string
   size?: 'small' | 'medium' | 'normal' | 'large' | 'custom'
@@ -41,11 +41,11 @@ const EmojiSize = {
   custom: '',
 }
 
-const getIconComponent = (type: IconType | string) => {
+const getIconComponent = (type: VectorIconNameOrEmoji) => {
   return IconNameToSvgMapping[type as keyof typeof IconNameToSvgMapping]
 }
 
-export const isIconEmoji = (type: IconType | string): boolean => {
+export const isIconEmoji = (type: VectorIconNameOrEmoji): boolean => {
   return getIconComponent(type) == undefined
 }
 

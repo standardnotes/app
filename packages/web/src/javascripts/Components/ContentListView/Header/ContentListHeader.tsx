@@ -42,11 +42,19 @@ const ContentListHeader = ({
     <div className="section-title-bar-header items-start gap-1 overflow-hidden">
       <NavigationMenuButton />
       <div className="flex min-w-0 flex-grow flex-col break-words">
-        <div className="flex min-w-0 flex-grow flex-row items-center">
-          {icon && <Icon type={icon as IconType} size={'large'} className={`ml-0.5 mr-1.5 text-neutral`} />}
-          <div className="text-lg font-semibold text-text">{panelTitle}</div>
+        <div className={`flex min-w-0 flex-grow flex-row ${!optionsSubtitle ? 'items-center' : ''}`}>
+          {icon && (
+            <Icon
+              type={icon as IconType}
+              size={'large'}
+              className={`ml-0.5 mr-1.5 text-neutral ${optionsSubtitle ? 'mt-1' : ''}`}
+            />
+          )}
+          <div className="flex min-w-0 flex-grow flex-col break-words">
+            <div className="text-lg font-semibold text-text">{panelTitle}</div>
+            {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
+          </div>
         </div>
-        {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
       </div>
       <div className="flex">
         <div className="relative" ref={displayOptionsContainerRef}>

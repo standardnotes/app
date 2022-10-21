@@ -1,11 +1,11 @@
 import { observer } from 'mobx-react-lite'
-import { useCallback, useRef, useMemo, useState } from 'react'
+import { useCallback, useRef, useMemo } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { IconType, SNTag, VectorIconNameOrEmoji } from '@standardnotes/snjs'
+import { SNTag, VectorIconNameOrEmoji, DefaultTagIconName } from '@standardnotes/snjs'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
@@ -21,10 +21,9 @@ type ContextMenuProps = {
 }
 
 const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag }: ContextMenuProps) => {
-  const [changeIcon, setChangeIcon] = useState(false)
   const premiumModal = usePremiumModal()
 
-  const { contextMenuOpen, contextMenuClickLocation } = navigationController
+  const { contextMenuOpen, contextMenuClickLocation, application } = navigationController
 
   const contextMenuRef = useRef<HTMLDivElement>(null)
   useCloseOnClickOutside(contextMenuRef, () => navigationController.setContextMenuOpen(false))
@@ -54,9 +53,8 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
     [selectedTag.userModifiedDate],
   )
 
-  const handleIconChange = (value: VectorIconNameOrEmoji) => {
-    navigationController.setIcon(selectedTag, value)
-    setChangeIcon(false)
+  const handleIconChange = (value?: VectorIconNameOrEmoji) => {
+    navigationController.setIcon(selectedTag, value || DefaultTagIconName)
   }
 
   const onClickStar = useCallback(() => {
@@ -75,30 +73,21 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
     >
       <div ref={contextMenuRef}>
         <Menu a11yLabel="Tag context menu" isOpen={contextMenuOpen}>
+          <MenuItem noHover={true}>
+            <IconPicker
+              key={'icon-picker'}
+              onIconChange={handleIconChange}
+              selectedValue={selectedTag.iconString}
+              platform={application.platform}
+            />
+          </MenuItem>
+          <HorizontalSeparator classes="my-2" />
           <MenuItem type={MenuItemType.IconButton} className={'justify-between py-1.5'} onClick={onClickStar}>
             <div className="flex items-center">
               <Icon type="star" className="mr-2 text-neutral" />
               {selectedTag.starred ? 'Unfavorite' : 'Favorite'}
             </div>
           </MenuItem>
-          {!changeIcon && (
-            <MenuItem onClick={() => setChangeIcon(true)}>
-              <div className="flex items-center">
-                <Icon type={selectedTag.iconString as IconType} className="mr-2 text-neutral" />
-                Change icon
-              </div>
-            </MenuItem>
-          )}
-          {changeIcon && (
-            <MenuItem>
-              <IconPicker
-                key={'icon-picker'}
-                onIconChange={handleIconChange}
-                initialType="icon"
-                selectedValue={selectedTag.iconString}
-              />
-            </MenuItem>
-          )}
           <MenuItem type={MenuItemType.IconButton} className={'justify-between py-1.5'} onClick={onClickAddSubtag}>
             <div className="flex items-center">
               <Icon type="add" className="mr-2 text-neutral" />

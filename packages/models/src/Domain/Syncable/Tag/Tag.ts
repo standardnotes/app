@@ -9,7 +9,7 @@ import { TagContent, TagContentSpecialized } from './TagContent'
 
 export const TagFolderDelimitter = '.'
 
-const DefaultIconName: IconType = 'hashtag'
+export const DefaultTagIconName: IconType = 'hashtag'
 
 export const isTag = (x: ItemInterface): x is SNTag => x.content_type === ContentType.Tag
 
@@ -22,7 +22,7 @@ export class SNTag extends DecryptedItem<TagContent> implements TagContentSpecia
     super(payload)
     this.title = this.payload.content.title || ''
     this.expanded = this.payload.content.expanded != undefined ? this.payload.content.expanded : true
-    this.iconString = this.payload.content.iconString || DefaultIconName
+    this.iconString = this.payload.content.iconString || DefaultTagIconName
   }
 
   get noteReferences(): ContentReference[] {
