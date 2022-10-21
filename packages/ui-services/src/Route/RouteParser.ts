@@ -14,14 +14,18 @@ import { RouteType } from './RouteType'
 export class RouteParser implements RouteParserInterface {
   private url: URL
   private readonly path: string
-  public readonly type: RouteType
+  private readonly parsedType: RouteType
   private readonly searchParams: URLSearchParams
 
   constructor(url: string) {
     this.url = new URL(url)
     this.path = this.url.pathname
     this.searchParams = this.url.searchParams
-    this.type = this.parseTypeFromQueryParameters()
+    this.parsedType = this.parseTypeFromQueryParameters()
+  }
+
+  get type(): RouteType {
+    return this.parsedType
   }
 
   get subscriptionInviteParams(): SubscriptionInviteParams {
@@ -66,7 +70,7 @@ export class RouteParser implements RouteParserInterface {
   }
 
   private checkForProperRouteType(type: RouteType): void {
-    if (this.type !== type) {
+    if (this.parsedType !== type) {
       throw new Error('Accessing invalid params')
     }
   }
