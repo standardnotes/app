@@ -37,7 +37,7 @@ const smartViewIconType = (view: SmartView, isSelected: boolean): IconType => {
     [SystemViewId.StarredNotes]: 'star-filled',
   }
 
-  return mapping[view.uuid as SystemViewId] || 'hashtag'
+  return mapping[view.uuid as SystemViewId] || 'restore'
 }
 
 const getIconClass = (view: SmartView, isSelected: boolean): string => {

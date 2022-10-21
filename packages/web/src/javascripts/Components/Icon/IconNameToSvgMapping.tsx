@@ -49,6 +49,7 @@ export const IconNameToSvgMapping = {
   'trash-sweep': icons.TrashSweepIcon,
   'user-add': icons.UserAddIcon,
   'user-switch': icons.UserSwitch,
+  'fullscreen-exit': icons.FullscreenExitIcon,
   accessibility: icons.AccessibilityIcon,
   add: icons.AddIcon,
   archive: icons.ArchiveIcon,

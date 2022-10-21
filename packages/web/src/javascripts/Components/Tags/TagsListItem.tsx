@@ -12,6 +12,7 @@ import {
   FormEventHandler,
   FunctionComponent,
   KeyboardEventHandler,
+  MouseEvent,
   MouseEventHandler,
   useCallback,
   useEffect,
@@ -29,6 +30,7 @@ import { LinkingController } from '@/Controllers/LinkingController'
 
 type Props = {
   tag: SNTag
+  type: 'all' | 'favorites'
   tagsState: NavigationController
   features: FeaturesController
   linkingController: LinkingController
@@ -40,8 +42,10 @@ const PADDING_BASE_PX = 14
 const PADDING_PER_LEVEL_PX = 21
 
 export const TagsListItem: FunctionComponent<Props> = observer(
-  ({ tag, features, tagsState, level, onContextMenu, linkingController }) => {
+  ({ tag, type, features, tagsState, level, onContextMenu, linkingController }) => {
     const { toggleAppPane } = useResponsiveAppPane()
+
+    const isFavorite = type === 'favorites'
 
     const [title, setTitle] = useState(tag.title || '')
     const [subtagTitle, setSubtagTitle] = useState('')
@@ -76,9 +80,9 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       setTitle(tag.title || '')
     }, [setTitle, tag])
 
-    const toggleChildren: MouseEventHandler = useCallback(
-      (e) => {
-        e.stopPropagation()
+    const toggleChildren = useCallback(
+      (e?: MouseEvent) => {
+        e?.stopPropagation()
         const shouldShowChildren = !showChildren
         setShowChildren(shouldShowChildren)
         tagsState.setExpanded(tag, !shouldShowChildren)
@@ -90,6 +94,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       await tagsState.setSelectedTag(tag, {
         userTriggered: true,
       })
+      toggleChildren()
       toggleAppPane(AppPaneId.Items)
     }, [tagsState, tag, toggleAppPane])
 
@@ -248,7 +253,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           }}
         >
           <div className="tag-info" title={title} ref={dropRef}>
-            {hasAtLeastOneFolder && (
+            {hasAtLeastOneFolder && !isFavorite && (
               <div className="tag-fold-container">
                 <a
                   role="button"
@@ -262,11 +267,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               </div>
             )}
             <div className={'tag-icon draggable mr-2'} ref={dragRef}>
-              <Icon
-                type={tag.iconType === 'emoji' ? 'emoji' : (tag.iconString as IconType)}
-                emoji={tag.iconType === 'emoji' ? tag.iconString : undefined}
-                className={`${isSelected ? 'text-info' : 'text-neutral'}`}
-              />
+              <Icon type={tag.iconString as IconType} className={`${isSelected ? 'text-info' : 'text-neutral'}`} />
             </div>
             {isEditing ? (
               <input
@@ -338,6 +339,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                   level={level + 1}
                   key={tag.uuid}
                   tag={tag}
+                  type={type}
                   tagsState={tagsState}
                   features={features}
                   linkingController={linkingController}

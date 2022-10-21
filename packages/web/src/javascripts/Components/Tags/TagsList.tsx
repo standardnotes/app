@@ -9,11 +9,12 @@ import { TagsListItem } from './TagsListItem'
 
 type Props = {
   viewControllerManager: ViewControllerManager
+  type: 'all' | 'favorites'
 }
 
-const TagsList: FunctionComponent<Props> = ({ viewControllerManager }: Props) => {
-  const tagsState = viewControllerManager.navigationController
-  const allTags = tagsState.allLocalRootTags
+const TagsList: FunctionComponent<Props> = ({ viewControllerManager, type }: Props) => {
+  const navigationController = viewControllerManager.navigationController
+  const allTags = type === 'all' ? navigationController.allLocalRootTags : navigationController.starredTags
 
   const backend = HTML5Backend
 
@@ -49,17 +50,20 @@ const TagsList: FunctionComponent<Props> = ({ viewControllerManager }: Props) =>
                 level={0}
                 key={tag.uuid}
                 tag={tag}
-                tagsState={tagsState}
+                type={type}
+                tagsState={navigationController}
                 features={viewControllerManager.featuresController}
                 linkingController={viewControllerManager.linkingController}
                 onContextMenu={onContextMenu}
               />
             )
           })}
-          <RootTagDropZone
-            tagsState={viewControllerManager.navigationController}
-            featuresState={viewControllerManager.featuresController}
-          />
+          {type === 'all' && (
+            <RootTagDropZone
+              tagsState={viewControllerManager.navigationController}
+              featuresState={viewControllerManager.featuresController}
+            />
+          )}
         </>
       )}
     </DndProvider>

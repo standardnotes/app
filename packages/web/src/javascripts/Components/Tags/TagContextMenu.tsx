@@ -58,6 +58,11 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
     setChangeIcon(false)
   }
 
+  const onClickStar = useCallback(() => {
+    navigationController.setFavorite(selectedTag, !selectedTag.starred).catch(console.error)
+    navigationController.setContextMenuOpen(false)
+  }, [navigationController, selectedTag])
+
   const tagCreatedAt = useMemo(() => formatDateForContextMenu(selectedTag.created_at), [selectedTag.created_at])
 
   return (
@@ -69,14 +74,16 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
     >
       <div ref={contextMenuRef}>
         <Menu a11yLabel="Tag context menu" isOpen={contextMenuOpen}>
+          <MenuItem type={MenuItemType.IconButton} className={'justify-between py-1.5'} onClick={onClickStar}>
+            <div className="flex items-center">
+              <Icon type="star" className="mr-2 text-neutral" />
+              {selectedTag.starred ? 'Unfavorite' : 'Favorite'}
+            </div>
+          </MenuItem>
           {!changeIcon && (
             <MenuItem onClick={() => setChangeIcon(true)}>
               <div className="flex items-center">
-                <Icon
-                  type={selectedTag.iconType === 'emoji' ? 'emoji' : (selectedTag.iconString as IconType)}
-                  emoji={selectedTag.iconType === 'emoji' ? selectedTag.iconString : undefined}
-                  className="mr-2 text-neutral"
-                />
+                <Icon type={selectedTag.iconString as IconType} className="mr-2 text-neutral" />
                 Change icon
               </div>
             </MenuItem>

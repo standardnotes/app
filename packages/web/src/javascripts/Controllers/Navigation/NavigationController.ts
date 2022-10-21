@@ -36,6 +36,7 @@ export class NavigationController
 {
   tags: SNTag[] = []
   smartViews: SmartView[] = []
+  starredTags: SNTag[] = []
   allNotesCount_ = 0
   selectedUuid: AnyTag['uuid'] | undefined = undefined
   selected_: AnyTag | undefined
@@ -67,6 +68,7 @@ export class NavigationController
 
     makeObservable(this, {
       tags: observable,
+      starredTags: observable,
       smartViews: observable.ref,
       hasAtLeastOneFolder: computed,
       allNotesCount_: observable,
@@ -112,7 +114,7 @@ export class NavigationController
       this.application.streamItems([ContentType.Tag, ContentType.SmartView], ({ changed, removed }) => {
         runInAction(() => {
           this.tags = this.application.items.getDisplayableTags()
-
+          this.starredTags = this.tags.filter((tag) => tag.starred)
           this.smartViews = this.application.items.getSmartViews()
 
           const currentSelectedTag = this.selected_
@@ -477,9 +479,15 @@ export class NavigationController
       .catch(console.error)
   }
 
+  public async setFavorite(tag: SNTag, favorite: boolean) {
+    return this.application.mutator
+      .changeAndSaveItem<TagMutator>(tag, (mutator) => {
+        mutator.starred = favorite
+      })
+      .catch(console.error)
+  }
+
   public setIcon(tag: SNTag, type: TagIconType, icon: string) {
-    console.log('setIcon > icon', icon)
-    console.log('setIcon > type', type)
     this.application.mutator
       .changeAndSaveItem<TagMutator>(tag, (mutator) => {
         mutator.iconString = icon
