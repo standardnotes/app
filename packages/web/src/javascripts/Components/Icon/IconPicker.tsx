@@ -52,7 +52,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className }: Props)
     const isSelected = currentType === type
 
     return (
-      <div
+      <button
         className={`relative mr-2 cursor-pointer border-0 bg-default pb-1.5 text-sm focus:shadow-none ${
           isSelected ? 'font-medium text-info' : 'text-text'
         }`}
@@ -61,7 +61,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className }: Props)
         }}
       >
         {label}
-      </div>
+      </button>
     )
   }
 
