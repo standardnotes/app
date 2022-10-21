@@ -236,9 +236,11 @@ export class LinkingController extends AbstractViewController {
     } else if (item instanceof FileItem) {
       const icon = this.application.iconsController.getIconForFileType(item.mimeType)
       return [icon, 'text-info']
+    } else if (item instanceof SNTag) {
+      return [item.iconString as IconType, 'text-info']
     }
 
-    return ['hashtag', 'text-info']
+    throw new Error('Unhandled case in getLinkedItemIcon')
   }
 
   activateItem = async (item: LinkableItem): Promise<AppPaneId | undefined> => {

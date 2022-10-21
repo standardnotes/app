@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.84.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.0...@standardnotes/web@3.84.1) (2022-10-21)
+
+### Bug Fixes
+
+* new tag creation ([e63b4f0](https://github.com/standardnotes/app/commit/e63b4f0592ed32ecd3cdb01e84c9ca47d61fe243))
+
+# [3.84.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.83.0...@standardnotes/web@3.84.0) (2022-10-21)
+
+### Features
+
+* ability to favorite tags + customize icon ([#1858](https://github.com/standardnotes/app/issues/1858)) ([cbd0063](https://github.com/standardnotes/app/commit/cbd0063926a416c23225242a4a1796712b6b224e))
+
+# [3.83.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.6...@standardnotes/web@3.83.0) (2022-10-21)
+
+### Features
+
+* "create new note" floating button on mobile ([#1857](https://github.com/standardnotes/app/issues/1857)) ([21f725b](https://github.com/standardnotes/app/commit/21f725bb2a8d7d9be3f879cc078dd0f8134c2365))
+
 ## [3.82.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.5...@standardnotes/web@3.82.6) (2022-10-21)
 
 ### Bug Fixes

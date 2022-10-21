@@ -5,13 +5,14 @@ import { KeyboardKey } from '@standardnotes/ui-services'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import '@reach/tooltip/styles.css'
-import { SNTag } from '@standardnotes/snjs'
+import { IconType, SNTag } from '@standardnotes/snjs'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react-lite'
 import {
   FormEventHandler,
   FunctionComponent,
   KeyboardEventHandler,
+  MouseEvent,
   MouseEventHandler,
   useCallback,
   useEffect,
@@ -26,10 +27,12 @@ import { classNames } from '@/Utils/ConcatenateClassNames'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
 import { LinkingController } from '@/Controllers/LinkingController'
+import { TagListSectionType } from './TagListSection'
 
 type Props = {
   tag: SNTag
-  tagsState: NavigationController
+  type: TagListSectionType
+  navigationController: NavigationController
   features: FeaturesController
   linkingController: LinkingController
   level: number
@@ -40,8 +43,10 @@ const PADDING_BASE_PX = 14
 const PADDING_PER_LEVEL_PX = 21
 
 export const TagsListItem: FunctionComponent<Props> = observer(
-  ({ tag, features, tagsState, level, onContextMenu, linkingController }) => {
+  ({ tag, type, features, navigationController: navigationController, level, onContextMenu, linkingController }) => {
     const { toggleAppPane } = useResponsiveAppPane()
+
+    const isFavorite = type === 'favorites'
 
     const [title, setTitle] = useState(tag.title || '')
     const [subtagTitle, setSubtagTitle] = useState('')
@@ -49,16 +54,16 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     const subtagInputRef = useRef<HTMLInputElement>(null)
     const menuButtonRef = useRef<HTMLAnchorElement>(null)
 
-    const isSelected = tagsState.selected === tag
-    const isEditing = tagsState.editingTag === tag
-    const isAddingSubtag = tagsState.addingSubtagTo === tag
-    const noteCounts = computed(() => tagsState.getNotesCount(tag))
+    const isSelected = navigationController.selected === tag
+    const isEditing = navigationController.editingTag === tag && navigationController.editingFrom === type
+    const isAddingSubtag = navigationController.addingSubtagTo === tag
+    const noteCounts = computed(() => navigationController.getNotesCount(tag))
 
-    const childrenTags = computed(() => tagsState.getChildren(tag)).get()
+    const childrenTags = computed(() => navigationController.getChildren(tag)).get()
     const hasChildren = childrenTags.length > 0
 
     const hasFolders = features.hasFolders
-    const hasAtLeastOneFolder = tagsState.hasAtLeastOneFolder
+    const hasAtLeastOneFolder = navigationController.hasAtLeastOneFolder
 
     const premiumModal = usePremiumModal()
 
@@ -76,27 +81,28 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       setTitle(tag.title || '')
     }, [setTitle, tag])
 
-    const toggleChildren: MouseEventHandler = useCallback(
-      (e) => {
-        e.stopPropagation()
+    const toggleChildren = useCallback(
+      (e?: MouseEvent) => {
+        e?.stopPropagation()
         const shouldShowChildren = !showChildren
         setShowChildren(shouldShowChildren)
-        tagsState.setExpanded(tag, shouldShowChildren)
+        navigationController.setExpanded(tag, shouldShowChildren)
       },
-      [showChildren, tag, tagsState],
+      [showChildren, tag, navigationController],
     )
 
     const selectCurrentTag = useCallback(async () => {
-      await tagsState.setSelectedTag(tag, {
+      await navigationController.setSelectedTag(tag, {
         userTriggered: true,
       })
+      toggleChildren()
       toggleAppPane(AppPaneId.Items)
-    }, [tagsState, tag, toggleAppPane])
+    }, [navigationController, tag, toggleAppPane, toggleChildren])
 
     const onBlur = useCallback(() => {
-      tagsState.save(tag, title).catch(console.error)
+      navigationController.save(tag, title).catch(console.error)
       setTitle(tag.title)
-    }, [tagsState, tag, title, setTitle])
+    }, [navigationController, tag, title, setTitle])
 
     const onInput: FormEventHandler = useCallback(
       (e) => {
@@ -128,9 +134,9 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     }, [])
 
     const onSubtagInputBlur = useCallback(() => {
-      tagsState.createSubtagAndAssignParent(tag, subtagTitle).catch(console.error)
+      navigationController.createSubtagAndAssignParent(tag, subtagTitle).catch(console.error)
       setSubtagTitle('')
-    }, [subtagTitle, tag, tagsState])
+    }, [subtagTitle, tag, navigationController])
 
     const onSubtagKeyDown: KeyboardEventHandler = useCallback(
       (e) => {
@@ -166,21 +172,21 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       () => ({
         accept: ItemTypes.TAG,
         canDrop: (item) => {
-          return tagsState.isValidTagParent(tag, item as SNTag)
+          return navigationController.isValidTagParent(tag, item as SNTag)
         },
         drop: (item) => {
           if (!hasFolders) {
             premiumModal.activate(TAG_FOLDERS_FEATURE_NAME)
             return
           }
-          tagsState.assignParent(item.uuid, tag.uuid).catch(console.error)
+          navigationController.assignParent(item.uuid, tag.uuid).catch(console.error)
         },
         collect: (monitor) => ({
           isOver: !!monitor.isOver(),
           canDrop: !!monitor.canDrop(),
         }),
       }),
-      [tag, tagsState, hasFolders, premiumModal],
+      [tag, navigationController, hasFolders, premiumModal],
     )
 
     const readyToDrop = isOver && canDrop
@@ -194,16 +200,16 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           return
         }
 
-        const contextMenuOpen = tagsState.contextMenuOpen
+        const contextMenuOpen = navigationController.contextMenuOpen
         const menuButtonRect = menuButtonRef.current?.getBoundingClientRect()
 
         if (contextMenuOpen) {
-          tagsState.setContextMenuOpen(false)
+          navigationController.setContextMenuOpen(false)
         } else {
           onContextMenu(tag, menuButtonRect.right, menuButtonRect.top)
         }
       },
-      [onContextMenu, tagsState, tag],
+      [onContextMenu, navigationController, tag],
     )
 
     const tagRef = useRef<HTMLDivElement>(null)
@@ -248,7 +254,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           }}
         >
           <div className="tag-info" title={title} ref={dropRef}>
-            {hasAtLeastOneFolder && (
+            {hasAtLeastOneFolder && !isFavorite && (
               <div className="tag-fold-container">
                 <a
                   role="button"
@@ -262,12 +268,12 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               </div>
             )}
             <div className={'tag-icon draggable mr-2'} ref={dragRef}>
-              <Icon type="hashtag" className={`${isSelected ? 'text-info' : 'text-neutral'}`} />
+              <Icon type={tag.iconString as IconType} className={`${isSelected ? 'text-info' : 'text-neutral'}`} />
             </div>
             {isEditing ? (
               <input
                 className={'title editing focus:shadow-none focus:outline-none'}
-                id={`react-tag-${tag.uuid}`}
+                id={`react-tag-${tag.uuid}-${type}`}
                 onBlur={onBlur}
                 onInput={onInput}
                 value={title}
@@ -278,7 +284,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             ) : (
               <div
                 className={'title overflow-hidden text-left focus:shadow-none focus:outline-none'}
-                id={`react-tag-${tag.uuid}`}
+                id={`react-tag-${tag.uuid}-${type}`}
               >
                 {title}
               </div>
@@ -334,7 +340,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                   level={level + 1}
                   key={tag.uuid}
                   tag={tag}
-                  tagsState={tagsState}
+                  type={type}
+                  navigationController={navigationController}
                   features={features}
                   linkingController={linkingController}
                   onContextMenu={onContextMenu}

@@ -5,15 +5,17 @@ import { FunctionComponent, useCallback } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import RootTagDropZone from './RootTagDropZone'
+import { TagListSectionType } from './TagListSection'
 import { TagsListItem } from './TagsListItem'
 
 type Props = {
   viewControllerManager: ViewControllerManager
+  type: TagListSectionType
 }
 
-const TagsList: FunctionComponent<Props> = ({ viewControllerManager }: Props) => {
-  const tagsState = viewControllerManager.navigationController
-  const allTags = tagsState.allLocalRootTags
+const TagsList: FunctionComponent<Props> = ({ viewControllerManager, type }: Props) => {
+  const navigationController = viewControllerManager.navigationController
+  const allTags = type === 'all' ? navigationController.allLocalRootTags : navigationController.starredTags
 
   const backend = HTML5Backend
 
@@ -23,10 +25,11 @@ const TagsList: FunctionComponent<Props> = ({ viewControllerManager }: Props) =>
         x: posX,
         y: posY,
       })
+      viewControllerManager.navigationController.setContextMenuOpenFrom(type)
       viewControllerManager.navigationController.reloadContextMenuLayout()
       viewControllerManager.navigationController.setContextMenuOpen(true)
     },
-    [viewControllerManager],
+    [viewControllerManager, type],
   )
 
   const onContextMenu = useCallback(
@@ -49,17 +52,20 @@ const TagsList: FunctionComponent<Props> = ({ viewControllerManager }: Props) =>
                 level={0}
                 key={tag.uuid}
                 tag={tag}
-                tagsState={tagsState}
+                type={type}
+                navigationController={navigationController}
                 features={viewControllerManager.featuresController}
                 linkingController={viewControllerManager.linkingController}
                 onContextMenu={onContextMenu}
               />
             )
           })}
-          <RootTagDropZone
-            tagsState={viewControllerManager.navigationController}
-            featuresState={viewControllerManager.featuresController}
-          />
+          {type === 'all' && (
+            <RootTagDropZone
+              tagsState={viewControllerManager.navigationController}
+              featuresState={viewControllerManager.featuresController}
+            />
+          )}
         </>
       )}
     </DndProvider>

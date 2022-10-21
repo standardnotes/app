@@ -5,5 +5,6 @@ export type DisplayableListItemProps = AbstractListItemProps & {
   tags: {
     uuid: SNTag['uuid']
     title: SNTag['title']
+    iconString: SNTag['iconString']
   }[]
 }

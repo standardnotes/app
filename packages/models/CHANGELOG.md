@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.30.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.29.1...@standardnotes/models@1.30.0) (2022-10-21)
+
+### Features
+
+* ability to favorite tags + customize icon ([#1858](https://github.com/standardnotes/app/issues/1858)) ([cbd0063](https://github.com/standardnotes/app/commit/cbd0063926a416c23225242a4a1796712b6b224e))
+
 ## [1.29.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.29.0...@standardnotes/models@1.29.1) (2022-10-19)
 
 ### Bug Fixes

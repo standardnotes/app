@@ -70,6 +70,8 @@ jobs:
             packages/mobile/android/app/build/outputs/apk/prod/release/app-prod-release.apk
 
   ios:
+    env:
+      ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD: true
     defaults:
       run:
         working-directory: packages/mobile

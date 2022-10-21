@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/models",
-  "version": "1.29.1",
+  "version": "1.30.0",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -25,6 +25,7 @@
     "@types/jest": "^28.1.5",
     "@types/lodash": "^4.14.182",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "eslint": "*",
     "eslint-plugin-prettier": "*",
     "jest": "^28.1.2",
     "ts-jest": "^28.0.5",
