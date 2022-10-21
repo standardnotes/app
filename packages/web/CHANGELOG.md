@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.84.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.0...@standardnotes/web@3.84.1) (2022-10-21)
+
+### Bug Fixes
+
+* new tag creation ([e63b4f0](https://github.com/standardnotes/app/commit/e63b4f0592ed32ecd3cdb01e84c9ca47d61fe243))
+
 # [3.84.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.83.0...@standardnotes/web@3.84.0) (2022-10-21)
 
 ### Features
