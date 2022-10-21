@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.82.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.5...@standardnotes/web@3.82.6) (2022-10-21)
+
+### Bug Fixes
+
+* refactor application event observing on web ([9fb85cd](https://github.com/standardnotes/app/commit/9fb85cd77a627364738a9c21706431d2a01e9c44))
+* **web:** event observer interface import ([c503d78](https://github.com/standardnotes/app/commit/c503d781aefcc1a15d3a8da1ee09294d176e4b89))
+
 ## [3.82.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.4...@standardnotes/web@3.82.5) (2022-10-21)
 
 ### Bug Fixes

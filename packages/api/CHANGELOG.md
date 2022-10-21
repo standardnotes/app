@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.1](https://github.com/standardnotes/app/compare/@standardnotes/api@1.17.0...@standardnotes/api@1.17.1) (2022-10-21)
+
+### Bug Fixes
+
+* refactor application event observing on web ([9fb85cd](https://github.com/standardnotes/app/commit/9fb85cd77a627364738a9c21706431d2a01e9c44))
+
 # [1.17.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.16.5...@standardnotes/api@1.17.0) (2022-10-21)
 
 ### Features
