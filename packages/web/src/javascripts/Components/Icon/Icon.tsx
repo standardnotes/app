@@ -17,10 +17,26 @@ const ContainerDimensions = {
   custom: '',
 }
 
+const EmojiContainerDimensions = {
+  small: 'w-4 h-4',
+  medium: 'w-5 h-5',
+  normal: 'w-5 h-5',
+  large: 'w-7 h-6',
+  custom: '',
+}
+
+const EmojiOffset = {
+  small: '',
+  medium: '',
+  normal: '-mt-0.5',
+  large: '',
+  custom: '',
+}
+
 const EmojiSize = {
   small: 'text-xs',
   medium: 'text-sm',
-  normal: 'text-md',
+  normal: 'text-base',
   large: 'text-lg',
   custom: '',
 }
@@ -37,7 +53,9 @@ const Icon: FunctionComponent<Props> = ({ type, className = '', ariaLabel, size 
   const IconComponent = getIconComponent(type)
   if (!IconComponent) {
     return (
-      <label className={`${EmojiSize[size]} ${ContainerDimensions[size]} fill-current text-center ${className}`}>
+      <label
+        className={`${EmojiSize[size]} ${EmojiContainerDimensions[size]} ${EmojiOffset[size]} fill-current text-center ${className}`}
+      >
         {type}
       </label>
     )

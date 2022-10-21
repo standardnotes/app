@@ -3,24 +3,24 @@ import { FunctionComponent, useMemo, useState } from 'react'
 import Dropdown from '../Dropdown/Dropdown'
 import { DropdownItem } from '../Dropdown/DropdownItem'
 import { IconNameToSvgMapping } from './IconNameToSvgMapping'
-import { TagIconType } from './TagIconType'
+import { IconPickerType } from './IconPickerType'
 
 type Props = {
-  initialType: TagIconType
+  initialType: IconPickerType
   selectedValue: string
-  onIconChange: (type: TagIconType, value: string) => void
+  onIconChange: (value: string) => void
 }
 
 const IconPicker = ({ initialType, selectedValue, onIconChange }: Props) => {
-  const [currentType, setCurrentType] = useState<TagIconType>(initialType)
+  const [currentType, setCurrentType] = useState<IconPickerType>(initialType)
 
-  const selectTab = (type: TagIconType) => {
+  const selectTab = (type: IconPickerType) => {
     setCurrentType(type)
   }
 
   const TabButton: FunctionComponent<{
     label: string
-    type: TagIconType
+    type: IconPickerType
   }> = ({ type, label }) => {
     const isSelected = currentType === type
 
@@ -39,11 +39,11 @@ const IconPicker = ({ initialType, selectedValue, onIconChange }: Props) => {
   }
 
   const handleIconChange = (value: string) => {
-    onIconChange('icon', value)
+    onIconChange(value)
   }
 
   const handleEmojiChange = (value: EmojiClickData) => {
-    onIconChange('emoji', value.emoji)
+    onIconChange(value.emoji)
   }
 
   const iconOptions = useMemo(
