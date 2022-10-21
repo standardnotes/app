@@ -1,3 +1,1 @@
-import { Either } from '@standardnotes/common'
-
-export type SubscriptionInviteAcceptResponseBody = Either<{ success: true }, { success: false; message: string }>
+export type SubscriptionInviteAcceptResponseBody = { success: true } | { success: false; message: string }

@@ -4,11 +4,16 @@ import {
   ApplicationInterface,
   InternalEventBusInterface,
 } from '@standardnotes/services'
+
 import { RouteParser } from './RouteParser'
 import { RouteParserInterface } from './RouteParserInterface'
 import { RouteServiceEvent } from './RouteServiceEvent'
+import { RouteServiceInterface } from './RouteServiceInterface'
 
-export class RouteService extends AbstractService<RouteServiceEvent, RouteParserInterface> {
+export class RouteService
+  extends AbstractService<RouteServiceEvent, RouteParserInterface>
+  implements RouteServiceInterface
+{
   private unsubApp!: () => void
 
   constructor(
