@@ -57,7 +57,6 @@ export class ApplicationEventObserver implements EventObserverInterface {
           this.application.streamItems<SNComponent>([ContentType.Component], ({ inserted, removed }) => {
             inserted.forEach((component) => {
               const url = this.application.componentManager.urlForComponent(component)
-              console.log(component.name, url)
               if (!url) {
                 return
               }
