@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.82.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.4...@standardnotes/web@3.82.5) (2022-10-21)
+
+### Bug Fixes
+
+* item selection/unselection on deleting ([4a1612c](https://github.com/standardnotes/app/commit/4a1612c7dc8ba2af0d28ac71d5dfcdf059cd5ea0))
+* template note getting unselected after typing ([d3ed439](https://github.com/standardnotes/app/commit/d3ed4391b7f6b77ced485884a97190449a1b5507))
+
 ## [3.82.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.3...@standardnotes/web@3.82.4) (2022-10-21)
 
 **Note:** Version bump only for package @standardnotes/web

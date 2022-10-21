@@ -139,7 +139,7 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     return isNullOrUndefined(this.apiService.getSession())
   }
 
-  public getUser() {
+  public getUser(): Responses.User | undefined {
     return this.user
   }
 
