@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.9.1](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.9.0...@standardnotes/ui-services@1.9.1) (2022-10-21)
+
+### Bug Fixes
+
+* refactor application event observing on web ([9fb85cd](https://github.com/standardnotes/app/commit/9fb85cd77a627364738a9c21706431d2a01e9c44))
+
 # [1.9.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.8.5...@standardnotes/ui-services@1.9.0) (2022-10-21)
 
 ### Bug Fixes
