@@ -49,6 +49,8 @@ jobs:
         with:
           path: packages/mobile
   ios:
+    env:
+      ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD: true
     defaults:
       run:
         working-directory: packages/mobile
