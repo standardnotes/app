@@ -10,9 +10,10 @@ type Props = {
   selectedValue: VectorIconNameOrEmoji
   onIconChange: (value?: string) => void
   platform: Platform
+  className?: string
 }
 
-const IconPicker = ({ selectedValue, onIconChange, platform }: Props) => {
+const IconPicker = ({ selectedValue, onIconChange, platform, className }: Props) => {
   const iconOptions = useMemo(
     () =>
       [...Object.keys(IconNameToSvgMapping)].map(
@@ -82,7 +83,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform }: Props) => {
   }
 
   return (
-    <div className={'flex h-full flex-grow flex-col overflow-auto'}>
+    <div className={`flex h-full flex-grow flex-col overflow-auto ${className}`}>
       <div className="flex">
         <TabButton label="Icon" type={'icon'} />
         <TabButton label="Emoji" type={'emoji'} />

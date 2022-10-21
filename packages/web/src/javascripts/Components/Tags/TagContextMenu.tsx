@@ -73,14 +73,13 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
     >
       <div ref={contextMenuRef}>
         <Menu a11yLabel="Tag context menu" isOpen={contextMenuOpen}>
-          <MenuItem noHover={true}>
-            <IconPicker
-              key={'icon-picker'}
-              onIconChange={handleIconChange}
-              selectedValue={selectedTag.iconString}
-              platform={application.platform}
-            />
-          </MenuItem>
+          <IconPicker
+            key={'icon-picker'}
+            onIconChange={handleIconChange}
+            selectedValue={selectedTag.iconString}
+            platform={application.platform}
+            className={'px-3 py-1.5'}
+          />
           <HorizontalSeparator classes="my-2" />
           <MenuItem type={MenuItemType.IconButton} className={'justify-between py-1.5'} onClick={onClickStar}>
             <div className="flex items-center">

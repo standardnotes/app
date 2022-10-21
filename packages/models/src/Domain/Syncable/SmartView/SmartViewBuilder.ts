@@ -1,8 +1,8 @@
 import { DecryptedPayload } from './../../Abstract/Payload/Implementations/DecryptedPayload'
 import { SNNote } from '../Note/Note'
 import { SmartView } from './SmartView'
-import { SmartViewContent } from "./SmartViewContent"
-import { SystemViewId } from "./SystemViewId"
+import { SmartViewContent } from './SmartViewContent'
+import { SystemViewId } from './SystemViewId'
 import { ItemWithTags } from '../../Runtime/Display/Search/ItemWithTags'
 import { ContentType } from '@standardnotes/common'
 import { FillItemContent } from '../../Abstract/Content/ItemContent'

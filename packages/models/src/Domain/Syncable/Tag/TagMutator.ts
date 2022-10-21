@@ -1,6 +1,6 @@
 import { ContentType } from '@standardnotes/common'
 import { SNTag } from './Tag'
-import { TagContent } from "./TagContent"
+import { TagContent } from './TagContent'
 import { FileItem } from '../File'
 import { SNNote } from '../Note'
 import { isTagToParentTagReference } from '../../Abstract/Reference/Functions'
