@@ -6,6 +6,7 @@ import { IconType } from '@standardnotes/snjs'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { MenuItemType } from './MenuItemType'
 import RadioIndicator from '../Radio/RadioIndicator'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type MenuItemProps = {
   children: ReactNode
@@ -61,9 +62,23 @@ const MenuItem = forwardRef(
           ref={ref}
           role={type === MenuItemType.RadioButton ? 'menuitemradio' : 'menuitem'}
           tabIndex={typeof tabIndex === 'number' ? tabIndex : FOCUSABLE_BUT_NOT_TABBABLE}
-          className={`flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text ${
-            !noHover ? 'hover:bg-contrast hover:text-foreground focus:bg-info-backdrop' : ''
-          } focus:shadow-none md:text-menu-item ${className}`}
+          className={classNames(
+            'flex',
+            'w-full',
+            'cursor-pointer',
+            'items-center',
+            'border-0',
+            'bg-transparent',
+            'px-3',
+            'py-1.5',
+            'text-left',
+            'text-mobile-menu-item',
+            'text-text',
+            !noHover ? 'hover:bg-contrast hover:text-foreground focus:bg-info-backdrop' : '',
+            'focus:shadow-none',
+            'md:text-menu-item',
+            className,
+          )}
           onClick={onClick}
           onBlur={onBlur}
           {...(type === MenuItemType.RadioButton ? { 'aria-checked': checked } : {})}

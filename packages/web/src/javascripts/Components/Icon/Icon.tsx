@@ -1,6 +1,7 @@
 import { FunctionComponent } from 'react'
 import { VectorIconNameOrEmoji } from '@standardnotes/snjs'
 import { IconNameToSvgMapping } from './IconNameToSvgMapping'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   type: VectorIconNameOrEmoji
@@ -54,7 +55,14 @@ const Icon: FunctionComponent<Props> = ({ type, className = '', ariaLabel, size 
   if (!IconComponent) {
     return (
       <label
-        className={`${EmojiSize[size]} ${EmojiContainerDimensions[size]} ${EmojiOffset[size]} fill-current text-center ${className}`}
+        className={classNames(
+          'fill-current',
+          'text-center',
+          EmojiSize[size],
+          EmojiContainerDimensions[size],
+          EmojiOffset[size],
+          className,
+        )}
       >
         {type}
       </label>
