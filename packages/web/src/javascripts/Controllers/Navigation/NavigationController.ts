@@ -522,6 +522,7 @@ export class NavigationController
 
     runInAction(() => {
       this.editing_ = newTag
+      this.editingFrom = 'all'
     })
   }
 
