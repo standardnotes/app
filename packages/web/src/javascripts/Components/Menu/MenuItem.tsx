@@ -41,7 +41,10 @@ const MenuItem = forwardRef(
       <li className="list-none" role="none">
         <button
           ref={ref}
-          className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+          className={classNames(
+            'flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5',
+            'text-left text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none',
+          )}
           onClick={() => {
             onChange(!checked)
           }}
@@ -61,17 +64,9 @@ const MenuItem = forwardRef(
           role={type === MenuItemType.RadioButton ? 'menuitemradio' : 'menuitem'}
           tabIndex={typeof tabIndex === 'number' ? tabIndex : FOCUSABLE_BUT_NOT_TABBABLE}
           className={classNames(
-            'flex',
-            'w-full',
-            'cursor-pointer',
-            'items-center',
-            'border-0',
-            'bg-transparent',
-            'px-3 py-1.5',
-            'text-left text-mobile-menu-item text-text',
-            'hover:bg-contrast hover:text-foreground',
-            'focus:bg-info-backdrop focus:shadow-none',
-            'md:text-menu-item',
+            'flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left',
+            'text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground',
+            'focus:bg-info-backdrop focus:shadow-none md:text-menu-item',
             className,
           )}
           onClick={onClick}
