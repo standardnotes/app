@@ -31,6 +31,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform }: Props) => {
   const isWindows = platform === Platform.WindowsWeb || platform === Platform.WindowsDesktop
 
   const emojiInputRef = useRef<HTMLInputElement>(null)
+  const [emojiInputFocused, setEmojiInputFocused] = useState(true)
   const [currentType, setCurrentType] = useState<IconPickerType>(isSelectedEmoji ? 'emoji' : 'icon')
   const [emojiInputValue, setEmojiInputValue] = useState(isSelectedEmoji ? selectedValue : '')
 
@@ -74,6 +75,9 @@ const IconPicker = ({ selectedValue, onIconChange, platform }: Props) => {
     if (emojiLength === 1) {
       onIconChange(value)
       emojiInputRef.current?.blur()
+      setEmojiInputFocused(false)
+    } else {
+      setEmojiInputFocused(true)
     }
   }
 
@@ -98,7 +102,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform }: Props) => {
               <input
                 ref={emojiInputRef}
                 autoComplete="off"
-                autoFocus
+                autoFocus={emojiInputFocused}
                 className="w-full flex-grow rounded border border-solid border-passive-3 bg-default px-2 py-1 text-base font-bold text-text focus:shadow-none focus:outline-none"
                 type="text"
                 value={emojiInputValue}
