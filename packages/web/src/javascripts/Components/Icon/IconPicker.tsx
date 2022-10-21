@@ -1,5 +1,5 @@
 import { EmojiString, Platform, VectorIconNameOrEmoji } from '@standardnotes/snjs'
-import { FunctionComponent, useMemo, useState } from 'react'
+import { FunctionComponent, useMemo, useRef, useState } from 'react'
 import Dropdown from '../Dropdown/Dropdown'
 import { DropdownItem } from '../Dropdown/DropdownItem'
 import { isIconEmoji } from './Icon'
@@ -30,6 +30,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform }: Props) => {
   const isMacOS = platform === Platform.MacWeb || platform === Platform.MacDesktop
   const isWindows = platform === Platform.WindowsWeb || platform === Platform.WindowsDesktop
 
+  const emojiInputRef = useRef<HTMLInputElement>(null)
   const [currentType, setCurrentType] = useState<IconPickerType>(isSelectedEmoji ? 'emoji' : 'icon')
   const [emojiInputValue, setEmojiInputValue] = useState(isSelectedEmoji ? selectedValue : '')
 
@@ -72,6 +73,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform }: Props) => {
     const emojiLength = [...value].length
     if (emojiLength === 1) {
       onIconChange(value)
+      emojiInputRef.current?.blur()
     }
   }
 
@@ -94,6 +96,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform }: Props) => {
           <>
             <div>
               <input
+                ref={emojiInputRef}
                 autoComplete="off"
                 autoFocus
                 className="w-full flex-grow rounded border border-solid border-passive-3 bg-default px-2 py-1 text-base font-bold text-text focus:shadow-none focus:outline-none"
