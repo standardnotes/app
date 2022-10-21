@@ -19,7 +19,6 @@ type MenuItemProps = {
   icon?: IconType
   iconClassName?: string
   tabIndex?: number
-  noHover?: boolean
 }
 
 const MenuItem = forwardRef(
@@ -35,7 +34,6 @@ const MenuItem = forwardRef(
       icon,
       iconClassName,
       tabIndex,
-      noHover,
     }: MenuItemProps,
     ref: Ref<HTMLButtonElement>,
   ) => {
@@ -69,13 +67,10 @@ const MenuItem = forwardRef(
             'items-center',
             'border-0',
             'bg-transparent',
-            'px-3',
-            'py-1.5',
-            'text-left',
-            'text-mobile-menu-item',
-            'text-text',
-            !noHover ? 'hover:bg-contrast hover:text-foreground focus:bg-info-backdrop' : '',
-            'focus:shadow-none',
+            'px-3 py-1.5',
+            'text-left text-mobile-menu-item text-text',
+            'hover:bg-contrast hover:text-foreground',
+            'focus:bg-info-backdrop focus:shadow-none',
             'md:text-menu-item',
             className,
           )}
