@@ -81,7 +81,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         e.stopPropagation()
         const shouldShowChildren = !showChildren
         setShowChildren(shouldShowChildren)
-        tagsState.setExpanded(tag, !shouldShowChildren)
+        tagsState.setExpanded(tag, shouldShowChildren)
       },
       [showChildren, tag, tagsState],
     )
