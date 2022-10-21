@@ -2,7 +2,7 @@ import Icon from '@/Components/Icon/Icon'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import '@reach/tooltip/styles.css'
-import { SmartView, SystemViewId, IconType, isSystemView } from '@standardnotes/snjs'
+import { SmartView, SystemViewId, isSystemView } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import {
   FormEventHandler,
@@ -26,19 +26,6 @@ type Props = {
 
 const PADDING_BASE_PX = 14
 const PADDING_PER_LEVEL_PX = 21
-
-const smartViewIconType = (view: SmartView, isSelected: boolean): IconType => {
-  const mapping: Record<SystemViewId, IconType> = {
-    [SystemViewId.AllNotes]: isSelected ? 'notes-filled' : 'notes',
-    [SystemViewId.Files]: 'folder',
-    [SystemViewId.ArchivedNotes]: 'archive',
-    [SystemViewId.TrashedNotes]: 'trash',
-    [SystemViewId.UntaggedNotes]: 'hashtag-off',
-    [SystemViewId.StarredNotes]: 'star-filled',
-  }
-
-  return mapping[view.uuid as SystemViewId] || 'hashtag'
-}
 
 const getIconClass = (view: SmartView, isSelected: boolean): string => {
   const mapping: Partial<Record<SystemViewId, string>> = {
@@ -111,7 +98,6 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
   }, [tagsState, view])
 
   const isFaded = false
-  const iconType = smartViewIconType(view, isSelected)
   const iconClass = getIconClass(view, isSelected)
 
   return (
@@ -127,7 +113,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
       >
         <div className="tag-info">
           <div className={'tag-icon mr-2'}>
-            <Icon type={iconType} className={iconClass} />
+            <Icon type={view.iconString} className={iconClass} />
           </div>
           {isEditing ? (
             <input

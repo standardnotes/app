@@ -1,4 +1,4 @@
-import { TagContent } from './../../Syncable/Tag/Tag'
+import { TagContent } from './../../Syncable/Tag/TagContent'
 import { ContentType } from '@standardnotes/common'
 import { FillItemContent, ItemContent } from '../../Abstract/Content/ItemContent'
 import { DecryptedPayload, PayloadSource, PayloadTimestampDefaults } from '../../Abstract/Payload'

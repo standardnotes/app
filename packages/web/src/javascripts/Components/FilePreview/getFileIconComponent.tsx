@@ -1,7 +1,7 @@
-import { ICONS } from '@/Components/Icon/Icon'
+import { IconNameToSvgMapping } from '@/Components/Icon/IconNameToSvgMapping'
 
 export const getFileIconComponent = (iconType: string, className: string) => {
-  const IconComponent = ICONS[iconType as keyof typeof ICONS]
+  const IconComponent = IconNameToSvgMapping[iconType as keyof typeof IconNameToSvgMapping]
 
   return <IconComponent className={className} />
 }

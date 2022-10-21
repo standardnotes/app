@@ -14,6 +14,7 @@ import {
   SystemViewId,
   InternalEventBus,
   InternalEventPublishStrategy,
+  VectorIconNameOrEmoji,
 } from '@standardnotes/snjs'
 import { action, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -24,6 +25,7 @@ import { AnyTag } from './AnyTagType'
 import { CrossControllerEvent } from '../CrossControllerEvent'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { Persistable } from '../Abstract/Persistable'
+import { TagListSectionType } from '@/Components/Tags/TagListSection'
 
 export type NavigationControllerPersistableValue = {
   selectedTagUuid: AnyTag['uuid']
@@ -35,14 +37,17 @@ export class NavigationController
 {
   tags: SNTag[] = []
   smartViews: SmartView[] = []
+  starredTags: SNTag[] = []
   allNotesCount_ = 0
   selectedUuid: AnyTag['uuid'] | undefined = undefined
   selected_: AnyTag | undefined
   previouslySelected_: AnyTag | undefined
   editing_: SNTag | SmartView | undefined
+  editingFrom?: TagListSectionType
   addingSubtagTo: SNTag | undefined
 
   contextMenuOpen = false
+  contextMenuOpenFrom?: TagListSectionType
   contextMenuPosition: { top?: number; left: number; bottom?: number } = {
     top: 0,
     left: 0,
@@ -66,6 +71,7 @@ export class NavigationController
 
     makeObservable(this, {
       tags: observable,
+      starredTags: observable,
       smartViews: observable.ref,
       hasAtLeastOneFolder: computed,
       allNotesCount_: observable,
@@ -111,7 +117,7 @@ export class NavigationController
       this.application.streamItems([ContentType.Tag, ContentType.SmartView], ({ changed, removed }) => {
         runInAction(() => {
           this.tags = this.application.items.getDisplayableTags()
-
+          this.starredTags = this.tags.filter((tag) => tag.starred)
           this.smartViews = this.application.items.getSmartViews()
 
           const currentSelectedTag = this.selected_
@@ -264,6 +270,10 @@ export class NavigationController
 
   setAddingSubtagTo(tag: SNTag | undefined): void {
     this.addingSubtagTo = tag
+  }
+
+  setContextMenuOpenFrom(section: TagListSectionType): void {
+    this.contextMenuOpenFrom = section
   }
 
   setContextMenuOpen(open: boolean): void {
@@ -476,6 +486,22 @@ export class NavigationController
       .catch(console.error)
   }
 
+  public async setFavorite(tag: SNTag, favorite: boolean) {
+    return this.application.mutator
+      .changeAndSaveItem<TagMutator>(tag, (mutator) => {
+        mutator.starred = favorite
+      })
+      .catch(console.error)
+  }
+
+  public setIcon(tag: SNTag, icon: VectorIconNameOrEmoji) {
+    this.application.mutator
+      .changeAndSaveItem<TagMutator>(tag, (mutator) => {
+        mutator.iconString = icon
+      })
+      .catch(console.error)
+  }
+
   public get editingTag(): SNTag | SmartView | undefined {
     return this.editing_
   }
@@ -500,6 +526,7 @@ export class NavigationController
   }
 
   public undoCreateNewTag() {
+    this.editingFrom = undefined
     this.editing_ = undefined
     const previousTag = this.previouslySelected_ || this.smartViews[0]
     void this.setSelectedTag(previousTag)
@@ -528,6 +555,7 @@ export class NavigationController
     const hasDuplicatedTitle = siblings.some((other) => other.title.toLowerCase() === newTitle.toLowerCase())
 
     runInAction(() => {
+      this.editingFrom = undefined
       this.editing_ = undefined
     })
 

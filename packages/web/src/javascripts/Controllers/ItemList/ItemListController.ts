@@ -64,7 +64,7 @@ export class ItemListController
   items: ListableContentItem[] = []
   notesToDisplay = 0
   pageSize = 0
-  panelTitle = 'All Notes'
+  panelTitle = 'Notes'
   panelWidth = 0
   renderedItems: ListableContentItem[] = []
   searchSubmitted = false

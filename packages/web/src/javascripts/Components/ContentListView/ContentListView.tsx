@@ -111,6 +111,10 @@ const ContentListView: FunctionComponent<Props> = ({
 
   const { selectedUuids, selectNextItem, selectPreviousItem } = selectionController
 
+  const { selected: selectedTag } = navigationController
+
+  const icon = selectedTag?.iconString
+
   const isFilesSmartView = useMemo(
     () => navigationController.selected?.uuid === SystemViewId.Files,
     [navigationController.selected?.uuid],
@@ -259,6 +263,7 @@ const ContentListView: FunctionComponent<Props> = ({
             <ContentListHeader
               application={application}
               panelTitle={panelTitle}
+              icon={icon}
               addButtonLabel={addButtonLabel}
               addNewItem={addNewItem}
               isFilesSmartView={isFilesSmartView}

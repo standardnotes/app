@@ -5,6 +5,7 @@ import { classNames } from '@/Utils/ConcatenateClassNames'
 import Popover from '@/Components/Popover/Popover'
 import DisplayOptionsMenu from './DisplayOptionsMenu'
 import { NavigationMenuButton } from '@/Components/NavigationMenu/NavigationMenu'
+import { IconType } from '@standardnotes/snjs'
 import RoundIconButton from '@/Components/Button/RoundIconButton'
 
 type Props = {
@@ -14,6 +15,7 @@ type Props = {
     isNativeMobileWeb: WebApplication['isNativeMobileWeb']
   }
   panelTitle: string
+  icon?: IconType | string
   addButtonLabel: string
   addNewItem: () => void
   isFilesSmartView: boolean
@@ -23,6 +25,7 @@ type Props = {
 const ContentListHeader = ({
   application,
   panelTitle,
+  icon,
   addButtonLabel,
   addNewItem,
   isFilesSmartView,
@@ -41,8 +44,19 @@ const ContentListHeader = ({
     <div className="section-title-bar-header items-start gap-1 overflow-hidden">
       <NavigationMenuButton />
       <div className="flex min-w-0 flex-grow flex-col break-words">
-        <div className="text-lg font-semibold text-text">{panelTitle}</div>
-        {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
+        <div className={`flex min-w-0 flex-grow flex-row ${!optionsSubtitle ? 'items-center' : ''}`}>
+          {icon && (
+            <Icon
+              type={icon as IconType}
+              size={'large'}
+              className={`ml-0.5 mr-1.5 text-neutral ${optionsSubtitle ? 'mt-1' : ''}`}
+            />
+          )}
+          <div className="flex min-w-0 flex-grow flex-col break-words">
+            <div className="text-lg font-semibold text-text">{panelTitle}</div>
+            {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
+          </div>
+        </div>
       </div>
       <div className="flex">
         <div className="relative" ref={displayOptionsContainerRef}>

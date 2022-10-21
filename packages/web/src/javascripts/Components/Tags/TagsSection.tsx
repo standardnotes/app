@@ -52,22 +52,37 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
   }, [viewControllerManager, checkIfMigrationNeeded])
 
   return (
-    <section>
-      <div className={'section-title-bar'}>
-        <div className="section-title-bar-header">
-          <TagsSectionTitle
-            features={viewControllerManager.featuresController}
-            hasMigration={hasMigration}
-            onClickMigration={runMigration}
-          />
-          <TagsSectionAddButton
-            tags={viewControllerManager.navigationController}
-            features={viewControllerManager.featuresController}
-          />
+    <>
+      {viewControllerManager.navigationController.starredTags.length > 0 && (
+        <section>
+          <div className={'section-title-bar'}>
+            <div className="section-title-bar-header">
+              <div className="title text-sm">
+                <span className="font-bold">Favorites</span>
+              </div>
+            </div>
+          </div>
+          <TagsList type="favorites" viewControllerManager={viewControllerManager} />
+        </section>
+      )}
+
+      <section>
+        <div className={'section-title-bar'}>
+          <div className="section-title-bar-header">
+            <TagsSectionTitle
+              features={viewControllerManager.featuresController}
+              hasMigration={hasMigration}
+              onClickMigration={runMigration}
+            />
+            <TagsSectionAddButton
+              tags={viewControllerManager.navigationController}
+              features={viewControllerManager.featuresController}
+            />
+          </div>
         </div>
-      </div>
-      <TagsList viewControllerManager={viewControllerManager} />
-    </section>
+        <TagsList type="all" viewControllerManager={viewControllerManager} />
+      </section>
+    </>
   )
 }
 
