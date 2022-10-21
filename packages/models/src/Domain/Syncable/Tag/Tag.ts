@@ -1,42 +1,27 @@
+import { EmojiString, IconType } from './../../Utilities/Icon/IconType'
 import { ContentType, Uuid } from '@standardnotes/common'
 import { DecryptedItem } from '../../Abstract/Item/Implementations/DecryptedItem'
 import { ItemInterface } from '../../Abstract/Item/Interfaces/ItemInterface'
-import { ItemContent } from '../../Abstract/Content/ItemContent'
 import { ContentReference } from '../../Abstract/Reference/ContentReference'
 import { isTagToParentTagReference } from '../../Abstract/Reference/Functions'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
+import { TagContent, TagContentSpecialized } from './TagContent'
 
 export const TagFolderDelimitter = '.'
 
-export type TagIconType = 'icon' | 'emoji'
-
-interface TagInterface {
-  title: string
-  expanded: boolean
-  iconType: TagIconType
-  iconString: string
-}
-
-const DefaultIconType: TagIconType = 'icon'
-const DefaultIconName = 'hashtag'
-
-export type TagContent = TagInterface & ItemContent
+const DefaultIconName: IconType = 'hashtag'
 
 export const isTag = (x: ItemInterface): x is SNTag => x.content_type === ContentType.Tag
 
-export class SNTag extends DecryptedItem<TagContent> implements TagInterface {
+export class SNTag extends DecryptedItem<TagContent> implements TagContentSpecialized {
   public readonly title: string
-  public readonly iconType: TagIconType
-  public readonly iconString: string
-
-  /** Whether to render child tags in view hierarchy. Opposite of collapsed. */
+  public readonly iconString: IconType | EmojiString
   public readonly expanded: boolean
 
   constructor(payload: DecryptedPayloadInterface<TagContent>) {
     super(payload)
     this.title = this.payload.content.title || ''
     this.expanded = this.payload.content.expanded != undefined ? this.payload.content.expanded : true
-    this.iconType = this.payload.content.iconType || DefaultIconType
     this.iconString = this.payload.content.iconString || DefaultIconName
   }
 

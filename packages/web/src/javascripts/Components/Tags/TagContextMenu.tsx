@@ -5,7 +5,7 @@ import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { IconType, SNTag, TagIconType } from '@standardnotes/snjs'
+import { IconType, SNTag } from '@standardnotes/snjs'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
@@ -13,6 +13,7 @@ import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import Popover from '../Popover/Popover'
 import IconPicker from '../Icon/IconPicker'
+import { TagIconType } from '../Icon/TagIconType'
 
 type ContextMenuProps = {
   navigationController: NavigationController

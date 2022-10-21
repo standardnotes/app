@@ -1,5 +1,6 @@
 import { ContentType } from '@standardnotes/common'
-import { TagContent, SNTag, TagIconType } from './Tag'
+import { SNTag } from './Tag'
+import { TagContent } from "./TagContent"
 import { FileItem } from '../File'
 import { SNNote } from '../Note'
 import { isTagToParentTagReference } from '../../Abstract/Reference/Functions'
@@ -15,10 +16,6 @@ export class TagMutator extends DecryptedItemMutator<TagContent> {
 
   set expanded(expanded: boolean) {
     this.mutableContent.expanded = expanded
-  }
-
-  set iconType(iconType: TagIconType) {
-    this.mutableContent.iconType = iconType
   }
 
   set iconString(iconString: string) {

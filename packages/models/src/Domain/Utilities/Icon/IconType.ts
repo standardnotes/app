@@ -1,3 +1,5 @@
+export type EmojiString = string
+
 export type IconType =
   | 'accessibility'
   | 'account-card-details-outline'

@@ -1,3 +1,4 @@
+import { TagIconType } from './../../Components/Icon/TagIconType'
 import { confirmDialog } from '@standardnotes/ui-services'
 import { STRING_DELETE_TAG } from '@/Constants/Strings'
 import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER, SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
@@ -14,7 +15,6 @@ import {
   SystemViewId,
   InternalEventBus,
   InternalEventPublishStrategy,
-  TagIconType,
 } from '@standardnotes/snjs'
 import { action, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'

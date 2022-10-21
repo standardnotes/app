@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { memo, useCallback, useRef, useState } from 'react'
-import Icon, { isIconEmoji } from '../../Icon/Icon'
+import Icon from '../../Icon/Icon'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import Popover from '@/Components/Popover/Popover'
 import DisplayOptionsMenu from './DisplayOptionsMenu'
@@ -43,7 +43,7 @@ const ContentListHeader = ({
       <NavigationMenuButton />
       <div className="flex min-w-0 flex-grow flex-col break-words">
         <div className="flex min-w-0 flex-grow flex-row items-center">
-          {icon && <Icon type={icon as IconType} size={'large'} className={`ml-0.5 mr-1 text-neutral`} />}
+          {icon && <Icon type={icon as IconType} size={'large'} className={`ml-0.5 mr-1.5 text-neutral`} />}
           <div className="text-lg font-semibold text-text">{panelTitle}</div>
         </div>
         {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}

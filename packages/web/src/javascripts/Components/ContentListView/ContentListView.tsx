@@ -1,7 +1,7 @@
 import { KeyboardKey, KeyboardModifier } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NOTES } from '@/Constants/Constants'
-import { FileItem, IconType, PrefKey, SNTag, SystemViewId } from '@standardnotes/snjs'
+import { FileItem, IconType, PrefKey, SystemViewId } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef } from 'react'
 import ContentList from '@/Components/ContentListView/ContentList'
@@ -113,7 +113,7 @@ const ContentListView: FunctionComponent<Props> = ({
 
   const { selected: selectedTag } = navigationController
 
-  const icon: IconType | undefined = selectedTag instanceof SNTag ? selectedTag.iconString : undefined
+  const icon = selectedTag?.iconString
 
   const isFilesSmartView = useMemo(
     () => navigationController.selected?.uuid === SystemViewId.Files,

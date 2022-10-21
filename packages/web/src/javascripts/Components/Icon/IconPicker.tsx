@@ -3,7 +3,7 @@ import { FunctionComponent, useMemo, useState } from 'react'
 import Dropdown from '../Dropdown/Dropdown'
 import { DropdownItem } from '../Dropdown/DropdownItem'
 import { IconNameToSvgMapping } from './IconNameToSvgMapping'
-import { TagIconType } from '@standardnotes/snjs'
+import { TagIconType } from './TagIconType'
 
 type Props = {
   initialType: TagIconType
