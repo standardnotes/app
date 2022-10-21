@@ -1,54 +1,43 @@
+import { Uuid } from '@standardnotes/common'
 import { PreferenceId } from './../Preferences/PreferenceId'
-import { DemoParams, OnboardingParams, PurchaseParams, SettingsParams } from './RouteParams'
+import { DemoParams } from './Params/DemoParams'
+import { OnboardingParams } from './Params/OnboardingParams'
+import { PurchaseParams } from './Params/PurchaseParams'
+import { SettingsParams } from './Params/SettingsParams'
+import { SubscriptionInviteParams } from './Params/SubscriptionInviteParams'
+
+import { RootQueryParam } from './RootQueryParam'
+import { RootRoutes } from './RootRoutes'
+import { RouteParserInterface } from './RouteParserInterface'
 import { RouteType } from './RouteType'
 
-enum RootRoutes {
-  Onboarding = '/onboard',
-  None = '/',
-}
-
-enum RootQueryParam {
-  Purchase = 'purchase',
-  Settings = 'settings',
-  DemoToken = 'demo-token',
-}
-
-export class RouteParser {
+export class RouteParser implements RouteParserInterface {
   private url: URL
   private readonly path: string
-  public readonly type: RouteType
+  private readonly parsedType: RouteType
   private readonly searchParams: URLSearchParams
 
   constructor(url: string) {
     this.url = new URL(url)
     this.path = this.url.pathname
     this.searchParams = this.url.searchParams
+    this.parsedType = this.parseTypeFromQueryParameters()
+  }
 
-    const pathUsesRootQueryParams = this.path === RootRoutes.None
+  get type(): RouteType {
+    return this.parsedType
+  }
 
-    if (pathUsesRootQueryParams) {
-      if (this.searchParams.has(RootQueryParam.Purchase)) {
-        this.type = RouteType.Purchase
-      } else if (this.searchParams.has(RootQueryParam.Settings)) {
-        this.type = RouteType.Settings
-      } else if (this.searchParams.has(RootQueryParam.DemoToken)) {
-        this.type = RouteType.Demo
-      } else {
-        this.type = RouteType.None
-      }
-    } else {
-      if (this.path === RootRoutes.Onboarding) {
-        this.type = RouteType.Onboarding
-      } else {
-        this.type = RouteType.None
-      }
+  get subscriptionInviteParams(): SubscriptionInviteParams {
+    this.checkForProperRouteType(RouteType.AcceptSubscriptionInvite)
+
+    return {
+      inviteUuid: this.searchParams.get(RootQueryParam.AcceptSubscriptionInvite) as Uuid,
     }
   }
 
   get demoParams(): DemoParams {
-    if (this.type !== RouteType.Demo) {
-      throw new Error('Accessing invalid params')
-    }
+    this.checkForProperRouteType(RouteType.Demo)
 
     return {
       token: this.searchParams.get(RootQueryParam.DemoToken) as string,
@@ -56,9 +45,7 @@ export class RouteParser {
   }
 
   get settingsParams(): SettingsParams {
-    if (this.type !== RouteType.Settings) {
-      throw new Error('Accessing invalid params')
-    }
+    this.checkForProperRouteType(RouteType.Settings)
 
     return {
       panel: this.searchParams.get(RootQueryParam.Settings) as PreferenceId,
@@ -66,9 +53,7 @@ export class RouteParser {
   }
 
   get purchaseParams(): PurchaseParams {
-    if (this.type !== RouteType.Purchase) {
-      throw new Error('Accessing invalid params')
-    }
+    this.checkForProperRouteType(RouteType.Purchase)
 
     return {
       plan: this.searchParams.get('plan') as string,
@@ -77,12 +62,41 @@ export class RouteParser {
   }
 
   get onboardingParams(): OnboardingParams {
-    if (this.type !== RouteType.Onboarding) {
-      throw new Error('Accessing invalid params')
-    }
+    this.checkForProperRouteType(RouteType.Onboarding)
 
     return {
       fromHomepage: !!this.searchParams.get('from_homepage'),
     }
+  }
+
+  private checkForProperRouteType(type: RouteType): void {
+    if (this.parsedType !== type) {
+      throw new Error('Accessing invalid params')
+    }
+  }
+
+  private parseTypeFromQueryParameters(): RouteType {
+    if (this.path === RootRoutes.Onboarding) {
+      return RouteType.Onboarding
+    }
+
+    if (this.path !== RootRoutes.None) {
+      return RouteType.None
+    }
+
+    const rootQueryParametersMap: Map<RootQueryParam, RouteType> = new Map([
+      [RootQueryParam.Purchase, RouteType.Purchase],
+      [RootQueryParam.Settings, RouteType.Settings],
+      [RootQueryParam.DemoToken, RouteType.Demo],
+      [RootQueryParam.AcceptSubscriptionInvite, RouteType.AcceptSubscriptionInvite],
+    ])
+
+    for (const rootQueryParam of rootQueryParametersMap.keys()) {
+      if (this.searchParams.has(rootQueryParam)) {
+        return rootQueryParametersMap.get(rootQueryParam) as RouteType
+      }
+    }
+
+    return RouteType.None
   }
 }

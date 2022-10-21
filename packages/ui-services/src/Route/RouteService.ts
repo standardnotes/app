@@ -5,9 +5,10 @@ import {
   InternalEventBusInterface,
 } from '@standardnotes/services'
 import { RouteParser } from './RouteParser'
+import { RouteParserInterface } from './RouteParserInterface'
 import { RouteServiceEvent } from './RouteServiceEvent'
 
-export class RouteService extends AbstractService<RouteServiceEvent, RouteParser> {
+export class RouteService extends AbstractService<RouteServiceEvent, RouteParserInterface> {
   private unsubApp!: () => void
 
   constructor(
@@ -24,7 +25,7 @@ export class RouteService extends AbstractService<RouteServiceEvent, RouteParser
     this.unsubApp()
   }
 
-  public getRoute(): RouteParser {
+  public getRoute(): RouteParserInterface {
     return new RouteParser(window.location.href)
   }
 

@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.8.5...@standardnotes/ui-services@1.9.0) (2022-10-21)
+
+### Bug Fixes
+
+* **ui-services:** add route type getter ([401a35f](https://github.com/standardnotes/app/commit/401a35f4db9e7f090ad84c2d9e0ce5b465c7e790))
+
+### Features
+
+* add accepting subscription invite route type ([83b4840](https://github.com/standardnotes/app/commit/83b484002c066675e58625d7c0a1f7a7566df787))
+
 ## [1.8.5](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.8.4...@standardnotes/ui-services@1.8.5) (2022-10-19)
 
 **Note:** Version bump only for package @standardnotes/ui-services
