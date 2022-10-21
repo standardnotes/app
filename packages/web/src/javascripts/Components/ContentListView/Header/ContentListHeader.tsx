@@ -5,11 +5,13 @@ import { classNames } from '@/Utils/ConcatenateClassNames'
 import Popover from '@/Components/Popover/Popover'
 import DisplayOptionsMenu from './DisplayOptionsMenu'
 import { NavigationMenuButton } from '@/Components/NavigationMenu/NavigationMenu'
+import RoundIconButton from '@/Components/Button/RoundIconButton'
 
 type Props = {
   application: {
     getPreference: WebApplication['getPreference']
     setPreference: WebApplication['setPreference']
+    isNativeMobileWeb: WebApplication['isNativeMobileWeb']
   }
   panelTitle: string
   addButtonLabel: string
@@ -44,16 +46,13 @@ const ContentListHeader = ({
       </div>
       <div className="flex">
         <div className="relative" ref={displayOptionsContainerRef}>
-          <button
-            className={classNames(
-              'bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast',
-              showDisplayOptionsMenu && 'bg-contrast',
-            )}
+          <RoundIconButton
+            className={classNames(showDisplayOptionsMenu && 'bg-contrast')}
             onClick={toggleDisplayOptionsMenu}
             ref={displayOptionsButtonRef}
-          >
-            <Icon type="sort-descending" />
-          </button>
+            icon="sort-descending"
+            label="Display options menu"
+          />
           <Popover
             open={showDisplayOptionsMenu}
             anchorElement={displayOptionsButtonRef.current}
@@ -70,12 +69,12 @@ const ContentListHeader = ({
           </Popover>
         </div>
         <button
-          className="ml-3 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-transparent bg-info text-info-contrast hover:brightness-125"
+          className="absolute bottom-4 right-6 ml-3 flex h-11 w-11 cursor-pointer items-center justify-center rounded-full border border-solid border-transparent bg-info text-info-contrast hover:brightness-125 md:static md:h-8 md:w-8"
           title={addButtonLabel}
           aria-label={addButtonLabel}
           onClick={addNewItem}
         >
-          <Icon type="add" />
+          <Icon type="add" size="custom" className="h-6 w-6 md:h-5 md:w-5" />
         </button>
       </div>
     </div>

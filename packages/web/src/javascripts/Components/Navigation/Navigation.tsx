@@ -9,10 +9,10 @@ import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '
 import ResponsivePaneContent from '@/Components/ResponsivePane/ResponsivePaneContent'
 import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import Icon from '../Icon/Icon'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { isIOS } from '@/Utils'
 import UpgradeNow from '../Footer/UpgradeNow'
+import RoundIconButton from '../Button/RoundIconButton'
 
 type Props = {
   application: WebApplication
@@ -89,58 +89,48 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
           <TagsSection viewControllerManager={viewControllerManager} />
         </div>
         <div className="flex items-center border-t border-border px-3.5 pt-2.5 md:hidden">
-          <button
-            className="mr-auto flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border bg-default text-neutral hover:bg-contrast focus:bg-contrast"
+          <RoundIconButton
+            className="mr-auto bg-default"
             onClick={() => {
               toggleAppPane(AppPaneId.Items)
             }}
-            title="Go to items list"
-            aria-label="Go to items list"
-          >
-            <Icon type="chevron-left" />
-          </button>
+            label="Go to items list"
+            icon="chevron-left"
+          />
           <UpgradeNow application={application} featuresController={viewControllerManager.featuresController} />
-          <button
-            className="ml-2.5 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border bg-default text-neutral hover:bg-contrast focus:bg-contrast"
+          <RoundIconButton
+            className="ml-2.5 bg-default"
             onClick={() => {
               viewControllerManager.accountMenuController.toggleShow()
             }}
-            title="Go to account menu"
-            aria-label="Go to account menu"
-          >
-            <Icon type="account-circle" />
-          </button>
+            label="Go to account menu"
+            icon="account-circle"
+          />
           {hasPasscode && (
-            <button
+            <RoundIconButton
               id="lock-item"
               onClick={() => application.lock()}
-              title="Locks application and wipes unencrypted data from memory."
-              aria-label="Locks application and wipes unencrypted data from memory."
-              className="ml-2.5 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border bg-default text-neutral hover:bg-contrast focus:bg-contrast"
-            >
-              <Icon type="lock-filled" size="custom" className="h-4.5 w-4.5" />
-            </button>
+              label="Locks application and wipes unencrypted data from memory."
+              className="ml-2.5 bg-default"
+              icon="lock-filled"
+            />
           )}
-          <button
-            className="ml-2.5 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border bg-default text-neutral hover:bg-contrast focus:bg-contrast"
+          <RoundIconButton
+            className="ml-2.5 bg-default"
             onClick={() => {
               viewControllerManager.preferencesController.openPreferences()
             }}
-            title="Go to preferences"
-            aria-label="Go to preferences"
-          >
-            <Icon type="tune" />
-          </button>
-          <button
-            className="ml-2.5 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border bg-default text-neutral hover:bg-contrast focus:bg-contrast"
+            label="Go to preferences"
+            icon="tune"
+          />
+          <RoundIconButton
+            className="ml-2.5 bg-default"
             onClick={() => {
               viewControllerManager.quickSettingsMenuController.toggle()
             }}
-            title="Go to quick settings menu"
-            aria-label="Go to quick settings menu"
-          >
-            <Icon type="themes" />
-          </button>
+            label="Go to quick settings menu"
+            icon="themes"
+          />
         </div>
       </ResponsivePaneContent>
       {panelElement && (
