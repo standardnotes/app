@@ -5,7 +5,7 @@ import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { IconType, SNTag } from '@standardnotes/snjs'
+import { IconType, SNTag, VectorIconNameOrEmoji } from '@standardnotes/snjs'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
@@ -13,7 +13,6 @@ import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import Popover from '../Popover/Popover'
 import IconPicker from '../Icon/IconPicker'
-import { TagIconType } from '../Icon/TagIconType'
 
 type ContextMenuProps = {
   navigationController: NavigationController
@@ -42,6 +41,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
 
   const onClickRename = useCallback(() => {
     navigationController.setContextMenuOpen(false)
+    navigationController.editingFrom = navigationController.contextMenuOpenFrom
     navigationController.editingTag = selectedTag
   }, [navigationController, selectedTag])
 
@@ -54,8 +54,8 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
     [selectedTag.userModifiedDate],
   )
 
-  const handleIconChange = (type: TagIconType, value: string) => {
-    navigationController.setIcon(selectedTag, type, value)
+  const handleIconChange = (value: VectorIconNameOrEmoji) => {
+    navigationController.setIcon(selectedTag, value)
     setChangeIcon(false)
   }
 

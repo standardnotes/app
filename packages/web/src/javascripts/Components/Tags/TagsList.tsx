@@ -5,11 +5,12 @@ import { FunctionComponent, useCallback } from 'react'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import RootTagDropZone from './RootTagDropZone'
+import { TagListSectionType } from './TagListSection'
 import { TagsListItem } from './TagsListItem'
 
 type Props = {
   viewControllerManager: ViewControllerManager
-  type: 'all' | 'favorites'
+  type: TagListSectionType
 }
 
 const TagsList: FunctionComponent<Props> = ({ viewControllerManager, type }: Props) => {
@@ -24,6 +25,7 @@ const TagsList: FunctionComponent<Props> = ({ viewControllerManager, type }: Pro
         x: posX,
         y: posY,
       })
+      viewControllerManager.navigationController.setContextMenuOpenFrom(type)
       viewControllerManager.navigationController.reloadContextMenuLayout()
       viewControllerManager.navigationController.setContextMenuOpen(true)
     },
@@ -51,7 +53,7 @@ const TagsList: FunctionComponent<Props> = ({ viewControllerManager, type }: Pro
                 key={tag.uuid}
                 tag={tag}
                 type={type}
-                tagsState={navigationController}
+                navigationController={navigationController}
                 features={viewControllerManager.featuresController}
                 linkingController={viewControllerManager.linkingController}
                 onContextMenu={onContextMenu}

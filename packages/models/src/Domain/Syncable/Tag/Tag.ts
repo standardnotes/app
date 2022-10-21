@@ -1,4 +1,4 @@
-import { EmojiString, IconType } from './../../Utilities/Icon/IconType'
+import { VectorIconNameOrEmoji, IconType } from './../../Utilities/Icon/IconType'
 import { ContentType, Uuid } from '@standardnotes/common'
 import { DecryptedItem } from '../../Abstract/Item/Implementations/DecryptedItem'
 import { ItemInterface } from '../../Abstract/Item/Interfaces/ItemInterface'
@@ -15,7 +15,7 @@ export const isTag = (x: ItemInterface): x is SNTag => x.content_type === Conten
 
 export class SNTag extends DecryptedItem<TagContent> implements TagContentSpecialized {
   public readonly title: string
-  public readonly iconString: IconType | EmojiString
+  public readonly iconString: VectorIconNameOrEmoji
   public readonly expanded: boolean
 
   constructor(payload: DecryptedPayloadInterface<TagContent>) {

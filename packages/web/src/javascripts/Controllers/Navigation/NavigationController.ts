@@ -1,4 +1,3 @@
-import { TagIconType } from './../../Components/Icon/TagIconType'
 import { confirmDialog } from '@standardnotes/ui-services'
 import { STRING_DELETE_TAG } from '@/Constants/Strings'
 import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER, SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
@@ -15,6 +14,7 @@ import {
   SystemViewId,
   InternalEventBus,
   InternalEventPublishStrategy,
+  VectorIconNameOrEmoji,
 } from '@standardnotes/snjs'
 import { action, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -25,6 +25,7 @@ import { AnyTag } from './AnyTagType'
 import { CrossControllerEvent } from '../CrossControllerEvent'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { Persistable } from '../Abstract/Persistable'
+import { TagListSectionType } from '@/Components/Tags/TagListSection'
 
 export type NavigationControllerPersistableValue = {
   selectedTagUuid: AnyTag['uuid']
@@ -42,9 +43,11 @@ export class NavigationController
   selected_: AnyTag | undefined
   previouslySelected_: AnyTag | undefined
   editing_: SNTag | SmartView | undefined
+  editingFrom?: TagListSectionType
   addingSubtagTo: SNTag | undefined
 
   contextMenuOpen = false
+  contextMenuOpenFrom?: TagListSectionType
   contextMenuPosition: { top?: number; left: number; bottom?: number } = {
     top: 0,
     left: 0,
@@ -269,6 +272,10 @@ export class NavigationController
     this.addingSubtagTo = tag
   }
 
+  setContextMenuOpenFrom(section: TagListSectionType): void {
+    this.contextMenuOpenFrom = section
+  }
+
   setContextMenuOpen(open: boolean): void {
     this.contextMenuOpen = open
   }
@@ -487,11 +494,10 @@ export class NavigationController
       .catch(console.error)
   }
 
-  public setIcon(tag: SNTag, type: TagIconType, icon: string) {
+  public setIcon(tag: SNTag, icon: VectorIconNameOrEmoji) {
     this.application.mutator
       .changeAndSaveItem<TagMutator>(tag, (mutator) => {
         mutator.iconString = icon
-        mutator.iconType = type
       })
       .catch(console.error)
   }
@@ -520,6 +526,7 @@ export class NavigationController
   }
 
   public undoCreateNewTag() {
+    this.editingFrom = undefined
     this.editing_ = undefined
     const previousTag = this.previouslySelected_ || this.smartViews[0]
     void this.setSelectedTag(previousTag)
@@ -548,6 +555,7 @@ export class NavigationController
     const hasDuplicatedTitle = siblings.some((other) => other.title.toLowerCase() === newTitle.toLowerCase())
 
     runInAction(() => {
+      this.editingFrom = undefined
       this.editing_ = undefined
     })
 
