@@ -198,7 +198,6 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   }
 
   const onShouldStartLoadWithRequest: OnShouldStartLoadWithRequest = (request) => {
-    console.log('Setting last iframe URL to', request.url)
     /**
      * We want to handle link clicks within an editor by opening the browser
      * instead of loading inline. On iOS, onShouldStartLoadWithRequest is
@@ -212,10 +211,13 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
      * if the url isn't equal to the editor url.
      */
 
-    if (
+    const shouldStopRequest =
       (Platform.OS === 'ios' && request.navigationType === 'click') ||
       (Platform.OS === 'android' && request.url !== sourceUri)
-    ) {
+
+    const isComponentUrl = Array.from(device.componentUrls.values()).includes(request.url)
+
+    if (shouldStopRequest && !isComponentUrl) {
       device.openUrl(request.url)
       return false
     }

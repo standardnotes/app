@@ -1,5 +1,11 @@
 import { RouteServiceInterface, RouteType } from '@standardnotes/ui-services'
-import { ApplicationEvent, SessionsClientInterface, SyncClientInterface } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  ContentType,
+  SessionsClientInterface,
+  SNComponent,
+  SyncClientInterface,
+} from '@standardnotes/snjs'
 
 import { PurchaseFlowController } from '@/Controllers/PurchaseFlow/PurchaseFlowController'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
@@ -8,9 +14,11 @@ import { SyncStatusController } from '@/Controllers/SyncStatusController'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 
 import { EventObserverInterface } from './EventObserverInterface'
+import { WebApplication } from '@/Application/Application'
 
 export class ApplicationEventObserver implements EventObserverInterface {
   constructor(
+    private application: WebApplication,
     private routeService: RouteServiceInterface,
     private purchaseFlowController: PurchaseFlowController,
     private accountMenuController: AccountMenuController,
@@ -44,6 +52,22 @@ export class ApplicationEventObserver implements EventObserverInterface {
               break
             }
           }
+        }
+        if (this.application.isNativeMobileWeb()) {
+          this.application.streamItems<SNComponent>([ContentType.Component], ({ inserted, removed }) => {
+            inserted.forEach((component) => {
+              const url = this.application.componentManager.urlForComponent(component)
+              console.log(component.name, url)
+              if (!url) {
+                return
+              }
+              this.application.mobileDevice().addComponentUrl(component.uuid, url)
+            })
+
+            removed.forEach((component) => {
+              this.application.mobileDevice().removeComponentUrl(component.uuid)
+            })
+          })
         }
         break
       case ApplicationEvent.SignedIn:

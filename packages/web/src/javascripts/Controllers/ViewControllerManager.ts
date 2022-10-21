@@ -147,6 +147,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
     this.historyModalController = new HistoryModalController(this.application, this.eventBus)
 
     this.applicationEventObserver = new ApplicationEventObserver(
+      application,
       application.routeService,
       this.purchaseFlowController,
       this.accountMenuController,
