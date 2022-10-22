@@ -19,7 +19,7 @@ const MobileItemsListButton = () => {
 
   return (
     <RoundIconButton
-      className="mr-3"
+      className="mr-3 md:hidden pointer-coarse:md-only:flex pointer-coarse:lg-only:flex"
       onClick={() => {
         if (isTabletScreenSize) {
           toggleNotesListOnTablets()
