@@ -18,11 +18,13 @@ const ListedActionsMenu = ({ application, note }: ListedActionsMenuProps) => {
 
   useEffect(() => {
     const authorize = async () => {
-      if (!application.listed.isNoteAuthorizedForListed(note)) {
-        await application.listed.authorizeNoteForListed(note)
+      let isNoteAuthorizedForListed = !application.listed.isNoteAuthorizedForListed(note)
+
+      if (!isNoteAuthorizedForListed) {
+        isNoteAuthorizedForListed = await application.listed.authorizeNoteForListed(note)
       }
 
-      setIsAuthorized(application.listed.isNoteAuthorizedForListed(note))
+      setIsAuthorized(isNoteAuthorizedForListed)
     }
 
     void authorize()
