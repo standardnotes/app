@@ -7132,7 +7132,7 @@ __metadata:
     dom-storage: ^2.1.0
     eslint: "*"
     eslint-plugin-prettier: "*"
-    exports-loader: ^3.1.0
+    exports-loader: ^4.0.0
     jest: ^28.1.2
     jest-environment-jsdom: ^28.1.2
     jsdom: ^20.0.0
@@ -17912,14 +17912,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"exports-loader@npm:^3.1.0":
-  version: 3.1.0
-  resolution: "exports-loader@npm:3.1.0"
+"exports-loader@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "exports-loader@npm:4.0.0"
   dependencies:
     source-map: ^0.6.1
   peerDependencies:
     webpack: ^5.0.0
-  checksum: 1bf210433b53cd33e603acea2a8ba9ff37e2fee1e25662374ea66c21bd0b8ea8780b3c67cc83dd8fa284892c51a75da4a88f05a0e7931532368c0e366d9a84da
+  checksum: 8d92a3a04e55abf87c245ea19b449fa109d17de5629bb0e5888eaadae3aeefdba497c7faf7d1ae4b072bd89a68a9d72ed37102cd0a5ccb5e804e7ca7269309c9
   languageName: node
   linkType: hard
 
