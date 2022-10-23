@@ -255,8 +255,8 @@ const ContentListView: FunctionComponent<Props> = ({
                   return
                 }
 
-                for (const file of files) {
-                  void filesController.uploadNewFile(file)
+                for (let i = 0; i < files.length; i++) {
+                  void filesController.uploadNewFile(files[i])
                 }
               }}
             />

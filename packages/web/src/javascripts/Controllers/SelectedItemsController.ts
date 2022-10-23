@@ -26,6 +26,7 @@ export class SelectedItemsController
 {
   lastSelectedItem: ListableContentItem | undefined
   selectedUuids: Set<UuidString> = observable(new Set<UuidString>())
+  selectedItems: Record<UuidString, ListableContentItem> = {}
   private itemListController!: ItemListController
 
   override deinit(): void {
@@ -38,6 +39,7 @@ export class SelectedItemsController
 
     makeObservable(this, {
       selectedUuids: observable,
+      selectedItems: observable,
 
       selectedItemsCount: computed,
       selectedFiles: computed,
@@ -46,6 +48,7 @@ export class SelectedItemsController
 
       selectItem: action,
       setSelectedUuids: action,
+      setSelectedItems: action,
 
       hydrateFromPersistedValue: action,
     })
@@ -82,13 +85,22 @@ export class SelectedItemsController
     this.itemListController = itemListController
 
     this.disposers.push(
-      this.application.streamItems<SNNote | FileItem>([ContentType.Note, ContentType.File], ({ removed }) => {
-        runInAction(() => {
-          for (const removedNote of removed) {
-            this.removeFromSelectedUuids(removedNote.uuid)
-          }
-        })
-      }),
+      this.application.streamItems<SNNote | FileItem>(
+        [ContentType.Note, ContentType.File],
+        ({ changed, inserted, removed }) => {
+          runInAction(() => {
+            for (const removedItem of removed) {
+              this.removeSelectedItem(removedItem.uuid)
+            }
+
+            for (const item of [...changed, ...inserted]) {
+              if (this.selectedItems[item.uuid]) {
+                this.selectedItems[item.uuid] = item
+              }
+            }
+          })
+        },
+      ),
     )
   }
 
@@ -97,11 +109,11 @@ export class SelectedItemsController
   }
 
   get selectedItemsCount(): number {
-    return this.selectedUuids.size
+    return Object.keys(this.selectedItems).length
   }
 
   get selectedFiles(): FileItem[] {
-    return this.getSelectedItems<FileItem>(ContentType.File)
+    return this.getFilteredSelectedItems<FileItem>(ContentType.File)
   }
 
   get selectedFilesCount(): number {
@@ -109,31 +121,37 @@ export class SelectedItemsController
   }
 
   get firstSelectedItem() {
-    return this.application.items.findSureItem(Array.from(this.selectedUuids)[0]) as ListableContentItem
+    return Object.values(this.selectedItems)[0]
   }
 
-  getSelectedItems = <T extends ListableContentItem = ListableContentItem>(contentType?: ContentType): T[] => {
+  getSelectedItems = () => {
     const uuids = Array.from(this.selectedUuids)
-    return uuids.length > 0
-      ? (uuids
-          .map((uuid) => this.application.items.findSureItem(uuid))
-          .filter((item) => {
-            return !contentType ? true : item.content_type === contentType
-          }) as T[])
-      : []
+    return uuids.map((uuid) => this.application.items.findSureItem<SNNote | FileItem>(uuid)).filter((item) => !!item)
+  }
+
+  getFilteredSelectedItems = <T extends ListableContentItem = ListableContentItem>(contentType?: ContentType): T[] => {
+    return Object.values(this.selectedItems).filter((item) => {
+      return !contentType ? true : item.content_type === contentType
+    }) as T[]
+  }
+
+  setSelectedItems = () => {
+    this.selectedItems = Object.fromEntries(this.getSelectedItems().map((item) => [item.uuid, item]))
   }
 
   setSelectedUuids = (selectedUuids: Set<UuidString>) => {
     this.selectedUuids = new Set(selectedUuids)
+    this.setSelectedItems()
   }
 
-  private removeFromSelectedUuids = (uuid: UuidString) => {
+  private removeSelectedItem = (uuid: UuidString) => {
     this.selectedUuids.delete(uuid)
     this.setSelectedUuids(this.selectedUuids)
+    delete this.selectedItems[uuid]
   }
 
   public deselectItem = (item: { uuid: ListableContentItem['uuid'] }): void => {
-    this.removeFromSelectedUuids(item.uuid)
+    this.removeSelectedItem(item.uuid)
 
     if (item.uuid === this.lastSelectedItem?.uuid) {
       this.lastSelectedItem = undefined
@@ -244,7 +262,7 @@ export class SelectedItemsController
 
     if (userTriggered && (hasMeta || hasCtrl)) {
       if (this.selectedUuids.has(uuid) && hasMoreThanOneSelected) {
-        this.removeFromSelectedUuids(uuid)
+        this.removeSelectedItem(uuid)
       } else if (isAuthorizedForAccess) {
         this.setSelectedUuids(this.selectedUuids.add(uuid))
         this.lastSelectedItem = item
