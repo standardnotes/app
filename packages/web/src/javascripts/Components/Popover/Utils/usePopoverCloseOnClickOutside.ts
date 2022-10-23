@@ -28,8 +28,9 @@ export const usePopoverCloseOnClickOutside = ({
       const isAnchorElement = anchorElement ? anchorElement === event.target || anchorElement.contains(target) : false
       const closestPopoverId = target.closest('[data-popover]')?.getAttribute('data-popover')
       const isDescendantOfChildPopover = closestPopoverId && childPopovers.has(closestPopoverId)
+      const isDescendantOfChallengeModal = !!target.closest('.challenge-modal')
 
-      if (!isDescendantOfMenu && !isAnchorElement && !isDescendantOfChildPopover) {
+      if (!isDescendantOfMenu && !isAnchorElement && !isDescendantOfChildPopover && !isDescendantOfChallengeModal) {
         togglePopover()
       }
     }
