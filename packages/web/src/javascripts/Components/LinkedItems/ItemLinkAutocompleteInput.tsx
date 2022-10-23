@@ -92,6 +92,7 @@ const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focus
         break
       case KeyboardKey.Down:
         if (searchQuery.length > 0) {
+          event.preventDefault()
           searchResultsMenuRef.current?.focus()
         }
         break
