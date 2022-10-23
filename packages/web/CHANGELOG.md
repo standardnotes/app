@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.84.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.3...@standardnotes/web@3.84.4) (2022-10-23)
+
+### Bug Fixes
+
+* new note button on mobile when no account ([47b3286](https://github.com/standardnotes/app/commit/47b3286235da7b5f63aef5fbe0d8c9b34d1f4558))
+
 ## [3.84.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.2...@standardnotes/web@3.84.3) (2022-10-23)
 
 ### Bug Fixes
