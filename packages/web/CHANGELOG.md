@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.84.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.5...@standardnotes/web@3.84.6) (2022-10-23)
+
+### Bug Fixes
+
+* listed menu closing when clicking inside challenge modal ([#1863](https://github.com/standardnotes/app/issues/1863)) ([bb63cbe](https://github.com/standardnotes/app/commit/bb63cbe2d15dd47d62a2cc34f824ed4bec6091de))
+* **web:** emoji length computation ([#1864](https://github.com/standardnotes/app/issues/1864)) ([bda16b8](https://github.com/standardnotes/app/commit/bda16b88c0708bb28f2b7da2fdf4cad2af1936d5))
+
 ## [3.84.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.4...@standardnotes/web@3.84.5) (2022-10-23)
 
 ### Bug Fixes
