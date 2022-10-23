@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.84.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.4...@standardnotes/web@3.84.5) (2022-10-23)
+
+### Bug Fixes
+
+* note option changes not updating correctly ([#1862](https://github.com/standardnotes/app/issues/1862)) ([9a509a7](https://github.com/standardnotes/app/commit/9a509a79c0e226b561d6606bf96907086326ae8f))
+
 ## [3.84.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.3...@standardnotes/web@3.84.4) (2022-10-23)
 
 ### Bug Fixes

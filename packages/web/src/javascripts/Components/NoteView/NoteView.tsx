@@ -898,8 +898,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     const observer = new MutationObserver((records) => {
       for (const record of records) {
-        const removedNodes = record.removedNodes.values()
-        for (const node of removedNodes) {
+        record.removedNodes.forEach((node) => {
           if (node === editor) {
             this.removeTabObserver?.()
             this.removeTabObserver = undefined
@@ -907,7 +906,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
             editor.removeEventListener('scroll', this.resetScrollPosition)
             this.scrollPosition = 0
           }
-        }
+        })
       }
     })
 
