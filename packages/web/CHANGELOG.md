@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.84.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.1...@standardnotes/web@3.84.2) (2022-10-22)
+
+### Bug Fixes
+
+* hide items list button on desktop ([fc6c6ba](https://github.com/standardnotes/app/commit/fc6c6bad2ca0e8ec8b7e1410a6a88713ec7e6ec3))
+
 ## [3.84.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.0...@standardnotes/web@3.84.1) (2022-10-21)
 
 ### Bug Fixes
