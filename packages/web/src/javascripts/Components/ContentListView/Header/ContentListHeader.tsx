@@ -83,7 +83,7 @@ const ContentListHeader = ({
           </Popover>
         </div>
         <button
-          className="absolute bottom-6 right-6 ml-3 flex h-13 w-13 cursor-pointer items-center justify-center rounded-full border border-solid border-transparent bg-info text-info-contrast hover:brightness-125 md:static md:h-8 md:w-8"
+          className="absolute bottom-6 right-6 z-editor-title-bar ml-3 flex h-13 w-13 cursor-pointer items-center justify-center rounded-full border border-solid border-transparent bg-info text-info-contrast hover:brightness-125 md:static md:h-8 md:w-8"
           title={addButtonLabel}
           aria-label={addButtonLabel}
           onClick={addNewItem}
