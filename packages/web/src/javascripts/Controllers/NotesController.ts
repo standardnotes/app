@@ -80,7 +80,7 @@ export class NotesController extends AbstractViewController {
   }
 
   public get selectedNotes(): SNNote[] {
-    return this.selectionController.getSelectedItems<SNNote>(ContentType.Note)
+    return this.selectionController.getFilteredSelectedItems<SNNote>(ContentType.Note)
   }
 
   get firstSelectedNote(): SNNote | undefined {
