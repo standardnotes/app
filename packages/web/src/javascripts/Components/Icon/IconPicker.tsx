@@ -2,6 +2,7 @@ import { EmojiString, Platform, VectorIconNameOrEmoji } from '@standardnotes/snj
 import { FunctionComponent, useMemo, useRef, useState } from 'react'
 import Dropdown from '../Dropdown/Dropdown'
 import { DropdownItem } from '../Dropdown/DropdownItem'
+import { getEmojiLength } from './EmojiLength'
 import { isIconEmoji } from './Icon'
 import { IconNameToSvgMapping } from './IconNameToSvgMapping'
 import { IconPickerType } from './IconPickerType'
@@ -72,7 +73,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className }: Props)
   const handleEmojiChange = (value: EmojiString) => {
     setEmojiInputValue(value)
 
-    const emojiLength = [...value].length
+    const emojiLength = getEmojiLength(value)
     if (emojiLength === 1) {
       onIconChange(value)
       emojiInputRef.current?.blur()

@@ -2,6 +2,7 @@
   "extends": "../../node_modules/@standardnotes/config/src/tsconfig.json",
   "compilerOptions": {
     "skipLibCheck": true,
+    "lib": ["ES2022"],
     "target": "ES2019",
     "module": "commonjs",
     "moduleResolution": "node",
