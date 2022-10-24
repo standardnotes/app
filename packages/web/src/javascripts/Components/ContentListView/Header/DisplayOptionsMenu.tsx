@@ -169,19 +169,31 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     const isSelected = currentMode === mode
 
     return (
-      <button
-        className={`relative mr-3 cursor-pointer border-0 bg-default text-sm focus:shadow-none ${
-          isSelected ? 'font-bold text-info' : 'text-text'
-        }`}
-        onClick={() => {
-          setCurrentMode(mode)
-        }}
+      <div
+        className={`${
+          isSelected ? 'bg-info' : 'bg-transparent'
+        } rounded-full border-2 border-solid border-transparent px-2`}
       >
-        <div className="flex">
-          {icon && <Icon type={icon as IconType} className={`mr-1 ${isSelected ? 'text-info' : 'text-neutral'}`} />}
-          {label}
-        </div>
-      </button>
+        <button
+          className={`relative cursor-pointer border-0 text-sm focus:shadow-none ${
+            isSelected ? 'text-info-contrast' : 'text-text'
+          }`}
+          onClick={() => {
+            setCurrentMode(mode)
+          }}
+        >
+          <div className="flex items-center justify-center">
+            {icon && (
+              <Icon
+                size="small"
+                type={icon as IconType}
+                className={`mr-1 ${isSelected ? 'text-info-contrast' : 'text-neutral'}`}
+              />
+            )}
+            <div>{label}</div>
+          </div>
+        </button>
+      </div>
     )
   }
 
