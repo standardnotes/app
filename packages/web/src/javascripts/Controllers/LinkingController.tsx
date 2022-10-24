@@ -367,12 +367,8 @@ export class LinkingController extends AbstractViewController {
         return false
       }
 
-      const isItemReferencedByActiveItem = this.application.items
-        .itemsReferencingItem(item)
-        .some((linkedItem) => linkedItem.uuid === this.activeItem?.uuid)
-      const isActiveItemReferencedByItem = this.application.items
-        .itemsReferencingItem(this.activeItem)
-        .some((linkedItem) => linkedItem.uuid === item.uuid)
+      const isItemReferencedByActiveItem = this.activeItem.references.some((ref) => ref.uuid === item.uuid)
+      const isActiveItemReferencedByItem = item.references.some((ref) => ref.uuid === this.activeItem?.uuid)
 
       if (this.activeItem.content_type === item.content_type) {
         return isItemReferencedByActiveItem
