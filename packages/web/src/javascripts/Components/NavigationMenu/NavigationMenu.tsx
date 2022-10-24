@@ -7,7 +7,7 @@ export const NavigationMenuButton = () => {
 
   return (
     <RoundIconButton
-      className="mr-3 md:hidden"
+      className="mr-3 md:hidden pointer-coarse:md-only:flex pointer-coarse:lg-only:flex"
       onClick={() => {
         if (selectedPane === AppPaneId.Items || selectedPane === AppPaneId.Editor) {
           toggleAppPane(AppPaneId.Navigation)
