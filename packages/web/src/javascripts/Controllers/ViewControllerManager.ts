@@ -1,5 +1,5 @@
 import { PaneController } from './PaneController'
-import { storage, StorageKey } from '@standardnotes/ui-services'
+import { storage, StorageKey, ToastService, ToastServiceInterface } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { destroyAllObjectProperties } from '@/Utils'
@@ -71,6 +71,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   private subscriptionManager: SubscriptionClientInterface
   private persistenceService: PersistenceService
   private applicationEventObserver: EventObserverInterface
+  private toastService: ToastServiceInterface
 
   constructor(public application: WebApplication, private device: WebOrDesktopDeviceInterface) {
     this.eventBus = new InternalEventBus()
@@ -146,6 +147,8 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
 
     this.historyModalController = new HistoryModalController(this.application, this.eventBus)
 
+    this.toastService = new ToastService()
+
     this.applicationEventObserver = new ApplicationEventObserver(
       application.routeService,
       this.purchaseFlowController,
@@ -154,6 +157,8 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
       this.syncStatusController,
       application.sync,
       application.sessions,
+      application.subscriptions,
+      this.toastService,
     )
 
     this.addAppEventObserver()
