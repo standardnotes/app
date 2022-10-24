@@ -211,6 +211,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         <div className="mt-3">Note Type</div>
         <div className="mt-2">
           <Dropdown
+            portal={false}
             disabled={disabled}
             fullWidth={true}
             id="def-editor-dropdown"
@@ -225,6 +226,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         <div className="mt-3">Title Format</div>
         <div className="mt-2">
           <Dropdown
+            portal={false}
             disabled={disabled}
             fullWidth={true}
             id="def-new-note-title-format"

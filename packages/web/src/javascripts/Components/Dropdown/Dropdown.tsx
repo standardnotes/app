@@ -16,6 +16,7 @@ type DropdownProps = {
   disabled?: boolean
   className?: string
   fullWidth?: boolean
+  portal?: boolean
 }
 
 type ListboxButtonProps = DropdownItem & {
@@ -52,6 +53,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
   disabled,
   className,
   fullWidth,
+  portal = true,
 }) => {
   const labelId = `${id}-label`
 
@@ -80,7 +82,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
             })
           }}
         />
-        <ListboxPopover className="sn-dropdown sn-dropdown-popover">
+        <ListboxPopover portal={portal} className="sn-dropdown sn-dropdown-popover">
           <div className="sn-component">
             <ListboxList>
               {items.map((item) => (

@@ -29,7 +29,6 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Defaults</Title>
-        <HorizontalSeparator classes="my-4" />
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             <Subtitle>Spellcheck</Subtitle>
