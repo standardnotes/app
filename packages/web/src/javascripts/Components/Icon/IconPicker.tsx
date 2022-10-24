@@ -93,6 +93,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className }: Props)
       <div className={'mt-2 h-full min-h-0 overflow-auto'}>
         {currentType === 'icon' && (
           <Dropdown
+            fullWidth={true}
             id="change-tag-icon-dropdown"
             label="Change the icon for a tag"
             items={iconOptions}

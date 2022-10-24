@@ -35,7 +35,8 @@ export class NoteViewController implements ItemViewControllerInterface {
   public isTemplateNote = false
   private saveTimeout?: ReturnType<typeof setTimeout>
   private defaultTitle: string | undefined
-  private defaultTag: UuidString | undefined
+  private defaultTagUuid: UuidString | undefined
+  private defaultTag?: SNTag
   public runtimeId = `${Math.random()}`
 
   constructor(
@@ -49,7 +50,11 @@ export class NoteViewController implements ItemViewControllerInterface {
 
     if (templateNoteOptions) {
       this.defaultTitle = templateNoteOptions.title
-      this.defaultTag = templateNoteOptions.tag
+      this.defaultTagUuid = templateNoteOptions.tag
+    }
+
+    if (this.defaultTagUuid) {
+      this.defaultTag = this.application.items.findItem(this.defaultTagUuid) as SNTag
     }
   }
 
@@ -67,20 +72,27 @@ export class NoteViewController implements ItemViewControllerInterface {
 
   async initialize(addTagHierarchy: boolean): Promise<void> {
     if (!this.item) {
-      const editor = this.application.componentManager.getDefaultEditor()
+      const editorIdentifier =
+        this.defaultTag?.preferences?.editorIdentifier ||
+        this.application.componentManager.getDefaultEditor()?.identifier
+
+      const defaultEditor = editorIdentifier
+        ? this.application.componentManager.componentWithIdentifier(editorIdentifier)
+        : undefined
+
       const note = this.application.mutator.createTemplateItem<NoteContent, SNNote>(ContentType.Note, {
         text: '',
         title: this.defaultTitle || '',
-        noteType: editor?.noteType || NoteType.Plain,
-        editorIdentifier: editor?.identifier,
+        noteType: defaultEditor?.noteType || NoteType.Plain,
+        editorIdentifier: editorIdentifier,
         references: [],
       })
 
       this.isTemplateNote = true
       this.item = note
 
-      if (this.defaultTag) {
-        const tag = this.application.items.findItem(this.defaultTag) as SNTag
+      if (this.defaultTagUuid) {
+        const tag = this.application.items.findItem(this.defaultTagUuid) as SNTag
         await this.application.items.addTagToNote(note, tag, addTagHierarchy)
       }
 

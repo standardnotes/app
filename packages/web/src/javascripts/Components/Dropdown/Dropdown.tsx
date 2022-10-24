@@ -15,6 +15,7 @@ type DropdownProps = {
   onChange: (value: string, item: DropdownItem) => void
   disabled?: boolean
   className?: string
+  fullWidth?: boolean
 }
 
 type ListboxButtonProps = DropdownItem & {
@@ -42,7 +43,16 @@ const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
   </>
 )
 
-const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, onChange, disabled, className }) => {
+const Dropdown: FunctionComponent<DropdownProps> = ({
+  id,
+  label,
+  items,
+  value,
+  onChange,
+  disabled,
+  className,
+  fullWidth,
+}) => {
   const labelId = `${id}-label`
 
   const handleChange = (value: string) => {
@@ -56,6 +66,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, o
       <VisuallyHidden id={labelId}>{label}</VisuallyHidden>
       <ListboxInput value={value} onChange={handleChange} aria-labelledby={labelId} disabled={disabled}>
         <StyledListboxButton
+          fullWidth={fullWidth}
           children={({ value, label, isExpanded }) => {
             const current = items.find((item) => item.value === value)
             const icon = current ? current?.icon : null

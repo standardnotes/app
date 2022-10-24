@@ -18,8 +18,8 @@ import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { DisplayOptionsMenuProps } from './DisplayOptionsMenuProps'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
-
-type PreferenceMode = 'global' | 'tag'
+import NewNotePreferences from './NewNotePreferences'
+import { PreferenceMode } from './PreferenceMode'
 
 const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   closeDisplayOptionsMenu,
@@ -146,7 +146,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   }, [application, preferences, changePreferences])
 
   const toggleShowTrashed = useCallback(() => {
-    changePreferences({ showArchived: !preferences.showTrashed })
+    changePreferences({ showTrashed: !preferences.showTrashed })
   }, [application, preferences, changePreferences])
 
   const toggleHideProtected = useCallback(() => {
@@ -191,7 +191,9 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         </div>
         {currentMode === 'tag' && <button onClick={resetTagPreferences}>Reset</button>}
       </div>
+
       <MenuItemSeparator />
+
       <div className="my-1 px-3 text-xs font-semibold uppercase text-text">Sort by</div>
       <MenuItem
         className="py-2"
@@ -314,6 +316,15 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       >
         Show trashed
       </MenuItem>
+
+      <MenuItemSeparator />
+
+      <NewNotePreferences
+        application={application}
+        selectedTag={selectedTag}
+        mode={currentMode}
+        changePreferencesCallback={changePreferences}
+      />
     </Menu>
   )
 }

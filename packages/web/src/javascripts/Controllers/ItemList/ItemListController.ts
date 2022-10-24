@@ -579,20 +579,18 @@ export class ItemListController
       await this.navigationController.selectHomeNavigationView()
     }
 
-    const titleFormat = this.application.getPreference(
-      PrefKey.NewNoteTitleFormat,
-      PrefDefaults[PrefKey.NewNoteTitleFormat],
-    )
+    const titleFormat =
+      this.navigationController.selected?.preferences?.newNoteTitleFormat ||
+      this.application.getPreference(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat])
 
     let title = formatDateAndTimeForNote(new Date())
 
     if (titleFormat === NewNoteTitleFormat.CurrentNoteCount) {
       title = `Note ${this.notes.length + 1}`
     } else if (titleFormat === NewNoteTitleFormat.CustomFormat) {
-      const customFormat = this.application.getPreference(
-        PrefKey.CustomNoteTitleFormat,
-        PrefDefaults[PrefKey.CustomNoteTitleFormat],
-      )
+      const customFormat =
+        this.navigationController.selected?.preferences?.customNoteTitleFormat ||
+        this.application.getPreference(PrefKey.CustomNoteTitleFormat, PrefDefaults[PrefKey.CustomNoteTitleFormat])
       title = dayjs().format(customFormat)
     } else if (titleFormat === NewNoteTitleFormat.Empty) {
       title = ''

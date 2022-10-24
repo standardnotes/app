@@ -10,12 +10,7 @@ import RoundIconButton from '@/Components/Button/RoundIconButton'
 import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 
 type Props = {
-  application: {
-    getPreference: WebApplication['getPreference']
-    setPreference: WebApplication['setPreference']
-    mutator: WebApplication['mutator']
-    isNativeMobileWeb: WebApplication['isNativeMobileWeb']
-  }
+  application: WebApplication
   panelTitle: string
   icon?: IconType | string
   addButtonLabel: string
