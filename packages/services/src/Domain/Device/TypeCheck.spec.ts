@@ -2,7 +2,7 @@ import { Environment } from '@standardnotes/models'
 
 import { DeviceInterface } from './DeviceInterface'
 import { MobileDeviceInterface } from './MobileDeviceInterface'
-import { isMobileDevice } from './TypeCheck'
+import { isMobileDevice, isNativeMobileWebDevice } from './TypeCheck'
 
 describe('device type check', () => {
   it('should return true for mobile devices', () => {
@@ -12,12 +12,13 @@ describe('device type check', () => {
 
     const nativeMobileWeb = { environment: Environment.NativeMobileWeb } as jest.Mocked<MobileDeviceInterface>
 
-    expect(isMobileDevice(nativeMobileWeb)).toBeTruthy()
+    expect(isNativeMobileWebDevice(nativeMobileWeb)).toBeTruthy()
   })
 
   it('should return false for non mobile devices', () => {
     const device = { environment: Environment.Web } as jest.Mocked<DeviceInterface>
 
     expect(isMobileDevice(device)).toBeFalsy()
+    expect(isNativeMobileWebDevice(device)).toBeFalsy()
   })
 })

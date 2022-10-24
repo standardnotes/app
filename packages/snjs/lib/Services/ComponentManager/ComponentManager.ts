@@ -37,7 +37,7 @@ import {
   InternalEventBusInterface,
   AlertService,
   DeviceInterface,
-  isMobileDevice,
+  isNativeMobileWebDevice,
 } from '@standardnotes/services'
 
 const DESKTOP_URL_PREFIX = 'sn://'
@@ -229,7 +229,7 @@ export class SNComponentManager
         this.handleChangedComponents(items, source)
 
         const device = this.device
-        if (isMobileDevice(device)) {
+        if (isNativeMobileWebDevice(device)) {
           inserted.forEach((component) => {
             const url = this.urlForComponent(component)
             if (!url) {
@@ -319,8 +319,12 @@ export class SNComponentManager
       }
     }
 
+    const isWeb = this.environment === Environment.Web
     const isMobileWebView = this.environment === Environment.NativeMobileWeb
     if (nativeFeature) {
+      if (!isWeb && !isMobileWebView) {
+        throw Error('Mobile must override urlForComponent to handle native paths')
+      }
       let baseUrlRequiredForThemesInsideEditors = window.location.origin
       if (isMobileWebView) {
         baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]
