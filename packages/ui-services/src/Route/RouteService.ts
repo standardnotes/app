@@ -5,6 +5,7 @@ import {
   InternalEventBusInterface,
 } from '@standardnotes/services'
 
+import { RootQueryParam } from './RootQueryParam'
 import { RouteParser } from './RouteParser'
 import { RouteParserInterface } from './RouteParserInterface'
 import { RouteServiceEvent } from './RouteServiceEvent'
@@ -30,13 +31,13 @@ export class RouteService
     this.unsubApp()
   }
 
-  public getRoute(): RouteParserInterface {
+  getRoute(): RouteParserInterface {
     return new RouteParser(window.location.href)
   }
 
-  public removeSettingsFromURLQueryParameters() {
+  removeQueryParameterFromURL(param: RootQueryParam): void {
     const urlSearchParams = new URLSearchParams(window.location.search)
-    urlSearchParams.delete('settings')
+    urlSearchParams.delete(param)
 
     const newUrl = `${window.location.origin}${window.location.pathname}${urlSearchParams.toString()}`
     window.history.replaceState(null, document.title, newUrl)

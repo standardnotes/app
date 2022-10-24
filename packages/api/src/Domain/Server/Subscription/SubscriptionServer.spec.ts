@@ -38,7 +38,7 @@ describe('SubscriptionServer', () => {
   })
 
   it('should accept an invite to a shared subscription', async () => {
-    httpService.get = jest.fn().mockReturnValue({
+    httpService.post = jest.fn().mockReturnValue({
       data: { success: true },
     } as jest.Mocked<SubscriptionInviteAcceptResponse>)
 

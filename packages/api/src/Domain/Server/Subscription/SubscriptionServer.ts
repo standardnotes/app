@@ -17,7 +17,7 @@ export class SubscriptionServer implements SubscriptionServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
 
   async acceptInvite(params: SubscriptionInviteAcceptRequestParams): Promise<SubscriptionInviteAcceptResponse> {
-    const response = await this.httpService.get(Paths.v1.acceptInvite(params.inviteUuid), params)
+    const response = await this.httpService.post(Paths.v1.acceptInvite(params.inviteUuid), params)
 
     return response as SubscriptionInviteAcceptResponse
   }
