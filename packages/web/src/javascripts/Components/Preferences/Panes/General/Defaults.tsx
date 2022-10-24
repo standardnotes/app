@@ -7,6 +7,7 @@ import {
   ComponentMutator,
   SNComponent,
   NewNoteTitleFormat,
+  Platform,
 } from '@standardnotes/snjs'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/Application'
@@ -52,7 +53,13 @@ const getDefaultEditor = (application: WebApplication) => {
   return application.componentManager.componentsForArea(ComponentArea.Editor).filter((e) => e.isDefaultEditor())[0]
 }
 
+export const AndroidConfirmBeforeExitKey = 'ConfirmBeforeExit'
+
 const Defaults: FunctionComponent<Props> = ({ application }) => {
+  const [androidConfirmBeforeExit, setAndroidConfirmBeforeExit] = useState(
+    () => (application.getValue(AndroidConfirmBeforeExitKey) as boolean) ?? true,
+  )
+
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([])
   const [defaultEditorValue, setDefaultEditorValue] = useState(
     () => getDefaultEditor(application)?.package_info?.identifier || 'plain-editor',
@@ -143,10 +150,26 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
     [],
   )
 
+  const toggleAndroidConfirmBeforeExit = () => {
+    const newValue = !androidConfirmBeforeExit
+    setAndroidConfirmBeforeExit(newValue)
+    application.setValue(AndroidConfirmBeforeExitKey, newValue)
+  }
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Defaults</Title>
+        {application.platform === Platform.Android && (
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col">
+              <Subtitle>Always ask before closing app</Subtitle>
+              <Text>Whether a confirmation dialog should be shown before closing the app.</Text>
+            </div>
+            <Switch onChange={toggleAndroidConfirmBeforeExit} checked={androidConfirmBeforeExit} />
+          </div>
+        )}
+        <HorizontalSeparator classes="my-4" />
         <div>
           <Subtitle>Default Note Type</Subtitle>
           <Text>New notes will be created using this type</Text>

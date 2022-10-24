@@ -567,7 +567,12 @@ export class MobileDevice implements MobileDeviceInterface {
     return true
   }
 
-  confirmAndExit() {
+  exitApp(shouldConfirm?: boolean) {
+    if (!shouldConfirm) {
+      SNReactNative.exitApp()
+      return
+    }
+
     Alert.alert(
       'Close app',
       'Do you want to close the app?',
