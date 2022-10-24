@@ -343,54 +343,89 @@ export class LinkingController extends AbstractViewController {
   }
 
   getSearchResults = (searchQuery: string) => {
-    if (!searchQuery.length) {
-      return {
-        linkedResults: [],
-        unlinkedResults: [],
-        shouldShowCreateTag: false,
-      }
+    let unlinkedResults: LinkableItem[] = []
+    const linkedResults: ItemLink<LinkableItem>[] = []
+    let shouldShowCreateTag = false
+
+    const defaultReturnValue = {
+      linkedResults,
+      unlinkedResults,
+      shouldShowCreateTag,
     }
 
-    const searchResults = naturalSort(
-      this.application.items.getItems([ContentType.Note, ContentType.File, ContentType.Tag]).filter((item) => {
-        const title = item instanceof SNTag ? this.application.items.getTagLongTitle(item) : item.title
-        const matchesQuery = title?.toLowerCase().includes(searchQuery.toLowerCase())
-        const isNotActiveItem = this.activeItem?.uuid !== item.uuid
-        const isArchivedOrTrashed = item.archived || item.trashed
-        return matchesQuery && isNotActiveItem && !isArchivedOrTrashed
-      }),
+    if (!searchQuery.length) {
+      return defaultReturnValue
+    }
+
+    if (!this.activeItem) {
+      return defaultReturnValue
+    }
+
+    const searchableItems = naturalSort(
+      this.application.items.getItems([ContentType.Note, ContentType.File, ContentType.Tag]),
       'title',
     )
 
-    const isAlreadyLinked = (item: DecryptedItemInterface<ItemContent>) => {
-      if (!this.activeItem) {
-        return false
+    const unlinkedTags: LinkableItem[] = []
+    const unlinkedNotes: LinkableItem[] = []
+    const unlinkedFiles: LinkableItem[] = []
+
+    for (let index = 0; index < searchableItems.length; index++) {
+      const item = searchableItems[index]
+
+      const title = item instanceof SNTag ? this.application.items.getTagLongTitle(item) : item.title
+
+      const matchesQuery = title?.toLowerCase().includes(searchQuery.toLowerCase())
+
+      const isActiveItem = this.activeItem?.uuid === item.uuid
+      const isArchivedOrTrashed = item.archived || item.trashed
+
+      const isValidSearchResult = matchesQuery && !isActiveItem && !isArchivedOrTrashed
+
+      if (!isValidSearchResult) {
+        continue
       }
+
+      let isAlreadyLinked = false
 
       const isItemReferencedByActiveItem = this.activeItem.references.some((ref) => ref.uuid === item.uuid)
       const isActiveItemReferencedByItem = item.references.some((ref) => ref.uuid === this.activeItem?.uuid)
 
       if (this.activeItem.content_type === item.content_type) {
-        return isItemReferencedByActiveItem
+        isAlreadyLinked = isItemReferencedByActiveItem
+      } else {
+        isAlreadyLinked = isActiveItemReferencedByItem || isItemReferencedByActiveItem
       }
 
-      return isActiveItemReferencedByItem || isItemReferencedByActiveItem
+      if (isAlreadyLinked) {
+        if (linkedResults.length < 20) {
+          linkedResults.push(this.createLinkFromItem(item, 'linked'))
+        }
+        continue
+      }
+
+      if (unlinkedTags.length < 5 && item.content_type === ContentType.Tag) {
+        unlinkedTags.push(item)
+        continue
+      }
+
+      if (unlinkedNotes.length < 5 && item.content_type === ContentType.Note) {
+        unlinkedNotes.push(item)
+        continue
+      }
+
+      if (unlinkedFiles.length < 5 && item.content_type === ContentType.File) {
+        unlinkedFiles.push(item)
+        continue
+      }
     }
 
-    const unlinkedItems = searchResults.filter((item) => !isAlreadyLinked(item))
-    const unlinkedTagResults = unlinkedItems.filter((item) => item.content_type === ContentType.Tag).slice(0, 5)
-    const unlinkedNoteResults = unlinkedItems.filter((item) => item.content_type === ContentType.Note).slice(0, 5)
-    const unlinkedFileResults = unlinkedItems.filter((item) => item.content_type === ContentType.File).slice(0, 5)
-    const unlinkedResults = unlinkedTagResults.concat(unlinkedNoteResults).concat(unlinkedFileResults)
-    const linkedResults = searchResults
-      .filter(isAlreadyLinked)
-      .slice(0, 20)
-      .map((item) => this.createLinkFromItem(item, 'linked'))
+    unlinkedResults = unlinkedTags.concat(unlinkedNotes).concat(unlinkedFiles)
 
     const isResultExistingTag = (result: DecryptedItemInterface<ItemContent>) =>
       result.content_type === ContentType.Tag && result.title === searchQuery
 
-    const shouldShowCreateTag =
+    shouldShowCreateTag =
       !linkedResults.find((link) => isResultExistingTag(link.item)) && !unlinkedResults.find(isResultExistingTag)
 
     return {
