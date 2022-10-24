@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.17.2...@standardnotes/api@1.18.0) (2022-10-24)
+
+### Features
+
+* **web:** add accepting subscription invites from UI ([0c44ad6](https://github.com/standardnotes/app/commit/0c44ad6c8eace6d5fe957fa75c205c66c5f590b4))
+
 ## [1.17.2](https://github.com/standardnotes/app/compare/@standardnotes/api@1.17.1...@standardnotes/api@1.17.2) (2022-10-21)
 
 **Note:** Version bump only for package @standardnotes/api

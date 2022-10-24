@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.35.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.34.4...@standardnotes/services@1.35.0) (2022-10-24)
+
+### Features
+
+* **web:** add accepting subscription invites from UI ([0c44ad6](https://github.com/standardnotes/app/commit/0c44ad6c8eace6d5fe957fa75c205c66c5f590b4))
+
 ## [1.34.4](https://github.com/standardnotes/app/compare/@standardnotes/services@1.34.3...@standardnotes/services@1.34.4) (2022-10-21)
 
 **Note:** Version bump only for package @standardnotes/services

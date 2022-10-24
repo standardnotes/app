@@ -13,6 +13,20 @@ export class SubscriptionManager extends AbstractService implements Subscription
     super(internalEventBus)
   }
 
+  async acceptInvitation(inviteUuid: string): Promise<{ success: true } | { success: false; message: string }> {
+    try {
+      const result = await this.subscriptionApiService.acceptInvite(inviteUuid)
+
+      if (result.data.error) {
+        return { success: false, message: result.data.error.message }
+      }
+
+      return result.data
+    } catch (error) {
+      return { success: false, message: 'Could not accept invitation.' }
+    }
+  }
+
   async listSubscriptionInvitations(): Promise<Invitation[]> {
     try {
       const response = await this.subscriptionApiService.listInvites()

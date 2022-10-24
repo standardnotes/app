@@ -1,7 +1,8 @@
+import { RootQueryParam } from './RootQueryParam'
 import { RouteParserInterface } from './RouteParserInterface'
 
 export interface RouteServiceInterface {
   deinit(): void
   getRoute(): RouteParserInterface
-  removeSettingsFromURLQueryParameters(): void
+  removeQueryParameterFromURL(param: RootQueryParam): void
 }

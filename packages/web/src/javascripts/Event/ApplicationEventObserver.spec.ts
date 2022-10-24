@@ -2,17 +2,30 @@
  * @jest-environment jsdom
  */
 
-import { RouteServiceInterface, RouteType } from '@standardnotes/ui-services'
-import { ApplicationEvent, SessionsClientInterface, SyncClientInterface, SyncOpStatus, User } from '@standardnotes/snjs'
+import {
+  RootQueryParam,
+  RouteServiceInterface,
+  RouteParserInterface,
+  RouteType,
+  ToastServiceInterface,
+} from '@standardnotes/ui-services'
+import { ToastType } from '@standardnotes/toast'
+import {
+  ApplicationEvent,
+  SessionsClientInterface,
+  SubscriptionClientInterface,
+  SyncClientInterface,
+  SyncOpStatus,
+  User,
+} from '@standardnotes/snjs'
 
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { PreferencesController } from '@/Controllers/PreferencesController'
 import { PurchaseFlowController } from '@/Controllers/PurchaseFlow/PurchaseFlowController'
 import { SyncStatusController } from '@/Controllers/SyncStatusController'
+import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 
 import { ApplicationEventObserver } from './ApplicationEventObserver'
-import { RouteParserInterface } from '@standardnotes/ui-services/dist/Route/RouteParserInterface'
-import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 
 describe('ApplicationEventObserver', () => {
   let routeService: RouteServiceInterface
@@ -22,6 +35,8 @@ describe('ApplicationEventObserver', () => {
   let syncStatusController: SyncStatusController
   let syncClient: SyncClientInterface
   let sessionManager: SessionsClientInterface
+  let subscriptionManager: SubscriptionClientInterface
+  let toastService: ToastServiceInterface
 
   const createObserver = () =>
     new ApplicationEventObserver(
@@ -32,6 +47,8 @@ describe('ApplicationEventObserver', () => {
       syncStatusController,
       syncClient,
       sessionManager,
+      subscriptionManager,
+      toastService,
     )
 
   beforeEach(() => {
@@ -39,6 +56,7 @@ describe('ApplicationEventObserver', () => {
     routeService.getRoute = jest.fn().mockReturnValue({
       type: RouteType.None,
     } as jest.Mocked<RouteParserInterface>)
+    routeService.removeQueryParameterFromURL = jest.fn()
 
     purchaseFlowController = {} as jest.Mocked<PurchaseFlowController>
     purchaseFlowController.openPurchaseFlow = jest.fn()
@@ -59,6 +77,12 @@ describe('ApplicationEventObserver', () => {
 
     sessionManager = {} as jest.Mocked<SessionsClientInterface>
     sessionManager.getUser = jest.fn().mockReturnValue({} as jest.Mocked<User>)
+
+    subscriptionManager = {} as jest.Mocked<SubscriptionClientInterface>
+    subscriptionManager.acceptInvitation = jest.fn()
+
+    toastService = {} as jest.Mocked<ToastServiceInterface>
+    toastService.showToast = jest.fn()
   })
 
   describe('Upon Application Launched', () => {
@@ -102,6 +126,59 @@ describe('ApplicationEventObserver', () => {
       expect(preferencesController.openPreferences).not.toHaveBeenCalled()
       expect(preferencesController.setCurrentPane).not.toHaveBeenCalled()
     })
+
+    it('should open up sign in if user is not logged in and to accept subscription invitation', async () => {
+      sessionManager.getUser = jest.fn().mockReturnValue(undefined)
+      routeService.getRoute = jest.fn().mockReturnValue({
+        type: RouteType.AcceptSubscriptionInvite,
+        subscriptionInviteParams: {
+          inviteUuid: '1-2-3',
+        },
+      } as jest.Mocked<RouteParserInterface>)
+
+      await createObserver().handle(ApplicationEvent.Launched)
+
+      expect(accountMenuController.setShow).toHaveBeenCalledWith(true)
+      expect(accountMenuController.setCurrentPane).toHaveBeenCalledWith(AccountMenuPane.SignIn)
+      expect(subscriptionManager.acceptInvitation).not.toHaveBeenCalled()
+      expect(toastService.showToast).not.toHaveBeenCalled()
+    })
+
+    it('should accept subscription invitation if user is logged in', async () => {
+      subscriptionManager.acceptInvitation = jest.fn().mockReturnValue({ success: true })
+      routeService.getRoute = jest.fn().mockReturnValue({
+        type: RouteType.AcceptSubscriptionInvite,
+        subscriptionInviteParams: {
+          inviteUuid: '1-2-3',
+        },
+      } as jest.Mocked<RouteParserInterface>)
+
+      await createObserver().handle(ApplicationEvent.Launched)
+
+      expect(subscriptionManager.acceptInvitation).toHaveBeenCalledWith('1-2-3')
+      expect(toastService.showToast).toHaveBeenCalledWith(
+        ToastType.Success,
+        'Successfully joined a shared subscription',
+      )
+      expect(routeService.removeQueryParameterFromURL).toHaveBeenCalledWith(RootQueryParam.AcceptSubscriptionInvite)
+    })
+
+    it('should show accept subscription invitation failure if user is logged in and accepting fails', async () => {
+      subscriptionManager.acceptInvitation = jest.fn().mockReturnValue({ success: false, message: 'Oops!' })
+
+      routeService.getRoute = jest.fn().mockReturnValue({
+        type: RouteType.AcceptSubscriptionInvite,
+        subscriptionInviteParams: {
+          inviteUuid: '1-2-3',
+        },
+      } as jest.Mocked<RouteParserInterface>)
+
+      await createObserver().handle(ApplicationEvent.Launched)
+
+      expect(subscriptionManager.acceptInvitation).toHaveBeenCalledWith('1-2-3')
+      expect(toastService.showToast).toHaveBeenCalledWith(ToastType.Error, 'Oops!')
+      expect(routeService.removeQueryParameterFromURL).toHaveBeenCalledWith(RootQueryParam.AcceptSubscriptionInvite)
+    })
   })
 
   describe('Upon Signing In', () => {
@@ -117,6 +194,25 @@ describe('ApplicationEventObserver', () => {
 
       expect(preferencesController.openPreferences).toHaveBeenCalled()
       expect(preferencesController.setCurrentPane).toHaveBeenCalledWith('general')
+    })
+
+    it('should accept subscription invitation', async () => {
+      subscriptionManager.acceptInvitation = jest.fn().mockReturnValue({ success: true })
+      routeService.getRoute = jest.fn().mockReturnValue({
+        type: RouteType.AcceptSubscriptionInvite,
+        subscriptionInviteParams: {
+          inviteUuid: '1-2-3',
+        },
+      } as jest.Mocked<RouteParserInterface>)
+
+      await createObserver().handle(ApplicationEvent.SignedIn)
+
+      expect(subscriptionManager.acceptInvitation).toHaveBeenCalledWith('1-2-3')
+      expect(toastService.showToast).toHaveBeenCalledWith(
+        ToastType.Success,
+        'Successfully joined a shared subscription',
+      )
+      expect(routeService.removeQueryParameterFromURL).toHaveBeenCalledWith(RootQueryParam.AcceptSubscriptionInvite)
     })
   })
 
