@@ -36,6 +36,8 @@ import {
   DesktopManagerInterface,
   InternalEventBusInterface,
   AlertService,
+  DeviceInterface,
+  MobileDeviceInterface,
 } from '@standardnotes/services'
 
 const DESKTOP_URL_PREFIX = 'sn://'
@@ -82,6 +84,7 @@ export class SNComponentManager
     private environment: Environment,
     private platform: Platform,
     protected override internalEventBus: InternalEventBusInterface,
+    private device: DeviceInterface,
   ) {
     super(internalEventBus)
     this.loggingEnabled = false
@@ -221,9 +224,23 @@ export class SNComponentManager
   addItemObserver(): void {
     this.removeItemObserver = this.itemManager.addObserver<SNComponent>(
       [ContentType.Component, ContentType.Theme],
-      ({ changed, inserted, source }) => {
+      ({ changed, inserted, removed, source }) => {
         const items = [...changed, ...inserted]
         this.handleChangedComponents(items, source)
+
+        if (this.environment === Environment.NativeMobileWeb) {
+          inserted.forEach((component) => {
+            const url = this.urlForComponent(component)
+            if (!url) {
+              return
+            }
+            ;(this.device as MobileDeviceInterface).addComponentUrl(component.uuid, url)
+          })
+
+          removed.forEach((component) => {
+            ;(this.device as MobileDeviceInterface).removeComponentUrl(component.uuid)
+          })
+        }
       },
     )
   }

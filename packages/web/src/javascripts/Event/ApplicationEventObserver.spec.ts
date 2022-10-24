@@ -13,10 +13,8 @@ import { SyncStatusController } from '@/Controllers/SyncStatusController'
 import { ApplicationEventObserver } from './ApplicationEventObserver'
 import { RouteParserInterface } from '@standardnotes/ui-services/dist/Route/RouteParserInterface'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
-import { WebApplication } from '@/Application/Application'
 
 describe('ApplicationEventObserver', () => {
-  let application: WebApplication
   let routeService: RouteServiceInterface
   let purchaseFlowController: PurchaseFlowController
   let accountMenuController: AccountMenuController
@@ -27,7 +25,6 @@ describe('ApplicationEventObserver', () => {
 
   const createObserver = () =>
     new ApplicationEventObserver(
-      application,
       routeService,
       purchaseFlowController,
       accountMenuController,
@@ -38,9 +35,6 @@ describe('ApplicationEventObserver', () => {
     )
 
   beforeEach(() => {
-    application = {} as jest.Mocked<WebApplication>
-    application.isNativeMobileWeb = jest.fn()
-
     routeService = {} as jest.Mocked<RouteServiceInterface>
     routeService.getRoute = jest.fn().mockReturnValue({
       type: RouteType.None,
