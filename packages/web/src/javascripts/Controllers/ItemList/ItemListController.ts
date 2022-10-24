@@ -126,7 +126,7 @@ export class ItemListController
       reaction(
         () => [this.navigationController.selected],
         () => {
-          this.reloadDisplayPreferences()
+          void this.reloadDisplayPreferences()
         },
       ),
     )

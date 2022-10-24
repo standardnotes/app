@@ -29,7 +29,12 @@ const NoAccountWarningContent = ({ accountMenuController, noAccountWarningContro
       <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
         Sign in or register to sync your notes to your other devices with end-to-end encryption.
       </p>
-      <Button primary small className="col-start-1 col-end-3 mt-3 justify-self-start uppercase" onClick={showAccountMenu}>
+      <Button
+        primary
+        small
+        className="col-start-1 col-end-3 mt-3 justify-self-start uppercase"
+        onClick={showAccountMenu}
+      >
         Open Account menu
       </Button>
       <button

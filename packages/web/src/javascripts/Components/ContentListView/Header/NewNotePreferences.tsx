@@ -69,9 +69,9 @@ const NewNotePreferences: FunctionComponent<Props> = ({
   )
   const [customNoteTitleFormat, setCustomNoteTitleFormat] = useState('')
 
-  const getGlobalEditorDefault = (): SNComponent | undefined => {
+  const getGlobalEditorDefault = useCallback((): SNComponent | undefined => {
     return application.componentManager.componentsForArea(ComponentArea.Editor).filter((e) => e.isDefaultEditor())[0]
-  }
+  }, [application])
 
   const reloadPreferences = useCallback(() => {
     if (mode === 'tag' && selectedTag.preferences?.editorIdentifier) {
@@ -88,7 +88,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         application.getPreference(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat]),
       )
     }
-  }, [mode, selectedTag, setDefaultEditorIdentifier, setNewNoteTitleFormat, newNoteTitleFormat])
+  }, [mode, selectedTag, application, getGlobalEditorDefault, setDefaultEditorIdentifier, setNewNoteTitleFormat])
 
   useEffect(() => {
     if (mode === 'tag' && selectedTag.preferences?.customNoteTitleFormat) {
@@ -98,10 +98,10 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         application.getPreference(PrefKey.CustomNoteTitleFormat, PrefDefaults[PrefKey.CustomNoteTitleFormat]),
       )
     }
-  }, [mode, selectedTag])
+  }, [application, mode, selectedTag])
 
   useEffect(() => {
-    reloadPreferences()
+    void reloadPreferences()
   }, [reloadPreferences])
 
   const setNewNoteTitleFormatChange = (value: string) => {
@@ -109,7 +109,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
     if (mode === 'global') {
       application.setPreference(PrefKey.NewNoteTitleFormat, value as NewNoteTitleFormat)
     } else {
-      changePreferencesCallback({ newNoteTitleFormat: value as NewNoteTitleFormat })
+      void changePreferencesCallback({ newNoteTitleFormat: value as NewNoteTitleFormat })
     }
   }
 
@@ -181,7 +181,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         removeEditorGlobalDefault(application, currentDefault)
       }
     } else {
-      changePreferencesCallback({ editorIdentifier: value })
+      void changePreferencesCallback({ editorIdentifier: value })
     }
   }
 
@@ -197,7 +197,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
 
     debounceTimeoutRef.current = window.setTimeout(async () => {
       if (mode === 'tag') {
-        changePreferencesCallback({ customNoteTitleFormat: newFormat })
+        void changePreferencesCallback({ customNoteTitleFormat: newFormat })
       } else {
         application.setPreference(PrefKey.CustomNoteTitleFormat, newFormat)
       }

@@ -93,28 +93,28 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         })
       }
     },
-    [reloadPreferences],
+    [reloadPreferences, application, currentMode, selectedTag],
   )
 
   const resetTagPreferences = useCallback(() => {
     application.mutator.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
       mutator.preferences = undefined
     })
-  }, [])
+  }, [application, selectedTag])
 
   const toggleSortReverse = useCallback(() => {
-    changePreferences({ sortReverse: !preferences.sortReverse })
-  }, [application, preferences, changePreferences])
+    void changePreferences({ sortReverse: !preferences.sortReverse })
+  }, [preferences, changePreferences])
 
   const toggleSortBy = useCallback(
     (sort: CollectionSortProperty) => {
       if (preferences.sortBy === sort) {
         toggleSortReverse()
       } else {
-        changePreferences({ sortBy: sort })
+        void changePreferences({ sortBy: sort })
       }
     },
-    [application, preferences, changePreferences, toggleSortReverse],
+    [preferences, changePreferences, toggleSortReverse],
   )
 
   const toggleSortByDateModified = useCallback(() => {
@@ -130,36 +130,36 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   }, [toggleSortBy])
 
   const toggleHidePreview = useCallback(() => {
-    changePreferences({ hideNotePreview: !preferences.hideNotePreview })
-  }, [application, preferences, changePreferences])
+    void changePreferences({ hideNotePreview: !preferences.hideNotePreview })
+  }, [preferences, changePreferences])
 
   const toggleHideDate = useCallback(() => {
-    changePreferences({ hideDate: !preferences.hideDate })
-  }, [application, preferences, changePreferences])
+    void changePreferences({ hideDate: !preferences.hideDate })
+  }, [preferences, changePreferences])
 
   const toggleHideTags = useCallback(() => {
-    changePreferences({ hideTags: !preferences.hideTags })
-  }, [application, preferences, changePreferences])
+    void changePreferences({ hideTags: !preferences.hideTags })
+  }, [preferences, changePreferences])
 
   const toggleHidePinned = useCallback(() => {
-    changePreferences({ hidePinned: !preferences.hidePinned })
-  }, [application, preferences, changePreferences])
+    void changePreferences({ hidePinned: !preferences.hidePinned })
+  }, [preferences, changePreferences])
 
   const toggleShowArchived = useCallback(() => {
-    changePreferences({ showArchived: !preferences.showArchived })
-  }, [application, preferences, changePreferences])
+    void changePreferences({ showArchived: !preferences.showArchived })
+  }, [preferences, changePreferences])
 
   const toggleShowTrashed = useCallback(() => {
-    changePreferences({ showTrashed: !preferences.showTrashed })
-  }, [application, preferences, changePreferences])
+    void changePreferences({ showTrashed: !preferences.showTrashed })
+  }, [preferences, changePreferences])
 
   const toggleHideProtected = useCallback(() => {
-    changePreferences({ hideProtected: !preferences.hideProtected })
-  }, [application, preferences, changePreferences])
+    void changePreferences({ hideProtected: !preferences.hideProtected })
+  }, [preferences, changePreferences])
 
   const toggleEditorIcon = useCallback(() => {
-    changePreferences({ hideEditorIcon: !preferences.hideEditorIcon })
-  }, [application, preferences, changePreferences])
+    void changePreferences({ hideEditorIcon: !preferences.hideEditorIcon })
+  }, [preferences, changePreferences])
 
   const TabButton: FunctionComponent<{
     label: string
