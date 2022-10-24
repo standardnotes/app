@@ -169,31 +169,25 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     const isSelected = currentMode === mode
 
     return (
-      <div
+      <button
         className={`${
-          isSelected ? 'bg-info' : 'bg-transparent'
-        } rounded-full border-2 border-solid border-transparent px-2`}
+          isSelected ? 'bg-info text-info-contrast' : 'bg-transparent text-text'
+        } relative cursor-pointer rounded-full border-2 border-0 border-solid border-transparent px-2 text-sm focus:shadow-none`}
+        onClick={() => {
+          setCurrentMode(mode)
+        }}
       >
-        <button
-          className={`relative cursor-pointer border-0 text-sm focus:shadow-none ${
-            isSelected ? 'text-info-contrast' : 'text-text'
-          }`}
-          onClick={() => {
-            setCurrentMode(mode)
-          }}
-        >
-          <div className="flex items-center justify-center">
-            {icon && (
-              <Icon
-                size="small"
-                type={icon as IconType}
-                className={`mr-1 ${isSelected ? 'text-info-contrast' : 'text-neutral'}`}
-              />
-            )}
-            <div>{label}</div>
-          </div>
-        </button>
-      </div>
+        <div className="flex items-center justify-center">
+          {icon && (
+            <Icon
+              size="small"
+              type={icon as IconType}
+              className={`mr-1 ${isSelected ? 'text-info-contrast' : 'text-neutral'}`}
+            />
+          )}
+          <div>{label}</div>
+        </div>
+      </button>
     )
   }
 
@@ -222,7 +216,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       <div className="my-1 px-3 text-xs font-semibold uppercase text-text">Preferences for</div>
       <div className="mt-2 flex w-full justify-between px-3">
         <div className="my-1 flex items-center">
-          <TabButton label="Default" mode="global" />
+          <TabButton label="Global" mode="global" />
           {!isSystemTag && <TabButton label={selectedTag.title} icon={selectedTag.iconString} mode="tag" />}
         </div>
         {currentMode === 'tag' && <button onClick={resetTagPreferences}>Reset</button>}
