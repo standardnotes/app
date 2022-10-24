@@ -85,7 +85,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
           reloadPreferences()
         }
       } else {
-        application.mutator.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
+        await application.mutator.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
           mutator.preferences = {
             ...mutator.preferences,
             ...properties,

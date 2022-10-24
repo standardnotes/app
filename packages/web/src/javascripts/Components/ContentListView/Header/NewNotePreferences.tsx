@@ -16,7 +16,6 @@ import { WebApplication } from '@/Application/Application'
 import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 import { PreferenceMode } from './PreferenceMode'
-import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import dayjs from 'dayjs'
 
 const PlainEditorType = 'plain-editor'
@@ -52,7 +51,7 @@ type Props = {
   application: WebApplication
   selectedTag: AnyTag
   mode: PreferenceMode
-  changePreferencesCallback: (properties: Partial<TagPreferences>) => void
+  changePreferencesCallback: (properties: Partial<TagPreferences>) => Promise<void>
   disabled?: boolean
 }
 
@@ -89,7 +88,9 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         application.getPreference(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat]),
       )
     }
+  }, [mode, selectedTag, setDefaultEditorIdentifier, setNewNoteTitleFormat, newNoteTitleFormat])
 
+  useEffect(() => {
     if (mode === 'tag' && selectedTag.preferences?.customNoteTitleFormat) {
       setCustomNoteTitleFormat(selectedTag.preferences?.customNoteTitleFormat)
     } else {
@@ -97,7 +98,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         application.getPreference(PrefKey.CustomNoteTitleFormat, PrefDefaults[PrefKey.CustomNoteTitleFormat]),
       )
     }
-  }, [mode, selectedTag, setDefaultEditorIdentifier, setNewNoteTitleFormat, newNoteTitleFormat, customNoteTitleFormat])
+  }, [mode, selectedTag])
 
   useEffect(() => {
     reloadPreferences()
@@ -184,30 +185,27 @@ const NewNotePreferences: FunctionComponent<Props> = ({
     }
   }
 
-  const setCustomNoteTitleFormatPreference = () => {
-    if (mode === 'tag') {
-      changePreferencesCallback({ customNoteTitleFormat: customNoteTitleFormat })
-    } else {
-      application.setPreference(PrefKey.CustomNoteTitleFormat, customNoteTitleFormat)
-    }
-  }
-
   const debounceTimeoutRef = useRef<number>()
 
-  const handleInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    setCustomNoteTitleFormat(event.currentTarget.value)
+  const handleCustomFormatInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    const newFormat = event.currentTarget.value
+    setCustomNoteTitleFormat(newFormat)
 
     if (debounceTimeoutRef.current) {
       clearTimeout(debounceTimeoutRef.current)
     }
 
     debounceTimeoutRef.current = window.setTimeout(async () => {
-      setCustomNoteTitleFormatPreference()
+      if (mode === 'tag') {
+        changePreferencesCallback({ customNoteTitleFormat: newFormat })
+      } else {
+        application.setPreference(PrefKey.CustomNoteTitleFormat, newFormat)
+      }
     }, PrefChangeDebounceTimeInMs)
   }
 
   return (
-    <div className="my-1 px-3 pb-3 pt-1">
+    <div className="my-1 px-3 pb-2 pt-1">
       <div className="text-xs font-semibold uppercase text-text">New Note Defaults</div>
       <div>
         <div className="mt-3">Note Type</div>
@@ -238,43 +236,37 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         </div>
       </div>
       {newNoteTitleFormat === NewNoteTitleFormat.CustomFormat && (
-        <>
-          <HorizontalSeparator classes="my-4" />
-          <div>
-            <div>Custom Note Title Format</div>
-            <div>
-              All available date-time formatting options can be found{' '}
-              <a
-                className="underline"
-                href={HelpPageUrl}
-                target="_blank"
-                onClick={(event) => {
-                  if (application.isNativeMobileWeb()) {
-                    event.preventDefault()
-                    application.mobileDevice().openUrl(HelpPageUrl)
-                  }
-                }}
-              >
-                here
-              </a>
-              . Use square brackets (<code>[]</code>) to escape date-time formatting.
-            </div>
-            <div className="mt-2">
-              <input
-                disabled={disabled}
-                className="min-w-55 rounded border border-solid border-passive-3 bg-default px-2 py-1.5 text-sm focus-within:ring-2 focus-within:ring-info"
-                placeholder="e.g. YYYY-MM-DD"
-                value={customNoteTitleFormat}
-                onChange={handleInputChange}
-                onBlur={setCustomNoteTitleFormatPreference}
-                spellCheck={false}
-              />
-            </div>
-            <div className="mt-2">
-              <span className="font-bold">Preview:</span> {dayjs().format(customNoteTitleFormat)}
-            </div>
+        <div className="mt-2">
+          <div className="mt-2">
+            <input
+              disabled={disabled}
+              className="w-full min-w-55 rounded border border-solid border-passive-3 bg-default px-2 py-1.5 text-sm focus-within:ring-2 focus-within:ring-info"
+              placeholder="e.g. YYYY-MM-DD"
+              value={customNoteTitleFormat}
+              onChange={handleCustomFormatInputChange}
+              spellCheck={false}
+            />
           </div>
-        </>
+          <div className="mt-2">
+            <span className="font-bold">Preview:</span> {dayjs().format(customNoteTitleFormat)}
+          </div>
+          <div className="mt-1">
+            <a
+              className="underline"
+              href={HelpPageUrl}
+              target="_blank"
+              onClick={(event) => {
+                if (application.isNativeMobileWeb()) {
+                  event.preventDefault()
+                  application.mobileDevice().openUrl(HelpPageUrl)
+                }
+              }}
+            >
+              Options
+            </a>
+            . Use <code>[]</code> to escape date-time formatting.
+          </div>
+        </div>
       )}
     </div>
   )
