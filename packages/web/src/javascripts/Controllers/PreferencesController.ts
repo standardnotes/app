@@ -1,6 +1,6 @@
 import { InternalEventBus } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
-import { PreferenceId } from '@standardnotes/ui-services'
+import { PreferenceId, RootQueryParam } from '@standardnotes/ui-services'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { WebApplication } from '@/Application/Application'
 
@@ -34,7 +34,7 @@ export class PreferencesController extends AbstractViewController {
   closePreferences = (): void => {
     this._open = false
     this.currentPane = DEFAULT_PANE
-    this.application.routeService.removeSettingsFromURLQueryParameters()
+    this.application.routeService.removeQueryParameterFromURL(RootQueryParam.Settings)
   }
 
   get isOpen(): boolean {

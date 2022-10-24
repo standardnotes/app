@@ -12,6 +12,7 @@ describe('SubscriptionManager', () => {
   beforeEach(() => {
     subscriptionApiService = {} as jest.Mocked<SubscriptionApiServiceInterface>
     subscriptionApiService.cancelInvite = jest.fn()
+    subscriptionApiService.acceptInvite = jest.fn()
     subscriptionApiService.invite = jest.fn()
     subscriptionApiService.listInvites = jest.fn()
 
@@ -79,5 +80,28 @@ describe('SubscriptionManager', () => {
     })
 
     expect(await createManager().listSubscriptionInvitations()).toEqual([])
+  })
+
+  it('should accept invite to a shared subscription', async () => {
+    subscriptionApiService.acceptInvite = jest.fn().mockReturnValue({ data: { success: true } })
+
+    expect(await createManager().acceptInvitation('1-2-3')).toEqual({ success: true })
+  })
+
+  it('should not accept invite if the api fails to do so', async () => {
+    subscriptionApiService.acceptInvite = jest.fn().mockReturnValue({ data: { error: { message: 'foobar' } } })
+
+    expect(await createManager().acceptInvitation('1-2-3')).toEqual({ success: false, message: 'foobar' })
+  })
+
+  it('should not accept invite if the api throws an error', async () => {
+    subscriptionApiService.acceptInvite = jest.fn().mockImplementation(() => {
+      throw new Error('Oops')
+    })
+
+    expect(await createManager().acceptInvitation('1-2-3')).toEqual({
+      success: false,
+      message: 'Could not accept invitation.',
+    })
   })
 })
