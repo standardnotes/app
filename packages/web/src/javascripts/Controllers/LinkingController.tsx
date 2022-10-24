@@ -26,19 +26,6 @@ import { NavigationController } from './Navigation/NavigationController'
 import { SelectedItemsController } from './SelectedItemsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
 
-const prioritizeTagResult = (
-  itemA: DecryptedItemInterface<ItemContent>,
-  itemB: DecryptedItemInterface<ItemContent>,
-) => {
-  if (itemA.content_type === ContentType.Tag && itemB.content_type !== ContentType.Tag) {
-    return -1
-  }
-  if (itemB.content_type === ContentType.Tag && itemA.content_type !== ContentType.Tag) {
-    return 1
-  }
-  return 0
-}
-
 export type LinkableItem = DecryptedItemInterface<ItemContent>
 
 export type ItemLink<ItemType extends LinkableItem = LinkableItem> = {
@@ -399,7 +386,7 @@ export class LinkingController extends AbstractViewController {
       ...unlinkedItems.filter((item) => item.content_type === ContentType.Tag).slice(0, 5),
       ...unlinkedItems.filter((item) => item.content_type === ContentType.Note).slice(0, 5),
       ...unlinkedItems.filter((item) => item.content_type === ContentType.File).slice(0, 5),
-    ].sort(prioritizeTagResult)
+    ]
     const linkedResults = searchResults
       .filter(isAlreadyLinked)
       .slice(0, 20)
