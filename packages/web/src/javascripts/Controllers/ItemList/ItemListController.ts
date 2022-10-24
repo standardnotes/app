@@ -492,12 +492,12 @@ export class ItemListController
     )
 
     newDisplayOptions.includePinned = useBoolean(
-      selectedTag?.preferences?.hidePinned,
+      !selectedTag?.preferences?.hidePinned,
       !this.application.getPreference(PrefKey.NotesHidePinned, PrefDefaults[PrefKey.NotesHidePinned]),
     )
 
     newDisplayOptions.includeProtected = useBoolean(
-      selectedTag?.preferences?.hideProtected,
+      !selectedTag?.preferences?.hideProtected,
       !this.application.getPreference(PrefKey.NotesHideProtected, PrefDefaults[PrefKey.NotesHideProtected]),
     )
 
