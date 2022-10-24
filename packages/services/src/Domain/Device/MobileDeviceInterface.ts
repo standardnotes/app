@@ -16,5 +16,5 @@ export interface MobileDeviceInterface extends DeviceInterface {
   shareBase64AsFile(base64: string, filename: string): Promise<void>
   downloadBase64AsFile(base64: string, filename: string, saveInTempLocation?: boolean): Promise<string | undefined>
   previewFile(base64: string, filename: string): Promise<boolean>
-  confirmAndExit(): void
+  exitApp(confirm?: boolean): void
 }
