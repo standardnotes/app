@@ -28,20 +28,11 @@ export function platformToString(platform: Platform) {
   return map[platform]
 }
 
-export function environmentFromString(string: string) {
-  const map: Record<string, Environment> = {
-    web: Environment.Web,
-    desktop: Environment.Desktop,
-    mobile: Environment.Mobile,
-  }
-  return map[string]
-}
-
 export function environmentToString(environment: Environment) {
   const map = {
     [Environment.Web]: 'web',
     [Environment.Desktop]: 'desktop',
-    [Environment.Mobile]: 'mobile',
+    [Environment.Mobile]: 'native-mobile-web',
   }
   return map[environment]
 }

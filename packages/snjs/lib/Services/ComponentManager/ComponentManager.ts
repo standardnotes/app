@@ -91,17 +91,14 @@ export class SNComponentManager
 
     this.addItemObserver()
 
-    /* On mobile, events listeners are handled by a respective component */
-    if (environment !== Environment.Mobile) {
-      window.addEventListener
-        ? window.addEventListener('focus', this.detectFocusChange, true)
-        : window.attachEvent('onfocusout', this.detectFocusChange)
-      window.addEventListener
-        ? window.addEventListener('blur', this.detectFocusChange, true)
-        : window.attachEvent('onblur', this.detectFocusChange)
+    window.addEventListener
+      ? window.addEventListener('focus', this.detectFocusChange, true)
+      : window.attachEvent('onfocusout', this.detectFocusChange)
+    window.addEventListener
+      ? window.addEventListener('blur', this.detectFocusChange, true)
+      : window.attachEvent('onblur', this.detectFocusChange)
 
-      window.addEventListener('message', this.onWindowMessage, true)
-    }
+    window.addEventListener('message', this.onWindowMessage, true)
   }
 
   get isDesktop(): boolean {
@@ -146,7 +143,7 @@ export class SNComponentManager
     this.removeItemObserver?.()
     ;(this.removeItemObserver as unknown) = undefined
 
-    if (window && !this.isMobile) {
+    if (window) {
       window.removeEventListener('focus', this.detectFocusChange, true)
       window.removeEventListener('blur', this.detectFocusChange, true)
       window.removeEventListener('message', this.onWindowMessage, true)
@@ -288,9 +285,6 @@ export class SNComponentManager
   }
 
   getActiveThemes(): SNTheme[] {
-    if (this.environment === Environment.Mobile) {
-      throw Error('getActiveThemes must be handled separately by mobile')
-    }
     return this.componentsForArea(ComponentArea.Themes).filter((theme) => {
       return theme.active
     }) as SNTheme[]
@@ -318,12 +312,8 @@ export class SNComponentManager
       }
     }
 
-    const isWeb = this.environment === Environment.Web
     const isMobile = this.environment === Environment.Mobile
     if (nativeFeature) {
-      if (!isWeb && !isMobile) {
-        throw Error('Mobile must override urlForComponent to handle native paths')
-      }
       let baseUrlRequiredForThemesInsideEditors = window.location.origin
       if (isMobile) {
         baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]

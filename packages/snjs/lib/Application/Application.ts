@@ -1345,10 +1345,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createComponentManager() {
-    const MaybeSwappedComponentManager = this.getClass<typeof InternalServices.SNComponentManager>(
-      InternalServices.SNComponentManager,
-    )
-    this.componentManagerService = new MaybeSwappedComponentManager(
+    this.componentManagerService = new  InternalServices.SNComponentManager(
       this.itemManager,
       this.syncService,
       this.featuresService,
@@ -1639,14 +1636,5 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createStatusService(): void {
     this.statusService = new ExternalServices.StatusService(this.internalEventBus)
     this.services.push(this.statusService)
-  }
-
-  private getClass<T>(base: T) {
-    const swapClass = this.options.swapClasses?.find((candidate) => candidate.swap === base)
-    if (swapClass) {
-      return swapClass.with as T
-    } else {
-      return base
-    }
   }
 }
