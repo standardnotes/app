@@ -382,11 +382,10 @@ export class LinkingController extends AbstractViewController {
     }
 
     const unlinkedItems = searchResults.filter((item) => !isAlreadyLinked(item))
-    const unlinkedResults = [
-      ...unlinkedItems.filter((item) => item.content_type === ContentType.Tag).slice(0, 5),
-      ...unlinkedItems.filter((item) => item.content_type === ContentType.Note).slice(0, 5),
-      ...unlinkedItems.filter((item) => item.content_type === ContentType.File).slice(0, 5),
-    ]
+    const unlinkedTagResults = unlinkedItems.filter((item) => item.content_type === ContentType.Tag).slice(0, 5)
+    const unlinkedNoteResults = unlinkedItems.filter((item) => item.content_type === ContentType.Note).slice(0, 5)
+    const unlinkedFileResults = unlinkedItems.filter((item) => item.content_type === ContentType.File).slice(0, 5)
+    const unlinkedResults = unlinkedTagResults.concat(unlinkedNoteResults).concat(unlinkedFileResults)
     const linkedResults = searchResults
       .filter(isAlreadyLinked)
       .slice(0, 20)
