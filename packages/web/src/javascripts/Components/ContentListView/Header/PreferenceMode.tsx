@@ -1,2 +1,1 @@
-
-export type PreferenceMode = 'global' | 'tag';
+export type PreferenceMode = 'global' | 'tag'

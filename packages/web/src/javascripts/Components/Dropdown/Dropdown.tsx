@@ -66,7 +66,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
       <VisuallyHidden id={labelId}>{label}</VisuallyHidden>
       <ListboxInput value={value} onChange={handleChange} aria-labelledby={labelId} disabled={disabled}>
         <StyledListboxButton
-          fullWidth={fullWidth}
+          className={`w-full ${!fullWidth ? 'md:w-fit' : ''}`}
           children={({ value, label, isExpanded }) => {
             const current = items.find((item) => item.value === value)
             const icon = current ? current?.icon : null

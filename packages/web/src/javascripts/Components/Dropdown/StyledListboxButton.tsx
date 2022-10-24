@@ -1,10 +1,7 @@
-import { classNames } from '@/Utils/ConcatenateClassNames'
 import { ListboxButton } from '@reach/listbox'
 import styled from 'styled-components'
 
-const StyledListboxButton = styled(ListboxButton).attrs<{ fullWidth: boolean }>((props) => ({
-  className: classNames('w-full', !props.fullWidth && 'md:w-fit'),
-}))`
+const StyledListboxButton = styled(ListboxButton)`
   &[data-reach-listbox-button] {
     background-color: var(--sn-stylekit-background-color);
     border-radius: 0.25rem;
