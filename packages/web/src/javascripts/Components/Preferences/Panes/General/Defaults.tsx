@@ -1,4 +1,4 @@
-import { PrefKey } from '@standardnotes/snjs'
+import { PrefKey, Platform } from '@standardnotes/snjs'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/Application'
 import { FunctionComponent, useState } from 'react'
@@ -11,7 +11,14 @@ import { PrefDefaults } from '@/Constants/PrefDefaults'
 type Props = {
   application: WebApplication
 }
+
+export const AndroidConfirmBeforeExitKey = 'ConfirmBeforeExit'
+
 const Defaults: FunctionComponent<Props> = ({ application }) => {
+  const [androidConfirmBeforeExit, setAndroidConfirmBeforeExit] = useState(
+    () => (application.getValue(AndroidConfirmBeforeExitKey) as boolean) ?? true,
+  )
+
   const [spellcheck, setSpellcheck] = useState(() =>
     application.getPreference(PrefKey.EditorSpellcheck, PrefDefaults[PrefKey.EditorSpellcheck]),
   )
@@ -25,10 +32,28 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
     application.toggleGlobalSpellcheck().catch(console.error)
   }
 
+  const toggleAndroidConfirmBeforeExit = () => {
+    const newValue = !androidConfirmBeforeExit
+    setAndroidConfirmBeforeExit(newValue)
+    application.setValue(AndroidConfirmBeforeExitKey, newValue)
+  }
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Defaults</Title>
+        {application.platform === Platform.Android && (
+          <>
+            <div className="flex items-center justify-between">
+              <div className="flex flex-col">
+                <Subtitle>Always ask before closing app (Android)</Subtitle>
+                <Text>Whether a confirmation dialog should be shown before closing the app.</Text>
+              </div>
+              <Switch onChange={toggleAndroidConfirmBeforeExit} checked={androidConfirmBeforeExit} />
+            </div>
+            <HorizontalSeparator classes="my-4" />
+          </>
+        )}
         <div className="flex items-center justify-between">
           <div className="flex flex-col">
             <Subtitle>Spellcheck</Subtitle>
