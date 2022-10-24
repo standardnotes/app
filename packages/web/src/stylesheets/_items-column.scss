@@ -112,9 +112,14 @@
   }
 
   .content-list-item {
-    &.selected,
-    &:hover {
+    &.selected {
       background-color: var(--item-cell-selected-background-color);
+    }
+
+    @media screen and (hover: hover) {
+      &:hover {
+        background-color: var(--item-cell-selected-background-color);
+      }
     }
 
     ul {
