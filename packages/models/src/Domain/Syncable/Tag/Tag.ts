@@ -6,6 +6,7 @@ import { ContentReference } from '../../Abstract/Reference/ContentReference'
 import { isTagToParentTagReference } from '../../Abstract/Reference/Functions'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
 import { TagContent, TagContentSpecialized } from './TagContent'
+import { TagPreferences } from './TagPreferences'
 
 export const TagFolderDelimitter = '.'
 
@@ -17,12 +18,14 @@ export class SNTag extends DecryptedItem<TagContent> implements TagContentSpecia
   public readonly title: string
   public readonly iconString: VectorIconNameOrEmoji
   public readonly expanded: boolean
+  public readonly preferences?: TagPreferences
 
   constructor(payload: DecryptedPayloadInterface<TagContent>) {
     super(payload)
     this.title = this.payload.content.title || ''
     this.expanded = this.payload.content.expanded != undefined ? this.payload.content.expanded : true
     this.iconString = this.payload.content.iconString || DefaultTagIconName
+    this.preferences = this.payload.content.preferences
   }
 
   get noteReferences(): ContentReference[] {
