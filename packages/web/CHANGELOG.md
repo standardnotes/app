@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.84.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.6...@standardnotes/web@3.84.7) (2022-10-24)
+
+### Bug Fixes
+
+* dont show item list "hover" indicator on mobile ([4181d7f](https://github.com/standardnotes/app/commit/4181d7ff2c6ff76bfd2eeaea5fa770d04062fb7c))
+
 ## [3.84.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.5...@standardnotes/web@3.84.6) (2022-10-23)
 
 ### Bug Fixes
