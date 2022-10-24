@@ -1,4 +1,10 @@
-import { RootQueryParam, RouteParserInterface, RouteServiceInterface, RouteType, ToastServiceInterface } from '@standardnotes/ui-services'
+import {
+  RootQueryParam,
+  RouteParserInterface,
+  RouteServiceInterface,
+  RouteType,
+  ToastServiceInterface,
+} from '@standardnotes/ui-services'
 import {
   ApplicationEvent,
   SessionsClientInterface,
