@@ -5,5 +5,5 @@ import { Environment } from '@standardnotes/models'
 /* istanbul ignore file */
 
 export function isMobileDevice(x: DeviceInterface): x is MobileDeviceInterface {
-  return x.environment === Environment.Mobile
+  return x.environment === Environment.Mobile || x.environment === Environment.NativeMobileWeb
 }

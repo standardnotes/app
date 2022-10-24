@@ -2,7 +2,7 @@ import { DeviceInterface } from './DeviceInterface'
 import { Environment, Platform, RawKeychainValue } from '@standardnotes/models'
 
 export interface MobileDeviceInterface extends DeviceInterface {
-  environment: Environment.Mobile
+  environment: Environment.Mobile | Environment.NativeMobileWeb
   platform: Platform.Ios | Platform.Android
 
   getRawKeychainValue(): Promise<RawKeychainValue | undefined>

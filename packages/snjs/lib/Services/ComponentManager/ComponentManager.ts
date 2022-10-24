@@ -37,7 +37,7 @@ import {
   InternalEventBusInterface,
   AlertService,
   DeviceInterface,
-  MobileDeviceInterface,
+  isMobileDevice,
 } from '@standardnotes/services'
 
 const DESKTOP_URL_PREFIX = 'sn://'
@@ -228,17 +228,18 @@ export class SNComponentManager
         const items = [...changed, ...inserted]
         this.handleChangedComponents(items, source)
 
-        if (this.environment === Environment.NativeMobileWeb) {
+        const device = this.device
+        if (isMobileDevice(device)) {
           inserted.forEach((component) => {
             const url = this.urlForComponent(component)
             if (!url) {
               return
             }
-            ;(this.device as MobileDeviceInterface).addComponentUrl(component.uuid, url)
+            device.addComponentUrl(component.uuid, url)
           })
 
           removed.forEach((component) => {
-            ;(this.device as MobileDeviceInterface).removeComponentUrl(component.uuid)
+            device.removeComponentUrl(component.uuid)
           })
         }
       },

@@ -9,6 +9,10 @@ describe('device type check', () => {
     const device = { environment: Environment.Mobile } as jest.Mocked<MobileDeviceInterface>
 
     expect(isMobileDevice(device)).toBeTruthy()
+
+    const nativeMobileWeb = { environment: Environment.NativeMobileWeb } as jest.Mocked<MobileDeviceInterface>
+
+    expect(isMobileDevice(nativeMobileWeb)).toBeTruthy()
   })
 
   it('should return false for non mobile devices', () => {
