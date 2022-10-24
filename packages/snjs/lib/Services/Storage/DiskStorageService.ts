@@ -92,7 +92,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
   public setEncryptionPolicy(encryptionPolicy: Services.StorageEncryptionPolicy, persist = true): void {
     if (
       encryptionPolicy === Services.StorageEncryptionPolicy.Disabled &&
-      ![Environment.Mobile, Environment.NativeMobileWeb].includes(this.environment)
+      ![Environment.Mobile].includes(this.environment)
     ) {
       throw Error('Disabling storage encryption is only available on mobile.')
     }

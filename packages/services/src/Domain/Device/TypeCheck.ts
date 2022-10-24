@@ -7,7 +7,3 @@ import { Environment } from '@standardnotes/models'
 export function isMobileDevice(x: DeviceInterface): x is MobileDeviceInterface {
   return x.environment === Environment.Mobile
 }
-
-export function isNativeMobileWebDevice(x: DeviceInterface): x is MobileDeviceInterface {
-  return x.environment === Environment.NativeMobileWeb
-}

@@ -80,7 +80,7 @@ export class MobileDevice implements MobileDeviceInterface {
   private eventObservers: MobileDeviceEventHandler[] = []
   public isDarkMode = false
   public statusBarBgColor: string | undefined
-  componentUrls: Map<UuidString, string> = new Map()
+  private componentUrls: Map<UuidString, string> = new Map()
 
   constructor(
     private stateObserverService?: AppStateObserverService,
@@ -600,5 +600,9 @@ export class MobileDevice implements MobileDeviceInterface {
 
   removeComponentUrl(componentUuid: UuidString) {
     this.componentUrls.delete(componentUuid)
+  }
+
+  isUrlComponentUrl(url: string): boolean {
+    return this.componentUrls.has(url)
   }
 }

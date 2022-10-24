@@ -932,7 +932,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   isNativeMobileWeb() {
-    return this.environment === Environment.NativeMobileWeb
+    return this.environment === Environment.Mobile
   }
 
   getDeinitMode(): DeinitMode {

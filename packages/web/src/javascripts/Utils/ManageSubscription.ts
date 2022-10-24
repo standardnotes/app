@@ -8,7 +8,7 @@ export async function openSubscriptionDashboard(application: SNApplication) {
 
   const url = `${window.dashboardUrl}?subscription_token=${token}`
 
-  if (application.deviceInterface.environment === Environment.NativeMobileWeb) {
+  if (application.deviceInterface.environment === Environment.Mobile) {
     application.deviceInterface.openUrl(url)
     return
   }

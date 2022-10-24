@@ -101,7 +101,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   class WebProcessDeviceInterface {
     constructor(messageSender) {
       this.appVersion = '${pjson.version} (${VersionInfo.buildVersion})'
-      this.environment = 4
+      this.environment = 3
       this.platform = ${device.platform}
       this.databases = []
       this.messageSender = messageSender
@@ -215,7 +215,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       (Platform.OS === 'ios' && request.navigationType === 'click') ||
       (Platform.OS === 'android' && request.url !== sourceUri)
 
-    const isComponentUrl = Array.from(device.componentUrls.values()).includes(request.url)
+    const isComponentUrl = device.isUrlComponentUrl(request.url)
 
     if (shouldStopRequest && !isComponentUrl) {
       device.openUrl(request.url)

@@ -37,7 +37,7 @@ import {
   InternalEventBusInterface,
   AlertService,
   DeviceInterface,
-  isNativeMobileWebDevice,
+  isMobileDevice,
 } from '@standardnotes/services'
 
 const DESKTOP_URL_PREFIX = 'sn://'
@@ -229,13 +229,12 @@ export class SNComponentManager
         this.handleChangedComponents(items, source)
 
         const device = this.device
-        if (isNativeMobileWebDevice(device)) {
+        if (isMobileDevice(device)) {
           inserted.forEach((component) => {
             const url = this.urlForComponent(component)
-            if (!url) {
-              return
+            if (url) {
+              device.addComponentUrl(component.uuid, url)
             }
-            device.addComponentUrl(component.uuid, url)
           })
 
           removed.forEach((component) => {
@@ -320,13 +319,13 @@ export class SNComponentManager
     }
 
     const isWeb = this.environment === Environment.Web
-    const isMobileWebView = this.environment === Environment.NativeMobileWeb
+    const isMobile = this.environment === Environment.Mobile
     if (nativeFeature) {
-      if (!isWeb && !isMobileWebView) {
+      if (!isWeb && !isMobile) {
         throw Error('Mobile must override urlForComponent to handle native paths')
       }
       let baseUrlRequiredForThemesInsideEditors = window.location.origin
-      if (isMobileWebView) {
+      if (isMobile) {
         baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]
       }
       return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${component.identifier}/${nativeFeature.index_path}`

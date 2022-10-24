@@ -2,7 +2,7 @@ import { DeviceInterface } from './DeviceInterface'
 import { Environment, Platform, RawKeychainValue } from '@standardnotes/models'
 
 export interface MobileDeviceInterface extends DeviceInterface {
-  environment: Environment.Mobile | Environment.NativeMobileWeb
+  environment: Environment.Mobile
   platform: Platform.Ios | Platform.Android
 
   getRawKeychainValue(): Promise<RawKeychainValue | undefined>
@@ -19,4 +19,5 @@ export interface MobileDeviceInterface extends DeviceInterface {
   confirmAndExit(): void
   addComponentUrl(componentUuid: string, componentUrl: string): void
   removeComponentUrl(componentUuid: string): void
+  isUrlComponentUrl(url: string): boolean
 }
