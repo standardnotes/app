@@ -284,6 +284,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
    * This function will load all services in their correct order.
    */
   async prepareForLaunch(callback: LaunchCallback): Promise<void> {
+    if (this.launched) {
+      throw new Error('Attempting to prelaunch already launched application')
+    }
+
     await this.options.crypto.initialize()
 
     this.setLaunchCallback(callback)
@@ -323,6 +327,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
    * Option to await database load before marking the app as ready.
    */
   public async launch(awaitDatabaseLoad = false): Promise<void> {
+    if (this.launched) {
+      throw new Error('Attempting to launch already launched application')
+    }
+
     this.launched = false
 
     const launchChallenge = this.getLaunchChallenge()
