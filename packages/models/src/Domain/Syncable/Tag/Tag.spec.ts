@@ -38,4 +38,10 @@ describe('SNTag Tests', () => {
 
     expect(tag.noteCount).toEqual(2)
   })
+
+  it('preferences should be undefined if not specified', () => {
+    const tag = create('helloworld', [])
+
+    expect(tag.preferences).toBeFalsy()
+  })
 })
