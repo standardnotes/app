@@ -20,6 +20,8 @@ import { DisplayOptionsMenuProps } from './DisplayOptionsMenuProps'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import NewNotePreferences from './NewNotePreferences'
 import { PreferenceMode } from './PreferenceMode'
+import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
+import Button from '@/Components/Button/Button'
 
 const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   closeDisplayOptionsMenu,
@@ -31,6 +33,8 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   const isSystemTag = isSmartView(selectedTag) && isSystemView(selectedTag)
   const [currentMode, setCurrentMode] = useState<PreferenceMode>(selectedTag.preferences ? 'tag' : 'global')
   const [preferences, setPreferences] = useState<TagPreferences>({})
+  const hasSubscription = application.hasValidSubscription()
+  const controlsDisabled = currentMode === 'tag' && !hasSubscription
 
   const reloadPreferences = useCallback(() => {
     const globalValues: TagPreferences = {
@@ -181,6 +185,26 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     )
   }
 
+  const NoSubscriptionBanner = () => (
+    <div className="m-2 mt-2 grid grid-cols-1 rounded-md border border-border p-4">
+      <div className="flex items-center">
+        <Icon className={`mr-1 -ml-1 h-5 w-5 ${PremiumFeatureIconClass}`} type={PremiumFeatureIconName} />
+        <h1 className="sk-h3 m-0 text-sm font-semibold">Upgrade for per-tag preferences</h1>
+      </div>
+      <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
+        Create powerful workflows and organizational layouts with per-tag display preferences.
+      </p>
+      <Button
+        primary
+        small
+        className="col-start-1 col-end-3 mt-3 justify-self-start uppercase"
+        onClick={() => application.openPurchaseFlow()}
+      >
+        Upgrade Features
+      </Button>
+    </div>
+  )
+
   return (
     <Menu className="text-sm" a11yLabel="Notes list options menu" closeMenu={closeDisplayOptionsMenu} isOpen={isOpen}>
       <div className="my-1 px-3 text-xs font-semibold uppercase text-text">Preferences for</div>
@@ -192,10 +216,13 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         {currentMode === 'tag' && <button onClick={resetTagPreferences}>Reset</button>}
       </div>
 
+      {currentMode === 'tag' && !hasSubscription && <NoSubscriptionBanner />}
+
       <MenuItemSeparator />
 
       <div className="my-1 px-3 text-xs font-semibold uppercase text-text">Sort by</div>
       <MenuItem
+        disabled={controlsDisabled}
         className="py-2"
         type={MenuItemType.RadioButton}
         onClick={toggleSortByDateModified}
@@ -213,6 +240,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         </div>
       </MenuItem>
       <MenuItem
+        disabled={controlsDisabled}
         className="py-2"
         type={MenuItemType.RadioButton}
         onClick={toggleSortByCreationDate}
@@ -230,6 +258,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         </div>
       </MenuItem>
       <MenuItem
+        disabled={controlsDisabled}
         className="py-2"
         type={MenuItemType.RadioButton}
         onClick={toggleSortByTitle}
@@ -250,6 +279,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       <div className="px-3 py-1 text-xs font-semibold uppercase text-text">View</div>
       {!isFilesSmartView && (
         <MenuItem
+          disabled={controlsDisabled}
           type={MenuItemType.SwitchButton}
           className="py-1 hover:bg-contrast focus:bg-info-backdrop"
           checked={!preferences.hideNotePreview}
@@ -259,6 +289,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         </MenuItem>
       )}
       <MenuItem
+        disabled={controlsDisabled}
         type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={!preferences.hideDate}
@@ -267,6 +298,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         Show date
       </MenuItem>
       <MenuItem
+        disabled={controlsDisabled}
         type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={!preferences.hideTags}
@@ -275,6 +307,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         Show tags
       </MenuItem>
       <MenuItem
+        disabled={controlsDisabled}
         type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={!preferences.hideEditorIcon}
@@ -285,6 +318,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       <MenuItemSeparator />
       <div className="px-3 py-1 text-xs font-semibold uppercase text-text">Other</div>
       <MenuItem
+        disabled={controlsDisabled}
         type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={!preferences.hidePinned}
@@ -293,6 +327,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         Show pinned
       </MenuItem>
       <MenuItem
+        disabled={controlsDisabled}
         type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={!preferences.hideProtected}
@@ -301,6 +336,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         Show protected
       </MenuItem>
       <MenuItem
+        disabled={controlsDisabled}
         type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={preferences.showArchived}
@@ -309,6 +345,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         Show archived
       </MenuItem>
       <MenuItem
+        disabled={controlsDisabled}
         type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={preferences.showTrashed}
@@ -320,6 +357,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       <MenuItemSeparator />
 
       <NewNotePreferences
+        disabled={controlsDisabled}
         application={application}
         selectedTag={selectedTag}
         mode={currentMode}

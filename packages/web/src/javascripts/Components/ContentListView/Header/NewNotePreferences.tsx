@@ -53,6 +53,7 @@ type Props = {
   selectedTag: AnyTag
   mode: PreferenceMode
   changePreferencesCallback: (properties: Partial<TagPreferences>) => void
+  disabled?: boolean
 }
 
 const NewNotePreferences: FunctionComponent<Props> = ({
@@ -60,6 +61,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
   selectedTag,
   mode,
   changePreferencesCallback,
+  disabled,
 }: Props) => {
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([])
   const [defaultEditorIdentifier, setDefaultEditorIdentifier] = useState<string>(PlainEditorType)
@@ -95,7 +97,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         application.getPreference(PrefKey.CustomNoteTitleFormat, PrefDefaults[PrefKey.CustomNoteTitleFormat]),
       )
     }
-  }, [mode, selectedTag, setDefaultEditorIdentifier, setNewNoteTitleFormat])
+  }, [mode, selectedTag, setDefaultEditorIdentifier, setNewNoteTitleFormat, newNoteTitleFormat, customNoteTitleFormat])
 
   useEffect(() => {
     reloadPreferences()
@@ -211,6 +213,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         <div className="mt-3">Note Type</div>
         <div className="mt-2">
           <Dropdown
+            disabled={disabled}
             fullWidth={true}
             id="def-editor-dropdown"
             label="Select the default note type"
@@ -224,6 +227,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         <div className="mt-3">Title Format</div>
         <div className="mt-2">
           <Dropdown
+            disabled={disabled}
             fullWidth={true}
             id="def-new-note-title-format"
             label="Select the default note type"
@@ -257,6 +261,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
             </div>
             <div className="mt-2">
               <input
+                disabled={disabled}
                 className="min-w-55 rounded border border-solid border-passive-3 bg-default px-2 py-1.5 text-sm focus-within:ring-2 focus-within:ring-info"
                 placeholder="e.g. YYYY-MM-DD"
                 value={customNoteTitleFormat}
