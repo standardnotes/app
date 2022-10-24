@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.10.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.9.2...@standardnotes/ui-services@1.10.0) (2022-10-24)
+
+### Features
+
+* **web:** add accepting subscription invites from UI ([0c44ad6](https://github.com/standardnotes/app/commit/0c44ad6c8eace6d5fe957fa75c205c66c5f590b4))
+
 ## [1.9.2](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.9.1...@standardnotes/ui-services@1.9.2) (2022-10-21)
 
 **Note:** Version bump only for package @standardnotes/ui-services

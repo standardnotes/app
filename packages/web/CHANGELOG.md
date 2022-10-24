@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.85.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.85.0...@standardnotes/web@3.85.1) (2022-10-24)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.85.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.7...@standardnotes/web@3.85.0) (2022-10-24)
+
+### Bug Fixes
+
+* lint ([c3212b0](https://github.com/standardnotes/app/commit/c3212b019e93a4684c7914b02fb94b239e99c7ff))
+
+### Features
+
+* **web:** add accepting subscription invites from UI ([0c44ad6](https://github.com/standardnotes/app/commit/0c44ad6c8eace6d5fe957fa75c205c66c5f590b4))
+
 ## [3.84.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.6...@standardnotes/web@3.84.7) (2022-10-24)
 
 ### Bug Fixes
