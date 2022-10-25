@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.144.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.143.3...@standardnotes/snjs@2.144.0) (2022-10-25)
+
+### Features
+
+* per-tag display preferences ([#1868](https://github.com/standardnotes/app/issues/1868)) ([ee7f11c](https://github.com/standardnotes/app/commit/ee7f11c933285234b20fa2d5db4fcf0d6a5dce9d))
+
 ## [2.143.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.143.2...@standardnotes/snjs@2.143.3) (2022-10-24)
 
 **Note:** Version bump only for package @standardnotes/snjs

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.87.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.86.0...@standardnotes/web@3.87.0) (2022-10-25)
+
+### Features
+
+* per-tag display preferences ([#1868](https://github.com/standardnotes/app/issues/1868)) ([ee7f11c](https://github.com/standardnotes/app/commit/ee7f11c933285234b20fa2d5db4fcf0d6a5dce9d))
+
 # [3.86.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.85.2...@standardnotes/web@3.86.0) (2022-10-24)
 
 ### Features
