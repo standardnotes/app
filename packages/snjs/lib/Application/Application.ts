@@ -1353,7 +1353,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createComponentManager() {
-    this.componentManagerService = new  InternalServices.SNComponentManager(
+    this.componentManagerService = new InternalServices.SNComponentManager(
       this.itemManager,
       this.syncService,
       this.featuresService,
