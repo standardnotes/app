@@ -173,7 +173,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       <button
         className={classNames(
           'relative cursor-pointer rounded-full border-2 border-solid border-transparent px-2 text-sm focus:shadow-none',
-          isSelected ? 'bg-info text-info-contrast' : 'bg-transparent text-text',
+          isSelected ? 'bg-info text-info-contrast' : 'bg-transparent text-text hover:bg-info-backdrop',
         )}
         onClick={() => {
           setCurrentMode(mode)
@@ -217,7 +217,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     <Menu className="text-sm" a11yLabel="Notes list options menu" closeMenu={closeDisplayOptionsMenu} isOpen={isOpen}>
       <div className="my-1 px-3 text-xs font-semibold uppercase text-text">Preferences for</div>
       <div className="mt-1.5 mb-3 flex w-full justify-between px-3">
-        <div className="flex items-center">
+        <div className="flex items-center gap-1.5">
           <TabButton label="Global" mode="global" />
           {!isSystemTag && <TabButton label={selectedTag.title} icon={selectedTag.iconString} mode="tag" />}
         </div>
