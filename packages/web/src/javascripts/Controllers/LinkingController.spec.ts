@@ -7,12 +7,12 @@ import { NavigationController } from './Navigation/NavigationController'
 import { SelectedItemsController } from './SelectedItemsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
 
-const createFile = (name: string, archived = false, trashed = false) => {
+const createFile = (name: string, archived = false, trashed = false, uuid?: string) => {
   return {
     title: name,
     archived,
     trashed,
-    uuid: String(Math.random()),
+    uuid: uuid ? uuid : String(Math.random()),
   } as jest.Mocked<FileItem>
 }
 
@@ -69,6 +69,19 @@ describe('LinkingController', () => {
 
     const isTrashedFileValidResult = linkingController.isValidSearchResult(trashed, searchQuery)
     expect(isTrashedFileValidResult).toBeFalsy()
+  })
+
+  it('should not be valid result if result is active item', () => {
+    const searchQuery = 'test'
+
+    const activeItem = createFile('test', false, false, 'same-uuid')
+
+    Object.defineProperty(itemListController, 'activeControllerItem', { value: activeItem })
+
+    const result = createFile('test', false, false, 'same-uuid')
+
+    const isFileValidResult = linkingController.isValidSearchResult(result, searchQuery)
+    expect(isFileValidResult).toBeFalsy()
   })
 
   it('should be valid result if it matches query even case insensitive', () => {
