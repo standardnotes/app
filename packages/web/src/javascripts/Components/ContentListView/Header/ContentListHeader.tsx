@@ -7,19 +7,17 @@ import DisplayOptionsMenu from './DisplayOptionsMenu'
 import { NavigationMenuButton } from '@/Components/NavigationMenu/NavigationMenu'
 import { IconType } from '@standardnotes/snjs'
 import RoundIconButton from '@/Components/Button/RoundIconButton'
+import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 
 type Props = {
-  application: {
-    getPreference: WebApplication['getPreference']
-    setPreference: WebApplication['setPreference']
-    isNativeMobileWeb: WebApplication['isNativeMobileWeb']
-  }
+  application: WebApplication
   panelTitle: string
   icon?: IconType | string
   addButtonLabel: string
   addNewItem: () => void
   isFilesSmartView: boolean
   optionsSubtitle?: string
+  selectedTag: AnyTag
 }
 
 const ContentListHeader = ({
@@ -30,6 +28,7 @@ const ContentListHeader = ({
   addNewItem,
   isFilesSmartView,
   optionsSubtitle,
+  selectedTag,
 }: Props) => {
   const displayOptionsContainerRef = useRef<HTMLDivElement>(null)
   const displayOptionsButtonRef = useRef<HTMLButtonElement>(null)
@@ -79,6 +78,7 @@ const ContentListHeader = ({
               closeDisplayOptionsMenu={toggleDisplayOptionsMenu}
               isFilesSmartView={isFilesSmartView}
               isOpen={showDisplayOptionsMenu}
+              selectedTag={selectedTag}
             />
           </Popover>
         </div>

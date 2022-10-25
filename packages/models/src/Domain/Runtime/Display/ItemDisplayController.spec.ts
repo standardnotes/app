@@ -1,6 +1,6 @@
 import { CreateItemDelta } from './../Index/ItemDelta'
 import { DeletedPayload } from './../../Abstract/Payload/Implementations/DeletedPayload'
-import { createFile, createNote, createTag, mockUuid, pinnedContent } from './../../Utilities/Test/SpecUtils'
+import { createFile, createNote, createTagWithTitle, mockUuid, pinnedContent } from './../../Utilities/Test/SpecUtils'
 import { ContentType } from '@standardnotes/common'
 import { DeletedItem, EncryptedItem } from '../../Abstract/Item'
 import { EncryptedPayload, PayloadTimestampDefaults } from '../../Abstract/Payload'
@@ -174,7 +174,7 @@ describe('item display controller', () => {
   it('should ignore items not matching content type on construction', () => {
     const collection = new ItemCollection()
     const note = createNoteWithContent({ title: 'a' })
-    const tag = createTag()
+    const tag = createTagWithTitle()
     collection.set([note, tag])
 
     const controller = new ItemDisplayController(collection, [ContentType.Note], {
@@ -187,7 +187,7 @@ describe('item display controller', () => {
   it('should ignore items not matching content type on sort change', () => {
     const collection = new ItemCollection()
     const note = createNoteWithContent({ title: 'a' })
-    const tag = createTag()
+    const tag = createTagWithTitle()
     collection.set([note, tag])
 
     const controller = new ItemDisplayController(collection, [ContentType.Note], {
@@ -207,7 +207,7 @@ describe('item display controller', () => {
       sortBy: 'title',
       sortDirection: 'asc',
     })
-    const tag = createTag()
+    const tag = createTagWithTitle()
 
     const delta = CreateItemDelta({ inserted: [tag], changed: [note] })
     collection.onChange(delta)

@@ -8,8 +8,18 @@ import { TagToParentTagReference } from '../../Abstract/Reference/TagToParentTag
 import { ContentReferenceType } from '../../Abstract/Reference/ContenteReferenceType'
 import { DecryptedItemMutator } from '../../Abstract/Item/Mutator/DecryptedItemMutator'
 import { TagToFileReference } from '../../Abstract/Reference/TagToFileReference'
+import { TagPreferences } from './TagPreferences'
+import { DecryptedItemInterface, MutationType } from '../../Abstract/Item'
 
 export class TagMutator extends DecryptedItemMutator<TagContent> {
+  private mutablePreferences?: TagPreferences
+
+  constructor(item: DecryptedItemInterface<TagContent>, type: MutationType) {
+    super(item, type)
+
+    this.mutablePreferences = this.mutableContent.preferences
+  }
+
   set title(title: string) {
     this.mutableContent.title = title
   }
@@ -20,6 +30,20 @@ export class TagMutator extends DecryptedItemMutator<TagContent> {
 
   set iconString(iconString: string) {
     this.mutableContent.iconString = iconString
+  }
+
+  get preferences(): TagPreferences {
+    if (!this.mutablePreferences) {
+      this.mutableContent.preferences = {}
+      this.mutablePreferences = this.mutableContent.preferences
+    }
+
+    return this.mutablePreferences
+  }
+
+  set preferences(preferences: TagPreferences | undefined) {
+    this.mutablePreferences = preferences
+    this.mutableContent.preferences = this.mutablePreferences
   }
 
   public makeChildOf(tag: SNTag): void {

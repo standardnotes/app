@@ -34,11 +34,7 @@ const PremiumModalProvider: FunctionComponent<Props> = observer(
 
     const showModal = !!featureName
 
-    const hasSubscription = Boolean(
-      viewControllerManager.subscriptionController.userSubscription &&
-        !viewControllerManager.subscriptionController.isUserSubscriptionExpired &&
-        !viewControllerManager.subscriptionController.isUserSubscriptionCanceled,
-    )
+    const hasSubscription = application.hasValidSubscription()
 
     const hasAccount = application.hasAccount()
 

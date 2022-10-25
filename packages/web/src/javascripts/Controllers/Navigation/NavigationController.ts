@@ -479,6 +479,10 @@ export class NavigationController
   }
 
   public setExpanded(tag: SNTag, expanded: boolean) {
+    if (tag.expanded === expanded) {
+      return
+    }
+
     this.application.mutator
       .changeAndSaveItem<TagMutator>(tag, (mutator) => {
         mutator.expanded = expanded

@@ -15,6 +15,8 @@ type DropdownProps = {
   onChange: (value: string, item: DropdownItem) => void
   disabled?: boolean
   className?: string
+  fullWidth?: boolean
+  portal?: boolean
 }
 
 type ListboxButtonProps = DropdownItem & {
@@ -42,7 +44,17 @@ const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
   </>
 )
 
-const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, onChange, disabled, className }) => {
+const Dropdown: FunctionComponent<DropdownProps> = ({
+  id,
+  label,
+  items,
+  value,
+  onChange,
+  disabled,
+  className,
+  fullWidth,
+  portal = true,
+}) => {
   const labelId = `${id}-label`
 
   const handleChange = (value: string) => {
@@ -56,6 +68,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, o
       <VisuallyHidden id={labelId}>{label}</VisuallyHidden>
       <ListboxInput value={value} onChange={handleChange} aria-labelledby={labelId} disabled={disabled}>
         <StyledListboxButton
+          className={`w-full ${!fullWidth ? 'md:w-fit' : ''}`}
           children={({ value, label, isExpanded }) => {
             const current = items.find((item) => item.value === value)
             const icon = current ? current?.icon : null
@@ -69,7 +82,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, o
             })
           }}
         />
-        <ListboxPopover className="sn-dropdown sn-dropdown-popover">
+        <ListboxPopover portal={portal} className="sn-dropdown sn-dropdown-popover">
           <div className="sn-component">
             <ListboxList>
               {items.map((item) => (
