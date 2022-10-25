@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.87.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.87.1...@standardnotes/web@3.87.2) (2022-10-25)
+
+### Bug Fixes
+
+* on mobile open links from editor in external browser ([#1860](https://github.com/standardnotes/app/issues/1860)) ([d9db73e](https://github.com/standardnotes/app/commit/d9db73ea056e2e6e2bde8e0c1de4a7090984ae9a))
+
 ## [3.87.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.87.0...@standardnotes/web@3.87.1) (2022-10-25)
 
 ### Bug Fixes
