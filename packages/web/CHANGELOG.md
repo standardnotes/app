@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.86.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.85.2...@standardnotes/web@3.86.0) (2022-10-24)
+
+### Features
+
+* add preference on android to not confirm when exiting ([#1870](https://github.com/standardnotes/app/issues/1870)) ([28ef905](https://github.com/standardnotes/app/commit/28ef9054fad5236bc9f1fc87768d3c17059da4fb))
+
 ## [3.85.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.85.1...@standardnotes/web@3.85.2) (2022-10-24)
 
 ### Bug Fixes
