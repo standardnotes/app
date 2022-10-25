@@ -342,72 +342,104 @@ export class LinkingController extends AbstractViewController {
     this.application.sync.sync().catch(console.error)
   }
 
-  getSearchResults = (searchQuery: string) => {
-    if (!searchQuery.length) {
-      return {
-        linkedResults: [],
-        unlinkedResults: [],
-        shouldShowCreateTag: false,
-      }
+  isValidSearchResult = (item: LinkableItem, searchQuery: string) => {
+    const title = item instanceof SNTag ? this.application.items.getTagLongTitle(item) : item.title ?? ''
+
+    const matchesQuery = title.toLowerCase().includes(searchQuery.toLowerCase())
+
+    const isActiveItem = this.activeItem?.uuid === item.uuid
+    const isArchivedOrTrashed = item.archived || item.trashed
+
+    const isValidSearchResult = matchesQuery && !isActiveItem && !isArchivedOrTrashed
+
+    return isValidSearchResult
+  }
+
+  isSearchResultAlreadyLinked = (item: LinkableItem) => {
+    if (!this.activeItem) {
+      return false
     }
 
-    const searchResults = naturalSort(
-      this.application.items.getItems([ContentType.Note, ContentType.File, ContentType.Tag]).filter((item) => {
-        const title = item instanceof SNTag ? this.application.items.getTagLongTitle(item) : item.title
-        const matchesQuery = title?.toLowerCase().includes(searchQuery.toLowerCase())
-        const isNotActiveItem = this.activeItem?.uuid !== item.uuid
-        const isArchivedOrTrashed = item.archived || item.trashed
-        return matchesQuery && isNotActiveItem && !isArchivedOrTrashed
-      }),
+    let isAlreadyLinked = false
+
+    const isItemReferencedByActiveItem = this.activeItem.references.some((ref) => ref.uuid === item.uuid)
+    const isActiveItemReferencedByItem = item.references.some((ref) => ref.uuid === this.activeItem?.uuid)
+
+    if (this.activeItem.content_type === item.content_type) {
+      isAlreadyLinked = isItemReferencedByActiveItem
+    } else {
+      isAlreadyLinked = isActiveItemReferencedByItem || isItemReferencedByActiveItem
+    }
+
+    return isAlreadyLinked
+  }
+
+  isSearchResultExistingTag = (result: DecryptedItemInterface<ItemContent>, searchQuery: string) =>
+    result.content_type === ContentType.Tag && result.title === searchQuery
+
+  getSearchResults = (searchQuery: string) => {
+    let unlinkedResults: LinkableItem[] = []
+    const linkedResults: ItemLink<LinkableItem>[] = []
+    let shouldShowCreateTag = false
+
+    const defaultReturnValue = {
+      linkedResults,
+      unlinkedResults,
+      shouldShowCreateTag,
+    }
+
+    if (!searchQuery.length) {
+      return defaultReturnValue
+    }
+
+    if (!this.activeItem) {
+      return defaultReturnValue
+    }
+
+    const searchableItems = naturalSort(
+      this.application.items.getItems([ContentType.Note, ContentType.File, ContentType.Tag]),
       'title',
     )
 
-    const isAlreadyLinked = (item: DecryptedItemInterface<ItemContent>) => {
-      if (!this.activeItem) {
-        return false
+    const unlinkedTags: LinkableItem[] = []
+    const unlinkedNotes: LinkableItem[] = []
+    const unlinkedFiles: LinkableItem[] = []
+
+    for (let index = 0; index < searchableItems.length; index++) {
+      const item = searchableItems[index]
+
+      if (!this.isValidSearchResult(item, searchQuery)) {
+        continue
       }
 
-      const isItemReferencedByActiveItem = this.application.items
-        .itemsReferencingItem(item)
-        .some((linkedItem) => linkedItem.uuid === this.activeItem?.uuid)
-      const isActiveItemReferencedByItem = this.application.items
-        .itemsReferencingItem(this.activeItem)
-        .some((linkedItem) => linkedItem.uuid === item.uuid)
-
-      if (this.activeItem.content_type === item.content_type) {
-        return isItemReferencedByActiveItem
+      if (this.isSearchResultAlreadyLinked(item)) {
+        if (linkedResults.length < 20) {
+          linkedResults.push(this.createLinkFromItem(item, 'linked'))
+        }
+        continue
       }
 
-      return isActiveItemReferencedByItem || isItemReferencedByActiveItem
+      if (unlinkedTags.length < 5 && item.content_type === ContentType.Tag) {
+        unlinkedTags.push(item)
+        continue
+      }
+
+      if (unlinkedNotes.length < 5 && item.content_type === ContentType.Note) {
+        unlinkedNotes.push(item)
+        continue
+      }
+
+      if (unlinkedFiles.length < 5 && item.content_type === ContentType.File) {
+        unlinkedFiles.push(item)
+        continue
+      }
     }
 
-    const prioritizeTagResult = (
-      itemA: DecryptedItemInterface<ItemContent>,
-      itemB: DecryptedItemInterface<ItemContent>,
-    ) => {
-      if (itemA.content_type === ContentType.Tag && itemB.content_type !== ContentType.Tag) {
-        return -1
-      }
-      if (itemB.content_type === ContentType.Tag && itemA.content_type !== ContentType.Tag) {
-        return 1
-      }
-      return 0
-    }
+    unlinkedResults = unlinkedTags.concat(unlinkedNotes).concat(unlinkedFiles)
 
-    const unlinkedResults = searchResults
-      .slice(0, 20)
-      .filter((item) => !isAlreadyLinked(item))
-      .sort(prioritizeTagResult)
-    const linkedResults = searchResults
-      .filter(isAlreadyLinked)
-      .slice(0, 20)
-      .map((item) => this.createLinkFromItem(item, 'linked'))
-
-    const isResultExistingTag = (result: DecryptedItemInterface<ItemContent>) =>
-      result.content_type === ContentType.Tag && result.title === searchQuery
-
-    const shouldShowCreateTag =
-      !linkedResults.find((link) => isResultExistingTag(link.item)) && !unlinkedResults.find(isResultExistingTag)
+    shouldShowCreateTag =
+      !linkedResults.find((link) => this.isSearchResultExistingTag(link.item, searchQuery)) &&
+      !unlinkedResults.find((item) => this.isSearchResultExistingTag(item, searchQuery))
 
     return {
       unlinkedResults,
