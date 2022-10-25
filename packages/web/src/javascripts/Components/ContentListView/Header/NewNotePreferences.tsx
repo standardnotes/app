@@ -256,7 +256,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
             <a
               className="underline"
               href={HelpPageUrl}
-              ref="noreferrer"
+              rel="noreferrer"
               target="_blank"
               onClick={(event) => {
                 if (application.isNativeMobileWeb()) {
