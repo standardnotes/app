@@ -260,15 +260,18 @@ const ContentListView: FunctionComponent<Props> = ({
                 }
               }}
             />
-            <ContentListHeader
-              application={application}
-              panelTitle={panelTitle}
-              icon={icon}
-              addButtonLabel={addButtonLabel}
-              addNewItem={addNewItem}
-              isFilesSmartView={isFilesSmartView}
-              optionsSubtitle={optionsSubtitle}
-            />
+            {selectedTag && (
+              <ContentListHeader
+                application={application}
+                panelTitle={panelTitle}
+                icon={icon}
+                addButtonLabel={addButtonLabel}
+                addNewItem={addNewItem}
+                isFilesSmartView={isFilesSmartView}
+                optionsSubtitle={optionsSubtitle}
+                selectedTag={selectedTag}
+              />
+            )}
             <SearchBar itemListController={itemListController} searchOptionsController={searchOptionsController} />
             <NoAccountWarning
               accountMenuController={accountMenuController}

@@ -318,4 +318,16 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
     return true
   }
+
+  entitledToPerTagPreferences(): boolean {
+    return this.hasValidSubscription()
+  }
+
+  hasValidSubscription(): boolean {
+    return this.getViewControllerManager().subscriptionController.hasValidSubscription()
+  }
+
+  openPurchaseFlow(): void {
+    this.getViewControllerManager().purchaseFlowController.openPurchaseFlow()
+  }
 }

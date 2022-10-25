@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.44.1](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.44.0...@standardnotes/mobile@3.44.1) (2022-10-25)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+# [3.44.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.43.33...@standardnotes/mobile@3.44.0) (2022-10-24)
+
+### Features
+
+* add preference on android to not confirm when exiting ([#1870](https://github.com/standardnotes/app/issues/1870)) ([28ef905](https://github.com/standardnotes/app/commit/28ef9054fad5236bc9f1fc87768d3c17059da4fb))
+
 ## [3.43.33](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.43.32...@standardnotes/mobile@3.43.33) (2022-10-24)
 
 **Note:** Version bump only for package @standardnotes/mobile
