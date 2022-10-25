@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.37.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.36.0...@standardnotes/services@1.37.0) (2022-10-25)
+
+### Features
+
+* per-tag display preferences ([#1868](https://github.com/standardnotes/app/issues/1868)) ([ee7f11c](https://github.com/standardnotes/app/commit/ee7f11c933285234b20fa2d5db4fcf0d6a5dce9d))
+
 # [1.36.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.35.0...@standardnotes/services@1.36.0) (2022-10-24)
 
 ### Features
