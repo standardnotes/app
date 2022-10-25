@@ -19,7 +19,7 @@ export const PrefDefaults = {
   [PrefKey.NotesHideProtected]: false,
   [PrefKey.NotesHideNotePreview]: false,
   [PrefKey.NotesHideDate]: false,
-  [PrefKey.NotesHideTags]: true,
+  [PrefKey.NotesHideTags]: false,
   [PrefKey.NotesHideEditorIcon]: false,
   [PrefKey.UseSystemColorScheme]: false,
   [PrefKey.AutoLightThemeIdentifier]: 'Default',
