@@ -1,13 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import {
-  ContentType,
-  DecryptedPayload,
-  FileContent,
-  FileItem,
-  FillItemContent,
-  InternalEventBus,
-  PayloadTimestampDefaults,
-} from '@standardnotes/snjs'
+import { FileItem, InternalEventBus } from '@standardnotes/snjs'
 import { FilesController } from './FilesController'
 import { ItemListController } from './ItemList/ItemListController'
 import { LinkingController } from './LinkingController'
@@ -15,17 +7,13 @@ import { NavigationController } from './Navigation/NavigationController'
 import { SelectedItemsController } from './SelectedItemsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
 
-const createFile = (name: string) => {
-  return new FileItem(
-    new DecryptedPayload({
-      uuid: String(Math.random()),
-      content_type: ContentType.File,
-      content: FillItemContent<FileContent>({
-        name: name,
-      }),
-      ...PayloadTimestampDefaults(),
-    }),
-  )
+const createFile = (name: string, archived = false, trashed = false) => {
+  return {
+    title: name,
+    archived,
+    trashed,
+    uuid: String(Math.random()),
+  } as jest.Mocked<FileItem>
 }
 
 describe('LinkingController', () => {
@@ -67,6 +55,20 @@ describe('LinkingController', () => {
     const isFileValidResult = linkingController.isValidSearchResult(file, searchQuery)
 
     expect(isFileValidResult).toBeFalsy()
+  })
+
+  it('should not be valid result if item is archived or trashed', () => {
+    const searchQuery = 'test'
+
+    const archived = createFile('test', true)
+
+    const trashed = createFile('test', false, true)
+
+    const isArchivedFileValidResult = linkingController.isValidSearchResult(archived, searchQuery)
+    expect(isArchivedFileValidResult).toBeFalsy()
+
+    const isTrashedFileValidResult = linkingController.isValidSearchResult(trashed, searchQuery)
+    expect(isTrashedFileValidResult).toBeFalsy()
   })
 
   it('should be valid result if it matches query even case insensitive', () => {
