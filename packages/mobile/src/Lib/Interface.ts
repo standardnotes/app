@@ -608,6 +608,6 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   isUrlComponentUrl(url: string): boolean {
-    return this.componentUrls.has(url)
+    return Array.from(this.componentUrls.values()).includes(url)
   }
 }
