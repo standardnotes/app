@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.88.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.87.2...@standardnotes/web@3.88.0) (2022-10-25)
+
+### Features
+
+* add "Upload and link file" button to linking panel ([f48c3f9](https://github.com/standardnotes/app/commit/f48c3f958252283d000300fc38932cc5efca243c))
+
 ## [3.87.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.87.1...@standardnotes/web@3.87.2) (2022-10-25)
 
 ### Bug Fixes
