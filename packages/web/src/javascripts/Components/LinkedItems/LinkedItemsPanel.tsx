@@ -1,3 +1,4 @@
+import { FeaturesController } from '@/Controllers/FeaturesController'
 import { FilesController } from '@/Controllers/FilesController'
 import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
@@ -6,7 +7,7 @@ import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
-import { useEffect, useRef, useState } from 'react'
+import { ChangeEventHandler, useEffect, useRef, useState } from 'react'
 import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import ClearInputButton from '../ClearInputButton/ClearInputButton'
 import Icon from '../Icon/Icon'
@@ -158,10 +159,12 @@ const LinkedItemsSectionItem = ({
 const LinkedItemsPanel = ({
   linkingController,
   filesController,
+  featuresController,
   isOpen,
 }: {
   linkingController: LinkingController
   filesController: FilesController
+  featuresController: FeaturesController
   isOpen: boolean
 }) => {
   const {
@@ -181,6 +184,9 @@ const LinkedItemsPanel = ({
     isEntitledToNoteLinking,
   } = linkingController
 
+  const { hasFiles } = featuresController
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const isSearching = !!searchQuery.length
@@ -191,6 +197,30 @@ const LinkedItemsPanel = ({
       searchInputRef.current.focus()
     }
   }, [isOpen])
+
+  const handleFileInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+    const files = event.currentTarget.files
+
+    if (!files) {
+      return
+    }
+
+    for (let i = 0; i < files.length; i++) {
+      filesController.uploadNewFile(files[i]).then((uploadedFiles) => {
+        if (uploadedFiles) {
+          void linkItemToSelectedItem(uploadedFiles[0])
+        }
+      })
+    }
+  }
+
+  const selectAndUploadFiles = () => {
+    if (!fileInputRef.current) {
+      return
+    }
+
+    fileInputRef.current.click()
+  }
 
   return (
     <div>
@@ -284,10 +314,24 @@ const LinkedItemsPanel = ({
                 </div>
               </div>
             )}
-            {!!linkedFiles.length && (
+            {(!!linkedFiles.length || hasFiles) && (
               <div>
                 <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Files</div>
                 <div className="my-1">
+                  <input
+                    type="file"
+                    className="absolute top-0 left-0 -z-50 h-px w-px opacity-0"
+                    multiple
+                    ref={fileInputRef}
+                    onChange={handleFileInputChange}
+                  />
+                  <button
+                    className="flex w-full cursor-pointer items-center gap-3 bg-transparent px-3 py-2 text-left text-sm text-text hover:bg-info-backdrop hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+                    onClick={selectAndUploadFiles}
+                  >
+                    <Icon type="add" />
+                    Upload and link file(s)
+                  </button>
                   {linkedFiles.map((link) => (
                     <LinkedItemsSectionItem
                       key={link.id}

@@ -999,6 +999,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                   filesController={this.viewControllerManager.filesController}
                   linkingController={this.viewControllerManager.linkingController}
                   onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  featuresController={this.viewControllerManager.featuresController}
                 />
                 <ChangeEditorButton
                   application={this.application}
