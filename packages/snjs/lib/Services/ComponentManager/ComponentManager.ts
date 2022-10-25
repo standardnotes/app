@@ -226,7 +226,7 @@ export class SNComponentManager
         this.handleChangedComponents(items, source)
 
         const device = this.device
-        if (isMobileDevice(device)) {
+        if (isMobileDevice(device) && 'addComponentUrl' in device) {
           inserted.forEach((component) => {
             const url = this.urlForComponent(component)
             if (url) {
