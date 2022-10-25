@@ -19,6 +19,7 @@ import {
   FileItem,
   WebAppEvent,
   NewNoteTitleFormat,
+  useBoolean,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -122,11 +123,22 @@ export class ItemListController
     )
 
     this.disposers.push(
+      reaction(
+        () => [this.navigationController.selected],
+        () => {
+          void this.reloadDisplayPreferences()
+        },
+      ),
+    )
+    this.disposers.push(
       application.streamItems<SNTag>([ContentType.Tag], async ({ changed, inserted }) => {
         const tags = [...changed, ...inserted]
 
-        /** A tag could have changed its relationships, so we need to reload the filter */
-        this.reloadNotesDisplayOptions()
+        const { didReloadItems } = await this.reloadDisplayPreferences()
+        if (!didReloadItems) {
+          /** A tag could have changed its relationships, so we need to reload the filter */
+          this.reloadNotesDisplayOptions()
+        }
 
         void this.reloadItems(ItemsReloadSource.ItemStream)
 
@@ -139,7 +151,7 @@ export class ItemListController
 
     this.disposers.push(
       application.addEventObserver(async () => {
-        void this.reloadPreferences()
+        void this.reloadDisplayPreferences()
       }, ApplicationEvent.PreferencesChanged),
     )
 
@@ -204,7 +216,7 @@ export class ItemListController
 
       reloadItems: action,
       reloadPanelTitle: action,
-      reloadPreferences: action,
+      reloadDisplayPreferences: action,
       resetPagination: action,
       setCompletedFullSync: action,
       setNoteFilterText: action,
@@ -447,54 +459,66 @@ export class ItemListController
     this.application.items.setPrimaryItemDisplayOptions(criteria)
   }
 
-  reloadPreferences = async () => {
+  reloadDisplayPreferences = async (): Promise<{ didReloadItems: boolean }> => {
     const newDisplayOptions = {} as DisplayOptions
     const newWebDisplayOptions = {} as WebDisplayOptions
+    const selectedTag = this.navigationController.selected
 
     const currentSortBy = this.displayOptions.sortBy
-
-    let sortBy = this.application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy])
+    let sortBy =
+      selectedTag?.preferences?.sortBy ||
+      this.application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy])
     if (sortBy === CollectionSort.UpdatedAt || (sortBy as string) === 'client_updated_at') {
       sortBy = CollectionSort.UpdatedAt
     }
-
     newDisplayOptions.sortBy = sortBy
+
     newDisplayOptions.sortDirection =
-      this.application.getPreference(PrefKey.SortNotesReverse, PrefDefaults[PrefKey.SortNotesReverse]) === false
+      useBoolean(
+        selectedTag?.preferences?.sortReverse,
+        this.application.getPreference(PrefKey.SortNotesReverse, PrefDefaults[PrefKey.SortNotesReverse]),
+      ) === false
         ? 'dsc'
         : 'asc'
-    newDisplayOptions.includeArchived = this.application.getPreference(
-      PrefKey.NotesShowArchived,
-      PrefDefaults[PrefKey.NotesShowArchived],
-    )
-    newDisplayOptions.includeTrashed = this.application.getPreference(
-      PrefKey.NotesShowTrashed,
-      PrefDefaults[PrefKey.NotesShowTrashed],
-    ) as boolean
-    newDisplayOptions.includePinned = !this.application.getPreference(
-      PrefKey.NotesHidePinned,
-      PrefDefaults[PrefKey.NotesHidePinned],
-    )
-    newDisplayOptions.includeProtected = !this.application.getPreference(
-      PrefKey.NotesHideProtected,
-      PrefDefaults[PrefKey.NotesHideProtected],
+
+    newDisplayOptions.includeArchived = useBoolean(
+      selectedTag?.preferences?.showArchived,
+      this.application.getPreference(PrefKey.NotesShowArchived, PrefDefaults[PrefKey.NotesShowArchived]),
     )
 
-    newWebDisplayOptions.hideNotePreview = this.application.getPreference(
-      PrefKey.NotesHideNotePreview,
-      PrefDefaults[PrefKey.NotesHideNotePreview],
+    newDisplayOptions.includeTrashed = useBoolean(
+      selectedTag?.preferences?.showTrashed,
+      this.application.getPreference(PrefKey.NotesShowTrashed, PrefDefaults[PrefKey.NotesShowTrashed]),
     )
-    newWebDisplayOptions.hideDate = this.application.getPreference(
-      PrefKey.NotesHideDate,
-      PrefDefaults[PrefKey.NotesHideDate],
+
+    newDisplayOptions.includePinned = useBoolean(
+      !selectedTag?.preferences?.hidePinned,
+      !this.application.getPreference(PrefKey.NotesHidePinned, PrefDefaults[PrefKey.NotesHidePinned]),
     )
-    newWebDisplayOptions.hideTags = this.application.getPreference(
-      PrefKey.NotesHideTags,
-      PrefDefaults[PrefKey.NotesHideTags],
+
+    newDisplayOptions.includeProtected = useBoolean(
+      !selectedTag?.preferences?.hideProtected,
+      !this.application.getPreference(PrefKey.NotesHideProtected, PrefDefaults[PrefKey.NotesHideProtected]),
     )
-    newWebDisplayOptions.hideEditorIcon = this.application.getPreference(
-      PrefKey.NotesHideEditorIcon,
-      PrefDefaults[PrefKey.NotesHideEditorIcon],
+
+    newWebDisplayOptions.hideNotePreview = useBoolean(
+      selectedTag?.preferences?.hideNotePreview,
+      this.application.getPreference(PrefKey.NotesHideNotePreview, PrefDefaults[PrefKey.NotesHideNotePreview]),
+    )
+
+    newWebDisplayOptions.hideDate = useBoolean(
+      selectedTag?.preferences?.hideDate,
+      this.application.getPreference(PrefKey.NotesHideDate, PrefDefaults[PrefKey.NotesHideDate]),
+    )
+
+    newWebDisplayOptions.hideTags = useBoolean(
+      selectedTag?.preferences?.hideTags,
+      this.application.getPreference(PrefKey.NotesHideTags, PrefDefaults[PrefKey.NotesHideTags]),
+    )
+
+    newWebDisplayOptions.hideEditorIcon = useBoolean(
+      selectedTag?.preferences?.hideEditorIcon,
+      this.application.getPreference(PrefKey.NotesHideEditorIcon, PrefDefaults[PrefKey.NotesHideEditorIcon]),
     )
 
     const displayOptionsChanged =
@@ -518,12 +542,10 @@ export class ItemListController
     }
 
     if (!displayOptionsChanged) {
-      return
+      return { didReloadItems: false }
     }
 
-    if (displayOptionsChanged) {
-      this.reloadNotesDisplayOptions()
-    }
+    this.reloadNotesDisplayOptions()
 
     await this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
 
@@ -535,6 +557,8 @@ export class ItemListController
       type: CrossControllerEvent.RequestValuePersistence,
       payload: undefined,
     })
+
+    return { didReloadItems: true }
   }
 
   async createNewNoteController(title?: string) {
@@ -555,20 +579,18 @@ export class ItemListController
       await this.navigationController.selectHomeNavigationView()
     }
 
-    const titleFormat = this.application.getPreference(
-      PrefKey.NewNoteTitleFormat,
-      PrefDefaults[PrefKey.NewNoteTitleFormat],
-    )
+    const titleFormat =
+      this.navigationController.selected?.preferences?.newNoteTitleFormat ||
+      this.application.getPreference(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat])
 
     let title = formatDateAndTimeForNote(new Date())
 
     if (titleFormat === NewNoteTitleFormat.CurrentNoteCount) {
       title = `Note ${this.notes.length + 1}`
     } else if (titleFormat === NewNoteTitleFormat.CustomFormat) {
-      const customFormat = this.application.getPreference(
-        PrefKey.CustomNoteTitleFormat,
-        PrefDefaults[PrefKey.CustomNoteTitleFormat],
-      )
+      const customFormat =
+        this.navigationController.selected?.preferences?.customNoteTitleFormat ||
+        this.application.getPreference(PrefKey.CustomNoteTitleFormat, PrefDefaults[PrefKey.CustomNoteTitleFormat])
       title = dayjs().format(customFormat)
     } else if (titleFormat === NewNoteTitleFormat.Empty) {
       title = ''

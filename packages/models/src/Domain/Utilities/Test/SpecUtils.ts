@@ -41,7 +41,21 @@ export const createNoteWithContent = (content: Partial<NoteContent>, createdAt?:
   )
 }
 
-export const createTag = (title = 'photos') => {
+export const createTagWithContent = (content: Partial<TagContent>): SNTag => {
+  return new SNTag(
+    new DecryptedPayload(
+      {
+        uuid: mockUuid(),
+        content_type: ContentType.Tag,
+        content: FillItemContent<TagContent>(content),
+        ...PayloadTimestampDefaults(),
+      },
+      PayloadSource.Constructor,
+    ),
+  )
+}
+
+export const createTagWithTitle = (title = 'photos') => {
   return new SNTag(
     new DecryptedPayload(
       {

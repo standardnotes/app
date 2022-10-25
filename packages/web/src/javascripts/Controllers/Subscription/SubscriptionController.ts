@@ -110,6 +110,10 @@ export class SubscriptionController extends AbstractViewController {
     return Boolean(this.userSubscription?.cancelled)
   }
 
+  hasValidSubscription(): boolean {
+    return this.userSubscription != undefined && !this.isUserSubscriptionExpired && !this.isUserSubscriptionCanceled
+  }
+
   get usedInvitationsCount(): number {
     return (
       this.subscriptionInvitations?.filter((invitation) =>
