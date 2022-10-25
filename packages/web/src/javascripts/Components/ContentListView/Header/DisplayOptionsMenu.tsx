@@ -22,6 +22,7 @@ import NewNotePreferences from './NewNotePreferences'
 import { PreferenceMode } from './PreferenceMode'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 import Button from '@/Components/Button/Button'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   closeDisplayOptionsMenu,
@@ -170,9 +171,10 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
 
     return (
       <button
-        className={`${
-          isSelected ? 'bg-info text-info-contrast' : 'bg-transparent text-text'
-        } relative cursor-pointer rounded-full border-2 border-0 border-solid border-transparent px-2 text-sm focus:shadow-none`}
+        className={classNames(
+          'relative cursor-pointer rounded-full border-2 border-solid border-transparent px-2 text-sm focus:shadow-none',
+          isSelected ? 'bg-info text-info-contrast' : 'bg-transparent text-text',
+        )}
         onClick={() => {
           setCurrentMode(mode)
         }}
@@ -182,7 +184,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             <Icon
               size="small"
               type={icon as IconType}
-              className={`mr-1 ${isSelected ? 'text-info-contrast' : 'text-neutral'}`}
+              className={classNames('mr-1 cursor-pointer', isSelected ? 'text-info-contrast' : 'text-neutral')}
             />
           )}
           <div>{label}</div>
@@ -214,8 +216,8 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   return (
     <Menu className="text-sm" a11yLabel="Notes list options menu" closeMenu={closeDisplayOptionsMenu} isOpen={isOpen}>
       <div className="my-1 px-3 text-xs font-semibold uppercase text-text">Preferences for</div>
-      <div className="mt-2 flex w-full justify-between px-3">
-        <div className="my-1 flex items-center">
+      <div className="mt-1.5 mb-3 flex w-full justify-between px-3">
+        <div className="flex items-center">
           <TabButton label="Global" mode="global" />
           {!isSystemTag && <TabButton label={selectedTag.title} icon={selectedTag.iconString} mode="tag" />}
         </div>
