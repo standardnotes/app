@@ -342,6 +342,41 @@ export class LinkingController extends AbstractViewController {
     this.application.sync.sync().catch(console.error)
   }
 
+  isValidSearchResult = (item: LinkableItem, searchQuery: string) => {
+    const title = item instanceof SNTag ? this.application.items.getTagLongTitle(item) : item.title
+
+    const matchesQuery = title?.toLowerCase().includes(searchQuery.toLowerCase())
+
+    const isActiveItem = this.activeItem?.uuid === item.uuid
+    const isArchivedOrTrashed = item.archived || item.trashed
+
+    const isValidSearchResult = matchesQuery && !isActiveItem && !isArchivedOrTrashed
+
+    return isValidSearchResult
+  }
+
+  isSearchResultAlreadyLinked = (item: LinkableItem) => {
+    if (!this.activeItem) {
+      return false
+    }
+
+    let isAlreadyLinked = false
+
+    const isItemReferencedByActiveItem = this.activeItem.references.some((ref) => ref.uuid === item.uuid)
+    const isActiveItemReferencedByItem = item.references.some((ref) => ref.uuid === this.activeItem?.uuid)
+
+    if (this.activeItem.content_type === item.content_type) {
+      isAlreadyLinked = isItemReferencedByActiveItem
+    } else {
+      isAlreadyLinked = isActiveItemReferencedByItem || isItemReferencedByActiveItem
+    }
+
+    return isAlreadyLinked
+  }
+
+  isSearchResultExistingTag = (result: DecryptedItemInterface<ItemContent>, searchQuery: string) =>
+    result.content_type === ContentType.Tag && result.title === searchQuery
+
   getSearchResults = (searchQuery: string) => {
     let unlinkedResults: LinkableItem[] = []
     const linkedResults: ItemLink<LinkableItem>[] = []
@@ -373,31 +408,11 @@ export class LinkingController extends AbstractViewController {
     for (let index = 0; index < searchableItems.length; index++) {
       const item = searchableItems[index]
 
-      const title = item instanceof SNTag ? this.application.items.getTagLongTitle(item) : item.title
-
-      const matchesQuery = title?.toLowerCase().includes(searchQuery.toLowerCase())
-
-      const isActiveItem = this.activeItem?.uuid === item.uuid
-      const isArchivedOrTrashed = item.archived || item.trashed
-
-      const isValidSearchResult = matchesQuery && !isActiveItem && !isArchivedOrTrashed
-
-      if (!isValidSearchResult) {
+      if (!this.isValidSearchResult(item, searchQuery)) {
         continue
       }
 
-      let isAlreadyLinked = false
-
-      const isItemReferencedByActiveItem = this.activeItem.references.some((ref) => ref.uuid === item.uuid)
-      const isActiveItemReferencedByItem = item.references.some((ref) => ref.uuid === this.activeItem?.uuid)
-
-      if (this.activeItem.content_type === item.content_type) {
-        isAlreadyLinked = isItemReferencedByActiveItem
-      } else {
-        isAlreadyLinked = isActiveItemReferencedByItem || isItemReferencedByActiveItem
-      }
-
-      if (isAlreadyLinked) {
+      if (this.isSearchResultAlreadyLinked(item)) {
         if (linkedResults.length < 20) {
           linkedResults.push(this.createLinkFromItem(item, 'linked'))
         }
@@ -422,11 +437,9 @@ export class LinkingController extends AbstractViewController {
 
     unlinkedResults = unlinkedTags.concat(unlinkedNotes).concat(unlinkedFiles)
 
-    const isResultExistingTag = (result: DecryptedItemInterface<ItemContent>) =>
-      result.content_type === ContentType.Tag && result.title === searchQuery
-
     shouldShowCreateTag =
-      !linkedResults.find((link) => isResultExistingTag(link.item)) && !unlinkedResults.find(isResultExistingTag)
+      !linkedResults.find((link) => this.isSearchResultExistingTag(link.item, searchQuery)) &&
+      !unlinkedResults.find((item) => this.isSearchResultExistingTag(item, searchQuery))
 
     return {
       unlinkedResults,
