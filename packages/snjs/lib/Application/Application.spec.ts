@@ -1,3 +1,7 @@
+/**
+ * @jest-environment jsdom
+ */
+
 import { SNLog } from './../Log'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { AlertService, DeviceInterface, namespacedKey, RawStorageKey } from '@standardnotes/services'

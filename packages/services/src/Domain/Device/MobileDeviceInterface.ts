@@ -17,4 +17,7 @@ export interface MobileDeviceInterface extends DeviceInterface {
   downloadBase64AsFile(base64: string, filename: string, saveInTempLocation?: boolean): Promise<string | undefined>
   previewFile(base64: string, filename: string): Promise<boolean>
   exitApp(confirm?: boolean): void
+  addComponentUrl(componentUuid: string, componentUrl: string): void
+  removeComponentUrl(componentUuid: string): void
+  isUrlComponentUrl(url: string): boolean
 }

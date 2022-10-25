@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Keyboard, Platform } from 'react-native'
 import VersionInfo from 'react-native-version-info'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
+import { OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTypes'
 import pjson from '../package.json'
 import { AndroidBackHandlerService } from './AndroidBackHandlerService'
 import { AppStateObserverService } from './AppStateObserverService'
@@ -23,6 +24,7 @@ export const MobileWebAppContainer = () => {
 
 const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => void }) => {
   const webViewRef = useRef<WebView>(null)
+
   const sourceUri = (Platform.OS === 'android' ? 'file:///android_asset/' : '') + 'Web.bundle/src/index.html'
   const stateService = useMemo(() => new AppStateObserverService(), [])
   const androidBackHandlerService = useMemo(() => new AndroidBackHandlerService(), [])
@@ -99,7 +101,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   class WebProcessDeviceInterface {
     constructor(messageSender) {
       this.appVersion = '${pjson.version} (${VersionInfo.buildVersion})'
-      this.environment = 4
+      this.environment = 3
       this.platform = ${device.platform}
       this.databases = []
       this.messageSender = messageSender
@@ -195,6 +197,34 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     webViewRef.current?.postMessage(JSON.stringify({ messageId, returnValue, messageType: 'reply' }))
   }
 
+  const onShouldStartLoadWithRequest: OnShouldStartLoadWithRequest = (request) => {
+    /**
+     * We want to handle link clicks within an editor by opening the browser
+     * instead of loading inline. On iOS, onShouldStartLoadWithRequest is
+     * called for all requests including the initial request to load the editor.
+     * On iOS, clicks in the editors have a navigationType of 'click', but on
+     * Android, this is not the case (no navigationType).
+     * However, on Android, this function is not called for the initial request.
+     * So that might be one way to determine if this request is a click or the
+     * actual editor load request. But I don't think it's safe to rely on this
+     * being the case in the future. So on Android, we'll handle url loads only
+     * if the url isn't equal to the editor url.
+     */
+
+    const shouldStopRequest =
+      (Platform.OS === 'ios' && request.navigationType === 'click') ||
+      (Platform.OS === 'android' && request.url !== sourceUri)
+
+    const isComponentUrl = device.isUrlComponentUrl(request.url)
+
+    if (shouldStopRequest && !isComponentUrl) {
+      device.openUrl(request.url)
+      return false
+    }
+
+    return true
+  }
+
   return (
     <WebView
       ref={webViewRef}
@@ -210,6 +240,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       onRenderProcessGone={() => {
         webViewRef.current?.reload()
       }}
+      onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       allowFileAccess={true}
       allowUniversalAccessFromFileURLs={true}
       injectedJavaScriptBeforeContentLoaded={injectedJS}

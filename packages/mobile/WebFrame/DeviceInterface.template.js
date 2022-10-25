@@ -2,7 +2,7 @@
 class WebProcessDeviceInterface {
   constructor(messageSender) {
     this.appVersion = '1.2.3'
-    this.environment = 4
+    this.environment = 3
     this.databases = []
     this.messageSender = messageSender
   }

@@ -11,6 +11,7 @@ import {
   RawKeychainValue,
   removeFromArray,
   TransferPayload,
+  UuidString,
 } from '@standardnotes/snjs'
 import { Alert, Linking, PermissionsAndroid, Platform, StatusBar } from 'react-native'
 import FileViewer from 'react-native-file-viewer'
@@ -79,6 +80,7 @@ export class MobileDevice implements MobileDeviceInterface {
   private eventObservers: MobileDeviceEventHandler[] = []
   public isDarkMode = false
   public statusBarBgColor: string | undefined
+  private componentUrls: Map<UuidString, string> = new Map()
 
   constructor(
     private stateObserverService?: AppStateObserverService,
@@ -595,5 +597,17 @@ export class MobileDevice implements MobileDeviceInterface {
         cancelable: true,
       },
     )
+  }
+
+  addComponentUrl(componentUuid: UuidString, componentUrl: string) {
+    this.componentUrls.set(componentUuid, componentUrl)
+  }
+
+  removeComponentUrl(componentUuid: UuidString) {
+    this.componentUrls.delete(componentUuid)
+  }
+
+  isUrlComponentUrl(url: string): boolean {
+    return Array.from(this.componentUrls.values()).includes(url)
   }
 }
