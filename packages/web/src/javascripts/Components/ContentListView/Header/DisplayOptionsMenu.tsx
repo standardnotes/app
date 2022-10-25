@@ -213,12 +213,10 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     </div>
   )
 
-  const shouldShowSubscriptionBanner = currentMode === 'tag' && !hasSubscription
-
   return (
     <Menu className="text-sm" a11yLabel="Notes list options menu" closeMenu={closeDisplayOptionsMenu} isOpen={isOpen}>
       <div className="my-1 px-3 text-xs font-semibold uppercase text-text">Preferences for</div>
-      <div className={classNames('mt-1.5 flex w-full justify-between px-3', !shouldShowSubscriptionBanner && 'mb-3')}>
+      <div className={classNames('mt-1.5 flex w-full justify-between px-3', !controlsDisabled && 'mb-3')}>
         <div className="flex items-center gap-1.5">
           <TabButton label="Global" mode="global" />
           {!isSystemTag && <TabButton label={selectedTag.title} icon={selectedTag.iconString} mode="tag" />}
@@ -226,7 +224,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         {currentMode === 'tag' && <button onClick={resetTagPreferences}>Reset</button>}
       </div>
 
-      {shouldShowSubscriptionBanner && <NoSubscriptionBanner />}
+      {controlsDisabled && <NoSubscriptionBanner />}
 
       <MenuItemSeparator />
 
