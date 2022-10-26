@@ -8,10 +8,13 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { useResponsiveAppPane } from '../../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../../ResponsivePane/AppPaneMetadata'
-import { createDailySectionsWithTemplateInterstices, insertBlanks } from './CreateDailySections'
+import { createDailySectionsWithTemplateInterstices, insertBlanks, templateEntryForDate } from './CreateDailySections'
 import { DailyItemsDaySection } from './DailyItemsDaySection'
 import { DailyItemCell } from './DailyItemCell'
 import { SNTag } from '@standardnotes/snjs'
+import { CalendarActivity } from '../Calendar/CalendarActivity'
+import Calendar from '../Calendar/Calendar'
+import { dailiesDateToSectionTitle } from './Utils'
 
 type Props = {
   itemListController: ItemListController
@@ -50,6 +53,15 @@ const DailyContentList: FunctionComponent<Props> = ({
     setSectionedItems(result)
     setTodaySection(result.find((item) => item.isToday) as DailyItemsDaySection)
   }, [items])
+
+  const calendarActivities: CalendarActivity[] = useMemo(() => {
+    return items.map((item) => {
+      return {
+        date: item.created_at,
+        item: item,
+      }
+    })
+  }, [sectionedItems])
 
   const paginateBottom = useCallback(() => {
     const copy = sectionedItems.slice()
@@ -123,6 +135,7 @@ const DailyContentList: FunctionComponent<Props> = ({
     (section: DailyItemsDaySection) => {
       setSelectedTemplateItem(section)
       itemListController.createNewNote(undefined, section.date, 'editor')
+      toggleAppPane(AppPaneId.Editor)
     },
     [setSelectedTemplateItem, itemListController],
   )
@@ -154,46 +167,71 @@ const DailyContentList: FunctionComponent<Props> = ({
     setNeedsSelectionReload(true)
   }, [selectedTag.uuid])
 
+  const sectionForDate = (date: Date): DailyItemsDaySection | undefined => {
+    return sectionedItems.find((candidate) => dailiesDateToSectionTitle(date) === candidate.dateKey)
+  }
+
+  const onCalendarSelect = useCallback(
+    (date: Date) => {
+      const section = sectionForDate(date)
+      if (section?.items && section?.items?.length > 0) {
+        onClickItem(section.items[0], false)
+      } else if (section) {
+        onClickTemplate(section)
+      } else {
+        const newSection = templateEntryForDate(date)
+        const copy = sectionedItems.slice()
+        copy.unshift(newSection)
+        setSectionedItems(copy)
+        onClickTemplate(newSection)
+      }
+    },
+    [onClickItem, setSectionedItems, onClickTemplate, sectionedItems],
+  )
+
   return (
-    <div
-      className={classNames(
-        'infinite-scroll overflow-y-auto overflow-x-hidden focus:shadow-none focus:outline-none',
-        'md:max-h-full md:overflow-y-hidden md:hover:overflow-y-auto pointer-coarse:md:overflow-y-auto',
-        'md:hover:[overflow-y:_overlay]',
-      )}
-      id={ElementIds.ContentList}
-      tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-    >
-      {sectionedItems.map((section, index) => {
-        const isFirst = index === 0
-        const isLast = index === sectionedItems.length - 1
-        if (section.items) {
-          return section.items.map((item) => (
-            <DailyItemCell
-              selected={selectedUuids.has(item.uuid)}
-              section={section}
-              key={item.uuid}
-              item={item}
-              hideDate={hideDate}
-              hidePreview={hideNotePreview}
-              hideTags={hideTags}
-              onClick={() => onClickItem(item, true)}
-              ref={isLast ? setLastElement : isFirst ? setFirstElement : null}
-            />
-          ))
-        } else {
-          return (
-            <DailyItemCell
-              selected={section.id === selectedTemplateItem?.id}
-              section={section}
-              key={section.dateKey}
-              onClick={() => onClickTemplate(section)}
-              ref={isLast ? setLastElement : isFirst ? setFirstElement : null}
-            />
-          )
-        }
-      })}
-    </div>
+    <>
+      <Calendar activities={calendarActivities} activityType={'created'} onDateSelect={onCalendarSelect} />
+      <div
+        className={classNames(
+          'infinite-scroll overflow-y-auto overflow-x-hidden focus:shadow-none focus:outline-none',
+          'md:max-h-full md:overflow-y-hidden md:hover:overflow-y-auto pointer-coarse:md:overflow-y-auto',
+          'md:hover:[overflow-y:_overlay]',
+        )}
+        id={ElementIds.ContentList}
+        tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
+      >
+        {sectionedItems.map((section, index) => {
+          const isFirst = index === 0
+          const isLast = index === sectionedItems.length - 1
+          if (section.items) {
+            return section.items.map((item) => (
+              <DailyItemCell
+                selected={selectedUuids.has(item.uuid)}
+                section={section}
+                key={item.uuid}
+                item={item}
+                hideDate={hideDate}
+                hidePreview={hideNotePreview}
+                hideTags={hideTags}
+                onClick={() => onClickItem(item, true)}
+                ref={isLast ? setLastElement : isFirst ? setFirstElement : null}
+              />
+            ))
+          } else {
+            return (
+              <DailyItemCell
+                selected={section.id === selectedTemplateItem?.id}
+                section={section}
+                key={section.dateKey}
+                onClick={() => onClickTemplate(section)}
+                ref={isLast ? setLastElement : isFirst ? setFirstElement : null}
+              />
+            )
+          }
+        })}
+      </div>
+    </>
   )
 }
 

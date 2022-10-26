@@ -3,7 +3,7 @@ import { addDays, getWeekdayName, numDaysBetweenDates } from '@/Utils/DateUtils'
 import { DailyItemsDaySection } from './DailyItemsDaySection'
 import { dailiesDateToSectionTitle } from './Utils'
 
-const templateEntryForDate = (date: Date): DailyItemsDaySection => {
+export const templateEntryForDate = (date: Date): DailyItemsDaySection => {
   const entryDateString = dailiesDateToSectionTitle(date)
 
   return {
