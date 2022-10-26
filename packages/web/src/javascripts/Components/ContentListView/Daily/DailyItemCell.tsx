@@ -42,7 +42,7 @@ interface Props extends ComponentPropsWithoutRef<'div'> {
   hidePreview?: boolean
 }
 
-export const CalendarCell = forwardRef(
+export const DailyItemCell = forwardRef(
   (
     { item, tags = [], section, onClick, selected, hideDate = false, hidePreview = false, hideTags = false }: Props,
     ref: Ref<HTMLDivElement>,

@@ -10,7 +10,7 @@ import { useResponsiveAppPane } from '../../ResponsivePane/ResponsivePaneProvide
 import { AppPaneId } from '../../ResponsivePane/AppPaneMetadata'
 import { createDailySectionsWithTemplateInterstices, insertBlanks } from './CreateDailySections'
 import { DailyItemsDaySection } from './DailyItemsDaySection'
-import { CalendarCell } from './CalendarCell'
+import { DailyItemCell } from './DailyItemCell'
 import { SNTag } from '@standardnotes/snjs'
 
 type Props = {
@@ -169,7 +169,7 @@ const DailyContentList: FunctionComponent<Props> = ({
         const isLast = index === sectionedItems.length - 1
         if (section.items) {
           return section.items.map((item) => (
-            <CalendarCell
+            <DailyItemCell
               selected={selectedUuids.has(item.uuid)}
               section={section}
               key={item.uuid}
@@ -183,7 +183,7 @@ const DailyContentList: FunctionComponent<Props> = ({
           ))
         } else {
           return (
-            <CalendarCell
+            <DailyItemCell
               selected={section.id === selectedTemplateItem?.id}
               section={section}
               key={section.dateKey}
