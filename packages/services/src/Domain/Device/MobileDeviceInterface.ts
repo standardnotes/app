@@ -20,4 +20,5 @@ export interface MobileDeviceInterface extends DeviceInterface {
   addComponentUrl(componentUuid: string, componentUrl: string): void
   removeComponentUrl(componentUuid: string): void
   isUrlComponentUrl(url: string): boolean
+  getAppState(): Promise<'active' | 'background' | 'inactive' | 'unknown' | 'extension'>
 }

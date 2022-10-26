@@ -34,12 +34,24 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
       return
     }
 
-    if (prompt.validation === ChallengeValidation.Biometric) {
-      biometricsButtonRef.current?.click()
-    } else {
-      inputRef.current?.focus()
+    const activatePrompt = async () => {
+      if (prompt.validation === ChallengeValidation.Biometric) {
+        if (application.isNativeMobileWeb()) {
+          const appState = await application.mobileDevice().getAppState()
+
+          if (appState !== 'active') {
+            return
+          }
+        }
+
+        biometricsButtonRef.current?.click()
+      } else {
+        inputRef.current?.focus()
+      }
     }
-  }, [index, prompt.validation])
+
+    void activatePrompt()
+  }, [application, index, prompt.validation])
 
   useEffect(() => {
     if (isInvalid) {
