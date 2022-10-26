@@ -29,6 +29,7 @@ import {
   CreateEncryptedBackupFileContextPayload,
   DecryptedItemInterface,
   DecryptedItemMutator,
+  DecryptedPayload,
   DecryptedPayloadInterface,
   EncryptedItemInterface,
   FileItem,
@@ -221,8 +222,8 @@ export class MutatorService extends AbstractService implements MutatorClientInte
   public createTemplateItem<
     C extends ItemContent = ItemContent,
     I extends DecryptedItemInterface<C> = DecryptedItemInterface<C>,
-  >(contentType: ContentType, content?: C): I {
-    return this.itemManager.createTemplateItem(contentType, content)
+  >(contentType: ContentType, content?: C, override?: Partial<DecryptedPayload<C>>): I {
+    return this.itemManager.createTemplateItem(contentType, content, override)
   }
 
   public async setItemNeedsSync(

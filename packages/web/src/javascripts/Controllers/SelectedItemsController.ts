@@ -287,16 +287,20 @@ export class SelectedItemsController
     item: {
       uuid: ListableContentItem['uuid']
     },
-    { userTriggered = false, scrollIntoView = true },
+    { userTriggered = false, scrollIntoView = true, animated = true },
   ): Promise<void> => {
     const { didSelect } = await this.selectItem(item.uuid, userTriggered)
 
     if (didSelect && scrollIntoView) {
-      const itemElement = document.getElementById(item.uuid)
-      itemElement?.scrollIntoView({
-        behavior: 'smooth',
-      })
+      this.scrollToItem(item, animated)
     }
+  }
+
+  scrollToItem = (item: { uuid: ListableContentItem['uuid'] }, animated = true): void => {
+    const itemElement = document.getElementById(item.uuid)
+    itemElement?.scrollIntoView({
+      behavior: animated ? 'smooth' : 'auto',
+    })
   }
 
   selectUuids = async (uuids: UuidString[], userTriggered = false) => {

@@ -26,6 +26,7 @@ import { classNames } from '@/Utils/ConcatenateClassNames'
 import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
 import { LinkingController } from '@/Controllers/LinkingController'
+import DailyContentList from './Daily/DailyContentList'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -227,6 +228,8 @@ const ContentListView: FunctionComponent<Props> = ({
   const matchesXLBreakpoint = useMediaQuery(MediaQueryBreakpoints.xl)
   const isTabletScreenSize = matchesMediumBreakpoint && !matchesXLBreakpoint
 
+  const dailyMode = selectedTag?.title === 'Daily Notes'
+
   return (
     <div
       id="items-column"
@@ -279,20 +282,35 @@ const ContentListView: FunctionComponent<Props> = ({
             />
           </div>
         </div>
-        {completedFullSync && !renderedItems.length ? <p className="empty-items-list opacity-50">No items.</p> : null}
-        {!completedFullSync && !renderedItems.length ? <p className="empty-items-list opacity-50">Loading...</p> : null}
-        {renderedItems.length ? (
-          <ContentList
+        {dailyMode && (
+          <DailyContentList
             items={renderedItems}
             selectedUuids={selectedUuids}
             application={application}
-            paginate={paginate}
-            filesController={filesController}
             itemListController={itemListController}
-            navigationController={navigationController}
-            notesController={notesController}
             selectionController={selectionController}
           />
+        )}
+        {!dailyMode && renderedItems.length ? (
+          <>
+            {completedFullSync && !renderedItems.length ? (
+              <p className="empty-items-list opacity-50">No items.</p>
+            ) : null}
+            {!completedFullSync && !renderedItems.length ? (
+              <p className="empty-items-list opacity-50">Loading...</p>
+            ) : null}
+            <ContentList
+              items={renderedItems}
+              selectedUuids={selectedUuids}
+              application={application}
+              paginate={paginate}
+              filesController={filesController}
+              itemListController={itemListController}
+              navigationController={navigationController}
+              notesController={notesController}
+              selectionController={selectionController}
+            />
+          </>
         ) : null}
         <div className="absolute bottom-0 h-safe-bottom w-full" />
       </ResponsivePaneContent>

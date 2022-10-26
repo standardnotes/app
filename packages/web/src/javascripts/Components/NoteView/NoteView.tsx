@@ -233,7 +233,11 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     if (this.controller.isTemplateNote) {
       setTimeout(() => {
-        this.focusTitle()
+        if (this.controller.templateNoteOptions?.autofocusBehavior === 'editor') {
+          this.focusEditor()
+        } else {
+          this.focusTitle()
+        }
       })
     }
   }

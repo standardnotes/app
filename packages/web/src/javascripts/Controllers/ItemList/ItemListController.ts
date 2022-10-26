@@ -20,6 +20,7 @@ import {
   WebAppEvent,
   NewNoteTitleFormat,
   useBoolean,
+  TemplateNoteViewAutofocusBehavior,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -561,24 +562,24 @@ export class ItemListController
     return { didReloadItems: true }
   }
 
-  async createNewNoteController(title?: string) {
+  async createNewNoteController(
+    title?: string,
+    createdAt?: Date,
+    autofocusBehavior?: TemplateNoteViewAutofocusBehavior,
+  ) {
     const selectedTag = this.navigationController.selected
 
     const activeRegularTagUuid = selectedTag instanceof SNTag ? selectedTag.uuid : undefined
 
-    await this.application.itemControllerGroup.createItemController({
+    return this.application.itemControllerGroup.createItemController({
       title,
       tag: activeRegularTagUuid,
+      createdAt,
+      autofocusBehavior,
     })
   }
 
-  createNewNote = async () => {
-    this.notesController.unselectNotes()
-
-    if (this.navigationController.isInSmartView() && !this.navigationController.isInHomeView()) {
-      await this.navigationController.selectHomeNavigationView()
-    }
-
+  titleForNewNote = () => {
     const titleFormat =
       this.navigationController.selected?.preferences?.newNoteTitleFormat ||
       this.application.getPreference(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat])
@@ -600,9 +601,21 @@ export class ItemListController
       title = this.noteFilterText
     }
 
-    await this.createNewNoteController(title)
+    return title
+  }
+
+  createNewNote = async (title?: string, createdAt?: Date, autofocusBehavior?: TemplateNoteViewAutofocusBehavior) => {
+    this.notesController.unselectNotes()
+
+    if (this.navigationController.isInSmartView() && !this.navigationController.isInHomeView()) {
+      await this.navigationController.selectHomeNavigationView()
+    }
+
+    const controller = await this.createNewNoteController(title || this.titleForNewNote(), createdAt, autofocusBehavior)
 
     this.linkingController.reloadAllLinks()
+
+    this.selectionController.scrollToItem(controller.item)
   }
 
   createPlaceholderNote = () => {

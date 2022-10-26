@@ -11,6 +11,7 @@ import {
   DeletedItemInterface,
   ItemContent,
   PredicateInterface,
+  DecryptedPayload,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 
@@ -93,6 +94,7 @@ export interface ItemManagerInterface extends AbstractService {
   >(
     contentType: ContentType,
     content?: C,
+    override?: Partial<DecryptedPayload<C>>,
   ): I
 
   /**

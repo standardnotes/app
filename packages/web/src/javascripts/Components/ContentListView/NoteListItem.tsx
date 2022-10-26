@@ -11,6 +11,7 @@ import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useContextMenuEvent } from '@/Hooks/useContextMenuEvent'
+import NotePreviewText from './NotePreviewText'
 
 const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   application,
@@ -88,24 +89,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
         <div className="flex items-start justify-between overflow-hidden text-base font-semibold leading-[1.3]">
           <div className="break-word mr-2">{item.title}</div>
         </div>
-        {!hidePreview && !item.hidePreview && !item.protected && (
-          <div className="overflow-hidden overflow-ellipsis text-sm">
-            {item.preview_html && (
-              <div
-                className="my-1"
-                dangerouslySetInnerHTML={{
-                  __html: sanitizeHtmlString(item.preview_html),
-                }}
-              ></div>
-            )}
-            {!item.preview_html && item.preview_plain && (
-              <div className="leading-1.3 line-clamp-1 mt-1 overflow-hidden">{item.preview_plain}</div>
-            )}
-            {!item.preview_html && !item.preview_plain && item.text && (
-              <div className="leading-1.3 line-clamp-1 mt-1 overflow-hidden">{item.text}</div>
-            )}
-          </div>
-        )}
+        {!hidePreview && !item.hidePreview && !item.protected && <NotePreviewText item={item} />}
         <ListItemMetadata item={item} hideDate={hideDate} sortBy={sortBy} />
         <ListItemTags hideTags={hideTags} tags={tags} />
         <ListItemConflictIndicator item={item} />
