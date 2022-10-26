@@ -52,7 +52,7 @@ export const CalendarCell: FunctionComponent<Props> = ({
             {item && (
               <>
                 <ListItemTitle item={item} />
-                {!hidePreview && <ListItemNotePreviewText item={item} />}
+                <ListItemNotePreviewText hidePreview={hidePreview} item={item} />
                 <ListItemMetadata item={item} hideDate={hideDate} sortBy={'created_at'} />
                 <ListItemTags hideTags={hideTags} tags={tags} />
               </>

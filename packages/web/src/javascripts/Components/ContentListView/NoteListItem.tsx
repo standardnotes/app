@@ -88,7 +88,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
       )}
       <div className="min-w-0 flex-grow border-b border-solid border-border py-4 px-0">
         <ListItemTitle item={item} />
-        {!hidePreview && !item.hidePreview && !item.protected && <ListItemNotePreviewText item={item} />}
+        <ListItemNotePreviewText item={item} hidePreview={hidePreview} />
         <ListItemMetadata item={item} hideDate={hideDate} sortBy={sortBy} />
         <ListItemTags hideTags={hideTags} tags={tags} />
         <ListItemConflictIndicator item={item} />

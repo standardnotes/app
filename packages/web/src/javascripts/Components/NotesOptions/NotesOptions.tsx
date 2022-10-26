@@ -318,7 +318,7 @@ const NotesOptions = ({
         }}
       >
         <span className="flex items-center">
-          <Icon type="password" className={iconClass} />
+          <Icon type="lock" className={iconClass} />
           Password protect
         </span>
         <Switch className="px-0" checked={protect} />

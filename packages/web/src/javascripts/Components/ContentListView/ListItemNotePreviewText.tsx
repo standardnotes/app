@@ -4,9 +4,14 @@ import { ListableContentItem } from './Types/ListableContentItem'
 
 type Props = {
   item: ListableContentItem
+  hidePreview: boolean
 }
 
-const ListItemNotePreviewText: FunctionComponent<Props> = ({ item }) => {
+const ListItemNotePreviewText: FunctionComponent<Props> = ({ item, hidePreview }) => {
+  if (item.hidePreview || item.protected || hidePreview) {
+    return null
+  }
+
   return (
     <div className={`overflow-hidden overflow-ellipsis text-sm ${item.archived ? 'opacity-60' : ''}`}>
       {item.preview_html && (
