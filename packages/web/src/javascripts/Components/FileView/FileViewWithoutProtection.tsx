@@ -94,6 +94,7 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
               <LinkedItemsButton
                 filesController={viewControllerManager.filesController}
                 linkingController={viewControllerManager.linkingController}
+                featuresController={viewControllerManager.featuresController}
               />
               <RoundIconButton
                 label="File information panel"

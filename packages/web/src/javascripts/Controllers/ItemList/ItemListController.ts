@@ -492,14 +492,14 @@ export class ItemListController
       this.application.getPreference(PrefKey.NotesShowTrashed, PrefDefaults[PrefKey.NotesShowTrashed]),
     )
 
-    newDisplayOptions.includePinned = useBoolean(
-      !selectedTag?.preferences?.hidePinned,
-      !this.application.getPreference(PrefKey.NotesHidePinned, PrefDefaults[PrefKey.NotesHidePinned]),
+    newDisplayOptions.includePinned = !useBoolean(
+      selectedTag?.preferences?.hidePinned,
+      this.application.getPreference(PrefKey.NotesHidePinned, PrefDefaults[PrefKey.NotesHidePinned]),
     )
 
-    newDisplayOptions.includeProtected = useBoolean(
-      !selectedTag?.preferences?.hideProtected,
-      !this.application.getPreference(PrefKey.NotesHideProtected, PrefDefaults[PrefKey.NotesHideProtected]),
+    newDisplayOptions.includeProtected = !useBoolean(
+      selectedTag?.preferences?.hideProtected,
+      this.application.getPreference(PrefKey.NotesHideProtected, PrefDefaults[PrefKey.NotesHideProtected]),
     )
 
     newWebDisplayOptions.hideNotePreview = useBoolean(
