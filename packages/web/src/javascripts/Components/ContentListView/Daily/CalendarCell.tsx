@@ -20,7 +20,7 @@ export const CalendarCell: FunctionComponent<Props> = ({ item, tags = [], sectio
     <div
       onClick={onClick}
       className={`content-list-item flex w-full cursor-pointer items-stretch text-text ${
-        selected && 'selected border-l-2 border-solid border-info'
+        selected && 'selected border-l-2 border-solid border-danger'
       }`}
       id={section.id}
     >
@@ -29,7 +29,7 @@ export const CalendarCell: FunctionComponent<Props> = ({ item, tags = [], sectio
           <div
             className={`${
               item ? 'bg-danger text-danger-contrast' : 'bg-neutral text-neutral-contrast'
-            } mr-3 h-7 w-7 rounded  p-1 text-center text-sm font-bold `}
+            } mr-3 h-7 w-7 rounded p-1 text-center text-sm font-bold `}
           >
             {section.day}
           </div>
@@ -46,7 +46,7 @@ export const CalendarCell: FunctionComponent<Props> = ({ item, tags = [], sectio
             {!item && (
               <div>
                 <div className="break-word mr-2 font-semibold">{formatDateAndTimeForNote(section.date, false)}</div>
-                <div className="leading-1.3 line-clamp-1 mt-1 overflow-hidden text-sm">No notes yet</div>
+                <div className="leading-1.3 line-clamp-1 mt-1 overflow-hidden text-sm text-neutral">No notes yet</div>
               </div>
             )}
           </div>

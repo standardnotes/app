@@ -167,18 +167,20 @@ export class ItemListController
 
     this.disposers.push(
       application.addEventObserver(async () => {
-        void this.reloadItems(ItemsReloadSource.SyncEvent).then(() => {
-          if (
-            this.notes.length === 0 &&
-            this.navigationController.selected instanceof SmartView &&
-            this.navigationController.selected.uuid === SystemViewId.AllNotes &&
-            this.noteFilterText === '' &&
-            !this.getActiveItemController()
-          ) {
-            this.createPlaceholderNote()?.catch(console.error)
-          }
-        })
-        this.setCompletedFullSync(true)
+        if (!this.completedFullSync) {
+          void this.reloadItems(ItemsReloadSource.SyncEvent).then(() => {
+            if (
+              this.notes.length === 0 &&
+              this.navigationController.selected instanceof SmartView &&
+              this.navigationController.selected.uuid === SystemViewId.AllNotes &&
+              this.noteFilterText === '' &&
+              !this.getActiveItemController()
+            ) {
+              this.createPlaceholderNote()?.catch(console.error)
+            }
+          })
+          this.setCompletedFullSync(true)
+        }
       }, ApplicationEvent.CompletedFullSync),
     )
 
@@ -213,6 +215,7 @@ export class ItemListController
       notesToDisplay: observable,
       panelTitle: observable,
       panelWidth: observable,
+      items: observable,
       renderedItems: observable,
       showDisplayOptionsMenu: observable,
 

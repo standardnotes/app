@@ -15,6 +15,7 @@ import {
   InternalEventBus,
   InternalEventPublishStrategy,
   VectorIconNameOrEmoji,
+  isTag,
 } from '@standardnotes/snjs'
 import { action, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -266,6 +267,13 @@ export class NavigationController
 
   public isInSystemView(id: SystemViewId): boolean {
     return this.selected instanceof SmartView && this.selected.uuid === id
+  }
+
+  public get selectedAsTag(): SNTag | undefined {
+    if (!this.selected || !isTag(this.selected)) {
+      return undefined
+    }
+    return this.selected
   }
 
   setAddingSubtagTo(tag: SNTag | undefined): void {

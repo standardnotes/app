@@ -73,7 +73,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
     <div
       ref={listItemRef}
       className={`content-list-item flex w-full cursor-pointer items-stretch text-text ${
-        selected && 'selected border-l-2 border-solid border-info'
+        selected && `selected border-l-2 border-solid border-accessory-tint-${tint}`
       }`}
       id={item.uuid}
       onClick={onClick}

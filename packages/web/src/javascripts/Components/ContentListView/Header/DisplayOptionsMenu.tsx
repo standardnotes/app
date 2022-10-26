@@ -162,6 +162,13 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     void changePreferences({ hideEditorIcon: !preferences.hideEditorIcon })
   }, [preferences, changePreferences])
 
+  const setEntryMode = useCallback(
+    (mode: 'normal' | 'daily') => {
+      void changePreferences({ entryMode: mode })
+    },
+    [changePreferences],
+  )
+
   const TabButton: FunctionComponent<{
     label: string
     mode: PreferenceMode
@@ -361,6 +368,33 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       >
         Show trashed
       </MenuItem>
+
+      {currentMode === 'tag' && (
+        <>
+          <MenuItemSeparator />
+          <div className="px-3 py-1 text-xs font-semibold uppercase text-text">Entry Mode</div>
+
+          <MenuItem
+            disabled={controlsDisabled}
+            className="py-2"
+            type={MenuItemType.RadioButton}
+            onClick={() => setEntryMode('normal')}
+            checked={!selectedTag.preferences?.entryMode || selectedTag.preferences?.entryMode === 'normal'}
+          >
+            <div className="ml-2 flex flex-grow items-center justify-between">Normal</div>
+          </MenuItem>
+
+          <MenuItem
+            disabled={controlsDisabled}
+            className="py-2"
+            type={MenuItemType.RadioButton}
+            onClick={() => setEntryMode('daily')}
+            checked={selectedTag.preferences?.entryMode === 'daily'}
+          >
+            <div className="ml-2 flex flex-grow items-center justify-between">Daily</div>
+          </MenuItem>
+        </>
+      )}
 
       <MenuItemSeparator />
 

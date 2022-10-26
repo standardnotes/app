@@ -113,7 +113,7 @@ const ContentListView: FunctionComponent<Props> = ({
 
   const { selectedUuids, selectNextItem, selectPreviousItem } = selectionController
 
-  const { selected: selectedTag } = navigationController
+  const { selected: selectedTag, selectedAsTag } = navigationController
 
   const icon = selectedTag?.iconString
 
@@ -229,7 +229,7 @@ const ContentListView: FunctionComponent<Props> = ({
   const matchesXLBreakpoint = useMediaQuery(MediaQueryBreakpoints.xl)
   const isTabletScreenSize = matchesMediumBreakpoint && !matchesXLBreakpoint
 
-  const dailyMode = selectedTag?.preferences?.entryMode === 'daily'
+  const dailyMode = selectedAsTag?.preferences?.entryMode === 'daily'
 
   return (
     <div
@@ -283,9 +283,10 @@ const ContentListView: FunctionComponent<Props> = ({
             />
           </div>
         </div>
-        {dailyMode && (
+        {selectedAsTag && dailyMode && (
           <DailyContentList
             items={items}
+            selectedTag={selectedAsTag}
             selectedUuids={selectedUuids}
             application={application}
             itemListController={itemListController}

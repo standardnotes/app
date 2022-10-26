@@ -11,14 +11,16 @@ import { useResponsiveAppPane } from '../../ResponsivePane/ResponsivePaneProvide
 import { AppPaneId } from '../../ResponsivePane/AppPaneMetadata'
 import { createDailySectionsWithTemplateInterstices } from './CreateDailySections'
 import { DailyNotesBlankItemsToInsertAtFrontAndEnd } from './Constants'
-import { areDailySectionsEqual, DailyItemsDaySection } from './DailyItemsDaySection'
+import { DailyItemsDaySection } from './DailyItemsDaySection'
 import { CalendarCell } from './CalendarCell'
+import { SNTag } from '@standardnotes/snjs'
 
 type Props = {
   application: WebApplication
   itemListController: ItemListController
   items: ListableContentItem[]
   selectionController: SelectedItemsController
+  selectedTag: SNTag
   selectedUuids: SelectedItemsController['selectedUuids']
 }
 
@@ -28,10 +30,13 @@ const DailyContentList: FunctionComponent<Props> = ({
   itemListController,
   selectionController,
   selectedUuids,
+  selectedTag,
 }) => {
   const [selectedTemplateItem, setSelectedTemplateItem] = useState<DailyItemsDaySection>()
 
   const { toggleAppPane } = useResponsiveAppPane()
+
+  const [needsSelectionReload, setNeedsSelectionReload] = useState(false)
 
   const sectionedItems = useMemo(
     () => createDailySectionsWithTemplateInterstices(items, DailyNotesBlankItemsToInsertAtFrontAndEnd),
@@ -46,25 +51,29 @@ const DailyContentList: FunctionComponent<Props> = ({
   useEffect(() => {
     const needsUpdateSelectedInstance = selectedTemplateItem
     if (needsUpdateSelectedInstance) {
-      setSelectedTemplateItem(
-        sectionedItems.find((candidate) => areDailySectionsEqual(candidate, selectedTemplateItem)),
-      )
+      setSelectedTemplateItem(sectionedItems.find((candidate) => candidate.id === selectedTemplateItem.id))
     }
-  }, [sectionedItems])
+
+    if (needsSelectionReload) {
+      setNeedsSelectionReload(false)
+
+      if (todaySection.items) {
+        onClickItem(todaySection.items[0])
+      } else {
+        onClickTemplate(todaySection)
+        const itemElement = document.getElementById(todaySection.id)
+        itemElement?.scrollIntoView({ behavior: 'auto' })
+      }
+    }
+  }, [sectionedItems, needsSelectionReload])
 
   useEffect(() => {
     if (!todaySection) {
       throw new Error('todaySection should not be undefined')
     }
 
-    if (todaySection.items) {
-      onClickItem(todaySection.items[0])
-    } else {
-      onClickTemplate(todaySection)
-      const itemElement = document.getElementById(todaySection.id)
-      itemElement?.scrollIntoView({ behavior: 'auto' })
-    }
-  }, [])
+    setNeedsSelectionReload(true)
+  }, [selectedTag.uuid])
 
   const onClickItem = useCallback(async (item: ListableContentItem) => {
     await selectionController.selectItemWithScrollHandling(item, {
@@ -74,6 +83,7 @@ const DailyContentList: FunctionComponent<Props> = ({
     })
 
     toggleAppPane(AppPaneId.Editor)
+    setSelectedTemplateItem(undefined)
   }, [])
 
   const onClickTemplate = useCallback(
@@ -109,7 +119,7 @@ const DailyContentList: FunctionComponent<Props> = ({
         } else {
           return (
             <CalendarCell
-              selected={section === selectedTemplateItem}
+              selected={section.id === selectedTemplateItem?.id}
               section={section}
               key={section.dateKey}
               onClick={() => onClickTemplate(section)}
