@@ -1,5 +1,5 @@
 import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
-import { isFile, sanitizeHtmlString, SNNote } from '@standardnotes/snjs'
+import { isFile, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useRef } from 'react'
 import Icon from '@/Components/Icon/Icon'
@@ -16,7 +16,7 @@ import NotePreviewText from './NotePreviewText'
 const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   application,
   notesController,
-  selectionController,
+  onSelect,
   hideDate,
   hideIcon,
   hideTags,
@@ -49,7 +49,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
     let shouldOpenContextMenu = selected
 
     if (!selected) {
-      const { didSelect } = await selectionController.selectItem(item.uuid)
+      const { didSelect } = await onSelect(item)
       if (didSelect) {
         shouldOpenContextMenu = true
       }
@@ -61,11 +61,11 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   }
 
   const onClick = useCallback(async () => {
-    const { didSelect } = await selectionController.selectItem(item.uuid, true)
+    const { didSelect } = await onSelect(item, true)
     if (didSelect) {
       toggleAppPane(AppPaneId.Editor)
     }
-  }, [item.uuid, selectionController, toggleAppPane])
+  }, [item.uuid, onSelect, toggleAppPane])
 
   useContextMenuEvent(listItemRef, openContextMenu)
 

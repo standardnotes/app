@@ -64,6 +64,13 @@ const ContentList: FunctionComponent<Props> = ({
     [selectNextItem, selectPreviousItem],
   )
 
+  const selectItem = useCallback(
+    (item: ListableContentItem, userTriggered?: boolean) => {
+      return selectionController.selectItem(item.uuid, userTriggered)
+    },
+    [selectionController],
+  )
+
   return (
     <div
       className={classNames(
@@ -88,7 +95,7 @@ const ContentList: FunctionComponent<Props> = ({
           hideIcon={hideEditorIcon}
           sortBy={sortBy}
           filesController={filesController}
-          selectionController={selectionController}
+          onSelect={selectItem}
           navigationController={navigationController}
           notesController={notesController}
         />

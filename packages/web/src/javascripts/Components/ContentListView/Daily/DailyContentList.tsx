@@ -19,7 +19,7 @@ type Props = {
   application: WebApplication
   itemListController: ItemListController
   items: ListableContentItem[]
-  selectionController: SelectedItemsController
+  onSelect: (item: ListableContentItem) => Promise<void>
   selectedTag: SNTag
   selectedUuids: SelectedItemsController['selectedUuids']
 }
@@ -28,7 +28,7 @@ const DailyContentList: FunctionComponent<Props> = ({
   application,
   items,
   itemListController,
-  selectionController,
+  onSelect,
   selectedUuids,
   selectedTag,
 }) => {
@@ -76,11 +76,7 @@ const DailyContentList: FunctionComponent<Props> = ({
   }, [selectedTag.uuid])
 
   const onClickItem = useCallback(async (item: ListableContentItem) => {
-    await selectionController.selectItemWithScrollHandling(item, {
-      userTriggered: true,
-      scrollIntoView: true,
-      animated: false,
-    })
+    await onSelect(item)
 
     toggleAppPane(AppPaneId.Editor)
     setSelectedTemplateItem(undefined)

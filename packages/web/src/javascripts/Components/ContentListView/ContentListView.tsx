@@ -27,6 +27,7 @@ import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
 import { LinkingController } from '@/Controllers/LinkingController'
 import DailyContentList from './Daily/DailyContentList'
+import { ListableContentItem } from './Types/ListableContentItem'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -231,6 +232,14 @@ const ContentListView: FunctionComponent<Props> = ({
 
   const dailyMode = selectedAsTag?.preferences?.entryMode === 'daily'
 
+  const handleDailyListSelection = useCallback(async (item: ListableContentItem) => {
+    await selectionController.selectItemWithScrollHandling(item, {
+      userTriggered: true,
+      scrollIntoView: true,
+      animated: false,
+    })
+  }, [])
+
   return (
     <div
       id="items-column"
@@ -290,7 +299,7 @@ const ContentListView: FunctionComponent<Props> = ({
             selectedUuids={selectedUuids}
             application={application}
             itemListController={itemListController}
-            selectionController={selectionController}
+            onSelect={handleDailyListSelection}
           />
         )}
         {!dailyMode && renderedItems.length ? (

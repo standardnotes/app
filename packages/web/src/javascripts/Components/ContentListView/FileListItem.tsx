@@ -14,11 +14,11 @@ import { useContextMenuEvent } from '@/Hooks/useContextMenuEvent'
 const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
   application,
   filesController,
-  selectionController,
   hideDate,
   hideIcon,
   hideTags,
   item,
+  onSelect,
   selected,
   sortBy,
   tags,
@@ -44,7 +44,7 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
       let shouldOpenContextMenu = selected
 
       if (!selected) {
-        const { didSelect } = await selectionController.selectItem(item.uuid)
+        const { didSelect } = await onSelect(item)
         if (didSelect) {
           shouldOpenContextMenu = true
         }
@@ -54,15 +54,15 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
         openFileContextMenu(posX, posY)
       }
     },
-    [selected, selectionController, item.uuid, openFileContextMenu],
+    [selected, onSelect, item.uuid, openFileContextMenu],
   )
 
   const onClick = useCallback(async () => {
-    const { didSelect } = await selectionController.selectItem(item.uuid, true)
+    const { didSelect } = await onSelect(item, true)
     if (didSelect) {
       toggleAppPane(AppPaneId.Editor)
     }
-  }, [item.uuid, selectionController, toggleAppPane])
+  }, [item.uuid, onSelect, toggleAppPane])
 
   const IconComponent = () =>
     getFileIconComponent(

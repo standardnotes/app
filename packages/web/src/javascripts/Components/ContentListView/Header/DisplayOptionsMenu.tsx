@@ -36,6 +36,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   const [preferences, setPreferences] = useState<TagPreferences>({})
   const hasSubscription = application.hasValidSubscription()
   const controlsDisabled = currentMode === 'tag' && !hasSubscription
+  const isDailyEntry = selectedTag.preferences?.entryMode === 'daily'
 
   const reloadPreferences = useCallback(() => {
     const globalValues: TagPreferences = {
@@ -237,7 +238,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
 
       <div className="my-1 px-3 text-xs font-semibold uppercase text-text">Sort by</div>
       <MenuItem
-        disabled={controlsDisabled}
+        disabled={controlsDisabled || isDailyEntry}
         className="py-2"
         type={MenuItemType.RadioButton}
         onClick={toggleSortByDateModified}
@@ -255,7 +256,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         </div>
       </MenuItem>
       <MenuItem
-        disabled={controlsDisabled}
+        disabled={controlsDisabled || isDailyEntry}
         className="py-2"
         type={MenuItemType.RadioButton}
         onClick={toggleSortByCreationDate}
@@ -273,7 +274,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         </div>
       </MenuItem>
       <MenuItem
-        disabled={controlsDisabled}
+        disabled={controlsDisabled || isDailyEntry}
         className="py-2"
         type={MenuItemType.RadioButton}
         onClick={toggleSortByTitle}
@@ -389,7 +390,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             className="py-2"
             type={MenuItemType.RadioButton}
             onClick={() => setEntryMode('daily')}
-            checked={selectedTag.preferences?.entryMode === 'daily'}
+            checked={isDailyEntry}
           >
             <div className="ml-2 flex flex-grow items-center justify-between">Daily</div>
           </MenuItem>
