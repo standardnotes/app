@@ -3,7 +3,7 @@ import { ReactNativeToWebEvent, WebApplicationInterface } from '@standardnotes/s
 export type NativeMobileEventListener = (event: ReactNativeToWebEvent) => void
 
 export class MobileWebReceiver {
-  private reactListeners: Set<NativeMobileEventListener> = new Set()
+  private listeners: Set<NativeMobileEventListener> = new Set()
 
   constructor(private application: WebApplicationInterface) {
     this.listenForNativeMobileEvents()
@@ -44,10 +44,10 @@ export class MobileWebReceiver {
   }
 
   addReactListener = (listener: NativeMobileEventListener) => {
-    this.reactListeners.add(listener)
+    this.listeners.add(listener)
 
     return () => {
-      this.reactListeners.delete(listener)
+      this.listeners.delete(listener)
     }
   }
 
@@ -73,6 +73,6 @@ export class MobileWebReceiver {
         break
     }
 
-    this.reactListeners.forEach((listener) => listener(event))
+    this.listeners.forEach((listener) => listener(event))
   }
 }
