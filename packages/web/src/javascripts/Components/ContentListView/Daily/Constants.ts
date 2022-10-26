@@ -1,1 +1,1 @@
-export const DailyNotesBlankItemsToInsertAtFrontAndEnd = 5
+export const DailyNotesBlankItemsToInsertAtFrontAndEnd = 90
