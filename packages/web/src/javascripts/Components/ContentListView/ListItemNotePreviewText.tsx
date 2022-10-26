@@ -6,9 +6,9 @@ type Props = {
   item: ListableContentItem
 }
 
-const NotePreviewText: FunctionComponent<Props> = ({ item }) => {
+const ListItemNotePreviewText: FunctionComponent<Props> = ({ item }) => {
   return (
-    <div className="overflow-hidden overflow-ellipsis text-sm">
+    <div className={`overflow-hidden overflow-ellipsis text-sm ${item.archived ? 'opacity-60' : ''}`}>
       {item.preview_html && (
         <div
           className="my-1"
@@ -27,4 +27,4 @@ const NotePreviewText: FunctionComponent<Props> = ({ item }) => {
   )
 }
 
-export default NotePreviewText
+export default ListItemNotePreviewText

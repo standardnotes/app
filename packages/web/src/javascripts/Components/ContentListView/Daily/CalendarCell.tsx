@@ -4,9 +4,10 @@ import { FunctionComponent } from 'react'
 import ListItemFlagIcons from '../ListItemFlagIcons'
 import ListItemMetadata from '../ListItemMetadata'
 import ListItemTags from '../ListItemTags'
-import NotePreviewText from '../NotePreviewText'
+import ListItemNotePreviewText from '../ListItemNotePreviewText'
 import { ListableContentItem } from '../Types/ListableContentItem'
 import { DailyItemsDaySection } from './DailyItemsDaySection'
+import { ListItemTitle } from '../ListItemTitle'
 
 type Props = {
   item?: ListableContentItem
@@ -50,8 +51,8 @@ export const CalendarCell: FunctionComponent<Props> = ({
           <div className="leading-[1.3]">
             {item && (
               <>
-                <div className="break-word mr-2 font-semibold">{item.title}</div>
-                {!hidePreview && <NotePreviewText item={item} />}
+                <ListItemTitle item={item} />
+                {!hidePreview && <ListItemNotePreviewText item={item} />}
                 <ListItemMetadata item={item} hideDate={hideDate} sortBy={'created_at'} />
                 <ListItemTags hideTags={hideTags} tags={tags} />
               </>

@@ -54,7 +54,7 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
         openFileContextMenu(posX, posY)
       }
     },
-    [selected, onSelect, item.uuid, openFileContextMenu],
+    [selected, onSelect, item, openFileContextMenu],
   )
 
   const onClick = useCallback(async () => {
@@ -62,7 +62,7 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
     if (didSelect) {
       toggleAppPane(AppPaneId.Editor)
     }
-  }, [item.uuid, onSelect, toggleAppPane])
+  }, [item, onSelect, toggleAppPane])
 
   const IconComponent = () =>
     getFileIconComponent(

@@ -11,7 +11,8 @@ import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useContextMenuEvent } from '@/Hooks/useContextMenuEvent'
-import NotePreviewText from './NotePreviewText'
+import ListItemNotePreviewText from './ListItemNotePreviewText'
+import { ListItemTitle } from './ListItemTitle'
 
 const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   application,
@@ -65,7 +66,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
     if (didSelect) {
       toggleAppPane(AppPaneId.Editor)
     }
-  }, [item.uuid, onSelect, toggleAppPane])
+  }, [item, onSelect, toggleAppPane])
 
   useContextMenuEvent(listItemRef, openContextMenu)
 
@@ -86,10 +87,8 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
         <div className="pr-4" />
       )}
       <div className="min-w-0 flex-grow border-b border-solid border-border py-4 px-0">
-        <div className="flex items-start justify-between overflow-hidden text-base font-semibold leading-[1.3]">
-          <div className="break-word mr-2">{item.title}</div>
-        </div>
-        {!hidePreview && !item.hidePreview && !item.protected && <NotePreviewText item={item} />}
+        <ListItemTitle item={item} />
+        {!hidePreview && !item.hidePreview && !item.protected && <ListItemNotePreviewText item={item} />}
         <ListItemMetadata item={item} hideDate={hideDate} sortBy={sortBy} />
         <ListItemTags hideTags={hideTags} tags={tags} />
         <ListItemConflictIndicator item={item} />

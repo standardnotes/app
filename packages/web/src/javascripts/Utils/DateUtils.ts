@@ -46,7 +46,7 @@ export function numDaysBetweenDates(date1: Date, date2: Date): number {
 }
 
 export function addDays(date: Date, days: number) {
-  var result = new Date(date)
+  const result = new Date(date)
   result.setDate(result.getDate() + days)
   return result
 }

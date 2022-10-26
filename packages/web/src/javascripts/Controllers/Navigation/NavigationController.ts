@@ -448,7 +448,7 @@ export class NavigationController
 
     this.previouslySelected_ = this.selected_
 
-    runInAction(async () => {
+    await runInAction(async () => {
       this.setSelectedTagInstance(tag)
 
       if (tag && this.application.items.isTemplateItem(tag)) {

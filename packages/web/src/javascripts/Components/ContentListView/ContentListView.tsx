@@ -232,13 +232,16 @@ const ContentListView: FunctionComponent<Props> = ({
 
   const dailyMode = selectedAsTag?.preferences?.entryMode === 'daily'
 
-  const handleDailyListSelection = useCallback(async (item: ListableContentItem) => {
-    await selectionController.selectItemWithScrollHandling(item, {
-      userTriggered: true,
-      scrollIntoView: true,
-      animated: false,
-    })
-  }, [])
+  const handleDailyListSelection = useCallback(
+    async (item: ListableContentItem) => {
+      await selectionController.selectItemWithScrollHandling(item, {
+        userTriggered: true,
+        scrollIntoView: true,
+        animated: false,
+      })
+    },
+    [selectionController],
+  )
 
   return (
     <div
@@ -297,7 +300,6 @@ const ContentListView: FunctionComponent<Props> = ({
             items={items}
             selectedTag={selectedAsTag}
             selectedUuids={selectedUuids}
-            application={application}
             itemListController={itemListController}
             onSelect={handleDailyListSelection}
           />

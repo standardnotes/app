@@ -6,7 +6,6 @@ import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { WebApplication } from '@/Application/Application'
 import { useResponsiveAppPane } from '../../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../../ResponsivePane/AppPaneMetadata'
 import { createDailySectionsWithTemplateInterstices } from './CreateDailySections'
@@ -16,7 +15,6 @@ import { CalendarCell } from './CalendarCell'
 import { SNTag } from '@standardnotes/snjs'
 
 type Props = {
-  application: WebApplication
   itemListController: ItemListController
   items: ListableContentItem[]
   onSelect: (item: ListableContentItem) => Promise<void>
@@ -25,7 +23,6 @@ type Props = {
 }
 
 const DailyContentList: FunctionComponent<Props> = ({
-  application,
   items,
   itemListController,
   onSelect,
@@ -49,6 +46,24 @@ const DailyContentList: FunctionComponent<Props> = ({
     [sectionedItems],
   )
 
+  const onClickItem = useCallback(
+    async (item: ListableContentItem) => {
+      await onSelect(item)
+
+      toggleAppPane(AppPaneId.Editor)
+      setSelectedTemplateItem(undefined)
+    },
+    [onSelect, toggleAppPane],
+  )
+
+  const onClickTemplate = useCallback(
+    (section: DailyItemsDaySection) => {
+      setSelectedTemplateItem(section)
+      itemListController.createNewNote(undefined, section.date, 'editor')
+    },
+    [setSelectedTemplateItem, itemListController],
+  )
+
   useEffect(() => {
     const needsUpdateSelectedInstance = selectedTemplateItem
     if (needsUpdateSelectedInstance) {
@@ -59,37 +74,18 @@ const DailyContentList: FunctionComponent<Props> = ({
       setNeedsSelectionReload(false)
 
       if (todaySection.items) {
-        onClickItem(todaySection.items[0])
+        void onClickItem(todaySection.items[0])
       } else {
         onClickTemplate(todaySection)
         const itemElement = document.getElementById(todaySection.id)
         itemElement?.scrollIntoView({ behavior: 'auto' })
       }
     }
-  }, [sectionedItems, needsSelectionReload])
+  }, [sectionedItems, needsSelectionReload, onClickItem, onClickTemplate, selectedTemplateItem, todaySection])
 
   useEffect(() => {
-    if (!todaySection) {
-      throw new Error('todaySection should not be undefined')
-    }
-
     setNeedsSelectionReload(true)
   }, [selectedTag.uuid])
-
-  const onClickItem = useCallback(async (item: ListableContentItem) => {
-    await onSelect(item)
-
-    toggleAppPane(AppPaneId.Editor)
-    setSelectedTemplateItem(undefined)
-  }, [])
-
-  const onClickTemplate = useCallback(
-    (section: DailyItemsDaySection) => {
-      setSelectedTemplateItem(section)
-      itemListController.createNewNote(undefined, section.date, 'editor')
-    },
-    [setSelectedTemplateItem, itemListController],
-  )
 
   return (
     <div
@@ -109,7 +105,6 @@ const DailyContentList: FunctionComponent<Props> = ({
               section={section}
               key={item.uuid}
               item={item}
-              tags={application.getItemTags(item)}
               hideDate={hideDate}
               hidePreview={hideNotePreview}
               hideTags={hideTags}

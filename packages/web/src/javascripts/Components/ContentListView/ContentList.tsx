@@ -12,6 +12,7 @@ import { NavigationController } from '@/Controllers/Navigation/NavigationControl
 import { NotesController } from '@/Controllers/NotesController'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { SNTag } from '@standardnotes/snjs'
 
 type Props = {
   application: WebApplication
@@ -71,6 +72,26 @@ const ContentList: FunctionComponent<Props> = ({
     [selectionController],
   )
 
+  const getTagsForItem = (item: ListableContentItem) => {
+    if (hideTags) {
+      return []
+    }
+
+    const selectedTag = navigationController.selected
+    if (!selectedTag) {
+      return []
+    }
+
+    const tags = application.getItemTags(item)
+
+    const isNavigatingOnlyTag = selectedTag instanceof SNTag && tags.length === 1
+    if (isNavigatingOnlyTag) {
+      return []
+    }
+
+    return tags
+  }
+
   return (
     <div
       className={classNames(
@@ -96,7 +117,7 @@ const ContentList: FunctionComponent<Props> = ({
           sortBy={sortBy}
           filesController={filesController}
           onSelect={selectItem}
-          navigationController={navigationController}
+          tags={getTagsForItem(item)}
           notesController={notesController}
         />
       ))}
