@@ -75,7 +75,20 @@ const insertBlanksBetweenItemEntries = (entries: DailyItemsDaySection[]): void =
   }
 }
 
-const insertBlanksAtFrontAndEnd = (entries: DailyItemsDaySection[], dayPadding: number): void => {
+export function createDailySectionsWithTemplateInterstices(items: ListableContentItem[]): DailyItemsDaySection[] {
+  const entries = entriesForItems(items)
+  insertBlanksBetweenItemEntries(entries)
+  return entries
+}
+
+/**
+ * Modifies entries array in-place.
+ */
+export function insertBlanks(
+  entries: DailyItemsDaySection[],
+  location: 'front' | 'end',
+  number: number,
+): DailyItemsDaySection[] {
   let laterDay, earlierDay
 
   if (entries.length > 0) {
@@ -85,29 +98,19 @@ const insertBlanksAtFrontAndEnd = (entries: DailyItemsDaySection[], dayPadding: 
     const today = new Date()
     laterDay = today
     earlierDay = today
-
-    entries.unshift(templateEntryForDate(today))
   }
 
-  for (let i = 1; i <= dayPadding; i++) {
-    const plusNFromFirstDay = addDays(laterDay, i)
-    const futureEntry = templateEntryForDate(plusNFromFirstDay)
-    entries.unshift(futureEntry)
-    const minusNFromLastDay = addDays(earlierDay, -i)
-    const pastEntry = templateEntryForDate(minusNFromLastDay)
-    entries.push(pastEntry)
+  for (let i = 1; i <= number; i++) {
+    if (location === 'front') {
+      const plusNFromFirstDay = addDays(laterDay, i)
+      const futureEntry = templateEntryForDate(plusNFromFirstDay)
+      entries.unshift(futureEntry)
+    } else {
+      const minusNFromLastDay = addDays(earlierDay, -i)
+      const pastEntry = templateEntryForDate(minusNFromLastDay)
+      entries.push(pastEntry)
+    }
   }
-}
 
-/**
- * @param dayPadding The number of empty days to add into the future and past
- */
-export function createDailySectionsWithTemplateInterstices(
-  items: ListableContentItem[],
-  dayPadding: number,
-): DailyItemsDaySection[] {
-  const entries = entriesForItems(items)
-  insertBlanksBetweenItemEntries(entries)
-  insertBlanksAtFrontAndEnd(entries, dayPadding)
   return entries
 }

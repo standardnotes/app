@@ -8,8 +8,7 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { useResponsiveAppPane } from '../../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../../ResponsivePane/AppPaneMetadata'
-import { createDailySectionsWithTemplateInterstices } from './CreateDailySections'
-import { DailyNotesBlankItemsToInsertAtFrontAndEnd } from './Constants'
+import { createDailySectionsWithTemplateInterstices, insertBlanks } from './CreateDailySections'
 import { DailyItemsDaySection } from './DailyItemsDaySection'
 import { CalendarCell } from './CalendarCell'
 import { SNTag } from '@standardnotes/snjs'
@@ -22,6 +21,8 @@ type Props = {
   selectedUuids: SelectedItemsController['selectedUuids']
 }
 
+const PageSize = 10
+
 const DailyContentList: FunctionComponent<Props> = ({
   items,
   itemListController,
@@ -29,22 +30,84 @@ const DailyContentList: FunctionComponent<Props> = ({
   selectedUuids,
   selectedTag,
 }) => {
+  const { toggleAppPane } = useResponsiveAppPane()
+  const [needsSelectionReload, setNeedsSelectionReload] = useState(false)
+  const [sectionedItems, setSectionedItems] = useState<DailyItemsDaySection[]>([])
+  const [todaySection, setTodaySection] = useState<DailyItemsDaySection>()
   const [selectedTemplateItem, setSelectedTemplateItem] = useState<DailyItemsDaySection>()
   const { hideTags, hideDate, hideNotePreview } = itemListController.webDisplayOptions
+  const [lastElement, setLastElement] = useState<HTMLDivElement | null>(null)
+  const [firstElement, setFirstElement] = useState<HTMLDivElement | null>(null)
 
-  const { toggleAppPane } = useResponsiveAppPane()
+  useEffect(() => {
+    const result = createDailySectionsWithTemplateInterstices(items)
+    if (result.length < PageSize) {
+      insertBlanks(result, 'front', PageSize)
+      insertBlanks(result, 'end', PageSize)
+    } else {
+      insertBlanks(result, 'front', PageSize)
+    }
+    setSectionedItems(result)
+    setTodaySection(result.find((item) => item.isToday) as DailyItemsDaySection)
+  }, [items])
 
-  const [needsSelectionReload, setNeedsSelectionReload] = useState(false)
+  const paginateBottom = useCallback(() => {
+    const copy = sectionedItems.slice()
+    insertBlanks(copy, 'end', PageSize)
+    setSectionedItems(copy)
+  }, [sectionedItems, setSectionedItems])
 
-  const sectionedItems = useMemo(
-    () => createDailySectionsWithTemplateInterstices(items, DailyNotesBlankItemsToInsertAtFrontAndEnd),
-    [items],
+  const paginateTop = useCallback(() => {
+    const copy = sectionedItems.slice()
+    insertBlanks(copy, 'front', PageSize)
+    setSectionedItems(copy)
+  }, [sectionedItems, setSectionedItems])
+
+  const bottomObserver = useMemo(
+    () =>
+      new IntersectionObserver((entries) => {
+        const first = entries[0]
+        if (first.isIntersecting) {
+          paginateBottom()
+        }
+      }),
+    [paginateBottom],
   )
 
-  const todaySection = useMemo(
-    () => sectionedItems.find((item) => item.isToday) as DailyItemsDaySection,
-    [sectionedItems],
+  const topObserver = useMemo(
+    () =>
+      new IntersectionObserver((entries) => {
+        const first = entries[0]
+        if (first.isIntersecting) {
+          paginateTop()
+        }
+      }),
+    [paginateTop],
   )
+
+  useEffect(() => {
+    if (lastElement) {
+      bottomObserver.observe(lastElement)
+    }
+
+    return () => {
+      if (lastElement) {
+        bottomObserver.unobserve(lastElement)
+      }
+    }
+  }, [lastElement, bottomObserver])
+
+  useEffect(() => {
+    if (firstElement) {
+      topObserver.observe(firstElement)
+    }
+
+    return () => {
+      if (firstElement) {
+        topObserver.unobserve(firstElement)
+      }
+    }
+  }, [firstElement, topObserver])
 
   const onClickItem = useCallback(
     async (item: ListableContentItem, userTriggered: boolean) => {
@@ -73,6 +136,10 @@ const DailyContentList: FunctionComponent<Props> = ({
     if (needsSelectionReload) {
       setNeedsSelectionReload(false)
 
+      if (!todaySection) {
+        return
+      }
+
       if (todaySection.items) {
         void onClickItem(todaySection.items[0], false)
       } else {
@@ -97,7 +164,9 @@ const DailyContentList: FunctionComponent<Props> = ({
       id={ElementIds.ContentList}
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
     >
-      {sectionedItems.map((section) => {
+      {sectionedItems.map((section, index) => {
+        const isFirst = index === 0
+        const isLast = index === sectionedItems.length - 1
         if (section.items) {
           return section.items.map((item) => (
             <CalendarCell
@@ -109,6 +178,7 @@ const DailyContentList: FunctionComponent<Props> = ({
               hidePreview={hideNotePreview}
               hideTags={hideTags}
               onClick={() => onClickItem(item, true)}
+              ref={isLast ? setLastElement : isFirst ? setFirstElement : null}
             />
           ))
         } else {
@@ -118,6 +188,7 @@ const DailyContentList: FunctionComponent<Props> = ({
               section={section}
               key={section.dateKey}
               onClick={() => onClickTemplate(section)}
+              ref={isLast ? setLastElement : isFirst ? setFirstElement : null}
             />
           )
         }

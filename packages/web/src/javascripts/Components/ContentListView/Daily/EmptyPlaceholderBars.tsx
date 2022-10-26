@@ -24,7 +24,13 @@ export const EmptyPlaceholderBars: FunctionComponent<Props> = ({ rows }) => {
   return (
     <div className="w-full">
       {barWidths.map((width, index) => {
-        return <div style={{ width: `${width}%` }} key={index} className={`my-4 h-7 bg-passive-4-opacity-variant pb-3`}></div>
+        return (
+          <div
+            style={{ width: `${width}%` }}
+            key={index}
+            className={'my-4 h-7 bg-passive-4-opacity-variant pb-3'}
+          ></div>
+        )
       })}
     </div>
   )
