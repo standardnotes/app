@@ -49,13 +49,15 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
   }, [application, prompt.validation])
 
   useEffect(() => {
-    const nativeMobileFocusListener = (event: ReactNativeToWebEvent) => {
+    if (!application.isNativeMobileWeb()) {
+      return
+    }
+
+    const disposeListener = application.addNativeMobileEventListener((event: ReactNativeToWebEvent) => {
       if (event === ReactNativeToWebEvent.GainingFocus) {
         void activatePrompt()
       }
-    }
-
-    const disposeListener = application.addNativeMobileEventListener(nativeMobileFocusListener)
+    })
 
     return () => {
       if (disposeListener) {

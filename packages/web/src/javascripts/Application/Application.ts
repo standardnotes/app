@@ -332,7 +332,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   addNativeMobileEventListener = (listener: NativeMobileEventListener) => {
-    if (!this.isNativeMobileWeb() || !this.mobileWebReceiver) {
+    if (!this.mobileWebReceiver) {
       return
     }
 
