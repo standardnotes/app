@@ -1,6 +1,10 @@
 import { ReactNativeToWebEvent, WebApplicationInterface } from '@standardnotes/snjs'
 
+export type NativeMobileEventListener = (event: ReactNativeToWebEvent) => void
+
 export class MobileWebReceiver {
+  private listeners: Set<NativeMobileEventListener> = new Set()
+
   constructor(private application: WebApplicationInterface) {
     this.listenForNativeMobileEvents()
   }
@@ -39,6 +43,14 @@ export class MobileWebReceiver {
     }
   }
 
+  addReactListener = (listener: NativeMobileEventListener) => {
+    this.listeners.add(listener)
+
+    return () => {
+      this.listeners.delete(listener)
+    }
+  }
+
   handleNativeEvent(event: ReactNativeToWebEvent) {
     switch (event) {
       case ReactNativeToWebEvent.EnteringBackground:
@@ -60,5 +72,7 @@ export class MobileWebReceiver {
       default:
         break
     }
+
+    this.listeners.forEach((listener) => listener(event))
   }
 }
