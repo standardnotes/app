@@ -28,7 +28,7 @@ const CalendarDay: FunctionComponent<Props> = ({ day, activities = [], isToday, 
     return <div>{activity.item.title}</div>
   })
 
-  const todayClassNames = 'bg-danger text-danger-contrast'
+  const todayClassNames = 'bg-danger text-danger-contrast font-bold'
   const hasActivity = day > 0 && activities.length > 0
   const hasActivityClassNames = 'bg-danger-light text-danger font-bold'
 
