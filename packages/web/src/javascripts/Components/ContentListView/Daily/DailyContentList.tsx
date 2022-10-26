@@ -17,7 +17,7 @@ import { SNTag } from '@standardnotes/snjs'
 type Props = {
   itemListController: ItemListController
   items: ListableContentItem[]
-  onSelect: (item: ListableContentItem) => Promise<void>
+  onSelect: (item: ListableContentItem, userTriggered: boolean) => Promise<void>
   selectedTag: SNTag
   selectedUuids: SelectedItemsController['selectedUuids']
 }
@@ -47,8 +47,8 @@ const DailyContentList: FunctionComponent<Props> = ({
   )
 
   const onClickItem = useCallback(
-    async (item: ListableContentItem) => {
-      await onSelect(item)
+    async (item: ListableContentItem, userTriggered: boolean) => {
+      await onSelect(item, userTriggered)
 
       toggleAppPane(AppPaneId.Editor)
       setSelectedTemplateItem(undefined)
@@ -74,7 +74,7 @@ const DailyContentList: FunctionComponent<Props> = ({
       setNeedsSelectionReload(false)
 
       if (todaySection.items) {
-        void onClickItem(todaySection.items[0])
+        void onClickItem(todaySection.items[0], false)
       } else {
         onClickTemplate(todaySection)
         const itemElement = document.getElementById(todaySection.id)
@@ -108,7 +108,7 @@ const DailyContentList: FunctionComponent<Props> = ({
               hideDate={hideDate}
               hidePreview={hideNotePreview}
               hideTags={hideTags}
-              onClick={() => onClickItem(item)}
+              onClick={() => onClickItem(item, true)}
             />
           ))
         } else {

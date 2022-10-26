@@ -50,3 +50,7 @@ export function addDays(date: Date, days: number) {
   result.setDate(result.getDate() + days)
   return result
 }
+
+export function getWeekdayName(date: Date, format: 'long' | 'short'): string {
+  return date.toLocaleString('default', { weekday: format })
+}

@@ -1,5 +1,5 @@
 import { ListableContentItem } from '../Types/ListableContentItem'
-import { addDays, numDaysBetweenDates } from '@/Utils/DateUtils'
+import { addDays, getWeekdayName, numDaysBetweenDates } from '@/Utils/DateUtils'
 import { DailyItemsDaySection } from './DailyItemsDaySection'
 import { dailiesDateToSectionTitle } from './Utils'
 
@@ -12,6 +12,7 @@ const templateEntryForDate = (date: Date): DailyItemsDaySection => {
     day: date.getDate(),
     isToday: entryDateString === dailiesDateToSectionTitle(new Date()),
     id: entryDateString,
+    weekday: getWeekdayName(date, 'short'),
   }
 }
 
@@ -25,6 +26,7 @@ const entryForItem = (item: ListableContentItem): DailyItemsDaySection => {
     items: [],
     isToday: entryDateString === dailiesDateToSectionTitle(new Date()),
     id: item.uuid,
+    weekday: getWeekdayName(item.created_at, 'short'),
   }
 }
 
