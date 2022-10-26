@@ -35,7 +35,7 @@ import {
   ThemeManager,
   WebAlertService,
 } from '@standardnotes/ui-services'
-import { MobileWebReceiver } from '../NativeMobileWeb/MobileWebReceiver'
+import { MobileWebReceiver, NativeMobileEventListener } from '../NativeMobileWeb/MobileWebReceiver'
 import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { setViewportHeightWithFallback } from '@/setViewportHeightWithFallback'
@@ -329,5 +329,13 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   openPurchaseFlow(): void {
     this.getViewControllerManager().purchaseFlowController.openPurchaseFlow()
+  }
+
+  addNativeMobileEventListener = (listener: NativeMobileEventListener) => {
+    if (!this.isNativeMobileWeb() || !this.mobileWebReceiver) {
+      return
+    }
+
+    return this.mobileWebReceiver.addReactListener(listener)
   }
 }
