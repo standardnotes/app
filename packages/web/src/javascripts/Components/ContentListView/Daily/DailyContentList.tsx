@@ -61,7 +61,7 @@ const DailyContentList: FunctionComponent<Props> = ({
         item: item,
       }
     })
-  }, [sectionedItems])
+  }, [items])
 
   const paginateBottom = useCallback(() => {
     const copy = sectionedItems.slice()
@@ -137,7 +137,7 @@ const DailyContentList: FunctionComponent<Props> = ({
       itemListController.createNewNote(undefined, section.date, 'editor')
       toggleAppPane(AppPaneId.Editor)
     },
-    [setSelectedTemplateItem, itemListController],
+    [setSelectedTemplateItem, itemListController, toggleAppPane],
   )
 
   useEffect(() => {
@@ -167,23 +167,22 @@ const DailyContentList: FunctionComponent<Props> = ({
     setNeedsSelectionReload(true)
   }, [selectedTag.uuid])
 
-  const sectionForDate = (date: Date): DailyItemsDaySection | undefined => {
-    return sectionedItems.find((candidate) => dailiesDateToSectionTitle(date) === candidate.dateKey)
-  }
-
   const onCalendarSelect = useCallback(
     (date: Date) => {
+      const sectionForDate = (date: Date): DailyItemsDaySection | undefined => {
+        return sectionedItems.find((candidate) => dailiesDateToSectionTitle(date) === candidate.dateKey)
+      }
       const section = sectionForDate(date)
       if (section?.items && section?.items?.length > 0) {
-        onClickItem(section.items[0], false)
+        void onClickItem(section.items[0], false)
       } else if (section) {
-        onClickTemplate(section)
+        void onClickTemplate(section)
       } else {
         const newSection = templateEntryForDate(date)
         const copy = sectionedItems.slice()
         copy.unshift(newSection)
         setSectionedItems(copy)
-        onClickTemplate(newSection)
+        void onClickTemplate(newSection)
       }
     },
     [onClickItem, setSectionedItems, onClickTemplate, sectionedItems],

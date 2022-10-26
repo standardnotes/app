@@ -34,7 +34,7 @@ const Calendar: FunctionComponent<Props> = ({ activities, onDateSelect, activity
   return (
     <div className="w-full border-b border-solid border-border pb-2">
       <div className="mr-auto ml-auto w-70">
-        <div className="text-md flex justify-between mt-2 py-1 px-1 font-bold">
+        <div className="text-md mt-2 flex justify-between py-1 px-1 font-bold">
           <button onClick={() => setDate(new Date(year, month - 1, day))}>
             <Icon type="chevron-left" />
           </button>
@@ -48,7 +48,7 @@ const Calendar: FunctionComponent<Props> = ({ activities, onDateSelect, activity
 
         <div className="flex w-full flex-wrap">
           {CalendarDaysOfTheWeek.map((d) => (
-            <div className={`flex h-8 w-[14.2%] cursor-pointer items-center justify-center`} key={d}>
+            <div className={'flex h-8 w-[14.2%] cursor-pointer items-center justify-center'} key={d}>
               {d}
             </div>
           ))}
