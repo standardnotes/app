@@ -924,6 +924,10 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   override render() {
+    if (this.controller.dealloced) {
+      return null
+    }
+
     if (this.state.showProtectedWarning || !this.application.isAuthorizedToRenderItem(this.note)) {
       return (
         <ProtectedItemOverlay

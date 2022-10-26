@@ -440,19 +440,21 @@ export class NavigationController
 
     this.previouslySelected_ = this.selected_
 
-    this.setSelectedTagInstance(tag)
+    runInAction(async () => {
+      this.setSelectedTagInstance(tag)
 
-    if (tag && this.application.items.isTemplateItem(tag)) {
-      return
-    }
+      if (tag && this.application.items.isTemplateItem(tag)) {
+        return
+      }
 
-    await this.eventBus.publishSync(
-      {
-        type: CrossControllerEvent.TagChanged,
-        payload: { tag, previousTag: this.previouslySelected_, userTriggered: userTriggered },
-      },
-      InternalEventPublishStrategy.SEQUENCE,
-    )
+      await this.eventBus.publishSync(
+        {
+          type: CrossControllerEvent.TagChanged,
+          payload: { tag, previousTag: this.previouslySelected_, userTriggered: userTriggered },
+        },
+        InternalEventPublishStrategy.SEQUENCE,
+      )
+    })
   }
 
   public async selectHomeNavigationView(): Promise<void> {

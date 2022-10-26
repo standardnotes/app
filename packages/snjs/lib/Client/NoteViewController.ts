@@ -113,6 +113,10 @@ export class NoteViewController implements ItemViewControllerInterface {
   }
 
   private streamItems() {
+    if (this.dealloced) {
+      return
+    }
+
     this.removeStreamObserver = this.application.streamItems<SNNote>(
       ContentType.Note,
       ({ changed, inserted, source }) => {

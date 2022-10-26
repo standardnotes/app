@@ -1,18 +1,17 @@
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useEffect, useMemo } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { ListableContentItem } from '../Types/ListableContentItem'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 import { WebApplication } from '@/Application/Application'
 import { useResponsiveAppPane } from '../../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../../ResponsivePane/AppPaneMetadata'
 import { createDailySectionsWithTemplateInterstices } from './CreateDailySections'
 import { DailyNotesBlankItemsToInsertAtFrontAndEnd } from './Constants'
-import { DailyItemsDaySection } from './DailyItemsDaySection'
+import { areDailySectionsEqual, DailyItemsDaySection } from './DailyItemsDaySection'
 import { CalendarCell } from './CalendarCell'
 
 type Props = {
@@ -30,12 +29,42 @@ const DailyContentList: FunctionComponent<Props> = ({
   selectionController,
   selectedUuids,
 }) => {
+  const [selectedTemplateItem, setSelectedTemplateItem] = useState<DailyItemsDaySection>()
+
   const { toggleAppPane } = useResponsiveAppPane()
 
   const sectionedItems = useMemo(
     () => createDailySectionsWithTemplateInterstices(items, DailyNotesBlankItemsToInsertAtFrontAndEnd),
     [items],
   )
+
+  const todaySection = useMemo(
+    () => sectionedItems.find((item) => item.isToday) as DailyItemsDaySection,
+    [sectionedItems],
+  )
+
+  useEffect(() => {
+    const needsUpdateSelectedInstance = selectedTemplateItem
+    if (needsUpdateSelectedInstance) {
+      setSelectedTemplateItem(
+        sectionedItems.find((candidate) => areDailySectionsEqual(candidate, selectedTemplateItem)),
+      )
+    }
+  }, [sectionedItems])
+
+  useEffect(() => {
+    if (!todaySection) {
+      throw new Error('todaySection should not be undefined')
+    }
+
+    if (todaySection.items) {
+      onClickItem(todaySection.items[0])
+    } else {
+      onClickTemplate(todaySection)
+      const itemElement = document.getElementById(todaySection.id)
+      itemElement?.scrollIntoView({ behavior: 'auto' })
+    }
+  }, [])
 
   const onClickItem = useCallback(async (item: ListableContentItem) => {
     await selectionController.selectItemWithScrollHandling(item, {
@@ -47,18 +76,13 @@ const DailyContentList: FunctionComponent<Props> = ({
     toggleAppPane(AppPaneId.Editor)
   }, [])
 
-  const onClickTemplate = useCallback((date: Date, title?: string) => {
-    itemListController.createNewNote(title, date, 'editor')
-  }, [])
-
-  const todayItem = sectionedItems.find((item) => item.isToday) as DailyItemsDaySection
-  useEffect(() => {
-    if (todayItem?.items) {
-      onClickItem(todayItem.items[0])
-    } else {
-      onClickTemplate(todayItem?.date, undefined)
-    }
-  }, [])
+  const onClickTemplate = useCallback(
+    (section: DailyItemsDaySection) => {
+      setSelectedTemplateItem(section)
+      itemListController.createNewNote(undefined, section.date, 'editor')
+    },
+    [setSelectedTemplateItem, itemListController],
+  )
 
   return (
     <div
@@ -75,11 +99,9 @@ const DailyContentList: FunctionComponent<Props> = ({
           return section.items.map((item) => (
             <CalendarCell
               selected={selectedUuids.has(item.uuid)}
-              key={Math.random()}
+              section={section}
+              key={item.uuid}
               item={item}
-              day={section.day}
-              date={section.date}
-              title={section.dateKey}
               tags={application.getItemTags(item)}
               onClick={() => onClickItem(item)}
             />
@@ -87,11 +109,10 @@ const DailyContentList: FunctionComponent<Props> = ({
         } else {
           return (
             <CalendarCell
-              key={Math.random()}
-              day={section.day}
-              date={section.date}
-              title={formatDateAndTimeForNote(section.date, false)}
-              onClick={() => onClickTemplate(section.date, formatDateAndTimeForNote(section.date, false))}
+              selected={section === selectedTemplateItem}
+              section={section}
+              key={section.dateKey}
+              onClick={() => onClickTemplate(section)}
             />
           )
         }

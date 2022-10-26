@@ -11,6 +11,7 @@ const templateEntryForDate = (date: Date): DailyItemsDaySection => {
     date: date,
     day: date.getDate(),
     isToday: entryDateString === dailiesDateToSectionTitle(new Date()),
+    id: entryDateString,
   }
 }
 
@@ -23,6 +24,7 @@ const entryForItem = (item: ListableContentItem): DailyItemsDaySection => {
     date: item.created_at,
     items: [],
     isToday: entryDateString === dailiesDateToSectionTitle(new Date()),
+    id: item.uuid,
   }
 }
 

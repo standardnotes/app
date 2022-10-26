@@ -107,6 +107,7 @@ const ContentListView: FunctionComponent<Props> = ({
     panelTitle,
     panelWidth,
     renderedItems,
+    items,
     searchBarElement,
   } = itemListController
 
@@ -228,7 +229,7 @@ const ContentListView: FunctionComponent<Props> = ({
   const matchesXLBreakpoint = useMediaQuery(MediaQueryBreakpoints.xl)
   const isTabletScreenSize = matchesMediumBreakpoint && !matchesXLBreakpoint
 
-  const dailyMode = selectedTag?.title === 'Daily Notes'
+  const dailyMode = selectedTag?.preferences?.entryMode === 'daily'
 
   return (
     <div
@@ -284,7 +285,7 @@ const ContentListView: FunctionComponent<Props> = ({
         </div>
         {dailyMode && (
           <DailyContentList
-            items={renderedItems}
+            items={items}
             selectedUuids={selectedUuids}
             application={application}
             itemListController={itemListController}
