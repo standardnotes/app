@@ -22,7 +22,7 @@ const DaySquare: FunctionComponent<DaySquareProps> = ({ day, hasActivity, weekda
       <div
         className={`${
           hasActivity ? 'bg-danger text-danger-contrast' : 'bg-neutral text-neutral-contrast'
-        } h-15 w-18 p-2 text-center`}
+        } rounded h-15 w-18 p-2 text-center`}
       >
         <div className="text-sm font-bold">{weekday}</div>
         <div className="text-4xl font-bold">{day}</div>
