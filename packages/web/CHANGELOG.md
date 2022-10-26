@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.89.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.88.1...@standardnotes/web@3.89.0) (2022-10-26)
+
+### Features
+
+* auto-activate biometrics prompt when mobile regains focus ([#1891](https://github.com/standardnotes/app/issues/1891)) ([3bd1ad3](https://github.com/standardnotes/app/commit/3bd1ad38ad05ba6ea0e99911693ed7b25e2f8380))
+
 ## [3.88.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.88.0...@standardnotes/web@3.88.1) (2022-10-26)
 
 ### Bug Fixes
