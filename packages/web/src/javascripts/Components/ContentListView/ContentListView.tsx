@@ -230,7 +230,7 @@ const ContentListView: FunctionComponent<Props> = ({
   const matchesXLBreakpoint = useMediaQuery(MediaQueryBreakpoints.xl)
   const isTabletScreenSize = matchesMediumBreakpoint && !matchesXLBreakpoint
 
-  const dailyMode = selectedAsTag?.preferences?.entryMode === 'daily'
+  const dailyMode = selectedAsTag?.isDailyEntry
 
   const handleDailyListSelection = useCallback(
     async (item: ListableContentItem) => {

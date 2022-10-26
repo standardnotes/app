@@ -405,7 +405,7 @@ export class ItemListController
 
   private shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource) => {
     const selectedTag = this.navigationController.selected
-    const isDailyEntry = selectedTag && isTag(selectedTag) && selectedTag.preferences?.entryMode === 'daily'
+    const isDailyEntry = selectedTag && isTag(selectedTag) && selectedTag.isDailyEntry
     if (isDailyEntry) {
       return false
     }
