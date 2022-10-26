@@ -28,6 +28,10 @@ export class SNTag extends DecryptedItem<TagContent> implements TagContentSpecia
     this.preferences = this.payload.content.preferences
   }
 
+  get isDailyEntry(): boolean {
+    return this.preferences?.entryMode === 'daily'
+  }
+
   get noteReferences(): ContentReference[] {
     const references = this.payload.references
     return references.filter((ref) => ref.content_type === ContentType.Note)

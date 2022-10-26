@@ -33,6 +33,7 @@ const DailyContentList: FunctionComponent<Props> = ({
   selectedTag,
 }) => {
   const [selectedTemplateItem, setSelectedTemplateItem] = useState<DailyItemsDaySection>()
+  const { hideTags, hideDate, hideNotePreview } = itemListController.webDisplayOptions
 
   const { toggleAppPane } = useResponsiveAppPane()
 
@@ -109,6 +110,9 @@ const DailyContentList: FunctionComponent<Props> = ({
               key={item.uuid}
               item={item}
               tags={application.getItemTags(item)}
+              hideDate={hideDate}
+              hidePreview={hideNotePreview}
+              hideTags={hideTags}
               onClick={() => onClickItem(item)}
             />
           ))

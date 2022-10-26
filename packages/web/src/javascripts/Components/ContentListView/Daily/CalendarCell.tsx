@@ -1,6 +1,7 @@
 import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 import { SNTag } from '@standardnotes/snjs'
 import { FunctionComponent } from 'react'
+import ListItemFlagIcons from '../ListItemFlagIcons'
 import ListItemMetadata from '../ListItemMetadata'
 import ListItemTags from '../ListItemTags'
 import NotePreviewText from '../NotePreviewText'
@@ -13,9 +14,21 @@ type Props = {
   section: DailyItemsDaySection
   selected?: boolean
   tags?: SNTag[]
+  hideDate?: boolean
+  hideTags?: boolean
+  hidePreview?: boolean
 }
 
-export const CalendarCell: FunctionComponent<Props> = ({ item, tags = [], section, onClick, selected }: Props) => {
+export const CalendarCell: FunctionComponent<Props> = ({
+  item,
+  tags = [],
+  section,
+  onClick,
+  selected,
+  hideDate = false,
+  hidePreview = false,
+  hideTags = false,
+}: Props) => {
   return (
     <div
       onClick={onClick}
@@ -38,9 +51,9 @@ export const CalendarCell: FunctionComponent<Props> = ({ item, tags = [], sectio
             {item && (
               <>
                 <div className="break-word mr-2 font-semibold">{item.title}</div>
-                <NotePreviewText item={item} />
-                <ListItemMetadata item={item} hideDate={false} sortBy={'created_at'} />
-                <ListItemTags hideTags={false} tags={tags} />
+                {!hidePreview && <NotePreviewText item={item} />}
+                <ListItemMetadata item={item} hideDate={hideDate} sortBy={'created_at'} />
+                <ListItemTags hideTags={hideTags} tags={tags} />
               </>
             )}
             {!item && (
@@ -52,6 +65,7 @@ export const CalendarCell: FunctionComponent<Props> = ({ item, tags = [], sectio
           </div>
         </div>
       </div>
+      {item && <ListItemFlagIcons item={item} hasFiles={false} />}
     </div>
   )
 }
