@@ -76,91 +76,91 @@ describe('create daily sections', () => {
     expect(result[2].dateKey).toEqual(dailiesDateToSectionTitle(today))
   })
 
-  it.only('insertBlanksBetweenItemEntries should not infinitely loop', () => {
+  it('insertBlanksBetweenItemEntries should not infinitely loop', () => {
     const today = new Date()
-    // expect(
-    //   createDailySectionsWithTemplateInterstices([{ created_at: today } as jest.Mocked<ListableContentItem>], 0),
-    // ).toHaveLength(1)
+    expect(
+      createDailySectionsWithTemplateInterstices([{ created_at: today } as jest.Mocked<ListableContentItem>], 0),
+    ).toHaveLength(1)
 
-    // expect(
-    //   createDailySectionsWithTemplateInterstices(
-    //     [
-    //       { created_at: today } as jest.Mocked<ListableContentItem>,
-    //       { created_at: today } as jest.Mocked<ListableContentItem>,
-    //     ],
-    //     0,
-    //   ),
-    // ).toHaveLength(1)
+    expect(
+      createDailySectionsWithTemplateInterstices(
+        [
+          { created_at: today } as jest.Mocked<ListableContentItem>,
+          { created_at: today } as jest.Mocked<ListableContentItem>,
+        ],
+        0,
+      ),
+    ).toHaveLength(1)
 
-    // expect(
-    //   createDailySectionsWithTemplateInterstices(
-    //     [
-    //       { created_at: today } as jest.Mocked<ListableContentItem>,
-    //       { created_at: addDays(today, 1) } as jest.Mocked<ListableContentItem>,
-    //     ],
-    //     0,
-    //   ),
-    // ).toHaveLength(2)
+    expect(
+      createDailySectionsWithTemplateInterstices(
+        [
+          { created_at: today } as jest.Mocked<ListableContentItem>,
+          { created_at: addDays(today, 1) } as jest.Mocked<ListableContentItem>,
+        ],
+        0,
+      ),
+    ).toHaveLength(2)
 
-    // expect(
-    //   createDailySectionsWithTemplateInterstices(
-    //     [
-    //       { created_at: today } as jest.Mocked<ListableContentItem>,
-    //       { created_at: addDays(today, 5) } as jest.Mocked<ListableContentItem>,
-    //     ],
-    //     0,
-    //   ),
-    // ).toHaveLength(6)
+    expect(
+      createDailySectionsWithTemplateInterstices(
+        [
+          { created_at: today } as jest.Mocked<ListableContentItem>,
+          { created_at: addDays(today, 5) } as jest.Mocked<ListableContentItem>,
+        ],
+        0,
+      ),
+    ).toHaveLength(6)
 
-    // expect(
-    //   createDailySectionsWithTemplateInterstices(
-    //     [
-    //       { created_at: today } as jest.Mocked<ListableContentItem>,
-    //       { created_at: addDays(today, 4) } as jest.Mocked<ListableContentItem>,
-    //     ],
-    //     0,
-    //   ),
-    // ).toHaveLength(5)
+    expect(
+      createDailySectionsWithTemplateInterstices(
+        [
+          { created_at: today } as jest.Mocked<ListableContentItem>,
+          { created_at: addDays(today, 4) } as jest.Mocked<ListableContentItem>,
+        ],
+        0,
+      ),
+    ).toHaveLength(5)
 
-    // expect(
-    //   createDailySectionsWithTemplateInterstices(
-    //     [
-    //       { created_at: addDays(today, 5) } as jest.Mocked<ListableContentItem>,
-    //       { created_at: addDays(today, 4) } as jest.Mocked<ListableContentItem>,
-    //       { created_at: today } as jest.Mocked<ListableContentItem>,
-    //       { created_at: addDays(today, -7) } as jest.Mocked<ListableContentItem>,
-    //     ],
-    //     0,
-    //   ),
-    // ).toHaveLength(13)
+    expect(
+      createDailySectionsWithTemplateInterstices(
+        [
+          { created_at: addDays(today, 5) } as jest.Mocked<ListableContentItem>,
+          { created_at: addDays(today, 4) } as jest.Mocked<ListableContentItem>,
+          { created_at: today } as jest.Mocked<ListableContentItem>,
+          { created_at: addDays(today, -7) } as jest.Mocked<ListableContentItem>,
+        ],
+        0,
+      ),
+    ).toHaveLength(13)
 
-    // expect(
-    //   createDailySectionsWithTemplateInterstices(
-    //     [
-    //       { created_at: addDays(today, 5) } as jest.Mocked<ListableContentItem>,
-    //       { created_at: addDays(today, 4) } as jest.Mocked<ListableContentItem>,
-    //       { created_at: today } as jest.Mocked<ListableContentItem>,
-    //       { created_at: addDays(today, -7) } as jest.Mocked<ListableContentItem>,
-    //     ],
-    //     1,
-    //   ),
-    // ).toHaveLength(15)
+    expect(
+      createDailySectionsWithTemplateInterstices(
+        [
+          { created_at: addDays(today, 5) } as jest.Mocked<ListableContentItem>,
+          { created_at: addDays(today, 4) } as jest.Mocked<ListableContentItem>,
+          { created_at: today } as jest.Mocked<ListableContentItem>,
+          { created_at: addDays(today, -7) } as jest.Mocked<ListableContentItem>,
+        ],
+        1,
+      ),
+    ).toHaveLength(15)
 
-    // expect(
-    createDailySectionsWithTemplateInterstices(
-      [
-        { created_at: addDays(today, -4) } as jest.Mocked<ListableContentItem>,
-        { created_at: addDays(today, -4) } as jest.Mocked<ListableContentItem>,
-        { created_at: addDays(today, -5) } as jest.Mocked<ListableContentItem>,
-        { created_at: addDays(today, -7) } as jest.Mocked<ListableContentItem>,
-        { created_at: addDays(today, -8) } as jest.Mocked<ListableContentItem>,
-        { created_at: addDays(today, -9) } as jest.Mocked<ListableContentItem>,
-        { created_at: addDays(today, -10) } as jest.Mocked<ListableContentItem>,
-        { created_at: addDays(today, -11) } as jest.Mocked<ListableContentItem>,
-        { created_at: addDays(today, -11) } as jest.Mocked<ListableContentItem>,
-      ],
-      8,
-    )
-    // ).toHaveLength(19)
+    expect(
+      createDailySectionsWithTemplateInterstices(
+        [
+          { created_at: addDays(today, -4) } as jest.Mocked<ListableContentItem>,
+          { created_at: addDays(today, -4) } as jest.Mocked<ListableContentItem>,
+          { created_at: addDays(today, -5) } as jest.Mocked<ListableContentItem>,
+          { created_at: addDays(today, -7) } as jest.Mocked<ListableContentItem>,
+          { created_at: addDays(today, -8) } as jest.Mocked<ListableContentItem>,
+          { created_at: addDays(today, -9) } as jest.Mocked<ListableContentItem>,
+          { created_at: addDays(today, -10) } as jest.Mocked<ListableContentItem>,
+          { created_at: addDays(today, -11) } as jest.Mocked<ListableContentItem>,
+          { created_at: addDays(today, -11) } as jest.Mocked<ListableContentItem>,
+        ],
+        8,
+      ),
+    ).toHaveLength(24)
   })
 })
