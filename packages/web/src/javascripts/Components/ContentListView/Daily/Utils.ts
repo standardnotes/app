@@ -1,3 +1,3 @@
-export function dailiesDateToSectionTitle(date: Date): string {
+export function dateToDailyDayIdentifier(date: Date): string {
   return date.toLocaleDateString()
 }

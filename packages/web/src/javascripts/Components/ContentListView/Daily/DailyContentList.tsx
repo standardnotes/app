@@ -7,12 +7,17 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { useResponsiveAppPane } from '../../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../../ResponsivePane/AppPaneMetadata'
-import { createDailySectionsWithTemplateInterstices, insertBlanks, templateEntryForDate } from './CreateDailySections'
+import {
+  createDailyItemsWithToday,
+  createItemsByDateMapping,
+  insertBlanks,
+  templateEntryForDate,
+} from './CreateDailySections'
 import { DailyItemsDay } from './DailyItemsDaySection'
 import { DailyItemCell } from './DailyItemCell'
 import { SNTag } from '@standardnotes/snjs'
 import { CalendarActivity } from '../Calendar/CalendarActivity'
-import { dailiesDateToSectionTitle } from './Utils'
+import { dateToDailyDayIdentifier } from './Utils'
 import CalendarScroller from '../Calendar/CalendarScroller'
 
 type Props = {
@@ -34,8 +39,10 @@ const DailyContentList: FunctionComponent<Props> = ({
 }) => {
   const { toggleAppPane } = useResponsiveAppPane()
   const [needsSelectionReload, setNeedsSelectionReload] = useState(false)
-  const [dailyItems, setDailyItems] = useState<DailyItemsDay[]>([])
-  const [todaySection, setTodaySection] = useState<DailyItemsDay>()
+  const [dailyItems, setDailyItems] = useState<DailyItemsDay[]>(() => {
+    return createDailyItemsWithToday(PageSize)
+  })
+  const [todayItem, setTodayItem] = useState<DailyItemsDay>()
   const [lastVisibleSection, setLastVisibleSection] = useState<DailyItemsDay>()
   const [selectedEmptyDay, setSelectedEmptyDay] = useState<DailyItemsDay>()
   const { hideTags, hideDate, hideNotePreview } = itemListController.webDisplayOptions
@@ -45,17 +52,13 @@ const DailyContentList: FunctionComponent<Props> = ({
   const [didPaginateTop, setDidPaginateTop] = useState(false)
   const scrollArea = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    const result = createDailySectionsWithTemplateInterstices(items)
-    if (result.length < PageSize) {
-      insertBlanks(result, 'front', PageSize)
-      insertBlanks(result, 'end', PageSize)
-    } else {
-      insertBlanks(result, 'front', PageSize)
-    }
-    setDailyItems(result)
-    setTodaySection(result.find((item) => item.isToday) as DailyItemsDay)
+  const itemsByDateMapping = useMemo(() => {
+    return createItemsByDateMapping(items)
   }, [items])
+
+  useEffect(() => {
+    setTodayItem(dailyItems.find((item) => item.isToday) as DailyItemsDay)
+  }, [dailyItems])
 
   const calendarActivities: CalendarActivity[] = useMemo(() => {
     return items.map((item) => {
@@ -199,19 +202,20 @@ const DailyContentList: FunctionComponent<Props> = ({
     if (needsSelectionReload) {
       setNeedsSelectionReload(false)
 
-      if (!todaySection) {
+      if (!todayItem) {
         return
       }
 
-      if (todaySection.items) {
-        void onClickItem(todaySection.items[0], false)
+      const items = itemsByDateMapping[todayItem.id]
+      if (items?.length > 0) {
+        void onClickItem(items[0], false)
       } else {
-        onClickTemplate(todaySection)
-        const itemElement = document.getElementById(todaySection.id)
+        onClickTemplate(todayItem)
+        const itemElement = document.getElementById(todayItem.id)
         itemElement?.scrollIntoView({ behavior: 'auto' })
       }
     }
-  }, [needsSelectionReload, onClickItem, onClickTemplate, todaySection])
+  }, [needsSelectionReload, onClickItem, onClickTemplate, todayItem])
 
   useEffect(() => {
     setNeedsSelectionReload(true)
@@ -221,20 +225,24 @@ const DailyContentList: FunctionComponent<Props> = ({
     (date: Date) => {
       setLastVisibleSection(undefined)
 
-      const sectionForDate = (date: Date): DailyItemsDay | undefined => {
-        return dailyItems.find((candidate) => dailiesDateToSectionTitle(date) === candidate.dateKey)
+      const dailyItemForDate = (date: Date): DailyItemsDay | undefined => {
+        return dailyItems.find((candidate) => dateToDailyDayIdentifier(date) === candidate.dateKey)
       }
-      const section = sectionForDate(date)
-      if (section?.items && section?.items?.length > 0) {
-        void onClickItem(section.items[0], false)
-      } else if (section) {
-        void onClickTemplate(section)
+
+      const dailyItem = dailyItemForDate(date)
+      if (dailyItem) {
+        const items = itemsByDateMapping[dailyItem.id]
+        if (items.length > 0) {
+          void onClickItem(items[0], false)
+        } else if (dailyItem) {
+          void onClickTemplate(dailyItem)
+        }
       } else {
-        const newSection = templateEntryForDate(date)
+        const newDailyItem = templateEntryForDate(date)
         const copy = dailyItems.slice()
-        copy.unshift(newSection)
+        copy.unshift(newDailyItem)
         setDailyItems(copy)
-        void onClickTemplate(newSection)
+        void onClickTemplate(newDailyItem)
       }
     },
     [onClickItem, setLastVisibleSection, setDailyItems, onClickTemplate, dailyItems],
@@ -259,16 +267,17 @@ const DailyContentList: FunctionComponent<Props> = ({
         id={ElementIds.ContentList}
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
       >
-        {dailyItems.map((section, index) => {
+        {dailyItems.map((dailyItem, index) => {
           const isFirst = index === 0
           const isLast = index === dailyItems.length - 1
-          if (section.items) {
-            return section.items.map((item) => (
+          const items = itemsByDateMapping[dailyItem.id]
+          if (items) {
+            return items.map((item) => (
               <DailyItemCell
                 selected={selectedUuids.has(item.uuid)}
-                section={section}
+                section={dailyItem}
                 key={item.uuid}
-                id={section.id}
+                id={dailyItem.id}
                 item={item}
                 hideDate={hideDate}
                 hidePreview={hideNotePreview}
@@ -285,11 +294,11 @@ const DailyContentList: FunctionComponent<Props> = ({
           } else {
             return (
               <DailyItemCell
-                selected={section.id === selectedEmptyDay?.id}
-                section={section}
-                id={section.id}
-                key={section.dateKey}
-                onClick={() => onClickTemplate(section)}
+                selected={dailyItem.id === selectedEmptyDay?.id}
+                section={dailyItem}
+                id={dailyItem.id}
+                key={dailyItem.dateKey}
+                onClick={() => onClickTemplate(dailyItem)}
                 ref={(ref) => {
                   isLast ? setLastElement(ref) : isFirst ? setFirstElement(ref) : null
                   if (ref) {

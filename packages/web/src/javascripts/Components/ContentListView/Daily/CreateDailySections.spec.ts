@@ -1,7 +1,7 @@
 import { addDays } from '@/Utils/DateUtils'
 import { ListableContentItem } from '../Types/ListableContentItem'
 import { createDailySectionsWithTemplateInterstices, insertBlanks } from './CreateDailySections'
-import { dailiesDateToSectionTitle } from './Utils'
+import { dateToDailyDayIdentifier } from './Utils'
 
 describe('create daily sections', () => {
   describe('createDailySectionsWithTemplateInterstices', () => {
@@ -20,10 +20,10 @@ describe('create daily sections', () => {
 
       expect(result.length).toEqual(4)
 
-      expect(result[0].dateKey).toEqual(dailiesDateToSectionTitle(future))
-      expect(result[1].dateKey).toEqual(dailiesDateToSectionTitle(addDays(future, -1)))
-      expect(result[2].dateKey).toEqual(dailiesDateToSectionTitle(addDays(future, -2)))
-      expect(result[3].dateKey).toEqual(dailiesDateToSectionTitle(today))
+      expect(result[0].dateKey).toEqual(dateToDailyDayIdentifier(future))
+      expect(result[1].dateKey).toEqual(dateToDailyDayIdentifier(addDays(future, -1)))
+      expect(result[2].dateKey).toEqual(dateToDailyDayIdentifier(addDays(future, -2)))
+      expect(result[3].dateKey).toEqual(dateToDailyDayIdentifier(today))
     })
 
     it('item entries should be sorted newest first', () => {
@@ -37,9 +37,9 @@ describe('create daily sections', () => {
 
       expect(result.length).toEqual(3)
 
-      expect(result[0].dateKey).toEqual(dailiesDateToSectionTitle(future))
-      expect(result[1].dateKey).toEqual(dailiesDateToSectionTitle(tomorrow))
-      expect(result[2].dateKey).toEqual(dailiesDateToSectionTitle(today))
+      expect(result[0].dateKey).toEqual(dateToDailyDayIdentifier(future))
+      expect(result[1].dateKey).toEqual(dateToDailyDayIdentifier(tomorrow))
+      expect(result[2].dateKey).toEqual(dateToDailyDayIdentifier(today))
     })
   })
 
@@ -52,9 +52,9 @@ describe('create daily sections', () => {
 
       expect(result.length).toEqual(3)
 
-      expect(result[0].dateKey).toEqual(dailiesDateToSectionTitle(addDays(today, 2)))
-      expect(result[1].dateKey).toEqual(dailiesDateToSectionTitle(addDays(today, 1)))
-      expect(result[2].dateKey).toEqual(dailiesDateToSectionTitle(addDays(today, 0)))
+      expect(result[0].dateKey).toEqual(dateToDailyDayIdentifier(addDays(today, 2)))
+      expect(result[1].dateKey).toEqual(dateToDailyDayIdentifier(addDays(today, 1)))
+      expect(result[2].dateKey).toEqual(dateToDailyDayIdentifier(addDays(today, 0)))
     })
   })
 })

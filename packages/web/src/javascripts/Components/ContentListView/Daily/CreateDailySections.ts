@@ -1,94 +1,44 @@
 import { ListableContentItem } from '../Types/ListableContentItem'
-import { addDays, getWeekdayName, numDaysBetweenDates } from '@/Utils/DateUtils'
+import { addDays, getWeekdayName } from '@/Utils/DateUtils'
 import { DailyItemsDay } from './DailyItemsDaySection'
-import { dailiesDateToSectionTitle } from './Utils'
+import { dateToDailyDayIdentifier } from './Utils'
+
+export const createItemsByDateMapping = (items: ListableContentItem[]) => {
+  const mapping: Record<string, ListableContentItem[]> = {}
+
+  for (const item of items) {
+    const key = dateToDailyDayIdentifier(item.created_at)
+    if (!mapping[key]) {
+      mapping[key] = []
+    }
+    mapping[key].push(item)
+  }
+
+  return mapping
+}
 
 export const templateEntryForDate = (date: Date): DailyItemsDay => {
-  const entryDateString = dailiesDateToSectionTitle(date)
+  const entryDateString = dateToDailyDayIdentifier(date)
 
   return {
     dateKey: entryDateString,
     date: date,
     day: date.getDate(),
-    isToday: entryDateString === dailiesDateToSectionTitle(new Date()),
+    isToday: entryDateString === dateToDailyDayIdentifier(new Date()),
     id: entryDateString,
     weekday: getWeekdayName(date, 'short'),
   }
 }
 
-const entryForItem = (item: ListableContentItem): DailyItemsDay => {
-  const entryDateString = dailiesDateToSectionTitle(item.created_at)
-
-  return {
-    dateKey: entryDateString,
-    day: item.created_at.getDate(),
-    date: item.created_at,
-    items: [],
-    isToday: entryDateString === dailiesDateToSectionTitle(new Date()),
-    id: item.uuid,
-    weekday: getWeekdayName(item.created_at, 'short'),
-  }
-}
-
-const entriesForItems = (items: ListableContentItem[]): DailyItemsDay[] => {
-  const entries: DailyItemsDay[] = []
-
-  for (const item of items) {
-    let entry = entries.find((candidate) => candidate.dateKey === dailiesDateToSectionTitle(item.created_at))
-    if (!entry) {
-      entry = entryForItem(item)
-      entries.push(entry)
-    }
-
-    entry.items!.push(item)
-  }
-
-  entries.sort((a, b) => {
-    return a.date > b.date ? -1 : b.date > a.date ? 1 : 0
-  })
-
-  return entries
-}
-
-const insertBlanksBetweenItemEntries = (entries: DailyItemsDay[]): void => {
-  let index = 1
-  let loop = true
-
-  while (loop) {
-    const earlierEntry = entries[index]
-    const laterEntry = entries[index - 1]
-
-    if (!earlierEntry || !laterEntry) {
-      break
-    }
-
-    const numDaysBetween = numDaysBetweenDates(earlierEntry.date, laterEntry.date)
-
-    for (let deltaFromEarlierEntry = 1; deltaFromEarlierEntry < numDaysBetween; deltaFromEarlierEntry++) {
-      const templateEntry = templateEntryForDate(addDays(earlierEntry.date, deltaFromEarlierEntry))
-      entries.splice(index, 0, templateEntry)
-    }
-
-    index += numDaysBetween
-
-    loop = index < entries.length
-  }
-}
-
-export function createDailySectionsWithTemplateInterstices(items: ListableContentItem[]): DailyItemsDay[] {
-  const entries = entriesForItems(items)
-  insertBlanksBetweenItemEntries(entries)
-  return entries
+export function createDailyItemsWithToday(count: number): DailyItemsDay[] {
+  const today = templateEntryForDate(new Date())
+  return insertBlanks([today], 'end', count)
 }
 
 /**
  * Modifies entries array in-place.
  */
-export function insertBlanks(
-  entries: DailyItemsDay[],
-  location: 'front' | 'end',
-  number: number,
-): DailyItemsDay[] {
+export function insertBlanks(entries: DailyItemsDay[], location: 'front' | 'end', number: number): DailyItemsDay[] {
   let laterDay, earlierDay
 
   if (entries.length > 0) {
