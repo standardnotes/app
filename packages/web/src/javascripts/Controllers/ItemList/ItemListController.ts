@@ -20,7 +20,6 @@ import {
   WebAppEvent,
   NewNoteTitleFormat,
   useBoolean,
-  ItemListControllerPersistableValue,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -35,7 +34,6 @@ import { PrefDefaults } from '@/Constants/PrefDefaults'
 import dayjs from 'dayjs'
 import { LinkingController } from '../LinkingController'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
-import { Persistable } from '../Abstract/Persistable'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -52,10 +50,7 @@ enum ItemsReloadSource {
   FilterTextChange,
 }
 
-export class ItemListController
-  extends AbstractViewController
-  implements Persistable<ItemListControllerPersistableValue>, InternalEventHandlerInterface
-{
+export class ItemListController extends AbstractViewController implements InternalEventHandlerInterface {
   completedFullSync = false
   noteFilterText = ''
   notes: SNNote[] = []
@@ -215,27 +210,10 @@ export class ItemListController
 
       optionsSubtitle: computed,
       activeControllerItem: computed,
-
-      hydrateFromPersistedValue: action,
     })
 
     window.onresize = () => {
       this.resetPagination(true)
-    }
-  }
-
-  getPersistableValue = (): ItemListControllerPersistableValue => {
-    return {
-      displayOptions: this.displayOptions,
-    }
-  }
-
-  hydrateFromPersistedValue = (state: ItemListControllerPersistableValue | undefined) => {
-    if (!state) {
-      return
-    }
-    if (state.displayOptions) {
-      this.displayOptions = state.displayOptions
     }
   }
 
@@ -536,11 +514,6 @@ export class ItemListController
     this.reloadNotesDisplayOptions()
 
     await this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
-
-    this.eventBus.publish({
-      type: CrossControllerEvent.RequestValuePersistence,
-      payload: undefined,
-    })
 
     return { didReloadItems: true }
   }
