@@ -120,14 +120,6 @@ export class ItemListController
     )
 
     this.disposers.push(
-      reaction(
-        () => [this.navigationController.selected],
-        () => {
-          void this.reloadDisplayPreferences()
-        },
-      ),
-    )
-    this.disposers.push(
       application.streamItems<SNTag>([ContentType.Tag], async ({ changed, inserted }) => {
         const tags = [...changed, ...inserted]
 
@@ -461,7 +453,6 @@ export class ItemListController
     const newWebDisplayOptions = {} as WebDisplayOptions
     const selectedTag = this.navigationController.selected
 
-    const currentSortBy = this.displayOptions.sortBy
     let sortBy =
       selectedTag?.preferences?.sortBy ||
       this.application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy])
@@ -545,10 +536,6 @@ export class ItemListController
     this.reloadNotesDisplayOptions()
 
     await this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
-
-    if (newDisplayOptions.sortBy !== currentSortBy) {
-      await this.selectFirstItem()
-    }
 
     this.eventBus.publish({
       type: CrossControllerEvent.RequestValuePersistence,
@@ -737,6 +724,8 @@ export class ItemListController
     this.reloadNotesDisplayOptions()
 
     void this.reloadItems(userTriggered ? ItemsReloadSource.UserTriggeredTagChange : ItemsReloadSource.TagChange)
+
+    void this.reloadDisplayPreferences()
   }
 
   onFilterEnter = () => {
