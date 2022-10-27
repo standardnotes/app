@@ -18,16 +18,16 @@ export class PersistenceService {
 
   async onAppEvent(eventName: ApplicationEvent) {
     if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
-      let shouldHydrateState = this.application.getValue(ShouldPersistNoteStateKey)
+      let shouldIgnorePersistedValues = this.application.getValue(ShouldPersistNoteStateKey)
 
-      if (typeof shouldHydrateState === 'undefined') {
+      if (typeof shouldIgnorePersistedValues === 'undefined') {
         this.application.setValue(ShouldPersistNoteStateKey, true)
-        shouldHydrateState = true
+        shouldIgnorePersistedValues = true
       }
 
       this.eventBus.publish({
         type: CrossControllerEvent.HydrateFromPersistedValues,
-        payload: shouldHydrateState ? this.getPersistedValues() : undefined,
+        payload: shouldIgnorePersistedValues ? this.getPersistedValues() : undefined,
       })
     }
   }
