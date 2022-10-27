@@ -61,6 +61,14 @@ export class PersistenceService {
     this.application.setValue(MasterPersistenceKey, values)
   }
 
+  clearPersistedValues(): void {
+    if (!this.application.isDatabaseLoaded()) {
+      return
+    }
+
+    this.application.setValue(MasterPersistenceKey, undefined)
+  }
+
   getPersistedValues(): MasterPersistedValue {
     return this.application.getValue(MasterPersistenceKey) as MasterPersistedValue
   }

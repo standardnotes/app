@@ -271,6 +271,10 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
     this.persistenceService.persistValues(values)
   }
 
+  clearPersistedValues = (): void => {
+    this.persistenceService.clearPersistedValues()
+  }
+
   hydrateFromPersistedValues = (values: MasterPersistedValue | undefined): void => {
     const itemListState = values?.[PersistenceKey.ItemListController] as ItemListControllerPersistableValue
     this.itemListController.hydrateFromPersistedValue(itemListState)
