@@ -88,7 +88,7 @@ const Calendar: FunctionComponent<Props> = ({ activities, startDate, onDateSelec
   }
 
   return (
-    <div className={`w-300 border-b border-solid border-border pb-2 ${className}`}>
+    <div className={`w-300 ${className}`}>
       <div className="mr-auto ml-auto w-70">
         {expanded && (
           <>

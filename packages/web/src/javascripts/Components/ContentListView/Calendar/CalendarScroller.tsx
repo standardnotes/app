@@ -1,6 +1,7 @@
 import { areDatesInSameMonth } from '@/Utils/DateUtils'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { dailiesDateToSectionTitle } from '../Daily/Utils'
 import Calendar from './Calendar'
 import { CalendarActivity, CalendarActivityType } from './CalendarActivity'
 import { CalendarMonth } from './CalendarMonth'
@@ -24,6 +25,7 @@ const CalendarScroller: FunctionComponent<Props> = ({ activities, onDateSelect, 
   const today = new Date()
 
   const [scrollWidth, setScrollWidth] = useState(0)
+  const [lastScrollLeft, setLastScrollLeft] = useState(0)
 
   const [months, setMonths] = useState<CalendarMonth[]>(() => {
     const base = [{ date: today }]
@@ -34,20 +36,46 @@ const CalendarScroller: FunctionComponent<Props> = ({ activities, onDateSelect, 
 
   const [firstElement, setFirstElement] = useState<HTMLDivElement | null>(null)
   const [lastElement, setLastElement] = useState<HTMLDivElement | null>(null)
-  const [currentMonthElement, setCurrentMonthElement] = useState<HTMLDivElement | null>(null)
+  const [todayMonthElement, setTodayMonthElement] = useState<HTMLDivElement | null>(null)
   const [didPaginateLeft, setDidPaginateLeft] = useState(false)
+  const [restoreScrollAfterExpand, setRestoreScrollAfterExpand] = useState(false)
   const scrollview = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (didInitialScroll) {
       return
     }
-    if (currentMonthElement) {
-      currentMonthElement.scrollIntoView()
 
+    if (todayMonthElement) {
+      todayMonthElement.scrollIntoView({
+        behavior: 'auto',
+        block: 'center',
+        inline: 'center',
+      })
       setDidInitialScroll(true)
     }
-  }, [currentMonthElement, didInitialScroll, setDidInitialScroll])
+  }, [todayMonthElement, didInitialScroll, setDidInitialScroll])
+
+  useEffect(() => {
+    if (!restoreScrollAfterExpand) {
+      return
+    }
+
+    if (scrollview.current && expanded) {
+      scrollview.current.scrollLeft = lastScrollLeft
+      setRestoreScrollAfterExpand(false)
+    }
+  }, [lastScrollLeft, expanded, restoreScrollAfterExpand, setRestoreScrollAfterExpand])
+
+  useLayoutEffect(() => {
+    if (!scrollview.current) {
+      return
+    }
+
+    if (didPaginateLeft) {
+      scrollview.current.scrollLeft += scrollview.current.scrollWidth - scrollWidth
+    }
+  }, [months, didPaginateLeft, scrollWidth])
 
   const paginateLeft = useCallback(() => {
     if (scrollview.current) {
@@ -71,12 +99,6 @@ const CalendarScroller: FunctionComponent<Props> = ({ activities, onDateSelect, 
     setMonths(copy)
   }, [months, setMonths])
 
-  useLayoutEffect(() => {
-    if (didPaginateLeft && scrollview.current) {
-      scrollview.current.scrollLeft += scrollview.current.scrollWidth - scrollWidth
-    }
-  }, [months, didPaginateLeft])
-
   const updateCurrentMonth = useCallback(
     (index: number) => {
       const newMonth = months[index]
@@ -90,9 +112,9 @@ const CalendarScroller: FunctionComponent<Props> = ({ activities, onDateSelect, 
     () =>
       new IntersectionObserver(
         (entries) => {
-          const firstEntry = entries[0]
-          if (firstEntry.isIntersecting) {
-            const id = firstEntry.target.id
+          const visibleEntry = entries.find((entry) => entry.isIntersecting)
+          if (visibleEntry) {
+            const id = visibleEntry.target.id
             const index = Number(id.split('-')[1])
             updateCurrentMonth(index)
           }
@@ -146,11 +168,21 @@ const CalendarScroller: FunctionComponent<Props> = ({ activities, onDateSelect, 
     }
   }, [firstElement, leftObserver])
 
+  const toggleVisibility = useCallback(() => {
+    if (scrollview.current && expanded) {
+      setRestoreScrollAfterExpand(true)
+      setScrollWidth(scrollview.current.scrollWidth)
+      setLastScrollLeft(scrollview.current.scrollLeft)
+    }
+
+    setExpanded(!expanded)
+  }, [expanded, setExpanded, setScrollWidth, scrollview, setRestoreScrollAfterExpand, setLastScrollLeft])
+
   const MonthLabel = () => {
     return (
       <div
-        className=" text-md mt-2 flex cursor-pointer items-center justify-center py-1 px-1 px-4 py-0.5 text-center font-bold hover:bg-contrast"
-        onClick={() => setExpanded(!expanded)}
+        className="text-md flex cursor-pointer items-center justify-center py-2 px-4 text-center font-bold hover:bg-contrast"
+        onClick={toggleVisibility}
       >
         {CalendarMonths[month]} {year}
       </div>
@@ -158,42 +190,45 @@ const CalendarScroller: FunctionComponent<Props> = ({ activities, onDateSelect, 
   }
 
   return (
-    <div className="w-full flex-shrink-0">
+    <div className="w-full flex-shrink-0 border-b border-solid border-border">
       <MonthLabel />
-      <div ref={scrollview} id="calendar-scroller" className="flex w-full overflow-x-scroll md:max-w-full">
-        {months.map((month, index) => {
-          const isFirst = index === 0
-          const isLast = index === months.length - 1
-          const isCurrent = areDatesInSameMonth(today, month.date)
-          return (
-            <div
-              id={`month-${index}`}
-              key={index}
-              ref={(ref) => {
-                isCurrent
-                  ? setCurrentMonthElement(ref)
-                  : isFirst
-                  ? setFirstElement(ref)
-                  : isLast
-                  ? setLastElement(ref)
-                  : null
+      {expanded && (
+        <div ref={scrollview} id="calendar-scroller" className="flex w-full overflow-x-scroll pb-2 md:max-w-full">
+          {months.map((month, index) => {
+            const isFirst = index === 0
+            const isLast = index === months.length - 1
+            const isCurrent = areDatesInSameMonth(today, month.date)
+            const id = `month-${index}-${dailiesDateToSectionTitle(month.date)}`
+            return (
+              <div
+                id={id}
+                key={id}
+                ref={(ref) => {
+                  isCurrent
+                    ? setTodayMonthElement(ref)
+                    : isFirst
+                    ? setFirstElement(ref)
+                    : isLast
+                    ? setLastElement(ref)
+                    : null
 
-                if (ref) {
-                  visibilityObserver.observe(ref)
-                }
-              }}
-            >
-              <Calendar
-                className="mx-2"
-                activities={activities}
-                onDateSelect={onDateSelect}
-                activityType={activityType}
-                startDate={month.date}
-              />
-            </div>
-          )
-        })}
-      </div>
+                  if (ref) {
+                    visibilityObserver.observe(ref)
+                  }
+                }}
+              >
+                <Calendar
+                  className="mx-2"
+                  activities={activities}
+                  onDateSelect={onDateSelect}
+                  activityType={activityType}
+                  startDate={month.date}
+                />
+              </div>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
