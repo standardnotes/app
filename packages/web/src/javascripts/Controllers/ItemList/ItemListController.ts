@@ -547,8 +547,7 @@ export class ItemListController
     await this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
 
     if (newDisplayOptions.sortBy !== currentSortBy) {
-      console.log(newDisplayOptions.sortBy, currentSortBy)
-      // await this.selectFirstItem()
+      await this.selectFirstItem()
     }
 
     this.eventBus.publish({

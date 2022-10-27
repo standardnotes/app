@@ -278,14 +278,14 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   }
 
   hydrateFromPersistedValues = (values: PersistedStateValue | undefined): void => {
+    const navigationState = values?.[PersistenceKey.NavigationController]
+    this.navigationController.hydrateFromPersistedValue(navigationState)
+
     const itemListState = values?.[PersistenceKey.ItemListController]
     this.itemListController.hydrateFromPersistedValue(itemListState)
 
     const selectedItemsState = values?.[PersistenceKey.SelectedItemsController]
     this.selectionController.hydrateFromPersistedValue(selectedItemsState)
-
-    const navigationState = values?.[PersistenceKey.NavigationController]
-    this.navigationController.hydrateFromPersistedValue(navigationState)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
