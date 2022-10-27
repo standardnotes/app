@@ -47,6 +47,17 @@ export class PersistenceService {
       return
     }
 
+    let shouldPersistState = this.application.getValue(ShouldPersistNoteStateKey)
+
+    if (typeof shouldPersistState === 'undefined') {
+      this.application.setValue(ShouldPersistNoteStateKey, true)
+      shouldPersistState = true
+    }
+
+    if (!shouldPersistState) {
+      return
+    }
+
     this.application.setValue(MasterPersistenceKey, values)
   }
 
