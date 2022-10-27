@@ -16,7 +16,7 @@ type Props = {
 
 const PageSize = 10
 
-const CalendarScroller: FunctionComponent<Props> = ({
+const InfiniteCalendar: FunctionComponent<Props> = ({
   activities,
   currentListDate,
   onDateSelect,
@@ -283,4 +283,4 @@ const CalendarScroller: FunctionComponent<Props> = ({
   )
 }
 
-export default CalendarScroller
+export default InfiniteCalendar

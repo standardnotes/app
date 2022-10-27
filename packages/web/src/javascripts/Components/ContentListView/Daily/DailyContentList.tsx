@@ -18,7 +18,7 @@ import { DailyItemCell } from './DailyItemCell'
 import { SNTag } from '@standardnotes/snjs'
 import { CalendarActivity } from '../Calendar/CalendarActivity'
 import { dateToDailyDayIdentifier } from './Utils'
-import CalendarScroller from '../Calendar/CalendarScroller'
+import InfiniteCalendar from '../Calendar/InfiniteCalendar'
 
 type Props = {
   itemListController: ItemListController
@@ -250,7 +250,7 @@ const DailyContentList: FunctionComponent<Props> = ({
 
   return (
     <>
-      <CalendarScroller
+      <InfiniteCalendar
         currentListDate={lastVisibleSection?.date}
         activities={calendarActivities}
         activityType={'created'}
