@@ -122,6 +122,9 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     this.controller = props.controller
 
     this.onEditorComponentLoad = () => {
+      if (!this.controller || this.controller.dealloced) {
+        return
+      }
       this.application.getDesktopService()?.redoSearch()
     }
 
@@ -233,7 +236,11 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
     if (this.controller.isTemplateNote) {
       setTimeout(() => {
-        this.focusTitle()
+        if (this.controller.templateNoteOptions?.autofocusBehavior === 'editor') {
+          this.focusEditor()
+        } else {
+          this.focusTitle()
+        }
       })
     }
   }
@@ -920,6 +927,10 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   override render() {
+    if (this.controller.dealloced) {
+      return null
+    }
+
     if (this.state.showProtectedWarning || !this.application.isAuthorizedToRenderItem(this.note)) {
       return (
         <ProtectedItemOverlay

@@ -1,5 +1,5 @@
 import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
-import { isFile, sanitizeHtmlString, SNNote } from '@standardnotes/snjs'
+import { isFile, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useRef } from 'react'
 import Icon from '@/Components/Icon/Icon'
@@ -11,11 +11,13 @@ import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useContextMenuEvent } from '@/Hooks/useContextMenuEvent'
+import ListItemNotePreviewText from './ListItemNotePreviewText'
+import { ListItemTitle } from './ListItemTitle'
 
 const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   application,
   notesController,
-  selectionController,
+  onSelect,
   hideDate,
   hideIcon,
   hideTags,
@@ -48,7 +50,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
     let shouldOpenContextMenu = selected
 
     if (!selected) {
-      const { didSelect } = await selectionController.selectItem(item.uuid)
+      const { didSelect } = await onSelect(item)
       if (didSelect) {
         shouldOpenContextMenu = true
       }
@@ -60,11 +62,11 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   }
 
   const onClick = useCallback(async () => {
-    const { didSelect } = await selectionController.selectItem(item.uuid, true)
+    const { didSelect } = await onSelect(item, true)
     if (didSelect) {
       toggleAppPane(AppPaneId.Editor)
     }
-  }, [item.uuid, selectionController, toggleAppPane])
+  }, [item, onSelect, toggleAppPane])
 
   useContextMenuEvent(listItemRef, openContextMenu)
 
@@ -72,7 +74,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
     <div
       ref={listItemRef}
       className={`content-list-item flex w-full cursor-pointer items-stretch text-text ${
-        selected && 'selected border-l-2 border-solid border-info'
+        selected && `selected border-l-2 border-solid border-accessory-tint-${tint}`
       }`}
       id={item.uuid}
       onClick={onClick}
@@ -85,27 +87,8 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
         <div className="pr-4" />
       )}
       <div className="min-w-0 flex-grow border-b border-solid border-border py-4 px-0">
-        <div className="flex items-start justify-between overflow-hidden text-base font-semibold leading-[1.3]">
-          <div className="break-word mr-2">{item.title}</div>
-        </div>
-        {!hidePreview && !item.hidePreview && !item.protected && (
-          <div className="overflow-hidden overflow-ellipsis text-sm">
-            {item.preview_html && (
-              <div
-                className="my-1"
-                dangerouslySetInnerHTML={{
-                  __html: sanitizeHtmlString(item.preview_html),
-                }}
-              ></div>
-            )}
-            {!item.preview_html && item.preview_plain && (
-              <div className="leading-1.3 line-clamp-1 mt-1 overflow-hidden">{item.preview_plain}</div>
-            )}
-            {!item.preview_html && !item.preview_plain && item.text && (
-              <div className="leading-1.3 line-clamp-1 mt-1 overflow-hidden">{item.text}</div>
-            )}
-          </div>
-        )}
+        <ListItemTitle item={item} />
+        <ListItemNotePreviewText item={item} hidePreview={hidePreview} />
         <ListItemMetadata item={item} hideDate={hideDate} sortBy={sortBy} />
         <ListItemTags hideTags={hideTags} tags={tags} />
         <ListItemConflictIndicator item={item} />

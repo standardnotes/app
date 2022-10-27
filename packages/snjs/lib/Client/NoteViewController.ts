@@ -34,7 +34,6 @@ export class NoteViewController implements ItemViewControllerInterface {
   private removeStreamObserver?: () => void
   public isTemplateNote = false
   private saveTimeout?: ReturnType<typeof setTimeout>
-  private defaultTitle: string | undefined
   private defaultTagUuid: UuidString | undefined
   private defaultTag?: SNTag
   public runtimeId = `${Math.random()}`
@@ -42,14 +41,13 @@ export class NoteViewController implements ItemViewControllerInterface {
   constructor(
     private application: SNApplication,
     item?: SNNote,
-    templateNoteOptions?: TemplateNoteViewControllerOptions,
+    public templateNoteOptions?: TemplateNoteViewControllerOptions,
   ) {
     if (item) {
       this.item = item
     }
 
     if (templateNoteOptions) {
-      this.defaultTitle = templateNoteOptions.title
       this.defaultTagUuid = templateNoteOptions.tag
     }
 
@@ -80,13 +78,19 @@ export class NoteViewController implements ItemViewControllerInterface {
         ? this.application.componentManager.componentWithIdentifier(editorIdentifier)
         : undefined
 
-      const note = this.application.mutator.createTemplateItem<NoteContent, SNNote>(ContentType.Note, {
-        text: '',
-        title: this.defaultTitle || '',
-        noteType: defaultEditor?.noteType || NoteType.Plain,
-        editorIdentifier: editorIdentifier,
-        references: [],
-      })
+      const note = this.application.mutator.createTemplateItem<NoteContent, SNNote>(
+        ContentType.Note,
+        {
+          text: '',
+          title: this.templateNoteOptions?.title || '',
+          noteType: defaultEditor?.noteType || NoteType.Plain,
+          editorIdentifier: editorIdentifier,
+          references: [],
+        },
+        {
+          created_at: this.templateNoteOptions?.createdAt || new Date(),
+        },
+      )
 
       this.isTemplateNote = true
       this.item = note
@@ -109,6 +113,10 @@ export class NoteViewController implements ItemViewControllerInterface {
   }
 
   private streamItems() {
+    if (this.dealloced) {
+      return
+    }
+
     this.removeStreamObserver = this.application.streamItems<SNNote>(
       ContentType.Note,
       ({ changed, inserted, source }) => {

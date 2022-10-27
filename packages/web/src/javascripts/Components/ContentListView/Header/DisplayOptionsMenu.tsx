@@ -23,6 +23,9 @@ import { PreferenceMode } from './PreferenceMode'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 import Button from '@/Components/Button/Button'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { isDev } from '@/Utils'
+
+const DailyEntryModeEnabled = isDev
 
 const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   closeDisplayOptionsMenu,
@@ -36,6 +39,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   const [preferences, setPreferences] = useState<TagPreferences>({})
   const hasSubscription = application.hasValidSubscription()
   const controlsDisabled = currentMode === 'tag' && !hasSubscription
+  const isDailyEntry = selectedTag.preferences?.entryMode === 'daily'
 
   const reloadPreferences = useCallback(() => {
     const globalValues: TagPreferences = {
@@ -162,6 +166,13 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     void changePreferences({ hideEditorIcon: !preferences.hideEditorIcon })
   }, [preferences, changePreferences])
 
+  const setEntryMode = useCallback(
+    (mode: 'normal' | 'daily') => {
+      void changePreferences({ entryMode: mode })
+    },
+    [changePreferences],
+  )
+
   const TabButton: FunctionComponent<{
     label: string
     mode: PreferenceMode
@@ -230,7 +241,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
 
       <div className="my-1 px-3 text-xs font-semibold uppercase text-text">Sort by</div>
       <MenuItem
-        disabled={controlsDisabled}
+        disabled={controlsDisabled || isDailyEntry}
         className="py-2"
         type={MenuItemType.RadioButton}
         onClick={toggleSortByDateModified}
@@ -248,7 +259,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         </div>
       </MenuItem>
       <MenuItem
-        disabled={controlsDisabled}
+        disabled={controlsDisabled || isDailyEntry}
         className="py-2"
         type={MenuItemType.RadioButton}
         onClick={toggleSortByCreationDate}
@@ -266,7 +277,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         </div>
       </MenuItem>
       <MenuItem
-        disabled={controlsDisabled}
+        disabled={controlsDisabled || isDailyEntry}
         className="py-2"
         type={MenuItemType.RadioButton}
         onClick={toggleSortByTitle}
@@ -361,6 +372,33 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       >
         Show trashed
       </MenuItem>
+
+      {currentMode === 'tag' && DailyEntryModeEnabled && (
+        <>
+          <MenuItemSeparator />
+          <div className="px-3 py-1 text-xs font-semibold uppercase text-text">Entry Mode</div>
+
+          <MenuItem
+            disabled={controlsDisabled}
+            className="py-2"
+            type={MenuItemType.RadioButton}
+            onClick={() => setEntryMode('normal')}
+            checked={!selectedTag.preferences?.entryMode || selectedTag.preferences?.entryMode === 'normal'}
+          >
+            <div className="ml-2 flex flex-grow items-center justify-between">Normal</div>
+          </MenuItem>
+
+          <MenuItem
+            disabled={controlsDisabled}
+            className="py-2"
+            type={MenuItemType.RadioButton}
+            onClick={() => setEntryMode('daily')}
+            checked={isDailyEntry}
+          >
+            <div className="ml-2 flex flex-grow items-center justify-between">Daily</div>
+          </MenuItem>
+        </>
+      )}
 
       <MenuItemSeparator />
 

@@ -115,6 +115,7 @@ module.exports = {
       'warning-contrast': 'var(--sn-stylekit-warning-contrast-color)',
       danger: 'var(--sn-stylekit-danger-color)',
       'danger-contrast': 'var(--sn-stylekit-danger-contrast-color)',
+      'danger-light': 'var(--sn-stylekit-danger-light-color, var(--sn-stylekit-danger-color))',
       default: 'var(--sn-stylekit-background-color)',
       foreground: 'var(--sn-stylekit-foreground-color)',
       contrast: 'var(--sn-stylekit-contrast-background-color)',

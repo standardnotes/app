@@ -5,7 +5,7 @@ import { classNames } from '@/Utils/ConcatenateClassNames'
 import Popover from '@/Components/Popover/Popover'
 import DisplayOptionsMenu from './DisplayOptionsMenu'
 import { NavigationMenuButton } from '@/Components/NavigationMenu/NavigationMenu'
-import { IconType } from '@standardnotes/snjs'
+import { IconType, isTag } from '@standardnotes/snjs'
 import RoundIconButton from '@/Components/Button/RoundIconButton'
 import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 
@@ -32,6 +32,7 @@ const ContentListHeader = ({
 }: Props) => {
   const displayOptionsContainerRef = useRef<HTMLDivElement>(null)
   const displayOptionsButtonRef = useRef<HTMLButtonElement>(null)
+  const isDailyEntry = isTag(selectedTag) && selectedTag.isDailyEntry
 
   const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false)
 
@@ -83,7 +84,13 @@ const ContentListHeader = ({
           </Popover>
         </div>
         <button
-          className="absolute bottom-6 right-6 z-editor-title-bar ml-3 flex h-13 w-13 cursor-pointer items-center justify-center rounded-full border border-solid border-transparent bg-info text-info-contrast hover:brightness-125 md:static md:h-8 md:w-8"
+          className={classNames(
+            'absolute bottom-6 right-6 z-editor-title-bar ml-3 flex h-13 w-13 cursor-pointer items-center',
+            `justify-center rounded-full border border-solid border-transparent ${
+              isDailyEntry ? 'bg-danger text-danger-contrast' : 'bg-info text-info-contrast'
+            }`,
+            'hover:brightness-125 md:static md:h-8 md:w-8',
+          )}
           title={addButtonLabel}
           aria-label={addButtonLabel}
           onClick={addNewItem}

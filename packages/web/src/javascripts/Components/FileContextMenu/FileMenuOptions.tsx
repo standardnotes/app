@@ -89,8 +89,8 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           void filesController.setProtectionForFiles(hasProtectedFiles, selectionController.selectedFiles)
         }}
       >
-        <Icon type="password" className="mr-2 text-neutral" />
-        Password protection
+        <Icon type="lock" className="mr-2 text-neutral" />
+        Password protect
       </MenuItem>
       <HorizontalSeparator classes="my-1" />
       <MenuItem
