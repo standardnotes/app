@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.39.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.38.0...@standardnotes/services@1.39.0) (2022-10-27)
+
+### Features
+
+* daily notes (dev only) ([#1894](https://github.com/standardnotes/app/issues/1894)) ([69c3f2b](https://github.com/standardnotes/app/commit/69c3f2be837152a1f937559327021c2128234c69))
+
 # [1.38.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.37.1...@standardnotes/services@1.38.0) (2022-10-26)
 
 ### Features

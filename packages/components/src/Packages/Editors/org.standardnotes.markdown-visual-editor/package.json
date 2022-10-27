@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/markdown-visual",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "author": "Johnny Almonte <johnny@standardnotes.com>",
   "description": "A lightweight WYSIWYG markdown editor for Standard Notes, derived from Milkdown.",
   "keywords": [
