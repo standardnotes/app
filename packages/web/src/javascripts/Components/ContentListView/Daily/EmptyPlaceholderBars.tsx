@@ -20,7 +20,7 @@ export const EmptyPlaceholderBars: FunctionComponent<Props> = ({ rows }) => {
       widths.push(width)
     }
     setBarWidths(widths)
-  }, [setBarWidths])
+  }, [setBarWidths, rows])
 
   useEffect(() => {
     reloadWidths()

@@ -7,12 +7,7 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { useResponsiveAppPane } from '../../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../../ResponsivePane/AppPaneMetadata'
-import {
-  createDailyItemsWithToday,
-  createItemsByDateMapping,
-  insertBlanks,
-  templateEntryForDate,
-} from './CreateDailySections'
+import { createDailyItemsWithToday, createItemsByDateMapping, insertBlanks } from './CreateDailySections'
 import { DailyItemsDay } from './DailyItemsDaySection'
 import { DailyItemCell } from './DailyItemCell'
 import { SNTag } from '@standardnotes/snjs'
@@ -40,7 +35,7 @@ const DailyContentList: FunctionComponent<Props> = ({
   const { toggleAppPane } = useResponsiveAppPane()
   const [needsSelectionReload, setNeedsSelectionReload] = useState(false)
   const [todayItem, setTodayItem] = useState<DailyItemsDay>()
-  const [selectedDay, setSelectedDay] = useState<DailyItemsDay>()
+  const [selectedDay, setSelectedDay] = useState<Date>()
   const [lastElement, setLastElement] = useState<HTMLDivElement | null>(null)
   const [firstElement, setFirstElement] = useState<HTMLDivElement | null>(null)
   const [lastScrollHeight, setLastScrollHeight] = useState(0)
@@ -178,28 +173,26 @@ const DailyContentList: FunctionComponent<Props> = ({
     async (day: DailyItemsDay, item: ListableContentItem, userTriggered: boolean) => {
       await onSelect(item, userTriggered)
       toggleAppPane(AppPaneId.Editor)
-      setSelectedDay(day)
+      setSelectedDay(day.date)
     },
     [onSelect, toggleAppPane],
   )
 
   const onClickTemplate = useCallback(
-    (day: DailyItemsDay) => {
-      setSelectedDay(day)
-      itemListController.createNewNote(undefined, day.date, 'editor')
+    (date: Date) => {
+      setSelectedDay(date)
+      itemListController.createNewNote(undefined, date, 'editor')
       toggleAppPane(AppPaneId.Editor)
     },
     [setSelectedDay, itemListController, toggleAppPane],
   )
 
-  useEffect(() => {
-    if (selectedDay) {
-      const updatedInstance = dailyItems.find((candidate) => candidate.id === selectedDay.id)
-      if (updatedInstance) {
-        setSelectedDay(updatedInstance)
-      }
-    }
-  }, [dailyItems])
+  const dailyItemForDate = useCallback(
+    (date: Date): DailyItemsDay | undefined => {
+      return dailyItems.find((candidate) => dateToDailyDayIdentifier(date) === candidate.dateKey)
+    },
+    [dailyItems],
+  )
 
   useEffect(() => {
     if (needsSelectionReload) {
@@ -217,20 +210,17 @@ const DailyContentList: FunctionComponent<Props> = ({
           void onClickItem(dailyItem, items[0], false)
         }
       } else {
-        onClickTemplate(todayItem)
+        onClickTemplate(todayItem.date)
         const itemElement = document.getElementById(todayItem.id)
         itemElement?.scrollIntoView({ behavior: 'auto' })
       }
     }
-  }, [needsSelectionReload, onClickItem, onClickTemplate, todayItem])
+  }, [needsSelectionReload, onClickItem, onClickTemplate, todayItem, dailyItemForDate, itemsByDateMapping])
 
   useEffect(() => {
     setNeedsSelectionReload(true)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTag.uuid])
-
-  const dailyItemForDate = useCallback((date: Date): DailyItemsDay | undefined => {
-    return dailyItems.find((candidate) => dateToDailyDayIdentifier(date) === candidate.dateKey)
-  }, [])
 
   const onCalendarSelect = useCallback(
     (date: Date) => {
@@ -240,17 +230,13 @@ const DailyContentList: FunctionComponent<Props> = ({
         if (items?.length > 0) {
           void onClickItem(dailyItem, items[0], false)
         } else if (dailyItem) {
-          void onClickTemplate(dailyItem)
+          void onClickTemplate(dailyItem.date)
         }
       } else {
-        const newDailyItem = templateEntryForDate(date)
-        const copy = dailyItems.slice()
-        copy.unshift(newDailyItem)
-        setDailyItems(copy)
-        void onClickTemplate(newDailyItem)
+        void onClickTemplate(date)
       }
     },
-    [onClickItem, setDailyItems, onClickTemplate, dailyItems],
+    [onClickItem, onClickTemplate, dailyItemForDate, itemsByDateMapping],
   )
 
   return (
@@ -259,8 +245,8 @@ const DailyContentList: FunctionComponent<Props> = ({
         activities={calendarActivities}
         activityType={'created'}
         onDateSelect={onCalendarSelect}
-        selectedTemplateDay={!selectedUuids.size ? selectedDay?.date : undefined}
-        selectedItemDay={selectedUuids.size ? selectedDay?.date : undefined}
+        selectedTemplateDay={selectedDay}
+        selectedItemDay={selectedDay}
         ref={calendarRef}
       />
       <div
@@ -300,11 +286,11 @@ const DailyContentList: FunctionComponent<Props> = ({
           } else {
             return (
               <DailyItemCell
-                selected={dailyItem.id === selectedDay?.id}
+                selected={selectedDay && dailyItem.id === dateToDailyDayIdentifier(selectedDay)}
                 section={dailyItem}
                 id={dailyItem.id}
                 key={dailyItem.dateKey}
-                onClick={() => onClickTemplate(dailyItem)}
+                onClick={() => onClickTemplate(dailyItem.date)}
                 ref={(ref) => {
                   isLast ? setLastElement(ref) : isFirst ? setFirstElement(ref) : null
                   if (ref) {

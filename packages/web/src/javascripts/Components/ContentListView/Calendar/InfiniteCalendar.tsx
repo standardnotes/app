@@ -35,14 +35,14 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
     const [month, setMonth] = useState(date.getMonth())
     const [year, setYear] = useState(date.getFullYear())
 
-    const [expanded, setExpanded] = useState(false)
+    const [expanded, setExpanded] = useState(true)
     const [scrollWidth, setScrollWidth] = useState(0)
 
     const today = new Date()
     const [months, setMonths] = useState<CalendarMonth[]>(() => {
       const base = [{ date: today }]
-      insertMonths(base, 'front', 1)
-      insertMonths(base, 'end', 1)
+      insertMonths(base, 'front', 2)
+      insertMonths(base, 'end', 2)
       return base
     })
 
@@ -106,11 +106,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
         return
       }
 
-      element.scrollIntoView({
-        behavior: 'auto',
-        block: 'center',
-        inline: 'center',
-      })
+      scrollArea.current!.scrollLeft = element.offsetLeft + -60
     }, [])
 
     useLayoutEffect(() => {
@@ -122,7 +118,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
       }
 
       scrollToMonth(date)
-    }, [date])
+    }, [date, hasMonthInList, insertMonthInList, scrollToMonth])
 
     useEffect(() => {
       if (!restoreScrollAfterExpand) {
@@ -133,7 +129,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
         scrollToMonth(date)
         setRestoreScrollAfterExpand(false)
       }
-    }, [expanded, scrollToMonth, restoreScrollAfterExpand, setRestoreScrollAfterExpand])
+    }, [expanded, scrollToMonth, date, restoreScrollAfterExpand, setRestoreScrollAfterExpand])
 
     useLayoutEffect(() => {
       if (!scrollArea.current) {
@@ -142,6 +138,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
 
       if (didPaginateLeft) {
         scrollArea.current.scrollLeft += scrollArea.current.scrollWidth - scrollWidth
+        setDidPaginateLeft(false)
       }
     }, [months, didPaginateLeft, scrollWidth])
 
@@ -185,7 +182,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
           },
           { threshold: 0.9 },
         ),
-      [updateCurrentMonth],
+      [updateCurrentMonth, months],
     )
 
     const rightObserver = useMemo(
@@ -209,7 +206,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
               paginateLeft()
             }
           },
-          { threshold: 0.5 },
+          { threshold: 1.0 },
         ),
       [paginateLeft],
     )
@@ -242,7 +239,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
       setRestoreScrollAfterExpand(true)
 
       setExpanded(!expanded)
-    }, [expanded, setExpanded, setScrollWidth, scrollArea, setRestoreScrollAfterExpand])
+    }, [expanded, setExpanded, setRestoreScrollAfterExpand])
 
     const elementIdForMonth = (date: Date): string => {
       return `month-${date.getFullYear()}-${date.getMonth()}`
@@ -253,7 +250,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
         resetNumberOfCalendarsToBase(date)
         onDateSelect(date)
       },
-      [onDateSelect, setDate, resetNumberOfCalendarsToBase],
+      [onDateSelect, resetNumberOfCalendarsToBase],
     )
 
     return (
@@ -265,7 +262,12 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
           {CalendarMonths[month]} {year}
         </div>
         {expanded && (
-          <div ref={scrollArea} id="calendar-scroller" className="flex w-full overflow-x-scroll pb-2 md:max-w-full">
+          <div
+            style={{ scrollBehavior: 'smooth' }}
+            ref={scrollArea}
+            id="calendar-scroller"
+            className="flex w-full overflow-x-scroll pb-2 md:max-w-full"
+          >
             {months.map((month, index) => {
               const isFirst = index === 0
               const isLast = index === months.length - 1

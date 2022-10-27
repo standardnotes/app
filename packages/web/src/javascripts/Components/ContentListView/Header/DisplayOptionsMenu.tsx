@@ -23,6 +23,9 @@ import { PreferenceMode } from './PreferenceMode'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 import Button from '@/Components/Button/Button'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { isDev } from '@/Utils'
+
+const DailyEntryModeEnabled = isDev
 
 const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   closeDisplayOptionsMenu,
@@ -370,7 +373,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         Show trashed
       </MenuItem>
 
-      {currentMode === 'tag' && (
+      {currentMode === 'tag' && DailyEntryModeEnabled && (
         <>
           <MenuItemSeparator />
           <div className="px-3 py-1 text-xs font-semibold uppercase text-text">Entry Mode</div>

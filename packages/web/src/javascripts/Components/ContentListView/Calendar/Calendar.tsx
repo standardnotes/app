@@ -32,7 +32,7 @@ const Calendar: FunctionComponent<Props> = ({ activities, startDate, onDateSelec
   const days = isLeapYear(year) ? CalendarDaysLeap : CalendarDays
 
   return (
-    <div className={`w-300 ${className}`}>
+    <div className={`w-300 ${className} border-left border-right border border-neutral`}>
       <div className="mr-auto ml-auto w-70">
         <div className="flex w-full flex-wrap">
           {CalendarDaysOfTheWeek.map((d) => (
