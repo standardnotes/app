@@ -19,7 +19,7 @@
     "@babel/preset-typescript": "^7.17.12",
     "@babel/runtime": "^7.18.2",
     "@svgr/webpack": "^6.2.1",
-    "babel-loader": "^8.2.5",
+    "babel-loader": "^9.0.0",
     "babel-plugin-transform-runtime": "^6.23.0",
     "prettier": "*",
     "react": "^18.1.0",
