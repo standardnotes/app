@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { ListableContentItem } from '../Types/ListableContentItem'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
@@ -41,6 +41,9 @@ const DailyContentList: FunctionComponent<Props> = ({
   const { hideTags, hideDate, hideNotePreview } = itemListController.webDisplayOptions
   const [lastElement, setLastElement] = useState<HTMLDivElement | null>(null)
   const [firstElement, setFirstElement] = useState<HTMLDivElement | null>(null)
+  const [lastScrollHeight, setLastScrollHeight] = useState(0)
+  const [didPaginateTop, setDidPaginateTop] = useState(false)
+  const scrollArea = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const result = createDailySectionsWithTemplateInterstices(items)
@@ -70,10 +73,25 @@ const DailyContentList: FunctionComponent<Props> = ({
   }, [dailyItems, setDailyItems])
 
   const paginateTop = useCallback(() => {
+    if (scrollArea.current) {
+      setLastScrollHeight(scrollArea.current.scrollHeight)
+    }
     const copy = dailyItems.slice()
     insertBlanks(copy, 'front', PageSize)
+    setDidPaginateTop(true)
     setDailyItems(copy)
-  }, [dailyItems, setDailyItems])
+  }, [dailyItems, setDailyItems, setDidPaginateTop])
+
+  useLayoutEffect(() => {
+    if (!scrollArea.current) {
+      return
+    }
+
+    if (didPaginateTop) {
+      scrollArea.current.scrollTop += scrollArea.current.scrollHeight - lastScrollHeight
+      setDidPaginateTop(false)
+    }
+  }, [didPaginateTop, lastScrollHeight])
 
   const onListItemDidBecomeVisible = useCallback(
     (elementId: string) => {
@@ -99,23 +117,29 @@ const DailyContentList: FunctionComponent<Props> = ({
 
   const bottomObserver = useMemo(
     () =>
-      new IntersectionObserver((entries) => {
-        const first = entries[0]
-        if (first.isIntersecting) {
-          paginateBottom()
-        }
-      }),
+      new IntersectionObserver(
+        (entries) => {
+          const first = entries[0]
+          if (first.isIntersecting) {
+            paginateBottom()
+          }
+        },
+        { threshold: 0.5 },
+      ),
     [paginateBottom],
   )
 
   const topObserver = useMemo(
     () =>
-      new IntersectionObserver((entries) => {
-        const first = entries[0]
-        if (first.isIntersecting) {
-          paginateTop()
-        }
-      }),
+      new IntersectionObserver(
+        (entries) => {
+          const first = entries[0]
+          if (first.isIntersecting) {
+            paginateTop()
+          }
+        },
+        { threshold: 0.5 },
+      ),
     [paginateTop],
   )
 
@@ -231,6 +255,7 @@ const DailyContentList: FunctionComponent<Props> = ({
           'md:max-h-full md:overflow-y-hidden md:hover:overflow-y-auto pointer-coarse:md:overflow-y-auto',
           'md:hover:[overflow-y:_overlay]',
         )}
+        ref={scrollArea}
         id={ElementIds.ContentList}
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
       >

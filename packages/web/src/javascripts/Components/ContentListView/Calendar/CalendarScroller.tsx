@@ -27,7 +27,7 @@ const CalendarScroller: FunctionComponent<Props> = ({
   const [month, setMonth] = useState(date.getMonth())
   const [year, setYear] = useState(date.getFullYear())
 
-  const [expanded, setExpanded] = useState(true)
+  const [expanded, setExpanded] = useState(false)
   const [scrollWidth, setScrollWidth] = useState(0)
 
   const today = new Date()
@@ -42,7 +42,7 @@ const CalendarScroller: FunctionComponent<Props> = ({
   const [lastElement, setLastElement] = useState<HTMLDivElement | null>(null)
   const [didPaginateLeft, setDidPaginateLeft] = useState(false)
   const [restoreScrollAfterExpand, setRestoreScrollAfterExpand] = useState(false)
-  const scrollview = useRef<HTMLDivElement>(null)
+  const scrollArea = useRef<HTMLDivElement>(null)
 
   const hasMonthInList = useCallback(
     (date: Date): boolean => {
@@ -109,25 +109,25 @@ const CalendarScroller: FunctionComponent<Props> = ({
       return
     }
 
-    if (scrollview.current && expanded) {
+    if (scrollArea.current && expanded) {
       scrollToMonth(date)
       setRestoreScrollAfterExpand(false)
     }
   }, [expanded, restoreScrollAfterExpand, setRestoreScrollAfterExpand])
 
   useLayoutEffect(() => {
-    if (!scrollview.current) {
+    if (!scrollArea.current) {
       return
     }
 
     if (didPaginateLeft) {
-      scrollview.current.scrollLeft += scrollview.current.scrollWidth - scrollWidth
+      scrollArea.current.scrollLeft += scrollArea.current.scrollWidth - scrollWidth
     }
   }, [months, didPaginateLeft, scrollWidth])
 
   const paginateLeft = useCallback(() => {
-    if (scrollview.current) {
-      setScrollWidth(scrollview.current.scrollWidth)
+    if (scrollArea.current) {
+      setScrollWidth(scrollArea.current.scrollWidth)
     }
 
     const copy = months.slice()
@@ -219,12 +219,12 @@ const CalendarScroller: FunctionComponent<Props> = ({
   }, [firstElement, leftObserver])
 
   const toggleVisibility = useCallback(() => {
-    if (scrollview.current && expanded) {
+    if (scrollArea.current && expanded) {
       setRestoreScrollAfterExpand(true)
     }
 
     setExpanded(!expanded)
-  }, [expanded, setExpanded, setScrollWidth, scrollview, setRestoreScrollAfterExpand])
+  }, [expanded, setExpanded, setScrollWidth, scrollArea, setRestoreScrollAfterExpand])
 
   const elementIdForMonth = (date: Date): string => {
     return `month-${date.getFullYear()}-${date.getMonth()}`
@@ -248,7 +248,7 @@ const CalendarScroller: FunctionComponent<Props> = ({
         {CalendarMonths[month]} {year}
       </div>
       {expanded && (
-        <div ref={scrollview} id="calendar-scroller" className="flex w-full overflow-x-scroll pb-2 md:max-w-full">
+        <div ref={scrollArea} id="calendar-scroller" className="flex w-full overflow-x-scroll pb-2 md:max-w-full">
           {months.map((month, index) => {
             const isFirst = index === 0
             const isLast = index === months.length - 1
