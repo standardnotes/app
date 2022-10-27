@@ -13,7 +13,7 @@ import {
   TransferPayload,
   UuidString,
 } from '@standardnotes/snjs'
-import { Alert, Linking, PermissionsAndroid, Platform, StatusBar } from 'react-native'
+import { Alert, AppState, AppStateStatus, Linking, PermissionsAndroid, Platform, StatusBar } from 'react-native'
 import FileViewer from 'react-native-file-viewer'
 import FingerprintScanner from 'react-native-fingerprint-scanner'
 import FlagSecure from 'react-native-flag-secure-android'
@@ -609,5 +609,9 @@ export class MobileDevice implements MobileDeviceInterface {
 
   isUrlComponentUrl(url: string): boolean {
     return Array.from(this.componentUrls.values()).includes(url)
+  }
+
+  async getAppState(): Promise<AppStateStatus> {
+    return AppState.currentState
   }
 }
