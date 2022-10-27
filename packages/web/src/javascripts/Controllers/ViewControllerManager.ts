@@ -12,13 +12,15 @@ import {
   SubscriptionClientInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
+  PersistedStateValue,
+  PersistenceKey,
 } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 import { ActionsMenuController } from './ActionsMenuController'
 import { FeaturesController } from './FeaturesController'
 import { FilesController } from './FilesController'
 import { NotesController } from './NotesController'
-import { ItemListController, ItemListControllerPersistableValue } from './ItemList/ItemListController'
+import { ItemListController } from './ItemList/ItemListController'
 import { NoAccountWarningController } from './NoAccountWarningController'
 import { PreferencesController } from './PreferencesController'
 import { PurchaseFlowController } from './PurchaseFlow/PurchaseFlowController'
@@ -26,12 +28,12 @@ import { QuickSettingsController } from './QuickSettingsController'
 import { SearchOptionsController } from './SearchOptionsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
 import { SyncStatusController } from './SyncStatusController'
-import { NavigationController, NavigationControllerPersistableValue } from './Navigation/NavigationController'
+import { NavigationController } from './Navigation/NavigationController'
 import { FilePreviewModalController } from './FilePreviewModalController'
-import { SelectedItemsController, SelectionControllerPersistableValue } from './SelectedItemsController'
+import { SelectedItemsController } from './SelectedItemsController'
 import { HistoryModalController } from './NoteHistory/HistoryModalController'
 import { LinkingController } from './LinkingController'
-import { MasterPersistedValue, PersistenceKey, PersistenceService } from './Abstract/PersistenceService'
+import { PersistenceService } from './Abstract/PersistenceService'
 import { CrossControllerEvent } from './CrossControllerEvent'
 import { EventObserverInterface } from '@/Event/EventObserverInterface'
 import { ApplicationEventObserver } from '@/Event/ApplicationEventObserver'
@@ -262,7 +264,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   }
 
   persistValues = (): void => {
-    const values: MasterPersistedValue = {
+    const values: PersistedStateValue = {
       [PersistenceKey.SelectedItemsController]: this.selectionController.getPersistableValue(),
       [PersistenceKey.NavigationController]: this.navigationController.getPersistableValue(),
       [PersistenceKey.ItemListController]: this.itemListController.getPersistableValue(),
@@ -275,20 +277,20 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
     this.persistenceService.clearPersistedValues()
   }
 
-  hydrateFromPersistedValues = (values: MasterPersistedValue | undefined): void => {
-    const itemListState = values?.[PersistenceKey.ItemListController] as ItemListControllerPersistableValue
+  hydrateFromPersistedValues = (values: PersistedStateValue | undefined): void => {
+    const itemListState = values?.[PersistenceKey.ItemListController]
     this.itemListController.hydrateFromPersistedValue(itemListState)
 
-    const selectedItemsState = values?.[PersistenceKey.SelectedItemsController] as SelectionControllerPersistableValue
+    const selectedItemsState = values?.[PersistenceKey.SelectedItemsController]
     this.selectionController.hydrateFromPersistedValue(selectedItemsState)
 
-    const navigationState = values?.[PersistenceKey.NavigationController] as NavigationControllerPersistableValue
+    const navigationState = values?.[PersistenceKey.NavigationController]
     this.navigationController.hydrateFromPersistedValue(navigationState)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === CrossControllerEvent.HydrateFromPersistedValues) {
-      this.hydrateFromPersistedValues(event.payload as MasterPersistedValue | undefined)
+      this.hydrateFromPersistedValues(event.payload as PersistedStateValue | undefined)
     } else if (event.type === CrossControllerEvent.RequestValuePersistence) {
       this.persistValues()
     }

@@ -73,6 +73,8 @@ import {
   SyncServiceInterface,
   DiagnosticInfo,
   EncryptionService,
+  MasterStatePersistenceKey,
+  PersistedStateValue,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -272,11 +274,9 @@ export class SNSyncService
       })
       .filter(isNotUndefined)
 
-    const persisedSelectionState: Record<string, unknown> = this.storageService.getValue('master-persistence-key')
-    const selectedItemsState = persisedSelectionState?.['selected-items-controller'] as { selectedUuids: UuidString[] }
-    const navigationSelectionState = persisedSelectionState?.['navigation-controller'] as {
-      selectedTagUuid: UuidString
-    }
+    const persisedSelectionState = this.storageService.getValue(MasterStatePersistenceKey) as PersistedStateValue
+    const selectedItemsState = persisedSelectionState?.['selected-items-controller']
+    const navigationSelectionState = persisedSelectionState?.['navigation-controller']
     const itemUuidsToHydrateFirst = new Array<UuidString>().concat(
       selectedItemsState?.selectedUuids.concat([navigationSelectionState?.selectedTagUuid]),
     )

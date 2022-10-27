@@ -1,17 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { ShouldPersistNoteStateKey } from '@/Components/Preferences/Panes/General/Persistence'
-import { ApplicationEvent, InternalEventBus } from '@standardnotes/snjs'
+import { ApplicationEvent, InternalEventBus, MasterStatePersistenceKey, PersistedStateValue } from '@standardnotes/snjs'
 import { CrossControllerEvent } from '../CrossControllerEvent'
-
-const MasterPersistenceKey = 'master-persistence-key'
-
-export enum PersistenceKey {
-  SelectedItemsController = 'selected-items-controller',
-  NavigationController = 'navigation-controller',
-  ItemListController = 'item-list-controller',
-}
-
-export type MasterPersistedValue = Record<PersistenceKey, unknown>
 
 export class PersistenceService {
   private unsubAppEventObserver: () => void
@@ -42,7 +32,7 @@ export class PersistenceService {
     }
   }
 
-  persistValues(values: MasterPersistedValue): void {
+  persistValues(values: PersistedStateValue): void {
     if (!this.application.isDatabaseLoaded()) {
       return
     }
@@ -58,7 +48,7 @@ export class PersistenceService {
       return
     }
 
-    this.application.setValue(MasterPersistenceKey, values)
+    this.application.setValue(MasterStatePersistenceKey, values)
   }
 
   clearPersistedValues(): void {
@@ -66,11 +56,11 @@ export class PersistenceService {
       return
     }
 
-    this.application.setValue(MasterPersistenceKey, undefined)
+    this.application.setValue(MasterStatePersistenceKey, undefined)
   }
 
-  getPersistedValues(): MasterPersistedValue {
-    return this.application.getValue(MasterPersistenceKey) as MasterPersistedValue
+  getPersistedValues(): PersistedStateValue {
+    return this.application.getValue(MasterStatePersistenceKey) as PersistedStateValue
   }
 
   deinit() {

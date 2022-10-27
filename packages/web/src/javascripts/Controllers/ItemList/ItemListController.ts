@@ -20,6 +20,7 @@ import {
   WebAppEvent,
   NewNoteTitleFormat,
   useBoolean,
+  ItemListControllerPersistableValue,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -49,10 +50,6 @@ enum ItemsReloadSource {
   TagChange,
   UserTriggeredTagChange,
   FilterTextChange,
-}
-
-export type ItemListControllerPersistableValue = {
-  displayOptions: DisplayOptions
 }
 
 export class ItemListController
@@ -414,17 +411,13 @@ export class ItemListController
     const activeItem = activeController?.item
 
     if (this.shouldCloseActiveItem(activeItem) && activeController) {
-      console.log('will close active item & select next')
       this.closeItemController(activeController)
       this.selectionController.selectNextItem()
     } else if (this.shouldSelectActiveItem(activeItem) && activeItem) {
-      console.log('will select active item')
       await this.selectionController.selectItem(activeItem.uuid).catch(console.error)
     } else if (this.shouldSelectFirstItem(itemsReloadSource)) {
-      console.log('will select first item')
       await this.selectFirstItem()
     } else if (this.shouldSelectNextItemOrCreateNewNote(activeItem)) {
-      console.log('will select next item or create new')
       await this.selectNextItemOrCreateNewNote()
     }
   }
@@ -554,7 +547,7 @@ export class ItemListController
     await this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
 
     if (newDisplayOptions.sortBy !== currentSortBy) {
-      console.log('will select first item because of display options')
+      console.log(newDisplayOptions.sortBy, currentSortBy)
       // await this.selectFirstItem()
     }
 

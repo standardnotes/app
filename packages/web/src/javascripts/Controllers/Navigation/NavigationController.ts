@@ -15,6 +15,7 @@ import {
   InternalEventBus,
   InternalEventPublishStrategy,
   VectorIconNameOrEmoji,
+  NavigationControllerPersistableValue,
 } from '@standardnotes/snjs'
 import { action, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -26,10 +27,6 @@ import { CrossControllerEvent } from '../CrossControllerEvent'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { Persistable } from '../Abstract/Persistable'
 import { TagListSectionType } from '@/Components/Tags/TagListSection'
-
-export type NavigationControllerPersistableValue = {
-  selectedTagUuid: AnyTag['uuid']
-}
 
 export class NavigationController
   extends AbstractViewController
