@@ -272,7 +272,20 @@ export class SNSyncService
       })
       .filter(isNotUndefined)
 
-    const payloads = SortPayloadsByRecentAndContentPriority(unsortedPayloads, this.localLoadPriorty)
+    const persisedSelectionState: Record<string, unknown> = this.storageService.getValue('master-persistence-key')
+    const selectedItemsState = persisedSelectionState?.['selected-items-controller'] as { selectedUuids: UuidString[] }
+    const navigationSelectionState = persisedSelectionState?.['navigation-controller'] as {
+      selectedTagUuid: UuidString
+    }
+    const itemUuidsToHydrateFirst = new Array<UuidString>().concat(
+      selectedItemsState?.selectedUuids.concat([navigationSelectionState?.selectedTagUuid]),
+    )
+
+    const payloads = SortPayloadsByRecentAndContentPriority(
+      unsortedPayloads,
+      this.localLoadPriorty,
+      itemUuidsToHydrateFirst,
+    )
 
     const itemsKeysPayloads = payloads.filter((payload) => {
       return payload.content_type === ContentType.ItemsKey

@@ -414,13 +414,17 @@ export class ItemListController
     const activeItem = activeController?.item
 
     if (this.shouldCloseActiveItem(activeItem) && activeController) {
+      console.log('will close active item & select next')
       this.closeItemController(activeController)
       this.selectionController.selectNextItem()
     } else if (this.shouldSelectActiveItem(activeItem) && activeItem) {
+      console.log('will select active item')
       await this.selectionController.selectItem(activeItem.uuid).catch(console.error)
     } else if (this.shouldSelectFirstItem(itemsReloadSource)) {
+      console.log('will select first item')
       await this.selectFirstItem()
     } else if (this.shouldSelectNextItemOrCreateNewNote(activeItem)) {
+      console.log('will select next item or create new')
       await this.selectNextItemOrCreateNewNote()
     }
   }
@@ -550,7 +554,8 @@ export class ItemListController
     await this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
 
     if (newDisplayOptions.sortBy !== currentSortBy) {
-      await this.selectFirstItem()
+      console.log('will select first item because of display options')
+      // await this.selectFirstItem()
     }
 
     this.eventBus.publish({

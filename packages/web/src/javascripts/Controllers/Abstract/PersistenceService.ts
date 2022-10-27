@@ -27,7 +27,7 @@ export class PersistenceService {
   }
 
   async onAppEvent(eventName: ApplicationEvent) {
-    if (eventName === ApplicationEvent.LocalDataLoaded) {
+    if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
       let shouldHydrateState = this.application.getValue(ShouldPersistNoteStateKey)
 
       if (typeof shouldHydrateState === 'undefined') {
