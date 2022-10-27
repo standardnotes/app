@@ -113,7 +113,7 @@ const InfiniteCalendar: FunctionComponent<Props> = ({
       scrollToMonth(date)
       setRestoreScrollAfterExpand(false)
     }
-  }, [expanded, restoreScrollAfterExpand, setRestoreScrollAfterExpand])
+  }, [expanded, scrollToMonth, restoreScrollAfterExpand, setRestoreScrollAfterExpand])
 
   useLayoutEffect(() => {
     if (!scrollArea.current) {
@@ -219,9 +219,7 @@ const InfiniteCalendar: FunctionComponent<Props> = ({
   }, [firstElement, leftObserver])
 
   const toggleVisibility = useCallback(() => {
-    if (scrollArea.current && expanded) {
-      setRestoreScrollAfterExpand(true)
-    }
+    setRestoreScrollAfterExpand(true)
 
     setExpanded(!expanded)
   }, [expanded, setExpanded, setScrollWidth, scrollArea, setRestoreScrollAfterExpand])
