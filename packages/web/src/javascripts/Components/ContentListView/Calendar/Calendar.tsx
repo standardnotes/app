@@ -1,28 +1,19 @@
-import { observer } from 'mobx-react-lite'
 import { useState, useEffect, FunctionComponent, useMemo } from 'react'
-import { CalendarActivityType, CalendarActivity } from './CalendarActivity'
+import { CalendarActivity } from './CalendarActivity'
 import CalendarDay from './CalendarDay'
 import { CalendarDays, CalendarDaysLeap, CalendarDaysOfTheWeek } from './Constants'
 import { createActivityRecord, dateToDateOnlyString, isLeapYear, getStartDayOfMonth } from './CalendarUtilts'
 import { isDateInSameDay } from '@/Utils/DateUtils'
 
 type Props = {
-  activityType: CalendarActivityType
   activities: CalendarActivity[]
   onDateSelect: (date: Date) => void
   startDate: Date
   className?: string
-  selectedTemplateDay?: Date
+  selectedDay?: Date
 }
 
-const Calendar: FunctionComponent<Props> = ({
-  activities,
-  startDate,
-  onDateSelect,
-  activityType,
-  selectedTemplateDay,
-  className,
-}) => {
+const Calendar: FunctionComponent<Props> = ({ activities, startDate, onDateSelect, selectedDay, className }) => {
   const activityMap = useMemo(() => createActivityRecord(activities), [activities])
 
   const [date, setDate] = useState(startDate || new Date())
@@ -61,11 +52,10 @@ const Calendar: FunctionComponent<Props> = ({
                 <CalendarDay
                   key={index}
                   day={d}
-                  mode={activityType}
                   isToday={isDateInSameDay(date, today)}
                   activities={activities}
                   onClick={() => onDateSelect(date)}
-                  hasPendingEntry={selectedTemplateDay && isDateInSameDay(selectedTemplateDay, date)}
+                  hasPendingEntry={selectedDay && isDateInSameDay(selectedDay, date)}
                 />
               )
             })}
