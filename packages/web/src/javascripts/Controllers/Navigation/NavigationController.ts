@@ -120,9 +120,6 @@ export class NavigationController
           const currentSelectedTag = this.selected_
 
           if (!currentSelectedTag) {
-            if (!this.selectedUuid) {
-              // void this.selectHomeNavigationView()
-            }
             return
           }
 
