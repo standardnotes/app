@@ -28,14 +28,17 @@ const CalendarDay: FunctionComponent<Props> = ({ day, activities = [], isToday, 
     return <div>{activity.item.title}</div>
   })
 
-  const todayClassNames = 'bg-danger text-danger-contrast font-bold'
   const hasActivity = day > 0 && activities.length > 0
+  const todayClassNames = 'bg-danger text-danger-contrast font-bold'
   const hasActivityClassNames = 'bg-danger-light text-danger font-bold'
+  const defaultClassNames = 'bg-transparent hover:bg-contrast'
 
   return (
     <div className="h-7 w-[14.2%] p-0.5">
       <div
-        className={`flex h-full w-full cursor-pointer items-center justify-center rounded ${
+        className={`${
+          !hasActivity && !isToday ? defaultClassNames : ''
+        } flex h-full w-full cursor-pointer items-center justify-center rounded ${
           isToday ? todayClassNames : hasActivity ? hasActivityClassNames : ''
         }`}
         onMouseEnter={onHoverEnter}

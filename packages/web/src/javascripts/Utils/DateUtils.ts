@@ -51,6 +51,16 @@ export function addDays(date: Date, days: number) {
   return result
 }
 
+export function addMonths(date: Date, months: number) {
+  const result = new Date(date)
+  result.setMonth(result.getMonth() + months)
+  return result
+}
+
 export function getWeekdayName(date: Date, format: 'long' | 'short'): string {
   return date.toLocaleString('default', { weekday: format })
+}
+
+export function areDatesInSameMonth(date1: Date, date2: Date): boolean {
+  return date1.getFullYear() === date2.getFullYear() && date1.getMonth() === date2.getMonth()
 }

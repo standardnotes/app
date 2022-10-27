@@ -13,8 +13,8 @@ import { DailyItemsDaySection } from './DailyItemsDaySection'
 import { DailyItemCell } from './DailyItemCell'
 import { SNTag } from '@standardnotes/snjs'
 import { CalendarActivity } from '../Calendar/CalendarActivity'
-import Calendar from '../Calendar/Calendar'
 import { dailiesDateToSectionTitle } from './Utils'
+import CalendarScroller from '../Calendar/CalendarScroller'
 
 type Props = {
   itemListController: ItemListController
@@ -190,7 +190,7 @@ const DailyContentList: FunctionComponent<Props> = ({
 
   return (
     <>
-      <Calendar activities={calendarActivities} activityType={'created'} onDateSelect={onCalendarSelect} />
+      <CalendarScroller activities={calendarActivities} activityType={'created'} onDateSelect={onCalendarSelect} />
       <div
         className={classNames(
           'infinite-scroll overflow-y-auto overflow-x-hidden focus:shadow-none focus:outline-none',
