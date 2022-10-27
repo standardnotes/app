@@ -1,4 +1,4 @@
-import { addMonths } from '@/Utils/DateUtils'
+import { addMonths, numberOfMonthsBetweenDates } from '@/Utils/DateUtils'
 import { CalendarActivity } from './CalendarActivity'
 import { CalendarMonth } from './CalendarMonth'
 
@@ -53,4 +53,37 @@ export function insertMonths(months: CalendarMonth[], location: 'front' | 'end',
   }
 
   return months
+}
+
+/**
+ * Modifies months array in-place.
+ */
+export function insertMonthsWithTarget(months: CalendarMonth[], targetMonth: Date): CalendarMonth[] {
+  const firstMonth = months[0].date
+  const lastMonth = months[months.length - 1].date
+
+  const isBeforeFirstMonth = targetMonth.getTime() < firstMonth.getTime()
+
+  const numMonthsToAdd = Math.abs(
+    isBeforeFirstMonth
+      ? numberOfMonthsBetweenDates(firstMonth, targetMonth)
+      : numberOfMonthsBetweenDates(lastMonth, targetMonth),
+  )
+
+  if (isBeforeFirstMonth) {
+    return insertMonths(months, 'front', numMonthsToAdd)
+  } else {
+    return insertMonths(months, 'end', numMonthsToAdd)
+  }
+}
+
+/**
+ * Modifies months array in-place.
+ */
+export function removeMonths(months: CalendarMonth[], location: 'front' | 'end', number: number): void {
+  if (location === 'front') {
+    months.splice(0, number)
+  } else {
+    months.splice(months.length - number - 1, number)
+  }
 }

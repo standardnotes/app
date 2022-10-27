@@ -122,6 +122,9 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     this.controller = props.controller
 
     this.onEditorComponentLoad = () => {
+      if (!this.controller || this.controller.dealloced) {
+        return
+      }
       this.application.getDesktopService()?.redoSearch()
     }
 

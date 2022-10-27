@@ -1,6 +1,6 @@
 import { ListableContentItem } from '../Types/ListableContentItem'
 
-export type DailyItemsDaySection = {
+export type DailyItemsDay = {
   dateKey: string
   day: number
   weekday: string

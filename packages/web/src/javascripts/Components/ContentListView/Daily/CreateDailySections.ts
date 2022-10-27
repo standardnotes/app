@@ -1,9 +1,9 @@
 import { ListableContentItem } from '../Types/ListableContentItem'
 import { addDays, getWeekdayName, numDaysBetweenDates } from '@/Utils/DateUtils'
-import { DailyItemsDaySection } from './DailyItemsDaySection'
+import { DailyItemsDay } from './DailyItemsDaySection'
 import { dailiesDateToSectionTitle } from './Utils'
 
-export const templateEntryForDate = (date: Date): DailyItemsDaySection => {
+export const templateEntryForDate = (date: Date): DailyItemsDay => {
   const entryDateString = dailiesDateToSectionTitle(date)
 
   return {
@@ -16,7 +16,7 @@ export const templateEntryForDate = (date: Date): DailyItemsDaySection => {
   }
 }
 
-const entryForItem = (item: ListableContentItem): DailyItemsDaySection => {
+const entryForItem = (item: ListableContentItem): DailyItemsDay => {
   const entryDateString = dailiesDateToSectionTitle(item.created_at)
 
   return {
@@ -30,8 +30,8 @@ const entryForItem = (item: ListableContentItem): DailyItemsDaySection => {
   }
 }
 
-const entriesForItems = (items: ListableContentItem[]): DailyItemsDaySection[] => {
-  const entries: DailyItemsDaySection[] = []
+const entriesForItems = (items: ListableContentItem[]): DailyItemsDay[] => {
+  const entries: DailyItemsDay[] = []
 
   for (const item of items) {
     let entry = entries.find((candidate) => candidate.dateKey === dailiesDateToSectionTitle(item.created_at))
@@ -50,7 +50,7 @@ const entriesForItems = (items: ListableContentItem[]): DailyItemsDaySection[] =
   return entries
 }
 
-const insertBlanksBetweenItemEntries = (entries: DailyItemsDaySection[]): void => {
+const insertBlanksBetweenItemEntries = (entries: DailyItemsDay[]): void => {
   let index = 1
   let loop = true
 
@@ -75,7 +75,7 @@ const insertBlanksBetweenItemEntries = (entries: DailyItemsDaySection[]): void =
   }
 }
 
-export function createDailySectionsWithTemplateInterstices(items: ListableContentItem[]): DailyItemsDaySection[] {
+export function createDailySectionsWithTemplateInterstices(items: ListableContentItem[]): DailyItemsDay[] {
   const entries = entriesForItems(items)
   insertBlanksBetweenItemEntries(entries)
   return entries
@@ -85,10 +85,10 @@ export function createDailySectionsWithTemplateInterstices(items: ListableConten
  * Modifies entries array in-place.
  */
 export function insertBlanks(
-  entries: DailyItemsDaySection[],
+  entries: DailyItemsDay[],
   location: 'front' | 'end',
   number: number,
-): DailyItemsDaySection[] {
+): DailyItemsDay[] {
   let laterDay, earlierDay
 
   if (entries.length > 0) {

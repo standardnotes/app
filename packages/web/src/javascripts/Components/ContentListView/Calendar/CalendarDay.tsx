@@ -1,5 +1,4 @@
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useState } from 'react'
 import { CalendarActivity, CalendarActivityType } from './CalendarActivity'
 
@@ -9,9 +8,10 @@ type Props = {
   activities: CalendarActivity[]
   isToday: boolean
   onClick: () => void
+  hasPendingEntry?: boolean
 }
 
-const CalendarDay: FunctionComponent<Props> = ({ day, activities = [], isToday, onClick, mode }) => {
+const CalendarDay: FunctionComponent<Props> = ({ day, activities = [], hasPendingEntry, isToday, onClick, mode }) => {
   const [showTooltip, setShowTooltip] = useState(false)
 
   const onHoverEnter = useCallback(() => {
@@ -32,6 +32,7 @@ const CalendarDay: FunctionComponent<Props> = ({ day, activities = [], isToday, 
   const todayClassNames = 'bg-danger text-danger-contrast font-bold'
   const hasActivityClassNames = 'bg-danger-light text-danger font-bold'
   const defaultClassNames = 'bg-transparent hover:bg-contrast'
+  const hasPendingEntryNames = 'bg-contrast'
 
   return (
     <div className="h-7 w-[14.2%] p-0.5">
@@ -40,7 +41,7 @@ const CalendarDay: FunctionComponent<Props> = ({ day, activities = [], isToday, 
           !hasActivity && !isToday ? defaultClassNames : ''
         } flex h-full w-full cursor-pointer items-center justify-center rounded ${
           isToday ? todayClassNames : hasActivity ? hasActivityClassNames : ''
-        }`}
+        } ${hasPendingEntry ? hasPendingEntryNames : ''}`}
         onMouseEnter={onHoverEnter}
         onMouseLeave={onHoverExit}
         key={day}
@@ -75,4 +76,4 @@ const CalendarDay: FunctionComponent<Props> = ({ day, activities = [], isToday, 
   )
 }
 
-export default observer(CalendarDay)
+export default CalendarDay

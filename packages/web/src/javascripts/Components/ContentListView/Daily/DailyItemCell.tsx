@@ -6,7 +6,7 @@ import ListItemMetadata from '../ListItemMetadata'
 import ListItemTags from '../ListItemTags'
 import ListItemNotePreviewText from '../ListItemNotePreviewText'
 import { ListableContentItem } from '../Types/ListableContentItem'
-import { DailyItemsDaySection } from './DailyItemsDaySection'
+import { DailyItemsDay } from './DailyItemsDaySection'
 import { ListItemTitle } from '../ListItemTitle'
 import { EmptyPlaceholderBars } from './EmptyPlaceholderBars'
 
@@ -34,7 +34,7 @@ const DaySquare: FunctionComponent<DaySquareProps> = ({ day, hasActivity, weekda
 interface Props extends ComponentPropsWithoutRef<'div'> {
   item?: ListableContentItem
   onClick: () => void
-  section: DailyItemsDaySection
+  section: DailyItemsDay
   selected?: boolean
   tags?: SNTag[]
   hideDate?: boolean
