@@ -26,8 +26,10 @@ import { SyncStatusController } from '@/Controllers/SyncStatusController'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 
 import { ApplicationEventObserver } from './ApplicationEventObserver'
+import { WebApplication } from '@/Application/Application'
 
 describe('ApplicationEventObserver', () => {
+  let application: WebApplication
   let routeService: RouteServiceInterface
   let purchaseFlowController: PurchaseFlowController
   let accountMenuController: AccountMenuController
@@ -40,6 +42,7 @@ describe('ApplicationEventObserver', () => {
 
   const createObserver = () =>
     new ApplicationEventObserver(
+      application,
       routeService,
       purchaseFlowController,
       accountMenuController,
@@ -52,6 +55,8 @@ describe('ApplicationEventObserver', () => {
     )
 
   beforeEach(() => {
+    application = {} as jest.Mocked<WebApplication>
+
     routeService = {} as jest.Mocked<RouteServiceInterface>
     routeService.getRoute = jest.fn().mockReturnValue({
       type: RouteType.None,
@@ -221,6 +226,17 @@ describe('ApplicationEventObserver', () => {
       await createObserver().handle(ApplicationEvent.SyncStatusChanged)
 
       expect(syncStatusController.update).toHaveBeenCalled()
+    })
+  })
+
+  describe('Upon Database Loaded', () => {
+    it('should handle mobile screenshot privacy setting', async () => {
+      application.isNativeMobileWeb = jest.fn().mockReturnValue(true)
+      application.handleInitialMobileScreenshotPrivacy = jest.fn()
+
+      await createObserver().handle(ApplicationEvent.LocalDataLoaded)
+
+      expect(application.handleInitialMobileScreenshotPrivacy).toHaveBeenCalled()
     })
   })
 })

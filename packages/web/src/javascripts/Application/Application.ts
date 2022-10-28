@@ -261,6 +261,14 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     setViewportHeightWithFallback()
   }
 
+  handleInitialMobileScreenshotPrivacy(): void {
+    if (this.protections.getMobileScreenshotPrivacyEnabled()) {
+      this.mobileDevice().hideMobileInterfaceFromScreenshots()
+    } else {
+      this.mobileDevice().stopHidingMobileInterfaceFromScreenshots()
+    }
+  }
+
   async handleMobileLosingFocusEvent(): Promise<void> {
     if (this.protections.getMobileScreenshotPrivacyEnabled()) {
       this.mobileDevice().stopHidingMobileInterfaceFromScreenshots()
