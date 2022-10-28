@@ -42,11 +42,15 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
         }
       }
 
+      if (typeof values[prompt.id].value === 'boolean') {
+        return
+      }
+
       biometricsButtonRef.current?.click()
     } else {
       inputRef.current?.focus()
     }
-  }, [application, prompt.validation])
+  }, [application, prompt.id, prompt.validation, values])
 
   useEffect(() => {
     if (!application.isNativeMobileWeb()) {
