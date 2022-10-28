@@ -21,4 +21,5 @@ export interface MobileDeviceInterface extends DeviceInterface {
   removeComponentUrl(componentUuid: string): void
   isUrlComponentUrl(url: string): boolean
   getAppState(): Promise<'active' | 'background' | 'inactive' | 'unknown' | 'extension'>
+  getColorScheme(): Promise<'light' | 'dark' | null | undefined>
 }

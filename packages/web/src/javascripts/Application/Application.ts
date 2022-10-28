@@ -289,6 +289,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     setViewportHeightWithFallback()
   }
 
+  handleMobileColorSchemeChangeEvent() {
+    void this.getThemeService().handleMobileColorSchemeChangeEvent()
+  }
+
   private async lockApplicationAfterMobileEventIfApplicable(): Promise<void> {
     const isLocked = await this.isLocked()
     if (isLocked) {

@@ -13,7 +13,18 @@ import {
   TransferPayload,
   UuidString,
 } from '@standardnotes/snjs'
-import { Alert, AppState, AppStateStatus, Linking, PermissionsAndroid, Platform, StatusBar } from 'react-native'
+import { ColorSchemeObserverService } from 'ColorSchemeObserverService'
+import {
+  Alert,
+  Appearance,
+  AppState,
+  AppStateStatus,
+  ColorSchemeName,
+  Linking,
+  PermissionsAndroid,
+  Platform,
+  StatusBar,
+} from 'react-native'
 import FileViewer from 'react-native-file-viewer'
 import FingerprintScanner from 'react-native-fingerprint-scanner'
 import FlagSecure from 'react-native-flag-secure-android'
@@ -85,6 +96,7 @@ export class MobileDevice implements MobileDeviceInterface {
   constructor(
     private stateObserverService?: AppStateObserverService,
     private androidBackHandlerService?: AndroidBackHandlerService,
+    private colorSchemeService?: ColorSchemeObserverService,
   ) {}
 
   deinit() {
@@ -92,6 +104,8 @@ export class MobileDevice implements MobileDeviceInterface {
     ;(this.stateObserverService as unknown) = undefined
     this.androidBackHandlerService?.deinit()
     ;(this.androidBackHandlerService as unknown) = undefined
+    this.colorSchemeService?.deinit()
+    ;(this.colorSchemeService as unknown) = undefined
   }
 
   consoleLog(...args: any[]): void {
@@ -615,5 +629,9 @@ export class MobileDevice implements MobileDeviceInterface {
 
   async getAppState(): Promise<AppStateStatus> {
     return AppState.currentState
+  }
+
+  async getColorScheme(): Promise<ColorSchemeName> {
+    return Appearance.getColorScheme()
   }
 }
