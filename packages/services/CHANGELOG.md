@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.39.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.39.0...@standardnotes/services@1.39.1) (2022-10-28)
+
+### Bug Fixes
+
+* color scheme handling on mobile ([#1902](https://github.com/standardnotes/app/issues/1902)) ([6071ebf](https://github.com/standardnotes/app/commit/6071ebffeb55c78eac79f39aecca07f6ebdbed93))
+
 # [1.39.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.38.0...@standardnotes/services@1.39.0) (2022-10-27)
 
 ### Features

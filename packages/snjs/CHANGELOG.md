@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.145.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.145.0...@standardnotes/snjs@2.145.1) (2022-10-28)
+
+### Bug Fixes
+
+* color scheme handling on mobile ([#1902](https://github.com/standardnotes/app/issues/1902)) ([6071ebf](https://github.com/standardnotes/app/commit/6071ebffeb55c78eac79f39aecca07f6ebdbed93))
+
 # [2.145.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.144.2...@standardnotes/snjs@2.145.0) (2022-10-27)
 
 ### Features
