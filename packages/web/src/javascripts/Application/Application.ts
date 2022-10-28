@@ -262,10 +262,14 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   handleInitialMobileScreenshotPrivacy(): void {
+    if (this.platform !== Platform.Android) {
+      return
+    }
+
     if (this.protections.getMobileScreenshotPrivacyEnabled()) {
-      this.mobileDevice().hideMobileInterfaceFromScreenshots()
+      this.mobileDevice().setAndroidScreenshotPrivacy(true)
     } else {
-      this.mobileDevice().stopHidingMobileInterfaceFromScreenshots()
+      this.mobileDevice().setAndroidScreenshotPrivacy(false)
     }
   }
 
