@@ -132,7 +132,7 @@ export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
           setNeedsMobilePaginationFix(false)
         }, 50)
       }
-    }, [needsMobilePaginationFix])
+    }, [needsMobilePaginationFix, scrollSize])
 
     const _paginateFront = useCallback(() => {
       if (direction === 'vertical') {
