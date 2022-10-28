@@ -805,12 +805,13 @@ export class ItemManager
   public createTemplateItem<
     C extends Models.ItemContent = Models.ItemContent,
     I extends Models.DecryptedItemInterface<C> = Models.DecryptedItemInterface<C>,
-  >(contentType: ContentType, content?: C): I {
+  >(contentType: ContentType, content?: C, override?: Partial<Models.DecryptedPayload<C>>): I {
     const payload = new Models.DecryptedPayload<C>({
       uuid: UuidGenerator.GenerateUuid(),
       content_type: contentType,
       content: Models.FillItemContent<C>(content || {}),
       ...Models.PayloadTimestampDefaults(),
+      ...override,
     })
     const item = Models.CreateDecryptedItemFromPayload<C, I>(payload)
     return item

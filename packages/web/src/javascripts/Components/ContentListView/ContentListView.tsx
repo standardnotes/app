@@ -26,6 +26,8 @@ import { classNames } from '@/Utils/ConcatenateClassNames'
 import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
 import { LinkingController } from '@/Controllers/LinkingController'
+import DailyContentList from './Daily/DailyContentList'
+import { ListableContentItem } from './Types/ListableContentItem'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -106,12 +108,13 @@ const ContentListView: FunctionComponent<Props> = ({
     panelTitle,
     panelWidth,
     renderedItems,
+    items,
     searchBarElement,
   } = itemListController
 
   const { selectedUuids, selectNextItem, selectPreviousItem } = selectionController
 
-  const { selected: selectedTag } = navigationController
+  const { selected: selectedTag, selectedAsTag } = navigationController
 
   const icon = selectedTag?.iconString
 
@@ -227,6 +230,19 @@ const ContentListView: FunctionComponent<Props> = ({
   const matchesXLBreakpoint = useMediaQuery(MediaQueryBreakpoints.xl)
   const isTabletScreenSize = matchesMediumBreakpoint && !matchesXLBreakpoint
 
+  const dailyMode = selectedAsTag?.isDailyEntry
+
+  const handleDailyListSelection = useCallback(
+    async (item: ListableContentItem, userTriggered: boolean) => {
+      await selectionController.selectItemWithScrollHandling(item, {
+        userTriggered: true,
+        scrollIntoView: userTriggered === false,
+        animated: false,
+      })
+    },
+    [selectionController],
+  )
+
   return (
     <div
       id="items-column"
@@ -279,20 +295,35 @@ const ContentListView: FunctionComponent<Props> = ({
             />
           </div>
         </div>
-        {completedFullSync && !renderedItems.length ? <p className="empty-items-list opacity-50">No items.</p> : null}
-        {!completedFullSync && !renderedItems.length ? <p className="empty-items-list opacity-50">Loading...</p> : null}
-        {renderedItems.length ? (
-          <ContentList
-            items={renderedItems}
+        {selectedAsTag && dailyMode && (
+          <DailyContentList
+            items={items}
+            selectedTag={selectedAsTag}
             selectedUuids={selectedUuids}
-            application={application}
-            paginate={paginate}
-            filesController={filesController}
             itemListController={itemListController}
-            navigationController={navigationController}
-            notesController={notesController}
-            selectionController={selectionController}
+            onSelect={handleDailyListSelection}
           />
+        )}
+        {!dailyMode && renderedItems.length ? (
+          <>
+            {completedFullSync && !renderedItems.length ? (
+              <p className="empty-items-list opacity-50">No items.</p>
+            ) : null}
+            {!completedFullSync && !renderedItems.length ? (
+              <p className="empty-items-list opacity-50">Loading...</p>
+            ) : null}
+            <ContentList
+              items={renderedItems}
+              selectedUuids={selectedUuids}
+              application={application}
+              paginate={paginate}
+              filesController={filesController}
+              itemListController={itemListController}
+              navigationController={navigationController}
+              notesController={notesController}
+              selectionController={selectionController}
+            />
+          </>
         ) : null}
         <div className="absolute bottom-0 h-safe-bottom w-full" />
       </ResponsivePaneContent>

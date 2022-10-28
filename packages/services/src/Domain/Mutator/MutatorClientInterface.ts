@@ -3,6 +3,7 @@ import {
   BackupFile,
   DecryptedItemInterface,
   DecryptedItemMutator,
+  DecryptedPayload,
   EncryptedItemInterface,
   FileItem,
   ItemContent,
@@ -117,6 +118,7 @@ export interface MutatorClientInterface {
   >(
     contentType: ContentType,
     content?: C,
+    override?: Partial<DecryptedPayload<C>>,
   ): I
 
   /**

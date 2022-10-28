@@ -20,6 +20,8 @@ import {
   WebAppEvent,
   NewNoteTitleFormat,
   useBoolean,
+  TemplateNoteViewAutofocusBehavior,
+  isTag,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -149,18 +151,20 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.disposers.push(
       application.addEventObserver(async () => {
-        void this.reloadItems(ItemsReloadSource.SyncEvent).then(() => {
-          if (
-            this.notes.length === 0 &&
-            this.navigationController.selected instanceof SmartView &&
-            this.navigationController.selected.uuid === SystemViewId.AllNotes &&
-            this.noteFilterText === '' &&
-            !this.getActiveItemController()
-          ) {
-            this.createPlaceholderNote()?.catch(console.error)
-          }
-        })
-        this.setCompletedFullSync(true)
+        if (!this.completedFullSync) {
+          void this.reloadItems(ItemsReloadSource.SyncEvent).then(() => {
+            if (
+              this.notes.length === 0 &&
+              this.navigationController.selected instanceof SmartView &&
+              this.navigationController.selected.uuid === SystemViewId.AllNotes &&
+              this.noteFilterText === '' &&
+              !this.getActiveItemController()
+            ) {
+              this.createPlaceholderNote()?.catch(console.error)
+            }
+          })
+          this.setCompletedFullSync(true)
+        }
       }, ApplicationEvent.CompletedFullSync),
     )
 
@@ -195,6 +199,7 @@ export class ItemListController extends AbstractViewController implements Intern
       notesToDisplay: observable,
       panelTitle: observable,
       panelWidth: observable,
+      items: observable,
       renderedItems: observable,
       showDisplayOptionsMenu: observable,
 
@@ -220,7 +225,7 @@ export class ItemListController extends AbstractViewController implements Intern
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === CrossControllerEvent.TagChanged) {
       const payload = event.payload as { userTriggered: boolean }
-      this.handleTagChange(payload.userTriggered)
+      await this.handleTagChange(payload.userTriggered)
     } else if (event.type === CrossControllerEvent.ActiveEditorChanged) {
       this.handleEditorChange().catch(console.error)
     }
@@ -342,12 +347,6 @@ export class ItemListController extends AbstractViewController implements Intern
     )
   }
 
-  private shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource) => {
-    return (
-      itemsReloadSource === ItemsReloadSource.UserTriggeredTagChange || !this.selectionController.selectedUuids.size
-    )
-  }
-
   private shouldCloseActiveItem = (activeItem: SNNote | FileItem | undefined) => {
     const isSearching = this.noteFilterText.length > 0
     const itemExistsInUpdatedResults = this.items.find((item) => item.uuid === activeItem?.uuid)
@@ -369,6 +368,18 @@ export class ItemListController extends AbstractViewController implements Intern
 
   private shouldSelectActiveItem = (activeItem: SNNote | FileItem | undefined) => {
     return activeItem && !this.selectionController.isItemSelected(activeItem)
+  }
+
+  private shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource) => {
+    const selectedTag = this.navigationController.selected
+    const isDailyEntry = selectedTag && isTag(selectedTag) && selectedTag.isDailyEntry
+    if (isDailyEntry) {
+      return false
+    }
+
+    const userChangedTag = itemsReloadSource === ItemsReloadSource.UserTriggeredTagChange
+    const hasNoSelectedItem = !this.selectionController.selectedUuids.size
+    return userChangedTag || hasNoSelectedItem
   }
 
   private async recomputeSelectionAfterItemsReload(itemsReloadSource: ItemsReloadSource) {
@@ -518,48 +529,65 @@ export class ItemListController extends AbstractViewController implements Intern
     return { didReloadItems: true }
   }
 
-  async createNewNoteController(title?: string) {
+  async createNewNoteController(
+    title?: string,
+    createdAt?: Date,
+    autofocusBehavior?: TemplateNoteViewAutofocusBehavior,
+  ) {
     const selectedTag = this.navigationController.selected
 
     const activeRegularTagUuid = selectedTag instanceof SNTag ? selectedTag.uuid : undefined
 
-    await this.application.itemControllerGroup.createItemController({
+    return this.application.itemControllerGroup.createItemController({
       title,
       tag: activeRegularTagUuid,
+      createdAt,
+      autofocusBehavior,
     })
   }
 
-  createNewNote = async () => {
-    this.notesController.unselectNotes()
-
-    if (this.navigationController.isInSmartView() && !this.navigationController.isInHomeView()) {
-      await this.navigationController.selectHomeNavigationView()
+  titleForNewNote = (createdAt?: Date) => {
+    if (this.isFiltering) {
+      return this.noteFilterText
     }
 
     const titleFormat =
       this.navigationController.selected?.preferences?.newNoteTitleFormat ||
       this.application.getPreference(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat])
 
-    let title = formatDateAndTimeForNote(new Date())
-
     if (titleFormat === NewNoteTitleFormat.CurrentNoteCount) {
-      title = `Note ${this.notes.length + 1}`
-    } else if (titleFormat === NewNoteTitleFormat.CustomFormat) {
+      return `Note ${this.notes.length + 1}`
+    }
+
+    if (titleFormat === NewNoteTitleFormat.CustomFormat) {
       const customFormat =
         this.navigationController.selected?.preferences?.customNoteTitleFormat ||
         this.application.getPreference(PrefKey.CustomNoteTitleFormat, PrefDefaults[PrefKey.CustomNoteTitleFormat])
-      title = dayjs().format(customFormat)
-    } else if (titleFormat === NewNoteTitleFormat.Empty) {
-      title = ''
+
+      return dayjs(createdAt).format(customFormat)
     }
 
-    if (this.isFiltering) {
-      title = this.noteFilterText
+    if (titleFormat === NewNoteTitleFormat.Empty) {
+      return ''
     }
 
-    await this.createNewNoteController(title)
+    return formatDateAndTimeForNote(createdAt || new Date())
+  }
+
+  createNewNote = async (title?: string, createdAt?: Date, autofocusBehavior?: TemplateNoteViewAutofocusBehavior) => {
+    this.notesController.unselectNotes()
+
+    if (this.navigationController.isInSmartView() && !this.navigationController.isInHomeView()) {
+      await this.navigationController.selectHomeNavigationView()
+    }
+
+    const useTitle = title || this.titleForNewNote(createdAt)
+
+    const controller = await this.createNewNoteController(useTitle, createdAt, autofocusBehavior)
 
     this.linkingController.reloadAllLinks()
+
+    this.selectionController.scrollToItem(controller.item)
   }
 
   createPlaceholderNote = () => {
@@ -678,7 +706,7 @@ export class ItemListController extends AbstractViewController implements Intern
     this.application.itemControllerGroup.closeItemController(controller)
   }
 
-  handleTagChange = (userTriggered: boolean) => {
+  handleTagChange = async (userTriggered: boolean) => {
     const activeNoteController = this.getActiveItemController()
     if (activeNoteController instanceof NoteViewController && activeNoteController.isTemplateNote) {
       this.closeItemController(activeNoteController)

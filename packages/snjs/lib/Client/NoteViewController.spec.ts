@@ -28,6 +28,7 @@ describe('note view controller', () => {
     expect(application.mutator.createTemplateItem).toHaveBeenCalledWith(
       ContentType.Note,
       expect.objectContaining({ noteType: NoteType.Plain }),
+      expect.anything(),
     )
   })
 })

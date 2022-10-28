@@ -49,8 +49,8 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
         }}
       >
         <span className="flex items-center">
-          <Icon type="password" className="mr-2 text-neutral" />
-          Password protection
+          <Icon type="lock" className="mr-2 text-neutral" />
+          Password protect
         </span>
         <Switch className="pointer-events-none px-0" tabIndex={FOCUSABLE_BUT_NOT_TABBABLE} checked={isFileProtected} />
       </button>

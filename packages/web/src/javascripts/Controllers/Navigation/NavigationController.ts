@@ -16,6 +16,7 @@ import {
   InternalEventPublishStrategy,
   VectorIconNameOrEmoji,
   NavigationControllerPersistableValue,
+  isTag,
 } from '@standardnotes/snjs'
 import { action, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -265,6 +266,13 @@ export class NavigationController
     return this.selected instanceof SmartView && this.selected.uuid === id
   }
 
+  public get selectedAsTag(): SNTag | undefined {
+    if (!this.selected || !isTag(this.selected)) {
+      return undefined
+    }
+    return this.selected
+  }
+
   setAddingSubtagTo(tag: SNTag | undefined): void {
     this.addingSubtagTo = tag
   }
@@ -437,19 +445,21 @@ export class NavigationController
 
     this.previouslySelected_ = this.selected_
 
-    this.setSelectedTagInstance(tag)
+    await runInAction(async () => {
+      this.setSelectedTagInstance(tag)
 
-    if (tag && this.application.items.isTemplateItem(tag)) {
-      return
-    }
+      if (tag && this.application.items.isTemplateItem(tag)) {
+        return
+      }
 
-    await this.eventBus.publishSync(
-      {
-        type: CrossControllerEvent.TagChanged,
-        payload: { tag, previousTag: this.previouslySelected_, userTriggered: userTriggered },
-      },
-      InternalEventPublishStrategy.SEQUENCE,
-    )
+      await this.eventBus.publishSync(
+        {
+          type: CrossControllerEvent.TagChanged,
+          payload: { tag, previousTag: this.previouslySelected_, userTriggered: userTriggered },
+        },
+        InternalEventPublishStrategy.SEQUENCE,
+      )
+    })
   }
 
   public async selectHomeNavigationView(): Promise<void> {
