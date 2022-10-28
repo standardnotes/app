@@ -3,7 +3,7 @@ import { CalendarActivity } from './CalendarActivity'
 import CalendarDay from './CalendarDay'
 import { CalendarDays, CalendarDaysLeap, CalendarDaysOfTheWeek } from './Constants'
 import { createActivityRecord, dateToDateOnlyString, isLeapYear, getStartDayOfMonth } from './CalendarUtilts'
-import { isDateInSameDay } from '@/Utils/DateUtils'
+import { areDatesInSameDay } from '@/Utils/DateUtils'
 
 type Props = {
   activities: CalendarActivity[]
@@ -48,14 +48,14 @@ const Calendar: FunctionComponent<Props> = ({ activities, startDate, onDateSelec
             const date = new Date(year, month, dayIndex)
             const day = date.getDate()
             const activities = activityMap[dateToDateOnlyString(date)] || []
-            const isTemplate = selectedDay && isDateInSameDay(selectedDay, date)
+            const isTemplate = selectedDay && areDatesInSameDay(selectedDay, date)
             const type = activities.length > 0 ? 'item' : isTemplate ? 'template' : 'empty'
             return (
               <CalendarDay
                 isLastMonth={dayIndex <= 0}
                 key={index}
                 day={day}
-                isToday={isDateInSameDay(date, today)}
+                isToday={areDatesInSameDay(date, today)}
                 onClick={() => onDateSelect(date)}
                 type={type}
               />

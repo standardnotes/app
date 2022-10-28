@@ -1,4 +1,4 @@
-import { areDatesInSameMonth } from '@/Utils/DateUtils'
+import { areDatesInSameDay, areDatesInSameMonth } from '@/Utils/DateUtils'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import Calendar from './Calendar'
 import { CalendarActivity, CalendarActivityType } from './CalendarActivity'
@@ -8,6 +8,7 @@ import { insertMonths, insertMonthsWithTarget } from './CalendarUtilts'
 import { InfiniteScrollerInterface, InfinteScroller } from '../InfiniteScroller/InfiniteScroller'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { LoggingDomain, log } from '@/Logging'
+import { usePrevious } from './usePrevious'
 
 type Props = {
   activityType: CalendarActivityType
@@ -29,6 +30,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
     const [expanded, setExpanded] = useState(true)
     const [restoreScrollAfterExpand, setRestoreScrollAfterExpand] = useState(false)
     const scrollerRef = useRef<InfiniteScrollerInterface | null>(null)
+    const previousSelectedDay = usePrevious(selectedDay)
 
     const [activeDate, setActiveDate] = useState(new Date())
     const today = new Date()
@@ -101,10 +103,14 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
 
     useEffect(() => {
       if (selectedDay) {
+        if (previousSelectedDay && areDatesInSameDay(previousSelectedDay, selectedDay)) {
+          log(LoggingDomain.DailyNotes, '[Calendar] selectedDay has changed, but is same as previous', selectedDay)
+          return
+        }
         log(LoggingDomain.DailyNotes, '[Calendar] selectedDay has changed, going to month:', selectedDay)
         goToMonth(selectedDay)
       }
-    }, [selectedDay, goToMonth])
+    }, [selectedDay, goToMonth, previousSelectedDay])
 
     useEffect(() => {
       if (!restoreScrollAfterExpand) {
