@@ -1,10 +1,7 @@
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { ListableContentItem } from '../Types/ListableContentItem'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
-import { ElementIds } from '@/Constants/ElementIDs'
-import { classNames } from '@/Utils/ConcatenateClassNames'
 import { useResponsiveAppPane } from '../../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../../ResponsivePane/AppPaneMetadata'
 import { createDailyItemsWithToday, createItemsByDateMapping, insertBlanks } from './CreateDailySections'
@@ -25,6 +22,7 @@ type Props = {
 }
 
 const PageSize = 10
+const LoggingEnabled = true
 
 const DailyContentList: FunctionComponent<Props> = ({
   items,
@@ -38,6 +36,7 @@ const DailyContentList: FunctionComponent<Props> = ({
   const [todayItem, setTodayItem] = useState<DailyItemsDay>()
   const [selectedDay, setSelectedDay] = useState<Date>()
   const calendarRef = useRef<InfiniteCalendarInterface | null>(null)
+  const [lastVisibleDay, setLastVisibleDay] = useState<DailyItemsDay>()
 
   const [dailyItems, setDailyItems] = useState<DailyItemsDay[]>(() => {
     return createDailyItemsWithToday(PageSize)
@@ -81,11 +80,15 @@ const DailyContentList: FunctionComponent<Props> = ({
   const onListItemDidBecomeVisible = useCallback(
     (elementId: string) => {
       const dailyItem = dailyItems.find((candidate) => candidate.id === elementId)
-      if (dailyItem) {
-        calendarRef?.current?.changeMonth(dailyItem.date)
+      if (dailyItem && dailyItem !== lastVisibleDay) {
+        setLastVisibleDay(dailyItem)
+        LoggingEnabled && console.log('[ContentList] Item did become visible for date', dailyItem.date)
+        calendarRef?.current?.goToMonth(dailyItem.date)
+      } else {
+        LoggingEnabled && console.log('[ContentList] Ignoring duplicate day visibility')
       }
     },
-    [dailyItems],
+    [dailyItems, lastVisibleDay],
   )
 
   const onClickItem = useCallback(
@@ -158,14 +161,16 @@ const DailyContentList: FunctionComponent<Props> = ({
     [onClickItem, onClickTemplate, dailyItemForDate, itemsByDateMapping],
   )
 
+  const hasItemsOnSelectedDay = selectedDay && itemsByDateMapping[dateToDailyDayIdentifier(selectedDay)]?.length > 0
+
   return (
     <>
       <InfiniteCalendar
         activities={calendarActivities}
         activityType={'created'}
         onDateSelect={onCalendarSelect}
-        selectedTemplateDay={selectedDay}
-        selectedItemDay={selectedDay}
+        selectedDay={selectedDay}
+        selectedDayType={!selectedDay ? undefined : hasItemsOnSelectedDay ? 'item' : 'template'}
         ref={calendarRef}
         className={'flex-column flex'}
       />

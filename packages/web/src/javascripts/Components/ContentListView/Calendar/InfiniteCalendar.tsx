@@ -1,5 +1,5 @@
 import { areDatesInSameMonth } from '@/Utils/DateUtils'
-import { forwardRef, useCallback, useEffect, useImperativeHandle, useLayoutEffect, useRef, useState } from 'react'
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import Calendar from './Calendar'
 import { CalendarActivity, CalendarActivityType } from './CalendarActivity'
 import { CalendarMonth } from './CalendarMonth'
@@ -12,25 +12,25 @@ type Props = {
   activityType: CalendarActivityType
   activities: CalendarActivity[]
   onDateSelect: (date: Date) => void
-  selectedTemplateDay?: Date
-  selectedItemDay?: Date
+  selectedDay?: Date
+  selectedDayType?: 'item' | 'template'
   className?: string
 }
 
 export type InfiniteCalendarInterface = {
-  changeMonth: (month: Date) => void
+  goToMonth: (month: Date) => void
 }
 
 const PageSize = 2
+const LoggingEnabled = true
 
 const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
-  ({ activities, onDateSelect, selectedTemplateDay, selectedItemDay, className }: Props, ref) => {
+  ({ activities, onDateSelect, selectedDay, className }: Props, ref) => {
     const [expanded, setExpanded] = useState(true)
     const [restoreScrollAfterExpand, setRestoreScrollAfterExpand] = useState(false)
     const scrollerRef = useRef<InfiniteScrollerInterface | null>(null)
 
     const [activeDate, setActiveDate] = useState(new Date())
-
     const today = new Date()
     const [months, setMonths] = useState<CalendarMonth[]>(() => {
       const base = [{ date: today }]
@@ -38,16 +38,6 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
       insertMonths(base, 'end', 2)
       return base
     })
-
-    useImperativeHandle(
-      ref,
-      () => ({
-        changeMonth(date: Date) {
-          setActiveDate(date)
-        },
-      }),
-      [setActiveDate],
-    )
 
     const hasMonthInList = useCallback(
       (date: Date): boolean => {
@@ -65,7 +55,38 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
       (date: Date): void => {
         setMonths(insertMonthsWithTarget(months, date))
       },
-      [months, setMonths],
+      [months],
+    )
+
+    const scrollToMonth = useCallback(
+      (date: Date) => {
+        const elementId = elementIdForMonth(date)
+        scrollerRef.current?.scrollToElementId(elementId)
+      },
+      [scrollerRef],
+    )
+
+    const goToMonth = useCallback(
+      (month: Date) => {
+        if (!hasMonthInList(month)) {
+          insertMonthInList(month)
+        }
+
+        LoggingEnabled && console.log('[Calendar] Scrolling to month', month, 'from goToMonth')
+        setActiveDate(month)
+        scrollToMonth(month)
+      },
+      [hasMonthInList, insertMonthInList, scrollToMonth],
+    )
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        goToMonth(date: Date) {
+          goToMonth(date)
+        },
+      }),
+      [goToMonth],
     )
 
     const resetNumberOfCalendarsToBase = useCallback(
@@ -79,29 +100,11 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
     )
 
     useEffect(() => {
-      if (selectedTemplateDay) {
-        // setDate(selectedTemplateDay)
+      if (selectedDay) {
+        LoggingEnabled && console.log('[Calendar] selectedDay has changed, going to month:', selectedDay)
+        goToMonth(selectedDay)
       }
-    }, [selectedTemplateDay])
-
-    useEffect(() => {
-      if (selectedItemDay) {
-        // setDate(selectedItemDay)
-      }
-    }, [selectedItemDay])
-
-    const scrollToMonth = useCallback((date: Date) => {
-      const elementId = elementIdForMonth(date)
-      scrollerRef.current?.scrollToElementId(elementId)
-    }, [])
-
-    useEffect(() => {
-      if (!hasMonthInList(activeDate)) {
-        insertMonthInList(activeDate)
-      }
-
-      scrollToMonth(activeDate)
-    }, [activeDate, hasMonthInList, insertMonthInList, scrollToMonth])
+    }, [selectedDay])
 
     useEffect(() => {
       if (!restoreScrollAfterExpand) {
@@ -109,6 +112,8 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
       }
 
       if (expanded) {
+        LoggingEnabled &&
+          console.log('[Calendar] Scrolling to month', activeDate, 'from restoreScrollAfterExpand useEffect')
         scrollToMonth(activeDate)
         setRestoreScrollAfterExpand(false)
       }
@@ -135,7 +140,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
         const index = months.findIndex((candidate) => elementIdForMonth(candidate.date) === id)
         if (index >= 0) {
           const newMonth = months[index]
-          setActiveDate(newMonth.date)
+          goToMonth(newMonth.date)
         }
       },
       [months],
@@ -189,7 +194,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
                     activities={activities}
                     onDateSelect={handleDaySelection}
                     startDate={month.date}
-                    selectedDay={selectedTemplateDay}
+                    selectedDay={selectedDay}
                   />
                 </div>
               )

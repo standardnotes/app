@@ -1,4 +1,3 @@
-import { classNames } from '@/Utils/ConcatenateClassNames'
 import {
   forwardRef,
   ReactNode,
@@ -18,6 +17,7 @@ type Props = {
   direction: 'horizontal' | 'vertical'
   onElementVisibility?: (elementId: string) => void
   className?: string
+  loggingEnabled?: boolean
 }
 
 export type InfiniteScrollerInterface = {
@@ -25,7 +25,18 @@ export type InfiniteScrollerInterface = {
 }
 
 export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
-  ({ children, paginateFront, paginateEnd, direction = 'vertical', onElementVisibility, className }: Props, ref) => {
+  (
+    {
+      children,
+      paginateFront,
+      paginateEnd,
+      direction = 'vertical',
+      onElementVisibility,
+      className,
+      loggingEnabled = false,
+    }: Props,
+    ref,
+  ) => {
     const topSentinel = useRef<HTMLDivElement | null>(null)
     const bottomSentinel = useRef<HTMLDivElement | null>(null)
 
@@ -69,10 +80,11 @@ export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
     const scrollToElementId = useCallback((id: string) => {
       const element = document.getElementById(id)
       if (!element) {
-        console.log('Element not found', id)
+        loggingEnabled && console.log('Element not found', id)
         return
       }
 
+      loggingEnabled && console.log('Scrolling to element', id)
       element.scrollIntoView({
         behavior: 'auto',
         block: 'center',
