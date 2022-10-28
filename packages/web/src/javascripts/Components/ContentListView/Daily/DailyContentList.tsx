@@ -1,10 +1,7 @@
 import { FunctionComponent, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { ListableContentItem } from '../Types/ListableContentItem'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
-import { ElementIds } from '@/Constants/ElementIDs'
-import { classNames } from '@/Utils/ConcatenateClassNames'
 import { useResponsiveAppPane } from '../../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../../ResponsivePane/AppPaneMetadata'
 import { createDailyItemsWithToday, createItemsByDateMapping, insertBlanks } from './CreateDailySections'
@@ -14,6 +11,9 @@ import { SNTag } from '@standardnotes/snjs'
 import { CalendarActivity } from '../Calendar/CalendarActivity'
 import { dateToDailyDayIdentifier } from './Utils'
 import InfiniteCalendar, { InfiniteCalendarInterface } from '../Calendar/InfiniteCalendar'
+import { InfiniteScrollerInterface, InfinteScroller } from '../InfiniteScroller/InfiniteScroller'
+import { LoggingDomain, log } from '@/Logging'
+import { isMobileScreen } from '@/Utils'
 
 type Props = {
   itemListController: ItemListController
@@ -36,12 +36,9 @@ const DailyContentList: FunctionComponent<Props> = ({
   const [needsSelectionReload, setNeedsSelectionReload] = useState(false)
   const [todayItem, setTodayItem] = useState<DailyItemsDay>()
   const [selectedDay, setSelectedDay] = useState<Date>()
-  const [lastElement, setLastElement] = useState<HTMLDivElement | null>(null)
-  const [firstElement, setFirstElement] = useState<HTMLDivElement | null>(null)
-  const [lastScrollHeight, setLastScrollHeight] = useState(0)
-  const [didPaginateTop, setDidPaginateTop] = useState(false)
-  const scrollArea = useRef<HTMLDivElement>(null)
   const calendarRef = useRef<InfiniteCalendarInterface | null>(null)
+  const [lastVisibleDay, setLastVisibleDay] = useState<DailyItemsDay>()
+  const scrollerRef = useRef<InfiniteScrollerInterface | null>(null)
 
   const [dailyItems, setDailyItems] = useState<DailyItemsDay[]>(() => {
     return createDailyItemsWithToday(PageSize)
@@ -57,6 +54,12 @@ const DailyContentList: FunctionComponent<Props> = ({
     setTodayItem(dailyItems.find((item) => item.isToday) as DailyItemsDay)
   }, [dailyItems])
 
+  useLayoutEffect(() => {
+    if (todayItem && scrollerRef.current) {
+      scrollerRef.current?.scrollToElementId(todayItem.id)
+    }
+  }, [todayItem, scrollerRef])
+
   const calendarActivities: CalendarActivity[] = useMemo(() => {
     return items.map((item) => {
       return {
@@ -67,107 +70,36 @@ const DailyContentList: FunctionComponent<Props> = ({
   }, [items])
 
   const paginateBottom = useCallback(() => {
-    const copy = dailyItems.slice()
-    insertBlanks(copy, 'end', PageSize)
-    setDailyItems(copy)
-  }, [dailyItems, setDailyItems])
+    log(LoggingDomain.DailyNotes, '[ContentList] paginateBottom')
+    setDailyItems((prev) => {
+      const copy = prev.slice()
+      insertBlanks(copy, 'end', PageSize)
+      return copy
+    })
+  }, [setDailyItems])
 
   const paginateTop = useCallback(() => {
-    if (scrollArea.current) {
-      setLastScrollHeight(scrollArea.current.scrollHeight)
-    }
-    const copy = dailyItems.slice()
-    insertBlanks(copy, 'front', PageSize)
-    setDidPaginateTop(true)
-    setDailyItems(copy)
-  }, [dailyItems, setDailyItems, setDidPaginateTop])
-
-  useLayoutEffect(() => {
-    if (!scrollArea.current) {
-      return
-    }
-
-    if (didPaginateTop) {
-      scrollArea.current.scrollTop += scrollArea.current.scrollHeight - lastScrollHeight
-      setDidPaginateTop(false)
-    }
-  }, [didPaginateTop, lastScrollHeight])
+    log(LoggingDomain.DailyNotes, '[ContentList] paginateTop')
+    setDailyItems((prev) => {
+      const copy = prev.slice()
+      insertBlanks(copy, 'front', PageSize)
+      return copy
+    })
+  }, [setDailyItems])
 
   const onListItemDidBecomeVisible = useCallback(
     (elementId: string) => {
       const dailyItem = dailyItems.find((candidate) => candidate.id === elementId)
-      if (dailyItem) {
-        calendarRef?.current?.changeMonth(dailyItem.date)
+      if (dailyItem && dailyItem !== lastVisibleDay) {
+        setLastVisibleDay(dailyItem)
+        log(LoggingDomain.DailyNotes, '[ContentList] Item did become visible for date', dailyItem.date)
+        calendarRef?.current?.goToMonth(dailyItem.date)
+      } else {
+        log(LoggingDomain.DailyNotes, '[ContentList] Ignoring duplicate day visibility')
       }
     },
-    [dailyItems],
+    [dailyItems, lastVisibleDay],
   )
-
-  const visibilityObserver = useMemo(
-    () =>
-      new IntersectionObserver(
-        (entries) => {
-          const visibleEntry = entries.find((entry) => entry.isIntersecting)
-          if (visibleEntry) {
-            onListItemDidBecomeVisible(visibleEntry.target.id)
-          }
-        },
-        { threshold: 0.9 },
-      ),
-    [onListItemDidBecomeVisible],
-  )
-
-  const bottomObserver = useMemo(
-    () =>
-      new IntersectionObserver(
-        (entries) => {
-          const first = entries[0]
-          if (first.isIntersecting) {
-            paginateBottom()
-          }
-        },
-        { threshold: 0.5 },
-      ),
-    [paginateBottom],
-  )
-
-  const topObserver = useMemo(
-    () =>
-      new IntersectionObserver(
-        (entries) => {
-          const first = entries[0]
-          if (first.isIntersecting) {
-            paginateTop()
-          }
-        },
-        { threshold: 0.5 },
-      ),
-    [paginateTop],
-  )
-
-  useEffect(() => {
-    if (lastElement) {
-      bottomObserver.observe(lastElement)
-    }
-
-    return () => {
-      if (lastElement) {
-        bottomObserver.unobserve(lastElement)
-      }
-    }
-  }, [lastElement, bottomObserver])
-
-  useEffect(() => {
-    if (firstElement) {
-      topObserver.observe(firstElement)
-    }
-
-    return () => {
-      if (firstElement) {
-        topObserver.unobserve(firstElement)
-      }
-    }
-  }, [firstElement, topObserver])
 
   const onClickItem = useCallback(
     async (day: DailyItemsDay, item: ListableContentItem, userTriggered: boolean) => {
@@ -239,29 +171,29 @@ const DailyContentList: FunctionComponent<Props> = ({
     [onClickItem, onClickTemplate, dailyItemForDate, itemsByDateMapping],
   )
 
+  const hasItemsOnSelectedDay = selectedDay && itemsByDateMapping[dateToDailyDayIdentifier(selectedDay)]?.length > 0
   return (
     <>
       <InfiniteCalendar
         activities={calendarActivities}
         activityType={'created'}
         onDateSelect={onCalendarSelect}
-        selectedTemplateDay={selectedDay}
-        selectedItemDay={selectedDay}
+        selectedDay={selectedDay}
+        selectedDayType={!selectedDay ? undefined : hasItemsOnSelectedDay ? 'item' : 'template'}
         ref={calendarRef}
+        className={'flex-column flex'}
       />
-      <div
-        className={classNames(
-          'infinite-scroll overflow-y-auto overflow-x-hidden focus:shadow-none focus:outline-none',
-          'md:max-h-full md:overflow-y-hidden md:hover:overflow-y-auto pointer-coarse:md:overflow-y-auto',
-          'md:hover:[overflow-y:_overlay]',
-        )}
-        ref={scrollArea}
-        id={ElementIds.ContentList}
-        tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
+
+      <InfinteScroller
+        paginateFront={paginateTop}
+        paginateEnd={paginateBottom}
+        direction="vertical"
+        onElementVisibility={onListItemDidBecomeVisible}
+        className={'flex-1'}
+        ref={scrollerRef}
+        isMobileScreen={isMobileScreen()}
       >
-        {dailyItems.map((dailyItem, index) => {
-          const isFirst = index === 0
-          const isLast = index === dailyItems.length - 1
+        {dailyItems.map((dailyItem) => {
           const items = itemsByDateMapping[dailyItem.id]
           if (items) {
             return items.map((item) => (
@@ -275,12 +207,6 @@ const DailyContentList: FunctionComponent<Props> = ({
                 hidePreview={hideNotePreview}
                 hideTags={hideTags}
                 onClick={() => onClickItem(dailyItem, item, true)}
-                ref={(ref) => {
-                  isLast ? setLastElement(ref) : isFirst ? setFirstElement(ref) : null
-                  if (ref) {
-                    visibilityObserver.observe(ref)
-                  }
-                }}
               />
             ))
           } else {
@@ -291,17 +217,11 @@ const DailyContentList: FunctionComponent<Props> = ({
                 id={dailyItem.id}
                 key={dailyItem.dateKey}
                 onClick={() => onClickTemplate(dailyItem.date)}
-                ref={(ref) => {
-                  isLast ? setLastElement(ref) : isFirst ? setFirstElement(ref) : null
-                  if (ref) {
-                    visibilityObserver.observe(ref)
-                  }
-                }}
               />
             )
           }
         })}
-      </div>
+      </InfinteScroller>
     </>
   )
 }

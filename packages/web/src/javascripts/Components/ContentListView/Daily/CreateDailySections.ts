@@ -31,8 +31,9 @@ export const templateEntryForDate = (date: Date): DailyItemsDay => {
 }
 
 export function createDailyItemsWithToday(count: number): DailyItemsDay[] {
-  const today = templateEntryForDate(new Date())
-  return insertBlanks([today], 'end', count)
+  const items = [templateEntryForDate(new Date())]
+  insertBlanks(items, 'front', count / 2 - 1)
+  return insertBlanks(items, 'end', count / 2)
 }
 
 /**
