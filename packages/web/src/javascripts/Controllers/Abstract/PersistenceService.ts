@@ -5,6 +5,7 @@ import { CrossControllerEvent } from '../CrossControllerEvent'
 
 export class PersistenceService {
   private unsubAppEventObserver: () => void
+  private didIncrementalLoad = false
 
   constructor(private application: WebApplication, private eventBus: InternalEventBus) {
     this.unsubAppEventObserver = this.application.addEventObserver(async (eventName) => {
@@ -17,19 +18,27 @@ export class PersistenceService {
   }
 
   async onAppEvent(eventName: ApplicationEvent) {
-    if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
-      let shouldIgnorePersistedValues = this.application.getValue(ShouldPersistNoteStateKey)
-
-      if (typeof shouldIgnorePersistedValues === 'undefined') {
-        this.application.setValue(ShouldPersistNoteStateKey, true)
-        shouldIgnorePersistedValues = true
-      }
-
-      this.eventBus.publish({
-        type: CrossControllerEvent.HydrateFromPersistedValues,
-        payload: shouldIgnorePersistedValues ? this.getPersistedValues() : undefined,
-      })
+    if (eventName === ApplicationEvent.LocalDataLoaded && !this.didIncrementalLoad) {
+      this.hydratePersistedValues()
     }
+    if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
+      this.didIncrementalLoad = true
+      this.hydratePersistedValues()
+    }
+  }
+
+  hydratePersistedValues = () => {
+    let shouldIgnorePersistedValues = this.application.getValue(ShouldPersistNoteStateKey)
+
+    if (typeof shouldIgnorePersistedValues === 'undefined') {
+      this.application.setValue(ShouldPersistNoteStateKey, true)
+      shouldIgnorePersistedValues = true
+    }
+
+    this.eventBus.publish({
+      type: CrossControllerEvent.HydrateFromPersistedValues,
+      payload: shouldIgnorePersistedValues ? this.getPersistedValues() : undefined,
+    })
   }
 
   persistValues(values: PersistedStateValue): void {
