@@ -20,9 +20,11 @@ import { SyncStatusController } from '@/Controllers/SyncStatusController'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 
 import { EventObserverInterface } from './EventObserverInterface'
+import { WebApplication } from '@/Application/Application'
 
 export class ApplicationEventObserver implements EventObserverInterface {
   constructor(
+    private application: WebApplication,
     private routeService: RouteServiceInterface,
     private purchaseFlowController: PurchaseFlowController,
     private accountMenuController: AccountMenuController,
@@ -88,6 +90,11 @@ export class ApplicationEventObserver implements EventObserverInterface {
         break
       case ApplicationEvent.SyncStatusChanged:
         this.syncStatusController.update(this.syncClient.getSyncStatus())
+        break
+      case ApplicationEvent.LocalDataLoaded:
+        if (this.application.isNativeMobileWeb()) {
+          this.application.handleInitialMobileScreenshotPrivacy()
+        }
         break
     }
   }

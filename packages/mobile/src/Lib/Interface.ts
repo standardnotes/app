@@ -220,10 +220,12 @@ export class MobileDevice implements MobileDeviceInterface {
 
   hideMobileInterfaceFromScreenshots(): void {
     hide()
+    this.setAndroidScreenshotPrivacy(true)
   }
 
   stopHidingMobileInterfaceFromScreenshots(): void {
     show()
+    this.setAndroidScreenshotPrivacy(false)
   }
 
   async getAllRawStorageKeyValues() {
