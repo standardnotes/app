@@ -140,7 +140,8 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
         const index = months.findIndex((candidate) => elementIdForMonth(candidate.date) === id)
         if (index >= 0) {
           const newMonth = months[index]
-          goToMonth(newMonth.date)
+          LoggingEnabled && console.log('[Calendar] Month element did become visible, setting activeDate', newMonth)
+          setActiveDate(newMonth.date)
         }
       },
       [months],
