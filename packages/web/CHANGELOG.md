@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.90.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.1...@standardnotes/web@3.90.2) (2022-10-28)
+
+### Bug Fixes
+
+* boolean ([5058aae](https://github.com/standardnotes/app/commit/5058aaee3395ee2760ae4de72378db1de286a2bb))
+
 ## [3.90.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.0...@standardnotes/web@3.90.1) (2022-10-28)
 
 ### Bug Fixes
