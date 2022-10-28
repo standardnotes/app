@@ -104,7 +104,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
         log(LoggingDomain.DailyNotes, '[Calendar] selectedDay has changed, going to month:', selectedDay)
         goToMonth(selectedDay)
       }
-    }, [selectedDay])
+    }, [selectedDay, goToMonth])
 
     useEffect(() => {
       if (!restoreScrollAfterExpand) {
@@ -130,7 +130,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
         insertMonths(copy, 'front', PageSize)
         return copy
       })
-    }, [months, setMonths])
+    }, [setMonths])
 
     const paginateRight = useCallback(() => {
       log(LoggingDomain.DailyNotes, '[Calendar] paginateRight')
@@ -139,7 +139,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
         insertMonths(copy, 'end', PageSize)
         return copy
       })
-    }, [months, setMonths])
+    }, [setMonths])
 
     const onElementVisibility = useCallback(
       (id: string) => {
@@ -172,7 +172,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
     )
 
     return (
-      <div className={`border-b border-solid border-border`}>
+      <div className={'border-b border-solid border-border'}>
         <div
           onClick={toggleVisibility}
           className={classNames(

@@ -5,12 +5,15 @@ type Props = {
   isToday: boolean
   onClick: () => void
   type: 'empty' | 'item' | 'template'
+  isLastMonth: boolean
 }
 
-const CalendarDay: FunctionComponent<Props> = ({ day, type, isToday, onClick }) => {
+const CalendarDay: FunctionComponent<Props> = ({ day, type, isToday, onClick, isLastMonth }) => {
   let classNames = ''
   if (isToday) {
     classNames += 'bg-danger text-danger-contrast font-bold'
+  } else if (isLastMonth) {
+    classNames += 'text-passive-3'
   } else {
     if (type === 'empty') {
       classNames += 'bg-transparent hover:bg-contrast'
@@ -28,7 +31,7 @@ const CalendarDay: FunctionComponent<Props> = ({ day, type, isToday, onClick }) 
         key={day}
         onClick={onClick}
       >
-        {day > 0 ? day : ''}
+        {day}
       </div>
     </div>
   )

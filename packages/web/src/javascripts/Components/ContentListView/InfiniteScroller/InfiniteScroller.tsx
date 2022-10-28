@@ -19,7 +19,6 @@ type Props = {
   direction: 'horizontal' | 'vertical'
   onElementVisibility?: (elementId: string) => void
   className?: string
-  loggingEnabled?: boolean
 }
 
 export type InfiniteScrollerInterface = {
@@ -27,18 +26,7 @@ export type InfiniteScrollerInterface = {
 }
 
 export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
-  (
-    {
-      children,
-      paginateFront,
-      paginateEnd,
-      direction = 'vertical',
-      onElementVisibility,
-      className,
-      loggingEnabled = false,
-    }: Props,
-    ref,
-  ) => {
+  ({ children, paginateFront, paginateEnd, direction = 'vertical', onElementVisibility, className }: Props, ref) => {
     const frontSentinel = useRef<HTMLDivElement | null>(null)
     const endSentinel = useRef<HTMLDivElement | null>(null)
     const [ignoreFirstFrontSentinelEvent, setIgnoreFirstFrontSentinelEvent] = useState(true)
@@ -83,11 +71,11 @@ export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
     const scrollToElementId = useCallback((id: string) => {
       const element = document.getElementById(id)
       if (!element) {
-        loggingEnabled && console.log('Element not found', id)
+        log(LoggingDomain.DailyNotes, 'Element not found', id)
         return
       }
 
-      loggingEnabled && console.log('Scrolling to element', id)
+      log(LoggingDomain.DailyNotes, 'Scrolling to element', id)
       element.scrollIntoView({
         behavior: 'auto',
         block: 'center',

@@ -44,15 +44,17 @@ const Calendar: FunctionComponent<Props> = ({ activities, startDate, onDateSelec
         </div>
         <div className="flex w-full flex-wrap">
           {days.map((_, index) => {
-            const d = index - (startDay - 2)
-            const date = new Date(year, month, d)
+            const dayIndex = index - (startDay - 2)
+            const date = new Date(year, month, dayIndex)
+            const day = date.getDate()
             const activities = activityMap[dateToDateOnlyString(date)] || []
             const isTemplate = selectedDay && isDateInSameDay(selectedDay, date)
             const type = activities.length > 0 ? 'item' : isTemplate ? 'template' : 'empty'
             return (
               <CalendarDay
+                isLastMonth={dayIndex <= 0}
                 key={index}
-                day={d}
+                day={day}
                 isToday={isDateInSameDay(date, today)}
                 onClick={() => onDateSelect(date)}
                 type={type}
