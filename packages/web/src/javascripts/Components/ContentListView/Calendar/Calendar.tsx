@@ -3,7 +3,7 @@ import { CalendarActivity } from './CalendarActivity'
 import CalendarDay from './CalendarDay'
 import { CalendarDays, CalendarDaysLeap, CalendarDaysOfTheWeek } from './Constants'
 import { createActivityRecord, dateToDateOnlyString, isLeapYear, getStartDayOfMonth } from './CalendarUtilts'
-import { isDateInSameDay } from '@/Utils/DateUtils'
+import { areDatesInSameDay } from '@/Utils/DateUtils'
 
 type Props = {
   activities: CalendarActivity[]
@@ -29,10 +29,11 @@ const Calendar: FunctionComponent<Props> = ({ activities, startDate, onDateSelec
   }, [startDate])
 
   const today = new Date()
-  const days = isLeapYear(year) ? CalendarDaysLeap : CalendarDays
+  const dayBundle = isLeapYear(year) ? CalendarDaysLeap : CalendarDays
+  const days = Array(dayBundle[month] + (startDay - 1)).fill(null)
 
   return (
-    <div className={`w-300 ${className} border-left border-right border border-neutral`}>
+    <div className={`w-300 ${className} min-h-[210px]`}>
       <div className="mr-auto ml-auto w-70">
         <div className="flex w-full flex-wrap">
           {CalendarDaysOfTheWeek.map((d) => (
@@ -42,23 +43,24 @@ const Calendar: FunctionComponent<Props> = ({ activities, startDate, onDateSelec
           ))}
         </div>
         <div className="flex w-full flex-wrap">
-          {Array(days[month] + (startDay - 1))
-            .fill(null)
-            .map((_, index) => {
-              const d = index - (startDay - 2)
-              const date = new Date(year, month, d)
-              const activities = activityMap[dateToDateOnlyString(date)] || []
-              return (
-                <CalendarDay
-                  key={index}
-                  day={d}
-                  isToday={isDateInSameDay(date, today)}
-                  activities={activities}
-                  onClick={() => onDateSelect(date)}
-                  hasPendingEntry={selectedDay && isDateInSameDay(selectedDay, date)}
-                />
-              )
-            })}
+          {days.map((_, index) => {
+            const dayIndex = index - (startDay - 2)
+            const date = new Date(year, month, dayIndex)
+            const day = date.getDate()
+            const activities = activityMap[dateToDateOnlyString(date)] || []
+            const isTemplate = selectedDay && areDatesInSameDay(selectedDay, date)
+            const type = activities.length > 0 ? 'item' : isTemplate ? 'template' : 'empty'
+            return (
+              <CalendarDay
+                isLastMonth={dayIndex <= 0}
+                key={index}
+                day={day}
+                isToday={areDatesInSameDay(date, today)}
+                onClick={() => onDateSelect(date)}
+                type={type}
+              />
+            )
+          })}
         </div>
       </div>
     </div>
