@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { ListableContentItem } from '../Types/ListableContentItem'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
@@ -11,7 +11,8 @@ import { SNTag } from '@standardnotes/snjs'
 import { CalendarActivity } from '../Calendar/CalendarActivity'
 import { dateToDailyDayIdentifier } from './Utils'
 import InfiniteCalendar, { InfiniteCalendarInterface } from '../Calendar/InfiniteCalendar'
-import { InfinteScroller } from '../InfiniteScroller/InfiniteScroller'
+import { InfiniteScrollerInterface, InfinteScroller } from '../InfiniteScroller/InfiniteScroller'
+import { LoggingDomain, log } from '@/Logging'
 
 type Props = {
   itemListController: ItemListController
@@ -22,7 +23,6 @@ type Props = {
 }
 
 const PageSize = 10
-const LoggingEnabled = true
 
 const DailyContentList: FunctionComponent<Props> = ({
   items,
@@ -37,6 +37,7 @@ const DailyContentList: FunctionComponent<Props> = ({
   const [selectedDay, setSelectedDay] = useState<Date>()
   const calendarRef = useRef<InfiniteCalendarInterface | null>(null)
   const [lastVisibleDay, setLastVisibleDay] = useState<DailyItemsDay>()
+  const scrollerRef = useRef<InfiniteScrollerInterface | null>(null)
 
   const [dailyItems, setDailyItems] = useState<DailyItemsDay[]>(() => {
     return createDailyItemsWithToday(PageSize)
@@ -52,6 +53,12 @@ const DailyContentList: FunctionComponent<Props> = ({
     setTodayItem(dailyItems.find((item) => item.isToday) as DailyItemsDay)
   }, [dailyItems])
 
+  useLayoutEffect(() => {
+    if (todayItem && scrollerRef.current) {
+      scrollerRef.current?.scrollToElementId(todayItem.id)
+    }
+  }, [todayItem, scrollerRef])
+
   const calendarActivities: CalendarActivity[] = useMemo(() => {
     return items.map((item) => {
       return {
@@ -62,6 +69,7 @@ const DailyContentList: FunctionComponent<Props> = ({
   }, [items])
 
   const paginateBottom = useCallback(() => {
+    log(LoggingDomain.DailyNotes, '[ContentList] paginateBottom')
     setDailyItems((prev) => {
       const copy = prev.slice()
       insertBlanks(copy, 'end', PageSize)
@@ -70,6 +78,7 @@ const DailyContentList: FunctionComponent<Props> = ({
   }, [setDailyItems])
 
   const paginateTop = useCallback(() => {
+    log(LoggingDomain.DailyNotes, '[ContentList] paginateTop')
     setDailyItems((prev) => {
       const copy = prev.slice()
       insertBlanks(copy, 'front', PageSize)
@@ -82,10 +91,10 @@ const DailyContentList: FunctionComponent<Props> = ({
       const dailyItem = dailyItems.find((candidate) => candidate.id === elementId)
       if (dailyItem && dailyItem !== lastVisibleDay) {
         setLastVisibleDay(dailyItem)
-        LoggingEnabled && console.log('[ContentList] Item did become visible for date', dailyItem.date)
+        log(LoggingDomain.DailyNotes, '[ContentList] Item did become visible for date', dailyItem.date)
         calendarRef?.current?.goToMonth(dailyItem.date)
       } else {
-        LoggingEnabled && console.log('[ContentList] Ignoring duplicate day visibility')
+        log(LoggingDomain.DailyNotes, '[ContentList] Ignoring duplicate day visibility')
       }
     },
     [dailyItems, lastVisibleDay],
@@ -162,7 +171,6 @@ const DailyContentList: FunctionComponent<Props> = ({
   )
 
   const hasItemsOnSelectedDay = selectedDay && itemsByDateMapping[dateToDailyDayIdentifier(selectedDay)]?.length > 0
-
   return (
     <>
       <InfiniteCalendar
@@ -181,6 +189,7 @@ const DailyContentList: FunctionComponent<Props> = ({
         direction="vertical"
         onElementVisibility={onListItemDidBecomeVisible}
         className={'flex-1'}
+        ref={scrollerRef}
       >
         {dailyItems.map((dailyItem) => {
           const items = itemsByDateMapping[dailyItem.id]

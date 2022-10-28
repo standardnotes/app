@@ -10,6 +10,8 @@ import {
   useState,
 } from 'react'
 
+import { LoggingDomain, log } from '@/Logging'
+
 type Props = {
   children: ReactNode
   paginateFront: () => void
@@ -37,8 +39,9 @@ export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
     }: Props,
     ref,
   ) => {
-    const topSentinel = useRef<HTMLDivElement | null>(null)
-    const bottomSentinel = useRef<HTMLDivElement | null>(null)
+    const frontSentinel = useRef<HTMLDivElement | null>(null)
+    const endSentinel = useRef<HTMLDivElement | null>(null)
+    const [ignoreFirstFrontSentinelEvent, setIgnoreFirstFrontSentinelEvent] = useState(true)
 
     const scrollArea = useRef<HTMLDivElement | null>(null)
     const [scrollSize, setScrollSize] = useState(0)
@@ -65,13 +68,13 @@ export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
     )
 
     useEffect(() => {
-      const childElements = scrollArea.current!.children
-      for (const child of Array.from(childElements)) {
+      const childElements = Array.from(scrollArea.current!.children)
+      for (const child of childElements) {
         visibilityObserver.observe(child)
       }
 
       return () => {
-        for (const child of Array.from(childElements)) {
+        for (const child of childElements) {
           visibilityObserver.unobserve(child)
         }
       }
@@ -121,26 +124,31 @@ export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
       paginateEnd()
     }, [paginateEnd])
 
-    const topObserver = useMemo(
+    const frontObserver = useMemo(
       () =>
         new IntersectionObserver(
           (entries) => {
             if (entries[0].isIntersecting) {
+              if (ignoreFirstFrontSentinelEvent) {
+                log(LoggingDomain.DailyNotes, '[InfiniteScroller] Ignoring first front sentinel event')
+                setIgnoreFirstFrontSentinelEvent(false)
+                return
+              }
               _paginateFront()
             }
           },
           { threshold: 0.5 },
         ),
-      [_paginateFront],
+      [_paginateFront, ignoreFirstFrontSentinelEvent],
     )
 
     useEffect(() => {
-      if (topSentinel.current) {
-        topObserver.observe(topSentinel.current)
+      if (frontSentinel.current) {
+        frontObserver.observe(frontSentinel.current)
       }
-    }, [topObserver, topSentinel])
+    }, [frontObserver, frontSentinel])
 
-    const bottomObserver = useMemo(
+    const endObserver = useMemo(
       () =>
         new IntersectionObserver(
           (entries) => {
@@ -154,10 +162,10 @@ export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
     )
 
     useEffect(() => {
-      if (bottomSentinel.current) {
-        bottomObserver.observe(bottomSentinel.current)
+      if (endSentinel.current) {
+        endObserver.observe(endSentinel.current)
       }
-    }, [bottomObserver, bottomSentinel])
+    }, [endObserver, endSentinel])
 
     return (
       <div
@@ -168,9 +176,9 @@ export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
           flexDirection: direction === 'vertical' ? 'column' : 'row',
         }}
       >
-        <div style={{ width: '100%', height: 1, backgroundColor: 'blue' }} ref={topSentinel}></div>
+        <div style={{ width: 1, height: 1, backgroundColor: 'transparent' }} ref={frontSentinel}></div>
         {children}
-        <div style={{ width: '100%', height: 1, backgroundColor: 'green' }} ref={bottomSentinel}></div>
+        <div style={{ width: 1, height: 1, backgroundColor: 'transparent' }} ref={endSentinel}></div>
       </div>
     )
   },

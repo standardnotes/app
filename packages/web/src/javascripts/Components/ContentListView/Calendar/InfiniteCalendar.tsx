@@ -7,6 +7,7 @@ import { CalendarMonths } from './Constants'
 import { insertMonths, insertMonthsWithTarget } from './CalendarUtilts'
 import { InfiniteScrollerInterface, InfinteScroller } from '../InfiniteScroller/InfiniteScroller'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { LoggingDomain, log } from '@/Logging'
 
 type Props = {
   activityType: CalendarActivityType
@@ -22,7 +23,6 @@ export type InfiniteCalendarInterface = {
 }
 
 const PageSize = 2
-const LoggingEnabled = true
 
 const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
   ({ activities, onDateSelect, selectedDay, className }: Props, ref) => {
@@ -72,7 +72,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
           insertMonthInList(month)
         }
 
-        LoggingEnabled && console.log('[Calendar] Scrolling to month', month, 'from goToMonth')
+        log(LoggingDomain.DailyNotes, '[Calendar] Scrolling to month', month, 'from goToMonth')
         setActiveDate(month)
         scrollToMonth(month)
       },
@@ -101,7 +101,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
 
     useEffect(() => {
       if (selectedDay) {
-        LoggingEnabled && console.log('[Calendar] selectedDay has changed, going to month:', selectedDay)
+        log(LoggingDomain.DailyNotes, '[Calendar] selectedDay has changed, going to month:', selectedDay)
         goToMonth(selectedDay)
       }
     }, [selectedDay])
@@ -112,14 +112,19 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
       }
 
       if (expanded) {
-        LoggingEnabled &&
-          console.log('[Calendar] Scrolling to month', activeDate, 'from restoreScrollAfterExpand useEffect')
+        log(
+          LoggingDomain.DailyNotes,
+          '[Calendar] Scrolling to month',
+          activeDate,
+          'from restoreScrollAfterExpand useEffect',
+        )
         scrollToMonth(activeDate)
         setRestoreScrollAfterExpand(false)
       }
     }, [expanded, scrollToMonth, activeDate, restoreScrollAfterExpand, setRestoreScrollAfterExpand])
 
     const paginateLeft = useCallback(() => {
+      log(LoggingDomain.DailyNotes, '[Calendar] paginateLeft')
       setMonths((prevMonths) => {
         const copy = prevMonths.slice()
         insertMonths(copy, 'front', PageSize)
@@ -128,6 +133,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
     }, [months, setMonths])
 
     const paginateRight = useCallback(() => {
+      log(LoggingDomain.DailyNotes, '[Calendar] paginateRight')
       setMonths((prevMonths) => {
         const copy = prevMonths.slice()
         insertMonths(copy, 'end', PageSize)
@@ -140,7 +146,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
         const index = months.findIndex((candidate) => elementIdForMonth(candidate.date) === id)
         if (index >= 0) {
           const newMonth = months[index]
-          LoggingEnabled && console.log('[Calendar] Month element did become visible, setting activeDate', newMonth)
+          log(LoggingDomain.DailyNotes, '[Calendar] Month element did become visible, setting activeDate', newMonth)
           setActiveDate(newMonth.date)
         }
       },
