@@ -4,4 +4,5 @@ export enum ReactNativeToWebEvent {
   GainingFocus = 'GainingFocus',
   LosingFocus = 'LosingFocus',
   AndroidBackButtonPressed = 'AndroidBackButtonPressed',
+  ColorSchemeChanged = 'ColorSchemeChanged',
 }

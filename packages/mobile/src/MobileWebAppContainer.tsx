@@ -1,4 +1,5 @@
 import { ReactNativeToWebEvent } from '@standardnotes/snjs'
+import { ColorSchemeObserverService } from './ColorSchemeObserverService'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Keyboard, Platform } from 'react-native'
 import VersionInfo from 'react-native-version-info'
@@ -28,9 +29,10 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   const sourceUri = (Platform.OS === 'android' ? 'file:///android_asset/' : '') + 'Web.bundle/src/index.html'
   const stateService = useMemo(() => new AppStateObserverService(), [])
   const androidBackHandlerService = useMemo(() => new AndroidBackHandlerService(), [])
+  const colorSchemeService = useMemo(() => new ColorSchemeObserverService(), [])
   const device = useMemo(
-    () => new MobileDevice(stateService, androidBackHandlerService),
-    [androidBackHandlerService, stateService],
+    () => new MobileDevice(stateService, androidBackHandlerService, colorSchemeService),
+    [androidBackHandlerService, colorSchemeService, stateService],
   )
 
   useEffect(() => {
@@ -44,6 +46,10 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       },
     )
 
+    const removeColorSchemeServiceListener = colorSchemeService.addEventObserver((event: ReactNativeToWebEvent) => {
+      webViewRef.current?.postMessage(JSON.stringify({ reactNativeEvent: event, messageType: 'event' }))
+    })
+
     const keyboardShowListener = Keyboard.addListener('keyboardWillShow', () => {
       device.reloadStatusBarStyle(false)
     })
@@ -55,10 +61,11 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     return () => {
       removeStateServiceListener()
       removeBackHandlerServiceListener()
+      removeColorSchemeServiceListener()
       keyboardShowListener.remove()
       keyboardHideListener.remove()
     }
-  }, [webViewRef, stateService, device, androidBackHandlerService])
+  }, [webViewRef, stateService, device, androidBackHandlerService, colorSchemeService])
 
   useEffect(() => {
     const observer = device.addMobileWebEventReceiver((event) => {
