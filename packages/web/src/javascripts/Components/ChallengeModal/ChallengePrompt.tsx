@@ -42,7 +42,9 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
         }
       }
 
-      if (typeof values[prompt.id].value === 'boolean') {
+      const hasUserAlreadyInteracted = typeof values[prompt.id].value === 'boolean'
+
+      if (hasUserAlreadyInteracted) {
         return
       }
 
