@@ -9,6 +9,7 @@ import { InfiniteScrollerInterface, InfinteScroller } from '../InfiniteScroller/
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { LoggingDomain, log } from '@/Logging'
 import { usePrevious } from './usePrevious'
+import { isMobileScreen } from '@/Utils'
 
 type Props = {
   activityType: CalendarActivityType
@@ -196,6 +197,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
             onElementVisibility={onElementVisibility}
             ref={scrollerRef}
             className={className}
+            isMobileScreen={isMobileScreen()}
           >
             {months.map((month) => {
               const id = elementIdForMonth(month.date)

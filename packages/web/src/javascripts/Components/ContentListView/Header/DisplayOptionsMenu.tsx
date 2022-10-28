@@ -208,8 +208,10 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         <h1 className="sk-h3 m-0 text-sm font-semibold">Upgrade for per-tag preferences</h1>
       </div>
       <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
-        Create powerful workflows and organizational layouts with per-tag display preferences and the all-new Daily
-        Notebook feature.
+        {DailyEntryModeEnabled &&
+          'Create powerful workflows and organizational layouts with per-tag display preferences and the all-new Daily Notebook feature.'}
+        {!DailyEntryModeEnabled &&
+          'Create powerful workflows and organizational layouts with per-tag display preferences.'}
       </p>
       <Button
         primary

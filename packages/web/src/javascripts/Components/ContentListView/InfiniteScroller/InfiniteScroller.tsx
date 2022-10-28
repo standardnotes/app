@@ -19,6 +19,7 @@ type Props = {
   direction: 'horizontal' | 'vertical'
   onElementVisibility?: (elementId: string) => void
   className?: string
+  isMobileScreen?: boolean
 }
 
 export type InfiniteScrollerInterface = {
@@ -26,10 +27,22 @@ export type InfiniteScrollerInterface = {
 }
 
 export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
-  ({ children, paginateFront, paginateEnd, direction = 'vertical', onElementVisibility, className }: Props, ref) => {
+  (
+    {
+      children,
+      paginateFront,
+      paginateEnd,
+      direction = 'vertical',
+      onElementVisibility,
+      className,
+      isMobileScreen,
+    }: Props,
+    ref,
+  ) => {
     const frontSentinel = useRef<HTMLDivElement | null>(null)
     const endSentinel = useRef<HTMLDivElement | null>(null)
     const [ignoreFirstFrontSentinelEvent, setIgnoreFirstFrontSentinelEvent] = useState(true)
+    const [needsMobilePaginationFix, setNeedsMobilePaginationFix] = useState(false)
 
     const scrollArea = useRef<HTMLDivElement | null>(null)
     const [scrollSize, setScrollSize] = useState(0)
@@ -91,12 +104,35 @@ export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
       if (didPaginateFront) {
         if (direction === 'vertical') {
           scrollArea.current.scrollTop += scrollArea.current.scrollHeight - scrollSize
+          if (isMobileScreen) {
+            setNeedsMobilePaginationFix(true)
+          }
         } else {
           scrollArea.current.scrollLeft += scrollArea.current.scrollWidth - scrollSize
         }
         setDidPaginateFront(false)
       }
-    }, [didPaginateFront, scrollSize, direction])
+    }, [didPaginateFront, scrollSize, direction, isMobileScreen])
+
+    useLayoutEffect(() => {
+      /**
+       * iOS Safari has an issue rendering paginated items from the top where the new
+       * scrolled to area is white until the user interacts with scroll again. The fix
+       * we apply is to re-set scrollTop to its same value to trigger a refresh.
+       * https://stackoverflow.com/questions/9807620
+       */
+      if (needsMobilePaginationFix) {
+        setTimeout(() => {
+          if (!scrollArea.current) {
+            return
+          }
+
+          log(LoggingDomain.DailyNotes, '[InfiniteScroller] Applying mobile pagination fix')
+          scrollArea.current.scrollTop += scrollArea.current.scrollHeight - scrollSize
+          setNeedsMobilePaginationFix(false)
+        }, 50)
+      }
+    }, [needsMobilePaginationFix])
 
     const _paginateFront = useCallback(() => {
       if (direction === 'vertical') {

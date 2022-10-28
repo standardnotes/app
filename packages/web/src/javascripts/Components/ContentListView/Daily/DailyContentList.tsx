@@ -13,6 +13,7 @@ import { dateToDailyDayIdentifier } from './Utils'
 import InfiniteCalendar, { InfiniteCalendarInterface } from '../Calendar/InfiniteCalendar'
 import { InfiniteScrollerInterface, InfinteScroller } from '../InfiniteScroller/InfiniteScroller'
 import { LoggingDomain, log } from '@/Logging'
+import { isMobileScreen } from '@/Utils'
 
 type Props = {
   itemListController: ItemListController
@@ -190,6 +191,7 @@ const DailyContentList: FunctionComponent<Props> = ({
         onElementVisibility={onListItemDidBecomeVisible}
         className={'flex-1'}
         ref={scrollerRef}
+        isMobileScreen={isMobileScreen()}
       >
         {dailyItems.map((dailyItem) => {
           const items = itemsByDateMapping[dailyItem.id]
