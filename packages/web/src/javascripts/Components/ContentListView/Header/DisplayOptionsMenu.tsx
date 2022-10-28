@@ -235,7 +235,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         {currentMode === 'tag' && <button onClick={resetTagPreferences}>Reset</button>}
       </div>
 
-      {!controlsDisabled && <NoSubscriptionBanner />}
+      {controlsDisabled && <NoSubscriptionBanner />}
 
       <MenuItemSeparator />
 
@@ -385,7 +385,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
           >
             <div className="flex flex-col pr-5">
               <div className="text-xs font-semibold uppercase text-text">Daily Notebook</div>
-              <div className="mt-1">Capture new notes daily with a calendar-based experience</div>
+              <div className="mt-1">Capture new notes daily with a calendar-based layout</div>
             </div>
           </MenuItem>
         </>
