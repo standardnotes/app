@@ -1,3 +1,4 @@
+import { classNames } from '@/Utils/ConcatenateClassNames'
 import {
   forwardRef,
   ReactNode,
@@ -16,6 +17,7 @@ type Props = {
   paginateEnd: () => void
   direction: 'horizontal' | 'vertical'
   onElementVisibility?: (elementId: string) => void
+  className?: string
 }
 
 export type InfiniteScrollerInterface = {
@@ -23,14 +25,12 @@ export type InfiniteScrollerInterface = {
 }
 
 export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
-  ({ children, paginateFront, paginateEnd, direction = 'vertical', onElementVisibility }: Props, ref) => {
+  ({ children, paginateFront, paginateEnd, direction = 'vertical', onElementVisibility, className }: Props, ref) => {
     const topSentinel = useRef<HTMLDivElement | null>(null)
     const bottomSentinel = useRef<HTMLDivElement | null>(null)
 
     const scrollArea = useRef<HTMLDivElement | null>(null)
-
     const [scrollSize, setScrollSize] = useState(0)
-
     const [didPaginateFront, setDidPaginateFront] = useState(false)
 
     useImperativeHandle(ref, () => ({
@@ -48,7 +48,7 @@ export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
               onElementVisibility?.(visibleEntry.target.id)
             }
           },
-          { threshold: 0.9 },
+          { threshold: 1.0 },
         ),
       [onElementVisibility],
     )
@@ -73,7 +73,11 @@ export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
         return
       }
 
-      element.scrollIntoView()
+      element.scrollIntoView({
+        behavior: 'auto',
+        block: 'center',
+        inline: 'center',
+      })
     }, [])
 
     useLayoutEffect(() => {
@@ -146,13 +150,10 @@ export const InfinteScroller = forwardRef<InfiniteScrollerInterface, Props>(
     return (
       <div
         ref={scrollArea}
+        className={className}
         style={{
-          display: 'flex',
-          flexDirection: direction === 'vertical' ? 'column' : 'row',
-          height: '100%',
-          width: '100%',
-          overflowX: 'scroll',
           overflowY: 'scroll',
+          flexDirection: direction === 'vertical' ? 'column' : 'row',
         }}
       >
         <div style={{ width: '100%', height: 1, backgroundColor: 'blue' }} ref={topSentinel}></div>

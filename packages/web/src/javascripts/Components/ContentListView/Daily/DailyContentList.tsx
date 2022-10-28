@@ -37,7 +37,6 @@ const DailyContentList: FunctionComponent<Props> = ({
   const [needsSelectionReload, setNeedsSelectionReload] = useState(false)
   const [todayItem, setTodayItem] = useState<DailyItemsDay>()
   const [selectedDay, setSelectedDay] = useState<Date>()
-  const scrollArea = useRef<HTMLDivElement>(null)
   const calendarRef = useRef<InfiniteCalendarInterface | null>(null)
 
   const [dailyItems, setDailyItems] = useState<DailyItemsDay[]>(() => {
@@ -64,16 +63,20 @@ const DailyContentList: FunctionComponent<Props> = ({
   }, [items])
 
   const paginateBottom = useCallback(() => {
-    const copy = dailyItems.slice()
-    insertBlanks(copy, 'end', PageSize)
-    setDailyItems(copy)
-  }, [dailyItems, setDailyItems])
+    setDailyItems((prev) => {
+      const copy = prev.slice()
+      insertBlanks(copy, 'end', PageSize)
+      return copy
+    })
+  }, [setDailyItems])
 
   const paginateTop = useCallback(() => {
-    const copy = dailyItems.slice()
-    insertBlanks(copy, 'front', PageSize)
-    setDailyItems(copy)
-  }, [dailyItems, setDailyItems])
+    setDailyItems((prev) => {
+      const copy = prev.slice()
+      insertBlanks(copy, 'front', PageSize)
+      return copy
+    })
+  }, [setDailyItems])
 
   const onListItemDidBecomeVisible = useCallback(
     (elementId: string) => {
@@ -157,60 +160,52 @@ const DailyContentList: FunctionComponent<Props> = ({
 
   return (
     <>
-      {/* <InfiniteCalendar
+      <InfiniteCalendar
         activities={calendarActivities}
         activityType={'created'}
         onDateSelect={onCalendarSelect}
         selectedTemplateDay={selectedDay}
         selectedItemDay={selectedDay}
         ref={calendarRef}
-      /> */}
-      <div
-        className={classNames(
-          'infinite-scroll overflow-y-auto overflow-x-hidden focus:shadow-none focus:outline-none',
-          'md:max-h-full md:overflow-y-hidden md:hover:overflow-y-auto pointer-coarse:md:overflow-y-auto',
-          'md:hover:[overflow-y:_overlay]',
-        )}
-        ref={scrollArea}
-        id={ElementIds.ContentList}
-        tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
+        className={'flex-column flex'}
+      />
+
+      <InfinteScroller
+        paginateFront={paginateTop}
+        paginateEnd={paginateBottom}
+        direction="vertical"
+        onElementVisibility={onListItemDidBecomeVisible}
+        className={'flex-1'}
       >
-        <InfinteScroller
-          paginateFront={paginateTop}
-          paginateEnd={paginateBottom}
-          direction="vertical"
-          onElementVisibility={onListItemDidBecomeVisible}
-        >
-          {dailyItems.map((dailyItem) => {
-            const items = itemsByDateMapping[dailyItem.id]
-            if (items) {
-              return items.map((item) => (
-                <DailyItemCell
-                  selected={selectedUuids.has(item.uuid)}
-                  section={dailyItem}
-                  key={item.uuid}
-                  id={dailyItem.id}
-                  item={item}
-                  hideDate={hideDate}
-                  hidePreview={hideNotePreview}
-                  hideTags={hideTags}
-                  onClick={() => onClickItem(dailyItem, item, true)}
-                />
-              ))
-            } else {
-              return (
-                <DailyItemCell
-                  selected={selectedDay && dailyItem.id === dateToDailyDayIdentifier(selectedDay)}
-                  section={dailyItem}
-                  id={dailyItem.id}
-                  key={dailyItem.dateKey}
-                  onClick={() => onClickTemplate(dailyItem.date)}
-                />
-              )
-            }
-          })}
-        </InfinteScroller>
-      </div>
+        {dailyItems.map((dailyItem) => {
+          const items = itemsByDateMapping[dailyItem.id]
+          if (items) {
+            return items.map((item) => (
+              <DailyItemCell
+                selected={selectedUuids.has(item.uuid)}
+                section={dailyItem}
+                key={item.uuid}
+                id={dailyItem.id}
+                item={item}
+                hideDate={hideDate}
+                hidePreview={hideNotePreview}
+                hideTags={hideTags}
+                onClick={() => onClickItem(dailyItem, item, true)}
+              />
+            ))
+          } else {
+            return (
+              <DailyItemCell
+                selected={selectedDay && dailyItem.id === dateToDailyDayIdentifier(selectedDay)}
+                section={dailyItem}
+                id={dailyItem.id}
+                key={dailyItem.dateKey}
+                onClick={() => onClickTemplate(dailyItem.date)}
+              />
+            )
+          }
+        })}
+      </InfinteScroller>
     </>
   )
 }
