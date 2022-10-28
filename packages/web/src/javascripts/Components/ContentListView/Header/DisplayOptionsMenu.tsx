@@ -235,7 +235,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         {currentMode === 'tag' && <button onClick={resetTagPreferences}>Reset</button>}
       </div>
 
-      {!controlsDisabled && <NoSubscriptionBanner />}
+      {controlsDisabled && <NoSubscriptionBanner />}
 
       <MenuItemSeparator />
 
