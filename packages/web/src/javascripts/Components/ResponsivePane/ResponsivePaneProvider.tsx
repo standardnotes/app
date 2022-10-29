@@ -54,7 +54,7 @@ function useStateRef<State>(state: State): MutableRefObject<State> {
   return ref
 }
 
-const MemoizedChildren = memo(({ children }: ChildrenProps) => <div className="response-pane-provider">{children}</div>)
+const MemoizedChildren = memo(({ children }: ChildrenProps) => <>{children}</>)
 
 const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => {
   const currentSelectedPane = paneController.currentPane
