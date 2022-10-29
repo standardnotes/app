@@ -17,7 +17,7 @@ import {
   EditorFontSize,
   NoteType,
 } from '@standardnotes/snjs'
-import { debounce, isDesktopApplication } from '@/Utils'
+import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
 import { EditorEventSource } from '../../Types/EditorEventSource'
 import { confirmDialog, KeyboardModifier, KeyboardKey } from '@standardnotes/ui-services'
 import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, StringDeleteNote } from '@/Constants/Strings'
@@ -74,6 +74,7 @@ type State = {
   /** Setting to true then false will allow the main content textarea to be destroyed
    * then re-initialized. Used when reloading spellcheck status. */
   textareaUnloading: boolean
+  plaintextEditorFocused?: boolean
 
   leftResizerWidth: number
   leftResizerOffset: number
@@ -104,7 +105,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   private lastEditorFocusEventSource?: EditorEventSource
   onEditorComponentLoad?: () => void
 
-  private scrollPosition = 0
   private removeTrashKeyObserver?: () => void
   private removeTabObserver?: () => void
   private removeComponentStreamObserver?: () => void
@@ -193,8 +193,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     ;(this.onPanelResizeFinish as unknown) = undefined
     ;(this.stackComponentExpanded as unknown) = undefined
     ;(this.toggleStackComponent as unknown) = undefined
-    ;(this.setScrollPosition as unknown) = undefined
-    ;(this.resetScrollPosition as unknown) = undefined
     ;(this.onSystemEditorLoad as unknown) = undefined
     ;(this.debounceReloadEditorComponent as unknown) = undefined
     ;(this.textAreaChangeDebounceSave as unknown) = undefined
@@ -644,6 +642,15 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       this.application.notifyWebEvent(WebAppEvent.EditorFocused, { eventSource: this.lastEditorFocusEventSource })
     }
     this.lastEditorFocusEventSource = undefined
+    this.setState({ plaintextEditorFocused: true })
+  }
+
+  onContentBlur = () => {
+    if (this.lastEditorFocusEventSource) {
+      this.application.notifyWebEvent(WebAppEvent.EditorFocused, { eventSource: this.lastEditorFocusEventSource })
+    }
+    this.lastEditorFocusEventSource = undefined
+    this.setState({ plaintextEditorFocused: false })
   }
 
   setShowProtectedOverlay(show: boolean) {
@@ -837,16 +844,6 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     })
   }
 
-  setScrollPosition = () => {
-    const editor = document.getElementById(ElementIds.NoteTextEditor) as HTMLInputElement
-    this.scrollPosition = editor.scrollTop
-  }
-
-  resetScrollPosition = () => {
-    const editor = document.getElementById(ElementIds.NoteTextEditor) as HTMLInputElement
-    editor.scrollTop = this.scrollPosition
-  }
-
   onSystemEditorLoad = (ref: HTMLTextAreaElement | null) => {
     if (this.removeTabObserver || !ref) {
       return
@@ -900,18 +897,12 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       },
     })
 
-    editor.addEventListener('scroll', this.setScrollPosition)
-    editor.addEventListener('input', this.resetScrollPosition)
-
     const observer = new MutationObserver((records) => {
       for (const record of records) {
         record.removedNodes.forEach((node) => {
           if (node === editor) {
             this.removeTabObserver?.()
             this.removeTabObserver = undefined
-            editor.removeEventListener('scroll', this.setScrollPosition)
-            editor.removeEventListener('scroll', this.resetScrollPosition)
-            this.scrollPosition = 0
           }
         })
       }
@@ -941,6 +932,8 @@ class NoteView extends PureComponent<NoteViewProps, State> {
         />
       )
     }
+
+    const renderHeaderOptions = isMobileScreen() ? !this.state.plaintextEditorFocused : true
 
     return (
       <div
@@ -1005,31 +998,33 @@ class NoteView extends PureComponent<NoteViewProps, State> {
                   updateSavingIndicator={this.state.updateSavingIndicator}
                 />
               </div>
-              <div className="flex items-center gap-3">
-                <LinkedItemsButton
-                  filesController={this.viewControllerManager.filesController}
-                  linkingController={this.viewControllerManager.linkingController}
-                  onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                  featuresController={this.viewControllerManager.featuresController}
-                />
-                <ChangeEditorButton
-                  application={this.application}
-                  viewControllerManager={this.viewControllerManager}
-                  onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                />
-                <PinNoteButton
-                  notesController={this.viewControllerManager.notesController}
-                  onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                />
-                <NotesOptionsPanel
-                  application={this.application}
-                  navigationController={this.viewControllerManager.navigationController}
-                  notesController={this.viewControllerManager.notesController}
-                  linkingController={this.viewControllerManager.linkingController}
-                  historyModalController={this.viewControllerManager.historyModalController}
-                  onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
-                />
-              </div>
+              {renderHeaderOptions && (
+                <div className="flex items-center gap-3">
+                  <LinkedItemsButton
+                    filesController={this.viewControllerManager.filesController}
+                    linkingController={this.viewControllerManager.linkingController}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                    featuresController={this.viewControllerManager.featuresController}
+                  />
+                  <ChangeEditorButton
+                    application={this.application}
+                    viewControllerManager={this.viewControllerManager}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  />
+                  <PinNoteButton
+                    notesController={this.viewControllerManager.notesController}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  />
+                  <NotesOptionsPanel
+                    application={this.application}
+                    navigationController={this.viewControllerManager.navigationController}
+                    notesController={this.viewControllerManager.notesController}
+                    linkingController={this.viewControllerManager.linkingController}
+                    historyModalController={this.viewControllerManager.historyModalController}
+                    onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
+                  />
+                </div>
+              )}
             </div>
             <LinkedItemBubblesContainer linkingController={this.viewControllerManager.linkingController} />
           </div>
@@ -1073,6 +1068,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
               id={ElementIds.NoteTextEditor}
               onChange={this.onTextAreaChange}
               onFocus={this.onContentFocus}
+              onBlur={this.onContentBlur}
               readOnly={this.state.noteLocked}
               ref={(ref) => ref && this.onSystemEditorLoad(ref)}
               spellCheck={this.state.spellcheck}
