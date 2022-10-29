@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.90.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.3...@standardnotes/web@3.90.4) (2022-10-29)
+
+### Bug Fixes
+
+* **mobile:** note view hide bar options on editor focus ([#1903](https://github.com/standardnotes/app/issues/1903)) ([88017ce](https://github.com/standardnotes/app/commit/88017ce3d9c84f0383e147179d88c0fcb6538331))
+
 ## [3.90.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.2...@standardnotes/web@3.90.3) (2022-10-28)
 
 ### Bug Fixes
