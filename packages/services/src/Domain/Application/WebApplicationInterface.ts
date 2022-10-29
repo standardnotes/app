@@ -10,6 +10,7 @@ export interface WebApplicationInterface extends ApplicationInterface {
   handleMobileGainingFocusEvent(): Promise<void>
   handleMobileLosingFocusEvent(): Promise<void>
   handleMobileResumingFromBackgroundEvent(): Promise<void>
+  handleMobileColorSchemeChangeEvent(): void
   isNativeMobileWeb(): boolean
   mobileDevice(): MobileDeviceInterface
   handleAndroidBackButtonPressed(): void

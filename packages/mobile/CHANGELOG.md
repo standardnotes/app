@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.45.4](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.3...@standardnotes/mobile@3.45.4) (2022-10-28)
+
+### Bug Fixes
+
+* color scheme handling on mobile ([#1902](https://github.com/standardnotes/app/issues/1902)) ([6071ebf](https://github.com/standardnotes/app/commit/6071ebffeb55c78eac79f39aecca07f6ebdbed93))
+
+## [3.45.3](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.2...@standardnotes/mobile@3.45.3) (2022-10-28)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.45.2](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.1...@standardnotes/mobile@3.45.2) (2022-10-28)
+
+### Bug Fixes
+
+* screenshot privacy setting not working on app relaunch ([#1900](https://github.com/standardnotes/app/issues/1900)) ([5a6f4fb](https://github.com/standardnotes/app/commit/5a6f4fb35c2e70a463e04ce5f71bde55bba4bb30))
+
 ## [3.45.1](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.0...@standardnotes/mobile@3.45.1) (2022-10-27)
 
 **Note:** Version bump only for package @standardnotes/mobile

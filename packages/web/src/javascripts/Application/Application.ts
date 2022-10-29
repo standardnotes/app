@@ -261,6 +261,18 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     setViewportHeightWithFallback()
   }
 
+  handleInitialMobileScreenshotPrivacy(): void {
+    if (this.platform !== Platform.Android) {
+      return
+    }
+
+    if (this.protections.getMobileScreenshotPrivacyEnabled()) {
+      this.mobileDevice().setAndroidScreenshotPrivacy(true)
+    } else {
+      this.mobileDevice().setAndroidScreenshotPrivacy(false)
+    }
+  }
+
   async handleMobileLosingFocusEvent(): Promise<void> {
     if (this.protections.getMobileScreenshotPrivacyEnabled()) {
       this.mobileDevice().stopHidingMobileInterfaceFromScreenshots()
@@ -275,6 +287,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     }
 
     setViewportHeightWithFallback()
+  }
+
+  handleMobileColorSchemeChangeEvent() {
+    void this.getThemeService().handleMobileColorSchemeChangeEvent()
   }
 
   private async lockApplicationAfterMobileEventIfApplicable(): Promise<void> {

@@ -33,7 +33,7 @@ export function numHoursBetweenDates(date1: Date, date2: Date): number {
   return Math.abs(date1.getTime() - date2.getTime()) / 3600000
 }
 
-export function isDateInSameDay(date1: Date, date2: Date): boolean {
+export function areDatesInSameDay(date1: Date, date2: Date): boolean {
   return date1.toLocaleDateString() === date2.toLocaleDateString()
 }
 

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.10.6](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.10.5...@standardnotes/ui-services@1.10.6) (2022-10-28)
+
+### Bug Fixes
+
+* color scheme handling on mobile ([#1902](https://github.com/standardnotes/app/issues/1902)) ([6071ebf](https://github.com/standardnotes/app/commit/6071ebffeb55c78eac79f39aecca07f6ebdbed93))
+
 ## [1.10.5](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.10.4...@standardnotes/ui-services@1.10.5) (2022-10-27)
 
 **Note:** Version bump only for package @standardnotes/ui-services

@@ -152,6 +152,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
     this.toastService = new ToastService()
 
     this.applicationEventObserver = new ApplicationEventObserver(
+      application,
       application.routeService,
       this.purchaseFlowController,
       this.accountMenuController,

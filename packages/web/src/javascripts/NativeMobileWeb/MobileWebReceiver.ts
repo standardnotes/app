@@ -68,6 +68,9 @@ export class MobileWebReceiver {
       case ReactNativeToWebEvent.AndroidBackButtonPressed:
         void this.application.handleAndroidBackButtonPressed()
         break
+      case ReactNativeToWebEvent.ColorSchemeChanged:
+        void this.application.handleMobileColorSchemeChangeEvent()
+        break
 
       default:
         break

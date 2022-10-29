@@ -167,12 +167,9 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     void changePreferences({ hideEditorIcon: !preferences.hideEditorIcon })
   }, [preferences, changePreferences])
 
-  const setEntryMode = useCallback(
-    (mode: 'normal' | 'daily') => {
-      void changePreferences({ entryMode: mode })
-    },
-    [changePreferences],
-  )
+  const toggleEntryMode = useCallback(() => {
+    void changePreferences({ entryMode: isDailyEntry ? 'normal' : 'daily' })
+  }, [isDailyEntry, changePreferences])
 
   const TabButton: FunctionComponent<{
     label: string
@@ -212,7 +209,10 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         <h1 className="sk-h3 m-0 text-sm font-semibold">Upgrade for per-tag preferences</h1>
       </div>
       <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
-        Create powerful workflows and organizational layouts with per-tag display preferences.
+        {DailyEntryModeEnabled &&
+          'Create powerful workflows and organizational layouts with per-tag display preferences and the all-new Daily Notebook feature.'}
+        {!DailyEntryModeEnabled &&
+          'Create powerful workflows and organizational layouts with per-tag display preferences.'}
       </p>
       <Button
         primary
@@ -377,26 +377,17 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       {currentMode === 'tag' && DailyEntryModeEnabled && (
         <>
           <MenuItemSeparator />
-          <div className="px-3 py-1 text-xs font-semibold uppercase text-text">Entry Mode</div>
-
           <MenuItem
             disabled={controlsDisabled}
-            className="py-2"
-            type={MenuItemType.RadioButton}
-            onClick={() => setEntryMode('normal')}
-            checked={!selectedTag.preferences?.entryMode || selectedTag.preferences?.entryMode === 'normal'}
-          >
-            <div className="ml-2 flex flex-grow items-center justify-between">Normal</div>
-          </MenuItem>
-
-          <MenuItem
-            disabled={controlsDisabled}
-            className="py-2"
-            type={MenuItemType.RadioButton}
-            onClick={() => setEntryMode('daily')}
+            type={MenuItemType.SwitchButton}
+            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
             checked={isDailyEntry}
+            onChange={toggleEntryMode}
           >
-            <div className="ml-2 flex flex-grow items-center justify-between">Daily</div>
+            <div className="flex flex-col pr-5">
+              <div className="text-xs font-semibold uppercase text-text">Daily Notebook</div>
+              <div className="mt-1">Capture new notes daily with a calendar-based layout</div>
+            </div>
           </MenuItem>
         </>
       )}

@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.90.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.2...@standardnotes/web@3.90.3) (2022-10-28)
+
+### Bug Fixes
+
+* color scheme handling on mobile ([#1902](https://github.com/standardnotes/app/issues/1902)) ([6071ebf](https://github.com/standardnotes/app/commit/6071ebffeb55c78eac79f39aecca07f6ebdbed93))
+
+## [3.90.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.1...@standardnotes/web@3.90.2) (2022-10-28)
+
+### Bug Fixes
+
+* boolean ([5058aae](https://github.com/standardnotes/app/commit/5058aaee3395ee2760ae4de72378db1de286a2bb))
+
+## [3.90.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.0...@standardnotes/web@3.90.1) (2022-10-28)
+
+### Bug Fixes
+
+* only auto-toggle biometrics prompt if user hasn't interacted ([02ad461](https://github.com/standardnotes/app/commit/02ad46147dbb05543edb7bf9a4b95d7fa61ae713))
+* privacy overlay on iOS ([5bb923c](https://github.com/standardnotes/app/commit/5bb923cff3b595a0c78d16098e66006073ff2a59))
+* screenshot privacy setting not working on app relaunch ([#1900](https://github.com/standardnotes/app/issues/1900)) ([5a6f4fb](https://github.com/standardnotes/app/commit/5a6f4fb35c2e70a463e04ce5f71bde55bba4bb30))
+
 # [3.90.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.89.0...@standardnotes/web@3.90.0) (2022-10-27)
 
 ### Features

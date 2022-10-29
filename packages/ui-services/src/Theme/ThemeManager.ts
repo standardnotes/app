@@ -59,11 +59,13 @@ export class ThemeManager extends AbstractService {
         break
       }
       case ApplicationEvent.Launched: {
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', this.colorSchemeEventHandler)
+        if (!this.application.isNativeMobileWeb()) {
+          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', this.colorSchemeEventHandler)
+        }
         break
       }
       case ApplicationEvent.PreferencesChanged: {
-        this.handlePreferencesChangeEvent()
+        void this.handlePreferencesChangeEvent()
         break
       }
     }
@@ -88,7 +90,16 @@ export class ThemeManager extends AbstractService {
     })
   }
 
-  private handlePreferencesChangeEvent(): void {
+  async handleMobileColorSchemeChangeEvent() {
+    const useDeviceThemeSettings = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
+
+    if (useDeviceThemeSettings) {
+      const prefersDarkColorScheme = (await this.application.mobileDevice().getColorScheme()) === 'dark'
+      this.setThemeAsPerColorScheme(prefersDarkColorScheme)
+    }
+  }
+
+  private async handlePreferencesChangeEvent() {
     const useDeviceThemeSettings = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
 
     const hasPreferenceChanged = useDeviceThemeSettings !== this.lastUseDeviceThemeSettings
@@ -98,9 +109,13 @@ export class ThemeManager extends AbstractService {
     }
 
     if (hasPreferenceChanged && useDeviceThemeSettings) {
-      const prefersDarkColorScheme = window.matchMedia('(prefers-color-scheme: dark)')
+      let prefersDarkColorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 
-      this.setThemeAsPerColorScheme(prefersDarkColorScheme.matches)
+      if (this.application.isNativeMobileWeb()) {
+        prefersDarkColorScheme = (await this.application.mobileDevice().getColorScheme()) === 'dark'
+      }
+
+      this.setThemeAsPerColorScheme(prefersDarkColorScheme)
     }
   }
 
