@@ -279,9 +279,9 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
 
     const selectedItemsState = values['selected-items-controller']
     const navigationSelectionState = values['navigation-controller']
-    const launchPriorityUuids = [
+    const launchPriorityUuids: string[] = [
       ...(selectedItemsState?.selectedUuids ?? []),
-      ...[navigationSelectionState?.selectedTagUuid],
+      ...[navigationSelectionState?.selectedTagUuid ?? []],
     ]
     this.application.sync.setLaunchPriorityUuids(launchPriorityUuids)
   }
