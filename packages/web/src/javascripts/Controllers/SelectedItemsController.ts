@@ -8,8 +8,8 @@ import {
   UuidString,
   InternalEventBus,
   isFile,
-  SelectionControllerPersistableValue,
 } from '@standardnotes/snjs'
+import { SelectionControllerPersistableValue } from '@standardnotes/ui-services'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'

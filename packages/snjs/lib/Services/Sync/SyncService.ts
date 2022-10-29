@@ -73,8 +73,6 @@ import {
   SyncServiceInterface,
   DiagnosticInfo,
   EncryptionService,
-  MasterStatePersistenceKey,
-  PersistedStateValue,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -127,6 +125,8 @@ export class SNSyncService
   public lastSyncInvokationPromise?: Promise<unknown>
   public currentSyncRequestPromise?: Promise<void>
 
+  /** Items for these uuids are loaded first */
+  private launchPriorityUuids: string[] = []
   /** Content types appearing first are always mapped first */
   private readonly localLoadPriorty = [
     ContentType.ItemsKey,
@@ -158,6 +158,10 @@ export class SNSyncService
     if (await this.getLastSyncToken()) {
       await this.clearSyncPositionTokens()
     }
+  }
+
+  public setLaunchPriorityUuids(launchPriorityUuids: string[]) {
+    this.launchPriorityUuids = launchPriorityUuids
   }
 
   public override deinit(): void {
@@ -274,17 +278,10 @@ export class SNSyncService
       })
       .filter(isNotUndefined)
 
-    const persisedSelectionState = this.storageService.getValue(MasterStatePersistenceKey) as PersistedStateValue
-    const selectedItemsState = persisedSelectionState?.['selected-items-controller']
-    const navigationSelectionState = persisedSelectionState?.['navigation-controller']
-    const itemUuidsToHydrateFirst = new Array<UuidString>().concat(
-      selectedItemsState?.selectedUuids.concat([navigationSelectionState?.selectedTagUuid]),
-    )
-
     const payloads = SortPayloadsByRecentAndContentPriority(
       unsortedPayloads,
       this.localLoadPriorty,
-      itemUuidsToHydrateFirst,
+      this.launchPriorityUuids,
     )
 
     const itemsKeysPayloads = payloads.filter((payload) => {

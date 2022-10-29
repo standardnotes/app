@@ -1,5 +1,3 @@
-export const MasterStatePersistenceKey = 'master-persistence-key'
-
 export enum PersistenceKey {
   SelectedItemsController = 'selected-items-controller',
   NavigationController = 'navigation-controller',

@@ -1,6 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { ShouldPersistNoteStateKey } from '@/Components/Preferences/Panes/General/Persistence'
-import { ApplicationEvent, InternalEventBus, MasterStatePersistenceKey, PersistedStateValue } from '@standardnotes/snjs'
+import { ApplicationEvent, InternalEventBus } from '@standardnotes/snjs'
+import { PersistedStateValue, StorageKey } from '@standardnotes/ui-services'
 import { CrossControllerEvent } from '../CrossControllerEvent'
 
 export class PersistenceService {
@@ -47,7 +48,7 @@ export class PersistenceService {
       return
     }
 
-    this.application.setValue(MasterStatePersistenceKey, values)
+    this.application.setValue(StorageKey.MasterStatePersistenceKey, values)
   }
 
   clearPersistedValues(): void {
@@ -55,11 +56,11 @@ export class PersistenceService {
       return
     }
 
-    this.application.removeValue(MasterStatePersistenceKey)
+    this.application.removeValue(StorageKey.MasterStatePersistenceKey)
   }
 
   getPersistedValues(): PersistedStateValue {
-    return this.application.getValue(MasterStatePersistenceKey) as PersistedStateValue
+    return this.application.getValue(StorageKey.MasterStatePersistenceKey) as PersistedStateValue
   }
 
   deinit() {

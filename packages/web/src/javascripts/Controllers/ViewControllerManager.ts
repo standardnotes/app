@@ -1,5 +1,12 @@
 import { PaneController } from './PaneController'
-import { storage, StorageKey, ToastService, ToastServiceInterface } from '@standardnotes/ui-services'
+import {
+  PersistedStateValue,
+  PersistenceKey,
+  storage,
+  StorageKey,
+  ToastService,
+  ToastServiceInterface,
+} from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { destroyAllObjectProperties } from '@/Utils'
@@ -12,8 +19,6 @@ import {
   SubscriptionClientInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
-  PersistedStateValue,
-  PersistenceKey,
 } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 import { ActionsMenuController } from './ActionsMenuController'
