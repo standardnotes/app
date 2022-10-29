@@ -159,11 +159,11 @@ export class SNSyncService
   }
 
   private get launchPriorityUuids() {
-    return (this.storageService.getValue('launch-priority-uuids') as string[]) ?? []
+    return (this.storageService.getValue(StorageKey.LaunchPriorityUuids) as string[]) ?? []
   }
 
   public setLaunchPriorityUuids(launchPriorityUuids: string[]) {
-    this.storageService.setValue('launch-priority-uuids', launchPriorityUuids)
+    this.storageService.setValue(StorageKey.LaunchPriorityUuids, launchPriorityUuids)
   }
 
   public override deinit(): void {
