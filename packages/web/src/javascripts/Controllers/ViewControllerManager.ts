@@ -19,7 +19,6 @@ import {
   SubscriptionClientInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
-  UuidString,
 } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 import { ActionsMenuController } from './ActionsMenuController'
@@ -280,9 +279,10 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
 
     const selectedItemsState = values['selected-items-controller']
     const navigationSelectionState = values['navigation-controller']
-    const launchPriorityUuids = new Array<UuidString>().concat(
-      selectedItemsState?.selectedUuids.concat([navigationSelectionState?.selectedTagUuid]),
-    )
+    const launchPriorityUuids = [
+      ...(selectedItemsState?.selectedUuids ?? []),
+      ...[navigationSelectionState?.selectedTagUuid],
+    ]
     this.application.sync.setLaunchPriorityUuids(launchPriorityUuids)
   }
 

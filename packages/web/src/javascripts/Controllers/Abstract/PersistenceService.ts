@@ -21,8 +21,7 @@ export class PersistenceService {
   async onAppEvent(eventName: ApplicationEvent) {
     if (eventName === ApplicationEvent.LocalDataLoaded && !this.didIncrementalLoad) {
       this.hydratePersistedValues()
-    }
-    if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
+    } else if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
       this.didIncrementalLoad = true
       this.hydratePersistedValues()
     }

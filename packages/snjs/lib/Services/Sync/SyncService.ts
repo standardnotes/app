@@ -159,7 +159,7 @@ export class SNSyncService
   }
 
   private get launchPriorityUuids() {
-    return (this.storageService.getValue(StorageKey.LaunchPriorityUuids) as string[]) ?? []
+    return this.storageService.getValue<string[]>(StorageKey.LaunchPriorityUuids) ?? []
   }
 
   public setLaunchPriorityUuids(launchPriorityUuids: string[]) {
