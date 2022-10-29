@@ -174,28 +174,22 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   }, [needsUnlock, launched])
 
   const renderChallenges = useCallback(() => {
-    return (
-      <AndroidBackHandlerProvider application={application}>
-        {challenges.map((challenge) => {
-          return (
-            <div className="sk-modal" key={`${challenge.id}${application.ephemeralIdentifier}`}>
-              <ChallengeModal
-                key={`${challenge.id}${application.ephemeralIdentifier}`}
-                application={application}
-                viewControllerManager={viewControllerManager}
-                mainApplicationGroup={mainApplicationGroup}
-                challenge={challenge}
-                onDismiss={removeChallenge}
-              />
-            </div>
-          )
-        })}
-      </AndroidBackHandlerProvider>
-    )
+    return challenges.map((challenge) => (
+      <div className="sk-modal" key={`${challenge.id}${application.ephemeralIdentifier}`}>
+        <ChallengeModal
+          key={`${challenge.id}${application.ephemeralIdentifier}`}
+          application={application}
+          viewControllerManager={viewControllerManager}
+          mainApplicationGroup={mainApplicationGroup}
+          challenge={challenge}
+          onDismiss={removeChallenge}
+        />
+      </div>
+    ))
   }, [viewControllerManager, challenges, mainApplicationGroup, removeChallenge, application])
 
   if (!renderAppContents) {
-    return renderChallenges()
+    return <AndroidBackHandlerProvider application={application}>{renderChallenges()}</AndroidBackHandlerProvider>
   }
 
   return (
