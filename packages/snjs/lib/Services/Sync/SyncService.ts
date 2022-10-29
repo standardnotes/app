@@ -159,7 +159,6 @@ export class SNSyncService
   }
 
   private get launchPriorityUuids() {
-    console.log(this.storageService.getValue('launch-priority-uuids'))
     return (this.storageService.getValue('launch-priority-uuids') as string[]) ?? []
   }
 
