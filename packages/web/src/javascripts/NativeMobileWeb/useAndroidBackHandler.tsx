@@ -25,7 +25,7 @@ type ProviderProps = {
   application: WebApplication
 } & ChildrenProps
 
-const MemoizedChildren = memo(({ children }: ChildrenProps) => <div>{children}</div>)
+const MemoizedChildren = memo(({ children }: ChildrenProps) => <div className="android-back-handler">{children}</div>)
 
 const AndroidBackHandlerProvider = ({ application, children }: ProviderProps) => {
   const addAndroidBackHandler = useCallback(
