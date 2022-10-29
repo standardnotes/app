@@ -27,17 +27,14 @@ export class PersistenceService {
     }
   }
 
+  get persistenceEnabled() {
+    return this.application.getValue(ShouldPersistNoteStateKey) ?? true
+  }
+
   hydratePersistedValues = () => {
-    let shouldIgnorePersistedValues = this.application.getValue(ShouldPersistNoteStateKey)
-
-    if (typeof shouldIgnorePersistedValues === 'undefined') {
-      this.application.setValue(ShouldPersistNoteStateKey, true)
-      shouldIgnorePersistedValues = true
-    }
-
     this.eventBus.publish({
       type: CrossControllerEvent.HydrateFromPersistedValues,
-      payload: shouldIgnorePersistedValues ? this.getPersistedValues() : undefined,
+      payload: this.persistenceEnabled ? this.getPersistedValues() : undefined,
     })
   }
 
@@ -46,14 +43,7 @@ export class PersistenceService {
       return
     }
 
-    let shouldPersistState = this.application.getValue(ShouldPersistNoteStateKey)
-
-    if (typeof shouldPersistState === 'undefined') {
-      this.application.setValue(ShouldPersistNoteStateKey, true)
-      shouldPersistState = true
-    }
-
-    if (!shouldPersistState) {
+    if (!this.persistenceEnabled) {
       return
     }
 
@@ -65,7 +55,7 @@ export class PersistenceService {
       return
     }
 
-    this.application.setValue(MasterStatePersistenceKey, undefined)
+    this.application.removeValue(MasterStatePersistenceKey)
   }
 
   getPersistedValues(): PersistedStateValue {

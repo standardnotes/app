@@ -10,7 +10,7 @@ import { FullyFormedPayloadInterface } from '@standardnotes/models'
 export function SortPayloadsByRecentAndContentPriority(
   payloads: FullyFormedPayloadInterface[],
   priorityList: ContentType[],
-  itemUuidsToHydrateFirst: UuidString[],
+  itemUuidsToPrioritize: UuidString[],
 ): FullyFormedPayloadInterface[] {
   return payloads.sort((a, b) => {
     const dateResult = new Date(b.serverUpdatedAt).getTime() - new Date(a.serverUpdatedAt).getTime()
@@ -32,17 +32,17 @@ export function SortPayloadsByRecentAndContentPriority(
       }
     }
 
-    if (itemUuidsToHydrateFirst.length) {
-      aPriority = itemUuidsToHydrateFirst.indexOf(a.uuid)
-      bPriority = itemUuidsToHydrateFirst.indexOf(b.uuid)
+    if (itemUuidsToPrioritize.length) {
+      aPriority = itemUuidsToPrioritize.indexOf(a.uuid)
+      bPriority = itemUuidsToPrioritize.indexOf(b.uuid)
 
       if (aPriority === -1) {
         /** Not found in list, not prioritized. Set it to max value */
-        aPriority = itemUuidsToHydrateFirst.length
+        aPriority = itemUuidsToPrioritize.length
       }
       if (bPriority === -1) {
         /** Not found in list, not prioritized. Set it to max value */
-        bPriority = itemUuidsToHydrateFirst.length
+        bPriority = itemUuidsToPrioritize.length
       }
     }
 
