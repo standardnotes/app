@@ -1,18 +1,15 @@
 import {
-  PersistedStateValue,
   RootQueryParam,
   RouteParserInterface,
   RouteServiceInterface,
   RouteType,
   ToastServiceInterface,
-  StorageKey,
 } from '@standardnotes/ui-services'
 import {
   ApplicationEvent,
   SessionsClientInterface,
   SubscriptionClientInterface,
   SyncClientInterface,
-  UuidString,
 } from '@standardnotes/snjs'
 import { ToastType } from '@standardnotes/toast'
 
@@ -94,18 +91,6 @@ export class ApplicationEventObserver implements EventObserverInterface {
       case ApplicationEvent.SyncStatusChanged:
         this.syncStatusController.update(this.syncClient.getSyncStatus())
         break
-      case ApplicationEvent.StorageReady: {
-        const persisedSelectionState = this.application.getValue(
-          StorageKey.MasterStatePersistenceKey,
-        ) as PersistedStateValue
-        const selectedItemsState = persisedSelectionState?.['selected-items-controller']
-        const navigationSelectionState = persisedSelectionState?.['navigation-controller']
-        const launchPriorityUuids = new Array<UuidString>().concat(
-          selectedItemsState?.selectedUuids.concat([navigationSelectionState?.selectedTagUuid]),
-        )
-        this.syncClient.setLaunchPriorityUuids(launchPriorityUuids)
-        break
-      }
       case ApplicationEvent.LocalDataLoaded:
         if (this.application.isNativeMobileWeb()) {
           this.application.handleInitialMobileScreenshotPrivacy()

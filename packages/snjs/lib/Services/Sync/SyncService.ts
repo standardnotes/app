@@ -125,8 +125,6 @@ export class SNSyncService
   public lastSyncInvokationPromise?: Promise<unknown>
   public currentSyncRequestPromise?: Promise<void>
 
-  /** Items for these uuids are loaded first */
-  private launchPriorityUuids: string[] = []
   /** Content types appearing first are always mapped first */
   private readonly localLoadPriorty = [
     ContentType.ItemsKey,
@@ -160,8 +158,13 @@ export class SNSyncService
     }
   }
 
+  private get launchPriorityUuids() {
+    console.log(this.storageService.getValue('launch-priority-uuids'))
+    return (this.storageService.getValue('launch-priority-uuids') as string[]) ?? []
+  }
+
   public setLaunchPriorityUuids(launchPriorityUuids: string[]) {
-    this.launchPriorityUuids = launchPriorityUuids
+    this.storageService.setValue('launch-priority-uuids', launchPriorityUuids)
   }
 
   public override deinit(): void {
