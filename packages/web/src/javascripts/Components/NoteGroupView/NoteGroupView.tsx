@@ -1,5 +1,5 @@
 import { FileItem, FileViewController, NoteViewController } from '@standardnotes/snjs'
-import { PureComponent } from '@/Components/Abstract/PureComponent'
+import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import { WebApplication } from '@/Application/Application'
 import MultipleSelectedNotes from '@/Components/MultipleSelectedNotes/MultipleSelectedNotes'
 import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFiles'
@@ -22,7 +22,7 @@ type Props = {
   application: WebApplication
 }
 
-class NoteGroupView extends PureComponent<Props, State> {
+class NoteGroupView extends AbstractComponent<Props, State> {
   private removeChangeObserver!: () => void
 
   constructor(props: Props) {

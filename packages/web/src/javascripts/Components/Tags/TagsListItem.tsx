@@ -28,6 +28,7 @@ import { mergeRefs } from '@/Hooks/mergeRefs'
 import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { TagListSectionType } from './TagListSection'
+import { log, LoggingDomain } from '@/Logging'
 
 type Props = {
   tag: SNTag
@@ -236,6 +237,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         }
       }
     }, [addDragTarget, linkingController, removeDragTarget, tag])
+
+    log(LoggingDomain.NavigationList, 'Rendering TagsListItem')
 
     return (
       <>

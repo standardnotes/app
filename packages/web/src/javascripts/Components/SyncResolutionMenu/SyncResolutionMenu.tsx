@@ -1,12 +1,12 @@
 import { WebApplication } from '@/Application/Application'
-import { PureComponent } from '@/Components/Abstract/PureComponent'
+import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 
 type Props = {
   application: WebApplication
   close: () => void
 }
 
-class SyncResolutionMenu extends PureComponent<Props> {
+class SyncResolutionMenu extends AbstractComponent<Props> {
   constructor(props: Props) {
     super(props, props.application)
   }

@@ -40,6 +40,7 @@ const ContentList: FunctionComponent<Props> = ({
   const { selectPreviousItem, selectNextItem } = selectionController
   const { hideTags, hideDate, hideNotePreview, hideEditorIcon } = itemListController.webDisplayOptions
   const { sortBy } = itemListController.displayOptions
+  const selectedTag = navigationController.selected
 
   const onScroll: UIEventHandler = useCallback(
     (e) => {
@@ -72,25 +73,27 @@ const ContentList: FunctionComponent<Props> = ({
     [selectionController],
   )
 
-  const getTagsForItem = (item: ListableContentItem) => {
-    if (hideTags) {
-      return []
-    }
+  const getTagsForItem = useCallback(
+    (item: ListableContentItem) => {
+      if (hideTags) {
+        return []
+      }
 
-    const selectedTag = navigationController.selected
-    if (!selectedTag) {
-      return []
-    }
+      if (!selectedTag) {
+        return []
+      }
 
-    const tags = application.getItemTags(item)
+      const tags = application.getItemTags(item)
 
-    const isNavigatingOnlyTag = selectedTag instanceof SNTag && tags.length === 1
-    if (isNavigatingOnlyTag) {
-      return []
-    }
+      const isNavigatingOnlyTag = selectedTag instanceof SNTag && tags.length === 1
+      if (isNavigatingOnlyTag) {
+        return []
+      }
 
-    return tags
-  }
+      return tags
+    },
+    [hideTags, selectedTag, application],
+  )
 
   return (
     <div

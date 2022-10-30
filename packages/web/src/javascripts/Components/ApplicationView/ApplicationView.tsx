@@ -4,7 +4,7 @@ import { ApplicationEvent, Challenge, removeFromArray, WebAppEvent } from '@stan
 import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
 import { alertDialog, RouteType } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
-import Navigation from '@/Components/Navigation/Navigation'
+import Navigation from '@/Components/Tags/Navigation'
 import NoteGroupView from '@/Components/NoteGroupView/NoteGroupView'
 import Footer from '@/Components/Footer/Footer'
 import SessionsModal from '@/Components/SessionsModal/SessionsModal'

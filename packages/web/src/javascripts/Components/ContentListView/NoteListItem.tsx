@@ -13,6 +13,7 @@ import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useContextMenuEvent } from '@/Hooks/useContextMenuEvent'
 import ListItemNotePreviewText from './ListItemNotePreviewText'
 import { ListItemTitle } from './ListItemTitle'
+import { log, LoggingDomain } from '@/Logging'
 
 const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   application,
@@ -69,6 +70,8 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   }, [item, onSelect, toggleAppPane])
 
   useContextMenuEvent(listItemRef, openContextMenu)
+
+  log(LoggingDomain.ItemsList, 'Rendering note list item', item.title)
 
   return (
     <div
