@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.90.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.4...@standardnotes/web@3.90.5) (2022-10-30)
+
+### Performance Improvements
+
+* avoid uneccessary notes list item rerenders ([#1904](https://github.com/standardnotes/app/issues/1904)) ([89927a3](https://github.com/standardnotes/app/commit/89927a37908fc9e84b981f1cba7c9abd37039c8b))
+
 ## [3.90.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.3...@standardnotes/web@3.90.4) (2022-10-29)
 
 ### Bug Fixes
