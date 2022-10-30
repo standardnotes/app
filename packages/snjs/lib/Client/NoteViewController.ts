@@ -1,3 +1,4 @@
+import { InfoStrings } from '../Strings/Info'
 import { NoteType } from '@standardnotes/features'
 import {
   NoteMutator,
@@ -11,20 +12,21 @@ import { removeFromArray } from '@standardnotes/utils'
 import { ContentType } from '@standardnotes/common'
 import { UuidString } from '@Lib/Types/UuidString'
 import { SNApplication } from '../Application/Application'
-import {
-  STRING_SAVING_WHILE_DOCUMENT_HIDDEN,
-  STRING_INVALID_NOTE,
-  NOTE_PREVIEW_CHAR_LIMIT,
-  STRING_ELLIPSES,
-  SAVE_TIMEOUT_NO_DEBOUNCE,
-  SAVE_TIMEOUT_DEBOUNCE,
-} from './Types'
 import { ItemViewControllerInterface } from './ItemViewControllerInterface'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
 
 export type EditorValues = {
   title: string
   text: string
+}
+
+const StringEllipses = '...'
+const NotePreviewCharLimit = 160
+
+const SaveTimeoutDebounc = {
+  Desktop: 350,
+  ImmediateChange: 100,
+  NativeMobileWeb: 700,
 }
 
 export class NoteViewController implements ItemViewControllerInterface {
@@ -182,7 +184,7 @@ export class NoteViewController implements ItemViewControllerInterface {
     const isTemplate = this.isTemplateNote
 
     if (typeof document !== 'undefined' && document.hidden) {
-      void this.application.alertService.alert(STRING_SAVING_WHILE_DOCUMENT_HIDDEN)
+      void this.application.alertService.alert(InfoStrings.SavingWhileDocumentHidden)
       return
     }
 
@@ -191,7 +193,7 @@ export class NoteViewController implements ItemViewControllerInterface {
     }
 
     if (!this.application.items.findItem(this.item.uuid)) {
-      void this.application.alertService.alert(STRING_INVALID_NOTE)
+      void this.application.alertService.alert(InfoStrings.InvalidNote)
       return
     }
 
@@ -207,9 +209,9 @@ export class NoteViewController implements ItemViewControllerInterface {
 
         if (!dto.dontUpdatePreviews) {
           const noteText = text || ''
-          const truncate = noteText.length > NOTE_PREVIEW_CHAR_LIMIT
-          const substring = noteText.substring(0, NOTE_PREVIEW_CHAR_LIMIT)
-          const previewPlain = substring + (truncate ? STRING_ELLIPSES : '')
+          const truncate = noteText.length > NotePreviewCharLimit
+          const substring = noteText.substring(0, NotePreviewCharLimit)
+          const previewPlain = substring + (truncate ? StringEllipses : '')
 
           // eslint-disable-next-line camelcase
           noteMutator.preview_plain = previewPlain
@@ -225,7 +227,13 @@ export class NoteViewController implements ItemViewControllerInterface {
     }
 
     const noDebounce = dto.bypassDebouncer || this.application.noAccount()
-    const syncDebouceMs = noDebounce ? SAVE_TIMEOUT_NO_DEBOUNCE : SAVE_TIMEOUT_DEBOUNCE
+
+    const syncDebouceMs = noDebounce
+      ? SaveTimeoutDebounc.ImmediateChange
+      : this.application.isNativeMobileWeb()
+      ? SaveTimeoutDebounc.NativeMobileWeb
+      : SaveTimeoutDebounc.Desktop
+
     this.saveTimeout = setTimeout(() => {
       void this.application.sync.sync()
     }, syncDebouceMs)
