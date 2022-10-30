@@ -1,49 +1,50 @@
-import { ChangeEventHandler, createRef, KeyboardEventHandler, RefObject } from 'react'
+import { AbstractComponent } from '@/Components/Abstract/PureComponent'
+import ChangeEditorButton from '@/Components/ChangeEditor/ChangeEditorButton'
+import ComponentView from '@/Components/ComponentView/ComponentView'
+import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
+import PanelResizer, { PanelResizeType, PanelSide } from '@/Components/PanelResizer/PanelResizer'
+import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
+import ProtectedItemOverlay from '@/Components/ProtectedItemOverlay/ProtectedItemOverlay'
+import { ElementIds } from '@/Constants/ElementIDs'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
+import { StringDeleteNote, STRING_DELETE_LOCKED_ATTEMPT, STRING_DELETE_PLACEHOLDER_ATTEMPT } from '@/Constants/Strings'
+import { log, LoggingDomain } from '@/Logging'
+import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 import {
   ApplicationEvent,
-  isPayloadSourceRetrieved,
-  isPayloadSourceInternalChange,
-  ContentType,
-  SNComponent,
-  SNNote,
   ComponentArea,
-  PrefKey,
   ComponentViewerInterface,
-  ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
+  ContentType,
+  EditorFontSize,
+  EditorLineHeight,
+  isPayloadSourceInternalChange,
+  isPayloadSourceRetrieved,
+  NoteType,
   NoteViewController,
   PayloadEmitSource,
+  PrefKey,
+  ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
+  SNComponent,
+  SNNote,
   WebAppEvent,
-  EditorLineHeight,
-  EditorFontSize,
-  NoteType,
 } from '@standardnotes/snjs'
-import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
+import { confirmDialog, KeyboardKey, KeyboardModifier } from '@standardnotes/ui-services'
+import { ChangeEventHandler, createRef, KeyboardEventHandler, RefObject } from 'react'
 import { EditorEventSource } from '../../Types/EditorEventSource'
-import { confirmDialog, KeyboardModifier, KeyboardKey } from '@standardnotes/ui-services'
-import { STRING_DELETE_PLACEHOLDER_ATTEMPT, STRING_DELETE_LOCKED_ATTEMPT, StringDeleteNote } from '@/Constants/Strings'
-import { PureComponent } from '@/Components/Abstract/PureComponent'
-import ProtectedItemOverlay from '@/Components/ProtectedItemOverlay/ProtectedItemOverlay'
-import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
-import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
-import ComponentView from '@/Components/ComponentView/ComponentView'
-import PanelResizer, { PanelSide, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
-import { ElementIds } from '@/Constants/ElementIDs'
-import ChangeEditorButton from '@/Components/ChangeEditor/ChangeEditorButton'
+import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
+import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
+import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
+import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 import EditingDisabledBanner from './EditingDisabledBanner'
+import { reloadFont } from './FontFunctions'
+import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
+import NoteViewFileDropTarget from './NoteViewFileDropTarget'
+import { NoteViewProps } from './NoteViewProps'
 import {
   transactionForAssociateComponentWithCurrentNote,
   transactionForDisassociateComponentWithCurrentNote,
 } from './TransactionFunctions'
-import { reloadFont } from './FontFunctions'
-import { NoteViewProps } from './NoteViewProps'
-import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
-import { classNames } from '@/Utils/ConcatenateClassNames'
-import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
-import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
-import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
-import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
-import NoteViewFileDropTarget from './NoteViewFileDropTarget'
 
 const MinimumStatusDuration = 400
 const TextareaDebounce = 100
@@ -98,7 +99,7 @@ const PlaintextFontSizeMapping: Record<EditorFontSize, string> = {
   Large: 'text-xl',
 }
 
-class NoteView extends PureComponent<NoteViewProps, State> {
+class NoteView extends AbstractComponent<NoteViewProps, State> {
   readonly controller!: NoteViewController
 
   private statusTimeout?: NodeJS.Timeout
@@ -193,7 +194,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     ;(this.onPanelResizeFinish as unknown) = undefined
     ;(this.stackComponentExpanded as unknown) = undefined
     ;(this.toggleStackComponent as unknown) = undefined
-    ;(this.onSystemEditorLoad as unknown) = undefined
+    ;(this.onSystemEditorRef as unknown) = undefined
     ;(this.debounceReloadEditorComponent as unknown) = undefined
     ;(this.textAreaChangeDebounceSave as unknown) = undefined
     ;(this.editorContentRef as unknown) = undefined
@@ -205,6 +206,24 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
   get note() {
     return this.controller.item
+  }
+
+  override shouldComponentUpdate(_nextProps: Readonly<NoteViewProps>, nextState: Readonly<State>): boolean {
+    const complexObjects: (keyof State)[] = ['availableStackComponents', 'stackComponentViewers']
+    for (const key of Object.keys(nextState) as (keyof State)[]) {
+      if (complexObjects.includes(key)) {
+        continue
+      }
+      const prevValue = this.state[key]
+      const nextValue = nextState[key]
+
+      if (prevValue !== nextValue) {
+        log(LoggingDomain.NoteView, 'Rendering due to state change', key, prevValue, nextValue)
+        return true
+      }
+    }
+
+    return false
   }
 
   override componentDidMount(): void {
@@ -253,6 +272,8 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   onNoteInnerChange(note: SNNote, source: PayloadEmitSource): void {
+    log(LoggingDomain.NoteView, 'On inner note change', PayloadEmitSource[source])
+
     if (note.uuid !== this.note.uuid) {
       throw Error('Editor received changes for non-current note')
     }
@@ -431,12 +452,15 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
   streamItems() {
     this.removeComponentStreamObserver = this.application.streamItems(ContentType.Component, async ({ source }) => {
+      log(LoggingDomain.NoteView, 'On component stream observer', PayloadEmitSource[source])
       if (isPayloadSourceInternalChange(source) || source === PayloadEmitSource.InitialObserverRegistrationPush) {
         return
       }
+
       if (!this.note) {
         return
       }
+
       await this.reloadStackComponents()
       this.debounceReloadEditorComponent()
     })
@@ -454,6 +478,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     if (this.state.editorComponentViewerDidAlreadyReload && !force) {
       return
     }
+
     const component = viewer.component
     this.application.componentManager.destroyComponentViewer(viewer)
     this.setState(
@@ -489,6 +514,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   async reloadEditorComponent() {
+    log(LoggingDomain.NoteView, 'Reload editor component')
     if (this.state.showProtectedWarning) {
       this.destroyCurrentEditorComponent()
       return
@@ -581,13 +607,16 @@ class NoteView extends PureComponent<NoteViewProps, State> {
 
   onTextAreaChange: ChangeEventHandler<HTMLTextAreaElement> = ({ currentTarget }) => {
     const text = currentTarget.value
+
     this.setState({
       editorText: text,
     })
+
     this.textAreaChangeDebounceSave()
   }
 
   textAreaChangeDebounceSave = () => {
+    log(LoggingDomain.NoteView, 'Performing save after debounce')
     this.controller
       .save({
         editorValues: {
@@ -609,10 +638,14 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   onTitleChange: ChangeEventHandler<HTMLInputElement> = ({ currentTarget }) => {
+    log(LoggingDomain.NoteView, 'Performing save after title change')
+
     const title = currentTarget.value
+
     this.setState({
       editorTitle: title,
     })
+
     this.controller
       .save({
         editorValues: {
@@ -662,10 +695,12 @@ class NoteView extends PureComponent<NoteViewProps, State> {
       this.application.alertService.alert(STRING_DELETE_PLACEHOLDER_ATTEMPT).catch(console.error)
       return
     }
+
     if (this.note.locked) {
       this.application.alertService.alert(STRING_DELETE_LOCKED_ATTEMPT).catch(console.error)
       return
     }
+
     const title = this.note.title.length ? `'${this.note.title}'` : 'this note'
     const text = StringDeleteNote(title, permanently)
     if (
@@ -727,6 +762,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
   }
 
   async reloadPreferences() {
+    log(LoggingDomain.NoteView, 'Reload preferences')
     const monospaceFont = this.application.getPreference(
       PrefKey.EditorMonospaceEnabled,
       PrefDefaults[PrefKey.EditorMonospaceEnabled],
@@ -776,9 +812,8 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     }
   }
 
-  /** @components */
-
   async reloadStackComponents() {
+    log(LoggingDomain.NoteView, 'Reload stack components')
     const stackComponents = sortAlphabetically(
       this.application.componentManager
         .componentsForArea(ComponentArea.EditorStack)
@@ -844,10 +879,13 @@ class NoteView extends PureComponent<NoteViewProps, State> {
     })
   }
 
-  onSystemEditorLoad = (ref: HTMLTextAreaElement | null) => {
+  onSystemEditorRef = (ref: HTMLTextAreaElement | null) => {
     if (this.removeTabObserver || !ref) {
       return
     }
+
+    log(LoggingDomain.NoteView, 'On system editor ref')
+
     /**
      * Insert 4 spaces when a tab key is pressed,
      * only used when inside of the text editor.
@@ -1070,7 +1108,7 @@ class NoteView extends PureComponent<NoteViewProps, State> {
               onFocus={this.onContentFocus}
               onBlur={this.onContentBlur}
               readOnly={this.state.noteLocked}
-              ref={(ref) => ref && this.onSystemEditorLoad(ref)}
+              ref={(ref) => ref && this.onSystemEditorRef(ref)}
               spellCheck={this.state.spellcheck}
               value={this.state.editorText}
               className={classNames(
