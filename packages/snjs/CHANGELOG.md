@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.145.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.145.1...@standardnotes/snjs@2.145.2) (2022-10-30)
+
+### Bug Fixes
+
+* **mobile:** increase save debounce timeout ([35e2fa9](https://github.com/standardnotes/app/commit/35e2fa9eb6df44beb7717ce38209ee4944286355))
+
 ## [2.145.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.145.0...@standardnotes/snjs@2.145.1) (2022-10-28)
 
 ### Bug Fixes
