@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.90.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.7...@standardnotes/web@3.90.8) (2022-10-31)
+
+### Bug Fixes
+
+* **web:** support for older browsers like Safari 11 on iOS 13.7 ([fef1bdf](https://github.com/standardnotes/app/commit/fef1bdf7999df8e08240336fbdc94d9e98c167a7))
+
 ## [3.90.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.6...@standardnotes/web@3.90.7) (2022-10-31)
 
 **Note:** Version bump only for package @standardnotes/web

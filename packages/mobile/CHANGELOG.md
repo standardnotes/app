@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.45.10](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.9...@standardnotes/mobile@3.45.10) (2022-10-31)
+
+### Bug Fixes
+
+* **mobile:** decrease iOS deployment target to 13 ([8b25c01](https://github.com/standardnotes/app/commit/8b25c01551ffde67a41d87ae79fd21d46a10eff3))
+* **mobile:** increase iOS deployment target to 14 ([50182fa](https://github.com/standardnotes/app/commit/50182fad4ff635fe1c54c8880fb82ef3f3c9c434))
+
 ## [3.45.9](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.8...@standardnotes/mobile@3.45.9) (2022-10-31)
 
 **Note:** Version bump only for package @standardnotes/mobile
