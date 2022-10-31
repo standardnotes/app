@@ -15,7 +15,6 @@ buildscript {
         google()
         mavenLocal()
         mavenCentral()
-        jcenter()
     }
     dependencies {
         classpath('com.android.tools.build:gradle:7.1.2')
@@ -45,7 +44,6 @@ allprojects {
             }
         }
         google()
-        jcenter()
         maven {
             // All of Detox' artifacts are provided via the npm module
             url "$rootDir/../node_modules/detox/Detox-android"
