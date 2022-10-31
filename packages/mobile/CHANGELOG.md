@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.45.11](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.10...@standardnotes/mobile@3.45.11) (2022-10-31)
+
+### Bug Fixes
+
+* **mobile:** bump minimum android sdk to 28 (9.0) ([50b0db3](https://github.com/standardnotes/app/commit/50b0db3baa4f27de3e7c13bbb59d9e33a360d949))
+
 ## [3.45.10](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.9...@standardnotes/mobile@3.45.10) (2022-10-31)
 
 ### Bug Fixes
