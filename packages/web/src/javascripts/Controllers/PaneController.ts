@@ -21,11 +21,21 @@ export class PaneController {
       setIsInMobileView: action,
     })
 
-    window.matchMedia(MediaQueryBreakpoints.md).addEventListener('change', this.mediumScreenMQHandler)
+    const mediaQuery = window.matchMedia(MediaQueryBreakpoints.md)
+    if (mediaQuery?.addEventListener != undefined) {
+      mediaQuery.addEventListener('change', this.mediumScreenMQHandler)
+    } else {
+      mediaQuery.addListener(this.mediumScreenMQHandler)
+    }
   }
 
   deinit() {
-    window.matchMedia(MediaQueryBreakpoints.md).removeEventListener('change', this.mediumScreenMQHandler)
+    const mq = window.matchMedia(MediaQueryBreakpoints.md)
+    if (mq?.removeEventListener != undefined) {
+      mq.removeEventListener('change', this.mediumScreenMQHandler)
+    } else {
+      mq.removeListener(this.mediumScreenMQHandler)
+    }
   }
 
   mediumScreenMQHandler = (event: MediaQueryListEvent) => {

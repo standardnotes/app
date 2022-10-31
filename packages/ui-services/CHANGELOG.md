@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.10.7](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.10.6...@standardnotes/ui-services@1.10.7) (2022-10-31)
+
+### Bug Fixes
+
+* **web:** support for older browsers like Safari 11 on iOS 13.7 ([fef1bdf](https://github.com/standardnotes/app/commit/fef1bdf7999df8e08240336fbdc94d9e98c167a7))
+
 ## [1.10.6](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.10.5...@standardnotes/ui-services@1.10.6) (2022-10-28)
 
 ### Bug Fixes

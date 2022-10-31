@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.45.11](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.10...@standardnotes/mobile@3.45.11) (2022-10-31)
+
+### Bug Fixes
+
+* **mobile:** bump minimum android sdk to 28 (9.0) ([50b0db3](https://github.com/standardnotes/app/commit/50b0db3baa4f27de3e7c13bbb59d9e33a360d949))
+
+## [3.45.10](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.9...@standardnotes/mobile@3.45.10) (2022-10-31)
+
+### Bug Fixes
+
+* **mobile:** decrease iOS deployment target to 13 ([8b25c01](https://github.com/standardnotes/app/commit/8b25c01551ffde67a41d87ae79fd21d46a10eff3))
+* **mobile:** increase iOS deployment target to 14 ([50182fa](https://github.com/standardnotes/app/commit/50182fad4ff635fe1c54c8880fb82ef3f3c9c434))
+
+## [3.45.9](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.8...@standardnotes/mobile@3.45.9) (2022-10-31)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.45.8](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.7...@standardnotes/mobile@3.45.8) (2022-10-31)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
 ## [3.45.7](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.6...@standardnotes/mobile@3.45.7) (2022-10-30)
 
 **Note:** Version bump only for package @standardnotes/mobile
