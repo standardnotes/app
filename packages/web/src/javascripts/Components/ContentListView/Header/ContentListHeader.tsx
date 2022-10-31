@@ -8,6 +8,7 @@ import { NavigationMenuButton } from '@/Components/NavigationMenu/NavigationMenu
 import { IconType, isTag } from '@standardnotes/snjs'
 import RoundIconButton from '@/Components/Button/RoundIconButton'
 import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
+import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type Props = {
   application: WebApplication
@@ -34,6 +35,10 @@ const ContentListHeader = ({
   const displayOptionsButtonRef = useRef<HTMLButtonElement>(null)
   const isDailyEntry = isTag(selectedTag) && selectedTag.isDailyEntry
 
+  const matchesMd = useMediaQuery(MediaQueryBreakpoints.md)
+  const isTouchScreen = !useMediaQuery(MediaQueryBreakpoints.pointerFine)
+  const isTablet = matchesMd && isTouchScreen
+
   const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false)
 
   const toggleDisplayOptionsMenu = useCallback(() => {
@@ -41,7 +46,7 @@ const ContentListHeader = ({
   }, [])
 
   const OptionsMenu = useMemo(() => {
-    return () => (
+    return (
       <div className="flex">
         <div className="relative" ref={displayOptionsContainerRef}>
           <RoundIconButton
@@ -79,7 +84,7 @@ const ContentListHeader = ({
   ])
 
   const AddButton = useMemo(() => {
-    return () => (
+    return (
       <button
         className={classNames(
           'absolute bottom-6 right-6 z-editor-title-bar ml-3 flex h-15 w-15 cursor-pointer items-center',
@@ -98,7 +103,7 @@ const ContentListHeader = ({
   }, [addButtonLabel, addNewItem, isDailyEntry])
 
   const FolderName = useMemo(() => {
-    return () => (
+    return (
       <div className="flex min-w-0 flex-grow flex-col break-words pt-1 lg:pt-0">
         <div className={`flex min-w-0 flex-grow flex-row ${!optionsSubtitle ? 'items-center' : ''}`}>
           {icon && (
@@ -120,37 +125,37 @@ const ContentListHeader = ({
   }, [selectedTag, optionsSubtitle, icon, panelTitle])
 
   const PhoneAndDesktopLayout = useMemo(() => {
-    return () => (
-      <div className={'flex w-full justify-between md:flex pointer-coarse:md-only:hidden'}>
+    return (
+      <div className={'flex w-full justify-between md:flex'}>
         <NavigationMenuButton />
-        <FolderName />
+        {FolderName}
         <div className="flex">
-          <OptionsMenu />
-          <AddButton />
+          {OptionsMenu}
+          {AddButton}
         </div>
       </div>
     )
   }, [OptionsMenu, AddButton, FolderName])
 
   const TabletLayout = useMemo(() => {
-    return () => (
-      <div className={'hidden w-full flex-col pointer-coarse:md-only:flex'}>
+    return (
+      <div className={'w-full flex-col'}>
         <div className="mb-2 flex justify-between">
           <NavigationMenuButton />
           <div className="flex">
-            <OptionsMenu />
-            <AddButton />
+            {OptionsMenu}
+            {AddButton}
           </div>
         </div>
-        <FolderName />
+        {FolderName}
       </div>
     )
   }, [OptionsMenu, AddButton, FolderName])
 
   return (
     <div className="section-title-bar-header items-start gap-1 overflow-hidden">
-      <PhoneAndDesktopLayout />
-      <TabletLayout />
+      {!isTablet && PhoneAndDesktopLayout}
+      {isTablet && TabletLayout}
     </div>
   )
 }
