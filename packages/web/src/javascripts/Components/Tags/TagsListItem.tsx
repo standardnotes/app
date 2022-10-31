@@ -245,7 +245,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         <div
           role="button"
           tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-          className={classNames('tag py-2 px-3.5 md:py-1', isSelected && 'selected', readyToDrop && 'is-drag-over')}
+          className={classNames('tag py- px-3.5 md:py-1', isSelected && 'selected', readyToDrop && 'is-drag-over')}
           onClick={selectCurrentTag}
           ref={mergeRefs([dragRef, tagRef])}
           style={{
@@ -307,7 +307,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               >
                 <Icon type="more" className="text-neutral" />
               </a>
-              <div className="text-base lg:text-sm count">{noteCounts.get()}</div>
+              <div className="count text-base lg:text-sm">{noteCounts.get()}</div>
             </div>
           </div>
 

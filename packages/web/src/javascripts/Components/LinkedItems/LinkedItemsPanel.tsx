@@ -326,7 +326,7 @@ const LinkedItemsPanel = ({
                     onChange={handleFileInputChange}
                   />
                   <button
-                    className="flex w-full cursor-pointer items-center gap-3 bg-transparent px-3 py-2 text-left text-sm text-text hover:bg-info-backdrop hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+                    className="flex w-full cursor-pointer items-center gap-3 bg-transparent px-3 py-2 text-left text-base md:text-sm text-text hover:bg-info-backdrop hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
                     onClick={selectAndUploadFiles}
                   >
                     <Icon type="add" />

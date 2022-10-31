@@ -93,10 +93,10 @@ $content-horizontal-padding: 16px;
       }
 
       > .title {
-        line-height: 20px;
+        min-height: 26px;
 
         @media screen and (min-width: 768px) {
-          line-height: 18px;
+          min-height: 22px;
         }
 
         width: 80%;

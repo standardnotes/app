@@ -108,7 +108,19 @@ const getPlaintextFontSize = (key: EditorFontSize): string => {
     Large: 'text-xl2',
   }
 
-  return isMobileScreen() || isTabletScreen() ? mobileMapping[key] : desktopMapping[key]
+  const tabletMapping: Record<EditorFontSize, string> = {
+    ExtraSmall: 'text-sm',
+    Small: 'text-editor',
+    Normal: 'text-base',
+    Medium: 'text-xl',
+    Large: 'text-xl2',
+  }
+
+  if (isTabletScreen) {
+    return tabletMapping[key]
+  }
+
+  return isMobileScreen() ? mobileMapping[key] : desktopMapping[key]
 }
 
 class NoteView extends AbstractComponent<NoteViewProps, State> {

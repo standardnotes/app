@@ -92,7 +92,7 @@ const LinkedItemBubble = ({
   return (
     <button
       ref={ref}
-      className="group flex h-6 cursor-pointer items-center rounded border-0 bg-passive-4-opacity-variant py-2 pl-1 pr-2 text-xs text-text hover:bg-contrast focus:bg-contrast"
+      className="group flex h-6 cursor-pointer items-center rounded border-0 bg-passive-4-opacity-variant py-2 pl-1 pr-2 text-sm lg:text-xs text-text hover:bg-contrast focus:bg-contrast"
       onFocus={handleFocus}
       onBlur={onBlur}
       onClick={onClick}
