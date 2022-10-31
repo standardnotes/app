@@ -78,7 +78,7 @@ const PositionedPopoverContent = ({
         <div className="md:hidden">
           <div className="flex items-center justify-end px-3 pt-2">
             <button className="rounded-full border border-border p-1" onClick={togglePopover}>
-              <Icon type="close" className="h-4 w-4" />
+              <Icon type="close" className="h-6 w-6" />
             </button>
           </div>
           <HorizontalSeparator classes="my-2" />

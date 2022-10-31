@@ -206,9 +206,9 @@ const NewNotePreferences: FunctionComponent<Props> = ({
 
   return (
     <div className="my-1 px-3 pb-2 pt-1">
-      <div className="text-xs font-semibold uppercase text-text">New Note Defaults</div>
+      <div className="text-base font-semibold uppercase text-text lg:text-xs">New Note Defaults</div>
       <div>
-        <div className="mt-3">Note Type</div>
+        <div className="mt-3 text-mobile-menu-item md:text-menu-item">Note Type</div>
         <div className="mt-2">
           <Dropdown
             portal={false}
@@ -223,7 +223,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         </div>
       </div>
       <div>
-        <div className="mt-3">Title Format</div>
+        <div className="mt-3 text-mobile-menu-item md:text-menu-item">Title Format</div>
         <div className="mt-2">
           <Dropdown
             portal={false}

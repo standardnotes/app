@@ -9,7 +9,7 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { StringDeleteNote, STRING_DELETE_LOCKED_ATTEMPT, STRING_DELETE_PLACEHOLDER_ATTEMPT } from '@/Constants/Strings'
 import { log, LoggingDomain } from '@/Logging'
-import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
+import { debounce, isDesktopApplication, isMobileScreen, isTabletScreen } from '@/Utils'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import {
   ApplicationEvent,
@@ -91,12 +91,24 @@ type State = {
   noteType?: NoteType
 }
 
-const PlaintextFontSizeMapping: Record<EditorFontSize, string> = {
-  ExtraSmall: 'text-xs',
-  Small: 'text-sm',
-  Normal: 'text-editor',
-  Medium: 'text-lg',
-  Large: 'text-xl',
+const getPlaintextFontSize = (key: EditorFontSize): string => {
+  const desktopMapping: Record<EditorFontSize, string> = {
+    ExtraSmall: 'text-xs',
+    Small: 'text-sm',
+    Normal: 'text-editor',
+    Medium: 'text-lg',
+    Large: 'text-xl',
+  }
+
+  const mobileMapping: Record<EditorFontSize, string> = {
+    ExtraSmall: 'text-sm',
+    Small: 'text-editor',
+    Normal: 'text-lg',
+    Medium: 'text-xl',
+    Large: 'text-xl2',
+  }
+
+  return isMobileScreen() || isTabletScreen() ? mobileMapping[key] : desktopMapping[key]
 }
 
 class NoteView extends AbstractComponent<NoteViewProps, State> {
@@ -1114,7 +1126,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               className={classNames(
                 'editable font-editor flex-grow',
                 this.state.lineHeight && `leading-${this.state.lineHeight.toLowerCase()}`,
-                this.state.fontSize && PlaintextFontSizeMapping[this.state.fontSize],
+                this.state.fontSize && getPlaintextFontSize(this.state.fontSize),
               )}
             ></textarea>
           )}

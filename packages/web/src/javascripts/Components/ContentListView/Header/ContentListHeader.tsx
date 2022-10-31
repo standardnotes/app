@@ -43,17 +43,19 @@ const ContentListHeader = ({
   return (
     <div className="section-title-bar-header items-start gap-1 overflow-hidden">
       <NavigationMenuButton />
-      <div className="flex min-w-0 flex-grow flex-col break-words">
+      <div className="flex min-w-0 flex-grow flex-col break-words pt-1 lg:pt-0">
         <div className={`flex min-w-0 flex-grow flex-row ${!optionsSubtitle ? 'items-center' : ''}`}>
           {icon && (
             <Icon
               type={icon as IconType}
-              size={'large'}
-              className={`ml-0.5 mr-1.5 text-neutral ${optionsSubtitle ? 'mt-1' : ''}`}
+              size={'custom'}
+              className={` ml-0.5 mr-1.5 h-7 w-7 text-2xl text-neutral lg:h-6 lg:w-6 lg:text-lg ${
+                optionsSubtitle ? 'mt-1' : ''
+              }`}
             />
           )}
           <div className="flex min-w-0 flex-grow flex-col break-words">
-            <div className=" text-xl lg:text-lg font-semibold text-text">{panelTitle}</div>
+            <div className=" text-2xl font-semibold text-text lg:text-lg">{panelTitle}</div>
             {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
           </div>
         </div>

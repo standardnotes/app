@@ -47,6 +47,7 @@ const MenuItem = forwardRef(
           className={classNames(
             'flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5',
             'text-left text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none',
+            'text-mobile-menu-item md:text-menu-item',
           )}
           onClick={() => {
             onChange(!checked)

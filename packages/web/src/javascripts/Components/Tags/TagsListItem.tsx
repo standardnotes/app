@@ -275,7 +275,9 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             </div>
             {isEditing ? (
               <input
-                className={'title text-base md:text-sm editing focus:shadow-none focus:outline-none'}
+                className={
+                  'title editing text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item'
+                }
                 id={`react-tag-${tag.uuid}-${type}`}
                 onBlur={onBlur}
                 onInput={onInput}
@@ -286,7 +288,9 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               />
             ) : (
               <div
-                className={'title text-base md:text-sm overflow-hidden text-left focus:shadow-none focus:outline-none'}
+                className={
+                  'title overflow-hidden text-left text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item'
+                }
                 id={`react-tag-${tag.uuid}-${type}`}
               >
                 {title}
@@ -303,7 +307,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               >
                 <Icon type="more" className="text-neutral" />
               </a>
-              <div className="count">{noteCounts.get()}</div>
+              <div className="text-base lg:text-sm count">{noteCounts.get()}</div>
             </div>
           </div>
 
@@ -324,7 +328,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                 <Icon type="hashtag" className="mr-1 text-neutral" />
               </div>
               <input
-                className="title text-base md:text-sm w-full focus:shadow-none focus:outline-none"
+                className="title w-full text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item"
                 type="text"
                 ref={subtagInputRef}
                 onBlur={onSubtagInputBlur}

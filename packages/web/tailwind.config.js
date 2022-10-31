@@ -29,9 +29,11 @@ module.exports = {
         3: '0.75rem',
         4: '1rem',
         5: '1.25rem',
+        6: '1.5rem',
         8: '2rem',
         8.5: '2.125rem',
         9: '2.25rem',
+        10: '2.5rem',
         15: '3.75rem',
         20: '5rem',
         24: '6rem',
@@ -88,7 +90,9 @@ module.exports = {
       },
       fontSize: {
         'menu-item': '0.813rem',
-        'mobile-menu-item': '0.9rem',
+        'mobile-menu-item': '1.1rem',
+        'navigation-list-item': '0.88rem',
+        'mobile-navigation-list-item': '1.1rem',
         editor: 'var(--sn-stylekit-font-size-editor)',
       },
       screens: {
