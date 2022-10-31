@@ -6,14 +6,23 @@ import { NotesController } from '@/Controllers/NotesController'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import Popover from '../Popover/Popover'
 import { LinkingController } from '@/Controllers/LinkingController'
+import { IconType } from '@standardnotes/snjs'
 
 type Props = {
   navigationController: NavigationController
   notesController: NotesController
   linkingController: LinkingController
+  className: string
+  iconClassName: string
 }
 
-const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesController, linkingController }) => {
+const AddTagOption: FunctionComponent<Props> = ({
+  navigationController,
+  notesController,
+  linkingController,
+  className,
+  iconClassName,
+}) => {
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -33,10 +42,10 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
           }
         }}
         ref={buttonRef}
-        className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-menu-item"
+        className={className}
       >
         <div className="flex items-center">
-          <Icon type="hashtag" className="mr-2 text-neutral" />
+          <Icon type="hashtag" className={`${iconClassName} mr-2 text-neutral`} />
           Add tag
         </div>
         <Icon type="chevron-right" className="text-neutral" />
@@ -52,13 +61,20 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
         {navigationController.tags.map((tag) => (
           <button
             key={tag.uuid}
-            className="max-w-80 flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-2 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-menu-item"
+            className={`max-w-80 ${className.replace('justify-between', 'justify-start')}`}
             onClick={() => {
               notesController.isTagInSelectedNotes(tag)
                 ? notesController.removeTagFromSelectedNotes(tag).catch(console.error)
                 : notesController.addTagToSelectedNotes(tag).catch(console.error)
             }}
           >
+            {tag.iconString && (
+              <Icon
+                type={tag.iconString as IconType}
+                size={'custom'}
+                className={`ml-0.5 mr-1.5 h-7 w-7 text-2xl text-neutral lg:h-6 lg:w-6 lg:text-lg`}
+              />
+            )}
             <span
               className={`overflow-hidden overflow-ellipsis whitespace-nowrap
                       ${notesController.isTagInSelectedNotes(tag) ? 'font-bold' : ''}`}

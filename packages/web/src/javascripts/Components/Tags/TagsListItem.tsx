@@ -245,7 +245,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         <div
           role="button"
           tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-          className={classNames('tag py- px-3.5 md:py-1', isSelected && 'selected', readyToDrop && 'is-drag-over')}
+          className={classNames('tag px-3.5', isSelected && 'selected', readyToDrop && 'is-drag-over')}
           onClick={selectCurrentTag}
           ref={mergeRefs([dragRef, tagRef])}
           style={{

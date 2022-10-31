@@ -29,6 +29,7 @@ const MobileItemsListButton = () => {
       }}
       label={label}
       icon={iconType}
+      iconClassName={'h-6 w-6'}
     />
   )
 }

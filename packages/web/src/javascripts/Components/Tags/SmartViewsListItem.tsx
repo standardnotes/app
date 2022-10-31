@@ -105,7 +105,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
       <div
         role="button"
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-        className={classNames('tag py-1 px-3.5 md:py-1', isSelected && 'selected', isFaded && 'opacity-50')}
+        className={classNames('tag px-3.5', isSelected && 'selected', isFaded && 'opacity-50')}
         onClick={selectCurrentTag}
         style={{
           paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
@@ -136,7 +136,9 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
               {title}
             </div>
           )}
-          <div className={'count'}>{view.uuid === SystemViewId.AllNotes && tagsState.allNotesCount}</div>
+          <div className={'count text-base lg:text-sm'}>
+            {view.uuid === SystemViewId.AllNotes && tagsState.allNotesCount}
+          </div>
         </div>
 
         {!isSystemView(view) && (

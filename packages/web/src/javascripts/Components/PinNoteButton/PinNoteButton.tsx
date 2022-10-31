@@ -27,9 +27,8 @@ const PinNoteButton: FunctionComponent<Props> = ({ className = '', notesControll
 
   return (
     <button
-      className={`sn-icon-button flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast md:h-8 md:w-8 ${
-        pinned ? 'toggled' : ''
-      } ${className}`}
+      className={`sn-icon-button flex h-10 min-w-10 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast
+      md:h-8 md:min-w-8 ${pinned ? 'toggled' : ''} ${className}`}
       onClick={togglePinned}
     >
       <VisuallyHidden>Pin selected notes</VisuallyHidden>

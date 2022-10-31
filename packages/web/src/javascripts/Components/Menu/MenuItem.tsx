@@ -45,9 +45,9 @@ const MenuItem = forwardRef(
           disabled={disabled}
           ref={ref}
           className={classNames(
-            'flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5',
+            'flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-2 md:py-1.5',
             'text-left text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none',
-            'text-mobile-menu-item md:text-menu-item',
+            'text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item',
           )}
           onClick={() => {
             onChange(!checked)
@@ -69,9 +69,9 @@ const MenuItem = forwardRef(
           role={type === MenuItemType.RadioButton ? 'menuitemradio' : 'menuitem'}
           tabIndex={typeof tabIndex === 'number' ? tabIndex : FOCUSABLE_BUT_NOT_TABBABLE}
           className={classNames(
-            'flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left',
+            'flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-2 text-left md:py-1.5',
             'text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground',
-            'focus:bg-info-backdrop focus:shadow-none md:text-menu-item',
+            'focus:bg-info-backdrop focus:shadow-none md:text-tablet-menu-item lg:text-menu-item',
             className,
           )}
           onClick={onClick}
