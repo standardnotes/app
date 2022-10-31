@@ -53,7 +53,7 @@ const ContentListHeader = ({
             />
           )}
           <div className="flex min-w-0 flex-grow flex-col break-words">
-            <div className="text-lg font-semibold text-text">{panelTitle}</div>
+            <div className=" text-xl lg:text-lg font-semibold text-text">{panelTitle}</div>
             {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
           </div>
         </div>
@@ -85,7 +85,7 @@ const ContentListHeader = ({
         </div>
         <button
           className={classNames(
-            'absolute bottom-6 right-6 z-editor-title-bar ml-3 flex h-13 w-13 cursor-pointer items-center',
+            'absolute bottom-6 right-6 z-editor-title-bar ml-3 flex h-15 w-15 cursor-pointer items-center',
             `justify-center rounded-full border border-solid border-transparent ${
               isDailyEntry ? 'bg-danger text-danger-contrast' : 'bg-info text-info-contrast'
             }`,
@@ -95,7 +95,7 @@ const ContentListHeader = ({
           aria-label={addButtonLabel}
           onClick={addNewItem}
         >
-          <Icon type="add" size="custom" className="h-6 w-6 md:h-5 md:w-5" />
+          <Icon type="add" size="custom" className="h-8 w-8 md:h-5 md:w-5" />
         </button>
       </div>
     </div>

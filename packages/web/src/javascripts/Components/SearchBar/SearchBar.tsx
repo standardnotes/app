@@ -50,7 +50,7 @@ const SearchBar = ({ itemListController, searchOptionsController }: Props) => {
         autocomplete={false}
         className={{
           container: 'px-1',
-          input: 'placeholder:text-passive-0',
+          input: 'placeholder:text-passive-0 text-base lg:text-sm',
         }}
         placeholder={'Search...'}
         value={noteFilterText}
