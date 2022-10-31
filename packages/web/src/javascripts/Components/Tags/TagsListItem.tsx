@@ -275,7 +275,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             </div>
             {isEditing ? (
               <input
-                className={'title editing focus:shadow-none focus:outline-none'}
+                className={'title text-base md:text-sm editing focus:shadow-none focus:outline-none'}
                 id={`react-tag-${tag.uuid}-${type}`}
                 onBlur={onBlur}
                 onInput={onInput}
@@ -286,7 +286,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               />
             ) : (
               <div
-                className={'title overflow-hidden text-left focus:shadow-none focus:outline-none'}
+                className={'title text-base md:text-sm overflow-hidden text-left focus:shadow-none focus:outline-none'}
                 id={`react-tag-${tag.uuid}-${type}`}
               >
                 {title}
@@ -324,7 +324,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                 <Icon type="hashtag" className="mr-1 text-neutral" />
               </div>
               <input
-                className="title w-full focus:shadow-none focus:outline-none"
+                className="title text-base md:text-sm w-full focus:shadow-none focus:outline-none"
                 type="text"
                 ref={subtagInputRef}
                 onBlur={onSubtagInputBlur}

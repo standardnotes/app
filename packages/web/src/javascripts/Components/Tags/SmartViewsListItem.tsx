@@ -117,7 +117,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
           </div>
           {isEditing ? (
             <input
-              className={'title editing'}
+              className={'title text-base md:text-sm editing'}
               id={`react-tag-${view.uuid}`}
               onBlur={onBlur}
               onInput={onInput}
@@ -127,7 +127,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
               ref={inputRef}
             />
           ) : (
-            <div className={'title overflow-hidden text-left'} id={`react-tag-${view.uuid}`}>
+            <div className={'title text-base md:text-sm overflow-hidden text-left'} id={`react-tag-${view.uuid}`}>
               {title}
             </div>
           )}

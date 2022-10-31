@@ -57,7 +57,7 @@ const TagsSection: FunctionComponent<Props> = ({ viewControllerManager }) => {
         <section>
           <div className={'section-title-bar'}>
             <div className="section-title-bar-header">
-              <div className="title text-sm">
+              <div className="title text-base md:text-sm">
                 <span className="font-bold">Favorites</span>
               </div>
             </div>
