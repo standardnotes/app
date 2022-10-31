@@ -1,4 +1,4 @@
-import { addMonths, numberOfMonthsBetweenDates } from '@/Utils/DateUtils'
+import { addCalendarMonths, numberOfMonthsBetweenDates } from '@/Utils/DateUtils'
 import { CalendarActivity } from './CalendarActivity'
 import { CalendarMonth } from './CalendarMonth'
 
@@ -40,12 +40,12 @@ export function insertMonths(months: CalendarMonth[], location: 'front' | 'end',
 
   for (let i = 1; i <= number; i++) {
     if (location === 'front') {
-      const minusNFromFirstMonth = addMonths(earlierMonth, -i)
+      const minusNFromFirstMonth = addCalendarMonths(earlierMonth, -i)
       months.unshift({
         date: minusNFromFirstMonth,
       })
     } else {
-      const plusNFromLastMonth = addMonths(laterMonth, i)
+      const plusNFromLastMonth = addCalendarMonths(laterMonth, i)
       months.push({
         date: plusNFromLastMonth,
       })
