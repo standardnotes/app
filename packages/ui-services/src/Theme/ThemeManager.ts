@@ -60,7 +60,12 @@ export class ThemeManager extends AbstractService {
       }
       case ApplicationEvent.Launched: {
         if (!this.application.isNativeMobileWeb()) {
-          window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', this.colorSchemeEventHandler)
+          const mq = window.matchMedia('(prefers-color-scheme: dark)')
+          if (mq.addEventListener != undefined) {
+            mq.addEventListener('change', this.colorSchemeEventHandler)
+          } else {
+            mq.addListener(this.colorSchemeEventHandler)
+          }
         }
         break
       }
@@ -131,7 +136,13 @@ export class ThemeManager extends AbstractService {
     ;(this.unregisterDesktop as unknown) = undefined
     ;(this.unregisterStream as unknown) = undefined
 
-    window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', this.colorSchemeEventHandler)
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    if (mq.removeEventListener != undefined) {
+      mq.removeEventListener('change', this.colorSchemeEventHandler)
+    } else {
+      mq.removeListener(this.colorSchemeEventHandler)
+    }
+
     ;(this.application as unknown) = undefined
 
     this.unsubApp()

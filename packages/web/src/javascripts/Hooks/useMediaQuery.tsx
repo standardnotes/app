@@ -18,9 +18,21 @@ export const useMediaQuery = (mediaQuery: string) => {
       setMatches(event.matches)
     }
 
-    window.matchMedia(mediaQuery).addEventListener('change', handler)
+    const mq = window.matchMedia(mediaQuery)
+    if (mq.addEventListener != undefined) {
+      mq.addEventListener('change', handler)
+    } else {
+      mq.addListener(handler)
+    }
 
-    return () => window.matchMedia(mediaQuery).removeEventListener('change', handler)
+    return () => {
+      const mq = window.matchMedia(mediaQuery)
+      if (mq.removeEventListener != undefined) {
+        mq.removeEventListener('change', handler)
+      } else {
+        mq.removeListener(handler)
+      }
+    }
   }, [mediaQuery])
 
   return matches

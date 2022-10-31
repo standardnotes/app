@@ -47,9 +47,9 @@ module.exports = (env) => {
           { from: 'src/500.html' },
           { from: 'src/index.html' },
           { from: 'src/manifest.webmanifest' },
-          { from: 'src/robots.txt' }
-        ]
-      })
+          { from: 'src/robots.txt' },
+        ],
+      }),
     ],
     resolve: {
       extensions: ['.ts', '.tsx', '.js'],
@@ -67,7 +67,10 @@ module.exports = (env) => {
       rules: [
         {
           test: /\.(js|tsx?)$/,
-          exclude: /(node_modules)/,
+          /**
+           * @standardnotes/common uses class properties which we need to run through our babel rules.
+           */
+          exclude: /node_modules\/(?!(@standardnotes\/common))/,
           use: [
             'babel-loader',
             {
