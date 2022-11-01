@@ -23,7 +23,7 @@
   "dependencies": {
     "@docusaurus/core": "2.0.0-alpha.73",
     "@docusaurus/plugin-client-redirects": "^2.0.0-alpha.73",
-    "@docusaurus/preset-classic": "2.0.0-alpha.73",
+    "@docusaurus/preset-classic": "2.2.0",
     "clsx": "^1.1.1",
     "docusaurus-plugin-sass": "^0.1.12",
     "prettier": "^2.2.1",
