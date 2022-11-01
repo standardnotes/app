@@ -220,7 +220,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
 
   const onFunctionMessage = async (functionName: string, messageId: string, args: any) => {
     const returnValue = await (device as any)[functionName](...args)
-    if (LoggingEnabled) {
+    if (LoggingEnabled && functionName !== 'consoleLog') {
       console.log(`Native device function ${functionName} called`)
     }
     webViewRef.current?.postMessage(JSON.stringify({ messageId, returnValue, messageType: 'reply' }))
