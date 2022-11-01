@@ -23,7 +23,7 @@
     "test": "jest spec"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.39.0",
+    "@standardnotes/common": "^1.43.0",
     "@standardnotes/features": "workspace:^",
     "@standardnotes/filepicker": "workspace:^",
     "@standardnotes/services": "workspace:^",

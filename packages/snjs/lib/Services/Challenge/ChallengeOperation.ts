@@ -1,4 +1,4 @@
-import { Challenge } from './Challenge'
+import { Challenge } from '@standardnotes/services/src/Domain/Challenge/Challenge'
 import { ChallengeResponse } from './ChallengeResponse'
 import { removeFromArray } from '@standardnotes/utils'
 import { ValueCallback } from './ChallengeService'

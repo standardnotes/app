@@ -26,12 +26,13 @@
   "dependencies": {
     "@standardnotes/api": "workspace:^",
     "@standardnotes/auth": "^3.19.4",
-    "@standardnotes/common": "^1.39.0",
+    "@standardnotes/common": "^1.43.0",
     "@standardnotes/encryption": "workspace:^",
     "@standardnotes/files": "workspace:^",
     "@standardnotes/models": "workspace:^",
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/security": "^1.2.0",
+    "@standardnotes/sncrypto-common": "workspace:^",
     "@standardnotes/utils": "workspace:*",
     "reflect-metadata": "^0.1.13"
   },

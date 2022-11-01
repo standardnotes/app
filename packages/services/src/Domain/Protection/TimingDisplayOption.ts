@@ -1,7 +1,4 @@
-export enum MobileUnlockTiming {
-  Immediately = 'immediately',
-  OnQuit = 'on-quit',
-}
+import { MobileUnlockTiming } from './MobileUnlockTiming'
 
 export type TimingDisplayOption = {
   title: string

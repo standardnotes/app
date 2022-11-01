@@ -5,7 +5,6 @@ import {
   ItemManager,
   AlertService,
   SNApiService,
-  UserService,
   SNSessionManager,
   DiskStorageService,
   StorageKey,
@@ -17,7 +16,7 @@ import { SNWebSocketsService } from '../Api/WebsocketsService'
 import { SNSettingsService } from '../Settings'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { convertTimestampToMilliseconds } from '@standardnotes/utils'
-import { FeatureStatus, InternalEventBusInterface } from '@standardnotes/services'
+import { FeatureStatus, InternalEventBusInterface, UserService } from '@standardnotes/services'
 
 describe('featuresService', () => {
   let storageService: DiskStorageService

@@ -1,32 +1,29 @@
-import { Challenge } from '../Challenge'
-import { ChallengeService } from '../Challenge/ChallengeService'
-import { SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
+import { EncryptionProviderInterface, SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
 import { HttpResponse, SignInResponse, User } from '@standardnotes/responses'
-import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { KeyParamsOrigination } from '@standardnotes/common'
+import { UuidGenerator } from '@standardnotes/utils'
+import { UserApiServiceInterface, UserRegistrationResponseBody } from '@standardnotes/api'
+
+import * as Messages from '../Strings/Messages'
+import { InfoStrings } from '../Strings/InfoStrings'
+import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
+import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
+import { ItemManagerInterface } from '../Item/ItemManagerInterface'
+import { AlertService } from '../Alert/AlertService'
 import {
-  AbstractService,
-  AlertService,
+  Challenge,
   ChallengePrompt,
   ChallengeReason,
+  ChallengeServiceInterface,
   ChallengeValidation,
-  DeinitSource,
-  InternalEventBusInterface,
-  UserClientInterface,
-  StoragePersistencePolicies,
-  EncryptionService,
-} from '@standardnotes/services'
-import { SNApiService } from './../Api/ApiService'
-import { SNProtectionService } from '../Protection/ProtectionService'
-import { SNSessionManager, MINIMUM_PASSWORD_LENGTH } from '../Session/SessionManager'
-import { DiskStorageService } from '@Lib/Services/Storage/DiskStorageService'
-import { SNSyncService } from '../Sync/SyncService'
-import { Strings } from '../../Strings/index'
-import { UuidGenerator } from '@standardnotes/utils'
-import * as Messages from '../Api/Messages'
-import { UserRegistrationResponseBody } from '@standardnotes/api'
-
-const MINIMUM_PASSCODE_LENGTH = 1
+} from '../Challenge'
+import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
+import { AbstractService } from '../Service/AbstractService'
+import { UserClientInterface } from './UserClientInterface'
+import { DeinitSource } from '../Application/DeinitSource'
+import { StoragePersistencePolicies } from '../Storage/StorageTypes'
+import { SessionsClientInterface } from '../Session/SessionsClientInterface'
+import { ProtectionsClientInterface } from '../Protection/ProtectionClientInterface'
 
 export type CredentialsChangeFunctionResponse = { error?: { message: string } }
 export type AccountServiceResponse = HttpResponse
@@ -44,16 +41,19 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
   private signingIn = false
   private registering = false
 
+  private readonly MINIMUM_PASSCODE_LENGTH = 1
+  private readonly MINIMUM_PASSWORD_LENGTH = 8
+
   constructor(
-    private sessionManager: SNSessionManager,
-    private syncService: SNSyncService,
-    private storageService: DiskStorageService,
-    private itemManager: ItemManager,
-    private protocolService: EncryptionService,
+    private sessionManager: SessionsClientInterface,
+    private syncService: SyncServiceInterface,
+    private storageService: StorageServiceInterface,
+    private itemManager: ItemManagerInterface,
+    private protocolService: EncryptionProviderInterface,
     private alertService: AlertService,
-    private challengeService: ChallengeService,
-    private protectionService: SNProtectionService,
-    private apiService: SNApiService,
+    private challengeService: ChallengeServiceInterface,
+    private protectionService: ProtectionsClientInterface,
+    private userApiService: UserApiServiceInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -69,7 +69,7 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
     ;(this.alertService as unknown) = undefined
     ;(this.challengeService as unknown) = undefined
     ;(this.protectionService as unknown) = undefined
-    ;(this.apiService as unknown) = undefined
+    ;(this.userApiService as unknown) = undefined
   }
 
   /**
@@ -204,7 +204,9 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
   }> {
     if (
       !(await this.protectionService.authorizeAction(ChallengeReason.DeleteAccount, {
+        fallBackToAccountPassword: true,
         requireAccountPassword: true,
+        forcePrompt: false,
       }))
     ) {
       return {
@@ -214,17 +216,17 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
     }
 
     const uuid = this.sessionManager.getSureUser().uuid
-    const response = await this.apiService.deleteAccount(uuid)
-    if (response.error) {
+    const response = await this.userApiService.deleteAccount(uuid)
+    if (response.data.error) {
       return {
         error: true,
-        message: response.error.message,
+        message: response.data.error.message,
       }
     }
 
     await this.signOut(true)
 
-    void this.alertService.alert(Strings.Info.AccountDeleted)
+    void this.alertService.alert(InfoStrings.AccountDeleted)
 
     return {
       error: false,
@@ -239,7 +241,11 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
   public async correctiveSignIn(rootKey: SNRootKey): Promise<HttpResponse | SignInResponse> {
     this.lockSyncing()
 
-    const response = await this.sessionManager.bypassChecksAndSignInWithRootKey(rootKey.keyParams.identifier, rootKey)
+    const response = await this.sessionManager.bypassChecksAndSignInWithRootKey(
+      rootKey.keyParams.identifier,
+      rootKey,
+      false,
+    )
 
     if (!response.error) {
       await this.notifyEvent(AccountEvent.SignedInOrRegistered)
@@ -381,7 +387,7 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
   }
 
   public async addPasscode(passcode: string): Promise<boolean> {
-    if (passcode.length < MINIMUM_PASSCODE_LENGTH) {
+    if (passcode.length < this.MINIMUM_PASSCODE_LENGTH) {
       return false
     }
     if (!(await this.protectionService.authorizeAddingPasscode())) {
@@ -424,7 +430,7 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
     newPasscode: string,
     origination = KeyParamsOrigination.PasscodeChange,
   ): Promise<boolean> {
-    if (newPasscode.length < MINIMUM_PASSCODE_LENGTH) {
+    if (newPasscode.length < this.MINIMUM_PASSCODE_LENGTH) {
       return false
     }
     if (!(await this.protectionService.authorizeChangingPasscode())) {
@@ -501,9 +507,9 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
     }
 
     if (parameters.newPassword !== undefined && parameters.validateNewPasswordStrength) {
-      if (parameters.newPassword.length < MINIMUM_PASSWORD_LENGTH) {
+      if (parameters.newPassword.length < this.MINIMUM_PASSWORD_LENGTH) {
         return {
-          error: Error(Messages.InsufficientPasswordMessage(MINIMUM_PASSWORD_LENGTH)),
+          error: Error(Messages.InsufficientPasswordMessage(this.MINIMUM_PASSWORD_LENGTH)),
         }
       }
     }

@@ -30,7 +30,7 @@
     "ts-jest": "^28.0.5"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.39.0",
+    "@standardnotes/common": "^1.43.0",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",

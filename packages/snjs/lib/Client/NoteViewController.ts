@@ -1,5 +1,5 @@
-import { InfoStrings } from '../Strings/Info'
 import { NoteType } from '@standardnotes/features'
+import { InfoStrings } from '@standardnotes/services'
 import {
   NoteMutator,
   SNNote,

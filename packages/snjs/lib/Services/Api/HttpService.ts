@@ -1,8 +1,12 @@
-import { API_MESSAGE_RATE_LIMITED, UNKNOWN_ERROR } from './Messages'
 import { HttpResponse, StatusCode } from '@standardnotes/responses'
 import { isString } from '@standardnotes/utils'
 import { SnjsVersion } from '@Lib/Version'
-import { AbstractService, InternalEventBusInterface } from '@standardnotes/services'
+import {
+  AbstractService,
+  API_MESSAGE_RATE_LIMITED,
+  InternalEventBusInterface,
+  UNKNOWN_ERROR,
+} from '@standardnotes/services'
 import { Environment } from '@standardnotes/models'
 
 export enum HttpVerb {

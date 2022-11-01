@@ -1,6 +1,9 @@
-import { ChallengeModalTitle, ChallengeStrings } from '../Api/Messages'
 import { assertUnreachable } from '@standardnotes/utils'
-import { ChallengeValidation, ChallengeReason, ChallengeInterface, ChallengePrompt } from '@standardnotes/services'
+import { ChallengeModalTitle, ChallengeStrings } from '../Strings/Messages'
+import { ChallengeInterface } from './ChallengeInterface'
+import { ChallengePrompt } from './Prompt/ChallengePrompt'
+import { ChallengeReason } from './Types/ChallengeReason'
+import { ChallengeValidation } from './Types/ChallengeValidation'
 
 /**
  * A challenge is a stateless description of what the client needs to provide

@@ -1,6 +1,6 @@
 import { SettingsList } from './SettingsList'
 import { SettingName, SensitiveSettingName, SubscriptionSettingName } from '@standardnotes/settings'
-import * as messages from '../Api/Messages'
+import { API_MESSAGE_INVALID_SESSION } from '@standardnotes/services'
 import { StatusCode, User } from '@standardnotes/responses'
 import { SettingsServerInterface } from './SettingsServerInterface'
 
@@ -25,7 +25,7 @@ export class SettingsGateway {
   private get userUuid() {
     const user = this.getUser()
     if (user == undefined || user.uuid == undefined) {
-      throw new Error(messages.API_MESSAGE_INVALID_SESSION)
+      throw new Error(API_MESSAGE_INVALID_SESSION)
     }
     return user.uuid
   }

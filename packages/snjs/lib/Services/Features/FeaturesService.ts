@@ -1,4 +1,3 @@
-import { AccountEvent, UserService } from '../User/UserService'
 import { SNApiService } from '../Api/ApiService'
 import {
   arraysEqual,
@@ -24,12 +23,15 @@ import { TRUSTED_CUSTOM_EXTENSIONS_HOSTS, TRUSTED_FEATURE_HOSTS } from '@Lib/Hos
 import { UserRolesChangedEvent } from '@standardnotes/domain-events'
 import { UuidString } from '@Lib/Types/UuidString'
 import * as FeaturesImports from '@standardnotes/features'
-import * as Messages from '@Lib/Services/Api/Messages'
 import * as Models from '@standardnotes/models'
 import {
   AbstractService,
+  AccountEvent,
   AlertService,
   ApiServiceEvent,
+  API_MESSAGE_FAILED_DOWNLOADING_EXTENSION,
+  API_MESSAGE_FAILED_OFFLINE_ACTIVATION,
+  API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING,
   ApplicationStage,
   ButtonType,
   DiagnosticInfo,
@@ -39,10 +41,12 @@ import {
   InternalEventBusInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
+  INVALID_EXTENSION_URL,
   MetaReceivedData,
   OfflineSubscriptionEntitlements,
   SetOfflineFeaturesFunctionResponse,
   StorageKey,
+  UserService,
 } from '@standardnotes/services'
 import { FeatureIdentifier } from '@standardnotes/features'
 
@@ -250,7 +254,7 @@ export class SNFeaturesService
       void this.syncService.sync()
       return this.downloadOfflineFeatures(offlineRepo)
     } catch (err) {
-      return new ClientDisplayableError(Messages.API_MESSAGE_FAILED_OFFLINE_ACTIVATION)
+      return new ClientDisplayableError(API_MESSAGE_FAILED_OFFLINE_ACTIVATION)
     }
   }
 
@@ -280,7 +284,7 @@ export class SNFeaturesService
         extensionKey,
       }
     } catch (error) {
-      return new ClientDisplayableError(Messages.API_MESSAGE_FAILED_OFFLINE_ACTIVATION)
+      return new ClientDisplayableError(API_MESSAGE_FAILED_OFFLINE_ACTIVATION)
     }
   }
 
@@ -631,7 +635,7 @@ export class SNFeaturesService
       const { host } = new URL(url)
       if (!trustedCustomExtensionsUrls.includes(host)) {
         const didConfirm = await this.alertService.confirm(
-          Messages.API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING,
+          API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING,
           'Install extension from an untrusted source?',
           'Proceed to install',
           ButtonType.Danger,
@@ -644,7 +648,7 @@ export class SNFeaturesService
         return this.performDownloadExternalFeature(url)
       }
     } catch (err) {
-      void this.alertService.alert(Messages.INVALID_EXTENSION_URL)
+      void this.alertService.alert(INVALID_EXTENSION_URL)
     }
 
     return undefined
@@ -653,7 +657,7 @@ export class SNFeaturesService
   private async performDownloadExternalFeature(url: string): Promise<Models.SNComponent | undefined> {
     const response = await this.apiService.downloadFeatureUrl(url)
     if (response.error) {
-      await this.alertService.alert(Messages.API_MESSAGE_FAILED_DOWNLOADING_EXTENSION)
+      await this.alertService.alert(API_MESSAGE_FAILED_DOWNLOADING_EXTENSION)
       return undefined
     }
 
@@ -683,14 +687,14 @@ export class SNFeaturesService
 
     const nativeFeature = FeaturesImports.FindNativeFeature(rawFeature.identifier)
     if (nativeFeature) {
-      await this.alertService.alert(Messages.API_MESSAGE_FAILED_DOWNLOADING_EXTENSION)
+      await this.alertService.alert(API_MESSAGE_FAILED_DOWNLOADING_EXTENSION)
       return
     }
 
     if (rawFeature.url) {
       for (const nativeFeature of FeaturesImports.GetFeatures()) {
         if (rawFeature.url.includes(nativeFeature.identifier)) {
-          await this.alertService.alert(Messages.API_MESSAGE_FAILED_DOWNLOADING_EXTENSION)
+          await this.alertService.alert(API_MESSAGE_FAILED_DOWNLOADING_EXTENSION)
           return
         }
       }

@@ -17,7 +17,7 @@ import {
 } from '@standardnotes/services'
 import { ChallengeResponse } from './ChallengeResponse'
 import { ChallengeOperation } from './ChallengeOperation'
-import { Challenge } from './Challenge'
+import { Challenge } from '@standardnotes/services/src/Domain/Challenge/Challenge'
 
 type ChallengeValidationResponse = {
   valid: boolean

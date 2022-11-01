@@ -1,6 +1,7 @@
 export * from './Subscription/SubscriptionApiOperations'
 export * from './Subscription/SubscriptionApiService'
 export * from './Subscription/SubscriptionApiServiceInterface'
+export * from './User/UserApiOperations'
 export * from './User/UserApiService'
 export * from './User/UserApiServiceInterface'
 export * from './WebSocket/WebSocketApiService'

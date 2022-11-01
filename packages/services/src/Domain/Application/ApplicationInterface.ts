@@ -16,7 +16,7 @@ import { StorageValueModes } from '../Storage/StorageTypes'
 
 import { DeinitMode } from './DeinitMode'
 import { DeinitSource } from './DeinitSource'
-import { UserClientInterface } from './UserClientInterface'
+import { UserClientInterface } from '../User/UserClientInterface'
 
 export interface ApplicationInterface {
   deinit(mode: DeinitMode, source: DeinitSource): void
