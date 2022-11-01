@@ -32,7 +32,7 @@ const AccountPreferences = ({ application, viewControllerManager }: Props) => (
     {application.hasAccount() && viewControllerManager.featuresController.hasFiles && (
       <FilesSection application={application} />
     )}
-    <Email application={application} />
+    {application.hasAccount() && <Email application={application} />}
     <SignOutWrapper application={application} viewControllerManager={viewControllerManager} />
     <DeleteAccount application={application} viewControllerManager={viewControllerManager} />
   </PreferencesPane>

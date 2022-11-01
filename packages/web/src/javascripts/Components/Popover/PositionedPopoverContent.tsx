@@ -1,7 +1,7 @@
 import { useDocumentRect } from '@/Hooks/useDocumentRect'
 import { useAutoElementRect } from '@/Hooks/useElementRect'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import Icon from '../Icon/Icon'
 import Portal from '../Portal/Portal'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
@@ -54,6 +54,18 @@ const PositionedPopoverContent = ({
 
   useDisableBodyScrollOnMobile()
 
+  const correctInitialScrollForOverflowedContent = useCallback(() => {
+    if (popoverElement) {
+      setTimeout(() => {
+        popoverElement.scrollTop = 0
+      })
+    }
+  }, [popoverElement])
+
+  useLayoutEffect(() => {
+    correctInitialScrollForOverflowedContent()
+  }, [popoverElement, correctInitialScrollForOverflowedContent])
+
   return (
     <Portal>
       <div
@@ -70,9 +82,7 @@ const PositionedPopoverContent = ({
             : '',
           top: !isDesktopScreen ? `${document.documentElement.scrollTop}px` : '',
         }}
-        ref={(node) => {
-          setPopoverElement(node)
-        }}
+        ref={setPopoverElement}
         data-popover={id}
       >
         <div className="md:hidden">

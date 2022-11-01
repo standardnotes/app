@@ -36,7 +36,7 @@ const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
           <Icon type={icon} className={iconClassName} size="small" />
         </div>
       ) : null}
-      <div className="dropdown-selected-label">{label}</div>
+      <div className="text-base lg:text-sm">{label}</div>
     </div>
     <ListboxArrow className={`flex ${isExpanded ? 'rotate-180' : ''}`}>
       <Icon type="menu-arrow-down" className="text-passive-1" size="small" />
@@ -92,7 +92,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
                       <Icon type={item.icon} className={item.iconClassName ?? ''} size="small" />
                     </div>
                   ) : null}
-                  <div className="text-input">{item.label}</div>
+                  <div className="text-base lg:text-sm">{item.label}</div>
                 </StyledListboxOption>
               ))}
             </ListboxList>

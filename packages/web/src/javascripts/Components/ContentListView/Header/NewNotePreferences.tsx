@@ -249,10 +249,11 @@ const NewNotePreferences: FunctionComponent<Props> = ({
               spellCheck={false}
             />
           </div>
-          <div className="mt-2">
-            <span className="font-bold">Preview:</span> {dayjs().format(customNoteTitleFormat)}
+          <div className="mt-3 text-neutral">
+            <span className="font-bold">Preview: </span>
+            <em>{dayjs().format(customNoteTitleFormat)}</em>
           </div>
-          <div className="mt-1">
+          <div className="mt-2 text-neutral">
             <a
               className="underline"
               href={HelpPageUrl}
@@ -267,7 +268,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
             >
               Options
             </a>
-            . Use <code>[]</code> to escape date-time formatting.
+            . Use <code>[]</code> to escape formatting.
           </div>
         </div>
       )}

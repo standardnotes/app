@@ -99,7 +99,8 @@ export const STRING_UPGRADE_ACCOUNT_CONFIRM_BUTTON = 'Upgrade'
 
 export const STRING_REMOVE_OFFLINE_KEY_CONFIRMATION = 'This will delete the previously saved offline key.'
 
-export const STRING_DELETE_ACCOUNT_CONFIRMATION = 'Are you sure you want to permanently delete your account?'
+export const STRING_DELETE_ACCOUNT_CONFIRMATION =
+  "Are you sure you want to permanently delete your account? You will be asked to confirm your account password in the next step. If you have an active paid subscription, cancel the subscription first. Otherwise, if you'd like to keep the subscription, you can re-register with the same email after deletion, and your subscription will be linked back up with your account."
 
 export const STRING_FAILED_TO_UPDATE_USER_SETTING =
   'There was an error while trying to update your settings. Please try again.'
