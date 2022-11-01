@@ -122,7 +122,7 @@ const ContentListHeader = ({
         </div>
       </div>
     )
-  }, [selectedTag, optionsSubtitle, icon, panelTitle])
+  }, [optionsSubtitle, icon, panelTitle])
 
   const PhoneAndDesktopLayout = useMemo(() => {
     return (
