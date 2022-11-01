@@ -43,7 +43,7 @@ const TagsList: FunctionComponent<Props> = ({ viewControllerManager, type }: Pro
   return (
     <DndProvider backend={backend}>
       {allTags.length === 0 ? (
-        <div className="no-tags-placeholder opacity-[0.4] text-base lg:text-sm">
+        <div className="no-tags-placeholder text-base opacity-[0.4] lg:text-sm">
           No tags or folders. Create one using the add button above.
         </div>
       ) : (
