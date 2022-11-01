@@ -60,6 +60,7 @@ const startApplication: StartApplication = async function startApplication(
 
   const setupViewportHeightListeners = () => {
     if (!isDesktop) {
+      setViewportHeightWithFallback()
       window.addEventListener('orientationchange', setViewportHeightWithFallback)
       window.addEventListener('resize', setViewportHeightWithFallback)
     }
