@@ -75,7 +75,6 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
       <PreferencesSegment>
         <Title>Privacy</Title>
         <div>
-          <HorizontalSeparator classes="my-4" />
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <Subtitle>Session user agent logging</Subtitle>

@@ -19,6 +19,8 @@ import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { ChallengeModalValues } from './ChallengeModalValues'
 import { InputValue } from './InputValue'
+import { isMobileScreen } from '@/Utils'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   application: WebApplication
@@ -211,23 +213,24 @@ const ChallengeModal: FunctionComponent<Props> = ({
     return null
   }
 
+  const isFullScreenBlocker = challenge.reason === ChallengeReason.ApplicationUnlock
+  const isMobileOverlay = isMobileScreen() && !isFullScreenBlocker
+
+  const contentClasses = classNames(
+    `challenge-modal relative flex flex-col items-center rounded border-solid border-border p-8 md:border`,
+    !isMobileScreen() && 'shadow-overlay-light',
+    isMobileOverlay && 'border border-solid border-border shadow-overlay-light',
+    isFullScreenBlocker && isMobileScreen() ? 'bg-passive-5' : 'bg-default',
+  )
+
   return (
     <DialogOverlay
-      className={`sn-component ${
-        challenge.reason === ChallengeReason.ApplicationUnlock ? 'challenge-modal-overlay' : ''
-      }`}
+      className={`sn-component ${isFullScreenBlocker ? 'bg-passive-5' : ''}`}
       onDismiss={cancelChallenge}
       dangerouslyBypassFocusLock={bypassModalFocusLock}
       key={challenge.id}
     >
-      <DialogContent
-        aria-label="Challenge modal"
-        className={`challenge-modal relative flex flex-col items-center rounded bg-default p-8 ${
-          challenge.reason !== ChallengeReason.ApplicationUnlock
-            ? 'shadow-overlay-light border border-solid border-border'
-            : 'focus:shadow-none'
-        }`}
-      >
+      <DialogContent aria-label="Challenge modal" className={contentClasses}>
         {challenge.cancelable && (
           <button
             onClick={cancelChallenge}
