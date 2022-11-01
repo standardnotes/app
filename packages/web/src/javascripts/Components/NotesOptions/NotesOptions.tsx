@@ -20,6 +20,7 @@ import { shareSelectedNotes } from '@/NativeMobileWeb/ShareSelectedNotes'
 import { downloadSelectedNotesOnAndroid } from '@/NativeMobileWeb/DownloadSelectedNotesOnAndroid'
 import ProtectedUnauthorizedLabel from '../ProtectedItemOverlay/ProtectedUnauthorizedLabel'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 
 type DeletePermanentlyButtonProps = {
   onClick: () => void
@@ -35,7 +36,7 @@ const DeletePermanentlyButton = ({ onClick }: DeletePermanentlyButtonProps) => (
   </button>
 )
 
-const iconSize = 'w-6 h-6 md:w-5 md:h-5'
+const iconSize = MenuItemIconSize
 const iconClass = `text-neutral mr-2 ${iconSize}`
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
 const iconClassWarning = `text-warning mr-2 ${iconSize}`

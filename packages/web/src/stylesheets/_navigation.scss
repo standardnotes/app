@@ -24,9 +24,6 @@ $content-horizontal-padding: 16px;
 
   .no-tags-placeholder {
     padding: 0px $content-horizontal-padding;
-    font-size: 12px;
-    opacity: 0.4;
-    margin-top: -5px;
   }
 
   .root-drop {
@@ -75,7 +72,7 @@ $content-horizontal-padding: 16px;
       min-height: 35px;
 
       @media screen and (min-width: 768px) {
-        min-height:31px;
+        min-height: 31px;
       }
 
       @media screen and (min-width: 1024px) {

@@ -14,6 +14,7 @@ import WorkspaceSwitcherOption from './WorkspaceSwitcher/WorkspaceSwitcherOption
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { formatLastSyncDate } from '@/Utils/DateUtils'
 import Spinner from '@/Components/Spinner/Spinner'
+import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -23,7 +24,7 @@ type Props = {
   closeMenu: () => void
 }
 
-const iconClassName = 'text-neutral mr-2'
+const iconClassName = `text-neutral mr-2 ${MenuItemIconSize}`
 
 const GeneralAccountMenu: FunctionComponent<Props> = ({
   application,
@@ -90,48 +91,48 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
   return (
     <>
       <div className="mt-1 mb-1 flex items-center justify-between px-3">
-        <div className="text-base font-bold">Account</div>
+        <div className="text-lg font-bold lg:text-base">Account</div>
         <div className="flex cursor-pointer" onClick={closeMenu}>
           <Icon type="close" className="text-neutral" />
         </div>
       </div>
       {user ? (
         <>
-          <div className="mb-3 px-3 text-sm text-foreground">
+          <div className="mb-3 px-3 text-lg text-foreground lg:text-sm">
             <div>You're signed in as:</div>
             <div className="wrap my-0.5 font-bold">{user.email}</div>
             <span className="text-neutral">{application.getHost()}</span>
           </div>
           <div className="mb-2 flex items-start justify-between px-3">
             {isSyncingInProgress ? (
-              <div className="flex items-center text-sm font-semibold text-info">
+              <div className="flex items-center text-base font-semibold text-info lg:text-sm">
                 <Spinner className="mr-2 h-5 w-5" />
                 Syncing...
               </div>
             ) : (
               <div className="flex items-start">
-                <Icon type="check-circle" className="mr-2 text-success" />
+                <Icon type="check-circle" className={`mr-2 text-success ${MenuItemIconSize}`} />
                 <div>
-                  <div className="text-sm font-semibold text-success">Last synced:</div>
-                  <div className="text-sm text-text">{lastSyncDate}</div>
+                  <div className="text-base font-semibold text-success lg:text-sm">Last synced:</div>
+                  <div className="text-base text-text lg:text-sm">{lastSyncDate}</div>
                 </div>
               </div>
             )}
             <div className="flex cursor-pointer text-passive-1" onClick={doSynchronization}>
-              <Icon type="sync" />
+              <Icon type="sync" className={`${MenuItemIconSize}`} />
             </div>
           </div>
         </>
       ) : (
         <>
           <div className="mb-1 px-3">
-            <div className="mb-3 text-sm text-foreground">
+            <div className="mb-3 text-lg text-foreground lg:text-sm">
               You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end
               encryption.
             </div>
             <div className="flex items-center text-passive-1">
-              <Icon type="cloud-off" className="mr-2" />
-              <span className="text-sm font-semibold">Offline</span>
+              <Icon type="cloud-off" className={`mr-2 ${MenuItemIconSize}`} />
+              <span className="text-lg font-semibold lg:text-sm">Offline</span>
             </div>
           </div>
         </>
