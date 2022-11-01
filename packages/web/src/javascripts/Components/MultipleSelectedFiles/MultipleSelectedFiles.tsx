@@ -26,7 +26,7 @@ const MultipleSelectedFiles = ({ filesController, selectionController }: Props) 
           <FileOptionsPanel filesController={filesController} selectionController={selectionController} />
         </div>
       </div>
-      <div className="flex min-h-screen w-full max-w-md flex-grow flex-col items-center justify-center md:min-h-0">
+      <div className="flex min-h-full w-full max-w-md flex-grow flex-col items-center justify-center">
         <IlNotesIcon className="block" />
         <h2 className="m-0 mt-4 text-center text-lg font-bold">{count} selected files</h2>
         <p className="max-w-60 mt-2 text-center text-sm">Actions will be performed on all selected files.</p>

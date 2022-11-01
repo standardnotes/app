@@ -10,7 +10,6 @@ import ResponsivePaneContent from '@/Components/ResponsivePane/ResponsivePaneCon
 import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
-import { isIOS } from '@/Utils'
 import UpgradeNow from '../Footer/UpgradeNow'
 import RoundIconButton from '../Button/RoundIconButton'
 
@@ -54,16 +53,70 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
     [application],
   )
 
+  const NavigationFooter = useMemo(() => {
+    return (
+      <div
+        className={classNames(
+          'fixed bottom-0 flex min-h-[50px] w-full w-full items-center border-t border-border bg-contrast',
+          'px-3.5 pb-safe-bottom pt-2.5 md:hidden',
+        )}
+      >
+        <RoundIconButton
+          className="mr-auto bg-default"
+          onClick={() => {
+            toggleAppPane(AppPaneId.Items)
+          }}
+          label="Go to items list"
+          icon="chevron-left"
+        />
+        <UpgradeNow application={application} featuresController={viewControllerManager.featuresController} />
+        <RoundIconButton
+          className="ml-2.5 bg-default"
+          onClick={() => {
+            viewControllerManager.accountMenuController.toggleShow()
+          }}
+          label="Go to account menu"
+          icon="account-circle"
+        />
+        {hasPasscode && (
+          <RoundIconButton
+            id="lock-item"
+            onClick={() => application.lock()}
+            label="Locks application and wipes unencrypted data from memory."
+            className="ml-2.5 bg-default"
+            icon="lock-filled"
+          />
+        )}
+        <RoundIconButton
+          className="ml-2.5 bg-default"
+          onClick={() => {
+            viewControllerManager.preferencesController.openPreferences()
+          }}
+          label="Go to preferences"
+          icon="tune"
+        />
+        <RoundIconButton
+          className="ml-2.5 bg-default"
+          onClick={() => {
+            viewControllerManager.quickSettingsMenuController.toggle()
+          }}
+          label="Go to quick settings menu"
+          icon="themes"
+        />
+      </div>
+    )
+  }, [hasPasscode, application, viewControllerManager, toggleAppPane])
+
   return (
     <div
       id="navigation"
       className={classNames(
-        'sn-component section app-column h-screen max-h-screen overflow-hidden pt-safe-top md:h-full md:max-h-full md:min-h-0 md:pb-0',
+        'pb-[50px] md:pb-0',
+        'sn-component section app-column h-full max-h-full overflow-hidden pt-safe-top md:h-full md:max-h-full md:min-h-0',
         'w-[220px] xl:w-[220px] xsm-only:!w-full sm-only:!w-full',
         selectedPane === AppPaneId.Navigation
           ? 'pointer-coarse:md-only:!w-48 pointer-coarse:lg-only:!w-48'
           : 'pointer-coarse:md-only:!w-0 pointer-coarse:lg-only:!w-0',
-        isIOS() ? 'pb-safe-bottom' : 'pb-2.5',
       )}
       ref={(element) => {
         if (element) {
@@ -88,50 +141,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
           <SmartViewsSection viewControllerManager={viewControllerManager} />
           <TagsSection viewControllerManager={viewControllerManager} />
         </div>
-        <div className="flex items-center border-t border-border px-3.5 pt-2.5 md:hidden">
-          <RoundIconButton
-            className="mr-auto bg-default"
-            onClick={() => {
-              toggleAppPane(AppPaneId.Items)
-            }}
-            label="Go to items list"
-            icon="chevron-left"
-          />
-          <UpgradeNow application={application} featuresController={viewControllerManager.featuresController} />
-          <RoundIconButton
-            className="ml-2.5 bg-default"
-            onClick={() => {
-              viewControllerManager.accountMenuController.toggleShow()
-            }}
-            label="Go to account menu"
-            icon="account-circle"
-          />
-          {hasPasscode && (
-            <RoundIconButton
-              id="lock-item"
-              onClick={() => application.lock()}
-              label="Locks application and wipes unencrypted data from memory."
-              className="ml-2.5 bg-default"
-              icon="lock-filled"
-            />
-          )}
-          <RoundIconButton
-            className="ml-2.5 bg-default"
-            onClick={() => {
-              viewControllerManager.preferencesController.openPreferences()
-            }}
-            label="Go to preferences"
-            icon="tune"
-          />
-          <RoundIconButton
-            className="ml-2.5 bg-default"
-            onClick={() => {
-              viewControllerManager.quickSettingsMenuController.toggle()
-            }}
-            label="Go to quick settings menu"
-            icon="themes"
-          />
-        </div>
+        {NavigationFooter}
       </ResponsivePaneContent>
       {panelElement && (
         <PanelResizer

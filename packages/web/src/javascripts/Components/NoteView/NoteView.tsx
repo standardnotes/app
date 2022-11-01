@@ -1025,11 +1025,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     const renderHeaderOptions = isMobileScreen() ? !this.state.plaintextEditorFocused : true
 
     return (
-      <div
-        aria-label="Note"
-        className="section editor sn-component max-h-screen md:max-h-full"
-        ref={this.noteViewElementRef}
-      >
+      <div aria-label="Note" className="section editor sn-component h-full md:max-h-full" ref={this.noteViewElementRef}>
         {this.note && (
           <NoteViewFileDropTarget
             note={this.note}
