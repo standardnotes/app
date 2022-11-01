@@ -126,7 +126,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
       ) : (
         <>
           <div className="mb-1 px-3">
-            <div className="mb-3 text-lg text-foreground lg:text-sm">
+            <div className="mb-3 text-base text-foreground lg:text-sm">
               You’re offline. Sign in to sync your notes and preferences across all your devices and enable end-to-end
               encryption.
             </div>
