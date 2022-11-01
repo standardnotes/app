@@ -217,7 +217,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
   const isMobileOverlay = isMobileScreen() && !isFullScreenBlocker
 
   const contentClasses = classNames(
-    `challenge-modal relative flex flex-col items-center rounded border-solid border-border p-8 md:border`,
+    'challenge-modal relative flex flex-col items-center rounded border-solid border-border p-8 md:border',
     !isMobileScreen() && 'shadow-overlay-light',
     isMobileOverlay && 'border border-solid border-border shadow-overlay-light',
     isFullScreenBlocker && isMobileScreen() ? 'bg-passive-5' : 'bg-default',

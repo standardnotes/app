@@ -1,5 +1,5 @@
 import Button from '@/Components/Button/Button'
-import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
+import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
