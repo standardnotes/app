@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.145.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.145.2...@standardnotes/snjs@2.145.3) (2022-11-01)
+
+### Bug Fixes
+
+* **mobile:** increase font sizes and other mobile-centric improvements ([#1907](https://github.com/standardnotes/app/issues/1907)) ([994f824](https://github.com/standardnotes/app/commit/994f824757e1143a4547c975b154fd84e3ebeedf))
+
 ## [2.145.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.145.1...@standardnotes/snjs@2.145.2) (2022-10-30)
 
 ### Bug Fixes

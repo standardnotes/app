@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.45.12](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.11...@standardnotes/mobile@3.45.12) (2022-11-01)
+
+### Bug Fixes
+
+* **mobile:** increase font sizes and other mobile-centric improvements ([#1907](https://github.com/standardnotes/app/issues/1907)) ([994f824](https://github.com/standardnotes/app/commit/994f824757e1143a4547c975b154fd84e3ebeedf))
+
 ## [3.45.11](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.10...@standardnotes/mobile@3.45.11) (2022-10-31)
 
 ### Bug Fixes

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.1](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.6.0...@standardnotes/styles@1.6.1) (2022-11-01)
+
+### Bug Fixes
+
+* **mobile:** increase font sizes and other mobile-centric improvements ([#1907](https://github.com/standardnotes/app/issues/1907)) ([994f824](https://github.com/standardnotes/app/commit/994f824757e1143a4547c975b154fd84e3ebeedf))
+
 # [1.6.0](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.5.0...@standardnotes/styles@1.6.0) (2022-10-27)
 
 ### Features
