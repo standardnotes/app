@@ -19,30 +19,26 @@ export function SortPayloadsByRecentAndContentPriority(
     let bPriority = 0
 
     if (priorityList) {
-      aPriority = priorityList.indexOf(a.content_type)
-      bPriority = priorityList.indexOf(b.content_type)
+      const aIsInPriorityList = priorityList.includes(a.content_type)
+      const bIsInPriorityList = priorityList.includes(b.content_type)
 
-      if (aPriority === -1) {
-        /** Not found in list, not prioritized. Set it to max value */
+      const aHasUuidToPrioritize = itemUuidsToPrioritize.includes(a.uuid)
+      const bHasUuidToPrioritize = itemUuidsToPrioritize.includes(b.uuid)
+
+      if (aIsInPriorityList) {
+        aPriority = priorityList.indexOf(a.content_type)
+      } else if (aHasUuidToPrioritize) {
+        aPriority = itemUuidsToPrioritize.indexOf(a.uuid) + priorityList.length
+      } else {
         aPriority = priorityList.length
       }
-      if (bPriority === -1) {
-        /** Not found in list, not prioritized. Set it to max value */
-        bPriority = priorityList.length
-      }
-    }
 
-    if (itemUuidsToPrioritize.length) {
-      aPriority = itemUuidsToPrioritize.indexOf(a.uuid)
-      bPriority = itemUuidsToPrioritize.indexOf(b.uuid)
-
-      if (aPriority === -1) {
-        /** Not found in list, not prioritized. Set it to max value */
-        aPriority = itemUuidsToPrioritize.length
-      }
-      if (bPriority === -1) {
-        /** Not found in list, not prioritized. Set it to max value */
-        bPriority = itemUuidsToPrioritize.length
+      if (bIsInPriorityList) {
+        bPriority = priorityList.indexOf(b.content_type)
+      } else if (bHasUuidToPrioritize) {
+        bPriority = itemUuidsToPrioritize.indexOf(b.uuid) + priorityList.length
+      } else {
+        bPriority = priorityList.length + itemUuidsToPrioritize.length
       }
     }
 
