@@ -87,7 +87,7 @@ class ApplicationGroupView extends Component<Props, State> {
               'challenge-modal shadow-overlay-light relative flex flex-col items-center rounded border border-solid border-border bg-default p-8'
             }
           >
-            {message}
+            <div className="text-base lg:text-xs">{message}</div>
           </DialogContent>
         </DialogOverlay>
       )

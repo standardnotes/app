@@ -9,7 +9,7 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { StringDeleteNote, STRING_DELETE_LOCKED_ATTEMPT, STRING_DELETE_PLACEHOLDER_ATTEMPT } from '@/Constants/Strings'
 import { log, LoggingDomain } from '@/Logging'
-import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
+import { debounce, isDesktopApplication, isMobileScreen, isTabletScreen } from '@/Utils'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import {
   ApplicationEvent,
@@ -91,12 +91,36 @@ type State = {
   noteType?: NoteType
 }
 
-const PlaintextFontSizeMapping: Record<EditorFontSize, string> = {
-  ExtraSmall: 'text-xs',
-  Small: 'text-sm',
-  Normal: 'text-editor',
-  Medium: 'text-lg',
-  Large: 'text-xl',
+const getPlaintextFontSize = (key: EditorFontSize): string => {
+  const desktopMapping: Record<EditorFontSize, string> = {
+    ExtraSmall: 'text-xs',
+    Small: 'text-sm',
+    Normal: 'text-editor',
+    Medium: 'text-lg',
+    Large: 'text-xl',
+  }
+
+  const mobileMapping: Record<EditorFontSize, string> = {
+    ExtraSmall: 'text-sm',
+    Small: 'text-editor',
+    Normal: 'text-lg',
+    Medium: 'text-xl',
+    Large: 'text-xl2',
+  }
+
+  const tabletMapping: Record<EditorFontSize, string> = {
+    ExtraSmall: 'text-sm',
+    Small: 'text-editor',
+    Normal: 'text-base',
+    Medium: 'text-xl',
+    Large: 'text-xl2',
+  }
+
+  if (isTabletScreen()) {
+    return tabletMapping[key]
+  }
+
+  return isMobileScreen() ? mobileMapping[key] : desktopMapping[key]
 }
 
 class NoteView extends AbstractComponent<NoteViewProps, State> {
@@ -111,6 +135,10 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   private removeComponentStreamObserver?: () => void
   private removeComponentManagerObserver?: () => void
   private removeInnerNoteObserver?: () => void
+  private removeWebAppEventObserver: () => void
+
+  private needsAdjustMobileCursor = false
+  private isAdjustingMobileCursor = false
 
   private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null
 
@@ -132,6 +160,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.debounceReloadEditorComponent = debounce(this.debounceReloadEditorComponent.bind(this), 25)
 
     this.textAreaChangeDebounceSave = debounce(this.textAreaChangeDebounceSave, TextareaDebounce)
+
+    this.removeWebAppEventObserver = props.application.addWebEventObserver((event) => {
+      if (event === WebAppEvent.MobileKeyboardWillChangeFrame) {
+        this.scrollMobileCursorIntoViewAfterWebviewResize()
+      }
+    })
 
     this.state = {
       availableStackComponents: [],
@@ -160,6 +194,16 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.editorContentRef = createRef<HTMLDivElement>()
   }
 
+  scrollMobileCursorIntoViewAfterWebviewResize() {
+    if (this.needsAdjustMobileCursor) {
+      this.needsAdjustMobileCursor = false
+      this.isAdjustingMobileCursor = true
+      document.getElementById('note-text-editor')?.blur()
+      document.getElementById('note-text-editor')?.focus()
+      this.isAdjustingMobileCursor = false
+    }
+  }
+
   override deinit() {
     super.deinit()
     ;(this.controller as unknown) = undefined
@@ -178,6 +222,9 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     this.clearNoteProtectionInactivityTimer()
     ;(this.ensureNoteIsInsertedBeforeUIAction as unknown) = undefined
+
+    this.removeWebAppEventObserver?.()
+    ;(this.removeWebAppEventObserver as unknown) = undefined
 
     this.removeTabObserver?.()
     this.removeTabObserver = undefined
@@ -671,9 +718,13 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   onContentFocus = () => {
+    if (!this.isAdjustingMobileCursor) {
+      this.needsAdjustMobileCursor = true
+    }
     if (this.lastEditorFocusEventSource) {
       this.application.notifyWebEvent(WebAppEvent.EditorFocused, { eventSource: this.lastEditorFocusEventSource })
     }
+
     this.lastEditorFocusEventSource = undefined
     this.setState({ plaintextEditorFocused: true })
   }
@@ -1114,7 +1165,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               className={classNames(
                 'editable font-editor flex-grow',
                 this.state.lineHeight && `leading-${this.state.lineHeight.toLowerCase()}`,
-                this.state.fontSize && PlaintextFontSizeMapping[this.state.fontSize],
+                this.state.fontSize && getPlaintextFontSize(this.state.fontSize),
               )}
             ></textarea>
           )}

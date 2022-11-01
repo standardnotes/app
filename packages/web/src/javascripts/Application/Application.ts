@@ -38,7 +38,7 @@ import {
 import { MobileWebReceiver, NativeMobileEventListener } from '../NativeMobileWeb/MobileWebReceiver'
 import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { setViewportHeightWithFallback } from '@/setViewportHeightWithFallback'
+import { setCustomViewportHeight, setViewportHeightWithFallback } from '@/setViewportHeightWithFallback'
 import { WebServices } from './WebServices'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
@@ -291,6 +291,15 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   handleMobileColorSchemeChangeEvent() {
     void this.getThemeService().handleMobileColorSchemeChangeEvent()
+  }
+
+  handleMobileKeyboardWillChangeFrameEvent(frame: { height: number; contentHeight: number }): void {
+    setCustomViewportHeight(String(frame.contentHeight), 'px', true)
+    this.notifyWebEvent(WebAppEvent.MobileKeyboardWillChangeFrame, frame)
+  }
+
+  handleMobileKeyboardDidChangeFrameEvent(frame: { height: number; contentHeight: number }): void {
+    this.notifyWebEvent(WebAppEvent.MobileKeyboardDidChangeFrame, frame)
   }
 
   private async lockApplicationAfterMobileEventIfApplicable(): Promise<void> {

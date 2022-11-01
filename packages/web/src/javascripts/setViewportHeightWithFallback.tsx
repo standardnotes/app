@@ -1,24 +1,27 @@
-import { isDev } from '@/Utils'
+import { log, LoggingDomain } from './Logging'
 
 export const ViewportHeightKey = '--viewport-height'
 
 export const setViewportHeightWithFallback = () => {
-  const currentHeight = parseInt(document.documentElement.style.getPropertyValue(ViewportHeightKey))
   const newValue = visualViewport && visualViewport.height > 0 ? visualViewport.height : window.innerHeight
 
-  if (isDev) {
-    // eslint-disable-next-line no-console
-    console.log(`currentHeight: ${currentHeight}, newValue: ${newValue}`)
-  }
-
-  if (currentHeight && newValue < currentHeight) {
-    return
-  }
-
   if (!newValue) {
-    document.documentElement.style.setProperty(ViewportHeightKey, '100vh')
+    setCustomViewportHeight('100', 'vh')
     return
   }
 
-  document.documentElement.style.setProperty(ViewportHeightKey, `${newValue}px`)
+  setCustomViewportHeight(String(newValue), 'px')
+}
+
+/**
+ * @param forceTriggerResizeEvent On iPad at least, setProperty(ViewportHeightKey) does not trigger a resize event
+ */
+export const setCustomViewportHeight = (height: string, suffix: 'px' | 'vh', forceTriggerResizeEvent = false) => {
+  log(LoggingDomain.Viewport, `setCustomViewportHeight: ${height}`)
+
+  document.documentElement.style.setProperty(ViewportHeightKey, `${height}${suffix}`)
+
+  if (forceTriggerResizeEvent) {
+    window.dispatchEvent(new Event('resize'))
+  }
 }

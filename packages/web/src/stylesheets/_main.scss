@@ -137,11 +137,6 @@ body,
   position: relative;
   overflow: auto;
   background-color: var(--editor-header-bar-background-color);
-
-  @media screen and (min-width: 768px) {
-    min-height: 100vh;
-    height: 100vh;
-  }
 }
 
 $footer-height: 2rem;

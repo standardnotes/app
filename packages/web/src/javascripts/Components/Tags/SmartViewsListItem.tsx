@@ -105,7 +105,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
       <div
         role="button"
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-        className={classNames('tag py-2 px-3.5 md:py-1', isSelected && 'selected', isFaded && 'opacity-50')}
+        className={classNames('tag px-3.5', isSelected && 'selected', isFaded && 'opacity-50')}
         onClick={selectCurrentTag}
         style={{
           paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
@@ -117,7 +117,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
           </div>
           {isEditing ? (
             <input
-              className={'title editing'}
+              className={'title editing text-mobile-navigation-list-item lg:text-navigation-list-item'}
               id={`react-tag-${view.uuid}`}
               onBlur={onBlur}
               onInput={onInput}
@@ -127,18 +127,23 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
               ref={inputRef}
             />
           ) : (
-            <div className={'title overflow-hidden text-left'} id={`react-tag-${view.uuid}`}>
+            <div
+              className={
+                'title overflow-hidden text-left text-mobile-navigation-list-item lg:text-navigation-list-item'
+              }
+              id={`react-tag-${view.uuid}`}
+            >
               {title}
             </div>
           )}
-          <div className={'count'}>{view.uuid === SystemViewId.AllNotes && tagsState.allNotesCount}</div>
+          <div className={'count text-base lg:text-sm'}>
+            {view.uuid === SystemViewId.AllNotes && tagsState.allNotesCount}
+          </div>
         </div>
 
         {!isSystemView(view) && (
           <div className="meta">
-            {view.conflictOf && (
-              <div className="danger text-[0.625rem] font-bold">Conflicted Copy {view.conflictOf}</div>
-            )}
+            {view.conflictOf && <div className="-mt-1 text-[0.625rem] font-bold text-danger">Conflicted Copy</div>}
 
             {isSelected && (
               <div className="menu">

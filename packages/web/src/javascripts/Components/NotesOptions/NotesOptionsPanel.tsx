@@ -40,7 +40,7 @@ const NotesOptionsPanel = ({
   return (
     <>
       <RoundIconButton label="Note options menu" onClick={toggleMenu} ref={buttonRef} icon="more" />
-      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="select-none py-2">
+      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="select-none">
         <NotesOptions
           application={application}
           navigationController={navigationController}

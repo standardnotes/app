@@ -19,7 +19,9 @@ const Listed = ({ application }: Props) => {
   const [requestingAccount, setRequestingAccount] = useState<boolean>()
 
   const reloadAccounts = useCallback(async () => {
-    setAccounts(await application.listed.getListedAccounts())
+    if (application.hasAccount()) {
+      setAccounts(await application.listed.getListedAccounts())
+    }
   }, [application])
 
   useEffect(() => {
@@ -82,11 +84,11 @@ const Listed = ({ application }: Props) => {
           <Subtitle>What is Listed?</Subtitle>
           <Text>
             Listed is a free blogging platform that allows you to create a public journal published directly from your
-            notes.{' '}
-            <a target="_blank" href="https://listed.to" rel="noreferrer noopener">
-              Learn more
-            </a>
+            notes. {!application.getUser() && 'To get started, sign in or register for a Standard Notes account.'}
           </Text>
+          <a className="mt-2 text-info" target="_blank" href="https://listed.to" rel="noreferrer noopener">
+            Learn more
+          </a>
         </PreferencesSegment>
         {application.getUser() && (
           <>

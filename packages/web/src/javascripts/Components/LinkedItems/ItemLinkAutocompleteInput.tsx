@@ -119,8 +119,11 @@ const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focus
         <Disclosure open={dropdownVisible} onChange={showDropdown}>
           <input
             ref={inputRef}
-            className={`${tags.length > 0 ? 'w-80' : 'mr-10 w-70'} no-border h-7
-            bg-transparent text-xs text-text focus:border-b-2 focus:border-solid focus:border-info focus:shadow-none focus:outline-none`}
+            className={classNames(
+              `${tags.length > 0 ? 'w-80' : 'mr-10 w-70'}`,
+              'bg-transparent text-sm text-text focus:border-b-2 focus:border-solid focus:border-info lg:text-xs',
+              'no-border h-7 focus:shadow-none focus:outline-none',
+            )}
             value={searchQuery}
             onChange={onSearchQueryChange}
             type="text"

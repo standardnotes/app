@@ -9,7 +9,7 @@
 }
 
 [data-reach-dialog-overlay]::before {
-  background-color: var(--sn-stylekit-contrast-background-color);
+  background-color: var(--sn-stylekit-passive-color-5);
   content: '';
   position: fixed;
   top: 0px;
@@ -17,10 +17,6 @@
   bottom: 0px;
   left: 0px;
   opacity: 0.75;
-}
-
-.challenge-modal-overlay::before {
-  background-color: var(--sn-stylekit-passive-color-5);
 }
 
 [data-reach-dialog-content] {

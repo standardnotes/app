@@ -23,9 +23,8 @@ import { PreferenceMode } from './PreferenceMode'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 import Button from '@/Components/Button/Button'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { isDev } from '@/Utils'
 
-const DailyEntryModeEnabled = isDev
+const DailyEntryModeEnabled = true
 
 const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   closeDisplayOptionsMenu,
@@ -180,7 +179,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     return (
       <button
         className={classNames(
-          'relative cursor-pointer rounded-full border-2 border-solid border-transparent px-2 text-sm focus:shadow-none',
+          'relative cursor-pointer rounded-full border-2 border-solid border-transparent px-2 text-base focus:shadow-none lg:text-sm',
           isSelected ? 'bg-info text-info-contrast' : 'bg-transparent text-text hover:bg-info-backdrop',
         )}
         onClick={() => {
@@ -209,7 +208,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       </div>
       <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
         {DailyEntryModeEnabled &&
-          'Create powerful workflows and organizational layouts with per-tag display preferences and the all-new Daily Notebook feature.'}
+          'Create powerful workflows and organizational layouts with per-tag display preferences and the all-new Daily Notebook calendar layout.'}
         {!DailyEntryModeEnabled &&
           'Create powerful workflows and organizational layouts with per-tag display preferences.'}
       </p>
@@ -226,20 +225,24 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
 
   return (
     <Menu className="text-sm" a11yLabel="Notes list options menu" closeMenu={closeDisplayOptionsMenu} isOpen={isOpen}>
-      <div className="my-1 px-3 text-xs font-semibold uppercase text-text">Preferences for</div>
+      <div className="my-1 px-3 text-base font-semibold uppercase text-text lg:text-xs">Preferences for</div>
       <div className={classNames('mt-1.5 flex w-full justify-between px-3', !controlsDisabled && 'mb-3')}>
         <div className="flex items-center gap-1.5">
           <TabButton label="Global" mode="global" />
           {!isSystemTag && <TabButton label={selectedTag.title} icon={selectedTag.iconString} mode="tag" />}
         </div>
-        {currentMode === 'tag' && <button onClick={resetTagPreferences}>Reset</button>}
+        {currentMode === 'tag' && (
+          <button className="text-base lg:text-sm" onClick={resetTagPreferences}>
+            Reset
+          </button>
+        )}
       </div>
 
       {controlsDisabled && <NoSubscriptionBanner />}
 
       <MenuItemSeparator />
 
-      <div className="my-1 px-3 text-xs font-semibold uppercase text-text">Sort by</div>
+      <div className="my-1 px-3 text-base font-semibold uppercase text-text lg:text-xs">Sort by</div>
       <MenuItem
         disabled={controlsDisabled || isDailyEntry}
         className="py-2"
@@ -295,7 +298,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         </div>
       </MenuItem>
       <MenuItemSeparator />
-      <div className="px-3 py-1 text-xs font-semibold uppercase text-text">View</div>
+      <div className="px-3 py-1 text-base font-semibold uppercase text-text lg:text-xs">View</div>
       {!isFilesSmartView && (
         <MenuItem
           disabled={controlsDisabled}
@@ -335,7 +338,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         Show icon
       </MenuItem>
       <MenuItemSeparator />
-      <div className="px-3 py-1 text-xs font-semibold uppercase text-text">Other</div>
+      <div className="px-3 py-1 text-base font-semibold uppercase text-text lg:text-xs">Other</div>
       <MenuItem
         disabled={controlsDisabled}
         type={MenuItemType.SwitchButton}
@@ -384,7 +387,12 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             onChange={toggleEntryMode}
           >
             <div className="flex flex-col pr-5">
-              <div className="text-xs font-semibold uppercase text-text">Daily Notebook</div>
+              <div className="flex flex-row items-center">
+                <div className="text-base font-semibold uppercase text-text lg:text-xs">Daily Notebook</div>
+                <div className="ml-2 rounded bg-success px-1.5 py-[1px] text-[10px] font-bold text-success-contrast">
+                  Experimental
+                </div>
+              </div>
               <div className="mt-1">Capture new notes daily with a calendar-based layout</div>
             </div>
           </MenuItem>

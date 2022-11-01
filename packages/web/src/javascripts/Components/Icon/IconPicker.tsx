@@ -54,7 +54,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className }: Props)
 
     return (
       <button
-        className={`relative mr-2 cursor-pointer border-0 bg-default pb-1.5 text-sm focus:shadow-none ${
+        className={`relative mr-2 cursor-pointer border-0 bg-default pb-1.5 text-mobile-menu-item focus:shadow-none md:text-tablet-menu-item lg:text-menu-item ${
           isSelected ? 'font-medium text-info' : 'text-text'
         }`}
         onClick={() => {
@@ -114,14 +114,18 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className }: Props)
                 onChange={({ target: input }) => handleEmojiChange((input as HTMLInputElement)?.value)}
               />
             </div>
-            <div className="mt-2 text-xs text-passive-0">
+            <div className="mt-2 text-sm text-passive-0 lg:text-xs">
               Use your keyboard to enter or paste in an emoji character.
             </div>
             {isMacOS && (
-              <div className="mt-2 text-xs text-passive-0">On macOS: ⌘ + ⌃ + Space bar to bring up emoji picker.</div>
+              <div className="mt-2 text-sm text-passive-0 lg:text-xs">
+                On macOS: ⌘ + ⌃ + Space bar to bring up emoji picker.
+              </div>
             )}
             {isWindows && (
-              <div className="mt-2 text-xs text-passive-0">On Windows: Windows key + . to bring up emoji picker.</div>
+              <div className="mt-2 text-sm text-passive-0 lg:text-xs">
+                On Windows: Windows key + . to bring up emoji picker.
+              </div>
             )}
           </>
         )}

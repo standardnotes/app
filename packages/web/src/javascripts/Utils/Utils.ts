@@ -204,6 +204,8 @@ export const disableIosTextFieldZoom = () => {
 }
 
 export const isMobileScreen = () => !window.matchMedia(MediaQueryBreakpoints.md).matches
+export const isTabletScreen = () =>
+  !window.matchMedia(MediaQueryBreakpoints.sm).matches && !window.matchMedia(MediaQueryBreakpoints.lg).matches
 
 export const getBase64FromBlob = (blob: Blob) => {
   return new Promise<string>((resolve, reject) => {

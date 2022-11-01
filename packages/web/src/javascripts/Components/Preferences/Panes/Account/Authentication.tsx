@@ -1,5 +1,5 @@
 import Button from '@/Components/Button/Button'
-import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
+import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
@@ -33,11 +33,11 @@ const Authentication: FunctionComponent<Props> = ({ viewControllerManager }) => 
         <div className="flex flex-col items-center px-4 md:px-12">
           <AccountIllustration className="mb-3" />
           <Title>You're not signed in</Title>
-          <Text className="mb-3 text-center">
+          <div className="mb-3 text-center text-base lg:text-sm">
             Sign in to sync your notes and preferences across all your devices and enable end-to-end encryption.
-          </Text>
+          </div>
           <Button primary label="Create free account" onClick={clickRegister} className="mb-3" />
-          <div className="text-sm">
+          <div className="text-base lg:text-sm">
             Already have an account?{' '}
             <button className="cursor-pointer border-0 bg-default p-0 text-info underline" onClick={clickSignIn}>
               Sign in
