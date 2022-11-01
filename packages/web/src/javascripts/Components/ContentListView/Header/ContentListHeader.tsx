@@ -87,7 +87,7 @@ const ContentListHeader = ({
     return (
       <button
         className={classNames(
-          'absolute bottom-6 right-6 z-editor-title-bar ml-3 flex h-15 w-15 cursor-pointer items-center',
+          'fixed bottom-6 right-6 z-editor-title-bar ml-3 flex h-15 w-15 cursor-pointer items-center',
           `justify-center rounded-full border border-solid border-transparent ${
             isDailyEntry ? 'bg-danger text-danger-contrast' : 'bg-info text-info-contrast'
           }`,

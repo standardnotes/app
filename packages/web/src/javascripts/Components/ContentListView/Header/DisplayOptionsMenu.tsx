@@ -23,9 +23,8 @@ import { PreferenceMode } from './PreferenceMode'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 import Button from '@/Components/Button/Button'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { isDev } from '@/Utils'
 
-const DailyEntryModeEnabled = isDev
+const DailyEntryModeEnabled = true
 
 const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   closeDisplayOptionsMenu,
@@ -209,7 +208,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       </div>
       <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
         {DailyEntryModeEnabled &&
-          'Create powerful workflows and organizational layouts with per-tag display preferences and the all-new Daily Notebook feature.'}
+          'Create powerful workflows and organizational layouts with per-tag display preferences and the all-new Daily Notebook calendar layout.'}
         {!DailyEntryModeEnabled &&
           'Create powerful workflows and organizational layouts with per-tag display preferences.'}
       </p>
@@ -388,7 +387,12 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             onChange={toggleEntryMode}
           >
             <div className="flex flex-col pr-5">
-              <div className="text-base font-semibold uppercase text-text lg:text-xs">Daily Notebook</div>
+              <div className="flex flex-row items-center">
+                <div className="text-base font-semibold uppercase text-text lg:text-xs">Daily Notebook</div>
+                <div className="ml-2 rounded bg-success px-1.5 py-[1px] text-[10px] font-bold text-success-contrast">
+                  Experimental
+                </div>
+              </div>
               <div className="mt-1">Capture new notes daily with a calendar-based layout</div>
             </div>
           </MenuItem>

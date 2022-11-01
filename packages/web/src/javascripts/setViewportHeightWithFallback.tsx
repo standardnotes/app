@@ -13,11 +13,15 @@ export const setViewportHeightWithFallback = () => {
   setCustomViewportHeight(String(newValue), 'px')
 }
 
-export const setCustomViewportHeight = (height: string, suffix: 'px' | 'vh') => {
+/**
+ * @param forceTriggerResizeEvent On iPad at least, setProperty(ViewportHeightKey) does not trigger a resize event
+ */
+export const setCustomViewportHeight = (height: string, suffix: 'px' | 'vh', forceTriggerResizeEvent = false) => {
   log(LoggingDomain.Viewport, `setCustomViewportHeight: ${height}`)
 
   document.documentElement.style.setProperty(ViewportHeightKey, `${height}${suffix}`)
 
-  /** On iPad at least, the above setProperty does not trigger a resize event */
-  window.dispatchEvent(new Event('resize'))
+  if (forceTriggerResizeEvent) {
+    window.dispatchEvent(new Event('resize'))
+  }
 }

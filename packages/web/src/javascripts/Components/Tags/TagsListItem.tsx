@@ -312,7 +312,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           </div>
 
           <div className={`meta ${hasAtLeastOneFolder ? 'with-folders' : ''}`}>
-            {tag.conflictOf && <div className="danger text-[0.625rem] font-bold">Conflicted Copy {tag.conflictOf}</div>}
+            {tag.conflictOf && <div className="-mt-1 text-[0.625rem] font-bold text-danger">Conflicted Copy</div>}
           </div>
         </div>
         {isAddingSubtag && (

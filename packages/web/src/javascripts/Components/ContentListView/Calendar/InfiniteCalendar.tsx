@@ -28,7 +28,7 @@ const PageSize = 2
 
 const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
   ({ activities, onDateSelect, selectedDay, className }: Props, ref) => {
-    const [expanded, setExpanded] = useState(true)
+    const [expanded, setExpanded] = useState(isMobileScreen() ? false : true)
     const [restoreScrollAfterExpand, setRestoreScrollAfterExpand] = useState(false)
     const scrollerRef = useRef<InfiniteScrollerInterface | null>(null)
     const previousSelectedDay = usePrevious(selectedDay)

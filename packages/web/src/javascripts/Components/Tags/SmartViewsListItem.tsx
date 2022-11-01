@@ -143,9 +143,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
 
         {!isSystemView(view) && (
           <div className="meta">
-            {view.conflictOf && (
-              <div className="danger text-[0.625rem] font-bold">Conflicted Copy {view.conflictOf}</div>
-            )}
+            {view.conflictOf && <div className="-mt-1 text-[0.625rem] font-bold text-danger">Conflicted Copy</div>}
 
             {isSelected && (
               <div className="menu">

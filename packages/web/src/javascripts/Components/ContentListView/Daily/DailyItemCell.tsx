@@ -9,6 +9,7 @@ import { ListableContentItem } from '../Types/ListableContentItem'
 import { DailyItemsDay } from './DailyItemsDaySection'
 import { ListItemTitle } from '../ListItemTitle'
 import { EmptyPlaceholderBars } from './EmptyPlaceholderBars'
+import { isMobileScreen } from '@/Utils'
 
 type DaySquareProps = {
   day: number
@@ -22,7 +23,7 @@ const DaySquare: FunctionComponent<DaySquareProps> = ({ day, hasActivity, weekda
       <div
         className={`${
           hasActivity ? 'bg-danger text-danger-contrast' : 'bg-neutral text-neutral-contrast'
-        } h-15 w-18 rounded p-2 text-center`}
+        } h-19 w-18 rounded p-2 text-center`}
       >
         <div className="text-sm font-bold">{weekday}</div>
         <div className="text-4xl font-bold">{day}</div>
@@ -72,7 +73,7 @@ export const DailyItemCell = forwardRef(
               {!item && (
                 <div className="w-full">
                   <div className="break-word mr-2 font-semibold">{formatDateAndTimeForNote(section.date, false)}</div>
-                  <EmptyPlaceholderBars rows={4} />
+                  <EmptyPlaceholderBars rows={isMobileScreen() ? 2 : 4} />
                 </div>
               )}
             </div>

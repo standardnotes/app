@@ -294,7 +294,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   handleMobileKeyboardWillChangeFrameEvent(frame: { height: number; contentHeight: number }): void {
-    setCustomViewportHeight(String(frame.contentHeight), 'px')
+    setCustomViewportHeight(String(frame.contentHeight), 'px', true)
     this.notifyWebEvent(WebAppEvent.MobileKeyboardWillChangeFrame, frame)
   }
 
