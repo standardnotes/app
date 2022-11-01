@@ -76,11 +76,11 @@ export class MobileWebReceiver {
           messageData as { height: number; contentHeight: number },
         )
         break
-        case ReactNativeToWebEvent.KeyboardFrameDidChange:
-          void this.application.handleMobileKeyboardDidChangeFrameEvent(
-            messageData as { height: number; contentHeight: number },
-          )
-          break
+      case ReactNativeToWebEvent.KeyboardFrameDidChange:
+        void this.application.handleMobileKeyboardDidChangeFrameEvent(
+          messageData as { height: number; contentHeight: number },
+        )
+        break
 
       default:
         break
