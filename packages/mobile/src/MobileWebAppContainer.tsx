@@ -58,12 +58,23 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       device.reloadStatusBarStyle(false)
     })
 
+    const keyboardWillChangeFrame = Keyboard.addListener('keyboardWillChangeFrame', (e) => {
+      webViewRef.current?.postMessage(
+        JSON.stringify({
+          reactNativeEvent: ReactNativeToWebEvent.KeyboardFrameWillChange,
+          messageType: 'event',
+          messageData: { height: e.endCoordinates.height, contentHeight: e.endCoordinates.screenY },
+        }),
+      )
+    })
+
     return () => {
       removeStateServiceListener()
       removeBackHandlerServiceListener()
       removeColorSchemeServiceListener()
       keyboardShowListener.remove()
       keyboardHideListener.remove()
+      keyboardWillChangeFrame.remove()
     }
   }, [webViewRef, stateService, device, androidBackHandlerService, colorSchemeService])
 
@@ -253,6 +264,12 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       injectedJavaScriptBeforeContentLoaded={injectedJS}
       bounces={false}
       keyboardDisplayRequiresUserAction={false}
+      scalesPageToFit={true}
+      /**
+       * This disables the global window scroll but keeps scroll within div elements like lists and textareas.
+       * This is needed to prevent the keyboard from pushing the webview up and down when it appears and disappears.
+       */
+      scrollEnabled={false}
     />
   )
 }

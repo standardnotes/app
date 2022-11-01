@@ -116,7 +116,7 @@ const getPlaintextFontSize = (key: EditorFontSize): string => {
     Large: 'text-xl2',
   }
 
-  if (isTabletScreen) {
+  if (isTabletScreen()) {
     return tabletMapping[key]
   }
 

@@ -3,22 +3,21 @@ import { isDev } from '@/Utils'
 export const ViewportHeightKey = '--viewport-height'
 
 export const setViewportHeightWithFallback = () => {
-  const currentHeight = parseInt(document.documentElement.style.getPropertyValue(ViewportHeightKey))
   const newValue = visualViewport && visualViewport.height > 0 ? visualViewport.height : window.innerHeight
 
+  if (!newValue) {
+    setCustomViewportHeight('100vh')
+    return
+  }
+
+  setCustomViewportHeight(String(newValue))
+}
+
+export const setCustomViewportHeight = (height: string) => {
   if (isDev) {
     // eslint-disable-next-line no-console
-    console.log(`currentHeight: ${currentHeight}, newValue: ${newValue}`)
+    console.log(`setCustomViewportHeight: ${height}`)
   }
 
-  if (currentHeight && newValue < currentHeight) {
-    return
-  }
-
-  if (!newValue) {
-    document.documentElement.style.setProperty(ViewportHeightKey, '100vh')
-    return
-  }
-
-  document.documentElement.style.setProperty(ViewportHeightKey, `${newValue}px`)
+  document.documentElement.style.setProperty(ViewportHeightKey, `${height}px`)
 }
