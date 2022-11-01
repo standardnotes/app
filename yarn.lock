@@ -7243,6 +7243,7 @@ __metadata:
     "@standardnotes/models": "workspace:^"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/security": ^1.2.0
+    "@standardnotes/sncrypto-common": "workspace:^"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^28.1.5
     "@typescript-eslint/eslint-plugin": ^5.30.0
@@ -7302,7 +7303,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/sncrypto-common@workspace:*, @standardnotes/sncrypto-common@workspace:packages/sncrypto-common":
+"@standardnotes/sncrypto-common@workspace:*, @standardnotes/sncrypto-common@workspace:^, @standardnotes/sncrypto-common@workspace:packages/sncrypto-common":
   version: 0.0.0-use.local
   resolution: "@standardnotes/sncrypto-common@workspace:packages/sncrypto-common"
   dependencies:
