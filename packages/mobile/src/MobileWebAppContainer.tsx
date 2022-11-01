@@ -68,6 +68,16 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       )
     })
 
+    const keyboardDidChangeFrame = Keyboard.addListener('keyboardDidChangeFrame', (e) => {
+      webViewRef.current?.postMessage(
+        JSON.stringify({
+          reactNativeEvent: ReactNativeToWebEvent.KeyboardFrameDidChange,
+          messageType: 'event',
+          messageData: { height: e.endCoordinates.height, contentHeight: e.endCoordinates.screenY },
+        }),
+      )
+    })
+
     return () => {
       removeStateServiceListener()
       removeBackHandlerServiceListener()
@@ -75,6 +85,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       keyboardShowListener.remove()
       keyboardHideListener.remove()
       keyboardWillChangeFrame.remove()
+      keyboardDidChangeFrame.remove()
     }
   }, [webViewRef, stateService, device, androidBackHandlerService, colorSchemeService])
 

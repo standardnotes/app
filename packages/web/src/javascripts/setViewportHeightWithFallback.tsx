@@ -1,4 +1,4 @@
-import { isDev } from '@/Utils'
+import { log, LoggingDomain } from './Logging'
 
 export const ViewportHeightKey = '--viewport-height'
 
@@ -14,10 +14,7 @@ export const setViewportHeightWithFallback = () => {
 }
 
 export const setCustomViewportHeight = (height: string) => {
-  if (isDev) {
-    // eslint-disable-next-line no-console
-    console.log(`setCustomViewportHeight: ${height}`)
-  }
+  log(LoggingDomain.Viewport, `setCustomViewportHeight: ${height}`)
 
   document.documentElement.style.setProperty(ViewportHeightKey, `${height}px`)
 }

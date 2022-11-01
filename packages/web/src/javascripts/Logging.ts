@@ -6,6 +6,7 @@ export enum LoggingDomain {
   NoteView,
   ItemsList,
   NavigationList,
+  Viewport,
 }
 
 const LoggingStatus: Record<LoggingDomain, boolean> = {
@@ -13,6 +14,7 @@ const LoggingStatus: Record<LoggingDomain, boolean> = {
   [LoggingDomain.NoteView]: false,
   [LoggingDomain.ItemsList]: false,
   [LoggingDomain.NavigationList]: false,
+  [LoggingDomain.Viewport]: false,
 }
 
 export function log(domain: LoggingDomain, ...args: any[]): void {

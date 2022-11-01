@@ -135,6 +135,10 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   private removeComponentStreamObserver?: () => void
   private removeComponentManagerObserver?: () => void
   private removeInnerNoteObserver?: () => void
+  private removeWebAppEventObserver: () => void
+
+  private needsAdjustMobileCursor = false
+  private isAdjustingMobileCursor = false
 
   private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null
 
@@ -156,6 +160,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.debounceReloadEditorComponent = debounce(this.debounceReloadEditorComponent.bind(this), 25)
 
     this.textAreaChangeDebounceSave = debounce(this.textAreaChangeDebounceSave, TextareaDebounce)
+
+    this.removeWebAppEventObserver = props.application.addWebEventObserver((event) => {
+      if (event === WebAppEvent.MobileKeyboardWillChangeFrame) {
+        this.scrollMobileCursorIntoViewAfterWebviewResize()
+      }
+    })
 
     this.state = {
       availableStackComponents: [],
@@ -184,6 +194,16 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.editorContentRef = createRef<HTMLDivElement>()
   }
 
+  scrollMobileCursorIntoViewAfterWebviewResize() {
+    if (this.needsAdjustMobileCursor) {
+      this.needsAdjustMobileCursor = false
+      this.isAdjustingMobileCursor = true
+      document.getElementById('note-text-editor')?.blur()
+      document.getElementById('note-text-editor')?.focus()
+      this.isAdjustingMobileCursor = false
+    }
+  }
+
   override deinit() {
     super.deinit()
     ;(this.controller as unknown) = undefined
@@ -202,6 +222,9 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     this.clearNoteProtectionInactivityTimer()
     ;(this.ensureNoteIsInsertedBeforeUIAction as unknown) = undefined
+
+    this.removeWebAppEventObserver?.()
+    ;(this.removeWebAppEventObserver as unknown) = undefined
 
     this.removeTabObserver?.()
     this.removeTabObserver = undefined
@@ -695,9 +718,13 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   onContentFocus = () => {
+    if (!this.isAdjustingMobileCursor) {
+      this.needsAdjustMobileCursor = true
+    }
     if (this.lastEditorFocusEventSource) {
       this.application.notifyWebEvent(WebAppEvent.EditorFocused, { eventSource: this.lastEditorFocusEventSource })
     }
+
     this.lastEditorFocusEventSource = undefined
     this.setState({ plaintextEditorFocused: true })
   }

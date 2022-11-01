@@ -12,6 +12,7 @@ export interface WebApplicationInterface extends ApplicationInterface {
   handleMobileResumingFromBackgroundEvent(): Promise<void>
   handleMobileColorSchemeChangeEvent(): void
   handleMobileKeyboardWillChangeFrameEvent(frame: { height: number; contentHeight: number }): void
+  handleMobileKeyboardDidChangeFrameEvent(frame: { height: number; contentHeight: number }): void
   isNativeMobileWeb(): boolean
   mobileDevice(): MobileDeviceInterface
   handleAndroidBackButtonPressed(): void
