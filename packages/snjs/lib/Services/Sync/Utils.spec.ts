@@ -83,8 +83,8 @@ describe('SortPayloadsByRecentAndContentPriority', () => {
     expect(sortedPayloads[3].content_type).toBe(ContentType.Theme)
     expect(sortedPayloads[4].uuid).toBe(prioritizedNoteUuid)
     expect(sortedPayloads[5].uuid).toBe(prioritizedTagUuid)
-    expect(sortedPayloads[6].uuid).toBe(unprioritizedTagUuid)
-    expect(sortedPayloads[7].uuid).toBe(unprioritizedNoteUuid)
+    expect(sortedPayloads[6].uuid).toBe(unprioritizedNoteUuid)
+    expect(sortedPayloads[7].uuid).toBe(unprioritizedTagUuid)
   })
 
   it('should sort payloads based on server updated date if same content type', () => {

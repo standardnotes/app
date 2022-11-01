@@ -30,7 +30,7 @@ export function SortPayloadsByRecentAndContentPriority(
       } else if (aHasUuidToPrioritize) {
         aPriority = itemUuidsToPrioritize.indexOf(a.uuid) + priorityList.length
       } else {
-        aPriority = priorityList.length
+        aPriority = priorityList.length + itemUuidsToPrioritize.length
       }
 
       if (bIsInPriorityList) {
