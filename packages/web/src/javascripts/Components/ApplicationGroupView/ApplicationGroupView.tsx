@@ -113,7 +113,11 @@ class ApplicationGroupView extends Component<Props, State> {
     }
 
     return (
-      <div id={this.state.activeApplication.identifier} key={this.state.activeApplication.ephemeralIdentifier}>
+      <div
+        id={this.state.activeApplication.identifier}
+        className={'h-full'}
+        key={this.state.activeApplication.ephemeralIdentifier}
+      >
         <DeallocateHandler application={this.state.activeApplication}>
           <ApplicationView
             key={this.state.activeApplication.ephemeralIdentifier}

@@ -38,7 +38,7 @@ import {
 import { MobileWebReceiver, NativeMobileEventListener } from '../NativeMobileWeb/MobileWebReceiver'
 import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { setCustomViewportHeight, setViewportHeightWithFallback } from '@/setViewportHeightWithFallback'
+import { setCustomViewportHeight } from '@/setViewportHeightWithFallback'
 import { WebServices } from './WebServices'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
@@ -258,7 +258,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   async handleMobileGainingFocusEvent(): Promise<void> {
-    setViewportHeightWithFallback()
+    /** Optional override */
   }
 
   handleInitialMobileScreenshotPrivacy(): void {
@@ -285,8 +285,6 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     if (this.protections.getMobileScreenshotPrivacyEnabled()) {
       this.mobileDevice().hideMobileInterfaceFromScreenshots()
     }
-
-    setViewportHeightWithFallback()
   }
 
   handleMobileColorSchemeChangeEvent() {
@@ -294,7 +292,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   handleMobileKeyboardWillChangeFrameEvent(frame: { height: number; contentHeight: number }): void {
-    setCustomViewportHeight(String(frame.contentHeight), 'px', true)
+    setCustomViewportHeight(frame.contentHeight, 'px', true)
     this.notifyWebEvent(WebAppEvent.MobileKeyboardWillChangeFrame, frame)
   }
 

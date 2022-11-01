@@ -98,10 +98,7 @@ class NoteGroupView extends AbstractComponent<Props, State> {
     const canRenderEditorView = this.state.selectedPane === AppPaneId.Editor || !this.state.isInMobileView
 
     return (
-      <div
-        id={ElementIds.EditorColumn}
-        className="app-column app-column-third flex min-h-screen flex-col pt-safe-top md:h-full md:min-h-0"
-      >
+      <div id={ElementIds.EditorColumn} className="app-column app-column-third flex h-full flex-col pt-safe-top">
         <ResponsivePaneContent paneId={AppPaneId.Editor} className="flex-grow">
           {this.state.showMultipleSelectedNotes && (
             <MultipleSelectedNotes
