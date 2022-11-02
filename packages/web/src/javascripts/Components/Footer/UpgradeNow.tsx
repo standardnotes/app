@@ -12,6 +12,10 @@ const UpgradeNow = ({ application, featuresController }: Props) => {
   const shouldShowCTA = !featuresController.hasFolders
   const hasAccount = application.hasAccount()
 
+  if (hasAccount && application.hideSubscriptionMarketing) {
+    return null
+  }
+
   return shouldShowCTA ? (
     <div className="flex h-full items-center px-2">
       <button

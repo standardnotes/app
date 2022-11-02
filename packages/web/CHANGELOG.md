@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.91.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.11...@standardnotes/web@3.91.0) (2022-11-02)
+
+### Features
+
+* dedicated files layout ([#1928](https://github.com/standardnotes/app/issues/1928)) ([dd821c9](https://github.com/standardnotes/app/commit/dd821c95e61c8cd82317ad9fb3788daff7241942))
+
 ## [3.90.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.10...@standardnotes/web@3.90.11) (2022-11-02)
 
 **Note:** Version bump only for package @standardnotes/web

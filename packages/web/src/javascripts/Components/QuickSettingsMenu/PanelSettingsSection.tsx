@@ -53,7 +53,7 @@ const PanelSettingsSection = ({ application }: Props) => {
   }, [application])
 
   return (
-    <div className="hidden text-sm md:block pointer-coarse:md-only:hidden pointer-coarse:lg-only:hidden">
+    <div className="hidden md:block pointer-coarse:md-only:hidden pointer-coarse:lg-only:hidden">
       <MenuItem
         type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"

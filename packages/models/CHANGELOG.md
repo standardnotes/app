@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.34.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.33.0...@standardnotes/models@1.34.0) (2022-11-02)
+
+### Features
+
+* dedicated files layout ([#1928](https://github.com/standardnotes/app/issues/1928)) ([dd821c9](https://github.com/standardnotes/app/commit/dd821c95e61c8cd82317ad9fb3788daff7241942))
+
 # [1.33.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.32.0...@standardnotes/models@1.33.0) (2022-11-02)
 
 ### Features

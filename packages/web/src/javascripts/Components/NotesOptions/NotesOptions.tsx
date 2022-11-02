@@ -286,11 +286,13 @@ const NotesOptions = ({
 
   const switchClassNames = classNames(textClassNames, defaultClassNames, 'justify-between')
 
+  const firstItemClass = 'pt-4'
+
   return (
     <>
       {notes.length === 1 && (
         <>
-          <button className={defaultClassNames} onClick={openRevisionHistoryModal}>
+          <button className={classNames(defaultClassNames, firstItemClass)} onClick={openRevisionHistoryModal}>
             <Icon type="history" className={iconClass} />
             Note history
           </button>
