@@ -117,10 +117,9 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         toggleSortReverse()
       } else {
         void changePreferences({ sortBy: sort })
-        application.getViewControllerManager().itemListController.selectFirstItem()
       }
     },
-    [preferences.sortBy, toggleSortReverse, changePreferences, application],
+    [preferences.sortBy, toggleSortReverse, changePreferences],
   )
 
   const toggleSortByDateModified = useCallback(() => {

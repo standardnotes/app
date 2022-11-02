@@ -124,9 +124,8 @@ export class ItemListController extends AbstractViewController implements Intern
         if (!didReloadItems) {
           /** A tag could have changed its relationships, so we need to reload the filter */
           this.reloadNotesDisplayOptions()
+          void this.reloadItems(ItemsReloadSource.ItemStream)
         }
-
-        void this.reloadItems(ItemsReloadSource.ItemStream)
 
         if (this.navigationController.selected && findInArray(tags, 'uuid', this.navigationController.selected.uuid)) {
           /** Tag title could have changed */
@@ -442,6 +441,7 @@ export class ItemListController extends AbstractViewController implements Intern
     const newWebDisplayOptions = {} as WebDisplayOptions
     const selectedTag = this.navigationController.selected
 
+    const currentSortBy = this.displayOptions.sortBy
     let sortBy =
       selectedTag?.preferences?.sortBy ||
       this.application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy])
@@ -450,6 +450,7 @@ export class ItemListController extends AbstractViewController implements Intern
     }
     newDisplayOptions.sortBy = sortBy
 
+    const currentSortDirection = this.displayOptions.sortDirection
     newDisplayOptions.sortDirection =
       useBoolean(
         selectedTag?.preferences?.sortReverse,
@@ -525,6 +526,14 @@ export class ItemListController extends AbstractViewController implements Intern
     this.reloadNotesDisplayOptions()
 
     await this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
+
+    const didSortByChange = currentSortBy !== this.displayOptions.sortBy
+    const didSortDirectionChange = currentSortDirection !== this.displayOptions.sortDirection
+    const didSortPrefChange = didSortByChange || didSortDirectionChange
+
+    if (didSortPrefChange) {
+      void this.selectFirstItem()
+    }
 
     return { didReloadItems: true }
   }

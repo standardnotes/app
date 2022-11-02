@@ -1,12 +1,12 @@
 import { WebApplication } from '@/Application/Application'
 import { ShouldPersistNoteStateKey } from '@/Components/Preferences/Panes/General/Persistence'
-import { ApplicationEvent, InternalEventBus } from '@standardnotes/snjs'
+import { ApplicationEvent, ContentType, InternalEventBus } from '@standardnotes/snjs'
 import { PersistedStateValue, StorageKey } from '@standardnotes/ui-services'
 import { CrossControllerEvent } from '../CrossControllerEvent'
 
 export class PersistenceService {
   private unsubAppEventObserver: () => void
-  private didIncrementalLoad = false
+  private didHydrateOnce = false
 
   constructor(private application: WebApplication, private eventBus: InternalEventBus) {
     this.unsubAppEventObserver = this.application.addEventObserver(async (eventName) => {
@@ -19,11 +19,18 @@ export class PersistenceService {
   }
 
   async onAppEvent(eventName: ApplicationEvent) {
-    if (eventName === ApplicationEvent.LocalDataLoaded && !this.didIncrementalLoad) {
+    if (eventName === ApplicationEvent.LocalDataLoaded && !this.didHydrateOnce) {
       this.hydratePersistedValues()
+      this.didHydrateOnce = true
     } else if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
-      this.didIncrementalLoad = true
+      const canHydrate = this.application.items.getItems([ContentType.Note, ContentType.Tag]).length > 0
+
+      if (!canHydrate) {
+        return
+      }
+
       this.hydratePersistedValues()
+      this.didHydrateOnce = true
     }
   }
 

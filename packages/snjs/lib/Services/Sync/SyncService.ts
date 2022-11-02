@@ -56,6 +56,7 @@ import {
   PayloadEmitSource,
   getIncrementedDirtyIndex,
   getCurrentDirtyIndex,
+  ItemContent,
 } from '@standardnotes/models'
 import {
   AbstractService,
@@ -294,6 +295,14 @@ export class SNSyncService
 
     await this.processItemsKeysFirstDuringDatabaseLoad(itemsKeysPayloads)
 
+    const localLoadPriortyPayloads = payloads.filter((payload) => {
+      return this.localLoadPriorty.includes(payload.content_type)
+    })
+
+    subtractFromArray(payloads, localLoadPriortyPayloads)
+
+    await this.processPayloadBatch(localLoadPriortyPayloads, 0, localLoadPriortyPayloads.length)
+
     /**
      * Map in batches to give interface a chance to update. Note that total decryption
      * time is constant regardless of batch size. Decrypting 3000 items all at once or in
@@ -307,36 +316,44 @@ export class SNSyncService
     for (let batchIndex = 0; batchIndex < numBatches; batchIndex++) {
       const currentPosition = batchIndex * batchSize
       const batch = payloads.slice(currentPosition, currentPosition + batchSize)
-      const encrypted: EncryptedPayloadInterface[] = []
-      const nonencrypted: (DecryptedPayloadInterface | DeletedPayloadInterface)[] = []
-
-      for (const payload of batch) {
-        if (isEncryptedPayload(payload)) {
-          encrypted.push(payload)
-        } else {
-          nonencrypted.push(payload)
-        }
-      }
-
-      const split: KeyedDecryptionSplit = {
-        usesItemsKeyWithKeyLookup: {
-          items: encrypted,
-        },
-      }
-
-      const results = await this.protocolService.decryptSplit(split)
-
-      await this.payloadManager.emitPayloads([...nonencrypted, ...results], PayloadEmitSource.LocalDatabaseLoaded)
-
-      void this.notifyEvent(SyncEvent.LocalDataIncrementalLoad)
-
-      this.opStatus.setDatabaseLoadStatus(currentPosition, payloadCount, false)
-
-      await sleep(1, false)
+      await this.processPayloadBatch(batch, currentPosition, payloadCount)
     }
 
     this.databaseLoaded = true
     this.opStatus.setDatabaseLoadStatus(0, 0, true)
+  }
+
+  private async processPayloadBatch(
+    batch: FullyFormedPayloadInterface<ItemContent>[],
+    currentPosition: number,
+    payloadCount: number,
+  ) {
+    const encrypted: EncryptedPayloadInterface[] = []
+    const nonencrypted: (DecryptedPayloadInterface | DeletedPayloadInterface)[] = []
+
+    for (const payload of batch) {
+      if (isEncryptedPayload(payload)) {
+        encrypted.push(payload)
+      } else {
+        nonencrypted.push(payload)
+      }
+    }
+
+    const split: KeyedDecryptionSplit = {
+      usesItemsKeyWithKeyLookup: {
+        items: encrypted,
+      },
+    }
+
+    const results = await this.protocolService.decryptSplit(split)
+
+    await this.payloadManager.emitPayloads([...nonencrypted, ...results], PayloadEmitSource.LocalDatabaseLoaded)
+
+    void this.notifyEvent(SyncEvent.LocalDataIncrementalLoad)
+
+    this.opStatus.setDatabaseLoadStatus(currentPosition, payloadCount, false)
+
+    await sleep(1, false)
   }
 
   private setLastSyncToken(token: string) {
