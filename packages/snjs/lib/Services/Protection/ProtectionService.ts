@@ -1,4 +1,3 @@
-import { Challenge } from '@standardnotes/services/src/Domain/Challenge/Challenge'
 import { ChallengeService } from './../Challenge/ChallengeService'
 import { SNLog } from '@Lib/Log'
 import { DecryptedItem } from '@standardnotes/models'
@@ -11,6 +10,7 @@ import {
   ApplicationStage,
   StorageKey,
   DiagnosticInfo,
+  Challenge,
   ChallengeReason,
   ChallengePrompt,
   ChallengeValidation,

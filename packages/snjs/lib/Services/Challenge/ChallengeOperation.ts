@@ -1,8 +1,7 @@
-import { Challenge } from '@standardnotes/services/src/Domain/Challenge/Challenge'
+import { Challenge, ChallengeValue, ChallengeArtifacts } from '@standardnotes/services'
 import { ChallengeResponse } from './ChallengeResponse'
 import { removeFromArray } from '@standardnotes/utils'
 import { ValueCallback } from './ChallengeService'
-import { ChallengeValue, ChallengeArtifacts } from '@standardnotes/services'
 
 /**
  * A challenge operation stores user-submitted values and callbacks.
