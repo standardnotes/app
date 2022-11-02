@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.147.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.146.1...@standardnotes/snjs@2.147.0) (2022-11-02)
+
+### Features
+
+* prioritize loading latest selected items ([#1930](https://github.com/standardnotes/app/issues/1930)) ([a6ef658](https://github.com/standardnotes/app/commit/a6ef658daef9a01f5ddacc967fe30d22f580799a))
+
 ## [2.146.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.146.0...@standardnotes/snjs@2.146.1) (2022-11-02)
 
 **Note:** Version bump only for package @standardnotes/snjs

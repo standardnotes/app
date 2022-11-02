@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.41.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.40.1...@standardnotes/services@1.41.0) (2022-11-02)
+
+### Features
+
+* prioritize loading latest selected items ([#1930](https://github.com/standardnotes/app/issues/1930)) ([a6ef658](https://github.com/standardnotes/app/commit/a6ef658daef9a01f5ddacc967fe30d22f580799a))
+
 ## [1.40.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.40.0...@standardnotes/services@1.40.1) (2022-11-02)
 
 **Note:** Version bump only for package @standardnotes/services
