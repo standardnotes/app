@@ -1,7 +1,7 @@
 import { KeyboardKey, KeyboardModifier } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NOTES } from '@/Constants/Constants'
-import { FileItem, PrefKey, SystemViewId } from '@standardnotes/snjs'
+import { FileItem, PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef } from 'react'
 import ContentList from '@/Components/ContentListView/ContentList'
@@ -118,10 +118,7 @@ const ContentListView: FunctionComponent<Props> = ({
 
   const icon = selectedTag?.iconString
 
-  const isFilesSmartView = useMemo(
-    () => navigationController.selected?.uuid === SystemViewId.Files,
-    [navigationController.selected?.uuid],
-  )
+  const isFilesSmartView = useMemo(() => navigationController.isInFilesView, [navigationController.isInFilesView])
 
   const addNewItem = useCallback(async () => {
     if (isFilesSmartView) {
@@ -215,10 +212,14 @@ const ContentListView: FunctionComponent<Props> = ({
 
   const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
     (width, _lastLeft, _isMaxWidth, isCollapsed) => {
-      application.setPreference(PrefKey.NotesPanelWidth, width).catch(console.error)
+      if (selectedAsTag) {
+        navigationController.setPanelWidthForTag(selectedAsTag, width)
+      } else {
+        application.setPreference(PrefKey.NotesPanelWidth, width).catch(console.error)
+      }
       application.publishPanelDidResizeEvent(PANEL_NAME_NOTES, isCollapsed)
     },
-    [application],
+    [application, selectedAsTag, navigationController],
   )
 
   const addButtonLabel = useMemo(
@@ -243,15 +244,26 @@ const ContentListView: FunctionComponent<Props> = ({
     [selectionController],
   )
 
+  useEffect(() => {
+    const hasEditorPane = selectedUuids.size > 0
+    if (!hasEditorPane) {
+      itemsViewPanelRef.current?.style.removeProperty('width')
+    }
+  }, [selectedUuids, itemsViewPanelRef])
+
+  const hasEditorPane = selectedUuids.size > 0 || renderedItems.length === 0
+
   return (
     <div
       id="items-column"
       className={classNames(
         'sn-component section app-column flex h-full flex-col overflow-hidden pt-safe-top',
-        'xl:w-87.5 xsm-only:!w-full sm-only:!w-full',
-        isTabletScreenSize && !isNotesListVisibleOnTablets
-          ? 'pointer-coarse:md-only:!w-0 pointer-coarse:lg-only:!w-0'
-          : 'pointer-coarse:md-only:!w-60 pointer-coarse:lg-only:!w-60',
+        hasEditorPane ? 'xl:w-[24rem] xsm-only:!w-full sm-only:!w-full' : 'w-full md:min-w-[400px]',
+        hasEditorPane
+          ? isTabletScreenSize && !isNotesListVisibleOnTablets
+            ? 'pointer-coarse:md-only:!w-0 pointer-coarse:lg-only:!w-0'
+            : 'pointer-coarse:md-only:!w-60 pointer-coarse:lg-only:!w-60'
+          : '',
       )}
       aria-label={'Notes & Files'}
       ref={itemsViewPanelRef}
@@ -327,7 +339,7 @@ const ContentListView: FunctionComponent<Props> = ({
         ) : null}
         <div className="absolute bottom-0 h-safe-bottom w-full" />
       </ResponsivePaneContent>
-      {itemsViewPanelRef.current && (
+      {hasEditorPane && itemsViewPanelRef.current && (
         <PanelResizer
           collapsable={true}
           hoverable={true}

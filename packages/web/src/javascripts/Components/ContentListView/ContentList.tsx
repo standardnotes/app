@@ -12,7 +12,7 @@ import { NavigationController } from '@/Controllers/Navigation/NavigationControl
 import { NotesController } from '@/Controllers/NotesController'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { SNTag } from '@standardnotes/snjs'
+import { ContentType, SNTag } from '@standardnotes/snjs'
 
 type Props = {
   application: WebApplication
@@ -95,35 +95,44 @@ const ContentList: FunctionComponent<Props> = ({
     [hideTags, selectedTag, application],
   )
 
+  const hasNotes = items.some((item) => item.content_type === ContentType.Note)
+
   return (
     <div
       className={classNames(
         'infinite-scroll overflow-y-auto overflow-x-hidden focus:shadow-none focus:outline-none',
         'md:max-h-full md:overflow-y-hidden md:hover:overflow-y-auto pointer-coarse:md:overflow-y-auto',
-        'md:hover:[overflow-y:_overlay]',
+        'flex flex-wrap pb-2 md:hover:[overflow-y:_overlay]',
+        hasNotes ? 'justify-center' : 'justify-center md:justify-start md:pl-1',
       )}
       id={ElementIds.ContentList}
       onScroll={onScroll}
       onKeyDown={onKeyDown}
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
     >
-      {items.map((item) => (
-        <ContentListItem
-          key={item.uuid}
-          application={application}
-          item={item}
-          selected={selectedUuids.has(item.uuid)}
-          hideDate={hideDate}
-          hidePreview={hideNotePreview}
-          hideTags={hideTags}
-          hideIcon={hideEditorIcon}
-          sortBy={sortBy}
-          filesController={filesController}
-          onSelect={selectItem}
-          tags={getTagsForItem(item)}
-          notesController={notesController}
-        />
-      ))}
+      {items.map((item, index) => {
+        const previousItem = items[index - 1]
+        const nextItem = items[index + 1]
+        return (
+          <ContentListItem
+            key={item.uuid}
+            application={application}
+            item={item}
+            selected={selectedUuids.has(item.uuid)}
+            hideDate={hideDate}
+            hidePreview={hideNotePreview}
+            hideTags={hideTags}
+            hideIcon={hideEditorIcon}
+            sortBy={sortBy}
+            filesController={filesController}
+            onSelect={selectItem}
+            tags={getTagsForItem(item)}
+            notesController={notesController}
+            isPreviousItemTiled={previousItem?.content_type === ContentType.File}
+            isNextItemTiled={nextItem?.content_type === ContentType.File}
+          />
+        )
+      })}
     </div>
   )
 }

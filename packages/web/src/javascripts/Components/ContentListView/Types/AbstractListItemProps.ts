@@ -4,7 +4,9 @@ import { NotesController } from '@/Controllers/NotesController'
 import { SortableItem, SNTag, Uuids } from '@standardnotes/snjs'
 import { ListableContentItem } from './ListableContentItem'
 
-export type AbstractListItemProps = {
+type KeysOfUnion<T> = T extends T ? keyof T : never
+
+export type AbstractListItemProps<I extends ListableContentItem> = {
   application: WebApplication
   filesController: FilesController
   notesController: NotesController
@@ -13,14 +15,19 @@ export type AbstractListItemProps = {
   hideIcon: boolean
   hideTags: boolean
   hidePreview: boolean
-  item: ListableContentItem
+  item: I
   selected: boolean
   sortBy: keyof SortableItem | undefined
   tags: SNTag[]
+  isPreviousItemTiled?: boolean
+  isNextItemTiled?: boolean
 }
 
-export function doListItemPropsMeritRerender(previous: AbstractListItemProps, next: AbstractListItemProps): boolean {
-  const simpleComparison: (keyof AbstractListItemProps)[] = [
+export function doListItemPropsMeritRerender(
+  previous: AbstractListItemProps<ListableContentItem>,
+  next: AbstractListItemProps<ListableContentItem>,
+): boolean {
+  const simpleComparison: (keyof AbstractListItemProps<ListableContentItem>)[] = [
     'onSelect',
     'hideDate',
     'hideIcon',
@@ -28,6 +35,8 @@ export function doListItemPropsMeritRerender(previous: AbstractListItemProps, ne
     'hidePreview',
     'selected',
     'sortBy',
+    'isPreviousItemTiled',
+    'isNextItemTiled',
   ]
 
   for (const key of simpleComparison) {
@@ -83,7 +92,7 @@ function doesItemChangeMeritRerender(previous: ListableContentItem, next: Listab
     return true
   }
 
-  const propertiesMeritingRerender: (keyof ListableContentItem)[] = [
+  const propertiesMeritingRerender: KeysOfUnion<ListableContentItem>[] = [
     'title',
     'protected',
     'updatedAtString',
@@ -97,7 +106,7 @@ function doesItemChangeMeritRerender(previous: ListableContentItem, next: Listab
   ]
 
   for (const key of propertiesMeritingRerender) {
-    if (previous[key] !== next[key]) {
+    if (previous[key as keyof ListableContentItem] !== next[key as keyof ListableContentItem]) {
       return true
     }
   }
