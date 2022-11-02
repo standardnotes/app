@@ -82,7 +82,11 @@ export function GetSortedPayloadsByPriority(
   payloads: FullyFormedPayloadInterface[],
   contentTypePriorityList: ContentType[],
   uuidPriorityList: UuidString[],
-) {
+): {
+  itemsKeyPayloads: FullyFormedPayloadInterface[]
+  contentTypePriorityPayloads: FullyFormedPayloadInterface[]
+  remainingPayloads: FullyFormedPayloadInterface[]
+} {
   const itemsKeyPayloads: FullyFormedPayloadInterface[] = []
   const contentTypePriorityPayloads: FullyFormedPayloadInterface[] = []
   const remainingPayloads: FullyFormedPayloadInterface[] = []
