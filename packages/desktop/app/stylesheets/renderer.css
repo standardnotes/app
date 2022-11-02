@@ -79,7 +79,6 @@ panel-resizer {
 
 input,
 #navigation #navigation-content,
-.component-view-container,
 .panel-resizer {
   -webkit-app-region: no-drag;
 }

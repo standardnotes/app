@@ -5,6 +5,7 @@ import { DecryptedItem } from '../../Abstract/Item/Implementations/DecryptedItem
 import { ItemInterface } from '../../Abstract/Item/Interfaces/ItemInterface'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
 import { NoteContent, NoteContentSpecialized } from './NoteContent'
+import { NoteBlock, NoteBlocks } from './NoteBlocks'
 
 export const isNote = (x: ItemInterface): x is SNNote => x.content_type === ContentType.Note
 
@@ -17,6 +18,7 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
   public readonly spellcheck?: boolean
   public readonly noteType?: NoteType
   public readonly authorizedForListed: boolean
+  public readonly blocksItem?: NoteBlocks
 
   /** The package_info.identifier of the editor (not its uuid), such as org.standardnotes.advanced-markdown */
   public readonly editorIdentifier?: FeatureIdentifier | string
@@ -33,6 +35,7 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
     this.noteType = this.payload.content.noteType
     this.editorIdentifier = this.payload.content.editorIdentifier
     this.authorizedForListed = this.payload.content.authorizedForListed || false
+    this.blocksItem = this.payload.content.blocksItem
 
     if (!this.noteType) {
       const prefersPlain = this.getAppDomainValueWithDefault(AppDataField.LegacyPrefersPlainEditor, false)
@@ -40,5 +43,9 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
         this.noteType = NoteType.Plain
       }
     }
+  }
+
+  getBlock(id: string): NoteBlock | undefined {
+    return this.blocksItem?.blocks.find((block) => block.id === id)
   }
 }
