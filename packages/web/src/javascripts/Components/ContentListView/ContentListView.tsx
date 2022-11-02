@@ -250,7 +250,7 @@ const ContentListView: FunctionComponent<Props> = ({
     if (!hasEditorPane) {
       itemsViewPanelRef.current?.style.removeProperty('width')
     }
-  }, [selectedUuids, itemsViewPanelRef, isCurrentNoteTemplate])
+  }, [selectedUuids, itemsViewPanelRef, isCurrentNoteTemplate, renderedItems])
 
   const hasEditorPane = selectedUuids.size > 0 || renderedItems.length === 0 || isCurrentNoteTemplate
 
