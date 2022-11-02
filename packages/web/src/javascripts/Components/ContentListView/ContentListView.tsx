@@ -251,7 +251,7 @@ const ContentListView: FunctionComponent<Props> = ({
     }
   }, [selectedUuids, itemsViewPanelRef])
 
-  const hasEditorPane = selectedUuids.size > 0
+  const hasEditorPane = selectedUuids.size > 0 || renderedItems.length === 0
 
   return (
     <div

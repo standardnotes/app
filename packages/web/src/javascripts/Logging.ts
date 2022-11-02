@@ -16,7 +16,7 @@ const LoggingStatus: Record<LoggingDomain, boolean> = {
   [LoggingDomain.ItemsList]: false,
   [LoggingDomain.NavigationList]: false,
   [LoggingDomain.Viewport]: false,
-  [LoggingDomain.Selection]: true,
+  [LoggingDomain.Selection]: false,
 }
 
 export function log(domain: LoggingDomain, ...args: any[]): void {
