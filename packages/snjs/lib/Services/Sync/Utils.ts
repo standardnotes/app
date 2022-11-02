@@ -19,13 +19,13 @@ export function SortPayloadsByRecentAndContentPriority(
     let bPriority = 0
 
     if (priorityList) {
-      const aIsInPriorityList = priorityList.includes(a.content_type)
-      const bIsInPriorityList = priorityList.includes(b.content_type)
+      const aIsContentTypePriority = priorityList.includes(a.content_type)
+      const bIsContentTypePriority = priorityList.includes(b.content_type)
 
       const aHasUuidToPrioritize = itemUuidsToPrioritize.includes(a.uuid)
       const bHasUuidToPrioritize = itemUuidsToPrioritize.includes(b.uuid)
 
-      if (aIsInPriorityList) {
+      if (aIsContentTypePriority) {
         aPriority = priorityList.indexOf(a.content_type)
       } else if (aHasUuidToPrioritize) {
         aPriority = itemUuidsToPrioritize.indexOf(a.uuid) + priorityList.length
@@ -33,7 +33,7 @@ export function SortPayloadsByRecentAndContentPriority(
         aPriority = priorityList.length + itemUuidsToPrioritize.length
       }
 
-      if (bIsInPriorityList) {
+      if (bIsContentTypePriority) {
         bPriority = priorityList.indexOf(b.content_type)
       } else if (bHasUuidToPrioritize) {
         bPriority = itemUuidsToPrioritize.indexOf(b.uuid) + priorityList.length
