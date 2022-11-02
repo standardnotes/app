@@ -1,5 +1,12 @@
 import { PaneController } from './PaneController'
-import { storage, StorageKey, ToastService, ToastServiceInterface } from '@standardnotes/ui-services'
+import {
+  PersistedStateValue,
+  PersistenceKey,
+  storage,
+  StorageKey,
+  ToastService,
+  ToastServiceInterface,
+} from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { destroyAllObjectProperties } from '@/Utils'
@@ -18,7 +25,7 @@ import { ActionsMenuController } from './ActionsMenuController'
 import { FeaturesController } from './FeaturesController'
 import { FilesController } from './FilesController'
 import { NotesController } from './NotesController'
-import { ItemListController, ItemListControllerPersistableValue } from './ItemList/ItemListController'
+import { ItemListController } from './ItemList/ItemListController'
 import { NoAccountWarningController } from './NoAccountWarningController'
 import { PreferencesController } from './PreferencesController'
 import { PurchaseFlowController } from './PurchaseFlow/PurchaseFlowController'
@@ -26,12 +33,12 @@ import { QuickSettingsController } from './QuickSettingsController'
 import { SearchOptionsController } from './SearchOptionsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
 import { SyncStatusController } from './SyncStatusController'
-import { NavigationController, NavigationControllerPersistableValue } from './Navigation/NavigationController'
+import { NavigationController } from './Navigation/NavigationController'
 import { FilePreviewModalController } from './FilePreviewModalController'
-import { SelectedItemsController, SelectionControllerPersistableValue } from './SelectedItemsController'
+import { SelectedItemsController } from './SelectedItemsController'
 import { HistoryModalController } from './NoteHistory/HistoryModalController'
 import { LinkingController } from './LinkingController'
-import { MasterPersistedValue, PersistenceKey, PersistenceService } from './Abstract/PersistenceService'
+import { PersistenceService } from './Abstract/PersistenceService'
 import { CrossControllerEvent } from './CrossControllerEvent'
 import { EventObserverInterface } from '@/Event/EventObserverInterface'
 import { ApplicationEventObserver } from '@/Event/ApplicationEventObserver'
@@ -263,29 +270,40 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   }
 
   persistValues = (): void => {
-    const values: MasterPersistedValue = {
+    const values: PersistedStateValue = {
       [PersistenceKey.SelectedItemsController]: this.selectionController.getPersistableValue(),
       [PersistenceKey.NavigationController]: this.navigationController.getPersistableValue(),
-      [PersistenceKey.ItemListController]: this.itemListController.getPersistableValue(),
     }
 
     this.persistenceService.persistValues(values)
+
+    const selectedItemsState = values['selected-items-controller']
+    const navigationSelectionState = values['navigation-controller']
+    const launchPriorityUuids: string[] = []
+    if (selectedItemsState.selectedUuids.length) {
+      launchPriorityUuids.push(...selectedItemsState.selectedUuids)
+    }
+    if (navigationSelectionState.selectedTagUuid) {
+      launchPriorityUuids.push(navigationSelectionState.selectedTagUuid)
+    }
+    this.application.sync.setLaunchPriorityUuids(launchPriorityUuids)
   }
 
-  hydrateFromPersistedValues = (values: MasterPersistedValue | undefined): void => {
-    const itemListState = values?.[PersistenceKey.ItemListController] as ItemListControllerPersistableValue
-    this.itemListController.hydrateFromPersistedValue(itemListState)
+  clearPersistedValues = (): void => {
+    this.persistenceService.clearPersistedValues()
+  }
 
-    const selectedItemsState = values?.[PersistenceKey.SelectedItemsController] as SelectionControllerPersistableValue
-    this.selectionController.hydrateFromPersistedValue(selectedItemsState)
-
-    const navigationState = values?.[PersistenceKey.NavigationController] as NavigationControllerPersistableValue
+  hydrateFromPersistedValues = (values: PersistedStateValue | undefined): void => {
+    const navigationState = values?.[PersistenceKey.NavigationController]
     this.navigationController.hydrateFromPersistedValue(navigationState)
+
+    const selectedItemsState = values?.[PersistenceKey.SelectedItemsController]
+    this.selectionController.hydrateFromPersistedValue(selectedItemsState)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === CrossControllerEvent.HydrateFromPersistedValues) {
-      this.hydrateFromPersistedValues(event.payload as MasterPersistedValue | undefined)
+      this.hydrateFromPersistedValues(event.payload as PersistedStateValue | undefined)
     } else if (event.type === CrossControllerEvent.RequestValuePersistence) {
       this.persistValues()
     }

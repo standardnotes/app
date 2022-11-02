@@ -118,7 +118,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         void changePreferences({ sortBy: sort })
       }
     },
-    [preferences, changePreferences, toggleSortReverse],
+    [preferences.sortBy, toggleSortReverse, changePreferences],
   )
 
   const toggleSortByDateModified = useCallback(() => {

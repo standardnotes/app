@@ -672,10 +672,10 @@ describe('online syncing', function () {
       const payload = Factory.createStorageItemPayload(contentTypes[Math.floor(i / 2)])
       originalPayloads.push(payload)
     }
-    const sorted = SortPayloadsByRecentAndContentPriority(originalPayloads, ['C', 'A', 'B'])
-    expect(sorted[0].content_type).to.equal('C')
-    expect(sorted[2].content_type).to.equal('A')
-    expect(sorted[4].content_type).to.equal('B')
+    const { contentTypePriorityPayloads } = GetSortedPayloadsByPriority(originalPayloads, ['C', 'A', 'B'])
+    expect(contentTypePriorityPayloads[0].content_type).to.equal('C')
+    expect(contentTypePriorityPayloads[2].content_type).to.equal('A')
+    expect(contentTypePriorityPayloads[4].content_type).to.equal('B')
   })
 
   it('should sign in and retrieve large number of items', async function () {

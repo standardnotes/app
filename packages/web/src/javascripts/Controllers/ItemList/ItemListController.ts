@@ -37,7 +37,6 @@ import { PrefDefaults } from '@/Constants/PrefDefaults'
 import dayjs from 'dayjs'
 import { LinkingController } from '../LinkingController'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
-import { Persistable } from '../Abstract/Persistable'
 import { log, LoggingDomain } from '@/Logging'
 
 const MinNoteCellHeight = 51.0
@@ -55,14 +54,7 @@ enum ItemsReloadSource {
   FilterTextChange,
 }
 
-export type ItemListControllerPersistableValue = {
-  displayOptions: DisplayOptions
-}
-
-export class ItemListController
-  extends AbstractViewController
-  implements Persistable<ItemListControllerPersistableValue>, InternalEventHandlerInterface
-{
+export class ItemListController extends AbstractViewController implements InternalEventHandlerInterface {
   completedFullSync = false
   noteFilterText = ''
   notes: SNNote[] = []
@@ -127,14 +119,6 @@ export class ItemListController
     )
 
     this.disposers.push(
-      reaction(
-        () => [this.navigationController.selected],
-        () => {
-          void this.reloadDisplayPreferences()
-        },
-      ),
-    )
-    this.disposers.push(
       application.streamItems<SNTag>([ContentType.Tag], async ({ changed, inserted }) => {
         const tags = [...changed, ...inserted]
 
@@ -142,9 +126,8 @@ export class ItemListController
         if (!didReloadItems) {
           /** A tag could have changed its relationships, so we need to reload the filter */
           this.reloadNotesDisplayOptions()
+          void this.reloadItems(ItemsReloadSource.ItemStream)
         }
-
-        void this.reloadItems(ItemsReloadSource.ItemStream)
 
         if (this.navigationController.selected && findInArray(tags, 'uuid', this.navigationController.selected.uuid)) {
           /** Tag title could have changed */
@@ -233,27 +216,10 @@ export class ItemListController
 
       optionsSubtitle: computed,
       activeControllerItem: computed,
-
-      hydrateFromPersistedValue: action,
     })
 
     window.onresize = () => {
       this.resetPagination(true)
-    }
-  }
-
-  getPersistableValue = (): ItemListControllerPersistableValue => {
-    return {
-      displayOptions: this.displayOptions,
-    }
-  }
-
-  hydrateFromPersistedValue = (state: ItemListControllerPersistableValue | undefined) => {
-    if (!state) {
-      return
-    }
-    if (state.displayOptions) {
-      this.displayOptions = state.displayOptions
     }
   }
 
@@ -535,6 +501,7 @@ export class ItemListController
     }
     newDisplayOptions.sortBy = sortBy
 
+    const currentSortDirection = this.displayOptions.sortDirection
     newDisplayOptions.sortDirection =
       useBoolean(
         selectedTag?.preferences?.sortReverse,
@@ -613,17 +580,13 @@ export class ItemListController
 
     await this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
 
-    if (
-      newDisplayOptions.sortBy !== currentSortBy &&
-      this.shouldSelectFirstItem(ItemsReloadSource.DisplayOptionsChange)
-    ) {
+    const didSortByChange = currentSortBy !== this.displayOptions.sortBy
+    const didSortDirectionChange = currentSortDirection !== this.displayOptions.sortDirection
+    const didSortPrefChange = didSortByChange || didSortDirectionChange
+
+    if (didSortPrefChange && this.shouldSelectFirstItem(ItemsReloadSource.DisplayOptionsChange)) {
       await this.selectFirstItem()
     }
-
-    this.eventBus.publish({
-      type: CrossControllerEvent.RequestValuePersistence,
-      payload: undefined,
-    })
 
     return { didReloadItems: true }
   }
@@ -825,9 +788,12 @@ export class ItemListController
 
     this.resetPagination()
 
-    this.reloadNotesDisplayOptions()
+    const { didReloadItems } = await this.reloadDisplayPreferences()
 
-    await this.reloadItems(userTriggered ? ItemsReloadSource.UserTriggeredTagChange : ItemsReloadSource.TagChange)
+    if (!didReloadItems) {
+      this.reloadNotesDisplayOptions()
+      void this.reloadItems(userTriggered ? ItemsReloadSource.UserTriggeredTagChange : ItemsReloadSource.TagChange)
+    }
   }
 
   onFilterEnter = () => {

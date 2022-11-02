@@ -11,16 +11,13 @@ import {
   isFile,
   Uuids,
 } from '@standardnotes/snjs'
+import { SelectionControllerPersistableValue } from '@standardnotes/ui-services'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { Persistable } from './Abstract/Persistable'
 import { CrossControllerEvent } from './CrossControllerEvent'
 import { ItemListController } from './ItemList/ItemListController'
-
-export type SelectionControllerPersistableValue = {
-  selectedUuids: UuidString[]
-}
 
 export class SelectedItemsController
   extends AbstractViewController

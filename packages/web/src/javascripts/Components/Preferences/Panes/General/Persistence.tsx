@@ -17,6 +17,12 @@ const Persistence = ({ application }: Props) => {
   const toggleStatePersistence = (shouldPersist: boolean) => {
     application.setValue(ShouldPersistNoteStateKey, shouldPersist)
     setShouldPersistNoteState(shouldPersist)
+
+    if (shouldPersist) {
+      application.getViewControllerManager().persistValues()
+    } else {
+      application.getViewControllerManager().clearPersistedValues()
+    }
   }
 
   return (

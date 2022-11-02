@@ -1,4 +1,4 @@
-import { confirmDialog } from '@standardnotes/ui-services'
+import { confirmDialog, NavigationControllerPersistableValue } from '@standardnotes/ui-services'
 import { STRING_DELETE_TAG } from '@/Constants/Strings'
 import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER, SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
 import {
@@ -27,10 +27,6 @@ import { CrossControllerEvent } from '../CrossControllerEvent'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { Persistable } from '../Abstract/Persistable'
 import { TagListSectionType } from '@/Components/Tags/TagListSection'
-
-export type NavigationControllerPersistableValue = {
-  selectedTagUuid: AnyTag['uuid']
-}
 
 export class NavigationController
   extends AbstractViewController

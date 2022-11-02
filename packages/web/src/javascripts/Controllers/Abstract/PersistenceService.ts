@@ -1,20 +1,12 @@
 import { WebApplication } from '@/Application/Application'
 import { ShouldPersistNoteStateKey } from '@/Components/Preferences/Panes/General/Persistence'
-import { ApplicationEvent, InternalEventBus } from '@standardnotes/snjs'
+import { ApplicationEvent, ContentType, InternalEventBus } from '@standardnotes/snjs'
+import { PersistedStateValue, StorageKey } from '@standardnotes/ui-services'
 import { CrossControllerEvent } from '../CrossControllerEvent'
-
-const MasterPersistenceKey = 'master-persistence-key'
-
-export enum PersistenceKey {
-  SelectedItemsController = 'selected-items-controller',
-  NavigationController = 'navigation-controller',
-  ItemListController = 'item-list-controller',
-}
-
-export type MasterPersistedValue = Record<PersistenceKey, unknown>
 
 export class PersistenceService {
   private unsubAppEventObserver: () => void
+  private didHydrateOnce = false
 
   constructor(private application: WebApplication, private eventBus: InternalEventBus) {
     this.unsubAppEventObserver = this.application.addEventObserver(async (eventName) => {
@@ -27,31 +19,54 @@ export class PersistenceService {
   }
 
   async onAppEvent(eventName: ApplicationEvent) {
-    if (eventName === ApplicationEvent.LocalDataLoaded) {
-      let shouldHydrateState = this.application.getValue(ShouldPersistNoteStateKey)
+    if (eventName === ApplicationEvent.LocalDataLoaded && !this.didHydrateOnce) {
+      this.hydratePersistedValues()
+      this.didHydrateOnce = true
+    } else if (eventName === ApplicationEvent.LocalDataIncrementalLoad) {
+      const canHydrate = this.application.items.getItems([ContentType.Note, ContentType.Tag]).length > 0
 
-      if (typeof shouldHydrateState === 'undefined') {
-        this.application.setValue(ShouldPersistNoteStateKey, true)
-        shouldHydrateState = true
+      if (!canHydrate) {
+        return
       }
 
-      this.eventBus.publish({
-        type: CrossControllerEvent.HydrateFromPersistedValues,
-        payload: shouldHydrateState ? this.getPersistedValues() : undefined,
-      })
+      this.hydratePersistedValues()
+      this.didHydrateOnce = true
     }
   }
 
-  persistValues(values: MasterPersistedValue): void {
+  get persistenceEnabled() {
+    return this.application.getValue(ShouldPersistNoteStateKey) ?? true
+  }
+
+  hydratePersistedValues = () => {
+    this.eventBus.publish({
+      type: CrossControllerEvent.HydrateFromPersistedValues,
+      payload: this.persistenceEnabled ? this.getPersistedValues() : undefined,
+    })
+  }
+
+  persistValues(values: PersistedStateValue): void {
     if (!this.application.isDatabaseLoaded()) {
       return
     }
 
-    this.application.setValue(MasterPersistenceKey, values)
+    if (!this.persistenceEnabled) {
+      return
+    }
+
+    this.application.setValue(StorageKey.MasterStatePersistenceKey, values)
   }
 
-  getPersistedValues(): MasterPersistedValue {
-    return this.application.getValue(MasterPersistenceKey) as MasterPersistedValue
+  clearPersistedValues(): void {
+    if (!this.application.isDatabaseLoaded()) {
+      return
+    }
+
+    this.application.removeValue(StorageKey.MasterStatePersistenceKey)
+  }
+
+  getPersistedValues(): PersistedStateValue {
+    return this.application.getValue(StorageKey.MasterStatePersistenceKey) as PersistedStateValue
   }
 
   deinit() {
