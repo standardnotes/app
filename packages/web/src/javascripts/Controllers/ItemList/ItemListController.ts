@@ -547,9 +547,11 @@ export class ItemListController
     this.displayOptions = newDisplayOptions
     this.webDisplayOptions = newWebDisplayOptions
 
-    const newWidth = this.application.getPreference(PrefKey.NotesPanelWidth)
-    if (newWidth && newWidth !== this.panelWidth) {
-      this.panelWidth = newWidth
+    const listColumnWidth =
+      selectedTag?.preferences?.panelWidth || this.application.getPreference(PrefKey.NotesPanelWidth)
+
+    if (listColumnWidth && listColumnWidth !== this.panelWidth) {
+      this.panelWidth = listColumnWidth
     }
 
     if (!displayOptionsChanged) {

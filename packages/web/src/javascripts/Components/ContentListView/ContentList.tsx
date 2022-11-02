@@ -110,7 +110,6 @@ const ContentList: FunctionComponent<Props> = ({
       {items.map((item, index) => {
         const previousItem = items[index - 1]
         const nextItem = items[index + 1]
-
         return (
           <ContentListItem
             key={item.uuid}

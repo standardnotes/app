@@ -215,10 +215,14 @@ const ContentListView: FunctionComponent<Props> = ({
 
   const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
     (width, _lastLeft, _isMaxWidth, isCollapsed) => {
-      application.setPreference(PrefKey.NotesPanelWidth, width).catch(console.error)
+      if (selectedAsTag) {
+        navigationController.setPanelWidthForTag(selectedAsTag, width)
+      } else {
+        application.setPreference(PrefKey.NotesPanelWidth, width).catch(console.error)
+      }
       application.publishPanelDidResizeEvent(PANEL_NAME_NOTES, isCollapsed)
     },
-    [application],
+    [application, selectedAsTag, navigationController],
   )
 
   const addButtonLabel = useMemo(
