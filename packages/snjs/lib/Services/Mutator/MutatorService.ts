@@ -7,6 +7,8 @@ import {
   ChallengePrompt,
   ChallengeReason,
   MutatorClientInterface,
+  Challenge,
+  InfoStrings,
 } from '@standardnotes/services'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ClientDisplayableError } from '@standardnotes/responses'
@@ -18,7 +20,7 @@ import { SNProtectionService } from '../Protection/ProtectionService'
 import { SNSyncService } from '../Sync'
 import { Strings } from '../../Strings'
 import { TagsToFoldersMigrationApplicator } from '@Lib/Migrations/Applicators/TagsToFolders'
-import { Challenge, ChallengeService } from '../Challenge'
+import { ChallengeService } from '../Challenge'
 import {
   BackupFile,
   BackupFileDecryptedContextualPayload,
@@ -170,7 +172,13 @@ export class MutatorService extends AbstractService implements MutatorClientInte
     items: I[],
     reason: ChallengeReason,
   ): Promise<I[] | undefined> {
-    if (!(await this.protectionService.authorizeAction(reason))) {
+    if (
+      !(await this.protectionService.authorizeAction(reason, {
+        fallBackToAccountPassword: true,
+        requireAccountPassword: false,
+        forcePrompt: false,
+      }))
+    ) {
       return undefined
     }
 
@@ -314,13 +322,13 @@ export class MutatorService extends AbstractService implements MutatorClientInte
 
       const supportedVersions = this.encryption.supportedVersions()
       if (!supportedVersions.includes(version)) {
-        return { error: new ClientDisplayableError(Strings.Info.UnsupportedBackupFileVersion) }
+        return { error: new ClientDisplayableError(InfoStrings.UnsupportedBackupFileVersion) }
       }
 
       const userVersion = this.encryption.getUserVersion()
       if (userVersion && compareVersions(version, userVersion) === 1) {
         /** File was made with a greater version than the user's account */
-        return { error: new ClientDisplayableError(Strings.Info.BackupFileMoreRecentThanAccount) }
+        return { error: new ClientDisplayableError(InfoStrings.BackupFileMoreRecentThanAccount) }
       }
     }
 

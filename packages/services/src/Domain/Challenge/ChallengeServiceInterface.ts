@@ -1,3 +1,5 @@
+import { RootKeyInterface } from '@standardnotes/models'
+
 import { AbstractService } from '../Service/AbstractService'
 import { ChallengeInterface } from './ChallengeInterface'
 import { ChallengePromptInterface } from './Prompt/ChallengePromptInterface'
@@ -10,7 +12,6 @@ export interface ChallengeServiceInterface extends AbstractService {
    * For non-validated challenges, will resolve when the first value is submitted.
    */
   promptForChallengeResponse(challenge: ChallengeInterface): Promise<ChallengeResponseInterface | undefined>
-
   createChallenge(
     prompts: ChallengePromptInterface[],
     reason: ChallengeReason,
@@ -18,6 +19,19 @@ export interface ChallengeServiceInterface extends AbstractService {
     heading?: string,
     subheading?: string,
   ): ChallengeInterface
-
   completeChallenge(challenge: ChallengeInterface): void
+  getWrappingKeyIfApplicable(passcode?: string): Promise<
+    | {
+        canceled?: undefined
+        wrappingKey?: undefined
+      }
+    | {
+        canceled: boolean
+        wrappingKey?: undefined
+      }
+    | {
+        wrappingKey: RootKeyInterface
+        canceled?: undefined
+      }
+  >
 }

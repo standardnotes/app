@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.146.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.145.3...@standardnotes/snjs@2.146.0) (2022-11-02)
+
+### Features
+
+* add sending user requests to process ([#1908](https://github.com/standardnotes/app/issues/1908)) ([b2faa81](https://github.com/standardnotes/app/commit/b2faa815e967a9e7052b3ce6955e967c6bc68864))
+
+## [2.145.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.145.2...@standardnotes/snjs@2.145.3) (2022-11-01)
+
+### Bug Fixes
+
+* **mobile:** increase font sizes and other mobile-centric improvements ([#1907](https://github.com/standardnotes/app/issues/1907)) ([994f824](https://github.com/standardnotes/app/commit/994f824757e1143a4547c975b154fd84e3ebeedf))
+
+## [2.145.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.145.1...@standardnotes/snjs@2.145.2) (2022-10-30)
+
+### Bug Fixes
+
+* **mobile:** increase save debounce timeout ([35e2fa9](https://github.com/standardnotes/app/commit/35e2fa9eb6df44beb7717ce38209ee4944286355))
+
 ## [2.145.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.145.0...@standardnotes/snjs@2.145.1) (2022-10-28)
 
 ### Bug Fixes

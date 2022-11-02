@@ -1,7 +1,7 @@
 import { useDocumentRect } from '@/Hooks/useDocumentRect'
 import { useAutoElementRect } from '@/Hooks/useElementRect'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { useState } from 'react'
+import { useCallback, useLayoutEffect, useState } from 'react'
 import Icon from '../Icon/Icon'
 import Portal from '../Portal/Portal'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
@@ -54,11 +54,24 @@ const PositionedPopoverContent = ({
 
   useDisableBodyScrollOnMobile()
 
+  const correctInitialScrollForOverflowedContent = useCallback(() => {
+    if (popoverElement) {
+      setTimeout(() => {
+        popoverElement.scrollTop = 0
+      }, 10)
+    }
+  }, [popoverElement])
+
+  useLayoutEffect(() => {
+    correctInitialScrollForOverflowedContent()
+  }, [popoverElement, correctInitialScrollForOverflowedContent])
+
   return (
     <Portal>
       <div
         className={classNames(
-          'absolute top-0 left-0 flex h-screen w-full min-w-80 cursor-auto flex-col overflow-y-auto rounded bg-default shadow-main md:h-auto md:max-w-xs',
+          'absolute top-0 left-0 flex h-full w-full min-w-80 cursor-auto flex-col',
+          'overflow-y-auto rounded bg-default shadow-main md:h-auto md:max-w-xs',
           overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
           !isDesktopScreen ? 'pt-safe-top pb-safe-bottom' : '',
           !styles && 'md:invisible',
@@ -70,15 +83,13 @@ const PositionedPopoverContent = ({
             : '',
           top: !isDesktopScreen ? `${document.documentElement.scrollTop}px` : '',
         }}
-        ref={(node) => {
-          setPopoverElement(node)
-        }}
+        ref={setPopoverElement}
         data-popover={id}
       >
         <div className="md:hidden">
           <div className="flex items-center justify-end px-3 pt-2">
             <button className="rounded-full border border-border p-1" onClick={togglePopover}>
-              <Icon type="close" className="h-4 w-4" />
+              <Icon type="close" className="h-6 w-6" />
             </button>
           </div>
           <HorizontalSeparator classes="my-2" />

@@ -1,4 +1,5 @@
 import { getPlatformString } from '@/Utils'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
 import { ReactNode } from 'react'
 
@@ -16,7 +17,10 @@ const HistoryModalDialog = ({ children, onDismiss }: Props) => {
     >
       <DialogContent
         aria-label="Note revision history"
-        className="my-0 flex h-screen w-full flex-col rounded-md bg-[color:var(--modal-background-color)] p-0 pt-safe-top pb-safe-bottom shadow-lg md:max-h-[90%] md:w-[90%] md:max-w-[90%]"
+        className={classNames(
+          'my-0 flex h-full w-full flex-col rounded-md bg-[color:var(--modal-background-color)]',
+          'p-0 pt-safe-top pb-safe-bottom shadow-lg md:max-h-[90%] md:w-[90%] md:max-w-[90%]',
+        )}
       >
         <div className="flex h-full flex-col overflow-hidden bg-default">{children}</div>
       </DialogContent>

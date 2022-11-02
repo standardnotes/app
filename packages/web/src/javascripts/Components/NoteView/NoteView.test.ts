@@ -44,6 +44,7 @@ describe('NoteView', () => {
     application.getViewControllerManager = jest.fn().mockReturnValue(viewControllerManager)
     application.hasProtectionSources = jest.fn().mockReturnValue(true)
     application.authorizeNoteAccess = jest.fn()
+    application.addWebEventObserver = jest.fn()
   })
 
   afterEach(() => {

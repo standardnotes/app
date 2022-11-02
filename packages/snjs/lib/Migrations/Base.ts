@@ -1,8 +1,6 @@
 import { AnyKeyParamsContent } from '@standardnotes/common'
 import { SNLog } from '@Lib/Log'
 import { EncryptedPayload, EncryptedTransferPayload, isErrorDecryptingPayload } from '@standardnotes/models'
-import { Challenge } from '../Services/Challenge'
-import { KeychainRecoveryStrings, SessionStrings } from '../Services/Api/Messages'
 import { PreviousSnjsVersion1_0_0, PreviousSnjsVersion2_0_0, SnjsVersion } from '../Version'
 import { Migration } from '@Lib/Migrations/Migration'
 import {
@@ -12,6 +10,9 @@ import {
   ChallengeValidation,
   ChallengeReason,
   ChallengePrompt,
+  KeychainRecoveryStrings,
+  SessionStrings,
+  Challenge,
 } from '@standardnotes/services'
 import { isNullOrUndefined } from '@standardnotes/utils'
 import { CreateReader } from './StorageReaders/Functions'

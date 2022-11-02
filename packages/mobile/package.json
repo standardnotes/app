@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/mobile",
-  "version": "3.45.4",
+  "version": "3.45.14",
   "author": "Standard Notes.",
   "private": true,
   "license": "AGPL-3.0-or-later",
@@ -35,7 +35,7 @@
     "react": "17.0.2",
     "react-native": "0.67.4",
     "react-native-file-viewer": "^2.1.5",
-    "react-native-fingerprint-scanner": "standardnotes/react-native-fingerprint-scanner#0f9c1f6712ee0c1a2908fe7e589c72151d143c48",
+    "react-native-fingerprint-scanner": "standardnotes/react-native-fingerprint-scanner#b55d1c0ca627a87a130f758603f12911fbac200f",
     "react-native-flag-secure-android": "standardnotes/react-native-flag-secure-android#cb08e74583c22a5d912842459b35ebbbb4bcd852",
     "react-native-fs": "^2.19.0",
     "react-native-keychain": "standardnotes/react-native-keychain#d277d360494cbd02be4accb4a360772a8e0e97b6",
@@ -64,12 +64,6 @@
     "pod-install": "^0.1.33",
     "prettier": "^2.6.0",
     "prettier-plugin-organize-imports": "^2.3.4",
-    "react-devtools": "^4.24.6",
-    "react-devtools-core": "^4.24.6",
-    "react-native-monorepo-tools": "^1.1.4",
-    "react-native-pager-view": "^5.4.15",
-    "react-test-renderer": "17.0.2",
-    "replace-in-file": "^6.3.2",
     "typescript": "^4.6.3"
   },
   "jest": {

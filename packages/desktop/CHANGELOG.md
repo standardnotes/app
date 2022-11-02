@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.23.265](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.264...@standardnotes/desktop@3.23.265) (2022-11-02)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.264](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.263...@standardnotes/desktop@3.23.264) (2022-11-01)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.263](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.262...@standardnotes/desktop@3.23.263) (2022-11-01)
+
+### Bug Fixes
+
+* **mobile:** increase font sizes and other mobile-centric improvements ([#1907](https://github.com/standardnotes/app/issues/1907)) ([994f824](https://github.com/standardnotes/app/commit/994f824757e1143a4547c975b154fd84e3ebeedf))
+
+## [3.23.262](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.261...@standardnotes/desktop@3.23.262) (2022-10-31)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.261](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.260...@standardnotes/desktop@3.23.261) (2022-10-31)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.260](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.259...@standardnotes/desktop@3.23.260) (2022-10-30)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.259](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.258...@standardnotes/desktop@3.23.259) (2022-10-30)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.258](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.257...@standardnotes/desktop@3.23.258) (2022-10-29)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
 ## [3.23.257](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.256...@standardnotes/desktop@3.23.257) (2022-10-28)
 
 **Note:** Version bump only for package @standardnotes/desktop

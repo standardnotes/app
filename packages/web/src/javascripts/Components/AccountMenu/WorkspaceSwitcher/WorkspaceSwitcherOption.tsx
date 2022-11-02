@@ -8,6 +8,7 @@ import WorkspaceSwitcherMenu from './WorkspaceSwitcherMenu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import Popover from '@/Components/Popover/Popover'
+import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 
 type Props = {
   mainApplicationGroup: ApplicationGroup
@@ -32,10 +33,10 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
         className="justify-between"
       >
         <div className="flex items-center">
-          <Icon type="user-switch" className="mr-2 text-neutral" />
+          <Icon type="user-switch" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
           Switch workspace
         </div>
-        <Icon type="chevron-right" className="text-neutral" />
+        <Icon type="chevron-right" className={`text-neutral ${MenuItemIconSize}`} />
       </MenuItem>
       <Popover
         align="end"

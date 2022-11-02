@@ -111,7 +111,7 @@ async function configureWindow(remoteBridge: CrossProcessBridge) {
   // For Mac inset window
   const sheet = document.styleSheets[0]
   if (isMacOS) {
-    sheet.insertRule('#navigation { padding-top: 25px !important; }', sheet.cssRules.length)
+    sheet.insertRule('#navigation-content { padding-top: 25px !important; }', sheet.cssRules.length)
   }
 
   if (isMacOS || useSystemMenuBar) {

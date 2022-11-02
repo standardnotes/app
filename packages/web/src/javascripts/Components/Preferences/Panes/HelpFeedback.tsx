@@ -78,11 +78,7 @@ const HelpAndFeedback = ({ application }: { application: WebApplication }) => {
           <Title>Community forum</Title>
           <Text>
             If you have an issue, found a bug or want to suggest a feature, you can browse or post to the forum. It’s
-            recommended for non-account related issues. Please read our{' '}
-            <a target="_blank" className="underline hover:no-underline" href="https://standardnotes.com/longevity/">
-              Longevity statement
-            </a>{' '}
-            before advocating for a feature request.
+            recommended for non-account related issues.
           </Text>
           <LinkButton
             className="mt-3"
@@ -97,14 +93,8 @@ const HelpAndFeedback = ({ application }: { application: WebApplication }) => {
           <Title>Community groups</Title>
           <Text>
             Want to meet other passionate note-takers and privacy enthusiasts? Want to share your feedback with us? Join
-            the Standard Notes community groups for discussions on security, themes, editors and more.
+            the Standard Notes Discord for discussions on security, themes, editors and more.
           </Text>
-          <LinkButton
-            className="mt-3"
-            link="https://standardnotes.com/slack"
-            label="Join our Slack"
-            onClick={handleClick}
-          />
           <LinkButton
             className="mt-3"
             link="https://standardnotes.com/discord"

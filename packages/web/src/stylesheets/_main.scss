@@ -121,7 +121,7 @@ p {
 html,
 body,
 .main-ui-view {
-  height: max-content;
+  height: 100%;
   min-height: 0;
   max-height: none;
 
@@ -137,14 +137,7 @@ body,
   position: relative;
   overflow: auto;
   background-color: var(--editor-header-bar-background-color);
-
-  @media screen and (min-width: 768px) {
-    min-height: 100vh;
-    height: 100vh;
-  }
 }
-
-$footer-height: 2rem;
 
 #resizer-overlay {
   position: absolute;
@@ -161,10 +154,6 @@ $footer-height: 2rem;
   position: relative;
   vertical-align: top;
   width: 100%;
-
-  @media screen and (min-width: 768px) {
-    height: calc(var(--viewport-height, 100vh) - #{$footer-height});
-  }
 
   .section {
     position: relative;

@@ -247,7 +247,7 @@ const ContentListView: FunctionComponent<Props> = ({
     <div
       id="items-column"
       className={classNames(
-        'sn-component section app-column flex h-screen flex-col overflow-hidden pt-safe-top md:h-full',
+        'sn-component section app-column flex h-full flex-col overflow-hidden pt-safe-top',
         'xl:w-87.5 xsm-only:!w-full sm-only:!w-full',
         isTabletScreenSize && !isNotesListVisibleOnTablets
           ? 'pointer-coarse:md-only:!w-0 pointer-coarse:lg-only:!w-0'

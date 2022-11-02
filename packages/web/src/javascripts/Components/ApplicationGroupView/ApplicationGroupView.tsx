@@ -87,7 +87,7 @@ class ApplicationGroupView extends Component<Props, State> {
               'challenge-modal shadow-overlay-light relative flex flex-col items-center rounded border border-solid border-border bg-default p-8'
             }
           >
-            {message}
+            <div className="text-base lg:text-xs">{message}</div>
           </DialogContent>
         </DialogOverlay>
       )
@@ -113,7 +113,11 @@ class ApplicationGroupView extends Component<Props, State> {
     }
 
     return (
-      <div id={this.state.activeApplication.identifier} key={this.state.activeApplication.ephemeralIdentifier}>
+      <div
+        id={this.state.activeApplication.identifier}
+        className={'h-full'}
+        key={this.state.activeApplication.ephemeralIdentifier}
+      >
         <DeallocateHandler application={this.state.activeApplication}>
           <ApplicationView
             key={this.state.activeApplication.ephemeralIdentifier}

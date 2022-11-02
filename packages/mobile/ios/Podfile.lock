@@ -274,8 +274,6 @@ PODS:
     - glog
   - react-native-fingerprint-scanner (5.0.0):
     - React-Core
-  - react-native-pager-view (5.4.25):
-    - React-Core
   - react-native-version-info (1.1.1):
     - React-Core
   - react-native-webview (11.23.1):
@@ -407,7 +405,6 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
   - react-native-fingerprint-scanner (from `../node_modules/react-native-fingerprint-scanner`)
-  - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-version-info (from `../node_modules/react-native-version-info`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -487,8 +484,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/logger"
   react-native-fingerprint-scanner:
     :path: "../node_modules/react-native-fingerprint-scanner"
-  react-native-pager-view:
-    :path: "../node_modules/react-native-pager-view"
   react-native-version-info:
     :path: "../node_modules/react-native-version-info"
   react-native-webview:
@@ -566,7 +561,6 @@ SPEC CHECKSUMS:
   React-jsinspector: f4775ea9118cbe1f72b834f0f842baa7a99508d8
   React-logger: a1f028f6d8639a3f364ef80419e5e862e1115250
   react-native-fingerprint-scanner: be63e626b31fb951780a5fac5328b065a61a3d6e
-  react-native-pager-view: da490aa1f902c9a5aeecf0909cc975ad0e92e53e
   react-native-version-info: a106f23009ac0db4ee00de39574eb546682579b9
   react-native-webview: d33e2db8925d090871ffeb232dfa50cb3a727581
   React-perflogger: 0afaf2f01a47fd0fc368a93bfbb5bd3b26db6e7f

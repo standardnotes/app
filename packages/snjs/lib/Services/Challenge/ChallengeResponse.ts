@@ -1,6 +1,6 @@
 import { isNullOrUndefined } from '@standardnotes/utils'
-import { Challenge } from './Challenge'
 import {
+  Challenge,
   ChallengeResponseInterface,
   ChallengeValidation,
   ChallengeValue,

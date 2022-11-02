@@ -28,6 +28,7 @@ import { mergeRefs } from '@/Hooks/mergeRefs'
 import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { TagListSectionType } from './TagListSection'
+import { log, LoggingDomain } from '@/Logging'
 
 type Props = {
   tag: SNTag
@@ -237,12 +238,14 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       }
     }, [addDragTarget, linkingController, removeDragTarget, tag])
 
+    log(LoggingDomain.NavigationList, 'Rendering TagsListItem')
+
     return (
       <>
         <div
           role="button"
           tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-          className={classNames('tag py-2 px-3.5 md:py-1', isSelected && 'selected', readyToDrop && 'is-drag-over')}
+          className={classNames('tag px-3.5', isSelected && 'selected', readyToDrop && 'is-drag-over')}
           onClick={selectCurrentTag}
           ref={mergeRefs([dragRef, tagRef])}
           style={{
@@ -272,7 +275,9 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             </div>
             {isEditing ? (
               <input
-                className={'title editing focus:shadow-none focus:outline-none'}
+                className={
+                  'title editing text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item'
+                }
                 id={`react-tag-${tag.uuid}-${type}`}
                 onBlur={onBlur}
                 onInput={onInput}
@@ -283,7 +288,9 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               />
             ) : (
               <div
-                className={'title overflow-hidden text-left focus:shadow-none focus:outline-none'}
+                className={
+                  'title overflow-hidden text-left text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item'
+                }
                 id={`react-tag-${tag.uuid}-${type}`}
               >
                 {title}
@@ -300,12 +307,12 @@ export const TagsListItem: FunctionComponent<Props> = observer(
               >
                 <Icon type="more" className="text-neutral" />
               </a>
-              <div className="count">{noteCounts.get()}</div>
+              <div className="count text-base lg:text-sm">{noteCounts.get()}</div>
             </div>
           </div>
 
           <div className={`meta ${hasAtLeastOneFolder ? 'with-folders' : ''}`}>
-            {tag.conflictOf && <div className="danger text-[0.625rem] font-bold">Conflicted Copy {tag.conflictOf}</div>}
+            {tag.conflictOf && <div className="-mt-1 text-[0.625rem] font-bold text-danger">Conflicted Copy</div>}
           </div>
         </div>
         {isAddingSubtag && (
@@ -321,7 +328,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                 <Icon type="hashtag" className="mr-1 text-neutral" />
               </div>
               <input
-                className="title w-full focus:shadow-none focus:outline-none"
+                className="title w-full text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item"
                 type="text"
                 ref={subtagInputRef}
                 onBlur={onSubtagInputBlur}

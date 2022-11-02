@@ -1,6 +1,11 @@
-import { Challenge } from '../Services/Challenge'
 import { MigrationServices } from './MigrationServices'
-import { ApplicationStage, ChallengeValidation, ChallengeReason, ChallengePrompt } from '@standardnotes/services'
+import {
+  ApplicationStage,
+  ChallengeValidation,
+  ChallengeReason,
+  ChallengePrompt,
+  Challenge,
+} from '@standardnotes/services'
 
 type StageHandler = () => Promise<void>
 

@@ -22,7 +22,7 @@ const LinkedItemMeta = ({
   return (
     <>
       <Icon type={icon} className={classNames('flex-shrink-0', className)} />
-      <div className="min-w-0 flex-grow break-words text-left text-sm">
+      <div className="min-w-0 flex-grow break-words text-left text-base lg:text-sm">
         {tagTitle && <span className="text-passive-1">{tagTitle.titlePrefix}</span>}
         {searchQuery
           ? splitQueryInString(title, searchQuery).map((substring, index) => (

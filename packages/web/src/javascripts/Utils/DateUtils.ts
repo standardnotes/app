@@ -55,9 +55,13 @@ export function addDays(date: Date, days: number) {
   return result
 }
 
-export function addMonths(date: Date, months: number) {
+/**
+ * @returns Date with day equal to first day of the offseted month
+ */
+export function addCalendarMonths(date: Date, months: number) {
   const result = new Date(date)
-  result.setMonth(result.getMonth() + months)
+  const day = 1
+  result.setMonth(result.getMonth() + months, day)
   return result
 }
 

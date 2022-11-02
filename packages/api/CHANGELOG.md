@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.18.3...@standardnotes/api@1.19.0) (2022-11-02)
+
+### Features
+
+* add sending user requests to process ([#1908](https://github.com/standardnotes/app/issues/1908)) ([b2faa81](https://github.com/standardnotes/app/commit/b2faa815e967a9e7052b3ce6955e967c6bc68864))
+
 ## [1.18.3](https://github.com/standardnotes/app/compare/@standardnotes/api@1.18.2...@standardnotes/api@1.18.3) (2022-10-27)
 
 **Note:** Version bump only for package @standardnotes/api

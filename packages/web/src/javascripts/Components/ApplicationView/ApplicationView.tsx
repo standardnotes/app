@@ -4,7 +4,7 @@ import { ApplicationEvent, Challenge, removeFromArray, WebAppEvent } from '@stan
 import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
 import { alertDialog, RouteType } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
-import Navigation from '@/Components/Navigation/Navigation'
+import Navigation from '@/Components/Tags/Navigation'
 import NoteGroupView from '@/Components/NoteGroupView/NoteGroupView'
 import Footer from '@/Components/Footer/Footer'
 import SessionsModal from '@/Components/SessionsModal/SessionsModal'
@@ -174,28 +174,22 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   }, [needsUnlock, launched])
 
   const renderChallenges = useCallback(() => {
-    return (
-      <AndroidBackHandlerProvider application={application}>
-        {challenges.map((challenge) => {
-          return (
-            <div className="sk-modal" key={`${challenge.id}${application.ephemeralIdentifier}`}>
-              <ChallengeModal
-                key={`${challenge.id}${application.ephemeralIdentifier}`}
-                application={application}
-                viewControllerManager={viewControllerManager}
-                mainApplicationGroup={mainApplicationGroup}
-                challenge={challenge}
-                onDismiss={removeChallenge}
-              />
-            </div>
-          )
-        })}
-      </AndroidBackHandlerProvider>
-    )
+    return challenges.map((challenge) => (
+      <div className="sk-modal" key={`${challenge.id}${application.ephemeralIdentifier}`}>
+        <ChallengeModal
+          key={`${challenge.id}${application.ephemeralIdentifier}`}
+          application={application}
+          viewControllerManager={viewControllerManager}
+          mainApplicationGroup={mainApplicationGroup}
+          challenge={challenge}
+          onDismiss={removeChallenge}
+        />
+      </div>
+    ))
   }, [viewControllerManager, challenges, mainApplicationGroup, removeChallenge, application])
 
   if (!renderAppContents) {
-    return renderChallenges()
+    return <AndroidBackHandlerProvider application={application}>{renderChallenges()}</AndroidBackHandlerProvider>
   }
 
   return (
@@ -203,7 +197,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       <DarkModeHandler application={application} />
       <ResponsivePaneProvider paneController={application.getViewControllerManager().paneController}>
         <PremiumModalProvider application={application} viewControllerManager={viewControllerManager}>
-          <div className={platformString + ' main-ui-view sn-component'}>
+          <div className={platformString + ' main-ui-view sn-component h-full'}>
             <div id="app" className="app app-column-container" ref={appColumnContainerRef}>
               <FileDragNDropProvider
                 application={application}

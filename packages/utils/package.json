@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/utils",
-  "version": "1.10.0",
+  "version": "1.11.0",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -25,7 +25,7 @@
     "test": "jest spec"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.39.0",
+    "@standardnotes/common": "^1.43.0",
     "dompurify": "^2.3.8",
     "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13"

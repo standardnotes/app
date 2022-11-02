@@ -32,11 +32,11 @@ export class MobileWebReceiver {
 
     try {
       const parsed = JSON.parse(message)
-      const { messageType, reactNativeEvent } = parsed
+      const { messageType, reactNativeEvent, messageData } = parsed
 
       if (messageType === 'event' && reactNativeEvent) {
         const nativeEvent = reactNativeEvent as ReactNativeToWebEvent
-        this.handleNativeEvent(nativeEvent)
+        this.handleNativeEvent(nativeEvent, messageData)
       }
     } catch (error) {
       console.log('[MobileWebReceiver] Error parsing message from React Native', error)
@@ -51,7 +51,7 @@ export class MobileWebReceiver {
     }
   }
 
-  handleNativeEvent(event: ReactNativeToWebEvent) {
+  handleNativeEvent(event: ReactNativeToWebEvent, messageData?: unknown) {
     switch (event) {
       case ReactNativeToWebEvent.EnteringBackground:
         void this.application.handleMobileEnteringBackgroundEvent()
@@ -70,6 +70,16 @@ export class MobileWebReceiver {
         break
       case ReactNativeToWebEvent.ColorSchemeChanged:
         void this.application.handleMobileColorSchemeChangeEvent()
+        break
+      case ReactNativeToWebEvent.KeyboardFrameWillChange:
+        void this.application.handleMobileKeyboardWillChangeFrameEvent(
+          messageData as { height: number; contentHeight: number },
+        )
+        break
+      case ReactNativeToWebEvent.KeyboardFrameDidChange:
+        void this.application.handleMobileKeyboardDidChangeFrameEvent(
+          messageData as { height: number; contentHeight: number },
+        )
         break
 
       default:

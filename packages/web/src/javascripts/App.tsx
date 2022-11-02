@@ -25,7 +25,7 @@ declare global {
 
 import { disableIosTextFieldZoom } from '@/Utils'
 import { IsWebPlatform, WebAppVersion } from '@/Constants/Version'
-import { DesktopManagerInterface, Environment, SNLog } from '@standardnotes/snjs'
+import { DesktopManagerInterface, SNLog } from '@standardnotes/snjs'
 import ApplicationGroupView from './Components/ApplicationGroupView/ApplicationGroupView'
 import { WebDevice } from './Application/Device/WebDevice'
 import { StartApplication } from './Application/Device/StartApplication'
@@ -34,8 +34,6 @@ import { WebOrDesktopDevice } from './Application/Device/WebOrDesktopDevice'
 import { WebApplication } from './Application/Application'
 import { createRoot, Root } from 'react-dom/client'
 import { ElementIds } from './Constants/ElementIDs'
-import { MediaQueryBreakpoints } from './Hooks/useMediaQuery'
-import { setViewportHeightWithFallback } from './setViewportHeightWithFallback'
 import { setDefaultMonospaceFont } from './setDefaultMonospaceFont'
 
 let keyCount = 0
@@ -54,27 +52,7 @@ const startApplication: StartApplication = async function startApplication(
   SNLog.onError = console.error
   let root: Root
 
-  const isDesktop =
-    device.environment === Environment.Desktop ||
-    (matchMedia(MediaQueryBreakpoints.md).matches && matchMedia(MediaQueryBreakpoints.pointerFine))
-
-  const setupViewportHeightListeners = () => {
-    if (!isDesktop) {
-      setViewportHeightWithFallback()
-      window.addEventListener('orientationchange', setViewportHeightWithFallback)
-      window.addEventListener('resize', setViewportHeightWithFallback)
-    }
-  }
-
-  const removeViewportHeightListeners = () => {
-    if (!isDesktop) {
-      window.removeEventListener('orientationchange', setViewportHeightWithFallback)
-      window.removeEventListener('resize', setViewportHeightWithFallback)
-    }
-  }
-
   const onDestroy = () => {
-    removeViewportHeightListeners()
     const rootElement = document.getElementById(ElementIds.RootId) as HTMLElement
     root.unmount()
     rootElement.remove()
@@ -84,12 +62,11 @@ const startApplication: StartApplication = async function startApplication(
   const renderApp = () => {
     const rootElement = document.createElement('div')
     rootElement.id = ElementIds.RootId
+    rootElement.className = 'h-full'
     const appendedRootNode = document.body.appendChild(rootElement)
     root = createRoot(appendedRootNode)
 
     disableIosTextFieldZoom()
-
-    setupViewportHeightListeners()
 
     setDefaultMonospaceFont(device.platform)
 

@@ -3,6 +3,46 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.90.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.10...@standardnotes/web@3.90.11) (2022-11-02)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.90.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.9...@standardnotes/web@3.90.10) (2022-11-01)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.90.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.8...@standardnotes/web@3.90.9) (2022-11-01)
+
+### Bug Fixes
+
+* **mobile:** increase font sizes and other mobile-centric improvements ([#1907](https://github.com/standardnotes/app/issues/1907)) ([994f824](https://github.com/standardnotes/app/commit/994f824757e1143a4547c975b154fd84e3ebeedf))
+
+## [3.90.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.7...@standardnotes/web@3.90.8) (2022-10-31)
+
+### Bug Fixes
+
+* **web:** support for older browsers like Safari 11 on iOS 13.7 ([fef1bdf](https://github.com/standardnotes/app/commit/fef1bdf7999df8e08240336fbdc94d9e98c167a7))
+
+## [3.90.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.6...@standardnotes/web@3.90.7) (2022-10-31)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.90.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.5...@standardnotes/web@3.90.6) (2022-10-30)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.90.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.4...@standardnotes/web@3.90.5) (2022-10-30)
+
+### Performance Improvements
+
+* avoid uneccessary notes list item rerenders ([#1904](https://github.com/standardnotes/app/issues/1904)) ([89927a3](https://github.com/standardnotes/app/commit/89927a37908fc9e84b981f1cba7c9abd37039c8b))
+
+## [3.90.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.3...@standardnotes/web@3.90.4) (2022-10-29)
+
+### Bug Fixes
+
+* **mobile:** note view hide bar options on editor focus ([#1903](https://github.com/standardnotes/app/issues/1903)) ([88017ce](https://github.com/standardnotes/app/commit/88017ce3d9c84f0383e147179d88c0fcb6538331))
+
 ## [3.90.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.2...@standardnotes/web@3.90.3) (2022-10-28)
 
 ### Bug Fixes

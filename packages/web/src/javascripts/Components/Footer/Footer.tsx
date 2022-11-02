@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
-import { PureComponent } from '@/Components/Abstract/PureComponent'
+import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import { destroyAllObjectProperties, preventRefreshing } from '@/Utils'
 import { ApplicationEvent, ApplicationDescriptor, WebAppEvent } from '@standardnotes/snjs'
 import {
@@ -41,7 +41,7 @@ type State = {
   arbitraryStatusMessage?: string
 }
 
-class Footer extends PureComponent<Props, State> {
+class Footer extends AbstractComponent<Props, State> {
   public user?: unknown
   private didCheckForOffline = false
   private completedInitialSync = false

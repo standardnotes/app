@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.33.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.32.0...@standardnotes/models@1.33.0) (2022-11-02)
+
+### Features
+
+* add sending user requests to process ([#1908](https://github.com/standardnotes/app/issues/1908)) ([b2faa81](https://github.com/standardnotes/app/commit/b2faa815e967a9e7052b3ce6955e967c6bc68864))
+
 # [1.32.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.31.1...@standardnotes/models@1.32.0) (2022-10-27)
 
 ### Features
