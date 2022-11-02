@@ -18,7 +18,7 @@ import { SNHistoryManager } from '../History/HistoryManager'
 import { SNLog } from '@Lib/Log'
 import { SNSessionManager } from '../Session/SessionManager'
 import { DiskStorageService } from '../Storage/DiskStorageService'
-import { SortPayloadsByRecentAndContentPriority } from '@Lib/Services/Sync/Utils'
+import { GetSortedPayloadsByPriority } from '@Lib/Services/Sync/Utils'
 import { SyncClientInterface } from './SyncClientInterface'
 import { SyncPromise } from './Types'
 import { SyncOpStatus } from '@Lib/Services/Sync/SyncOpStatus'
@@ -281,27 +281,15 @@ export class SNSyncService
       })
       .filter(isNotUndefined)
 
-    const payloads = SortPayloadsByRecentAndContentPriority(
+    const { itemsKeyPayloads, contentTypePriorityPayloads, remainingPayloads } = GetSortedPayloadsByPriority(
       unsortedPayloads,
       this.localLoadPriorty,
       this.launchPriorityUuids,
     )
 
-    const itemsKeysPayloads = payloads.filter((payload) => {
-      return payload.content_type === ContentType.ItemsKey
-    })
+    await this.processItemsKeysFirstDuringDatabaseLoad(itemsKeyPayloads)
 
-    subtractFromArray(payloads, itemsKeysPayloads)
-
-    await this.processItemsKeysFirstDuringDatabaseLoad(itemsKeysPayloads)
-
-    const localLoadPriortyPayloads = payloads.filter((payload) => {
-      return this.localLoadPriorty.includes(payload.content_type)
-    })
-
-    subtractFromArray(payloads, localLoadPriortyPayloads)
-
-    await this.processPayloadBatch(localLoadPriortyPayloads, 0, localLoadPriortyPayloads.length)
+    await this.processPayloadBatch(contentTypePriorityPayloads, 0, contentTypePriorityPayloads.length)
 
     /**
      * Map in batches to give interface a chance to update. Note that total decryption
@@ -309,13 +297,13 @@ export class SNSyncService
      * batches will result in the same time spent. It's the emitting/painting/rendering
      * that requires batch size optimization.
      */
-    const payloadCount = payloads.length
+    const payloadCount = remainingPayloads.length
     const batchSize = this.options.loadBatchSize
     const numBatches = Math.ceil(payloadCount / batchSize)
 
     for (let batchIndex = 0; batchIndex < numBatches; batchIndex++) {
       const currentPosition = batchIndex * batchSize
-      const batch = payloads.slice(currentPosition, currentPosition + batchSize)
+      const batch = remainingPayloads.slice(currentPosition, currentPosition + batchSize)
       await this.processPayloadBatch(batch, currentPosition, payloadCount)
     }
 

@@ -1,8 +1,8 @@
 import { ContentType } from '@standardnotes/common'
 import { FullyFormedPayloadInterface } from '@standardnotes/models'
-import { SortPayloadsByRecentAndContentPriority } from './Utils'
+import { GetSortedPayloadsByPriority } from './Utils'
 
-describe('SortPayloadsByRecentAndContentPriority', () => {
+describe('GetSortedPayloadsByPriority', () => {
   let payloads: FullyFormedPayloadInterface[] = []
   const contentTypePriority = [ContentType.ItemsKey, ContentType.UserPrefs, ContentType.Component, ContentType.Theme]
   let launchPriorityUuids: string[] = []
@@ -26,13 +26,22 @@ describe('SortPayloadsByRecentAndContentPriority', () => {
       } as FullyFormedPayloadInterface,
     ]
 
-    const sortedPayloads = SortPayloadsByRecentAndContentPriority(payloads, contentTypePriority, launchPriorityUuids)
+    const { itemsKeyPayloads, contentTypePriorityPayloads, remainingPayloads } = GetSortedPayloadsByPriority(
+      payloads,
+      contentTypePriority,
+      launchPriorityUuids,
+    )
 
-    expect(sortedPayloads[0].content_type).toBe(ContentType.ItemsKey)
-    expect(sortedPayloads[1].content_type).toBe(ContentType.UserPrefs)
-    expect(sortedPayloads[2].content_type).toBe(ContentType.Component)
-    expect(sortedPayloads[3].content_type).toBe(ContentType.Theme)
-    expect(sortedPayloads[4].content_type).toBe(ContentType.Note)
+    expect(itemsKeyPayloads.length).toBe(1)
+    expect(itemsKeyPayloads[0].content_type).toBe(ContentType.ItemsKey)
+
+    expect(contentTypePriorityPayloads.length).toBe(3)
+    expect(contentTypePriorityPayloads[0].content_type).toBe(ContentType.UserPrefs)
+    expect(contentTypePriorityPayloads[1].content_type).toBe(ContentType.Component)
+    expect(contentTypePriorityPayloads[2].content_type).toBe(ContentType.Theme)
+
+    expect(remainingPayloads.length).toBe(1)
+    expect(remainingPayloads[0].content_type).toBe(ContentType.Note)
   })
 
   it('should sort payloads based on launch priority uuids', () => {
@@ -75,16 +84,25 @@ describe('SortPayloadsByRecentAndContentPriority', () => {
 
     launchPriorityUuids = [prioritizedNoteUuid, prioritizedTagUuid]
 
-    const sortedPayloads = SortPayloadsByRecentAndContentPriority(payloads, contentTypePriority, launchPriorityUuids)
+    const { itemsKeyPayloads, contentTypePriorityPayloads, remainingPayloads } = GetSortedPayloadsByPriority(
+      payloads,
+      contentTypePriority,
+      launchPriorityUuids,
+    )
 
-    expect(sortedPayloads[0].content_type).toBe(ContentType.ItemsKey)
-    expect(sortedPayloads[1].content_type).toBe(ContentType.UserPrefs)
-    expect(sortedPayloads[2].content_type).toBe(ContentType.Component)
-    expect(sortedPayloads[3].content_type).toBe(ContentType.Theme)
-    expect(sortedPayloads[4].uuid).toBe(prioritizedNoteUuid)
-    expect(sortedPayloads[5].uuid).toBe(prioritizedTagUuid)
-    expect(sortedPayloads[6].uuid).toBe(unprioritizedNoteUuid)
-    expect(sortedPayloads[7].uuid).toBe(unprioritizedTagUuid)
+    expect(itemsKeyPayloads.length).toBe(1)
+    expect(itemsKeyPayloads[0].content_type).toBe(ContentType.ItemsKey)
+
+    expect(contentTypePriorityPayloads.length).toBe(3)
+    expect(contentTypePriorityPayloads[0].content_type).toBe(ContentType.UserPrefs)
+    expect(contentTypePriorityPayloads[1].content_type).toBe(ContentType.Component)
+    expect(contentTypePriorityPayloads[2].content_type).toBe(ContentType.Theme)
+
+    expect(remainingPayloads.length).toBe(4)
+    expect(remainingPayloads[0].uuid).toBe(prioritizedNoteUuid)
+    expect(remainingPayloads[1].uuid).toBe(prioritizedTagUuid)
+    expect(remainingPayloads[2].uuid).toBe(unprioritizedNoteUuid)
+    expect(remainingPayloads[3].uuid).toBe(unprioritizedTagUuid)
   })
 
   it('should sort payloads based on server updated date if same content type', () => {
@@ -117,11 +135,12 @@ describe('SortPayloadsByRecentAndContentPriority', () => {
 
     launchPriorityUuids = [prioritizedNoteUuid, prioritizedTagUuid]
 
-    const sortedPayloads = SortPayloadsByRecentAndContentPriority(payloads, contentTypePriority, launchPriorityUuids)
+    const { remainingPayloads } = GetSortedPayloadsByPriority(payloads, contentTypePriority, launchPriorityUuids)
 
-    expect(sortedPayloads[0].uuid).toBe(prioritizedNoteUuid)
-    expect(sortedPayloads[1].uuid).toBe(prioritizedTagUuid)
-    expect(sortedPayloads[2].uuid).toBe(unprioritizedTagUuid)
-    expect(sortedPayloads[3].uuid).toBe(unprioritizedNoteUuid)
+    expect(remainingPayloads.length).toBe(4)
+    expect(remainingPayloads[0].uuid).toBe(prioritizedNoteUuid)
+    expect(remainingPayloads[1].uuid).toBe(prioritizedTagUuid)
+    expect(remainingPayloads[2].uuid).toBe(unprioritizedTagUuid)
+    expect(remainingPayloads[3].uuid).toBe(unprioritizedNoteUuid)
   })
 })

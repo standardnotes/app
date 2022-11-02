@@ -9,8 +9,7 @@ import { FullyFormedPayloadInterface } from '@standardnotes/models'
  */
 export function SortPayloadsByRecentAndContentPriority(
   payloads: FullyFormedPayloadInterface[],
-  priorityList: ContentType[],
-  itemUuidsToPrioritize: UuidString[],
+  contentTypePriorityList: ContentType[],
 ): FullyFormedPayloadInterface[] {
   return payloads.sort((a, b) => {
     const dateResult = new Date(b.serverUpdatedAt).getTime() - new Date(a.serverUpdatedAt).getTime()
@@ -18,28 +17,15 @@ export function SortPayloadsByRecentAndContentPriority(
     let aPriority = 0
     let bPriority = 0
 
-    if (priorityList) {
-      const aIsContentTypePriority = priorityList.includes(a.content_type)
-      const bIsContentTypePriority = priorityList.includes(b.content_type)
+    aPriority = contentTypePriorityList.indexOf(a.content_type)
+    bPriority = contentTypePriorityList.indexOf(b.content_type)
 
-      const aHasUuidToPrioritize = itemUuidsToPrioritize.includes(a.uuid)
-      const bHasUuidToPrioritize = itemUuidsToPrioritize.includes(b.uuid)
+    if (aPriority === -1) {
+      aPriority = contentTypePriorityList.length
+    }
 
-      if (aIsContentTypePriority) {
-        aPriority = priorityList.indexOf(a.content_type)
-      } else if (aHasUuidToPrioritize) {
-        aPriority = itemUuidsToPrioritize.indexOf(a.uuid) + priorityList.length
-      } else {
-        aPriority = priorityList.length + itemUuidsToPrioritize.length
-      }
-
-      if (bIsContentTypePriority) {
-        bPriority = priorityList.indexOf(b.content_type)
-      } else if (bHasUuidToPrioritize) {
-        bPriority = itemUuidsToPrioritize.indexOf(b.uuid) + priorityList.length
-      } else {
-        bPriority = priorityList.length + itemUuidsToPrioritize.length
-      }
+    if (bPriority === -1) {
+      bPriority = contentTypePriorityList.length
     }
 
     if (aPriority === bPriority) {
@@ -52,4 +38,73 @@ export function SortPayloadsByRecentAndContentPriority(
       return 1
     }
   })
+}
+
+/**
+ * Sorts payloads according by most recently modified first, according to the priority,
+ * whereby the earlier a uuid appears in the priorityList,
+ * the earlier it will appear in the resulting sorted array.
+ */
+export function SortPayloadsByRecentAndUuidPriority(
+  payloads: FullyFormedPayloadInterface[],
+  uuidPriorityList: UuidString[],
+): FullyFormedPayloadInterface[] {
+  return payloads.sort((a, b) => {
+    const dateResult = new Date(b.serverUpdatedAt).getTime() - new Date(a.serverUpdatedAt).getTime()
+
+    let aPriority = 0
+    let bPriority = 0
+
+    aPriority = uuidPriorityList.indexOf(a.uuid)
+    bPriority = uuidPriorityList.indexOf(b.uuid)
+
+    if (aPriority === -1) {
+      aPriority = uuidPriorityList.length
+    }
+
+    if (bPriority === -1) {
+      bPriority = uuidPriorityList.length
+    }
+
+    if (aPriority === bPriority) {
+      return dateResult
+    }
+
+    if (aPriority < bPriority) {
+      return -1
+    } else {
+      return 1
+    }
+  })
+}
+
+export function GetSortedPayloadsByPriority(
+  payloads: FullyFormedPayloadInterface[],
+  contentTypePriorityList: ContentType[],
+  uuidPriorityList: UuidString[],
+) {
+  const itemsKeyPayloads: FullyFormedPayloadInterface[] = []
+  const contentTypePriorityPayloads: FullyFormedPayloadInterface[] = []
+  const remainingPayloads: FullyFormedPayloadInterface[] = []
+
+  for (let index = 0; index < payloads.length; index++) {
+    const payload = payloads[index]
+
+    if (payload.content_type === ContentType.ItemsKey) {
+      itemsKeyPayloads.push(payload)
+    } else if (contentTypePriorityList.includes(payload.content_type)) {
+      contentTypePriorityPayloads.push(payload)
+    } else {
+      remainingPayloads.push(payload)
+    }
+  }
+
+  return {
+    itemsKeyPayloads,
+    contentTypePriorityPayloads: SortPayloadsByRecentAndContentPriority(
+      contentTypePriorityPayloads,
+      contentTypePriorityList,
+    ),
+    remainingPayloads: SortPayloadsByRecentAndUuidPriority(remainingPayloads, uuidPriorityList),
+  }
 }
