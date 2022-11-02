@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.91.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.91.0...@standardnotes/web@3.91.1) (2022-11-02)
+
+### Bug Fixes
+
+* hide subscription marketing on iOS ([#1929](https://github.com/standardnotes/app/issues/1929)) ([35b21b2](https://github.com/standardnotes/app/commit/35b21b21ce2438540d799b5a2f04fe5616bf2c3e))
+
 # [3.91.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.11...@standardnotes/web@3.91.0) (2022-11-02)
 
 ### Features
