@@ -11,11 +11,13 @@ type Props = {
     starred: ListableContentItem['starred']
   }
   hasFiles?: boolean
+  hasBorder?: boolean
+  className?: string
 }
 
-const ListItemFlagIcons: FunctionComponent<Props> = ({ item, hasFiles = false }) => {
+const ListItemFlagIcons: FunctionComponent<Props> = ({ item, hasFiles = false, hasBorder = true, className }) => {
   return (
-    <div className="flex items-start border-b border-solid border-border p-4 pl-0">
+    <div className={`flex items-start ${hasBorder && 'border-b border-solid border-border'} ${className} pl-0`}>
       {item.locked && (
         <span className="flex items-center" title="Editing Disabled">
           <Icon ariaLabel="Editing Disabled" type="pencil-off" className="text-info" size="medium" />

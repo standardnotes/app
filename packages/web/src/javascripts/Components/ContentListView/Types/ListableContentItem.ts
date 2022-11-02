@@ -1,12 +1,3 @@
-import { DecryptedItem, ItemContent } from '@standardnotes/snjs'
+import { FileItem, SNNote } from '@standardnotes/snjs'
 
-export type ListableContentItem = DecryptedItem<ItemContent> & {
-  title: string
-  protected: boolean
-  updatedAtString?: string
-  createdAtString?: string
-  hidePreview?: boolean
-  preview_html?: string
-  preview_plain?: string
-  text?: string
-}
+export type ListableContentItem = SNNote | FileItem

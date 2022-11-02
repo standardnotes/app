@@ -3,15 +3,16 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useRef } from 'react'
 import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
 import ListItemConflictIndicator from './ListItemConflictIndicator'
-import ListItemFlagIcons from './ListItemFlagIcons'
 import ListItemTags from './ListItemTags'
 import ListItemMetadata from './ListItemMetadata'
 import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useContextMenuEvent } from '@/Hooks/useContextMenuEvent'
+import { classNames } from '@/Utils/ConcatenateClassNames'
+import { formatSizeToReadableString } from '@standardnotes/filepicker'
 
-const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
+const FileListItem: FunctionComponent<DisplayableListItemProps<FileItem>> = ({
   application,
   filesController,
   hideDate,
@@ -67,7 +68,7 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
   const IconComponent = () =>
     getFileIconComponent(
       application.iconsController.getIconForFileType((item as FileItem).mimeType),
-      'w-5 h-5 flex-shrink-0',
+      'w-10 h-10 flex-shrink-0',
     )
 
   useContextMenuEvent(listItemRef, openContextMenu)
@@ -75,28 +76,41 @@ const FileListItem: FunctionComponent<DisplayableListItemProps> = ({
   return (
     <div
       ref={listItemRef}
-      className={`content-list-item flex w-full cursor-pointer items-stretch text-text ${
-        selected && 'selected border-l-2px border-solid border-info'
-      }`}
+      className={classNames('flex max-h-[300px] w-[180px] cursor-pointer px-1 pt-2 text-text md:w-[200px]')}
       id={item.uuid}
       onClick={onClick}
     >
-      {!hideIcon ? (
-        <div className="mr-0 flex flex-col items-center justify-between p-4.5 pr-3">
-          <IconComponent />
+      <div
+        className={`flex flex-col justify-between overflow-hidden rounded bg-passive-5 pt-5 transition-all hover:bg-passive-4 ${
+          selected ? 'border-[1px] border-solid border-info' : 'border-[1px] border-solid border-border'
+        }`}
+      >
+        <div className={'px-5'}>
+          {!hideIcon ? (
+            <div className="mr-0">
+              <IconComponent />
+            </div>
+          ) : (
+            <div className="pr-4" />
+          )}
+          <div className="min-w-0 flex-grow py-4 px-0">
+            <div className="line-clamp-2 overflow-hidden text-editor font-semibold">
+              <div className="break-word line-clamp-2 mr-2 overflow-hidden">{item.title}</div>
+            </div>
+            <ListItemMetadata item={item} hideDate={hideDate} sortBy={sortBy} />
+            <ListItemTags hideTags={hideTags} tags={tags} />
+            <ListItemConflictIndicator item={item} />
+          </div>
         </div>
-      ) : (
-        <div className="pr-4" />
-      )}
-      <div className="min-w-0 flex-grow border-b border-solid border-border py-4 px-0">
-        <div className="flex items-start justify-between overflow-hidden text-base font-semibold leading-[1.3]">
-          <div className="break-word mr-2">{item.title}</div>
+        <div
+          className={classNames(
+            'border-t-[1px] border-solid border-border p-3 text-xs font-bold',
+            selected ? 'bg-info text-info-contrast' : 'bg-passive-4 text-neutral',
+          )}
+        >
+          {formatSizeToReadableString(item.decryptedSize)}
         </div>
-        <ListItemMetadata item={item} hideDate={hideDate} sortBy={sortBy} />
-        <ListItemTags hideTags={hideTags} tags={tags} />
-        <ListItemConflictIndicator item={item} />
       </div>
-      <ListItemFlagIcons item={item} />
     </div>
   )
 }

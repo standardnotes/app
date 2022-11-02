@@ -14,8 +14,9 @@ import { useContextMenuEvent } from '@/Hooks/useContextMenuEvent'
 import ListItemNotePreviewText from './ListItemNotePreviewText'
 import { ListItemTitle } from './ListItemTitle'
 import { log, LoggingDomain } from '@/Logging'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
-const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
+const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
   application,
   notesController,
   onSelect,
@@ -27,6 +28,8 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   selected,
   sortBy,
   tags,
+  isPreviousItemTiled,
+  isNextItemTiled,
 }) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
@@ -73,12 +76,17 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
 
   log(LoggingDomain.ItemsList, 'Rendering note list item', item.title)
 
+  const hasOffsetBorder = !isNextItemTiled
+
   return (
     <div
       ref={listItemRef}
-      className={`content-list-item flex w-full cursor-pointer items-stretch text-text ${
-        selected && `selected border-l-2 border-solid border-accessory-tint-${tint}`
-      }`}
+      className={classNames(
+        'content-list-item text-tex flex w-full cursor-pointer items-stretch',
+        selected && `selected border-l-2 border-solid border-accessory-tint-${tint}`,
+        isPreviousItemTiled && 'mt-3 border-t border-solid border-t-border',
+        isNextItemTiled && 'mb-3 border-b border-solid border-b-border',
+      )}
       id={item.uuid}
       onClick={onClick}
     >
@@ -89,14 +97,14 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
       ) : (
         <div className="pr-4" />
       )}
-      <div className="min-w-0 flex-grow border-b border-solid border-border py-4 px-0">
+      <div className={`min-w-0 flex-grow ${hasOffsetBorder && 'border-b border-solid border-border'} py-4 px-0`}>
         <ListItemTitle item={item} />
         <ListItemNotePreviewText item={item} hidePreview={hidePreview} />
         <ListItemMetadata item={item} hideDate={hideDate} sortBy={sortBy} />
         <ListItemTags hideTags={hideTags} tags={tags} />
         <ListItemConflictIndicator item={item} />
       </div>
-      <ListItemFlagIcons item={item} hasFiles={hasFiles} />
+      <ListItemFlagIcons className="p-4" item={item} hasFiles={hasFiles} hasBorder={hasOffsetBorder} />
     </div>
   )
 }
