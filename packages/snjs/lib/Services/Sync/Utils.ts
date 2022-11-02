@@ -7,7 +7,7 @@ import { FullyFormedPayloadInterface } from '@standardnotes/models'
  * whereby the earlier a content_type appears in the priorityList,
  * the earlier it will appear in the resulting sorted array.
  */
-export function SortPayloadsByRecentAndContentPriority(
+function SortPayloadsByRecentAndContentPriority(
   payloads: FullyFormedPayloadInterface[],
   contentTypePriorityList: ContentType[],
 ): FullyFormedPayloadInterface[] {
@@ -45,7 +45,7 @@ export function SortPayloadsByRecentAndContentPriority(
  * whereby the earlier a uuid appears in the priorityList,
  * the earlier it will appear in the resulting sorted array.
  */
-export function SortPayloadsByRecentAndUuidPriority(
+function SortPayloadsByRecentAndUuidPriority(
   payloads: FullyFormedPayloadInterface[],
   uuidPriorityList: UuidString[],
 ): FullyFormedPayloadInterface[] {
