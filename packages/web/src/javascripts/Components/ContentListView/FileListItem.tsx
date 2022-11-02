@@ -76,7 +76,7 @@ const FileListItem: FunctionComponent<DisplayableListItemProps<FileItem>> = ({
   return (
     <div
       ref={listItemRef}
-      className={classNames('flex max-h-[300px] w-[180px] cursor-pointer px-1 pt-2 text-text md:w-[200px]')}
+      className={classNames('flex max-h-[300px] w-[190px] cursor-pointer px-1 pt-2 text-text md:w-[200px]')}
       id={item.uuid}
       onClick={onClick}
     >

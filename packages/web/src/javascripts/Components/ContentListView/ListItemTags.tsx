@@ -1,10 +1,11 @@
 import { FunctionComponent } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
+import { ListableContentItem } from './Types/ListableContentItem'
 
 type Props = {
   hideTags: boolean
-  tags: DisplayableListItemProps['tags']
+  tags: DisplayableListItemProps<ListableContentItem>['tags']
 }
 
 const ListItemTags: FunctionComponent<Props> = ({ hideTags, tags }) => {

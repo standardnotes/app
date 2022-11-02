@@ -1,4 +1,5 @@
 import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
+import { log, LoggingDomain } from '@/Logging'
 import {
   ChallengeReason,
   ContentType,
@@ -8,6 +9,7 @@ import {
   UuidString,
   InternalEventBus,
   isFile,
+  Uuids,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
@@ -248,11 +250,14 @@ export class SelectedItemsController
     didSelect: boolean
   }> => {
     const item = this.application.items.findItem<ListableContentItem>(uuid)
+
     if (!item) {
       return {
         didSelect: false,
       }
     }
+
+    log(LoggingDomain.Selection, 'selectItem', item)
 
     const hasMeta = this.io.activeModifiers.has(KeyboardModifier.Meta)
     const hasCtrl = this.io.activeModifiers.has(KeyboardModifier.Ctrl)
@@ -304,14 +309,18 @@ export class SelectedItemsController
   }
 
   selectUuids = async (uuids: UuidString[], userTriggered = false) => {
-    const itemsForUuids = this.application.items.findItems(uuids)
+    const itemsForUuids = this.application.items.findItems(uuids).filter((item) => !isFile(item))
+
     if (itemsForUuids.length < 1) {
       return
     }
+
     if (!userTriggered && itemsForUuids.some((item) => item.protected && isFile(item))) {
       return
     }
-    this.setSelectedUuids(new Set(uuids))
+
+    this.setSelectedUuids(new Set(Uuids(itemsForUuids)))
+
     if (itemsForUuids.length === 1) {
       void this.openSingleSelectedItem()
     }
