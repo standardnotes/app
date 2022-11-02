@@ -731,11 +731,12 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.resetPagination()
 
-    this.reloadNotesDisplayOptions()
+    const { didReloadItems } = await this.reloadDisplayPreferences()
 
-    void this.reloadItems(userTriggered ? ItemsReloadSource.UserTriggeredTagChange : ItemsReloadSource.TagChange)
-
-    void this.reloadDisplayPreferences()
+    if (!didReloadItems) {
+      this.reloadNotesDisplayOptions()
+      void this.reloadItems(userTriggered ? ItemsReloadSource.UserTriggeredTagChange : ItemsReloadSource.TagChange)
+    }
   }
 
   onFilterEnter = () => {
