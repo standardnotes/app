@@ -427,6 +427,15 @@ export class NavigationController
     return this.selected_
   }
 
+  public async setPanelWidthForTag(tag: SNTag, width: number): Promise<void> {
+    await this.application.mutator.changeAndSaveItem<TagMutator>(tag, (mutator) => {
+      mutator.preferences = {
+        ...mutator.preferences,
+        panelWidth: width,
+      }
+    })
+  }
+
   public async setSelectedTag(tag: AnyTag | undefined, { userTriggered } = { userTriggered: false }) {
     if (tag && tag.conflictOf) {
       this.application.mutator

@@ -22,6 +22,7 @@ import {
   useBoolean,
   TemplateNoteViewAutofocusBehavior,
   isTag,
+  isFile,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -36,6 +37,7 @@ import { PrefDefaults } from '@/Constants/PrefDefaults'
 import dayjs from 'dayjs'
 import { LinkingController } from '../LinkingController'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
+import { log, LoggingDomain } from '@/Logging'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -346,11 +348,42 @@ export class ItemListController extends AbstractViewController implements Intern
     )
   }
 
+  /**
+   * In some cases we want to keep the selected item open even if it doesn't appear in results,
+   * for example if you are inside tag Foo and remove tag Foo from the note, we want to keep the note open.
+   */
   private shouldCloseActiveItem = (activeItem: SNNote | FileItem | undefined) => {
-    const isSearching = this.noteFilterText.length > 0
-    const itemExistsInUpdatedResults = this.items.find((item) => item.uuid === activeItem?.uuid)
+    const activeItemExistsInUpdatedResults = this.items.find((item) => item.uuid === activeItem?.uuid)
 
-    return !itemExistsInUpdatedResults && !isSearching && this.navigationController.isInAnySystemView()
+    const closeBecauseActiveItemIsFileAndDoesntExistInUpdatedResults =
+      activeItem && isFile(activeItem) && !activeItemExistsInUpdatedResults
+
+    if (closeBecauseActiveItemIsFileAndDoesntExistInUpdatedResults) {
+      log(LoggingDomain.Selection, 'shouldCloseActiveItem closeBecauseActiveItemIsFileAndDoesntExistInUpdatedResults')
+      return true
+    }
+
+    const firstItemInNewResults = this.getFirstNonProtectedItem()
+
+    const closePreviousItemWhenSwitchingToFilesBasedView =
+      firstItemInNewResults && isFile(firstItemInNewResults) && !activeItemExistsInUpdatedResults
+
+    if (closePreviousItemWhenSwitchingToFilesBasedView) {
+      log(LoggingDomain.Selection, 'shouldCloseActiveItem closePreviousItemWhenSwitchingToFilesBasedView')
+      return true
+    }
+
+    const isSearching = this.noteFilterText.length > 0
+
+    const closeBecauseActiveItemDoesntExistInCurrentSystemView =
+      !activeItemExistsInUpdatedResults && !isSearching && this.navigationController.isInAnySystemView()
+
+    if (closeBecauseActiveItemDoesntExistInCurrentSystemView) {
+      log(LoggingDomain.Selection, 'shouldCloseActiveItem closePreviousItemWhenSwitchingToFilesBasedView')
+      return true
+    }
+
+    return false
   }
 
   private shouldSelectNextItemOrCreateNewNote = (activeItem: SNNote | FileItem | undefined) => {
@@ -369,7 +402,12 @@ export class ItemListController extends AbstractViewController implements Intern
     return activeItem && !this.selectionController.isItemSelected(activeItem)
   }
 
-  private shouldSelectFirstItemOnItemReload = (itemsReloadSource: ItemsReloadSource) => {
+  private shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource) => {
+    const item = this.getFirstNonProtectedItem()
+    if (item && isFile(item)) {
+      return false
+    }
+
     const selectedTag = this.navigationController.selected
     const isDailyEntry = selectedTag && isTag(selectedTag) && selectedTag.isDailyEntry
     if (isDailyEntry) {
@@ -390,12 +428,19 @@ export class ItemListController extends AbstractViewController implements Intern
 
     const activeItem = activeController?.item
 
-    if (this.shouldCloseActiveItem(activeItem) && activeController) {
+    if (activeController && activeItem && this.shouldCloseActiveItem(activeItem)) {
       this.closeItemController(activeController)
-      this.selectionController.selectNextItem()
+
+      this.selectionController.deselectItem(activeItem)
+
+      if (this.shouldSelectFirstItem(itemsReloadSource)) {
+        log(LoggingDomain.Selection, 'Selecting next item after closing active one')
+        this.selectionController.selectNextItem()
+      }
     } else if (this.shouldSelectActiveItem(activeItem) && activeItem) {
+      log(LoggingDomain.Selection, 'Selecting active item')
       await this.selectionController.selectItem(activeItem.uuid).catch(console.error)
-    } else if (this.shouldSelectFirstItemOnItemReload(itemsReloadSource)) {
+    } else if (this.shouldSelectFirstItem(itemsReloadSource)) {
       await this.selectFirstItem()
     } else if (this.shouldSelectNextItemOrCreateNewNote(activeItem)) {
       await this.selectNextItemOrCreateNewNote()
@@ -514,9 +559,11 @@ export class ItemListController extends AbstractViewController implements Intern
     this.displayOptions = newDisplayOptions
     this.webDisplayOptions = newWebDisplayOptions
 
-    const newWidth = this.application.getPreference(PrefKey.NotesPanelWidth)
-    if (newWidth && newWidth !== this.panelWidth) {
-      this.panelWidth = newWidth
+    const listColumnWidth =
+      selectedTag?.preferences?.panelWidth || this.application.getPreference(PrefKey.NotesPanelWidth)
+
+    if (listColumnWidth && listColumnWidth !== this.panelWidth) {
+      this.panelWidth = listColumnWidth
     }
 
     if (!displayOptionsChanged) {
@@ -531,8 +578,8 @@ export class ItemListController extends AbstractViewController implements Intern
     const didSortDirectionChange = currentSortDirection !== this.displayOptions.sortDirection
     const didSortPrefChange = didSortByChange || didSortDirectionChange
 
-    if (didSortPrefChange) {
-      void this.selectFirstItem()
+    if (didSortPrefChange && this.shouldSelectFirstItem(ItemsReloadSource.DisplayOptionsChange)) {
+      await this.selectFirstItem()
     }
 
     return { didReloadItems: true }
@@ -655,6 +702,8 @@ export class ItemListController extends AbstractViewController implements Intern
     const item = this.getFirstNonProtectedItem()
 
     if (item) {
+      log(LoggingDomain.Selection, 'Selecting first item', item.uuid)
+
       await this.selectionController.selectItemWithScrollHandling(item, {
         userTriggered: false,
         scrollIntoView: false,
@@ -668,6 +717,7 @@ export class ItemListController extends AbstractViewController implements Intern
     const item = this.getFirstNonProtectedItem()
 
     if (item) {
+      log(LoggingDomain.Selection, 'selectNextItemOrCreateNewNote')
       await this.selectionController
         .selectItemWithScrollHandling(item, {
           userTriggered: false,
@@ -712,6 +762,7 @@ export class ItemListController extends AbstractViewController implements Intern
   }
 
   private closeItemController(controller: NoteViewController | FileViewController): void {
+    log(LoggingDomain.Selection, 'Closing item controller', controller.runtimeId)
     this.application.itemControllerGroup.closeItemController(controller)
   }
 

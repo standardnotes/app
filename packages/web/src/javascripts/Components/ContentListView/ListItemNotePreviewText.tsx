@@ -1,9 +1,8 @@
-import { sanitizeHtmlString } from '@standardnotes/snjs'
+import { sanitizeHtmlString, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent } from 'react'
-import { ListableContentItem } from './Types/ListableContentItem'
 
 type Props = {
-  item: ListableContentItem
+  item: SNNote
   hidePreview: boolean
   lineLimit?: number
 }

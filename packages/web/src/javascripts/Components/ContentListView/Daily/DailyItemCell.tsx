@@ -1,5 +1,5 @@
 import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
-import { SNTag } from '@standardnotes/snjs'
+import { isNote, SNTag } from '@standardnotes/snjs'
 import { ComponentPropsWithoutRef, forwardRef, FunctionComponent, Ref } from 'react'
 import ListItemFlagIcons from '../ListItemFlagIcons'
 import ListItemMetadata from '../ListItemMetadata'
@@ -65,7 +65,7 @@ export const DailyItemCell = forwardRef(
               {item && (
                 <>
                   <ListItemTitle item={item} />
-                  <ListItemNotePreviewText hidePreview={hidePreview} item={item} lineLimit={5} />
+                  {isNote(item) && <ListItemNotePreviewText hidePreview={hidePreview} item={item} lineLimit={5} />}
                   <ListItemMetadata item={item} hideDate={hideDate} sortBy={'created_at'} />
                   <ListItemTags hideTags={hideTags} tags={tags} />
                 </>

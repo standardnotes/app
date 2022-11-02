@@ -17,4 +17,5 @@ export interface TagPreferences {
   customNoteTitleFormat?: string
   editorIdentifier?: FeatureIdentifier | string
   entryMode?: 'normal' | 'daily'
+  panelWidth?: number
 }
