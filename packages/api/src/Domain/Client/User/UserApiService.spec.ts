@@ -1,5 +1,6 @@
 import { ProtocolVersion, UserRequestType } from '@standardnotes/common'
 import { RootKeyParamsInterface } from '@standardnotes/models'
+import { UserDeletionResponse } from '../../Response/User/UserDeletionResponse'
 
 import { UserRegistrationResponse } from '../../Response/User/UserRegistrationResponse'
 import { UserRequestResponse } from '../../Response/UserRequest/UserRequestResponse'
@@ -21,6 +22,9 @@ describe('UserApiService', () => {
     userServer.register = jest.fn().mockReturnValue({
       data: { user: { email: 'test@test.te', uuid: '1-2-3' } },
     } as jest.Mocked<UserRegistrationResponse>)
+    userServer.deleteAccount = jest.fn().mockReturnValue({
+      data: { message: 'Success' },
+    } as jest.Mocked<UserDeletionResponse>)
 
     userRequestServer = {} as jest.Mocked<UserRequestServerInterface>
     userRequestServer.submitUserRequest = jest.fn().mockReturnValue({
