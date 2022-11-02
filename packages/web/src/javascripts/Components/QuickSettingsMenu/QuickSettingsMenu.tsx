@@ -21,6 +21,7 @@ import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
 import PanelSettingsSection from './PanelSettingsSection'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 const focusModeAnimationDuration = 1255
 
@@ -173,7 +174,11 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
           <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Tools</div>
           {toggleableComponents.map((component) => (
             <button
-              className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-sm"
+              className={classNames(
+                'flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left',
+                'text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none',
+                'text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item',
+              )}
               onClick={() => {
                 toggleComponent(component)
               }}
@@ -191,7 +196,11 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
       )}
       <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Appearance</div>
       <button
-        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-sm"
+        className={classNames(
+          'flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left',
+          'text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none',
+          'text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item',
+        )}
         onClick={toggleDefaultTheme}
         ref={defaultThemeButtonRef}
       >
