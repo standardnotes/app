@@ -369,7 +369,7 @@ export class ItemListController extends AbstractViewController implements Intern
     return activeItem && !this.selectionController.isItemSelected(activeItem)
   }
 
-  private shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource) => {
+  private shouldSelectFirstItemOnItemReload = (itemsReloadSource: ItemsReloadSource) => {
     const selectedTag = this.navigationController.selected
     const isDailyEntry = selectedTag && isTag(selectedTag) && selectedTag.isDailyEntry
     if (isDailyEntry) {
@@ -395,7 +395,7 @@ export class ItemListController extends AbstractViewController implements Intern
       this.selectionController.selectNextItem()
     } else if (this.shouldSelectActiveItem(activeItem) && activeItem) {
       await this.selectionController.selectItem(activeItem.uuid).catch(console.error)
-    } else if (this.shouldSelectFirstItem(itemsReloadSource)) {
+    } else if (this.shouldSelectFirstItemOnItemReload(itemsReloadSource)) {
       await this.selectFirstItem()
     } else if (this.shouldSelectNextItemOrCreateNewNote(activeItem)) {
       await this.selectNextItemOrCreateNewNote()
