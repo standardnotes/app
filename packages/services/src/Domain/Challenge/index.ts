@@ -1,3 +1,4 @@
+export * from './Challenge'
 export * from './ChallengeInterface'
 export * from './ChallengeResponseInterface'
 export * from './ChallengeServiceInterface'

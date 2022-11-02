@@ -10,6 +10,18 @@ import {
   ChallengeReason,
   ChallengePromptTitle,
   EncryptionService,
+  SessionsClientInterface,
+  SessionManagerResponse,
+  SessionStrings,
+  SignInStrings,
+  INVALID_PASSWORD_COST,
+  API_MESSAGE_FALLBACK_LOGIN_FAIL,
+  API_MESSAGE_GENERIC_SYNC_FAIL,
+  EXPIRED_PROTOCOL_VERSION,
+  StrictSignInFailed,
+  UNSUPPORTED_KEY_DERIVATION,
+  UNSUPPORTED_PROTOCOL_VERSION,
+  Challenge,
 } from '@standardnotes/services'
 import { Base64String } from '@standardnotes/sncrypto-common'
 import { ClientDisplayableError } from '@standardnotes/responses'
@@ -17,11 +29,9 @@ import { CopyPayloadWithContentOverride } from '@standardnotes/models'
 import { isNullOrUndefined } from '@standardnotes/utils'
 import { JwtSession } from './Sessions/JwtSession'
 import { KeyParamsFromApiResponse, SNRootKeyParams, SNRootKey, CreateNewRootKey } from '@standardnotes/encryption'
-import { SessionStrings, SignInStrings } from '../Api/Messages'
 import { RemoteSession, RawStorageValue } from './Sessions/Types'
 import { Session } from './Sessions/Session'
 import { SessionFromRawStorageValue } from './Sessions/Generator'
-import { SessionsClientInterface } from './SessionsClientInterface'
 import { ShareToken } from './ShareToken'
 import { SNApiService } from '../Api/ApiService'
 import { DiskStorageService } from '../Storage/DiskStorageService'
@@ -31,9 +41,8 @@ import { Subscription } from '@standardnotes/security'
 import { TokenSession } from './Sessions/TokenSession'
 import { UuidString } from '@Lib/Types/UuidString'
 import * as Common from '@standardnotes/common'
-import * as Messages from '../Api/Messages'
 import * as Responses from '@standardnotes/responses'
-import { Challenge, ChallengeService } from '../Challenge'
+import { ChallengeService } from '../Challenge'
 import {
   ApiCallError,
   ErrorMessage,
@@ -45,12 +54,6 @@ import {
 
 export const MINIMUM_PASSWORD_LENGTH = 8
 export const MissingAccountParams = 'missing-params'
-
-type SessionManagerResponse = {
-  response: Responses.HttpResponse
-  rootKey?: SNRootKey
-  keyParams?: Common.AnyKeyParamsContent
-}
 
 const cleanedEmailString = (email: string) => {
   return email.trim().toLowerCase()
@@ -338,7 +341,7 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     const keyParams = KeyParamsFromApiResponse(response as Responses.KeyParamsResponse, email)
     if (!keyParams || !keyParams.version) {
       return {
-        response: this.apiService.createErrorResponse(Messages.API_MESSAGE_FALLBACK_LOGIN_FAIL),
+        response: this.apiService.createErrorResponse(API_MESSAGE_FALLBACK_LOGIN_FAIL),
       }
     }
     return { keyParams, response, mfaKeyPath, mfaCode }
@@ -388,11 +391,11 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     if (!this.protocolService.supportedVersions().includes(keyParams.version)) {
       if (this.protocolService.isVersionNewerThanLibraryVersion(keyParams.version)) {
         return {
-          response: this.apiService.createErrorResponse(Messages.UNSUPPORTED_PROTOCOL_VERSION),
+          response: this.apiService.createErrorResponse(UNSUPPORTED_PROTOCOL_VERSION),
         }
       } else {
         return {
-          response: this.apiService.createErrorResponse(Messages.EXPIRED_PROTOCOL_VERSION),
+          response: this.apiService.createErrorResponse(EXPIRED_PROTOCOL_VERSION),
         }
       }
     }
@@ -402,7 +405,7 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
       const minimum = this.protocolService.costMinimumForVersion(keyParams.version)
       if (keyParams.content002.pw_cost < minimum) {
         return {
-          response: this.apiService.createErrorResponse(Messages.INVALID_PASSWORD_COST),
+          response: this.apiService.createErrorResponse(INVALID_PASSWORD_COST),
         }
       }
 
@@ -415,14 +418,14 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
 
       if (!confirmed) {
         return {
-          response: this.apiService.createErrorResponse(Messages.API_MESSAGE_FALLBACK_LOGIN_FAIL),
+          response: this.apiService.createErrorResponse(API_MESSAGE_FALLBACK_LOGIN_FAIL),
         }
       }
     }
 
     if (!this.protocolService.platformSupportsKeyDerivation(keyParams)) {
       return {
-        response: this.apiService.createErrorResponse(Messages.UNSUPPORTED_KEY_DERIVATION),
+        response: this.apiService.createErrorResponse(UNSUPPORTED_KEY_DERIVATION),
       }
     }
 
@@ -433,9 +436,7 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     if (!isNullOrUndefined(minAllowedVersion)) {
       if (!Common.leftVersionGreaterThanOrEqualToRight(keyParams.version, minAllowedVersion)) {
         return {
-          response: this.apiService.createErrorResponse(
-            Messages.StrictSignInFailed(keyParams.version, minAllowedVersion),
-          ),
+          response: this.apiService.createErrorResponse(StrictSignInFailed(keyParams.version, minAllowedVersion)),
         }
       }
     }
@@ -532,7 +533,7 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
   public async revokeAllOtherSessions(): Promise<void> {
     const response = await this.getSessionsList()
     if (response.error != undefined || response.data == undefined) {
-      throw new Error(response.error?.message ?? Messages.API_MESSAGE_GENERIC_SYNC_FAIL)
+      throw new Error(response.error?.message ?? API_MESSAGE_GENERIC_SYNC_FAIL)
     }
     const sessions = response.data as RemoteSession[]
     const otherSessions = sessions.filter((session) => !session.current)

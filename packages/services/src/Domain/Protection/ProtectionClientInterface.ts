@@ -1,6 +1,7 @@
-import { ChallengeReason } from '@standardnotes/services'
 import { DecryptedItem } from '@standardnotes/models'
-import { TimingDisplayOption, MobileUnlockTiming } from './MobileUnlockTiming'
+import { ChallengeReason } from '../Challenge'
+import { MobileUnlockTiming } from './MobileUnlockTiming'
+import { TimingDisplayOption } from './TimingDisplayOption'
 
 export interface ProtectionsClientInterface {
   authorizeProtectedActionForItems<T extends DecryptedItem>(files: T[], challengeReason: ChallengeReason): Promise<T[]>
@@ -16,4 +17,11 @@ export interface ProtectionsClientInterface {
   hasBiometricsEnabled(): boolean
   enableBiometrics(): boolean
   disableBiometrics(): Promise<boolean>
+  authorizeAction(
+    reason: ChallengeReason,
+    dto: { fallBackToAccountPassword: boolean; requireAccountPassword: boolean; forcePrompt: boolean },
+  ): Promise<boolean>
+  authorizeAddingPasscode(): Promise<boolean>
+  authorizeRemovingPasscode(): Promise<boolean>
+  authorizeChangingPasscode(): Promise<boolean>
 }

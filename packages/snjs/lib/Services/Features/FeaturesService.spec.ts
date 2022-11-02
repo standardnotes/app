@@ -1,15 +1,6 @@
 import { ItemInterface, SNComponent, SNFeatureRepo } from '@standardnotes/models'
 import { SNSyncService } from '../Sync/SyncService'
 import { SettingName } from '@standardnotes/settings'
-import {
-  ItemManager,
-  AlertService,
-  SNApiService,
-  UserService,
-  SNSessionManager,
-  DiskStorageService,
-  StorageKey,
-} from '@Lib/index'
 import { SNFeaturesService } from '@Lib/Services/Features'
 import { ContentType, RoleName } from '@standardnotes/common'
 import { FeatureDescription, FeatureIdentifier, GetFeatures } from '@standardnotes/features'
@@ -17,7 +8,16 @@ import { SNWebSocketsService } from '../Api/WebsocketsService'
 import { SNSettingsService } from '../Settings'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { convertTimestampToMilliseconds } from '@standardnotes/utils'
-import { FeatureStatus, InternalEventBusInterface } from '@standardnotes/services'
+import {
+  AlertService,
+  FeatureStatus,
+  InternalEventBusInterface,
+  StorageKey,
+  UserService,
+} from '@standardnotes/services'
+import { SNApiService, SNSessionManager } from '../Api'
+import { ItemManager } from '../Items'
+import { DiskStorageService } from '../Storage/DiskStorageService'
 
 describe('featuresService', () => {
   let storageService: DiskStorageService

@@ -1,6 +1,5 @@
 export * from './ApiService'
 export * from './HttpService'
-export * from './Messages'
 export * from './Paths'
 export * from '../Session/Sessions/Session'
 export * from '../Session/SessionManager'

@@ -8,6 +8,8 @@ import {
   UserApiService,
   UserApiServiceInterface,
   UserRegistrationResponseBody,
+  UserRequestServer,
+  UserRequestServerInterface,
   UserServer,
   UserServerInterface,
   WebSocketApiService,
@@ -52,6 +54,15 @@ import {
   WorkspaceClientInterface,
   WorkspaceManager,
   ChallengePrompt,
+  Challenge,
+  ErrorAlertStrings,
+  SessionsClientInterface,
+  ProtectionsClientInterface,
+  UserService,
+  ProtocolUpgradeStrings,
+  CredentialsChangeFunctionResponse,
+  SessionStrings,
+  AccountEvent,
 } from '@standardnotes/services'
 import { FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateUsername } from '@standardnotes/encryption'
@@ -68,7 +79,7 @@ import { ClientDisplayableError } from '@standardnotes/responses'
 
 import { SnjsVersion } from './../Version'
 import { SNLog } from '../Log'
-import { Challenge, ChallengeResponse, ListedClientInterface } from '../Services'
+import { ChallengeResponse, ListedClientInterface } from '../Services'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
 
@@ -112,6 +123,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private apiService!: InternalServices.SNApiService
   private declare userApiService: UserApiServiceInterface
   private declare userServer: UserServerInterface
+  private declare userRequestServer: UserRequestServerInterface
   private declare subscriptionApiService: SubscriptionApiServiceInterface
   private declare subscriptionServer: SubscriptionServerInterface
   private declare subscriptionManager: SubscriptionClientInterface
@@ -132,7 +144,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private keyRecoveryService!: InternalServices.SNKeyRecoveryService
   private preferencesService!: InternalServices.SNPreferencesService
   private featuresService!: InternalServices.SNFeaturesService
-  private userService!: InternalServices.UserService
+  private userService!: UserService
   private webSocketsService!: InternalServices.SNWebSocketsService
   private settingsService!: InternalServices.SNSettingsService
   private mfaService!: InternalServices.SNMfaService
@@ -235,7 +247,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.itemManager
   }
 
-  public get protections(): InternalServices.ProtectionsClientInterface {
+  public get protections(): ProtectionsClientInterface {
     return this.protectionService
   }
 
@@ -255,7 +267,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.mutatorService
   }
 
-  public get sessions(): InternalServices.SessionsClientInterface {
+  public get sessions(): SessionsClientInterface {
     return this.sessionManager
   }
 
@@ -347,8 +359,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
         await this.diskStorageService.decryptStorage()
       } catch (_error) {
         void this.alertService.alert(
-          InternalServices.ErrorAlertStrings.StorageDecryptErrorBody,
-          InternalServices.ErrorAlertStrings.StorageDecryptErrorTitle,
+          ErrorAlertStrings.StorageDecryptErrorBody,
+          ErrorAlertStrings.StorageDecryptErrorTitle,
         )
       }
     }
@@ -628,12 +640,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     const result = await this.userService.performProtocolUpgrade()
     if (result.success) {
       if (this.hasAccount()) {
-        void this.alertService.alert(InternalServices.ProtocolUpgradeStrings.SuccessAccount)
+        void this.alertService.alert(ProtocolUpgradeStrings.SuccessAccount)
       } else {
-        void this.alertService.alert(InternalServices.ProtocolUpgradeStrings.SuccessPasscodeOnly)
+        void this.alertService.alert(ProtocolUpgradeStrings.SuccessPasscodeOnly)
       }
     } else if (result.error) {
-      void this.alertService.alert(InternalServices.ProtocolUpgradeStrings.Fail)
+      void this.alertService.alert(ProtocolUpgradeStrings.Fail)
     }
     return result
   }
@@ -848,7 +860,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     currentPassword: string,
     passcode?: string,
     origination = Common.KeyParamsOrigination.EmailChange,
-  ): Promise<InternalServices.CredentialsChangeFunctionResponse> {
+  ): Promise<CredentialsChangeFunctionResponse> {
     return this.userService.changeCredentials({
       currentPassword,
       newEmail,
@@ -864,7 +876,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     passcode?: string,
     origination = Common.KeyParamsOrigination.PasswordChange,
     validateNewPasswordStrength = true,
-  ): Promise<InternalServices.CredentialsChangeFunctionResponse> {
+  ): Promise<CredentialsChangeFunctionResponse> {
     return this.userService.changeCredentials({
       currentPassword,
       newPassword,
@@ -886,7 +898,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     /** Keep a reference to the soon-to-be-cleared alertService */
     const alertService = this.alertService
     await this.user.signOut(true)
-    void alertService.alert(InternalServices.SessionStrings.CurrentSessionRevoked)
+    void alertService.alert(SessionStrings.CurrentSessionRevoked)
   }
 
   public async validateAccountPassword(password: string): Promise<boolean> {
@@ -1064,6 +1076,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createApiService()
     this.createHttpService()
     this.createUserServer()
+    this.createUserRequestServer()
     this.createUserApiService()
     this.createSubscriptionServer()
     this.createSubscriptionApiService()
@@ -1111,6 +1124,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.apiService as unknown) = undefined
     ;(this.userApiService as unknown) = undefined
     ;(this.userServer as unknown) = undefined
+    ;(this.userRequestServer as unknown) = undefined
     ;(this.subscriptionApiService as unknown) = undefined
     ;(this.subscriptionServer as unknown) = undefined
     ;(this.subscriptionManager as unknown) = undefined
@@ -1261,7 +1275,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createUserService(): void {
-    this.userService = new InternalServices.UserService(
+    this.userService = new UserService(
       this.sessionManager,
       this.syncService,
       this.diskStorageService,
@@ -1270,17 +1284,17 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.alertService,
       this.challengeService,
       this.protectionService,
-      this.apiService,
+      this.userApiService,
       this.internalEventBus,
     )
     this.serviceObservers.push(
       this.userService.addEventObserver(async (event, data) => {
         switch (event) {
-          case InternalServices.AccountEvent.SignedInOrRegistered: {
+          case AccountEvent.SignedInOrRegistered: {
             void this.notifyEvent(ApplicationEvent.SignedIn)
             break
           }
-          case InternalServices.AccountEvent.SignedOut: {
+          case AccountEvent.SignedOut: {
             await this.notifyEvent(ApplicationEvent.SignedOut)
             await this.prepareForDeinit()
             this.deinit(this.getDeinitMode(), data?.source || DeinitSource.SignOut)
@@ -1308,11 +1322,15 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createUserApiService() {
-    this.userApiService = new UserApiService(this.userServer)
+    this.userApiService = new UserApiService(this.userServer, this.userRequestServer)
   }
 
   private createUserServer() {
     this.userServer = new UserServer(this.httpService)
+  }
+
+  private createUserRequestServer() {
+    this.userRequestServer = new UserRequestServer(this.httpService)
   }
 
   private createSubscriptionApiService() {

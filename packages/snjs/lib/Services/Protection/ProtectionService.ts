@@ -1,4 +1,3 @@
-import { Challenge } from './../Challenge/Challenge'
 import { ChallengeService } from './../Challenge/ChallengeService'
 import { SNLog } from '@Lib/Log'
 import { DecryptedItem } from '@standardnotes/models'
@@ -11,14 +10,16 @@ import {
   ApplicationStage,
   StorageKey,
   DiagnosticInfo,
+  Challenge,
   ChallengeReason,
   ChallengePrompt,
   ChallengeValidation,
   EncryptionService,
+  MobileUnlockTiming,
+  TimingDisplayOption,
+  ProtectionsClientInterface,
 } from '@standardnotes/services'
-import { ProtectionsClientInterface } from './ClientInterface'
 import { ContentType } from '@standardnotes/common'
-import { MobileUnlockTiming, TimingDisplayOption } from './MobileUnlockTiming'
 
 export enum ProtectionEvent {
   UnprotectedSessionBegan = 'UnprotectedSessionBegan',
@@ -176,62 +177,95 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
       item.content_type === ContentType.Note
         ? ChallengeReason.AccessProtectedNote
         : ChallengeReason.AccessProtectedFile,
+      { fallBackToAccountPassword: true, requireAccountPassword: false, forcePrompt: false },
     )
   }
 
   authorizeAddingPasscode(): Promise<boolean> {
-    return this.authorizeAction(ChallengeReason.AddPasscode)
+    return this.authorizeAction(ChallengeReason.AddPasscode, {
+      fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: false,
+    })
   }
 
   authorizeChangingPasscode(): Promise<boolean> {
-    return this.authorizeAction(ChallengeReason.ChangePasscode)
+    return this.authorizeAction(ChallengeReason.ChangePasscode, {
+      fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: false,
+    })
   }
 
   authorizeRemovingPasscode(): Promise<boolean> {
-    return this.authorizeAction(ChallengeReason.RemovePasscode)
+    return this.authorizeAction(ChallengeReason.RemovePasscode, {
+      fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: false,
+    })
   }
 
   authorizeSearchingProtectedNotesText(): Promise<boolean> {
-    return this.authorizeAction(ChallengeReason.SearchProtectedNotesText)
+    return this.authorizeAction(ChallengeReason.SearchProtectedNotesText, {
+      fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: false,
+    })
   }
 
   authorizeFileImport(): Promise<boolean> {
-    return this.authorizeAction(ChallengeReason.ImportFile)
+    return this.authorizeAction(ChallengeReason.ImportFile, {
+      fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: false,
+    })
   }
 
   async authorizeBackupCreation(): Promise<boolean> {
     return this.authorizeAction(ChallengeReason.ExportBackup, {
       fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: false,
     })
   }
 
   async authorizeMfaDisable(): Promise<boolean> {
     return this.authorizeAction(ChallengeReason.DisableMfa, {
+      fallBackToAccountPassword: true,
       requireAccountPassword: true,
+      forcePrompt: false,
     })
   }
 
   async authorizeAutolockIntervalChange(): Promise<boolean> {
-    return this.authorizeAction(ChallengeReason.ChangeAutolockInterval)
+    return this.authorizeAction(ChallengeReason.ChangeAutolockInterval, {
+      fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: false,
+    })
   }
 
   async authorizeSessionRevoking(): Promise<boolean> {
-    return this.authorizeAction(ChallengeReason.RevokeSession)
+    return this.authorizeAction(ChallengeReason.RevokeSession, {
+      fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: false,
+    })
   }
 
   async authorizeListedPublishing(): Promise<boolean> {
-    return this.authorizeAction(ChallengeReason.AuthorizeNoteForListed, { forcePrompt: true })
+    return this.authorizeAction(ChallengeReason.AuthorizeNoteForListed, {
+      fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: true,
+    })
   }
 
   async authorizeAction(
     reason: ChallengeReason,
-    { fallBackToAccountPassword = true, requireAccountPassword = false, forcePrompt = false } = {},
+    dto: { fallBackToAccountPassword: boolean; requireAccountPassword: boolean; forcePrompt: boolean },
   ): Promise<boolean> {
-    return this.validateOrRenewSession(reason, {
-      requireAccountPassword,
-      fallBackToAccountPassword,
-      forcePrompt,
-    })
+    return this.validateOrRenewSession(reason, dto)
   }
 
   getMobilePasscodeTimingOptions(): TimingDisplayOption[] {

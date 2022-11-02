@@ -1,5 +1,5 @@
 import { SNRootKey } from '@standardnotes/encryption'
-import { Challenge, ChallengeService } from '../Challenge'
+import { ChallengeService } from '../Challenge'
 import { ListedService } from '../Listed/ListedService'
 import { ActionResponse, HttpResponse } from '@standardnotes/responses'
 import { ContentType } from '@standardnotes/common'
@@ -31,6 +31,7 @@ import {
   ChallengeReason,
   ChallengePrompt,
   EncryptionService,
+  Challenge,
 } from '@standardnotes/services'
 
 /**
