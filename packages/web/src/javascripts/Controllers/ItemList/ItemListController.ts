@@ -739,7 +739,7 @@ export class ItemListController
     const item = this.getFirstNonProtectedItem()
 
     if (item) {
-      log(LoggingDomain.Selection, 'Selecting first item', item)
+      log(LoggingDomain.Selection, 'Selecting first item', item.uuid)
 
       await this.selectionController.selectItemWithScrollHandling(item, {
         userTriggered: false,
@@ -799,7 +799,7 @@ export class ItemListController
   }
 
   private closeItemController(controller: NoteViewController | FileViewController): void {
-    log(LoggingDomain.Selection, 'Closing item controller', controller)
+    log(LoggingDomain.Selection, 'Closing item controller', controller.runtimeId)
     this.application.itemControllerGroup.closeItemController(controller)
   }
 

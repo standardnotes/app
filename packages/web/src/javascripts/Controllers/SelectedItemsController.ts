@@ -257,7 +257,7 @@ export class SelectedItemsController
       }
     }
 
-    log(LoggingDomain.Selection, 'selectItem', item)
+    log(LoggingDomain.Selection, 'selectItem', item.uuid)
 
     const hasMeta = this.io.activeModifiers.has(KeyboardModifier.Meta)
     const hasCtrl = this.io.activeModifiers.has(KeyboardModifier.Ctrl)
