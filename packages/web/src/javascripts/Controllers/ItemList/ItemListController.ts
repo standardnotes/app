@@ -386,7 +386,12 @@ export class ItemListController
    * In some cases we want to keep the selected item open even if it doesn't appear in results,
    * for example if you are inside tag Foo and remove tag Foo from the note, we want to keep the note open.
    */
-  private shouldCloseActiveItem = (activeItem: SNNote | FileItem | undefined) => {
+  private shouldCloseActiveItem = (activeItem: SNNote | FileItem | undefined, source?: ItemsReloadSource) => {
+    if (source === ItemsReloadSource.UserTriggeredTagChange) {
+      log(LoggingDomain.Selection, 'shouldCloseActiveItem true due to ItemsReloadSource.UserTriggeredTagChange')
+      return true
+    }
+
     const activeItemExistsInUpdatedResults = this.items.find((item) => item.uuid === activeItem?.uuid)
 
     const closeBecauseActiveItemIsFileAndDoesntExistInUpdatedResults =
@@ -417,6 +422,7 @@ export class ItemListController
       return true
     }
 
+    log(LoggingDomain.Selection, 'shouldCloseActiveItem false')
     return false
   }
 
@@ -462,7 +468,7 @@ export class ItemListController
 
     const activeItem = activeController?.item
 
-    if (activeController && activeItem && this.shouldCloseActiveItem(activeItem)) {
+    if (activeController && activeItem && this.shouldCloseActiveItem(activeItem, itemsReloadSource)) {
       this.closeItemController(activeController)
 
       this.selectionController.deselectItem(activeItem)
@@ -833,6 +839,16 @@ export class ItemListController
     this.searchSubmitted = true
 
     this.application.getDesktopService()?.searchText(this.noteFilterText)
+  }
+
+  get isCurrentNoteTemplate(): boolean {
+    const controller = this.getActiveItemController()
+
+    if (!controller) {
+      return false
+    }
+
+    return controller instanceof NoteViewController && controller.isTemplateNote
   }
 
   public async insertCurrentIfTemplate(): Promise<void> {

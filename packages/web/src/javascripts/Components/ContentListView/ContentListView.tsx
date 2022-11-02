@@ -110,6 +110,7 @@ const ContentListView: FunctionComponent<Props> = ({
     renderedItems,
     items,
     searchBarElement,
+    isCurrentNoteTemplate,
   } = itemListController
 
   const { selectedUuids, selectNextItem, selectPreviousItem } = selectionController
@@ -245,13 +246,13 @@ const ContentListView: FunctionComponent<Props> = ({
   )
 
   useEffect(() => {
-    const hasEditorPane = selectedUuids.size > 0
+    const hasEditorPane = selectedUuids.size > 0 || renderedItems.length === 0 || isCurrentNoteTemplate
     if (!hasEditorPane) {
       itemsViewPanelRef.current?.style.removeProperty('width')
     }
-  }, [selectedUuids, itemsViewPanelRef])
+  }, [selectedUuids, itemsViewPanelRef, isCurrentNoteTemplate])
 
-  const hasEditorPane = selectedUuids.size > 0 || renderedItems.length === 0
+  const hasEditorPane = selectedUuids.size > 0 || renderedItems.length === 0 || isCurrentNoteTemplate
 
   return (
     <div
