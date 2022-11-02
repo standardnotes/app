@@ -203,6 +203,14 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return undefined
   }
 
+  isNativeIOS() {
+    return this.isNativeMobileWeb() && this.platform === Platform.Ios
+  }
+
+  get hideSubscriptionMarketing() {
+    return this.isNativeIOS()
+  }
+
   mobileDevice(): MobileDeviceInterface {
     if (!this.isNativeMobileWeb()) {
       throw Error('Attempting to access device as mobile device on non mobile platform')
