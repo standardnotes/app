@@ -289,7 +289,7 @@ export class SNSyncService
 
     await this.processItemsKeysFirstDuringDatabaseLoad(itemsKeyPayloads)
 
-    await this.processPayloadBatch(contentTypePriorityPayloads, 0, contentTypePriorityPayloads.length)
+    await this.processPayloadBatch(contentTypePriorityPayloads)
 
     /**
      * Map in batches to give interface a chance to update. Note that total decryption
@@ -313,8 +313,8 @@ export class SNSyncService
 
   private async processPayloadBatch(
     batch: FullyFormedPayloadInterface<ItemContent>[],
-    currentPosition: number,
-    payloadCount: number,
+    currentPosition?: number,
+    payloadCount?: number,
   ) {
     const encrypted: EncryptedPayloadInterface[] = []
     const nonencrypted: (DecryptedPayloadInterface | DeletedPayloadInterface)[] = []
@@ -339,7 +339,9 @@ export class SNSyncService
 
     void this.notifyEvent(SyncEvent.LocalDataIncrementalLoad)
 
-    this.opStatus.setDatabaseLoadStatus(currentPosition, payloadCount, false)
+    if (currentPosition != undefined && payloadCount != undefined) {
+      this.opStatus.setDatabaseLoadStatus(currentPosition, payloadCount, false)
+    }
 
     await sleep(1, false)
   }
