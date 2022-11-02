@@ -61,15 +61,17 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
             To take advantage of <span className="font-semibold">{featureName}</span> and other advanced features,
             upgrade your current plan.
           </AlertDialogDescription>
-          <div className="p-4">
-            <button
-              onClick={handleClick}
-              className="no-border w-full cursor-pointer rounded bg-info py-2 font-bold text-info-contrast hover:brightness-125 focus:brightness-125"
-              ref={plansButtonRef}
-            >
-              Upgrade
-            </button>
-          </div>
+          {!application.hideSubscriptionMarketing && (
+            <div className="p-4">
+              <button
+                onClick={handleClick}
+                className="no-border w-full cursor-pointer rounded bg-info py-2 font-bold text-info-contrast hover:brightness-125 focus:brightness-125"
+                ref={plansButtonRef}
+              >
+                Upgrade
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </AlertDialog>

@@ -2,6 +2,7 @@ import { WebApplication } from '@/Application/Application'
 import { FunctionComponent, MouseEventHandler, useCallback } from 'react'
 import Switch from '@/Components/Switch/Switch'
 import { isMobileScreen } from '@/Utils'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   application: WebApplication
@@ -29,7 +30,11 @@ const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggle, onCl
 
   return (
     <button
-      className="group flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none disabled:bg-default disabled:text-passive-2"
+      className={classNames(
+        'group flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left',
+        'text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none disabled:bg-default disabled:text-passive-2',
+        'text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item',
+      )}
       onClick={toggle}
     >
       <div className="flex items-center">Focused Writing</div>
