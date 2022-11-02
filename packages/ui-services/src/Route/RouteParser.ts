@@ -1,10 +1,11 @@
-import { Uuid } from '@standardnotes/common'
+import { UserRequestType, Uuid } from '@standardnotes/common'
 import { PreferenceId } from './../Preferences/PreferenceId'
 import { DemoParams } from './Params/DemoParams'
 import { OnboardingParams } from './Params/OnboardingParams'
 import { PurchaseParams } from './Params/PurchaseParams'
 import { SettingsParams } from './Params/SettingsParams'
 import { SubscriptionInviteParams } from './Params/SubscriptionInviteParams'
+import { UserRequestParams } from './Params/UserRequestParams'
 
 import { RootQueryParam } from './RootQueryParam'
 import { RootRoutes } from './RootRoutes'
@@ -26,6 +27,14 @@ export class RouteParser implements RouteParserInterface {
 
   get type(): RouteType {
     return this.parsedType
+  }
+
+  get userRequestParams(): UserRequestParams {
+    this.checkForProperRouteType(RouteType.UserRequest)
+
+    return {
+      requestType: this.searchParams.get(RootQueryParam.UserRequest) as UserRequestType,
+    }
   }
 
   get subscriptionInviteParams(): SubscriptionInviteParams {
@@ -89,6 +98,7 @@ export class RouteParser implements RouteParserInterface {
       [RootQueryParam.Settings, RouteType.Settings],
       [RootQueryParam.DemoToken, RouteType.Demo],
       [RootQueryParam.AcceptSubscriptionInvite, RouteType.AcceptSubscriptionInvite],
+      [RootQueryParam.UserRequest, RouteType.UserRequest],
     ])
 
     for (const rootQueryParam of rootQueryParametersMap.keys()) {

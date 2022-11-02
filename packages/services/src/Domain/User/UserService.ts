@@ -1,6 +1,6 @@
 import { EncryptionProviderInterface, SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
 import { HttpResponse, SignInResponse, User } from '@standardnotes/responses'
-import { KeyParamsOrigination } from '@standardnotes/common'
+import { KeyParamsOrigination, UserRequestType } from '@standardnotes/common'
 import { UuidGenerator } from '@standardnotes/utils'
 import { UserApiServiceInterface, UserRegistrationResponseBody } from '@standardnotes/api'
 
@@ -230,6 +230,24 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
 
     return {
       error: false,
+    }
+  }
+
+  async submitUserRequest(requestType: UserRequestType): Promise<boolean> {
+    const userUuid = this.sessionManager.getSureUser().uuid
+    try {
+      const result = await this.userApiService.submitUserRequest({
+        userUuid,
+        requestType,
+      })
+
+      if (result.data.error) {
+        return false
+      }
+
+      return result.data.success
+    } catch (error) {
+      return false
     }
   }
 
