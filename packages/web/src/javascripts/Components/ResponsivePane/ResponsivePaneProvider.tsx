@@ -72,11 +72,11 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
   useEffect(() => {
     if (previousSelectedPane) {
       const previousPaneElement = document.getElementById(ElementIds[previousSelectedPane])
-      previousPaneElement?.classList.remove('selected')
+      previousPaneElement?.removeAttribute('data-selected-pane')
     }
 
     const currentPaneElement = document.getElementById(ElementIds[currentSelectedPane])
-    currentPaneElement?.classList.add('selected')
+    currentPaneElement?.setAttribute('data-selected-pane', '')
   }, [currentSelectedPane, previousSelectedPane])
 
   const addAndroidBackHandler = useAndroidBackHandler()
