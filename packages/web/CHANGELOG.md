@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.93.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.4...@standardnotes/web@3.93.5) (2022-11-03)
+
+### Bug Fixes
+
+* padding on files view on mobile ([#1934](https://github.com/standardnotes/app/issues/1934)) ([633d618](https://github.com/standardnotes/app/commit/633d6189fbbd2a470a74f8bfd352e8b3e7af684c))
+
 ## [3.93.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.3...@standardnotes/web@3.93.4) (2022-11-03)
 
 ### Bug Fixes
