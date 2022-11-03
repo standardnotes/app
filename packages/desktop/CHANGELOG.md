@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.23.271](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.270...@standardnotes/desktop@3.23.271) (2022-11-03)
+
+### Bug Fixes
+
+* **desktop:** editor column top padding on mac ([9ae0ce0](https://github.com/standardnotes/app/commit/9ae0ce0bfd78bedf3e8318aa56b8542dd81d5870))
+
 ## [3.23.270](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.269...@standardnotes/desktop@3.23.270) (2022-11-03)
 
 ### Bug Fixes

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.93.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.1...@standardnotes/web@3.93.2) (2022-11-03)
+
+### Bug Fixes
+
+* "No modifications allowed" error on file drag in Firefox ([de4adca](https://github.com/standardnotes/app/commit/de4adca059b169e75267c8a29012e9988a607bc2))
+* files list not updating when new file is uploaded ([4036113](https://github.com/standardnotes/app/commit/40361132063e70e9851baf01eb772a0b3ff0aa1c))
+
 ## [3.93.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.0...@standardnotes/web@3.93.1) (2022-11-03)
 
 ### Bug Fixes
