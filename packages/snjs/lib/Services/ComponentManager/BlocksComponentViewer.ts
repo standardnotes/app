@@ -28,6 +28,7 @@ import {
   NoteBlock,
   SNNote,
   ComponentDataDomain,
+  MutationType,
 } from '@standardnotes/models'
 import find from 'lodash/find'
 
@@ -72,6 +73,7 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
   public sessionKey?: string
 
   private note: SNNote
+  private lastBlockSent?: NoteBlock
 
   constructor(
     public readonly component: SNComponent,
@@ -257,6 +259,12 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
   }
 
   sendNoteToEditor(source?: PayloadEmitSource): void {
+    const block = this.note.getBlock(this.blockId)
+
+    if (this.lastBlockSent && this.lastBlockSent.content === block?.content) {
+      return
+    }
+
     this.log(
       'Sending note in reply',
       'component:',
@@ -285,10 +293,8 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
         ? this.note.spellcheck
         : this.preferencesSerivce.getValue(PrefKey.EditorSpellcheck, true)
 
-    const block = this.note.getBlock(this.blockId)
-
     params.content = {
-      text: block?.content,
+      text: block?.content || '',
       spellcheck,
     } as NoteContent
 
@@ -301,6 +307,8 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
     }
 
     this.replyToMessage(this.streamContextItemOriginalMessage as ComponentMessage, response)
+
+    this.lastBlockSent = block
   }
 
   private log(message: string, ...args: unknown[]): void {
@@ -446,9 +454,15 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
     const content = itemPayloads[0].content as NoteContent
 
     const text = content.text
-    this.itemManager.changeNote(this.note, (mutator) => {
-      mutator.changeBlockContent(this.blockId, text)
-    })
+    this.itemManager.changeNote(
+      this.note,
+      (mutator) => {
+        mutator.changeBlockContent(this.blockId, text)
+      },
+      MutationType.UpdateUserTimestamps,
+      PayloadEmitSource.ComponentRetrieved,
+      this.component.uuid,
+    )
 
     this.syncService
       .sync({

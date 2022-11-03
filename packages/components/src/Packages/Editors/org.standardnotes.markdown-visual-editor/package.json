@@ -39,7 +39,7 @@
     "@milkdown/prose": "5.5.0",
     "@milkdown/react": "5.5.0",
     "@milkdown/theme-nord": "5.5.0",
-    "@standardnotes/editor-kit": "2.2.4",
+    "@standardnotes/editor-kit": "workspace:*",
     "@standardnotes/styles": "workspace:*",
     "@testing-library/dom": "^8.11.3",
     "@testing-library/jest-dom": "^5.16.2",

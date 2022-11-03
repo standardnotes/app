@@ -71,7 +71,7 @@ class AppWrapper extends Component<AppProps, AppState> {
         }
       },
       onNoteValueChange: async (note: any) => {
-        const editable = !note.content.appData['org.standardnotes.sn'].locked ?? true
+        const editable = !note.content.appData?.['org.standardnotes.sn']?.locked ?? true
         const spellcheck = note.content.spellcheck
 
         this.setState({
@@ -86,11 +86,16 @@ class AppWrapper extends Component<AppProps, AppState> {
           editable,
         })
       },
+      handleRequestForContentHeight: () => {
+        let height = 0
+        height += document.querySelector('.ProseMirror')?.clientHeight ?? 0
+        height += document.querySelector('.milkdown-menu')?.clientHeight ?? 0
+        return height
+      },
     }
 
     this.editorKit = new EditorKit(editorKitDelegate, {
       mode: 'markdown',
-      supportsFileSafe: false,
     })
   }
 

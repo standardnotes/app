@@ -14,12 +14,6 @@ object-assign
 /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
 
 /**
-     * @license
-     * Lodash (Custom Build) lodash.com/license | Underscore.js 1.8.3 underscorejs.org/LICENSE
-     * Build: `lodash include="includes,merge,filter,map,remove,find,omit,pull,cloneDeep,pick,uniq,sortedIndexBy,mergeWith"`
-     */
-
-/**
    * Prism: Lightweight, robust, elegant syntax highlighting
    *
    * @license MIT <https://opensource.org/licenses/MIT>

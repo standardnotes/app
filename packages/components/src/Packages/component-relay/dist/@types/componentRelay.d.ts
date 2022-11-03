@@ -1,5 +1,5 @@
-import { OutgoingItemMessagePayload, AppDataField, ComponentAction, ContentType } from '@standardnotes/snjs';
-import { ItemPayload } from './Types/ItemPayload';
+import { ItemContent } from '@standardnotes/models';
+import { OutgoingItemMessagePayload, AppDataField, ComponentAction, ContentType, DecryptedTransferPayload } from '@standardnotes/snjs';
 import { ComponentRelayParams } from './Types/ComponentRelayParams';
 export default class ComponentRelay {
     private contentWindow;
@@ -81,7 +81,7 @@ export default class ComponentRelay {
      * Selects a `Tag` item.
      * @param item The Item (`Tag` or `SmartTag`) to select.
      */
-    selectItem(item: ItemPayload): void;
+    selectItem(item: DecryptedTransferPayload): void;
     /**
      * Clears current selected `Tag` (if any).
      */
@@ -91,35 +91,35 @@ export default class ComponentRelay {
      * @param item The Item's payload content.
      * @param callback The callback to process the created Item.
      */
-    createItem(item: ItemPayload, callback: (data: any) => void): void;
+    createItem(item: DecryptedTransferPayload, callback: (data: any) => void): void;
     /**
      * Creates and stores a collection of Items in the item store.
      * @param items The Item(s) payload collection.
      * @param callback The callback to process the created Item(s).
      */
-    createItems(items: ItemPayload[], callback: (data: any) => void): void;
+    createItems(items: DecryptedTransferPayload[], callback: (data: any) => void): void;
     /**
      * Associates a `Tag` with the current Note.
      * @param item The `Tag` item to associate.
      */
-    associateItem(item: ItemPayload): void;
+    associateItem(item: DecryptedTransferPayload): void;
     /**
      * Deassociates a `Tag` with the current Note.
      * @param item The `Tag` item to deassociate.
      */
-    deassociateItem(item: ItemPayload): void;
+    deassociateItem(item: DecryptedTransferPayload): void;
     /**
      * Deletes an Item from the item store.
      * @param item The Item to delete.
      * @param callback The callback with the result of the operation.
      */
-    deleteItem(item: ItemPayload, callback: (data: OutgoingItemMessagePayload) => void): void;
+    deleteItem(item: DecryptedTransferPayload, callback: (data: OutgoingItemMessagePayload) => void): void;
     /**
      * Deletes a collection of Items from the item store.
      * @param items The Item(s) to delete.
      * @param callback The callback with the result of the operation.
      */
-    deleteItems(items: ItemPayload[], callback: (data: OutgoingItemMessagePayload) => void): void;
+    deleteItems(items: DecryptedTransferPayload[], callback: (data: OutgoingItemMessagePayload) => void): void;
     /**
      * Performs a custom action to the component manager.
      * @param action
@@ -133,7 +133,7 @@ export default class ComponentRelay {
      * @param callback
      * @param skipDebouncer
      */
-    saveItem(item: ItemPayload, callback?: () => void, skipDebouncer?: boolean): void;
+    saveItem(item: DecryptedTransferPayload, callback?: () => void, skipDebouncer?: boolean): void;
     /**
      * Runs a callback before saving an Item.
      * @param item An existing Item to be saved.
@@ -142,7 +142,7 @@ export default class ComponentRelay {
      * hook into the debounce cycle so that clients don't have to implement their own debouncing.
      * @param callback
      */
-    saveItemWithPresave(item: ItemPayload, presave: any, callback?: () => void): void;
+    saveItemWithPresave<C extends ItemContent = ItemContent>(item: DecryptedTransferPayload<C>, presave: any, callback?: () => void): void;
     /**
      * Runs a callback before saving a collection of Items.
      * @param items A collection of existing Items to be saved.
@@ -151,7 +151,7 @@ export default class ComponentRelay {
      * hook into the debounce cycle so that clients don't have to implement their own debouncing.
      * @param callback
      */
-    saveItemsWithPresave(items: ItemPayload[], presave: any, callback?: () => void): void;
+    saveItemsWithPresave(items: DecryptedTransferPayload[], presave: any, callback?: () => void): void;
     private performSavingOfItems;
     /**
      * Saves a collection of existing Items.
@@ -161,7 +161,7 @@ export default class ComponentRelay {
      * This should be used when saving items via other means besides keystrokes.
      * @param presave
      */
-    saveItems(items: ItemPayload[], callback?: () => void, skipDebouncer?: boolean, presave?: any): void;
+    saveItems(items: DecryptedTransferPayload[], callback?: () => void, skipDebouncer?: boolean, presave?: any): void;
     /**
      * Sets a new container size for the current component.
      * @param width The new width.

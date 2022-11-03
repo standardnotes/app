@@ -9,7 +9,8 @@
       "src/Packages/Deprecated/*",
       "src/Packages/Editors/*",
       "src/Packages/Themes/*",
-      "src/Packages/component-relay"
+      "src/Packages/component-relay",
+      "src/Packages/editor-kit"
     ]
   },
   "scripts": {

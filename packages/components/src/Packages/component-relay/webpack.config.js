@@ -1,7 +1,7 @@
 const path = require('path');
 
 module.exports = {
-  entry: './lib/componentRelay.ts',
+  entry: './lib/ComponentRelay.ts',
   resolve: {
     extensions: ['.ts']
   },

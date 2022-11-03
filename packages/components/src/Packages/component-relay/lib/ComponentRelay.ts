@@ -1,3 +1,4 @@
+import { ItemContent } from '@standardnotes/models'
 import {
   OutgoingItemMessagePayload,
   MessageData,
@@ -6,11 +7,11 @@ import {
   ComponentAction,
   ContentType,
   Environment,
+  DecryptedTransferPayload,
 } from '@standardnotes/snjs'
 import { environmentToString, generateUuid, isValidJsonString } from './Utils'
 import Logger from './Logger'
 import { KeyboardModifier } from './Types/KeyboardModifier'
-import { ItemPayload } from './Types/ItemPayload'
 import { ComponentRelayParams } from './Types/ComponentRelayParams'
 import { MessagePayload } from './Types/MessagePayload'
 import { Component } from './Types/Component'
@@ -24,8 +25,8 @@ export default class ComponentRelay {
   private component: Component = { activeThemes: [], acceptsThemes: true }
   private sentMessages: MessagePayload[] = []
   private messageQueue: MessagePayload[] = []
-  private lastStreamedItem?: ItemPayload
-  private pendingSaveItems?: ItemPayload[]
+  private lastStreamedItem?: DecryptedTransferPayload
+  private pendingSaveItems?: DecryptedTransferPayload[]
   private pendingSaveTimeout?: NodeJS.Timeout
   private pendingSaveParams?: any
   private messageHandler?: (event: any) => void
@@ -547,7 +548,7 @@ export default class ComponentRelay {
    * Selects a `Tag` item.
    * @param item The Item (`Tag` or `SmartTag`) to select.
    */
-  public selectItem(item: ItemPayload): void {
+  public selectItem(item: DecryptedTransferPayload): void {
     this.postMessage(ComponentAction.SelectItem, {
       item: this.jsonObjectForItem(item),
     })
@@ -567,7 +568,10 @@ export default class ComponentRelay {
    * @param item The Item's payload content.
    * @param callback The callback to process the created Item.
    */
-  public createItem(item: ItemPayload, callback: (data: any) => void): void {
+  public createItem(
+    item: DecryptedTransferPayload,
+    callback: (data: any) => void,
+  ): void {
     this.postMessage(
       ComponentAction.CreateItem,
       { item: this.jsonObjectForItem(item) },
@@ -592,7 +596,7 @@ export default class ComponentRelay {
    * @param callback The callback to process the created Item(s).
    */
   public createItems(
-    items: ItemPayload[],
+    items: DecryptedTransferPayload[],
     callback: (data: any) => void,
   ): void {
     const mapped = items.map((item) => this.jsonObjectForItem(item))
@@ -609,7 +613,7 @@ export default class ComponentRelay {
    * Associates a `Tag` with the current Note.
    * @param item The `Tag` item to associate.
    */
-  public associateItem(item: ItemPayload): void {
+  public associateItem(item: DecryptedTransferPayload): void {
     this.postMessage(ComponentAction.AssociateItem, {
       item: this.jsonObjectForItem(item),
     })
@@ -619,7 +623,7 @@ export default class ComponentRelay {
    * Deassociates a `Tag` with the current Note.
    * @param item The `Tag` item to deassociate.
    */
-  public deassociateItem(item: ItemPayload): void {
+  public deassociateItem(item: DecryptedTransferPayload): void {
     this.postMessage(ComponentAction.DeassociateItem, {
       item: this.jsonObjectForItem(item),
     })
@@ -631,7 +635,7 @@ export default class ComponentRelay {
    * @param callback The callback with the result of the operation.
    */
   public deleteItem(
-    item: ItemPayload,
+    item: DecryptedTransferPayload,
     callback: (data: OutgoingItemMessagePayload) => void,
   ): void {
     this.deleteItems([item], callback)
@@ -643,7 +647,7 @@ export default class ComponentRelay {
    * @param callback The callback with the result of the operation.
    */
   public deleteItems(
-    items: ItemPayload[],
+    items: DecryptedTransferPayload[],
     callback: (data: OutgoingItemMessagePayload) => void,
   ): void {
     const params = {
@@ -679,7 +683,7 @@ export default class ComponentRelay {
    * @param skipDebouncer
    */
   public saveItem(
-    item: ItemPayload,
+    item: DecryptedTransferPayload,
     callback?: () => void,
     skipDebouncer = false,
   ): void {
@@ -694,8 +698,8 @@ export default class ComponentRelay {
    * hook into the debounce cycle so that clients don't have to implement their own debouncing.
    * @param callback
    */
-  public saveItemWithPresave(
-    item: ItemPayload,
+  public saveItemWithPresave<C extends ItemContent = ItemContent>(
+    item: DecryptedTransferPayload<C>,
     presave: any,
     callback?: () => void,
   ): void {
@@ -711,7 +715,7 @@ export default class ComponentRelay {
    * @param callback
    */
   public saveItemsWithPresave(
-    items: ItemPayload[],
+    items: DecryptedTransferPayload[],
     presave: any,
     callback?: () => void,
   ): void {
@@ -723,7 +727,7 @@ export default class ComponentRelay {
     presave,
     callback,
   }: {
-    items: ItemPayload[]
+    items: DecryptedTransferPayload[]
     presave: () => void
     callback?: () => void
   }) {
@@ -770,7 +774,7 @@ export default class ComponentRelay {
    * @param presave
    */
   public saveItems(
-    items: ItemPayload[],
+    items: DecryptedTransferPayload[],
     callback?: () => void,
     skipDebouncer = false,
     presave?: any,
@@ -854,7 +858,7 @@ export default class ComponentRelay {
     this.postMessage(ComponentAction.Click, {})
   }
 
-  private jsonObjectForItem(item: DecryptedItem | ItemPayload) {
+  private jsonObjectForItem(item: DecryptedItem | DecryptedTransferPayload) {
     const copy = Object.assign({}, item) as any
     copy.children = null
     copy.parent = null

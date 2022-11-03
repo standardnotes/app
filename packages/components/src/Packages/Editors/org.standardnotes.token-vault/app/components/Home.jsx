@@ -78,11 +78,13 @@ export default class Home extends React.Component {
           lastUpdated: Date.now(),
         })
       },
+      handleRequestForContentHeight: () => {
+        return document.body.scrollHeight
+      },
     }
 
     this.editorKit = new EditorKit(delegate, {
       mode: 'json',
-      supportsFileSafe: false,
     })
   }
 

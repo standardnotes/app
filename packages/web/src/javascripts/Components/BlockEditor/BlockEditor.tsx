@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/Application'
+import { log, LoggingDomain } from '@/Logging'
 import {
   ComponentAction,
   ComponentArea,
@@ -10,6 +11,10 @@ import {
 } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ComponentView from '../ComponentView/ComponentView'
+
+const MaxBlockHeight: Record<string, number> = {
+  'org.standardnotes.standard-sheets': 300,
+}
 
 export class BlockEditorController {
   constructor(private note: SNNote, private application: WebApplication) {
@@ -105,9 +110,10 @@ const SingleBlockRenderer: FunctionComponent<SingleBlockRendererProps> = ({ bloc
     const disposer = viewer?.addActionObserver((action, data) => {
       if (action === ComponentAction.SetSize) {
         if (data.height && data.height > 0) {
-          console.log('received height', data.height, block.editorIdentifier)
-          setHeight(Number(data.height))
-          controller.saveBlockSize(block, { width: 0, height: Number(data.height) })
+          const height = Math.min(Number(data.height), MaxBlockHeight[block.editorIdentifier] ?? 0)
+          log(LoggingDomain.BlockEditor, `Received block height ${height}`)
+          setHeight(height)
+          controller.saveBlockSize(block, { width: 0, height })
         }
       }
     })

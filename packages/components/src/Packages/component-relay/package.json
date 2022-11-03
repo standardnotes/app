@@ -6,11 +6,11 @@
     "url": "git://github.com/standardnotes/component-relay.git"
   },
   "main": "dist/dist.js",
-  "types": "dist/@types/componentRelay.d.ts",
+  "types": "dist/@types/ComponentRelay.d.ts",
   "scripts": {
     "build:docs": "typedoc",
     "build:types": "tsc",
-    "build": "yarn run lint && yarn run build:types && webpack --config webpack.prod.js",
+    "build": "yarn run build:types && webpack --config webpack.prod.js",
     "clean-cache:docs": "rm -rf node_modules/.cache/gh-pages",
     "publish:docs": "gh-pages -b gh-pages -d docs",
     "coverage": "yarn test --coverage --silent",

@@ -57,7 +57,6 @@ module.exports = {
   plugins: [
     function() {
       this.plugin("done", function(stats) {
-        // console.log("done", stats);
         if (stats.compilation.errors && stats.compilation.errors.length &&
 process.argv.indexOf("--watch") == -1) {
           console.log(stats.compilation.errors);
