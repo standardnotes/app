@@ -449,12 +449,12 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
     this.sendNoteToEditor()
   }
 
-  handleSaveItemsMessage(message: ComponentMessage): void {
+  async handleSaveItemsMessage(message: ComponentMessage): Promise<void> {
     const itemPayloads = message.data.items as IncomingComponentItemPayload[]
     const content = itemPayloads[0].content as NoteContent
 
     const text = content.text
-    this.itemManager.changeNote(
+    await this.itemManager.changeNote(
       this.note,
       (mutator) => {
         mutator.changeBlockContent(this.blockId, text)
