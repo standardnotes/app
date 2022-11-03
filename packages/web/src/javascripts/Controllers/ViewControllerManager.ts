@@ -19,7 +19,6 @@ import {
   SubscriptionClientInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
-  UserClientInterface,
 } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 import { ActionsMenuController } from './ActionsMenuController'
@@ -77,7 +76,6 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   private eventBus: InternalEventBus
   private itemCounter: ItemCounterInterface
   private subscriptionManager: SubscriptionClientInterface
-  private userService: UserClientInterface
   private persistenceService: PersistenceService
   private applicationEventObserver: EventObserverInterface
   private toastService: ToastServiceInterface
@@ -93,8 +91,6 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
     this.itemCounter = new ItemCounter()
 
     this.subscriptionManager = application.subscriptions
-
-    this.userService = application.user
 
     this.paneController = new PaneController()
 
@@ -171,7 +167,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
       application.sessions,
       application.subscriptions,
       this.toastService,
-      this.userService,
+      application.user,
     )
 
     this.addAppEventObserver()
