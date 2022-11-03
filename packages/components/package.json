@@ -8,9 +8,7 @@
     "packages": [
       "Packages/Deprecated/*",
       "Packages/Editors/*",
-      "Packages/Themes/*",
-      "Packages/ComponentRelay",
-      "Packages/EditorKit"
+      "Packages/Themes/*"
     ]
   },
   "scripts": {

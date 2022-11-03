@@ -3,8 +3,6 @@ tmp
 Packages/Editors/**/build
 Packages/Editors/**/dist
 Packages/Themes/**/dist
-Packages/ComponentRelay/**/dist
-Packages/EditorKit/**/dist
 
 # Deprecated dist assets should be commited to source control as these compnonents will no longer be compiled.
 !Packages/Deprecated/**/dist

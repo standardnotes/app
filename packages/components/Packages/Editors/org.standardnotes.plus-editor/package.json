@@ -15,12 +15,14 @@
   "sn": {
     "main": "dist/index.html"
   },
+  "dependencies": {
+    "@standardnotes/component-relay": "workspace:*"
+  },
   "devDependencies": {
     "@babel/cli": "^7.13.0",
     "@babel/core": "^7.13.8",
     "@babel/eslint-parser": "^7.13.8",
     "@babel/preset-env": "^7.13.8",
-    "@standardnotes/component-relay": "workspace:*",
     "@standardnotes/eslint-config-extensions": "1.0.1",
     "bootstrap": "3.4.1",
     "css-loader": "^5.1.0",

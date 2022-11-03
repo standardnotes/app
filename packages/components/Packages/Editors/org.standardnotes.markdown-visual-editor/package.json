@@ -20,6 +20,10 @@
     "format": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md",
     "test": "echo \"Error: no test specified\" && exit 0"
   },
+  "dependencies": {
+    "@standardnotes/editor-kit": "workspace:*",
+    "@standardnotes/styles": "workspace:*"
+  },
   "devDependencies": {
     "@codemirror/lang-markdown": "^0.19.6",
     "@milkdown/core": "5.5.0",
@@ -39,8 +43,6 @@
     "@milkdown/prose": "5.5.0",
     "@milkdown/react": "5.5.0",
     "@milkdown/theme-nord": "5.5.0",
-    "@standardnotes/editor-kit": "workspace:*",
-    "@standardnotes/styles": "workspace:*",
     "@testing-library/dom": "^8.11.3",
     "@testing-library/jest-dom": "^5.16.2",
     "@testing-library/react": "^12.1.4",

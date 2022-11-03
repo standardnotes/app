@@ -17,11 +17,13 @@
     "skip:test": "echo \"Error: no test specified\" && exit 0",
     "skip:format": "prettier --write 'src/**/*.{html,css,scss,js,jsx,ts,tsx,json}' README.md"
   },
+  "dependencies": {
+    "@standardnotes/component-relay": "workspace:*"
+  },
   "devDependencies": {
     "@babel/cli": "^7.13.10",
     "@babel/core": "^7.13.13",
     "@babel/preset-env": "^7.13.12",
-    "@standardnotes/component-relay": "workspace:*",
     "copy-webpack-plugin": "*",
     "css-loader": "^5.2.0",
     "dompurify": "^2.2.9",

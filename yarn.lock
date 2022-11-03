@@ -6801,15 +6801,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/component-relay@workspace:*, @standardnotes/component-relay@workspace:packages/components/Packages/ComponentRelay":
+"@standardnotes/component-relay@workspace:*, @standardnotes/component-relay@workspace:packages/component-relay":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/component-relay@workspace:packages/components/Packages/ComponentRelay"
+  resolution: "@standardnotes/component-relay@workspace:packages/component-relay"
   dependencies:
     "@babel/core": ^7.12.3
     "@babel/plugin-proposal-class-properties": ^7.12.1
     "@babel/preset-env": ^7.12.1
     "@babel/preset-typescript": ^7.12.7
-    "@standardnotes/sncrypto-common": ^1.2.9
+    "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/snjs": "workspace:*"
     "@types/jest": ^26.0.19
     "@types/jsdom": ^16.2.5
@@ -6974,9 +6974,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/editor-kit@workspace:*, @standardnotes/editor-kit@workspace:packages/components/Packages/EditorKit":
+"@standardnotes/editor-kit@workspace:*, @standardnotes/editor-kit@workspace:packages/editor-kit":
   version: 0.0.0-use.local
-  resolution: "@standardnotes/editor-kit@workspace:packages/components/Packages/EditorKit"
+  resolution: "@standardnotes/editor-kit@workspace:packages/editor-kit"
   dependencies:
     "@babel/cli": ^7.13.16
     "@babel/core": ^7.12.10
@@ -7595,7 +7595,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/sncrypto-common@^1.2.9, @standardnotes/sncrypto-common@workspace:*, @standardnotes/sncrypto-common@workspace:^, @standardnotes/sncrypto-common@workspace:packages/sncrypto-common":
+"@standardnotes/sncrypto-common@workspace:*, @standardnotes/sncrypto-common@workspace:^, @standardnotes/sncrypto-common@workspace:packages/sncrypto-common":
   version: 0.0.0-use.local
   resolution: "@standardnotes/sncrypto-common@workspace:packages/sncrypto-common"
   dependencies:

@@ -14,11 +14,13 @@
     "clean": "rm -rf ./vendor",
     "test": "echo \"Error: no test specified\" && exit 0"
   },
+  "dependencies": {
+    "@standardnotes/component-relay": "workspace:*"
+  },
   "devDependencies": {
     "@babel/cli": "^7.12.10",
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
-    "@standardnotes/component-relay": "workspace:*",
     "codemirror": "5.65.2",
     "copy-webpack-plugin": "*",
     "css-loader": "^5.0.1",

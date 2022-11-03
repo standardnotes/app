@@ -23,6 +23,10 @@
       "prettier --write"
     ]
   },
+  "dependencies": {
+    "@standardnotes/editor-kit": "workspace:*",
+    "@standardnotes/styles": "workspace:*"
+  },
   "devDependencies": {
     "@babel/core": "^7.18.5",
     "@babel/eslint-parser": "^7.18.2",
@@ -30,9 +34,7 @@
     "@babel/plugin-transform-runtime": "^7.18.5",
     "@babel/preset-env": "^7.18.2",
     "@babel/preset-react": "^7.17.12",
-    "@standardnotes/editor-kit": "workspace:*",
     "@standardnotes/eslint-config-extensions": "^1.0.4",
-    "@standardnotes/styles": "workspace:*",
     "@svgr/webpack": "^6.2.1",
     "babel-loader": "^8.2.5",
     "css-loader": "*",
