@@ -17,7 +17,7 @@
     "lint": "eslint lib --ext .ts",
     "lint:fix": "yarn run lint --fix",
     "start": "webpack -w --config webpack.dev.js",
-    "test": "jest"
+    "noci:test": "jest"
   },
   "dependencies": {
     "@standardnotes/sncrypto-common": "workspace:*",

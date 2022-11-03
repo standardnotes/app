@@ -13,7 +13,7 @@
     "coverage": "yarn test --coverage --silent",
     "lint": "eslint src --ext .ts",
     "lint:fix": "yarn run lint --fix",
-    "test": "jest",
+    "noci:test": "jest",
     "start": "webpack -w --config webpack.dev.js"
   },
   "dependencies": {
