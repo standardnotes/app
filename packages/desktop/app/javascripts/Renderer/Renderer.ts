@@ -122,7 +122,7 @@ async function configureWindow(remoteBridge: CrossProcessBridge) {
     the app content height so its not overflowing */
     sheet.insertRule('body { padding-top: var(--sn-desktop-titlebar-height); }', sheet.cssRules.length)
     sheet.insertRule(
-      '[data-popover] { padding-top: calc(var(--sn-desktop-titlebar-height) + 0.5rem); }',
+      '@media screen and (max-width: 768px) { [data-popover] { padding-top: calc(var(--sn-desktop-titlebar-height) + 0.5rem); } }',
       sheet.cssRules.length,
     )
     sheet.insertRule(
