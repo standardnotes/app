@@ -113,7 +113,7 @@ export class ItemListController extends AbstractViewController implements Intern
     this.resetPagination()
 
     this.disposers.push(
-      application.streamItems<SNNote>(ContentType.Note, () => {
+      application.streamItems<SNNote>([ContentType.Note, ContentType.File], () => {
         void this.reloadItems(ItemsReloadSource.ItemStream)
       }),
     )
