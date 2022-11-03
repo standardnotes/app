@@ -393,15 +393,19 @@ export class ItemListController extends AbstractViewController implements Intern
   }
 
   private shouldSelectNextItemOrCreateNewNote = (activeItem: SNNote | FileItem | undefined) => {
+    const isActiveItemTrashed = activeItem?.trashed
     const shouldShowTrashedNotes =
-      this.navigationController.isInSystemView(SystemViewId.TrashedNotes) || this.searchOptionsController.includeTrashed
+      this.navigationController.isInSystemView(SystemViewId.TrashedNotes) ||
+      this.searchOptionsController.includeTrashed ||
+      this.displayOptions.includeTrashed
 
+    const isActiveItemArchived = activeItem?.archived
     const shouldShowArchivedNotes =
       this.navigationController.isInSystemView(SystemViewId.ArchivedNotes) ||
       this.searchOptionsController.includeArchived ||
-      this.application.getPreference(PrefKey.NotesShowArchived, PrefDefaults[PrefKey.NotesShowArchived])
+      this.displayOptions.includeArchived
 
-    return (activeItem?.trashed && !shouldShowTrashedNotes) || (activeItem?.archived && !shouldShowArchivedNotes)
+    return (isActiveItemTrashed && !shouldShowTrashedNotes) || (isActiveItemArchived && !shouldShowArchivedNotes)
   }
 
   private shouldSelectActiveItem = (activeItem: SNNote | FileItem | undefined) => {
