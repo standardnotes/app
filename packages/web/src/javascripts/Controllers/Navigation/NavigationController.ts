@@ -534,6 +534,7 @@ export class NavigationController
     const newTag = this.application.mutator.createTemplateItem(ContentType.Tag) as SNTag
 
     runInAction(() => {
+      this.selectedLocation = 'all'
       this.editing_ = newTag
     })
   }
