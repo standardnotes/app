@@ -61,7 +61,6 @@ export class NavigationController
       tags: observable,
       starredTags: observable,
       smartViews: observable.ref,
-      hasAtLeastOneFolder: computed,
       allNotesCount_: observable,
       allNotesCount: computed,
       setAllNotesCount: action,
@@ -606,10 +605,6 @@ export class NavigationController
         mutator.title = newTitle
       })
     }
-  }
-
-  public get hasAtLeastOneFolder(): boolean {
-    return this.tags.some((tag) => !!this.application.items.getTagParent(tag))
   }
 }
 

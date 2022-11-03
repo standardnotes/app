@@ -62,7 +62,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     const hasChildren = childrenTags.length > 0
 
     const hasFolders = features.hasFolders
-    const hasAtLeastOneFolder = navigationController.hasAtLeastOneFolder
 
     const premiumModal = usePremiumModal()
 
@@ -321,9 +320,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             </div>
           </div>
 
-          <div className={`meta ${hasAtLeastOneFolder ? 'with-folders' : ''}`}>
-            {tag.conflictOf && <div className="-mt-1 text-[0.625rem] font-bold text-danger">Conflicted Copy</div>}
-          </div>
+          {tag.conflictOf && <div className="-mt-1 text-[0.625rem] font-bold text-danger">Conflicted Copy</div>}
         </div>
         {isAddingSubtag && (
           <div
