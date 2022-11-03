@@ -386,6 +386,7 @@ class Footer extends AbstractComponent<Props, State> {
             <UpgradeNow
               application={this.application}
               featuresController={this.viewControllerManager.featuresController}
+              subscriptionContoller={this.viewControllerManager.subscriptionController}
             />
             {this.state.showBetaWarning && (
               <Fragment>
