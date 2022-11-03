@@ -283,8 +283,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                       role="button"
                       className={`focus:shadow-inner ${showChildren ? 'cursor-n-resize' : 'cursor-s-resize'} ${
                         showChildren ? 'opened' : 'closed'
-                      } ${!hasChildren ? 'invisible' : ''}`}
-                      onClick={hasChildren ? toggleChildren : undefined}
+                      } `}
+                      onClick={toggleChildren}
                     >
                       <Icon
                         className={'text-neutral'}
