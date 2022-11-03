@@ -247,7 +247,7 @@ export class LinkingController extends AbstractViewController {
     this.setIsLinkingPanelOpen(false)
 
     if (item instanceof SNTag) {
-      await this.navigationController.setSelectedTag(item)
+      await this.navigationController.setSelectedTag(item, 'all')
       return AppPaneId.Items
     } else if (item instanceof SNNote) {
       await this.navigationController.selectHomeNavigationView()

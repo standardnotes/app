@@ -47,17 +47,15 @@ export const TagsListItem: FunctionComponent<Props> = observer(
   ({ tag, type, features, navigationController: navigationController, level, onContextMenu, linkingController }) => {
     const { toggleAppPane } = useResponsiveAppPane()
 
-    const isFavorite = type === 'favorites'
-
     const [title, setTitle] = useState(tag.title || '')
     const [subtagTitle, setSubtagTitle] = useState('')
     const inputRef = useRef<HTMLInputElement>(null)
     const subtagInputRef = useRef<HTMLInputElement>(null)
     const menuButtonRef = useRef<HTMLAnchorElement>(null)
 
-    const isSelected = navigationController.selected === tag
-    const isEditing = navigationController.editingTag === tag && navigationController.editingFrom === type
-    const isAddingSubtag = navigationController.addingSubtagTo === tag
+    const isSelected = navigationController.selected === tag && navigationController.selectedLocation === type
+    const isEditing = navigationController.editingTag === tag && navigationController.selectedLocation === type
+    const isAddingSubtag = navigationController.addingSubtagTo === tag && navigationController.selectedLocation === type
     const noteCounts = computed(() => navigationController.getNotesCount(tag))
 
     const childrenTags = computed(() => navigationController.getChildren(tag)).get()
@@ -93,12 +91,11 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     )
 
     const selectCurrentTag = useCallback(async () => {
-      await navigationController.setSelectedTag(tag, {
+      await navigationController.setSelectedTag(tag, type, {
         userTriggered: true,
       })
-      toggleChildren()
       toggleAppPane(AppPaneId.Items)
-    }, [navigationController, tag, toggleAppPane, toggleChildren])
+    }, [navigationController, tag, type, toggleAppPane])
 
     const onBlur = useCallback(() => {
       navigationController.save(tag, title).catch(console.error)
@@ -257,23 +254,14 @@ export const TagsListItem: FunctionComponent<Props> = observer(
           }}
         >
           <div className="tag-info" title={title} ref={dropRef}>
-            {hasAtLeastOneFolder && !isFavorite && (
-              <div className="tag-fold-container">
-                <a
-                  role="button"
-                  className={`tag-fold focus:shadow-inner ${showChildren ? 'opened' : 'closed'} ${
-                    !hasChildren ? 'invisible' : ''
-                  }`}
-                  onClick={hasChildren ? toggleChildren : undefined}
-                >
-                  <Icon className={'text-neutral'} type={showChildren ? 'menu-arrow-down-alt' : 'menu-arrow-right'} />
-                </a>
-              </div>
-            )}
-            <div className={'tag-icon draggable mr-2'} ref={dragRef}>
-              <Icon type={tag.iconString as IconType} className={`${isSelected ? 'text-info' : 'text-neutral'}`} />
+            <div onClick={selectCurrentTag} className={'tag-icon draggable mr-2'} ref={dragRef}>
+              <Icon
+                type={tag.iconString as IconType}
+                className={`cursor-pointer ${isSelected ? 'text-info' : 'text-neutral'}`}
+              />
             </div>
-            {isEditing ? (
+
+            {isEditing && (
               <input
                 className={
                   'title editing text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item'
@@ -286,16 +274,38 @@ export const TagsListItem: FunctionComponent<Props> = observer(
                 spellCheck={false}
                 ref={inputRef}
               />
-            ) : (
-              <div
-                className={
-                  'title overflow-hidden text-left text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item'
-                }
-                id={`react-tag-${tag.uuid}-${type}`}
-              >
-                {title}
-              </div>
             )}
+
+            {!isEditing && (
+              <>
+                {hasChildren && (
+                  <div className="-ml-1.5">
+                    <a
+                      role="button"
+                      className={`focus:shadow-inner ${
+                        hasChildren ? (showChildren ? 'cursor-n-resize' : 'cursor-s-resize') : ''
+                      } ${showChildren ? 'opened' : 'closed'} ${!hasChildren ? 'invisible' : ''}`}
+                      onClick={hasChildren ? toggleChildren : undefined}
+                    >
+                      <Icon
+                        className={'text-neutral'}
+                        type={showChildren ? 'menu-arrow-down-alt' : 'menu-arrow-right'}
+                      />
+                    </a>
+                  </div>
+                )}
+
+                <div
+                  className={
+                    'title overflow-hidden text-left text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item'
+                  }
+                  id={`react-tag-${tag.uuid}-${type}`}
+                >
+                  {title}
+                </div>
+              </>
+            )}
+
             <div className="flex items-center">
               <a
                 role="button"

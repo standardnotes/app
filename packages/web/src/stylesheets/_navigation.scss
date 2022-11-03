@@ -88,18 +88,9 @@ $content-horizontal-padding: 16px;
         display: flex;
         align-items: center;
         height: 100%;
-
-        &.draggable {
-          cursor: move;
-        }
-
-        &.propose-folders {
-          cursor: help;
-        }
       }
 
       > .title {
-        width: 80%;
         background-color: transparent;
         font-weight: 600;
         color: var(--navigation-item-text-color);
@@ -107,7 +98,6 @@ $content-horizontal-padding: 16px;
         border: none;
         cursor: pointer;
         text-overflow: ellipsis;
-        width: 75%;
         flex-grow: 1;
 
         // Required for Safari to avoid highlighting when dragging panel resizers
