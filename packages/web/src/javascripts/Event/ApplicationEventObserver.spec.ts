@@ -17,6 +17,8 @@ import {
   SyncClientInterface,
   SyncOpStatus,
   User,
+  UserClientInterface,
+  UserRequestType,
 } from '@standardnotes/snjs'
 
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
@@ -39,6 +41,7 @@ describe('ApplicationEventObserver', () => {
   let sessionManager: SessionsClientInterface
   let subscriptionManager: SubscriptionClientInterface
   let toastService: ToastServiceInterface
+  let userService: UserClientInterface
 
   const createObserver = () =>
     new ApplicationEventObserver(
@@ -52,6 +55,7 @@ describe('ApplicationEventObserver', () => {
       sessionManager,
       subscriptionManager,
       toastService,
+      userService,
     )
 
   beforeEach(() => {
@@ -87,7 +91,11 @@ describe('ApplicationEventObserver', () => {
     subscriptionManager.acceptInvitation = jest.fn()
 
     toastService = {} as jest.Mocked<ToastServiceInterface>
-    toastService.showToast = jest.fn()
+    toastService.showToast = jest.fn().mockReturnValue('1')
+    toastService.hideToast = jest.fn()
+
+    userService = {} as jest.Mocked<UserClientInterface>
+    userService.submitUserRequest = jest.fn().mockReturnValue(true)
   })
 
   describe('Upon Application Launched', () => {
@@ -184,6 +192,63 @@ describe('ApplicationEventObserver', () => {
       expect(toastService.showToast).toHaveBeenCalledWith(ToastType.Error, 'Oops!')
       expect(routeService.removeQueryParameterFromURL).toHaveBeenCalledWith(RootQueryParam.AcceptSubscriptionInvite)
     })
+
+    it('should open up sign in if user is not logged in and tries to send request', async () => {
+      sessionManager.getUser = jest.fn().mockReturnValue(undefined)
+      routeService.getRoute = jest.fn().mockReturnValue({
+        type: RouteType.UserRequest,
+        userRequestParams: {
+          requestType: UserRequestType.ExitDiscount,
+        },
+      } as jest.Mocked<RouteParserInterface>)
+
+      await createObserver().handle(ApplicationEvent.Launched)
+
+      expect(accountMenuController.setShow).toHaveBeenCalledWith(true)
+      expect(accountMenuController.setCurrentPane).toHaveBeenCalledWith(AccountMenuPane.SignIn)
+      expect(userService.submitUserRequest).not.toHaveBeenCalled()
+      expect(toastService.showToast).not.toHaveBeenCalled()
+    })
+
+    it('should send user request if user is logged in', async () => {
+      userService.submitUserRequest = jest.fn().mockReturnValue(true)
+      routeService.getRoute = jest.fn().mockReturnValue({
+        type: RouteType.UserRequest,
+        userRequestParams: {
+          requestType: UserRequestType.ExitDiscount,
+        },
+      } as jest.Mocked<RouteParserInterface>)
+
+      await createObserver().handle(ApplicationEvent.Launched)
+
+      expect(userService.submitUserRequest).toHaveBeenCalledWith('exit-discount')
+      expect(toastService.showToast).toHaveBeenNthCalledWith(
+        2,
+        ToastType.Success,
+        'We have received your request. Please check your email for further instructions.',
+      )
+      expect(routeService.removeQueryParameterFromURL).toHaveBeenCalledWith(RootQueryParam.UserRequest)
+    })
+
+    it('should show sending request failure if user is logged in and sending fails', async () => {
+      userService.submitUserRequest = jest.fn().mockReturnValue(false)
+      routeService.getRoute = jest.fn().mockReturnValue({
+        type: RouteType.UserRequest,
+        userRequestParams: {
+          requestType: UserRequestType.ExitDiscount,
+        },
+      } as jest.Mocked<RouteParserInterface>)
+
+      await createObserver().handle(ApplicationEvent.Launched)
+
+      expect(userService.submitUserRequest).toHaveBeenCalledWith('exit-discount')
+      expect(toastService.showToast).toHaveBeenNthCalledWith(
+        2,
+        ToastType.Success,
+        'We could not process your request. Please try again or contact support if the issue persists.',
+      )
+      expect(routeService.removeQueryParameterFromURL).toHaveBeenCalledWith(RootQueryParam.UserRequest)
+    })
   })
 
   describe('Upon Signing In', () => {
@@ -218,6 +283,26 @@ describe('ApplicationEventObserver', () => {
         'Successfully joined a shared subscription',
       )
       expect(routeService.removeQueryParameterFromURL).toHaveBeenCalledWith(RootQueryParam.AcceptSubscriptionInvite)
+    })
+
+    it('should send user request', async () => {
+      userService.submitUserRequest = jest.fn().mockReturnValue(true)
+      routeService.getRoute = jest.fn().mockReturnValue({
+        type: RouteType.UserRequest,
+        userRequestParams: {
+          requestType: UserRequestType.ExitDiscount,
+        },
+      } as jest.Mocked<RouteParserInterface>)
+
+      await createObserver().handle(ApplicationEvent.SignedIn)
+
+      expect(userService.submitUserRequest).toHaveBeenCalledWith('exit-discount')
+      expect(toastService.showToast).toHaveBeenNthCalledWith(
+        2,
+        ToastType.Success,
+        'We have received your request. Please check your email for further instructions.',
+      )
+      expect(routeService.removeQueryParameterFromURL).toHaveBeenCalledWith(RootQueryParam.UserRequest)
     })
   })
 

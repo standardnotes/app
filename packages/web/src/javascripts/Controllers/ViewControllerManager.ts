@@ -167,6 +167,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
       application.sessions,
       application.subscriptions,
       this.toastService,
+      application.user,
     )
 
     this.addAppEventObserver()

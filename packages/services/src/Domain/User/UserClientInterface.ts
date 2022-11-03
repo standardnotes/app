@@ -1,3 +1,4 @@
+import { UserRequestType } from '@standardnotes/common'
 import { DeinitSource } from '../Application/DeinitSource'
 
 export interface UserClientInterface {
@@ -6,4 +7,5 @@ export interface UserClientInterface {
     message?: string
   }>
   signOut(force?: boolean, source?: DeinitSource): Promise<void>
+  submitUserRequest(requestType: UserRequestType): Promise<boolean>
 }
