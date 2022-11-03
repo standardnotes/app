@@ -42,7 +42,6 @@ export class NavigationController
   addingSubtagTo: SNTag | undefined = undefined
 
   contextMenuOpen = false
-  contextMenuOpenFrom?: TagListSectionType
   contextMenuPosition: { top?: number; left: number; bottom?: number } = {
     top: 0,
     left: 0,
@@ -267,10 +266,6 @@ export class NavigationController
 
   setAddingSubtagTo(tag: SNTag | undefined): void {
     this.addingSubtagTo = tag
-  }
-
-  setContextMenuOpenFrom(section: TagListSectionType): void {
-    this.contextMenuOpenFrom = section
   }
 
   setContextMenuOpen(open: boolean): void {

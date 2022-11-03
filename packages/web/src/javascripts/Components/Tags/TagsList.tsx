@@ -25,11 +25,10 @@ const TagsList: FunctionComponent<Props> = ({ viewControllerManager, type }: Pro
         x: posX,
         y: posY,
       })
-      viewControllerManager.navigationController.setContextMenuOpenFrom(type)
       viewControllerManager.navigationController.reloadContextMenuLayout()
       viewControllerManager.navigationController.setContextMenuOpen(true)
     },
-    [viewControllerManager, type],
+    [viewControllerManager],
   )
 
   const onContextMenu = useCallback(
