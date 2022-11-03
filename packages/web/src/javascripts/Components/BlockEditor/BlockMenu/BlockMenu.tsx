@@ -12,7 +12,7 @@ type BlockMenuProps = {
 
 export const BlockMenu: FunctionComponent<BlockMenuProps> = ({ application, onSelectOption }) => {
   const components = application.componentManager.componentsForArea(ComponentArea.Editor)
-  const options = components.map(componentToBlockOption)
+  const options = components.map((component) => componentToBlockOption(component, application.iconsController))
 
   return (
     <div className="flex flex-row flex-wrap">

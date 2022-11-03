@@ -1,7 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { NoteBlocks, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent } from 'react'
-import { BlockEditorController } from './BlockEditorController'
+import { BlockEditorController } from '../BlockEditorController'
 import { SingleBlockRenderer } from './SingleBlockRenderer'
 
 type MultiBlockRendererProps = {

@@ -1,5 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { NoteBlock, NoteMutator, SNComponent, SNNote } from '@standardnotes/snjs'
+import { BlockOption } from './BlockMenu/BlockOption'
 
 export class BlockEditorController {
   constructor(private note: SNNote, private application: WebApplication) {
@@ -24,10 +25,20 @@ export class BlockEditorController {
     return block
   }
 
-  async addNewBlock(editor: SNComponent): Promise<void> {
-    const block = this.createBlockItem(editor)
+  async addNewBlock(option: BlockOption): Promise<void> {
+    if (!option.component) {
+      throw new Error('Non-component block options are not supported yet')
+    }
+
+    const block = this.createBlockItem(option.component)
     await this.application.mutator.changeAndSaveItem<NoteMutator>(this.note, (mutator) => {
       mutator.addBlock(block)
+    })
+  }
+
+  async removeBlock(block: NoteBlock): Promise<void> {
+    await this.application.mutator.changeAndSaveItem<NoteMutator>(this.note, (mutator) => {
+      mutator.removeBlock(block)
     })
   }
 

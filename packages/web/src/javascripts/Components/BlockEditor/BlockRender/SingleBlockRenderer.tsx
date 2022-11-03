@@ -1,10 +1,12 @@
 import { WebApplication } from '@/Application/Application'
 import { log, LoggingDomain } from '@/Logging'
 import { ComponentAction, NoteBlock, SNNote } from '@standardnotes/snjs'
-import { FunctionComponent, useEffect, useMemo, useState } from 'react'
-import ComponentView from '../ComponentView/ComponentView'
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
+import ComponentView from '../../ComponentView/ComponentView'
 import { MaxBlockHeight } from './MaxBlockHeight'
-import { BlockEditorController } from './BlockEditorController'
+import { BlockEditorController } from '../BlockEditorController'
+import { classNames } from '@/Utils/ConcatenateClassNames'
+import Icon from '@/Components/Icon/Icon'
 
 type SingleBlockRendererProps = {
   application: WebApplication
@@ -20,6 +22,7 @@ export const SingleBlockRenderer: FunctionComponent<SingleBlockRendererProps> = 
   controller,
 }) => {
   const [height, setHeight] = useState<number | undefined>(block.size?.height)
+  const [showCloseButton, setShowCloseButton] = useState(false)
 
   const component = useMemo(
     () => application.componentManager.componentWithIdentifier(block.editorIdentifier),
@@ -54,6 +57,18 @@ export const SingleBlockRenderer: FunctionComponent<SingleBlockRendererProps> = 
     }
   }, [application, viewer])
 
+  const onHoverEnter = useCallback(() => {
+    setShowCloseButton(true)
+  }, [])
+
+  const onHoverExit = useCallback(() => {
+    setShowCloseButton(false)
+  }, [])
+
+  const onRemoveBlock = useCallback(() => {
+    void controller.removeBlock(block)
+  }, [block, controller])
+
   if (!component || !viewer) {
     return <div>Unable to find component {block.editorIdentifier}</div>
   }
@@ -64,7 +79,24 @@ export const SingleBlockRenderer: FunctionComponent<SingleBlockRendererProps> = 
   }
 
   return (
-    <div className="w-full" style={styles}>
+    <div
+      onMouseEnter={onHoverEnter}
+      onMouseLeave={onHoverExit}
+      className="w-full border-info hover:border-[1px]"
+      style={styles}
+    >
+      {showCloseButton && (
+        <button
+          className={classNames(
+            'fixed bottom-6 right-6 z-editor-title-bar ml-3 flex h-15 w-15 cursor-pointer items-center',
+            `justify-center rounded-full border border-solid border-transparent ${'bg-info text-info-contrast'}`,
+            'hover:brightness-125 md:static md:h-8 md:w-8',
+          )}
+          onClick={onRemoveBlock}
+        >
+          <Icon type="remove" size="custom" className="h-8 w-8 md:h-5 md:w-5" />
+        </button>
+      )}
       <ComponentView key={viewer.identifier} componentViewer={viewer} application={application} />
     </div>
   )
