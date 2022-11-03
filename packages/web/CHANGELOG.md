@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.93.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.0...@standardnotes/web@3.93.1) (2022-11-03)
+
+### Bug Fixes
+
+* correctly refresh cta banner ([305ffdf](https://github.com/standardnotes/app/commit/305ffdf9847cfe67e2d022f84c1e2443b4bc2c76))
+* purchase flow close on complete ([c4dbc5c](https://github.com/standardnotes/app/commit/c4dbc5cbd2147b695403e6f57254a97d42337965))
+
 # [3.93.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.92.0...@standardnotes/web@3.93.0) (2022-11-03)
 
 ### Features
