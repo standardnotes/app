@@ -1,1 +1,1 @@
-export type TagListSectionType = 'all' | 'favorites'
+export type TagListSectionType = 'views' | 'all' | 'favorites'

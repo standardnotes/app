@@ -88,18 +88,9 @@ $content-horizontal-padding: 16px;
         display: flex;
         align-items: center;
         height: 100%;
-
-        &.draggable {
-          cursor: move;
-        }
-
-        &.propose-folders {
-          cursor: help;
-        }
       }
 
       > .title {
-        width: 80%;
         background-color: transparent;
         font-weight: 600;
         color: var(--navigation-item-text-color);
@@ -107,7 +98,6 @@ $content-horizontal-padding: 16px;
         border: none;
         cursor: pointer;
         text-overflow: ellipsis;
-        width: 75%;
         flex-grow: 1;
 
         // Required for Safari to avoid highlighting when dragging panel resizers
@@ -144,12 +134,6 @@ $content-horizontal-padding: 16px;
     }
 
     .meta {
-      padding-left: 3px;
-
-      &.with-folders {
-        padding-left: 25px;
-      }
-
       > .menu {
         font-size: 11px;
 
@@ -160,8 +144,8 @@ $content-horizontal-padding: 16px;
         opacity: 0.5;
         font-weight: bold;
         clear: both;
-        margin-top: 2px;
         margin-bottom: 2px;
+        padding-bottom: 5px;
 
         &:hover {
           opacity: 1;
