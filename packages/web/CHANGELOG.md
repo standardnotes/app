@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.93.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.3...@standardnotes/web@3.93.4) (2022-11-03)
+
+### Bug Fixes
+
+* archived/trashed items getting unselected when changed ([#1932](https://github.com/standardnotes/app/issues/1932)) ([2dd0586](https://github.com/standardnotes/app/commit/2dd0586bb16cb29c7c2a538e82aca48f247910e6))
+
 ## [3.93.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.2...@standardnotes/web@3.93.3) (2022-11-03)
 
 ### Bug Fixes
