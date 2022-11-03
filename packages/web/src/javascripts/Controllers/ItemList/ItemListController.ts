@@ -393,15 +393,38 @@ export class ItemListController extends AbstractViewController implements Intern
   }
 
   private shouldSelectNextItemOrCreateNewNote = (activeItem: SNNote | FileItem | undefined) => {
-    const shouldShowTrashedNotes =
-      this.navigationController.isInSystemView(SystemViewId.TrashedNotes) || this.searchOptionsController.includeTrashed
+    const selectedView = this.navigationController.selected
 
-    const shouldShowArchivedNotes =
-      this.navigationController.isInSystemView(SystemViewId.ArchivedNotes) ||
-      this.searchOptionsController.includeArchived ||
-      this.application.getPreference(PrefKey.NotesShowArchived, PrefDefaults[PrefKey.NotesShowArchived])
+    const isActiveItemTrashed = activeItem?.trashed
+    const isActiveItemArchived = activeItem?.archived
 
-    return (activeItem?.trashed && !shouldShowTrashedNotes) || (activeItem?.archived && !shouldShowArchivedNotes)
+    if (isActiveItemTrashed) {
+      const selectedSmartViewShowsTrashed =
+        selectedView instanceof SmartView && selectedView.predicate.keypathIncludesString('trashed')
+
+      const shouldShowTrashedNotes =
+        this.navigationController.isInSystemView(SystemViewId.TrashedNotes) ||
+        this.searchOptionsController.includeTrashed ||
+        selectedSmartViewShowsTrashed ||
+        this.displayOptions.includeTrashed
+
+      return !shouldShowTrashedNotes
+    }
+
+    if (isActiveItemArchived) {
+      const selectedSmartViewShowsArchived =
+        selectedView instanceof SmartView && selectedView.predicate.keypathIncludesString('archived')
+
+      const shouldShowArchivedNotes =
+        this.navigationController.isInSystemView(SystemViewId.ArchivedNotes) ||
+        this.searchOptionsController.includeArchived ||
+        selectedSmartViewShowsArchived ||
+        this.displayOptions.includeArchived
+
+      return !shouldShowArchivedNotes
+    }
+
+    return false
   }
 
   private shouldSelectActiveItem = (activeItem: SNNote | FileItem | undefined) => {
