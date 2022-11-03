@@ -1,4 +1,3 @@
-import { ItemContent } from '@standardnotes/models'
 import {
   OutgoingItemMessagePayload,
   MessageData,
@@ -8,6 +7,7 @@ import {
   ContentType,
   Environment,
   DecryptedTransferPayload,
+  ItemContent,
 } from '@standardnotes/snjs'
 import { environmentToString, generateUuid, isValidJsonString } from './Utils'
 import Logger from './Logger'
