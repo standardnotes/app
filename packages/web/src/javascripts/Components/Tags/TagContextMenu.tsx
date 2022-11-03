@@ -40,8 +40,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
 
   const onClickRename = useCallback(() => {
     navigationController.setContextMenuOpen(false)
-    navigationController.editingFrom = navigationController.contextMenuOpenFrom
-    navigationController.editingTag = selectedTag
+    navigationController.setEditingTag(selectedTag)
   }, [navigationController, selectedTag])
 
   const onClickDelete = useCallback(() => {

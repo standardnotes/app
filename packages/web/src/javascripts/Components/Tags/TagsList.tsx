@@ -25,19 +25,18 @@ const TagsList: FunctionComponent<Props> = ({ viewControllerManager, type }: Pro
         x: posX,
         y: posY,
       })
-      viewControllerManager.navigationController.setContextMenuOpenFrom(type)
       viewControllerManager.navigationController.reloadContextMenuLayout()
       viewControllerManager.navigationController.setContextMenuOpen(true)
     },
-    [viewControllerManager, type],
+    [viewControllerManager],
   )
 
   const onContextMenu = useCallback(
     (tag: SNTag, posX: number, posY: number) => {
-      void viewControllerManager.navigationController.setSelectedTag(tag)
+      void viewControllerManager.navigationController.setSelectedTag(tag, type)
       openTagContextMenu(posX, posY)
     },
-    [viewControllerManager, openTagContextMenu],
+    [viewControllerManager, openTagContextMenu, type],
   )
 
   return (
