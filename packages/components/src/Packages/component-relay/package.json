@@ -1,0 +1,55 @@
+{
+  "name": "@standardnotes/component-relay",
+  "version": "2.2.2",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/standardnotes/component-relay.git"
+  },
+  "main": "dist/dist.js",
+  "types": "dist/@types/componentRelay.d.ts",
+  "scripts": {
+    "build:docs": "typedoc",
+    "build:types": "tsc",
+    "build": "yarn run lint && yarn run build:types && webpack --config webpack.prod.js",
+    "clean-cache:docs": "rm -rf node_modules/.cache/gh-pages",
+    "publish:docs": "gh-pages -b gh-pages -d docs",
+    "coverage": "yarn test --coverage --silent",
+    "lint": "eslint lib --ext .ts",
+    "lint:fix": "yarn run lint --fix",
+    "start": "webpack -w --config webpack.dev.js",
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/plugin-proposal-class-properties": "^7.12.1",
+    "@babel/preset-env": "^7.12.1",
+    "@babel/preset-typescript": "^7.12.7",
+    "@standardnotes/sncrypto-common": "^1.2.9",
+    "@standardnotes/snjs": "workspace:*",
+    "@types/jest": "^26.0.19",
+    "@types/jsdom": "^16.2.5",
+    "@types/node": "^14.14.6",
+    "@types/uuid": "^8.3.0",
+    "@typescript-eslint/eslint-plugin": "^4.6.1",
+    "@typescript-eslint/parser": "^4.6.1",
+    "babel-loader": "^8.2.2",
+    "eslint": "^7.13.0",
+    "gh-pages": "^3.1.0",
+    "jest": "^26.6.3",
+    "jsdom": "^16.4.0",
+    "nock": "^13.0.5",
+    "pre-commit": "^1.2.2",
+    "ts-jest": "^26.4.4",
+    "typedoc": "^0.20.30",
+    "typescript": "^4.0.5",
+    "uuid": "^8.3.2",
+    "webpack": "^5.4.0",
+    "webpack-bundle-analyzer": "^4.3.0",
+    "webpack-cli": "^4.2.0",
+    "webpack-merge": "^5.3.0"
+  },
+  "pre-commit": [
+    "lint",
+    "coverage"
+  ]
+}

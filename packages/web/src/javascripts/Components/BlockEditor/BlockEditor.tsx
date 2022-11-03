@@ -1,6 +1,14 @@
 import { WebApplication } from '@/Application/Application'
-import { ComponentArea, NoteBlock, NoteBlocks, NoteMutator, SNComponent, SNNote } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback, useEffect, useMemo, useRef } from 'react'
+import {
+  ComponentAction,
+  ComponentArea,
+  NoteBlock,
+  NoteBlocks,
+  NoteMutator,
+  SNComponent,
+  SNNote,
+} from '@standardnotes/snjs'
+import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ComponentView from '../ComponentView/ComponentView'
 
 export class BlockEditorController {
@@ -32,6 +40,16 @@ export class BlockEditorController {
       mutator.addBlock(block)
     })
   }
+
+  async saveBlockSize(block: NoteBlock, size: { width: number; height: number }): Promise<void> {
+    if (block.size?.height === size.height) {
+      return
+    }
+
+    await this.application.mutator.changeAndSaveItem<NoteMutator>(this.note, (mutator) => {
+      mutator.changeBlockSize(block.id, size)
+    })
+  }
 }
 
 /**
@@ -47,7 +65,7 @@ const AddBlockButton: FunctionComponent<AddButtonProps> = ({ application, onSele
   const components = application.componentManager.componentsForArea(ComponentArea.Editor)
 
   return (
-    <div className="mt-2 flex flex-row">
+    <div className="mt-2 flex flex-row flex-wrap">
       {components.map((component) => {
         return (
           <div className="m-3 border-2" key={component.uuid} onClick={() => onSelectEditor(component)}>
@@ -67,18 +85,35 @@ type SingleBlockRendererProps = {
   application: WebApplication
   block: NoteBlock
   note: SNNote
+  controller: BlockEditorController
 }
 
-const SingleBlockRenderer: FunctionComponent<SingleBlockRendererProps> = ({ block, application, note }) => {
-  const component = application.componentManager.componentWithIdentifier(block.editorIdentifier)
-  if (!component) {
-    return <div>Unable to find component {block.editorIdentifier}</div>
-  }
+const SingleBlockRenderer: FunctionComponent<SingleBlockRendererProps> = ({ block, application, note, controller }) => {
+  const [height, setHeight] = useState<number | undefined>(block.size?.height)
+
+  const component = useMemo(
+    () => application.componentManager.componentWithIdentifier(block.editorIdentifier),
+    [block, application],
+  )
 
   const viewer = useMemo(
-    () => application.componentManager.createBlockComponentViewer(component, note.uuid, block.id),
+    () => component && application.componentManager.createBlockComponentViewer(component, note.uuid, block.id),
     [application, component, note.uuid, block.id],
   )
+
+  useEffect(() => {
+    const disposer = viewer?.addActionObserver((action, data) => {
+      if (action === ComponentAction.SetSize) {
+        if (data.height && data.height > 0) {
+          console.log('received height', data.height, block.editorIdentifier)
+          setHeight(Number(data.height))
+          controller.saveBlockSize(block, { width: 0, height: Number(data.height) })
+        }
+      }
+    })
+
+    return disposer
+  }, [viewer])
 
   useEffect(() => {
     return () => {
@@ -88,8 +123,17 @@ const SingleBlockRenderer: FunctionComponent<SingleBlockRendererProps> = ({ bloc
     }
   }, [application, viewer])
 
+  if (!component || !viewer) {
+    return <div>Unable to find component {block.editorIdentifier}</div>
+  }
+
+  const styles: Record<string, unknown> = {}
+  if (height) {
+    styles['height'] = height
+  }
+
   return (
-    <div className="w-full">
+    <div className="w-full" style={styles}>
       <ComponentView key={viewer.identifier} componentViewer={viewer} application={application} />
     </div>
   )
@@ -103,14 +147,27 @@ type MultiBlockRendererProps = {
   application: WebApplication
   note: SNNote
   blocksItem: NoteBlocks
+  controller: BlockEditorController
 }
 
-export const MultiBlockRenderer: FunctionComponent<MultiBlockRendererProps> = ({ blocksItem, note, application }) => {
+export const MultiBlockRenderer: FunctionComponent<MultiBlockRendererProps> = ({
+  blocksItem,
+  controller,
+  note,
+  application,
+}) => {
   return (
     <div className="w-full">
       {blocksItem.blocks.map((block) => {
-        console.log('{blocksItem.blocks.map > block', block)
-        return <SingleBlockRenderer key={block.id} block={block} note={note} application={application} />
+        return (
+          <SingleBlockRenderer
+            key={block.id}
+            block={block}
+            note={note}
+            application={application}
+            controller={controller}
+          />
+        )
       })}
     </div>
   )
@@ -138,7 +195,13 @@ export const BlockEditor: FunctionComponent<Props> = ({ note, application }) => 
     <div className="w-full">
       <AddBlockButton application={application} onSelectEditor={onEditorSelect} />
       {note.blocksItem && (
-        <MultiBlockRenderer key={note.uuid} blocksItem={note.blocksItem} note={note} application={application} />
+        <MultiBlockRenderer
+          controller={controller.current}
+          key={note.uuid}
+          blocksItem={note.blocksItem}
+          note={note}
+          application={application}
+        />
       )}
     </div>
   )

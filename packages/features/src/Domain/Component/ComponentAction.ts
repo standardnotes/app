@@ -12,7 +12,6 @@ export enum ComponentAction {
   DeleteItems = 'delete-items',
   SetComponentData = 'set-component-data',
   ToggleActivateComponent = 'toggle-activate-component',
-  RequestPermissions = 'request-permissions',
   PresentConflictResolution = 'present-conflict-resolution',
   DuplicateItem = 'duplicate-item',
   ComponentRegistered = 'component-registered',

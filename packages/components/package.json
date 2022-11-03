@@ -20,6 +20,7 @@
     "build": "yarn build:ts && yarn workspaces foreach --parallel --interlaced --jobs 10 --verbose --exclude @standardnotes/components-meta run components:compile",
     "build:ts": "tsc --project tsconfig.json",
     "package": "yarn build:ts && node scripts/package.mjs",
+    "package:assets": "yarn build:ts && node scripts/package.mjs --no-zip",
     "version": "./scripts/VERSION.sh"
   },
   "dependencies": {

@@ -15,6 +15,12 @@ document.addEventListener('DOMContentLoaded', function () {
 
       initializeEditor()
     },
+    handleRequestForContentHeight: () => {
+      const baseHeight = 30
+      const toolbarHeight = document.querySelector('.editor-toolbar')?.offsetHeight
+      const scrollHeight = document.getElementsByClassName('CodeMirror-code')[0]?.scrollHeight
+      return baseHeight + toolbarHeight + scrollHeight
+    },
   })
 
   componentRelay.streamContextItem(async (note) => {

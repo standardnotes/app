@@ -13,6 +13,7 @@ import {
   PermissionDialog,
   Environment,
   Platform,
+  ComponentMessage,
 } from '@standardnotes/models'
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import find from 'lodash/find'
@@ -291,9 +292,10 @@ export class SNComponentManager
 
   onWindowMessage = (event: MessageEvent): void => {
     /** Make sure this message is for us */
-    if (event.data.sessionKey) {
-      this.log('Component manager received message', event.data)
-      this.componentViewerForSessionKey(event.data.sessionKey)?.handleMessage(event.data)
+    const data = event.data as ComponentMessage
+    if (data.sessionKey) {
+      this.log('Component manager received message', data)
+      this.componentViewerForSessionKey(data.sessionKey)?.handleMessage(data)
     }
   }
 

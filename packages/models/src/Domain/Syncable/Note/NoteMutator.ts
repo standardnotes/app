@@ -95,6 +95,15 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
     }
   }
 
+  changeBlockSize(blockId: string, size: { width: number; height: number }): void {
+    const block = this.mutableContent.blocksItem?.blocks.find((b) => b.id === blockId)
+    if (!block) {
+      return
+    }
+
+    block.size = size
+  }
+
   toggleSpellcheck(): void {
     if (this.mutableContent.spellcheck == undefined) {
       this.mutableContent.spellcheck = false

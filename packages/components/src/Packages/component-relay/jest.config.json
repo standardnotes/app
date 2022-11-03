@@ -1,0 +1,36 @@
+{
+  "clearMocks": true,
+  "collectCoverageFrom": [
+    "lib/**/{!(index),}.ts"
+  ],
+  "coverageDirectory": "coverage",
+  "coveragePathIgnorePatterns": [
+    "<rootDir>/node_modules"
+  ],
+  "coverageReporters": [
+    "text",
+    "html"
+  ],
+  "globals": {
+    "ts-jest": {
+      "diagnostics": false,
+      "isolatedModules": true
+    }
+  },
+  "preset": "ts-jest",
+  "resetMocks": true,
+  "restoreMocks": true,
+  "roots": [
+    "<rootDir>/lib",
+    "<rootDir>/test"
+  ],
+  "setupFiles": [
+    "<rootDir>/test/setup/jsdom.ts",
+    "<rootDir>/test/setup/fakeHttpServer.ts"
+  ],
+  "testEnvironment": "jsdom",
+  "testMatch": [
+    "<rootDir>/test/?(*.)+(test).+(ts)"
+  ],
+  "verbose": true
+}

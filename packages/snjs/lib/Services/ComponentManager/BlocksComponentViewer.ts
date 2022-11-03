@@ -34,11 +34,11 @@ import find from 'lodash/find'
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import { environmentToString, platformToString } from '@Lib/Application/Platforms'
 import { OutgoingItemMessagePayload, MessageReply, MessageReplyData } from './Types'
-import { ComponentAction, ComponentPermission, ComponentArea, FindNativeFeature } from '@standardnotes/features'
+import { ComponentAction, ComponentPermission, FindNativeFeature } from '@standardnotes/features'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { UuidString } from '@Lib/Types/UuidString'
 import { ContentType } from '@standardnotes/common'
-import { isString, removeFromArray, log, nonSecureRandomIdentifier, UuidGenerator } from '@standardnotes/utils'
+import { removeFromArray, log, nonSecureRandomIdentifier, UuidGenerator } from '@standardnotes/utils'
 
 type RunWithPermissionsCallback = (
   componentUuid: UuidString,
@@ -58,7 +58,7 @@ type Writeable<T> = { -readonly [P in keyof T]: T[P] }
 export class BlocksComponentViewer implements ComponentViewerInterface {
   private streamContextItemOriginalMessage?: ComponentMessage
   private removeItemObserver: () => void
-  private loggingEnabled = true
+  private loggingEnabled = false
   public identifier = nonSecureRandomIdentifier()
   private actionObservers: ActionObserver[] = []
   private featureStatus: FeatureStatus
@@ -398,6 +398,7 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
 
   handleMessage(message: ComponentMessage): void {
     this.log('Handle message', message, this)
+
     if (!this.component) {
       this.log('Component not defined for message, returning', message)
       void this.alertService.alert(
@@ -418,7 +419,6 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
       [ComponentAction.StreamContextItem]: this.handleStreamContextItemMessage.bind(this),
       [ComponentAction.SetComponentData]: this.handleSetComponentDataMessage.bind(this),
       [ComponentAction.SaveItems]: this.handleSaveItemsMessage.bind(this),
-      [ComponentAction.SetSize]: this.handleSetSizeEvent.bind(this),
     }
 
     const handler = messageHandlers[message.action]
@@ -426,6 +426,10 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
 
     for (const observer of this.actionObservers) {
       observer(message.action, message.data)
+
+      if (message.data.height) {
+        observer(ComponentAction.SetSize, { width: message.data.width, height: message.data.height })
+      }
     }
   }
 
@@ -468,24 +472,6 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
 
       void this.syncService.sync()
     })
-  }
-
-  handleSetSizeEvent(message: ComponentMessage): void {
-    if (this.component.area !== ComponentArea.EditorStack) {
-      return
-    }
-
-    const parent = this.getIframe()?.parentElement
-    if (!parent) {
-      return
-    }
-
-    const data = message.data
-    const widthString = isString(data.width) ? data.width : `${data.width}px`
-    const heightString = isString(data.height) ? data.height : `${data.height}px`
-    if (parent) {
-      parent.setAttribute('style', `width:${widthString}; height:${heightString};`)
-    }
   }
 
   getIframe(): HTMLIFrameElement | undefined {

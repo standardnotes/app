@@ -1176,7 +1176,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           )}
 
           {editorMode === 'blocks' && (
-            <div className={classNames('editable blocks-editor flex-grow')}>
+            <div className={classNames('blocks-editor w-full flex-grow overflow-hidden overflow-y-scroll')}>
               <BlockEditor key={this.note.uuid} application={this.application} note={this.note} />
             </div>
           )}

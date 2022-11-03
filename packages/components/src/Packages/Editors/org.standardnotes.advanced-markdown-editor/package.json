@@ -21,7 +21,7 @@
     "@babel/cli": "^7.13.10",
     "@babel/core": "^7.13.13",
     "@babel/preset-env": "^7.13.12",
-    "@standardnotes/component-relay": "2.2.0",
+    "@standardnotes/component-relay": "workspace:*",
     "copy-webpack-plugin": "*",
     "css-loader": "^5.2.0",
     "dompurify": "^2.2.9",
