@@ -396,33 +396,32 @@ export class ItemListController extends AbstractViewController implements Intern
     const selectedView = this.navigationController.selected
 
     const isActiveItemTrashed = activeItem?.trashed
-
-    const selectedSmartViewShowsTrashed =
-      selectedView instanceof SmartView && selectedView.predicate.keypathIncludesString('trashed')
-
-    const shouldShowTrashedNotes =
-      this.navigationController.isInSystemView(SystemViewId.TrashedNotes) ||
-      this.searchOptionsController.includeTrashed ||
-      selectedSmartViewShowsTrashed ||
-      this.displayOptions.includeTrashed
-
-    if (isActiveItemTrashed && !shouldShowTrashedNotes) {
-      return true
-    }
-
     const isActiveItemArchived = activeItem?.archived
 
-    const selectedSmartViewShowsArchived =
-      selectedView instanceof SmartView && selectedView.predicate.keypathIncludesString('archived')
+    if (isActiveItemTrashed) {
+      const selectedSmartViewShowsTrashed =
+        selectedView instanceof SmartView && selectedView.predicate.keypathIncludesString('trashed')
 
-    const shouldShowArchivedNotes =
-      this.navigationController.isInSystemView(SystemViewId.ArchivedNotes) ||
-      this.searchOptionsController.includeArchived ||
-      selectedSmartViewShowsArchived ||
-      this.displayOptions.includeArchived
+      const shouldShowTrashedNotes =
+        this.navigationController.isInSystemView(SystemViewId.TrashedNotes) ||
+        this.searchOptionsController.includeTrashed ||
+        selectedSmartViewShowsTrashed ||
+        this.displayOptions.includeTrashed
 
-    if (isActiveItemArchived && !shouldShowArchivedNotes) {
-      return true
+      return !shouldShowTrashedNotes
+    }
+
+    if (isActiveItemArchived) {
+      const selectedSmartViewShowsArchived =
+        selectedView instanceof SmartView && selectedView.predicate.keypathIncludesString('archived')
+
+      const shouldShowArchivedNotes =
+        this.navigationController.isInSystemView(SystemViewId.ArchivedNotes) ||
+        this.searchOptionsController.includeArchived ||
+        selectedSmartViewShowsArchived ||
+        this.displayOptions.includeArchived
+
+      return !shouldShowArchivedNotes
     }
 
     return false
