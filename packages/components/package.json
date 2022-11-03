@@ -23,6 +23,8 @@
     "version": "./scripts/VERSION.sh"
   },
   "dependencies": {
+    "@standardnotes/component-relay": "workspace:*",
+    "@standardnotes/editor-kit": "workspace:*",
     "@standardnotes/features": "workspace:*",
     "@standardnotes/styles": "workspace:*",
     "@standardnotes/utils": "workspace:*"

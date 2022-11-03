@@ -6839,7 +6839,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/components-meta@workspace:packages/components"
   dependencies:
+    "@standardnotes/component-relay": "workspace:*"
     "@standardnotes/deterministic-zip": ^1.2.0
+    "@standardnotes/editor-kit": "workspace:*"
     "@standardnotes/eslint-config-extensions": ^1.0.4
     "@standardnotes/features": "workspace:*"
     "@standardnotes/styles": "workspace:*"
