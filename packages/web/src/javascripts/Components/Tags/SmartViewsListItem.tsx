@@ -50,7 +50,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
   }, [setTitle, view])
 
   const selectCurrentTag = useCallback(async () => {
-    await tagsState.setSelectedTag(view, {
+    await tagsState.setSelectedTag(view, 'views', {
       userTriggered: true,
     })
     toggleAppPane(AppPaneId.Items)
@@ -86,7 +86,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
   }, [inputRef, isEditing])
 
   const onClickRename = useCallback(() => {
-    tagsState.editingTag = view
+    tagsState.setEditingTag(view)
   }, [tagsState, view])
 
   const onClickSave = useCallback(() => {
