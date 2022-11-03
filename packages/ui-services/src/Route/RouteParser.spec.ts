@@ -1,3 +1,5 @@
+import { UserRequestType } from '@standardnotes/common'
+
 import { RouteParser } from './RouteParser'
 import { RouteType } from './RouteType'
 
@@ -55,5 +57,13 @@ describe('route parser', () => {
 
     expect(parser.type).toEqual(RouteType.AcceptSubscriptionInvite)
     expect(parser.subscriptionInviteParams.inviteUuid).toEqual('1-2-3')
+  })
+
+  it('routes to user request', () => {
+    const url = 'https://app.standardnotes.com/?user-request=exit-discount'
+    const parser = new RouteParser(url)
+
+    expect(parser.type).toEqual(RouteType.UserRequest)
+    expect(parser.userRequestParams.requestType).toEqual(UserRequestType.ExitDiscount)
   })
 })

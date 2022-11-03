@@ -9,6 +9,12 @@
   transition: 0.15s padding ease;
 }
 
+@media screen and (max-width: 768px) {
+  .mac-desktop .app-column.selected {
+    padding-top: 18px;
+  }
+}
+
 @media screen and (min-width: 768px) {
   .mac-desktop #app.collapsed-notes.collapsed-navigation #editor-column {
     padding-top: 18px;

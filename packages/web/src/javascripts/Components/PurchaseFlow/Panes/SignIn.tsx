@@ -74,10 +74,14 @@ const SignIn: FunctionComponent<Props> = ({ viewControllerManager, application }
       if (response.error || response.data?.error) {
         throw new Error(response.error?.message || response.data?.error?.message)
       } else {
-        loadPurchaseFlowUrl(application).catch((err) => {
-          console.error(err)
-          application.alertService.alert(err).catch(console.error)
-        })
+        viewControllerManager.purchaseFlowController.closePurchaseFlow()
+
+        if (!application.hideSubscriptionMarketing) {
+          loadPurchaseFlowUrl(application).catch((err) => {
+            console.error(err)
+            application.alertService.alert(err).catch(console.error)
+          })
+        }
       }
     } catch (err) {
       console.error(err)

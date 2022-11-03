@@ -3,6 +3,7 @@ export enum RouteType {
   Settings = 'settings',
   Purchase = 'purchase',
   AcceptSubscriptionInvite = 'accept-subscription-invite',
+  UserRequest = 'user-request',
   Demo = 'demo',
   None = 'none',
 }

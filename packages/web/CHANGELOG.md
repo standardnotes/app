@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.93.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.1...@standardnotes/web@3.93.2) (2022-11-03)
+
+### Bug Fixes
+
+* "No modifications allowed" error on file drag in Firefox ([de4adca](https://github.com/standardnotes/app/commit/de4adca059b169e75267c8a29012e9988a607bc2))
+* files list not updating when new file is uploaded ([4036113](https://github.com/standardnotes/app/commit/40361132063e70e9851baf01eb772a0b3ff0aa1c))
+
+## [3.93.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.0...@standardnotes/web@3.93.1) (2022-11-03)
+
+### Bug Fixes
+
+* correctly refresh cta banner ([305ffdf](https://github.com/standardnotes/app/commit/305ffdf9847cfe67e2d022f84c1e2443b4bc2c76))
+* purchase flow close on complete ([c4dbc5c](https://github.com/standardnotes/app/commit/c4dbc5cbd2147b695403e6f57254a97d42337965))
+
+# [3.93.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.92.0...@standardnotes/web@3.93.0) (2022-11-03)
+
+### Features
+
+* add sending user requests from UI ([#1927](https://github.com/standardnotes/app/issues/1927)) ([7ead0f6](https://github.com/standardnotes/app/commit/7ead0f655bb2572e5805dd26c297d520949d661a))
+
+# [3.92.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.91.1...@standardnotes/web@3.92.0) (2022-11-02)
+
+### Features
+
+* prioritize loading latest selected items ([#1930](https://github.com/standardnotes/app/issues/1930)) ([a6ef658](https://github.com/standardnotes/app/commit/a6ef658daef9a01f5ddacc967fe30d22f580799a))
+
 ## [3.91.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.91.0...@standardnotes/web@3.91.1) (2022-11-02)
 
 ### Bug Fixes

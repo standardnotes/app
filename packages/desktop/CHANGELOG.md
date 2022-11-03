@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.23.271](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.270...@standardnotes/desktop@3.23.271) (2022-11-03)
+
+### Bug Fixes
+
+* **desktop:** editor column top padding on mac ([9ae0ce0](https://github.com/standardnotes/app/commit/9ae0ce0bfd78bedf3e8318aa56b8542dd81d5870))
+
+## [3.23.270](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.269...@standardnotes/desktop@3.23.270) (2022-11-03)
+
+### Bug Fixes
+
+* **desktop:** only add extra popover padding for small windows ([ac96e19](https://github.com/standardnotes/app/commit/ac96e197e00a7e7af1b771e46a178b0fa21d0f94))
+* **desktop:** selected column top padding on small windows ([d6cafa1](https://github.com/standardnotes/app/commit/d6cafa1e739dd46e4cf465d8511aad2024ebe294))
+
+## [3.23.269](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.268...@standardnotes/desktop@3.23.269) (2022-11-03)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.23.268](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.267...@standardnotes/desktop@3.23.268) (2022-11-02)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
 ## [3.23.267](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.266...@standardnotes/desktop@3.23.267) (2022-11-02)
 
 **Note:** Version bump only for package @standardnotes/desktop

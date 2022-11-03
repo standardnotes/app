@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.45.20](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.19...@standardnotes/mobile@3.45.20) (2022-11-03)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.45.19](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.18...@standardnotes/mobile@3.45.19) (2022-11-03)
+
+### Bug Fixes
+
+* **mobile:** disable pinch zoom on mobile app UI ([dc4530b](https://github.com/standardnotes/app/commit/dc4530b2f33057ec3d44a94b28dc0407656d4098))
+
+## [3.45.18](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.17...@standardnotes/mobile@3.45.18) (2022-11-03)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.45.17](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.16...@standardnotes/mobile@3.45.17) (2022-11-02)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
 ## [3.45.16](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.15...@standardnotes/mobile@3.45.16) (2022-11-02)
 
 **Note:** Version bump only for package @standardnotes/mobile

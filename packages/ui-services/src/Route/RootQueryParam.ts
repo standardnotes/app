@@ -3,4 +3,5 @@ export enum RootQueryParam {
   Settings = 'settings',
   DemoToken = 'demo-token',
   AcceptSubscriptionInvite = 'accept-subscription-invite',
+  UserRequest = 'user-request',
 }

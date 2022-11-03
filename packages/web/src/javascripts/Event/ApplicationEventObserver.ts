@@ -10,6 +10,7 @@ import {
   SessionsClientInterface,
   SubscriptionClientInterface,
   SyncClientInterface,
+  UserClientInterface,
 } from '@standardnotes/snjs'
 import { ToastType } from '@standardnotes/toast'
 
@@ -34,6 +35,7 @@ export class ApplicationEventObserver implements EventObserverInterface {
     private sessionManager: SessionsClientInterface,
     private subscriptionManager: SubscriptionClientInterface,
     private toastService: ToastServiceInterface,
+    private userService: UserClientInterface,
   ) {}
 
   async handle(event: ApplicationEvent): Promise<void> {
@@ -69,6 +71,17 @@ export class ApplicationEventObserver implements EventObserverInterface {
 
               break
             }
+            case RouteType.UserRequest: {
+              const user = this.sessionManager.getUser()
+              if (user === undefined) {
+                this.promptUserSignIn()
+
+                break
+              }
+              await this.sendUserRequest(route)
+
+              break
+            }
           }
         }
         break
@@ -83,6 +96,10 @@ export class ApplicationEventObserver implements EventObserverInterface {
               break
             case RouteType.AcceptSubscriptionInvite:
               await this.acceptSubscriptionInvitation(route)
+
+              break
+            case RouteType.UserRequest:
+              await this.sendUserRequest(route)
 
               break
           }
@@ -105,7 +122,11 @@ export class ApplicationEventObserver implements EventObserverInterface {
   }
 
   private async acceptSubscriptionInvitation(route: RouteParserInterface): Promise<void> {
+    const processingToastId = this.toastService.showToast(ToastType.Loading, 'Accepting invitation...')
+
     const acceptResult = await this.subscriptionManager.acceptInvitation(route.subscriptionInviteParams.inviteUuid)
+
+    this.toastService.hideToast(processingToastId)
 
     const toastType = acceptResult.success ? ToastType.Success : ToastType.Error
     const toastMessage = acceptResult.success ? 'Successfully joined a shared subscription' : acceptResult.message
@@ -113,5 +134,22 @@ export class ApplicationEventObserver implements EventObserverInterface {
     this.toastService.showToast(toastType, toastMessage)
 
     this.routeService.removeQueryParameterFromURL(RootQueryParam.AcceptSubscriptionInvite)
+  }
+
+  private async sendUserRequest(route: RouteParserInterface): Promise<void> {
+    const processingToastId = this.toastService.showToast(ToastType.Loading, 'Processing your request...')
+
+    const requestSubmittedSuccessfully = await this.userService.submitUserRequest(route.userRequestParams.requestType)
+
+    this.toastService.hideToast(processingToastId)
+
+    const toastType = requestSubmittedSuccessfully ? ToastType.Success : ToastType.Error
+    const toastMessage = requestSubmittedSuccessfully
+      ? 'We have received your request. Please check your email for further instructions.'
+      : 'We could not process your request. Please try again or contact support if the issue persists.'
+
+    this.toastService.showToast(toastType, toastMessage)
+
+    this.routeService.removeQueryParameterFromURL(RootQueryParam.UserRequest)
   }
 }

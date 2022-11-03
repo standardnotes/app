@@ -69,7 +69,11 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
           label="Go to items list"
           icon="chevron-left"
         />
-        <UpgradeNow application={application} featuresController={viewControllerManager.featuresController} />
+        <UpgradeNow
+          application={application}
+          subscriptionContoller={viewControllerManager.subscriptionController}
+          featuresController={viewControllerManager.featuresController}
+        />
         <RoundIconButton
           className="ml-2.5 bg-default"
           onClick={() => {

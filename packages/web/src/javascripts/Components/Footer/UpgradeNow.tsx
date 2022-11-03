@@ -1,18 +1,20 @@
 import { WebApplication } from '@/Application/Application'
 import { FeaturesController } from '@/Controllers/FeaturesController'
+import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 import { observer } from 'mobx-react-lite'
 import { loadPurchaseFlowUrl } from '../PurchaseFlow/PurchaseFlowFunctions'
 
 type Props = {
   application: WebApplication
   featuresController: FeaturesController
+  subscriptionContoller: SubscriptionController
 }
 
-const UpgradeNow = ({ application, featuresController }: Props) => {
+const UpgradeNow = ({ application, featuresController, subscriptionContoller }: Props) => {
   const shouldShowCTA = !featuresController.hasFolders
-  const hasAccount = application.hasAccount()
+  const hasAccount = subscriptionContoller.hasAccount
 
-  if (hasAccount && application.hideSubscriptionMarketing) {
+  if (hasAccount && subscriptionContoller.hideSubscriptionMarketing) {
     return null
   }
 
