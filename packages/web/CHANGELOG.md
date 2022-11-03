@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.93.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.92.0...@standardnotes/web@3.93.0) (2022-11-03)
+
+### Features
+
+* add sending user requests from UI ([#1927](https://github.com/standardnotes/app/issues/1927)) ([7ead0f6](https://github.com/standardnotes/app/commit/7ead0f655bb2572e5805dd26c297d520949d661a))
+
 # [3.92.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.91.1...@standardnotes/web@3.92.0) (2022-11-02)
 
 ### Features
