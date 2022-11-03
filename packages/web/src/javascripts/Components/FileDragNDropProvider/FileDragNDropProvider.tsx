@@ -100,6 +100,20 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
     [application],
   )
 
+  const handleDragStart = useCallback(
+    (event: DragEvent) => {
+      if (isHandlingFileDrag(event, application)) {
+        event.preventDefault()
+        event.stopPropagation()
+
+        if (event.dataTransfer) {
+          event.dataTransfer.clearData()
+        }
+      }
+    },
+    [application],
+  )
+
   const handleDragIn = useCallback(
     (event: DragEvent) => {
       if (!isHandlingFileDrag(event, application)) {
@@ -200,7 +214,6 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
           }
         })
 
-        event.dataTransfer.clearData()
         dragCounter.current = 0
       }
     },
@@ -208,18 +221,20 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
   )
 
   useEffect(() => {
+    window.addEventListener('dragstart', handleDragStart)
     window.addEventListener('dragenter', handleDragIn)
     window.addEventListener('dragleave', handleDragOut)
     window.addEventListener('dragover', handleDrag)
     window.addEventListener('drop', handleDrop)
 
     return () => {
+      window.removeEventListener('dragstart', handleDragStart)
       window.removeEventListener('dragenter', handleDragIn)
       window.removeEventListener('dragleave', handleDragOut)
       window.removeEventListener('dragover', handleDrag)
       window.removeEventListener('drop', handleDrop)
     }
-  }, [handleDragIn, handleDrop, handleDrag, handleDragOut])
+  }, [handleDragIn, handleDrop, handleDrag, handleDragOut, handleDragStart])
 
   const contextValue = useMemo(() => {
     return {
