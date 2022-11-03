@@ -110,7 +110,7 @@ const SingleBlockRenderer: FunctionComponent<SingleBlockRendererProps> = ({ bloc
     const disposer = viewer?.addActionObserver((action, data) => {
       if (action === ComponentAction.SetSize) {
         if (data.height && data.height > 0) {
-          const height = Math.min(Number(data.height), MaxBlockHeight[block.editorIdentifier] ?? 0)
+          const height = Math.min(Number(data.height), MaxBlockHeight[block.editorIdentifier] ?? Number(data.height))
           log(LoggingDomain.BlockEditor, `Received block height ${height}`)
           setHeight(height)
           controller.saveBlockSize(block, { width: 0, height })

@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename)
 
 console.log('Beginning packaging procedure...')
 
-const SourceFilesPath = path.join(__dirname, '../src/Packages')
+const SourceFilesPath = path.join(__dirname, '../Packages')
 const DistDir = path.join(__dirname, '../dist')
 const TmpDir = path.join(__dirname, '../tmp')
 const ZipsDir = path.join(DistDir, '/zips')

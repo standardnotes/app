@@ -10,9 +10,11 @@
   "workspaces": {
     "packages": [
       "packages/*",
-      "packages/components/src/Packages/Deprecated/*",
-      "packages/components/src/Packages/Editors/*",
-      "packages/components/src/Packages/Themes/*"
+      "packages/components/Packages/Deprecated/*",
+      "packages/components/Packages/Editors/*",
+      "packages/components/Packages/Themes/*",
+      "packages/components/Packages/EditorKit",
+      "packages/components/Packages/ComponentRelay"
     ]
   },
   "engines": {

@@ -7,5 +7,5 @@
     "module": "node16"
   },
   "include": ["src"],
-  "exclude": ["dist", "node_modules", "src/Packages"]
+  "exclude": ["dist", "node_modules", "Packages"]
 }

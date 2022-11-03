@@ -6,11 +6,11 @@
   "main": "dist",
   "workspaces": {
     "packages": [
-      "src/Packages/Deprecated/*",
-      "src/Packages/Editors/*",
-      "src/Packages/Themes/*",
-      "src/Packages/component-relay",
-      "src/Packages/editor-kit"
+      "Packages/Deprecated/*",
+      "Packages/Editors/*",
+      "Packages/Themes/*",
+      "Packages/ComponentRelay",
+      "Packages/EditorKit"
     ]
   },
   "scripts": {
@@ -21,7 +21,7 @@
     "build": "yarn build:ts && yarn workspaces foreach --parallel --interlaced --jobs 10 --verbose --exclude @standardnotes/components-meta run components:compile",
     "build:ts": "tsc --project tsconfig.json",
     "package": "yarn build:ts && node scripts/package.mjs",
-    "package:assets": "yarn build:ts && node scripts/package.mjs --no-zip",
+    "package:nozip": "yarn build:ts && node scripts/package.mjs --no-zip",
     "version": "./scripts/VERSION.sh"
   },
   "dependencies": {

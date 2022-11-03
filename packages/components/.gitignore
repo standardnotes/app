@@ -1,9 +1,11 @@
 tmp
 
-src/Packages/Editors/**/build
-src/Packages/Editors/**/dist
-src/Packages/Themes/**/dist
+Packages/Editors/**/build
+Packages/Editors/**/dist
+Packages/Themes/**/dist
+Packages/ComponentRelay/**/dist
+Packages/EditorKit/**/dist
 
 # Deprecated dist assets should be commited to source control as these compnonents will no longer be compiled.
-!src/Packages/Deprecated/**/dist
-!src/Packages/Deprecated/**/build
+!Packages/Deprecated/**/dist
+!Packages/Deprecated/**/build
