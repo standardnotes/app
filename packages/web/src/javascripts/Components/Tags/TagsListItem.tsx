@@ -277,23 +277,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
             {!isEditing && (
               <>
-                {hasChildren && (
-                  <div className="-ml-1.5">
-                    <a
-                      role="button"
-                      className={`focus:shadow-inner ${showChildren ? 'cursor-n-resize' : 'cursor-s-resize'} ${
-                        showChildren ? 'opened' : 'closed'
-                      } `}
-                      onClick={toggleChildren}
-                    >
-                      <Icon
-                        className={'text-neutral'}
-                        type={showChildren ? 'menu-arrow-down-alt' : 'menu-arrow-right'}
-                      />
-                    </a>
-                  </div>
-                )}
-
                 <div
                   className={
                     'title overflow-hidden text-left text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item'
@@ -306,17 +289,40 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             )}
 
             <div className="flex items-center">
-              <a
-                role="button"
-                className={`mr-2 cursor-pointer border-0 bg-transparent hover:bg-contrast focus:shadow-inner ${
-                  isSelected ? 'visible' : 'invisible'
+              {isSelected && (
+                <a
+                  role="button"
+                  className={'mr-2 cursor-pointer border-0 bg-transparent hover:bg-contrast focus:shadow-inner'}
+                  onClick={toggleContextMenu}
+                  ref={menuButtonRef}
+                >
+                  <Icon type="more" className="text-neutral" />
+                </a>
+              )}
+
+              {hasChildren && (
+                <a
+                  role="button"
+                  className={`focus:shadow-inner ${showChildren ? 'cursor-n-resize' : 'cursor-s-resize'} ${
+                    showChildren ? 'opened' : 'closed'
+                  } `}
+                  onClick={toggleChildren}
+                >
+                  <Icon
+                    className={'text-neutral'}
+                    size="large"
+                    type={showChildren ? 'menu-arrow-down-alt' : 'menu-arrow-right'}
+                  />
+                </a>
+              )}
+              <div
+                onClick={hasChildren ? toggleChildren : undefined}
+                className={`count text-base lg:text-sm ${
+                  hasChildren ? (showChildren ? 'cursor-n-resize' : 'cursor-s-resize') : ''
                 }`}
-                onClick={toggleContextMenu}
-                ref={menuButtonRef}
               >
-                <Icon type="more" className="text-neutral" />
-              </a>
-              <div className="count text-base lg:text-sm">{noteCounts.get()}</div>
+                {noteCounts.get()}
+              </div>
             </div>
           </div>
 
