@@ -91,10 +91,15 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
 
     try {
       await application.register(email, password)
-      loadPurchaseFlowUrl(application).catch((err) => {
-        console.error(err)
-        application.alertService.alert(err).catch(console.error)
-      })
+
+      viewControllerManager.purchaseFlowController.closePurchaseFlow()
+
+      if (!application.hideSubscriptionMarketing) {
+        loadPurchaseFlowUrl(application).catch((err) => {
+          console.error(err)
+          application.alertService.alert(err).catch(console.error)
+        })
+      }
     } catch (err) {
       console.error(err)
       application.alertService.alert(err as string).catch(console.error)
