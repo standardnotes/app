@@ -59,7 +59,7 @@ export default class EditorKit {
         return
       }
 
-      let text = note.content?.text || ''
+      const text = note.content?.text || ''
 
       /**
        * If we're an HTML editor, and we're dealing with a new note,
