@@ -45,6 +45,7 @@ export const createEditorMenuGroups = (application: WebApplication, editors: SNC
     spreadsheet: [],
     authentication: [],
     others: [],
+    blocks: [],
   }
 
   GetFeatures()
