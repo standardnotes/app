@@ -1,1 +1,0 @@
-/*! For license information please see dist.js.LICENSE.txt */

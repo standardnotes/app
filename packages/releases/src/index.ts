@@ -17,7 +17,6 @@ export type Platform =
 export type Package =
   | '@standardnotes/mobile'
   | '@standardnotes/desktop'
-  | '@standardnotes/components-meta'
   | '@standardnotes/web'
 
 export type Versions = Record<Package, string>

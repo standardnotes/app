@@ -1,7 +1,0 @@
-node_modules
-.sass-cache
-.DS_Store
-yarn-error.log
-coverage
-docs
-dist
