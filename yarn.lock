@@ -5614,7 +5614,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/sncrypto-common@1.13.0, @standardnotes/sncrypto-common@workspace:*, @standardnotes/sncrypto-common@workspace:^, @standardnotes/sncrypto-common@workspace:packages/sncrypto-common":
+"@standardnotes/sncrypto-common@npm:1.13.0":
+  version: 1.13.0
+  resolution: "@standardnotes/sncrypto-common@npm:1.13.0"
+  dependencies:
+    reflect-metadata: ^0.1.13
+  checksum: e58258f52546a3f0ce2d8f76d4be79a7d23e15dfd81e687ac66cd3fc00dc91e563556da2e600dbd2f270f659b3e1f3e4301dd6e6e7e6eb4faf51c4343fc65c96
+  languageName: node
+  linkType: hard
+
+"@standardnotes/sncrypto-common@workspace:*, @standardnotes/sncrypto-common@workspace:^, @standardnotes/sncrypto-common@workspace:packages/sncrypto-common":
   version: 0.0.0-use.local
   resolution: "@standardnotes/sncrypto-common@workspace:packages/sncrypto-common"
   dependencies:
