@@ -24,7 +24,7 @@
     "prettier": "*",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
-    "ts-jest": "^28.0.5",
+    "ts-jest": "^29.0.3",
     "ts-loader": "^9.3.0",
     "typescript": "*",
     "webpack": "*",
