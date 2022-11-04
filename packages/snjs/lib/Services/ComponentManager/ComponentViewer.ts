@@ -78,8 +78,6 @@ type ComponentManagerFunctions = {
 
 const ReadwriteActions = [
   ComponentAction.SaveItems,
-  ComponentAction.AssociateItem,
-  ComponentAction.DeassociateItem,
   ComponentAction.CreateItem,
   ComponentAction.CreateItems,
   ComponentAction.DeleteItems,
