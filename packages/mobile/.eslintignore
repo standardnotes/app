@@ -1,9 +1,0 @@
-metro.config.js
-html/**/*
-node_modules
-ios
-e2e
-android
-fastlane
-WebFrame
-__tests__

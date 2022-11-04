@@ -1,7 +1,0 @@
-{
-  "extends": ["./node_modules/@standardnotes/config/src/.eslintrc"],
-  "rules": {
-    "max-classes-per-file": ["error", 1]
-  },
-  "ignorePatterns": [".eslintrc.js", "*.webpack.*.js", "webpack-defaults.js", "jest.config.js", "__mocks__", "**/**/coverage"]
-}
