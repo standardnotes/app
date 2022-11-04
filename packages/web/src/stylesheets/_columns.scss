@@ -17,7 +17,7 @@
   }
 
   @media screen and (max-width: 768px) {
-    &.selected {
+    &[data-selected-pane] {
       flex-grow: 1;
 
       .content {
@@ -30,7 +30,7 @@
       left: 0 !important;
     }
 
-    &:not(.selected) {
+    &:not([data-selected-pane]) {
       min-height: 0;
       height: auto;
       padding: 0;

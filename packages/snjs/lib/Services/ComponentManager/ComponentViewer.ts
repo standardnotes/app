@@ -34,6 +34,7 @@ import {
   MessageData,
   Environment,
   Platform,
+  OutgoingItemMessagePayload,
 } from '@standardnotes/models'
 import find from 'lodash/find'
 import uniq from 'lodash/uniq'
@@ -41,7 +42,6 @@ import remove from 'lodash/remove'
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import { environmentToString, platformToString } from '@Lib/Application/Platforms'
 import {
-  OutgoingItemMessagePayload,
   MessageReply,
   StreamItemsMessageData,
   AllowedBatchContentTypes,
@@ -78,8 +78,6 @@ type ComponentManagerFunctions = {
 
 const ReadwriteActions = [
   ComponentAction.SaveItems,
-  ComponentAction.AssociateItem,
-  ComponentAction.DeassociateItem,
   ComponentAction.CreateItem,
   ComponentAction.CreateItems,
   ComponentAction.DeleteItems,
