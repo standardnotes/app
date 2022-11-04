@@ -1,13 +1,13 @@
 import { ItemContent } from './../Content/ItemContent'
 import { ContentType } from '@standardnotes/common'
 
-export type OutgoingItemMessagePayload = {
+export type OutgoingItemMessagePayload<C extends ItemContent = ItemContent> = {
   uuid: string
   content_type: ContentType
   created_at: Date
   updated_at: Date
   deleted?: boolean
-  content?: ItemContent
+  content?: C
   clientData?: Record<string, unknown>
 
   /**
