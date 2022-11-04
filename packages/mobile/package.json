@@ -50,7 +50,7 @@
     "npm-check-updates": "*",
     "pod-install": "^0.1.33",
     "prettier": "^2.6.0",
-    "prettier-plugin-organize-imports": "^2.3.4",
+    "prettier-plugin-organize-imports": "^3.1.1",
     "react": "17.0.2",
     "react-native": "0.67.4",
     "react-native-file-viewer": "^2.1.5",
