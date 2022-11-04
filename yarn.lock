@@ -5776,7 +5776,7 @@ __metadata:
     "@types/react-dom": "link:../web/node_modules/@types/react-dom"
     eslint: "*"
     nanoid: ^3.3.4
-    nanostores: ^0.5.12
+    nanostores: ^0.7.0
     prettier: "*"
     react: "link:../web/node_modules/react"
     react-dom: "link:../web/node_modules/react-dom"
@@ -21326,10 +21326,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanostores@npm:^0.5.12":
-  version: 0.5.13
-  resolution: "nanostores@npm:0.5.13"
-  checksum: f3831519a3b31d32f164f58d1d46f6664e5fa373f3e83b060f261691b125bc4c5a1819c0ed16d7eaad6ab479774b000253d1876a7ec05b23fe14aafab575b7fb
+"nanostores@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "nanostores@npm:0.7.0"
+  checksum: 2826f4e04c31c5db4b751fc7253a1f0917a11be166270a6a8e7049025bae11b77824426fcea3a202abc81da5079d52672fcada058ebdd709ca499e7fcf6d9b2c
   languageName: node
   linkType: hard
 
