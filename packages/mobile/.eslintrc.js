@@ -9,11 +9,5 @@ module.exports = {
   plugins: ['@typescript-eslint', 'react', 'react-hooks', 'prettier'],
   rules: {
     'no-console': 'warn',
-  },
-  env: {
-    browser: true,
-  },
-  globals: {
-    __WEB_VERSION__: true,
-  },
+  }
 }
