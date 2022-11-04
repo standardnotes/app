@@ -5069,6 +5069,39 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/authenticator@npm:^2.3.8":
+  version: 2.3.8
+  resolution: "@standardnotes/authenticator@npm:2.3.8"
+  dependencies:
+    "@standardnotes/editor-kit": "github:standardnotes/editor-kit#50ffb15c935a297b082eb00ffd031adc05080d7f"
+    "@standardnotes/styles": 1.6.1
+  checksum: 02f59c945161232a07e25be8e9e2463cb63de5a39df2bc9434952a36f63fa757421f7749600b84d76c617a565f0062a0757522b6303324d1772d7dc1ff11867d
+  languageName: node
+  linkType: hard
+
+"@standardnotes/autobiography-theme@npm:^1.2.7":
+  version: 1.2.7
+  resolution: "@standardnotes/autobiography-theme@npm:1.2.7"
+  checksum: 5eccb091015562e98f30ae073c92e8366426db92d75ecfecacb19dc2e34a6793c4dbf60f38a62e34cba50dc88ee2bec8160bed69a3f8f8712e62cacacdd28f79
+  languageName: node
+  linkType: hard
+
+"@standardnotes/bold-editor@npm:^1.6.3":
+  version: 1.6.3
+  resolution: "@standardnotes/bold-editor@npm:1.6.3"
+  checksum: fa299a1d16834283a6fe996df5e19a20fd78c0145963236a4d01a15dfc898de47dd3365a19a6fa3adb91ffee23c1f29e6a023966a3eaf026ddda41da8df60b1c
+  languageName: node
+  linkType: hard
+
+"@standardnotes/classic-code-editor@npm:^1.5.6":
+  version: 1.5.6
+  resolution: "@standardnotes/classic-code-editor@npm:1.5.6"
+  dependencies:
+    "@standardnotes/component-relay": "github:standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d"
+  checksum: 84abd6c2f72f21120205ef75582b9810c3ba55c9162e327ba6620c95b2a9cac5dc79126f2e62254026f08124a280c60ca8b18fe8ce93771edb3d4b23a1236b95
+  languageName: node
+  linkType: hard
+
 "@standardnotes/common@npm:1.40.0, @standardnotes/common@npm:^1.23.1":
   version: 1.40.0
   resolution: "@standardnotes/common@npm:1.40.0"
@@ -5084,6 +5117,19 @@ __metadata:
   dependencies:
     reflect-metadata: ^0.1.13
   checksum: 59300594418a5cb9d4b811240c23007bb927df6f620cb37460a978d82b1b8baf7107e4a3557110c032636ab02f7e61669613d35bdcac2bcb0e8f0e66b8a16f8d
+  languageName: node
+  linkType: hard
+
+"@standardnotes/component-relay@github:standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d, @standardnotes/component-relay@standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d":
+  version: 2.3.0
+  resolution: "@standardnotes/component-relay@https://github.com/standardnotes/component-relay.git#commit=839ff5db9bc92db9d42cad8d202ddc4df729597d"
+  dependencies:
+    "@standardnotes/common": ^1.43.0
+    "@standardnotes/features": 1.54.0
+    "@standardnotes/models": 1.34.3
+    "@standardnotes/sncrypto-common": 1.13.0
+    "@standardnotes/snjs": 2.147.2
+  checksum: c8478582b49b7f4134eeee29e97385dfd92842072ccec8de7038fb51c2b90fd24f017818a35a3e0f0ea071974c36167fec96d0bdf0184d442644538796dfc257
   languageName: node
   linkType: hard
 
@@ -5179,6 +5225,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/dynamic-theme@npm:^1.2.8":
+  version: 1.2.8
+  resolution: "@standardnotes/dynamic-theme@npm:1.2.8"
+  checksum: 4dffec74e3ea5d6de6c487669232d924db2682eb844c903026201ff0f2c307dda86a58ed11a612bbca21c19908aaf8b436e0801bff958255980f729e10fd6b6f
+  languageName: node
+  linkType: hard
+
+"@standardnotes/editor-kit@github:standardnotes/editor-kit#50ffb15c935a297b082eb00ffd031adc05080d7f":
+  version: 2.3.0
+  resolution: "@standardnotes/editor-kit@https://github.com/standardnotes/editor-kit.git#commit=50ffb15c935a297b082eb00ffd031adc05080d7f"
+  dependencies:
+    "@standardnotes/component-relay": "standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d"
+    "@standardnotes/models": 1.34.3
+    "@standardnotes/snjs": 2.147.2
+  checksum: c59d160a86e9c40c10f20d15a0df8874a8305bd4ae281fad8729fbf9bd714667b3849c78e3a28f18c12127e23bb9e4834139c0501505822662b51c19c9ddf343
+  languageName: node
+  linkType: hard
+
 "@standardnotes/electron-clear-data@npm:1.1.1":
   version: 1.1.1
   resolution: "@standardnotes/electron-clear-data@npm:1.1.1"
@@ -5228,6 +5292,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@standardnotes/features@npm:1.54.0":
+  version: 1.54.0
+  resolution: "@standardnotes/features@npm:1.54.0"
+  dependencies:
+    "@standardnotes/auth": ^3.19.4
+    "@standardnotes/common": ^1.43.0
+    "@standardnotes/security": ^1.2.0
+    reflect-metadata: ^0.1.13
+  checksum: 7426de5249c3f7c42e28b82263febeb89c6e4eb1833dc7761f9b641f8bcc8697e93649080b053dc18efcbc59442be891d51e80c94c145e72714dbb892cc05122
+  languageName: node
+  linkType: hard
+
 "@standardnotes/filepicker@workspace:*, @standardnotes/filepicker@workspace:^, @standardnotes/filepicker@workspace:packages/filepicker":
   version: 0.0.0-use.local
   resolution: "@standardnotes/filepicker@workspace:packages/filepicker"
@@ -5266,6 +5342,20 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@standardnotes/focus-theme@npm:^1.4.6":
+  version: 1.4.6
+  resolution: "@standardnotes/focus-theme@npm:1.4.6"
+  checksum: f43dbf02ad76c75906b210585b5d96344fbd64d6a478f73406e2d6c7823ef59cbda7bdaf84c8f0d73622044f766e7a2cd221b2e982a20e91d7bd82f80ef71b54
+  languageName: node
+  linkType: hard
+
+"@standardnotes/futura-theme@npm:^1.4.6":
+  version: 1.4.6
+  resolution: "@standardnotes/futura-theme@npm:1.4.6"
+  checksum: 6bbb0324918d52dd974ec5e478faa2bdccb43bfbf8892691fdfbef7630f43634d0be5b7951ed5097a9c113dde4b559ac4a1be4802add5aa820540887c3866f6a
+  languageName: node
+  linkType: hard
+
 "@standardnotes/icons@workspace:*, @standardnotes/icons@workspace:packages/icons":
   version: 0.0.0-use.local
   resolution: "@standardnotes/icons@workspace:packages/icons"
@@ -5299,6 +5389,50 @@ __metadata:
     keytar: ^7.9.0
   languageName: unknown
   linkType: soft
+
+"@standardnotes/markdown-basic@npm:^1.6.1":
+  version: 1.6.1
+  resolution: "@standardnotes/markdown-basic@npm:1.6.1"
+  checksum: fc689ff00a03d6fde1151343da6aacabf20ee76edff504a1d86c3e666f60e7a25435dc48b3d3f2b938f0312f12e971a36763f96d765f0c5214a81e82f77e11ab
+  languageName: node
+  linkType: hard
+
+"@standardnotes/markdown-hybrid@npm:^1.7.7":
+  version: 1.7.7
+  resolution: "@standardnotes/markdown-hybrid@npm:1.7.7"
+  dependencies:
+    "@standardnotes/component-relay": "github:standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d"
+  checksum: 81b08e1d6be1b982bb63b779c55bf87554a3e8ee50215bea117fae6c29272f1b4af9281a8f76550de8cb4c1181d927100c4833be442e4b7b31f4c46f3ccafcdd
+  languageName: node
+  linkType: hard
+
+"@standardnotes/markdown-math@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "@standardnotes/markdown-math@npm:1.4.1"
+  checksum: 4252d75e9e1aba15f4e04f4bd2f91c4a861cd902418d76c34842fe65b162893a9e81ca1de781a2959d3d0dce530680a46dc1a53c79e2aa3464cccb9b4acc244f
+  languageName: node
+  linkType: hard
+
+"@standardnotes/markdown-minimal@npm:^1.2.1":
+  version: 1.2.1
+  resolution: "@standardnotes/markdown-minimal@npm:1.2.1"
+  checksum: 681dd001e7af64d318bf891165894d85123653a3801455701f8790bf09e5e0c0a685f14bd94ee2a484fb03e46e8f32895e96b2c509eeed4e1b1f6c6009714c0b
+  languageName: node
+  linkType: hard
+
+"@standardnotes/markdown-visual@npm:^1.0.7":
+  version: 1.0.7
+  resolution: "@standardnotes/markdown-visual@npm:1.0.7"
+  checksum: 8827893f0953beb03ff6da77304968dfdf9a7144022c770947b56de16aee006ce9550cdf114fa2751bc836b0092924f2dd352049b91d6d67c0fd12b88b36d74c
+  languageName: node
+  linkType: hard
+
+"@standardnotes/midnight-theme@npm:^1.4.6":
+  version: 1.4.6
+  resolution: "@standardnotes/midnight-theme@npm:1.4.6"
+  checksum: f10de578f96692888e29c5efacafb1a50256da1668839fdd2ae7d631af8682b1709977e255d9c827d8e44cf22155801dac18abaa4fd7319bfe7d6d63543edd6f
+  languageName: node
+  linkType: hard
 
 "@standardnotes/mobile@workspace:*, @standardnotes/mobile@workspace:packages/mobile":
   version: 0.0.0-use.local
@@ -5341,6 +5475,13 @@ __metadata:
     typescript: ^4.6.3
   languageName: unknown
   linkType: soft
+
+"@standardnotes/models@npm:1.34.3":
+  version: 1.34.3
+  resolution: "@standardnotes/models@npm:1.34.3"
+  checksum: 3f5314eb6ca59dd248217cc39e88a4293eeb91e0fb78267cb6f9226888f190f510bf9f77166ccb2e6bf84541749d701d1358823e06de2813724cea8c1f39d9f4
+  languageName: node
+  linkType: hard
 
 "@standardnotes/models@workspace:*, @standardnotes/models@workspace:^, @standardnotes/models@workspace:packages/models":
   version: 0.0.0-use.local
@@ -5408,6 +5549,15 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@standardnotes/rich-text@npm:^1.8.7":
+  version: 1.8.7
+  resolution: "@standardnotes/rich-text@npm:1.8.7"
+  dependencies:
+    "@standardnotes/component-relay": "github:standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d"
+  checksum: 81286625b5d28628f0e962d59868d85dec051ca176fbe66a051e06f8a124a1648ec4b3d986203b0b83eb99fe2a088ac8fe49a11bb635d7ff009a96070ea44951
+  languageName: node
+  linkType: hard
+
 "@standardnotes/security@npm:1.4.9, @standardnotes/security@npm:^1.1.0, @standardnotes/security@npm:^1.2.0":
   version: 1.4.9
   resolution: "@standardnotes/security@npm:1.4.9"
@@ -5454,7 +5604,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/sncrypto-common@workspace:*, @standardnotes/sncrypto-common@workspace:^, @standardnotes/sncrypto-common@workspace:packages/sncrypto-common":
+"@standardnotes/simple-task-editor@npm:^1.3.10":
+  version: 1.3.10
+  resolution: "@standardnotes/simple-task-editor@npm:1.3.10"
+  checksum: 33579784c493a33abee8fd985ea3405a11a8397b99a9fbe89d4f4aa55f8c9b86555438869dc953af38dc0c015555dde2f32c975a205ab2c61b10e6089397c6ca
+  languageName: node
+  linkType: hard
+
+"@standardnotes/sncrypto-common@1.13.0, @standardnotes/sncrypto-common@workspace:*, @standardnotes/sncrypto-common@workspace:^, @standardnotes/sncrypto-common@workspace:packages/sncrypto-common":
   version: 0.0.0-use.local
   resolution: "@standardnotes/sncrypto-common@workspace:packages/sncrypto-common"
   dependencies:
@@ -5555,6 +5712,36 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@standardnotes/snjs@npm:2.147.2":
+  version: 2.147.2
+  resolution: "@standardnotes/snjs@npm:2.147.2"
+  checksum: 4bf5a1e64472c9ed7674fab109f6f9319a1749aaad4d1f046924b5ab0c49e206087a961df879511ba8b1279db7735cd98b1ebf3dd3aba0072ef05f6d54830227
+  languageName: node
+  linkType: hard
+
+"@standardnotes/solarized-dark-theme@npm:^1.4.6":
+  version: 1.4.6
+  resolution: "@standardnotes/solarized-dark-theme@npm:1.4.6"
+  checksum: 17a22fed5419fc3bf17ddebb01330e73520c605bd4954a0336118addd47c663fa6e00dec10dab6dd2698a82ee44229bae9eb72024187a4acc2f6b48a9eb5bf26
+  languageName: node
+  linkType: hard
+
+"@standardnotes/spreadsheets@npm:^1.6.7":
+  version: 1.6.7
+  resolution: "@standardnotes/spreadsheets@npm:1.6.7"
+  dependencies:
+    "@standardnotes/component-relay": "github:standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d"
+  checksum: 30461e462a733587a62f933e9e17296a4e558e206d22b939f89aa3c70bd4a271fc02fccd7828461379d00db157b8c2d4325dc02dcfad2f407baea8f4561707bd
+  languageName: node
+  linkType: hard
+
+"@standardnotes/styles@npm:1.6.1":
+  version: 1.6.1
+  resolution: "@standardnotes/styles@npm:1.6.1"
+  checksum: e0a9e6732edcd4df9d8861377a5e9fa50708b46f8ce59df43053aeb321cc7b900560ac5c51a06c8a1f58f0cd5cb2a4b99b187490100529fa5d2905ffdfd7c486
+  languageName: node
+  linkType: hard
+
 "@standardnotes/styles@workspace:*, @standardnotes/styles@workspace:^, @standardnotes/styles@workspace:packages/styles":
   version: 0.0.0-use.local
   resolution: "@standardnotes/styles@workspace:packages/styles"
@@ -5562,14 +5749,22 @@ __metadata:
     css-loader: "*"
     eslint: "*"
     mini-css-extract-plugin: ^2.5.3
-    node-sass: "*"
+    node-sass: ^7.0.3
     prettier: "*"
+    sass: ^1.52.3
     sass-loader: "*"
     style-loader: ~3.3.1
     typescript: "*"
     webpack: "*"
   languageName: unknown
   linkType: soft
+
+"@standardnotes/titanium-theme@npm:^1.4.6":
+  version: 1.4.6
+  resolution: "@standardnotes/titanium-theme@npm:1.4.6"
+  checksum: 1374d0015f33d1e3a6c669576cccd469f287dc1c2332d941450ec3d4c59f2677872d701b474acc8dc08b8d00107ab3836e4d670138cec66da75ed68226bb393a
+  languageName: node
+  linkType: hard
 
 "@standardnotes/toast@workspace:*, @standardnotes/toast@workspace:^, @standardnotes/toast@workspace:packages/toast":
   version: 0.0.0-use.local
@@ -5649,11 +5844,29 @@ __metadata:
     "@reach/listbox": ^0.17.0
     "@reach/tooltip": ^0.17.0
     "@reach/visually-hidden": ^0.17.0
+    "@standardnotes/authenticator": ^2.3.8
+    "@standardnotes/autobiography-theme": ^1.2.7
+    "@standardnotes/bold-editor": ^1.6.3
+    "@standardnotes/classic-code-editor": ^1.5.6
+    "@standardnotes/dynamic-theme": ^1.2.8
     "@standardnotes/filepicker": "workspace:*"
+    "@standardnotes/focus-theme": ^1.4.6
+    "@standardnotes/futura-theme": ^1.4.6
     "@standardnotes/icons": "workspace:*"
+    "@standardnotes/markdown-basic": ^1.6.1
+    "@standardnotes/markdown-hybrid": ^1.7.7
+    "@standardnotes/markdown-math": ^1.4.1
+    "@standardnotes/markdown-minimal": ^1.2.1
+    "@standardnotes/markdown-visual": ^1.0.7
+    "@standardnotes/midnight-theme": ^1.4.6
+    "@standardnotes/rich-text": ^1.8.7
+    "@standardnotes/simple-task-editor": ^1.3.10
     "@standardnotes/sncrypto-web": "workspace:*"
     "@standardnotes/snjs": "workspace:*"
+    "@standardnotes/solarized-dark-theme": ^1.4.6
+    "@standardnotes/spreadsheets": ^1.6.7
     "@standardnotes/styles": "workspace:*"
+    "@standardnotes/titanium-theme": ^1.4.6
     "@standardnotes/toast": "workspace:*"
     "@standardnotes/ui-services": "workspace:^"
     "@types/jest": ^29.2.0
@@ -5679,9 +5892,10 @@ __metadata:
     jest-environment-jsdom: ^29.2.1
     lint-staged: ">=12"
     mini-css-extract-plugin: ^2.6.1
+    minimatch: ^5.1.0
     mobx: ^6.6.2
     mobx-react-lite: ^3.4.0
-    node-sass: "*"
+    node-sass: ^7.0.3
     npm-check-updates: "*"
     postcss: ^8.4.16
     postcss-loader: ^7.0.1
@@ -10078,6 +10292,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chokidar@npm:>=3.0.0 <4.0.0, chokidar@npm:^3.4.1, chokidar@npm:^3.4.2, chokidar@npm:^3.5.1, chokidar@npm:^3.5.3":
+  version: 3.5.3
+  resolution: "chokidar@npm:3.5.3"
+  dependencies:
+    anymatch: ~3.1.2
+    braces: ~3.0.2
+    fsevents: ~2.3.2
+    glob-parent: ~5.1.2
+    is-binary-path: ~2.1.0
+    is-glob: ~4.0.1
+    normalize-path: ~3.0.0
+    readdirp: ~3.6.0
+  dependenciesMeta:
+    fsevents:
+      optional: true
+  checksum: b49fcde40176ba007ff361b198a2d35df60d9bb2a5aab228279eb810feae9294a6b4649ab15981304447afe1e6ffbf4788ad5db77235dc770ab777c6e771980c
+  languageName: node
+  linkType: hard
+
 "chokidar@npm:^2.1.8":
   version: 2.1.8
   resolution: "chokidar@npm:2.1.8"
@@ -10098,25 +10331,6 @@ __metadata:
     fsevents:
       optional: true
   checksum: 0c43e89cbf0268ef1e1f41ce8ec5233c7ba022c6f3282c2ef6530e351d42396d389a1148c5a040f291cf1f4083a4c6b2f51dad3f31c726442ea9a337de316bcf
-  languageName: node
-  linkType: hard
-
-"chokidar@npm:^3.4.1, chokidar@npm:^3.4.2, chokidar@npm:^3.5.1, chokidar@npm:^3.5.3":
-  version: 3.5.3
-  resolution: "chokidar@npm:3.5.3"
-  dependencies:
-    anymatch: ~3.1.2
-    braces: ~3.0.2
-    fsevents: ~2.3.2
-    glob-parent: ~5.1.2
-    is-binary-path: ~2.1.0
-    is-glob: ~4.0.1
-    normalize-path: ~3.0.0
-    readdirp: ~3.6.0
-  dependenciesMeta:
-    fsevents:
-      optional: true
-  checksum: b49fcde40176ba007ff361b198a2d35df60d9bb2a5aab228279eb810feae9294a6b4649ab15981304447afe1e6ffbf4788ad5db77235dc770ab777c6e771980c
   languageName: node
   linkType: hard
 
@@ -16349,6 +16563,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"immutable@npm:^4.0.0":
+  version: 4.1.0
+  resolution: "immutable@npm:4.1.0"
+  checksum: b9bc1f14fb18eb382d48339c064b24a1f97ae4cf43102e0906c0a6e186a27afcd18b55ca4a0b63c98eefb58143e2b5ebc7755a5fb4da4a7ad84b7a6096ac5b13
+  languageName: node
+  linkType: hard
+
 "import-fresh@npm:^2.0.0":
   version: 2.0.0
   resolution: "import-fresh@npm:2.0.0"
@@ -21379,31 +21600,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-sass@npm:*":
-  version: 7.0.3
-  resolution: "node-sass@npm:7.0.3"
-  dependencies:
-    async-foreach: ^0.1.3
-    chalk: ^4.1.2
-    cross-spawn: ^7.0.3
-    gaze: ^1.0.0
-    get-stdin: ^4.0.1
-    glob: ^7.0.3
-    lodash: ^4.17.15
-    meow: ^9.0.0
-    nan: ^2.13.2
-    node-gyp: ^8.4.1
-    npmlog: ^5.0.0
-    request: ^2.88.0
-    sass-graph: ^4.0.1
-    stdout-stream: ^1.4.0
-    true-case-path: ^1.0.2
-  bin:
-    node-sass: bin/node-sass
-  checksum: 7d577d0fb68948959f367341e6cfc2858aa37abc5fadbd9e6b477ed0d192bebf7f8516d0b53c27be30ab05d5cd62d8a9bab08cc4442ef901b02cb51d864b4419
-  languageName: node
-  linkType: hard
-
 "node-sass@npm:^6.0.0":
   version: 6.0.1
   resolution: "node-sass@npm:6.0.1"
@@ -21426,6 +21622,31 @@ __metadata:
   bin:
     node-sass: bin/node-sass
   checksum: 930a147aeaa1d9e91e3453199125c5ed2cb13e94f8466f221bf3ee1501007f453ccb946e121731f945d88aa8ffc451716109f2aea3b2beac70b46af00397c55f
+  languageName: node
+  linkType: hard
+
+"node-sass@npm:^7.0.3":
+  version: 7.0.3
+  resolution: "node-sass@npm:7.0.3"
+  dependencies:
+    async-foreach: ^0.1.3
+    chalk: ^4.1.2
+    cross-spawn: ^7.0.3
+    gaze: ^1.0.0
+    get-stdin: ^4.0.1
+    glob: ^7.0.3
+    lodash: ^4.17.15
+    meow: ^9.0.0
+    nan: ^2.13.2
+    node-gyp: ^8.4.1
+    npmlog: ^5.0.0
+    request: ^2.88.0
+    sass-graph: ^4.0.1
+    stdout-stream: ^1.4.0
+    true-case-path: ^1.0.2
+  bin:
+    node-sass: bin/node-sass
+  checksum: 7d577d0fb68948959f367341e6cfc2858aa37abc5fadbd9e6b477ed0d192bebf7f8516d0b53c27be30ab05d5cd62d8a9bab08cc4442ef901b02cb51d864b4419
   languageName: node
   linkType: hard
 
@@ -26542,6 +26763,19 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sass@npm:^1.52.3":
+  version: 1.56.0
+  resolution: "sass@npm:1.56.0"
+  dependencies:
+    chokidar: ">=3.0.0 <4.0.0"
+    immutable: ^4.0.0
+    source-map-js: ">=0.6.2 <2.0.0"
+  bin:
+    sass: sass.js
+  checksum: 37fb48b838f7a12f3c3efbf27bfc5f2b7fba015ed4b11effe32bd9488e30e1d5cefcbfef1e5c5dbd95557889fe2c7ec72f33e898cfc76182ea34eae03b1a4fb1
+  languageName: node
+  linkType: hard
+
 "sax@npm:^1.2.4, sax@npm:~1.2.4":
   version: 1.2.4
   resolution: "sax@npm:1.2.4"
@@ -27320,7 +27554,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"source-map-js@npm:^1.0.2":
+"source-map-js@npm:>=0.6.2 <2.0.0, source-map-js@npm:^1.0.2":
   version: 1.0.2
   resolution: "source-map-js@npm:1.0.2"
   checksum: c049a7fc4deb9a7e9b481ae3d424cc793cb4845daa690bc5a05d428bf41bf231ced49b4cf0c9e77f9d42fdb3d20d6187619fc586605f5eabe995a316da8d377c

@@ -16,11 +16,6 @@ updates:
       interval: "daily"
 
   - package-ecosystem: "npm"
-    directory: "/packages/components"
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "npm"
     directory: "/packages/desktop"
     schedule:
       interval: "daily"

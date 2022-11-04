@@ -29,12 +29,13 @@ import {
   SNNote,
   ComponentDataDomain,
   MutationType,
+  OutgoingItemMessagePayload,
 } from '@standardnotes/models'
 import find from 'lodash/find'
 
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import { environmentToString, platformToString } from '@Lib/Application/Platforms'
-import { OutgoingItemMessagePayload, MessageReply, MessageReplyData } from './Types'
+import { MessageReply, MessageReplyData } from './Types'
 import { ComponentAction, ComponentPermission, FindNativeFeature } from '@standardnotes/features'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { UuidString } from '@Lib/Types/UuidString'
