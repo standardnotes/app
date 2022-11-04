@@ -51,7 +51,7 @@ export function isSameDay(dateA: Date, dateB: Date): boolean {
 export function debounce(this: any, func: any, wait: number, immediate = false) {
   let timeout: NodeJS.Timeout | null
   return () => {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    // eslint-disable-next-line @typescript-eslint/no-this-alias, no-invalid-this
     const context = this
     // eslint-disable-next-line prefer-rest-params
     const args = arguments

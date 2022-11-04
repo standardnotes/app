@@ -17,7 +17,7 @@
     "ios-dev": "react-native run-ios --scheme StandardNotesDev",
     "ios-prod": "react-native run-ios --scheme StandardNotes",
     "lint:fix": "yarn lint --fix",
-    "lint": "yarn tsc && yarn eslint . --ext .ts,.tsx",
+    "lint": "yarn eslint src --ext .ts,.tsx",
     "pods": "yarn install:pods",
     "start": "react-native start",
     "tsc": "tsc --noEmit",

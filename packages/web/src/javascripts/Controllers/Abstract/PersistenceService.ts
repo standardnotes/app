@@ -62,7 +62,7 @@ export class PersistenceService {
       return
     }
 
-    this.application.removeValue(StorageKey.MasterStatePersistenceKey)
+    void this.application.removeValue(StorageKey.MasterStatePersistenceKey)
   }
 
   getPersistedValues(): PersistedStateValue {

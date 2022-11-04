@@ -101,7 +101,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   )
 
   const resetTagPreferences = useCallback(() => {
-    application.mutator.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
+    void application.mutator.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
       mutator.preferences = undefined
     })
   }, [application, selectedTag])

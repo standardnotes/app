@@ -48,7 +48,7 @@ const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, compone
   const component: SNComponent = componentViewer.component
 
   const manageSubscription = useCallback(() => {
-    openSubscriptionDashboard(application)
+    void openSubscriptionDashboard(application)
   }, [application])
 
   const reloadValidityStatus = useCallback(() => {

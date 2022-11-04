@@ -101,7 +101,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
   const setNewNoteTitleFormatChange = (value: string) => {
     setNewNoteTitleFormat(value as NewNoteTitleFormat)
     if (mode === 'global') {
-      application.setPreference(PrefKey.NewNoteTitleFormat, value as NewNoteTitleFormat)
+      void application.setPreference(PrefKey.NewNoteTitleFormat, value as NewNoteTitleFormat)
     } else {
       void changePreferencesCallback({ newNoteTitleFormat: value as NewNoteTitleFormat })
     }
@@ -168,7 +168,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
       if (mode === 'tag') {
         void changePreferencesCallback({ customNoteTitleFormat: newFormat })
       } else {
-        application.setPreference(PrefKey.CustomNoteTitleFormat, newFormat)
+        void application.setPreference(PrefKey.CustomNoteTitleFormat, newFormat)
       }
     }, PrefChangeDebounceTimeInMs)
   }

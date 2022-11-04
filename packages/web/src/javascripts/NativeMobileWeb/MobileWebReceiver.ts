@@ -39,6 +39,7 @@ export class MobileWebReceiver {
         this.handleNativeEvent(nativeEvent, messageData)
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.log('[MobileWebReceiver] Error parsing message from React Native', error)
     }
   }

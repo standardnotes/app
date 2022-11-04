@@ -21,7 +21,7 @@
     "start": "tsc -p tsconfig.json --watch",
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint src --ext .ts",
     "test": "jest spec"
   },
   "dependencies": {
@@ -37,6 +37,7 @@
     "@types/lodash": "^4.14.179",
     "@types/node": "^18.0.0",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "eslint": "*",
     "eslint-plugin-prettier": "*",
     "jest": "^28.1.2",
     "jsdom": "^20.0.0",

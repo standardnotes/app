@@ -41,7 +41,7 @@ const loadAndStartApplication = async () => {
 
   window.device = await createDesktopDevice(remoteBridge)
 
-  window.startApplication(DEFAULT_SYNC_SERVER, window.device, window.enableUnfinishedFeatures, WEBSOCKET_URL)
+  return window.startApplication(DEFAULT_SYNC_SERVER, window.device, window.enableUnfinishedFeatures, WEBSOCKET_URL)
 }
 
 window.onload = () => {
@@ -154,5 +154,5 @@ window.electronMainEvents.handleWindowFocused(() => {
 })
 
 window.electronMainEvents.handleInstallComponentComplete((_: IpcRendererEvent, data: any) => {
-  window.webClient.onComponentInstallationComplete(data.component, undefined)
+  void window.webClient.onComponentInstallationComplete(data.component, undefined)
 })

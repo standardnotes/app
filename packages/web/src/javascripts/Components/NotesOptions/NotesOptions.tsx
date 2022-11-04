@@ -392,7 +392,7 @@ const NotesOptions = ({
       <button
         className={defaultClassNames}
         onClick={() => {
-          application.isNativeMobileWeb() ? shareSelectedNotes(application, notes) : downloadSelectedItems()
+          application.isNativeMobileWeb() ? void shareSelectedNotes(application, notes) : void downloadSelectedItems()
         }}
       >
         <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
