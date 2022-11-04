@@ -13,7 +13,9 @@
     "e2e-server.js"
   ],
   "license": "AGPL-3.0-or-later",
-  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "start": "webpack -w --config webpack.dev.js",
     "start:test-server": "yarn node e2e-server.js",
