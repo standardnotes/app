@@ -344,11 +344,13 @@ export class SNComponentManager
 
     const isMobile = this.environment === Environment.Mobile
     if (nativeFeature) {
-      let baseUrlRequiredForThemesInsideEditors = window.location.origin
       if (isMobile) {
-        baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]
+        const baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]
+        return `${baseUrlRequiredForThemesInsideEditors}/web-src/components/assets/${component.identifier}/${nativeFeature.index_path}`
+      } else {
+        const baseUrlRequiredForThemesInsideEditors = window.location.origin
+        return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${component.identifier}/${nativeFeature.index_path}`
       }
-      return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${component.identifier}/${nativeFeature.index_path}`
     }
 
     let url = component.hosted_url || component.legacy_url

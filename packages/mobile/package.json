@@ -22,7 +22,7 @@
     "start": "react-native start",
     "tsc": "tsc --noEmit",
     "upgrade:snjs": "ncu -u '@standardnotes/*'",
-    "bundle:web": "mkdir -p html/Web.bundle/src/web-src/ && cp -r ../web/dist/. html/Web.bundle/src/web-src/ && mkdir -p html/Web.bundle/src/components/assets && cp -r ../components/dist/assets/. html/Web.bundle/src/components/assets/"
+    "bundle:web": "mkdir -p html/Web.bundle/src/web-src/ && cp -r ../web/dist/. html/Web.bundle/src/web-src/"
   },
   "installConfig": {
     "hoistingLimits": "workspaces"
