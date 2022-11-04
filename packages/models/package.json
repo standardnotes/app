@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/models",
-  "version": "1.34.1",
+  "version": "1.34.2",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -22,21 +22,19 @@
     "test": "jest"
   },
   "devDependencies": {
+    "@standardnotes/common": "^1.43.0",
+    "@standardnotes/features": "workspace:*",
+    "@standardnotes/responses": "workspace:*",
+    "@standardnotes/utils": "workspace:*",
     "@types/jest": "^28.1.5",
     "@types/lodash": "^4.14.182",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "eslint": "*",
     "eslint-plugin-prettier": "*",
     "jest": "^28.1.2",
+    "lodash": "^4.17.21",
+    "reflect-metadata": "^0.1.13",
     "ts-jest": "^28.0.5",
     "typescript": "*"
-  },
-  "dependencies": {
-    "@standardnotes/common": "^1.43.0",
-    "@standardnotes/features": "workspace:*",
-    "@standardnotes/responses": "workspace:*",
-    "@standardnotes/utils": "workspace:*",
-    "lodash": "^4.17.21",
-    "reflect-metadata": "^0.1.13"
   }
 }
