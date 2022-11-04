@@ -43,7 +43,7 @@ const LinkedItemSearchResults = ({
               if (cannotLinkItem) {
                 premiumModal.activate('Note linking')
               } else {
-                linkItemToSelectedItem(result)
+                void linkItemToSelectedItem(result)
                 onClickCallback?.()
               }
             }}
@@ -62,7 +62,7 @@ const LinkedItemSearchResults = ({
         <button
           className="group flex w-full items-center gap-2 overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground focus:bg-info-backdrop"
           onClick={() => {
-            createAndAddNewTag(searchQuery)
+            void createAndAddNewTag(searchQuery)
             onClickCallback?.()
           }}
         >

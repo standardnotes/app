@@ -1,0 +1,60 @@
+module.exports = {
+  env: {
+    node: true,
+    commonjs: true,
+  },
+  parserOptions: {
+    project: './tsconfig.json',
+    tsconfigRootDir: __dirname,
+  },
+  root: true,
+  parser: '@typescript-eslint/parser',
+  plugins: ['@typescript-eslint', 'prettier'],
+  extends: ['prettier/prettier', 'plugin:react-hooks/recommended'],
+  rules: {
+    'no-console': 'warn',
+    '@typescript-eslint/no-explicit-any': 'warn',
+    '@typescript-eslint/no-var-requires': 'off',
+    eqeqeq: ['off'],
+    'no-void': ['off'],
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        vars: 'all',
+        args: 'after-used',
+        ignoreRestSiblings: false,
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_',
+      },
+    ],
+    '@typescript-eslint/no-floating-promises': ['error'],
+    'block-scoped-var': 'error',
+    'comma-dangle': ['error', 'always-multiline'],
+    curly: ['error', 'all'],
+    'no-confusing-arrow': 'error',
+    'no-inline-comments': 'warn',
+    'no-invalid-this': 'error',
+    'no-return-assign': 'warn',
+    'no-constructor-return': 'error',
+    'no-duplicate-imports': 'error',
+    'no-self-compare': 'error',
+
+    'no-unmodified-loop-condition': 'error',
+    'no-unused-private-class-members': 'error',
+    'object-curly-spacing': ['error', 'always'],
+    quotes: ['error', 'single', { avoidEscape: true }],
+    semi: ['error', 'never'],
+    'prettier/prettier': [
+      'error',
+      {
+        singleQuote: true,
+        trailingComma: 'all',
+        printWidth: 120,
+        semi: false,
+      },
+      {
+        usePrettierrc: false,
+      },
+    ],
+  },
+}

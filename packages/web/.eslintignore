@@ -1,7 +1,0 @@
-dist
-node_modules
-web.webpack-defaults.js
-coverage
-src/components
-src/favicon
-src/vendor

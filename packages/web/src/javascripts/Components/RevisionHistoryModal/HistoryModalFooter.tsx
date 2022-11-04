@@ -18,7 +18,7 @@ const HistoryModalFooter = ({ dismissModal, noteHistoryController }: Props) => {
 
   const restoreSelectedRevision = useCallback(() => {
     if (selectedRevision) {
-      restoreRevision(selectedRevision)
+      void restoreRevision(selectedRevision)
       dismissModal()
     }
   }, [dismissModal, restoreRevision, selectedRevision])

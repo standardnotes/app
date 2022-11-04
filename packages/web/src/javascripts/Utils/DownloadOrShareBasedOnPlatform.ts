@@ -15,12 +15,12 @@ export const downloadOrShareBlobBasedOnPlatform = async (
   }
 
   if (application.platform === Platform.Ios) {
-    shareBlobOnMobile(application, blob, filename)
+    void shareBlobOnMobile(application, blob, filename)
     return
   }
 
   if (application.platform === Platform.Android) {
-    downloadBlobOnAndroid(application, blob, filename, showToastOnAndroid)
+    void downloadBlobOnAndroid(application, blob, filename, showToastOnAndroid)
     return
   }
 }

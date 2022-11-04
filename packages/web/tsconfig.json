@@ -1,5 +1,4 @@
 {
-  "extends": "../../node_modules/@standardnotes/config/src/tsconfig.json",
   "compilerOptions": {
     "skipLibCheck": true,
     "lib": ["ES2022"],
@@ -23,5 +22,5 @@
       "@Controllers/*": ["src/javascripts/Controllers/*"]
     }
   },
-  "exclude": ["node_modules", "dist", "coverage", "src/components", "src/vendor"]
+  "include": ["src/javascripts"]
 }

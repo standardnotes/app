@@ -48,7 +48,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
                   key={entry.uuid}
                   isSelected={(selectedEntry as RevisionListEntry)?.uuid === entry.uuid}
                   onClick={() => {
-                    selectRemoteRevision(entry)
+                    void selectRemoteRevision(entry)
                     onSelectRevision()
                   }}
                 >
