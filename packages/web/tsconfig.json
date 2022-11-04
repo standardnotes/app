@@ -23,5 +23,5 @@
       "@Controllers/*": ["src/javascripts/Controllers/*"]
     }
   },
-  "exclude": ["node_modules", "dist", "coverage"]
+  "exclude": ["node_modules", "dist", "coverage", "src/components", "src/vendor"]
 }

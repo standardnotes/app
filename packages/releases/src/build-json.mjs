@@ -1,4 +1,3 @@
-import Components from '../../components/package.json' assert { type: 'json' }
 import Desktop from '../../desktop/package.json' assert { type: 'json' }
 import Mobile from '../../mobile/package.json' assert { type: 'json' }
 import Web from '../../web/package.json' assert { type: 'json' }
@@ -11,7 +10,6 @@ const BaseFileName = `standard-notes-${DesktopVersion}`
 const ReleaseUrl = `${CdnUrl}${DesktopPackageName}@${DesktopVersion}/${BaseFileName}`.replaceAll('@', '%40')
 
 const Versions = {
-  [Components.name]: Components.version,
   [Desktop.name]: Desktop.version,
   [Mobile.name]: Mobile.version,
   [Web.name]: Web.version,

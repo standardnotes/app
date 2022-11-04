@@ -200,6 +200,7 @@ const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, compone
       {error === ComponentViewerError.MissingUrl && <UrlMissing componentName={component.displayName} />}
       {component.uuid && isComponentValid && (
         <iframe
+          className="h-full w-full grow bg-transparent"
           ref={iframeRef}
           onLoad={onIframeLoad}
           data-component-viewer-id={componentViewer.identifier}

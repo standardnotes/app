@@ -9,30 +9,25 @@
   },
   "workspaces": {
     "packages": [
-      "packages/*",
-      "packages/components/src/Packages/Deprecated/*",
-      "packages/components/src/Packages/Editors/*",
-      "packages/components/src/Packages/Themes/*"
+      "packages/*"
     ]
   },
   "engines": {
     "node": ">=12.19.0 <17.0.0"
   },
   "scripts": {
-    "lint": "yarn workspaces foreach -t --verbose --exclude @standardnotes/components-meta run lint",
-    "test": "yarn workspaces foreach -pt --jobs 10 --verbose --exclude @standardnotes/components-meta run test",
+    "lint": "yarn workspaces foreach -t --verbose run lint",
+    "test": "yarn workspaces foreach -pt --jobs 10 --verbose run test",
     "clean": "lerna run clean",
     "build:all": "yarn workspaces foreach -pt --topological-dev --verbose --exclude '{@standardnotes/docs}' run build",
-    "build:components": "yarn workspaces foreach -pt --topological-dev --verbose --interlaced -R --from @standardnotes/components-meta run build",
-    "build:web": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/web --exclude @standardnotes/components-meta run build",
-    "build:desktop": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/desktop --exclude @standardnotes/components-meta run build",
-    "build:mobile": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/mobile --exclude @standardnotes/components-meta run build",
-    "build:snjs": "yarn workspaces foreach -p --topological-dev --verbose -R --from @standardnotes/snjs --exclude @standardnotes/components-meta run build",
-    "build:services": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/services --exclude @standardnotes/components-meta run build",
-    "build:api": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/api --exclude @standardnotes/components-meta run build",
+    "build:web": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/web run build",
+    "build:desktop": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/desktop run build",
+    "build:mobile": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/mobile run build",
+    "build:snjs": "yarn workspaces foreach -p --topological-dev --verbose -R --from @standardnotes/snjs run build",
+    "build:services": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/services run build",
+    "build:api": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/api run build",
     "start:server:web": "lerna run start --scope=@standardnotes/web",
     "start:server:e2e": "lerna run start:test-server --scope=@standardnotes/snjs",
-    "prepare": "husky install",
     "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock && yarn install",
     "release:prod": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",
     "publish:prod": "lerna publish from-git --yes --no-verify-access --loglevel verbose",
@@ -66,7 +61,6 @@
     "css-loader": "^6.7.1",
     "eslint": "^8.26.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "npm-check-updates": "^16.3.15",
     "prettier": "^2.7.1",

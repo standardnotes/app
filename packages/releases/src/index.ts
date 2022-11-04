@@ -14,11 +14,7 @@ export type Platform =
   | 'WinX64Exe'
   | 'WinExe'
 
-export type Package =
-  | '@standardnotes/mobile'
-  | '@standardnotes/desktop'
-  | '@standardnotes/components-meta'
-  | '@standardnotes/web'
+export type Package = '@standardnotes/mobile' | '@standardnotes/desktop' | '@standardnotes/web'
 
 export type Versions = Record<Package, string>
 export type Downloads = Record<Platform, string>

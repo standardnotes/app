@@ -5,6 +5,8 @@ import { NoteToNoteReference } from '../../Abstract/Reference/NoteToNoteReferenc
 import { ContentType } from '@standardnotes/common'
 import { ContentReferenceType } from '../../Abstract/Item'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
+import { blockContentToNoteTextRendition, bracketSyntaxForBlock, NoteBlock, stringIndexOfBlock } from './NoteBlocks'
+import { removeFromArray } from '@standardnotes/utils'
 
 export class NoteMutator extends DecryptedItemMutator<NoteContent> {
   set title(title: string) {
@@ -41,6 +43,65 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
 
   set authorizedForListed(authorizedForListed: boolean) {
     this.mutableContent.authorizedForListed = authorizedForListed
+  }
+
+  addBlock(block: NoteBlock): void {
+    if (!this.mutableContent.blocksItem) {
+      this.mutableContent.blocksItem = { blocks: [] }
+    }
+
+    this.mutableContent.blocksItem.blocks.push(block)
+
+    const brackets = bracketSyntaxForBlock(block)
+
+    this.text += `${brackets.open}${block.content}${brackets.close}`
+  }
+
+  removeBlock(block: NoteBlock): void {
+    if (!this.mutableContent.blocksItem) {
+      return
+    }
+
+    removeFromArray(this.mutableContent.blocksItem.blocks, block)
+
+    const location = stringIndexOfBlock(this.mutableContent.text, block)
+
+    if (location) {
+      this.mutableContent.text = this.mutableContent.text.slice(location.begin, location.end)
+    }
+  }
+
+  changeBlockContent(blockId: string, content: string): void {
+    const block = this.mutableContent.blocksItem?.blocks.find((b) => b.id === blockId)
+    if (!block) {
+      return
+    }
+
+    block.content = content
+
+    const location = stringIndexOfBlock(this.mutableContent.text, block)
+
+    if (location) {
+      const replaceRange = (s: string, start: number, end: number, substitute: string) => {
+        return s.substring(0, start) + substitute + s.substring(end)
+      }
+
+      this.mutableContent.text = replaceRange(
+        this.mutableContent.text,
+        location.begin,
+        location.end,
+        blockContentToNoteTextRendition({ id: blockId }, content),
+      )
+    }
+  }
+
+  changeBlockSize(blockId: string, size: { width: number; height: number }): void {
+    const block = this.mutableContent.blocksItem?.blocks.find((b) => b.id === blockId)
+    if (!block) {
+      return
+    }
+
+    block.size = size
   }
 
   toggleSpellcheck(): void {
