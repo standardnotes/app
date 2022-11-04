@@ -32,9 +32,7 @@ const SmartViews = ({ application, viewControllerManager }: Props) => {
                 key={view.uuid}
                 view={view}
                 onEdit={() => setEditingSmartView(view)}
-                onDelete={() => {
-                  //
-                }}
+                onDelete={() => viewControllerManager.navigationController.remove(view, true)}
               />
             ))}
           </div>
