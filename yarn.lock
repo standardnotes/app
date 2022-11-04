@@ -5283,7 +5283,8 @@ __metadata:
     "@standardnotes/common": ^1.43.0
     "@standardnotes/security": ^1.2.0
     "@types/jest": ^28.1.5
-    "@typescript-eslint/eslint-plugin": ^5.30.0
+    "@typescript-eslint/eslint-plugin": "*"
+    eslint: "*"
     eslint-plugin-prettier: "*"
     jest: ^28.1.2
     reflect-metadata: ^0.1.13
@@ -5314,6 +5315,7 @@ __metadata:
     "@types/jest": ^28.1.5
     "@types/wicg-file-system-access": ^2020.9.5
     "@typescript-eslint/eslint-plugin": ^5.30.0
+    eslint: "*"
     eslint-plugin-prettier: "*"
     jest: ^28.1.2
     reflect-metadata: ^0.1.13
@@ -5335,6 +5337,7 @@ __metadata:
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^28.1.5
     "@typescript-eslint/eslint-plugin": ^5.30.0
+    eslint: "*"
     eslint-plugin-prettier: "*"
     jest: ^28.1.2
     reflect-metadata: ^0.1.13
@@ -5543,6 +5546,7 @@ __metadata:
     "@standardnotes/security": ^1.1.0
     "@types/jest": ^28.1.5
     "@typescript-eslint/eslint-plugin": ^5.30.0
+    eslint: "*"
     eslint-plugin-prettier: "*"
     jest: ^28.1.2
     reflect-metadata: ^0.1.13
@@ -5618,6 +5622,7 @@ __metadata:
   dependencies:
     "@typescript-eslint/eslint-plugin": ^5.30.0
     "@typescript-eslint/parser": ^5.12.1
+    eslint: "*"
     eslint-plugin-prettier: ^4.2.1
     reflect-metadata: ^0.1.13
     typescript: "*"
@@ -5799,6 +5804,7 @@ __metadata:
     "@types/jest": ^28.1.5
     "@typescript-eslint/eslint-plugin": ^5.30.0
     "@typescript-eslint/parser": ^5.12.1
+    eslint: "*"
     eslint-plugin-prettier: "*"
     jest: ^28.1.2
     ts-jest: ^28.0.5
@@ -5818,6 +5824,7 @@ __metadata:
     "@types/node": ^18.0.0
     "@typescript-eslint/eslint-plugin": ^5.30.0
     dompurify: ^2.3.8
+    eslint: "*"
     eslint-plugin-prettier: "*"
     jest: ^28.1.2
     jsdom: ^20.0.0

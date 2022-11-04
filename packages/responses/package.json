@@ -20,12 +20,13 @@
     "start": "tsc -p tsconfig.json --watch",
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint src --ext .ts",
     "test": "jest spec --coverage --passWithNoTests"
   },
   "devDependencies": {
     "@types/jest": "^28.1.5",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "eslint": "*",
     "eslint-plugin-prettier": "*",
     "jest": "^28.1.2",
     "ts-jest": "^28.0.5"

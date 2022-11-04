@@ -20,12 +20,13 @@
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
     "watch": "tsc -p tsconfig.json --watch",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint src --ext .ts",
     "test": "yarn lint"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "@typescript-eslint/parser": "^5.12.1",
+    "eslint": "*",
     "eslint-plugin-prettier": "^4.2.1",
     "typescript": "*"
   },

@@ -1,65 +1,9 @@
 module.exports = {
   root: true,
-  parser: '@typescript-eslint/parser',
-  extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
+  extends: ['../../common.eslintrc.js'],
   parserOptions: {
     project: './lib/tsconfig.json',
     tsconfigRootDir: __dirname,
   },
-  plugins: ['@typescript-eslint', 'prettier'],
-  rules: {
-    'standard/no-callback-literal': 0, // Disable this as we have too many callbacks relying on literals
-    'no-throw-literal': 0,
-    camelcase: 'off',
-    'sort-imports': 'off',
-    'eol-last': 'error',
-    'no-multiple-empty-lines': ['error', { max: 1, maxEOF: 0 }],
-    'no-trailing-spaces': 'error',
-    '@typescript-eslint/no-explicit-any': 'warn',
-    '@typescript-eslint/no-unused-vars': [
-      'error',
-      {
-        vars: 'all',
-        args: 'after-used',
-        ignoreRestSiblings: false,
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-      },
-    ],
-    '@typescript-eslint/no-floating-promises': ['error'],
-    'block-scoped-var': 'error',
-    'comma-dangle': ['error', 'always-multiline'],
-    curly: ['error', 'all'],
-    'no-confusing-arrow': 'error',
-    'no-inline-comments': 'warn',
-    'no-invalid-this': 'error',
-    'no-return-assign': 'warn',
-    'no-constructor-return': 'error',
-    'no-duplicate-imports': 'error',
-    'no-self-compare': 'error',
-    'no-console': ['error', { allow: ['warn', 'error'] }],
-    'no-unmodified-loop-condition': 'error',
-    'no-unused-private-class-members': 'error',
-    'object-curly-spacing': ['error', 'always'],
-    quotes: ['error', 'single', { avoidEscape: true }],
-    semi: ['error', 'never'],
-    'prettier/prettier': [
-      'error',
-      {
-        singleQuote: true,
-        trailingComma: 'all',
-        printWidth: 120,
-        semi: false,
-      },
-      {
-        usePrettierrc: false,
-      },
-    ],
-  },
-  env: {
-    browser: true,
-  },
-  globals: {
-    __WEB_VERSION__: true,
-  },
+  ignorePatterns: ['**/*.spec.ts'],
 }
