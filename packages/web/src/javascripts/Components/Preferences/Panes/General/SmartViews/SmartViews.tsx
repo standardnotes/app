@@ -1,6 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { isSystemView, SmartView } from '@standardnotes/snjs'
+import { observer } from 'mobx-react-lite'
 import { useState } from 'react'
 import { Title } from '../../../PreferencesComponents/Content'
 import PreferencesGroup from '../../../PreferencesComponents/PreferencesGroup'
@@ -13,7 +14,7 @@ type Props = {
   viewControllerManager: ViewControllerManager
 }
 
-const SmartViews = ({ viewControllerManager }: Props) => {
+const SmartViews = ({ application, viewControllerManager }: Props) => {
   const [editingSmartView, setEditingSmartView] = useState<SmartView | undefined>(undefined)
 
   const nonSystemSmartViews = viewControllerManager.navigationController.smartViews.filter(
@@ -41,6 +42,7 @@ const SmartViews = ({ viewControllerManager }: Props) => {
       </PreferencesGroup>
       {!!editingSmartView && (
         <EditSmartViewModal
+          application={application}
           view={editingSmartView}
           closeDialog={() => {
             setEditingSmartView(undefined)
@@ -51,4 +53,4 @@ const SmartViews = ({ viewControllerManager }: Props) => {
   )
 }
 
-export default SmartViews
+export default observer(SmartViews)

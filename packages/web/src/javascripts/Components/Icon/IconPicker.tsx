@@ -11,10 +11,11 @@ type Props = {
   selectedValue: VectorIconNameOrEmoji
   onIconChange: (value?: string) => void
   platform: Platform
+  portalDropdown?: boolean
   className?: string
 }
 
-const IconPicker = ({ selectedValue, onIconChange, platform, className }: Props) => {
+const IconPicker = ({ selectedValue, onIconChange, platform, className, portalDropdown }: Props) => {
   const iconOptions = useMemo(
     () =>
       [...Object.keys(IconNameToSvgMapping)].map(
@@ -99,6 +100,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className }: Props)
             items={iconOptions}
             value={selectedValue}
             onChange={handleIconChange}
+            portal={portalDropdown}
           />
         )}
         {currentType === 'emoji' && (
