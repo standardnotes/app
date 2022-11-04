@@ -34,7 +34,7 @@
     "jest": "^28.1.2",
     "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13",
-    "ts-jest": "^28.0.5",
+    "ts-jest": "^29.0.3",
     "typescript": "*"
   }
 }
