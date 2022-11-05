@@ -13,16 +13,10 @@ import { PrefDefaults } from '@/Constants/PrefDefaults'
 import Dropdown from '@/Components/Dropdown/Dropdown'
 import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { WebApplication } from '@/Application/Application'
-import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 import { PreferenceMode } from './PreferenceMode'
 import dayjs from 'dayjs'
-
-const PlainEditorType = 'plain-editor'
-
-type EditorOption = DropdownItem & {
-  value: FeatureIdentifier | typeof PlainEditorType
-}
+import { getDropdownItemsForAllEditors, PlainEditorType } from '@/Utils/DropdownItemsForEditors'
 
 const PrefChangeDebounceTimeInMs = 25
 
@@ -107,7 +101,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
   const setNewNoteTitleFormatChange = (value: string) => {
     setNewNoteTitleFormat(value as NewNoteTitleFormat)
     if (mode === 'global') {
-      application.setPreference(PrefKey.NewNoteTitleFormat, value as NewNoteTitleFormat)
+      void application.setPreference(PrefKey.NewNoteTitleFormat, value as NewNoteTitleFormat)
     } else {
       void changePreferencesCallback({ newNoteTitleFormat: value as NewNoteTitleFormat })
     }
@@ -139,32 +133,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
   }
 
   useEffect(() => {
-    const editors = application.componentManager
-      .componentsForArea(ComponentArea.Editor)
-      .map((editor): EditorOption => {
-        const identifier = editor.package_info.identifier
-        const [iconType, tint] = application.iconsController.getIconAndTintForNoteType(editor.package_info.note_type)
-
-        return {
-          label: editor.displayName,
-          value: identifier,
-          ...(iconType ? { icon: iconType } : null),
-          ...(tint ? { iconClassName: `text-accessory-tint-${tint}` } : null),
-        }
-      })
-      .concat([
-        {
-          icon: 'plain-text',
-          iconClassName: 'text-accessory-tint-1',
-          label: PLAIN_EDITOR_NAME,
-          value: PlainEditorType,
-        },
-      ])
-      .sort((a, b) => {
-        return a.label.toLowerCase() < b.label.toLowerCase() ? -1 : 1
-      })
-
-    setEditorItems(editors)
+    setEditorItems(getDropdownItemsForAllEditors(application))
   }, [application])
 
   const setDefaultEditor = (value: string) => {
@@ -199,7 +168,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
       if (mode === 'tag') {
         void changePreferencesCallback({ customNoteTitleFormat: newFormat })
       } else {
-        application.setPreference(PrefKey.CustomNoteTitleFormat, newFormat)
+        void application.setPreference(PrefKey.CustomNoteTitleFormat, newFormat)
       }
     }, PrefChangeDebounceTimeInMs)
   }

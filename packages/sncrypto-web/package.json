@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/sncrypto-web",
-  "version": "1.14.0",
+  "version": "1.14.1",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -19,7 +19,7 @@
     "prebuild": "yarn clean",
     "build": "webpack --mode production && tsc",
     "watch": "webpack --mode production --watch",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint src --ext .ts",
     "test:e2e": "node test-server.js"
   },
   "dependencies": {

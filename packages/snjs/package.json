@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/snjs",
-  "version": "2.147.3",
+  "version": "2.147.6",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -24,7 +24,7 @@
     "build": "yarn tsc && webpack --config webpack.prod.js",
     "docs": "jsdoc -c jsdoc.json",
     "tsc": "tsc --project lib/tsconfig.json && tscpaths -p lib/tsconfig.json -s lib -o dist/@types",
-    "lint": "yarn lint:tsc && yarn lint:eslint",
+    "lint": "yarn lint:eslint lib",
     "lint:eslint": "eslint --ext .ts lib/",
     "lint:fix": "eslint --fix --ext .ts lib/",
     "lint:tsc": "tsc --noEmit --emitDeclarationOnly false --project lib/tsconfig.json",

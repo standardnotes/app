@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/features",
-  "version": "1.54.0",
+  "version": "1.54.3",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -21,7 +21,7 @@
     "start": "tsc -p tsconfig.json --watch",
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint src --ext .ts",
     "test": "jest"
   },
   "dependencies": {
@@ -32,7 +32,8 @@
   },
   "devDependencies": {
     "@types/jest": "^28.1.5",
-    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "@typescript-eslint/eslint-plugin": "*",
+    "eslint": "*",
     "eslint-plugin-prettier": "*",
     "jest": "^28.1.2",
     "ts-jest": "^28.0.5",

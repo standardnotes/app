@@ -1,5 +1,6 @@
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
 import { ItemContent } from '../../Abstract/Content/ItemContent'
+import { NoteBlocks } from './NoteBlocks'
 
 export interface NoteContentSpecialized {
   title: string
@@ -11,6 +12,7 @@ export interface NoteContentSpecialized {
   noteType?: NoteType
   editorIdentifier?: FeatureIdentifier | string
   authorizedForListed?: boolean
+  blocksItem?: NoteBlocks
 }
 
 export type NoteContent = NoteContentSpecialized & ItemContent

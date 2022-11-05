@@ -27,7 +27,7 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
 
   const handleClick = useCallback(() => {
     if (hasSubscription) {
-      openSubscriptionDashboard(application)
+      void openSubscriptionDashboard(application)
     } else if (hasAccount) {
       void loadPurchaseFlowUrl(application)
     } else if (window.plansUrl) {

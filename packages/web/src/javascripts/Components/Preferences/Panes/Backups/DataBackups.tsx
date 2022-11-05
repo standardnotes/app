@@ -78,12 +78,12 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
         .getArchiveService()
         .formattedDateForExports()}`
       const sanitizedFilename = sanitizeFileName(filename) + '.txt'
-      downloadOrShareBlobBasedOnPlatform(application, blobData, sanitizedFilename)
+      void downloadOrShareBlobBasedOnPlatform(application, blobData, sanitizedFilename)
     } else {
       const zippedDecryptedItemsBlob = await application.getArchiveService().getZippedDecryptedItemsBlob(data)
       const filename = `Standard Notes Backup - ${application.getArchiveService().formattedDateForExports()}`
       const sanitizedFilename = sanitizeFileName(filename) + '.zip'
-      downloadOrShareBlobBasedOnPlatform(application, zippedDecryptedItemsBlob, sanitizedFilename)
+      void downloadOrShareBlobBasedOnPlatform(application, zippedDecryptedItemsBlob, sanitizedFilename)
     }
   }
 

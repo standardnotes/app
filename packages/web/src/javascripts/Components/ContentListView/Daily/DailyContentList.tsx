@@ -113,7 +113,7 @@ const DailyContentList: FunctionComponent<Props> = ({
   const onClickTemplate = useCallback(
     (date: Date) => {
       setSelectedDay(date)
-      itemListController.createNewNote(undefined, date, 'editor')
+      void itemListController.createNewNote(undefined, date, 'editor')
       toggleAppPane(AppPaneId.Editor)
     },
     [setSelectedDay, itemListController, toggleAppPane],

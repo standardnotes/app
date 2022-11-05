@@ -1,4 +1,0 @@
-{
-  "extends": ["../../node_modules/@standardnotes/config/src/.eslintrc"],
-  "ignorePatterns": [".eslintrc.js", "webpack.config.js"]
-}

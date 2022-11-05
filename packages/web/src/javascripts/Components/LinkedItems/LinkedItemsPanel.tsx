@@ -206,7 +206,7 @@ const LinkedItemsPanel = ({
     }
 
     for (let i = 0; i < files.length; i++) {
-      filesController.uploadNewFile(files[i]).then((uploadedFiles) => {
+      void filesController.uploadNewFile(files[i]).then((uploadedFiles) => {
         if (uploadedFiles) {
           void linkItemToSelectedItem(uploadedFiles[0])
         }

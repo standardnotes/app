@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/encryption",
-  "version": "1.19.2",
+  "version": "1.19.5",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -18,7 +18,7 @@
     "start": "tsc -p tsconfig.json --watch",
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint src --ext .ts",
     "format": "prettier --write src",
     "test": "jest"
   },

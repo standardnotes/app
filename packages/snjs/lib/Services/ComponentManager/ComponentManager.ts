@@ -13,6 +13,7 @@ import {
   PermissionDialog,
   Environment,
   Platform,
+  ComponentMessage,
 } from '@standardnotes/models'
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import find from 'lodash/find'
@@ -39,6 +40,7 @@ import {
   DeviceInterface,
   isMobileDevice,
 } from '@standardnotes/services'
+import { BlocksComponentViewer } from './BlocksComponentViewer'
 
 const DESKTOP_URL_PREFIX = 'sn://'
 const LOCAL_HOST = 'localhost'
@@ -157,7 +159,6 @@ export class SNComponentManager
     component: SNComponent,
     contextItem?: UuidString,
     actionObserver?: ActionObserver,
-    urlOverride?: string,
   ): ComponentViewerInterface {
     const viewer = new ComponentViewer(
       component,
@@ -172,8 +173,36 @@ export class SNComponentManager
         runWithPermissions: this.runWithPermissions.bind(this),
         urlsForActiveThemes: this.urlsForActiveThemes.bind(this),
       },
-      urlOverride || this.urlForComponent(component),
+      this.urlForComponent(component),
       contextItem,
+      actionObserver,
+    )
+    this.viewers.push(viewer)
+    return viewer
+  }
+
+  public createBlockComponentViewer(
+    component: SNComponent,
+    noteId: string,
+    blockId: string,
+    actionObserver?: ActionObserver,
+  ): ComponentViewerInterface {
+    const viewer = new BlocksComponentViewer(
+      component,
+      noteId,
+      blockId,
+      this.itemManager,
+      this.syncService,
+      this.alertService,
+      this.preferencesSerivce,
+      this.featuresService,
+      this.environment,
+      this.platform,
+      {
+        runWithPermissions: this.runWithPermissions.bind(this),
+        urlsForActiveThemes: this.urlsForActiveThemes.bind(this),
+      },
+      this.urlForComponent(component),
       actionObserver,
     )
     this.viewers.push(viewer)
@@ -263,9 +292,10 @@ export class SNComponentManager
 
   onWindowMessage = (event: MessageEvent): void => {
     /** Make sure this message is for us */
-    if (event.data.sessionKey) {
-      this.log('Component manager received message', event.data)
-      this.componentViewerForSessionKey(event.data.sessionKey)?.handleMessage(event.data)
+    const data = event.data as ComponentMessage
+    if (data.sessionKey) {
+      this.log('Component manager received message', data)
+      this.componentViewerForSessionKey(data.sessionKey)?.handleMessage(data)
     }
   }
 
@@ -314,11 +344,13 @@ export class SNComponentManager
 
     const isMobile = this.environment === Environment.Mobile
     if (nativeFeature) {
-      let baseUrlRequiredForThemesInsideEditors = window.location.origin
       if (isMobile) {
-        baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]
+        const baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]
+        return `${baseUrlRequiredForThemesInsideEditors}/web-src/components/assets/${component.identifier}/${nativeFeature.index_path}`
+      } else {
+        const baseUrlRequiredForThemesInsideEditors = window.location.origin
+        return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${component.identifier}/${nativeFeature.index_path}`
       }
-      return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${component.identifier}/${nativeFeature.index_path}`
     }
 
     let url = component.hosted_url || component.legacy_url

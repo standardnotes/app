@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/services",
-  "version": "1.42.1",
+  "version": "1.42.4",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -19,8 +19,8 @@
     "start": "tsc -p tsconfig.json --watch",
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
     "test": "jest spec --coverage"
   },
   "dependencies": {

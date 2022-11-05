@@ -33,7 +33,7 @@ const LegacyHistoryList: FunctionComponent<Props> = ({ legacyHistory, noteHistor
             key={url}
             isSelected={selectedEntryUrl === url}
             onClick={() => {
-              selectLegacyRevision(entry)
+              void selectLegacyRevision(entry)
               onSelectRevision()
             }}
           >

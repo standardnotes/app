@@ -6,5 +6,5 @@ export const shareBlobOnMobile = async (application: WebApplication, blob: Blob,
     throw new Error('Share function being used outside mobile webview')
   }
   const base64 = await getBase64FromBlob(blob)
-  application.mobileDevice().shareBase64AsFile(base64, filename)
+  void application.mobileDevice().shareBase64AsFile(base64, filename)
 }

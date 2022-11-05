@@ -12,7 +12,7 @@ type Props = {
 
 const SubscriptionInformation = ({ subscriptionState, application }: Props) => {
   const manageSubscription = async () => {
-    openSubscriptionDashboard(application)
+    void openSubscriptionDashboard(application)
   }
 
   return (

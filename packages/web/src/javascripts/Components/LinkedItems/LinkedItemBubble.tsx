@@ -61,14 +61,14 @@ const LinkedItemBubble = ({
 
   const onUnlinkClick: MouseEventHandler = (event) => {
     event.stopPropagation()
-    unlinkItem(link)
+    void unlinkItem(link)
   }
 
   const onKeyDown: KeyboardEventHandler = (event) => {
     switch (event.key) {
       case KeyboardKey.Backspace: {
         focusPreviousItem()
-        unlinkItem(link)
+        void unlinkItem(link)
         break
       }
       case KeyboardKey.Left:

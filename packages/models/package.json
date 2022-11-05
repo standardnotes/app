@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/models",
-  "version": "1.34.4",
+  "version": "1.34.7",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -18,7 +18,7 @@
     "start": "tsc -p tsconfig.json --watch",
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
-    "lint": "eslint . --ext .ts",
+    "lint": "eslint src --ext .ts",
     "test": "jest"
   },
   "devDependencies": {
