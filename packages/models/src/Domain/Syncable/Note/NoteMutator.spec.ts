@@ -32,64 +32,56 @@ describe('note mutator', () => {
   it('should addBlock to new note', () => {
     const note = createNote({})
     const mutator = new NoteMutator(note, MutationType.NoUpdateUserTimestamps)
-    mutator.addBlock({ type: NoteType.Code, id: '123', editorIdentifier: 'markdown' }, 'test')
+    mutator.addBlock({ type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'test' })
     const result = mutator.getResult()
 
     expect(result.content.blocksItem).toEqual({
-      blocks: [{ type: NoteType.Code, id: '123', editorIdentifier: 'markdown' }],
+      blocks: [{ type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'test' }],
     })
-    expect(result.content.text).toEqual('<Block id=123>\ntest\n</Block id=123>')
   })
 
   it('should addBlock to existing note', () => {
     const note = createNote({
-      text: '<Block id=123>\ntest\n</Block id=123>',
       blocksItem: {
-        blocks: [{ type: NoteType.Code, id: '123', editorIdentifier: 'markdown' }],
+        blocks: [{ type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'test' }],
       },
     })
     const mutator = new NoteMutator(note, MutationType.NoUpdateUserTimestamps)
-    mutator.addBlock({ type: NoteType.RichText, id: '456', editorIdentifier: 'richy' }, 'test')
+    mutator.addBlock({ type: NoteType.RichText, id: '456', editorIdentifier: 'richy', content: 'test' })
     const result = mutator.getResult()
 
     expect(result.content.blocksItem).toEqual({
       blocks: [
-        { type: NoteType.Code, id: '123', editorIdentifier: 'markdown' },
-        { type: NoteType.RichText, id: '456', editorIdentifier: 'richy' },
+        { type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'test' },
+        { type: NoteType.RichText, id: '456', editorIdentifier: 'richy', content: 'test' },
       ],
     })
-    expect(result.content.text).toEqual(
-      '<Block id=123>\ntest\n</Block id=123>\n\n<Block id=456>\ntest\n</Block id=456>',
-    )
   })
 
   it('should removeBlock', () => {
     const note = createNote({
-      text: '<Block id=123>\ntest\n</Block id=123>\n\n<Block id=456>\ntest\n</Block id=456>',
       blocksItem: {
         blocks: [
-          { type: NoteType.Code, id: '123', editorIdentifier: 'markdown' },
-          { type: NoteType.Code, id: '456', editorIdentifier: 'markdown' },
+          { type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'test' },
+          { type: NoteType.Code, id: '456', editorIdentifier: 'markdown', content: 'test' },
         ],
       },
     })
     const mutator = new NoteMutator(note, MutationType.NoUpdateUserTimestamps)
-    mutator.removeBlock({ type: NoteType.Code, id: '123', editorIdentifier: 'markdown' })
+    mutator.removeBlock({ type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'test' })
     const result = mutator.getResult()
 
     expect(result.content.blocksItem).toEqual({
-      blocks: [{ type: NoteType.Code, id: '456', editorIdentifier: 'markdown' }],
+      blocks: [{ type: NoteType.Code, id: '456', editorIdentifier: 'markdown', content: 'test' }],
     })
-    expect(result.content.text).toEqual('\n\n<Block id=456>\ntest\n</Block id=456>')
   })
 
   it('should changeBlockContent', () => {
     const note = createNote({
-      text: '<Block id=123>\nold content 1\n</Block id=123>\n\n<Block id=456>\nold content 2\n</Block id=456>',
       blocksItem: {
         blocks: [
-          { type: NoteType.Code, id: '123', editorIdentifier: 'markdown' },
-          { type: NoteType.Code, id: '456', editorIdentifier: 'markdown' },
+          { type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'old content 1' },
+          { type: NoteType.Code, id: '456', editorIdentifier: 'markdown', content: 'old content 2' },
         ],
       },
     })
@@ -99,22 +91,18 @@ describe('note mutator', () => {
 
     expect(result.content.blocksItem).toEqual({
       blocks: [
-        { type: NoteType.Code, id: '123', editorIdentifier: 'markdown' },
-        { type: NoteType.Code, id: '456', editorIdentifier: 'markdown' },
+        { type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'new content' },
+        { type: NoteType.Code, id: '456', editorIdentifier: 'markdown', content: 'old content 2' },
       ],
     })
-    expect(result.content.text).toEqual(
-      '<Block id=123>\nnew content\n</Block id=123>\n\n<Block id=456>\nold content 2\n</Block id=456>',
-    )
   })
 
   it('should changeBlockSize', () => {
     const note = createNote({
-      text: '<Block id=123>test</Block id=123><Block id=456>test</Block id=456>',
       blocksItem: {
         blocks: [
-          { type: NoteType.Code, id: '123', editorIdentifier: 'markdown' },
-          { type: NoteType.Code, id: '456', editorIdentifier: 'markdown' },
+          { type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'test' },
+          { type: NoteType.Code, id: '456', editorIdentifier: 'markdown', content: 'test' },
         ],
       },
     })
@@ -124,8 +112,14 @@ describe('note mutator', () => {
 
     expect(result.content.blocksItem).toEqual({
       blocks: [
-        { type: NoteType.Code, id: '123', editorIdentifier: 'markdown', size: { width: 10, height: 20 } },
-        { type: NoteType.Code, id: '456', editorIdentifier: 'markdown' },
+        {
+          type: NoteType.Code,
+          id: '123',
+          editorIdentifier: 'markdown',
+          content: 'test',
+          size: { width: 10, height: 20 },
+        },
+        { type: NoteType.Code, id: '456', editorIdentifier: 'markdown', content: 'test' },
       ],
     })
   })

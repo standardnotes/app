@@ -45,6 +45,7 @@ describe('SNNote Tests', () => {
             id: '123',
             type: NoteType.Authentication,
             editorIdentifier: '456',
+            content: 'foo',
           },
         ],
       },
@@ -54,6 +55,7 @@ describe('SNNote Tests', () => {
       id: '123',
       type: NoteType.Authentication,
       editorIdentifier: '456',
+      content: 'foo',
     })
   })
 
@@ -73,31 +75,6 @@ describe('SNNote Tests', () => {
     expect(note.getBlock('123')).toBe(undefined)
   })
 
-  it('should getContentForBlock', () => {
-    const note = createNote({
-      text: '<Block id=123>test</Block id=123>',
-      blocksItem: {
-        blocks: [
-          {
-            id: '123',
-            type: NoteType.Authentication,
-            editorIdentifier: '456',
-          },
-        ],
-      },
-    })
-
-    expect(note.getContentForBlock({ id: '123' })).toBe('test')
-  })
-
-  it('should getContentForBlock with no blocks', () => {
-    const note = createNote({
-      text: 'some text',
-    })
-
-    expect(note.getContentForBlock({ id: '123' })).toBe(undefined)
-  })
-
   it('should get indexOfBlock', () => {
     const note = createNote({
       text: 'some text',
@@ -107,6 +84,7 @@ describe('SNNote Tests', () => {
             id: '123',
             type: NoteType.Authentication,
             editorIdentifier: '456',
+            content: 'foo',
           },
         ],
       },

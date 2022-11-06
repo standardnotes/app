@@ -5,7 +5,7 @@ import { NoteToNoteReference } from '../../Abstract/Reference/NoteToNoteReferenc
 import { ContentType } from '@standardnotes/common'
 import { ContentReferenceType } from '../../Abstract/Item'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
-import { createBlockTextWithSyntaxAndContent, NoteBlock, stringIndicesForBlock } from './NoteBlocks'
+import { NoteBlock } from './NoteBlocks'
 import { filterFromArray } from '@standardnotes/utils'
 
 export const replaceRange = (string: string, start: number, end: number, substitute: string) => {
@@ -49,23 +49,12 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
     this.mutableContent.authorizedForListed = authorizedForListed
   }
 
-  addBlock(block: NoteBlock, content: string): void {
+  addBlock(block: NoteBlock): void {
     if (!this.mutableContent.blocksItem) {
       this.mutableContent.blocksItem = { blocks: [] }
     }
 
     this.mutableContent.blocksItem.blocks.push(block)
-
-    if (!this.mutableContent.text) {
-      this.mutableContent.text = ''
-    }
-
-    this.mutableContent.text += createBlockTextWithSyntaxAndContent(
-      block,
-      content,
-      this.mutableContent.blocksItem.blocks.length - 1,
-      true,
-    )
   }
 
   removeBlock(block: NoteBlock): void {
@@ -74,12 +63,6 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
     }
 
     filterFromArray(this.mutableContent.blocksItem.blocks, { id: block.id })
-
-    const location = stringIndicesForBlock(this.mutableContent.text, block)
-
-    if (location) {
-      this.mutableContent.text = replaceRange(this.mutableContent.text, location.open.start, location.close.end, '')
-    }
   }
 
   changeBlockContent(blockId: string, content: string): void {
@@ -96,16 +79,7 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
       return
     }
 
-    const location = stringIndicesForBlock(this.mutableContent.text, block)
-
-    if (location) {
-      this.mutableContent.text = replaceRange(
-        this.mutableContent.text,
-        location.open.start,
-        location.close.end,
-        createBlockTextWithSyntaxAndContent({ id: blockId }, content, blockIndex, false),
-      )
-    }
+    block.content = content
   }
 
   changeBlockSize(blockId: string, size: { width: number; height: number }): void {

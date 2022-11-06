@@ -60,7 +60,7 @@ type Writeable<T> = { -readonly [P in keyof T]: T[P] }
 export class BlocksComponentViewer implements ComponentViewerInterface {
   private streamContextItemOriginalMessage?: ComponentMessage
   private removeItemObserver: () => void
-  private loggingEnabled = true
+  private loggingEnabled = false
   public identifier = nonSecureRandomIdentifier()
   private actionObservers: ActionObserver[] = []
   private featureStatus: FeatureStatus
@@ -265,9 +265,7 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
       return
     }
 
-    const content = this.note.getContentForBlock(block)
-
-    if (this.lastBlockContentSent && this.lastBlockContentSent === content) {
+    if (this.lastBlockContentSent && this.lastBlockContentSent === block.content) {
       this.log('Not sending note to editor, content has not changed')
       return
     }
@@ -301,7 +299,7 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
         : this.preferencesSerivce.getValue(PrefKey.EditorSpellcheck, true)
 
     params.content = {
-      text: content || '',
+      text: block.content,
       spellcheck,
     } as NoteContent
 
@@ -316,7 +314,7 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
     const sent = this.replyToMessage(this.streamContextItemOriginalMessage as ComponentMessage, response)
 
     if (sent) {
-      this.lastBlockContentSent = content
+      this.lastBlockContentSent = block.content
     }
   }
 

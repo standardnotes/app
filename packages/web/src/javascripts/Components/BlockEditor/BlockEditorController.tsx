@@ -19,6 +19,7 @@ export class BlockEditorController {
       id: id,
       editorIdentifier: editor.identifier,
       type: editor.noteType,
+      content: '',
     }
 
     return block
@@ -31,7 +32,7 @@ export class BlockEditorController {
 
     const block = this.createBlockItem(option.component)
     await this.application.mutator.changeAndSaveItem<NoteMutator>(this.note, (mutator) => {
-      mutator.addBlock(block, '')
+      mutator.addBlock(block)
     })
   }
 
