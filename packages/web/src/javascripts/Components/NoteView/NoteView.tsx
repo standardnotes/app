@@ -10,7 +10,7 @@ import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { StringDeleteNote, STRING_DELETE_LOCKED_ATTEMPT, STRING_DELETE_PLACEHOLDER_ATTEMPT } from '@/Constants/Strings'
 import { featureTrunkEnabled, FeatureTrunkName } from '@/FeatureTrunk'
 import { log, LoggingDomain } from '@/Logging'
-import { debounce, isDesktopApplication, isMobileScreen, isTabletScreen } from '@/Utils'
+import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import {
   ApplicationEvent,
@@ -40,6 +40,7 @@ import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 import EditingDisabledBanner from './EditingDisabledBanner'
 import { reloadFont } from './FontFunctions'
+import { getPlaintextFontSize } from '../../Utils/getPlaintextFontSize'
 import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
 import NoteViewFileDropTarget from './NoteViewFileDropTarget'
 import { NoteViewProps } from './NoteViewProps'
@@ -91,38 +92,6 @@ type State = {
 
   editorFeatureIdentifier?: string
   noteType?: NoteType
-}
-
-const getPlaintextFontSize = (key: EditorFontSize): string => {
-  const desktopMapping: Record<EditorFontSize, string> = {
-    ExtraSmall: 'text-xs',
-    Small: 'text-sm',
-    Normal: 'text-editor',
-    Medium: 'text-lg',
-    Large: 'text-xl',
-  }
-
-  const mobileMapping: Record<EditorFontSize, string> = {
-    ExtraSmall: 'text-sm',
-    Small: 'text-editor',
-    Normal: 'text-lg',
-    Medium: 'text-xl',
-    Large: 'text-xl2',
-  }
-
-  const tabletMapping: Record<EditorFontSize, string> = {
-    ExtraSmall: 'text-sm',
-    Small: 'text-editor',
-    Normal: 'text-base',
-    Medium: 'text-xl',
-    Large: 'text-xl2',
-  }
-
-  if (isTabletScreen()) {
-    return tabletMapping[key]
-  }
-
-  return isMobileScreen() ? mobileMapping[key] : desktopMapping[key]
 }
 
 class NoteView extends AbstractComponent<NoteViewProps, State> {

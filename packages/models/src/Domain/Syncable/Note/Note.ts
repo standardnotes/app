@@ -28,8 +28,6 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
 
     this.title = String(this.payload.content.title || '')
     this.text = String(this.payload.content.text || '')
-    this.preview_plain = String(this.payload.content.preview_plain || '')
-    this.preview_html = String(this.payload.content.preview_html || '')
     this.hidePreview = Boolean(this.payload.content.hidePreview)
     this.spellcheck = this.payload.content.spellcheck
     this.noteType = this.payload.content.noteType
@@ -42,6 +40,15 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
       if (prefersPlain) {
         this.noteType = NoteType.Plain
       }
+    }
+
+    if (this.noteType === NoteType.Blocks && this.blocksItem) {
+      const firstBlock: NoteBlock | undefined = this.blocksItem.blocks[0]
+      this.preview_plain = firstBlock?.previewPlain || ''
+      this.preview_html = firstBlock?.previewHtml || ''
+    } else {
+      this.preview_plain = String(this.payload.content.preview_plain || '')
+      this.preview_html = String(this.payload.content.preview_html || '')
     }
   }
 

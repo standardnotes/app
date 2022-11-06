@@ -1,5 +1,5 @@
-import { NoteType } from '@standardnotes/features'
 import { createNote } from './../../Utilities/Test/SpecUtils'
+import { BlockType } from './NoteBlocks'
 
 describe('SNNote Tests', () => {
   it('should safely type required fields of Note when creating from PayloadContent', () => {
@@ -43,9 +43,10 @@ describe('SNNote Tests', () => {
         blocks: [
           {
             id: '123',
-            type: NoteType.Authentication,
-            editorIdentifier: '456',
+            type: BlockType.Component,
+            componentIdentifier: '456',
             content: 'foo',
+            previewPlain: 'foo',
           },
         ],
       },
@@ -53,8 +54,8 @@ describe('SNNote Tests', () => {
 
     expect(note.getBlock('123')).toStrictEqual({
       id: '123',
-      type: NoteType.Authentication,
-      editorIdentifier: '456',
+      type: BlockType.Component,
+      componentIdentifier: '456',
       content: 'foo',
     })
   })
@@ -82,9 +83,10 @@ describe('SNNote Tests', () => {
         blocks: [
           {
             id: '123',
-            type: NoteType.Authentication,
-            editorIdentifier: '456',
+            type: BlockType.Component,
+            componentIdentifier: '456',
             content: 'foo',
+            previewPlain: 'foo',
           },
         ],
       },

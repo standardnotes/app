@@ -1,10 +1,10 @@
-import { IconType, SNComponent } from '@standardnotes/snjs'
+import { BlockType, IconType, SNComponent } from '@standardnotes/snjs'
 
 export type BlockOption = {
-  editorIdentifier: string
+  type: BlockType
   label: string
   identifier: string
-  icon: IconType | string
+  icon: IconType
   iconTint: number
   component?: SNComponent
 }

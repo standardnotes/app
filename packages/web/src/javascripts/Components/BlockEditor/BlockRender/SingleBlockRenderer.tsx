@@ -1,12 +1,13 @@
 import { WebApplication } from '@/Application/Application'
-import { log, LoggingDomain } from '@/Logging'
-import { ComponentAction, NoteBlock, SNNote } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
-import ComponentView from '../../ComponentView/ComponentView'
+import { BlockType, NoteBlock, SNNote, BlockValues } from '@standardnotes/snjs'
+import { FunctionComponent, useCallback, useMemo, useState } from 'react'
 import { MaxBlockHeight } from './MaxBlockHeight'
 import { BlockEditorController } from '../BlockEditorController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import Icon from '@/Components/Icon/Icon'
+import { ComponentBlock } from '../Blocks/ComponentBlock'
+import { PlaintextBlock } from '../Blocks/PlaintextBlock'
+import { BlockquoteBlock } from '../Blocks/BlockquoteBlock'
 
 type SingleBlockRendererProps = {
   application: WebApplication
@@ -24,39 +25,6 @@ export const SingleBlockRenderer: FunctionComponent<SingleBlockRendererProps> = 
   const [height, setHeight] = useState<number | undefined>(block.size?.height)
   const [showCloseButton, setShowCloseButton] = useState(false)
 
-  const component = useMemo(
-    () => application.componentManager.componentWithIdentifier(block.editorIdentifier),
-    [block, application],
-  )
-
-  const viewer = useMemo(
-    () => component && application.componentManager.createBlockComponentViewer(component, note.uuid, block.id),
-    [application, component, note.uuid, block.id],
-  )
-
-  useEffect(() => {
-    const disposer = viewer?.addActionObserver((action, data) => {
-      if (action === ComponentAction.SetSize) {
-        if (data.height && data.height > 0) {
-          const height = Math.min(Number(data.height), MaxBlockHeight[block.editorIdentifier] ?? Number(data.height))
-          log(LoggingDomain.BlockEditor, `Received block height ${height}`)
-          setHeight(height)
-          void controller.saveBlockSize(block, { width: 0, height })
-        }
-      }
-    })
-
-    return disposer
-  }, [viewer, block, controller])
-
-  useEffect(() => {
-    return () => {
-      if (viewer) {
-        application.componentManager.destroyComponentViewer(viewer)
-      }
-    }
-  }, [application, viewer])
-
   const onHoverEnter = useCallback(() => {
     setShowCloseButton(true)
   }, [])
@@ -69,15 +37,64 @@ export const SingleBlockRenderer: FunctionComponent<SingleBlockRendererProps> = 
     void controller.removeBlock(block)
   }, [block, controller])
 
-  if (!component || !viewer) {
-    return <div>Unable to find component {block.editorIdentifier}</div>
-  }
+  const onSizeChange = useCallback(
+    (size: { width: number; height: number }) => {
+      const adjustedHeight = Math.min(size.height, MaxBlockHeight[block.componentIdentifier || ''] ?? size.height)
+      setHeight(adjustedHeight)
+      void controller.saveBlockSize(block, { width: size.width, height: adjustedHeight })
+    },
+    [controller, block],
+  )
+
+  const onContentChange = useCallback(
+    (values: BlockValues) => {
+      void controller.changeBlock(block, values)
+    },
+    [controller, block],
+  )
+
+  const onFocus = useCallback(() => {
+    /** Pending implementation */
+  }, [])
+
+  const onBlur = useCallback(() => {
+    /** Pending implementation */
+  }, [])
+
+  const blockComponent = useMemo(() => {
+    if (block.type === BlockType.Plaintext) {
+      return (
+        <PlaintextBlock
+          block={block}
+          note={note}
+          application={application}
+          onSizeChange={onSizeChange}
+          onChange={onContentChange}
+          onFocus={onFocus}
+          onBlur={onBlur}
+        />
+      )
+    } else if (block.type === BlockType.Quote) {
+      return (
+        <BlockquoteBlock
+          block={block}
+          note={note}
+          application={application}
+          onSizeChange={onSizeChange}
+          onChange={onContentChange}
+          onFocus={onFocus}
+          onBlur={onBlur}
+        />
+      )
+    } else {
+      return <ComponentBlock block={block} note={note} application={application} onSizeChange={onSizeChange} />
+    }
+  }, [application, block, note, onBlur, onContentChange, onFocus, onSizeChange])
 
   const styles: Record<string, unknown> = {}
   if (height) {
     styles['height'] = height
   }
-
   return (
     <div
       onMouseEnter={onHoverEnter}
@@ -97,7 +114,8 @@ export const SingleBlockRenderer: FunctionComponent<SingleBlockRendererProps> = 
           <Icon type="close" size="custom" className="h-8 w-8 md:h-5 md:w-5" />
         </button>
       )}
-      <ComponentView key={viewer.identifier} componentViewer={viewer} application={application} />
+
+      {blockComponent}
     </div>
   )
 }

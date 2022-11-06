@@ -467,12 +467,11 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
     await this.itemManager.changeNote(
       this.note,
       (mutator) => {
-        mutator.changeBlockContent(this.blockId, text)
-
-        if (this.note.indexOfBlock({ id: this.blockId }) === 0) {
-          mutator.preview_html = content.preview_html
-          mutator.preview_plain = content.preview_plain || ''
-        }
+        mutator.changeBlockValues(this.blockId, {
+          content: text,
+          previewPlain: content.preview_plain || '',
+          previewHtml: content.preview_html,
+        })
       },
       MutationType.UpdateUserTimestamps,
       PayloadEmitSource.ComponentRetrieved,

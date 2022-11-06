@@ -5,7 +5,7 @@ import { NoteToNoteReference } from '../../Abstract/Reference/NoteToNoteReferenc
 import { ContentType } from '@standardnotes/common'
 import { ContentReferenceType } from '../../Abstract/Item'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
-import { NoteBlock } from './NoteBlocks'
+import { BlockValues, NoteBlock } from './NoteBlocks'
 import { filterFromArray } from '@standardnotes/utils'
 
 export class NoteMutator extends DecryptedItemMutator<NoteContent> {
@@ -61,7 +61,7 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
     filterFromArray(this.mutableContent.blocksItem.blocks, { id: block.id })
   }
 
-  changeBlockContent(blockId: string, content: string): void {
+  changeBlockValues(blockId: string, values: BlockValues): void {
     const blockIndex = this.mutableContent.blocksItem?.blocks.findIndex((b) => {
       return b.id === blockId
     })
@@ -75,7 +75,9 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
       return
     }
 
-    block.content = content
+    block.content = values.content
+    block.previewPlain = values.previewPlain
+    block.previewHtml = values.previewHtml
   }
 
   changeBlockSize(blockId: string, size: { width: number; height: number }): void {

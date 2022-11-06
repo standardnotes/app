@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import { NoteBlock, NoteMutator, SNComponent, SNNote } from '@standardnotes/snjs'
+import { BlockType, NoteBlock, NoteMutator, SNComponent, SNNote, BlockValues } from '@standardnotes/snjs'
 import { BlockOption } from './BlockMenu/BlockOption'
 
 export class BlockEditorController {
@@ -13,24 +13,37 @@ export class BlockEditorController {
     ;(this.application as unknown) = undefined
   }
 
-  createBlockItem(editor: SNComponent): NoteBlock {
-    const id = this.application.generateUuid()
-    const block: NoteBlock = {
-      id: id,
-      editorIdentifier: editor.identifier,
-      type: editor.noteType,
+  createComponentBlockItem(component: SNComponent): NoteBlock {
+    return {
+      id: this.application.generateUuid(),
+      componentIdentifier: component.identifier,
+      type: BlockType.Component,
       content: '',
+      previewPlain: '',
     }
+  }
 
-    return block
+  createBlockItem(type: BlockType): NoteBlock {
+    return {
+      id: this.application.generateUuid(),
+      type: type,
+      content: '',
+      previewPlain: '',
+    }
   }
 
   async addNewBlock(option: BlockOption): Promise<void> {
-    if (!option.component) {
-      throw new Error('Non-component block options are not supported yet')
+    let block: NoteBlock
+    if (option.component) {
+      block = this.createComponentBlockItem(option.component)
+    } else if (option.type === BlockType.Plaintext) {
+      block = this.createBlockItem(BlockType.Plaintext)
+    } else if (option.type === BlockType.Quote) {
+      block = this.createBlockItem(BlockType.Quote)
+    } else {
+      throw new Error('Unsupported block type')
     }
 
-    const block = this.createBlockItem(option.component)
     await this.application.mutator.changeAndSaveItem<NoteMutator>(this.note, (mutator) => {
       mutator.addBlock(block)
     })
@@ -39,6 +52,12 @@ export class BlockEditorController {
   async removeBlock(block: NoteBlock): Promise<void> {
     await this.application.mutator.changeAndSaveItem<NoteMutator>(this.note, (mutator) => {
       mutator.removeBlock(block)
+    })
+  }
+
+  async changeBlock(block: NoteBlock, values: BlockValues): Promise<void> {
+    await this.application.mutator.changeAndSaveItem<NoteMutator>(this.note, (mutator) => {
+      mutator.changeBlockValues(block.id, values)
     })
   }
 

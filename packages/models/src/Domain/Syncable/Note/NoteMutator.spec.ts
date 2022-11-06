@@ -2,6 +2,7 @@ import { NoteMutator } from './NoteMutator'
 import { createNote } from './../../Utilities/Test/SpecUtils'
 import { MutationType } from '../../Abstract/Item'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
+import { BlockType } from './NoteBlocks'
 
 describe('note mutator', () => {
   it('sets noteType', () => {
@@ -13,7 +14,7 @@ describe('note mutator', () => {
     expect(result.content.noteType).toEqual(NoteType.Authentication)
   })
 
-  it('sets editorIdentifier', () => {
+  it('sets componentIdentifier', () => {
     const note = createNote({})
     const mutator = new NoteMutator(note, MutationType.NoUpdateUserTimestamps)
     mutator.editorIdentifier = FeatureIdentifier.MarkdownProEditor
@@ -25,28 +26,48 @@ describe('note mutator', () => {
   it('should addBlock to new note', () => {
     const note = createNote({})
     const mutator = new NoteMutator(note, MutationType.NoUpdateUserTimestamps)
-    mutator.addBlock({ type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'test' })
+    mutator.addBlock({
+      type: BlockType.Component,
+      id: '123',
+      componentIdentifier: 'markdown',
+      content: 'test',
+      previewPlain: 'test',
+    })
     const result = mutator.getResult()
 
     expect(result.content.blocksItem).toEqual({
-      blocks: [{ type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'test' }],
+      blocks: [{ type: NoteType.Code, id: '123', componentIdentifier: 'markdown', content: 'test' }],
     })
   })
 
   it('should addBlock to existing note', () => {
     const note = createNote({
       blocksItem: {
-        blocks: [{ type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'test' }],
+        blocks: [
+          {
+            type: BlockType.Component,
+            id: '123',
+            componentIdentifier: 'markdown',
+            content: 'test',
+            previewPlain: 'test',
+          },
+        ],
       },
     })
     const mutator = new NoteMutator(note, MutationType.NoUpdateUserTimestamps)
-    mutator.addBlock({ type: NoteType.RichText, id: '456', editorIdentifier: 'richy', content: 'test' })
+    mutator.addBlock({
+      type: BlockType.Component,
+      id: '456',
+      componentIdentifier: 'richy',
+      content: 'test',
+      previewPlain: 'test',
+    })
     const result = mutator.getResult()
 
     expect(result.content.blocksItem).toEqual({
       blocks: [
-        { type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'test' },
-        { type: NoteType.RichText, id: '456', editorIdentifier: 'richy', content: 'test' },
+        { type: BlockType.Component, id: '123', componentIdentifier: 'markdown', content: 'test' },
+        { type: NoteType.RichText, id: '456', componentIdentifier: 'richy', content: 'test' },
       ],
     })
   })
@@ -55,17 +76,35 @@ describe('note mutator', () => {
     const note = createNote({
       blocksItem: {
         blocks: [
-          { type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'test' },
-          { type: NoteType.Code, id: '456', editorIdentifier: 'markdown', content: 'test' },
+          {
+            type: BlockType.Component,
+            id: '123',
+            componentIdentifier: 'markdown',
+            content: 'test',
+            previewPlain: 'test',
+          },
+          {
+            type: BlockType.Component,
+            id: '456',
+            componentIdentifier: 'markdown',
+            content: 'test',
+            previewPlain: 'test',
+          },
         ],
       },
     })
     const mutator = new NoteMutator(note, MutationType.NoUpdateUserTimestamps)
-    mutator.removeBlock({ type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'test' })
+    mutator.removeBlock({
+      type: BlockType.Component,
+      id: '123',
+      componentIdentifier: 'markdown',
+      content: 'test',
+      previewPlain: 'test',
+    })
     const result = mutator.getResult()
 
     expect(result.content.blocksItem).toEqual({
-      blocks: [{ type: NoteType.Code, id: '456', editorIdentifier: 'markdown', content: 'test' }],
+      blocks: [{ type: BlockType.Component, id: '456', componentIdentifier: 'markdown', content: 'test' }],
     })
   })
 
@@ -73,19 +112,31 @@ describe('note mutator', () => {
     const note = createNote({
       blocksItem: {
         blocks: [
-          { type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'old content 1' },
-          { type: NoteType.Code, id: '456', editorIdentifier: 'markdown', content: 'old content 2' },
+          {
+            type: BlockType.Component,
+            id: '123',
+            componentIdentifier: 'markdown',
+            content: 'old content 1',
+            previewPlain: 'test',
+          },
+          {
+            type: BlockType.Component,
+            id: '456',
+            componentIdentifier: 'markdown',
+            content: 'old content 2',
+            previewPlain: 'test',
+          },
         ],
       },
     })
     const mutator = new NoteMutator(note, MutationType.NoUpdateUserTimestamps)
-    mutator.changeBlockContent('123', 'new content')
+    mutator.changeBlockValues('123', { content: 'new content', previewPlain: 'new content' })
     const result = mutator.getResult()
 
     expect(result.content.blocksItem).toEqual({
       blocks: [
-        { type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'new content' },
-        { type: NoteType.Code, id: '456', editorIdentifier: 'markdown', content: 'old content 2' },
+        { type: BlockType.Component, id: '123', componentIdentifier: 'markdown', content: 'new content' },
+        { type: BlockType.Component, id: '456', componentIdentifier: 'markdown', content: 'old content 2' },
       ],
     })
   })
@@ -94,8 +145,20 @@ describe('note mutator', () => {
     const note = createNote({
       blocksItem: {
         blocks: [
-          { type: NoteType.Code, id: '123', editorIdentifier: 'markdown', content: 'test' },
-          { type: NoteType.Code, id: '456', editorIdentifier: 'markdown', content: 'test' },
+          {
+            type: BlockType.Component,
+            id: '123',
+            componentIdentifier: 'markdown',
+            content: 'test',
+            previewPlain: 'test',
+          },
+          {
+            type: BlockType.Component,
+            id: '456',
+            componentIdentifier: 'markdown',
+            content: 'test',
+            previewPlain: 'test',
+          },
         ],
       },
     })
@@ -106,13 +169,13 @@ describe('note mutator', () => {
     expect(result.content.blocksItem).toEqual({
       blocks: [
         {
-          type: NoteType.Code,
+          type: BlockType.Component,
           id: '123',
-          editorIdentifier: 'markdown',
+          componentIdentifier: 'markdown',
           content: 'test',
           size: { width: 10, height: 20 },
         },
-        { type: NoteType.Code, id: '456', editorIdentifier: 'markdown', content: 'test' },
+        { type: BlockType.Component, id: '456', componentIdentifier: 'markdown', content: 'test' },
       ],
     })
   })
