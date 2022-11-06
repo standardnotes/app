@@ -1,4 +1,4 @@
-import { NoteMutator, replaceRange } from './NoteMutator'
+import { NoteMutator } from './NoteMutator'
 import { createNote } from './../../Utilities/Test/SpecUtils'
 import { MutationType } from '../../Abstract/Item'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
@@ -20,13 +20,6 @@ describe('note mutator', () => {
     const result = mutator.getResult()
 
     expect(result.content.editorIdentifier).toEqual(FeatureIdentifier.MarkdownProEditor)
-  })
-
-  it('should replaceRange', () => {
-    const str = 'foobar'
-    const result = replaceRange(str, 0, 2, 'car')
-
-    expect(result).toEqual('carbar')
   })
 
   it('should addBlock to new note', () => {

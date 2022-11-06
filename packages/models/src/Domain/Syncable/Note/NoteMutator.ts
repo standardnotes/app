@@ -8,10 +8,6 @@ import { FeatureIdentifier, NoteType } from '@standardnotes/features'
 import { NoteBlock } from './NoteBlocks'
 import { filterFromArray } from '@standardnotes/utils'
 
-export const replaceRange = (string: string, start: number, end: number, substitute: string) => {
-  return string.substring(0, start) + substitute + string.substring(end + 1)
-}
-
 export class NoteMutator extends DecryptedItemMutator<NoteContent> {
   set title(title: string) {
     this.mutableContent.title = title
