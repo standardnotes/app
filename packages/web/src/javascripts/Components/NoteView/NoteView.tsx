@@ -8,8 +8,9 @@ import ProtectedItemOverlay from '@/Components/ProtectedItemOverlay/ProtectedIte
 import { ElementIds } from '@/Constants/ElementIDs'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { StringDeleteNote, STRING_DELETE_LOCKED_ATTEMPT, STRING_DELETE_PLACEHOLDER_ATTEMPT } from '@/Constants/Strings'
+import { featureTrunkEnabled, FeatureTrunkName } from '@/FeatureTrunk'
 import { log, LoggingDomain } from '@/Logging'
-import { debounce, isDesktopApplication, isDev, isMobileScreen, isTabletScreen } from '@/Utils'
+import { debounce, isDesktopApplication, isMobileScreen, isTabletScreen } from '@/Utils'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import {
   ApplicationEvent,
@@ -54,8 +55,6 @@ const NoteEditingDisabledText = 'Note editing disabled.'
 function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
 }
-
-const IsBlocksEnabled = isDev
 
 type State = {
   availableStackComponents: SNComponent[]
@@ -1028,7 +1027,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     const renderHeaderOptions = isMobileScreen() ? !this.state.plaintextEditorFocused : true
 
     const editorMode =
-      IsBlocksEnabled && this.note.title.toLowerCase().includes('blocks')
+      featureTrunkEnabled(FeatureTrunkName.Blocks) && this.note.noteType === NoteType.Blocks
         ? 'blocks'
         : this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading
         ? 'plain'

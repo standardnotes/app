@@ -94,7 +94,7 @@ export const SingleBlockRenderer: FunctionComponent<SingleBlockRendererProps> = 
           )}
           onClick={onRemoveBlock}
         >
-          <Icon type="remove" size="custom" className="h-8 w-8 md:h-5 md:w-5" />
+          <Icon type="close" size="custom" className="h-8 w-8 md:h-5 md:w-5" />
         </button>
       )}
       <ComponentView key={viewer.identifier} componentViewer={viewer} application={application} />

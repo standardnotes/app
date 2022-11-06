@@ -38,7 +38,7 @@ module.exports = {
     'no-constructor-return': 'error',
     'no-duplicate-imports': 'error',
     'no-self-compare': 'error',
-    'no-console': ['error', { allow: ['warn', 'error'] }],
+    'no-console': ['warn', { allow: ['warn', 'error'] }],
     'no-unmodified-loop-condition': 'error',
     'no-unused-private-class-members': 'error',
     'object-curly-spacing': ['error', 'always'],

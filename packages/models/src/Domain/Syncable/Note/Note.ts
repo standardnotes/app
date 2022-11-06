@@ -48,4 +48,17 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
   getBlock(id: string): NoteBlock | undefined {
     return this.blocksItem?.blocks.find((block) => block.id === id)
   }
+
+  indexOfBlock(block: { id: string }): number | undefined {
+    if (!this.blocksItem) {
+      return undefined
+    }
+
+    const index = this.blocksItem.blocks.findIndex((b) => b.id === block.id)
+    if (index === -1) {
+      return undefined
+    }
+
+    return index
+  }
 }

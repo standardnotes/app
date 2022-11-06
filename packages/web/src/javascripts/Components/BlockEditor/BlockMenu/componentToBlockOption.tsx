@@ -10,5 +10,6 @@ export function componentToBlockOption(component: SNComponent, iconsController: 
     label: component.name,
     icon: iconType,
     iconTint: tint,
+    component: component,
   }
 }
