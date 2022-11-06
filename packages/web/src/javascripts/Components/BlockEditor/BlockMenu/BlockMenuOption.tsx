@@ -10,8 +10,8 @@ export type BlockMenuOptionProps = {
 export const BlockMenuOption: FunctionComponent<BlockMenuOptionProps> = ({ option, onSelect }) => {
   return (
     <div
-      className={'flex w-full flex-row items-center border-[1px] border-b border-border p-4'}
-      onClick={() => onSelect}
+      className={'flex w-full cursor-pointer flex-row items-center border-[1px] border-b border-border p-4'}
+      onClick={() => onSelect(option)}
     >
       <Icon type={option.icon} size={'large'} />
       <div className={'ml-3 text-base'}>{option.label}</div>

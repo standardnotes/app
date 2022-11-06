@@ -5,8 +5,12 @@ import { NoteToNoteReference } from '../../Abstract/Reference/NoteToNoteReferenc
 import { ContentType } from '@standardnotes/common'
 import { ContentReferenceType } from '../../Abstract/Item'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
-import { blockContentToNoteTextRendition, bracketSyntaxForBlock, NoteBlock, stringIndexOfBlock } from './NoteBlocks'
-import { removeFromArray } from '@standardnotes/utils'
+import { createBlockTextWithSyntaxAndContent, NoteBlock, stringIndicesForBlock } from './NoteBlocks'
+import { filterFromArray } from '@standardnotes/utils'
+
+export const replaceRange = (string: string, start: number, end: number, substitute: string) => {
+  return string.substring(0, start) + substitute + string.substring(end + 1)
+}
 
 export class NoteMutator extends DecryptedItemMutator<NoteContent> {
   set title(title: string) {
@@ -45,16 +49,23 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
     this.mutableContent.authorizedForListed = authorizedForListed
   }
 
-  addBlock(block: NoteBlock): void {
+  addBlock(block: NoteBlock, content: string): void {
     if (!this.mutableContent.blocksItem) {
       this.mutableContent.blocksItem = { blocks: [] }
     }
 
     this.mutableContent.blocksItem.blocks.push(block)
 
-    const brackets = bracketSyntaxForBlock(block)
+    if (!this.mutableContent.text) {
+      this.mutableContent.text = ''
+    }
 
-    this.text += `${brackets.open}${block.content}${brackets.close}`
+    this.mutableContent.text += createBlockTextWithSyntaxAndContent(
+      block,
+      content,
+      this.mutableContent.blocksItem.blocks.length - 1,
+      true,
+    )
   }
 
   removeBlock(block: NoteBlock): void {
@@ -62,35 +73,37 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
       return
     }
 
-    removeFromArray(this.mutableContent.blocksItem.blocks, block)
+    filterFromArray(this.mutableContent.blocksItem.blocks, { id: block.id })
 
-    const location = stringIndexOfBlock(this.mutableContent.text, block)
+    const location = stringIndicesForBlock(this.mutableContent.text, block)
 
     if (location) {
-      this.mutableContent.text = this.mutableContent.text.slice(location.begin, location.end)
+      this.mutableContent.text = replaceRange(this.mutableContent.text, location.open.start, location.close.end, '')
     }
   }
 
   changeBlockContent(blockId: string, content: string): void {
-    const block = this.mutableContent.blocksItem?.blocks.find((b) => b.id === blockId)
+    const blockIndex = this.mutableContent.blocksItem?.blocks.findIndex((b) => {
+      return b.id === blockId
+    })
+
+    if (blockIndex == null || blockIndex === -1) {
+      return
+    }
+
+    const block = this.mutableContent.blocksItem?.blocks[blockIndex]
     if (!block) {
       return
     }
 
-    block.content = content
-
-    const location = stringIndexOfBlock(this.mutableContent.text, block)
+    const location = stringIndicesForBlock(this.mutableContent.text, block)
 
     if (location) {
-      const replaceRange = (s: string, start: number, end: number, substitute: string) => {
-        return s.substring(0, start) + substitute + s.substring(end)
-      }
-
       this.mutableContent.text = replaceRange(
         this.mutableContent.text,
-        location.begin,
-        location.end,
-        blockContentToNoteTextRendition({ id: blockId }, content),
+        location.open.start,
+        location.close.end,
+        createBlockTextWithSyntaxAndContent({ id: blockId }, content, blockIndex, false),
       )
     }
   }

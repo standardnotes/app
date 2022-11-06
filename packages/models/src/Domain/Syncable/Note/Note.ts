@@ -5,7 +5,7 @@ import { DecryptedItem } from '../../Abstract/Item/Implementations/DecryptedItem
 import { ItemInterface } from '../../Abstract/Item/Interfaces/ItemInterface'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
 import { NoteContent, NoteContentSpecialized } from './NoteContent'
-import { NoteBlock, NoteBlocks } from './NoteBlocks'
+import { NoteBlock, NoteBlocks, stringIndicesForBlock } from './NoteBlocks'
 
 export const isNote = (x: ItemInterface): x is SNNote => x.content_type === ContentType.Note
 
@@ -47,5 +47,27 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
 
   getBlock(id: string): NoteBlock | undefined {
     return this.blocksItem?.blocks.find((block) => block.id === id)
+  }
+
+  indexOfBlock(block: { id: string }): number | undefined {
+    if (!this.blocksItem) {
+      return undefined
+    }
+
+    const index = this.blocksItem.blocks.findIndex((b) => b.id === block.id)
+    if (index === -1) {
+      return undefined
+    }
+
+    return index
+  }
+
+  getContentForBlock(block: { id: string }): string | undefined {
+    const location = stringIndicesForBlock(this.text, block)
+    if (!location) {
+      return undefined
+    }
+
+    return this.text.substring(location.content.start, location.content.end + 1)
   }
 }

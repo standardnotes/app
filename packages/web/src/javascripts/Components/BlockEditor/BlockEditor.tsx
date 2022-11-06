@@ -2,7 +2,7 @@ import { WebApplication } from '@/Application/Application'
 import { SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useRef } from 'react'
 import { BlockEditorController } from './BlockEditorController'
-import { AddBlockButton } from './AddButton'
+import { AddBlockButton } from './BlockMenu/AddButton'
 import { MultiBlockRenderer } from './BlockRender/MultiBlockRenderer'
 import { BlockOption } from './BlockMenu/BlockOption'
 

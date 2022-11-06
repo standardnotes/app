@@ -5,7 +5,14 @@ export type NoteBlock = {
   type: NoteType
   editorIdentifier: string
   size?: { width: number; height: number }
-  content: string
+}
+
+type StringLocation = { start: number; end: number }
+
+type BlockStringIndices = {
+  open: StringLocation
+  content: StringLocation
+  close: StringLocation
 }
 
 export interface NoteBlocks {
@@ -19,26 +26,42 @@ export function bracketSyntaxForBlock(block: { id: NoteBlock['id'] }): { open: s
   }
 }
 
-export function stringIndexOfBlock(
-  text: string,
-  block: { id: NoteBlock['id'] },
-): { begin: number; end: number } | undefined {
+export function stringIndicesForBlock(text: string, block: { id: NoteBlock['id'] }): BlockStringIndices | undefined {
   const brackets = bracketSyntaxForBlock(block)
 
   const startIndex = text.indexOf(brackets.open)
   if (startIndex === -1) {
     return undefined
   }
+  const startOfEndTag = text.indexOf(brackets.close, startIndex)
+  if (startOfEndTag === -1) {
+    return undefined
+  }
 
-  const endIndex = text.indexOf(brackets.close) + brackets.close.length
+  const open = { start: startIndex, end: startIndex + brackets.open.length - 1 }
+
+  const close =
+    startOfEndTag === -1
+      ? { start: -1, end: -1 }
+      : { start: startOfEndTag, end: startOfEndTag + brackets.close.length - 1 }
+
+  const content = close.start === open.end + 1 ? { start: -1, end: -1 } : { start: open.end + 1, end: close.start - 1 }
 
   return {
-    begin: startIndex,
-    end: endIndex,
+    open,
+    content,
+    close,
   }
 }
 
-export function blockContentToNoteTextRendition(block: { id: NoteBlock['id'] }, content: string): string {
+export function createBlockTextWithSyntaxAndContent(
+  block: { id: NoteBlock['id'] },
+  content: string,
+  blockIndex: number,
+  addingPadding: boolean,
+): string {
   const brackets = bracketSyntaxForBlock(block)
-  return `${brackets.open}${content}${brackets.close}`
+  const padding = !addingPadding ? '' : blockIndex === 0 ? '' : '\n\n'
+
+  return `${padding}${brackets.open}\n${content}\n${brackets.close}`
 }

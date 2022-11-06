@@ -1,9 +1,9 @@
 import { WebApplication } from '@/Application/Application'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { FunctionComponent, useCallback, useState } from 'react'
-import Icon from '../Icon/Icon'
-import { BlockMenu } from './BlockMenu/BlockMenu'
-import { BlockOption } from './BlockMenu/BlockOption'
+import Icon from '../../Icon/Icon'
+import { BlockMenu } from './BlockMenu'
+import { BlockOption } from './BlockOption'
 
 type AddButtonProps = {
   application: WebApplication
@@ -11,11 +11,19 @@ type AddButtonProps = {
 }
 
 export const AddBlockButton: FunctionComponent<AddButtonProps> = ({ application, onSelectOption }) => {
-  const [showMenu, setShowMenu] = useState(true)
+  const [showMenu, setShowMenu] = useState(false)
 
   const toggleMenu = useCallback(() => {
     setShowMenu((prevValue) => !prevValue)
   }, [])
+
+  const handleSelection = useCallback(
+    (option: BlockOption) => {
+      onSelectOption(option)
+      setShowMenu(false)
+    },
+    [onSelectOption],
+  )
 
   return (
     <div className="mt-2 flex flex-row flex-wrap">
@@ -30,7 +38,7 @@ export const AddBlockButton: FunctionComponent<AddButtonProps> = ({ application,
         <Icon type="add" size="custom" className="h-8 w-8 md:h-5 md:w-5" />
       </button>
 
-      {showMenu && <BlockMenu application={application} onSelectOption={onSelectOption} />}
+      {showMenu && <BlockMenu application={application} onSelectOption={handleSelection} />}
     </div>
   )
 }
