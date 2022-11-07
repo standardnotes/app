@@ -19,7 +19,16 @@
 @import 'sn';
 @import 'columns';
 @import 'animation';
+@import 'lexical_base';
+@import 'lexical_custom';
+@import 'lexical_editor';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  ul {
+    list-style-type: revert;
+  }
+}
