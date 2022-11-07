@@ -19,7 +19,7 @@ declare global {
 
     application?: WebApplication
     mainApplicationGroup?: ApplicationGroup
-    MSStream?: Record<string, unknown>
+    MSStream?: unknown
   }
 }
 

@@ -10,7 +10,7 @@ import {CAN_USE_DOM} from './canUseDOM';
 
 declare global {
   interface Document {
-    documentMode?: unknown;
+    documentMode?: string;
   }
 
   interface Window {
