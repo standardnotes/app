@@ -1,0 +1,1 @@
+Based on https://github.com/facebook/lexical/tree/main/packages/lexical-playground

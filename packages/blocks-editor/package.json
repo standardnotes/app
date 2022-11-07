@@ -1,0 +1,23 @@
+{
+  "name": "@standardnotes/blocks-editor",
+  "version": "1.3.6",
+  "private": true,
+  "main": "./src/index.ts",
+  "scripts": {
+    "start": "tsc -p tsconfig.json --watch"
+  },
+  "dependencies": {
+    "@lexical/react": "^0.6.0",
+    "@standardnotes/icons": "workspace:*",
+    "lexical": "^0.6.0",
+    "react": "link:../web/node_modules/react",
+    "react-dom": "link:../web/node_modules/react-dom"
+  },
+  "devDependencies": {
+    "@types/react": "link:../web/node_modules/@types/react",
+    "@types/react-dom": "link:../web/node_modules/@types/react-dom",
+    "eslint": "*",
+    "prettier": "*",
+    "typescript": "*"
+  }
+}
