@@ -1,9 +1,10 @@
+import { classNames } from '@/Utils/ConcatenateClassNames'
 import { EmojiString, Platform, VectorIconNameOrEmoji } from '@standardnotes/snjs'
 import { FunctionComponent, useMemo, useRef, useState } from 'react'
 import Dropdown from '../Dropdown/Dropdown'
 import { DropdownItem } from '../Dropdown/DropdownItem'
 import { getEmojiLength } from './EmojiLength'
-import { isIconEmoji } from './Icon'
+import Icon, { isIconEmoji } from './Icon'
 import { IconNameToSvgMapping } from './IconNameToSvgMapping'
 import { IconPickerType } from './IconPickerType'
 
@@ -11,14 +12,26 @@ type Props = {
   selectedValue: VectorIconNameOrEmoji
   onIconChange: (value?: string) => void
   platform: Platform
+  useIconGrid?: boolean
+  iconGridClassName?: string
   portalDropdown?: boolean
   className?: string
 }
 
-const IconPicker = ({ selectedValue, onIconChange, platform, className, portalDropdown }: Props) => {
+const IconPicker = ({
+  selectedValue,
+  onIconChange,
+  platform,
+  className,
+  useIconGrid,
+  portalDropdown,
+  iconGridClassName,
+}: Props) => {
+  const iconKeys = useMemo(() => Object.keys(IconNameToSvgMapping), [])
+
   const iconOptions = useMemo(
     () =>
-      [...Object.keys(IconNameToSvgMapping)].map(
+      iconKeys.map(
         (value) =>
           ({
             label: value,
@@ -26,7 +39,7 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className, portalDr
             icon: value,
           } as DropdownItem),
       ),
-    [],
+    [iconKeys],
   )
 
   const isSelectedEmoji = isIconEmoji(selectedValue)
@@ -92,17 +105,36 @@ const IconPicker = ({ selectedValue, onIconChange, platform, className, portalDr
         <TabButton label="Reset" type={'reset'} />
       </div>
       <div className={'mt-2 h-full min-h-0 overflow-auto'}>
-        {currentType === 'icon' && (
-          <Dropdown
-            fullWidth={true}
-            id="change-tag-icon-dropdown"
-            label="Change the icon for a tag"
-            items={iconOptions}
-            value={selectedValue}
-            onChange={handleIconChange}
-            portal={portalDropdown}
-          />
-        )}
+        {currentType === 'icon' &&
+          (useIconGrid ? (
+            <div
+              className={classNames(
+                'flex w-full flex-wrap items-center gap-6 p-1 md:max-h-24 md:gap-4 md:p-0',
+                iconGridClassName,
+              )}
+            >
+              {iconKeys.map((iconName) => (
+                <button
+                  key={iconName}
+                  onClick={() => {
+                    handleIconChange(iconName)
+                  }}
+                >
+                  <Icon type={iconName} />
+                </button>
+              ))}
+            </div>
+          ) : (
+            <Dropdown
+              fullWidth={true}
+              id="change-tag-icon-dropdown"
+              label="Change the icon for a tag"
+              items={iconOptions}
+              value={selectedValue}
+              onChange={handleIconChange}
+              portal={portalDropdown}
+            />
+          ))}
         {currentType === 'emoji' && (
           <>
             <div>

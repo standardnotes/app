@@ -79,8 +79,10 @@ const EditSmartViewModal = ({ application, view, closeDialog }: Props) => {
                   selectedValue={selectedIcon || IconNameToSvgMapping.restore}
                   onIconChange={(value?: string | undefined) => {
                     setSelectedIcon(value)
+                    toggleIconPicker()
                   }}
                   platform={application.platform}
+                  useIconGrid={true}
                   portalDropdown={false}
                 />
               </div>

@@ -78,6 +78,8 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
             selectedValue={selectedTag.iconString}
             platform={application.platform}
             className={'px-3 py-1.5'}
+            useIconGrid={true}
+            iconGridClassName="max-h-30"
           />
           <HorizontalSeparator classes="my-2" />
           <MenuItem type={MenuItemType.IconButton} className={'justify-between py-1.5'} onClick={onClickStar}>
