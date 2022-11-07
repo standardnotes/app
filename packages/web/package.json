@@ -36,7 +36,7 @@
     "@reach/disclosure": "^0.17.0",
     "@reach/listbox": "^0.17.0",
     "@reach/tooltip": "^0.17.0",
-    "@reach/visually-hidden": "^0.17.0",
+    "@reach/visually-hidden": "^0.18.0",
     "@standardnotes/authenticator": "^2.3.8",
     "@standardnotes/autobiography-theme": "^1.2.7",
     "@standardnotes/blocks-editor": "workspace:*",
