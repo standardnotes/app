@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.93.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.11...@standardnotes/web@3.93.12) (2022-11-07)
+
+### Bug Fixes
+
+* mobx out of bounds read warning ([34b3f67](https://github.com/standardnotes/app/commit/34b3f67b2a4521783063d31f1b3aa1bee1bb91ea))
+
+## [3.93.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.10...@standardnotes/web@3.93.11) (2022-11-06)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.93.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.9...@standardnotes/web@3.93.10) (2022-11-04)
 
 **Note:** Version bump only for package @standardnotes/web

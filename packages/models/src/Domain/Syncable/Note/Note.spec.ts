@@ -1,3 +1,4 @@
+import { NoteType } from '@standardnotes/features'
 import { createNote } from './../../Utilities/Test/SpecUtils'
 
 describe('SNNote Tests', () => {
@@ -33,5 +34,62 @@ describe('SNNote Tests', () => {
     const note = createNote({})
 
     expect(note.noteType).toBe(undefined)
+  })
+
+  it('should getBlock', () => {
+    const note = createNote({
+      text: 'some text',
+      blocksItem: {
+        blocks: [
+          {
+            id: '123',
+            type: NoteType.Authentication,
+            editorIdentifier: '456',
+            content: 'foo',
+          },
+        ],
+      },
+    })
+
+    expect(note.getBlock('123')).toStrictEqual({
+      id: '123',
+      type: NoteType.Authentication,
+      editorIdentifier: '456',
+      content: 'foo',
+    })
+  })
+
+  it('should getBlock with no blocks', () => {
+    const note = createNote({
+      text: 'some text',
+    })
+
+    expect(note.getBlock('123')).toBe(undefined)
+  })
+
+  it('should getBlock with no blocksItem', () => {
+    const note = createNote({
+      text: 'some text',
+    })
+
+    expect(note.getBlock('123')).toBe(undefined)
+  })
+
+  it('should get indexOfBlock', () => {
+    const note = createNote({
+      text: 'some text',
+      blocksItem: {
+        blocks: [
+          {
+            id: '123',
+            type: NoteType.Authentication,
+            editorIdentifier: '456',
+            content: 'foo',
+          },
+        ],
+      },
+    })
+
+    expect(note.indexOfBlock({ id: '123' })).toBe(0)
   })
 })

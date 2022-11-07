@@ -111,8 +111,12 @@ const ContentList: FunctionComponent<Props> = ({
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
     >
       {items.map((item, index) => {
-        const previousItem = items[index - 1]
-        const nextItem = items[index + 1]
+        const previousIndex = index - 1
+        const previousItem = previousIndex >= 0 ? items[previousIndex] : undefined
+
+        const nextIndex = index + 1
+        const nextItem = nextIndex < items.length ? items[nextIndex] : undefined
+
         return (
           <ContentListItem
             key={item.uuid}

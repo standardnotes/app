@@ -7,4 +7,5 @@ export enum NoteType {
   Task = 'task',
   Plain = 'plain-text',
   Blocks = 'blocks',
+  Unknown = 'unknown',
 }

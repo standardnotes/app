@@ -74,7 +74,7 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
   public sessionKey?: string
 
   private note: SNNote
-  private lastBlockSent?: NoteBlock
+  private lastBlockContentSent?: string
 
   constructor(
     public readonly component: SNComponent,
@@ -261,8 +261,12 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
 
   sendNoteToEditor(source?: PayloadEmitSource): void {
     const block = this.note.getBlock(this.blockId)
+    if (!block) {
+      return
+    }
 
-    if (this.lastBlockSent && this.lastBlockSent.content === block?.content) {
+    if (this.lastBlockContentSent && this.lastBlockContentSent === block.content) {
+      this.log('Not sending note to editor, content has not changed')
       return
     }
 
@@ -295,7 +299,7 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
         : this.preferencesSerivce.getValue(PrefKey.EditorSpellcheck, true)
 
     params.content = {
-      text: block?.content || '',
+      text: block.content,
       spellcheck,
     } as NoteContent
 
@@ -307,9 +311,11 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
       item: params,
     }
 
-    this.replyToMessage(this.streamContextItemOriginalMessage as ComponentMessage, response)
+    const sent = this.replyToMessage(this.streamContextItemOriginalMessage as ComponentMessage, response)
 
-    this.lastBlockSent = block
+    if (sent) {
+      this.lastBlockContentSent = block.content
+    }
   }
 
   private log(message: string, ...args: unknown[]): void {
@@ -318,23 +324,24 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
     }
   }
 
-  private replyToMessage(originalMessage: ComponentMessage, replyData: MessageReplyData): void {
+  private replyToMessage(originalMessage: ComponentMessage, replyData: MessageReplyData): boolean {
     const reply: MessageReply = {
       action: ComponentAction.Reply,
       original: originalMessage,
       data: replyData,
     }
-    this.sendMessage(reply)
+
+    return this.sendMessage(reply)
   }
 
   /**
    * @param essential If the message is non-essential, no alert will be shown
    *  if we can no longer find the window.
    */
-  sendMessage(message: ComponentMessage | MessageReply, essential = true): void {
+  sendMessage(message: ComponentMessage | MessageReply, essential = true): boolean {
     if (!this.window && message.action === ComponentAction.Reply) {
       this.log('Component has been deallocated in between message send and reply', this.component, message)
-      return
+      return false
     }
 
     this.log('Send message to component', this.component, 'message: ', message)
@@ -347,7 +354,7 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
             'but an error is occurring. Please restart this extension and try again.',
         )
       }
-      return
+      return false
     }
 
     if (!origin.startsWith('http') && !origin.startsWith('file')) {
@@ -357,6 +364,8 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
 
     /* Mobile messaging requires json */
     this.window.postMessage(this.isMobile ? JSON.stringify(message) : message, origin)
+
+    return true
   }
 
   public getWindow(): Window | undefined {
@@ -459,6 +468,11 @@ export class BlocksComponentViewer implements ComponentViewerInterface {
       this.note,
       (mutator) => {
         mutator.changeBlockContent(this.blockId, text)
+
+        if (this.note.indexOfBlock({ id: this.blockId }) === 0) {
+          mutator.preview_html = content.preview_html
+          mutator.preview_plain = content.preview_plain || ''
+        }
       },
       MutationType.UpdateUserTimestamps,
       PayloadEmitSource.ComponentRetrieved,
