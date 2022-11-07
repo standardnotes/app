@@ -1,5 +1,4 @@
 import { createNote } from './../../Utilities/Test/SpecUtils'
-import { BlockType } from './NoteBlocks'
 
 describe('SNNote Tests', () => {
   it('should safely type required fields of Note when creating from PayloadContent', () => {
@@ -34,64 +33,5 @@ describe('SNNote Tests', () => {
     const note = createNote({})
 
     expect(note.noteType).toBe(undefined)
-  })
-
-  it('should getBlock', () => {
-    const note = createNote({
-      text: 'some text',
-      blocksItem: {
-        blocks: [
-          {
-            id: '123',
-            type: BlockType.Component,
-            componentIdentifier: '456',
-            content: 'foo',
-            previewPlain: 'foo',
-          },
-        ],
-      },
-    })
-
-    expect(note.getBlock('123')).toStrictEqual({
-      id: '123',
-      type: BlockType.Component,
-      componentIdentifier: '456',
-      content: 'foo',
-    })
-  })
-
-  it('should getBlock with no blocks', () => {
-    const note = createNote({
-      text: 'some text',
-    })
-
-    expect(note.getBlock('123')).toBe(undefined)
-  })
-
-  it('should getBlock with no blocksItem', () => {
-    const note = createNote({
-      text: 'some text',
-    })
-
-    expect(note.getBlock('123')).toBe(undefined)
-  })
-
-  it('should get indexOfBlock', () => {
-    const note = createNote({
-      text: 'some text',
-      blocksItem: {
-        blocks: [
-          {
-            id: '123',
-            type: BlockType.Component,
-            componentIdentifier: '456',
-            content: 'foo',
-            previewPlain: 'foo',
-          },
-        ],
-      },
-    })
-
-    expect(note.indexOfBlock({ id: '123' })).toBe(0)
   })
 })

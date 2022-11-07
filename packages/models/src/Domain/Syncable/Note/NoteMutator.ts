@@ -5,8 +5,6 @@ import { NoteToNoteReference } from '../../Abstract/Reference/NoteToNoteReferenc
 import { ContentType } from '@standardnotes/common'
 import { ContentReferenceType } from '../../Abstract/Item'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
-import { BlockValues, NoteBlock } from './NoteBlocks'
-import { filterFromArray } from '@standardnotes/utils'
 
 export class NoteMutator extends DecryptedItemMutator<NoteContent> {
   set title(title: string) {
@@ -43,50 +41,6 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
 
   set authorizedForListed(authorizedForListed: boolean) {
     this.mutableContent.authorizedForListed = authorizedForListed
-  }
-
-  addBlock(block: NoteBlock): void {
-    if (!this.mutableContent.blocksItem) {
-      this.mutableContent.blocksItem = { blocks: [] }
-    }
-
-    this.mutableContent.blocksItem.blocks.push(block)
-  }
-
-  removeBlock(block: NoteBlock): void {
-    if (!this.mutableContent.blocksItem) {
-      return
-    }
-
-    filterFromArray(this.mutableContent.blocksItem.blocks, { id: block.id })
-  }
-
-  changeBlockValues(blockId: string, values: BlockValues): void {
-    const blockIndex = this.mutableContent.blocksItem?.blocks.findIndex((b) => {
-      return b.id === blockId
-    })
-
-    if (blockIndex == null || blockIndex === -1) {
-      return
-    }
-
-    const block = this.mutableContent.blocksItem?.blocks[blockIndex]
-    if (!block) {
-      return
-    }
-
-    block.content = values.content
-    block.previewPlain = values.previewPlain
-    block.previewHtml = values.previewHtml
-  }
-
-  changeBlockSize(blockId: string, size: { width: number; height: number }): void {
-    const block = this.mutableContent.blocksItem?.blocks.find((b) => b.id === blockId)
-    if (!block) {
-      return
-    }
-
-    block.size = size
   }
 
   toggleSpellcheck(): void {

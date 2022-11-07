@@ -1,4 +1,4 @@
-import {FunctionComponent, useCallback} from 'react';
+import {FunctionComponent, useCallback, useState} from 'react';
 import {LexicalComposer} from '@lexical/react/LexicalComposer';
 import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
 import {ContentEditable} from '@lexical/react/LexicalContentEditable';
@@ -7,6 +7,7 @@ import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
 import {CheckListPlugin} from '@lexical/react/LexicalCheckListPlugin';
 import {ClearEditorPlugin} from '@lexical/react/LexicalClearEditorPlugin';
 import {MarkdownShortcutPlugin} from '@lexical/react/LexicalMarkdownShortcutPlugin';
+import {TablePlugin} from '@lexical/react/LexicalTablePlugin';
 import {
   CHECK_LIST,
   ELEMENT_TRANSFORMERS,
@@ -18,15 +19,17 @@ import {HashtagPlugin} from '@lexical/react/LexicalHashtagPlugin';
 import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
 import {LinkPlugin} from '@lexical/react/LexicalLinkPlugin';
 import {ListPlugin} from '@lexical/react/LexicalListPlugin';
-import {ListNode, ListItemNode} from '@lexical/list';
-import {CodeHighlightNode, CodeNode} from '@lexical/code';
-import {HashtagNode} from '@lexical/hashtag';
-import {AutoLinkNode, LinkNode} from '@lexical/link';
-import {HeadingNode, QuoteNode} from '@lexical/rich-text';
 import {EditorState, LexicalEditor} from 'lexical';
 
 import ComponentPickerMenuPlugin from '../Lexical/Plugins/ComponentPickerPlugin';
-import BlocksEditorTheme from '../Lexical/Theme';
+import BlocksEditorTheme from '../Lexical/Theme/Theme';
+import HorizontalRulePlugin from '../Lexical/Plugins/HorizontalRulePlugin';
+import TwitterPlugin from '../Lexical/Plugins/TwitterPlugin';
+import YouTubePlugin from '../Lexical/Plugins/YouTubePlugin';
+import AutoEmbedPlugin from '../Lexical/Plugins/AutoEmbedPlugin';
+import CollapsiblePlugin from '../Lexical/Plugins/CollapsiblePlugin';
+import {BlockEditorNodes} from '../Lexical/Nodes/AllNodes';
+// import DraggableBlockPlugin from '../Lexical/Plugins/DraggableBlockPlugin';
 
 type BlocksEditorProps = {
   initialValue: string;
@@ -47,52 +50,66 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
     [onChange],
   );
 
+  const [floatingAnchorElem, setFloatingAnchorElem] =
+    useState<HTMLDivElement | null>(null);
+
+  const onRef = (_floatingAnchorElem: HTMLDivElement) => {
+    if (_floatingAnchorElem !== null) {
+      setFloatingAnchorElem(_floatingAnchorElem);
+    }
+  };
+
   return (
     <LexicalComposer
       initialConfig={{
-        namespace: 'MyEditor',
+        namespace: 'BlocksEditor',
         theme: BlocksEditorTheme,
         onError: (error: Error) => console.error(error),
         editorState:
           initialValue && initialValue.length > 0 ? initialValue : undefined,
-        nodes: [
-          ListNode,
-          ListItemNode,
-          HeadingNode,
-          ListNode,
-          ListItemNode,
-          QuoteNode,
-          CodeNode,
-          HashtagNode,
-          CodeHighlightNode,
-          AutoLinkNode,
-          LinkNode,
-        ],
+        nodes: BlockEditorNodes,
       }}>
-      <RichTextPlugin
-        contentEditable={
-          <ContentEditable className={`ContentEditable__root ${className}`} />
-        }
-        placeholder=""
-        ErrorBoundary={LexicalErrorBoundary}
-      />
-      <ListPlugin />
-      <MarkdownShortcutPlugin
-        transformers={[
-          CHECK_LIST,
-          ...ELEMENT_TRANSFORMERS,
-          ...TEXT_FORMAT_TRANSFORMERS,
-          ...TEXT_MATCH_TRANSFORMERS,
-        ]}
-      />
-      <OnChangePlugin onChange={handleChange} />
-      <HistoryPlugin />
-      <AutoFocusPlugin />
-      <ComponentPickerMenuPlugin />
-      <ClearEditorPlugin />
-      <CheckListPlugin />
-      <LinkPlugin />
-      <HashtagPlugin />
+      <>
+        <RichTextPlugin
+          contentEditable={
+            <div id="blocks-editor" className="editor-scroller">
+              <div className="editor" ref={onRef}>
+                <ContentEditable
+                  className={`ContentEditable__root ${className}`}
+                />
+              </div>
+            </div>
+          }
+          placeholder=""
+          ErrorBoundary={LexicalErrorBoundary}
+        />
+        <ListPlugin />
+        <MarkdownShortcutPlugin
+          transformers={[
+            CHECK_LIST,
+            ...ELEMENT_TRANSFORMERS,
+            ...TEXT_FORMAT_TRANSFORMERS,
+            ...TEXT_MATCH_TRANSFORMERS,
+          ]}
+        />
+        <TablePlugin />
+        <OnChangePlugin onChange={handleChange} />
+        <HistoryPlugin />
+        <HorizontalRulePlugin />
+        <AutoFocusPlugin />
+        <ComponentPickerMenuPlugin />
+        <ClearEditorPlugin />
+        <CheckListPlugin />
+        <LinkPlugin />
+        <HashtagPlugin />
+        <AutoEmbedPlugin />
+        <TwitterPlugin />
+        <YouTubePlugin />
+        <CollapsiblePlugin />
+        {floatingAnchorElem && (
+          <>{/* <DraggableBlockPlugin anchorElem={floatingAnchorElem} /> */}</>
+        )}
+      </>
     </LexicalComposer>
   );
 };

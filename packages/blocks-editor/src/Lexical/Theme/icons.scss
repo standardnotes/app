@@ -1,0 +1,235 @@
+.icon.paragraph {
+  background-image: url(#{$blocks-editor-icons-path}/text-paragraph.svg);
+}
+
+.icon.h1 {
+  background-image: url(#{$blocks-editor-icons-path}/type-h1.svg);
+}
+
+.icon.h2 {
+  background-image: url(#{$blocks-editor-icons-path}/type-h2.svg);
+}
+
+.icon.h3 {
+  background-image: url(#{$blocks-editor-icons-path}/type-h3.svg);
+}
+
+.icon.h4 {
+  background-image: url(#{$blocks-editor-icons-path}/type-h4.svg);
+}
+
+.icon.h5 {
+  background-image: url(#{$blocks-editor-icons-path}/type-h5.svg);
+}
+
+.icon.h6 {
+  background-image: url(#{$blocks-editor-icons-path}/type-h6.svg);
+}
+
+.icon.bullet-list,
+.icon.bullet {
+  background-image: url(#{$blocks-editor-icons-path}/list-ul.svg);
+}
+
+.icon.check-list,
+.icon.check {
+  background-image: url(#{$blocks-editor-icons-path}/square-check.svg);
+}
+
+.icon.numbered-list,
+.icon.number {
+  background-image: url(#{$blocks-editor-icons-path}/list-ol.svg);
+}
+
+.icon.quote {
+  background-image: url(#{$blocks-editor-icons-path}/chat-square-quote.svg);
+}
+
+.icon.code {
+  background-image: url(#{$blocks-editor-icons-path}/code.svg);
+}
+
+.icon.plus {
+  background-image: url(#{$blocks-editor-icons-path}/plus.svg);
+}
+
+.icon.caret-right {
+  background-image: url(#{$blocks-editor-icons-path}/caret-right-fill.svg);
+}
+
+.icon.dropdown-more {
+  background-image: url(#{$blocks-editor-icons-path}/dropdown-more.svg);
+}
+
+.icon.font-color {
+  background-image: url(#{$blocks-editor-icons-path}/font-color.svg);
+}
+
+.icon.font-family {
+  background-image: url(#{$blocks-editor-icons-path}/font-family.svg);
+}
+
+.icon.bg-color {
+  background-image: url(#{$blocks-editor-icons-path}/bg-color.svg);
+}
+
+i.palette {
+  background-image: url(#{$blocks-editor-icons-path}/palette.svg);
+}
+
+i.bucket {
+  background-image: url(#{$blocks-editor-icons-path}/paint-bucket.svg);
+}
+
+i.bold {
+  background-image: url(#{$blocks-editor-icons-path}/type-bold.svg);
+}
+
+i.italic {
+  background-image: url(#{$blocks-editor-icons-path}/type-italic.svg);
+}
+
+i.clear {
+  background-image: url(#{$blocks-editor-icons-path}/trash.svg);
+}
+
+i.code {
+  background-image: url(#{$blocks-editor-icons-path}/code.svg);
+}
+
+i.underline {
+  background-image: url(#{$blocks-editor-icons-path}/type-underline.svg);
+}
+
+i.strikethrough {
+  background-image: url(#{$blocks-editor-icons-path}/type-strikethrough.svg);
+}
+
+i.subscript {
+  background-image: url(#{$blocks-editor-icons-path}/type-subscript.svg);
+}
+
+i.superscript {
+  background-image: url(#{$blocks-editor-icons-path}/type-superscript.svg);
+}
+
+i.link {
+  background-image: url(#{$blocks-editor-icons-path}/link.svg);
+}
+
+i.horizontal-rule {
+  background-image: url(#{$blocks-editor-icons-path}/horizontal-rule.svg);
+}
+
+i.image {
+  background-image: url(#{$blocks-editor-icons-path}/file-image.svg);
+}
+
+i.table {
+  background-image: url(#{$blocks-editor-icons-path}/table.svg);
+}
+
+i.close {
+  background-image: url(#{$blocks-editor-icons-path}/close.svg);
+}
+
+i.figma {
+  background-image: url(#{$blocks-editor-icons-path}/figma.svg);
+}
+
+i.poll {
+  background-image: url(#{$blocks-editor-icons-path}/card-checklist.svg);
+}
+
+i.tweet {
+  background-image: url(#{$blocks-editor-icons-path}/tweet.svg);
+}
+
+i.youtube {
+  background-image: url(#{$blocks-editor-icons-path}/youtube.svg);
+}
+
+.icon.left-align,
+i.left-align {
+  background-image: url(#{$blocks-editor-icons-path}/text-left.svg);
+}
+
+i.center-align {
+  background-image: url(#{$blocks-editor-icons-path}/text-center.svg);
+}
+
+i.right-align {
+  background-image: url(#{$blocks-editor-icons-path}/text-right.svg);
+}
+
+i.justify-align {
+  background-image: url(#{$blocks-editor-icons-path}/justify.svg);
+}
+
+i.indent {
+  background-image: url(#{$blocks-editor-icons-path}/indent.svg);
+}
+
+i.markdown {
+  background-image: url(#{$blocks-editor-icons-path}/markdown.svg);
+}
+
+i.outdent {
+  background-image: url(#{$blocks-editor-icons-path}/outdent.svg);
+}
+
+i.undo {
+  background-image: url(#{$blocks-editor-icons-path}/arrow-counterclockwise.svg);
+}
+
+i.redo {
+  background-image: url(#{$blocks-editor-icons-path}/arrow-clockwise.svg);
+}
+
+i.sticky {
+  background-image: url(#{$blocks-editor-icons-path}/sticky.svg);
+}
+
+i.mic {
+  background-image: url(#{$blocks-editor-icons-path}/mic.svg);
+}
+
+i.import {
+  background-image: url(#{$blocks-editor-icons-path}/upload.svg);
+}
+
+i.export {
+  background-image: url(#{$blocks-editor-icons-path}/download.svg);
+}
+
+i.diagram-2 {
+  background-image: url(#{$blocks-editor-icons-path}/diagram-2.svg);
+}
+
+i.user {
+  background-image: url(#{$blocks-editor-icons-path}/user.svg);
+}
+
+i.equation {
+  background-image: url(#{$blocks-editor-icons-path}/plus-slash-minus.svg);
+}
+
+i.gif {
+  background-image: url(#{$blocks-editor-icons-path}/filetype-gif.svg);
+}
+
+i.copy {
+  background-image: url(#{$blocks-editor-icons-path}/copy.svg);
+}
+
+i.success {
+  background-image: url(#{$blocks-editor-icons-path}/success.svg);
+}
+
+i.prettier {
+  background-image: url(#{$blocks-editor-icons-path}/prettier.svg);
+}
+
+i.prettier-error {
+  background-image: url(#{$blocks-editor-icons-path}/prettier-error.svg);
+}
