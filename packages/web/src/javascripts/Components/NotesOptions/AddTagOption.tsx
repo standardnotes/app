@@ -5,13 +5,13 @@ import { NavigationController } from '@/Controllers/Navigation/NavigationControl
 import { NotesController } from '@/Controllers/NotesController'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import Popover from '../Popover/Popover'
-import { LinkingController } from '@/Controllers/LinkingController'
 import { IconType } from '@standardnotes/snjs'
+import { getTitleForLinkedTag } from '@/Utils/Items/Display/getTitleForLinkedTag'
+import { useApplication } from '../ApplicationView/ApplicationProvider'
 
 type Props = {
   navigationController: NavigationController
   notesController: NotesController
-  linkingController: LinkingController
   className: string
   iconClassName: string
 }
@@ -19,10 +19,10 @@ type Props = {
 const AddTagOption: FunctionComponent<Props> = ({
   navigationController,
   notesController,
-  linkingController,
   className,
   iconClassName,
 }) => {
+  const application = useApplication()
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -79,7 +79,7 @@ const AddTagOption: FunctionComponent<Props> = ({
               className={`overflow-hidden overflow-ellipsis whitespace-nowrap
                       ${notesController.isTagInSelectedNotes(tag) ? 'font-bold' : ''}`}
             >
-              {linkingController.getTitleForLinkedTag(tag)?.longTitle}
+              {getTitleForLinkedTag(tag, application)?.longTitle}
             </span>
           </button>
         ))}

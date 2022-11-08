@@ -1,13 +1,17 @@
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { FilesController } from '@/Controllers/FilesController'
-import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
+import { LinkingController } from '@/Controllers/LinkingController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
+import { getIconForItem } from '@/Utils/Items/Icons/getIconForItem'
+import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
+import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { ChangeEventHandler, useEffect, useRef, useState } from 'react'
+import { useApplication } from '../ApplicationView/ApplicationProvider'
 import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import ClearInputButton from '../ClearInputButton/ClearInputButton'
 import Icon from '../Icon/Icon'
@@ -22,29 +26,26 @@ import LinkedItemSearchResults from './LinkedItemSearchResults'
 
 const LinkedItemsSectionItem = ({
   activateItem,
-  getItemIcon,
-  getTitleForLinkedTag,
   item,
   searchQuery,
   unlinkItem,
   handleFileAction,
 }: {
   activateItem: LinkingController['activateItem']
-  getItemIcon: LinkingController['getLinkedItemIcon']
-  getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
   item: LinkableItem
   searchQuery?: string
   unlinkItem: () => void
   handleFileAction: FilesController['handleFileAction']
 }) => {
   const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const application = useApplication()
 
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const toggleMenu = () => setIsMenuOpen((open) => !open)
 
   const [isRenamingFile, setIsRenamingFile] = useState(false)
 
-  const [icon, className] = getItemIcon(item)
+  const [icon, className] = getIconForItem(item, application)
   const title = item.title ?? ''
 
   const renameFile = async (name: string) => {
@@ -93,12 +94,7 @@ const LinkedItemsSectionItem = ({
             toggleMenu()
           }}
         >
-          <LinkedItemMeta
-            item={item}
-            getItemIcon={getItemIcon}
-            getTitleForLinkedTag={getTitleForLinkedTag}
-            searchQuery={searchQuery}
-          />
+          <LinkedItemMeta item={item} searchQuery={searchQuery} />
         </button>
       )}
       <button
@@ -174,23 +170,26 @@ const LinkedItemsPanel = ({
     notesLinkedToItem,
     notesLinkingToActiveItem,
     allItemLinks: allLinkedItems,
-    getTitleForLinkedTag,
-    getLinkedItemIcon,
-    getSearchResults,
     linkItemToSelectedItem,
     unlinkItemFromSelectedItem,
     activateItem,
     createAndAddNewTag,
     isEntitledToNoteLinking,
+    activeItem,
   } = linkingController
 
   const { hasFiles } = featuresController
+  const application = useApplication()
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const isSearching = !!searchQuery.length
-  const { linkedResults, unlinkedResults, shouldShowCreateTag } = getSearchResults(searchQuery)
+  const { linkedResults, unlinkedItems, shouldShowCreateTag } = getLinkingSearchResults(
+    searchQuery,
+    application,
+    activeItem,
+  )
 
   useEffect(() => {
     if (isOpen && searchInputRef.current) {
@@ -227,7 +226,7 @@ const LinkedItemsPanel = ({
       <form
         className={classNames(
           'sticky top-0 z-10 bg-default px-2.5 pt-2.5',
-          allLinkedItems.length || linkedResults.length || unlinkedResults.length || notesLinkingToActiveItem.length
+          allLinkedItems.length || linkedResults.length || unlinkedItems.length || notesLinkingToActiveItem.length
             ? 'border-b border-border pb-2.5'
             : 'pb-1',
         )}
@@ -254,15 +253,13 @@ const LinkedItemsPanel = ({
       <div className="divide-y divide-border">
         {isSearching ? (
           <>
-            {(!!unlinkedResults.length || shouldShowCreateTag) && (
+            {(!!unlinkedItems.length || shouldShowCreateTag) && (
               <div>
                 <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Unlinked</div>
                 <LinkedItemSearchResults
                   createAndAddNewTag={createAndAddNewTag}
-                  getLinkedItemIcon={getLinkedItemIcon}
-                  getTitleForLinkedTag={getTitleForLinkedTag}
                   linkItemToSelectedItem={linkItemToSelectedItem}
-                  results={unlinkedResults}
+                  results={unlinkedItems}
                   searchQuery={searchQuery}
                   shouldShowCreateTag={shouldShowCreateTag}
                   isEntitledToNoteLinking={isEntitledToNoteLinking}
@@ -281,8 +278,6 @@ const LinkedItemsPanel = ({
                     <LinkedItemsSectionItem
                       key={link.id}
                       item={link.item}
-                      getItemIcon={getLinkedItemIcon}
-                      getTitleForLinkedTag={getTitleForLinkedTag}
                       searchQuery={searchQuery}
                       unlinkItem={() => unlinkItemFromSelectedItem(link)}
                       activateItem={activateItem}
@@ -303,8 +298,6 @@ const LinkedItemsPanel = ({
                     <LinkedItemsSectionItem
                       key={link.id}
                       item={link.item}
-                      getItemIcon={getLinkedItemIcon}
-                      getTitleForLinkedTag={getTitleForLinkedTag}
                       searchQuery={searchQuery}
                       unlinkItem={() => unlinkItemFromSelectedItem(link)}
                       activateItem={activateItem}
@@ -336,8 +329,6 @@ const LinkedItemsPanel = ({
                     <LinkedItemsSectionItem
                       key={link.id}
                       item={link.item}
-                      getItemIcon={getLinkedItemIcon}
-                      getTitleForLinkedTag={getTitleForLinkedTag}
                       searchQuery={searchQuery}
                       unlinkItem={() => unlinkItemFromSelectedItem(link)}
                       activateItem={activateItem}
@@ -357,8 +348,6 @@ const LinkedItemsPanel = ({
                     <LinkedItemsSectionItem
                       key={link.id}
                       item={link.item}
-                      getItemIcon={getLinkedItemIcon}
-                      getTitleForLinkedTag={getTitleForLinkedTag}
                       searchQuery={searchQuery}
                       unlinkItem={() => unlinkItemFromSelectedItem(link)}
                       activateItem={activateItem}
@@ -376,8 +365,6 @@ const LinkedItemsPanel = ({
                     <LinkedItemsSectionItem
                       key={link.id}
                       item={link.item}
-                      getItemIcon={getLinkedItemIcon}
-                      getTitleForLinkedTag={getTitleForLinkedTag}
                       searchQuery={searchQuery}
                       unlinkItem={() => unlinkItemFromSelectedItem(link)}
                       activateItem={activateItem}
@@ -397,8 +384,6 @@ const LinkedItemsPanel = ({
                     <LinkedItemsSectionItem
                       key={link.id}
                       item={link.item}
-                      getItemIcon={getLinkedItemIcon}
-                      getTitleForLinkedTag={getTitleForLinkedTag}
                       searchQuery={searchQuery}
                       unlinkItem={() => unlinkItemFromSelectedItem(link)}
                       activateItem={activateItem}

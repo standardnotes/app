@@ -15,6 +15,7 @@ import ListItemNotePreviewText from './ListItemNotePreviewText'
 import { ListItemTitle } from './ListItemTitle'
 import { log, LoggingDomain } from '@/Logging'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { getIconAndTintForNoteType } from '@/Utils/Items/Icons/getIconAndTintForNoteType'
 
 const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
   application,
@@ -37,7 +38,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
 
   const editorForNote = application.componentManager.editorForNote(item as SNNote)
   const editorName = editorForNote?.name ?? PLAIN_EDITOR_NAME
-  const [icon, tint] = application.iconsController.getIconAndTintForNoteType(editorForNote?.package_info.note_type)
+  const [icon, tint] = getIconAndTintForNoteType(editorForNote?.package_info.note_type)
   const hasFiles = application.items.itemsReferencingItem(item).filter(isFile).length > 0
 
   const openNoteContextMenu = (posX: number, posY: number) => {

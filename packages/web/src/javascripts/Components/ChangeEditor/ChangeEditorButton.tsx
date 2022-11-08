@@ -5,6 +5,7 @@ import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import ChangeEditorMenu from './ChangeEditorMenu'
 import Popover from '../Popover/Popover'
 import RoundIconButton from '../Button/RoundIconButton'
+import { getIconAndTintForNoteType } from '@/Utils/Items/Icons/getIconAndTintForNoteType'
 
 type Props = {
   application: WebApplication
@@ -24,9 +25,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
   const [selectedEditor, setSelectedEditor] = useState(() => {
     return note ? application.componentManager.editorForNote(note) : undefined
   })
-  const [selectedEditorIcon, selectedEditorIconTint] = application.iconsController.getIconAndTintForNoteType(
-    selectedEditor?.package_info.note_type,
-  )
+  const [selectedEditorIcon, selectedEditorIconTint] = getIconAndTintForNoteType(selectedEditor?.package_info.note_type)
 
   const toggleMenu = useCallback(async () => {
     const willMenuOpen = !isOpen

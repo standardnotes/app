@@ -5,6 +5,6 @@
     "rootDir": "src",
     "outDir": "dist"
   },
-  "include": ["src"],
+  "include": ["src", "../web/src/javascripts/Components/BlockEditor/EncryptedFileNode.tsx"],
   "exclude": ["dist", "node_modules"]
 }

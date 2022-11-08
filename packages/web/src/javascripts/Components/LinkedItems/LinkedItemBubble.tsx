@@ -1,15 +1,18 @@
-import { ItemLink, LinkableItem, LinkingController } from '@/Controllers/LinkingController'
+import { LinkingController } from '@/Controllers/LinkingController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { KeyboardEventHandler, MouseEventHandler, useEffect, useRef, useState } from 'react'
 import { ContentType } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
+import { ItemLink } from '@/Utils/Items/Search/ItemLink'
+import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
+import { getIconForItem } from '@/Utils/Items/Icons/getIconForItem'
+import { useApplication } from '../ApplicationView/ApplicationProvider'
+import { getTitleForLinkedTag } from '@/Utils/Items/Display/getTitleForLinkedTag'
 
 type Props = {
   link: ItemLink
-  getItemIcon: LinkingController['getLinkedItemIcon']
-  getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
   activateItem: (item: LinkableItem) => Promise<void>
   unlinkItem: LinkingController['unlinkItemFromSelectedItem']
   focusPreviousItem: () => void
@@ -21,8 +24,6 @@ type Props = {
 
 const LinkedItemBubble = ({
   link,
-  getItemIcon,
-  getTitleForLinkedTag,
   activateItem,
   unlinkItem,
   focusPreviousItem,
@@ -32,6 +33,7 @@ const LinkedItemBubble = ({
   isBidirectional,
 }: Props) => {
   const ref = useRef<HTMLButtonElement>(null)
+  const application = useApplication()
 
   const [showUnlinkButton, setShowUnlinkButton] = useState(false)
   const unlinkButtonRef = useRef<HTMLAnchorElement | null>(null)
@@ -80,8 +82,8 @@ const LinkedItemBubble = ({
     }
   }
 
-  const [icon, iconClassName] = getItemIcon(link.item)
-  const tagTitle = getTitleForLinkedTag(link.item)
+  const [icon, iconClassName] = getIconForItem(link.item, application)
+  const tagTitle = getTitleForLinkedTag(link.item, application)
 
   useEffect(() => {
     if (link.id === focusedId) {

@@ -11,9 +11,9 @@ import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useContextMenuEvent } from '@/Hooks/useContextMenuEvent'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
+import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
 
 const FileListItem: FunctionComponent<DisplayableListItemProps<FileItem>> = ({
-  application,
   filesController,
   hideDate,
   hideIcon,
@@ -66,10 +66,7 @@ const FileListItem: FunctionComponent<DisplayableListItemProps<FileItem>> = ({
   }, [item, onSelect, toggleAppPane])
 
   const IconComponent = () =>
-    getFileIconComponent(
-      application.iconsController.getIconForFileType((item as FileItem).mimeType),
-      'w-10 h-10 flex-shrink-0',
-    )
+    getFileIconComponent(getIconForFileType((item as FileItem).mimeType), 'w-10 h-10 flex-shrink-0')
 
   useContextMenuEvent(listItemRef, openContextMenu)
 

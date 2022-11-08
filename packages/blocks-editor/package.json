@@ -9,13 +9,13 @@
   "dependencies": {
     "@lexical/react": "^0.6.0",
     "@standardnotes/icons": "workspace:*",
+    "@types/react": "^18.0.20",
+    "@types/react-dom": "^18.0.6",
     "lexical": "^0.6.0",
-    "react": "link:../web/node_modules/react",
-    "react-dom": "link:../web/node_modules/react-dom"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
-    "@types/react": "link:../web/node_modules/@types/react",
-    "@types/react-dom": "link:../web/node_modules/@types/react-dom",
     "eslint": "*",
     "prettier": "*",
     "typescript": "*"

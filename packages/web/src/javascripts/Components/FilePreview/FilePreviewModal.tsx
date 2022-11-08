@@ -9,6 +9,7 @@ import { KeyboardKey } from '@standardnotes/ui-services'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import FilePreview from './FilePreview'
+import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
 
 type Props = {
   application: WebApplication
@@ -67,12 +68,8 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
   )
 
   const IconComponent = useMemo(
-    () =>
-      getFileIconComponent(
-        application.iconsController.getIconForFileType(currentFile.mimeType),
-        'w-6 h-6 flex-shrink-0',
-      ),
-    [application.iconsController, currentFile.mimeType],
+    () => getFileIconComponent(getIconForFileType(currentFile.mimeType), 'w-6 h-6 flex-shrink-0'),
+    [currentFile.mimeType],
   )
 
   return (

@@ -1,5 +1,4 @@
 import {FunctionComponent, useCallback, useState} from 'react';
-import {LexicalComposer} from '@lexical/react/LexicalComposer';
 import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
 import {ContentEditable} from '@lexical/react/LexicalContentEditable';
 import {OnChangePlugin} from '@lexical/react/LexicalOnChangePlugin';
@@ -20,27 +19,25 @@ import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
 import {LinkPlugin} from '@lexical/react/LexicalLinkPlugin';
 import {ListPlugin} from '@lexical/react/LexicalListPlugin';
 import {EditorState, LexicalEditor} from 'lexical';
-
-import ComponentPickerMenuPlugin from '../Lexical/Plugins/ComponentPickerPlugin';
-import BlocksEditorTheme from '../Lexical/Theme/Theme';
 import HorizontalRulePlugin from '../Lexical/Plugins/HorizontalRulePlugin';
 import TwitterPlugin from '../Lexical/Plugins/TwitterPlugin';
 import YouTubePlugin from '../Lexical/Plugins/YouTubePlugin';
 import AutoEmbedPlugin from '../Lexical/Plugins/AutoEmbedPlugin';
 import CollapsiblePlugin from '../Lexical/Plugins/CollapsiblePlugin';
-import {BlockEditorNodes} from '../Lexical/Nodes/AllNodes';
-// import DraggableBlockPlugin from '../Lexical/Plugins/DraggableBlockPlugin';
+import DraggableBlockPlugin from '../Lexical/Plugins/DraggableBlockPlugin';
+
+const BlockDragEnabled = false;
 
 type BlocksEditorProps = {
-  initialValue: string;
   onChange: (value: string) => void;
   className?: string;
+  children: React.ReactNode;
 };
 
 export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
-  initialValue,
   onChange,
   className,
+  children,
 }) => {
   const handleChange = useCallback(
     (editorState: EditorState, _editor: LexicalEditor) => {
@@ -60,56 +57,46 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
   };
 
   return (
-    <LexicalComposer
-      initialConfig={{
-        namespace: 'BlocksEditor',
-        theme: BlocksEditorTheme,
-        onError: (error: Error) => console.error(error),
-        editorState:
-          initialValue && initialValue.length > 0 ? initialValue : undefined,
-        nodes: BlockEditorNodes,
-      }}>
-      <>
-        <RichTextPlugin
-          contentEditable={
-            <div id="blocks-editor" className="editor-scroller">
-              <div className="editor" ref={onRef}>
-                <ContentEditable
-                  className={`ContentEditable__root ${className}`}
-                />
-              </div>
+    <>
+      {children}
+      <RichTextPlugin
+        contentEditable={
+          <div id="blocks-editor" className="editor-scroller">
+            <div className="editor" ref={onRef}>
+              <ContentEditable
+                className={`ContentEditable__root ${className}`}
+              />
             </div>
-          }
-          placeholder=""
-          ErrorBoundary={LexicalErrorBoundary}
-        />
-        <ListPlugin />
-        <MarkdownShortcutPlugin
-          transformers={[
-            CHECK_LIST,
-            ...ELEMENT_TRANSFORMERS,
-            ...TEXT_FORMAT_TRANSFORMERS,
-            ...TEXT_MATCH_TRANSFORMERS,
-          ]}
-        />
-        <TablePlugin />
-        <OnChangePlugin onChange={handleChange} />
-        <HistoryPlugin />
-        <HorizontalRulePlugin />
-        <AutoFocusPlugin />
-        <ComponentPickerMenuPlugin />
-        <ClearEditorPlugin />
-        <CheckListPlugin />
-        <LinkPlugin />
-        <HashtagPlugin />
-        <AutoEmbedPlugin />
-        <TwitterPlugin />
-        <YouTubePlugin />
-        <CollapsiblePlugin />
-        {floatingAnchorElem && (
-          <>{/* <DraggableBlockPlugin anchorElem={floatingAnchorElem} /> */}</>
-        )}
-      </>
-    </LexicalComposer>
+          </div>
+        }
+        placeholder=""
+        ErrorBoundary={LexicalErrorBoundary}
+      />
+      <ListPlugin />
+      <MarkdownShortcutPlugin
+        transformers={[
+          CHECK_LIST,
+          ...ELEMENT_TRANSFORMERS,
+          ...TEXT_FORMAT_TRANSFORMERS,
+          ...TEXT_MATCH_TRANSFORMERS,
+        ]}
+      />
+      <TablePlugin />
+      <OnChangePlugin onChange={handleChange} />
+      <HistoryPlugin />
+      <HorizontalRulePlugin />
+      <AutoFocusPlugin />
+      <ClearEditorPlugin />
+      <CheckListPlugin />
+      <LinkPlugin />
+      <HashtagPlugin />
+      <AutoEmbedPlugin />
+      <TwitterPlugin />
+      <YouTubePlugin />
+      <CollapsiblePlugin />
+      {floatingAnchorElem && BlockDragEnabled && (
+        <>{<DraggableBlockPlugin anchorElem={floatingAnchorElem} />}</>
+      )}
+    </>
   );
 };
