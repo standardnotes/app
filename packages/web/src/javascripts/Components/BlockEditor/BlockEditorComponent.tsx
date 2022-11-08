@@ -7,6 +7,7 @@ import { ItemSelectionPlugin } from './Plugins/ItemSelectionPlugin/ItemSelection
 import { FileNode } from './Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import FilePlugin from './Plugins/EncryptedFilePlugin/FilePlugin'
 import BlockPickerMenuPlugin from './Plugins/BlockPickerPlugin/BlockPickerPlugin'
+import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 
 const StringEllipses = '...'
 const NotePreviewCharLimit = 160
@@ -32,16 +33,18 @@ export const BlockEditor: FunctionComponent<Props> = ({ note, application }) => 
 
   return (
     <div className="relative h-full w-full p-5">
-      <BlocksEditorComposer initialValue={note.text} nodes={[FileNode]}>
-        <BlocksEditor
-          onChange={handleChange}
-          className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
-        >
-          <ItemSelectionPlugin currentNote={note} />
-          <FilePlugin />
-          <BlockPickerMenuPlugin />
-        </BlocksEditor>
-      </BlocksEditorComposer>
+      <ErrorBoundary>
+        <BlocksEditorComposer initialValue={note.text} nodes={[FileNode]}>
+          <BlocksEditor
+            onChange={handleChange}
+            className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
+          >
+            <ItemSelectionPlugin currentNote={note} />
+            <FilePlugin />
+            <BlockPickerMenuPlugin />
+          </BlocksEditor>
+        </BlocksEditorComposer>
+      </ErrorBoundary>
     </div>
   )
 }
