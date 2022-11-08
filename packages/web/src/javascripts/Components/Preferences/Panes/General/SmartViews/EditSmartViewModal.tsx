@@ -9,18 +9,25 @@ import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
 import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 import Spinner from '@/Components/Spinner/Spinner'
-import { SmartView, TagMutator } from '@standardnotes/snjs'
+import { SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
+import { FeaturesController } from '@/Controllers/FeaturesController'
+import { SmartView, SNTag, TagMutator } from '@standardnotes/snjs'
+import { observer } from 'mobx-react-lite'
 import { useRef, useState } from 'react'
-import SmartViewPredicate from './SmartViewPredicate'
 
 type Props = {
   application: WebApplication
-  view: SmartView
+  featuresController: FeaturesController
+  view: SmartView | SNTag
   closeDialog: () => void
 }
 
-const EditSmartViewModal = ({ application, view, closeDialog }: Props) => {
+const EditSmartViewModal = ({ application, featuresController, view, closeDialog }: Props) => {
+  const isAddingNewSmartView = view instanceof SNTag && application.items.isTemplateItem(view)
+
   const [title, setTitle] = useState(view.title)
+  const titleInputRef = useRef<HTMLInputElement>(null)
+
   const [selectedIcon, setSelectedIcon] = useState<string | undefined>(view.iconString)
 
   const [isSaving, setIsSaving] = useState(false)
@@ -34,17 +41,47 @@ const EditSmartViewModal = ({ application, view, closeDialog }: Props) => {
 
   const saveSmartView = async () => {
     setIsSaving(true)
-    await application.mutator.changeAndSaveItem<TagMutator>(view, (mutator) => {
-      mutator.title = title
-      mutator.iconString = selectedIcon || IconNameToSvgMapping.restore
-    })
+
+    const save = async () => {
+      if (!title.length) {
+        titleInputRef.current?.focus()
+        return false
+      }
+
+      if (isAddingNewSmartView) {
+        if (!featuresController.hasSmartViews) {
+          void featuresController.showPremiumAlert(SMART_TAGS_FEATURE_NAME)
+          return false
+        }
+      } else {
+        const saved = await application.mutator.changeAndSaveItem<TagMutator>(view, (mutator) => {
+          mutator.title = title
+          mutator.iconString = selectedIcon || IconNameToSvgMapping.restore
+        })
+        return !!saved
+      }
+    }
+
+    const didSave = await save()
     setIsSaving(false)
+
+    if (didSave) {
+      closeDialog()
+    }
+  }
+
+  const close = () => {
+    if (isAddingNewSmartView) {
+      application.getViewControllerManager().navigationController.undoCreateNewTag()
+    }
     closeDialog()
   }
 
   return (
     <ModalDialog>
-      <ModalDialogLabel closeDialog={closeDialog}>Edit Smart View "{view.title}"</ModalDialogLabel>
+      <ModalDialogLabel closeDialog={close}>
+        {isAddingNewSmartView ? 'Create Smart View' : `Edit Smart View "${view.title}"`}
+      </ModalDialogLabel>
       <ModalDialogDescription>
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2.5">
@@ -55,6 +92,7 @@ const EditSmartViewModal = ({ application, view, closeDialog }: Props) => {
               onChange={(event) => {
                 setTitle(event.target.value)
               }}
+              ref={titleInputRef}
             />
           </div>
           <div className="flex items-center gap-2.5">
@@ -88,19 +126,13 @@ const EditSmartViewModal = ({ application, view, closeDialog }: Props) => {
               </div>
             </Popover>
           </div>
-          <div className="flex flex-col gap-2">
-            <div className="text-sm font-semibold">Predicate:</div>
-            <div>
-              <SmartViewPredicate predicate={view.predicate} />
-            </div>
-          </div>
         </div>
       </ModalDialogDescription>
       <ModalDialogButtons>
         <Button disabled={isSaving} onClick={saveSmartView}>
           {isSaving ? <Spinner className="h-4.5 w-4.5" /> : 'Save'}
         </Button>
-        <Button disabled={isSaving} onClick={closeDialog}>
+        <Button disabled={isSaving} onClick={close}>
           Cancel
         </Button>
       </ModalDialogButtons>
@@ -108,4 +140,4 @@ const EditSmartViewModal = ({ application, view, closeDialog }: Props) => {
   )
 }
 
-export default EditSmartViewModal
+export default observer(EditSmartViewModal)
