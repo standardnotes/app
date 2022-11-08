@@ -1,5 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import Button from '@/Components/Button/Button'
+import IconButton from '@/Components/Button/IconButton'
 import Icon from '@/Components/Icon/Icon'
 import { IconNameToSvgMapping } from '@/Components/Icon/IconNameToSvgMapping'
 import IconPicker from '@/Components/Icon/IconPicker'
@@ -11,9 +12,20 @@ import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 import Spinner from '@/Components/Spinner/Spinner'
 import { SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
 import { FeaturesController } from '@/Controllers/FeaturesController'
-import { SmartView, SNTag, TagMutator } from '@standardnotes/snjs'
+import {
+  AllPredicateCompoundOperators,
+  CompoundPredicate,
+  DecryptedItem,
+  Predicate,
+  SmartView,
+  SNTag,
+  TagMutator,
+} from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useRef, useState } from 'react'
+import { NonCompoundPredicateOperators } from './NonCompoundPredicateOperators'
+import SmartViewEditableCompoundPredicate from './SmartViewEditableCompoundPredicate'
+import SmartViewEditablePredicate from './SmartViewEditablePredicate'
 
 type Props = {
   application: WebApplication
@@ -24,9 +36,14 @@ type Props = {
 
 const EditSmartViewModal = ({ application, featuresController, view, closeDialog }: Props) => {
   const isAddingNewSmartView = view instanceof SNTag && application.items.isTemplateItem(view)
+  const [currentPredicate, setCurrentPredicate] = useState<
+    Predicate<DecryptedItem> | CompoundPredicate<DecryptedItem> | undefined
+  >(isAddingNewSmartView ? new Predicate('uuid', NonCompoundPredicateOperators[0], '') : undefined)
 
   const [title, setTitle] = useState(view.title)
   const titleInputRef = useRef<HTMLInputElement>(null)
+
+  const compoundOperatorSelectRef = useRef<HTMLSelectElement>(null)
 
   const [selectedIcon, setSelectedIcon] = useState<string | undefined>(view.iconString)
 
@@ -53,6 +70,18 @@ const EditSmartViewModal = ({ application, featuresController, view, closeDialog
           void featuresController.showPremiumAlert(SMART_TAGS_FEATURE_NAME)
           return false
         }
+
+        if (!currentPredicate) {
+          return false
+        }
+
+        const smartView = await application.items.createSmartView(title, currentPredicate)
+
+        if (!smartView) {
+          return false
+        }
+
+        return true
       } else {
         const saved = await application.mutator.changeAndSaveItem<TagMutator>(view, (mutator) => {
           mutator.title = title
@@ -126,6 +155,62 @@ const EditSmartViewModal = ({ application, featuresController, view, closeDialog
               </div>
             </Popover>
           </div>
+          {currentPredicate && (
+            <div className="flex flex-col gap-2.5">
+              <div className="text-sm font-semibold">Predicate:</div>
+              {currentPredicate instanceof CompoundPredicate ? (
+                <SmartViewEditableCompoundPredicate
+                  predicate={currentPredicate}
+                  onPredicateChange={(predicate) => {
+                    setCurrentPredicate(predicate)
+                    console.log(predicate)
+                  }}
+                />
+              ) : (
+                <>
+                  <SmartViewEditablePredicate
+                    predicate={currentPredicate}
+                    onPredicateChange={(predicate: Predicate<DecryptedItem>) => {
+                      setCurrentPredicate(predicate)
+                    }}
+                  />
+                  <div className="flex items-center justify-end gap-2.5">
+                    <div role="separator" className="h-px flex-grow bg-border" />
+                    <select
+                      className="rounded border border-border bg-default py-1 px-2"
+                      ref={compoundOperatorSelectRef}
+                    >
+                      {AllPredicateCompoundOperators.map((operator) => (
+                        <option key={operator} value={operator}>
+                          {operator}
+                        </option>
+                      ))}
+                    </select>
+                    <IconButton
+                      icon="add"
+                      className="rounded border border-border bg-default py-1 px-2"
+                      onClick={() => {
+                        if (!compoundOperatorSelectRef.current) {
+                          return
+                        }
+
+                        const compoundOperator = compoundOperatorSelectRef.current.value as 'and' | 'or'
+
+                        const newCompoundPredicate = new CompoundPredicate(compoundOperator, [
+                          currentPredicate,
+                          new Predicate('uuid', NonCompoundPredicateOperators[0], ''),
+                        ])
+
+                        setCurrentPredicate(newCompoundPredicate)
+                      }}
+                      title={'Add new predicate'}
+                      focusable={true}
+                    />
+                  </div>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </ModalDialogDescription>
       <ModalDialogButtons>

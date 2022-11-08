@@ -148,4 +148,9 @@ export interface ItemsClientInterface {
    * @returns Whether the item is a template (unmanaged)
    */
   isTemplateItem(item: DecryptedItemInterface): boolean
+
+  createSmartView<T extends DecryptedItemInterface<ItemContent>>(
+    title: string,
+    predicate: PredicateInterface<T>,
+  ): Promise<SmartView>
 }
