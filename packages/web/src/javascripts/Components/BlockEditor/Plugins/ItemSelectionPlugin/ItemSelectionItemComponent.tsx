@@ -1,5 +1,5 @@
 import LinkedItemMeta from '@/Components/LinkedItems/LinkedItemMeta'
-import { PopoverItemClassNames, PopoverItemSelectedClassNames } from '@standardnotes/blocks-editor'
+import { PopoverItemClassNames, PopoverItemSelectedClassNames } from '../ClassNames'
 import { ItemOption } from './ItemOption'
 
 type Props = {

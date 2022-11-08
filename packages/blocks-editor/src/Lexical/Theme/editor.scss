@@ -306,7 +306,7 @@
   list-style-position: inside;
 }
 .Lexical__listItem {
-  margin: 0 32px;
+  margin: 0 0px;
 }
 .Lexical__listItemChecked,
 .Lexical__listItemUnchecked {
@@ -317,6 +317,7 @@
   padding-right: 24px;
   list-style-type: none;
   outline: none;
+  vertical-align: middle;
 }
 .Lexical__listItemChecked {
   text-decoration: line-through;
@@ -326,10 +327,9 @@
   content: '';
   width: 16px;
   height: 16px;
-  top: 5px;
   left: 0;
+  top: 5px;
   cursor: pointer;
-  display: block;
   background-size: cover;
   position: absolute;
 }

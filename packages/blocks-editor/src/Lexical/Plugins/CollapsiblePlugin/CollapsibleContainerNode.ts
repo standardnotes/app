@@ -53,6 +53,7 @@ export class CollapsibleContainerNode extends ElementNode {
   ): boolean {
     if (prevNode.__open !== this.__open) {
       dom.open = this.__open;
+      console.log('dom.open', dom.open);
     }
 
     return false;
@@ -80,6 +81,7 @@ export class CollapsibleContainerNode extends ElementNode {
   setOpen(open: boolean): void {
     const writable = this.getWritable();
     writable.__open = open;
+    console.log('setOpen > open', open);
   }
 
   getOpen(): boolean {
@@ -88,6 +90,7 @@ export class CollapsibleContainerNode extends ElementNode {
 
   toggleOpen(): void {
     this.setOpen(!this.getOpen());
+    console.log('toggleOpen > this.setOpen');
   }
 }
 

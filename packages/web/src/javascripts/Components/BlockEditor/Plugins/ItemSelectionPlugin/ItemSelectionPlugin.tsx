@@ -1,14 +1,16 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { LexicalTypeaheadMenuPlugin, useBasicTypeaheadTriggerMatch } from '@lexical/react/LexicalTypeaheadMenuPlugin'
-import { INSERT_FILE_COMMAND, PopoverClassNames } from '@standardnotes/blocks-editor'
 import { TextNode } from 'lexical'
 import { FunctionComponent, useCallback, useMemo, useState } from 'react'
 import { ItemSelectionItemComponent } from './ItemSelectionItemComponent'
 import { ItemOption } from './ItemOption'
 import { useApplication } from '@/Components/ApplicationView/ApplicationProvider'
-import { ContentType, FileItem, SNNote } from '@standardnotes/snjs'
+import { ContentType, SNNote } from '@standardnotes/snjs'
 import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
 import Popover from '@/Components/Popover/Popover'
+import { INSERT_BUBBLE_COMMAND, INSERT_FILE_COMMAND } from '../Commands'
+import { useLinkingController } from '../../Contexts/LinkingControllerProvider'
+import { PopoverClassNames } from '../ClassNames'
 
 type Props = {
   currentNote: SNNote
@@ -18,6 +20,8 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
   const application = useApplication()
 
   const [editor] = useLexicalComposerContext()
+
+  const linkingController = useLinkingController()
 
   const [queryString, setQueryString] = useState<string | null>('')
 
@@ -43,18 +47,24 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
 
   const options = useMemo(() => {
     const results = getLinkingSearchResults(queryString || '', application, currentNote, {
-      contentType: ContentType.File,
       returnEmptyIfQueryEmpty: false,
     })
-    const files = [...results.linkedItems, ...results.unlinkedItems] as FileItem[]
-    return files.map((file) => {
-      return new ItemOption(file, {
+
+    const items = [...results.linkedItems, ...results.unlinkedItems]
+
+    return items.map((item) => {
+      return new ItemOption(item, {
         onSelect: (_queryString: string) => {
-          editor.dispatchCommand(INSERT_FILE_COMMAND, file.uuid)
+          void linkingController.linkItems(currentNote, item)
+          if (item.content_type === ContentType.File) {
+            editor.dispatchCommand(INSERT_FILE_COMMAND, item.uuid)
+          } else {
+            editor.dispatchCommand(INSERT_BUBBLE_COMMAND, item.uuid)
+          }
         },
       })
     })
-  }, [application, editor, currentNote, queryString])
+  }, [application, editor, currentNote, queryString, linkingController])
 
   return (
     <LexicalTypeaheadMenuPlugin<ItemOption>
@@ -80,7 +90,6 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
               x: anchorElementRef.current.offsetLeft,
               y: anchorElementRef.current.offsetTop + anchorElementRef.current.offsetHeight,
             }}
-            className={'min-h-80 h-80'}
             open={popoverOpen}
             togglePopover={() => {
               setPopoverOpen((prevValue) => !prevValue)

@@ -1,4 +1,4 @@
-import { PopoverItemClassNames, PopoverItemSelectedClassNames } from '@standardnotes/blocks-editor'
+import { PopoverItemClassNames, PopoverItemSelectedClassNames } from '../ClassNames'
 import { BlockPickerOption } from './BlockPickerOption'
 
 export function BlockPickerMenuItem({
