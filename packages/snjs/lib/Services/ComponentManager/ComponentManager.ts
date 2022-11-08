@@ -40,7 +40,6 @@ import {
   DeviceInterface,
   isMobileDevice,
 } from '@standardnotes/services'
-import { BlocksComponentViewer } from './BlocksComponentViewer'
 
 const DESKTOP_URL_PREFIX = 'sn://'
 const LOCAL_HOST = 'localhost'
@@ -175,34 +174,6 @@ export class SNComponentManager
       },
       this.urlForComponent(component),
       contextItem,
-      actionObserver,
-    )
-    this.viewers.push(viewer)
-    return viewer
-  }
-
-  public createBlockComponentViewer(
-    component: SNComponent,
-    noteId: string,
-    blockId: string,
-    actionObserver?: ActionObserver,
-  ): ComponentViewerInterface {
-    const viewer = new BlocksComponentViewer(
-      component,
-      noteId,
-      blockId,
-      this.itemManager,
-      this.syncService,
-      this.alertService,
-      this.preferencesSerivce,
-      this.featuresService,
-      this.environment,
-      this.platform,
-      {
-        runWithPermissions: this.runWithPermissions.bind(this),
-        urlsForActiveThemes: this.urlsForActiveThemes.bind(this),
-      },
-      this.urlForComponent(component),
       actionObserver,
     )
     this.viewers.push(viewer)

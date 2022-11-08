@@ -19,12 +19,6 @@ export interface ComponentManagerInterface {
     actionObserver?: ActionObserver,
     urlOverride?: string,
   ): ComponentViewerInterface
-  createBlockComponentViewer(
-    component: SNComponent,
-    noteId: string,
-    blockId: string,
-    actionObserver?: ActionObserver,
-  ): ComponentViewerInterface
   presentPermissionsDialog(_dialog: PermissionDialog): void
   getDefaultEditor(): SNComponent | undefined
   componentWithIdentifier(identifier: FeatureIdentifier | string): SNComponent | undefined

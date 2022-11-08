@@ -1,3 +1,5 @@
+$blocks-editor-icons-path: '../../../blocks-editor/src/Lexical/Icons';
+
 @import '../../../styles/src/Styles/_colors.scss';
 @import '../../../styles/src/Styles/_panels.scss';
 @import '../../../styles/src/Styles/_scrollbar.scss';
@@ -19,7 +21,14 @@
 @import 'sn';
 @import 'columns';
 @import 'animation';
+@import '../../../blocks-editor/src/Lexical/Theme/lexical.scss';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  ul, ol {
+    list-style-type: revert;
+  }
+}
