@@ -50,7 +50,7 @@
     "@standardnotes/utils": "workspace:*",
     "@types/crypto-js": "^4.1.1",
     "@types/jest": "^28.1.5",
-    "@types/jsdom": "^16.2.14",
+    "@types/jsdom": "^20.0.1",
     "@types/libsodium-wrappers": "^0.7.9",
     "@types/lodash": "^4.14.179",
     "@types/semver": "^7.3.10",
