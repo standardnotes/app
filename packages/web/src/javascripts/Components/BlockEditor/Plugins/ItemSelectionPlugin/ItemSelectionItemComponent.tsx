@@ -1,18 +1,14 @@
 import { ItemOption } from './ItemOption'
 
-export function ItemSelectionItemComponent({
-  index,
-  isSelected,
-  onClick,
-  onMouseEnter,
-  option,
-}: {
+type Props = {
   index: number
   isSelected: boolean
   onClick: () => void
   onMouseEnter: () => void
   option: ItemOption
-}) {
+}
+
+export function ItemSelectionItemComponent({ index, isSelected, onClick, onMouseEnter, option }: Props) {
   let className = 'item'
   if (isSelected) {
     className += ' selected'
@@ -30,7 +26,7 @@ export function ItemSelectionItemComponent({
       onClick={onClick}
     >
       {option.icon}
-      <span className="text">{option.title}</span>
+      <span className="text">{option.item.title}</span>
     </li>
   )
 }

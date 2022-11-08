@@ -1,10 +1,11 @@
-import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
+import { LinkingController } from '@/Controllers/LinkingController'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { observer } from 'mobx-react-lite'
 import { SNNote } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
 import { PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import LinkedItemMeta from './LinkedItemMeta'
+import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 
 type Props = {
   createAndAddNewTag: LinkingController['createAndAddNewTag']

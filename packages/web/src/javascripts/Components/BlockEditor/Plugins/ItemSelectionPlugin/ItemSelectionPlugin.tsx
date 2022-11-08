@@ -7,7 +7,7 @@ import * as ReactDOM from 'react-dom'
 import { ItemSelectionItemComponent } from './ItemSelectionItemComponent'
 import { ItemOption } from './ItemOption'
 import { useApplication } from '@/Components/ApplicationView/ApplicationProvider'
-import { ContentType, SNNote } from '@standardnotes/snjs'
+import { ContentType, FileItem, SNNote } from '@standardnotes/snjs'
 import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
 
 type Props = {
@@ -31,7 +31,7 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
         if (nodeToRemove) {
           nodeToRemove.remove()
         }
-        selectedOption.onSelect(matchingString)
+        selectedOption.options.onSelect(matchingString)
         closeMenu()
       })
     },
@@ -43,9 +43,9 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
       contentType: ContentType.File,
       returnEmptyIfQueryEmpty: false,
     })
-    const files = [...results.linkedItems, ...results.unlinkedItems]
+    const files = [...results.linkedItems, ...results.unlinkedItems] as FileItem[]
     return files.map((file) => {
-      return new ItemOption(file.title || '', file.uuid, {
+      return new ItemOption(file, {
         onSelect: (_queryString: string) => {
           editor.dispatchCommand(INSERT_FILE_COMMAND, file.uuid)
         },
@@ -54,39 +54,37 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
   }, [application, editor, currentNote, queryString])
 
   return (
-    <>
-      <LexicalTypeaheadMenuPlugin<ItemOption>
-        onQueryChange={setQueryString}
-        onSelectOption={onSelectOption}
-        triggerFn={checkForTriggerMatch}
-        options={options}
-        menuRenderFn={(anchorElementRef, { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex }) => {
-          return anchorElementRef.current && options.length
-            ? ReactDOM.createPortal(
-                <div className="typeahead-popover component-picker-menu">
-                  <ul>
-                    {options.map((option, i: number) => (
-                      <ItemSelectionItemComponent
-                        index={i}
-                        isSelected={selectedIndex === i}
-                        onClick={() => {
-                          setHighlightedIndex(i)
-                          selectOptionAndCleanUp(option)
-                        }}
-                        onMouseEnter={() => {
-                          setHighlightedIndex(i)
-                        }}
-                        key={option.key}
-                        option={option}
-                      />
-                    ))}
-                  </ul>
-                </div>,
-                anchorElementRef.current,
-              )
-            : null
-        }}
-      />
-    </>
+    <LexicalTypeaheadMenuPlugin<ItemOption>
+      onQueryChange={setQueryString}
+      onSelectOption={onSelectOption}
+      triggerFn={checkForTriggerMatch}
+      options={options}
+      menuRenderFn={(anchorElementRef, { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex }) => {
+        return anchorElementRef.current && options.length
+          ? ReactDOM.createPortal(
+              <div className="typeahead-popover component-picker-menu">
+                <ul>
+                  {options.map((option, i: number) => (
+                    <ItemSelectionItemComponent
+                      index={i}
+                      isSelected={selectedIndex === i}
+                      onClick={() => {
+                        setHighlightedIndex(i)
+                        selectOptionAndCleanUp(option)
+                      }}
+                      onMouseEnter={() => {
+                        setHighlightedIndex(i)
+                      }}
+                      key={option.key}
+                      option={option}
+                    />
+                  ))}
+                </ul>
+              </div>,
+              anchorElementRef.current,
+            )
+          : null
+      }}
+    />
   )
 }
