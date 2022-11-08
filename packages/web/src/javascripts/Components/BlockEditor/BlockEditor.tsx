@@ -3,6 +3,7 @@ import { SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useRef } from 'react'
 import { BlockEditorController } from './BlockEditorController'
 import { BlocksEditor } from '@standardnotes/blocks-editor'
+import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 
 const StringEllipses = '...'
 const NotePreviewCharLimit = 160
@@ -28,11 +29,13 @@ export const BlockEditor: FunctionComponent<Props> = ({ note, application }) => 
 
   return (
     <div className="relative h-full w-full p-5">
-      <BlocksEditor
-        onChange={handleChange}
-        initialValue={note.content.text}
-        className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
-      />
+      <ErrorBoundary>
+        <BlocksEditor
+          onChange={handleChange}
+          initialValue={note.content.text}
+          className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
+        />
+      </ErrorBoundary>
     </div>
   )
 }
