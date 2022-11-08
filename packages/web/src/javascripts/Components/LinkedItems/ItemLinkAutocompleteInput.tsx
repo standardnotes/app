@@ -18,6 +18,8 @@ import { LinkingController } from '@/Controllers/LinkingController'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { ElementIds } from '@/Constants/ElementIDs'
 import Menu from '../Menu/Menu'
+import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
+import { useApplication } from '../ApplicationView/ApplicationProvider'
 
 type Props = {
   linkingController: LinkingController
@@ -27,18 +29,19 @@ type Props = {
 }
 
 const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focusedId, setFocusedId }: Props) => {
+  const application = useApplication()
   const {
     tags,
     getTitleForLinkedTag,
     getLinkedItemIcon,
-    getSearchResults,
     linkItemToSelectedItem,
     createAndAddNewTag,
     isEntitledToNoteLinking,
+    activeItem,
   } = linkingController
 
   const [searchQuery, setSearchQuery] = useState('')
-  const { unlinkedResults, shouldShowCreateTag } = getSearchResults(searchQuery)
+  const { unlinkedItems, shouldShowCreateTag } = getLinkingSearchResults(searchQuery, application, activeItem)
 
   const [dropdownVisible, setDropdownVisible] = useState(false)
   const [dropdownMaxHeight, setDropdownMaxHeight] = useState<number | 'auto'>('auto')
@@ -105,7 +108,7 @@ const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focus
     }
   }, [focusedId])
 
-  const areSearchResultsVisible = dropdownVisible && (unlinkedResults.length > 0 || shouldShowCreateTag)
+  const areSearchResultsVisible = dropdownVisible && (unlinkedItems.length > 0 || shouldShowCreateTag)
 
   const handleMenuKeyDown: KeyboardEventHandler<HTMLMenuElement> = useCallback((event) => {
     if (event.key === KeyboardKey.Escape) {
@@ -158,7 +161,7 @@ const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focus
                   getLinkedItemIcon={getLinkedItemIcon}
                   getTitleForLinkedTag={getTitleForLinkedTag}
                   linkItemToSelectedItem={linkItemToSelectedItem}
-                  results={unlinkedResults}
+                  results={unlinkedItems}
                   searchQuery={searchQuery}
                   shouldShowCreateTag={shouldShowCreateTag}
                   onClickCallback={() => setSearchQuery('')}

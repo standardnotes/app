@@ -7,13 +7,19 @@ import * as ReactDOM from 'react-dom'
 import { ItemSelectionItemComponent } from './ItemSelectionItemComponent'
 import { ItemOption } from './ItemOption'
 import { useApplication } from '@/Components/ApplicationView/ApplicationProvider'
+import { ContentType, SNNote } from '@standardnotes/snjs'
+import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
 
-export const ItemSelectionPlugin: FunctionComponent = () => {
+type Props = {
+  currentNote: SNNote
+}
+
+export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) => {
   const application = useApplication()
 
   const [editor] = useLexicalComposerContext()
 
-  const [_queryString, setQueryString] = useState<string | null>(null)
+  const [queryString, setQueryString] = useState<string | null>('')
 
   const checkForTriggerMatch = useBasicTypeaheadTriggerMatch('@', {
     minLength: 0,
@@ -33,15 +39,19 @@ export const ItemSelectionPlugin: FunctionComponent = () => {
   )
 
   const options = useMemo(() => {
-    const files = application.items.getDisplayableFiles()
+    const results = getLinkingSearchResults(queryString || '', application, currentNote, {
+      contentType: ContentType.File,
+      returnEmptyIfQueryEmpty: false,
+    })
+    const files = [...results.linkedItems, ...results.unlinkedItems]
     return files.map((file) => {
-      return new ItemOption(file.name, file.uuid, {
+      return new ItemOption(file.title || '', file.uuid, {
         onSelect: (_queryString: string) => {
           editor.dispatchCommand(INSERT_FILE_COMMAND, file.uuid)
         },
       })
     })
-  }, [application, editor])
+  }, [application, editor, currentNote, queryString])
 
   return (
     <>

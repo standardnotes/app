@@ -36,7 +36,7 @@ export const BlockEditor: FunctionComponent<Props> = ({ note, application }) => 
           onChange={handleChange}
           className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
         >
-          <ItemSelectionPlugin />
+          <ItemSelectionPlugin currentNote={note} />
           <FilePlugin />
         </BlocksEditor>
       </BlocksEditorComposer>

@@ -17,7 +17,6 @@ export type FileComponentProps = Readonly<{
 
 export function FileComponent({ className, format, nodeKey, fileUuid }: FileComponentProps) {
   const application = useApplication()
-  console.log('FileComponent > application', application)
   const file = useMemo(() => application.items.findItem<FileItem>(fileUuid), [application, fileUuid])
 
   if (!file) {

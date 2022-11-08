@@ -66,7 +66,6 @@ export class FileNode extends DecoratorBlockNode {
   }
 
   decorate(_editor: LexicalEditor, config: EditorConfig): JSX.Element {
-    console.log('FileNode decorate > _editor', _editor)
     const embedBlockTheme = config.theme.embedBlock || {}
     const className = {
       base: embedBlockTheme.base || '',

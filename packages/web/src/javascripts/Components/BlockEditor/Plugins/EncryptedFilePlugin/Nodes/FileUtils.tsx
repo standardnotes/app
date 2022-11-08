@@ -12,7 +12,6 @@ export function convertToFileElement(domNode: HTMLDivElement): DOMConversionOutp
 }
 
 export function $createFileNode(fileUuid: string): FileNode {
-  console.log('$createFileNode > fileUuid', fileUuid)
   return new FileNode(fileUuid)
 }
 
