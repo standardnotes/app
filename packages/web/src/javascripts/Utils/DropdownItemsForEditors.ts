@@ -3,6 +3,7 @@ import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { WebApplication } from '@/Application/Application'
 import { BLOCKS_EDITOR_NAME, PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 import { featureTrunkEnabled, FeatureTrunkName } from '@/FeatureTrunk'
+import { getIconAndTintForNoteType } from './Items/Icons/getIconAndTintForNoteType'
 
 export const PlainEditorType = 'plain-editor'
 export const BlocksType = 'blocks-editor'
@@ -21,7 +22,7 @@ export function getDropdownItemsForAllEditors(application: WebApplication) {
 
   const options = application.componentManager.componentsForArea(ComponentArea.Editor).map((editor): EditorOption => {
     const identifier = editor.package_info.identifier
-    const [iconType, tint] = application.iconsController.getIconAndTintForNoteType(editor.package_info.note_type)
+    const [iconType, tint] = getIconAndTintForNoteType(editor.package_info.note_type)
 
     return {
       label: editor.displayName,

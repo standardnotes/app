@@ -9,8 +9,6 @@ import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 
 type Props = {
   createAndAddNewTag: LinkingController['createAndAddNewTag']
-  getLinkedItemIcon: LinkingController['getLinkedItemIcon']
-  getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
   linkItemToSelectedItem: LinkingController['linkItemToSelectedItem']
   results: LinkableItem[]
   searchQuery: string
@@ -21,8 +19,6 @@ type Props = {
 
 const LinkedItemSearchResults = ({
   createAndAddNewTag,
-  getLinkedItemIcon,
-  getTitleForLinkedTag,
   linkItemToSelectedItem,
   results,
   searchQuery,
@@ -49,12 +45,7 @@ const LinkedItemSearchResults = ({
               }
             }}
           >
-            <LinkedItemMeta
-              item={result}
-              getItemIcon={getLinkedItemIcon}
-              getTitleForLinkedTag={getTitleForLinkedTag}
-              searchQuery={searchQuery}
-            />
+            <LinkedItemMeta item={result} searchQuery={searchQuery} />
             {cannotLinkItem && <Icon type={PremiumFeatureIconName} className="ml-auto flex-shrink-0 text-info" />}
           </button>
         )

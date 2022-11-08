@@ -30,15 +30,7 @@ type Props = {
 
 const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focusedId, setFocusedId }: Props) => {
   const application = useApplication()
-  const {
-    tags,
-    getTitleForLinkedTag,
-    getLinkedItemIcon,
-    linkItemToSelectedItem,
-    createAndAddNewTag,
-    isEntitledToNoteLinking,
-    activeItem,
-  } = linkingController
+  const { tags, linkItemToSelectedItem, createAndAddNewTag, isEntitledToNoteLinking, activeItem } = linkingController
 
   const [searchQuery, setSearchQuery] = useState('')
   const { unlinkedItems, shouldShowCreateTag } = getLinkingSearchResults(searchQuery, application, activeItem)
@@ -158,8 +150,6 @@ const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focus
               >
                 <LinkedItemSearchResults
                   createAndAddNewTag={createAndAddNewTag}
-                  getLinkedItemIcon={getLinkedItemIcon}
-                  getTitleForLinkedTag={getTitleForLinkedTag}
                   linkItemToSelectedItem={linkItemToSelectedItem}
                   results={unlinkedItems}
                   searchQuery={searchQuery}

@@ -7,7 +7,6 @@ import {
   SNApplication,
   ItemGroupController,
   removeFromArray,
-  IconsController,
   DesktopDeviceInterface,
   isDesktopDevice,
   DeinitMode,
@@ -47,7 +46,6 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   private webServices!: WebServices
   private webEventObservers: WebEventObserver[] = []
   public itemControllerGroup: ItemGroupController
-  public iconsController: IconsController
   private onVisibilityChange: () => void
   private mobileWebReceiver?: MobileWebReceiver
   private androidBackHandler?: AndroidBackHandler
@@ -81,7 +79,6 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     const internalEventBus = new InternalEventBus()
 
     this.itemControllerGroup = new ItemGroupController(this)
-    this.iconsController = new IconsController()
     this.routeService = new RouteService(this, internalEventBus)
 
     const viewControllerManager = new ViewControllerManager(this, deviceInterface)

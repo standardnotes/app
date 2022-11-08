@@ -9,7 +9,6 @@ import {
   ApplicationEvent,
   ContentType,
   FileItem,
-  IconType,
   InternalEventBus,
   naturalSort,
   NoteViewController,
@@ -193,39 +192,6 @@ export class LinkingController extends AbstractViewController {
       this.application.items.itemsReferencingItem(this.activeItem).filter(isNote),
       'title',
     ).map((item) => createLinkFromItem(item, 'linked-by'))
-  }
-
-  getTitleForLinkedTag = (item: LinkableItem) => {
-    const isTag = item instanceof SNTag
-
-    if (!isTag) {
-      return
-    }
-
-    const titlePrefix = this.application.items.getTagPrefixTitle(item)
-    const longTitle = this.application.items.getTagLongTitle(item)
-    return {
-      titlePrefix,
-      longTitle,
-    }
-  }
-
-  getLinkedItemIcon = (item: LinkableItem): [IconType, string] => {
-    if (item instanceof SNNote) {
-      const editorForNote = this.application.componentManager.editorForNote(item)
-      const [icon, tint] = this.application.iconsController.getIconAndTintForNoteType(
-        editorForNote?.package_info.note_type,
-      )
-      const className = `text-accessory-tint-${tint}`
-      return [icon, className]
-    } else if (item instanceof FileItem) {
-      const icon = this.application.iconsController.getIconForFileType(item.mimeType)
-      return [icon, 'text-info']
-    } else if (item instanceof SNTag) {
-      return [item.iconString as IconType, 'text-info']
-    }
-
-    throw new Error('Unhandled case in getLinkedItemIcon')
   }
 
   activateItem = async (item: LinkableItem): Promise<AppPaneId | undefined> => {

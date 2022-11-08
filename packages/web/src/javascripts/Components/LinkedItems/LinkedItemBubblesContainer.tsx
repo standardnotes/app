@@ -1,12 +1,14 @@
 import { observer } from 'mobx-react-lite'
 import ItemLinkAutocompleteInput from './ItemLinkAutocompleteInput'
-import { ItemLink, LinkableItem, LinkingController } from '@/Controllers/LinkingController'
+import { LinkingController } from '@/Controllers/LinkingController'
 import LinkedItemBubble from './LinkedItemBubble'
 import { useCallback, useState } from 'react'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { ContentType } from '@standardnotes/snjs'
+import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
+import { ItemLink } from '@/Utils/Items/Search/ItemLink'
 
 type Props = {
   linkingController: LinkingController
@@ -19,8 +21,6 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
     notesLinkingToActiveItem,
     filesLinkingToActiveItem,
     unlinkItemFromSelectedItem: unlinkItem,
-    getTitleForLinkedTag,
-    getLinkedItemIcon: getItemIcon,
     activateItem,
   } = linkingController
 
@@ -86,8 +86,6 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
           <LinkedItemBubble
             link={link}
             key={link.id}
-            getItemIcon={getItemIcon}
-            getTitleForLinkedTag={getTitleForLinkedTag}
             activateItem={activateItemAndTogglePane}
             unlinkItem={unlinkItem}
             focusPreviousItem={focusPreviousItem}

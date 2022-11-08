@@ -1,3 +1,5 @@
+import LinkedItemMeta from '@/Components/LinkedItems/LinkedItemMeta'
+import { PopoverItemClassNames } from '@standardnotes/blocks-editor'
 import { ItemOption } from './ItemOption'
 
 type Props = {
@@ -6,18 +8,15 @@ type Props = {
   onClick: () => void
   onMouseEnter: () => void
   option: ItemOption
+  searchQuery: string
 }
 
-export function ItemSelectionItemComponent({ index, isSelected, onClick, onMouseEnter, option }: Props) {
-  let className = 'item'
-  if (isSelected) {
-    className += ' selected'
-  }
+export function ItemSelectionItemComponent({ index, isSelected, onClick, onMouseEnter, option, searchQuery }: Props) {
   return (
     <li
       key={option.key}
       tabIndex={-1}
-      className={className}
+      className={PopoverItemClassNames}
       ref={option.setRefElement}
       role="option"
       aria-selected={isSelected}
@@ -25,8 +24,7 @@ export function ItemSelectionItemComponent({ index, isSelected, onClick, onMouse
       onMouseEnter={onMouseEnter}
       onClick={onClick}
     >
-      {option.icon}
-      <span className="text">{option.item.title}</span>
+      <LinkedItemMeta item={option.item} searchQuery={searchQuery} />
     </li>
   )
 }

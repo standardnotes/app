@@ -1,6 +1,6 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { LexicalTypeaheadMenuPlugin, useBasicTypeaheadTriggerMatch } from '@lexical/react/LexicalTypeaheadMenuPlugin'
-import { INSERT_FILE_COMMAND } from '@standardnotes/blocks-editor'
+import { INSERT_FILE_COMMAND, PopoverClassNames } from '@standardnotes/blocks-editor'
 import { TextNode } from 'lexical'
 import { FunctionComponent, useCallback, useMemo, useState } from 'react'
 import * as ReactDOM from 'react-dom'
@@ -62,10 +62,11 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
       menuRenderFn={(anchorElementRef, { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex }) => {
         return anchorElementRef.current && options.length
           ? ReactDOM.createPortal(
-              <div className="typeahead-popover component-picker-menu">
+              <div className={PopoverClassNames}>
                 <ul>
                   {options.map((option, i: number) => (
                     <ItemSelectionItemComponent
+                      searchQuery={queryString || ''}
                       index={i}
                       isSelected={selectedIndex === i}
                       onClick={() => {

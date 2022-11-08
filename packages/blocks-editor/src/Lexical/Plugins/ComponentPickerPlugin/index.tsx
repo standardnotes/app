@@ -32,6 +32,11 @@ import {
 } from 'lexical';
 import {useCallback, useMemo, useState} from 'react';
 import * as ReactDOM from 'react-dom';
+import {
+  ComponentPopoverIconClassNames,
+  PopoverClassNames,
+  PopoverItemClassNames,
+} from '../../../Editor/ClassNames';
 
 import useModal from '../../Hooks/useModal';
 import {EmbedConfigs} from '../AutoEmbedPlugin';
@@ -42,7 +47,7 @@ class ComponentPickerOption extends TypeaheadOption {
   // What shows up in the editor
   title: string;
   // Icon for display
-  icon?: JSX.Element;
+  iconName?: string;
   // For extra searching.
   keywords: Array<string>;
   // TBD
@@ -53,7 +58,7 @@ class ComponentPickerOption extends TypeaheadOption {
   constructor(
     title: string,
     options: {
-      icon?: JSX.Element;
+      iconName?: string;
       keywords?: Array<string>;
       keyboardShortcut?: string;
       onSelect: (queryString: string) => void;
@@ -62,7 +67,7 @@ class ComponentPickerOption extends TypeaheadOption {
     super(title);
     this.title = title;
     this.keywords = options.keywords || [];
-    this.icon = options.icon;
+    this.iconName = options.iconName;
     this.keyboardShortcut = options.keyboardShortcut;
     this.onSelect = options.onSelect.bind(this);
   }
@@ -81,23 +86,21 @@ function ComponentPickerMenuItem({
   onMouseEnter: () => void;
   option: ComponentPickerOption;
 }) {
-  let className = 'item';
-  if (isSelected) {
-    className += ' selected';
-  }
   return (
     <li
       key={option.key}
       tabIndex={-1}
-      className={className}
+      className={PopoverItemClassNames}
       ref={option.setRefElement}
       role="option"
       aria-selected={isSelected}
       id={'typeahead-item-' + index}
       onMouseEnter={onMouseEnter}
       onClick={onClick}>
-      {option.icon}
-      <span className="text">{option.title}</span>
+      <i
+        className={`icon ${option.iconName} ${ComponentPopoverIconClassNames}`}
+      />
+      <div className="">{option.title}</div>
     </li>
   );
 }
@@ -131,7 +134,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
 
       options.push(
         new ComponentPickerOption(`${rows}x${columns} Table`, {
-          icon: <i className="icon table" />,
+          iconName: 'table',
           keywords: ['table'],
           onSelect: () =>
             // @ts-ignore Correct types, but since they're dynamic TS doesn't like it.
@@ -145,7 +148,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
         ...Array.from({length: 5}, (_, i) => i + 1).map(
           (columns) =>
             new ComponentPickerOption(`${rows}x${columns} Table`, {
-              icon: <i className="icon table" />,
+              iconName: 'table',
               keywords: ['table'],
               onSelect: () =>
                 // @ts-ignore Correct types, but since they're dynamic TS doesn't like it.
@@ -161,7 +164,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
   const options = useMemo(() => {
     const baseOptions = [
       new ComponentPickerOption('Paragraph', {
-        icon: <i className="icon paragraph" />,
+        iconName: 'paragraph',
         keywords: ['normal', 'paragraph', 'p', 'text'],
         onSelect: () =>
           editor.update(() => {
@@ -174,7 +177,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
       ...Array.from({length: 3}, (_, i) => i + 1).map(
         (n) =>
           new ComponentPickerOption(`Heading ${n}`, {
-            icon: <i className={`icon h${n}`} />,
+            iconName: `icon h${n}`,
             keywords: ['heading', 'header', `h${n}`],
             onSelect: () =>
               editor.update(() => {
@@ -189,7 +192,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
           }),
       ),
       new ComponentPickerOption('Table', {
-        icon: <i className="icon table" />,
+        iconName: 'table',
         keywords: ['table', 'grid', 'spreadsheet', 'rows', 'columns'],
         onSelect: () =>
           showModal('Insert Table', (onClose) => (
@@ -197,25 +200,25 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
           )),
       }),
       new ComponentPickerOption('Numbered List', {
-        icon: <i className="icon number" />,
+        iconName: 'number',
         keywords: ['numbered list', 'ordered list', 'ol'],
         onSelect: () =>
           editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined),
       }),
       new ComponentPickerOption('Bulleted List', {
-        icon: <i className="icon bullet" />,
+        iconName: 'bullet',
         keywords: ['bulleted list', 'unordered list', 'ul'],
         onSelect: () =>
           editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined),
       }),
       new ComponentPickerOption('Check List', {
-        icon: <i className="icon check" />,
+        iconName: 'check',
         keywords: ['check list', 'todo list'],
         onSelect: () =>
           editor.dispatchCommand(INSERT_CHECK_LIST_COMMAND, undefined),
       }),
       new ComponentPickerOption('Quote', {
-        icon: <i className="icon quote" />,
+        iconName: 'quote',
         keywords: ['block quote'],
         onSelect: () =>
           editor.update(() => {
@@ -226,7 +229,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
           }),
       }),
       new ComponentPickerOption('Code', {
-        icon: <i className="icon code" />,
+        iconName: 'code',
         keywords: ['javascript', 'python', 'js', 'codeblock'],
         onSelect: () =>
           editor.update(() => {
@@ -246,7 +249,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
           }),
       }),
       new ComponentPickerOption('Divider', {
-        icon: <i className="icon horizontal-rule" />,
+        iconName: 'horizontal-rule',
         keywords: ['horizontal rule', 'divider', 'hr'],
         onSelect: () =>
           editor.dispatchCommand(INSERT_HORIZONTAL_RULE_COMMAND, undefined),
@@ -254,7 +257,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
       ...EmbedConfigs.map(
         (embedConfig) =>
           new ComponentPickerOption(`Embed ${embedConfig.contentName}`, {
-            icon: embedConfig.icon,
+            iconName: embedConfig.iconName,
             keywords: [...embedConfig.keywords, 'embed'],
             onSelect: () =>
               editor.dispatchCommand(INSERT_EMBED_COMMAND, embedConfig.type),
@@ -262,7 +265,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
       ),
 
       new ComponentPickerOption('Collapsible', {
-        icon: <i className="icon caret-right" />,
+        iconName: 'caret-right',
         keywords: ['collapse', 'collapsible', 'toggle'],
         onSelect: () =>
           editor.dispatchCommand(INSERT_COLLAPSIBLE_COMMAND, undefined),
@@ -270,7 +273,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
       ...['left', 'center', 'right', 'justify'].map(
         (alignment) =>
           new ComponentPickerOption(`Align ${alignment}`, {
-            icon: <i className={`icon ${alignment}-align`} />,
+            iconName: `${alignment}-align`,
             keywords: ['align', 'justify', alignment],
             onSelect: () =>
               // @ts-ignore Correct types, but since they're dynamic TS doesn't like it.
@@ -328,7 +331,7 @@ export default function ComponentPickerMenuPlugin(): JSX.Element {
         ) =>
           anchorElementRef.current && options.length
             ? ReactDOM.createPortal(
-                <div className="typeahead-popover component-picker-menu">
+                <div className={PopoverClassNames}>
                   <ul>
                     {options.map((option, i: number) => (
                       <ComponentPickerMenuItem
