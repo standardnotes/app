@@ -74,7 +74,7 @@ describe('LinkingController', () => {
 
       const file = createFile('anotherFile')
 
-      const isFileValidResult = linkingController.isValidSearchResult(file, searchQuery)
+      const isFileValidResult = linkingController.doesItemMatchSearchQuery(file, searchQuery)
 
       expect(isFileValidResult).toBeFalsy()
     })
@@ -86,10 +86,10 @@ describe('LinkingController', () => {
 
       const trashed = createFile('test', { trashed: true })
 
-      const isArchivedFileValidResult = linkingController.isValidSearchResult(archived, searchQuery)
+      const isArchivedFileValidResult = linkingController.doesItemMatchSearchQuery(archived, searchQuery)
       expect(isArchivedFileValidResult).toBeFalsy()
 
-      const isTrashedFileValidResult = linkingController.isValidSearchResult(trashed, searchQuery)
+      const isTrashedFileValidResult = linkingController.doesItemMatchSearchQuery(trashed, searchQuery)
       expect(isTrashedFileValidResult).toBeFalsy()
     })
 
@@ -102,7 +102,7 @@ describe('LinkingController', () => {
 
       const result = createFile('test', { uuid: 'same-uuid' })
 
-      const isFileValidResult = linkingController.isValidSearchResult(result, searchQuery)
+      const isFileValidResult = linkingController.doesItemMatchSearchQuery(result, searchQuery)
       expect(isFileValidResult).toBeFalsy()
     })
 
@@ -111,7 +111,7 @@ describe('LinkingController', () => {
 
       const file = createFile('TeSt')
 
-      const isFileValidResult = linkingController.isValidSearchResult(file, searchQuery)
+      const isFileValidResult = linkingController.doesItemMatchSearchQuery(file, searchQuery)
 
       expect(isFileValidResult).toBeTruthy()
     })

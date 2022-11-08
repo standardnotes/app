@@ -2,15 +2,17 @@ import {FunctionComponent} from 'react';
 import {LexicalComposer} from '@lexical/react/LexicalComposer';
 import BlocksEditorTheme from '../Lexical/Theme/Theme';
 import {BlockEditorNodes} from '../Lexical/Nodes/AllNodes';
+import {Klass, LexicalNode} from 'lexical';
 
 type BlocksEditorComposerProps = {
   initialValue: string;
   children: React.ReactNode;
+  nodes: Array<Klass<LexicalNode>>;
 };
 
 export const BlocksEditorComposer: FunctionComponent<
   BlocksEditorComposerProps
-> = ({initialValue, children}) => {
+> = ({initialValue, children, nodes}) => {
   return (
     <LexicalComposer
       initialConfig={{
@@ -19,7 +21,7 @@ export const BlocksEditorComposer: FunctionComponent<
         onError: (error: Error) => console.error(error),
         editorState:
           initialValue && initialValue.length > 0 ? initialValue : undefined,
-        nodes: BlockEditorNodes,
+        nodes: [...nodes, ...BlockEditorNodes],
       }}>
       <>{children}</>
     </LexicalComposer>

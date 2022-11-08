@@ -2,6 +2,7 @@ import { WebApplication } from '@/Application/Application'
 import { PopoverFileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
+import { doesItemMatchSearchQuery } from '@/Utils/Items/Search'
 import {
   ApplicationEvent,
   ContentType,
@@ -342,17 +343,8 @@ export class LinkingController extends AbstractViewController {
     this.application.sync.sync().catch(console.error)
   }
 
-  isValidSearchResult = (item: LinkableItem, searchQuery: string) => {
-    const title = item instanceof SNTag ? this.application.items.getTagLongTitle(item) : item.title ?? ''
-
-    const matchesQuery = title.toLowerCase().includes(searchQuery.toLowerCase())
-
-    const isActiveItem = this.activeItem?.uuid === item.uuid
-    const isArchivedOrTrashed = item.archived || item.trashed
-
-    const isValidSearchResult = matchesQuery && !isActiveItem && !isArchivedOrTrashed
-
-    return isValidSearchResult
+  doesItemMatchSearchQuery = (item: LinkableItem, searchQuery: string) => {
+    return doesItemMatchSearchQuery(item, searchQuery, this.application)
   }
 
   isSearchResultAlreadyLinked = (item: LinkableItem) => {
@@ -408,7 +400,11 @@ export class LinkingController extends AbstractViewController {
     for (let index = 0; index < searchableItems.length; index++) {
       const item = searchableItems[index]
 
-      if (!this.isValidSearchResult(item, searchQuery)) {
+      if (this.activeItem?.uuid === item.uuid) {
+        continue
+      }
+
+      if (!this.doesItemMatchSearchQuery(item, searchQuery)) {
         continue
       }
 
