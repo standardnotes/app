@@ -55,7 +55,7 @@ export function getLinkingSearchResults(
   for (let index = 0; index < searchableItems.length; index++) {
     const item = searchableItems[index]
 
-    if (activeItem?.uuid === item.uuid) {
+    if (activeItem.uuid === item.uuid) {
       continue
     }
 
@@ -67,7 +67,7 @@ export function getLinkingSearchResults(
       continue
     }
 
-    if (activeItem && isSearchResultAlreadyLinkedToItem(item, activeItem)) {
+    if (isSearchResultAlreadyLinkedToItem(item, activeItem)) {
       if (linkedResults.length < MaxLinkedResults) {
         linkedResults.push(createLinkFromItem(item, 'linked'))
       }
