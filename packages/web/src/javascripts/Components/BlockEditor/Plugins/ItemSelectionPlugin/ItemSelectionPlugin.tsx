@@ -3,12 +3,12 @@ import { LexicalTypeaheadMenuPlugin, useBasicTypeaheadTriggerMatch } from '@lexi
 import { INSERT_FILE_COMMAND, PopoverClassNames } from '@standardnotes/blocks-editor'
 import { TextNode } from 'lexical'
 import { FunctionComponent, useCallback, useMemo, useState } from 'react'
-import * as ReactDOM from 'react-dom'
 import { ItemSelectionItemComponent } from './ItemSelectionItemComponent'
 import { ItemOption } from './ItemOption'
 import { useApplication } from '@/Components/ApplicationView/ApplicationProvider'
 import { ContentType, FileItem, SNNote } from '@standardnotes/snjs'
 import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
+import Popover from '@/Components/Popover/Popover'
 
 type Props = {
   currentNote: SNNote
@@ -25,6 +25,8 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
     minLength: 0,
   })
 
+  const [popoverOpen, setPopoverOpen] = useState(true)
+
   const onSelectOption = useCallback(
     (selectedOption: ItemOption, nodeToRemove: TextNode | null, closeMenu: () => void, matchingString: string) => {
       editor.update(() => {
@@ -32,6 +34,7 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
           nodeToRemove.remove()
         }
         selectedOption.options.onSelect(matchingString)
+        setPopoverOpen(false)
         closeMenu()
       })
     },
@@ -59,32 +62,52 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
       onSelectOption={onSelectOption}
       triggerFn={checkForTriggerMatch}
       options={options}
+      onClose={() => {
+        setPopoverOpen(false)
+      }}
+      onOpen={() => {
+        setPopoverOpen(true)
+      }}
       menuRenderFn={(anchorElementRef, { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex }) => {
-        return anchorElementRef.current && options.length
-          ? ReactDOM.createPortal(
-              <div className={PopoverClassNames}>
-                <ul>
-                  {options.map((option, i: number) => (
-                    <ItemSelectionItemComponent
-                      searchQuery={queryString || ''}
-                      index={i}
-                      isSelected={selectedIndex === i}
-                      onClick={() => {
-                        setHighlightedIndex(i)
-                        selectOptionAndCleanUp(option)
-                      }}
-                      onMouseEnter={() => {
-                        setHighlightedIndex(i)
-                      }}
-                      key={option.key}
-                      option={option}
-                    />
-                  ))}
-                </ul>
-              </div>,
-              anchorElementRef.current,
-            )
-          : null
+        if (!anchorElementRef.current || !options.length) {
+          return null
+        }
+
+        return (
+          <Popover
+            align="start"
+            anchorPoint={{
+              x: anchorElementRef.current.offsetLeft,
+              y: anchorElementRef.current.offsetTop + anchorElementRef.current.offsetHeight,
+            }}
+            className={'min-h-80 h-80'}
+            open={popoverOpen}
+            togglePopover={() => {
+              setPopoverOpen((prevValue) => !prevValue)
+            }}
+          >
+            <div className={PopoverClassNames}>
+              <ul>
+                {options.map((option, i: number) => (
+                  <ItemSelectionItemComponent
+                    searchQuery={queryString || ''}
+                    index={i}
+                    isSelected={selectedIndex === i}
+                    onClick={() => {
+                      setHighlightedIndex(i)
+                      selectOptionAndCleanUp(option)
+                    }}
+                    onMouseEnter={() => {
+                      setHighlightedIndex(i)
+                    }}
+                    key={option.key}
+                    option={option}
+                  />
+                ))}
+              </ul>
+            </div>
+          </Popover>
+        )
       }}
     />
   )

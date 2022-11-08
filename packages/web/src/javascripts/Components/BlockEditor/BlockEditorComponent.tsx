@@ -6,6 +6,7 @@ import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor
 import { ItemSelectionPlugin } from './Plugins/ItemSelectionPlugin/ItemSelectionPlugin'
 import { FileNode } from './Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import FilePlugin from './Plugins/EncryptedFilePlugin/FilePlugin'
+import BlockPickerMenuPlugin from './Plugins/BlockPickerPlugin/BlockPickerPlugin'
 
 const StringEllipses = '...'
 const NotePreviewCharLimit = 160
@@ -38,6 +39,7 @@ export const BlockEditor: FunctionComponent<Props> = ({ note, application }) => 
         >
           <ItemSelectionPlugin currentNote={note} />
           <FilePlugin />
+          <BlockPickerMenuPlugin />
         </BlocksEditor>
       </BlocksEditorComposer>
     </div>

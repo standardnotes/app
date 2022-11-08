@@ -19,7 +19,6 @@ import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
 import {LinkPlugin} from '@lexical/react/LexicalLinkPlugin';
 import {ListPlugin} from '@lexical/react/LexicalListPlugin';
 import {EditorState, LexicalEditor} from 'lexical';
-import ComponentPickerMenuPlugin from '../Lexical/Plugins/ComponentPickerPlugin';
 import HorizontalRulePlugin from '../Lexical/Plugins/HorizontalRulePlugin';
 import TwitterPlugin from '../Lexical/Plugins/TwitterPlugin';
 import YouTubePlugin from '../Lexical/Plugins/YouTubePlugin';
@@ -87,7 +86,6 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <HistoryPlugin />
       <HorizontalRulePlugin />
       <AutoFocusPlugin />
-      <ComponentPickerMenuPlugin />
       <ClearEditorPlugin />
       <CheckListPlugin />
       <LinkPlugin />

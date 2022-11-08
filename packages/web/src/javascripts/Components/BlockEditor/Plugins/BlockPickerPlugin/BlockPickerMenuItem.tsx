@@ -1,17 +1,19 @@
-import LinkedItemMeta from '@/Components/LinkedItems/LinkedItemMeta'
 import { PopoverItemClassNames, PopoverItemSelectedClassNames } from '@standardnotes/blocks-editor'
-import { ItemOption } from './ItemOption'
+import { BlockPickerOption } from './BlockPickerOption'
 
-type Props = {
+export function BlockPickerMenuItem({
+  index,
+  isSelected,
+  onClick,
+  onMouseEnter,
+  option,
+}: {
   index: number
   isSelected: boolean
   onClick: () => void
   onMouseEnter: () => void
-  option: ItemOption
-  searchQuery: string
-}
-
-export function ItemSelectionItemComponent({ index, isSelected, onClick, onMouseEnter, option, searchQuery }: Props) {
+  option: BlockPickerOption
+}) {
   return (
     <li
       key={option.key}
@@ -24,7 +26,8 @@ export function ItemSelectionItemComponent({ index, isSelected, onClick, onMouse
       onMouseEnter={onMouseEnter}
       onClick={onClick}
     >
-      <LinkedItemMeta item={option.item} searchQuery={searchQuery} />
+      <i className={`icon ${option.iconName} mr-[8px] flex h-5 w-5 bg-contain fill-current text-center`} />
+      <div className="">{option.title}</div>
     </li>
   )
 }
