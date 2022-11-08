@@ -2,7 +2,8 @@ import { WebApplication } from '@/Application/Application'
 import { SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useRef } from 'react'
 import { BlockEditorController } from './BlockEditorController'
-import { BlocksEditor } from '@standardnotes/blocks-editor'
+import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
+import { AutocompleteMenuPlugin } from './AutocompleteMenuPlugin'
 
 const StringEllipses = '...'
 const NotePreviewCharLimit = 160
@@ -28,11 +29,14 @@ export const BlockEditor: FunctionComponent<Props> = ({ note, application }) => 
 
   return (
     <div className="relative h-full w-full p-5">
-      <BlocksEditor
-        onChange={handleChange}
-        initialValue={note.content.text}
-        className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
-      />
+      <BlocksEditorComposer initialValue={note.text}>
+        <BlocksEditor
+          onChange={handleChange}
+          className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
+        >
+          <AutocompleteMenuPlugin application={application} />
+        </BlocksEditor>
+      </BlocksEditorComposer>
     </div>
   )
 }

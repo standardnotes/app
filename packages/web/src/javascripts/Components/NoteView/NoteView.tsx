@@ -33,7 +33,7 @@ import {
 import { confirmDialog, KeyboardKey, KeyboardModifier } from '@standardnotes/ui-services'
 import { ChangeEventHandler, createRef, KeyboardEventHandler, RefObject } from 'react'
 import { EditorEventSource } from '../../Types/EditorEventSource'
-import { BlockEditor } from '../BlockEditor/BlockEditor'
+import { BlockEditor } from '../BlockEditor/BlockEditorComponent'
 import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
