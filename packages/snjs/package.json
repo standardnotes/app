@@ -64,7 +64,7 @@
     "eslint": "*",
     "eslint-plugin-prettier": "*",
     "exports-loader": "^3.1.0",
-    "jest": "^28.1.2",
+    "jest": "^29.3.1",
     "jest-environment-jsdom": "^28.1.2",
     "jsdom": "^20.0.0",
     "libsodium-wrappers": "^0.7.9",
