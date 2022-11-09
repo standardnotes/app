@@ -25,6 +25,7 @@ import YouTubePlugin from '../Lexical/Plugins/YouTubePlugin';
 import AutoEmbedPlugin from '../Lexical/Plugins/AutoEmbedPlugin';
 import CollapsiblePlugin from '../Lexical/Plugins/CollapsiblePlugin';
 import DraggableBlockPlugin from '../Lexical/Plugins/DraggableBlockPlugin';
+import CodeHighlightPlugin from '../Lexical/Plugins/CodeHighlightPlugin';
 
 const BlockDragEnabled = false;
 
@@ -88,6 +89,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <AutoFocusPlugin />
       <ClearEditorPlugin />
       <CheckListPlugin />
+      <CodeHighlightPlugin />
       <LinkPlugin />
       <HashtagPlugin />
       <AutoEmbedPlugin />
