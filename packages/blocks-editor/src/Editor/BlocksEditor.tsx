@@ -26,6 +26,8 @@ import AutoEmbedPlugin from '../Lexical/Plugins/AutoEmbedPlugin';
 import CollapsiblePlugin from '../Lexical/Plugins/CollapsiblePlugin';
 import DraggableBlockPlugin from '../Lexical/Plugins/DraggableBlockPlugin';
 import CodeHighlightPlugin from '../Lexical/Plugins/CodeHighlightPlugin';
+import FloatingTextFormatToolbarPlugin from '../Lexical/Plugins/FloatingTextFormatToolbarPlugin';
+import FloatingLinkEditorPlugin from '../Lexical/Plugins/FloatingLinkEditorPlugin';
 
 const BlockDragEnabled = false;
 
@@ -92,10 +94,17 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <CodeHighlightPlugin />
       <LinkPlugin />
       <HashtagPlugin />
+
       <AutoEmbedPlugin />
       <TwitterPlugin />
       <YouTubePlugin />
       <CollapsiblePlugin />
+      {floatingAnchorElem && (
+        <>
+          <FloatingTextFormatToolbarPlugin anchorElem={floatingAnchorElem} />
+          <FloatingLinkEditorPlugin />
+        </>
+      )}
       {floatingAnchorElem && BlockDragEnabled && (
         <>{<DraggableBlockPlugin anchorElem={floatingAnchorElem} />}</>
       )}
