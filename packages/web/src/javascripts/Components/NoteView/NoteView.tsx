@@ -8,7 +8,6 @@ import ProtectedItemOverlay from '@/Components/ProtectedItemOverlay/ProtectedIte
 import { ElementIds } from '@/Constants/ElementIDs'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { StringDeleteNote, STRING_DELETE_LOCKED_ATTEMPT, STRING_DELETE_PLACEHOLDER_ATTEMPT } from '@/Constants/Strings'
-import { featureTrunkEnabled, FeatureTrunkName } from '@/FeatureTrunk'
 import { log, LoggingDomain } from '@/Logging'
 import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
 import { classNames } from '@/Utils/ConcatenateClassNames'
