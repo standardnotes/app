@@ -2,6 +2,14 @@ import { WebApplication } from '@/Application/Application'
 import { PredicateCompoundOperator, predicateFromJson, PredicateJsonForm } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 
+const getEmptyPredicate = (): PredicateJsonForm => {
+  return {
+    keypath: '',
+    operator: '!=',
+    value: '',
+  }
+}
+
 export class AddSmartViewModalController {
   isAddingSmartView = false
   isSaving = false
@@ -10,11 +18,7 @@ export class AddSmartViewModalController {
 
   icon = 'restore'
 
-  predicate: PredicateJsonForm = {
-    keypath: '',
-    operator: '!=',
-    value: '',
-  }
+  predicate: PredicateJsonForm = getEmptyPredicate()
 
   constructor(private application: WebApplication) {
     makeObservable(this, {
@@ -63,14 +67,7 @@ export class AddSmartViewModalController {
     this.setPredicate({
       keypath: undefined,
       operator,
-      value: [
-        currentPredicate,
-        {
-          keypath: '',
-          operator: '!=',
-          value: '',
-        },
-      ],
+      value: [currentPredicate, getEmptyPredicate()],
     })
   }
 
@@ -78,10 +75,16 @@ export class AddSmartViewModalController {
     this.setIsAddingSmartView(false)
     this.setTitle('')
     this.setIcon('')
+    this.setIsSaving(false)
+    this.setPredicate(getEmptyPredicate())
   }
 
   saveCurrentSmartView = async () => {
     this.setIsSaving(true)
+
+    if (!this.title) {
+      return
+    }
 
     const predicate = predicateFromJson(this.predicate)
     await this.application.items.createSmartView(this.title, predicate, this.icon)
