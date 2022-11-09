@@ -1,9 +1,10 @@
 import { LexicalIconName } from '@/Components/Icon/LexicalIcons'
 import { TypeaheadOption } from '@lexical/react/LexicalTypeaheadMenuPlugin'
+import { IconType } from '@standardnotes/snjs'
 
 export class BlockPickerOption extends TypeaheadOption {
   title: string
-  iconName: LexicalIconName
+  iconName: IconType | LexicalIconName
   keywords: Array<string>
   keyboardShortcut?: string
   onSelect: (queryString: string) => void
@@ -11,7 +12,7 @@ export class BlockPickerOption extends TypeaheadOption {
   constructor(
     title: string,
     options: {
-      iconName: LexicalIconName
+      iconName: IconType | LexicalIconName
       keywords?: Array<string>
       keyboardShortcut?: string
       onSelect: (queryString: string) => void

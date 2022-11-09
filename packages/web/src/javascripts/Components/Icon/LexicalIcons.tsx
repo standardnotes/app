@@ -1,7 +1,7 @@
 import * as icons from '@standardnotes/icons'
 
 export const LexicalIconNameToSvgMapping = {
-  code: icons.LexicalCode,
+  'lexical-code': icons.LexicalCode,
   'align-center': icons.LexicalTextCenter,
   'align-justify': icons.LexicalTextJustify,
   'align-left': icons.LexicalTextLeft,

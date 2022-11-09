@@ -5,7 +5,7 @@ import { $createCodeNode } from '@lexical/code'
 
 export function GetCodeBlock(editor: LexicalEditor) {
   return new BlockPickerOption('Code', {
-    iconName: 'code',
+    iconName: 'lexical-code',
     keywords: ['javascript', 'python', 'js', 'codeblock'],
     onSelect: () =>
       editor.update(() => {
