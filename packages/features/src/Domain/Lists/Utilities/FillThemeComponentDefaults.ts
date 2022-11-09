@@ -8,7 +8,7 @@ export function FillThemeComponentDefaults(
   theme: Partial<ThemeFeatureDescription> & RequiredThemeFields,
 ): ThemeFeatureDescription {
   if (!theme.index_path) {
-    theme.index_path = 'dist/dist.css'
+    theme.index_path = 'index.css'
   }
 
   theme.content_type = ContentType.Theme
