@@ -1,23 +1,36 @@
 import fs from 'fs'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { doesDirExist, emptyExistingDir, ensureDirExists, copyFileOrDir } from '../../../scripts/ScriptUtils.mjs'
+import {
+  copyRecursiveSync,
+  doesDirExist,
+  emptyExistingDir,
+  ensureDirExists,
+  copyFileOrDir,
+} from '../../../scripts/ScriptUtils.mjs'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const components = {
   '@standardnotes/authenticator': 'org.standardnotes.token-vault',
-  '@standardnotes/bold-editor': 'org.standardnotes.bold-editor',
+  '@standardnotes/autobiography-theme': 'org.standardnotes.theme-autobiography',
   '@standardnotes/classic-code-editor': 'org.standardnotes.code-editor',
-  '@standardnotes/markdown-basic': 'org.standardnotes.simple-markdown-editor',
+  '@standardnotes/dynamic-theme': 'org.standardnotes.theme-dynamic',
+  '@standardnotes/focus-theme': 'org.standardnotes.theme-focus',
+  '@standardnotes/futura-theme': 'org.standardnotes.theme-futura',
   '@standardnotes/markdown-hybrid': 'org.standardnotes.advanced-markdown-editor',
-  '@standardnotes/markdown-math': 'org.standardnotes.fancy-markdown-editor',
-  '@standardnotes/markdown-minimal': 'org.standardnotes.minimal-markdown-editor',
   '@standardnotes/markdown-visual': 'org.standardnotes.markdown-visual-editor',
+  '@standardnotes/midnight-theme': 'org.standardnotes.theme-midnight',
   '@standardnotes/rich-text': 'org.standardnotes.plus-editor',
   '@standardnotes/simple-task-editor': 'org.standardnotes.simple-task-editor',
+  '@standardnotes/solarized-dark-theme': 'org.standardnotes.theme-solarized-dark',
   '@standardnotes/spreadsheets': 'org.standardnotes.standard-sheets',
+  '@standardnotes/titanium-theme': 'org.standardnotes.theme-titanium',
+  '@standardnotes/bold-editor': 'org.standardnotes.bold-editor',
+  '@standardnotes/markdown-basic': 'org.standardnotes.simple-markdown-editor',
+  '@standardnotes/markdown-math': 'org.standardnotes.fancy-markdown-editor',
+  '@standardnotes/markdown-minimal': 'org.standardnotes.minimal-markdown-editor',
 }
 
 const BasePath = path.join(__dirname, '../../../node_modules')
