@@ -5,8 +5,6 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-import './index.css';
-
 import {$isAutoLinkNode, $isLinkNode, TOGGLE_LINK_COMMAND} from '@lexical/link';
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {$findMatchingParent, mergeRegister} from '@lexical/utils';
@@ -28,6 +26,8 @@ import LinkPreview from '../../UI/LinkPreview';
 import {getSelectedNode} from '../../Utils/getSelectedNode';
 import {sanitizeUrl} from '../../Utils/sanitizeUrl';
 import {setFloatingElemPosition} from '../../Utils/setFloatingElemPosition';
+import {LexicalPencilFill} from '@standardnotes/icons';
+import {IconComponent} from '../../../Lexical/Theme/IconComponent';
 
 function FloatingLinkEditor({
   editor,
@@ -195,8 +195,11 @@ function FloatingLinkEditor({
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => {
                 setEditMode(true);
-              }}
-            />
+              }}>
+              <IconComponent size={15}>
+                <LexicalPencilFill />
+              </IconComponent>
+            </div>
           </div>
           <LinkPreview url={linkUrl} />
         </>

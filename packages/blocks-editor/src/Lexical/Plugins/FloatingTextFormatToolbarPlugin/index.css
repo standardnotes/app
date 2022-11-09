@@ -7,11 +7,9 @@
   z-index: 10;
   opacity: 0;
   background-color: var(--sn-stylekit-contrast-background-color);
-  color: var(--sn-stylekit-contrast-color);
-  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0px 5px 10px var(--sn-stylekit-shadow-color);
   border-radius: 8px;
   transition: opacity 0.5s;
-  height: 35px;
   will-change: transform;
 }
 
@@ -20,7 +18,7 @@
   display: flex;
   background: none;
   border-radius: 10px;
-  padding: 8px;
+  padding: 12px;
   cursor: pointer;
   vertical-align: middle;
 }
@@ -57,7 +55,8 @@
 }
 
 .floating-text-format-popup .popup-item:hover:not([disabled]) {
-  background-color: #eee;
+  background-color: var(--sn-stylekit-info-color);
+  color: var(--sn-stylekit-info-contrast-color);
 }
 
 .floating-text-format-popup select.popup-item {

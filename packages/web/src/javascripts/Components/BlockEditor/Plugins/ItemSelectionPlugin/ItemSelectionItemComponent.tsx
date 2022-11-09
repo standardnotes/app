@@ -16,7 +16,7 @@ export function ItemSelectionItemComponent({ index, isSelected, onClick, onMouse
     <li
       key={option.key}
       tabIndex={-1}
-      className={`${PopoverItemClassNames} ${isSelected ? PopoverItemSelectedClassNames : ''}`}
+      className={`gap-4 ${PopoverItemClassNames} ${isSelected ? PopoverItemSelectedClassNames : ''}`}
       ref={option.setRefElement}
       role="option"
       aria-selected={isSelected}

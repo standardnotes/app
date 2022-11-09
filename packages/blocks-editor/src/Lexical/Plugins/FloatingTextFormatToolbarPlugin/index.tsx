@@ -28,15 +28,18 @@ import {getDOMRangeRect} from '../../Utils/getDOMRangeRect';
 import {getSelectedNode} from '../../Utils/getSelectedNode';
 import {setFloatingElemPosition} from '../../Utils/setFloatingElemPosition';
 import {
-  TypeItalic,
-  TypeStrikethrough,
-  TypeSubscript,
-  TypeSuperscript,
-  TypeUnderline,
-  TypeBold,
-  LexicalCode,
-  LexicalLink,
+  BoldIcon,
+  ItalicIcon,
+  UnderlineIcon,
+  StrikethroughIcon,
+  CodeIcon,
+  LinkIcon,
+  SuperscriptIcon,
+  SubscriptIcon,
 } from '@standardnotes/icons';
+import {IconComponent} from '../../Theme/IconComponent';
+
+const IconSize = 15;
 
 function TextFormatFloatingToolbar({
   editor,
@@ -149,7 +152,9 @@ function TextFormatFloatingToolbar({
             }}
             className={'popup-item spaced ' + (isBold ? 'active' : '')}
             aria-label="Format text as bold">
-            <TypeBold />
+            <IconComponent size={IconSize}>
+              <BoldIcon />
+            </IconComponent>
           </button>
           <button
             onClick={() => {
@@ -157,7 +162,9 @@ function TextFormatFloatingToolbar({
             }}
             className={'popup-item spaced ' + (isItalic ? 'active' : '')}
             aria-label="Format text as italics">
-            <TypeItalic />
+            <IconComponent size={IconSize}>
+              <ItalicIcon />
+            </IconComponent>
           </button>
           <button
             onClick={() => {
@@ -165,7 +172,9 @@ function TextFormatFloatingToolbar({
             }}
             className={'popup-item spaced ' + (isUnderline ? 'active' : '')}
             aria-label="Format text to underlined">
-            <TypeUnderline />
+            <IconComponent size={IconSize + 1}>
+              <UnderlineIcon />
+            </IconComponent>
           </button>
           <button
             onClick={() => {
@@ -173,7 +182,9 @@ function TextFormatFloatingToolbar({
             }}
             className={'popup-item spaced ' + (isStrikethrough ? 'active' : '')}
             aria-label="Format text with a strikethrough">
-            <TypeStrikethrough />
+            <IconComponent size={IconSize}>
+              <StrikethroughIcon />
+            </IconComponent>
           </button>
           <button
             onClick={() => {
@@ -182,7 +193,9 @@ function TextFormatFloatingToolbar({
             className={'popup-item spaced ' + (isSubscript ? 'active' : '')}
             title="Subscript"
             aria-label="Format Subscript">
-            <TypeSubscript />
+            <IconComponent paddingTop={4} size={IconSize - 2}>
+              <SubscriptIcon />
+            </IconComponent>
           </button>
           <button
             onClick={() => {
@@ -191,7 +204,9 @@ function TextFormatFloatingToolbar({
             className={'popup-item spaced ' + (isSuperscript ? 'active' : '')}
             title="Superscript"
             aria-label="Format Superscript">
-            <TypeSuperscript />
+            <IconComponent paddingTop={1} size={IconSize - 2}>
+              <SuperscriptIcon />
+            </IconComponent>
           </button>
           <button
             onClick={() => {
@@ -199,13 +214,17 @@ function TextFormatFloatingToolbar({
             }}
             className={'popup-item spaced ' + (isCode ? 'active' : '')}
             aria-label="Insert code block">
-            <LexicalCode />
+            <IconComponent size={IconSize}>
+              <CodeIcon />
+            </IconComponent>
           </button>
           <button
             onClick={insertLink}
             className={'popup-item spaced ' + (isLink ? 'active' : '')}
             aria-label="Insert link">
-            <LexicalLink />
+            <IconComponent size={IconSize}>
+              <LinkIcon />
+            </IconComponent>
           </button>
         </>
       )}
