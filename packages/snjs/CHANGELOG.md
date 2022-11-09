@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.147.11](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.147.10...@standardnotes/snjs@2.147.11) (2022-11-09)
+
+### Bug Fixes
+
+* load blocking by network await ([#1989](https://github.com/standardnotes/app/issues/1989)) ([3498130](https://github.com/standardnotes/app/commit/3498130bfb4e7ee9764e5c687844fd78bf909150))
+
 ## [2.147.10](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.147.9...@standardnotes/snjs@2.147.10) (2022-11-09)
 
 **Note:** Version bump only for package @standardnotes/snjs

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.19.9](https://github.com/standardnotes/app/compare/@standardnotes/api@1.19.8...@standardnotes/api@1.19.9) (2022-11-09)
+
+### Bug Fixes
+
+* load blocking by network await ([#1989](https://github.com/standardnotes/app/issues/1989)) ([3498130](https://github.com/standardnotes/app/commit/3498130bfb4e7ee9764e5c687844fd78bf909150))
+
 ## [1.19.8](https://github.com/standardnotes/app/compare/@standardnotes/api@1.19.7...@standardnotes/api@1.19.8) (2022-11-09)
 
 **Note:** Version bump only for package @standardnotes/api
