@@ -1,4 +1,4 @@
-import { isString, joinPaths } from '@standardnotes/utils'
+import { isString, joinPaths, sleep } from '@standardnotes/utils'
 import { Environment } from '@standardnotes/models'
 import { HttpRequestParams } from './HttpRequestParams'
 import { HttpVerb } from './HttpVerb'
@@ -13,6 +13,7 @@ import { HttpErrorResponseBody } from './HttpErrorResponseBody'
 
 export class HttpService implements HttpServiceInterface {
   private authorizationToken?: string
+  private __latencySimulatorMs?: number
 
   constructor(
     private environment: Environment,
@@ -77,6 +78,10 @@ export class HttpService implements HttpServiceInterface {
 
   private async runHttp(httpRequest: HttpRequest): Promise<HttpResponse> {
     const request = this.createXmlRequest(httpRequest)
+
+    if (this.__latencySimulatorMs) {
+      await sleep(this.__latencySimulatorMs, true)
+    }
 
     const response = await this.runRequest(request, this.createRequestBody(httpRequest))
 
