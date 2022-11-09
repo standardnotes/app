@@ -1,1 +1,11 @@
-src/components
+src/components/assets/org.standardnotes.advanced-markdown-editor
+src/components/assets/org.standardnotes.bold-editor
+src/components/assets/org.standardnotes.code-editor
+src/components/assets/org.standardnotes.fancy-markdown-editor
+src/components/assets/org.standardnotes.markdown-visual-editor
+src/components/assets/org.standardnotes.minimal-markdown-editor
+src/components/assets/org.standardnotes.plus-editor
+src/components/assets/org.standardnotes.simple-markdown-editor
+src/components/assets/org.standardnotes.simple-task-editor
+src/components/assets/org.standardnotes.standard-sheets
+src/components/assets/org.standardnotes.token-vault
