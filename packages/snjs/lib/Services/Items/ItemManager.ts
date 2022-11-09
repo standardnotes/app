@@ -1222,12 +1222,14 @@ export class ItemManager
   public async createSmartView<T extends Models.DecryptedItemInterface>(
     title: string,
     predicate: Models.PredicateInterface<T>,
+    iconString?: string,
   ): Promise<Models.SmartView> {
     return this.createItem(
       ContentType.SmartView,
       Models.FillItemContent({
         title,
         predicate: predicate.toJson(),
+        iconString: iconString || 'restore',
       } as Models.SmartViewContent),
       true,
     ) as Promise<Models.SmartView>

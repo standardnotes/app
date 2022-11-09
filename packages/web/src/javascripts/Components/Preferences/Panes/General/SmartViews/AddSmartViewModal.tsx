@@ -11,6 +11,7 @@ import { Platform } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useRef, useState } from 'react'
 import { AddSmartViewModalController } from './AddSmartViewModalController'
+import EditablePredicate from './EditablePredicate'
 
 type Props = {
   controller: AddSmartViewModalController
@@ -18,7 +19,8 @@ type Props = {
 }
 
 const AddSmartViewModal = ({ controller, platform }: Props) => {
-  const { isSaving, title, setTitle, icon, setIcon, closeModal } = controller
+  const { isSaving, title, setTitle, icon, setIcon, predicate, setPredicate, closeModal, saveCurrentSmartView } =
+    controller
 
   const titleInputRef = useRef<HTMLInputElement>(null)
 
@@ -76,15 +78,19 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
               </div>
             </Popover>
           </div>
+          <div className="flex flex-col gap-2.5">
+            <div className="text-sm font-semibold">Predicate:</div>
+            <EditablePredicate
+              predicate={predicate}
+              setPredicate={setPredicate}
+              controller={controller}
+              isSubPredicate={false}
+            />
+          </div>
         </div>
       </ModalDialogDescription>
       <ModalDialogButtons>
-        <Button
-          disabled={isSaving}
-          onClick={() => {
-            //
-          }}
-        >
+        <Button disabled={isSaving} onClick={saveCurrentSmartView}>
           {isSaving ? <Spinner className="h-4.5 w-4.5" /> : 'Save'}
         </Button>
         <Button disabled={isSaving} onClick={closeModal}>

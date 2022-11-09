@@ -152,5 +152,6 @@ export interface ItemsClientInterface {
   createSmartView<T extends DecryptedItemInterface<ItemContent>>(
     title: string,
     predicate: PredicateInterface<T>,
+    iconString?: string,
   ): Promise<SmartView>
 }
