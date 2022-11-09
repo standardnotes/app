@@ -7,7 +7,7 @@ export function GetHeadingsBlocks(editor: LexicalEditor) {
   return Array.from({ length: 3 }, (_, i) => i + 1).map(
     (n) =>
       new BlockPickerOption(`Heading ${n}`, {
-        iconName: `icon h${n}`,
+        iconName: `h${n}`,
         keywords: ['heading', 'header', `h${n}`],
         onSelect: () =>
           editor.update(() => {

@@ -4,7 +4,7 @@ import { INSERT_ORDERED_LIST_COMMAND } from '@lexical/list'
 
 export function GetNumberedListBlock(editor: LexicalEditor) {
   return new BlockPickerOption('Numbered List', {
-    iconName: 'number',
+    iconName: 'list-ol',
     keywords: ['numbered list', 'ordered list', 'ol'],
     onSelect: () => editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined),
   })

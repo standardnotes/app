@@ -1,3 +1,4 @@
+import Icon from '@/Components/Icon/Icon'
 import { PopoverItemClassNames, PopoverItemSelectedClassNames } from '../ClassNames'
 import { BlockPickerOption } from './BlockPickerOption'
 
@@ -18,7 +19,9 @@ export function BlockPickerMenuItem({
     <li
       key={option.key}
       tabIndex={-1}
-      className={`${PopoverItemClassNames} ${isSelected ? PopoverItemSelectedClassNames : ''}`}
+      className={`border-bottom gap-3 border-[0.5px] border-border ${PopoverItemClassNames} ${
+        isSelected ? PopoverItemSelectedClassNames : ''
+      }`}
       ref={option.setRefElement}
       role="option"
       aria-selected={isSelected}
@@ -26,8 +29,8 @@ export function BlockPickerMenuItem({
       onMouseEnter={onMouseEnter}
       onClick={onClick}
     >
-      <i className={`icon ${option.iconName} mr-[8px] flex h-5 w-5 bg-contain fill-current text-center`} />
-      <div className="">{option.title}</div>
+      <Icon type={option.iconName} className="mt-1.5 h-5 w-5" />
+      <div className="text-editor">{option.title}</div>
     </li>
   )
 }

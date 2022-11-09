@@ -1,0 +1,110 @@
+.button.active,
+.toolbar .button.active {
+  background-color: var(--sn-stylekit-contrast-background-color);
+}
+
+.link-editor {
+  background-color: var(--sn-stylekit-secondary-background-color);
+  border-radius: 8px;
+  border: 0;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+  box-sizing: border-box;
+  display: absolute;
+  font-family: inherit;
+  font-size: 15px;
+  left: 0;
+  margin: 8px 12px;
+  max-width: 400px;
+  opacity: 0;
+  outline: 0;
+  padding: 8px 12px;
+  position: absolute;
+  top: 0;
+  transition: opacity 0.5s;
+  width: 100%;
+  will-change: transform;
+  z-index: 10;
+}
+
+.link-input {
+  background-color: var(--sn-stylekit-background-color);
+  border-radius: 15px;
+  border: 0;
+  box-sizing: border-box;
+  color: var(--sn-stylekit-contrast-color);
+  display: absolute;
+  font-family: inherit;
+  font-size: 15px;
+  margin: 8px 12px;
+  outline: 0;
+  padding: 8px 12px;
+  position: relative;
+  width: calc(100% - 24px);
+}
+
+.link-editor div.link-edit {
+  display: flex;
+  align-items: center;
+  background-size: 16px;
+  background-position: center;
+  background-repeat: no-repeat;
+  vertical-align: -0.25em;
+  position: absolute;
+  right: 12px;
+  top: 0;
+  bottom: 0;
+  cursor: pointer;
+}
+
+.link-editor .link-input a {
+  color: rgb(33, 111, 219);
+  text-decoration: none;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-right: 30px;
+  text-overflow: ellipsis;
+}
+
+.link-editor .link-input a:hover {
+  text-decoration: underline;
+}
+
+.link-editor .font-size-wrapper,
+.link-editor .font-family-wrapper {
+  display: flex;
+  margin: 0 4px;
+}
+
+.link-editor select {
+  padding: 6px;
+  border: none;
+  background-color: rgba(0, 0, 0, 0.075);
+  border-radius: 4px;
+}
+
+.link-editor .button {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  padding: 6px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 0 2px;
+}
+
+.link-editor .button.hovered {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  background-color: #eee;
+}
+
+.link-editor .button i,
+.actions i {
+  background-size: contain;
+  display: inline-block;
+  height: 20px;
+  width: 20px;
+  vertical-align: -0.25em;
+}

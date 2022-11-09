@@ -197,6 +197,7 @@ import UserSwitch from './ic-user-switch.svg'
 import ViewIcon from './ic-view.svg'
 import WarningIcon from './ic-warning.svg'
 import WindowIcon from './ic-window.svg'
+import SuperscriptIcon from './ic-superscript.svg'
 
 export {
   AccessibilityIcon,
@@ -398,4 +399,5 @@ export {
   ViewIcon,
   WarningIcon,
   WindowIcon,
+  SuperscriptIcon,
 }
