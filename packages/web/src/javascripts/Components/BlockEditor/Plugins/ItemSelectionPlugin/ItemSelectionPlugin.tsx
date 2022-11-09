@@ -9,7 +9,7 @@ import { ContentType, SNNote } from '@standardnotes/snjs'
 import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
 import Popover from '@/Components/Popover/Popover'
 import { INSERT_BUBBLE_COMMAND, INSERT_FILE_COMMAND } from '../Commands'
-import { useLinkingController } from '../../Contexts/LinkingControllerProvider'
+import { useLinkingController } from '../../../../Controllers/LinkingControllerProvider'
 import { PopoverClassNames } from '../ClassNames'
 
 type Props = {

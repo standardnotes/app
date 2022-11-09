@@ -9,10 +9,12 @@ import FilePlugin from './Plugins/EncryptedFilePlugin/FilePlugin'
 import BlockPickerMenuPlugin from './Plugins/BlockPickerPlugin/BlockPickerPlugin'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import { LinkingController } from '@/Controllers/LinkingController'
-import LinkingControllerProvider from './Contexts/LinkingControllerProvider'
+import LinkingControllerProvider from '../../Controllers/LinkingControllerProvider'
 import { BubbleNode } from './Plugins/ItemBubblePlugin/Nodes/BubbleNode'
 import ItemBubblePlugin from './Plugins/ItemBubblePlugin/ItemBubblePlugin'
 import { NodeObserverPlugin } from './Plugins/NodeObserverPlugin/NodeObserverPlugin'
+import { FilesController } from '@/Controllers/FilesController'
+import FilesControllerProvider from '@/Controllers/FilesControllerProvider'
 
 const StringEllipses = '...'
 const NotePreviewCharLimit = 160
@@ -21,9 +23,10 @@ type Props = {
   application: WebApplication
   note: SNNote
   linkingController: LinkingController
+  filesController: FilesController
 }
 
-export const BlockEditor: FunctionComponent<Props> = ({ note, application, linkingController }) => {
+export const BlockEditor: FunctionComponent<Props> = ({ note, application, linkingController, filesController }) => {
   const controller = useRef(new BlockEditorController(note, application))
 
   const handleChange = useCallback(
@@ -51,19 +54,21 @@ export const BlockEditor: FunctionComponent<Props> = ({ note, application, linki
     <div className="relative h-full w-full p-5">
       <ErrorBoundary>
         <LinkingControllerProvider controller={linkingController}>
-          <BlocksEditorComposer initialValue={note.text} nodes={[FileNode, BubbleNode]}>
-            <BlocksEditor
-              onChange={handleChange}
-              className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
-            >
-              <ItemSelectionPlugin currentNote={note} />
-              <FilePlugin />
-              <ItemBubblePlugin />
-              <BlockPickerMenuPlugin />
-              <NodeObserverPlugin nodeType={BubbleNode} onRemove={handleBubbleRemove} />
-              <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
-            </BlocksEditor>
-          </BlocksEditorComposer>
+          <FilesControllerProvider controller={filesController}>
+            <BlocksEditorComposer initialValue={note.text} nodes={[FileNode, BubbleNode]}>
+              <BlocksEditor
+                onChange={handleChange}
+                className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
+              >
+                <ItemSelectionPlugin currentNote={note} />
+                <FilePlugin />
+                <ItemBubblePlugin />
+                <BlockPickerMenuPlugin />
+                <NodeObserverPlugin nodeType={BubbleNode} onRemove={handleBubbleRemove} />
+                <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
+              </BlocksEditor>
+            </BlocksEditorComposer>
+          </FilesControllerProvider>
         </LinkingControllerProvider>
       </ErrorBoundary>
     </div>

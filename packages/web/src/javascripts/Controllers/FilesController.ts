@@ -34,7 +34,17 @@ const NonMutatingFileActions = [PopoverFileItemActionType.DownloadFile, PopoverF
 
 type FileContextMenuLocation = { x: number; y: number }
 
-export class FilesController extends AbstractViewController {
+export type FilesControllerEventData = {
+  [FilesControllerEvent.FileUploadedToNote]: {
+    uuid: string
+  }
+}
+
+export enum FilesControllerEvent {
+  FileUploadedToNote,
+}
+
+export class FilesController extends AbstractViewController<FilesControllerEvent, FilesControllerEventData> {
   allFiles: FileItem[] = []
   attachedFiles: FileItem[] = []
   showFileContextMenu = false
@@ -387,6 +397,10 @@ export class FilesController extends AbstractViewController {
         addToast({
           type: ToastType.Success,
           message: `Uploaded file "${uploadedFile.name}"`,
+        })
+
+        this.notifyEvent(FilesControllerEvent.FileUploadedToNote, {
+          [FilesControllerEvent.FileUploadedToNote]: { uuid: uploadedFile.uuid },
         })
       }
 
