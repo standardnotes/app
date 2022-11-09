@@ -1,12 +1,14 @@
 import { WebApplication } from '@/Application/Application'
 import Button from '@/Components/Button/Button'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { isSystemView, SmartView, SNTag } from '@standardnotes/snjs'
+import { isSystemView, SmartView } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Title } from '../../../PreferencesComponents/Content'
 import PreferencesGroup from '../../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
+import AddSmartViewModal from './AddSmartViewModal'
+import { AddSmartViewModalController } from './AddSmartViewModalController'
 import EditSmartViewModal from './EditSmartViewModal'
 import SmartViewItem from './SmartViewItem'
 
@@ -16,7 +18,9 @@ type Props = {
 }
 
 const SmartViews = ({ application, viewControllerManager }: Props) => {
-  const [editingSmartView, setEditingSmartView] = useState<SmartView | SNTag | undefined>(undefined)
+  const [editingSmartView, setEditingSmartView] = useState<SmartView | undefined>(undefined)
+
+  const addSmartViewModalController = useMemo(() => new AddSmartViewModalController(application), [application])
 
   const nonSystemSmartViews = viewControllerManager.navigationController.smartViews.filter(
     (view) => !isSystemView(view),
@@ -39,11 +43,7 @@ const SmartViews = ({ application, viewControllerManager }: Props) => {
           </div>
           <Button
             onClick={() => {
-              const view = viewControllerManager.navigationController.createNewTemplate()
-              if (!view) {
-                return
-              }
-              setEditingSmartView(view)
+              addSmartViewModalController.setIsAddingSmartView(true)
             }}
           >
             Create Smart View
@@ -53,12 +53,14 @@ const SmartViews = ({ application, viewControllerManager }: Props) => {
       {!!editingSmartView && (
         <EditSmartViewModal
           application={application}
-          featuresController={viewControllerManager.featuresController}
           view={editingSmartView}
           closeDialog={() => {
             setEditingSmartView(undefined)
           }}
         />
+      )}
+      {addSmartViewModalController.isAddingSmartView && (
+        <AddSmartViewModal controller={addSmartViewModalController} platform={application.platform} />
       )}
     </>
   )
