@@ -1219,7 +1219,7 @@ body {
     content: '';
     display: block;
     height: 2px;
-    background-color: #ccc;
+    background-color: var(--sn-stylekit-contrast-border-color);
     line-height: 2px;
   }
 

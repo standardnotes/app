@@ -8,8 +8,8 @@
  */
 
 .Collapsible__container {
-  background: #fcfcfc;
-  border: 1px solid #eee;
+  background: var(--sn-stylekit-contrast-background-color);
+  border: 1px solid var(--sn-stylekit-contrast-border-color);
   border-radius: 10px;
   margin-bottom: 8px;
 }
@@ -44,7 +44,7 @@
 .Collapsible__container[open] .Collapsible__title:before {
   border-color: transparent;
   border-width: 6px 4px 0 4px;
-  border-top-color: #000;
+  border-top-color: var(--sn-stylekit-contrast-color);
 }
 
 .Collapsible__content {

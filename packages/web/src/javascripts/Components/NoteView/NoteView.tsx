@@ -1091,7 +1091,9 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 </div>
               )}
             </div>
-            <LinkedItemBubblesContainer linkingController={this.viewControllerManager.linkingController} />
+            {editorMode !== 'blocks' && (
+              <LinkedItemBubblesContainer linkingController={this.viewControllerManager.linkingController} />
+            )}
           </div>
         )}
 
@@ -1148,7 +1150,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
           {editorMode === 'blocks' && (
             <div className={classNames('blocks-editor w-full flex-grow overflow-hidden overflow-y-scroll')}>
-              <BlockEditor key={this.note.uuid} application={this.application} note={this.note} />
+              <BlockEditor
+                key={this.note.uuid}
+                application={this.application}
+                note={this.note}
+                linkingController={this.viewControllerManager.linkingController}
+              />
             </div>
           )}
 

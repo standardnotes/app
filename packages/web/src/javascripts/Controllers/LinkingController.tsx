@@ -219,14 +219,14 @@ export class LinkingController extends AbstractViewController {
     return undefined
   }
 
-  unlinkItemFromSelectedItem = async (itemToUnlink: ItemLink) => {
+  unlinkItemFromSelectedItem = async (itemToUnlink: LinkableItem) => {
     const selectedItem = this.selectionController.firstSelectedItem
 
     if (!selectedItem) {
       return
     }
 
-    await this.application.items.unlinkItems(selectedItem, itemToUnlink.item)
+    await this.application.items.unlinkItems(selectedItem, itemToUnlink)
 
     void this.application.sync.sync()
     this.reloadAllLinks()

@@ -61,10 +61,12 @@
   vertical-align: super;
 }
 .Lexical__textCode {
-  background-color: rgb(240, 242, 245);
-  padding: 1px 0.25rem;
+  background-color: var(--sn-stylekit-secondary-background-color);
+  color: var(--sn-stylekit-info-color);
+  padding: 5px;
+  border-radius: 5px;
   font-family: Menlo, Consolas, Monaco, monospace;
-  font-size: 94%;
+  font-size: 85%;
 }
 .Lexical__hashtag {
   background-color: rgba(88, 144, 255, 0.15);
@@ -78,7 +80,7 @@
   text-decoration: underline;
 }
 .Lexical__code {
-  background-color: rgb(240, 242, 245);
+  background-color: var(--sn-stylekit-contrast-background-color);
   font-family: Menlo, Consolas, Monaco, monospace;
   display: block;
   padding: 8px 8px 8px 52px;
@@ -95,12 +97,12 @@
 .Lexical__code:before {
   content: attr(data-gutter);
   position: absolute;
-  background-color: #eee;
+  background-color: var(--sn-stylekit-secondary-background-color);
   left: 0;
   top: 0;
-  border-right: 1px solid #ccc;
+  border-right: 1px solid var(--sn-stylekit-contrast-border-color);
   padding: 8px;
-  color: #777;
+  color: var(--sn-stylekit-info-color);
   white-space: pre-wrap;
   text-align: right;
   min-width: 25px;
@@ -113,12 +115,13 @@
   table-layout: fixed;
   width: calc(100% - 25px);
   margin: 30px 0;
+  color: var(--sn-stylekit-contrast-foreground-color);
 }
 .Lexical__tableSelected {
   outline: 2px solid rgb(60, 132, 244);
 }
 .Lexical__tableCell {
-  border: 1px solid #bbb;
+  border: 1px solid var(--sn-stylekit-border-color);
   min-width: 75px;
   vertical-align: top;
   text-align: start;
@@ -147,7 +150,8 @@
   top: 0;
 }
 .Lexical__tableCellHeader {
-  background-color: #f2f3f5;
+  background-color: var(--sn-stylekit-contrast-background-color);
+  border-color: var(--sn-stylekit-contrast-border-color);
   text-align: start;
 }
 .Lexical__tableCellSelected {
@@ -306,7 +310,7 @@
   list-style-position: inside;
 }
 .Lexical__listItem {
-  margin: 0 32px;
+  margin: 0 0px;
 }
 .Lexical__listItemChecked,
 .Lexical__listItemUnchecked {
@@ -317,6 +321,7 @@
   padding-right: 24px;
   list-style-type: none;
   outline: none;
+  vertical-align: middle;
 }
 .Lexical__listItemChecked {
   text-decoration: line-through;
@@ -326,10 +331,9 @@
   content: '';
   width: 16px;
   height: 16px;
-  top: 5px;
   left: 0;
+  top: 5px;
   cursor: pointer;
-  display: block;
   background-size: cover;
   position: absolute;
 }
