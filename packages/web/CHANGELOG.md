@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.93.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.17...@standardnotes/web@3.93.18) (2022-11-09)
+
+### Reverts
+
+* Revert "refactor: include themes in components folder" ([3690104](https://github.com/standardnotes/app/commit/3690104934b444ca99eed86c1a41b22a3582811a))
+
 ## [3.93.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.16...@standardnotes/web@3.93.17) (2022-11-09)
 
 **Note:** Version bump only for package @standardnotes/web
