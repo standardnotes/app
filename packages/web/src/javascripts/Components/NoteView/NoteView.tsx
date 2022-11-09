@@ -996,7 +996,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     const renderHeaderOptions = isMobileScreen() ? !this.state.plaintextEditorFocused : true
 
     const editorMode =
-      featureTrunkEnabled(FeatureTrunkName.Blocks) && this.note.noteType === NoteType.Blocks
+      this.note.noteType === NoteType.Blocks
         ? 'blocks'
         : this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading
         ? 'plain'
