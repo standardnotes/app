@@ -39,6 +39,8 @@ import {
 } from '@standardnotes/icons';
 import {IconComponent} from '../../Theme/IconComponent';
 
+const IconSize = 15;
+
 function TextFormatFloatingToolbar({
   editor,
   anchorElem,
@@ -150,7 +152,7 @@ function TextFormatFloatingToolbar({
             }}
             className={'popup-item spaced ' + (isBold ? 'active' : '')}
             aria-label="Format text as bold">
-            <IconComponent>
+            <IconComponent size={IconSize}>
               <BoldIcon />
             </IconComponent>
           </button>
@@ -160,7 +162,7 @@ function TextFormatFloatingToolbar({
             }}
             className={'popup-item spaced ' + (isItalic ? 'active' : '')}
             aria-label="Format text as italics">
-            <IconComponent>
+            <IconComponent size={IconSize}>
               <ItalicIcon />
             </IconComponent>
           </button>
@@ -170,7 +172,7 @@ function TextFormatFloatingToolbar({
             }}
             className={'popup-item spaced ' + (isUnderline ? 'active' : '')}
             aria-label="Format text to underlined">
-            <IconComponent size={21}>
+            <IconComponent size={IconSize + 1}>
               <UnderlineIcon />
             </IconComponent>
           </button>
@@ -180,7 +182,7 @@ function TextFormatFloatingToolbar({
             }}
             className={'popup-item spaced ' + (isStrikethrough ? 'active' : '')}
             aria-label="Format text with a strikethrough">
-            <IconComponent>
+            <IconComponent size={IconSize}>
               <StrikethroughIcon />
             </IconComponent>
           </button>
@@ -191,7 +193,7 @@ function TextFormatFloatingToolbar({
             className={'popup-item spaced ' + (isSubscript ? 'active' : '')}
             title="Subscript"
             aria-label="Format Subscript">
-            <IconComponent paddingTop={4} size={18}>
+            <IconComponent paddingTop={4} size={IconSize - 2}>
               <SubscriptIcon />
             </IconComponent>
           </button>
@@ -202,7 +204,7 @@ function TextFormatFloatingToolbar({
             className={'popup-item spaced ' + (isSuperscript ? 'active' : '')}
             title="Superscript"
             aria-label="Format Superscript">
-            <IconComponent paddingTop={1} size={18}>
+            <IconComponent paddingTop={1} size={IconSize - 2}>
               <SuperscriptIcon />
             </IconComponent>
           </button>
@@ -212,7 +214,7 @@ function TextFormatFloatingToolbar({
             }}
             className={'popup-item spaced ' + (isCode ? 'active' : '')}
             aria-label="Insert code block">
-            <IconComponent>
+            <IconComponent size={IconSize}>
               <CodeIcon />
             </IconComponent>
           </button>
@@ -220,7 +222,7 @@ function TextFormatFloatingToolbar({
             onClick={insertLink}
             className={'popup-item spaced ' + (isLink ? 'active' : '')}
             aria-label="Insert link">
-            <IconComponent>
+            <IconComponent size={IconSize}>
               <LinkIcon />
             </IconComponent>
           </button>
