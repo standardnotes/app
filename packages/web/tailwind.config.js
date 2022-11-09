@@ -3,7 +3,7 @@
 const plugin = require('tailwindcss/plugin')
 
 module.exports = {
-  content: ['./src/javascripts/**/*.tsx', '../toast/src/**/*.tsx'],
+  content: ['./src/javascripts/**/*.tsx', '../toast/src/**/*.tsx', '../blocks-editor/src/Editor/**/*'],
   theme: {
     extend: {
       spacing: {

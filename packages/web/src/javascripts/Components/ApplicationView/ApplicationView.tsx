@@ -28,6 +28,7 @@ import ResponsivePaneProvider from '../ResponsivePane/ResponsivePaneProvider'
 import AndroidBackHandlerProvider from '@/NativeMobileWeb/useAndroidBackHandler'
 import ConfirmDeleteAccountContainer from '@/Components/ConfirmDeleteAccountModal/ConfirmDeleteAccountModal'
 import DarkModeHandler from '../DarkModeHandler/DarkModeHandler'
+import ApplicationProvider from './ApplicationProvider'
 
 type Props = {
   application: WebApplication
@@ -193,80 +194,85 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   }
 
   return (
-    <AndroidBackHandlerProvider application={application}>
-      <DarkModeHandler application={application} />
-      <ResponsivePaneProvider paneController={application.getViewControllerManager().paneController}>
-        <PremiumModalProvider application={application} viewControllerManager={viewControllerManager}>
-          <div className={platformString + ' main-ui-view sn-component h-full'}>
-            <div id="app" className="app app-column-container" ref={appColumnContainerRef}>
-              <FileDragNDropProvider
-                application={application}
-                featuresController={viewControllerManager.featuresController}
-                filesController={viewControllerManager.filesController}
-              >
-                <Navigation application={application} />
-                <ContentListView
+    <ApplicationProvider application={application}>
+      <AndroidBackHandlerProvider application={application}>
+        <DarkModeHandler application={application} />
+        <ResponsivePaneProvider paneController={application.getViewControllerManager().paneController}>
+          <PremiumModalProvider application={application} viewControllerManager={viewControllerManager}>
+            <div className={platformString + ' main-ui-view sn-component h-full'}>
+              <div id="app" className="app app-column-container" ref={appColumnContainerRef}>
+                <FileDragNDropProvider
                   application={application}
-                  accountMenuController={viewControllerManager.accountMenuController}
+                  featuresController={viewControllerManager.featuresController}
                   filesController={viewControllerManager.filesController}
-                  itemListController={viewControllerManager.itemListController}
-                  navigationController={viewControllerManager.navigationController}
-                  noAccountWarningController={viewControllerManager.noAccountWarningController}
+                >
+                  <Navigation application={application} />
+                  <ContentListView
+                    application={application}
+                    accountMenuController={viewControllerManager.accountMenuController}
+                    filesController={viewControllerManager.filesController}
+                    itemListController={viewControllerManager.itemListController}
+                    navigationController={viewControllerManager.navigationController}
+                    noAccountWarningController={viewControllerManager.noAccountWarningController}
+                    notesController={viewControllerManager.notesController}
+                    selectionController={viewControllerManager.selectionController}
+                    searchOptionsController={viewControllerManager.searchOptionsController}
+                    linkingController={viewControllerManager.linkingController}
+                  />
+                  <NoteGroupView application={application} />
+                </FileDragNDropProvider>
+              </div>
+
+              <>
+                <Footer application={application} applicationGroup={mainApplicationGroup} />
+                <SessionsModal application={application} viewControllerManager={viewControllerManager} />
+                <PreferencesViewWrapper viewControllerManager={viewControllerManager} application={application} />
+                <RevisionHistoryModal
+                  application={application}
+                  historyModalController={viewControllerManager.historyModalController}
                   notesController={viewControllerManager.notesController}
                   selectionController={viewControllerManager.selectionController}
-                  searchOptionsController={viewControllerManager.searchOptionsController}
-                  linkingController={viewControllerManager.linkingController}
+                  subscriptionController={viewControllerManager.subscriptionController}
                 />
-                <NoteGroupView application={application} />
-              </FileDragNDropProvider>
+              </>
+
+              {renderChallenges()}
+
+              <>
+                <NotesContextMenu
+                  application={application}
+                  navigationController={viewControllerManager.navigationController}
+                  notesController={viewControllerManager.notesController}
+                  linkingController={viewControllerManager.linkingController}
+                  historyModalController={viewControllerManager.historyModalController}
+                />
+                <TagContextMenuWrapper
+                  navigationController={viewControllerManager.navigationController}
+                  featuresController={viewControllerManager.featuresController}
+                />
+                <FileContextMenuWrapper
+                  filesController={viewControllerManager.filesController}
+                  selectionController={viewControllerManager.selectionController}
+                />
+                <PurchaseFlowWrapper application={application} viewControllerManager={viewControllerManager} />
+                <ConfirmSignoutContainer
+                  applicationGroup={mainApplicationGroup}
+                  viewControllerManager={viewControllerManager}
+                  application={application}
+                />
+                <ToastContainer />
+                <FilePreviewModalWrapper application={application} viewControllerManager={viewControllerManager} />
+                <PermissionsModalWrapper application={application} />
+                <ConfirmDeleteAccountContainer
+                  application={application}
+                  viewControllerManager={viewControllerManager}
+                />
+              </>
             </div>
-
-            <>
-              <Footer application={application} applicationGroup={mainApplicationGroup} />
-              <SessionsModal application={application} viewControllerManager={viewControllerManager} />
-              <PreferencesViewWrapper viewControllerManager={viewControllerManager} application={application} />
-              <RevisionHistoryModal
-                application={application}
-                historyModalController={viewControllerManager.historyModalController}
-                notesController={viewControllerManager.notesController}
-                selectionController={viewControllerManager.selectionController}
-                subscriptionController={viewControllerManager.subscriptionController}
-              />
-            </>
-
-            {renderChallenges()}
-
-            <>
-              <NotesContextMenu
-                application={application}
-                navigationController={viewControllerManager.navigationController}
-                notesController={viewControllerManager.notesController}
-                linkingController={viewControllerManager.linkingController}
-                historyModalController={viewControllerManager.historyModalController}
-              />
-              <TagContextMenuWrapper
-                navigationController={viewControllerManager.navigationController}
-                featuresController={viewControllerManager.featuresController}
-              />
-              <FileContextMenuWrapper
-                filesController={viewControllerManager.filesController}
-                selectionController={viewControllerManager.selectionController}
-              />
-              <PurchaseFlowWrapper application={application} viewControllerManager={viewControllerManager} />
-              <ConfirmSignoutContainer
-                applicationGroup={mainApplicationGroup}
-                viewControllerManager={viewControllerManager}
-                application={application}
-              />
-              <ToastContainer />
-              <FilePreviewModalWrapper application={application} viewControllerManager={viewControllerManager} />
-              <PermissionsModalWrapper application={application} />
-              <ConfirmDeleteAccountContainer application={application} viewControllerManager={viewControllerManager} />
-            </>
-          </div>
-        </PremiumModalProvider>
-      </ResponsivePaneProvider>
-    </AndroidBackHandlerProvider>
+          </PremiumModalProvider>
+        </ResponsivePaneProvider>
+      </AndroidBackHandlerProvider>
+    </ApplicationProvider>
   )
 }
 

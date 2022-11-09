@@ -1,15 +1,14 @@
-import { LinkableItem, LinkingController } from '@/Controllers/LinkingController'
+import { LinkingController } from '@/Controllers/LinkingController'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { observer } from 'mobx-react-lite'
 import { SNNote } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
 import { PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import LinkedItemMeta from './LinkedItemMeta'
+import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 
 type Props = {
   createAndAddNewTag: LinkingController['createAndAddNewTag']
-  getLinkedItemIcon: LinkingController['getLinkedItemIcon']
-  getTitleForLinkedTag: LinkingController['getTitleForLinkedTag']
   linkItemToSelectedItem: LinkingController['linkItemToSelectedItem']
   results: LinkableItem[]
   searchQuery: string
@@ -20,8 +19,6 @@ type Props = {
 
 const LinkedItemSearchResults = ({
   createAndAddNewTag,
-  getLinkedItemIcon,
-  getTitleForLinkedTag,
   linkItemToSelectedItem,
   results,
   searchQuery,
@@ -48,12 +45,7 @@ const LinkedItemSearchResults = ({
               }
             }}
           >
-            <LinkedItemMeta
-              item={result}
-              getItemIcon={getLinkedItemIcon}
-              getTitleForLinkedTag={getTitleForLinkedTag}
-              searchQuery={searchQuery}
-            />
+            <LinkedItemMeta item={result} searchQuery={searchQuery} />
             {cannotLinkItem && <Icon type={PremiumFeatureIconName} className="ml-auto flex-shrink-0 text-info" />}
           </button>
         )

@@ -5334,13 +5334,13 @@ __metadata:
   dependencies:
     "@lexical/react": ^0.6.0
     "@standardnotes/icons": "workspace:*"
-    "@types/react": "link:../web/node_modules/@types/react"
-    "@types/react-dom": "link:../web/node_modules/@types/react-dom"
+    "@types/react": ^18.0.20
+    "@types/react-dom": ^18.0.6
     eslint: "*"
     lexical: ^0.6.0
     prettier: "*"
-    react: "link:../web/node_modules/react"
-    react-dom: "link:../web/node_modules/react-dom"
+    react: ^18.2.0
+    react-dom: ^18.2.0
     typescript: "*"
   languageName: unknown
   linkType: soft
@@ -6109,6 +6109,7 @@ __metadata:
     "@babel/plugin-transform-react-jsx": ^7.19.0
     "@babel/preset-env": "*"
     "@babel/preset-typescript": ^7.18.6
+    "@lexical/react": ^0.6.0
     "@pmmmwh/react-refresh-webpack-plugin": ^0.5.7
     "@reach/alert": ^0.17.0
     "@reach/alert-dialog": ^0.17.0
@@ -6165,6 +6166,7 @@ __metadata:
     identity-obj-proxy: ^3.0.0
     jest: ^29.2.1
     jest-environment-jsdom: ^29.2.1
+    lexical: 0.6.0
     lint-staged: ">=12"
     mini-css-extract-plugin: ^2.6.1
     minimatch: ^5.1.0
@@ -7064,12 +7066,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@link:../web/node_modules/@types/react-dom::locator=%40standardnotes%2Fblocks-editor%40workspace%3Apackages%2Fblocks-editor":
-  version: 0.0.0-use.local
-  resolution: "@types/react-dom@link:../web/node_modules/@types/react-dom::locator=%40standardnotes%2Fblocks-editor%40workspace%3Apackages%2Fblocks-editor"
-  languageName: node
-  linkType: soft
-
 "@types/react-dom@link:../web/node_modules/@types/react-dom::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast":
   version: 0.0.0-use.local
   resolution: "@types/react-dom@link:../web/node_modules/@types/react-dom::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast"
@@ -7093,12 +7089,6 @@ __metadata:
   checksum: 303648aff9b8f8232ad4313cc37d6cae6a6894f4a8e4e4980922237ccce16912bb1f8b6a0ce6c2a61b58ef31b2f41f6afa0bf492f65db9eb9f6defe91d4fe1bf
   languageName: node
   linkType: hard
-
-"@types/react@link:../web/node_modules/@types/react::locator=%40standardnotes%2Fblocks-editor%40workspace%3Apackages%2Fblocks-editor":
-  version: 0.0.0-use.local
-  resolution: "@types/react@link:../web/node_modules/@types/react::locator=%40standardnotes%2Fblocks-editor%40workspace%3Apackages%2Fblocks-editor"
-  languageName: node
-  linkType: soft
 
 "@types/react@link:../web/node_modules/@types/react::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast":
   version: 0.0.0-use.local
@@ -19677,7 +19667,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lexical@npm:^0.6.0":
+"lexical@npm:0.6.0, lexical@npm:^0.6.0":
   version: 0.6.0
   resolution: "lexical@npm:0.6.0"
   checksum: cac65609c231d9494b5f183fd50fc579d0df8af9c0075ef9e293d2fff21af8b84f66d97bebb7714edddd365d4f4d019a151d24838ffdce422d53815c7b1a0519
@@ -25397,12 +25387,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-dom@link:../web/node_modules/react-dom::locator=%40standardnotes%2Fblocks-editor%40workspace%3Apackages%2Fblocks-editor":
-  version: 0.0.0-use.local
-  resolution: "react-dom@link:../web/node_modules/react-dom::locator=%40standardnotes%2Fblocks-editor%40workspace%3Apackages%2Fblocks-editor"
-  languageName: node
-  linkType: soft
-
 "react-dom@link:../web/node_modules/react-dom::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast":
   version: 0.0.0-use.local
   resolution: "react-dom@link:../web/node_modules/react-dom::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast"
@@ -25862,12 +25846,6 @@ __metadata:
   checksum: 87360d4392276d4e87511a73be9b0634b8bcce8f4f648cf659334d993f25ad3d4062f468f1e1944fc614123acae4299580aad00b760c6a96cec190e076f847f5
   languageName: node
   linkType: hard
-
-"react@link:../web/node_modules/react::locator=%40standardnotes%2Fblocks-editor%40workspace%3Apackages%2Fblocks-editor":
-  version: 0.0.0-use.local
-  resolution: "react@link:../web/node_modules/react::locator=%40standardnotes%2Fblocks-editor%40workspace%3Apackages%2Fblocks-editor"
-  languageName: node
-  linkType: soft
 
 "react@link:../web/node_modules/react::locator=%40standardnotes%2Ftoast%40workspace%3Apackages%2Ftoast":
   version: 0.0.0-use.local

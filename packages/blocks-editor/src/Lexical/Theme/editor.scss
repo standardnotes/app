@@ -21,13 +21,13 @@
 }
 .Lexical__h1 {
   font-size: 24px;
-  color: rgb(5, 5, 5);
+  color: var(--sn-stylekit-editor-foreground-color);
   font-weight: 400;
   margin: 0;
 }
 .Lexical__h2 {
   font-size: 15px;
-  color: rgb(101, 103, 107);
+  color: var(--sn-stylekit-editor-foreground-color);
   font-weight: 700;
   margin: 0;
   text-transform: uppercase;

@@ -28,7 +28,10 @@ type DeletePermanentlyButtonProps = {
 
 const DeletePermanentlyButton = ({ onClick }: DeletePermanentlyButtonProps) => (
   <button
-    className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-menu-item"
+    className={classNames(
+      'flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item',
+      'text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-menu-item',
+    )}
     onClick={onClick}
   >
     <Icon type="close" className="mr-2 text-danger" />
@@ -183,7 +186,6 @@ const NotesOptions = ({
   application,
   navigationController,
   notesController,
-  linkingController,
   historyModalController,
   closeMenu,
 }: NotesOptionsProps) => {
@@ -353,7 +355,6 @@ const NotesOptions = ({
           className={switchClassNames}
           navigationController={navigationController}
           notesController={notesController}
-          linkingController={linkingController}
         />
       )}
 

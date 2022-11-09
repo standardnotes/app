@@ -31,6 +31,7 @@ interface PlaygroundEmbedConfig extends EmbedConfig {
 
   // Icon for display.
   icon?: JSX.Element;
+  iconName: string;
 
   // An example of a matching url https://twitter.com/jack/status/20
   exampleUrl: string;
@@ -49,6 +50,7 @@ export const YoutubeEmbedConfig: PlaygroundEmbedConfig = {
 
   // Icon for display.
   icon: <i className="icon youtube" />,
+  iconName: 'youtube',
 
   insertNode: (editor: LexicalEditor, result: EmbedMatchResult) => {
     editor.dispatchCommand(INSERT_YOUTUBE_COMMAND, result.id);
@@ -84,6 +86,7 @@ export const TwitterEmbedConfig: PlaygroundEmbedConfig = {
 
   // Icon for display.
   icon: <i className="icon tweet" />,
+  iconName: 'tweet',
 
   // Create the Lexical embed node from the url data.
   insertNode: (editor: LexicalEditor, result: EmbedMatchResult) => {

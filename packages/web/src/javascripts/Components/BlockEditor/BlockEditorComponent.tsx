@@ -2,7 +2,12 @@ import { WebApplication } from '@/Application/Application'
 import { SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useRef } from 'react'
 import { BlockEditorController } from './BlockEditorController'
-import { BlocksEditor } from '@standardnotes/blocks-editor'
+import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
+import { ItemSelectionPlugin } from './Plugins/ItemSelectionPlugin/ItemSelectionPlugin'
+import { FileNode } from './Plugins/EncryptedFilePlugin/Nodes/FileNode'
+import FilePlugin from './Plugins/EncryptedFilePlugin/FilePlugin'
+import BlockPickerMenuPlugin from './Plugins/BlockPickerPlugin/BlockPickerPlugin'
+import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 
 const StringEllipses = '...'
 const NotePreviewCharLimit = 160
@@ -28,11 +33,18 @@ export const BlockEditor: FunctionComponent<Props> = ({ note, application }) => 
 
   return (
     <div className="relative h-full w-full p-5">
-      <BlocksEditor
-        onChange={handleChange}
-        initialValue={note.content.text}
-        className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
-      />
+      <ErrorBoundary>
+        <BlocksEditorComposer initialValue={note.text} nodes={[FileNode]}>
+          <BlocksEditor
+            onChange={handleChange}
+            className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
+          >
+            <ItemSelectionPlugin currentNote={note} />
+            <FilePlugin />
+            <BlockPickerMenuPlugin />
+          </BlocksEditor>
+        </BlocksEditorComposer>
+      </ErrorBoundary>
     </div>
   )
 }

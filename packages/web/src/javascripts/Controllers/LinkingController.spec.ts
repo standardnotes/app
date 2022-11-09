@@ -1,4 +1,6 @@
+import { isSearchResultAlreadyLinkedToItem } from '@/Utils/Items/Search/isSearchResultAlreadyLinkedToItem'
 import { WebApplication } from '@/Application/Application'
+import { doesItemMatchSearchQuery } from '@/Utils/Items/Search/doesItemMatchSearchQuery'
 import {
   AnonymousReference,
   ContentReferenceType,
@@ -7,6 +9,7 @@ import {
   FileToNoteReference,
   InternalEventBus,
   SNNote,
+  ItemsClientInterface,
 } from '@standardnotes/snjs'
 import { FilesController } from './FilesController'
 import { ItemListController } from './ItemList/ItemListController'
@@ -14,6 +17,7 @@ import { LinkingController } from './LinkingController'
 import { NavigationController } from './Navigation/NavigationController'
 import { SelectedItemsController } from './SelectedItemsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
+import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
 
 const createNote = (name: string, options?: Partial<SNNote>) => {
   return {
@@ -54,6 +58,8 @@ describe('LinkingController', () => {
     application.addSingleEventObserver = jest.fn()
     application.streamItems = jest.fn()
 
+    Object.defineProperty(application, 'items', { value: {} as jest.Mocked<ItemsClientInterface> })
+
     navigationController = {} as jest.Mocked<NavigationController>
 
     selectionController = {} as jest.Mocked<SelectedItemsController>
@@ -74,7 +80,7 @@ describe('LinkingController', () => {
 
       const file = createFile('anotherFile')
 
-      const isFileValidResult = linkingController.isValidSearchResult(file, searchQuery)
+      const isFileValidResult = doesItemMatchSearchQuery(file, searchQuery, application)
 
       expect(isFileValidResult).toBeFalsy()
     })
@@ -86,10 +92,10 @@ describe('LinkingController', () => {
 
       const trashed = createFile('test', { trashed: true })
 
-      const isArchivedFileValidResult = linkingController.isValidSearchResult(archived, searchQuery)
+      const isArchivedFileValidResult = doesItemMatchSearchQuery(archived, searchQuery, application)
       expect(isArchivedFileValidResult).toBeFalsy()
 
-      const isTrashedFileValidResult = linkingController.isValidSearchResult(trashed, searchQuery)
+      const isTrashedFileValidResult = doesItemMatchSearchQuery(trashed, searchQuery, application)
       expect(isTrashedFileValidResult).toBeFalsy()
     })
 
@@ -98,12 +104,11 @@ describe('LinkingController', () => {
 
       const activeItem = createFile('test', { uuid: 'same-uuid' })
 
-      Object.defineProperty(itemListController, 'activeControllerItem', { value: activeItem })
+      application.items.getItems = jest.fn().mockReturnValue([activeItem])
 
-      const result = createFile('test', { uuid: 'same-uuid' })
+      const results = getLinkingSearchResults(searchQuery, application, activeItem)
 
-      const isFileValidResult = linkingController.isValidSearchResult(result, searchQuery)
-      expect(isFileValidResult).toBeFalsy()
+      expect([...results.unlinkedItems, ...results.linkedItems]).toHaveLength(0)
     })
 
     it('should be valid result if it matches query even case insensitive', () => {
@@ -111,13 +116,15 @@ describe('LinkingController', () => {
 
       const file = createFile('TeSt')
 
-      const isFileValidResult = linkingController.isValidSearchResult(file, searchQuery)
+      application.items.getItems = jest.fn().mockReturnValue([file])
+
+      const isFileValidResult = doesItemMatchSearchQuery(file, searchQuery, application)
 
       expect(isFileValidResult).toBeTruthy()
     })
   })
 
-  describe('isSearchResultAlreadyLinked', () => {
+  describe('isSearchResultAlreadyLinkedToItem', () => {
     it('should be true if active item & result are same content type & active item references result', () => {
       const activeItem = createFile('test', {
         uuid: 'active-item',
@@ -130,9 +137,7 @@ describe('LinkingController', () => {
       })
       const result = createFile('test', { uuid: 'result', references: [] })
 
-      Object.defineProperty(itemListController, 'activeControllerItem', { value: activeItem })
-
-      const isFileAlreadyLinked = linkingController.isSearchResultAlreadyLinked(result)
+      const isFileAlreadyLinked = isSearchResultAlreadyLinkedToItem(result, activeItem)
       expect(isFileAlreadyLinked).toBeTruthy()
     })
 
@@ -151,9 +156,7 @@ describe('LinkingController', () => {
         ],
       })
 
-      Object.defineProperty(itemListController, 'activeControllerItem', { value: activeItem })
-
-      const isFileAlreadyLinked = linkingController.isSearchResultAlreadyLinked(result)
+      const isFileAlreadyLinked = isSearchResultAlreadyLinkedToItem(result, activeItem)
       expect(isFileAlreadyLinked).toBeFalsy()
     })
 
@@ -173,9 +176,7 @@ describe('LinkingController', () => {
         ],
       })
 
-      Object.defineProperty(itemListController, 'activeControllerItem', { value: activeNote })
-
-      const isFileResultAlreadyLinked = linkingController.isSearchResultAlreadyLinked(fileResult)
+      const isFileResultAlreadyLinked = isSearchResultAlreadyLinkedToItem(fileResult, activeNote)
       expect(isFileResultAlreadyLinked).toBeTruthy()
     })
 
@@ -195,9 +196,7 @@ describe('LinkingController', () => {
         references: [],
       })
 
-      Object.defineProperty(itemListController, 'activeControllerItem', { value: activeFile })
-
-      const isNoteResultAlreadyLinked = linkingController.isSearchResultAlreadyLinked(noteResult)
+      const isNoteResultAlreadyLinked = isSearchResultAlreadyLinkedToItem(noteResult, activeFile)
       expect(isNoteResultAlreadyLinked).toBeTruthy()
     })
 
@@ -212,9 +211,7 @@ describe('LinkingController', () => {
         references: [],
       })
 
-      Object.defineProperty(itemListController, 'activeControllerItem', { value: activeFile })
-
-      const isNoteResultAlreadyLinked = linkingController.isSearchResultAlreadyLinked(noteResult)
+      const isNoteResultAlreadyLinked = isSearchResultAlreadyLinkedToItem(noteResult, activeFile)
       expect(isNoteResultAlreadyLinked).toBeFalsy()
     })
   })
