@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.94.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.19...@standardnotes/web@3.94.0) (2022-11-09)
+
+### Features
+
+* file drop handling for super notes ([#1990](https://github.com/standardnotes/app/issues/1990)) ([fdf9ab0](https://github.com/standardnotes/app/commit/fdf9ab0fcb07a5a832f136857f0ccd7e01bab1d7))
+
 ## [3.93.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.18...@standardnotes/web@3.93.19) (2022-11-09)
 
 **Note:** Version bump only for package @standardnotes/web
