@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.93.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.15...@standardnotes/web@3.93.16) (2022-11-09)
+
+### Bug Fixes
+
+* editor height ([73ff1c3](https://github.com/standardnotes/app/commit/73ff1c35ab4779137d3f222c41c497eb728a53ce))
+
 ## [3.93.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.14...@standardnotes/web@3.93.15) (2022-11-09)
 
 ### Bug Fixes
