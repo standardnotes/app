@@ -28,20 +28,14 @@ import {getDOMRangeRect} from '../../Utils/getDOMRangeRect';
 import {getSelectedNode} from '../../Utils/getSelectedNode';
 import {setFloatingElemPosition} from '../../Utils/setFloatingElemPosition';
 import {
-  TypeItalic,
-  TypeStrikethrough,
-  TypeSubscript,
-  TypeSuperscript,
-  TypeUnderline,
-  TypeBold,
-  LexicalCode,
-  LexicalLink,
   BoldIcon,
   ItalicIcon,
   UnderlineIcon,
   StrikethroughIcon,
   CodeIcon,
   LinkIcon,
+  SuperscriptIcon,
+  SubscriptIcon,
 } from '@standardnotes/icons';
 import {IconComponent} from '../../Theme/IconComponent';
 
@@ -176,7 +170,7 @@ function TextFormatFloatingToolbar({
             }}
             className={'popup-item spaced ' + (isUnderline ? 'active' : '')}
             aria-label="Format text to underlined">
-            <IconComponent>
+            <IconComponent size={21}>
               <UnderlineIcon />
             </IconComponent>
           </button>
@@ -197,8 +191,8 @@ function TextFormatFloatingToolbar({
             className={'popup-item spaced ' + (isSubscript ? 'active' : '')}
             title="Subscript"
             aria-label="Format Subscript">
-            <IconComponent>
-              <TypeSubscript />
+            <IconComponent paddingTop={4} size={18}>
+              <SubscriptIcon />
             </IconComponent>
           </button>
           <button
@@ -208,8 +202,8 @@ function TextFormatFloatingToolbar({
             className={'popup-item spaced ' + (isSuperscript ? 'active' : '')}
             title="Superscript"
             aria-label="Format Superscript">
-            <IconComponent>
-              <TypeSuperscript />
+            <IconComponent paddingTop={1} size={18}>
+              <SuperscriptIcon />
             </IconComponent>
           </button>
           <button
