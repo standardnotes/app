@@ -116,7 +116,7 @@ export class LinkingController extends AbstractViewController {
   }
 
   get activeItem() {
-    return this.itemListController.activeControllerItem
+    return this.application.itemControllerGroup.activeItemViewController?.item
   }
 
   get selectedItemTitle() {
