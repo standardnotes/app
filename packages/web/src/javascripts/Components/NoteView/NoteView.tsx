@@ -1115,7 +1115,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           ) : null}
 
           {editorMode === 'component' && this.state.editorComponentViewer && (
-            <div className="component-view">
+            <div className="component-view flex-grow">
               <ComponentView
                 key={this.state.editorComponentViewer.identifier}
                 componentViewer={this.state.editorComponentViewer}
