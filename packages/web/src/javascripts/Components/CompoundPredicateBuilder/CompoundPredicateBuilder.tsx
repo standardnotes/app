@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import { NonCompoundPredicateOperators } from '../Preferences/Panes/General/SmartViews/NonCompoundPredicateOperators'
-import { CompoundPredicateBuilderController } from './CompoundPredicateBuilderState'
+import { CompoundPredicateBuilderController } from './CompoundPredicateBuilderController'
 
 type Props = {
   controller: CompoundPredicateBuilderController
