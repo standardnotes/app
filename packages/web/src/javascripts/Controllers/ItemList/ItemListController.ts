@@ -259,7 +259,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.linkingController.reloadAllLinks()
 
-    await this.publishEventSync(CrossControllerEvent.ActiveEditorChanged)
+    await this.publishCrossControllerEventSync(CrossControllerEvent.ActiveEditorChanged)
   }
 
   async openFile(fileUuid: string): Promise<void> {

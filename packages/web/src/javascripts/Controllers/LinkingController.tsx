@@ -20,6 +20,7 @@ import {
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
+import { CrossControllerEvent } from './CrossControllerEvent'
 import { FilesController } from './FilesController'
 import { ItemListController } from './ItemList/ItemListController'
 import { NavigationController } from './Navigation/NavigationController'
@@ -262,24 +263,33 @@ export class LinkingController extends AbstractViewController {
     this.reloadAllLinks()
   }
 
-  linkItemToSelectedItem = async (itemToLink: LinkableItem) => {
+  linkItemToSelectedItem = async (itemToLink: LinkableItem): Promise<boolean> => {
+    const cannotLinkItem = !this.isEntitledToNoteLinking && itemToLink instanceof SNNote
+    if (cannotLinkItem) {
+      void this.publishCrossControllerEventSync(CrossControllerEvent.DisplayPremiumModal, 'Note linking')
+      return false
+    }
+
     await this.ensureActiveItemIsInserted()
     const activeItem = this.activeItem
 
     if (!activeItem) {
-      return
+      return false
     }
 
     await this.linkItems(activeItem, itemToLink)
+    return true
   }
 
-  createAndAddNewTag = async (title: string) => {
+  createAndAddNewTag = async (title: string): Promise<SNTag> => {
     await this.ensureActiveItemIsInserted()
     const activeItem = this.activeItem
     const newTag = await this.application.mutator.findOrCreateTag(title)
     if (activeItem) {
       await this.addTagToItem(newTag, activeItem)
     }
+
+    return newTag
   }
 
   addTagToItem = async (tag: SNTag, item: FileItem | SNNote) => {
