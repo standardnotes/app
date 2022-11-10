@@ -44,7 +44,7 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
           <div className="flex w-full items-center gap-2">
             {index !== 0 && <div className="mr-2 text-sm font-semibold">{operator === 'and' ? 'AND' : 'OR'}</div>}
             <input
-              className="flex-grow rounded border border-border py-1 px-2"
+              className="flex-grow rounded border border-border bg-default py-1 px-2"
               value={predicate.keypath}
               onChange={(event) => {
                 setPredicate(index, { keypath: event.target.value })
@@ -64,7 +64,7 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
               ))}
             </select>
             <input
-              className="flex-grow rounded border border-border py-1 px-2"
+              className="flex-grow rounded border border-border bg-default py-1 px-2"
               value={predicate.value.toString()}
               onChange={(event) => {
                 setPredicate(index, { value: event.target.value })
