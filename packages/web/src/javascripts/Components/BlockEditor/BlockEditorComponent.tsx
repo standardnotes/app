@@ -23,9 +23,16 @@ type Props = {
   note: SNNote
   linkingController: LinkingController
   filesController: FilesController
+  spellcheck: boolean
 }
 
-export const BlockEditor: FunctionComponent<Props> = ({ note, application, linkingController, filesController }) => {
+export const BlockEditor: FunctionComponent<Props> = ({
+  note,
+  application,
+  linkingController,
+  filesController,
+  spellcheck,
+}) => {
   const controller = useRef(new BlockEditorController(note, application))
 
   const handleChange = useCallback(
@@ -55,6 +62,7 @@ export const BlockEditor: FunctionComponent<Props> = ({ note, application, linki
                 onChange={handleChange}
                 className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
                 previewLength={NotePreviewCharLimit}
+                spellcheck={spellcheck}
               >
                 <ItemSelectionPlugin currentNote={note} />
                 <FilePlugin />

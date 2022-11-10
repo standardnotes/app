@@ -38,6 +38,7 @@ type BlocksEditorProps = {
   className?: string;
   children: React.ReactNode;
   previewLength: number;
+  spellcheck?: boolean;
 };
 
 export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
@@ -45,6 +46,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
   className,
   children,
   previewLength,
+  spellcheck,
 }) => {
   const handleChange = useCallback(
     (editorState: EditorState, _editor: LexicalEditor) => {
@@ -85,6 +87,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
               <ContentEditable
                 id={SuperEditorContentId}
                 className={`ContentEditable__root ${className}`}
+                spellCheck={spellcheck}
               />
             </div>
           </div>
