@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.94.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.94.0...@standardnotes/web@3.94.1) (2022-11-10)
+
+### Bug Fixes
+
+* iframe classname ([93b6616](https://github.com/standardnotes/app/commit/93b6616b7814a0cef22a50d372a3416c0953ace2))
+
 # [3.94.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.19...@standardnotes/web@3.94.0) (2022-11-09)
 
 ### Features
