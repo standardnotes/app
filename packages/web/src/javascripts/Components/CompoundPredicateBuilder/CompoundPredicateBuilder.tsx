@@ -1,8 +1,7 @@
-import { PredicateCompoundOperator, PredicateOperator } from '@standardnotes/snjs'
+import { AllNonCompoundPredicateOperators, PredicateCompoundOperator, PredicateOperator } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
-import { NonCompoundPredicateOperators } from '../Preferences/Panes/General/SmartViews/NonCompoundPredicateOperators'
 import { CompoundPredicateBuilderController } from './CompoundPredicateBuilderController'
 
 type Props = {
@@ -58,7 +57,7 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
                 setPredicate(index, { operator: event.target.value as PredicateOperator })
               }}
             >
-              {NonCompoundPredicateOperators.map((operator) => (
+              {AllNonCompoundPredicateOperators.map((operator) => (
                 <option key={operator} value={operator}>
                   {operator}
                 </option>
