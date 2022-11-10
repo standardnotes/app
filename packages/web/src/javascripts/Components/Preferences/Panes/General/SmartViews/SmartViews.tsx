@@ -11,13 +11,18 @@ import AddSmartViewModal from '@/Components/SmartViewBuilder/AddSmartViewModal'
 import { AddSmartViewModalController } from '@/Components/SmartViewBuilder/AddSmartViewModalController'
 import EditSmartViewModal from './EditSmartViewModal'
 import SmartViewItem from './SmartViewItem'
+import { FeaturesController } from '@/Controllers/FeaturesController'
+import NoSubscriptionBanner from '@/Components/NoSubscriptionBanner/NoSubscriptionBanner'
 
-type Props = {
+type NewType = {
   application: WebApplication
   navigationController: NavigationController
+  featuresController: FeaturesController
 }
 
-const SmartViews = ({ application, navigationController }: Props) => {
+type Props = NewType
+
+const SmartViews = ({ application, navigationController, featuresController }: Props) => {
   const [editingSmartView, setEditingSmartView] = useState<SmartView | undefined>(undefined)
 
   const addSmartViewModalController = useMemo(() => new AddSmartViewModalController(application), [application])
@@ -29,23 +34,35 @@ const SmartViews = ({ application, navigationController }: Props) => {
       <PreferencesGroup>
         <PreferencesSegment>
           <Title>Smart Views</Title>
-          <div className="my-2 flex flex-col">
-            {nonSystemSmartViews.map((view) => (
-              <SmartViewItem
-                key={view.uuid}
-                view={view}
-                onEdit={() => setEditingSmartView(view)}
-                onDelete={() => navigationController.remove(view, true)}
-              />
-            ))}
-          </div>
-          <Button
-            onClick={() => {
-              addSmartViewModalController.setIsAddingSmartView(true)
-            }}
-          >
-            Create Smart View
-          </Button>
+          {!featuresController.hasSmartViews && (
+            <NoSubscriptionBanner
+              className="mt-2"
+              application={application}
+              title="Upgrade for smart views"
+              message="Create smart views to organize your notes according to conditions you define."
+            />
+          )}
+          {featuresController.hasSmartViews && (
+            <>
+              <div className="my-2 flex flex-col">
+                {nonSystemSmartViews.map((view) => (
+                  <SmartViewItem
+                    key={view.uuid}
+                    view={view}
+                    onEdit={() => setEditingSmartView(view)}
+                    onDelete={() => navigationController.remove(view, true)}
+                  />
+                ))}
+              </div>
+              <Button
+                onClick={() => {
+                  addSmartViewModalController.setIsAddingSmartView(true)
+                }}
+              >
+                Create Smart View
+              </Button>
+            </>
+          )}
         </PreferencesSegment>
       </PreferencesGroup>
       {!!editingSmartView && (
