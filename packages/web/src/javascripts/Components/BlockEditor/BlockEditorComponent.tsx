@@ -46,7 +46,7 @@ export const BlockEditor: FunctionComponent<Props> = ({ note, application, linki
   )
 
   return (
-    <div className="relative h-full w-full p-5">
+    <div className="relative h-full w-full px-5 py-4">
       <ErrorBoundary>
         <LinkingControllerProvider controller={linkingController}>
           <FilesControllerProvider controller={filesController}>
