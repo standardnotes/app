@@ -352,22 +352,22 @@
   border-radius: 2px;
 }
 .Lexical__listItemChecked:before {
-  border: 1px solid rgb(61, 135, 245);
+  border: 1px solid var(--sn-stylekit-info-color);
   border-radius: 2px;
-  background-color: #3d87f5;
+  background-color: var(--sn-stylekit-info-color);
   background-repeat: no-repeat;
 }
 .Lexical__listItemChecked:after {
   content: '';
   cursor: pointer;
-  border-color: #fff;
+  border-color: var(--sn-stylekit-info-contrast-color);
   border-style: solid;
   position: absolute;
   display: block;
-  top: 6px;
-  width: 3px;
-  left: 7px;
-  height: 6px;
+  top: 7px;
+  width: 5px;
+  left: 6px;
+  height: 10px;
   transform: rotate(45deg);
   border-width: 0 2px 2px 0;
 }

@@ -47,6 +47,7 @@ import {
   transactionForAssociateComponentWithCurrentNote,
   transactionForDisassociateComponentWithCurrentNote,
 } from './TransactionFunctions'
+import { SuperEditorContentId } from '@standardnotes/blocks-editor'
 
 const MinimumStatusDuration = 400
 const TextareaDebounce = 100
@@ -202,7 +203,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     this.statusTimeout = undefined
     ;(this.onPanelResizeFinish as unknown) = undefined
-    ;(this.dismissProtectedWarning as unknown) = undefined
+    ;(this.authorizeAndDismissProtectedWarning as unknown) = undefined
     ;(this.editorComponentViewerRequestsReload as unknown) = undefined
     ;(this.onTextAreaChange as unknown) = undefined
     ;(this.onTitleEnter as unknown) = undefined
@@ -452,7 +453,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     }
   }
 
-  dismissProtectedWarning = async () => {
+  authorizeAndDismissProtectedWarning = async () => {
     let showNoteContents = true
 
     if (this.application.hasProtectionSources()) {
@@ -893,6 +894,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.removeTrashKeyObserver = this.application.io.addKeyObserver({
       key: KeyboardKey.Backspace,
       notTags: ['INPUT', 'TEXTAREA'],
+      notElementIds: [SuperEditorContentId],
       modifiers: [KeyboardModifier.Meta],
       onKeyDown: () => {
         this.deleteNote(false).catch(console.error)
@@ -984,9 +986,9 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     if (this.state.showProtectedWarning || !this.application.isAuthorizedToRenderItem(this.note)) {
       return (
         <ProtectedItemOverlay
-          viewControllerManager={this.viewControllerManager}
+          showAccountMenu={() => this.application.showAccountMenu()}
           hasProtectionSources={this.application.hasProtectionSources()}
-          onViewItem={this.dismissProtectedWarning}
+          onViewItem={this.authorizeAndDismissProtectedWarning}
           itemType={'note'}
         />
       )
@@ -1009,6 +1011,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           <NoteViewFileDropTarget
             note={this.note}
             linkingController={this.viewControllerManager.linkingController}
+            filesController={this.viewControllerManager.filesController}
             noteViewElement={this.noteViewElementRef.current}
           />
         )}
@@ -1155,6 +1158,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 note={this.note}
                 linkingController={this.viewControllerManager.linkingController}
                 filesController={this.viewControllerManager.filesController}
+                spellcheck={this.state.spellcheck}
               />
             </div>
           )}

@@ -3,4 +3,5 @@ export enum CrossControllerEvent {
   ActiveEditorChanged = 'ActiveEditorChanged',
   HydrateFromPersistedValues = 'HydrateFromPersistedValues',
   RequestValuePersistence = 'RequestValuePersistence',
+  DisplayPremiumModal = 'DisplayPremiumModal',
 }

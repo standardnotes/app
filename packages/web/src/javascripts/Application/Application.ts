@@ -366,4 +366,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
     return this.mobileWebReceiver.addReactListener(listener)
   }
+
+  showAccountMenu(): void {
+    this.getViewControllerManager().accountMenuController.setShow(true)
+  }
 }

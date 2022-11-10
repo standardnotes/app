@@ -1,3 +1,4 @@
+import { FilesController } from '@/Controllers/FilesController'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { SNNote } from '@standardnotes/snjs'
 import { useEffect } from 'react'
@@ -6,10 +7,11 @@ import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider
 type Props = {
   note: SNNote
   linkingController: LinkingController
+  filesController: FilesController
   noteViewElement: HTMLElement | null
 }
 
-const NoteViewFileDropTarget = ({ note, linkingController, noteViewElement }: Props) => {
+const NoteViewFileDropTarget = ({ note, linkingController, noteViewElement, filesController }: Props) => {
   const { isDraggingFiles, addDragTarget, removeDragTarget } = useFileDragNDrop()
 
   useEffect(() => {
@@ -21,6 +23,7 @@ const NoteViewFileDropTarget = ({ note, linkingController, noteViewElement }: Pr
         callback: (files) => {
           files.forEach(async (uploadedFile) => {
             await linkingController.linkItems(note, uploadedFile)
+            filesController.notifyObserversOfUploadedFileLinkingToCurrentNote(uploadedFile.uuid)
           })
         },
       })
@@ -31,7 +34,7 @@ const NoteViewFileDropTarget = ({ note, linkingController, noteViewElement }: Pr
         removeDragTarget(target)
       }
     }
-  }, [addDragTarget, linkingController, note, noteViewElement, removeDragTarget])
+  }, [addDragTarget, linkingController, note, noteViewElement, removeDragTarget, filesController])
 
   return isDraggingFiles ? (
     // Required to block drag events to editor iframe

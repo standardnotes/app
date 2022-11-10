@@ -1,4 +1,5 @@
 import LinkedItemMeta from '@/Components/LinkedItems/LinkedItemMeta'
+import { LinkedItemSearchResultsAddTagOption } from '@/Components/LinkedItems/LinkedItemSearchResultsAddTagOption'
 import { PopoverItemClassNames, PopoverItemSelectedClassNames } from '../ClassNames'
 import { ItemOption } from './ItemOption'
 
@@ -24,7 +25,14 @@ export function ItemSelectionItemComponent({ index, isSelected, onClick, onMouse
       onMouseEnter={onMouseEnter}
       onClick={onClick}
     >
-      <LinkedItemMeta item={option.item} searchQuery={searchQuery} />
+      {option.item && <LinkedItemMeta item={option.item} searchQuery={searchQuery} />}
+      {!option.item && (
+        <LinkedItemSearchResultsAddTagOption
+          searchQuery={searchQuery}
+          onClickCallback={onClick}
+          isFocused={isSelected}
+        />
+      )}
     </li>
   )
 }

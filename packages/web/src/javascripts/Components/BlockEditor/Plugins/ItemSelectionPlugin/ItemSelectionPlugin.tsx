@@ -46,14 +46,19 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
   )
 
   const options = useMemo(() => {
-    const results = getLinkingSearchResults(queryString || '', application, currentNote, {
-      returnEmptyIfQueryEmpty: false,
-    })
+    const { linkedItems, unlinkedItems, shouldShowCreateTag } = getLinkingSearchResults(
+      queryString || '',
+      application,
+      currentNote,
+      {
+        returnEmptyIfQueryEmpty: false,
+      },
+    )
 
-    const items = [...results.linkedItems, ...results.unlinkedItems]
+    const items = [...linkedItems, ...unlinkedItems]
 
-    return items.map((item) => {
-      return new ItemOption(item, {
+    const options = items.map((item) => {
+      return new ItemOption(item, item.title || '', {
         onSelect: (_queryString: string) => {
           void linkingController.linkItems(currentNote, item)
           if (item.content_type === ContentType.File) {
@@ -64,6 +69,19 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
         },
       })
     })
+
+    if (shouldShowCreateTag) {
+      options.push(
+        new ItemOption(undefined, '', {
+          onSelect: async (queryString: string) => {
+            const newTag = await linkingController.createAndAddNewTag(queryString || '')
+            editor.dispatchCommand(INSERT_BUBBLE_COMMAND, newTag.uuid)
+          },
+        }),
+      )
+    }
+
+    return options
   }, [application, editor, currentNote, queryString, linkingController])
 
   return (

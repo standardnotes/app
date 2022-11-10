@@ -139,7 +139,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     }
   }
 
-  attachFileToNote = async (file: FileItem) => {
+  attachFileToSelectedNote = async (file: FileItem) => {
     const note = this.notesController.firstSelectedNote
     if (!note) {
       addToast({
@@ -207,7 +207,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
     switch (action.type) {
       case PopoverFileItemActionType.AttachFileToNote:
-        await this.attachFileToNote(file)
+        await this.attachFileToSelectedNote(file)
         break
       case PopoverFileItemActionType.DetachFileToNote:
         await this.detachFileFromNote(file)
@@ -398,10 +398,6 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
           type: ToastType.Success,
           message: `Uploaded file "${uploadedFile.name}"`,
         })
-
-        this.notifyEvent(FilesControllerEvent.FileUploadedToNote, {
-          [FilesControllerEvent.FileUploadedToNote]: { uuid: uploadedFile.uuid },
-        })
       }
 
       return uploadedFiles
@@ -418,6 +414,12 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     }
 
     return undefined
+  }
+
+  notifyObserversOfUploadedFileLinkingToCurrentNote(fileUuid: string) {
+    this.notifyEvent(FilesControllerEvent.FileUploadedToNote, {
+      [FilesControllerEvent.FileUploadedToNote]: { uuid: fileUuid },
+    })
   }
 
   deleteFilesPermanently = async (files: FileItem[]) => {

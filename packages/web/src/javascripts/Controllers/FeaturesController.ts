@@ -1,8 +1,15 @@
 import { WebApplication } from '@/Application/Application'
 import { destroyAllObjectProperties } from '@/Utils'
-import { ApplicationEvent, FeatureIdentifier, FeatureStatus, InternalEventBus } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  FeatureIdentifier,
+  FeatureStatus,
+  InternalEventBus,
+  InternalEventInterface,
+} from '@standardnotes/snjs'
 import { action, makeObservable, observable, runInAction, when } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
+import { CrossControllerEvent } from './CrossControllerEvent'
 
 export class FeaturesController extends AbstractViewController {
   hasFolders: boolean
@@ -30,6 +37,8 @@ export class FeaturesController extends AbstractViewController {
     this.hasFiles = this.isEntitledToFiles()
     this.premiumAlertFeatureName = undefined
 
+    eventBus.addEventHandler(this, CrossControllerEvent.DisplayPremiumModal)
+
     makeObservable(this, {
       hasFolders: observable,
       hasSmartViews: observable,
@@ -56,6 +65,13 @@ export class FeaturesController extends AbstractViewController {
         }
       }),
     )
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === CrossControllerEvent.DisplayPremiumModal) {
+      const payload = event.payload as { featureName: string }
+      void this.showPremiumAlert(payload.featureName)
+    }
   }
 
   public async showPremiumAlert(featureName: string): Promise<void> {
