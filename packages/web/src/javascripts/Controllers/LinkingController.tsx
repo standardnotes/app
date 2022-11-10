@@ -266,7 +266,9 @@ export class LinkingController extends AbstractViewController {
   linkItemToSelectedItem = async (itemToLink: LinkableItem): Promise<boolean> => {
     const cannotLinkItem = !this.isEntitledToNoteLinking && itemToLink instanceof SNNote
     if (cannotLinkItem) {
-      void this.publishCrossControllerEventSync(CrossControllerEvent.DisplayPremiumModal, 'Note linking')
+      void this.publishCrossControllerEventSync(CrossControllerEvent.DisplayPremiumModal, {
+        featureName: 'Note linking',
+      })
       return false
     }
 
