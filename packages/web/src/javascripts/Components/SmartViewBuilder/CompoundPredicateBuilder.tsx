@@ -3,13 +3,16 @@ import { observer } from 'mobx-react-lite'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import { CompoundPredicateBuilderController } from './CompoundPredicateBuilderController'
+import { PredicateKeypath, PredicateKeypathLabels } from './PredicateKeypaths'
+import PredicateValue from './PredicateValue'
 
 type Props = {
   controller: CompoundPredicateBuilderController
 }
 
 const CompoundPredicateBuilder = ({ controller }: Props) => {
-  const { operator, setOperator, predicates, setPredicate, addPredicate, removePredicate } = controller
+  const { operator, setOperator, predicates, setPredicate, changePredicateKeypath, addPredicate, removePredicate } =
+    controller
 
   return (
     <>
@@ -43,13 +46,19 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
         <div className="flex flex-col gap-2.5" key={index}>
           <div className="flex w-full items-center gap-2">
             {index !== 0 && <div className="mr-2 text-sm font-semibold">{operator === 'and' ? 'AND' : 'OR'}</div>}
-            <input
-              className="flex-grow rounded border border-border bg-default py-1 px-2"
+            <select
+              className="flex-grow rounded border border-border bg-default py-1.5 px-2 focus:outline focus:outline-1 focus:outline-info"
               value={predicate.keypath}
               onChange={(event) => {
-                setPredicate(index, { keypath: event.target.value })
+                changePredicateKeypath(index, event.target.value as PredicateKeypath)
               }}
-            />
+            >
+              {Object.entries(PredicateKeypathLabels).map(([key, label]) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
+            </select>
             <select
               className="rounded border border-border bg-default py-1.5 px-2 focus:outline focus:outline-1 focus:outline-info"
               value={predicate.operator}
@@ -63,13 +72,15 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
                 </option>
               ))}
             </select>
-            <input
-              className="flex-grow rounded border border-border bg-default py-1 px-2"
-              value={predicate.value.toString()}
-              onChange={(event) => {
-                setPredicate(index, { value: event.target.value })
-              }}
-            />
+            {predicate.keypath && (
+              <PredicateValue
+                keypath={predicate.keypath as PredicateKeypath}
+                value={predicate.value.toString()}
+                setValue={(value: string) => {
+                  setPredicate(index, { value })
+                }}
+              />
+            )}
             {index !== 0 && (
               <button
                 className="rounded border border-border p-1 text-danger"

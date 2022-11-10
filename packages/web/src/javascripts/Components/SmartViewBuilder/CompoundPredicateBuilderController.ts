@@ -1,9 +1,11 @@
-import { PredicateCompoundOperator, PredicateJsonForm } from '@standardnotes/snjs'
+import { PlainEditorType } from '@/Utils/DropdownItemsForEditors'
+import { NoteType, PredicateCompoundOperator, PredicateJsonForm } from '@standardnotes/snjs'
 import { makeObservable, observable, action } from 'mobx'
+import { PredicateKeypath, PredicateKeypathTypes } from './PredicateKeypaths'
 
 const getEmptyPredicate = (): PredicateJsonForm => {
   return {
-    keypath: '',
+    keypath: 'title',
     operator: '!=',
     value: '',
   }
@@ -35,6 +37,34 @@ export class CompoundPredicateBuilderController {
       ...predicateAtIndex,
       ...predicate,
     }
+  }
+
+  changePredicateKeypath = (index: number, keypath: string) => {
+    const currentKeyPath = this.predicates[index].keypath as PredicateKeypath
+    const currentKeyPathType = PredicateKeypathTypes[currentKeyPath]
+    const newKeyPathType = PredicateKeypathTypes[keypath as PredicateKeypath]
+
+    if (currentKeyPathType !== newKeyPathType) {
+      switch (newKeyPathType) {
+        case 'string':
+          this.setPredicate(index, { value: '' })
+          break
+        case 'boolean':
+          this.setPredicate(index, { value: true })
+          break
+        case 'number':
+          this.setPredicate(index, { value: 0 })
+          break
+        case 'noteType':
+          this.setPredicate(index, { value: Object.values(NoteType)[0] })
+          break
+        case 'editorIdentifier':
+          this.setPredicate(index, { value: PlainEditorType })
+          break
+      }
+    }
+
+    this.setPredicate(index, { keypath })
   }
 
   addPredicate = () => {
