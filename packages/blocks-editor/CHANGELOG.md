@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.11](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.3.10...@standardnotes/blocks-editor@1.3.11) (2022-11-10)
+
+### Bug Fixes
+
+* super note improvements ([#1991](https://github.com/standardnotes/app/issues/1991)) ([2dbc895](https://github.com/standardnotes/app/commit/2dbc89594ea2759c49bc318d5efd2b3a5ef3b22d))
+
 ## [1.3.10](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.3.9...@standardnotes/blocks-editor@1.3.10) (2022-11-09)
 
 ### Bug Fixes
