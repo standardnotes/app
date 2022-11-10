@@ -537,8 +537,6 @@ export class NavigationController
       this.selectedLocation = 'all'
       this.editing_ = newTag
     })
-
-    return newTag
   }
 
   public undoCreateNewTag() {

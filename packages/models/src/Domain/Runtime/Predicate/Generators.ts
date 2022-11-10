@@ -85,28 +85,22 @@ export function predicateFromDSLString<T extends PredicateTarget>(dsl: string): 
   }
 }
 
-export function isValuePredicateInArrayForm(
+function isValuePredicateInArrayForm(
   value: SureValue | PredicateJsonForm | PredicateJsonForm[] | RawPredicateInArrayForm,
 ): value is RawPredicateInArrayForm {
   return Array.isArray(value) && AllPredicateOperators.includes(value[1] as PredicateOperator)
 }
 
-export function isSureValue(value: unknown): value is SureValue {
+function isSureValue(value: unknown): value is SureValue {
   if (SureValueNonObjectTypesAsStrings.includes(typeof value)) {
     return true
   }
 
   if (Array.isArray(value)) {
-    return !isValuePredicateInArrayForm(value) && value.every((item) => isSureValue(item))
+    return !isValuePredicateInArrayForm(value)
   }
 
   return false
-}
-
-export function isValuePredicateJsonFormArray(
-  value: SureValue | PredicateJsonForm | PredicateJsonForm[] | RawPredicateInArrayForm,
-): value is PredicateJsonForm[] {
-  return !isSureValue(value) && Array.isArray(value)
 }
 
 function predicateDSLArrayToJsonPredicate(predicateArray: RawPredicateInArrayForm): PredicateJsonForm {
