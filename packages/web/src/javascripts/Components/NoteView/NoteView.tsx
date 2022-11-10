@@ -1011,6 +1011,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           <NoteViewFileDropTarget
             note={this.note}
             linkingController={this.viewControllerManager.linkingController}
+            filesController={this.viewControllerManager.filesController}
             noteViewElement={this.noteViewElementRef.current}
           />
         )}
