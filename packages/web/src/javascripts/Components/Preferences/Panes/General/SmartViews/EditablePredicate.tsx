@@ -26,7 +26,7 @@ const CompoundPredicateCreatorForm = ({ controller }: { controller: AddSmartView
     >
       <div role="separator" className="w-full border border-border" />
       <select
-        className="rounded border border-border bg-default py-1 px-2 focus:outline focus:outline-1 focus:outline-info"
+        className="rounded border border-border bg-default py-1.5 px-2 focus:outline focus:outline-1 focus:outline-info"
         name="compound-operator"
       >
         <option value="and">and</option>
@@ -50,7 +50,7 @@ const EditablePredicate = ({
   controller: AddSmartViewModalController
   isSubPredicate: boolean
 }) => {
-  const isCompoundPredicate = AllPredicateCompoundOperators.includes(predicate.operator as 'and' | 'or')
+  const isCompoundPredicate = AllPredicateCompoundOperators.includes(predicate.operator as PredicateCompoundOperator)
   const hasSureValue = isSureValue(predicate.value)
 
   if (isCompoundPredicate) {
@@ -108,7 +108,7 @@ const EditablePredicate = ({
           />
         )}
         <select
-          className="rounded border border-border bg-default py-1 px-2 focus:outline focus:outline-1 focus:outline-info"
+          className="rounded border border-border bg-default py-1.5 px-2 focus:outline focus:outline-1 focus:outline-info"
           value={predicate.operator}
           onChange={(event) => {
             const value = event.target.value
