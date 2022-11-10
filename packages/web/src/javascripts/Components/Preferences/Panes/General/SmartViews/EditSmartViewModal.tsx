@@ -10,7 +10,7 @@ import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 import Spinner from '@/Components/Spinner/Spinner'
 import { SmartView, TagMutator } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { useRef, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 
 type Props = {
   application: WebApplication
@@ -29,11 +29,11 @@ const EditSmartViewModal = ({ application, view, closeDialog }: Props) => {
   const [shouldShowIconPicker, setShouldShowIconPicker] = useState(false)
   const iconPickerButtonRef = useRef<HTMLButtonElement>(null)
 
-  const toggleIconPicker = () => {
+  const toggleIconPicker = useCallback(() => {
     setShouldShowIconPicker((shouldShow) => !shouldShow)
-  }
+  }, [])
 
-  const saveSmartView = async () => {
+  const saveSmartView = useCallback(async () => {
     if (!title.length) {
       titleInputRef.current?.focus()
       return
@@ -48,11 +48,11 @@ const EditSmartViewModal = ({ application, view, closeDialog }: Props) => {
 
     setIsSaving(false)
     closeDialog()
-  }
+  }, [application.mutator, closeDialog, selectedIcon, title, view])
 
-  const close = () => {
+  const close = useCallback(() => {
     closeDialog()
-  }
+  }, [closeDialog])
 
   return (
     <ModalDialog>
