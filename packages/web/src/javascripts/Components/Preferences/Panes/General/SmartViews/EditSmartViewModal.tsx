@@ -34,28 +34,20 @@ const EditSmartViewModal = ({ application, view, closeDialog }: Props) => {
   }
 
   const saveSmartView = async () => {
+    if (!title.length) {
+      titleInputRef.current?.focus()
+      return
+    }
+
     setIsSaving(true)
 
-    const save = async () => {
-      if (!title.length) {
-        titleInputRef.current?.focus()
-        return false
-      }
+    await application.mutator.changeAndSaveItem<TagMutator>(view, (mutator) => {
+      mutator.title = title
+      mutator.iconString = selectedIcon || 'restore'
+    })
 
-      const saved = await application.mutator.changeAndSaveItem<TagMutator>(view, (mutator) => {
-        mutator.title = title
-        mutator.iconString = selectedIcon || 'restore'
-      })
-
-      return !!saved
-    }
-
-    const didSave = await save()
     setIsSaving(false)
-
-    if (didSave) {
-      closeDialog()
-    }
+    closeDialog()
   }
 
   const close = () => {
