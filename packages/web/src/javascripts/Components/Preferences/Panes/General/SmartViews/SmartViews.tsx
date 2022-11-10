@@ -7,8 +7,8 @@ import { useMemo, useState } from 'react'
 import { Title } from '../../../PreferencesComponents/Content'
 import PreferencesGroup from '../../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
-import AddSmartViewModal from './AddSmartViewModal'
-import { AddSmartViewModalController } from './AddSmartViewModalController'
+import AddSmartViewModal from '@/Components/SmartViewBuilder/AddSmartViewModal'
+import { AddSmartViewModalController } from '@/Components/SmartViewBuilder/AddSmartViewModalController'
 import EditSmartViewModal from './EditSmartViewModal'
 import SmartViewItem from './SmartViewItem'
 
@@ -51,6 +51,7 @@ const SmartViews = ({ application, navigationController }: Props) => {
       {!!editingSmartView && (
         <EditSmartViewModal
           application={application}
+          navigationController={navigationController}
           view={editingSmartView}
           closeDialog={() => {
             setEditingSmartView(undefined)

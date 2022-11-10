@@ -1,5 +1,5 @@
 import Button from '@/Components/Button/Button'
-import CompoundPredicateBuilder from '@/Components/CompoundPredicateBuilder/CompoundPredicateBuilder'
+import CompoundPredicateBuilder from '@/Components/SmartViewBuilder/CompoundPredicateBuilder'
 import Icon from '@/Components/Icon/Icon'
 import IconPicker from '@/Components/Icon/IconPicker'
 import Popover from '@/Components/Popover/Popover'

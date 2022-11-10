@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import { CompoundPredicateBuilderController } from '@/Components/CompoundPredicateBuilder/CompoundPredicateBuilderController'
+import { CompoundPredicateBuilderController } from '@/Components/SmartViewBuilder/CompoundPredicateBuilderController'
 import { predicateFromJson } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 

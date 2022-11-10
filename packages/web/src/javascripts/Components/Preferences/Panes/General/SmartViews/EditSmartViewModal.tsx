@@ -8,17 +8,19 @@ import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
 import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 import Spinner from '@/Components/Spinner/Spinner'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { SmartView, TagMutator } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useRef, useState } from 'react'
 
 type Props = {
   application: WebApplication
+  navigationController: NavigationController
   view: SmartView
   closeDialog: () => void
 }
 
-const EditSmartViewModal = ({ application, view, closeDialog }: Props) => {
+const EditSmartViewModal = ({ application, navigationController, view, closeDialog }: Props) => {
   const [title, setTitle] = useState(view.title)
   const titleInputRef = useRef<HTMLInputElement>(null)
 
@@ -49,6 +51,11 @@ const EditSmartViewModal = ({ application, view, closeDialog }: Props) => {
     setIsSaving(false)
     closeDialog()
   }, [application.mutator, closeDialog, selectedIcon, title, view])
+
+  const deleteSmartView = useCallback(async () => {
+    void navigationController.remove(view, true)
+    closeDialog()
+  }, [closeDialog, navigationController, view])
 
   const close = useCallback(() => {
     closeDialog()
@@ -104,6 +111,9 @@ const EditSmartViewModal = ({ application, view, closeDialog }: Props) => {
         </div>
       </ModalDialogDescription>
       <ModalDialogButtons>
+        <Button className="mr-auto" disabled={isSaving} onClick={deleteSmartView} colorStyle="danger">
+          Delete
+        </Button>
         <Button disabled={isSaving} onClick={saveSmartView}>
           {isSaving ? <Spinner className="h-4.5 w-4.5" /> : 'Save'}
         </Button>

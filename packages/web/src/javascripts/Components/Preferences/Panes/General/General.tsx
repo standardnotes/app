@@ -23,7 +23,7 @@ const General: FunctionComponent<Props> = ({ viewControllerManager, application,
     <Persistence application={application} />
     <PlaintextDefaults application={application} />
     <Defaults application={application} />
-    <SmartViews application={application} viewControllerManager={viewControllerManager} />
+    <SmartViews application={application} navigationController={viewControllerManager.navigationController} />
     <Tools application={application} />
     <LabsPane application={application} />
     <Advanced
