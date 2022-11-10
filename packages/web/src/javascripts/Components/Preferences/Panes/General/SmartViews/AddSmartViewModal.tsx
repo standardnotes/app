@@ -1,4 +1,5 @@
 import Button from '@/Components/Button/Button'
+import CompoundPredicateBuilder from '@/Components/CompoundPredicateBuilder/CompoundPredicateBuilder'
 import Icon from '@/Components/Icon/Icon'
 import IconPicker from '@/Components/Icon/IconPicker'
 import Popover from '@/Components/Popover/Popover'
@@ -11,7 +12,6 @@ import { Platform } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useRef, useState } from 'react'
 import { AddSmartViewModalController } from './AddSmartViewModalController'
-import EditablePredicate from './EditablePredicate'
 
 type Props = {
   controller: AddSmartViewModalController
@@ -19,8 +19,7 @@ type Props = {
 }
 
 const AddSmartViewModal = ({ controller, platform }: Props) => {
-  const { isSaving, title, setTitle, icon, setIcon, predicate, setPredicate, closeModal, saveCurrentSmartView } =
-    controller
+  const { isSaving, title, setTitle, icon, setIcon, closeModal, saveCurrentSmartView, predicateController } = controller
 
   const titleInputRef = useRef<HTMLInputElement>(null)
 
@@ -80,12 +79,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
           </div>
           <div className="flex flex-col gap-2.5">
             <div className="text-sm font-semibold">Predicate:</div>
-            <EditablePredicate
-              predicate={predicate}
-              setPredicate={setPredicate}
-              controller={controller}
-              isSubPredicate={false}
-            />
+            <CompoundPredicateBuilder controller={predicateController} />
           </div>
         </div>
       </ModalDialogDescription>

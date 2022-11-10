@@ -1,14 +1,7 @@
 import { WebApplication } from '@/Application/Application'
-import { PredicateCompoundOperator, predicateFromJson, PredicateJsonForm } from '@standardnotes/snjs'
+import { CompoundPredicateBuilderController } from '@/Components/CompoundPredicateBuilder/CompoundPredicateBuilderState'
+import { predicateFromJson } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
-
-const getEmptyPredicate = (): PredicateJsonForm => {
-  return {
-    keypath: '',
-    operator: '!=',
-    value: '',
-  }
-}
 
 export class AddSmartViewModalController {
   isAddingSmartView = false
@@ -18,7 +11,7 @@ export class AddSmartViewModalController {
 
   icon = 'restore'
 
-  predicate: PredicateJsonForm = getEmptyPredicate()
+  predicateController = new CompoundPredicateBuilderController()
 
   constructor(private application: WebApplication) {
     makeObservable(this, {
@@ -33,9 +26,6 @@ export class AddSmartViewModalController {
 
       icon: observable,
       setIcon: action,
-
-      predicate: observable,
-      setPredicate: action,
     })
   }
 
@@ -55,38 +45,23 @@ export class AddSmartViewModalController {
     this.icon = icon
   }
 
-  setPredicate = (predicate: Partial<PredicateJsonForm>) => {
-    this.predicate = {
-      ...this.predicate,
-      ...predicate,
-    }
-  }
-
-  createCompoundPredicateFromCurrentPredicate = (operator: PredicateCompoundOperator) => {
-    const currentPredicate = { ...this.predicate }
-    this.setPredicate({
-      keypath: undefined,
-      operator,
-      value: [currentPredicate, getEmptyPredicate()],
-    })
-  }
-
   closeModal = () => {
     this.setIsAddingSmartView(false)
     this.setTitle('')
     this.setIcon('')
     this.setIsSaving(false)
-    this.setPredicate(getEmptyPredicate())
+    ;(this.predicateController as unknown) = undefined
   }
 
   saveCurrentSmartView = async () => {
     this.setIsSaving(true)
 
     if (!this.title) {
+      this.setIsSaving(false)
       return
     }
 
-    const predicate = predicateFromJson(this.predicate)
+    const predicate = predicateFromJson(this.predicateController.toJson())
     await this.application.items.createSmartView(this.title, predicate, this.icon)
 
     this.setIsSaving(false)
