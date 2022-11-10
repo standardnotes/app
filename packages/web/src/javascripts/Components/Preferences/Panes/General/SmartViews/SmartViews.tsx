@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import Button from '@/Components/Button/Button'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { isSystemView, SmartView } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useMemo, useState } from 'react'
@@ -14,17 +14,15 @@ import SmartViewItem from './SmartViewItem'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
+  navigationController: NavigationController
 }
 
-const SmartViews = ({ application, viewControllerManager }: Props) => {
+const SmartViews = ({ application, navigationController }: Props) => {
   const [editingSmartView, setEditingSmartView] = useState<SmartView | undefined>(undefined)
 
   const addSmartViewModalController = useMemo(() => new AddSmartViewModalController(application), [application])
 
-  const nonSystemSmartViews = viewControllerManager.navigationController.smartViews.filter(
-    (view) => !isSystemView(view),
-  )
+  const nonSystemSmartViews = navigationController.smartViews.filter((view) => !isSystemView(view))
 
   return (
     <>
@@ -37,7 +35,7 @@ const SmartViews = ({ application, viewControllerManager }: Props) => {
                 key={view.uuid}
                 view={view}
                 onEdit={() => setEditingSmartView(view)}
-                onDelete={() => viewControllerManager.navigationController.remove(view, true)}
+                onDelete={() => navigationController.remove(view, true)}
               />
             ))}
           </div>
