@@ -18,7 +18,7 @@ import {HashtagPlugin} from '@lexical/react/LexicalHashtagPlugin';
 import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
 import {LinkPlugin} from '@lexical/react/LexicalLinkPlugin';
 import {ListPlugin} from '@lexical/react/LexicalListPlugin';
-import {EditorState, LexicalEditor} from 'lexical';
+import {$getRoot, EditorState, LexicalEditor} from 'lexical';
 import HorizontalRulePlugin from '../Lexical/Plugins/HorizontalRulePlugin';
 import TwitterPlugin from '../Lexical/Plugins/TwitterPlugin';
 import YouTubePlugin from '../Lexical/Plugins/YouTubePlugin';
@@ -28,24 +28,39 @@ import DraggableBlockPlugin from '../Lexical/Plugins/DraggableBlockPlugin';
 import CodeHighlightPlugin from '../Lexical/Plugins/CodeHighlightPlugin';
 import FloatingTextFormatToolbarPlugin from '../Lexical/Plugins/FloatingTextFormatToolbarPlugin';
 import FloatingLinkEditorPlugin from '../Lexical/Plugins/FloatingLinkEditorPlugin';
+import {truncateString} from './Utils';
 
 const BlockDragEnabled = false;
 
 type BlocksEditorProps = {
-  onChange: (value: string) => void;
+  onChange: (value: string, preview: string) => void;
   className?: string;
   children: React.ReactNode;
+  previewLength: number;
 };
 
 export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
   onChange,
   className,
   children,
+  previewLength,
 }) => {
   const handleChange = useCallback(
     (editorState: EditorState, _editor: LexicalEditor) => {
-      const stringifiedEditorState = JSON.stringify(editorState.toJSON());
-      onChange(stringifiedEditorState);
+      editorState.read(() => {
+        const childrenNodes = $getRoot().getAllTextNodes().slice(0, 2);
+        let previewText = '';
+        childrenNodes.forEach((node, index) => {
+          previewText += node.getTextContent();
+          if (index !== childrenNodes.length - 1) {
+            previewText += '\n';
+          }
+        });
+        previewText = truncateString(previewText, previewLength);
+
+        const stringifiedEditorState = JSON.stringify(editorState.toJSON());
+        onChange(stringifiedEditorState, previewText);
+      });
     },
     [onChange],
   );
@@ -85,7 +100,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
         ]}
       />
       <TablePlugin />
-      <OnChangePlugin onChange={handleChange} />
+      <OnChangePlugin onChange={handleChange} ignoreSelectionChange={true} />
       <HistoryPlugin />
       <HorizontalRulePlugin />
       <AutoFocusPlugin />

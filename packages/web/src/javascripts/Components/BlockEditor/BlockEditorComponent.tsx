@@ -16,7 +16,6 @@ import { NodeObserverPlugin } from './Plugins/NodeObserverPlugin/NodeObserverPlu
 import { FilesController } from '@/Controllers/FilesController'
 import FilesControllerProvider from '@/Controllers/FilesControllerProvider'
 
-const StringEllipses = '...'
 const NotePreviewCharLimit = 160
 
 type Props = {
@@ -30,12 +29,8 @@ export const BlockEditor: FunctionComponent<Props> = ({ note, application, linki
   const controller = useRef(new BlockEditorController(note, application))
 
   const handleChange = useCallback(
-    (value: string) => {
-      const content = value
-      const truncate = content.length > NotePreviewCharLimit
-      const substring = content.substring(0, NotePreviewCharLimit)
-      const previewPlain = substring + (truncate ? StringEllipses : '')
-      void controller.current.save({ text: content, previewPlain: previewPlain, previewHtml: undefined })
+    (value: string, preview: string) => {
+      void controller.current.save({ text: value, previewPlain: preview, previewHtml: undefined })
     },
     [controller],
   )
@@ -59,6 +54,7 @@ export const BlockEditor: FunctionComponent<Props> = ({ note, application, linki
               <BlocksEditor
                 onChange={handleChange}
                 className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
+                previewLength={NotePreviewCharLimit}
               >
                 <ItemSelectionPlugin currentNote={note} />
                 <FilePlugin />
