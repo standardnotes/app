@@ -69,7 +69,7 @@ const EditSmartViewModal = ({ application, navigationController, view, closeDial
           <div className="flex items-center gap-2.5">
             <div className="text-sm font-semibold">Title:</div>
             <input
-              className="rounded border border-border py-1 px-2"
+              className="rounded border border-border bg-default py-1 px-2"
               value={title}
               onChange={(event) => {
                 setTitle(event.target.value)
