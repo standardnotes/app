@@ -30,6 +30,15 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
     setShouldShowIconPicker((shouldShow) => !shouldShow)
   }
 
+  const save = () => {
+    if (!title.length) {
+      titleInputRef.current?.focus()
+      return
+    }
+
+    void saveCurrentSmartView()
+  }
+
   return (
     <ModalDialog>
       <ModalDialogLabel closeDialog={closeModal}>Add Smart View</ModalDialogLabel>
@@ -84,7 +93,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
         </div>
       </ModalDialogDescription>
       <ModalDialogButtons>
-        <Button disabled={isSaving} onClick={saveCurrentSmartView}>
+        <Button disabled={isSaving} onClick={save}>
           {isSaving ? <Spinner className="h-4.5 w-4.5" /> : 'Save'}
         </Button>
         <Button disabled={isSaving} onClick={closeModal}>
