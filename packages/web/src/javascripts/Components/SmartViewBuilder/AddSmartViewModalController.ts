@@ -50,7 +50,7 @@ export class AddSmartViewModalController {
     this.setTitle('')
     this.setIcon('')
     this.setIsSaving(false)
-    ;(this.predicateController as unknown) = undefined
+    this.predicateController.resetState()
   }
 
   saveCurrentSmartView = async () => {

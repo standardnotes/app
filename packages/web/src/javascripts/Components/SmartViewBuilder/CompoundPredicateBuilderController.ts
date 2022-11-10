@@ -51,4 +51,9 @@ export class CompoundPredicateBuilderController {
       value: this.predicates,
     }
   }
+
+  resetState() {
+    this.operator = 'and'
+    this.predicates = [getEmptyPredicate()]
+  }
 }
