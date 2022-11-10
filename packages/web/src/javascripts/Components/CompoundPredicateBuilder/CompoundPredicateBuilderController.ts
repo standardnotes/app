@@ -21,6 +21,7 @@ export class CompoundPredicateBuilderController {
       predicates: observable,
       setPredicate: action,
       addPredicate: action,
+      removePredicate: action,
     })
   }
 
