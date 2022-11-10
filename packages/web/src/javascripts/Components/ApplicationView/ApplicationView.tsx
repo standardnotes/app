@@ -29,6 +29,7 @@ import AndroidBackHandlerProvider from '@/NativeMobileWeb/useAndroidBackHandler'
 import ConfirmDeleteAccountContainer from '@/Components/ConfirmDeleteAccountModal/ConfirmDeleteAccountModal'
 import DarkModeHandler from '../DarkModeHandler/DarkModeHandler'
 import ApplicationProvider from './ApplicationProvider'
+import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 
 type Props = {
   application: WebApplication
@@ -219,7 +220,9 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                     searchOptionsController={viewControllerManager.searchOptionsController}
                     linkingController={viewControllerManager.linkingController}
                   />
-                  <NoteGroupView application={application} />
+                  <ErrorBoundary>
+                    <NoteGroupView application={application} />
+                  </ErrorBoundary>
                 </FileDragNDropProvider>
               </div>
 

@@ -1,5 +1,5 @@
 import LinkedItemMeta from '@/Components/LinkedItems/LinkedItemMeta'
-import { PopoverItemClassNames, PopoverItemSelectedClassNames } from '@standardnotes/blocks-editor'
+import { PopoverItemClassNames, PopoverItemSelectedClassNames } from '../ClassNames'
 import { ItemOption } from './ItemOption'
 
 type Props = {
@@ -16,7 +16,7 @@ export function ItemSelectionItemComponent({ index, isSelected, onClick, onMouse
     <li
       key={option.key}
       tabIndex={-1}
-      className={`${PopoverItemClassNames} ${isSelected ? PopoverItemSelectedClassNames : ''}`}
+      className={`gap-4 ${PopoverItemClassNames} ${isSelected ? PopoverItemSelectedClassNames : ''}`}
       ref={option.setRefElement}
       role="option"
       aria-selected={isSelected}

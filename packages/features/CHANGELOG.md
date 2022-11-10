@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.54.5](https://github.com/standardnotes/app/compare/@standardnotes/features@1.54.4...@standardnotes/features@1.54.5) (2022-11-09)
+
+### Reverts
+
+* Revert "refactor: include themes in components folder" ([3690104](https://github.com/standardnotes/app/commit/3690104934b444ca99eed86c1a41b22a3582811a))
+
 ## [1.54.4](https://github.com/standardnotes/app/compare/@standardnotes/features@1.54.3...@standardnotes/features@1.54.4) (2022-11-06)
 
 **Note:** Version bump only for package @standardnotes/features

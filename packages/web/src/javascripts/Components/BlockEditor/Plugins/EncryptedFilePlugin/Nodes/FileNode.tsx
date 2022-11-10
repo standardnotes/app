@@ -3,8 +3,9 @@ import { DecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
 import { $createFileNode, convertToFileElement } from './FileUtils'
 import { FileComponent } from './FileComponent'
 import { SerializedFileNode } from './SerializedFileNode'
+import { ItemNodeInterface } from '../../ItemNodeInterface'
 
-export class FileNode extends DecoratorBlockNode {
+export class FileNode extends DecoratorBlockNode implements ItemNodeInterface {
   __id: string
 
   static getType(): string {
@@ -45,7 +46,7 @@ export class FileNode extends DecoratorBlockNode {
   }
 
   exportDOM(): DOMExportOutput {
-    const element = document.createElement('div')
+    const element = document.createElement('span')
     element.setAttribute('data-lexical-file-uuid', this.__id)
     const text = document.createTextNode(this.getTextContent())
     element.append(text)
@@ -73,9 +74,5 @@ export class FileNode extends DecoratorBlockNode {
     }
 
     return <FileComponent className={className} format={this.__format} nodeKey={this.getKey()} fileUuid={this.__id} />
-  }
-
-  isInline(): false {
-    return false
   }
 }

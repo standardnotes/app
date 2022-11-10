@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.10](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.3.9...@standardnotes/blocks-editor@1.3.10) (2022-11-09)
+
+### Bug Fixes
+
+* link color ([ac4882b](https://github.com/standardnotes/app/commit/ac4882b357162f8737ac32ea9f55884276cc3011))
+
+### Reverts
+
+* Revert "refactor: include themes in components folder" ([3690104](https://github.com/standardnotes/app/commit/3690104934b444ca99eed86c1a41b22a3582811a))
+
+## [1.3.9](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.3.8...@standardnotes/blocks-editor@1.3.9) (2022-11-09)
+
+**Note:** Version bump only for package @standardnotes/blocks-editor
+
 ## [1.3.8](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.3.7...@standardnotes/blocks-editor@1.3.8) (2022-11-08)
 
 **Note:** Version bump only for package @standardnotes/blocks-editor

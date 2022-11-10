@@ -4,7 +4,7 @@ import { INSERT_UNORDERED_LIST_COMMAND } from '@lexical/list'
 
 export function GetBulletedListBlock(editor: LexicalEditor) {
   return new BlockPickerOption('Bulleted List', {
-    iconName: 'bullet',
+    iconName: 'list-ul',
     keywords: ['bulleted list', 'unordered list', 'ul'],
     onSelect: () => editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined),
   })

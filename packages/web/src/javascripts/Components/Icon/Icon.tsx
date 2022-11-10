@@ -2,9 +2,10 @@ import { FunctionComponent } from 'react'
 import { VectorIconNameOrEmoji } from '@standardnotes/snjs'
 import { IconNameToSvgMapping } from './IconNameToSvgMapping'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { LexicalIconName, LexicalIconNameToSvgMapping } from './LexicalIcons'
 
 type Props = {
-  type: VectorIconNameOrEmoji
+  type: VectorIconNameOrEmoji | LexicalIconName
   className?: string
   ariaLabel?: string
   size?: 'small' | 'medium' | 'normal' | 'large' | 'custom'
@@ -42,8 +43,11 @@ const EmojiSize = {
   custom: '',
 }
 
-const getIconComponent = (type: VectorIconNameOrEmoji) => {
-  return IconNameToSvgMapping[type as keyof typeof IconNameToSvgMapping]
+const getIconComponent = (type: VectorIconNameOrEmoji | LexicalIconName) => {
+  return (
+    IconNameToSvgMapping[type as keyof typeof IconNameToSvgMapping] ||
+    LexicalIconNameToSvgMapping[type as LexicalIconName]
+  )
 }
 
 export const isIconEmoji = (type: VectorIconNameOrEmoji): boolean => {

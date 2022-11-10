@@ -216,34 +216,6 @@ body {
     bottom: 20px;
   }
 
-  #options-button::after {
-    background-image: url(#{$blocks-editor-icons-path}/gear.svg);
-  }
-
-  #test-recorder-button::after {
-    background-image: url(#{$blocks-editor-icons-path}/journal-code.svg);
-  }
-
-  #paste-log-button::after {
-    background-image: url(#{$blocks-editor-icons-path}/clipboard.svg);
-  }
-
-  #test-recorder-button-snapshot {
-    margin-right: auto;
-  }
-
-  #test-recorder-button-snapshot::after {
-    background-image: url(#{$blocks-editor-icons-path}/camera.svg);
-  }
-
-  #test-recorder-button-copy::after {
-    background-image: url(#{$blocks-editor-icons-path}/clipboard.svg);
-  }
-
-  #test-recorder-button-download::after {
-    background-image: url(#{$blocks-editor-icons-path}/download.svg);
-  }
-
   .mentions-menu {
     width: 250px;
   }
@@ -254,68 +226,6 @@ body {
 
   .emoji-menu {
     width: 200px;
-  }
-
-  .link-editor .button.active,
-  .toolbar .button.active {
-    background-color: rgb(223, 232, 250);
-  }
-
-  .link-editor .link-input {
-    display: block;
-    width: calc(100% - 24px);
-    box-sizing: border-box;
-    margin: 8px 12px;
-    padding: 8px 12px;
-    border-radius: 15px;
-    background-color: #eee;
-    font-size: 15px;
-    color: rgb(5, 5, 5);
-    border: 0;
-    outline: 0;
-    position: relative;
-    font-family: inherit;
-  }
-
-  .link-editor div.link-edit {
-    background-image: url(#{$blocks-editor-icons-path}/pencil-fill.svg);
-    background-size: 16px;
-    background-position: center;
-    background-repeat: no-repeat;
-    width: 35px;
-    vertical-align: -0.25em;
-    position: absolute;
-    right: 0;
-    top: 0;
-    bottom: 0;
-    cursor: pointer;
-  }
-
-  .link-editor .link-input a {
-    color: rgb(33, 111, 219);
-    text-decoration: none;
-    display: block;
-    white-space: nowrap;
-    overflow: hidden;
-    margin-right: 30px;
-    text-overflow: ellipsis;
-  }
-
-  .link-editor .link-input a:hover {
-    text-decoration: underline;
-  }
-
-  .link-editor .font-size-wrapper,
-  .link-editor .font-family-wrapper {
-    display: flex;
-    margin: 0 4px;
-  }
-
-  .link-editor select {
-    padding: 6px;
-    border: none;
-    background-color: rgba(0, 0, 0, 0.075);
-    border-radius: 4px;
   }
 
   .mention:focus {
@@ -363,34 +273,6 @@ body {
     width: 18px;
     height: 18px;
     margin: 2px;
-  }
-
-  #block-controls span.block-type.paragraph {
-    background-image: url(#{$blocks-editor-icons-path}/text-paragraph.svg);
-  }
-
-  #block-controls span.block-type.h1 {
-    background-image: url(#{$blocks-editor-icons-path}/type-h1.svg);
-  }
-
-  #block-controls span.block-type.h2 {
-    background-image: url(#{$blocks-editor-icons-path}/type-h2.svg);
-  }
-
-  #block-controls span.block-type.quote {
-    background-image: url(#{$blocks-editor-icons-path}/chat-square-quote.svg);
-  }
-
-  #block-controls span.block-type.ul {
-    background-image: url(#{$blocks-editor-icons-path}/list-ul.svg);
-  }
-
-  #block-controls span.block-type.ol {
-    background-image: url(#{$blocks-editor-icons-path}/list-ol.svg);
-  }
-
-  #block-controls span.block-type.code {
-    background-image: url(#{$blocks-editor-icons-path}/code.svg);
   }
 
   .characters-limit {
@@ -755,54 +637,6 @@ body {
     height: 15px;
     width: 15px;
     vertical-align: -0.25em;
-  }
-
-  .actions i.indent {
-    background-image: url(#{$blocks-editor-icons-path}/indent.svg);
-  }
-
-  .actions i.outdent {
-    background-image: url(#{$blocks-editor-icons-path}/outdent.svg);
-  }
-
-  .actions i.lock {
-    background-image: url(#{$blocks-editor-icons-path}/lock-fill.svg);
-  }
-
-  .actions i.image {
-    background-image: url(#{$blocks-editor-icons-path}/file-image.svg);
-  }
-
-  .actions i.table {
-    background-image: url(#{$blocks-editor-icons-path}/table.svg);
-  }
-
-  .actions i.unlock {
-    background-image: url(#{$blocks-editor-icons-path}/lock.svg);
-  }
-
-  .actions i.left-align {
-    background-image: url(#{$blocks-editor-icons-path}/text-left.svg);
-  }
-
-  .actions i.center-align {
-    background-image: url(#{$blocks-editor-icons-path}/text-center.svg);
-  }
-
-  .actions i.right-align {
-    background-image: url(#{$blocks-editor-icons-path}/text-right.svg);
-  }
-
-  .actions i.justify-align {
-    background-image: url(#{$blocks-editor-icons-path}/justify.svg);
-  }
-
-  .actions i.disconnect {
-    background-image: url(#{$blocks-editor-icons-path}/plug.svg);
-  }
-
-  .actions i.connect {
-    background-image: url(#{$blocks-editor-icons-path}/plug-fill.svg);
   }
 
   .table-cell-action-button-container {
@@ -1219,7 +1053,7 @@ body {
     content: '';
     display: block;
     height: 2px;
-    background-color: #ccc;
+    background-color: var(--sn-stylekit-contrast-border-color);
     line-height: 2px;
   }
 

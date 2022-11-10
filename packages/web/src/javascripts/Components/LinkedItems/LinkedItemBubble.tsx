@@ -15,11 +15,13 @@ type Props = {
   link: ItemLink
   activateItem: (item: LinkableItem) => Promise<void>
   unlinkItem: LinkingController['unlinkItemFromSelectedItem']
-  focusPreviousItem: () => void
-  focusNextItem: () => void
-  focusedId: string | undefined
-  setFocusedId: (id: string) => void
+  focusPreviousItem?: () => void
+  focusNextItem?: () => void
+  focusedId?: string | undefined
+  setFocusedId?: (id: string) => void
   isBidirectional: boolean
+  inlineFlex?: boolean
+  className?: string
 }
 
 const LinkedItemBubble = ({
@@ -31,6 +33,8 @@ const LinkedItemBubble = ({
   focusedId,
   setFocusedId,
   isBidirectional,
+  inlineFlex,
+  className,
 }: Props) => {
   const ref = useRef<HTMLButtonElement>(null)
   const application = useApplication()
@@ -42,7 +46,7 @@ const LinkedItemBubble = ({
 
   const handleFocus = () => {
     if (focusedId !== link.id) {
-      setFocusedId(link.id)
+      setFocusedId?.(link.id)
     }
     setShowUnlinkButton(true)
   }
@@ -63,21 +67,21 @@ const LinkedItemBubble = ({
 
   const onUnlinkClick: MouseEventHandler = (event) => {
     event.stopPropagation()
-    void unlinkItem(link)
+    void unlinkItem(link.item)
   }
 
   const onKeyDown: KeyboardEventHandler = (event) => {
     switch (event.key) {
       case KeyboardKey.Backspace: {
-        focusPreviousItem()
-        void unlinkItem(link)
+        focusPreviousItem?.()
+        void unlinkItem(link.item)
         break
       }
       case KeyboardKey.Left:
-        focusPreviousItem()
+        focusPreviousItem?.()
         break
       case KeyboardKey.Right:
-        focusNextItem()
+        focusNextItem?.()
         break
     }
   }
@@ -94,7 +98,12 @@ const LinkedItemBubble = ({
   return (
     <button
       ref={ref}
-      className="group flex h-6 cursor-pointer items-center rounded border-0 bg-passive-4-opacity-variant py-2 pl-1 pr-2 text-sm text-text hover:bg-contrast focus:bg-contrast lg:text-xs"
+      className={classNames(
+        'group h-6 cursor-pointer items-center rounded border-0 bg-passive-4-opacity-variant py-2 pl-1 pr-2 text-sm',
+        'text-text hover:bg-contrast focus:bg-contrast lg:text-xs',
+        inlineFlex ? 'inline-flex' : 'flex',
+        className,
+      )}
       onFocus={handleFocus}
       onBlur={onBlur}
       onClick={onClick}

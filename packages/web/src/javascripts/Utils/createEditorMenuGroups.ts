@@ -11,7 +11,7 @@ import {
 } from '@standardnotes/snjs'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
-import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
+import { BLOCKS_EDITOR_NAME, PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 
 type NoteTypeToEditorRowsMap = Record<NoteType, EditorMenuItem[]>
 
@@ -128,7 +128,7 @@ const createGroupsFromMap = (map: NoteTypeToEditorRowsMap): EditorMenuGroup[] =>
     groups.splice(1, 0, {
       icon: 'dashboard',
       iconClassName: 'text-accessory-tint-1',
-      title: 'Blocks',
+      title: BLOCKS_EDITOR_NAME,
       items: map[NoteType.Blocks],
     })
   }
@@ -157,7 +157,7 @@ const createBaselineMap = (): NoteTypeToEditorRowsMap => {
 
   if (featureTrunkEnabled(FeatureTrunkName.Blocks)) {
     map[NoteType.Blocks].push({
-      name: 'Blocks',
+      name: BLOCKS_EDITOR_NAME,
       isEntitled: true,
       noteType: NoteType.Blocks,
     })

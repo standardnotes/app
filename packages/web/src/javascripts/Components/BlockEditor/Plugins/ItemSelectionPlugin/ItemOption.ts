@@ -1,18 +1,16 @@
-import { FileItem } from '@standardnotes/snjs'
 import { TypeaheadOption } from '@lexical/react/LexicalTypeaheadMenuPlugin'
+import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 
 export class ItemOption extends TypeaheadOption {
-  icon?: JSX.Element
-
   constructor(
-    public item: FileItem,
+    public item: LinkableItem,
     public options: {
       keywords?: Array<string>
       keyboardShortcut?: string
       onSelect: (queryString: string) => void
     },
   ) {
-    super(item.title)
+    super(item.title || '')
     this.key = item.uuid
   }
 }

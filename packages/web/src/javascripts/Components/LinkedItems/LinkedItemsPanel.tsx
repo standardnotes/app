@@ -279,7 +279,7 @@ const LinkedItemsPanel = ({
                       key={link.id}
                       item={link.item}
                       searchQuery={searchQuery}
-                      unlinkItem={() => unlinkItemFromSelectedItem(link)}
+                      unlinkItem={() => unlinkItemFromSelectedItem(link.item)}
                       activateItem={activateItem}
                       handleFileAction={filesController.handleFileAction}
                     />
@@ -299,7 +299,7 @@ const LinkedItemsPanel = ({
                       key={link.id}
                       item={link.item}
                       searchQuery={searchQuery}
-                      unlinkItem={() => unlinkItemFromSelectedItem(link)}
+                      unlinkItem={() => unlinkItemFromSelectedItem(link.item)}
                       activateItem={activateItem}
                       handleFileAction={filesController.handleFileAction}
                     />
@@ -330,7 +330,7 @@ const LinkedItemsPanel = ({
                       key={link.id}
                       item={link.item}
                       searchQuery={searchQuery}
-                      unlinkItem={() => unlinkItemFromSelectedItem(link)}
+                      unlinkItem={() => unlinkItemFromSelectedItem(link.item)}
                       activateItem={activateItem}
                       handleFileAction={filesController.handleFileAction}
                     />
@@ -349,7 +349,7 @@ const LinkedItemsPanel = ({
                       key={link.id}
                       item={link.item}
                       searchQuery={searchQuery}
-                      unlinkItem={() => unlinkItemFromSelectedItem(link)}
+                      unlinkItem={() => unlinkItemFromSelectedItem(link.item)}
                       activateItem={activateItem}
                       handleFileAction={filesController.handleFileAction}
                     />
@@ -366,7 +366,7 @@ const LinkedItemsPanel = ({
                       key={link.id}
                       item={link.item}
                       searchQuery={searchQuery}
-                      unlinkItem={() => unlinkItemFromSelectedItem(link)}
+                      unlinkItem={() => unlinkItemFromSelectedItem(link.item)}
                       activateItem={activateItem}
                       handleFileAction={filesController.handleFileAction}
                     />
@@ -385,7 +385,7 @@ const LinkedItemsPanel = ({
                       key={link.id}
                       item={link.item}
                       searchQuery={searchQuery}
-                      unlinkItem={() => unlinkItemFromSelectedItem(link)}
+                      unlinkItem={() => unlinkItemFromSelectedItem(link.item)}
                       activateItem={activateItem}
                       handleFileAction={filesController.handleFileAction}
                     />

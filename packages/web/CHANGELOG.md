@@ -3,6 +3,44 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.94.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.94.0...@standardnotes/web@3.94.1) (2022-11-10)
+
+### Bug Fixes
+
+* iframe classname ([93b6616](https://github.com/standardnotes/app/commit/93b6616b7814a0cef22a50d372a3416c0953ace2))
+
+# [3.94.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.19...@standardnotes/web@3.94.0) (2022-11-09)
+
+### Features
+
+* file drop handling for super notes ([#1990](https://github.com/standardnotes/app/issues/1990)) ([fdf9ab0](https://github.com/standardnotes/app/commit/fdf9ab0fcb07a5a832f136857f0ccd7e01bab1d7))
+
+## [3.93.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.18...@standardnotes/web@3.93.19) (2022-11-09)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.93.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.17...@standardnotes/web@3.93.18) (2022-11-09)
+
+### Reverts
+
+* Revert "refactor: include themes in components folder" ([3690104](https://github.com/standardnotes/app/commit/3690104934b444ca99eed86c1a41b22a3582811a))
+
+## [3.93.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.16...@standardnotes/web@3.93.17) (2022-11-09)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.93.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.15...@standardnotes/web@3.93.16) (2022-11-09)
+
+### Bug Fixes
+
+* editor height ([73ff1c3](https://github.com/standardnotes/app/commit/73ff1c35ab4779137d3f222c41c497eb728a53ce))
+
+## [3.93.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.14...@standardnotes/web@3.93.15) (2022-11-09)
+
+### Bug Fixes
+
+* links & new note ([e9e5a20](https://github.com/standardnotes/app/commit/e9e5a20afa935e1f6b096cee22c7105ae421b37c))
+
 ## [3.93.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.13...@standardnotes/web@3.93.14) (2022-11-08)
 
 **Note:** Version bump only for package @standardnotes/web

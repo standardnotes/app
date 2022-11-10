@@ -4,7 +4,7 @@ import { INSERT_COLLAPSIBLE_COMMAND } from '@standardnotes/blocks-editor/src/Lex
 
 export function GetCollapsibleBlock(editor: LexicalEditor) {
   return new BlockPickerOption('Collapsible', {
-    iconName: 'caret-right',
+    iconName: 'caret-right-fill',
     keywords: ['collapse', 'collapsible', 'toggle'],
     onSelect: () => editor.dispatchCommand(INSERT_COLLAPSIBLE_COMMAND, undefined),
   })

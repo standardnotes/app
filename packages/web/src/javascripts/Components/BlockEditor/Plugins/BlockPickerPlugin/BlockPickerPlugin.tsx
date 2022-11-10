@@ -2,7 +2,6 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { LexicalTypeaheadMenuPlugin, useBasicTypeaheadTriggerMatch } from '@lexical/react/LexicalTypeaheadMenuPlugin'
 import { TextNode } from 'lexical'
 import { useCallback, useMemo, useState } from 'react'
-import { PopoverClassNames } from '@standardnotes/blocks-editor'
 import useModal from '@standardnotes/blocks-editor/src/Lexical/Hooks/useModal'
 import { InsertTableDialog } from '@standardnotes/blocks-editor/src/Lexical/Plugins/TablePlugin'
 import { BlockPickerOption } from './BlockPickerOption'
@@ -20,6 +19,7 @@ import { GetCodeBlock } from './Blocks/Code'
 import { GetEmbedsBlocks } from './Blocks/Embeds'
 import { GetDynamicTableBlocks, GetTableBlock } from './Blocks/Table'
 import Popover from '@/Components/Popover/Popover'
+import { PopoverClassNames } from '../ClassNames'
 
 export default function BlockPickerMenuPlugin(): JSX.Element {
   const [editor] = useLexicalComposerContext()
@@ -109,7 +109,6 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
                 x: anchorElementRef.current.offsetLeft,
                 y: anchorElementRef.current.offsetTop + anchorElementRef.current.offsetHeight,
               }}
-              className={'min-h-80 h-80'}
               open={popoverOpen}
               togglePopover={() => {
                 setPopoverOpen((prevValue) => !prevValue)
