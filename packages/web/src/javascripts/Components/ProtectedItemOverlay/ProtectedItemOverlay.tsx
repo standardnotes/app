@@ -1,21 +1,20 @@
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import Button from '@/Components/Button/Button'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
+  showAccountMenu: () => void
   onViewItem: () => void
   hasProtectionSources: boolean
   itemType: 'note' | 'file'
 }
 
-const ProtectedItemOverlay = ({ viewControllerManager, onViewItem, hasProtectionSources, itemType }: Props) => {
+const ProtectedItemOverlay = ({ showAccountMenu, onViewItem, hasProtectionSources, itemType }: Props) => {
   const instructionText = hasProtectionSources
     ? `Authenticate to view this ${itemType}.`
     : `Add a passcode or create an account to require authentication to view this ${itemType}.`
 
   return (
-    <div aria-label="Protected overlay" className="section editor sn-component">
+    <div aria-label="Protected overlay" className="section editor sn-component p-5">
       <div className="flex h-full flex-grow flex-col justify-center md:flex-row md:items-center">
         <div className="mb-auto p-4 md:hidden">
           <MobileItemsListButton />
@@ -29,7 +28,7 @@ const ProtectedItemOverlay = ({ viewControllerManager, onViewItem, hasProtection
                 primary
                 small
                 onClick={() => {
-                  viewControllerManager.accountMenuController.setShow(true)
+                  showAccountMenu()
                 }}
               >
                 Open account menu

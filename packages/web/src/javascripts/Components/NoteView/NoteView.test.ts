@@ -179,7 +179,7 @@ describe('NoteView', () => {
           application,
         })
 
-        await noteView.dismissProtectedWarning()
+        await noteView.authorizeAndDismissProtectedWarning()
 
         expect(notesController.setShowProtectedWarning).toHaveBeenCalledWith(false)
       })
@@ -192,7 +192,7 @@ describe('NoteView', () => {
           application,
         })
 
-        await noteView.dismissProtectedWarning()
+        await noteView.authorizeAndDismissProtectedWarning()
 
         expect(notesController.setShowProtectedWarning).not.toHaveBeenCalled()
       })
@@ -207,7 +207,7 @@ describe('NoteView', () => {
           application,
         })
 
-        await noteView.dismissProtectedWarning()
+        await noteView.authorizeAndDismissProtectedWarning()
 
         expect(notesController.setShowProtectedWarning).toHaveBeenCalledWith(false)
       })

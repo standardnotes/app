@@ -203,7 +203,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     this.statusTimeout = undefined
     ;(this.onPanelResizeFinish as unknown) = undefined
-    ;(this.dismissProtectedWarning as unknown) = undefined
+    ;(this.authorizeAndDismissProtectedWarning as unknown) = undefined
     ;(this.editorComponentViewerRequestsReload as unknown) = undefined
     ;(this.onTextAreaChange as unknown) = undefined
     ;(this.onTitleEnter as unknown) = undefined
@@ -453,7 +453,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     }
   }
 
-  dismissProtectedWarning = async () => {
+  authorizeAndDismissProtectedWarning = async () => {
     let showNoteContents = true
 
     if (this.application.hasProtectionSources()) {
@@ -986,9 +986,9 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     if (this.state.showProtectedWarning || !this.application.isAuthorizedToRenderItem(this.note)) {
       return (
         <ProtectedItemOverlay
-          viewControllerManager={this.viewControllerManager}
+          showAccountMenu={() => this.application.showAccountMenu()}
           hasProtectionSources={this.application.hasProtectionSources()}
-          onViewItem={this.dismissProtectedWarning}
+          onViewItem={this.authorizeAndDismissProtectedWarning}
           itemType={'note'}
         />
       )
