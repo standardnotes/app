@@ -47,6 +47,7 @@ import {
   transactionForAssociateComponentWithCurrentNote,
   transactionForDisassociateComponentWithCurrentNote,
 } from './TransactionFunctions'
+import { SuperEditorContentId } from '@standardnotes/blocks-editor'
 
 const MinimumStatusDuration = 400
 const TextareaDebounce = 100
@@ -893,6 +894,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.removeTrashKeyObserver = this.application.io.addKeyObserver({
       key: KeyboardKey.Backspace,
       notTags: ['INPUT', 'TEXTAREA'],
+      notElementIds: [SuperEditorContentId],
       modifiers: [KeyboardModifier.Meta],
       onKeyDown: () => {
         this.deleteNote(false).catch(console.error)

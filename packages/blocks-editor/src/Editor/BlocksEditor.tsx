@@ -29,6 +29,7 @@ import CodeHighlightPlugin from '../Lexical/Plugins/CodeHighlightPlugin';
 import FloatingTextFormatToolbarPlugin from '../Lexical/Plugins/FloatingTextFormatToolbarPlugin';
 import FloatingLinkEditorPlugin from '../Lexical/Plugins/FloatingLinkEditorPlugin';
 import {truncateString} from './Utils';
+import {SuperEditorContentId} from './Constants';
 
 const BlockDragEnabled = false;
 
@@ -82,6 +83,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
           <div id="blocks-editor" className="editor-scroller">
             <div className="editor" ref={onRef}>
               <ContentEditable
+                id={SuperEditorContentId}
                 className={`ContentEditable__root ${className}`}
               />
             </div>
