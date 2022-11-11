@@ -36,7 +36,7 @@ const BlockDragEnabled = false;
 type BlocksEditorProps = {
   onChange: (value: string, preview: string) => void;
   className?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   previewLength: number;
   spellcheck?: boolean;
 };
@@ -48,8 +48,14 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
   previewLength,
   spellcheck,
 }) => {
+  const [didIgnoreFirstChange, setDidIgnoreFirstChange] = useState(false);
   const handleChange = useCallback(
     (editorState: EditorState, _editor: LexicalEditor) => {
+      if (!didIgnoreFirstChange) {
+        setDidIgnoreFirstChange(true);
+        return;
+      }
+
       editorState.read(() => {
         const childrenNodes = $getRoot().getAllTextNodes().slice(0, 2);
         let previewText = '';
@@ -65,7 +71,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
         onChange(stringifiedEditorState, previewText);
       });
     },
-    [onChange],
+    [onChange, didIgnoreFirstChange],
   );
 
   const [floatingAnchorElem, setFloatingAnchorElem] =

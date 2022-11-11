@@ -5,4 +5,5 @@ export type AccordionMenuGroup<T> = {
   iconClassName?: string
   title: string
   items: Array<T>
+  featured?: boolean
 }

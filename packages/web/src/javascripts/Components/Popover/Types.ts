@@ -44,6 +44,7 @@ export type PopoverContentProps = CommonPopoverProps & {
   anchorPoint?: Point
   childPopovers: Set<string>
   id: string
+  disableClickOutside?: boolean
 }
 
 export type PopoverProps =

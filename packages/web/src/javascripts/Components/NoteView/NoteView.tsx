@@ -334,6 +334,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       this.setState({
         editorFeatureIdentifier: note.editorIdentifier,
         noteType: note.noteType,
+        editorText: note.text,
+        editorTitle: note.title,
       })
 
       void this.reloadEditorComponent()

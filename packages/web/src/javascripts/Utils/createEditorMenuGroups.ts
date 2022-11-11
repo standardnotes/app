@@ -126,10 +126,11 @@ const createGroupsFromMap = (map: NoteTypeToEditorRowsMap): EditorMenuGroup[] =>
 
   if (featureTrunkEnabled(FeatureTrunkName.Blocks)) {
     groups.splice(1, 0, {
-      icon: 'dashboard',
-      iconClassName: 'text-accessory-tint-1',
+      icon: 'file-doc',
+      iconClassName: 'text-accessory-tint-4',
       title: BLOCKS_EDITOR_NAME,
       items: map[NoteType.Blocks],
+      featured: true,
     })
   }
 

@@ -26,6 +26,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
     return note ? application.componentManager.editorForNote(note) : undefined
   })
   const [selectedEditorIcon, selectedEditorIconTint] = getIconAndTintForNoteType(selectedEditor?.package_info.note_type)
+  const [isClickOutsideDisabled, setIsClickOutsideDisabled] = useState(false)
 
   const toggleMenu = useCallback(async () => {
     const willMenuOpen = !isOpen
@@ -34,6 +35,10 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
     }
     setIsOpen(willMenuOpen)
   }, [onClickPreprocessing, isOpen])
+
+  const disableClickOutside = useCallback(() => {
+    setIsClickOutsideDisabled(true)
+  }, [])
 
   return (
     <div ref={containerRef}>
@@ -44,11 +49,18 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
         icon={selectedEditorIcon}
         iconClassName={`text-accessory-tint-${selectedEditorIconTint}`}
       />
-      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="pt-2 md:pt-0">
+      <Popover
+        togglePopover={toggleMenu}
+        disableClickOutside={isClickOutsideDisabled}
+        anchorElement={buttonRef.current}
+        open={isOpen}
+        className="pt-2 md:pt-0"
+      >
         <ChangeEditorMenu
           application={application}
           isVisible={isOpen}
           note={note}
+          handleDisableClickoutsideRequest={disableClickOutside}
           closeMenu={() => {
             setIsOpen(false)
           }}
