@@ -59,7 +59,7 @@ export const BlockEditor: FunctionComponent<Props> = ({
       <ErrorBoundary>
         <LinkingControllerProvider controller={linkingController}>
           <FilesControllerProvider controller={filesController}>
-            <BlocksEditorComposer initialValue={note.text} nodes={[FileNode, BubbleNode]}>
+            <BlocksEditorComposer readonly={note.locked} initialValue={note.text} nodes={[FileNode, BubbleNode]}>
               <BlocksEditor
                 onChange={handleChange}
                 className="relative relative resize-none text-base focus:shadow-none focus:outline-none"

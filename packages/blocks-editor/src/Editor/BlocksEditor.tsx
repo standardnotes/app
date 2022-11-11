@@ -36,7 +36,7 @@ const BlockDragEnabled = false;
 type BlocksEditorProps = {
   onChange: (value: string, preview: string) => void;
   className?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
   previewLength: number;
   spellcheck?: boolean;
 };

@@ -23,6 +23,7 @@ const PositionedPopoverContent = ({
   overrideZIndex,
   side = 'bottom',
   togglePopover,
+  disableClickOutside,
 }: PopoverContentProps) => {
   const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
   const popoverRect = useAutoElementRect(popoverElement)
@@ -50,6 +51,7 @@ const PositionedPopoverContent = ({
     anchorElement,
     togglePopover,
     childPopovers,
+    disabled: disableClickOutside,
   })
 
   useDisableBodyScrollOnMobile()

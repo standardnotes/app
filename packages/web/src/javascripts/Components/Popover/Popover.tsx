@@ -27,6 +27,7 @@ const useRegisterPopoverToParent = (popoverId: string) => {
 
 type Props = PopoverProps & {
   open: boolean
+  disableClickOutside?: boolean
 }
 
 const Popover = ({
@@ -39,6 +40,7 @@ const Popover = ({
   overrideZIndex,
   side,
   togglePopover,
+  disableClickOutside,
 }: Props) => {
   const popoverId = useRef(UuidGenerator.GenerateUuid())
 
@@ -96,6 +98,7 @@ const Popover = ({
         overrideZIndex={overrideZIndex}
         side={side}
         togglePopover={togglePopover}
+        disableClickOutside={disableClickOutside}
       >
         {children}
       </PositionedPopoverContent>
