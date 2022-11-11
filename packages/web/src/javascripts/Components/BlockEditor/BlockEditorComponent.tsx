@@ -16,6 +16,7 @@ import { NodeObserverPlugin } from './Plugins/NodeObserverPlugin/NodeObserverPlu
 import { FilesController } from '@/Controllers/FilesController'
 import FilesControllerProvider from '@/Controllers/FilesControllerProvider'
 import DatetimePlugin from './Plugins/DateTimePlugin/DateTimePlugin'
+import AutoLinkPlugin from './Plugins/AutoLinkPlugin/AutoLinkPlugin'
 
 const NotePreviewCharLimit = 160
 
@@ -70,6 +71,7 @@ export const BlockEditor: FunctionComponent<Props> = ({
                 <ItemBubblePlugin />
                 <BlockPickerMenuPlugin />
                 <DatetimePlugin />
+                <AutoLinkPlugin />
                 <NodeObserverPlugin nodeType={BubbleNode} onRemove={handleBubbleRemove} />
                 <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
               </BlocksEditor>
