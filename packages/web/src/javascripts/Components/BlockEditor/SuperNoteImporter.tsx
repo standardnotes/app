@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import { SNNote } from '@standardnotes/snjs'
+import { NoteType, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useState } from 'react'
 import { BlockEditorController } from './BlockEditorController'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
@@ -26,6 +26,11 @@ type Props = {
 
 export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application, closeDialog, onConvertComplete }) => {
   const [lastValue, setLastValue] = useState({ text: '', previewPlain: '' })
+
+  const format =
+    !note.noteType || [NoteType.Plain, NoteType.Markdown, NoteType.Code, NoteType.Task].includes(note.noteType)
+      ? 'md'
+      : 'html'
 
   const handleChange = useCallback((value: string, preview: string) => {
     setLastValue({ text: value, previewPlain: preview })
@@ -76,7 +81,7 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
                 previewLength={NotePreviewCharLimit}
                 spellcheck={note.spellcheck}
               >
-                <ImportPlugin text={note.text} />
+                <ImportPlugin text={note.text} format={format} />
               </BlocksEditor>
             </BlocksEditorComposer>
           </ErrorBoundary>
