@@ -1,11 +1,12 @@
 import { WebApplication } from '@/Application/Application'
 import { concatenateUint8Arrays } from '@/Utils'
-import { FileItem } from '@standardnotes/snjs'
+import { ApplicationEvent, FileItem } from '@standardnotes/snjs'
 import { useEffect, useMemo, useState } from 'react'
 import Spinner from '@/Components/Spinner/Spinner'
 import FilePreviewError from './FilePreviewError'
 import { isFileTypePreviewable } from './isFilePreviewable'
 import PreviewComponent from './PreviewComponent'
+import ProtectedItemOverlay from '../ProtectedItemOverlay/ProtectedItemOverlay'
 
 type Props = {
   application: WebApplication
@@ -13,6 +14,8 @@ type Props = {
 }
 
 const FilePreview = ({ file, application }: Props) => {
+  const [isAuthorized, setIsAuthorized] = useState(application.isAuthorizedToRenderItem(file))
+
   const isFilePreviewable = useMemo(() => {
     return isFileTypePreviewable(file.mimeType)
   }, [file.mimeType])
@@ -22,7 +25,23 @@ const FilePreview = ({ file, application }: Props) => {
   const [downloadedBytes, setDownloadedBytes] = useState<Uint8Array>()
 
   useEffect(() => {
-    if (!isFilePreviewable) {
+    setIsAuthorized(application.isAuthorizedToRenderItem(file))
+  }, [file.protected, application, file])
+
+  useEffect(() => {
+    const disposer = application.addEventObserver(async (event) => {
+      if (event === ApplicationEvent.UnprotectedSessionBegan) {
+        setIsAuthorized(true)
+      } else if (event === ApplicationEvent.UnprotectedSessionExpired) {
+        setIsAuthorized(application.isAuthorizedToRenderItem(file))
+      }
+    })
+
+    return disposer
+  }, [application, file])
+
+  useEffect(() => {
+    if (!isFilePreviewable || !isAuthorized) {
       setIsDownloading(false)
       setDownloadProgress(0)
       setDownloadedBytes(undefined)
@@ -55,10 +74,17 @@ const FilePreview = ({ file, application }: Props) => {
     }
 
     void downloadFileForPreview()
-  }, [application.files, downloadedBytes, file, isFilePreviewable])
+  }, [application.files, downloadedBytes, file, isFilePreviewable, isAuthorized])
 
-  if (!application.isAuthorizedToRenderItem(file)) {
-    return null
+  if (!isAuthorized) {
+    return (
+      <ProtectedItemOverlay
+        showAccountMenu={application.showAccountMenu}
+        itemType={'file'}
+        onViewItem={() => application.protections.authorizeItemAccess(file)}
+        hasProtectionSources={application.hasProtectionSources()}
+      />
+    )
   }
 
   return isDownloading ? (

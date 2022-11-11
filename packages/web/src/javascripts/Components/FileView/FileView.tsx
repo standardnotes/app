@@ -3,13 +3,14 @@ import { useCallback, useEffect, useState } from 'react'
 import ProtectedItemOverlay from '@/Components/ProtectedItemOverlay/ProtectedItemOverlay'
 import FileViewWithoutProtection from './FileViewWithoutProtection'
 import { FileViewProps } from './FileViewProps'
+import { ApplicationEvent } from '@standardnotes/snjs'
 
 const FileView = ({ application, viewControllerManager, file }: FileViewProps) => {
   const [shouldShowProtectedOverlay, setShouldShowProtectedOverlay] = useState(false)
 
   useEffect(() => {
-    viewControllerManager.filesController.setShowProtectedOverlay(file.protected && !application.hasProtectionSources())
-  }, [application, file.protected, viewControllerManager.filesController])
+    viewControllerManager.filesController.setShowProtectedOverlay(!application.isAuthorizedToRenderItem(file))
+  }, [application, file, viewControllerManager.filesController])
 
   useEffect(() => {
     setShouldShowProtectedOverlay(viewControllerManager.filesController.showProtectedOverlay)
@@ -27,9 +28,21 @@ const FileView = ({ application, viewControllerManager, file }: FileViewProps) =
     }
   }, [application, file])
 
+  useEffect(() => {
+    const disposer = application.addEventObserver(async (event) => {
+      if (event === ApplicationEvent.UnprotectedSessionBegan) {
+        setShouldShowProtectedOverlay(false)
+      } else if (event === ApplicationEvent.UnprotectedSessionExpired) {
+        setShouldShowProtectedOverlay(!application.isAuthorizedToRenderItem(file))
+      }
+    })
+
+    return disposer
+  }, [application, file])
+
   return shouldShowProtectedOverlay ? (
     <ProtectedItemOverlay
-      viewControllerManager={viewControllerManager}
+      showAccountMenu={application.showAccountMenu}
       hasProtectionSources={application.hasProtectionSources()}
       onViewItem={dismissProtectedOverlay}
       itemType={'file'}

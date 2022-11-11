@@ -5,13 +5,14 @@ import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/Application'
-import { ComponentArea, NoteMutator, PrefKey, SNComponent, SNNote } from '@standardnotes/snjs'
+import { ComponentArea, NoteMutator, NoteType, PrefKey, SNComponent, SNNote } from '@standardnotes/snjs'
 import { Fragment, FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
 import { createEditorMenuGroups } from '../../Utils/createEditorMenuGroups'
 import { reloadFont } from '../NoteView/FontFunctions'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
+import { SuperNoteImporter } from '../BlockEditor/SuperNoteImporter'
 
 type ChangeEditorMenuProps = {
   application: WebApplication
@@ -19,6 +20,7 @@ type ChangeEditorMenuProps = {
   isVisible: boolean
   note: SNNote | undefined
   onSelect?: (component: SNComponent | undefined) => void
+  handleDisableClickoutsideRequest?: () => void
 }
 
 const getGroupId = (group: EditorMenuGroup) => group.title.toLowerCase().replace(/\s/, '-')
@@ -29,6 +31,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   isVisible,
   note,
   onSelect,
+  handleDisableClickoutsideRequest,
 }) => {
   const editors = useMemo(
     () =>
@@ -39,6 +42,8 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   )
   const groups = useMemo(() => createEditorMenuGroups(application, editors), [application, editors])
   const [currentComponent, setCurrentComponent] = useState<SNComponent>()
+  const [showSuperImporter, setShowSuperImporter] = useState(false)
+  const [pendingSuperItem, setPendingSuperItem] = useState<EditorMenuItem | null>(null)
 
   useEffect(() => {
     if (note) {
@@ -54,7 +59,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         return item.component?.identifier === currentComponent.identifier
       }
 
-      return item.noteType === note?.noteType
+      return item.noteType === note?.noteType || (!note?.noteType && item.noteType === NoteType.Plain)
     },
     [currentComponent, note],
   )
@@ -109,6 +114,13 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         return
       }
 
+      if (itemToBeSelected.noteType === NoteType.Blocks) {
+        setPendingSuperItem(itemToBeSelected)
+        handleDisableClickoutsideRequest?.()
+        setShowSuperImporter(true)
+        return
+      }
+
       let shouldMakeSelection = true
 
       if (itemToBeSelected.component) {
@@ -136,46 +148,77 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         onSelect(itemToBeSelected.component)
       }
     },
-    [application, closeMenu, currentComponent, note, onSelect, premiumModal, selectComponent, selectNonComponent],
+    [
+      application,
+      closeMenu,
+      currentComponent,
+      note,
+      onSelect,
+      premiumModal,
+      selectComponent,
+      selectNonComponent,
+      handleDisableClickoutsideRequest,
+    ],
   )
 
-  return (
-    <Menu className="pt-0.5 pb-1" a11yLabel="Change note type menu" isOpen={isVisible}>
-      {groups
-        .filter((group) => group.items && group.items.length)
-        .map((group, index) => {
-          const groupId = getGroupId(group)
+  const handleSuperNoteConversionCompletion = useCallback(() => {
+    if (!pendingSuperItem || !note) {
+      return
+    }
 
-          return (
-            <Fragment key={groupId}>
-              <div className={`border-0 border-t border-solid border-border py-1 ${index === 0 ? 'border-t-0' : ''}`}>
-                {group.items.map((item) => {
-                  const onClickEditorItem = () => {
-                    selectItem(item).catch(console.error)
-                  }
-                  return (
-                    <MenuItem
-                      key={item.name}
-                      type={MenuItemType.RadioButton}
-                      onClick={onClickEditorItem}
-                      className={'flex-row-reverse py-2'}
-                      checked={item.isEntitled ? isSelected(item) : undefined}
-                    >
-                      <div className="flex flex-grow items-center justify-between">
-                        <div className="flex items-center">
-                          {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
-                          {item.name}
+    selectNonComponent(pendingSuperItem, note).catch(console.error)
+    closeMenu()
+  }, [note, pendingSuperItem, selectNonComponent, closeMenu])
+
+  return (
+    <>
+      <Menu className="pt-0.5 pb-1" a11yLabel="Change note type menu" isOpen={isVisible}>
+        {groups
+          .filter((group) => group.items && group.items.length)
+          .map((group, index) => {
+            const groupId = getGroupId(group)
+
+            return (
+              <Fragment key={groupId}>
+                <div className={`border-0 border-t border-solid border-border py-1 ${index === 0 ? 'border-t-0' : ''}`}>
+                  {group.items.map((item) => {
+                    const onClickEditorItem = () => {
+                      selectItem(item).catch(console.error)
+                    }
+                    return (
+                      <MenuItem
+                        key={item.name}
+                        type={MenuItemType.RadioButton}
+                        onClick={onClickEditorItem}
+                        className={'flex-row-reverse py-2'}
+                        checked={item.isEntitled ? isSelected(item) : undefined}
+                      >
+                        <div className="flex flex-grow items-center justify-between">
+                          <div className={`flex items-center ${group.featured ? 'font-bold' : ''}`}>
+                            {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
+                            {item.name}
+                          </div>
+                          {!item.isEntitled && (
+                            <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />
+                          )}
                         </div>
-                        {!item.isEntitled && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
-                      </div>
-                    </MenuItem>
-                  )
-                })}
-              </div>
-            </Fragment>
-          )
-        })}
-    </Menu>
+                      </MenuItem>
+                    )
+                  })}
+                </div>
+              </Fragment>
+            )
+          })}
+      </Menu>
+      {showSuperImporter && note && (
+        <SuperNoteImporter
+          note={note}
+          application={application}
+          onConvertComplete={handleSuperNoteConversionCompletion}
+          closeDialog={() => setShowSuperImporter(false)}
+        />
+      )}
+    </>
   )
 }
 

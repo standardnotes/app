@@ -15,8 +15,9 @@ import ItemBubblePlugin from './Plugins/ItemBubblePlugin/ItemBubblePlugin'
 import { NodeObserverPlugin } from './Plugins/NodeObserverPlugin/NodeObserverPlugin'
 import { FilesController } from '@/Controllers/FilesController'
 import FilesControllerProvider from '@/Controllers/FilesControllerProvider'
+import DatetimePlugin from './Plugins/DateTimePlugin/DateTimePlugin'
+import AutoLinkPlugin from './Plugins/AutoLinkPlugin/AutoLinkPlugin'
 
-const StringEllipses = '...'
 const NotePreviewCharLimit = 160
 
 type Props = {
@@ -24,18 +25,21 @@ type Props = {
   note: SNNote
   linkingController: LinkingController
   filesController: FilesController
+  spellcheck: boolean
 }
 
-export const BlockEditor: FunctionComponent<Props> = ({ note, application, linkingController, filesController }) => {
+export const BlockEditor: FunctionComponent<Props> = ({
+  note,
+  application,
+  linkingController,
+  filesController,
+  spellcheck,
+}) => {
   const controller = useRef(new BlockEditorController(note, application))
 
   const handleChange = useCallback(
-    (value: string) => {
-      const content = value
-      const truncate = content.length > NotePreviewCharLimit
-      const substring = content.substring(0, NotePreviewCharLimit)
-      const previewPlain = substring + (truncate ? StringEllipses : '')
-      void controller.current.save({ text: content, previewPlain: previewPlain, previewHtml: undefined })
+    (value: string, preview: string) => {
+      void controller.current.save({ text: value, previewPlain: preview, previewHtml: undefined })
     },
     [controller],
   )
@@ -51,19 +55,23 @@ export const BlockEditor: FunctionComponent<Props> = ({ note, application, linki
   )
 
   return (
-    <div className="relative h-full w-full p-5">
+    <div className="relative h-full w-full px-5 py-4">
       <ErrorBoundary>
         <LinkingControllerProvider controller={linkingController}>
           <FilesControllerProvider controller={filesController}>
-            <BlocksEditorComposer initialValue={note.text} nodes={[FileNode, BubbleNode]}>
+            <BlocksEditorComposer readonly={note.locked} initialValue={note.text} nodes={[FileNode, BubbleNode]}>
               <BlocksEditor
                 onChange={handleChange}
                 className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
+                previewLength={NotePreviewCharLimit}
+                spellcheck={spellcheck}
               >
                 <ItemSelectionPlugin currentNote={note} />
                 <FilePlugin />
                 <ItemBubblePlugin />
                 <BlockPickerMenuPlugin />
+                <DatetimePlugin />
+                <AutoLinkPlugin />
                 <NodeObserverPlugin nodeType={BubbleNode} onRemove={handleBubbleRemove} />
                 <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
               </BlocksEditor>

@@ -12,8 +12,8 @@ export abstract class AbstractViewController<Event = void, EventData = void> {
 
   constructor(public application: WebApplication, protected eventBus: InternalEventBus) {}
 
-  protected async publishEventSync(name: CrossControllerEvent): Promise<void> {
-    await this.eventBus.publishSync({ type: name, payload: undefined }, InternalEventPublishStrategy.SEQUENCE)
+  protected async publishCrossControllerEventSync(name: CrossControllerEvent, data?: unknown): Promise<void> {
+    await this.eventBus.publishSync({ type: name, payload: data }, InternalEventPublishStrategy.SEQUENCE)
   }
 
   deinit(): void {
@@ -38,7 +38,7 @@ export abstract class AbstractViewController<Event = void, EventData = void> {
     }
   }
 
-  notifyEvent(event: Event, data: EventData): void {
+  protected notifyEvent(event: Event, data: EventData): void {
     this.eventObservers.forEach((observer) => observer(event, data))
   }
 }
