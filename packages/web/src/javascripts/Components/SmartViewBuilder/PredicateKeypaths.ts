@@ -42,7 +42,7 @@ export const PredicateKeypathLabels: { [k in PredicateKeypath]: string } = {
 } as const
 
 export const PredicateKeypathTypes: {
-  [k in PredicateKeypath]: 'string' | 'noteType' | 'editorIdentifier' | 'number' | 'boolean'
+  [k in PredicateKeypath]: 'string' | 'noteType' | 'editorIdentifier' | 'number' | 'boolean' | 'date'
 } = {
   title: 'string',
   'title.length': 'number',
@@ -51,9 +51,9 @@ export const PredicateKeypathTypes: {
   noteType: 'noteType',
   authorizedForListed: 'boolean',
   editorIdentifier: 'editorIdentifier',
-  userModifiedDate: 'string',
-  serverUpdatedAt: 'string',
-  created_at: 'string',
+  userModifiedDate: 'date',
+  serverUpdatedAt: 'date',
+  created_at: 'date',
   conflict_of: 'string',
   protected: 'boolean',
   trashed: 'boolean',

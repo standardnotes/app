@@ -61,6 +61,9 @@ export class CompoundPredicateBuilderController {
         case 'editorIdentifier':
           this.setPredicate(index, { value: PlainEditorType })
           break
+        case 'date':
+          this.setPredicate(index, { value: '1.days.ago' })
+          break
       }
     }
 

@@ -23,6 +23,10 @@ export function valueMatchesTargetValue(
     value = value.toLowerCase()
   }
 
+  if (value instanceof Date && typeof targetValue === 'string') {
+    targetValue = new Date(targetValue)
+  }
+
   if (operator === 'not') {
     return !valueMatchesTargetValue(value, '=', targetValue)
   }

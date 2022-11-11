@@ -42,7 +42,7 @@ const PredicateValue = ({ keypath, value, setValue }: Props) => {
         </option>
       ))}
     </select>
-  ) : type === 'string' ? (
+  ) : type === 'string' || type === 'date' ? (
     <input
       className="flex-grow rounded border border-border bg-default py-1.5 px-2"
       value={value}
