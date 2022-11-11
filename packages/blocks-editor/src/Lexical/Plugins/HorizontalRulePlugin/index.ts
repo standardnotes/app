@@ -35,7 +35,6 @@ export default function HorizontalRulePlugin(): null {
 
         if (focusNode !== null) {
           const horizontalRuleNode = $createHorizontalRuleNode();
-          selection.insertParagraph();
           selection.focus
             .getNode()
             .getTopLevelElementOrThrow()

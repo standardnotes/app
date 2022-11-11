@@ -15,6 +15,7 @@ import ItemBubblePlugin from './Plugins/ItemBubblePlugin/ItemBubblePlugin'
 import { NodeObserverPlugin } from './Plugins/NodeObserverPlugin/NodeObserverPlugin'
 import { FilesController } from '@/Controllers/FilesController'
 import FilesControllerProvider from '@/Controllers/FilesControllerProvider'
+import DatetimePlugin from './Plugins/DateTimePlugin/DateTimePlugin'
 
 const NotePreviewCharLimit = 160
 
@@ -68,6 +69,7 @@ export const BlockEditor: FunctionComponent<Props> = ({
                 <FilePlugin />
                 <ItemBubblePlugin />
                 <BlockPickerMenuPlugin />
+                <DatetimePlugin />
                 <NodeObserverPlugin nodeType={BubbleNode} onRemove={handleBubbleRemove} />
                 <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
               </BlocksEditor>

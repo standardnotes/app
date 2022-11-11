@@ -1041,7 +1041,7 @@ body {
   }
 
   hr {
-    padding: 2px 2px;
+    padding: 2px 0px;
     border: none;
     margin: 1em 0;
     cursor: pointer;
@@ -1051,7 +1051,7 @@ body {
     content: '';
     display: block;
     height: 2px;
-    background-color: var(--sn-stylekit-contrast-border-color);
+    background-color: var(--sn-stylekit-secondary-background-color);
     line-height: 2px;
   }
 
