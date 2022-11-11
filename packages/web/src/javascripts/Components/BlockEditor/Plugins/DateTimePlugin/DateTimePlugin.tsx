@@ -1,7 +1,6 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import {
   COMMAND_PRIORITY_EDITOR,
-  $getRoot,
   $createTextNode,
   $getSelection,
   $isRangeSelection,
