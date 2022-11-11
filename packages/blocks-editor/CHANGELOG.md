@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.3.11...@standardnotes/blocks-editor@1.4.0) (2022-11-11)
+
+### Features
+
+* **dev:** insert current date and time command in super note ([#1994](https://github.com/standardnotes/app/issues/1994)) ([e27ac31](https://github.com/standardnotes/app/commit/e27ac3126ee4fec9e81df8722b6326ba6f38fe5e))
+
 ## [1.3.11](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.3.10...@standardnotes/blocks-editor@1.3.11) (2022-11-10)
 
 ### Bug Fixes
