@@ -29,6 +29,12 @@ export const formatDateAndTimeForNote = (date: Date, includeTime = true) => {
   }
 }
 
+export const dateToHoursAndMinutesTimeString = (date: Date) => {
+  return date.toLocaleTimeString(undefined, {
+    timeStyle: 'short',
+  })
+}
+
 export function numHoursBetweenDates(date1: Date, date2: Date): number {
   return Math.abs(date1.getTime() - date2.getTime()) / 3600000
 }

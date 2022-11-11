@@ -20,6 +20,7 @@ import { GetEmbedsBlocks } from './Blocks/Embeds'
 import { GetDynamicTableBlocks, GetTableBlock } from './Blocks/Table'
 import Popover from '@/Components/Popover/Popover'
 import { PopoverClassNames } from '../ClassNames'
+import { GetDatetimeBlocks } from './Blocks/DateTime'
 
 export default function BlockPickerMenuPlugin(): JSX.Element {
   const [editor] = useLexicalComposerContext()
@@ -45,6 +46,7 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
       GetQuoteBlock(editor),
       GetCodeBlock(editor),
       GetDividerBlock(editor),
+      ...GetDatetimeBlocks(editor),
       ...GetAlignmentBlocks(editor),
       GetCollapsibleBlock(editor),
       ...GetEmbedsBlocks(editor),
