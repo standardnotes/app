@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.95.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.95.0...@standardnotes/web@3.95.1) (2022-11-11)
+
+### Bug Fixes
+
+* super improvements ([#1995](https://github.com/standardnotes/app/issues/1995)) ([da6f36f](https://github.com/standardnotes/app/commit/da6f36f34cdee324339d2c923d61191b373513f3))
+
 # [3.95.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.94.2...@standardnotes/web@3.95.0) (2022-11-11)
 
 ### Features
