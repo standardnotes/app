@@ -110,7 +110,7 @@ export class SNApiService
     this.invalidSessionObserver = observer
   }
 
-  public loadHost(): void {
+  public loadHost(): string {
     const storedValue = this.storageService.getValue<string | undefined>(StorageKey.ServerHost)
     this.host =
       storedValue ||
@@ -120,6 +120,8 @@ export class SNApiService
           _default_sync_server?: string
         }
       )._default_sync_server as string)
+
+    return this.host
   }
 
   public async setHost(host: string): Promise<void> {

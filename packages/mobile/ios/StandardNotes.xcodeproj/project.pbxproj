@@ -14,6 +14,7 @@
 		1C2EEB3B45F4EB07AC795C77 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		33BB1B14071EBE5978EBF3A8 /* libPods-StandardNotes-StandardNotesTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04FCB5A3A3387CA3CFC82AA3 /* libPods-StandardNotes-StandardNotesTests.a */; };
 		BC8DEA834BF198E8511F04FF /* libPods-StandardNotesDev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F2D747BE02C2A1BCFEEFD1 /* libPods-StandardNotesDev.a */; };
+		CD6592A9291EEFCC00C09DC6 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6592A8291EEFCC00C09DC6 /* StoreKit.framework */; };
 		CD7D5ECA27800609005FE1BF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD7D5EC927800608005FE1BF /* LaunchScreen.storyboard */; };
 		CD7D5ECF278015D2005FE1BF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		CD7D5ED0278015D2005FE1BF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -59,6 +60,7 @@
 		66417CEB7622E77D89928FCA /* Pods-StandardNotes.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StandardNotes.debug.xcconfig"; path = "Target Support Files/Pods-StandardNotes/Pods-StandardNotes.debug.xcconfig"; sourceTree = "<group>"; };
 		948EE90E15EA48C27577820B /* Pods-StandardNotes.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StandardNotes.release.xcconfig"; path = "Target Support Files/Pods-StandardNotes/Pods-StandardNotes.release.xcconfig"; sourceTree = "<group>"; };
 		A09B7794259DBFABFC4D05CE /* Pods-StandardNotesDev.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StandardNotesDev.debug.xcconfig"; path = "Target Support Files/Pods-StandardNotesDev/Pods-StandardNotesDev.debug.xcconfig"; sourceTree = "<group>"; };
+		CD6592A8291EEFCC00C09DC6 /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		CD7D5EC8278005B6005FE1BF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = StandardNotes/Info.plist; sourceTree = "<group>"; };
 		CD7D5EC927800608005FE1BF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CD7D5EDF278015D2005FE1BF /* StandardNotesDev.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StandardNotesDev.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -86,6 +88,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CD6592A9291EEFCC00C09DC6 /* StoreKit.framework in Frameworks */,
 				1C2EEB3B45F4EB07AC795C77 /* (null) in Frameworks */,
 				DD3D1CE428EC1C8BA0C49211 /* libPods-StandardNotes.a in Frameworks */,
 			);
@@ -153,6 +156,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CD6592A8291EEFCC00C09DC6 /* StoreKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				04FCB5A3A3387CA3CFC82AA3 /* libPods-StandardNotes-StandardNotesTests.a */,
 				51F2D747BE02C2A1BCFEEFD1 /* libPods-StandardNotesDev.a */,

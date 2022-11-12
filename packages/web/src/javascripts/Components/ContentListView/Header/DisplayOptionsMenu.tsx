@@ -213,16 +213,14 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
           'Create powerful workflows and organizational layouts with per-tag display preferences.'}
       </p>
 
-      {!application.hideSubscriptionMarketing && (
-        <Button
-          primary
-          small
-          className="col-start-1 col-end-3 mt-3 justify-self-start uppercase"
-          onClick={() => application.openPurchaseFlow()}
-        >
-          Upgrade Features
-        </Button>
-      )}
+      <Button
+        primary
+        small
+        className="col-start-1 col-end-3 mt-3 justify-self-start uppercase"
+        onClick={() => application.openPurchaseFlow()}
+      >
+        Upgrade Features
+      </Button>
     </div>
   )
 

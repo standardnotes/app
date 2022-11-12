@@ -7,7 +7,6 @@ import { ChangeEventHandler, FunctionComponent, useEffect, useRef, useState } fr
 import FloatingLabelInput from '@/Components/Input/FloatingLabelInput'
 import { isEmailValid } from '@/Utils'
 import { BlueDotIcon, CircleIcon, DiamondIcon, CreateAccountIllustration } from '@standardnotes/icons'
-import { loadPurchaseFlowUrl } from '../PurchaseFlowFunctions'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -52,10 +51,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
   }
 
   const subscribeWithoutAccount = () => {
-    loadPurchaseFlowUrl(application).catch((err) => {
-      console.error(err)
-      application.alertService.alert(err).catch(console.error)
-    })
+    application.getViewControllerManager().purchaseFlowController.openPurchaseWebpage()
   }
 
   const handleCreateAccount = async () => {
@@ -93,13 +89,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
       await application.register(email, password)
 
       viewControllerManager.purchaseFlowController.closePurchaseFlow()
-
-      if (!application.hideSubscriptionMarketing) {
-        loadPurchaseFlowUrl(application).catch((err) => {
-          console.error(err)
-          application.alertService.alert(err).catch(console.error)
-        })
-      }
+      viewControllerManager.purchaseFlowController.openPurchaseFlow()
     } catch (err) {
       console.error(err)
       application.alertService.alert(err as string).catch(console.error)
@@ -170,13 +160,15 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
             >
               Sign in instead
             </button>
-            <button
-              onClick={subscribeWithoutAccount}
-              disabled={isCreatingAccount}
-              className="flex cursor-pointer items-start border-0 bg-default p-0 font-medium text-info hover:underline"
-            >
-              Subscribe without account
-            </button>
+            {!application.isNativeIOS() && (
+              <button
+                onClick={subscribeWithoutAccount}
+                disabled={isCreatingAccount}
+                className="flex cursor-pointer items-start border-0 bg-default p-0 font-medium text-info hover:underline"
+              >
+                Subscribe without account
+              </button>
+            )}
           </div>
           <Button
             className="mb-4 py-2.5 md:mb-0"

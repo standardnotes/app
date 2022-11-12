@@ -4,7 +4,6 @@ import Icon from '@/Components/Icon/Icon'
 import { WebApplication } from '@/Application/Application'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
-import { loadPurchaseFlowUrl } from '../PurchaseFlow/PurchaseFlowFunctions'
 
 type Props = {
   application: WebApplication
@@ -29,7 +28,7 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
     if (hasSubscription) {
       void openSubscriptionDashboard(application)
     } else if (hasAccount) {
-      void loadPurchaseFlowUrl(application)
+      void application.openPurchaseFlow()
     } else if (window.plansUrl) {
       window.location.assign(window.plansUrl)
     }
@@ -61,17 +60,16 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
             To take advantage of <span className="font-semibold">{featureName}</span> and other advanced features,
             upgrade your current plan.
           </AlertDialogDescription>
-          {!application.hideSubscriptionMarketing && (
-            <div className="p-4">
-              <button
-                onClick={handleClick}
-                className="no-border w-full cursor-pointer rounded bg-info py-2 font-bold text-info-contrast hover:brightness-125 focus:brightness-125"
-                ref={plansButtonRef}
-              >
-                Upgrade
-              </button>
-            </div>
-          )}
+
+          <div className="p-4">
+            <button
+              onClick={handleClick}
+              className="no-border w-full cursor-pointer rounded bg-info py-2 font-bold text-info-contrast hover:brightness-125 focus:brightness-125"
+              ref={plansButtonRef}
+            >
+              Upgrade
+            </button>
+          </div>
         </div>
       </div>
     </AlertDialog>

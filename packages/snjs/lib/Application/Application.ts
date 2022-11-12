@@ -367,8 +367,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     await this.handleStage(ExternalServices.ApplicationStage.StorageDecrypted_09)
 
-    this.apiService.loadHost()
+    const host = this.apiService.loadHost()
+
+    this.httpService.setHost(host)
+
     this.webSocketsService.loadWebSocketUrl()
+
     await this.sessionManager.initializeFromDisk()
 
     this.settingsService.initializeFromDisk()
@@ -594,6 +598,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public async setCustomHost(host: string): Promise<void> {
     await this.setHost(host)
+
     this.webSocketsService.setWebSocketUrl(undefined)
   }
 
@@ -1072,7 +1077,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createProtocolService()
     this.diskStorageService.provideEncryptionProvider(this.protocolService)
     this.createChallengeService()
-    this.createHttpManager()
+    this.createLegacyHttpManager()
     this.createApiService()
     this.createHttpService()
     this.createUserServer()
@@ -1385,7 +1390,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.services.push(this.componentManagerService)
   }
 
-  private createHttpManager() {
+  private createLegacyHttpManager() {
     this.deprecatedHttpService = new InternalServices.SNHttpService(
       this.environment,
       this.options.appVersion,
@@ -1399,7 +1404,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.environment,
       this.options.appVersion,
       SnjsVersion,
-      this.options.defaultHost,
       this.apiService.processMetaObject.bind(this.apiService),
     )
   }

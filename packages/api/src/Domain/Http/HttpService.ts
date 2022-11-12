@@ -14,12 +14,12 @@ import { HttpErrorResponseBody } from './HttpErrorResponseBody'
 export class HttpService implements HttpServiceInterface {
   private authorizationToken?: string
   private __latencySimulatorMs?: number
+  private host!: string
 
   constructor(
     private environment: Environment,
     private appVersion: string,
     private snjsVersion: string,
-    private host: string,
     private updateMetaCallback: (meta: HttpResponseMeta) => void,
   ) {}
 

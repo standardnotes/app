@@ -1,3 +1,5 @@
+export * from './Subscription/AppleIAPConfirmResponse'
+export * from './Subscription/AppleIAPConfirmResponseBody'
 export * from './Subscription/SubscriptionInviteAcceptResponse'
 export * from './Subscription/SubscriptionInviteAcceptResponseBody'
 export * from './Subscription/SubscriptionInviteCancelResponse'
