@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.6.4...@standardnotes/styles@1.7.0) (2022-11-13)
+
+### Features
+
+* iap ([#1996](https://github.com/standardnotes/app/issues/1996)) ([d519aca](https://github.com/standardnotes/app/commit/d519aca685b32f4b6f7079ba9562ecaf1a18aecb))
+
 ## [1.6.4](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.6.3...@standardnotes/styles@1.6.4) (2022-11-04)
 
 **Note:** Version bump only for package @standardnotes/styles

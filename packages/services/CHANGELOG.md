@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.43.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.42.8...@standardnotes/services@1.43.0) (2022-11-13)
+
+### Features
+
+* iap ([#1996](https://github.com/standardnotes/app/issues/1996)) ([d519aca](https://github.com/standardnotes/app/commit/d519aca685b32f4b6f7079ba9562ecaf1a18aecb))
+
 ## [1.42.8](https://github.com/standardnotes/app/compare/@standardnotes/services@1.42.7...@standardnotes/services@1.42.8) (2022-11-09)
 
 **Note:** Version bump only for package @standardnotes/services

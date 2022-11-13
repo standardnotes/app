@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/styles",
-  "version": "1.6.4",
+  "version": "1.7.0",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "publishConfig": {
