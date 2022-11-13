@@ -1,3 +1,4 @@
+import { FeatureName } from './FeatureName'
 import { WebApplication } from '@/Application/Application'
 import { PremiumFeatureModalType } from '@/Components/PremiumFeaturesModal/PremiumFeatureModalType'
 import { destroyAllObjectProperties } from '@/Utils'
@@ -15,7 +16,7 @@ import { CrossControllerEvent } from './CrossControllerEvent'
 export class FeaturesController extends AbstractViewController {
   hasFolders: boolean
   hasSmartViews: boolean
-  hasFiles: boolean
+  entitledToFiles: boolean
   premiumAlertFeatureName: string | undefined
   premiumAlertType: PremiumFeatureModalType | undefined = undefined
 
@@ -25,7 +26,7 @@ export class FeaturesController extends AbstractViewController {
     ;(this.closePremiumAlert as unknown) = undefined
     ;(this.hasFolders as unknown) = undefined
     ;(this.hasSmartViews as unknown) = undefined
-    ;(this.hasFiles as unknown) = undefined
+    ;(this.entitledToFiles as unknown) = undefined
     ;(this.premiumAlertFeatureName as unknown) = undefined
     ;(this.premiumAlertType as unknown) = undefined
 
@@ -37,7 +38,7 @@ export class FeaturesController extends AbstractViewController {
 
     this.hasFolders = this.isEntitledToFolders()
     this.hasSmartViews = this.isEntitledToSmartViews()
-    this.hasFiles = this.isEntitledToFiles()
+    this.entitledToFiles = this.isEntitledToFiles()
     this.premiumAlertFeatureName = undefined
 
     eventBus.addEventHandler(this, CrossControllerEvent.DisplayPremiumModal)
@@ -45,7 +46,7 @@ export class FeaturesController extends AbstractViewController {
     makeObservable(this, {
       hasFolders: observable,
       hasSmartViews: observable,
-      hasFiles: observable,
+      entitledToFiles: observable,
       premiumAlertType: observable,
       premiumAlertFeatureName: observable,
       showPremiumAlert: action,
@@ -67,7 +68,7 @@ export class FeaturesController extends AbstractViewController {
             runInAction(() => {
               this.hasFolders = this.isEntitledToFolders()
               this.hasSmartViews = this.isEntitledToSmartViews()
-              this.hasFiles = this.isEntitledToFiles()
+              this.entitledToFiles = this.isEntitledToFiles()
             })
         }
       }),
@@ -81,7 +82,7 @@ export class FeaturesController extends AbstractViewController {
     }
   }
 
-  public async showPremiumAlert(featureName: string): Promise<void> {
+  public async showPremiumAlert(featureName: FeatureName | string): Promise<void> {
     this.premiumAlertFeatureName = featureName
     this.premiumAlertType = PremiumFeatureModalType.UpgradePrompt
 

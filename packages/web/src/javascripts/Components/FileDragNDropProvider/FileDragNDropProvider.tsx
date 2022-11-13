@@ -188,7 +188,7 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
 
       resetState()
 
-      if (!featuresController.hasFiles) {
+      if (!featuresController.entitledToFiles) {
         premiumModal.activate('Files')
         return
       }
@@ -217,7 +217,7 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
         dragCounter.current = 0
       }
     },
-    [application, featuresController.hasFiles, filesController, premiumModal, resetState],
+    [application, featuresController.entitledToFiles, filesController, premiumModal, resetState],
   )
 
   useEffect(() => {

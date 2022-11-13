@@ -39,6 +39,7 @@ import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { setCustomViewportHeight } from '@/setViewportHeightWithFallback'
 import { WebServices } from './WebServices'
+import { FeatureName } from '@/Controllers/FeatureName'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -345,6 +346,14 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   entitledToPerTagPreferences(): boolean {
     return this.hasValidSubscription()
+  }
+
+  get entitledToFiles(): boolean {
+    return this.getViewControllerManager().featuresController.entitledToFiles
+  }
+
+  showPremiumModal(featureName: FeatureName): void {
+    void this.getViewControllerManager().featuresController.showPremiumAlert(featureName)
   }
 
   hasValidSubscription(): boolean {

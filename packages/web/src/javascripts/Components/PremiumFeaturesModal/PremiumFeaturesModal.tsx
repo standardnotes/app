@@ -5,10 +5,11 @@ import { WebApplication } from '@/Application/Application'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import { PremiumFeatureModalType } from './PremiumFeatureModalType'
+import { FeatureName } from '@/Controllers/FeatureName'
 
 type Props = {
   application: WebApplication
-  featureName: string
+  featureName: FeatureName | string
   hasSubscription: boolean
   hasAccount: boolean
   onClose: () => void
