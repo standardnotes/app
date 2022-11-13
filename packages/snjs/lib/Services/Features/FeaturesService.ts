@@ -154,7 +154,7 @@ export class SNFeaturesService
     if (stage === ApplicationStage.FullSyncCompleted_13) {
       void this.addDarkTheme()
 
-      if (!this.hasOnlineSubscription()) {
+      if (!this.rolesIncludePaidSubscription()) {
         const offlineRepo = this.getOfflineRepo()
         if (offlineRepo) {
           void this.downloadOfflineFeatures(offlineRepo)
@@ -355,7 +355,11 @@ export class SNFeaturesService
   }
 
   public async updateRolesAndFetchFeatures(userUuid: UuidString, roles: RoleName[]): Promise<void> {
+    const previousRoles = this.roles
+
     const userRolesChanged = this.haveRolesChanged(roles)
+
+    const isInitialLoadRolesChange = previousRoles.length === 0 && userRolesChanged
 
     if (!userRolesChanged && !this.needsInitialFeaturesUpdate) {
       return
@@ -375,13 +379,23 @@ export class SNFeaturesService
         await this.didDownloadFeatures(features)
       }
     }
+
+    if (userRolesChanged && !isInitialLoadRolesChange) {
+      if (this.rolesIncludePaidSubscription()) {
+        await this.notifyEvent(FeaturesEvent.DidPurchaseSubscription)
+      }
+    }
   }
 
-  private async setRoles(roles: RoleName[]): Promise<void> {
+  async setRoles(roles: RoleName[]): Promise<void> {
+    const rolesChanged = !arraysEqual(this.roles, roles)
+
     this.roles = roles
-    if (!arraysEqual(this.roles, roles)) {
+
+    if (rolesChanged) {
       void this.notifyEvent(FeaturesEvent.UserRolesChanged)
     }
+
     this.storageService.setValue(StorageKey.UserRoles, this.roles)
   }
 
@@ -434,14 +448,13 @@ export class SNFeaturesService
     return this.features.find((feature) => feature.identifier === featureId)
   }
 
-  hasOnlineSubscription(): boolean {
-    const roles = this.roles
+  rolesIncludePaidSubscription(): boolean {
     const unpaidRoles = [RoleName.CoreUser]
-    return roles.some((role) => !unpaidRoles.includes(role))
+    return this.roles.some((role) => !unpaidRoles.includes(role))
   }
 
   public hasPaidOnlineOrOfflineSubscription(): boolean {
-    return this.hasOnlineSubscription() || this.hasOfflineRepo()
+    return this.rolesIncludePaidSubscription() || this.hasOfflineRepo()
   }
 
   public rolesBySorting(roles: RoleName[]): RoleName[] {

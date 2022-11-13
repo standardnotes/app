@@ -21,7 +21,6 @@ export class SubscriptionController extends AbstractViewController {
   userSubscription: Subscription | undefined = undefined
   availableSubscriptions: AvailableSubscriptions | undefined = undefined
   subscriptionInvitations: Invitation[] | undefined = undefined
-  hideSubscriptionMarketing: boolean
   hasAccount: boolean
 
   override deinit() {
@@ -39,14 +38,12 @@ export class SubscriptionController extends AbstractViewController {
     private subscriptionManager: SubscriptionClientInterface,
   ) {
     super(application, eventBus)
-    this.hideSubscriptionMarketing = application.hideSubscriptionMarketing
     this.hasAccount = application.hasAccount()
 
     makeObservable(this, {
       userSubscription: observable,
       availableSubscriptions: observable,
       subscriptionInvitations: observable,
-      hideSubscriptionMarketing: observable,
       hasAccount: observable,
 
       userSubscriptionName: computed,

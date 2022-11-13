@@ -9,6 +9,7 @@ export enum LoggingDomain {
   Viewport,
   Selection,
   BlockEditor,
+  Purchasing,
 }
 
 const LoggingStatus: Record<LoggingDomain, boolean> = {
@@ -18,7 +19,8 @@ const LoggingStatus: Record<LoggingDomain, boolean> = {
   [LoggingDomain.NavigationList]: false,
   [LoggingDomain.Viewport]: false,
   [LoggingDomain.Selection]: false,
-  [LoggingDomain.BlockEditor]: true,
+  [LoggingDomain.BlockEditor]: false,
+  [LoggingDomain.Purchasing]: true,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

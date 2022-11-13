@@ -1,4 +1,5 @@
 export * from './ApiEndpointParam'
+export * from './Subscription/AppleIAPConfirmRequestParams'
 export * from './Subscription/SubscriptionInviteAcceptRequestParams'
 export * from './Subscription/SubscriptionInviteCancelRequestParams'
 export * from './Subscription/SubscriptionInviteDeclineRequestParams'
