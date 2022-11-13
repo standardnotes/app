@@ -10,6 +10,7 @@ import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { convertTimestampToMilliseconds } from '@standardnotes/utils'
 import {
   AlertService,
+  FeaturesEvent,
   FeatureStatus,
   InternalEventBusInterface,
   StorageKey,
@@ -203,6 +204,19 @@ describe('featuresService', () => {
   })
 
   describe('updateRoles()', () => {
+    it('setRoles should notify event if roles changed', async () => {
+      storageService.getValue = jest.fn().mockReturnValue(roles)
+      const featuresService = createService()
+      featuresService.initializeFromDisk()
+
+      const mock = (featuresService['notifyEvent'] = jest.fn())
+
+      const newRoles = [...roles, RoleName.PlusUser]
+      await featuresService.setRoles(newRoles)
+
+      expect(mock.mock.calls[0][0]).toEqual(FeaturesEvent.UserRolesChanged)
+    })
+
     it('saves new roles to storage and fetches features if a role has been added', async () => {
       const newRoles = [...roles, RoleName.PlusUser]
 
@@ -631,7 +645,7 @@ describe('featuresService', () => {
       await featuresService.updateRolesAndFetchFeatures('123', [RoleName.CoreUser, RoleName.PlusUser])
 
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(false)
-      featuresService.hasOnlineSubscription = jest.fn().mockReturnValue(false)
+      featuresService.rolesIncludePaidSubscription = jest.fn().mockReturnValue(false)
       featuresService['completedSuccessfulFeaturesRetrieval'] = true
 
       expect(featuresService.getFeatureStatus(FeatureIdentifier.MidnightTheme)).toBe(FeatureStatus.NoUserSubscription)

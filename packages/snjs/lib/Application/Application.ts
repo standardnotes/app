@@ -287,6 +287,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.listedService
   }
 
+  public get alerts(): ExternalServices.AlertService {
+    return this.alertService
+  }
+
   public computePrivateUsername(username: string): Promise<string | undefined> {
     return ComputePrivateUsername(this.options.crypto, username)
   }
@@ -1241,6 +1245,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
           }
           case ExternalServices.FeaturesEvent.FeaturesUpdated: {
             void this.notifyEvent(ApplicationEvent.FeaturesUpdated)
+            break
+          }
+          case ExternalServices.FeaturesEvent.DidPurchaseSubscription: {
+            void this.notifyEvent(ApplicationEvent.DidPurchaseSubscription)
             break
           }
           default: {

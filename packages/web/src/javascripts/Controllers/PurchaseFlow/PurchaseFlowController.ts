@@ -78,7 +78,12 @@ export class PurchaseFlowController extends AbstractViewController {
 
     log(LoggingDomain.Purchasing, 'Server confirm result', confirmResult)
 
-    if (!confirmResult) {
+    if (confirmResult) {
+      void this.application.alerts.alert(
+        'Please allow a few minutes for your subscription benefits to activate. You will see a confirmation alert in the app when your subscription is ready.',
+        'Your purchase was successful!',
+      )
+    } else {
       showGenericError()
     }
   }
