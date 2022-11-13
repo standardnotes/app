@@ -355,7 +355,11 @@ export class SNFeaturesService
   }
 
   public async updateRolesAndFetchFeatures(userUuid: UuidString, roles: RoleName[]): Promise<void> {
+    const previousRoles = this.roles
+
     const userRolesChanged = this.haveRolesChanged(roles)
+
+    const isInitialLoadRolesChange = previousRoles.length === 0 && userRolesChanged
 
     if (!userRolesChanged && !this.needsInitialFeaturesUpdate) {
       return
@@ -376,7 +380,7 @@ export class SNFeaturesService
       }
     }
 
-    if (userRolesChanged) {
+    if (userRolesChanged && !isInitialLoadRolesChange) {
       if (this.rolesIncludePaidSubscription()) {
         await this.notifyEvent(FeaturesEvent.DidPurchaseSubscription)
       }
