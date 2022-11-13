@@ -5,7 +5,7 @@ export enum LoggingDomain {
 }
 
 const LoggingStatus: Record<LoggingDomain, boolean> = {
-  [LoggingDomain.AppleIAP]: true,
+  [LoggingDomain.AppleIAP]: false,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
