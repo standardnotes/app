@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import { CompoundPredicateBuilderController } from './CompoundPredicateBuilderController'
-import { PredicateKeypath, PredicateKeypathLabels } from './PredicateKeypaths'
+import { PredicateKeypath, PredicateKeypathLabels, PredicateKeypathTypes } from './PredicateKeypaths'
 import PredicateValue from './PredicateValue'
 
 type Props = {
@@ -105,6 +105,21 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
           )}
         </div>
       ))}
+      {predicates.some((predicate) => PredicateKeypathTypes[predicate.keypath as PredicateKeypath] === 'date') && (
+        <div className="flex flex-col gap-2 rounded-md border-2 border-info-backdrop bg-info-backdrop py-3 px-4 [&_code]:rounded [&_code]:bg-contrast [&_code]:px-1.5 [&_code]:py-1">
+          <div className="text-sm font-semibold">Date Examples:</div>
+          <ul className="space-y-2 pl-4">
+            <li>
+              To get all the items modified within the last 7 days, you can use <code>User Modified Date</code>{' '}
+              <code>&gt;</code> <code>7.days.ago</code>
+            </li>
+            <li>
+              To get all the items created before June 2022, you can use <code>Created At</code> <code>&lt;</code>{' '}
+              <code>06/01/2022</code>
+            </li>
+          </ul>
+        </div>
+      )}
     </>
   )
 }
