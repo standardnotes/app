@@ -106,7 +106,7 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
         </div>
       ))}
       {predicates.some((predicate) => PredicateKeypathTypes[predicate.keypath as PredicateKeypath] === 'date') && (
-        <div className="flex flex-col gap-2 rounded-md border-2 border-info-backdrop bg-info-backdrop py-3 px-4 [&_code]:rounded [&_code]:bg-contrast [&_code]:px-1.5 [&_code]:py-1">
+        <div className="flex flex-col gap-2 rounded-md border-2 border-info-backdrop bg-info-backdrop py-3 px-4 [&_code]:rounded [&_code]:bg-default [&_code]:px-1.5 [&_code]:py-1">
           <div className="text-sm font-semibold">Date Examples:</div>
           <ul className="space-y-2 pl-4">
             <li>
