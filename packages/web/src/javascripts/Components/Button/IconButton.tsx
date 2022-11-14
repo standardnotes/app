@@ -3,7 +3,7 @@ import Icon from '@/Components/Icon/Icon'
 import { IconType } from '@standardnotes/snjs'
 
 type Props = {
-  onClick: () => void
+  onClick: MouseEventHandler<HTMLButtonElement>
   className?: string
   icon: IconType
   iconClassName?: string
@@ -21,9 +21,9 @@ const IconButton: FunctionComponent<Props> = ({
   iconClassName = '',
   disabled = false,
 }) => {
-  const click: MouseEventHandler = (e) => {
+  const click: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault()
-    onClick()
+    onClick(e)
   }
   const focusableClass = focusable ? '' : 'focus:shadow-none'
   return (

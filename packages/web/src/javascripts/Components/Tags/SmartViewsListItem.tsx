@@ -22,6 +22,7 @@ type Props = {
   view: SmartView
   tagsState: NavigationController
   features: FeaturesController
+  setEditingSmartView: (smartView: SmartView) => void
 }
 
 const PADDING_BASE_PX = 14
@@ -35,7 +36,7 @@ const getIconClass = (view: SmartView, isSelected: boolean): string => {
   return mapping[view.uuid as SystemViewId] || (isSelected ? 'text-info' : 'text-neutral')
 }
 
-const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
+const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEditingSmartView }) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
   const [title, setTitle] = useState(view.title || '')
@@ -85,13 +86,9 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
     }
   }, [inputRef, isEditing])
 
-  const onClickRename = useCallback(() => {
-    tagsState.setEditingTag(view)
-  }, [tagsState, view])
-
-  const onClickSave = useCallback(() => {
-    inputRef.current?.blur()
-  }, [inputRef])
+  const onClickEdit = useCallback(() => {
+    setEditingSmartView(view)
+  }, [setEditingSmartView, view])
 
   const onClickDelete = useCallback(() => {
     tagsState.remove(view, true).catch(console.error)
@@ -107,6 +104,11 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
         className={classNames('tag px-3.5', isSelected && 'selected', isFaded && 'opacity-50')}
         onClick={selectCurrentTag}
+        onContextMenu={(event) => {
+          event.preventDefault()
+          event.stopPropagation()
+          onClickEdit()
+        }}
         style={{
           paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
         }}
@@ -147,16 +149,9 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState }) => {
 
             {isSelected && (
               <div className="menu">
-                {!isEditing && (
-                  <a className="item" onClick={onClickRename}>
-                    Rename
-                  </a>
-                )}
-                {isEditing && (
-                  <a className="item" onClick={onClickSave}>
-                    Save
-                  </a>
-                )}
+                <a className="item" onClick={onClickEdit}>
+                  Edit
+                </a>
                 <a className="item" onClick={onClickDelete}>
                   Delete
                 </a>

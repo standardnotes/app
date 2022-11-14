@@ -20,9 +20,8 @@ import { DisplayOptionsMenuProps } from './DisplayOptionsMenuProps'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import NewNotePreferences from './NewNotePreferences'
 import { PreferenceMode } from './PreferenceMode'
-import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
-import Button from '@/Components/Button/Button'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import NoSubscriptionBanner from '@/Components/NoSubscriptionBanner/NoSubscriptionBanner'
 
 const DailyEntryModeEnabled = true
 
@@ -200,30 +199,6 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     )
   }
 
-  const NoSubscriptionBanner = () => (
-    <div className="m-2 mt-2 mb-3 grid grid-cols-1 rounded-md border border-border p-4">
-      <div className="flex items-center">
-        <Icon className={classNames('mr-1 -ml-1 h-5 w-5', PremiumFeatureIconClass)} type={PremiumFeatureIconName} />
-        <h1 className="sk-h3 m-0 text-sm font-semibold">Upgrade for per-tag preferences</h1>
-      </div>
-      <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
-        {DailyEntryModeEnabled &&
-          'Create powerful workflows and organizational layouts with per-tag display preferences and the all-new Daily Notebook calendar layout.'}
-        {!DailyEntryModeEnabled &&
-          'Create powerful workflows and organizational layouts with per-tag display preferences.'}
-      </p>
-
-      <Button
-        primary
-        small
-        className="col-start-1 col-end-3 mt-3 justify-self-start uppercase"
-        onClick={() => application.openPurchaseFlow()}
-      >
-        Upgrade Features
-      </Button>
-    </div>
-  )
-
   return (
     <Menu className="text-sm" a11yLabel="Notes list options menu" closeMenu={closeDisplayOptionsMenu} isOpen={isOpen}>
       <div className="my-1 px-3 text-base font-semibold uppercase text-text lg:text-xs">Preferences for</div>
@@ -239,7 +214,18 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         )}
       </div>
 
-      {controlsDisabled && <NoSubscriptionBanner />}
+      {controlsDisabled && (
+        <NoSubscriptionBanner
+          className="m-2 mt-2 mb-3"
+          application={application}
+          title="Upgrade for per-tag preferences"
+          message={
+            DailyEntryModeEnabled
+              ? 'Create powerful workflows and organizational layouts with per-tag display preferences and the all-new Daily Notebook calendar layout.'
+              : 'Create powerful workflows and organizational layouts with per-tag display preferences.'
+          }
+        />
+      )}
 
       <MenuItemSeparator />
 

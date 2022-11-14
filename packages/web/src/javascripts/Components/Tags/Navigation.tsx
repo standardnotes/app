@@ -57,7 +57,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
     return (
       <div
         className={classNames(
-          'fixed bottom-0 flex min-h-[50px] w-full w-full items-center border-t border-border bg-contrast',
+          'fixed bottom-0 flex min-h-[50px] w-full items-center border-t border-border bg-contrast',
           'px-3.5 pb-safe-bottom pt-2.5 md:hidden',
         )}
       >
@@ -135,14 +135,7 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
             'md:hover:[overflow-y:_overlay]',
           )}
         >
-          <div className={'section-title-bar'}>
-            <div className="section-title-bar-header">
-              <div className="title text-base md:text-sm">
-                <span className="font-bold">Views</span>
-              </div>
-            </div>
-          </div>
-          <SmartViewsSection viewControllerManager={viewControllerManager} />
+          <SmartViewsSection application={application} viewControllerManager={viewControllerManager} />
           <TagsSection viewControllerManager={viewControllerManager} />
         </div>
         {NavigationFooter}

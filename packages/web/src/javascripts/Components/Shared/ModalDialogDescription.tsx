@@ -7,7 +7,7 @@ type Props = {
 }
 
 const ModalDialogDescription: FunctionComponent<Props> = ({ children, className = '' }) => (
-  <AlertDialogDescription className={`overflow-y-scroll px-4 py-4 ${className}`}>{children}</AlertDialogDescription>
+  <AlertDialogDescription className={`overflow-y-auto px-4 py-4 ${className}`}>{children}</AlertDialogDescription>
 )
 
 export default ModalDialogDescription

@@ -10,6 +10,10 @@ export function dateFromDSLDateString(string: string): Date {
     date.setDate(date.getDate() - offset)
   } else if (unit === 'hours') {
     date.setHours(date.getHours() - offset)
+  } else if (unit === 'months') {
+    date.setMonth(date.getMonth() - offset)
+  } else if (unit === 'years') {
+    date.setFullYear(date.getFullYear() - offset)
   }
   return date
 }
