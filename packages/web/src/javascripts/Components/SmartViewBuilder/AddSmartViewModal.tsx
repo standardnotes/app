@@ -12,10 +12,9 @@ import { Platform } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
 import { AddSmartViewModalController } from './AddSmartViewModalController'
-import TabList from '../Tabs/TabList'
-import Tab from '../Tabs/Tab'
 import TabPanel from '../Tabs/TabPanel'
 import { useTabState } from '../Tabs/useTabState'
+import TabsContainer from '../Tabs/TabsContainer'
 
 type Props = {
   controller: AddSmartViewModalController
@@ -128,11 +127,19 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
           </div>
           <div className="flex flex-col gap-2.5">
             <div className="text-sm font-semibold">Predicate:</div>
-            <div className="overflow-hidden rounded-md border border-border">
-              <TabList state={tabState} className="border-b border-border">
-                <Tab id="builder">Builder</Tab>
-                <Tab id="custom">Custom (JSON)</Tab>
-              </TabList>
+            <TabsContainer
+              tabs={[
+                {
+                  id: 'builder',
+                  title: 'Builder',
+                },
+                {
+                  id: 'custom',
+                  title: 'Custom (JSON)',
+                },
+              ]}
+              state={tabState}
+            >
               <TabPanel state={tabState} id="builder" className="flex flex-col gap-2.5 p-4">
                 <CompoundPredicateBuilder controller={predicateController} />
               </TabPanel>
@@ -153,7 +160,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
                   </div>
                 )}
               </TabPanel>
-            </div>
+            </TabsContainer>
           </div>
         </div>
       </ModalDialogDescription>
