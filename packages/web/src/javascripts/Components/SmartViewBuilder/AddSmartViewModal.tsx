@@ -10,7 +10,7 @@ import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 import Spinner from '@/Components/Spinner/Spinner'
 import { Platform } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AddSmartViewModalController } from './AddSmartViewModalController'
 import TabList from '../Tabs/TabList'
 import Tab from '../Tabs/Tab'
@@ -40,6 +40,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
   } = controller
 
   const titleInputRef = useRef<HTMLInputElement>(null)
+  const customJsonInputRef = useRef<HTMLTextAreaElement>(null)
 
   const [shouldShowIconPicker, setShouldShowIconPicker] = useState(false)
   const iconPickerButtonRef = useRef<HTMLButtonElement>(null)
@@ -67,6 +68,17 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
   }
 
   const canSave = tabState.activeTab === 'builder' || isCustomJsonValidPredicate
+
+  useEffect(() => {
+    if (!customJsonInputRef.current) {
+      return
+    }
+
+    if (tabState.activeTab === 'custom' && isCustomJsonValidPredicate === false) {
+      customJsonInputRef.current.focus()
+    }
+  }, [isCustomJsonValidPredicate, tabState.activeTab])
+
   return (
     <ModalDialog>
       <ModalDialogLabel closeDialog={closeModal}>Add Smart View</ModalDialogLabel>
@@ -133,8 +145,9 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
                     setIsCustomJsonValidPredicate(undefined)
                   }}
                   spellCheck={false}
+                  ref={customJsonInputRef}
                 />
-                {customPredicateJson && isCustomJsonValidPredicate != undefined && !isCustomJsonValidPredicate && (
+                {customPredicateJson && isCustomJsonValidPredicate === false && (
                   <div className="mt-2 border-t border-border px-2.5 py-1.5 text-sm text-danger">
                     Invalid JSON. Please fix the errors and try again.
                   </div>
