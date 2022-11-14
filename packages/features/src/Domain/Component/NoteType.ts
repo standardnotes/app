@@ -1,3 +1,5 @@
+import { EditorIdentifier, PlainEditorIdentifier, SuperEditorIdentifier } from './EditorIdentifier'
+
 export enum NoteType {
   Authentication = 'authentication',
   Code = 'code',
@@ -6,6 +8,16 @@ export enum NoteType {
   Spreadsheet = 'spreadsheet',
   Task = 'task',
   Plain = 'plain-text',
-  Blocks = 'blocks',
+  Super = 'super',
   Unknown = 'unknown',
+}
+
+export function noteTypeForEditorIdentifier(identifier: EditorIdentifier | string): NoteType {
+  if (identifier === PlainEditorIdentifier) {
+    return NoteType.Plain
+  } else if (identifier === SuperEditorIdentifier) {
+    return NoteType.Super
+  }
+
+  return NoteType.Unknown
 }

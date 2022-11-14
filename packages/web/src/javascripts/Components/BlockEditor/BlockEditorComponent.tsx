@@ -1,7 +1,6 @@
 import { WebApplication } from '@/Application/Application'
-import { SNNote } from '@standardnotes/snjs'
+import { NoteViewController, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useRef } from 'react'
-import { BlockEditorController } from './BlockEditorController'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ItemSelectionPlugin } from './Plugins/ItemSelectionPlugin/ItemSelectionPlugin'
 import { FileNode } from './Plugins/EncryptedFilePlugin/Nodes/FileNode'
@@ -35,13 +34,19 @@ export const BlockEditor: FunctionComponent<Props> = ({
   filesController,
   spellcheck,
 }) => {
-  const controller = useRef(new BlockEditorController(note.uuid, application))
+  const controller = useRef(new NoteViewController(application, note))
 
   const handleChange = useCallback(
     (value: string, preview: string) => {
-      void controller.current.save({ text: value, previewPlain: preview, previewHtml: undefined })
+      void controller.current.save({
+        editorValues: { title: note.title, text: value },
+        previews: {
+          previewPlain: preview,
+          previewHtml: undefined,
+        },
+      })
     },
-    [controller],
+    [controller, note],
   )
 
   const handleBubbleRemove = useCallback(

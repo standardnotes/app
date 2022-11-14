@@ -1,4 +1,4 @@
-import { NoteType } from '@standardnotes/features'
+import { NoteType, noteTypeForEditorIdentifier } from '@standardnotes/features'
 import { InfoStrings } from '@standardnotes/services'
 import {
   NoteMutator,
@@ -7,6 +7,7 @@ import {
   NoteContent,
   DecryptedItemInterface,
   PayloadEmitSource,
+  PrefKey,
 } from '@standardnotes/models'
 import { removeFromArray } from '@standardnotes/utils'
 import { ContentType } from '@standardnotes/common'
@@ -28,12 +29,13 @@ export class NoteViewController implements ItemViewControllerInterface {
   public item!: SNNote
   public dealloced = false
   private innerValueChangeObservers: ((note: SNNote, source: PayloadEmitSource) => void)[] = []
-  private removeStreamObserver?: () => void
+  private disposers: (() => void)[] = []
   public isTemplateNote = false
   private saveTimeout?: ReturnType<typeof setTimeout>
   private defaultTagUuid: UuidString | undefined
   private defaultTag?: SNTag
   public runtimeId = `${Math.random()}`
+  public needsInit = true
 
   constructor(
     private application: SNApplication,
@@ -55,8 +57,10 @@ export class NoteViewController implements ItemViewControllerInterface {
 
   deinit(): void {
     this.dealloced = true
-    this.removeStreamObserver?.()
-    ;(this.removeStreamObserver as unknown) = undefined
+    for (const disposer of this.disposers) {
+      disposer()
+    }
+    this.disposers.length = 0
     ;(this.application as unknown) = undefined
     ;(this.item as unknown) = undefined
 
@@ -65,11 +69,21 @@ export class NoteViewController implements ItemViewControllerInterface {
     this.saveTimeout = undefined
   }
 
-  async initialize(addTagHierarchy: boolean): Promise<void> {
+  async initialize(): Promise<void> {
+    if (!this.needsInit) {
+      throw Error('NoteViewController already initialized')
+    }
+
+    this.needsInit = false
+
+    const addTagHierarchy = this.application.getPreference(PrefKey.NoteAddToParentFolders, true)
+
     if (!this.item) {
       const editorIdentifier =
         this.defaultTag?.preferences?.editorIdentifier ||
         this.application.componentManager.getDefaultEditor()?.identifier
+
+      const noteType = editorIdentifier ? noteTypeForEditorIdentifier(editorIdentifier) : NoteType.Unknown
 
       const defaultEditor = editorIdentifier
         ? this.application.componentManager.componentWithIdentifier(editorIdentifier)
@@ -80,7 +94,7 @@ export class NoteViewController implements ItemViewControllerInterface {
         {
           text: '',
           title: this.templateNoteOptions?.title || '',
-          noteType: defaultEditor?.noteType || NoteType.Plain,
+          noteType: defaultEditor?.noteType || noteType,
           editorIdentifier: editorIdentifier,
           references: [],
         },
@@ -114,9 +128,8 @@ export class NoteViewController implements ItemViewControllerInterface {
       return
     }
 
-    this.removeStreamObserver = this.application.streamItems<SNNote>(
-      ContentType.Note,
-      ({ changed, inserted, source }) => {
+    this.disposers.push(
+      this.application.streamItems<SNNote>(ContentType.Note, ({ changed, inserted, source }) => {
         if (this.dealloced) {
           return
         }
@@ -132,7 +145,7 @@ export class NoteViewController implements ItemViewControllerInterface {
           this.item = matchingNote
           this.notifyObservers(matchingNote, source)
         }
-      },
+      }),
     )
   }
 
@@ -163,7 +176,7 @@ export class NoteViewController implements ItemViewControllerInterface {
    * immediately.
    * @param isUserModified This field determines if the item will be saved as a user
    * modification, thus updating the user modified date displayed in the UI
-   * @param dontUpdatePreviews Whether this change should update the note's plain and HTML
+   * @param dontGeneratePreviews Whether this change should update the note's plain and HTML
    * preview.
    * @param customMutate A custom mutator function.
    */
@@ -171,9 +184,14 @@ export class NoteViewController implements ItemViewControllerInterface {
     editorValues: EditorValues
     bypassDebouncer?: boolean
     isUserModified?: boolean
-    dontUpdatePreviews?: boolean
+    dontGeneratePreviews?: boolean
+    previews?: { previewPlain: string; previewHtml?: string }
     customMutate?: (mutator: NoteMutator) => void
   }): Promise<void> {
+    if (this.needsInit) {
+      await this.initialize()
+    }
+
     const title = dto.editorValues.title
     const text = dto.editorValues.text
     const isTemplate = this.isTemplateNote
@@ -202,15 +220,15 @@ export class NoteViewController implements ItemViewControllerInterface {
         noteMutator.title = title
         noteMutator.text = text
 
-        if (!dto.dontUpdatePreviews) {
+        if (dto.previews) {
+          noteMutator.preview_plain = dto.previews.previewPlain
+          noteMutator.preview_html = dto.previews.previewHtml
+        } else if (!dto.dontGeneratePreviews) {
           const noteText = text || ''
           const truncate = noteText.length > NotePreviewCharLimit
           const substring = noteText.substring(0, NotePreviewCharLimit)
           const previewPlain = substring + (truncate ? StringEllipses : '')
-
-          // eslint-disable-next-line camelcase
           noteMutator.preview_plain = previewPlain
-          // eslint-disable-next-line camelcase
           noteMutator.preview_html = undefined
         }
       },

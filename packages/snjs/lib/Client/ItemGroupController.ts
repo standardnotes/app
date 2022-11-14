@@ -1,9 +1,6 @@
-import { FileItem, PrefKey, SNNote } from '@standardnotes/models'
+import { FileItem, SNNote } from '@standardnotes/models'
 import { removeFromArray } from '@standardnotes/utils'
-import { ApplicationEvent } from '@standardnotes/services'
-
 import { SNApplication } from '../Application/Application'
-
 import { NoteViewController } from './NoteViewController'
 import { FileViewController } from './FileViewController'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
@@ -14,19 +11,10 @@ type CreateItemControllerOptions = FileItem | SNNote | TemplateNoteViewControlle
 
 export class ItemGroupController {
   public itemControllers: (NoteViewController | FileViewController)[] = []
-  private addTagHierarchy: boolean
   changeObservers: ItemControllerGroupChangeCallback[] = []
   eventObservers: (() => void)[] = []
 
-  constructor(private application: SNApplication) {
-    this.addTagHierarchy = application.getPreference(PrefKey.NoteAddToParentFolders, true)
-
-    this.eventObservers.push(
-      application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
-        this.addTagHierarchy = application.getPreference(PrefKey.NoteAddToParentFolders, true)
-      }),
-    )
-  }
+  constructor(private application: SNApplication) {}
 
   public deinit(): void {
     ;(this.application as unknown) = undefined
@@ -63,7 +51,7 @@ export class ItemGroupController {
 
     this.itemControllers.push(controller)
 
-    await controller.initialize(this.addTagHierarchy)
+    await controller.initialize()
 
     this.notifyObservers()
 

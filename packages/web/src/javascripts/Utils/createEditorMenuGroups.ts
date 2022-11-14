@@ -11,7 +11,7 @@ import {
 } from '@standardnotes/snjs'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
-import { BLOCKS_EDITOR_NAME, PLAIN_EDITOR_NAME } from '@/Constants/Constants'
+import { PlainEditorMetadata, SuperEditorMetadata } from '@/Constants/Constants'
 
 type NoteTypeToEditorRowsMap = Record<NoteType, EditorMenuItem[]>
 
@@ -124,12 +124,12 @@ const createGroupsFromMap = (map: NoteTypeToEditorRowsMap): EditorMenuGroup[] =>
     },
   ]
 
-  if (featureTrunkEnabled(FeatureTrunkName.Blocks)) {
+  if (featureTrunkEnabled(FeatureTrunkName.Super)) {
     groups.splice(1, 0, {
-      icon: 'file-doc',
-      iconClassName: 'text-accessory-tint-4',
-      title: BLOCKS_EDITOR_NAME,
-      items: map[NoteType.Blocks],
+      icon: SuperEditorMetadata.icon,
+      iconClassName: SuperEditorMetadata.iconClassName,
+      title: SuperEditorMetadata.name,
+      items: map[NoteType.Super],
       featured: true,
     })
   }
@@ -141,12 +141,12 @@ const createBaselineMap = (): NoteTypeToEditorRowsMap => {
   const map: NoteTypeToEditorRowsMap = {
     [NoteType.Plain]: [
       {
-        name: PLAIN_EDITOR_NAME,
+        name: PlainEditorMetadata.name,
         isEntitled: true,
         noteType: NoteType.Plain,
       },
     ],
-    [NoteType.Blocks]: [],
+    [NoteType.Super]: [],
     [NoteType.RichText]: [],
     [NoteType.Markdown]: [],
     [NoteType.Task]: [],
@@ -156,11 +156,11 @@ const createBaselineMap = (): NoteTypeToEditorRowsMap => {
     [NoteType.Unknown]: [],
   }
 
-  if (featureTrunkEnabled(FeatureTrunkName.Blocks)) {
-    map[NoteType.Blocks].push({
-      name: BLOCKS_EDITOR_NAME,
+  if (featureTrunkEnabled(FeatureTrunkName.Super)) {
+    map[NoteType.Super].push({
+      name: SuperEditorMetadata.name,
       isEntitled: true,
-      noteType: NoteType.Blocks,
+      noteType: NoteType.Super,
     })
   }
 

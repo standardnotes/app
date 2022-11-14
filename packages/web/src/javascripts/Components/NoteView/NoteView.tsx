@@ -673,7 +673,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           text: this.state.editorText,
         },
         isUserModified: true,
-        dontUpdatePreviews: true,
+        dontGeneratePreviews: true,
       })
       .catch(console.error)
   }
@@ -743,7 +743,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               text: this.state.editorText,
             },
             bypassDebouncer: true,
-            dontUpdatePreviews: true,
+            dontGeneratePreviews: true,
             customMutate: (mutator) => {
               mutator.trashed = true
             },
@@ -999,8 +999,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     const renderHeaderOptions = isMobileScreen() ? !this.state.plaintextEditorFocused : true
 
     const editorMode =
-      this.note.noteType === NoteType.Blocks
-        ? 'blocks'
+      this.note.noteType === NoteType.Super
+        ? 'super'
         : this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading
         ? 'plain'
         : this.state.editorComponentViewer
@@ -1095,7 +1095,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 </div>
               )}
             </div>
-            {editorMode !== 'blocks' && (
+            {editorMode !== 'super' && (
               <LinkedItemBubblesContainer linkingController={this.viewControllerManager.linkingController} />
             )}
           </div>
@@ -1152,7 +1152,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             ></textarea>
           )}
 
-          {editorMode === 'blocks' && (
+          {editorMode === 'super' && (
             <div className={classNames('blocks-editor w-full flex-grow overflow-hidden overflow-y-scroll')}>
               <BlockEditor
                 key={this.note.uuid}

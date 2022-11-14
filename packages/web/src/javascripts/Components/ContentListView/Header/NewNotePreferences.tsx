@@ -5,6 +5,7 @@ import {
   NewNoteTitleFormat,
   PrefKey,
   SNComponent,
+  EditorIdentifier,
   TagPreferences,
 } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
@@ -16,7 +17,9 @@ import { WebApplication } from '@/Application/Application'
 import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 import { PreferenceMode } from './PreferenceMode'
 import dayjs from 'dayjs'
-import { getDropdownItemsForAllEditors, PlainEditorType } from '@/Utils/DropdownItemsForEditors'
+import { EditorOption, getDropdownItemsForAllEditors } from '@/Utils/DropdownItemsForEditors'
+import { classNames } from '@/Utils/ConcatenateClassNames'
+import { PlainEditorMetadata } from '@/Constants/Constants'
 
 const PrefChangeDebounceTimeInMs = 25
 
@@ -57,7 +60,9 @@ const NewNotePreferences: FunctionComponent<Props> = ({
   disabled,
 }: Props) => {
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([])
-  const [defaultEditorIdentifier, setDefaultEditorIdentifier] = useState<string>(PlainEditorType)
+  const [defaultEditorIdentifier, setDefaultEditorIdentifier] = useState<EditorIdentifier>(
+    PlainEditorMetadata.identifier,
+  )
   const [newNoteTitleFormat, setNewNoteTitleFormat] = useState<NewNoteTitleFormat>(
     NewNoteTitleFormat.CurrentDateAndTime,
   )
@@ -72,7 +77,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
       setDefaultEditorIdentifier(selectedTag.preferences?.editorIdentifier)
     } else {
       const globalDefault = getGlobalEditorDefault()
-      setDefaultEditorIdentifier(globalDefault?.identifier || PlainEditorType)
+      setDefaultEditorIdentifier(globalDefault?.identifier || PlainEditorMetadata.identifier)
     }
 
     if (mode === 'tag' && selectedTag.preferences?.newNoteTitleFormat) {
@@ -116,43 +121,45 @@ const NewNotePreferences: FunctionComponent<Props> = ({
       .catch(console.error)
   }
 
-  const makeEditorGlobalDefault = (
-    application: WebApplication,
-    component: SNComponent,
-    currentDefault?: SNComponent,
-  ) => {
-    if (currentDefault) {
-      removeEditorGlobalDefault(application, currentDefault)
-    }
-    application.mutator
-      .changeAndSaveItem(component, (m) => {
-        const mutator = m as ComponentMutator
-        mutator.defaultEditor = true
-      })
-      .catch(console.error)
-  }
+  const makeEditorGlobalDefault = useCallback(
+    (application: WebApplication, component: SNComponent, currentDefault?: SNComponent) => {
+      if (currentDefault) {
+        removeEditorGlobalDefault(application, currentDefault)
+      }
+      application.mutator
+        .changeAndSaveItem(component, (m) => {
+          const mutator = m as ComponentMutator
+          mutator.defaultEditor = true
+        })
+        .catch(console.error)
+    },
+    [],
+  )
 
   useEffect(() => {
     setEditorItems(getDropdownItemsForAllEditors(application))
   }, [application])
 
-  const setDefaultEditor = (value: string) => {
-    setDefaultEditorIdentifier(value as FeatureIdentifier)
+  const setDefaultEditor = useCallback(
+    (value: EditorOption['value']) => {
+      setDefaultEditorIdentifier(value as FeatureIdentifier)
 
-    if (mode === 'global') {
-      const editors = application.componentManager.componentsForArea(ComponentArea.Editor)
-      const currentDefault = getGlobalEditorDefault()
+      if (mode === 'global') {
+        const editors = application.componentManager.componentsForArea(ComponentArea.Editor)
+        const currentDefault = getGlobalEditorDefault()
 
-      if (value !== PlainEditorType) {
-        const editorComponent = editors.filter((e) => e.package_info.identifier === value)[0]
-        makeEditorGlobalDefault(application, editorComponent, currentDefault)
-      } else if (currentDefault) {
-        removeEditorGlobalDefault(application, currentDefault)
+        if (value !== PlainEditorMetadata.identifier) {
+          const editorComponent = editors.filter((e) => e.package_info.identifier === value)[0]
+          makeEditorGlobalDefault(application, editorComponent, currentDefault)
+        } else if (currentDefault) {
+          removeEditorGlobalDefault(application, currentDefault)
+        }
+      } else {
+        void changePreferencesCallback({ editorIdentifier: value })
       }
-    } else {
-      void changePreferencesCallback({ editorIdentifier: value })
-    }
-  }
+    },
+    [application, makeEditorGlobalDefault, changePreferencesCallback, mode, getGlobalEditorDefault],
+  )
 
   const debounceTimeoutRef = useRef<number>()
 
@@ -187,7 +194,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
             label="Select the default note type"
             items={editorItems}
             value={defaultEditorIdentifier}
-            onChange={setDefaultEditor}
+            onChange={(value) => setDefaultEditor(value as EditorOption['value'])}
           />
         </div>
       </div>
@@ -211,7 +218,10 @@ const NewNotePreferences: FunctionComponent<Props> = ({
           <div className="mt-2">
             <input
               disabled={disabled}
-              className="w-full min-w-55 rounded border border-solid border-passive-3 bg-default px-2 py-1.5 text-sm focus-within:ring-2 focus-within:ring-info"
+              className={classNames(
+                'w-full min-w-55 rounded border border-solid border-passive-3 bg-default px-2 py-1.5 text-sm',
+                'focus-within:ring-2 focus-within:ring-info',
+              )}
               placeholder="e.g. YYYY-MM-DD"
               value={customNoteTitleFormat}
               onChange={handleCustomFormatInputChange}

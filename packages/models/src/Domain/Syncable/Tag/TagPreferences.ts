@@ -1,4 +1,4 @@
-import { FeatureIdentifier } from '@standardnotes/features'
+import { EditorIdentifier } from '@standardnotes/features'
 import { NewNoteTitleFormat } from '../UserPrefs'
 import { CollectionSortProperty } from './../../Runtime/Collection/CollectionSort'
 
@@ -15,7 +15,7 @@ export interface TagPreferences {
   hideEditorIcon?: boolean
   newNoteTitleFormat?: NewNoteTitleFormat
   customNoteTitleFormat?: string
-  editorIdentifier?: FeatureIdentifier | string
+  editorIdentifier?: EditorIdentifier
   entryMode?: 'normal' | 'daily'
   panelWidth?: number
 }

@@ -114,7 +114,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         return
       }
 
-      if (itemToBeSelected.noteType === NoteType.Blocks) {
+      if (itemToBeSelected.noteType === NoteType.Super) {
         setPendingSuperItem(itemToBeSelected)
         handleDisableClickoutsideRequest?.()
         setShowSuperImporter(true)

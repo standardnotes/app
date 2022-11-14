@@ -1,7 +1,6 @@
 import { WebApplication } from '@/Application/Application'
-import { NoteType, SNNote } from '@standardnotes/snjs'
+import { NoteType, NoteViewController, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
-import { BlockEditorController } from './BlockEditorController'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import ModalDialog from '@/Components/Shared/ModalDialog'
@@ -37,8 +36,11 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
   }, [])
 
   const confirmConvert = useCallback(async () => {
-    const controller = new BlockEditorController(note.uuid, application)
-    await controller.saveAndWait({ text: lastValue.text, previewPlain: lastValue.previewPlain, previewHtml: undefined })
+    const controller = new NoteViewController(application, note)
+    await controller.save({
+      editorValues: { title: note.title, text: lastValue.text },
+      previews: { previewPlain: lastValue.previewPlain, previewHtml: undefined },
+    })
     closeDialog()
     onConvertComplete()
   }, [closeDialog, application, lastValue, note, onConvertComplete])
@@ -62,8 +64,14 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
       return
     }
 
-    const controller = new BlockEditorController(note.uuid, application)
-    void controller.save({ text: note.text, previewPlain: note.preview_plain, previewHtml: undefined })
+    const controller = new NoteViewController(application, note)
+    void controller.save({
+      editorValues: { title: note.title, text: note.text },
+      previews: {
+        previewPlain: note.preview_plain,
+        previewHtml: undefined,
+      },
+    })
     closeDialog()
     onConvertComplete()
   }, [closeDialog, application, note, onConvertComplete])
