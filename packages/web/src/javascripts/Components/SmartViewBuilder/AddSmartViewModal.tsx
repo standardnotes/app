@@ -35,6 +35,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
     customPredicateJson,
     setCustomPredicateJson,
     isCustomJsonValidPredicate,
+    setIsCustomJsonValidPredicate,
     validateAndPrettifyCustomPredicate,
   } = controller
 
@@ -65,6 +66,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
     void saveCurrentSmartView()
   }
 
+  const canSave = tabState.activeTab === 'builder' || isCustomJsonValidPredicate
   return (
     <ModalDialog>
       <ModalDialogLabel closeDialog={closeModal}>Add Smart View</ModalDialogLabel>
@@ -128,25 +130,26 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
                   value={customPredicateJson}
                   onChange={(event) => {
                     setCustomPredicateJson(event.target.value)
+                    setIsCustomJsonValidPredicate(undefined)
                   }}
+                  spellCheck={false}
                 />
+                {customPredicateJson && isCustomJsonValidPredicate != undefined && !isCustomJsonValidPredicate && (
+                  <div className="mt-2 border-t border-border px-2.5 py-1.5 text-sm text-danger">
+                    Invalid JSON. Please fix the errors and try again.
+                  </div>
+                )}
               </TabPanel>
             </div>
           </div>
         </div>
       </ModalDialogDescription>
       <ModalDialogButtons>
-        <Button disabled={isSaving} onClick={save}>
-          {isSaving ? (
-            <Spinner className="h-4.5 w-4.5" />
-          ) : tabState.activeTab === 'builder' || isCustomJsonValidPredicate ? (
-            'Save'
-          ) : (
-            'Validate'
-          )}
-        </Button>
-        <Button disabled={isSaving} onClick={closeModal}>
+        <Button disabled={isSaving} onClick={closeModal} className="mr-auto">
           Cancel
+        </Button>
+        <Button disabled={isSaving} onClick={save} colorStyle={canSave ? 'info' : 'default'} primary={canSave}>
+          {isSaving ? <Spinner className="h-4.5 w-4.5" /> : canSave ? 'Save' : 'Validate'}
         </Button>
       </ModalDialogButtons>
     </ModalDialog>

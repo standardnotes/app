@@ -14,7 +14,7 @@ export class AddSmartViewModalController {
   predicateController = new CompoundPredicateBuilderController()
 
   customPredicateJson: string | undefined = undefined
-  isCustomJsonValidPredicate = false
+  isCustomJsonValidPredicate: boolean | undefined = undefined
 
   constructor(private application: WebApplication) {
     makeObservable(this, {
@@ -57,7 +57,7 @@ export class AddSmartViewModalController {
     this.customPredicateJson = customPredicateJson
   }
 
-  setIsCustomJsonValidPredicate = (isCustomJsonValidPredicate: boolean) => {
+  setIsCustomJsonValidPredicate = (isCustomJsonValidPredicate: boolean | undefined) => {
     this.isCustomJsonValidPredicate = isCustomJsonValidPredicate
   }
 
@@ -67,6 +67,8 @@ export class AddSmartViewModalController {
     this.setIcon('')
     this.setIsSaving(false)
     this.predicateController.resetState()
+    this.setCustomPredicateJson('')
+    this.setIsCustomJsonValidPredicate(false)
   }
 
   saveCurrentSmartView = async () => {
