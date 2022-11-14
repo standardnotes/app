@@ -3,7 +3,7 @@
 Standard Notes is an end-to-end encrypted note-taking app for digitalists and professionals. Capture your notes, files, and life’s work all in one secure place.
 
 [![latest release version](https://img.shields.io/github/v/release/standardnotes/app)](https://github.com/standardnotes/app/releases)
-[![Slack](https://img.shields.io/badge/slack-standardnotes-CC2B5E.svg?style=flat&logo=slack)](https://standardnotes.com/slack)
+[![Discord](https://img.shields.io/badge/discord-standardnotes-CC2B5E.svg?style=flat&logo=discord)](https://standardnotes.com/discord)
 [![Twitter Follow](https://img.shields.io/badge/follow-%40standardnotes-blue.svg?style=flat&logo=twitter)](https://twitter.com/standardnotes)
 
 ### Why Standard Notes?
@@ -38,7 +38,6 @@ Join us on
 - [Discord](https://standardnotes.com/discord)
 - [Twitter](https://twitter.com/StandardNotes)
 - [Forum](https://forum.standardnotes.org)
-- [Slack](https://standardnotes.com/slack)
 
 Developers can create and publish their own extensions. Visit the [documentation hub](https://docs.standardnotes.com/) to learn more.
 
