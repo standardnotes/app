@@ -41,6 +41,14 @@ const HelpAndFeedback = ({ application }: { application: WebApplication }) => {
               Privacy Manifesto.
             </a>
           </Text>
+          {application.isNativeIOS() && (
+            <LinkButton
+              className="mt-3"
+              label="Privacy Policy"
+              link="https://standardnotes.com/privacy"
+              onClick={handleClick}
+            />
+          )}
         </PreferencesSegment>
         <HorizontalSeparator classes="my-4" />
         <PreferencesSegment>

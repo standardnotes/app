@@ -33,7 +33,9 @@ const NoProSubscription: FunctionComponent<Props> = ({ application }) => {
       {purchaseFlowError && <Text className="text-danger">{purchaseFlowError}</Text>}
 
       <div className="flex">
-        <LinkButton className="mt-3 mr-3 min-w-20" label="Learn More" link={window.plansUrl as string} />
+        {!application.hideOutboundSubscriptionLinks && (
+          <LinkButton className="mt-3 mr-3 min-w-20" label="Learn More" link={window.plansUrl as string} />
+        )}
         {application.hasAccount() && (
           <Button className="mt-3 min-w-20" primary label="Upgrade" onClick={onPurchaseClick} />
         )}
