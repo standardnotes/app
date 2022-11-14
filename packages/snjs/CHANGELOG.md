@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.149.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.148.0...@standardnotes/snjs@2.149.0) (2022-11-14)
+
+### Features
+
+* GUI to create smart views ([#1997](https://github.com/standardnotes/app/issues/1997)) ([f656185](https://github.com/standardnotes/app/commit/f656185c167b3306d408dc486970836efa1d70c5))
+
 # [2.148.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.147.11...@standardnotes/snjs@2.148.0) (2022-11-13)
 
 ### Features

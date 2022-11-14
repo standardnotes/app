@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.35.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.34.10...@standardnotes/models@1.35.0) (2022-11-14)
+
+### Features
+
+* GUI to create smart views ([#1997](https://github.com/standardnotes/app/issues/1997)) ([f656185](https://github.com/standardnotes/app/commit/f656185c167b3306d408dc486970836efa1d70c5))
+
 ## [1.34.10](https://github.com/standardnotes/app/compare/@standardnotes/models@1.34.9...@standardnotes/models@1.34.10) (2022-11-09)
 
 **Note:** Version bump only for package @standardnotes/models

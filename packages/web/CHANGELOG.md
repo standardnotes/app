@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.97.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.96.1...@standardnotes/web@3.97.0) (2022-11-14)
+
+### Bug Fixes
+
+* **mobile:** iOS IAP related adjustments ([1c23bc1](https://github.com/standardnotes/app/commit/1c23bc1747a6701b56c54abea7c6d0a6e373d4ae))
+
+### Features
+
+* GUI to create smart views ([#1997](https://github.com/standardnotes/app/issues/1997)) ([f656185](https://github.com/standardnotes/app/commit/f656185c167b3306d408dc486970836efa1d70c5))
+
 ## [3.96.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.96.0...@standardnotes/web@3.96.1) (2022-11-13)
 
 ### Bug Fixes
