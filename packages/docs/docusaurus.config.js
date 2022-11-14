@@ -111,12 +111,12 @@ module.exports = {
           title: 'Community',
           items: [
             {
-              label: 'Join our Slack',
-              href: 'https://standardnotes.com/slack',
+              label: 'Join our Discord',
+              href: 'https://standardnotes.com/discord',
             },
             {
               label: 'Community Forum',
-              href: 'https://forum.standardnotes.org',
+              href: 'https://standardnotes.com/forum',
             },
             {
               label: 'Listed Blogging Platform',
