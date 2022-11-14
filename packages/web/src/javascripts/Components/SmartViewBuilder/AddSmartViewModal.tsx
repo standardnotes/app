@@ -12,6 +12,10 @@ import { Platform } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useRef, useState } from 'react'
 import { AddSmartViewModalController } from './AddSmartViewModalController'
+import TabList from '../Tabs/TabList'
+import Tab from '../Tabs/Tab'
+import TabPanel from '../Tabs/TabPanel'
+import { useTabState } from '../Tabs/useTabState'
 
 type Props = {
   controller: AddSmartViewModalController
@@ -19,7 +23,20 @@ type Props = {
 }
 
 const AddSmartViewModal = ({ controller, platform }: Props) => {
-  const { isSaving, title, setTitle, icon, setIcon, closeModal, saveCurrentSmartView, predicateController } = controller
+  const {
+    isSaving,
+    title,
+    setTitle,
+    icon,
+    setIcon,
+    closeModal,
+    saveCurrentSmartView,
+    predicateController,
+    customPredicateJson,
+    setCustomPredicateJson,
+    isCustomJsonValidPredicate,
+    validateAndPrettifyCustomPredicate,
+  } = controller
 
   const titleInputRef = useRef<HTMLInputElement>(null)
 
@@ -30,9 +47,18 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
     setShouldShowIconPicker((shouldShow) => !shouldShow)
   }
 
+  const tabState = useTabState({
+    defaultTab: 'builder',
+  })
+
   const save = () => {
     if (!title.length) {
       titleInputRef.current?.focus()
+      return
+    }
+
+    if (tabState.activeTab === 'custom' && !isCustomJsonValidPredicate) {
+      validateAndPrettifyCustomPredicate()
       return
     }
 
@@ -88,13 +114,36 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
           </div>
           <div className="flex flex-col gap-2.5">
             <div className="text-sm font-semibold">Predicate:</div>
-            <CompoundPredicateBuilder controller={predicateController} />
+            <div className="overflow-hidden rounded-md border border-border">
+              <TabList state={tabState} className="border-b border-border">
+                <Tab id="builder">Builder</Tab>
+                <Tab id="custom">Custom (JSON)</Tab>
+              </TabList>
+              <TabPanel state={tabState} id="builder" className="flex flex-col gap-2.5 p-4">
+                <CompoundPredicateBuilder controller={predicateController} />
+              </TabPanel>
+              <TabPanel state={tabState} id="custom">
+                <textarea
+                  className="h-full min-h-[10rem] w-full resize-none bg-default py-1.5 px-2.5 font-mono text-sm"
+                  value={customPredicateJson}
+                  onChange={(event) => {
+                    setCustomPredicateJson(event.target.value)
+                  }}
+                />
+              </TabPanel>
+            </div>
           </div>
         </div>
       </ModalDialogDescription>
       <ModalDialogButtons>
         <Button disabled={isSaving} onClick={save}>
-          {isSaving ? <Spinner className="h-4.5 w-4.5" /> : 'Save'}
+          {isSaving ? (
+            <Spinner className="h-4.5 w-4.5" />
+          ) : tabState.activeTab === 'builder' || isCustomJsonValidPredicate ? (
+            'Save'
+          ) : (
+            'Validate'
+          )}
         </Button>
         <Button disabled={isSaving} onClick={closeModal}>
           Cancel

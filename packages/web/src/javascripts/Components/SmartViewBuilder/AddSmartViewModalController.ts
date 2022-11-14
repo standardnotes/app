@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { CompoundPredicateBuilderController } from '@/Components/SmartViewBuilder/CompoundPredicateBuilderController'
-import { predicateFromJson } from '@standardnotes/snjs'
+import { predicateFromJson, PredicateJsonForm } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 
 export class AddSmartViewModalController {
@@ -12,6 +12,9 @@ export class AddSmartViewModalController {
   icon = 'restore'
 
   predicateController = new CompoundPredicateBuilderController()
+
+  customPredicateJson: string | undefined = undefined
+  isCustomJsonValidPredicate = false
 
   constructor(private application: WebApplication) {
     makeObservable(this, {
@@ -26,6 +29,11 @@ export class AddSmartViewModalController {
 
       icon: observable,
       setIcon: action,
+
+      customPredicateJson: observable,
+      isCustomJsonValidPredicate: observable,
+      setCustomPredicateJson: action,
+      setIsCustomJsonValidPredicate: action,
     })
   }
 
@@ -45,6 +53,14 @@ export class AddSmartViewModalController {
     this.icon = icon
   }
 
+  setCustomPredicateJson = (customPredicateJson: string) => {
+    this.customPredicateJson = customPredicateJson
+  }
+
+  setIsCustomJsonValidPredicate = (isCustomJsonValidPredicate: boolean) => {
+    this.isCustomJsonValidPredicate = isCustomJsonValidPredicate
+  }
+
   closeModal = () => {
     this.setIsAddingSmartView(false)
     this.setTitle('')
@@ -61,10 +77,36 @@ export class AddSmartViewModalController {
       return
     }
 
-    const predicate = predicateFromJson(this.predicateController.toJson())
+    const predicateJson =
+      this.customPredicateJson && this.isCustomJsonValidPredicate
+        ? JSON.parse(this.customPredicateJson)
+        : this.predicateController.toJson()
+    const predicate = predicateFromJson(predicateJson as PredicateJsonForm)
     await this.application.items.createSmartView(this.title, predicate, this.icon)
 
     this.setIsSaving(false)
     this.closeModal()
+  }
+
+  validateAndPrettifyCustomPredicate = () => {
+    if (!this.customPredicateJson) {
+      this.setIsCustomJsonValidPredicate(false)
+      return
+    }
+
+    try {
+      const parsedPredicate: PredicateJsonForm = JSON.parse(this.customPredicateJson)
+      const predicate = predicateFromJson(parsedPredicate)
+
+      if (predicate) {
+        this.setCustomPredicateJson(JSON.stringify(parsedPredicate, null, 2))
+        this.setIsCustomJsonValidPredicate(true)
+      } else {
+        this.setIsCustomJsonValidPredicate(false)
+      }
+    } catch (error) {
+      this.setIsCustomJsonValidPredicate(false)
+      return
+    }
   }
 }
