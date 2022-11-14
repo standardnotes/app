@@ -21,17 +21,14 @@ const NoSubscriptionBanner = ({
       <h1 className="sk-h3 m-0 text-sm font-semibold">{title}</h1>
     </div>
     <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">{message}</p>
-
-    {!application.hideSubscriptionMarketing && (
-      <Button
-        primary
-        small
-        className="col-start-1 col-end-3 mt-3 justify-self-start uppercase"
-        onClick={() => application.openPurchaseFlow()}
-      >
-        Upgrade Features
-      </Button>
-    )}
+    <Button
+      primary
+      small
+      className="col-start-1 col-end-3 mt-3 justify-self-start uppercase"
+      onClick={() => application.openPurchaseFlow()}
+    >
+      Upgrade Features
+    </Button>
   </div>
 )
 
