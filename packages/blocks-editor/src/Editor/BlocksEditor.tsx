@@ -39,6 +39,7 @@ type BlocksEditorProps = {
   children?: React.ReactNode;
   previewLength: number;
   spellcheck?: boolean;
+  ignoreFirstChange?: boolean;
 };
 
 export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
@@ -47,11 +48,12 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
   children,
   previewLength,
   spellcheck,
+  ignoreFirstChange = false,
 }) => {
   const [didIgnoreFirstChange, setDidIgnoreFirstChange] = useState(false);
   const handleChange = useCallback(
     (editorState: EditorState, _editor: LexicalEditor) => {
-      if (!didIgnoreFirstChange) {
+      if (ignoreFirstChange && !didIgnoreFirstChange) {
         setDidIgnoreFirstChange(true);
         return;
       }

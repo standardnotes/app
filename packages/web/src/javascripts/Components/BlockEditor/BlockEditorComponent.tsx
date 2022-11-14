@@ -35,7 +35,7 @@ export const BlockEditor: FunctionComponent<Props> = ({
   filesController,
   spellcheck,
 }) => {
-  const controller = useRef(new BlockEditorController(note, application))
+  const controller = useRef(new BlockEditorController(note.uuid, application))
 
   const handleChange = useCallback(
     (value: string, preview: string) => {
@@ -62,6 +62,7 @@ export const BlockEditor: FunctionComponent<Props> = ({
             <BlocksEditorComposer readonly={note.locked} initialValue={note.text} nodes={[FileNode, BubbleNode]}>
               <BlocksEditor
                 onChange={handleChange}
+                ignoreFirstChange={true}
                 className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
                 previewLength={NotePreviewCharLimit}
                 spellcheck={spellcheck}

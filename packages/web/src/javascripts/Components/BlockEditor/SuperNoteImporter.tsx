@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { NoteType, SNNote } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { BlockEditorController } from './BlockEditorController'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
@@ -36,12 +36,18 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
     setLastValue({ text: value, previewPlain: preview })
   }, [])
 
-  const confirmConvert = useCallback(() => {
-    const controller = new BlockEditorController(note, application)
-    void controller.save({ text: lastValue.text, previewPlain: lastValue.previewPlain, previewHtml: undefined })
+  const confirmConvert = useCallback(async () => {
+    const controller = new BlockEditorController(note.uuid, application)
+    await controller.saveAndWait({ text: lastValue.text, previewPlain: lastValue.previewPlain, previewHtml: undefined })
     closeDialog()
     onConvertComplete()
   }, [closeDialog, application, lastValue, note, onConvertComplete])
+
+  useEffect(() => {
+    if (note.text.length === 0) {
+      void confirmConvert()
+    }
+  }, [note, confirmConvert])
 
   const convertAsIs = useCallback(async () => {
     const confirmed = await application.alertService.confirm(
@@ -56,7 +62,7 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
       return
     }
 
-    const controller = new BlockEditorController(note, application)
+    const controller = new BlockEditorController(note.uuid, application)
     void controller.save({ text: note.text, previewPlain: note.preview_plain, previewHtml: undefined })
     closeDialog()
     onConvertComplete()
@@ -77,6 +83,7 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
             <BlocksEditorComposer readonly initialValue={''}>
               <BlocksEditor
                 onChange={handleChange}
+                ignoreFirstChange={false}
                 className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
                 previewLength={NotePreviewCharLimit}
                 spellcheck={note.spellcheck}

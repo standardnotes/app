@@ -14,6 +14,7 @@ import { UuidString } from '@Lib/Types/UuidString'
 import { SNApplication } from '../Application/Application'
 import { ItemViewControllerInterface } from './ItemViewControllerInterface'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
+import { EditorSaveTimeoutDebounce } from './EditorSaveTimeoutDebounce'
 
 export type EditorValues = {
   title: string
@@ -22,12 +23,6 @@ export type EditorValues = {
 
 const StringEllipses = '...'
 const NotePreviewCharLimit = 160
-
-const SaveTimeoutDebounc = {
-  Desktop: 350,
-  ImmediateChange: 100,
-  NativeMobileWeb: 700,
-}
 
 export class NoteViewController implements ItemViewControllerInterface {
   public item!: SNNote
@@ -229,10 +224,10 @@ export class NoteViewController implements ItemViewControllerInterface {
     const noDebounce = dto.bypassDebouncer || this.application.noAccount()
 
     const syncDebouceMs = noDebounce
-      ? SaveTimeoutDebounc.ImmediateChange
+      ? EditorSaveTimeoutDebounce.ImmediateChange
       : this.application.isNativeMobileWeb()
-      ? SaveTimeoutDebounc.NativeMobileWeb
-      : SaveTimeoutDebounc.Desktop
+      ? EditorSaveTimeoutDebounce.NativeMobileWeb
+      : EditorSaveTimeoutDebounce.Desktop
 
     this.saveTimeout = setTimeout(() => {
       void this.application.sync.sync()
