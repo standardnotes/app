@@ -1,0 +1,1 @@
+(window.webpackJsonp=window.webpackJsonp||[]).push([[21],{91:function(e,t,n){"use strict";n.r(t);var i=n(0),s=n.n(i),c=(n(141),n(21));t.default=function(){return s.a.createElement(c.Redirect,{to:"/listed/settings"})}}}]);
