@@ -64,4 +64,5 @@ export enum ApplicationEvent {
   CompletedInitialSync = 30,
   BiometricsSoftLockEngaged = 31,
   BiometricsSoftLockDisengaged = 32,
+  DidPurchaseSubscription = 33,
 }

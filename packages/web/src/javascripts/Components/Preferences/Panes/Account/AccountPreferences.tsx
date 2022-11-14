@@ -29,7 +29,7 @@ const AccountPreferences = ({ application, viewControllerManager }: Props) => (
     )}
     <Subscription application={application} viewControllerManager={viewControllerManager} />
     <SubscriptionSharing application={application} viewControllerManager={viewControllerManager} />
-    {application.hasAccount() && viewControllerManager.featuresController.hasFiles && (
+    {application.hasAccount() && viewControllerManager.featuresController.entitledToFiles && (
       <FilesSection application={application} />
     )}
     {application.hasAccount() && <Email application={application} />}

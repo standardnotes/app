@@ -199,7 +199,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       <AndroidBackHandlerProvider application={application}>
         <DarkModeHandler application={application} />
         <ResponsivePaneProvider paneController={application.getViewControllerManager().paneController}>
-          <PremiumModalProvider application={application} viewControllerManager={viewControllerManager}>
+          <PremiumModalProvider application={application} featuresController={viewControllerManager.featuresController}>
             <div className={platformString + ' main-ui-view sn-component h-full'}>
               <div id="app" className="app app-column-container" ref={appColumnContainerRef}>
                 <FileDragNDropProvider

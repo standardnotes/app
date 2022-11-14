@@ -149,6 +149,7 @@ android {
 
         testBuildType System.getProperty('testBuildType', 'debug')  // detox: This will later be used to control the test apk build type
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
+        missingDimensionStrategy 'store', 'play'
     }
 
     signingConfigs {

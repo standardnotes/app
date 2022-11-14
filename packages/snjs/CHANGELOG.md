@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.148.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.147.11...@standardnotes/snjs@2.148.0) (2022-11-13)
+
+### Features
+
+* iap ([#1996](https://github.com/standardnotes/app/issues/1996)) ([d519aca](https://github.com/standardnotes/app/commit/d519aca685b32f4b6f7079ba9562ecaf1a18aecb))
+
 ## [2.147.11](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.147.10...@standardnotes/snjs@2.147.11) (2022-11-09)
 
 ### Bug Fixes

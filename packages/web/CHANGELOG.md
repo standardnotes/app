@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.96.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.96.0...@standardnotes/web@3.96.1) (2022-11-13)
+
+### Bug Fixes
+
+* show files option in linking menu even if not entitled ([f42657f](https://github.com/standardnotes/app/commit/f42657fa9e01b3b8a4ca555ea5c06236503b40a4))
+
+# [3.96.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.95.1...@standardnotes/web@3.96.0) (2022-11-13)
+
+### Features
+
+* iap ([#1996](https://github.com/standardnotes/app/issues/1996)) ([d519aca](https://github.com/standardnotes/app/commit/d519aca685b32f4b6f7079ba9562ecaf1a18aecb))
+
 ## [3.95.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.95.0...@standardnotes/web@3.95.1) (2022-11-11)
 
 ### Bug Fixes

@@ -10,7 +10,11 @@ describe('HttpService', () => {
   const host = 'http://bar'
   let updateMetaCallback: (meta: HttpResponseMeta) => void
 
-  const createService = () => new HttpService(environment, appVersion, snjsVersion, host, updateMetaCallback)
+  const createService = () => {
+    const service = new HttpService(environment, appVersion, snjsVersion, updateMetaCallback)
+    service.setHost(host)
+    return service
+  }
 
   beforeEach(() => {
     updateMetaCallback = jest.fn()

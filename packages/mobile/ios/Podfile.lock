@@ -349,6 +349,8 @@ PODS:
     - React-Core
   - RNFS (2.20.0):
     - React-Core
+  - RNIap (12.4.4):
+    - React-Core
   - RNKeychain (8.0.0):
     - React-Core
   - RNPrivacySnapshot (1.0.0):
@@ -422,6 +424,7 @@ DEPENDENCIES:
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - RNFileViewer (from `../node_modules/react-native-file-viewer`)
   - RNFS (from `../node_modules/react-native-fs`)
+  - RNIap (from `../node_modules/react-native-iap`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNPrivacySnapshot (from `../node_modules/react-native-privacy-snapshot`)
   - RNShare (from `../node_modules/react-native-share`)
@@ -518,6 +521,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-file-viewer"
   RNFS:
     :path: "../node_modules/react-native-fs"
+  RNIap:
+    :path: "../node_modules/react-native-iap"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
   RNPrivacySnapshot:
@@ -578,6 +583,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
   RNFileViewer: ce7ca3ac370e18554d35d6355cffd7c30437c592
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
+  RNIap: 3bcd6982cf99503339cf9243e4ba70a45ea2cf72
   RNKeychain: 4f63aada75ebafd26f4bc2c670199461eab85d94
   RNPrivacySnapshot: 8eaf571478a353f2e5184f5c803164f22428b023
   RNShare: a5dc3b9c53ddc73e155b8cd9a94c70c91913c43c

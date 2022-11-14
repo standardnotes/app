@@ -28,6 +28,7 @@ import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider
 import { LinkingController } from '@/Controllers/LinkingController'
 import DailyContentList from './Daily/DailyContentList'
 import { ListableContentItem } from './Types/ListableContentItem'
+import { FeatureName } from '@/Controllers/FeatureName'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -123,6 +124,11 @@ const ContentListView: FunctionComponent<Props> = ({
 
   const addNewItem = useCallback(async () => {
     if (isFilesSmartView) {
+      if (!application.entitledToFiles) {
+        application.showPremiumModal(FeatureName.Files)
+        return
+      }
+
       if (StreamingFileReader.available()) {
         void filesController.uploadNewFile()
         return
@@ -133,7 +139,7 @@ const ContentListView: FunctionComponent<Props> = ({
       await createNewNote()
       toggleAppPane(AppPaneId.Editor)
     }
-  }, [isFilesSmartView, filesController, createNewNote, toggleAppPane])
+  }, [isFilesSmartView, filesController, createNewNote, toggleAppPane, application])
 
   useEffect(() => {
     /**

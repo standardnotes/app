@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.46.2](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.46.1...@standardnotes/mobile@3.46.2) (2022-11-13)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.46.1](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.46.0...@standardnotes/mobile@3.46.1) (2022-11-13)
+
+### Bug Fixes
+
+* **mobile:** android build ([5777e51](https://github.com/standardnotes/app/commit/5777e511a95fb5c3f6c867b239d849290a71fcea))
+
+# [3.46.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.42...@standardnotes/mobile@3.46.0) (2022-11-13)
+
+### Features
+
+* iap ([#1996](https://github.com/standardnotes/app/issues/1996)) ([d519aca](https://github.com/standardnotes/app/commit/d519aca685b32f4b6f7079ba9562ecaf1a18aecb))
+
 ## [3.45.42](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.45.41...@standardnotes/mobile@3.45.42) (2022-11-11)
 
 **Note:** Version bump only for package @standardnotes/mobile

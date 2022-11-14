@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage'
 import SNReactNative from '@standardnotes/react-native-utils'
+import { AppleIAPReceipt } from '@standardnotes/services/dist/Domain/Subscription/AppleIAPReceipt'
 import {
   ApplicationIdentifier,
   Environment,
@@ -11,6 +12,7 @@ import {
   RawKeychainValue,
   removeFromArray,
   TransferPayload,
+  AppleIAPProductId,
   UuidString,
 } from '@standardnotes/snjs'
 import { ColorSchemeObserverService } from 'ColorSchemeObserverService'
@@ -41,6 +43,7 @@ import Share from 'react-native-share'
 import { AndroidBackHandlerService } from '../AndroidBackHandlerService'
 import { AppStateObserverService } from './../AppStateObserverService'
 import Keychain from './Keychain'
+import { PurchaseManager } from '../PurchaseManager'
 
 export type BiometricsType = 'Fingerprint' | 'Face ID' | 'Biometrics' | 'Touch ID'
 
@@ -99,6 +102,10 @@ export class MobileDevice implements MobileDeviceInterface {
     private colorSchemeService?: ColorSchemeObserverService,
   ) {}
 
+  purchaseSubscriptionIAP(plan: AppleIAPProductId): Promise<AppleIAPReceipt | undefined> {
+    return PurchaseManager.getInstance().purchase(plan)
+  }
+
   deinit() {
     this.stateObserverService?.deinit()
     ;(this.stateObserverService as unknown) = undefined
@@ -108,7 +115,7 @@ export class MobileDevice implements MobileDeviceInterface {
     ;(this.colorSchemeService as unknown) = undefined
   }
 
-  consoleLog(...args: any[]): void {
+  consoleLog(...args: unknown[]): void {
     // eslint-disable-next-line no-console
     console.log(args)
   }

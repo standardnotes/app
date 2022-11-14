@@ -8,8 +8,13 @@ const SharingPaths = {
   listInvites: '/v1/subscription-invites',
 }
 
+const ApplePaths = {
+  confirmAppleIAP: '/v1/subscriptions/apple_iap_confirm',
+}
+
 export const Paths = {
   v1: {
     ...SharingPaths,
+    ...ApplePaths,
   },
 }
