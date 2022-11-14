@@ -68,7 +68,7 @@ export class AddSmartViewModalController {
     this.setIsSaving(false)
     this.predicateController.resetState()
     this.setCustomPredicateJson('')
-    this.setIsCustomJsonValidPredicate(false)
+    this.setIsCustomJsonValidPredicate(undefined)
   }
 
   saveCurrentSmartView = async () => {
