@@ -17,7 +17,7 @@ Thank you for your interest in contributing to Standard Notes. We are very happy
 
 1. Submit suggestions and feature ideas to our [community forum](https://forum.standardnotes.org). You can comment on the existing feature requests and subscribe to individual threads to follow their progress.
 2. Report bugs or issues to our [community forum](https://forum.standardnotes.org).
-3. Help others on the forum and our [Slack group](https://standardnotes.com/slack).
+3. Help others on the forum and our [Discord group](https://standardnotes.com/discord).
 4. Blog, tweet and share what you like about Standard Notes, what you use it for, and how it helps you.
 
 We do things the old-fashioned way and rely on people like you telling other people like you about Standard Notes to sustain our efforts. Get a free month of Extended when your friend also joins Extended. Log into the [member dashboard](https://dashboard.standardnotes.com) to get your unique referral link. 🙂

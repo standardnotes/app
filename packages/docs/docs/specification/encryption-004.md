@@ -338,8 +338,8 @@ result = ['004', nonce, ciphertext, encoded_authenticated_data].join(':')
 
 ## Next Steps
 
-Join the [Slack group](https://standardnotes.com/slack) to discuss implementation details and ask any questions you may have.
+Join the [Discord group](https://standardnotes.com/Discord) to discuss implementation details and ask any questions you may have.
 
-You can also email [help@standardnotes.org](mailto:help@standardnotes.org).
+You can also email [help@standardnotes.org](mailto:help@standardnotes.com).
 
 Follow [@standardnotes on Twitter](https://twitter.com/standardnotes) for updates and announcements.
