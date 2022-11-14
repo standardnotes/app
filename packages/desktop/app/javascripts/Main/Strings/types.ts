@@ -24,7 +24,6 @@ interface AppMenuStrings {
   website: string
   gitHub: string
   discord: string
-  slack: string
   twitter: string
   toggleErrorConsole: string
   openDataDirectory: string

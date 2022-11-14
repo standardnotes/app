@@ -98,4 +98,4 @@ Standard Notes will ping the `latest_url`endpoint automatically to update extens
 
 ## Questions?
 
-Join the [Slack group](https://standardnotes.com/slack) and ask away in the \#dev channel.
+Join the [Discord group](https://standardnotes.com/discord) and ask away in the \#dev channel.

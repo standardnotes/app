@@ -31,7 +31,6 @@ This documentation explains how to get started with using Standard Notes, publis
 - [GitHub](https://github.com/standardnotes)
 - [Discord](https://standardnotes.com/discord)
 - [Twitter](https://twitter.com/standardnotes)
-- [Slack](https://standardnotes.com/slack)
 - [Blog](https://blog.standardnotes.org)
 
 ## Something missing?
