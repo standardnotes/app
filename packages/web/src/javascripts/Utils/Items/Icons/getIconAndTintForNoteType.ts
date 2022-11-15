@@ -1,3 +1,4 @@
+import { PlainEditorMetadata, SuperEditorMetadata } from '@/Constants/Constants'
 import { NoteType } from '@standardnotes/features'
 import { IconType } from '@standardnotes/models'
 
@@ -15,7 +16,9 @@ export function getIconAndTintForNoteType(noteType?: NoteType): [IconType, numbe
       return ['tasks', 3]
     case NoteType.Code:
       return ['code', 4]
+    case NoteType.Super:
+      return [SuperEditorMetadata.icon, SuperEditorMetadata.iconTintNumber]
     default:
-      return ['plain-text', 1]
+      return [PlainEditorMetadata.icon, PlainEditorMetadata.iconTintNumber]
   }
 }

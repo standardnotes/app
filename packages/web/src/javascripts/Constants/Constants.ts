@@ -26,26 +26,26 @@ export const SMART_TAGS_FEATURE_NAME = 'Smart Tags'
 export const SYNC_TIMEOUT_DEBOUNCE = 350
 export const SYNC_TIMEOUT_NO_DEBOUNCE = 100
 
-export const SuperEditorMetadata: {
+type EditorMetadata = {
   identifier: EditorIdentifier
   name: string
   icon: IconType
   iconClassName: string
-} = {
+  iconTintNumber: number
+}
+
+export const SuperEditorMetadata: EditorMetadata = {
   identifier: FeatureIdentifier.SuperEditor,
   name: 'Super',
   icon: 'file-doc',
   iconClassName: 'text-accessory-tint-4',
+  iconTintNumber: 4,
 }
 
-export const PlainEditorMetadata: {
-  identifier: EditorIdentifier
-  name: string
-  icon: IconType
-  iconClassName: string
-} = {
+export const PlainEditorMetadata: EditorMetadata = {
   identifier: FeatureIdentifier.PlainEditor,
   name: 'Plain Text',
   icon: 'plain-text',
   iconClassName: 'text-accessory-tint-1',
+  iconTintNumber: 1,
 }

@@ -9,7 +9,8 @@ export function experimentalFeatures(): FeatureDescription[] {
     identifier: FeatureIdentifier.SuperEditor,
     availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     permission_name: PermissionName.SuperEditor,
-    description: 'A new way to edit notes.',
+    description:
+      'A new way to edit notes. Type / to bring up the block selection menu, or @ to embed images or link other tags and notes.',
     availableInRoles: [RoleName.PlusUser, RoleName.ProUser],
   }
 
