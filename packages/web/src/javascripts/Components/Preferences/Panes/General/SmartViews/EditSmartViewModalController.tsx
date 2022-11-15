@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
-import { predicateFromJson, PredicateJsonForm, SmartView, TagMutator } from '@standardnotes/snjs'
+import { predicateFromJson, PredicateJsonForm, SmartView, SmartViewMutator } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 
 export class EditSmartViewModalController {
@@ -80,9 +80,10 @@ export class EditSmartViewModalController {
 
     this.setIsSaving(true)
 
-    await this.application.mutator.changeAndSaveItem<TagMutator>(this.view, (mutator) => {
+    await this.application.mutator.changeAndSaveItem<SmartViewMutator>(this.view, (mutator) => {
       mutator.title = this.title
       mutator.iconString = this.icon || 'restore'
+      mutator.predicate = JSON.parse(this.predicateJson) as PredicateJsonForm
     })
 
     this.setIsSaving(false)
