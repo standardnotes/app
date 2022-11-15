@@ -8,7 +8,7 @@ import FilePlugin from './Plugins/EncryptedFilePlugin/FilePlugin'
 import BlockPickerMenuPlugin from './Plugins/BlockPickerPlugin/BlockPickerPlugin'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import { LinkingController } from '@/Controllers/LinkingController'
-import LinkingControllerProvider from '../../Controllers/LinkingControllerProvider'
+import LinkingControllerProvider from '../../../Controllers/LinkingControllerProvider'
 import { BubbleNode } from './Plugins/ItemBubblePlugin/Nodes/BubbleNode'
 import ItemBubblePlugin from './Plugins/ItemBubblePlugin/ItemBubblePlugin'
 import { NodeObserverPlugin } from './Plugins/NodeObserverPlugin/NodeObserverPlugin'
@@ -16,7 +16,7 @@ import { FilesController } from '@/Controllers/FilesController'
 import FilesControllerProvider from '@/Controllers/FilesControllerProvider'
 import DatetimePlugin from './Plugins/DateTimePlugin/DateTimePlugin'
 import AutoLinkPlugin from './Plugins/AutoLinkPlugin/AutoLinkPlugin'
-import { NoteViewController } from '../NoteView/Controller/NoteViewController'
+import { NoteViewController } from '../Controller/NoteViewController'
 
 const NotePreviewCharLimit = 160
 
@@ -28,7 +28,7 @@ type Props = {
   spellcheck: boolean
 }
 
-export const BlockEditor: FunctionComponent<Props> = ({
+export const SuperEditor: FunctionComponent<Props> = ({
   note,
   application,
   linkingController,

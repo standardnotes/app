@@ -27,7 +27,7 @@ import {
 } from '@standardnotes/snjs'
 import { confirmDialog, KeyboardKey, KeyboardModifier } from '@standardnotes/ui-services'
 import { ChangeEventHandler, createRef, KeyboardEventHandler, RefObject } from 'react'
-import { BlockEditor } from '../BlockEditor/BlockEditorComponent'
+import { SuperEditor } from './SuperEditor/SuperEditor'
 import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
@@ -954,7 +954,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
           {editorMode === 'super' && (
             <div className={classNames('blocks-editor w-full flex-grow overflow-hidden overflow-y-scroll')}>
-              <BlockEditor
+              <SuperEditor
                 key={this.note.uuid}
                 application={this.application}
                 note={this.note}

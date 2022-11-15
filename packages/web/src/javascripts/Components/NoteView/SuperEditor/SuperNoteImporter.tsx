@@ -9,7 +9,7 @@ import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 import Button from '@/Components/Button/Button'
 import ImportPlugin from './Plugins/ImportPlugin/ImportPlugin'
-import { NoteViewController } from '../NoteView/Controller/NoteViewController'
+import { NoteViewController } from '../Controller/NoteViewController'
 
 export function spaceSeparatedStrings(...strings: string[]): string {
   return strings.join(' ')
