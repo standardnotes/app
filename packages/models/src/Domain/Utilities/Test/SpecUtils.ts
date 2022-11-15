@@ -84,6 +84,20 @@ export const createTagWithTitle = (title = 'photos') => {
   )
 }
 
+export const createSmartViewWithTitle = (title = 'photos') => {
+  return new SmartView(
+    new DecryptedPayload(
+      {
+        uuid: mockUuid(),
+        content_type: ContentType.SmartView,
+        content: FillItemContent<SmartViewContent>({ title }),
+        ...PayloadTimestampDefaults(),
+      },
+      PayloadSource.Constructor,
+    ),
+  )
+}
+
 export const createFile = (name = 'screenshot.png') => {
   return new FileItem(
     new DecryptedPayload(
