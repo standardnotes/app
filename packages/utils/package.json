@@ -32,7 +32,7 @@
   },
   "devDependencies": {
     "@types/dompurify": "^2.3.3",
-    "@types/jest": "^28.1.5",
+    "@types/jest": "^29.2.3",
     "@types/jsdom": "^16.2.14",
     "@types/lodash": "^4.14.179",
     "@types/node": "^18.0.0",
