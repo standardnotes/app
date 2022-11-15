@@ -15,6 +15,7 @@ import { AddSmartViewModalController } from './AddSmartViewModalController'
 import TabPanel from '../Tabs/TabPanel'
 import { useTabState } from '../Tabs/useTabState'
 import TabsContainer from '../Tabs/TabsContainer'
+import CopyableCodeBlock from '../Shared/CopyableCodeBlock'
 
 type Props = {
   controller: AddSmartViewModalController
@@ -156,11 +157,56 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
                 />
                 {customPredicateJson && isCustomJsonValidPredicate === false && (
                   <div className="mt-2 border-t border-border px-2.5 py-1.5 text-sm text-danger">
-                    Invalid JSON. Please fix the errors and try again.
+                    Invalid JSON. Double check your entry and try again.
                   </div>
                 )}
               </TabPanel>
             </TabsContainer>
+            {tabState.activeTab === 'custom' && (
+              <div className="flex flex-col gap-1.5 rounded-md border-2 border-info-backdrop bg-info-backdrop py-3 px-4">
+                <div className="text-sm font-semibold">Examples</div>
+                <div className="text-sm font-medium">1. List notes that are conflicted copies of another note:</div>
+                <CopyableCodeBlock
+                  code={`{
+  "keypath": "content.conflict_of.length",
+  "operator": ">",
+  "value": 0
+}`}
+                />
+                <div className="text-sm font-medium">
+                  2. List notes that have the tag `foo` but don't have the tag `boo`:
+                </div>
+                <CopyableCodeBlock
+                  code={`{
+  "operator": "and",
+  "value": [
+    {
+      "operator": "not",
+      "value": {
+        "keypath": "tags",
+        "operator": "includes",
+        "value": {
+          "keypath": "title",
+          "operator": "=",
+          "value": "boo"
+        }
+      }
+    },
+    {
+      "keypath": "tags",
+      "operator": "includes",
+      "value": {
+        "keypath": "title",
+        "operator": "=",
+        "value": "foo"
+      }
+    }
+  ]
+}
+`}
+                />
+              </div>
+            )}
           </div>
         </div>
       </ModalDialogDescription>
