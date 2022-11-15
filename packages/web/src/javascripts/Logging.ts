@@ -14,7 +14,7 @@ export enum LoggingDomain {
 
 const LoggingStatus: Record<LoggingDomain, boolean> = {
   [LoggingDomain.DailyNotes]: false,
-  [LoggingDomain.NoteView]: true,
+  [LoggingDomain.NoteView]: false,
   [LoggingDomain.ItemsList]: false,
   [LoggingDomain.NavigationList]: false,
   [LoggingDomain.Viewport]: false,

@@ -176,11 +176,11 @@ export class NoteViewController implements ItemViewControllerInterface {
     }
   }
 
-  public async save(dto: {
+  public async saveAndAwaitLocalPropagation(dto: {
     title?: string
     text?: string
+    isUserModified: boolean
     bypassDebouncer?: boolean
-    isUserModified?: boolean
     dontGeneratePreviews?: boolean
     previews?: { previewPlain: string; previewHtml?: string }
     customMutate?: (mutator: NoteMutator) => void
@@ -201,9 +201,11 @@ export class NoteViewController implements ItemViewControllerInterface {
       ? EditorSaveTimeoutDebounce.NativeMobileWeb
       : EditorSaveTimeoutDebounce.Desktop
 
-    this.saveTimeout = setTimeout(() => {
-      void this.undebouncedSave(dto)
-    }, syncDebouceMs)
+    return new Promise((resolve) => {
+      this.saveTimeout = setTimeout(() => {
+        void this.undebouncedSave({ ...dto, onLocalPropagationComplete: resolve })
+      }, syncDebouceMs)
+    })
   }
 
   private async undebouncedSave(dto: {
@@ -214,6 +216,8 @@ export class NoteViewController implements ItemViewControllerInterface {
     dontGeneratePreviews?: boolean
     previews?: { previewPlain: string; previewHtml?: string }
     customMutate?: (mutator: NoteMutator) => void
+    onLocalPropagationComplete?: () => void
+    onRemoteSyncComplete?: () => void
   }): Promise<void> {
     log(LoggingDomain.NoteView, 'Saving note', dto)
 
@@ -264,6 +268,10 @@ export class NoteViewController implements ItemViewControllerInterface {
       dto.isUserModified,
     )
 
-    void this.application.sync.sync()
+    dto.onLocalPropagationComplete?.()
+
+    void this.application.sync.sync().then(() => {
+      dto.onRemoteSyncComplete?.()
+    })
   }
 }

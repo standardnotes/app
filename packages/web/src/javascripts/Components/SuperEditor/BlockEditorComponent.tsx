@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { SNNote } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback } from 'react'
+import { FunctionComponent, useCallback, useRef } from 'react'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ItemSelectionPlugin } from './Plugins/ItemSelectionPlugin/ItemSelectionPlugin'
 import { FileNode } from './Plugins/EncryptedFilePlugin/Nodes/FileNode'
@@ -8,7 +8,7 @@ import FilePlugin from './Plugins/EncryptedFilePlugin/FilePlugin'
 import BlockPickerMenuPlugin from './Plugins/BlockPickerPlugin/BlockPickerPlugin'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import { LinkingController } from '@/Controllers/LinkingController'
-import LinkingControllerProvider from '../../../Controllers/LinkingControllerProvider'
+import LinkingControllerProvider from '../../Controllers/LinkingControllerProvider'
 import { BubbleNode } from './Plugins/ItemBubblePlugin/Nodes/BubbleNode'
 import ItemBubblePlugin from './Plugins/ItemBubblePlugin/ItemBubblePlugin'
 import { NodeObserverPlugin } from './Plugins/NodeObserverPlugin/NodeObserverPlugin'
@@ -16,31 +16,34 @@ import { FilesController } from '@/Controllers/FilesController'
 import FilesControllerProvider from '@/Controllers/FilesControllerProvider'
 import DatetimePlugin from './Plugins/DateTimePlugin/DateTimePlugin'
 import AutoLinkPlugin from './Plugins/AutoLinkPlugin/AutoLinkPlugin'
-import { NoteViewController } from '../Controller/NoteViewController'
+import { NoteViewController } from '../NoteView/Controller/NoteViewController'
 
 const NotePreviewCharLimit = 160
 
 type Props = {
   application: WebApplication
-  controller: NoteViewController
   note: SNNote
   linkingController: LinkingController
   filesController: FilesController
   spellcheck: boolean
 }
 
-export const SuperEditor: FunctionComponent<Props> = ({
+export const BlockEditor: FunctionComponent<Props> = ({
   note,
   application,
   linkingController,
   filesController,
   spellcheck,
-  controller,
 }) => {
+  const controller = useRef(new NoteViewController(application, note))
+
   const handleChange = useCallback(
     async (value: string, preview: string) => {
-      void controller.saveAndAwaitLocalPropagation({
-        title: note.title,
+      if (controller.current.needsInit) {
+        await controller.current.initialize()
+      }
+
+      void controller.current.saveAndAwaitLocalPropagation({
         text: value,
         isUserModified: true,
         previews: {
@@ -49,7 +52,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
         },
       })
     },
-    [controller, note],
+    [controller],
   )
 
   const handleBubbleRemove = useCallback(

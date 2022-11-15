@@ -36,16 +36,25 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
     setLastValue({ text: value, previewPlain: preview })
   }, [])
 
+  const performConvert = useCallback(
+    async (text: string, previewPlain: string) => {
+      const controller = new NoteViewController(application, note)
+      await controller.initialize()
+      await controller.saveAndAwaitLocalPropagation({
+        text: text,
+        previews: { previewPlain: previewPlain, previewHtml: undefined },
+        isUserModified: true,
+        bypassDebouncer: true,
+      })
+    },
+    [application, note],
+  )
+
   const confirmConvert = useCallback(async () => {
-    const controller = new NoteViewController(application, note)
-    await controller.initialize()
-    await controller.save({
-      text: lastValue.text,
-      previews: { previewPlain: lastValue.previewPlain, previewHtml: undefined },
-    })
+    await performConvert(lastValue.text, lastValue.previewPlain)
     closeDialog()
     onConvertComplete()
-  }, [closeDialog, application, lastValue, note, onConvertComplete])
+  }, [closeDialog, performConvert, onConvertComplete, lastValue])
 
   useEffect(() => {
     if (note.text.length === 0) {
@@ -66,19 +75,11 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
       return
     }
 
-    const controller = new NoteViewController(application, note)
-    await controller.initialize()
-    void controller.save({
-      title: note.title,
-      text: note.text,
-      previews: {
-        previewPlain: note.preview_plain,
-        previewHtml: undefined,
-      },
-    })
+    await performConvert(note.text, note.preview_plain)
+
     closeDialog()
     onConvertComplete()
-  }, [closeDialog, application, note, onConvertComplete])
+  }, [closeDialog, application, note, onConvertComplete, performConvert])
 
   return (
     <ModalDialog>

@@ -582,7 +582,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     })
 
     this.controller
-      .save({
+      .saveAndAwaitLocalPropagation({
         title: title,
         isUserModified: true,
         dontGeneratePreviews: true,
@@ -621,10 +621,11 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         this.performNoteDeletion(this.note)
       } else {
         this.controller
-          .save({
+          .saveAndAwaitLocalPropagation({
             title: this.state.editorTitle,
             bypassDebouncer: true,
             dontGeneratePreviews: true,
+            isUserModified: true,
             customMutate: (mutator) => {
               mutator.trashed = true
             },
@@ -961,6 +962,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 linkingController={this.viewControllerManager.linkingController}
                 filesController={this.viewControllerManager.filesController}
                 spellcheck={this.state.spellcheck}
+                controller={this.controller}
               />
             </div>
           )}

@@ -79,9 +79,10 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
 
     const onTextAreaChange: ChangeEventHandler<HTMLTextAreaElement> = ({ currentTarget }) => {
       const text = currentTarget.value
+
       setEditorText(text)
 
-      controller.save({ text: text, isUserModified: true }).catch(console.error)
+      void controller.saveAndAwaitLocalPropagation({ text: text, isUserModified: true })
     }
 
     const onContentFocus = useCallback(() => {
@@ -173,10 +174,8 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
       log(LoggingDomain.NoteView, 'On system editor ref')
 
       /**
-       * Insert 4 spaces when a tab key is pressed,
-       * only used when inside of the text editor.
-       * If the shift key is pressed first, this event is
-       * not fired.
+       * Insert 4 spaces when a tab key is pressed, only used when inside of the text editor.
+       * If the shift key is pressed first, this event is not fired.
        */
       const editor = document.getElementById(ElementIds.NoteTextEditor) as HTMLInputElement
 
@@ -208,7 +207,11 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
 
           setEditorText(editor.value)
 
-          controller.save({ text: editor.value, bypassDebouncer: true }).catch(console.error)
+          void controller.saveAndAwaitLocalPropagation({
+            text: editor.value,
+            bypassDebouncer: true,
+            isUserModified: true,
+          })
         },
       })
 
