@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
-import { SNNote } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback } from 'react'
+import { isPayloadSourceRetrieved } from '@standardnotes/snjs'
+import { FunctionComponent, useCallback, useEffect, useRef } from 'react'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ItemSelectionPlugin } from './Plugins/ItemSelectionPlugin/ItemSelectionPlugin'
 import { FileNode } from './Plugins/EncryptedFilePlugin/Nodes/FileNode'
@@ -17,30 +17,40 @@ import FilesControllerProvider from '@/Controllers/FilesControllerProvider'
 import DatetimePlugin from './Plugins/DateTimePlugin/DateTimePlugin'
 import AutoLinkPlugin from './Plugins/AutoLinkPlugin/AutoLinkPlugin'
 import { NoteViewController } from '../Controller/NoteViewController'
+import {
+  ChangeContentCallbackPlugin,
+  ChangeEditorFunction,
+} from './Plugins/ChangeContentCallback/ChangeContentCallback'
 
 const NotePreviewCharLimit = 160
 
 type Props = {
   application: WebApplication
   controller: NoteViewController
-  note: SNNote
   linkingController: LinkingController
   filesController: FilesController
   spellcheck: boolean
 }
 
 export const SuperEditor: FunctionComponent<Props> = ({
-  note,
   application,
   linkingController,
   filesController,
   spellcheck,
   controller,
 }) => {
+  const note = useRef(controller.item)
+  const changeEditorFunction = useRef<ChangeEditorFunction>()
+  const ignoreNextChange = useRef(false)
+
   const handleChange = useCallback(
     async (value: string, preview: string) => {
+      if (ignoreNextChange.current === true) {
+        ignoreNextChange.current = false
+        return
+      }
+
       void controller.saveAndAwaitLocalPropagation({
-        title: note.title,
         text: value,
         isUserModified: true,
         previews: {
@@ -49,7 +59,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
         },
       })
     },
-    [controller, note],
+    [controller],
   )
 
   const handleBubbleRemove = useCallback(
@@ -62,12 +72,33 @@ export const SuperEditor: FunctionComponent<Props> = ({
     [linkingController, application],
   )
 
+  useEffect(() => {
+    const disposer = controller.addNoteInnerValueChangeObserver((updatedNote, source) => {
+      if (updatedNote.uuid !== note.current.uuid) {
+        throw Error('Editor received changes for non-current note')
+      }
+
+      if (isPayloadSourceRetrieved(source)) {
+        ignoreNextChange.current = true
+        changeEditorFunction.current?.(updatedNote.text)
+      }
+
+      note.current = updatedNote
+    })
+
+    return disposer
+  }, [controller, controller.item.uuid])
+
   return (
     <div className="relative h-full w-full px-5 py-4">
       <ErrorBoundary>
         <LinkingControllerProvider controller={linkingController}>
           <FilesControllerProvider controller={filesController}>
-            <BlocksEditorComposer readonly={note.locked} initialValue={note.text} nodes={[FileNode, BubbleNode]}>
+            <BlocksEditorComposer
+              readonly={note.current.locked}
+              initialValue={note.current.text}
+              nodes={[FileNode, BubbleNode]}
+            >
               <BlocksEditor
                 onChange={handleChange}
                 ignoreFirstChange={true}
@@ -75,12 +106,15 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 previewLength={NotePreviewCharLimit}
                 spellcheck={spellcheck}
               >
-                <ItemSelectionPlugin currentNote={note} />
+                <ItemSelectionPlugin currentNote={note.current} />
                 <FilePlugin />
                 <ItemBubblePlugin />
                 <BlockPickerMenuPlugin />
                 <DatetimePlugin />
                 <AutoLinkPlugin />
+                <ChangeContentCallbackPlugin
+                  providerCallback={(callback) => (changeEditorFunction.current = callback)}
+                />
                 <NodeObserverPlugin nodeType={BubbleNode} onRemove={handleBubbleRemove} />
                 <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
               </BlocksEditor>

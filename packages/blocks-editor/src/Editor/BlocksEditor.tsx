@@ -122,7 +122,6 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <CodeHighlightPlugin />
       <LinkPlugin />
       <HashtagPlugin />
-
       <AutoEmbedPlugin />
       <TwitterPlugin />
       <YouTubePlugin />

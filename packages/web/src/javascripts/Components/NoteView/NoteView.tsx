@@ -958,7 +958,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               <SuperEditor
                 key={this.note.uuid}
                 application={this.application}
-                note={this.note}
                 linkingController={this.viewControllerManager.linkingController}
                 filesController={this.viewControllerManager.filesController}
                 spellcheck={this.state.spellcheck}
