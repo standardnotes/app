@@ -1,13 +1,10 @@
-import { FileItem, SNNote } from '@standardnotes/models'
 import { removeFromArray } from '@standardnotes/utils'
-import { SNApplication } from '@standardnotes/snjs'
+import { SNApplication, FileItem, SNNote } from '@standardnotes/snjs'
 import { NoteViewController } from './NoteViewController'
 import { FileViewController } from './FileViewController'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
 
 type ItemControllerGroupChangeCallback = (activeController: NoteViewController | FileViewController | undefined) => void
-
-type CreateItemControllerOptions = FileItem | SNNote | TemplateNoteViewControllerOptions
 
 export class ItemGroupController {
   public itemControllers: (NoteViewController | FileViewController)[] = []
@@ -32,21 +29,25 @@ export class ItemGroupController {
     this.itemControllers.length = 0
   }
 
-  async createItemController(options: CreateItemControllerOptions): Promise<NoteViewController | FileViewController> {
+  async createItemController(context: {
+    file?: FileItem
+    note?: SNNote
+    templateOptions?: TemplateNoteViewControllerOptions
+  }): Promise<NoteViewController | FileViewController> {
     if (this.activeItemViewController) {
       this.closeItemController(this.activeItemViewController, { notify: false })
     }
 
     let controller!: NoteViewController | FileViewController
 
-    if (options instanceof FileItem) {
-      const file = options
-      controller = new FileViewController(this.application, file)
-    } else if (options instanceof SNNote) {
-      const note = options
-      controller = new NoteViewController(this.application, note)
+    if (context.file) {
+      controller = new FileViewController(this.application, context.file)
+    } else if (context.note) {
+      controller = new NoteViewController(this.application, context.note)
+    } else if (context.templateOptions) {
+      controller = new NoteViewController(this.application, undefined, context.templateOptions)
     } else {
-      controller = new NoteViewController(this.application, undefined, options)
+      throw Error('Invalid input to createItemController')
     }
 
     this.itemControllers.push(controller)

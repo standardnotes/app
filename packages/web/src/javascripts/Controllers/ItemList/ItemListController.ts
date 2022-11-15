@@ -5,7 +5,6 @@ import {
   CollectionSort,
   ContentType,
   findInArray,
-  NoteViewController,
   PrefKey,
   SmartView,
   SNNote,
@@ -15,12 +14,10 @@ import {
   InternalEventBus,
   InternalEventHandlerInterface,
   InternalEventInterface,
-  FileViewController,
   FileItem,
   WebAppEvent,
   NewNoteTitleFormat,
   useBoolean,
-  TemplateNoteViewAutofocusBehavior,
   isTag,
   isFile,
 } from '@standardnotes/snjs'
@@ -38,6 +35,9 @@ import dayjs from 'dayjs'
 import { LinkingController } from '../LinkingController'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { log, LoggingDomain } from '@/Logging'
+import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewController'
+import { FileViewController } from '@/Components/NoteView/Controller/FileViewController'
+import { TemplateNoteViewAutofocusBehavior } from '@/Components/NoteView/Controller/TemplateNoteViewControllerOptions'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -255,7 +255,7 @@ export class ItemListController extends AbstractViewController implements Intern
       return
     }
 
-    await this.application.itemControllerGroup.createItemController(note)
+    await this.application.itemControllerGroup.createItemController({ note })
 
     this.linkingController.reloadAllLinks()
 
@@ -273,7 +273,7 @@ export class ItemListController extends AbstractViewController implements Intern
       return
     }
 
-    await this.application.itemControllerGroup.createItemController(file)
+    await this.application.itemControllerGroup.createItemController({ file })
 
     this.linkingController.reloadAllLinks()
   }
@@ -624,10 +624,12 @@ export class ItemListController extends AbstractViewController implements Intern
     const activeRegularTagUuid = selectedTag instanceof SNTag ? selectedTag.uuid : undefined
 
     return this.application.itemControllerGroup.createItemController({
-      title,
-      tag: activeRegularTagUuid,
-      createdAt,
-      autofocusBehavior,
+      templateOptions: {
+        title,
+        tag: activeRegularTagUuid,
+        createdAt,
+        autofocusBehavior,
+      },
     })
   }
 

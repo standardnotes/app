@@ -14,7 +14,7 @@ import {
   isPayloadSourceRetrieved,
   PrefKey,
   WebAppEvent,
-} from '@standardnotes/snjs/dist/@types'
+} from '@standardnotes/snjs'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { ChangeEventHandler, forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { NoteViewController } from '../Controller/NoteViewController'
@@ -34,11 +34,12 @@ export type PlainEditorInterface = {
 
 export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
   ({ application, spellcheck, controller, locked, onFocus, onBlur }: Props, ref) => {
-    const [editorText, setEditorText] = useState('')
+    const [editorText, setEditorText] = useState<string | undefined>()
     const [needsAdjustMobileCursor, setNeedsAdjustMobileCursor] = useState(false)
     const [isAdjustingMobileCursor, setIsAdjustingMobileCursor] = useState(false)
     const [lastEditorFocusEventSource, setLastEditorFocusEventSource] = useState<EditorEventSource | undefined>()
     const previousSpellcheck = usePrevious(spellcheck)
+    const note = useRef(controller.item)
 
     /** Setting to true then false will allow the main content textarea to be destroyed
      * then re-initialized. Used when reloading spellcheck status. */
@@ -57,18 +58,20 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
 
     useEffect(() => {
       const disposer = controller.addNoteInnerValueChangeObserver((updatedNote, source) => {
-        if (updatedNote.uuid !== controller.item.uuid) {
+        if (updatedNote.uuid !== note.current.uuid) {
           throw Error('Editor received changes for non-current note')
         }
 
         if (
           isPayloadSourceRetrieved(source) ||
-          !editorText ||
-          updatedNote.editorIdentifier !== controller.item.editorIdentifier ||
-          updatedNote.noteType !== controller.item.noteType
+          editorText == undefined ||
+          updatedNote.editorIdentifier !== note.current.editorIdentifier ||
+          updatedNote.noteType !== note.current.noteType
         ) {
           setEditorText(updatedNote.text)
         }
+
+        note.current = updatedNote
       })
 
       return disposer
@@ -186,7 +189,7 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
         element: editor,
         key: KeyboardKey.Tab,
         onKeyDown: (event) => {
-          if (document.hidden || controller.item.locked || event.shiftKey) {
+          if (document.hidden || note.current.locked || event.shiftKey) {
             return
           }
           event.preventDefault()

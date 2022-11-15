@@ -14,13 +14,13 @@ export enum LoggingDomain {
 
 const LoggingStatus: Record<LoggingDomain, boolean> = {
   [LoggingDomain.DailyNotes]: false,
-  [LoggingDomain.NoteView]: false,
+  [LoggingDomain.NoteView]: true,
   [LoggingDomain.ItemsList]: false,
   [LoggingDomain.NavigationList]: false,
   [LoggingDomain.Viewport]: false,
   [LoggingDomain.Selection]: false,
   [LoggingDomain.BlockEditor]: false,
-  [LoggingDomain.Purchasing]: true,
+  [LoggingDomain.Purchasing]: false,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

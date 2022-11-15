@@ -21,7 +21,7 @@ describe('note view controller', () => {
 
   it('should create notes with plaintext note type', async () => {
     const controller = new NoteViewController(application)
-    await controller.initialize(false)
+    await controller.initialize()
 
     expect(application.mutator.createTemplateItem).toHaveBeenCalledWith(
       ContentType.Note,

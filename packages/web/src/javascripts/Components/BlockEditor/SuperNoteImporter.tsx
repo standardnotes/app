@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import { NoteType, NoteViewController, SNNote } from '@standardnotes/snjs'
+import { NoteType, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
@@ -9,6 +9,7 @@ import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 import Button from '@/Components/Button/Button'
 import ImportPlugin from './Plugins/ImportPlugin/ImportPlugin'
+import { NoteViewController } from '../NoteView/Controller/NoteViewController'
 
 export function spaceSeparatedStrings(...strings: string[]): string {
   return strings.join(' ')
@@ -37,8 +38,9 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
 
   const confirmConvert = useCallback(async () => {
     const controller = new NoteViewController(application, note)
+    await controller.initialize()
     await controller.save({
-      editorValues: { title: note.title, text: lastValue.text },
+      text: lastValue.text,
       previews: { previewPlain: lastValue.previewPlain, previewHtml: undefined },
     })
     closeDialog()
@@ -65,8 +67,10 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
     }
 
     const controller = new NoteViewController(application, note)
+    await controller.initialize()
     void controller.save({
-      editorValues: { title: note.title, text: note.text },
+      title: note.title,
+      text: note.text,
       previews: {
         previewPlain: note.preview_plain,
         previewHtml: undefined,

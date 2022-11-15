@@ -38,7 +38,11 @@ export const BlockEditor: FunctionComponent<Props> = ({
   const controller = useRef(new NoteViewController(application, note))
 
   const handleChange = useCallback(
-    (value: string, preview: string) => {
+    async (value: string, preview: string) => {
+      if (controller.current.needsInit) {
+        await controller.current.initialize()
+      }
+
       void controller.current.save({
         title: note.title,
         text: value,

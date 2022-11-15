@@ -15,6 +15,7 @@ import { ContentType } from '@standardnotes/common'
 import { ItemViewControllerInterface } from './ItemViewControllerInterface'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
 import { EditorSaveTimeoutDebounce } from './EditorSaveTimeoutDebounce'
+import { log, LoggingDomain } from '@/Logging'
 
 export type EditorValues = {
   title: string
@@ -73,11 +74,15 @@ export class NoteViewController implements ItemViewControllerInterface {
       throw Error('NoteViewController already initialized')
     }
 
+    log(LoggingDomain.NoteView, 'Initializing NoteViewController')
+
     this.needsInit = false
 
     const addTagHierarchy = this.application.getPreference(PrefKey.NoteAddToParentFolders, true)
 
     if (!this.item) {
+      log(LoggingDomain.NoteView, 'Initializing as template note')
+
       const editorIdentifier =
         this.defaultTag?.preferences?.editorIdentifier ||
         this.application.componentManager.getDefaultEditor()?.identifier
@@ -149,6 +154,7 @@ export class NoteViewController implements ItemViewControllerInterface {
   }
 
   public insertTemplatedNote(): Promise<DecryptedItemInterface> {
+    log(LoggingDomain.NoteView, 'Inserting template note')
     this.isTemplateNote = false
     return this.application.mutator.insertItem(this.item)
   }
@@ -179,6 +185,10 @@ export class NoteViewController implements ItemViewControllerInterface {
     previews?: { previewPlain: string; previewHtml?: string }
     customMutate?: (mutator: NoteMutator) => void
   }): Promise<void> {
+    if (this.needsInit) {
+      throw Error('NoteViewController not initialized')
+    }
+
     if (this.saveTimeout) {
       clearTimeout(this.saveTimeout)
     }
@@ -205,9 +215,7 @@ export class NoteViewController implements ItemViewControllerInterface {
     previews?: { previewPlain: string; previewHtml?: string }
     customMutate?: (mutator: NoteMutator) => void
   }): Promise<void> {
-    if (this.needsInit) {
-      await this.initialize()
-    }
+    log(LoggingDomain.NoteView, 'Saving note', dto)
 
     const isTemplate = this.isTemplateNote
 
@@ -236,6 +244,7 @@ export class NoteViewController implements ItemViewControllerInterface {
         if (dto.title != undefined) {
           noteMutator.title = dto.title
         }
+
         if (dto.text != undefined) {
           noteMutator.text = dto.text
         }

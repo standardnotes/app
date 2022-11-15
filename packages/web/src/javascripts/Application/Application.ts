@@ -5,7 +5,6 @@ import {
   DeinitSource,
   Platform,
   SNApplication,
-  ItemGroupController,
   removeFromArray,
   DesktopDeviceInterface,
   isDesktopDevice,
@@ -40,6 +39,7 @@ import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { setCustomViewportHeight } from '@/setViewportHeightWithFallback'
 import { WebServices } from './WebServices'
 import { FeatureName } from '@/Controllers/FeatureName'
+import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
