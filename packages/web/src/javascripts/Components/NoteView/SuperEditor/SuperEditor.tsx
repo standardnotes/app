@@ -102,7 +102,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
               <BlocksEditor
                 onChange={handleChange}
                 ignoreFirstChange={true}
-                className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
+                className="relative relative h-full resize-none text-base focus:shadow-none focus:outline-none"
                 previewLength={NotePreviewCharLimit}
                 spellcheck={spellcheck}
               >

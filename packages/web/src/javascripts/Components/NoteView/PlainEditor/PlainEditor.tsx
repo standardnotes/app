@@ -35,18 +35,15 @@ export type PlainEditorInterface = {
 export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
   ({ application, spellcheck, controller, locked, onFocus, onBlur }: Props, ref) => {
     const [editorText, setEditorText] = useState<string | undefined>()
-    const [needsAdjustMobileCursor, setNeedsAdjustMobileCursor] = useState(false)
-    const [isAdjustingMobileCursor, setIsAdjustingMobileCursor] = useState(false)
-    const [lastEditorFocusEventSource, setLastEditorFocusEventSource] = useState<EditorEventSource | undefined>()
-    const previousSpellcheck = usePrevious(spellcheck)
-    const note = useRef(controller.item)
-
-    /** Setting to true then false will allow the main content textarea to be destroyed
-     * then re-initialized. Used when reloading spellcheck status. */
     const [textareaUnloading, setTextareaUnloading] = useState(false)
-
     const [lineHeight, setLineHeight] = useState<EditorLineHeight | undefined>()
     const [fontSize, setFontSize] = useState<EditorFontSize | undefined>()
+    const previousSpellcheck = usePrevious(spellcheck)
+
+    const lastEditorFocusEventSource = useRef<EditorEventSource | undefined>()
+    const needsAdjustMobileCursor = useRef(false)
+    const isAdjustingMobileCursor = useRef(false)
+    const note = useRef(controller.item)
 
     const tabObserverDisposer = useRef<Disposer>()
 
@@ -86,33 +83,33 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
     }
 
     const onContentFocus = useCallback(() => {
-      if (!isAdjustingMobileCursor) {
-        setNeedsAdjustMobileCursor(true)
+      if (!isAdjustingMobileCursor.current) {
+        needsAdjustMobileCursor.current = true
       }
 
-      if (lastEditorFocusEventSource) {
+      if (lastEditorFocusEventSource.current) {
         application.notifyWebEvent(WebAppEvent.EditorFocused, { eventSource: lastEditorFocusEventSource })
       }
 
-      setLastEditorFocusEventSource(undefined)
+      lastEditorFocusEventSource.current = undefined
       onFocus()
     }, [application, isAdjustingMobileCursor, lastEditorFocusEventSource, onFocus])
 
     const onContentBlur = useCallback(() => {
-      if (lastEditorFocusEventSource) {
+      if (lastEditorFocusEventSource.current) {
         application.notifyWebEvent(WebAppEvent.EditorFocused, { eventSource: lastEditorFocusEventSource })
       }
-      setLastEditorFocusEventSource(undefined)
+      lastEditorFocusEventSource.current = undefined
       onBlur()
     }, [application, lastEditorFocusEventSource, onBlur])
 
     const scrollMobileCursorIntoViewAfterWebviewResize = useCallback(() => {
-      if (needsAdjustMobileCursor) {
-        setNeedsAdjustMobileCursor(false)
-        setIsAdjustingMobileCursor(true)
+      if (needsAdjustMobileCursor.current) {
+        needsAdjustMobileCursor.current = false
+        isAdjustingMobileCursor.current = true
         document.getElementById('note-text-editor')?.blur()
         document.getElementById('note-text-editor')?.focus()
-        setIsAdjustingMobileCursor(false)
+        isAdjustingMobileCursor.current = false
       }
     }, [needsAdjustMobileCursor])
 
@@ -128,7 +125,7 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
     const focusEditor = useCallback(() => {
       const element = document.getElementById(ElementIds.NoteTextEditor)
       if (element) {
-        setLastEditorFocusEventSource(EditorEventSource.Script)
+        lastEditorFocusEventSource.current = EditorEventSource.Script
         element.focus()
       }
     }, [])

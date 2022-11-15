@@ -90,7 +90,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       {children}
       <RichTextPlugin
         contentEditable={
-          <div id="blocks-editor" className="editor-scroller">
+          <div id="blocks-editor" className="editor-scroller h-full">
             <div className="editor" ref={onRef}>
               <ContentEditable
                 id={SuperEditorContentId}
