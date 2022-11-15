@@ -2,11 +2,11 @@ import { WebApplication } from '@/Application/Application'
 import { SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { SmartView } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useMemo, useState } from 'react'
+import { FunctionComponent, useCallback, useMemo } from 'react'
 import IconButton from '../Button/IconButton'
 import EditSmartViewModal from '../Preferences/Panes/General/SmartViews/EditSmartViewModal'
+import { EditSmartViewModalController } from '../Preferences/Panes/General/SmartViews/EditSmartViewModalController'
 import AddSmartViewModal from '../SmartViewBuilder/AddSmartViewModal'
 import { AddSmartViewModalController } from '../SmartViewBuilder/AddSmartViewModalController'
 import SmartViewsList from './SmartViewsList'
@@ -19,8 +19,10 @@ type Props = {
 const SmartViewsSection: FunctionComponent<Props> = ({ application, viewControllerManager }) => {
   const premiumModal = usePremiumModal()
   const addSmartViewModalController = useMemo(() => new AddSmartViewModalController(application), [application])
-
-  const [editingSmartView, setEditingSmartView] = useState<SmartView | undefined>(undefined)
+  const editSmartViewModalController = useMemo(
+    () => new EditSmartViewModalController(application, viewControllerManager.navigationController),
+    [application, viewControllerManager.navigationController],
+  )
 
   const createNewSmartView = useCallback(() => {
     if (!viewControllerManager.featuresController.hasSmartViews) {
@@ -47,16 +49,12 @@ const SmartViewsSection: FunctionComponent<Props> = ({ application, viewControll
           />
         </div>
       </div>
-      <SmartViewsList viewControllerManager={viewControllerManager} setEditingSmartView={setEditingSmartView} />
-      {!!editingSmartView && (
-        <EditSmartViewModal
-          application={application}
-          navigationController={viewControllerManager.navigationController}
-          view={editingSmartView}
-          closeDialog={() => {
-            setEditingSmartView(undefined)
-          }}
-        />
+      <SmartViewsList
+        viewControllerManager={viewControllerManager}
+        setEditingSmartView={editSmartViewModalController.setView}
+      />
+      {!!editSmartViewModalController.view && (
+        <EditSmartViewModal controller={editSmartViewModalController} platform={application.platform} />
       )}
       {addSmartViewModalController.isAddingSmartView && (
         <AddSmartViewModal controller={addSmartViewModalController} platform={application.platform} />

@@ -1,9 +1,9 @@
 import { WebApplication } from '@/Application/Application'
 import Button from '@/Components/Button/Button'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
-import { isSystemView, SmartView } from '@standardnotes/snjs'
+import { isSystemView } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Title } from '../../../PreferencesComponents/Content'
 import PreferencesGroup from '../../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
@@ -13,6 +13,7 @@ import EditSmartViewModal from './EditSmartViewModal'
 import SmartViewItem from './SmartViewItem'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import NoSubscriptionBanner from '@/Components/NoSubscriptionBanner/NoSubscriptionBanner'
+import { EditSmartViewModalController } from './EditSmartViewModalController'
 
 type NewType = {
   application: WebApplication
@@ -23,9 +24,11 @@ type NewType = {
 type Props = NewType
 
 const SmartViews = ({ application, navigationController, featuresController }: Props) => {
-  const [editingSmartView, setEditingSmartView] = useState<SmartView | undefined>(undefined)
-
   const addSmartViewModalController = useMemo(() => new AddSmartViewModalController(application), [application])
+  const editSmartViewModalController = useMemo(
+    () => new EditSmartViewModalController(application, navigationController),
+    [application, navigationController],
+  )
 
   const nonSystemSmartViews = navigationController.smartViews.filter((view) => !isSystemView(view))
 
@@ -49,7 +52,7 @@ const SmartViews = ({ application, navigationController, featuresController }: P
                   <SmartViewItem
                     key={view.uuid}
                     view={view}
-                    onEdit={() => setEditingSmartView(view)}
+                    onEdit={() => editSmartViewModalController.setView(view)}
                     onDelete={() => navigationController.remove(view, true)}
                   />
                 ))}
@@ -65,15 +68,8 @@ const SmartViews = ({ application, navigationController, featuresController }: P
           )}
         </PreferencesSegment>
       </PreferencesGroup>
-      {!!editingSmartView && (
-        <EditSmartViewModal
-          application={application}
-          navigationController={navigationController}
-          view={editingSmartView}
-          closeDialog={() => {
-            setEditingSmartView(undefined)
-          }}
-        />
+      {!!editSmartViewModalController.view && (
+        <EditSmartViewModal controller={editSmartViewModalController} platform={application.platform} />
       )}
       {addSmartViewModalController.isAddingSmartView && (
         <AddSmartViewModal controller={addSmartViewModalController} platform={application.platform} />

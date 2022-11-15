@@ -1,4 +1,3 @@
-import { WebApplication } from '@/Application/Application'
 import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import IconPicker from '@/Components/Icon/IconPicker'
@@ -8,25 +7,35 @@ import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
 import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 import Spinner from '@/Components/Spinner/Spinner'
-import { NavigationController } from '@/Controllers/Navigation/NavigationController'
-import { SmartView, TagMutator } from '@standardnotes/snjs'
+import { Platform } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { EditSmartViewModalController } from './EditSmartViewModalController'
 
 type Props = {
-  application: WebApplication
-  navigationController: NavigationController
-  view: SmartView
-  closeDialog: () => void
+  controller: EditSmartViewModalController
+  platform: Platform
 }
 
-const EditSmartViewModal = ({ application, navigationController, view, closeDialog }: Props) => {
-  const [title, setTitle] = useState(view.title)
+const EditSmartViewModal = ({ controller, platform }: Props) => {
+  const {
+    view,
+    title,
+    setTitle,
+    predicateJson,
+    setPredicateJson,
+    isPredicateJsonValid,
+    setIsPredicateJsonValid,
+    icon,
+    setIcon,
+    save,
+    isSaving,
+    closeDialog,
+    deleteView,
+  } = controller
+
   const titleInputRef = useRef<HTMLInputElement>(null)
-
-  const [selectedIcon, setSelectedIcon] = useState<string | undefined>(view.iconString)
-
-  const [isSaving, setIsSaving] = useState(false)
+  const predicateJsonInputRef = useRef<HTMLTextAreaElement>(null)
 
   const [shouldShowIconPicker, setShouldShowIconPicker] = useState(false)
   const iconPickerButtonRef = useRef<HTMLButtonElement>(null)
@@ -41,29 +50,26 @@ const EditSmartViewModal = ({ application, navigationController, view, closeDial
       return
     }
 
-    setIsSaving(true)
+    void save()
+  }, [save, title.length])
 
-    await application.mutator.changeAndSaveItem<TagMutator>(view, (mutator) => {
-      mutator.title = title
-      mutator.iconString = selectedIcon || 'restore'
-    })
+  useEffect(() => {
+    if (!predicateJsonInputRef.current) {
+      return
+    }
 
-    setIsSaving(false)
-    closeDialog()
-  }, [application.mutator, closeDialog, selectedIcon, title, view])
+    if (isPredicateJsonValid === false) {
+      predicateJsonInputRef.current.focus()
+    }
+  }, [isPredicateJsonValid])
 
-  const deleteSmartView = useCallback(async () => {
-    void navigationController.remove(view, true)
-    closeDialog()
-  }, [closeDialog, navigationController, view])
-
-  const close = useCallback(() => {
-    closeDialog()
-  }, [closeDialog])
+  if (!view) {
+    return null
+  }
 
   return (
     <ModalDialog>
-      <ModalDialogLabel closeDialog={close}>Edit Smart View "{view.title}"</ModalDialogLabel>
+      <ModalDialogLabel closeDialog={closeDialog}>Edit Smart View "{view.title}"</ModalDialogLabel>
       <ModalDialogDescription>
         <div className="flex flex-col gap-4">
           <div className="flex items-center gap-2.5">
@@ -85,7 +91,7 @@ const EditSmartViewModal = ({ application, navigationController, view, closeDial
               onClick={toggleIconPicker}
               ref={iconPickerButtonRef}
             >
-              <Icon type={selectedIcon || 'restore'} />
+              <Icon type={icon || 'restore'} />
             </button>
             <Popover
               open={shouldShowIconPicker}
@@ -96,28 +102,48 @@ const EditSmartViewModal = ({ application, navigationController, view, closeDial
             >
               <div className="p-2">
                 <IconPicker
-                  selectedValue={selectedIcon || 'restore'}
+                  selectedValue={icon || 'restore'}
                   onIconChange={(value?: string | undefined) => {
-                    setSelectedIcon(value)
+                    setIcon(value || 'restore')
                     toggleIconPicker()
                   }}
-                  platform={application.platform}
+                  platform={platform}
                   useIconGrid={true}
                   portalDropdown={false}
                 />
               </div>
             </Popover>
           </div>
+          <div className="flex flex-col gap-2.5">
+            <div className="text-sm font-semibold">Predicate:</div>
+            <div className="flex flex-col overflow-hidden rounded-md border border-border">
+              <textarea
+                className="h-full min-h-[10rem] w-full flex-grow resize-none bg-default py-1.5 px-2.5 font-mono text-sm"
+                value={predicateJson}
+                onChange={(event) => {
+                  setPredicateJson(event.target.value)
+                  setIsPredicateJsonValid(true)
+                }}
+                spellCheck={false}
+                ref={predicateJsonInputRef}
+              />
+              {!isPredicateJsonValid && (
+                <div className="border-t border-border px-2.5 py-1.5 text-sm text-danger">
+                  Invalid JSON. Double check your entry and try again.
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </ModalDialogDescription>
       <ModalDialogButtons>
-        <Button className="mr-auto" disabled={isSaving} onClick={deleteSmartView} colorStyle="danger">
+        <Button className="mr-auto" disabled={isSaving} onClick={deleteView} colorStyle="danger">
           Delete
         </Button>
-        <Button disabled={isSaving} onClick={saveSmartView}>
+        <Button disabled={isSaving} onClick={saveSmartView} primary colorStyle="info">
           {isSaving ? <Spinner className="h-4.5 w-4.5" /> : 'Save'}
         </Button>
-        <Button disabled={isSaving} onClick={close}>
+        <Button disabled={isSaving} onClick={closeDialog}>
           Cancel
         </Button>
       </ModalDialogButtons>
