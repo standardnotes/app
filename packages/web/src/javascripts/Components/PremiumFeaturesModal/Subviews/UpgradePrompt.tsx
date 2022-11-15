@@ -13,7 +13,7 @@ export const UpgradePrompt = ({
   hasAccount,
   onClose,
 }: {
-  featureName: string
+  featureName?: string
   ctaRef: React.RefObject<HTMLButtonElement>
   application: WebApplication
   hasSubscription: boolean
@@ -52,8 +52,17 @@ export const UpgradePrompt = ({
         <div className="mb-1 text-center text-lg font-bold">Enable Advanced Features</div>
       </AlertDialogLabel>
       <AlertDialogDescription className="mb-2 px-4.5 text-center text-sm text-passive-1">
-        To take advantage of <span className="font-semibold">{featureName}</span> and other advanced features, upgrade
-        your current plan.
+        {featureName && (
+          <span>
+            To take advantage of <span className="font-semibold">{featureName}</span> and other advanced features,
+            upgrade your current plan.
+          </span>
+        )}
+        {!featureName && (
+          <span>
+            To take advantage of all the advanced features Standard Notes has to offer, upgrade your current plan.
+          </span>
+        )}
         {application.isNativeIOS() && (
           <div className="mt-2">
             <div className="mb-2 font-bold">The Professional Plan costs $99.99/year and includes benefits like</div>

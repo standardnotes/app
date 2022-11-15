@@ -15,7 +15,11 @@ const NoSubscription: FunctionComponent<Props> = ({ application }) => {
     const errorMessage = 'There was an error when attempting to redirect you to the subscription page.'
     setIsLoadingPurchaseFlow(true)
     try {
-      application.openPurchaseFlow()
+      if (application.isNativeIOS()) {
+        application.showPremiumModal()
+      } else {
+        application.openPurchaseFlow()
+      }
     } catch (e) {
       setPurchaseFlowError(errorMessage)
     } finally {

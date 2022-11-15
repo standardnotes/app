@@ -356,7 +356,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.getViewControllerManager().featuresController.entitledToFiles
   }
 
-  showPremiumModal(featureName: FeatureName): void {
+  showPremiumModal(featureName?: FeatureName): void {
     void this.getViewControllerManager().featuresController.showPremiumAlert(featureName)
   }
 

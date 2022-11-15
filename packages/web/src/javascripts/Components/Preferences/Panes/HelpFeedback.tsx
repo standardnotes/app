@@ -42,12 +42,20 @@ const HelpAndFeedback = ({ application }: { application: WebApplication }) => {
             </a>
           </Text>
           {application.isNativeIOS() && (
-            <LinkButton
-              className="mt-3"
-              label="Privacy Policy"
-              link="https://standardnotes.com/privacy"
-              onClick={handleClick}
-            />
+            <>
+              <LinkButton
+                className="mt-3"
+                label="Privacy Policy"
+                link="https://standardnotes.com/privacy"
+                onClick={handleClick}
+              />
+              <LinkButton
+                className="mt-3"
+                label="Terms of Use"
+                link="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/"
+                onClick={handleClick}
+              />
+            </>
           )}
         </PreferencesSegment>
         <HorizontalSeparator classes="my-4" />

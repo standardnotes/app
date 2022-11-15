@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.98.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.98.0...@standardnotes/web@3.98.1) (2022-11-15)
+
+### Bug Fixes
+
+* **mobile:** show premium modal on iOS ([e962e9c](https://github.com/standardnotes/app/commit/e962e9c7457115100aba0f5d34c949ab2d8b0e23))
+
+# [3.98.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.97.0...@standardnotes/web@3.98.0) (2022-11-15)
+
+### Features
+
+* add smart view with custom json ([#2000](https://github.com/standardnotes/app/issues/2000)) ([68991ab](https://github.com/standardnotes/app/commit/68991abba7a2b32047ec7cc6402c3a8b5cc6ec52))
+
 # [3.97.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.96.1...@standardnotes/web@3.97.0) (2022-11-14)
 
 ### Bug Fixes
