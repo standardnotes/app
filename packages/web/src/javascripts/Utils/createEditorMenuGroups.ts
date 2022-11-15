@@ -1,4 +1,3 @@
-import { featureTrunkEnabled, FeatureTrunkName } from '@/FeatureTrunk'
 import { WebApplication } from '@/Application/Application'
 import {
   ContentType,
@@ -8,6 +7,7 @@ import {
   FeatureDescription,
   GetFeatures,
   NoteType,
+  FeatureIdentifier,
 } from '@standardnotes/snjs'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
@@ -72,7 +72,7 @@ const insertInstalledComponentsInMap = (
   })
 }
 
-const createGroupsFromMap = (map: NoteTypeToEditorRowsMap): EditorMenuGroup[] => {
+const createGroupsFromMap = (map: NoteTypeToEditorRowsMap, application: WebApplication): EditorMenuGroup[] => {
   const groups: EditorMenuGroup[] = [
     {
       icon: 'plain-text',
@@ -124,7 +124,7 @@ const createGroupsFromMap = (map: NoteTypeToEditorRowsMap): EditorMenuGroup[] =>
     },
   ]
 
-  if (featureTrunkEnabled(FeatureTrunkName.Super)) {
+  if (application.features.isExperimentalFeatureEnabled(FeatureIdentifier.SuperEditor)) {
     groups.splice(1, 0, {
       icon: SuperEditorMetadata.icon,
       iconClassName: SuperEditorMetadata.iconClassName,
@@ -137,7 +137,7 @@ const createGroupsFromMap = (map: NoteTypeToEditorRowsMap): EditorMenuGroup[] =>
   return groups
 }
 
-const createBaselineMap = (): NoteTypeToEditorRowsMap => {
+const createBaselineMap = (application: WebApplication): NoteTypeToEditorRowsMap => {
   const map: NoteTypeToEditorRowsMap = {
     [NoteType.Plain]: [
       {
@@ -156,7 +156,7 @@ const createBaselineMap = (): NoteTypeToEditorRowsMap => {
     [NoteType.Unknown]: [],
   }
 
-  if (featureTrunkEnabled(FeatureTrunkName.Super)) {
+  if (application.features.isExperimentalFeatureEnabled(FeatureIdentifier.SuperEditor)) {
     map[NoteType.Super].push({
       name: SuperEditorMetadata.name,
       isEntitled: true,
@@ -168,11 +168,11 @@ const createBaselineMap = (): NoteTypeToEditorRowsMap => {
 }
 
 export const createEditorMenuGroups = (application: WebApplication, components: SNComponent[]) => {
-  const map = createBaselineMap()
+  const map = createBaselineMap(application)
 
   insertNonInstalledNativeComponentsInMap(map, components, application)
 
   insertInstalledComponentsInMap(map, components, application)
 
-  return createGroupsFromMap(map)
+  return createGroupsFromMap(map, application)
 }

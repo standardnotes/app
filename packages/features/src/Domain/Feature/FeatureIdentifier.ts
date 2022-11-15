@@ -6,7 +6,6 @@ export enum FeatureIdentifier {
   DailyGDriveBackup = 'org.standardnotes.daily-gdrive-backup',
   DailyOneDriveBackup = 'org.standardnotes.daily-onedrive-backup',
   Files = 'org.standardnotes.files',
-  FilesBeta = 'org.standardnotes.files-beta',
   FilesLowStorageTier = 'org.standardnotes.files-low-storage-tier',
   FilesMaximumStorageTier = 'org.standardnotes.files-max-storage-tier',
   ListedCustomDomain = 'org.standardnotes.listed-custom-domain',
@@ -28,10 +27,12 @@ export enum FeatureIdentifier {
   SolarizedDarkTheme = 'org.standardnotes.theme-solarized-dark',
   TitaniumTheme = 'org.standardnotes.theme-titanium',
 
+  PlainEditor = 'com.standardnotes.plain-text',
+  SuperEditor = 'com.standardnotes.super-editor',
+
   CodeEditor = 'org.standardnotes.code-editor',
   MarkdownProEditor = 'org.standardnotes.advanced-markdown-editor',
   MarkdownVisualEditor = 'org.standardnotes.markdown-visual-editor',
-  PlainTextEditor = 'org.standardnotes.plain-text-editor',
   PlusEditor = 'org.standardnotes.plus-editor',
   SheetsEditor = 'org.standardnotes.standard-sheets',
   TaskEditor = 'org.standardnotes.simple-task-editor',
@@ -50,4 +51,4 @@ export enum FeatureIdentifier {
  */
 export const LegacyFileSafeIdentifier = 'org.standardnotes.legacy.file-safe'
 
-export const ExperimentalFeatures = []
+export const ExperimentalFeatures = [FeatureIdentifier.SuperEditor]

@@ -2,7 +2,6 @@ import { FeatureIdentifier } from '@standardnotes/snjs'
 import { ComponentArea, NoteType } from '@standardnotes/features'
 import { WebApplication } from '@/Application/Application'
 import { PlainEditorMetadata, SuperEditorMetadata } from '@/Constants/Constants'
-import { featureTrunkEnabled, FeatureTrunkName } from '@/FeatureTrunk'
 import { getIconAndTintForNoteType } from './Items/Icons/getIconAndTintForNoteType'
 import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 
@@ -46,7 +45,7 @@ export function getDropdownItemsForAllEditors(application: WebApplication): Edit
 
   options.push(plaintextOption)
 
-  if (featureTrunkEnabled(FeatureTrunkName.Super)) {
+  if (application.features.isExperimentalFeatureEnabled(FeatureIdentifier.SuperEditor)) {
     options.push({
       icon: SuperEditorMetadata.icon,
       iconClassName: SuperEditorMetadata.iconClassName,

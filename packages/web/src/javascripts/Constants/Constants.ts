@@ -1,4 +1,4 @@
-import { IconType, SuperEditorIdentifier, PlainEditorIdentifier, EditorIdentifier } from '@standardnotes/snjs'
+import { IconType, EditorIdentifier, FeatureIdentifier } from '@standardnotes/snjs'
 
 export const PANEL_NAME_NOTES = 'notes'
 export const PANEL_NAME_NAVIGATION = 'navigation'
@@ -32,7 +32,7 @@ export const SuperEditorMetadata: {
   icon: IconType
   iconClassName: string
 } = {
-  identifier: SuperEditorIdentifier,
+  identifier: FeatureIdentifier.SuperEditor,
   name: 'Super',
   icon: 'file-doc',
   iconClassName: 'text-accessory-tint-4',
@@ -44,7 +44,7 @@ export const PlainEditorMetadata: {
   icon: IconType
   iconClassName: string
 } = {
-  identifier: PlainEditorIdentifier,
+  identifier: FeatureIdentifier.PlainEditor,
   name: 'Plain Text',
   icon: 'plain-text',
   iconClassName: 'text-accessory-tint-1',
