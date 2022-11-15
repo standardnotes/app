@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import { NoteViewController, SNNote } from '@standardnotes/snjs'
+import { SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useRef } from 'react'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ItemSelectionPlugin } from './Plugins/ItemSelectionPlugin/ItemSelectionPlugin'
@@ -16,6 +16,7 @@ import { FilesController } from '@/Controllers/FilesController'
 import FilesControllerProvider from '@/Controllers/FilesControllerProvider'
 import DatetimePlugin from './Plugins/DateTimePlugin/DateTimePlugin'
 import AutoLinkPlugin from './Plugins/AutoLinkPlugin/AutoLinkPlugin'
+import { NoteViewController } from '../NoteView/Controller/NoteViewController'
 
 const NotePreviewCharLimit = 160
 
@@ -39,7 +40,8 @@ export const BlockEditor: FunctionComponent<Props> = ({
   const handleChange = useCallback(
     (value: string, preview: string) => {
       void controller.current.save({
-        editorValues: { title: note.title, text: value },
+        title: note.title,
+        text: value,
         previews: {
           previewPlain: preview,
           previewHtml: undefined,

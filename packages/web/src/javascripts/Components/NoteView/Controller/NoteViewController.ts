@@ -9,10 +9,9 @@ import {
   PayloadEmitSource,
   PrefKey,
 } from '@standardnotes/models'
+import { SNApplication, UuidString } from '@standardnotes/snjs'
 import { removeFromArray } from '@standardnotes/utils'
 import { ContentType } from '@standardnotes/common'
-import { UuidString } from '@Lib/Types/UuidString'
-import { SNApplication } from '../Application/Application'
 import { ItemViewControllerInterface } from './ItemViewControllerInterface'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
 import { EditorSaveTimeoutDebounce } from './EditorSaveTimeoutDebounce'
@@ -171,17 +170,35 @@ export class NoteViewController implements ItemViewControllerInterface {
     }
   }
 
-  /**
-   * @param bypassDebouncer Calling save will debounce by default. You can pass true to save
-   * immediately.
-   * @param isUserModified This field determines if the item will be saved as a user
-   * modification, thus updating the user modified date displayed in the UI
-   * @param dontGeneratePreviews Whether this change should update the note's plain and HTML
-   * preview.
-   * @param customMutate A custom mutator function.
-   */
   public async save(dto: {
-    editorValues: EditorValues
+    title?: string
+    text?: string
+    bypassDebouncer?: boolean
+    isUserModified?: boolean
+    dontGeneratePreviews?: boolean
+    previews?: { previewPlain: string; previewHtml?: string }
+    customMutate?: (mutator: NoteMutator) => void
+  }): Promise<void> {
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout)
+    }
+
+    const noDebounce = dto.bypassDebouncer || this.application.noAccount()
+
+    const syncDebouceMs = noDebounce
+      ? EditorSaveTimeoutDebounce.ImmediateChange
+      : this.application.isNativeMobileWeb()
+      ? EditorSaveTimeoutDebounce.NativeMobileWeb
+      : EditorSaveTimeoutDebounce.Desktop
+
+    this.saveTimeout = setTimeout(() => {
+      void this.undebouncedSave(dto)
+    }, syncDebouceMs)
+  }
+
+  private async undebouncedSave(dto: {
+    title?: string
+    text?: string
     bypassDebouncer?: boolean
     isUserModified?: boolean
     dontGeneratePreviews?: boolean
@@ -192,8 +209,6 @@ export class NoteViewController implements ItemViewControllerInterface {
       await this.initialize()
     }
 
-    const title = dto.editorValues.title
-    const text = dto.editorValues.text
     const isTemplate = this.isTemplateNote
 
     if (typeof document !== 'undefined' && document.hidden) {
@@ -217,14 +232,19 @@ export class NoteViewController implements ItemViewControllerInterface {
         if (dto.customMutate) {
           dto.customMutate(noteMutator)
         }
-        noteMutator.title = title
-        noteMutator.text = text
+
+        if (dto.title != undefined) {
+          noteMutator.title = dto.title
+        }
+        if (dto.text != undefined) {
+          noteMutator.text = dto.text
+        }
 
         if (dto.previews) {
           noteMutator.preview_plain = dto.previews.previewPlain
           noteMutator.preview_html = dto.previews.previewHtml
-        } else if (!dto.dontGeneratePreviews) {
-          const noteText = text || ''
+        } else if (!dto.dontGeneratePreviews && dto.text != undefined) {
+          const noteText = dto.text || ''
           const truncate = noteText.length > NotePreviewCharLimit
           const substring = noteText.substring(0, NotePreviewCharLimit)
           const previewPlain = substring + (truncate ? StringEllipses : '')
@@ -235,20 +255,6 @@ export class NoteViewController implements ItemViewControllerInterface {
       dto.isUserModified,
     )
 
-    if (this.saveTimeout) {
-      clearTimeout(this.saveTimeout)
-    }
-
-    const noDebounce = dto.bypassDebouncer || this.application.noAccount()
-
-    const syncDebouceMs = noDebounce
-      ? EditorSaveTimeoutDebounce.ImmediateChange
-      : this.application.isNativeMobileWeb()
-      ? EditorSaveTimeoutDebounce.NativeMobileWeb
-      : EditorSaveTimeoutDebounce.Desktop
-
-    this.saveTimeout = setTimeout(() => {
-      void this.application.sync.sync()
-    }, syncDebouceMs)
+    void this.application.sync.sync()
   }
 }

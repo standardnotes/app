@@ -1,4 +1,4 @@
-import { UuidString } from '@Lib/Types/UuidString'
+import { UuidString } from '@standardnotes/snjs'
 
 export type TemplateNoteViewControllerOptions = {
   title?: string

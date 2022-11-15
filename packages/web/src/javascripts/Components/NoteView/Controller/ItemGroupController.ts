@@ -1,6 +1,6 @@
 import { FileItem, SNNote } from '@standardnotes/models'
 import { removeFromArray } from '@standardnotes/utils'
-import { SNApplication } from '../Application/Application'
+import { SNApplication } from '@standardnotes/snjs'
 import { NoteViewController } from './NoteViewController'
 import { FileViewController } from './FileViewController'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'

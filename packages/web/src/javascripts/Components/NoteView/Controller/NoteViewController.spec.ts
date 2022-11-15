@@ -1,7 +1,5 @@
-import { SNApplication } from './../Application/Application'
 import { ContentType } from '@standardnotes/common'
-import { MutatorService } from './../Services/Mutator/MutatorService'
-import { SNComponentManager } from './../Services/ComponentManager/ComponentManager'
+import { SNApplication, MutatorService, SNComponentManager } from '@standardnotes/snjs'
 import { NoteType } from '@standardnotes/features'
 import { NoteViewController } from './NoteViewController'
 

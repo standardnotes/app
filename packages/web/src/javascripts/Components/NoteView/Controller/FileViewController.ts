@@ -1,6 +1,6 @@
 import { FileItem } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
-import { SNApplication } from '../Application/Application'
+import { SNApplication } from '@standardnotes/snjs'
 import { ItemViewControllerInterface } from './ItemViewControllerInterface'
 
 export class FileViewController implements ItemViewControllerInterface {
