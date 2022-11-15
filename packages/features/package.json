@@ -31,7 +31,7 @@
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
-    "@types/jest": "^28.1.5",
+    "@types/jest": "^29.2.3",
     "@typescript-eslint/eslint-plugin": "*",
     "eslint": "*",
     "eslint-plugin-prettier": "*",
