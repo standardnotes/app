@@ -182,9 +182,9 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
               <TabPanel state={tabState} id="builder" className="flex flex-col gap-2.5 p-4">
                 <CompoundPredicateBuilder controller={predicateController} />
               </TabPanel>
-              <TabPanel state={tabState} id="custom">
+              <TabPanel state={tabState} id="custom" className="flex flex-col">
                 <textarea
-                  className="h-full min-h-[10rem] w-full resize-none bg-default py-1.5 px-2.5 font-mono text-sm"
+                  className="h-full min-h-[10rem] w-full flex-grow resize-none bg-default py-1.5 px-2.5 font-mono text-sm"
                   value={customPredicateJson}
                   onChange={(event) => {
                     setCustomPredicateJson(event.target.value)
@@ -194,7 +194,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
                   ref={customJsonInputRef}
                 />
                 {customPredicateJson && isCustomJsonValidPredicate === false && (
-                  <div className="mt-2 border-t border-border px-2.5 py-1.5 text-sm text-danger">
+                  <div className="border-t border-border px-2.5 py-1.5 text-sm text-danger">
                     Invalid JSON. Double check your entry and try again.
                   </div>
                 )}
