@@ -61,7 +61,7 @@ export const createSmartViewWithContent = (content: Partial<SmartViewContent>): 
     new DecryptedPayload(
       {
         uuid: mockUuid(),
-        content_type: ContentType.Tag,
+        content_type: ContentType.SmartView,
         content: FillItemContent<SmartViewContent>(content),
         ...PayloadTimestampDefaults(),
       },
