@@ -1,4 +1,5 @@
-import { NoteType, noteTypeForEditorIdentifier } from '@standardnotes/features'
+import { WebApplication } from '@/Application/Application'
+import { noteTypeForEditorIdentifier } from '@standardnotes/features'
 import { InfoStrings } from '@standardnotes/services'
 import {
   NoteMutator,
@@ -9,7 +10,7 @@ import {
   PayloadEmitSource,
   PrefKey,
 } from '@standardnotes/models'
-import { SNApplication, UuidString } from '@standardnotes/snjs'
+import { UuidString } from '@standardnotes/snjs'
 import { removeFromArray } from '@standardnotes/utils'
 import { ContentType } from '@standardnotes/common'
 import { ItemViewControllerInterface } from './ItemViewControllerInterface'
@@ -38,7 +39,7 @@ export class NoteViewController implements ItemViewControllerInterface {
   public needsInit = true
 
   constructor(
-    private application: SNApplication,
+    private application: WebApplication,
     item?: SNNote,
     public templateNoteOptions?: TemplateNoteViewControllerOptions,
   ) {
@@ -83,22 +84,16 @@ export class NoteViewController implements ItemViewControllerInterface {
     if (!this.item) {
       log(LoggingDomain.NoteView, 'Initializing as template note')
 
-      const editorIdentifier =
-        this.defaultTag?.preferences?.editorIdentifier ||
-        this.application.componentManager.getDefaultEditor()?.identifier
+      const editorIdentifier = this.application.geDefaultEditorIdentifier(this.defaultTag)
 
-      const noteType = editorIdentifier ? noteTypeForEditorIdentifier(editorIdentifier) : NoteType.Unknown
-
-      const defaultEditor = editorIdentifier
-        ? this.application.componentManager.componentWithIdentifier(editorIdentifier)
-        : undefined
+      const noteType = noteTypeForEditorIdentifier(editorIdentifier)
 
       const note = this.application.mutator.createTemplateItem<NoteContent, SNNote>(
         ContentType.Note,
         {
           text: '',
           title: this.templateNoteOptions?.title || '',
-          noteType: defaultEditor?.noteType || noteType,
+          noteType: noteType,
           editorIdentifier: editorIdentifier,
           references: [],
         },

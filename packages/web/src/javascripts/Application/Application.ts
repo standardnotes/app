@@ -19,6 +19,8 @@ import {
   MobileUnlockTiming,
   InternalEventBus,
   DecryptedItem,
+  EditorIdentifier,
+  FeatureIdentifier,
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
 import { PanelResizedData } from '@/Types/PanelResizedData'
@@ -377,5 +379,14 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   showAccountMenu(): void {
     this.getViewControllerManager().accountMenuController.setShow(true)
+  }
+
+  geDefaultEditorIdentifier(currentTag?: SNTag): EditorIdentifier {
+    return (
+      currentTag?.preferences?.editorIdentifier ||
+      this.getPreference(PrefKey.DefaultEditorIdentifier) ||
+      this.componentManager.legacyGetDefaultEditor()?.identifier ||
+      FeatureIdentifier.PlainEditor
+    )
   }
 }

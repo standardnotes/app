@@ -1,4 +1,4 @@
-import { IconType, EditorIdentifier, FeatureIdentifier } from '@standardnotes/snjs'
+import { IconType } from '@standardnotes/snjs'
 
 export const PANEL_NAME_NOTES = 'notes'
 export const PANEL_NAME_NAVIGATION = 'navigation'
@@ -27,7 +27,6 @@ export const SYNC_TIMEOUT_DEBOUNCE = 350
 export const SYNC_TIMEOUT_NO_DEBOUNCE = 100
 
 type EditorMetadata = {
-  identifier: EditorIdentifier
   name: string
   icon: IconType
   iconClassName: string
@@ -35,7 +34,6 @@ type EditorMetadata = {
 }
 
 export const SuperEditorMetadata: EditorMetadata = {
-  identifier: FeatureIdentifier.SuperEditor,
   name: 'Super',
   icon: 'file-doc',
   iconClassName: 'text-accessory-tint-4',
@@ -43,7 +41,6 @@ export const SuperEditorMetadata: EditorMetadata = {
 }
 
 export const PlainEditorMetadata: EditorMetadata = {
-  identifier: FeatureIdentifier.PlainEditor,
   name: 'Plain Text',
   icon: 'plain-text',
   iconClassName: 'text-accessory-tint-1',

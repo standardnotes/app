@@ -619,7 +619,7 @@ export class SNComponentManager
         return editor
       }
     }
-    const defaultEditor = this.getDefaultEditor()
+    const defaultEditor = this.legacyGetDefaultEditor()
 
     if (defaultEditor && !defaultEditor.isExplicitlyDisabledForItem(note.uuid)) {
       return defaultEditor
@@ -628,9 +628,9 @@ export class SNComponentManager
     }
   }
 
-  getDefaultEditor(): SNComponent | undefined {
+  legacyGetDefaultEditor(): SNComponent | undefined {
     const editors = this.componentsForArea(ComponentArea.Editor)
-    return editors.filter((e) => e.isDefaultEditor())[0]
+    return editors.filter((e) => e.legacyIsDefaultEditor())[0]
   }
 
   permissionsStringForPermissions(permissions: ComponentPermission[], component: SNComponent): string {

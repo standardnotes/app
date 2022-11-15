@@ -6,13 +6,13 @@ import { getIconAndTintForNoteType } from './Items/Icons/getIconAndTintForNoteTy
 import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 
 export type EditorOption = DropdownItem & {
-  value: FeatureIdentifier | typeof PlainEditorMetadata.identifier | typeof SuperEditorMetadata.identifier
+  value: FeatureIdentifier
 }
 
 export function noteTypeForEditorOptionValue(value: EditorOption['value'], application: WebApplication): NoteType {
-  if (value === PlainEditorMetadata.identifier) {
+  if (value === FeatureIdentifier.PlainEditor) {
     return NoteType.Plain
-  } else if (value === SuperEditorMetadata.identifier) {
+  } else if (value === FeatureIdentifier.SuperEditor) {
     return NoteType.Super
   }
 
@@ -28,7 +28,7 @@ export function getDropdownItemsForAllEditors(application: WebApplication): Edit
     icon: PlainEditorMetadata.icon,
     iconClassName: PlainEditorMetadata.iconClassName,
     label: PlainEditorMetadata.name,
-    value: PlainEditorMetadata.identifier,
+    value: FeatureIdentifier.PlainEditor,
   }
 
   const options = application.componentManager.componentsForArea(ComponentArea.Editor).map((editor): EditorOption => {
@@ -50,7 +50,7 @@ export function getDropdownItemsForAllEditors(application: WebApplication): Edit
       icon: SuperEditorMetadata.icon,
       iconClassName: SuperEditorMetadata.iconClassName,
       label: SuperEditorMetadata.name,
-      value: SuperEditorMetadata.identifier,
+      value: FeatureIdentifier.SuperEditor,
     })
   }
 
