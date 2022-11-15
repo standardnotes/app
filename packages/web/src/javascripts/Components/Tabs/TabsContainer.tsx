@@ -16,7 +16,7 @@ const TabsContainer = ({ tabs, state, children }: Props) => {
     <div className="overflow-hidden rounded-md border border-border">
       <TabList state={state} className="border-b border-border">
         {tabs.map(({ id, title }) => (
-          <Tab key={id} id={id}>
+          <Tab key={id} id={id} className="first:rounded-tl-md">
             {title}
           </Tab>
         ))}
