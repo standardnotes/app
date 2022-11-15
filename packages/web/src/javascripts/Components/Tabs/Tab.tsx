@@ -20,8 +20,9 @@ const Tab = ({ id, className, children, ...props }: Props) => {
       aria-selected={isActive}
       aria-controls={`tab-panel-${id}`}
       className={classNames(
-        'relative cursor-pointer border-0 bg-default px-3 py-2.5 text-sm focus:shadow-inner',
-        isActive ? 'font-medium text-info shadow-bottom' : 'text-text',
+        'relative cursor-pointer border-0 bg-default px-3 py-2.5 text-sm first:rounded-tl-md focus:shadow-inner',
+        isActive ? 'font-medium text-info' : 'text-text',
+        isActive && 'after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:bg-info',
         className,
       )}
       {...props}
