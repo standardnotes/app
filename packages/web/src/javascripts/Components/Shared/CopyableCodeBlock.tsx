@@ -13,12 +13,14 @@ const CopyableCodeBlock = ({ code }: Props) => {
   const [isCopyButtonVisible, setIsCopyButtonVisible] = useState(false)
 
   return (
-    <pre
-      className="group relative rounded-md bg-default px-2.5 py-1.5"
-      onMouseEnter={() => setIsCopyButtonVisible(true)}
-      onMouseLeave={() => setIsCopyButtonVisible(false)}
-    >
-      {code}
+    <div className="group relative">
+      <pre
+        className="overflow-auto rounded-md bg-default px-2.5 py-1.5"
+        onMouseEnter={() => setIsCopyButtonVisible(true)}
+        onMouseLeave={() => setIsCopyButtonVisible(false)}
+      >
+        {code}
+      </pre>
       <div className="absolute top-1.5 right-1.5">
         <button
           ref={buttonRef}
@@ -50,13 +52,13 @@ const CopyableCodeBlock = ({ code }: Props) => {
         <div
           className={classNames(
             didCopy ? '' : 'hidden',
-            'absolute top-full right-0 min-w-[90vw] translate-x-2 translate-y-1 select-none rounded border border-border bg-default py-1.5 px-3 text-left peer-hover:block peer-focus:block md:min-w-max',
+            'absolute top-full right-0 min-w-max translate-x-2 translate-y-1 select-none rounded border border-border bg-default py-1.5 px-3 text-left md:peer-hover:block md:peer-focus:block',
           )}
         >
           {didCopy ? 'Copied!' : 'Copy example to clipboard'}
         </div>
       </div>
-    </pre>
+    </div>
   )
 }
 
