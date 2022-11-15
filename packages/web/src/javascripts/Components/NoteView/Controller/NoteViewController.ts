@@ -171,7 +171,7 @@ export class NoteViewController implements ItemViewControllerInterface {
     }
   }
 
-  public async saveAndAwaitLocalPropagation(dto: {
+  public async saveAndAwaitLocalPropagation(params: {
     title?: string
     text?: string
     isUserModified: boolean
@@ -188,7 +188,7 @@ export class NoteViewController implements ItemViewControllerInterface {
       clearTimeout(this.saveTimeout)
     }
 
-    const noDebounce = dto.bypassDebouncer || this.application.noAccount()
+    const noDebounce = params.bypassDebouncer || this.application.noAccount()
 
     const syncDebouceMs = noDebounce
       ? EditorSaveTimeoutDebounce.ImmediateChange
@@ -198,12 +198,12 @@ export class NoteViewController implements ItemViewControllerInterface {
 
     return new Promise((resolve) => {
       this.saveTimeout = setTimeout(() => {
-        void this.undebouncedSave({ ...dto, onLocalPropagationComplete: resolve })
+        void this.undebouncedSave({ ...params, onLocalPropagationComplete: resolve })
       }, syncDebouceMs)
     })
   }
 
-  private async undebouncedSave(dto: {
+  private async undebouncedSave(params: {
     title?: string
     text?: string
     bypassDebouncer?: boolean
@@ -214,7 +214,7 @@ export class NoteViewController implements ItemViewControllerInterface {
     onLocalPropagationComplete?: () => void
     onRemoteSyncComplete?: () => void
   }): Promise<void> {
-    log(LoggingDomain.NoteView, 'Saving note', dto)
+    log(LoggingDomain.NoteView, 'Saving note', params)
 
     const isTemplate = this.isTemplateNote
 
@@ -235,23 +235,23 @@ export class NoteViewController implements ItemViewControllerInterface {
       this.item,
       (mutator) => {
         const noteMutator = mutator as NoteMutator
-        if (dto.customMutate) {
-          dto.customMutate(noteMutator)
+        if (params.customMutate) {
+          params.customMutate(noteMutator)
         }
 
-        if (dto.title != undefined) {
-          noteMutator.title = dto.title
+        if (params.title != undefined) {
+          noteMutator.title = params.title
         }
 
-        if (dto.text != undefined) {
-          noteMutator.text = dto.text
+        if (params.text != undefined) {
+          noteMutator.text = params.text
         }
 
-        if (dto.previews) {
-          noteMutator.preview_plain = dto.previews.previewPlain
-          noteMutator.preview_html = dto.previews.previewHtml
-        } else if (!dto.dontGeneratePreviews && dto.text != undefined) {
-          const noteText = dto.text || ''
+        if (params.previews) {
+          noteMutator.preview_plain = params.previews.previewPlain
+          noteMutator.preview_html = params.previews.previewHtml
+        } else if (!params.dontGeneratePreviews && params.text != undefined) {
+          const noteText = params.text || ''
           const truncate = noteText.length > NotePreviewCharLimit
           const substring = noteText.substring(0, NotePreviewCharLimit)
           const previewPlain = substring + (truncate ? StringEllipses : '')
@@ -259,13 +259,13 @@ export class NoteViewController implements ItemViewControllerInterface {
           noteMutator.preview_html = undefined
         }
       },
-      dto.isUserModified,
+      params.isUserModified,
     )
 
-    dto.onLocalPropagationComplete?.()
+    params.onLocalPropagationComplete?.()
 
     void this.application.sync.sync().then(() => {
-      dto.onRemoteSyncComplete?.()
+      params.onRemoteSyncComplete?.()
     })
   }
 }
