@@ -41,7 +41,7 @@ const ComplexCompoundExampleCode = `{
         "value": {
           "keypath": "title",
           "operator": "=",
-          "value": "boo"
+          "value": "completed-tasks"
         }
       }
     },
@@ -51,7 +51,7 @@ const ComplexCompoundExampleCode = `{
       "value": {
         "keypath": "title",
         "operator": "=",
-        "value": "foo"
+        "value": "remaining-tasks"
       }
     }
   ]
@@ -211,7 +211,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
                     <div className="text-sm font-medium">1. List notes that are conflicted copies of another note:</div>
                     <CopyableCodeBlock code={ConflictedNotesExampleCode} />
                     <div className="text-sm font-medium">
-                      2. List notes that have the tag `foo` but don't have the tag `boo`:
+                      2. List notes that have the tag `remaining-tasks` but not the tag `completed-tasks`:
                     </div>
                     <CopyableCodeBlock code={ComplexCompoundExampleCode} />
                   </DisclosurePanel>
