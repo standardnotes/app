@@ -24,7 +24,7 @@ const CopyableCodeBlock = ({ code }: Props) => {
           ref={buttonRef}
           className={classNames(
             'peer rounded border border-border bg-default p-2 text-text hover:bg-contrast',
-            isCopyButtonVisible ? 'opacity-100' : 'opacity-0',
+            !isCopyButtonVisible && 'hidden',
           )}
           onClick={() => {
             navigator.clipboard.writeText(code).then(
@@ -49,8 +49,8 @@ const CopyableCodeBlock = ({ code }: Props) => {
         </button>
         <div
           className={classNames(
-            didCopy ? '' : 'hidden',
-            'absolute top-full right-0 min-w-max translate-x-2 translate-y-1 select-none rounded border border-border bg-default py-1.5 px-3 text-left md:peer-hover:block md:peer-focus:block',
+            didCopy && isCopyButtonVisible ? '' : 'hidden',
+            'absolute top-full right-0 min-w-max translate-x-2 translate-y-1 select-none rounded border border-border bg-default py-1.5 px-3 text-left md:peer-hover:block',
           )}
         >
           {didCopy ? 'Copied!' : 'Copy example to clipboard'}
