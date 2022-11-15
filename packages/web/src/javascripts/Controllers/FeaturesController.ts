@@ -82,7 +82,7 @@ export class FeaturesController extends AbstractViewController {
     }
   }
 
-  public async showPremiumAlert(featureName: FeatureName | string): Promise<void> {
+  public async showPremiumAlert(featureName?: FeatureName | string): Promise<void> {
     this.premiumAlertFeatureName = featureName
     this.premiumAlertType = PremiumFeatureModalType.UpgradePrompt
 

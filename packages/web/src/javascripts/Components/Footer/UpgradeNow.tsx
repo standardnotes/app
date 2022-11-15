@@ -13,11 +13,19 @@ const UpgradeNow = ({ application, featuresController, subscriptionContoller }: 
   const shouldShowCTA = !featuresController.hasFolders
   const hasAccount = subscriptionContoller.hasAccount
 
+  const onClick = () => {
+    if (application.isNativeIOS()) {
+      application.showPremiumModal()
+    } else {
+      application.openPurchaseFlow()
+    }
+  }
+
   return shouldShowCTA ? (
     <div className="flex h-full items-center px-2">
       <button
         className="rounded bg-info py-0.5 px-1.5 text-sm font-bold uppercase text-info-contrast hover:brightness-125 lg:text-xs"
-        onClick={() => application.openPurchaseFlow()}
+        onClick={onClick}
       >
         {hasAccount ? 'Unlock features' : 'Sign up to sync'}
       </button>

@@ -8,7 +8,7 @@ import { UpgradePrompt } from './Subviews/UpgradePrompt'
 
 type Props = {
   application: WebApplication
-  featureName: FeatureName | string
+  featureName?: FeatureName | string
   hasSubscription: boolean
   hasAccount: boolean
   onClose: () => void
