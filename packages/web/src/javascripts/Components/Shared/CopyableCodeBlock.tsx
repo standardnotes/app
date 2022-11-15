@@ -13,14 +13,12 @@ const CopyableCodeBlock = ({ code }: Props) => {
   const [isCopyButtonVisible, setIsCopyButtonVisible] = useState(false)
 
   return (
-    <div className="group relative">
-      <pre
-        className="overflow-auto rounded-md bg-default px-2.5 py-1.5"
-        onMouseEnter={() => setIsCopyButtonVisible(true)}
-        onMouseLeave={() => setIsCopyButtonVisible(false)}
-      >
-        {code}
-      </pre>
+    <div
+      className="group relative"
+      onMouseEnter={() => setIsCopyButtonVisible(true)}
+      onMouseLeave={() => setIsCopyButtonVisible(false)}
+    >
+      <pre className="overflow-auto rounded-md bg-default px-2.5 py-1.5">{code}</pre>
       <div className="absolute top-1.5 right-1.5">
         <button
           ref={buttonRef}
