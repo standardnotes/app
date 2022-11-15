@@ -44,7 +44,7 @@ const CompoundPredicateBuilder = ({ controller }: Props) => {
       </div>
       {predicates.map((predicate, index) => (
         <div className="flex flex-col gap-2.5" key={index}>
-          <div className="flex w-full items-center gap-2">
+          <div className="flex w-full flex-col gap-2 md:flex-row md:items-center">
             {index !== 0 && <div className="mr-2 text-sm font-semibold">{operator === 'and' ? 'AND' : 'OR'}</div>}
             <select
               className="flex-grow rounded border border-border bg-default py-1.5 px-2 focus:outline focus:outline-1 focus:outline-info"
