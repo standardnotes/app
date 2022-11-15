@@ -204,7 +204,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
               <Disclosure open={shouldShowJsonExamples} onChange={() => setShouldShowJsonExamples((show) => !show)}>
                 <div className="flex flex-col gap-1.5 rounded-md border-2 border-info-backdrop bg-info-backdrop py-3 px-4">
                   <DisclosureButton className="flex items-center justify-between focus:shadow-none focus:outline-none">
-                    <div className="text-sm font-semibold">{shouldShowJsonExamples ? 'Hide' : 'Show'} examples</div>
+                    <div className="text-sm font-semibold">Examples</div>
                     <Icon type={shouldShowJsonExamples ? 'chevron-up' : 'chevron-down'} />
                   </DisclosureButton>
                   <DisclosurePanel className={classNames(shouldShowJsonExamples && 'flex', 'flex-col gap-2.5')}>
