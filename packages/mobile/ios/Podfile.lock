@@ -386,7 +386,7 @@ PODS:
     - React-Core
   - RNPrivacySnapshot (1.0.0):
     - React-Core
-  - RNShare (7.9.1):
+  - RNShare (8.0.0):
     - React-Core
   - SNReactNative (1.0.1):
     - React-Core
@@ -636,7 +636,7 @@ SPEC CHECKSUMS:
   RNIap: 3bcd6982cf99503339cf9243e4ba70a45ea2cf72
   RNKeychain: 4f63aada75ebafd26f4bc2c670199461eab85d94
   RNPrivacySnapshot: 8eaf571478a353f2e5184f5c803164f22428b023
-  RNShare: a5dc3b9c53ddc73e155b8cd9a94c70c91913c43c
+  RNShare: 36aa3e6958373a0ad1c95a1c960adef589da3794
   SNReactNative: b5e9e529c175c13f3a618e27c76cf3071213d5e1
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   TrustKit: 073855e3adecd317417bda4ac9e9ac54a2e3b9f2
