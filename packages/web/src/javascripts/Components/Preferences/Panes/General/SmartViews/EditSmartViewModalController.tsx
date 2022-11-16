@@ -1,6 +1,7 @@
 import { WebApplication } from '@/Application/Application'
-import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import { STRING_DELETE_TAG } from '@/Constants/Strings'
 import { predicateFromJson, PredicateJsonForm, SmartView, SmartViewMutator } from '@standardnotes/snjs'
+import { confirmDialog } from '@standardnotes/ui-services'
 import { action, makeObservable, observable } from 'mobx'
 
 export class EditSmartViewModalController {
@@ -11,7 +12,7 @@ export class EditSmartViewModalController {
   isSaving = false
   view: SmartView | undefined = undefined
 
-  constructor(private application: WebApplication, private navigationController: NavigationController) {
+  constructor(private application: WebApplication) {
     makeObservable(this, {
       title: observable,
       icon: observable,
@@ -90,13 +91,21 @@ export class EditSmartViewModalController {
     this.closeDialog()
   }
 
-  deleteView = () => {
+  deleteView = async () => {
     if (!this.view) {
       return
     }
+    const view = this.view
 
-    void this.navigationController.remove(this.view, true)
     this.closeDialog()
+
+    const shouldDelete = await confirmDialog({
+      text: STRING_DELETE_TAG,
+      confirmButtonStyle: 'danger',
+    })
+    if (shouldDelete) {
+      this.application.mutator.deleteItem(view).catch(console.error)
+    }
   }
 
   validateAndPrettifyCustomPredicate = () => {

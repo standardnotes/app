@@ -25,10 +25,7 @@ type Props = NewType
 
 const SmartViews = ({ application, navigationController, featuresController }: Props) => {
   const addSmartViewModalController = useMemo(() => new AddSmartViewModalController(application), [application])
-  const editSmartViewModalController = useMemo(
-    () => new EditSmartViewModalController(application, navigationController),
-    [application, navigationController],
-  )
+  const editSmartViewModalController = useMemo(() => new EditSmartViewModalController(application), [application])
 
   const nonSystemSmartViews = navigationController.smartViews.filter((view) => !isSystemView(view))
 

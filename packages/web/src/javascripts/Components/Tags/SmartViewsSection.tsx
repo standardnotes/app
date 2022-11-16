@@ -19,10 +19,7 @@ type Props = {
 const SmartViewsSection: FunctionComponent<Props> = ({ application, viewControllerManager }) => {
   const premiumModal = usePremiumModal()
   const addSmartViewModalController = useMemo(() => new AddSmartViewModalController(application), [application])
-  const editSmartViewModalController = useMemo(
-    () => new EditSmartViewModalController(application, viewControllerManager.navigationController),
-    [application, viewControllerManager.navigationController],
-  )
+  const editSmartViewModalController = useMemo(() => new EditSmartViewModalController(application), [application])
 
   const createNewSmartView = useCallback(() => {
     if (!viewControllerManager.featuresController.hasSmartViews) {
