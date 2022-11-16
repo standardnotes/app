@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.2](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.5.1...@standardnotes/blocks-editor@1.5.2) (2022-11-16)
+
+### Bug Fixes
+
+* super editor package ([2a12eb6](https://github.com/standardnotes/app/commit/2a12eb60bb0cc10358c51b3608f6f432667e58b0))
+
 ## [1.5.1](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.5.0...@standardnotes/blocks-editor@1.5.1) (2022-11-16)
 
 **Note:** Version bump only for package @standardnotes/blocks-editor

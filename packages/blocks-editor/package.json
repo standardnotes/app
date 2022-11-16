@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/blocks-editor",
-  "version": "1.5.1",
+  "version": "1.5.2",
   "private": true,
   "main": "./src/index.ts",
   "scripts": {
