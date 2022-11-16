@@ -3,7 +3,6 @@ import { SettingName } from '@standardnotes/settings'
 import { SNSettingsService } from '../Settings'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { SNFeaturesService } from '../Features/FeaturesService'
-import { FeatureIdentifier } from '@standardnotes/features'
 import { AbstractService, InternalEventBusInterface, SignInStrings } from '@standardnotes/services'
 
 export class SNMfaService extends AbstractService {
@@ -45,17 +44,6 @@ export class SNMfaService extends AbstractService {
 
   async disableMfa(): Promise<void> {
     return await this.settingsService.deleteSetting(SettingName.MfaSecret)
-  }
-
-  isMfaFeatureAvailable(): boolean {
-    const feature = this.featuresService.getUserFeature(FeatureIdentifier.TwoFactorAuth)
-
-    // If the feature is not present in the collection, we don't want to block it
-    if (feature == undefined) {
-      return false
-    }
-
-    return feature.no_expire === true || (feature.expires_at ?? 0) > Date.now()
   }
 
   override deinit(): void {

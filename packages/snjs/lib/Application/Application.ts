@@ -1035,10 +1035,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     }
   }
 
-  public isMfaFeatureAvailable(): boolean {
-    return this.mfaService.isMfaFeatureAvailable()
-  }
-
   public async isMfaActivated(): Promise<boolean> {
     return this.mfaService.isMfaActivated()
   }

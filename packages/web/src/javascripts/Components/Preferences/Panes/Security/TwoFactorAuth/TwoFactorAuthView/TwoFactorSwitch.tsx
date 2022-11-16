@@ -9,7 +9,7 @@ type Props = {
 }
 
 const TwoFactorSwitch: FunctionComponent<Props> = ({ auth }) => {
-  if (!(auth.isLoggedIn() && auth.isMfaFeatureAvailable())) {
+  if (!auth.isLoggedIn()) {
     return null
   }
 

@@ -81,10 +81,6 @@ export class TwoFactorAuth {
       return
     }
 
-    if (!this.isMfaFeatureAvailable()) {
-      return
-    }
-
     this.mfaProvider
       .isMfaActivated()
       .then(
@@ -110,10 +106,6 @@ export class TwoFactorAuth {
       return
     }
 
-    if (!this.isMfaFeatureAvailable()) {
-      return
-    }
-
     if (this._status === 'two-factor-disabled') {
       return this.startActivation()
     }
@@ -129,9 +121,5 @@ export class TwoFactorAuth {
 
   get status(): TwoFactorStatus | 'fetching' {
     return this._status
-  }
-
-  isMfaFeatureAvailable(): boolean {
-    return this.mfaProvider.isMfaFeatureAvailable()
   }
 }

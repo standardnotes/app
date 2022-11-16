@@ -11,9 +11,7 @@ const TwoFactorTitle: FunctionComponent<Props> = ({ auth }) => {
   if (!auth.isLoggedIn()) {
     return <Title>Two-factor authentication not available</Title>
   }
-  if (!auth.isMfaFeatureAvailable()) {
-    return <Title>Two-factor authentication not available</Title>
-  }
+
   return <Title>Two-factor authentication</Title>
 }
 
