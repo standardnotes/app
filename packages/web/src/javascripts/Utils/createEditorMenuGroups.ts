@@ -1,4 +1,3 @@
-import { featureTrunkEnabled, FeatureTrunkName } from '@/FeatureTrunk'
 import { WebApplication } from '@/Application/Application'
 import {
   ContentType,
@@ -8,10 +7,11 @@ import {
   FeatureDescription,
   GetFeatures,
   NoteType,
+  FeatureIdentifier,
 } from '@standardnotes/snjs'
 import { EditorMenuGroup } from '@/Components/NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
-import { BLOCKS_EDITOR_NAME, PLAIN_EDITOR_NAME } from '@/Constants/Constants'
+import { PlainEditorMetadata, SuperEditorMetadata } from '@/Constants/Constants'
 
 type NoteTypeToEditorRowsMap = Record<NoteType, EditorMenuItem[]>
 
@@ -72,7 +72,7 @@ const insertInstalledComponentsInMap = (
   })
 }
 
-const createGroupsFromMap = (map: NoteTypeToEditorRowsMap): EditorMenuGroup[] => {
+const createGroupsFromMap = (map: NoteTypeToEditorRowsMap, application: WebApplication): EditorMenuGroup[] => {
   const groups: EditorMenuGroup[] = [
     {
       icon: 'plain-text',
@@ -124,12 +124,12 @@ const createGroupsFromMap = (map: NoteTypeToEditorRowsMap): EditorMenuGroup[] =>
     },
   ]
 
-  if (featureTrunkEnabled(FeatureTrunkName.Blocks)) {
+  if (application.features.isExperimentalFeatureEnabled(FeatureIdentifier.SuperEditor)) {
     groups.splice(1, 0, {
-      icon: 'file-doc',
-      iconClassName: 'text-accessory-tint-4',
-      title: BLOCKS_EDITOR_NAME,
-      items: map[NoteType.Blocks],
+      icon: SuperEditorMetadata.icon,
+      iconClassName: SuperEditorMetadata.iconClassName,
+      title: SuperEditorMetadata.name,
+      items: map[NoteType.Super],
       featured: true,
     })
   }
@@ -137,16 +137,16 @@ const createGroupsFromMap = (map: NoteTypeToEditorRowsMap): EditorMenuGroup[] =>
   return groups
 }
 
-const createBaselineMap = (): NoteTypeToEditorRowsMap => {
+const createBaselineMap = (application: WebApplication): NoteTypeToEditorRowsMap => {
   const map: NoteTypeToEditorRowsMap = {
     [NoteType.Plain]: [
       {
-        name: PLAIN_EDITOR_NAME,
+        name: PlainEditorMetadata.name,
         isEntitled: true,
         noteType: NoteType.Plain,
       },
     ],
-    [NoteType.Blocks]: [],
+    [NoteType.Super]: [],
     [NoteType.RichText]: [],
     [NoteType.Markdown]: [],
     [NoteType.Task]: [],
@@ -156,11 +156,11 @@ const createBaselineMap = (): NoteTypeToEditorRowsMap => {
     [NoteType.Unknown]: [],
   }
 
-  if (featureTrunkEnabled(FeatureTrunkName.Blocks)) {
-    map[NoteType.Blocks].push({
-      name: BLOCKS_EDITOR_NAME,
+  if (application.features.isExperimentalFeatureEnabled(FeatureIdentifier.SuperEditor)) {
+    map[NoteType.Super].push({
+      name: SuperEditorMetadata.name,
       isEntitled: true,
-      noteType: NoteType.Blocks,
+      noteType: NoteType.Super,
     })
   }
 
@@ -168,11 +168,11 @@ const createBaselineMap = (): NoteTypeToEditorRowsMap => {
 }
 
 export const createEditorMenuGroups = (application: WebApplication, components: SNComponent[]) => {
-  const map = createBaselineMap()
+  const map = createBaselineMap(application)
 
   insertNonInstalledNativeComponentsInMap(map, components, application)
 
   insertInstalledComponentsInMap(map, components, application)
 
-  return createGroupsFromMap(map)
+  return createGroupsFromMap(map, application)
 }

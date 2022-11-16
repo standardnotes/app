@@ -1,7 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { NoteType, SNNote } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback, useState } from 'react'
-import { BlockEditorController } from './BlockEditorController'
+import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import ModalDialog from '@/Components/Shared/ModalDialog'
@@ -10,6 +9,7 @@ import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 import Button from '@/Components/Button/Button'
 import ImportPlugin from './Plugins/ImportPlugin/ImportPlugin'
+import { NoteViewController } from '../Controller/NoteViewController'
 
 export function spaceSeparatedStrings(...strings: string[]): string {
   return strings.join(' ')
@@ -36,12 +36,31 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
     setLastValue({ text: value, previewPlain: preview })
   }, [])
 
-  const confirmConvert = useCallback(() => {
-    const controller = new BlockEditorController(note, application)
-    void controller.save({ text: lastValue.text, previewPlain: lastValue.previewPlain, previewHtml: undefined })
+  const performConvert = useCallback(
+    async (text: string, previewPlain: string) => {
+      const controller = new NoteViewController(application, note)
+      await controller.initialize()
+      await controller.saveAndAwaitLocalPropagation({
+        text: text,
+        previews: { previewPlain: previewPlain, previewHtml: undefined },
+        isUserModified: true,
+        bypassDebouncer: true,
+      })
+    },
+    [application, note],
+  )
+
+  const confirmConvert = useCallback(async () => {
+    await performConvert(lastValue.text, lastValue.previewPlain)
     closeDialog()
     onConvertComplete()
-  }, [closeDialog, application, lastValue, note, onConvertComplete])
+  }, [closeDialog, performConvert, onConvertComplete, lastValue])
+
+  useEffect(() => {
+    if (note.text.length === 0) {
+      void confirmConvert()
+    }
+  }, [note, confirmConvert])
 
   const convertAsIs = useCallback(async () => {
     const confirmed = await application.alertService.confirm(
@@ -56,11 +75,11 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
       return
     }
 
-    const controller = new BlockEditorController(note, application)
-    void controller.save({ text: note.text, previewPlain: note.preview_plain, previewHtml: undefined })
+    await performConvert(note.text, note.preview_plain)
+
     closeDialog()
     onConvertComplete()
-  }, [closeDialog, application, note, onConvertComplete])
+  }, [closeDialog, application, note, onConvertComplete, performConvert])
 
   return (
     <ModalDialog>
@@ -77,6 +96,7 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
             <BlocksEditorComposer readonly initialValue={''}>
               <BlocksEditor
                 onChange={handleChange}
+                ignoreFirstChange={false}
                 className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
                 previewLength={NotePreviewCharLimit}
                 spellcheck={note.spellcheck}

@@ -14,10 +14,6 @@ export class ComponentMutator extends DecryptedItemMutator<ComponentContent> {
     this.mutableContent.isMobileDefault = isMobileDefault
   }
 
-  set defaultEditor(defaultEditor: boolean) {
-    this.setAppDataItem(AppDataField.DefaultEditor, defaultEditor)
-  }
-
   set componentData(componentData: Record<string, unknown>) {
     this.mutableContent.componentData = componentData
   }

@@ -1,32 +1,18 @@
-import { FileItem, PrefKey, SNNote } from '@standardnotes/models'
+import { WebApplication } from '@/Application/Application'
 import { removeFromArray } from '@standardnotes/utils'
-import { ApplicationEvent } from '@standardnotes/services'
-
-import { SNApplication } from '../Application/Application'
-
+import { FileItem, SNNote } from '@standardnotes/snjs'
 import { NoteViewController } from './NoteViewController'
 import { FileViewController } from './FileViewController'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
 
 type ItemControllerGroupChangeCallback = (activeController: NoteViewController | FileViewController | undefined) => void
 
-type CreateItemControllerOptions = FileItem | SNNote | TemplateNoteViewControllerOptions
-
 export class ItemGroupController {
   public itemControllers: (NoteViewController | FileViewController)[] = []
-  private addTagHierarchy: boolean
   changeObservers: ItemControllerGroupChangeCallback[] = []
   eventObservers: (() => void)[] = []
 
-  constructor(private application: SNApplication) {
-    this.addTagHierarchy = application.getPreference(PrefKey.NoteAddToParentFolders, true)
-
-    this.eventObservers.push(
-      application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
-        this.addTagHierarchy = application.getPreference(PrefKey.NoteAddToParentFolders, true)
-      }),
-    )
-  }
+  constructor(private application: WebApplication) {}
 
   public deinit(): void {
     ;(this.application as unknown) = undefined
@@ -44,26 +30,30 @@ export class ItemGroupController {
     this.itemControllers.length = 0
   }
 
-  async createItemController(options: CreateItemControllerOptions): Promise<NoteViewController | FileViewController> {
+  async createItemController(context: {
+    file?: FileItem
+    note?: SNNote
+    templateOptions?: TemplateNoteViewControllerOptions
+  }): Promise<NoteViewController | FileViewController> {
     if (this.activeItemViewController) {
       this.closeItemController(this.activeItemViewController, { notify: false })
     }
 
     let controller!: NoteViewController | FileViewController
 
-    if (options instanceof FileItem) {
-      const file = options
-      controller = new FileViewController(this.application, file)
-    } else if (options instanceof SNNote) {
-      const note = options
-      controller = new NoteViewController(this.application, note)
+    if (context.file) {
+      controller = new FileViewController(this.application, context.file)
+    } else if (context.note) {
+      controller = new NoteViewController(this.application, context.note)
+    } else if (context.templateOptions) {
+      controller = new NoteViewController(this.application, undefined, context.templateOptions)
     } else {
-      controller = new NoteViewController(this.application, undefined, options)
+      throw Error('Invalid input to createItemController')
     }
 
     this.itemControllers.push(controller)
 
-    await controller.initialize(this.addTagHierarchy)
+    await controller.initialize()
 
     this.notifyObservers()
 

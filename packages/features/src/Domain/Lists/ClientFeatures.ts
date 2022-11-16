@@ -21,16 +21,9 @@ export function clientFeatures(): ClientFeatureDescription[] {
     },
     {
       availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
-      name: 'Encrypted files (coming soon)',
+      name: 'Encrypted files',
       identifier: FeatureIdentifier.Files,
       permission_name: PermissionName.Files,
-      description: '',
-    },
-    {
-      availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
-      name: 'Encrypted files beta',
-      identifier: FeatureIdentifier.FilesBeta,
-      permission_name: PermissionName.FilesBeta,
       description: '',
     },
     {

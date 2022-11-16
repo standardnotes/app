@@ -39,6 +39,7 @@ type BlocksEditorProps = {
   children?: React.ReactNode;
   previewLength: number;
   spellcheck?: boolean;
+  ignoreFirstChange?: boolean;
 };
 
 export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
@@ -47,11 +48,12 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
   children,
   previewLength,
   spellcheck,
+  ignoreFirstChange = false,
 }) => {
   const [didIgnoreFirstChange, setDidIgnoreFirstChange] = useState(false);
   const handleChange = useCallback(
     (editorState: EditorState, _editor: LexicalEditor) => {
-      if (!didIgnoreFirstChange) {
+      if (ignoreFirstChange && !didIgnoreFirstChange) {
         setDidIgnoreFirstChange(true);
         return;
       }
@@ -88,7 +90,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       {children}
       <RichTextPlugin
         contentEditable={
-          <div id="blocks-editor" className="editor-scroller">
+          <div id="blocks-editor" className="editor-scroller h-full">
             <div className="editor" ref={onRef}>
               <ContentEditable
                 id={SuperEditorContentId}
@@ -120,7 +122,6 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <CodeHighlightPlugin />
       <LinkPlugin />
       <HashtagPlugin />
-
       <AutoEmbedPlugin />
       <TwitterPlugin />
       <YouTubePlugin />

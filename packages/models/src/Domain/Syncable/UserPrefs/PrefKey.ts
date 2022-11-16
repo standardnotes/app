@@ -1,5 +1,5 @@
 import { CollectionSortProperty } from '../../Runtime/Collection/CollectionSort'
-import { FeatureIdentifier } from '@standardnotes/features'
+import { EditorIdentifier, FeatureIdentifier } from '@standardnotes/features'
 
 export enum PrefKey {
   TagsPanelWidth = 'tagsPanelWidth',
@@ -38,6 +38,7 @@ export enum PrefKey {
   CustomNoteTitleFormat = 'customNoteTitleFormat',
   UpdateSavingStatusIndicator = 'updateSavingStatusIndicator',
   DarkMode = 'darkMode',
+  DefaultEditorIdentifier = 'defaultEditorIdentifier',
 }
 
 export enum NewNoteTitleFormat {
@@ -101,4 +102,5 @@ export type PrefValue = {
   [PrefKey.EditorFontSize]: EditorFontSize
   [PrefKey.UpdateSavingStatusIndicator]: boolean
   [PrefKey.DarkMode]: boolean
+  [PrefKey.DefaultEditorIdentifier]: EditorIdentifier
 }

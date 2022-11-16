@@ -1,4 +1,5 @@
-import { NoteType } from '@standardnotes/features'
+import { WebApplication } from '@/Application/Application'
+import { noteTypeForEditorIdentifier } from '@standardnotes/features'
 import { InfoStrings } from '@standardnotes/services'
 import {
   NoteMutator,
@@ -7,13 +8,15 @@ import {
   NoteContent,
   DecryptedItemInterface,
   PayloadEmitSource,
+  PrefKey,
 } from '@standardnotes/models'
+import { UuidString } from '@standardnotes/snjs'
 import { removeFromArray } from '@standardnotes/utils'
 import { ContentType } from '@standardnotes/common'
-import { UuidString } from '@Lib/Types/UuidString'
-import { SNApplication } from '../Application/Application'
 import { ItemViewControllerInterface } from './ItemViewControllerInterface'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
+import { EditorSaveTimeoutDebounce } from './EditorSaveTimeoutDebounce'
+import { log, LoggingDomain } from '@/Logging'
 
 export type EditorValues = {
   title: string
@@ -23,25 +26,20 @@ export type EditorValues = {
 const StringEllipses = '...'
 const NotePreviewCharLimit = 160
 
-const SaveTimeoutDebounc = {
-  Desktop: 350,
-  ImmediateChange: 100,
-  NativeMobileWeb: 700,
-}
-
 export class NoteViewController implements ItemViewControllerInterface {
   public item!: SNNote
   public dealloced = false
   private innerValueChangeObservers: ((note: SNNote, source: PayloadEmitSource) => void)[] = []
-  private removeStreamObserver?: () => void
+  private disposers: (() => void)[] = []
   public isTemplateNote = false
   private saveTimeout?: ReturnType<typeof setTimeout>
   private defaultTagUuid: UuidString | undefined
   private defaultTag?: SNTag
   public runtimeId = `${Math.random()}`
+  public needsInit = true
 
   constructor(
-    private application: SNApplication,
+    private application: WebApplication,
     item?: SNNote,
     public templateNoteOptions?: TemplateNoteViewControllerOptions,
   ) {
@@ -60,8 +58,10 @@ export class NoteViewController implements ItemViewControllerInterface {
 
   deinit(): void {
     this.dealloced = true
-    this.removeStreamObserver?.()
-    ;(this.removeStreamObserver as unknown) = undefined
+    for (const disposer of this.disposers) {
+      disposer()
+    }
+    this.disposers.length = 0
     ;(this.application as unknown) = undefined
     ;(this.item as unknown) = undefined
 
@@ -70,22 +70,30 @@ export class NoteViewController implements ItemViewControllerInterface {
     this.saveTimeout = undefined
   }
 
-  async initialize(addTagHierarchy: boolean): Promise<void> {
-    if (!this.item) {
-      const editorIdentifier =
-        this.defaultTag?.preferences?.editorIdentifier ||
-        this.application.componentManager.getDefaultEditor()?.identifier
+  async initialize(): Promise<void> {
+    if (!this.needsInit) {
+      throw Error('NoteViewController already initialized')
+    }
 
-      const defaultEditor = editorIdentifier
-        ? this.application.componentManager.componentWithIdentifier(editorIdentifier)
-        : undefined
+    log(LoggingDomain.NoteView, 'Initializing NoteViewController')
+
+    this.needsInit = false
+
+    const addTagHierarchy = this.application.getPreference(PrefKey.NoteAddToParentFolders, true)
+
+    if (!this.item) {
+      log(LoggingDomain.NoteView, 'Initializing as template note')
+
+      const editorIdentifier = this.application.geDefaultEditorIdentifier(this.defaultTag)
+
+      const noteType = noteTypeForEditorIdentifier(editorIdentifier)
 
       const note = this.application.mutator.createTemplateItem<NoteContent, SNNote>(
         ContentType.Note,
         {
           text: '',
           title: this.templateNoteOptions?.title || '',
-          noteType: defaultEditor?.noteType || NoteType.Plain,
+          noteType: noteType,
           editorIdentifier: editorIdentifier,
           references: [],
         },
@@ -119,9 +127,8 @@ export class NoteViewController implements ItemViewControllerInterface {
       return
     }
 
-    this.removeStreamObserver = this.application.streamItems<SNNote>(
-      ContentType.Note,
-      ({ changed, inserted, source }) => {
+    this.disposers.push(
+      this.application.streamItems<SNNote>(ContentType.Note, ({ changed, inserted, source }) => {
         if (this.dealloced) {
           return
         }
@@ -137,11 +144,12 @@ export class NoteViewController implements ItemViewControllerInterface {
           this.item = matchingNote
           this.notifyObservers(matchingNote, source)
         }
-      },
+      }),
     )
   }
 
   public insertTemplatedNote(): Promise<DecryptedItemInterface> {
+    log(LoggingDomain.NoteView, 'Inserting template note')
     this.isTemplateNote = false
     return this.application.mutator.insertItem(this.item)
   }
@@ -163,29 +171,55 @@ export class NoteViewController implements ItemViewControllerInterface {
     }
   }
 
-  /**
-   * @param bypassDebouncer Calling save will debounce by default. You can pass true to save
-   * immediately.
-   * @param isUserModified This field determines if the item will be saved as a user
-   * modification, thus updating the user modified date displayed in the UI
-   * @param dontUpdatePreviews Whether this change should update the note's plain and HTML
-   * preview.
-   * @param customMutate A custom mutator function.
-   */
-  public async save(dto: {
-    editorValues: EditorValues
+  public async saveAndAwaitLocalPropagation(params: {
+    title?: string
+    text?: string
+    isUserModified: boolean
     bypassDebouncer?: boolean
-    isUserModified?: boolean
-    dontUpdatePreviews?: boolean
+    dontGeneratePreviews?: boolean
+    previews?: { previewPlain: string; previewHtml?: string }
     customMutate?: (mutator: NoteMutator) => void
   }): Promise<void> {
-    const title = dto.editorValues.title
-    const text = dto.editorValues.text
+    if (this.needsInit) {
+      throw Error('NoteViewController not initialized')
+    }
+
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout)
+    }
+
+    const noDebounce = params.bypassDebouncer || this.application.noAccount()
+
+    const syncDebouceMs = noDebounce
+      ? EditorSaveTimeoutDebounce.ImmediateChange
+      : this.application.isNativeMobileWeb()
+      ? EditorSaveTimeoutDebounce.NativeMobileWeb
+      : EditorSaveTimeoutDebounce.Desktop
+
+    return new Promise((resolve) => {
+      this.saveTimeout = setTimeout(() => {
+        void this.undebouncedSave({ ...params, onLocalPropagationComplete: resolve })
+      }, syncDebouceMs)
+    })
+  }
+
+  private async undebouncedSave(params: {
+    title?: string
+    text?: string
+    bypassDebouncer?: boolean
+    isUserModified?: boolean
+    dontGeneratePreviews?: boolean
+    previews?: { previewPlain: string; previewHtml?: string }
+    customMutate?: (mutator: NoteMutator) => void
+    onLocalPropagationComplete?: () => void
+    onRemoteSyncComplete?: () => void
+  }): Promise<void> {
+    log(LoggingDomain.NoteView, 'Saving note', params)
+
     const isTemplate = this.isTemplateNote
 
     if (typeof document !== 'undefined' && document.hidden) {
       void this.application.alertService.alert(InfoStrings.SavingWhileDocumentHidden)
-      return
     }
 
     if (isTemplate) {
@@ -201,41 +235,37 @@ export class NoteViewController implements ItemViewControllerInterface {
       this.item,
       (mutator) => {
         const noteMutator = mutator as NoteMutator
-        if (dto.customMutate) {
-          dto.customMutate(noteMutator)
+        if (params.customMutate) {
+          params.customMutate(noteMutator)
         }
-        noteMutator.title = title
-        noteMutator.text = text
 
-        if (!dto.dontUpdatePreviews) {
-          const noteText = text || ''
+        if (params.title != undefined) {
+          noteMutator.title = params.title
+        }
+
+        if (params.text != undefined) {
+          noteMutator.text = params.text
+        }
+
+        if (params.previews) {
+          noteMutator.preview_plain = params.previews.previewPlain
+          noteMutator.preview_html = params.previews.previewHtml
+        } else if (!params.dontGeneratePreviews && params.text != undefined) {
+          const noteText = params.text || ''
           const truncate = noteText.length > NotePreviewCharLimit
           const substring = noteText.substring(0, NotePreviewCharLimit)
           const previewPlain = substring + (truncate ? StringEllipses : '')
-
-          // eslint-disable-next-line camelcase
           noteMutator.preview_plain = previewPlain
-          // eslint-disable-next-line camelcase
           noteMutator.preview_html = undefined
         }
       },
-      dto.isUserModified,
+      params.isUserModified,
     )
 
-    if (this.saveTimeout) {
-      clearTimeout(this.saveTimeout)
-    }
+    params.onLocalPropagationComplete?.()
 
-    const noDebounce = dto.bypassDebouncer || this.application.noAccount()
-
-    const syncDebouceMs = noDebounce
-      ? SaveTimeoutDebounc.ImmediateChange
-      : this.application.isNativeMobileWeb()
-      ? SaveTimeoutDebounc.NativeMobileWeb
-      : SaveTimeoutDebounc.Desktop
-
-    this.saveTimeout = setTimeout(() => {
-      void this.application.sync.sync()
-    }, syncDebouceMs)
+    void this.application.sync.sync().then(() => {
+      params.onRemoteSyncComplete?.()
+    })
   }
 }

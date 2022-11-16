@@ -1,7 +1,6 @@
 import { WebApplication } from '@/Application/Application'
-import { SNNote } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback, useRef } from 'react'
-import { BlockEditorController } from './BlockEditorController'
+import { isPayloadSourceRetrieved } from '@standardnotes/snjs'
+import { FunctionComponent, useCallback, useEffect, useRef } from 'react'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ItemSelectionPlugin } from './Plugins/ItemSelectionPlugin/ItemSelectionPlugin'
 import { FileNode } from './Plugins/EncryptedFilePlugin/Nodes/FileNode'
@@ -9,7 +8,7 @@ import FilePlugin from './Plugins/EncryptedFilePlugin/FilePlugin'
 import BlockPickerMenuPlugin from './Plugins/BlockPickerPlugin/BlockPickerPlugin'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import { LinkingController } from '@/Controllers/LinkingController'
-import LinkingControllerProvider from '../../Controllers/LinkingControllerProvider'
+import LinkingControllerProvider from '../../../Controllers/LinkingControllerProvider'
 import { BubbleNode } from './Plugins/ItemBubblePlugin/Nodes/BubbleNode'
 import ItemBubblePlugin from './Plugins/ItemBubblePlugin/ItemBubblePlugin'
 import { NodeObserverPlugin } from './Plugins/NodeObserverPlugin/NodeObserverPlugin'
@@ -17,29 +16,48 @@ import { FilesController } from '@/Controllers/FilesController'
 import FilesControllerProvider from '@/Controllers/FilesControllerProvider'
 import DatetimePlugin from './Plugins/DateTimePlugin/DateTimePlugin'
 import AutoLinkPlugin from './Plugins/AutoLinkPlugin/AutoLinkPlugin'
+import { NoteViewController } from '../Controller/NoteViewController'
+import {
+  ChangeContentCallbackPlugin,
+  ChangeEditorFunction,
+} from './Plugins/ChangeContentCallback/ChangeContentCallback'
 
 const NotePreviewCharLimit = 160
 
 type Props = {
   application: WebApplication
-  note: SNNote
+  controller: NoteViewController
   linkingController: LinkingController
   filesController: FilesController
   spellcheck: boolean
 }
 
-export const BlockEditor: FunctionComponent<Props> = ({
-  note,
+export const SuperEditor: FunctionComponent<Props> = ({
   application,
   linkingController,
   filesController,
   spellcheck,
+  controller,
 }) => {
-  const controller = useRef(new BlockEditorController(note, application))
+  const note = useRef(controller.item)
+  const changeEditorFunction = useRef<ChangeEditorFunction>()
+  const ignoreNextChange = useRef(false)
 
   const handleChange = useCallback(
-    (value: string, preview: string) => {
-      void controller.current.save({ text: value, previewPlain: preview, previewHtml: undefined })
+    async (value: string, preview: string) => {
+      if (ignoreNextChange.current === true) {
+        ignoreNextChange.current = false
+        return
+      }
+
+      void controller.saveAndAwaitLocalPropagation({
+        text: value,
+        isUserModified: true,
+        previews: {
+          previewPlain: preview,
+          previewHtml: undefined,
+        },
+      })
     },
     [controller],
   )
@@ -54,24 +72,49 @@ export const BlockEditor: FunctionComponent<Props> = ({
     [linkingController, application],
   )
 
+  useEffect(() => {
+    const disposer = controller.addNoteInnerValueChangeObserver((updatedNote, source) => {
+      if (updatedNote.uuid !== note.current.uuid) {
+        throw Error('Editor received changes for non-current note')
+      }
+
+      if (isPayloadSourceRetrieved(source)) {
+        ignoreNextChange.current = true
+        changeEditorFunction.current?.(updatedNote.text)
+      }
+
+      note.current = updatedNote
+    })
+
+    return disposer
+  }, [controller, controller.item.uuid])
+
   return (
     <div className="relative h-full w-full px-5 py-4">
       <ErrorBoundary>
         <LinkingControllerProvider controller={linkingController}>
           <FilesControllerProvider controller={filesController}>
-            <BlocksEditorComposer readonly={note.locked} initialValue={note.text} nodes={[FileNode, BubbleNode]}>
+            <BlocksEditorComposer
+              readonly={note.current.locked}
+              initialValue={note.current.text}
+              nodes={[FileNode, BubbleNode]}
+            >
               <BlocksEditor
                 onChange={handleChange}
-                className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
+                ignoreFirstChange={true}
+                className="relative relative h-full resize-none text-base focus:shadow-none focus:outline-none"
                 previewLength={NotePreviewCharLimit}
                 spellcheck={spellcheck}
               >
-                <ItemSelectionPlugin currentNote={note} />
+                <ItemSelectionPlugin currentNote={note.current} />
                 <FilePlugin />
                 <ItemBubblePlugin />
                 <BlockPickerMenuPlugin />
                 <DatetimePlugin />
                 <AutoLinkPlugin />
+                <ChangeContentCallbackPlugin
+                  providerCallback={(callback) => (changeEditorFunction.current = callback)}
+                />
                 <NodeObserverPlugin nodeType={BubbleNode} onRemove={handleBubbleRemove} />
                 <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
               </BlocksEditor>

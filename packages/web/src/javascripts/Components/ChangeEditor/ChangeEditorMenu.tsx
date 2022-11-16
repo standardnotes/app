@@ -12,7 +12,7 @@ import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
 import { createEditorMenuGroups } from '../../Utils/createEditorMenuGroups'
 import { reloadFont } from '../NoteView/FontFunctions'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
-import { SuperNoteImporter } from '../BlockEditor/SuperNoteImporter'
+import { SuperNoteImporter } from '../NoteView/SuperEditor/SuperNoteImporter'
 
 type ChangeEditorMenuProps = {
   application: WebApplication
@@ -114,7 +114,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         return
       }
 
-      if (itemToBeSelected.noteType === NoteType.Blocks) {
+      if (itemToBeSelected.noteType === NoteType.Super) {
         setPendingSuperItem(itemToBeSelected)
         handleDisableClickoutsideRequest?.()
         setShowSuperImporter(true)

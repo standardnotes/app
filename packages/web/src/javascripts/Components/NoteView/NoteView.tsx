@@ -16,30 +16,24 @@ import {
   ComponentArea,
   ComponentViewerInterface,
   ContentType,
-  EditorFontSize,
-  EditorLineHeight,
   isPayloadSourceInternalChange,
   isPayloadSourceRetrieved,
   NoteType,
-  NoteViewController,
   PayloadEmitSource,
   PrefKey,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
   SNComponent,
   SNNote,
-  WebAppEvent,
 } from '@standardnotes/snjs'
 import { confirmDialog, KeyboardKey, KeyboardModifier } from '@standardnotes/ui-services'
 import { ChangeEventHandler, createRef, KeyboardEventHandler, RefObject } from 'react'
-import { EditorEventSource } from '../../Types/EditorEventSource'
-import { BlockEditor } from '../BlockEditor/BlockEditorComponent'
+import { SuperEditor } from './SuperEditor/SuperEditor'
 import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
 import EditingDisabledBanner from './EditingDisabledBanner'
 import { reloadFont } from './FontFunctions'
-import { getPlaintextFontSize } from '../../Utils/getPlaintextFontSize'
 import NoteStatusIndicator, { NoteStatus } from './NoteStatusIndicator'
 import NoteViewFileDropTarget from './NoteViewFileDropTarget'
 import { NoteViewProps } from './NoteViewProps'
@@ -48,9 +42,10 @@ import {
   transactionForDisassociateComponentWithCurrentNote,
 } from './TransactionFunctions'
 import { SuperEditorContentId } from '@standardnotes/blocks-editor'
+import { NoteViewController } from './Controller/NoteViewController'
+import { PlainEditor, PlainEditorInterface } from './PlainEditor/PlainEditor'
 
 const MinimumStatusDuration = 400
-const TextareaDebounce = 100
 const NoteEditingDisabledText = 'Note editing disabled.'
 
 function sortAlphabetically(array: SNComponent[]): SNComponent[] {
@@ -63,7 +58,6 @@ type State = {
   editorComponentViewerDidAlreadyReload?: boolean
   editorStateDidLoad: boolean
   editorTitle: string
-  editorText: string
   isDesktop?: boolean
   lockText: string
   marginResizersEnabled?: boolean
@@ -75,21 +69,14 @@ type State = {
   spellcheck: boolean
   stackComponentViewers: ComponentViewerInterface[]
   syncTakingTooLong: boolean
-  /** Setting to true then false will allow the main content textarea to be destroyed
-   * then re-initialized. Used when reloading spellcheck status. */
-  textareaUnloading: boolean
-  plaintextEditorFocused?: boolean
-
+  monospaceFont?: boolean
+  plainEditorFocused?: boolean
   leftResizerWidth: number
   leftResizerOffset: number
   rightResizerWidth: number
   rightResizerOffset: number
 
-  monospaceFont?: boolean
-  lineHeight?: EditorLineHeight
-  fontSize?: EditorFontSize
   updateSavingIndicator?: boolean
-
   editorFeatureIdentifier?: string
   noteType?: NoteType
 }
@@ -98,23 +85,17 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   readonly controller!: NoteViewController
 
   private statusTimeout?: NodeJS.Timeout
-  private lastEditorFocusEventSource?: EditorEventSource
   onEditorComponentLoad?: () => void
 
   private removeTrashKeyObserver?: () => void
-  private removeTabObserver?: () => void
   private removeComponentStreamObserver?: () => void
   private removeComponentManagerObserver?: () => void
   private removeInnerNoteObserver?: () => void
-  private removeWebAppEventObserver: () => void
-
-  private needsAdjustMobileCursor = false
-  private isAdjustingMobileCursor = false
 
   private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null
-
   private noteViewElementRef: RefObject<HTMLDivElement>
   private editorContentRef: RefObject<HTMLDivElement>
+  private plainEditorRef?: RefObject<PlainEditorInterface>
 
   constructor(props: NoteViewProps) {
     super(props, props.application)
@@ -130,18 +111,9 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     this.debounceReloadEditorComponent = debounce(this.debounceReloadEditorComponent.bind(this), 25)
 
-    this.textAreaChangeDebounceSave = debounce(this.textAreaChangeDebounceSave, TextareaDebounce)
-
-    this.removeWebAppEventObserver = props.application.addWebEventObserver((event) => {
-      if (event === WebAppEvent.MobileKeyboardWillChangeFrame) {
-        this.scrollMobileCursorIntoViewAfterWebviewResize()
-      }
-    })
-
     this.state = {
       availableStackComponents: [],
       editorStateDidLoad: false,
-      editorText: '',
       editorTitle: '',
       isDesktop: isDesktopApplication(),
       lockText: NoteEditingDisabledText,
@@ -152,7 +124,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       spellcheck: true,
       stackComponentViewers: [],
       syncTakingTooLong: false,
-      textareaUnloading: false,
       leftResizerWidth: 0,
       leftResizerOffset: 0,
       rightResizerWidth: 0,
@@ -163,16 +134,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     this.noteViewElementRef = createRef<HTMLDivElement>()
     this.editorContentRef = createRef<HTMLDivElement>()
-  }
-
-  scrollMobileCursorIntoViewAfterWebviewResize() {
-    if (this.needsAdjustMobileCursor) {
-      this.needsAdjustMobileCursor = false
-      this.isAdjustingMobileCursor = true
-      document.getElementById('note-text-editor')?.blur()
-      document.getElementById('note-text-editor')?.focus()
-      this.isAdjustingMobileCursor = false
-    }
   }
 
   override deinit() {
@@ -194,28 +155,20 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.clearNoteProtectionInactivityTimer()
     ;(this.ensureNoteIsInsertedBeforeUIAction as unknown) = undefined
 
-    this.removeWebAppEventObserver?.()
-    ;(this.removeWebAppEventObserver as unknown) = undefined
-
-    this.removeTabObserver?.()
-    this.removeTabObserver = undefined
     this.onEditorComponentLoad = undefined
 
     this.statusTimeout = undefined
     ;(this.onPanelResizeFinish as unknown) = undefined
     ;(this.authorizeAndDismissProtectedWarning as unknown) = undefined
     ;(this.editorComponentViewerRequestsReload as unknown) = undefined
-    ;(this.onTextAreaChange as unknown) = undefined
     ;(this.onTitleEnter as unknown) = undefined
     ;(this.onTitleChange as unknown) = undefined
-    ;(this.onContentFocus as unknown) = undefined
     ;(this.onPanelResizeFinish as unknown) = undefined
     ;(this.stackComponentExpanded as unknown) = undefined
     ;(this.toggleStackComponent as unknown) = undefined
-    ;(this.onSystemEditorRef as unknown) = undefined
     ;(this.debounceReloadEditorComponent as unknown) = undefined
-    ;(this.textAreaChangeDebounceSave as unknown) = undefined
     ;(this.editorContentRef as unknown) = undefined
+    ;(this.plainEditorRef as unknown) = undefined
   }
 
   getState() {
@@ -271,9 +224,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     if (this.controller.isTemplateNote) {
       setTimeout(() => {
-        if (this.controller.templateNoteOptions?.autofocusBehavior === 'editor') {
-          this.focusEditor()
-        } else {
+        if (this.controller.templateNoteOptions?.autofocusBehavior === 'title') {
           this.focusTitle()
         }
       })
@@ -296,31 +247,19 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       throw Error('Editor received changes for non-current note')
     }
 
-    let title = this.state.editorTitle,
-      text = this.state.editorText
+    let title = this.state.editorTitle
 
     if (isPayloadSourceRetrieved(source)) {
       title = note.title
-      text = note.text
     }
 
     if (!this.state.editorTitle) {
       title = note.title
     }
 
-    if (!this.state.editorText) {
-      text = note.text
-    }
-
     if (title !== this.state.editorTitle) {
       this.setState({
         editorTitle: title,
-      })
-    }
-
-    if (text !== this.state.editorText) {
-      this.setState({
-        editorText: text,
       })
     }
 
@@ -334,7 +273,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       this.setState({
         editorFeatureIdentifier: note.editorIdentifier,
         noteType: note.noteType,
-        editorText: note.text,
         editorTitle: note.title,
       })
 
@@ -625,36 +563,13 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     }
   }
 
-  onTextAreaChange: ChangeEventHandler<HTMLTextAreaElement> = ({ currentTarget }) => {
-    const text = currentTarget.value
-
-    this.setState({
-      editorText: text,
-    })
-
-    this.textAreaChangeDebounceSave()
-  }
-
-  textAreaChangeDebounceSave = () => {
-    log(LoggingDomain.NoteView, 'Performing save after debounce')
-    this.controller
-      .save({
-        editorValues: {
-          title: this.state.editorTitle,
-          text: this.state.editorText,
-        },
-        isUserModified: true,
-      })
-      .catch(console.error)
-  }
-
   onTitleEnter: KeyboardEventHandler<HTMLInputElement> = ({ key, currentTarget }) => {
     if (key !== KeyboardKey.Enter) {
       return
     }
 
     currentTarget.blur()
-    this.focusEditor()
+    this.plainEditorRef?.current?.focus()
   }
 
   onTitleChange: ChangeEventHandler<HTMLInputElement> = ({ currentTarget }) => {
@@ -667,47 +582,16 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     })
 
     this.controller
-      .save({
-        editorValues: {
-          title: title,
-          text: this.state.editorText,
-        },
+      .saveAndAwaitLocalPropagation({
+        title: title,
         isUserModified: true,
-        dontUpdatePreviews: true,
+        dontGeneratePreviews: true,
       })
       .catch(console.error)
   }
 
-  focusEditor() {
-    const element = document.getElementById(ElementIds.NoteTextEditor)
-    if (element) {
-      this.lastEditorFocusEventSource = EditorEventSource.Script
-      element.focus()
-    }
-  }
-
   focusTitle() {
     document.getElementById(ElementIds.NoteTitleEditor)?.focus()
-  }
-
-  onContentFocus = () => {
-    if (!this.isAdjustingMobileCursor) {
-      this.needsAdjustMobileCursor = true
-    }
-    if (this.lastEditorFocusEventSource) {
-      this.application.notifyWebEvent(WebAppEvent.EditorFocused, { eventSource: this.lastEditorFocusEventSource })
-    }
-
-    this.lastEditorFocusEventSource = undefined
-    this.setState({ plaintextEditorFocused: true })
-  }
-
-  onContentBlur = () => {
-    if (this.lastEditorFocusEventSource) {
-      this.application.notifyWebEvent(WebAppEvent.EditorFocused, { eventSource: this.lastEditorFocusEventSource })
-    }
-    this.lastEditorFocusEventSource = undefined
-    this.setState({ plaintextEditorFocused: false })
   }
 
   setShowProtectedOverlay(show: boolean) {
@@ -737,13 +621,11 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         this.performNoteDeletion(this.note)
       } else {
         this.controller
-          .save({
-            editorValues: {
-              title: this.state.editorTitle,
-              text: this.state.editorText,
-            },
+          .saveAndAwaitLocalPropagation({
+            title: this.state.editorTitle,
             bypassDebouncer: true,
-            dontUpdatePreviews: true,
+            dontGeneratePreviews: true,
+            isUserModified: true,
             customMutate: (mutator) => {
               mutator.trashed = true
             },
@@ -773,15 +655,9 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   async reloadSpellcheck() {
     const spellcheck = this.viewControllerManager.notesController.getSpellcheckStateForNote(this.note)
-
     if (spellcheck !== this.state.spellcheck) {
-      this.setState({ textareaUnloading: true })
-      this.setState({ textareaUnloading: false })
       reloadFont(this.state.monospaceFont)
-
-      this.setState({
-        spellcheck,
-      })
+      this.setState({ spellcheck })
     }
   }
 
@@ -797,10 +673,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       PrefDefaults[PrefKey.EditorResizersEnabled],
     )
 
-    const lineHeight = this.application.getPreference(PrefKey.EditorLineHeight, PrefDefaults[PrefKey.EditorLineHeight])
-
-    const fontSize = this.application.getPreference(PrefKey.EditorFontSize, PrefDefaults[PrefKey.EditorFontSize])
-
     const updateSavingIndicator = this.application.getPreference(
       PrefKey.UpdateSavingStatusIndicator,
       PrefDefaults[PrefKey.UpdateSavingStatusIndicator],
@@ -811,8 +683,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.setState({
       monospaceFont,
       marginResizersEnabled,
-      lineHeight,
-      fontSize,
+
       updateSavingIndicator,
     })
 
@@ -904,80 +775,18 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     })
   }
 
-  onSystemEditorRef = (ref: HTMLTextAreaElement | null) => {
-    if (this.removeTabObserver || !ref) {
-      return
-    }
-
-    log(LoggingDomain.NoteView, 'On system editor ref')
-
-    /**
-     * Insert 4 spaces when a tab key is pressed,
-     * only used when inside of the text editor.
-     * If the shift key is pressed first, this event is
-     * not fired.
-     */
-    const editor = document.getElementById(ElementIds.NoteTextEditor) as HTMLInputElement
-
-    if (!editor) {
-      console.error('Editor is not yet mounted; unable to add tab observer.')
-      return
-    }
-
-    this.removeTabObserver = this.application.io.addKeyObserver({
-      element: editor,
-      key: KeyboardKey.Tab,
-      onKeyDown: (event) => {
-        if (document.hidden || this.note.locked || event.shiftKey) {
-          return
-        }
-        event.preventDefault()
-        /** Using document.execCommand gives us undo support */
-        const insertSuccessful = document.execCommand('insertText', false, '\t')
-        if (!insertSuccessful) {
-          /** document.execCommand works great on Chrome/Safari but not Firefox */
-          const start = editor.selectionStart || 0
-          const end = editor.selectionEnd || 0
-          const spaces = '    '
-          /** Insert 4 spaces */
-          editor.value = editor.value.substring(0, start) + spaces + editor.value.substring(end)
-          /** Place cursor 4 spaces away from where the tab key was pressed */
-          editor.selectionStart = editor.selectionEnd = start + 4
-        }
-        this.setState({
-          editorText: editor.value,
-        })
-
-        this.controller
-          .save({
-            editorValues: {
-              title: this.state.editorTitle,
-              text: this.state.editorText,
-            },
-            bypassDebouncer: true,
-          })
-          .catch(console.error)
-      },
-    })
-
-    const observer = new MutationObserver((records) => {
-      for (const record of records) {
-        record.removedNodes.forEach((node) => {
-          if (node === editor) {
-            this.removeTabObserver?.()
-            this.removeTabObserver = undefined
-          }
-        })
-      }
-    })
-
-    observer.observe(editor.parentElement as HTMLElement, { childList: true })
-  }
-
   ensureNoteIsInsertedBeforeUIAction = async () => {
     if (this.controller.isTemplateNote) {
       await this.controller.insertTemplatedNote()
     }
+  }
+
+  onPlainFocus = () => {
+    this.setState({ plainEditorFocused: true })
+  }
+
+  onPlainBlur = () => {
+    this.setState({ plainEditorFocused: false })
   }
 
   override render() {
@@ -996,12 +805,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       )
     }
 
-    const renderHeaderOptions = isMobileScreen() ? !this.state.plaintextEditorFocused : true
+    const renderHeaderOptions = isMobileScreen() ? !this.state.plainEditorFocused : true
 
     const editorMode =
-      this.note.noteType === NoteType.Blocks
-        ? 'blocks'
-        : this.state.editorStateDidLoad && !this.state.editorComponentViewer && !this.state.textareaUnloading
+      this.note.noteType === NoteType.Super
+        ? 'super'
+        : this.state.editorStateDidLoad && !this.state.editorComponentViewer
         ? 'plain'
         : this.state.editorComponentViewer
         ? 'component'
@@ -1095,7 +904,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 </div>
               )}
             </div>
-            {editorMode !== 'blocks' && (
+            {editorMode !== 'super' && (
               <LinkedItemBubblesContainer linkingController={this.viewControllerManager.linkingController} />
             )}
           </div>
@@ -1103,7 +912,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
         <div
           id={ElementIds.EditorContent}
-          className={`${ElementIds.EditorContent} z-editor-content overflow-scroll`}
+          className={`${ElementIds.EditorContent} z-editor-content overflow-auto`}
           ref={this.editorContentRef}
         >
           {this.state.marginResizersEnabled && this.editorContentRef.current ? (
@@ -1133,34 +942,26 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           )}
 
           {editorMode === 'plain' && (
-            <textarea
-              autoComplete="off"
-              dir="auto"
-              id={ElementIds.NoteTextEditor}
-              onChange={this.onTextAreaChange}
-              onFocus={this.onContentFocus}
-              onBlur={this.onContentBlur}
-              readOnly={this.state.noteLocked}
-              ref={(ref) => ref && this.onSystemEditorRef(ref)}
-              spellCheck={this.state.spellcheck}
-              value={this.state.editorText}
-              className={classNames(
-                'editable font-editor flex-grow',
-                this.state.lineHeight && `leading-${this.state.lineHeight.toLowerCase()}`,
-                this.state.fontSize && getPlaintextFontSize(this.state.fontSize),
-              )}
-            ></textarea>
+            <PlainEditor
+              application={this.application}
+              spellcheck={this.state.spellcheck}
+              ref={this.plainEditorRef}
+              controller={this.controller}
+              locked={this.state.noteLocked}
+              onFocus={this.onPlainFocus}
+              onBlur={this.onPlainBlur}
+            />
           )}
 
-          {editorMode === 'blocks' && (
+          {editorMode === 'super' && (
             <div className={classNames('blocks-editor w-full flex-grow overflow-hidden overflow-y-scroll')}>
-              <BlockEditor
+              <SuperEditor
                 key={this.note.uuid}
                 application={this.application}
-                note={this.note}
                 linkingController={this.viewControllerManager.linkingController}
                 filesController={this.viewControllerManager.filesController}
                 spellcheck={this.state.spellcheck}
+                controller={this.controller}
               />
             </div>
           )}
