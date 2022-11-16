@@ -912,7 +912,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
         <div
           id={ElementIds.EditorContent}
-          className={`${ElementIds.EditorContent} z-editor-content overflow-scroll`}
+          className={`${ElementIds.EditorContent} z-editor-content overflow-auto`}
           ref={this.editorContentRef}
         >
           {this.state.marginResizersEnabled && this.editorContentRef.current ? (
