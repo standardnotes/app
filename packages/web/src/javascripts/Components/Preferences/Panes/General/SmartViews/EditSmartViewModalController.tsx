@@ -1,12 +1,18 @@
 import { WebApplication } from '@/Application/Application'
 import { STRING_DELETE_TAG } from '@/Constants/Strings'
-import { predicateFromJson, PredicateJsonForm, SmartView, SmartViewMutator } from '@standardnotes/snjs'
+import {
+  predicateFromJson,
+  PredicateJsonForm,
+  SmartView,
+  SmartViewDefaultIconName,
+  SmartViewMutator,
+} from '@standardnotes/snjs'
 import { confirmDialog } from '@standardnotes/ui-services'
 import { action, makeObservable, observable } from 'mobx'
 
 export class EditSmartViewModalController {
   title = ''
-  icon = 'restore'
+  icon: string = SmartViewDefaultIconName
   predicateJson = ''
   isPredicateJsonValid = false
   isSaving = false
@@ -64,7 +70,7 @@ export class EditSmartViewModalController {
   closeDialog = () => {
     this.setView(undefined)
     this.setTitle('')
-    this.setIcon('restore')
+    this.setIcon(SmartViewDefaultIconName)
     this.setPredicateJson('')
   }
 
@@ -83,7 +89,7 @@ export class EditSmartViewModalController {
 
     await this.application.mutator.changeAndSaveItem<SmartViewMutator>(this.view, (mutator) => {
       mutator.title = this.title
-      mutator.iconString = this.icon || 'restore'
+      mutator.iconString = this.icon || SmartViewDefaultIconName
       mutator.predicate = JSON.parse(this.predicateJson) as PredicateJsonForm
     })
 

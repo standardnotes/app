@@ -8,7 +8,7 @@ import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
 import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 import Spinner from '@/Components/Spinner/Spinner'
-import { Platform } from '@standardnotes/snjs'
+import { Platform, SmartViewDefaultIconName } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
 import { AddSmartViewModalController } from './AddSmartViewModalController'
@@ -141,7 +141,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
               onClick={toggleIconPicker}
               ref={iconPickerButtonRef}
             >
-              <Icon type={icon || 'restore'} />
+              <Icon type={icon || SmartViewDefaultIconName} />
             </button>
             <Popover
               open={shouldShowIconPicker}
@@ -152,9 +152,9 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
             >
               <div className="p-2">
                 <IconPicker
-                  selectedValue={icon || 'restore'}
+                  selectedValue={icon || SmartViewDefaultIconName}
                   onIconChange={(value?: string | undefined) => {
-                    setIcon(value ?? 'restore')
+                    setIcon(value ?? SmartViewDefaultIconName)
                     toggleIconPicker()
                   }}
                   platform={platform}
