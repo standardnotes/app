@@ -6338,24 +6338,24 @@ __metadata:
     "@babel/plugin-syntax-dynamic-import": ^7.8.3
     "@babel/preset-env": "*"
     "@standardnotes/sncrypto-common": "workspace:*"
-    "@types/libsodium-wrappers": ^0.7.9
-    "@types/node": ^18.0.0
+    "@types/libsodium-wrappers": ^0.7.10
+    "@types/node": ^18.11.9
     "@types/uuid": ^8.3.4
-    "@typescript-eslint/eslint-plugin": ^5.30.0
-    babel-loader: ^8.2.3
+    "@typescript-eslint/eslint-plugin": ^5.43.0
+    babel-loader: ^9.1.0
     buffer: ^6.0.3
-    chai: ^4.3.6
+    chai: ^4.3.7
     connect: ^3.7.0
     eslint: "*"
     eslint-plugin-prettier: "*"
     libsodium-wrappers: ^0.7.10
     reflect-metadata: ^0.1.13
-    regenerator-runtime: ^0.13.9
-    serve-static: ^1.14.2
-    ts-loader: ^9.2.6
+    regenerator-runtime: ^0.13.10
+    serve-static: ^1.15.0
+    ts-loader: ^9.4.1
     typedarray-to-buffer: ^4.0.0
     typescript: "*"
-    uuid: ^8.3.2
+    uuid: ^9.0.0
     webpack: "*"
     webpack-cli: "*"
   languageName: unknown
@@ -7495,7 +7495,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/libsodium-wrappers@npm:^0.7.10, @types/libsodium-wrappers@npm:^0.7.9":
+"@types/libsodium-wrappers@npm:^0.7.10":
   version: 0.7.10
   resolution: "@types/libsodium-wrappers@npm:0.7.10"
   checksum: 717054ebcb5fa553e378144b8d564bed8b691905c0d4e90b95c64d77ba24ec9fe798cb2c58cd61dad545ceacb1f05ab69b5597217f9829f2da7a23f0688d11d0
@@ -9750,7 +9750,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-loader@npm:^8.2.2, babel-loader@npm:^8.2.3, babel-loader@npm:^8.2.5":
+"babel-loader@npm:^8.2.2, babel-loader@npm:^8.2.5":
   version: 8.2.5
   resolution: "babel-loader@npm:8.2.5"
   dependencies:
@@ -11073,18 +11073,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chai@npm:^4.3.6":
-  version: 4.3.6
-  resolution: "chai@npm:4.3.6"
+"chai@npm:^4.3.7":
+  version: 4.3.7
+  resolution: "chai@npm:4.3.7"
   dependencies:
     assertion-error: ^1.1.0
     check-error: ^1.0.2
-    deep-eql: ^3.0.1
+    deep-eql: ^4.1.2
     get-func-name: ^2.0.0
     loupe: ^2.3.1
     pathval: ^1.1.1
     type-detect: ^4.0.5
-  checksum: acff93fd537f96d4a4d62dd83810285dffcfccb5089e1bf2a1205b28ec82d93dff551368722893cf85004282df10ee68802737c33c90c5493957ed449ed7ce71
+  checksum: 0bba7d267848015246a66995f044ce3f0ebc35e530da3cbdf171db744e14cbe301ab913a8d07caf7952b430257ccbb1a4a983c570a7c5748dc537897e5131f7c
   languageName: node
   linkType: hard
 
@@ -13145,12 +13145,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deep-eql@npm:^3.0.1":
-  version: 3.0.1
-  resolution: "deep-eql@npm:3.0.1"
+"deep-eql@npm:^4.1.2":
+  version: 4.1.2
+  resolution: "deep-eql@npm:4.1.2"
   dependencies:
     type-detect: ^4.0.0
-  checksum: 4f4c9fb79eb994fb6e81d4aa8b063adc40c00f831588aa65e20857d5d52f15fb23034a6576ecf886f7ff6222d5ae42e71e9b7d57113e0715b1df7ea1e812b125
+  checksum: 1832456c5f6a59d6ef6f0b925d4c75c30ef9582bc9a884c8c2475844d31febafefc5b3ff129cf95d14a3f450b7c1dfb52e597fad849653d8a123bbbb21d9fc3e
   languageName: node
   linkType: hard
 
@@ -26964,7 +26964,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regenerator-runtime@npm:^0.13.2, regenerator-runtime@npm:^0.13.4, regenerator-runtime@npm:^0.13.9":
+"regenerator-runtime@npm:^0.13.2, regenerator-runtime@npm:^0.13.4":
   version: 0.13.10
   resolution: "regenerator-runtime@npm:0.13.10"
   checksum: 09893f5a9e82932642d9a999716b6c626dc53ef2a01307c952ebbf8e011802360163a37c304c18a6c358548be5a72b448e37209954a18696f21e438c81cbb4b9
@@ -28214,7 +28214,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"serve-static@npm:1.15.0, serve-static@npm:^1.13.1, serve-static@npm:^1.14.2":
+"serve-static@npm:1.15.0, serve-static@npm:^1.13.1, serve-static@npm:^1.15.0":
   version: 1.15.0
   resolution: "serve-static@npm:1.15.0"
   dependencies:
@@ -30174,7 +30174,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-loader@npm:^9.2.6, ts-loader@npm:^9.3.1, ts-loader@npm:^9.4.1":
+"ts-loader@npm:^9.3.1, ts-loader@npm:^9.4.1":
   version: 9.4.1
   resolution: "ts-loader@npm:9.4.1"
   dependencies:
