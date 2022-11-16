@@ -119,7 +119,7 @@ export class ItemListController extends AbstractViewController implements Intern
     )
 
     this.disposers.push(
-      application.streamItems<SNTag>([ContentType.Tag], async ({ changed, inserted }) => {
+      application.streamItems<SNTag>([ContentType.Tag, ContentType.SmartView], async ({ changed, inserted }) => {
         const tags = [...changed, ...inserted]
 
         const { didReloadItems } = await this.reloadDisplayPreferences()

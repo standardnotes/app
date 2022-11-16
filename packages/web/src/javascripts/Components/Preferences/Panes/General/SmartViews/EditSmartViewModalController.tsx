@@ -80,17 +80,10 @@ export class EditSmartViewModalController {
 
     this.setIsSaving(true)
 
-    const updatedView = await this.application.mutator.changeAndSaveItem<SmartViewMutator>(this.view, (mutator) => {
+    await this.application.mutator.changeAndSaveItem<SmartViewMutator>(this.view, (mutator) => {
       mutator.title = this.title
       mutator.iconString = this.icon || 'restore'
       mutator.predicate = JSON.parse(this.predicateJson) as PredicateJsonForm
-    })
-
-    await this.navigationController.setSelectedTag(undefined, 'all', {
-      userTriggered: true,
-    })
-    await this.navigationController.setSelectedTag(updatedView as SmartView, 'all', {
-      userTriggered: true,
     })
 
     this.setIsSaving(false)
