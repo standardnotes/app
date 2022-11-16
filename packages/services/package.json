@@ -38,8 +38,8 @@
   },
   "devDependencies": {
     "@types/jest": "^29.2.3",
-    "@typescript-eslint/eslint-plugin": "^5.43.0",
-    "@typescript-eslint/parser": "^5.43.0",
+    "@typescript-eslint/eslint-plugin": "*",
+    "@typescript-eslint/parser": "*",
     "eslint": "^8.27.0",
     "eslint-plugin-prettier": "*",
     "jest": "^29.3.1",

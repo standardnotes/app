@@ -5671,7 +5671,7 @@ __metadata:
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^29.2.3
     "@types/lodash": ^4.14.189
-    "@typescript-eslint/eslint-plugin": ^5.43.0
+    "@typescript-eslint/eslint-plugin": "*"
     eslint: ^8.27.0
     eslint-plugin-prettier: "*"
     jest: ^29.3.1
@@ -5992,7 +5992,7 @@ __metadata:
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^29.2.3
     "@types/wicg-file-system-access": ^2020.9.5
-    "@typescript-eslint/eslint-plugin": ^5.43.0
+    "@typescript-eslint/eslint-plugin": "*"
     eslint: "*"
     eslint-plugin-prettier: "*"
     jest: ^29.3.1
@@ -6014,7 +6014,7 @@ __metadata:
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^29.2.3
-    "@typescript-eslint/eslint-plugin": ^5.43.0
+    "@typescript-eslint/eslint-plugin": "*"
     eslint: "*"
     eslint-plugin-prettier: "*"
     jest: ^29.3.1
@@ -6131,8 +6131,8 @@ __metadata:
     "@standardnotes/web": "workspace:*"
     "@types/react": ^18.0.21
     "@types/react-native": ^0.67.3
-    "@typescript-eslint/eslint-plugin": ^5.20.0
-    "@typescript-eslint/parser": ^5.20.0
+    "@typescript-eslint/eslint-plugin": "*"
+    "@typescript-eslint/parser": "*"
     babel-jest: ^27.5.1
     detox: ^19.5.7
     eslint: ^8.13.0
@@ -6176,7 +6176,7 @@ __metadata:
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^29.2.3
     "@types/lodash": ^4.14.189
-    "@typescript-eslint/eslint-plugin": ^5.43.0
+    "@typescript-eslint/eslint-plugin": "*"
     eslint: "*"
     eslint-plugin-prettier: "*"
     jest: ^29.3.1
@@ -6224,7 +6224,7 @@ __metadata:
     "@standardnotes/features": "workspace:*"
     "@standardnotes/security": ^1.7.0
     "@types/jest": ^29.2.3
-    "@typescript-eslint/eslint-plugin": ^5.43.0
+    "@typescript-eslint/eslint-plugin": "*"
     eslint: "*"
     eslint-plugin-prettier: "*"
     jest: ^29.3.1
@@ -6280,8 +6280,8 @@ __metadata:
     "@standardnotes/sncrypto-common": "workspace:^"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^29.2.3
-    "@typescript-eslint/eslint-plugin": ^5.43.0
-    "@typescript-eslint/parser": ^5.43.0
+    "@typescript-eslint/eslint-plugin": "*"
+    "@typescript-eslint/parser": "*"
     eslint: ^8.27.0
     eslint-plugin-prettier: "*"
     jest: ^29.3.1
@@ -6321,8 +6321,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/sncrypto-common@workspace:packages/sncrypto-common"
   dependencies:
-    "@typescript-eslint/eslint-plugin": ^5.30.0
-    "@typescript-eslint/parser": ^5.12.1
+    "@typescript-eslint/eslint-plugin": "*"
+    "@typescript-eslint/parser": "*"
     eslint: "*"
     eslint-plugin-prettier: ^4.2.1
     reflect-metadata: ^0.1.13
@@ -6387,7 +6387,7 @@ __metadata:
     "@types/libsodium-wrappers": ^0.7.10
     "@types/lodash": ^4.14.189
     "@types/semver": ^7.3.13
-    "@typescript-eslint/eslint-plugin": ^5.43.0
+    "@typescript-eslint/eslint-plugin": "*"
     babel-jest: ^29.3.1
     babel-loader: ^9.1.0
     circular-dependency-plugin: ^5.2.2
@@ -6503,8 +6503,8 @@ __metadata:
     "@standardnotes/toast": "workspace:^"
     "@standardnotes/utils": "workspace:^"
     "@types/jest": ^28.1.5
-    "@typescript-eslint/eslint-plugin": ^5.30.0
-    "@typescript-eslint/parser": ^5.12.1
+    "@typescript-eslint/eslint-plugin": "*"
+    "@typescript-eslint/parser": "*"
     eslint: "*"
     eslint-plugin-prettier: "*"
     jest: ^28.1.2
@@ -7987,7 +7987,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:*, @typescript-eslint/eslint-plugin@npm:^5.12.1, @typescript-eslint/eslint-plugin@npm:^5.20.0, @typescript-eslint/eslint-plugin@npm:^5.30.0, @typescript-eslint/eslint-plugin@npm:^5.30.5":
+"@typescript-eslint/eslint-plugin@npm:*, @typescript-eslint/eslint-plugin@npm:^5.12.1, @typescript-eslint/eslint-plugin@npm:^5.30.0, @typescript-eslint/eslint-plugin@npm:^5.30.5":
   version: 5.40.0
   resolution: "@typescript-eslint/eslint-plugin@npm:5.40.0"
   dependencies:
@@ -8032,24 +8032,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.12.1, @typescript-eslint/parser@npm:^5.20.0, @typescript-eslint/parser@npm:^5.30.5":
-  version: 5.40.0
-  resolution: "@typescript-eslint/parser@npm:5.40.0"
-  dependencies:
-    "@typescript-eslint/scope-manager": 5.40.0
-    "@typescript-eslint/types": 5.40.0
-    "@typescript-eslint/typescript-estree": 5.40.0
-    debug: ^4.3.4
-  peerDependencies:
-    eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
-  peerDependenciesMeta:
-    typescript:
-      optional: true
-  checksum: a8d02950dd12fcb1d19ad5f24cbfd186ca88d8a099160f93f99767896a45198a9f9bfbdd1a57c1ae50d452e6c895ae5b4d7e4623dfc87bca55a45c5ba16491f8
-  languageName: node
-  linkType: hard
-
-"@typescript-eslint/parser@npm:^5.43.0":
+"@typescript-eslint/parser@npm:*, @typescript-eslint/parser@npm:^5.43.0":
   version: 5.43.0
   resolution: "@typescript-eslint/parser@npm:5.43.0"
   dependencies:
@@ -8063,6 +8046,23 @@ __metadata:
     typescript:
       optional: true
   checksum: a28e0ef2807f1c3381c6dc1d9ddfd83ea8db657d3f808511adf13023b469ed64fc09619e05d7f68746b05ea68770a0882883c77ce908682965ba266f95e168c9
+  languageName: node
+  linkType: hard
+
+"@typescript-eslint/parser@npm:^5.12.1, @typescript-eslint/parser@npm:^5.30.5":
+  version: 5.40.0
+  resolution: "@typescript-eslint/parser@npm:5.40.0"
+  dependencies:
+    "@typescript-eslint/scope-manager": 5.40.0
+    "@typescript-eslint/types": 5.40.0
+    "@typescript-eslint/typescript-estree": 5.40.0
+    debug: ^4.3.4
+  peerDependencies:
+    eslint: ^6.0.0 || ^7.0.0 || ^8.0.0
+  peerDependenciesMeta:
+    typescript:
+      optional: true
+  checksum: a8d02950dd12fcb1d19ad5f24cbfd186ca88d8a099160f93f99767896a45198a9f9bfbdd1a57c1ae50d452e6c895ae5b4d7e4623dfc87bca55a45c5ba16491f8
   languageName: node
   linkType: hard
 
