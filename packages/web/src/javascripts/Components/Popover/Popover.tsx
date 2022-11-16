@@ -40,7 +40,7 @@ const Popover = ({
   side,
   togglePopover,
   disableClickOutside,
-  disableMobileBehavior,
+  disableMobileFullscreenTakeover,
 }: Props) => {
   const popoverId = useRef(UuidGenerator.GenerateUuid())
 
@@ -99,7 +99,7 @@ const Popover = ({
         side={side}
         togglePopover={togglePopover}
         disableClickOutside={disableClickOutside}
-        disableMobileBehavior={disableMobileBehavior}
+        disableMobileFullscreenTakeover={disableMobileFullscreenTakeover}
       >
         {children}
       </PositionedPopoverContent>

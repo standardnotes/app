@@ -116,7 +116,7 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
               togglePopover={() => {
                 setPopoverOpen((prevValue) => !prevValue)
               }}
-              disableMobileBehavior={true}
+              disableMobileFullscreenTakeover={true}
               side={isMobileScreen() ? 'top' : 'bottom'}
             >
               <div className={PopoverClassNames}>

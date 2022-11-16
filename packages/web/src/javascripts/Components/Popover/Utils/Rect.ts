@@ -6,11 +6,11 @@ export const getPopoverMaxHeight = (
   buttonRect: DOMRect | undefined,
   side: PopoverSide,
   alignment: PopoverAlignment,
-  disableMobileBehavior?: boolean,
+  disableMobileFullscreenTakeover?: boolean,
 ): number | 'none' => {
   const matchesMediumBreakpoint = matchMedia(MediaQueryBreakpoints.md).matches
 
-  if (!matchesMediumBreakpoint && !disableMobileBehavior) {
+  if (!matchesMediumBreakpoint && !disableMobileFullscreenTakeover) {
     return 'none'
   }
 

@@ -113,7 +113,7 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
             togglePopover={() => {
               setPopoverOpen((prevValue) => !prevValue)
             }}
-            disableMobileBehavior={true}
+            disableMobileFullscreenTakeover={true}
             side={isMobileScreen() ? 'top' : 'bottom'}
           >
             <div className={PopoverClassNames}>

@@ -38,7 +38,7 @@ type CommonPopoverProps = {
   togglePopover: () => void
   className?: string
   disableClickOutside?: boolean
-  disableMobileBehavior?: boolean
+  disableMobileFullscreenTakeover?: boolean
 }
 
 export type PopoverContentProps = CommonPopoverProps & {
