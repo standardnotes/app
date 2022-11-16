@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.46.9](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.46.8...@standardnotes/mobile@3.46.9) (2022-11-16)
+
+### Bug Fixes
+
+* **mobile:** android build ([c3e5228](https://github.com/standardnotes/app/commit/c3e5228c9dd4e2e9cac926e40483c8d3073fb68d))
+
 ## [3.46.8](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.46.7...@standardnotes/mobile@3.46.8) (2022-11-16)
 
 ### Bug Fixes

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.100.0](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.301...@standardnotes/desktop@3.100.0) (2022-11-16)
+
+### Features
+
+* bump desktop version to match web ([e9c6eed](https://github.com/standardnotes/app/commit/e9c6eed235ba59ac9b3bbb102bed78acb2e10177))
+* bump desktop version to match web (skip e2e) ([a73074c](https://github.com/standardnotes/app/commit/a73074ce1c64f4cba04745dd22e5fce775ed434e))
+
 ## [3.23.301](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.23.300...@standardnotes/desktop@3.23.301) (2022-11-16)
 
 **Note:** Version bump only for package @standardnotes/desktop
