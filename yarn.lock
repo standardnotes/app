@@ -5898,21 +5898,21 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/encryption@workspace:packages/encryption"
   dependencies:
-    "@standardnotes/common": ^1.43.0
+    "@standardnotes/common": ^1.45.0
     "@standardnotes/config": 2.4.3
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
-    "@types/jest": ^28.1.5
-    "@types/node": ^18.0.0
+    "@types/jest": ^29.2.3
+    "@types/node": ^18.11.9
     "@typescript-eslint/eslint-plugin": "*"
     eslint: "*"
     eslint-plugin-prettier: "*"
-    jest: ^28.1.2
+    jest: ^29.3.1
     prettier: "*"
     reflect-metadata: ^0.1.13
-    ts-jest: ^28.0.5
+    ts-jest: ^29.0.3
     typescript: "*"
   languageName: unknown
   linkType: soft
@@ -7398,6 +7398,13 @@ __metadata:
   version: 16.11.65
   resolution: "@types/node@npm:16.11.65"
   checksum: 81d84cb1e7aa305574cd35acf1a5e47f4a7f52783ba096f4bc511314540dee33a27cbd4fddc8bddd4535f1c87a96a76907157bcde093a25c89e8851d6dd63022
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^18.11.9":
+  version: 18.11.9
+  resolution: "@types/node@npm:18.11.9"
+  checksum: cc0aae109e9b7adefc32eecb838d6fad931663bb06484b5e9cbbbf74865c721b03d16fd8d74ad90e31dbe093d956a7c2c306ba5429ba0c00f3f7505103d7a496
   languageName: node
   linkType: hard
 

@@ -24,18 +24,18 @@
   },
   "devDependencies": {
     "@standardnotes/config": "2.4.3",
-    "@types/jest": "^28.1.5",
-    "@types/node": "^18.0.0",
+    "@types/jest": "^29.2.3",
+    "@types/node": "^18.11.9",
     "@typescript-eslint/eslint-plugin": "*",
     "eslint": "*",
     "eslint-plugin-prettier": "*",
-    "jest": "^28.1.2",
+    "jest": "^29.3.1",
     "prettier": "*",
-    "ts-jest": "^28.0.5",
+    "ts-jest": "^29.0.3",
     "typescript": "*"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.43.0",
+    "@standardnotes/common": "^1.45.0",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/sncrypto-common": "workspace:*",
