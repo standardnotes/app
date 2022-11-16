@@ -4505,14 +4505,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nanostores/react@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@nanostores/react@npm:0.2.0"
+"@nanostores/react@npm:^0.4.0":
+  version: 0.4.0
+  resolution: "@nanostores/react@npm:0.4.0"
+  dependencies:
+    use-sync-external-store: ^1.2.0
   peerDependencies:
-    nanostores: ^0.5.2
+    nanostores: ^0.7.0
     react: ">=18.0.0"
     react-dom: ">=18.0.0"
-  checksum: 338dbe994263ab06947c5819882f69aeaef558bb1c995115e38f56f1a35289da8619aa1faad5f238136d36b1c87662a751c969b45b3aee053d09c5d50f9f4b14
+  checksum: 0252993e821f81e695c97a0e8f3b2baeacf9b2c1fb14c9fe76b5d0485aa584f9ed907416fa4bba08a297b5f315c4de3a7bfd481804f462eb7fb61587439fa4f8
   languageName: node
   linkType: hard
 
@@ -6477,13 +6479,13 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/toast@workspace:packages/toast"
   dependencies:
-    "@nanostores/react": ^0.2.0
+    "@nanostores/react": ^0.4.0
     "@standardnotes/icons": "workspace:*"
     "@types/react": "link:../web/node_modules/@types/react"
     "@types/react-dom": "link:../web/node_modules/@types/react-dom"
     eslint: "*"
-    nanoid: ^3.3.4
-    nanostores: ^0.5.12
+    nanoid: ^4.0.0
+    nanostores: ^0.7.1
     prettier: "*"
     react: "link:../web/node_modules/react"
     react-dom: "link:../web/node_modules/react-dom"
@@ -22283,6 +22285,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nanoid@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "nanoid@npm:4.0.0"
+  bin:
+    nanoid: bin/nanoid.js
+  checksum: 7d5946df5c6d383694195b781ae7b5067c149d164ec71e910d6b06676309c3459b68af570b944fb5ecd5065d19df464f05700d141d70bb712ff8ca06642fd8df
+  languageName: node
+  linkType: hard
+
 "nanomatch@npm:^1.2.9":
   version: 1.2.13
   resolution: "nanomatch@npm:1.2.13"
@@ -22302,10 +22313,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nanostores@npm:^0.5.12":
-  version: 0.5.13
-  resolution: "nanostores@npm:0.5.13"
-  checksum: f3831519a3b31d32f164f58d1d46f6664e5fa373f3e83b060f261691b125bc4c5a1819c0ed16d7eaad6ab479774b000253d1876a7ec05b23fe14aafab575b7fb
+"nanostores@npm:^0.7.1":
+  version: 0.7.1
+  resolution: "nanostores@npm:0.7.1"
+  checksum: 29aeb45893afa97436e65da513bdaa3240747f191c38d982dc7d7a4340063f0a05acc3da388b967d97c9cb52852ac5c7b7b8d80efb7b00a4c3c95bdd233f92e9
   languageName: node
   linkType: hard
 
