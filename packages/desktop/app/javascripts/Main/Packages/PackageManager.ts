@@ -1,4 +1,4 @@
-import compareVersions from 'compare-versions'
+import { compareVersions } from 'compare-versions'
 import log from 'electron-log'
 import fs from 'fs'
 import path from 'path'
