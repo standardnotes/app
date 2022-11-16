@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-community/async-storage'
 import SNReactNative from '@standardnotes/react-native-utils'
 import { AppleIAPReceipt } from '@standardnotes/services/dist/Domain/Subscription/AppleIAPReceipt'
 import {
+  AppleIAPProductId,
   ApplicationIdentifier,
   Environment,
   LegacyMobileKeychainStructure,
@@ -12,7 +13,6 @@ import {
   RawKeychainValue,
   removeFromArray,
   TransferPayload,
-  AppleIAPProductId,
   UuidString,
 } from '@standardnotes/snjs'
 import { ColorSchemeObserverService } from 'ColorSchemeObserverService'
@@ -41,9 +41,9 @@ import {
 import { hide, show } from 'react-native-privacy-snapshot'
 import Share from 'react-native-share'
 import { AndroidBackHandlerService } from '../AndroidBackHandlerService'
+import { PurchaseManager } from '../PurchaseManager'
 import { AppStateObserverService } from './../AppStateObserverService'
 import Keychain from './Keychain'
-import { PurchaseManager } from '../PurchaseManager'
 
 export type BiometricsType = 'Fingerprint' | 'Face ID' | 'Biometrics' | 'Touch ID'
 
