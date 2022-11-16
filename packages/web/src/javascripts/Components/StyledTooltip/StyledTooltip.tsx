@@ -1,4 +1,4 @@
-import Tooltip from '@reach/tooltip'
+import { Tooltip } from '@reach/tooltip'
 import styled from 'styled-components'
 
 export default styled(Tooltip)`

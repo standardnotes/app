@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/sncrypto-web",
-  "version": "1.14.1",
+  "version": "1.14.2",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -32,21 +32,21 @@
     "@babel/core": "*",
     "@babel/plugin-syntax-dynamic-import": "^7.8.3",
     "@babel/preset-env": "*",
-    "@types/libsodium-wrappers": "^0.7.9",
-    "@types/node": "^18.0.0",
+    "@types/libsodium-wrappers": "^0.7.10",
+    "@types/node": "^18.11.9",
     "@types/uuid": "^8.3.4",
-    "@typescript-eslint/eslint-plugin": "^5.30.0",
-    "babel-loader": "^8.2.3",
-    "chai": "^4.3.6",
+    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "babel-loader": "^9.1.0",
+    "chai": "^4.3.7",
     "connect": "^3.7.0",
     "eslint": "*",
     "eslint-plugin-prettier": "*",
-    "regenerator-runtime": "^0.13.9",
-    "serve-static": "^1.14.2",
-    "ts-loader": "^9.2.6",
+    "regenerator-runtime": "^0.13.10",
+    "serve-static": "^1.15.0",
+    "ts-loader": "^9.4.1",
     "typedarray-to-buffer": "^4.0.0",
     "typescript": "*",
-    "uuid": "^8.3.2",
+    "uuid": "^9.0.0",
     "webpack": "*",
     "webpack-cli": "*"
   }

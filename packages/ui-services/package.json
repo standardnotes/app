@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/ui-services",
-  "version": "1.13.13",
+  "version": "1.13.14",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -23,7 +23,7 @@
     "test": "jest spec"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.43.0",
+    "@standardnotes/common": "^1.45.0",
     "@standardnotes/features": "workspace:^",
     "@standardnotes/filepicker": "workspace:^",
     "@standardnotes/services": "workspace:^",
@@ -32,13 +32,13 @@
     "@standardnotes/utils": "workspace:^"
   },
   "devDependencies": {
-    "@types/jest": "^28.1.5",
-    "@typescript-eslint/eslint-plugin": "^5.30.0",
-    "@typescript-eslint/parser": "^5.12.1",
+    "@types/jest": "^29.2.3",
+    "@typescript-eslint/eslint-plugin": "*",
+    "@typescript-eslint/parser": "*",
     "eslint": "*",
     "eslint-plugin-prettier": "*",
-    "jest": "^28.1.2",
-    "ts-jest": "^28.0.5",
+    "jest": "^29.3.1",
+    "ts-jest": "^29.0.3",
     "typescript": "*"
   }
 }
