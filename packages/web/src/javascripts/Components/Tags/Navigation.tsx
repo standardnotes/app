@@ -135,7 +135,11 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
             'md:hover:[overflow-y:_overlay]',
           )}
         >
-          <SmartViewsSection application={application} viewControllerManager={viewControllerManager} />
+          <SmartViewsSection
+            application={application}
+            featuresController={viewControllerManager.featuresController}
+            navigationController={viewControllerManager.navigationController}
+          />
           <TagsSection viewControllerManager={viewControllerManager} />
         </div>
         {NavigationFooter}

@@ -1,6 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
+import { FeaturesController } from '@/Controllers/FeaturesController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useMemo } from 'react'
@@ -13,22 +14,23 @@ import SmartViewsList from './SmartViewsList'
 
 type Props = {
   application: WebApplication
-  viewControllerManager: ViewControllerManager
+  navigationController: NavigationController
+  featuresController: FeaturesController
 }
 
-const SmartViewsSection: FunctionComponent<Props> = ({ application, viewControllerManager }) => {
+const SmartViewsSection: FunctionComponent<Props> = ({ application, navigationController, featuresController }) => {
   const premiumModal = usePremiumModal()
   const addSmartViewModalController = useMemo(() => new AddSmartViewModalController(application), [application])
   const editSmartViewModalController = useMemo(() => new EditSmartViewModalController(application), [application])
 
   const createNewSmartView = useCallback(() => {
-    if (!viewControllerManager.featuresController.hasSmartViews) {
+    if (!featuresController.hasSmartViews) {
       premiumModal.activate(SMART_TAGS_FEATURE_NAME)
       return
     }
 
     addSmartViewModalController.setIsAddingSmartView(true)
-  }, [addSmartViewModalController, premiumModal, viewControllerManager.featuresController.hasSmartViews])
+  }, [addSmartViewModalController, premiumModal, featuresController.hasSmartViews])
 
   return (
     <section>
@@ -47,7 +49,8 @@ const SmartViewsSection: FunctionComponent<Props> = ({ application, viewControll
         </div>
       </div>
       <SmartViewsList
-        viewControllerManager={viewControllerManager}
+        navigationController={navigationController}
+        featuresController={featuresController}
         setEditingSmartView={editSmartViewModalController.setView}
       />
       {!!editSmartViewModalController.view && (
