@@ -8,15 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		00E356F31AD99517003FC87E /* StandardNotesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* StandardNotesTests.m */; };
-		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		1C2EEB3B45F4EB07AC795C77 /* (null) in Frameworks */ = {isa = PBXBuildFile; };
+		1C2EEB3B45F4EB07AC795C77 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
 		33BB1B14071EBE5978EBF3A8 /* libPods-StandardNotes-StandardNotesTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 04FCB5A3A3387CA3CFC82AA3 /* libPods-StandardNotes-StandardNotesTests.a */; };
 		BC8DEA834BF198E8511F04FF /* libPods-StandardNotesDev.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F2D747BE02C2A1BCFEEFD1 /* libPods-StandardNotesDev.a */; };
 		CD6592A9291EEFCC00C09DC6 /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD6592A8291EEFCC00C09DC6 /* StoreKit.framework */; };
 		CD7D5ECA27800609005FE1BF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CD7D5EC927800608005FE1BF /* LaunchScreen.storyboard */; };
-		CD7D5ECF278015D2005FE1BF /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		CD7D5ED0278015D2005FE1BF /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		CD7D5ED4278015D2005FE1BF /* Red.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D83FE277FF8CB00915D89 /* Red.png */; };
 		CD7D5ED5278015D2005FE1BF /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
@@ -27,6 +25,8 @@
 		CD7D8400277FF8CB00915D89 /* Red@3x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D83FD277FF8CB00915D89 /* Red@3x.png */; };
 		CD7D8401277FF8CB00915D89 /* Red.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D83FE277FF8CB00915D89 /* Red.png */; };
 		CD7D8402277FF8CB00915D89 /* Red@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = CD7D83FF277FF8CB00915D89 /* Red@2x.png */; };
+		CDC75796292552080019F4AF /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDC75795292552080019F4AF /* AppDelegate.mm */; };
+		CDC75797292552080019F4AF /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = CDC75795292552080019F4AF /* AppDelegate.mm */; };
 		D261494528699DCE00B17102 /* Web.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D261494428699DCE00B17102 /* Web.bundle */; };
 		D261494628699DCE00B17102 /* Web.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D261494428699DCE00B17102 /* Web.bundle */; };
 		DD3D1CE428EC1C8BA0C49211 /* libPods-StandardNotes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 41388EB4F886116157DA092C /* libPods-StandardNotes.a */; };
@@ -50,7 +50,6 @@
 		0BB10C8D896AFACECE748F6D /* Pods-StandardNotesDev.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StandardNotesDev.release.xcconfig"; path = "Target Support Files/Pods-StandardNotesDev/Pods-StandardNotesDev.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* StandardNotes.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StandardNotes.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = StandardNotes/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = StandardNotes/AppDelegate.m; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = StandardNotes/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = StandardNotes/main.m; sourceTree = "<group>"; };
 		321F15E603CF0AF8B1769447 /* Pods-StandardNotes-StandardNotesTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-StandardNotes-StandardNotesTests.release.xcconfig"; path = "Target Support Files/Pods-StandardNotes-StandardNotesTests/Pods-StandardNotes-StandardNotesTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -71,6 +70,7 @@
 		CD7D83FD277FF8CB00915D89 /* Red@3x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Red@3x.png"; sourceTree = "<group>"; };
 		CD7D83FE277FF8CB00915D89 /* Red.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Red.png; sourceTree = "<group>"; };
 		CD7D83FF277FF8CB00915D89 /* Red@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Red@2x.png"; sourceTree = "<group>"; };
+		CDC75795292552080019F4AF /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = StandardNotes/AppDelegate.mm; sourceTree = "<group>"; };
 		D261494428699DCE00B17102 /* Web.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; name = Web.bundle; path = ../html/Web.bundle; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -89,7 +89,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CD6592A9291EEFCC00C09DC6 /* StoreKit.framework in Frameworks */,
-				1C2EEB3B45F4EB07AC795C77 /* (null) in Frameworks */,
+				1C2EEB3B45F4EB07AC795C77 /* BuildFile in Frameworks */,
 				DD3D1CE428EC1C8BA0C49211 /* libPods-StandardNotes.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -140,7 +140,7 @@
 			children = (
 				D261494428699DCE00B17102 /* Web.bundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.m */,
+				CDC75795292552080019F4AF /* AppDelegate.mm */,
 				CD7D5EE527801F10005FE1BF /* StandardNotes.entitlements */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB71A68108700A75B9A /* main.m */,
@@ -257,6 +257,7 @@
 				CD7D5ED3278015D2005FE1BF /* Resources */,
 				CD7D5ED9278015D2005FE1BF /* Bundle React Native code and images */,
 				CD7D5EDB278015D2005FE1BF /* [CP] Copy Pods Resources */,
+				73628DBD12483F78939E4EEB /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -398,6 +399,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		73628DBD12483F78939E4EEB /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-StandardNotesDev/Pods-StandardNotesDev-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-StandardNotesDev/Pods-StandardNotesDev-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-StandardNotesDev/Pods-StandardNotesDev-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		AA865067D78BE435788A7E7C /* [CP] Copy Pods Resources */ = {
@@ -574,7 +592,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				CDC75796292552080019F4AF /* AppDelegate.mm in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -583,7 +601,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CD7D5ECF278015D2005FE1BF /* AppDelegate.m in Sources */,
+				CDC75797292552080019F4AF /* AppDelegate.mm in Sources */,
 				CD7D5ED0278015D2005FE1BF /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -714,7 +732,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -742,7 +760,7 @@
 				COPY_PHASE_STRIP = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -770,6 +788,7 @@
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 			};
 			name = Debug;
@@ -779,7 +798,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LANGUAGE_STANDARD = "c++17";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
@@ -807,7 +826,7 @@
 				COPY_PHASE_STRIP = YES;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "";
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = i386;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -827,6 +846,7 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};
