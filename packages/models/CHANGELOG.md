@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.36.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.35.0...@standardnotes/models@1.36.0) (2022-11-16)
+
+### Features
+
+* **labs:** super editor ([#2001](https://github.com/standardnotes/app/issues/2001)) ([59f8547](https://github.com/standardnotes/app/commit/59f8547a8de1c804cb2f01ac734c83268977fa28))
+
 # [1.35.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.34.10...@standardnotes/models@1.35.0) (2022-11-14)
 
 ### Features

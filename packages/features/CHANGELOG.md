@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.55.0](https://github.com/standardnotes/app/compare/@standardnotes/features@1.54.5...@standardnotes/features@1.55.0) (2022-11-16)
+
+### Features
+
+* **labs:** super editor ([#2001](https://github.com/standardnotes/app/issues/2001)) ([59f8547](https://github.com/standardnotes/app/commit/59f8547a8de1c804cb2f01ac734c83268977fa28))
+
 ## [1.54.5](https://github.com/standardnotes/app/compare/@standardnotes/features@1.54.4...@standardnotes/features@1.54.5) (2022-11-09)
 
 ### Reverts
