@@ -5922,16 +5922,16 @@ __metadata:
   resolution: "@standardnotes/features@workspace:packages/features"
   dependencies:
     "@standardnotes/auth": ^3.19.4
-    "@standardnotes/common": ^1.43.0
-    "@standardnotes/security": ^1.2.0
-    "@types/jest": ^28.1.5
+    "@standardnotes/common": ^1.45.0
+    "@standardnotes/security": ^1.7.0
+    "@types/jest": ^29.2.3
     "@typescript-eslint/eslint-plugin": "*"
     eslint: "*"
     eslint-plugin-prettier: "*"
-    jest: ^28.1.2
+    jest: ^29.3.1
     reflect-metadata: ^0.1.13
-    ts-jest: ^28.0.5
-    typescript: 4.7.3
+    ts-jest: ^29.0.3
+    typescript: 4.9.3
   languageName: unknown
   linkType: soft
 
@@ -30265,16 +30265,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:4.7.3":
-  version: 4.7.3
-  resolution: "typescript@npm:4.7.3"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: fd13a1ce53790a36bb8350e1f5e5e384b5f6cb9b0635114a6d01d49cb99916abdcfbc13c7521cdae2f2d3f6d8bc4a8ae7625edf645a04ee940588cd5e7597b2f
-  languageName: node
-  linkType: hard
-
 "typescript@npm:4.9.3":
   version: 4.9.3
   resolution: "typescript@npm:4.9.3"
@@ -30292,16 +30282,6 @@ __metadata:
     tsc: bin/tsc
     tsserver: bin/tsserver
   checksum: 563a0ef47abae6df27a9a3ab38f75fc681f633ccf1a3502b1108e252e187787893de689220f4544aaf95a371a4eb3141e4a337deb9895de5ac3c1ca76430e5f0
-  languageName: node
-  linkType: hard
-
-"typescript@patch:typescript@4.7.3#~builtin<compat/typescript>":
-  version: 4.7.3
-  resolution: "typescript@patch:typescript@npm%3A4.7.3#~builtin<compat/typescript>::version=4.7.3&hash=7ad353"
-  bin:
-    tsc: bin/tsc
-    tsserver: bin/tsserver
-  checksum: 137d18a77f52254a284960b16ab53d0619f57b69b5d585804b8413f798a1175ce3e774fb95e6a101868577aafe357d8fcfc9171f0dc9fc0c210e9ae59d107cc0
   languageName: node
   linkType: hard
 
