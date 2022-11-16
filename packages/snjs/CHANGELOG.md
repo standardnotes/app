@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.151.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.150.0...@standardnotes/snjs@2.151.0) (2022-11-16)
+
+### Features
+
+* edit smart view predicate as json ([#2012](https://github.com/standardnotes/app/issues/2012)) ([f3e4ba8](https://github.com/standardnotes/app/commit/f3e4ba87795b82cbd96663b441f87ab80f710d05))
+
 # [2.150.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.149.1...@standardnotes/snjs@2.150.0) (2022-11-16)
 
 ### Features

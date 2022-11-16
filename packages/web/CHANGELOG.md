@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.100.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.99.0...@standardnotes/web@3.100.0) (2022-11-16)
+
+### Features
+
+* edit smart view predicate as json ([#2012](https://github.com/standardnotes/app/issues/2012)) ([f3e4ba8](https://github.com/standardnotes/app/commit/f3e4ba87795b82cbd96663b441f87ab80f710d05))
+
 # [3.99.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.98.2...@standardnotes/web@3.99.0) (2022-11-16)
 
 ### Features

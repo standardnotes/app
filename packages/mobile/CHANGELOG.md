@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.46.8](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.46.7...@standardnotes/mobile@3.46.8) (2022-11-16)
+
+### Bug Fixes
+
+* **mobile:** bump android targetSdkVersion to 31 ([66a8983](https://github.com/standardnotes/app/commit/66a898345af6ea48dfa3e7fae38fac97cb376cbe))
+
 ## [3.46.7](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.46.6...@standardnotes/mobile@3.46.7) (2022-11-16)
 
 **Note:** Version bump only for package @standardnotes/mobile
