@@ -5971,19 +5971,20 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/files@workspace:packages/files"
   dependencies:
-    "@standardnotes/common": ^1.43.0
+    "@standardnotes/common": ^1.45.0
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/utils": "workspace:*"
-    "@types/jest": ^28.1.5
-    "@typescript-eslint/eslint-plugin": ^5.30.0
+    "@types/jest": ^29.2.3
+    "@typescript-eslint/eslint-plugin": ^5.43.0
     eslint: "*"
     eslint-plugin-prettier: "*"
-    jest: ^28.1.2
+    jest: ^29.3.1
     reflect-metadata: ^0.1.13
-    ts-jest: ^28.0.5
+    ts-jest: ^29.0.3
+    typescript: "*"
   languageName: unknown
   linkType: soft
 
