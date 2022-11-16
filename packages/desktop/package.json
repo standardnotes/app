@@ -37,7 +37,7 @@
     "@electron/remote": "^2.0.8",
     "@standardnotes/electron-clear-data": "1.1.1",
     "@standardnotes/web": "workspace:*",
-    "axios": "^0.27.2",
+    "axios": "^1.1.3",
     "compare-versions": "^5.0.1",
     "decrypt": "github:standardnotes/decrypt#master",
     "dotenv": "^16.0.3",
