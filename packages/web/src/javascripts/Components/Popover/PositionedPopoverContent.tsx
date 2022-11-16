@@ -24,6 +24,7 @@ const PositionedPopoverContent = ({
   side = 'bottom',
   togglePopover,
   disableClickOutside,
+  disableMobileBehavior,
 }: PopoverContentProps) => {
   const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
   const popoverRect = useAutoElementRect(popoverElement)
@@ -44,6 +45,7 @@ const PositionedPopoverContent = ({
     documentRect,
     popoverRect: popoverRect ?? popoverElement?.getBoundingClientRect(),
     side,
+    disableMobileBehavior,
   })
 
   usePopoverCloseOnClickOutside({
@@ -72,8 +74,9 @@ const PositionedPopoverContent = ({
     <Portal>
       <div
         className={classNames(
-          'absolute top-0 left-0 flex h-full w-full min-w-80 cursor-auto flex-col',
+          'absolute top-0 left-0 flex w-full min-w-80 cursor-auto flex-col',
           'overflow-y-auto rounded bg-default shadow-main md:h-auto md:max-w-xs',
+          !disableMobileBehavior && 'h-full',
           overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
           !isDesktopScreen ? 'pt-safe-top pb-safe-bottom' : '',
           !styles && 'md:invisible',
@@ -88,7 +91,7 @@ const PositionedPopoverContent = ({
         ref={setPopoverElement}
         data-popover={id}
       >
-        <div className="md:hidden">
+        <div className={classNames(disableMobileBehavior && 'hidden', 'md:hidden')}>
           <div className="flex items-center justify-end px-3 pt-2">
             <button className="rounded-full border border-border p-1" onClick={togglePopover}>
               <Icon type="close" className="h-6 w-6" />

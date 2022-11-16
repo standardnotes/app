@@ -17,6 +17,7 @@ type Options = {
   documentRect: DOMRect
   popoverRect?: DOMRect
   side: PopoverSide
+  disableMobileBehavior?: boolean
 }
 
 export const getPositionedPopoverStyles = ({
@@ -25,6 +26,7 @@ export const getPositionedPopoverStyles = ({
   documentRect,
   popoverRect,
   side,
+  disableMobileBehavior,
 }: Options): [CSSProperties | null, PopoverSide, PopoverAlignment] => {
   if (!popoverRect || !anchorRect) {
     return [null, side, align]
@@ -32,7 +34,7 @@ export const getPositionedPopoverStyles = ({
 
   const matchesMediumBreakpoint = matchMedia(MediaQueryBreakpoints.md).matches
 
-  if (!matchesMediumBreakpoint) {
+  if (!matchesMediumBreakpoint && !disableMobileBehavior) {
     return [null, side, align]
   }
 

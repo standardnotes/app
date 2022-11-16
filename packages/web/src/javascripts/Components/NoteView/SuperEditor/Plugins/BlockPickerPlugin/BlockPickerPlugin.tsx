@@ -21,6 +21,7 @@ import { GetDynamicTableBlocks, GetTableBlock } from './Blocks/Table'
 import Popover from '@/Components/Popover/Popover'
 import { PopoverClassNames } from '../ClassNames'
 import { GetDatetimeBlocks } from './Blocks/DateTime'
+import { isMobileScreen } from '@/Utils'
 
 export default function BlockPickerMenuPlugin(): JSX.Element {
   const [editor] = useLexicalComposerContext()
@@ -115,6 +116,8 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
               togglePopover={() => {
                 setPopoverOpen((prevValue) => !prevValue)
               }}
+              disableMobileBehavior={true}
+              side={isMobileScreen() ? 'top' : 'bottom'}
             >
               <div className={PopoverClassNames}>
                 <ul>
