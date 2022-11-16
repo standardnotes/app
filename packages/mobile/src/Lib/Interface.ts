@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage'
 import SNReactNative from '@standardnotes/react-native-utils'
-import { AppleIAPReceipt } from '@standardnotes/services/dist/Domain/Subscription/AppleIAPReceipt'
+import { AppleIAPReceipt } from '@standardnotes/services'
 import {
   AppleIAPProductId,
   ApplicationIdentifier,
