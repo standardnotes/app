@@ -78,7 +78,7 @@ const PositionedPopoverContent = ({
           'overflow-y-auto rounded bg-default shadow-main md:h-auto md:max-w-xs',
           !disableMobileBehavior && 'h-full',
           overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
-          !isDesktopScreen ? 'pt-safe-top pb-safe-bottom' : '',
+          !isDesktopScreen && !disableMobileBehavior ? 'pt-safe-top pb-safe-bottom' : '',
           !styles && 'md:invisible',
         )}
         style={{
