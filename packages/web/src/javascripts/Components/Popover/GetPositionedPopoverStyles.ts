@@ -4,10 +4,15 @@ import { PopoverAlignment, PopoverSide } from './Types'
 import { OppositeSide, checkCollisions, getNonCollidingSide, getNonCollidingAlignment } from './Utils/Collisions'
 import { getPositionedPopoverRect } from './Utils/Rect'
 
-const getStylesFromRect = (rect: DOMRect): CSSProperties => {
+const getStylesFromRect = (rect: DOMRect, disableMobileBehavior?: boolean): CSSProperties => {
   return {
     willChange: 'transform',
     transform: `translate(${rect.x}px, ${rect.y}px)`,
+    ...(disableMobileBehavior
+      ? {
+          maxWidth: `${window.innerWidth - rect.x * 2}px`,
+        }
+      : {}),
   }
 }
 
@@ -53,5 +58,5 @@ export const getPositionedPopoverStyles = ({
   })
   const finalPositionedRect = getPositionedPopoverRect(popoverRect, anchorRect, finalSide, finalAlignment)
 
-  return [getStylesFromRect(finalPositionedRect), finalSide, finalAlignment]
+  return [getStylesFromRect(finalPositionedRect, disableMobileBehavior), finalSide, finalAlignment]
 }

@@ -110,7 +110,7 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
               align="start"
               anchorPoint={{
                 x: anchorElementRef.current.offsetLeft,
-                y: anchorElementRef.current.offsetTop + anchorElementRef.current.offsetHeight,
+                y: anchorElementRef.current.offsetTop + (!isMobileScreen() ? anchorElementRef.current.offsetHeight : 0),
               }}
               open={popoverOpen}
               togglePopover={() => {
