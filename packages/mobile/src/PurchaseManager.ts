@@ -1,18 +1,18 @@
-import { LoggingDomain, log } from './Lib/Logging'
+import { AppleIAPProductId, AppleIAPReceipt } from '@standardnotes/snjs'
 import { EmitterSubscription } from 'react-native'
 import {
-  initConnection,
   endConnection,
+  finishTransaction,
+  getSubscriptions,
+  initConnection,
   purchaseErrorListener,
   purchaseUpdatedListener,
+  requestSubscription,
   type ProductPurchase,
   type PurchaseError,
   type SubscriptionPurchase,
-  finishTransaction,
-  requestSubscription,
-  getSubscriptions,
 } from 'react-native-iap'
-import { AppleIAPReceipt, AppleIAPProductId } from '@standardnotes/snjs'
+import { log, LoggingDomain } from './Lib/Logging'
 
 export class PurchaseManager {
   private static instance: PurchaseManager

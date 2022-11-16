@@ -24,8 +24,8 @@
     "test": "yarn lint"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.30.0",
-    "@typescript-eslint/parser": "^5.12.1",
+    "@typescript-eslint/eslint-plugin": "*",
+    "@typescript-eslint/parser": "*",
     "eslint": "*",
     "eslint-plugin-prettier": "^4.2.1",
     "typescript": "*"

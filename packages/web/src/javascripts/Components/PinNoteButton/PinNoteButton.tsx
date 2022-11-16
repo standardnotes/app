@@ -1,4 +1,4 @@
-import VisuallyHidden from '@reach/visually-hidden'
+import { VisuallyHidden } from '@reach/visually-hidden'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback } from 'react'
 import Icon from '@/Components/Icon/Icon'

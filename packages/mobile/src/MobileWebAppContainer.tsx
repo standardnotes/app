@@ -1,5 +1,4 @@
 import { ReactNativeToWebEvent } from '@standardnotes/snjs'
-import { ColorSchemeObserverService } from './ColorSchemeObserverService'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Keyboard, Platform } from 'react-native'
 import VersionInfo from 'react-native-version-info'
@@ -8,6 +7,7 @@ import { OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTy
 import pjson from '../package.json'
 import { AndroidBackHandlerService } from './AndroidBackHandlerService'
 import { AppStateObserverService } from './AppStateObserverService'
+import { ColorSchemeObserverService } from './ColorSchemeObserverService'
 import { MobileDevice, MobileDeviceEvent } from './Lib/Interface'
 import { IsDev } from './Lib/Utils'
 

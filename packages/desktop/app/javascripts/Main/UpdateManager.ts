@@ -1,4 +1,4 @@
-import compareVersions from 'compare-versions'
+import { compareVersions } from 'compare-versions'
 import { BrowserWindow, dialog, shell } from 'electron'
 import electronLog from 'electron-log'
 import { autoUpdater } from 'electron-updater'
