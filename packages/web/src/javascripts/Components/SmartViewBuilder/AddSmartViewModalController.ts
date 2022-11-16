@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { CompoundPredicateBuilderController } from '@/Components/SmartViewBuilder/CompoundPredicateBuilderController'
-import { predicateFromJson, PredicateJsonForm } from '@standardnotes/snjs'
+import { predicateFromJson, PredicateJsonForm, SmartViewDefaultIconName } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 
 export class AddSmartViewModalController {
@@ -9,7 +9,7 @@ export class AddSmartViewModalController {
 
   title = ''
 
-  icon = 'restore'
+  icon: string = SmartViewDefaultIconName
 
   predicateController = new CompoundPredicateBuilderController()
 

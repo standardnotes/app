@@ -9,7 +9,7 @@ import * as Services from '@standardnotes/services'
 import { PayloadManagerChangeData } from '../Payloads'
 import { DiagnosticInfo, ItemsClientInterface, ItemRelationshipDirection } from '@standardnotes/services'
 import { ApplicationDisplayOptions } from '@Lib/Application/Options/OptionalOptions'
-import { CollectionSort, DecryptedItemInterface, ItemContent } from '@standardnotes/models'
+import { CollectionSort, DecryptedItemInterface, ItemContent, SmartViewDefaultIconName } from '@standardnotes/models'
 
 type ItemsChangeObserver<I extends Models.DecryptedItemInterface = Models.DecryptedItemInterface> = {
   contentType: ContentType[]
@@ -1229,7 +1229,7 @@ export class ItemManager
       Models.FillItemContent({
         title,
         predicate: predicate.toJson(),
-        iconString: iconString || 'restore',
+        iconString: iconString || SmartViewDefaultIconName,
       } as Models.SmartViewContent),
       true,
     ) as Promise<Models.SmartView>

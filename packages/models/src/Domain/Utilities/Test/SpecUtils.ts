@@ -5,6 +5,7 @@ import { DecryptedPayload, PayloadSource, PayloadTimestampDefaults } from '../..
 import { FileContent, FileItem } from '../../Syncable/File'
 import { NoteContent, SNNote } from '../../Syncable/Note'
 import { SNTag } from '../../Syncable/Tag'
+import { SmartView, SmartViewContent } from '../../Syncable/SmartView'
 
 let currentId = 0
 
@@ -55,6 +56,20 @@ export const createTagWithContent = (content: Partial<TagContent>): SNTag => {
   )
 }
 
+export const createSmartViewWithContent = (content: Partial<SmartViewContent>): SmartView => {
+  return new SmartView(
+    new DecryptedPayload(
+      {
+        uuid: mockUuid(),
+        content_type: ContentType.SmartView,
+        content: FillItemContent<SmartViewContent>(content),
+        ...PayloadTimestampDefaults(),
+      },
+      PayloadSource.Constructor,
+    ),
+  )
+}
+
 export const createTagWithTitle = (title = 'photos') => {
   return new SNTag(
     new DecryptedPayload(
@@ -62,6 +77,20 @@ export const createTagWithTitle = (title = 'photos') => {
         uuid: mockUuid(),
         content_type: ContentType.Tag,
         content: FillItemContent<TagContent>({ title }),
+        ...PayloadTimestampDefaults(),
+      },
+      PayloadSource.Constructor,
+    ),
+  )
+}
+
+export const createSmartViewWithTitle = (title = 'photos') => {
+  return new SmartView(
+    new DecryptedPayload(
+      {
+        uuid: mockUuid(),
+        content_type: ContentType.SmartView,
+        content: FillItemContent<SmartViewContent>({ title }),
         ...PayloadTimestampDefaults(),
       },
       PayloadSource.Constructor,

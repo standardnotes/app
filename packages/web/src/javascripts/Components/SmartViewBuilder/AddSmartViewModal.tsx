@@ -8,7 +8,7 @@ import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
 import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 import Spinner from '@/Components/Spinner/Spinner'
-import { Platform } from '@standardnotes/snjs'
+import { Platform, SmartViewDefaultIconName } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useEffect, useRef, useState } from 'react'
 import { AddSmartViewModalController } from './AddSmartViewModalController'
@@ -141,7 +141,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
               onClick={toggleIconPicker}
               ref={iconPickerButtonRef}
             >
-              <Icon type={icon || 'restore'} />
+              <Icon type={icon || SmartViewDefaultIconName} />
             </button>
             <Popover
               open={shouldShowIconPicker}
@@ -152,9 +152,9 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
             >
               <div className="p-2">
                 <IconPicker
-                  selectedValue={icon || 'restore'}
+                  selectedValue={icon || SmartViewDefaultIconName}
                   onIconChange={(value?: string | undefined) => {
-                    setIcon(value ?? 'restore')
+                    setIcon(value ?? SmartViewDefaultIconName)
                     toggleIconPicker()
                   }}
                   platform={platform}
@@ -182,9 +182,9 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
               <TabPanel state={tabState} id="builder" className="flex flex-col gap-2.5 p-4">
                 <CompoundPredicateBuilder controller={predicateController} />
               </TabPanel>
-              <TabPanel state={tabState} id="custom">
+              <TabPanel state={tabState} id="custom" className="flex flex-col">
                 <textarea
-                  className="h-full min-h-[10rem] w-full resize-none bg-default py-1.5 px-2.5 font-mono text-sm"
+                  className="h-full min-h-[10rem] w-full flex-grow resize-none bg-default py-1.5 px-2.5 font-mono text-sm"
                   value={customPredicateJson}
                   onChange={(event) => {
                     setCustomPredicateJson(event.target.value)
@@ -194,7 +194,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
                   ref={customJsonInputRef}
                 />
                 {customPredicateJson && isCustomJsonValidPredicate === false && (
-                  <div className="mt-2 border-t border-border px-2.5 py-1.5 text-sm text-danger">
+                  <div className="border-t border-border px-2.5 py-1.5 text-sm text-danger">
                     Invalid JSON. Double check your entry and try again.
                   </div>
                 )}

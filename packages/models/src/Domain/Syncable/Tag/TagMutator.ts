@@ -11,10 +11,10 @@ import { TagToFileReference } from '../../Abstract/Reference/TagToFileReference'
 import { TagPreferences } from './TagPreferences'
 import { DecryptedItemInterface, MutationType } from '../../Abstract/Item'
 
-export class TagMutator extends DecryptedItemMutator<TagContent> {
+export class TagMutator<Content extends TagContent = TagContent> extends DecryptedItemMutator<Content> {
   private mutablePreferences?: TagPreferences
 
-  constructor(item: DecryptedItemInterface<TagContent>, type: MutationType) {
+  constructor(item: DecryptedItemInterface<Content>, type: MutationType) {
     super(item, type)
 
     this.mutablePreferences = this.mutableContent.preferences

@@ -1,9 +1,8 @@
 import { WebApplication } from '@/Application/Application'
 import Button from '@/Components/Button/Button'
-import { NavigationController } from '@/Controllers/Navigation/NavigationController'
-import { isSystemView, SmartView } from '@standardnotes/snjs'
+import { ContentType, isSystemView, SmartView } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Title } from '../../../PreferencesComponents/Content'
 import PreferencesGroup from '../../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
@@ -13,21 +12,45 @@ import EditSmartViewModal from './EditSmartViewModal'
 import SmartViewItem from './SmartViewItem'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import NoSubscriptionBanner from '@/Components/NoSubscriptionBanner/NoSubscriptionBanner'
+import { EditSmartViewModalController } from './EditSmartViewModalController'
+import { STRING_DELETE_TAG } from '@/Constants/Strings'
+import { confirmDialog } from '@standardnotes/ui-services'
 
 type NewType = {
   application: WebApplication
-  navigationController: NavigationController
   featuresController: FeaturesController
 }
 
 type Props = NewType
 
-const SmartViews = ({ application, navigationController, featuresController }: Props) => {
-  const [editingSmartView, setEditingSmartView] = useState<SmartView | undefined>(undefined)
-
+const SmartViews = ({ application, featuresController }: Props) => {
   const addSmartViewModalController = useMemo(() => new AddSmartViewModalController(application), [application])
+  const editSmartViewModalController = useMemo(() => new EditSmartViewModalController(application), [application])
 
-  const nonSystemSmartViews = navigationController.smartViews.filter((view) => !isSystemView(view))
+  const [smartViews, setSmartViews] = useState(() =>
+    application.items.getSmartViews().filter((view) => !isSystemView(view)),
+  )
+
+  useEffect(() => {
+    const disposeItemStream = application.streamItems([ContentType.SmartView], () => {
+      setSmartViews(application.items.getSmartViews().filter((view) => !isSystemView(view)))
+    })
+
+    return disposeItemStream
+  }, [application])
+
+  const deleteItem = useCallback(
+    async (view: SmartView) => {
+      const shouldDelete = await confirmDialog({
+        text: STRING_DELETE_TAG,
+        confirmButtonStyle: 'danger',
+      })
+      if (shouldDelete) {
+        application.mutator.deleteItem(view).catch(console.error)
+      }
+    },
+    [application.mutator],
+  )
 
   return (
     <>
@@ -45,12 +68,12 @@ const SmartViews = ({ application, navigationController, featuresController }: P
           {featuresController.hasSmartViews && (
             <>
               <div className="my-2 flex flex-col">
-                {nonSystemSmartViews.map((view) => (
+                {smartViews.map((view) => (
                   <SmartViewItem
                     key={view.uuid}
                     view={view}
-                    onEdit={() => setEditingSmartView(view)}
-                    onDelete={() => navigationController.remove(view, true)}
+                    onEdit={() => editSmartViewModalController.setView(view)}
+                    onDelete={deleteItem}
                   />
                 ))}
               </div>
@@ -65,15 +88,8 @@ const SmartViews = ({ application, navigationController, featuresController }: P
           )}
         </PreferencesSegment>
       </PreferencesGroup>
-      {!!editingSmartView && (
-        <EditSmartViewModal
-          application={application}
-          navigationController={navigationController}
-          view={editingSmartView}
-          closeDialog={() => {
-            setEditingSmartView(undefined)
-          }}
-        />
+      {!!editSmartViewModalController.view && (
+        <EditSmartViewModal controller={editSmartViewModalController} platform={application.platform} />
       )}
       {addSmartViewModalController.isAddingSmartView && (
         <AddSmartViewModal controller={addSmartViewModalController} platform={application.platform} />

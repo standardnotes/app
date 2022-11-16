@@ -1,16 +1,22 @@
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
+import { FeaturesController } from '@/Controllers/FeaturesController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { SmartView } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import SmartViewsListItem from './SmartViewsListItem'
 
 type Props = {
-  viewControllerManager: ViewControllerManager
+  navigationController: NavigationController
+  featuresController: FeaturesController
   setEditingSmartView: (smartView: SmartView) => void
 }
 
-const SmartViewsList: FunctionComponent<Props> = ({ viewControllerManager, setEditingSmartView }: Props) => {
-  const allViews = viewControllerManager.navigationController.smartViews
+const SmartViewsList: FunctionComponent<Props> = ({
+  navigationController,
+  featuresController,
+  setEditingSmartView,
+}: Props) => {
+  const allViews = navigationController.smartViews
 
   return (
     <>
@@ -19,8 +25,8 @@ const SmartViewsList: FunctionComponent<Props> = ({ viewControllerManager, setEd
           <SmartViewsListItem
             key={view.uuid}
             view={view}
-            tagsState={viewControllerManager.navigationController}
-            features={viewControllerManager.featuresController}
+            tagsState={navigationController}
+            features={featuresController}
             setEditingSmartView={setEditingSmartView}
           />
         )
