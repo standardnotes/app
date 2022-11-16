@@ -1,6 +1,6 @@
 import { ListboxArrow, ListboxInput, ListboxList, ListboxPopover } from '@reach/listbox'
 import '@reach/listbox/styles.css'
-import VisuallyHidden from '@reach/visually-hidden'
+import { VisuallyHidden } from '@reach/visually-hidden'
 import { FunctionComponent } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { DropdownItem } from './DropdownItem'
