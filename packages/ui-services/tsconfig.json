@@ -4,11 +4,8 @@
     "skipLibCheck": true,
     "rootDir": "./src",
     "outDir": "./dist",
-    "jsx": "react-jsx",
+    "jsx": "react-jsx"
   },
-  "include": [
-    "src/**/*"
-  ],
-  "references": [],
-  "exclude": ["**/*.spec.ts", "dist", "node_modules"]
+  "include": ["src/**/*"],
+  "exclude": ["**/*.spec.ts", "node_modules"]
 }
