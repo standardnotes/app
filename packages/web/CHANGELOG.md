@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.100.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.100.2...@standardnotes/web@3.100.3) (2022-11-16)
+
+### Bug Fixes
+
+* **mobile:** super editor autocomplete dropdowns ([#2019](https://github.com/standardnotes/app/issues/2019)) ([d21f3ba](https://github.com/standardnotes/app/commit/d21f3ba6f360b4b4fc8122f310444af8a0089cec))
+
 ## [3.100.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.100.1...@standardnotes/web@3.100.2) (2022-11-16)
 
 **Note:** Version bump only for package @standardnotes/web
