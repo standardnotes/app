@@ -5627,20 +5627,20 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/api@workspace:packages/api"
   dependencies:
-    "@standardnotes/common": ^1.43.0
+    "@standardnotes/common": ^1.45.0
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
-    "@standardnotes/security": ^1.1.0
+    "@standardnotes/security": ^1.7.0
     "@standardnotes/utils": "workspace:*"
-    "@types/jest": ^28.1.5
-    "@types/lodash": ^4.14.182
-    "@typescript-eslint/eslint-plugin": ^5.30.0
-    eslint: ^8.23.0
+    "@types/jest": ^29.2.3
+    "@types/lodash": ^4.14.189
+    "@typescript-eslint/eslint-plugin": ^5.43.0
+    eslint: ^8.27.0
     eslint-plugin-prettier: "*"
-    jest: ^28.1.2
+    jest: ^29.3.1
     reflect-metadata: ^0.1.13
-    ts-jest: ^28.0.5
+    ts-jest: ^29.0.3
     typescript: "*"
   languageName: unknown
   linkType: soft
@@ -7308,7 +7308,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.14.179, @types/lodash@npm:^4.14.182, @types/lodash@npm:^4.14.185":
+"@types/lodash@npm:^4.14.179, @types/lodash@npm:^4.14.185":
   version: 4.14.186
   resolution: "@types/lodash@npm:4.14.186"
   checksum: ee0c1368a8100bb6efb88335107473a41928fc307ff1ef4ff1278868ccddba9c04c68c36d1ffe3a0392ef4a956e1955f7de3203ec09df4f1655dd1b88485c549
@@ -14521,7 +14521,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:*, eslint@npm:^8.13.0, eslint@npm:^8.23.0, eslint@npm:^8.23.1":
+"eslint@npm:*, eslint@npm:^8.13.0, eslint@npm:^8.23.1":
   version: 8.25.0
   resolution: "eslint@npm:8.25.0"
   dependencies:
