@@ -5951,18 +5951,18 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/filepicker@workspace:packages/filepicker"
   dependencies:
-    "@standardnotes/common": ^1.43.0
+    "@standardnotes/common": ^1.45.0
     "@standardnotes/files": "workspace:*"
     "@standardnotes/utils": "workspace:*"
-    "@types/jest": ^28.1.5
+    "@types/jest": ^29.2.3
     "@types/wicg-file-system-access": ^2020.9.5
-    "@typescript-eslint/eslint-plugin": ^5.30.0
+    "@typescript-eslint/eslint-plugin": ^5.43.0
     eslint: "*"
     eslint-plugin-prettier: "*"
-    jest: ^28.1.2
+    jest: ^29.3.1
     reflect-metadata: ^0.1.13
-    ts-jest: ^28.0.5
-    ts-node: ^10.5.0
+    ts-jest: ^29.0.3
+    ts-node: ^10.9.1
     typescript: "*"
   languageName: unknown
   linkType: soft
@@ -29988,7 +29988,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-node@npm:^10.5.0, ts-node@npm:^10.8.1, ts-node@npm:^10.9.1":
+"ts-node@npm:^10.8.1, ts-node@npm:^10.9.1":
   version: 10.9.1
   resolution: "ts-node@npm:10.9.1"
   dependencies:
