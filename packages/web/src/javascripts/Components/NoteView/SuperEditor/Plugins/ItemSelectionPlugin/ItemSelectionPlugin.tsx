@@ -11,6 +11,7 @@ import Popover from '@/Components/Popover/Popover'
 import { INSERT_BUBBLE_COMMAND, INSERT_FILE_COMMAND } from '../Commands'
 import { useLinkingController } from '../../../../../Controllers/LinkingControllerProvider'
 import { PopoverClassNames } from '../ClassNames'
+import { isMobileScreen } from '@/Utils'
 
 type Props = {
   currentNote: SNNote
@@ -106,12 +107,14 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
             align="start"
             anchorPoint={{
               x: anchorElementRef.current.offsetLeft,
-              y: anchorElementRef.current.offsetTop + anchorElementRef.current.offsetHeight,
+              y: anchorElementRef.current.offsetTop + (!isMobileScreen() ? anchorElementRef.current.offsetHeight : 0),
             }}
             open={popoverOpen}
             togglePopover={() => {
               setPopoverOpen((prevValue) => !prevValue)
             }}
+            disableMobileFullscreenTakeover={true}
+            side={isMobileScreen() ? 'top' : 'bottom'}
           >
             <div className={PopoverClassNames}>
               <ul>

@@ -6,14 +6,18 @@ export const getPopoverMaxHeight = (
   buttonRect: DOMRect | undefined,
   side: PopoverSide,
   alignment: PopoverAlignment,
+  disableMobileFullscreenTakeover?: boolean,
 ): number | 'none' => {
   const matchesMediumBreakpoint = matchMedia(MediaQueryBreakpoints.md).matches
 
-  if (!matchesMediumBreakpoint) {
+  if (!matchesMediumBreakpoint && !disableMobileFullscreenTakeover) {
     return 'none'
   }
 
   const MarginFromAppBorderInPX = 10
+  const topSafeAreaInset = parseInt(
+    getComputedStyle(document.documentElement).getPropertyValue('--safe-area-inset-top'),
+  )
 
   let constraint = 0
 
@@ -21,6 +25,9 @@ export const getPopoverMaxHeight = (
     switch (side) {
       case 'top':
         constraint = appRect.height - buttonRect.top
+        if (topSafeAreaInset > 0) {
+          constraint += topSafeAreaInset
+        }
         break
       case 'bottom':
         constraint = buttonRect.bottom
