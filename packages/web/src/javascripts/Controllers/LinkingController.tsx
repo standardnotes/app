@@ -1,5 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { PopoverFileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
+import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewController'
 import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
@@ -11,7 +12,6 @@ import {
   FileItem,
   InternalEventBus,
   naturalSort,
-  NoteViewController,
   PrefKey,
   SNNote,
   SNTag,

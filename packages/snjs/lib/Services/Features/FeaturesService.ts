@@ -173,24 +173,19 @@ export class SNFeaturesService
 
   public enableExperimentalFeature(identifier: FeaturesImports.FeatureIdentifier): void {
     const feature = this.getUserFeature(identifier)
-    if (!feature) {
-      throw Error('Attempting to enable a feature user does not have access to.')
-    }
 
     this.enabledExperimentalFeatures.push(identifier)
 
     void this.storageService.setValue(StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
 
-    void this.mapRemoteNativeFeaturesToItems([feature])
+    if (feature) {
+      void this.mapRemoteNativeFeaturesToItems([feature])
+    }
+
     void this.notifyEvent(FeaturesEvent.FeaturesUpdated)
   }
 
   public disableExperimentalFeature(identifier: FeaturesImports.FeatureIdentifier): void {
-    const feature = this.getUserFeature(identifier)
-    if (!feature) {
-      throw Error('Attempting to disable a feature user does not have access to.')
-    }
-
     removeFromArray(this.enabledExperimentalFeatures, identifier)
 
     void this.storageService.setValue(StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
@@ -484,6 +479,16 @@ export class SNFeaturesService
   public getFeatureStatus(featureId: FeaturesImports.FeatureIdentifier): FeatureStatus {
     if (this.isFreeFeature(featureId)) {
       return FeatureStatus.Entitled
+    }
+
+    if (this.isExperimentalFeature(featureId)) {
+      const nativeFeature = FeaturesImports.FindNativeFeature(featureId)
+      if (nativeFeature) {
+        const hasRole = this.roles.some((role) => nativeFeature.availableInRoles?.includes(role))
+        if (hasRole) {
+          return FeatureStatus.Entitled
+        }
+      }
     }
 
     const isDeprecated = this.isFeatureDeprecated(featureId)

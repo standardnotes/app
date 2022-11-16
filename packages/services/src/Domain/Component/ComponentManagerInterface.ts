@@ -20,6 +20,6 @@ export interface ComponentManagerInterface {
     urlOverride?: string,
   ): ComponentViewerInterface
   presentPermissionsDialog(_dialog: PermissionDialog): void
-  getDefaultEditor(): SNComponent | undefined
+  legacyGetDefaultEditor(): SNComponent | undefined
   componentWithIdentifier(identifier: FeatureIdentifier | string): SNComponent | undefined
 }

@@ -39,4 +39,5 @@ export enum PermissionName {
   TokenVaultEditor = 'editor:token-vault',
   TwoFactorAuth = 'server:two-factor-auth',
   SubscriptionSharing = 'server:subscription-sharing',
+  SuperEditor = 'editor:super-editor',
 }

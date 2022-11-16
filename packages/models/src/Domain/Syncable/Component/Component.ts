@@ -114,7 +114,8 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
     return this.content_type === ContentType.Theme || this.area === ComponentArea.Themes
   }
 
-  public isDefaultEditor(): boolean {
+  /** @deprecated Use global application PrefKey.DefaultEditorIdentifier */
+  public legacyIsDefaultEditor(): boolean {
     return this.getAppDomainValue(AppDataField.DefaultEditor) === true
   }
 

@@ -1,12 +1,4 @@
-import {
-  ComponentArea,
-  ComponentMutator,
-  FeatureIdentifier,
-  NewNoteTitleFormat,
-  PrefKey,
-  SNComponent,
-  TagPreferences,
-} from '@standardnotes/snjs'
+import { FeatureIdentifier, NewNoteTitleFormat, PrefKey, EditorIdentifier, TagPreferences } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { ChangeEventHandler, FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
@@ -16,30 +8,13 @@ import { WebApplication } from '@/Application/Application'
 import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 import { PreferenceMode } from './PreferenceMode'
 import dayjs from 'dayjs'
-import { getDropdownItemsForAllEditors, PlainEditorType } from '@/Utils/DropdownItemsForEditors'
+import { EditorOption, getDropdownItemsForAllEditors } from '@/Utils/DropdownItemsForEditors'
+import { classNames } from '@/Utils/ConcatenateClassNames'
+import { NoteTitleFormatOptions } from './NoteTitleFormatOptions'
 
 const PrefChangeDebounceTimeInMs = 25
 
 const HelpPageUrl = 'https://day.js.org/docs/en/display/format#list-of-all-available-formats'
-
-const NoteTitleFormatOptions = [
-  {
-    label: 'Current date and time',
-    value: NewNoteTitleFormat.CurrentDateAndTime,
-  },
-  {
-    label: 'Current note count',
-    value: NewNoteTitleFormat.CurrentNoteCount,
-  },
-  {
-    label: 'Custom format',
-    value: NewNoteTitleFormat.CustomFormat,
-  },
-  {
-    label: 'Empty',
-    value: NewNoteTitleFormat.Empty,
-  },
-]
 
 type Props = {
   application: WebApplication
@@ -57,22 +32,24 @@ const NewNotePreferences: FunctionComponent<Props> = ({
   disabled,
 }: Props) => {
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([])
-  const [defaultEditorIdentifier, setDefaultEditorIdentifier] = useState<string>(PlainEditorType)
+  const [defaultEditorIdentifier, setDefaultEditorIdentifier] = useState<EditorIdentifier>(
+    FeatureIdentifier.PlainEditor,
+  )
   const [newNoteTitleFormat, setNewNoteTitleFormat] = useState<NewNoteTitleFormat>(
     NewNoteTitleFormat.CurrentDateAndTime,
   )
   const [customNoteTitleFormat, setCustomNoteTitleFormat] = useState('')
 
-  const getGlobalEditorDefault = useCallback((): SNComponent | undefined => {
-    return application.componentManager.componentsForArea(ComponentArea.Editor).filter((e) => e.isDefaultEditor())[0]
+  const getGlobalEditorDefaultIdentifier = useCallback((): string => {
+    return application.geDefaultEditorIdentifier()
   }, [application])
 
   const reloadPreferences = useCallback(() => {
     if (mode === 'tag' && selectedTag.preferences?.editorIdentifier) {
       setDefaultEditorIdentifier(selectedTag.preferences?.editorIdentifier)
     } else {
-      const globalDefault = getGlobalEditorDefault()
-      setDefaultEditorIdentifier(globalDefault?.identifier || PlainEditorType)
+      const globalDefault = getGlobalEditorDefaultIdentifier()
+      setDefaultEditorIdentifier(globalDefault)
     }
 
     if (mode === 'tag' && selectedTag.preferences?.newNoteTitleFormat) {
@@ -82,7 +59,14 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         application.getPreference(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat]),
       )
     }
-  }, [mode, selectedTag, application, getGlobalEditorDefault, setDefaultEditorIdentifier, setNewNoteTitleFormat])
+  }, [
+    mode,
+    selectedTag,
+    application,
+    getGlobalEditorDefaultIdentifier,
+    setDefaultEditorIdentifier,
+    setNewNoteTitleFormat,
+  ])
 
   useEffect(() => {
     if (mode === 'tag' && selectedTag.preferences?.customNoteTitleFormat) {
@@ -107,52 +91,22 @@ const NewNotePreferences: FunctionComponent<Props> = ({
     }
   }
 
-  const removeEditorGlobalDefault = (application: WebApplication, component: SNComponent) => {
-    application.mutator
-      .changeAndSaveItem(component, (m) => {
-        const mutator = m as ComponentMutator
-        mutator.defaultEditor = false
-      })
-      .catch(console.error)
-  }
-
-  const makeEditorGlobalDefault = (
-    application: WebApplication,
-    component: SNComponent,
-    currentDefault?: SNComponent,
-  ) => {
-    if (currentDefault) {
-      removeEditorGlobalDefault(application, currentDefault)
-    }
-    application.mutator
-      .changeAndSaveItem(component, (m) => {
-        const mutator = m as ComponentMutator
-        mutator.defaultEditor = true
-      })
-      .catch(console.error)
-  }
-
   useEffect(() => {
     setEditorItems(getDropdownItemsForAllEditors(application))
   }, [application])
 
-  const setDefaultEditor = (value: string) => {
-    setDefaultEditorIdentifier(value as FeatureIdentifier)
+  const setDefaultEditor = useCallback(
+    (value: EditorOption['value']) => {
+      setDefaultEditorIdentifier(value as FeatureIdentifier)
 
-    if (mode === 'global') {
-      const editors = application.componentManager.componentsForArea(ComponentArea.Editor)
-      const currentDefault = getGlobalEditorDefault()
-
-      if (value !== PlainEditorType) {
-        const editorComponent = editors.filter((e) => e.package_info.identifier === value)[0]
-        makeEditorGlobalDefault(application, editorComponent, currentDefault)
-      } else if (currentDefault) {
-        removeEditorGlobalDefault(application, currentDefault)
+      if (mode === 'global') {
+        void application.setPreference(PrefKey.DefaultEditorIdentifier, value)
+      } else {
+        void changePreferencesCallback({ editorIdentifier: value })
       }
-    } else {
-      void changePreferencesCallback({ editorIdentifier: value })
-    }
-  }
+    },
+    [application, changePreferencesCallback, mode],
+  )
 
   const debounceTimeoutRef = useRef<number>()
 
@@ -187,7 +141,7 @@ const NewNotePreferences: FunctionComponent<Props> = ({
             label="Select the default note type"
             items={editorItems}
             value={defaultEditorIdentifier}
-            onChange={setDefaultEditor}
+            onChange={(value) => setDefaultEditor(value as EditorOption['value'])}
           />
         </div>
       </div>
@@ -211,7 +165,10 @@ const NewNotePreferences: FunctionComponent<Props> = ({
           <div className="mt-2">
             <input
               disabled={disabled}
-              className="w-full min-w-55 rounded border border-solid border-passive-3 bg-default px-2 py-1.5 text-sm focus-within:ring-2 focus-within:ring-info"
+              className={classNames(
+                'w-full min-w-55 rounded border border-solid border-passive-3 bg-default px-2 py-1.5 text-sm',
+                'focus-within:ring-2 focus-within:ring-info',
+              )}
               placeholder="e.g. YYYY-MM-DD"
               value={customNoteTitleFormat}
               onChange={handleCustomFormatInputChange}

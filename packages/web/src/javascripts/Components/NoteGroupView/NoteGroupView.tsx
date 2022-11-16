@@ -1,4 +1,4 @@
-import { FileItem, FileViewController, NoteViewController } from '@standardnotes/snjs'
+import { FileItem } from '@standardnotes/snjs'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import { WebApplication } from '@/Application/Application'
 import MultipleSelectedNotes from '@/Components/MultipleSelectedNotes/MultipleSelectedNotes'
@@ -8,6 +8,8 @@ import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
 import FileView from '../FileView/FileView'
 import NoteView from '../NoteView/NoteView'
+import { NoteViewController } from '../NoteView/Controller/NoteViewController'
+import { FileViewController } from '../NoteView/Controller/FileViewController'
 
 type State = {
   showMultipleSelectedNotes: boolean

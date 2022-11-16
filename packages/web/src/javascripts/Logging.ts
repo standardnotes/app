@@ -20,7 +20,7 @@ const LoggingStatus: Record<LoggingDomain, boolean> = {
   [LoggingDomain.Viewport]: false,
   [LoggingDomain.Selection]: false,
   [LoggingDomain.BlockEditor]: false,
-  [LoggingDomain.Purchasing]: true,
+  [LoggingDomain.Purchasing]: false,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

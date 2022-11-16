@@ -1,4 +1,3 @@
-import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
 import { isFile, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useRef } from 'react'
@@ -36,9 +35,8 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
 
   const listItemRef = useRef<HTMLDivElement>(null)
 
-  const editorForNote = application.componentManager.editorForNote(item as SNNote)
-  const editorName = editorForNote?.name ?? PLAIN_EDITOR_NAME
-  const [icon, tint] = getIconAndTintForNoteType(editorForNote?.package_info.note_type)
+  const noteType = item.noteType || application.componentManager.editorForNote(item)?.package_info.note_type
+  const [icon, tint] = getIconAndTintForNoteType(noteType)
   const hasFiles = application.items.itemsReferencingItem(item).filter(isFile).length > 0
 
   const openNoteContextMenu = (posX: number, posY: number) => {
@@ -93,7 +91,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
     >
       {!hideIcon ? (
         <div className="mr-0 flex flex-col items-center justify-between p-4 pr-4">
-          <Icon ariaLabel={`Icon for ${editorName}`} type={icon} className={`text-accessory-tint-${tint}`} />
+          <Icon type={icon} className={`text-accessory-tint-${tint}`} />
         </div>
       ) : (
         <div className="pr-4" />

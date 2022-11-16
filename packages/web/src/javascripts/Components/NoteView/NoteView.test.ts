@@ -8,12 +8,12 @@ import { NotesController } from '@/Controllers/NotesController'
 import {
   ApplicationEvent,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
-  NoteViewController,
   SNNote,
   NoteType,
   PayloadEmitSource,
 } from '@standardnotes/snjs'
 import NoteView from './NoteView'
+import { NoteViewController } from './Controller/NoteViewController'
 
 describe('NoteView', () => {
   let noteViewController: NoteViewController

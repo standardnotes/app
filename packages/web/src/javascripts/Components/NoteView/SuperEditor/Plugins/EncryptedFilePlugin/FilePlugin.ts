@@ -1,4 +1,4 @@
-import { INSERT_FILE_COMMAND } from './../Commands'
+import { INSERT_FILE_COMMAND } from '../Commands'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 
 import { useEffect } from 'react'

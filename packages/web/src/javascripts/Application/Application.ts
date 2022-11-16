@@ -5,7 +5,6 @@ import {
   DeinitSource,
   Platform,
   SNApplication,
-  ItemGroupController,
   removeFromArray,
   DesktopDeviceInterface,
   isDesktopDevice,
@@ -20,6 +19,8 @@ import {
   MobileUnlockTiming,
   InternalEventBus,
   DecryptedItem,
+  EditorIdentifier,
+  FeatureIdentifier,
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
 import { PanelResizedData } from '@/Types/PanelResizedData'
@@ -40,6 +41,8 @@ import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { setCustomViewportHeight } from '@/setViewportHeightWithFallback'
 import { WebServices } from './WebServices'
 import { FeatureName } from '@/Controllers/FeatureName'
+import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
+import { VisibilityObserver } from './VisibilityObserver'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -47,10 +50,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   private webServices!: WebServices
   private webEventObservers: WebEventObserver[] = []
   public itemControllerGroup: ItemGroupController
-  private onVisibilityChange: () => void
   private mobileWebReceiver?: MobileWebReceiver
   private androidBackHandler?: AndroidBackHandler
   public readonly routeService: RouteServiceInterface
+  private visibilityObserver?: VisibilityObserver
 
   constructor(
     deviceInterface: WebOrDesktopDevice,
@@ -106,14 +109,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       }
     }
 
-    this.onVisibilityChange = () => {
-      const visible = document.visibilityState === 'visible'
-      const event = visible ? WebAppEvent.WindowDidFocus : WebAppEvent.WindowDidBlur
-      this.notifyWebEvent(event)
-    }
-
     if (!isDesktopApplication()) {
-      document.addEventListener('visibilitychange', this.onVisibilityChange)
+      this.visibilityObserver = new VisibilityObserver((event) => {
+        this.notifyWebEvent(event)
+      })
     }
   }
 
@@ -144,8 +143,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
       this.webEventObservers.length = 0
 
-      document.removeEventListener('visibilitychange', this.onVisibilityChange)
-      ;(this.onVisibilityChange as unknown) = undefined
+      if (this.visibilityObserver) {
+        this.visibilityObserver.deinit()
+        this.visibilityObserver = undefined
+      }
     } catch (error) {
       console.error('Error while deiniting application', error)
     }
@@ -378,5 +379,14 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   showAccountMenu(): void {
     this.getViewControllerManager().accountMenuController.setShow(true)
+  }
+
+  geDefaultEditorIdentifier(currentTag?: SNTag): EditorIdentifier {
+    return (
+      currentTag?.preferences?.editorIdentifier ||
+      this.getPreference(PrefKey.DefaultEditorIdentifier) ||
+      this.componentManager.legacyGetDefaultEditor()?.identifier ||
+      FeatureIdentifier.PlainEditor
+    )
   }
 }
