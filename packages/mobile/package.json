@@ -51,7 +51,7 @@
     "pod-install": "^0.1.33",
     "prettier": "^2.7.1",
     "prettier-plugin-organize-imports": "^3.2.0",
-    "react": "17.0.2",
+    "react": "18.2.0",
     "react-native": "0.67.4",
     "react-native-file-viewer": "^2.1.5",
     "react-native-fingerprint-scanner": "standardnotes/react-native-fingerprint-scanner#b55d1c0ca627a87a130f758603f12911fbac200f",
