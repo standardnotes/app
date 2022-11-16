@@ -7,7 +7,7 @@ buildscript {
         buildToolsVersion = "30.0.3"
         minSdkVersion = 28
         compileSdkVersion = 30
-        targetSdkVersion = 30
+        targetSdkVersion = 31
         androidXCore = "1.6.0"
         ndkVersion = "21.4.7075529"
     }
