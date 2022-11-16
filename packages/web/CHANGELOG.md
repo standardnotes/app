@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.98.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.98.1...@standardnotes/web@3.98.2) (2022-11-16)
+
+### Bug Fixes
+
+* **web:** remove checking for MFA permissions as all users are permitted to MFA ([ea40427](https://github.com/standardnotes/app/commit/ea40427e6715ba75193430fd7d3044e3c960d6ae))
+
 ## [3.98.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.98.0...@standardnotes/web@3.98.1) (2022-11-15)
 
 ### Bug Fixes

@@ -8,6 +8,4 @@ export interface MfaProvider {
   enableMfa(secret: string, otpToken: string): Promise<void>
 
   disableMfa(): Promise<void>
-
-  isMfaFeatureAvailable(): boolean
 }

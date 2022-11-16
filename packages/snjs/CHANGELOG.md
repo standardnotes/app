@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.149.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.149.0...@standardnotes/snjs@2.149.1) (2022-11-16)
+
+### Bug Fixes
+
+* **web:** remove checking for MFA permissions as all users are permitted to MFA ([ea40427](https://github.com/standardnotes/app/commit/ea40427e6715ba75193430fd7d3044e3c960d6ae))
+
 # [2.149.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.148.0...@standardnotes/snjs@2.149.0) (2022-11-14)
 
 ### Features
