@@ -1,12 +1,12 @@
-import axios, { AxiosRequestHeaders, AxiosResponseHeaders } from 'axios'
+import axios, { RawAxiosResponseHeaders } from 'axios'
 import { WriteStream } from 'fs'
 
 export async function downloadData(
   writeStream: WriteStream,
   url: string,
-  headers: AxiosRequestHeaders,
+  headers: RawAxiosResponseHeaders,
 ): Promise<{
-  headers: AxiosResponseHeaders
+  headers: RawAxiosResponseHeaders
   status: number
 }> {
   const response = await axios.get(url, {
