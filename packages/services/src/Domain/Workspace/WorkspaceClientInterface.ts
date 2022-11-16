@@ -1,5 +1,5 @@
 import { Uuid, WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
-import { Workspace, WorkspaceUser } from '@standardnotes/models'
+import { Workspace, WorkspaceUser } from '@standardnotes/api'
 
 export interface WorkspaceClientInterface {
   createWorkspace(dto: {

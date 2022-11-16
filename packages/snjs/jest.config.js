@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const base = require('../../node_modules/@standardnotes/config/src/jest.json');
+const base = require('../../common.jest.json')
 
 module.exports = {
   ...base,
@@ -7,12 +7,11 @@ module.exports = {
     '@Lib/(.*)': '<rootDir>/lib/$1',
     '@Services/(.*)': '<rootDir>/lib/Services/$1',
   },
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/lib/tsconfig.json',
-      isolatedModules: true,
-      babelConfig: 'babel.config.js',
-    },
+  transform: {
+    '^.+\\.tsx?$': [
+      'ts-jest',
+      { tsconfig: './lib/tsconfig.json', isolatedModules: true, babelConfig: 'babel.config.js' },
+    ],
   },
   clearMocks: true,
   collectCoverageFrom: ['lib/**/{!(index),}.ts'],
@@ -23,9 +22,6 @@ module.exports = {
   roots: ['<rootDir>/lib'],
   setupFiles: ['<rootDir>/jest-global.ts'],
   setupFilesAfterEnv: [],
-  transform: {
-    '^.+\\.(ts|js)?$': 'ts-jest',
-  },
   coverageThreshold: {
     global: {
       branches: 13,
