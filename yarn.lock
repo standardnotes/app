@@ -5493,8 +5493,8 @@ __metadata:
   dependencies:
     "@lexical/react": ^0.6.0
     "@standardnotes/icons": "workspace:*"
-    "@types/react": ^18.0.20
-    "@types/react-dom": ^18.0.6
+    "@types/react": ^18.0.25
+    "@types/react-dom": ^18.0.9
     eslint: "*"
     lexical: ^0.6.0
     prettier: "*"
@@ -7401,15 +7401,6 @@ __metadata:
   languageName: node
   linkType: soft
 
-"@types/react-dom@npm:^18.0.6":
-  version: 18.0.6
-  resolution: "@types/react-dom@npm:18.0.6"
-  dependencies:
-    "@types/react": "*"
-  checksum: db571047af1a567631758700b9f7d143e566df939cfe5fbf7535347cc0c726a1cdbb5e3f8566d076e54cf708b6c1166689de194a9ba09ee35efc9e1d45911685
-  languageName: node
-  linkType: hard
-
 "@types/react-dom@npm:^18.0.9":
   version: 18.0.9
   resolution: "@types/react-dom@npm:18.0.9"
@@ -7434,7 +7425,7 @@ __metadata:
   languageName: node
   linkType: soft
 
-"@types/react@npm:*, @types/react@npm:^18.0.20, @types/react@npm:^18.0.21":
+"@types/react@npm:*, @types/react@npm:^18.0.21":
   version: 18.0.21
   resolution: "@types/react@npm:18.0.21"
   dependencies:
