@@ -1,9 +1,10 @@
 import { ElementIds } from '@/Constants/ElementIDs'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useCallback, useState } from 'react'
 import { IconType, PrefKey } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
+import { useApplication } from '../ApplicationView/ApplicationProvider'
 
 export type NoteStatus = {
   type: 'saving' | 'saved' | 'error'
@@ -42,7 +43,8 @@ const IndicatorWithTooltip = ({
       id={ElementIds.NoteStatusTooltip}
       className={classNames(
         isTooltipVisible ? '' : 'hidden',
-        'absolute top-full right-0 min-w-[90vw] translate-x-2 translate-y-1 select-none rounded border border-border bg-default py-1.5 px-3 text-left peer-hover:block peer-focus:block md:min-w-max',
+        'absolute top-full right-0 min-w-[90vw] translate-x-2 translate-y-1 select-none rounded border border-border',
+        'bg-default py-1.5 px-3 text-left peer-hover:block peer-focus:block md:min-w-max',
       )}
     >
       {children}
@@ -61,10 +63,14 @@ const NoteStatusIndicator = ({
   syncTakingTooLong,
   updateSavingIndicator = PrefDefaults[PrefKey.UpdateSavingStatusIndicator],
 }: Props) => {
+  const application = useApplication()
   const [isTooltipVisible, setIsTooltipVisible] = useState(false)
 
-  const onClick = () => setIsTooltipVisible((show) => !show)
   const onBlur = () => setIsTooltipVisible(false)
+
+  const toggleShowPreference = useCallback(() => {
+    void application.setPreference(PrefKey.UpdateSavingStatusIndicator, !updateSavingIndicator)
+  }, [application, updateSavingIndicator])
 
   if (updateSavingIndicator && !status) {
     return null
@@ -74,7 +80,7 @@ const NoteStatusIndicator = ({
     return (
       <IndicatorWithTooltip
         className="bg-danger text-danger-contrast"
-        onClick={onClick}
+        onClick={toggleShowPreference}
         onBlur={onBlur}
         icon="warning"
         isTooltipVisible={isTooltipVisible}
@@ -89,7 +95,7 @@ const NoteStatusIndicator = ({
     return (
       <IndicatorWithTooltip
         className="bg-warning text-warning-contrast"
-        onClick={onClick}
+        onClick={toggleShowPreference}
         onBlur={onBlur}
         icon={status && status.type === 'saving' ? 'sync' : 'warning'}
         isTooltipVisible={isTooltipVisible}
@@ -113,7 +119,7 @@ const NoteStatusIndicator = ({
           status.type === 'saving' && 'bg-contrast',
           status.type === 'saved' && 'bg-success text-success-contrast',
         )}
-        onClick={onClick}
+        onClick={toggleShowPreference}
         onBlur={onBlur}
         icon={status.type === 'saving' ? 'sync' : 'check'}
         animateIcon={status.type === 'saving'}
@@ -128,13 +134,13 @@ const NoteStatusIndicator = ({
   return (
     <IndicatorWithTooltip
       className="bg-contrast text-passive-1"
-      onClick={onClick}
+      onClick={toggleShowPreference}
       onBlur={onBlur}
       icon="info"
       isTooltipVisible={isTooltipVisible}
     >
       <div className="text-sm font-bold">Note status updates are disabled</div>
-      <div className="mt-0.5">They can be re-enabled in the Preferences under General &gt; Tools</div>
+      <div className="mt-0.5">Click to enable.</div>
     </IndicatorWithTooltip>
   )
 }
