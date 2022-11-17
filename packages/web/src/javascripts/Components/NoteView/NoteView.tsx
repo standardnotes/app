@@ -876,7 +876,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 />
               </div>
               {renderHeaderOptions && (
-                <div className="flex items-center gap-3">
+                <div className="note-view-options-buttons flex items-center gap-3">
                   <LinkedItemsButton
                     filesController={this.viewControllerManager.filesController}
                     linkingController={this.viewControllerManager.linkingController}

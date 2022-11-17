@@ -29,7 +29,7 @@ const IndicatorWithTooltip = ({
   children: ReactNode
   animateIcon?: boolean
 }) => (
-  <div className="relative">
+  <div className="note-status-tooltip-container relative">
     <button
       className={classNames('peer flex h-5 w-5 items-center justify-center rounded-full', className)}
       onClick={onClick}

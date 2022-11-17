@@ -23,25 +23,11 @@ import PanelSettingsSection from './PanelSettingsSection'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 
-const focusModeAnimationDuration = 1255
+export const focusModeAnimationDuration = 1255
 
 type MenuProps = {
   quickSettingsMenuController: QuickSettingsController
   application: WebApplication
-}
-
-const toggleFocusMode = (enabled: boolean) => {
-  if (enabled) {
-    document.body.classList.add('focus-mode')
-  } else {
-    if (document.body.classList.contains('focus-mode')) {
-      document.body.classList.add('disable-focus-mode')
-      document.body.classList.remove('focus-mode')
-      setTimeout(() => {
-        document.body.classList.remove('disable-focus-mode')
-      }, focusModeAnimationDuration)
-    }
-  }
 }
 
 const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSettingsMenuController }) => {
@@ -70,10 +56,6 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
 
   const prefsButtonRef = useRef<HTMLButtonElement>(null)
   const defaultThemeButtonRef = useRef<HTMLButtonElement>(null)
-
-  useEffect(() => {
-    toggleFocusMode(focusModeEnabled)
-  }, [focusModeEnabled])
 
   const reloadThemes = useCallback(() => {
     const themes = application.items

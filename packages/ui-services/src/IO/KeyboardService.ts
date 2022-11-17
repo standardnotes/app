@@ -153,7 +153,10 @@ export class KeyboardService {
 
       const callback = keyEvent === KeyboardKeyEvent.Down ? observer.onKeyDown : observer.onKeyUp
       if (callback) {
-        callback(event)
+        const exclusive = callback(event)
+        if (exclusive) {
+          return
+        }
       }
     }
   }

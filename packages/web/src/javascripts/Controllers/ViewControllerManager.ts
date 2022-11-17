@@ -60,7 +60,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   readonly itemListController: ItemListController
   readonly preferencesController: PreferencesController
   readonly purchaseFlowController: PurchaseFlowController
-  readonly quickSettingsMenuController = new QuickSettingsController()
+  readonly quickSettingsMenuController: QuickSettingsController
   readonly searchOptionsController: SearchOptionsController
   readonly subscriptionController: SubscriptionController
   readonly syncStatusController = new SyncStatusController()
@@ -91,6 +91,8 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
     this.itemCounter = new ItemCounter()
 
     this.subscriptionManager = application.subscriptions
+
+    this.quickSettingsMenuController = new QuickSettingsController(application, this.eventBus)
 
     this.paneController = new PaneController(application, this.eventBus)
 
