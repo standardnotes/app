@@ -21,8 +21,8 @@
     "prebuild": "yarn clean",
     "build": "webpack --mode production && tsc",
     "watch": "webpack --mode production --watch",
-    "start:test-server": "yarn node test-server.js",
-    "lint": "eslint src --ext .ts"
+    "lint": "eslint src --ext .ts",
+    "start:test-server": "yarn node test-server.js"
   },
   "dependencies": {
     "@standardnotes/sncrypto-common": "workspace:*",

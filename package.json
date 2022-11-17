@@ -19,7 +19,6 @@
     "lint": "yarn workspaces foreach -t --verbose run lint",
     "test": "yarn workspaces foreach -pt --jobs 10 --verbose run test",
     "clean": "lerna run clean",
-
     "build:all": "yarn workspaces foreach -pt --topological-dev --verbose --exclude '{@standardnotes/docs}' run build",
     "build:web": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/web run build",
     "build:desktop": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/desktop run build",
