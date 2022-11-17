@@ -4,6 +4,7 @@
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
+  "private": true,
   "description": "Models used in SNJS library",
   "author": "Standard Notes",
   "main": "./src/index.ts",
