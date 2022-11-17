@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.151.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.4...@standardnotes/snjs@2.151.5) (2022-11-17)
+
+### Bug Fixes
+
+* distinguish client controlled features so that server expiration timestamps are ignored ([#2022](https://github.com/standardnotes/app/issues/2022)) ([a6e57e3](https://github.com/standardnotes/app/commit/a6e57e30cff64de83eaedf3d36117a497a7a70ae))
+
 ## [2.151.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.3...@standardnotes/snjs@2.151.4) (2022-11-17)
 
 ### Bug Fixes

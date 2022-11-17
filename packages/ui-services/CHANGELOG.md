@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.16](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.13.15...@standardnotes/ui-services@1.13.16) (2022-11-17)
+
+### Bug Fixes
+
+* distinguish client controlled features so that server expiration timestamps are ignored ([#2022](https://github.com/standardnotes/app/issues/2022)) ([a6e57e3](https://github.com/standardnotes/app/commit/a6e57e30cff64de83eaedf3d36117a497a7a70ae))
+
 ## [1.13.15](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.13.14...@standardnotes/ui-services@1.13.15) (2022-11-17)
 
 **Note:** Version bump only for package @standardnotes/ui-services

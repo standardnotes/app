@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.55.3](https://github.com/standardnotes/app/compare/@standardnotes/features@1.55.2...@standardnotes/features@1.55.3) (2022-11-17)
+
+### Bug Fixes
+
+* distinguish client controlled features so that server expiration timestamps are ignored ([#2022](https://github.com/standardnotes/app/issues/2022)) ([a6e57e3](https://github.com/standardnotes/app/commit/a6e57e30cff64de83eaedf3d36117a497a7a70ae))
+
 ## [1.55.2](https://github.com/standardnotes/app/compare/@standardnotes/features@1.55.1...@standardnotes/features@1.55.2) (2022-11-17)
 
 **Note:** Version bump only for package @standardnotes/features
