@@ -77,6 +77,7 @@ describe('storage manager', function () {
   })
 
   it('ephemeral session should not persist data', async function () {
+    this.retries(2)
     await Factory.registerUserToApplication({
       application: this.application,
       email: this.email,
