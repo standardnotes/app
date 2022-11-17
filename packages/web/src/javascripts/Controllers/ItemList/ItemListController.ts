@@ -38,21 +38,12 @@ import { log, LoggingDomain } from '@/Logging'
 import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewController'
 import { FileViewController } from '@/Components/NoteView/Controller/FileViewController'
 import { TemplateNoteViewAutofocusBehavior } from '@/Components/NoteView/Controller/TemplateNoteViewControllerOptions'
+import { ItemsReloadSource } from './ItemsReloadSource'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
 const ElementIdSearchBar = 'search-bar'
 const ElementIdScrollContainer = 'notes-scrollable'
-
-enum ItemsReloadSource {
-  ItemStream,
-  SyncEvent,
-  DisplayOptionsChange,
-  Pagination,
-  TagChange,
-  UserTriggeredTagChange,
-  FilterTextChange,
-}
 
 export class ItemListController extends AbstractViewController implements InternalEventHandlerInterface {
   completedFullSync = false
@@ -122,7 +113,7 @@ export class ItemListController extends AbstractViewController implements Intern
       application.streamItems<SNTag>([ContentType.Tag, ContentType.SmartView], async ({ changed, inserted }) => {
         const tags = [...changed, ...inserted]
 
-        const { didReloadItems } = await this.reloadDisplayPreferences()
+        const { didReloadItems } = await this.reloadDisplayPreferences({ userTriggered: false })
         if (!didReloadItems) {
           /** A tag could have changed its relationships, so we need to reload the filter */
           this.reloadNotesDisplayOptions()
@@ -138,7 +129,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.disposers.push(
       application.addEventObserver(async () => {
-        void this.reloadDisplayPreferences()
+        void this.reloadDisplayPreferences({ userTriggered: false })
       }, ApplicationEvent.PreferencesChanged),
     )
 
@@ -427,11 +418,11 @@ export class ItemListController extends AbstractViewController implements Intern
     return false
   }
 
-  private shouldSelectActiveItem = (activeItem: SNNote | FileItem | undefined) => {
-    return activeItem && !this.selectionController.isItemSelected(activeItem)
+  private shouldSelectActiveItem = (activeItem: SNNote | FileItem) => {
+    return !this.selectionController.isItemSelected(activeItem)
   }
 
-  private shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource) => {
+  shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource) => {
     const item = this.getFirstNonProtectedItem()
     if (item && isFile(item)) {
       return false
@@ -445,6 +436,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     const userChangedTag = itemsReloadSource === ItemsReloadSource.UserTriggeredTagChange
     const hasNoSelectedItem = !this.selectionController.selectedUuids.size
+
     return userChangedTag || hasNoSelectedItem
   }
 
@@ -466,7 +458,7 @@ export class ItemListController extends AbstractViewController implements Intern
         log(LoggingDomain.Selection, 'Selecting next item after closing active one')
         this.selectionController.selectNextItem()
       }
-    } else if (this.shouldSelectActiveItem(activeItem) && activeItem) {
+    } else if (activeItem && this.shouldSelectActiveItem(activeItem)) {
       log(LoggingDomain.Selection, 'Selecting active item')
       await this.selectionController.selectItem(activeItem.uuid).catch(console.error)
     } else if (this.shouldSelectFirstItem(itemsReloadSource)) {
@@ -510,7 +502,11 @@ export class ItemListController extends AbstractViewController implements Intern
     this.application.items.setPrimaryItemDisplayOptions(criteria)
   }
 
-  reloadDisplayPreferences = async (): Promise<{ didReloadItems: boolean }> => {
+  reloadDisplayPreferences = async ({
+    userTriggered,
+  }: {
+    userTriggered: boolean
+  }): Promise<{ didReloadItems: boolean }> => {
     const newDisplayOptions = {} as DisplayOptions
     const newWebDisplayOptions = {} as WebDisplayOptions
     const selectedTag = this.navigationController.selected
@@ -601,7 +597,9 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.reloadNotesDisplayOptions()
 
-    await this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
+    await this.reloadItems(
+      userTriggered ? ItemsReloadSource.UserTriggeredTagChange : ItemsReloadSource.DisplayOptionsChange,
+    )
 
     const didSortByChange = currentSortBy !== this.displayOptions.sortBy
     const didSortDirectionChange = currentSortDirection !== this.displayOptions.sortDirection
@@ -813,7 +811,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.resetPagination()
 
-    const { didReloadItems } = await this.reloadDisplayPreferences()
+    const { didReloadItems } = await this.reloadDisplayPreferences({ userTriggered })
 
     if (!didReloadItems) {
       this.reloadNotesDisplayOptions()
