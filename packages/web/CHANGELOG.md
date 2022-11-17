@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.100.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.100.7...@standardnotes/web@3.100.8) (2022-11-17)
+
+### Bug Fixes
+
+* select first item when switching tags ([#2026](https://github.com/standardnotes/app/issues/2026)) ([b9e6dc4](https://github.com/standardnotes/app/commit/b9e6dc4c2beafed0562fa41f6cb05c987fdc2e08))
+
 ## [3.100.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.100.6...@standardnotes/web@3.100.7) (2022-11-17)
 
 **Note:** Version bump only for package @standardnotes/web
