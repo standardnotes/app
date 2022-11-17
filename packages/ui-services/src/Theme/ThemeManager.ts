@@ -153,21 +153,24 @@ export class ThemeManager extends AbstractService {
 
   private handleFeaturesUpdated(): void {
     let hasChange = false
+
     for (const themeUuid of this.activeThemes) {
       const theme = this.application.items.findItem(themeUuid) as SNTheme
+
       if (!theme) {
         this.deactivateTheme(themeUuid)
         hasChange = true
-      } else {
-        const status = this.application.features.getFeatureStatus(theme.identifier)
-        if (status !== FeatureStatus.Entitled) {
-          if (theme.active) {
-            this.application.mutator.toggleTheme(theme).catch(console.error)
-          } else {
-            this.deactivateTheme(theme.uuid)
-          }
-          hasChange = true
+        continue
+      }
+
+      const status = this.application.features.getFeatureStatus(theme.identifier)
+      if (status !== FeatureStatus.Entitled) {
+        if (theme.active) {
+          this.application.mutator.toggleTheme(theme).catch(console.error)
+        } else {
+          this.deactivateTheme(theme.uuid)
         }
+        hasChange = true
       }
     }
 

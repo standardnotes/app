@@ -152,7 +152,7 @@ export class SNFeaturesService
     await super.handleApplicationStage(stage)
 
     if (stage === ApplicationStage.FullSyncCompleted_13) {
-      void this.addDarkTheme()
+      void this.mapClientControlledFeaturesToItems()
 
       if (!this.rolesIncludePaidSubscription()) {
         const offlineRepo = this.getOfflineRepo()
@@ -163,11 +163,32 @@ export class SNFeaturesService
     }
   }
 
-  private async addDarkTheme() {
-    const darkThemeFeature = FeaturesImports.FindNativeFeature(FeatureIdentifier.DarkTheme)
+  private async mapClientControlledFeaturesToItems() {
+    const clientFeatures = FeaturesImports.GetFeatures().filter((feature) => feature.clientControlled)
+    const currentItems = this.itemManager.getItems<Models.SNComponent>([ContentType.Component, ContentType.Theme])
 
-    if (darkThemeFeature) {
-      await this.mapRemoteNativeFeaturesToItems([darkThemeFeature])
+    for (const feature of clientFeatures) {
+      if (!feature.content_type) {
+        continue
+      }
+
+      const existingItem = currentItems.find((item) => item.identifier === feature.identifier)
+      if (existingItem) {
+        const hasChange = JSON.stringify(feature) !== JSON.stringify(existingItem.package_info)
+        if (hasChange) {
+          await this.itemManager.changeComponent(existingItem, (mutator) => {
+            mutator.package_info = feature
+          })
+        }
+
+        continue
+      }
+
+      await this.itemManager.createItem(
+        feature.content_type,
+        this.componentContentForNativeFeatureDescription(feature),
+        true,
+      )
     }
   }
 
@@ -396,7 +417,10 @@ export class SNFeaturesService
 
   public async didDownloadFeatures(features: FeaturesImports.FeatureDescription[]): Promise<void> {
     features = features
-      .filter((feature) => !!FeaturesImports.FindNativeFeature(feature.identifier))
+      .filter((feature) => {
+        const nativeFeature = FeaturesImports.FindNativeFeature(feature.identifier)
+        return nativeFeature != undefined && !nativeFeature.clientControlled
+      })
       .map((feature) => this.mapRemoteNativeFeatureToStaticFeature(feature))
 
     this.features = features
@@ -436,6 +460,7 @@ export class SNFeaturesService
     if (nativeFeatureCopy.expires_at) {
       nativeFeatureCopy.expires_at = convertTimestampToMilliseconds(nativeFeatureCopy.expires_at)
     }
+
     return nativeFeatureCopy
   }
 
@@ -563,32 +588,41 @@ export class SNFeaturesService
     let hasChanges = false
 
     for (const feature of features) {
-      const didChange = await this.mapNativeFeatureToItem(feature, currentItems, itemsToDelete)
+      const didChange = await this.mapRemoteNativeFeatureToItem(feature, currentItems, itemsToDelete)
       if (didChange) {
         hasChanges = true
       }
     }
 
     await this.itemManager.setItemsToBeDeleted(itemsToDelete)
+
     if (hasChanges) {
       void this.syncService.sync()
     }
   }
 
-  private async mapNativeFeatureToItem(
+  private async mapRemoteNativeFeatureToItem(
     feature: FeaturesImports.FeatureDescription,
     currentItems: Models.SNComponent[],
     itemsToDelete: Models.SNComponent[],
   ): Promise<boolean> {
+    if (feature.clientControlled) {
+      throw new Error('Attempted to map client controlled feature as remote item')
+    }
+
     if (!feature.content_type) {
       return false
     }
 
-    if (this.isExperimentalFeature(feature.identifier) && !this.isExperimentalFeatureEnabled(feature.identifier)) {
+    const isDisabledExperimentalFeature =
+      this.isExperimentalFeature(feature.identifier) && !this.isExperimentalFeatureEnabled(feature.identifier)
+
+    if (isDisabledExperimentalFeature) {
       return false
     }
 
     let hasChanges = false
+
     const now = new Date()
     const expired = this.isFreeFeature(feature.identifier)
       ? false
@@ -599,6 +633,7 @@ export class SNFeaturesService
         const itemIdentifier = item.content.package_info.identifier
         return itemIdentifier === feature.identifier
       }
+
       return false
     })
 
@@ -610,14 +645,17 @@ export class SNFeaturesService
 
     if (existingItem) {
       const featureExpiresAt = new Date(feature.expires_at || 0)
-      const hasChange =
-        JSON.stringify(feature) !== JSON.stringify(existingItem.package_info) ||
-        featureExpiresAt.getTime() !== existingItem.valid_until.getTime()
+      const hasChangeInPackageInfo = JSON.stringify(feature) !== JSON.stringify(existingItem.package_info)
+      const hasChangeInExpiration = featureExpiresAt.getTime() !== existingItem.valid_until.getTime()
+
+      const hasChange = hasChangeInPackageInfo || hasChangeInExpiration
+
       if (hasChange) {
         resultingItem = await this.itemManager.changeComponent(existingItem, (mutator) => {
           mutator.package_info = feature
           mutator.valid_until = featureExpiresAt
         })
+
         hasChanges = true
       } else {
         resultingItem = existingItem

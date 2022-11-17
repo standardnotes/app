@@ -23,6 +23,9 @@ export type BaseFeatureDescription = RoleFields & {
   description?: string
   expires_at?: number
 
+  /** Whether the client controls availability of this feature (such as the dark theme) */
+  clientControlled?: boolean
+
   flags?: ComponentFlag[]
   identifier: FeatureIdentifier
   marketing_url?: string
