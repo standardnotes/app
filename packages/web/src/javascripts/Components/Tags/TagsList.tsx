@@ -2,8 +2,6 @@ import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { SNTag } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback } from 'react'
-import { DndProvider } from 'react-dnd'
-import { HTML5Backend } from 'react-dnd-html5-backend'
 import RootTagDropZone from './RootTagDropZone'
 import { TagListSectionType } from './TagListSection'
 import { TagsListItem } from './TagsListItem'
@@ -16,8 +14,6 @@ type Props = {
 const TagsList: FunctionComponent<Props> = ({ viewControllerManager, type }: Props) => {
   const navigationController = viewControllerManager.navigationController
   const allTags = type === 'all' ? navigationController.allLocalRootTags : navigationController.starredTags
-
-  const backend = HTML5Backend
 
   const openTagContextMenu = useCallback(
     (posX: number, posY: number) => {
@@ -40,7 +36,7 @@ const TagsList: FunctionComponent<Props> = ({ viewControllerManager, type }: Pro
   )
 
   return (
-    <DndProvider backend={backend}>
+    <>
       {allTags.length === 0 ? (
         <div className="no-tags-placeholder text-base opacity-[0.4] lg:text-sm">
           No tags or folders. Create one using the add button above.
@@ -69,7 +65,7 @@ const TagsList: FunctionComponent<Props> = ({ viewControllerManager, type }: Pro
           )}
         </>
       )}
-    </DndProvider>
+    </>
   )
 }
 

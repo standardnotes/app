@@ -1,6 +1,5 @@
 import Icon from '@/Components/Icon/Icon'
-import { FOCUSABLE_BUT_NOT_TABBABLE, TAG_FOLDERS_FEATURE_NAME } from '@/Constants/Constants'
-import { usePremiumModal } from '@/Hooks/usePremiumModal'
+import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
@@ -19,12 +18,9 @@ import {
   useRef,
   useState,
 } from 'react'
-import { useDrag, useDrop } from 'react-dnd'
-import { DropItem, DropProps, ItemTypes } from './DragNDrop'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { classNames } from '@/Utils/ConcatenateClassNames'
-import { mergeRefs } from '@/Hooks/mergeRefs'
 import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { TagListSectionType } from './TagListSection'
@@ -60,10 +56,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
     const childrenTags = computed(() => navigationController.getChildren(tag)).get()
     const hasChildren = childrenTags.length > 0
-
-    const hasFolders = features.hasFolders
-
-    const premiumModal = usePremiumModal()
 
     const [showChildren, setShowChildren] = useState(tag.expanded)
     const [hadChildren, setHadChildren] = useState(hasChildren)
@@ -151,43 +143,6 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       }
     }, [subtagInputRef, isAddingSubtag])
 
-    const [, dragRef] = useDrag(
-      () => ({
-        type: ItemTypes.TAG,
-        item: { uuid: tag.uuid },
-        canDrag: () => {
-          return true
-        },
-        collect: (monitor) => ({
-          isDragging: !!monitor.isDragging(),
-        }),
-      }),
-      [tag],
-    )
-
-    const [{ isOver, canDrop }, dropRef] = useDrop<DropItem, void, DropProps>(
-      () => ({
-        accept: ItemTypes.TAG,
-        canDrop: (item) => {
-          return navigationController.isValidTagParent(tag, item as SNTag)
-        },
-        drop: (item) => {
-          if (!hasFolders) {
-            premiumModal.activate(TAG_FOLDERS_FEATURE_NAME)
-            return
-          }
-          navigationController.assignParent(item.uuid, tag.uuid).catch(console.error)
-        },
-        collect: (monitor) => ({
-          isOver: !!monitor.isOver(),
-          canDrop: !!monitor.canDrop(),
-        }),
-      }),
-      [tag, navigationController, hasFolders, premiumModal],
-    )
-
-    const readyToDrop = isOver && canDrop
-
     const toggleContextMenu: MouseEventHandler<HTMLAnchorElement> = useCallback(
       (event) => {
         event.preventDefault()
@@ -241,9 +196,9 @@ export const TagsListItem: FunctionComponent<Props> = observer(
         <div
           role="button"
           tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-          className={classNames('tag px-3.5', isSelected && 'selected', readyToDrop && 'is-drag-over')}
+          className={classNames('tag px-3.5', isSelected && 'selected')}
           onClick={selectCurrentTag}
-          ref={mergeRefs([dragRef, tagRef])}
+          ref={tagRef}
           style={{
             paddingLeft: `${level * PADDING_PER_LEVEL_PX + PADDING_BASE_PX}px`,
           }}
@@ -252,8 +207,8 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             onContextMenu(tag, e.clientX, e.clientY)
           }}
         >
-          <div className="tag-info" title={title} ref={dropRef}>
-            <div onClick={selectCurrentTag} className={'tag-icon draggable mr-2'} ref={dragRef}>
+          <div className="tag-info" title={title}>
+            <div onClick={selectCurrentTag} className={'tag-icon draggable mr-2'}>
               <Icon
                 type={tag.iconString as IconType}
                 className={`cursor-pointer ${isSelected ? 'text-info' : 'text-neutral'}`}
