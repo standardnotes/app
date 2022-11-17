@@ -31,7 +31,7 @@ import FloatingLinkEditorPlugin from '../Lexical/Plugins/FloatingLinkEditorPlugi
 import {truncateString} from './Utils';
 import {SuperEditorContentId} from './Constants';
 
-const BlockDragEnabled = false;
+const BlockDragEnabled = true;
 
 type BlocksEditorProps = {
   onChange: (value: string, preview: string) => void;
@@ -133,7 +133,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
         </>
       )}
       {floatingAnchorElem && BlockDragEnabled && (
-        <>{<DraggableBlockPlugin anchorElem={floatingAnchorElem} />}</>
+        <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
       )}
     </>
   );
