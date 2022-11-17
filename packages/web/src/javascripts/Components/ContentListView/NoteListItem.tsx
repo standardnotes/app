@@ -1,5 +1,4 @@
-import { PLAIN_EDITOR_NAME } from '@/Constants/Constants'
-import { sanitizeHtmlString, SNNote } from '@standardnotes/snjs'
+import { isFile, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useRef } from 'react'
 import Icon from '@/Components/Icon/Icon'
@@ -11,11 +10,16 @@ import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useContextMenuEvent } from '@/Hooks/useContextMenuEvent'
+import ListItemNotePreviewText from './ListItemNotePreviewText'
+import { ListItemTitle } from './ListItemTitle'
+import { log, LoggingDomain } from '@/Logging'
+import { classNames } from '@/Utils/ConcatenateClassNames'
+import { getIconAndTintForNoteType } from '@/Utils/Items/Icons/getIconAndTintForNoteType'
 
-const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
+const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
   application,
   notesController,
-  selectionController,
+  onSelect,
   hideDate,
   hideIcon,
   hideTags,
@@ -24,15 +28,16 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   selected,
   sortBy,
   tags,
+  isPreviousItemTiled,
+  isNextItemTiled,
 }) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
   const listItemRef = useRef<HTMLDivElement>(null)
 
-  const editorForNote = application.componentManager.editorForNote(item as SNNote)
-  const editorName = editorForNote?.name ?? PLAIN_EDITOR_NAME
-  const [icon, tint] = application.iconsController.getIconAndTintForNoteType(editorForNote?.package_info.note_type)
-  const hasFiles = application.items.getFilesForNote(item as SNNote).length > 0
+  const noteType = item.noteType || application.componentManager.editorForNote(item)?.package_info.note_type
+  const [icon, tint] = getIconAndTintForNoteType(noteType)
+  const hasFiles = application.items.itemsReferencingItem(item).filter(isFile).length > 0
 
   const openNoteContextMenu = (posX: number, posY: number) => {
     notesController.setContextMenuOpen(false)
@@ -48,7 +53,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
     let shouldOpenContextMenu = selected
 
     if (!selected) {
-      const { didSelect } = await selectionController.selectItem(item.uuid)
+      const { didSelect } = await onSelect(item)
       if (didSelect) {
         shouldOpenContextMenu = true
       }
@@ -60,57 +65,45 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps> = ({
   }
 
   const onClick = useCallback(async () => {
-    const { didSelect } = await selectionController.selectItem(item.uuid, true)
+    const { didSelect } = await onSelect(item, true)
     if (didSelect) {
       toggleAppPane(AppPaneId.Editor)
     }
-  }, [item.uuid, selectionController, toggleAppPane])
+  }, [item, onSelect, toggleAppPane])
 
   useContextMenuEvent(listItemRef, openContextMenu)
+
+  log(LoggingDomain.ItemsList, 'Rendering note list item', item.title)
+
+  const hasOffsetBorder = !isNextItemTiled
 
   return (
     <div
       ref={listItemRef}
-      className={`content-list-item flex w-full cursor-pointer items-stretch text-text ${
-        selected && 'selected border-l-2 border-solid border-info'
-      }`}
+      className={classNames(
+        'content-list-item text-tex flex w-full cursor-pointer items-stretch',
+        selected && `selected border-l-2 border-solid border-accessory-tint-${tint}`,
+        isPreviousItemTiled && 'mt-3 border-t border-solid border-t-border',
+        isNextItemTiled && 'mb-3 border-b border-solid border-b-border',
+      )}
       id={item.uuid}
       onClick={onClick}
     >
       {!hideIcon ? (
         <div className="mr-0 flex flex-col items-center justify-between p-4 pr-4">
-          <Icon ariaLabel={`Icon for ${editorName}`} type={icon} className={`text-accessory-tint-${tint}`} />
+          <Icon type={icon} className={`text-accessory-tint-${tint}`} />
         </div>
       ) : (
         <div className="pr-4" />
       )}
-      <div className="min-w-0 flex-grow border-b border-solid border-border py-4 px-0">
-        <div className="flex items-start justify-between overflow-hidden text-base font-semibold leading-[1.3]">
-          <div className="break-word mr-2">{item.title}</div>
-        </div>
-        {!hidePreview && !item.hidePreview && !item.protected && (
-          <div className="overflow-hidden overflow-ellipsis text-sm">
-            {item.preview_html && (
-              <div
-                className="my-1"
-                dangerouslySetInnerHTML={{
-                  __html: sanitizeHtmlString(item.preview_html),
-                }}
-              ></div>
-            )}
-            {!item.preview_html && item.preview_plain && (
-              <div className="leading-1.3 line-clamp-1 mt-1 overflow-hidden">{item.preview_plain}</div>
-            )}
-            {!item.preview_html && !item.preview_plain && item.text && (
-              <div className="leading-1.3 line-clamp-1 mt-1 overflow-hidden">{item.text}</div>
-            )}
-          </div>
-        )}
+      <div className={`min-w-0 flex-grow ${hasOffsetBorder && 'border-b border-solid border-border'} py-4 px-0`}>
+        <ListItemTitle item={item} />
+        <ListItemNotePreviewText item={item} hidePreview={hidePreview} />
         <ListItemMetadata item={item} hideDate={hideDate} sortBy={sortBy} />
         <ListItemTags hideTags={hideTags} tags={tags} />
         <ListItemConflictIndicator item={item} />
       </div>
-      <ListItemFlagIcons item={item} hasFiles={hasFiles} />
+      <ListItemFlagIcons className="p-4" item={item} hasFiles={hasFiles} hasBorder={hasOffsetBorder} />
     </div>
   )
 }

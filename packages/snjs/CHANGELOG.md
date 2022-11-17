@@ -3,6 +3,306 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.151.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.4...@standardnotes/snjs@2.151.5) (2022-11-17)
+
+### Bug Fixes
+
+* distinguish client controlled features so that server expiration timestamps are ignored ([#2022](https://github.com/standardnotes/app/issues/2022)) ([a6e57e3](https://github.com/standardnotes/app/commit/a6e57e30cff64de83eaedf3d36117a497a7a70ae))
+
+## [2.151.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.3...@standardnotes/snjs@2.151.4) (2022-11-17)
+
+### Bug Fixes
+
+* handle cleared data on firefox ([#2021](https://github.com/standardnotes/app/issues/2021)) ([55b6714](https://github.com/standardnotes/app/commit/55b671479451d8d7e291a9875e227abc917d30b5))
+
+## [2.151.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.2...@standardnotes/snjs@2.151.3) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.151.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.1...@standardnotes/snjs@2.151.2) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.151.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.0...@standardnotes/snjs@2.151.1) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+# [2.151.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.150.0...@standardnotes/snjs@2.151.0) (2022-11-16)
+
+### Features
+
+* edit smart view predicate as json ([#2012](https://github.com/standardnotes/app/issues/2012)) ([f3e4ba8](https://github.com/standardnotes/app/commit/f3e4ba87795b82cbd96663b441f87ab80f710d05))
+
+# [2.150.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.149.1...@standardnotes/snjs@2.150.0) (2022-11-16)
+
+### Features
+
+* **labs:** super editor ([#2001](https://github.com/standardnotes/app/issues/2001)) ([59f8547](https://github.com/standardnotes/app/commit/59f8547a8de1c804cb2f01ac734c83268977fa28))
+
+## [2.149.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.149.0...@standardnotes/snjs@2.149.1) (2022-11-16)
+
+### Bug Fixes
+
+* **web:** remove checking for MFA permissions as all users are permitted to MFA ([ea40427](https://github.com/standardnotes/app/commit/ea40427e6715ba75193430fd7d3044e3c960d6ae))
+
+# [2.149.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.148.0...@standardnotes/snjs@2.149.0) (2022-11-14)
+
+### Features
+
+* GUI to create smart views ([#1997](https://github.com/standardnotes/app/issues/1997)) ([f656185](https://github.com/standardnotes/app/commit/f656185c167b3306d408dc486970836efa1d70c5))
+
+# [2.148.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.147.11...@standardnotes/snjs@2.148.0) (2022-11-13)
+
+### Features
+
+* iap ([#1996](https://github.com/standardnotes/app/issues/1996)) ([d519aca](https://github.com/standardnotes/app/commit/d519aca685b32f4b6f7079ba9562ecaf1a18aecb))
+
+## [2.147.11](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.147.10...@standardnotes/snjs@2.147.11) (2022-11-09)
+
+### Bug Fixes
+
+* load blocking by network await ([#1989](https://github.com/standardnotes/app/issues/1989)) ([3498130](https://github.com/standardnotes/app/commit/3498130bfb4e7ee9764e5c687844fd78bf909150))
+
+## [2.147.10](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.147.9...@standardnotes/snjs@2.147.10) (2022-11-09)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.147.9](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.147.8...@standardnotes/snjs@2.147.9) (2022-11-08)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.147.8](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.147.7...@standardnotes/snjs@2.147.8) (2022-11-07)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.147.7](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.147.6...@standardnotes/snjs@2.147.7) (2022-11-06)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.147.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.147.5...@standardnotes/snjs@2.147.6) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.147.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.147.4...@standardnotes/snjs@2.147.5) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.147.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.147.3...@standardnotes/snjs@2.147.4) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.147.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.147.1...@standardnotes/snjs@2.147.3) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.147.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.147.0...@standardnotes/snjs@2.147.1) (2022-11-03)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+# [2.147.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.146.1...@standardnotes/snjs@2.147.0) (2022-11-02)
+
+### Features
+
+* prioritize loading latest selected items ([#1930](https://github.com/standardnotes/app/issues/1930)) ([a6ef658](https://github.com/standardnotes/app/commit/a6ef658daef9a01f5ddacc967fe30d22f580799a))
+
+## [2.146.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.146.0...@standardnotes/snjs@2.146.1) (2022-11-02)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+# [2.146.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.145.3...@standardnotes/snjs@2.146.0) (2022-11-02)
+
+### Features
+
+* add sending user requests to process ([#1908](https://github.com/standardnotes/app/issues/1908)) ([b2faa81](https://github.com/standardnotes/app/commit/b2faa815e967a9e7052b3ce6955e967c6bc68864))
+
+## [2.145.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.145.2...@standardnotes/snjs@2.145.3) (2022-11-01)
+
+### Bug Fixes
+
+* **mobile:** increase font sizes and other mobile-centric improvements ([#1907](https://github.com/standardnotes/app/issues/1907)) ([994f824](https://github.com/standardnotes/app/commit/994f824757e1143a4547c975b154fd84e3ebeedf))
+
+## [2.145.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.145.1...@standardnotes/snjs@2.145.2) (2022-10-30)
+
+### Bug Fixes
+
+* **mobile:** increase save debounce timeout ([35e2fa9](https://github.com/standardnotes/app/commit/35e2fa9eb6df44beb7717ce38209ee4944286355))
+
+## [2.145.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.145.0...@standardnotes/snjs@2.145.1) (2022-10-28)
+
+### Bug Fixes
+
+* color scheme handling on mobile ([#1902](https://github.com/standardnotes/app/issues/1902)) ([6071ebf](https://github.com/standardnotes/app/commit/6071ebffeb55c78eac79f39aecca07f6ebdbed93))
+
+# [2.145.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.144.2...@standardnotes/snjs@2.145.0) (2022-10-27)
+
+### Features
+
+* daily notes (dev only) ([#1894](https://github.com/standardnotes/app/issues/1894)) ([69c3f2b](https://github.com/standardnotes/app/commit/69c3f2be837152a1f937559327021c2128234c69))
+
+## [2.144.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.144.1...@standardnotes/snjs@2.144.2) (2022-10-26)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.144.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.144.0...@standardnotes/snjs@2.144.1) (2022-10-25)
+
+### Bug Fixes
+
+* on mobile open links from editor in external browser ([#1860](https://github.com/standardnotes/app/issues/1860)) ([d9db73e](https://github.com/standardnotes/app/commit/d9db73ea056e2e6e2bde8e0c1de4a7090984ae9a))
+
+# [2.144.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.143.3...@standardnotes/snjs@2.144.0) (2022-10-25)
+
+### Features
+
+* per-tag display preferences ([#1868](https://github.com/standardnotes/app/issues/1868)) ([ee7f11c](https://github.com/standardnotes/app/commit/ee7f11c933285234b20fa2d5db4fcf0d6a5dce9d))
+
+## [2.143.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.143.2...@standardnotes/snjs@2.143.3) (2022-10-24)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.143.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.143.1...@standardnotes/snjs@2.143.2) (2022-10-24)
+
+### Bug Fixes
+
+* prevent duplicate launch calls ([#1867](https://github.com/standardnotes/app/issues/1867)) ([4928df0](https://github.com/standardnotes/app/commit/4928df08e2a3a94b95ee786b7c9b0430a39512f5))
+
+## [2.143.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.143.0...@standardnotes/snjs@2.143.1) (2022-10-24)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+# [2.143.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.142.3...@standardnotes/snjs@2.143.0) (2022-10-21)
+
+### Features
+
+* ability to favorite tags + customize icon ([#1858](https://github.com/standardnotes/app/issues/1858)) ([cbd0063](https://github.com/standardnotes/app/commit/cbd0063926a416c23225242a4a1796712b6b224e))
+
+## [2.142.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.142.2...@standardnotes/snjs@2.142.3) (2022-10-21)
+
+### Bug Fixes
+
+* refactor application event observing on web ([9fb85cd](https://github.com/standardnotes/app/commit/9fb85cd77a627364738a9c21706431d2a01e9c44))
+
+## [2.142.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.142.1...@standardnotes/snjs@2.142.2) (2022-10-21)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.142.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.142.0...@standardnotes/snjs@2.142.1) (2022-10-19)
+
+### Bug Fixes
+
+* issue with not being able to unlink a file from a note ([#1836](https://github.com/standardnotes/app/issues/1836)) ([4030953](https://github.com/standardnotes/app/commit/4030953b00ad609dc2b0f5b66cfd971d449f6121))
+
+# [2.142.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.141.1...@standardnotes/snjs@2.142.0) (2022-10-18)
+
+### Features
+
+* authorize notes for listed ([#1823](https://github.com/standardnotes/app/issues/1823)) ([9954bdc](https://github.com/standardnotes/app/commit/9954bdc29f9de2a42c4539d55749991d86a72943))
+
+## [2.141.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.141.0...@standardnotes/snjs@2.141.1) (2022-10-17)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+# [2.141.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.140.0...@standardnotes/snjs@2.141.0) (2022-10-17)
+
+### Features
+
+* add workspaces workflow e2e tests ([#1810](https://github.com/standardnotes/app/issues/1810)) ([3f7d4a4](https://github.com/standardnotes/app/commit/3f7d4a4cd9a06f33bb51cbe678ab06dbe456dda6))
+
+# [2.140.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.139.1...@standardnotes/snjs@2.140.0) (2022-10-13)
+
+### Features
+
+* soft biometrics lock ([#1793](https://github.com/standardnotes/app/issues/1793)) ([1a2dde2](https://github.com/standardnotes/app/commit/1a2dde2e0ea406b9818571ab71d38442f9c9fb50))
+
+## [2.139.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.139.0...@standardnotes/snjs@2.139.1) (2022-10-13)
+
+### Bug Fixes
+
+* error when trying to create new note inside a tag/folder ([4a59216](https://github.com/standardnotes/app/commit/4a592167833d856d90a10d6c252cb14b1b6e91f4))
+
+# [2.139.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.138.2...@standardnotes/snjs@2.139.0) (2022-10-12)
+
+### Features
+
+* replace private workspaces with private usernames ([#1783](https://github.com/standardnotes/app/issues/1783)) ([18c821d](https://github.com/standardnotes/app/commit/18c821d8eb51beb6f54211eb1d6eb454303044f5))
+
+## [2.138.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.138.1...@standardnotes/snjs@2.138.2) (2022-10-12)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.138.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.138.0...@standardnotes/snjs@2.138.1) (2022-10-12)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+# [2.138.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.137.0...@standardnotes/snjs@2.138.0) (2022-10-11)
+
+### Features
+
+* item linking ([#1779](https://github.com/standardnotes/app/issues/1779)) ([e3f2842](https://github.com/standardnotes/app/commit/e3f28421ff042c635ad2ae645c102c27e3e3f9c7))
+
+# [2.137.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.136.4...@standardnotes/snjs@2.137.0) (2022-10-11)
+
+### Features
+
+* **api:** add listing workspace users ([fb41f65](https://github.com/standardnotes/app/commit/fb41f651eca45dd62314609c2f389d5dc683c36e))
+
+## [2.136.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.136.3...@standardnotes/snjs@2.136.4) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.136.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.136.2...@standardnotes/snjs@2.136.3) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.136.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.136.1...@standardnotes/snjs@2.136.2) (2022-10-10)
+
+### Bug Fixes
+
+* dark mode not working in editors ([#1773](https://github.com/standardnotes/app/issues/1773)) ([27d2c95](https://github.com/standardnotes/app/commit/27d2c95b5b82645bf6c0372979f05236c83a10f6))
+
+## [2.136.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.136.0...@standardnotes/snjs@2.136.1) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+
+# [2.136.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.135.0...@standardnotes/snjs@2.136.0) (2022-10-07)
+
+### Features
+
+* **api:** add workspaces api ([#1765](https://github.com/standardnotes/app/issues/1765)) ([01ba715](https://github.com/standardnotes/app/commit/01ba715eba987a7da1ee062fec0b3593a7a453ed))
+
+# [2.135.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.134.9...@standardnotes/snjs@2.135.0) (2022-10-06)
+
+### Features
+
+* experimental 005 operator ([#1753](https://github.com/standardnotes/app/issues/1753)) ([cbbe913](https://github.com/standardnotes/app/commit/cbbe913cd6eb694dd27997927bd5c45e8a64cc09))
+
+## [2.134.9](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.134.8...@standardnotes/snjs@2.134.9) (2022-10-05)
+
+### Bug Fixes
+
+* **mobile:** passcode timing options ([#1744](https://github.com/standardnotes/app/issues/1744)) ([6c26b96](https://github.com/standardnotes/app/commit/6c26b96cdce0d69a4a459104709880850a401a92))
+
+## [2.134.8](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.134.7...@standardnotes/snjs@2.134.8) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.134.7](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.134.6...@standardnotes/snjs@2.134.7) (2022-10-03)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.134.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.134.5...@standardnotes/snjs@2.134.6) (2022-10-02)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.134.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.134.4...@standardnotes/snjs@2.134.5) (2022-09-30)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.134.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.134.3...@standardnotes/snjs@2.134.4) (2022-09-30)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
 ## [2.134.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.134.2...@standardnotes/snjs@2.134.3) (2022-09-29)
 
 **Note:** Version bump only for package @standardnotes/snjs

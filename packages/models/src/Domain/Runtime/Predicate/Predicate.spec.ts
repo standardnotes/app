@@ -429,6 +429,36 @@ describe('predicates', () => {
     it('hours ago value', () => {
       expect(new Predicate('updated_at', '>', '1.hours.ago').matchesItem(item)).toEqual(true)
     })
+
+    it('nonmatching hours ago value', () => {
+      expect(new Predicate('updated_at', '<', '1.hours.ago').matchesItem(item)).toEqual(false)
+    })
+
+    it('months ago value', () => {
+      expect(new Predicate('updated_at', '>', '1.months.ago').matchesItem(item)).toEqual(true)
+    })
+
+    it('nonmatching months ago value', () => {
+      expect(new Predicate('updated_at', '<', '1.months.ago').matchesItem(item)).toEqual(false)
+    })
+
+    it('years ago value', () => {
+      expect(new Predicate('updated_at', '>', '1.years.ago').matchesItem(item)).toEqual(true)
+    })
+
+    it('nonmatching years ago value', () => {
+      expect(new Predicate('updated_at', '<', '1.years.ago').matchesItem(item)).toEqual(false)
+    })
+
+    it('string date value', () => {
+      item = createItem({}, new Date('01/01/2022'))
+      expect(new Predicate('updated_at', '<', '01/02/2022').matchesItem(item)).toEqual(true)
+    })
+
+    it('nonmatching string date value', () => {
+      item = createItem({}, new Date('01/01/2022'))
+      expect(new Predicate('updated_at', '>', '01/02/2022').matchesItem(item)).toEqual(false)
+    })
   })
 
   describe('nonexistent properties', () => {

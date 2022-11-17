@@ -3,6 +3,144 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.12.14](https://github.com/standardnotes/app/compare/@standardnotes/files@1.12.13...@standardnotes/files@1.12.14) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.12.13](https://github.com/standardnotes/app/compare/@standardnotes/files@1.12.12...@standardnotes/files@1.12.13) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.12.12](https://github.com/standardnotes/app/compare/@standardnotes/files@1.12.11...@standardnotes/files@1.12.12) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.12.11](https://github.com/standardnotes/app/compare/@standardnotes/files@1.12.10...@standardnotes/files@1.12.11) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.12.10](https://github.com/standardnotes/app/compare/@standardnotes/files@1.12.9...@standardnotes/files@1.12.10) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.12.9](https://github.com/standardnotes/app/compare/@standardnotes/files@1.12.8...@standardnotes/files@1.12.9) (2022-11-14)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.12.8](https://github.com/standardnotes/app/compare/@standardnotes/files@1.12.7...@standardnotes/files@1.12.8) (2022-11-09)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.12.7](https://github.com/standardnotes/app/compare/@standardnotes/files@1.12.6...@standardnotes/files@1.12.7) (2022-11-07)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.12.6](https://github.com/standardnotes/app/compare/@standardnotes/files@1.12.5...@standardnotes/files@1.12.6) (2022-11-06)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.12.5](https://github.com/standardnotes/app/compare/@standardnotes/files@1.12.4...@standardnotes/files@1.12.5) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.12.4](https://github.com/standardnotes/app/compare/@standardnotes/files@1.12.3...@standardnotes/files@1.12.4) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.12.3](https://github.com/standardnotes/app/compare/@standardnotes/files@1.12.2...@standardnotes/files@1.12.3) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.12.2](https://github.com/standardnotes/app/compare/@standardnotes/files@1.12.1...@standardnotes/files@1.12.2) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.12.1](https://github.com/standardnotes/app/compare/@standardnotes/files@1.12.0...@standardnotes/files@1.12.1) (2022-11-02)
+
+**Note:** Version bump only for package @standardnotes/files
+
+# [1.12.0](https://github.com/standardnotes/app/compare/@standardnotes/files@1.11.10...@standardnotes/files@1.12.0) (2022-11-02)
+
+### Features
+
+* add sending user requests to process ([#1908](https://github.com/standardnotes/app/issues/1908)) ([b2faa81](https://github.com/standardnotes/app/commit/b2faa815e967a9e7052b3ce6955e967c6bc68864))
+
+## [1.11.10](https://github.com/standardnotes/app/compare/@standardnotes/files@1.11.9...@standardnotes/files@1.11.10) (2022-10-27)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.11.9](https://github.com/standardnotes/app/compare/@standardnotes/files@1.11.8...@standardnotes/files@1.11.9) (2022-10-25)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.11.8](https://github.com/standardnotes/app/compare/@standardnotes/files@1.11.7...@standardnotes/files@1.11.8) (2022-10-25)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.11.7](https://github.com/standardnotes/app/compare/@standardnotes/files@1.11.6...@standardnotes/files@1.11.7) (2022-10-21)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.11.6](https://github.com/standardnotes/app/compare/@standardnotes/files@1.11.5...@standardnotes/files@1.11.6) (2022-10-19)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.11.5](https://github.com/standardnotes/app/compare/@standardnotes/files@1.11.4...@standardnotes/files@1.11.5) (2022-10-18)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.11.4](https://github.com/standardnotes/app/compare/@standardnotes/files@1.11.3...@standardnotes/files@1.11.4) (2022-10-17)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.11.3](https://github.com/standardnotes/app/compare/@standardnotes/files@1.11.2...@standardnotes/files@1.11.3) (2022-10-13)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.11.2](https://github.com/standardnotes/app/compare/@standardnotes/files@1.11.1...@standardnotes/files@1.11.2) (2022-10-12)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.11.1](https://github.com/standardnotes/app/compare/@standardnotes/files@1.11.0...@standardnotes/files@1.11.1) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/files
+
+# [1.11.0](https://github.com/standardnotes/app/compare/@standardnotes/files@1.10.15...@standardnotes/files@1.11.0) (2022-10-11)
+
+### Features
+
+* **api:** add listing workspace users ([fb41f65](https://github.com/standardnotes/app/commit/fb41f651eca45dd62314609c2f389d5dc683c36e))
+
+## [1.10.15](https://github.com/standardnotes/app/compare/@standardnotes/files@1.10.14...@standardnotes/files@1.10.15) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.10.14](https://github.com/standardnotes/app/compare/@standardnotes/files@1.10.13...@standardnotes/files@1.10.14) (2022-10-10)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.10.13](https://github.com/standardnotes/app/compare/@standardnotes/files@1.10.12...@standardnotes/files@1.10.13) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+
+## [1.10.12](https://github.com/standardnotes/app/compare/@standardnotes/files@1.10.11...@standardnotes/files@1.10.12) (2022-10-06)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.10.11](https://github.com/standardnotes/app/compare/@standardnotes/files@1.10.10...@standardnotes/files@1.10.11) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.10.10](https://github.com/standardnotes/app/compare/@standardnotes/files@1.10.9...@standardnotes/files@1.10.10) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.10.9](https://github.com/standardnotes/app/compare/@standardnotes/files@1.10.8...@standardnotes/files@1.10.9) (2022-09-30)
+
+**Note:** Version bump only for package @standardnotes/files
+
 ## [1.10.8](https://github.com/standardnotes/app/compare/@standardnotes/files@1.10.7...@standardnotes/files@1.10.8) (2022-09-29)
 
 **Note:** Version bump only for package @standardnotes/files

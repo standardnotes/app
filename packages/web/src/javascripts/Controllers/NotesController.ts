@@ -8,7 +8,6 @@ import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { SelectedItemsController } from './SelectedItemsController'
 import { ItemListController } from './ItemList/ItemListController'
-import { NoteTagsController } from './NoteTagsController'
 import { NavigationController } from './Navigation/NavigationController'
 
 export class NotesController extends AbstractViewController {
@@ -27,7 +26,6 @@ export class NotesController extends AbstractViewController {
     super.deinit()
     ;(this.lastSelectedNote as unknown) = undefined
     ;(this.selectionController as unknown) = undefined
-    ;(this.noteTagsController as unknown) = undefined
     ;(this.navigationController as unknown) = undefined
     ;(this.itemListController as unknown) = undefined
 
@@ -37,7 +35,6 @@ export class NotesController extends AbstractViewController {
   constructor(
     application: WebApplication,
     private selectionController: SelectedItemsController,
-    private noteTagsController: NoteTagsController,
     private navigationController: NavigationController,
     eventBus: InternalEventBus,
   ) {
@@ -66,20 +63,6 @@ export class NotesController extends AbstractViewController {
     this.itemListController = itemListController
 
     this.disposers.push(
-      this.application.streamItems<SNNote>(ContentType.Note, ({ changed, inserted, removed }) => {
-        runInAction(() => {
-          for (const removedNote of removed) {
-            this.selectionController.deselectItem(removedNote)
-          }
-
-          for (const note of [...changed, ...inserted]) {
-            if (this.selectionController.isItemSelected(note)) {
-              this.selectionController.updateReferenceOfSelectedItem(note)
-            }
-          }
-        })
-      }),
-
       this.application.itemControllerGroup.addActiveControllerChangeObserver(() => {
         const controllers = this.application.itemControllerGroup.itemControllers
 
@@ -97,7 +80,7 @@ export class NotesController extends AbstractViewController {
   }
 
   public get selectedNotes(): SNNote[] {
-    return this.selectionController.getSelectedItems<SNNote>(ContentType.Note)
+    return this.selectionController.getFilteredSelectedItems<SNNote>(ContentType.Note)
   }
 
   get firstSelectedNote(): SNNote | undefined {
@@ -262,6 +245,12 @@ export class NotesController extends AbstractViewController {
     }).catch(console.error)
   }
 
+  setStarSelectedNotes(starred: boolean): void {
+    this.changeSelectedNotes((mutator) => {
+      mutator.starred = starred
+    }).catch(console.error)
+  }
+
   async setArchiveSelectedNotes(archived: boolean): Promise<void> {
     if (this.getSelectedNotesList().some((note) => note.locked)) {
       this.application.alertService
@@ -275,7 +264,7 @@ export class NotesController extends AbstractViewController {
     })
 
     runInAction(() => {
-      this.selectionController.setSelectedItems({})
+      this.selectionController.deselectAll()
       this.contextMenuOpen = false
     })
   }
@@ -292,7 +281,7 @@ export class NotesController extends AbstractViewController {
   }
 
   unselectNotes(): void {
-    this.selectionController.setSelectedItems({})
+    this.selectionController.deselectAll()
   }
 
   getSpellcheckStateForNote(note: SNNote) {

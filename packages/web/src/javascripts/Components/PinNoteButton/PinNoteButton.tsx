@@ -1,4 +1,4 @@
-import VisuallyHidden from '@reach/visually-hidden'
+import { VisuallyHidden } from '@reach/visually-hidden'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback } from 'react'
 import Icon from '@/Components/Icon/Icon'
@@ -27,9 +27,8 @@ const PinNoteButton: FunctionComponent<Props> = ({ className = '', notesControll
 
   return (
     <button
-      className={`sn-icon-button flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast ${
-        pinned ? 'toggled' : ''
-      } ${className}`}
+      className={`sn-icon-button flex h-10 min-w-10 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast
+      md:h-8 md:min-w-8 ${pinned ? 'toggled' : ''} ${className}`}
       onClick={togglePinned}
     >
       <VisuallyHidden>Pin selected notes</VisuallyHidden>

@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/api",
-  "version": "1.8.6",
+  "version": "1.20.6",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -21,26 +21,26 @@
     "start": "tsc -p tsconfig.json --watch",
     "prebuild": "yarn clean",
     "build": "tsc -p tsconfig.json",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
+    "lint": "eslint src --ext .ts",
+    "lint:fix": "eslint src --ext .ts --fix",
     "test": "jest spec --coverage"
   },
   "devDependencies": {
-    "@types/jest": "^28.1.5",
-    "@types/lodash": "^4.14.182",
-    "@typescript-eslint/eslint-plugin": "^5.30.0",
-    "eslint": "^8.23.0",
+    "@types/jest": "^29.2.3",
+    "@types/lodash": "^4.14.189",
+    "@typescript-eslint/eslint-plugin": "*",
+    "eslint": "^8.27.0",
     "eslint-plugin-prettier": "*",
-    "jest": "^28.1.2",
-    "ts-jest": "^28.0.5",
+    "jest": "^29.3.1",
+    "ts-jest": "^29.0.3",
     "typescript": "*"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.32.0",
+    "@standardnotes/common": "^1.45.0",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
-    "@standardnotes/security": "^1.1.0",
+    "@standardnotes/security": "^1.7.0",
     "@standardnotes/utils": "workspace:*",
     "reflect-metadata": "^0.1.13"
   }

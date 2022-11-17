@@ -46,7 +46,7 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
   }
 
   if (usedInvitationsCount === 0) {
-    return <Text className="mt-1 mb-3">Make your first subscription invitation below.</Text>
+    return <Text className="mt-1 mb-3">Make your first subscription invite below.</Text>
   }
 
   return (

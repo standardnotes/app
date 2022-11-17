@@ -22,6 +22,7 @@ const EmailBackups = ({ application }: Props) => {
   const [emailFrequency, setEmailFrequency] = useState<EmailBackupFrequency>(EmailBackupFrequency.Disabled)
   const [emailFrequencyOptions, setEmailFrequencyOptions] = useState<DropdownItem[]>([])
   const [isFailedBackupEmailMuted, setIsFailedBackupEmailMuted] = useState(true)
+  const hasAccount = application.hasAccount()
 
   const loadEmailFrequencySetting = useCallback(async () => {
     if (!application.getUser()) {
@@ -104,12 +105,13 @@ const EmailBackups = ({ application }: Props) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Email Backups</Title>
-        <div>
-          {!isDesktopApplication() && (
-            <Text className="mb-3">
-              Daily encrypted email backups of your entire data set delivered directly to your inbox.
-            </Text>
-          )}
+        {!isDesktopApplication() && (
+          <Text className="mb-3">
+            Receive daily encrypted email backups of all your notes directly in your email inbox.
+          </Text>
+        )}
+
+        <div className={`${!hasAccount ? 'pointer-events-none cursor-default opacity-50' : ''}`}>
           <Subtitle>Email frequency</Subtitle>
           <Text>How often to receive backups.</Text>
           <div className="mt-2">

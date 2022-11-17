@@ -9,17 +9,25 @@ import Popover from '../Popover/Popover'
 type Props = {
   application: WebApplication
   note: SNNote
+  className: string
+  iconClassName: string
 }
 
-const ListedActionsOption: FunctionComponent<Props> = ({ application, note }) => {
+const ListedActionsOption: FunctionComponent<Props> = ({ application, note, className, iconClassName }) => {
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const [isOpen, setIsOpen] = useState(false)
 
-  const toggleMenu = useCallback(() => {
-    setIsOpen((isOpen) => !isOpen)
-  }, [])
+  const toggleMenu = useCallback(async () => {
+    if (!application.listed.isNoteAuthorizedForListed(note)) {
+      await application.listed.authorizeNoteForListed(note)
+    }
+
+    if (application.listed.isNoteAuthorizedForListed(note)) {
+      setIsOpen((isOpen) => !isOpen)
+    }
+  }, [application, note])
 
   return (
     <div ref={menuContainerRef}>
@@ -31,10 +39,10 @@ const ListedActionsOption: FunctionComponent<Props> = ({ application, note }) =>
           }
         }}
         ref={buttonRef}
-        className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+        className={className}
       >
         <div className="flex items-center">
-          <Icon type="listed" className="mr-2 text-neutral" />
+          <Icon type="listed" className={`mr-2 text-neutral ${iconClassName}`} />
           Listed actions
         </div>
         <Icon type="chevron-right" className="text-neutral" />

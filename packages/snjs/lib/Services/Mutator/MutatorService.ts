@@ -7,8 +7,10 @@ import {
   ChallengePrompt,
   ChallengeReason,
   MutatorClientInterface,
+  Challenge,
+  InfoStrings,
 } from '@standardnotes/services'
-import { EncryptionProvider } from '@standardnotes/encryption'
+import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { ContentType, ProtocolVersion, compareVersions } from '@standardnotes/common'
 import { ItemManager } from '../Items'
@@ -18,7 +20,7 @@ import { SNProtectionService } from '../Protection/ProtectionService'
 import { SNSyncService } from '../Sync'
 import { Strings } from '../../Strings'
 import { TagsToFoldersMigrationApplicator } from '@Lib/Migrations/Applicators/TagsToFolders'
-import { Challenge, ChallengeService } from '../Challenge'
+import { ChallengeService } from '../Challenge'
 import {
   BackupFile,
   BackupFileDecryptedContextualPayload,
@@ -29,6 +31,7 @@ import {
   CreateEncryptedBackupFileContextPayload,
   DecryptedItemInterface,
   DecryptedItemMutator,
+  DecryptedPayload,
   DecryptedPayloadInterface,
   EncryptedItemInterface,
   FileItem,
@@ -49,7 +52,7 @@ export class MutatorService extends AbstractService implements MutatorClientInte
     private itemManager: ItemManager,
     private syncService: SNSyncService,
     private protectionService: SNProtectionService,
-    private encryption: EncryptionProvider,
+    private encryption: EncryptionProviderInterface,
     private payloadManager: PayloadManager,
     private challengeService: ChallengeService,
     private componentManager: SNComponentManager,
@@ -169,7 +172,13 @@ export class MutatorService extends AbstractService implements MutatorClientInte
     items: I[],
     reason: ChallengeReason,
   ): Promise<I[] | undefined> {
-    if (!(await this.protectionService.authorizeAction(reason))) {
+    if (
+      !(await this.protectionService.authorizeAction(reason, {
+        fallBackToAccountPassword: true,
+        requireAccountPassword: false,
+        forcePrompt: false,
+      }))
+    ) {
       return undefined
     }
 
@@ -221,8 +230,8 @@ export class MutatorService extends AbstractService implements MutatorClientInte
   public createTemplateItem<
     C extends ItemContent = ItemContent,
     I extends DecryptedItemInterface<C> = DecryptedItemInterface<C>,
-  >(contentType: ContentType, content?: C): I {
-    return this.itemManager.createTemplateItem(contentType, content)
+  >(contentType: ContentType, content?: C, override?: Partial<DecryptedPayload<C>>): I {
+    return this.itemManager.createTemplateItem(contentType, content, override)
   }
 
   public async setItemNeedsSync(
@@ -313,13 +322,13 @@ export class MutatorService extends AbstractService implements MutatorClientInte
 
       const supportedVersions = this.encryption.supportedVersions()
       if (!supportedVersions.includes(version)) {
-        return { error: new ClientDisplayableError(Strings.Info.UnsupportedBackupFileVersion) }
+        return { error: new ClientDisplayableError(InfoStrings.UnsupportedBackupFileVersion) }
       }
 
       const userVersion = this.encryption.getUserVersion()
       if (userVersion && compareVersions(version, userVersion) === 1) {
         /** File was made with a greater version than the user's account */
-        return { error: new ClientDisplayableError(Strings.Info.BackupFileMoreRecentThanAccount) }
+        return { error: new ClientDisplayableError(InfoStrings.BackupFileMoreRecentThanAccount) }
       }
     }
 

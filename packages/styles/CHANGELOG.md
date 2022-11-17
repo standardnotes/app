@@ -3,6 +3,46 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.1](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.7.0...@standardnotes/styles@1.7.1) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/styles
+
+# [1.7.0](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.6.4...@standardnotes/styles@1.7.0) (2022-11-13)
+
+### Features
+
+* iap ([#1996](https://github.com/standardnotes/app/issues/1996)) ([d519aca](https://github.com/standardnotes/app/commit/d519aca685b32f4b6f7079ba9562ecaf1a18aecb))
+
+## [1.6.4](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.6.3...@standardnotes/styles@1.6.4) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/styles
+
+## [1.6.3](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.6.2...@standardnotes/styles@1.6.3) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/styles
+
+## [1.6.2](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.6.1...@standardnotes/styles@1.6.2) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/styles
+
+## [1.6.1](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.6.0...@standardnotes/styles@1.6.1) (2022-11-01)
+
+### Bug Fixes
+
+* **mobile:** increase font sizes and other mobile-centric improvements ([#1907](https://github.com/standardnotes/app/issues/1907)) ([994f824](https://github.com/standardnotes/app/commit/994f824757e1143a4547c975b154fd84e3ebeedf))
+
+# [1.6.0](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.5.0...@standardnotes/styles@1.6.0) (2022-10-27)
+
+### Features
+
+* daily notes (dev only) ([#1894](https://github.com/standardnotes/app/issues/1894)) ([69c3f2b](https://github.com/standardnotes/app/commit/69c3f2be837152a1f937559327021c2128234c69))
+
+# [1.5.0](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.4.2...@standardnotes/styles@1.5.0) (2022-10-05)
+
+### Features
+
+* add free dark mode ([#1748](https://github.com/standardnotes/app/issues/1748)) ([09b994f](https://github.com/standardnotes/app/commit/09b994f8f938ae0536f42742f7a221df536c4c4a))
+
 ## [1.4.2](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.4.1...@standardnotes/styles@1.4.2) (2022-06-30)
 
 ### Bug Fixes

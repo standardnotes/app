@@ -7,7 +7,6 @@ import { ChangeEventHandler, FunctionComponent, useEffect, useRef, useState } fr
 import FloatingLabelInput from '@/Components/Input/FloatingLabelInput'
 import { isEmailValid } from '@/Utils'
 import { BlueDotIcon, CircleIcon, DiamondIcon } from '@standardnotes/icons'
-import { loadPurchaseFlowUrl } from '../PurchaseFlowFunctions'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -74,10 +73,8 @@ const SignIn: FunctionComponent<Props> = ({ viewControllerManager, application }
       if (response.error || response.data?.error) {
         throw new Error(response.error?.message || response.data?.error?.message)
       } else {
-        loadPurchaseFlowUrl(application).catch((err) => {
-          console.error(err)
-          application.alertService.alert(err).catch(console.error)
-        })
+        viewControllerManager.purchaseFlowController.closePurchaseFlow()
+        viewControllerManager.purchaseFlowController.openPurchaseFlow()
       }
     } catch (err) {
       console.error(err)

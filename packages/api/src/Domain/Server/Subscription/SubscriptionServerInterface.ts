@@ -1,3 +1,5 @@
+import { AppleIAPConfirmResponse } from './../../Response/Subscription/AppleIAPConfirmResponse'
+import { AppleIAPConfirmRequestParams } from './../../Request/Subscription/AppleIAPConfirmRequestParams'
 import { SubscriptionInviteAcceptRequestParams } from '../../Request/Subscription/SubscriptionInviteAcceptRequestParams'
 import { SubscriptionInviteCancelRequestParams } from '../../Request/Subscription/SubscriptionInviteCancelRequestParams'
 import { SubscriptionInviteDeclineRequestParams } from '../../Request/Subscription/SubscriptionInviteDeclineRequestParams'
@@ -15,4 +17,5 @@ export interface SubscriptionServerInterface {
   declineInvite(params: SubscriptionInviteDeclineRequestParams): Promise<SubscriptionInviteDeclineResponse>
   cancelInvite(params: SubscriptionInviteCancelRequestParams): Promise<SubscriptionInviteCancelResponse>
   listInvites(params: SubscriptionInviteListRequestParams): Promise<SubscriptionInviteListResponse>
+  confirmAppleIAP(params: AppleIAPConfirmRequestParams): Promise<AppleIAPConfirmResponse>
 }

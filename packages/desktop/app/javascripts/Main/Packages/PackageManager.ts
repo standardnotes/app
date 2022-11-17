@@ -1,4 +1,4 @@
-import compareVersions from 'compare-versions'
+import { compareVersions } from 'compare-versions'
 import log from 'electron-log'
 import fs from 'fs'
 import path from 'path'
@@ -10,8 +10,9 @@ import {
   deleteDir,
   deleteDirContents,
   ensureDirectoryExists,
-  extractNestedZip,
+  extractZip,
   FileDoesNotExist,
+  moveDirContents,
   readJSONFile,
 } from '../Utils/FileUtils'
 import { timeout } from '../Utils/Utils'
@@ -267,6 +268,30 @@ async function checkForUpdate(webContents: Electron.WebContents, mapping: Mappin
   }
 }
 
+/**
+ * Some plugin zips may be served directly from GitHub's Releases feature, which automatically generates a zip file.
+ * However, the actual assets end up being nested inside a root level folder within that zip.
+ * We can detect if we have a legacy nested structure if after unzipping the zip we end up with
+ * only 1 entry and that entry is a folder.
+ */
+async function usesLegacyNestedFolderStructure(dir: string) {
+  const fileNames = await fs.promises.readdir(dir)
+  if (fileNames.length > 1) {
+    return false
+  }
+
+  const stat = fs.lstatSync(path.join(dir, fileNames[0]))
+  return stat.isDirectory()
+}
+
+async function unnestLegacyStructure(dir: string) {
+  const fileNames = await fs.promises.readdir(dir)
+  const sourceDir = path.join(dir, fileNames[0])
+  const destDir = dir
+
+  await moveDirContents(sourceDir, destDir)
+}
+
 async function installComponent(
   webContents: Electron.WebContents,
   mapping: MappingFileHandler,
@@ -312,7 +337,12 @@ async function installComponent(
     ])
 
     logMessage('Extracting', paths.downloadPath, 'to', paths.absolutePath)
-    await extractNestedZip(paths.downloadPath, paths.absolutePath)
+    await extractZip(paths.downloadPath, paths.absolutePath)
+
+    const legacyStructure = await usesLegacyNestedFolderStructure(paths.absolutePath)
+    if (legacyStructure) {
+      await unnestLegacyStructure(paths.absolutePath)
+    }
 
     let main = 'index.html'
     try {

@@ -23,7 +23,7 @@ export class SKAlert {
   buttonsString() {
     const genButton = function (buttonDesc: AlertButton, index: number) {
       return `
-        <button id='button-${index}' class='font-bold px-2.5 py-2 text-xs text-info-contrast bg-${buttonDesc.style}'>
+        <button id='button-${index}' class='font-bold px-2.5 py-2 text-base lg:text-xs text-info-contrast bg-${buttonDesc.style}'>
           <div class='sk-label'>${buttonDesc.text}</div>
         </button>
       `
@@ -57,8 +57,8 @@ export class SKAlert {
       buttonsTemplate = ''
       panelStyle = 'style="padding-bottom: 8px"'
     }
-    const titleTemplate = this.title ? `<div class='sk-h3 sk-panel-section-title'>${this.title}</div>` : ''
-    const messageTemplate = this.text ? `<p class='sk-p'>${this.text}</p>` : ''
+    const titleTemplate = this.title ? `<div class='mb-1 font-bold text-lg lg:text-base'>${this.title}</div>` : ''
+    const messageTemplate = this.text ? `<p class='sk-p text-base lg:text-sm'>${this.text}</p>` : ''
 
     const template = `
       <div class="sk-modal">

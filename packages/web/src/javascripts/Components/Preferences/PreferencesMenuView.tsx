@@ -4,7 +4,8 @@ import styled from 'styled-components'
 import Dropdown from '../Dropdown/Dropdown'
 import { DropdownItem } from '../Dropdown/DropdownItem'
 import PreferencesMenuItem from './PreferencesComponents/MenuItem'
-import { PreferenceId, PreferencesMenu } from './PreferencesMenu'
+import { PreferencesMenu } from './PreferencesMenu'
+import { PreferenceId } from '@standardnotes/ui-services'
 
 type Props = {
   menu: PreferencesMenu

@@ -1,8 +1,6 @@
-import { TEnvironment } from '@Root/NativeApp'
 import VersionInfo from 'react-native-version-info'
 
 export const IsDev = VersionInfo.bundleIdentifier?.includes('dev')
-export const IsMobileWeb = IsDev
 
 export function isNullOrUndefined(value: unknown) {
   return value === null || value === undefined
@@ -39,8 +37,4 @@ export function isSameDay(dateA: Date, dateB: Date) {
     dateA.getMonth() === dateB.getMonth() &&
     dateA.getDate() === dateB.getDate()
   )
-}
-
-export function isUnfinishedFeaturesEnabled(env: TEnvironment): boolean {
-  return env === 'dev' || __DEV__
 }

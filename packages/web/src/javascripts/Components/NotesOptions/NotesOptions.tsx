@@ -16,8 +16,11 @@ import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { getNoteBlob, getNoteFileName } from '@/Utils/NoteExportUtils'
-import { shareSelectedItems } from '@/NativeMobileWeb/ShareSelectedItems'
-import { downloadSelectedItemsOnAndroid } from '@/NativeMobileWeb/DownloadSelectedItemsOnAndroid'
+import { shareSelectedNotes } from '@/NativeMobileWeb/ShareSelectedNotes'
+import { downloadSelectedNotesOnAndroid } from '@/NativeMobileWeb/DownloadSelectedNotesOnAndroid'
+import ProtectedUnauthorizedLabel from '../ProtectedItemOverlay/ProtectedUnauthorizedLabel'
+import { classNames } from '@/Utils/ConcatenateClassNames'
+import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 
 type DeletePermanentlyButtonProps = {
   onClick: () => void
@@ -25,7 +28,10 @@ type DeletePermanentlyButtonProps = {
 
 const DeletePermanentlyButton = ({ onClick }: DeletePermanentlyButtonProps) => (
   <button
-    className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+    className={classNames(
+      'flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item',
+      'text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-menu-item',
+    )}
     onClick={onClick}
   >
     <Icon type="close" className="mr-2 text-danger" />
@@ -33,10 +39,11 @@ const DeletePermanentlyButton = ({ onClick }: DeletePermanentlyButtonProps) => (
   </button>
 )
 
-const iconClass = 'text-neutral mr-2'
-const iconClassDanger = 'text-danger mr-2'
-const iconClassWarning = 'text-warning mr-2'
-const iconClassSuccess = 'text-success mr-2'
+const iconSize = MenuItemIconSize
+const iconClass = `text-neutral mr-2 ${iconSize}`
+const iconClassDanger = `text-danger mr-2 ${iconSize}`
+const iconClassWarning = `text-warning mr-2 ${iconSize}`
+const iconClassSuccess = `text-success mr-2 ${iconSize}`
 
 const getWordCount = (text: string) => {
   if (text.trim().length === 0) {
@@ -98,7 +105,7 @@ const NoteAttributes: FunctionComponent<{
   const format = editor?.package_info?.file_type || 'txt'
 
   return (
-    <div className="select-text px-3 py-1.5 text-xs font-medium text-neutral">
+    <div className="select-text px-3 py-1.5 text-sm font-medium text-neutral lg:text-xs">
       {typeof words === 'number' && (format === 'txt' || format === 'md') ? (
         <>
           <div className="mb-1">
@@ -126,7 +133,8 @@ const SpellcheckOptions: FunctionComponent<{
   editorForNote: SNComponent | undefined
   notesController: NotesController
   note: SNNote
-}> = ({ editorForNote, notesController, note }) => {
+  className: string
+}> = ({ editorForNote, notesController, note, className }) => {
   const spellcheckControllable = Boolean(!editorForNote || editorForNote.package_info.spellcheckControl)
   const noteSpellcheck = !spellcheckControllable
     ? true
@@ -137,7 +145,7 @@ const SpellcheckOptions: FunctionComponent<{
   return (
     <div className="flex flex-col">
       <button
-        className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+        className={className}
         onClick={() => {
           notesController.toggleGlobalSpellcheckForNote(note).catch(console.error)
         }}
@@ -178,7 +186,6 @@ const NotesOptions = ({
   application,
   navigationController,
   notesController,
-  noteTagsController,
   historyModalController,
   closeMenu,
 }: NotesOptionsProps) => {
@@ -201,6 +208,7 @@ const NotesOptions = ({
   const notTrashed = notes.some((note) => !note.trashed)
   const pinned = notes.some((note) => note.pinned)
   const unpinned = notes.some((note) => !note.pinned)
+  const starred = notes.some((note) => note.starred)
 
   const editorForNote = useMemo(
     () => (notes[0] ? application.componentManager.editorForNote(notes[0]) : undefined),
@@ -266,14 +274,27 @@ const NotesOptions = ({
     historyModalController.openModal(notesController.firstSelectedNote)
   }, [historyModalController, notesController.firstSelectedNote])
 
+  const unauthorized = notes.some((note) => !application.isAuthorizedToRenderItem(note))
+  if (unauthorized) {
+    return <ProtectedUnauthorizedLabel />
+  }
+
+  const textClassNames = 'text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item'
+
+  const defaultClassNames = classNames(
+    textClassNames,
+    'flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none',
+  )
+
+  const switchClassNames = classNames(textClassNames, defaultClassNames, 'justify-between')
+
+  const firstItemClass = 'pt-4'
+
   return (
     <>
       {notes.length === 1 && (
         <>
-          <button
-            className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-            onClick={openRevisionHistoryModal}
-          >
+          <button className={classNames(defaultClassNames, firstItemClass)} onClick={openRevisionHistoryModal}>
             <Icon type="history" className={iconClass} />
             Note history
           </button>
@@ -281,7 +302,7 @@ const NotesOptions = ({
         </>
       )}
       <button
-        className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+        className={switchClassNames}
         onClick={() => {
           notesController.setLockSelectedNotes(!locked)
         }}
@@ -293,7 +314,7 @@ const NotesOptions = ({
         <Switch className="px-0" checked={locked} />
       </button>
       <button
-        className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+        className={switchClassNames}
         onClick={() => {
           notesController.setHideSelectedNotePreviews(!hidePreviews)
         }}
@@ -305,13 +326,13 @@ const NotesOptions = ({
         <Switch className="px-0" checked={!hidePreviews} />
       </button>
       <button
-        className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+        className={switchClassNames}
         onClick={() => {
           notesController.setProtectSelectedNotes(!protect).catch(console.error)
         }}
       >
         <span className="flex items-center">
-          <Icon type="password" className={iconClass} />
+          <Icon type="lock" className={iconClass} />
           Password protect
         </span>
         <Switch className="px-0" checked={protect} />
@@ -319,20 +340,37 @@ const NotesOptions = ({
       {notes.length === 1 && (
         <>
           <HorizontalSeparator classes="my-2" />
-          <ChangeEditorOption application={application} note={notes[0]} />
+          <ChangeEditorOption
+            iconClassName={iconClass}
+            className={switchClassNames}
+            application={application}
+            note={notes[0]}
+          />
         </>
       )}
       <HorizontalSeparator classes="my-2" />
       {navigationController.tagsCount > 0 && (
         <AddTagOption
+          iconClassName={iconClass}
+          className={switchClassNames}
           navigationController={navigationController}
           notesController={notesController}
-          noteTagsController={noteTagsController}
         />
       )}
+
+      <button
+        className={defaultClassNames}
+        onClick={() => {
+          notesController.setStarSelectedNotes(!starred)
+        }}
+      >
+        <Icon type="star" className={iconClass} />
+        {starred ? 'Unstar' : 'Star'}
+      </button>
+
       {unpinned && (
         <button
-          className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+          className={defaultClassNames}
           onClick={() => {
             notesController.setPinSelectedNotes(true)
           }}
@@ -343,7 +381,7 @@ const NotesOptions = ({
       )}
       {pinned && (
         <button
-          className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+          className={defaultClassNames}
           onClick={() => {
             notesController.setPinSelectedNotes(false)
           }}
@@ -353,33 +391,27 @@ const NotesOptions = ({
         </button>
       )}
       <button
-        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+        className={defaultClassNames}
         onClick={() => {
-          application.isNativeMobileWeb() ? shareSelectedItems(application, notes) : downloadSelectedItems()
+          application.isNativeMobileWeb() ? void shareSelectedNotes(application, notes) : void downloadSelectedItems()
         }}
       >
         <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
         {application.platform === Platform.Android ? 'Share' : 'Export'}
       </button>
       {application.platform === Platform.Android && (
-        <button
-          className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-          onClick={() => downloadSelectedItemsOnAndroid(application, notes)}
-        >
+        <button className={defaultClassNames} onClick={() => downloadSelectedNotesOnAndroid(application, notes)}>
           <Icon type="download" className={iconClass} />
           Export
         </button>
       )}
-      <button
-        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-        onClick={duplicateSelectedItems}
-      >
+      <button className={defaultClassNames} onClick={duplicateSelectedItems}>
         <Icon type="copy" className={iconClass} />
         Duplicate
       </button>
       {unarchived && (
         <button
-          className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+          className={defaultClassNames}
           onClick={async () => {
             await notesController.setArchiveSelectedNotes(true).catch(console.error)
             closeMenuAndToggleNotesList()
@@ -391,7 +423,7 @@ const NotesOptions = ({
       )}
       {archived && (
         <button
-          className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+          className={defaultClassNames}
           onClick={async () => {
             await notesController.setArchiveSelectedNotes(false).catch(console.error)
             closeMenuAndToggleNotesList()
@@ -411,7 +443,7 @@ const NotesOptions = ({
           />
         ) : (
           <button
-            className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+            className={defaultClassNames}
             onClick={async () => {
               await notesController.setTrashSelectedNotes(true)
               closeMenuAndToggleNotesList()
@@ -424,7 +456,7 @@ const NotesOptions = ({
       {trashed && (
         <>
           <button
-            className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+            className={defaultClassNames}
             onClick={async () => {
               await notesController.setTrashSelectedNotes(false)
               closeMenuAndToggleNotesList()
@@ -440,7 +472,7 @@ const NotesOptions = ({
             }}
           />
           <button
-            className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+            className={defaultClassNames}
             onClick={async () => {
               await notesController.emptyTrash()
               closeMenuAndToggleNotesList()
@@ -456,14 +488,31 @@ const NotesOptions = ({
           </button>
         </>
       )}
+
       {notes.length === 1 ? (
         <>
           <HorizontalSeparator classes="my-2" />
-          <ListedActionsOption application={application} note={notes[0]} />
+
+          <ListedActionsOption
+            iconClassName={iconClass}
+            className={switchClassNames}
+            application={application}
+            note={notes[0]}
+          />
+
           <HorizontalSeparator classes="my-2" />
-          <SpellcheckOptions editorForNote={editorForNote} notesController={notesController} note={notes[0]} />
+
+          <SpellcheckOptions
+            className={switchClassNames}
+            editorForNote={editorForNote}
+            notesController={notesController}
+            note={notes[0]}
+          />
+
           <HorizontalSeparator classes="my-2" />
+
           <NoteAttributes application={application} note={notes[0]} />
+
           <NoteSizeWarning note={notes[0]} />
         </>
       ) : null}

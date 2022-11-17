@@ -1,8 +1,11 @@
+import { PersistedStateValue } from '../StatePersistence/StatePersistence'
+
 export enum StorageKey {
   AnonymousUserId = 'AnonymousUserId',
   ShowBetaWarning = 'ShowBetaWarning',
   ShowNoAccountWarning = 'ShowNoAccountWarning',
   FilesNavigationEnabled = 'FilesNavigationEnabled',
+  MasterStatePersistenceKey = 'master-persistence-key',
 }
 
 export type StorageValue = {
@@ -10,6 +13,7 @@ export type StorageValue = {
   [StorageKey.ShowBetaWarning]: boolean
   [StorageKey.ShowNoAccountWarning]: boolean
   [StorageKey.FilesNavigationEnabled]: boolean
+  [StorageKey.MasterStatePersistenceKey]: PersistedStateValue
 }
 
 export const storage = {

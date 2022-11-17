@@ -1,3 +1,1 @@
-export type SubscriptionInviteAcceptResponseBody = {
-  success: boolean
-}
+export type SubscriptionInviteAcceptResponseBody = { success: true } | { success: false; message: string }

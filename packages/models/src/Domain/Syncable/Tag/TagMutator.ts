@@ -1,14 +1,25 @@
 import { ContentType } from '@standardnotes/common'
-import { TagContent, SNTag } from './Tag'
+import { SNTag } from './Tag'
+import { TagContent } from './TagContent'
 import { FileItem } from '../File'
 import { SNNote } from '../Note'
 import { isTagToParentTagReference } from '../../Abstract/Reference/Functions'
 import { TagToParentTagReference } from '../../Abstract/Reference/TagToParentTagReference'
-import { ContenteReferenceType } from '../../Abstract/Reference/ContenteReferenceType'
+import { ContentReferenceType } from '../../Abstract/Reference/ContenteReferenceType'
 import { DecryptedItemMutator } from '../../Abstract/Item/Mutator/DecryptedItemMutator'
 import { TagToFileReference } from '../../Abstract/Reference/TagToFileReference'
+import { TagPreferences } from './TagPreferences'
+import { DecryptedItemInterface, MutationType } from '../../Abstract/Item'
 
-export class TagMutator extends DecryptedItemMutator<TagContent> {
+export class TagMutator<Content extends TagContent = TagContent> extends DecryptedItemMutator<Content> {
+  private mutablePreferences?: TagPreferences
+
+  constructor(item: DecryptedItemInterface<Content>, type: MutationType) {
+    super(item, type)
+
+    this.mutablePreferences = this.mutableContent.preferences
+  }
+
   set title(title: string) {
     this.mutableContent.title = title
   }
@@ -17,11 +28,29 @@ export class TagMutator extends DecryptedItemMutator<TagContent> {
     this.mutableContent.expanded = expanded
   }
 
+  set iconString(iconString: string) {
+    this.mutableContent.iconString = iconString
+  }
+
+  get preferences(): TagPreferences {
+    if (!this.mutablePreferences) {
+      this.mutableContent.preferences = {}
+      this.mutablePreferences = this.mutableContent.preferences
+    }
+
+    return this.mutablePreferences
+  }
+
+  set preferences(preferences: TagPreferences | undefined) {
+    this.mutablePreferences = preferences
+    this.mutableContent.preferences = this.mutablePreferences
+  }
+
   public makeChildOf(tag: SNTag): void {
     const references = this.immutableItem.references.filter((ref) => !isTagToParentTagReference(ref))
 
     const reference: TagToParentTagReference = {
-      reference_type: ContenteReferenceType.TagToParentTag,
+      reference_type: ContentReferenceType.TagToParentTag,
       content_type: ContentType.Tag,
       uuid: tag.uuid,
     }
@@ -41,7 +70,7 @@ export class TagMutator extends DecryptedItemMutator<TagContent> {
     }
 
     const reference: TagToFileReference = {
-      reference_type: ContenteReferenceType.TagToFile,
+      reference_type: ContentReferenceType.TagToFile,
       content_type: ContentType.File,
       uuid: file.uuid,
     }

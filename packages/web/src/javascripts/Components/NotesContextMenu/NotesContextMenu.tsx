@@ -4,15 +4,15 @@ import { useRef } from 'react'
 import { WebApplication } from '@/Application/Application'
 import { NotesController } from '@/Controllers/NotesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
-import { NoteTagsController } from '@/Controllers/NoteTagsController'
 import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 import Popover from '../Popover/Popover'
+import { LinkingController } from '@/Controllers/LinkingController'
 
 type Props = {
   application: WebApplication
   navigationController: NavigationController
   notesController: NotesController
-  noteTagsController: NoteTagsController
+  linkingController: LinkingController
   historyModalController: HistoryModalController
 }
 
@@ -20,7 +20,7 @@ const NotesContextMenu = ({
   application,
   navigationController,
   notesController,
-  noteTagsController,
+  linkingController,
   historyModalController,
 }: Props) => {
   const { contextMenuOpen, contextMenuClickLocation, setContextMenuOpen } = notesController
@@ -46,7 +46,7 @@ const NotesContextMenu = ({
           application={application}
           navigationController={navigationController}
           notesController={notesController}
-          noteTagsController={noteTagsController}
+          linkingController={linkingController}
           historyModalController={historyModalController}
           closeMenu={closeMenu}
         />

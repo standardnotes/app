@@ -8,17 +8,18 @@ import { NotesController } from '@/Controllers/NotesController'
 import {
   ApplicationEvent,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,
-  NoteViewController,
   SNNote,
+  NoteType,
+  PayloadEmitSource,
 } from '@standardnotes/snjs'
-
 import NoteView from './NoteView'
+import { NoteViewController } from './Controller/NoteViewController'
 
 describe('NoteView', () => {
   let noteViewController: NoteViewController
   let application: WebApplication
   let viewControllerManager: ViewControllerManager
-  let notesState: NotesController
+  let notesController: NotesController
 
   const createNoteView = () =>
     new NoteView({
@@ -31,17 +32,19 @@ describe('NoteView', () => {
 
     noteViewController = {} as jest.Mocked<NoteViewController>
 
-    notesState = {} as jest.Mocked<NotesController>
-    notesState.setShowProtectedWarning = jest.fn()
+    notesController = {} as jest.Mocked<NotesController>
+    notesController.setShowProtectedWarning = jest.fn()
+    notesController.getSpellcheckStateForNote = jest.fn()
 
     viewControllerManager = {
-      notesController: notesState,
+      notesController: notesController,
     } as jest.Mocked<ViewControllerManager>
 
     application = {} as jest.Mocked<WebApplication>
     application.getViewControllerManager = jest.fn().mockReturnValue(viewControllerManager)
     application.hasProtectionSources = jest.fn().mockReturnValue(true)
     application.authorizeNoteAccess = jest.fn()
+    application.addWebEventObserver = jest.fn()
   })
 
   afterEach(() => {
@@ -59,7 +62,7 @@ describe('NoteView', () => {
 
       await createNoteView().onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
 
-      expect(notesState.setShowProtectedWarning).toHaveBeenCalledWith(true)
+      expect(notesController.setShowProtectedWarning).toHaveBeenCalledWith(true)
     })
 
     it('should postpone the note hiding by correct time if the time passed after its last modification is less than the allowed idle time', async () => {
@@ -77,11 +80,11 @@ describe('NoteView', () => {
 
       jest.advanceTimersByTime((secondsAfterWhichTheNoteShouldHide - 1) * 1000)
 
-      expect(notesState.setShowProtectedWarning).not.toHaveBeenCalled()
+      expect(notesController.setShowProtectedWarning).not.toHaveBeenCalled()
 
       jest.advanceTimersByTime(1 * 1000)
 
-      expect(notesState.setShowProtectedWarning).toHaveBeenCalledWith(true)
+      expect(notesController.setShowProtectedWarning).toHaveBeenCalledWith(true)
     })
 
     it('should postpone the note hiding by correct time if the user continued editing it even after the protection session has expired', async () => {
@@ -105,10 +108,10 @@ describe('NoteView', () => {
 
       secondsAfterWhichTheNoteShouldHide = ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction
       jest.advanceTimersByTime((secondsAfterWhichTheNoteShouldHide - 1) * 1000)
-      expect(notesState.setShowProtectedWarning).not.toHaveBeenCalled()
+      expect(notesController.setShowProtectedWarning).not.toHaveBeenCalled()
 
       jest.advanceTimersByTime(1 * 1000)
-      expect(notesState.setShowProtectedWarning).toHaveBeenCalledWith(true)
+      expect(notesController.setShowProtectedWarning).toHaveBeenCalledWith(true)
     })
   })
 
@@ -120,7 +123,43 @@ describe('NoteView', () => {
 
       await createNoteView().onAppEvent(ApplicationEvent.UnprotectedSessionExpired)
 
-      expect(notesState.setShowProtectedWarning).not.toHaveBeenCalled()
+      expect(notesController.setShowProtectedWarning).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('editors', () => {
+    it('should reload editor if noteType changes', async () => {
+      noteViewController.item = {
+        noteType: NoteType.Code,
+      } as jest.Mocked<SNNote>
+
+      const view = createNoteView()
+      view.reloadEditorComponent = jest.fn()
+      view.setState = jest.fn()
+
+      const changedItem = {
+        noteType: NoteType.Plain,
+      } as jest.Mocked<SNNote>
+      view.onNoteInnerChange(changedItem, PayloadEmitSource.LocalChanged)
+
+      expect(view.reloadEditorComponent).toHaveBeenCalled()
+    })
+
+    it('should reload editor if editorIdentifier changes', async () => {
+      noteViewController.item = {
+        editorIdentifier: 'foo',
+      } as jest.Mocked<SNNote>
+
+      const view = createNoteView()
+      view.reloadEditorComponent = jest.fn()
+      view.setState = jest.fn()
+
+      const changedItem = {
+        editorIdentifier: 'bar',
+      } as jest.Mocked<SNNote>
+      view.onNoteInnerChange(changedItem, PayloadEmitSource.LocalChanged)
+
+      expect(view.reloadEditorComponent).toHaveBeenCalled()
     })
   })
 
@@ -140,9 +179,9 @@ describe('NoteView', () => {
           application,
         })
 
-        await noteView.dismissProtectedWarning()
+        await noteView.authorizeAndDismissProtectedWarning()
 
-        expect(notesState.setShowProtectedWarning).toHaveBeenCalledWith(false)
+        expect(notesController.setShowProtectedWarning).toHaveBeenCalledWith(false)
       })
 
       it('should not reveal note contents if the authorization has not been passed', async () => {
@@ -153,9 +192,9 @@ describe('NoteView', () => {
           application,
         })
 
-        await noteView.dismissProtectedWarning()
+        await noteView.authorizeAndDismissProtectedWarning()
 
-        expect(notesState.setShowProtectedWarning).not.toHaveBeenCalled()
+        expect(notesController.setShowProtectedWarning).not.toHaveBeenCalled()
       })
     })
 
@@ -168,9 +207,9 @@ describe('NoteView', () => {
           application,
         })
 
-        await noteView.dismissProtectedWarning()
+        await noteView.authorizeAndDismissProtectedWarning()
 
-        expect(notesState.setShowProtectedWarning).toHaveBeenCalledWith(false)
+        expect(notesController.setShowProtectedWarning).toHaveBeenCalledWith(false)
       })
     })
   })

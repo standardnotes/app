@@ -1,8 +1,8 @@
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
-import Icon from '../Icon/Icon'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { useMediaQuery, MediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { IconType } from '@standardnotes/snjs'
+import RoundIconButton from '../Button/RoundIconButton'
 
 const MobileItemsListButton = () => {
   const { toggleAppPane, isNotesListVisibleOnTablets, toggleNotesListOnTablets } = useResponsiveAppPane()
@@ -18,8 +18,8 @@ const MobileItemsListButton = () => {
     : 'Go to items list'
 
   return (
-    <button
-      className="bg-text-padding mr-3 flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast md:hidden pointer-coarse:md-only:flex pointer-coarse:lg-only:flex"
+    <RoundIconButton
+      className="mr-3 md:hidden pointer-coarse:md-only:flex pointer-coarse:lg-only:flex"
       onClick={() => {
         if (isTabletScreenSize) {
           toggleNotesListOnTablets()
@@ -27,11 +27,10 @@ const MobileItemsListButton = () => {
           toggleAppPane(AppPaneId.Items)
         }
       }}
-      title={label}
-      aria-label={label}
-    >
-      <Icon type={iconType} />
-    </button>
+      label={label}
+      icon={iconType}
+      iconClassName={'h-6 w-6'}
+    />
   )
 }
 

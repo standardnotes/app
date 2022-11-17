@@ -1,15 +1,6 @@
 import { ItemInterface, SNComponent, SNFeatureRepo } from '@standardnotes/models'
 import { SNSyncService } from '../Sync/SyncService'
 import { SettingName } from '@standardnotes/settings'
-import {
-  ItemManager,
-  AlertService,
-  SNApiService,
-  UserService,
-  SNSessionManager,
-  DiskStorageService,
-  StorageKey,
-} from '@Lib/index'
 import { SNFeaturesService } from '@Lib/Services/Features'
 import { ContentType, RoleName } from '@standardnotes/common'
 import { FeatureDescription, FeatureIdentifier, GetFeatures } from '@standardnotes/features'
@@ -17,7 +8,17 @@ import { SNWebSocketsService } from '../Api/WebsocketsService'
 import { SNSettingsService } from '../Settings'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { convertTimestampToMilliseconds } from '@standardnotes/utils'
-import { FeatureStatus, InternalEventBusInterface } from '@standardnotes/services'
+import {
+  AlertService,
+  FeaturesEvent,
+  FeatureStatus,
+  InternalEventBusInterface,
+  StorageKey,
+  UserService,
+} from '@standardnotes/services'
+import { SNApiService, SNSessionManager } from '../Api'
+import { ItemManager } from '../Items'
+import { DiskStorageService } from '../Storage/DiskStorageService'
 
 describe('featuresService', () => {
   let storageService: DiskStorageService
@@ -203,6 +204,47 @@ describe('featuresService', () => {
   })
 
   describe('updateRoles()', () => {
+    it('setRoles should notify event if roles changed', async () => {
+      storageService.getValue = jest.fn().mockReturnValue(roles)
+      const featuresService = createService()
+      featuresService.initializeFromDisk()
+
+      const mock = (featuresService['notifyEvent'] = jest.fn())
+
+      const newRoles = [...roles, RoleName.PlusUser]
+      await featuresService.setRoles(newRoles)
+
+      expect(mock.mock.calls[0][0]).toEqual(FeaturesEvent.UserRolesChanged)
+    })
+
+    it('should notify of subscription purchase', async () => {
+      storageService.getValue = jest.fn().mockReturnValue(roles)
+      const featuresService = createService()
+      featuresService.initializeFromDisk()
+
+      const spy = jest.spyOn(featuresService, 'notifyEvent' as never)
+
+      const newRoles = [...roles, RoleName.ProUser]
+      await featuresService.updateRolesAndFetchFeatures('123', newRoles)
+
+      expect(spy.mock.calls[2][0]).toEqual(FeaturesEvent.DidPurchaseSubscription)
+    })
+
+    it('should not notify of subscription purchase on initial roles load after sign in', async () => {
+      storageService.getValue = jest.fn().mockReturnValue(roles)
+      const featuresService = createService()
+      featuresService.initializeFromDisk()
+      featuresService['roles'] = []
+
+      const spy = jest.spyOn(featuresService, 'notifyEvent' as never)
+
+      const newRoles = [...roles, RoleName.ProUser]
+      await featuresService.updateRolesAndFetchFeatures('123', newRoles)
+
+      const triggeredEvents = spy.mock.calls.map((call) => call[0])
+      expect(triggeredEvents).not.toContain(FeaturesEvent.DidPurchaseSubscription)
+    })
+
     it('saves new roles to storage and fetches features if a role has been added', async () => {
       const newRoles = [...roles, RoleName.PlusUser]
 
@@ -437,14 +479,33 @@ describe('featuresService', () => {
 
       const featuresService = createService()
       const nativeFeature = featuresService['mapRemoteNativeFeatureToStaticFeature'](remoteFeature)
-      featuresService['mapNativeFeatureToItem'] = jest.fn()
+      featuresService['mapRemoteNativeFeatureToItem'] = jest.fn()
       featuresService.initializeFromDisk()
       await featuresService.updateRolesAndFetchFeatures('123', newRoles)
-      expect(featuresService['mapNativeFeatureToItem']).toHaveBeenCalledWith(
+      expect(featuresService['mapRemoteNativeFeatureToItem']).toHaveBeenCalledWith(
         nativeFeature,
         expect.anything(),
         expect.anything(),
       )
+    })
+
+    it('mapRemoteNativeFeatureToItem should throw if called with client controlled feature', async () => {
+      const clientFeature = {
+        identifier: FeatureIdentifier.DarkTheme,
+        content_type: ContentType.Theme,
+        clientControlled: true,
+      } as FeatureDescription
+
+      storageService.getValue = jest.fn().mockReturnValue(roles)
+      apiService.getUserFeatures = jest.fn().mockReturnValue({
+        data: {
+          features: [clientFeature],
+        },
+      })
+
+      const featuresService = createService()
+      featuresService.initializeFromDisk()
+      await expect(() => featuresService['mapRemoteNativeFeatureToItem'](clientFeature, [], [])).rejects.toThrow()
     })
 
     it('feature status', async () => {
@@ -607,6 +668,16 @@ describe('featuresService', () => {
       expect(featuresService.getFeatureStatus(FeatureIdentifier.TokenVaultEditor)).toBe(FeatureStatus.NotInCurrentPlan)
     })
 
+    it('didDownloadFeatures should filter out client controlled features', async () => {
+      const featuresService = createService()
+
+      featuresService['mapRemoteNativeFeaturesToItems'] = jest.fn()
+
+      await featuresService.didDownloadFeatures(GetFeatures().filter((f) => f.clientControlled))
+
+      expect(featuresService['mapRemoteNativeFeaturesToItems']).toHaveBeenCalledWith([])
+    })
+
     it('feature status should be dynamic for subscriber if cached features and no successful features request made yet', async () => {
       const featuresService = createService()
 
@@ -631,7 +702,7 @@ describe('featuresService', () => {
       await featuresService.updateRolesAndFetchFeatures('123', [RoleName.CoreUser, RoleName.PlusUser])
 
       sessionManager.isSignedIntoFirstPartyServer = jest.fn().mockReturnValue(false)
-      featuresService.hasOnlineSubscription = jest.fn().mockReturnValue(false)
+      featuresService.rolesIncludePaidSubscription = jest.fn().mockReturnValue(false)
       featuresService['completedSuccessfulFeaturesRetrieval'] = true
 
       expect(featuresService.getFeatureStatus(FeatureIdentifier.MidnightTheme)).toBe(FeatureStatus.NoUserSubscription)

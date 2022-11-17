@@ -6,9 +6,13 @@ import { SubscriptionServerInterface } from '../../Server/Subscription/Subscript
 import { SubscriptionInviteResponse } from '../../Response/Subscription/SubscriptionInviteResponse'
 import { SubscriptionInviteListResponse } from '../../Response/Subscription/SubscriptionInviteListResponse'
 import { SubscriptionInviteCancelResponse } from '../../Response/Subscription/SubscriptionInviteCancelResponse'
+import { SubscriptionInviteAcceptResponse } from '../../Response/Subscription/SubscriptionInviteAcceptResponse'
 
 import { SubscriptionApiServiceInterface } from './SubscriptionApiServiceInterface'
 import { SubscriptionApiOperations } from './SubscriptionApiOperations'
+import { Uuid } from '@standardnotes/common'
+import { AppleIAPConfirmResponse } from './../../Response/Subscription/AppleIAPConfirmResponse'
+import { AppleIAPConfirmRequestParams } from '../../Request'
 
 export class SubscriptionApiService implements SubscriptionApiServiceInterface {
   private operationsInProgress: Map<SubscriptionApiOperations, boolean>
@@ -29,11 +33,11 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
         [ApiEndpointParam.ApiVersion]: ApiVersion.v0,
       })
 
-      this.operationsInProgress.set(SubscriptionApiOperations.ListingInvites, false)
-
       return response
     } catch (error) {
       throw new ApiCallError(ErrorMessage.GenericFail)
+    } finally {
+      this.operationsInProgress.set(SubscriptionApiOperations.ListingInvites, false)
     }
   }
 
@@ -50,11 +54,11 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
         inviteUuid,
       })
 
-      this.operationsInProgress.set(SubscriptionApiOperations.CancelingInvite, false)
-
       return response
     } catch (error) {
       throw new ApiCallError(ErrorMessage.GenericFail)
+    } finally {
+      this.operationsInProgress.set(SubscriptionApiOperations.CancelingInvite, false)
     }
   }
 
@@ -71,11 +75,47 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
         identifier: inviteeEmail,
       })
 
+      return response
+    } catch (error) {
+      throw new ApiCallError(ErrorMessage.GenericFail)
+    } finally {
       this.operationsInProgress.set(SubscriptionApiOperations.Inviting, false)
+    }
+  }
+
+  async acceptInvite(inviteUuid: Uuid): Promise<SubscriptionInviteAcceptResponse> {
+    if (this.operationsInProgress.get(SubscriptionApiOperations.AcceptingInvite)) {
+      throw new ApiCallError(ErrorMessage.GenericInProgress)
+    }
+
+    this.operationsInProgress.set(SubscriptionApiOperations.AcceptingInvite, true)
+
+    try {
+      const response = await this.subscriptionServer.acceptInvite({
+        inviteUuid,
+      })
 
       return response
     } catch (error) {
       throw new ApiCallError(ErrorMessage.GenericFail)
+    } finally {
+      this.operationsInProgress.set(SubscriptionApiOperations.AcceptingInvite, false)
+    }
+  }
+
+  async confirmAppleIAP(params: AppleIAPConfirmRequestParams): Promise<AppleIAPConfirmResponse> {
+    if (this.operationsInProgress.get(SubscriptionApiOperations.ConfirmAppleIAP)) {
+      throw new ApiCallError(ErrorMessage.GenericInProgress)
+    }
+
+    this.operationsInProgress.set(SubscriptionApiOperations.ConfirmAppleIAP, true)
+
+    try {
+      const response = await this.subscriptionServer.confirmAppleIAP(params)
+
+      return response
+    } finally {
+      this.operationsInProgress.set(SubscriptionApiOperations.ConfirmAppleIAP, false)
     }
   }
 }

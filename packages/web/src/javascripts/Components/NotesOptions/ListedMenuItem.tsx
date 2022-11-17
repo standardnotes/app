@@ -41,17 +41,19 @@ const ListedMenuItem: FunctionComponent<ListedMenuItemProps> = ({
       onClick={handleClick}
       className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-2 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
     >
-      <div className="flex flex-col">
-        <div className="font-semibold">{action.label}</div>
-        {action.access_type && (
-          <div className="mt-0.5 text-xs text-passive-0">
-            {'Uses '}
-            <strong>{action.access_type}</strong>
-            {' access to this note.'}
-          </div>
-        )}
+      <div className="flex w-full flex-row items-center justify-between">
+        <div className="flex flex-col">
+          <div className="font-semibold">{action.label}</div>
+          {action.access_type && (
+            <div className="mt-0.5 text-xs text-passive-0">
+              {'Uses '}
+              <strong>{action.access_type}</strong>
+              {' access to this note.'}
+            </div>
+          )}
+        </div>
+        {isRunning && <Spinner className="h-3 w-3" />}
       </div>
-      {isRunning && <Spinner className="h-3 w-3" />}
     </button>
   )
 }

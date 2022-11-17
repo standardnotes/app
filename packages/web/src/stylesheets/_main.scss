@@ -4,6 +4,7 @@
   --z-index-resizer-overlay: 1000;
   --z-index-component-view: 1000;
   --z-index-panel-resizer: 1001;
+  --z-index-tooltip: 2000;
   --z-index-footer-bar: 2000;
   --z-index-footer-bar-item: 2000;
   --z-index-footer-bar-item-panel: 2000;
@@ -30,6 +31,10 @@
   --safe-area-inset-right: env(safe-area-inset-right, 0);
 
   --sn-stylekit-font-size-editor: 0.9375rem;
+
+  @media screen and (max-width: 768px) {
+    --sn-stylekit-font-size-editor: 1rem;
+  }
 }
 
 html {
@@ -116,7 +121,7 @@ p {
 html,
 body,
 .main-ui-view {
-  height: max-content;
+  height: 100%;
   min-height: 0;
   max-height: none;
 
@@ -132,14 +137,7 @@ body,
   position: relative;
   overflow: auto;
   background-color: var(--editor-header-bar-background-color);
-
-  @media screen and (min-width: 768px) {
-    min-height: 100vh;
-    height: 100vh;
-  }
 }
-
-$footer-height: 2rem;
 
 #resizer-overlay {
   position: absolute;
@@ -156,10 +154,6 @@ $footer-height: 2rem;
   position: relative;
   vertical-align: top;
   width: 100%;
-
-  @media screen and (min-width: 768px) {
-    height: calc(var(--viewport-height) - #{$footer-height});
-  }
 
   .section {
     position: relative;

@@ -3,11 +3,15 @@
 const plugin = require('tailwindcss/plugin')
 
 module.exports = {
-  content: ['./src/javascripts/**/*.tsx', '../toast/src/**/*.tsx'],
+  content: ['./src/javascripts/**/*.tsx', '../toast/src/**/*.tsx', '../blocks-editor/src/Editor/**/*'],
   theme: {
     extend: {
       spacing: {
         4.5: '1.125rem',
+        5.5: '1.325rem',
+        8.5: '2.125rem',
+        13: '3.25rem',
+        15: '3.75rem',
         18: '4.5rem',
         26: '6.5rem',
         30: '7.5rem',
@@ -26,7 +30,11 @@ module.exports = {
         3: '0.75rem',
         4: '1rem',
         5: '1.25rem',
+        6: '1.5rem',
         8: '2rem',
+        8.5: '2.125rem',
+        9: '2.25rem',
+        10: '2.5rem',
         15: '3.75rem',
         20: '5rem',
         24: '6rem',
@@ -46,17 +54,12 @@ module.exports = {
         89: '22.25rem',
         125: '31.25rem',
       },
-      height: {
-        screen: 'var(--viewport-height)',
-      },
       minHeight: {
         1: '0.25rem',
         2: '0.5rem',
-        screen: 'var(--viewport-height)',
       },
       maxHeight: {
         110: '27.5rem',
-        screen: 'var(--viewport-height)',
       },
       zIndex: {
         'editor-content': 'var(--z-index-editor-content)',
@@ -83,6 +86,10 @@ module.exports = {
       },
       fontSize: {
         'menu-item': '0.813rem',
+        'mobile-menu-item': '1.1rem',
+        'tablet-menu-item': '0.95rem',
+        'navigation-list-item': '0.88rem',
+        'mobile-navigation-list-item': '1rem',
         editor: 'var(--sn-stylekit-font-size-editor)',
       },
       screens: {
@@ -110,6 +117,7 @@ module.exports = {
       'warning-contrast': 'var(--sn-stylekit-warning-contrast-color)',
       danger: 'var(--sn-stylekit-danger-color)',
       'danger-contrast': 'var(--sn-stylekit-danger-contrast-color)',
+      'danger-light': 'var(--sn-stylekit-danger-light-color, var(--sn-stylekit-danger-color))',
       default: 'var(--sn-stylekit-background-color)',
       foreground: 'var(--sn-stylekit-foreground-color)',
       contrast: 'var(--sn-stylekit-contrast-background-color)',

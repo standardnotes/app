@@ -1,9 +1,0 @@
-node_modules
-dist
-test
-*.config.js
-mocha/**/*
-coverage
-e2e-server.js
-jest-global.ts
-webpack.*.js

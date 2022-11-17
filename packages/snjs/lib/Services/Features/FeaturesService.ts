@@ -1,4 +1,3 @@
-import { AccountEvent, UserService } from '../User/UserService'
 import { SNApiService } from '../Api/ApiService'
 import {
   arraysEqual,
@@ -24,12 +23,15 @@ import { TRUSTED_CUSTOM_EXTENSIONS_HOSTS, TRUSTED_FEATURE_HOSTS } from '@Lib/Hos
 import { UserRolesChangedEvent } from '@standardnotes/domain-events'
 import { UuidString } from '@Lib/Types/UuidString'
 import * as FeaturesImports from '@standardnotes/features'
-import * as Messages from '@Lib/Services/Api/Messages'
 import * as Models from '@standardnotes/models'
 import {
   AbstractService,
+  AccountEvent,
   AlertService,
   ApiServiceEvent,
+  API_MESSAGE_FAILED_DOWNLOADING_EXTENSION,
+  API_MESSAGE_FAILED_OFFLINE_ACTIVATION,
+  API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING,
   ApplicationStage,
   ButtonType,
   DiagnosticInfo,
@@ -39,11 +41,14 @@ import {
   InternalEventBusInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
+  INVALID_EXTENSION_URL,
   MetaReceivedData,
   OfflineSubscriptionEntitlements,
   SetOfflineFeaturesFunctionResponse,
   StorageKey,
+  UserService,
 } from '@standardnotes/services'
+import { FeatureIdentifier } from '@standardnotes/features'
 
 type GetOfflineSubscriptionDetailsResponse = OfflineSubscriptionEntitlements | ClientDisplayableError
 
@@ -145,8 +150,11 @@ export class SNFeaturesService
 
   override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
     await super.handleApplicationStage(stage)
+
     if (stage === ApplicationStage.FullSyncCompleted_13) {
-      if (!this.hasOnlineSubscription()) {
+      void this.mapClientControlledFeaturesToItems()
+
+      if (!this.rolesIncludePaidSubscription()) {
         const offlineRepo = this.getOfflineRepo()
         if (offlineRepo) {
           void this.downloadOfflineFeatures(offlineRepo)
@@ -155,26 +163,50 @@ export class SNFeaturesService
     }
   }
 
+  private async mapClientControlledFeaturesToItems() {
+    const clientFeatures = FeaturesImports.GetFeatures().filter((feature) => feature.clientControlled)
+    const currentItems = this.itemManager.getItems<Models.SNComponent>([ContentType.Component, ContentType.Theme])
+
+    for (const feature of clientFeatures) {
+      if (!feature.content_type) {
+        continue
+      }
+
+      const existingItem = currentItems.find((item) => item.identifier === feature.identifier)
+      if (existingItem) {
+        const hasChange = JSON.stringify(feature) !== JSON.stringify(existingItem.package_info)
+        if (hasChange) {
+          await this.itemManager.changeComponent(existingItem, (mutator) => {
+            mutator.package_info = feature
+          })
+        }
+
+        continue
+      }
+
+      await this.itemManager.createItem(
+        feature.content_type,
+        this.componentContentForNativeFeatureDescription(feature),
+        true,
+      )
+    }
+  }
+
   public enableExperimentalFeature(identifier: FeaturesImports.FeatureIdentifier): void {
     const feature = this.getUserFeature(identifier)
-    if (!feature) {
-      throw Error('Attempting to enable a feature user does not have access to.')
-    }
 
     this.enabledExperimentalFeatures.push(identifier)
 
     void this.storageService.setValue(StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
 
-    void this.mapRemoteNativeFeaturesToItems([feature])
+    if (feature) {
+      void this.mapRemoteNativeFeaturesToItems([feature])
+    }
+
     void this.notifyEvent(FeaturesEvent.FeaturesUpdated)
   }
 
   public disableExperimentalFeature(identifier: FeaturesImports.FeatureIdentifier): void {
-    const feature = this.getUserFeature(identifier)
-    if (!feature) {
-      throw Error('Attempting to disable a feature user does not have access to.')
-    }
-
     removeFromArray(this.enabledExperimentalFeatures, identifier)
 
     void this.storageService.setValue(StorageKey.ExperimentalFeatures, this.enabledExperimentalFeatures)
@@ -238,7 +270,7 @@ export class SNFeaturesService
       void this.syncService.sync()
       return this.downloadOfflineFeatures(offlineRepo)
     } catch (err) {
-      return new ClientDisplayableError(Messages.API_MESSAGE_FAILED_OFFLINE_ACTIVATION)
+      return new ClientDisplayableError(API_MESSAGE_FAILED_OFFLINE_ACTIVATION)
     }
   }
 
@@ -268,7 +300,7 @@ export class SNFeaturesService
         extensionKey,
       }
     } catch (error) {
-      return new ClientDisplayableError(Messages.API_MESSAGE_FAILED_OFFLINE_ACTIVATION)
+      return new ClientDisplayableError(API_MESSAGE_FAILED_OFFLINE_ACTIVATION)
     }
   }
 
@@ -339,7 +371,11 @@ export class SNFeaturesService
   }
 
   public async updateRolesAndFetchFeatures(userUuid: UuidString, roles: RoleName[]): Promise<void> {
+    const previousRoles = this.roles
+
     const userRolesChanged = this.haveRolesChanged(roles)
+
+    const isInitialLoadRolesChange = previousRoles.length === 0 && userRolesChanged
 
     if (!userRolesChanged && !this.needsInitialFeaturesUpdate) {
       return
@@ -359,19 +395,32 @@ export class SNFeaturesService
         await this.didDownloadFeatures(features)
       }
     }
+
+    if (userRolesChanged && !isInitialLoadRolesChange) {
+      if (this.rolesIncludePaidSubscription()) {
+        await this.notifyEvent(FeaturesEvent.DidPurchaseSubscription)
+      }
+    }
   }
 
-  private async setRoles(roles: RoleName[]): Promise<void> {
+  async setRoles(roles: RoleName[]): Promise<void> {
+    const rolesChanged = !arraysEqual(this.roles, roles)
+
     this.roles = roles
-    if (!arraysEqual(this.roles, roles)) {
+
+    if (rolesChanged) {
       void this.notifyEvent(FeaturesEvent.UserRolesChanged)
     }
-    await this.storageService.setValue(StorageKey.UserRoles, this.roles)
+
+    this.storageService.setValue(StorageKey.UserRoles, this.roles)
   }
 
   public async didDownloadFeatures(features: FeaturesImports.FeatureDescription[]): Promise<void> {
     features = features
-      .filter((feature) => !!FeaturesImports.FindNativeFeature(feature.identifier))
+      .filter((feature) => {
+        const nativeFeature = FeaturesImports.FindNativeFeature(feature.identifier)
+        return nativeFeature != undefined && !nativeFeature.clientControlled
+      })
       .map((feature) => this.mapRemoteNativeFeatureToStaticFeature(feature))
 
     this.features = features
@@ -411,6 +460,7 @@ export class SNFeaturesService
     if (nativeFeatureCopy.expires_at) {
       nativeFeatureCopy.expires_at = convertTimestampToMilliseconds(nativeFeatureCopy.expires_at)
     }
+
     return nativeFeatureCopy
   }
 
@@ -418,14 +468,13 @@ export class SNFeaturesService
     return this.features.find((feature) => feature.identifier === featureId)
   }
 
-  hasOnlineSubscription(): boolean {
-    const roles = this.roles
+  rolesIncludePaidSubscription(): boolean {
     const unpaidRoles = [RoleName.CoreUser]
-    return roles.some((role) => !unpaidRoles.includes(role))
+    return this.roles.some((role) => !unpaidRoles.includes(role))
   }
 
   public hasPaidOnlineOrOfflineSubscription(): boolean {
-    return this.hasOnlineSubscription() || this.hasOfflineRepo()
+    return this.rolesIncludePaidSubscription() || this.hasOfflineRepo()
   }
 
   public rolesBySorting(roles: RoleName[]): RoleName[] {
@@ -448,7 +497,25 @@ export class SNFeaturesService
     return FeaturesImports.FindNativeFeature(featureId)?.deprecated === true
   }
 
+  public isFreeFeature(featureId: FeaturesImports.FeatureIdentifier) {
+    return [FeatureIdentifier.DarkTheme].includes(featureId)
+  }
+
   public getFeatureStatus(featureId: FeaturesImports.FeatureIdentifier): FeatureStatus {
+    if (this.isFreeFeature(featureId)) {
+      return FeatureStatus.Entitled
+    }
+
+    if (this.isExperimentalFeature(featureId)) {
+      const nativeFeature = FeaturesImports.FindNativeFeature(featureId)
+      if (nativeFeature) {
+        const hasRole = this.roles.some((role) => nativeFeature.availableInRoles?.includes(role))
+        if (hasRole) {
+          return FeatureStatus.Entitled
+        }
+      }
+    }
+
     const isDeprecated = this.isFeatureDeprecated(featureId)
     if (isDeprecated) {
       if (this.hasPaidOnlineOrOfflineSubscription()) {
@@ -521,40 +588,52 @@ export class SNFeaturesService
     let hasChanges = false
 
     for (const feature of features) {
-      const didChange = await this.mapNativeFeatureToItem(feature, currentItems, itemsToDelete)
+      const didChange = await this.mapRemoteNativeFeatureToItem(feature, currentItems, itemsToDelete)
       if (didChange) {
         hasChanges = true
       }
     }
 
     await this.itemManager.setItemsToBeDeleted(itemsToDelete)
+
     if (hasChanges) {
       void this.syncService.sync()
     }
   }
 
-  private async mapNativeFeatureToItem(
+  private async mapRemoteNativeFeatureToItem(
     feature: FeaturesImports.FeatureDescription,
     currentItems: Models.SNComponent[],
     itemsToDelete: Models.SNComponent[],
   ): Promise<boolean> {
+    if (feature.clientControlled) {
+      throw new Error('Attempted to map client controlled feature as remote item')
+    }
+
     if (!feature.content_type) {
       return false
     }
 
-    if (this.isExperimentalFeature(feature.identifier) && !this.isExperimentalFeatureEnabled(feature.identifier)) {
+    const isDisabledExperimentalFeature =
+      this.isExperimentalFeature(feature.identifier) && !this.isExperimentalFeatureEnabled(feature.identifier)
+
+    if (isDisabledExperimentalFeature) {
       return false
     }
 
     let hasChanges = false
+
     const now = new Date()
-    const expired = new Date(feature.expires_at || 0).getTime() < now.getTime()
+    const expired = this.isFreeFeature(feature.identifier)
+      ? false
+      : new Date(feature.expires_at || 0).getTime() < now.getTime()
 
     const existingItem = currentItems.find((item) => {
       if (item.content.package_info) {
         const itemIdentifier = item.content.package_info.identifier
         return itemIdentifier === feature.identifier
       }
+
       return false
     })
 
@@ -566,14 +645,17 @@ export class SNFeaturesService
 
     if (existingItem) {
       const featureExpiresAt = new Date(feature.expires_at || 0)
-      const hasChange =
-        JSON.stringify(feature) !== JSON.stringify(existingItem.package_info) ||
-        featureExpiresAt.getTime() !== existingItem.valid_until.getTime()
+      const hasChangeInPackageInfo = JSON.stringify(feature) !== JSON.stringify(existingItem.package_info)
+      const hasChangeInExpiration = featureExpiresAt.getTime() !== existingItem.valid_until.getTime()
+
+      const hasChange = hasChangeInPackageInfo || hasChangeInExpiration
+
       if (hasChange) {
         resultingItem = await this.itemManager.changeComponent(existingItem, (mutator) => {
           mutator.package_info = feature
           mutator.valid_until = featureExpiresAt
         })
+
         hasChanges = true
       } else {
         resultingItem = existingItem
@@ -609,7 +691,7 @@ export class SNFeaturesService
       const { host } = new URL(url)
       if (!trustedCustomExtensionsUrls.includes(host)) {
         const didConfirm = await this.alertService.confirm(
-          Messages.API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING,
+          API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING,
           'Install extension from an untrusted source?',
           'Proceed to install',
           ButtonType.Danger,
@@ -622,7 +704,7 @@ export class SNFeaturesService
         return this.performDownloadExternalFeature(url)
       }
     } catch (err) {
-      void this.alertService.alert(Messages.INVALID_EXTENSION_URL)
+      void this.alertService.alert(INVALID_EXTENSION_URL)
     }
 
     return undefined
@@ -631,7 +713,7 @@ export class SNFeaturesService
   private async performDownloadExternalFeature(url: string): Promise<Models.SNComponent | undefined> {
     const response = await this.apiService.downloadFeatureUrl(url)
     if (response.error) {
-      await this.alertService.alert(Messages.API_MESSAGE_FAILED_DOWNLOADING_EXTENSION)
+      await this.alertService.alert(API_MESSAGE_FAILED_DOWNLOADING_EXTENSION)
       return undefined
     }
 
@@ -661,14 +743,14 @@ export class SNFeaturesService
 
     const nativeFeature = FeaturesImports.FindNativeFeature(rawFeature.identifier)
     if (nativeFeature) {
-      await this.alertService.alert(Messages.API_MESSAGE_FAILED_DOWNLOADING_EXTENSION)
+      await this.alertService.alert(API_MESSAGE_FAILED_DOWNLOADING_EXTENSION)
       return
     }
 
     if (rawFeature.url) {
       for (const nativeFeature of FeaturesImports.GetFeatures()) {
         if (rawFeature.url.includes(nativeFeature.identifier)) {
-          await this.alertService.alert(Messages.API_MESSAGE_FAILED_DOWNLOADING_EXTENSION)
+          await this.alertService.alert(API_MESSAGE_FAILED_DOWNLOADING_EXTENSION)
           return
         }
       }

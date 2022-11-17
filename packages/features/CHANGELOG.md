@@ -3,6 +3,84 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.55.3](https://github.com/standardnotes/app/compare/@standardnotes/features@1.55.2...@standardnotes/features@1.55.3) (2022-11-17)
+
+### Bug Fixes
+
+* distinguish client controlled features so that server expiration timestamps are ignored ([#2022](https://github.com/standardnotes/app/issues/2022)) ([a6e57e3](https://github.com/standardnotes/app/commit/a6e57e30cff64de83eaedf3d36117a497a7a70ae))
+
+## [1.55.2](https://github.com/standardnotes/app/compare/@standardnotes/features@1.55.1...@standardnotes/features@1.55.2) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/features
+
+## [1.55.1](https://github.com/standardnotes/app/compare/@standardnotes/features@1.55.0...@standardnotes/features@1.55.1) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/features
+
+# [1.55.0](https://github.com/standardnotes/app/compare/@standardnotes/features@1.54.5...@standardnotes/features@1.55.0) (2022-11-16)
+
+### Features
+
+* **labs:** super editor ([#2001](https://github.com/standardnotes/app/issues/2001)) ([59f8547](https://github.com/standardnotes/app/commit/59f8547a8de1c804cb2f01ac734c83268977fa28))
+
+## [1.54.5](https://github.com/standardnotes/app/compare/@standardnotes/features@1.54.4...@standardnotes/features@1.54.5) (2022-11-09)
+
+### Reverts
+
+* Revert "refactor: include themes in components folder" ([3690104](https://github.com/standardnotes/app/commit/3690104934b444ca99eed86c1a41b22a3582811a))
+
+## [1.54.4](https://github.com/standardnotes/app/compare/@standardnotes/features@1.54.3...@standardnotes/features@1.54.4) (2022-11-06)
+
+**Note:** Version bump only for package @standardnotes/features
+
+## [1.54.3](https://github.com/standardnotes/app/compare/@standardnotes/features@1.54.2...@standardnotes/features@1.54.3) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/features
+
+## [1.54.2](https://github.com/standardnotes/app/compare/@standardnotes/features@1.54.1...@standardnotes/features@1.54.2) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/features
+
+## [1.54.1](https://github.com/standardnotes/app/compare/@standardnotes/features@1.54.0...@standardnotes/features@1.54.1) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/features
+
+# [1.54.0](https://github.com/standardnotes/app/compare/@standardnotes/features@1.53.2...@standardnotes/features@1.54.0) (2022-11-02)
+
+### Features
+
+* add sending user requests to process ([#1908](https://github.com/standardnotes/app/issues/1908)) ([b2faa81](https://github.com/standardnotes/app/commit/b2faa815e967a9e7052b3ce6955e967c6bc68864))
+
+## [1.53.2](https://github.com/standardnotes/app/compare/@standardnotes/features@1.53.1...@standardnotes/features@1.53.2) (2022-10-18)
+
+**Note:** Version bump only for package @standardnotes/features
+
+## [1.53.1](https://github.com/standardnotes/app/compare/@standardnotes/features@1.53.0...@standardnotes/features@1.53.1) (2022-10-13)
+
+**Note:** Version bump only for package @standardnotes/features
+
+# [1.53.0](https://github.com/standardnotes/app/compare/@standardnotes/features@1.52.4...@standardnotes/features@1.53.0) (2022-10-11)
+
+### Features
+
+* **api:** add listing workspace users ([fb41f65](https://github.com/standardnotes/app/commit/fb41f651eca45dd62314609c2f389d5dc683c36e))
+
+## [1.52.4](https://github.com/standardnotes/app/compare/@standardnotes/features@1.52.3...@standardnotes/features@1.52.4) (2022-10-10)
+
+### Bug Fixes
+
+* dark mode not working in editors ([#1773](https://github.com/standardnotes/app/issues/1773)) ([27d2c95](https://github.com/standardnotes/app/commit/27d2c95b5b82645bf6c0372979f05236c83a10f6))
+
+## [1.52.3](https://github.com/standardnotes/app/compare/@standardnotes/features@1.52.2...@standardnotes/features@1.52.3) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+
+## [1.52.2](https://github.com/standardnotes/app/compare/@standardnotes/features@1.52.1...@standardnotes/features@1.52.2) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/features
+
 ## [1.52.1](https://github.com/standardnotes/app/compare/@standardnotes/features@1.52.0...@standardnotes/features@1.52.1) (2022-09-23)
 
 ### Bug Fixes

@@ -3,6 +3,76 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.12.9](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.12.8...@standardnotes/responses@1.12.9) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.12.8](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.12.7...@standardnotes/responses@1.12.8) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.12.7](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.12.6...@standardnotes/responses@1.12.7) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.12.6](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.12.5...@standardnotes/responses@1.12.6) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.12.5](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.12.4...@standardnotes/responses@1.12.5) (2022-11-09)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.12.4](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.12.3...@standardnotes/responses@1.12.4) (2022-11-06)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.12.3](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.12.2...@standardnotes/responses@1.12.3) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.12.2](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.12.1...@standardnotes/responses@1.12.2) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.12.1](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.12.0...@standardnotes/responses@1.12.1) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+# [1.12.0](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.11.2...@standardnotes/responses@1.12.0) (2022-11-02)
+
+### Features
+
+* add sending user requests to process ([#1908](https://github.com/standardnotes/app/issues/1908)) ([b2faa81](https://github.com/standardnotes/app/commit/b2faa815e967a9e7052b3ce6955e967c6bc68864))
+
+## [1.11.2](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.11.1...@standardnotes/responses@1.11.2) (2022-10-18)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.11.1](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.11.0...@standardnotes/responses@1.11.1) (2022-10-13)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+# [1.11.0](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.10.6...@standardnotes/responses@1.11.0) (2022-10-11)
+
+### Features
+
+* **api:** add listing workspace users ([fb41f65](https://github.com/standardnotes/app/commit/fb41f651eca45dd62314609c2f389d5dc683c36e))
+
+## [1.10.6](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.10.5...@standardnotes/responses@1.10.6) (2022-10-10)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.10.5](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.10.4...@standardnotes/responses@1.10.5) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+
+## [1.10.4](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.10.3...@standardnotes/responses@1.10.4) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/responses
+
 ## [1.10.3](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.10.2...@standardnotes/responses@1.10.3) (2022-09-23)
 
 **Note:** Version bump only for package @standardnotes/responses

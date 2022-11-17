@@ -52,7 +52,7 @@ const getClassName = (
   const cursor = disabled ? 'cursor-not-allowed' : 'cursor-pointer'
   const width = fullWidth ? 'w-full' : 'w-fit'
   const padding = small ? 'px-3 py-1.5' : 'px-4 py-1.5'
-  const textSize = small ? 'text-xs' : 'text-sm'
+  const textSize = small ? 'text-sm lg:text-xs' : 'text-base lg:text-sm'
   const rounded = isRounded ? 'rounded' : ''
 
   let colors = primary ? getColorsForPrimaryVariant(style) : getColorsForNormalVariant(style)

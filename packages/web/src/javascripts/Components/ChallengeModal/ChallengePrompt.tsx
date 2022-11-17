@@ -1,5 +1,10 @@
-import { ChallengePrompt, ChallengeValidation, ProtectionSessionDurations } from '@standardnotes/snjs'
-import { FunctionComponent, useEffect, useRef } from 'react'
+import {
+  ChallengePrompt,
+  ChallengeValidation,
+  ProtectionSessionDurations,
+  ReactNativeToWebEvent,
+} from '@standardnotes/snjs'
+import { FunctionComponent, useCallback, useEffect, useRef } from 'react'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
 import { ChallengeModalValues } from './ChallengeModalValues'
@@ -27,6 +32,46 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
   const inputRef = useRef<HTMLInputElement>(null)
   const biometricsButtonRef = useRef<HTMLButtonElement>(null)
 
+  const activatePrompt = useCallback(async () => {
+    if (prompt.validation === ChallengeValidation.Biometric) {
+      if (application.isNativeMobileWeb()) {
+        const appState = await application.mobileDevice().getAppState()
+
+        if (appState !== 'active') {
+          return
+        }
+      }
+
+      const hasUserAlreadyInteracted = typeof values[prompt.id].value === 'boolean'
+
+      if (hasUserAlreadyInteracted) {
+        return
+      }
+
+      biometricsButtonRef.current?.click()
+    } else {
+      inputRef.current?.focus()
+    }
+  }, [application, prompt.id, prompt.validation, values])
+
+  useEffect(() => {
+    if (!application.isNativeMobileWeb()) {
+      return
+    }
+
+    const disposeListener = application.addNativeMobileEventListener((event: ReactNativeToWebEvent) => {
+      if (event === ReactNativeToWebEvent.GainingFocus) {
+        void activatePrompt()
+      }
+    })
+
+    return () => {
+      if (disposeListener) {
+        disposeListener()
+      }
+    }
+  }, [activatePrompt, application])
+
   useEffect(() => {
     const isNotFirstPrompt = index !== 0
 
@@ -34,12 +79,8 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
       return
     }
 
-    if (prompt.validation === ChallengeValidation.Biometric) {
-      biometricsButtonRef.current?.click()
-    } else {
-      inputRef.current?.focus()
-    }
-  }, [index, prompt.validation])
+    void activatePrompt()
+  }, [activatePrompt, index])
 
   useEffect(() => {
     if (isInvalid) {

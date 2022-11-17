@@ -13,6 +13,7 @@ export interface ItemContent {
   trashed?: boolean
   pinned?: boolean
   archived?: boolean
+  starred?: boolean
   locked?: boolean
   appData?: AppData
 }

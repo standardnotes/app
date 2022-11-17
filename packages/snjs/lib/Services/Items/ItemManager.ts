@@ -7,9 +7,9 @@ import { UuidString } from '../../Types/UuidString'
 import * as Models from '@standardnotes/models'
 import * as Services from '@standardnotes/services'
 import { PayloadManagerChangeData } from '../Payloads'
-import { DiagnosticInfo, ItemsClientInterface } from '@standardnotes/services'
+import { DiagnosticInfo, ItemsClientInterface, ItemRelationshipDirection } from '@standardnotes/services'
 import { ApplicationDisplayOptions } from '@Lib/Application/Options/OptionalOptions'
-import { CollectionSort } from '@standardnotes/models'
+import { CollectionSort, DecryptedItemInterface, ItemContent, SmartViewDefaultIconName } from '@standardnotes/models'
 
 type ItemsChangeObserver<I extends Models.DecryptedItemInterface = Models.DecryptedItemInterface> = {
   contentType: ContentType[]
@@ -32,7 +32,7 @@ export class ItemManager
   private observers: ItemsChangeObserver[] = []
   private collection!: Models.ItemCollection
   private systemSmartViews: Models.SmartView[]
-  private tagNotesIndex!: Models.TagNotesIndex
+  private tagItemsIndex!: Models.TagItemsIndex
 
   private navigationDisplayController!: Models.ItemDisplayController<Models.SNNote | Models.FileItem>
   private tagDisplayController!: Models.ItemDisplayController<Models.SNTag>
@@ -96,7 +96,7 @@ export class ItemManager
       sortDirection: 'asc',
     })
 
-    this.tagNotesIndex = new Models.TagNotesIndex(this.collection, this.tagNotesIndex?.observers)
+    this.tagItemsIndex = new Models.TagItemsIndex(this.collection, this.tagItemsIndex?.observers)
   }
 
   private get allDisplayControllers(): Models.ItemDisplayController<Models.DisplayItem>[] {
@@ -219,7 +219,7 @@ export class ItemManager
     ;(this.unsubChangeObserver as unknown) = undefined
     ;(this.payloadManager as unknown) = undefined
     ;(this.collection as unknown) = undefined
-    ;(this.tagNotesIndex as unknown) = undefined
+    ;(this.tagItemsIndex as unknown) = undefined
     ;(this.tagDisplayController as unknown) = undefined
     ;(this.navigationDisplayController as unknown) = undefined
     ;(this.itemsKeyDisplayController as unknown) = undefined
@@ -284,23 +284,23 @@ export class ItemManager
     return TagsToFoldersMigrationApplicator.isApplicableToCurrentData(this)
   }
 
-  public addNoteCountChangeObserver(observer: Models.TagNoteCountChangeObserver): () => void {
-    return this.tagNotesIndex.addCountChangeObserver(observer)
+  public addNoteCountChangeObserver(observer: Models.TagItemCountChangeObserver): () => void {
+    return this.tagItemsIndex.addCountChangeObserver(observer)
   }
 
   public allCountableNotesCount(): number {
-    return this.tagNotesIndex.allCountableNotesCount()
+    return this.tagItemsIndex.allCountableItemsCount()
   }
 
   public countableNotesForTag(tag: Models.SNTag | Models.SmartView): number {
     if (tag instanceof Models.SmartView) {
       if (tag.uuid === Models.SystemViewId.AllNotes) {
-        return this.tagNotesIndex.allCountableNotesCount()
+        return this.tagItemsIndex.allCountableItemsCount()
       }
 
-      throw Error('countableNotesForTag is not meant to be used for smart views.')
+      throw Error('countableItemsForTag is not meant to be used for smart views.')
     }
-    return this.tagNotesIndex.countableNotesForTag(tag)
+    return this.tagItemsIndex.countableItemsForTag(tag)
   }
 
   public getNoteCount(): number {
@@ -406,7 +406,7 @@ export class ItemManager
     }
 
     this.collection.onChange(delta)
-    this.tagNotesIndex.onChange(delta)
+    this.tagItemsIndex.onChange(delta)
 
     const affectedContentTypesArray = Array.from(affectedContentTypes.values())
     for (const controller of this.allDisplayControllers) {
@@ -805,12 +805,13 @@ export class ItemManager
   public createTemplateItem<
     C extends Models.ItemContent = Models.ItemContent,
     I extends Models.DecryptedItemInterface<C> = Models.DecryptedItemInterface<C>,
-  >(contentType: ContentType, content?: C): I {
+  >(contentType: ContentType, content?: C, override?: Partial<Models.DecryptedPayload<C>>): I {
     const payload = new Models.DecryptedPayload<C>({
       uuid: UuidGenerator.GenerateUuid(),
       content_type: contentType,
       content: Models.FillItemContent<C>(content || {}),
       ...Models.PayloadTimestampDefaults(),
+      ...override,
     })
     const item = Models.CreateDecryptedItemFromPayload<C, I>(payload)
     return item
@@ -1140,14 +1141,58 @@ export class ItemManager
     )
   }
 
+  public async addTagToFile(file: Models.FileItem, tag: Models.SNTag, addHierarchy: boolean): Promise<Models.SNTag[]> {
+    let tagsToAdd = [tag]
+
+    if (addHierarchy) {
+      const parentChainTags = this.getTagParentChain(tag)
+      tagsToAdd = [...parentChainTags, tag]
+    }
+
+    return Promise.all(
+      tagsToAdd.map((tagToAdd) => {
+        return this.changeTag(tagToAdd, (mutator) => {
+          mutator.addFile(file)
+        }) as Promise<Models.SNTag>
+      }),
+    )
+  }
+
+  public async linkNoteToNote(note: Models.SNNote, otherNote: Models.SNNote): Promise<Models.SNNote> {
+    return this.changeItem<Models.NoteMutator, Models.SNNote>(note, (mutator) => {
+      mutator.addNote(otherNote)
+    })
+  }
+
+  public async linkFileToFile(file: Models.FileItem, otherFile: Models.FileItem): Promise<Models.FileItem> {
+    return this.changeItem<Models.FileMutator, Models.FileItem>(file, (mutator) => {
+      mutator.addFile(otherFile)
+    })
+  }
+
+  public async unlinkItems(itemA: DecryptedItemInterface<ItemContent>, itemB: DecryptedItemInterface<ItemContent>) {
+    const relationshipDirection = this.relationshipDirectionBetweenItems(itemA, itemB)
+
+    if (relationshipDirection === ItemRelationshipDirection.NoRelationship) {
+      throw new Error('Trying to unlink already unlinked items')
+    }
+
+    const itemToChange = relationshipDirection === ItemRelationshipDirection.AReferencesB ? itemA : itemB
+    const itemToRemove = itemToChange === itemA ? itemB : itemA
+
+    return this.changeItem(itemToChange, (mutator) => {
+      mutator.removeItemAsRelationship(itemToRemove)
+    })
+  }
+
   /**
    * Get tags for a note sorted in natural order
-   * @param note - The note whose tags will be returned
-   * @returns Array containing tags associated with a note
+   * @param item - The item whose tags will be returned
+   * @returns Array containing tags associated with an item
    */
-  public getSortedTagsForNote(note: Models.SNNote): Models.SNTag[] {
+  public getSortedTagsForItem(item: DecryptedItemInterface<ItemContent>): Models.SNTag[] {
     return naturalSort(
-      this.itemsReferencingItem(note).filter((ref) => {
+      this.itemsReferencingItem(item).filter((ref) => {
         return ref?.content_type === ContentType.Tag
       }) as Models.SNTag[],
       'title',
@@ -1177,12 +1222,14 @@ export class ItemManager
   public async createSmartView<T extends Models.DecryptedItemInterface>(
     title: string,
     predicate: Models.PredicateInterface<T>,
+    iconString?: string,
   ): Promise<Models.SmartView> {
     return this.createItem(
       ContentType.SmartView,
       Models.FillItemContent({
         title,
         predicate: predicate.toJson(),
+        iconString: iconString || SmartViewDefaultIconName,
       } as Models.SmartViewContent),
       true,
     ) as Promise<Models.SmartView>
@@ -1312,12 +1359,6 @@ export class ItemManager
     }
   }
 
-  public getFilesForNote(note: Models.SNNote): Models.FileItem[] {
-    return (
-      this.itemsReferencingItem(note).filter((ref) => ref.content_type === ContentType.File) as Models.FileItem[]
-    ).sort((a, b) => (a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1))
-  }
-
   public renameFile(file: Models.FileItem, name: string): Promise<Models.FileItem> {
     return this.changeItem<Models.FileMutator, Models.FileItem>(file, (mutator) => {
       mutator.name = name
@@ -1351,6 +1392,20 @@ export class ItemManager
     await this.payloadManager.emitPayloads(payloads, Models.PayloadEmitSource.PreSyncSave)
 
     return this.findAnyItems(uuids) as (Models.DecryptedItemInterface | Models.DeletedItemInterface)[]
+  }
+
+  public relationshipDirectionBetweenItems(
+    itemA: Models.DecryptedItemInterface<Models.ItemContent>,
+    itemB: Models.DecryptedItemInterface<Models.ItemContent>,
+  ): ItemRelationshipDirection {
+    const itemAReferencesItemB = !!itemA.references.find((reference) => reference.uuid === itemB.uuid)
+    const itemBReferencesItemA = !!itemB.references.find((reference) => reference.uuid === itemA.uuid)
+
+    return itemAReferencesItemB
+      ? ItemRelationshipDirection.AReferencesB
+      : itemBReferencesItemA
+      ? ItemRelationshipDirection.BReferencesA
+      : ItemRelationshipDirection.NoRelationship
   }
 
   override getDiagnostics(): Promise<DiagnosticInfo | undefined> {

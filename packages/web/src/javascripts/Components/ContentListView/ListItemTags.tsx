@@ -1,10 +1,11 @@
 import { FunctionComponent } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
+import { ListableContentItem } from './Types/ListableContentItem'
 
 type Props = {
   hideTags: boolean
-  tags: DisplayableListItemProps['tags']
+  tags: DisplayableListItemProps<ListableContentItem>['tags']
 }
 
 const ListItemTags: FunctionComponent<Props> = ({ hideTags, tags }) => {
@@ -13,13 +14,13 @@ const ListItemTags: FunctionComponent<Props> = ({ hideTags, tags }) => {
   }
 
   return (
-    <div className="mt-1.5 flex flex-wrap gap-2 text-xs">
+    <div className="mt-1.5 flex flex-wrap gap-2 text-sm lg:text-xs">
       {tags.map((tag) => (
         <span
           className="inline-flex items-center rounded-sm bg-passive-4-opacity-variant py-1 px-1.5 text-foreground"
           key={tag.uuid}
         >
-          <Icon type="hashtag" className="mr-1 text-passive-1" size="small" />
+          <Icon type={tag.iconString} className="mr-1 text-passive-1" size="small" />
           <span>{tag.title}</span>
         </span>
       ))}

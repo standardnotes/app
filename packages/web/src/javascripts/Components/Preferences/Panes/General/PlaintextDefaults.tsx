@@ -29,7 +29,7 @@ const PlaintextDefaults = ({ application }: Props) => {
 
   const handleLineHeightChange = (value: string) => {
     setLineHeight(value as EditorLineHeight)
-    application.setPreference(PrefKey.EditorLineHeight, value as EditorLineHeight)
+    void application.setPreference(PrefKey.EditorLineHeight, value as EditorLineHeight)
   }
 
   const lineHeightDropdownOptions = useMemo(
@@ -47,7 +47,7 @@ const PlaintextDefaults = ({ application }: Props) => {
 
   const handleFontSizeChange = (value: string) => {
     setFontSize(value as EditorFontSize)
-    application.setPreference(PrefKey.EditorFontSize, value as EditorFontSize)
+    void application.setPreference(PrefKey.EditorFontSize, value as EditorFontSize)
   }
 
   const fontSizeDropdownOptions = useMemo(

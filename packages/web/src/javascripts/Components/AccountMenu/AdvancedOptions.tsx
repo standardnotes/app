@@ -10,7 +10,7 @@ type Props = {
   application: WebApplication
   viewControllerManager: ViewControllerManager
   disabled?: boolean
-  onPrivateWorkspaceChange?: (isPrivate: boolean, identifier?: string) => void
+  onPrivateUsernameModeChange?: (isPrivate: boolean, identifier?: string) => void
   onStrictSignInChange?: (isStrictSignIn: boolean) => void
   children?: ReactNode
 }
@@ -19,54 +19,46 @@ const AdvancedOptions: FunctionComponent<Props> = ({
   viewControllerManager,
   application,
   disabled = false,
-  onPrivateWorkspaceChange,
+  onPrivateUsernameModeChange,
   onStrictSignInChange,
   children,
 }) => {
   const { server, setServer, enableServerOption, setEnableServerOption } = viewControllerManager.accountMenuController
   const [showAdvanced, setShowAdvanced] = useState(false)
 
-  const [isPrivateWorkspace, setIsPrivateWorkspace] = useState(false)
-  const [privateWorkspaceName, setPrivateWorkspaceName] = useState('')
-  const [privateWorkspaceUserphrase, setPrivateWorkspaceUserphrase] = useState('')
+  const [isPrivateUsername, setIsPrivateUsername] = useState(false)
+  const [privateUsername, setPrivateUsername] = useState('')
 
   const [isStrictSignin, setIsStrictSignin] = useState(false)
 
   useEffect(() => {
-    const recomputePrivateWorkspaceIdentifier = async () => {
-      const identifier = await application.computePrivateWorkspaceIdentifier(
-        privateWorkspaceName,
-        privateWorkspaceUserphrase,
-      )
+    const recomputePrivateUsername = async () => {
+      const identifier = await application.computePrivateUsername(privateUsername)
 
       if (!identifier) {
-        if (privateWorkspaceName?.length > 0 && privateWorkspaceUserphrase?.length > 0) {
-          application.alertService.alert('Unable to compute private workspace name.').catch(console.error)
+        if (privateUsername?.length > 0) {
+          application.alertService.alert('Unable to compute private username.').catch(console.error)
         }
         return
       }
-      onPrivateWorkspaceChange?.(true, identifier)
+      onPrivateUsernameModeChange?.(true, identifier)
     }
 
-    if (privateWorkspaceName && privateWorkspaceUserphrase) {
-      recomputePrivateWorkspaceIdentifier().catch(console.error)
+    if (privateUsername) {
+      recomputePrivateUsername().catch(console.error)
     }
-  }, [privateWorkspaceName, privateWorkspaceUserphrase, application, onPrivateWorkspaceChange])
+  }, [privateUsername, application, onPrivateUsernameModeChange])
 
   useEffect(() => {
-    onPrivateWorkspaceChange?.(isPrivateWorkspace)
-  }, [isPrivateWorkspace, onPrivateWorkspaceChange])
+    onPrivateUsernameModeChange?.(isPrivateUsername)
+  }, [isPrivateUsername, onPrivateUsernameModeChange])
 
-  const handleIsPrivateWorkspaceChange = useCallback(() => {
-    setIsPrivateWorkspace(!isPrivateWorkspace)
-  }, [isPrivateWorkspace])
+  const handleIsPrivateUsernameChange = useCallback(() => {
+    setIsPrivateUsername(!isPrivateUsername)
+  }, [isPrivateUsername])
 
-  const handlePrivateWorkspaceNameChange = useCallback((name: string) => {
-    setPrivateWorkspaceName(name)
-  }, [])
-
-  const handlePrivateWorkspaceUserphraseChange = useCallback((userphrase: string) => {
-    setPrivateWorkspaceUserphrase(userphrase)
+  const handlePrivateUsernameNameChange = useCallback((name: string) => {
+    setPrivateUsername(name)
   }, [])
 
   const handleServerOptionChange: ChangeEventHandler<HTMLInputElement> = useCallback(
@@ -114,35 +106,28 @@ const AdvancedOptions: FunctionComponent<Props> = ({
           <div className="mb-1 flex items-center justify-between">
             <Checkbox
               name="private-workspace"
-              label="Private workspace"
-              checked={isPrivateWorkspace}
+              label="Private username mode"
+              checked={isPrivateUsername}
               disabled={disabled}
-              onChange={handleIsPrivateWorkspaceChange}
+              onChange={handleIsPrivateUsernameChange}
             />
             <a href="https://standardnotes.com/help/80" target="_blank" rel="noopener noreferrer" title="Learn more">
               <Icon type="info" className="text-neutral" />
             </a>
           </div>
 
-          {isPrivateWorkspace && (
+          {isPrivateUsername && (
             <>
               <DecoratedInput
                 className={{ container: 'mb-2' }}
-                left={[<Icon type="server" className="text-neutral" />]}
+                left={[<Icon type="account-circle" className="text-neutral" />]}
                 type="text"
-                placeholder="Userphrase"
-                value={privateWorkspaceUserphrase}
-                onChange={handlePrivateWorkspaceUserphraseChange}
+                placeholder="Username"
+                value={privateUsername}
+                onChange={handlePrivateUsernameNameChange}
                 disabled={disabled}
-              />
-              <DecoratedInput
-                className={{ container: 'mb-2' }}
-                left={[<Icon type="folder" className="text-neutral" />]}
-                type="text"
-                placeholder="Name"
-                value={privateWorkspaceName}
-                onChange={handlePrivateWorkspaceNameChange}
-                disabled={disabled}
+                spellcheck={false}
+                autocomplete={false}
               />
             </>
           )}

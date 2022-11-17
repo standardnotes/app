@@ -6,6 +6,7 @@ import { FunctionComponent } from 'react'
 import CreateAccount from './Panes/CreateAccount'
 import SignIn from './Panes/SignIn'
 import { SNLogoFull } from '@standardnotes/icons'
+import Icon from '../Icon/Icon'
 
 type PaneSelectorProps = {
   currentPane: PurchaseFlowPane
@@ -36,6 +37,14 @@ const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = ({ viewContro
     <div className="absolute top-0 left-0 z-purchase-flow flex h-full w-full items-center justify-center overflow-hidden bg-passive-super-light">
       <div className="relative w-fit">
         <div className="rounded-0 relative mb-4 w-full border border-solid border-border bg-default px-8 py-8 md:rounded md:p-12">
+          <button
+            className="absolute top-4 right-4 rounded-full p-1 hover:bg-info-backdrop"
+            onClick={() => {
+              viewControllerManager.purchaseFlowController.closePurchaseFlow()
+            }}
+          >
+            <Icon type="close" className="text-neutral" />
+          </button>
           <SNLogoFull className="mb-5" />
           <PurchaseFlowPaneSelector
             currentPane={currentPane}

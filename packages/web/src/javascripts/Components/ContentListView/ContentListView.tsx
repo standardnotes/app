@@ -1,7 +1,7 @@
 import { KeyboardKey, KeyboardModifier } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NOTES } from '@/Constants/Constants'
-import { PrefKey, SystemViewId } from '@standardnotes/snjs'
+import { FileItem, PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef } from 'react'
 import ContentList from '@/Components/ContentListView/ContentList'
@@ -11,7 +11,6 @@ import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { FilesController } from '@/Controllers/FilesController'
-import { NoteTagsController } from '@/Controllers/NoteTagsController'
 import { NoAccountWarningController } from '@/Controllers/NoAccountWarningController'
 import { NotesController } from '@/Controllers/NotesController'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
@@ -25,6 +24,11 @@ import SearchBar from '../SearchBar/SearchBar'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
+import { LinkingController } from '@/Controllers/LinkingController'
+import DailyContentList from './Daily/DailyContentList'
+import { ListableContentItem } from './Types/ListableContentItem'
+import { FeatureName } from '@/Controllers/FeatureName'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -33,10 +37,10 @@ type Props = {
   itemListController: ItemListController
   navigationController: NavigationController
   noAccountWarningController: NoAccountWarningController
-  noteTagsController: NoteTagsController
   notesController: NotesController
   selectionController: SelectedItemsController
   searchOptionsController: SearchOptionsController
+  linkingController: LinkingController
 }
 
 const ContentListView: FunctionComponent<Props> = ({
@@ -46,15 +50,56 @@ const ContentListView: FunctionComponent<Props> = ({
   itemListController,
   navigationController,
   noAccountWarningController,
-  noteTagsController,
   notesController,
   selectionController,
   searchOptionsController,
+  linkingController,
 }) => {
   const { isNotesListVisibleOnTablets, toggleAppPane } = useResponsiveAppPane()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
+
+  const { addDragTarget, removeDragTarget } = useFileDragNDrop()
+
+  const fileDropCallback = useCallback(
+    async (files: FileItem[]) => {
+      const currentTag = navigationController.selected
+
+      if (!currentTag) {
+        return
+      }
+
+      if (navigationController.isInAnySystemView() || navigationController.isInSmartView()) {
+        console.error('Trying to link uploaded files to smart view')
+        return
+      }
+
+      files.forEach(async (file) => {
+        await linkingController.linkItems(file, currentTag)
+      })
+    },
+    [navigationController, linkingController],
+  )
+
+  useEffect(() => {
+    const target = itemsViewPanelRef.current
+    const currentTag = navigationController.selected
+    const shouldAddDropTarget = !navigationController.isInAnySystemView() && !navigationController.isInSmartView()
+
+    if (target && shouldAddDropTarget && currentTag) {
+      addDragTarget(target, {
+        tooltipText: `Drop your files to upload and link them to tag "${currentTag.title}"`,
+        callback: fileDropCallback,
+      })
+    }
+
+    return () => {
+      if (target) {
+        removeDragTarget(target)
+      }
+    }
+  }, [addDragTarget, fileDropCallback, navigationController, navigationController.selected, removeDragTarget])
 
   const {
     completedFullSync,
@@ -64,18 +109,26 @@ const ContentListView: FunctionComponent<Props> = ({
     panelTitle,
     panelWidth,
     renderedItems,
+    items,
     searchBarElement,
+    isCurrentNoteTemplate,
   } = itemListController
 
-  const { selectedItems, selectNextItem, selectPreviousItem } = selectionController
+  const { selectedUuids, selectNextItem, selectPreviousItem } = selectionController
 
-  const isFilesSmartView = useMemo(
-    () => navigationController.selected?.uuid === SystemViewId.Files,
-    [navigationController.selected?.uuid],
-  )
+  const { selected: selectedTag, selectedAsTag } = navigationController
+
+  const icon = selectedTag?.iconString
+
+  const isFilesSmartView = useMemo(() => navigationController.isInFilesView, [navigationController.isInFilesView])
 
   const addNewItem = useCallback(async () => {
     if (isFilesSmartView) {
+      if (!application.entitledToFiles) {
+        application.showPremiumModal(FeatureName.Files)
+        return
+      }
+
       if (StreamingFileReader.available()) {
         void filesController.uploadNewFile()
         return
@@ -86,7 +139,7 @@ const ContentListView: FunctionComponent<Props> = ({
       await createNewNote()
       toggleAppPane(AppPaneId.Editor)
     }
-  }, [isFilesSmartView, filesController, createNewNote, toggleAppPane])
+  }, [isFilesSmartView, filesController, createNewNote, toggleAppPane, application])
 
   useEffect(() => {
     /**
@@ -166,16 +219,15 @@ const ContentListView: FunctionComponent<Props> = ({
 
   const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
     (width, _lastLeft, _isMaxWidth, isCollapsed) => {
-      application.setPreference(PrefKey.NotesPanelWidth, width).catch(console.error)
-      noteTagsController.reloadTagsContainerMaxWidth()
+      if (selectedAsTag) {
+        void navigationController.setPanelWidthForTag(selectedAsTag, width)
+      } else {
+        void application.setPreference(PrefKey.NotesPanelWidth, width).catch(console.error)
+      }
       application.publishPanelDidResizeEvent(PANEL_NAME_NOTES, isCollapsed)
     },
-    [application, noteTagsController],
+    [application, selectedAsTag, navigationController],
   )
-
-  const panelWidthEventCallback = useCallback(() => {
-    noteTagsController.reloadTagsContainerMaxWidth()
-  }, [noteTagsController])
 
   const addButtonLabel = useMemo(
     () => (isFilesSmartView ? 'Upload file' : 'Create a new note in the selected tag'),
@@ -186,20 +238,44 @@ const ContentListView: FunctionComponent<Props> = ({
   const matchesXLBreakpoint = useMediaQuery(MediaQueryBreakpoints.xl)
   const isTabletScreenSize = matchesMediumBreakpoint && !matchesXLBreakpoint
 
+  const dailyMode = selectedAsTag?.isDailyEntry
+
+  const handleDailyListSelection = useCallback(
+    async (item: ListableContentItem, userTriggered: boolean) => {
+      await selectionController.selectItemWithScrollHandling(item, {
+        userTriggered: true,
+        scrollIntoView: userTriggered === false,
+        animated: false,
+      })
+    },
+    [selectionController],
+  )
+
+  useEffect(() => {
+    const hasEditorPane = selectedUuids.size > 0 || renderedItems.length === 0 || isCurrentNoteTemplate
+    if (!hasEditorPane) {
+      itemsViewPanelRef.current?.style.removeProperty('width')
+    }
+  }, [selectedUuids, itemsViewPanelRef, isCurrentNoteTemplate, renderedItems])
+
+  const hasEditorPane = selectedUuids.size > 0 || renderedItems.length === 0 || isCurrentNoteTemplate
+
   return (
     <div
       id="items-column"
       className={classNames(
-        'sn-component section app-column flex h-screen flex-col pt-safe-top md:h-full',
-        'xl:w-87.5 xsm-only:!w-full sm-only:!w-full',
-        isTabletScreenSize && !isNotesListVisibleOnTablets
-          ? 'pointer-coarse:md-only:!w-0 pointer-coarse:lg-only:!w-0'
-          : 'pointer-coarse:md-only:!w-60 pointer-coarse:lg-only:!w-60',
+        'sn-component section app-column flex h-full flex-col overflow-hidden pt-safe-top',
+        hasEditorPane ? 'xl:w-[24rem] xsm-only:!w-full sm-only:!w-full' : 'w-full md:min-w-[400px]',
+        hasEditorPane
+          ? isTabletScreenSize && !isNotesListVisibleOnTablets
+            ? 'pointer-coarse:md-only:!w-0 pointer-coarse:lg-only:!w-0'
+            : 'pointer-coarse:md-only:!w-60 pointer-coarse:lg-only:!w-60'
+          : '',
       )}
       aria-label={'Notes & Files'}
       ref={itemsViewPanelRef}
     >
-      <ResponsivePaneContent paneId={AppPaneId.Items}>
+      <ResponsivePaneContent className="overflow-hidden" paneId={AppPaneId.Items}>
         <div id="items-title-bar" className="section-title-bar border-b border-solid border-border">
           <div id="items-title-bar-container">
             <input
@@ -214,19 +290,23 @@ const ContentListView: FunctionComponent<Props> = ({
                   return
                 }
 
-                for (const file of files) {
-                  void filesController.uploadNewFile(file)
+                for (let i = 0; i < files.length; i++) {
+                  void filesController.uploadNewFile(files[i])
                 }
               }}
             />
-            <ContentListHeader
-              application={application}
-              panelTitle={panelTitle}
-              addButtonLabel={addButtonLabel}
-              addNewItem={addNewItem}
-              isFilesSmartView={isFilesSmartView}
-              optionsSubtitle={optionsSubtitle}
-            />
+            {selectedTag && (
+              <ContentListHeader
+                application={application}
+                panelTitle={panelTitle}
+                icon={icon}
+                addButtonLabel={addButtonLabel}
+                addNewItem={addNewItem}
+                isFilesSmartView={isFilesSmartView}
+                optionsSubtitle={optionsSubtitle}
+                selectedTag={selectedTag}
+              />
+            )}
             <SearchBar itemListController={itemListController} searchOptionsController={searchOptionsController} />
             <NoAccountWarning
               accountMenuController={accountMenuController}
@@ -234,23 +314,39 @@ const ContentListView: FunctionComponent<Props> = ({
             />
           </div>
         </div>
-        {completedFullSync && !renderedItems.length ? <p className="empty-items-list opacity-50">No items.</p> : null}
-        {!completedFullSync && !renderedItems.length ? <p className="empty-items-list opacity-50">Loading...</p> : null}
-        {renderedItems.length ? (
-          <ContentList
-            items={renderedItems}
-            selectedItems={selectedItems}
-            application={application}
-            paginate={paginate}
-            filesController={filesController}
+        {selectedAsTag && dailyMode && (
+          <DailyContentList
+            items={items}
+            selectedTag={selectedAsTag}
+            selectedUuids={selectedUuids}
             itemListController={itemListController}
-            navigationController={navigationController}
-            notesController={notesController}
-            selectionController={selectionController}
+            onSelect={handleDailyListSelection}
           />
+        )}
+        {!dailyMode && renderedItems.length ? (
+          <>
+            {completedFullSync && !renderedItems.length ? (
+              <p className="empty-items-list opacity-50">No items.</p>
+            ) : null}
+            {!completedFullSync && !renderedItems.length ? (
+              <p className="empty-items-list opacity-50">Loading...</p>
+            ) : null}
+            <ContentList
+              items={renderedItems}
+              selectedUuids={selectedUuids}
+              application={application}
+              paginate={paginate}
+              filesController={filesController}
+              itemListController={itemListController}
+              navigationController={navigationController}
+              notesController={notesController}
+              selectionController={selectionController}
+            />
+          </>
         ) : null}
+        <div className="absolute bottom-0 h-safe-bottom w-full" />
       </ResponsivePaneContent>
-      {itemsViewPanelRef.current && (
+      {hasEditorPane && itemsViewPanelRef.current && (
         <PanelResizer
           collapsable={true}
           hoverable={true}
@@ -259,7 +355,6 @@ const ContentListView: FunctionComponent<Props> = ({
           side={PanelSide.Right}
           type={PanelResizeType.WidthOnly}
           resizeFinishCallback={panelResizeFinishCallback}
-          widthEventCallback={panelWidthEventCallback}
           width={panelWidth}
           left={0}
         />

@@ -9,7 +9,7 @@ import {
   SubscriptionClientInterface,
   Uuid,
 } from '@standardnotes/snjs'
-import { action, computed, makeObservable, observable } from 'mobx'
+import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { AvailableSubscriptions } from './AvailableSubscriptionsType'
@@ -21,6 +21,7 @@ export class SubscriptionController extends AbstractViewController {
   userSubscription: Subscription | undefined = undefined
   availableSubscriptions: AvailableSubscriptions | undefined = undefined
   subscriptionInvitations: Invitation[] | undefined = undefined
+  hasAccount: boolean
 
   override deinit() {
     super.deinit()
@@ -37,11 +38,13 @@ export class SubscriptionController extends AbstractViewController {
     private subscriptionManager: SubscriptionClientInterface,
   ) {
     super(application, eventBus)
+    this.hasAccount = application.hasAccount()
 
     makeObservable(this, {
       userSubscription: observable,
       availableSubscriptions: observable,
       subscriptionInvitations: observable,
+      hasAccount: observable,
 
       userSubscriptionName: computed,
       userSubscriptionExpirationDate: computed,
@@ -61,6 +64,9 @@ export class SubscriptionController extends AbstractViewController {
           this.getSubscriptionInfo().catch(console.error)
           this.reloadSubscriptionInvitations().catch(console.error)
         }
+        runInAction(() => {
+          this.hasAccount = application.hasAccount()
+        })
       }, ApplicationEvent.Launched),
     )
 
@@ -68,6 +74,9 @@ export class SubscriptionController extends AbstractViewController {
       application.addEventObserver(async () => {
         this.getSubscriptionInfo().catch(console.error)
         this.reloadSubscriptionInvitations().catch(console.error)
+        runInAction(() => {
+          this.hasAccount = application.hasAccount()
+        })
       }, ApplicationEvent.SignedIn),
     )
 
@@ -108,6 +117,10 @@ export class SubscriptionController extends AbstractViewController {
 
   get isUserSubscriptionCanceled(): boolean {
     return Boolean(this.userSubscription?.cancelled)
+  }
+
+  hasValidSubscription(): boolean {
+    return this.userSubscription != undefined && !this.isUserSubscriptionExpired && !this.isUserSubscriptionCanceled
   }
 
   get usedInvitationsCount(): number {

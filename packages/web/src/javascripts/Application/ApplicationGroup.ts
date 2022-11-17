@@ -1,17 +1,7 @@
 import { WebApplication } from './Application'
-import {
-  ApplicationDescriptor,
-  SNApplicationGroup,
-  Platform,
-  InternalEventBus,
-  isDesktopDevice,
-} from '@standardnotes/snjs'
-import { ArchiveManager, IOService, AutolockService, ThemeManager } from '@standardnotes/ui-services'
-
-import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
+import { ApplicationDescriptor, SNApplicationGroup } from '@standardnotes/snjs'
 import { getPlatform, isDesktopApplication } from '@/Utils'
 import { WebOrDesktopDevice } from '@/Application/Device/WebOrDesktopDevice'
-import { DesktopManager } from './Device/DesktopManager'
 
 const createApplication = (
   descriptor: ApplicationDescriptor,
@@ -29,22 +19,6 @@ const createApplication = (
     defaultSyncServerHost,
     webSocketUrl,
   )
-
-  const viewControllerManager = new ViewControllerManager(application, device)
-  const archiveService = new ArchiveManager(application)
-  const io = new IOService(platform === Platform.MacWeb || platform === Platform.MacDesktop)
-  const internalEventBus = new InternalEventBus()
-  const autolockService = new AutolockService(application, internalEventBus)
-  const themeService = new ThemeManager(application, internalEventBus)
-
-  application.setWebServices({
-    viewControllerManager,
-    archiveService,
-    desktopService: isDesktopDevice(device) ? new DesktopManager(application, device) : undefined,
-    io,
-    autolockService,
-    themeService,
-  })
 
   return application
 }

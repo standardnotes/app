@@ -13,28 +13,44 @@ import {
   MetaReceivedData,
   DiagnosticInfo,
   KeyValueStoreInterface,
+  API_MESSAGE_GENERIC_SYNC_FAIL,
+  API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL,
+  API_MESSAGE_CHANGE_CREDENTIALS_IN_PROGRESS,
+  API_MESSAGE_FAILED_ACCESS_PURCHASE,
+  API_MESSAGE_FAILED_CREATE_FILE_TOKEN,
+  API_MESSAGE_FAILED_DELETE_REVISION,
+  API_MESSAGE_FAILED_GET_SETTINGS,
+  API_MESSAGE_FAILED_LISTED_REGISTRATION,
+  API_MESSAGE_FAILED_OFFLINE_ACTIVATION,
+  API_MESSAGE_FAILED_OFFLINE_FEATURES,
+  API_MESSAGE_FAILED_SUBSCRIPTION_INFO,
+  API_MESSAGE_FAILED_UPDATE_SETTINGS,
+  API_MESSAGE_GENERIC_CHANGE_CREDENTIALS_FAIL,
+  API_MESSAGE_GENERIC_INTEGRITY_CHECK_FAIL,
+  API_MESSAGE_GENERIC_INVALID_LOGIN,
+  API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
+  API_MESSAGE_INVALID_SESSION,
+  API_MESSAGE_LOGIN_IN_PROGRESS,
+  API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS,
 } from '@standardnotes/services'
 import { FilesApiInterface } from '@standardnotes/files'
 
 import { ServerSyncPushContextualPayload, SNFeatureRepo, FileContent } from '@standardnotes/models'
 import * as Responses from '@standardnotes/responses'
-import { API_MESSAGE_FAILED_OFFLINE_ACTIVATION } from '@Lib/Services/Api/Messages'
 import { HttpParams, HttpRequest, HttpVerb, SNHttpService } from './HttpService'
 import { isUrlFirstParty, TRUSTED_FEATURE_HOSTS } from '@Lib/Hosts'
 import { Paths } from './Paths'
 import { Session } from '../Session/Sessions/Session'
 import { TokenSession } from '../Session/Sessions/TokenSession'
 import { DiskStorageService } from '../Storage/DiskStorageService'
-import { UserServerInterface } from '../User/UserServerInterface'
+import { HttpResponseMeta } from '@standardnotes/api'
 import { UuidString } from '../../Types/UuidString'
-import * as messages from '@Lib/Services/Api/Messages'
 import merge from 'lodash/merge'
 import { SettingsServerInterface } from '../Settings/SettingsServerInterface'
 import { Strings } from '@Lib/Strings'
 import { SNRootKeyParams } from '@standardnotes/encryption'
 import { ApiEndpointParam, ClientDisplayableError, CreateValetTokenPayload } from '@standardnotes/responses'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { HttpResponseMeta } from '@standardnotes/api'
 
 /** Legacy api version field to be specified in params when calling v0 APIs. */
 const V0_API_VERSION = '20200115'
@@ -48,7 +64,6 @@ export class SNApiService
     FilesApiInterface,
     IntegrityApiInterface,
     ItemsServerInterface,
-    UserServerInterface,
     SettingsServerInterface
 {
   private session?: Session
@@ -95,7 +110,7 @@ export class SNApiService
     this.invalidSessionObserver = observer
   }
 
-  public loadHost(): void {
+  public loadHost(): string {
     const storedValue = this.storageService.getValue<string | undefined>(StorageKey.ServerHost)
     this.host =
       storedValue ||
@@ -105,6 +120,8 @@ export class SNApiService
           _default_sync_server?: string
         }
       )._default_sync_server as string)
+
+    return this.host
   }
 
   public async setHost(host: string): Promise<void> {
@@ -232,7 +249,7 @@ export class SNApiService
     return this.request({
       verb: HttpVerb.Post,
       url: joinPaths(this.host, Paths.v2.keyParams),
-      fallbackErrorMessage: messages.API_MESSAGE_GENERIC_INVALID_LOGIN,
+      fallbackErrorMessage: API_MESSAGE_GENERIC_INVALID_LOGIN,
       params,
       /** A session is optional here, if valid, endpoint bypasses 2FA and returns additional params */
       authentication: this.session?.authorizationValue,
@@ -245,7 +262,7 @@ export class SNApiService
     ephemeral: boolean
   }): Promise<Responses.SignInResponse | Responses.HttpResponse> {
     if (this.authenticating) {
-      return this.createErrorResponse(messages.API_MESSAGE_LOGIN_IN_PROGRESS) as Responses.SignInResponse
+      return this.createErrorResponse(API_MESSAGE_LOGIN_IN_PROGRESS) as Responses.SignInResponse
     }
     this.authenticating = true
     const url = joinPaths(this.host, Paths.v2.signIn)
@@ -260,7 +277,7 @@ export class SNApiService
       verb: HttpVerb.Post,
       url,
       params,
-      fallbackErrorMessage: messages.API_MESSAGE_GENERIC_INVALID_LOGIN,
+      fallbackErrorMessage: API_MESSAGE_GENERIC_INVALID_LOGIN,
     })
 
     this.authenticating = false
@@ -285,7 +302,7 @@ export class SNApiService
     newEmail?: string
   }): Promise<Responses.ChangeCredentialsResponse | Responses.HttpResponse> {
     if (this.changing) {
-      return this.createErrorResponse(messages.API_MESSAGE_CHANGE_CREDENTIALS_IN_PROGRESS)
+      return this.createErrorResponse(API_MESSAGE_CHANGE_CREDENTIALS_IN_PROGRESS)
     }
     const preprocessingError = this.preprocessingError()
     if (preprocessingError) {
@@ -309,26 +326,12 @@ export class SNApiService
             params,
           })
         }
-        return this.errorResponseWithFallbackMessage(
-          errorResponse,
-          messages.API_MESSAGE_GENERIC_CHANGE_CREDENTIALS_FAIL,
-        )
+        return this.errorResponseWithFallbackMessage(errorResponse, API_MESSAGE_GENERIC_CHANGE_CREDENTIALS_FAIL)
       })
 
     this.processResponse(response)
 
     this.changing = false
-    return response
-  }
-
-  public async deleteAccount(userUuid: string): Promise<Responses.HttpResponse | Responses.MinimalHttpResponse> {
-    const url = joinPaths(this.host, Paths.v1.deleteAccount(userUuid))
-    const response = await this.request({
-      verb: HttpVerb.Delete,
-      url,
-      authentication: this.session?.authorizationValue,
-      fallbackErrorMessage: messages.ServerErrorStrings.DeleteAccountError,
-    })
     return response
   }
 
@@ -360,7 +363,7 @@ export class SNApiService
             params,
           })
         }
-        return this.errorResponseWithFallbackMessage(errorResponse, messages.API_MESSAGE_GENERIC_SYNC_FAIL)
+        return this.errorResponseWithFallbackMessage(errorResponse, API_MESSAGE_GENERIC_SYNC_FAIL)
       })
     this.processResponse(response)
 
@@ -405,7 +408,7 @@ export class SNApiService
       })
       .catch((errorResponse) => {
         this.preprocessAuthenticatedErrorResponse(errorResponse)
-        return this.errorResponseWithFallbackMessage(errorResponse, messages.API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL)
+        return this.errorResponseWithFallbackMessage(errorResponse, API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL)
       })
     this.refreshingSession = false
     return result
@@ -427,7 +430,7 @@ export class SNApiService
             url,
           })
         }
-        return this.errorResponseWithFallbackMessage(errorResponse, messages.API_MESSAGE_GENERIC_SYNC_FAIL)
+        return this.errorResponseWithFallbackMessage(errorResponse, API_MESSAGE_GENERIC_SYNC_FAIL)
       })
     this.processResponse(response)
 
@@ -451,7 +454,7 @@ export class SNApiService
             url,
           })
         }
-        return this.errorResponseWithFallbackMessage(errorResponse, messages.API_MESSAGE_GENERIC_SYNC_FAIL)
+        return this.errorResponseWithFallbackMessage(errorResponse, API_MESSAGE_GENERIC_SYNC_FAIL)
       })
     this.processResponse(response)
     return response
@@ -473,7 +476,7 @@ export class SNApiService
             url,
           })
         }
-        return this.errorResponseWithFallbackMessage(errorResponse, messages.API_MESSAGE_GENERIC_SYNC_FAIL)
+        return this.errorResponseWithFallbackMessage(errorResponse, API_MESSAGE_GENERIC_SYNC_FAIL)
       })
     this.processResponse(response)
     return response
@@ -498,7 +501,7 @@ export class SNApiService
             url,
           })
         }
-        return this.errorResponseWithFallbackMessage(errorResponse, messages.API_MESSAGE_GENERIC_SYNC_FAIL)
+        return this.errorResponseWithFallbackMessage(errorResponse, API_MESSAGE_GENERIC_SYNC_FAIL)
       })
     this.processResponse(response)
     return response
@@ -516,7 +519,7 @@ export class SNApiService
             url,
           })
         }
-        return this.errorResponseWithFallbackMessage(errorResponse, messages.API_MESSAGE_GENERIC_SYNC_FAIL)
+        return this.errorResponseWithFallbackMessage(errorResponse, API_MESSAGE_GENERIC_SYNC_FAIL)
       })
     this.processResponse(response)
     return response
@@ -546,7 +549,7 @@ export class SNApiService
     return await this.tokenRefreshableRequest<Responses.ListSettingsResponse>({
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.settings(userUuid)),
-      fallbackErrorMessage: messages.API_MESSAGE_FAILED_GET_SETTINGS,
+      fallbackErrorMessage: API_MESSAGE_FAILED_GET_SETTINGS,
       authentication: this.session?.authorizationValue,
     })
   }
@@ -566,7 +569,7 @@ export class SNApiService
       verb: HttpVerb.Put,
       url: joinPaths(this.host, Paths.v1.settings(userUuid)),
       authentication: this.session?.authorizationValue,
-      fallbackErrorMessage: messages.API_MESSAGE_FAILED_UPDATE_SETTINGS,
+      fallbackErrorMessage: API_MESSAGE_FAILED_UPDATE_SETTINGS,
       params,
     })
   }
@@ -576,7 +579,7 @@ export class SNApiService
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.setting(userUuid, settingName.toLowerCase() as SettingName)),
       authentication: this.session?.authorizationValue,
-      fallbackErrorMessage: messages.API_MESSAGE_FAILED_GET_SETTINGS,
+      fallbackErrorMessage: API_MESSAGE_FAILED_GET_SETTINGS,
     })
   }
 
@@ -591,7 +594,7 @@ export class SNApiService
         Paths.v1.subscriptionSetting(userUuid, settingName.toLowerCase() as SubscriptionSettingName),
       ),
       authentication: this.session?.authorizationValue,
-      fallbackErrorMessage: messages.API_MESSAGE_FAILED_GET_SETTINGS,
+      fallbackErrorMessage: API_MESSAGE_FAILED_GET_SETTINGS,
     })
   }
 
@@ -600,7 +603,7 @@ export class SNApiService
       verb: HttpVerb.Delete,
       url: joinPaths(this.host, Paths.v1.setting(userUuid, settingName)),
       authentication: this.session?.authorizationValue,
-      fallbackErrorMessage: messages.API_MESSAGE_FAILED_UPDATE_SETTINGS,
+      fallbackErrorMessage: API_MESSAGE_FAILED_UPDATE_SETTINGS,
     })
   }
 
@@ -612,7 +615,7 @@ export class SNApiService
     const response = await this.tokenRefreshableRequest({
       verb: HttpVerb.Delete,
       url,
-      fallbackErrorMessage: messages.API_MESSAGE_FAILED_DELETE_REVISION,
+      fallbackErrorMessage: API_MESSAGE_FAILED_DELETE_REVISION,
       authentication: this.session?.authorizationValue,
     })
     return response
@@ -623,7 +626,7 @@ export class SNApiService
       verb: HttpVerb.Get,
       url,
       external: true,
-      fallbackErrorMessage: messages.API_MESSAGE_GENERIC_INVALID_LOGIN,
+      fallbackErrorMessage: API_MESSAGE_GENERIC_INVALID_LOGIN,
     })
   }
 
@@ -633,7 +636,7 @@ export class SNApiService
       verb: HttpVerb.Get,
       url,
       authentication: this.session?.authorizationValue,
-      fallbackErrorMessage: messages.API_MESSAGE_FAILED_SUBSCRIPTION_INFO,
+      fallbackErrorMessage: API_MESSAGE_FAILED_SUBSCRIPTION_INFO,
     })
     return response
   }
@@ -645,7 +648,7 @@ export class SNApiService
     const response = await this.request({
       verb: HttpVerb.Get,
       url,
-      fallbackErrorMessage: messages.API_MESSAGE_FAILED_SUBSCRIPTION_INFO,
+      fallbackErrorMessage: API_MESSAGE_FAILED_SUBSCRIPTION_INFO,
     })
     return response
   }
@@ -656,7 +659,7 @@ export class SNApiService
       verb: HttpVerb.Post,
       url,
       authentication: this.session?.authorizationValue,
-      fallbackErrorMessage: messages.API_MESSAGE_FAILED_ACCESS_PURCHASE,
+      fallbackErrorMessage: API_MESSAGE_FAILED_ACCESS_PURCHASE,
     })
     return (response as Responses.PostSubscriptionTokensResponse).data?.token
   }
@@ -680,7 +683,7 @@ export class SNApiService
       const response: Responses.HttpResponse | Responses.GetOfflineFeaturesResponse = await this.request({
         verb: HttpVerb.Get,
         url: featuresUrl,
-        fallbackErrorMessage: messages.API_MESSAGE_FAILED_OFFLINE_FEATURES,
+        fallbackErrorMessage: API_MESSAGE_FAILED_OFFLINE_FEATURES,
         customHeaders: [{ key: 'x-offline-token', value: extensionKey }],
       })
 
@@ -702,7 +705,7 @@ export class SNApiService
     return await this.tokenRefreshableRequest<Responses.ListedRegistrationResponse>({
       verb: HttpVerb.Post,
       url: joinPaths(this.host, Paths.v1.listedRegistration(this.user.uuid)),
-      fallbackErrorMessage: messages.API_MESSAGE_FAILED_LISTED_REGISTRATION,
+      fallbackErrorMessage: API_MESSAGE_FAILED_LISTED_REGISTRATION,
       authentication: this.session?.authorizationValue,
     })
   }
@@ -723,7 +726,7 @@ export class SNApiService
       verb: HttpVerb.Post,
       url: url,
       authentication: this.session?.authorizationValue,
-      fallbackErrorMessage: messages.API_MESSAGE_FAILED_CREATE_FILE_TOKEN,
+      fallbackErrorMessage: API_MESSAGE_FAILED_CREATE_FILE_TOKEN,
       params,
     })
 
@@ -856,7 +859,7 @@ export class SNApiService
       params: {
         integrityPayloads,
       },
-      fallbackErrorMessage: messages.API_MESSAGE_GENERIC_INTEGRITY_CHECK_FAIL,
+      fallbackErrorMessage: API_MESSAGE_GENERIC_INTEGRITY_CHECK_FAIL,
       authentication: this.session?.authorizationValue,
     })
   }
@@ -865,17 +868,17 @@ export class SNApiService
     return await this.tokenRefreshableRequest<Responses.GetSingleItemResponse>({
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.getSingleItem(itemUuid)),
-      fallbackErrorMessage: messages.API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
+      fallbackErrorMessage: API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
       authentication: this.session?.authorizationValue,
     })
   }
 
   private preprocessingError() {
     if (this.refreshingSession) {
-      return this.createErrorResponse(messages.API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS)
+      return this.createErrorResponse(API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS)
     }
     if (!this.session) {
-      return this.createErrorResponse(messages.API_MESSAGE_INVALID_SESSION)
+      return this.createErrorResponse(API_MESSAGE_INVALID_SESSION)
     }
     return undefined
   }

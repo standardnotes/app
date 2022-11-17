@@ -1,30 +1,30 @@
-import { FileItem, FileViewController, NoteViewController } from '@standardnotes/snjs'
-import { PureComponent } from '@/Components/Abstract/PureComponent'
+import { FileItem } from '@standardnotes/snjs'
+import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import { WebApplication } from '@/Application/Application'
 import MultipleSelectedNotes from '@/Components/MultipleSelectedNotes/MultipleSelectedNotes'
-import NoteView from '@/Components/NoteView/NoteView'
 import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFiles'
 import { ElementIds } from '@/Constants/ElementIDs'
-import FileView from '@/Components/FileView/FileView'
-import { FileDnDContext } from '@/Components/FileDragNDropProvider/FileDragNDropProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
+import FileView from '../FileView/FileView'
+import NoteView from '../NoteView/NoteView'
+import { NoteViewController } from '../NoteView/Controller/NoteViewController'
+import { FileViewController } from '../NoteView/Controller/FileViewController'
 
 type State = {
   showMultipleSelectedNotes: boolean
   showMultipleSelectedFiles: boolean
   controllers: (NoteViewController | FileViewController)[]
   selectedFile: FileItem | undefined
+  selectedPane?: AppPaneId
+  isInMobileView?: boolean
 }
 
 type Props = {
   application: WebApplication
 }
 
-class NoteGroupView extends PureComponent<Props, State> {
-  static override contextType = FileDnDContext
-  declare context: React.ContextType<typeof FileDnDContext>
-
+class NoteGroupView extends AbstractComponent<Props, State> {
   private removeChangeObserver!: () => void
 
   constructor(props: Props) {
@@ -73,6 +73,15 @@ class NoteGroupView extends PureComponent<Props, State> {
         })
       }
     })
+
+    this.autorun(() => {
+      if (this.viewControllerManager && this.viewControllerManager.paneController) {
+        this.setState({
+          selectedPane: this.viewControllerManager.paneController.currentPane,
+          isInMobileView: this.viewControllerManager.paneController.isInMobileView,
+        })
+      }
+    })
   }
 
   override deinit() {
@@ -83,27 +92,23 @@ class NoteGroupView extends PureComponent<Props, State> {
   }
 
   override render() {
-    const fileDragNDropContext = this.context
-
     const shouldNotShowMultipleSelectedItems =
       !this.state.showMultipleSelectedNotes && !this.state.showMultipleSelectedFiles
 
+    const hasControllers = this.state.controllers.length > 0
+
+    const canRenderEditorView = this.state.selectedPane === AppPaneId.Editor || !this.state.isInMobileView
+
     return (
-      <div
-        id={ElementIds.EditorColumn}
-        className="app-column app-column-third flex min-h-screen flex-col pt-safe-top md:h-full md:min-h-0"
-      >
+      <div id={ElementIds.EditorColumn} className="app-column app-column-third flex h-full flex-col pt-safe-top">
         <ResponsivePaneContent paneId={AppPaneId.Editor} className="flex-grow">
           {this.state.showMultipleSelectedNotes && (
             <MultipleSelectedNotes
               application={this.application}
-              filesController={this.viewControllerManager.filesController}
               selectionController={this.viewControllerManager.selectionController}
-              featuresController={this.viewControllerManager.featuresController}
-              filePreviewModalController={this.viewControllerManager.filePreviewModalController}
               navigationController={this.viewControllerManager.navigationController}
               notesController={this.viewControllerManager.notesController}
-              noteTagsController={this.viewControllerManager.noteTagsController}
+              linkingController={this.viewControllerManager.linkingController}
               historyModalController={this.viewControllerManager.historyModalController}
             />
           )}
@@ -113,12 +118,7 @@ class NoteGroupView extends PureComponent<Props, State> {
               selectionController={this.viewControllerManager.selectionController}
             />
           )}
-          {this.viewControllerManager.navigationController.isInFilesView && fileDragNDropContext?.isDraggingFiles && (
-            <div className="absolute bottom-8 left-1/2 z-dropdown-menu -translate-x-1/2 rounded bg-info px-5 py-3 text-info-contrast shadow-main">
-              Drop your files to upload them
-            </div>
-          )}
-          {shouldNotShowMultipleSelectedItems && this.state.controllers.length > 0 && (
+          {shouldNotShowMultipleSelectedItems && hasControllers && canRenderEditorView && (
             <>
               {this.state.controllers.map((controller) => {
                 return controller instanceof NoteViewController ? (

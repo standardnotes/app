@@ -6,6 +6,7 @@ import {
   AbstractService,
   ChallengeServiceInterface,
   InternalEventBusInterface,
+  Challenge,
   ChallengeArtifacts,
   ChallengeReason,
   ChallengeValidation,
@@ -17,7 +18,6 @@ import {
 } from '@standardnotes/services'
 import { ChallengeResponse } from './ChallengeResponse'
 import { ChallengeOperation } from './ChallengeOperation'
-import { Challenge } from './Challenge'
 
 type ChallengeValidationResponse = {
   valid: boolean

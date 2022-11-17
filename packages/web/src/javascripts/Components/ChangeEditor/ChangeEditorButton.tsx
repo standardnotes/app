@@ -2,10 +2,10 @@ import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'
-import Icon from '@/Components/Icon/Icon'
 import ChangeEditorMenu from './ChangeEditorMenu'
 import Popover from '../Popover/Popover'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import RoundIconButton from '../Button/RoundIconButton'
+import { getIconAndTintForNoteType } from '@/Utils/Items/Icons/getIconAndTintForNoteType'
 
 type Props = {
   application: WebApplication
@@ -25,9 +25,8 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
   const [selectedEditor, setSelectedEditor] = useState(() => {
     return note ? application.componentManager.editorForNote(note) : undefined
   })
-  const [selectedEditorIcon, selectedEditorIconTint] = application.iconsController.getIconAndTintForNoteType(
-    selectedEditor?.package_info.note_type,
-  )
+  const [selectedEditorIcon, selectedEditorIconTint] = getIconAndTintForNoteType(selectedEditor?.package_info.note_type)
+  const [isClickOutsideDisabled, setIsClickOutsideDisabled] = useState(false)
 
   const toggleMenu = useCallback(async () => {
     const willMenuOpen = !isOpen
@@ -37,25 +36,31 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
     setIsOpen(willMenuOpen)
   }, [onClickPreprocessing, isOpen])
 
+  const disableClickOutside = useCallback(() => {
+    setIsClickOutsideDisabled(true)
+  }, [])
+
   return (
     <div ref={containerRef}>
-      <button
-        className={classNames(
-          'bg-text-padding flex h-8 min-w-8 cursor-pointer items-center justify-center rounded-full border border-solid text-neutral hover:bg-contrast focus:bg-contrast',
-          `border-accessory-tint-${selectedEditorIconTint}`,
-        )}
-        title="Change note type"
-        aria-label="Change note type"
+      <RoundIconButton
+        label="Change note type"
         onClick={toggleMenu}
         ref={buttonRef}
+        icon={selectedEditorIcon}
+        iconClassName={`text-accessory-tint-${selectedEditorIconTint}`}
+      />
+      <Popover
+        togglePopover={toggleMenu}
+        disableClickOutside={isClickOutsideDisabled}
+        anchorElement={buttonRef.current}
+        open={isOpen}
+        className="pt-2 md:pt-0"
       >
-        <Icon type={selectedEditorIcon} className={`text-accessory-tint-${selectedEditorIconTint}`} />
-      </button>
-      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="pt-2 md:pt-0">
         <ChangeEditorMenu
           application={application}
           isVisible={isOpen}
           note={note}
+          handleDisableClickoutsideRequest={disableClickOutside}
           closeMenu={() => {
             setIsOpen(false)
           }}

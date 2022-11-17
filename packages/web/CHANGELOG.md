@@ -3,6 +3,761 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.100.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.100.6...@standardnotes/web@3.100.7) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.100.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.100.5...@standardnotes/web@3.100.6) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.100.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.100.4...@standardnotes/web@3.100.5) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.100.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.100.3...@standardnotes/web@3.100.4) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.100.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.100.2...@standardnotes/web@3.100.3) (2022-11-16)
+
+### Bug Fixes
+
+* **mobile:** super editor autocomplete dropdowns ([#2019](https://github.com/standardnotes/app/issues/2019)) ([d21f3ba](https://github.com/standardnotes/app/commit/d21f3ba6f360b4b4fc8122f310444af8a0089cec))
+
+## [3.100.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.100.1...@standardnotes/web@3.100.2) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.100.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.100.0...@standardnotes/web@3.100.1) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.100.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.99.0...@standardnotes/web@3.100.0) (2022-11-16)
+
+### Features
+
+* edit smart view predicate as json ([#2012](https://github.com/standardnotes/app/issues/2012)) ([f3e4ba8](https://github.com/standardnotes/app/commit/f3e4ba87795b82cbd96663b441f87ab80f710d05))
+
+# [3.99.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.98.2...@standardnotes/web@3.99.0) (2022-11-16)
+
+### Features
+
+* **labs:** super editor ([#2001](https://github.com/standardnotes/app/issues/2001)) ([59f8547](https://github.com/standardnotes/app/commit/59f8547a8de1c804cb2f01ac734c83268977fa28))
+
+## [3.98.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.98.1...@standardnotes/web@3.98.2) (2022-11-16)
+
+### Bug Fixes
+
+* **web:** remove checking for MFA permissions as all users are permitted to MFA ([ea40427](https://github.com/standardnotes/app/commit/ea40427e6715ba75193430fd7d3044e3c960d6ae))
+
+## [3.98.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.98.0...@standardnotes/web@3.98.1) (2022-11-15)
+
+### Bug Fixes
+
+* **mobile:** show premium modal on iOS ([e962e9c](https://github.com/standardnotes/app/commit/e962e9c7457115100aba0f5d34c949ab2d8b0e23))
+
+# [3.98.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.97.0...@standardnotes/web@3.98.0) (2022-11-15)
+
+### Features
+
+* add smart view with custom json ([#2000](https://github.com/standardnotes/app/issues/2000)) ([68991ab](https://github.com/standardnotes/app/commit/68991abba7a2b32047ec7cc6402c3a8b5cc6ec52))
+
+# [3.97.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.96.1...@standardnotes/web@3.97.0) (2022-11-14)
+
+### Bug Fixes
+
+* **mobile:** iOS IAP related adjustments ([1c23bc1](https://github.com/standardnotes/app/commit/1c23bc1747a6701b56c54abea7c6d0a6e373d4ae))
+
+### Features
+
+* GUI to create smart views ([#1997](https://github.com/standardnotes/app/issues/1997)) ([f656185](https://github.com/standardnotes/app/commit/f656185c167b3306d408dc486970836efa1d70c5))
+
+## [3.96.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.96.0...@standardnotes/web@3.96.1) (2022-11-13)
+
+### Bug Fixes
+
+* show files option in linking menu even if not entitled ([f42657f](https://github.com/standardnotes/app/commit/f42657fa9e01b3b8a4ca555ea5c06236503b40a4))
+
+# [3.96.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.95.1...@standardnotes/web@3.96.0) (2022-11-13)
+
+### Features
+
+* iap ([#1996](https://github.com/standardnotes/app/issues/1996)) ([d519aca](https://github.com/standardnotes/app/commit/d519aca685b32f4b6f7079ba9562ecaf1a18aecb))
+
+## [3.95.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.95.0...@standardnotes/web@3.95.1) (2022-11-11)
+
+### Bug Fixes
+
+* super improvements ([#1995](https://github.com/standardnotes/app/issues/1995)) ([da6f36f](https://github.com/standardnotes/app/commit/da6f36f34cdee324339d2c923d61191b373513f3))
+
+# [3.95.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.94.2...@standardnotes/web@3.95.0) (2022-11-11)
+
+### Features
+
+* **dev:** insert current date and time command in super note ([#1994](https://github.com/standardnotes/app/issues/1994)) ([e27ac31](https://github.com/standardnotes/app/commit/e27ac3126ee4fec9e81df8722b6326ba6f38fe5e))
+
+## [3.94.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.94.1...@standardnotes/web@3.94.2) (2022-11-10)
+
+### Bug Fixes
+
+* super note improvements ([#1991](https://github.com/standardnotes/app/issues/1991)) ([2dbc895](https://github.com/standardnotes/app/commit/2dbc89594ea2759c49bc318d5efd2b3a5ef3b22d))
+
+## [3.94.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.94.0...@standardnotes/web@3.94.1) (2022-11-10)
+
+### Bug Fixes
+
+* iframe classname ([93b6616](https://github.com/standardnotes/app/commit/93b6616b7814a0cef22a50d372a3416c0953ace2))
+
+# [3.94.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.19...@standardnotes/web@3.94.0) (2022-11-09)
+
+### Features
+
+* file drop handling for super notes ([#1990](https://github.com/standardnotes/app/issues/1990)) ([fdf9ab0](https://github.com/standardnotes/app/commit/fdf9ab0fcb07a5a832f136857f0ccd7e01bab1d7))
+
+## [3.93.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.18...@standardnotes/web@3.93.19) (2022-11-09)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.93.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.17...@standardnotes/web@3.93.18) (2022-11-09)
+
+### Reverts
+
+* Revert "refactor: include themes in components folder" ([3690104](https://github.com/standardnotes/app/commit/3690104934b444ca99eed86c1a41b22a3582811a))
+
+## [3.93.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.16...@standardnotes/web@3.93.17) (2022-11-09)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.93.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.15...@standardnotes/web@3.93.16) (2022-11-09)
+
+### Bug Fixes
+
+* editor height ([73ff1c3](https://github.com/standardnotes/app/commit/73ff1c35ab4779137d3f222c41c497eb728a53ce))
+
+## [3.93.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.14...@standardnotes/web@3.93.15) (2022-11-09)
+
+### Bug Fixes
+
+* links & new note ([e9e5a20](https://github.com/standardnotes/app/commit/e9e5a20afa935e1f6b096cee22c7105ae421b37c))
+
+## [3.93.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.13...@standardnotes/web@3.93.14) (2022-11-08)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.93.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.12...@standardnotes/web@3.93.13) (2022-11-07)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.93.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.11...@standardnotes/web@3.93.12) (2022-11-07)
+
+### Bug Fixes
+
+* mobx out of bounds read warning ([34b3f67](https://github.com/standardnotes/app/commit/34b3f67b2a4521783063d31f1b3aa1bee1bb91ea))
+
+## [3.93.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.10...@standardnotes/web@3.93.11) (2022-11-06)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.93.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.9...@standardnotes/web@3.93.10) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.93.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.8...@standardnotes/web@3.93.9) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.93.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.7...@standardnotes/web@3.93.8) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.93.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.6...@standardnotes/web@3.93.7) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.93.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.5...@standardnotes/web@3.93.6) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.93.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.4...@standardnotes/web@3.93.5) (2022-11-03)
+
+### Bug Fixes
+
+* padding on files view on mobile ([#1934](https://github.com/standardnotes/app/issues/1934)) ([633d618](https://github.com/standardnotes/app/commit/633d6189fbbd2a470a74f8bfd352e8b3e7af684c))
+
+## [3.93.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.3...@standardnotes/web@3.93.4) (2022-11-03)
+
+### Bug Fixes
+
+* archived/trashed items getting unselected when changed ([#1932](https://github.com/standardnotes/app/issues/1932)) ([2dd0586](https://github.com/standardnotes/app/commit/2dd0586bb16cb29c7c2a538e82aca48f247910e6))
+
+## [3.93.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.2...@standardnotes/web@3.93.3) (2022-11-03)
+
+### Bug Fixes
+
+* unable to add children to favorited tag; remove expand-on-click; render arrow before title ([#1931](https://github.com/standardnotes/app/issues/1931)) ([5bb4435](https://github.com/standardnotes/app/commit/5bb4435c5b10de6e0fcb580472e028f76cd2a5bd))
+
+## [3.93.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.1...@standardnotes/web@3.93.2) (2022-11-03)
+
+### Bug Fixes
+
+* "No modifications allowed" error on file drag in Firefox ([de4adca](https://github.com/standardnotes/app/commit/de4adca059b169e75267c8a29012e9988a607bc2))
+* files list not updating when new file is uploaded ([4036113](https://github.com/standardnotes/app/commit/40361132063e70e9851baf01eb772a0b3ff0aa1c))
+
+## [3.93.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.93.0...@standardnotes/web@3.93.1) (2022-11-03)
+
+### Bug Fixes
+
+* correctly refresh cta banner ([305ffdf](https://github.com/standardnotes/app/commit/305ffdf9847cfe67e2d022f84c1e2443b4bc2c76))
+* purchase flow close on complete ([c4dbc5c](https://github.com/standardnotes/app/commit/c4dbc5cbd2147b695403e6f57254a97d42337965))
+
+# [3.93.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.92.0...@standardnotes/web@3.93.0) (2022-11-03)
+
+### Features
+
+* add sending user requests from UI ([#1927](https://github.com/standardnotes/app/issues/1927)) ([7ead0f6](https://github.com/standardnotes/app/commit/7ead0f655bb2572e5805dd26c297d520949d661a))
+
+# [3.92.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.91.1...@standardnotes/web@3.92.0) (2022-11-02)
+
+### Features
+
+* prioritize loading latest selected items ([#1930](https://github.com/standardnotes/app/issues/1930)) ([a6ef658](https://github.com/standardnotes/app/commit/a6ef658daef9a01f5ddacc967fe30d22f580799a))
+
+## [3.91.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.91.0...@standardnotes/web@3.91.1) (2022-11-02)
+
+### Bug Fixes
+
+* hide subscription marketing on iOS ([#1929](https://github.com/standardnotes/app/issues/1929)) ([35b21b2](https://github.com/standardnotes/app/commit/35b21b21ce2438540d799b5a2f04fe5616bf2c3e))
+
+# [3.91.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.11...@standardnotes/web@3.91.0) (2022-11-02)
+
+### Features
+
+* dedicated files layout ([#1928](https://github.com/standardnotes/app/issues/1928)) ([dd821c9](https://github.com/standardnotes/app/commit/dd821c95e61c8cd82317ad9fb3788daff7241942))
+
+## [3.90.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.10...@standardnotes/web@3.90.11) (2022-11-02)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.90.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.9...@standardnotes/web@3.90.10) (2022-11-01)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.90.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.8...@standardnotes/web@3.90.9) (2022-11-01)
+
+### Bug Fixes
+
+* **mobile:** increase font sizes and other mobile-centric improvements ([#1907](https://github.com/standardnotes/app/issues/1907)) ([994f824](https://github.com/standardnotes/app/commit/994f824757e1143a4547c975b154fd84e3ebeedf))
+
+## [3.90.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.7...@standardnotes/web@3.90.8) (2022-10-31)
+
+### Bug Fixes
+
+* **web:** support for older browsers like Safari 11 on iOS 13.7 ([fef1bdf](https://github.com/standardnotes/app/commit/fef1bdf7999df8e08240336fbdc94d9e98c167a7))
+
+## [3.90.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.6...@standardnotes/web@3.90.7) (2022-10-31)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.90.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.5...@standardnotes/web@3.90.6) (2022-10-30)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.90.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.4...@standardnotes/web@3.90.5) (2022-10-30)
+
+### Performance Improvements
+
+* avoid uneccessary notes list item rerenders ([#1904](https://github.com/standardnotes/app/issues/1904)) ([89927a3](https://github.com/standardnotes/app/commit/89927a37908fc9e84b981f1cba7c9abd37039c8b))
+
+## [3.90.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.3...@standardnotes/web@3.90.4) (2022-10-29)
+
+### Bug Fixes
+
+* **mobile:** note view hide bar options on editor focus ([#1903](https://github.com/standardnotes/app/issues/1903)) ([88017ce](https://github.com/standardnotes/app/commit/88017ce3d9c84f0383e147179d88c0fcb6538331))
+
+## [3.90.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.2...@standardnotes/web@3.90.3) (2022-10-28)
+
+### Bug Fixes
+
+* color scheme handling on mobile ([#1902](https://github.com/standardnotes/app/issues/1902)) ([6071ebf](https://github.com/standardnotes/app/commit/6071ebffeb55c78eac79f39aecca07f6ebdbed93))
+
+## [3.90.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.1...@standardnotes/web@3.90.2) (2022-10-28)
+
+### Bug Fixes
+
+* boolean ([5058aae](https://github.com/standardnotes/app/commit/5058aaee3395ee2760ae4de72378db1de286a2bb))
+
+## [3.90.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.90.0...@standardnotes/web@3.90.1) (2022-10-28)
+
+### Bug Fixes
+
+* only auto-toggle biometrics prompt if user hasn't interacted ([02ad461](https://github.com/standardnotes/app/commit/02ad46147dbb05543edb7bf9a4b95d7fa61ae713))
+* privacy overlay on iOS ([5bb923c](https://github.com/standardnotes/app/commit/5bb923cff3b595a0c78d16098e66006073ff2a59))
+* screenshot privacy setting not working on app relaunch ([#1900](https://github.com/standardnotes/app/issues/1900)) ([5a6f4fb](https://github.com/standardnotes/app/commit/5a6f4fb35c2e70a463e04ce5f71bde55bba4bb30))
+
+# [3.90.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.89.0...@standardnotes/web@3.90.0) (2022-10-27)
+
+### Features
+
+* daily notes (dev only) ([#1894](https://github.com/standardnotes/app/issues/1894)) ([69c3f2b](https://github.com/standardnotes/app/commit/69c3f2be837152a1f937559327021c2128234c69))
+
+# [3.89.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.88.1...@standardnotes/web@3.89.0) (2022-10-26)
+
+### Features
+
+* auto-activate biometrics prompt when mobile regains focus ([#1891](https://github.com/standardnotes/app/issues/1891)) ([3bd1ad3](https://github.com/standardnotes/app/commit/3bd1ad38ad05ba6ea0e99911693ed7b25e2f8380))
+
+## [3.88.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.88.0...@standardnotes/web@3.88.1) (2022-10-26)
+
+### Bug Fixes
+
+* **web:** issue with hide pinned and hide protected not having effect ([55296dc](https://github.com/standardnotes/app/commit/55296dcc77aeabc53673407fb2fe9be76bc41e52))
+
+# [3.88.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.87.2...@standardnotes/web@3.88.0) (2022-10-25)
+
+### Features
+
+* add "Upload and link file" button to linking panel ([f48c3f9](https://github.com/standardnotes/app/commit/f48c3f958252283d000300fc38932cc5efca243c))
+
+## [3.87.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.87.1...@standardnotes/web@3.87.2) (2022-10-25)
+
+### Bug Fixes
+
+* on mobile open links from editor in external browser ([#1860](https://github.com/standardnotes/app/issues/1860)) ([d9db73e](https://github.com/standardnotes/app/commit/d9db73ea056e2e6e2bde8e0c1de4a7090984ae9a))
+
+## [3.87.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.87.0...@standardnotes/web@3.87.1) (2022-10-25)
+
+### Bug Fixes
+
+* item linking search results ([#1869](https://github.com/standardnotes/app/issues/1869)) ([b7c5020](https://github.com/standardnotes/app/commit/b7c502038fe0afc05b983ff3f58af0d6f9a10540))
+
+# [3.87.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.86.0...@standardnotes/web@3.87.0) (2022-10-25)
+
+### Features
+
+* per-tag display preferences ([#1868](https://github.com/standardnotes/app/issues/1868)) ([ee7f11c](https://github.com/standardnotes/app/commit/ee7f11c933285234b20fa2d5db4fcf0d6a5dce9d))
+
+# [3.86.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.85.2...@standardnotes/web@3.86.0) (2022-10-24)
+
+### Features
+
+* add preference on android to not confirm when exiting ([#1870](https://github.com/standardnotes/app/issues/1870)) ([28ef905](https://github.com/standardnotes/app/commit/28ef9054fad5236bc9f1fc87768d3c17059da4fb))
+
+## [3.85.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.85.1...@standardnotes/web@3.85.2) (2022-10-24)
+
+### Bug Fixes
+
+* navigation button not showing up on iPad ([5eb5634](https://github.com/standardnotes/app/commit/5eb56345419dec8bcfcef45c381eb3e3b958d99b))
+
+## [3.85.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.85.0...@standardnotes/web@3.85.1) (2022-10-24)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.85.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.7...@standardnotes/web@3.85.0) (2022-10-24)
+
+### Bug Fixes
+
+* lint ([c3212b0](https://github.com/standardnotes/app/commit/c3212b019e93a4684c7914b02fb94b239e99c7ff))
+
+### Features
+
+* **web:** add accepting subscription invites from UI ([0c44ad6](https://github.com/standardnotes/app/commit/0c44ad6c8eace6d5fe957fa75c205c66c5f590b4))
+
+## [3.84.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.6...@standardnotes/web@3.84.7) (2022-10-24)
+
+### Bug Fixes
+
+* dont show item list "hover" indicator on mobile ([4181d7f](https://github.com/standardnotes/app/commit/4181d7ff2c6ff76bfd2eeaea5fa770d04062fb7c))
+
+## [3.84.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.5...@standardnotes/web@3.84.6) (2022-10-23)
+
+### Bug Fixes
+
+* listed menu closing when clicking inside challenge modal ([#1863](https://github.com/standardnotes/app/issues/1863)) ([bb63cbe](https://github.com/standardnotes/app/commit/bb63cbe2d15dd47d62a2cc34f824ed4bec6091de))
+* **web:** emoji length computation ([#1864](https://github.com/standardnotes/app/issues/1864)) ([bda16b8](https://github.com/standardnotes/app/commit/bda16b88c0708bb28f2b7da2fdf4cad2af1936d5))
+
+## [3.84.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.4...@standardnotes/web@3.84.5) (2022-10-23)
+
+### Bug Fixes
+
+* note option changes not updating correctly ([#1862](https://github.com/standardnotes/app/issues/1862)) ([9a509a7](https://github.com/standardnotes/app/commit/9a509a79c0e226b561d6606bf96907086326ae8f))
+
+## [3.84.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.3...@standardnotes/web@3.84.4) (2022-10-23)
+
+### Bug Fixes
+
+* new note button on mobile when no account ([47b3286](https://github.com/standardnotes/app/commit/47b3286235da7b5f63aef5fbe0d8c9b34d1f4558))
+
+## [3.84.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.2...@standardnotes/web@3.84.3) (2022-10-23)
+
+### Bug Fixes
+
+* link autocomplete input keyboard navigation ([#1859](https://github.com/standardnotes/app/issues/1859)) ([b98f5e2](https://github.com/standardnotes/app/commit/b98f5e2d02d77b65e9e7a08b73fb8d22a467f7ec))
+
+## [3.84.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.1...@standardnotes/web@3.84.2) (2022-10-22)
+
+### Bug Fixes
+
+* hide items list button on desktop ([fc6c6ba](https://github.com/standardnotes/app/commit/fc6c6bad2ca0e8ec8b7e1410a6a88713ec7e6ec3))
+
+## [3.84.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.84.0...@standardnotes/web@3.84.1) (2022-10-21)
+
+### Bug Fixes
+
+* new tag creation ([e63b4f0](https://github.com/standardnotes/app/commit/e63b4f0592ed32ecd3cdb01e84c9ca47d61fe243))
+
+# [3.84.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.83.0...@standardnotes/web@3.84.0) (2022-10-21)
+
+### Features
+
+* ability to favorite tags + customize icon ([#1858](https://github.com/standardnotes/app/issues/1858)) ([cbd0063](https://github.com/standardnotes/app/commit/cbd0063926a416c23225242a4a1796712b6b224e))
+
+# [3.83.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.6...@standardnotes/web@3.83.0) (2022-10-21)
+
+### Features
+
+* "create new note" floating button on mobile ([#1857](https://github.com/standardnotes/app/issues/1857)) ([21f725b](https://github.com/standardnotes/app/commit/21f725bb2a8d7d9be3f879cc078dd0f8134c2365))
+
+## [3.82.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.5...@standardnotes/web@3.82.6) (2022-10-21)
+
+### Bug Fixes
+
+* refactor application event observing on web ([9fb85cd](https://github.com/standardnotes/app/commit/9fb85cd77a627364738a9c21706431d2a01e9c44))
+* **web:** event observer interface import ([c503d78](https://github.com/standardnotes/app/commit/c503d781aefcc1a15d3a8da1ee09294d176e4b89))
+
+## [3.82.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.4...@standardnotes/web@3.82.5) (2022-10-21)
+
+### Bug Fixes
+
+* item selection/unselection on deleting ([4a1612c](https://github.com/standardnotes/app/commit/4a1612c7dc8ba2af0d28ac71d5dfcdf059cd5ea0))
+* template note getting unselected after typing ([d3ed439](https://github.com/standardnotes/app/commit/d3ed4391b7f6b77ced485884a97190449a1b5507))
+
+## [3.82.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.3...@standardnotes/web@3.82.4) (2022-10-21)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.82.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.2...@standardnotes/web@3.82.3) (2022-10-21)
+
+### Bug Fixes
+
+* default auto-dark theme ([1addaf4](https://github.com/standardnotes/app/commit/1addaf4c3941364f695545669158f09f4c012dea))
+* tag collapse/expand not persisting ([c6e3580](https://github.com/standardnotes/app/commit/c6e3580678dbed6562041ce5afed47563276843a))
+
+## [3.82.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.1...@standardnotes/web@3.82.2) (2022-10-21)
+
+### Bug Fixes
+
+* improve plaintext editor performance on mobile ([#1855](https://github.com/standardnotes/app/issues/1855)) ([f71e6fe](https://github.com/standardnotes/app/commit/f71e6fe70397cf9ab2c109cad52780088337fc47))
+
+## [3.82.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.82.0...@standardnotes/web@3.82.1) (2022-10-20)
+
+### Reverts
+
+* Revert "feat: ability to favorite tags (#1852)" ([5d202a8](https://github.com/standardnotes/app/commit/5d202a823e2a89c5e6fe7e07306957f2b2ea68b1)), closes [#1852](https://github.com/standardnotes/app/issues/1852)
+
+# [3.82.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.81.0...@standardnotes/web@3.82.0) (2022-10-20)
+
+### Bug Fixes
+
+* mobx warnings and react render phase set state error ([76f23e1](https://github.com/standardnotes/app/commit/76f23e13ecc8795b4e6cbbb37c32db262c0084c2))
+
+### Features
+
+* ability to favorite tags ([#1852](https://github.com/standardnotes/app/issues/1852)) ([4f3b258](https://github.com/standardnotes/app/commit/4f3b258363ded1a340bd1a7702da7cfd6415b954))
+
+# [3.81.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.80.1...@standardnotes/web@3.81.0) (2022-10-20)
+
+### Features
+
+* persist selected tag & note locally ([#1851](https://github.com/standardnotes/app/issues/1851)) ([4432f1c](https://github.com/standardnotes/app/commit/4432f1cb4cfc2042ddfb7bd574d53270626ebe0d))
+
+## [3.80.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.80.0...@standardnotes/web@3.80.1) (2022-10-20)
+
+### Bug Fixes
+
+* "Forgot passcode" and "Switch workspace" lock screen options not working on mobile ([#1850](https://github.com/standardnotes/app/issues/1850)) ([57fab4f](https://github.com/standardnotes/app/commit/57fab4f670faeaa0018d9d1a678e50d1e90052aa))
+
+# [3.80.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.79.0...@standardnotes/web@3.80.0) (2022-10-20)
+
+### Bug Fixes
+
+* file not linking to note when uploaded by dragging on note ([d333d4f](https://github.com/standardnotes/app/commit/d333d4f1887672b526a5d8fc659e6dd2b1b12e21))
+* help & feedback links on mobile ([#1849](https://github.com/standardnotes/app/issues/1849)) ([fb72c2f](https://github.com/standardnotes/app/commit/fb72c2fdae277cb4e348ce5ee550f0545f281dcd))
+* links for template notes ([60a8e8b](https://github.com/standardnotes/app/commit/60a8e8b92b1e5c0f4c4c007591aa115fce51930b))
+* make tags non-tabbable ([a8535cf](https://github.com/standardnotes/app/commit/a8535cfa2380a4ddd648d5d099701c0b5e8f3a22))
+* remove tinted border from change note type button ([27bb4eb](https://github.com/standardnotes/app/commit/27bb4ebdae259718c0e13134c2ffdce7c681f0da))
+
+### Features
+
+* make sans-serif font default ([050fa9c](https://github.com/standardnotes/app/commit/050fa9cabca65bba4845fc9b315c81ce524e8b0d))
+
+# [3.79.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.78.1...@standardnotes/web@3.79.0) (2022-10-19)
+
+### Features
+
+* improved file drag-n-drop experience ([#1848](https://github.com/standardnotes/app/issues/1848)) ([e99c7b7](https://github.com/standardnotes/app/commit/e99c7b7c516b0c822f0e663843146c7f5cf1fb86))
+
+## [3.78.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.78.0...@standardnotes/web@3.78.1) (2022-10-19)
+
+### Bug Fixes
+
+* issue with not being able to unlink a file from a note ([#1836](https://github.com/standardnotes/app/issues/1836)) ([4030953](https://github.com/standardnotes/app/commit/4030953b00ad609dc2b0f5b66cfd971d449f6121))
+
+# [3.78.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.77.1...@standardnotes/web@3.78.0) (2022-10-18)
+
+### Bug Fixes
+
+* context menu opening when swiping up from bottom on iOS ([5ffd37d](https://github.com/standardnotes/app/commit/5ffd37d4478aec638392962f45d3a4428a8da86a))
+* editor width on mobile ([361f773](https://github.com/standardnotes/app/commit/361f773f2c3c65255e0d5cc8d991fac0f4521fff))
+* hide dynamic panels & focused mode options on mobile ([e4de9c1](https://github.com/standardnotes/app/commit/e4de9c1be76c758f36e5068a8395bb3abd19069a))
+* use mobx action for setting state ([eec7ae1](https://github.com/standardnotes/app/commit/eec7ae1589f7eae36ba810942911ccb3b8d863ee))
+
+### Features
+
+* authorize notes for listed ([#1823](https://github.com/standardnotes/app/issues/1823)) ([9954bdc](https://github.com/standardnotes/app/commit/9954bdc29f9de2a42c4539d55749991d86a72943))
+
+## [3.77.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.77.0...@standardnotes/web@3.77.1) (2022-10-18)
+
+### Bug Fixes
+
+* remove switch to classic mx option ([e40cd15](https://github.com/standardnotes/app/commit/e40cd157b6d1683cf9eb9548714c604649134971))
+
+# [3.77.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.76.2...@standardnotes/web@3.77.0) (2022-10-17)
+
+### Features
+
+* starred notes ([#1813](https://github.com/standardnotes/app/issues/1813)) ([d52fdae](https://github.com/standardnotes/app/commit/d52fdae0b359b4768855ae030ac13d1c16f2312a))
+
+## [3.76.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.76.1...@standardnotes/web@3.76.2) (2022-10-17)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.76.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.76.0...@standardnotes/web@3.76.1) (2022-10-14)
+
+### Bug Fixes
+
+* don't render editor view on mobile if editor pane not selected ([#1790](https://github.com/standardnotes/app/issues/1790)) ([d0c413c](https://github.com/standardnotes/app/commit/d0c413cd150ea835a4cb22aefadd6d9e477b1039))
+
+# [3.76.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.75.1...@standardnotes/web@3.76.0) (2022-10-13)
+
+### Features
+
+* soft biometrics lock ([#1793](https://github.com/standardnotes/app/issues/1793)) ([1a2dde2](https://github.com/standardnotes/app/commit/1a2dde2e0ea406b9818571ab71d38442f9c9fb50))
+
+## [3.75.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.75.0...@standardnotes/web@3.75.1) (2022-10-13)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.75.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.74.0...@standardnotes/web@3.75.0) (2022-10-13)
+
+### Features
+
+* handle basic routes ([#1784](https://github.com/standardnotes/app/issues/1784)) ([3cb016a](https://github.com/standardnotes/app/commit/3cb016ab1f3295ff60f269754d48c7f3b3ef2b91))
+
+# [3.74.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.73.0...@standardnotes/web@3.74.0) (2022-10-13)
+
+### Features
+
+* focus secure text entry after successful biometrics input ([#1785](https://github.com/standardnotes/app/issues/1785)) ([8068fef](https://github.com/standardnotes/app/commit/8068fef4d3b3a31c2cc30f9e5521010e9ba9ca3b))
+
+# [3.73.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.72.4...@standardnotes/web@3.73.0) (2022-10-12)
+
+### Features
+
+* replace private workspaces with private usernames ([#1783](https://github.com/standardnotes/app/issues/1783)) ([18c821d](https://github.com/standardnotes/app/commit/18c821d8eb51beb6f54211eb1d6eb454303044f5))
+
+## [3.72.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.72.3...@standardnotes/web@3.72.4) (2022-10-12)
+
+### Bug Fixes
+
+* bidirectional linking indicator for files ([37abac2](https://github.com/standardnotes/app/commit/37abac2ec2c839b3af9324a83e36cbbc409d86a9))
+
+## [3.72.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.72.2...@standardnotes/web@3.72.3) (2022-10-12)
+
+### Bug Fixes
+
+* css variable fallback ([075d7f4](https://github.com/standardnotes/app/commit/075d7f444da13b380ed675ecfd89823f840e2d56))
+
+## [3.72.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.72.1...@standardnotes/web@3.72.2) (2022-10-12)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.72.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.72.0...@standardnotes/web@3.72.1) (2022-10-11)
+
+### Bug Fixes
+
+* viewport height-related issue on mobile ([9909393](https://github.com/standardnotes/app/commit/990939318f572fe2226784f5ecbd83d5f1709397))
+
+# [3.72.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.71.8...@standardnotes/web@3.72.0) (2022-10-11)
+
+### Features
+
+* item linking ([#1779](https://github.com/standardnotes/app/issues/1779)) ([e3f2842](https://github.com/standardnotes/app/commit/e3f28421ff042c635ad2ae645c102c27e3e3f9c7))
+
+## [3.71.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.71.7...@standardnotes/web@3.71.8) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.71.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.71.6...@standardnotes/web@3.71.7) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.71.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.71.5...@standardnotes/web@3.71.6) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.71.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.71.4...@standardnotes/web@3.71.5) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.71.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.71.3...@standardnotes/web@3.71.4) (2022-10-10)
+
+### Bug Fixes
+
+* dark mode not working in editors ([#1773](https://github.com/standardnotes/app/issues/1773)) ([27d2c95](https://github.com/standardnotes/app/commit/27d2c95b5b82645bf6c0372979f05236c83a10f6))
+
+## [3.71.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.71.2...@standardnotes/web@3.71.3) (2022-10-10)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.71.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.71.1...@standardnotes/web@3.71.2) (2022-10-09)
+
+### Bug Fixes
+
+* move viewport early return above ([6a4b5c5](https://github.com/standardnotes/app/commit/6a4b5c5cdc808c2947e4fe04c5a7e1c3ce7821d0))
+* potential fix for viewport height issue ([#1772](https://github.com/standardnotes/app/issues/1772)) ([cd1669f](https://github.com/standardnotes/app/commit/cd1669f56f510fe44c39f6c6d76ca6c93ee6e5ac))
+
+## [3.71.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.71.0...@standardnotes/web@3.71.1) (2022-10-08)
+
+### Bug Fixes
+
+* open upgrade page in new tab if user has account ([e7ca12b](https://github.com/standardnotes/app/commit/e7ca12babefc4b8867c9dc2c535a9da0d4f62a76))
+
+# [3.71.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.5...@standardnotes/web@3.71.0) (2022-10-07)
+
+### Features
+
+* change quick settings menu layout ([#1770](https://github.com/standardnotes/app/issues/1770)) ([59db63f](https://github.com/standardnotes/app/commit/59db63f05230168b20d6b2db2eaf1a4b99c02f50))
+* open purchase flow when clicking upgrade cta with no account ([#1771](https://github.com/standardnotes/app/issues/1771)) ([734b986](https://github.com/standardnotes/app/commit/734b986294380954c7eb3ceac42d76ef17b27ca1))
+
+## [3.70.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.4...@standardnotes/web@3.70.5) (2022-10-07)
+
+### Bug Fixes
+
+* add fallback for viewport height on mobile ([#1766](https://github.com/standardnotes/app/issues/1766)) ([1e3acd5](https://github.com/standardnotes/app/commit/1e3acd50e941051636ae2c92d143c649913b3c1a))
+
+## [3.70.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.3...@standardnotes/web@3.70.4) (2022-10-07)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.70.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.2...@standardnotes/web@3.70.3) (2022-10-06)
+
+### Bug Fixes
+
+* dark mode toggling ([1377846](https://github.com/standardnotes/app/commit/1377846f3f3a23a405c96b8a733d439947abfefe))
+* **mobile:** reenable bouncing in lists ([c13dd88](https://github.com/standardnotes/app/commit/c13dd883a41d21d46350676f350ac95b5ae5d5a6))
+
+## [3.70.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.1...@standardnotes/web@3.70.2) (2022-10-06)
+
+### Bug Fixes
+
+* increase default editor font size on mobile ([c944eb9](https://github.com/standardnotes/app/commit/c944eb9365e5835494724724d04c7dc3e20b8f61))
+
+## [3.70.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.70.0...@standardnotes/web@3.70.1) (2022-10-06)
+
+### Bug Fixes
+
+* add fallback for initial window size ([#1749](https://github.com/standardnotes/app/issues/1749)) ([05aff27](https://github.com/standardnotes/app/commit/05aff2776ba84f2988ebc7b3fca5ab9a18a58430))
+
+# [3.70.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.69.1...@standardnotes/web@3.70.0) (2022-10-05)
+
+### Bug Fixes
+
+* **mobile:** passcode timing options ([#1744](https://github.com/standardnotes/app/issues/1744)) ([6c26b96](https://github.com/standardnotes/app/commit/6c26b96cdce0d69a4a459104709880850a401a92))
+
+### Features
+
+* add free dark mode ([#1748](https://github.com/standardnotes/app/issues/1748)) ([09b994f](https://github.com/standardnotes/app/commit/09b994f8f938ae0536f42742f7a221df536c4c4a))
+
+## [3.69.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.69.0...@standardnotes/web@3.69.1) (2022-10-05)
+
+### Bug Fixes
+
+* prevent overflow bouncing on desktop and mobile ([#1743](https://github.com/standardnotes/app/issues/1743)) ([6bd5534](https://github.com/standardnotes/app/commit/6bd5534f749a35b5ddc35cb09115358ce9ee4115))
+
+# [3.69.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.6...@standardnotes/web@3.69.0) (2022-10-05)
+
+### Features
+
+* add file info panel button to file view ([#1741](https://github.com/standardnotes/app/issues/1741)) ([376810e](https://github.com/standardnotes/app/commit/376810e657b5dace6cc342b7298bb00abd311587))
+
+## [3.68.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.5...@standardnotes/web@3.68.6) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.68.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.4...@standardnotes/web@3.68.5) (2022-10-04)
+
+### Bug Fixes
+
+* increase context menu item font size on mobile ([#1738](https://github.com/standardnotes/app/issues/1738)) ([1c60316](https://github.com/standardnotes/app/commit/1c603161a518b7f3ccc5bc049f3827746bb43cff))
+
+## [3.68.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.3...@standardnotes/web@3.68.4) (2022-10-04)
+
+### Bug Fixes
+
+* android monospace font ([#1735](https://github.com/standardnotes/app/issues/1735)) ([927938c](https://github.com/standardnotes/app/commit/927938cb561d3c4622ce09a6f56ecf8ef88a0a7c))
+* attached file renaming on mobile ([b4eacd0](https://github.com/standardnotes/app/commit/b4eacd0f2ae4a9896150830fa8e8b153a34422d7))
+
+## [3.68.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.2...@standardnotes/web@3.68.3) (2022-10-04)
+
+### Bug Fixes
+
+* preferences on mobile webview when zoomed in ([#1731](https://github.com/standardnotes/app/issues/1731)) ([782cbee](https://github.com/standardnotes/app/commit/782cbee97e2b2ec9e0e5a930d883e2fc1c7d3f1c))
+
+## [3.68.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.1...@standardnotes/web@3.68.2) (2022-10-03)
+
+### Bug Fixes
+
+* resizing in desktop app ([b9b84c7](https://github.com/standardnotes/app/commit/b9b84c79d5baf9b711618224c98e296bd26482ec))
+
+## [3.68.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.68.0...@standardnotes/web@3.68.1) (2022-10-03)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.68.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.67.4...@standardnotes/web@3.68.0) (2022-10-02)
+
+### Features
+
+* use native preview for pdf in mobile webview ([#1728](https://github.com/standardnotes/app/issues/1728)) ([a90e4a5](https://github.com/standardnotes/app/commit/a90e4a50e820aa13b6af1f76ee9b2f935d12f211))
+
+## [3.67.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.67.3...@standardnotes/web@3.67.4) (2022-10-02)
+
+### Bug Fixes
+
+* text wrapping in notes list panel title ([52962ed](https://github.com/standardnotes/app/commit/52962ed65d9e8f64916e6bc0e8c032642a67fcc8))
+
+## [3.67.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.67.2...@standardnotes/web@3.67.3) (2022-09-30)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.67.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.67.1...@standardnotes/web@3.67.2) (2022-09-30)
+
+### Bug Fixes
+
+* files download in mobile webview ([#1726](https://github.com/standardnotes/app/issues/1726)) ([b15d80e](https://github.com/standardnotes/app/commit/b15d80eb2949eedef59722bc6c7e9cb6b7847db2))
+
+## [3.67.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.67.0...@standardnotes/web@3.67.1) (2022-09-30)
+
+### Bug Fixes
+
+* downloading backups in mobile webview ([#1703](https://github.com/standardnotes/app/issues/1703)) ([5f24e72](https://github.com/standardnotes/app/commit/5f24e7285e941b44e05cec5be32bee4589f4963c))
+
+# [3.67.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.66.0...@standardnotes/web@3.67.0) (2022-09-30)
+
+### Features
+
+* add pref to disable note status updates ([#1702](https://github.com/standardnotes/app/issues/1702)) ([08b7096](https://github.com/standardnotes/app/commit/08b70968f255d5a72562610f08fe727ebcffa8bb))
+
 # [3.66.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.65.0...@standardnotes/web@3.66.0) (2022-09-29)
 
 ### Features

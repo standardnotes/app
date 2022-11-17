@@ -1,18 +1,19 @@
-import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
-import { FunctionComponent, useCallback, useRef } from 'react'
-import Icon from '@/Components/Icon/Icon'
+import { AlertDialog } from '@reach/alert-dialog'
+import { FunctionComponent, useRef } from 'react'
 import { WebApplication } from '@/Application/Application'
-import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
-import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
-import { loadPurchaseFlowUrl } from '../PurchaseFlow/PurchaseFlowFunctions'
+import { PremiumFeatureModalType } from './PremiumFeatureModalType'
+import { FeatureName } from '@/Controllers/FeatureName'
+import { SuccessPrompt } from './Subviews/SuccessPrompt'
+import { UpgradePrompt } from './Subviews/UpgradePrompt'
 
 type Props = {
   application: WebApplication
-  featureName: string
+  featureName?: FeatureName | string
   hasSubscription: boolean
   hasAccount: boolean
   onClose: () => void
   showModal: boolean
+  type: PremiumFeatureModalType
 }
 
 const PremiumFeaturesModal: FunctionComponent<Props> = ({
@@ -22,58 +23,34 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
   hasAccount,
   onClose,
   showModal,
+  type = PremiumFeatureModalType.UpgradePrompt,
 }) => {
-  const plansButtonRef = useRef<HTMLButtonElement>(null)
+  const ctaButtonRef = useRef<HTMLButtonElement>(null)
 
-  const handleClick = useCallback(() => {
-    if (hasSubscription) {
-      openSubscriptionDashboard(application)
-    } else if (hasAccount) {
-      void loadPurchaseFlowUrl(application)
-    } else if (window.plansUrl) {
-      window.location.assign(window.plansUrl)
-    }
-  }, [application, hasSubscription, hasAccount])
+  if (!showModal) {
+    return null
+  }
 
-  return showModal ? (
-    <AlertDialog leastDestructiveRef={plansButtonRef} className="p-0">
+  return (
+    <AlertDialog leastDestructiveRef={ctaButtonRef} className="p-0">
       <div tabIndex={-1} className="sn-component">
         <div tabIndex={0} className="max-w-89 rounded bg-default p-4 shadow-main">
-          <AlertDialogLabel>
-            <div className="flex justify-end p-1">
-              <button
-                className="flex cursor-pointer border-0 bg-transparent p-0"
-                onClick={onClose}
-                aria-label="Close modal"
-              >
-                <Icon className="text-neutral" type="close" />
-              </button>
-            </div>
-            <div
-              className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-[50%] bg-contrast"
-              aria-hidden={true}
-            >
-              <Icon className={`h-12 w-12 ${PremiumFeatureIconClass}`} type={PremiumFeatureIconName} />
-            </div>
-            <div className="mb-1 text-center text-lg font-bold">Enable Advanced Features</div>
-          </AlertDialogLabel>
-          <AlertDialogDescription className="mb-2 px-4.5 text-center text-sm text-passive-1">
-            To take advantage of <span className="font-semibold">{featureName}</span> and other advanced features,
-            upgrade your current plan.
-          </AlertDialogDescription>
-          <div className="p-4">
-            <button
-              onClick={handleClick}
-              className="no-border w-full cursor-pointer rounded bg-info py-2 font-bold text-info-contrast hover:brightness-125 focus:brightness-125"
-              ref={plansButtonRef}
-            >
-              Upgrade
-            </button>
-          </div>
+          {type === PremiumFeatureModalType.UpgradePrompt && (
+            <UpgradePrompt
+              featureName={featureName}
+              ctaRef={ctaButtonRef}
+              application={application}
+              hasAccount={hasAccount}
+              hasSubscription={hasSubscription}
+              onClose={onClose}
+            />
+          )}
+
+          {type === PremiumFeatureModalType.UpgradeSuccess && <SuccessPrompt ctaRef={ctaButtonRef} onClose={onClose} />}
         </div>
       </div>
     </AlertDialog>
-  ) : null
+  )
 }
 
 export default PremiumFeaturesModal

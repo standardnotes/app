@@ -13,11 +13,19 @@ import {
   PermissionDialog,
   Environment,
   Platform,
+  ComponentMessage,
 } from '@standardnotes/models'
 import { SNSyncService } from '@Lib/Services/Sync/SyncService'
 import find from 'lodash/find'
 import uniq from 'lodash/uniq'
-import { ComponentArea, ComponentAction, ComponentPermission, FindNativeFeature } from '@standardnotes/features'
+import {
+  ComponentArea,
+  ComponentAction,
+  ComponentPermission,
+  FindNativeFeature,
+  NoteType,
+  FeatureIdentifier,
+} from '@standardnotes/features'
 import { Copy, filterFromArray, removeFromArray, sleep, assert } from '@standardnotes/utils'
 import { UuidString } from '@Lib/Types/UuidString'
 import { AllowedBatchContentTypes } from '@Lib/Services/ComponentManager/Types'
@@ -29,6 +37,8 @@ import {
   DesktopManagerInterface,
   InternalEventBusInterface,
   AlertService,
+  DeviceInterface,
+  isMobileDevice,
 } from '@standardnotes/services'
 
 const DESKTOP_URL_PREFIX = 'sn://'
@@ -75,23 +85,21 @@ export class SNComponentManager
     private environment: Environment,
     private platform: Platform,
     protected override internalEventBus: InternalEventBusInterface,
+    private device: DeviceInterface,
   ) {
     super(internalEventBus)
     this.loggingEnabled = false
 
     this.addItemObserver()
 
-    /* On mobile, events listeners are handled by a respective component */
-    if (environment !== Environment.Mobile) {
-      window.addEventListener
-        ? window.addEventListener('focus', this.detectFocusChange, true)
-        : window.attachEvent('onfocusout', this.detectFocusChange)
-      window.addEventListener
-        ? window.addEventListener('blur', this.detectFocusChange, true)
-        : window.attachEvent('onblur', this.detectFocusChange)
+    window.addEventListener
+      ? window.addEventListener('focus', this.detectFocusChange, true)
+      : window.attachEvent('onfocusout', this.detectFocusChange)
+    window.addEventListener
+      ? window.addEventListener('blur', this.detectFocusChange, true)
+      : window.attachEvent('onblur', this.detectFocusChange)
 
-      window.addEventListener('message', this.onWindowMessage, true)
-    }
+    window.addEventListener('message', this.onWindowMessage, true)
   }
 
   get isDesktop(): boolean {
@@ -110,6 +118,10 @@ export class SNComponentManager
     return this.components.filter((component) => {
       return component.area === area
     })
+  }
+
+  componentWithIdentifier(identifier: FeatureIdentifier | string): SNComponent | undefined {
+    return this.components.find((component) => component.identifier === identifier)
   }
 
   override deinit(): void {
@@ -132,7 +144,7 @@ export class SNComponentManager
     this.removeItemObserver?.()
     ;(this.removeItemObserver as unknown) = undefined
 
-    if (window && !this.isMobile) {
+    if (window) {
       window.removeEventListener('focus', this.detectFocusChange, true)
       window.removeEventListener('blur', this.detectFocusChange, true)
       window.removeEventListener('message', this.onWindowMessage, true)
@@ -146,7 +158,6 @@ export class SNComponentManager
     component: SNComponent,
     contextItem?: UuidString,
     actionObserver?: ActionObserver,
-    urlOverride?: string,
   ): ComponentViewerInterface {
     const viewer = new ComponentViewer(
       component,
@@ -161,7 +172,7 @@ export class SNComponentManager
         runWithPermissions: this.runWithPermissions.bind(this),
         urlsForActiveThemes: this.urlsForActiveThemes.bind(this),
       },
-      urlOverride || this.urlForComponent(component),
+      this.urlForComponent(component),
       contextItem,
       actionObserver,
     )
@@ -210,9 +221,23 @@ export class SNComponentManager
   addItemObserver(): void {
     this.removeItemObserver = this.itemManager.addObserver<SNComponent>(
       [ContentType.Component, ContentType.Theme],
-      ({ changed, inserted, source }) => {
+      ({ changed, inserted, removed, source }) => {
         const items = [...changed, ...inserted]
         this.handleChangedComponents(items, source)
+
+        const device = this.device
+        if (isMobileDevice(device) && 'addComponentUrl' in device) {
+          inserted.forEach((component) => {
+            const url = this.urlForComponent(component)
+            if (url) {
+              device.addComponentUrl(component.uuid, url)
+            }
+          })
+
+          removed.forEach((component) => {
+            device.removeComponentUrl(component.uuid)
+          })
+        }
       },
     )
   }
@@ -238,9 +263,10 @@ export class SNComponentManager
 
   onWindowMessage = (event: MessageEvent): void => {
     /** Make sure this message is for us */
-    if (event.data.sessionKey) {
-      this.log('Component manager received message', event.data)
-      this.componentViewerForSessionKey(event.data.sessionKey)?.handleMessage(event.data)
+    const data = event.data as ComponentMessage
+    if (data.sessionKey) {
+      this.log('Component manager received message', data)
+      this.componentViewerForSessionKey(data.sessionKey)?.handleMessage(data)
     }
   }
 
@@ -260,9 +286,6 @@ export class SNComponentManager
   }
 
   getActiveThemes(): SNTheme[] {
-    if (this.environment === Environment.Mobile) {
-      throw Error('getActiveThemes must be handled separately by mobile')
-    }
     return this.componentsForArea(ComponentArea.Themes).filter((theme) => {
       return theme.active
     }) as SNTheme[]
@@ -290,17 +313,15 @@ export class SNComponentManager
       }
     }
 
-    const isWeb = this.environment === Environment.Web
-    const isMobileWebView = this.environment === Environment.NativeMobileWeb
+    const isMobile = this.environment === Environment.Mobile
     if (nativeFeature) {
-      if (!isWeb && !isMobileWebView) {
-        throw Error('Mobile must override urlForComponent to handle native paths')
+      if (isMobile) {
+        const baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]
+        return `${baseUrlRequiredForThemesInsideEditors}/web-src/components/assets/${component.identifier}/${nativeFeature.index_path}`
+      } else {
+        const baseUrlRequiredForThemesInsideEditors = window.location.origin
+        return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${component.identifier}/${nativeFeature.index_path}`
       }
-      let baseUrlRequiredForThemesInsideEditors = window.location.origin
-      if (isMobileWebView) {
-        baseUrlRequiredForThemesInsideEditors = window.location.href.split('/index.html')[0]
-      }
-      return `${baseUrlRequiredForThemesInsideEditors}/components/assets/${component.identifier}/${nativeFeature.index_path}`
     }
 
     let url = component.hosted_url || component.legacy_url
@@ -569,13 +590,6 @@ export class SNComponentManager
   }
 
   allComponentIframes(): HTMLIFrameElement[] {
-    if (this.isMobile) {
-      /**
-       * Retrieving all iframes is typically related to lifecycle management of
-       * non-editor components. So this function is not useful to mobile.
-       */
-      return []
-    }
     return Array.from(document.getElementsByTagName('iframe'))
   }
 
@@ -584,23 +598,29 @@ export class SNComponentManager
   }
 
   editorForNote(note: SNNote): SNComponent | undefined {
+    if (note.editorIdentifier) {
+      return this.componentWithIdentifier(note.editorIdentifier)
+    }
+
+    if (note.noteType === NoteType.Plain) {
+      return undefined
+    }
+
+    return this.legacyGetEditorForNote(note)
+  }
+
+  /**
+   * Uses legacy approach of note/editor association. New method uses note.editorIdentifier and note.noteType directly.
+   */
+  private legacyGetEditorForNote(note: SNNote): SNComponent | undefined {
     const editors = this.componentsForArea(ComponentArea.Editor)
     for (const editor of editors) {
       if (editor.isExplicitlyEnabledForItem(note.uuid)) {
         return editor
       }
     }
-    let defaultEditor
-    /* No editor found for note. Use default editor, if note does not prefer system editor */
-    if (this.isMobile) {
-      if (!note.mobilePrefersPlainEditor) {
-        defaultEditor = this.getDefaultEditor()
-      }
-    } else {
-      if (!note.prefersPlainEditor) {
-        defaultEditor = this.getDefaultEditor()
-      }
-    }
+    const defaultEditor = this.legacyGetDefaultEditor()
+
     if (defaultEditor && !defaultEditor.isExplicitlyDisabledForItem(note.uuid)) {
       return defaultEditor
     } else {
@@ -608,15 +628,9 @@ export class SNComponentManager
     }
   }
 
-  getDefaultEditor(): SNComponent {
+  legacyGetDefaultEditor(): SNComponent | undefined {
     const editors = this.componentsForArea(ComponentArea.Editor)
-    if (this.isMobile) {
-      return editors.filter((e) => {
-        return e.isMobileDefault
-      })[0]
-    } else {
-      return editors.filter((e) => e.isDefaultEditor())[0]
-    }
+    return editors.filter((e) => e.legacyIsDefaultEditor())[0]
   }
 
   permissionsStringForPermissions(permissions: ComponentPermission[], component: SNComponent): string {

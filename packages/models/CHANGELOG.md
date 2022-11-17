@@ -3,6 +3,172 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.37.3](https://github.com/standardnotes/app/compare/@standardnotes/models@1.37.2...@standardnotes/models@1.37.3) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.37.2](https://github.com/standardnotes/app/compare/@standardnotes/models@1.37.1...@standardnotes/models@1.37.2) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.37.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.37.0...@standardnotes/models@1.37.1) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/models
+
+# [1.37.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.36.0...@standardnotes/models@1.37.0) (2022-11-16)
+
+### Features
+
+* edit smart view predicate as json ([#2012](https://github.com/standardnotes/app/issues/2012)) ([f3e4ba8](https://github.com/standardnotes/app/commit/f3e4ba87795b82cbd96663b441f87ab80f710d05))
+
+# [1.36.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.35.0...@standardnotes/models@1.36.0) (2022-11-16)
+
+### Features
+
+* **labs:** super editor ([#2001](https://github.com/standardnotes/app/issues/2001)) ([59f8547](https://github.com/standardnotes/app/commit/59f8547a8de1c804cb2f01ac734c83268977fa28))
+
+# [1.35.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.34.10...@standardnotes/models@1.35.0) (2022-11-14)
+
+### Features
+
+* GUI to create smart views ([#1997](https://github.com/standardnotes/app/issues/1997)) ([f656185](https://github.com/standardnotes/app/commit/f656185c167b3306d408dc486970836efa1d70c5))
+
+## [1.34.10](https://github.com/standardnotes/app/compare/@standardnotes/models@1.34.9...@standardnotes/models@1.34.10) (2022-11-09)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.34.9](https://github.com/standardnotes/app/compare/@standardnotes/models@1.34.8...@standardnotes/models@1.34.9) (2022-11-07)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.34.8](https://github.com/standardnotes/app/compare/@standardnotes/models@1.34.7...@standardnotes/models@1.34.8) (2022-11-06)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.34.7](https://github.com/standardnotes/app/compare/@standardnotes/models@1.34.6...@standardnotes/models@1.34.7) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.34.6](https://github.com/standardnotes/app/compare/@standardnotes/models@1.34.5...@standardnotes/models@1.34.6) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.34.5](https://github.com/standardnotes/app/compare/@standardnotes/models@1.34.4...@standardnotes/models@1.34.5) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.34.4](https://github.com/standardnotes/app/compare/@standardnotes/models@1.34.0...@standardnotes/models@1.34.4) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/models
+
+# [1.34.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.33.0...@standardnotes/models@1.34.0) (2022-11-02)
+
+### Features
+
+* dedicated files layout ([#1928](https://github.com/standardnotes/app/issues/1928)) ([dd821c9](https://github.com/standardnotes/app/commit/dd821c95e61c8cd82317ad9fb3788daff7241942))
+
+# [1.33.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.32.0...@standardnotes/models@1.33.0) (2022-11-02)
+
+### Features
+
+* add sending user requests to process ([#1908](https://github.com/standardnotes/app/issues/1908)) ([b2faa81](https://github.com/standardnotes/app/commit/b2faa815e967a9e7052b3ce6955e967c6bc68864))
+
+# [1.32.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.31.1...@standardnotes/models@1.32.0) (2022-10-27)
+
+### Features
+
+* daily notes (dev only) ([#1894](https://github.com/standardnotes/app/issues/1894)) ([69c3f2b](https://github.com/standardnotes/app/commit/69c3f2be837152a1f937559327021c2128234c69))
+
+## [1.31.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.31.0...@standardnotes/models@1.31.1) (2022-10-25)
+
+### Bug Fixes
+
+* on mobile open links from editor in external browser ([#1860](https://github.com/standardnotes/app/issues/1860)) ([d9db73e](https://github.com/standardnotes/app/commit/d9db73ea056e2e6e2bde8e0c1de4a7090984ae9a))
+
+# [1.31.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.30.0...@standardnotes/models@1.31.0) (2022-10-25)
+
+### Features
+
+* per-tag display preferences ([#1868](https://github.com/standardnotes/app/issues/1868)) ([ee7f11c](https://github.com/standardnotes/app/commit/ee7f11c933285234b20fa2d5db4fcf0d6a5dce9d))
+
+# [1.30.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.29.1...@standardnotes/models@1.30.0) (2022-10-21)
+
+### Features
+
+* ability to favorite tags + customize icon ([#1858](https://github.com/standardnotes/app/issues/1858)) ([cbd0063](https://github.com/standardnotes/app/commit/cbd0063926a416c23225242a4a1796712b6b224e))
+
+## [1.29.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.29.0...@standardnotes/models@1.29.1) (2022-10-19)
+
+### Bug Fixes
+
+* issue with not being able to unlink a file from a note ([#1836](https://github.com/standardnotes/app/issues/1836)) ([4030953](https://github.com/standardnotes/app/commit/4030953b00ad609dc2b0f5b66cfd971d449f6121))
+
+# [1.29.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.28.0...@standardnotes/models@1.29.0) (2022-10-18)
+
+### Features
+
+* authorize notes for listed ([#1823](https://github.com/standardnotes/app/issues/1823)) ([9954bdc](https://github.com/standardnotes/app/commit/9954bdc29f9de2a42c4539d55749991d86a72943))
+
+# [1.28.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.27.1...@standardnotes/models@1.28.0) (2022-10-17)
+
+### Features
+
+* starred notes ([#1813](https://github.com/standardnotes/app/issues/1813)) ([d52fdae](https://github.com/standardnotes/app/commit/d52fdae0b359b4768855ae030ac13d1c16f2312a))
+
+## [1.27.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.27.0...@standardnotes/models@1.27.1) (2022-10-13)
+
+**Note:** Version bump only for package @standardnotes/models
+
+# [1.27.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.26.0...@standardnotes/models@1.27.0) (2022-10-11)
+
+### Features
+
+* item linking ([#1779](https://github.com/standardnotes/app/issues/1779)) ([e3f2842](https://github.com/standardnotes/app/commit/e3f28421ff042c635ad2ae645c102c27e3e3f9c7))
+
+# [1.26.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.25.0...@standardnotes/models@1.26.0) (2022-10-11)
+
+### Features
+
+* **api:** add listing workspace users ([fb41f65](https://github.com/standardnotes/app/commit/fb41f651eca45dd62314609c2f389d5dc683c36e))
+
+# [1.25.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.24.2...@standardnotes/models@1.25.0) (2022-10-11)
+
+### Features
+
+* **api:** add listing workspaces ([8376381](https://github.com/standardnotes/app/commit/837638198112df24c30e53803a7ddf5f841975b0))
+
+## [1.24.2](https://github.com/standardnotes/app/compare/@standardnotes/models@1.24.1...@standardnotes/models@1.24.2) (2022-10-10)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.24.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.24.0...@standardnotes/models@1.24.1) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+
+# [1.24.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.23.0...@standardnotes/models@1.24.0) (2022-10-06)
+
+### Features
+
+* experimental 005 operator ([#1753](https://github.com/standardnotes/app/issues/1753)) ([cbbe913](https://github.com/standardnotes/app/commit/cbbe913cd6eb694dd27997927bd5c45e8a64cc09))
+
+# [1.23.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.22.1...@standardnotes/models@1.23.0) (2022-10-05)
+
+### Features
+
+* add free dark mode ([#1748](https://github.com/standardnotes/app/issues/1748)) ([09b994f](https://github.com/standardnotes/app/commit/09b994f8f938ae0536f42742f7a221df536c4c4a))
+
+## [1.22.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.22.0...@standardnotes/models@1.22.1) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/models
+
+# [1.22.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.21.0...@standardnotes/models@1.22.0) (2022-09-30)
+
+### Features
+
+* add pref to disable note status updates ([#1702](https://github.com/standardnotes/app/issues/1702)) ([08b7096](https://github.com/standardnotes/app/commit/08b70968f255d5a72562610f08fe727ebcffa8bb))
+
 # [1.21.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.20.0...@standardnotes/models@1.21.0) (2022-09-29)
 
 ### Features

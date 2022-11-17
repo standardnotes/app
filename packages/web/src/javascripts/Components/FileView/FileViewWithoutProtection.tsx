@@ -1,16 +1,28 @@
 import { ElementIds } from '@/Constants/ElementIDs'
 import { observer } from 'mobx-react-lite'
-import { ChangeEventHandler, useCallback, useRef } from 'react'
+import { ChangeEventHandler, useCallback, useEffect, useRef, useState } from 'react'
 import FileOptionsPanel from '@/Components/FileContextMenu/FileOptionsPanel'
 import FilePreview from '@/Components/FilePreview/FilePreview'
 import { FileViewProps } from './FileViewProps'
 import MobileItemsListButton from '../NoteGroupView/MobileItemsListButton'
+import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
+import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
+import Popover from '../Popover/Popover'
+import FilePreviewInfoPanel from '../FilePreview/FilePreviewInfoPanel'
+import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
+import RoundIconButton from '../Button/RoundIconButton'
 
 const SyncTimeoutNoDebounceMs = 100
 const SyncTimeoutDebounceMs = 350
 
 const FileViewWithoutProtection = ({ application, viewControllerManager, file }: FileViewProps) => {
   const syncTimeoutRef = useRef<number>()
+  const fileInfoButtonRef = useRef<HTMLButtonElement>(null)
+
+  const [isFileInfoPanelOpen, setIsFileInfoPanelOpen] = useState(false)
+  const toggleFileInfoPanel = () => {
+    setIsFileInfoPanelOpen((show) => !show)
+  }
 
   const onTitleChange: ChangeEventHandler<HTMLInputElement> = useCallback(
     async (event) => {
@@ -29,8 +41,33 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
     [application, file],
   )
 
+  const fileDragTargetRef = useRef<HTMLDivElement>(null)
+
+  const { addDragTarget, removeDragTarget } = useFileDragNDrop()
+
+  useEffect(() => {
+    const target = fileDragTargetRef.current
+
+    if (target) {
+      addDragTarget(target, {
+        tooltipText: 'Drop your files to upload and link them to the current file',
+        callback(files) {
+          files.forEach(async (uploadedFile) => {
+            await viewControllerManager.linkingController.linkItems(uploadedFile, file)
+          })
+        },
+      })
+    }
+
+    return () => {
+      if (target) {
+        removeDragTarget(target)
+      }
+    }
+  }, [addDragTarget, file, removeDragTarget, viewControllerManager.linkingController])
+
   return (
-    <div className="sn-component section editor" aria-label="File">
+    <div className="sn-component section editor" aria-label="File" ref={fileDragTargetRef}>
       <div className="flex flex-col">
         <div
           className="content-title-bar section-title-bar section-title-bar z-editor-title-bar w-full"
@@ -53,13 +90,34 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
                 />
               </div>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center gap-3">
+              <LinkedItemsButton
+                filesController={viewControllerManager.filesController}
+                linkingController={viewControllerManager.linkingController}
+                featuresController={viewControllerManager.featuresController}
+              />
+              <RoundIconButton
+                label="File information panel"
+                onClick={toggleFileInfoPanel}
+                ref={fileInfoButtonRef}
+                icon="info"
+              />
+              <Popover
+                open={isFileInfoPanelOpen}
+                togglePopover={toggleFileInfoPanel}
+                anchorElement={fileInfoButtonRef.current}
+                side="bottom"
+                align="center"
+              >
+                <FilePreviewInfoPanel file={file} />
+              </Popover>
               <FileOptionsPanel
                 filesController={viewControllerManager.filesController}
                 selectionController={viewControllerManager.selectionController}
               />
             </div>
           </div>
+          <LinkedItemBubblesContainer linkingController={viewControllerManager.linkingController} />
         </div>
       </div>
       <div className="flex min-h-0 flex-grow flex-col">

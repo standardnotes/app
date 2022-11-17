@@ -1,6 +1,8 @@
 import { DecryptedPayload } from './../../Abstract/Payload/Implementations/DecryptedPayload'
 import { SNNote } from '../Note/Note'
-import { SmartViewContent, SmartView, SystemViewId } from './SmartView'
+import { SmartView } from './SmartView'
+import { SmartViewContent } from './SmartViewContent'
+import { SystemViewId } from './SystemViewId'
 import { ItemWithTags } from '../../Runtime/Display/Search/ItemWithTags'
 import { ContentType } from '@standardnotes/common'
 import { FillItemContent } from '../../Abstract/Content/ItemContent'
@@ -74,10 +76,22 @@ export function BuildSmartViews(
     }),
   )
 
+  const starred = new SmartView(
+    new DecryptedPayload({
+      uuid: SystemViewId.StarredNotes,
+      content_type: ContentType.SmartView,
+      ...PayloadTimestampDefaults(),
+      content: FillItemContent<SmartViewContent>({
+        title: 'Starred',
+        predicate: starredNotesPredicate(options).toJson(),
+      }),
+    }),
+  )
+
   if (supportsFileNavigation) {
-    return [notes, files, archived, trash, untagged]
+    return [notes, starred, files, archived, trash, untagged]
   } else {
-    return [notes, archived, trash, untagged]
+    return [notes, starred, archived, trash, untagged]
   }
 }
 
@@ -166,6 +180,25 @@ function untaggedNotesPredicate(options: FilterDisplayOptions) {
   ]
   if (options.includeArchived === false) {
     subPredicates.push(new Predicate('archived', '=', false))
+  }
+  if (options.includeProtected === false) {
+    subPredicates.push(new Predicate('protected', '=', false))
+  }
+  if (options.includePinned === false) {
+    subPredicates.push(new Predicate('pinned', '=', false))
+  }
+  const predicate = new CompoundPredicate('and', subPredicates)
+
+  return predicate
+}
+
+function starredNotesPredicate(options: FilterDisplayOptions) {
+  const subPredicates: Predicate<SNNote>[] = [
+    new Predicate('starred', '=', true),
+    new Predicate('content_type', '=', ContentType.Note),
+  ]
+  if (options.includeTrashed === false) {
+    subPredicates.push(new Predicate('trashed', '=', false))
   }
   if (options.includeProtected === false) {
     subPredicates.push(new Predicate('protected', '=', false))

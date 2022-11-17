@@ -1,3 +1,5 @@
+import { IconType } from '@standardnotes/snjs'
+
 export const PANEL_NAME_NOTES = 'notes'
 export const PANEL_NAME_NAVIGATION = 'navigation'
 
@@ -21,7 +23,26 @@ export const TAG_FOLDERS_FEATURE_NAME = 'Tag folders'
 export const TAG_FOLDERS_FEATURE_TOOLTIP = 'A Plus or Pro plan is required to enable Tag folders.'
 export const SMART_TAGS_FEATURE_NAME = 'Smart Tags'
 
-export const PLAIN_EDITOR_NAME = 'Plain Text'
-
 export const SYNC_TIMEOUT_DEBOUNCE = 350
 export const SYNC_TIMEOUT_NO_DEBOUNCE = 100
+
+type EditorMetadata = {
+  name: string
+  icon: IconType
+  iconClassName: string
+  iconTintNumber: number
+}
+
+export const SuperEditorMetadata: EditorMetadata = {
+  name: 'Super',
+  icon: 'file-doc',
+  iconClassName: 'text-accessory-tint-4',
+  iconTintNumber: 4,
+}
+
+export const PlainEditorMetadata: EditorMetadata = {
+  name: 'Plain Text',
+  icon: 'plain-text',
+  iconClassName: 'text-accessory-tint-1',
+  iconTintNumber: 1,
+}

@@ -57,7 +57,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
   return (
     <div
       className={classNames(
-        'absolute top-0 left-0 z-preferences flex h-screen max-h-screen w-full flex-col bg-default pt-safe-top md:h-full md:max-h-full',
+        'absolute top-0 left-0 z-preferences flex h-full w-full flex-col bg-default pt-safe-top',
         isIOS() ? 'pb-safe-bottom' : 'pb-2 md:pb-0',
       )}
       style={{
@@ -71,8 +71,8 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
           onClick={() => {
             closePreferences()
           }}
-          type="normal"
           icon="close"
+          label="Close preferences"
         />
       </div>
       <PreferencesCanvas

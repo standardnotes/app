@@ -13,6 +13,7 @@ type RoleFields = {
 
   /** Statically populated. Non-influencing; used as a reference by other static consumers (such as email service) */
   availableInSubscriptions: SubscriptionName[]
+  availableInRoles?: RoleName[]
 }
 
 export type BaseFeatureDescription = RoleFields & {
@@ -21,6 +22,9 @@ export type BaseFeatureDescription = RoleFields & {
   deprecation_message?: string
   description?: string
   expires_at?: number
+
+  /** Whether the client controls availability of this feature (such as the dark theme) */
+  clientControlled?: boolean
 
   flags?: ComponentFlag[]
   identifier: FeatureIdentifier

@@ -1,25 +1,103 @@
+import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
-import * as Factory from './lib/factory.js'
 
-describe('private workspaces', () => {
-  it('generates identifier', async () => {
-    const userphrase = 'myworkspaceuserphrase'
-    const name = 'myworkspacename'
+describe('workspaces', function () {
+  this.timeout(Factory.TwentySecondTimeout)
 
-    const result = await ComputePrivateWorkspaceIdentifier(new SNWebCrypto(), userphrase, name)
+  let ownerContext
+  let owner
+  let inviteeContext
+  let invitee
 
-    expect(result).to.equal('5155c13a44f333790f6564fbcee0c35a16d26a8359dd77d67d8ecc6ad5d399bb')
+  afterEach(async function () {
+    await Factory.safeDeinit(ownerContext.application)
+    await Factory.safeDeinit(inviteeContext.application)
+    localStorage.clear()
   })
 
-  it('application result matches direct function call', async () => {
-    const userphrase = 'myworkspaceuserphrase'
-    const name = 'myworkspacename'
+  beforeEach(async function () {
+    localStorage.clear()
 
-    const application = (await Factory.createAppContextWithRealCrypto()).application
-    const appResult = await application.computePrivateWorkspaceIdentifier(userphrase, name)
-    const directResult = await ComputePrivateWorkspaceIdentifier(new SNWebCrypto(), userphrase, name)
+    ownerContext = await Factory.createAppContextWithFakeCrypto()
+    await ownerContext.launch()
+    const ownerRegistrationResponse = await ownerContext.register()
+    owner = ownerRegistrationResponse.user
 
-    expect(appResult).to.equal(directResult)
+    inviteeContext = await Factory.createAppContextWithFakeCrypto()
+    await inviteeContext.launch()
+    const inviteeRegistrationResponse = await inviteeContext.register()
+    invitee = inviteeRegistrationResponse.user
+  })
+
+  it('should create workspaces for user', async () => {
+    await ownerContext.application.workspaceManager.createWorkspace({
+      workspaceType: 'team',
+      encryptedWorkspaceKey: 'foo',
+      encryptedPrivateKey: 'bar',
+      publicKey: 'buzz',
+      workspaceName: 'Acme Team',
+    })
+
+    await ownerContext.application.workspaceManager.createWorkspace({
+      workspaceType: 'private',
+      encryptedWorkspaceKey: 'foo',
+      encryptedPrivateKey: 'bar',
+      publicKey: 'buzz',
+    })
+
+    const { ownedWorkspaces, joinedWorkspaces } = await ownerContext.application.workspaceManager.listWorkspaces()
+
+    expect(joinedWorkspaces.length).to.equal(0)
+
+    expect(ownedWorkspaces.length).to.equal(2)
+  })
+
+  it('should allow inviting and adding users to a workspace', async () => {
+    const { uuid } = await ownerContext.application.workspaceManager.createWorkspace({
+      workspaceType: 'team',
+      encryptedWorkspaceKey: 'foo',
+      encryptedPrivateKey: 'bar',
+      publicKey: 'buzz',
+      workspaceName: 'Acme Team',
+    })
+
+    const result = await ownerContext.application.workspaceManager.inviteToWorkspace({
+      inviteeEmail: 'test@standardnotes.com',
+      workspaceUuid: uuid,
+      accessLevel: 'read-only'
+    })
+
+    await inviteeContext.application.workspaceManager.acceptInvite({
+      inviteUuid: result.uuid,
+      userUuid: invitee.uuid,
+      publicKey: 'foobar',
+      encryptedPrivateKey: 'buzz',
+    })
+
+    let listUsersResult = await inviteeContext.application.workspaceManager.listWorkspaceUsers({ workspaceUuid: uuid })
+    let inviteeAssociation = listUsersResult.users.find(user => user.userDisplayName === 'test@standardnotes.com')
+
+    expect(inviteeAssociation.userUuid).to.equal(invitee.uuid)
+    expect(inviteeAssociation.status).to.equal('pending-keyshare')
+
+    await ownerContext.application.workspaceManager.initiateKeyshare({
+      workspaceUuid: inviteeAssociation.workspaceUuid,
+      userUuid: inviteeAssociation.userUuid,
+      encryptedWorkspaceKey: 'foobarbuzz',
+    })
+
+    listUsersResult = await inviteeContext.application.workspaceManager.listWorkspaceUsers({ workspaceUuid: uuid })
+    inviteeAssociation = listUsersResult.users.find(user => user.userDisplayName === 'test@standardnotes.com')
+
+    expect(inviteeAssociation.userUuid).to.equal(invitee.uuid)
+    expect(inviteeAssociation.status).to.equal('active')
+    expect(inviteeAssociation.encryptedWorkspaceKey).to.equal('foobarbuzz')
+
+    const { ownedWorkspaces, joinedWorkspaces } = await inviteeContext.application.workspaceManager.listWorkspaces()
+
+    expect(joinedWorkspaces.length).to.equal(1)
+
+    expect(ownedWorkspaces.length).to.equal(0)
   })
 })

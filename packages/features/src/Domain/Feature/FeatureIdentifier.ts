@@ -6,7 +6,6 @@ export enum FeatureIdentifier {
   DailyGDriveBackup = 'org.standardnotes.daily-gdrive-backup',
   DailyOneDriveBackup = 'org.standardnotes.daily-onedrive-backup',
   Files = 'org.standardnotes.files',
-  FilesBeta = 'org.standardnotes.files-beta',
   FilesLowStorageTier = 'org.standardnotes.files-low-storage-tier',
   FilesMaximumStorageTier = 'org.standardnotes.files-max-storage-tier',
   ListedCustomDomain = 'org.standardnotes.listed-custom-domain',
@@ -21,18 +20,19 @@ export enum FeatureIdentifier {
 
   AutobiographyTheme = 'org.standardnotes.theme-autobiography',
   DynamicTheme = 'org.standardnotes.theme-dynamic',
-  FocusedTheme = 'org.standardnotes.theme-focus',
+  DarkTheme = 'org.standardnotes.theme-focus',
   FocusMode = 'org.standardnotes.focus-mode',
   FuturaTheme = 'org.standardnotes.theme-futura',
   MidnightTheme = 'org.standardnotes.theme-midnight',
   SolarizedDarkTheme = 'org.standardnotes.theme-solarized-dark',
   TitaniumTheme = 'org.standardnotes.theme-titanium',
 
-  AdvancedChecklist = 'org.standardnotes.advanced-checklist',
+  PlainEditor = 'com.standardnotes.plain-text',
+  SuperEditor = 'com.standardnotes.super-editor',
+
   CodeEditor = 'org.standardnotes.code-editor',
   MarkdownProEditor = 'org.standardnotes.advanced-markdown-editor',
   MarkdownVisualEditor = 'org.standardnotes.markdown-visual-editor',
-  PlainTextEditor = 'org.standardnotes.plain-text-editor',
   PlusEditor = 'org.standardnotes.plus-editor',
   SheetsEditor = 'org.standardnotes.standard-sheets',
   TaskEditor = 'org.standardnotes.simple-task-editor',
@@ -51,4 +51,4 @@ export enum FeatureIdentifier {
  */
 export const LegacyFileSafeIdentifier = 'org.standardnotes.legacy.file-safe'
 
-export const ExperimentalFeatures = [FeatureIdentifier.AdvancedChecklist]
+export const ExperimentalFeatures = [FeatureIdentifier.SuperEditor]

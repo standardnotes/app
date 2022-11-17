@@ -10,8 +10,6 @@ export function themes(): ThemeFeatureDescription[] {
     name: 'Midnight',
     identifier: FeatureIdentifier.MidnightTheme,
     permission_name: PermissionName.MidnightTheme,
-    description: 'Elegant utilitarianism.',
-    thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/themes/midnight-with-mobile.jpg',
     isDark: true,
     dock_icon: {
       type: 'circle',
@@ -26,8 +24,6 @@ export function themes(): ThemeFeatureDescription[] {
     name: 'Futura',
     identifier: FeatureIdentifier.FuturaTheme,
     permission_name: PermissionName.FuturaTheme,
-    description: 'Calm and relaxed. Take some time off.',
-    thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/themes/futura-with-mobile.jpg',
     isDark: true,
     dock_icon: {
       type: 'circle',
@@ -42,8 +38,6 @@ export function themes(): ThemeFeatureDescription[] {
     name: 'Solarized Dark',
     identifier: FeatureIdentifier.SolarizedDarkTheme,
     permission_name: PermissionName.SolarizedDarkTheme,
-    description: 'The perfect theme for any time.',
-    thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/themes/solarized-dark.jpg',
     isDark: true,
     dock_icon: {
       type: 'circle',
@@ -58,8 +52,6 @@ export function themes(): ThemeFeatureDescription[] {
     name: 'Autobiography',
     identifier: FeatureIdentifier.AutobiographyTheme,
     permission_name: PermissionName.AutobiographyTheme,
-    description: 'A theme for writers and readers.',
-    thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/themes/autobiography.jpg',
     dock_icon: {
       type: 'circle',
       background_color: '#9D7441',
@@ -68,13 +60,12 @@ export function themes(): ThemeFeatureDescription[] {
     },
   })
 
-  const focus: ThemeFeatureDescription = FillThemeComponentDefaults({
+  const dark: ThemeFeatureDescription = FillThemeComponentDefaults({
     availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
-    name: 'Focus',
-    identifier: FeatureIdentifier.FocusedTheme,
+    name: 'Dark',
+    identifier: FeatureIdentifier.DarkTheme,
     permission_name: PermissionName.FocusedTheme,
-    description: 'For when you need to go in.',
-    thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/themes/focus-with-mobile.jpg',
+    clientControlled: true,
     isDark: true,
     dock_icon: {
       type: 'circle',
@@ -89,8 +80,6 @@ export function themes(): ThemeFeatureDescription[] {
     name: 'Titanium',
     identifier: FeatureIdentifier.TitaniumTheme,
     permission_name: PermissionName.TitaniumTheme,
-    description: 'Light on the eyes, heavy on the spirit.',
-    thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/themes/titanium-with-mobile.jpg',
     dock_icon: {
       type: 'circle',
       background_color: '#6e2b9e',
@@ -106,8 +95,7 @@ export function themes(): ThemeFeatureDescription[] {
     permission_name: PermissionName.ThemeDynamic,
     layerable: true,
     no_mobile: true,
-    description: 'A smart theme that minimizes the tags and notes panels when they are not in use.',
   })
 
-  return [midnight, futura, solarizedDark, autobiography, focus, titanium, dynamic]
+  return [midnight, futura, solarizedDark, autobiography, dark, titanium, dynamic]
 }

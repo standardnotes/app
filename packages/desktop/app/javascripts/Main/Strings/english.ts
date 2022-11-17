@@ -19,7 +19,6 @@ export function createEnglishStrings(): Strings {
       website: 'Website',
       gitHub: 'GitHub',
       discord: 'Discord',
-      slack: 'Slack',
       twitter: 'Twitter',
       toggleErrorConsole: 'Toggle Error Console',
       openDataDirectory: 'Open Data Directory',

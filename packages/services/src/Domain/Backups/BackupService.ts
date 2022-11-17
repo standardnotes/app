@@ -1,5 +1,5 @@
 import { ContentType, Uuid } from '@standardnotes/common'
-import { EncryptionProvider } from '@standardnotes/encryption'
+import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { PayloadEmitSource, FileItem, CreateEncryptedBackupFileContextPayload } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { FilesApiInterface, FileBackupMetadataFile, FileBackupsDevice, FileBackupsMapping } from '@standardnotes/files'
@@ -15,7 +15,7 @@ export class FilesBackupService extends AbstractService {
   constructor(
     private items: ItemManagerInterface,
     private api: FilesApiInterface,
-    private encryptor: EncryptionProvider,
+    private encryptor: EncryptionProviderInterface,
     private device: FileBackupsDevice,
     private status: StatusServiceInterface,
     protected override internalEventBus: InternalEventBusInterface,

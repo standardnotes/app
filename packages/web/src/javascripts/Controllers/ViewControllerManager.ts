@@ -1,15 +1,24 @@
-import { storage, StorageKey } from '@standardnotes/ui-services'
+import { PaneController } from './PaneController'
+import {
+  PersistedStateValue,
+  PersistenceKey,
+  storage,
+  StorageKey,
+  ToastService,
+  ToastServiceInterface,
+} from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { destroyAllObjectProperties } from '@/Utils'
 import {
-  ApplicationEvent,
   DeinitSource,
   WebOrDesktopDeviceInterface,
   InternalEventBus,
   ItemCounterInterface,
   ItemCounter,
   SubscriptionClientInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
 } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 import { ActionsMenuController } from './ActionsMenuController'
@@ -17,7 +26,6 @@ import { FeaturesController } from './FeaturesController'
 import { FilesController } from './FilesController'
 import { NotesController } from './NotesController'
 import { ItemListController } from './ItemList/ItemListController'
-import { NoteTagsController } from './NoteTagsController'
 import { NoAccountWarningController } from './NoAccountWarningController'
 import { PreferencesController } from './PreferencesController'
 import { PurchaseFlowController } from './PurchaseFlow/PurchaseFlowController'
@@ -29,10 +37,13 @@ import { NavigationController } from './Navigation/NavigationController'
 import { FilePreviewModalController } from './FilePreviewModalController'
 import { SelectedItemsController } from './SelectedItemsController'
 import { HistoryModalController } from './NoteHistory/HistoryModalController'
-import { PreferenceId } from '@/Components/Preferences/PreferencesMenu'
-import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
+import { LinkingController } from './LinkingController'
+import { PersistenceService } from './Abstract/PersistenceService'
+import { CrossControllerEvent } from './CrossControllerEvent'
+import { EventObserverInterface } from '@/Event/EventObserverInterface'
+import { ApplicationEventObserver } from '@/Event/ApplicationEventObserver'
 
-export class ViewControllerManager {
+export class ViewControllerManager implements InternalEventHandlerInterface {
   readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
 
   private unsubAppEventObserver!: () => void
@@ -47,8 +58,7 @@ export class ViewControllerManager {
   readonly noAccountWarningController: NoAccountWarningController
   readonly notesController: NotesController
   readonly itemListController: ItemListController
-  readonly noteTagsController: NoteTagsController
-  readonly preferencesController = new PreferencesController()
+  readonly preferencesController: PreferencesController
   readonly purchaseFlowController: PurchaseFlowController
   readonly quickSettingsMenuController = new QuickSettingsController()
   readonly searchOptionsController: SearchOptionsController
@@ -57,6 +67,8 @@ export class ViewControllerManager {
   readonly navigationController: NavigationController
   readonly selectionController: SelectedItemsController
   readonly historyModalController: HistoryModalController
+  readonly linkingController: LinkingController
+  readonly paneController: PaneController
 
   public isSessionsModalVisible = false
 
@@ -64,17 +76,27 @@ export class ViewControllerManager {
   private eventBus: InternalEventBus
   private itemCounter: ItemCounterInterface
   private subscriptionManager: SubscriptionClientInterface
+  private persistenceService: PersistenceService
+  private applicationEventObserver: EventObserverInterface
+  private toastService: ToastServiceInterface
 
   constructor(public application: WebApplication, private device: WebOrDesktopDeviceInterface) {
     this.eventBus = new InternalEventBus()
+
+    this.persistenceService = new PersistenceService(application, this.eventBus)
+
+    this.eventBus.addEventHandler(this, CrossControllerEvent.HydrateFromPersistedValues)
+    this.eventBus.addEventHandler(this, CrossControllerEvent.RequestValuePersistence)
 
     this.itemCounter = new ItemCounter()
 
     this.subscriptionManager = application.subscriptions
 
-    this.selectionController = new SelectedItemsController(application, this.eventBus)
+    this.paneController = new PaneController()
 
-    this.noteTagsController = new NoteTagsController(application, this.eventBus)
+    this.preferencesController = new PreferencesController(application, this.eventBus)
+
+    this.selectionController = new SelectedItemsController(application, this.eventBus)
 
     this.featuresController = new FeaturesController(application, this.eventBus)
 
@@ -83,12 +105,18 @@ export class ViewControllerManager {
     this.notesController = new NotesController(
       application,
       this.selectionController,
-      this.noteTagsController,
       this.navigationController,
       this.eventBus,
     )
 
     this.searchOptionsController = new SearchOptionsController(application, this.eventBus)
+
+    this.linkingController = new LinkingController(
+      application,
+      this.navigationController,
+      this.selectionController,
+      this.eventBus,
+    )
 
     this.itemListController = new ItemListController(
       application,
@@ -96,12 +124,11 @@ export class ViewControllerManager {
       this.searchOptionsController,
       this.selectionController,
       this.notesController,
-      this.noteTagsController,
+      this.linkingController,
       this.eventBus,
     )
 
     this.notesController.setServicesPostConstruction(this.itemListController)
-    this.noteTagsController.setServicesPostConstruction(this.itemListController)
     this.selectionController.setServicesPostConstruction(this.itemListController)
 
     this.noAccountWarningController = new NoAccountWarningController(application, this.eventBus)
@@ -119,7 +146,29 @@ export class ViewControllerManager {
       this.eventBus,
     )
 
+    this.linkingController.setServicesPostConstruction(
+      this.itemListController,
+      this.filesController,
+      this.subscriptionController,
+    )
+
     this.historyModalController = new HistoryModalController(this.application, this.eventBus)
+
+    this.toastService = new ToastService()
+
+    this.applicationEventObserver = new ApplicationEventObserver(
+      application,
+      application.routeService,
+      this.purchaseFlowController,
+      this.accountMenuController,
+      this.preferencesController,
+      this.syncStatusController,
+      application.sync,
+      application.sessions,
+      application.subscriptions,
+      this.toastService,
+      application.user,
+    )
 
     this.addAppEventObserver()
 
@@ -159,6 +208,9 @@ export class ViewControllerManager {
     ;(this.quickSettingsMenuController as unknown) = undefined
     ;(this.syncStatusController as unknown) = undefined
 
+    this.persistenceService.deinit()
+    ;(this.persistenceService as unknown) = undefined
+
     this.actionsMenuController.reset()
     ;(this.actionsMenuController as unknown) = undefined
 
@@ -180,8 +232,8 @@ export class ViewControllerManager {
     this.itemListController.deinit()
     ;(this.itemListController as unknown) = undefined
 
-    this.noteTagsController.deinit()
-    ;(this.noteTagsController as unknown) = undefined
+    this.linkingController.deinit()
+    ;(this.linkingController as unknown) = undefined
 
     this.purchaseFlowController.deinit()
     ;(this.purchaseFlowController as unknown) = undefined
@@ -198,6 +250,9 @@ export class ViewControllerManager {
     this.historyModalController.deinit()
     ;(this.historyModalController as unknown) = undefined
 
+    this.paneController.deinit()
+    ;(this.paneController as unknown) = undefined
+
     destroyAllObjectProperties(this)
   }
 
@@ -210,37 +265,48 @@ export class ViewControllerManager {
   }
 
   addAppEventObserver() {
-    this.unsubAppEventObserver = this.application.addEventObserver(async (eventName) => {
-      const urlSearchParams = new URLSearchParams(window.location.search)
+    this.unsubAppEventObserver = this.application.addEventObserver(
+      this.applicationEventObserver.handle.bind(this.applicationEventObserver),
+    )
+  }
 
-      switch (eventName) {
-        case ApplicationEvent.Launched:
-          if (urlSearchParams.get('purchase')) {
-            this.purchaseFlowController.openPurchaseFlow()
-          }
-          if (urlSearchParams.get('settings')) {
-            const user = this.application.getUser()
-            if (user === undefined) {
-              this.accountMenuController.setShow(true)
-              this.accountMenuController.setCurrentPane(AccountMenuPane.SignIn)
+  persistValues = (): void => {
+    const values: PersistedStateValue = {
+      [PersistenceKey.SelectedItemsController]: this.selectionController.getPersistableValue(),
+      [PersistenceKey.NavigationController]: this.navigationController.getPersistableValue(),
+    }
 
-              break
-            }
+    this.persistenceService.persistValues(values)
 
-            this.preferencesController.openPreferences()
-            this.preferencesController.setCurrentPane(urlSearchParams.get('settings') as PreferenceId)
-          }
-          break
-        case ApplicationEvent.SignedIn:
-          if (urlSearchParams.get('settings')) {
-            this.preferencesController.openPreferences()
-            this.preferencesController.setCurrentPane(urlSearchParams.get('settings') as PreferenceId)
-          }
-          break
-        case ApplicationEvent.SyncStatusChanged:
-          this.syncStatusController.update(this.application.sync.getSyncStatus())
-          break
-      }
-    })
+    const selectedItemsState = values['selected-items-controller']
+    const navigationSelectionState = values['navigation-controller']
+    const launchPriorityUuids: string[] = []
+    if (selectedItemsState.selectedUuids.length) {
+      launchPriorityUuids.push(...selectedItemsState.selectedUuids)
+    }
+    if (navigationSelectionState.selectedTagUuid) {
+      launchPriorityUuids.push(navigationSelectionState.selectedTagUuid)
+    }
+    this.application.sync.setLaunchPriorityUuids(launchPriorityUuids)
+  }
+
+  clearPersistedValues = (): void => {
+    this.persistenceService.clearPersistedValues()
+  }
+
+  hydrateFromPersistedValues = (values: PersistedStateValue | undefined): void => {
+    const navigationState = values?.[PersistenceKey.NavigationController]
+    this.navigationController.hydrateFromPersistedValue(navigationState)
+
+    const selectedItemsState = values?.[PersistenceKey.SelectedItemsController]
+    this.selectionController.hydrateFromPersistedValue(selectedItemsState)
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === CrossControllerEvent.HydrateFromPersistedValues) {
+      this.hydrateFromPersistedValues(event.payload as PersistedStateValue | undefined)
+    } else if (event.type === CrossControllerEvent.RequestValuePersistence) {
+      this.persistValues()
+    }
   }
 }

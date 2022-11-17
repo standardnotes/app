@@ -8,21 +8,24 @@ type Props = {
     trashed: ListableContentItem['trashed']
     archived: ListableContentItem['archived']
     pinned: ListableContentItem['pinned']
+    starred: ListableContentItem['starred']
   }
   hasFiles?: boolean
+  hasBorder?: boolean
+  className?: string
 }
 
-const ListItemFlagIcons: FunctionComponent<Props> = ({ item, hasFiles = false }) => {
+const ListItemFlagIcons: FunctionComponent<Props> = ({ item, hasFiles = false, hasBorder = true, className }) => {
   return (
-    <div className="flex items-start border-b border-solid border-border p-4 pl-0">
+    <div className={`flex items-start ${hasBorder && 'border-b border-solid border-border'} ${className} pl-0`}>
       {item.locked && (
         <span className="flex items-center" title="Editing Disabled">
-          <Icon ariaLabel="Editing Disabled" type="pencil-off" className="text-info" size="small" />
+          <Icon ariaLabel="Editing Disabled" type="pencil-off" className="text-info" size="medium" />
         </span>
       )}
       {item.trashed && (
         <span className="ml-1.5 flex items-center" title="Trashed">
-          <Icon ariaLabel="Trashed" type="trash-filled" className="text-danger" size="small" />
+          <Icon ariaLabel="Trashed" type="trash-filled" className="text-danger" size="medium" />
         </span>
       )}
       {item.archived && (
@@ -32,12 +35,17 @@ const ListItemFlagIcons: FunctionComponent<Props> = ({ item, hasFiles = false })
       )}
       {item.pinned && (
         <span className="ml-1.5 flex items-center" title="Pinned">
-          <Icon ariaLabel="Pinned" type="pin-filled" className="text-info" size="small" />
+          <Icon ariaLabel="Pinned" type="pin-filled" className="text-info" size="medium" />
         </span>
       )}
       {hasFiles && (
         <span className="ml-1.5 flex items-center" title="Files">
-          <Icon ariaLabel="Files" type="attachment-file" className="text-info" size="small" />
+          <Icon ariaLabel="Files" type="attachment-file" className="text-info" size="medium" />
+        </span>
+      )}
+      {item.starred && (
+        <span className="ml-1.5 flex items-center" title="Starred">
+          <Icon ariaLabel="Starred" type="star-filled" className="text-warning" size="medium" />
         </span>
       )}
     </div>

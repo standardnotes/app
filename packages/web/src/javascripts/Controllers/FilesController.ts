@@ -14,19 +14,37 @@ import {
   ClassicFileSaver,
   parseFileName,
 } from '@standardnotes/filepicker'
-import { ChallengeReason, ClientDisplayableError, ContentType, FileItem, InternalEventBus } from '@standardnotes/snjs'
+import {
+  ChallengeReason,
+  ClientDisplayableError,
+  ContentType,
+  FileItem,
+  InternalEventBus,
+  isFile,
+} from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/toast'
 import { action, makeObservable, observable, reaction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { NotesController } from './NotesController'
+import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
 
 const UnprotectedFileActions = [PopoverFileItemActionType.ToggleFileProtection]
 const NonMutatingFileActions = [PopoverFileItemActionType.DownloadFile, PopoverFileItemActionType.PreviewFile]
 
 type FileContextMenuLocation = { x: number; y: number }
 
-export class FilesController extends AbstractViewController {
+export type FilesControllerEventData = {
+  [FilesControllerEvent.FileUploadedToNote]: {
+    uuid: string
+  }
+}
+
+export enum FilesControllerEvent {
+  FileUploadedToNote,
+}
+
+export class FilesController extends AbstractViewController<FilesControllerEvent, FilesControllerEventData> {
   allFiles: FileItem[] = []
   attachedFiles: FileItem[] = []
   showFileContextMenu = false
@@ -98,7 +116,7 @@ export class FilesController extends AbstractViewController {
   reloadAttachedFiles = () => {
     const note = this.notesController.firstSelectedNote
     if (note) {
-      this.attachedFiles = this.application.items.getFilesForNote(note)
+      this.attachedFiles = this.application.items.itemsReferencingItem(note).filter(isFile)
     }
   }
 
@@ -121,7 +139,7 @@ export class FilesController extends AbstractViewController {
     }
   }
 
-  attachFileToNote = async (file: FileItem) => {
+  attachFileToSelectedNote = async (file: FileItem) => {
     const note = this.notesController.firstSelectedNote
     if (!note) {
       addToast({
@@ -189,7 +207,7 @@ export class FilesController extends AbstractViewController {
 
     switch (action.type) {
       case PopoverFileItemActionType.AttachFileToNote:
-        await this.attachFileToNote(file)
+        await this.attachFileToSelectedNote(file)
         break
       case PopoverFileItemActionType.DetachFileToNote:
         await this.detachFileFromNote(file)
@@ -267,7 +285,10 @@ export class FilesController extends AbstractViewController {
         await saver.finish()
       } else {
         const finalBytes = concatenateUint8Arrays(decryptedBytesArray)
-        saver.saveFile(file.name, finalBytes)
+        const blob = new Blob([finalBytes], {
+          type: file.mimeType,
+        })
+        await downloadOrShareBlobBasedOnPlatform(this.application, blob, file.name, false)
       }
 
       addToast({
@@ -393,6 +414,12 @@ export class FilesController extends AbstractViewController {
     }
 
     return undefined
+  }
+
+  notifyObserversOfUploadedFileLinkingToCurrentNote(fileUuid: string) {
+    this.notifyEvent(FilesControllerEvent.FileUploadedToNote, {
+      [FilesControllerEvent.FileUploadedToNote]: { uuid: fileUuid },
+    })
   }
 
   deleteFilesPermanently = async (files: FileItem[]) => {

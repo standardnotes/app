@@ -1,4 +1,5 @@
 import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
+import { log, LoggingDomain } from '@/Logging'
 import {
   ChallengeReason,
   ContentType,
@@ -7,17 +8,24 @@ import {
   SNNote,
   UuidString,
   InternalEventBus,
+  isFile,
+  Uuids,
 } from '@standardnotes/snjs'
-import { action, computed, makeObservable, observable, runInAction } from 'mobx'
+import { SelectionControllerPersistableValue } from '@standardnotes/ui-services'
+import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
+import { Persistable } from './Abstract/Persistable'
+import { CrossControllerEvent } from './CrossControllerEvent'
 import { ItemListController } from './ItemList/ItemListController'
 
-type SelectedItems = Record<UuidString, ListableContentItem>
-
-export class SelectedItemsController extends AbstractViewController {
+export class SelectedItemsController
+  extends AbstractViewController
+  implements Persistable<SelectionControllerPersistableValue>
+{
   lastSelectedItem: ListableContentItem | undefined
-  selectedItems: SelectedItems = {}
+  selectedUuids: Set<UuidString> = observable(new Set<UuidString>())
+  selectedItems: Record<UuidString, ListableContentItem> = {}
   private itemListController!: ItemListController
 
   override deinit(): void {
@@ -29,15 +37,47 @@ export class SelectedItemsController extends AbstractViewController {
     super(application, eventBus)
 
     makeObservable(this, {
+      selectedUuids: observable,
       selectedItems: observable,
 
       selectedItemsCount: computed,
       selectedFiles: computed,
       selectedFilesCount: computed,
+      firstSelectedItem: computed,
 
       selectItem: action,
+      setSelectedUuids: action,
       setSelectedItems: action,
+
+      hydrateFromPersistedValue: action,
     })
+
+    this.disposers.push(
+      reaction(
+        () => this.selectedUuids,
+        () => {
+          eventBus.publish({
+            type: CrossControllerEvent.RequestValuePersistence,
+            payload: undefined,
+          })
+        },
+      ),
+    )
+  }
+
+  getPersistableValue = (): SelectionControllerPersistableValue => {
+    return {
+      selectedUuids: Array.from(this.selectedUuids),
+    }
+  }
+
+  hydrateFromPersistedValue = (state: SelectionControllerPersistableValue | undefined): void => {
+    if (!state) {
+      return
+    }
+    if (!this.selectedUuids.size && state.selectedUuids.length > 0) {
+      void this.selectUuids(state.selectedUuids)
+    }
   }
 
   public setServicesPostConstruction(itemListController: ItemListController) {
@@ -48,8 +88,8 @@ export class SelectedItemsController extends AbstractViewController {
         [ContentType.Note, ContentType.File],
         ({ changed, inserted, removed }) => {
           runInAction(() => {
-            for (const removedNote of removed) {
-              delete this.selectedItems[removedNote.uuid]
+            for (const removedItem of removed) {
+              this.removeSelectedItem(removedItem.uuid)
             }
 
             for (const item of [...changed, ...inserted]) {
@@ -72,25 +112,45 @@ export class SelectedItemsController extends AbstractViewController {
   }
 
   get selectedFiles(): FileItem[] {
-    return this.getSelectedItems<FileItem>(ContentType.File)
+    return this.getFilteredSelectedItems<FileItem>(ContentType.File)
   }
 
   get selectedFilesCount(): number {
     return this.selectedFiles.length
   }
 
-  getSelectedItems = <T extends ListableContentItem = ListableContentItem>(contentType?: ContentType): T[] => {
+  get firstSelectedItem() {
+    return Object.values(this.selectedItems)[0]
+  }
+
+  getSelectedItems = () => {
+    const uuids = Array.from(this.selectedUuids)
+    return uuids.map((uuid) => this.application.items.findSureItem<SNNote | FileItem>(uuid)).filter((item) => !!item)
+  }
+
+  getFilteredSelectedItems = <T extends ListableContentItem = ListableContentItem>(contentType?: ContentType): T[] => {
     return Object.values(this.selectedItems).filter((item) => {
       return !contentType ? true : item.content_type === contentType
     }) as T[]
   }
 
-  setSelectedItems = (selectedItems: SelectedItems) => {
-    this.selectedItems = selectedItems
+  setSelectedItems = () => {
+    this.selectedItems = Object.fromEntries(this.getSelectedItems().map((item) => [item.uuid, item]))
+  }
+
+  setSelectedUuids = (selectedUuids: Set<UuidString>) => {
+    this.selectedUuids = new Set(selectedUuids)
+    this.setSelectedItems()
+  }
+
+  private removeSelectedItem = (uuid: UuidString) => {
+    this.selectedUuids.delete(uuid)
+    this.setSelectedUuids(this.selectedUuids)
+    delete this.selectedItems[uuid]
   }
 
   public deselectItem = (item: { uuid: ListableContentItem['uuid'] }): void => {
-    delete this.selectedItems[item.uuid]
+    this.removeSelectedItem(item.uuid)
 
     if (item.uuid === this.lastSelectedItem?.uuid) {
       this.lastSelectedItem = undefined
@@ -98,11 +158,7 @@ export class SelectedItemsController extends AbstractViewController {
   }
 
   public isItemSelected = (item: ListableContentItem): boolean => {
-    return this.selectedItems[item.uuid] != undefined
-  }
-
-  public updateReferenceOfSelectedItem = (item: ListableContentItem): void => {
-    this.selectedItems[item.uuid] = item
+    return this.selectedUuids.has(item.uuid)
   }
 
   private selectItemsRange = async ({
@@ -133,7 +189,7 @@ export class SelectedItemsController extends AbstractViewController {
 
     for (const item of authorizedItems) {
       runInAction(() => {
-        this.selectedItems[item.uuid] = item
+        this.setSelectedUuids(this.selectedUuids.add(item.uuid))
         this.lastSelectedItem = item
       })
     }
@@ -142,7 +198,7 @@ export class SelectedItemsController extends AbstractViewController {
   cancelMultipleSelection = () => {
     this.io.cancelAllKeyboardModifiers()
 
-    const firstSelectedItem = this.getSelectedItems()[0]
+    const firstSelectedItem = this.firstSelectedItem
 
     if (firstSelectedItem) {
       this.replaceSelection(firstSelectedItem)
@@ -152,9 +208,8 @@ export class SelectedItemsController extends AbstractViewController {
   }
 
   private replaceSelection = (item: ListableContentItem): void => {
-    this.setSelectedItems({
-      [item.uuid]: item,
-    })
+    this.deselectAll()
+    runInAction(() => this.setSelectedUuids(this.selectedUuids.add(item.uuid)))
 
     this.lastSelectedItem = item
   }
@@ -166,10 +221,23 @@ export class SelectedItemsController extends AbstractViewController {
     })
   }
 
-  private deselectAll = (): void => {
-    this.setSelectedItems({})
+  deselectAll = (): void => {
+    this.selectedUuids.clear()
+    this.setSelectedUuids(this.selectedUuids)
 
     this.lastSelectedItem = undefined
+  }
+
+  openSingleSelectedItem = async () => {
+    if (this.selectedItemsCount === 1) {
+      const item = this.firstSelectedItem
+
+      if (item.content_type === ContentType.Note) {
+        await this.itemListController.openNote(item.uuid)
+      } else if (item.content_type === ContentType.File) {
+        await this.itemListController.openFile(item.uuid)
+      }
+    }
   }
 
   selectItem = async (
@@ -179,11 +247,14 @@ export class SelectedItemsController extends AbstractViewController {
     didSelect: boolean
   }> => {
     const item = this.application.items.findItem<ListableContentItem>(uuid)
+
     if (!item) {
       return {
         didSelect: false,
       }
     }
+
+    log(LoggingDomain.Selection, 'selectItem', item.uuid)
 
     const hasMeta = this.io.activeModifiers.has(KeyboardModifier.Meta)
     const hasCtrl = this.io.activeModifiers.has(KeyboardModifier.Ctrl)
@@ -192,33 +263,25 @@ export class SelectedItemsController extends AbstractViewController {
     const isAuthorizedForAccess = await this.application.protections.authorizeItemAccess(item)
 
     if (userTriggered && (hasMeta || hasCtrl)) {
-      if (this.selectedItems[uuid] && hasMoreThanOneSelected) {
-        delete this.selectedItems[uuid]
+      if (this.selectedUuids.has(uuid) && hasMoreThanOneSelected) {
+        this.removeSelectedItem(uuid)
       } else if (isAuthorizedForAccess) {
-        this.selectedItems[uuid] = item
+        this.setSelectedUuids(this.selectedUuids.add(uuid))
         this.lastSelectedItem = item
       }
     } else if (userTriggered && hasShift) {
       await this.selectItemsRange({ selectedItem: item })
     } else {
-      const shouldSelectNote = hasMoreThanOneSelected || !this.selectedItems[uuid]
+      const shouldSelectNote = hasMoreThanOneSelected || !this.selectedUuids.has(uuid)
       if (shouldSelectNote && isAuthorizedForAccess) {
         this.replaceSelection(item)
       }
     }
 
-    if (this.selectedItemsCount === 1) {
-      const item = Object.values(this.selectedItems)[0]
-
-      if (item.content_type === ContentType.Note) {
-        await this.itemListController.openNote(item.uuid)
-      } else if (item.content_type === ContentType.File) {
-        await this.itemListController.openFile(item.uuid)
-      }
-    }
+    await this.openSingleSelectedItem()
 
     return {
-      didSelect: this.selectedItems[uuid] != undefined,
+      didSelect: this.selectedUuids.has(uuid),
     }
   }
 
@@ -226,15 +289,37 @@ export class SelectedItemsController extends AbstractViewController {
     item: {
       uuid: ListableContentItem['uuid']
     },
-    { userTriggered = false, scrollIntoView = true },
+    { userTriggered = false, scrollIntoView = true, animated = true },
   ): Promise<void> => {
     const { didSelect } = await this.selectItem(item.uuid, userTriggered)
 
     if (didSelect && scrollIntoView) {
-      const itemElement = document.getElementById(item.uuid)
-      itemElement?.scrollIntoView({
-        behavior: 'smooth',
-      })
+      this.scrollToItem(item, animated)
+    }
+  }
+
+  scrollToItem = (item: { uuid: ListableContentItem['uuid'] }, animated = true): void => {
+    const itemElement = document.getElementById(item.uuid)
+    itemElement?.scrollIntoView({
+      behavior: animated ? 'smooth' : 'auto',
+    })
+  }
+
+  selectUuids = async (uuids: UuidString[], userTriggered = false) => {
+    const itemsForUuids = this.application.items.findItems(uuids).filter((item) => !isFile(item))
+
+    if (itemsForUuids.length < 1) {
+      return
+    }
+
+    if (!userTriggered && itemsForUuids.some((item) => item.protected && isFile(item))) {
+      return
+    }
+
+    this.setSelectedUuids(new Set(Uuids(itemsForUuids)))
+
+    if (itemsForUuids.length === 1) {
+      void this.openSingleSelectedItem()
     }
   }
 

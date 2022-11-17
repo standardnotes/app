@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.3](https://github.com/standardnotes/app/compare/@standardnotes/sncrypto-common@1.13.2...@standardnotes/sncrypto-common@1.13.3) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/sncrypto-common
+
+## [1.13.2](https://github.com/standardnotes/app/compare/@standardnotes/sncrypto-common@1.13.1...@standardnotes/sncrypto-common@1.13.2) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/sncrypto-common
+
+## [1.13.1](https://github.com/standardnotes/app/compare/@standardnotes/sncrypto-common@1.13.0...@standardnotes/sncrypto-common@1.13.1) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/sncrypto-common
+
+# [1.13.0](https://github.com/standardnotes/app/compare/@standardnotes/sncrypto-common@1.12.0...@standardnotes/sncrypto-common@1.13.0) (2022-10-06)
+
+### Features
+
+* experimental 005 operator ([#1753](https://github.com/standardnotes/app/issues/1753)) ([cbbe913](https://github.com/standardnotes/app/commit/cbbe913cd6eb694dd27997927bd5c45e8a64cc09))
+
 # [1.12.0](https://github.com/standardnotes/app/compare/@standardnotes/sncrypto-common@1.11.1...@standardnotes/sncrypto-common@1.12.0) (2022-09-28)
 
 ### Features

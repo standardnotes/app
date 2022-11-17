@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/Application'
+import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 
 export type DisplayOptionsMenuPositionProps = {
   top: number
@@ -6,10 +7,8 @@ export type DisplayOptionsMenuPositionProps = {
 }
 
 export type DisplayOptionsMenuProps = {
-  application: {
-    getPreference: WebApplication['getPreference']
-    setPreference: WebApplication['setPreference']
-  }
+  application: WebApplication
+  selectedTag: AnyTag
   closeDisplayOptionsMenu: () => void
   isOpen: boolean
   isFilesSmartView: boolean

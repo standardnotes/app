@@ -24,7 +24,6 @@
     "@babel/preset-typescript": "^7.15.0",
     "@standardnotes/config": "^2.2.0",
     "@types/wicg-native-file-system": "^2020.6.0",
-    "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.3",
     "html-webpack-plugin": "^5.5.0",
     "ts-loader": "^9.2.6",

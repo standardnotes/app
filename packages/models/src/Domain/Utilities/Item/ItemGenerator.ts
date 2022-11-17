@@ -33,6 +33,7 @@ import {
 import { DeletedItem } from '../../Abstract/Item/Implementations/DeletedItem'
 import { EncryptedItemInterface } from '../../Abstract/Item/Interfaces/EncryptedItem'
 import { DeletedItemInterface } from '../../Abstract/Item/Interfaces/DeletedItem'
+import { SmartViewMutator } from '../../Syncable/SmartView'
 
 type ItemClass<C extends ItemContent = ItemContent> = new (payload: DecryptedPayloadInterface<C>) => DecryptedItem<C>
 
@@ -56,7 +57,7 @@ const ContentTypeClassMapping: Partial<Record<ContentType, MappingEntry>> = {
   [ContentType.ExtensionRepo]: { itemClass: SNFeatureRepo },
   [ContentType.File]: { itemClass: FileItem, mutatorClass: FileMutator },
   [ContentType.Note]: { itemClass: SNNote, mutatorClass: NoteMutator },
-  [ContentType.SmartView]: { itemClass: SmartView, mutatorClass: TagMutator },
+  [ContentType.SmartView]: { itemClass: SmartView, mutatorClass: SmartViewMutator },
   [ContentType.Tag]: { itemClass: SNTag, mutatorClass: TagMutator },
   [ContentType.Theme]: { itemClass: SNTheme, mutatorClass: ThemeMutator },
   [ContentType.UserPrefs]: { itemClass: SNUserPrefs, mutatorClass: UserPrefsMutator },

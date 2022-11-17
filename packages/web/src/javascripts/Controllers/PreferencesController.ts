@@ -1,13 +1,18 @@
-import { PreferenceId } from '@/Components/Preferences/PreferencesMenu'
+import { InternalEventBus } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
+import { PreferenceId, RootQueryParam } from '@standardnotes/ui-services'
+import { AbstractViewController } from './Abstract/AbstractViewController'
+import { WebApplication } from '@/Application/Application'
 
-const DEFAULT_PANE = 'account'
+const DEFAULT_PANE: PreferenceId = 'account'
 
-export class PreferencesController {
+export class PreferencesController extends AbstractViewController {
   private _open = false
   currentPane: PreferenceId = DEFAULT_PANE
 
-  constructor() {
+  constructor(application: WebApplication, eventBus: InternalEventBus) {
+    super(application, eventBus)
+
     makeObservable<PreferencesController, '_open'>(this, {
       _open: observable,
       currentPane: observable,
@@ -29,18 +34,10 @@ export class PreferencesController {
   closePreferences = (): void => {
     this._open = false
     this.currentPane = DEFAULT_PANE
-    this.removePreferencesToggleFromURLQueryParameters()
+    this.application.routeService.removeQueryParameterFromURL(RootQueryParam.Settings)
   }
 
   get isOpen(): boolean {
     return this._open
-  }
-
-  private removePreferencesToggleFromURLQueryParameters() {
-    const urlSearchParams = new URLSearchParams(window.location.search)
-    urlSearchParams.delete('settings')
-
-    const newUrl = `${window.location.origin}${window.location.pathname}${urlSearchParams.toString()}`
-    window.history.replaceState(null, document.title, newUrl)
   }
 }

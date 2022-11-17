@@ -8,12 +8,18 @@ import {
   UserApiService,
   UserApiServiceInterface,
   UserRegistrationResponseBody,
+  UserRequestServer,
+  UserRequestServerInterface,
   UserServer,
   UserServerInterface,
   WebSocketApiService,
   WebSocketApiServiceInterface,
   WebSocketServer,
   WebSocketServerInterface,
+  WorkspaceApiService,
+  WorkspaceApiServiceInterface,
+  WorkspaceServer,
+  WorkspaceServerInterface,
 } from '@standardnotes/api'
 import * as Common from '@standardnotes/common'
 import * as ExternalServices from '@standardnotes/services'
@@ -45,10 +51,21 @@ import {
   FileService,
   SubscriptionClientInterface,
   SubscriptionManager,
-  StorageValueModes,
+  WorkspaceClientInterface,
+  WorkspaceManager,
+  ChallengePrompt,
+  Challenge,
+  ErrorAlertStrings,
+  SessionsClientInterface,
+  ProtectionsClientInterface,
+  UserService,
+  ProtocolUpgradeStrings,
+  CredentialsChangeFunctionResponse,
+  SessionStrings,
+  AccountEvent,
 } from '@standardnotes/services'
 import { FilesClientInterface } from '@standardnotes/files'
-import { ComputePrivateWorkspaceIdentifier } from '@standardnotes/encryption'
+import { ComputePrivateUsername } from '@standardnotes/encryption'
 import { useBoolean } from '@standardnotes/utils'
 import {
   BackupFile,
@@ -62,10 +79,9 @@ import { ClientDisplayableError } from '@standardnotes/responses'
 
 import { SnjsVersion } from './../Version'
 import { SNLog } from '../Log'
-import { Challenge, ChallengeResponse } from '../Services'
+import { ChallengeResponse, ListedClientInterface } from '../Services'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
-import { MobileUnlockTiming } from '@Lib/Services/Protection/MobileUnlockTiming'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -81,9 +97,7 @@ type ApplicationObserver = {
 
 type ObserverRemover = () => void
 
-export class SNApplication
-  implements ApplicationInterface, AppGroupManagedApplication, InternalServices.ListedClientInterface
-{
+export class SNApplication implements ApplicationInterface, AppGroupManagedApplication {
   onDeinit!: ExternalServices.DeinitCallback
 
   /**
@@ -109,9 +123,13 @@ export class SNApplication
   private apiService!: InternalServices.SNApiService
   private declare userApiService: UserApiServiceInterface
   private declare userServer: UserServerInterface
+  private declare userRequestServer: UserRequestServerInterface
   private declare subscriptionApiService: SubscriptionApiServiceInterface
   private declare subscriptionServer: SubscriptionServerInterface
   private declare subscriptionManager: SubscriptionClientInterface
+  private declare workspaceApiService: WorkspaceApiServiceInterface
+  private declare workspaceServer: WorkspaceServerInterface
+  private declare workspaceManager: WorkspaceClientInterface
   private declare webSocketApiService: WebSocketApiServiceInterface
   private declare webSocketServer: WebSocketServerInterface
   private sessionManager!: InternalServices.SNSessionManager
@@ -126,7 +144,7 @@ export class SNApplication
   private keyRecoveryService!: InternalServices.SNKeyRecoveryService
   private preferencesService!: InternalServices.SNPreferencesService
   private featuresService!: InternalServices.SNFeaturesService
-  private userService!: InternalServices.UserService
+  private userService!: UserService
   private webSocketsService!: InternalServices.SNWebSocketsService
   private settingsService!: InternalServices.SNSettingsService
   private mfaService!: InternalServices.SNMfaService
@@ -213,6 +231,10 @@ export class SNApplication
     return this.subscriptionManager
   }
 
+  get workspaces(): ExternalServices.WorkspaceClientInterface {
+    return this.workspaceManager
+  }
+
   public get files(): FilesClientInterface {
     return this.fileService
   }
@@ -225,7 +247,7 @@ export class SNApplication
     return this.itemManager
   }
 
-  public get protections(): InternalServices.ProtectionsClientInterface {
+  public get protections(): ProtectionsClientInterface {
     return this.protectionService
   }
 
@@ -245,7 +267,7 @@ export class SNApplication
     return this.mutatorService
   }
 
-  public get sessions(): InternalServices.SessionsClientInterface {
+  public get sessions(): SessionsClientInterface {
     return this.sessionManager
   }
 
@@ -261,8 +283,16 @@ export class SNApplication
     return this.componentManagerService
   }
 
-  public computePrivateWorkspaceIdentifier(userphrase: string, name: string): Promise<string | undefined> {
-    return ComputePrivateWorkspaceIdentifier(this.options.crypto, userphrase, name)
+  public get listed(): ListedClientInterface {
+    return this.listedService
+  }
+
+  public get alerts(): ExternalServices.AlertService {
+    return this.alertService
+  }
+
+  public computePrivateUsername(username: string): Promise<string | undefined> {
+    return ComputePrivateUsername(this.options.crypto, username)
   }
 
   /**
@@ -270,6 +300,10 @@ export class SNApplication
    * This function will load all services in their correct order.
    */
   async prepareForLaunch(callback: LaunchCallback): Promise<void> {
+    if (this.launched) {
+      throw new Error('Attempting to prelaunch already launched application')
+    }
+
     await this.options.crypto.initialize()
 
     this.setLaunchCallback(callback)
@@ -309,6 +343,10 @@ export class SNApplication
    * Option to await database load before marking the app as ready.
    */
   public async launch(awaitDatabaseLoad = false): Promise<void> {
+    if (this.launched) {
+      throw new Error('Attempting to launch already launched application')
+    }
+
     this.launched = false
 
     const launchChallenge = this.getLaunchChallenge()
@@ -325,16 +363,20 @@ export class SNApplication
         await this.diskStorageService.decryptStorage()
       } catch (_error) {
         void this.alertService.alert(
-          InternalServices.ErrorAlertStrings.StorageDecryptErrorBody,
-          InternalServices.ErrorAlertStrings.StorageDecryptErrorTitle,
+          ErrorAlertStrings.StorageDecryptErrorBody,
+          ErrorAlertStrings.StorageDecryptErrorTitle,
         )
       }
     }
 
     await this.handleStage(ExternalServices.ApplicationStage.StorageDecrypted_09)
 
-    this.apiService.loadHost()
+    const host = this.apiService.loadHost()
+
+    this.httpService.setHost(host)
+
     this.webSocketsService.loadWebSocketUrl()
+
     await this.sessionManager.initializeFromDisk()
 
     this.settingsService.initializeFromDisk()
@@ -560,6 +602,7 @@ export class SNApplication
 
   public async setCustomHost(host: string): Promise<void> {
     await this.setHost(host)
+
     this.webSocketsService.setWebSocketUrl(undefined)
   }
 
@@ -606,12 +649,12 @@ export class SNApplication
     const result = await this.userService.performProtocolUpgrade()
     if (result.success) {
       if (this.hasAccount()) {
-        void this.alertService.alert(InternalServices.ProtocolUpgradeStrings.SuccessAccount)
+        void this.alertService.alert(ProtocolUpgradeStrings.SuccessAccount)
       } else {
-        void this.alertService.alert(InternalServices.ProtocolUpgradeStrings.SuccessPasscodeOnly)
+        void this.alertService.alert(ProtocolUpgradeStrings.SuccessPasscodeOnly)
       }
     } else if (result.error) {
-      void this.alertService.alert(InternalServices.ProtocolUpgradeStrings.Fail)
+      void this.alertService.alert(ProtocolUpgradeStrings.Fail)
     }
     return result
   }
@@ -668,25 +711,6 @@ export class SNApplication
 
   public authorizeSearchingProtectedNotesText(): Promise<boolean> {
     return this.protectionService.authorizeSearchingProtectedNotesText()
-  }
-
-  public canRegisterNewListedAccount(): boolean {
-    return this.listedService.canRegisterNewListedAccount()
-  }
-
-  public async requestNewListedAccount(): Promise<Responses.ListedAccount | undefined> {
-    return this.listedService.requestNewListedAccount()
-  }
-
-  public async getListedAccounts(): Promise<Responses.ListedAccount[]> {
-    return this.listedService.getListedAccounts()
-  }
-
-  public getListedAccountInfo(
-    account: Responses.ListedAccount,
-    inContextOfItem?: UuidString,
-  ): Promise<Responses.ListedAccountInfo | undefined> {
-    return this.listedService.getListedAccountInfo(account, inContextOfItem)
   }
 
   public async createEncryptedBackupFileForAutomatedDesktopBackups(): Promise<BackupFile | undefined> {
@@ -845,7 +869,7 @@ export class SNApplication
     currentPassword: string,
     passcode?: string,
     origination = Common.KeyParamsOrigination.EmailChange,
-  ): Promise<InternalServices.CredentialsChangeFunctionResponse> {
+  ): Promise<CredentialsChangeFunctionResponse> {
     return this.userService.changeCredentials({
       currentPassword,
       newEmail,
@@ -861,7 +885,7 @@ export class SNApplication
     passcode?: string,
     origination = Common.KeyParamsOrigination.PasswordChange,
     validateNewPasswordStrength = true,
-  ): Promise<InternalServices.CredentialsChangeFunctionResponse> {
+  ): Promise<CredentialsChangeFunctionResponse> {
     return this.userService.changeCredentials({
       currentPassword,
       newPassword,
@@ -883,7 +907,7 @@ export class SNApplication
     /** Keep a reference to the soon-to-be-cleared alertService */
     const alertService = this.alertService
     await this.user.signOut(true)
-    void alertService.alert(InternalServices.SessionStrings.CurrentSessionRevoked)
+    void alertService.alert(SessionStrings.CurrentSessionRevoked)
   }
 
   public async validateAccountPassword(password: string): Promise<boolean> {
@@ -897,24 +921,6 @@ export class SNApplication
 
   public isLaunched(): boolean {
     return this.launched
-  }
-
-  public hasBiometrics(): boolean {
-    return this.protectionService.hasBiometricsEnabled()
-  }
-
-  /**
-   * @returns whether the operation was successful or not
-   */
-  public enableBiometrics(): boolean {
-    return this.protectionService.enableBiometrics()
-  }
-
-  /**
-   * @returns whether the operation was successful or not
-   */
-  public disableBiometrics(): Promise<boolean> {
-    return this.protectionService.disableBiometrics()
   }
 
   public hasPasscode(): boolean {
@@ -936,40 +942,26 @@ export class SNApplication
     return this.deinit(this.getDeinitMode(), DeinitSource.Lock)
   }
 
-  setBiometricsTiming(timing: MobileUnlockTiming) {
-    return this.protectionService.setBiometricsTiming(timing)
-  }
+  public softLockBiometrics(): void {
+    const challenge = new Challenge(
+      [new ChallengePrompt(ChallengeValidation.Biometric)],
+      ChallengeReason.ApplicationUnlock,
+      false,
+    )
 
-  getMobileScreenshotPrivacyEnabled(): boolean {
-    return this.protectionService.getMobileScreenshotPrivacyEnabled()
-  }
+    void this.promptForCustomChallenge(challenge)
 
-  setMobileScreenshotPrivacyEnabled(isEnabled: boolean) {
-    return this.protectionService.setMobileScreenshotPrivacyEnabled(isEnabled)
-  }
+    void this.notifyEvent(ApplicationEvent.BiometricsSoftLockEngaged)
 
-  getMobilePasscodeTiming(): MobileUnlockTiming | undefined {
-    return this.getValue(StorageKey.MobilePasscodeTiming, StorageValueModes.Nonwrapped) as
-      | MobileUnlockTiming
-      | undefined
-  }
-
-  getMobileBiometricsTiming(): MobileUnlockTiming | undefined {
-    return this.getValue(StorageKey.MobileBiometricsTiming, StorageValueModes.Nonwrapped) as
-      | MobileUnlockTiming
-      | undefined
-  }
-
-  getBiometricsTimingOptions() {
-    return this.protectionService.getBiometricsTimingOptions()
-  }
-
-  getPasscodeTimingOptions() {
-    return this.protectionService.getPasscodeTimingOptions()
+    this.addChallengeObserver(challenge, {
+      onComplete: () => {
+        void this.notifyEvent(ApplicationEvent.BiometricsSoftLockDisengaged)
+      },
+    })
   }
 
   isNativeMobileWeb() {
-    return this.environment === Environment.NativeMobileWeb
+    return this.environment === Environment.Mobile
   }
 
   getDeinitMode(): DeinitMode {
@@ -1043,10 +1035,6 @@ export class SNApplication
     }
   }
 
-  public isMfaFeatureAvailable(): boolean {
-    return this.mfaService.isMfaFeatureAvailable()
-  }
-
   public async isMfaActivated(): Promise<boolean> {
     return this.mfaService.isMfaActivated()
   }
@@ -1089,16 +1077,20 @@ export class SNApplication
     this.createProtocolService()
     this.diskStorageService.provideEncryptionProvider(this.protocolService)
     this.createChallengeService()
-    this.createHttpManager()
+    this.createLegacyHttpManager()
     this.createApiService()
     this.createHttpService()
     this.createUserServer()
+    this.createUserRequestServer()
     this.createUserApiService()
     this.createSubscriptionServer()
     this.createSubscriptionApiService()
     this.createWebSocketServer()
     this.createWebSocketApiService()
     this.createSubscriptionManager()
+    this.createWorkspaceServer()
+    this.createWorkspaceApiService()
+    this.createWorkspaceManager()
     this.createWebSocketsService()
     this.createSessionManager()
     this.createHistoryManager()
@@ -1113,11 +1105,11 @@ export class SNApplication
     this.createComponentManager()
     this.createMigrationService()
     this.createMfaService()
-    this.createListedService()
-    this.createActionsManager()
     this.createFileService()
     this.createIntegrityService()
     this.createMutatorService()
+    this.createListedService()
+    this.createActionsManager()
     this.createStatusService()
 
     if (isDesktopDevice(this.deviceInterface)) {
@@ -1137,11 +1129,15 @@ export class SNApplication
     ;(this.apiService as unknown) = undefined
     ;(this.userApiService as unknown) = undefined
     ;(this.userServer as unknown) = undefined
+    ;(this.userRequestServer as unknown) = undefined
     ;(this.subscriptionApiService as unknown) = undefined
     ;(this.subscriptionServer as unknown) = undefined
+    ;(this.subscriptionManager as unknown) = undefined
+    ;(this.workspaceApiService as unknown) = undefined
+    ;(this.workspaceServer as unknown) = undefined
+    ;(this.workspaceManager as unknown) = undefined
     ;(this.webSocketApiService as unknown) = undefined
     ;(this.webSocketServer as unknown) = undefined
-    ;(this.subscriptionManager as unknown) = undefined
     ;(this.sessionManager as unknown) = undefined
     ;(this.syncService as unknown) = undefined
     ;(this.challengeService as unknown) = undefined
@@ -1189,6 +1185,8 @@ export class SNApplication
       this.itemManager,
       this.settingsService,
       this.deprecatedHttpService,
+      this.protectionService,
+      this.mutator,
       this.internalEventBus,
     )
     this.services.push(this.listedService)
@@ -1245,6 +1243,10 @@ export class SNApplication
             void this.notifyEvent(ApplicationEvent.FeaturesUpdated)
             break
           }
+          case ExternalServices.FeaturesEvent.DidPurchaseSubscription: {
+            void this.notifyEvent(ApplicationEvent.DidPurchaseSubscription)
+            break
+          }
           default: {
             Utils.assertUnreachable(event)
           }
@@ -1282,7 +1284,7 @@ export class SNApplication
   }
 
   private createUserService(): void {
-    this.userService = new InternalServices.UserService(
+    this.userService = new UserService(
       this.sessionManager,
       this.syncService,
       this.diskStorageService,
@@ -1291,17 +1293,17 @@ export class SNApplication
       this.alertService,
       this.challengeService,
       this.protectionService,
-      this.apiService,
+      this.userApiService,
       this.internalEventBus,
     )
     this.serviceObservers.push(
       this.userService.addEventObserver(async (event, data) => {
         switch (event) {
-          case InternalServices.AccountEvent.SignedInOrRegistered: {
+          case AccountEvent.SignedInOrRegistered: {
             void this.notifyEvent(ApplicationEvent.SignedIn)
             break
           }
-          case InternalServices.AccountEvent.SignedOut: {
+          case AccountEvent.SignedOut: {
             await this.notifyEvent(ApplicationEvent.SignedOut)
             await this.prepareForDeinit()
             this.deinit(this.getDeinitMode(), data?.source || DeinitSource.SignOut)
@@ -1329,11 +1331,15 @@ export class SNApplication
   }
 
   private createUserApiService() {
-    this.userApiService = new UserApiService(this.userServer)
+    this.userApiService = new UserApiService(this.userServer, this.userRequestServer)
   }
 
   private createUserServer() {
     this.userServer = new UserServer(this.httpService)
+  }
+
+  private createUserRequestServer() {
+    this.userRequestServer = new UserRequestServer(this.httpService)
   }
 
   private createSubscriptionApiService() {
@@ -1356,16 +1362,25 @@ export class SNApplication
     this.subscriptionManager = new SubscriptionManager(this.subscriptionApiService, this.internalEventBus)
   }
 
+  private createWorkspaceServer() {
+    this.workspaceServer = new WorkspaceServer(this.httpService)
+  }
+
+  private createWorkspaceApiService() {
+    this.workspaceApiService = new WorkspaceApiService(this.workspaceServer)
+  }
+
+  private createWorkspaceManager() {
+    this.workspaceManager = new WorkspaceManager(this.workspaceApiService, this.internalEventBus)
+  }
+
   private createItemManager() {
     this.itemManager = new InternalServices.ItemManager(this.payloadManager, this.options, this.internalEventBus)
     this.services.push(this.itemManager)
   }
 
   private createComponentManager() {
-    const MaybeSwappedComponentManager = this.getClass<typeof InternalServices.SNComponentManager>(
-      InternalServices.SNComponentManager,
-    )
-    this.componentManagerService = new MaybeSwappedComponentManager(
+    this.componentManagerService = new InternalServices.SNComponentManager(
       this.itemManager,
       this.syncService,
       this.featuresService,
@@ -1374,11 +1389,12 @@ export class SNApplication
       this.environment,
       this.platform,
       this.internalEventBus,
+      this.deviceInterface,
     )
     this.services.push(this.componentManagerService)
   }
 
-  private createHttpManager() {
+  private createLegacyHttpManager() {
     this.deprecatedHttpService = new InternalServices.SNHttpService(
       this.environment,
       this.options.appVersion,
@@ -1392,7 +1408,6 @@ export class SNApplication
       this.environment,
       this.options.appVersion,
       SnjsVersion,
-      this.options.defaultHost,
       this.apiService.processMetaObject.bind(this.apiService),
     )
   }
@@ -1518,7 +1533,10 @@ export class SNApplication
     const syncEventCallback = async (eventName: ExternalServices.SyncEvent) => {
       const appEvent = applicationEventForSyncEvent(eventName)
       if (appEvent) {
+        await this.protocolService.onSyncEvent(eventName)
+
         await this.notifyEvent(appEvent)
+
         if (appEvent === ApplicationEvent.CompletedFullSync) {
           if (!this.handledFullSyncStage) {
             this.handledFullSyncStage = true
@@ -1526,7 +1544,6 @@ export class SNApplication
           }
         }
       }
-      await this.protocolService.onSyncEvent(eventName)
     }
     const uninstall = this.syncService.addEventObserver(syncEventCallback)
     this.serviceObservers.push(uninstall)
@@ -1653,14 +1670,5 @@ export class SNApplication
   private createStatusService(): void {
     this.statusService = new ExternalServices.StatusService(this.internalEventBus)
     this.services.push(this.statusService)
-  }
-
-  private getClass<T>(base: T) {
-    const swapClass = this.options.swapClasses?.find((candidate) => candidate.swap === base)
-    if (swapClass) {
-      return swapClass.with as T
-    } else {
-      return base
-    }
   }
 }

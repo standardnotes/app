@@ -1,0 +1,23 @@
+{
+  "name": "@standardnotes/blocks-editor",
+  "version": "1.5.3",
+  "private": true,
+  "main": "./src/index.ts",
+  "scripts": {
+    "tsc": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@lexical/react": "^0.6.0",
+    "@standardnotes/icons": "workspace:*",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.9",
+    "lexical": "^0.6.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "eslint": "*",
+    "prettier": "*",
+    "typescript": "*"
+  }
+}

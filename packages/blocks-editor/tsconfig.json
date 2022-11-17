@@ -1,0 +1,10 @@
+{
+  "extends": "../../UILib.tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src", "../web/src/javascripts/Components/BlockEditor/EncryptedFileNode.tsx"],
+  "exclude": ["dist", "node_modules"]
+}

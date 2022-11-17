@@ -1,4 +1,3 @@
-import { Challenge } from './../Challenge/Challenge'
 import { ChallengeService } from './../Challenge/ChallengeService'
 import { SNLog } from '@Lib/Log'
 import { DecryptedItem } from '@standardnotes/models'
@@ -11,14 +10,16 @@ import {
   ApplicationStage,
   StorageKey,
   DiagnosticInfo,
+  Challenge,
   ChallengeReason,
   ChallengePrompt,
   ChallengeValidation,
   EncryptionService,
+  MobileUnlockTiming,
+  TimingDisplayOption,
+  ProtectionsClientInterface,
 } from '@standardnotes/services'
-import { ProtectionsClientInterface } from './ClientInterface'
 import { ContentType } from '@standardnotes/common'
-import { MobileUnlockTiming } from './MobileUnlockTiming'
 
 export enum ProtectionEvent {
   UnprotectedSessionBegan = 'UnprotectedSessionBegan',
@@ -64,8 +65,8 @@ export const ProtectionSessionDurations = [
  */
 export class SNProtectionService extends AbstractService<ProtectionEvent> implements ProtectionsClientInterface {
   private sessionExpiryTimeout = -1
-  private mobilePasscodeTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.Immediately
-  private mobileBiometricsTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.Immediately
+  private mobilePasscodeTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.OnQuit
+  private mobileBiometricsTiming: MobileUnlockTiming | undefined = MobileUnlockTiming.OnQuit
 
   constructor(
     private protocolService: EncryptionService,
@@ -87,8 +88,8 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
   override handleApplicationStage(stage: ApplicationStage): Promise<void> {
     if (stage === ApplicationStage.LoadedDatabase_12) {
       this.updateSessionExpiryTimer(this.getSessionExpiryDate())
-      this.mobilePasscodeTiming = this.getPasscodeTiming()
-      this.mobileBiometricsTiming = this.getBiometricsTiming()
+      this.mobilePasscodeTiming = this.getMobilePasscodeTiming()
+      this.mobileBiometricsTiming = this.getMobileBiometricsTiming()
     }
     return Promise.resolve()
   }
@@ -176,60 +177,98 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
       item.content_type === ContentType.Note
         ? ChallengeReason.AccessProtectedNote
         : ChallengeReason.AccessProtectedFile,
+      { fallBackToAccountPassword: true, requireAccountPassword: false, forcePrompt: false },
     )
   }
 
   authorizeAddingPasscode(): Promise<boolean> {
-    return this.authorizeAction(ChallengeReason.AddPasscode)
+    return this.authorizeAction(ChallengeReason.AddPasscode, {
+      fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: false,
+    })
   }
 
   authorizeChangingPasscode(): Promise<boolean> {
-    return this.authorizeAction(ChallengeReason.ChangePasscode)
+    return this.authorizeAction(ChallengeReason.ChangePasscode, {
+      fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: false,
+    })
   }
 
   authorizeRemovingPasscode(): Promise<boolean> {
-    return this.authorizeAction(ChallengeReason.RemovePasscode)
+    return this.authorizeAction(ChallengeReason.RemovePasscode, {
+      fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: false,
+    })
   }
 
   authorizeSearchingProtectedNotesText(): Promise<boolean> {
-    return this.authorizeAction(ChallengeReason.SearchProtectedNotesText)
+    return this.authorizeAction(ChallengeReason.SearchProtectedNotesText, {
+      fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: false,
+    })
   }
 
   authorizeFileImport(): Promise<boolean> {
-    return this.authorizeAction(ChallengeReason.ImportFile)
+    return this.authorizeAction(ChallengeReason.ImportFile, {
+      fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: false,
+    })
   }
 
   async authorizeBackupCreation(): Promise<boolean> {
     return this.authorizeAction(ChallengeReason.ExportBackup, {
       fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: false,
     })
   }
 
   async authorizeMfaDisable(): Promise<boolean> {
     return this.authorizeAction(ChallengeReason.DisableMfa, {
+      fallBackToAccountPassword: true,
       requireAccountPassword: true,
+      forcePrompt: false,
     })
   }
 
   async authorizeAutolockIntervalChange(): Promise<boolean> {
-    return this.authorizeAction(ChallengeReason.ChangeAutolockInterval)
+    return this.authorizeAction(ChallengeReason.ChangeAutolockInterval, {
+      fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: false,
+    })
   }
 
   async authorizeSessionRevoking(): Promise<boolean> {
-    return this.authorizeAction(ChallengeReason.RevokeSession)
+    return this.authorizeAction(ChallengeReason.RevokeSession, {
+      fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: false,
+    })
+  }
+
+  async authorizeListedPublishing(): Promise<boolean> {
+    return this.authorizeAction(ChallengeReason.AuthorizeNoteForListed, {
+      fallBackToAccountPassword: true,
+      requireAccountPassword: false,
+      forcePrompt: true,
+    })
   }
 
   async authorizeAction(
     reason: ChallengeReason,
-    { fallBackToAccountPassword = true, requireAccountPassword = false } = {},
+    dto: { fallBackToAccountPassword: boolean; requireAccountPassword: boolean; forcePrompt: boolean },
   ): Promise<boolean> {
-    return this.validateOrRenewSession(reason, {
-      requireAccountPassword,
-      fallBackToAccountPassword,
-    })
+    return this.validateOrRenewSession(reason, dto)
   }
 
-  getPasscodeTimingOptions() {
+  getMobilePasscodeTimingOptions(): TimingDisplayOption[] {
     return [
       {
         title: 'Immediately',
@@ -244,7 +283,7 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
     ]
   }
 
-  getBiometricsTimingOptions() {
+  getMobileBiometricsTimingOptions(): TimingDisplayOption[] {
     return [
       {
         title: 'Immediately',
@@ -259,23 +298,30 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
     ]
   }
 
-  private getBiometricsTiming(): MobileUnlockTiming | undefined {
+  getMobileBiometricsTiming(): MobileUnlockTiming | undefined {
     return this.storageService.getValue<MobileUnlockTiming | undefined>(
       StorageKey.MobileBiometricsTiming,
       StorageValueModes.Nonwrapped,
+      MobileUnlockTiming.OnQuit,
     )
   }
 
-  private getPasscodeTiming(): MobileUnlockTiming | undefined {
+  getMobilePasscodeTiming(): MobileUnlockTiming | undefined {
     return this.storageService.getValue<MobileUnlockTiming | undefined>(
       StorageKey.MobilePasscodeTiming,
       StorageValueModes.Nonwrapped,
+      MobileUnlockTiming.OnQuit,
     )
   }
 
-  async setBiometricsTiming(timing: MobileUnlockTiming) {
+  setMobileBiometricsTiming(timing: MobileUnlockTiming): void {
     this.storageService.setValue(StorageKey.MobileBiometricsTiming, timing, StorageValueModes.Nonwrapped)
     this.mobileBiometricsTiming = timing
+  }
+
+  setMobilePasscodeTiming(timing: MobileUnlockTiming): void {
+    this.storageService.setValue(StorageKey.MobilePasscodeTiming, timing, StorageValueModes.Nonwrapped)
+    this.mobilePasscodeTiming = timing
   }
 
   setMobileScreenshotPrivacyEnabled(isEnabled: boolean) {
@@ -288,9 +334,9 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
 
   private async validateOrRenewSession(
     reason: ChallengeReason,
-    { fallBackToAccountPassword = true, requireAccountPassword = false } = {},
+    { fallBackToAccountPassword = true, requireAccountPassword = false, forcePrompt = false } = {},
   ): Promise<boolean> {
-    if (this.getSessionExpiryDate() > new Date()) {
+    if (this.getSessionExpiryDate() > new Date() && !forcePrompt) {
       return true
     }
 

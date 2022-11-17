@@ -48,17 +48,9 @@ jobs:
         uses: martinbeentjes/npm-get-version-action@main
         with:
           path: packages/mobile
-      - name: Release
-        uses: softprops/action-gh-release@v1
-        with:
-          token: ${{ secrets.CI_PAT_TOKEN }}
-          tag_name: "@standardnotes/mobile@${{ steps.package-version.outputs.current-version}}"
-          prerelease: true
-          draft: true
-          name: "Mobile Dev ${{ steps.package-version.outputs.current-version }}"
-          files: |
-            packages/mobile/android/app/build/outputs/apk/dev/release/app-dev-release.apk
   ios:
+    env:
+      ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD: true
     defaults:
       run:
         working-directory: packages/mobile

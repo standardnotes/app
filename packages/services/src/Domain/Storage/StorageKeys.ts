@@ -38,6 +38,7 @@ export enum StorageKey {
   ExperimentalFeatures = 'experimental_features',
   DeinitMode = 'deinit_mode',
   CodeVerifier = 'code_verifier',
+  LaunchPriorityUuids = 'launch_priority_uuids',
 }
 
 export enum NonwrappedStorageKey {

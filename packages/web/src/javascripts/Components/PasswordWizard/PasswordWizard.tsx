@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { createRef } from 'react'
-import { PureComponent } from '@/Components/Abstract/PureComponent'
+import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import Button from '@/Components/Button/Button'
 import DecoratedPasswordInput from '../Input/DecoratedPasswordInput'
 import ModalDialog from '../Shared/ModalDialog'
@@ -38,7 +38,7 @@ type FormData = {
   status?: string
 }
 
-class PasswordWizard extends PureComponent<Props, State> {
+class PasswordWizard extends AbstractComponent<Props, State> {
   private currentPasswordInput = createRef<HTMLInputElement>()
 
   constructor(props: Props) {

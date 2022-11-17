@@ -1,6 +1,6 @@
 import { PureCryptoInterface, StreamEncryptor } from '@standardnotes/sncrypto-common'
 import { FileItem } from '@standardnotes/models'
-import { EncryptionProvider } from '@standardnotes/encryption'
+import { EncryptionProviderInterface } from '@standardnotes/encryption'
 
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { ChallengeServiceInterface } from '../Challenge'
@@ -19,7 +19,7 @@ describe('fileService', () => {
   let crypto: PureCryptoInterface
   let challengor: ChallengeServiceInterface
   let fileService: FileService
-  let encryptor: EncryptionProvider
+  let encryptor: EncryptionProviderInterface
   let internalEventBus: InternalEventBusInterface
 
   beforeEach(() => {
@@ -41,7 +41,7 @@ describe('fileService', () => {
     syncService = {} as jest.Mocked<SyncServiceInterface>
     syncService.sync = jest.fn()
 
-    encryptor = {} as jest.Mocked<EncryptionProvider>
+    encryptor = {} as jest.Mocked<EncryptionProviderInterface>
 
     alertService = {} as jest.Mocked<AlertService>
     alertService.confirm = jest.fn().mockReturnValue(true)
@@ -77,7 +77,7 @@ describe('fileService', () => {
     crypto.xchacha20StreamEncryptorPush = jest.fn().mockReturnValue(new Uint8Array())
   })
 
-  it.only('should cache file after download', async () => {
+  it('should cache file after download', async () => {
     const file = {
       uuid: '1',
       decryptedSize: 100_000,

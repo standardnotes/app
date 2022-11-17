@@ -1,6 +1,6 @@
 import { ListboxArrow, ListboxInput, ListboxList, ListboxPopover } from '@reach/listbox'
 import '@reach/listbox/styles.css'
-import VisuallyHidden from '@reach/visually-hidden'
+import { VisuallyHidden } from '@reach/visually-hidden'
 import { FunctionComponent } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { DropdownItem } from './DropdownItem'
@@ -15,6 +15,8 @@ type DropdownProps = {
   onChange: (value: string, item: DropdownItem) => void
   disabled?: boolean
   className?: string
+  fullWidth?: boolean
+  portal?: boolean
 }
 
 type ListboxButtonProps = DropdownItem & {
@@ -34,7 +36,7 @@ const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
           <Icon type={icon} className={iconClassName} size="small" />
         </div>
       ) : null}
-      <div className="dropdown-selected-label">{label}</div>
+      <div className="text-base lg:text-sm">{label}</div>
     </div>
     <ListboxArrow className={`flex ${isExpanded ? 'rotate-180' : ''}`}>
       <Icon type="menu-arrow-down" className="text-passive-1" size="small" />
@@ -42,7 +44,17 @@ const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
   </>
 )
 
-const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, onChange, disabled, className }) => {
+const Dropdown: FunctionComponent<DropdownProps> = ({
+  id,
+  label,
+  items,
+  value,
+  onChange,
+  disabled,
+  className,
+  fullWidth,
+  portal = true,
+}) => {
   const labelId = `${id}-label`
 
   const handleChange = (value: string) => {
@@ -56,6 +68,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, o
       <VisuallyHidden id={labelId}>{label}</VisuallyHidden>
       <ListboxInput value={value} onChange={handleChange} aria-labelledby={labelId} disabled={disabled}>
         <StyledListboxButton
+          className={`w-full ${!fullWidth ? 'md:w-fit' : ''}`}
           children={({ value, label, isExpanded }) => {
             const current = items.find((item) => item.value === value)
             const icon = current ? current?.icon : null
@@ -69,7 +82,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, o
             })
           }}
         />
-        <ListboxPopover className="sn-dropdown sn-dropdown-popover">
+        <ListboxPopover portal={portal} className="sn-dropdown sn-dropdown-popover">
           <div className="sn-component">
             <ListboxList>
               {items.map((item) => (
@@ -79,7 +92,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({ id, label, items, value, o
                       <Icon type={item.icon} className={item.iconClassName ?? ''} size="small" />
                     </div>
                   ) : null}
-                  <div className="text-input">{item.label}</div>
+                  <div className="text-base lg:text-sm">{item.label}</div>
                 </StyledListboxOption>
               ))}
             </ListboxList>

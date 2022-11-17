@@ -9,6 +9,8 @@ import LabsPane from './Labs/Labs'
 import Advanced from '@/Components/Preferences/Panes/General/Advanced/AdvancedSection'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import PlaintextDefaults from './PlaintextDefaults'
+import Persistence from './Persistence'
+import SmartViews from './SmartViews/SmartViews'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -18,8 +20,10 @@ type Props = {
 
 const General: FunctionComponent<Props> = ({ viewControllerManager, application, extensionsLatestVersions }) => (
   <PreferencesPane>
+    <Persistence application={application} />
     <PlaintextDefaults application={application} />
     <Defaults application={application} />
+    <SmartViews application={application} featuresController={viewControllerManager.featuresController} />
     <Tools application={application} />
     <LabsPane application={application} />
     <Advanced

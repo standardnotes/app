@@ -14,10 +14,27 @@ type ListedActionsMenuProps = {
 const ListedActionsMenu = ({ application, note }: ListedActionsMenuProps) => {
   const [menuGroups, setMenuGroups] = useState<ListedMenuGroup[]>([])
   const [isFetchingAccounts, setIsFetchingAccounts] = useState(true)
+  const [isAuthorized, setIsAuthorized] = useState(false)
+
+  useEffect(() => {
+    const authorize = async () => {
+      if (!application.listed.isNoteAuthorizedForListed(note)) {
+        await application.listed.authorizeNoteForListed(note)
+      }
+
+      setIsAuthorized(application.listed.isNoteAuthorizedForListed(note))
+    }
+
+    void authorize()
+  }, [application, note])
 
   const reloadMenuGroup = useCallback(
     async (group: ListedMenuGroup) => {
-      const updatedAccountInfo = await application.getListedAccountInfo(group.account, note.uuid)
+      if (!isAuthorized) {
+        return
+      }
+
+      const updatedAccountInfo = await application.listed.getListedAccountInfo(group.account, note.uuid)
 
       if (!updatedAccountInfo) {
         return
@@ -39,7 +56,7 @@ const ListedActionsMenu = ({ application, note }: ListedActionsMenuProps) => {
 
       setMenuGroups(updatedGroups)
     },
-    [application, menuGroups, note],
+    [application, menuGroups, note, isAuthorized],
   )
 
   useEffect(() => {
@@ -49,19 +66,21 @@ const ListedActionsMenu = ({ application, note }: ListedActionsMenuProps) => {
         return
       }
 
+      if (!isAuthorized) {
+        return
+      }
+
       try {
-        const listedAccountEntries = await application.getListedAccounts()
+        const listedAccountEntries = await application.listed.getListedAccounts()
 
         if (!listedAccountEntries.length) {
           throw new Error('No Listed accounts found')
         }
 
         const menuGroups: ListedMenuGroup[] = []
-
         await Promise.all(
           listedAccountEntries.map(async (account) => {
-            const accountInfo = await application.getListedAccountInfo(account, note.uuid)
-
+            const accountInfo = await application.listed.getListedAccountInfo(account, note.uuid)
             if (accountInfo) {
               menuGroups.push({
                 name: accountInfo.display_name,
@@ -91,7 +110,11 @@ const ListedActionsMenu = ({ application, note }: ListedActionsMenuProps) => {
     }
 
     void fetchListedAccounts()
-  }, [application, note.uuid])
+  }, [application, note.uuid, isAuthorized])
+
+  if (!isAuthorized) {
+    return null
+  }
 
   return (
     <>

@@ -20,6 +20,7 @@ const DecoratedInput = forwardRef(
   (
     {
       autocomplete = false,
+      spellcheck = true,
       className,
       disabled = false,
       id,
@@ -68,6 +69,7 @@ const DecoratedInput = forwardRef(
           title={title}
           type={type}
           value={value}
+          spellCheck={spellcheck}
         />
 
         {right && (

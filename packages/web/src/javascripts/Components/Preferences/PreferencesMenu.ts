@@ -3,21 +3,7 @@ import { IconType } from '@standardnotes/snjs'
 import { WebApplication } from '@/Application/Application'
 import { PackageProvider } from './Panes/General/Advanced/Packages/Provider/PackageProvider'
 import { securityPrefsHasBubble } from './Panes/Security/securityPrefsHasBubble'
-
-const PREFERENCE_IDS = [
-  'general',
-  'account',
-  'security',
-  'appearance',
-  'backups',
-  'listed',
-  'shortcuts',
-  'accessibility',
-  'get-free-month',
-  'help-feedback',
-] as const
-
-export type PreferenceId = typeof PREFERENCE_IDS[number]
+import { PreferenceId } from '@standardnotes/ui-services'
 
 interface PreferencesMenuItem {
   readonly id: PreferenceId

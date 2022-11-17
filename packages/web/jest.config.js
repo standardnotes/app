@@ -22,4 +22,5 @@ module.exports = {
     '^.+\\.(ts|tsx)?$': 'ts-jest',
     '\\.svg$': 'svg-jest',
   },
+  testEnvironment: 'jsdom',
 }

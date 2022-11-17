@@ -1,10 +1,11 @@
 import { PayloadSource } from './../../Abstract/Payload/Types/PayloadSource'
 import { DecryptedPayload } from './../../Abstract/Payload/Implementations/DecryptedPayload'
-import { SNTag, TagContent } from './Tag'
+import { SNTag } from './Tag'
 import { ContentType } from '@standardnotes/common'
 import { FillItemContent } from '../../Abstract/Content/ItemContent'
 import { ContentReference } from '../../Abstract/Reference/ContentReference'
 import { PayloadTimestampDefaults } from '../../Abstract/Payload'
+import { TagContent } from './TagContent'
 
 const randUuid = () => String(Math.random())
 
@@ -36,5 +37,11 @@ describe('SNTag Tests', () => {
     ])
 
     expect(tag.noteCount).toEqual(2)
+  })
+
+  it('preferences should be undefined if not specified', () => {
+    const tag = create('helloworld', [])
+
+    expect(tag.preferences).toBeFalsy()
   })
 })

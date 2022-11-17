@@ -1,3 +1,4 @@
+import Button from '@/Components/Button/Button'
 import { FunctionComponent, useState, useRef, useEffect } from 'react'
 
 type Props = {
@@ -39,7 +40,7 @@ const PackageEntrySubInfo: FunctionComponent<Props> = ({ extensionName, changeNa
   }
 
   return (
-    <div className="mr-3 flex flex-row items-center">
+    <div className="flex flex-row flex-wrap items-center gap-3">
       <input
         ref={inputRef}
         disabled={!isRenaming || !renameable}
@@ -50,24 +51,21 @@ const PackageEntrySubInfo: FunctionComponent<Props> = ({ extensionName, changeNa
         onChange={({ target: input }) => setNewExtensionName((input as HTMLInputElement)?.value)}
       />
 
-      <div className="min-w-3" />
-
       {isRenaming && (
         <>
-          <a className="cursor-pointer pt-1" onClick={confirmRename}>
+          <Button small className="cursor-pointer" onClick={confirmRename}>
             Confirm
-          </a>
-          <div className="min-w-3" />
-          <a className="cursor-pointer pt-1" onClick={cancelRename}>
+          </Button>
+          <Button small className="cursor-pointer" onClick={cancelRename}>
             Cancel
-          </a>
+          </Button>
         </>
       )}
 
       {renameable && !isRenaming && (
-        <a className="cursor-pointer pt-1" onClick={startRenaming}>
+        <Button small className="cursor-pointer" onClick={startRenaming}>
           Rename
-        </a>
+        </Button>
       )}
     </div>
   )

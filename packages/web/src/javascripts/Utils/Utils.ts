@@ -51,7 +51,7 @@ export function isSameDay(dateA: Date, dateB: Date): boolean {
 export function debounce(this: any, func: any, wait: number, immediate = false) {
   let timeout: NodeJS.Timeout | null
   return () => {
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    // eslint-disable-next-line @typescript-eslint/no-this-alias, no-invalid-this
     const context = this
     // eslint-disable-next-line prefer-rest-params
     const args = arguments
@@ -160,10 +160,6 @@ export const isEmailValid = (email: string): boolean => {
   return EMAIL_REGEX.test(email)
 }
 
-export const getWindowUrlParams = (): URLSearchParams => {
-  return new URLSearchParams(window.location.search)
-}
-
 export const openInNewTab = (url: string) => {
   const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
   if (newWindow) {
@@ -208,6 +204,8 @@ export const disableIosTextFieldZoom = () => {
 }
 
 export const isMobileScreen = () => !window.matchMedia(MediaQueryBreakpoints.md).matches
+export const isTabletScreen = () =>
+  !window.matchMedia(MediaQueryBreakpoints.sm).matches && !window.matchMedia(MediaQueryBreakpoints.lg).matches
 
 export const getBase64FromBlob = (blob: Blob) => {
   return new Promise<string>((resolve, reject) => {

@@ -12,11 +12,15 @@ module.exports = (env, argv) => {
     optimization: {
       minimize: false,
     },
+    output: {
+      publicPath: '/',
+    },
     plugins: [new ReactRefreshWebpackPlugin()],
     devServer: {
       hot: true,
       static: './dist',
       port,
+      historyApiFallback: true,
       devMiddleware: {
         writeToDisk: argv.writeToDisk,
       },

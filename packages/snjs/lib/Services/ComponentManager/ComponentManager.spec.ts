@@ -3,16 +3,23 @@
  */
 
 import { SNPreferencesService } from '../Preferences/PreferencesService'
+import { createNote } from './../../Spec/SpecUtils'
 import {
   ComponentAction,
   ComponentPermission,
   FeatureDescription,
   FindNativeFeature,
   FeatureIdentifier,
+  NoteType,
 } from '@standardnotes/features'
 import { ContentType } from '@standardnotes/common'
 import { GenericItem, SNComponent, Environment, Platform } from '@standardnotes/models'
-import { DesktopManagerInterface, InternalEventBusInterface, AlertService } from '@standardnotes/services'
+import {
+  DesktopManagerInterface,
+  InternalEventBusInterface,
+  AlertService,
+  DeviceInterface,
+} from '@standardnotes/services'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { SNFeaturesService } from '@Lib/Services/Features/FeaturesService'
 import { SNComponentManager } from './ComponentManager'
@@ -25,6 +32,7 @@ describe('featuresService', () => {
   let syncService: SNSyncService
   let prefsService: SNPreferencesService
   let internalEventBus: InternalEventBusInterface
+  let device: DeviceInterface
 
   const desktopExtHost = 'http://localhost:123'
 
@@ -51,6 +59,7 @@ describe('featuresService', () => {
       environment,
       platform,
       internalEventBus,
+      device,
     )
     manager.setDesktopManager(desktopManager)
     return manager
@@ -79,6 +88,8 @@ describe('featuresService', () => {
 
     internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
     internalEventBus.publish = jest.fn()
+
+    device = {} as jest.Mocked<DeviceInterface>
   })
 
   const nativeComponent = (identifier?: FeatureIdentifier, file_type?: FeatureDescription['file_type']) => {
@@ -303,6 +314,26 @@ describe('featuresService', () => {
         const url = manager.urlForComponent(component)
         expect(url).toEqual(component.hosted_url)
       })
+    })
+  })
+
+  describe('editors', () => {
+    it('getEditorForNote should return undefined is note type is plain', () => {
+      const note = createNote({
+        noteType: NoteType.Plain,
+      })
+      const manager = createManager(Environment.Web, Platform.MacWeb)
+
+      expect(manager.editorForNote(note)).toBe(undefined)
+    })
+
+    it('getEditorForNote should call legacy function if no note editorIdentifier or noteType', () => {
+      const note = createNote({})
+      const manager = createManager(Environment.Web, Platform.MacWeb)
+      manager['legacyGetEditorForNote'] = jest.fn()
+      manager.editorForNote(note)
+
+      expect(manager['legacyGetEditorForNote']).toHaveBeenCalled()
     })
   })
 

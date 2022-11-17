@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/Application'
+import { AndroidConfirmBeforeExitKey } from '@/Components/Preferences/Panes/General/Defaults'
 import { observer } from 'mobx-react-lite'
 import { createContext, memo, ReactNode, useCallback, useContext, useEffect } from 'react'
 
@@ -24,7 +25,7 @@ type ProviderProps = {
   application: WebApplication
 } & ChildrenProps
 
-const MemoizedChildren = memo(({ children }: ChildrenProps) => <div>{children}</div>)
+const MemoizedChildren = memo(({ children }: ChildrenProps) => <>{children}</>)
 
 const AndroidBackHandlerProvider = ({ application, children }: ProviderProps) => {
   const addAndroidBackHandler = useCallback(
@@ -34,7 +35,10 @@ const AndroidBackHandlerProvider = ({ application, children }: ProviderProps) =>
 
   useEffect(() => {
     const removeListener = addAndroidBackHandler(() => {
-      application.mobileDevice.confirmAndExit()
+      const shouldConfirm = (application.getValue(AndroidConfirmBeforeExitKey) as boolean) ?? true
+
+      application.mobileDevice().exitApp(shouldConfirm)
+
       return true
     })
     return () => {

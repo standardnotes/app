@@ -11,6 +11,7 @@ import {
   DeletedItemInterface,
   ItemContent,
   PredicateInterface,
+  DecryptedPayload,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 
@@ -43,63 +44,30 @@ export interface ItemManagerInterface extends AbstractService {
     contentType: ContentType | ContentType[],
     callback: ItemManagerChangeObserverCallback<I>,
   ): () => void
-
-  /**
-   * Marks the item as deleted and needing sync.
-   */
   setItemToBeDeleted(itemToLookupUuidFor: DecryptedItemInterface, source?: PayloadEmitSource): Promise<void>
-
   setItemsToBeDeleted(itemsToLookupUuidsFor: DecryptedItemInterface[]): Promise<void>
-
   setItemsDirty(
     itemsToLookupUuidsFor: DecryptedItemInterface[],
     isUserModified?: boolean,
   ): Promise<DecryptedItemInterface[]>
-
   get items(): DecryptedItemInterface[]
-
-  /**
-   * Inserts the item as-is by reading its payload value. This function will not
-   * modify item in any way (such as marking it as dirty). It is up to the caller
-   * to pass in a dirtied item if that is their intention.
-   */
   insertItem(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
-
   emitItemFromPayload(payload: DecryptedPayloadInterface, source: PayloadEmitSource): Promise<DecryptedItemInterface>
-
   getItems<T extends DecryptedItemInterface>(contentType: ContentType | ContentType[]): T[]
-
-  /**
-   * Returns all non-deleted items keys
-   */
   getDisplayableItemsKeys(): ItemsKeyInterface[]
-
-  /**
-   * Creates an item and conditionally maps it and marks it as dirty.
-   * @param needsSync - Whether to mark the item as needing sync
-   */
   createItem<T extends DecryptedItemInterface, C extends ItemContent = ItemContent>(
     contentType: ContentType,
     content: C,
     needsSync?: boolean,
   ): Promise<T>
-
-  /**
-   * Create an unmanaged item that can later be inserted via `insertItem`
-   */
   createTemplateItem<
     C extends ItemContent = ItemContent,
     I extends DecryptedItemInterface<C> = DecryptedItemInterface<C>,
   >(
     contentType: ContentType,
     content?: C,
+    override?: Partial<DecryptedPayload<C>>,
   ): I
-
-  /**
-   * Consumers wanting to modify an item should run it through this block,
-   * so that data is properly mapped through our function, and latest state
-   * is properly reconciled.
-   */
   changeItem<
     M extends DecryptedItemMutator = DecryptedItemMutator,
     I extends DecryptedItemInterface = DecryptedItemInterface,
@@ -110,7 +78,6 @@ export interface ItemManagerInterface extends AbstractService {
     emitSource?: PayloadEmitSource,
     payloadSourceKey?: string,
   ): Promise<I>
-
   changeItemsKey(
     itemToLookupUuidFor: ItemsKeyInterface,
     mutate: (mutator: ItemsKeyMutatorInterface) => void,
@@ -118,16 +85,15 @@ export interface ItemManagerInterface extends AbstractService {
     emitSource?: PayloadEmitSource,
     payloadSourceKey?: string,
   ): Promise<ItemsKeyInterface>
-
   itemsMatchingPredicate<T extends DecryptedItemInterface>(
     contentType: ContentType,
     predicate: PredicateInterface<T>,
   ): T[]
-
   itemsMatchingPredicates<T extends DecryptedItemInterface>(
     contentType: ContentType,
     predicates: PredicateInterface<T>[],
   ): T[]
-
   subItemsMatchingPredicates<T extends DecryptedItemInterface>(items: T[], predicates: PredicateInterface<T>[]): T[]
+  removeAllItemsFromMemory(): Promise<void>
+  getDirtyItems(): (DecryptedItemInterface | DeletedItemInterface)[]
 }

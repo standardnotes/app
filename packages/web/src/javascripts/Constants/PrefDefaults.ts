@@ -1,11 +1,12 @@
 import { PrefKey, CollectionSort, NewNoteTitleFormat, EditorLineHeight, EditorFontSize } from '@standardnotes/models'
+import { FeatureIdentifier } from '@standardnotes/snjs'
 
 export const PrefDefaults = {
   [PrefKey.TagsPanelWidth]: 220,
   [PrefKey.NotesPanelWidth]: 350,
   [PrefKey.EditorWidth]: null,
   [PrefKey.EditorLeft]: null,
-  [PrefKey.EditorMonospaceEnabled]: true,
+  [PrefKey.EditorMonospaceEnabled]: false,
   [PrefKey.EditorSpellcheck]: true,
   [PrefKey.EditorResizersEnabled]: true,
   [PrefKey.EditorLineHeight]: EditorLineHeight.Normal,
@@ -18,12 +19,14 @@ export const PrefDefaults = {
   [PrefKey.NotesHideProtected]: false,
   [PrefKey.NotesHideNotePreview]: false,
   [PrefKey.NotesHideDate]: false,
-  [PrefKey.NotesHideTags]: true,
+  [PrefKey.NotesHideTags]: false,
   [PrefKey.NotesHideEditorIcon]: false,
   [PrefKey.UseSystemColorScheme]: false,
   [PrefKey.AutoLightThemeIdentifier]: 'Default',
-  [PrefKey.AutoDarkThemeIdentifier]: 'Default',
+  [PrefKey.AutoDarkThemeIdentifier]: FeatureIdentifier.DarkTheme,
   [PrefKey.NoteAddToParentFolders]: true,
   [PrefKey.NewNoteTitleFormat]: NewNoteTitleFormat.CurrentDateAndTime,
   [PrefKey.CustomNoteTitleFormat]: 'YYYY-MM-DD [at] hh:mm A',
+  [PrefKey.UpdateSavingStatusIndicator]: true,
+  [PrefKey.DarkMode]: false,
 } as const

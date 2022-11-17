@@ -35,7 +35,7 @@ export class SNPreferencesService
     })
 
     this.removeSyncObserver = syncService.addEventObserver((event) => {
-      if (event === SyncEvent.SyncCompletedWithAllItemsUploaded) {
+      if (event === SyncEvent.SyncCompletedWithAllItemsUploaded || event === SyncEvent.LocalDataIncrementalLoad) {
         void this.reload()
       }
     })

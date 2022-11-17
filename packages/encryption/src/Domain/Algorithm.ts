@@ -44,3 +44,8 @@ export enum V004Algorithm {
   EncryptionKeyLength = 256,
   EncryptionNonceLength = 192,
 }
+
+export enum V005Algorithm {
+  AsymmetricEncryptionNonceLength = 192,
+  SymmetricEncryptionNonceLength = 192,
+}

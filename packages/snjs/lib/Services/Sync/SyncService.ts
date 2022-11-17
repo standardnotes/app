@@ -18,7 +18,7 @@ import { SNHistoryManager } from '../History/HistoryManager'
 import { SNLog } from '@Lib/Log'
 import { SNSessionManager } from '../Session/SessionManager'
 import { DiskStorageService } from '../Storage/DiskStorageService'
-import { SortPayloadsByRecentAndContentPriority } from '@Lib/Services/Sync/Utils'
+import { GetSortedPayloadsByPriority } from '@Lib/Services/Sync/Utils'
 import { SyncClientInterface } from './SyncClientInterface'
 import { SyncPromise } from './Types'
 import { SyncOpStatus } from '@Lib/Services/Sync/SyncOpStatus'
@@ -56,6 +56,7 @@ import {
   PayloadEmitSource,
   getIncrementedDirtyIndex,
   getCurrentDirtyIndex,
+  ItemContent,
 } from '@standardnotes/models'
 import {
   AbstractService,
@@ -156,6 +157,14 @@ export class SNSyncService
     if (await this.getLastSyncToken()) {
       await this.clearSyncPositionTokens()
     }
+  }
+
+  private get launchPriorityUuids() {
+    return this.storageService.getValue<string[]>(StorageKey.LaunchPriorityUuids) ?? []
+  }
+
+  public setLaunchPriorityUuids(launchPriorityUuids: string[]) {
+    this.storageService.setValue(StorageKey.LaunchPriorityUuids, launchPriorityUuids)
   }
 
   public override deinit(): void {
@@ -272,15 +281,15 @@ export class SNSyncService
       })
       .filter(isNotUndefined)
 
-    const payloads = SortPayloadsByRecentAndContentPriority(unsortedPayloads, this.localLoadPriorty)
+    const { itemsKeyPayloads, contentTypePriorityPayloads, remainingPayloads } = GetSortedPayloadsByPriority(
+      unsortedPayloads,
+      this.localLoadPriorty,
+      this.launchPriorityUuids,
+    )
 
-    const itemsKeysPayloads = payloads.filter((payload) => {
-      return payload.content_type === ContentType.ItemsKey
-    })
+    await this.processItemsKeysFirstDuringDatabaseLoad(itemsKeyPayloads)
 
-    subtractFromArray(payloads, itemsKeysPayloads)
-
-    await this.processItemsKeysFirstDuringDatabaseLoad(itemsKeysPayloads)
+    await this.processPayloadBatch(contentTypePriorityPayloads)
 
     /**
      * Map in batches to give interface a chance to update. Note that total decryption
@@ -288,43 +297,53 @@ export class SNSyncService
      * batches will result in the same time spent. It's the emitting/painting/rendering
      * that requires batch size optimization.
      */
-    const payloadCount = payloads.length
+    const payloadCount = remainingPayloads.length
     const batchSize = this.options.loadBatchSize
     const numBatches = Math.ceil(payloadCount / batchSize)
 
     for (let batchIndex = 0; batchIndex < numBatches; batchIndex++) {
       const currentPosition = batchIndex * batchSize
-      const batch = payloads.slice(currentPosition, currentPosition + batchSize)
-      const encrypted: EncryptedPayloadInterface[] = []
-      const nonencrypted: (DecryptedPayloadInterface | DeletedPayloadInterface)[] = []
-
-      for (const payload of batch) {
-        if (isEncryptedPayload(payload)) {
-          encrypted.push(payload)
-        } else {
-          nonencrypted.push(payload)
-        }
-      }
-
-      const split: KeyedDecryptionSplit = {
-        usesItemsKeyWithKeyLookup: {
-          items: encrypted,
-        },
-      }
-
-      const results = await this.protocolService.decryptSplit(split)
-
-      await this.payloadManager.emitPayloads([...nonencrypted, ...results], PayloadEmitSource.LocalDatabaseLoaded)
-
-      void this.notifyEvent(SyncEvent.LocalDataIncrementalLoad)
-
-      this.opStatus.setDatabaseLoadStatus(currentPosition, payloadCount, false)
-
-      await sleep(1, false)
+      const batch = remainingPayloads.slice(currentPosition, currentPosition + batchSize)
+      await this.processPayloadBatch(batch, currentPosition, payloadCount)
     }
 
     this.databaseLoaded = true
     this.opStatus.setDatabaseLoadStatus(0, 0, true)
+  }
+
+  private async processPayloadBatch(
+    batch: FullyFormedPayloadInterface<ItemContent>[],
+    currentPosition?: number,
+    payloadCount?: number,
+  ) {
+    const encrypted: EncryptedPayloadInterface[] = []
+    const nonencrypted: (DecryptedPayloadInterface | DeletedPayloadInterface)[] = []
+
+    for (const payload of batch) {
+      if (isEncryptedPayload(payload)) {
+        encrypted.push(payload)
+      } else {
+        nonencrypted.push(payload)
+      }
+    }
+
+    const split: KeyedDecryptionSplit = {
+      usesItemsKeyWithKeyLookup: {
+        items: encrypted,
+      },
+    }
+
+    const results = await this.protocolService.decryptSplit(split)
+
+    await this.payloadManager.emitPayloads([...nonencrypted, ...results], PayloadEmitSource.LocalDatabaseLoaded)
+
+    void this.notifyEvent(SyncEvent.LocalDataIncrementalLoad)
+
+    if (currentPosition != undefined && payloadCount != undefined) {
+      this.opStatus.setDatabaseLoadStatus(currentPosition, payloadCount, false)
+    }
+
+    await sleep(1, false)
   }
 
   private setLastSyncToken(token: string) {

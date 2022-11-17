@@ -1,43 +1,33 @@
 import { WebApplication } from '@/Application/Application'
 import { FeaturesController } from '@/Controllers/FeaturesController'
+import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 import { observer } from 'mobx-react-lite'
-import { loadPurchaseFlowUrl } from '../PurchaseFlow/PurchaseFlowFunctions'
 
 type Props = {
   application: WebApplication
   featuresController: FeaturesController
+  subscriptionContoller: SubscriptionController
 }
 
-const UpgradeNow = ({ application, featuresController }: Props) => {
+const UpgradeNow = ({ application, featuresController, subscriptionContoller }: Props) => {
   const shouldShowCTA = !featuresController.hasFolders
-  const hasAccount = application.hasAccount()
+  const hasAccount = subscriptionContoller.hasAccount
 
-  const openPlansPage = () => {
-    if (!window.plansUrl) {
-      return
-    }
-
-    if (application.isNativeMobileWeb()) {
-      application.mobileDevice.openUrl(window.plansUrl)
+  const onClick = () => {
+    if (application.isNativeIOS()) {
+      application.showPremiumModal()
     } else {
-      window.location.assign(window.plansUrl)
+      application.openPurchaseFlow()
     }
   }
 
   return shouldShowCTA ? (
     <div className="flex h-full items-center px-2">
       <button
-        className="rounded bg-info py-0.5 px-1.5 text-xs font-bold uppercase text-info-contrast hover:brightness-125"
-        onClick={() => {
-          if (hasAccount) {
-            void loadPurchaseFlowUrl(application)
-            return
-          }
-
-          openPlansPage()
-        }}
+        className="rounded bg-info py-0.5 px-1.5 text-sm font-bold uppercase text-info-contrast hover:brightness-125 lg:text-xs"
+        onClick={onClick}
       >
-        Upgrade now
+        {hasAccount ? 'Unlock features' : 'Sign up to sync'}
       </button>
     </div>
   ) : null

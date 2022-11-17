@@ -16,6 +16,7 @@ import {
   StorageValueModes,
   FeatureStatus,
 } from '@standardnotes/services'
+import { FeatureIdentifier } from '@standardnotes/features'
 
 const CachedThemesKey = 'cachedThemes'
 const TimeBeforeApplyingColorScheme = 5
@@ -58,11 +59,18 @@ export class ThemeManager extends AbstractService {
         break
       }
       case ApplicationEvent.Launched: {
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', this.colorSchemeEventHandler)
+        if (!this.application.isNativeMobileWeb()) {
+          const mq = window.matchMedia('(prefers-color-scheme: dark)')
+          if (mq.addEventListener != undefined) {
+            mq.addEventListener('change', this.colorSchemeEventHandler)
+          } else {
+            mq.addListener(this.colorSchemeEventHandler)
+          }
+        }
         break
       }
       case ApplicationEvent.PreferencesChanged: {
-        this.handlePreferencesChangeEvent()
+        void this.handlePreferencesChangeEvent()
         break
       }
     }
@@ -87,17 +95,32 @@ export class ThemeManager extends AbstractService {
     })
   }
 
-  private handlePreferencesChangeEvent(): void {
+  async handleMobileColorSchemeChangeEvent() {
     const useDeviceThemeSettings = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
 
-    if (useDeviceThemeSettings !== this.lastUseDeviceThemeSettings) {
+    if (useDeviceThemeSettings) {
+      const prefersDarkColorScheme = (await this.application.mobileDevice().getColorScheme()) === 'dark'
+      this.setThemeAsPerColorScheme(prefersDarkColorScheme)
+    }
+  }
+
+  private async handlePreferencesChangeEvent() {
+    const useDeviceThemeSettings = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
+
+    const hasPreferenceChanged = useDeviceThemeSettings !== this.lastUseDeviceThemeSettings
+
+    if (hasPreferenceChanged) {
       this.lastUseDeviceThemeSettings = useDeviceThemeSettings
     }
 
-    if (useDeviceThemeSettings) {
-      const prefersDarkColorScheme = window.matchMedia('(prefers-color-scheme: dark)')
+    if (hasPreferenceChanged && useDeviceThemeSettings) {
+      let prefersDarkColorScheme = window.matchMedia('(prefers-color-scheme: dark)').matches
 
-      this.setThemeAsPerColorScheme(prefersDarkColorScheme.matches)
+      if (this.application.isNativeMobileWeb()) {
+        prefersDarkColorScheme = (await this.application.mobileDevice().getColorScheme()) === 'dark'
+      }
+
+      this.setThemeAsPerColorScheme(prefersDarkColorScheme)
     }
   }
 
@@ -113,7 +136,13 @@ export class ThemeManager extends AbstractService {
     ;(this.unregisterDesktop as unknown) = undefined
     ;(this.unregisterStream as unknown) = undefined
 
-    window.matchMedia('(prefers-color-scheme: dark)').removeEventListener('change', this.colorSchemeEventHandler)
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    if (mq.removeEventListener != undefined) {
+      mq.removeEventListener('change', this.colorSchemeEventHandler)
+    } else {
+      mq.removeListener(this.colorSchemeEventHandler)
+    }
+
     ;(this.application as unknown) = undefined
 
     this.unsubApp()
@@ -124,21 +153,24 @@ export class ThemeManager extends AbstractService {
 
   private handleFeaturesUpdated(): void {
     let hasChange = false
+
     for (const themeUuid of this.activeThemes) {
       const theme = this.application.items.findItem(themeUuid) as SNTheme
+
       if (!theme) {
         this.deactivateTheme(themeUuid)
         hasChange = true
-      } else {
-        const status = this.application.features.getFeatureStatus(theme.identifier)
-        if (status !== FeatureStatus.Entitled) {
-          if (theme.active) {
-            this.application.mutator.toggleTheme(theme).catch(console.error)
-          } else {
-            this.deactivateTheme(theme.uuid)
-          }
-          hasChange = true
+        continue
+      }
+
+      const status = this.application.features.getFeatureStatus(theme.identifier)
+      if (status !== FeatureStatus.Entitled) {
+        if (theme.active) {
+          this.application.mutator.toggleTheme(theme).catch(console.error)
+        } else {
+          this.deactivateTheme(theme.uuid)
         }
+        hasChange = true
       }
     }
 
@@ -159,7 +191,11 @@ export class ThemeManager extends AbstractService {
   }
 
   private colorSchemeEventHandler(event: MediaQueryListEvent) {
-    this.setThemeAsPerColorScheme(event.matches)
+    const shouldChangeTheme = this.application.getPreference(PrefKey.UseSystemColorScheme, false)
+
+    if (shouldChangeTheme) {
+      this.setThemeAsPerColorScheme(event.matches)
+    }
   }
 
   private showColorSchemeToast(setThemeCallback: () => void) {
@@ -192,6 +228,8 @@ export class ThemeManager extends AbstractService {
 
   private setThemeAsPerColorScheme(prefersDarkColorScheme: boolean) {
     const preference = prefersDarkColorScheme ? PrefKey.AutoDarkThemeIdentifier : PrefKey.AutoLightThemeIdentifier
+    const preferenceDefault =
+      preference === PrefKey.AutoDarkThemeIdentifier ? FeatureIdentifier.DarkTheme : DefaultThemeIdentifier
 
     const themes = this.application.items
       .getDisplayableComponents()
@@ -200,11 +238,18 @@ export class ThemeManager extends AbstractService {
     const activeTheme = themes.find((theme) => theme.active && !theme.isLayerable())
     const activeThemeIdentifier = activeTheme ? activeTheme.identifier : DefaultThemeIdentifier
 
-    const themeIdentifier = this.application.getPreference(preference, DefaultThemeIdentifier) as string
+    const themeIdentifier = this.application.getPreference(preference, preferenceDefault) as string
+
+    const toggleActiveTheme = () => {
+      if (activeTheme) {
+        void this.application.mutator.toggleTheme(activeTheme)
+      }
+    }
 
     const setTheme = () => {
-      if (themeIdentifier === DefaultThemeIdentifier && activeTheme) {
-        this.application.mutator.toggleTheme(activeTheme).catch(console.error)
+      if (themeIdentifier === DefaultThemeIdentifier) {
+        toggleActiveTheme()
+        void this.application.setPreference(PrefKey.DarkMode, false)
       } else {
         const theme = themes.find((theme) => theme.package_info.identifier === themeIdentifier)
         if (theme && !theme.active) {
@@ -288,12 +333,25 @@ export class ThemeManager extends AbstractService {
     link.rel = 'stylesheet'
     link.media = 'screen,print'
     link.id = theme.uuid
-    link.onload = this.syncThemeColorMetadata
+    link.onload = () => {
+      this.syncThemeColorMetadata()
+
+      if (this.application.isNativeMobileWeb()) {
+        setTimeout(() => {
+          this.application
+            .mobileDevice()
+            .handleThemeSchemeChange(theme.package_info.isDark ?? false, this.getBackgroundColor())
+        })
+      }
+    }
     document.getElementsByTagName('head')[0].appendChild(link)
 
-    if (this.application.isNativeMobileWeb()) {
-      this.application.mobileDevice.handleThemeSchemeChange(theme.package_info.isDark ?? false)
-    }
+    void this.application.setPreference(PrefKey.DarkMode, false)
+  }
+
+  private getBackgroundColor() {
+    const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--sn-stylekit-background-color').trim()
+    return bgColor.length ? bgColor : '#ffffff'
   }
 
   /**
@@ -306,8 +364,7 @@ export class ThemeManager extends AbstractService {
       return
     }
 
-    const bgColor = getComputedStyle(document.documentElement).getPropertyValue('--sn-stylekit-background-color')
-    themeColorMetaElement.setAttribute('content', bgColor ? bgColor.trim() : '#ffffff')
+    themeColorMetaElement.setAttribute('content', this.getBackgroundColor())
   }
 
   private deactivateTheme(uuid: string) {
@@ -324,7 +381,7 @@ export class ThemeManager extends AbstractService {
     removeFromArray(this.activeThemes, uuid)
 
     if (this.activeThemes.length === 0 && this.application.isNativeMobileWeb()) {
-      this.application.mobileDevice.handleThemeSchemeChange(false)
+      this.application.mobileDevice().handleThemeSchemeChange(false, '#ffffff')
     }
   }
 

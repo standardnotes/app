@@ -6,6 +6,7 @@ import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
 import { observer } from 'mobx-react-lite'
+import ClearInputButton from '../ClearInputButton/ClearInputButton'
 
 type Props = {
   itemListController: ItemListController
@@ -49,7 +50,7 @@ const SearchBar = ({ itemListController, searchOptionsController }: Props) => {
         autocomplete={false}
         className={{
           container: 'px-1',
-          input: 'placeholder:text-passive-0',
+          input: 'text-base placeholder:text-passive-0 lg:text-sm',
         }}
         placeholder={'Search...'}
         value={noteFilterText}
@@ -59,16 +60,7 @@ const SearchBar = ({ itemListController, searchOptionsController }: Props) => {
         onFocus={onSearchFocus}
         onKeyUp={onNoteFilterKeyUp}
         left={[<Icon type="search" className="mr-1 h-4.5 w-4.5 flex-shrink-0 text-passive-1" />]}
-        right={[
-          noteFilterText && (
-            <button
-              onClick={onClearSearch}
-              className="flex h-4.5 w-4.5 items-center justify-center rounded-full border-0 bg-neutral text-neutral-contrast"
-            >
-              <Icon type="close" className="h-3.5 w-3.5" />
-            </button>
-          ),
-        ]}
+        right={[noteFilterText && <ClearInputButton onClick={onClearSearch} />]}
         roundedFull
       />
 

@@ -3,6 +3,148 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.19.14](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.13...@standardnotes/encryption@1.19.14) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.19.13](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.12...@standardnotes/encryption@1.19.13) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.19.12](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.11...@standardnotes/encryption@1.19.12) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.19.11](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.10...@standardnotes/encryption@1.19.11) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.19.10](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.9...@standardnotes/encryption@1.19.10) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.19.9](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.8...@standardnotes/encryption@1.19.9) (2022-11-14)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.19.8](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.7...@standardnotes/encryption@1.19.8) (2022-11-09)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.19.7](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.6...@standardnotes/encryption@1.19.7) (2022-11-07)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.19.6](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.5...@standardnotes/encryption@1.19.6) (2022-11-06)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.19.5](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.4...@standardnotes/encryption@1.19.5) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.19.4](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.3...@standardnotes/encryption@1.19.4) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.19.3](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.2...@standardnotes/encryption@1.19.3) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.19.2](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.1...@standardnotes/encryption@1.19.2) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.19.1](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.0...@standardnotes/encryption@1.19.1) (2022-11-02)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+# [1.19.0](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.18.8...@standardnotes/encryption@1.19.0) (2022-11-02)
+
+### Features
+
+* add sending user requests to process ([#1908](https://github.com/standardnotes/app/issues/1908)) ([b2faa81](https://github.com/standardnotes/app/commit/b2faa815e967a9e7052b3ce6955e967c6bc68864))
+
+## [1.18.8](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.18.7...@standardnotes/encryption@1.18.8) (2022-10-27)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.18.7](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.18.6...@standardnotes/encryption@1.18.7) (2022-10-25)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.18.6](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.18.5...@standardnotes/encryption@1.18.6) (2022-10-25)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.18.5](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.18.4...@standardnotes/encryption@1.18.5) (2022-10-21)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.18.4](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.18.3...@standardnotes/encryption@1.18.4) (2022-10-19)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.18.3](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.18.2...@standardnotes/encryption@1.18.3) (2022-10-18)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.18.2](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.18.1...@standardnotes/encryption@1.18.2) (2022-10-17)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.18.1](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.18.0...@standardnotes/encryption@1.18.1) (2022-10-13)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+# [1.18.0](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.17.1...@standardnotes/encryption@1.18.0) (2022-10-12)
+
+### Features
+
+* replace private workspaces with private usernames ([#1783](https://github.com/standardnotes/app/issues/1783)) ([18c821d](https://github.com/standardnotes/app/commit/18c821d8eb51beb6f54211eb1d6eb454303044f5))
+
+## [1.17.1](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.17.0...@standardnotes/encryption@1.17.1) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+# [1.17.0](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.16.3...@standardnotes/encryption@1.17.0) (2022-10-11)
+
+### Features
+
+* **api:** add listing workspace users ([fb41f65](https://github.com/standardnotes/app/commit/fb41f651eca45dd62314609c2f389d5dc683c36e))
+
+## [1.16.3](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.16.2...@standardnotes/encryption@1.16.3) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.16.2](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.16.1...@standardnotes/encryption@1.16.2) (2022-10-10)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.16.1](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.16.0...@standardnotes/encryption@1.16.1) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+
+# [1.16.0](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.15.11...@standardnotes/encryption@1.16.0) (2022-10-06)
+
+### Features
+
+* experimental 005 operator ([#1753](https://github.com/standardnotes/app/issues/1753)) ([cbbe913](https://github.com/standardnotes/app/commit/cbbe913cd6eb694dd27997927bd5c45e8a64cc09))
+
+## [1.15.11](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.15.10...@standardnotes/encryption@1.15.11) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.15.10](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.15.9...@standardnotes/encryption@1.15.10) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.15.9](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.15.8...@standardnotes/encryption@1.15.9) (2022-09-30)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
 ## [1.15.8](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.15.7...@standardnotes/encryption@1.15.8) (2022-09-29)
 
 **Note:** Version bump only for package @standardnotes/encryption

@@ -5,13 +5,14 @@ import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { SNTag } from '@standardnotes/snjs'
+import { SNTag, VectorIconNameOrEmoji, DefaultTagIconName } from '@standardnotes/snjs'
 import { useCloseOnClickOutside } from '@/Hooks/useCloseOnClickOutside'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import Popover from '../Popover/Popover'
+import IconPicker from '../Icon/IconPicker'
 
 type ContextMenuProps = {
   navigationController: NavigationController
@@ -22,7 +23,7 @@ type ContextMenuProps = {
 const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag }: ContextMenuProps) => {
   const premiumModal = usePremiumModal()
 
-  const { contextMenuOpen, contextMenuClickLocation } = navigationController
+  const { contextMenuOpen, contextMenuClickLocation, application } = navigationController
 
   const contextMenuRef = useRef<HTMLDivElement>(null)
   useCloseOnClickOutside(contextMenuRef, () => navigationController.setContextMenuOpen(false))
@@ -39,7 +40,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
 
   const onClickRename = useCallback(() => {
     navigationController.setContextMenuOpen(false)
-    navigationController.editingTag = selectedTag
+    navigationController.setEditingTag(selectedTag)
   }, [navigationController, selectedTag])
 
   const onClickDelete = useCallback(() => {
@@ -50,6 +51,15 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
     () => formatDateForContextMenu(selectedTag.userModifiedDate),
     [selectedTag.userModifiedDate],
   )
+
+  const handleIconChange = (value?: VectorIconNameOrEmoji) => {
+    navigationController.setIcon(selectedTag, value || DefaultTagIconName)
+  }
+
+  const onClickStar = useCallback(() => {
+    navigationController.setFavorite(selectedTag, !selectedTag.starred).catch(console.error)
+    navigationController.setContextMenuOpen(false)
+  }, [navigationController, selectedTag])
 
   const tagCreatedAt = useMemo(() => formatDateForContextMenu(selectedTag.created_at), [selectedTag.created_at])
 
@@ -62,6 +72,22 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
     >
       <div ref={contextMenuRef}>
         <Menu a11yLabel="Tag context menu" isOpen={contextMenuOpen}>
+          <IconPicker
+            key={'icon-picker'}
+            onIconChange={handleIconChange}
+            selectedValue={selectedTag.iconString}
+            platform={application.platform}
+            className={'px-3 py-1.5'}
+            useIconGrid={true}
+            iconGridClassName="max-h-30"
+          />
+          <HorizontalSeparator classes="my-2" />
+          <MenuItem type={MenuItemType.IconButton} className={'justify-between py-1.5'} onClick={onClickStar}>
+            <div className="flex items-center">
+              <Icon type="star" className="mr-2 text-neutral" />
+              {selectedTag.starred ? 'Unfavorite' : 'Favorite'}
+            </div>
+          </MenuItem>
           <MenuItem type={MenuItemType.IconButton} className={'justify-between py-1.5'} onClick={onClickAddSubtag}>
             <div className="flex items-center">
               <Icon type="add" className="mr-2 text-neutral" />
@@ -79,7 +105,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
           </MenuItem>
         </Menu>
         <HorizontalSeparator classes="my-2" />
-        <div className="px-3 pt-1 pb-1.5 text-xs font-medium text-neutral">
+        <div className="px-3 pt-1 pb-1.5 text-sm font-medium text-neutral lg:text-xs">
           <div className="mb-1">
             <span className="font-semibold">Last modified:</span> {tagLastModified}
           </div>

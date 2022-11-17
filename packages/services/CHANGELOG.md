@@ -3,6 +3,276 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.45.4](https://github.com/standardnotes/app/compare/@standardnotes/services@1.45.3...@standardnotes/services@1.45.4) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.45.3](https://github.com/standardnotes/app/compare/@standardnotes/services@1.45.2...@standardnotes/services@1.45.3) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.45.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.45.1...@standardnotes/services@1.45.2) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.45.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.45.0...@standardnotes/services@1.45.1) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/services
+
+# [1.45.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.44.0...@standardnotes/services@1.45.0) (2022-11-16)
+
+### Features
+
+* **labs:** super editor ([#2001](https://github.com/standardnotes/app/issues/2001)) ([59f8547](https://github.com/standardnotes/app/commit/59f8547a8de1c804cb2f01ac734c83268977fa28))
+
+# [1.44.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.43.0...@standardnotes/services@1.44.0) (2022-11-14)
+
+### Features
+
+* GUI to create smart views ([#1997](https://github.com/standardnotes/app/issues/1997)) ([f656185](https://github.com/standardnotes/app/commit/f656185c167b3306d408dc486970836efa1d70c5))
+
+# [1.43.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.42.8...@standardnotes/services@1.43.0) (2022-11-13)
+
+### Features
+
+* iap ([#1996](https://github.com/standardnotes/app/issues/1996)) ([d519aca](https://github.com/standardnotes/app/commit/d519aca685b32f4b6f7079ba9562ecaf1a18aecb))
+
+## [1.42.8](https://github.com/standardnotes/app/compare/@standardnotes/services@1.42.7...@standardnotes/services@1.42.8) (2022-11-09)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.42.7](https://github.com/standardnotes/app/compare/@standardnotes/services@1.42.6...@standardnotes/services@1.42.7) (2022-11-09)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.42.6](https://github.com/standardnotes/app/compare/@standardnotes/services@1.42.5...@standardnotes/services@1.42.6) (2022-11-07)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.42.5](https://github.com/standardnotes/app/compare/@standardnotes/services@1.42.4...@standardnotes/services@1.42.5) (2022-11-06)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.42.4](https://github.com/standardnotes/app/compare/@standardnotes/services@1.42.3...@standardnotes/services@1.42.4) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.42.3](https://github.com/standardnotes/app/compare/@standardnotes/services@1.42.2...@standardnotes/services@1.42.3) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.42.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.42.1...@standardnotes/services@1.42.2) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.42.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.42.0...@standardnotes/services@1.42.1) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/services
+
+# [1.42.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.41.0...@standardnotes/services@1.42.0) (2022-11-03)
+
+### Features
+
+* add sending user requests from UI ([#1927](https://github.com/standardnotes/app/issues/1927)) ([7ead0f6](https://github.com/standardnotes/app/commit/7ead0f655bb2572e5805dd26c297d520949d661a))
+
+# [1.41.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.40.1...@standardnotes/services@1.41.0) (2022-11-02)
+
+### Features
+
+* prioritize loading latest selected items ([#1930](https://github.com/standardnotes/app/issues/1930)) ([a6ef658](https://github.com/standardnotes/app/commit/a6ef658daef9a01f5ddacc967fe30d22f580799a))
+
+## [1.40.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.40.0...@standardnotes/services@1.40.1) (2022-11-02)
+
+**Note:** Version bump only for package @standardnotes/services
+
+# [1.40.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.39.2...@standardnotes/services@1.40.0) (2022-11-02)
+
+### Features
+
+* add sending user requests to process ([#1908](https://github.com/standardnotes/app/issues/1908)) ([b2faa81](https://github.com/standardnotes/app/commit/b2faa815e967a9e7052b3ce6955e967c6bc68864))
+
+## [1.39.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.39.1...@standardnotes/services@1.39.2) (2022-11-01)
+
+### Bug Fixes
+
+* **mobile:** increase font sizes and other mobile-centric improvements ([#1907](https://github.com/standardnotes/app/issues/1907)) ([994f824](https://github.com/standardnotes/app/commit/994f824757e1143a4547c975b154fd84e3ebeedf))
+
+## [1.39.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.39.0...@standardnotes/services@1.39.1) (2022-10-28)
+
+### Bug Fixes
+
+* color scheme handling on mobile ([#1902](https://github.com/standardnotes/app/issues/1902)) ([6071ebf](https://github.com/standardnotes/app/commit/6071ebffeb55c78eac79f39aecca07f6ebdbed93))
+
+# [1.39.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.38.0...@standardnotes/services@1.39.0) (2022-10-27)
+
+### Features
+
+* daily notes (dev only) ([#1894](https://github.com/standardnotes/app/issues/1894)) ([69c3f2b](https://github.com/standardnotes/app/commit/69c3f2be837152a1f937559327021c2128234c69))
+
+# [1.38.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.37.1...@standardnotes/services@1.38.0) (2022-10-26)
+
+### Features
+
+* auto-activate biometrics prompt when mobile regains focus ([#1891](https://github.com/standardnotes/app/issues/1891)) ([3bd1ad3](https://github.com/standardnotes/app/commit/3bd1ad38ad05ba6ea0e99911693ed7b25e2f8380))
+
+## [1.37.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.37.0...@standardnotes/services@1.37.1) (2022-10-25)
+
+### Bug Fixes
+
+* on mobile open links from editor in external browser ([#1860](https://github.com/standardnotes/app/issues/1860)) ([d9db73e](https://github.com/standardnotes/app/commit/d9db73ea056e2e6e2bde8e0c1de4a7090984ae9a))
+
+# [1.37.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.36.0...@standardnotes/services@1.37.0) (2022-10-25)
+
+### Features
+
+* per-tag display preferences ([#1868](https://github.com/standardnotes/app/issues/1868)) ([ee7f11c](https://github.com/standardnotes/app/commit/ee7f11c933285234b20fa2d5db4fcf0d6a5dce9d))
+
+# [1.36.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.35.0...@standardnotes/services@1.36.0) (2022-10-24)
+
+### Features
+
+* add preference on android to not confirm when exiting ([#1870](https://github.com/standardnotes/app/issues/1870)) ([28ef905](https://github.com/standardnotes/app/commit/28ef9054fad5236bc9f1fc87768d3c17059da4fb))
+
+# [1.35.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.34.4...@standardnotes/services@1.35.0) (2022-10-24)
+
+### Features
+
+* **web:** add accepting subscription invites from UI ([0c44ad6](https://github.com/standardnotes/app/commit/0c44ad6c8eace6d5fe957fa75c205c66c5f590b4))
+
+## [1.34.4](https://github.com/standardnotes/app/compare/@standardnotes/services@1.34.3...@standardnotes/services@1.34.4) (2022-10-21)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.34.3](https://github.com/standardnotes/app/compare/@standardnotes/services@1.34.2...@standardnotes/services@1.34.3) (2022-10-21)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.34.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.34.1...@standardnotes/services@1.34.2) (2022-10-21)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.34.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.34.0...@standardnotes/services@1.34.1) (2022-10-19)
+
+### Bug Fixes
+
+* issue with not being able to unlink a file from a note ([#1836](https://github.com/standardnotes/app/issues/1836)) ([4030953](https://github.com/standardnotes/app/commit/4030953b00ad609dc2b0f5b66cfd971d449f6121))
+
+# [1.34.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.33.1...@standardnotes/services@1.34.0) (2022-10-18)
+
+### Features
+
+* authorize notes for listed ([#1823](https://github.com/standardnotes/app/issues/1823)) ([9954bdc](https://github.com/standardnotes/app/commit/9954bdc29f9de2a42c4539d55749991d86a72943))
+
+## [1.33.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.33.0...@standardnotes/services@1.33.1) (2022-10-17)
+
+**Note:** Version bump only for package @standardnotes/services
+
+# [1.33.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.32.3...@standardnotes/services@1.33.0) (2022-10-13)
+
+### Features
+
+* soft biometrics lock ([#1793](https://github.com/standardnotes/app/issues/1793)) ([1a2dde2](https://github.com/standardnotes/app/commit/1a2dde2e0ea406b9818571ab71d38442f9c9fb50))
+
+## [1.32.3](https://github.com/standardnotes/app/compare/@standardnotes/services@1.32.2...@standardnotes/services@1.32.3) (2022-10-13)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.32.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.32.1...@standardnotes/services@1.32.2) (2022-10-12)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.32.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.32.0...@standardnotes/services@1.32.1) (2022-10-12)
+
+**Note:** Version bump only for package @standardnotes/services
+
+# [1.32.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.31.0...@standardnotes/services@1.32.0) (2022-10-12)
+
+### Features
+
+* **api:** add keyshare initiation for workspaces ([fabce1f](https://github.com/standardnotes/app/commit/fabce1f7aca5c9caaa5bb3908b2dc68063c690d0))
+
+# [1.31.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.30.0...@standardnotes/services@1.31.0) (2022-10-11)
+
+### Features
+
+* item linking ([#1779](https://github.com/standardnotes/app/issues/1779)) ([e3f2842](https://github.com/standardnotes/app/commit/e3f28421ff042c635ad2ae645c102c27e3e3f9c7))
+
+# [1.30.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.29.0...@standardnotes/services@1.30.0) (2022-10-11)
+
+### Features
+
+* **api:** add listing workspace users ([fb41f65](https://github.com/standardnotes/app/commit/fb41f651eca45dd62314609c2f389d5dc683c36e))
+
+# [1.29.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.28.0...@standardnotes/services@1.29.0) (2022-10-11)
+
+### Features
+
+* **api:** add access level to invitation requests ([49b3d27](https://github.com/standardnotes/app/commit/49b3d2714fbe4ac9f9242097b8df6b4e3d604513))
+
+# [1.28.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.27.1...@standardnotes/services@1.28.0) (2022-10-11)
+
+### Features
+
+* **api:** add accepting invites to workspace ([15e2c82](https://github.com/standardnotes/app/commit/15e2c82e654ce3f983cd42b01f14d18435b3e939))
+* **api:** add listing workspaces ([8376381](https://github.com/standardnotes/app/commit/837638198112df24c30e53803a7ddf5f841975b0))
+
+## [1.27.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.27.0...@standardnotes/services@1.27.1) (2022-10-10)
+
+### Bug Fixes
+
+* dark mode not working in editors ([#1773](https://github.com/standardnotes/app/issues/1773)) ([27d2c95](https://github.com/standardnotes/app/commit/27d2c95b5b82645bf6c0372979f05236c83a10f6))
+
+# [1.27.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.26.0...@standardnotes/services@1.27.0) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+* linter issues ([e2e7605](https://github.com/standardnotes/app/commit/e2e76054142e8d67cac69280e2a3efcb15cf67f1))
+
+### Features
+
+* **api:** add inviting to workspace ([158ca6a](https://github.com/standardnotes/app/commit/158ca6ac6a428e082c8f984791f80fcaadcb3e34))
+
+# [1.26.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.25.0...@standardnotes/services@1.26.0) (2022-10-07)
+
+### Features
+
+* **api:** add workspaces api ([#1765](https://github.com/standardnotes/app/issues/1765)) ([01ba715](https://github.com/standardnotes/app/commit/01ba715eba987a7da1ee062fec0b3593a7a453ed))
+
+# [1.25.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.24.3...@standardnotes/services@1.25.0) (2022-10-06)
+
+### Features
+
+* experimental 005 operator ([#1753](https://github.com/standardnotes/app/issues/1753)) ([cbbe913](https://github.com/standardnotes/app/commit/cbbe913cd6eb694dd27997927bd5c45e8a64cc09))
+
+## [1.24.3](https://github.com/standardnotes/app/compare/@standardnotes/services@1.24.2...@standardnotes/services@1.24.3) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.24.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.24.1...@standardnotes/services@1.24.2) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.24.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.24.0...@standardnotes/services@1.24.1) (2022-10-03)
+
+**Note:** Version bump only for package @standardnotes/services
+
+# [1.24.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.23.0...@standardnotes/services@1.24.0) (2022-10-02)
+
+### Features
+
+* use native preview for pdf in mobile webview ([#1728](https://github.com/standardnotes/app/issues/1728)) ([a90e4a5](https://github.com/standardnotes/app/commit/a90e4a50e820aa13b6af1f76ee9b2f935d12f211))
+
+# [1.23.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.22.4...@standardnotes/services@1.23.0) (2022-09-30)
+
+### Features
+
+* sync android status bar bg with theme bg color ([#1727](https://github.com/standardnotes/app/issues/1727)) ([47106fd](https://github.com/standardnotes/app/commit/47106fdf83ec89e67444e84a94350870645993cf))
+
+## [1.22.4](https://github.com/standardnotes/app/compare/@standardnotes/services@1.22.3...@standardnotes/services@1.22.4) (2022-09-30)
+
+**Note:** Version bump only for package @standardnotes/services
+
 ## [1.22.3](https://github.com/standardnotes/app/compare/@standardnotes/services@1.22.2...@standardnotes/services@1.22.3) (2022-09-29)
 
 **Note:** Version bump only for package @standardnotes/services

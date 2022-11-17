@@ -37,6 +37,8 @@ type CommonPopoverProps = {
   overrideZIndex?: string
   togglePopover: () => void
   className?: string
+  disableClickOutside?: boolean
+  disableMobileFullscreenTakeover?: boolean
 }
 
 export type PopoverContentProps = CommonPopoverProps & {

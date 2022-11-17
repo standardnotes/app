@@ -1,5 +1,5 @@
 import { CollectionSortProperty } from '../../Runtime/Collection/CollectionSort'
-import { FeatureIdentifier } from '@standardnotes/features'
+import { EditorIdentifier, FeatureIdentifier } from '@standardnotes/features'
 
 export enum PrefKey {
   TagsPanelWidth = 'tagsPanelWidth',
@@ -36,6 +36,9 @@ export enum PrefKey {
   MobileNotesHideEditorIcon = 'mobileHideEditorIcon',
   NewNoteTitleFormat = 'newNoteTitleFormat',
   CustomNoteTitleFormat = 'customNoteTitleFormat',
+  UpdateSavingStatusIndicator = 'updateSavingStatusIndicator',
+  DarkMode = 'darkMode',
+  DefaultEditorIdentifier = 'defaultEditorIdentifier',
 }
 
 export enum NewNoteTitleFormat {
@@ -81,8 +84,8 @@ export type PrefValue = {
   [PrefKey.NotesHideTags]: boolean
   [PrefKey.NotesHideEditorIcon]: boolean
   [PrefKey.UseSystemColorScheme]: boolean
-  [PrefKey.AutoLightThemeIdentifier]: FeatureIdentifier | 'Default'
-  [PrefKey.AutoDarkThemeIdentifier]: FeatureIdentifier | 'Default'
+  [PrefKey.AutoLightThemeIdentifier]: FeatureIdentifier | 'Default' | 'Dark'
+  [PrefKey.AutoDarkThemeIdentifier]: FeatureIdentifier | 'Default' | 'Dark'
   [PrefKey.NoteAddToParentFolders]: boolean
   [PrefKey.MobileSortNotesBy]: CollectionSortProperty
   [PrefKey.MobileSortNotesReverse]: boolean
@@ -97,4 +100,7 @@ export type PrefValue = {
   [PrefKey.CustomNoteTitleFormat]: string
   [PrefKey.EditorLineHeight]: EditorLineHeight
   [PrefKey.EditorFontSize]: EditorFontSize
+  [PrefKey.UpdateSavingStatusIndicator]: boolean
+  [PrefKey.DarkMode]: boolean
+  [PrefKey.DefaultEditorIdentifier]: EditorIdentifier
 }

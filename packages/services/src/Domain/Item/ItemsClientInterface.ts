@@ -1,10 +1,12 @@
+/* istanbul ignore file */
+
 import { ContentType, Uuid } from '@standardnotes/common'
 import {
   SNNote,
   FileItem,
   SNTag,
   SmartView,
-  TagNoteCountChangeObserver,
+  TagItemCountChangeObserver,
   DecryptedPayloadInterface,
   EncryptedItemInterface,
   DecryptedTransferPayload,
@@ -14,6 +16,7 @@ import {
   SNTheme,
   DisplayOptions,
   ItemsKeyInterface,
+  ItemContent,
 } from '@standardnotes/models'
 
 export interface ItemsClientInterface {
@@ -23,11 +26,11 @@ export interface ItemsClientInterface {
 
   disassociateFileWithNote(file: FileItem, note: SNNote): Promise<FileItem>
 
-  getFilesForNote(note: SNNote): FileItem[]
-
   renameFile(file: FileItem, name: string): Promise<FileItem>
 
   addTagToNote(note: SNNote, tag: SNTag, addHierarchy: boolean): Promise<SNTag[]>
+
+  addTagToFile(file: FileItem, tag: SNTag, addHierarchy: boolean): Promise<SNTag[]>
 
   /** Creates an unmanaged, un-inserted item from a payload. */
   createItemFromPayload(payload: DecryptedPayloadInterface): DecryptedItemInterface
@@ -54,7 +57,7 @@ export interface ItemsClientInterface {
 
   notesMatchingSmartView(view: SmartView): SNNote[]
 
-  addNoteCountChangeObserver(observer: TagNoteCountChangeObserver): () => void
+  addNoteCountChangeObserver(observer: TagItemCountChangeObserver): () => void
 
   allCountableNotesCount(): number
 
@@ -71,6 +74,14 @@ export interface ItemsClientInterface {
   referencesForItem(itemToLookupUuidFor: DecryptedItemInterface, contentType?: ContentType): DecryptedItemInterface[]
 
   itemsReferencingItem(itemToLookupUuidFor: DecryptedItemInterface, contentType?: ContentType): DecryptedItemInterface[]
+
+  linkNoteToNote(note: SNNote, otherNote: SNNote): Promise<SNNote>
+  linkFileToFile(file: FileItem, otherFile: FileItem): Promise<FileItem>
+
+  unlinkItems(
+    itemOne: DecryptedItemInterface<ItemContent>,
+    itemTwo: DecryptedItemInterface<ItemContent>,
+  ): Promise<DecryptedItemInterface<ItemContent>>
 
   /**
    * Finds tags with title or component starting with a search query and (optionally) not associated with a note
@@ -101,10 +112,10 @@ export interface ItemsClientInterface {
 
   /**
    * Get tags for a note sorted in natural order
-   * @param note - The note whose tags will be returned
-   * @returns Array containing tags associated with a note
+   * @param item - The item whose tags will be returned
+   * @returns Array containing tags associated with an item
    */
-  getSortedTagsForNote(note: SNNote): SNTag[]
+  getSortedTagsForItem(item: DecryptedItemInterface<ItemContent>): SNTag[]
 
   isSmartViewTitle(title: string): boolean
 
@@ -137,4 +148,10 @@ export interface ItemsClientInterface {
    * @returns Whether the item is a template (unmanaged)
    */
   isTemplateItem(item: DecryptedItemInterface): boolean
+
+  createSmartView<T extends DecryptedItemInterface<ItemContent>>(
+    title: string,
+    predicate: PredicateInterface<T>,
+    iconString?: string,
+  ): Promise<SmartView>
 }

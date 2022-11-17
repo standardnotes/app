@@ -39,6 +39,8 @@ const Popover = ({
   overrideZIndex,
   side,
   togglePopover,
+  disableClickOutside,
+  disableMobileFullscreenTakeover,
 }: Props) => {
   const popoverId = useRef(UuidGenerator.GenerateUuid())
 
@@ -96,6 +98,8 @@ const Popover = ({
         overrideZIndex={overrideZIndex}
         side={side}
         togglePopover={togglePopover}
+        disableClickOutside={disableClickOutside}
+        disableMobileFullscreenTakeover={disableMobileFullscreenTakeover}
       >
         {children}
       </PositionedPopoverContent>

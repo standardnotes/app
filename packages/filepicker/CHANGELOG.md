@@ -3,6 +3,144 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.25.14](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.25.13...@standardnotes/filepicker@1.25.14) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.25.13](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.25.12...@standardnotes/filepicker@1.25.13) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.25.12](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.25.11...@standardnotes/filepicker@1.25.12) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.25.11](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.25.10...@standardnotes/filepicker@1.25.11) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.25.10](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.25.9...@standardnotes/filepicker@1.25.10) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.25.9](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.25.8...@standardnotes/filepicker@1.25.9) (2022-11-14)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.25.8](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.25.7...@standardnotes/filepicker@1.25.8) (2022-11-09)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.25.7](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.25.6...@standardnotes/filepicker@1.25.7) (2022-11-07)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.25.6](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.25.5...@standardnotes/filepicker@1.25.6) (2022-11-06)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.25.5](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.25.4...@standardnotes/filepicker@1.25.5) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.25.4](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.25.3...@standardnotes/filepicker@1.25.4) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.25.3](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.25.2...@standardnotes/filepicker@1.25.3) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.25.2](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.25.1...@standardnotes/filepicker@1.25.2) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.25.1](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.25.0...@standardnotes/filepicker@1.25.1) (2022-11-02)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+# [1.25.0](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.24.10...@standardnotes/filepicker@1.25.0) (2022-11-02)
+
+### Features
+
+* add sending user requests to process ([#1908](https://github.com/standardnotes/app/issues/1908)) ([b2faa81](https://github.com/standardnotes/app/commit/b2faa815e967a9e7052b3ce6955e967c6bc68864))
+
+## [1.24.10](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.24.9...@standardnotes/filepicker@1.24.10) (2022-10-27)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.24.9](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.24.8...@standardnotes/filepicker@1.24.9) (2022-10-25)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.24.8](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.24.7...@standardnotes/filepicker@1.24.8) (2022-10-25)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.24.7](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.24.6...@standardnotes/filepicker@1.24.7) (2022-10-21)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.24.6](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.24.5...@standardnotes/filepicker@1.24.6) (2022-10-19)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.24.5](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.24.4...@standardnotes/filepicker@1.24.5) (2022-10-18)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.24.4](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.24.3...@standardnotes/filepicker@1.24.4) (2022-10-17)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.24.3](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.24.2...@standardnotes/filepicker@1.24.3) (2022-10-13)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.24.2](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.24.1...@standardnotes/filepicker@1.24.2) (2022-10-12)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.24.1](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.24.0...@standardnotes/filepicker@1.24.1) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+# [1.24.0](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.23.15...@standardnotes/filepicker@1.24.0) (2022-10-11)
+
+### Features
+
+* **api:** add listing workspace users ([fb41f65](https://github.com/standardnotes/app/commit/fb41f651eca45dd62314609c2f389d5dc683c36e))
+
+## [1.23.15](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.23.14...@standardnotes/filepicker@1.23.15) (2022-10-11)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.23.14](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.23.13...@standardnotes/filepicker@1.23.14) (2022-10-10)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.23.13](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.23.12...@standardnotes/filepicker@1.23.13) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+
+## [1.23.12](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.23.11...@standardnotes/filepicker@1.23.12) (2022-10-06)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.23.11](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.23.10...@standardnotes/filepicker@1.23.11) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.23.10](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.23.9...@standardnotes/filepicker@1.23.10) (2022-10-05)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
+## [1.23.9](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.23.8...@standardnotes/filepicker@1.23.9) (2022-09-30)
+
+**Note:** Version bump only for package @standardnotes/filepicker
+
 ## [1.23.8](https://github.com/standardnotes/app/compare/@standardnotes/filepicker@1.23.7...@standardnotes/filepicker@1.23.8) (2022-09-29)
 
 **Note:** Version bump only for package @standardnotes/filepicker

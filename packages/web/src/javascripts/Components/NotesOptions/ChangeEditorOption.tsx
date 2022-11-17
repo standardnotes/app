@@ -9,9 +9,16 @@ import Popover from '../Popover/Popover'
 type ChangeEditorOptionProps = {
   application: WebApplication
   note: SNNote
+  className: string
+  iconClassName: string
 }
 
-const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ application, note }) => {
+const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
+  application,
+  note,
+  className,
+  iconClassName,
+}) => {
   const [isOpen, setIsOpen] = useState(false)
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -30,10 +37,10 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ applic
           }
         }}
         ref={buttonRef}
-        className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+        className={className}
       >
         <div className="flex items-center">
-          <Icon type="dashboard" className="mr-2 text-neutral" />
+          <Icon type="dashboard" className={`${iconClassName} mr-2 text-neutral`} />
           Change note type
         </div>
         <Icon type="chevron-right" className="text-neutral" />

@@ -1,16 +1,19 @@
 import { CrossControllerEvent } from '../CrossControllerEvent'
-import { InternalEventBus, InternalEventPublishStrategy } from '@standardnotes/snjs'
+import { InternalEventBus, InternalEventPublishStrategy, removeFromArray } from '@standardnotes/snjs'
 import { WebApplication } from '../../Application/Application'
 import { Disposer } from '@/Types/Disposer'
 
-export abstract class AbstractViewController {
+type ControllerEventObserver<Event = void, EventData = void> = (event: Event, data: EventData) => void
+
+export abstract class AbstractViewController<Event = void, EventData = void> {
   dealloced = false
   protected disposers: Disposer[] = []
+  private eventObservers: ControllerEventObserver<Event, EventData>[] = []
 
   constructor(public application: WebApplication, protected eventBus: InternalEventBus) {}
 
-  protected async publishEventSync(name: CrossControllerEvent): Promise<void> {
-    await this.eventBus.publishSync({ type: name, payload: undefined }, InternalEventPublishStrategy.SEQUENCE)
+  protected async publishCrossControllerEventSync(name: CrossControllerEvent, data?: unknown): Promise<void> {
+    await this.eventBus.publishSync({ type: name, payload: data }, InternalEventPublishStrategy.SEQUENCE)
   }
 
   deinit(): void {
@@ -23,5 +26,19 @@ export abstract class AbstractViewController {
     }
 
     ;(this.disposers as unknown) = undefined
+
+    this.eventObservers.length = 0
+  }
+
+  addEventObserver(observer: ControllerEventObserver<Event, EventData>): () => void {
+    this.eventObservers.push(observer)
+
+    return () => {
+      removeFromArray(this.eventObservers, observer)
+    }
+  }
+
+  protected notifyEvent(event: Event, data: EventData): void {
+    this.eventObservers.forEach((observer) => observer(event, data))
   }
 }

@@ -1,4 +1,6 @@
+import { AppleIAPConfirmResponse } from './../../Response/Subscription/AppleIAPConfirmResponse'
 import { HttpServiceInterface } from '../../Http/HttpServiceInterface'
+import { AppleIAPConfirmRequestParams } from '../../Request'
 import { SubscriptionInviteAcceptRequestParams } from '../../Request/Subscription/SubscriptionInviteAcceptRequestParams'
 import { SubscriptionInviteCancelRequestParams } from '../../Request/Subscription/SubscriptionInviteCancelRequestParams'
 import { SubscriptionInviteDeclineRequestParams } from '../../Request/Subscription/SubscriptionInviteDeclineRequestParams'
@@ -17,7 +19,7 @@ export class SubscriptionServer implements SubscriptionServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
 
   async acceptInvite(params: SubscriptionInviteAcceptRequestParams): Promise<SubscriptionInviteAcceptResponse> {
-    const response = await this.httpService.get(Paths.v1.acceptInvite(params.inviteUuid), params)
+    const response = await this.httpService.post(Paths.v1.acceptInvite(params.inviteUuid), params)
 
     return response as SubscriptionInviteAcceptResponse
   }
@@ -44,5 +46,11 @@ export class SubscriptionServer implements SubscriptionServerInterface {
     const response = await this.httpService.post(Paths.v1.invite, params)
 
     return response as SubscriptionInviteResponse
+  }
+
+  async confirmAppleIAP(params: AppleIAPConfirmRequestParams): Promise<AppleIAPConfirmResponse> {
+    const response = await this.httpService.post(Paths.v1.confirmAppleIAP, params)
+
+    return response as AppleIAPConfirmResponse
   }
 }

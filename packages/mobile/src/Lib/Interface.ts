@@ -1,7 +1,8 @@
 import AsyncStorage from '@react-native-community/async-storage'
-import { AndroidBackHandlerService } from '@Root/AndroidBackHandlerService'
 import SNReactNative from '@standardnotes/react-native-utils'
+import { AppleIAPReceipt } from '@standardnotes/services'
 import {
+  AppleIAPProductId,
   ApplicationIdentifier,
   Environment,
   LegacyMobileKeychainStructure,
@@ -12,8 +13,21 @@ import {
   RawKeychainValue,
   removeFromArray,
   TransferPayload,
+  UuidString,
 } from '@standardnotes/snjs'
-import { Alert, Linking, PermissionsAndroid, Platform, StatusBar } from 'react-native'
+import { ColorSchemeObserverService } from 'ColorSchemeObserverService'
+import {
+  Alert,
+  Appearance,
+  AppState,
+  AppStateStatus,
+  ColorSchemeName,
+  Linking,
+  PermissionsAndroid,
+  Platform,
+  StatusBar,
+} from 'react-native'
+import FileViewer from 'react-native-file-viewer'
 import FingerprintScanner from 'react-native-fingerprint-scanner'
 import FlagSecure from 'react-native-flag-secure-android'
 import {
@@ -26,10 +40,10 @@ import {
 } from 'react-native-fs'
 import { hide, show } from 'react-native-privacy-snapshot'
 import Share from 'react-native-share'
+import { AndroidBackHandlerService } from '../AndroidBackHandlerService'
+import { PurchaseManager } from '../PurchaseManager'
 import { AppStateObserverService } from './../AppStateObserverService'
 import Keychain from './Keychain'
-import { SNReactNativeCrypto } from './ReactNativeCrypto'
-import { IsMobileWeb } from './Utils'
 
 export type BiometricsType = 'Fingerprint' | 'Face ID' | 'Biometrics' | 'Touch ID'
 
@@ -79,13 +93,17 @@ export class MobileDevice implements MobileDeviceInterface {
   platform: SNPlatform.Ios | SNPlatform.Android = Platform.OS === 'ios' ? SNPlatform.Ios : SNPlatform.Android
   private eventObservers: MobileDeviceEventHandler[] = []
   public isDarkMode = false
-  private crypto: SNReactNativeCrypto
+  public statusBarBgColor: string | undefined
+  private componentUrls: Map<UuidString, string> = new Map()
 
   constructor(
     private stateObserverService?: AppStateObserverService,
     private androidBackHandlerService?: AndroidBackHandlerService,
-  ) {
-    this.crypto = new SNReactNativeCrypto()
+    private colorSchemeService?: ColorSchemeObserverService,
+  ) {}
+
+  purchaseSubscriptionIAP(plan: AppleIAPProductId): Promise<AppleIAPReceipt | undefined> {
+    return PurchaseManager.getInstance().purchase(plan)
   }
 
   deinit() {
@@ -93,9 +111,11 @@ export class MobileDevice implements MobileDeviceInterface {
     ;(this.stateObserverService as unknown) = undefined
     this.androidBackHandlerService?.deinit()
     ;(this.androidBackHandlerService as unknown) = undefined
+    this.colorSchemeService?.deinit()
+    ;(this.colorSchemeService as unknown) = undefined
   }
 
-  consoleLog(...args: any[]): void {
+  consoleLog(...args: unknown[]): void {
     // eslint-disable-next-line no-console
     console.log(args)
   }
@@ -221,10 +241,12 @@ export class MobileDevice implements MobileDeviceInterface {
 
   hideMobileInterfaceFromScreenshots(): void {
     hide()
+    this.setAndroidScreenshotPrivacy(true)
   }
 
   stopHidingMobileInterfaceFromScreenshots(): void {
     show()
+    this.setAndroidScreenshotPrivacy(false)
   }
 
   async getAllRawStorageKeyValues() {
@@ -437,11 +459,7 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   performSoftReset() {
-    if (IsMobileWeb) {
-      this.notifyEvent(MobileDeviceEvent.RequestsWebViewReload)
-    } else {
-      SNReactNative.exitApp()
-    }
+    this.notifyEvent(MobileDeviceEvent.RequestsWebViewReload)
   }
 
   addMobileWebEventReceiver(handler: MobileDeviceEventHandler): () => void {
@@ -454,13 +472,17 @@ export class MobileDevice implements MobileDeviceInterface {
     }
   }
 
-  handleThemeSchemeChange(isDark: boolean): void {
+  handleThemeSchemeChange(isDark: boolean, bgColor: string): void {
     this.isDarkMode = isDark
+    this.statusBarBgColor = bgColor
 
     this.reloadStatusBarStyle()
   }
 
   reloadStatusBarStyle(animated = true) {
+    if (this.statusBarBgColor && Platform.OS === 'android') {
+      StatusBar.setBackgroundColor(this.statusBarBgColor, animated)
+    }
     StatusBar.setBarStyle(this.isDarkMode ? 'light-content' : 'dark-content', animated)
   }
 
@@ -540,16 +562,42 @@ export class MobileDevice implements MobileDeviceInterface {
 
     try {
       const path = this.getFileDestinationPath(filename, saveInTempLocation)
-      void this.deleteFileAtPathIfExists(path)
-      const decodedContents = this.crypto.base64Decode(base64.replace(/data.*base64,/, ''))
-      await writeFile(path, decodedContents)
+      await this.deleteFileAtPathIfExists(path)
+      await writeFile(path, base64.replace(/data.*base64,/, ''), 'base64')
       return path
     } catch (error) {
       this.consoleLog(`${error}`)
     }
   }
 
-  confirmAndExit() {
+  async previewFile(base64: string, filename: string): Promise<boolean> {
+    const tempLocation = await this.downloadBase64AsFile(base64, filename, true)
+
+    if (!tempLocation) {
+      this.consoleLog('Error: Could not download file to preview')
+      return false
+    }
+
+    try {
+      await FileViewer.open(tempLocation, {
+        onDismiss: async () => {
+          await this.deleteFileAtPathIfExists(tempLocation)
+        },
+      })
+    } catch (error) {
+      this.consoleLog(error)
+      return false
+    }
+
+    return true
+  }
+
+  exitApp(shouldConfirm?: boolean) {
+    if (!shouldConfirm) {
+      SNReactNative.exitApp()
+      return
+    }
+
     Alert.alert(
       'Close app',
       'Do you want to close the app?',
@@ -572,5 +620,25 @@ export class MobileDevice implements MobileDeviceInterface {
         cancelable: true,
       },
     )
+  }
+
+  addComponentUrl(componentUuid: UuidString, componentUrl: string) {
+    this.componentUrls.set(componentUuid, componentUrl)
+  }
+
+  removeComponentUrl(componentUuid: UuidString) {
+    this.componentUrls.delete(componentUuid)
+  }
+
+  isUrlComponentUrl(url: string): boolean {
+    return Array.from(this.componentUrls.values()).includes(url)
+  }
+
+  async getAppState(): Promise<AppStateStatus> {
+    return AppState.currentState
+  }
+
+  async getColorScheme(): Promise<ColorSchemeName> {
+    return Appearance.getColorScheme()
   }
 }

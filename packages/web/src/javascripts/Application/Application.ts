@@ -5,9 +5,7 @@ import {
   DeinitSource,
   Platform,
   SNApplication,
-  ItemGroupController,
   removeFromArray,
-  IconsController,
   DesktopDeviceInterface,
   isDesktopDevice,
   DeinitMode,
@@ -19,24 +17,32 @@ import {
   WebApplicationInterface,
   MobileDeviceInterface,
   MobileUnlockTiming,
+  InternalEventBus,
+  DecryptedItem,
+  EditorIdentifier,
+  FeatureIdentifier,
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { isDesktopApplication } from '@/Utils'
 import { DesktopManager } from './Device/DesktopManager'
-import { ArchiveManager, AutolockService, IOService, WebAlertService, ThemeManager } from '@standardnotes/ui-services'
-import { MobileWebReceiver } from './MobileWebReceiver'
+import {
+  ArchiveManager,
+  AutolockService,
+  IOService,
+  RouteService,
+  RouteServiceInterface,
+  ThemeManager,
+  WebAlertService,
+} from '@standardnotes/ui-services'
+import { MobileWebReceiver, NativeMobileEventListener } from '../NativeMobileWeb/MobileWebReceiver'
 import { AndroidBackHandler } from '@/NativeMobileWeb/AndroidBackHandler'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
-
-type WebServices = {
-  viewControllerManager: ViewControllerManager
-  desktopService?: DesktopManager
-  autolockService: AutolockService
-  archiveService: ArchiveManager
-  themeService: ThemeManager
-  io: IOService
-}
+import { setCustomViewportHeight } from '@/setViewportHeightWithFallback'
+import { WebServices } from './WebServices'
+import { FeatureName } from '@/Controllers/FeatureName'
+import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
+import { VisibilityObserver } from './VisibilityObserver'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -44,10 +50,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   private webServices!: WebServices
   private webEventObservers: WebEventObserver[] = []
   public itemControllerGroup: ItemGroupController
-  public iconsController: IconsController
-  private onVisibilityChange: () => void
   private mobileWebReceiver?: MobileWebReceiver
   private androidBackHandler?: AndroidBackHandler
+  public readonly routeService: RouteServiceInterface
+  private visibilityObserver?: VisibilityObserver
 
   constructor(
     deviceInterface: WebOrDesktopDevice,
@@ -74,8 +80,24 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     })
 
     deviceInterface.setApplication(this)
+    const internalEventBus = new InternalEventBus()
+
     this.itemControllerGroup = new ItemGroupController(this)
-    this.iconsController = new IconsController()
+    this.routeService = new RouteService(this, internalEventBus)
+
+    const viewControllerManager = new ViewControllerManager(this, deviceInterface)
+    const archiveService = new ArchiveManager(this)
+    const io = new IOService(platform === Platform.MacWeb || platform === Platform.MacDesktop)
+    const themeService = new ThemeManager(this, internalEventBus)
+
+    this.setWebServices({
+      viewControllerManager,
+      archiveService,
+      desktopService: isDesktopDevice(deviceInterface) ? new DesktopManager(this, deviceInterface) : undefined,
+      io,
+      autolockService: this.isNativeMobileWeb() ? undefined : new AutolockService(this, internalEventBus),
+      themeService,
+    })
 
     if (this.isNativeMobileWeb()) {
       this.mobileWebReceiver = new MobileWebReceiver(this)
@@ -83,18 +105,14 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
       // eslint-disable-next-line no-console
       console.log = (...args) => {
-        this.mobileDevice.consoleLog(...args)
+        this.mobileDevice().consoleLog(...args)
       }
     }
 
-    this.onVisibilityChange = () => {
-      const visible = document.visibilityState === 'visible'
-      const event = visible ? WebAppEvent.WindowDidFocus : WebAppEvent.WindowDidBlur
-      this.notifyWebEvent(event)
-    }
-
     if (!isDesktopApplication()) {
-      document.addEventListener('visibilitychange', this.onVisibilityChange)
+      this.visibilityObserver = new VisibilityObserver((event) => {
+        this.notifyWebEvent(event)
+      })
     }
   }
 
@@ -120,10 +138,15 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       ;(this.itemControllerGroup as unknown) = undefined
       ;(this.mobileWebReceiver as unknown) = undefined
 
+      this.routeService.deinit()
+      ;(this.routeService as unknown) = undefined
+
       this.webEventObservers.length = 0
 
-      document.removeEventListener('visibilitychange', this.onVisibilityChange)
-      ;(this.onVisibilityChange as unknown) = undefined
+      if (this.visibilityObserver) {
+        this.visibilityObserver.deinit()
+        this.visibilityObserver = undefined
+      }
     } catch (error) {
       console.error('Error while deiniting application', error)
     }
@@ -179,7 +202,15 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return undefined
   }
 
-  get mobileDevice(): MobileDeviceInterface {
+  isNativeIOS() {
+    return this.isNativeMobileWeb() && this.platform === Platform.Ios
+  }
+
+  get hideOutboundSubscriptionLinks() {
+    return this.isNativeIOS()
+  }
+
+  mobileDevice(): MobileDeviceInterface {
     if (!this.isNativeMobileWeb()) {
       throw Error('Attempting to access device as mobile device on non mobile platform')
     }
@@ -233,21 +264,47 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     await this.lockApplicationAfterMobileEventIfApplicable()
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  async handleMobileGainingFocusEvent(): Promise<void> {}
+  async handleMobileGainingFocusEvent(): Promise<void> {
+    /** Optional override */
+  }
+
+  handleInitialMobileScreenshotPrivacy(): void {
+    if (this.platform !== Platform.Android) {
+      return
+    }
+
+    if (this.protections.getMobileScreenshotPrivacyEnabled()) {
+      this.mobileDevice().setAndroidScreenshotPrivacy(true)
+    } else {
+      this.mobileDevice().setAndroidScreenshotPrivacy(false)
+    }
+  }
 
   async handleMobileLosingFocusEvent(): Promise<void> {
-    if (this.getMobileScreenshotPrivacyEnabled()) {
-      this.mobileDevice.stopHidingMobileInterfaceFromScreenshots()
+    if (this.protections.getMobileScreenshotPrivacyEnabled()) {
+      this.mobileDevice().stopHidingMobileInterfaceFromScreenshots()
     }
 
     await this.lockApplicationAfterMobileEventIfApplicable()
   }
 
   async handleMobileResumingFromBackgroundEvent(): Promise<void> {
-    if (this.getMobileScreenshotPrivacyEnabled()) {
-      this.mobileDevice.hideMobileInterfaceFromScreenshots()
+    if (this.protections.getMobileScreenshotPrivacyEnabled()) {
+      this.mobileDevice().hideMobileInterfaceFromScreenshots()
     }
+  }
+
+  handleMobileColorSchemeChangeEvent() {
+    void this.getThemeService().handleMobileColorSchemeChangeEvent()
+  }
+
+  handleMobileKeyboardWillChangeFrameEvent(frame: { height: number; contentHeight: number }): void {
+    setCustomViewportHeight(frame.contentHeight, 'px', true)
+    this.notifyWebEvent(WebAppEvent.MobileKeyboardWillChangeFrame, frame)
+  }
+
+  handleMobileKeyboardDidChangeFrameEvent(frame: { height: number; contentHeight: number }): void {
+    this.notifyWebEvent(WebAppEvent.MobileKeyboardDidChangeFrame, frame)
   }
 
   private async lockApplicationAfterMobileEventIfApplicable(): Promise<void> {
@@ -256,16 +313,18 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       return
     }
 
-    const hasBiometrics = this.hasBiometrics()
+    const hasBiometrics = this.protections.hasBiometricsEnabled()
     const hasPasscode = this.hasPasscode()
-    const passcodeTiming = await this.getMobilePasscodeTiming()
-    const biometricsTiming = await this.getMobileBiometricsTiming()
+    const passcodeTiming = this.protections.getMobilePasscodeTiming()
+    const biometricsTiming = this.protections.getMobileBiometricsTiming()
 
     const passcodeLockImmediately = hasPasscode && passcodeTiming === MobileUnlockTiming.Immediately
     const biometricsLockImmediately = hasBiometrics && biometricsTiming === MobileUnlockTiming.Immediately
 
-    if (passcodeLockImmediately || biometricsLockImmediately) {
+    if (passcodeLockImmediately) {
       await this.lock()
+    } else if (biometricsLockImmediately) {
+      this.softLockBiometrics()
     }
   }
 
@@ -280,5 +339,54 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       return this.androidBackHandler.addEventListener(listener)
     }
     return
+  }
+
+  isAuthorizedToRenderItem(item: DecryptedItem): boolean {
+    if (item.protected && this.hasProtectionSources()) {
+      return this.hasUnprotectedAccessSession()
+    }
+
+    return true
+  }
+
+  entitledToPerTagPreferences(): boolean {
+    return this.hasValidSubscription()
+  }
+
+  get entitledToFiles(): boolean {
+    return this.getViewControllerManager().featuresController.entitledToFiles
+  }
+
+  showPremiumModal(featureName?: FeatureName): void {
+    void this.getViewControllerManager().featuresController.showPremiumAlert(featureName)
+  }
+
+  hasValidSubscription(): boolean {
+    return this.getViewControllerManager().subscriptionController.hasValidSubscription()
+  }
+
+  openPurchaseFlow(): void {
+    this.getViewControllerManager().purchaseFlowController.openPurchaseFlow()
+  }
+
+  addNativeMobileEventListener = (listener: NativeMobileEventListener) => {
+    if (!this.mobileWebReceiver) {
+      return
+    }
+
+    return this.mobileWebReceiver.addReactListener(listener)
+  }
+
+  showAccountMenu(): void {
+    this.getViewControllerManager().accountMenuController.setShow(true)
+  }
+
+  geDefaultEditorIdentifier(currentTag?: SNTag): EditorIdentifier {
+    return (
+      currentTag?.preferences?.editorIdentifier ||
+      this.getPreference(PrefKey.DefaultEditorIdentifier) ||
+      this.componentManager.legacyGetDefaultEditor()?.identifier ||
+      FeatureIdentifier.PlainEditor
+    )
   }
 }

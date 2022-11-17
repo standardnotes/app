@@ -5,7 +5,6 @@ import {
   CollectionSort,
   ContentType,
   findInArray,
-  NoteViewController,
   PrefKey,
   SmartView,
   SNNote,
@@ -15,38 +14,36 @@ import {
   InternalEventBus,
   InternalEventHandlerInterface,
   InternalEventInterface,
-  FileViewController,
   FileItem,
   WebAppEvent,
   NewNoteTitleFormat,
+  useBoolean,
+  isTag,
+  isFile,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
-import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { WebDisplayOptions } from './WebDisplayOptions'
 import { NavigationController } from '../Navigation/NavigationController'
 import { CrossControllerEvent } from '../CrossControllerEvent'
 import { SearchOptionsController } from '../SearchOptionsController'
 import { SelectedItemsController } from '../SelectedItemsController'
 import { NotesController } from '../NotesController'
-import { NoteTagsController } from '../NoteTagsController'
 import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import dayjs from 'dayjs'
+import { LinkingController } from '../LinkingController'
+import { AbstractViewController } from '../Abstract/AbstractViewController'
+import { log, LoggingDomain } from '@/Logging'
+import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewController'
+import { FileViewController } from '@/Components/NoteView/Controller/FileViewController'
+import { TemplateNoteViewAutofocusBehavior } from '@/Components/NoteView/Controller/TemplateNoteViewControllerOptions'
+import { ItemsReloadSource } from './ItemsReloadSource'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
 const ElementIdSearchBar = 'search-bar'
 const ElementIdScrollContainer = 'notes-scrollable'
-
-enum ItemsReloadSource {
-  ItemStream,
-  SyncEvent,
-  DisplayOptionsChange,
-  Pagination,
-  TagChange,
-  FilterTextChange,
-}
 
 export class ItemListController extends AbstractViewController implements InternalEventHandlerInterface {
   completedFullSync = false
@@ -55,7 +52,7 @@ export class ItemListController extends AbstractViewController implements Intern
   items: ListableContentItem[] = []
   notesToDisplay = 0
   pageSize = 0
-  panelTitle = 'All Notes'
+  panelTitle = 'Notes'
   panelWidth = 0
   renderedItems: ListableContentItem[] = []
   searchSubmitted = false
@@ -85,7 +82,6 @@ export class ItemListController extends AbstractViewController implements Intern
     ;(this.searchOptionsController as unknown) = undefined
     ;(this.selectionController as unknown) = undefined
     ;(this.notesController as unknown) = undefined
-    ;(this.noteTagsController as unknown) = undefined
     ;(window.onresize as unknown) = undefined
 
     destroyAllObjectProperties(this)
@@ -97,7 +93,7 @@ export class ItemListController extends AbstractViewController implements Intern
     private searchOptionsController: SearchOptionsController,
     private selectionController: SelectedItemsController,
     private notesController: NotesController,
-    private noteTagsController: NoteTagsController,
+    private linkingController: LinkingController,
     eventBus: InternalEventBus,
   ) {
     super(application, eventBus)
@@ -108,19 +104,21 @@ export class ItemListController extends AbstractViewController implements Intern
     this.resetPagination()
 
     this.disposers.push(
-      application.streamItems<SNNote>(ContentType.Note, () => {
+      application.streamItems<SNNote>([ContentType.Note, ContentType.File], () => {
         void this.reloadItems(ItemsReloadSource.ItemStream)
       }),
     )
 
     this.disposers.push(
-      application.streamItems<SNTag>([ContentType.Tag], async ({ changed, inserted }) => {
+      application.streamItems<SNTag>([ContentType.Tag, ContentType.SmartView], async ({ changed, inserted }) => {
         const tags = [...changed, ...inserted]
 
-        /** A tag could have changed its relationships, so we need to reload the filter */
-        this.reloadNotesDisplayOptions()
-
-        void this.reloadItems(ItemsReloadSource.ItemStream)
+        const { didReloadItems } = await this.reloadDisplayPreferences({ userTriggered: false })
+        if (!didReloadItems) {
+          /** A tag could have changed its relationships, so we need to reload the filter */
+          this.reloadNotesDisplayOptions()
+          void this.reloadItems(ItemsReloadSource.ItemStream)
+        }
 
         if (this.navigationController.selected && findInArray(tags, 'uuid', this.navigationController.selected.uuid)) {
           /** Tag title could have changed */
@@ -131,7 +129,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.disposers.push(
       application.addEventObserver(async () => {
-        void this.reloadPreferences()
+        void this.reloadDisplayPreferences({ userTriggered: false })
       }, ApplicationEvent.PreferencesChanged),
     )
 
@@ -145,18 +143,20 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.disposers.push(
       application.addEventObserver(async () => {
-        void this.reloadItems(ItemsReloadSource.SyncEvent).then(() => {
-          if (
-            this.notes.length === 0 &&
-            this.navigationController.selected instanceof SmartView &&
-            this.navigationController.selected.uuid === SystemViewId.AllNotes &&
-            this.noteFilterText === '' &&
-            !this.getActiveItemController()
-          ) {
-            this.createPlaceholderNote()?.catch(console.error)
-          }
-        })
-        this.setCompletedFullSync(true)
+        if (!this.completedFullSync) {
+          void this.reloadItems(ItemsReloadSource.SyncEvent).then(() => {
+            if (
+              this.notes.length === 0 &&
+              this.navigationController.selected instanceof SmartView &&
+              this.navigationController.selected.uuid === SystemViewId.AllNotes &&
+              this.noteFilterText === '' &&
+              !this.getActiveItemController()
+            ) {
+              this.createPlaceholderNote()?.catch(console.error)
+            }
+          })
+          this.setCompletedFullSync(true)
+        }
       }, ApplicationEvent.CompletedFullSync),
     )
 
@@ -191,12 +191,13 @@ export class ItemListController extends AbstractViewController implements Intern
       notesToDisplay: observable,
       panelTitle: observable,
       panelWidth: observable,
+      items: observable,
       renderedItems: observable,
       showDisplayOptionsMenu: observable,
 
       reloadItems: action,
       reloadPanelTitle: action,
-      reloadPreferences: action,
+      reloadDisplayPreferences: action,
       resetPagination: action,
       setCompletedFullSync: action,
       setNoteFilterText: action,
@@ -205,6 +206,7 @@ export class ItemListController extends AbstractViewController implements Intern
       handleFilterTextChanged: action,
 
       optionsSubtitle: computed,
+      activeControllerItem: computed,
     })
 
     window.onresize = () => {
@@ -214,7 +216,8 @@ export class ItemListController extends AbstractViewController implements Intern
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === CrossControllerEvent.TagChanged) {
-      this.handleTagChange()
+      const payload = event.payload as { userTriggered: boolean }
+      await this.handleTagChange(payload.userTriggered)
     } else if (event.type === CrossControllerEvent.ActiveEditorChanged) {
       this.handleEditorChange().catch(console.error)
     }
@@ -228,13 +231,12 @@ export class ItemListController extends AbstractViewController implements Intern
     return this.application.itemControllerGroup.activeItemViewController
   }
 
-  public get activeControllerNote(): SNNote | undefined {
-    const activeController = this.getActiveItemController()
-    return activeController instanceof NoteViewController ? activeController.item : undefined
+  public get activeControllerItem() {
+    return this.getActiveItemController()?.item
   }
 
   async openNote(uuid: string): Promise<void> {
-    if (this.activeControllerNote?.uuid === uuid) {
+    if (this.activeControllerItem?.uuid === uuid) {
       return
     }
 
@@ -244,11 +246,11 @@ export class ItemListController extends AbstractViewController implements Intern
       return
     }
 
-    await this.application.itemControllerGroup.createItemController(note)
+    await this.application.itemControllerGroup.createItemController({ note })
 
-    this.noteTagsController.reloadTagsForCurrentNote()
+    this.linkingController.reloadAllLinks()
 
-    await this.publishEventSync(CrossControllerEvent.ActiveEditorChanged)
+    await this.publishCrossControllerEventSync(CrossControllerEvent.ActiveEditorChanged)
   }
 
   async openFile(fileUuid: string): Promise<void> {
@@ -262,7 +264,9 @@ export class ItemListController extends AbstractViewController implements Intern
       return
     }
 
-    await this.application.itemControllerGroup.createItemController(file)
+    await this.application.itemControllerGroup.createItemController({ file })
+
+    this.linkingController.reloadAllLinks()
   }
 
   setCompletedFullSync = (completed: boolean) => {
@@ -335,31 +339,105 @@ export class ItemListController extends AbstractViewController implements Intern
     )
   }
 
-  private shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource, activeItem: SNNote | FileItem | undefined) => {
-    return itemsReloadSource === ItemsReloadSource.TagChange || !activeItem
-  }
+  /**
+   * In some cases we want to keep the selected item open even if it doesn't appear in results,
+   * for example if you are inside tag Foo and remove tag Foo from the note, we want to keep the note open.
+   */
+  private shouldCloseActiveItem = (activeItem: SNNote | FileItem | undefined, source?: ItemsReloadSource) => {
+    if (source === ItemsReloadSource.UserTriggeredTagChange) {
+      log(LoggingDomain.Selection, 'shouldCloseActiveItem true due to ItemsReloadSource.UserTriggeredTagChange')
+      return true
+    }
 
-  private shouldCloseActiveItem = (activeItem: SNNote | FileItem | undefined) => {
+    const activeItemExistsInUpdatedResults = this.items.find((item) => item.uuid === activeItem?.uuid)
+
+    const closeBecauseActiveItemIsFileAndDoesntExistInUpdatedResults =
+      activeItem && isFile(activeItem) && !activeItemExistsInUpdatedResults
+
+    if (closeBecauseActiveItemIsFileAndDoesntExistInUpdatedResults) {
+      log(LoggingDomain.Selection, 'shouldCloseActiveItem closeBecauseActiveItemIsFileAndDoesntExistInUpdatedResults')
+      return true
+    }
+
+    const firstItemInNewResults = this.getFirstNonProtectedItem()
+
+    const closePreviousItemWhenSwitchingToFilesBasedView =
+      firstItemInNewResults && isFile(firstItemInNewResults) && !activeItemExistsInUpdatedResults
+
+    if (closePreviousItemWhenSwitchingToFilesBasedView) {
+      log(LoggingDomain.Selection, 'shouldCloseActiveItem closePreviousItemWhenSwitchingToFilesBasedView')
+      return true
+    }
+
     const isSearching = this.noteFilterText.length > 0
-    const itemExistsInUpdatedResults = this.items.find((item) => item.uuid === activeItem?.uuid)
 
-    return !itemExistsInUpdatedResults && !isSearching && this.navigationController.isInAnySystemView()
+    const closeBecauseActiveItemDoesntExistInCurrentSystemView =
+      !activeItemExistsInUpdatedResults && !isSearching && this.navigationController.isInAnySystemView()
+
+    if (closeBecauseActiveItemDoesntExistInCurrentSystemView) {
+      log(LoggingDomain.Selection, 'shouldCloseActiveItem closePreviousItemWhenSwitchingToFilesBasedView')
+      return true
+    }
+
+    log(LoggingDomain.Selection, 'shouldCloseActiveItem false')
+    return false
   }
 
   private shouldSelectNextItemOrCreateNewNote = (activeItem: SNNote | FileItem | undefined) => {
-    const shouldShowTrashedNotes =
-      this.navigationController.isInSystemView(SystemViewId.TrashedNotes) || this.searchOptionsController.includeTrashed
+    const selectedView = this.navigationController.selected
 
-    const shouldShowArchivedNotes =
-      this.navigationController.isInSystemView(SystemViewId.ArchivedNotes) ||
-      this.searchOptionsController.includeArchived ||
-      this.application.getPreference(PrefKey.NotesShowArchived, PrefDefaults[PrefKey.NotesShowArchived])
+    const isActiveItemTrashed = activeItem?.trashed
+    const isActiveItemArchived = activeItem?.archived
 
-    return (activeItem?.trashed && !shouldShowTrashedNotes) || (activeItem?.archived && !shouldShowArchivedNotes)
+    if (isActiveItemTrashed) {
+      const selectedSmartViewShowsTrashed =
+        selectedView instanceof SmartView && selectedView.predicate.keypathIncludesString('trashed')
+
+      const shouldShowTrashedNotes =
+        this.navigationController.isInSystemView(SystemViewId.TrashedNotes) ||
+        this.searchOptionsController.includeTrashed ||
+        selectedSmartViewShowsTrashed ||
+        this.displayOptions.includeTrashed
+
+      return !shouldShowTrashedNotes
+    }
+
+    if (isActiveItemArchived) {
+      const selectedSmartViewShowsArchived =
+        selectedView instanceof SmartView && selectedView.predicate.keypathIncludesString('archived')
+
+      const shouldShowArchivedNotes =
+        this.navigationController.isInSystemView(SystemViewId.ArchivedNotes) ||
+        this.searchOptionsController.includeArchived ||
+        selectedSmartViewShowsArchived ||
+        this.displayOptions.includeArchived
+
+      return !shouldShowArchivedNotes
+    }
+
+    return false
   }
 
-  private shouldSelectActiveItem = (activeItem: SNNote | FileItem | undefined) => {
-    return activeItem && !this.selectionController.selectedItems[activeItem.uuid]
+  private shouldSelectActiveItem = (activeItem: SNNote | FileItem) => {
+    return !this.selectionController.isItemSelected(activeItem)
+  }
+
+  shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource) => {
+    const item = this.getFirstNonProtectedItem()
+    if (item && isFile(item)) {
+      return false
+    }
+
+    const selectedTag = this.navigationController.selected
+    const isDailyEntry = selectedTag && isTag(selectedTag) && selectedTag.isDailyEntry
+    if (isDailyEntry) {
+      return false
+    }
+
+    const userChangedTag = itemsReloadSource === ItemsReloadSource.UserTriggeredTagChange
+    const hasNoSelectedItem = !this.selectionController.selectedUuids.size
+
+    return userChangedTag || hasNoSelectedItem
   }
 
   private async recomputeSelectionAfterItemsReload(itemsReloadSource: ItemsReloadSource) {
@@ -371,15 +449,22 @@ export class ItemListController extends AbstractViewController implements Intern
 
     const activeItem = activeController?.item
 
-    if (this.shouldSelectFirstItem(itemsReloadSource, activeItem)) {
-      await this.selectFirstItem()
-    } else if (this.shouldCloseActiveItem(activeItem) && activeController) {
+    if (activeController && activeItem && this.shouldCloseActiveItem(activeItem, itemsReloadSource)) {
       this.closeItemController(activeController)
-      this.selectionController.selectNextItem()
+
+      this.selectionController.deselectItem(activeItem)
+
+      if (this.shouldSelectFirstItem(itemsReloadSource)) {
+        log(LoggingDomain.Selection, 'Selecting next item after closing active one')
+        this.selectionController.selectNextItem()
+      }
+    } else if (activeItem && this.shouldSelectActiveItem(activeItem)) {
+      log(LoggingDomain.Selection, 'Selecting active item')
+      await this.selectionController.selectItem(activeItem.uuid).catch(console.error)
+    } else if (this.shouldSelectFirstItem(itemsReloadSource)) {
+      await this.selectFirstItem()
     } else if (this.shouldSelectNextItemOrCreateNewNote(activeItem)) {
       await this.selectNextItemOrCreateNewNote()
-    } else if (this.shouldSelectActiveItem(activeItem) && activeItem) {
-      await this.selectionController.selectItem(activeItem.uuid).catch(console.error)
     }
   }
 
@@ -417,54 +502,71 @@ export class ItemListController extends AbstractViewController implements Intern
     this.application.items.setPrimaryItemDisplayOptions(criteria)
   }
 
-  reloadPreferences = async () => {
+  reloadDisplayPreferences = async ({
+    userTriggered,
+  }: {
+    userTriggered: boolean
+  }): Promise<{ didReloadItems: boolean }> => {
     const newDisplayOptions = {} as DisplayOptions
     const newWebDisplayOptions = {} as WebDisplayOptions
+    const selectedTag = this.navigationController.selected
 
     const currentSortBy = this.displayOptions.sortBy
-
-    let sortBy = this.application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy])
+    let sortBy =
+      selectedTag?.preferences?.sortBy ||
+      this.application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy])
     if (sortBy === CollectionSort.UpdatedAt || (sortBy as string) === 'client_updated_at') {
       sortBy = CollectionSort.UpdatedAt
     }
-
     newDisplayOptions.sortBy = sortBy
+
+    const currentSortDirection = this.displayOptions.sortDirection
     newDisplayOptions.sortDirection =
-      this.application.getPreference(PrefKey.SortNotesReverse, PrefDefaults[PrefKey.SortNotesReverse]) === false
+      useBoolean(
+        selectedTag?.preferences?.sortReverse,
+        this.application.getPreference(PrefKey.SortNotesReverse, PrefDefaults[PrefKey.SortNotesReverse]),
+      ) === false
         ? 'dsc'
         : 'asc'
-    newDisplayOptions.includeArchived = this.application.getPreference(
-      PrefKey.NotesShowArchived,
-      PrefDefaults[PrefKey.NotesShowArchived],
-    )
-    newDisplayOptions.includeTrashed = this.application.getPreference(
-      PrefKey.NotesShowTrashed,
-      PrefDefaults[PrefKey.NotesShowTrashed],
-    ) as boolean
-    newDisplayOptions.includePinned = !this.application.getPreference(
-      PrefKey.NotesHidePinned,
-      PrefDefaults[PrefKey.NotesHidePinned],
-    )
-    newDisplayOptions.includeProtected = !this.application.getPreference(
-      PrefKey.NotesHideProtected,
-      PrefDefaults[PrefKey.NotesHideProtected],
+
+    newDisplayOptions.includeArchived = useBoolean(
+      selectedTag?.preferences?.showArchived,
+      this.application.getPreference(PrefKey.NotesShowArchived, PrefDefaults[PrefKey.NotesShowArchived]),
     )
 
-    newWebDisplayOptions.hideNotePreview = this.application.getPreference(
-      PrefKey.NotesHideNotePreview,
-      PrefDefaults[PrefKey.NotesHideNotePreview],
+    newDisplayOptions.includeTrashed = useBoolean(
+      selectedTag?.preferences?.showTrashed,
+      this.application.getPreference(PrefKey.NotesShowTrashed, PrefDefaults[PrefKey.NotesShowTrashed]),
     )
-    newWebDisplayOptions.hideDate = this.application.getPreference(
-      PrefKey.NotesHideDate,
-      PrefDefaults[PrefKey.NotesHideDate],
+
+    newDisplayOptions.includePinned = !useBoolean(
+      selectedTag?.preferences?.hidePinned,
+      this.application.getPreference(PrefKey.NotesHidePinned, PrefDefaults[PrefKey.NotesHidePinned]),
     )
-    newWebDisplayOptions.hideTags = this.application.getPreference(
-      PrefKey.NotesHideTags,
-      PrefDefaults[PrefKey.NotesHideTags],
+
+    newDisplayOptions.includeProtected = !useBoolean(
+      selectedTag?.preferences?.hideProtected,
+      this.application.getPreference(PrefKey.NotesHideProtected, PrefDefaults[PrefKey.NotesHideProtected]),
     )
-    newWebDisplayOptions.hideEditorIcon = this.application.getPreference(
-      PrefKey.NotesHideEditorIcon,
-      PrefDefaults[PrefKey.NotesHideEditorIcon],
+
+    newWebDisplayOptions.hideNotePreview = useBoolean(
+      selectedTag?.preferences?.hideNotePreview,
+      this.application.getPreference(PrefKey.NotesHideNotePreview, PrefDefaults[PrefKey.NotesHideNotePreview]),
+    )
+
+    newWebDisplayOptions.hideDate = useBoolean(
+      selectedTag?.preferences?.hideDate,
+      this.application.getPreference(PrefKey.NotesHideDate, PrefDefaults[PrefKey.NotesHideDate]),
+    )
+
+    newWebDisplayOptions.hideTags = useBoolean(
+      selectedTag?.preferences?.hideTags,
+      this.application.getPreference(PrefKey.NotesHideTags, PrefDefaults[PrefKey.NotesHideTags]),
+    )
+
+    newWebDisplayOptions.hideEditorIcon = useBoolean(
+      selectedTag?.preferences?.hideEditorIcon,
+      this.application.getPreference(PrefKey.NotesHideEditorIcon, PrefDefaults[PrefKey.NotesHideEditorIcon]),
     )
 
     const displayOptionsChanged =
@@ -482,70 +584,95 @@ export class ItemListController extends AbstractViewController implements Intern
     this.displayOptions = newDisplayOptions
     this.webDisplayOptions = newWebDisplayOptions
 
-    const newWidth = this.application.getPreference(PrefKey.NotesPanelWidth)
-    if (newWidth && newWidth !== this.panelWidth) {
-      this.panelWidth = newWidth
+    const listColumnWidth =
+      selectedTag?.preferences?.panelWidth || this.application.getPreference(PrefKey.NotesPanelWidth)
+
+    if (listColumnWidth && listColumnWidth !== this.panelWidth) {
+      this.panelWidth = listColumnWidth
     }
 
     if (!displayOptionsChanged) {
-      return
+      return { didReloadItems: false }
     }
 
-    if (displayOptionsChanged) {
-      this.reloadNotesDisplayOptions()
-    }
+    this.reloadNotesDisplayOptions()
 
-    await this.reloadItems(ItemsReloadSource.DisplayOptionsChange)
+    await this.reloadItems(
+      userTriggered ? ItemsReloadSource.UserTriggeredTagChange : ItemsReloadSource.DisplayOptionsChange,
+    )
 
-    if (newDisplayOptions.sortBy !== currentSortBy) {
+    const didSortByChange = currentSortBy !== this.displayOptions.sortBy
+    const didSortDirectionChange = currentSortDirection !== this.displayOptions.sortDirection
+    const didSortPrefChange = didSortByChange || didSortDirectionChange
+
+    if (didSortPrefChange && this.shouldSelectFirstItem(ItemsReloadSource.DisplayOptionsChange)) {
       await this.selectFirstItem()
     }
+
+    return { didReloadItems: true }
   }
 
-  async createNewNoteController(title?: string) {
+  async createNewNoteController(
+    title?: string,
+    createdAt?: Date,
+    autofocusBehavior?: TemplateNoteViewAutofocusBehavior,
+  ) {
     const selectedTag = this.navigationController.selected
 
     const activeRegularTagUuid = selectedTag instanceof SNTag ? selectedTag.uuid : undefined
 
-    await this.application.itemControllerGroup.createItemController({
-      title,
-      tag: activeRegularTagUuid,
+    return this.application.itemControllerGroup.createItemController({
+      templateOptions: {
+        title,
+        tag: activeRegularTagUuid,
+        createdAt,
+        autofocusBehavior,
+      },
     })
   }
 
-  createNewNote = async () => {
+  titleForNewNote = (createdAt?: Date) => {
+    if (this.isFiltering) {
+      return this.noteFilterText
+    }
+
+    const titleFormat =
+      this.navigationController.selected?.preferences?.newNoteTitleFormat ||
+      this.application.getPreference(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat])
+
+    if (titleFormat === NewNoteTitleFormat.CurrentNoteCount) {
+      return `Note ${this.notes.length + 1}`
+    }
+
+    if (titleFormat === NewNoteTitleFormat.CustomFormat) {
+      const customFormat =
+        this.navigationController.selected?.preferences?.customNoteTitleFormat ||
+        this.application.getPreference(PrefKey.CustomNoteTitleFormat, PrefDefaults[PrefKey.CustomNoteTitleFormat])
+
+      return dayjs(createdAt).format(customFormat)
+    }
+
+    if (titleFormat === NewNoteTitleFormat.Empty) {
+      return ''
+    }
+
+    return formatDateAndTimeForNote(createdAt || new Date())
+  }
+
+  createNewNote = async (title?: string, createdAt?: Date, autofocusBehavior?: TemplateNoteViewAutofocusBehavior) => {
     this.notesController.unselectNotes()
 
     if (this.navigationController.isInSmartView() && !this.navigationController.isInHomeView()) {
       await this.navigationController.selectHomeNavigationView()
     }
 
-    const titleFormat = this.application.getPreference(
-      PrefKey.NewNoteTitleFormat,
-      PrefDefaults[PrefKey.NewNoteTitleFormat],
-    )
+    const useTitle = title || this.titleForNewNote(createdAt)
 
-    let title = formatDateAndTimeForNote(new Date())
+    const controller = await this.createNewNoteController(useTitle, createdAt, autofocusBehavior)
 
-    if (titleFormat === NewNoteTitleFormat.CurrentNoteCount) {
-      title = `Note ${this.notes.length + 1}`
-    } else if (titleFormat === NewNoteTitleFormat.CustomFormat) {
-      const customFormat = this.application.getPreference(
-        PrefKey.CustomNoteTitleFormat,
-        PrefDefaults[PrefKey.CustomNoteTitleFormat],
-      )
-      title = dayjs().format(customFormat)
-    } else if (titleFormat === NewNoteTitleFormat.Empty) {
-      title = ''
-    }
+    this.linkingController.reloadAllLinks()
 
-    if (this.isFiltering) {
-      title = this.noteFilterText
-    }
-
-    await this.createNewNoteController(title)
-
-    this.noteTagsController.reloadTagsForCurrentNote()
+    this.selectionController.scrollToItem(controller.item)
   }
 
   createPlaceholderNote = () => {
@@ -604,6 +731,8 @@ export class ItemListController extends AbstractViewController implements Intern
     const item = this.getFirstNonProtectedItem()
 
     if (item) {
+      log(LoggingDomain.Selection, 'Selecting first item', item.uuid)
+
       await this.selectionController.selectItemWithScrollHandling(item, {
         userTriggered: false,
         scrollIntoView: false,
@@ -617,6 +746,7 @@ export class ItemListController extends AbstractViewController implements Intern
     const item = this.getFirstNonProtectedItem()
 
     if (item) {
+      log(LoggingDomain.Selection, 'selectNextItemOrCreateNewNote')
       await this.selectionController
         .selectItemWithScrollHandling(item, {
           userTriggered: false,
@@ -661,10 +791,11 @@ export class ItemListController extends AbstractViewController implements Intern
   }
 
   private closeItemController(controller: NoteViewController | FileViewController): void {
+    log(LoggingDomain.Selection, 'Closing item controller', controller.runtimeId)
     this.application.itemControllerGroup.closeItemController(controller)
   }
 
-  handleTagChange = () => {
+  handleTagChange = async (userTriggered: boolean) => {
     const activeNoteController = this.getActiveItemController()
     if (activeNoteController instanceof NoteViewController && activeNoteController.isTemplateNote) {
       this.closeItemController(activeNoteController)
@@ -680,9 +811,12 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.resetPagination()
 
-    this.reloadNotesDisplayOptions()
+    const { didReloadItems } = await this.reloadDisplayPreferences({ userTriggered })
 
-    void this.reloadItems(ItemsReloadSource.TagChange)
+    if (!didReloadItems) {
+      this.reloadNotesDisplayOptions()
+      void this.reloadItems(userTriggered ? ItemsReloadSource.UserTriggeredTagChange : ItemsReloadSource.TagChange)
+    }
   }
 
   onFilterEnter = () => {
@@ -694,6 +828,16 @@ export class ItemListController extends AbstractViewController implements Intern
     this.searchSubmitted = true
 
     this.application.getDesktopService()?.searchText(this.noteFilterText)
+  }
+
+  get isCurrentNoteTemplate(): boolean {
+    const controller = this.getActiveItemController()
+
+    if (!controller) {
+      return false
+    }
+
+    return controller instanceof NoteViewController && controller.isTemplateNote
   }
 
   public async insertCurrentIfTemplate(): Promise<void> {

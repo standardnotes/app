@@ -1,8 +1,8 @@
 import { ContentType } from '@standardnotes/common'
 import { AnonymousReference } from './AnonymousReference'
-import { ContenteReferenceType } from './ContenteReferenceType'
+import { ContentReferenceType } from './ContenteReferenceType'
 
 export interface TagToFileReference extends AnonymousReference {
   content_type: ContentType.File
-  reference_type: ContenteReferenceType.TagToFile
+  reference_type: ContentReferenceType.TagToFile
 }

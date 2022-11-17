@@ -19,7 +19,9 @@ const Listed = ({ application }: Props) => {
   const [requestingAccount, setRequestingAccount] = useState<boolean>()
 
   const reloadAccounts = useCallback(async () => {
-    setAccounts(await application.getListedAccounts())
+    if (application.hasAccount()) {
+      setAccounts(await application.listed.getListedAccounts())
+    }
   }, [application])
 
   useEffect(() => {
@@ -30,7 +32,7 @@ const Listed = ({ application }: Props) => {
     setRequestingAccount(true)
 
     const requestAccount = async () => {
-      const account = await application.requestNewListedAccount()
+      const account = await application.listed.requestNewListedAccount()
       if (account) {
         const openSettings = await application.alertService.confirm(
           'Your new Listed blog has been successfully created!' +
@@ -43,7 +45,7 @@ const Listed = ({ application }: Props) => {
         )
         reloadAccounts().catch(console.error)
         if (openSettings) {
-          const info = await application.getListedAccountInfo(account)
+          const info = await application.listed.getListedAccountInfo(account)
           if (info) {
             application.deviceInterface.openUrl(info?.settings_url)
           }
@@ -82,11 +84,11 @@ const Listed = ({ application }: Props) => {
           <Subtitle>What is Listed?</Subtitle>
           <Text>
             Listed is a free blogging platform that allows you to create a public journal published directly from your
-            notes.{' '}
-            <a target="_blank" href="https://listed.to" rel="noreferrer noopener">
-              Learn more
-            </a>
+            notes. {!application.getUser() && 'To get started, sign in or register for a Standard Notes account.'}
           </Text>
+          <a className="mt-2 text-info" target="_blank" href="https://listed.to" rel="noreferrer noopener">
+            Learn more
+          </a>
         </PreferencesSegment>
         {application.getUser() && (
           <>

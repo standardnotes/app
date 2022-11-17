@@ -112,9 +112,14 @@
   }
 
   .content-list-item {
-    &.selected,
-    &:hover {
+    &.selected {
       background-color: var(--item-cell-selected-background-color);
+    }
+
+    @media screen and (hover: hover) {
+      &:hover {
+        background-color: var(--item-cell-selected-background-color);
+      }
     }
 
     ul {
@@ -141,7 +146,6 @@
 
     &.selected {
       background-color: var(--item-cell-selected-background-color);
-      border-left: 2px solid var(--item-cell-selected-border-left-color);
 
       progress {
         background-color: var(--note-preview-selected-progress-background-color);

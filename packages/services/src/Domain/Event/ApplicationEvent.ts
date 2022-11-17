@@ -62,4 +62,7 @@ export enum ApplicationEvent {
   UnprotectedSessionExpired = 29,
   /** Called when the app first launches and after first sync request made after sign in */
   CompletedInitialSync = 30,
+  BiometricsSoftLockEngaged = 31,
+  BiometricsSoftLockDisengaged = 32,
+  DidPurchaseSubscription = 33,
 }

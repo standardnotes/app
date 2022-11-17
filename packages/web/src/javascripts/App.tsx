@@ -1,7 +1,5 @@
 'use strict'
 
-import { disableIosTextFieldZoom } from '@/Utils'
-
 declare global {
   interface Window {
     dashboardUrl?: string
@@ -21,10 +19,11 @@ declare global {
 
     application?: WebApplication
     mainApplicationGroup?: ApplicationGroup
-    MSStream?: Record<string, unknown>
+    MSStream?: unknown
   }
 }
 
+import { disableIosTextFieldZoom } from '@/Utils'
 import { IsWebPlatform, WebAppVersion } from '@/Constants/Version'
 import { DesktopManagerInterface, SNLog } from '@standardnotes/snjs'
 import ApplicationGroupView from './Components/ApplicationGroupView/ApplicationGroupView'
@@ -35,17 +34,11 @@ import { WebOrDesktopDevice } from './Application/Device/WebOrDesktopDevice'
 import { WebApplication } from './Application/Application'
 import { createRoot, Root } from 'react-dom/client'
 import { ElementIds } from './Constants/ElementIDs'
+import { setDefaultMonospaceFont } from './setDefaultMonospaceFont'
 
 let keyCount = 0
 const getKey = () => {
   return keyCount++
-}
-
-const setViewportHeight = () => {
-  document.documentElement.style.setProperty(
-    '--viewport-height',
-    `${visualViewport ? visualViewport.height : window.innerHeight}px`,
-  )
 }
 
 const startApplication: StartApplication = async function startApplication(
@@ -60,7 +53,6 @@ const startApplication: StartApplication = async function startApplication(
   let root: Root
 
   const onDestroy = () => {
-    window.removeEventListener('orientationchange', setViewportHeight)
     const rootElement = document.getElementById(ElementIds.RootId) as HTMLElement
     root.unmount()
     rootElement.remove()
@@ -70,12 +62,13 @@ const startApplication: StartApplication = async function startApplication(
   const renderApp = () => {
     const rootElement = document.createElement('div')
     rootElement.id = ElementIds.RootId
+    rootElement.className = 'h-full'
     const appendedRootNode = document.body.appendChild(rootElement)
     root = createRoot(appendedRootNode)
 
     disableIosTextFieldZoom()
-    setViewportHeight()
-    window.addEventListener('orientationchange', setViewportHeight)
+
+    setDefaultMonospaceFont(device.platform)
 
     root.render(
       <ApplicationGroupView

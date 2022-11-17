@@ -238,7 +238,6 @@ const Urls = {
   Support: 'mailto:help@standardnotes.com',
   Website: 'https://standardnotes.com',
   GitHub: 'https://github.com/standardnotes',
-  Slack: 'https://standardnotes.com/slack',
   Discord: 'https://standardnotes.com/discord',
   Twitter: 'https://twitter.com/StandardNotes',
   GitHubReleases: 'https://github.com/standardnotes/app/releases',
@@ -602,12 +601,6 @@ function helpMenu(window: Electron.BrowserWindow, shell: Electron.Shell) {
         label: str().discord,
         click() {
           void shell.openExternal(Urls.Discord)
-        },
-      },
-      {
-        label: str().slack,
-        click() {
-          void shell.openExternal(Urls.Slack)
         },
       },
       {

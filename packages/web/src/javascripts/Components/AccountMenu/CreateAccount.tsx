@@ -40,7 +40,7 @@ const CreateAccount: FunctionComponent<Props> = ({
 }) => {
   const emailInputRef = useRef<HTMLInputElement>(null)
   const passwordInputRef = useRef<HTMLInputElement>(null)
-  const [isPrivateWorkspace, setIsPrivateWorkspace] = useState(false)
+  const [isPrivateUsername, setIsPrivateUsername] = useState(false)
 
   useEffect(() => {
     if (emailInputRef.current) {
@@ -98,11 +98,11 @@ const CreateAccount: FunctionComponent<Props> = ({
     setPassword('')
   }, [setEmail, setMenuPane, setPassword])
 
-  const onPrivateWorkspaceChange = useCallback(
-    (isPrivateWorkspace: boolean, privateWorkspaceIdentifier?: string) => {
-      setIsPrivateWorkspace(isPrivateWorkspace)
-      if (isPrivateWorkspace && privateWorkspaceIdentifier) {
-        setEmail(privateWorkspaceIdentifier)
+  const onPrivateUsernameChange = useCallback(
+    (isPrivateUsername: boolean, privateUsernameIdentifier?: string) => {
+      setIsPrivateUsername(isPrivateUsername)
+      if (isPrivateUsername && privateUsernameIdentifier) {
+        setEmail(privateUsernameIdentifier)
       }
     },
     [setEmail],
@@ -123,7 +123,7 @@ const CreateAccount: FunctionComponent<Props> = ({
       <form onSubmit={handleRegisterFormSubmit} className="mb-1 px-3">
         <DecoratedInput
           className={{ container: 'mb-2' }}
-          disabled={isPrivateWorkspace}
+          disabled={isPrivateUsername}
           left={[<Icon type="email" className="text-neutral" />]}
           onChange={handleEmailChange}
           onKeyDown={handleKeyDown}
@@ -147,7 +147,7 @@ const CreateAccount: FunctionComponent<Props> = ({
       <AdvancedOptions
         application={application}
         viewControllerManager={viewControllerManager}
-        onPrivateWorkspaceChange={onPrivateWorkspaceChange}
+        onPrivateUsernameModeChange={onPrivateUsernameChange}
       />
     </>
   )

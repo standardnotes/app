@@ -5,9 +5,10 @@ import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import Switch from '@/Components/Switch/Switch'
 import { ThemeItem } from './ThemeItem'
-import RadioIndicator from '../RadioIndicator/RadioIndicator'
+import RadioIndicator from '../Radio/RadioIndicator'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import { isMobileScreen } from '@/Utils'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 
 type Props = {
   item: ThemeItem
@@ -32,7 +33,8 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
       e.preventDefault()
 
       if (item.component && canActivateTheme) {
-        const themeIsLayerableOrNotActive = item.component.isLayerable() || !item.component.active
+        const isThemeLayerable = item.component.isLayerable()
+        const themeIsLayerableOrNotActive = isThemeLayerable || !item.component.active
 
         if (themeIsLayerableOrNotActive) {
           application.mutator.toggleTheme(item.component).catch(console.error)
@@ -45,22 +47,28 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
   )
 
   const isMobile = application.isNativeMobileWeb() || isMobileScreen()
+  const shouldHideButton = item.identifier === FeatureIdentifier.DynamicTheme && isMobile
+
+  if (shouldHideButton) {
+    return null
+  }
 
   return (
     <button
-      className={
-        'group flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none disabled:bg-default disabled:text-passive-2'
-      }
-      disabled={item.identifier === FeatureIdentifier.DynamicTheme && isMobile}
+      className={classNames(
+        'group flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5',
+        'text-left text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none disabled:bg-default disabled:text-passive-2',
+        'text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item',
+      )}
       onClick={toggleTheme}
     >
       {item.component?.isLayerable() ? (
         <>
           <div className="flex items-center">
-            <Switch className="mr-2 px-0" checked={item.component?.active} />
+            {!canActivateTheme && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
             {item.name}
           </div>
-          {!canActivateTheme && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
+          <Switch className="px-0" checked={item.component?.active} />
         </>
       ) : (
         <>

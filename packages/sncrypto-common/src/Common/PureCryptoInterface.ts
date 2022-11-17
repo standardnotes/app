@@ -1,3 +1,4 @@
+import { PkcKeyPair } from '../Types'
 import { Base64String } from '../Types/Base64String'
 import { Base64URLSafeString } from '../Types/Base64URLSafeString'
 import { HexString } from '../Types/HexString'
@@ -27,7 +28,7 @@ export interface PureCryptoInterface {
    * @param bits - Length of key in bits
    * @returns A string key in hex format
    */
-  generateRandomKey(bits: number): string
+  generateRandomKey(bits: number): HexString
 
   /**
    * @legacy
@@ -98,7 +99,7 @@ export interface PureCryptoInterface {
    * @param assocData
    * @returns Base64 ciphertext string
    */
-  xchacha20Encrypt(plaintext: Utf8String, nonce: HexString, key: HexString, assocData: Utf8String): Base64String
+  xchacha20Encrypt(plaintext: Utf8String, nonce: HexString, key: HexString, assocData?: Utf8String): Base64String
 
   /**
    * Decrypt a message (and associated data) with XChaCha20-Poly1305
@@ -112,7 +113,7 @@ export interface PureCryptoInterface {
     ciphertext: Base64String,
     nonce: HexString,
     key: HexString,
-    assocData: Utf8String | Uint8Array,
+    assocData?: Utf8String | Uint8Array,
   ): Utf8String | null
 
   xchacha20StreamInitEncryptor(key: HexString): StreamEncryptor
@@ -131,6 +132,22 @@ export interface PureCryptoInterface {
     encryptedBuffer: Uint8Array,
     assocData: Utf8String,
   ): { message: Uint8Array; tag: SodiumConstant } | false
+
+  sodiumCryptoBoxEasyEncrypt(
+    message: Utf8String,
+    nonce: HexString,
+    senderSecretKey: HexString,
+    recipientPublicKey: HexString,
+  ): Base64String
+
+  sodiumCryptoBoxEasyDecrypt(
+    ciphertext: Base64String,
+    nonce: HexString,
+    senderPublicKey: HexString,
+    recipientSecretKey: HexString,
+  ): Utf8String
+
+  sodiumCryptoBoxGenerateKeypair(): PkcKeyPair
 
   /**
    * Converts a plain string into base64

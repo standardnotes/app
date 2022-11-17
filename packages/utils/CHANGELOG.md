@@ -3,6 +3,36 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.11.3](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.11.2...@standardnotes/utils@1.11.3) (2022-11-17)
+
+**Note:** Version bump only for package @standardnotes/utils
+
+## [1.11.2](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.11.1...@standardnotes/utils@1.11.2) (2022-11-16)
+
+**Note:** Version bump only for package @standardnotes/utils
+
+## [1.11.1](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.11.0...@standardnotes/utils@1.11.1) (2022-11-04)
+
+**Note:** Version bump only for package @standardnotes/utils
+
+# [1.11.0](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.10.0...@standardnotes/utils@1.11.0) (2022-11-02)
+
+### Features
+
+* add sending user requests to process ([#1908](https://github.com/standardnotes/app/issues/1908)) ([b2faa81](https://github.com/standardnotes/app/commit/b2faa815e967a9e7052b3ce6955e967c6bc68864))
+
+# [1.10.0](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.9.1...@standardnotes/utils@1.10.0) (2022-10-11)
+
+### Features
+
+* **api:** add listing workspace users ([fb41f65](https://github.com/standardnotes/app/commit/fb41f651eca45dd62314609c2f389d5dc683c36e))
+
+## [1.9.1](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.9.0...@standardnotes/utils@1.9.1) (2022-10-10)
+
+### Bug Fixes
+
+* **api:** workspace creation arguments ([a275a45](https://github.com/standardnotes/app/commit/a275a45753abc4a29a89de5fe784260165297bbe))
+
 # [1.9.0](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.8.3...@standardnotes/utils@1.9.0) (2022-09-13)
 
 ### Features

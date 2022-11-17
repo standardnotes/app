@@ -1,10 +1,8 @@
-import { confirmDialog } from '@standardnotes/ui-services'
+import { confirmDialog, NavigationControllerPersistableValue } from '@standardnotes/ui-services'
 import { STRING_DELETE_TAG } from '@/Constants/Strings'
 import { MAX_MENU_SIZE_MULTIPLIER, MENU_MARGIN_FROM_APP_BORDER, SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
 import {
-  ComponentAction,
   ContentType,
-  MessageData,
   SmartView,
   SNTag,
   TagMutator,
@@ -14,24 +12,34 @@ import {
   SystemViewId,
   InternalEventBus,
   InternalEventPublishStrategy,
+  VectorIconNameOrEmoji,
+  isTag,
 } from '@standardnotes/snjs'
-import { action, computed, makeAutoObservable, makeObservable, observable, runInAction } from 'mobx'
+import { action, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
 import { FeaturesController } from '../FeaturesController'
-import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { destroyAllObjectProperties } from '@/Utils'
 import { isValidFutureSiblings, rootTags, tagSiblings } from './Utils'
 import { AnyTag } from './AnyTagType'
 import { CrossControllerEvent } from '../CrossControllerEvent'
+import { AbstractViewController } from '../Abstract/AbstractViewController'
+import { Persistable } from '../Abstract/Persistable'
+import { TagListSectionType } from '@/Components/Tags/TagListSection'
 
-export class NavigationController extends AbstractViewController {
+export class NavigationController
+  extends AbstractViewController
+  implements Persistable<NavigationControllerPersistableValue>
+{
   tags: SNTag[] = []
   smartViews: SmartView[] = []
+  starredTags: SNTag[] = []
   allNotesCount_ = 0
-  selected_: AnyTag | undefined
-  previouslySelected_: AnyTag | undefined
-  editing_: SNTag | SmartView | undefined
-  addingSubtagTo: SNTag | undefined
+  selectedUuid: AnyTag['uuid'] | undefined = undefined
+  selected_: AnyTag | undefined = undefined
+  selectedLocation: TagListSectionType | undefined = undefined
+  previouslySelected_: AnyTag | undefined = undefined
+  editing_: SNTag | SmartView | undefined = undefined
+  addingSubtagTo: SNTag | undefined = undefined
 
   contextMenuOpen = false
   contextMenuPosition: { top?: number; left: number; bottom?: number } = {
@@ -47,28 +55,23 @@ export class NavigationController extends AbstractViewController {
     super(application, eventBus)
 
     this.tagsCountsState = new TagsCountsState(this.application)
-
-    this.selected_ = undefined
-    this.previouslySelected_ = undefined
-    this.editing_ = undefined
-    this.addingSubtagTo = undefined
-
     this.smartViews = this.application.items.getSmartViews()
 
     makeObservable(this, {
       tags: observable,
+      starredTags: observable,
       smartViews: observable.ref,
-      hasAtLeastOneFolder: computed,
       allNotesCount_: observable,
       allNotesCount: computed,
       setAllNotesCount: action,
 
-      selected_: observable.ref,
+      selected_: observable,
+      selectedLocation: observable,
       previouslySelected_: observable.ref,
       previouslySelected: computed,
       editing_: observable.ref,
       selected: computed,
-      selectedUuid: computed,
+      selectedUuid: observable,
       editingTag: computed,
 
       addingSubtagTo: observable,
@@ -94,34 +97,34 @@ export class NavigationController extends AbstractViewController {
       setContextMenuMaxHeight: action,
 
       isInFilesView: computed,
+
+      hydrateFromPersistedValue: action,
     })
 
     this.disposers.push(
       this.application.streamItems([ContentType.Tag, ContentType.SmartView], ({ changed, removed }) => {
         runInAction(() => {
           this.tags = this.application.items.getDisplayableTags()
-
+          this.starredTags = this.tags.filter((tag) => tag.starred)
           this.smartViews = this.application.items.getSmartViews()
 
-          const currrentSelectedTag = this.selected_
+          const currentSelectedTag = this.selected_
 
-          if (!currrentSelectedTag) {
-            this.setSelectedTagInstance(this.smartViews[0])
-
+          if (!currentSelectedTag) {
             return
           }
 
           const updatedReference =
-            FindItem(changed, currrentSelectedTag.uuid) || FindItem(this.smartViews, currrentSelectedTag.uuid)
+            FindItem(changed, currentSelectedTag.uuid) || FindItem(this.smartViews, currentSelectedTag.uuid)
           if (updatedReference) {
             this.setSelectedTagInstance(updatedReference as AnyTag)
           }
 
-          if (isSystemView(currrentSelectedTag as SmartView)) {
+          if (isSystemView(currentSelectedTag as SmartView)) {
             return
           }
 
-          if (FindItem(removed, currrentSelectedTag.uuid)) {
+          if (FindItem(removed, currentSelectedTag.uuid)) {
             this.setSelectedTagInstance(this.smartViews[0])
           }
         })
@@ -140,6 +143,52 @@ export class NavigationController extends AbstractViewController {
         }
       }),
     )
+
+    this.disposers.push(
+      reaction(
+        () => this.selectedUuid,
+        () => {
+          eventBus.publish({
+            type: CrossControllerEvent.RequestValuePersistence,
+            payload: undefined,
+          })
+        },
+      ),
+    )
+  }
+
+  private findAndSetTag = (uuid: UuidString) => {
+    const tagToSelect = [...this.tags, ...this.smartViews].find((tag) => tag.uuid === uuid)
+    if (tagToSelect) {
+      void this.setSelectedTag(tagToSelect, isTag(tagToSelect) ? (tagToSelect.starred ? 'favorites' : 'all') : 'views')
+    }
+  }
+
+  private selectHydratedTagOrDefault = () => {
+    if (this.selectedUuid && !this.selected_) {
+      this.findAndSetTag(this.selectedUuid)
+    }
+
+    if (!this.selectedUuid) {
+      void this.selectHomeNavigationView()
+    }
+  }
+
+  getPersistableValue = (): NavigationControllerPersistableValue => {
+    return {
+      selectedTagUuid: this.selectedUuid ? this.selectedUuid : SystemViewId.AllNotes,
+    }
+  }
+
+  hydrateFromPersistedValue = (state: NavigationControllerPersistableValue | undefined) => {
+    if (!state) {
+      void this.selectHomeNavigationView()
+      return
+    }
+    if (state.selectedTagUuid) {
+      this.selectedUuid = state.selectedTagUuid
+      this.selectHydratedTagOrDefault()
+    }
   }
 
   override deinit() {
@@ -179,7 +228,7 @@ export class NavigationController extends AbstractViewController {
     this.application.sync.sync().catch(console.error)
 
     runInAction(() => {
-      void this.setSelectedTag(createdTag as SNTag)
+      void this.setSelectedTag(createdTag as SNTag, 'all')
     })
 
     this.setAddingSubtagTo(undefined)
@@ -205,6 +254,13 @@ export class NavigationController extends AbstractViewController {
 
   public isInSystemView(id: SystemViewId): boolean {
     return this.selected instanceof SmartView && this.selected.uuid === id
+  }
+
+  public get selectedAsTag(): SNTag | undefined {
+    if (!this.selected || !isTag(this.selected)) {
+      return undefined
+    }
+    return this.selected
   }
 
   setAddingSubtagTo(tag: SNTag | undefined): void {
@@ -358,7 +414,20 @@ export class NavigationController extends AbstractViewController {
     return this.selected_
   }
 
-  public async setSelectedTag(tag: AnyTag | undefined) {
+  public async setPanelWidthForTag(tag: SNTag, width: number): Promise<void> {
+    await this.application.mutator.changeAndSaveItem<TagMutator>(tag, (mutator) => {
+      mutator.preferences = {
+        ...mutator.preferences,
+        panelWidth: width,
+      }
+    })
+  }
+
+  public async setSelectedTag(
+    tag: AnyTag | undefined,
+    location: TagListSectionType,
+    { userTriggered } = { userTriggered: false },
+  ) {
     if (tag && tag.conflictOf) {
       this.application.mutator
         .changeAndSaveItem(tag, (mutator) => {
@@ -367,7 +436,7 @@ export class NavigationController extends AbstractViewController {
         .catch(console.error)
     }
 
-    const selectionHasNotChanged = this.selected_?.uuid === tag?.uuid
+    const selectionHasNotChanged = this.selected_?.uuid === tag?.uuid && location === this.selectedLocation
 
     if (selectionHasNotChanged) {
       return
@@ -375,34 +444,52 @@ export class NavigationController extends AbstractViewController {
 
     this.previouslySelected_ = this.selected_
 
-    this.setSelectedTagInstance(tag)
+    await runInAction(async () => {
+      this.setSelectedTagInstance(tag)
+      this.selectedLocation = location
 
-    if (tag && this.application.items.isTemplateItem(tag)) {
-      return
-    }
+      if (tag && this.application.items.isTemplateItem(tag)) {
+        return
+      }
 
-    await this.eventBus.publishSync(
-      {
-        type: CrossControllerEvent.TagChanged,
-        payload: { tag, previousTag: this.previouslySelected_ },
-      },
-      InternalEventPublishStrategy.SEQUENCE,
-    )
+      await this.eventBus.publishSync(
+        {
+          type: CrossControllerEvent.TagChanged,
+          payload: { tag, previousTag: this.previouslySelected_, userTriggered: userTriggered },
+        },
+        InternalEventPublishStrategy.SEQUENCE,
+      )
+    })
   }
 
   public async selectHomeNavigationView(): Promise<void> {
-    await this.setSelectedTag(this.homeNavigationView)
+    await this.setSelectedTag(this.homeNavigationView, 'views')
+  }
+
+  public async selectFilesView() {
+    await this.setSelectedTag(this.filesNavigationView, 'views')
   }
 
   get homeNavigationView(): SmartView {
     return this.smartViews[0]
   }
 
+  get filesNavigationView(): SmartView {
+    return this.smartViews.find((view) => view.uuid === SystemViewId.Files) as SmartView
+  }
+
   private setSelectedTagInstance(tag: AnyTag | undefined): void {
-    runInAction(() => (this.selected_ = tag))
+    runInAction(() => {
+      this.selected_ = tag
+      this.selectedUuid = tag ? tag.uuid : undefined
+    })
   }
 
   public setExpanded(tag: SNTag, expanded: boolean) {
+    if (tag.expanded === expanded) {
+      return
+    }
+
     this.application.mutator
       .changeAndSaveItem<TagMutator>(tag, (mutator) => {
         mutator.expanded = expanded
@@ -410,17 +497,31 @@ export class NavigationController extends AbstractViewController {
       .catch(console.error)
   }
 
-  public get selectedUuid(): UuidString | undefined {
-    return this.selected_?.uuid
+  public async setFavorite(tag: SNTag, favorite: boolean) {
+    return this.application.mutator
+      .changeAndSaveItem<TagMutator>(tag, (mutator) => {
+        mutator.starred = favorite
+      })
+      .catch(console.error)
+  }
+
+  public setIcon(tag: SNTag, icon: VectorIconNameOrEmoji) {
+    this.application.mutator
+      .changeAndSaveItem<TagMutator>(tag, (mutator) => {
+        mutator.iconString = icon
+      })
+      .catch(console.error)
   }
 
   public get editingTag(): SNTag | SmartView | undefined {
     return this.editing_
   }
 
-  public set editingTag(editingTag: SNTag | SmartView | undefined) {
-    this.editing_ = editingTag
-    void this.setSelectedTag(editingTag)
+  public setEditingTag(editingTag: SNTag | SmartView | undefined) {
+    runInAction(() => {
+      this.editing_ = editingTag
+      void this.setSelectedTag(editingTag, this.selectedLocation || 'all')
+    })
   }
 
   public createNewTemplate() {
@@ -433,6 +534,7 @@ export class NavigationController extends AbstractViewController {
     const newTag = this.application.mutator.createTemplateItem(ContentType.Tag) as SNTag
 
     runInAction(() => {
+      this.selectedLocation = 'all'
       this.editing_ = newTag
     })
   }
@@ -440,7 +542,7 @@ export class NavigationController extends AbstractViewController {
   public undoCreateNewTag() {
     this.editing_ = undefined
     const previousTag = this.previouslySelected_ || this.smartViews[0]
-    void this.setSelectedTag(previousTag)
+    void this.setSelectedTag(previousTag, this.selectedLocation || 'views')
   }
 
   public async remove(tag: SNTag | SmartView, userTriggered: boolean) {
@@ -453,7 +555,7 @@ export class NavigationController extends AbstractViewController {
     }
     if (shouldDelete) {
       this.application.mutator.deleteItem(tag).catch(console.error)
-      await this.setSelectedTag(this.smartViews[0])
+      await this.setSelectedTag(this.smartViews[0], 'views')
     }
   }
 
@@ -497,38 +599,13 @@ export class NavigationController extends AbstractViewController {
       const insertedTag = await this.application.mutator.createTagOrSmartView(newTitle)
       this.application.sync.sync().catch(console.error)
       runInAction(() => {
-        void this.setSelectedTag(insertedTag as SNTag)
+        void this.setSelectedTag(insertedTag as SNTag, this.selectedLocation || 'views')
       })
     } else {
       await this.application.mutator.changeAndSaveItem<TagMutator>(tag, (mutator) => {
         mutator.title = newTitle
       })
     }
-  }
-
-  public onFoldersComponentMessage(action: ComponentAction, data: MessageData): void {
-    if (action === ComponentAction.SelectItem) {
-      const item = data.item
-
-      if (!item) {
-        return
-      }
-
-      if (item.content_type === ContentType.Tag || item.content_type === ContentType.SmartView) {
-        const matchingTag = this.application.items.findItem(item.uuid)
-
-        if (matchingTag) {
-          void this.setSelectedTag(matchingTag as AnyTag)
-          return
-        }
-      }
-    } else if (action === ComponentAction.ClearSelection) {
-      void this.setSelectedTag(this.smartViews[0])
-    }
-  }
-
-  public get hasAtLeastOneFolder(): boolean {
-    return this.tags.some((tag) => !!this.application.items.getTagParent(tag))
   }
 }
 

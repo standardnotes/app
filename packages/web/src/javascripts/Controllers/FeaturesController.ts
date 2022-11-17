@@ -1,14 +1,24 @@
+import { FeatureName } from './FeatureName'
 import { WebApplication } from '@/Application/Application'
+import { PremiumFeatureModalType } from '@/Components/PremiumFeaturesModal/PremiumFeatureModalType'
 import { destroyAllObjectProperties } from '@/Utils'
-import { ApplicationEvent, FeatureIdentifier, FeatureStatus, InternalEventBus } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  FeatureIdentifier,
+  FeatureStatus,
+  InternalEventBus,
+  InternalEventInterface,
+} from '@standardnotes/snjs'
 import { action, makeObservable, observable, runInAction, when } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
+import { CrossControllerEvent } from './CrossControllerEvent'
 
 export class FeaturesController extends AbstractViewController {
   hasFolders: boolean
   hasSmartViews: boolean
-  hasFiles: boolean
+  entitledToFiles: boolean
   premiumAlertFeatureName: string | undefined
+  premiumAlertType: PremiumFeatureModalType | undefined = undefined
 
   override deinit() {
     super.deinit()
@@ -16,8 +26,9 @@ export class FeaturesController extends AbstractViewController {
     ;(this.closePremiumAlert as unknown) = undefined
     ;(this.hasFolders as unknown) = undefined
     ;(this.hasSmartViews as unknown) = undefined
-    ;(this.hasFiles as unknown) = undefined
+    ;(this.entitledToFiles as unknown) = undefined
     ;(this.premiumAlertFeatureName as unknown) = undefined
+    ;(this.premiumAlertType as unknown) = undefined
 
     destroyAllObjectProperties(this)
   }
@@ -27,17 +38,20 @@ export class FeaturesController extends AbstractViewController {
 
     this.hasFolders = this.isEntitledToFolders()
     this.hasSmartViews = this.isEntitledToSmartViews()
-    this.hasFiles = this.isEntitledToFiles()
+    this.entitledToFiles = this.isEntitledToFiles()
     this.premiumAlertFeatureName = undefined
+
+    eventBus.addEventHandler(this, CrossControllerEvent.DisplayPremiumModal)
 
     makeObservable(this, {
       hasFolders: observable,
       hasSmartViews: observable,
-      hasFiles: observable,
-
+      entitledToFiles: observable,
+      premiumAlertType: observable,
       premiumAlertFeatureName: observable,
       showPremiumAlert: action,
       closePremiumAlert: action,
+      showPurchaseSuccessAlert: action,
     })
 
     this.showPremiumAlert = this.showPremiumAlert.bind(this)
@@ -46,25 +60,41 @@ export class FeaturesController extends AbstractViewController {
     this.disposers.push(
       application.addEventObserver(async (event) => {
         switch (event) {
+          case ApplicationEvent.DidPurchaseSubscription:
+            this.showPurchaseSuccessAlert()
+            break
           case ApplicationEvent.FeaturesUpdated:
           case ApplicationEvent.Launched:
             runInAction(() => {
               this.hasFolders = this.isEntitledToFolders()
               this.hasSmartViews = this.isEntitledToSmartViews()
-              this.hasFiles = this.isEntitledToFiles()
+              this.entitledToFiles = this.isEntitledToFiles()
             })
         }
       }),
     )
   }
 
-  public async showPremiumAlert(featureName: string): Promise<void> {
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === CrossControllerEvent.DisplayPremiumModal) {
+      const payload = event.payload as { featureName: string }
+      void this.showPremiumAlert(payload.featureName)
+    }
+  }
+
+  public async showPremiumAlert(featureName?: FeatureName | string): Promise<void> {
     this.premiumAlertFeatureName = featureName
-    return when(() => this.premiumAlertFeatureName === undefined)
+    this.premiumAlertType = PremiumFeatureModalType.UpgradePrompt
+
+    return when(() => this.premiumAlertType === undefined)
+  }
+
+  showPurchaseSuccessAlert = () => {
+    this.premiumAlertType = PremiumFeatureModalType.UpgradeSuccess
   }
 
   public closePremiumAlert() {
-    this.premiumAlertFeatureName = undefined
+    this.premiumAlertType = undefined
   }
 
   private isEntitledToFiles(): boolean {

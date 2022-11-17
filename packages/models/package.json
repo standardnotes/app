@@ -1,41 +1,33 @@
 {
   "name": "@standardnotes/models",
-  "version": "1.21.0",
+  "version": "1.37.3",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
+  "private": true,
   "description": "Models used in SNJS library",
-  "main": "dist/index.js",
   "author": "Standard Notes",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "main": "./src/index.ts",
   "license": "AGPL-3.0-or-later",
   "scripts": {
-    "clean": "rm -fr dist",
-    "prestart": "yarn clean",
-    "start": "tsc -p tsconfig.json --watch",
-    "prebuild": "yarn clean",
-    "build": "tsc -p tsconfig.json",
-    "lint": "eslint . --ext .ts",
+    "tsc": "tsc -p tsconfig.json",
+    "lint": "eslint src --ext .ts",
     "test": "jest"
   },
   "devDependencies": {
-    "@types/jest": "^28.1.5",
-    "@types/lodash": "^4.14.182",
-    "@typescript-eslint/eslint-plugin": "^5.30.0",
-    "eslint-plugin-prettier": "*",
-    "jest": "^28.1.2",
-    "ts-jest": "^28.0.5",
-    "typescript": "*"
-  },
-  "dependencies": {
-    "@standardnotes/common": "^1.32.0",
+    "@standardnotes/common": "^1.45.0",
     "@standardnotes/features": "workspace:*",
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/utils": "workspace:*",
+    "@types/jest": "^29.2.3",
+    "@types/lodash": "^4.14.189",
+    "@typescript-eslint/eslint-plugin": "*",
+    "eslint": "*",
+    "eslint-plugin-prettier": "*",
+    "jest": "^29.3.1",
     "lodash": "^4.17.21",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "ts-jest": "^29.0.3",
+    "typescript": "*"
   }
 }

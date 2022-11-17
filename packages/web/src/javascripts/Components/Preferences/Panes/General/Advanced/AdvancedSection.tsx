@@ -21,7 +21,7 @@ const Advanced: FunctionComponent<Props> = ({ application, viewControllerManager
       <PreferencesSegment>
         <AccordionItem title={'Advanced Options'}>
           <div className="flex flex-row items-center">
-            <div className="flex flex-grow flex-col">
+            <div className="flex max-w-full flex-grow flex-col">
               <OfflineSubscription application={application} viewControllerManager={viewControllerManager} />
               <PackagesPreferencesSection
                 className={'mt-3'}

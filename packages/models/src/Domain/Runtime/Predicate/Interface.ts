@@ -15,8 +15,7 @@ export interface PredicateJsonForm {
 export const AllPredicateCompoundOperators = ['and', 'or'] as const
 export type PredicateCompoundOperator = typeof AllPredicateCompoundOperators[number]
 
-export const AllPredicateOperators = [
-  ...AllPredicateCompoundOperators,
+export const AllNonCompoundPredicateOperators = [
   '!=',
   '=',
   '<',
@@ -29,6 +28,8 @@ export const AllPredicateOperators = [
   'not',
   'includes',
 ] as const
+
+export const AllPredicateOperators = [...AllPredicateCompoundOperators, ...AllNonCompoundPredicateOperators] as const
 
 export type PredicateOperator = typeof AllPredicateOperators[number]
 
