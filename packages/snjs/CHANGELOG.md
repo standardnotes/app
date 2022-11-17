@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.151.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.3...@standardnotes/snjs@2.151.4) (2022-11-17)
+
+### Bug Fixes
+
+* handle cleared data on firefox ([#2021](https://github.com/standardnotes/app/issues/2021)) ([55b6714](https://github.com/standardnotes/app/commit/55b671479451d8d7e291a9875e227abc917d30b5))
+
 ## [2.151.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.2...@standardnotes/snjs@2.151.3) (2022-11-17)
 
 **Note:** Version bump only for package @standardnotes/snjs
