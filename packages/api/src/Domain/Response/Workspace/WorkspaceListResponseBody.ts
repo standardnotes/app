@@ -1,4 +1,4 @@
-import { Workspace } from '@standardnotes/models'
+import { Workspace } from './../../Client/Workspace/Workspace'
 
 export type WorkspaceListResponseBody = {
   ownedWorkspaces: Array<Workspace>

@@ -5,19 +5,11 @@
     "node": ">=16.0.0 <17.0.0"
   },
   "description": "Models used in SNJS library",
-  "main": "dist/index.js",
   "author": "Standard Notes",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
+  "main": "./src/index.ts",
   "license": "AGPL-3.0-or-later",
   "scripts": {
-    "clean": "rm -fr dist",
-    "prestart": "yarn clean",
-    "start": "tsc -p tsconfig.json --watch",
-    "prebuild": "yarn clean",
-    "build": "tsc -p tsconfig.json",
+    "tsc": "tsc -p tsconfig.json",
     "lint": "eslint src --ext .ts",
     "test": "jest"
   },

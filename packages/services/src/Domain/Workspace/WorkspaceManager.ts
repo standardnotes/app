@@ -1,7 +1,5 @@
-import { WorkspaceApiServiceInterface } from '@standardnotes/api'
+import { WorkspaceApiServiceInterface, Workspace, WorkspaceUser } from '@standardnotes/api'
 import { Uuid, WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
-import { Workspace, WorkspaceUser } from '@standardnotes/models'
-
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { WorkspaceClientInterface } from './WorkspaceClientInterface'

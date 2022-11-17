@@ -4,7 +4,7 @@
   "private": true,
   "main": "./src/index.ts",
   "scripts": {
-    "start": "tsc -p tsconfig.json --watch"
+    "tsc": "tsc -p tsconfig.json"
   },
   "dependencies": {
     "@lexical/react": "^0.6.0",
