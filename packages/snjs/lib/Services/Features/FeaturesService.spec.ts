@@ -479,14 +479,33 @@ describe('featuresService', () => {
 
       const featuresService = createService()
       const nativeFeature = featuresService['mapRemoteNativeFeatureToStaticFeature'](remoteFeature)
-      featuresService['mapNativeFeatureToItem'] = jest.fn()
+      featuresService['mapRemoteNativeFeatureToItem'] = jest.fn()
       featuresService.initializeFromDisk()
       await featuresService.updateRolesAndFetchFeatures('123', newRoles)
-      expect(featuresService['mapNativeFeatureToItem']).toHaveBeenCalledWith(
+      expect(featuresService['mapRemoteNativeFeatureToItem']).toHaveBeenCalledWith(
         nativeFeature,
         expect.anything(),
         expect.anything(),
       )
+    })
+
+    it('mapRemoteNativeFeatureToItem should throw if called with client controlled feature', async () => {
+      const clientFeature = {
+        identifier: FeatureIdentifier.DarkTheme,
+        content_type: ContentType.Theme,
+        clientControlled: true,
+      } as FeatureDescription
+
+      storageService.getValue = jest.fn().mockReturnValue(roles)
+      apiService.getUserFeatures = jest.fn().mockReturnValue({
+        data: {
+          features: [clientFeature],
+        },
+      })
+
+      const featuresService = createService()
+      featuresService.initializeFromDisk()
+      await expect(() => featuresService['mapRemoteNativeFeatureToItem'](clientFeature, [], [])).rejects.toThrow()
     })
 
     it('feature status', async () => {
@@ -647,6 +666,16 @@ describe('featuresService', () => {
 
       expect(featuresService.getFeatureStatus(FeatureIdentifier.MidnightTheme)).toBe(FeatureStatus.Entitled)
       expect(featuresService.getFeatureStatus(FeatureIdentifier.TokenVaultEditor)).toBe(FeatureStatus.NotInCurrentPlan)
+    })
+
+    it('didDownloadFeatures should filter out client controlled features', async () => {
+      const featuresService = createService()
+
+      featuresService['mapRemoteNativeFeaturesToItems'] = jest.fn()
+
+      await featuresService.didDownloadFeatures(GetFeatures().filter((f) => f.clientControlled))
+
+      expect(featuresService['mapRemoteNativeFeaturesToItems']).toHaveBeenCalledWith([])
     })
 
     it('feature status should be dynamic for subscriber if cached features and no successful features request made yet', async () => {
