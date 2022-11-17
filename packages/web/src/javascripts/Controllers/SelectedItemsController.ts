@@ -103,8 +103,8 @@ export class SelectedItemsController
     )
   }
 
-  private get io() {
-    return this.application.io
+  private get keyboardService() {
+    return this.application.keyboardService
   }
 
   get selectedItemsCount(): number {
@@ -196,7 +196,7 @@ export class SelectedItemsController
   }
 
   cancelMultipleSelection = () => {
-    this.io.cancelAllKeyboardModifiers()
+    this.keyboardService.cancelAllKeyboardModifiers()
 
     const firstSelectedItem = this.firstSelectedItem
 
@@ -256,9 +256,9 @@ export class SelectedItemsController
 
     log(LoggingDomain.Selection, 'selectItem', item.uuid)
 
-    const hasMeta = this.io.activeModifiers.has(KeyboardModifier.Meta)
-    const hasCtrl = this.io.activeModifiers.has(KeyboardModifier.Ctrl)
-    const hasShift = this.io.activeModifiers.has(KeyboardModifier.Shift)
+    const hasMeta = this.keyboardService.activeModifiers.has(KeyboardModifier.Meta)
+    const hasCtrl = this.keyboardService.activeModifiers.has(KeyboardModifier.Ctrl)
+    const hasShift = this.keyboardService.activeModifiers.has(KeyboardModifier.Shift)
     const hasMoreThanOneSelected = this.selectedItemsCount > 1
     const isAuthorizedForAccess = await this.application.protections.authorizeItemAccess(item)
 

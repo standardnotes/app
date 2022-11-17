@@ -1,4 +1,11 @@
-import { KeyboardKey, KeyboardModifier } from '@standardnotes/ui-services'
+import {
+  CANCEL_SEARCH_COMMAND,
+  CREATE_NEW_NOTE_KEYBOARD_COMMAND,
+  NEXT_LIST_ITEM_KEYBOARD_COMMAND,
+  PREVIOUS_LIST_ITEM_KEYBOARD_COMMAND,
+  SEARCH_KEYBOARD_COMMAND,
+  SELECT_ALL_ITEMS_KEYBOARD_COMMAND,
+} from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NOTES } from '@/Constants/Constants'
 import { FileItem, PrefKey } from '@standardnotes/snjs'
@@ -110,7 +117,6 @@ const ContentListView: FunctionComponent<Props> = ({
     panelWidth,
     renderedItems,
     items,
-    searchBarElement,
     isCurrentNoteTemplate,
   } = itemListController
 
@@ -142,80 +148,69 @@ const ContentListView: FunctionComponent<Props> = ({
   }, [isFilesSmartView, filesController, createNewNote, toggleAppPane, application])
 
   useEffect(() => {
+    const searchBarElement = document.getElementById(ElementIds.SearchBar)
     /**
      * In the browser we're not allowed to override cmd/ctrl + n, so we have to
      * use Control modifier as well. These rules don't apply to desktop, but
      * probably better to be consistent.
      */
-    const disposeNewNoteKeyObserver = application.io.addKeyObserver({
-      key: 'n',
-      modifiers: [KeyboardModifier.Meta, KeyboardModifier.Ctrl],
-      onKeyDown: (event) => {
-        event.preventDefault()
-        void addNewItem()
+    return application.keyboardService.addCommandHandlers([
+      {
+        command: CREATE_NEW_NOTE_KEYBOARD_COMMAND,
+        onKeyDown: (event) => {
+          event.preventDefault()
+          void addNewItem()
+        },
       },
-    })
-
-    const disposeNextNoteKeyObserver = application.io.addKeyObserver({
-      key: KeyboardKey.Down,
-      elements: [document.body, ...(searchBarElement ? [searchBarElement] : [])],
-      onKeyDown: () => {
-        if (searchBarElement === document.activeElement) {
-          searchBarElement?.blur()
-        }
-        selectNextItem()
+      {
+        command: NEXT_LIST_ITEM_KEYBOARD_COMMAND,
+        elements: [document.body, ...(searchBarElement ? [searchBarElement] : [])],
+        onKeyDown: () => {
+          if (searchBarElement === document.activeElement) {
+            searchBarElement?.blur()
+          }
+          selectNextItem()
+        },
       },
-    })
-
-    const disposePreviousNoteKeyObserver = application.io.addKeyObserver({
-      key: KeyboardKey.Up,
-      element: document.body,
-      onKeyDown: () => {
-        selectPreviousItem()
+      {
+        command: PREVIOUS_LIST_ITEM_KEYBOARD_COMMAND,
+        element: document.body,
+        onKeyDown: () => {
+          selectPreviousItem()
+        },
       },
-    })
-
-    const disposeSearchKeyObserver = application.io.addKeyObserver({
-      key: 'f',
-      modifiers: [KeyboardModifier.Meta, KeyboardModifier.Shift],
-      onKeyDown: () => {
-        if (searchBarElement) {
-          searchBarElement.focus()
-        }
+      {
+        command: SEARCH_KEYBOARD_COMMAND,
+        onKeyDown: (event) => {
+          if (searchBarElement) {
+            event.preventDefault()
+            searchBarElement.focus()
+          }
+        },
       },
-    })
-
-    const disposeSelectAllKeyObserver = application.io.addKeyObserver({
-      key: 'a',
-      modifiers: [KeyboardModifier.Ctrl],
-      onKeyDown: (event) => {
-        const isTargetInsideContentList = (event.target as HTMLElement).closest(`#${ElementIds.ContentList}`)
-
-        if (!isTargetInsideContentList) {
-          return
-        }
-
-        event.preventDefault()
-        selectionController.selectAll()
+      {
+        command: CANCEL_SEARCH_COMMAND,
+        onKeyDown: () => {
+          if (searchBarElement) {
+            searchBarElement.blur()
+          }
+        },
       },
-    })
+      {
+        command: SELECT_ALL_ITEMS_KEYBOARD_COMMAND,
+        onKeyDown: (event) => {
+          const isTargetInsideContentList = (event.target as HTMLElement).closest(`#${ElementIds.ContentList}`)
 
-    return () => {
-      disposeNewNoteKeyObserver()
-      disposeNextNoteKeyObserver()
-      disposePreviousNoteKeyObserver()
-      disposeSearchKeyObserver()
-      disposeSelectAllKeyObserver()
-    }
-  }, [
-    addNewItem,
-    application.io,
-    createNewNote,
-    searchBarElement,
-    selectNextItem,
-    selectPreviousItem,
-    selectionController,
-  ])
+          if (!isTargetInsideContentList) {
+            return
+          }
+
+          event.preventDefault()
+          selectionController.selectAll()
+        },
+      },
+    ])
+  }, [addNewItem, application.keyboardService, createNewNote, selectNextItem, selectPreviousItem, selectionController])
 
   const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
     (width, _lastLeft, _isMaxWidth, isCollapsed) => {

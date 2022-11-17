@@ -92,7 +92,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
 
     this.subscriptionManager = application.subscriptions
 
-    this.paneController = new PaneController()
+    this.paneController = new PaneController(application, this.eventBus)
 
     this.preferencesController = new PreferencesController(application, this.eventBus)
 

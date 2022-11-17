@@ -1,6 +1,6 @@
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { DesktopManager } from './Device/DesktopManager'
-import { ArchiveManager, AutolockService, IOService, ThemeManager } from '@standardnotes/ui-services'
+import { ArchiveManager, AutolockService, KeyboardService, ThemeManager } from '@standardnotes/ui-services'
 
 export type WebServices = {
   viewControllerManager: ViewControllerManager
@@ -8,5 +8,5 @@ export type WebServices = {
   autolockService?: AutolockService
   archiveService: ArchiveManager
   themeService: ThemeManager
-  io: IOService
+  keyboardService: KeyboardService
 }

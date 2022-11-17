@@ -1,0 +1,83 @@
+import { Environment, Platform } from '@standardnotes/snjs'
+import {
+  CREATE_NEW_NOTE_KEYBOARD_COMMAND,
+  KeyboardCommand,
+  TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
+  TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND,
+  NEXT_LIST_ITEM_KEYBOARD_COMMAND,
+  PREVIOUS_LIST_ITEM_KEYBOARD_COMMAND,
+  SEARCH_KEYBOARD_COMMAND,
+  SELECT_ALL_ITEMS_KEYBOARD_COMMAND,
+  SHOW_HIDDEN_OPTIONS_KEYBOARD_COMMAND,
+  DELETE_NOTE_KEYBOARD_COMMAND,
+  PLAIN_EDITOR_INSERT_TAB_COMMAND,
+  CLOSE_PREFERENCES_COMMAND,
+  CANCEL_SEARCH_COMMAND,
+} from './KeyboardCommands'
+import { KeyboardKey } from './KeyboardKey'
+import { KeyboardModifier } from './KeyboardModifier'
+
+export type KeyboardShortcut = {
+  command: KeyboardCommand
+  key?: KeyboardKey | string
+  modifiers?: KeyboardModifier[]
+}
+
+export function getKeyboardShortcuts(_platform: Platform, _environment: Environment) {
+  return [
+    {
+      command: TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
+      key: 'l',
+      modifiers: [KeyboardModifier.Shift],
+    },
+    {
+      command: TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND,
+      key: 't',
+      modifiers: [KeyboardModifier.Shift],
+    },
+    {
+      command: CREATE_NEW_NOTE_KEYBOARD_COMMAND,
+      key: 'n',
+      modifiers: [KeyboardModifier.Shift],
+    },
+    {
+      command: NEXT_LIST_ITEM_KEYBOARD_COMMAND,
+      key: KeyboardKey.Down,
+    },
+    {
+      command: PREVIOUS_LIST_ITEM_KEYBOARD_COMMAND,
+      key: KeyboardKey.Up,
+    },
+    {
+      command: SEARCH_KEYBOARD_COMMAND,
+      key: 'f',
+      modifiers: [KeyboardModifier.Shift],
+    },
+    {
+      command: CANCEL_SEARCH_COMMAND,
+      key: KeyboardKey.Escape,
+    },
+    {
+      command: SELECT_ALL_ITEMS_KEYBOARD_COMMAND,
+      key: 'a',
+      modifiers: [KeyboardModifier.Ctrl],
+    },
+    {
+      command: SHOW_HIDDEN_OPTIONS_KEYBOARD_COMMAND,
+      modifiers: [KeyboardModifier.Alt],
+    },
+    {
+      command: DELETE_NOTE_KEYBOARD_COMMAND,
+      key: KeyboardKey.Backspace,
+      modifiers: [KeyboardModifier.Meta],
+    },
+    {
+      command: PLAIN_EDITOR_INSERT_TAB_COMMAND,
+      key: KeyboardKey.Tab,
+    },
+    {
+      command: CLOSE_PREFERENCES_COMMAND,
+      key: KeyboardKey.Escape,
+    },
+  ]
+}

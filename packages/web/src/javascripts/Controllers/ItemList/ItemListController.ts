@@ -42,7 +42,6 @@ import { ItemsReloadSource } from './ItemsReloadSource'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
-const ElementIdSearchBar = 'search-bar'
 const ElementIdScrollContainer = 'notes-scrollable'
 
 export class ItemListController extends AbstractViewController implements InternalEventHandlerInterface {
@@ -275,10 +274,6 @@ export class ItemListController extends AbstractViewController implements Intern
 
   setShowDisplayOptionsMenu = (enabled: boolean) => {
     this.showDisplayOptionsMenu = enabled
-  }
-
-  get searchBarElement() {
-    return document.getElementById(ElementIdSearchBar)
   }
 
   get isFiltering(): boolean {

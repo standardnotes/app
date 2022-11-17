@@ -3,7 +3,7 @@ import Switch from '@/Components/Switch/Switch'
 import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback, FunctionComponent } from 'react'
 import { Platform, SNApplication, SNComponent, SNNote } from '@standardnotes/snjs'
-import { KeyboardModifier } from '@standardnotes/ui-services'
+import { SHOW_HIDDEN_OPTIONS_KEYBOARD_COMMAND } from '@standardnotes/ui-services'
 import ChangeEditorOption from './ChangeEditorOption'
 import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
 import ListedActionsOption from './ListedActionsOption'
@@ -216,8 +216,8 @@ const NotesOptions = ({
   )
 
   useEffect(() => {
-    const removeAltKeyObserver = application.io.addKeyObserver({
-      modifiers: [KeyboardModifier.Alt],
+    const removeAltKeyObserver = application.keyboardService.addCommandHandler({
+      command: SHOW_HIDDEN_OPTIONS_KEYBOARD_COMMAND,
       onKeyDown: () => {
         setAltKeyDown(true)
       },
