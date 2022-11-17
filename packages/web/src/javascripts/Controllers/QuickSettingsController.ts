@@ -2,7 +2,7 @@ import { InternalEventBus } from '@standardnotes/snjs'
 import { WebApplication } from '@/Application/Application'
 import { action, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
-import { TOGGLE_FOCUS_MODE_COMMAND, EXIT_FOCUS_MODE_COMMAND } from '@standardnotes/ui-services'
+import { TOGGLE_FOCUS_MODE_COMMAND } from '@standardnotes/ui-services'
 import { toggleFocusMode } from '@/Utils/toggleFocusMode'
 
 export class QuickSettingsController extends AbstractViewController {

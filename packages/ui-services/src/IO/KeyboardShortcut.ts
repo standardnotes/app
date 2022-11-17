@@ -13,7 +13,6 @@ import {
   PLAIN_EDITOR_INSERT_TAB_COMMAND,
   CLOSE_PREFERENCES_COMMAND,
   CANCEL_SEARCH_COMMAND,
-  EXIT_FOCUS_MODE_COMMAND,
   TOGGLE_FOCUS_MODE_COMMAND,
 } from './KeyboardCommands'
 import { KeyboardKey } from './KeyboardKey'
