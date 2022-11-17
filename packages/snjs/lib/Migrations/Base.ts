@@ -1,5 +1,4 @@
 import { AnyKeyParamsContent } from '@standardnotes/common'
-import { SNLog } from '@Lib/Log'
 import { EncryptedPayload, EncryptedTransferPayload, isErrorDecryptingPayload } from '@standardnotes/models'
 import { PreviousSnjsVersion1_0_0, PreviousSnjsVersion2_0_0, SnjsVersion } from '../Version'
 import { Migration } from '@Lib/Migrations/Migration'
@@ -14,7 +13,7 @@ import {
   SessionStrings,
   Challenge,
 } from '@standardnotes/services'
-import { isNullOrUndefined } from '@standardnotes/utils'
+import { assert } from '@standardnotes/utils'
 import { CreateReader } from './StorageReaders/Functions'
 import { StorageReader } from './StorageReaders/Reader'
 import { ContentTypeUsesRootKeyEncryption } from '@standardnotes/encryption'
@@ -77,7 +76,7 @@ export class BaseMigration extends Migration {
         /** Coming from 2.0.0 (which did not store version) OR is brand new application */
         const migrationKey = namespacedKey(this.services.identifier, LastMigrationTimeStampKey2_0_0)
         const migrationValue = await this.services.deviceInterface.getRawStorageValue(migrationKey)
-        const is_2_0_0_application = !isNullOrUndefined(migrationValue)
+        const is_2_0_0_application = migrationValue != undefined
         if (is_2_0_0_application) {
           await this.services.deviceInterface.setRawStorageValue(storageKey, PreviousSnjsVersion2_0_0)
           await this.services.deviceInterface.removeRawStorageValue(LastMigrationTimeStampKey2_0_0)
@@ -141,7 +140,7 @@ export class BaseMigration extends Migration {
     }
 
     const rawAccountParams = await this.reader.getAccountKeyParams()
-    const hasAccountKeyParams = !isNullOrUndefined(rawAccountParams)
+    const hasAccountKeyParams = rawAccountParams != undefined
     if (!hasAccountKeyParams) {
       /** Doesn't apply if account is not involved */
       this.memoizedNeedsKeychainRepair = false
@@ -169,7 +168,30 @@ export class BaseMigration extends Migration {
     const version = (await this.getStoredVersion()) as string
     const rawAccountParams = await this.reader.getAccountKeyParams()
 
-    /** Challenge for account password */
+    /** Choose an item to decrypt against */
+    const allItems = (
+      await this.services.deviceInterface.getAllRawDatabasePayloads<EncryptedTransferPayload>(this.services.identifier)
+    ).map((p) => new EncryptedPayload(p))
+
+    let itemToDecrypt = allItems.find((item) => {
+      return ContentTypeUsesRootKeyEncryption(item.content_type)
+    })
+
+    if (!itemToDecrypt) {
+      /** If no root key encrypted item, choose any item */
+      itemToDecrypt = allItems[0]
+    }
+
+    if (!itemToDecrypt) {
+      /**
+       * No items to decrypt, user probably cleared their browser data. Only choice is to clear storage
+       * as any remainign account data is useless without items
+       */
+      await this.services.storageService.clearValues()
+      return
+    }
+
+    /** Prompt for account password */
     const challenge = new Challenge(
       [new ChallengePrompt(ChallengeValidation.None, undefined, SessionStrings.PasswordInputPlaceholder, true)],
       ChallengeReason.Custom,
@@ -185,25 +207,8 @@ export class BaseMigration extends Migration {
           const accountParams = this.services.protocolService.createKeyParams(rawAccountParams as AnyKeyParamsContent)
           const rootKey = await this.services.protocolService.computeRootKey(password, accountParams)
 
-          /** Choose an item to decrypt */
-          const allItems = (
-            await this.services.deviceInterface.getAllRawDatabasePayloads<EncryptedTransferPayload>(
-              this.services.identifier,
-            )
-          ).map((p) => new EncryptedPayload(p))
-
-          let itemToDecrypt = allItems.find((item) => {
-            return ContentTypeUsesRootKeyEncryption(item.content_type)
-          })
-
-          if (!itemToDecrypt) {
-            /** If no root key encrypted item, just choose any item */
-            itemToDecrypt = allItems[0]
-          }
-
-          if (!itemToDecrypt) {
-            throw SNLog.error(Error('Attempting keychain recovery validation but no items present.'))
-          }
+          /** TS can't detect we returned early above if itemToDecrypt is null */
+          assert(itemToDecrypt)
 
           const decryptedPayload = await this.services.protocolService.decryptSplitSingle({
             usesRootKey: {
