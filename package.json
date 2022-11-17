@@ -26,7 +26,7 @@
     "build:snjs": "yarn workspaces foreach -p --topological-dev --verbose -R --from @standardnotes/snjs run build",
     "build:services": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/services run build",
     "build:api": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/api run build",
-    "build:sncrypto-web": "yyarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/sncrypto-web run build",
+    "build:sncrypto-web": "yarn workspaces foreach -pt --topological-dev --verbose -R --from @standardnotes/sncrypto-web run build",
     "start:server:web": "lerna run start --scope=@standardnotes/web",
     "start:server:e2e": "lerna run start:test-server --scope=@standardnotes/snjs",
     "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock && yarn install",
