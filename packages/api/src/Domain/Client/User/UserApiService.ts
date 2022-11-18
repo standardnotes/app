@@ -1,4 +1,4 @@
-import { RootKeyParamsInterface } from '@standardnotes/models'
+import { type RootKeyParamsInterface } from '@standardnotes/models'
 import { UserRequestType } from '@standardnotes/common'
 
 import { ErrorMessage } from '../../Error/ErrorMessage'
