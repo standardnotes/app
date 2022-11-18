@@ -5,7 +5,7 @@ import { KeyboardCommand } from './KeyboardCommands'
 import { KeyboardKeyEvent } from './KeyboardKeyEvent'
 import { KeyboardModifier } from './KeyboardModifier'
 import { KeyboardCommandHandler } from './KeyboardCommandHandler'
-import { getKeyboardShortcuts, KeyboardShortcut } from './KeyboardShortcut'
+import { getKeyboardShortcuts, KeyboardShortcut, PlatformedKeyboardShortcut } from './KeyboardShortcut'
 
 export class KeyboardService {
   readonly activeModifiers = new Set<KeyboardModifier>()
@@ -117,7 +117,7 @@ export class KeyboardService {
         continue
       }
 
-      if (eventMatchesKeyAndModifiers(event, shortcut.key, shortcut.modifiers)) {
+      if (eventMatchesKeyAndModifiers(event, shortcut)) {
         this.handleCommand(command, event, keyEvent)
       }
     }
@@ -180,6 +180,18 @@ export class KeyboardService {
       for (const disposer of disposers) {
         disposer()
       }
+    }
+  }
+
+  keyboardShortcutForCommand(command: KeyboardCommand): PlatformedKeyboardShortcut | undefined {
+    const shortcut = this.commandMap.get(command)
+    if (!shortcut) {
+      return undefined
+    }
+
+    return {
+      platform: this.platform,
+      ...shortcut,
     }
   }
 }

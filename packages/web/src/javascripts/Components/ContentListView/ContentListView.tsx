@@ -1,6 +1,7 @@
 import {
   CANCEL_SEARCH_COMMAND,
   CREATE_NEW_NOTE_KEYBOARD_COMMAND,
+  keyboardStringForShortcut,
   NEXT_LIST_ITEM_KEYBOARD_COMMAND,
   PREVIOUS_LIST_ITEM_KEYBOARD_COMMAND,
   SEARCH_KEYBOARD_COMMAND,
@@ -224,10 +225,16 @@ const ContentListView: FunctionComponent<Props> = ({
     [application, selectedAsTag, navigationController],
   )
 
-  const addButtonLabel = useMemo(
-    () => (isFilesSmartView ? 'Upload file' : 'Create a new note in the selected tag'),
-    [isFilesSmartView],
+  const shortcutForCreate = useMemo(
+    () => application.keyboardService.keyboardShortcutForCommand(CREATE_NEW_NOTE_KEYBOARD_COMMAND),
+    [application],
   )
+
+  const addButtonLabel = useMemo(() => {
+    return isFilesSmartView
+      ? 'Upload file'
+      : `Create a new note in the selected tag (${shortcutForCreate && keyboardStringForShortcut(shortcutForCreate)})`
+  }, [isFilesSmartView, shortcutForCreate])
 
   const matchesMediumBreakpoint = useMediaQuery(MediaQueryBreakpoints.md)
   const matchesXLBreakpoint = useMediaQuery(MediaQueryBreakpoints.xl)

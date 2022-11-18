@@ -10,8 +10,8 @@ import {
   SELECT_ALL_ITEMS_KEYBOARD_COMMAND,
   SHOW_HIDDEN_OPTIONS_KEYBOARD_COMMAND,
   DELETE_NOTE_KEYBOARD_COMMAND,
-  PLAIN_EDITOR_INSERT_TAB_COMMAND,
-  CLOSE_PREFERENCES_COMMAND,
+  TAB_COMMAND,
+  ESCAPE_COMMAND,
   CANCEL_SEARCH_COMMAND,
   TOGGLE_FOCUS_MODE_COMMAND,
 } from './KeyboardCommands'
@@ -20,8 +20,17 @@ import { KeyboardModifier } from './KeyboardModifier'
 
 export type KeyboardShortcut = {
   command: KeyboardCommand
-  key?: KeyboardKey | string
   modifiers?: KeyboardModifier[]
+  key?: KeyboardKey | string
+  /**
+   * Alternative to using key, if the key can be affected by alt + shift. For example, if you want alt + shift + n,
+   * use code 'KeyN' instead of key 'n', as the modifiers would turn n into '˜' on Mac.
+   */
+  code?: string
+}
+
+export type PlatformedKeyboardShortcut = KeyboardShortcut & {
+  platform: Platform
 }
 
 export function getKeyboardShortcuts(_platform: Platform, _environment: Environment) {
@@ -38,7 +47,7 @@ export function getKeyboardShortcuts(_platform: Platform, _environment: Environm
     },
     {
       command: CREATE_NEW_NOTE_KEYBOARD_COMMAND,
-      key: 'n',
+      code: 'KeyN',
       modifiers: [KeyboardModifier.Alt, KeyboardModifier.Shift],
     },
     {
@@ -73,11 +82,11 @@ export function getKeyboardShortcuts(_platform: Platform, _environment: Environm
       modifiers: [KeyboardModifier.Meta],
     },
     {
-      command: PLAIN_EDITOR_INSERT_TAB_COMMAND,
+      command: TAB_COMMAND,
       key: KeyboardKey.Tab,
     },
     {
-      command: CLOSE_PREFERENCES_COMMAND,
+      command: ESCAPE_COMMAND,
       key: KeyboardKey.Escape,
     },
     {

@@ -1,8 +1,10 @@
 import { WebApplication } from '@/Application/Application'
-import { FunctionComponent, MouseEventHandler, useCallback } from 'react'
+import { FunctionComponent, MouseEventHandler, useCallback, useMemo } from 'react'
 import Switch from '@/Components/Switch/Switch'
 import { isMobileScreen } from '@/Utils'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { TOGGLE_FOCUS_MODE_COMMAND } from '@standardnotes/ui-services'
+import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 
 type Props = {
   application: WebApplication
@@ -22,6 +24,11 @@ const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggle, onCl
     [onToggle, isEnabled, onClose],
   )
 
+  const shortcut = useMemo(
+    () => application.keyboardService.keyboardShortcutForCommand(TOGGLE_FOCUS_MODE_COMMAND),
+    [application],
+  )
+
   const isMobile = application.isNativeMobileWeb() || isMobileScreen()
 
   if (isMobile) {
@@ -38,7 +45,10 @@ const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggle, onCl
       onClick={toggle}
     >
       <div className="flex items-center">Focused Writing</div>
-      <Switch className="px-0" checked={isEnabled} />
+      <div className="flex">
+        {shortcut && <KeyboardShortcutIndicator className="mr-2" shortcut={shortcut} />}
+        <Switch className="px-0" checked={isEnabled} />
+      </div>
     </button>
   )
 }
