@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.103.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.103.0...@standardnotes/web@3.103.1) (2022-11-18)
+
+### Bug Fixes
+
+* issue where converting empty plain note to super would result in error ([e58c563](https://github.com/standardnotes/app/commit/e58c5637951f928efcd8c8427f06d0b6c69b5e55))
+
 # [3.103.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.102.0...@standardnotes/web@3.103.0) (2022-11-18)
 
 ### Features
