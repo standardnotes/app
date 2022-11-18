@@ -24,7 +24,7 @@ import {isHTMLElement} from '../../Utils/guard';
 import {Point} from '../../Utils/point';
 import {Rect} from '../../Utils/rect';
 
-const SPACE = 4;
+const SPACE = -16;
 const TARGET_LINE_HALF_HEIGHT = 2;
 const DRAGGABLE_BLOCK_MENU_CLASSNAME = 'draggable-block-menu';
 const DRAG_DATA_FORMAT = 'application/x-lexical-drag-block';
