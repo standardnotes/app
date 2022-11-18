@@ -1,39 +1,50 @@
 import Icon from '@/Components/Icon/Icon'
-import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import { classNames } from '@/Utils/ConcatenateClassNames'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent } from 'react'
-import { useDrop } from 'react-dnd'
-import { DropItem, DropProps, ItemTypes } from './DragNDrop'
+import { DragEventHandler, FunctionComponent, useCallback, useState } from 'react'
+import { TagDragDataFormat } from './DragNDrop'
 
 type Props = {
   tagsState: NavigationController
-  featuresState: FeaturesController
 }
 
 const RootTagDropZone: FunctionComponent<Props> = ({ tagsState }) => {
-  const premiumModal = usePremiumModal()
+  const [isOver, setIsOver] = useState(false)
 
-  const [{ isOver, canDrop }, dropRef] = useDrop<DropItem, void, DropProps>(
-    () => ({
-      accept: ItemTypes.TAG,
-      canDrop: (item) => {
-        return tagsState.hasParent(item.uuid)
-      },
-      drop: (item) => {
-        tagsState.assignParent(item.uuid, undefined).catch(console.error)
-      },
-      collect: (monitor) => ({
-        isOver: !!monitor.isOver(),
-        canDrop: !!monitor.canDrop(),
-      }),
-    }),
-    [tagsState, premiumModal],
+  const removeDragIndicator = useCallback(() => {
+    setIsOver(false)
+  }, [])
+
+  const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((event): void => {
+    if (event.dataTransfer.types.includes(TagDragDataFormat)) {
+      event.preventDefault()
+      setIsOver(true)
+    }
+  }, [])
+
+  const onDrop: DragEventHandler<HTMLDivElement> = useCallback(
+    (event): void => {
+      setIsOver(false)
+      const draggedTagUuid = event.dataTransfer.getData(TagDragDataFormat)
+      if (!draggedTagUuid) {
+        return
+      }
+      if (draggedTagUuid) {
+        void tagsState.assignParent(draggedTagUuid, undefined)
+      }
+    },
+    [tagsState],
   )
 
   return (
-    <div ref={dropRef} className={`root-drop ${canDrop ? 'active' : ''} ${isOver ? 'is-drag-over' : ''}`}>
+    <div
+      className={classNames('root-drop', isOver && 'active is-drag-over')}
+      onDragExit={removeDragIndicator}
+      onDragOver={onDragOver}
+      onDragLeave={removeDragIndicator}
+      onDrop={onDrop}
+    >
       <Icon className="text-neutral" type="link-off" />
       <p className="content">
         Move the tag here to <br />

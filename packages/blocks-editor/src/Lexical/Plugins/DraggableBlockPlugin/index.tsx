@@ -19,16 +19,18 @@ import {
 } from 'lexical';
 import {DragEvent as ReactDragEvent, useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
+import {LexicalDraggableBlockMenu} from '@standardnotes/icons';
 
 import {isHTMLElement} from '../../Utils/guard';
 import {Point} from '../../Utils/point';
 import {Rect} from '../../Utils/rect';
 
-const SPACE = 4;
+const SPACE = -16;
 const TARGET_LINE_HALF_HEIGHT = 2;
 const DRAGGABLE_BLOCK_MENU_CLASSNAME = 'draggable-block-menu';
 const DRAG_DATA_FORMAT = 'application/x-lexical-drag-block';
 const TEXT_BOX_HORIZONTAL_PADDING = 28;
+const TARGET_LINE_SPACE_FROM_LEFT = 0;
 
 const Downward = 1;
 const Upward = -1;
@@ -179,7 +181,7 @@ function setTargetLine(
   }
 
   const top = lineTop - anchorTop - TARGET_LINE_HALF_HEIGHT;
-  const left = TEXT_BOX_HORIZONTAL_PADDING - SPACE;
+  const left = TARGET_LINE_SPACE_FROM_LEFT;
 
   targetLineElem.style.transform = `translate(${left}px, ${top}px)`;
   targetLineElem.style.width = `${
@@ -347,7 +349,9 @@ function useDraggableBlockMenu(
         draggable={true}
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}>
-        <div className={isEditable ? 'icon' : ''} />
+        <div className={isEditable ? 'icon' : ''}>
+          <LexicalDraggableBlockMenu className="text-text pointer-events-none" />
+        </div>
       </div>
       <div className="draggable-block-target-line" ref={targetLineRef} />
     </>,
