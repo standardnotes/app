@@ -1,5 +1,5 @@
 import Icon from '@/Components/Icon/Icon'
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
+import { FOCUSABLE_BUT_NOT_TABBABLE, TAG_FOLDERS_FEATURE_NAME } from '@/Constants/Constants'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
@@ -8,6 +8,7 @@ import { IconType, SNTag } from '@standardnotes/snjs'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react-lite'
 import {
+  DragEventHandler,
   FormEventHandler,
   FunctionComponent,
   KeyboardEventHandler,
@@ -25,6 +26,8 @@ import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider
 import { LinkingController } from '@/Controllers/LinkingController'
 import { TagListSectionType } from './TagListSection'
 import { log, LoggingDomain } from '@/Logging'
+import { TagDragDataFormat } from './DragNDrop'
+import { usePremiumModal } from '@/Hooks/usePremiumModal'
 
 type Props = {
   tag: SNTag
@@ -57,8 +60,14 @@ export const TagsListItem: FunctionComponent<Props> = observer(
     const childrenTags = computed(() => navigationController.getChildren(tag)).get()
     const hasChildren = childrenTags.length > 0
 
+    const hasFolders = features.hasFolders
+
+    const premiumModal = usePremiumModal()
+
     const [showChildren, setShowChildren] = useState(tag.expanded)
     const [hadChildren, setHadChildren] = useState(hasChildren)
+
+    const [isBeingDraggedOver, setIsBeingDraggedOver] = useState(false)
 
     useEffect(() => {
       if (!hadChildren && hasChildren) {
@@ -191,12 +200,57 @@ export const TagsListItem: FunctionComponent<Props> = observer(
 
     log(LoggingDomain.NavigationList, 'Rendering TagsListItem')
 
+    const onDragStart: DragEventHandler<HTMLDivElement> = useCallback(
+      (event) => {
+        event.dataTransfer.setData(TagDragDataFormat, tag.uuid)
+      },
+      [tag.uuid],
+    )
+
+    const onDragEnter: DragEventHandler<HTMLDivElement> = useCallback((event): void => {
+      if (event.dataTransfer.types.includes(TagDragDataFormat)) {
+        event.preventDefault()
+        setIsBeingDraggedOver(true)
+      }
+    }, [])
+
+    const removeDragIndicator = useCallback(() => {
+      setIsBeingDraggedOver(false)
+    }, [])
+
+    const onDragOver: DragEventHandler<HTMLDivElement> = useCallback((event): void => {
+      if (event.dataTransfer.types.includes(TagDragDataFormat)) {
+        event.preventDefault()
+      }
+    }, [])
+
+    const onDrop: DragEventHandler<HTMLDivElement> = useCallback(
+      (event): void => {
+        setIsBeingDraggedOver(false)
+        const draggedTagUuid = event.dataTransfer.getData(TagDragDataFormat)
+        if (!draggedTagUuid) {
+          return
+        }
+        if (!navigationController.isValidTagParent(tag, { uuid: draggedTagUuid } as SNTag)) {
+          return
+        }
+        if (!hasFolders) {
+          premiumModal.activate(TAG_FOLDERS_FEATURE_NAME)
+          return
+        }
+        if (draggedTagUuid) {
+          void navigationController.assignParent(draggedTagUuid, tag.uuid)
+        }
+      },
+      [hasFolders, navigationController, premiumModal, tag],
+    )
+
     return (
       <>
         <div
           role="button"
           tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-          className={classNames('tag px-3.5', isSelected && 'selected')}
+          className={classNames('tag px-3.5', isSelected && 'selected', isBeingDraggedOver && 'is-drag-over')}
           onClick={selectCurrentTag}
           ref={tagRef}
           style={{
@@ -206,6 +260,13 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             e.preventDefault()
             onContextMenu(tag, e.clientX, e.clientY)
           }}
+          draggable={true}
+          onDragStart={onDragStart}
+          onDragEnter={onDragEnter}
+          onDragExit={removeDragIndicator}
+          onDragOver={onDragOver}
+          onDragLeave={removeDragIndicator}
+          onDrop={onDrop}
         >
           <div className="tag-info" title={title}>
             <div onClick={selectCurrentTag} className={'tag-icon draggable mr-2'}>

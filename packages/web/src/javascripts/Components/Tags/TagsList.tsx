@@ -57,12 +57,7 @@ const TagsList: FunctionComponent<Props> = ({ viewControllerManager, type }: Pro
               />
             )
           })}
-          {type === 'all' && (
-            <RootTagDropZone
-              tagsState={viewControllerManager.navigationController}
-              featuresState={viewControllerManager.featuresController}
-            />
-          )}
+          {type === 'all' && <RootTagDropZone tagsState={viewControllerManager.navigationController} />}
         </>
       )}
     </>
