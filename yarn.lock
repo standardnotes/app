@@ -5599,7 +5599,7 @@ __metadata:
     copy-webpack-plugin: ^11.0.0
     decrypt: "github:standardnotes/decrypt#master"
     dotenv: ^16.0.3
-    electron: 21.2.3
+    electron: 21.3.0
     electron-builder: 23.6.0
     electron-log: ^4.4.8
     electron-notarize: ^1.2.1
@@ -13674,16 +13674,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"electron@npm:21.2.3":
-  version: 21.2.3
-  resolution: "electron@npm:21.2.3"
+"electron@npm:21.3.0":
+  version: 21.3.0
+  resolution: "electron@npm:21.3.0"
   dependencies:
     "@electron/get": ^1.14.1
     "@types/node": ^16.11.26
     extract-zip: ^2.0.1
   bin:
     electron: cli.js
-  checksum: 9e871c38a07fb9bb4b2d1d7957c5b39f5b5acab95746c0cbcc4a8f4b5c22a4a05d96e340584aa58aa58903d625174dbbe6834da3d4c5cf6d8246a0ad9225ba15
+  checksum: c0f170299609410a4aeb2daa9bf4d6ac2872ca226a6ba16b0c97d9dfcfbfa27e0d3339c3b71c66b59dd333d471f813ca16933e7b4e7ce10342799dc60cbdf066
   languageName: node
   linkType: hard
 
