@@ -1,7 +1,6 @@
 import { Environment, Platform } from '@standardnotes/snjs'
 import {
   CREATE_NEW_NOTE_KEYBOARD_COMMAND,
-  KeyboardCommand,
   TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
   TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND,
   NEXT_LIST_ITEM_KEYBOARD_COMMAND,
@@ -17,21 +16,6 @@ import {
 } from './KeyboardCommands'
 import { KeyboardKey } from './KeyboardKey'
 import { KeyboardModifier } from './KeyboardModifier'
-
-export type KeyboardShortcut = {
-  command: KeyboardCommand
-  modifiers?: KeyboardModifier[]
-  key?: KeyboardKey | string
-  /**
-   * Alternative to using key, if the key can be affected by alt + shift. For example, if you want alt + shift + n,
-   * use code 'KeyN' instead of key 'n', as the modifiers would turn n into '˜' on Mac.
-   */
-  code?: string
-}
-
-export type PlatformedKeyboardShortcut = KeyboardShortcut & {
-  platform: Platform
-}
 
 export function getKeyboardShortcuts(_platform: Platform, _environment: Environment) {
   return [

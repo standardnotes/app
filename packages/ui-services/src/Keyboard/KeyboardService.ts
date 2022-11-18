@@ -5,7 +5,8 @@ import { KeyboardCommand } from './KeyboardCommands'
 import { KeyboardKeyEvent } from './KeyboardKeyEvent'
 import { KeyboardModifier } from './KeyboardModifier'
 import { KeyboardCommandHandler } from './KeyboardCommandHandler'
-import { getKeyboardShortcuts, KeyboardShortcut, PlatformedKeyboardShortcut } from './KeyboardShortcut'
+import { KeyboardShortcut, PlatformedKeyboardShortcut } from './KeyboardShortcut'
+import { getKeyboardShortcuts } from './getKeyboardShortcuts'
 
 export class KeyboardService {
   readonly activeModifiers = new Set<KeyboardModifier>()
