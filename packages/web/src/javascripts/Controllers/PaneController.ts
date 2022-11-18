@@ -20,8 +20,8 @@ export class PaneController extends AbstractViewController {
   isInMobileView = isMobileScreen()
   protected disposers: Disposer[] = []
 
-  currentNavPanelWidth: number
-  currentItemsPanelWidth: number
+  currentNavPanelWidth = 0
+  currentItemsPanelWidth = 0
 
   constructor(application: WebApplication, eventBus: InternalEventBus) {
     super(application, eventBus)
@@ -30,6 +30,8 @@ export class PaneController extends AbstractViewController {
       currentPane: observable,
       previousPane: observable,
       isInMobileView: observable,
+      currentNavPanelWidth: observable,
+      currentItemsPanelWidth: observable,
 
       isListPaneCollapsed: computed,
       isNavigationPaneCollapsed: computed,
