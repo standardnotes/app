@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.5.3...@standardnotes/blocks-editor@1.6.0) (2022-11-18)
+
+### Features
+
+* **web:** enable block drag'n'drop in super editor ([#2029](https://github.com/standardnotes/app/issues/2029)) ([dab4f67](https://github.com/standardnotes/app/commit/dab4f678f04aee2c7dfbe7f416e7fc34e8d870cf))
+
 ## [1.5.3](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.5.2...@standardnotes/blocks-editor@1.5.3) (2022-11-17)
 
 **Note:** Version bump only for package @standardnotes/blocks-editor

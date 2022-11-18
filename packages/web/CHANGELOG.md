@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.103.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.102.0...@standardnotes/web@3.103.0) (2022-11-18)
+
+### Features
+
+* **web:** enable block drag'n'drop in super editor ([#2029](https://github.com/standardnotes/app/issues/2029)) ([dab4f67](https://github.com/standardnotes/app/commit/dab4f678f04aee2c7dfbe7f416e7fc34e8d870cf))
+
 # [3.102.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.101.2...@standardnotes/web@3.102.0) (2022-11-18)
 
 ### Features
