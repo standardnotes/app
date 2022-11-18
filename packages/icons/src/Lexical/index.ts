@@ -27,6 +27,7 @@ import TypeSubscript from './type-subscript.svg'
 import TypeSuperscript from './type-superscript.svg'
 import TypeUnderline from './type-underline.svg'
 import LexicalPencilFill from './pencil-fill.svg'
+import LexicalDraggableBlockMenu from './draggable-block-menu.svg'
 
 export {
   LexicalCaretRightFill,
@@ -58,4 +59,5 @@ export {
   TypeSuperscript,
   TypeUnderline,
   LexicalPencilFill,
+  LexicalDraggableBlockMenu,
 }
