@@ -159,6 +159,7 @@ function setDragImage(
   });
 }
 
+const TARGET_LINE_SPACE_FROM_LEFT = 4;
 function setTargetLine(
   targetLineElem: HTMLElement,
   targetBlockElem: HTMLElement,
@@ -180,7 +181,7 @@ function setTargetLine(
   }
 
   const top = lineTop - anchorTop - TARGET_LINE_HALF_HEIGHT;
-  const left = TEXT_BOX_HORIZONTAL_PADDING - SPACE;
+  const left = TEXT_BOX_HORIZONTAL_PADDING - TARGET_LINE_SPACE_FROM_LEFT;
 
   targetLineElem.style.transform = `translate(${left}px, ${top}px)`;
   targetLineElem.style.width = `${
