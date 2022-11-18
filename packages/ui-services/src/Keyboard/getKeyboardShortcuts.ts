@@ -17,17 +17,25 @@ import {
 import { KeyboardKey } from './KeyboardKey'
 import { KeyboardModifier } from './KeyboardModifier'
 
-export function getKeyboardShortcuts(_platform: Platform, _environment: Environment) {
+function isMacPlatform(platform: Platform) {
+  return platform === Platform.MacDesktop || platform === Platform.MacWeb
+}
+
+export function getKeyboardShortcuts(platform: Platform, _environment: Environment) {
+  const isMac = isMacPlatform(platform)
+
+  const primaryModifier = isMac ? KeyboardModifier.Meta : KeyboardModifier.Ctrl
+
   return [
     {
       command: TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
       key: 'l',
-      modifiers: [KeyboardModifier.Meta, KeyboardModifier.Shift],
+      modifiers: [primaryModifier, KeyboardModifier.Shift],
     },
     {
       command: TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND,
       key: 'e',
-      modifiers: [KeyboardModifier.Meta, KeyboardModifier.Shift],
+      modifiers: [primaryModifier, KeyboardModifier.Shift],
     },
     {
       command: CREATE_NEW_NOTE_KEYBOARD_COMMAND,
@@ -54,7 +62,7 @@ export function getKeyboardShortcuts(_platform: Platform, _environment: Environm
     {
       command: SELECT_ALL_ITEMS_KEYBOARD_COMMAND,
       key: 'a',
-      modifiers: [KeyboardModifier.Ctrl],
+      modifiers: [primaryModifier],
     },
     {
       command: SHOW_HIDDEN_OPTIONS_KEYBOARD_COMMAND,
@@ -63,7 +71,7 @@ export function getKeyboardShortcuts(_platform: Platform, _environment: Environm
     {
       command: DELETE_NOTE_KEYBOARD_COMMAND,
       key: KeyboardKey.Backspace,
-      modifiers: [KeyboardModifier.Meta],
+      modifiers: [primaryModifier],
     },
     {
       command: TAB_COMMAND,
@@ -76,7 +84,7 @@ export function getKeyboardShortcuts(_platform: Platform, _environment: Environm
     {
       command: TOGGLE_FOCUS_MODE_COMMAND,
       key: 'f',
-      modifiers: [KeyboardModifier.Meta, KeyboardModifier.Shift],
+      modifiers: [primaryModifier, KeyboardModifier.Shift],
     },
   ]
 }
