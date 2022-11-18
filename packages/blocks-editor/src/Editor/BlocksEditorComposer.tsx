@@ -5,7 +5,7 @@ import {BlockEditorNodes} from '../Lexical/Nodes/AllNodes';
 import {Klass, LexicalNode} from 'lexical';
 
 type BlocksEditorComposerProps = {
-  initialValue: string;
+  initialValue: string | undefined;
   children: React.ReactNode;
   nodes?: Array<Klass<LexicalNode>>;
   readonly?: boolean;

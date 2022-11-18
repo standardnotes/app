@@ -9,6 +9,11 @@ export default function ImportPlugin({ text, format }: { text: string; format: '
   const [editor] = useLexicalComposerContext()
 
   useEffect(() => {
+    const dontAllowConversionOfEmptyStringWhichWouldResultInError = text.length === 0
+    if (dontAllowConversionOfEmptyStringWhichWouldResultInError) {
+      return
+    }
+
     editor.update(() => {
       if (format === 'md') {
         $convertFromMarkdownString(text, [...TRANSFORMERS])

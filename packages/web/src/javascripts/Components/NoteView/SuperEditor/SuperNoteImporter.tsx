@@ -25,6 +25,7 @@ type Props = {
 }
 
 export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application, closeDialog, onConvertComplete }) => {
+  const isSeamlessConvert = note.text.length === 0
   const [lastValue, setLastValue] = useState({ text: '', previewPlain: '' })
 
   const format =
@@ -51,16 +52,18 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
   )
 
   const confirmConvert = useCallback(async () => {
-    await performConvert(lastValue.text, lastValue.previewPlain)
     closeDialog()
+
+    await performConvert(lastValue.text, lastValue.previewPlain)
+
     onConvertComplete()
   }, [closeDialog, performConvert, onConvertComplete, lastValue])
 
   useEffect(() => {
-    if (note.text.length === 0) {
+    if (isSeamlessConvert) {
       void confirmConvert()
     }
-  }, [note, confirmConvert])
+  }, [isSeamlessConvert, confirmConvert])
 
   const convertAsIs = useCallback(async () => {
     const confirmed = await application.alertService.confirm(
@@ -75,11 +78,16 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
       return
     }
 
+    closeDialog()
+
     await performConvert(note.text, note.preview_plain)
 
-    closeDialog()
     onConvertComplete()
   }, [closeDialog, application, note, onConvertComplete, performConvert])
+
+  if (isSeamlessConvert) {
+    return null
+  }
 
   return (
     <ModalDialog>
@@ -93,7 +101,7 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
       <ModalDialogDescription>
         <div className="relative w-full">
           <ErrorBoundary>
-            <BlocksEditorComposer readonly initialValue={''}>
+            <BlocksEditorComposer readonly initialValue={undefined}>
               <BlocksEditor
                 onChange={handleChange}
                 ignoreFirstChange={false}
