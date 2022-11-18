@@ -1,16 +1,23 @@
 {
   "name": "@standardnotes/models",
-  "version": "1.37.3",
+  "version": "1.37.4",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
-  "private": true,
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "Models used in SNJS library",
   "author": "Standard Notes",
-  "main": "./src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "license": "AGPL-3.0-or-later",
   "scripts": {
-    "tsc": "tsc -p tsconfig.json",
+    "clean": "rm -fr dist",
+    "prestart": "yarn clean",
+    "start": "tsc -p tsconfig.json --watch",
+    "prebuild": "yarn clean",
+    "build": "tsc -p tsconfig.json",
     "lint": "eslint src --ext .ts",
     "test": "jest"
   },

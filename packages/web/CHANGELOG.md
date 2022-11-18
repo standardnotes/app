@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.101.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.101.0...@standardnotes/web@3.101.1) (2022-11-18)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.101.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.100.8...@standardnotes/web@3.101.0) (2022-11-17)
+
+### Features
+
+* click saving indicator to toggle visibility ([#2028](https://github.com/standardnotes/app/issues/2028)) ([f793673](https://github.com/standardnotes/app/commit/f7936738759d4c2aa9d5a4a370649a20d758d3f9))
+
 ## [3.100.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.100.7...@standardnotes/web@3.100.8) (2022-11-17)
 
 ### Bug Fixes

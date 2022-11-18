@@ -1,4 +1,4 @@
-import { Invitation } from '@standardnotes/models'
+import { type Invitation } from '@standardnotes/models'
 
 import { ApiVersion } from '../../Api'
 import { HttpServiceInterface } from '../../Http'

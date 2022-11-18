@@ -885,6 +885,38 @@ describe('online conflict handling', function () {
     await this.sharedFinalAssertions()
   })
 
+  it('conflict where server updated_at_timestamp is less than base updated_at should not result in infinite loop', async function () {
+    /**
+     * While this shouldn't happen, I've seen this happen locally where a single UserPrefs object has a timestamp of A
+     * on the server, and A + 10 on the client side. Somehow the client had a newer timestamp than the server. The
+     * server rejects any change if the timestamp is not exactly equal. When we use the KeepBase strategy during conflict
+     * resolution, we keep the base item, but give it the timestamp of the server item, so that the server accepts it.
+     * However, RemoteDataConflict would only take the server's timestamp if it was greater than the base's timestamp.
+     * Because this was not the case, the client kept sending up its own base timestamp and the server kept rejecting it,
+     * and it never resolved. The fix made here was to take the server's timestamp no matter what, even if it is less than client's.
+     */
+    const note = await Factory.createSyncedNote(this.application)
+    this.expectedItemCount++
+
+    /** First modify the item without saving so that our local contents digress from the server's */
+    await this.application.mutator.changeItem(note, (mutator) => {
+      mutator.title = `${Math.random()}`
+    })
+    const modified = note.payload.copy({
+      updated_at_timestamp: note.payload.updated_at_timestamp + 1,
+      content: {
+        ...note.content,
+        title: Math.random(),
+      },
+      dirty: true,
+    })
+    this.expectedItemCount++
+    await this.application.itemManager.emitItemFromPayload(modified)
+    await this.application.sync.sync()
+    expect(this.application.itemManager.getDisplayableNotes().length).to.equal(2)
+    await this.sharedFinalAssertions()
+  })
+
   it('conflicting should not over resolve', async function () {
     /**
      * Before refactoring to use dirtyIndex instead of dirtiedDate, sometimes an item could be dirtied
