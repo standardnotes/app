@@ -99,4 +99,22 @@ describe('conflict delta', () => {
 
     expect(delta.getConflictStrategy()).toBe(ConflictStrategy.KeepApply)
   })
+
+  it('if keep base strategy, always use the apply payloads updated_at_timestamp', () => {
+    const basePayload = createDecryptedItemsKey('123', 'secret', 2)
+
+    const baseCollection = createBaseCollection(basePayload)
+
+    const applyPayload = createDecryptedItemsKey('123', 'other secret', 1)
+
+    const delta = new ConflictDelta(baseCollection, basePayload, applyPayload, historyMap)
+
+    expect(delta.getConflictStrategy()).toBe(ConflictStrategy.KeepBaseDuplicateApply)
+
+    const result = delta.result()
+
+    expect(result.emits).toHaveLength(1)
+
+    expect(result.emits[0].updated_at_timestamp).toEqual(applyPayload.updated_at_timestamp)
+  })
 })
