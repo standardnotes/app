@@ -3,7 +3,7 @@ import { ContentType, SNNote } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useEffect, useMemo } from 'react'
 import ComponentView from '@/Components/ComponentView/ComponentView'
-import { NotesController } from '@/Controllers/NotesController'
+import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 
 const ABSOLUTE_CENTER_CLASSNAME = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'

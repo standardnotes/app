@@ -119,6 +119,9 @@ export class KeyboardService {
       }
 
       if (eventMatchesKeyAndModifiers(event, shortcut)) {
+        if (shortcut.preventDefault) {
+          event.preventDefault()
+        }
         this.handleCommand(command, event, keyEvent)
       }
     }
@@ -171,6 +174,8 @@ export class KeyboardService {
 
     const thislessObservers = this.commandHandlers
     return () => {
+      observer.onKeyDown = undefined
+      observer.onKeyDown = undefined
       removeFromArray(thislessObservers, observer)
     }
   }

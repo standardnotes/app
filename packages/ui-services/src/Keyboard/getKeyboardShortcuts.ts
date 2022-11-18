@@ -13,15 +13,23 @@ import {
   ESCAPE_COMMAND,
   CANCEL_SEARCH_COMMAND,
   TOGGLE_FOCUS_MODE_COMMAND,
+  CHANGE_EDITOR_COMMAND,
+  FOCUS_TAGS_INPUT_COMMAND,
+  CREATE_NEW_TAG_COMMAND,
+  OPEN_NOTE_HISTORY_COMMAND,
+  CAPTURE_SAVE_COMMAND,
+  STAR_NOTE_COMMAND,
+  PIN_NOTE_COMMAND,
 } from './KeyboardCommands'
 import { KeyboardKey } from './KeyboardKey'
 import { KeyboardModifier } from './KeyboardModifier'
+import { KeyboardShortcut } from './KeyboardShortcut'
 
 function isMacPlatform(platform: Platform) {
   return platform === Platform.MacDesktop || platform === Platform.MacWeb
 }
 
-export function getKeyboardShortcuts(platform: Platform, _environment: Environment) {
+export function getKeyboardShortcuts(platform: Platform, _environment: Environment): KeyboardShortcut[] {
   const isMac = isMacPlatform(platform)
 
   const primaryModifier = isMac ? KeyboardModifier.Meta : KeyboardModifier.Ctrl
@@ -52,7 +60,7 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
     },
     {
       command: SEARCH_KEYBOARD_COMMAND,
-      key: 'f',
+      code: 'KeyF',
       modifiers: [KeyboardModifier.Alt, KeyboardModifier.Shift],
     },
     {
@@ -85,6 +93,47 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
       command: TOGGLE_FOCUS_MODE_COMMAND,
       key: 'f',
       modifiers: [primaryModifier, KeyboardModifier.Shift],
+    },
+    {
+      command: CHANGE_EDITOR_COMMAND,
+      key: '/',
+      modifiers: [primaryModifier, KeyboardModifier.Shift],
+      preventDefault: true,
+    },
+    {
+      command: FOCUS_TAGS_INPUT_COMMAND,
+      code: 'KeyT',
+      modifiers: [primaryModifier, KeyboardModifier.Alt],
+      preventDefault: true,
+    },
+    {
+      command: CREATE_NEW_TAG_COMMAND,
+      code: 'KeyN',
+      modifiers: [primaryModifier, KeyboardModifier.Alt],
+    },
+    {
+      command: OPEN_NOTE_HISTORY_COMMAND,
+      key: 'h',
+      modifiers: [primaryModifier, KeyboardModifier.Shift],
+      preventDefault: true,
+    },
+    {
+      command: CAPTURE_SAVE_COMMAND,
+      key: 's',
+      modifiers: [primaryModifier],
+      preventDefault: true,
+    },
+    {
+      command: STAR_NOTE_COMMAND,
+      key: 's',
+      modifiers: [primaryModifier, KeyboardModifier.Shift],
+      preventDefault: true,
+    },
+    {
+      command: PIN_NOTE_COMMAND,
+      key: 'p',
+      modifiers: [primaryModifier, KeyboardModifier.Shift],
+      preventDefault: true,
     },
   ]
 }

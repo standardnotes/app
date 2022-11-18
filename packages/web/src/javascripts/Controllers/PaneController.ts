@@ -2,7 +2,7 @@ import { TOGGLE_LIST_PANE_KEYBOARD_COMMAND, TOGGLE_NAVIGATION_PANE_KEYBOARD_COMM
 import { ApplicationEvent, InternalEventBus, PrefKey } from '@standardnotes/snjs'
 import { AppPaneId } from './../Components/ResponsivePane/AppPaneMetadata'
 import { isMobileScreen } from '@/Utils'
-import { makeObservable, observable, action } from 'mobx'
+import { makeObservable, observable, action, computed } from 'mobx'
 import { Disposer } from '@/Types/Disposer'
 import { MediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { WebApplication } from '@/Application/Application'
@@ -25,14 +25,20 @@ export class PaneController extends AbstractViewController {
 
   constructor(application: WebApplication, eventBus: InternalEventBus) {
     super(application, eventBus)
+
     makeObservable(this, {
       currentPane: observable,
       previousPane: observable,
       isInMobileView: observable,
 
+      isListPaneCollapsed: computed,
+      isNavigationPaneCollapsed: computed,
+
       setCurrentPane: action,
       setPreviousPane: action,
       setIsInMobileView: action,
+      toggleListPane: action,
+      toggleNavigationPane: action,
     })
 
     this.currentNavPanelWidth = application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth)
@@ -98,7 +104,7 @@ export class PaneController extends AbstractViewController {
     this.isInMobileView = isInMobileView
   }
 
-  toggleListPane() {
+  toggleListPane = () => {
     const currentItemsPanelWidth = this.application.getPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth)
 
     const isCollapsed = currentItemsPanelWidth <= WidthForCollapsedPanel
@@ -111,7 +117,7 @@ export class PaneController extends AbstractViewController {
     this.application.publishPanelDidResizeEvent(PANEL_NAME_NOTES, !isCollapsed)
   }
 
-  toggleNavigationPane() {
+  toggleNavigationPane = () => {
     const currentNavPanelWidth = this.application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth)
 
     const isCollapsed = currentNavPanelWidth <= WidthForCollapsedPanel

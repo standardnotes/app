@@ -3,14 +3,19 @@ import Switch from '@/Components/Switch/Switch'
 import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback, FunctionComponent } from 'react'
 import { Platform, SNApplication, SNComponent, SNNote } from '@standardnotes/snjs'
-import { SHOW_HIDDEN_OPTIONS_KEYBOARD_COMMAND } from '@standardnotes/ui-services'
+import {
+  OPEN_NOTE_HISTORY_COMMAND,
+  PIN_NOTE_COMMAND,
+  SHOW_HIDDEN_OPTIONS_KEYBOARD_COMMAND,
+  STAR_NOTE_COMMAND,
+} from '@standardnotes/ui-services'
 import ChangeEditorOption from './ChangeEditorOption'
 import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
 import ListedActionsOption from './ListedActionsOption'
 import AddTagOption from './AddTagOption'
 import { addToast, dismissToast, ToastType } from '@standardnotes/toast'
 import { NotesOptionsProps } from './NotesOptionsProps'
-import { NotesController } from '@/Controllers/NotesController'
+import { NotesController } from '@/Controllers/NotesController/NotesController'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
@@ -21,6 +26,7 @@ import { downloadSelectedNotesOnAndroid } from '@/NativeMobileWeb/DownloadSelect
 import ProtectedUnauthorizedLabel from '../ProtectedItemOverlay/ProtectedUnauthorizedLabel'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
+import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 
 type DeletePermanentlyButtonProps = {
   onClick: () => void
@@ -274,6 +280,21 @@ const NotesOptions = ({
     historyModalController.openModal(notesController.firstSelectedNote)
   }, [historyModalController, notesController.firstSelectedNote])
 
+  const historyShortcut = useMemo(
+    () => application.keyboardService.keyboardShortcutForCommand(OPEN_NOTE_HISTORY_COMMAND),
+    [application],
+  )
+
+  const pinShortcut = useMemo(
+    () => application.keyboardService.keyboardShortcutForCommand(PIN_NOTE_COMMAND),
+    [application],
+  )
+
+  const starShortcut = useMemo(
+    () => application.keyboardService.keyboardShortcutForCommand(STAR_NOTE_COMMAND),
+    [application],
+  )
+
   const unauthorized = notes.some((note) => !application.isAuthorizedToRenderItem(note))
   if (unauthorized) {
     return <ProtectedUnauthorizedLabel />
@@ -295,8 +316,13 @@ const NotesOptions = ({
       {notes.length === 1 && (
         <>
           <button className={classNames(defaultClassNames, firstItemClass)} onClick={openRevisionHistoryModal}>
-            <Icon type="history" className={iconClass} />
-            Note history
+            <div className="flex w-full items-center justify-between">
+              <span className="flex">
+                <Icon type="history" className={iconClass} />
+                Note history
+              </span>
+              {historyShortcut && <KeyboardShortcutIndicator className={''} shortcut={historyShortcut} />}
+            </div>
           </button>
           <HorizontalSeparator classes="my-2" />
         </>
@@ -364,8 +390,13 @@ const NotesOptions = ({
           notesController.setStarSelectedNotes(!starred)
         }}
       >
-        <Icon type="star" className={iconClass} />
-        {starred ? 'Unstar' : 'Star'}
+        <div className="flex w-full items-center justify-between">
+          <span className="flex">
+            <Icon type="star" className={iconClass} />
+            {starred ? 'Unstar' : 'Star'}
+          </span>
+          {starShortcut && <KeyboardShortcutIndicator className={''} shortcut={starShortcut} />}
+        </div>
       </button>
 
       {unpinned && (
@@ -375,8 +406,13 @@ const NotesOptions = ({
             notesController.setPinSelectedNotes(true)
           }}
         >
-          <Icon type="pin" className={iconClass} />
-          Pin to top
+          <div className="flex w-full items-center justify-between">
+            <span className="flex">
+              <Icon type="pin" className={iconClass} />
+              Pin to top
+            </span>
+            {pinShortcut && <KeyboardShortcutIndicator className={''} shortcut={pinShortcut} />}
+          </div>
         </button>
       )}
       {pinned && (
@@ -386,8 +422,13 @@ const NotesOptions = ({
             notesController.setPinSelectedNotes(false)
           }}
         >
-          <Icon type="unpin" className={iconClass} />
-          Unpin
+          <div className="flex w-full items-center justify-between">
+            <span className="flex">
+              <Icon type="unpin" className={iconClass} />
+              Unpin
+            </span>
+            {pinShortcut && <KeyboardShortcutIndicator className={''} shortcut={pinShortcut} />}
+          </div>
         </button>
       )}
       <button

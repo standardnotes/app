@@ -4,7 +4,7 @@
 
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { NotesController } from '@/Controllers/NotesController'
+import { NotesController } from '@/Controllers/NotesController/NotesController'
 import {
   ApplicationEvent,
   ProposedSecondsToDeferUILevelSessionExpirationDuringActiveInteraction,

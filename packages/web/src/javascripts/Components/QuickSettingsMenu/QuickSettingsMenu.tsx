@@ -198,7 +198,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
         onClose={closeQuickSettingsMenu}
         isEnabled={focusModeEnabled}
       />
-      <PanelSettingsSection application={application} />
+      <PanelSettingsSection />
     </div>
   )
 }

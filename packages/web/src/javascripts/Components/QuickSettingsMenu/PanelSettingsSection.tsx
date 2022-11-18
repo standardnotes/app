@@ -1,21 +1,27 @@
-import { WebApplication } from '@/Application/Application'
 import { TOGGLE_LIST_PANE_KEYBOARD_COMMAND, TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND } from '@standardnotes/ui-services'
-import { memo, useMemo } from 'react'
+import { useMemo } from 'react'
 import MenuItem from '../Menu/MenuItem'
 import { MenuItemType } from '../Menu/MenuItemType'
+import { observer } from 'mobx-react-lite'
+import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { useCommandService } from '../ApplicationView/CommandProvider'
 
-type Props = {
-  application: WebApplication
-}
+const PanelSettingsSection = () => {
+  const { isListPaneCollapsed, isNavigationPaneCollapsed, toggleListPane, toggleNavigationPane } =
+    useResponsiveAppPane()
 
-const PanelSettingsSection = ({ application }: Props) => {
+    console.log('rerendering settings')
+
+  const commandService = useCommandService()
+
   const navigationShortcut = useMemo(
-    () => application.keyboardService.keyboardShortcutForCommand(TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND),
-    [application],
+    () => commandService.keyboardShortcutForCommand(TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND),
+    [commandService],
   )
+
   const listShortcut = useMemo(
-    () => application.keyboardService.keyboardShortcutForCommand(TOGGLE_LIST_PANE_KEYBOARD_COMMAND),
-    [application],
+    () => commandService.keyboardShortcutForCommand(TOGGLE_LIST_PANE_KEYBOARD_COMMAND),
+    [commandService],
   )
 
   return (
@@ -23,8 +29,8 @@ const PanelSettingsSection = ({ application }: Props) => {
       <MenuItem
         type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-        checked={application.paneController.isNavigationPaneCollapsed}
-        onChange={application.paneController.toggleNavigationPane}
+        checked={isNavigationPaneCollapsed}
+        onChange={toggleNavigationPane}
         shortcut={navigationShortcut}
       >
         Show navigation panel
@@ -32,8 +38,8 @@ const PanelSettingsSection = ({ application }: Props) => {
       <MenuItem
         type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-        checked={application.paneController.isListPaneCollapsed}
-        onChange={application.paneController.toggleListPane}
+        checked={isListPaneCollapsed}
+        onChange={toggleListPane}
         shortcut={listShortcut}
       >
         Show list panel
@@ -41,4 +47,4 @@ const PanelSettingsSection = ({ application }: Props) => {
     </div>
   )
 }
-export default memo(PanelSettingsSection)
+export default observer(PanelSettingsSection)

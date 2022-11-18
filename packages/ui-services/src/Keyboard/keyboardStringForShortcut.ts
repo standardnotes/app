@@ -5,7 +5,11 @@ function stringForCode(code = ''): string {
   return code.replace('Key', '').replace('Digit', '')
 }
 
-export function keyboardStringForShortcut(shortcut: PlatformedKeyboardShortcut) {
+export function keyboardStringForShortcut(shortcut: PlatformedKeyboardShortcut | undefined) {
+  if (!shortcut) {
+    return ''
+  }
+
   const key = shortcut.key?.toUpperCase() || stringForCode(shortcut.code)
 
   if (!shortcut.modifiers || shortcut.modifiers.length === 0) {

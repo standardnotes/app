@@ -24,7 +24,7 @@ import { action, makeObservable, observable } from 'mobx'
 import { ActionsMenuController } from './ActionsMenuController'
 import { FeaturesController } from './FeaturesController'
 import { FilesController } from './FilesController'
-import { NotesController } from './NotesController'
+import { NotesController } from './NotesController/NotesController'
 import { ItemListController } from './ItemList/ItemListController'
 import { NoAccountWarningController } from './NoAccountWarningController'
 import { PreferencesController } from './PreferencesController'
@@ -154,7 +154,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
       this.subscriptionController,
     )
 
-    this.historyModalController = new HistoryModalController(this.application, this.eventBus)
+    this.historyModalController = new HistoryModalController(this.application, this.eventBus, this.notesController)
 
     this.toastService = new ToastService()
 

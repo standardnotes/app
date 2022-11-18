@@ -12,6 +12,7 @@ export type KeyboardShortcut = {
    * use code 'KeyN' instead of key 'n', as the modifiers would turn n into '˜' on Mac.
    */
   code?: string
+  preventDefault?: boolean
 }
 
 export type PlatformedKeyboardShortcut = KeyboardShortcut & {
