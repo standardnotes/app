@@ -41,10 +41,12 @@ export class PaneController extends AbstractViewController {
       setIsInMobileView: action,
       toggleListPane: action,
       toggleNavigationPane: action,
+      setCurrentItemsPanelWidth: action,
+      setCurrentNavPanelWidth: action,
     })
 
-    this.currentNavPanelWidth = application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth)
-    this.currentItemsPanelWidth = application.getPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth)
+    this.setCurrentNavPanelWidth(application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
+    this.setCurrentItemsPanelWidth(application.getPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
 
     const mediaQuery = window.matchMedia(MediaQueryBreakpoints.md)
     if (mediaQuery?.addEventListener != undefined) {
@@ -55,8 +57,8 @@ export class PaneController extends AbstractViewController {
 
     this.disposers.push(
       application.addEventObserver(async () => {
-        this.currentNavPanelWidth = application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth)
-        this.currentItemsPanelWidth = application.getPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth)
+        this.setCurrentNavPanelWidth(application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
+        this.setCurrentItemsPanelWidth(application.getPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
       }, ApplicationEvent.PreferencesChanged),
 
       application.keyboardService.addCommandHandler({
@@ -74,6 +76,14 @@ export class PaneController extends AbstractViewController {
         },
       }),
     )
+  }
+
+  setCurrentNavPanelWidth(width: number) {
+    this.currentNavPanelWidth = width
+  }
+
+  setCurrentItemsPanelWidth(width: number) {
+    this.currentItemsPanelWidth = width
   }
 
   deinit() {

@@ -1,4 +1,4 @@
-import { PlatformedKeyboardShortcut, keyboardCharacterForModifier } from '@standardnotes/ui-services'
+import { PlatformedKeyboardShortcut, keyboardCharacterForModifier, isMacPlatform } from '@standardnotes/ui-services'
 
 type Props = {
   shortcut: PlatformedKeyboardShortcut
@@ -7,19 +7,32 @@ type Props = {
 
 export const KeyboardShortcutIndicator = ({ shortcut, className }: Props) => {
   const modifiers = shortcut.modifiers || []
-  const key = (shortcut.key || '').toUpperCase()
-  const spacingClass = 'ml-0.5'
+  const primaryKey = (shortcut.key || '').toUpperCase()
+  const addPluses = !isMacPlatform(shortcut.platform)
+  const spacingClass = addPluses ? '' : 'ml-0.5'
+
+  const keys: string[] = []
+  modifiers.forEach((modifier, index) => {
+    keys.push(keyboardCharacterForModifier(modifier, shortcut.platform))
+
+    if (addPluses && (primaryKey || index !== modifiers.length - 1)) {
+      keys.push('+')
+    }
+  })
+
+  if (primaryKey) {
+    keys.push(primaryKey)
+  }
 
   return (
     <div className={`keyboard-shortcut-indicator flex opacity-[0.35] ${className}`}>
-      {modifiers.map((modifier, index) => {
+      {keys.map((key, index) => {
         return (
-          <div className={index !== 0 ? spacingClass : ''} key={modifier}>
-            {keyboardCharacterForModifier(modifier, shortcut.platform)}
+          <div className={index !== 0 ? spacingClass : ''} key={index}>
+            {key}
           </div>
         )
       })}
-      {key && <span className={spacingClass}>{key}</span>}
     </div>
   )
 }

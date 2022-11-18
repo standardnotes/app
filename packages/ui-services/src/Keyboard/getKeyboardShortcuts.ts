@@ -1,4 +1,5 @@
 import { Environment, Platform } from '@standardnotes/snjs'
+import { isMacPlatform } from './platformCheck'
 import {
   CREATE_NEW_NOTE_KEYBOARD_COMMAND,
   TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
@@ -24,10 +25,6 @@ import {
 import { KeyboardKey } from './KeyboardKey'
 import { KeyboardModifier } from './KeyboardModifier'
 import { KeyboardShortcut } from './KeyboardShortcut'
-
-function isMacPlatform(platform: Platform) {
-  return platform === Platform.MacDesktop || platform === Platform.MacWeb
-}
 
 export function getKeyboardShortcuts(platform: Platform, _environment: Environment): KeyboardShortcut[] {
   const isMac = isMacPlatform(platform)

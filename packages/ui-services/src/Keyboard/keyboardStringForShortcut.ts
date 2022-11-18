@@ -1,5 +1,6 @@
 import { keyboardCharacterForModifier } from './keyboardCharacterForModifier'
 import { PlatformedKeyboardShortcut } from './KeyboardShortcut'
+import { isWindowsPlatform } from './platformCheck'
 
 function stringForCode(code = ''): string {
   return code.replace('Key', '').replace('Digit', '')
@@ -20,5 +21,9 @@ export function keyboardStringForShortcut(shortcut: PlatformedKeyboardShortcut |
     keyboardCharacterForModifier(modifier, shortcut.platform),
   )
 
-  return `${modifierCharacters.join('')}${key}`
+  if (isWindowsPlatform(shortcut.platform)) {
+    return `${modifierCharacters.join('+')}+${key}`
+  } else {
+    return `${modifierCharacters.join('')}${key}`
+  }
 }
