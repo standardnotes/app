@@ -131,7 +131,7 @@ export class KeyboardService {
     const target = event.target as HTMLElement
 
     for (const observer of this.commandHandlers) {
-      if (observer.command.type !== command.type) {
+      if (observer.command !== command) {
         continue
       }
 

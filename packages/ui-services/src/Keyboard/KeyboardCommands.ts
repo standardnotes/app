@@ -1,9 +1,7 @@
-export class KeyboardCommand {
-  constructor(public readonly type: string) {}
-}
+export type KeyboardCommand = symbol
 
 function createKeyboardCommand(type: string): KeyboardCommand {
-  return new KeyboardCommand(type)
+  return Symbol(type)
 }
 
 export const TOGGLE_LIST_PANE_KEYBOARD_COMMAND = createKeyboardCommand('TOGGLE_LIST_PANE_KEYBOARD_COMMAND')
