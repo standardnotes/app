@@ -26,7 +26,7 @@ import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/t
 import { action, makeObservable, observable, reaction } from 'mobx'
 import { WebApplication } from '../Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
-import { NotesController } from './NotesController'
+import { NotesController } from './NotesController/NotesController'
 import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
 
 const UnprotectedFileActions = [PopoverFileItemActionType.ToggleFileProtection]

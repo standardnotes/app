@@ -9,6 +9,7 @@ import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobi
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
+import { ESCAPE_COMMAND } from '@standardnotes/ui-services'
 
 const PreferencesView: FunctionComponent<PreferencesProps> = ({
   application,
@@ -26,8 +27,8 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
 
   useEffect(() => {
     menu.selectPane(viewControllerManager.preferencesController.currentPane)
-    const removeEscKeyObserver = application.io.addKeyObserver({
-      key: 'Escape',
+    const removeEscKeyObserver = application.keyboardService.addCommandHandler({
+      command: ESCAPE_COMMAND,
       onKeyDown: (event) => {
         event.preventDefault()
         closePreferences()
@@ -36,7 +37,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
     return () => {
       removeEscKeyObserver()
     }
-  }, [menu, viewControllerManager.preferencesController.currentPane, application.io, closePreferences])
+  }, [menu, viewControllerManager.preferencesController.currentPane, application.keyboardService, closePreferences])
 
   useDisableBodyScrollOnMobile()
 

@@ -7,6 +7,7 @@ import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
 import { observer } from 'mobx-react-lite'
 import ClearInputButton from '../ClearInputButton/ClearInputButton'
+import { ElementIds } from '@/Constants/ElementIDs'
 
 type Props = {
   itemListController: ItemListController
@@ -48,6 +49,7 @@ const SearchBar = ({ itemListController, searchOptionsController }: Props) => {
     <div className="pt-3 pb-0.5" role="search">
       <DecoratedInput
         autocomplete={false}
+        id={ElementIds.SearchBar}
         className={{
           container: 'px-1',
           input: 'text-base placeholder:text-passive-0 lg:text-sm',

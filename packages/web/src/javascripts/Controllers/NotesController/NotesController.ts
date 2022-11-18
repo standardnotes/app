@@ -1,16 +1,17 @@
 import { destroyAllObjectProperties } from '@/Utils'
-import { confirmDialog } from '@standardnotes/ui-services'
+import { confirmDialog, PIN_NOTE_COMMAND, STAR_NOTE_COMMAND } from '@standardnotes/ui-services'
 import { StringEmptyTrash, Strings, StringUtils } from '@/Constants/Strings'
 import { MENU_MARGIN_FROM_APP_BORDER } from '@/Constants/Constants'
 import { SNNote, NoteMutator, ContentType, SNTag, TagMutator, InternalEventBus } from '@standardnotes/snjs'
 import { makeObservable, observable, action, computed, runInAction } from 'mobx'
-import { WebApplication } from '../Application/Application'
-import { AbstractViewController } from './Abstract/AbstractViewController'
-import { SelectedItemsController } from './SelectedItemsController'
-import { ItemListController } from './ItemList/ItemListController'
-import { NavigationController } from './Navigation/NavigationController'
+import { WebApplication } from '../../Application/Application'
+import { AbstractViewController } from '../Abstract/AbstractViewController'
+import { SelectedItemsController } from '../SelectedItemsController'
+import { ItemListController } from '../ItemList/ItemListController'
+import { NavigationController } from '../Navigation/NavigationController'
+import { NotesControllerInterface } from './NotesControllerInterface'
 
-export class NotesController extends AbstractViewController {
+export class NotesController extends AbstractViewController implements NotesControllerInterface {
   lastSelectedNote: SNNote | undefined
   contextMenuOpen = false
   contextMenuPosition: { top?: number; left: number; bottom?: number } = {
@@ -57,6 +58,21 @@ export class NotesController extends AbstractViewController {
       setShowProtectedWarning: action,
       unselectNotes: action,
     })
+
+    this.disposers.push(
+      this.application.keyboardService.addCommandHandler({
+        command: PIN_NOTE_COMMAND,
+        onKeyDown: () => {
+          this.togglePinSelectedNotes()
+        },
+      }),
+      this.application.keyboardService.addCommandHandler({
+        command: STAR_NOTE_COMMAND,
+        onKeyDown: () => {
+          this.toggleStarSelectedNotes()
+        },
+      }),
+    )
   }
 
   public setServicesPostConstruction(itemListController: ItemListController) {
@@ -237,6 +253,28 @@ export class NotesController extends AbstractViewController {
     }
 
     return false
+  }
+
+  togglePinSelectedNotes(): void {
+    const notes = this.selectedNotes
+    const pinned = notes.some((note) => note.pinned)
+
+    if (!pinned) {
+      this.setPinSelectedNotes(true)
+    } else {
+      this.setPinSelectedNotes(false)
+    }
+  }
+
+  toggleStarSelectedNotes(): void {
+    const notes = this.selectedNotes
+    const starred = notes.some((note) => note.starred)
+
+    if (!starred) {
+      this.setStarSelectedNotes(true)
+    } else {
+      this.setStarSelectedNotes(false)
+    }
   }
 
   setPinSelectedNotes(pinned: boolean): void {

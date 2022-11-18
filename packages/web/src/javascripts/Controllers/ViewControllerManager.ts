@@ -24,7 +24,7 @@ import { action, makeObservable, observable } from 'mobx'
 import { ActionsMenuController } from './ActionsMenuController'
 import { FeaturesController } from './FeaturesController'
 import { FilesController } from './FilesController'
-import { NotesController } from './NotesController'
+import { NotesController } from './NotesController/NotesController'
 import { ItemListController } from './ItemList/ItemListController'
 import { NoAccountWarningController } from './NoAccountWarningController'
 import { PreferencesController } from './PreferencesController'
@@ -60,7 +60,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   readonly itemListController: ItemListController
   readonly preferencesController: PreferencesController
   readonly purchaseFlowController: PurchaseFlowController
-  readonly quickSettingsMenuController = new QuickSettingsController()
+  readonly quickSettingsMenuController: QuickSettingsController
   readonly searchOptionsController: SearchOptionsController
   readonly subscriptionController: SubscriptionController
   readonly syncStatusController = new SyncStatusController()
@@ -92,7 +92,9 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
 
     this.subscriptionManager = application.subscriptions
 
-    this.paneController = new PaneController()
+    this.quickSettingsMenuController = new QuickSettingsController(application, this.eventBus)
+
+    this.paneController = new PaneController(application, this.eventBus)
 
     this.preferencesController = new PreferencesController(application, this.eventBus)
 
@@ -152,7 +154,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
       this.subscriptionController,
     )
 
-    this.historyModalController = new HistoryModalController(this.application, this.eventBus)
+    this.historyModalController = new HistoryModalController(this.application, this.eventBus, this.notesController)
 
     this.toastService = new ToastService()
 

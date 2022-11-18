@@ -1,11 +1,12 @@
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useRef, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ChangeEditorMenu from './ChangeEditorMenu'
 import Popover from '../Popover/Popover'
 import RoundIconButton from '../Button/RoundIconButton'
 import { getIconAndTintForNoteType } from '@/Utils/Items/Icons/getIconAndTintForNoteType'
+import { CHANGE_EDITOR_COMMAND, keyboardStringForShortcut } from '@standardnotes/ui-services'
 
 type Props = {
   application: WebApplication
@@ -40,10 +41,24 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
     setIsClickOutsideDisabled(true)
   }, [])
 
+  useEffect(() => {
+    return application.keyboardService.addCommandHandler({
+      command: CHANGE_EDITOR_COMMAND,
+      onKeyDown: () => {
+        void toggleMenu()
+      },
+    })
+  }, [application, toggleMenu])
+
+  const shortcut = useMemo(
+    () => application.keyboardService.keyboardShortcutForCommand(CHANGE_EDITOR_COMMAND),
+    [application],
+  )
+
   return (
     <div ref={containerRef}>
       <RoundIconButton
-        label="Change note type"
+        label={`Change note type (${shortcut && keyboardStringForShortcut(shortcut)})`}
         onClick={toggleMenu}
         ref={buttonRef}
         icon={selectedEditorIcon}

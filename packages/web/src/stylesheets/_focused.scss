@@ -15,8 +15,41 @@
       -webkit-app-region: drag;
     }
 
-    #editor-title-bar {
-      display: none;
+    #editor-column {
+      padding: 25px 10% 0px 10%;
+
+      @media screen and (min-width: 992px) {
+        padding: 25px 15% 0px 15%;
+      }
+
+      @media screen and (min-width: 1200px) {
+        padding: 25px 20% 0px 20%;
+      }
+
+      background-color: var(--sn-stylekit-contrast-background-color);
+
+      .content {
+        box-shadow: 0 0 4px 1px var(--sn-stylekit-shadow-color);
+        overflow: hidden;
+      }
+
+      .note-view-linking-container {
+        display: none;
+      }
+
+      #editor-title-bar:hover .note-view-linking-container {
+        display: flex;
+      }
+
+      .note-view-options-buttons,
+      .note-status-tooltip-container {
+        opacity: 0;
+      }
+
+      #editor-title-bar:hover .note-view-options-buttons,
+      #editor-title-bar:hover .note-status-tooltip-container {
+        opacity: 1;
+      }
     }
 
     #editor-menu-bar {
@@ -27,20 +60,21 @@
       display: none;
     }
 
-    #footer-bar {
+    #footer-bar .left,
+    #footer-bar .right {
       opacity: 0.08;
       transition: opacity 0.25s;
     }
 
-    #footer-bar:hover {
+    #footer-bar *:hover {
       opacity: 1;
     }
 
     #navigation,
     #items-column {
       will-change: opacity;
-      animation: fade-out 1.25s forwards;
-      transition: width 1.25s;
+      animation: fade-out 0.5s forwards;
+      transition: width 0.5s;
       transition-delay: 0s;
       width: 0px !important;
       flex: none !important;
@@ -61,9 +95,9 @@
 .disable-focus-mode {
   #navigation,
   #items-column {
-    transition: width 1.25s;
+    transition: width 0.5s;
     will-change: opacity;
-    animation: fade-in 1.25s forwards;
+    animation: fade-in 0.5s forwards;
   }
 }
 

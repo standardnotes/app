@@ -29,7 +29,7 @@ import { DesktopManager } from './Device/DesktopManager'
 import {
   ArchiveManager,
   AutolockService,
-  IOService,
+  KeyboardService,
   RouteService,
   RouteServiceInterface,
   ThemeManager,
@@ -85,19 +85,17 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     this.itemControllerGroup = new ItemGroupController(this)
     this.routeService = new RouteService(this, internalEventBus)
 
-    const viewControllerManager = new ViewControllerManager(this, deviceInterface)
-    const archiveService = new ArchiveManager(this)
-    const io = new IOService(platform === Platform.MacWeb || platform === Platform.MacDesktop)
-    const themeService = new ThemeManager(this, internalEventBus)
-
-    this.setWebServices({
-      viewControllerManager,
-      archiveService,
-      desktopService: isDesktopDevice(deviceInterface) ? new DesktopManager(this, deviceInterface) : undefined,
-      io,
-      autolockService: this.isNativeMobileWeb() ? undefined : new AutolockService(this, internalEventBus),
-      themeService,
-    })
+    this.webServices = {} as WebServices
+    this.webServices.keyboardService = new KeyboardService(platform, this.environment)
+    this.webServices.archiveService = new ArchiveManager(this)
+    this.webServices.themeService = new ThemeManager(this, internalEventBus)
+    this.webServices.autolockService = this.isNativeMobileWeb()
+      ? undefined
+      : new AutolockService(this, internalEventBus)
+    this.webServices.desktopService = isDesktopDevice(deviceInterface)
+      ? new DesktopManager(this, deviceInterface)
+      : undefined
+    this.webServices.viewControllerManager = new ViewControllerManager(this, deviceInterface)
 
     if (this.isNativeMobileWeb()) {
       this.mobileWebReceiver = new MobileWebReceiver(this)
@@ -152,10 +150,6 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     }
   }
 
-  setWebServices(services: WebServices): void {
-    this.webServices = services
-  }
-
   public addWebEventObserver(observer: WebEventObserver): () => void {
     this.webEventObservers.push(observer)
 
@@ -194,6 +188,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.webServices.archiveService
   }
 
+  public get paneController() {
+    return this.webServices.viewControllerManager.paneController
+  }
+
   public get desktopDevice(): DesktopDeviceInterface | undefined {
     if (isDesktopDevice(this.deviceInterface)) {
       return this.deviceInterface
@@ -221,8 +219,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.webServices.themeService
   }
 
-  public get io() {
-    return this.webServices.io
+  public get keyboardService() {
+    return this.webServices.keyboardService
   }
 
   async checkForSecurityUpdate() {

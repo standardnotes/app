@@ -13,7 +13,7 @@ type Props = {
 }
 
 const RoundIconButton = forwardRef(
-  ({ onClick, className, icon: iconType, iconClassName, id }: Props, ref: ForwardedRef<HTMLButtonElement>) => {
+  ({ onClick, className, icon: iconType, iconClassName, id, label }: Props, ref: ForwardedRef<HTMLButtonElement>) => {
     const click: MouseEventHandler = (e) => {
       e.preventDefault()
       onClick()
@@ -29,6 +29,8 @@ const RoundIconButton = forwardRef(
         onClick={click}
         ref={ref}
         id={id}
+        title={label}
+        aria-label={label}
       >
         <Icon type={iconType} className={iconClassName} />
       </button>
