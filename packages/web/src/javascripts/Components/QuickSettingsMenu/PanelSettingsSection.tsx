@@ -10,8 +10,6 @@ const PanelSettingsSection = () => {
   const { isListPaneCollapsed, isNavigationPaneCollapsed, toggleListPane, toggleNavigationPane } =
     useResponsiveAppPane()
 
-    console.log('rerendering settings')
-
   const commandService = useCommandService()
 
   const navigationShortcut = useMemo(
