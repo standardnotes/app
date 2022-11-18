@@ -1,8 +1,11 @@
 import { VisuallyHidden } from '@reach/visually-hidden'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback } from 'react'
+import { FunctionComponent, useCallback, useMemo } from 'react'
 import Icon from '@/Components/Icon/Icon'
-import { NotesController } from '@/Controllers/NotesController'
+import { NotesController } from '@/Controllers/NotesController/NotesController'
+import { classNames } from '@/Utils/ConcatenateClassNames'
+import { keyboardStringForShortcut, PIN_NOTE_COMMAND } from '@standardnotes/ui-services'
+import { useCommandService } from '../ApplicationView/CommandProvider'
 
 type Props = {
   className?: string
@@ -18,18 +21,29 @@ const PinNoteButton: FunctionComponent<Props> = ({ className = '', notesControll
     if (onClickPreprocessing) {
       await onClickPreprocessing()
     }
-    if (!pinned) {
-      notesController.setPinSelectedNotes(true)
-    } else {
-      notesController.setPinSelectedNotes(false)
-    }
-  }, [onClickPreprocessing, pinned, notesController])
+    notesController.togglePinSelectedNotes()
+  }, [onClickPreprocessing, notesController])
+
+  const commandService = useCommandService()
+
+  const shortcut = useMemo(
+    () => keyboardStringForShortcut(commandService.keyboardShortcutForCommand(PIN_NOTE_COMMAND)),
+    [commandService],
+  )
+
+  const label = pinned ? `Unpin note (${shortcut})` : `Pin note (${shortcut})`
 
   return (
     <button
-      className={`sn-icon-button flex h-10 min-w-10 cursor-pointer items-center justify-center rounded-full border border-solid border-border text-neutral hover:bg-contrast focus:bg-contrast
-      md:h-8 md:min-w-8 ${pinned ? 'toggled' : ''} ${className}`}
+      className={classNames(
+        'sn-icon-button flex h-10 min-w-10 cursor-pointer items-center justify-center',
+        'focus:bg-contras rounded-full border border-solid border-border text-neutral hover:bg-contrast',
+        `md:h-8 md:min-w-8 ${pinned ? 'toggled' : ''}`,
+        className,
+      )}
       onClick={togglePinned}
+      title={label}
+      aria-label={label}
     >
       <VisuallyHidden>Pin selected notes</VisuallyHidden>
       <Icon type="pin" className="block" />

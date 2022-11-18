@@ -15,7 +15,7 @@ import {
   PrefKey,
   WebAppEvent,
 } from '@standardnotes/snjs'
-import { KeyboardKey } from '@standardnotes/ui-services'
+import { TAB_COMMAND } from '@standardnotes/ui-services'
 import { ChangeEventHandler, forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { NoteViewController } from '../Controller/NoteViewController'
 
@@ -181,9 +181,9 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
         return
       }
 
-      tabObserverDisposer.current = application.io.addKeyObserver({
+      tabObserverDisposer.current = application.keyboardService.addCommandHandler({
         element: editor,
-        key: KeyboardKey.Tab,
+        command: TAB_COMMAND,
         onKeyDown: (event) => {
           if (document.hidden || note.current.locked || event.shiftKey) {
             return

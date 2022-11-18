@@ -25,7 +25,7 @@ import {
   SNComponent,
   SNNote,
 } from '@standardnotes/snjs'
-import { confirmDialog, KeyboardKey, KeyboardModifier } from '@standardnotes/ui-services'
+import { confirmDialog, DELETE_NOTE_KEYBOARD_COMMAND, KeyboardKey } from '@standardnotes/ui-services'
 import { ChangeEventHandler, createRef, KeyboardEventHandler, RefObject } from 'react'
 import { SuperEditor } from './SuperEditor/SuperEditor'
 import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
@@ -764,11 +764,10 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   registerKeyboardShortcuts() {
-    this.removeTrashKeyObserver = this.application.io.addKeyObserver({
-      key: KeyboardKey.Backspace,
+    this.removeTrashKeyObserver = this.application.keyboardService.addCommandHandler({
+      command: DELETE_NOTE_KEYBOARD_COMMAND,
       notTags: ['INPUT', 'TEXTAREA'],
       notElementIds: [SuperEditorContentId],
-      modifiers: [KeyboardModifier.Meta],
       onKeyDown: () => {
         this.deleteNote(false).catch(console.error)
       },
@@ -877,7 +876,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 />
               </div>
               {renderHeaderOptions && (
-                <div className="flex items-center gap-3">
+                <div className="note-view-options-buttons flex items-center gap-3">
                   <LinkedItemsButton
                     filesController={this.viewControllerManager.filesController}
                     linkingController={this.viewControllerManager.linkingController}

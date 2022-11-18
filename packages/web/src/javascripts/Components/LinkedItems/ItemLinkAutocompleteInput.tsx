@@ -26,9 +26,16 @@ type Props = {
   focusPreviousItem: () => void
   focusedId: string | undefined
   setFocusedId: (id: string) => void
+  hoverLabel?: string
 }
 
-const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focusedId, setFocusedId }: Props) => {
+const ItemLinkAutocompleteInput = ({
+  linkingController,
+  focusPreviousItem,
+  focusedId,
+  setFocusedId,
+  hoverLabel,
+}: Props) => {
   const application = useApplication()
   const { tags, linkItemToSelectedItem, createAndAddNewTag, isEntitledToNoteLinking, activeItem } = linkingController
 
@@ -128,6 +135,8 @@ const ItemLinkAutocompleteInput = ({ linkingController, focusPreviousItem, focus
             onKeyDown={onKeyDown}
             id={ElementIds.ItemLinkAutocompleteInput}
             autoComplete="off"
+            title={hoverLabel}
+            aria-label={hoverLabel}
           />
           {areSearchResultsVisible && (
             <DisclosurePanel

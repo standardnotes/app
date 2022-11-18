@@ -7,6 +7,8 @@ import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { MenuItemType } from './MenuItemType'
 import RadioIndicator from '../Radio/RadioIndicator'
 import { classNames } from '@/Utils/ConcatenateClassNames'
+import { PlatformedKeyboardShortcut } from '@standardnotes/ui-services'
+import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 
 type MenuItemProps = {
   children: ReactNode
@@ -20,6 +22,7 @@ type MenuItemProps = {
   iconClassName?: string
   tabIndex?: number
   disabled?: boolean
+  shortcut?: PlatformedKeyboardShortcut
 }
 
 const MenuItem = forwardRef(
@@ -36,6 +39,7 @@ const MenuItem = forwardRef(
       iconClassName,
       tabIndex,
       disabled,
+      shortcut,
     }: MenuItemProps,
     ref: Ref<HTMLButtonElement>,
   ) => {
@@ -58,7 +62,10 @@ const MenuItem = forwardRef(
           aria-checked={checked}
         >
           <span className="flex flex-grow items-center">{children}</span>
-          <Switch disabled={disabled} className="px-0" checked={checked} />
+          <div className="flex">
+            {shortcut && <KeyboardShortcutIndicator className="mr-2" shortcut={shortcut} />}
+            <Switch disabled={disabled} className="px-0" checked={checked} />
+          </div>
         </button>
       </li>
     ) : (
@@ -78,6 +85,7 @@ const MenuItem = forwardRef(
           onBlur={onBlur}
           {...(type === MenuItemType.RadioButton ? { 'aria-checked': checked } : {})}
         >
+          {shortcut && <KeyboardShortcutIndicator className="mr-2" shortcut={shortcut} />}
           {type === MenuItemType.IconButton && icon ? <Icon type={icon} className={iconClassName} /> : null}
           {type === MenuItemType.RadioButton && typeof checked === 'boolean' ? (
             <RadioIndicator disabled={disabled} checked={checked} className="flex-shrink-0" />

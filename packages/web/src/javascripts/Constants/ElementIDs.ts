@@ -11,4 +11,5 @@ export const ElementIds = {
   RootId: 'app-group-root',
   NoteStatusTooltip: 'note-status-tooltip',
   ItemLinkAutocompleteInput: 'item-link-autocomplete-input',
+  SearchBar: 'search-bar',
 } as const

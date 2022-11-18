@@ -20,8 +20,12 @@ import { observer } from 'mobx-react-lite'
 type ResponsivePaneData = {
   selectedPane: AppPaneId
   toggleAppPane: (paneId: AppPaneId) => void
-  isNotesListVisibleOnTablets: boolean
   toggleNotesListOnTablets: () => void
+  toggleListPane: () => void
+  toggleNavigationPane: () => void
+  isNotesListVisibleOnTablets: boolean
+  isListPaneCollapsed: boolean
+  isNavigationPaneCollapsed: boolean
 }
 
 const ResponsivePaneContext = createContext<ResponsivePaneData | undefined>(undefined)
@@ -112,8 +116,21 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
       toggleAppPane,
       isNotesListVisibleOnTablets,
       toggleNotesListOnTablets,
+      isListPaneCollapsed: paneController.isListPaneCollapsed,
+      isNavigationPaneCollapsed: paneController.isNavigationPaneCollapsed,
+      toggleListPane: paneController.toggleListPane,
+      toggleNavigationPane: paneController.toggleNavigationPane,
     }),
-    [currentSelectedPane, isNotesListVisibleOnTablets, toggleAppPane, toggleNotesListOnTablets],
+    [
+      currentSelectedPane,
+      isNotesListVisibleOnTablets,
+      toggleAppPane,
+      toggleNotesListOnTablets,
+      paneController.toggleListPane,
+      paneController.toggleNavigationPane,
+      paneController.isListPaneCollapsed,
+      paneController.isNavigationPaneCollapsed,
+    ],
   )
 
   return (

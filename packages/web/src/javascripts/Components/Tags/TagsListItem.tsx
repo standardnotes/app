@@ -279,7 +279,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
             {isEditing && (
               <input
                 className={
-                  'title editing text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item'
+                  'title editing overflow-hidden text-mobile-navigation-list-item focus:shadow-none focus:outline-none lg:text-navigation-list-item'
                 }
                 id={`react-tag-${tag.uuid}-${type}`}
                 onBlur={onBlur}
