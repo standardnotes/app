@@ -192,6 +192,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
       {themes.map((theme) => (
         <ThemesMenuButton item={theme} application={application} key={theme.component?.uuid ?? theme.identifier} />
       ))}
+      <HorizontalSeparator classes="my-2" />
       <FocusModeSwitch
         application={application}
         onToggle={setFocusModeEnabled}

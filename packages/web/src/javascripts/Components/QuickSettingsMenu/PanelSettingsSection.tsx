@@ -31,7 +31,7 @@ const PanelSettingsSection = () => {
         onChange={toggleNavigationPane}
         shortcut={navigationShortcut}
       >
-        Show navigation panel
+        Show Tags Panel
       </MenuItem>
       <MenuItem
         type={MenuItemType.SwitchButton}
@@ -40,7 +40,7 @@ const PanelSettingsSection = () => {
         onChange={toggleListPane}
         shortcut={listShortcut}
       >
-        Show list panel
+        Show Notes Panel
       </MenuItem>
     </div>
   )

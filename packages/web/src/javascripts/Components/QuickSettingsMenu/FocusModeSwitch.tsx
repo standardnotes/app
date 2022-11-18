@@ -44,7 +44,7 @@ const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggle, onCl
       )}
       onClick={toggle}
     >
-      <div className="flex items-center">Focused Writing</div>
+      <div className="flex items-center">Focus Mode</div>
       <div className="flex">
         {shortcut && <KeyboardShortcutIndicator className="mr-2" shortcut={shortcut} />}
         <Switch className="px-0" checked={isEnabled} />
