@@ -4,7 +4,7 @@ import { NavigationController } from '@/Controllers/Navigation/NavigationControl
 import { CREATE_NEW_TAG_COMMAND, keyboardStringForShortcut } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useMemo } from 'react'
-import { useApplication } from '../ApplicationView/ApplicationProvider'
+import { useCommandService } from '../ApplicationView/CommandProvider'
 
 type Props = {
   tags: NavigationController
@@ -12,11 +12,11 @@ type Props = {
 }
 
 const TagsSectionAddButton: FunctionComponent<Props> = ({ tags }) => {
-  const application = useApplication()
+  const commandService = useCommandService()
 
   const shortcut = useMemo(
-    () => keyboardStringForShortcut(application.keyboardService.keyboardShortcutForCommand(CREATE_NEW_TAG_COMMAND)),
-    [application],
+    () => keyboardStringForShortcut(commandService.keyboardShortcutForCommand(CREATE_NEW_TAG_COMMAND)),
+    [commandService],
   )
   return (
     <IconButton

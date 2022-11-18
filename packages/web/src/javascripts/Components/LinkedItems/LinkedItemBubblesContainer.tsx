@@ -9,8 +9,8 @@ import { classNames } from '@/Utils/ConcatenateClassNames'
 import { ContentType } from '@standardnotes/snjs'
 import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { ItemLink } from '@/Utils/Items/Search/ItemLink'
-import { useApplication } from '../ApplicationView/ApplicationProvider'
 import { FOCUS_TAGS_INPUT_COMMAND, keyboardStringForShortcut } from '@standardnotes/ui-services'
+import { useCommandService } from '../ApplicationView/CommandProvider'
 
 type Props = {
   linkingController: LinkingController
@@ -18,7 +18,9 @@ type Props = {
 
 const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
-  const application = useApplication()
+
+  const commandService = useCommandService()
+
   const {
     allItemLinks,
     notesLinkingToActiveItem,
@@ -28,7 +30,7 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
   } = linkingController
 
   useEffect(() => {
-    return application.keyboardService.addCommandHandler({
+    return commandService.addCommandHandler({
       command: FOCUS_TAGS_INPUT_COMMAND,
       onKeyDown: () => {
         const input = document.getElementById(ElementIds.ItemLinkAutocompleteInput)
@@ -37,11 +39,11 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
         }
       },
     })
-  }, [application])
+  }, [commandService])
 
   const shortcut = useMemo(
-    () => keyboardStringForShortcut(application.keyboardService.keyboardShortcutForCommand(FOCUS_TAGS_INPUT_COMMAND)),
-    [application],
+    () => keyboardStringForShortcut(commandService.keyboardShortcutForCommand(FOCUS_TAGS_INPUT_COMMAND)),
+    [commandService],
   )
 
   const [focusedId, setFocusedId] = useState<string>()
