@@ -182,6 +182,7 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
       }
 
       tabObserverDisposer.current = application.keyboardService.addCommandHandler({
+        element: editor,
         command: PLAIN_EDITOR_INSERT_TAB_COMMAND,
         onKeyDown: (event) => {
           if (document.hidden || note.current.locked || event.shiftKey) {
