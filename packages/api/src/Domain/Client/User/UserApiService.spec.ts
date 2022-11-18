@@ -1,5 +1,5 @@
 import { ProtocolVersion, UserRequestType } from '@standardnotes/common'
-import { RootKeyParamsInterface } from '@standardnotes/models'
+import { type RootKeyParamsInterface } from '@standardnotes/models'
 import { UserDeletionResponse } from '../../Response/User/UserDeletionResponse'
 
 import { UserRegistrationResponse } from '../../Response/User/UserRegistrationResponse'

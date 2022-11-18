@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.151.7](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.6...@standardnotes/snjs@2.151.7) (2022-11-18)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.151.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.5...@standardnotes/snjs@2.151.6) (2022-11-18)
+
+### Bug Fixes
+
+* **snjs:** keep apply payload timestamp when using keep base conflict strategy ([#2031](https://github.com/standardnotes/app/issues/2031)) ([87f8669](https://github.com/standardnotes/app/commit/87f86693a67a36972f0e44a883b18a7129c36893))
+
 ## [2.151.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.4...@standardnotes/snjs@2.151.5) (2022-11-17)
 
 ### Bug Fixes

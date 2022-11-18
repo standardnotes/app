@@ -1,4 +1,4 @@
-import { Invitation } from '@standardnotes/models'
+import { type Invitation } from '@standardnotes/models'
 
 import { SubscriptionInviteAcceptResponse } from '../../Response/Subscription/SubscriptionInviteAcceptResponse'
 import { SubscriptionInviteCancelResponse } from '../../Response/Subscription/SubscriptionInviteCancelResponse'

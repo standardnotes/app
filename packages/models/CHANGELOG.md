@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.37.5](https://github.com/standardnotes/app/compare/@standardnotes/models@1.37.4...@standardnotes/models@1.37.5) (2022-11-18)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.37.4](https://github.com/standardnotes/app/compare/@standardnotes/models@1.37.3...@standardnotes/models@1.37.4) (2022-11-18)
+
+### Bug Fixes
+
+* **snjs:** keep apply payload timestamp when using keep base conflict strategy ([#2031](https://github.com/standardnotes/app/issues/2031)) ([87f8669](https://github.com/standardnotes/app/commit/87f86693a67a36972f0e44a883b18a7129c36893))
+
 ## [1.37.3](https://github.com/standardnotes/app/compare/@standardnotes/models@1.37.2...@standardnotes/models@1.37.3) (2022-11-17)
 
 **Note:** Version bump only for package @standardnotes/models
