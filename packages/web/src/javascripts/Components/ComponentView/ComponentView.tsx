@@ -143,10 +143,10 @@ const ComponentView: FunctionComponent<IProps> = ({ application, onLoad, compone
     const removeActionObserver = componentViewer.addActionObserver((action, data) => {
       switch (action) {
         case ComponentAction.KeyDown:
-          application.io.handleComponentKeyDown(data.keyboardModifier)
+          application.keyboardService.handleComponentKeyDown(data.keyboardModifier)
           break
         case ComponentAction.KeyUp:
-          application.io.handleComponentKeyUp(data.keyboardModifier)
+          application.keyboardService.handleComponentKeyUp(data.keyboardModifier)
           break
         case ComponentAction.Click:
           application.getViewControllerManager().notesController.setContextMenuOpen(false)

@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { FilesController } from '@/Controllers/FilesController'
-import { NotesController } from '@/Controllers/NotesController'
+import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { SortableItem, SNTag, Uuids } from '@standardnotes/snjs'
 import { ListableContentItem } from './ListableContentItem'
 

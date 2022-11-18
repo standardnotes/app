@@ -1,76 +1,48 @@
-import { WebApplication } from '@/Application/Application'
-import { memo, useEffect, useState } from 'react'
-import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
+import { TOGGLE_LIST_PANE_KEYBOARD_COMMAND, TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND } from '@standardnotes/ui-services'
+import { useMemo } from 'react'
 import MenuItem from '../Menu/MenuItem'
 import { MenuItemType } from '../Menu/MenuItemType'
-import { PANEL_NAME_NAVIGATION, PANEL_NAME_NOTES } from '@/Constants/Constants'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
+import { observer } from 'mobx-react-lite'
+import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { useCommandService } from '../ApplicationView/CommandProvider'
 
-type Props = {
-  application: WebApplication
-}
+const PanelSettingsSection = () => {
+  const { isListPaneCollapsed, isNavigationPaneCollapsed, toggleListPane, toggleNavigationPane } =
+    useResponsiveAppPane()
 
-const WidthForCollapsedPanel = 5
-const MinimumNavPanelWidth = PrefDefaults[PrefKey.TagsPanelWidth]
-const MinimumNotesPanelWidth = PrefDefaults[PrefKey.NotesPanelWidth]
+  const commandService = useCommandService()
 
-const PanelSettingsSection = ({ application }: Props) => {
-  const [currentNavPanelWidth, setCurrentNavPanelWidth] = useState(
-    application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth),
+  const navigationShortcut = useMemo(
+    () => commandService.keyboardShortcutForCommand(TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND),
+    [commandService],
   )
 
-  const [currentItemsPanelWidth, setCurrentItemsPanelWidth] = useState(
-    application.getPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth),
+  const listShortcut = useMemo(
+    () => commandService.keyboardShortcutForCommand(TOGGLE_LIST_PANE_KEYBOARD_COMMAND),
+    [commandService],
   )
-
-  const toggleNavigationPanel = () => {
-    const isCollapsed = currentNavPanelWidth <= WidthForCollapsedPanel
-    if (isCollapsed) {
-      void application.setPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth)
-    } else {
-      void application.setPreference(PrefKey.TagsPanelWidth, WidthForCollapsedPanel)
-    }
-    application.publishPanelDidResizeEvent(PANEL_NAME_NAVIGATION, !isCollapsed)
-  }
-
-  const toggleItemsListPanel = () => {
-    const isCollapsed = currentItemsPanelWidth <= WidthForCollapsedPanel
-    if (isCollapsed) {
-      void application.setPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth)
-    } else {
-      void application.setPreference(PrefKey.NotesPanelWidth, WidthForCollapsedPanel)
-    }
-    application.publishPanelDidResizeEvent(PANEL_NAME_NOTES, !isCollapsed)
-  }
-
-  useEffect(() => {
-    const removeObserver = application.addEventObserver(async () => {
-      setCurrentNavPanelWidth(application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
-      setCurrentItemsPanelWidth(application.getPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
-    }, ApplicationEvent.PreferencesChanged)
-
-    return removeObserver
-  }, [application])
 
   return (
     <div className="hidden md:block pointer-coarse:md-only:hidden pointer-coarse:lg-only:hidden">
       <MenuItem
         type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-        checked={currentNavPanelWidth > WidthForCollapsedPanel}
-        onChange={toggleNavigationPanel}
+        checked={isNavigationPaneCollapsed}
+        onChange={toggleNavigationPane}
+        shortcut={navigationShortcut}
       >
-        Show navigation panel
+        Show Tags Panel
       </MenuItem>
       <MenuItem
         type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-        checked={currentItemsPanelWidth > WidthForCollapsedPanel}
-        onChange={toggleItemsListPanel}
+        checked={isListPaneCollapsed}
+        onChange={toggleListPane}
+        shortcut={listShortcut}
       >
-        Show list panel
+        Show Notes Panel
       </MenuItem>
     </div>
   )
 }
-export default memo(PanelSettingsSection)
+export default observer(PanelSettingsSection)
