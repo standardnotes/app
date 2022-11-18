@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.14.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.13.18...@standardnotes/ui-services@1.14.0) (2022-11-18)
+
+### Features
+
+* keyboard shortcuts for primary actions ([#2030](https://github.com/standardnotes/app/issues/2030)) ([f49ba6b](https://github.com/standardnotes/app/commit/f49ba6bd4d38e4026bd88630014126a6e0086351))
+
 ## [1.13.18](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.13.17...@standardnotes/ui-services@1.13.18) (2022-11-18)
 
 **Note:** Version bump only for package @standardnotes/ui-services
