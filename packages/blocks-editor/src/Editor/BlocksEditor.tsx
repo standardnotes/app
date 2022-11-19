@@ -67,8 +67,14 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
         });
         previewText = truncateString(previewText, previewLength);
 
-        const stringifiedEditorState = JSON.stringify(editorState.toJSON());
-        onChange(stringifiedEditorState, previewText);
+        try {
+          const stringifiedEditorState = JSON.stringify(editorState.toJSON());
+          onChange(stringifiedEditorState, previewText);
+        } catch (error) {
+          window.alert(
+            `An invalid change was made inside the Super editor. Your change was not saved. Please report this error to the team: ${error}`,
+          );
+        }
       });
     },
     [onChange, didIgnoreFirstChange],

@@ -90,7 +90,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
   }, [controller, controller.item.uuid])
 
   return (
-    <div className="relative h-full w-full px-5 py-4">
+    <div className="relative h-full w-full">
       <ErrorBoundary>
         <LinkingControllerProvider controller={linkingController}>
           <FilesControllerProvider controller={filesController}>
@@ -102,7 +102,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
               <BlocksEditor
                 onChange={handleChange}
                 ignoreFirstChange={true}
-                className="relative h-full resize-none text-base focus:shadow-none focus:outline-none"
+                className="relative h-full resize-none px-5 py-4 text-base focus:shadow-none focus:outline-none"
                 previewLength={NotePreviewCharLimit}
                 spellcheck={spellcheck}
               >

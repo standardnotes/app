@@ -7,7 +7,7 @@
  */
 import {isPoint, Point} from './point';
 
-type ContainsPointReturn = {
+export type ContainsPointReturn = {
   result: boolean;
   reason: {
     isOnTopSide: boolean;
