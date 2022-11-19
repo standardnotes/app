@@ -5,6 +5,7 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
+import {$createListNode, $isListNode} from '@lexical/list';
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {eventFiles} from '@lexical/rich-text';
 import {mergeRegister} from '@lexical/utils';
@@ -23,7 +24,7 @@ import {LexicalDraggableBlockMenu} from '@standardnotes/icons';
 
 import {isHTMLElement} from '../../Utils/guard';
 import {Point} from '../../Utils/point';
-import {Rect} from '../../Utils/rect';
+import {ContainsPointReturn, Rect} from '../../Utils/rect';
 
 const SPACE = 4;
 const TARGET_LINE_HALF_HEIGHT = 2;
@@ -53,12 +54,56 @@ function getTopLevelNodeKeys(editor: LexicalEditor): string[] {
   return root ? root.__children : [];
 }
 
+function elementContainingEventLocation(
+  anchorElem: HTMLElement,
+  element: HTMLElement,
+  event: MouseEvent,
+): {contains: ContainsPointReturn; element: HTMLElement} {
+  const anchorElementRect = anchorElem.getBoundingClientRect();
+
+  const eventLocation = new Point(event.x, event.y);
+  const elementDomRect = Rect.fromDOM(element);
+  const {marginTop, marginBottom} = window.getComputedStyle(element);
+
+  const rect = elementDomRect.generateNewRect({
+    bottom: elementDomRect.bottom + parseFloat(marginBottom),
+    left: anchorElementRect.left,
+    right: anchorElementRect.right,
+    top: elementDomRect.top - parseFloat(marginTop),
+  });
+
+  const children = Array.from(element.children);
+
+  const shouldRecurseIntoChildren = ['UL', 'OL', 'LI'].includes(
+    element.tagName,
+  );
+
+  if (shouldRecurseIntoChildren) {
+    for (const child of children) {
+      const isLeaf = child.children.length === 0;
+      if (isLeaf) {
+        continue;
+      }
+      const childResult = elementContainingEventLocation(
+        anchorElem,
+        child as HTMLElement,
+        event,
+      );
+
+      if (childResult.contains.result) {
+        return childResult;
+      }
+    }
+  }
+
+  return {contains: rect.contains(eventLocation), element: element};
+}
+
 function getBlockElement(
   anchorElem: HTMLElement,
   editor: LexicalEditor,
   event: MouseEvent,
 ): HTMLElement | null {
-  const anchorElementRect = anchorElem.getBoundingClientRect();
   const topLevelNodeKeys = getTopLevelNodeKeys(editor);
 
   let blockElem: HTMLElement | null = null;
@@ -73,32 +118,22 @@ function getBlockElement(
       if (elem === null) {
         break;
       }
-      const point = new Point(event.x, event.y);
-      const domRect = Rect.fromDOM(elem);
-      const {marginTop, marginBottom} = window.getComputedStyle(elem);
+      const {contains, element} = elementContainingEventLocation(
+        anchorElem,
+        elem,
+        event,
+      );
 
-      const rect = domRect.generateNewRect({
-        bottom: domRect.bottom + parseFloat(marginBottom),
-        left: anchorElementRect.left,
-        right: anchorElementRect.right,
-        top: domRect.top - parseFloat(marginTop),
-      });
-
-      const {
-        result,
-        reason: {isOnTopSide, isOnBottomSide},
-      } = rect.contains(point);
-
-      if (result) {
-        blockElem = elem;
+      if (contains.result) {
+        blockElem = element;
         prevIndex = index;
         break;
       }
 
       if (direction === Indeterminate) {
-        if (isOnTopSide) {
+        if (contains.reason.isOnTopSide) {
           direction = Upward;
-        } else if (isOnBottomSide) {
+        } else if (contains.reason.isOnBottomSide) {
           direction = Downward;
         } else {
           // stop search block element
@@ -284,18 +319,30 @@ function useDraggableBlockMenu(
         return false;
       }
       const targetNode = $getNearestNodeFromDOMNode(targetBlockElem);
+
       if (!targetNode) {
         return false;
       }
       if (targetNode === draggedNode) {
         return true;
       }
+
+      let nodeToInsert = draggedNode;
+      const targetParent = targetNode.getParent();
+      const sourceParent = draggedNode.getParent();
+
+      if ($isListNode(sourceParent) && !$isListNode(targetParent)) {
+        const newList = $createListNode(sourceParent.getListType());
+        newList.append(draggedNode);
+        nodeToInsert = newList;
+      }
+
       const {top, height} = targetBlockElem.getBoundingClientRect();
       const shouldInsertAfter = pageY - top > height / 2;
       if (shouldInsertAfter) {
-        targetNode.insertAfter(draggedNode);
+        targetNode.insertAfter(nodeToInsert);
       } else {
-        targetNode.insertBefore(draggedNode);
+        targetNode.insertBefore(nodeToInsert);
       }
       setDraggableBlockElem(null);
 
