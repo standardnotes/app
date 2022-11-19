@@ -21,6 +21,7 @@ import {
   ChangeContentCallbackPlugin,
   ChangeEditorFunction,
 } from './Plugins/ChangeContentCallback/ChangeContentCallback'
+import PasswordPlugin from './Plugins/PasswordPlugin/PasswordPlugin'
 
 const NotePreviewCharLimit = 160
 
@@ -111,6 +112,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 <ItemBubblePlugin />
                 <BlockPickerMenuPlugin />
                 <DatetimePlugin />
+                <PasswordPlugin />
                 <AutoLinkPlugin />
                 <ChangeContentCallbackPlugin
                   providerCallback={(callback) => (changeEditorFunction.current = callback)}
