@@ -20,7 +20,7 @@ import {
 } from 'lexical';
 import {DragEvent as ReactDragEvent, useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
-import {LexicalDraggableBlockMenu} from '@standardnotes/icons';
+import {BlockIcon} from '@standardnotes/icons';
 
 import {isHTMLElement} from '../../Utils/guard';
 import {Point} from '../../Utils/point';
@@ -394,7 +394,7 @@ function useDraggableBlockMenu(
         onDragStart={onDragStart}
         onDragEnd={onDragEnd}>
         <div className={isEditable ? 'icon' : ''}>
-          <LexicalDraggableBlockMenu className="text-text pointer-events-none" />
+          <BlockIcon className="text-text pointer-events-none" />
         </div>
       </div>
       <div className="draggable-block-target-line" ref={targetLineRef} />
