@@ -21,6 +21,7 @@ import AttachmentFileIcon from './ic-attachment-file.svg'
 import AuthenticatorIcon from './ic-authenticator.svg'
 import AuthenticatorVariantIcon from './ic-authenticator-variant.svg'
 import BackIosIcon from './ic-back-ios.svg'
+import BlockIcon from './ic-block.svg'
 import BlueDotIcon from './blue-dot.svg'
 import BoldIcon from './ic-bold.svg'
 import BoxFilledIcon from './ic-box-filled.svg'
@@ -224,6 +225,7 @@ export {
   AuthenticatorIcon,
   AuthenticatorVariantIcon,
   BackIosIcon,
+  BlockIcon,
   BlueDotIcon,
   BoldIcon,
   BoxFilledIcon,

@@ -21,6 +21,7 @@ import {
   ChangeContentCallbackPlugin,
   ChangeEditorFunction,
 } from './Plugins/ChangeContentCallback/ChangeContentCallback'
+import PasswordPlugin from './Plugins/PasswordPlugin/PasswordPlugin'
 
 const NotePreviewCharLimit = 160
 
@@ -102,7 +103,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
               <BlocksEditor
                 onChange={handleChange}
                 ignoreFirstChange={true}
-                className="relative h-full resize-none px-5 py-4 text-base focus:shadow-none focus:outline-none"
+                className="relative h-full resize-none px-6 py-4 text-base focus:shadow-none focus:outline-none"
                 previewLength={NotePreviewCharLimit}
                 spellcheck={spellcheck}
               >
@@ -111,6 +112,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 <ItemBubblePlugin />
                 <BlockPickerMenuPlugin />
                 <DatetimePlugin />
+                <PasswordPlugin />
                 <AutoLinkPlugin />
                 <ChangeContentCallbackPlugin
                   providerCallback={(callback) => (changeEditorFunction.current = callback)}

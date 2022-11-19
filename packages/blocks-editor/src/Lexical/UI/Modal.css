@@ -17,7 +17,7 @@
   bottom: 0px;
   left: 0px;
   right: 0px;
-  background-color: rgba(40, 40, 40, 0.6);
+  background-color: rgba(0, 0, 0, 0.7);
   flex-grow: 0px;
   flex-shrink: 1px;
   z-index: 100;
@@ -28,22 +28,23 @@
   min-width: 300px;
   display: flex;
   flex-grow: 0px;
-  background-color: #fff;
+  background-color: var(--sn-stylekit-background-color);
   flex-direction: column;
   position: relative;
-  box-shadow: 0 0 20px 0 #444;
-  border-radius: 10px;
+  box-shadow: 0 0px 0 var(--sn-stylekit-shadow-color);
+  border-radius: 0px;
 }
 .Modal__title {
-  color: #444;
+  color:var(--sn-stylekit-foreground-color);
   margin: 0px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid #ccc;
+  padding-bottom: 15px;
+  border-bottom: 1px solid var(--sn-stylekit-border-color);
 }
 .Modal__closeButton {
   border: 0px;
   position: absolute;
   right: 20px;
+  top: 15px;
   border-radius: 20px;
   justify-content: center;
   align-items: center;
@@ -52,10 +53,11 @@
   height: 30px;
   text-align: center;
   cursor: pointer;
-  background-color: #eee;
+  background-color: var(--sn-stylekit-contrast-background-color);
 }
 .Modal__closeButton:hover {
-  background-color: #ddd;
+  background-color: var(--sn-stylekit-info-color);
+  color: var(--sn-stylekit-info-contrast-color);
 }
 .Modal__content {
   padding-top: 20px;

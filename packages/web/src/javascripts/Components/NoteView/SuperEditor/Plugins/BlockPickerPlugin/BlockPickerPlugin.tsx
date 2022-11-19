@@ -11,6 +11,7 @@ import { GetBulletedListBlock } from './Blocks/BulletedList'
 import { GetChecklistBlock } from './Blocks/Checklist'
 import { GetDividerBlock } from './Blocks/Divider'
 import { GetCollapsibleBlock } from './Blocks/Collapsible'
+import { GetDynamicPasswordBlocks, GetPasswordBlocks } from './Blocks/Password'
 import { GetParagraphBlock } from './Blocks/Paragraph'
 import { GetHeadingsBlocks } from './Blocks/Headings'
 import { GetQuoteBlock } from './Blocks/Quote'
@@ -49,11 +50,15 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
       GetDividerBlock(editor),
       ...GetDatetimeBlocks(editor),
       ...GetAlignmentBlocks(editor),
+      ...GetPasswordBlocks(editor),
       GetCollapsibleBlock(editor),
       ...GetEmbedsBlocks(editor),
     ]
 
-    const dynamicOptions = GetDynamicTableBlocks(editor, queryString || '')
+    const dynamicOptions = [
+      ...GetDynamicTableBlocks(editor, queryString || ''),
+      ...GetDynamicPasswordBlocks(editor, queryString || ''),
+    ]
 
     return queryString
       ? [

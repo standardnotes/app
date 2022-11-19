@@ -13,13 +13,13 @@
   padding-left: 15px;
   padding-right: 15px;
   border: 0px;
-  background-color: #eee;
-  border-radius: 5px;
+  background-color: var(--sn-stylekit-contrast-background-color);
   cursor: pointer;
   font-size: 14px;
 }
 .Button__root:hover {
-  background-color: #ddd;
+  background-color: var(--sn-stylekit-info-color);
+  color: var(--sn-stylekit-info-contrast-color);
 }
 .Button__small {
   padding-top: 5px;
@@ -32,5 +32,5 @@
   cursor: not-allowed;
 }
 .Button__disabled:hover {
-  background-color: #eee;
+  background-color: var(--sn-stylekit-secondary-background-color);
 }

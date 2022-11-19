@@ -110,8 +110,8 @@ export function InsertTableDialog({
 
   return (
     <>
-      <TextInput label="No of rows" onChange={setRows} value={rows} />
-      <TextInput label="No of columns" onChange={setColumns} value={columns} />
+      <TextInput label="Number of rows" onChange={setRows} value={rows} />
+      <TextInput label="Number of columns" onChange={setColumns} value={columns} />
       <DialogActions data-test-id="table-model-confirm-insert">
         <Button onClick={onClick}>Confirm</Button>
       </DialogActions>
