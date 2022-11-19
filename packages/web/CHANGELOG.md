@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.104.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.103.2...@standardnotes/web@3.104.0) (2022-11-19)
+
+### Features
+
+* ability to drag super list items; secure password generation blocks ([#2039](https://github.com/standardnotes/app/issues/2039)) ([c39c72d](https://github.com/standardnotes/app/commit/c39c72da7a4fb85f4da9aa4e6f8e9f7ba4486a94))
+
 ## [3.103.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.103.1...@standardnotes/web@3.103.2) (2022-11-19)
 
 ### Bug Fixes
