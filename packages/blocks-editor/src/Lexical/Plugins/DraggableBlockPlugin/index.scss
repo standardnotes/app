@@ -7,12 +7,13 @@
   left: 0;
   top: 0;
   will-change: transform;
+  transition: opacity 0.3s;
 }
 
 .draggable-block-menu .icon {
   width: 1rem;
   height: 1rem;
-  opacity: 0.4;
+  opacity: 0.2;
 }
 
 .draggable-block-menu:active {
@@ -32,5 +33,6 @@
   left: 0;
   top: 0;
   opacity: 0;
-  will-change: transform;
+  will-change: transform, opacity;
+  transition: opacity 0.15s;
 }

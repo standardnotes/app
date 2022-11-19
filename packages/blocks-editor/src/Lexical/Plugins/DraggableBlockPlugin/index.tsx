@@ -30,7 +30,7 @@ const SPACE = 4;
 const TARGET_LINE_HALF_HEIGHT = 2;
 const DRAGGABLE_BLOCK_MENU_CLASSNAME = 'draggable-block-menu';
 const DRAG_DATA_FORMAT = 'application/x-lexical-drag-block';
-const TEXT_BOX_HORIZONTAL_PADDING = 28;
+const TEXT_BOX_HORIZONTAL_PADDING = 24;
 
 const Downward = 1;
 const Upward = -1;
@@ -159,7 +159,6 @@ function setMenuPosition(
 ) {
   if (!targetElem) {
     floatingElem.style.opacity = '0';
-    floatingElem.style.transform = 'translate(-10000px, -10000px)';
     return;
   }
 
@@ -221,13 +220,12 @@ function setTargetLine(
   targetLineElem.style.width = `${
     anchorWidth - (TEXT_BOX_HORIZONTAL_PADDING - SPACE) * 2
   }px`;
-  targetLineElem.style.opacity = '.4';
+  targetLineElem.style.opacity = '.6';
 }
 
 function hideTargetLine(targetLineElem: HTMLElement | null) {
   if (targetLineElem) {
     targetLineElem.style.opacity = '0';
-    targetLineElem.style.transform = 'translate(-10000px, -10000px)';
   }
 }
 

@@ -98,7 +98,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
             <div className="editor" ref={onRef}>
               <ContentEditable
                 id={SuperEditorContentId}
-                className={`ContentEditable__root ${className}`}
+                className={`ContentEditable__root overflow-y-auto ${className}`}
                 spellCheck={spellcheck}
               />
             </div>
