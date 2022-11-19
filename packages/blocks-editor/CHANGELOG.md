@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.2](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.6.1...@standardnotes/blocks-editor@1.6.2) (2022-11-19)
+
+### Bug Fixes
+
+* improved error reporting in super; improved draggable block icon padding ([24ff87c](https://github.com/standardnotes/app/commit/24ff87c30625432393ffedeada14478ebb625292))
+
 ## [1.6.1](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.6.0...@standardnotes/blocks-editor@1.6.1) (2022-11-18)
 
 ### Bug Fixes

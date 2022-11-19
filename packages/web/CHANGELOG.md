@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.103.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.103.1...@standardnotes/web@3.103.2) (2022-11-19)
+
+### Bug Fixes
+
+* improved error reporting in super; improved draggable block icon padding ([24ff87c](https://github.com/standardnotes/app/commit/24ff87c30625432393ffedeada14478ebb625292))
+
 ## [3.103.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.103.0...@standardnotes/web@3.103.1) (2022-11-18)
 
 ### Bug Fixes
