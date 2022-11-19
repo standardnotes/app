@@ -1,8 +1,8 @@
 import { classNames } from '@/Utils/ConcatenateClassNames'
 
 export const PopoverClassNames = classNames(
-  'z-dropdown-menu w-full min-w-80',
-  'cursor-auto flex-col overflow-y-auto rounded bg-default md:h-auto md:max-w-xs h-auto overflow-y-scroll',
+  'z-dropdown-menu w-full',
+  'cursor-auto flex-col overflow-y-auto rounded bg-default md:h-auto h-auto overflow-y-scroll',
 )
 
 export const PopoverItemClassNames = classNames(
