@@ -4,7 +4,6 @@ import { CSSProperties } from 'react'
 import { PopoverAlignment, PopoverSide } from './Types'
 import { OppositeSide, checkCollisions, getNonCollidingAlignment, getOverflows } from './Utils/Collisions'
 import { getAppRect, getMaxHeightAdjustedRect, getPopoverMaxHeight, getPositionedPopoverRect } from './Utils/Rect'
-import { isVerticalSide } from './Utils/Utils'
 
 const getStylesFromRect = (rect: DOMRect, disableMobileFullscreenTakeover?: boolean): CSSProperties => {
   return {
@@ -62,19 +61,17 @@ export const getPositionedPopoverStyles = ({
   })
   const finalPositionedRect = getPositionedPopoverRect(popoverRect, anchorRect, sideWithLessOverflows, finalAlignment)
 
-  if (isVerticalSide(sideWithLessOverflows)) {
-    const maxHeight = getPopoverMaxHeight(
-      getAppRect(),
-      anchorRect,
-      sideWithLessOverflows,
-      finalAlignment,
-      disableMobileFullscreenTakeover,
-    )
+  const maxHeight = getPopoverMaxHeight(
+    getAppRect(),
+    anchorRect,
+    sideWithLessOverflows,
+    finalAlignment,
+    disableMobileFullscreenTakeover,
+  )
 
-    if (maxHeight !== 'none') {
-      const maxHeightAdjustedRect = getMaxHeightAdjustedRect(finalPositionedRect, maxHeight)
-      return getStylesFromRect(maxHeightAdjustedRect, disableMobileFullscreenTakeover)
-    }
+  if (maxHeight !== 'none') {
+    const maxHeightAdjustedRect = getMaxHeightAdjustedRect(finalPositionedRect, maxHeight)
+    return getStylesFromRect(maxHeightAdjustedRect, disableMobileFullscreenTakeover)
   }
 
   return getStylesFromRect(finalPositionedRect, disableMobileFullscreenTakeover)
