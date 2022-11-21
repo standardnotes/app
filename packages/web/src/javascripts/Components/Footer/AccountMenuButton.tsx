@@ -45,7 +45,7 @@ const AccountMenuButton = ({
         open={isOpen}
         togglePopover={toggleMenu}
         side="top"
-        align="start"
+        // align="start"
         className="py-2"
       >
         <AccountMenu

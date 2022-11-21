@@ -8,6 +8,17 @@ export const OppositeSide: Record<PopoverSide, PopoverSide> = {
   right: 'left',
 }
 
+export const getOverflows = (popoverRect: DOMRect, documentRect: DOMRect): Record<PopoverSide, number> => {
+  const overflows = {
+    top: documentRect.top - popoverRect.top,
+    bottom: popoverRect.height - (documentRect.bottom - popoverRect.top),
+    left: documentRect.left - popoverRect.left,
+    right: popoverRect.right - documentRect.right,
+  }
+
+  return overflows
+}
+
 export const checkCollisions = (popoverRect: DOMRect, containerRect: DOMRect): RectCollisions => {
   const appRect = getAppRect(containerRect)
 

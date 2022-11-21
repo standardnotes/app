@@ -2,14 +2,15 @@ import { MediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { isMobileScreen } from '@/Utils'
 import { CSSProperties } from 'react'
 import { PopoverAlignment, PopoverSide } from './Types'
-import { OppositeSide, checkCollisions, getNonCollidingSide, getNonCollidingAlignment } from './Utils/Collisions'
+import { OppositeSide, checkCollisions, getNonCollidingAlignment, getOverflows } from './Utils/Collisions'
 import { getAppRect, getMaxHeightAdjustedRect, getPopoverMaxHeight, getPositionedPopoverRect } from './Utils/Rect'
+import { isVerticalSide } from './Utils/Utils'
 
 const getStylesFromRect = (rect: DOMRect, disableMobileFullscreenTakeover?: boolean): CSSProperties => {
   return {
     willChange: 'transform',
     transform: `translate(${rect.x}px, ${rect.y}px)`,
-    // height: !isMobileScreen() || disableMobileFullscreenTakeover ? rect.height : '',
+    height: !isMobileScreen() || disableMobileFullscreenTakeover ? rect.height : '',
     ...(disableMobileFullscreenTakeover
       ? {
           maxWidth: `${window.innerWidth - rect.x * 2}px`,
@@ -47,18 +48,34 @@ export const getPositionedPopoverStyles = ({
 
   const rectForPreferredSide = getPositionedPopoverRect(popoverRect, anchorRect, side, align)
   const preferredSideRectCollisions = checkCollisions(rectForPreferredSide, documentRect)
+  const preferredSideOverflows = getOverflows(rectForPreferredSide, documentRect)
 
   const oppositeSide = OppositeSide[side]
   const rectForOppositeSide = getPositionedPopoverRect(popoverRect, anchorRect, oppositeSide, align)
-  const oppositeSideRectCollisions = checkCollisions(rectForOppositeSide, documentRect)
+  const oppositeSideOverflows = getOverflows(rectForOppositeSide, documentRect)
 
-  const finalSide = getNonCollidingSide(side, preferredSideRectCollisions, oppositeSideRectCollisions)
-  const finalAlignment = getNonCollidingAlignment(finalSide, align, preferredSideRectCollisions, {
+  const sideWithLessOverflows = preferredSideOverflows[side] < oppositeSideOverflows[oppositeSide] ? side : oppositeSide
+  const finalAlignment = getNonCollidingAlignment(sideWithLessOverflows, align, preferredSideRectCollisions, {
     popoverRect,
     buttonRect: anchorRect,
     documentRect,
   })
-  const finalPositionedRect = getPositionedPopoverRect(popoverRect, anchorRect, finalSide, finalAlignment)
+  const finalPositionedRect = getPositionedPopoverRect(popoverRect, anchorRect, sideWithLessOverflows, finalAlignment)
+
+  if (isVerticalSide(sideWithLessOverflows)) {
+    const maxHeight = getPopoverMaxHeight(
+      getAppRect(),
+      anchorRect,
+      sideWithLessOverflows,
+      finalAlignment,
+      disableMobileFullscreenTakeover,
+    )
+
+    if (maxHeight !== 'none') {
+      const maxHeightAdjustedRect = getMaxHeightAdjustedRect(finalPositionedRect, maxHeight)
+      return getStylesFromRect(maxHeightAdjustedRect, disableMobileFullscreenTakeover)
+    }
+  }
 
   return getStylesFromRect(finalPositionedRect, disableMobileFullscreenTakeover)
 }
