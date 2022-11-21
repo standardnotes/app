@@ -40,7 +40,14 @@ const AccountMenuButton = ({
           </div>
         </button>
       </StyledTooltip>
-      <Popover anchorElement={buttonRef.current} open={isOpen} togglePopover={toggleMenu} side="top" className="py-2">
+      <Popover
+        anchorElement={buttonRef.current}
+        open={isOpen}
+        togglePopover={toggleMenu}
+        side="top"
+        align="start"
+        className="py-2"
+      >
         <AccountMenu
           onClickOutside={onClickOutside}
           viewControllerManager={viewControllerManager}

@@ -1,13 +1,15 @@
 import { MediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
+import { isMobileScreen } from '@/Utils'
 import { CSSProperties } from 'react'
 import { PopoverAlignment, PopoverSide } from './Types'
 import { OppositeSide, checkCollisions, getNonCollidingSide, getNonCollidingAlignment } from './Utils/Collisions'
-import { getPositionedPopoverRect } from './Utils/Rect'
+import { getAppRect, getMaxHeightAdjustedRect, getPopoverMaxHeight, getPositionedPopoverRect } from './Utils/Rect'
 
 const getStylesFromRect = (rect: DOMRect, disableMobileFullscreenTakeover?: boolean): CSSProperties => {
   return {
     willChange: 'transform',
     transform: `translate(${rect.x}px, ${rect.y}px)`,
+    // height: !isMobileScreen() || disableMobileFullscreenTakeover ? rect.height : '',
     ...(disableMobileFullscreenTakeover
       ? {
           maxWidth: `${window.innerWidth - rect.x * 2}px`,
@@ -32,15 +34,15 @@ export const getPositionedPopoverStyles = ({
   popoverRect,
   side,
   disableMobileFullscreenTakeover,
-}: Options): [CSSProperties | null, PopoverSide, PopoverAlignment] => {
+}: Options): CSSProperties | null => {
   if (!popoverRect || !anchorRect) {
-    return [null, side, align]
+    return null
   }
 
   const matchesMediumBreakpoint = matchMedia(MediaQueryBreakpoints.md).matches
 
   if (!matchesMediumBreakpoint && !disableMobileFullscreenTakeover) {
-    return [null, side, align]
+    return null
   }
 
   const rectForPreferredSide = getPositionedPopoverRect(popoverRect, anchorRect, side, align)
@@ -58,5 +60,5 @@ export const getPositionedPopoverStyles = ({
   })
   const finalPositionedRect = getPositionedPopoverRect(popoverRect, anchorRect, finalSide, finalAlignment)
 
-  return [getStylesFromRect(finalPositionedRect, disableMobileFullscreenTakeover), finalSide, finalAlignment]
+  return getStylesFromRect(finalPositionedRect, disableMobileFullscreenTakeover)
 }

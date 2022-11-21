@@ -7,7 +7,6 @@ import Portal from '../Portal/Portal'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { getPositionedPopoverStyles } from './GetPositionedPopoverStyles'
 import { PopoverContentProps } from './Types'
-import { getPopoverMaxHeight, getAppRect } from './Utils/Rect'
 import { usePopoverCloseOnClickOutside } from './Utils/usePopoverCloseOnClickOutside'
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
@@ -39,7 +38,7 @@ const PositionedPopoverContent = ({
   const documentRect = useDocumentRect()
   const isDesktopScreen = useMediaQuery(MediaQueryBreakpoints.md)
 
-  const [styles, positionedSide, positionedAlignment] = getPositionedPopoverStyles({
+  const styles = getPositionedPopoverStyles({
     align,
     anchorRect,
     documentRect,
@@ -83,16 +82,6 @@ const PositionedPopoverContent = ({
         )}
         style={{
           ...styles,
-          maxHeight: styles
-            ? getPopoverMaxHeight(
-                getAppRect(documentRect),
-                anchorRect,
-                positionedSide,
-                positionedAlignment,
-                disableMobileFullscreenTakeover,
-              )
-            : '',
-          top: !isDesktopScreen ? `${document.documentElement.scrollTop}px` : '',
         }}
         ref={setPopoverElement}
         data-popover={id}
