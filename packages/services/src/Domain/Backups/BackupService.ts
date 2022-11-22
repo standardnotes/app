@@ -17,6 +17,7 @@ import { StatusServiceInterface } from '../Status/StatusServiceInterface'
 export class FilesBackupService extends AbstractService {
   private itemsObserverDisposer: () => void
   private pendingFiles = new Set<Uuid>()
+  private mappingCache?: FileBackupsMapping['files']
 
   constructor(
     private items: ItemManagerInterface,
@@ -81,14 +82,25 @@ export class FilesBackupService extends AbstractService {
     return this.device.openFilesBackupsLocation()
   }
 
-  private async getBackupsMapping(): Promise<FileBackupsMapping['files']> {
-    return (await this.device.getFilesBackupsMappingFile()).files
+  private async getBackupsMappingFromDisk(): Promise<FileBackupsMapping['files']> {
+    const result = (await this.device.getFilesBackupsMappingFile()).files
+
+    this.mappingCache = result
+
+    return result
+  }
+
+  private invalidateMappingCache(): void {
+    this.mappingCache = undefined
+  }
+
+  private async getBackupsMappingFromCache(): Promise<FileBackupsMapping['files']> {
+    return this.mappingCache ?? (await this.getBackupsMappingFromDisk())
   }
 
   public async getFileBackupInfo(file: FileItem): Promise<FileBackupRecord | undefined> {
-    const mapping = await this.getBackupsMapping()
+    const mapping = await this.getBackupsMappingFromCache()
     const record = mapping[file.uuid]
-
     return record
   }
 
@@ -105,7 +117,7 @@ export class FilesBackupService extends AbstractService {
       return
     }
 
-    const mapping = await this.getBackupsMapping()
+    const mapping = await this.getBackupsMappingFromDisk()
 
     for (const file of files) {
       if (this.pendingFiles.has(file.uuid)) {
@@ -122,6 +134,8 @@ export class FilesBackupService extends AbstractService {
         this.pendingFiles.delete(file.uuid)
       }
     }
+
+    this.invalidateMappingCache()
   }
 
   private async performBackupOperation(file: FileItem): Promise<'success' | 'failed' | 'aborted'> {

@@ -118,7 +118,7 @@ const FileListItem: FunctionComponent<DisplayableListItemProps<FileItem>> = ({
             {formatSizeToReadableString(file.decryptedSize)}
             {backupInfo && (
               <div title="File is backed up locally">
-                <Icon type="safe-square" />
+                <Icon type="check-circle" />
               </div>
             )}
           </div>

@@ -144,7 +144,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
 
       {backupInfo && (
         <MenuItem
-          icon={'safe-square'}
+          icon={'check-circle'}
           iconClassName={'text-success mt-1'}
           className={'items-start'}
           onClick={openFileBackup}
