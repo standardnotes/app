@@ -1,5 +1,5 @@
 import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { ElementFormatType, NodeKey } from 'lexical'
 import { useApplication } from '@/Components/ApplicationView/ApplicationProvider'
 import FilePreview from '@/Components/FilePreview/FilePreview'
@@ -21,19 +21,14 @@ export function FileComponent({ className, format, nodeKey, fileUuid }: FileComp
 
   const [canLoad, setCanLoad] = useState(false)
 
-  const loadCurrentFile = useCallback(() => {
-    setCanLoad(true)
-  }, [])
-
   const blockWrapperRef = useRef<HTMLDivElement>(null)
-
   const blockObserver = useMemo(
     () =>
       new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              loadCurrentFile()
+              setCanLoad(true)
             }
           })
         },
@@ -41,7 +36,7 @@ export function FileComponent({ className, format, nodeKey, fileUuid }: FileComp
           threshold: 0.25,
         },
       ),
-    [loadCurrentFile],
+    [],
   )
 
   useEffect(() => {
