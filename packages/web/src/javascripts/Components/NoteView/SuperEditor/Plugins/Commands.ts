@@ -7,5 +7,4 @@ export const INSERT_DATE_COMMAND: LexicalCommand<string> = createCommand('INSERT
 export const INSERT_DATETIME_COMMAND: LexicalCommand<string> = createCommand('INSERT_DATETIME_COMMAND')
 export const INSERT_PASSWORD_COMMAND: LexicalCommand<string> = createCommand('INSERT_PASSWORD_COMMAND')
 
-export const LOAD_FILE_COMMAND: LexicalCommand<string> = createCommand('LOAD_FILE_COMMAND')
 export const LOAD_ALL_FILES_COMMAND: LexicalCommand<string> = createCommand('LOAD_ALL_FILES_COMMAND')

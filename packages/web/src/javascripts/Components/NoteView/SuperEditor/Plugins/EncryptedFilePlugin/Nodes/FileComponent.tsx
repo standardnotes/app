@@ -6,7 +6,7 @@ import FilePreview from '@/Components/FilePreview/FilePreview'
 import { FileItem } from '@standardnotes/snjs'
 import Button from '@/Components/Button/Button'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import { LOAD_ALL_FILES_COMMAND, LOAD_FILE_COMMAND } from '../../Commands'
+import { LOAD_ALL_FILES_COMMAND } from '../../Commands'
 
 export type FileComponentProps = Readonly<{
   className: Readonly<{
@@ -27,20 +27,6 @@ export function FileComponent({ className, format, nodeKey, fileUuid }: FileComp
 
   useEffect(() => {
     editor.registerCommand(
-      LOAD_FILE_COMMAND,
-      (payload) => {
-        if (payload === fileUuid) {
-          setCanLoad(true)
-          return true
-        }
-        return false
-      },
-      COMMAND_PRIORITY_EDITOR,
-    )
-  }, [editor, fileUuid])
-
-  useEffect(() => {
-    editor.registerCommand(
       LOAD_ALL_FILES_COMMAND,
       () => {
         setCanLoad(true)
@@ -51,8 +37,8 @@ export function FileComponent({ className, format, nodeKey, fileUuid }: FileComp
   }, [editor])
 
   const loadCurrentFile = useCallback(() => {
-    editor.dispatchCommand(LOAD_FILE_COMMAND, fileUuid)
-  }, [editor, fileUuid])
+    setCanLoad(true)
+  }, [])
 
   const loadAllFiles = useCallback(() => {
     editor.dispatchCommand(LOAD_ALL_FILES_COMMAND, '')
