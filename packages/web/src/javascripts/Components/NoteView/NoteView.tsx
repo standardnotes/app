@@ -953,7 +953,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           )}
 
           {editorMode === 'super' && (
-            <div className={classNames('blocks-editor w-full flex-grow overflow-hidden overflow-y-scroll')}>
+            <div className={classNames('blocks-editor w-full flex-grow overflow-hidden overflow-y-auto')}>
               <SuperEditor
                 key={this.note.uuid}
                 application={this.application}

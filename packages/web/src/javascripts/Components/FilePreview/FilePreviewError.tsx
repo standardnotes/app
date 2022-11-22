@@ -17,7 +17,7 @@ const FilePreviewError = ({ file, filesController, isFilePreviewable, tryAgainCa
       <div className="mb-2 text-base font-bold">This file can't be previewed.</div>
       {isFilePreviewable ? (
         <>
-          <div className="max-w-35ch mb-4 text-center text-sm text-passive-0">
+          <div className="mb-4 max-w-[35ch] text-center text-sm text-passive-0">
             There was an error loading the file. Try again, or download the file and open it using another application.
           </div>
           <div className="flex items-center">
@@ -41,7 +41,7 @@ const FilePreviewError = ({ file, filesController, isFilePreviewable, tryAgainCa
         </>
       ) : (
         <>
-          <div className="max-w-35ch mb-4 text-center text-sm text-passive-0">
+          <div className="mb-4 max-w-[35ch] text-center text-sm text-passive-0">
             To view this file, download it and open it using another application.
           </div>
           <Button
