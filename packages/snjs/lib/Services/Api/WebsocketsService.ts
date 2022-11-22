@@ -70,6 +70,11 @@ export class SNWebSocketsService extends AbstractService<WebSocketsServiceEvent,
   private async createWebSocketConnectionToken(): Promise<string | undefined> {
     try {
       const response = await this.webSocketApiService.createConnectionToken()
+      if (response.data.error) {
+        console.error(response.data.error)
+
+        return undefined
+      }
 
       return response.data.token
     } catch (error) {
