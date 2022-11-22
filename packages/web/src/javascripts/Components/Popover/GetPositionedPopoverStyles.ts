@@ -82,7 +82,6 @@ export const getPositionedPopoverStyles = ({
     disableMobileFullscreenTakeover,
   )
 
-  console.log(maxHeightFunction, maxHeight)
   if (maxHeightFunction && typeof maxHeight === 'number') {
     maxHeight = maxHeightFunction(maxHeight)
   }
