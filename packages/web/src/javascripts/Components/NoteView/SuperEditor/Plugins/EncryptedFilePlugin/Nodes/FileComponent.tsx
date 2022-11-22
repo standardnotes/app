@@ -53,7 +53,7 @@ export function FileComponent({ className, format, nodeKey, fileUuid }: FileComp
       {canLoad ? (
         <FilePreview file={file} application={application} />
       ) : (
-        <div className="mb-4 flex h-full flex-grow flex-col items-center justify-center gap-2">
+        <div className="mb-4 flex h-full flex-grow flex-col items-center justify-center gap-2 border border-border py-6 px-4">
           <h1 className="m-0 text-2xl font-bold">{file.name}</h1>
           <div className="flex gap-3">
             <Button onClick={loadCurrentFile}>Load file</Button>
