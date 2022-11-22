@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.151.8](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.7...@standardnotes/snjs@2.151.8) (2022-11-22)
+
+### Bug Fixes
+
+* **snjs:** add handling errors on creating websocket connection ([c5e104f](https://github.com/standardnotes/app/commit/c5e104f90bcd0d494b9d4adc0b27f2f942dfe71c))
+
 ## [2.151.7](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.6...@standardnotes/snjs@2.151.7) (2022-11-18)
 
 **Note:** Version bump only for package @standardnotes/snjs
