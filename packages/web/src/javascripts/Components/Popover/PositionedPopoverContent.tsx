@@ -7,7 +7,6 @@ import Portal from '../Portal/Portal'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { getPositionedPopoverStyles } from './GetPositionedPopoverStyles'
 import { PopoverContentProps } from './Types'
-import { getPopoverMaxHeight, getAppRect } from './Utils/Rect'
 import { usePopoverCloseOnClickOutside } from './Utils/usePopoverCloseOnClickOutside'
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
@@ -25,6 +24,7 @@ const PositionedPopoverContent = ({
   togglePopover,
   disableClickOutside,
   disableMobileFullscreenTakeover,
+  maxHeight,
 }: PopoverContentProps) => {
   const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
   const popoverRect = useAutoElementRect(popoverElement)
@@ -39,13 +39,14 @@ const PositionedPopoverContent = ({
   const documentRect = useDocumentRect()
   const isDesktopScreen = useMediaQuery(MediaQueryBreakpoints.md)
 
-  const [styles, positionedSide, positionedAlignment] = getPositionedPopoverStyles({
+  const styles = getPositionedPopoverStyles({
     align,
     anchorRect,
     documentRect,
     popoverRect: popoverRect ?? popoverElement?.getBoundingClientRect(),
     side,
     disableMobileFullscreenTakeover: disableMobileFullscreenTakeover,
+    maxHeightFunction: maxHeight,
   })
 
   usePopoverCloseOnClickOutside({
@@ -79,20 +80,10 @@ const PositionedPopoverContent = ({
           !disableMobileFullscreenTakeover && 'h-full',
           overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
           !isDesktopScreen && !disableMobileFullscreenTakeover ? 'pt-safe-top pb-safe-bottom' : '',
-          !styles && 'md:invisible',
+          isDesktopScreen || disableMobileFullscreenTakeover ? 'invisible' : '',
         )}
         style={{
           ...styles,
-          maxHeight: styles
-            ? getPopoverMaxHeight(
-                getAppRect(documentRect),
-                anchorRect,
-                positionedSide,
-                positionedAlignment,
-                disableMobileFullscreenTakeover,
-              )
-            : '',
-          top: !isDesktopScreen ? `${document.documentElement.scrollTop}px` : '',
         }}
         ref={setPopoverElement}
         data-popover={id}

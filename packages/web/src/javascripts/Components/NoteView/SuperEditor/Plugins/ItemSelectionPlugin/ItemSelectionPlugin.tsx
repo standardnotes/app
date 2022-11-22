@@ -105,16 +105,14 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
         return (
           <Popover
             align="start"
-            anchorPoint={{
-              x: anchorElementRef.current.offsetLeft,
-              y: anchorElementRef.current.offsetTop + (!isMobileScreen() ? anchorElementRef.current.offsetHeight : 0),
-            }}
+            anchorElement={anchorElementRef.current}
             open={popoverOpen}
             togglePopover={() => {
               setPopoverOpen((prevValue) => !prevValue)
             }}
             disableMobileFullscreenTakeover={true}
             side={isMobileScreen() ? 'top' : 'bottom'}
+            maxHeight={(mh) => mh / 2}
           >
             <div className={PopoverClassNames}>
               <ul>

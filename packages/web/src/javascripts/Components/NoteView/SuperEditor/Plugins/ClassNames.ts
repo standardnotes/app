@@ -2,7 +2,7 @@ import { classNames } from '@/Utils/ConcatenateClassNames'
 
 export const PopoverClassNames = classNames(
   'z-dropdown-menu w-full',
-  'cursor-auto flex-col overflow-y-auto rounded bg-default md:h-auto h-auto overflow-y-scroll',
+  'cursor-auto flex-col overflow-y-auto rounded bg-default h-auto',
 )
 
 export const PopoverItemClassNames = classNames(

@@ -38,7 +38,6 @@ const NotesContextMenu = ({
       }}
       className="py-2"
       open={contextMenuOpen}
-      side="right"
       togglePopover={closeMenu}
     >
       <div className="select-none" ref={contextMenuRef}>
