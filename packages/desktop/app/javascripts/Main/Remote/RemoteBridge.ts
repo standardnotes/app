@@ -5,7 +5,7 @@ import { StoreKeys } from '../Store/StoreKeys'
 const path = require('path')
 const rendererPath = path.join('file://', __dirname, '/renderer.js')
 
-import { FileBackupsDevice, FileBackupsMapping } from '@web/Application/Device/DesktopSnjsExports'
+import { FileBackupsDevice, FileBackupsMapping, FileBackupRecord } from '@web/Application/Device/DesktopSnjsExports'
 import { app, BrowserWindow } from 'electron'
 import { BackupsManagerInterface } from '../Backups/BackupsManagerInterface'
 import { KeychainInterface } from '../Keychain/KeychainInterface'
@@ -64,6 +64,7 @@ export class RemoteBridge implements CrossProcessBridge {
       changeFilesBackupsLocation: this.changeFilesBackupsLocation.bind(this),
       getFilesBackupsLocation: this.getFilesBackupsLocation.bind(this),
       openFilesBackupsLocation: this.openFilesBackupsLocation.bind(this),
+      openFileBackup: this.openFileBackup.bind(this),
     }
   }
 
@@ -201,5 +202,9 @@ export class RemoteBridge implements CrossProcessBridge {
 
   public openFilesBackupsLocation(): Promise<void> {
     return this.fileBackups.openFilesBackupsLocation()
+  }
+
+  public openFileBackup(record: FileBackupRecord): Promise<void> {
+    return this.fileBackups.openFileBackup(record)
   }
 }

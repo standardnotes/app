@@ -46,6 +46,7 @@ export const IconNameToSvgMapping = {
   'star-circle-filled': icons.StarCircleFilled,
   'star-filled': icons.StarFilledIcon,
   'star-variant-filled': icons.StarVariantFilledIcon,
+  'safe-square': icons.SafeSquareIcon,
   'trash-filled': icons.TrashFilledIcon,
   'trash-sweep': icons.TrashSweepIcon,
   'user-add': icons.UserAddIcon,

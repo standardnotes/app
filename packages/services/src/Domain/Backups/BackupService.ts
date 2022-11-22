@@ -2,7 +2,13 @@ import { ContentType, Uuid } from '@standardnotes/common'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { PayloadEmitSource, FileItem, CreateEncryptedBackupFileContextPayload } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { FilesApiInterface, FileBackupMetadataFile, FileBackupsDevice, FileBackupsMapping } from '@standardnotes/files'
+import {
+  FilesApiInterface,
+  FileBackupMetadataFile,
+  FileBackupsDevice,
+  FileBackupsMapping,
+  FileBackupRecord,
+} from '@standardnotes/files'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { AbstractService } from '../Service/AbstractService'
@@ -77,6 +83,17 @@ export class FilesBackupService extends AbstractService {
 
   private async getBackupsMapping(): Promise<FileBackupsMapping['files']> {
     return (await this.device.getFilesBackupsMappingFile()).files
+  }
+
+  public async getFileBackupInfo(file: FileItem): Promise<FileBackupRecord | undefined> {
+    const mapping = await this.getBackupsMapping()
+    const record = mapping[file.uuid]
+
+    return record
+  }
+
+  public async openFileBackup(record: FileBackupRecord): Promise<void> {
+    await this.device.openFileBackup(record)
   }
 
   private async handleChangedFiles(files: FileItem[]): Promise<void> {

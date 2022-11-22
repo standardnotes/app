@@ -1,4 +1,4 @@
-import { FileBackupsDevice, FileBackupsMapping } from '@web/Application/Device/DesktopSnjsExports'
+import { FileBackupRecord, FileBackupsDevice, FileBackupsMapping } from '@web/Application/Device/DesktopSnjsExports'
 import { AppState } from 'app/AppState'
 import { shell } from 'electron'
 import { StoreKeys } from '../Store/StoreKeys'
@@ -127,6 +127,10 @@ export class FilesBackupManager implements FileBackupsDevice {
     const location = await this.getFilesBackupsLocation()
 
     void shell.openPath(location)
+  }
+
+  async openFileBackup(record: FileBackupRecord): Promise<void> {
+    void shell.openPath(record.absolutePath)
   }
 
   async saveFilesBackupsMappingFile(file: FileBackupsMapping): Promise<'success' | 'failed'> {

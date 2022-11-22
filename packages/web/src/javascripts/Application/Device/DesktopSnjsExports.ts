@@ -6,4 +6,5 @@ export {
   DesktopClientRequiresWebMethods,
   FileBackupsMapping,
   FileBackupsDevice,
+  FileBackupRecord,
 } from '@standardnotes/snjs'

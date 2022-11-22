@@ -1,5 +1,5 @@
 {
-  "extends": "../../node_modules/@standardnotes/config/src/tsconfig.json",
+  "extends": "../../UILib.tsconfig.json",
   "compilerOptions": {
     "skipLibCheck": true,
     "rootDir": "./src",

@@ -3,6 +3,7 @@ import {
   Environment,
   FileBackupsMapping,
   RawKeychainValue,
+  FileBackupRecord,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { WebOrDesktopDevice } from '@web/Application/Device/WebOrDesktopDevice'
 import { Component } from '../Main/Packages/PackageManagerInterface'
@@ -130,6 +131,10 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
 
   async openFilesBackupsLocation(): Promise<void> {
     return this.remoteBridge.openFilesBackupsLocation()
+  }
+
+  openFileBackup(record: FileBackupRecord): Promise<void> {
+    return this.remoteBridge.openFileBackup(record)
   }
 
   async saveFilesBackupsFile(
