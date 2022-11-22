@@ -24,6 +24,7 @@ const PositionedPopoverContent = ({
   togglePopover,
   disableClickOutside,
   disableMobileFullscreenTakeover,
+  maxHeight,
 }: PopoverContentProps) => {
   const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
   const popoverRect = useAutoElementRect(popoverElement)
@@ -45,6 +46,7 @@ const PositionedPopoverContent = ({
     popoverRect: popoverRect ?? popoverElement?.getBoundingClientRect(),
     side,
     disableMobileFullscreenTakeover: disableMobileFullscreenTakeover,
+    maxHeightFunction: maxHeight,
   })
 
   usePopoverCloseOnClickOutside({

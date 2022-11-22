@@ -120,6 +120,7 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
               }}
               disableMobileFullscreenTakeover={true}
               side={isMobileScreen() ? 'top' : 'bottom'}
+              maxHeight={(mh) => mh / 2}
             >
               <div className={PopoverClassNames}>
                 <ul>

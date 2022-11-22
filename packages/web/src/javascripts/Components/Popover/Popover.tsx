@@ -41,6 +41,7 @@ const Popover = ({
   togglePopover,
   disableClickOutside,
   disableMobileFullscreenTakeover,
+  maxHeight,
 }: Props) => {
   const popoverId = useRef(UuidGenerator.GenerateUuid())
 
@@ -100,6 +101,7 @@ const Popover = ({
         togglePopover={togglePopover}
         disableClickOutside={disableClickOutside}
         disableMobileFullscreenTakeover={disableMobileFullscreenTakeover}
+        maxHeight={maxHeight}
       >
         {children}
       </PositionedPopoverContent>

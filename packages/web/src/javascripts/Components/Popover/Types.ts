@@ -39,6 +39,7 @@ type CommonPopoverProps = {
   className?: string
   disableClickOutside?: boolean
   disableMobileFullscreenTakeover?: boolean
+  maxHeight?: (calculatedMaxHeight: number) => number
 }
 
 export type PopoverContentProps = CommonPopoverProps & {

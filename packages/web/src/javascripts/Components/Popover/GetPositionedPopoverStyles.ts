@@ -36,6 +36,7 @@ type Options = {
   popoverRect?: DOMRect
   side: PopoverSide
   disableMobileFullscreenTakeover?: boolean
+  maxHeightFunction?: (calculatedMaxHeight: number) => number
 }
 
 export const getPositionedPopoverStyles = ({
@@ -45,6 +46,7 @@ export const getPositionedPopoverStyles = ({
   popoverRect,
   side,
   disableMobileFullscreenTakeover,
+  maxHeightFunction,
 }: Options): CSSProperties | null => {
   if (!popoverRect || !anchorRect) {
     return null
@@ -72,13 +74,18 @@ export const getPositionedPopoverStyles = ({
   })
   const finalPositionedRect = getPositionedPopoverRect(popoverRect, anchorRect, sideWithLessOverflows, finalAlignment)
 
-  const maxHeight = getPopoverMaxHeight(
+  let maxHeight = getPopoverMaxHeight(
     getAppRect(),
     anchorRect,
     sideWithLessOverflows,
     finalAlignment,
     disableMobileFullscreenTakeover,
   )
+
+  console.log(maxHeightFunction, maxHeight)
+  if (maxHeightFunction && typeof maxHeight === 'number') {
+    maxHeight = maxHeightFunction(maxHeight)
+  }
 
   return getStylesFromRect(finalPositionedRect, { disableMobileFullscreenTakeover, maxHeight })
 }
