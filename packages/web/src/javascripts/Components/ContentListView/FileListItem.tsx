@@ -1,6 +1,6 @@
-import { FileItem } from '@standardnotes/snjs'
+import { FileItem, FileBackupRecord } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useRef } from 'react'
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
 import ListItemConflictIndicator from './ListItemConflictIndicator'
 import ListItemTags from './ListItemTags'
@@ -12,19 +12,28 @@ import { useContextMenuEvent } from '@/Hooks/useContextMenuEvent'
 import { classNames } from '@/Utils/ConcatenateClassNames'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
+import { useApplication } from '../ApplicationView/ApplicationProvider'
+import Icon from '../Icon/Icon'
 
 const FileListItem: FunctionComponent<DisplayableListItemProps<FileItem>> = ({
   filesController,
   hideDate,
   hideIcon,
   hideTags,
-  item,
+  item: file,
   onSelect,
   selected,
   sortBy,
   tags,
 }) => {
   const { toggleAppPane } = useResponsiveAppPane()
+  const application = useApplication()
+
+  const [backupInfo, setBackupInfo] = useState<FileBackupRecord | undefined>(undefined)
+
+  useEffect(() => {
+    void application.fileBackups?.getFileBackupInfo(file).then(setBackupInfo)
+  }, [application, file])
 
   const listItemRef = useRef<HTMLDivElement>(null)
 
@@ -45,7 +54,7 @@ const FileListItem: FunctionComponent<DisplayableListItemProps<FileItem>> = ({
       let shouldOpenContextMenu = selected
 
       if (!selected) {
-        const { didSelect } = await onSelect(item)
+        const { didSelect } = await onSelect(file)
         if (didSelect) {
           shouldOpenContextMenu = true
         }
@@ -55,18 +64,18 @@ const FileListItem: FunctionComponent<DisplayableListItemProps<FileItem>> = ({
         openFileContextMenu(posX, posY)
       }
     },
-    [selected, onSelect, item, openFileContextMenu],
+    [selected, onSelect, file, openFileContextMenu],
   )
 
   const onClick = useCallback(async () => {
-    const { didSelect } = await onSelect(item, true)
+    const { didSelect } = await onSelect(file, true)
     if (didSelect) {
       toggleAppPane(AppPaneId.Editor)
     }
-  }, [item, onSelect, toggleAppPane])
+  }, [file, onSelect, toggleAppPane])
 
   const IconComponent = () =>
-    getFileIconComponent(getIconForFileType((item as FileItem).mimeType), 'w-10 h-10 flex-shrink-0')
+    getFileIconComponent(getIconForFileType((file as FileItem).mimeType), 'w-10 h-10 flex-shrink-0')
 
   useContextMenuEvent(listItemRef, openContextMenu)
 
@@ -74,7 +83,7 @@ const FileListItem: FunctionComponent<DisplayableListItemProps<FileItem>> = ({
     <div
       ref={listItemRef}
       className={classNames('flex max-h-[300px] w-[190px] cursor-pointer px-1 pt-2 text-text md:w-[200px]')}
-      id={item.uuid}
+      id={file.uuid}
       onClick={onClick}
     >
       <div
@@ -92,11 +101,11 @@ const FileListItem: FunctionComponent<DisplayableListItemProps<FileItem>> = ({
           )}
           <div className="min-w-0 flex-grow py-4 px-0">
             <div className="line-clamp-2 overflow-hidden text-editor font-semibold">
-              <div className="break-word line-clamp-2 mr-2 overflow-hidden">{item.title}</div>
+              <div className="break-word line-clamp-2 mr-2 overflow-hidden">{file.title}</div>
             </div>
-            <ListItemMetadata item={item} hideDate={hideDate} sortBy={sortBy} />
+            <ListItemMetadata item={file} hideDate={hideDate} sortBy={sortBy} />
             <ListItemTags hideTags={hideTags} tags={tags} />
-            <ListItemConflictIndicator item={item} />
+            <ListItemConflictIndicator item={file} />
           </div>
         </div>
         <div
@@ -105,7 +114,14 @@ const FileListItem: FunctionComponent<DisplayableListItemProps<FileItem>> = ({
             selected ? 'bg-info text-info-contrast' : 'bg-passive-4 text-neutral',
           )}
         >
-          {formatSizeToReadableString(item.decryptedSize)}
+          <div className="flex justify-between">
+            {formatSizeToReadableString(file.decryptedSize)}
+            {backupInfo && (
+              <div title="File is backed up locally">
+                <Icon type="safe-square" />
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
