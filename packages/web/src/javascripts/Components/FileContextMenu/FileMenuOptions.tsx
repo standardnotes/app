@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
+import { FunctionComponent, useCallback, useMemo } from 'react'
 import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import Icon from '@/Components/Icon/Icon'
 import { observer } from 'mobx-react-lite'
@@ -10,8 +10,7 @@ import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import MenuItem from '../Menu/MenuItem'
 import { MenuItemType } from '../Menu/MenuItemType'
-import { useApplication } from '../ApplicationView/ApplicationProvider'
-import { FileBackupRecord } from '@standardnotes/snjs'
+import { FileContextMenuBackupOption } from './FileContextMenuBackupOption'
 
 type Props = {
   closeMenu: () => void
@@ -32,12 +31,9 @@ const FileMenuOptions: FunctionComponent<Props> = ({
   shouldShowRenameOption,
   shouldShowAttachOption,
 }) => {
-  const [backupInfo, setBackupInfo] = useState<FileBackupRecord | undefined>(undefined)
-
   const { selectedFiles } = selectionController
   const { handleFileAction } = filesController
   const { toggleAppPane } = useResponsiveAppPane()
-  const application = useApplication()
 
   const hasProtectedFiles = useMemo(() => selectedFiles.some((file) => file.protected), [selectedFiles])
   const hasSelectedMultipleFiles = useMemo(() => selectedFiles.length > 1, [selectedFiles.length])
@@ -46,12 +42,6 @@ const FileMenuOptions: FunctionComponent<Props> = ({
     () => selectedFiles.map((file) => file.decryptedSize).reduce((prev, next) => prev + next, 0),
     [selectedFiles],
   )
-
-  useEffect(() => {
-    if (selectedFiles.length === 1) {
-      void application.fileBackups?.getFileBackupInfo(selectedFiles[0]).then(setBackupInfo)
-    }
-  }, [application, selectedFiles])
 
   const onDetach = useCallback(() => {
     const file = selectedFiles[0]
@@ -75,16 +65,6 @@ const FileMenuOptions: FunctionComponent<Props> = ({
     toggleAppPane(AppPaneId.Items)
     closeMenu()
   }, [closeMenu, toggleAppPane])
-
-  const openFileBackup = useCallback(() => {
-    if (backupInfo) {
-      void application.fileBackups?.openFileBackup(backupInfo)
-    }
-  }, [backupInfo, application])
-
-  const configureFileBackups = useCallback(() => {
-    application.openPreferences('backups')
-  }, [application])
 
   return (
     <>
@@ -142,33 +122,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         <span className="text-danger">Delete permanently</span>
       </MenuItem>
 
-      {backupInfo && (
-        <MenuItem
-          icon={'check-circle'}
-          iconClassName={'text-success mt-1'}
-          className={'items-start'}
-          onClick={openFileBackup}
-        >
-          <div className="ml-2">
-            <div className="font-semibold text-success">Backed up on {backupInfo.backedUpOn.toLocaleString()}</div>
-            <div className="text-xs text-neutral">{backupInfo.absolutePath}</div>
-          </div>
-        </MenuItem>
-      )}
-
-      {!backupInfo && application.fileBackups && (
-        <MenuItem
-          icon={'safe-square'}
-          className={'items-start'}
-          iconClassName={'text-neutral mt-1'}
-          onClick={configureFileBackups}
-        >
-          <div className="ml-2">
-            <div>Configure file backups</div>
-            <div className="text-xs text-neutral">File not backed up locally</div>
-          </div>
-        </MenuItem>
-      )}
+      <FileContextMenuBackupOption file={selectedFiles[0]} />
 
       <HorizontalSeparator classes="my-2" />
       <div className="px-3 pt-1 pb-0.5 text-xs font-medium text-neutral">

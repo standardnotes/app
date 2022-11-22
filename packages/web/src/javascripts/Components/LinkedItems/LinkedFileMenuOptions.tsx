@@ -3,6 +3,7 @@ import { FilesController } from '@/Controllers/FilesController'
 import { FileItem } from '@standardnotes/snjs'
 import { useState } from 'react'
 import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
+import { FileContextMenuBackupOption } from '../FileContextMenu/FileContextMenuBackupOption'
 import Icon from '../Icon/Icon'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import Switch from '../Switch/Switch'
@@ -91,6 +92,8 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
         <Icon type="trash" className="mr-2 text-danger" />
         <span className="text-danger">Delete permanently</span>
       </button>
+
+      <FileContextMenuBackupOption file={file} />
     </>
   )
 }

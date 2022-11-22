@@ -120,6 +120,10 @@ export class FilesBackupManager implements FileBackupsDevice {
       return this.defaultMappingFileValue()
     }
 
+    for (const entry of Object.values(data.files)) {
+      entry.backedUpOn = new Date(entry.backedUpOn)
+    }
+
     return data
   }
 

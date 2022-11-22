@@ -29,6 +29,14 @@ export const formatDateAndTimeForNote = (date: Date, includeTime = true) => {
   }
 }
 
+export const dateToStringStyle1 = (date: Date) => {
+  const dateString = `${date.toLocaleDateString()}`
+
+  return `${dateString} at ${date.toLocaleTimeString(undefined, {
+    timeStyle: 'short',
+  })}`
+}
+
 export const dateToHoursAndMinutesTimeString = (date: Date) => {
   return date.toLocaleTimeString(undefined, {
     timeStyle: 'short',
