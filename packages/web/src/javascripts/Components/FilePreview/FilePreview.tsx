@@ -7,6 +7,7 @@ import FilePreviewError from './FilePreviewError'
 import { isFileTypePreviewable } from './isFilePreviewable'
 import PreviewComponent from './PreviewComponent'
 import Button from '../Button/Button'
+import { ProtectedIllustration } from '@standardnotes/icons'
 
 type Props = {
   application: WebApplication
@@ -81,6 +82,7 @@ const FilePreview = ({ file, application }: Props) => {
 
     return (
       <div className="flex flex-grow flex-col items-center justify-center">
+        <ProtectedIllustration className="mb-4 h-30 w-30" />
         <div className="mb-2 text-base font-bold">This file is protected.</div>
         <p className="max-w-[35ch] text-center text-sm text-passive-0">
           {hasProtectionSources
