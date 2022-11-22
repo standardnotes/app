@@ -23,11 +23,9 @@ const getStylesFromRect = (
     ...(canApplyMaxHeight && {
       maxHeight: `${maxHeight}px`,
     }),
-    ...(disableMobileFullscreenTakeover
-      ? {
-          maxWidth: `${window.innerWidth - rect.x * 2}px`,
-        }
-      : {}),
+    ...(disableMobileFullscreenTakeover && {
+      maxWidth: `${window.innerWidth - rect.x * 2}px`,
+    }),
   }
 }
 
