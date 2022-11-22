@@ -50,15 +50,6 @@ export const getPopoverMaxHeight = (
   return appRect.height - constraint - MarginFromAppBorderInPX
 }
 
-export const getMaxHeightAdjustedRect = (rect: DOMRect, maxHeight: number) => {
-  return DOMRect.fromRect({
-    width: rect.width,
-    height: rect.height < maxHeight ? rect.height : maxHeight,
-    x: rect.x,
-    y: rect.y,
-  })
-}
-
 export const getAppRect = (updatedDocumentRect?: DOMRect) => {
   const footerRect = document.querySelector('footer')?.getBoundingClientRect()
   const documentRect = updatedDocumentRect ? updatedDocumentRect : document.documentElement.getBoundingClientRect()

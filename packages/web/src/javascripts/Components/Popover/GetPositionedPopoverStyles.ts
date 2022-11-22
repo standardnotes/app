@@ -3,14 +3,26 @@ import { isMobileScreen } from '@/Utils'
 import { CSSProperties } from 'react'
 import { PopoverAlignment, PopoverSide } from './Types'
 import { OppositeSide, checkCollisions, getNonCollidingAlignment, getOverflows } from './Utils/Collisions'
-import { getAppRect, getMaxHeightAdjustedRect, getPopoverMaxHeight, getPositionedPopoverRect } from './Utils/Rect'
+import { getAppRect, getPopoverMaxHeight, getPositionedPopoverRect } from './Utils/Rect'
 
-const getStylesFromRect = (rect: DOMRect, disableMobileFullscreenTakeover?: boolean): CSSProperties => {
+const getStylesFromRect = (
+  rect: DOMRect,
+  options: {
+    disableMobileFullscreenTakeover?: boolean
+    maxHeight?: number | 'none'
+  },
+): CSSProperties => {
+  const { disableMobileFullscreenTakeover = false, maxHeight = 'none' } = options
+
+  const canApplyMaxHeight = maxHeight !== 'none' && (!isMobileScreen() || disableMobileFullscreenTakeover)
+
   return {
     willChange: 'transform',
     transform: `translate(${rect.x}px, ${rect.y}px)`,
-    height: !isMobileScreen() || disableMobileFullscreenTakeover ? rect.height : '',
     visibility: 'visible',
+    ...(canApplyMaxHeight && {
+      maxHeight: `${maxHeight}px`,
+    }),
     ...(disableMobileFullscreenTakeover
       ? {
           maxWidth: `${window.innerWidth - rect.x * 2}px`,
@@ -55,6 +67,7 @@ export const getPositionedPopoverStyles = ({
   const oppositeSideOverflows = getOverflows(rectForOppositeSide, documentRect)
 
   const sideWithLessOverflows = preferredSideOverflows[side] < oppositeSideOverflows[oppositeSide] ? side : oppositeSide
+  console.log(sideWithLessOverflows, side)
   const finalAlignment = getNonCollidingAlignment(sideWithLessOverflows, align, preferredSideRectCollisions, {
     popoverRect,
     buttonRect: anchorRect,
@@ -70,10 +83,5 @@ export const getPositionedPopoverStyles = ({
     disableMobileFullscreenTakeover,
   )
 
-  if (maxHeight !== 'none') {
-    const maxHeightAdjustedRect = getMaxHeightAdjustedRect(finalPositionedRect, maxHeight)
-    return getStylesFromRect(maxHeightAdjustedRect, disableMobileFullscreenTakeover)
-  }
-
-  return getStylesFromRect(finalPositionedRect, disableMobileFullscreenTakeover)
+  return getStylesFromRect(finalPositionedRect, { disableMobileFullscreenTakeover, maxHeight })
 }
