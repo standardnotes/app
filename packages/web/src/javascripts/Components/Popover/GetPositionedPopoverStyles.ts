@@ -10,6 +10,7 @@ const getStylesFromRect = (rect: DOMRect, disableMobileFullscreenTakeover?: bool
     willChange: 'transform',
     transform: `translate(${rect.x}px, ${rect.y}px)`,
     height: !isMobileScreen() || disableMobileFullscreenTakeover ? rect.height : '',
+    visibility: 'visible',
     ...(disableMobileFullscreenTakeover
       ? {
           maxWidth: `${window.innerWidth - rect.x * 2}px`,

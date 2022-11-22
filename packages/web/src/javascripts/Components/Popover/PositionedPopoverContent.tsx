@@ -78,7 +78,7 @@ const PositionedPopoverContent = ({
           !disableMobileFullscreenTakeover && 'h-full',
           overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
           !isDesktopScreen && !disableMobileFullscreenTakeover ? 'pt-safe-top pb-safe-bottom' : '',
-          !styles && 'md:invisible',
+          isDesktopScreen || disableMobileFullscreenTakeover ? 'invisible' : '',
         )}
         style={{
           ...styles,
