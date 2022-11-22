@@ -65,7 +65,6 @@ export const getPositionedPopoverStyles = ({
   const oppositeSideOverflows = getOverflows(rectForOppositeSide, documentRect)
 
   const sideWithLessOverflows = preferredSideOverflows[side] < oppositeSideOverflows[oppositeSide] ? side : oppositeSide
-  console.log(sideWithLessOverflows, side)
   const finalAlignment = getNonCollidingAlignment(sideWithLessOverflows, align, preferredSideRectCollisions, {
     popoverRect,
     buttonRect: anchorRect,
