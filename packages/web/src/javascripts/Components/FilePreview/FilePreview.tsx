@@ -6,7 +6,7 @@ import Spinner from '@/Components/Spinner/Spinner'
 import FilePreviewError from './FilePreviewError'
 import { isFileTypePreviewable } from './isFilePreviewable'
 import PreviewComponent from './PreviewComponent'
-import ProtectedItemOverlay from '../ProtectedItemOverlay/ProtectedItemOverlay'
+import Button from '../Button/Button'
 
 type Props = {
   application: WebApplication
@@ -77,13 +77,27 @@ const FilePreview = ({ file, application }: Props) => {
   }, [application.files, downloadedBytes, file, isFilePreviewable, isAuthorized])
 
   if (!isAuthorized) {
+    const hasProtectionSources = application.hasProtectionSources()
+
     return (
-      <ProtectedItemOverlay
-        showAccountMenu={application.showAccountMenu}
-        itemType={'file'}
-        onViewItem={() => application.protections.authorizeItemAccess(file)}
-        hasProtectionSources={application.hasProtectionSources()}
-      />
+      <div className="flex flex-grow flex-col items-center justify-center">
+        <div className="mb-2 text-base font-bold">This file is protected.</div>
+        <p className="max-w-[35ch] text-center text-sm text-passive-0">
+          {hasProtectionSources
+            ? 'Authenticate to view this file.'
+            : 'Add a passcode or create an account to require authentication to view this file.'}
+        </p>
+        <div className="mt-3 flex gap-3">
+          {!hasProtectionSources && (
+            <Button primary small onClick={() => application.showAccountMenu()}>
+              Open account menu
+            </Button>
+          )}
+          <Button primary onClick={() => application.protections.authorizeItemAccess(file)}>
+            {hasProtectionSources ? 'Authenticate' : 'View file'}
+          </Button>
+        </div>
+      </div>
     )
   }
 
