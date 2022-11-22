@@ -1,6 +1,5 @@
 import { MediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { PopoverSide, PopoverAlignment } from '../Types'
-import { isVerticalSide } from './Utils'
 
 export const getPopoverMaxHeight = (
   appRect: DOMRect,
@@ -90,7 +89,7 @@ export const getPositionedPopoverRect = (
       break
   }
 
-  if (isVerticalSide(side)) {
+  if (side === 'top' || side === 'bottom') {
     switch (align) {
       case 'start':
         positionPopoverRect.x = buttonRect.left
