@@ -24,7 +24,7 @@ import { getNoteBlob, getNoteFileName } from '@/Utils/NoteExportUtils'
 import { shareSelectedNotes } from '@/NativeMobileWeb/ShareSelectedNotes'
 import { downloadSelectedNotesOnAndroid } from '@/NativeMobileWeb/DownloadSelectedNotesOnAndroid'
 import ProtectedUnauthorizedLabel from '../ProtectedItemOverlay/ProtectedUnauthorizedLabel'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 

@@ -1,4 +1,4 @@
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { EmojiString, Platform, VectorIconNameOrEmoji } from '@standardnotes/snjs'
 import { FunctionComponent, useMemo, useRef, useState } from 'react'
 import Dropdown from '../Dropdown/Dropdown'

@@ -11,7 +11,7 @@ import {
 import { Disclosure, DisclosurePanel } from '@reach/disclosure'
 import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
 import { observer } from 'mobx-react-lite'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import LinkedItemSearchResults from './LinkedItemSearchResults'
 import { LinkingController } from '@/Controllers/LinkingController'

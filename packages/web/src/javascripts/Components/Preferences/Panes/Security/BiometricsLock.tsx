@@ -7,7 +7,7 @@ import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/P
 import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import Button from '@/Components/Button/Button'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 
 type Props = {
   application: WebApplication

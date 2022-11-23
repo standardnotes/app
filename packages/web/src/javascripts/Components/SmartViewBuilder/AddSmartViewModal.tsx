@@ -17,7 +17,7 @@ import { useTabState } from '../Tabs/useTabState'
 import TabsContainer from '../Tabs/TabsContainer'
 import CopyableCodeBlock from '../Shared/CopyableCodeBlock'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 
 type Props = {
   controller: AddSmartViewModalController

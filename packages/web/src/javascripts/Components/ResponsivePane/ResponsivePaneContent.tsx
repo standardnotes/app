@@ -1,6 +1,6 @@
 import { useMemo, ReactNode } from 'react'
 import { AppPaneId } from './AppPaneMetadata'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { useResponsiveAppPane } from './ResponsivePaneProvider'
 
 type Props = {

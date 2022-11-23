@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'

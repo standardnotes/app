@@ -1,6 +1,6 @@
 import { FilesController } from '@/Controllers/FilesController'
 import { LinkingController } from '@/Controllers/LinkingController'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { getIconForItem } from '@/Utils/Items/Icons/getIconForItem'
 import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'

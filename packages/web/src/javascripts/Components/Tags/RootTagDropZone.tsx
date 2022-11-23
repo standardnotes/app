@@ -1,6 +1,6 @@
 import Icon from '@/Components/Icon/Icon'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { observer } from 'mobx-react-lite'
 import { DragEventHandler, FunctionComponent, useCallback, useState } from 'react'
 import { TagDragDataFormat } from './DragNDrop'

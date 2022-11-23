@@ -6,7 +6,7 @@ import HistoryModalFooter from './HistoryModalFooter'
 import HistoryModalContentPane from './HistoryModalContentPane'
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 import Icon from '../Icon/Icon'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { HistoryModalMobileTab } from './utils'
 
 const HistoryModalDialogContent = ({

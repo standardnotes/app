@@ -8,7 +8,7 @@ import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 're
 import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import ResponsivePaneContent from '@/Components/ResponsivePane/ResponsivePaneContent'
 import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import UpgradeNow from '../Footer/UpgradeNow'
 import RoundIconButton from '../Button/RoundIconButton'

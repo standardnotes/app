@@ -20,7 +20,7 @@ import { DisplayOptionsMenuProps } from './DisplayOptionsMenuProps'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import NewNotePreferences from './NewNotePreferences'
 import { PreferenceMode } from './PreferenceMode'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import NoSubscriptionBanner from '@/Components/NoSubscriptionBanner/NoSubscriptionBanner'
 
 const DailyEntryModeEnabled = true

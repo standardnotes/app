@@ -11,7 +11,7 @@ import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { ElementIds } from '@/Constants/ElementIDs'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { ContentType, SNTag } from '@standardnotes/snjs'
 
 type Props = {

@@ -1,4 +1,4 @@
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 
 export const PopoverClassNames = classNames(
   'z-dropdown-menu w-full',

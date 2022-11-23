@@ -1,6 +1,6 @@
 import { useRef, ReactNode } from 'react'
 import { AlertDialogContent, AlertDialogOverlay } from '@reach/alert-dialog'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 
 type Props = {
   children: ReactNode

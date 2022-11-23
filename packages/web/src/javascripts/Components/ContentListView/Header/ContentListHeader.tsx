@@ -1,7 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import Icon from '../../Icon/Icon'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import Popover from '@/Components/Popover/Popover'
 import DisplayOptionsMenu from './DisplayOptionsMenu'
 import { NavigationMenuButton } from '@/Components/NavigationMenu/NavigationMenu'

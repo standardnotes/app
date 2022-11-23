@@ -1,7 +1,7 @@
 import { FunctionComponent } from 'react'
 import { VectorIconNameOrEmoji } from '@standardnotes/snjs'
 import { IconNameToSvgMapping } from './IconNameToSvgMapping'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { LexicalIconName, LexicalIconNameToSvgMapping } from './LexicalIcons'
 
 type Props = {
