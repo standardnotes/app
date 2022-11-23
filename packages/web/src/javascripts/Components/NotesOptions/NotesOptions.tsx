@@ -29,7 +29,6 @@ import { NoteAttributes } from './NoteAttributes'
 import { SpellcheckOptions } from './SpellcheckOptions'
 import { NoteSizeWarning } from './NoteSizeWarning'
 import { DeletePermanentlyButton } from './DeletePermanentlyButton'
-import { SuperNoteMarkdownPreview } from '../NoteView/SuperEditor/SuperNoteMarkdownPreview'
 import { useCommandService } from '../ApplicationView/CommandProvider'
 
 const iconSize = MenuItemIconSize
@@ -43,12 +42,10 @@ const NotesOptions = ({
   navigationController,
   notesController,
   historyModalController,
-  requestDisableClickOutside,
   closeMenu,
 }: NotesOptionsProps) => {
   const [altKeyDown, setAltKeyDown] = useState(false)
   const { toggleAppPane } = useResponsiveAppPane()
-  const [showMarkdownPreview, setShowMarkdownPreview] = useState(false)
   const commandService = useCommandService()
 
   const markdownShortcut = useMemo(
@@ -154,14 +151,8 @@ const NotesOptions = ({
   )
 
   const enableSuperMarkdownPreview = useCallback(() => {
-    setShowMarkdownPreview(true)
-    requestDisableClickOutside?.(true)
-  }, [requestDisableClickOutside])
-
-  const closeMarkdownPreview = useCallback(() => {
-    setShowMarkdownPreview(false)
-    requestDisableClickOutside?.(false)
-  }, [requestDisableClickOutside])
+    commandService.triggerCommand(SUPER_SHOW_MARKDOWN_PREVIEW)
+  }, [commandService])
 
   const unauthorized = notes.some((note) => !application.isAuthorizedToRenderItem(note))
   if (unauthorized) {
@@ -415,8 +406,6 @@ const NotesOptions = ({
                   {markdownShortcut && <KeyboardShortcutIndicator className={''} shortcut={markdownShortcut} />}
                 </div>
               </button>
-
-              {showMarkdownPreview && <SuperNoteMarkdownPreview note={notes[0]} closeDialog={closeMarkdownPreview} />}
             </>
           )}
           <HorizontalSeparator classes="my-2" />
