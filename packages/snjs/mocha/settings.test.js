@@ -164,12 +164,6 @@ describe('settings service', function () {
 
     await Files.uploadFile(application.fileService, buffer, 'my-file', 'md', 1000)
 
-    await Factory.publishMockedEvent('FILE_UPLOADED', {
-      userUuid: user.uuid,
-      fileByteSize: 123,
-      filePath: 'foobar',
-      fileName: 'barbuzz',
-    })
     await Factory.sleep(1)
 
     const limitSettingBefore = await application.settings.getSubscriptionSetting('FILE_UPLOAD_BYTES_LIMIT')
