@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.106.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.105.0...@standardnotes/web@3.106.0) (2022-11-23)
+
+### Features
+
+* use line height preference in super editor (skip e2e) ([#2045](https://github.com/standardnotes/app/issues/2045)) ([87cd31a](https://github.com/standardnotes/app/commit/87cd31ae5d630a528ce6d4895b2c144bf51808f0))
+
 # [3.105.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.104.1...@standardnotes/web@3.105.0) (2022-11-23)
 
 ### Bug Fixes
