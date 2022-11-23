@@ -124,6 +124,13 @@ describe('settings service', function () {
       subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
       timestamp: Date.now(),
       offline: false,
+      discountCode: null,
+      limitedDiscountPurchased: false,
+      newSubscriber: true,
+      totalActiveSubscriptionsCount: 1,
+      userRegisteredAt: 1,
+      billingFrequency: 12,
+      payAmount: 59.00
     })
 
     await Factory.sleep(1)
@@ -142,6 +149,13 @@ describe('settings service', function () {
       subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
       timestamp: Date.now(),
       offline: false,
+      discountCode: null,
+      limitedDiscountPurchased: false,
+      newSubscriber: true,
+      totalActiveSubscriptionsCount: 1,
+      userRegisteredAt: 1,
+      billingFrequency: 12,
+      payAmount: 59.00
     })
     await Factory.sleep(1)
 
@@ -164,13 +178,16 @@ describe('settings service', function () {
     const usedSettingBefore = await application.settings.getSubscriptionSetting('FILE_UPLOAD_BYTES_USED')
     expect(usedSettingBefore).to.equal('123')
 
-
     await Factory.publishMockedEvent('SUBSCRIPTION_EXPIRED', {
       userEmail: context.email,
       subscriptionId: 1,
       subscriptionName: 'PRO_PLAN',
       timestamp: Date.now(),
       offline: false,
+      totalActiveSubscriptionsCount: 1,
+      userExistingSubscriptionsCount: 1,
+      billingFrequency: 12,
+      payAmount: 59.00
     })
     await Factory.sleep(1)
 
@@ -181,6 +198,13 @@ describe('settings service', function () {
       subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
       timestamp: Date.now(),
       offline: false,
+      discountCode: null,
+      limitedDiscountPurchased: false,
+      newSubscriber: false,
+      totalActiveSubscriptionsCount: 2,
+      userRegisteredAt: 1,
+      billingFrequency: 12,
+      payAmount: 59.00
     })
     await Factory.sleep(1)
 

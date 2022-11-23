@@ -37,6 +37,13 @@ describe('subscriptions', function () {
       subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
       timestamp: Date.now(),
       offline: false,
+      discountCode: null,
+      limitedDiscountPurchased: false,
+      newSubscriber: true,
+      totalActiveSubscriptionsCount: 1,
+      userRegisteredAt: 1,
+      billingFrequency: 12,
+      payAmount: 59.00
     })
     await Factory.sleep(0.25)
   })

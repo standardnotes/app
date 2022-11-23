@@ -38,19 +38,21 @@ export class SNWebSocketsService extends AbstractService<WebSocketsServiceEvent,
   }
 
   async startWebSocketConnection(): Promise<void> {
+    if (!this.webSocketUrl) {
+      return
+    }
+
     const webSocketConectionToken = await this.createWebSocketConnectionToken()
     if (webSocketConectionToken === undefined) {
       return
     }
 
-    if (this.webSocketUrl) {
-      try {
-        this.webSocket = new WebSocket(`${this.webSocketUrl}?authToken=${webSocketConectionToken}`)
-        this.webSocket.onmessage = this.onWebSocketMessage.bind(this)
-        this.webSocket.onclose = this.onWebSocketClose.bind(this)
-      } catch (e) {
-        console.error('Error starting WebSocket connection', e)
-      }
+    try {
+      this.webSocket = new WebSocket(`${this.webSocketUrl}?authToken=${webSocketConectionToken}`)
+      this.webSocket.onmessage = this.onWebSocketMessage.bind(this)
+      this.webSocket.onclose = this.onWebSocketClose.bind(this)
+    } catch (e) {
+      console.error('Error starting WebSocket connection', e)
     }
   }
 
