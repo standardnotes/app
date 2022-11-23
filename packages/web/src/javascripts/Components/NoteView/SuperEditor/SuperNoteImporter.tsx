@@ -10,10 +10,7 @@ import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 import Button from '@/Components/Button/Button'
 import ImportPlugin from './Plugins/ImportPlugin/ImportPlugin'
 import { NoteViewController } from '../Controller/NoteViewController'
-
-export function spaceSeparatedStrings(...strings: string[]): string {
-  return strings.join(' ')
-}
+import { spaceSeparatedStrings } from '../../../Utils/spaceSeparatedStrings'
 
 const NotePreviewCharLimit = 160
 
@@ -103,6 +100,7 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
           <ErrorBoundary>
             <BlocksEditorComposer readonly initialValue={undefined}>
               <BlocksEditor
+                readonly
                 onChange={handleChange}
                 ignoreFirstChange={false}
                 className="relative resize-none text-base focus:shadow-none focus:outline-none"

@@ -7,12 +7,6 @@ import {CheckListPlugin} from '@lexical/react/LexicalCheckListPlugin';
 import {ClearEditorPlugin} from '@lexical/react/LexicalClearEditorPlugin';
 import {MarkdownShortcutPlugin} from '@lexical/react/LexicalMarkdownShortcutPlugin';
 import {TablePlugin} from '@lexical/react/LexicalTablePlugin';
-import {
-  CHECK_LIST,
-  ELEMENT_TRANSFORMERS,
-  TEXT_FORMAT_TRANSFORMERS,
-  TEXT_MATCH_TRANSFORMERS,
-} from '@lexical/markdown';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import {HashtagPlugin} from '@lexical/react/LexicalHashtagPlugin';
 import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
@@ -32,15 +26,17 @@ import {truncateString} from './Utils';
 import {SuperEditorContentId} from './Constants';
 import {classNames} from '@standardnotes/utils';
 import {EditorLineHeight} from '@standardnotes/snjs';
+import {MarkdownTransformers} from './MarkdownTransformers';
 
 type BlocksEditorProps = {
-  onChange: (value: string, preview: string) => void;
+  onChange?: (value: string, preview: string) => void;
   className?: string;
   children?: React.ReactNode;
-  previewLength: number;
+  previewLength?: number;
   spellcheck?: boolean;
   ignoreFirstChange?: boolean;
   lineHeight?: EditorLineHeight;
+  readonly?: boolean;
 };
 
 export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
@@ -51,6 +47,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
   spellcheck,
   ignoreFirstChange = false,
   lineHeight,
+  readonly,
 }) => {
   const [didIgnoreFirstChange, setDidIgnoreFirstChange] = useState(false);
   const handleChange = useCallback(
@@ -69,11 +66,14 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
             previewText += '\n';
           }
         });
-        previewText = truncateString(previewText, previewLength);
+
+        if (previewLength) {
+          previewText = truncateString(previewText, previewLength);
+        }
 
         try {
           const stringifiedEditorState = JSON.stringify(editorState.toJSON());
-          onChange(stringifiedEditorState, previewText);
+          onChange?.(stringifiedEditorState, previewText);
         } catch (error) {
           window.alert(
             `An invalid change was made inside the Super editor. Your change was not saved. Please report this error to the team: ${error}`,
@@ -116,14 +116,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
         ErrorBoundary={LexicalErrorBoundary}
       />
       <ListPlugin />
-      <MarkdownShortcutPlugin
-        transformers={[
-          CHECK_LIST,
-          ...ELEMENT_TRANSFORMERS,
-          ...TEXT_FORMAT_TRANSFORMERS,
-          ...TEXT_MATCH_TRANSFORMERS,
-        ]}
-      />
+      <MarkdownShortcutPlugin transformers={MarkdownTransformers} />
       <TablePlugin />
       <OnChangePlugin onChange={handleChange} ignoreSelectionChange={true} />
       <HistoryPlugin />
@@ -138,7 +131,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <TwitterPlugin />
       <YouTubePlugin />
       <CollapsiblePlugin />
-      {floatingAnchorElem && (
+      {!readonly && floatingAnchorElem && (
         <>
           <FloatingTextFormatToolbarPlugin anchorElem={floatingAnchorElem} />
           <FloatingLinkEditorPlugin />

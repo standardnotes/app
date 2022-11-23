@@ -23,6 +23,9 @@ import {
 } from './Plugins/ChangeContentCallback/ChangeContentCallback'
 import PasswordPlugin from './Plugins/PasswordPlugin/PasswordPlugin'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
+import { useCommandService } from '@/Components/ApplicationView/CommandProvider'
+import { SUPER_SHOW_MARKDOWN_PREVIEW } from '@standardnotes/ui-services'
+import { SuperNoteMarkdownPreview } from './SuperNoteMarkdownPreview'
 
 const NotePreviewCharLimit = 160
 
@@ -44,6 +47,20 @@ export const SuperEditor: FunctionComponent<Props> = ({
   const note = useRef(controller.item)
   const changeEditorFunction = useRef<ChangeEditorFunction>()
   const ignoreNextChange = useRef(false)
+  const [showMarkdownPreview, setShowMarkdownPreview] = useState(false)
+
+  const commandService = useCommandService()
+
+  useEffect(() => {
+    return commandService.addCommandHandler({
+      command: SUPER_SHOW_MARKDOWN_PREVIEW,
+      onKeyDown: () => setShowMarkdownPreview(true),
+    })
+  }, [commandService])
+
+  const closeMarkdownPreview = useCallback(() => {
+    setShowMarkdownPreview(false)
+  }, [])
 
   const [lineHeight, setLineHeight] = useState<EditorLineHeight>(PrefDefaults[PrefKey.EditorLineHeight])
 
@@ -110,37 +127,41 @@ export const SuperEditor: FunctionComponent<Props> = ({
   return (
     <div className="relative h-full w-full">
       <ErrorBoundary>
-        <LinkingControllerProvider controller={linkingController}>
-          <FilesControllerProvider controller={filesController}>
-            <BlocksEditorComposer
-              readonly={note.current.locked}
-              initialValue={note.current.text}
-              nodes={[FileNode, BubbleNode]}
-            >
-              <BlocksEditor
-                onChange={handleChange}
-                ignoreFirstChange={true}
-                className="relative h-full resize-none px-6 py-4 text-base focus:shadow-none focus:outline-none"
-                previewLength={NotePreviewCharLimit}
-                spellcheck={spellcheck}
-                lineHeight={lineHeight}
+        <>
+          <LinkingControllerProvider controller={linkingController}>
+            <FilesControllerProvider controller={filesController}>
+              <BlocksEditorComposer
+                readonly={note.current.locked}
+                initialValue={note.current.text}
+                nodes={[FileNode, BubbleNode]}
               >
-                <ItemSelectionPlugin currentNote={note.current} />
-                <FilePlugin />
-                <ItemBubblePlugin />
-                <BlockPickerMenuPlugin />
-                <DatetimePlugin />
-                <PasswordPlugin />
-                <AutoLinkPlugin />
-                <ChangeContentCallbackPlugin
-                  providerCallback={(callback) => (changeEditorFunction.current = callback)}
-                />
-                <NodeObserverPlugin nodeType={BubbleNode} onRemove={handleBubbleRemove} />
-                <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
-              </BlocksEditor>
-            </BlocksEditorComposer>
-          </FilesControllerProvider>
-        </LinkingControllerProvider>
+                <BlocksEditor
+                  onChange={handleChange}
+                  ignoreFirstChange={true}
+                  className="relative h-full resize-none px-6 py-4 text-base focus:shadow-none focus:outline-none"
+                  previewLength={NotePreviewCharLimit}
+                  spellcheck={spellcheck}
+                  lineHeight={lineHeight}
+                >
+                  <ItemSelectionPlugin currentNote={note.current} />
+                  <FilePlugin />
+                  <ItemBubblePlugin />
+                  <BlockPickerMenuPlugin />
+                  <DatetimePlugin />
+                  <PasswordPlugin />
+                  <AutoLinkPlugin />
+                  <ChangeContentCallbackPlugin
+                    providerCallback={(callback) => (changeEditorFunction.current = callback)}
+                  />
+                  <NodeObserverPlugin nodeType={BubbleNode} onRemove={handleBubbleRemove} />
+                  <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
+                </BlocksEditor>
+              </BlocksEditorComposer>
+            </FilesControllerProvider>
+          </LinkingControllerProvider>
+
+          {showMarkdownPreview && <SuperNoteMarkdownPreview note={note.current} closeDialog={closeMarkdownPreview} />}
+        </>
       </ErrorBoundary>
     </div>
   )

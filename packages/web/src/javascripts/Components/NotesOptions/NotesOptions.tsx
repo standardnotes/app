@@ -1,23 +1,21 @@
 import Icon from '@/Components/Icon/Icon'
 import Switch from '@/Components/Switch/Switch'
 import { observer } from 'mobx-react-lite'
-import { useState, useEffect, useMemo, useCallback, FunctionComponent } from 'react'
-import { Platform, SNApplication, SNComponent, SNNote } from '@standardnotes/snjs'
+import { useState, useEffect, useMemo, useCallback } from 'react'
+import { NoteType, Platform, SNNote } from '@standardnotes/snjs'
 import {
   OPEN_NOTE_HISTORY_COMMAND,
   PIN_NOTE_COMMAND,
   SHOW_HIDDEN_OPTIONS_KEYBOARD_COMMAND,
   STAR_NOTE_COMMAND,
+  SUPER_SHOW_MARKDOWN_PREVIEW,
 } from '@standardnotes/ui-services'
 import ChangeEditorOption from './ChangeEditorOption'
-import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
-import ListedActionsOption from './ListedActionsOption'
+import ListedActionsOption from './Listed/ListedActionsOption'
 import AddTagOption from './AddTagOption'
 import { addToast, dismissToast, ToastType } from '@standardnotes/toast'
 import { NotesOptionsProps } from './NotesOptionsProps'
-import { NotesController } from '@/Controllers/NotesController/NotesController'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
-import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { getNoteBlob, getNoteFileName } from '@/Utils/NoteExportUtils'
@@ -27,176 +25,36 @@ import ProtectedUnauthorizedLabel from '../ProtectedItemOverlay/ProtectedUnautho
 import { classNames } from '@standardnotes/utils'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
-
-type DeletePermanentlyButtonProps = {
-  onClick: () => void
-}
-
-const DeletePermanentlyButton = ({ onClick }: DeletePermanentlyButtonProps) => (
-  <button
-    className={classNames(
-      'flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-mobile-menu-item',
-      'text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-menu-item',
-    )}
-    onClick={onClick}
-  >
-    <Icon type="close" className="mr-2 text-danger" />
-    <span className="text-danger">Delete permanently</span>
-  </button>
-)
+import { NoteAttributes } from './NoteAttributes'
+import { SpellcheckOptions } from './SpellcheckOptions'
+import { NoteSizeWarning } from './NoteSizeWarning'
+import { DeletePermanentlyButton } from './DeletePermanentlyButton'
+import { SuperNoteMarkdownPreview } from '../NoteView/SuperEditor/SuperNoteMarkdownPreview'
+import { useCommandService } from '../ApplicationView/CommandProvider'
 
 const iconSize = MenuItemIconSize
-const iconClass = `text-neutral mr-2 ${iconSize}`
+export const iconClass = `text-neutral mr-2 ${iconSize}`
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
 const iconClassWarning = `text-warning mr-2 ${iconSize}`
 const iconClassSuccess = `text-success mr-2 ${iconSize}`
-
-const getWordCount = (text: string) => {
-  if (text.trim().length === 0) {
-    return 0
-  }
-  return text.split(/\s+/).length
-}
-
-const getParagraphCount = (text: string) => {
-  if (text.trim().length === 0) {
-    return 0
-  }
-  return text.replace(/\n$/gm, '').split(/\n/).length
-}
-
-const countNoteAttributes = (text: string) => {
-  try {
-    JSON.parse(text)
-    return {
-      characters: 'N/A',
-      words: 'N/A',
-      paragraphs: 'N/A',
-    }
-  } catch {
-    const characters = text.length
-    const words = getWordCount(text)
-    const paragraphs = getParagraphCount(text)
-
-    return {
-      characters,
-      words,
-      paragraphs,
-    }
-  }
-}
-
-const calculateReadTime = (words: number) => {
-  const timeToRead = Math.round(words / 200)
-  if (timeToRead === 0) {
-    return '< 1 minute'
-  } else {
-    return `${timeToRead} ${timeToRead > 1 ? 'minutes' : 'minute'}`
-  }
-}
-
-const NoteAttributes: FunctionComponent<{
-  application: SNApplication
-  note: SNNote
-}> = ({ application, note }) => {
-  const { words, characters, paragraphs } = useMemo(() => countNoteAttributes(note.text), [note.text])
-
-  const readTime = useMemo(() => (typeof words === 'number' ? calculateReadTime(words) : 'N/A'), [words])
-
-  const dateLastModified = useMemo(() => formatDateForContextMenu(note.userModifiedDate), [note.userModifiedDate])
-
-  const dateCreated = useMemo(() => formatDateForContextMenu(note.created_at), [note.created_at])
-
-  const editor = application.componentManager.editorForNote(note)
-  const format = editor?.package_info?.file_type || 'txt'
-
-  return (
-    <div className="select-text px-3 py-1.5 text-sm font-medium text-neutral lg:text-xs">
-      {typeof words === 'number' && (format === 'txt' || format === 'md') ? (
-        <>
-          <div className="mb-1">
-            {words} words · {characters} characters · {paragraphs} paragraphs
-          </div>
-          <div className="mb-1">
-            <span className="font-semibold">Read time:</span> {readTime}
-          </div>
-        </>
-      ) : null}
-      <div className="mb-1">
-        <span className="font-semibold">Last modified:</span> {dateLastModified}
-      </div>
-      <div className="mb-1">
-        <span className="font-semibold">Created:</span> {dateCreated}
-      </div>
-      <div>
-        <span className="font-semibold">Note ID:</span> {note.uuid}
-      </div>
-    </div>
-  )
-}
-
-const SpellcheckOptions: FunctionComponent<{
-  editorForNote: SNComponent | undefined
-  notesController: NotesController
-  note: SNNote
-  className: string
-}> = ({ editorForNote, notesController, note, className }) => {
-  const spellcheckControllable = Boolean(!editorForNote || editorForNote.package_info.spellcheckControl)
-  const noteSpellcheck = !spellcheckControllable
-    ? true
-    : note
-    ? notesController.getSpellcheckStateForNote(note)
-    : undefined
-
-  return (
-    <div className="flex flex-col">
-      <button
-        className={className}
-        onClick={() => {
-          notesController.toggleGlobalSpellcheckForNote(note).catch(console.error)
-        }}
-        disabled={!spellcheckControllable}
-      >
-        <span className="flex items-center">
-          <Icon type="notes" className={iconClass} />
-          Spellcheck
-        </span>
-        <Switch className="px-0" checked={noteSpellcheck} disabled={!spellcheckControllable} />
-      </button>
-      {!spellcheckControllable && (
-        <p className="px-3 py-1.5 text-xs">Spellcheck cannot be controlled for this editor.</p>
-      )}
-    </div>
-  )
-}
-
-const NOTE_SIZE_WARNING_THRESHOLD = 0.5 * BYTES_IN_ONE_MEGABYTE
-
-const NoteSizeWarning: FunctionComponent<{
-  note: SNNote
-}> = ({ note }) => {
-  return new Blob([note.text]).size > NOTE_SIZE_WARNING_THRESHOLD ? (
-    <>
-      <HorizontalSeparator classes="my-2" />
-      <div className="bg-warning-faded relative flex items-center px-3 py-3.5">
-        <Icon type="warning" className="mr-3 flex-shrink-0 text-accessory-tint-3" />
-        <div className="leading-140% max-w-80% select-none text-warning">
-          This note may have trouble syncing to the mobile application due to its size.
-        </div>
-      </div>
-    </>
-  ) : null
-}
 
 const NotesOptions = ({
   application,
   navigationController,
   notesController,
   historyModalController,
+  requestDisableClickOutside,
   closeMenu,
 }: NotesOptionsProps) => {
   const [altKeyDown, setAltKeyDown] = useState(false)
   const { toggleAppPane } = useResponsiveAppPane()
+  const [showMarkdownPreview, setShowMarkdownPreview] = useState(false)
+  const commandService = useCommandService()
+
+  const markdownShortcut = useMemo(
+    () => commandService.keyboardShortcutForCommand(SUPER_SHOW_MARKDOWN_PREVIEW),
+    [commandService],
+  )
 
   const toggleOn = (condition: (note: SNNote) => boolean) => {
     const notesMatchingAttribute = notes.filter(condition)
@@ -294,6 +152,16 @@ const NotesOptions = ({
     () => application.keyboardService.keyboardShortcutForCommand(STAR_NOTE_COMMAND),
     [application],
   )
+
+  const enableSuperMarkdownPreview = useCallback(() => {
+    setShowMarkdownPreview(true)
+    requestDisableClickOutside?.(true)
+  }, [requestDisableClickOutside])
+
+  const closeMarkdownPreview = useCallback(() => {
+    setShowMarkdownPreview(false)
+    requestDisableClickOutside?.(false)
+  }, [requestDisableClickOutside])
 
   const unauthorized = notes.some((note) => !application.isAuthorizedToRenderItem(note))
   if (unauthorized) {
@@ -532,6 +400,25 @@ const NotesOptions = ({
 
       {notes.length === 1 ? (
         <>
+          {notes[0].noteType === NoteType.Super && (
+            <>
+              <HorizontalSeparator classes="my-2" />
+
+              <div className="my-1 px-3 text-base font-semibold uppercase text-text lg:text-xs">Super</div>
+
+              <button className={defaultClassNames} onClick={enableSuperMarkdownPreview}>
+                <div className="flex w-full items-center justify-between">
+                  <span className="flex">
+                    <Icon type="markdown" className={iconClass} />
+                    Show Markdown
+                  </span>
+                  {markdownShortcut && <KeyboardShortcutIndicator className={''} shortcut={markdownShortcut} />}
+                </div>
+              </button>
+
+              {showMarkdownPreview && <SuperNoteMarkdownPreview note={notes[0]} closeDialog={closeMarkdownPreview} />}
+            </>
+          )}
           <HorizontalSeparator classes="my-2" />
 
           <ListedActionsOption
