@@ -1,4 +1,4 @@
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { useRef } from 'react'
 import AccountMenu, { AccountMenuProps } from '../AccountMenu/AccountMenu'
 import Icon from '../Icon/Icon'

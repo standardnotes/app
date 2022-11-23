@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { useRef } from 'react'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'

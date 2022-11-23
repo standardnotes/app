@@ -2,7 +2,7 @@ import { WebApplication } from '@/Application/Application'
 import { FunctionComponent, MouseEventHandler, useCallback, useMemo } from 'react'
 import Switch from '@/Components/Switch/Switch'
 import { isMobileScreen } from '@/Utils'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { TOGGLE_FOCUS_MODE_COMMAND } from '@standardnotes/ui-services'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 

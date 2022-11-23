@@ -20,7 +20,7 @@ import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { ChallengeModalValues } from './ChallengeModalValues'
 import { InputValue } from './InputValue'
 import { isMobileScreen } from '@/Utils'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 
 type Props = {
   application: WebApplication

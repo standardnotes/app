@@ -1,4 +1,4 @@
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { addToast, ToastType } from '@standardnotes/toast'
 import { useRef, useState } from 'react'
 import Icon from '../Icon/Icon'

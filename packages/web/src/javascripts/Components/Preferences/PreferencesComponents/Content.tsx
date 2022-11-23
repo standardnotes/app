@@ -1,4 +1,4 @@
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { FunctionComponent, MouseEventHandler, ReactNode } from 'react'
 
 type Props = {

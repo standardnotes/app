@@ -1,6 +1,6 @@
 import { ElementIds } from '@/Constants/ElementIDs'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { ReactNode, useCallback, useState } from 'react'
 import { IconType, PrefKey } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'

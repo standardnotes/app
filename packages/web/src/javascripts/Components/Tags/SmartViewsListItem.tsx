@@ -15,7 +15,7 @@ import {
 } from 'react'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 
 type Props = {

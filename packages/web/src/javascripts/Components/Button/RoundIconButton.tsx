@@ -1,7 +1,7 @@
 import { ForwardedRef, forwardRef, MouseEventHandler } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { IconType } from '@standardnotes/snjs'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 
 type Props = {
   onClick: () => void

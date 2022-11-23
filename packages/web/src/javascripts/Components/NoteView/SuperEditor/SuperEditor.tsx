@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
-import { isPayloadSourceRetrieved } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback, useEffect, useRef } from 'react'
+import { ApplicationEvent, EditorLineHeight, isPayloadSourceRetrieved, PrefKey } from '@standardnotes/snjs'
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ItemSelectionPlugin } from './Plugins/ItemSelectionPlugin/ItemSelectionPlugin'
 import { FileNode } from './Plugins/EncryptedFilePlugin/Nodes/FileNode'
@@ -22,6 +22,7 @@ import {
   ChangeEditorFunction,
 } from './Plugins/ChangeContentCallback/ChangeContentCallback'
 import PasswordPlugin from './Plugins/PasswordPlugin/PasswordPlugin'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 const NotePreviewCharLimit = 160
 
@@ -43,6 +44,8 @@ export const SuperEditor: FunctionComponent<Props> = ({
   const note = useRef(controller.item)
   const changeEditorFunction = useRef<ChangeEditorFunction>()
   const ignoreNextChange = useRef(false)
+
+  const [lineHeight, setLineHeight] = useState<EditorLineHeight>(PrefDefaults[PrefKey.EditorLineHeight])
 
   const handleChange = useCallback(
     async (value: string, preview: string) => {
@@ -90,6 +93,20 @@ export const SuperEditor: FunctionComponent<Props> = ({
     return disposer
   }, [controller, controller.item.uuid])
 
+  const reloadPreferences = useCallback(() => {
+    const lineHeight = application.getPreference(PrefKey.EditorLineHeight, PrefDefaults[PrefKey.EditorLineHeight])
+
+    setLineHeight(lineHeight)
+  }, [application])
+
+  useEffect(() => {
+    reloadPreferences()
+
+    return application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
+      reloadPreferences()
+    })
+  }, [reloadPreferences, application])
+
   return (
     <div className="relative h-full w-full">
       <ErrorBoundary>
@@ -106,6 +123,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 className="relative h-full resize-none px-6 py-4 text-base focus:shadow-none focus:outline-none"
                 previewLength={NotePreviewCharLimit}
                 spellcheck={spellcheck}
+                lineHeight={lineHeight}
               >
                 <ItemSelectionPlugin currentNote={note.current} />
                 <FilePlugin />

@@ -1,7 +1,7 @@
 import { FunctionComponent, ReactNode, useEffect } from 'react'
 import { AlertDialogLabel } from '@reach/alert-dialog'
 import Icon from '@/Components/Icon/Icon'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 
 type Props = {

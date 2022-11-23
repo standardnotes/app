@@ -1,4 +1,4 @@
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { ComponentPropsWithoutRef } from 'react'
 import { useTabStateContext } from './useTabState'
 

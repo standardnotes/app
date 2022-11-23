@@ -8,7 +8,7 @@ import { ThemeItem } from './ThemeItem'
 import RadioIndicator from '../Radio/RadioIndicator'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import { isMobileScreen } from '@/Utils'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 
 type Props = {
   item: ThemeItem

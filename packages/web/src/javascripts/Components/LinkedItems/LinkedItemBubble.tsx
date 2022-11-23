@@ -1,5 +1,5 @@
 import { LinkingController } from '@/Controllers/LinkingController'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { KeyboardEventHandler, MouseEventHandler, useEffect, useRef, useState } from 'react'

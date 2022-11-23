@@ -1,6 +1,6 @@
 import { useDocumentRect } from '@/Hooks/useDocumentRect'
 import { useAutoElementRect } from '@/Hooks/useElementRect'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { useCallback, useLayoutEffect, useState } from 'react'
 import Icon from '../Icon/Icon'
 import Portal from '../Portal/Portal'

@@ -1,5 +1,5 @@
 import { getPlatformString } from '@/Utils'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
 import { ReactNode } from 'react'
 

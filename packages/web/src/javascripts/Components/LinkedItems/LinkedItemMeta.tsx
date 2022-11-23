@@ -1,5 +1,5 @@
 import { splitQueryInString } from '@/Utils'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { getTitleForLinkedTag } from '@/Utils/Items/Display/getTitleForLinkedTag'
 import { getIconForItem } from '@/Utils/Items/Icons/getIconForItem'
 import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'

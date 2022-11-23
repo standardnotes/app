@@ -1,4 +1,4 @@
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import Icon from '../Icon/Icon'
 
 type Props = {

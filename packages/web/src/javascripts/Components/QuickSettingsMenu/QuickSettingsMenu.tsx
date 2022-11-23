@@ -21,7 +21,7 @@ import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
 import PanelSettingsSection from './PanelSettingsSection'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 
 export const focusModeAnimationDuration = 1255
 

@@ -13,7 +13,7 @@ import { useContextMenuEvent } from '@/Hooks/useContextMenuEvent'
 import ListItemNotePreviewText from './ListItemNotePreviewText'
 import { ListItemTitle } from './ListItemTitle'
 import { log, LoggingDomain } from '@/Logging'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { getIconAndTintForNoteType } from '@/Utils/Items/Icons/getIconAndTintForNoteType'
 
 const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({

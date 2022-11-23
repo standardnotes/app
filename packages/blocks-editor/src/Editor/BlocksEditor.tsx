@@ -30,6 +30,8 @@ import FloatingTextFormatToolbarPlugin from '../Lexical/Plugins/FloatingTextForm
 import FloatingLinkEditorPlugin from '../Lexical/Plugins/FloatingLinkEditorPlugin';
 import {truncateString} from './Utils';
 import {SuperEditorContentId} from './Constants';
+import {classNames} from '@standardnotes/utils';
+import {EditorLineHeight} from '@standardnotes/snjs';
 
 type BlocksEditorProps = {
   onChange: (value: string, preview: string) => void;
@@ -38,6 +40,7 @@ type BlocksEditorProps = {
   previewLength: number;
   spellcheck?: boolean;
   ignoreFirstChange?: boolean;
+  lineHeight: EditorLineHeight;
 };
 
 export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
@@ -47,6 +50,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
   previewLength,
   spellcheck,
   ignoreFirstChange = false,
+  lineHeight,
 }) => {
   const [didIgnoreFirstChange, setDidIgnoreFirstChange] = useState(false);
   const handleChange = useCallback(
@@ -98,7 +102,11 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
             <div className="editor" ref={onRef}>
               <ContentEditable
                 id={SuperEditorContentId}
-                className={`ContentEditable__root overflow-y-auto ${className}`}
+                className={classNames(
+                  'ContentEditable__root overflow-y-auto',
+                  `leading-${lineHeight.toLowerCase()}`,
+                  className,
+                )}
                 spellCheck={spellcheck}
               />
             </div>

@@ -1,6 +1,6 @@
 import { Component, createRef, MouseEventHandler } from 'react'
 import { debounce } from '@/Utils'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 
 export type ResizeFinishCallback = (
   lastWidth: number,

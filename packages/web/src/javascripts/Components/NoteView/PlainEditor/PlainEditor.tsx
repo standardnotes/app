@@ -5,7 +5,7 @@ import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { log, LoggingDomain } from '@/Logging'
 import { Disposer } from '@/Types/Disposer'
 import { EditorEventSource } from '@/Types/EditorEventSource'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { getPlaintextFontSize } from '@/Utils/getPlaintextFontSize'
 import {
   ApplicationEvent,

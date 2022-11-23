@@ -9,7 +9,7 @@ import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 import { PreferenceMode } from './PreferenceMode'
 import dayjs from 'dayjs'
 import { EditorOption, getDropdownItemsForAllEditors } from '@/Utils/DropdownItemsForEditors'
-import { classNames } from '@/Utils/ConcatenateClassNames'
+import { classNames } from '@standardnotes/utils'
 import { NoteTitleFormatOptions } from './NoteTitleFormatOptions'
 
 const PrefChangeDebounceTimeInMs = 25
