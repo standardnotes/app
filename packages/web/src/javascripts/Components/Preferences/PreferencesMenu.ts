@@ -20,6 +20,7 @@ interface SelectableMenuItem extends PreferencesMenuItem {
  * Items are in order of appearance
  */
 const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
+  { id: 'whats-new', label: "What's New", icon: 'asterisk' },
   { id: 'account', label: 'Account', icon: 'user' },
   { id: 'general', label: 'General', icon: 'settings' },
   { id: 'security', label: 'Security', icon: 'security' },
@@ -30,10 +31,10 @@ const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'accessibility', label: 'Accessibility', icon: 'accessibility' },
   { id: 'get-free-month', label: 'Get a free month', icon: 'star' },
   { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
-  { id: 'whats-new', label: "What's New", icon: 'help' },
 ]
 
 const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
+  { id: 'whats-new', label: "What's New", icon: 'asterisk' },
   { id: 'account', label: 'Account', icon: 'user' },
   { id: 'general', label: 'General', icon: 'settings' },
   { id: 'security', label: 'Security', icon: 'security' },

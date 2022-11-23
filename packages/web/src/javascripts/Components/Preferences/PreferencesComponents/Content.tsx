@@ -10,6 +10,12 @@ export const Title: FunctionComponent<Props> = ({ children, className }) => (
   <h2 className={classNames('m-0 mb-1 text-lg font-bold text-info md:text-base', className)}>{children}</h2>
 )
 
+export const TitleLink: FunctionComponent<Props & { link: string }> = ({ children, className, link }) => (
+  <a target="_blank" href={link} className={classNames('m-0 mb-1 text-lg font-bold text-info md:text-base', className)}>
+    {children}
+  </a>
+)
+
 export const Subtitle: FunctionComponent<Props> = ({ children, className }) => (
   <h4 className={classNames('m-0 mb-1 text-base font-medium lg:text-sm', className)}>{children}</h4>
 )

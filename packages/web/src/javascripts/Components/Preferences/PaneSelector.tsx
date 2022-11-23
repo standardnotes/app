@@ -9,7 +9,7 @@ import Security from './Panes/Security/Security'
 import Listed from './Panes/Listed/Listed'
 import HelpAndFeedback from './Panes/HelpFeedback'
 import { PreferencesProps } from './PreferencesProps'
-import WhatsNew from './Panes/WhatsNew'
+import WhatsNew from './Panes/WhatsNew/WhatsNew'
 
 const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu }> = ({
   menu,

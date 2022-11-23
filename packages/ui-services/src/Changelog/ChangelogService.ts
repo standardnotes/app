@@ -2,6 +2,7 @@ import { Changelog, ChangelogVersion } from './Changelog'
 import { ChangelogServiceInterface } from './ChangelogServiceInterface'
 
 const ChangelogUrl = 'https://raw.githubusercontent.com/standardnotes/app/main/packages/web/CHANGELOG.md.json'
+const DownloadsUrlBase = 'https://github.com/standardnotes/app/releases/tag/%40standardnotes%2Fdesktop%40'
 
 export class ChangelogService implements ChangelogServiceInterface {
   private changeLog?: Changelog
@@ -26,5 +27,9 @@ export class ChangelogService implements ChangelogServiceInterface {
   public async getVersions(): Promise<ChangelogVersion[]> {
     const changelog = await this.getChangelog()
     return changelog.versions
+  }
+
+  public getDownloadsUrl(version: string): string {
+    return DownloadsUrlBase + version
   }
 }
