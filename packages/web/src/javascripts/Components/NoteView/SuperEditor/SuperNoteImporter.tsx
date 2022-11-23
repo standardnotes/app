@@ -105,7 +105,7 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
               <BlocksEditor
                 onChange={handleChange}
                 ignoreFirstChange={false}
-                className="relative relative resize-none text-base focus:shadow-none focus:outline-none"
+                className="relative resize-none text-base focus:shadow-none focus:outline-none"
                 previewLength={NotePreviewCharLimit}
                 spellcheck={note.spellcheck}
               >

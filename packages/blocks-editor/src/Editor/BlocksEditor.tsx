@@ -40,7 +40,7 @@ type BlocksEditorProps = {
   previewLength: number;
   spellcheck?: boolean;
   ignoreFirstChange?: boolean;
-  lineHeight: EditorLineHeight;
+  lineHeight?: EditorLineHeight;
 };
 
 export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
@@ -104,7 +104,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
                 id={SuperEditorContentId}
                 className={classNames(
                   'ContentEditable__root overflow-y-auto',
-                  `leading-${lineHeight.toLowerCase()}`,
+                  lineHeight && `leading-${lineHeight.toLowerCase()}`,
                   className,
                 )}
                 spellCheck={spellcheck}
