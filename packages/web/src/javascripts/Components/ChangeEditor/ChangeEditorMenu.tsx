@@ -59,7 +59,11 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         return item.component?.identifier === currentComponent.identifier
       }
 
-      return item.noteType === note?.noteType || (!note?.noteType && item.noteType === NoteType.Plain)
+      const itemNoteTypeIsSameAsCurrentNoteType = item.noteType === note?.noteType
+      const noteDoesntHaveTypeAndItemIsPlain = !note?.noteType && item.noteType === NoteType.Plain
+      const unknownNoteTypeAndItemIsPlain = note?.noteType === NoteType.Unknown && item.noteType === NoteType.Plain
+
+      return itemNoteTypeIsSameAsCurrentNoteType || noteDoesntHaveTypeAndItemIsPlain || unknownNoteTypeAndItemIsPlain
     },
     [currentComponent, note],
   )

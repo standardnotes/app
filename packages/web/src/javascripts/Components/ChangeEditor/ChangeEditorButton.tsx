@@ -26,7 +26,9 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
   const [selectedEditor, setSelectedEditor] = useState(() => {
     return note ? application.componentManager.editorForNote(note) : undefined
   })
-  const [selectedEditorIcon, selectedEditorIconTint] = getIconAndTintForNoteType(selectedEditor?.package_info.note_type)
+  const [selectedEditorIcon, selectedEditorIconTint] = getIconAndTintForNoteType(
+    note?.noteType || selectedEditor?.package_info.note_type,
+  )
   const [isClickOutsideDisabled, setIsClickOutsideDisabled] = useState(false)
 
   const toggleMenu = useCallback(async () => {
