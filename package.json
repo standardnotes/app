@@ -31,7 +31,8 @@
     "reset": "find . -type dir -name node_modules | xargs rm -rf && rm -rf yarn.lock && yarn install",
     "release:prod": "lerna version --conventional-commits --yes -m \"chore(release): publish\"",
     "publish:prod": "lerna publish from-git --yes --no-verify-access --loglevel verbose",
-    "version": "yarn install --no-immutable && git add yarn.lock",
+    "version": "yarn install --no-immutable && git add yarn.lock && yarn changelog:json",
+    "changelog:json": "node scripts/ChangelogToJson.js && git add .",
     "postversion": "./scripts/push-tags-one-by-one.sh",
     "workspace:list": " yarn lerna list -all",
     "upgrade:snjs": "ncu -u '@standardnotes/*' && yarn workspaces foreach --verbose run upgrade:snjs"

@@ -9,6 +9,7 @@ import Security from './Panes/Security/Security'
 import Listed from './Panes/Listed/Listed'
 import HelpAndFeedback from './Panes/HelpFeedback'
 import { PreferencesProps } from './PreferencesProps'
+import WhatsNew from './Panes/WhatsNew'
 
 const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu }> = ({
   menu,
@@ -51,6 +52,8 @@ const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu
       return null
     case 'help-feedback':
       return <HelpAndFeedback application={application} />
+    case 'whats-new':
+      return <WhatsNew application={application} />
     default:
       return (
         <General
