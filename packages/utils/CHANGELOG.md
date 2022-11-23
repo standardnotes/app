@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.11.3...@standardnotes/utils@1.12.0) (2022-11-23)
+
+### Features
+
+* display file backup status in file context menu ([#2044](https://github.com/standardnotes/app/issues/2044)) (skip e2e) ([7c2e832](https://github.com/standardnotes/app/commit/7c2e832065d45676f1b69b7c386e789e2f76775e))
+
 ## [1.11.3](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.11.2...@standardnotes/utils@1.11.3) (2022-11-17)
 
 **Note:** Version bump only for package @standardnotes/utils

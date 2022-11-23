@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.101.0](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.100.18...@standardnotes/desktop@3.101.0) (2022-11-23)
+
+### Features
+
+* display file backup status in file context menu ([#2044](https://github.com/standardnotes/app/issues/2044)) (skip e2e) ([7c2e832](https://github.com/standardnotes/app/commit/7c2e832065d45676f1b69b7c386e789e2f76775e))
+
 ## [3.100.18](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.100.17...@standardnotes/desktop@3.100.18) (2022-11-22)
 
 **Note:** Version bump only for package @standardnotes/desktop

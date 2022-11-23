@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.105.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.104.1...@standardnotes/web@3.105.0) (2022-11-23)
+
+### Bug Fixes
+
+* lazy load embedded files in super editor ([#2043](https://github.com/standardnotes/app/issues/2043)) ([096d82f](https://github.com/standardnotes/app/commit/096d82f7af73613a3d8bc994bec2ec10a92a527c))
+* super editor popover menus ([#2041](https://github.com/standardnotes/app/issues/2041)) ([8c8f045](https://github.com/standardnotes/app/commit/8c8f045b9a53d910bcbf1dc5ee19cf92addf252e))
+
+### Features
+
+* display file backup status in file context menu ([#2044](https://github.com/standardnotes/app/issues/2044)) (skip e2e) ([7c2e832](https://github.com/standardnotes/app/commit/7c2e832065d45676f1b69b7c386e789e2f76775e))
+
 ## [3.104.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.104.0...@standardnotes/web@3.104.1) (2022-11-22)
 
 **Note:** Version bump only for package @standardnotes/web

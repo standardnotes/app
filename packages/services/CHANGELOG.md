@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.46.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.45.6...@standardnotes/services@1.46.0) (2022-11-23)
+
+### Features
+
+* display file backup status in file context menu ([#2044](https://github.com/standardnotes/app/issues/2044)) (skip e2e) ([7c2e832](https://github.com/standardnotes/app/commit/7c2e832065d45676f1b69b7c386e789e2f76775e))
+
 ## [1.45.6](https://github.com/standardnotes/app/compare/@standardnotes/services@1.45.5...@standardnotes/services@1.45.6) (2022-11-18)
 
 **Note:** Version bump only for package @standardnotes/services
