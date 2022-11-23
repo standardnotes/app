@@ -10,6 +10,7 @@ import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import MenuItem from '../Menu/MenuItem'
 import { MenuItemType } from '../Menu/MenuItemType'
+import { FileContextMenuBackupOption } from './FileContextMenuBackupOption'
 
 type Props = {
   closeMenu: () => void
@@ -120,6 +121,9 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         <Icon type="trash" className="mr-2 text-danger" />
         <span className="text-danger">Delete permanently</span>
       </MenuItem>
+
+      <FileContextMenuBackupOption file={selectedFiles[0]} />
+
       <HorizontalSeparator classes="my-2" />
       <div className="px-3 pt-1 pb-0.5 text-xs font-medium text-neutral">
         {!hasSelectedMultipleFiles && (

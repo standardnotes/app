@@ -1,5 +1,5 @@
 import { Uuid } from '@standardnotes/common'
-import { FileBackupsMapping } from './FileBackupsMapping'
+import { FileBackupRecord, FileBackupsMapping } from './FileBackupsMapping'
 
 export interface FileBackupsDevice {
   getFilesBackupsMappingFile(): Promise<FileBackupsMapping>
@@ -18,4 +18,5 @@ export interface FileBackupsDevice {
   changeFilesBackupsLocation(): Promise<string | undefined>
   getFilesBackupsLocation(): Promise<string>
   openFilesBackupsLocation(): Promise<void>
+  openFileBackup(record: FileBackupRecord): Promise<void>
 }

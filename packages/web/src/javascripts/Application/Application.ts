@@ -30,6 +30,7 @@ import {
   ArchiveManager,
   AutolockService,
   KeyboardService,
+  PreferenceId,
   RouteService,
   RouteServiceInterface,
   ThemeManager,
@@ -386,5 +387,12 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       this.componentManager.legacyGetDefaultEditor()?.identifier ||
       FeatureIdentifier.PlainEditor
     )
+  }
+
+  openPreferences(pane?: PreferenceId): void {
+    this.getViewControllerManager().preferencesController.openPreferences()
+    if (pane) {
+      this.getViewControllerManager().preferencesController.setCurrentPane(pane)
+    }
   }
 }

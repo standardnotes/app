@@ -6264,6 +6264,7 @@ __metadata:
     lodash: ^4.17.21
     reflect-metadata: ^0.1.13
     ts-jest: ^29.0.3
+    typescript: "*"
   languageName: unknown
   linkType: soft
 
