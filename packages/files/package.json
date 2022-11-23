@@ -15,7 +15,8 @@
   "license": "AGPL-3.0-or-later",
   "scripts": {
     "lint": "eslint src --ext .ts",
-    "test": "jest"
+    "test": "jest",
+    "build": "echo 'Empty build script required for yarn topological install'"
   },
   "devDependencies": {
     "@types/jest": "^29.2.3",
