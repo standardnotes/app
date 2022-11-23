@@ -37,16 +37,28 @@ const NotesOptionsPanel = ({
     setIsOpen(willMenuOpen)
   }, [onClickPreprocessing, isOpen])
 
+  const [disableClickOutside, setDisableClickOutside] = useState(false)
+  const handleDisableClickOutsideRequest = useCallback((disabled: boolean) => {
+    setDisableClickOutside(disabled)
+  }, [])
+
   return (
     <>
       <RoundIconButton label="Note options menu" onClick={toggleMenu} ref={buttonRef} icon="more" />
-      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="select-none">
+      <Popover
+        disableClickOutside={disableClickOutside}
+        togglePopover={toggleMenu}
+        anchorElement={buttonRef.current}
+        open={isOpen}
+        className="select-none"
+      >
         <NotesOptions
           application={application}
           navigationController={navigationController}
           notesController={notesController}
           linkingController={linkingController}
           historyModalController={historyModalController}
+          requestDisableClickOutside={handleDisableClickOutsideRequest}
           closeMenu={toggleMenu}
         />
       </Popover>
