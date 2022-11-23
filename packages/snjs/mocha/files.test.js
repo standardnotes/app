@@ -40,7 +40,7 @@ describe('files', function () {
       await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
         userEmail: context.email,
         subscriptionId: 1,
-        subscriptionName: 'PLUS_PLAN',
+        subscriptionName: 'PRO_PLAN',
         subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
         timestamp: Date.now(),
         offline: false,
@@ -52,7 +52,7 @@ describe('files', function () {
         billingFrequency: 12,
         payAmount: 59.00
       })
-      await Factory.sleep(0.25)
+      await Factory.sleep(1)
     }
   }
 
