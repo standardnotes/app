@@ -14,9 +14,10 @@ type Props = {
   application: WebApplication
   file: FileItem
   bytes: Uint8Array
+  isEmbedded: boolean
 }
 
-const PreviewComponent: FunctionComponent<Props> = ({ application, file, bytes }) => {
+const PreviewComponent: FunctionComponent<Props> = ({ application, file, bytes, isEmbedded }) => {
   const { selectedPane } = useResponsiveAppPane()
 
   const objectUrlRef = useRef<string>()
@@ -73,7 +74,7 @@ const PreviewComponent: FunctionComponent<Props> = ({ application, file, bytes }
   }
 
   if (file.mimeType.startsWith('image/')) {
-    return <ImagePreview objectUrl={objectUrl} />
+    return <ImagePreview objectUrl={objectUrl} isEmbedded={isEmbedded} />
   }
 
   if (file.mimeType.startsWith('video/')) {

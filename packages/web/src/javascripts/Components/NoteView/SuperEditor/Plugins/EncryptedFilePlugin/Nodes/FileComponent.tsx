@@ -59,7 +59,9 @@ export function FileComponent({ className, format, nodeKey, fileUuid }: FileComp
 
   return (
     <BlockWithAlignableContents className={className} format={format} nodeKey={nodeKey}>
-      <div ref={blockWrapperRef}>{canLoad && <FilePreview file={file} application={application} />}</div>
+      <div ref={blockWrapperRef}>
+        {canLoad && <FilePreview isEmbedded={true} file={file} application={application} />}
+      </div>
     </BlockWithAlignableContents>
   )
 }

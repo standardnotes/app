@@ -12,9 +12,10 @@ import { ProtectedIllustration } from '@standardnotes/icons'
 type Props = {
   application: WebApplication
   file: FileItem
+  isEmbedded?: boolean
 }
 
-const FilePreview = ({ file, application }: Props) => {
+const FilePreview = ({ file, application, isEmbedded = false }: Props) => {
   const [isAuthorized, setIsAuthorized] = useState(application.isAuthorizedToRenderItem(file))
 
   const isFilePreviewable = useMemo(() => {
@@ -112,7 +113,7 @@ const FilePreview = ({ file, application }: Props) => {
       <span className="mt-3">Loading file...</span>
     </div>
   ) : downloadedBytes ? (
-    <PreviewComponent application={application} file={file} bytes={downloadedBytes} />
+    <PreviewComponent application={application} file={file} bytes={downloadedBytes} isEmbedded={isEmbedded} />
   ) : (
     <FilePreviewError
       file={file}
