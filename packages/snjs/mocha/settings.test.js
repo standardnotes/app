@@ -170,7 +170,7 @@ describe('settings service', function () {
     expect(limitSettingBefore).to.equal('107374182400')
 
     const usedSettingBefore = await application.settings.getSubscriptionSetting('FILE_UPLOAD_BYTES_USED')
-    expect(usedSettingBefore).to.equal('123')
+    expect(usedSettingBefore).to.equal('196')
 
     await Factory.publishMockedEvent('SUBSCRIPTION_EXPIRED', {
       userEmail: context.email,
