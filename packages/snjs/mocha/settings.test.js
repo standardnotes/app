@@ -13,6 +13,7 @@ describe('settings service', function () {
 
   let application
   let context
+  let subscriptionId = 2001
 
   beforeEach(async function () {
     localStorage.clear()
@@ -118,7 +119,7 @@ describe('settings service', function () {
   it('reads a subscription setting', async () => {
     await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: context.email,
-      subscriptionId: 1,
+      subscriptionId: subscriptionId++,
       subscriptionName: 'PRO_PLAN',
       subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
       timestamp: Date.now(),
@@ -143,7 +144,7 @@ describe('settings service', function () {
 
     await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: context.email,
-      subscriptionId: 42,
+      subscriptionId: subscriptionId,
       subscriptionName: 'PRO_PLAN',
       subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
       timestamp: Date.now(),
@@ -173,7 +174,7 @@ describe('settings service', function () {
 
     await Factory.publishMockedEvent('SUBSCRIPTION_EXPIRED', {
       userEmail: context.email,
-      subscriptionId: 42,
+      subscriptionId: subscriptionId++,
       subscriptionName: 'PRO_PLAN',
       timestamp: Date.now(),
       offline: false,
@@ -186,7 +187,7 @@ describe('settings service', function () {
 
     await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: context.email,
-      subscriptionId: 43,
+      subscriptionId: subscriptionId++,
       subscriptionName: 'PRO_PLAN',
       subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
       timestamp: Date.now(),
