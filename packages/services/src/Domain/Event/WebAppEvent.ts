@@ -8,7 +8,4 @@ export enum WebAppEvent {
   WindowDidBlur = 'WindowDidBlur',
   MobileKeyboardDidChangeFrame = 'MobileKeyboardDidChangeFrame',
   MobileKeyboardWillChangeFrame = 'MobileKeyboardWillChangeFrame',
-  SuperNoteExportJson = 'SuperNoteExportJson',
-  SuperNoteExportMarkdown = 'SuperNoteExportMarkdown',
-  SuperNoteExportHtml = 'SuperNoteExportHtml',
 }

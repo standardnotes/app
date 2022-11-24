@@ -2,16 +2,23 @@ import { useApplication } from '@/Components/ApplicationView/ApplicationProvider
 import { downloadBlobOnAndroid } from '@/NativeMobileWeb/DownloadBlobOnAndroid'
 import { shareBlobOnMobile } from '@/NativeMobileWeb/ShareBlobOnMobile'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import { Platform, WebAppEvent } from '@standardnotes/snjs'
-import { sanitizeFileName } from '@standardnotes/ui-services'
+import { Platform } from '@standardnotes/snjs'
+import {
+  sanitizeFileName,
+  SUPER_EXPORT_HTML,
+  SUPER_EXPORT_JSON,
+  SUPER_EXPORT_MARKDOWN,
+} from '@standardnotes/ui-services'
 import { useCallback, useEffect } from 'react'
 import { $convertToMarkdownString } from '@lexical/markdown'
 import { MarkdownTransformers } from '@standardnotes/blocks-editor'
 import { $generateHtmlFromNodes } from '@lexical/html'
+import { useCommandService } from '@/Components/ApplicationView/CommandProvider'
 
 export const ExportPlugin = () => {
   const application = useApplication()
   const [editor] = useLexicalComposerContext()
+  const commandService = useCommandService()
 
   const downloadData = useCallback(
     (data: Blob, fileName: string) => {
@@ -61,19 +68,46 @@ export const ExportPlugin = () => {
   )
 
   useEffect(() => {
-    return application.addWebEventObserver((event, data) => {
-      if (event === WebAppEvent.SuperNoteExportJson) {
+    return commandService.addCommandHandler({
+      command: SUPER_EXPORT_JSON,
+      onKeyDown: (_, data) => {
+        if (!data) {
+          throw new Error('No data provided for export command')
+        }
+
         const title = data as string
         exportJson(title)
-      } else if (event === WebAppEvent.SuperNoteExportMarkdown) {
+      },
+    })
+  }, [commandService, exportJson])
+
+  useEffect(() => {
+    return commandService.addCommandHandler({
+      command: SUPER_EXPORT_MARKDOWN,
+      onKeyDown: (_, data) => {
+        if (!data) {
+          throw new Error('No data provided for export command')
+        }
+
         const title = data as string
         exportMarkdown(title)
-      } else if (event === WebAppEvent.SuperNoteExportHtml) {
+      },
+    })
+  }, [commandService, exportMarkdown])
+
+  useEffect(() => {
+    return commandService.addCommandHandler({
+      command: SUPER_EXPORT_HTML,
+      onKeyDown: (_, data) => {
+        if (!data) {
+          throw new Error('No data provided for export command')
+        }
+
         const title = data as string
         exportHtml(title)
-      }
+      },
     })
-  }, [application, exportHtml, exportJson, exportMarkdown])
+  }, [commandService, exportHtml])
 
   return null
 }

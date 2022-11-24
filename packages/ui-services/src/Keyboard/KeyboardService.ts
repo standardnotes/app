@@ -165,7 +165,7 @@ export class KeyboardService {
     }
   }
 
-  public triggerCommand(command: KeyboardCommand): void {
+  public triggerCommand(command: KeyboardCommand, data?: unknown): void {
     for (const observer of this.commandHandlers) {
       if (observer.command !== command) {
         continue
@@ -173,7 +173,7 @@ export class KeyboardService {
 
       const callback = observer.onKeyDown || observer.onKeyUp
       if (callback) {
-        const exclusive = callback(new KeyboardEvent('command-trigger'))
+        const exclusive = callback(new KeyboardEvent('command-trigger'), data)
         if (exclusive) {
           return
         }

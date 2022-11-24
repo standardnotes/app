@@ -1,7 +1,12 @@
-import { SNNote, WebAppEvent } from '@standardnotes/snjs'
-import { PlatformedKeyboardShortcut } from '@standardnotes/ui-services'
+import { SNNote } from '@standardnotes/snjs'
+import {
+  PlatformedKeyboardShortcut,
+  SUPER_EXPORT_HTML,
+  SUPER_EXPORT_JSON,
+  SUPER_EXPORT_MARKDOWN,
+} from '@standardnotes/ui-services'
 import { useRef, useState } from 'react'
-import { useApplication } from '../ApplicationView/ApplicationProvider'
+import { useCommandService } from '../ApplicationView/CommandProvider'
 import Icon from '../Icon/Icon'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 import Menu from '../Menu/Menu'
@@ -17,7 +22,8 @@ type Props = {
 }
 
 const SuperNoteOptions = ({ note, markdownShortcut, enableSuperMarkdownPreview }: Props) => {
-  const application = useApplication()
+  const commandService = useCommandService()
+
   const exportButtonRef = useRef<HTMLButtonElement>(null)
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false)
 
@@ -61,15 +67,15 @@ const SuperNoteOptions = ({ note, markdownShortcut, enableSuperMarkdownPreview }
         className="py-1"
       >
         <Menu a11yLabel={'Super note export menu'} isOpen={isExportMenuOpen}>
-          <MenuItem onClick={() => application.notifyWebEvent(WebAppEvent.SuperNoteExportJson, note.title)}>
+          <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_JSON, note.title)}>
             <Icon type="code" className={iconClass} />
             Export as JSON
           </MenuItem>
-          <MenuItem onClick={() => application.notifyWebEvent(WebAppEvent.SuperNoteExportMarkdown, note.title)}>
+          <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_MARKDOWN, note.title)}>
             <Icon type="markdown" className={iconClass} />
             Export as Markdown
           </MenuItem>
-          <MenuItem onClick={() => application.notifyWebEvent(WebAppEvent.SuperNoteExportHtml, note.title)}>
+          <MenuItem onClick={() => commandService.triggerCommand(SUPER_EXPORT_HTML, note.title)}>
             <Icon type="rich-text" className={iconClass} />
             Export as HTML
           </MenuItem>
