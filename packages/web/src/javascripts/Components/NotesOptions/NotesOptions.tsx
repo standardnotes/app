@@ -282,20 +282,26 @@ const NotesOptions = ({
           </div>
         </button>
       )}
-      <button
-        className={menuItemClassNames}
-        onClick={() => {
-          application.isNativeMobileWeb() ? void shareSelectedNotes(application, notes) : void downloadSelectedItems()
-        }}
-      >
-        <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
-        {application.platform === Platform.Android ? 'Share' : 'Export'}
-      </button>
-      {application.platform === Platform.Android && (
-        <button className={menuItemClassNames} onClick={() => downloadSelectedNotesOnAndroid(application, notes)}>
-          <Icon type="download" className={iconClass} />
-          Export
-        </button>
+      {notes[0].noteType !== NoteType.Super && (
+        <>
+          <button
+            className={menuItemClassNames}
+            onClick={() => {
+              application.isNativeMobileWeb()
+                ? void shareSelectedNotes(application, notes)
+                : void downloadSelectedItems()
+            }}
+          >
+            <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
+            {application.platform === Platform.Android ? 'Share' : 'Export'}
+          </button>
+          {application.platform === Platform.Android && (
+            <button className={menuItemClassNames} onClick={() => downloadSelectedNotesOnAndroid(application, notes)}>
+              <Icon type="download" className={iconClass} />
+              Export
+            </button>
+          )}
+        </>
       )}
       <button className={menuItemClassNames} onClick={duplicateSelectedItems}>
         <Icon type="copy" className={iconClass} />
