@@ -8,7 +8,7 @@ describe('subscriptions', function () {
   let application
   let context
   let subscriptionManager
-  let subscriptionId
+  let subscriptionId = 3001
 
   afterEach(async function () {
     await Factory.safeDeinit(application)
