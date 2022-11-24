@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.152.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.152.3...@standardnotes/snjs@2.152.4) (2022-11-24)
+
+### Bug Fixes
+
+* **snjs:** initial value of subscription ids on files test - run e2e ([81b5123](https://github.com/standardnotes/app/commit/81b51232940b5fade61ad6e72237f739607bed2b))
+* **snjs:** subscription id increments - run e2e ([7a89a3c](https://github.com/standardnotes/app/commit/7a89a3cd9cb2c364d3b22da96c894040bcf7167b))
+
 ## [2.152.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.152.1...@standardnotes/snjs@2.152.3) (2022-11-24)
 
 ### Bug Fixes
