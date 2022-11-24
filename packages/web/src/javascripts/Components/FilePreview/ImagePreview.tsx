@@ -10,6 +10,7 @@ type Props = {
 const ImagePreview: FunctionComponent<Props> = ({ objectUrl, isEmbedded }) => {
   const [imageHeight, setImageHeight] = useState<number>(0)
   const [imageZoomPercent, setImageZoomPercent] = useState(100)
+  const [isZoomInputVisible, setIsZoomInputVisible] = useState(false)
 
   useEffect(() => {
     const image = new Image()
@@ -73,7 +74,40 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl, isEmbedded }) => {
             })
           }}
         />
-        <span className="mx-2">{imageZoomPercent}%</span>
+        {isZoomInputVisible ? (
+          <div className="mx-2">
+            <input
+              type="number"
+              className="w-10 text-center"
+              defaultValue={imageZoomPercent}
+              onKeyDown={(event) => {
+                event.stopPropagation()
+                if (event.key === 'Enter') {
+                  const value = parseInt(event.currentTarget.value)
+                  if (value >= 10 && value <= 1000) {
+                    setImageZoomPercent(value)
+                  }
+                  setIsZoomInputVisible(false)
+                }
+              }}
+              onBlur={(event) => {
+                setIsZoomInputVisible(false)
+                const value = parseInt(event.currentTarget.value)
+                if (value >= 10 && value <= 1000) {
+                  setImageZoomPercent(value)
+                }
+              }}
+            />
+            %
+          </div>
+        ) : (
+          <button
+            className="mx-1 rounded py-1 px-1.5 hover:bg-contrast"
+            onClick={() => setIsZoomInputVisible((visible) => !visible)}
+          >
+            {imageZoomPercent}%
+          </button>
+        )}
         <IconButton
           className="rounded p-1 hover:bg-contrast"
           icon="add"
