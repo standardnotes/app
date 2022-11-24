@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.108.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.107.0...@standardnotes/web@3.108.0) (2022-11-24)
+
+### Features
+
+* New 'What's New' section in Preferences ([#2049](https://github.com/standardnotes/app/issues/2049)) (skip e2e) ([0a01ddb](https://github.com/standardnotes/app/commit/0a01ddb430154fa4518985458c15c644855c80ea))
+
 # [3.107.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.106.0...@standardnotes/web@3.107.0) (2022-11-23)
 
 ### Bug Fixes
