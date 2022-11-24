@@ -3,5 +3,6 @@ import { Changelog, ChangelogVersion } from './Changelog'
 export interface ChangelogServiceInterface {
   getChangelog(): Promise<Changelog>
   getVersions(): Promise<ChangelogVersion[]>
-  getDownloadsUrl(version: string): string
+  getDesktopDownloadsUrl(version: string): string
+  getDesktopVersionForWebVersion(webVersion: string): string
 }
