@@ -8,6 +8,12 @@ type Props = {
   isEmbeddedInSuper: boolean
 } & ImageZoomLevelProps
 
+const MinimumZoomPercent = 10
+const DefaultZoomPercent = 100
+const MaximumZoomPercent = 1000
+const ZoomPercentModifier = 10
+const PercentageDivisor = 100
+
 const ImagePreview: FunctionComponent<Props> = ({
   objectUrl,
   isEmbeddedInSuper,
@@ -15,11 +21,11 @@ const ImagePreview: FunctionComponent<Props> = ({
   setImageZoomLevel,
 }) => {
   const [imageHeight, setImageHeight] = useState<number>(0)
-  const [imageZoomPercent, setImageZoomPercent] = useState(imageZoomLevel ? imageZoomLevel : 100)
+  const [imageZoomPercent, setImageZoomPercent] = useState(imageZoomLevel ? imageZoomLevel : DefaultZoomPercent)
   const [isZoomInputVisible, setIsZoomInputVisible] = useState(false)
 
   useEffect(() => {
-    setImageZoomPercent(imageZoomLevel ? imageZoomLevel : 100)
+    setImageZoomPercent(imageZoomLevel ? imageZoomLevel : DefaultZoomPercent)
   }, [imageZoomLevel])
 
   const setImageZoom = useCallback(
@@ -38,7 +44,7 @@ const ImagePreview: FunctionComponent<Props> = ({
     }
   }, [objectUrl])
 
-  const heightIfEmbedded = imageHeight * (imageZoomPercent / 100)
+  const heightIfEmbedded = imageHeight * (imageZoomPercent / PercentageDivisor)
 
   return (
     <div className="group flex h-full min-h-0 w-full items-center justify-center">
@@ -54,7 +60,7 @@ const ImagePreview: FunctionComponent<Props> = ({
             height: isEmbeddedInSuper ? `${heightIfEmbedded}px` : `${imageZoomPercent}%`,
             ...(isEmbeddedInSuper
               ? {}
-              : imageZoomPercent <= 100
+              : imageZoomPercent <= DefaultZoomPercent
               ? {
                   minWidth: '100%',
                   objectFit: 'contain',
@@ -82,8 +88,8 @@ const ImagePreview: FunctionComponent<Props> = ({
           title={isEmbeddedInSuper ? 'Decrease size' : 'Zoom Out'}
           focusable={true}
           onClick={() => {
-            const newPercent = imageZoomPercent - 10
-            if (newPercent >= 10) {
+            const newPercent = imageZoomPercent - ZoomPercentModifier
+            if (newPercent >= ZoomPercentModifier) {
               setImageZoom(newPercent)
             } else {
               setImageZoom(imageZoomPercent)
@@ -100,7 +106,7 @@ const ImagePreview: FunctionComponent<Props> = ({
                 event.stopPropagation()
                 if (event.key === 'Enter') {
                   const value = parseInt(event.currentTarget.value)
-                  if (value >= 10 && value <= 1000) {
+                  if (value >= MinimumZoomPercent && value <= MaximumZoomPercent) {
                     setImageZoom(value)
                   }
                   setIsZoomInputVisible(false)
@@ -109,7 +115,7 @@ const ImagePreview: FunctionComponent<Props> = ({
               onBlur={(event) => {
                 setIsZoomInputVisible(false)
                 const value = parseInt(event.currentTarget.value)
-                if (value >= 10 && value <= 1000) {
+                if (value >= MinimumZoomPercent && value <= MaximumZoomPercent) {
                   setImageZoom(value)
                 }
               }}
@@ -130,7 +136,7 @@ const ImagePreview: FunctionComponent<Props> = ({
           title={isEmbeddedInSuper ? 'Increase size' : 'Zoom In'}
           focusable={true}
           onClick={() => {
-            setImageZoom(imageZoomPercent + 10)
+            setImageZoom(imageZoomPercent + ZoomPercentModifier)
           }}
         />
       </div>
