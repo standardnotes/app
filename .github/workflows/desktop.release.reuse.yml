@@ -34,7 +34,7 @@ jobs:
       - name: MacX64
         run: |
           yarn run electron-builder --mac --x64 --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
-          node scripts/fixMacZip.js
+          node scripts/fixMacZip.js ${{ env.APP_VERSION }}
       - name: MacArm64
         run: yarn run electron-builder --mac --arm64 --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
 
