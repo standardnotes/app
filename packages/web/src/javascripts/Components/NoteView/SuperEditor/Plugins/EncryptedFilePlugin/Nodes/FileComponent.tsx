@@ -75,7 +75,7 @@ export function FileComponent({ className, format, nodeKey, fileUuid, zoomLevel,
       <div ref={blockWrapperRef}>
         {canLoad && (
           <FilePreview
-            isEmbedded={true}
+            isEmbeddedInSuper={true}
             file={file}
             application={application}
             imageZoomLevel={zoomLevel}

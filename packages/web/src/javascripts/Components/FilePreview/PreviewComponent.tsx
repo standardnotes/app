@@ -15,14 +15,14 @@ type Props = {
   application: WebApplication
   file: FileItem
   bytes: Uint8Array
-  isEmbedded: boolean
+  isEmbeddedInSuper: boolean
 } & ImageZoomLevelProps
 
 const PreviewComponent: FunctionComponent<Props> = ({
   application,
   file,
   bytes,
-  isEmbedded,
+  isEmbeddedInSuper,
   imageZoomLevel,
   setImageZoomLevel,
 }) => {
@@ -85,7 +85,7 @@ const PreviewComponent: FunctionComponent<Props> = ({
     return (
       <ImagePreview
         objectUrl={objectUrl}
-        isEmbedded={isEmbedded}
+        isEmbeddedInSuper={isEmbeddedInSuper}
         imageZoomLevel={imageZoomLevel}
         setImageZoomLevel={setImageZoomLevel}
       />

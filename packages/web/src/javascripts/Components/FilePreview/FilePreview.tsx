@@ -13,10 +13,10 @@ import { ImageZoomLevelProps } from './ImageZoomLevelProps'
 type Props = {
   application: WebApplication
   file: FileItem
-  isEmbedded?: boolean
+  isEmbeddedInSuper?: boolean
 } & ImageZoomLevelProps
 
-const FilePreview = ({ file, application, isEmbedded = false, imageZoomLevel, setImageZoomLevel }: Props) => {
+const FilePreview = ({ file, application, isEmbeddedInSuper = false, imageZoomLevel, setImageZoomLevel }: Props) => {
   const [isAuthorized, setIsAuthorized] = useState(application.isAuthorizedToRenderItem(file))
 
   const isFilePreviewable = useMemo(() => {
@@ -118,7 +118,7 @@ const FilePreview = ({ file, application, isEmbedded = false, imageZoomLevel, se
       application={application}
       file={file}
       bytes={downloadedBytes}
-      isEmbedded={isEmbedded}
+      isEmbeddedInSuper={isEmbeddedInSuper}
       imageZoomLevel={imageZoomLevel}
       setImageZoomLevel={setImageZoomLevel}
     />

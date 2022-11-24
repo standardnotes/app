@@ -5,10 +5,15 @@ import { ImageZoomLevelProps } from './ImageZoomLevelProps'
 
 type Props = {
   objectUrl: string
-  isEmbedded: boolean
+  isEmbeddedInSuper: boolean
 } & ImageZoomLevelProps
 
-const ImagePreview: FunctionComponent<Props> = ({ objectUrl, isEmbedded, imageZoomLevel, setImageZoomLevel }) => {
+const ImagePreview: FunctionComponent<Props> = ({
+  objectUrl,
+  isEmbeddedInSuper,
+  imageZoomLevel,
+  setImageZoomLevel,
+}) => {
   const [imageHeight, setImageHeight] = useState<number>(0)
   const [imageZoomPercent, setImageZoomPercent] = useState(imageZoomLevel ? imageZoomLevel : 100)
   const [isZoomInputVisible, setIsZoomInputVisible] = useState(false)
@@ -40,14 +45,14 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl, isEmbedded, imageZo
       <div
         className="relative flex h-full w-full items-center justify-center overflow-auto"
         style={{
-          height: isEmbedded ? `${heightIfEmbedded}px` : '',
+          height: isEmbeddedInSuper ? `${heightIfEmbedded}px` : '',
         }}
       >
         <img
           src={objectUrl}
           style={{
-            height: isEmbedded ? `${heightIfEmbedded}px` : `${imageZoomPercent}%`,
-            ...(isEmbedded
+            height: isEmbeddedInSuper ? `${heightIfEmbedded}px` : `${imageZoomPercent}%`,
+            ...(isEmbeddedInSuper
               ? {}
               : imageZoomPercent <= 100
               ? {
@@ -66,15 +71,15 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl, isEmbedded, imageZo
       </div>
       <div
         className={classNames(
-          isEmbedded ? 'hidden focus-within:flex group-hover:flex' : '',
+          isEmbeddedInSuper ? 'hidden focus-within:flex group-hover:flex' : '',
           'absolute left-1/2 bottom-6 flex -translate-x-1/2 items-center rounded border border-solid border-border bg-default py-1 px-3',
         )}
       >
-        <span className="mr-1.5">Zoom:</span>
+        <span className="mr-1.5">{isEmbeddedInSuper ? 'Size' : 'Zoom'}:</span>
         <IconButton
           className="rounded p-1 hover:bg-contrast"
           icon={'subtract' as IconType}
-          title="Zoom Out"
+          title={isEmbeddedInSuper ? 'Decrease size' : 'Zoom Out'}
           focusable={true}
           onClick={() => {
             const newPercent = imageZoomPercent - 10
@@ -122,7 +127,7 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl, isEmbedded, imageZo
         <IconButton
           className="rounded p-1 hover:bg-contrast"
           icon="add"
-          title="Zoom In"
+          title={isEmbeddedInSuper ? 'Increase size' : 'Zoom In'}
           focusable={true}
           onClick={() => {
             setImageZoom(imageZoomPercent + 10)
