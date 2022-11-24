@@ -201,8 +201,6 @@ describe('settings service', function () {
     })
     await Factory.sleep(2)
 
-    await application.signIn(context.email, context.password, undefined, undefined, undefined, false)
-
     const limitSettingAfter = await application.settings.getSubscriptionSetting('FILE_UPLOAD_BYTES_LIMIT')
     expect(limitSettingAfter).to.equal(limitSettingBefore)
 
