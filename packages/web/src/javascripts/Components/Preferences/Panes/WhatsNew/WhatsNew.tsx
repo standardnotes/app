@@ -1,12 +1,13 @@
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import { WebApplication } from '@/Application/Application'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Changelog } from '@standardnotes/ui-services'
 import { LinkButton, Subtitle, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { getSectionItems } from './getSectionItems'
 import { isDesktopApplication } from '@/Utils'
+import { compareSemVersions } from '@standardnotes/snjs'
 
 const WhatsNewSection = ({ items, sectionName }: { items: string[] | undefined; sectionName: string }) => {
   if (!items) {
@@ -28,10 +29,17 @@ const WhatsNew = ({ application }: { application: WebApplication }) => {
   const [changelog, setChangelog] = useState<Changelog | null>(null)
 
   const appVersion = application.version
+  const lastReadVersion = useMemo(() => application.changelogService.getLastReadVersion(), [application])
 
   useEffect(() => {
     void application.changelogService.getChangelog().then(setChangelog)
   }, [application])
+
+  useEffect(() => {
+    if (changelog) {
+      application.changelogService.markAsRead()
+    }
+  }, [changelog, application])
 
   if (!changelog) {
     return <div>Loading...</div>
@@ -51,6 +59,8 @@ const WhatsNew = ({ application }: { application: WebApplication }) => {
           return null
         }
 
+        const isUnreadVersion = lastReadVersion && compareSemVersions(version.version, lastReadVersion) > 0
+
         const isLatest = index === 0
         const isDesktopEnvironment = isDesktopApplication()
         const showDownloadLink = isDesktopEnvironment && isLatest
@@ -69,6 +79,11 @@ const WhatsNew = ({ application }: { application: WebApplication }) => {
                   {isLatest && (
                     <div className="ml-2 rounded bg-success px-2 py-1 text-[10px] font-bold text-success-contrast">
                       Latest Version
+                    </div>
+                  )}
+                  {isUnreadVersion && (
+                    <div className="ml-2 rounded bg-success px-2 py-1 text-[10px] font-bold text-success-contrast">
+                      New
                     </div>
                   )}
                 </div>

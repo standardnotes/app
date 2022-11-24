@@ -1,4 +1,5 @@
 import { Environment } from '@standardnotes/models'
+import { StorageServiceInterface, StorageKey } from '@standardnotes/services'
 import { Changelog, ChangelogVersion } from './Changelog'
 import { ChangelogServiceInterface } from './ChangelogServiceInterface'
 import { LegacyWebToDesktopVersionMapping } from './LegacyDesktopMapping'
@@ -10,7 +11,7 @@ const DesktopDownloadsUrlBase = 'https://github.com/standardnotes/app/releases/t
 export class ChangelogService implements ChangelogServiceInterface {
   private changeLog?: Changelog
 
-  constructor(private environment: Environment) {}
+  constructor(private environment: Environment, private diskService: StorageServiceInterface) {}
 
   private async performDownloadChangelog(): Promise<Changelog> {
     const response = await fetch(WebChangelogUrl)
@@ -28,6 +29,7 @@ export class ChangelogService implements ChangelogServiceInterface {
 
     if (this.environment !== Environment.Web) {
       const legacyMapping = this.getLegacyMapping()
+
       this.changeLog.versions = this.changeLog.versions.map((versionRecord) => {
         const versionString = versionRecord.version || ''
         return {
@@ -38,6 +40,18 @@ export class ChangelogService implements ChangelogServiceInterface {
     }
 
     return this.changeLog
+  }
+
+  public markAsRead(): void {
+    if (!this.changeLog) {
+      return
+    }
+
+    this.diskService.setValue(StorageKey.LastReadChangelogVersion, this.changeLog.versions[0].version)
+  }
+
+  public getLastReadVersion(): string | undefined {
+    return this.diskService.getValue(StorageKey.LastReadChangelogVersion)
   }
 
   public async getVersions(): Promise<ChangelogVersion[]> {

@@ -98,7 +98,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       ? new DesktopManager(this, deviceInterface)
       : undefined
     this.webServices.viewControllerManager = new ViewControllerManager(this, deviceInterface)
-    this.webServices.changelogService = new ChangelogService(this.environment)
+    this.webServices.changelogService = new ChangelogService(this.environment, this.storage)
 
     if (this.isNativeMobileWeb()) {
       this.mobileWebReceiver = new MobileWebReceiver(this)

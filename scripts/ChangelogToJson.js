@@ -2,7 +2,7 @@ const parseChangelog = require('changelog-parser')
 const path = require('path')
 const fs = require('fs')
 
-const FILES = ['packages/web/CHANGELOG.md', 'packages/desktop/CHANGELOG.md', 'packages/mobile/CHANGELOG.md']
+const FILES = ['packages/web/CHANGELOG.md']
 
 async function saveJsonChangelogs() {
   for (const file of FILES) {

@@ -5,4 +5,6 @@ export interface ChangelogServiceInterface {
   getVersions(): Promise<ChangelogVersion[]>
   getDesktopDownloadsUrl(version: string): string
   getDesktopVersionForWebVersion(webVersion: string): string
+  markAsRead(): void
+  getLastReadVersion(): string | undefined
 }
