@@ -8,6 +8,7 @@ describe('subscriptions', function () {
   let application
   let context
   let subscriptionManager
+  let subscriptionId = 3001
 
   afterEach(async function () {
     await Factory.safeDeinit(application)
@@ -32,7 +33,7 @@ describe('subscriptions', function () {
 
     await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: context.email,
-      subscriptionId: 1,
+      subscriptionId: subscriptionId++,
       subscriptionName: 'PRO_PLAN',
       subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
       timestamp: Date.now(),

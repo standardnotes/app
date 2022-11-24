@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.109.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.109.0...@standardnotes/web@3.109.1) (2022-11-24)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.109.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.108.1...@standardnotes/web@3.109.0) (2022-11-24)
+
+### Bug Fixes
+
+* include more search results in linking autocomplete menu ([2e517c9](https://github.com/standardnotes/app/commit/2e517c985dfff5e1980f505f1b38cbdea292211a))
+
+### Features
+
+* resize images in super editor ([#2052](https://github.com/standardnotes/app/issues/2052)) ([2485bed](https://github.com/standardnotes/app/commit/2485bed3508b194137f058064cb36d1ba1d2c41c))
+
 ## [3.108.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.108.0...@standardnotes/web@3.108.1) (2022-11-24)
 
 **Note:** Version bump only for package @standardnotes/web

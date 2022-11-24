@@ -12,6 +12,7 @@ describe('files', function () {
   let context
   let fileService
   let itemManager
+  let subscriptionId = 1001
 
   beforeEach(function () {
     localStorage.clear()
@@ -39,7 +40,7 @@ describe('files', function () {
     if (subscription) {
       await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
         userEmail: context.email,
-        subscriptionId: 1,
+        subscriptionId: subscriptionId++,
         subscriptionName: 'PRO_PLAN',
         subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
         timestamp: Date.now(),
@@ -84,7 +85,7 @@ describe('files', function () {
 
     await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: context.email,
-      subscriptionId: 1,
+      subscriptionId: subscriptionId++,
       subscriptionName: 'PLUS_PLAN',
       subscriptionExpiresAt: (new Date().getTime() - 3_600_000) * 1_000,
       timestamp: Date.now(),

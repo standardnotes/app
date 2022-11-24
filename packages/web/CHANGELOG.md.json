@@ -1,6 +1,35 @@
 {
   "versions": [
     {
+      "version": "3.109.1",
+      "title": "[3.109.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.109.0...@standardnotes/web@3.109.1) (2022-11-24)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.109.0",
+      "title": "[3.109.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.108.1...@standardnotes/web@3.109.0) (2022-11-24)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* include more search results in linking autocomplete menu ([2e517c9](https://github.com/standardnotes/app/commit/2e517c985dfff5e1980f505f1b38cbdea292211a))\n\n### Features\n\n* resize images in super editor ([#2052](https://github.com/standardnotes/app/issues/2052)) ([2485bed](https://github.com/standardnotes/app/commit/2485bed3508b194137f058064cb36d1ba1d2c41c))",
+      "parsed": {
+        "_": [
+          "include more search results in linking autocomplete menu (2e517c9)",
+          "resize images in super editor (#2052) (2485bed)"
+        ],
+        "Bug Fixes": [
+          "include more search results in linking autocomplete menu (2e517c9)"
+        ],
+        "Features": [
+          "resize images in super editor (#2052) (2485bed)"
+        ]
+      }
+    },
+    {
       "version": "3.108.1",
       "title": "[3.108.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.108.0...@standardnotes/web@3.108.1) (2022-11-24)",
       "date": null,
