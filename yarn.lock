@@ -4241,18 +4241,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@newrelic/native-metrics@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "@newrelic/native-metrics@npm:9.0.0"
-  dependencies:
-    https-proxy-agent: ^5.0.0
-    nan: ^2.16.0
-    node-gyp: latest
-    semver: ^5.5.1
-  checksum: 94e73055417a360f257c50af25a09378b038572feba630c96027f746243ccfb7fdf16f69ab9448983d41a1dc11c3ff6407094db208aa1751d972d7335676b74c
-  languageName: node
-  linkType: hard
-
 "@nicolo-ribaudo/eslint-scope-5-internals@npm:5.1.1-v1":
   version: 5.1.1-v1
   resolution: "@nicolo-ribaudo/eslint-scope-5-internals@npm:5.1.1-v1"
@@ -5522,6 +5510,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/common@npm:1.46.0":
+  version: 1.46.0
+  resolution: "@standardnotes/common@npm:1.46.0"
+  dependencies:
+    reflect-metadata: ^0.1.13
+  checksum: 721fde0b25ee466faaf2d607322b33081c614c846d5c8fdee2649b358dbd9fe71ca00d07bc15f73fd24b6078c209f6fad6168376884748fbb3efdc537dbddff4
+  languageName: node
+  linkType: hard
+
 "@standardnotes/common@npm:^1.43.0":
   version: 1.43.0
   resolution: "@standardnotes/common@npm:1.43.0"
@@ -5621,6 +5618,21 @@ __metadata:
     remark-math: ^3.0.1
   languageName: unknown
   linkType: soft
+
+"@standardnotes/domain-core@npm:^1.3.0":
+  version: 1.3.0
+  resolution: "@standardnotes/domain-core@npm:1.3.0"
+  dependencies:
+    "@standardnotes/common": 1.46.0
+    "@standardnotes/features": ^1.52.1
+    "@standardnotes/predicates": 1.6.1
+    "@standardnotes/security": 1.7.1
+    reflect-metadata: ^0.1.13
+    shallow-equal-object: ^1.1.1
+    uuid: ^9.0.0
+  checksum: 294e510e54b8d53ebe3a964a4168ea925937a4e7c67a3b9b472d30adf262ee06065f999630743361fb49e100b83f1c41c6cabd13ce33251453e24b6302812ca2
+  languageName: node
+  linkType: hard
 
 "@standardnotes/domain-events@npm:^2.88.0":
   version: 2.88.0
@@ -5929,6 +5941,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/predicates@npm:1.6.1":
+  version: 1.6.1
+  resolution: "@standardnotes/predicates@npm:1.6.1"
+  dependencies:
+    "@standardnotes/common": 1.46.0
+    reflect-metadata: ^0.1.13
+  checksum: 6cddece621baa7a8e19f5bc0fbfb0801dd5212cd369525b5f6450fa6b2c1a875c3ed7b257ab7489f0f0f125c3eb45cb0865dcee56e8433f3473c9ef78ca54b87
+  languageName: node
+  linkType: hard
+
 "@standardnotes/react-native-utils@npm:1.0.1":
   version: 1.0.1
   resolution: "@standardnotes/react-native-utils@npm:1.0.1"
@@ -5986,6 +6008,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/security@npm:1.7.1":
+  version: 1.7.1
+  resolution: "@standardnotes/security@npm:1.7.1"
+  dependencies:
+    "@standardnotes/common": 1.46.0
+    jsonwebtoken: ^8.5.1
+    reflect-metadata: ^0.1.13
+  checksum: 7c44864bc9979e5cd76150203ac2445a0dc2c82e4d0b1a4cd494d1d0e3d5d8da499ede48f7974d07e4f1a44aa2b09bdb109d9a403f47dd69ae474be06f37622d
+  languageName: node
+  linkType: hard
+
 "@standardnotes/security@npm:^1.2.0":
   version: 1.4.9
   resolution: "@standardnotes/security@npm:1.4.9"
@@ -6023,13 +6056,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/settings@npm:^1.18.3":
-  version: 1.18.3
-  resolution: "@standardnotes/settings@npm:1.18.3"
+"@standardnotes/settings@npm:^1.18.4":
+  version: 1.18.4
+  resolution: "@standardnotes/settings@npm:1.18.4"
   dependencies:
-    "@newrelic/native-metrics": ^9.0.0
     reflect-metadata: ^0.1.13
-  checksum: f5668249b2728c7a002daab339da2225a05956dab5da23c1d102dcd207a5be839195ed5b99a6591d69350d7723a536c23a7492dd00d75b268132219e48432cb3
+  checksum: 73017d19517c5719a3611385b76a5a3273f03c570c42da79656d0df04cb539f6a5eeb7a5d7db30a8ffc7fd0ef4c801924ff27093f84b2c40ad1542b0397745ac
   languageName: node
   linkType: hard
 
@@ -6101,6 +6133,7 @@ __metadata:
     "@babel/preset-env": "*"
     "@standardnotes/api": "workspace:*"
     "@standardnotes/common": ^1.45.0
+    "@standardnotes/domain-core": ^1.3.0
     "@standardnotes/domain-events": ^2.88.0
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/features": "workspace:*"
@@ -6109,7 +6142,7 @@ __metadata:
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/security": ^1.7.0
     "@standardnotes/services": "workspace:*"
-    "@standardnotes/settings": ^1.18.3
+    "@standardnotes/settings": ^1.18.4
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/sncrypto-web": "workspace:*"
     "@standardnotes/utils": "workspace:*"
@@ -21311,7 +21344,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nan@npm:^2.12.1, nan@npm:^2.13.2, nan@npm:^2.14.0, nan@npm:^2.16.0, nan@npm:^2.17.0":
+"nan@npm:^2.12.1, nan@npm:^2.13.2, nan@npm:^2.14.0, nan@npm:^2.17.0":
   version: 2.17.0
   resolution: "nan@npm:2.17.0"
   dependencies:
@@ -26986,7 +27019,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:2 || 3 || 4 || 5, semver@npm:^5.4.1, semver@npm:^5.5.0, semver@npm:^5.5.1, semver@npm:^5.6.0":
+"semver@npm:2 || 3 || 4 || 5, semver@npm:^5.4.1, semver@npm:^5.5.0, semver@npm:^5.6.0":
   version: 5.7.1
   resolution: "semver@npm:5.7.1"
   bin:
@@ -27209,6 +27242,13 @@ __metadata:
   dependencies:
     kind-of: ^6.0.2
   checksum: 39b3dd9630a774aba288a680e7d2901f5c0eae7b8387fc5c8ea559918b29b3da144b7bdb990d7ccd9e11be05508ac9e459ce51d01fd65e583282f6ffafcba2e7
+  languageName: node
+  linkType: hard
+
+"shallow-equal-object@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "shallow-equal-object@npm:1.1.1"
+  checksum: e925aa4511bdf246a10577c983b9c540ea3ea443dbc8f2f336fd398c4ddee682389f19a9f0c2c9e7a99ab62baff5f2f716fbe108729454ff7b9f787d09743cc9
   languageName: node
   linkType: hard
 
