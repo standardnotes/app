@@ -9,6 +9,7 @@ const PREFERENCE_IDS = [
   'accessibility',
   'get-free-month',
   'help-feedback',
+  'whats-new',
 ] as const
 
 export type PreferenceId = typeof PREFERENCE_IDS[number]

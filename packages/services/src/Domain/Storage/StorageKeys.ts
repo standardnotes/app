@@ -39,6 +39,7 @@ export enum StorageKey {
   DeinitMode = 'deinit_mode',
   CodeVerifier = 'code_verifier',
   LaunchPriorityUuids = 'launch_priority_uuids',
+  LastReadChangelogVersion = 'last_read_changelog_version',
 }
 
 export enum NonwrappedStorageKey {

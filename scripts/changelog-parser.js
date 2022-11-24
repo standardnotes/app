@@ -1,7 +1,7 @@
 const parseChangelog = require('changelog-parser')
 const path = require('path')
 
-const scopes = ['mobile', 'web', 'desktop', 'components']
+const scopes = ['mobile', 'web', 'desktop']
 
 async function parsePackages(packageNames) {
   let result = ''

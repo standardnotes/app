@@ -5,13 +5,13 @@ import { writeJson, ensureDirExists } from '../../../scripts/ScriptUtils.mjs'
 
 const CdnUrl = 'https://github.com/standardnotes/app/releases/download/'
 const DesktopPackageName = '@standardnotes/desktop'
-const DesktopVersion = Desktop.version
+const DesktopVersion = Web.version
 const BaseFileName = `standard-notes-${DesktopVersion}`
 const ReleaseUrl = `${CdnUrl}${DesktopPackageName}@${DesktopVersion}/${BaseFileName}`.replaceAll('@', '%40')
 
 const Versions = {
-  [Desktop.name]: Desktop.version,
-  [Mobile.name]: Mobile.version,
+  [Desktop.name]: Web.version,
+  [Mobile.name]: Web.version,
   [Web.name]: Web.version,
 }
 
