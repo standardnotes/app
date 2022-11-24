@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.152.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.152.0...@standardnotes/snjs@2.152.1) (2022-11-24)
+
+### Bug Fixes
+
+* subscription expiring event ([07e2691](https://github.com/standardnotes/app/commit/07e26915b07656e813d439a24f8d4682ba6773af))
+
 # [2.152.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.11...@standardnotes/snjs@2.152.0) (2022-11-24)
 
 ### Bug Fixes
