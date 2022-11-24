@@ -1,4 +1,4 @@
-import { IconType } from '@standardnotes/snjs'
+import { classNames, IconType } from '@standardnotes/snjs'
 import { FunctionComponent, useEffect, useState } from 'react'
 import IconButton from '../Button/IconButton'
 
@@ -22,7 +22,7 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl, isEmbedded }) => {
   const heightIfEmbedded = imageHeight * (imageZoomPercent / 100)
 
   return (
-    <div className="flex h-full min-h-0 w-full items-center justify-center">
+    <div className="group flex h-full min-h-0 w-full items-center justify-center">
       <div
         className="relative flex h-full w-full items-center justify-center overflow-auto"
         style={{
@@ -50,7 +50,12 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl, isEmbedded }) => {
           }}
         />
       </div>
-      <div className="absolute left-1/2 bottom-6 flex -translate-x-1/2 items-center rounded border border-solid border-border bg-default py-1 px-3">
+      <div
+        className={classNames(
+          isEmbedded ? 'hidden focus-within:flex group-hover:flex' : '',
+          'absolute left-1/2 bottom-6 flex -translate-x-1/2 items-center rounded border border-solid border-border bg-default py-1 px-3',
+        )}
+      >
         <span className="mr-1.5">Zoom:</span>
         <IconButton
           className="rounded p-1 hover:bg-contrast"
