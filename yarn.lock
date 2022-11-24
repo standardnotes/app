@@ -5619,9 +5619,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/domain-core@npm:^1.3.0":
-  version: 1.3.0
-  resolution: "@standardnotes/domain-core@npm:1.3.0"
+"@standardnotes/domain-core@npm:^1.5.0":
+  version: 1.5.0
+  resolution: "@standardnotes/domain-core@npm:1.5.0"
   dependencies:
     "@standardnotes/common": 1.46.0
     "@standardnotes/features": ^1.52.1
@@ -5630,7 +5630,7 @@ __metadata:
     reflect-metadata: ^0.1.13
     shallow-equal-object: ^1.1.1
     uuid: ^9.0.0
-  checksum: 294e510e54b8d53ebe3a964a4168ea925937a4e7c67a3b9b472d30adf262ee06065f999630743361fb49e100b83f1c41c6cabd13ce33251453e24b6302812ca2
+  checksum: 0fff110a72a31db93c8c5c16e084ff112c7fa2d0a1c2f1d19dc1a14beacaa2d963d1a63de67ce629265448c3f93f7098283fa01e2ca7acedf5a4f7551f445d14
   languageName: node
   linkType: hard
 
@@ -6133,7 +6133,7 @@ __metadata:
     "@babel/preset-env": "*"
     "@standardnotes/api": "workspace:*"
     "@standardnotes/common": ^1.45.0
-    "@standardnotes/domain-core": ^1.3.0
+    "@standardnotes/domain-core": ^1.5.0
     "@standardnotes/domain-events": ^2.88.0
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/features": "workspace:*"
