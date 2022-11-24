@@ -610,7 +610,7 @@ export class ItemListController extends AbstractViewController implements Intern
   async createNewNoteController(
     title?: string,
     createdAt?: Date,
-    autofocusBehavior?: TemplateNoteViewAutofocusBehavior,
+    autofocusBehavior: TemplateNoteViewAutofocusBehavior = 'editor',
   ) {
     const selectedTag = this.navigationController.selected
 

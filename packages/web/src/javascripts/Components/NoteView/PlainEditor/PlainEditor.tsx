@@ -33,7 +33,7 @@ export type PlainEditorInterface = {
 }
 
 export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
-  ({ application, spellcheck, controller, locked, onFocus, onBlur }: Props, ref) => {
+  ({ application, spellcheck, controller, locked, onFocus, onBlur }, ref) => {
     const [editorText, setEditorText] = useState<string | undefined>()
     const [textareaUnloading, setTextareaUnloading] = useState(false)
     const [lineHeight, setLineHeight] = useState<EditorLineHeight | undefined>()
@@ -239,7 +239,7 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
         onFocus={onContentFocus}
         onBlur={onContentBlur}
         readOnly={locked}
-        ref={(ref) => ref && onRef(ref)}
+        ref={onRef}
         spellCheck={spellcheck}
         value={editorText}
         className={classNames(

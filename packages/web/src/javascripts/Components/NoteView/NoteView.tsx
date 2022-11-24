@@ -95,7 +95,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   private protectionTimeoutId: ReturnType<typeof setTimeout> | null = null
   private noteViewElementRef: RefObject<HTMLDivElement>
   private editorContentRef: RefObject<HTMLDivElement>
-  private plainEditorRef?: RefObject<PlainEditorInterface>
+  private plainEditorRef?: PlainEditorInterface
 
   constructor(props: NoteViewProps) {
     super(props, props.application)
@@ -228,6 +228,18 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           this.focusTitle()
         }
       })
+    }
+  }
+
+  setPlainEditorRef = (ref: PlainEditorInterface | undefined) => {
+    this.plainEditorRef = ref || undefined
+
+    if (!this.plainEditorRef) {
+      return
+    }
+
+    if (this.controller.isTemplateNote && this.controller.templateNoteOptions?.autofocusBehavior === 'editor') {
+      this.plainEditorRef.focus()
     }
   }
 
@@ -569,7 +581,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     }
 
     currentTarget.blur()
-    this.plainEditorRef?.current?.focus()
+    this.plainEditorRef?.focus()
   }
 
   onTitleChange: ChangeEventHandler<HTMLInputElement> = ({ currentTarget }) => {
@@ -944,7 +956,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             <PlainEditor
               application={this.application}
               spellcheck={this.state.spellcheck}
-              ref={this.plainEditorRef}
+              ref={(ref) => this.setPlainEditorRef(ref || undefined)}
               controller={this.controller}
               locked={this.state.noteLocked}
               onFocus={this.onPlainFocus}

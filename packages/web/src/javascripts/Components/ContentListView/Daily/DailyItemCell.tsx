@@ -9,7 +9,6 @@ import { ListableContentItem } from '../Types/ListableContentItem'
 import { DailyItemsDay } from './DailyItemsDaySection'
 import { ListItemTitle } from '../ListItemTitle'
 import { EmptyPlaceholderBars } from './EmptyPlaceholderBars'
-import { isMobileScreen } from '@/Utils'
 
 type DaySquareProps = {
   day: number
@@ -73,7 +72,7 @@ export const DailyItemCell = forwardRef(
               {!item && (
                 <div className="w-full">
                   <div className="break-word mr-2 font-semibold">{formatDateAndTimeForNote(section.date, false)}</div>
-                  <EmptyPlaceholderBars rows={isMobileScreen() ? 2 : 4} />
+                  <EmptyPlaceholderBars rows={1} />
                 </div>
               )}
             </div>
