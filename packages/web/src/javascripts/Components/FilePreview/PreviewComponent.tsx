@@ -7,6 +7,7 @@ import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { createObjectURLWithRef } from './CreateObjectURLWithRef'
 import ImagePreview from './ImagePreview'
+import { ImageZoomLevelProps } from './ImageZoomLevelProps'
 import { PreviewableTextFileTypes, RequiresNativeFilePreview } from './isFilePreviewable'
 import TextPreview from './TextPreview'
 
@@ -15,9 +16,16 @@ type Props = {
   file: FileItem
   bytes: Uint8Array
   isEmbedded: boolean
-}
+} & ImageZoomLevelProps
 
-const PreviewComponent: FunctionComponent<Props> = ({ application, file, bytes, isEmbedded }) => {
+const PreviewComponent: FunctionComponent<Props> = ({
+  application,
+  file,
+  bytes,
+  isEmbedded,
+  imageZoomLevel,
+  setImageZoomLevel,
+}) => {
   const { selectedPane } = useResponsiveAppPane()
 
   const objectUrlRef = useRef<string>()
@@ -74,7 +82,14 @@ const PreviewComponent: FunctionComponent<Props> = ({ application, file, bytes, 
   }
 
   if (file.mimeType.startsWith('image/')) {
-    return <ImagePreview objectUrl={objectUrl} isEmbedded={isEmbedded} />
+    return (
+      <ImagePreview
+        objectUrl={objectUrl}
+        isEmbedded={isEmbedded}
+        imageZoomLevel={imageZoomLevel}
+        setImageZoomLevel={setImageZoomLevel}
+      />
+    )
   }
 
   if (file.mimeType.startsWith('video/')) {

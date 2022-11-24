@@ -1,16 +1,29 @@
 import { classNames, IconType } from '@standardnotes/snjs'
-import { FunctionComponent, useEffect, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import IconButton from '../Button/IconButton'
+import { ImageZoomLevelProps } from './ImageZoomLevelProps'
 
 type Props = {
   objectUrl: string
   isEmbedded: boolean
-}
+} & ImageZoomLevelProps
 
-const ImagePreview: FunctionComponent<Props> = ({ objectUrl, isEmbedded }) => {
+const ImagePreview: FunctionComponent<Props> = ({ objectUrl, isEmbedded, imageZoomLevel, setImageZoomLevel }) => {
   const [imageHeight, setImageHeight] = useState<number>(0)
-  const [imageZoomPercent, setImageZoomPercent] = useState(100)
+  const [imageZoomPercent, setImageZoomPercent] = useState(imageZoomLevel ? imageZoomLevel : 100)
   const [isZoomInputVisible, setIsZoomInputVisible] = useState(false)
+
+  useEffect(() => {
+    setImageZoomPercent(imageZoomLevel ? imageZoomLevel : 100)
+  }, [imageZoomLevel])
+
+  const setImageZoom = useCallback(
+    (zoomLevel: number) => {
+      setImageZoomPercent(zoomLevel)
+      setImageZoomLevel?.(zoomLevel)
+    },
+    [setImageZoomLevel],
+  )
 
   useEffect(() => {
     const image = new Image()
@@ -64,14 +77,12 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl, isEmbedded }) => {
           title="Zoom Out"
           focusable={true}
           onClick={() => {
-            setImageZoomPercent((percent) => {
-              const newPercent = percent - 10
-              if (newPercent >= 10) {
-                return newPercent
-              } else {
-                return percent
-              }
-            })
+            const newPercent = imageZoomPercent - 10
+            if (newPercent >= 10) {
+              setImageZoom(newPercent)
+            } else {
+              setImageZoom(imageZoomPercent)
+            }
           }}
         />
         {isZoomInputVisible ? (
@@ -85,7 +96,7 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl, isEmbedded }) => {
                 if (event.key === 'Enter') {
                   const value = parseInt(event.currentTarget.value)
                   if (value >= 10 && value <= 1000) {
-                    setImageZoomPercent(value)
+                    setImageZoom(value)
                   }
                   setIsZoomInputVisible(false)
                 }
@@ -94,7 +105,7 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl, isEmbedded }) => {
                 setIsZoomInputVisible(false)
                 const value = parseInt(event.currentTarget.value)
                 if (value >= 10 && value <= 1000) {
-                  setImageZoomPercent(value)
+                  setImageZoom(value)
                 }
               }}
             />
@@ -114,7 +125,7 @@ const ImagePreview: FunctionComponent<Props> = ({ objectUrl, isEmbedded }) => {
           title="Zoom In"
           focusable={true}
           onClick={() => {
-            setImageZoomPercent((percent) => percent + 10)
+            setImageZoom(imageZoomPercent + 10)
           }}
         />
       </div>
