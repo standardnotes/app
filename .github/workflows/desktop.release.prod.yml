@@ -3,7 +3,7 @@ name: Desktop Release
 on:
   push:
     tags:
-      - '*standardnotes/*desktop*'
+      - '*standardnotes/*web*'
       - '!*standardnotes/*inner-desktop*'
   workflow_dispatch:
 

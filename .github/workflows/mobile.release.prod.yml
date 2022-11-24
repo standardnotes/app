@@ -3,7 +3,7 @@ name: Mobile Release Production
 on:
   push:
     tags:
-      - '*standardnotes/mobile*'
+      - '*standardnotes/web*'
   workflow_dispatch:
 
 jobs:
