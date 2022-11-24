@@ -6,8 +6,12 @@ import { isSearchResultExistingTag } from './isSearchResultExistingTag'
 import { ItemLink } from './ItemLink'
 import { LinkableItem } from './LinkableItem'
 
-const ResultLimitPerContentType = 5
-const MaxLinkedResults = 20
+const MaxLinkedResults = 50
+
+function resultLimitForSearchQuery(query: string): number {
+  const limitPerContentType = 10
+  return Math.max(limitPerContentType, query.length * 3)
+}
 
 export function getLinkingSearchResults(
   searchQuery: string,
@@ -77,27 +81,22 @@ export function getLinkingSearchResults(
 
     const enforceResultLimit = options.contentType == null
 
+    const limitPerContentType = resultLimitForSearchQuery(searchQuery)
+
     if (
       item.content_type === ContentType.Tag &&
-      (!enforceResultLimit ||
-        (unlinkedTags.length < ResultLimitPerContentType && item.content_type === ContentType.Tag))
+      (!enforceResultLimit || (unlinkedTags.length < limitPerContentType && item.content_type === ContentType.Tag))
     ) {
       unlinkedTags.push(item)
       continue
     }
 
-    if (
-      item.content_type === ContentType.Note &&
-      (!enforceResultLimit || unlinkedNotes.length < ResultLimitPerContentType)
-    ) {
+    if (item.content_type === ContentType.Note && (!enforceResultLimit || unlinkedNotes.length < limitPerContentType)) {
       unlinkedNotes.push(item)
       continue
     }
 
-    if (
-      item.content_type === ContentType.File &&
-      (!enforceResultLimit || unlinkedFiles.length < ResultLimitPerContentType)
-    ) {
+    if (item.content_type === ContentType.File && (!enforceResultLimit || unlinkedFiles.length < limitPerContentType)) {
       unlinkedFiles.push(item)
       continue
     }
