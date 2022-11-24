@@ -7,18 +7,20 @@ import { ItemNodeInterface } from '../../ItemNodeInterface'
 
 export class FileNode extends DecoratorBlockNode implements ItemNodeInterface {
   __id: string
+  __zoomLevel: number
 
   static getType(): string {
     return 'snfile'
   }
 
   static clone(node: FileNode): FileNode {
-    return new FileNode(node.__id, node.__format, node.__key)
+    return new FileNode(node.__id, node.__format, node.__key, node.__zoomLevel)
   }
 
   static importJSON(serializedNode: SerializedFileNode): FileNode {
     const node = $createFileNode(serializedNode.fileUuid)
     node.setFormat(serializedNode.format)
+    node.setZoomLevel(serializedNode.zoomLevel)
     return node
   }
 
@@ -28,6 +30,7 @@ export class FileNode extends DecoratorBlockNode implements ItemNodeInterface {
       fileUuid: this.getId(),
       version: 1,
       type: 'snfile',
+      zoomLevel: this.__zoomLevel,
     }
   }
 
@@ -53,9 +56,10 @@ export class FileNode extends DecoratorBlockNode implements ItemNodeInterface {
     return { element }
   }
 
-  constructor(id: string, format?: ElementFormatType, key?: NodeKey) {
+  constructor(id: string, format?: ElementFormatType, key?: NodeKey, zoomLevel?: number) {
     super(format, key)
     this.__id = id
+    this.__zoomLevel = zoomLevel || 100
   }
 
   getId(): string {
@@ -66,6 +70,11 @@ export class FileNode extends DecoratorBlockNode implements ItemNodeInterface {
     return `[File: ${this.__id}]`
   }
 
+  setZoomLevel(zoomLevel: number): void {
+    const writable = this.getWritable()
+    writable.__zoomLevel = zoomLevel
+  }
+
   decorate(_editor: LexicalEditor, config: EditorConfig): JSX.Element {
     const embedBlockTheme = config.theme.embedBlock || {}
     const className = {
@@ -73,6 +82,15 @@ export class FileNode extends DecoratorBlockNode implements ItemNodeInterface {
       focus: embedBlockTheme.focus || '',
     }
 
-    return <FileComponent className={className} format={this.__format} nodeKey={this.getKey()} fileUuid={this.__id} />
+    return (
+      <FileComponent
+        className={className}
+        format={this.__format}
+        nodeKey={this.getKey()}
+        fileUuid={this.__id}
+        zoomLevel={this.__zoomLevel}
+        setZoomLevel={this.setZoomLevel.bind(this)}
+      />
+    )
   }
 }

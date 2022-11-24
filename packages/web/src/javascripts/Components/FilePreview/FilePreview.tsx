@@ -8,13 +8,15 @@ import { isFileTypePreviewable } from './isFilePreviewable'
 import PreviewComponent from './PreviewComponent'
 import Button from '../Button/Button'
 import { ProtectedIllustration } from '@standardnotes/icons'
+import { ImageZoomLevelProps } from './ImageZoomLevelProps'
 
 type Props = {
   application: WebApplication
   file: FileItem
-}
+  isEmbeddedInSuper?: boolean
+} & ImageZoomLevelProps
 
-const FilePreview = ({ file, application }: Props) => {
+const FilePreview = ({ file, application, isEmbeddedInSuper = false, imageZoomLevel, setImageZoomLevel }: Props) => {
   const [isAuthorized, setIsAuthorized] = useState(application.isAuthorizedToRenderItem(file))
 
   const isFilePreviewable = useMemo(() => {
@@ -112,7 +114,14 @@ const FilePreview = ({ file, application }: Props) => {
       <span className="mt-3">Loading file...</span>
     </div>
   ) : downloadedBytes ? (
-    <PreviewComponent application={application} file={file} bytes={downloadedBytes} />
+    <PreviewComponent
+      application={application}
+      file={file}
+      bytes={downloadedBytes}
+      isEmbeddedInSuper={isEmbeddedInSuper}
+      imageZoomLevel={imageZoomLevel}
+      setImageZoomLevel={setImageZoomLevel}
+    />
   ) : (
     <FilePreviewError
       file={file}

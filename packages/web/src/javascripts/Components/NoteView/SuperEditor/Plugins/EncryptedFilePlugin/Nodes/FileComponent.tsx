@@ -1,9 +1,10 @@
 import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ElementFormatType, NodeKey } from 'lexical'
 import { useApplication } from '@/Components/ApplicationView/ApplicationProvider'
 import FilePreview from '@/Components/FilePreview/FilePreview'
 import { FileItem } from '@standardnotes/snjs'
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 
 export type FileComponentProps = Readonly<{
   className: Readonly<{
@@ -13,10 +14,13 @@ export type FileComponentProps = Readonly<{
   format: ElementFormatType | null
   nodeKey: NodeKey
   fileUuid: string
+  zoomLevel: number
+  setZoomLevel: (zoomLevel: number) => void
 }>
 
-export function FileComponent({ className, format, nodeKey, fileUuid }: FileComponentProps) {
+export function FileComponent({ className, format, nodeKey, fileUuid, zoomLevel, setZoomLevel }: FileComponentProps) {
   const application = useApplication()
+  const [editor] = useLexicalComposerContext()
   const file = useMemo(() => application.items.findItem<FileItem>(fileUuid), [application, fileUuid])
 
   const [canLoad, setCanLoad] = useState(false)
@@ -53,13 +57,32 @@ export function FileComponent({ className, format, nodeKey, fileUuid }: FileComp
     }
   }, [blockObserver])
 
+  const setImageZoomLevel = useCallback(
+    (zoomLevel: number) => {
+      editor.update(() => {
+        setZoomLevel(zoomLevel)
+      })
+    },
+    [editor, setZoomLevel],
+  )
+
   if (!file) {
     return <div>Unable to find file {fileUuid}</div>
   }
 
   return (
     <BlockWithAlignableContents className={className} format={format} nodeKey={nodeKey}>
-      <div ref={blockWrapperRef}>{canLoad && <FilePreview file={file} application={application} />}</div>
+      <div ref={blockWrapperRef}>
+        {canLoad && (
+          <FilePreview
+            isEmbeddedInSuper={true}
+            file={file}
+            application={application}
+            imageZoomLevel={zoomLevel}
+            setImageZoomLevel={setImageZoomLevel}
+          />
+        )}
+      </div>
     </BlockWithAlignableContents>
   )
 }
