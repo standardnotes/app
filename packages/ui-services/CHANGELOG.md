@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.16.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.15.0...@standardnotes/ui-services@1.16.0) (2022-11-24)
+
+### Features
+
+* New 'What's New' section in Preferences ([#2049](https://github.com/standardnotes/app/issues/2049)) (skip e2e) ([0a01ddb](https://github.com/standardnotes/app/commit/0a01ddb430154fa4518985458c15c644855c80ea))
+
 # [1.15.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.14.4...@standardnotes/ui-services@1.15.0) (2022-11-23)
 
 ### Features

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.47.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.46.31...@standardnotes/mobile@3.47.0) (2022-11-24)
+
+### Features
+
+* New 'What's New' section in Preferences ([#2049](https://github.com/standardnotes/app/issues/2049)) (skip e2e) ([0a01ddb](https://github.com/standardnotes/app/commit/0a01ddb430154fa4518985458c15c644855c80ea))
+
 ## [3.46.31](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.46.30...@standardnotes/mobile@3.46.31) (2022-11-23)
 
 **Note:** Version bump only for package @standardnotes/mobile

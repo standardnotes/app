@@ -5,7 +5,7 @@ chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('settings service', function () {
-  this.timeout(Factory.TwentySecondTimeout)
+  this.timeout(Factory.ThirtySecondTimeout)
 
   const validSetting = SettingName.GoogleDriveBackupFrequency
   const fakePayload = 'Im so meta even this acronym'
@@ -13,21 +13,20 @@ describe('settings service', function () {
 
   let application
   let context
-  let user
 
   beforeEach(async function () {
+    localStorage.clear()
     context = await Factory.createAppContextWithFakeCrypto()
 
     await context.launch()
 
     application = context.application
 
-    const registerResponse = await Factory.registerUserToApplication({
+    await Factory.registerUserToApplication({
       application: context.application,
       email: context.email,
       password: context.password,
     })
-    user = registerResponse.user
   })
 
   const reInitializeApplicationWithRealCrypto = async () => {
@@ -39,16 +38,16 @@ describe('settings service', function () {
 
     application = context.application
 
-    const registerResponse = await Factory.registerUserToApplication({
+    await Factory.registerUserToApplication({
       application: context.application,
       email: context.email,
       password: context.password,
     })
-    user = registerResponse.user
   }
 
   afterEach(async function () {
     await Factory.safeDeinit(application)
+    localStorage.clear()
   })
 
   it('creates and reads a setting', async function () {
@@ -133,7 +132,7 @@ describe('settings service', function () {
       payAmount: 59.00
     })
 
-    await Factory.sleep(1)
+    await Factory.sleep(2)
 
     const setting = await application.settings.getSubscriptionSetting('FILE_UPLOAD_BYTES_LIMIT')
     expect(setting).to.be.a('string')
@@ -144,7 +143,7 @@ describe('settings service', function () {
 
     await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: context.email,
-      subscriptionId: 1,
+      subscriptionId: 42,
       subscriptionName: 'PRO_PLAN',
       subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
       timestamp: Date.now(),
@@ -157,7 +156,7 @@ describe('settings service', function () {
       billingFrequency: 12,
       payAmount: 59.00
     })
-    await Factory.sleep(1)
+    await Factory.sleep(2)
 
     const response = await fetch('/packages/snjs/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
@@ -174,7 +173,7 @@ describe('settings service', function () {
 
     await Factory.publishMockedEvent('SUBSCRIPTION_EXPIRED', {
       userEmail: context.email,
-      subscriptionId: 1,
+      subscriptionId: 42,
       subscriptionName: 'PRO_PLAN',
       timestamp: Date.now(),
       offline: false,
@@ -183,11 +182,11 @@ describe('settings service', function () {
       billingFrequency: 12,
       payAmount: 59.00
     })
-    await Factory.sleep(1)
+    await Factory.sleep(2)
 
     await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: context.email,
-      subscriptionId: 2,
+      subscriptionId: 43,
       subscriptionName: 'PRO_PLAN',
       subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
       timestamp: Date.now(),
@@ -200,7 +199,7 @@ describe('settings service', function () {
       billingFrequency: 12,
       payAmount: 59.00
     })
-    await Factory.sleep(1)
+    await Factory.sleep(2)
 
     const limitSettingAfter = await application.settings.getSubscriptionSetting('FILE_UPLOAD_BYTES_LIMIT')
     expect(limitSettingAfter).to.equal(limitSettingBefore)

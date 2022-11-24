@@ -52,7 +52,7 @@ describe('files', function () {
         billingFrequency: 12,
         payAmount: 59.00
       })
-      await Factory.sleep(1)
+      await Factory.sleep(2)
     }
   }
 
@@ -63,6 +63,7 @@ describe('files', function () {
 
   it('should create valet token from server', async function () {
     await setup({ fakeCrypto: true, subscription: true })
+
     const remoteIdentifier = Utils.generateUuid()
     const token = await application.apiService.createFileValetToken(remoteIdentifier, 'write')
 
@@ -97,7 +98,7 @@ describe('files', function () {
       payAmount: 59.00
     })
 
-    await Factory.sleep(1)
+    await Factory.sleep(2)
 
     const remoteIdentifier = Utils.generateUuid()
     const tokenOrError = await application.apiService.createFileValetToken(remoteIdentifier, 'write')
@@ -162,11 +163,5 @@ describe('files', function () {
     const downloadError = await fileService.downloadFile(file)
 
     expect(downloadError).to.be.ok
-  })
-
-  it.skip('should cancel file download', async function () {
-    await setup({ fakeCrypto: false, subscription: true })
-
-    // ...
   })
 })

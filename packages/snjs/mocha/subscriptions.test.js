@@ -45,7 +45,7 @@ describe('subscriptions', function () {
       billingFrequency: 12,
       payAmount: 59.00
     })
-    await Factory.sleep(0.25)
+    await Factory.sleep(2)
   })
 
   it('should invite a user by email to a shared subscription', async () => {

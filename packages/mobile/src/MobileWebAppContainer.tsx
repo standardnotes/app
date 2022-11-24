@@ -4,7 +4,6 @@ import { Keyboard, Platform } from 'react-native'
 import VersionInfo from 'react-native-version-info'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
 import { OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTypes'
-import pjson from '../package.json'
 import { AndroidBackHandlerService } from './AndroidBackHandlerService'
 import { AppStateObserverService } from './AppStateObserverService'
 import { ColorSchemeObserverService } from './ColorSchemeObserverService'
@@ -129,7 +128,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   const WebProcessDeviceInterface = `
   class WebProcessDeviceInterface {
     constructor(messageSender) {
-      this.appVersion = '${pjson.version} (${VersionInfo.buildVersion})'
+      this.appVersion = '${VersionInfo.appVersion} (${VersionInfo.buildVersion})'
       this.environment = 3
       this.platform = ${device.platform}
       this.databases = []

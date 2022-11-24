@@ -29,6 +29,7 @@ import { DesktopManager } from './Device/DesktopManager'
 import {
   ArchiveManager,
   AutolockService,
+  ChangelogService,
   KeyboardService,
   PreferenceId,
   RouteService,
@@ -97,6 +98,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       ? new DesktopManager(this, deviceInterface)
       : undefined
     this.webServices.viewControllerManager = new ViewControllerManager(this, deviceInterface)
+    this.webServices.changelogService = new ChangelogService(this.environment, this.storage)
 
     if (this.isNativeMobileWeb()) {
       this.mobileWebReceiver = new MobileWebReceiver(this)
@@ -191,6 +193,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   public get paneController() {
     return this.webServices.viewControllerManager.paneController
+  }
+
+  public get changelogService() {
+    return this.webServices.changelogService
   }
 
   public get desktopDevice(): DesktopDeviceInterface | undefined {

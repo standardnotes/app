@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.152.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.152.0...@standardnotes/snjs@2.152.1) (2022-11-24)
+
+### Bug Fixes
+
+* subscription expiring event ([07e2691](https://github.com/standardnotes/app/commit/07e26915b07656e813d439a24f8d4682ba6773af))
+
+# [2.152.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.11...@standardnotes/snjs@2.152.0) (2022-11-24)
+
+### Bug Fixes
+
+* **snjs:** factory timeout to propagate subscription purchase ([c40b17b](https://github.com/standardnotes/app/commit/c40b17bd4cdb943b299e3cb17f0cbb5ce8e736e2))
+
+### Features
+
+* New 'What's New' section in Preferences ([#2049](https://github.com/standardnotes/app/issues/2049)) (skip e2e) ([0a01ddb](https://github.com/standardnotes/app/commit/0a01ddb430154fa4518985458c15c644855c80ea))
+
 ## [2.151.11](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.10...@standardnotes/snjs@2.151.11) (2022-11-23)
 
 ### Bug Fixes

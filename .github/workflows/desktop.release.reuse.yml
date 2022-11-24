@@ -27,14 +27,14 @@ jobs:
           cache: 'yarn'
       - run: yarn install --immutable
       - run: yarn build:desktop
-      - run: echo APP_VERSION=$(node -p "require('./package.json').version") >> $GITHUB_ENV
+      - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
 
       - name: Compile Mac
         run: yarn run webpack --config desktop.webpack.prod.js
       - name: MacX64
         run: |
           yarn run electron-builder --mac --x64 --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
-          node scripts/fixMacZip.js
+          node scripts/fixMacZip.js ${{ env.APP_VERSION }}
       - name: MacArm64
         run: yarn run electron-builder --mac --arm64 --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
 
@@ -69,7 +69,7 @@ jobs:
       - run: yarn install --immutable
       - run: yarn build:desktop
 
-      - run: echo APP_VERSION=$(node -p "require('./package.json').version") >> $GITHUB_ENV
+      - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
 
       - name: Compile for AppImage
         run: yarn run webpack --config desktop.webpack.prod.js
@@ -139,7 +139,7 @@ jobs:
       - run: yarn install --immutable
       - run: yarn build:desktop
       - run: yarn run webpack --config desktop.webpack.prod.js
-      - run: echo APP_VERSION=$(node -p "require('./package.json').version") >> $GITHUB_ENV
+      - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
       - run: yarn run electron-builder --windows --x64 --ia32 --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
 
       - name: Upload
@@ -160,6 +160,8 @@ jobs:
       run:
         working-directory: packages/desktop
     steps:
+      - run: echo APP_VERSION=$(node -p "require('./../web/package.json').version") >> $GITHUB_ENV
+
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
@@ -194,8 +196,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.CI_PAT_TOKEN }}
-          tag_name: "@standardnotes/desktop@${{ steps.package-version.outputs.current-version}}"
-          name: "Desktop ${{ steps.package-version.outputs.current-version }}"
+          tag_name: "@standardnotes/desktop@${{ env.APP_VERSION }}"
+          name: "Desktop ${{ env.APP_VERSION }}"
           body: ${{ steps.release-notes.outputs.result }}
           prerelease: true
           draft: false
@@ -214,4 +216,4 @@ jobs:
           sudo snap install snapcraft --classic
           echo "${{ secrets.SNAPCRAFT_LOGIN_FILE }}" >> snapauth.txt
           snapcraft login --with=snapauth.txt
-          snapcraft upload dist/standard-notes-${{ steps.package-version.outputs.current-version}}-linux-amd64.snap --release stable,candidate,beta,edge
+          snapcraft upload dist/standard-notes-${{ env.APP_VERSION }}-linux-amd64.snap --release stable,candidate,beta,edge

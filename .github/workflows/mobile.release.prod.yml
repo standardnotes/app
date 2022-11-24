@@ -3,7 +3,7 @@ name: Mobile Release Production
 on:
   push:
     tags:
-      - '*standardnotes/mobile*'
+      - '*standardnotes/web*'
   workflow_dispatch:
 
 jobs:
@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Export version from package.json
         run:
-          echo "PACKAGE_VERSION=$(grep '"version"' package.json | cut -d '"' -f 4 | cut -d "-" -f 1)" >> $GITHUB_ENV
+          echo "PACKAGE_VERSION=$(grep '"version"' ../web/package.json | cut -d '"' -f 4 | cut -d "-" -f 1)" >> $GITHUB_ENV
       - name: Setup react-native kernel and increase watchers
         run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
       - name: Decode Production Android keystore
@@ -82,7 +82,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Export version from package.json
         run:
-          echo "PACKAGE_VERSION=$(grep '"version"' package.json | cut -d '"' -f 4 | cut -d "-" -f 1)" >> $GITHUB_ENV
+          echo "PACKAGE_VERSION=$(grep '"version"' ../web/package.json | cut -d '"' -f 4 | cut -d "-" -f 1)" >> $GITHUB_ENV
       - name: Install dependencies
         run: yarn install --immutable && yarn install:pods
       - run: yarn build:mobile
