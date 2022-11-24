@@ -63,9 +63,9 @@ describe('files', function () {
 
   it('should create valet token from server', async function () {
     await setup({ fakeCrypto: true, subscription: true })
+
     const remoteIdentifier = Utils.generateUuid()
     const token = await application.apiService.createFileValetToken(remoteIdentifier, 'write')
-    console.log(token)
 
     expect(token.length).to.be.above(0)
   })

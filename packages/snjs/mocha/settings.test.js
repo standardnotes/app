@@ -143,7 +143,7 @@ describe('settings service', function () {
 
     await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: context.email,
-      subscriptionId: 1,
+      subscriptionId: 42,
       subscriptionName: 'PRO_PLAN',
       subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
       timestamp: Date.now(),
@@ -173,7 +173,7 @@ describe('settings service', function () {
 
     await Factory.publishMockedEvent('SUBSCRIPTION_EXPIRED', {
       userEmail: context.email,
-      subscriptionId: 1,
+      subscriptionId: 42,
       subscriptionName: 'PRO_PLAN',
       timestamp: Date.now(),
       offline: false,
@@ -186,7 +186,7 @@ describe('settings service', function () {
 
     await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: context.email,
-      subscriptionId: 2,
+      subscriptionId: 43,
       subscriptionName: 'PRO_PLAN',
       subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
       timestamp: Date.now(),
