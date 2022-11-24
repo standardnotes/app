@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.152.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.152.1...@standardnotes/snjs@2.152.3) (2022-11-24)
+
+### Bug Fixes
+
+* **snjs:** add additional sign in missing - run e2e ([6bbf0c0](https://github.com/standardnotes/app/commit/6bbf0c02bda0350772638ee19424420b6430dec3))
+* **snjs:** decrease factory sleep in order to have a continuing session - run e2e ([0fac2dd](https://github.com/standardnotes/app/commit/0fac2dd93974f7072e5e3a73ef705836e163dcac))
+* **snjs:** remove extra sign in - run e2e ([212e784](https://github.com/standardnotes/app/commit/212e7843ec2ec565c46e06a3acd52a7bbfc16f0b))
+* **snjs:** run e2e ([75303b5](https://github.com/standardnotes/app/commit/75303b5eb8c1e403541bca57b20ae293cb67f979))
+
 ## [2.152.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.152.0...@standardnotes/snjs@2.152.1) (2022-11-24)
 
 ### Bug Fixes
