@@ -156,7 +156,7 @@ describe('settings service', function () {
       billingFrequency: 12,
       payAmount: 59.00
     })
-    await Factory.sleep(2)
+    await Factory.sleep(1)
 
     const response = await fetch('/packages/snjs/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
@@ -182,7 +182,7 @@ describe('settings service', function () {
       billingFrequency: 12,
       payAmount: 59.00
     })
-    await Factory.sleep(2)
+    await Factory.sleep(1)
 
     await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: context.email,
@@ -199,7 +199,7 @@ describe('settings service', function () {
       billingFrequency: 12,
       payAmount: 59.00
     })
-    await Factory.sleep(2)
+    await Factory.sleep(1)
 
     const limitSettingAfter = await application.settings.getSubscriptionSetting('FILE_UPLOAD_BYTES_LIMIT')
     expect(limitSettingAfter).to.equal(limitSettingBefore)
