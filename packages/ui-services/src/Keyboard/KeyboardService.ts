@@ -165,6 +165,22 @@ export class KeyboardService {
     }
   }
 
+  public triggerCommand(command: KeyboardCommand): void {
+    for (const observer of this.commandHandlers) {
+      if (observer.command !== command) {
+        continue
+      }
+
+      const callback = observer.onKeyDown || observer.onKeyUp
+      if (callback) {
+        const exclusive = callback(new KeyboardEvent('command-trigger'))
+        if (exclusive) {
+          return
+        }
+      }
+    }
+  }
+
   registerShortcut(shortcut: KeyboardShortcut): void {
     this.commandMap.set(shortcut.command, shortcut)
   }

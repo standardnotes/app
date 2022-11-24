@@ -10,5 +10,6 @@ export type NotesOptionsProps = {
   notesController: NotesController
   linkingController: LinkingController
   historyModalController: HistoryModalController
+  requestDisableClickOutside?: (disabled: boolean) => void
   closeMenu: () => void
 }

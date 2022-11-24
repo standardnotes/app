@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.107.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.106.0...@standardnotes/web@3.107.0) (2022-11-23)
+
+### Bug Fixes
+
+* change editor button icon & selection ([9d5a575](https://github.com/standardnotes/app/commit/9d5a57521e58823f7d8e17c7a9d7776c5e0bc672))
+
+### Features
+
+* option to show markdown preview for super notes (skip e2e) ([#2048](https://github.com/standardnotes/app/issues/2048)) ([8579ff3](https://github.com/standardnotes/app/commit/8579ff39b1f81dbbcf22b4031ede183ab4287262))
+
 # [3.106.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.105.0...@standardnotes/web@3.106.0) (2022-11-23)
 
 ### Features

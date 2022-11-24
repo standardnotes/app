@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.8.0...@standardnotes/blocks-editor@1.9.0) (2022-11-23)
+
+### Features
+
+* dim checked list items in super editor ([#2046](https://github.com/standardnotes/app/issues/2046)) ([8a70915](https://github.com/standardnotes/app/commit/8a709158d6839b9eb1092923a14b0dcadb0da25b))
+* option to show markdown preview for super notes (skip e2e) ([#2048](https://github.com/standardnotes/app/issues/2048)) ([8579ff3](https://github.com/standardnotes/app/commit/8579ff39b1f81dbbcf22b4031ede183ab4287262))
+
 # [1.8.0](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.7.0...@standardnotes/blocks-editor@1.8.0) (2022-11-23)
 
 ### Features

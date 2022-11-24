@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.14.4...@standardnotes/ui-services@1.15.0) (2022-11-23)
+
+### Features
+
+* option to show markdown preview for super notes (skip e2e) ([#2048](https://github.com/standardnotes/app/issues/2048)) ([8579ff3](https://github.com/standardnotes/app/commit/8579ff39b1f81dbbcf22b4031ede183ab4287262))
+
 ## [1.14.4](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.14.3...@standardnotes/ui-services@1.14.4) (2022-11-23)
 
 **Note:** Version bump only for package @standardnotes/ui-services

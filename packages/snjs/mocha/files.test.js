@@ -97,7 +97,7 @@ describe('files', function () {
       payAmount: 59.00
     })
 
-    await Factory.sleep(0.25)
+    await Factory.sleep(1)
 
     const remoteIdentifier = Utils.generateUuid()
     const tokenOrError = await application.apiService.createFileValetToken(remoteIdentifier, 'write')

@@ -21,6 +21,7 @@ import {
   CAPTURE_SAVE_COMMAND,
   STAR_NOTE_COMMAND,
   PIN_NOTE_COMMAND,
+  SUPER_SHOW_MARKDOWN_PREVIEW,
 } from './KeyboardCommands'
 import { KeyboardKey } from './KeyboardKey'
 import { KeyboardModifier } from './KeyboardModifier'
@@ -129,6 +130,12 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
     {
       command: PIN_NOTE_COMMAND,
       key: 'p',
+      modifiers: [primaryModifier, KeyboardModifier.Shift],
+      preventDefault: true,
+    },
+    {
+      command: SUPER_SHOW_MARKDOWN_PREVIEW,
+      key: 'm',
       modifiers: [primaryModifier, KeyboardModifier.Shift],
       preventDefault: true,
     },

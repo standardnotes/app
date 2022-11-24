@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.151.11](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.10...@standardnotes/snjs@2.151.11) (2022-11-23)
+
+### Bug Fixes
+
+* **snjs:** adjust file bytes used expected ([e36a1ff](https://github.com/standardnotes/app/commit/e36a1ffea0aba9e860c511fa64e0b0ad87890b30))
+* **snjs:** file subscriptions tests subscription assignment ([25cf4cf](https://github.com/standardnotes/app/commit/25cf4cfd2210b4032f362b4ec86ff6c6aa485891))
+* **snjs:** remove unnecessary file uploaded event in tests ([b05c793](https://github.com/standardnotes/app/commit/b05c793fe9c0016ce744eace14871291511399a6))
+* **snjs:** subscription events in tests ([c454176](https://github.com/standardnotes/app/commit/c45417623cc65f4369183069b9df0ba97e9f9965))
+* **snjs:** wait timeout after subscription purchase ([99163d9](https://github.com/standardnotes/app/commit/99163d90d2084d118433afe311362a1f943087b7))
+
 ## [2.151.10](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.151.9...@standardnotes/snjs@2.151.10) (2022-11-23)
 
 **Note:** Version bump only for package @standardnotes/snjs

@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import NotesOptions from '@/Components/NotesOptions/NotesOptions'
-import { useRef } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { WebApplication } from '@/Application/Application'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
@@ -29,6 +29,11 @@ const NotesContextMenu = ({
 
   const closeMenu = () => setContextMenuOpen(!contextMenuOpen)
 
+  const [disableClickOutside, setDisableClickOutside] = useState(false)
+  const handleDisableClickOutsideRequest = useCallback((disabled: boolean) => {
+    setDisableClickOutside(disabled)
+  }, [])
+
   return (
     <Popover
       align="start"
@@ -36,6 +41,7 @@ const NotesContextMenu = ({
         x: contextMenuClickLocation.x,
         y: contextMenuClickLocation.y,
       }}
+      disableClickOutside={disableClickOutside}
       className="py-2"
       open={contextMenuOpen}
       togglePopover={closeMenu}
@@ -47,6 +53,7 @@ const NotesContextMenu = ({
           notesController={notesController}
           linkingController={linkingController}
           historyModalController={historyModalController}
+          requestDisableClickOutside={handleDisableClickOutsideRequest}
           closeMenu={closeMenu}
         />
       </div>
