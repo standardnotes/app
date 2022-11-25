@@ -2,6 +2,9 @@ type SwipeDirection = 'left' | 'right'
 
 type SwipeGestureListener = (direction: SwipeDirection) => boolean
 
+const ThresholdMultiplier = 0.25
+const VelocityThreshold = 10
+
 /**
  * Handles swipe gestures on the document.
  * Adapted from https://github.com/sciactive/tinygesture
@@ -16,7 +19,7 @@ export class SwipeGestureHandler {
   public velocityX: number | null = null
   public velocityY: number | null = null
 
-  public thresholdX = window.innerWidth / 2
+  public thresholdX = window.innerWidth * ThresholdMultiplier
   public thresholdY = 0
   public disregardVelocityThresholdX = 0
   public disregardVelocityThresholdY = 0
@@ -71,11 +74,11 @@ export class SwipeGestureHandler {
       this.swipedHorizontal = absX >= absY && absX > this.thresholdX
       if (this.swipedHorizontal) {
         if (x < 0) {
-          if ((this.velocityX ?? 0) < -10 || x < -this.disregardVelocityThresholdX) {
+          if ((this.velocityX ?? 0) < -VelocityThreshold || x < -this.disregardVelocityThresholdX) {
             this.notifySwipeGesture('left')
           }
         } else {
-          if ((this.velocityX ?? 0) > 10 || x > this.disregardVelocityThresholdX) {
+          if ((this.velocityX ?? 0) > VelocityThreshold || x > this.disregardVelocityThresholdX) {
             this.notifySwipeGesture('right')
           }
         }
