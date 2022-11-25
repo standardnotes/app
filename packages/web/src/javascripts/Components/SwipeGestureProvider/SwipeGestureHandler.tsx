@@ -16,7 +16,7 @@ export class SwipeGestureHandler {
   public velocityX: number | null = null
   public velocityY: number | null = null
 
-  public thresholdX = 0
+  public thresholdX = window.innerWidth / 2
   public thresholdY = 0
   public disregardVelocityThresholdX = 0
   public disregardVelocityThresholdY = 0
