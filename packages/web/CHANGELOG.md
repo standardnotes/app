@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.110.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.110.0...@standardnotes/web@3.110.1) (2022-11-25)
+
+### Bug Fixes
+
+* issue where plaintext editor autofocus would interfere with sign in form ([a6efc53](https://github.com/standardnotes/app/commit/a6efc5336b5e5b4814e7e833ccdc2cd4b0096ce8))
+
 # [3.110.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.109.1...@standardnotes/web@3.110.0) (2022-11-25)
 
 ### Features
