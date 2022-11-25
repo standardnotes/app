@@ -60,8 +60,8 @@ describe('features', () => {
 
   describe('new user roles received on api response meta', () => {
     it('should save roles and features', async () => {
-      expect(application.featuresService.roles).to.have.lengthOf(1)
-      expect(application.featuresService.roles[0]).to.equal('CORE_USER')
+      expect(application.featuresService.roles.value).to.have.lengthOf(1)
+      expect(application.featuresService.roles.value[0].value).to.equal('CORE_USER')
 
       expect(application.featuresService.features).to.have.lengthOf(3)
       expect(application.featuresService.features[0]).to.containSubset(midnightThemeFeature)
