@@ -1,7 +1,7 @@
 import { SNApiService } from '../Api/ApiService'
 import { convertTimestampToMilliseconds, removeFromArray, Copy, isString } from '@standardnotes/utils'
 import { ClientDisplayableError, UserFeaturesResponse } from '@standardnotes/responses'
-import { ContentType, RoleName as RoleNameEnum } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { RoleName, RoleNameCollection } from '@standardnotes/domain-core'
 import { FillItemContent, PayloadEmitSource } from '@standardnotes/models'
 import { ItemManager } from '../Items/ItemManager'
@@ -359,7 +359,7 @@ export class SNFeaturesService
   }
 
   public initializeFromDisk(): void {
-    const storageRoles = this.storageService.getValue<RoleNameEnum[]>(StorageKey.UserRoles, undefined, [])
+    const storageRoles = this.storageService.getValue<string[]>(StorageKey.UserRoles, undefined, [])
 
     this.roles = this.castStringsToRoleNameCollection(storageRoles)
 
@@ -412,7 +412,10 @@ export class SNFeaturesService
       void this.notifyEvent(FeaturesEvent.UserRolesChanged)
     }
 
-    this.storageService.setValue(StorageKey.UserRoles, this.roles)
+    this.storageService.setValue(
+      StorageKey.UserRoles,
+      this.roles.value.map((roleName) => roleName.value),
+    )
   }
 
   public async didDownloadFeatures(features: FeaturesImports.FeatureDescription[]): Promise<void> {
@@ -477,10 +480,6 @@ export class SNFeaturesService
 
   public hasPaidOnlineOrOfflineSubscription(): boolean {
     return this.rolesIncludePaidSubscription() || this.hasOfflineRepo()
-  }
-
-  public rolesBySorting(roles: RoleName[]): RoleName[] {
-    return Object.values(RoleName).filter((role) => roles.includes(role))
   }
 
   public hasMinimumRole(role: string): boolean {
