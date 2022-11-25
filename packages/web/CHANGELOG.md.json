@@ -1,6 +1,24 @@
 {
   "versions": [
     {
+      "version": "3.110.0",
+      "title": "[3.110.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.109.1...@standardnotes/web@3.110.0) (2022-11-25)",
+      "date": null,
+      "body": "### Features\n\n* Markdown, HTML & JSON export options for super notes ([#2054](https://github.com/standardnotes/app/issues/2054)) ([dcc8cfb](https://github.com/standardnotes/app/commit/dcc8cfbe45644dbb77e0ade0073017e6ac66164c))\n\n### Reverts\n\n* Revert \"chore: e2e tests opt in\" ([9b91875](https://github.com/standardnotes/app/commit/9b91875d3d31609449e22a386d7305fd7ca5a68f))",
+      "parsed": {
+        "_": [
+          "Markdown, HTML & JSON export options for super notes (#2054) (dcc8cfb)",
+          "Revert \"chore: e2e tests opt in\" (9b91875)"
+        ],
+        "Features": [
+          "Markdown, HTML & JSON export options for super notes (#2054) (dcc8cfb)"
+        ],
+        "Reverts": [
+          "Revert \"chore: e2e tests opt in\" (9b91875)"
+        ]
+      }
+    },
+    {
       "version": "3.109.1",
       "title": "[3.109.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.109.0...@standardnotes/web@3.109.1) (2022-11-24)",
       "date": null,
