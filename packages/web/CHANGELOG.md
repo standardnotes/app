@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.110.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.109.1...@standardnotes/web@3.110.0) (2022-11-25)
+
+### Features
+
+* Markdown, HTML & JSON export options for super notes ([#2054](https://github.com/standardnotes/app/issues/2054)) ([dcc8cfb](https://github.com/standardnotes/app/commit/dcc8cfbe45644dbb77e0ade0073017e6ac66164c))
+
+### Reverts
+
+* Revert "chore: e2e tests opt in" ([9b91875](https://github.com/standardnotes/app/commit/9b91875d3d31609449e22a386d7305fd7ca5a68f))
+
 ## [3.109.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.109.0...@standardnotes/web@3.109.1) (2022-11-24)
 
 **Note:** Version bump only for package @standardnotes/web

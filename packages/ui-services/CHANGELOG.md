@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.17.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.16.0...@standardnotes/ui-services@1.17.0) (2022-11-25)
+
+### Features
+
+* Markdown, HTML & JSON export options for super notes ([#2054](https://github.com/standardnotes/app/issues/2054)) ([dcc8cfb](https://github.com/standardnotes/app/commit/dcc8cfbe45644dbb77e0ade0073017e6ac66164c))
+
 # [1.16.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.15.0...@standardnotes/ui-services@1.16.0) (2022-11-24)
 
 ### Features
