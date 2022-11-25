@@ -16,6 +16,7 @@ import {
 import { AppPaneId } from './AppPaneMetadata'
 import { PaneController } from '../../Controllers/PaneController'
 import { observer } from 'mobx-react-lite'
+import { useSwipeGesture } from '../SwipeGestureProvider/SwipeGestureProvider'
 
 type ResponsivePaneData = {
   selectedPane: AppPaneId
@@ -103,6 +104,37 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
       }
     }
   }, [addAndroidBackHandler, currentSelectedPaneRef, toggleAppPane])
+
+  const addSwipeGestureListener = useSwipeGesture()
+
+  useEffect(() => {
+    const removeListener = addSwipeGestureListener((direction) => {
+      if (direction === 'left') {
+        if (currentSelectedPaneRef.current === AppPaneId.Navigation) {
+          toggleAppPane(AppPaneId.Items)
+          return true
+        } else if (currentSelectedPaneRef.current === AppPaneId.Items) {
+          toggleAppPane(AppPaneId.Editor)
+          return true
+        } else {
+          return false
+        }
+      } else if (direction === 'right') {
+        if (currentSelectedPaneRef.current === AppPaneId.Editor) {
+          toggleAppPane(AppPaneId.Items)
+          return true
+        } else if (currentSelectedPaneRef.current === AppPaneId.Items) {
+          toggleAppPane(AppPaneId.Navigation)
+          return true
+        } else {
+          return false
+        }
+      } else {
+        return false
+      }
+    })
+    return removeListener
+  }, [addSwipeGestureListener, currentSelectedPaneRef, toggleAppPane])
 
   const [isNotesListVisibleOnTablets, setNotesListVisibleOnTablets] = useState(true)
 
