@@ -3,7 +3,7 @@ import Switch from '@/Components/Switch/Switch'
 import { FunctionComponent } from 'react'
 import { SNComponent, SNNote } from '@standardnotes/snjs'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
-import { iconClass } from './NotesOptions'
+import { iconClass } from './ClassNames'
 
 export const SpellcheckOptions: FunctionComponent<{
   editorForNote: SNComponent | undefined

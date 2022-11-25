@@ -30,9 +30,10 @@ import { SpellcheckOptions } from './SpellcheckOptions'
 import { NoteSizeWarning } from './NoteSizeWarning'
 import { DeletePermanentlyButton } from './DeletePermanentlyButton'
 import { useCommandService } from '../ApplicationView/CommandProvider'
+import { menuItemClassNames, menuItemSwitchClassNames, iconClass } from './ClassNames'
+import SuperNoteOptions from './SuperNoteOptions'
 
 const iconSize = MenuItemIconSize
-export const iconClass = `text-neutral mr-2 ${iconSize}`
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
 const iconClassWarning = `text-warning mr-2 ${iconSize}`
 const iconClassSuccess = `text-success mr-2 ${iconSize}`
@@ -159,22 +160,13 @@ const NotesOptions = ({
     return <ProtectedUnauthorizedLabel />
   }
 
-  const textClassNames = 'text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item'
-
-  const defaultClassNames = classNames(
-    textClassNames,
-    'flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none',
-  )
-
-  const switchClassNames = classNames(textClassNames, defaultClassNames, 'justify-between')
-
   const firstItemClass = 'pt-4'
 
   return (
     <>
       {notes.length === 1 && (
         <>
-          <button className={classNames(defaultClassNames, firstItemClass)} onClick={openRevisionHistoryModal}>
+          <button className={classNames(menuItemClassNames, firstItemClass)} onClick={openRevisionHistoryModal}>
             <div className="flex w-full items-center justify-between">
               <span className="flex">
                 <Icon type="history" className={iconClass} />
@@ -187,7 +179,7 @@ const NotesOptions = ({
         </>
       )}
       <button
-        className={switchClassNames}
+        className={menuItemSwitchClassNames}
         onClick={() => {
           notesController.setLockSelectedNotes(!locked)
         }}
@@ -199,7 +191,7 @@ const NotesOptions = ({
         <Switch className="px-0" checked={locked} />
       </button>
       <button
-        className={switchClassNames}
+        className={menuItemSwitchClassNames}
         onClick={() => {
           notesController.setHideSelectedNotePreviews(!hidePreviews)
         }}
@@ -211,7 +203,7 @@ const NotesOptions = ({
         <Switch className="px-0" checked={!hidePreviews} />
       </button>
       <button
-        className={switchClassNames}
+        className={menuItemSwitchClassNames}
         onClick={() => {
           notesController.setProtectSelectedNotes(!protect).catch(console.error)
         }}
@@ -227,7 +219,7 @@ const NotesOptions = ({
           <HorizontalSeparator classes="my-2" />
           <ChangeEditorOption
             iconClassName={iconClass}
-            className={switchClassNames}
+            className={menuItemSwitchClassNames}
             application={application}
             note={notes[0]}
           />
@@ -237,14 +229,14 @@ const NotesOptions = ({
       {navigationController.tagsCount > 0 && (
         <AddTagOption
           iconClassName={iconClass}
-          className={switchClassNames}
+          className={menuItemSwitchClassNames}
           navigationController={navigationController}
           notesController={notesController}
         />
       )}
 
       <button
-        className={defaultClassNames}
+        className={menuItemClassNames}
         onClick={() => {
           notesController.setStarSelectedNotes(!starred)
         }}
@@ -260,7 +252,7 @@ const NotesOptions = ({
 
       {unpinned && (
         <button
-          className={defaultClassNames}
+          className={menuItemClassNames}
           onClick={() => {
             notesController.setPinSelectedNotes(true)
           }}
@@ -276,7 +268,7 @@ const NotesOptions = ({
       )}
       {pinned && (
         <button
-          className={defaultClassNames}
+          className={menuItemClassNames}
           onClick={() => {
             notesController.setPinSelectedNotes(false)
           }}
@@ -290,28 +282,34 @@ const NotesOptions = ({
           </div>
         </button>
       )}
-      <button
-        className={defaultClassNames}
-        onClick={() => {
-          application.isNativeMobileWeb() ? void shareSelectedNotes(application, notes) : void downloadSelectedItems()
-        }}
-      >
-        <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
-        {application.platform === Platform.Android ? 'Share' : 'Export'}
-      </button>
-      {application.platform === Platform.Android && (
-        <button className={defaultClassNames} onClick={() => downloadSelectedNotesOnAndroid(application, notes)}>
-          <Icon type="download" className={iconClass} />
-          Export
-        </button>
+      {notes[0].noteType !== NoteType.Super && (
+        <>
+          <button
+            className={menuItemClassNames}
+            onClick={() => {
+              application.isNativeMobileWeb()
+                ? void shareSelectedNotes(application, notes)
+                : void downloadSelectedItems()
+            }}
+          >
+            <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
+            {application.platform === Platform.Android ? 'Share' : 'Export'}
+          </button>
+          {application.platform === Platform.Android && (
+            <button className={menuItemClassNames} onClick={() => downloadSelectedNotesOnAndroid(application, notes)}>
+              <Icon type="download" className={iconClass} />
+              Export
+            </button>
+          )}
+        </>
       )}
-      <button className={defaultClassNames} onClick={duplicateSelectedItems}>
+      <button className={menuItemClassNames} onClick={duplicateSelectedItems}>
         <Icon type="copy" className={iconClass} />
         Duplicate
       </button>
       {unarchived && (
         <button
-          className={defaultClassNames}
+          className={menuItemClassNames}
           onClick={async () => {
             await notesController.setArchiveSelectedNotes(true).catch(console.error)
             closeMenuAndToggleNotesList()
@@ -323,7 +321,7 @@ const NotesOptions = ({
       )}
       {archived && (
         <button
-          className={defaultClassNames}
+          className={menuItemClassNames}
           onClick={async () => {
             await notesController.setArchiveSelectedNotes(false).catch(console.error)
             closeMenuAndToggleNotesList()
@@ -343,7 +341,7 @@ const NotesOptions = ({
           />
         ) : (
           <button
-            className={defaultClassNames}
+            className={menuItemClassNames}
             onClick={async () => {
               await notesController.setTrashSelectedNotes(true)
               closeMenuAndToggleNotesList()
@@ -356,7 +354,7 @@ const NotesOptions = ({
       {trashed && (
         <>
           <button
-            className={defaultClassNames}
+            className={menuItemClassNames}
             onClick={async () => {
               await notesController.setTrashSelectedNotes(false)
               closeMenuAndToggleNotesList()
@@ -372,7 +370,7 @@ const NotesOptions = ({
             }}
           />
           <button
-            className={defaultClassNames}
+            className={menuItemClassNames}
             onClick={async () => {
               await notesController.emptyTrash()
               closeMenuAndToggleNotesList()
@@ -392,27 +390,17 @@ const NotesOptions = ({
       {notes.length === 1 ? (
         <>
           {notes[0].noteType === NoteType.Super && (
-            <>
-              <HorizontalSeparator classes="my-2" />
-
-              <div className="my-1 px-3 text-base font-semibold uppercase text-text lg:text-xs">Super</div>
-
-              <button className={defaultClassNames} onClick={enableSuperMarkdownPreview}>
-                <div className="flex w-full items-center justify-between">
-                  <span className="flex">
-                    <Icon type="markdown" className={iconClass} />
-                    Show Markdown
-                  </span>
-                  {markdownShortcut && <KeyboardShortcutIndicator className={''} shortcut={markdownShortcut} />}
-                </div>
-              </button>
-            </>
+            <SuperNoteOptions
+              note={notes[0]}
+              markdownShortcut={markdownShortcut}
+              enableSuperMarkdownPreview={enableSuperMarkdownPreview}
+            />
           )}
           <HorizontalSeparator classes="my-2" />
 
           <ListedActionsOption
             iconClassName={iconClass}
-            className={switchClassNames}
+            className={menuItemSwitchClassNames}
             application={application}
             note={notes[0]}
           />
@@ -420,7 +408,7 @@ const NotesOptions = ({
           <HorizontalSeparator classes="my-2" />
 
           <SpellcheckOptions
-            className={switchClassNames}
+            className={menuItemSwitchClassNames}
             editorForNote={editorForNote}
             notesController={notesController}
             note={notes[0]}
