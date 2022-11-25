@@ -231,16 +231,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     }
   }
 
-  setPlainEditorRef = (ref: PlainEditorInterface | undefined) => {
+  setPlainEditorRef = (ref: PlainEditorInterface | null) => {
     this.plainEditorRef = ref || undefined
-
-    if (!this.plainEditorRef) {
-      return
-    }
-
-    if (this.controller.isTemplateNote && this.controller.templateNoteOptions?.autofocusBehavior === 'editor') {
-      this.plainEditorRef.focus()
-    }
   }
 
   override componentDidUpdate(_prevProps: NoteViewProps, prevState: State): void {
@@ -956,7 +948,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             <PlainEditor
               application={this.application}
               spellcheck={this.state.spellcheck}
-              ref={(ref) => this.setPlainEditorRef(ref || undefined)}
+              ref={this.setPlainEditorRef}
               controller={this.controller}
               locked={this.state.noteLocked}
               onFocus={this.onPlainFocus}

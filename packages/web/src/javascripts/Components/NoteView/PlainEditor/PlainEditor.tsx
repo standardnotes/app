@@ -132,9 +132,15 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
 
     useEffect(() => {
       if (controller.isTemplateNote && controller.templateNoteOptions?.autofocusBehavior === 'editor') {
-        setTimeout(() => {
-          focusEditor()
-        })
+        focusEditor()
+      }
+    }, [controller, focusEditor])
+
+    useEffect(() => {
+      const shouldFocus = controller.isTemplateNote && controller.templateNoteOptions?.autofocusBehavior === 'editor'
+
+      if (shouldFocus) {
+        focusEditor()
       }
     }, [controller, focusEditor])
 
@@ -155,6 +161,10 @@ export const PlainEditor = forwardRef<PlainEditorInterface, Props>(
     }, [reloadPreferences, application])
 
     useEffect(() => {
+      if (previousSpellcheck === undefined) {
+        return
+      }
+
       if (spellcheck !== previousSpellcheck) {
         setTextareaUnloading(true)
         setTimeout(() => {
