@@ -8,6 +8,7 @@ import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalCo
 import Popover from '../Popover/Popover'
 import { LinkingController } from '@/Controllers/LinkingController'
 import RoundIconButton from '../Button/RoundIconButton'
+import Menu from '../Menu/Menu'
 
 type Props = {
   application: WebApplication
@@ -52,15 +53,17 @@ const NotesOptionsPanel = ({
         open={isOpen}
         className="select-none md:pt-2"
       >
-        <NotesOptions
-          application={application}
-          navigationController={navigationController}
-          notesController={notesController}
-          linkingController={linkingController}
-          historyModalController={historyModalController}
-          requestDisableClickOutside={handleDisableClickOutsideRequest}
-          closeMenu={toggleMenu}
-        />
+        <Menu a11yLabel="Note options menu" isOpen={isOpen}>
+          <NotesOptions
+            application={application}
+            navigationController={navigationController}
+            notesController={notesController}
+            linkingController={linkingController}
+            historyModalController={historyModalController}
+            requestDisableClickOutside={handleDisableClickOutsideRequest}
+            closeMenu={toggleMenu}
+          />
+        </Menu>
       </Popover>
     </>
   )
