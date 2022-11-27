@@ -1,6 +1,6 @@
 export type VectorIconNameOrEmoji = EmojiString | IconType
 
-export type EmojiString = string
+export type EmojiString = Omit<string, IconType>
 
 export type IconType =
   | 'accessibility'
