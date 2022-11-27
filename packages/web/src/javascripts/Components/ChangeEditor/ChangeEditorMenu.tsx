@@ -1,7 +1,5 @@
 import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
-import MenuItem from '@/Components/Menu/MenuItem'
-import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/Application'
@@ -13,6 +11,7 @@ import { createEditorMenuGroups } from '../../Utils/createEditorMenuGroups'
 import { reloadFont } from '../NoteView/FontFunctions'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import { SuperNoteImporter } from '../NoteView/SuperEditor/SuperNoteImporter'
+import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
 
 type ChangeEditorMenuProps = {
   application: WebApplication
@@ -190,12 +189,11 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                       selectItem(item).catch(console.error)
                     }
                     return (
-                      <MenuItem
+                      <MenuRadioButtonItem
                         key={item.name}
-                        type={MenuItemType.RadioButton}
                         onClick={onClickEditorItem}
                         className={'flex-row-reverse py-2'}
-                        checked={item.isEntitled ? isSelected(item) : undefined}
+                        checked={item.isEntitled ? isSelected(item) : false}
                       >
                         <div className="flex flex-grow items-center justify-between">
                           <div className={`flex items-center ${group.featured ? 'font-bold' : ''}`}>
@@ -206,7 +204,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                             <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />
                           )}
                         </div>
-                      </MenuItem>
+                      </MenuRadioButtonItem>
                     )
                   })}
                 </div>

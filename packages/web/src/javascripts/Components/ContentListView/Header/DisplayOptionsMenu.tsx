@@ -13,15 +13,15 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
-import MenuItem from '@/Components/Menu/MenuItem'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
-import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { DisplayOptionsMenuProps } from './DisplayOptionsMenuProps'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import NewNotePreferences from './NewNotePreferences'
 import { PreferenceMode } from './PreferenceMode'
 import { classNames } from '@standardnotes/utils'
 import NoSubscriptionBanner from '@/Components/NoSubscriptionBanner/NoSubscriptionBanner'
+import MenuRadioButtonItem from '@/Components/Menu/MenuRadioButtonItem'
+import MenuSwitchButtonItem from '@/Components/Menu/MenuSwitchButtonItem'
 
 const DailyEntryModeEnabled = true
 
@@ -230,10 +230,9 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       <MenuItemSeparator />
 
       <div className="my-1 px-3 text-base font-semibold uppercase text-text lg:text-xs">Sort by</div>
-      <MenuItem
+      <MenuRadioButtonItem
         disabled={controlsDisabled || isDailyEntry}
         className="py-2"
-        type={MenuItemType.RadioButton}
         onClick={toggleSortByDateModified}
         checked={preferences.sortBy === CollectionSort.UpdatedAt}
       >
@@ -247,11 +246,10 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             )
           ) : null}
         </div>
-      </MenuItem>
-      <MenuItem
+      </MenuRadioButtonItem>
+      <MenuRadioButtonItem
         disabled={controlsDisabled || isDailyEntry}
         className="py-2"
-        type={MenuItemType.RadioButton}
         onClick={toggleSortByCreationDate}
         checked={preferences.sortBy === CollectionSort.CreatedAt}
       >
@@ -265,11 +263,10 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             )
           ) : null}
         </div>
-      </MenuItem>
-      <MenuItem
+      </MenuRadioButtonItem>
+      <MenuRadioButtonItem
         disabled={controlsDisabled || isDailyEntry}
         className="py-2"
-        type={MenuItemType.RadioButton}
         onClick={toggleSortByTitle}
         checked={preferences.sortBy === CollectionSort.Title}
       >
@@ -283,92 +280,83 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             )
           ) : null}
         </div>
-      </MenuItem>
+      </MenuRadioButtonItem>
       <MenuItemSeparator />
       <div className="px-3 py-1 text-base font-semibold uppercase text-text lg:text-xs">View</div>
       {!isFilesSmartView && (
-        <MenuItem
+        <MenuSwitchButtonItem
           disabled={controlsDisabled}
-          type={MenuItemType.SwitchButton}
           className="py-1 hover:bg-contrast focus:bg-info-backdrop"
           checked={!preferences.hideNotePreview}
           onChange={toggleHidePreview}
         >
           <div className="max-w-3/4 flex flex-col">Show note preview</div>
-        </MenuItem>
+        </MenuSwitchButtonItem>
       )}
-      <MenuItem
+      <MenuSwitchButtonItem
         disabled={controlsDisabled}
-        type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={!preferences.hideDate}
         onChange={toggleHideDate}
       >
         Show date
-      </MenuItem>
-      <MenuItem
+      </MenuSwitchButtonItem>
+      <MenuSwitchButtonItem
         disabled={controlsDisabled}
-        type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={!preferences.hideTags}
         onChange={toggleHideTags}
       >
         Show tags
-      </MenuItem>
-      <MenuItem
+      </MenuSwitchButtonItem>
+      <MenuSwitchButtonItem
         disabled={controlsDisabled}
-        type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={!preferences.hideEditorIcon}
         onChange={toggleEditorIcon}
       >
         Show icon
-      </MenuItem>
+      </MenuSwitchButtonItem>
       <MenuItemSeparator />
       <div className="px-3 py-1 text-base font-semibold uppercase text-text lg:text-xs">Other</div>
-      <MenuItem
+      <MenuSwitchButtonItem
         disabled={controlsDisabled}
-        type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={!preferences.hidePinned}
         onChange={toggleHidePinned}
       >
         Show pinned
-      </MenuItem>
-      <MenuItem
+      </MenuSwitchButtonItem>
+      <MenuSwitchButtonItem
         disabled={controlsDisabled}
-        type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={!preferences.hideProtected}
         onChange={toggleHideProtected}
       >
         Show protected
-      </MenuItem>
-      <MenuItem
+      </MenuSwitchButtonItem>
+      <MenuSwitchButtonItem
         disabled={controlsDisabled}
-        type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-        checked={preferences.showArchived}
+        checked={Boolean(preferences.showArchived)}
         onChange={toggleShowArchived}
       >
         Show archived
-      </MenuItem>
-      <MenuItem
+      </MenuSwitchButtonItem>
+      <MenuSwitchButtonItem
         disabled={controlsDisabled}
-        type={MenuItemType.SwitchButton}
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-        checked={preferences.showTrashed}
+        checked={Boolean(preferences.showTrashed)}
         onChange={toggleShowTrashed}
       >
         Show trashed
-      </MenuItem>
+      </MenuSwitchButtonItem>
 
       {currentMode === 'tag' && DailyEntryModeEnabled && (
         <>
           <MenuItemSeparator />
-          <MenuItem
+          <MenuSwitchButtonItem
             disabled={controlsDisabled}
-            type={MenuItemType.SwitchButton}
             className="py-1 hover:bg-contrast focus:bg-info-backdrop"
             checked={isDailyEntry}
             onChange={toggleEntryMode}
@@ -382,7 +370,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
               </div>
               <div className="mt-1">Capture new notes daily with a calendar-based layout</div>
             </div>
-          </MenuItem>
+          </MenuSwitchButtonItem>
         </>
       )}
 
