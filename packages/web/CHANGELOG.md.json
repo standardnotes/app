@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.111.0",
+      "title": "[3.111.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.110.4...@standardnotes/web@3.111.0) (2022-11-27)",
+      "date": null,
+      "body": "### Features\n\n* add arrow key navigation to file context menu & options panel ([ac91621](https://github.com/standardnotes/app/commit/ac916212714e219fc203597cb873e79aa9d6a6f2))",
+      "parsed": {
+        "_": [
+          "add arrow key navigation to file context menu & options panel (ac91621)"
+        ],
+        "Features": [
+          "add arrow key navigation to file context menu & options panel (ac91621)"
+        ]
+      }
+    },
+    {
       "version": "3.110.4",
       "title": "[3.110.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.110.3...@standardnotes/web@3.110.4) (2022-11-27)",
       "date": null,

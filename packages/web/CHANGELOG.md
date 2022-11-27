@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.111.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.110.4...@standardnotes/web@3.111.0) (2022-11-27)
+
+### Features
+
+* add arrow key navigation to file context menu & options panel ([ac91621](https://github.com/standardnotes/app/commit/ac916212714e219fc203597cb873e79aa9d6a6f2))
+
 ## [3.110.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.110.3...@standardnotes/web@3.110.4) (2022-11-27)
 
 **Note:** Version bump only for package @standardnotes/web
