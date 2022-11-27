@@ -517,7 +517,7 @@ export class NavigationController
   public setIcon(tag: SNTag, icon: VectorIconNameOrEmoji) {
     this.application.mutator
       .changeAndSaveItem<TagMutator>(tag, (mutator) => {
-        mutator.iconString = icon
+        mutator.iconString = icon as string
       })
       .catch(console.error)
   }
