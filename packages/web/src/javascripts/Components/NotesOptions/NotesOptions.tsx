@@ -1,5 +1,4 @@
 import Icon from '@/Components/Icon/Icon'
-import Switch from '@/Components/Switch/Switch'
 import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { NoteType, Platform, SNNote } from '@standardnotes/snjs'
@@ -32,6 +31,7 @@ import { DeletePermanentlyButton } from './DeletePermanentlyButton'
 import { useCommandService } from '../ApplicationView/CommandProvider'
 import { menuItemClassNames, menuItemSwitchClassNames, iconClass } from './ClassNames'
 import SuperNoteOptions from './SuperNoteOptions'
+import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -178,42 +178,33 @@ const NotesOptions = ({
           <HorizontalSeparator classes="my-2" />
         </>
       )}
-      <button
-        className={menuItemSwitchClassNames}
-        onClick={() => {
-          notesController.setLockSelectedNotes(!locked)
+      <MenuSwitchButtonItem
+        checked={locked}
+        onChange={(locked) => {
+          notesController.setLockSelectedNotes(locked)
         }}
       >
-        <span className="flex items-center">
-          <Icon type="pencil-off" className={iconClass} />
-          Prevent editing
-        </span>
-        <Switch className="px-0" checked={locked} />
-      </button>
-      <button
-        className={menuItemSwitchClassNames}
-        onClick={() => {
+        <Icon type="pencil-off" className={iconClass} />
+        Prevent editing
+      </MenuSwitchButtonItem>
+      <MenuSwitchButtonItem
+        checked={!hidePreviews}
+        onChange={(hidePreviews) => {
           notesController.setHideSelectedNotePreviews(!hidePreviews)
         }}
       >
-        <span className="flex items-center">
-          <Icon type="rich-text" className={iconClass} />
-          Show preview
-        </span>
-        <Switch className="px-0" checked={!hidePreviews} />
-      </button>
-      <button
-        className={menuItemSwitchClassNames}
-        onClick={() => {
-          notesController.setProtectSelectedNotes(!protect).catch(console.error)
+        <Icon type="rich-text" className={iconClass} />
+        Show preview
+      </MenuSwitchButtonItem>
+      <MenuSwitchButtonItem
+        checked={protect}
+        onChange={(protect) => {
+          notesController.setProtectSelectedNotes(protect).catch(console.error)
         }}
       >
-        <span className="flex items-center">
-          <Icon type="lock" className={iconClass} />
-          Password protect
-        </span>
-        <Switch className="px-0" checked={protect} />
-      </button>
+        <Icon type="lock" className={iconClass} />
+        Password protect
+      </MenuSwitchButtonItem>
       {notes.length === 1 && (
         <>
           <HorizontalSeparator classes="my-2" />
