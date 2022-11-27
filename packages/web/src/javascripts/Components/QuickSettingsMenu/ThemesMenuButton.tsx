@@ -3,12 +3,12 @@ import { FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
 import { FunctionComponent, MouseEventHandler, useCallback, useMemo } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
-import Switch from '@/Components/Switch/Switch'
 import { ThemeItem } from './ThemeItem'
-import RadioIndicator from '../Radio/RadioIndicator'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import { isMobileScreen } from '@/Utils'
 import { classNames } from '@standardnotes/utils'
+import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
+import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
 
 type Props = {
   item: ThemeItem
@@ -28,22 +28,25 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
   )
   const canActivateTheme = useMemo(() => isEntitledToTheme || isThirdPartyTheme, [isEntitledToTheme, isThirdPartyTheme])
 
-  const toggleTheme: MouseEventHandler<HTMLButtonElement> = useCallback(
-    (e) => {
-      e.preventDefault()
+  const toggleTheme = useCallback(() => {
+    if (item.component && canActivateTheme) {
+      const isThemeLayerable = item.component.isLayerable()
+      const themeIsLayerableOrNotActive = isThemeLayerable || !item.component.active
 
-      if (item.component && canActivateTheme) {
-        const isThemeLayerable = item.component.isLayerable()
-        const themeIsLayerableOrNotActive = isThemeLayerable || !item.component.active
-
-        if (themeIsLayerableOrNotActive) {
-          application.mutator.toggleTheme(item.component).catch(console.error)
-        }
-      } else {
-        premiumModal.activate(`${item.name} theme`)
+      if (themeIsLayerableOrNotActive) {
+        application.mutator.toggleTheme(item.component).catch(console.error)
       }
+    } else {
+      premiumModal.activate(`${item.name} theme`)
+    }
+  }, [application, canActivateTheme, item, premiumModal])
+
+  const onClick: MouseEventHandler<HTMLButtonElement> = useCallback(
+    (event) => {
+      event.preventDefault()
+      toggleTheme()
     },
-    [application, canActivateTheme, item, premiumModal],
+    [toggleTheme],
   )
 
   const isMobile = application.isNativeMobileWeb() || isMobileScreen()
@@ -53,42 +56,27 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
     return null
   }
 
-  return (
-    <button
-      className={classNames(
-        'group flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5',
-        'text-left text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none disabled:bg-default disabled:text-passive-2',
-        'text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item',
+  return item.component?.isLayerable() ? (
+    <MenuSwitchButtonItem checked={item.component.active} onChange={() => toggleTheme()}>
+      {!canActivateTheme && (
+        <Icon type={PremiumFeatureIconName} className={classNames(PremiumFeatureIconClass, 'mr-2')} />
       )}
-      onClick={toggleTheme}
-    >
-      {item.component?.isLayerable() ? (
-        <>
-          <div className="flex items-center">
-            {!canActivateTheme && <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />}
-            {item.name}
-          </div>
-          <Switch className="px-0" checked={item.component?.active} />
-        </>
+      {item.name}
+    </MenuSwitchButtonItem>
+  ) : (
+    <MenuRadioButtonItem checked={Boolean(item.component?.active)} onClick={onClick}>
+      <span className={item.component?.active ? 'font-semibold' : undefined}>{item.name}</span>
+      {item.component && canActivateTheme ? (
+        <div
+          className="ml-auto h-5 w-5 rounded-full"
+          style={{
+            backgroundColor: item.component.package_info?.dock_icon?.background_color,
+          }}
+        ></div>
       ) : (
-        <>
-          <div className="flex items-center">
-            <RadioIndicator checked={Boolean(item.component?.active)} className="mr-2" />
-            <span className={item.component?.active ? 'font-semibold' : undefined}>{item.name}</span>
-          </div>
-          {item.component && canActivateTheme ? (
-            <div
-              className="h-5 w-5 rounded-full"
-              style={{
-                backgroundColor: item.component.package_info?.dock_icon?.background_color,
-              }}
-            ></div>
-          ) : (
-            <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />
-          )}
-        </>
+        <Icon type={PremiumFeatureIconName} className={classNames(PremiumFeatureIconClass, 'ml-auto')} />
       )}
-    </button>
+    </MenuRadioButtonItem>
   )
 }
 

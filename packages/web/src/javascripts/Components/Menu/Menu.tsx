@@ -50,7 +50,7 @@ const Menu = forwardRef(
       if (isOpen && shouldAutoFocus) {
         setTimeout(() => {
           menuElementRef.current?.focus()
-        })
+        }, 5)
       }
     }, [isOpen, shouldAutoFocus])
 

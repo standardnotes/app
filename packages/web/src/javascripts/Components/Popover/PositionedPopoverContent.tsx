@@ -87,6 +87,15 @@ const PositionedPopoverContent = ({
         }}
         ref={setPopoverElement}
         data-popover={id}
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') {
+            event.stopPropagation()
+            togglePopover()
+            if (anchorElement) {
+              anchorElement.focus()
+            }
+          }
+        }}
       >
         <div className={classNames(disableMobileFullscreenTakeover && 'hidden', 'md:hidden')}>
           <div className="flex items-center justify-end px-3 pt-2">

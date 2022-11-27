@@ -65,7 +65,6 @@ const ContentListHeader = ({
           >
             <DisplayOptionsMenu
               application={application}
-              closeDisplayOptionsMenu={toggleDisplayOptionsMenu}
               isFilesSmartView={isFilesSmartView}
               isOpen={showDisplayOptionsMenu}
               selectedTag={selectedTag}

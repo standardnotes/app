@@ -1,7 +1,8 @@
 import { FilesController } from '@/Controllers/FilesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useRef } from 'react'
+import { FunctionComponent } from 'react'
+import Menu from '../Menu/Menu'
 import Popover from '../Popover/Popover'
 import FileMenuOptions from './FileMenuOptions'
 
@@ -13,8 +14,6 @@ type Props = {
 const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, selectionController }) => {
   const { showFileContextMenu, setShowFileContextMenu, fileContextMenuLocation } = filesController
 
-  const contextMenuRef = useRef<HTMLDivElement>(null)
-
   return (
     <Popover
       open={showFileContextMenu}
@@ -23,7 +22,7 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, s
       align="start"
       className="py-2"
     >
-      <div ref={contextMenuRef}>
+      <Menu a11yLabel="File context menu" isOpen={showFileContextMenu}>
         <FileMenuOptions
           filesController={filesController}
           selectionController={selectionController}
@@ -31,7 +30,7 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, s
           shouldShowRenameOption={false}
           shouldShowAttachOption={false}
         />
-      </div>
+      </Menu>
     </Popover>
   )
 })

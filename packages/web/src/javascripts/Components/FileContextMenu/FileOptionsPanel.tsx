@@ -5,6 +5,7 @@ import { FilesController } from '@/Controllers/FilesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import Popover from '../Popover/Popover'
 import RoundIconButton from '../Button/RoundIconButton'
+import Menu from '../Menu/Menu'
 
 type Props = {
   filesController: FilesController
@@ -21,15 +22,17 @@ const FilesOptionsPanel = ({ filesController, selectionController }: Props) => {
     <>
       <RoundIconButton label="File options menu" onClick={toggleMenu} ref={buttonRef} icon="more" />
       <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="py-2">
-        <FileMenuOptions
-          filesController={filesController}
-          selectionController={selectionController}
-          closeMenu={() => {
-            setIsOpen(false)
-          }}
-          shouldShowAttachOption={false}
-          shouldShowRenameOption={false}
-        />
+        <Menu a11yLabel="File options panel" isOpen={isOpen}>
+          <FileMenuOptions
+            filesController={filesController}
+            selectionController={selectionController}
+            closeMenu={() => {
+              setIsOpen(false)
+            }}
+            shouldShowAttachOption={false}
+            shouldShowRenameOption={false}
+          />
+        </Menu>
       </Popover>
     </>
   )

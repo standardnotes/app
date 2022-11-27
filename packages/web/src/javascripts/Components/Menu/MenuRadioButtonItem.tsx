@@ -24,7 +24,7 @@ const MenuRadioButtonItem = forwardRef(
           role="menuitemradio"
           tabIndex={typeof tabIndex === 'number' ? tabIndex : FOCUSABLE_BUT_NOT_TABBABLE}
           className={classNames(
-            'flex w-full cursor-pointer border-0 bg-transparent px-3 py-2 text-left md:py-1.5',
+            'flex w-full cursor-pointer gap-2 border-0 bg-transparent px-3 py-2 text-left md:py-1.5',
             'text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground',
             'focus:bg-info-backdrop focus:shadow-none md:text-tablet-menu-item lg:text-menu-item',
             className,

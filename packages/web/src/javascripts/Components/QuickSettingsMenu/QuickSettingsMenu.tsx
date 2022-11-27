@@ -11,17 +11,17 @@ import {
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
-import Switch from '@/Components/Switch/Switch'
 import FocusModeSwitch from './FocusModeSwitch'
 import ThemesMenuButton from './ThemesMenuButton'
 import { ThemeItem } from './ThemeItem'
 import { sortThemes } from '@/Utils/SortThemes'
-import RadioIndicator from '../Radio/RadioIndicator'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
 import PanelSettingsSection from './PanelSettingsSection'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { classNames } from '@standardnotes/utils'
+import Menu from '../Menu/Menu'
+import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
+import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
 
 export const focusModeAnimationDuration = 1255
 
@@ -150,45 +150,29 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
   }, [application, deactivateAnyNonLayerableTheme])
 
   return (
-    <div>
+    <Menu a11yLabel="Quick settings menu" isOpen>
       {toggleableComponents.length > 0 && (
         <>
           <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Tools</div>
           {toggleableComponents.map((component) => (
-            <button
-              className={classNames(
-                'flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left',
-                'text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none',
-                'text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item',
-              )}
-              onClick={() => {
+            <MenuSwitchButtonItem
+              onChange={() => {
                 toggleComponent(component)
               }}
+              checked={component.active}
               key={component.uuid}
             >
-              <div className="flex items-center">
-                <Icon type="window" className="mr-2 text-neutral" />
-                {component.displayName}
-              </div>
-              <Switch checked={component.active} className="px-0" />
-            </button>
+              <Icon type="window" className="mr-2 text-neutral" />
+              {component.displayName}
+            </MenuSwitchButtonItem>
           ))}
           <HorizontalSeparator classes="my-2" />
         </>
       )}
       <div className="my-1 px-3 text-sm font-semibold uppercase text-text">Appearance</div>
-      <button
-        className={classNames(
-          'flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left',
-          'text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none',
-          'text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item',
-        )}
-        onClick={toggleDefaultTheme}
-        ref={defaultThemeButtonRef}
-      >
-        <RadioIndicator checked={defaultThemeOn} className="mr-2" />
+      <MenuRadioButtonItem checked={defaultThemeOn} onClick={toggleDefaultTheme} ref={defaultThemeButtonRef}>
         Default
-      </button>
+      </MenuRadioButtonItem>
       {themes.map((theme) => (
         <ThemesMenuButton item={theme} application={application} key={theme.component?.uuid ?? theme.identifier} />
       ))}
@@ -200,7 +184,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
         isEnabled={focusModeEnabled}
       />
       <PanelSettingsSection />
-    </div>
+    </Menu>
   )
 }
 

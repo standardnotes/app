@@ -26,7 +26,6 @@ import MenuSwitchButtonItem from '@/Components/Menu/MenuSwitchButtonItem'
 const DailyEntryModeEnabled = true
 
 const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
-  closeDisplayOptionsMenu,
   application,
   isOpen,
   isFilesSmartView,
@@ -179,7 +178,9 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       <button
         className={classNames(
           'relative cursor-pointer rounded-full border-2 border-solid border-transparent px-2 text-base focus:shadow-none lg:text-sm',
-          isSelected ? 'bg-info text-info-contrast' : 'bg-transparent text-text hover:bg-info-backdrop',
+          isSelected
+            ? 'bg-info text-info-contrast'
+            : 'bg-transparent text-text hover:bg-info-backdrop focus:bg-info-backdrop',
         )}
         onClick={() => {
           setCurrentMode(mode)
@@ -200,7 +201,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   }
 
   return (
-    <Menu className="text-sm" a11yLabel="Notes list options menu" closeMenu={closeDisplayOptionsMenu} isOpen={isOpen}>
+    <Menu className="text-sm" a11yLabel="Notes list options menu" isOpen={isOpen}>
       <div className="my-1 px-3 text-base font-semibold uppercase text-text lg:text-xs">Preferences for</div>
       <div className={classNames('mt-1.5 flex w-full justify-between px-3', !controlsDisabled && 'mb-3')}>
         <div className="flex items-center gap-1.5">

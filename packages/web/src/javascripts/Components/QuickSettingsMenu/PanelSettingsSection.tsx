@@ -24,7 +24,7 @@ const PanelSettingsSection = () => {
   return (
     <div className="hidden md:block pointer-coarse:md-only:hidden pointer-coarse:lg-only:hidden">
       <MenuSwitchButtonItem
-        className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+        className="items-center"
         checked={isNavigationPaneCollapsed}
         onChange={toggleNavigationPane}
         shortcut={navigationShortcut}
@@ -32,7 +32,7 @@ const PanelSettingsSection = () => {
         Show Tags Panel
       </MenuSwitchButtonItem>
       <MenuSwitchButtonItem
-        className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+        className="items-center"
         checked={isListPaneCollapsed}
         onChange={toggleListPane}
         shortcut={listShortcut}
