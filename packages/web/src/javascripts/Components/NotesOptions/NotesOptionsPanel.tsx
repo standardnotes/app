@@ -50,7 +50,7 @@ const NotesOptionsPanel = ({
         togglePopover={toggleMenu}
         anchorElement={buttonRef.current}
         open={isOpen}
-        className="select-none"
+        className="select-none md:pt-2"
       >
         <NotesOptions
           application={application}

@@ -6,20 +6,15 @@ import Icon from '@/Components/Icon/Icon'
 import ChangeEditorMenu from '@/Components/ChangeEditor/ChangeEditorMenu'
 import Popover from '../Popover/Popover'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
+import MenuItem from '../Menu/MenuItem'
 
 type ChangeEditorOptionProps = {
   application: WebApplication
   note: SNNote
-  className: string
   iconClassName: string
 }
 
-const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
-  application,
-  note,
-  className,
-  iconClassName,
-}) => {
+const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({ application, note, iconClassName }) => {
   const [isOpen, setIsOpen] = useState(false)
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -35,7 +30,8 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
 
   return (
     <div ref={menuContainerRef}>
-      <button
+      <MenuItem
+        className="justify-between"
         onClick={toggleMenu}
         onKeyDown={(event) => {
           if (event.key === KeyboardKey.Escape) {
@@ -43,7 +39,6 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
           }
         }}
         ref={buttonRef}
-        className={className}
       >
         <div className="flex items-center">
           <Icon type="dashboard" className={`${iconClassName} mr-2 text-neutral`} />
@@ -53,7 +48,7 @@ const ChangeEditorOption: FunctionComponent<ChangeEditorOptionProps> = ({
           {shortcut && <KeyboardShortcutIndicator className={'mr-2'} shortcut={shortcut} />}
           <Icon type="chevron-right" className="text-neutral" />
         </div>
-      </button>
+      </MenuItem>
       <Popover
         align="start"
         anchorElement={buttonRef.current}

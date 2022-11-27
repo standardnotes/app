@@ -21,7 +21,6 @@ import { getNoteBlob, getNoteFileName } from '@/Utils/NoteExportUtils'
 import { shareSelectedNotes } from '@/NativeMobileWeb/ShareSelectedNotes'
 import { downloadSelectedNotesOnAndroid } from '@/NativeMobileWeb/DownloadSelectedNotesOnAndroid'
 import ProtectedUnauthorizedLabel from '../ProtectedItemOverlay/ProtectedUnauthorizedLabel'
-import { classNames } from '@standardnotes/utils'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 import { NoteAttributes } from './NoteAttributes'
@@ -29,9 +28,10 @@ import { SpellcheckOptions } from './SpellcheckOptions'
 import { NoteSizeWarning } from './NoteSizeWarning'
 import { DeletePermanentlyButton } from './DeletePermanentlyButton'
 import { useCommandService } from '../ApplicationView/CommandProvider'
-import { menuItemClassNames, menuItemSwitchClassNames, iconClass } from './ClassNames'
+import { iconClass } from './ClassNames'
 import SuperNoteOptions from './SuperNoteOptions'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
+import MenuItem from '../Menu/MenuItem'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -160,21 +160,15 @@ const NotesOptions = ({
     return <ProtectedUnauthorizedLabel />
   }
 
-  const firstItemClass = 'pt-4'
-
   return (
     <>
       {notes.length === 1 && (
         <>
-          <button className={classNames(menuItemClassNames, firstItemClass)} onClick={openRevisionHistoryModal}>
-            <div className="flex w-full items-center justify-between">
-              <span className="flex">
-                <Icon type="history" className={iconClass} />
-                Note history
-              </span>
-              {historyShortcut && <KeyboardShortcutIndicator className={''} shortcut={historyShortcut} />}
-            </div>
-          </button>
+          <MenuItem onClick={openRevisionHistoryModal}>
+            <Icon type="history" className={iconClass} />
+            Note history
+            {historyShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={historyShortcut} />}
+          </MenuItem>
           <HorizontalSeparator classes="my-2" />
         </>
       )}
@@ -208,75 +202,52 @@ const NotesOptions = ({
       {notes.length === 1 && (
         <>
           <HorizontalSeparator classes="my-2" />
-          <ChangeEditorOption
-            iconClassName={iconClass}
-            className={menuItemSwitchClassNames}
-            application={application}
-            note={notes[0]}
-          />
+          <ChangeEditorOption iconClassName={iconClass} application={application} note={notes[0]} />
         </>
       )}
       <HorizontalSeparator classes="my-2" />
       {navigationController.tagsCount > 0 && (
         <AddTagOption
           iconClassName={iconClass}
-          className={menuItemSwitchClassNames}
           navigationController={navigationController}
           notesController={notesController}
         />
       )}
-
-      <button
-        className={menuItemClassNames}
+      <MenuItem
         onClick={() => {
           notesController.setStarSelectedNotes(!starred)
         }}
       >
-        <div className="flex w-full items-center justify-between">
-          <span className="flex">
-            <Icon type="star" className={iconClass} />
-            {starred ? 'Unstar' : 'Star'}
-          </span>
-          {starShortcut && <KeyboardShortcutIndicator className={''} shortcut={starShortcut} />}
-        </div>
-      </button>
+        <Icon type="star" className={iconClass} />
+        {starred ? 'Unstar' : 'Star'}
+        {starShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={starShortcut} />}
+      </MenuItem>
 
       {unpinned && (
-        <button
-          className={menuItemClassNames}
+        <MenuItem
           onClick={() => {
             notesController.setPinSelectedNotes(true)
           }}
         >
-          <div className="flex w-full items-center justify-between">
-            <span className="flex">
-              <Icon type="pin" className={iconClass} />
-              Pin to top
-            </span>
-            {pinShortcut && <KeyboardShortcutIndicator className={''} shortcut={pinShortcut} />}
-          </div>
-        </button>
+          <Icon type="pin" className={iconClass} />
+          Pin to top
+          {pinShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={pinShortcut} />}
+        </MenuItem>
       )}
       {pinned && (
-        <button
-          className={menuItemClassNames}
+        <MenuItem
           onClick={() => {
             notesController.setPinSelectedNotes(false)
           }}
         >
-          <div className="flex w-full items-center justify-between">
-            <span className="flex">
-              <Icon type="unpin" className={iconClass} />
-              Unpin
-            </span>
-            {pinShortcut && <KeyboardShortcutIndicator className={''} shortcut={pinShortcut} />}
-          </div>
-        </button>
+          <Icon type="unpin" className={iconClass} />
+          Unpin
+          {pinShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={pinShortcut} />}
+        </MenuItem>
       )}
       {notes[0].noteType !== NoteType.Super && (
         <>
-          <button
-            className={menuItemClassNames}
+          <MenuItem
             onClick={() => {
               application.isNativeMobileWeb()
                 ? void shareSelectedNotes(application, notes)
@@ -285,22 +256,21 @@ const NotesOptions = ({
           >
             <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
             {application.platform === Platform.Android ? 'Share' : 'Export'}
-          </button>
+          </MenuItem>
           {application.platform === Platform.Android && (
-            <button className={menuItemClassNames} onClick={() => downloadSelectedNotesOnAndroid(application, notes)}>
+            <MenuItem onClick={() => downloadSelectedNotesOnAndroid(application, notes)}>
               <Icon type="download" className={iconClass} />
               Export
-            </button>
+            </MenuItem>
           )}
         </>
       )}
-      <button className={menuItemClassNames} onClick={duplicateSelectedItems}>
+      <MenuItem onClick={duplicateSelectedItems}>
         <Icon type="copy" className={iconClass} />
         Duplicate
-      </button>
+      </MenuItem>
       {unarchived && (
-        <button
-          className={menuItemClassNames}
+        <MenuItem
           onClick={async () => {
             await notesController.setArchiveSelectedNotes(true).catch(console.error)
             closeMenuAndToggleNotesList()
@@ -308,11 +278,10 @@ const NotesOptions = ({
         >
           <Icon type="archive" className={iconClassWarning} />
           <span className="text-warning">Archive</span>
-        </button>
+        </MenuItem>
       )}
       {archived && (
-        <button
-          className={menuItemClassNames}
+        <MenuItem
           onClick={async () => {
             await notesController.setArchiveSelectedNotes(false).catch(console.error)
             closeMenuAndToggleNotesList()
@@ -320,7 +289,7 @@ const NotesOptions = ({
         >
           <Icon type="unarchive" className={iconClassWarning} />
           <span className="text-warning">Unarchive</span>
-        </button>
+        </MenuItem>
       )}
       {notTrashed &&
         (altKeyDown ? (
@@ -331,8 +300,7 @@ const NotesOptions = ({
             }}
           />
         ) : (
-          <button
-            className={menuItemClassNames}
+          <MenuItem
             onClick={async () => {
               await notesController.setTrashSelectedNotes(true)
               closeMenuAndToggleNotesList()
@@ -340,12 +308,11 @@ const NotesOptions = ({
           >
             <Icon type="trash" className={iconClassDanger} />
             <span className="text-danger">Move to trash</span>
-          </button>
+          </MenuItem>
         ))}
       {trashed && (
         <>
-          <button
-            className={menuItemClassNames}
+          <MenuItem
             onClick={async () => {
               await notesController.setTrashSelectedNotes(false)
               closeMenuAndToggleNotesList()
@@ -353,15 +320,14 @@ const NotesOptions = ({
           >
             <Icon type="restore" className={iconClassSuccess} />
             <span className="text-success">Restore</span>
-          </button>
+          </MenuItem>
           <DeletePermanentlyButton
             onClick={async () => {
               await notesController.deleteNotesPermanently()
               closeMenuAndToggleNotesList()
             }}
           />
-          <button
-            className={menuItemClassNames}
+          <MenuItem
             onClick={async () => {
               await notesController.emptyTrash()
               closeMenuAndToggleNotesList()
@@ -374,7 +340,7 @@ const NotesOptions = ({
                 <div className="text-xs">{notesController.trashedNotesCount} notes in Trash</div>
               </div>
             </div>
-          </button>
+          </MenuItem>
         </>
       )}
 
@@ -389,21 +355,11 @@ const NotesOptions = ({
           )}
           <HorizontalSeparator classes="my-2" />
 
-          <ListedActionsOption
-            iconClassName={iconClass}
-            className={menuItemSwitchClassNames}
-            application={application}
-            note={notes[0]}
-          />
+          <ListedActionsOption iconClassName={iconClass} application={application} note={notes[0]} />
 
           <HorizontalSeparator classes="my-2" />
 
-          <SpellcheckOptions
-            className={menuItemSwitchClassNames}
-            editorForNote={editorForNote}
-            notesController={notesController}
-            note={notes[0]}
-          />
+          <SpellcheckOptions editorForNote={editorForNote} notesController={notesController} note={notes[0]} />
 
           <HorizontalSeparator classes="my-2" />
 
