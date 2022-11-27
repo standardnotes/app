@@ -13,7 +13,7 @@ import Menu from '../Menu/Menu'
 import MenuItem from '../Menu/MenuItem'
 import Popover from '../Popover/Popover'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
-import { iconClass, menuItemClassNames, menuItemSwitchClassNames } from './ClassNames'
+import { iconClass } from './ClassNames'
 
 type Props = {
   note: SNNote
@@ -33,19 +33,14 @@ const SuperNoteOptions = ({ note, markdownShortcut, enableSuperMarkdownPreview }
 
       <div className="my-1 px-3 text-base font-semibold uppercase text-text lg:text-xs">Super</div>
 
-      <button className={menuItemClassNames} onClick={enableSuperMarkdownPreview}>
-        <div className="flex w-full items-center justify-between">
-          <span className="flex">
-            <Icon type="markdown" className={iconClass} />
-            Show Markdown
-          </span>
-          {markdownShortcut && <KeyboardShortcutIndicator shortcut={markdownShortcut} />}
-        </div>
-      </button>
+      <MenuItem onClick={enableSuperMarkdownPreview}>
+        <Icon type="markdown" className={iconClass} />
+        Show Markdown
+        {markdownShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={markdownShortcut} />}
+      </MenuItem>
 
-      <button
+      <MenuItem
         ref={exportButtonRef}
-        className={menuItemSwitchClassNames}
         onClick={() => {
           setIsExportMenuOpen((open) => !open)
         }}
@@ -54,8 +49,8 @@ const SuperNoteOptions = ({ note, markdownShortcut, enableSuperMarkdownPreview }
           <Icon type="download" className={iconClass} />
           Export
         </div>
-        <Icon type="chevron-right" className="text-neutral" />
-      </button>
+        <Icon type="chevron-right" className="ml-auto text-neutral" />
+      </MenuItem>
       <Popover
         side="left"
         align="start"

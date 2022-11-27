@@ -8,20 +8,15 @@ import Popover from '../Popover/Popover'
 import { IconType } from '@standardnotes/snjs'
 import { getTitleForLinkedTag } from '@/Utils/Items/Display/getTitleForLinkedTag'
 import { useApplication } from '../ApplicationView/ApplicationProvider'
+import MenuItem from '../Menu/MenuItem'
 
 type Props = {
   navigationController: NavigationController
   notesController: NotesController
-  className: string
   iconClassName: string
 }
 
-const AddTagOption: FunctionComponent<Props> = ({
-  navigationController,
-  notesController,
-  className,
-  iconClassName,
-}) => {
+const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesController, iconClassName }) => {
   const application = useApplication()
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -34,7 +29,8 @@ const AddTagOption: FunctionComponent<Props> = ({
 
   return (
     <div ref={menuContainerRef}>
-      <button
+      <MenuItem
+        className="justify-between"
         onClick={toggleMenu}
         onKeyDown={(event) => {
           if (event.key === KeyboardKey.Escape) {
@@ -42,14 +38,13 @@ const AddTagOption: FunctionComponent<Props> = ({
           }
         }}
         ref={buttonRef}
-        className={className}
       >
         <div className="flex items-center">
           <Icon type="hashtag" className={`${iconClassName} mr-2 text-neutral`} />
           Add tag
         </div>
         <Icon type="chevron-right" className="text-neutral" />
-      </button>
+      </MenuItem>
       <Popover
         togglePopover={toggleMenu}
         anchorElement={buttonRef.current}
@@ -59,9 +54,8 @@ const AddTagOption: FunctionComponent<Props> = ({
         className="py-2"
       >
         {navigationController.tags.map((tag) => (
-          <button
+          <MenuItem
             key={tag.uuid}
-            className={`max-w-80 ${className.replace('justify-between', 'justify-start')}`}
             onClick={() => {
               notesController.isTagInSelectedNotes(tag)
                 ? notesController.removeTagFromSelectedNotes(tag).catch(console.error)
@@ -81,7 +75,7 @@ const AddTagOption: FunctionComponent<Props> = ({
             >
               {getTitleForLinkedTag(tag, application)?.longTitle}
             </span>
-          </button>
+          </MenuItem>
         ))}
       </Popover>
     </div>

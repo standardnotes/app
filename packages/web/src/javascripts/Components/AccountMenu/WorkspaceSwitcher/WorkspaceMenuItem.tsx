@@ -1,6 +1,4 @@
 import Icon from '@/Components/Icon/Icon'
-import MenuItem from '@/Components/Menu/MenuItem'
-import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { ApplicationDescriptor } from '@standardnotes/snjs'
 import {
@@ -13,6 +11,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import MenuRadioButtonItem from '@/Components/Menu/MenuRadioButtonItem'
 
 type Props = {
   descriptor: ApplicationDescriptor
@@ -56,8 +55,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
   }, [inputValue, renameDescriptor])
 
   return (
-    <MenuItem
-      type={MenuItemType.RadioButton}
+    <MenuRadioButtonItem
       className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-2 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
       onClick={onClick}
       checked={descriptor.primary}
@@ -100,7 +98,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
           </div>
         )}
       </div>
-    </MenuItem>
+    </MenuRadioButtonItem>
   )
 }
 

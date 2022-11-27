@@ -9,8 +9,8 @@ import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import MenuItem from '../Menu/MenuItem'
-import { MenuItemType } from '../Menu/MenuItemType'
 import { FileContextMenuBackupOption } from './FileContextMenuBackupOption'
+import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 
 type Props = {
   closeMenu: () => void
@@ -83,8 +83,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           ) : null}
         </>
       )}
-      <MenuItem
-        type={MenuItemType.SwitchButton}
+      <MenuSwitchButtonItem
         checked={hasProtectedFiles}
         onChange={(hasProtectedFiles) => {
           void filesController.setProtectionForFiles(hasProtectedFiles, selectionController.selectedFiles)
@@ -92,7 +91,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       >
         <Icon type="lock" className="mr-2 text-neutral" />
         Password protect
-      </MenuItem>
+      </MenuSwitchButtonItem>
       <HorizontalSeparator classes="my-1" />
       <MenuItem
         onClick={() => {

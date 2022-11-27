@@ -12,7 +12,6 @@ import { useApplication } from '../ApplicationView/ApplicationProvider'
 import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import Icon from '../Icon/Icon'
 import MenuItem from '../Menu/MenuItem'
-import { MenuItemType } from '../Menu/MenuItemType'
 import Popover from '../Popover/Popover'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import LinkedFileMenuOptions from './LinkedFileMenuOptions'
@@ -107,7 +106,6 @@ export const LinkedItemsSectionItem = ({
         className="py-2"
       >
         <MenuItem
-          type={MenuItemType.IconButton}
           onClick={() => {
             unlinkItem()
             toggleMenu()

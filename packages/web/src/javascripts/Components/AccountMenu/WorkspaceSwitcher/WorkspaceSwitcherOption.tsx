@@ -6,7 +6,6 @@ import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import WorkspaceSwitcherMenu from './WorkspaceSwitcherMenu'
 import MenuItem from '@/Components/Menu/MenuItem'
-import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import Popover from '@/Components/Popover/Popover'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 
@@ -25,13 +24,7 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
 
   return (
     <>
-      <MenuItem
-        tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-        ref={buttonRef}
-        type={MenuItemType.IconButton}
-        onClick={toggleMenu}
-        className="justify-between"
-      >
+      <MenuItem tabIndex={FOCUSABLE_BUT_NOT_TABBABLE} ref={buttonRef} onClick={toggleMenu} className="justify-between">
         <div className="flex items-center">
           <Icon type="user-switch" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
           Switch workspace

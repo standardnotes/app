@@ -7,7 +7,6 @@ import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
-import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import WorkspaceMenuItem from './WorkspaceMenuItem'
 
 type Props = {
@@ -85,13 +84,13 @@ const WorkspaceSwitcherMenu: FunctionComponent<Props> = ({
       ))}
       <MenuItemSeparator />
 
-      <MenuItem type={MenuItemType.IconButton} onClick={addAnotherWorkspace}>
+      <MenuItem onClick={addAnotherWorkspace}>
         <Icon type="user-add" className="mr-2 text-neutral" />
         Add another workspace
       </MenuItem>
 
       {!hideWorkspaceOptions && (
-        <MenuItem type={MenuItemType.IconButton} onClick={signoutAll}>
+        <MenuItem onClick={signoutAll}>
           <Icon type="signOut" className="mr-2 text-neutral" />
           Sign out all workspaces
         </MenuItem>

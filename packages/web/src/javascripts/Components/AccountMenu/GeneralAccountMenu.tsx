@@ -9,7 +9,6 @@ import { AccountMenuPane } from './AccountMenuPane'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
-import { MenuItemType } from '@/Components/Menu/MenuItemType'
 import WorkspaceSwitcherOption from './WorkspaceSwitcher/WorkspaceSwitcherOption'
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { formatLastSyncDate } from '@/Utils/DateUtils'
@@ -150,23 +149,23 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
         />
         <MenuItemSeparator />
         {user ? (
-          <MenuItem type={MenuItemType.IconButton} onClick={openPreferences}>
+          <MenuItem onClick={openPreferences}>
             <Icon type="user" className={iconClassName} />
             Account settings
           </MenuItem>
         ) : (
           <>
-            <MenuItem type={MenuItemType.IconButton} onClick={activateRegisterPane}>
+            <MenuItem onClick={activateRegisterPane}>
               <Icon type="user" className={iconClassName} />
               Create free account
             </MenuItem>
-            <MenuItem type={MenuItemType.IconButton} onClick={activateSignInPane}>
+            <MenuItem onClick={activateSignInPane}>
               <Icon type="signIn" className={iconClassName} />
               Sign in
             </MenuItem>
           </>
         )}
-        <MenuItem className="justify-between" type={MenuItemType.IconButton} onClick={openHelp}>
+        <MenuItem className="justify-between" onClick={openHelp}>
           <div className="flex items-center">
             <Icon type="help" className={iconClassName} />
             Help &amp; feedback
@@ -176,7 +175,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
         {user ? (
           <>
             <MenuItemSeparator />
-            <MenuItem type={MenuItemType.IconButton} onClick={signOut}>
+            <MenuItem onClick={signOut}>
               <Icon type="signOut" className={iconClassName} />
               Sign out workspace
             </MenuItem>

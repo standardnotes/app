@@ -1,46 +1,41 @@
-import { ComponentPropsWithoutRef, forwardRef, MouseEventHandler, ReactNode, Ref } from 'react'
-import Icon from '@/Components/Icon/Icon'
-import { IconType } from '@standardnotes/snjs'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
-import { classNames } from '@standardnotes/utils'
+import { classNames } from '@standardnotes/snjs'
 import { PlatformedKeyboardShortcut } from '@standardnotes/ui-services'
+import { ComponentPropsWithoutRef, ForwardedRef, forwardRef, ReactNode } from 'react'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
+import RadioIndicator from '../Radio/RadioIndicator'
 import MenuListItem from './MenuListItem'
 
-type MenuItemProps = {
+type Props = {
+  checked: boolean
   children: ReactNode
-  onClick?: MouseEventHandler<HTMLButtonElement>
-  onBlur?: (event: { relatedTarget: EventTarget | null }) => void
-  className?: string
-  icon?: IconType
-  iconClassName?: string
-  tabIndex?: number
-  disabled?: boolean
   shortcut?: PlatformedKeyboardShortcut
 } & ComponentPropsWithoutRef<'button'>
 
-const MenuItem = forwardRef(
+const MenuRadioButtonItem = forwardRef(
   (
-    { children, className = '', icon, iconClassName, tabIndex, shortcut, ...props }: MenuItemProps,
-    ref: Ref<HTMLButtonElement>,
+    { checked, disabled, tabIndex, children, shortcut, className, ...props }: Props,
+    ref: ForwardedRef<HTMLButtonElement>,
   ) => {
     return (
       <MenuListItem>
         <button
           ref={ref}
-          role="menuitem"
+          role="menuitemradio"
           tabIndex={typeof tabIndex === 'number' ? tabIndex : FOCUSABLE_BUT_NOT_TABBABLE}
           className={classNames(
             'flex w-full cursor-pointer border-0 bg-transparent px-3 py-2 text-left md:py-1.5',
             'text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground',
             'focus:bg-info-backdrop focus:shadow-none md:text-tablet-menu-item lg:text-menu-item',
             className,
-            className.includes('items-') ? '' : 'items-center',
+            className?.includes('items-') ? '' : 'items-center',
           )}
+          aria-checked={checked}
+          disabled={disabled}
           {...props}
         >
           {shortcut && <KeyboardShortcutIndicator className="mr-2" shortcut={shortcut} />}
-          {icon ? <Icon type={icon} className={classNames('flex-shrink-0', iconClassName)} /> : null}
+          <RadioIndicator disabled={disabled} checked={checked} className="flex-shrink-0" />
           {children}
         </button>
       </MenuListItem>
@@ -48,4 +43,4 @@ const MenuItem = forwardRef(
   },
 )
 
-export default MenuItem
+export default MenuRadioButtonItem

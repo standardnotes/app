@@ -1,10 +1,9 @@
 import { TOGGLE_LIST_PANE_KEYBOARD_COMMAND, TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND } from '@standardnotes/ui-services'
 import { useMemo } from 'react'
-import MenuItem from '../Menu/MenuItem'
-import { MenuItemType } from '../Menu/MenuItemType'
 import { observer } from 'mobx-react-lite'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { useCommandService } from '../ApplicationView/CommandProvider'
+import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 
 const PanelSettingsSection = () => {
   const { isListPaneCollapsed, isNavigationPaneCollapsed, toggleListPane, toggleNavigationPane } =
@@ -24,24 +23,22 @@ const PanelSettingsSection = () => {
 
   return (
     <div className="hidden md:block pointer-coarse:md-only:hidden pointer-coarse:lg-only:hidden">
-      <MenuItem
-        type={MenuItemType.SwitchButton}
+      <MenuSwitchButtonItem
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={isNavigationPaneCollapsed}
         onChange={toggleNavigationPane}
         shortcut={navigationShortcut}
       >
         Show Tags Panel
-      </MenuItem>
-      <MenuItem
-        type={MenuItemType.SwitchButton}
+      </MenuSwitchButtonItem>
+      <MenuSwitchButtonItem
         className="py-1 hover:bg-contrast focus:bg-info-backdrop"
         checked={isListPaneCollapsed}
         onChange={toggleListPane}
         shortcut={listShortcut}
       >
         Show Notes Panel
-      </MenuItem>
+      </MenuSwitchButtonItem>
     </div>
   )
 }
