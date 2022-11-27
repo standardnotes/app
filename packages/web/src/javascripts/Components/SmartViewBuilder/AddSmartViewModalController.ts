@@ -1,6 +1,11 @@
 import { WebApplication } from '@/Application/Application'
 import { CompoundPredicateBuilderController } from '@/Components/SmartViewBuilder/CompoundPredicateBuilderController'
-import { predicateFromJson, PredicateJsonForm, SmartViewDefaultIconName } from '@standardnotes/snjs'
+import {
+  predicateFromJson,
+  PredicateJsonForm,
+  SmartViewDefaultIconName,
+  VectorIconNameOrEmoji,
+} from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 
 export class AddSmartViewModalController {
@@ -9,7 +14,7 @@ export class AddSmartViewModalController {
 
   title = ''
 
-  icon: string = SmartViewDefaultIconName
+  icon: VectorIconNameOrEmoji = SmartViewDefaultIconName
 
   predicateController = new CompoundPredicateBuilderController()
 
@@ -49,7 +54,7 @@ export class AddSmartViewModalController {
     this.title = title
   }
 
-  setIcon = (icon: string) => {
+  setIcon = (icon: VectorIconNameOrEmoji) => {
     this.icon = icon
   }
 
@@ -84,7 +89,7 @@ export class AddSmartViewModalController {
         ? JSON.parse(this.customPredicateJson)
         : this.predicateController.toJson()
     const predicate = predicateFromJson(predicateJson as PredicateJsonForm)
-    await this.application.items.createSmartView(this.title, predicate, this.icon)
+    await this.application.items.createSmartView(this.title, predicate, this.icon as string)
 
     this.setIsSaving(false)
     this.closeModal()

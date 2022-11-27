@@ -5,7 +5,7 @@ import { classNames } from '@standardnotes/utils'
 import Popover from '@/Components/Popover/Popover'
 import DisplayOptionsMenu from './DisplayOptionsMenu'
 import { NavigationMenuButton } from '@/Components/NavigationMenu/NavigationMenu'
-import { IconType, isTag } from '@standardnotes/snjs'
+import { isTag, VectorIconNameOrEmoji } from '@standardnotes/snjs'
 import RoundIconButton from '@/Components/Button/RoundIconButton'
 import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
@@ -13,7 +13,7 @@ import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 type Props = {
   application: WebApplication
   panelTitle: string
-  icon?: IconType | string
+  icon?: VectorIconNameOrEmoji
   addButtonLabel: string
   addNewItem: () => void
   isFilesSmartView: boolean
@@ -108,7 +108,7 @@ const ContentListHeader = ({
         <div className={`flex min-w-0 flex-grow flex-row ${!optionsSubtitle ? 'items-center' : ''}`}>
           {icon && (
             <Icon
-              type={icon as IconType}
+              type={icon}
               size={'custom'}
               className={` ml-0.5 mr-1.5 h-7 w-7 text-2xl text-neutral lg:h-6 lg:w-6 lg:text-lg ${
                 optionsSubtitle ? 'mt-1' : ''

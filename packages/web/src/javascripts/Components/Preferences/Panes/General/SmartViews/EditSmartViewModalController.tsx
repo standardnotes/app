@@ -6,13 +6,14 @@ import {
   SmartView,
   SmartViewDefaultIconName,
   SmartViewMutator,
+  VectorIconNameOrEmoji,
 } from '@standardnotes/snjs'
 import { confirmDialog } from '@standardnotes/ui-services'
 import { action, makeObservable, observable } from 'mobx'
 
 export class EditSmartViewModalController {
   title = ''
-  icon: string = SmartViewDefaultIconName
+  icon: VectorIconNameOrEmoji = SmartViewDefaultIconName
   predicateJson = ''
   isPredicateJsonValid = false
   isSaving = false
@@ -40,7 +41,7 @@ export class EditSmartViewModalController {
     this.title = title
   }
 
-  setIcon = (icon: string) => {
+  setIcon = (icon: VectorIconNameOrEmoji) => {
     this.icon = icon
   }
 
@@ -89,7 +90,7 @@ export class EditSmartViewModalController {
 
     await this.application.mutator.changeAndSaveItem<SmartViewMutator>(this.view, (mutator) => {
       mutator.title = this.title
-      mutator.iconString = this.icon || SmartViewDefaultIconName
+      mutator.iconString = (this.icon as string) || SmartViewDefaultIconName
       mutator.predicate = JSON.parse(this.predicateJson) as PredicateJsonForm
     })
 

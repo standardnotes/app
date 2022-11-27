@@ -10,7 +10,7 @@ import { IconPickerType } from './IconPickerType'
 
 type Props = {
   selectedValue: VectorIconNameOrEmoji
-  onIconChange: (value?: string) => void
+  onIconChange: (value?: VectorIconNameOrEmoji) => void
   platform: Platform
   useIconGrid?: boolean
   iconGridClassName?: string
@@ -87,7 +87,7 @@ const IconPicker = ({
   const handleEmojiChange = (value: EmojiString) => {
     setEmojiInputValue(value)
 
-    const emojiLength = getEmojiLength(value)
+    const emojiLength = getEmojiLength(value as string)
     if (emojiLength === 1) {
       onIconChange(value)
       emojiInputRef.current?.blur()
@@ -130,7 +130,7 @@ const IconPicker = ({
               id="change-tag-icon-dropdown"
               label="Change the icon for a tag"
               items={iconOptions}
-              value={selectedValue}
+              value={selectedValue as string}
               onChange={handleIconChange}
               portal={portalDropdown}
             />
@@ -144,7 +144,7 @@ const IconPicker = ({
                 autoFocus={emojiInputFocused}
                 className="w-full flex-grow rounded border border-solid border-passive-3 bg-default px-2 py-1 text-base font-bold text-text focus:shadow-none focus:outline-none"
                 type="text"
-                value={emojiInputValue}
+                value={emojiInputValue as string}
                 onChange={({ target: input }) => handleEmojiChange((input as HTMLInputElement)?.value)}
               />
             </div>

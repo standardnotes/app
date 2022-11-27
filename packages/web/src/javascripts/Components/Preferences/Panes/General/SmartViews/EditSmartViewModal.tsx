@@ -7,7 +7,7 @@ import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
 import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 import Spinner from '@/Components/Spinner/Spinner'
-import { Platform, SmartViewDefaultIconName } from '@standardnotes/snjs'
+import { Platform, SmartViewDefaultIconName, VectorIconNameOrEmoji } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { EditSmartViewModalController } from './EditSmartViewModalController'
@@ -103,7 +103,7 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
               <div className="p-2">
                 <IconPicker
                   selectedValue={icon || SmartViewDefaultIconName}
-                  onIconChange={(value?: string | undefined) => {
+                  onIconChange={(value?: VectorIconNameOrEmoji) => {
                     setIcon(value || SmartViewDefaultIconName)
                     toggleIconPicker()
                   }}
