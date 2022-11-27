@@ -9,6 +9,7 @@ import { IconType } from '@standardnotes/snjs'
 import { getTitleForLinkedTag } from '@/Utils/Items/Display/getTitleForLinkedTag'
 import { useApplication } from '../ApplicationView/ApplicationProvider'
 import MenuItem from '../Menu/MenuItem'
+import Menu from '../Menu/Menu'
 
 type Props = {
   navigationController: NavigationController
@@ -53,30 +54,32 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
         align="start"
         className="py-2"
       >
-        {navigationController.tags.map((tag) => (
-          <MenuItem
-            key={tag.uuid}
-            onClick={() => {
-              notesController.isTagInSelectedNotes(tag)
-                ? notesController.removeTagFromSelectedNotes(tag).catch(console.error)
-                : notesController.addTagToSelectedNotes(tag).catch(console.error)
-            }}
-          >
-            {tag.iconString && (
-              <Icon
-                type={tag.iconString as IconType}
-                size={'custom'}
-                className={'ml-0.5 mr-1.5 h-7 w-7 text-2xl text-neutral lg:h-6 lg:w-6 lg:text-lg'}
-              />
-            )}
-            <span
-              className={`overflow-hidden overflow-ellipsis whitespace-nowrap
-                      ${notesController.isTagInSelectedNotes(tag) ? 'font-bold' : ''}`}
+        <Menu a11yLabel="Tag selection menu" isOpen={isOpen}>
+          {navigationController.tags.map((tag) => (
+            <MenuItem
+              key={tag.uuid}
+              onClick={() => {
+                notesController.isTagInSelectedNotes(tag)
+                  ? notesController.removeTagFromSelectedNotes(tag).catch(console.error)
+                  : notesController.addTagToSelectedNotes(tag).catch(console.error)
+              }}
             >
-              {getTitleForLinkedTag(tag, application)?.longTitle}
-            </span>
-          </MenuItem>
-        ))}
+              {tag.iconString && (
+                <Icon
+                  type={tag.iconString as IconType}
+                  size={'custom'}
+                  className={'ml-0.5 mr-1.5 h-7 w-7 text-2xl text-neutral lg:h-6 lg:w-6 lg:text-lg'}
+                />
+              )}
+              <span
+                className={`overflow-hidden overflow-ellipsis whitespace-nowrap
+                        ${notesController.isTagInSelectedNotes(tag) ? 'font-bold' : ''}`}
+              >
+                {getTitleForLinkedTag(tag, application)?.longTitle}
+              </span>
+            </MenuItem>
+          ))}
+        </Menu>
       </Popover>
     </div>
   )
