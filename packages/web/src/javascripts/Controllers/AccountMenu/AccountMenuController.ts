@@ -1,14 +1,6 @@
 import { destroyAllObjectProperties, isDev } from '@/Utils'
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
-import {
-  ApplicationEvent,
-  ContentType,
-  InternalEventBus,
-  SNNote,
-  SNTag,
-  ItemCounterInterface,
-  ItemCounts,
-} from '@standardnotes/snjs'
+import { ApplicationEvent, ContentType, InternalEventBus, SNNote, SNTag } from '@standardnotes/snjs'
 import { WebApplication } from '@/Application/Application'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
@@ -36,7 +28,7 @@ export class AccountMenuController extends AbstractViewController {
     destroyAllObjectProperties(this)
   }
 
-  constructor(application: WebApplication, eventBus: InternalEventBus, private itemCounter: ItemCounterInterface) {
+  constructor(application: WebApplication, eventBus: InternalEventBus) {
     super(application, eventBus)
 
     makeObservable(this, {
@@ -164,9 +156,5 @@ export class AccountMenuController extends AbstractViewController {
 
   get notesAndTagsCount(): number {
     return this.notesAndTags.length
-  }
-
-  get structuredNotesAndTagsCount(): ItemCounts {
-    return this.itemCounter.countNotesAndTags(this.notesAndTags)
   }
 }

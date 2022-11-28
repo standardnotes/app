@@ -14,8 +14,6 @@ import {
   DeinitSource,
   WebOrDesktopDeviceInterface,
   InternalEventBus,
-  ItemCounterInterface,
-  ItemCounter,
   SubscriptionClientInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
@@ -74,7 +72,6 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
 
   private appEventObserverRemovers: (() => void)[] = []
   private eventBus: InternalEventBus
-  private itemCounter: ItemCounterInterface
   private subscriptionManager: SubscriptionClientInterface
   private persistenceService: PersistenceService
   private applicationEventObserver: EventObserverInterface
@@ -87,8 +84,6 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
 
     this.eventBus.addEventHandler(this, CrossControllerEvent.HydrateFromPersistedValues)
     this.eventBus.addEventHandler(this, CrossControllerEvent.RequestValuePersistence)
-
-    this.itemCounter = new ItemCounter()
 
     this.subscriptionManager = application.subscriptions
 
@@ -135,7 +130,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
 
     this.noAccountWarningController = new NoAccountWarningController(application, this.eventBus)
 
-    this.accountMenuController = new AccountMenuController(application, this.eventBus, this.itemCounter)
+    this.accountMenuController = new AccountMenuController(application, this.eventBus)
 
     this.subscriptionController = new SubscriptionController(application, this.eventBus, this.subscriptionManager)
 

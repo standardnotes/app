@@ -83,6 +83,7 @@ export class SNActionsService extends AbstractService {
     ;(this.challengeService as unknown) = undefined
     ;(this.protocolService as unknown) = undefined
     ;(this.syncService as unknown) = undefined
+    this.payloadRequestHandlers.length = 0
     this.previousPasswords.length = 0
     super.deinit()
   }

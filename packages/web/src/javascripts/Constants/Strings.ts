@@ -8,7 +8,7 @@ export const STRING_DEFAULT_FILE_ERROR =
   'Please use FileSafe or the Bold Editor to attach images and files. Learn more at standardnotes.com/filesafe.'
 export const STRING_GENERIC_SYNC_ERROR =
   'There was an error syncing. Please try again. If all else fails, try signing out and signing back in.'
-export function StringSyncException(data: any) {
+export function StringSyncException(data: unknown) {
   return `There was an error while trying to save your items. Please contact support and share this message: ${JSON.stringify(
     data,
   )}.`
@@ -108,7 +108,6 @@ export const STRING_FAILED_TO_UPDATE_USER_SETTING =
 export const Strings = {
   protectingNoteWithoutProtectionSources:
     'Access to this note will not be restricted until you set up a passcode or account.',
-  openAccountMenu: 'Open Account Menu',
   trashItemsTitle: 'Move to Trash',
   trashNotesText: 'Are you sure you want to move these notes to the trash?',
   trashFilesText: 'Are you sure you want to move these files to the trash?',

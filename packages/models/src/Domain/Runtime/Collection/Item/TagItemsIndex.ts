@@ -1,4 +1,3 @@
-import { isNote } from './../../../Syncable/Note/Note'
 import { removeFromArray } from '@standardnotes/utils'
 import { ContentType, Uuid } from '@standardnotes/common'
 import { isTag, SNTag } from '../../../Syncable/Tag/Tag'
@@ -13,7 +12,7 @@ export type TagItemCountChangeObserver = (tagUuid: Uuid | AllNotesUuidSignifier)
 export class TagItemsIndex implements SNIndex {
   private tagToItemsMap: Partial<Record<Uuid, Set<Uuid>>> = {}
   private allCountableItems = new Set<Uuid>()
-  private allCountableNotes = new Set<Uuid>()
+  private countableItemsByType = new Map<ContentType, Set<Uuid>>()
 
   constructor(private collection: ItemCollection, public observers: TagItemCountChangeObserver[] = []) {}
 
@@ -44,7 +43,11 @@ export class TagItemsIndex implements SNIndex {
   }
 
   public allCountableNotesCount(): number {
-    return this.allCountableNotes.size
+    return this.countableItemsByType.get(ContentType.Note)?.size || 0
+  }
+
+  public allCountableFilesCount(): number {
+    return this.countableItemsByType.get(ContentType.File)?.size || 0
   }
 
   public countableItemsForTag(tag: SNTag): number {
@@ -85,15 +88,14 @@ export class TagItemsIndex implements SNIndex {
       if (isCountable) {
         this.allCountableItems.add(item.uuid)
 
-        if (isNote(item)) {
-          this.allCountableNotes.add(item.uuid)
+        if (!this.countableItemsByType.has(item.content_type)) {
+          this.countableItemsByType.set(item.content_type, new Set())
         }
+
+        this.countableItemsByType.get(item.content_type)?.add(item.uuid)
       } else {
         this.allCountableItems.delete(item.uuid)
-
-        if (isNote(item)) {
-          this.allCountableNotes.delete(item.uuid)
-        }
+        this.countableItemsByType.get(item.content_type)?.delete(item.uuid)
       }
 
       const associatedTagUuids = this.collection.uuidsThatReferenceUuid(item.uuid)

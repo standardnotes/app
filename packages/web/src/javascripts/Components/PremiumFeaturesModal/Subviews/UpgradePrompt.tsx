@@ -10,26 +10,22 @@ export const UpgradePrompt = ({
   ctaRef,
   application,
   hasSubscription,
-  hasAccount,
   onClose,
 }: {
   featureName?: string
   ctaRef: React.RefObject<HTMLButtonElement>
   application: WebApplication
   hasSubscription: boolean
-  hasAccount: boolean
   onClose: () => void
 }) => {
   const handleClick = useCallback(() => {
     if (hasSubscription) {
       void openSubscriptionDashboard(application)
-    } else if (hasAccount) {
+    } else {
       void application.openPurchaseFlow()
-    } else if (window.plansUrl) {
-      window.location.assign(window.plansUrl)
     }
     onClose()
-  }, [application, hasSubscription, hasAccount, onClose])
+  }, [application, hasSubscription, onClose])
 
   return (
     <>

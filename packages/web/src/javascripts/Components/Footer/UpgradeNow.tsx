@@ -2,6 +2,7 @@ import { WebApplication } from '@/Application/Application'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 import { observer } from 'mobx-react-lite'
+import { useCallback } from 'react'
 
 type Props = {
   application: WebApplication
@@ -13,13 +14,13 @@ const UpgradeNow = ({ application, featuresController, subscriptionContoller }: 
   const shouldShowCTA = !featuresController.hasFolders
   const hasAccount = subscriptionContoller.hasAccount
 
-  const onClick = () => {
-    if (application.isNativeIOS()) {
+  const onClick = useCallback(() => {
+    if (hasAccount && application.isNativeIOS()) {
       application.showPremiumModal()
     } else {
       application.openPurchaseFlow()
     }
-  }
+  }, [application, hasAccount])
 
   return shouldShowCTA ? (
     <div className="flex h-full items-center px-2">

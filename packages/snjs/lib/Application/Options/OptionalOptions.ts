@@ -5,9 +5,8 @@ export interface ApplicationSyncOptions {
   loadBatchSize: number
 }
 
-export interface ApplicationDisplayOptions {
-  supportsFileNavigation: boolean
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface ApplicationDisplayOptions {}
 
 export interface ApplicationOptionalConfiguratioOptions {
   /**

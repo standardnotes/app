@@ -1,1 +1,1 @@
-export const formatCount = (count: number, itemType: string) => `${count} / ${count} ${itemType}`
+export const formatCount = (count: number, itemType: string) => `${count} ${itemType}`

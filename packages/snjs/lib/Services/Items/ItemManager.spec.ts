@@ -49,7 +49,7 @@ describe('itemManager', () => {
   let internalEventBus: InternalEventBusInterface
 
   const createService = () => {
-    return new ItemManager(payloadManager, { supportsFileNavigation: false }, internalEventBus)
+    return new ItemManager(payloadManager, internalEventBus)
   }
 
   beforeEach(() => {
