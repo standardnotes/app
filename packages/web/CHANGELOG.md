@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.111.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.111.1...@standardnotes/web@3.111.2) (2022-11-28)
+
+### Bug Fixes
+
+* add new line after embedding files ([7f6c53d](https://github.com/standardnotes/app/commit/7f6c53dfcbc8952ca9eee76b9c4af70fea3c1bf1))
+
 ## [3.111.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.111.0...@standardnotes/web@3.111.1) (2022-11-28)
 
 ### Bug Fixes
