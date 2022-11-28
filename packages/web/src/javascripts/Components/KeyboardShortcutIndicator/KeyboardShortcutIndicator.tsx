@@ -1,4 +1,10 @@
-import { PlatformedKeyboardShortcut, keyboardCharacterForModifier, isMacPlatform } from '@standardnotes/ui-services'
+import {
+  PlatformedKeyboardShortcut,
+  keyboardCharacterForModifier,
+  isMacPlatform,
+  isMobilePlatform,
+} from '@standardnotes/ui-services'
+import { useMemo } from 'react'
 
 type Props = {
   shortcut: PlatformedKeyboardShortcut
@@ -6,22 +12,31 @@ type Props = {
 }
 
 export const KeyboardShortcutIndicator = ({ shortcut, className }: Props) => {
-  const modifiers = shortcut.modifiers || []
-  const primaryKey = (shortcut.key || '').toUpperCase()
   const addPluses = !isMacPlatform(shortcut.platform)
   const spacingClass = addPluses ? '' : 'ml-0.5'
 
-  const keys: string[] = []
-  modifiers.forEach((modifier, index) => {
-    keys.push(keyboardCharacterForModifier(modifier, shortcut.platform))
+  const keys = useMemo(() => {
+    const modifiers = shortcut.modifiers || []
+    const primaryKey = (shortcut.key || '').toUpperCase()
 
-    if (addPluses && (primaryKey || index !== modifiers.length - 1)) {
-      keys.push('+')
+    const results: string[] = []
+    modifiers.forEach((modifier, index) => {
+      results.push(keyboardCharacterForModifier(modifier, shortcut.platform))
+
+      if (addPluses && (primaryKey || index !== modifiers.length - 1)) {
+        results.push('+')
+      }
+    })
+
+    if (primaryKey) {
+      results.push(primaryKey)
     }
-  })
 
-  if (primaryKey) {
-    keys.push(primaryKey)
+    return results
+  }, [shortcut, addPluses])
+
+  if (isMobilePlatform(shortcut.platform)) {
+    return null
   }
 
   return (

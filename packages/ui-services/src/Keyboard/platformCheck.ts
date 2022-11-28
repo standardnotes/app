@@ -7,3 +7,7 @@ export function isMacPlatform(platform: Platform) {
 export function isWindowsPlatform(platform: Platform) {
   return platform === Platform.WindowsDesktop || platform === Platform.WindowsWeb
 }
+
+export function isMobilePlatform(platform: Platform) {
+  return platform === Platform.Ios || platform === Platform.Android
+}
