@@ -27,6 +27,7 @@ import { useCommandService } from '@/Components/ApplicationView/CommandProvider'
 import { SUPER_SHOW_MARKDOWN_PREVIEW } from '@standardnotes/ui-services'
 import { SuperNoteMarkdownPreview } from './SuperNoteMarkdownPreview'
 import { ExportPlugin } from './Plugins/ExportPlugin/ExportPlugin'
+import GetMarkdownPlugin, { GetMarkdownPluginInterface } from './Plugins/GetMarkdownPlugin/GetMarkdownPlugin'
 
 const NotePreviewCharLimit = 160
 
@@ -49,6 +50,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
   const changeEditorFunction = useRef<ChangeEditorFunction>()
   const ignoreNextChange = useRef(false)
   const [showMarkdownPreview, setShowMarkdownPreview] = useState(false)
+  const getMarkdownPlugin = useRef<GetMarkdownPluginInterface | null>(null)
 
   const commandService = useCommandService()
 
@@ -62,6 +64,21 @@ export const SuperEditor: FunctionComponent<Props> = ({
   const closeMarkdownPreview = useCallback(() => {
     setShowMarkdownPreview(false)
   }, [])
+
+  useEffect(() => {
+    return application.actions.addPayloadRequestHandler((uuid) => {
+      if (uuid === note.current.uuid) {
+        const basePayload = note.current.payload.ejected()
+        return {
+          ...basePayload,
+          content: {
+            ...basePayload.content,
+            text: getMarkdownPlugin.current?.getMarkdown() ?? basePayload.content.text,
+          },
+        }
+      }
+    })
+  }, [application])
 
   const [lineHeight, setLineHeight] = useState<EditorLineHeight>(PrefDefaults[PrefKey.EditorLineHeight])
 
@@ -148,6 +165,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                   <FilePlugin />
                   <ItemBubblePlugin />
                   <BlockPickerMenuPlugin />
+                  <GetMarkdownPlugin ref={getMarkdownPlugin} />
                   <DatetimePlugin />
                   <PasswordPlugin />
                   <AutoLinkPlugin />

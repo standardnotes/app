@@ -1,3 +1,4 @@
+import { removeFromArray } from '@standardnotes/utils'
 import { SNRootKey } from '@standardnotes/encryption'
 import { ChallengeService } from '../Challenge'
 import { ListedService } from '../Listed/ListedService'
@@ -18,6 +19,8 @@ import {
   isErrorDecryptingPayload,
   CreateEncryptedBackupFileContextPayload,
   EncryptedTransferPayload,
+  TransferPayload,
+  ItemContent,
 } from '@standardnotes/models'
 import { SNSyncService } from '../Sync/SyncService'
 import { PayloadManager } from '../Payloads/PayloadManager'
@@ -33,6 +36,8 @@ import {
   EncryptionService,
   Challenge,
 } from '@standardnotes/services'
+
+type PayloadRequestHandler = (uuid: string) => TransferPayload | undefined
 
 /**
  * The Actions Service allows clients to interact with action-based extensions.
@@ -50,6 +55,7 @@ import {
  */
 export class SNActionsService extends AbstractService {
   private previousPasswords: string[] = []
+  private payloadRequestHandlers: PayloadRequestHandler[] = []
 
   constructor(
     private itemManager: ItemManager,
@@ -79,6 +85,14 @@ export class SNActionsService extends AbstractService {
     ;(this.syncService as unknown) = undefined
     this.previousPasswords.length = 0
     super.deinit()
+  }
+
+  public addPayloadRequestHandler(handler: PayloadRequestHandler) {
+    this.payloadRequestHandlers.push(handler)
+
+    return () => {
+      removeFromArray(this.payloadRequestHandlers, handler)
+    }
   }
 
   public getExtensions(): SNActionsExtension[] {
@@ -312,7 +326,16 @@ export class SNActionsService extends AbstractService {
     return {} as ActionResponse
   }
 
-  private async outgoingPayloadForItem(item: DecryptedItemInterface, decrypted = false) {
+  private async outgoingPayloadForItem(
+    item: DecryptedItemInterface,
+    decrypted = false,
+  ): Promise<TransferPayload<ItemContent>> {
+    const payloadFromHandler = this.getPayloadFromRequestHandlers(item.uuid)
+
+    if (payloadFromHandler) {
+      return payloadFromHandler
+    }
+
     if (decrypted) {
       return item.payload.ejected()
     }
@@ -322,5 +345,16 @@ export class SNActionsService extends AbstractService {
     })
 
     return CreateEncryptedBackupFileContextPayload(encrypted)
+  }
+
+  private getPayloadFromRequestHandlers(uuid: string): TransferPayload | undefined {
+    for (const handler of this.payloadRequestHandlers) {
+      const payload = handler(uuid)
+      if (payload) {
+        return payload
+      }
+    }
+
+    return undefined
   }
 }
