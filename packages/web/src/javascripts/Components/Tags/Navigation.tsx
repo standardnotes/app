@@ -12,6 +12,7 @@ import { classNames } from '@standardnotes/utils'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import UpgradeNow from '../Footer/UpgradeNow'
 import RoundIconButton from '../Button/RoundIconButton'
+import { isIOS } from '@/Utils'
 
 type Props = {
   application: WebApplication
@@ -58,7 +59,8 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
       <div
         className={classNames(
           'fixed bottom-0 flex min-h-[50px] w-full items-center border-t border-border bg-contrast',
-          'px-3.5 pb-safe-bottom pt-2.5 md:hidden',
+          'px-3.5 pt-2.5 md:hidden',
+          isIOS() ? 'pb-safe-bottom' : 'pb-2.5',
         )}
       >
         <RoundIconButton
