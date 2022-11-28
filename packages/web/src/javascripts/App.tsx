@@ -101,12 +101,11 @@ if (IsWebPlatform) {
 
   setTimeout(() => {
     const device = window.reactNativeDevice || new WebDevice(WebAppVersion)
+    window.platform = device.platform
 
     startApplication(window.defaultSyncServer, device, window.enabledUnfinishedFeatures, window.websocketUrl).catch(
       console.error,
     )
-
-    window.platform = device.platform
   }, ReactNativeWebViewInitializationTimeout)
 } else {
   window.startApplication = startApplication
