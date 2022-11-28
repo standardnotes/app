@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.37.9](https://github.com/standardnotes/app/compare/@standardnotes/models@1.37.8...@standardnotes/models@1.37.9) (2022-11-28)
+
+### Bug Fixes
+
+* exclude files from being counted in 'Notes' view ([#2062](https://github.com/standardnotes/app/issues/2062)) ([2b0c9b1](https://github.com/standardnotes/app/commit/2b0c9b188cd75477c0c1611443daadb8ffa29306))
+
 ## [1.37.8](https://github.com/standardnotes/app/compare/@standardnotes/models@1.37.7...@standardnotes/models@1.37.8) (2022-11-27)
 
 **Note:** Version bump only for package @standardnotes/models
