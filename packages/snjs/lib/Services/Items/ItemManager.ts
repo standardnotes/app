@@ -289,13 +289,13 @@ export class ItemManager
   }
 
   public allCountableNotesCount(): number {
-    return this.tagItemsIndex.allCountableItemsCount()
+    return this.tagItemsIndex.allCountableNotesCount()
   }
 
   public countableNotesForTag(tag: Models.SNTag | Models.SmartView): number {
     if (tag instanceof Models.SmartView) {
       if (tag.uuid === Models.SystemViewId.AllNotes) {
-        return this.tagItemsIndex.allCountableItemsCount()
+        return this.tagItemsIndex.allCountableNotesCount()
       }
 
       throw Error('countableItemsForTag is not meant to be used for smart views.')

@@ -1,3 +1,4 @@
+import { isNote } from './../../../Syncable/Note/Note'
 import { removeFromArray } from '@standardnotes/utils'
 import { ContentType, Uuid } from '@standardnotes/common'
 import { isTag, SNTag } from '../../../Syncable/Tag/Tag'
@@ -12,6 +13,7 @@ export type TagItemCountChangeObserver = (tagUuid: Uuid | AllNotesUuidSignifier)
 export class TagItemsIndex implements SNIndex {
   private tagToItemsMap: Partial<Record<Uuid, Set<Uuid>>> = {}
   private allCountableItems = new Set<Uuid>()
+  private allCountableNotes = new Set<Uuid>()
 
   constructor(private collection: ItemCollection, public observers: TagItemCountChangeObserver[] = []) {}
 
@@ -39,6 +41,10 @@ export class TagItemsIndex implements SNIndex {
 
   public allCountableItemsCount(): number {
     return this.allCountableItems.size
+  }
+
+  public allCountableNotesCount(): number {
+    return this.allCountableNotes.size
   }
 
   public countableItemsForTag(tag: SNTag): number {
@@ -75,10 +81,19 @@ export class TagItemsIndex implements SNIndex {
 
     for (const item of items) {
       const isCountable = this.isItemCountable(item)
+
       if (isCountable) {
         this.allCountableItems.add(item.uuid)
+
+        if (isNote(item)) {
+          this.allCountableNotes.add(item.uuid)
+        }
       } else {
         this.allCountableItems.delete(item.uuid)
+
+        if (isNote(item)) {
+          this.allCountableNotes.delete(item.uuid)
+        }
       }
 
       const associatedTagUuids = this.collection.uuidsThatReferenceUuid(item.uuid)
