@@ -12,10 +12,7 @@ import { PayloadTimestampDefaults } from '../../Abstract/Payload'
 import { FilterDisplayOptions } from '../../Runtime/Display'
 import { FileItem } from '../File'
 
-export function BuildSmartViews(
-  options: FilterDisplayOptions,
-  { supportsFileNavigation = false }: { supportsFileNavigation: boolean },
-): SmartView[] {
+export function BuildSmartViews(options: FilterDisplayOptions): SmartView[] {
   const notes = new SmartView(
     new DecryptedPayload({
       uuid: SystemViewId.AllNotes,
@@ -88,11 +85,7 @@ export function BuildSmartViews(
     }),
   )
 
-  if (supportsFileNavigation) {
-    return [notes, starred, files, archived, trash, untagged]
-  } else {
-    return [notes, starred, archived, trash, untagged]
-  }
+  return [notes, files, starred, archived, trash, untagged]
 }
 
 function allNotesPredicate(options: FilterDisplayOptions) {

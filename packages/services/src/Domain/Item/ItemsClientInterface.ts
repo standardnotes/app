@@ -60,6 +60,7 @@ export interface ItemsClientInterface {
   addNoteCountChangeObserver(observer: TagItemCountChangeObserver): () => void
 
   allCountableNotesCount(): number
+  allCountableFilesCount(): number
 
   countableNotesForTag(tag: SNTag | SmartView): number
 

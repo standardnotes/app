@@ -34,6 +34,7 @@ export class NavigationController
   smartViews: SmartView[] = []
   starredTags: SNTag[] = []
   allNotesCount_ = 0
+  allFilesCount_ = 0
   selectedUuid: AnyTag['uuid'] | undefined = undefined
   selected_: AnyTag | undefined = undefined
   selectedLocation: TagListSectionType | undefined = undefined
@@ -62,8 +63,11 @@ export class NavigationController
       starredTags: observable,
       smartViews: observable.ref,
       allNotesCount_: observable,
+      allFilesCount_: observable,
       allNotesCount: computed,
+      allFilesCount: computed,
       setAllNotesCount: action,
+      setAllFilesCount: action,
 
       selected_: observable,
       selectedLocation: observable,
@@ -135,6 +139,7 @@ export class NavigationController
       this.application.items.addNoteCountChangeObserver((tagUuid) => {
         if (!tagUuid) {
           this.setAllNotesCount(this.application.items.allCountableNotesCount())
+          this.setAllFilesCount(this.application.items.allCountableFilesCount())
         } else {
           const tag = this.application.items.findItem<SNTag>(tagUuid)
           if (tag) {
@@ -409,6 +414,14 @@ export class NavigationController
 
   setAllNotesCount(allNotesCount: number) {
     this.allNotesCount_ = allNotesCount
+  }
+
+  setAllFilesCount(allFilesCount: number) {
+    this.allFilesCount_ = allFilesCount
+  }
+
+  public get allFilesCount(): number {
+    return this.allFilesCount_
   }
 
   public get allNotesCount(): number {

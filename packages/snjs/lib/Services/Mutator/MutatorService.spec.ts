@@ -36,7 +36,7 @@ describe('mutator service', () => {
     internalEventBus.publish = jest.fn()
 
     payloadManager = new PayloadManager(internalEventBus)
-    itemManager = new ItemManager(payloadManager, { supportsFileNavigation: false }, internalEventBus)
+    itemManager = new ItemManager(payloadManager, internalEventBus)
 
     mutatorService = new MutatorService(
       itemManager,

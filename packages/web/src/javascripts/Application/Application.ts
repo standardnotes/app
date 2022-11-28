@@ -74,7 +74,6 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       defaultHost: defaultSyncServerHost,
       appVersion: deviceInterface.appVersion,
       webSocketUrl: webSocketUrl,
-      supportsFileNavigation: true,
     })
 
     makeObservable(this, {
