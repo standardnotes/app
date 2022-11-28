@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.47.11](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.47.10...@standardnotes/mobile@3.47.11) (2022-11-28)
+
+### Bug Fixes
+
+* Super editor popover menus on iOS ([#2061](https://github.com/standardnotes/app/issues/2061)) ([148aee4](https://github.com/standardnotes/app/commit/148aee441b816c58599d95db2e5b0f3f93414511))
+
 ## [3.47.10](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.47.9...@standardnotes/mobile@3.47.10) (2022-11-28)
 
 **Note:** Version bump only for package @standardnotes/mobile

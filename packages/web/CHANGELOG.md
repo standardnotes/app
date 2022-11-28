@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.112.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.111.2...@standardnotes/web@3.112.0) (2022-11-28)
+
+### Bug Fixes
+
+* Super editor popover menus on iOS ([#2061](https://github.com/standardnotes/app/issues/2061)) ([148aee4](https://github.com/standardnotes/app/commit/148aee441b816c58599d95db2e5b0f3f93414511))
+
+### Features
+
+* Paste files in Super notes to upload and embed them ([#2060](https://github.com/standardnotes/app/issues/2060)) ([db3069e](https://github.com/standardnotes/app/commit/db3069eab373636e3fa5ebdd15324644579dd93c))
+
 ## [3.111.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.111.1...@standardnotes/web@3.111.2) (2022-11-28)
 
 ### Bug Fixes
