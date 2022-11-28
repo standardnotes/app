@@ -27,7 +27,7 @@ const Encryption: FunctionComponent<Props> = ({ viewControllerManager }) => {
         <Title>Encryption</Title>
         <Text>{encryptionStatusString}</Text>
 
-        {isEncryptionEnabled && <EncryptionEnabled viewControllerManager={viewControllerManager} />}
+        {isEncryptionEnabled && <EncryptionEnabled />}
       </PreferencesSegment>
     </PreferencesGroup>
   )

@@ -1383,7 +1383,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createItemManager() {
-    this.itemManager = new InternalServices.ItemManager(this.payloadManager, this.options, this.internalEventBus)
+    this.itemManager = new InternalServices.ItemManager(this.payloadManager, this.internalEventBus)
     this.services.push(this.itemManager)
   }
 
