@@ -1,9 +1,14 @@
+import { isIOS } from '@/Utils'
 import { useEffect, useState } from 'react'
 
 const DebounceTimeInMs = 100
 
+const getBoundingClientRect = () => {
+  return isIOS() ? document.body.getBoundingClientRect() : document.documentElement.getBoundingClientRect()
+}
+
 export const useDocumentRect = (): DOMRect => {
-  const [documentRect, setDocumentRect] = useState<DOMRect>(document.documentElement.getBoundingClientRect())
+  const [documentRect, setDocumentRect] = useState<DOMRect>(getBoundingClientRect())
 
   useEffect(() => {
     let debounceTimeout: number
@@ -12,7 +17,7 @@ export const useDocumentRect = (): DOMRect => {
       window.clearTimeout(debounceTimeout)
 
       window.setTimeout(() => {
-        setDocumentRect(document.documentElement.getBoundingClientRect())
+        setDocumentRect(getBoundingClientRect())
       }, DebounceTimeInMs)
     }
 
