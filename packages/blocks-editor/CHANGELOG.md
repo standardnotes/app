@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.9.2](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.9.1...@standardnotes/blocks-editor@1.9.2) (2022-11-28)
+
+### Bug Fixes
+
+* Only autofocus super notes when creating new note ([#2063](https://github.com/standardnotes/app/issues/2063)) ([96e8dfd](https://github.com/standardnotes/app/commit/96e8dfdd310fad88a360c4ac984b376b51a618d1))
+
 ## [1.9.1](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.9.0...@standardnotes/blocks-editor@1.9.1) (2022-11-28)
 
 **Note:** Version bump only for package @standardnotes/blocks-editor

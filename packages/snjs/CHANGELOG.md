@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.153.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.152.6...@standardnotes/snjs@2.153.0) (2022-11-28)
+
+### Features
+
+* convert Super notes to Markdown behind the scenes while publishing to Listed ([#2064](https://github.com/standardnotes/app/issues/2064)) ([cc2762a](https://github.com/standardnotes/app/commit/cc2762a29d83e2e4cd646345f9d3935571b27c62))
+
 ## [2.152.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.152.5...@standardnotes/snjs@2.152.6) (2022-11-28)
 
 ### Bug Fixes
