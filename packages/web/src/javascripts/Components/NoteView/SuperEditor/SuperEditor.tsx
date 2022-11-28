@@ -27,6 +27,7 @@ import { useCommandService } from '@/Components/ApplicationView/CommandProvider'
 import { SUPER_SHOW_MARKDOWN_PREVIEW } from '@standardnotes/ui-services'
 import { SuperNoteMarkdownPreview } from './SuperNoteMarkdownPreview'
 import { ExportPlugin } from './Plugins/ExportPlugin/ExportPlugin'
+import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin'
 
 const NotePreviewCharLimit = 160
 
@@ -125,6 +126,8 @@ export const SuperEditor: FunctionComponent<Props> = ({
     })
   }, [reloadPreferences, application])
 
+  console.log(controller, controller.isTemplateNote)
+
   return (
     <div className="relative h-full w-full">
       <ErrorBoundary>
@@ -157,6 +160,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                   <NodeObserverPlugin nodeType={BubbleNode} onRemove={handleBubbleRemove} />
                   <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
                   <ExportPlugin />
+                  {controller.isTemplateNote ? <AutoFocusPlugin /> : null}
                 </BlocksEditor>
               </BlocksEditorComposer>
             </FilesControllerProvider>
