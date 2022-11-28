@@ -59,7 +59,7 @@ export default function FilePlugin(): JSX.Element | null {
       editor.registerCommand(
         PASTE_COMMAND,
         (payload) => {
-          const files = payload instanceof InputEvent ? payload.dataTransfer?.files : null
+          const files = payload instanceof ClipboardEvent ? payload.clipboardData?.files : null
           if (files?.length) {
             uploadFilesList(files)
             return true
