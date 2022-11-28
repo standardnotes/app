@@ -25,6 +25,21 @@ export default function FilePlugin(): JSX.Element | null {
       throw new Error('FilePlugin: FileNode not registered on editor')
     }
 
+    const uploadFilesList = (files: FileList) => {
+      Array.from(files).forEach(async (file) => {
+        try {
+          const uploadedFiles = await filesController.uploadNewFile(file)
+          if (uploadedFiles) {
+            uploadedFiles.forEach((uploadedFile) => {
+              editor.dispatchCommand(INSERT_FILE_COMMAND, uploadedFile.uuid)
+            })
+          }
+        } catch (error) {
+          console.error(error)
+        }
+      })
+    }
+
     return mergeRegister(
       editor.registerCommand<string>(
         INSERT_FILE_COMMAND,
@@ -47,18 +62,13 @@ export default function FilePlugin(): JSX.Element | null {
           if (payload instanceof InputEvent) {
             const files = payload.dataTransfer?.files
             if (files?.length) {
-              Array.from(files).forEach(async (file) => {
-                try {
-                  const uploadedFiles = await filesController.uploadNewFile(file)
-                  if (uploadedFiles) {
-                    uploadedFiles.forEach((uploadedFile) => {
-                      editor.dispatchCommand(INSERT_FILE_COMMAND, uploadedFile.uuid)
-                    })
-                  }
-                } catch (error) {
-                  console.error(error)
-                }
-              })
+              uploadFilesList(files)
+              return true
+            }
+          } else if (payload instanceof ClipboardEvent) {
+            const files = payload.clipboardData?.files
+            if (files?.length) {
+              uploadFilesList(files)
               return true
             }
           }
