@@ -7,7 +7,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* Only autofocus super notes when creating new note ([#2063](https://github.com/standardnotes/app/issues/2063)) ([96e8dfd](https://github.com/standardnotes/app/commit/96e8dfdd310fad88a360c4ac984b376b51a618d1))
+* Only autofocus Super notes when creating new note ([#2063](https://github.com/standardnotes/app/issues/2063)) ([96e8dfd](https://github.com/standardnotes/app/commit/96e8dfdd310fad88a360c4ac984b376b51a618d1))
 
 ### Features
 
