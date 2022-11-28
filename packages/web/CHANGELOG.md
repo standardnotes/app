@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.111.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.111.0...@standardnotes/web@3.111.1) (2022-11-28)
+
+### Bug Fixes
+
+* navigation footer padding ([6fc1bb5](https://github.com/standardnotes/app/commit/6fc1bb5e841543c7c07814764edfc68af6b53f5c))
+
 # [3.111.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.110.4...@standardnotes/web@3.111.0) (2022-11-27)
 
 ### Features
