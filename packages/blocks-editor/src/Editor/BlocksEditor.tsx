@@ -2,7 +2,6 @@ import {FunctionComponent, useCallback, useState} from 'react';
 import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
 import {ContentEditable} from '@lexical/react/LexicalContentEditable';
 import {OnChangePlugin} from '@lexical/react/LexicalOnChangePlugin';
-import {AutoFocusPlugin} from '@lexical/react/LexicalAutoFocusPlugin';
 import {CheckListPlugin} from '@lexical/react/LexicalCheckListPlugin';
 import {ClearEditorPlugin} from '@lexical/react/LexicalClearEditorPlugin';
 import {MarkdownShortcutPlugin} from '@lexical/react/LexicalMarkdownShortcutPlugin';
@@ -121,7 +120,6 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <OnChangePlugin onChange={handleChange} ignoreSelectionChange={true} />
       <HistoryPlugin />
       <HorizontalRulePlugin />
-      <AutoFocusPlugin />
       <ClearEditorPlugin />
       <CheckListPlugin />
       <CodeHighlightPlugin />
