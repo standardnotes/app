@@ -16,6 +16,7 @@ declare global {
     webClient?: DesktopManagerInterface
     electronRemoteBridge?: unknown
     reactNativeDevice?: WebDevice
+    platform?: Platform
 
     application?: WebApplication
     mainApplicationGroup?: ApplicationGroup
@@ -25,7 +26,7 @@ declare global {
 
 import { disableIosTextFieldZoom } from '@/Utils'
 import { IsWebPlatform, WebAppVersion } from '@/Constants/Version'
-import { DesktopManagerInterface, SNLog } from '@standardnotes/snjs'
+import { DesktopManagerInterface, Platform, SNLog } from '@standardnotes/snjs'
 import ApplicationGroupView from './Components/ApplicationGroupView/ApplicationGroupView'
 import { WebDevice } from './Application/Device/WebDevice'
 import { StartApplication } from './Application/Device/StartApplication'
@@ -100,6 +101,7 @@ if (IsWebPlatform) {
 
   setTimeout(() => {
     const device = window.reactNativeDevice || new WebDevice(WebAppVersion)
+    window.platform = device.platform
 
     startApplication(window.defaultSyncServer, device, window.enabledUnfinishedFeatures, window.websocketUrl).catch(
       console.error,

@@ -174,7 +174,8 @@ export const convertStringifiedBooleanToBoolean = (value: string) => {
 // https://stackoverflow.com/questions/9038625/detect-if-device-is-ios/9039885#9039885
 export const isIOS = () =>
   (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) ||
-  (navigator.userAgent.includes('Mac') && 'ontouchend' in document && navigator.maxTouchPoints > 1)
+  (navigator.userAgent.includes('Mac') && 'ontouchend' in document && navigator.maxTouchPoints > 1) ||
+  window.platform === Platform.Ios
 
 // https://stackoverflow.com/a/57527009/2504429
 export const disableIosTextFieldZoom = () => {
