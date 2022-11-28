@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.154.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.153.0...@standardnotes/snjs@2.154.0) (2022-11-28)
+
+### Features
+
+* display number of files for 'Files' view ([#2065](https://github.com/standardnotes/app/issues/2065)) ([767d354](https://github.com/standardnotes/app/commit/767d3547804bc98693dcc769baeed943c24426f3))
+
 # [2.153.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.152.6...@standardnotes/snjs@2.153.0) (2022-11-28)
 
 ### Features

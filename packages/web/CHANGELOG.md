@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.114.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.113.0...@standardnotes/web@3.114.0) (2022-11-28)
+
+### Features
+
+* display number of files for 'Files' view ([#2065](https://github.com/standardnotes/app/issues/2065)) ([767d354](https://github.com/standardnotes/app/commit/767d3547804bc98693dcc769baeed943c24426f3))
+
 # [3.113.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.112.2...@standardnotes/web@3.113.0) (2022-11-28)
 
 ### Bug Fixes
