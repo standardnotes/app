@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.6.1](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.6.0...@standardnotes/icons@1.6.1) (2022-11-28)
+
+### Bug Fixes
+
+* add new line after embedding files ([7f6c53d](https://github.com/standardnotes/app/commit/7f6c53dfcbc8952ca9eee76b9c4af70fea3c1bf1))
+
 # [1.6.0](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.5.0...@standardnotes/icons@1.6.0) (2022-11-19)
 
 ### Features
