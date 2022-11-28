@@ -126,8 +126,6 @@ export const SuperEditor: FunctionComponent<Props> = ({
     })
   }, [reloadPreferences, application])
 
-  console.log(controller, controller.isTemplateNote)
-
   return (
     <div className="relative h-full w-full">
       <ErrorBoundary>
