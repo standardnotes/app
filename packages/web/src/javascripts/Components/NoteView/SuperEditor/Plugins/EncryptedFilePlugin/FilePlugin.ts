@@ -26,6 +26,8 @@ export default function FilePlugin(): JSX.Element | null {
         if ($isRootOrShadowRoot(fileNode.getParentOrThrow())) {
           $wrapNodeInElement(fileNode, $createParagraphNode).selectEnd()
         }
+        const newLineNode = $createParagraphNode()
+        $insertNodes([newLineNode])
 
         return true
       },
