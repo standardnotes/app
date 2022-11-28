@@ -295,6 +295,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.diskStorageService
   }
 
+  public get actions(): InternalServices.SNActionsService {
+    return this.actionsManager
+  }
+
   public computePrivateUsername(username: string): Promise<string | undefined> {
     return ComputePrivateUsername(this.options.crypto, username)
   }
