@@ -108,7 +108,6 @@ export const STRING_FAILED_TO_UPDATE_USER_SETTING =
 export const Strings = {
   protectingNoteWithoutProtectionSources:
     'Access to this note will not be restricted until you set up a passcode or account.',
-  openAccountMenu: 'Open Account Menu',
   trashItemsTitle: 'Move to Trash',
   trashNotesText: 'Are you sure you want to move these notes to the trash?',
   trashFilesText: 'Are you sure you want to move these files to the trash?',

@@ -34,8 +34,6 @@ const PremiumModalProvider: FunctionComponent<Props> = observer(
 
     const hasSubscription = application.hasValidSubscription()
 
-    const hasAccount = application.hasAccount()
-
     const activate = useCallback(
       (feature: string) => {
         featuresController.showPremiumAlert(feature).catch(console.error)
@@ -54,7 +52,6 @@ const PremiumModalProvider: FunctionComponent<Props> = observer(
             application={application}
             featureName={featureName}
             hasSubscription={hasSubscription}
-            hasAccount={hasAccount}
             onClose={close}
             showModal={featuresController.premiumAlertType != undefined}
             type={featuresController.premiumAlertType}

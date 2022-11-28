@@ -10,7 +10,6 @@ type Props = {
   application: WebApplication
   featureName?: FeatureName | string
   hasSubscription: boolean
-  hasAccount: boolean
   onClose: () => void
   showModal: boolean
   type: PremiumFeatureModalType
@@ -20,7 +19,6 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
   application,
   featureName,
   hasSubscription,
-  hasAccount,
   onClose,
   showModal,
   type = PremiumFeatureModalType.UpgradePrompt,
@@ -40,7 +38,6 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
               featureName={featureName}
               ctaRef={ctaButtonRef}
               application={application}
-              hasAccount={hasAccount}
               hasSubscription={hasSubscription}
               onClose={onClose}
             />
