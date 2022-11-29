@@ -31,7 +31,6 @@ import { StreamingFileReader } from '@standardnotes/filepicker'
 import SearchBar from '../SearchBar/SearchBar'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { classNames } from '@standardnotes/utils'
-import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
 import { LinkingController } from '@/Controllers/LinkingController'
 import DailyContentList from './Daily/DailyContentList'
@@ -63,7 +62,7 @@ const ContentListView: FunctionComponent<Props> = ({
   searchOptionsController,
   linkingController,
 }) => {
-  const { isNotesListVisibleOnTablets, toggleAppPane } = useResponsiveAppPane()
+  const { toggleAppPane } = useResponsiveAppPane()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
   const itemsViewPanelRef = useRef<HTMLDivElement>(null)
@@ -236,10 +235,6 @@ const ContentListView: FunctionComponent<Props> = ({
       : `Create a new note in the selected tag (${shortcutForCreate && keyboardStringForShortcut(shortcutForCreate)})`
   }, [isFilesSmartView, shortcutForCreate])
 
-  const matchesMediumBreakpoint = useMediaQuery(MediaQueryBreakpoints.md)
-  const matchesXLBreakpoint = useMediaQuery(MediaQueryBreakpoints.xl)
-  const isTabletScreenSize = matchesMediumBreakpoint && !matchesXLBreakpoint
-
   const dailyMode = selectedAsTag?.isDailyEntry
 
   const handleDailyListSelection = useCallback(
@@ -268,11 +263,6 @@ const ContentListView: FunctionComponent<Props> = ({
       className={classNames(
         'sn-component section app-column flex h-full flex-col overflow-hidden pt-safe-top',
         hasEditorPane ? 'xl:w-[24rem] xsm-only:!w-full sm-only:!w-full' : 'w-full md:min-w-[400px]',
-        hasEditorPane
-          ? isTabletScreenSize && !isNotesListVisibleOnTablets
-            ? 'pointer-coarse:md-only:!w-0 pointer-coarse:lg-only:!w-0'
-            : 'pointer-coarse:md-only:!w-60 pointer-coarse:lg-only:!w-60'
-          : '',
       )}
       aria-label={'Notes & Files'}
       ref={itemsViewPanelRef}

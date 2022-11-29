@@ -1,5 +1,5 @@
 import { TOGGLE_LIST_PANE_KEYBOARD_COMMAND, TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND } from '@standardnotes/ui-services'
-import { ApplicationEvent, InternalEventBus, PrefKey } from '@standardnotes/snjs'
+import { ApplicationEvent, InternalEventBus, PrefKey, removeFromArray } from '@standardnotes/snjs'
 import { AppPaneId } from './../Components/ResponsivePane/AppPaneMetadata'
 import { isMobileScreen } from '@/Utils'
 import { makeObservable, observable, action, computed } from 'mobx'
@@ -47,6 +47,10 @@ export class PaneController extends AbstractViewController {
       setCurrentNavPanelWidth: action,
       presentPane: action,
       dismissLastPane: action,
+      replacePanes: action,
+      popToPane: action,
+      removePane: action,
+      insertPaneAtIndex: action,
     })
 
     this.setCurrentNavPanelWidth(application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
@@ -133,6 +137,11 @@ export class PaneController extends AbstractViewController {
     this.isInMobileView = isInMobileView
   }
 
+  replacePanes = (panes: AppPaneId[]) => {
+    log(LoggingDomain.Panes, 'Replacing panes', panes)
+    this.panes = panes
+  }
+
   presentPane = (pane: AppPaneId) => {
     log(LoggingDomain.Panes, 'Presenting pane', pane)
 
@@ -150,10 +159,22 @@ export class PaneController extends AbstractViewController {
     }
   }
 
+  insertPaneAtIndex = (pane: AppPaneId, index: number) => {
+    log(LoggingDomain.Panes, 'Inserting pane', pane, 'at index', index)
+
+    this.panes.splice(index, 0, pane)
+  }
+
   dismissLastPane = (): AppPaneId | undefined => {
     log(LoggingDomain.Panes, 'Dismissing last pane')
 
     return this.panes.pop()
+  }
+
+  removePane = (pane: AppPaneId) => {
+    log(LoggingDomain.Panes, 'Removing pane', pane)
+
+    removeFromArray(this.panes, pane)
   }
 
   popToPane = (pane: AppPaneId) => {

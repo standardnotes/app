@@ -7,7 +7,6 @@ import {
   createContext,
   useCallback,
   useContext,
-  useState,
   memo,
   useRef,
   useLayoutEffect,
@@ -19,10 +18,8 @@ import { observer } from 'mobx-react-lite'
 
 type ResponsivePaneData = {
   selectedPane: AppPaneId
-  toggleNotesListOnTablets: () => void
   toggleListPane: () => void
   toggleNavigationPane: () => void
-  isNotesListVisibleOnTablets: boolean
   isListPaneCollapsed: boolean
   isNavigationPaneCollapsed: boolean
   setPaneComponentProvider: PaneController['setPaneComponentProvider']
@@ -31,6 +28,10 @@ type ResponsivePaneData = {
   toggleAppPane: (paneId: AppPaneId) => void
   presentPane: PaneController['presentPane']
   popToPane: PaneController['popToPane']
+  dismissLastPane: PaneController['dismissLastPane']
+  replacePanes: PaneController['replacePanes']
+  removePane: PaneController['removePane']
+  insertPaneAtIndex: PaneController['insertPaneAtIndex']
 }
 
 const ResponsivePaneContext = createContext<ResponsivePaneData | undefined>(undefined)
@@ -108,19 +109,11 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
     }
   }, [addAndroidBackHandler, currentSelectedPaneRef, toggleAppPane])
 
-  const [isNotesListVisibleOnTablets, setNotesListVisibleOnTablets] = useState(true)
-
-  const toggleNotesListOnTablets = useCallback(() => {
-    setNotesListVisibleOnTablets((visible) => !visible)
-  }, [])
-
   const contextValue = useMemo(
     (): ResponsivePaneData => ({
       selectedPane: currentSelectedPane,
       toggleAppPane,
       presentPane: paneController.presentPane,
-      isNotesListVisibleOnTablets,
-      toggleNotesListOnTablets,
       isListPaneCollapsed: paneController.isListPaneCollapsed,
       isNavigationPaneCollapsed: paneController.isNavigationPaneCollapsed,
       toggleListPane: paneController.toggleListPane,
@@ -129,12 +122,14 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
       setPaneComponentProvider: paneController.setPaneComponentProvider,
       getPaneComponent: paneController.getPaneComponent,
       popToPane: paneController.popToPane,
+      dismissLastPane: paneController.dismissLastPane,
+      replacePanes: paneController.replacePanes,
+      removePane: paneController.removePane,
+      insertPaneAtIndex: paneController.insertPaneAtIndex,
     }),
     [
       currentSelectedPane,
       toggleAppPane,
-      isNotesListVisibleOnTablets,
-      toggleNotesListOnTablets,
       paneController.panes,
       paneController.isListPaneCollapsed,
       paneController.isNavigationPaneCollapsed,
@@ -144,6 +139,10 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
       paneController.getPaneComponent,
       paneController.presentPane,
       paneController.popToPane,
+      paneController.dismissLastPane,
+      paneController.replacePanes,
+      paneController.removePane,
+      paneController.insertPaneAtIndex,
     ],
   )
 

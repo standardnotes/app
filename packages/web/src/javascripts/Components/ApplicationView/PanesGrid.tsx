@@ -1,8 +1,10 @@
 import { PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
+import useIsTabletOrMobileScreen from '@/Hooks/useIsTabletOrMobileScreen'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import { ApplicationEvent, classNames, PrefKey } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { usePrevious } from '../ContentListView/Calendar/usePrevious'
 import ContentListView from '../ContentListView/ContentListView'
 import NoteGroupView from '../NoteGroupView/NoteGroupView'
 import PanelResizer, { PanelResizeType, PanelSide, ResizeFinishCallback } from '../PanelResizer/PanelResizer'
@@ -18,11 +20,17 @@ const BaseStyles: React.CSSProperties = {
 
 const PanesGrid = () => {
   const application = useApplication()
-  const { panes, setPaneComponentProvider, getPaneComponent, selectedPane } = useResponsiveAppPane()
+  const isTabletOrMobileScreenWrapped = useIsTabletOrMobileScreen()
+  const { isTabletOrMobile, isTablet, isMobile } = isTabletOrMobileScreenWrapped
+  const previousIsTabletOrMobileWrapped = usePrevious(isTabletOrMobileScreenWrapped)
+
+  const { panes, setPaneComponentProvider, getPaneComponent, selectedPane, removePane, insertPaneAtIndex } =
+    useResponsiveAppPane()
   const viewControllerManager = application.getViewControllerManager()
 
   const [navigationPanelWidth, setNavigationPanelWidth] = useState<number>(0)
   const [navigationRef, setNavigationRef] = useState<HTMLDivElement | null>(null)
+  const [showNavigationPanelResizer, setShowNavigationPanelResizer] = useState(false)
 
   useEffect(() => {
     const removeObserver = application.addEventObserver(async () => {
@@ -45,21 +53,41 @@ const PanesGrid = () => {
     [application],
   )
 
+  useEffect(() => {
+    const show = !isTabletOrMobile && navigationRef != null
+    if (show === showNavigationPanelResizer) {
+      return
+    }
+
+    setShowNavigationPanelResizer(show)
+    if (!show && navigationRef) {
+      navigationRef.style.removeProperty('width')
+    }
+  }, [navigationRef, isTabletOrMobile, showNavigationPanelResizer])
+
+  useEffect(() => {
+    if (isTablet && !previousIsTabletOrMobileWrapped?.isTablet) {
+      if (selectedPane !== AppPaneId.Navigation) {
+        removePane(AppPaneId.Navigation)
+      }
+    } else if (!isTablet && previousIsTabletOrMobileWrapped?.isTablet) {
+      insertPaneAtIndex(AppPaneId.Navigation, 0)
+    }
+  }, [isTablet, removePane, selectedPane, previousIsTabletOrMobileWrapped, insertPaneAtIndex])
+
   useMemo(() => {
     setPaneComponentProvider(AppPaneId.Navigation, (options) => {
       return (
         <Navigation
           ref={setNavigationRef}
           className={classNames(
-            'w-[220px] xl:w-[220px] xsm-only:!w-full sm-only:!w-full',
-            selectedPane === AppPaneId.Navigation
-              ? 'pointer-coarse:md-only:!w-48 pointer-coarse:lg-only:!w-48'
-              : 'pointer-coarse:md-only:!w-0 pointer-coarse:lg-only:!w-0',
+            isTabletOrMobile ? 'w-full' : 'w-[220px]',
+            isMobile && selectedPane !== AppPaneId.Navigation ? '!w-0' : '',
           )}
           key="navigation-pane"
           application={application}
         >
-          {navigationRef && (
+          {showNavigationPanelResizer && navigationRef && (
             <PanelResizer
               collapsable={true}
               defaultWidth={150}
@@ -108,6 +136,9 @@ const PanesGrid = () => {
     selectedPane,
     navigationRef,
     navigationPanelResizeFinishCallback,
+    showNavigationPanelResizer,
+    isTabletOrMobile,
+    isMobile,
   ])
 
   const computeStyles = (): React.CSSProperties => {
