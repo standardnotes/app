@@ -3,9 +3,7 @@ import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import { WebApplication } from '@/Application/Application'
 import MultipleSelectedNotes from '@/Components/MultipleSelectedNotes/MultipleSelectedNotes'
 import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFiles'
-import { ElementIds } from '@/Constants/ElementIDs'
 import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
-import ResponsivePaneContent from '../ResponsivePane/ResponsivePaneContent'
 import FileView from '../FileView/FileView'
 import NoteView from '../NoteView/NoteView'
 import { NoteViewController } from '../NoteView/Controller/NoteViewController'
@@ -22,6 +20,9 @@ type State = {
 
 type Props = {
   application: WebApplication
+  className?: string
+  innerRef: (ref: HTMLDivElement) => void
+  id: string
 }
 
 class NoteGroupView extends AbstractComponent<Props, State> {
@@ -100,41 +101,43 @@ class NoteGroupView extends AbstractComponent<Props, State> {
     const canRenderEditorView = this.state.selectedPane === AppPaneId.Editor || !this.state.isInMobileView
 
     return (
-      <div id={ElementIds.EditorColumn} className="app-column flex h-full flex-col pt-safe-top">
-        <ResponsivePaneContent paneId={AppPaneId.Editor} className="flex-grow">
-          {this.state.showMultipleSelectedNotes && (
-            <MultipleSelectedNotes
-              application={this.application}
-              selectionController={this.viewControllerManager.selectionController}
-              navigationController={this.viewControllerManager.navigationController}
-              notesController={this.viewControllerManager.notesController}
-              linkingController={this.viewControllerManager.linkingController}
-              historyModalController={this.viewControllerManager.historyModalController}
-            />
-          )}
-          {this.state.showMultipleSelectedFiles && (
-            <MultipleSelectedFiles
-              filesController={this.viewControllerManager.filesController}
-              selectionController={this.viewControllerManager.selectionController}
-            />
-          )}
-          {shouldNotShowMultipleSelectedItems && hasControllers && canRenderEditorView && (
-            <>
-              {this.state.controllers.map((controller) => {
-                return controller instanceof NoteViewController ? (
-                  <NoteView key={controller.runtimeId} application={this.application} controller={controller} />
-                ) : (
-                  <FileView
-                    key={controller.runtimeId}
-                    application={this.application}
-                    viewControllerManager={this.viewControllerManager}
-                    file={controller.item}
-                  />
-                )
-              })}
-            </>
-          )}
-        </ResponsivePaneContent>
+      <div
+        id={this.props.id}
+        className={`app-column flex h-full flex-grow flex-col pt-safe-top ${this.props.className}`}
+        ref={this.props.innerRef}
+      >
+        {this.state.showMultipleSelectedNotes && (
+          <MultipleSelectedNotes
+            application={this.application}
+            selectionController={this.viewControllerManager.selectionController}
+            navigationController={this.viewControllerManager.navigationController}
+            notesController={this.viewControllerManager.notesController}
+            linkingController={this.viewControllerManager.linkingController}
+            historyModalController={this.viewControllerManager.historyModalController}
+          />
+        )}
+        {this.state.showMultipleSelectedFiles && (
+          <MultipleSelectedFiles
+            filesController={this.viewControllerManager.filesController}
+            selectionController={this.viewControllerManager.selectionController}
+          />
+        )}
+        {shouldNotShowMultipleSelectedItems && hasControllers && canRenderEditorView && (
+          <>
+            {this.state.controllers.map((controller) => {
+              return controller instanceof NoteViewController ? (
+                <NoteView key={controller.runtimeId} application={this.application} controller={controller} />
+              ) : (
+                <FileView
+                  key={controller.runtimeId}
+                  application={this.application}
+                  viewControllerManager={this.viewControllerManager}
+                  file={controller.item}
+                />
+              )
+            })}
+          </>
+        )}
       </div>
     )
   }

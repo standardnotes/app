@@ -1,6 +1,6 @@
 import { TOGGLE_LIST_PANE_KEYBOARD_COMMAND, TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND } from '@standardnotes/ui-services'
 import { ApplicationEvent, InternalEventBus, PrefKey, removeFromArray } from '@standardnotes/snjs'
-import { AppPaneId } from './../Components/ResponsivePane/AppPaneMetadata'
+import { AppPaneId, AppPaneIdToDivId } from './../Components/ResponsivePane/AppPaneMetadata'
 import { isMobileScreen } from '@/Utils'
 import { makeObservable, observable, action, computed } from 'mobx'
 import { Disposer } from '@/Types/Disposer'
@@ -11,22 +11,28 @@ import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { PANEL_NAME_NAVIGATION, PANEL_NAME_NOTES } from '@/Constants/Constants'
 import { log, LoggingDomain } from '@/Logging'
 import { PaneLayout } from './PaneLayout'
-import { panesForLayout } from './panesForLayout'
+import { isPanesChangeLeafDismiss, isPanesChangePush, panesForLayout } from './panesForLayout'
+import {
+  animatePaneEntranceTransitionFromOffscreenToTheRight,
+  animatePaneExitTransitionOffscreenToTheRight,
+} from '@/Components/ApplicationView/PaneAnimator'
 
 const WidthForCollapsedPanel = 5
 const MinimumNavPanelWidth = PrefDefaults[PrefKey.TagsPanelWidth]
 const MinimumNotesPanelWidth = PrefDefaults[PrefKey.NotesPanelWidth]
-export type PaneComponentOptions = { userWidth?: number }
+export type PaneComponentOptions = { userWidth?: number; className?: string }
 export type PaneComponentProvider = (options: PaneComponentOptions) => JSX.Element
 
 export class PaneController extends AbstractViewController {
   isInMobileView = isMobileScreen()
   protected disposers: Disposer[] = []
-  panes: AppPaneId[] = [AppPaneId.Navigation, AppPaneId.Items]
+  panes: AppPaneId[] = [AppPaneId.Navigation]
   paneComponentsProviders: Map<AppPaneId, PaneComponentProvider> = new Map()
 
   currentNavPanelWidth = 0
   currentItemsPanelWidth = 0
+
+  animatingEntraceOfPanes: AppPaneId[] = []
 
   constructor(application: WebApplication, eventBus: InternalEventBus) {
     super(application, eventBus)
@@ -36,6 +42,7 @@ export class PaneController extends AbstractViewController {
       isInMobileView: observable,
       currentNavPanelWidth: observable,
       currentItemsPanelWidth: observable,
+      animatingEntraceOfPanes: observable,
 
       currentPane: computed,
       previousPane: computed,
@@ -140,14 +147,30 @@ export class PaneController extends AbstractViewController {
     this.isInMobileView = isInMobileView
   }
 
-  setPaneLayout = (layout: PaneLayout) => {
+  setPaneLayout = (layout: PaneLayout, animated = true) => {
     log(LoggingDomain.Panes, 'Set pane layout', layout)
-    this.replacePanes(panesForLayout(layout))
+
+    return this.replacePanes(panesForLayout(layout), animated)
   }
 
-  replacePanes = (panes: AppPaneId[]) => {
+  replacePanes = async (panes: AppPaneId[], animated = true) => {
     log(LoggingDomain.Panes, 'Replacing panes', panes)
-    this.panes = panes
+
+    if (animated) {
+      if (isPanesChangeLeafDismiss(this.panes, panes)) {
+        await animatePaneExitTransitionOffscreenToTheRight(AppPaneIdToDivId[this.currentPane])
+        this.panes = panes
+      } else if (isPanesChangePush(this.panes, panes)) {
+        this.animatingEntraceOfPanes.push(panes[panes.length - 1])
+        this.panes = panes
+        setTimeout(() => {
+          void animatePaneEntranceTransitionFromOffscreenToTheRight(AppPaneIdToDivId[this.currentPane])
+          removeFromArray(this.animatingEntraceOfPanes, panes[panes.length - 1])
+        })
+      }
+    } else {
+      this.panes = panes
+    }
   }
 
   presentPane = (pane: AppPaneId) => {

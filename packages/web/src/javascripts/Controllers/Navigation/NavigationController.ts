@@ -459,7 +459,9 @@ export class NavigationController
         .catch(console.error)
     }
 
-    this.application.paneController.setPaneLayout(PaneLayout.ItemSelection)
+    if (userTriggered) {
+      void this.application.paneController.setPaneLayout(PaneLayout.ItemSelection)
+    }
 
     this.previouslySelected_ = this.selected_
 

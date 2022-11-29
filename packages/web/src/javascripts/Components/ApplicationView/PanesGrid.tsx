@@ -1,4 +1,6 @@
 import { PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
+import { ElementIds } from '@/Constants/ElementIDs'
+import { PaneComponentOptions } from '@/Controllers/PaneController'
 import useIsTabletOrMobileScreen from '@/Hooks/useIsTabletOrMobileScreen'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import { ApplicationEvent, classNames, PrefKey } from '@standardnotes/snjs'
@@ -13,7 +15,6 @@ import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import Navigation from '../Tags/Navigation'
 import { useApplication } from './ApplicationProvider'
 
-const BaseClasses = 'grid flex flex-row'
 const BaseStyles: React.CSSProperties = {
   gridTemplateRows: 'auto',
 }
@@ -24,13 +25,22 @@ const PanesGrid = () => {
   const { isTabletOrMobile, isTablet, isMobile } = isTabletOrMobileScreenWrapped
   const previousIsTabletOrMobileWrapped = usePrevious(isTabletOrMobileScreenWrapped)
 
-  const { panes, setPaneComponentProvider, getPaneComponent, selectedPane, removePane, insertPaneAtIndex } =
-    useResponsiveAppPane()
+  const {
+    panes,
+    setPaneComponentProvider,
+    getPaneComponent,
+    selectedPane,
+    removePane,
+    insertPaneAtIndex,
+    animatingEntraceOfPanes,
+  } = useResponsiveAppPane()
   const viewControllerManager = application.getViewControllerManager()
 
   const [navigationPanelWidth, setNavigationPanelWidth] = useState<number>(0)
   const [navigationRef, setNavigationRef] = useState<HTMLDivElement | null>(null)
   const [showNavigationPanelResizer, setShowNavigationPanelResizer] = useState(false)
+
+  const [_editorRef, setEditorRef] = useState<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const removeObserver = application.addEventObserver(async () => {
@@ -54,13 +64,13 @@ const PanesGrid = () => {
   )
 
   useEffect(() => {
-    const show = !isTabletOrMobile && navigationRef != null
-    if (show === showNavigationPanelResizer) {
+    const showNavPanelResizer = !isTabletOrMobile && navigationRef != null
+    if (showNavPanelResizer === showNavigationPanelResizer) {
       return
     }
 
-    setShowNavigationPanelResizer(show)
-    if (!show && navigationRef) {
+    setShowNavigationPanelResizer(showNavPanelResizer)
+    if (!showNavPanelResizer && navigationRef) {
       navigationRef.style.removeProperty('width')
     }
   }, [navigationRef, isTabletOrMobile, showNavigationPanelResizer])
@@ -79,11 +89,9 @@ const PanesGrid = () => {
     setPaneComponentProvider(AppPaneId.Navigation, (options) => {
       return (
         <Navigation
+          id={ElementIds.NavigationColumn}
           ref={setNavigationRef}
-          className={classNames(
-            isTabletOrMobile ? 'w-full' : 'w-[220px]',
-            isMobile && selectedPane !== AppPaneId.Navigation ? '!w-0' : '',
-          )}
+          className={classNames(options.className, isTabletOrMobile ? 'w-full' : 'w-[220px]')}
           key="navigation-pane"
           application={application}
         >
@@ -104,9 +112,11 @@ const PanesGrid = () => {
       )
     })
 
-    setPaneComponentProvider(AppPaneId.Items, () => {
+    setPaneComponentProvider(AppPaneId.Items, (options) => {
       return (
         <ContentListView
+          id={ElementIds.ItemsColumn}
+          className={options.className}
           key="content-list-pane"
           application={application}
           accountMenuController={viewControllerManager.accountMenuController}
@@ -122,10 +132,15 @@ const PanesGrid = () => {
       )
     })
 
-    setPaneComponentProvider(AppPaneId.Editor, () => {
+    setPaneComponentProvider(AppPaneId.Editor, (options) => {
       return (
         <ErrorBoundary key="editor-pane">
-          <NoteGroupView application={application} />
+          <NoteGroupView
+            id={ElementIds.EditorColumn}
+            innerRef={(ref) => setEditorRef(ref)}
+            className={options.className}
+            application={application}
+          />
         </ErrorBoundary>
       )
     })
@@ -133,16 +148,19 @@ const PanesGrid = () => {
     application,
     viewControllerManager,
     setPaneComponentProvider,
-    selectedPane,
     navigationRef,
     navigationPanelResizeFinishCallback,
     showNavigationPanelResizer,
     isTabletOrMobile,
-    isMobile,
+    animatingEntraceOfPanes,
   ])
 
-  const computeStyles = (): React.CSSProperties => {
+  const computeStylesForContainer = (): React.CSSProperties => {
     const numPanes = panes.length
+
+    if (isMobile) {
+      return {}
+    }
 
     if (numPanes === 1) {
       return {
@@ -161,10 +179,34 @@ const PanesGrid = () => {
     }
   }
 
+  const computeClassesForPane = (_paneId: AppPaneId): string => {
+    if (isMobile) {
+      return 'content h-full absolute top-0 left-0 w-full'
+    } else {
+      return 'content flex h-full flex-col'
+    }
+  }
+
+  const computeClassesForContainer = (): string => {
+    if (isMobile) {
+      return 'w-full'
+    }
+
+    return 'grid flex flex-row'
+  }
+
   return (
-    <div id="app" className={`app ${BaseClasses}`} style={{ ...BaseStyles, ...computeStyles() }}>
+    <div
+      id="app"
+      className={`app ${computeClassesForContainer()}`}
+      style={{ ...BaseStyles, ...computeStylesForContainer() }}
+    >
       {panes.map((pane) => {
-        return getPaneComponent(pane, { userWidth: pane === AppPaneId.Navigation ? navigationPanelWidth : undefined })
+        const options: PaneComponentOptions = {
+          userWidth: pane === AppPaneId.Navigation ? navigationPanelWidth : undefined,
+          className: computeClassesForPane(pane),
+        }
+        return getPaneComponent(pane, options)
       })}
     </div>
   )

@@ -4,7 +4,6 @@ import { WebApplication } from '@/Application/Application'
 import { ApplicationEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { forwardRef, useEffect, useMemo, useState } from 'react'
-import ResponsivePaneContent from '@/Components/ResponsivePane/ResponsivePaneContent'
 import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
 import { classNames } from '@standardnotes/utils'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
@@ -16,9 +15,10 @@ type Props = {
   application: WebApplication
   className?: string
   children?: React.ReactNode
+  id: string
 }
 
-const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, children }, ref) => {
+const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, children, id }, ref) => {
   const viewControllerManager = useMemo(() => application.getViewControllerManager(), [application])
   const { toggleAppPane } = useResponsiveAppPane()
 
@@ -92,7 +92,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
 
   return (
     <div
-      id="navigation"
+      id={id}
       className={classNames(
         className,
         'sn-component section app-column pb-[50px] md:pb-0',
@@ -100,22 +100,22 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
       )}
       ref={ref}
     >
-      <ResponsivePaneContent paneId={AppPaneId.Navigation} contentElementId="navigation-content">
-        <div
-          className={classNames(
-            'flex-grow overflow-y-auto overflow-x-hidden md:overflow-y-hidden md:hover:overflow-y-auto',
-            'md:hover:[overflow-y:_overlay] pointer-coarse:md:overflow-y-auto',
-          )}
-        >
-          <SmartViewsSection
-            application={application}
-            featuresController={viewControllerManager.featuresController}
-            navigationController={viewControllerManager.navigationController}
-          />
-          <TagsSection viewControllerManager={viewControllerManager} />
-        </div>
-        {NavigationFooter}
-      </ResponsivePaneContent>
+      <div
+        id="navigation-content"
+        className={classNames(
+          'flex-grow overflow-y-auto overflow-x-hidden md:overflow-y-hidden md:hover:overflow-y-auto',
+          'md:hover:[overflow-y:_overlay] pointer-coarse:md:overflow-y-auto',
+        )}
+      >
+        <SmartViewsSection
+          application={application}
+          featuresController={viewControllerManager.featuresController}
+          navigationController={viewControllerManager.navigationController}
+        />
+        <TagsSection viewControllerManager={viewControllerManager} />
+      </div>
+      {NavigationFooter}
+
       {children}
     </div>
   )

@@ -21,12 +21,12 @@ const MobileItemsListButton = () => {
       className={classNames(isTabletOrMobile ? 'flex' : 'hidden', 'mr-3')}
       onClick={() => {
         if (isMobile) {
-          setPaneLayout(PaneLayout.ItemSelection)
+          void setPaneLayout(PaneLayout.ItemSelection)
         } else {
           if (itemsShown) {
-            replacePanes([AppPaneId.Editor])
+            void replacePanes([AppPaneId.Editor])
           } else {
-            setPaneLayout(PaneLayout.ItemSelection)
+            void setPaneLayout(PaneLayout.ItemSelection)
           }
         }
       }}

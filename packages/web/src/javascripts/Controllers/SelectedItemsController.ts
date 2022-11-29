@@ -1,3 +1,4 @@
+import { isMobileScreen } from '@/Utils'
 import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
 import { log, LoggingDomain } from '@/Logging'
 import {
@@ -242,7 +243,7 @@ export class SelectedItemsController
       }
 
       if (!this.application.paneController.isInMobileView || userTriggered) {
-        this.application.paneController.setPaneLayout(PaneLayout.Editing)
+        void this.application.paneController.setPaneLayout(PaneLayout.Editing)
       }
     }
   }
@@ -300,7 +301,9 @@ export class SelectedItemsController
   ): Promise<void> => {
     const { didSelect } = await this.selectItem(item.uuid, userTriggered)
 
-    if (didSelect && scrollIntoView) {
+    const avoidMobileScrollingDueToIncompatibilityWithPaneAnimations = isMobileScreen()
+
+    if (didSelect && scrollIntoView && !avoidMobileScrollingDueToIncompatibilityWithPaneAnimations) {
       this.scrollToItem(item, animated)
     }
   }

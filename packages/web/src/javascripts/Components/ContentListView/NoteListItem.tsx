@@ -65,11 +65,8 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
   }
 
   const onClick = useCallback(async () => {
-    const { didSelect } = await onSelect(item, true)
-    if (didSelect) {
-      toggleAppPane(AppPaneId.Editor)
-    }
-  }, [item, onSelect, toggleAppPane])
+    await onSelect(item, true)
+  }, [item, onSelect])
 
   useContextMenuEvent(listItemRef, openContextMenu)
 

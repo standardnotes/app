@@ -1,28 +1,21 @@
-import { useMemo, ReactNode } from 'react'
-import { AppPaneId } from './AppPaneMetadata'
-import { classNames } from '@standardnotes/utils'
-import { useResponsiveAppPane } from './ResponsivePaneProvider'
+// import { useMemo, ReactNode } from 'react'
+// import { AppPaneId } from './AppPaneMetadata'
+// import { classNames } from '@standardnotes/utils'
+// import { useResponsiveAppPane } from './ResponsivePaneProvider'
 
-type Props = {
-  children: ReactNode
-  className?: string
-  contentElementId?: string
-  paneId: AppPaneId
-}
+// type Props = {
+//   children: ReactNode
+//   className?: string
+//   contentElementId?: string
+//   paneId: AppPaneId
+// }
 
-const ResponsivePaneContent = ({ children, className, contentElementId, paneId }: Props) => {
-  const { selectedPane } = useResponsiveAppPane()
+// const ResponsivePaneContent = ({ children, className, contentElementId, paneId }: Props) => {
+//   return (
+//     <div id={contentElementId} className={classNames('content flex h-full flex-col', className)}>
+//       {children}
+//     </div>
+//   )
+// }
 
-  const isSelectedPane = useMemo(() => selectedPane === paneId, [paneId, selectedPane])
-
-  return (
-    <div
-      id={contentElementId}
-      className={classNames('content flex flex-col', isSelectedPane ? 'h-full' : 'hidden md:flex', className)}
-    >
-      {children}
-    </div>
-  )
-}
-
-export default ResponsivePaneContent
+// export default ResponsivePaneContent
