@@ -25,7 +25,7 @@ import { CrossControllerEvent } from '../CrossControllerEvent'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { Persistable } from '../Abstract/Persistable'
 import { TagListSectionType } from '@/Components/Tags/TagListSection'
-import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
+import { PaneLayout } from '../PaneLayout'
 
 export class NavigationController
   extends AbstractViewController
@@ -459,7 +459,7 @@ export class NavigationController
         .catch(console.error)
     }
 
-    this.application.paneController.presentPane(AppPaneId.Items)
+    this.application.paneController.setPaneLayout(PaneLayout.ItemSelection)
 
     this.previouslySelected_ = this.selected_
 

@@ -70,10 +70,10 @@ const PanesGrid = () => {
       if (selectedPane !== AppPaneId.Navigation) {
         removePane(AppPaneId.Navigation)
       }
-    } else if (!isTablet && previousIsTabletOrMobileWrapped?.isTablet) {
+    } else if (!isTablet && previousIsTabletOrMobileWrapped?.isTablet && !panes.includes(AppPaneId.Navigation)) {
       insertPaneAtIndex(AppPaneId.Navigation, 0)
     }
-  }, [isTablet, removePane, selectedPane, previousIsTabletOrMobileWrapped, insertPaneAtIndex])
+  }, [isTablet, removePane, selectedPane, previousIsTabletOrMobileWrapped, insertPaneAtIndex, panes])
 
   useMemo(() => {
     setPaneComponentProvider(AppPaneId.Navigation, (options) => {

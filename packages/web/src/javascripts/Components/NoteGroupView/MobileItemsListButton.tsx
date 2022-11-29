@@ -3,9 +3,10 @@ import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { classNames, IconType } from '@standardnotes/snjs'
 import RoundIconButton from '../Button/RoundIconButton'
 import useIsTabletOrMobileScreen from '@/Hooks/useIsTabletOrMobileScreen'
+import { PaneLayout } from '@/Controllers/PaneLayout'
 
 const MobileItemsListButton = () => {
-  const { panes, replacePanes, dismissLastPane } = useResponsiveAppPane()
+  const { panes, replacePanes, setPaneLayout } = useResponsiveAppPane()
 
   const { isTablet, isTabletOrMobile, isMobile } = useIsTabletOrMobileScreen()
 
@@ -19,14 +20,14 @@ const MobileItemsListButton = () => {
     <RoundIconButton
       className={classNames(isTabletOrMobile ? 'flex' : 'hidden', 'mr-3')}
       onClick={() => {
-        if (itemsShown) {
-          if (isMobile) {
-            dismissLastPane()
-          } else {
-            replacePanes([AppPaneId.Editor])
-          }
+        if (isMobile) {
+          setPaneLayout(PaneLayout.ItemSelection)
         } else {
-          replacePanes([AppPaneId.Items, AppPaneId.Editor])
+          if (itemsShown) {
+            replacePanes([AppPaneId.Editor])
+          } else {
+            setPaneLayout(PaneLayout.ItemSelection)
+          }
         }
       }}
       label={label}

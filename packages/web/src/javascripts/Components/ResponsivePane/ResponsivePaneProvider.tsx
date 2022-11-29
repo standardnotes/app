@@ -32,6 +32,7 @@ type ResponsivePaneData = {
   replacePanes: PaneController['replacePanes']
   removePane: PaneController['removePane']
   insertPaneAtIndex: PaneController['insertPaneAtIndex']
+  setPaneLayout: PaneController['setPaneLayout']
 }
 
 const ResponsivePaneContext = createContext<ResponsivePaneData | undefined>(undefined)
@@ -126,6 +127,7 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
       replacePanes: paneController.replacePanes,
       removePane: paneController.removePane,
       insertPaneAtIndex: paneController.insertPaneAtIndex,
+      setPaneLayout: paneController.setPaneLayout,
     }),
     [
       currentSelectedPane,
@@ -143,6 +145,7 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
       paneController.replacePanes,
       paneController.removePane,
       paneController.insertPaneAtIndex,
+      paneController.setPaneLayout,
     ],
   )
 

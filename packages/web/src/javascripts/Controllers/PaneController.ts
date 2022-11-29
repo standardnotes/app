@@ -10,6 +10,8 @@ import { AbstractViewController } from './Abstract/AbstractViewController'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { PANEL_NAME_NAVIGATION, PANEL_NAME_NOTES } from '@/Constants/Constants'
 import { log, LoggingDomain } from '@/Logging'
+import { PaneLayout } from './PaneLayout'
+import { panesForLayout } from './panesForLayout'
 
 const WidthForCollapsedPanel = 5
 const MinimumNavPanelWidth = PrefDefaults[PrefKey.TagsPanelWidth]
@@ -51,6 +53,7 @@ export class PaneController extends AbstractViewController {
       popToPane: action,
       removePane: action,
       insertPaneAtIndex: action,
+      setPaneLayout: action,
     })
 
     this.setCurrentNavPanelWidth(application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
@@ -133,8 +136,13 @@ export class PaneController extends AbstractViewController {
     }
   }
 
-  setIsInMobileView(isInMobileView: boolean) {
+  setIsInMobileView = (isInMobileView: boolean) => {
     this.isInMobileView = isInMobileView
+  }
+
+  setPaneLayout = (layout: PaneLayout) => {
+    log(LoggingDomain.Panes, 'Set pane layout', layout)
+    this.replacePanes(panesForLayout(layout))
   }
 
   replacePanes = (panes: AppPaneId[]) => {

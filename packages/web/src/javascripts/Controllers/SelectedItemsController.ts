@@ -1,5 +1,4 @@
 import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
-import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
 import { log, LoggingDomain } from '@/Logging'
 import {
   ChallengeReason,
@@ -19,6 +18,7 @@ import { AbstractViewController } from './Abstract/AbstractViewController'
 import { Persistable } from './Abstract/Persistable'
 import { CrossControllerEvent } from './CrossControllerEvent'
 import { ItemListController } from './ItemList/ItemListController'
+import { PaneLayout } from './PaneLayout'
 
 export class SelectedItemsController
   extends AbstractViewController
@@ -242,7 +242,7 @@ export class SelectedItemsController
       }
 
       if (!this.application.paneController.isInMobileView || userTriggered) {
-        this.application.paneController.presentPane(AppPaneId.Editor)
+        this.application.paneController.setPaneLayout(PaneLayout.Editing)
       }
     }
   }
