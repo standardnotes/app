@@ -4,8 +4,6 @@ import { ApplicationEvent, Challenge, removeFromArray, WebAppEvent } from '@stan
 import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
 import { alertDialog, RouteType } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
-import Navigation from '@/Components/Tags/Navigation'
-import NoteGroupView from '@/Components/NoteGroupView/NoteGroupView'
 import Footer from '@/Components/Footer/Footer'
 import SessionsModal from '@/Components/SessionsModal/SessionsModal'
 import PreferencesViewWrapper from '@/Components/Preferences/PreferencesViewWrapper'
@@ -18,7 +16,6 @@ import PremiumModalProvider from '@/Hooks/usePremiumModal'
 import ConfirmSignoutContainer from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
 import { ToastContainer } from '@standardnotes/toast'
 import FilePreviewModalWrapper from '@/Components/FilePreview/FilePreviewModal'
-import ContentListView from '@/Components/ContentListView/ContentListView'
 import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu'
 import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsModalWrapper'
 import { PanelResizedData } from '@/Types/PanelResizedData'
@@ -29,8 +26,8 @@ import AndroidBackHandlerProvider from '@/NativeMobileWeb/useAndroidBackHandler'
 import ConfirmDeleteAccountContainer from '@/Components/ConfirmDeleteAccountModal/ConfirmDeleteAccountModal'
 import DarkModeHandler from '../DarkModeHandler/DarkModeHandler'
 import ApplicationProvider from './ApplicationProvider'
-import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import CommandProvider from './CommandProvider'
+import PanesGrid from './PanesGrid'
 
 type Props = {
   application: WebApplication
@@ -206,30 +203,13 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
               featuresController={viewControllerManager.featuresController}
             >
               <div className={platformString + ' main-ui-view sn-component h-full'}>
-                <div id="app" className="app app-column-container" ref={appColumnContainerRef}>
-                  <FileDragNDropProvider
-                    application={application}
-                    featuresController={viewControllerManager.featuresController}
-                    filesController={viewControllerManager.filesController}
-                  >
-                    <Navigation application={application} />
-                    <ContentListView
-                      application={application}
-                      accountMenuController={viewControllerManager.accountMenuController}
-                      filesController={viewControllerManager.filesController}
-                      itemListController={viewControllerManager.itemListController}
-                      navigationController={viewControllerManager.navigationController}
-                      noAccountWarningController={viewControllerManager.noAccountWarningController}
-                      notesController={viewControllerManager.notesController}
-                      selectionController={viewControllerManager.selectionController}
-                      searchOptionsController={viewControllerManager.searchOptionsController}
-                      linkingController={viewControllerManager.linkingController}
-                    />
-                    <ErrorBoundary>
-                      <NoteGroupView application={application} />
-                    </ErrorBoundary>
-                  </FileDragNDropProvider>
-                </div>
+                <FileDragNDropProvider
+                  application={application}
+                  featuresController={viewControllerManager.featuresController}
+                  filesController={viewControllerManager.filesController}
+                >
+                  <PanesGrid />
+                </FileDragNDropProvider>
 
                 <>
                   <Footer application={application} applicationGroup={mainApplicationGroup} />

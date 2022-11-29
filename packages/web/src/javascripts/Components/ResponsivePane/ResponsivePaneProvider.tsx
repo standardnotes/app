@@ -19,13 +19,17 @@ import { observer } from 'mobx-react-lite'
 
 type ResponsivePaneData = {
   selectedPane: AppPaneId
-  toggleAppPane: (paneId: AppPaneId) => void
   toggleNotesListOnTablets: () => void
   toggleListPane: () => void
   toggleNavigationPane: () => void
   isNotesListVisibleOnTablets: boolean
   isListPaneCollapsed: boolean
   isNavigationPaneCollapsed: boolean
+  setPaneComponentProvider: PaneController['setPaneComponentProvider']
+  getPaneComponent: PaneController['getPaneComponent']
+  panes: PaneController['panes']
+  toggleAppPane: (paneId: AppPaneId) => void
+  presentPane: PaneController['presentPane']
 }
 
 const ResponsivePaneContext = createContext<ResponsivePaneData | undefined>(undefined)
@@ -67,10 +71,9 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
 
   const toggleAppPane = useCallback(
     (paneId: AppPaneId) => {
-      paneController.setPreviousPane(currentSelectedPane)
-      paneController.setCurrentPane(paneId)
+      paneController.presentPane(paneId)
     },
-    [paneController, currentSelectedPane],
+    [paneController],
   )
 
   useEffect(() => {
@@ -111,25 +114,33 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
   }, [])
 
   const contextValue = useMemo(
-    () => ({
+    (): ResponsivePaneData => ({
       selectedPane: currentSelectedPane,
       toggleAppPane,
+      presentPane: paneController.presentPane,
       isNotesListVisibleOnTablets,
       toggleNotesListOnTablets,
       isListPaneCollapsed: paneController.isListPaneCollapsed,
       isNavigationPaneCollapsed: paneController.isNavigationPaneCollapsed,
       toggleListPane: paneController.toggleListPane,
       toggleNavigationPane: paneController.toggleNavigationPane,
+      panes: paneController.panes,
+      setPaneComponentProvider: paneController.setPaneComponentProvider,
+      getPaneComponent: paneController.getPaneComponent,
     }),
     [
       currentSelectedPane,
-      isNotesListVisibleOnTablets,
       toggleAppPane,
+      isNotesListVisibleOnTablets,
       toggleNotesListOnTablets,
-      paneController.toggleListPane,
-      paneController.toggleNavigationPane,
+      paneController.panes,
       paneController.isListPaneCollapsed,
       paneController.isNavigationPaneCollapsed,
+      paneController.toggleListPane,
+      paneController.toggleNavigationPane,
+      paneController.setPaneComponentProvider,
+      paneController.getPaneComponent,
+      paneController.presentPane,
     ],
   )
 

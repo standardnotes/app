@@ -15,10 +15,10 @@ const MinimumNavPanelWidth = PrefDefaults[PrefKey.TagsPanelWidth]
 const MinimumNotesPanelWidth = PrefDefaults[PrefKey.NotesPanelWidth]
 
 export class PaneController extends AbstractViewController {
-  currentPane: AppPaneId = isMobileScreen() ? AppPaneId.Items : AppPaneId.Editor
-  previousPane: AppPaneId = isMobileScreen() ? AppPaneId.Items : AppPaneId.Editor
   isInMobileView = isMobileScreen()
   protected disposers: Disposer[] = []
+  panes: AppPaneId[] = [AppPaneId.Navigation, AppPaneId.Items]
+  paneComponentsProviders: Map<AppPaneId, () => JSX.Element> = new Map()
 
   currentNavPanelWidth = 0
   currentItemsPanelWidth = 0
@@ -27,22 +27,23 @@ export class PaneController extends AbstractViewController {
     super(application, eventBus)
 
     makeObservable(this, {
-      currentPane: observable,
-      previousPane: observable,
+      panes: observable,
       isInMobileView: observable,
       currentNavPanelWidth: observable,
       currentItemsPanelWidth: observable,
 
+      currentPane: computed,
+      previousPane: computed,
       isListPaneCollapsed: computed,
       isNavigationPaneCollapsed: computed,
 
-      setCurrentPane: action,
-      setPreviousPane: action,
       setIsInMobileView: action,
       toggleListPane: action,
       toggleNavigationPane: action,
       setCurrentItemsPanelWidth: action,
       setCurrentNavPanelWidth: action,
+      presentPane: action,
+      dismissLastPane: action,
     })
 
     this.setCurrentNavPanelWidth(application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
@@ -96,6 +97,27 @@ export class PaneController extends AbstractViewController {
     }
   }
 
+  setPaneComponentProvider = (pane: AppPaneId, provider: () => JSX.Element) => {
+    this.paneComponentsProviders.set(pane, provider)
+  }
+
+  getPaneComponent = (pane: AppPaneId) => {
+    const provider = this.paneComponentsProviders.get(pane)
+    if (!provider) {
+      throw new Error(`No provider for pane ${pane}`)
+    }
+
+    return provider()
+  }
+
+  get currentPane(): AppPaneId {
+    return this.panes[this.panes.length - 1] || this.panes[0]
+  }
+
+  get previousPane(): AppPaneId {
+    return this.panes[this.panes.length - 2] || this.panes[0]
+  }
+
   mediumScreenMQHandler = (event: MediaQueryListEvent) => {
     if (event.matches) {
       this.setIsInMobileView(false)
@@ -104,16 +126,27 @@ export class PaneController extends AbstractViewController {
     }
   }
 
-  setCurrentPane(pane: AppPaneId): void {
-    this.currentPane = pane
-  }
-
-  setPreviousPane(pane: AppPaneId): void {
-    this.previousPane = pane
-  }
-
   setIsInMobileView(isInMobileView: boolean) {
     this.isInMobileView = isInMobileView
+  }
+
+  presentPane = (pane: AppPaneId) => {
+    if (pane === this.currentPane) {
+      return
+    }
+
+    if (pane === AppPaneId.Items && this.currentPane === AppPaneId.Editor) {
+      this.dismissLastPane()
+      return
+    }
+
+    if (this.currentPane !== pane) {
+      this.panes.push(pane)
+    }
+  }
+
+  dismissLastPane = (): AppPaneId | undefined => {
+    return this.panes.pop()
   }
 
   toggleListPane = () => {

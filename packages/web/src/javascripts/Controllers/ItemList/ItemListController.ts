@@ -39,6 +39,7 @@ import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewCon
 import { FileViewController } from '@/Components/NoteView/Controller/FileViewController'
 import { TemplateNoteViewAutofocusBehavior } from '@/Components/NoteView/Controller/TemplateNoteViewControllerOptions'
 import { ItemsReloadSource } from './ItemsReloadSource'
+import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -246,6 +247,8 @@ export class ItemListController extends AbstractViewController implements Intern
     }
 
     await this.application.itemControllerGroup.createItemController({ note })
+
+    this.application.paneController.presentPane(AppPaneId.Editor)
 
     this.linkingController.reloadAllLinks()
 

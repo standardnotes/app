@@ -13,8 +13,6 @@ import {
   useRef,
   useState,
 } from 'react'
-import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
-import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import { classNames } from '@standardnotes/utils'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 
@@ -37,8 +35,6 @@ const getIconClass = (view: SmartView, isSelected: boolean): string => {
 }
 
 const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEditingSmartView }) => {
-  const { toggleAppPane } = useResponsiveAppPane()
-
   const [title, setTitle] = useState(view.title || '')
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -54,8 +50,7 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEdit
     await tagsState.setSelectedTag(view, 'views', {
       userTriggered: true,
     })
-    toggleAppPane(AppPaneId.Items)
-  }, [tagsState, toggleAppPane, view])
+  }, [tagsState, view])
 
   const onBlur = useCallback(() => {
     tagsState.save(view, title).catch(console.error)
