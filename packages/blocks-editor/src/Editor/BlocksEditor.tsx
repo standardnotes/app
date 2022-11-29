@@ -24,7 +24,6 @@ import FloatingLinkEditorPlugin from '../Lexical/Plugins/FloatingLinkEditorPlugi
 import {truncateString} from './Utils';
 import {SuperEditorContentId} from './Constants';
 import {classNames} from '@standardnotes/utils';
-import {EditorLineHeight} from '@standardnotes/snjs';
 import {MarkdownTransformers} from './MarkdownTransformers';
 
 type BlocksEditorProps = {
@@ -34,7 +33,6 @@ type BlocksEditorProps = {
   previewLength?: number;
   spellcheck?: boolean;
   ignoreFirstChange?: boolean;
-  lineHeight?: EditorLineHeight;
   readonly?: boolean;
 };
 
@@ -45,7 +43,6 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
   previewLength,
   spellcheck,
   ignoreFirstChange = false,
-  lineHeight,
   readonly,
 }) => {
   const [didIgnoreFirstChange, setDidIgnoreFirstChange] = useState(false);
@@ -103,7 +100,6 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
                 id={SuperEditorContentId}
                 className={classNames(
                   'ContentEditable__root overflow-y-auto',
-                  lineHeight && `leading-${lineHeight.toLowerCase()}`,
                   className,
                 )}
                 spellCheck={spellcheck}

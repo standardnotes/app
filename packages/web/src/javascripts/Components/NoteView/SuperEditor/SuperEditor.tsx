@@ -1,5 +1,12 @@
 import { WebApplication } from '@/Application/Application'
-import { ApplicationEvent, EditorLineHeight, isPayloadSourceRetrieved, PrefKey } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  classNames,
+  EditorFontSize,
+  EditorLineHeight,
+  isPayloadSourceRetrieved,
+  PrefKey,
+} from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ItemSelectionPlugin } from './Plugins/ItemSelectionPlugin/ItemSelectionPlugin'
@@ -29,6 +36,7 @@ import { SuperNoteMarkdownPreview } from './SuperNoteMarkdownPreview'
 import { ExportPlugin } from './Plugins/ExportPlugin/ExportPlugin'
 import GetMarkdownPlugin, { GetMarkdownPluginInterface } from './Plugins/GetMarkdownPlugin/GetMarkdownPlugin'
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin'
+import { getPlaintextFontSize } from '@/Utils/getPlaintextFontSize'
 
 const NotePreviewCharLimit = 160
 
@@ -81,8 +89,6 @@ export const SuperEditor: FunctionComponent<Props> = ({
     })
   }, [application])
 
-  const [lineHeight, setLineHeight] = useState<EditorLineHeight>(PrefDefaults[PrefKey.EditorLineHeight])
-
   const handleChange = useCallback(
     async (value: string, preview: string) => {
       if (ignoreNextChange.current === true) {
@@ -129,10 +135,15 @@ export const SuperEditor: FunctionComponent<Props> = ({
     return disposer
   }, [controller, controller.item.uuid])
 
+  const [lineHeight, setLineHeight] = useState<EditorLineHeight>(PrefDefaults[PrefKey.EditorLineHeight])
+  const [fontSize, setFontSize] = useState<EditorFontSize | undefined>()
+
   const reloadPreferences = useCallback(() => {
     const lineHeight = application.getPreference(PrefKey.EditorLineHeight, PrefDefaults[PrefKey.EditorLineHeight])
+    const fontSize = application.getPreference(PrefKey.EditorFontSize, PrefDefaults[PrefKey.EditorFontSize])
 
     setLineHeight(lineHeight)
+    setFontSize(fontSize)
   }, [application])
 
   useEffect(() => {
@@ -144,7 +155,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
   }, [reloadPreferences, application])
 
   return (
-    <div className="relative h-full w-full">
+    <div className="font-editor relative h-full w-full">
       <ErrorBoundary>
         <>
           <LinkingControllerProvider controller={linkingController}>
@@ -157,10 +168,13 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 <BlocksEditor
                   onChange={handleChange}
                   ignoreFirstChange={true}
-                  className="relative h-full resize-none px-6 py-4 text-base focus:shadow-none focus:outline-none"
+                  className={classNames(
+                    'relative h-full resize-none px-4 py-4 focus:shadow-none focus:outline-none',
+                    lineHeight && `leading-${lineHeight.toLowerCase()}`,
+                    fontSize ? getPlaintextFontSize(fontSize) : 'text-base',
+                  )}
                   previewLength={NotePreviewCharLimit}
                   spellcheck={spellcheck}
-                  lineHeight={lineHeight}
                 >
                   <ItemSelectionPlugin currentNote={note.current} />
                   <FilePlugin />
