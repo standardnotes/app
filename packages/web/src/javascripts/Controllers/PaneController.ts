@@ -14,12 +14,14 @@ import { log, LoggingDomain } from '@/Logging'
 const WidthForCollapsedPanel = 5
 const MinimumNavPanelWidth = PrefDefaults[PrefKey.TagsPanelWidth]
 const MinimumNotesPanelWidth = PrefDefaults[PrefKey.NotesPanelWidth]
+export type PaneComponentOptions = { userWidth?: number }
+export type PaneComponentProvider = (options: PaneComponentOptions) => JSX.Element
 
 export class PaneController extends AbstractViewController {
   isInMobileView = isMobileScreen()
   protected disposers: Disposer[] = []
   panes: AppPaneId[] = [AppPaneId.Navigation, AppPaneId.Items]
-  paneComponentsProviders: Map<AppPaneId, () => JSX.Element> = new Map()
+  paneComponentsProviders: Map<AppPaneId, PaneComponentProvider> = new Map()
 
   currentNavPanelWidth = 0
   currentItemsPanelWidth = 0
@@ -98,17 +100,17 @@ export class PaneController extends AbstractViewController {
     }
   }
 
-  setPaneComponentProvider = (pane: AppPaneId, provider: () => JSX.Element) => {
+  setPaneComponentProvider = (pane: AppPaneId, provider: PaneComponentProvider) => {
     this.paneComponentsProviders.set(pane, provider)
   }
 
-  getPaneComponent = (pane: AppPaneId) => {
+  getPaneComponent = (pane: AppPaneId, options: PaneComponentOptions = {}) => {
     const provider = this.paneComponentsProviders.get(pane)
     if (!provider) {
       throw new Error(`No provider for pane ${pane}`)
     }
 
-    return provider()
+    return provider(options)
   }
 
   get currentPane(): AppPaneId {

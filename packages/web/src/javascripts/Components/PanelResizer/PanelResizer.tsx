@@ -309,6 +309,7 @@ class PanelResizer extends Component<Props, State> {
     return (
       <div
         className={classNames(
+          'panel-resizer',
           'absolute right-0 top-0 z-panel-resizer',
           'hidden h-full w-[4px] cursor-col-resize border-y-0 bg-[color:var(--panel-resizer-background-color)] md:block',
           this.props.alwaysVisible || this.state.collapsed || this.state.pressed ? ' opacity-100' : 'opacity-0',
