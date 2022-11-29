@@ -30,6 +30,7 @@ type ResponsivePaneData = {
   panes: PaneController['panes']
   toggleAppPane: (paneId: AppPaneId) => void
   presentPane: PaneController['presentPane']
+  popToPane: PaneController['popToPane']
 }
 
 const ResponsivePaneContext = createContext<ResponsivePaneData | undefined>(undefined)
@@ -127,6 +128,7 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
       panes: paneController.panes,
       setPaneComponentProvider: paneController.setPaneComponentProvider,
       getPaneComponent: paneController.getPaneComponent,
+      popToPane: paneController.popToPane,
     }),
     [
       currentSelectedPane,
@@ -141,6 +143,7 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
       paneController.setPaneComponentProvider,
       paneController.getPaneComponent,
       paneController.presentPane,
+      paneController.popToPane,
     ],
   )
 

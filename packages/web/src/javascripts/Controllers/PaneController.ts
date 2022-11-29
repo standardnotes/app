@@ -9,6 +9,7 @@ import { WebApplication } from '@/Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { PANEL_NAME_NAVIGATION, PANEL_NAME_NOTES } from '@/Constants/Constants'
+import { log, LoggingDomain } from '@/Logging'
 
 const WidthForCollapsedPanel = 5
 const MinimumNavPanelWidth = PrefDefaults[PrefKey.TagsPanelWidth]
@@ -131,6 +132,8 @@ export class PaneController extends AbstractViewController {
   }
 
   presentPane = (pane: AppPaneId) => {
+    log(LoggingDomain.Panes, 'Presenting pane', pane)
+
     if (pane === this.currentPane) {
       return
     }
@@ -146,7 +149,23 @@ export class PaneController extends AbstractViewController {
   }
 
   dismissLastPane = (): AppPaneId | undefined => {
+    log(LoggingDomain.Panes, 'Dismissing last pane')
+
     return this.panes.pop()
+  }
+
+  popToPane = (pane: AppPaneId) => {
+    log(LoggingDomain.Panes, 'Popping to pane', pane)
+
+    let index = this.panes.length - 1
+    while (index >= 0) {
+      if (this.panes[index] === pane) {
+        break
+      }
+
+      this.dismissLastPane()
+      index--
+    }
   }
 
   toggleListPane = () => {

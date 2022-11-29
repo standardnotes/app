@@ -160,6 +160,10 @@ const NotesOptions = ({
     return <ProtectedUnauthorizedLabel />
   }
 
+  if (notes.length === 0) {
+    return null
+  }
+
   return (
     <>
       {notes.length === 1 && (

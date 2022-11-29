@@ -459,12 +459,6 @@ export class NavigationController
         .catch(console.error)
     }
 
-    const selectionHasNotChanged = this.selected_?.uuid === tag?.uuid && location === this.selectedLocation
-
-    if (selectionHasNotChanged) {
-      return
-    }
-
     this.application.paneController.presentPane(AppPaneId.Items)
 
     this.previouslySelected_ = this.selected_

@@ -39,7 +39,6 @@ import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewCon
 import { FileViewController } from '@/Components/NoteView/Controller/FileViewController'
 import { TemplateNoteViewAutofocusBehavior } from '@/Components/NoteView/Controller/TemplateNoteViewControllerOptions'
 import { ItemsReloadSource } from './ItemsReloadSource'
-import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
 
 const MinNoteCellHeight = 51.0
 const DefaultListNumNotes = 20
@@ -248,8 +247,6 @@ export class ItemListController extends AbstractViewController implements Intern
 
     await this.application.itemControllerGroup.createItemController({ note })
 
-    this.application.paneController.presentPane(AppPaneId.Editor)
-
     this.linkingController.reloadAllLinks()
 
     await this.publishCrossControllerEventSync(CrossControllerEvent.ActiveEditorChanged)
@@ -442,6 +439,7 @@ export class ItemListController extends AbstractViewController implements Intern
     const activeController = this.getActiveItemController()
 
     if (this.shouldLeaveSelectionUnchanged(activeController)) {
+      log(LoggingDomain.Selection, 'Leaving selection unchanged')
       return
     }
 
@@ -454,7 +452,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
       if (this.shouldSelectFirstItem(itemsReloadSource)) {
         log(LoggingDomain.Selection, 'Selecting next item after closing active one')
-        this.selectionController.selectNextItem()
+        this.selectionController.selectNextItem({ userTriggered: false })
       }
     } else if (activeItem && this.shouldSelectActiveItem(activeItem)) {
       log(LoggingDomain.Selection, 'Selecting active item')
@@ -463,6 +461,8 @@ export class ItemListController extends AbstractViewController implements Intern
       await this.selectFirstItem()
     } else if (this.shouldSelectNextItemOrCreateNewNote(activeItem)) {
       await this.selectNextItemOrCreateNewNote()
+    } else {
+      log(LoggingDomain.Selection, 'No selection change')
     }
   }
 

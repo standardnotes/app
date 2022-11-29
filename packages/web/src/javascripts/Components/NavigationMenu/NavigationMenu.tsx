@@ -3,14 +3,14 @@ import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 
 export const NavigationMenuButton = () => {
-  const { selectedPane, toggleAppPane } = useResponsiveAppPane()
+  const { selectedPane, toggleAppPane, popToPane } = useResponsiveAppPane()
 
   return (
     <RoundIconButton
       className="mr-3 md:hidden pointer-coarse:md-only:flex pointer-coarse:lg-only:flex"
       onClick={() => {
         if (selectedPane === AppPaneId.Items || selectedPane === AppPaneId.Editor) {
-          toggleAppPane(AppPaneId.Navigation)
+          popToPane(AppPaneId.Navigation)
         } else {
           toggleAppPane(AppPaneId.Items)
         }
