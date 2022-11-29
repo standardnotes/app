@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.114.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.114.0...@standardnotes/web@3.114.1) (2022-11-29)
+
+### Bug Fixes
+
+* Make super note styling consistent with plaintext notes ([#2068](https://github.com/standardnotes/app/issues/2068)) ([a417e5b](https://github.com/standardnotes/app/commit/a417e5ba8d3fc224b1527d0a9cfb0f25d197f9de))
+
 # [3.114.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.113.0...@standardnotes/web@3.114.0) (2022-11-28)
 
 ### Features
