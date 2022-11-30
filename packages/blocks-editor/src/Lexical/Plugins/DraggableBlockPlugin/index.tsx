@@ -69,11 +69,6 @@ function elementContainingEventLocation(
 ): {contains: ContainsPointReturn; element: HTMLElement} {
   const anchorElementRect = anchorElem.getBoundingClientRect();
 
-  /* const x =
-    event instanceof MouseEvent ? event.clientX : event.touches[0].clientX;
-  const y =
-    event instanceof MouseEvent ? event.clientY : event.touches[0].clientY; */
-
   const elementDomRect = Rect.fromDOM(element);
   const {marginTop, marginBottom} = window.getComputedStyle(element);
 
