@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.114.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.114.2...@standardnotes/web@3.114.3) (2022-11-30)
+
+### Bug Fixes
+
+* "Prevent editing" option not working correctly for Super notes ([f30d089](https://github.com/standardnotes/app/commit/f30d0898ec629c392472311a6eeb418764ed9013))
+
 ## [3.114.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.114.1...@standardnotes/web@3.114.2) (2022-11-30)
 
 ### Bug Fixes
