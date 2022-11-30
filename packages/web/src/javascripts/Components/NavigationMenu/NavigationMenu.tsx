@@ -1,8 +1,8 @@
-import { PaneLayout } from '@/Controllers/PaneLayout'
+import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 import useIsTabletOrMobileScreen from '@/Hooks/useIsTabletOrMobileScreen'
 import { classNames } from '@standardnotes/snjs'
 import RoundIconButton from '../Button/RoundIconButton'
-import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 
 /** This button is displayed in the items list header */
 export const NavigationMenuButton = () => {

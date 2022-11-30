@@ -12,7 +12,7 @@ import {
   MutableRefObject,
 } from 'react'
 import { AppPaneId } from './AppPaneMetadata'
-import { PaneController } from '../../Controllers/PaneController'
+import { PaneController } from '../../Controllers/PaneController/PaneController'
 import { observer } from 'mobx-react-lite'
 
 type ResponsivePaneData = {

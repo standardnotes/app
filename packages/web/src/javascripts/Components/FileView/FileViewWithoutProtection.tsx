@@ -9,7 +9,7 @@ import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 import Popover from '../Popover/Popover'
 import FilePreviewInfoPanel from '../FilePreview/FilePreviewInfoPanel'
-import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
+import { useFileDragNDrop } from '../FileDragNDropProvider'
 import RoundIconButton from '../Button/RoundIconButton'
 
 const SyncTimeoutNoDebounceMs = 100

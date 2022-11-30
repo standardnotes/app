@@ -1,8 +1,8 @@
 import { TOGGLE_LIST_PANE_KEYBOARD_COMMAND, TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND } from '@standardnotes/ui-services'
 import { useMemo } from 'react'
 import { observer } from 'mobx-react-lite'
-import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
-import { useCommandService } from '../ApplicationView/CommandProvider'
+import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
+import { useCommandService } from '../CommandProvider'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 
 const PanelSettingsSection = () => {

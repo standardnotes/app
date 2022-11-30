@@ -5,7 +5,7 @@ import Icon from '@/Components/Icon/Icon'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { classNames } from '@standardnotes/utils'
 import { keyboardStringForShortcut, PIN_NOTE_COMMAND } from '@standardnotes/ui-services'
-import { useCommandService } from '../ApplicationView/CommandProvider'
+import { useCommandService } from '../CommandProvider'
 
 type Props = {
   className?: string

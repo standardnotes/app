@@ -20,14 +20,14 @@ import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu
 import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsModalWrapper'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import TagContextMenuWrapper from '@/Components/Tags/TagContextMenuWrapper'
-import FileDragNDropProvider from '../FileDragNDropProvider/FileDragNDropProvider'
-import ResponsivePaneProvider from '../ResponsivePane/ResponsivePaneProvider'
+import FileDragNDropProvider from '../FileDragNDropProvider'
+import ResponsivePaneProvider from '../Panes/ResponsivePaneProvider'
 import AndroidBackHandlerProvider from '@/NativeMobileWeb/useAndroidBackHandler'
 import ConfirmDeleteAccountContainer from '@/Components/ConfirmDeleteAccountModal/ConfirmDeleteAccountModal'
 import DarkModeHandler from '../DarkModeHandler/DarkModeHandler'
-import ApplicationProvider from './ApplicationProvider'
-import CommandProvider from './CommandProvider'
-import PanesGrid from './PanesGrid'
+import ApplicationProvider from '../ApplicationProvider'
+import CommandProvider from '../CommandProvider'
+import PanesSystemComponent from '../Panes/PanesSystemComponent'
 
 type Props = {
   application: WebApplication
@@ -208,7 +208,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                   featuresController={viewControllerManager.featuresController}
                   filesController={viewControllerManager.filesController}
                 >
-                  <PanesGrid />
+                  <PanesSystemComponent />
                 </FileDragNDropProvider>
 
                 <>

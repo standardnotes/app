@@ -23,7 +23,7 @@ import {
 } from './Plugins/ChangeContentCallback/ChangeContentCallback'
 import PasswordPlugin from './Plugins/PasswordPlugin/PasswordPlugin'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { useCommandService } from '@/Components/ApplicationView/CommandProvider'
+import { useCommandService } from '@/Components/CommandProvider'
 import { SUPER_SHOW_MARKDOWN_PREVIEW } from '@standardnotes/ui-services'
 import { SuperNoteMarkdownPreview } from './SuperNoteMarkdownPreview'
 import { ExportPlugin } from './Plugins/ExportPlugin/ExportPlugin'

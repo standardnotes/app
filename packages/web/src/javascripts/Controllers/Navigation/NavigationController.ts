@@ -25,7 +25,7 @@ import { CrossControllerEvent } from '../CrossControllerEvent'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { Persistable } from '../Abstract/Persistable'
 import { TagListSectionType } from '@/Components/Tags/TagListSection'
-import { PaneLayout } from '../PaneLayout'
+import { PaneLayout } from '../PaneController/PaneLayout'
 
 export class NavigationController
   extends AbstractViewController

@@ -2,7 +2,7 @@ import { FilesController } from '@/Controllers/FilesController'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { SNNote } from '@standardnotes/snjs'
 import { useEffect } from 'react'
-import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
+import { useFileDragNDrop } from '../FileDragNDropProvider'
 
 type Props = {
   note: SNNote

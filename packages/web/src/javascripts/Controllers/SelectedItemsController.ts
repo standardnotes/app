@@ -19,7 +19,7 @@ import { AbstractViewController } from './Abstract/AbstractViewController'
 import { Persistable } from './Abstract/Persistable'
 import { CrossControllerEvent } from './CrossControllerEvent'
 import { ItemListController } from './ItemList/ItemListController'
-import { PaneLayout } from './PaneLayout'
+import { PaneLayout } from './PaneController/PaneLayout'
 
 export class SelectedItemsController
   extends AbstractViewController

@@ -1,6 +1,6 @@
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import MenuItem from '../Menu/MenuItem'
-import { useApplication } from '../ApplicationView/ApplicationProvider'
+import { useApplication } from '../ApplicationProvider'
 import { FileBackupRecord, FileItem } from '@standardnotes/snjs'
 import { dateToStringStyle1 } from '@/Utils/DateUtils'
 

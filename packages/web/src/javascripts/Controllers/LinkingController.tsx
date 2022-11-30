@@ -1,7 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { PopoverFileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewController'
-import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
+import { AppPaneId } from '@/Components/Panes/AppPaneMetadata'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
 import { ItemLink } from '@/Utils/Items/Search/ItemLink'

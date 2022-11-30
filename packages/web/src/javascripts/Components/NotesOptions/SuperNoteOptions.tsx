@@ -6,7 +6,7 @@ import {
   SUPER_EXPORT_MARKDOWN,
 } from '@standardnotes/ui-services'
 import { useRef, useState } from 'react'
-import { useCommandService } from '../ApplicationView/CommandProvider'
+import { useCommandService } from '../CommandProvider'
 import Icon from '../Icon/Icon'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 import Menu from '../Menu/Menu'

@@ -1,4 +1,4 @@
-import { AppPaneId } from './../Components/ResponsivePane/AppPaneMetadata'
+import { AppPaneId } from '../../Components/Panes/AppPaneMetadata'
 import { isMobileScreen, isTabletScreen } from '@/Utils'
 import { PaneLayout } from './PaneLayout'
 

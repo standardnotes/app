@@ -1,9 +1,9 @@
-import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
-import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { AppPaneId } from '../Panes/AppPaneMetadata'
+import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { classNames, IconType } from '@standardnotes/snjs'
 import RoundIconButton from '../Button/RoundIconButton'
 import useIsTabletOrMobileScreen from '@/Hooks/useIsTabletOrMobileScreen'
-import { PaneLayout } from '@/Controllers/PaneLayout'
+import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 
 const MobileItemsListButton = () => {
   const { panes, replacePanes, setPaneLayout } = useResponsiveAppPane()

@@ -20,7 +20,7 @@ import {
   useState,
 } from 'react'
 import { classNames } from '@standardnotes/utils'
-import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
+import { useFileDragNDrop } from '../FileDragNDropProvider'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { TagListSectionType } from './TagListSection'
 import { log, LoggingDomain } from '@/Logging'

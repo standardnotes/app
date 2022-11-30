@@ -19,7 +19,7 @@ import { KeyboardKey } from '@standardnotes/ui-services'
 import { ElementIds } from '@/Constants/ElementIDs'
 import Menu from '../Menu/Menu'
 import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
-import { useApplication } from '../ApplicationView/ApplicationProvider'
+import { useApplication } from '../ApplicationProvider'
 
 type Props = {
   linkingController: LinkingController

@@ -9,15 +9,15 @@ import { usePrevious } from '../ContentListView/Calendar/usePrevious'
 import ContentListView from '../ContentListView/ContentListView'
 import NoteGroupView from '../NoteGroupView/NoteGroupView'
 import PanelResizer, { PanelResizeType, PanelSide, ResizeFinishCallback } from '../PanelResizer/PanelResizer'
-import { AppPaneId, AppPaneIdToDivId } from '../ResponsivePane/AppPaneMetadata'
-import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { AppPaneId, AppPaneIdToDivId } from './AppPaneMetadata'
+import { useResponsiveAppPane } from './ResponsivePaneProvider'
 import Navigation from '../Tags/Navigation'
-import { useApplication } from './ApplicationProvider'
+import { useApplication } from '../ApplicationProvider'
 import {
   animatePaneEntranceTransitionFromOffscreenToTheRight,
   animatePaneExitTransitionOffscreenToTheRight,
-} from '@/Components/ApplicationView/PaneAnimator'
-import { isPanesChangeLeafDismiss, isPanesChangePush } from '@/Controllers/panesForLayout'
+} from '@/Components/Panes/PaneAnimator'
+import { isPanesChangeLeafDismiss, isPanesChangePush } from '@/Controllers/PaneController/panesForLayout'
 import { log, LoggingDomain } from '@/Logging'
 
 const NAVIGATION_PANEL_MIN_WIDTH = 45
@@ -25,7 +25,7 @@ const ITEMS_PANEL_MIN_WIDTH = 200
 const PLACEHOLDER_NAVIGATION_PANEL_WIDTH = 220
 const PLACEHOLDER_NOTES_PANEL_WIDTH = 440
 
-const PanesGrid = () => {
+const PanesSystemComponent = () => {
   const application = useApplication()
   const isTabletOrMobileScreenWrapped = useIsTabletOrMobileScreen()
   const { isTabletOrMobile, isTablet, isMobile } = isTabletOrMobileScreenWrapped
@@ -330,4 +330,4 @@ const PanesGrid = () => {
   )
 }
 
-export default observer(PanesGrid)
+export default observer(PanesSystemComponent)
