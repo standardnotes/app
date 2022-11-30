@@ -20,6 +20,7 @@ const ImagePreview: FunctionComponent<Props> = ({
   imageZoomLevel,
   setImageZoomLevel,
 }) => {
+  const [imageWidth, setImageWidth] = useState(0)
   const [imageHeight, setImageHeight] = useState<number>(0)
   const [imageZoomPercent, setImageZoomPercent] = useState(imageZoomLevel ? imageZoomLevel : DefaultZoomPercent)
   const [isZoomInputVisible, setIsZoomInputVisible] = useState(false)
@@ -40,24 +41,26 @@ const ImagePreview: FunctionComponent<Props> = ({
     const image = new Image()
     image.src = objectUrl
     image.onload = () => {
+      setImageWidth(image.width)
       setImageHeight(image.height)
     }
   }, [objectUrl])
 
-  const heightIfEmbedded = imageHeight * (imageZoomPercent / PercentageDivisor)
+  const widthIfEmbedded = imageWidth * (imageZoomPercent / PercentageDivisor)
 
   return (
     <div className="group flex h-full min-h-0 w-full items-center justify-center">
       <div
         className="relative flex h-full w-full items-center justify-center overflow-auto"
         style={{
-          height: isEmbeddedInSuper ? `${heightIfEmbedded}px` : '',
+          width: isEmbeddedInSuper ? `${widthIfEmbedded}px` : '',
+          aspectRatio: isEmbeddedInSuper ? `${imageWidth} / ${imageHeight}` : '',
         }}
       >
         <img
           src={objectUrl}
           style={{
-            height: isEmbeddedInSuper ? `${heightIfEmbedded}px` : `${imageZoomPercent}%`,
+            height: isEmbeddedInSuper ? '100%' : `${imageZoomPercent}%`,
             ...(isEmbeddedInSuper
               ? {}
               : imageZoomPercent <= DefaultZoomPercent
