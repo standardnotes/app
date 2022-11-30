@@ -463,7 +463,6 @@ function useDraggableBlockMenu(
 
       const dragData = dragDataRef.current || '';
       const draggedNode = $getNodeByKey(dragData);
-      console.log(draggedNode);
       if (!draggedNode) {
         return;
       }
@@ -473,17 +472,14 @@ function useDraggableBlockMenu(
         editor,
         new Point(pageX, pageY),
       );
-      console.log(targetBlockElem);
       if (!targetBlockElem) {
         return;
       }
       const targetNode = $getNearestNodeFromDOMNode(targetBlockElem);
-      console.log(targetNode);
 
       if (!targetNode) {
         return;
       }
-      console.log(targetNode === draggedNode);
       if (targetNode === draggedNode) {
         return;
       }
