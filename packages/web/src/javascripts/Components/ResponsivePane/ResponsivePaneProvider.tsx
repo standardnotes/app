@@ -22,8 +22,6 @@ type ResponsivePaneData = {
   toggleNavigationPane: () => void
   isListPaneCollapsed: boolean
   isNavigationPaneCollapsed: boolean
-  setPaneComponentProvider: PaneController['setPaneComponentProvider']
-  getPaneComponent: PaneController['getPaneComponent']
   panes: PaneController['panes']
   toggleAppPane: (paneId: AppPaneId) => void
   presentPane: PaneController['presentPane']
@@ -34,6 +32,7 @@ type ResponsivePaneData = {
   insertPaneAtIndex: PaneController['insertPaneAtIndex']
   setPaneLayout: PaneController['setPaneLayout']
   animatingEntraceOfPanes: PaneController['animatingEntraceOfPanes']
+  paneComponentsProviders: PaneController['paneComponentsProviders']
 }
 
 const ResponsivePaneContext = createContext<ResponsivePaneData | undefined>(undefined)
@@ -121,8 +120,6 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
       toggleListPane: paneController.toggleListPane,
       toggleNavigationPane: paneController.toggleNavigationPane,
       panes: paneController.panes,
-      setPaneComponentProvider: paneController.setPaneComponentProvider,
-      getPaneComponent: paneController.getPaneComponent,
       popToPane: paneController.popToPane,
       dismissLastPane: paneController.dismissLastPane,
       replacePanes: paneController.replacePanes,
@@ -130,6 +127,7 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
       insertPaneAtIndex: paneController.insertPaneAtIndex,
       setPaneLayout: paneController.setPaneLayout,
       animatingEntraceOfPanes: paneController.animatingEntraceOfPanes,
+      paneComponentsProviders: paneController.paneComponentsProviders,
     }),
     [
       currentSelectedPane,
@@ -139,8 +137,6 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
       paneController.isNavigationPaneCollapsed,
       paneController.toggleListPane,
       paneController.toggleNavigationPane,
-      paneController.setPaneComponentProvider,
-      paneController.getPaneComponent,
       paneController.presentPane,
       paneController.popToPane,
       paneController.dismissLastPane,
@@ -149,6 +145,7 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
       paneController.insertPaneAtIndex,
       paneController.setPaneLayout,
       paneController.animatingEntraceOfPanes,
+      paneController.paneComponentsProviders,
     ],
   )
 

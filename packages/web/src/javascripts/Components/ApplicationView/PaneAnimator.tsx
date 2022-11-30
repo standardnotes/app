@@ -19,7 +19,7 @@ export async function animatePaneEntranceTransitionFromOffscreenToTheRight(eleme
     {
       duration: 400,
       easing: 'ease-in-out',
-      fill: 'backwards',
+      fill: 'forwards',
     },
   )
 
