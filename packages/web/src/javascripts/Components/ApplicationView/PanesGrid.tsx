@@ -21,10 +21,6 @@ import {
 import { isPanesChangeLeafDismiss, isPanesChangePush } from '@/Controllers/panesForLayout'
 import { log, LoggingDomain } from '@/Logging'
 
-const BaseStyles: React.CSSProperties = {
-  gridTemplateRows: 'auto',
-}
-
 const PanesGrid = () => {
   const application = useApplication()
   const isTabletOrMobileScreenWrapped = useIsTabletOrMobileScreen()
@@ -167,7 +163,7 @@ const PanesGrid = () => {
       }
     } else if (numPanes === 2) {
       return {
-        gridTemplateColumns: 'auto 2fr',
+        gridTemplateColumns: '1fr 2fr',
       }
     } else if (numPanes === 3) {
       return {
@@ -193,7 +189,7 @@ const PanesGrid = () => {
       return 'w-full'
     }
 
-    return 'grid flex flex-row'
+    return 'grid'
   }
 
   const renderPanesWithPendingExit = [...renderPanes, ...panesPendingExit]
@@ -201,11 +197,7 @@ const PanesGrid = () => {
   log(LoggingDomain.Panes, 'Rendering panes', renderPanesWithPendingExit)
 
   return (
-    <div
-      id="app"
-      className={`app ${computeClassesForContainer()}`}
-      style={{ ...BaseStyles, ...computeStylesForContainer() }}
-    >
+    <div id="app" className={`app ${computeClassesForContainer()}`} style={{ ...computeStylesForContainer() }}>
       {renderPanesWithPendingExit.map((pane) => {
         const isPendingEntrance = panesPendingEntrance?.includes(pane)
 
