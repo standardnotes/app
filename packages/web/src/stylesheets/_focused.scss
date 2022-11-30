@@ -5,6 +5,10 @@
       padding-top: 35px;
     }
 
+    .app {
+      transition: grid-template-columns 0.25s;
+    }
+
     .mac-desktop #editor-column:before {
       content: '';
       display: block;

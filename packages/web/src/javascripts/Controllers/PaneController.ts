@@ -1,4 +1,8 @@
-import { TOGGLE_LIST_PANE_KEYBOARD_COMMAND, TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND } from '@standardnotes/ui-services'
+import {
+  TOGGLE_FOCUS_MODE_COMMAND,
+  TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
+  TOGGLE_NAVIGATION_PANE_KEYBOARD_COMMAND,
+} from '@standardnotes/ui-services'
 import { ApplicationEvent, InternalEventBus, PrefKey, removeFromArray } from '@standardnotes/snjs'
 import { AppPaneId } from './../Components/ResponsivePane/AppPaneMetadata'
 import { isMobileScreen } from '@/Utils'
@@ -14,6 +18,9 @@ import { panesForLayout } from './panesForLayout'
 
 const MinimumNavPanelWidth = PrefDefaults[PrefKey.TagsPanelWidth]
 const MinimumNotesPanelWidth = PrefDefaults[PrefKey.NotesPanelWidth]
+const FOCUS_MODE_CLASS_NAME = 'focus-mode'
+const DISABLING_FOCUS_MODE_CLASS_NAME = 'disable-focus-mode'
+const FOCUS_MODE_ANIMATION_DURATION = 1255
 
 export class PaneController extends AbstractViewController {
   isInMobileView = isMobileScreen()
@@ -22,6 +29,7 @@ export class PaneController extends AbstractViewController {
 
   currentNavPanelWidth = 0
   currentItemsPanelWidth = 0
+  focusModeEnabled = false
 
   constructor(application: WebApplication, eventBus: InternalEventBus) {
     super(application, eventBus)
@@ -31,6 +39,7 @@ export class PaneController extends AbstractViewController {
       isInMobileView: observable,
       currentNavPanelWidth: observable,
       currentItemsPanelWidth: observable,
+      focusModeEnabled: observable,
 
       currentPane: computed,
       previousPane: computed,
@@ -49,6 +58,7 @@ export class PaneController extends AbstractViewController {
       removePane: action,
       insertPaneAtIndex: action,
       setPaneLayout: action,
+      setFocusModeEnabled: action,
     })
 
     this.setCurrentNavPanelWidth(application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
@@ -67,6 +77,14 @@ export class PaneController extends AbstractViewController {
         this.setCurrentItemsPanelWidth(application.getPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
       }, ApplicationEvent.PreferencesChanged),
 
+      application.keyboardService.addCommandHandler({
+        command: TOGGLE_FOCUS_MODE_COMMAND,
+        onKeyDown: (event) => {
+          event.preventDefault()
+          this.setFocusModeEnabled(!this.focusModeEnabled)
+          return true
+        },
+      }),
       application.keyboardService.addCommandHandler({
         command: TOGGLE_LIST_PANE_KEYBOARD_COMMAND,
         onKeyDown: (event) => {
@@ -209,5 +227,23 @@ export class PaneController extends AbstractViewController {
 
   get isNavigationPaneCollapsed() {
     return !this.panes.includes(AppPaneId.Navigation)
+  }
+
+  setFocusModeEnabled = (enabled: boolean): void => {
+    this.focusModeEnabled = enabled
+
+    if (enabled) {
+      document.body.classList.add(FOCUS_MODE_CLASS_NAME)
+      return
+    }
+
+    if (document.body.classList.contains(FOCUS_MODE_CLASS_NAME)) {
+      document.body.classList.add(DISABLING_FOCUS_MODE_CLASS_NAME)
+      document.body.classList.remove(FOCUS_MODE_CLASS_NAME)
+
+      setTimeout(() => {
+        document.body.classList.remove(DISABLING_FOCUS_MODE_CLASS_NAME)
+      }, FOCUS_MODE_ANIMATION_DURATION)
+    }
   }
 }

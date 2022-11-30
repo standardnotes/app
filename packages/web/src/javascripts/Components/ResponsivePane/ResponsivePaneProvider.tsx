@@ -30,8 +30,7 @@ type ResponsivePaneData = {
   removePane: PaneController['removePane']
   insertPaneAtIndex: PaneController['insertPaneAtIndex']
   setPaneLayout: PaneController['setPaneLayout']
-  animatingEntraceOfPanes: PaneController['animatingEntraceOfPanes']
-  paneComponentsProviders: PaneController['paneComponentsProviders']
+  focusModeEnabled: PaneController['focusModeEnabled']
 }
 
 const ResponsivePaneContext = createContext<ResponsivePaneData | undefined>(undefined)
@@ -114,8 +113,7 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
       removePane: paneController.removePane,
       insertPaneAtIndex: paneController.insertPaneAtIndex,
       setPaneLayout: paneController.setPaneLayout,
-      animatingEntraceOfPanes: paneController.animatingEntraceOfPanes,
-      paneComponentsProviders: paneController.paneComponentsProviders,
+      focusModeEnabled: paneController.focusModeEnabled,
     }),
     [
       currentSelectedPane,
@@ -132,8 +130,7 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
       paneController.removePane,
       paneController.insertPaneAtIndex,
       paneController.setPaneLayout,
-      paneController.animatingEntraceOfPanes,
-      paneController.paneComponentsProviders,
+      paneController.focusModeEnabled,
     ],
   )
 

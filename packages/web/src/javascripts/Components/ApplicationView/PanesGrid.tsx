@@ -183,26 +183,40 @@ const PanesGrid = () => {
       return {}
     }
 
-    if (numPanes === 1) {
-      return {
-        gridTemplateColumns: 'auto',
-      }
-    } else if (numPanes === 2) {
-      if (isTablet) {
+    switch (numPanes) {
+      case 1: {
         return {
-          gridTemplateColumns: '1fr 2fr',
-        }
-      } else {
-        return {
-          gridTemplateColumns: `${navigationPanelWidth}px auto`,
+          gridTemplateColumns: 'auto',
         }
       }
-    } else if (numPanes === 3) {
-      return {
-        gridTemplateColumns: `${navigationPanelWidth}px ${itemsPanelWidth}px 2fr`,
+      case 2: {
+        if (paneController.focusModeEnabled) {
+          return {
+            gridTemplateColumns: '0 1fr',
+          }
+        }
+        if (isTablet) {
+          return {
+            gridTemplateColumns: '1fr 2fr',
+          }
+        } else {
+          return {
+            gridTemplateColumns: `${navigationPanelWidth}px auto`,
+          }
+        }
       }
-    } else {
-      return {}
+      case 3: {
+        if (paneController.focusModeEnabled) {
+          return {
+            gridTemplateColumns: '0 0 1fr',
+          }
+        }
+        return {
+          gridTemplateColumns: `${navigationPanelWidth}px ${itemsPanelWidth}px 2fr`,
+        }
+      }
+      default:
+        return {}
     }
   }
 
