@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.103.0](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.114.2...@standardnotes/desktop@3.103.0) (2022-11-30)
+
+### Features
+
+* screen presentation and dismiss animations for mobile ([#2073](https://github.com/standardnotes/app/issues/2073)) ([7f2074a](https://github.com/standardnotes/app/commit/7f2074a6ec59068f75dae76d31721d65e61c9673))
+
 ## [3.102.18](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.102.17...@standardnotes/desktop@3.102.18) (2022-11-30)
 
 **Note:** Version bump only for package @standardnotes/desktop
