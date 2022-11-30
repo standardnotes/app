@@ -37,6 +37,7 @@ import { ExportPlugin } from './Plugins/ExportPlugin/ExportPlugin'
 import GetMarkdownPlugin, { GetMarkdownPluginInterface } from './Plugins/GetMarkdownPlugin/GetMarkdownPlugin'
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin'
 import { getPlaintextFontSize } from '@/Utils/getPlaintextFontSize'
+import ReadonlyPlugin from './Plugins/ReadonlyPlugin/ReadonlyPlugin'
 
 const NotePreviewCharLimit = 160
 
@@ -190,6 +191,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                   <NodeObserverPlugin nodeType={BubbleNode} onRemove={handleBubbleRemove} />
                   <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
                   <ExportPlugin />
+                  <ReadonlyPlugin note={note.current} />
                   {controller.isTemplateNote ? <AutoFocusPlugin /> : null}
                 </BlocksEditor>
               </BlocksEditorComposer>
