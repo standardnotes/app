@@ -109,7 +109,6 @@ function elementContainingEventLocation(
 function getBlockElement(
   anchorElem: HTMLElement,
   editor: LexicalEditor,
-  // event: MouseEvent | TouchEvent,
   eventLocation: Point,
 ): HTMLElement | null {
   const topLevelNodeKeys = getTopLevelNodeKeys(editor);
