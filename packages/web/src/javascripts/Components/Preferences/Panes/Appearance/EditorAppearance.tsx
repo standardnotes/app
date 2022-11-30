@@ -3,7 +3,7 @@ import Dropdown from '@/Components/Dropdown/Dropdown'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { EditorFontSize, PrefKey } from '@standardnotes/snjs'
+import { EditorFontSize, EditorLineHeight, PrefKey } from '@standardnotes/snjs'
 import { useMemo, useState } from 'react'
 import { Subtitle, Title, Text } from '../../PreferencesComponents/Content'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
@@ -13,7 +13,25 @@ type Props = {
   application: WebApplication
 }
 
-const PlaintextDefaults = ({ application }: Props) => {
+const EditorDefaults = ({ application }: Props) => {
+  const [lineHeight, setLineHeight] = useState(() =>
+    application.getPreference(PrefKey.EditorLineHeight, PrefDefaults[PrefKey.EditorLineHeight]),
+  )
+
+  const handleLineHeightChange = (value: string) => {
+    setLineHeight(value as EditorLineHeight)
+    void application.setPreference(PrefKey.EditorLineHeight, value as EditorLineHeight)
+  }
+
+  const lineHeightDropdownOptions = useMemo(
+    () =>
+      Object.values(EditorLineHeight).map((lineHeight) => ({
+        label: lineHeight,
+        value: lineHeight,
+      })),
+    [],
+  )
+
   const [monospaceFont, setMonospaceFont] = useState(() =>
     application.getPreference(PrefKey.EditorMonospaceEnabled, PrefDefaults[PrefKey.EditorMonospaceEnabled]),
   )
@@ -41,11 +59,28 @@ const PlaintextDefaults = ({ application }: Props) => {
     [],
   )
 
+  const [marginResizers, setMarginResizers] = useState(() =>
+    application.getPreference(PrefKey.EditorResizersEnabled, PrefDefaults[PrefKey.EditorResizersEnabled]),
+  )
+
+  const toggleMarginResizers = () => {
+    setMarginResizers(!marginResizers)
+    application.setPreference(PrefKey.EditorResizersEnabled, !marginResizers).catch(console.error)
+  }
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Plaintext Note Defaults</Title>
-        <div>
+        <Title>Editor Appearance</Title>
+        <div className="mt-2">
+          <div className="flex items-center justify-between">
+            <div className="flex flex-col">
+              <Subtitle>Margin Resizers</Subtitle>
+              <Text>Allows left and right editor margins to be resized.</Text>
+            </div>
+            <Switch onChange={toggleMarginResizers} checked={marginResizers} />
+          </div>
+          <HorizontalSeparator classes="my-4" />
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <Subtitle>Monospace Font</Subtitle>
@@ -67,10 +102,24 @@ const PlaintextDefaults = ({ application }: Props) => {
               />
             </div>
           </div>
+          <HorizontalSeparator classes="my-4" />
+          <div>
+            <Subtitle>Line height</Subtitle>
+            <Text>Sets the line height (leading) in plaintext & Super notes</Text>
+            <div className="mt-2">
+              <Dropdown
+                id="def-line-height"
+                label="Select the line height for plaintext notes"
+                items={lineHeightDropdownOptions}
+                value={lineHeight}
+                onChange={handleLineHeightChange}
+              />
+            </div>
+          </div>
         </div>
       </PreferencesSegment>
     </PreferencesGroup>
   )
 }
 
-export default PlaintextDefaults
+export default EditorDefaults

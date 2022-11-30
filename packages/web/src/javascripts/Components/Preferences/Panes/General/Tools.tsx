@@ -14,15 +14,6 @@ type Props = {
 }
 
 const Tools: FunctionComponent<Props> = ({ application }: Props) => {
-  const [marginResizers, setMarginResizers] = useState(() =>
-    application.getPreference(PrefKey.EditorResizersEnabled, PrefDefaults[PrefKey.EditorResizersEnabled]),
-  )
-
-  const toggleMarginResizers = () => {
-    setMarginResizers(!marginResizers)
-    application.setPreference(PrefKey.EditorResizersEnabled, !marginResizers).catch(console.error)
-  }
-
   const [updateSavingIndicator, setUpdateSavingIndicator] = useState(() =>
     application.getPreference(PrefKey.UpdateSavingStatusIndicator, PrefDefaults[PrefKey.UpdateSavingStatusIndicator]),
   )
@@ -37,13 +28,6 @@ const Tools: FunctionComponent<Props> = ({ application }: Props) => {
       <PreferencesSegment>
         <Title>Tools</Title>
         <div>
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col">
-              <Subtitle>Margin Resizers</Subtitle>
-              <Text>Allows left and right editor margins to be resized.</Text>
-            </div>
-            <Switch onChange={toggleMarginResizers} checked={marginResizers} />
-          </div>
           <HorizontalSeparator classes="my-4" />
           <div className="flex items-center justify-between">
             <div className="flex flex-col">

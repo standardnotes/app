@@ -14,6 +14,7 @@ import PreferencesGroup from '../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../PreferencesComponents/PreferencesSegment'
 import { PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
+import EditorAppearance from './Appearance/EditorAppearance'
 
 type Props = {
   application: WebApplication
@@ -145,6 +146,7 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
           </div>
         </PreferencesSegment>
       </PreferencesGroup>
+      <EditorAppearance application={application} />
     </PreferencesPane>
   )
 }
