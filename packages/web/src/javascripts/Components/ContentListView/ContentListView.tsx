@@ -341,14 +341,16 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
             onSelect={handleDailyListSelection}
           />
         )}
+        {!dailyMode && completedFullSync && !renderedItems.length ? (
+          <p className="empty-items-list opacity-50">No items.</p>
+        ) : null}
+
+        {!dailyMode && !completedFullSync && !renderedItems.length ? (
+          <p className="empty-items-list opacity-50">Loading...</p>
+        ) : null}
+
         {!dailyMode && renderedItems.length ? (
           <>
-            {completedFullSync && !renderedItems.length ? (
-              <p className="empty-items-list opacity-50">No items.</p>
-            ) : null}
-            {!completedFullSync && !renderedItems.length ? (
-              <p className="empty-items-list opacity-50">Loading...</p>
-            ) : null}
             <ContentList
               items={renderedItems}
               selectedUuids={selectedUuids}

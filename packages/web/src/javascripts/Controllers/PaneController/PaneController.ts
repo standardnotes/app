@@ -25,7 +25,7 @@ const FOCUS_MODE_ANIMATION_DURATION = 1255
 export class PaneController extends AbstractViewController {
   isInMobileView = isMobileScreen()
   protected disposers: Disposer[] = []
-  panes: AppPaneId[] = [AppPaneId.Navigation, AppPaneId.Items]
+  panes: AppPaneId[] = [AppPaneId.Navigation, AppPaneId.Items, AppPaneId.Editor]
 
   currentNavPanelWidth = 0
   currentItemsPanelWidth = 0

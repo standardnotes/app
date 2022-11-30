@@ -23,7 +23,7 @@ import { log, LoggingDomain } from '@/Logging'
 const NAVIGATION_PANEL_MIN_WIDTH = 45
 const ITEMS_PANEL_MIN_WIDTH = 200
 const PLACEHOLDER_NAVIGATION_PANEL_WIDTH = 220
-const PLACEHOLDER_NOTES_PANEL_WIDTH = 440
+const PLACEHOLDER_NOTES_PANEL_WIDTH = 400
 
 const PanesSystemComponent = () => {
   const application = useApplication()
