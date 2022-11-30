@@ -206,7 +206,7 @@ const PanesGrid = () => {
 
   const computeClassesForPane = (_paneId: AppPaneId, isPendingEntrance: boolean): string => {
     if (isMobile) {
-      return `content h-full absolute top-0 left-0 w-full ${
+      return `content h-full absolute top-0 left-0 w-full flex flex-col ${
         isPendingEntrance ? 'translate-x-[100%]' : 'translate-x-0 '
       }`
     } else {
