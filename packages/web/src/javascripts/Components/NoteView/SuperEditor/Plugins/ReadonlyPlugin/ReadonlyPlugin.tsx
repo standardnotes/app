@@ -1,4 +1,4 @@
-import { useApplication } from '@/Components/ApplicationView/ApplicationProvider'
+import { useApplication } from '@/Components/ApplicationProvider'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { SNNote, ContentType } from '@standardnotes/snjs'
 import { useState, useEffect } from 'react'
