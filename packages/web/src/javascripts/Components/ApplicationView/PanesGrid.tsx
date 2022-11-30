@@ -1,6 +1,5 @@
-import { PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
+import { PANEL_NAME_NAVIGATION, PANEL_NAME_NOTES } from '@/Constants/Constants'
 import { ElementIds } from '@/Constants/ElementIDs'
-import { PaneComponentOptions } from '@/Controllers/PaneController'
 import useIsTabletOrMobileScreen from '@/Hooks/useIsTabletOrMobileScreen'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import { ApplicationEvent, classNames, PrefKey } from '@standardnotes/snjs'
@@ -22,6 +21,7 @@ import { isPanesChangeLeafDismiss, isPanesChangePush } from '@/Controllers/panes
 import { log, LoggingDomain } from '@/Logging'
 
 const PLACEHOLDER_NAVIGATION_PANEL_WIDTH = 220
+const PLACEHOLDER_NOTES_PANEL_WIDTH = 440
 
 const PanesGrid = () => {
   const application = useApplication()
@@ -41,7 +41,13 @@ const PanesGrid = () => {
     application.getPreference(PrefKey.TagsPanelWidth, PLACEHOLDER_NAVIGATION_PANEL_WIDTH),
   )
   const [navigationRef, setNavigationRef] = useState<HTMLDivElement | null>(null)
-  const [showNavigationPanelResizer, setShowNavigationPanelResizer] = useState(false)
+
+  const [itemsPanelWidth, setItemsPanelWidth] = useState<number>(
+    application.getPreference(PrefKey.NotesPanelWidth, PLACEHOLDER_NOTES_PANEL_WIDTH),
+  )
+  const [listRef, setListRef] = useState<HTMLDivElement | null>(null)
+
+  const showPanelResizers = !isTabletOrMobile
 
   const [_editorRef, setEditorRef] = useState<HTMLDivElement | null>(null)
 
@@ -132,25 +138,27 @@ const PanesGrid = () => {
     setNavigationPanelWidth(width)
   }, [])
 
+  const itemsPanelResizeWidthChangeCallback = useCallback((width: number) => {
+    setItemsPanelWidth(width)
+  }, [])
+
+  const handleInitialItemsListPanelWidthLoad = useCallback((width: number) => {
+    setItemsPanelWidth(width)
+  }, [])
+
   const navigationPanelResizeFinishCallback: ResizeFinishCallback = useCallback(
     (width, _lastLeft, _isMaxWidth, isCollapsed) => {
-      application.setPreference(PrefKey.TagsPanelWidth, width).catch(console.error)
-      application.publishPanelDidResizeEvent(PANEL_NAME_NAVIGATION, isCollapsed)
+      application.publishPanelDidResizeEvent(PANEL_NAME_NAVIGATION, width, isCollapsed)
     },
     [application],
   )
 
-  useEffect(() => {
-    const showNavPanelResizer = !isTabletOrMobile && navigationRef != null
-    if (showNavPanelResizer === showNavigationPanelResizer) {
-      return
-    }
-
-    setShowNavigationPanelResizer(showNavPanelResizer)
-    if (!showNavPanelResizer && navigationRef) {
-      navigationRef.style.removeProperty('width')
-    }
-  }, [navigationRef, isTabletOrMobile, showNavigationPanelResizer])
+  const itemsPanelResizeFinishCallback: ResizeFinishCallback = useCallback(
+    (width, _lastLeft, _isMaxWidth, isCollapsed) => {
+      application.publishPanelDidResizeEvent(PANEL_NAME_NOTES, width, isCollapsed)
+    },
+    [application],
+  )
 
   useEffect(() => {
     if (isTablet && !previousIsTabletOrMobileWrapped?.isTablet) {
@@ -189,7 +197,7 @@ const PanesGrid = () => {
       }
     } else if (numPanes === 3) {
       return {
-        gridTemplateColumns: `${navigationPanelWidth}px 1fr 2fr`,
+        gridTemplateColumns: `${navigationPanelWidth}px ${itemsPanelWidth}px 2fr`,
       }
     } else {
       return {}
@@ -223,33 +231,30 @@ const PanesGrid = () => {
       {renderPanesWithPendingExit.map((pane) => {
         const isPendingEntrance = panesPendingEntrance?.includes(pane)
 
-        const options: PaneComponentOptions = {
-          userWidth: pane === AppPaneId.Navigation ? navigationPanelWidth : undefined,
-          className: computeClassesForPane(pane, isPendingEntrance ?? false),
-        }
+        const className = computeClassesForPane(pane, isPendingEntrance ?? false)
 
         if (pane === AppPaneId.Navigation) {
           return (
             <Navigation
               id={ElementIds.NavigationColumn}
               ref={setNavigationRef}
-              className={classNames(options.className, isTabletOrMobile ? 'w-full' : '')}
+              className={classNames(className, isTabletOrMobile ? 'w-full' : '')}
               key="navigation-pane"
               application={application}
             >
-              {showNavigationPanelResizer && navigationRef && (
+              {showPanelResizers && navigationRef && (
                 <PanelResizer
                   collapsable={true}
-                  defaultWidth={150}
-                  panel={navigationRef}
-                  modifyElementWidth={false}
+                  defaultWidth={navigationPanelWidth}
                   hoverable={true}
+                  left={0}
+                  modifyElementWidth={false}
+                  panel={navigationRef}
+                  resizeFinishCallback={navigationPanelResizeFinishCallback}
                   side={PanelSide.Right}
                   type={PanelResizeType.WidthOnly}
-                  resizeFinishCallback={navigationPanelResizeFinishCallback}
-                  width={options.userWidth ?? 0}
+                  width={navigationPanelWidth}
                   widthEventCallback={navigationPanelResizeWidthChangeCallback}
-                  left={0}
                 />
               )}
             </Navigation>
@@ -258,9 +263,11 @@ const PanesGrid = () => {
           return (
             <ContentListView
               id={ElementIds.ItemsColumn}
-              className={options.className}
+              className={className}
+              ref={setListRef}
               key={'content-list-view'}
               application={application}
+              onPanelWidthLoad={handleInitialItemsListPanelWidthLoad}
               accountMenuController={viewControllerManager.accountMenuController}
               filesController={viewControllerManager.filesController}
               itemListController={viewControllerManager.itemListController}
@@ -270,7 +277,23 @@ const PanesGrid = () => {
               selectionController={viewControllerManager.selectionController}
               searchOptionsController={viewControllerManager.searchOptionsController}
               linkingController={viewControllerManager.linkingController}
-            />
+            >
+              {showPanelResizers && listRef && (
+                <PanelResizer
+                  collapsable={true}
+                  defaultWidth={itemsPanelWidth}
+                  hoverable={true}
+                  left={0}
+                  modifyElementWidth={false}
+                  panel={listRef}
+                  resizeFinishCallback={itemsPanelResizeFinishCallback}
+                  side={PanelSide.Right}
+                  type={PanelResizeType.WidthOnly}
+                  width={itemsPanelWidth}
+                  widthEventCallback={itemsPanelResizeWidthChangeCallback}
+                />
+              )}
+            </ContentListView>
           )
         } else if (pane === AppPaneId.Editor) {
           return (
@@ -278,7 +301,7 @@ const PanesGrid = () => {
               <NoteGroupView
                 id={ElementIds.EditorColumn}
                 innerRef={(ref) => setEditorRef(ref)}
-                className={options.className}
+                className={className}
                 application={application}
               />
             </ErrorBoundary>

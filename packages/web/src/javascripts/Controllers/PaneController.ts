@@ -16,19 +16,14 @@ import { panesForLayout } from './panesForLayout'
 const WidthForCollapsedPanel = 5
 const MinimumNavPanelWidth = PrefDefaults[PrefKey.TagsPanelWidth]
 const MinimumNotesPanelWidth = PrefDefaults[PrefKey.NotesPanelWidth]
-export type PaneComponentOptions = { userWidth?: number; className?: string }
-export type PaneComponentProvider = (options: PaneComponentOptions) => JSX.Element
 
 export class PaneController extends AbstractViewController {
   isInMobileView = isMobileScreen()
   protected disposers: Disposer[] = []
   panes: AppPaneId[] = [AppPaneId.Navigation, AppPaneId.Items]
-  paneComponentsProviders: Map<AppPaneId, PaneComponentProvider> = new Map()
 
   currentNavPanelWidth = 0
   currentItemsPanelWidth = 0
-
-  animatingEntraceOfPanes: AppPaneId[] = []
 
   constructor(application: WebApplication, eventBus: InternalEventBus) {
     super(application, eventBus)
@@ -38,8 +33,6 @@ export class PaneController extends AbstractViewController {
       isInMobileView: observable,
       currentNavPanelWidth: observable,
       currentItemsPanelWidth: observable,
-      animatingEntraceOfPanes: observable,
-      paneComponentsProviders: observable,
 
       currentPane: computed,
       previousPane: computed,
@@ -196,26 +189,20 @@ export class PaneController extends AbstractViewController {
     const currentItemsPanelWidth = this.application.getPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth)
 
     const isCollapsed = currentItemsPanelWidth <= WidthForCollapsedPanel
-    if (isCollapsed) {
-      void this.application.setPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth)
-    } else {
-      void this.application.setPreference(PrefKey.NotesPanelWidth, WidthForCollapsedPanel)
-    }
+    const width = isCollapsed ? MinimumNotesPanelWidth : WidthForCollapsedPanel
 
-    this.application.publishPanelDidResizeEvent(PANEL_NAME_NOTES, !isCollapsed)
+    void this.application.setPreference(PrefKey.NotesPanelWidth, width)
+    this.application.publishPanelDidResizeEvent(PANEL_NAME_NOTES, width, !isCollapsed)
   }
 
   toggleNavigationPane = () => {
     const currentNavPanelWidth = this.application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth)
 
     const isCollapsed = currentNavPanelWidth <= WidthForCollapsedPanel
-    if (isCollapsed) {
-      void this.application.setPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth)
-    } else {
-      void this.application.setPreference(PrefKey.TagsPanelWidth, WidthForCollapsedPanel)
-    }
+    const width = isCollapsed ? MinimumNavPanelWidth : WidthForCollapsedPanel
 
-    this.application.publishPanelDidResizeEvent(PANEL_NAME_NAVIGATION, !isCollapsed)
+    void this.application.setPreference(PrefKey.TagsPanelWidth, width)
+    this.application.publishPanelDidResizeEvent(PANEL_NAME_NAVIGATION, width, !isCollapsed)
   }
 
   get isListPaneCollapsed() {

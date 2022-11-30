@@ -1,7 +1,7 @@
 import SmartViewsSection from '@/Components/Tags/SmartViewsSection'
 import TagsSection from '@/Components/Tags/TagsSection'
 import { WebApplication } from '@/Application/Application'
-import { ApplicationEvent } from '@standardnotes/snjs'
+import { ApplicationEvent, PrefKey, WebAppEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { forwardRef, useEffect, useMemo, useState } from 'react'
 import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
@@ -10,6 +10,8 @@ import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import UpgradeNow from '../Footer/UpgradeNow'
 import RoundIconButton from '../Button/RoundIconButton'
 import { isIOS } from '@/Utils'
+import { PanelResizedData } from '@/Types/PanelResizedData'
+import { PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
 
 type Props = {
   application: WebApplication
@@ -29,6 +31,17 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
     }, ApplicationEvent.KeyStatusChanged)
 
     return removeObserver
+  }, [application])
+
+  useEffect(() => {
+    return application.addWebEventObserver((event, data) => {
+      if (event === WebAppEvent.PanelResized) {
+        const { panel, width } = data as PanelResizedData
+        if (panel === PANEL_NAME_NAVIGATION) {
+          application.setPreference(PrefKey.TagsPanelWidth, width).catch(console.error)
+        }
+      }
+    })
   }, [application])
 
   const NavigationFooter = useMemo(() => {

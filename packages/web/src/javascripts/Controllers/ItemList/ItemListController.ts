@@ -52,7 +52,6 @@ export class ItemListController extends AbstractViewController implements Intern
   notesToDisplay = 0
   pageSize = 0
   panelTitle = 'Notes'
-  panelWidth = 0
   renderedItems: ListableContentItem[] = []
   searchSubmitted = false
   showDisplayOptionsMenu = false
@@ -189,7 +188,6 @@ export class ItemListController extends AbstractViewController implements Intern
       notes: observable,
       notesToDisplay: observable,
       panelTitle: observable,
-      panelWidth: observable,
       items: observable,
       renderedItems: observable,
       showDisplayOptionsMenu: observable,
@@ -581,13 +579,6 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.displayOptions = newDisplayOptions
     this.webDisplayOptions = newWebDisplayOptions
-
-    const listColumnWidth =
-      selectedTag?.preferences?.panelWidth || this.application.getPreference(PrefKey.NotesPanelWidth)
-
-    if (listColumnWidth && listColumnWidth !== this.panelWidth) {
-      this.panelWidth = listColumnWidth
-    }
 
     if (!displayOptionsChanged) {
       return { didReloadItems: false }

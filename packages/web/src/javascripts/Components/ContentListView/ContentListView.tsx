@@ -9,12 +9,11 @@ import {
 } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NOTES } from '@/Constants/Constants'
-import { FileItem, PrefKey } from '@standardnotes/snjs'
+import { FileItem, PrefKey, WebAppEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react'
 import ContentList from '@/Components/ContentListView/ContentList'
 import NoAccountWarning from '@/Components/NoAccountWarning/NoAccountWarning'
-import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
@@ -35,7 +34,8 @@ import { LinkingController } from '@/Controllers/LinkingController'
 import DailyContentList from './Daily/DailyContentList'
 import { ListableContentItem } from './Types/ListableContentItem'
 import { FeatureName } from '@/Controllers/FeatureName'
-import useIsTabletOrMobileScreen from '@/Hooks/useIsTabletOrMobileScreen'
+import { PanelResizedData } from '@/Types/PanelResizedData'
+import { useForwardedRef } from '@/Hooks/useForwardedRef'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -50,6 +50,8 @@ type Props = {
   linkingController: LinkingController
   className?: string
   id: string
+  children?: React.ReactNode
+  onPanelWidthLoad: (width: number) => void
 }
 
 const ContentListView = forwardRef<HTMLDivElement, Props>(
@@ -67,16 +69,51 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       linkingController,
       className,
       id,
+      children,
+      onPanelWidthLoad,
     },
-    _ref,
+    ref,
   ) => {
     const { toggleAppPane, panes } = useResponsiveAppPane()
-    const { isTabletOrMobile } = useIsTabletOrMobileScreen()
+    const { selectedUuids, selectNextItem, selectPreviousItem } = selectionController
+    const { selected: selectedTag, selectedAsTag } = navigationController
+    const {
+      completedFullSync,
+      createNewNote,
+      optionsSubtitle,
+      paginate,
+      panelTitle,
+      renderedItems,
+      items,
+      isCurrentNoteTemplate,
+    } = itemListController
 
     const fileInputRef = useRef<HTMLInputElement>(null)
-    const itemsViewPanelRef = useRef<HTMLDivElement>(null)
+    const innerRef = useForwardedRef(ref)
 
     const { addDragTarget, removeDragTarget } = useFileDragNDrop()
+
+    useEffect(() => {
+      return application.addWebEventObserver((event, data) => {
+        if (event === WebAppEvent.PanelResized) {
+          const { panel, width } = data as PanelResizedData
+          if (panel === PANEL_NAME_NOTES) {
+            if (selectedAsTag) {
+              void navigationController.setPanelWidthForTag(selectedAsTag, width)
+            } else {
+              void application.setPreference(PrefKey.NotesPanelWidth, width).catch(console.error)
+            }
+          }
+        }
+      })
+    }, [application, navigationController, selectedAsTag])
+
+    useEffect(() => {
+      const panelWidth = selectedTag?.preferences?.panelWidth || application.getPreference(PrefKey.NotesPanelWidth)
+      if (panelWidth) {
+        onPanelWidthLoad(panelWidth)
+      }
+    }, [selectedTag, application, onPanelWidthLoad])
 
     const fileDropCallback = useCallback(
       async (files: FileItem[]) => {
@@ -99,7 +136,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
     )
 
     useEffect(() => {
-      const target = itemsViewPanelRef.current
+      const target = innerRef.current
       const currentTag = navigationController.selected
       const shouldAddDropTarget = !navigationController.isInAnySystemView() && !navigationController.isInSmartView()
 
@@ -115,23 +152,14 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
           removeDragTarget(target)
         }
       }
-    }, [addDragTarget, fileDropCallback, navigationController, navigationController.selected, removeDragTarget])
-
-    const {
-      completedFullSync,
-      createNewNote,
-      optionsSubtitle,
-      paginate,
-      panelTitle,
-      panelWidth,
-      renderedItems,
-      items,
-      isCurrentNoteTemplate,
-    } = itemListController
-
-    const { selectedUuids, selectNextItem, selectPreviousItem } = selectionController
-
-    const { selected: selectedTag, selectedAsTag } = navigationController
+    }, [
+      addDragTarget,
+      fileDropCallback,
+      navigationController,
+      navigationController.selected,
+      removeDragTarget,
+      innerRef,
+    ])
 
     const icon = selectedTag?.iconString
 
@@ -228,18 +256,6 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       selectionController,
     ])
 
-    const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
-      (width, _lastLeft, _isMaxWidth, isCollapsed) => {
-        if (selectedAsTag) {
-          void navigationController.setPanelWidthForTag(selectedAsTag, width)
-        } else {
-          void application.setPreference(PrefKey.NotesPanelWidth, width).catch(console.error)
-        }
-        application.publishPanelDidResizeEvent(PANEL_NAME_NOTES, isCollapsed)
-      },
-      [application, selectedAsTag, navigationController],
-    )
-
     const shortcutForCreate = useMemo(
       () => application.keyboardService.keyboardShortcutForCommand(CREATE_NEW_NOTE_KEYBOARD_COMMAND),
       [application],
@@ -267,18 +283,16 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
     useEffect(() => {
       const hasEditorPane = panes.includes(AppPaneId.Editor)
       if (!hasEditorPane) {
-        itemsViewPanelRef.current?.style.removeProperty('width')
+        innerRef.current?.style.removeProperty('width')
       }
-    }, [selectedUuids, itemsViewPanelRef, isCurrentNoteTemplate, renderedItems, panes])
-
-    const hasEditorPane = panes.includes(AppPaneId.Editor)
+    }, [selectedUuids, innerRef, isCurrentNoteTemplate, renderedItems, panes])
 
     return (
       <div
         id={id}
         className={classNames(className, 'sn-component section app-column h-full overflow-hidden pt-safe-top')}
         aria-label={'Notes & Files'}
-        ref={itemsViewPanelRef}
+        ref={innerRef}
       >
         <div id="items-title-bar" className="section-title-bar border-b border-solid border-border">
           <div id="items-title-bar-container">
@@ -349,19 +363,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
           </>
         ) : null}
         <div className="absolute bottom-0 h-safe-bottom w-full" />
-        {!isTabletOrMobile && hasEditorPane && itemsViewPanelRef.current && (
-          <PanelResizer
-            collapsable={true}
-            hoverable={true}
-            defaultWidth={300}
-            panel={itemsViewPanelRef.current}
-            side={PanelSide.Right}
-            type={PanelResizeType.WidthOnly}
-            resizeFinishCallback={panelResizeFinishCallback}
-            width={panelWidth}
-            left={0}
-          />
-        )}
+        {children}
       </div>
     )
   },
