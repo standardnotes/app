@@ -7,6 +7,7 @@ import {
   KeyboardService,
   ThemeManager,
 } from '@standardnotes/ui-services'
+import { TimelapseService } from '@/Controllers/Timelapse/TimelapseService'
 
 export type WebServices = {
   viewControllerManager: ViewControllerManager
@@ -16,4 +17,5 @@ export type WebServices = {
   themeService: ThemeManager
   keyboardService: KeyboardService
   changelogService: ChangelogServiceInterface
+  timelapseService: TimelapseService
 }

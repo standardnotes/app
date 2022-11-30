@@ -40,6 +40,7 @@ export enum StorageKey {
   CodeVerifier = 'code_verifier',
   LaunchPriorityUuids = 'launch_priority_uuids',
   LastReadChangelogVersion = 'last_read_changelog_version',
+  TimelapseEnabled = 'timelapse_enabled',
 }
 
 export enum NonwrappedStorageKey {

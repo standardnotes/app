@@ -10,6 +10,7 @@ import Advanced from '@/Components/Preferences/Panes/General/Advanced/AdvancedSe
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import Persistence from './Persistence'
 import SmartViews from './SmartViews/SmartViews'
+import Timelapse from './Timelapse'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -24,6 +25,7 @@ const General: FunctionComponent<Props> = ({ viewControllerManager, application,
     <Tools application={application} />
     <SmartViews application={application} featuresController={viewControllerManager.featuresController} />
     <LabsPane application={application} />
+    <Timelapse application={application} />
     <Advanced
       application={application}
       viewControllerManager={viewControllerManager}

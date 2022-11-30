@@ -7,7 +7,6 @@ import { FunctionComponent, useState } from 'react'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
-import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 
 type Props = {
   application: WebApplication
@@ -28,7 +27,6 @@ const Tools: FunctionComponent<Props> = ({ application }: Props) => {
       <PreferencesSegment>
         <Title>Tools</Title>
         <div>
-          <HorizontalSeparator classes="my-4" />
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <Subtitle>Show note saving status while editing</Subtitle>

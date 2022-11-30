@@ -45,6 +45,7 @@ import { WebServices } from './WebServices'
 import { FeatureName } from '@/Controllers/FeatureName'
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
 import { VisibilityObserver } from './VisibilityObserver'
+import { TimelapseService } from '@/Controllers/Timelapse/TimelapseService'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -98,6 +99,11 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       : undefined
     this.webServices.viewControllerManager = new ViewControllerManager(this, deviceInterface)
     this.webServices.changelogService = new ChangelogService(this.environment, this.storage)
+    this.webServices.timelapseService = new TimelapseService(
+      this,
+      this.webServices.viewControllerManager.filesController,
+      internalEventBus,
+    )
 
     if (this.isNativeMobileWeb()) {
       this.mobileWebReceiver = new MobileWebReceiver(this)
@@ -198,6 +204,14 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   public get changelogService() {
     return this.webServices.changelogService
+  }
+
+  public get timelapseService() {
+    return this.webServices.timelapseService
+  }
+
+  public get featuresController() {
+    return this.getViewControllerManager().featuresController
   }
 
   public get desktopDevice(): DesktopDeviceInterface | undefined {
