@@ -443,6 +443,16 @@ function useDraggableBlockMenu(
 
   function onTouchMove(event: TouchEvent) {
     const {pageX, pageY} = event.targetTouches[0];
+    const rootElement = editor.getRootElement();
+    if (rootElement) {
+      const {top, bottom} = rootElement.getBoundingClientRect();
+      const scrollOffset = 20;
+      if (pageY - top < scrollOffset) {
+        rootElement.scrollTop -= scrollOffset;
+      } else if (bottom - pageY < scrollOffset) {
+        rootElement.scrollTop += scrollOffset;
+      }
+    }
     const targetBlockElem = getBlockElement(
       anchorElem,
       editor,
