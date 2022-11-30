@@ -929,6 +929,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               left={this.state.leftResizerOffset}
               width={this.state.leftResizerWidth}
               resizeFinishCallback={this.onPanelResizeFinish}
+              modifyElementWidth={true}
             />
           ) : null}
 
@@ -980,6 +981,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               left={this.state.rightResizerOffset}
               width={this.state.rightResizerWidth}
               resizeFinishCallback={this.onPanelResizeFinish}
+              modifyElementWidth={true}
             />
           ) : null}
         </div>
