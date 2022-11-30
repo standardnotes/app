@@ -177,7 +177,8 @@ const PanesSystemComponent = () => {
   }, [isTablet, paneController, previousIsTabletOrMobileWrapped])
 
   const computeStylesForContainer = (): React.CSSProperties => {
-    const numPanes = paneController.panes.length
+    const panes = paneController.panes
+    const numPanes = panes.length
 
     if (isMobile) {
       return {}
@@ -200,8 +201,14 @@ const PanesSystemComponent = () => {
             gridTemplateColumns: '1fr 2fr',
           }
         } else {
-          return {
-            gridTemplateColumns: `${navigationPanelWidth}px auto`,
+          if (panes[0] === AppPaneId.Navigation) {
+            return {
+              gridTemplateColumns: `${navigationPanelWidth}px auto`,
+            }
+          } else {
+            return {
+              gridTemplateColumns: `${itemsPanelWidth}px auto`,
+            }
           }
         }
       }
