@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.114.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.114.1...@standardnotes/web@3.114.2) (2022-11-30)
+
+### Bug Fixes
+
+* Render super note content in revision history modal ([d51de34](https://github.com/standardnotes/app/commit/d51de34daa1dc92c3c02d8bd46b05d905ddf8744))
+
 ## [3.114.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.114.0...@standardnotes/web@3.114.1) (2022-11-29)
 
 ### Bug Fixes
