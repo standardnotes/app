@@ -34,7 +34,7 @@ import {isHTMLElement} from '../../Utils/guard';
 import {Point} from '../../Utils/point';
 import {ContainsPointReturn, Rect} from '../../Utils/rect';
 
-const SPACE = 4;
+const DRAGGABLE_BLOCK_MENU_LEFT_SPACE = -2;
 const TARGET_LINE_HALF_HEIGHT = 2;
 const DRAGGABLE_BLOCK_MENU_CLASSNAME = 'draggable-block-menu';
 const DRAG_DATA_FORMAT = 'application/x-lexical-drag-block';
@@ -179,7 +179,7 @@ function setMenuPosition(
     (parseInt(targetStyle.lineHeight, 10) - floatingElemRect.height) / 2 -
     anchorElementRect.top;
 
-  const left = SPACE;
+  const left = DRAGGABLE_BLOCK_MENU_LEFT_SPACE;
 
   floatingElem.style.opacity = '1';
   floatingElem.style.transform = `translate(${left}px, ${top}px)`;
@@ -221,11 +221,12 @@ function setTargetLine(
   }
 
   const top = lineTop - anchorTop - TARGET_LINE_HALF_HEIGHT;
-  const left = TEXT_BOX_HORIZONTAL_PADDING - SPACE;
+  const left = TEXT_BOX_HORIZONTAL_PADDING - DRAGGABLE_BLOCK_MENU_LEFT_SPACE;
 
   targetLineElem.style.transform = `translate(${left}px, ${top}px)`;
   targetLineElem.style.width = `${
-    anchorWidth - (TEXT_BOX_HORIZONTAL_PADDING - SPACE) * 2
+    anchorWidth -
+    (TEXT_BOX_HORIZONTAL_PADDING - DRAGGABLE_BLOCK_MENU_LEFT_SPACE) * 2
   }px`;
   targetLineElem.style.opacity = '.6';
 }
