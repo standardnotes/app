@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.9.5](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.9.4...@standardnotes/blocks-editor@1.9.5) (2022-11-30)
+
+**Note:** Version bump only for package @standardnotes/blocks-editor
+
+## [1.9.4](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.9.3...@standardnotes/blocks-editor@1.9.4) (2022-11-30)
+
+**Note:** Version bump only for package @standardnotes/blocks-editor
+
+## [1.9.3](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.9.2...@standardnotes/blocks-editor@1.9.3) (2022-11-29)
+
+### Bug Fixes
+
+* Make super note styling consistent with plaintext notes ([#2068](https://github.com/standardnotes/app/issues/2068)) ([a417e5b](https://github.com/standardnotes/app/commit/a417e5ba8d3fc224b1527d0a9cfb0f25d197f9de))
+
 ## [1.9.2](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.9.1...@standardnotes/blocks-editor@1.9.2) (2022-11-28)
 
 ### Bug Fixes

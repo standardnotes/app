@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.114.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.114.2...@standardnotes/web@3.114.3) (2022-11-30)
+
+### Bug Fixes
+
+* "Prevent editing" option not working correctly for Super notes ([f30d089](https://github.com/standardnotes/app/commit/f30d0898ec629c392472311a6eeb418764ed9013))
+
+## [3.114.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.114.1...@standardnotes/web@3.114.2) (2022-11-30)
+
+### Bug Fixes
+
+* Render super note content in revision history modal ([d51de34](https://github.com/standardnotes/app/commit/d51de34daa1dc92c3c02d8bd46b05d905ddf8744))
+
+## [3.114.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.114.0...@standardnotes/web@3.114.1) (2022-11-29)
+
+### Bug Fixes
+
+* Make super note styling consistent with plaintext notes ([#2068](https://github.com/standardnotes/app/issues/2068)) ([a417e5b](https://github.com/standardnotes/app/commit/a417e5ba8d3fc224b1527d0a9cfb0f25d197f9de))
+
 # [3.114.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.113.0...@standardnotes/web@3.114.0) (2022-11-28)
 
 ### Features
