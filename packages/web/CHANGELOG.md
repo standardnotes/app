@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.115.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.114.3...@standardnotes/web@3.115.0) (2022-11-30)
+
+### Features
+
+* Move editor apperance preferences to "Appearance" tab ([0e886bf](https://github.com/standardnotes/app/commit/0e886bf0f1cfab3c094b1b0beb1003c4e14397eb))
+* screen presentation and dismiss animations for mobile ([#2073](https://github.com/standardnotes/app/issues/2073)) ([7f2074a](https://github.com/standardnotes/app/commit/7f2074a6ec59068f75dae76d31721d65e61c9673))
+
 ## [3.114.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.114.2...@standardnotes/web@3.114.3) (2022-11-30)
 
 ### Bug Fixes

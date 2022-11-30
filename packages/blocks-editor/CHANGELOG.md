@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.9.6](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.9.5...@standardnotes/blocks-editor@1.9.6) (2022-11-30)
+
+### Bug Fixes
+
+* Disable all-caps for H2/H3 headings in Super notes ([9b3f11d](https://github.com/standardnotes/app/commit/9b3f11d85b10914a03aab93803513766670c47fe))
+* Super note block drag-n-drop on mobile ([#2072](https://github.com/standardnotes/app/issues/2072)) ([349fd72](https://github.com/standardnotes/app/commit/349fd7204e209d56b720a3b0cc6b2bfc0fc50f47))
+
 ## [1.9.5](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.9.4...@standardnotes/blocks-editor@1.9.5) (2022-11-30)
 
 **Note:** Version bump only for package @standardnotes/blocks-editor
