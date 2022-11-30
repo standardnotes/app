@@ -8,12 +8,10 @@ import { MediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { WebApplication } from '@/Application/Application'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { PANEL_NAME_NAVIGATION, PANEL_NAME_NOTES } from '@/Constants/Constants'
 import { log, LoggingDomain } from '@/Logging'
 import { PaneLayout } from './PaneLayout'
 import { panesForLayout } from './panesForLayout'
 
-const WidthForCollapsedPanel = 5
 const MinimumNavPanelWidth = PrefDefaults[PrefKey.TagsPanelWidth]
 const MinimumNotesPanelWidth = PrefDefaults[PrefKey.NotesPanelWidth]
 
@@ -186,30 +184,30 @@ export class PaneController extends AbstractViewController {
   }
 
   toggleListPane = () => {
-    const currentItemsPanelWidth = this.application.getPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth)
-
-    const isCollapsed = currentItemsPanelWidth <= WidthForCollapsedPanel
-    const width = isCollapsed ? MinimumNotesPanelWidth : WidthForCollapsedPanel
-
-    void this.application.setPreference(PrefKey.NotesPanelWidth, width)
-    this.application.publishPanelDidResizeEvent(PANEL_NAME_NOTES, width, !isCollapsed)
+    if (this.panes.includes(AppPaneId.Items)) {
+      this.removePane(AppPaneId.Items)
+    } else {
+      if (this.panes.includes(AppPaneId.Navigation)) {
+        this.insertPaneAtIndex(AppPaneId.Items, 1)
+      } else {
+        this.insertPaneAtIndex(AppPaneId.Items, 0)
+      }
+    }
   }
 
   toggleNavigationPane = () => {
-    const currentNavPanelWidth = this.application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth)
-
-    const isCollapsed = currentNavPanelWidth <= WidthForCollapsedPanel
-    const width = isCollapsed ? MinimumNavPanelWidth : WidthForCollapsedPanel
-
-    void this.application.setPreference(PrefKey.TagsPanelWidth, width)
-    this.application.publishPanelDidResizeEvent(PANEL_NAME_NAVIGATION, width, !isCollapsed)
+    if (this.panes.includes(AppPaneId.Navigation)) {
+      this.removePane(AppPaneId.Navigation)
+    } else {
+      this.insertPaneAtIndex(AppPaneId.Navigation, 0)
+    }
   }
 
   get isListPaneCollapsed() {
-    return this.currentItemsPanelWidth > WidthForCollapsedPanel
+    return !this.panes.includes(AppPaneId.Items)
   }
 
   get isNavigationPaneCollapsed() {
-    return this.currentNavPanelWidth > WidthForCollapsedPanel
+    return !this.panes.includes(AppPaneId.Navigation)
   }
 }

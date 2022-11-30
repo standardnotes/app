@@ -83,9 +83,12 @@ class PanelResizer extends Component<Props, State> {
   }
 
   override componentDidUpdate(prevProps: Props) {
+    this.lastWidth = this.props.panel.scrollWidth
+
     if (this.props.width != prevProps.width) {
       this.setWidth(this.props.width)
     }
+
     if (this.props.left !== prevProps.left) {
       this.setLeft(this.props.left)
       this.setWidth(this.props.width)
@@ -109,6 +112,10 @@ class PanelResizer extends Component<Props, State> {
   }
 
   getParentRect() {
+    if (!this.props.panel.parentNode) {
+      return new DOMRect()
+    }
+
     return (this.props.panel.parentNode as HTMLElement).getBoundingClientRect()
   }
 
@@ -132,7 +139,7 @@ class PanelResizer extends Component<Props, State> {
     })
   }
 
-  setWidth = (width: number, finish = false): void => {
+  setWidth = (width: number, finish = false): number => {
     if (width === 0) {
       width = this.computeMaxWidth()
     }
@@ -172,6 +179,8 @@ class PanelResizer extends Component<Props, State> {
         this.props.resizeFinishCallback(this.lastWidth, this.lastLeft, this.isAtMaxWidth(), this.isCollapsed())
       }
     }
+
+    return width
   }
 
   setLeft = (left: number) => {
@@ -203,10 +212,10 @@ class PanelResizer extends Component<Props, State> {
     }
     const deltaX = x - this.lastDownX
     const newWidth = this.startWidth + deltaX
-    this.setWidth(newWidth, false)
+    const adjustedWidth = this.setWidth(newWidth, false)
 
     if (this.props.widthEventCallback) {
-      this.props.widthEventCallback(newWidth)
+      this.props.widthEventCallback(adjustedWidth)
     }
   }
 

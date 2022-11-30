@@ -25,7 +25,7 @@ const PanelSettingsSection = () => {
     <div className="hidden md:block pointer-coarse:md-only:hidden pointer-coarse:lg-only:hidden">
       <MenuSwitchButtonItem
         className="items-center"
-        checked={isNavigationPaneCollapsed}
+        checked={!isNavigationPaneCollapsed}
         onChange={toggleNavigationPane}
         shortcut={navigationShortcut}
       >
@@ -33,7 +33,7 @@ const PanelSettingsSection = () => {
       </MenuSwitchButtonItem>
       <MenuSwitchButtonItem
         className="items-center"
-        checked={isListPaneCollapsed}
+        checked={!isListPaneCollapsed}
         onChange={toggleListPane}
         shortcut={listShortcut}
       >

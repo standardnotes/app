@@ -17,7 +17,7 @@ export async function animatePaneEntranceTransitionFromOffscreenToTheRight(eleme
       },
     ],
     {
-      duration: 400,
+      duration: 300,
       easing: 'ease-in-out',
       fill: 'forwards',
     },
@@ -45,7 +45,7 @@ export async function animatePaneExitTransitionOffscreenToTheRight(elementId: st
       },
     ],
     {
-      duration: 400,
+      duration: 300,
       easing: 'ease-in-out',
       fill: 'forwards',
     },
