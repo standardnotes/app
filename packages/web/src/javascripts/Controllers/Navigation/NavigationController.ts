@@ -25,6 +25,7 @@ import { CrossControllerEvent } from '../CrossControllerEvent'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { Persistable } from '../Abstract/Persistable'
 import { TagListSectionType } from '@/Components/Tags/TagListSection'
+import { PaneLayout } from '../PaneController/PaneLayout'
 
 export class NavigationController
   extends AbstractViewController
@@ -260,6 +261,10 @@ export class NavigationController
     return this.selectedUuid === SystemViewId.Files
   }
 
+  isTagFilesView(tag: AnyTag): boolean {
+    return tag.uuid === SystemViewId.Files
+  }
+
   public isInAnySystemView(): boolean {
     return (
       this.selected instanceof SmartView && Object.values(SystemViewId).includes(this.selected.uuid as SystemViewId)
@@ -458,10 +463,10 @@ export class NavigationController
         .catch(console.error)
     }
 
-    const selectionHasNotChanged = this.selected_?.uuid === tag?.uuid && location === this.selectedLocation
-
-    if (selectionHasNotChanged) {
-      return
+    if (tag && this.isTagFilesView(tag)) {
+      this.application.paneController.setPaneLayout(PaneLayout.FilesView)
+    } else if (userTriggered) {
+      this.application.paneController.setPaneLayout(PaneLayout.ItemSelection)
     }
 
     this.previouslySelected_ = this.selected_
@@ -497,7 +502,7 @@ export class NavigationController
   }
 
   get filesNavigationView(): SmartView {
-    return this.smartViews.find((view) => view.uuid === SystemViewId.Files) as SmartView
+    return this.smartViews.find(this.isTagFilesView) as SmartView
   }
 
   private setSelectedTagInstance(tag: AnyTag | undefined): void {

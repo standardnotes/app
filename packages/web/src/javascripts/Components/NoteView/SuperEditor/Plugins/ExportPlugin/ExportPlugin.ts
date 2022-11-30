@@ -1,4 +1,4 @@
-import { useApplication } from '@/Components/ApplicationView/ApplicationProvider'
+import { useApplication } from '@/Components/ApplicationProvider'
 import { downloadBlobOnAndroid } from '@/NativeMobileWeb/DownloadBlobOnAndroid'
 import { shareBlobOnMobile } from '@/NativeMobileWeb/ShareBlobOnMobile'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
@@ -13,7 +13,7 @@ import { useCallback, useEffect } from 'react'
 import { $convertToMarkdownString } from '@lexical/markdown'
 import { MarkdownTransformers } from '@standardnotes/blocks-editor'
 import { $generateHtmlFromNodes } from '@lexical/html'
-import { useCommandService } from '@/Components/ApplicationView/CommandProvider'
+import { useCommandService } from '@/Components/CommandProvider'
 
 export const ExportPlugin = () => {
   const application = useApplication()

@@ -1,7 +1,7 @@
 import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ElementFormatType, NodeKey } from 'lexical'
-import { useApplication } from '@/Components/ApplicationView/ApplicationProvider'
+import { useApplication } from '@/Components/ApplicationProvider'
 import FilePreview from '@/Components/FilePreview/FilePreview'
 import { FileItem } from '@standardnotes/snjs'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'

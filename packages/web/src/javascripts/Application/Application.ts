@@ -166,11 +166,13 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     }
   }
 
-  publishPanelDidResizeEvent(name: string, collapsed: boolean) {
+  publishPanelDidResizeEvent(name: string, width: number, collapsed: boolean) {
     const data: PanelResizedData = {
       panel: name,
-      collapsed: collapsed,
+      collapsed,
+      width,
     }
+
     this.notifyWebEvent(WebAppEvent.PanelResized, data)
   }
 

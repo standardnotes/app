@@ -4,7 +4,7 @@ import { NavigationController } from '@/Controllers/Navigation/NavigationControl
 import { CREATE_NEW_TAG_COMMAND, keyboardStringForShortcut } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useMemo } from 'react'
-import { useCommandService } from '../ApplicationView/CommandProvider'
+import { useCommandService } from '../CommandProvider'
 
 type Props = {
   tags: NavigationController

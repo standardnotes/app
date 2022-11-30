@@ -1,19 +1,19 @@
+import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
+import useIsTabletOrMobileScreen from '@/Hooks/useIsTabletOrMobileScreen'
+import { classNames } from '@standardnotes/snjs'
 import RoundIconButton from '../Button/RoundIconButton'
-import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
-import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 
+/** This button is displayed in the items list header */
 export const NavigationMenuButton = () => {
-  const { selectedPane, toggleAppPane } = useResponsiveAppPane()
+  const { setPaneLayout } = useResponsiveAppPane()
+  const { isTabletOrMobile } = useIsTabletOrMobileScreen()
 
   return (
     <RoundIconButton
-      className="mr-3 md:hidden pointer-coarse:md-only:flex pointer-coarse:lg-only:flex"
+      className={classNames(isTabletOrMobile ? 'flex' : 'hidden', 'mr-3')}
       onClick={() => {
-        if (selectedPane === AppPaneId.Items || selectedPane === AppPaneId.Editor) {
-          toggleAppPane(AppPaneId.Navigation)
-        } else {
-          toggleAppPane(AppPaneId.Items)
-        }
+        setPaneLayout(PaneLayout.TagSelection)
       }}
       label="Open navigation menu"
       icon="menu-variant"

@@ -7,7 +7,7 @@ import { KeyboardKey } from '@standardnotes/ui-services'
 import Popover from '../Popover/Popover'
 import { IconType } from '@standardnotes/snjs'
 import { getTitleForLinkedTag } from '@/Utils/Items/Display/getTitleForLinkedTag'
-import { useApplication } from '../ApplicationView/ApplicationProvider'
+import { useApplication } from '../ApplicationProvider'
 import MenuItem from '../Menu/MenuItem'
 import Menu from '../Menu/Menu'
 

@@ -23,15 +23,14 @@ import Menu from '../Menu/Menu'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
 
-export const focusModeAnimationDuration = 1255
-
 type MenuProps = {
   quickSettingsMenuController: QuickSettingsController
   application: WebApplication
 }
 
 const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSettingsMenuController }) => {
-  const { closeQuickSettingsMenu, focusModeEnabled, setFocusModeEnabled } = quickSettingsMenuController
+  const { focusModeEnabled, setFocusModeEnabled } = application.paneController
+  const { closeQuickSettingsMenu } = quickSettingsMenuController
   const [themes, setThemes] = useState<ThemeItem[]>([])
   const [toggleableComponents, setToggleableComponents] = useState<SNComponent[]>([])
 

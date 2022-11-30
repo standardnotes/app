@@ -1,10 +1,10 @@
 import { useCallback, useMemo } from 'react'
-import { useApplication } from '@/Components/ApplicationView/ApplicationProvider'
+import { useApplication } from '@/Components/ApplicationProvider'
 import LinkedItemBubble from '@/Components/LinkedItems/LinkedItemBubble'
 import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
 import { useLinkingController } from '@/Controllers/LinkingControllerProvider'
 import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
-import { useResponsiveAppPane } from '@/Components/ResponsivePane/ResponsivePaneProvider'
+import { useResponsiveAppPane } from '@/Components/Panes/ResponsivePaneProvider'
 import { LexicalNode } from 'lexical'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 

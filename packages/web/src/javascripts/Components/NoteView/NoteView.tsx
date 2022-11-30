@@ -9,7 +9,7 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { StringDeleteNote, STRING_DELETE_LOCKED_ATTEMPT, STRING_DELETE_PLACEHOLDER_ATTEMPT } from '@/Constants/Strings'
 import { log, LoggingDomain } from '@/Logging'
-import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
+import { debounce, isDesktopApplication, isMobileScreen, isTabletOrMobileScreen } from '@/Utils'
 import { classNames } from '@standardnotes/utils'
 import {
   ApplicationEvent,
@@ -672,10 +672,9 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       PrefDefaults[PrefKey.EditorMonospaceEnabled],
     )
 
-    const marginResizersEnabled = this.application.getPreference(
-      PrefKey.EditorResizersEnabled,
-      PrefDefaults[PrefKey.EditorResizersEnabled],
-    )
+    const marginResizersEnabled =
+      !isTabletOrMobileScreen() &&
+      this.application.getPreference(PrefKey.EditorResizersEnabled, PrefDefaults[PrefKey.EditorResizersEnabled])
 
     const updateSavingIndicator = this.application.getPreference(
       PrefKey.UpdateSavingStatusIndicator,
@@ -687,7 +686,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.setState({
       monospaceFont,
       marginResizersEnabled,
-
       updateSavingIndicator,
     })
 
@@ -929,6 +927,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               left={this.state.leftResizerOffset}
               width={this.state.leftResizerWidth}
               resizeFinishCallback={this.onPanelResizeFinish}
+              modifyElementWidth={true}
             />
           ) : null}
 
@@ -980,6 +979,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               left={this.state.rightResizerOffset}
               width={this.state.rightResizerWidth}
               resizeFinishCallback={this.onPanelResizeFinish}
+              modifyElementWidth={true}
             />
           ) : null}
         </div>

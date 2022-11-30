@@ -1,28 +1,28 @@
 import SmartViewsSection from '@/Components/Tags/SmartViewsSection'
 import TagsSection from '@/Components/Tags/TagsSection'
 import { WebApplication } from '@/Application/Application'
-import { PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
-import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
+import { ApplicationEvent, PrefKey, WebAppEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
-import PanelResizer, { PanelSide, ResizeFinishCallback, PanelResizeType } from '@/Components/PanelResizer/PanelResizer'
-import ResponsivePaneContent from '@/Components/ResponsivePane/ResponsivePaneContent'
-import { AppPaneId } from '@/Components/ResponsivePane/AppPaneMetadata'
+import { forwardRef, useEffect, useMemo, useState } from 'react'
+import { AppPaneId } from '@/Components/Panes/AppPaneMetadata'
 import { classNames } from '@standardnotes/utils'
-import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import UpgradeNow from '../Footer/UpgradeNow'
 import RoundIconButton from '../Button/RoundIconButton'
 import { isIOS } from '@/Utils'
+import { PanelResizedData } from '@/Types/PanelResizedData'
+import { PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
 
 type Props = {
   application: WebApplication
+  className?: string
+  children?: React.ReactNode
+  id: string
 }
 
-const Navigation: FunctionComponent<Props> = ({ application }) => {
+const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, children, id }, ref) => {
   const viewControllerManager = useMemo(() => application.getViewControllerManager(), [application])
-  const [panelElement, setPanelElement] = useState<HTMLDivElement>()
-  const [panelWidth, setPanelWidth] = useState<number>(0)
-  const { selectedPane, toggleAppPane } = useResponsiveAppPane()
+  const { toggleAppPane } = useResponsiveAppPane()
 
   const [hasPasscode, setHasPasscode] = useState(() => application.hasPasscode())
   useEffect(() => {
@@ -34,25 +34,15 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
   }, [application])
 
   useEffect(() => {
-    const removeObserver = application.addEventObserver(async () => {
-      const width = application.getPreference(PrefKey.TagsPanelWidth)
-      if (width) {
-        setPanelWidth(width)
+    return application.addWebEventObserver((event, data) => {
+      if (event === WebAppEvent.PanelResized) {
+        const { panel, width } = data as PanelResizedData
+        if (panel === PANEL_NAME_NAVIGATION) {
+          application.setPreference(PrefKey.TagsPanelWidth, width).catch(console.error)
+        }
       }
-    }, ApplicationEvent.PreferencesChanged)
-
-    return () => {
-      removeObserver()
-    }
+    })
   }, [application])
-
-  const panelResizeFinishCallback: ResizeFinishCallback = useCallback(
-    (width, _lastLeft, _isMaxWidth, isCollapsed) => {
-      application.setPreference(PrefKey.TagsPanelWidth, width).catch(console.error)
-      application.publishPanelDidResizeEvent(PANEL_NAME_NAVIGATION, isCollapsed)
-    },
-    [application],
-  )
 
   const NavigationFooter = useMemo(() => {
     return (
@@ -115,52 +105,33 @@ const Navigation: FunctionComponent<Props> = ({ application }) => {
 
   return (
     <div
-      id="navigation"
+      id={id}
       className={classNames(
-        'pb-[50px] md:pb-0',
-        'sn-component section app-column h-full max-h-full overflow-hidden pt-safe-top md:h-full md:max-h-full md:min-h-0',
-        'w-[220px] xl:w-[220px] xsm-only:!w-full sm-only:!w-full',
-        selectedPane === AppPaneId.Navigation
-          ? 'pointer-coarse:md-only:!w-48 pointer-coarse:lg-only:!w-48'
-          : 'pointer-coarse:md-only:!w-0 pointer-coarse:lg-only:!w-0',
+        className,
+        'sn-component section pb-[50px] md:pb-0',
+        'h-full max-h-full overflow-hidden pt-safe-top md:h-full md:max-h-full md:min-h-0',
       )}
-      ref={(element) => {
-        if (element) {
-          setPanelElement(element)
-        }
-      }}
+      ref={ref}
     >
-      <ResponsivePaneContent paneId={AppPaneId.Navigation} contentElementId="navigation-content">
-        <div
-          className={classNames(
-            'flex-grow overflow-y-auto overflow-x-hidden md:overflow-y-hidden md:hover:overflow-y-auto pointer-coarse:md:overflow-y-auto',
-            'md:hover:[overflow-y:_overlay]',
-          )}
-        >
-          <SmartViewsSection
-            application={application}
-            featuresController={viewControllerManager.featuresController}
-            navigationController={viewControllerManager.navigationController}
-          />
-          <TagsSection viewControllerManager={viewControllerManager} />
-        </div>
-        {NavigationFooter}
-      </ResponsivePaneContent>
-      {panelElement && (
-        <PanelResizer
-          collapsable={true}
-          defaultWidth={150}
-          panel={panelElement}
-          hoverable={true}
-          side={PanelSide.Right}
-          type={PanelResizeType.WidthOnly}
-          resizeFinishCallback={panelResizeFinishCallback}
-          width={panelWidth}
-          left={0}
+      <div
+        id="navigation-content"
+        className={classNames(
+          'flex-grow overflow-y-auto overflow-x-hidden md:overflow-y-hidden md:hover:overflow-y-auto',
+          'md:hover:[overflow-y:_overlay] pointer-coarse:md:overflow-y-auto',
+        )}
+      >
+        <SmartViewsSection
+          application={application}
+          featuresController={viewControllerManager.featuresController}
+          navigationController={viewControllerManager.navigationController}
         />
-      )}
+        <TagsSection viewControllerManager={viewControllerManager} />
+      </div>
+      {NavigationFooter}
+
+      {children}
     </div>
   )
-}
+})
 
 export default observer(Navigation)

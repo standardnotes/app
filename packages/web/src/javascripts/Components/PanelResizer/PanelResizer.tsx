@@ -31,7 +31,8 @@ type Props = {
   side: PanelSide
   type: PanelResizeType
   resizeFinishCallback?: ResizeFinishCallback
-  widthEventCallback?: () => void
+  widthEventCallback?: (width: number) => void
+  modifyElementWidth: boolean
 }
 
 type State = {
@@ -82,9 +83,12 @@ class PanelResizer extends Component<Props, State> {
   }
 
   override componentDidUpdate(prevProps: Props) {
+    this.lastWidth = this.props.panel.scrollWidth
+
     if (this.props.width != prevProps.width) {
       this.setWidth(this.props.width)
     }
+
     if (this.props.left !== prevProps.left) {
       this.setLeft(this.props.left)
       this.setWidth(this.props.width)
@@ -108,6 +112,10 @@ class PanelResizer extends Component<Props, State> {
   }
 
   getParentRect() {
+    if (!this.props.panel.parentNode) {
+      return new DOMRect()
+    }
+
     return (this.props.panel.parentNode as HTMLElement).getBoundingClientRect()
   }
 
@@ -131,7 +139,7 @@ class PanelResizer extends Component<Props, State> {
     })
   }
 
-  setWidth = (width: number, finish = false): void => {
+  setWidth = (width: number, finish = false): number => {
     if (width === 0) {
       width = this.computeMaxWidth()
     }
@@ -150,22 +158,29 @@ class PanelResizer extends Component<Props, State> {
     }
 
     const isFullWidth = Math.round(width + this.lastLeft) === Math.round(parentRect.width)
-    if (isFullWidth) {
-      if (this.props.type === PanelResizeType.WidthOnly) {
-        this.props.panel.style.removeProperty('width')
+    if (this.props.modifyElementWidth) {
+      if (isFullWidth) {
+        if (this.props.type === PanelResizeType.WidthOnly) {
+          this.props.panel.style.removeProperty('width')
+        } else {
+          this.props.panel.style.width = `calc(100% - ${this.lastLeft}px)`
+        }
       } else {
-        this.props.panel.style.width = `calc(100% - ${this.lastLeft}px)`
+        this.props.panel.style.width = width + 'px'
       }
-    } else {
-      this.props.panel.style.width = width + 'px'
     }
+
     this.lastWidth = width
+
     if (finish) {
       this.finishSettingWidth()
+
       if (this.props.resizeFinishCallback) {
         this.props.resizeFinishCallback(this.lastWidth, this.lastLeft, this.isAtMaxWidth(), this.isCollapsed())
       }
     }
+
+    return width
   }
 
   setLeft = (left: number) => {
@@ -187,10 +202,6 @@ class PanelResizer extends Component<Props, State> {
   }
 
   handleWidthEvent(event?: MouseEvent) {
-    if (this.props.widthEventCallback) {
-      this.props.widthEventCallback()
-    }
-
     let x
     if (event) {
       x = event.clientX
@@ -201,7 +212,11 @@ class PanelResizer extends Component<Props, State> {
     }
     const deltaX = x - this.lastDownX
     const newWidth = this.startWidth + deltaX
-    this.setWidth(newWidth, false)
+    const adjustedWidth = this.setWidth(newWidth, false)
+
+    if (this.props.widthEventCallback) {
+      this.props.widthEventCallback(adjustedWidth)
+    }
   }
 
   handleLeftEvent(event: MouseEvent) {
@@ -309,6 +324,7 @@ class PanelResizer extends Component<Props, State> {
     return (
       <div
         className={classNames(
+          'panel-resizer',
           'absolute right-0 top-0 z-panel-resizer',
           'hidden h-full w-[4px] cursor-col-resize border-y-0 bg-[color:var(--panel-resizer-background-color)] md:block',
           this.props.alwaysVisible || this.state.collapsed || this.state.pressed ? ' opacity-100' : 'opacity-0',

@@ -52,7 +52,6 @@ export class ItemListController extends AbstractViewController implements Intern
   notesToDisplay = 0
   pageSize = 0
   panelTitle = 'Notes'
-  panelWidth = 0
   renderedItems: ListableContentItem[] = []
   searchSubmitted = false
   showDisplayOptionsMenu = false
@@ -189,7 +188,6 @@ export class ItemListController extends AbstractViewController implements Intern
       notes: observable,
       notesToDisplay: observable,
       panelTitle: observable,
-      panelWidth: observable,
       items: observable,
       renderedItems: observable,
       showDisplayOptionsMenu: observable,
@@ -439,6 +437,7 @@ export class ItemListController extends AbstractViewController implements Intern
     const activeController = this.getActiveItemController()
 
     if (this.shouldLeaveSelectionUnchanged(activeController)) {
+      log(LoggingDomain.Selection, 'Leaving selection unchanged')
       return
     }
 
@@ -451,7 +450,7 @@ export class ItemListController extends AbstractViewController implements Intern
 
       if (this.shouldSelectFirstItem(itemsReloadSource)) {
         log(LoggingDomain.Selection, 'Selecting next item after closing active one')
-        this.selectionController.selectNextItem()
+        this.selectionController.selectNextItem({ userTriggered: false })
       }
     } else if (activeItem && this.shouldSelectActiveItem(activeItem)) {
       log(LoggingDomain.Selection, 'Selecting active item')
@@ -460,6 +459,8 @@ export class ItemListController extends AbstractViewController implements Intern
       await this.selectFirstItem()
     } else if (this.shouldSelectNextItemOrCreateNewNote(activeItem)) {
       await this.selectNextItemOrCreateNewNote()
+    } else {
+      log(LoggingDomain.Selection, 'No selection change')
     }
   }
 
@@ -578,13 +579,6 @@ export class ItemListController extends AbstractViewController implements Intern
 
     this.displayOptions = newDisplayOptions
     this.webDisplayOptions = newWebDisplayOptions
-
-    const listColumnWidth =
-      selectedTag?.preferences?.panelWidth || this.application.getPreference(PrefKey.NotesPanelWidth)
-
-    if (listColumnWidth && listColumnWidth !== this.panelWidth) {
-      this.panelWidth = listColumnWidth
-    }
 
     if (!displayOptionsChanged) {
       return { didReloadItems: false }

@@ -19,10 +19,8 @@ import {
   useRef,
   useState,
 } from 'react'
-import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
-import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { classNames } from '@standardnotes/utils'
-import { useFileDragNDrop } from '../FileDragNDropProvider/FileDragNDropProvider'
+import { useFileDragNDrop } from '../FileDragNDropProvider'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { TagListSectionType } from './TagListSection'
 import { log, LoggingDomain } from '@/Logging'
@@ -44,8 +42,6 @@ const PADDING_PER_LEVEL_PX = 21
 
 export const TagsListItem: FunctionComponent<Props> = observer(
   ({ tag, type, features, navigationController: navigationController, level, onContextMenu, linkingController }) => {
-    const { toggleAppPane } = useResponsiveAppPane()
-
     const [title, setTitle] = useState(tag.title || '')
     const [subtagTitle, setSubtagTitle] = useState('')
     const inputRef = useRef<HTMLInputElement>(null)
@@ -94,8 +90,7 @@ export const TagsListItem: FunctionComponent<Props> = observer(
       await navigationController.setSelectedTag(tag, type, {
         userTriggered: true,
       })
-      toggleAppPane(AppPaneId.Items)
-    }, [navigationController, tag, type, toggleAppPane])
+    }, [navigationController, tag, type])
 
     const onBlur = useCallback(() => {
       navigationController.save(tag, title).catch(console.error)

@@ -1,6 +1,5 @@
 const { merge } = require('webpack-merge')
 const config = require('./web.webpack.config.js')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 const mergeWithEnvDefaults = require('./web.webpack-defaults.js')
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin')
 
