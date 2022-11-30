@@ -98,8 +98,6 @@ class NoteGroupView extends AbstractComponent<Props, State> {
 
     const hasControllers = this.state.controllers.length > 0
 
-    const canRenderEditorView = this.state.selectedPane === AppPaneId.Editor || !this.state.isInMobileView
-
     return (
       <div
         id={this.props.id}
@@ -122,7 +120,7 @@ class NoteGroupView extends AbstractComponent<Props, State> {
             selectionController={this.viewControllerManager.selectionController}
           />
         )}
-        {shouldNotShowMultipleSelectedItems && hasControllers && canRenderEditorView && (
+        {shouldNotShowMultipleSelectedItems && hasControllers && (
           <>
             {this.state.controllers.map((controller) => {
               return controller instanceof NoteViewController ? (

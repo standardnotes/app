@@ -14,8 +14,12 @@ import { AppPaneId, AppPaneIdToDivId } from '../ResponsivePane/AppPaneMetadata'
 import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
 import Navigation from '../Tags/Navigation'
 import { useApplication } from './ApplicationProvider'
-import { animatePaneEntranceTransitionFromOffscreenToTheRight } from '@/Components/ApplicationView/PaneAnimator'
-import { isPanesChangePush } from '@/Controllers/panesForLayout'
+import {
+  animatePaneEntranceTransitionFromOffscreenToTheRight,
+  animatePaneExitTransitionOffscreenToTheRight,
+} from '@/Components/ApplicationView/PaneAnimator'
+import { isPanesChangeLeafDismiss, isPanesChangePush } from '@/Controllers/panesForLayout'
+import { log, LoggingDomain } from '@/Logging'
 
 const BaseStyles: React.CSSProperties = {
   gridTemplateRows: 'auto',
@@ -31,6 +35,7 @@ const PanesGrid = () => {
   const previousPaneController = usePrevious(paneController)
   const [renderPanes, setRenderPanes] = useState<AppPaneId[]>([])
   const [panesPendingEntrance, setPanesPendingEntrance] = useState<AppPaneId[]>([])
+  const [panesPendingExit, setPanesPendingExit] = useState<AppPaneId[]>([])
 
   const viewControllerManager = application.getViewControllerManager()
 
@@ -55,6 +60,20 @@ const PanesGrid = () => {
   }, [paneController.panes, previousPaneController?.panes])
 
   useEffect(() => {
+    const panes = paneController.panes
+    const previousPanes = previousPaneController?.panes
+    if (!previousPanes) {
+      setPanesPendingExit([])
+      return
+    }
+
+    const isExit = isPanesChangeLeafDismiss(previousPanes, panes)
+    if (isExit) {
+      setPanesPendingExit([previousPanes[previousPanes.length - 1]])
+    }
+  }, [paneController.panes, previousPaneController?.panes])
+
+  useEffect(() => {
     setRenderPanes(paneController.panes)
   }, [paneController.panes])
 
@@ -72,6 +91,21 @@ const PanesGrid = () => {
       setPanesPendingEntrance([])
     })
   }, [panesPendingEntrance])
+
+  useEffect(() => {
+    if (!panesPendingExit || panesPendingExit?.length === 0) {
+      return
+    }
+
+    if (panesPendingExit.length > 1) {
+      console.warn('More than one pane pending exit. This is not supported.')
+      return
+    }
+
+    void animatePaneExitTransitionOffscreenToTheRight(AppPaneIdToDivId[panesPendingExit[0]]).then(() => {
+      setPanesPendingExit([])
+    })
+  }, [panesPendingExit])
 
   useEffect(() => {
     const removeObserver = application.addEventObserver(async () => {
@@ -162,14 +196,19 @@ const PanesGrid = () => {
     return 'grid flex flex-row'
   }
 
+  const renderPanesWithPendingExit = [...renderPanes, ...panesPendingExit]
+
+  log(LoggingDomain.Panes, 'Rendering panes', renderPanesWithPendingExit)
+
   return (
     <div
       id="app"
       className={`app ${computeClassesForContainer()}`}
       style={{ ...BaseStyles, ...computeStylesForContainer() }}
     >
-      {renderPanes.map((pane) => {
+      {renderPanesWithPendingExit.map((pane) => {
         const isPendingEntrance = panesPendingEntrance?.includes(pane)
+
         const options: PaneComponentOptions = {
           userWidth: pane === AppPaneId.Navigation ? navigationPanelWidth : undefined,
           className: computeClassesForPane(pane, isPendingEntrance ?? false),
@@ -204,7 +243,7 @@ const PanesGrid = () => {
             <ContentListView
               id={ElementIds.ItemsColumn}
               className={options.className}
-              key={Math.random()}
+              key={'content-list-view'}
               application={application}
               accountMenuController={viewControllerManager.accountMenuController}
               filesController={viewControllerManager.filesController}

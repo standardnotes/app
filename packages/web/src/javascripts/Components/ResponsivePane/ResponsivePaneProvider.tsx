@@ -1,4 +1,3 @@
-import { ElementIds } from '@/Constants/ElementIDs'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import {
   useEffect,
@@ -69,7 +68,6 @@ const MemoizedChildren = memo(({ children }: ChildrenProps) => <>{children}</>)
 
 const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => {
   const currentSelectedPane = paneController.currentPane
-  const previousSelectedPane = paneController.previousPane
   const currentSelectedPaneRef = useStateRef<AppPaneId>(currentSelectedPane)
 
   const toggleAppPane = useCallback(
@@ -78,16 +76,6 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
     },
     [paneController],
   )
-
-  useEffect(() => {
-    if (previousSelectedPane) {
-      const previousPaneElement = document.getElementById(ElementIds[previousSelectedPane])
-      previousPaneElement?.removeAttribute('data-selected-pane')
-    }
-
-    const currentPaneElement = document.getElementById(ElementIds[currentSelectedPane])
-    currentPaneElement?.setAttribute('data-selected-pane', '')
-  }, [currentSelectedPane, previousSelectedPane])
 
   const addAndroidBackHandler = useAndroidBackHandler()
 
