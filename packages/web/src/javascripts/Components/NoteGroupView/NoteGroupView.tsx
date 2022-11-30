@@ -101,7 +101,7 @@ class NoteGroupView extends AbstractComponent<Props, State> {
     return (
       <div
         id={this.props.id}
-        className={`app-column flex h-full flex-grow flex-col pt-safe-top ${this.props.className}`}
+        className={`flex h-full flex-grow flex-col pt-safe-top ${this.props.className}`}
         ref={this.props.innerRef}
       >
         {this.state.showMultipleSelectedNotes && (

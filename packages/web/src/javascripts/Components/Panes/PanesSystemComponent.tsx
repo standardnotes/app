@@ -220,13 +220,15 @@ const PanesSystemComponent = () => {
     }
   }
 
-  const computeClassesForPane = (_paneId: AppPaneId, isPendingEntrance: boolean): string => {
+  const computeClassesForPane = (_paneId: AppPaneId, isPendingEntrance: boolean, index: number): string => {
+    const common = `app-pane app-pane-${index + 1} h-full content`
+
     if (isMobile) {
-      return `content h-full absolute top-0 left-0 w-full flex flex-col ${
+      return `absolute top-0 left-0 w-full flex flex-col ${common} ${
         isPendingEntrance ? 'translate-x-[100%]' : 'translate-x-0 '
       }`
     } else {
-      return 'content flex h-full flex-col relative'
+      return `flex flex-col relative overflow-hidden ${common}`
     }
   }
 
@@ -244,10 +246,10 @@ const PanesSystemComponent = () => {
 
   return (
     <div id="app" className={`app ${computeClassesForContainer()}`} style={{ ...computeStylesForContainer() }}>
-      {renderPanesWithPendingExit.map((pane) => {
+      {renderPanesWithPendingExit.map((pane, index) => {
         const isPendingEntrance = panesPendingEntrance?.includes(pane)
 
-        const className = computeClassesForPane(pane, isPendingEntrance ?? false)
+        const className = computeClassesForPane(pane, isPendingEntrance ?? false, index)
 
         if (pane === AppPaneId.Navigation) {
           return (

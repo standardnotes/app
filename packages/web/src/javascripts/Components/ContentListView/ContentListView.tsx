@@ -290,7 +290,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
     return (
       <div
         id={id}
-        className={classNames(className, 'sn-component section app-column h-full overflow-hidden pt-safe-top')}
+        className={classNames(className, 'sn-component section h-full overflow-hidden pt-safe-top')}
         aria-label={'Notes & Files'}
         ref={innerRef}
       >

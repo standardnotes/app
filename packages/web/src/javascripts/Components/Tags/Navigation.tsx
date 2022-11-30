@@ -108,7 +108,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
       id={id}
       className={classNames(
         className,
-        'sn-component section app-column pb-[50px] md:pb-0',
+        'sn-component section pb-[50px] md:pb-0',
         'h-full max-h-full overflow-hidden pt-safe-top md:h-full md:max-h-full md:min-h-0',
       )}
       ref={ref}

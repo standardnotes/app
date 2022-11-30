@@ -1,7 +1,6 @@
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { getPlatformString } from '@/Utils'
 import { ApplicationEvent, Challenge, removeFromArray, WebAppEvent } from '@standardnotes/snjs'
-import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
 import { alertDialog, RouteType } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import Footer from '@/Components/Footer/Footer'
@@ -10,7 +9,7 @@ import PreferencesViewWrapper from '@/Components/Preferences/PreferencesViewWrap
 import ChallengeModal from '@/Components/ChallengeModal/ChallengeModal'
 import NotesContextMenu from '@/Components/NotesContextMenu/NotesContextMenu'
 import PurchaseFlowWrapper from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
-import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import RevisionHistoryModal from '@/Components/RevisionHistoryModal/RevisionHistoryModal'
 import PremiumModalProvider from '@/Hooks/usePremiumModal'
 import ConfirmSignoutContainer from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
@@ -18,7 +17,6 @@ import { ToastContainer } from '@standardnotes/toast'
 import FilePreviewModalWrapper from '@/Components/FilePreview/FilePreviewModal'
 import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu'
 import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsModalWrapper'
-import { PanelResizedData } from '@/Types/PanelResizedData'
 import TagContextMenuWrapper from '@/Components/Tags/TagContextMenuWrapper'
 import FileDragNDropProvider from '../FileDragNDropProvider'
 import ResponsivePaneProvider from '../Panes/ResponsivePaneProvider'
@@ -41,8 +39,6 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   const [challenges, setChallenges] = useState<Challenge[]>([])
 
   const viewControllerManager = application.getViewControllerManager()
-
-  const appColumnContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const desktopService = application.getDesktopService()
@@ -134,30 +130,8 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   }, [application, onAppLaunch, onAppStart])
 
   useEffect(() => {
-    const removeObserver = application.addWebEventObserver(async (eventName, data) => {
-      if (eventName === WebAppEvent.PanelResized) {
-        if (!appColumnContainerRef.current) {
-          return
-        }
-
-        const { panel, collapsed } = data as PanelResizedData
-
-        if (panel === PANEL_NAME_NOTES) {
-          if (collapsed) {
-            appColumnContainerRef.current.classList.add('collapsed-notes')
-          } else {
-            appColumnContainerRef.current.classList.remove('collapsed-notes')
-          }
-        }
-
-        if (panel === PANEL_NAME_NAVIGATION) {
-          if (collapsed) {
-            appColumnContainerRef.current.classList.add('collapsed-navigation')
-          } else {
-            appColumnContainerRef.current.classList.remove('collapsed-navigation')
-          }
-        }
-      } else if (eventName === WebAppEvent.WindowDidFocus) {
+    const removeObserver = application.addWebEventObserver(async (eventName) => {
+      if (eventName === WebAppEvent.WindowDidFocus) {
         if (!(await application.isLocked())) {
           application.sync.sync().catch(console.error)
         }
