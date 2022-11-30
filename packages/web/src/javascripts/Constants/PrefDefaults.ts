@@ -8,7 +8,7 @@ export const PrefDefaults = {
   [PrefKey.EditorLeft]: null,
   [PrefKey.EditorMonospaceEnabled]: false,
   [PrefKey.EditorSpellcheck]: true,
-  [PrefKey.EditorResizersEnabled]: true,
+  [PrefKey.EditorResizersEnabled]: false,
   [PrefKey.EditorLineHeight]: EditorLineHeight.Normal,
   [PrefKey.EditorFontSize]: EditorFontSize.Normal,
   [PrefKey.SortNotesBy]: CollectionSort.CreatedAt,
