@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.115.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.115.0...@standardnotes/web@3.115.1) (2022-11-30)
+
+### Bug Fixes
+
+* Embedded image aspect ratio in Super notes ([#2075](https://github.com/standardnotes/app/issues/2075)) ([c32541c](https://github.com/standardnotes/app/commit/c32541c6e162737663c65bdf43105345e45d9988))
+
 # [3.115.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.114.3...@standardnotes/web@3.115.0) (2022-11-30)
 
 ### Features
