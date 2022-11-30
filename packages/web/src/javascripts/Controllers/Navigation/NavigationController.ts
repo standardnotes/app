@@ -261,6 +261,10 @@ export class NavigationController
     return this.selectedUuid === SystemViewId.Files
   }
 
+  isTagFilesView(tag: AnyTag): boolean {
+    return tag.uuid === SystemViewId.Files
+  }
+
   public isInAnySystemView(): boolean {
     return (
       this.selected instanceof SmartView && Object.values(SystemViewId).includes(this.selected.uuid as SystemViewId)
@@ -459,8 +463,10 @@ export class NavigationController
         .catch(console.error)
     }
 
-    if (userTriggered) {
-      void this.application.paneController.setPaneLayout(PaneLayout.ItemSelection)
+    if (tag && this.isTagFilesView(tag)) {
+      this.application.paneController.setPaneLayout(PaneLayout.FilesView)
+    } else if (userTriggered) {
+      this.application.paneController.setPaneLayout(PaneLayout.ItemSelection)
     }
 
     this.previouslySelected_ = this.selected_
@@ -496,7 +502,7 @@ export class NavigationController
   }
 
   get filesNavigationView(): SmartView {
-    return this.smartViews.find((view) => view.uuid === SystemViewId.Files) as SmartView
+    return this.smartViews.find(this.isTagFilesView) as SmartView
   }
 
   private setSelectedTagInstance(tag: AnyTag | undefined): void {

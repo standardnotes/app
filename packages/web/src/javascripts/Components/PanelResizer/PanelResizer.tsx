@@ -31,7 +31,8 @@ type Props = {
   side: PanelSide
   type: PanelResizeType
   resizeFinishCallback?: ResizeFinishCallback
-  widthEventCallback?: () => void
+  widthEventCallback?: (width: number) => void
+  modifyElementWidth: boolean
 }
 
 type State = {
@@ -150,18 +151,23 @@ class PanelResizer extends Component<Props, State> {
     }
 
     const isFullWidth = Math.round(width + this.lastLeft) === Math.round(parentRect.width)
-    if (isFullWidth) {
-      if (this.props.type === PanelResizeType.WidthOnly) {
-        this.props.panel.style.removeProperty('width')
+    if (this.props.modifyElementWidth) {
+      if (isFullWidth) {
+        if (this.props.type === PanelResizeType.WidthOnly) {
+          this.props.panel.style.removeProperty('width')
+        } else {
+          this.props.panel.style.width = `calc(100% - ${this.lastLeft}px)`
+        }
       } else {
-        this.props.panel.style.width = `calc(100% - ${this.lastLeft}px)`
+        this.props.panel.style.width = width + 'px'
       }
-    } else {
-      this.props.panel.style.width = width + 'px'
     }
+
     this.lastWidth = width
+
     if (finish) {
       this.finishSettingWidth()
+
       if (this.props.resizeFinishCallback) {
         this.props.resizeFinishCallback(this.lastWidth, this.lastLeft, this.isAtMaxWidth(), this.isCollapsed())
       }
@@ -187,10 +193,6 @@ class PanelResizer extends Component<Props, State> {
   }
 
   handleWidthEvent(event?: MouseEvent) {
-    if (this.props.widthEventCallback) {
-      this.props.widthEventCallback()
-    }
-
     let x
     if (event) {
       x = event.clientX
@@ -202,6 +204,10 @@ class PanelResizer extends Component<Props, State> {
     const deltaX = x - this.lastDownX
     const newWidth = this.startWidth + deltaX
     this.setWidth(newWidth, false)
+
+    if (this.props.widthEventCallback) {
+      this.props.widthEventCallback(newWidth)
+    }
   }
 
   handleLeftEvent(event: MouseEvent) {

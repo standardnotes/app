@@ -21,6 +21,8 @@ import {
 import { isPanesChangeLeafDismiss, isPanesChangePush } from '@/Controllers/panesForLayout'
 import { log, LoggingDomain } from '@/Logging'
 
+const PLACEHOLDER_NAVIGATION_PANEL_WIDTH = 220
+
 const PanesGrid = () => {
   const application = useApplication()
   const isTabletOrMobileScreenWrapped = useIsTabletOrMobileScreen()
@@ -35,13 +37,21 @@ const PanesGrid = () => {
 
   const viewControllerManager = application.getViewControllerManager()
 
-  const [navigationPanelWidth, setNavigationPanelWidth] = useState<number>(0)
+  const [navigationPanelWidth, setNavigationPanelWidth] = useState<number>(
+    application.getPreference(PrefKey.TagsPanelWidth, PLACEHOLDER_NAVIGATION_PANEL_WIDTH),
+  )
   const [navigationRef, setNavigationRef] = useState<HTMLDivElement | null>(null)
   const [showNavigationPanelResizer, setShowNavigationPanelResizer] = useState(false)
 
   const [_editorRef, setEditorRef] = useState<HTMLDivElement | null>(null)
 
+  const animationsSupported = isMobile
+
   useEffect(() => {
+    if (!animationsSupported) {
+      return
+    }
+
     const panes = paneController.panes
     const previousPanes = previousPaneController?.panes
     if (!previousPanes) {
@@ -53,9 +63,13 @@ const PanesGrid = () => {
     if (isPush) {
       setPanesPendingEntrance([panes[panes.length - 1]])
     }
-  }, [paneController.panes, previousPaneController?.panes])
+  }, [paneController.panes, previousPaneController?.panes, animationsSupported])
 
   useEffect(() => {
+    if (!animationsSupported) {
+      return
+    }
+
     const panes = paneController.panes
     const previousPanes = previousPaneController?.panes
     if (!previousPanes) {
@@ -67,7 +81,7 @@ const PanesGrid = () => {
     if (isExit) {
       setPanesPendingExit([previousPanes[previousPanes.length - 1]])
     }
-  }, [paneController.panes, previousPaneController?.panes])
+  }, [paneController.panes, previousPaneController?.panes, animationsSupported])
 
   useEffect(() => {
     setRenderPanes(paneController.panes)
@@ -105,16 +119,18 @@ const PanesGrid = () => {
 
   useEffect(() => {
     const removeObserver = application.addEventObserver(async () => {
-      const width = application.getPreference(PrefKey.TagsPanelWidth)
-      if (width) {
-        setNavigationPanelWidth(width)
-      }
+      const width = application.getPreference(PrefKey.TagsPanelWidth, PLACEHOLDER_NAVIGATION_PANEL_WIDTH)
+      setNavigationPanelWidth(width)
     }, ApplicationEvent.PreferencesChanged)
 
     return () => {
       removeObserver()
     }
   }, [application])
+
+  const navigationPanelResizeWidthChangeCallback = useCallback((width: number) => {
+    setNavigationPanelWidth(width)
+  }, [])
 
   const navigationPanelResizeFinishCallback: ResizeFinishCallback = useCallback(
     (width, _lastLeft, _isMaxWidth, isCollapsed) => {
@@ -162,12 +178,18 @@ const PanesGrid = () => {
         gridTemplateColumns: 'auto',
       }
     } else if (numPanes === 2) {
-      return {
-        gridTemplateColumns: '1fr 2fr',
+      if (isTablet) {
+        return {
+          gridTemplateColumns: '1fr 2fr',
+        }
+      } else {
+        return {
+          gridTemplateColumns: `${navigationPanelWidth}px auto`,
+        }
       }
     } else if (numPanes === 3) {
       return {
-        gridTemplateColumns: 'auto auto 2fr',
+        gridTemplateColumns: `${navigationPanelWidth}px 1fr 2fr`,
       }
     } else {
       return {}
@@ -180,7 +202,7 @@ const PanesGrid = () => {
         isPendingEntrance ? 'translate-x-[100%]' : 'translate-x-0 '
       }`
     } else {
-      return 'content flex h-full flex-col'
+      return 'content flex h-full flex-col relative'
     }
   }
 
@@ -211,7 +233,7 @@ const PanesGrid = () => {
             <Navigation
               id={ElementIds.NavigationColumn}
               ref={setNavigationRef}
-              className={classNames(options.className, isTabletOrMobile ? 'w-full' : 'w-[220px]')}
+              className={classNames(options.className, isTabletOrMobile ? 'w-full' : '')}
               key="navigation-pane"
               application={application}
             >
@@ -220,11 +242,13 @@ const PanesGrid = () => {
                   collapsable={true}
                   defaultWidth={150}
                   panel={navigationRef}
+                  modifyElementWidth={false}
                   hoverable={true}
                   side={PanelSide.Right}
                   type={PanelResizeType.WidthOnly}
                   resizeFinishCallback={navigationPanelResizeFinishCallback}
                   width={options.userWidth ?? 0}
+                  widthEventCallback={navigationPanelResizeWidthChangeCallback}
                   left={0}
                 />
               )}

@@ -22,7 +22,7 @@ export type PaneComponentProvider = (options: PaneComponentOptions) => JSX.Eleme
 export class PaneController extends AbstractViewController {
   isInMobileView = isMobileScreen()
   protected disposers: Disposer[] = []
-  panes: AppPaneId[] = [AppPaneId.Navigation]
+  panes: AppPaneId[] = [AppPaneId.Navigation, AppPaneId.Items]
   paneComponentsProviders: Map<AppPaneId, PaneComponentProvider> = new Map()
 
   currentNavPanelWidth = 0
@@ -134,10 +134,10 @@ export class PaneController extends AbstractViewController {
   setPaneLayout = (layout: PaneLayout) => {
     log(LoggingDomain.Panes, 'Set pane layout', layout)
 
-    return this.replacePanes(panesForLayout(layout))
+    this.replacePanes(panesForLayout(layout))
   }
 
-  replacePanes = async (panes: AppPaneId[]) => {
+  replacePanes = (panes: AppPaneId[]) => {
     log(LoggingDomain.Panes, 'Replacing panes', panes)
 
     this.panes = panes
