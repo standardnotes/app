@@ -1,5 +1,8 @@
 import { log, LoggingDomain } from '@/Logging'
 
+const ENTRANCE_DURATION = 200
+const EXIT_DURATION = 200
+
 export async function animatePaneEntranceTransitionFromOffscreenToTheRight(elementId: string): Promise<void> {
   log(LoggingDomain.Panes, 'Animating pane entrance transition from offscreen to the right', elementId)
   const element = document.getElementById(elementId)
@@ -17,7 +20,7 @@ export async function animatePaneEntranceTransitionFromOffscreenToTheRight(eleme
       },
     ],
     {
-      duration: 300,
+      duration: ENTRANCE_DURATION,
       easing: 'ease-in-out',
       fill: 'forwards',
     },
@@ -45,7 +48,7 @@ export async function animatePaneExitTransitionOffscreenToTheRight(elementId: st
       },
     ],
     {
-      duration: 300,
+      duration: EXIT_DURATION,
       easing: 'ease-in-out',
       fill: 'forwards',
     },
