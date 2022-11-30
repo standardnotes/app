@@ -240,6 +240,7 @@ function useDraggableBlockMenu(
   const targetLineRef = useRef<HTMLDivElement>(null);
   const [draggableBlockElem, setDraggableBlockElem] =
     useState<HTMLElement | null>(null);
+  const dragData = useRef<string | null>(null);
 
   useEffect(() => {
     function onMouseMove(event: MouseEvent) {
@@ -378,7 +379,7 @@ function useDraggableBlockMenu(
         nodeKey = node.getKey();
       }
     });
-    dataTransfer.setData(DRAG_DATA_FORMAT, nodeKey);
+    dragData.current = nodeKey;
   }
 
   function onDragEnd(): void {
