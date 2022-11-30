@@ -8,7 +8,7 @@ import Icon from '../Icon/Icon'
 import { ItemLink } from '@/Utils/Items/Search/ItemLink'
 import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { getIconForItem } from '@/Utils/Items/Icons/getIconForItem'
-import { useApplication } from '../ApplicationView/ApplicationProvider'
+import { useApplication } from '../ApplicationProvider'
 import { getTitleForLinkedTag } from '@/Utils/Items/Display/getTitleForLinkedTag'
 
 type Props = {

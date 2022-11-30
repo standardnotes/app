@@ -6330,7 +6330,6 @@ __metadata:
     eslint-config-prettier: ^8.5.0
     eslint-plugin-react: ^7.31.10
     eslint-plugin-react-hooks: ^4.6.0
-    html-webpack-plugin: ^5.5.0
     identity-obj-proxy: ^3.0.0
     jest: ^29.3.1
     jest-environment-jsdom: ^29.3.1

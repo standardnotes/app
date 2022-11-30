@@ -1,4 +1,4 @@
-import { PaneController } from './PaneController'
+import { PaneController } from './PaneController/PaneController'
 import {
   PersistedStateValue,
   PersistenceKey,

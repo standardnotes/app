@@ -1,36 +1,31 @@
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { getPlatformString } from '@/Utils'
 import { ApplicationEvent, Challenge, removeFromArray, WebAppEvent } from '@standardnotes/snjs'
-import { PANEL_NAME_NOTES, PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
 import { alertDialog, RouteType } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
-import Navigation from '@/Components/Tags/Navigation'
-import NoteGroupView from '@/Components/NoteGroupView/NoteGroupView'
 import Footer from '@/Components/Footer/Footer'
 import SessionsModal from '@/Components/SessionsModal/SessionsModal'
 import PreferencesViewWrapper from '@/Components/Preferences/PreferencesViewWrapper'
 import ChallengeModal from '@/Components/ChallengeModal/ChallengeModal'
 import NotesContextMenu from '@/Components/NotesContextMenu/NotesContextMenu'
 import PurchaseFlowWrapper from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
-import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import RevisionHistoryModal from '@/Components/RevisionHistoryModal/RevisionHistoryModal'
 import PremiumModalProvider from '@/Hooks/usePremiumModal'
 import ConfirmSignoutContainer from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
 import { ToastContainer } from '@standardnotes/toast'
 import FilePreviewModalWrapper from '@/Components/FilePreview/FilePreviewModal'
-import ContentListView from '@/Components/ContentListView/ContentListView'
 import FileContextMenuWrapper from '@/Components/FileContextMenu/FileContextMenu'
 import PermissionsModalWrapper from '@/Components/PermissionsModal/PermissionsModalWrapper'
-import { PanelResizedData } from '@/Types/PanelResizedData'
 import TagContextMenuWrapper from '@/Components/Tags/TagContextMenuWrapper'
-import FileDragNDropProvider from '../FileDragNDropProvider/FileDragNDropProvider'
-import ResponsivePaneProvider from '../ResponsivePane/ResponsivePaneProvider'
+import FileDragNDropProvider from '../FileDragNDropProvider'
+import ResponsivePaneProvider from '../Panes/ResponsivePaneProvider'
 import AndroidBackHandlerProvider from '@/NativeMobileWeb/useAndroidBackHandler'
 import ConfirmDeleteAccountContainer from '@/Components/ConfirmDeleteAccountModal/ConfirmDeleteAccountModal'
 import DarkModeHandler from '../DarkModeHandler/DarkModeHandler'
-import ApplicationProvider from './ApplicationProvider'
-import { ErrorBoundary } from '@/Utils/ErrorBoundary'
-import CommandProvider from './CommandProvider'
+import ApplicationProvider from '../ApplicationProvider'
+import CommandProvider from '../CommandProvider'
+import PanesSystemComponent from '../Panes/PanesSystemComponent'
 
 type Props = {
   application: WebApplication
@@ -44,8 +39,6 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   const [challenges, setChallenges] = useState<Challenge[]>([])
 
   const viewControllerManager = application.getViewControllerManager()
-
-  const appColumnContainerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const desktopService = application.getDesktopService()
@@ -137,30 +130,8 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   }, [application, onAppLaunch, onAppStart])
 
   useEffect(() => {
-    const removeObserver = application.addWebEventObserver(async (eventName, data) => {
-      if (eventName === WebAppEvent.PanelResized) {
-        if (!appColumnContainerRef.current) {
-          return
-        }
-
-        const { panel, collapsed } = data as PanelResizedData
-
-        if (panel === PANEL_NAME_NOTES) {
-          if (collapsed) {
-            appColumnContainerRef.current.classList.add('collapsed-notes')
-          } else {
-            appColumnContainerRef.current.classList.remove('collapsed-notes')
-          }
-        }
-
-        if (panel === PANEL_NAME_NAVIGATION) {
-          if (collapsed) {
-            appColumnContainerRef.current.classList.add('collapsed-navigation')
-          } else {
-            appColumnContainerRef.current.classList.remove('collapsed-navigation')
-          }
-        }
-      } else if (eventName === WebAppEvent.WindowDidFocus) {
+    const removeObserver = application.addWebEventObserver(async (eventName) => {
+      if (eventName === WebAppEvent.WindowDidFocus) {
         if (!(await application.isLocked())) {
           application.sync.sync().catch(console.error)
         }
@@ -206,30 +177,13 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
               featuresController={viewControllerManager.featuresController}
             >
               <div className={platformString + ' main-ui-view sn-component h-full'}>
-                <div id="app" className="app app-column-container" ref={appColumnContainerRef}>
-                  <FileDragNDropProvider
-                    application={application}
-                    featuresController={viewControllerManager.featuresController}
-                    filesController={viewControllerManager.filesController}
-                  >
-                    <Navigation application={application} />
-                    <ContentListView
-                      application={application}
-                      accountMenuController={viewControllerManager.accountMenuController}
-                      filesController={viewControllerManager.filesController}
-                      itemListController={viewControllerManager.itemListController}
-                      navigationController={viewControllerManager.navigationController}
-                      noAccountWarningController={viewControllerManager.noAccountWarningController}
-                      notesController={viewControllerManager.notesController}
-                      selectionController={viewControllerManager.selectionController}
-                      searchOptionsController={viewControllerManager.searchOptionsController}
-                      linkingController={viewControllerManager.linkingController}
-                    />
-                    <ErrorBoundary>
-                      <NoteGroupView application={application} />
-                    </ErrorBoundary>
-                  </FileDragNDropProvider>
-                </div>
+                <FileDragNDropProvider
+                  application={application}
+                  featuresController={viewControllerManager.featuresController}
+                  filesController={viewControllerManager.filesController}
+                >
+                  <PanesSystemComponent />
+                </FileDragNDropProvider>
 
                 <>
                   <Footer application={application} applicationGroup={mainApplicationGroup} />

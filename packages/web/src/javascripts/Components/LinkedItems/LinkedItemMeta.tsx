@@ -4,7 +4,7 @@ import { getTitleForLinkedTag } from '@/Utils/Items/Display/getTitleForLinkedTag
 import { getIconForItem } from '@/Utils/Items/Icons/getIconForItem'
 import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { observer } from 'mobx-react-lite'
-import { useApplication } from '../ApplicationView/ApplicationProvider'
+import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
 
 type Props = {

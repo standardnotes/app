@@ -4,7 +4,7 @@ import { classNames } from '@standardnotes/utils'
 import { ReactNode, useCallback, useState } from 'react'
 import { IconType, PrefKey } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
-import { useApplication } from '../ApplicationView/ApplicationProvider'
+import { useApplication } from '../ApplicationProvider'
 
 export type NoteStatus = {
   type: 'saving' | 'saved' | 'error'

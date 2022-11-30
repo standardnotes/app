@@ -3,14 +3,14 @@ import ItemLinkAutocompleteInput from './ItemLinkAutocompleteInput'
 import { LinkingController } from '@/Controllers/LinkingController'
 import LinkedItemBubble from './LinkedItemBubble'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
+import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/utils'
 import { ContentType } from '@standardnotes/snjs'
 import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { ItemLink } from '@/Utils/Items/Search/ItemLink'
 import { FOCUS_TAGS_INPUT_COMMAND, keyboardStringForShortcut } from '@standardnotes/ui-services'
-import { useCommandService } from '../ApplicationView/CommandProvider'
+import { useCommandService } from '../CommandProvider'
 
 type Props = {
   linkingController: LinkingController

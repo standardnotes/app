@@ -7,8 +7,6 @@ import ListItemFlagIcons from './ListItemFlagIcons'
 import ListItemTags from './ListItemTags'
 import ListItemMetadata from './ListItemMetadata'
 import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
-import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
-import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
 import { useContextMenuEvent } from '@/Hooks/useContextMenuEvent'
 import ListItemNotePreviewText from './ListItemNotePreviewText'
 import { ListItemTitle } from './ListItemTitle'
@@ -31,8 +29,6 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
   isPreviousItemTiled,
   isNextItemTiled,
 }) => {
-  const { toggleAppPane } = useResponsiveAppPane()
-
   const listItemRef = useRef<HTMLDivElement>(null)
 
   const noteType = item.noteType || application.componentManager.editorForNote(item)?.package_info.note_type
@@ -65,11 +61,8 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
   }
 
   const onClick = useCallback(async () => {
-    const { didSelect } = await onSelect(item, true)
-    if (didSelect) {
-      toggleAppPane(AppPaneId.Editor)
-    }
-  }, [item, onSelect, toggleAppPane])
+    await onSelect(item, true)
+  }, [item, onSelect])
 
   useContextMenuEvent(listItemRef, openContextMenu)
 

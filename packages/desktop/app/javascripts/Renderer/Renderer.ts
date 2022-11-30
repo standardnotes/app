@@ -22,7 +22,7 @@ declare global {
     plansUrl: string
     purchaseUrl: string
     startApplication: StartApplication
-    zip: any
+    zip: unknown
     electronMainEvents: any
   }
 }
@@ -88,15 +88,15 @@ async function configureWindow(remoteBridge: CrossProcessBridge) {
   /*
   Title bar events
   */
-  document.getElementById('menu-btn')!.addEventListener('click', () => {
+  document.getElementById('menu-btn')?.addEventListener('click', () => {
     remoteBridge.displayAppMenu()
   })
 
-  document.getElementById('min-btn')!.addEventListener('click', () => {
+  document.getElementById('min-btn')?.addEventListener('click', () => {
     remoteBridge.minimizeWindow()
   })
 
-  document.getElementById('max-btn')!.addEventListener('click', async () => {
+  document.getElementById('max-btn')?.addEventListener('click', async () => {
     if (remoteBridge.isWindowMaximized()) {
       remoteBridge.unmaximizeWindow()
     } else {
@@ -104,15 +104,12 @@ async function configureWindow(remoteBridge: CrossProcessBridge) {
     }
   })
 
-  document.getElementById('close-btn')!.addEventListener('click', () => {
+  document.getElementById('close-btn')?.addEventListener('click', () => {
     remoteBridge.closeWindow()
   })
 
   // For Mac inset window
   const sheet = document.styleSheets[0]
-  if (isMacOS) {
-    sheet.insertRule('#navigation-content { padding-top: 25px !important; }', sheet.cssRules.length)
-  }
 
   if (isMacOS || useSystemMenuBar) {
     // !important is important here because #desktop-title-bar has display: flex.
@@ -141,7 +138,7 @@ window.electronMainEvents.handlePerformAutomatedBackup(() => {
   void window.device.downloadBackup()
 })
 
-window.electronMainEvents.handleFinishedSavingBackup((_: IpcRendererEvent, data: any) => {
+window.electronMainEvents.handleFinishedSavingBackup((_: IpcRendererEvent, data: { success: boolean }) => {
   window.webClient.didFinishBackup(data.success)
 })
 

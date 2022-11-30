@@ -8,6 +8,10 @@ $content-horizontal-padding: 16px;
   display: flex;
   flex-direction: column;
 
+  @media screen and (min-width: 768px) {
+    border-right: 1px solid var(--items-column-border-right-color);
+  }
+
   &,
   #navigation-content {
     background-color: var(--navigation-column-background-color);

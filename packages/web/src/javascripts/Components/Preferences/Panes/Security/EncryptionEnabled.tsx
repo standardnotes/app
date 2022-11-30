@@ -1,4 +1,4 @@
-import { useApplication } from '@/Components/ApplicationView/ApplicationProvider'
+import { useApplication } from '@/Components/ApplicationProvider'
 import Icon from '@/Components/Icon/Icon'
 import { ContentType, ItemCounter } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'

@@ -1,4 +1,3 @@
-import { ElementIds } from '@/Constants/ElementIDs'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import {
   useEffect,
@@ -7,25 +6,31 @@ import {
   createContext,
   useCallback,
   useContext,
-  useState,
   memo,
   useRef,
   useLayoutEffect,
   MutableRefObject,
 } from 'react'
 import { AppPaneId } from './AppPaneMetadata'
-import { PaneController } from '../../Controllers/PaneController'
+import { PaneController } from '../../Controllers/PaneController/PaneController'
 import { observer } from 'mobx-react-lite'
 
 type ResponsivePaneData = {
   selectedPane: AppPaneId
-  toggleAppPane: (paneId: AppPaneId) => void
-  toggleNotesListOnTablets: () => void
   toggleListPane: () => void
   toggleNavigationPane: () => void
-  isNotesListVisibleOnTablets: boolean
   isListPaneCollapsed: boolean
   isNavigationPaneCollapsed: boolean
+  panes: PaneController['panes']
+  toggleAppPane: (paneId: AppPaneId) => void
+  presentPane: PaneController['presentPane']
+  popToPane: PaneController['popToPane']
+  dismissLastPane: PaneController['dismissLastPane']
+  replacePanes: PaneController['replacePanes']
+  removePane: PaneController['removePane']
+  insertPaneAtIndex: PaneController['insertPaneAtIndex']
+  setPaneLayout: PaneController['setPaneLayout']
+  focusModeEnabled: PaneController['focusModeEnabled']
 }
 
 const ResponsivePaneContext = createContext<ResponsivePaneData | undefined>(undefined)
@@ -62,26 +67,14 @@ const MemoizedChildren = memo(({ children }: ChildrenProps) => <>{children}</>)
 
 const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => {
   const currentSelectedPane = paneController.currentPane
-  const previousSelectedPane = paneController.previousPane
   const currentSelectedPaneRef = useStateRef<AppPaneId>(currentSelectedPane)
 
   const toggleAppPane = useCallback(
     (paneId: AppPaneId) => {
-      paneController.setPreviousPane(currentSelectedPane)
-      paneController.setCurrentPane(paneId)
+      paneController.presentPane(paneId)
     },
-    [paneController, currentSelectedPane],
+    [paneController],
   )
-
-  useEffect(() => {
-    if (previousSelectedPane) {
-      const previousPaneElement = document.getElementById(ElementIds[previousSelectedPane])
-      previousPaneElement?.removeAttribute('data-selected-pane')
-    }
-
-    const currentPaneElement = document.getElementById(ElementIds[currentSelectedPane])
-    currentPaneElement?.setAttribute('data-selected-pane', '')
-  }, [currentSelectedPane, previousSelectedPane])
 
   const addAndroidBackHandler = useAndroidBackHandler()
 
@@ -104,32 +97,40 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
     }
   }, [addAndroidBackHandler, currentSelectedPaneRef, toggleAppPane])
 
-  const [isNotesListVisibleOnTablets, setNotesListVisibleOnTablets] = useState(true)
-
-  const toggleNotesListOnTablets = useCallback(() => {
-    setNotesListVisibleOnTablets((visible) => !visible)
-  }, [])
-
   const contextValue = useMemo(
-    () => ({
+    (): ResponsivePaneData => ({
       selectedPane: currentSelectedPane,
       toggleAppPane,
-      isNotesListVisibleOnTablets,
-      toggleNotesListOnTablets,
+      presentPane: paneController.presentPane,
       isListPaneCollapsed: paneController.isListPaneCollapsed,
       isNavigationPaneCollapsed: paneController.isNavigationPaneCollapsed,
       toggleListPane: paneController.toggleListPane,
       toggleNavigationPane: paneController.toggleNavigationPane,
+      panes: paneController.panes,
+      popToPane: paneController.popToPane,
+      dismissLastPane: paneController.dismissLastPane,
+      replacePanes: paneController.replacePanes,
+      removePane: paneController.removePane,
+      insertPaneAtIndex: paneController.insertPaneAtIndex,
+      setPaneLayout: paneController.setPaneLayout,
+      focusModeEnabled: paneController.focusModeEnabled,
     }),
     [
       currentSelectedPane,
-      isNotesListVisibleOnTablets,
       toggleAppPane,
-      toggleNotesListOnTablets,
-      paneController.toggleListPane,
-      paneController.toggleNavigationPane,
+      paneController.panes,
       paneController.isListPaneCollapsed,
       paneController.isNavigationPaneCollapsed,
+      paneController.toggleListPane,
+      paneController.toggleNavigationPane,
+      paneController.presentPane,
+      paneController.popToPane,
+      paneController.dismissLastPane,
+      paneController.replacePanes,
+      paneController.removePane,
+      paneController.insertPaneAtIndex,
+      paneController.setPaneLayout,
+      paneController.focusModeEnabled,
     ],
   )
 

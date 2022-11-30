@@ -7,7 +7,7 @@ import { isHandlingFileDrag } from '@/Utils/DragTypeCheck'
 import { StreamingFileReader } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
 import { useMemo, useState, createContext, ReactNode, useRef, useCallback, useEffect, useContext, memo } from 'react'
-import Portal from '../Portal/Portal'
+import Portal from './Portal/Portal'
 
 type FileDragTargetData = {
   tooltipText: string

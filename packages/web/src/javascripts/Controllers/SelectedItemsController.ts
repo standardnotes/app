@@ -1,3 +1,4 @@
+import { isMobileScreen } from '@/Utils'
 import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
 import { log, LoggingDomain } from '@/Logging'
 import {
@@ -18,6 +19,7 @@ import { AbstractViewController } from './Abstract/AbstractViewController'
 import { Persistable } from './Abstract/Persistable'
 import { CrossControllerEvent } from './CrossControllerEvent'
 import { ItemListController } from './ItemList/ItemListController'
+import { PaneLayout } from './PaneController/PaneLayout'
 
 export class SelectedItemsController
   extends AbstractViewController
@@ -139,6 +141,7 @@ export class SelectedItemsController
   }
 
   setSelectedUuids = (selectedUuids: Set<UuidString>) => {
+    log(LoggingDomain.Selection, 'Setting selected uuids', selectedUuids)
     this.selectedUuids = new Set(selectedUuids)
     this.setSelectedItems()
   }
@@ -150,6 +153,7 @@ export class SelectedItemsController
   }
 
   public deselectItem = (item: { uuid: ListableContentItem['uuid'] }): void => {
+    log(LoggingDomain.Selection, 'Deselecting item', item.uuid)
     this.removeSelectedItem(item.uuid)
 
     if (item.uuid === this.lastSelectedItem?.uuid) {
@@ -228,7 +232,7 @@ export class SelectedItemsController
     this.lastSelectedItem = undefined
   }
 
-  openSingleSelectedItem = async () => {
+  openSingleSelectedItem = async ({ userTriggered } = { userTriggered: true }) => {
     if (this.selectedItemsCount === 1) {
       const item = this.firstSelectedItem
 
@@ -236,6 +240,10 @@ export class SelectedItemsController
         await this.itemListController.openNote(item.uuid)
       } else if (item.content_type === ContentType.File) {
         await this.itemListController.openFile(item.uuid)
+      }
+
+      if (!this.application.paneController.isInMobileView || userTriggered) {
+        void this.application.paneController.setPaneLayout(PaneLayout.Editing)
       }
     }
   }
@@ -254,7 +262,7 @@ export class SelectedItemsController
       }
     }
 
-    log(LoggingDomain.Selection, 'selectItem', item.uuid)
+    log(LoggingDomain.Selection, 'Select item', item.uuid)
 
     const hasMeta = this.keyboardService.activeModifiers.has(KeyboardModifier.Meta)
     const hasCtrl = this.keyboardService.activeModifiers.has(KeyboardModifier.Ctrl)
@@ -278,7 +286,7 @@ export class SelectedItemsController
       }
     }
 
-    await this.openSingleSelectedItem()
+    await this.openSingleSelectedItem({ userTriggered: userTriggered ?? false })
 
     return {
       didSelect: this.selectedUuids.has(uuid),
@@ -293,7 +301,9 @@ export class SelectedItemsController
   ): Promise<void> => {
     const { didSelect } = await this.selectItem(item.uuid, userTriggered)
 
-    if (didSelect && scrollIntoView) {
+    const avoidMobileScrollingDueToIncompatibilityWithPaneAnimations = isMobileScreen()
+
+    if (didSelect && scrollIntoView && !avoidMobileScrollingDueToIncompatibilityWithPaneAnimations) {
       this.scrollToItem(item, animated)
     }
   }
@@ -319,11 +329,11 @@ export class SelectedItemsController
     this.setSelectedUuids(new Set(Uuids(itemsForUuids)))
 
     if (itemsForUuids.length === 1) {
-      void this.openSingleSelectedItem()
+      void this.openSingleSelectedItem({ userTriggered })
     }
   }
 
-  selectNextItem = () => {
+  selectNextItem = ({ userTriggered } = { userTriggered: true }) => {
     const displayableItems = this.itemListController.items
 
     const currentIndex = displayableItems.findIndex((candidate) => {
@@ -341,7 +351,7 @@ export class SelectedItemsController
         continue
       }
 
-      this.selectItemWithScrollHandling(nextItem, { userTriggered: true }).catch(console.error)
+      this.selectItemWithScrollHandling(nextItem, { userTriggered }).catch(console.error)
 
       const nextNoteElement = document.getElementById(nextItem.uuid)
 

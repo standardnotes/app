@@ -15,8 +15,8 @@ import AddTagOption from './AddTagOption'
 import { addToast, dismissToast, ToastType } from '@standardnotes/toast'
 import { NotesOptionsProps } from './NotesOptionsProps'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
-import { useResponsiveAppPane } from '../ResponsivePane/ResponsivePaneProvider'
-import { AppPaneId } from '../ResponsivePane/AppPaneMetadata'
+import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
+import { AppPaneId } from '../Panes/AppPaneMetadata'
 import { getNoteBlob, getNoteFileName } from '@/Utils/NoteExportUtils'
 import { shareSelectedNotes } from '@/NativeMobileWeb/ShareSelectedNotes'
 import { downloadSelectedNotesOnAndroid } from '@/NativeMobileWeb/DownloadSelectedNotesOnAndroid'
@@ -27,7 +27,7 @@ import { NoteAttributes } from './NoteAttributes'
 import { SpellcheckOptions } from './SpellcheckOptions'
 import { NoteSizeWarning } from './NoteSizeWarning'
 import { DeletePermanentlyButton } from './DeletePermanentlyButton'
-import { useCommandService } from '../ApplicationView/CommandProvider'
+import { useCommandService } from '../CommandProvider'
 import { iconClass } from './ClassNames'
 import SuperNoteOptions from './SuperNoteOptions'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
@@ -158,6 +158,10 @@ const NotesOptions = ({
   const unauthorized = notes.some((note) => !application.isAuthorizedToRenderItem(note))
   if (unauthorized) {
     return <ProtectedUnauthorizedLabel />
+  }
+
+  if (notes.length === 0) {
+    return null
   }
 
   return (

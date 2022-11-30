@@ -1,6 +1,6 @@
 import { getDropdownItemsForAllEditors } from '@/Utils/DropdownItemsForEditors'
 import { NoteType } from '@standardnotes/snjs'
-import { useApplication } from '../ApplicationView/ApplicationProvider'
+import { useApplication } from '../ApplicationProvider'
 import { PredicateKeypath, PredicateKeypathTypes } from './PredicateKeypaths'
 
 type Props = {
