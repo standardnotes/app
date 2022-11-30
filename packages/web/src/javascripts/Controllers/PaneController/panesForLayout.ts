@@ -1,9 +1,11 @@
 import { AppPaneId } from '../../Components/Panes/AppPaneMetadata'
-import { isMobileScreen, isTabletScreen } from '@/Utils'
 import { PaneLayout } from './PaneLayout'
+import { WebApplication } from '@/Application/Application'
+import { getIsTabletOrMobileScreen } from '@/Hooks/useIsTabletOrMobileScreen'
 
-export function panesForLayout(layout: PaneLayout): AppPaneId[] {
-  if (isTabletScreen()) {
+export function panesForLayout(layout: PaneLayout, application: WebApplication): AppPaneId[] {
+  const screen = getIsTabletOrMobileScreen(application)
+  if (screen.isTablet) {
     if (layout === PaneLayout.TagSelection) {
       return [AppPaneId.Navigation, AppPaneId.Items]
     } else if (
@@ -13,7 +15,7 @@ export function panesForLayout(layout: PaneLayout): AppPaneId[] {
     ) {
       return [AppPaneId.Items, AppPaneId.Editor]
     }
-  } else if (isMobileScreen()) {
+  } else if (screen.isMobile) {
     if (layout === PaneLayout.TagSelection) {
       return [AppPaneId.Navigation]
     } else if (layout === PaneLayout.ItemSelection || layout === PaneLayout.FilesView) {

@@ -15,6 +15,7 @@ import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { log, LoggingDomain } from '@/Logging'
 import { PaneLayout } from './PaneLayout'
 import { panesForLayout } from './panesForLayout'
+import { getIsTabletOrMobileScreen } from '@/Hooks/useIsTabletOrMobileScreen'
 
 const MinimumNavPanelWidth = PrefDefaults[PrefKey.TagsPanelWidth]
 const MinimumNotesPanelWidth = PrefDefaults[PrefKey.NotesPanelWidth]
@@ -25,7 +26,7 @@ const FOCUS_MODE_ANIMATION_DURATION = 1255
 export class PaneController extends AbstractViewController {
   isInMobileView = isMobileScreen()
   protected disposers: Disposer[] = []
-  panes: AppPaneId[] = [AppPaneId.Navigation, AppPaneId.Items, AppPaneId.Editor]
+  panes: AppPaneId[] = []
 
   currentNavPanelWidth = 0
   currentItemsPanelWidth = 0
@@ -63,6 +64,12 @@ export class PaneController extends AbstractViewController {
 
     this.setCurrentNavPanelWidth(application.getPreference(PrefKey.TagsPanelWidth, MinimumNavPanelWidth))
     this.setCurrentItemsPanelWidth(application.getPreference(PrefKey.NotesPanelWidth, MinimumNotesPanelWidth))
+
+    const screen = getIsTabletOrMobileScreen(application)
+
+    this.panes = screen.isTabletOrMobile
+      ? [AppPaneId.Navigation, AppPaneId.Items]
+      : [AppPaneId.Navigation, AppPaneId.Items, AppPaneId.Editor]
 
     const mediaQuery = window.matchMedia(MediaQueryBreakpoints.md)
     if (mediaQuery?.addEventListener != undefined) {
@@ -143,7 +150,7 @@ export class PaneController extends AbstractViewController {
   setPaneLayout = (layout: PaneLayout) => {
     log(LoggingDomain.Panes, 'Set pane layout', layout)
 
-    this.replacePanes(panesForLayout(layout))
+    this.replacePanes(panesForLayout(layout, this.application))
   }
 
   replacePanes = (panes: AppPaneId[]) => {
