@@ -12,7 +12,7 @@ import path from 'path'
 import {
   deleteFile,
   ensureDirectoryExists,
-  moveFiles,
+  moveDirContents,
   openDirectoryPicker,
   readJSONFile,
   writeFile,
@@ -87,8 +87,11 @@ export class FilesBackupManager implements FileBackupsDevice {
     }
 
     const entries = Object.values(mapping.files)
-    const itemFolders = entries.map((entry) => path.join(oldPath, entry.relativePath))
-    await moveFiles(itemFolders, newPath)
+    for (const entry of entries) {
+      const sourcePath = path.join(oldPath, entry.relativePath)
+      const destinationPath = path.join(newPath, entry.relativePath)
+      await moveDirContents(sourcePath, destinationPath)
+    }
 
     for (const entry of entries) {
       entry.absolutePath = path.join(newPath, entry.relativePath)
