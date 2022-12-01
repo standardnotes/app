@@ -50,7 +50,7 @@ const Timelapse: FunctionComponent<Props> = ({ application }: Props) => {
       <PreferencesSegment>
         <div className="flex items-center justify-between">
           <div className="flex items-start">
-            <Title>Moments 📸</Title>
+            <Title>Moments</Title>
             <Pill style={'warning'}>Labs</Pill>
             <Pill style={'info'}>Professional Plan</Pill>
           </div>
@@ -63,14 +63,14 @@ const Timelapse: FunctionComponent<Props> = ({ application }: Props) => {
           <div className="flex flex-col"></div>
           <PreferencesSegment>
             <Text>
-              Capture your face every day of your life, right in Standard Notes. Moments takes a candid photo of you
-              throughout the day using your webcam. Photos are end-to-end encrypted and uploaded to your private
-              account.
+              Capture a portrait of yourself every day of your life, right in Standard Notes. Moments takes a candid
+              photo of you throughout the day using your webcam. Photos are end-to-end encrypted and uploaded to your
+              private account.
             </Text>
 
             <Text className="mt-3">
               Why? Many of us spend a good part of the day working on a computer, whether it's coding, writing, or just
-              browsing the web. Moments is a fun way to capture your life and look back on it.
+              browsing the web. Moments is a fun way to capture your life.
             </Text>
 
             <Text className="mt-3">
