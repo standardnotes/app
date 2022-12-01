@@ -19,8 +19,8 @@ export async function readAndDecryptBackupFileUsingFileSystemAPI(
 ): Promise<'aborted' | 'failed' | 'success'> {
   const decryptor = new FileDecryptor(file, crypto)
 
-  const byteChunker = new OrderedByteChunker(file.encryptedChunkSizes, async (chunk: Uint8Array) => {
-    const decryptResult = decryptor.decryptBytes(chunk)
+  const byteChunker = new OrderedByteChunker(file.encryptedChunkSizes, async (chunk) => {
+    const decryptResult = decryptor.decryptBytes(chunk.data)
 
     if (!decryptResult) {
       return

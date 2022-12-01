@@ -3,7 +3,7 @@ import fs from 'fs'
 import path from 'path'
 
 const ONE_MB = 1024 * 1024
-const CHUNK_LIMIT = ONE_MB
+const CHUNK_LIMIT = ONE_MB * 5
 
 export class FileReadOperation {
   public readonly token: string
@@ -38,6 +38,13 @@ export class FileReadOperation {
     return {
       chunk,
       isLast,
+      progress: {
+        encryptedFileSize: this.fileLength,
+        encryptedBytesDownloaded: this.currentChunkLocation,
+        encryptedBytesRemaining: this.fileLength - this.currentChunkLocation,
+        percentComplete: (this.currentChunkLocation / this.fileLength) * 100.0,
+        source: 'local',
+      },
     }
   }
 

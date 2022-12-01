@@ -8,9 +8,9 @@ describe('byte chunker', () => {
   it('should hold back small chunks until minimum size is met', async () => {
     let receivedBytes = new Uint8Array()
     let numChunks = 0
-    const chunker = new ByteChunker(100, async (bytes) => {
+    const chunker = new ByteChunker(100, async (chunk) => {
       numChunks++
-      receivedBytes = new Uint8Array([...receivedBytes, ...bytes])
+      receivedBytes = new Uint8Array([...receivedBytes, ...chunk.data])
     })
 
     await chunker.addBytes(chunkOfSize(50), false)
@@ -25,9 +25,9 @@ describe('byte chunker', () => {
   it('should send back big chunks immediately', async () => {
     let receivedBytes = new Uint8Array()
     let numChunks = 0
-    const chunker = new ByteChunker(100, async (bytes) => {
+    const chunker = new ByteChunker(100, async (chunk) => {
       numChunks++
-      receivedBytes = new Uint8Array([...receivedBytes, ...bytes])
+      receivedBytes = new Uint8Array([...receivedBytes, ...chunk.data])
     })
 
     await chunker.addBytes(chunkOfSize(150), false)
@@ -42,9 +42,9 @@ describe('byte chunker', () => {
   it('last chunk should be popped regardless of size', async () => {
     let receivedBytes = new Uint8Array()
     let numChunks = 0
-    const chunker = new ByteChunker(100, async (bytes) => {
+    const chunker = new ByteChunker(100, async (chunk) => {
       numChunks++
-      receivedBytes = new Uint8Array([...receivedBytes, ...bytes])
+      receivedBytes = new Uint8Array([...receivedBytes, ...chunk.data])
     })
 
     await chunker.addBytes(chunkOfSize(50), false)
@@ -57,9 +57,9 @@ describe('byte chunker', () => {
   it('single chunk should be popped immediately', async () => {
     let receivedBytes = new Uint8Array()
     let numChunks = 0
-    const chunker = new ByteChunker(100, async (bytes) => {
+    const chunker = new ByteChunker(100, async (chunk) => {
       numChunks++
-      receivedBytes = new Uint8Array([...receivedBytes, ...bytes])
+      receivedBytes = new Uint8Array([...receivedBytes, ...chunk.data])
     })
 
     await chunker.addBytes(chunkOfSize(50), true)

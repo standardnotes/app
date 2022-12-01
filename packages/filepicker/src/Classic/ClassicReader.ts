@@ -1,4 +1,4 @@
-import { ByteChunker, OnChunkCallback } from '@standardnotes/files'
+import { ByteChunker, OnChunkCallbackNoProgress } from '@standardnotes/files'
 import { FileSelectionResponse } from '../types'
 import { readFile as utilsReadFile } from '../utils'
 import { FileReaderInterface } from '../Interface/FileReader'
@@ -39,7 +39,7 @@ function selectFiles(): Promise<File[]> {
 async function readFile(
   file: File,
   minimumChunkSize: number,
-  onChunk: OnChunkCallback,
+  onChunk: OnChunkCallbackNoProgress,
 ): Promise<FileSelectionResponse> {
   const buffer = await utilsReadFile(file)
   const chunker = new ByteChunker(minimumChunkSize, onChunk)

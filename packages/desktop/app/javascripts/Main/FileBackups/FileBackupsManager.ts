@@ -209,7 +209,7 @@ export class FilesBackupManager implements FileBackupsDevice {
     return operation.token
   }
 
-  async readNextChunk(record: FileBackupRecord, token: string): Promise<FileBackupReadChunkResponse> {
+  async readNextChunk(token: string): Promise<FileBackupReadChunkResponse> {
     const operation = this.readOperations.get(token)
 
     if (!operation) {

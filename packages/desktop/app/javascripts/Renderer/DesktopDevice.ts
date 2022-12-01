@@ -155,8 +155,8 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.getFileBackupReadToken(record)
   }
 
-  readNextChunk(record: FileBackupRecord, nextToken: string): Promise<FileBackupReadChunkResponse> {
-    return this.remoteBridge.readNextChunk(record, nextToken)
+  readNextChunk(token: string): Promise<FileBackupReadChunkResponse> {
+    return this.remoteBridge.readNextChunk(token)
   }
 
   async performHardReset(): Promise<void> {

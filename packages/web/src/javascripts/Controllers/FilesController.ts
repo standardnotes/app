@@ -1,3 +1,8 @@
+import {
+  FileDownloadProgress,
+  fileProgressToHumanReadableString,
+  OnChunkCallbackNoProgress,
+} from '@standardnotes/files'
 import { FilePreviewModalController } from './FilePreviewModalController'
 import {
   PopoverFileItemAction,
@@ -260,6 +265,8 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
       const decryptedBytesArray: Uint8Array[] = []
 
+      let lastProgress: FileDownloadProgress | undefined
+
       const result = await this.application.files.downloadFile(file, async (decryptedBytes, progress) => {
         if (isUsingStreamingSaver) {
           await saver.pushBytes(decryptedBytes)
@@ -267,14 +274,14 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
           decryptedBytesArray.push(decryptedBytes)
         }
 
-        if (progress) {
-          const progressPercent = Math.floor(progress.percentComplete)
+        const progressPercent = Math.floor(progress.percentComplete)
 
-          updateToast(downloadingToastId, {
-            message: `Downloading file "${file.name}" (${progressPercent}%)`,
-            progress: progressPercent,
-          })
-        }
+        updateToast(downloadingToastId, {
+          message: fileProgressToHumanReadableString(progress, file.name, { showPercent: true }),
+          progress: progressPercent,
+        })
+
+        lastProgress = progress
       })
 
       if (result instanceof ClientDisplayableError) {
@@ -293,7 +300,9 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
       addToast({
         type: ToastType.Success,
-        message: 'Successfully downloaded file',
+        message: `Successfully downloaded file${
+          lastProgress && lastProgress.source === 'local' ? ' from local backup' : ''
+        }`,
       })
     } catch (error) {
       console.error(error)
@@ -364,13 +373,13 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
           progress: initialProgress,
         })
 
-        const onChunk = async (chunk: Uint8Array, index: number, isLast: boolean) => {
-          await this.application.files.pushBytesForUpload(operation, chunk, index, isLast)
+        const onChunk: OnChunkCallbackNoProgress = async ({ data, index, isLast }) => {
+          await this.application.files.pushBytesForUpload(operation, data, index, isLast)
 
-          const progress = Math.round(operation.getProgress().percentComplete)
+          const percentComplete = Math.round(operation.getProgress().percentComplete)
           updateToast(toastId, {
-            message: `Uploading file "${file.name}" (${progress}%)`,
-            progress,
+            message: `Uploading file "${file.name}" (${percentComplete}%)`,
+            progress: percentComplete,
           })
         }
 

@@ -16,6 +16,7 @@ import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { StatusServiceInterface } from '../Status/StatusServiceInterface'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { log, LoggingDomain } from '../Logging'
 
 export class FilesBackupService extends AbstractService implements BackupServiceInterface {
   private itemsObserverDisposer: () => void
@@ -149,7 +150,7 @@ export class FilesBackupService extends AbstractService implements BackupService
     this.invalidateMappingCache()
   }
 
-  async readFileFromBackup(uuid: string, onChunk: OnChunkCallback): Promise<'success' | 'failed' | 'aborted'> {
+  async readEncryptedFileFromBackup(uuid: string, onChunk: OnChunkCallback): Promise<'success' | 'failed' | 'aborted'> {
     const fileBackup = await this.getFileBackupInfo({ uuid })
 
     if (!fileBackup) {
@@ -162,9 +163,9 @@ export class FilesBackupService extends AbstractService implements BackupService
     let index = 0
 
     while (!readMore) {
-      const { chunk, isLast } = await this.device.readNextChunk(fileBackup, token)
+      const { chunk, isLast, progress } = await this.device.readNextChunk(token)
 
-      await onChunk(chunk, index, isLast)
+      await onChunk({ data: chunk, index, isLast, progress })
 
       readMore = isLast
 
@@ -175,6 +176,8 @@ export class FilesBackupService extends AbstractService implements BackupService
   }
 
   private async performBackupOperation(file: FileItem): Promise<'success' | 'failed' | 'aborted'> {
+    log(LoggingDomain.FilesBackups, 'Backing up file locally', file.uuid)
+
     const messageId = this.status.addMessage(`Backing up file ${file.name}...`)
 
     const encryptedFile = await this.encryptor.encryptSplitSingle({

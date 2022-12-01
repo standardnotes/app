@@ -655,11 +655,15 @@ export function secondHalfOfString(string: string): string {
 }
 
 export function log(namespace: string, ...args: any[]): void {
+  logWithColor(namespace, 'black', ...args)
+}
+
+export function logWithColor(namespace: string, namespaceColor: string, ...args: any[]): void {
   const date = new Date()
   const timeString = `${date.toLocaleTimeString().replace(' PM', '').replace(' AM', '')}.${date.getMilliseconds()}`
   customLog(
     `%c${namespace}%c${timeString}`,
-    'color: black; font-weight: bold; margin-right: 4px',
+    `color: ${namespaceColor}; font-weight: bold; margin-right: 4px`,
     'color: gray',
     ...args,
   )

@@ -9,4 +9,5 @@ export {
   FileBackupRecord,
   FileBackupReadToken,
   FileBackupReadChunkResponse,
+  FileDownloadProgress,
 } from '@standardnotes/snjs'

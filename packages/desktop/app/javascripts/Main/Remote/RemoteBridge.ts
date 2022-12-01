@@ -192,8 +192,8 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.fileBackups.getFileBackupReadToken(record)
   }
 
-  readNextChunk(record: FileBackupRecord, nextToken: string): Promise<FileBackupReadChunkResponse> {
-    return this.fileBackups.readNextChunk(record, nextToken)
+  readNextChunk(nextToken: string): Promise<FileBackupReadChunkResponse> {
+    return this.fileBackups.readNextChunk(nextToken)
   }
 
   public isFilesBackupsEnabled(): Promise<boolean> {
