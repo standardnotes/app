@@ -1,12 +1,17 @@
 import { Pill, Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useCallback } from 'react'
+import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import Button from '@/Components/Button/Button'
 import Switch from '@/Components/Switch/Switch'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
+import ItemSelectionDropdown from '@/Components/ItemSelectionDropdown/ItemSelectionDropdown'
+import { ContentType, DecryptedItem, PrefKey, SNTag } from '@standardnotes/snjs'
+import usePreference from '@/Hooks/usePreference'
+import LinkedItemBubble from '@/Components/LinkedItems/LinkedItemBubble'
+import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
 
 type Props = {
   application: WebApplication
@@ -15,6 +20,19 @@ type Props = {
 const Timelapse: FunctionComponent<Props> = ({ application }: Props) => {
   const timelapseEnabled = application.timelapseService.isEnabled
   const premiumModal = usePremiumModal()
+
+  const defaultTagId = usePreference<string>(PrefKey.MomentsDefaultTagUuid)
+  const [defaultTag, setDefaultTag] = useState<SNTag | undefined>()
+
+  useEffect(() => {
+    if (!defaultTagId) {
+      setDefaultTag(undefined)
+      return
+    }
+
+    const tag = application.items.findItem(defaultTagId) as SNTag | undefined
+    setDefaultTag(tag)
+  }, [defaultTagId, application])
 
   const enable = useCallback(() => {
     if (!application.featuresController.entitledToFiles) {
@@ -45,6 +63,17 @@ const Timelapse: FunctionComponent<Props> = ({ application }: Props) => {
     void application.timelapseService.takePhoto()
   }, [application, premiumModal])
 
+  const selectTag = useCallback(
+    (tag: DecryptedItem) => {
+      void application.setPreference(PrefKey.MomentsDefaultTagUuid, tag.uuid)
+    },
+    [application],
+  )
+
+  const unselectTag = useCallback(async () => {
+    void application.setPreference(PrefKey.MomentsDefaultTagUuid, undefined)
+  }, [application])
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
@@ -58,6 +87,27 @@ const Timelapse: FunctionComponent<Props> = ({ application }: Props) => {
         </div>
 
         <Subtitle>Capture photos of yourself at regular intervals</Subtitle>
+
+        {timelapseEnabled && (
+          <div className="mb-2 flex items-center">
+            {defaultTag && (
+              <div>
+                <LinkedItemBubble
+                  className="m-1 mr-2"
+                  link={createLinkFromItem(defaultTag, 'linked')}
+                  unlinkItem={unselectTag}
+                  isBidirectional={false}
+                  inlineFlex={true}
+                />
+              </div>
+            )}
+            <ItemSelectionDropdown
+              onSelection={selectTag}
+              placeholder="Select tag to save Moments to..."
+              contentTypes={[ContentType.Tag]}
+            />
+          </div>
+        )}
 
         <div className="flex items-center justify-between">
           <div className="flex flex-col"></div>

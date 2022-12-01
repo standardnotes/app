@@ -1,11 +1,12 @@
 import { ApplicationEvent, InternalEventBus, StorageKey } from '@standardnotes/services'
 import { isDev } from '@/Utils'
-import { FileItem, sleep } from '@standardnotes/snjs'
+import { FileItem, PrefKey, sleep, SNTag } from '@standardnotes/snjs'
 import { FilesController } from '../FilesController'
 import { preparePhotoOperation, takePhoto, stopCameraStream } from './prepareCameraElements'
 import { action, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewController'
 import { WebApplication } from '@/Application/Application'
+import { dateToStringStyle1 } from '@/Utils/DateUtils'
 
 const EVERY_HALF_HOUR = 1000 * 60 * 30
 const EVERY_TEN_SECONDS = 1000 * 10
@@ -70,10 +71,18 @@ export class TimelapseService extends AbstractViewController {
     )
   }
 
+  private getDefaultTag(): SNTag | undefined {
+    const defaultTagId = this.application.getPreference(PrefKey.MomentsDefaultTagUuid)
+
+    if (defaultTagId) {
+      return this.application.items.findItem(defaultTagId)
+    }
+  }
+
   public async takePhoto(): Promise<FileItem[] | undefined> {
     const { canvas, video, stream, width, height } = await preparePhotoOperation()
 
-    const filename = `📸 Moments-${new Date().toLocaleDateString()}.png`
+    const filename = `Moment ${dateToStringStyle1(new Date())}.png`
 
     let file = await takePhoto(filename, canvas, video, width, height)
     if (!file) {
@@ -84,6 +93,11 @@ export class TimelapseService extends AbstractViewController {
       }
     }
     const uploadedFile = await this.filesController.uploadNewFile(file)
+
+    const defaultTag = this.getDefaultTag()
+    if (defaultTag && uploadedFile) {
+      void this.application.linkingController.linkItems(uploadedFile[0], defaultTag)
+    }
 
     stopCameraStream(canvas, video, stream)
 

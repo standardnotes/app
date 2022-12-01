@@ -202,6 +202,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.webServices.viewControllerManager.paneController
   }
 
+  public get linkingController() {
+    return this.webServices.viewControllerManager.linkingController
+  }
+
   public get changelogService() {
     return this.webServices.changelogService
   }
