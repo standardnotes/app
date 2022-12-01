@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.104.0](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.115.2...@standardnotes/desktop@3.104.0) (2022-12-01)
+
+### Features
+
+* download and preview files from local backups automatically, if a local backup is available ([#2076](https://github.com/standardnotes/app/issues/2076)) ([28e43d3](https://github.com/standardnotes/app/commit/28e43d37c00c5cd97129c4b83266f7a234bd9857))
+
+## [3.103.2](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.115.1...@standardnotes/desktop@3.103.2) (2022-12-01)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
 ## [3.103.1](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.115.0...@standardnotes/desktop@3.103.1) (2022-11-30)
 
 **Note:** Version bump only for package @standardnotes/desktop

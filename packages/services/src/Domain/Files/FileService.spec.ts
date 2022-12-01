@@ -1,15 +1,14 @@
 import { PureCryptoInterface, StreamEncryptor } from '@standardnotes/sncrypto-common'
 import { FileItem } from '@standardnotes/models'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
-
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { ChallengeServiceInterface } from '../Challenge'
 import { InternalEventBusInterface } from '..'
 import { AlertService } from '../Alert/AlertService'
 import { ApiServiceInterface } from '../Api/ApiServiceInterface'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
-
 import { FileService } from './FileService'
+import { BackupServiceInterface } from '@standardnotes/files'
 
 describe('fileService', () => {
   let apiService: ApiServiceInterface
@@ -21,13 +20,33 @@ describe('fileService', () => {
   let fileService: FileService
   let encryptor: EncryptionProviderInterface
   let internalEventBus: InternalEventBusInterface
+  let backupService: BackupServiceInterface
 
   beforeEach(() => {
     apiService = {} as jest.Mocked<ApiServiceInterface>
     apiService.addEventObserver = jest.fn()
     apiService.createFileValetToken = jest.fn()
-    apiService.downloadFile = jest.fn()
     apiService.deleteFile = jest.fn().mockReturnValue({})
+    const numChunks = 1
+    apiService.downloadFile = jest
+      .fn()
+      .mockImplementation(
+        (
+          _file: string,
+          _chunkIndex: number,
+          _apiToken: string,
+          _rangeStart: number,
+          onBytesReceived: (bytes: Uint8Array) => void,
+        ) => {
+          return new Promise<void>((resolve) => {
+            for (let i = 0; i < numChunks; i++) {
+              onBytesReceived(Uint8Array.from([0xaa]))
+            }
+
+            resolve()
+          })
+        },
+      )
 
     itemManager = {} as jest.Mocked<ItemManagerInterface>
     itemManager.createItem = jest.fn()
@@ -52,6 +71,10 @@ describe('fileService', () => {
     internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
     internalEventBus.publish = jest.fn()
 
+    backupService = {} as jest.Mocked<BackupServiceInterface>
+    backupService.readEncryptedFileFromBackup = jest.fn()
+    backupService.getFileBackupInfo = jest.fn()
+
     fileService = new FileService(
       apiService,
       itemManager,
@@ -61,6 +84,7 @@ describe('fileService', () => {
       alertService,
       crypto,
       internalEventBus,
+      backupService,
     )
 
     crypto.xchacha20StreamInitDecryptor = jest.fn().mockReturnValue({
@@ -110,6 +134,8 @@ describe('fileService', () => {
       decryptedSize: 100_000,
     } as jest.Mocked<FileItem>
 
+    apiService.downloadFile = jest.fn()
+
     await fileService.downloadFile(file, async () => {
       return Promise.resolve()
     })
@@ -117,5 +143,43 @@ describe('fileService', () => {
     await fileService.deleteFile(file)
 
     expect(fileService['encryptedCache'].get(file.uuid)).toBeFalsy()
+  })
+
+  it('should download file from network if no backup', async () => {
+    const file = {
+      uuid: '1',
+      decryptedSize: 100_000,
+      encryptedSize: 101_000,
+      encryptedChunkSizes: [101_000],
+    } as jest.Mocked<FileItem>
+
+    backupService.getFileBackupInfo = jest.fn().mockReturnValue(undefined)
+
+    const downloadMock = apiService.downloadFile as jest.Mock
+
+    await fileService.downloadFile(file, async () => {
+      return Promise.resolve()
+    })
+
+    expect(downloadMock).toHaveBeenCalledTimes(1)
+  })
+
+  it('should download file from local backup if it exists', async () => {
+    const file = {
+      uuid: '1',
+      decryptedSize: 100_000,
+      encryptedSize: 101_000,
+      encryptedChunkSizes: [101_000],
+    } as jest.Mocked<FileItem>
+
+    backupService.getFileBackupInfo = jest.fn().mockReturnValue({})
+
+    const downloadMock = (apiService.downloadFile = jest.fn())
+
+    await fileService.downloadFile(file, async () => {
+      return Promise.resolve()
+    })
+
+    expect(downloadMock).toHaveBeenCalledTimes(0)
   })
 })

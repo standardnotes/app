@@ -19,7 +19,7 @@ import {
   FileDecryptor,
   FileDownloadProgress,
   FilesClientInterface,
-  readAndDecryptBackupFile,
+  readAndDecryptBackupFileUsingFileSystemAPI,
   FilesApiInterface,
   FileBackupsConstantsV1,
   FileBackupMetadataFile,
@@ -30,8 +30,9 @@ import {
   DecryptedBytes,
   OrderedByteChunker,
   FileMemoryCache,
+  readAndDecryptBackupFileUsingBackupService,
+  BackupServiceInterface,
 } from '@standardnotes/files'
-
 import { AlertService } from '../Alert/AlertService'
 import { ChallengeServiceInterface } from '../Challenge'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
@@ -39,6 +40,7 @@ import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
+import { log, LoggingDomain } from '../Logging'
 
 const OneHundredMb = 100 * 1_000_000
 
@@ -54,6 +56,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     private alertService: AlertService,
     private crypto: PureCryptoInterface,
     protected override internalEventBus: InternalEventBusInterface,
+    private backupsService?: BackupServiceInterface,
   ) {
     super(internalEventBus)
   }
@@ -158,8 +161,8 @@ export class FileService extends AbstractService implements FilesClientInterface
 
     let decryptedAggregate = new Uint8Array()
 
-    const orderedChunker = new OrderedByteChunker(file.encryptedChunkSizes, async (encryptedBytes) => {
-      const decryptedBytes = decryptOperation.decryptBytes(encryptedBytes)
+    const orderedChunker = new OrderedByteChunker(file.encryptedChunkSizes, 'memcache', async (chunk) => {
+      const decryptedBytes = decryptOperation.decryptBytes(chunk.data)
 
       if (decryptedBytes) {
         decryptedAggregate = new Uint8Array([...decryptedAggregate, ...decryptedBytes.decryptedBytes])
@@ -173,36 +176,60 @@ export class FileService extends AbstractService implements FilesClientInterface
 
   public async downloadFile(
     file: FileItem,
-    onDecryptedBytes: (decryptedBytes: Uint8Array, progress?: FileDownloadProgress) => Promise<void>,
+    onDecryptedBytes: (decryptedBytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
   ): Promise<ClientDisplayableError | undefined> {
     const cachedBytes = this.encryptedCache.get(file.uuid)
 
     if (cachedBytes) {
       const decryptedBytes = await this.decryptCachedEntry(file, cachedBytes)
 
-      await onDecryptedBytes(decryptedBytes.decryptedBytes, undefined)
+      await onDecryptedBytes(decryptedBytes.decryptedBytes, {
+        encryptedFileSize: cachedBytes.encryptedBytes.length,
+        encryptedBytesDownloaded: cachedBytes.encryptedBytes.length,
+        encryptedBytesRemaining: 0,
+        percentComplete: 100,
+        source: 'memcache',
+      })
 
       return undefined
     }
 
-    const addToCache = file.encryptedSize < this.encryptedCache.maxSize
+    const fileBackup = await this.backupsService?.getFileBackupInfo(file)
 
-    let cacheEntryAggregate = new Uint8Array()
+    if (this.backupsService && fileBackup) {
+      log(LoggingDomain.FilesService, 'Downloading file from backup', fileBackup)
 
-    const operation = new DownloadAndDecryptFileOperation(file, this.crypto, this.api)
+      await readAndDecryptBackupFileUsingBackupService(file, this.backupsService, this.crypto, async (chunk) => {
+        log(LoggingDomain.FilesService, 'Got local file chunk', chunk.progress)
 
-    const result = await operation.run(async ({ decrypted, encrypted, progress }): Promise<void> => {
-      if (addToCache) {
-        cacheEntryAggregate = new Uint8Array([...cacheEntryAggregate, ...encrypted.encryptedBytes])
+        return onDecryptedBytes(chunk.data, chunk.progress)
+      })
+
+      log(LoggingDomain.FilesService, 'Finished downloading file from backup')
+
+      return undefined
+    } else {
+      log(LoggingDomain.FilesService, 'Downloading file from network')
+
+      const addToCache = file.encryptedSize < this.encryptedCache.maxSize
+
+      let cacheEntryAggregate = new Uint8Array()
+
+      const operation = new DownloadAndDecryptFileOperation(file, this.crypto, this.api)
+
+      const result = await operation.run(async ({ decrypted, encrypted, progress }): Promise<void> => {
+        if (addToCache) {
+          cacheEntryAggregate = new Uint8Array([...cacheEntryAggregate, ...encrypted.encryptedBytes])
+        }
+        return onDecryptedBytes(decrypted.decryptedBytes, progress)
+      })
+
+      if (addToCache && cacheEntryAggregate.byteLength > 0) {
+        this.encryptedCache.add(file.uuid, { encryptedBytes: cacheEntryAggregate })
       }
-      return onDecryptedBytes(decrypted.decryptedBytes, progress)
-    })
 
-    if (addToCache) {
-      this.encryptedCache.add(file.uuid, { encryptedBytes: cacheEntryAggregate })
+      return result.error
     }
-
-    return result.error
   }
 
   public async deleteFile(file: FileItem): Promise<ClientDisplayableError | undefined> {
@@ -294,9 +321,15 @@ export class FileService extends AbstractService implements FilesClientInterface
       return destinationFileHandle
     }
 
-    const result = await readAndDecryptBackupFile(fileHandle, file, fileSystem, this.crypto, async (decryptedBytes) => {
-      await fileSystem.saveBytes(destinationFileHandle, decryptedBytes)
-    })
+    const result = await readAndDecryptBackupFileUsingFileSystemAPI(
+      fileHandle,
+      file,
+      fileSystem,
+      this.crypto,
+      async (decryptedBytes) => {
+        await fileSystem.saveBytes(destinationFileHandle, decryptedBytes)
+      },
+    )
 
     await fileSystem.closeFileWriteStream(destinationFileHandle)
 
@@ -310,9 +343,15 @@ export class FileService extends AbstractService implements FilesClientInterface
   ): Promise<Uint8Array> {
     let bytes = new Uint8Array()
 
-    await readAndDecryptBackupFile(fileHandle, file, fileSystem, this.crypto, async (decryptedBytes) => {
-      bytes = new Uint8Array([...bytes, ...decryptedBytes])
-    })
+    await readAndDecryptBackupFileUsingFileSystemAPI(
+      fileHandle,
+      file,
+      fileSystem,
+      this.crypto,
+      async (decryptedBytes) => {
+        bytes = new Uint8Array([...bytes, ...decryptedBytes])
+      },
+    )
 
     return bytes
   }

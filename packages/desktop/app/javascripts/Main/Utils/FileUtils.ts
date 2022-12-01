@@ -7,7 +7,6 @@ import { removeFromArray } from '../Utils/Utils'
 
 export const FileDoesNotExist = 'ENOENT'
 export const FileAlreadyExists = 'EEXIST'
-const CrossDeviceLink = 'EXDEV'
 const OperationNotPermitted = 'EPERM'
 const DeviceIsBusy = 'EBUSY'
 
@@ -152,8 +151,14 @@ function isChildOfDir(parent: string, potentialChild: string) {
   return relative && !relative.startsWith('..') && !path.isAbsolute(relative)
 }
 
-export async function moveDirContents(srcDir: string, destDir: string): Promise<void[]> {
-  let fileNames = await fs.promises.readdir(srcDir)
+export async function moveDirContents(srcDir: string, destDir: string): Promise<void> {
+  let fileNames: string[]
+  try {
+    fileNames = await fs.promises.readdir(srcDir)
+  } catch (error) {
+    console.error(error)
+    return
+  }
   await ensureDirectoryExists(destDir)
 
   if (isChildOfDir(srcDir, destDir)) {
@@ -163,10 +168,14 @@ export async function moveDirContents(srcDir: string, destDir: string): Promise<
     removeFromArray(fileNames, path.basename(destDir))
   }
 
-  return moveFiles(
-    fileNames.map((fileName) => path.join(srcDir, fileName)),
-    destDir,
-  )
+  try {
+    await moveFiles(
+      fileNames.map((fileName) => path.join(srcDir, fileName)),
+      destDir,
+    )
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 export async function extractZip(source: string, dest: string): Promise<void> {
@@ -245,14 +254,10 @@ export async function moveFiles(sources: string[], destDir: string): Promise<voi
 async function moveFile(source: PathLike, destination: PathLike) {
   try {
     await fs.promises.rename(source, destination)
-  } catch (error: any) {
-    if (error.code === CrossDeviceLink) {
-      /** Fall back to copying and then deleting. */
-      await fs.promises.copyFile(source, destination)
-      await fs.promises.unlink(source)
-    } else {
-      throw error
-    }
+  } catch (_error) {
+    /** Fall back to copying and then deleting. */
+    await fs.promises.copyFile(source, destination, fs.constants.COPYFILE_FICLONE_FORCE)
+    await fs.promises.unlink(source)
   }
 }
 

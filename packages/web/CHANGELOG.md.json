@@ -1,6 +1,34 @@
 {
   "versions": [
     {
+      "version": "3.116.0",
+      "title": "[3.116.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.115.2...@standardnotes/web@3.116.0) (2022-12-01)",
+      "date": null,
+      "body": "### Features\n\n* download and preview files from local backups automatically, if a local backup is available ([#2076](https://github.com/standardnotes/app/issues/2076)) ([28e43d3](https://github.com/standardnotes/app/commit/28e43d37c00c5cd97129c4b83266f7a234bd9857))",
+      "parsed": {
+        "_": [
+          "download and preview files from local backups automatically, if a local backup is available (#2076) (28e43d3)"
+        ],
+        "Features": [
+          "download and preview files from local backups automatically, if a local backup is available (#2076) (28e43d3)"
+        ]
+      }
+    },
+    {
+      "version": "3.115.2",
+      "title": "[3.115.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.115.1...@standardnotes/web@3.115.2) (2022-12-01)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* fixes issue where Dynamic Theme did not properly work with new grid system ([1726302](https://github.com/standardnotes/app/commit/1726302615c77b21bc10165a76476dadd53d5bb5))",
+      "parsed": {
+        "_": [
+          "fixes issue where Dynamic Theme did not properly work with new grid system (1726302)"
+        ],
+        "Bug Fixes": [
+          "fixes issue where Dynamic Theme did not properly work with new grid system (1726302)"
+        ]
+      }
+    },
+    {
       "version": "3.115.1",
       "title": "[3.115.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.115.0...@standardnotes/web@3.115.1) (2022-11-30)",
       "date": null,

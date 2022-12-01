@@ -1,5 +1,9 @@
 import { Uuid } from '@standardnotes/common'
+import { FileDownloadProgress } from '../Types/FileDownloadProgress'
 import { FileBackupRecord, FileBackupsMapping } from './FileBackupsMapping'
+
+export type FileBackupReadToken = string
+export type FileBackupReadChunkResponse = { chunk: Uint8Array; isLast: boolean; progress: FileDownloadProgress }
 
 export interface FileBackupsDevice {
   getFilesBackupsMappingFile(): Promise<FileBackupsMapping>
@@ -12,6 +16,8 @@ export interface FileBackupsDevice {
       url: string
     },
   ): Promise<'success' | 'failed'>
+  getFileBackupReadToken(record: FileBackupRecord): Promise<FileBackupReadToken>
+  readNextChunk(token: string): Promise<FileBackupReadChunkResponse>
   isFilesBackupsEnabled(): Promise<boolean>
   enableFilesBackups(): Promise<void>
   disableFilesBackups(): Promise<void>

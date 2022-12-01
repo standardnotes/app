@@ -73,10 +73,10 @@ const FileBackupsDesktop = ({ application, backupsService }: Props) => {
           )}
         </PreferencesSegment>
 
-        <HorizontalSeparator classes="my-4" />
-
         {backupsEnabled && (
           <>
+            <HorizontalSeparator classes="my-4" />
+
             <PreferencesSegment>
               <>
                 <Text className="mb-3">
