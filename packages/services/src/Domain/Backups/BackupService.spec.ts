@@ -76,5 +76,13 @@ describe('backup service', () => {
 
       expect(result).toEqual('failed')
     })
+
+    it('return success if backup', async () => {
+      backupService.getFileBackupInfo = jest.fn().mockReturnValue({})
+
+      const result = await backupService.readEncryptedFileFromBackup('123', async () => {})
+
+      expect(result).toEqual('success')
+    })
   })
 })
