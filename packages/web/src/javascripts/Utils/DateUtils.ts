@@ -63,12 +63,6 @@ export function numDaysBetweenDates(date1: Date, date2: Date): number {
   return Math.floor(diffInDays)
 }
 
-export function addDays(date: Date, days: number) {
-  const result = new Date(date)
-  result.setDate(result.getDate() + days)
-  return result
-}
-
 /**
  * @returns Date with day equal to first day of the offseted month
  */
