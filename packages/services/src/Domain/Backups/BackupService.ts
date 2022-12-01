@@ -9,13 +9,13 @@ import {
   FileBackupsMapping,
   FileBackupRecord,
   OnChunkCallback,
+  BackupServiceInterface,
 } from '@standardnotes/files'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { StatusServiceInterface } from '../Status/StatusServiceInterface'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { BackupServiceInterface } from './BackupServiceInterface'
 
 export class FilesBackupService extends AbstractService implements BackupServiceInterface {
   private itemsObserverDisposer: () => void

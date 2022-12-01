@@ -31,8 +31,8 @@ import {
   OrderedByteChunker,
   FileMemoryCache,
   readAndDecryptBackupFileUsingNodeAPI,
+  BackupServiceInterface,
 } from '@standardnotes/files'
-
 import { AlertService } from '../Alert/AlertService'
 import { ChallengeServiceInterface } from '../Challenge'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
@@ -40,7 +40,6 @@ import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
-import { BackupServiceInterface } from '../Backups/BackupServiceInterface'
 import { log, LoggingDomain } from '../Logging'
 
 const OneHundredMb = 100 * 1_000_000
