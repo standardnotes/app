@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.115.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.115.1...@standardnotes/web@3.115.2) (2022-12-01)
+
+### Bug Fixes
+
+* fixes issue where Dynamic Theme did not properly work with new grid system ([1726302](https://github.com/standardnotes/app/commit/1726302615c77b21bc10165a76476dadd53d5bb5))
+
 ## [3.115.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.115.0...@standardnotes/web@3.115.1) (2022-11-30)
 
 ### Bug Fixes
