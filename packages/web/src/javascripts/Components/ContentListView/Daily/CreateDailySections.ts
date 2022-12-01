@@ -1,5 +1,6 @@
+import { addDaysToDate } from '@standardnotes/utils'
 import { ListableContentItem } from '../Types/ListableContentItem'
-import { addDays, getWeekdayName } from '@/Utils/DateUtils'
+import { getWeekdayName } from '@/Utils/DateUtils'
 import { DailyItemsDay } from './DailyItemsDaySection'
 import { dateToDailyDayIdentifier } from './Utils'
 
@@ -53,11 +54,11 @@ export function insertBlanks(entries: DailyItemsDay[], location: 'front' | 'end'
 
   for (let i = 1; i <= number; i++) {
     if (location === 'front') {
-      const plusNFromFirstDay = addDays(laterDay, i)
+      const plusNFromFirstDay = addDaysToDate(laterDay, i)
       const futureEntry = templateEntryForDate(plusNFromFirstDay)
       entries.unshift(futureEntry)
     } else {
-      const minusNFromLastDay = addDays(earlierDay, -i)
+      const minusNFromLastDay = addDaysToDate(earlierDay, -i)
       const pastEntry = templateEntryForDate(minusNFromLastDay)
       entries.push(pastEntry)
     }
