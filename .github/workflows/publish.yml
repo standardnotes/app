@@ -64,7 +64,7 @@ jobs:
 
       - name: Run E2E test suite
         if: "${{ contains(github.event.head_commit.message, 'skip e2e') == false }}"
-        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        uses: convictional/trigger-workflow-and-wait@v1.6.5
         with:
           owner: standardnotes
           repo: e2e

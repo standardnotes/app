@@ -40,7 +40,7 @@ jobs:
           docker tag standardnotes/snjs:${{ github.sha }} standardnotes/snjs:test
           docker push standardnotes/snjs:test
       - name: Run E2E test suite
-        uses: convictional/trigger-workflow-and-wait@v1.6.1
+        uses: convictional/trigger-workflow-and-wait@v1.6.5
         with:
           owner: standardnotes
           repo: e2e
