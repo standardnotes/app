@@ -36,7 +36,10 @@ describe('backup service', () => {
     itemManager.changeItem = jest.fn()
 
     status = {} as jest.Mocked<StatusServiceInterface>
+
     device = {} as jest.Mocked<FileBackupsDevice>
+    device.getFileBackupReadToken = jest.fn()
+    device.readNextChunk = jest.fn()
 
     syncService = {} as jest.Mocked<SyncServiceInterface>
     syncService.sync = jest.fn()
@@ -80,9 +83,27 @@ describe('backup service', () => {
     it('return success if backup', async () => {
       backupService.getFileBackupInfo = jest.fn().mockReturnValue({})
 
+      device.readNextChunk = jest.fn().mockReturnValue({ chunk: new Uint8Array([]), isLast: true, progress: undefined })
+
       const result = await backupService.readEncryptedFileFromBackup('123', async () => {})
 
       expect(result).toEqual('success')
+    })
+
+    it('should loop through all chunks until last', async () => {
+      backupService.getFileBackupInfo = jest.fn().mockReturnValue({})
+      const expectedChunkCount = 3
+      let receivedChunkCount = 0
+
+      const mockFn = (device.readNextChunk = jest.fn().mockImplementation(() => {
+        receivedChunkCount++
+
+        return { chunk: new Uint8Array([]), isLast: receivedChunkCount === expectedChunkCount, progress: undefined }
+      }))
+
+      await backupService.readEncryptedFileFromBackup('123', async () => {})
+
+      expect(mockFn.mock.calls.length).toEqual(expectedChunkCount)
     })
   })
 })
