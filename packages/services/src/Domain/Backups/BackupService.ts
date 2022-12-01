@@ -8,13 +8,17 @@ import {
   FileBackupsDevice,
   FileBackupsMapping,
   FileBackupRecord,
+  OnChunkCallback,
+  BackupServiceInterface,
 } from '@standardnotes/files'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { StatusServiceInterface } from '../Status/StatusServiceInterface'
+import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { log, LoggingDomain } from '../Logging'
 
-export class FilesBackupService extends AbstractService {
+export class FilesBackupService extends AbstractService implements BackupServiceInterface {
   private itemsObserverDisposer: () => void
   private pendingFiles = new Set<Uuid>()
   private mappingCache?: FileBackupsMapping['files']
@@ -25,6 +29,7 @@ export class FilesBackupService extends AbstractService {
     private encryptor: EncryptionProviderInterface,
     private device: FileBackupsDevice,
     private status: StatusServiceInterface,
+    private crypto: PureCryptoInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -43,7 +48,14 @@ export class FilesBackupService extends AbstractService {
   }
 
   override deinit() {
+    super.deinit()
     this.itemsObserverDisposer()
+    ;(this.items as unknown) = undefined
+    ;(this.api as unknown) = undefined
+    ;(this.encryptor as unknown) = undefined
+    ;(this.device as unknown) = undefined
+    ;(this.status as unknown) = undefined
+    ;(this.crypto as unknown) = undefined
   }
 
   public isFilesBackupsEnabled(): Promise<boolean> {
@@ -98,7 +110,7 @@ export class FilesBackupService extends AbstractService {
     return this.mappingCache ?? (await this.getBackupsMappingFromDisk())
   }
 
-  public async getFileBackupInfo(file: FileItem): Promise<FileBackupRecord | undefined> {
+  public async getFileBackupInfo(file: { uuid: string }): Promise<FileBackupRecord | undefined> {
     const mapping = await this.getBackupsMappingFromCache()
     const record = mapping[file.uuid]
     return record
@@ -138,7 +150,34 @@ export class FilesBackupService extends AbstractService {
     this.invalidateMappingCache()
   }
 
+  async readEncryptedFileFromBackup(uuid: string, onChunk: OnChunkCallback): Promise<'success' | 'failed' | 'aborted'> {
+    const fileBackup = await this.getFileBackupInfo({ uuid })
+
+    if (!fileBackup) {
+      return 'failed'
+    }
+
+    const token = await this.device.getFileBackupReadToken(fileBackup)
+
+    let readMore = true
+    let index = 0
+
+    while (readMore) {
+      const { chunk, isLast, progress } = await this.device.readNextChunk(token)
+
+      await onChunk({ data: chunk, index, isLast, progress })
+
+      readMore = !isLast
+
+      index++
+    }
+
+    return 'success'
+  }
+
   private async performBackupOperation(file: FileItem): Promise<'success' | 'failed' | 'aborted'> {
+    log(LoggingDomain.FilesBackups, 'Backing up file locally', file.uuid)
+
     const messageId = this.status.addMessage(`Backing up file ${file.name}...`)
 
     const encryptedFile = await this.encryptor.encryptSplitSingle({

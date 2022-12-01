@@ -1,6 +1,11 @@
 import { WebApplication } from '@/Application/Application'
 import { concatenateUint8Arrays } from '@/Utils'
-import { ApplicationEvent, FileItem } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  FileDownloadProgress,
+  FileItem,
+  fileProgressToHumanReadableString,
+} from '@standardnotes/snjs'
 import { useEffect, useMemo, useState } from 'react'
 import Spinner from '@/Components/Spinner/Spinner'
 import FilePreviewError from './FilePreviewError'
@@ -24,7 +29,7 @@ const FilePreview = ({ file, application, isEmbeddedInSuper = false, imageZoomLe
   }, [file.mimeType])
 
   const [isDownloading, setIsDownloading] = useState(true)
-  const [downloadProgress, setDownloadProgress] = useState(0)
+  const [downloadProgress, setDownloadProgress] = useState<FileDownloadProgress | undefined>()
   const [downloadedBytes, setDownloadedBytes] = useState<Uint8Array>()
 
   useEffect(() => {
@@ -46,7 +51,7 @@ const FilePreview = ({ file, application, isEmbeddedInSuper = false, imageZoomLe
   useEffect(() => {
     if (!isFilePreviewable || !isAuthorized) {
       setIsDownloading(false)
-      setDownloadProgress(0)
+      setDownloadProgress(undefined)
       setDownloadedBytes(undefined)
       return
     }
@@ -60,15 +65,18 @@ const FilePreview = ({ file, application, isEmbeddedInSuper = false, imageZoomLe
 
       try {
         const chunks: Uint8Array[] = []
-        setDownloadProgress(0)
-        await application.files.downloadFile(file, async (decryptedChunk, progress) => {
+        setDownloadProgress(undefined)
+        const error = await application.files.downloadFile(file, async (decryptedChunk, progress) => {
           chunks.push(decryptedChunk)
           if (progress) {
-            setDownloadProgress(Math.round(progress.percentComplete))
+            setDownloadProgress(progress)
           }
         })
-        const finalDecryptedBytes = concatenateUint8Arrays(chunks)
-        setDownloadedBytes(finalDecryptedBytes)
+
+        if (!error) {
+          const finalDecryptedBytes = concatenateUint8Arrays(chunks)
+          setDownloadedBytes(finalDecryptedBytes)
+        }
       } catch (error) {
         console.error(error)
       } finally {
@@ -109,9 +117,17 @@ const FilePreview = ({ file, application, isEmbeddedInSuper = false, imageZoomLe
     <div className="flex flex-grow flex-col items-center justify-center">
       <div className="flex items-center">
         <Spinner className="mr-3 h-5 w-5" />
-        <div className="text-base font-semibold">{downloadProgress}%</div>
+        {downloadProgress && (
+          <div className="text-base font-semibold">{Math.floor(downloadProgress.percentComplete)}%</div>
+        )}
       </div>
-      <span className="mt-3">Loading file...</span>
+      {downloadProgress ? (
+        <span className="mt-3">
+          {fileProgressToHumanReadableString(downloadProgress, file.name, { showPercent: false })}
+        </span>
+      ) : (
+        <span className="mt-3">Loading...</span>
+      )}
     </div>
   ) : downloadedBytes ? (
     <PreviewComponent

@@ -5,7 +5,7 @@ import { FileSystemApi } from '../Api/FileSystemApi'
 import { FileHandleRead } from '../Api/FileHandleRead'
 import { OrderedByteChunker } from '../Chunker/OrderedByteChunker'
 
-export async function readAndDecryptBackupFile(
+export async function readAndDecryptBackupFileUsingFileSystemAPI(
   fileHandle: FileHandleRead,
   file: {
     encryptionHeader: FileContent['encryptionHeader']
@@ -19,8 +19,8 @@ export async function readAndDecryptBackupFile(
 ): Promise<'aborted' | 'failed' | 'success'> {
   const decryptor = new FileDecryptor(file, crypto)
 
-  const byteChunker = new OrderedByteChunker(file.encryptedChunkSizes, async (chunk: Uint8Array) => {
-    const decryptResult = decryptor.decryptBytes(chunk)
+  const byteChunker = new OrderedByteChunker(file.encryptedChunkSizes, 'local', async (chunk) => {
+    const decryptResult = decryptor.decryptBytes(chunk.data)
 
     if (!decryptResult) {
       return

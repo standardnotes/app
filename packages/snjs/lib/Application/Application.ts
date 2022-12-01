@@ -64,7 +64,7 @@ import {
   SessionStrings,
   AccountEvent,
 } from '@standardnotes/services'
-import { FilesClientInterface } from '@standardnotes/files'
+import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateUsername } from '@standardnotes/encryption'
 import { useBoolean } from '@standardnotes/utils'
 import {
@@ -275,7 +275,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.statusService
   }
 
-  public get fileBackups(): FilesBackupService | undefined {
+  public get fileBackups(): BackupServiceInterface | undefined {
     return this.filesBackupService
   }
 
@@ -1113,16 +1113,17 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createComponentManager()
     this.createMigrationService()
     this.createMfaService()
+
+    this.createStatusService()
+    if (isDesktopDevice(this.deviceInterface)) {
+      this.createFilesBackupService(this.deviceInterface)
+    }
     this.createFileService()
+
     this.createIntegrityService()
     this.createMutatorService()
     this.createListedService()
     this.createActionsManager()
-    this.createStatusService()
-
-    if (isDesktopDevice(this.deviceInterface)) {
-      this.createFilesBackupService(this.deviceInterface)
-    }
   }
 
   private clearServices() {
@@ -1210,6 +1211,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.alertService,
       this.options.crypto,
       this.internalEventBus,
+      this.fileBackups,
     )
 
     this.services.push(this.fileService)
@@ -1670,6 +1672,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.protocolService,
       device,
       this.statusService,
+      this.options.crypto,
       this.internalEventBus,
     )
     this.services.push(this.filesBackupService)

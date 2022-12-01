@@ -35,6 +35,7 @@ export class FileDownloader {
       encryptedBytesDownloaded: this.totalBytesDownloaded,
       encryptedBytesRemaining: encryptedSize - this.totalBytesDownloaded,
       percentComplete: (this.totalBytesDownloaded / encryptedSize) * 100.0,
+      source: 'network',
     }
   }
 
