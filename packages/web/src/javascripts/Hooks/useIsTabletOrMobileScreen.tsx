@@ -2,6 +2,7 @@ import { WebApplication } from '@/Application/Application'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { isMobileScreen, isTabletOrMobileScreen, isTabletScreen } from '@/Utils'
 import { useEffect, useState } from 'react'
+import { MediaQueryBreakpoints } from './useMediaQuery'
 
 export function getIsTabletOrMobileScreen(application: WebApplication) {
   const isNativeMobile = application.isNativeMobileWeb()
@@ -17,19 +18,34 @@ export function getIsTabletOrMobileScreen(application: WebApplication) {
 }
 
 export default function useIsTabletOrMobileScreen() {
-  const [_windowSize, setWindowSize] = useState(0)
+  const [, setMatchesSmallBreakpoint] = useState(false)
+  const [, setMatchesMediumBreakpoint] = useState(false)
+  const [, setMatchesLargeBreakpoint] = useState(false)
   const application = useApplication()
 
   useEffect(() => {
-    const handleResize = () => {
-      setWindowSize(window.innerWidth)
+    const smallBreakpoint = matchMedia(MediaQueryBreakpoints.sm)
+    const mediumBreakpoint = matchMedia(MediaQueryBreakpoints.md)
+    const largeBreakpoint = matchMedia(MediaQueryBreakpoints.lg)
+
+    const handleSmallBreakpointChange = (event: MediaQueryListEvent) => {
+      setMatchesSmallBreakpoint(event.matches)
+    }
+    const handleMediumBreakpointChange = (event: MediaQueryListEvent) => {
+      setMatchesMediumBreakpoint(event.matches)
+    }
+    const handleLargeBreakpointChange = (event: MediaQueryListEvent) => {
+      setMatchesLargeBreakpoint(event.matches)
     }
 
-    window.addEventListener('resize', handleResize)
-    handleResize()
+    smallBreakpoint.addEventListener('change', handleSmallBreakpointChange)
+    mediumBreakpoint.addEventListener('change', handleMediumBreakpointChange)
+    largeBreakpoint.addEventListener('change', handleLargeBreakpointChange)
 
     return () => {
-      window.removeEventListener('resize', handleResize)
+      smallBreakpoint.removeEventListener('change', handleSmallBreakpointChange)
+      mediumBreakpoint.removeEventListener('change', handleMediumBreakpointChange)
+      largeBreakpoint.removeEventListener('change', handleLargeBreakpointChange)
     }
   }, [])
 
