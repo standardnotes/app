@@ -159,15 +159,15 @@ export class FilesBackupService extends AbstractService implements BackupService
 
     const token = await this.device.getFileBackupReadToken(fileBackup)
 
-    let readMore = false
+    let readMore = true
     let index = 0
 
-    while (!readMore) {
+    while (readMore) {
       const { chunk, isLast, progress } = await this.device.readNextChunk(token)
 
       await onChunk({ data: chunk, index, isLast, progress })
 
-      readMore = isLast
+      readMore = !isLast
 
       index++
     }

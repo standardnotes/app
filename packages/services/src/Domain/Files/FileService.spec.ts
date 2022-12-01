@@ -26,8 +26,27 @@ describe('fileService', () => {
     apiService = {} as jest.Mocked<ApiServiceInterface>
     apiService.addEventObserver = jest.fn()
     apiService.createFileValetToken = jest.fn()
-    apiService.downloadFile = jest.fn()
     apiService.deleteFile = jest.fn().mockReturnValue({})
+    const numChunks = 1
+    apiService.downloadFile = jest
+      .fn()
+      .mockImplementation(
+        (
+          _file: string,
+          _chunkIndex: number,
+          _apiToken: string,
+          _rangeStart: number,
+          onBytesReceived: (bytes: Uint8Array) => void,
+        ) => {
+          return new Promise<void>((resolve) => {
+            for (let i = 0; i < numChunks; i++) {
+              onBytesReceived(Uint8Array.from([0xaa]))
+            }
+
+            resolve()
+          })
+        },
+      )
 
     itemManager = {} as jest.Mocked<ItemManagerInterface>
     itemManager.createItem = jest.fn()
@@ -114,6 +133,8 @@ describe('fileService', () => {
       uuid: '1',
       decryptedSize: 100_000,
     } as jest.Mocked<FileItem>
+
+    apiService.downloadFile = jest.fn()
 
     await fileService.downloadFile(file, async () => {
       return Promise.resolve()
