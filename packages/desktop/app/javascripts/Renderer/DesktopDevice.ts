@@ -4,6 +4,8 @@ import {
   FileBackupsMapping,
   RawKeychainValue,
   FileBackupRecord,
+  FileBackupReadToken,
+  FileBackupReadChunkResponse,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { WebOrDesktopDevice } from '@web/Application/Device/WebOrDesktopDevice'
 import { Component } from '../Main/Packages/PackageManagerInterface'
@@ -147,6 +149,14 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     },
   ): Promise<'success' | 'failed'> {
     return this.remoteBridge.saveFilesBackupsFile(uuid, metaFile, downloadRequest)
+  }
+
+  getFileBackupReadToken(record: FileBackupRecord): Promise<FileBackupReadToken> {
+    return this.remoteBridge.getFileBackupReadToken(record)
+  }
+
+  readNextChunk(record: FileBackupRecord, nextToken: string): Promise<FileBackupReadChunkResponse> {
+    return this.remoteBridge.readNextChunk(record, nextToken)
   }
 
   async performHardReset(): Promise<void> {

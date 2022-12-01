@@ -1,0 +1,51 @@
+import { FileBackupReadChunkResponse, FileBackupRecord } from '@web/Application/Device/DesktopSnjsExports'
+import fs from 'fs'
+import path from 'path'
+
+const ONE_MB = 1024 * 1024
+const CHUNK_LIMIT = ONE_MB
+
+export class FileReadOperation {
+  public readonly token: string
+  private currentChunkLocation = 0
+  private localFileId: number
+  private fileLength: number
+
+  constructor(backupRecord: FileBackupRecord) {
+    this.token = backupRecord.absolutePath
+    this.localFileId = fs.openSync(path.join(backupRecord.absolutePath, backupRecord.binaryFileName), 'r')
+    this.fileLength = fs.fstatSync(this.localFileId).size
+  }
+
+  async readNextChunk(): Promise<FileBackupReadChunkResponse> {
+    let isLast = false
+    let readUpto = this.currentChunkLocation + CHUNK_LIMIT
+    if (readUpto > this.fileLength) {
+      readUpto = this.fileLength
+      isLast = true
+    }
+
+    const readLength = readUpto - this.currentChunkLocation
+
+    const chunk = await this.readChunk(this.currentChunkLocation, readLength)
+
+    this.currentChunkLocation = readUpto
+
+    if (isLast) {
+      fs.close(this.localFileId)
+    }
+
+    return {
+      chunk,
+      isLast,
+    }
+  }
+
+  async readChunk(start: number, length: number): Promise<Uint8Array> {
+    const buffer = Buffer.alloc(length)
+
+    fs.readSync(this.localFileId, buffer, 0, length, start)
+
+    return buffer
+  }
+}

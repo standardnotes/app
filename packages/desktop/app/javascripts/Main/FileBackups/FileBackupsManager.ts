@@ -1,4 +1,10 @@
-import { FileBackupRecord, FileBackupsDevice, FileBackupsMapping } from '@web/Application/Device/DesktopSnjsExports'
+import {
+  FileBackupRecord,
+  FileBackupsDevice,
+  FileBackupsMapping,
+  FileBackupReadToken,
+  FileBackupReadChunkResponse,
+} from '@web/Application/Device/DesktopSnjsExports'
 import { AppState } from 'app/AppState'
 import { shell } from 'electron'
 import { StoreKeys } from '../Store/StoreKeys'
@@ -13,6 +19,7 @@ import {
   writeJSONFile,
 } from '../Utils/FileUtils'
 import { FileDownloader } from './FileDownloader'
+import { FileReadOperation } from './FileReadOperation'
 
 export const FileBackupsConstantsV1 = {
   Version: '1.0.0',
@@ -21,6 +28,8 @@ export const FileBackupsConstantsV1 = {
 }
 
 export class FilesBackupManager implements FileBackupsDevice {
+  private readOperations: Map<string, FileReadOperation> = new Map()
+
   constructor(private appState: AppState) {}
 
   public isFilesBackupsEnabled(): Promise<boolean> {
@@ -184,6 +193,30 @@ export class FilesBackupManager implements FileBackupsDevice {
       }
 
       await this.saveFilesBackupsMappingFile(mapping)
+    }
+
+    return result
+  }
+
+  async getFileBackupReadToken(record: FileBackupRecord): Promise<FileBackupReadToken> {
+    const operation = new FileReadOperation(record)
+
+    this.readOperations.set(operation.token, operation)
+
+    return operation.token
+  }
+
+  async readNextChunk(record: FileBackupRecord, token: string): Promise<FileBackupReadChunkResponse> {
+    const operation = this.readOperations.get(token)
+
+    if (!operation) {
+      return Promise.reject(new Error('Invalid token'))
+    }
+
+    const result = await operation.readNextChunk()
+
+    if (result.isLast) {
+      this.readOperations.delete(token)
     }
 
     return result

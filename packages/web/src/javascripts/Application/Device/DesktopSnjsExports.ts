@@ -7,4 +7,6 @@ export {
   FileBackupsMapping,
   FileBackupsDevice,
   FileBackupRecord,
+  FileBackupReadToken,
+  FileBackupReadChunkResponse,
 } from '@standardnotes/snjs'

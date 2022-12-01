@@ -5,7 +5,13 @@ import { StoreKeys } from '../Store/StoreKeys'
 const path = require('path')
 const rendererPath = path.join('file://', __dirname, '/renderer.js')
 
-import { FileBackupsDevice, FileBackupsMapping, FileBackupRecord } from '@web/Application/Device/DesktopSnjsExports'
+import {
+  FileBackupsDevice,
+  FileBackupsMapping,
+  FileBackupRecord,
+  FileBackupReadToken,
+  FileBackupReadChunkResponse,
+} from '@web/Application/Device/DesktopSnjsExports'
 import { app, BrowserWindow } from 'electron'
 import { BackupsManagerInterface } from '../Backups/BackupsManagerInterface'
 import { KeychainInterface } from '../Keychain/KeychainInterface'
@@ -65,6 +71,8 @@ export class RemoteBridge implements CrossProcessBridge {
       getFilesBackupsLocation: this.getFilesBackupsLocation.bind(this),
       openFilesBackupsLocation: this.openFilesBackupsLocation.bind(this),
       openFileBackup: this.openFileBackup.bind(this),
+      getFileBackupReadToken: this.getFileBackupReadToken.bind(this),
+      readNextChunk: this.readNextChunk.bind(this),
     }
   }
 
@@ -178,6 +186,14 @@ export class RemoteBridge implements CrossProcessBridge {
     },
   ): Promise<'success' | 'failed'> {
     return this.fileBackups.saveFilesBackupsFile(uuid, metaFile, downloadRequest)
+  }
+
+  getFileBackupReadToken(record: FileBackupRecord): Promise<FileBackupReadToken> {
+    return this.fileBackups.getFileBackupReadToken(record)
+  }
+
+  readNextChunk(record: FileBackupRecord, nextToken: string): Promise<FileBackupReadChunkResponse> {
+    return this.fileBackups.readNextChunk(record, nextToken)
   }
 
   public isFilesBackupsEnabled(): Promise<boolean> {
