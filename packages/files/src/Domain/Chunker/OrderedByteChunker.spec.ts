@@ -10,7 +10,7 @@ describe('ordered byte chunker', () => {
     let receivedBytes = new Uint8Array()
     let numCallbacks = 0
 
-    const chunker = new OrderedByteChunker(chunkSizes, async (chunk) => {
+    const chunker = new OrderedByteChunker(chunkSizes, 'network', async (chunk) => {
       numCallbacks++
       receivedBytes = new Uint8Array([...receivedBytes, ...chunk.data])
     })
@@ -26,7 +26,7 @@ describe('ordered byte chunker', () => {
     let receivedBytes = new Uint8Array()
     let numCallbacks = 0
 
-    const chunker = new OrderedByteChunker(chunkSizes, async (chunk) => {
+    const chunker = new OrderedByteChunker(chunkSizes, 'network', async (chunk) => {
       numCallbacks++
 
       receivedBytes = new Uint8Array([...receivedBytes, ...chunk.data])
