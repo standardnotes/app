@@ -11,7 +11,7 @@ import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NOTES } from '@/Constants/Constants'
 import { FileItem, PrefKey, WebAppEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react'
+import { forwardRef, useCallback, useEffect, useMemo } from 'react'
 import ContentList from '@/Components/ContentListView/ContentList'
 import NoAccountWarning from '@/Components/NoAccountWarning/NoAccountWarning'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
@@ -25,7 +25,6 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import ContentListHeader from './Header/ContentListHeader'
 import { AppPaneId } from '../Panes/AppPaneMetadata'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
-import { StreamingFileReader } from '@standardnotes/filepicker'
 import SearchBar from '../SearchBar/SearchBar'
 import { SearchOptionsController } from '@/Controllers/SearchOptionsController'
 import { classNames } from '@standardnotes/utils'
@@ -88,7 +87,6 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       isCurrentNoteTemplate,
     } = itemListController
 
-    const fileInputRef = useRef<HTMLInputElement>(null)
     const innerRef = useForwardedRef(ref)
 
     const { addDragTarget, removeDragTarget } = useFileDragNDrop()
@@ -172,12 +170,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
           return
         }
 
-        if (StreamingFileReader.available()) {
-          void filesController.uploadNewFile()
-          return
-        }
-
-        fileInputRef.current?.click()
+        void filesController.uploadNewFile()
       } else {
         await createNewNote()
         toggleAppPane(AppPaneId.Editor)
@@ -296,23 +289,6 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       >
         <div id="items-title-bar" className="section-title-bar border-b border-solid border-border">
           <div id="items-title-bar-container">
-            <input
-              type="file"
-              className="absolute top-0 left-0 -z-50 h-px w-px opacity-0"
-              multiple
-              ref={fileInputRef}
-              onChange={(event) => {
-                const files = event.currentTarget.files
-
-                if (!files) {
-                  return
-                }
-
-                for (let i = 0; i < files.length; i++) {
-                  void filesController.uploadNewFile(files[i])
-                }
-              }}
-            />
             {selectedTag && (
               <ContentListHeader
                 application={application}

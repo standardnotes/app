@@ -5,7 +5,7 @@ import { LinkingController } from '@/Controllers/LinkingController'
 import { classNames } from '@standardnotes/utils'
 import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
 import { observer } from 'mobx-react-lite'
-import { ChangeEventHandler, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
 import ClearInputButton from '../ClearInputButton/ClearInputButton'
 import Icon from '../Icon/Icon'
@@ -42,7 +42,6 @@ const LinkedItemsPanel = ({
   const { entitledToFiles } = featuresController
   const application = useApplication()
 
-  const fileInputRef = useRef<HTMLInputElement | null>(null)
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const isSearching = !!searchQuery.length
@@ -58,33 +57,19 @@ const LinkedItemsPanel = ({
     }
   }, [isOpen])
 
-  const handleFileInputChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    const files = event.currentTarget.files
-
-    if (!files) {
-      return
-    }
-
-    for (let i = 0; i < files.length; i++) {
-      void filesController.uploadNewFile(files[i]).then((uploadedFiles) => {
-        if (uploadedFiles) {
-          void linkItemToSelectedItem(uploadedFiles[0])
-        }
-      })
-    }
-  }
-
-  const selectAndUploadFiles = () => {
+  const selectAndUploadFiles = async () => {
     if (!entitledToFiles) {
       void featuresController.showPremiumAlert(FeatureName.Files)
       return
     }
 
-    if (!fileInputRef.current) {
-      return
-    }
+    const uploadedFiles = await filesController.uploadNewFile()
 
-    fileInputRef.current.click()
+    if (uploadedFiles && uploadedFiles.length) {
+      uploadedFiles.forEach((file) => {
+        void linkItemToSelectedItem(file)
+      })
+    }
   }
 
   return (
@@ -177,13 +162,6 @@ const LinkedItemsPanel = ({
             <div>
               <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Files</div>
               <div className="my-1">
-                <input
-                  type="file"
-                  className="absolute top-0 left-0 -z-50 h-px w-px opacity-0"
-                  multiple
-                  ref={fileInputRef}
-                  onChange={handleFileInputChange}
-                />
                 <button
                   className="flex w-full cursor-pointer items-center gap-3 bg-transparent px-3 py-2 text-left text-base text-text hover:bg-info-backdrop hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-sm"
                   onClick={selectAndUploadFiles}
