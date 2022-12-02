@@ -39,6 +39,7 @@ export enum PrefKey {
   UpdateSavingStatusIndicator = 'updateSavingStatusIndicator',
   DarkMode = 'darkMode',
   DefaultEditorIdentifier = 'defaultEditorIdentifier',
+  MomentsDefaultTagUuid = 'momentsDefaultTagUuid',
 }
 
 export enum NewNoteTitleFormat {
@@ -103,4 +104,5 @@ export type PrefValue = {
   [PrefKey.UpdateSavingStatusIndicator]: boolean
   [PrefKey.DarkMode]: boolean
   [PrefKey.DefaultEditorIdentifier]: EditorIdentifier
+  [PrefKey.MomentsDefaultTagUuid]: string | undefined
 }

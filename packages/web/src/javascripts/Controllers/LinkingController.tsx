@@ -240,7 +240,7 @@ export class LinkingController extends AbstractViewController {
     }
   }
 
-  linkItems = async (item: LinkableItem, itemToLink: LinkableItem) => {
+  linkItems = async (item: SNNote | FileItem, itemToLink: LinkableItem) => {
     if (item instanceof SNNote) {
       if (itemToLink instanceof FileItem) {
         await this.application.items.associateFileWithNote(itemToLink, item)
@@ -248,6 +248,8 @@ export class LinkingController extends AbstractViewController {
         await this.application.items.linkNoteToNote(item, itemToLink)
       } else if (itemToLink instanceof SNTag) {
         await this.addTagToItem(itemToLink, item)
+      } else {
+        throw Error('Invalid item type')
       }
     } else if (item instanceof FileItem) {
       if (itemToLink instanceof SNNote) {
@@ -256,7 +258,11 @@ export class LinkingController extends AbstractViewController {
         await this.application.items.linkFileToFile(item, itemToLink)
       } else if (itemToLink instanceof SNTag) {
         await this.addTagToItem(itemToLink, item)
+      } else {
+        throw Error('Invalid item to link')
       }
+    } else {
+      throw new Error('First item must be a note or file')
     }
 
     void this.application.sync.sync()

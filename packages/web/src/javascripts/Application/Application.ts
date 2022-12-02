@@ -24,7 +24,7 @@ import {
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
 import { PanelResizedData } from '@/Types/PanelResizedData'
-import { isDesktopApplication } from '@/Utils'
+import { isAndroid, isDesktopApplication, isIOS } from '@/Utils'
 import { DesktopManager } from './Device/DesktopManager'
 import {
   ArchiveManager,
@@ -45,6 +45,7 @@ import { WebServices } from './WebServices'
 import { FeatureName } from '@/Controllers/FeatureName'
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
 import { VisibilityObserver } from './VisibilityObserver'
+import { MomentsService } from '@/Controllers/Moments/MomentsService'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -98,6 +99,11 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       : undefined
     this.webServices.viewControllerManager = new ViewControllerManager(this, deviceInterface)
     this.webServices.changelogService = new ChangelogService(this.environment, this.storage)
+    this.webServices.momentsService = new MomentsService(
+      this,
+      this.webServices.viewControllerManager.filesController,
+      internalEventBus,
+    )
 
     if (this.isNativeMobileWeb()) {
       this.mobileWebReceiver = new MobileWebReceiver(this)
@@ -196,8 +202,20 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.webServices.viewControllerManager.paneController
   }
 
+  public get linkingController() {
+    return this.webServices.viewControllerManager.linkingController
+  }
+
   public get changelogService() {
     return this.webServices.changelogService
+  }
+
+  public get momentsService() {
+    return this.webServices.momentsService
+  }
+
+  public get featuresController() {
+    return this.getViewControllerManager().featuresController
   }
 
   public get desktopDevice(): DesktopDeviceInterface | undefined {
@@ -210,6 +228,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   isNativeIOS() {
     return this.isNativeMobileWeb() && this.platform === Platform.Ios
+  }
+
+  get isMobileDevice() {
+    return this.isNativeMobileWeb() || isIOS() || isAndroid()
   }
 
   get hideOutboundSubscriptionLinks() {
