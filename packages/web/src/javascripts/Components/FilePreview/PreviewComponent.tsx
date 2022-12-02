@@ -3,8 +3,6 @@ import { getBase64FromBlob } from '@/Utils'
 import { FileItem } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef } from 'react'
 import Button from '../Button/Button'
-import { AppPaneId } from '../Panes/AppPaneMetadata'
-import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { createObjectURLWithRef } from './CreateObjectURLWithRef'
 import ImagePreview from './ImagePreview'
 import { ImageZoomLevelProps } from './ImageZoomLevelProps'
@@ -26,8 +24,6 @@ const PreviewComponent: FunctionComponent<Props> = ({
   imageZoomLevel,
   setImageZoomLevel,
 }) => {
-  const { selectedPane } = useResponsiveAppPane()
-
   const objectUrlRef = useRef<string>()
 
   const objectUrl = useMemo(() => {
@@ -62,20 +58,14 @@ const PreviewComponent: FunctionComponent<Props> = ({
     void application.mobileDevice().previewFile(fileBase64, file.name)
   }, [application, bytes, file.mimeType, file.name, isNativeMobileWeb])
 
-  useEffect(() => {
-    const shouldOpenNativePreviewOnLoad =
-      isNativeMobileWeb && selectedPane === AppPaneId.Editor && requiresNativePreview
-    if (shouldOpenNativePreviewOnLoad) {
-      void openNativeFilePreview()
-    }
-  }, [isNativeMobileWeb, openNativeFilePreview, requiresNativePreview, selectedPane])
-
   if (isNativeMobileWeb && requiresNativePreview) {
     return (
       <div className="flex flex-grow flex-col items-center justify-center">
-        <div className="text-base font-bold">Previewing file...</div>
+        <div className="max-w-[30ch] text-center text-base font-bold">
+          This file can only be previewed in an external app
+        </div>
         <Button className="mt-3" primary onClick={openNativeFilePreview}>
-          Re-open file preview
+          Open file preview
         </Button>
       </div>
     )
