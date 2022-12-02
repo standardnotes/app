@@ -13,7 +13,7 @@ import { getTitleForLinkedTag } from '@/Utils/Items/Display/getTitleForLinkedTag
 
 type Props = {
   link: ItemLink
-  activateItem: (item: LinkableItem) => Promise<void>
+  activateItem?: (item: LinkableItem) => Promise<void>
   unlinkItem: LinkingController['unlinkItemFromSelectedItem']
   focusPreviousItem?: () => void
   focusNextItem?: () => void
@@ -59,7 +59,7 @@ const LinkedItemBubble = ({
   const onClick: MouseEventHandler = (event) => {
     if (wasClicked && event.target !== unlinkButtonRef.current) {
       setWasClicked(false)
-      void activateItem(link.item)
+      void activateItem?.(link.item)
     } else {
       setWasClicked(true)
     }

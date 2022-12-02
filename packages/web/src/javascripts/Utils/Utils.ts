@@ -177,6 +177,8 @@ export const isIOS = () =>
   (navigator.userAgent.includes('Mac') && 'ontouchend' in document && navigator.maxTouchPoints > 1) ||
   window.platform === Platform.Ios
 
+export const isAndroid = () => navigator.userAgent.toLowerCase().includes('android')
+
 // https://stackoverflow.com/a/57527009/2504429
 export const disableIosTextFieldZoom = () => {
   const addMaximumScaleToMetaViewport = () => {

@@ -1,6 +1,6 @@
 import { Ref, forwardRef, ReactNode, ComponentPropsWithoutRef } from 'react'
 
-type ButtonStyle = 'default' | 'contrast' | 'neutral' | 'info' | 'warning' | 'danger' | 'success'
+export type ButtonStyle = 'default' | 'contrast' | 'neutral' | 'info' | 'warning' | 'danger' | 'success'
 
 const getColorsForNormalVariant = (style: ButtonStyle) => {
   switch (style) {
@@ -21,7 +21,7 @@ const getColorsForNormalVariant = (style: ButtonStyle) => {
   }
 }
 
-const getColorsForPrimaryVariant = (style: ButtonStyle) => {
+export const getColorsForPrimaryVariant = (style: ButtonStyle) => {
   switch (style) {
     case 'default':
       return 'bg-default text-foreground'
