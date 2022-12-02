@@ -1,8 +1,9 @@
+import { addToast, dismissToast, ToastType } from '@standardnotes/toast'
 import { ApplicationEvent, InternalEventBus, StorageKey } from '@standardnotes/services'
 import { isDev } from '@/Utils'
 import { FileItem, PrefKey, sleep, SNTag } from '@standardnotes/snjs'
 import { FilesController } from '../FilesController'
-import { preparePhotoOperation, takePhoto, stopCameraStream } from './prepareCameraElements'
+import { preparePhotoOperation, takePhoto, stopCameraStream } from './CameraUtils'
 import { action, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewController'
 import { WebApplication } from '@/Application/Application'
@@ -11,6 +12,8 @@ import { dateToStringStyle1 } from '@/Utils/DateUtils'
 const EVERY_HALF_HOUR = 1000 * 60 * 30
 const EVERY_TEN_SECONDS = 1000 * 10
 const DEBUG_MODE = isDev && false
+
+const DELAY_AFTER_STARTING_CAMERA_TO_ALLOW_MOBILE_AUTOFOCUS = 2000
 
 export class MomentsService extends AbstractViewController {
   isEnabled = false
@@ -78,9 +81,18 @@ export class MomentsService extends AbstractViewController {
   }
 
   public async takePhoto(): Promise<FileItem[] | undefined> {
+    const toastId = addToast({
+      type: ToastType.Loading,
+      message: 'Capturing Moment...',
+    })
+
     const { canvas, video, stream, width, height } = await preparePhotoOperation()
 
     const filename = `Moment ${dateToStringStyle1(new Date())}.png`
+
+    if (this.application.isMobileDevice) {
+      await sleep(DELAY_AFTER_STARTING_CAMERA_TO_ALLOW_MOBILE_AUTOFOCUS)
+    }
 
     let file = await takePhoto(filename, canvas, video, width, height)
     if (!file) {
@@ -90,6 +102,9 @@ export class MomentsService extends AbstractViewController {
         return undefined
       }
     }
+
+    dismissToast(toastId)
+
     const uploadedFile = await this.filesController.uploadNewFile(file)
 
     const defaultTag = this.getDefaultTag()

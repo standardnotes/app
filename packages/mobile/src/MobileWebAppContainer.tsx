@@ -253,6 +253,9 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     return true
   }
 
+  const requireInlineMediaPlaybackForMomentsFeature = true
+  const requireMediaUserInteractionForMomentsFeature = false
+
   return (
     <WebView
       ref={webViewRef}
@@ -274,6 +277,8 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       injectedJavaScriptBeforeContentLoaded={injectedJS}
       bounces={false}
       keyboardDisplayRequiresUserAction={false}
+      allowsInlineMediaPlayback={requireInlineMediaPlaybackForMomentsFeature}
+      mediaPlaybackRequiresUserAction={requireMediaUserInteractionForMomentsFeature}
       scalesPageToFit={true}
       /**
        * This disables the global window scroll but keeps scroll within div elements like lists and textareas.

@@ -81,7 +81,7 @@ const Moments: FunctionComponent<Props> = ({ application }: Props) => {
           <div className="flex items-start">
             <Title>Moments</Title>
             <Pill style={'warning'}>Labs</Pill>
-            <Pill style={'info'}>Professional Plan</Pill>
+            <Pill style={'info'}>Professional</Pill>
           </div>
           <Switch onChange={toggle} checked={momentsEnabled} />
         </div>
@@ -125,7 +125,7 @@ const Moments: FunctionComponent<Props> = ({ application }: Props) => {
 
             <Text className="mt-3">
               Moments currently takes a photo on app startup and every half hour. This will be customizable in the
-              future.
+              future. Moments must be enabled on a per-device basis, and is also compatible on mobile.
             </Text>
             <div className="mt-5 flex flex-row flex-wrap gap-3">
               <Button colorStyle="info" onClick={takePhoto}>

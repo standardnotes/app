@@ -44,6 +44,7 @@ export async function takePhoto(
 export async function preparePhotoOperation() {
   const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
   const video = document.createElement('video')
+  video.playsInline = true
   video.style.position = 'absolute'
   video.style.display = 'none'
   const canvas = document.createElement('canvas')

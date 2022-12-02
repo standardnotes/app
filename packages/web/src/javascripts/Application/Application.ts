@@ -24,7 +24,7 @@ import {
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
 import { PanelResizedData } from '@/Types/PanelResizedData'
-import { isDesktopApplication } from '@/Utils'
+import { isAndroid, isDesktopApplication, isIOS } from '@/Utils'
 import { DesktopManager } from './Device/DesktopManager'
 import {
   ArchiveManager,
@@ -228,6 +228,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
 
   isNativeIOS() {
     return this.isNativeMobileWeb() && this.platform === Platform.Ios
+  }
+
+  get isMobileDevice() {
+    return this.isNativeMobileWeb() || isIOS() || isAndroid()
   }
 
   get hideOutboundSubscriptionLinks() {
