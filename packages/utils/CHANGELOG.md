@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.14.1](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.14.0...@standardnotes/utils@1.14.1) (2022-12-02)
+
+### Bug Fixes
+
+* fixes issue where files imported from another account could not be deleted ([#2082](https://github.com/standardnotes/app/issues/2082)) ([b5b6192](https://github.com/standardnotes/app/commit/b5b6192b603b5ce60b913cc7138d30e46aafbe14))
+
 # [1.14.0](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.13.1...@standardnotes/utils@1.14.0) (2022-12-01)
 
 ### Features
