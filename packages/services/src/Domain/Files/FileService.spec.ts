@@ -145,6 +145,23 @@ describe('fileService', () => {
     expect(fileService['encryptedCache'].get(file.uuid)).toBeFalsy()
   })
 
+  it('if file fails to delete, should present alert asking if they want to remove item', async () => {
+    const file = {
+      uuid: '1',
+      decryptedSize: 100_000,
+    } as jest.Mocked<FileItem>
+
+    const alertMock = (alertService.confirm = jest.fn().mockReturnValue(true))
+    const deleteItemMock = (itemManager.setItemToBeDeleted = jest.fn())
+
+    apiService.deleteFile = jest.fn().mockReturnValue({ error: true })
+
+    await fileService.deleteFile(file)
+
+    expect(alertMock).toHaveBeenCalledTimes(1)
+    expect(deleteItemMock).toHaveBeenCalledTimes(1)
+  })
+
   it('should download file from network if no backup', async () => {
     const file = {
       uuid: '1',

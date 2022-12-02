@@ -683,3 +683,7 @@ export function assert(value: unknown): asserts value {
 export function useBoolean(value: boolean | undefined, defaultValue: boolean): boolean {
   return value != undefined ? value : defaultValue
 }
+
+export function spaceSeparatedStrings(...strings: string[]): string {
+  return strings.join(' ')
+}
