@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.50.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.49.0...@standardnotes/services@1.50.0) (2022-12-02)
+
+### Features
+
+* Moments: your personal photo journal, now available in Labs ([#2079](https://github.com/standardnotes/app/issues/2079)) ([29368c5](https://github.com/standardnotes/app/commit/29368c51b801331dd73d8cbee9746abadf2e1120))
+
 # [1.49.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.48.1...@standardnotes/services@1.49.0) (2022-12-01)
 
 ### Features
