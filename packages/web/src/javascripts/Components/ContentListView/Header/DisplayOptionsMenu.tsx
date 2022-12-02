@@ -365,8 +365,8 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             <div className="flex flex-col pr-5">
               <div className="flex flex-row items-center">
                 <div className="text-base font-semibold uppercase text-text lg:text-xs">Daily Notebook</div>
-                <div className="ml-2 rounded bg-success px-1.5 py-[1px] text-[10px] font-bold text-success-contrast">
-                  Experimental
+                <div className="ml-2 rounded bg-warning px-1.5 py-[1px] text-[10px] font-bold text-warning-contrast">
+                  Labs
                 </div>
               </div>
               <div className="mt-1">Capture new notes daily with a calendar-based layout</div>

@@ -46,14 +46,6 @@ type PillProps = Props & {
 export const Pill: FunctionComponent<PillProps> = ({ children, className, style }) => {
   const colorClass = getColorsForPrimaryVariant(style)
   return (
-    <div
-      className={classNames(
-        'ml-2 rounded bg-success px-2 py-1 text-[10px] font-bold text-success-contrast',
-        className,
-        colorClass,
-      )}
-    >
-      {children}
-    </div>
+    <div className={classNames('ml-2 rounded px-2 py-1 text-[10px] font-bold', className, colorClass)}>{children}</div>
   )
 }
