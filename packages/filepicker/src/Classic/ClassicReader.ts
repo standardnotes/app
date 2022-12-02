@@ -18,16 +18,31 @@ function maximumFileSize(): number {
   return 50 * 1_000_000
 }
 
+const FileInputId = 'file-input'
+function createFileInputOrReturnExisting(): HTMLInputElement {
+  let fileInput = document.getElementById(FileInputId) as HTMLInputElement
+  if (fileInput) {
+    return fileInput
+  }
+
+  fileInput = document.createElement('input')
+  fileInput.id = FileInputId
+  fileInput.type = 'file'
+  fileInput.className = 'absolute top-0 left-0 -z-50 h-px w-px opacity-0'
+  fileInput.multiple = true
+  document.body.appendChild(fileInput)
+
+  return fileInput
+}
+
 function selectFiles(): Promise<File[]> {
-  const input = document.createElement('input') as HTMLInputElement
-  input.type = 'file'
-  input.multiple = true
+  const input = createFileInputOrReturnExisting()
 
   return new Promise((resolve) => {
     input.onchange = async (event) => {
       const target = event.target as HTMLInputElement
       const files = []
-      for (const file of target.files as FileList) {
+      for (const file of Array.from(target.files as FileList)) {
         files.push(file)
       }
       resolve(files)
