@@ -18,7 +18,7 @@ function maximumFileSize(): number {
   return 50 * 1_000_000
 }
 
-const FileInputId = 'file-input'
+const FileInputId = 'classic-reader-file-input'
 function createFileInputOrReturnExisting(): HTMLInputElement {
   let fileInput = document.getElementById(FileInputId) as HTMLInputElement
   if (fileInput) {
