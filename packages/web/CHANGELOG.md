@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.117.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.117.2...@standardnotes/web@3.117.3) (2022-12-02)
+
+### Bug Fixes
+
+* fixes issue where Moments camera wouldn't properly start on desktop app ([#2084](https://github.com/standardnotes/app/issues/2084)) ([8c41f0e](https://github.com/standardnotes/app/commit/8c41f0ecc30662c5e2fef72e5685056a8cddce62))
+
 ## [3.117.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.117.1...@standardnotes/web@3.117.2) (2022-12-02)
 
 ### Bug Fixes
