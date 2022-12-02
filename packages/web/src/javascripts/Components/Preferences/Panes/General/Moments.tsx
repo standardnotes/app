@@ -18,7 +18,7 @@ type Props = {
 }
 
 const Moments: FunctionComponent<Props> = ({ application }: Props) => {
-  const timelapseEnabled = application.momentsService.isEnabled
+  const momentsEnabled = application.momentsService.isEnabled
   const premiumModal = usePremiumModal()
 
   const defaultTagId = usePreference<string>(PrefKey.MomentsDefaultTagUuid)
@@ -39,20 +39,20 @@ const Moments: FunctionComponent<Props> = ({ application }: Props) => {
       premiumModal.activate('Moments')
       return
     }
-    void application.momentsService.enableTimelapse()
+    void application.momentsService.enableMoments()
   }, [application, premiumModal])
 
   const disable = useCallback(() => {
-    void application.momentsService.disableTimelapse()
+    void application.momentsService.disableMoments()
   }, [application])
 
   const toggle = useCallback(() => {
-    if (timelapseEnabled) {
+    if (momentsEnabled) {
       disable()
     } else {
       enable()
     }
-  }, [timelapseEnabled, enable, disable])
+  }, [momentsEnabled, enable, disable])
 
   const takePhoto = useCallback(() => {
     if (!application.featuresController.entitledToFiles) {
@@ -83,12 +83,12 @@ const Moments: FunctionComponent<Props> = ({ application }: Props) => {
             <Pill style={'warning'}>Labs</Pill>
             <Pill style={'info'}>Professional Plan</Pill>
           </div>
-          <Switch onChange={toggle} checked={timelapseEnabled} />
+          <Switch onChange={toggle} checked={momentsEnabled} />
         </div>
 
         <Subtitle>Capture photos of yourself at regular intervals</Subtitle>
 
-        {timelapseEnabled && (
+        {momentsEnabled && (
           <div className="mb-2 flex items-center">
             {defaultTag && (
               <div>
