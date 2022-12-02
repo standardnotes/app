@@ -12,9 +12,8 @@ const EVERY_HALF_HOUR = 1000 * 60 * 30
 const EVERY_TEN_SECONDS = 1000 * 10
 const DEBUG_MODE = isDev && false
 
-export class TimelapseService extends AbstractViewController {
+export class MomentsService extends AbstractViewController {
   isEnabled = false
-  isEntitledToTimelapse = false
   private intervalReference: ReturnType<typeof setInterval> | undefined
 
   constructor(application: WebApplication, private filesController: FilesController, eventBus: InternalEventBus) {
@@ -22,7 +21,7 @@ export class TimelapseService extends AbstractViewController {
 
     this.disposers.push(
       application.addEventObserver(async () => {
-        this.isEnabled = (this.application.getValue(StorageKey.TimelapseEnabled) as boolean) ?? false
+        this.isEnabled = (this.application.getValue(StorageKey.MomentsEnabled) as boolean) ?? false
         if (this.isEnabled) {
           void this.beginTakingPhotos()
         }
@@ -31,10 +30,9 @@ export class TimelapseService extends AbstractViewController {
 
     makeObservable(this, {
       isEnabled: observable,
-      isEntitledToTimelapse: observable,
 
-      enableTimelapse: action,
-      disableTimelapse: action,
+      enableMoments: action,
+      disableMoments: action,
     })
   }
 
@@ -44,16 +42,16 @@ export class TimelapseService extends AbstractViewController {
     ;(this.filesController as unknown) = undefined
   }
 
-  public enableTimelapse = (): void => {
-    this.application.setValue(StorageKey.TimelapseEnabled, true)
+  public enableMoments = (): void => {
+    this.application.setValue(StorageKey.MomentsEnabled, true)
 
     this.isEnabled = true
 
     void this.beginTakingPhotos()
   }
 
-  public disableTimelapse = (): void => {
-    this.application.setValue(StorageKey.TimelapseEnabled, false)
+  public disableMoments = (): void => {
+    this.application.setValue(StorageKey.MomentsEnabled, false)
 
     this.isEnabled = false
 

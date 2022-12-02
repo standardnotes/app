@@ -45,7 +45,7 @@ import { WebServices } from './WebServices'
 import { FeatureName } from '@/Controllers/FeatureName'
 import { ItemGroupController } from '@/Components/NoteView/Controller/ItemGroupController'
 import { VisibilityObserver } from './VisibilityObserver'
-import { TimelapseService } from '@/Controllers/Timelapse/TimelapseService'
+import { MomentsService } from '@/Controllers/Moments/MomentsService'
 
 export type WebEventObserver = (event: WebAppEvent, data?: unknown) => void
 
@@ -99,7 +99,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       : undefined
     this.webServices.viewControllerManager = new ViewControllerManager(this, deviceInterface)
     this.webServices.changelogService = new ChangelogService(this.environment, this.storage)
-    this.webServices.timelapseService = new TimelapseService(
+    this.webServices.momentsService = new MomentsService(
       this,
       this.webServices.viewControllerManager.filesController,
       internalEventBus,
@@ -210,8 +210,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.webServices.changelogService
   }
 
-  public get timelapseService() {
-    return this.webServices.timelapseService
+  public get momentsService() {
+    return this.webServices.momentsService
   }
 
   public get featuresController() {

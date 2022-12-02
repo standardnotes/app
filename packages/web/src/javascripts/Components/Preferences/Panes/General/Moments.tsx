@@ -17,8 +17,8 @@ type Props = {
   application: WebApplication
 }
 
-const Timelapse: FunctionComponent<Props> = ({ application }: Props) => {
-  const timelapseEnabled = application.timelapseService.isEnabled
+const Moments: FunctionComponent<Props> = ({ application }: Props) => {
+  const timelapseEnabled = application.momentsService.isEnabled
   const premiumModal = usePremiumModal()
 
   const defaultTagId = usePreference<string>(PrefKey.MomentsDefaultTagUuid)
@@ -39,11 +39,11 @@ const Timelapse: FunctionComponent<Props> = ({ application }: Props) => {
       premiumModal.activate('Moments')
       return
     }
-    void application.timelapseService.enableTimelapse()
+    void application.momentsService.enableTimelapse()
   }, [application, premiumModal])
 
   const disable = useCallback(() => {
-    void application.timelapseService.disableTimelapse()
+    void application.momentsService.disableTimelapse()
   }, [application])
 
   const toggle = useCallback(() => {
@@ -60,7 +60,7 @@ const Timelapse: FunctionComponent<Props> = ({ application }: Props) => {
       return
     }
 
-    void application.timelapseService.takePhoto()
+    void application.momentsService.takePhoto()
   }, [application, premiumModal])
 
   const selectTag = useCallback(
@@ -139,4 +139,4 @@ const Timelapse: FunctionComponent<Props> = ({ application }: Props) => {
   )
 }
 
-export default observer(Timelapse)
+export default observer(Moments)
