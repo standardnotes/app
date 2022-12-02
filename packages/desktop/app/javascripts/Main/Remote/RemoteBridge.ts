@@ -19,6 +19,7 @@ import { MenuManagerInterface } from '../Menus/MenuManagerInterface'
 import { Component, PackageManagerInterface } from '../Packages/PackageManagerInterface'
 import { SearchManagerInterface } from '../Search/SearchManagerInterface'
 import { RemoteDataInterface } from './DataInterface'
+import { MediaManagerInterface } from '../Media/MediaManagerInterface'
 
 /**
  * Read https://github.com/electron/remote to understand how electron/remote works.
@@ -34,6 +35,7 @@ export class RemoteBridge implements CrossProcessBridge {
     private data: RemoteDataInterface,
     private menus: MenuManagerInterface,
     private fileBackups: FileBackupsDevice,
+    private media: MediaManagerInterface,
   ) {}
 
   get exposableValue(): CrossProcessBridge {
@@ -73,6 +75,7 @@ export class RemoteBridge implements CrossProcessBridge {
       openFileBackup: this.openFileBackup.bind(this),
       getFileBackupReadToken: this.getFileBackupReadToken.bind(this),
       readNextChunk: this.readNextChunk.bind(this),
+      askForMediaAccess: this.askForMediaAccess.bind(this),
     }
   }
 
@@ -222,5 +225,9 @@ export class RemoteBridge implements CrossProcessBridge {
 
   public openFileBackup(record: FileBackupRecord): Promise<void> {
     return this.fileBackups.openFileBackup(record)
+  }
+
+  askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean> {
+    return this.media.askForMediaAccess(type)
   }
 }

@@ -19,6 +19,8 @@ export interface WebClientRequiresDesktopMethods extends FileBackupsDevice {
   downloadBackup(): void | Promise<void>
 
   get extensionsServerHost(): string
+
+  askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean>
 }
 
 export interface DesktopClientRequiresWebMethods {

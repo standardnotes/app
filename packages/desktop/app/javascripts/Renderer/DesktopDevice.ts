@@ -166,4 +166,8 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
   isDeviceDestroyed(): boolean {
     return false
   }
+
+  askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean> {
+    return this.remoteBridge.askForMediaAccess(type)
+  }
 }

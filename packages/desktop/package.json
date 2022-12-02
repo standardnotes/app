@@ -104,6 +104,9 @@
       "hardenedRuntime": true,
       "entitlements": "./build/entitlements.mac.inherit.plist",
       "entitlementsInherit": "./build/entitlements.mac.inherit.plist",
+      "extendInfo": {
+        "NSCameraUsageDescription": "Standard Notes requires access to your camera to enable the Moments feature."
+      },
       "target": [
         "dmg",
         "zip"
