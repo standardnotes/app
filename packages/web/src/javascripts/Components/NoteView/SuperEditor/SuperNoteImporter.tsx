@@ -10,7 +10,7 @@ import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 import Button from '@/Components/Button/Button'
 import ImportPlugin from './Plugins/ImportPlugin/ImportPlugin'
 import { NoteViewController } from '../Controller/NoteViewController'
-import { spaceSeparatedStrings } from '../../../Utils/spaceSeparatedStrings'
+import { spaceSeparatedStrings } from '@standardnotes/utils'
 
 const NotePreviewCharLimit = 160
 

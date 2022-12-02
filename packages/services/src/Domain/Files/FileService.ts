@@ -11,7 +11,7 @@ import {
   isEncryptedPayload,
 } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { UuidGenerator } from '@standardnotes/utils'
+import { spaceSeparatedStrings, UuidGenerator } from '@standardnotes/utils'
 import { EncryptionProviderInterface, SNItemsKey } from '@standardnotes/encryption'
 import {
   DownloadAndDecryptFileOperation,
@@ -33,7 +33,7 @@ import {
   readAndDecryptBackupFileUsingBackupService,
   BackupServiceInterface,
 } from '@standardnotes/files'
-import { AlertService } from '../Alert/AlertService'
+import { AlertService, ButtonType } from '../Alert/AlertService'
 import { ChallengeServiceInterface } from '../Challenge'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
@@ -244,7 +244,21 @@ export class FileService extends AbstractService implements FilesClientInterface
     const result = await this.api.deleteFile(tokenResult)
 
     if (result.error) {
-      return ClientDisplayableError.FromError(result.error)
+      const deleteAnyway = await this.alertService.confirm(
+        spaceSeparatedStrings(
+          'This file could not be deleted from the server, possibly because you are attempting to delete a file item',
+          'that was imported from another account. Would you like to remove this file item from your account anyway?',
+          "If you're sure the file is yours and still exists on the server, do not choose this option,",
+          'and instead try to delete it again.',
+        ),
+        'Unable to Delete',
+        'Delete Anyway',
+        ButtonType.Danger,
+      )
+
+      if (!deleteAnyway) {
+        return ClientDisplayableError.FromError(result.error)
+      }
     }
 
     await this.itemManager.setItemToBeDeleted(file)
