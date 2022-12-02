@@ -10,6 +10,7 @@ import { createBackupsManager } from './Backups/BackupsManager'
 import { BackupsManagerInterface } from './Backups/BackupsManagerInterface'
 import { FilesBackupManager } from './FileBackups/FileBackupsManager'
 import { Keychain } from './Keychain/Keychain'
+import { MediaManager } from './Media/MediaManager'
 import { MenuManagerInterface } from './Menus/MenuManagerInterface'
 import { buildContextMenu, createMenuManager } from './Menus/Menus'
 import { initializePackageManager } from './Packages/PackageManager'
@@ -74,6 +75,7 @@ export async function createWindowState({
     },
     services.menuManager,
     services.fileBackupsManager,
+    services.mediaManager,
   )
 
   const shouldOpenUrl = (url: string) => url.startsWith('http') || url.startsWith('mailto')
@@ -203,6 +205,7 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
   const updateManager = setupUpdates(window, appState, backupsManager)
   const trayManager = createTrayManager(window, appState.store)
   const spellcheckerManager = createSpellcheckerManager(appState.store, window.webContents, appLocale)
+  const mediaManager = new MediaManager()
 
   if (isTesting()) {
     handleTestMessage(MessageType.SpellCheckerManager, () => spellcheckerManager)
@@ -228,6 +231,7 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
     packageManager,
     searchManager,
     fileBackupsManager,
+    mediaManager,
   }
 }
 

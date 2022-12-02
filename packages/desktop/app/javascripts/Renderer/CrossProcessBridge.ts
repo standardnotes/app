@@ -49,4 +49,6 @@ export interface CrossProcessBridge extends FileBackupsDevice {
   onInitialDataLoad(): void
 
   destroyAllData(): void
+
+  askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean>
 }

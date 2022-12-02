@@ -86,6 +86,20 @@ export class MomentsService extends AbstractViewController {
       message: 'Capturing Moment...',
     })
 
+    if (this.application.desktopDevice) {
+      const granted = await this.application.desktopDevice.askForMediaAccess('camera')
+      if (!granted) {
+        dismissToast(toastId)
+        addToast({
+          type: ToastType.Error,
+          message: 'Please enable Camera permissions for Standard Notes to enable Moments.',
+          duration: 3000,
+        })
+
+        return
+      }
+    }
+
     const { canvas, video, stream, width, height } = await preparePhotoOperation()
 
     const filename = `Moment ${dateToStringStyle1(new Date())}.png`
