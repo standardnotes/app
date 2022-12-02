@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.117.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.117.0...@standardnotes/web@3.117.1) (2022-12-02)
+
+### Bug Fixes
+
+* **mobile:** PDF preview causing loop when biometrics are set to Immediate ([#2080](https://github.com/standardnotes/app/issues/2080)) ([0c23e4d](https://github.com/standardnotes/app/commit/0c23e4d36cb46cfe66d47bb32a753eacd37eba63))
+
 # [3.117.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.116.0...@standardnotes/web@3.117.0) (2022-12-02)
 
 ### Features
