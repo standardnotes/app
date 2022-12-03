@@ -80,7 +80,7 @@ export class MomentsService extends AbstractViewController {
     }
   }
 
-  public async takePhoto(): Promise<FileItem[] | undefined> {
+  public async takePhoto(): Promise<FileItem | undefined> {
     const toastId = addToast({
       type: ToastType.Loading,
       message: 'Capturing Moment...',
@@ -123,7 +123,7 @@ export class MomentsService extends AbstractViewController {
 
     const defaultTag = this.getDefaultTag()
     if (defaultTag && uploadedFile) {
-      void this.application.linkingController.linkItems(uploadedFile[0], defaultTag)
+      void this.application.linkingController.linkItems(uploadedFile, defaultTag)
     }
 
     stopCameraStream(canvas, video, stream)

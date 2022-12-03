@@ -56,6 +56,10 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
   showProtectedOverlay = false
   fileContextMenuLocation: FileContextMenuLocation = { x: 0, y: 0 }
 
+  shouldUseStreamingReader = StreamingFileSaver.available()
+  reader = this.shouldUseStreamingReader ? StreamingFileReader : ClassicFileReader
+  maxFileSize = this.reader.maximumFileSize()
+
   override deinit(): void {
     super.deinit()
     ;(this.notesController as unknown) = undefined
@@ -318,98 +322,103 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     }
   }
 
-  public async uploadNewFile(fileOrHandle?: File | FileSystemFileHandle) {
+  alertIfFileExceedsSizeLimit = (file: File): boolean => {
+    if (!this.shouldUseStreamingReader && this.maxFileSize && file.size >= this.maxFileSize) {
+      this.application.alertService
+        .alert(
+          `This file exceeds the limits supported in this browser. To upload files greater than ${
+            this.maxFileSize / BYTES_IN_ONE_MEGABYTE
+          }MB, please use the desktop application or the Chrome browser.`,
+          `Cannot upload file "${file.name}"`,
+        )
+        .catch(console.error)
+      return true
+    }
+    return false
+  }
+
+  public async selectAndUploadNewFiles(callback?: (file: FileItem) => void) {
+    const selectedFiles = await this.reader.selectFiles()
+
+    selectedFiles.forEach(async (file) => {
+      if (this.alertIfFileExceedsSizeLimit(file)) {
+        return
+      }
+      const uploadedFile = await this.uploadNewFile(file)
+      if (uploadedFile && callback) {
+        callback(uploadedFile)
+      }
+    })
+  }
+
+  public async uploadNewFile(fileOrHandle: File | FileSystemFileHandle): Promise<FileItem | undefined> {
     let toastId = ''
 
     try {
       const minimumChunkSize = this.application.files.minimumChunkSize()
 
-      const shouldUseStreamingReader = StreamingFileReader.available()
-
-      const picker = shouldUseStreamingReader ? StreamingFileReader : ClassicFileReader
-      const maxFileSize = picker.maximumFileSize()
-
-      const selectedFiles =
-        fileOrHandle instanceof File
-          ? [fileOrHandle]
-          : shouldUseStreamingReader && fileOrHandle instanceof FileSystemFileHandle
-          ? await StreamingFileReader.getFilesFromHandles([fileOrHandle])
-          : await picker.selectFiles()
-
-      if (selectedFiles.length === 0) {
+      if (fileOrHandle instanceof FileSystemFileHandle && !this.shouldUseStreamingReader) {
         return
       }
 
-      const uploadedFiles: FileItem[] = []
+      const fileToUpload = fileOrHandle instanceof File ? fileOrHandle : await fileOrHandle.getFile()
 
-      for (const file of selectedFiles) {
-        if (!shouldUseStreamingReader && maxFileSize && file.size >= maxFileSize) {
-          this.application.alertService
-            .alert(
-              `This file exceeds the limits supported in this browser. To upload files greater than ${
-                maxFileSize / BYTES_IN_ONE_MEGABYTE
-              }MB, please use the desktop application or the Chrome browser.`,
-              `Cannot upload file "${file.name}"`,
-            )
-            .catch(console.error)
-          continue
-        }
+      if (this.alertIfFileExceedsSizeLimit(fileToUpload)) {
+        return
+      }
 
-        const operation = await this.application.files.beginNewFileUpload(file.size)
+      const operation = await this.application.files.beginNewFileUpload(fileToUpload.size)
 
-        if (operation instanceof ClientDisplayableError) {
-          addToast({
-            type: ToastType.Error,
-            message: 'Unable to start upload session',
-          })
-          throw new Error('Unable to start upload session')
-        }
-
-        const initialProgress = operation.getProgress().percentComplete
-
-        toastId = addToast({
-          type: ToastType.Progress,
-          message: `Uploading file "${file.name}" (${initialProgress}%)`,
-          progress: initialProgress,
-        })
-
-        const onChunk: OnChunkCallbackNoProgress = async ({ data, index, isLast }) => {
-          await this.application.files.pushBytesForUpload(operation, data, index, isLast)
-
-          const percentComplete = Math.round(operation.getProgress().percentComplete)
-          updateToast(toastId, {
-            message: `Uploading file "${file.name}" (${percentComplete}%)`,
-            progress: percentComplete,
-          })
-        }
-
-        const fileResult = await picker.readFile(file, minimumChunkSize, onChunk)
-
-        if (!fileResult.mimeType) {
-          const { ext } = parseFileName(file.name)
-          fileResult.mimeType = await this.application.getArchiveService().getMimeType(ext)
-        }
-
-        const uploadedFile = await this.application.files.finishUpload(operation, fileResult)
-
-        if (uploadedFile instanceof ClientDisplayableError) {
-          addToast({
-            type: ToastType.Error,
-            message: 'Unable to close upload session',
-          })
-          throw new Error('Unable to close upload session')
-        }
-
-        uploadedFiles.push(uploadedFile)
-
-        dismissToast(toastId)
+      if (operation instanceof ClientDisplayableError) {
         addToast({
-          type: ToastType.Success,
-          message: `Uploaded file "${uploadedFile.name}"`,
+          type: ToastType.Error,
+          message: 'Unable to start upload session',
+        })
+        throw new Error('Unable to start upload session')
+      }
+
+      const initialProgress = operation.getProgress().percentComplete
+
+      toastId = addToast({
+        type: ToastType.Progress,
+        message: `Uploading file "${fileToUpload.name}" (${initialProgress}%)`,
+        progress: initialProgress,
+      })
+
+      const onChunk: OnChunkCallbackNoProgress = async ({ data, index, isLast }) => {
+        await this.application.files.pushBytesForUpload(operation, data, index, isLast)
+
+        const percentComplete = Math.round(operation.getProgress().percentComplete)
+        updateToast(toastId, {
+          message: `Uploading file "${fileToUpload.name}" (${percentComplete}%)`,
+          progress: percentComplete,
         })
       }
 
-      return uploadedFiles
+      const fileResult = await this.reader.readFile(fileToUpload, minimumChunkSize, onChunk)
+
+      if (!fileResult.mimeType) {
+        const { ext } = parseFileName(fileToUpload.name)
+        fileResult.mimeType = await this.application.getArchiveService().getMimeType(ext)
+      }
+
+      const uploadedFile = await this.application.files.finishUpload(operation, fileResult)
+
+      if (uploadedFile instanceof ClientDisplayableError) {
+        addToast({
+          type: ToastType.Error,
+          message: 'Unable to close upload session',
+        })
+        throw new Error('Unable to close upload session')
+      }
+
+      dismissToast(toastId)
+      addToast({
+        type: ToastType.Success,
+        message: `Uploaded file "${uploadedFile.name}"`,
+      })
+
+      return uploadedFile
     } catch (error) {
       console.error(error)
 

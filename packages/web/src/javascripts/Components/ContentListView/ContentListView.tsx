@@ -114,7 +114,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
     }, [selectedTag, application, onPanelWidthLoad])
 
     const fileDropCallback = useCallback(
-      async (files: FileItem[]) => {
+      async (file: FileItem) => {
         const currentTag = navigationController.selected
 
         if (!currentTag) {
@@ -126,9 +126,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
           return
         }
 
-        files.forEach(async (file) => {
-          await linkingController.linkItems(file, currentTag)
-        })
+        await linkingController.linkItems(file, currentTag)
       },
       [navigationController, linkingController],
     )
@@ -170,7 +168,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
           return
         }
 
-        void filesController.uploadNewFile()
+        void filesController.selectAndUploadNewFiles()
       } else {
         await createNewNote()
         toggleAppPane(AppPaneId.Editor)

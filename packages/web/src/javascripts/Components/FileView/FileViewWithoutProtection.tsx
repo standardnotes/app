@@ -51,10 +51,8 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
     if (target) {
       addDragTarget(target, {
         tooltipText: 'Drop your files to upload and link them to the current file',
-        callback(files) {
-          files.forEach(async (uploadedFile) => {
-            await viewControllerManager.linkingController.linkItems(uploadedFile, file)
-          })
+        async callback(uploadedFile) {
+          await viewControllerManager.linkingController.linkItems(uploadedFile, file)
         },
       })
     }

@@ -28,11 +28,9 @@ export default function FilePlugin(): JSX.Element | null {
     const uploadFilesList = (files: FileList) => {
       Array.from(files).forEach(async (file) => {
         try {
-          const uploadedFiles = await filesController.uploadNewFile(file)
-          if (uploadedFiles) {
-            uploadedFiles.forEach((uploadedFile) => {
-              editor.dispatchCommand(INSERT_FILE_COMMAND, uploadedFile.uuid)
-            })
+          const uploadedFile = await filesController.uploadNewFile(file)
+          if (uploadedFile) {
+            editor.dispatchCommand(INSERT_FILE_COMMAND, uploadedFile.uuid)
           }
         } catch (error) {
           console.error(error)
