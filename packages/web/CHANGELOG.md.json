@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.117.5",
+      "title": "[3.117.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.117.4...@standardnotes/web@3.117.5) (2022-12-04)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* **mobile:** Fixed issue where pressing the back button on editor screen wouldn't switch back to the items list on Android ([07cb00a](https://github.com/standardnotes/app/commit/07cb00a81505ed880a2b8033b3e69c53dd9b48b2))",
+      "parsed": {
+        "_": [
+          "mobile: Fixed issue where pressing the back button on editor screen wouldn't switch back to the items list on Android (07cb00a)"
+        ],
+        "Bug Fixes": [
+          "mobile: Fixed issue where pressing the back button on editor screen wouldn't switch back to the items list on Android (07cb00a)"
+        ]
+      }
+    },
+    {
       "version": "3.117.4",
       "title": "[3.117.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.117.3...@standardnotes/web@3.117.4) (2022-12-04)",
       "date": null,

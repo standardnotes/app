@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.117.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.117.4...@standardnotes/web@3.117.5) (2022-12-04)
+
+### Bug Fixes
+
+* **mobile:** Fixed issue where pressing the back button on editor screen wouldn't switch back to the items list on Android ([07cb00a](https://github.com/standardnotes/app/commit/07cb00a81505ed880a2b8033b3e69c53dd9b48b2))
+
 ## [3.117.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.117.3...@standardnotes/web@3.117.4) (2022-12-04)
 
 **Note:** Version bump only for package @standardnotes/web
