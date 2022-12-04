@@ -14,6 +14,7 @@ import {
 import { AppPaneId } from './AppPaneMetadata'
 import { PaneController } from '../../Controllers/PaneController/PaneController'
 import { observer } from 'mobx-react-lite'
+import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 
 type ResponsivePaneData = {
   selectedPane: AppPaneId
@@ -84,7 +85,7 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
         currentSelectedPaneRef.current === AppPaneId.Editor ||
         currentSelectedPaneRef.current === AppPaneId.Navigation
       ) {
-        toggleAppPane(AppPaneId.Items)
+        paneController.setPaneLayout(PaneLayout.ItemSelection)
         return true
       } else {
         return false
@@ -95,7 +96,7 @@ const ResponsivePaneProvider = ({ paneController, children }: ProviderProps) => 
         removeListener()
       }
     }
-  }, [addAndroidBackHandler, currentSelectedPaneRef, toggleAppPane])
+  }, [addAndroidBackHandler, currentSelectedPaneRef, paneController])
 
   const contextValue = useMemo(
     (): ResponsivePaneData => ({

@@ -17,4 +17,5 @@ export interface WebApplicationInterface extends ApplicationInterface {
   mobileDevice(): MobileDeviceInterface
   handleAndroidBackButtonPressed(): void
   addAndroidBackHandlerEventListener(listener: () => boolean): (() => void) | undefined
+  setAndroidBackHandlerFallbackListener(listener: () => boolean): void
 }

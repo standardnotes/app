@@ -7,13 +7,13 @@ import ListItemTags from './ListItemTags'
 import ListItemMetadata from './ListItemMetadata'
 import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
-import { AppPaneId } from '../Panes/AppPaneMetadata'
 import { useContextMenuEvent } from '@/Hooks/useContextMenuEvent'
 import { classNames } from '@standardnotes/utils'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
 import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
+import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 
 const FileListItem: FunctionComponent<DisplayableListItemProps<FileItem>> = ({
   filesController,
@@ -26,7 +26,7 @@ const FileListItem: FunctionComponent<DisplayableListItemProps<FileItem>> = ({
   sortBy,
   tags,
 }) => {
-  const { toggleAppPane } = useResponsiveAppPane()
+  const { setPaneLayout } = useResponsiveAppPane()
   const application = useApplication()
 
   const [backupInfo, setBackupInfo] = useState<FileBackupRecord | undefined>(undefined)
@@ -70,9 +70,9 @@ const FileListItem: FunctionComponent<DisplayableListItemProps<FileItem>> = ({
   const onClick = useCallback(async () => {
     const { didSelect } = await onSelect(file, true)
     if (didSelect) {
-      toggleAppPane(AppPaneId.Editor)
+      setPaneLayout(PaneLayout.Editing)
     }
-  }, [file, onSelect, toggleAppPane])
+  }, [file, onSelect, setPaneLayout])
 
   const IconComponent = () =>
     getFileIconComponent(getIconForFileType((file as FileItem).mimeType), 'w-10 h-10 flex-shrink-0')

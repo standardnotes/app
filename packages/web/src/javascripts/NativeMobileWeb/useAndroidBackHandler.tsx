@@ -34,19 +34,14 @@ const AndroidBackHandlerProvider = ({ application, children }: ProviderProps) =>
   )
 
   useEffect(() => {
-    const removeListener = addAndroidBackHandler(() => {
+    application.setAndroidBackHandlerFallbackListener(() => {
       const shouldConfirm = (application.getValue(AndroidConfirmBeforeExitKey) as boolean) ?? true
 
       application.mobileDevice().exitApp(shouldConfirm)
 
       return true
     })
-    return () => {
-      if (removeListener) {
-        removeListener()
-      }
-    }
-  }, [addAndroidBackHandler, application])
+  }, [application])
 
   return (
     <BackHandlerContext.Provider value={addAndroidBackHandler}>

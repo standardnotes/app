@@ -4,7 +4,6 @@ import { WebApplication } from '@/Application/Application'
 import { ApplicationEvent, PrefKey, WebAppEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { forwardRef, useEffect, useMemo, useState } from 'react'
-import { AppPaneId } from '@/Components/Panes/AppPaneMetadata'
 import { classNames } from '@standardnotes/utils'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import UpgradeNow from '../Footer/UpgradeNow'
@@ -12,6 +11,7 @@ import RoundIconButton from '../Button/RoundIconButton'
 import { isIOS } from '@/Utils'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
+import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 
 type Props = {
   application: WebApplication
@@ -22,7 +22,7 @@ type Props = {
 
 const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, children, id }, ref) => {
   const viewControllerManager = useMemo(() => application.getViewControllerManager(), [application])
-  const { toggleAppPane } = useResponsiveAppPane()
+  const { setPaneLayout } = useResponsiveAppPane()
 
   const [hasPasscode, setHasPasscode] = useState(() => application.hasPasscode())
   useEffect(() => {
@@ -56,7 +56,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
         <RoundIconButton
           className="mr-auto bg-default"
           onClick={() => {
-            toggleAppPane(AppPaneId.Items)
+            setPaneLayout(PaneLayout.ItemSelection)
           }}
           label="Go to items list"
           icon="chevron-left"
@@ -101,7 +101,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
         />
       </div>
     )
-  }, [hasPasscode, application, viewControllerManager, toggleAppPane])
+  }, [application, viewControllerManager, hasPasscode, setPaneLayout])
 
   return (
     <div

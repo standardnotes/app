@@ -369,6 +369,12 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return
   }
 
+  setAndroidBackHandlerFallbackListener(listener: () => boolean) {
+    if (typeof this.androidBackHandler !== 'undefined') {
+      this.androidBackHandler.setFallbackListener(listener)
+    }
+  }
+
   isAuthorizedToRenderItem(item: DecryptedItem): boolean {
     if (item.protected && this.hasProtectionSources()) {
       return this.hasUnprotectedAccessSession()
