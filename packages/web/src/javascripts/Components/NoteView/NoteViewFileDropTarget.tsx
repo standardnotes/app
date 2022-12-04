@@ -20,11 +20,9 @@ const NoteViewFileDropTarget = ({ note, linkingController, noteViewElement, file
     if (target) {
       addDragTarget(target, {
         tooltipText: 'Drop your files to upload and link them to the current note',
-        callback: (files) => {
-          files.forEach(async (uploadedFile) => {
-            await linkingController.linkItems(note, uploadedFile)
-            filesController.notifyObserversOfUploadedFileLinkingToCurrentNote(uploadedFile.uuid)
-          })
+        callback: async (uploadedFile) => {
+          await linkingController.linkItems(note, uploadedFile)
+          filesController.notifyObserversOfUploadedFileLinkingToCurrentNote(uploadedFile.uuid)
         },
       })
     }

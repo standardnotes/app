@@ -63,13 +63,9 @@ const LinkedItemsPanel = ({
       return
     }
 
-    const uploadedFiles = await filesController.uploadNewFile()
-
-    if (uploadedFiles && uploadedFiles.length) {
-      uploadedFiles.forEach((file) => {
-        void linkItemToSelectedItem(file)
-      })
-    }
+    void filesController.selectAndUploadNewFiles((file) => {
+      void linkItemToSelectedItem(file)
+    })
   }
 
   return (

@@ -11,7 +11,7 @@ import Portal from './Portal/Portal'
 
 type FileDragTargetData = {
   tooltipText: string
-  callback: (files: FileItem[]) => void
+  callback: (files: FileItem) => void
 }
 
 type FileDnDContextData = {
@@ -203,14 +203,14 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
             return
           }
 
-          const uploadedFiles = await filesController.uploadNewFile(fileOrHandle)
+          const uploadedFile = await filesController.uploadNewFile(fileOrHandle)
 
-          if (!uploadedFiles) {
+          if (!uploadedFile) {
             return
           }
 
           if (closestDragTarget && dragTargets.current.has(closestDragTarget)) {
-            dragTargets.current.get(closestDragTarget)?.callback(uploadedFiles)
+            dragTargets.current.get(closestDragTarget)?.callback(uploadedFile)
           }
         })
 
