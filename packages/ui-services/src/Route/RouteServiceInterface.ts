@@ -5,4 +5,5 @@ export interface RouteServiceInterface {
   deinit(): void
   getRoute(): RouteParserInterface
   removeQueryParameterFromURL(param: RootQueryParam): void
+  get isDotOrg(): boolean
 }

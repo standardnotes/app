@@ -26,6 +26,7 @@ import DarkModeHandler from '../DarkModeHandler/DarkModeHandler'
 import ApplicationProvider from '../ApplicationProvider'
 import CommandProvider from '../CommandProvider'
 import PanesSystemComponent from '../Panes/PanesSystemComponent'
+import DotOrgNotice from './DotOrgNotice'
 
 type Props = {
   application: WebApplication
@@ -230,6 +231,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                     viewControllerManager={viewControllerManager}
                   />
                 </>
+                {application.routeService.isDotOrg && <DotOrgNotice />}
               </div>
             </PremiumModalProvider>
           </ResponsivePaneProvider>

@@ -35,6 +35,10 @@ export class RouteService
     return new RouteParser(window.location.href)
   }
 
+  get isDotOrg(): boolean {
+    return window.location.host === 'app.standardnotes.org'
+  }
+
   removeQueryParameterFromURL(param: RootQueryParam): void {
     const urlSearchParams = new URLSearchParams(window.location.search)
     urlSearchParams.delete(param)
