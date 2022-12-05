@@ -1,6 +1,24 @@
 {
   "versions": [
     {
+      "version": "3.120.0",
+      "title": "[3.120.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.119.1...@standardnotes/web@3.120.0) (2022-12-05)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* fixes issue where first change was ignored with Super notes ([1d22365](https://github.com/standardnotes/app/commit/1d22365086ffca3efa46143783b724fcde3c1681))\n\n### Features\n\n* add Super note type to list of note types ([#2086](https://github.com/standardnotes/app/issues/2086)) ([caf2c4a](https://github.com/standardnotes/app/commit/caf2c4a87646ab4d1aa7007c39547fd3b16c0c6f))",
+      "parsed": {
+        "_": [
+          "fixes issue where first change was ignored with Super notes (1d22365)",
+          "add Super note type to list of note types (#2086) (caf2c4a)"
+        ],
+        "Bug Fixes": [
+          "fixes issue where first change was ignored with Super notes (1d22365)"
+        ],
+        "Features": [
+          "add Super note type to list of note types (#2086) (caf2c4a)"
+        ]
+      }
+    },
+    {
       "version": "3.119.1",
       "title": "[3.119.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.119.0...@standardnotes/web@3.119.1) (2022-12-05)",
       "date": null,

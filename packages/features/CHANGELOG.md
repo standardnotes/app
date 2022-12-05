@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.56.0](https://github.com/standardnotes/app/compare/@standardnotes/features@1.55.3...@standardnotes/features@1.56.0) (2022-12-05)
+
+### Features
+
+* add Super note type to list of note types ([#2086](https://github.com/standardnotes/app/issues/2086)) ([caf2c4a](https://github.com/standardnotes/app/commit/caf2c4a87646ab4d1aa7007c39547fd3b16c0c6f))
+
 ## [1.55.3](https://github.com/standardnotes/app/compare/@standardnotes/features@1.55.2...@standardnotes/features@1.55.3) (2022-11-17)
 
 ### Bug Fixes
