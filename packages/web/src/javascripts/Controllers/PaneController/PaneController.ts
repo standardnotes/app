@@ -32,6 +32,9 @@ export class PaneController extends AbstractViewController {
   currentItemsPanelWidth = 0
   focusModeEnabled = false
 
+  listPaneExplicitelyCollapsed = false
+  navigationPaneExplicitelyCollapsed = false
+
   constructor(application: WebApplication, eventBus: InternalEventBus) {
     super(application, eventBus)
 
@@ -150,7 +153,17 @@ export class PaneController extends AbstractViewController {
   setPaneLayout = (layout: PaneLayout) => {
     log(LoggingDomain.Panes, 'Set pane layout', layout)
 
-    this.replacePanes(panesForLayout(layout, this.application))
+    const panes = panesForLayout(layout, this.application)
+
+    if (panes.includes(AppPaneId.Items) && this.listPaneExplicitelyCollapsed) {
+      removeFromArray(panes, AppPaneId.Items)
+    }
+
+    if (panes.includes(AppPaneId.Navigation) && this.navigationPaneExplicitelyCollapsed) {
+      removeFromArray(panes, AppPaneId.Navigation)
+    }
+
+    this.replacePanes(panes)
   }
 
   replacePanes = (panes: AppPaneId[]) => {
@@ -211,20 +224,24 @@ export class PaneController extends AbstractViewController {
   toggleListPane = () => {
     if (this.panes.includes(AppPaneId.Items)) {
       this.removePane(AppPaneId.Items)
+      this.listPaneExplicitelyCollapsed = true
     } else {
       if (this.panes.includes(AppPaneId.Navigation)) {
         this.insertPaneAtIndex(AppPaneId.Items, 1)
       } else {
         this.insertPaneAtIndex(AppPaneId.Items, 0)
       }
+      this.listPaneExplicitelyCollapsed = false
     }
   }
 
   toggleNavigationPane = () => {
     if (this.panes.includes(AppPaneId.Navigation)) {
       this.removePane(AppPaneId.Navigation)
+      this.navigationPaneExplicitelyCollapsed = true
     } else {
       this.insertPaneAtIndex(AppPaneId.Navigation, 0)
+      this.navigationPaneExplicitelyCollapsed = false
     }
   }
 
