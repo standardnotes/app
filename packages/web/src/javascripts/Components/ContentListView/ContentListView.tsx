@@ -35,6 +35,8 @@ import { ListableContentItem } from './Types/ListableContentItem'
 import { FeatureName } from '@/Controllers/FeatureName'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { useForwardedRef } from '@/Hooks/useForwardedRef'
+import { isMobileScreen } from '@/Utils'
+import FloatingAddButton from './FloatingAddButton'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -285,6 +287,9 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         aria-label={'Notes & Files'}
         ref={innerRef}
       >
+        {isMobileScreen() && (
+          <FloatingAddButton onClick={addNewItem} label={addButtonLabel} style={dailyMode ? 'danger' : 'info'} />
+        )}
         <div id="items-title-bar" className="section-title-bar border-b border-solid border-border">
           <div id="items-title-bar-container">
             {selectedTag && (

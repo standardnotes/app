@@ -86,17 +86,18 @@ const ContentListHeader = ({
     return (
       <button
         className={classNames(
-          'fixed bottom-6 right-6 z-editor-title-bar ml-3 flex h-15 w-15 cursor-pointer items-center',
+          'hidden md:flex',
+          'h-8 w-8 hover:brightness-125',
+          'z-editor-title-bar ml-3  cursor-pointer items-center',
           `justify-center rounded-full border border-solid border-transparent ${
             isDailyEntry ? 'bg-danger text-danger-contrast' : 'bg-info text-info-contrast'
           }`,
-          'hover:brightness-125 md:static md:h-8 md:w-8',
         )}
         title={addButtonLabel}
         aria-label={addButtonLabel}
         onClick={addNewItem}
       >
-        <Icon type="add" size="custom" className="h-8 w-8 md:h-5 md:w-5" />
+        <Icon type="add" size="custom" className="h-5 w-5" />
       </button>
     )
   }, [addButtonLabel, addNewItem, isDailyEntry])
