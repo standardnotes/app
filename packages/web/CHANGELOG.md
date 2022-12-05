@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.120.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.120.0...@standardnotes/web@3.120.1) (2022-12-05)
+
+### Bug Fixes
+
+* fixes issue where add button would not be visible at times on iOS ([#2087](https://github.com/standardnotes/app/issues/2087)) ([c928f8a](https://github.com/standardnotes/app/commit/c928f8a281ad4e45c79c6c43f009175e5cbbed46))
+
 # [3.120.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.119.1...@standardnotes/web@3.120.0) (2022-12-05)
 
 ### Bug Fixes
