@@ -28,6 +28,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
   })
   const [selectedEditorIcon, selectedEditorIconTint] = getIconAndTintForNoteType(
     note?.noteType || selectedEditor?.package_info.note_type,
+    true,
   )
   const [isClickOutsideDisabled, setIsClickOutsideDisabled] = useState(false)
 

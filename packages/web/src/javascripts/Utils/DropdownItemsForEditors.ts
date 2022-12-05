@@ -7,6 +7,7 @@ import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 
 export type EditorOption = DropdownItem & {
   value: FeatureIdentifier
+  isLabs?: boolean
 }
 
 export function noteTypeForEditorOptionValue(value: EditorOption['value'], application: WebApplication): NoteType {
@@ -45,14 +46,13 @@ export function getDropdownItemsForAllEditors(application: WebApplication): Edit
 
   options.push(plaintextOption)
 
-  if (application.features.isExperimentalFeatureEnabled(FeatureIdentifier.SuperEditor)) {
-    options.push({
-      icon: SuperEditorMetadata.icon,
-      iconClassName: SuperEditorMetadata.iconClassName,
-      label: SuperEditorMetadata.name,
-      value: FeatureIdentifier.SuperEditor,
-    })
-  }
+  options.push({
+    icon: SuperEditorMetadata.icon,
+    iconClassName: SuperEditorMetadata.iconClassName,
+    label: SuperEditorMetadata.name,
+    value: FeatureIdentifier.SuperEditor,
+    isLabs: true,
+  })
 
   options.sort((a, b) => {
     return a.label.toLowerCase() < b.label.toLowerCase() ? -1 : 1

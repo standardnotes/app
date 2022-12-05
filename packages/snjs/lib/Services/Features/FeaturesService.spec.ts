@@ -197,7 +197,7 @@ describe('featuresService', () => {
 
   describe('loadUserRoles()', () => {
     it('retrieves user roles and features from storage', async () => {
-      await createService().initializeFromDisk()
+      createService().initializeFromDisk()
       expect(storageService.getValue).toHaveBeenCalledWith(StorageKey.UserRoles, undefined, [])
       expect(storageService.getValue).toHaveBeenCalledWith(StorageKey.UserFeatures, undefined, [])
     })
@@ -574,6 +574,14 @@ describe('featuresService', () => {
       )
       expect(featuresService.getFeatureStatus(FeatureIdentifier.PlusEditor)).toBe(FeatureStatus.NotInCurrentPlan)
       expect(featuresService.getFeatureStatus(FeatureIdentifier.SheetsEditor)).toBe(FeatureStatus.NotInCurrentPlan)
+    })
+
+    it('availableInRoles-based features', async () => {
+      const featuresService = createService()
+
+      await featuresService.updateRolesAndFetchFeatures('123', [RoleName.ProUser])
+
+      expect(featuresService.getFeatureStatus(FeatureIdentifier.SuperEditor)).toBe(FeatureStatus.Entitled)
     })
 
     it('third party feature status', async () => {

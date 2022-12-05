@@ -506,13 +506,11 @@ export class SNFeaturesService
       return FeatureStatus.Entitled
     }
 
-    if (this.isExperimentalFeature(featureId)) {
-      const nativeFeature = FeaturesImports.FindNativeFeature(featureId)
-      if (nativeFeature) {
-        const hasRole = this.roles.some((role) => nativeFeature.availableInRoles?.includes(role))
-        if (hasRole) {
-          return FeatureStatus.Entitled
-        }
+    const nativeFeature = FeaturesImports.FindNativeFeature(featureId)
+    if (nativeFeature && nativeFeature.availableInRoles) {
+      const hasRole = this.roles.some((role) => nativeFeature.availableInRoles?.includes(role))
+      if (hasRole) {
+        return FeatureStatus.Entitled
       }
     }
 
@@ -525,7 +523,7 @@ export class SNFeaturesService
       }
     }
 
-    const isThirdParty = FeaturesImports.FindNativeFeature(featureId) == undefined
+    const isThirdParty = nativeFeature == undefined
     if (isThirdParty) {
       const component = this.itemManager
         .getDisplayableComponents()

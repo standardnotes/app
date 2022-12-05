@@ -1,7 +1,7 @@
 import { ClientFeatureDescription } from '../Feature/FeatureDescription'
 import { PermissionName } from '../Permission/PermissionName'
 import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
-import { SubscriptionName } from '@standardnotes/common'
+import { RoleName, SubscriptionName } from '@standardnotes/common'
 
 export function clientFeatures(): ClientFeatureDescription[] {
   return [
@@ -11,6 +11,15 @@ export function clientFeatures(): ClientFeatureDescription[] {
       identifier: FeatureIdentifier.TagNesting,
       permission_name: PermissionName.TagNesting,
       description: 'Organize your tags into folders.',
+    },
+    {
+      name: 'Super Notes',
+      identifier: FeatureIdentifier.SuperEditor,
+      availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
+      permission_name: PermissionName.SuperEditor,
+      description:
+        'Type / to bring up the block selection menu, or @ to embed images or link other tags and notes. Type - then space to start a list, or [] then space to start a checklist. Drag and drop an image or file to embed it in your note.',
+      availableInRoles: [RoleName.PlusUser, RoleName.ProUser],
     },
     {
       availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],

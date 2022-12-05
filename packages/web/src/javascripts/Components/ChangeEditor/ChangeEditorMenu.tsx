@@ -12,6 +12,7 @@ import { reloadFont } from '../NoteView/FontFunctions'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import { SuperNoteImporter } from '../NoteView/SuperEditor/SuperNoteImporter'
 import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
+import { Pill } from '../Preferences/PreferencesComponents/Content'
 
 type ChangeEditorMenuProps = {
   application: WebApplication
@@ -188,17 +189,24 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
                     const onClickEditorItem = () => {
                       selectItem(item).catch(console.error)
                     }
+
                     return (
                       <MenuRadioButtonItem
                         key={item.name}
                         onClick={onClickEditorItem}
-                        className={'flex-row-reverse py-2'}
+                        className={'flex-row-reversed py-2'}
                         checked={item.isEntitled ? isSelected(item) : false}
+                        info={item.description}
                       >
                         <div className="flex flex-grow items-center justify-between">
                           <div className={`flex items-center ${group.featured ? 'font-bold' : ''}`}>
                             {group.icon && <Icon type={group.icon} className={`mr-2 ${group.iconClassName}`} />}
                             {item.name}
+                            {item.isLabs && (
+                              <Pill className="py-0.5 px-1.5" style="success">
+                                Labs
+                              </Pill>
+                            )}
                           </div>
                           {!item.isEntitled && (
                             <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />
