@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react'
 
 // Follows https://tailwindcss.com/docs/responsive-design
 export const MediaQueryBreakpoints = {
-  sm: '(max-width: 640px)',
-  md: '(min-width: 768px)',
+  sm: '(min-width: 0px) and (max-width: 767px)',
+  md: '(min-width: 768px) and (max-width: 1024px)',
   lg: '(min-width: 1024px)',
   xl: '(min-width: 1280px)',
   '2xl': '(min-width:  1536px)',

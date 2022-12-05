@@ -1,6 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { isMobileScreen, isTabletOrMobileScreen, isTabletScreen } from '@/Utils'
+import { debounce, isMobileScreen, isTabletOrMobileScreen, isTabletScreen } from '@/Utils'
 import { useEffect, useState } from 'react'
 
 export function getIsTabletOrMobileScreen(application: WebApplication) {
@@ -8,6 +8,10 @@ export function getIsTabletOrMobileScreen(application: WebApplication) {
   const isTabletOrMobile = isTabletOrMobileScreen() || isNativeMobile
   const isTablet = isTabletScreen() || (isNativeMobile && !isMobileScreen())
   const isMobile = isMobileScreen() || (isNativeMobile && !isTablet)
+
+  if (isTablet && isMobile) {
+    throw Error('isTablet and isMobile cannot both be true')
+  }
 
   return {
     isTabletOrMobile,
@@ -21,9 +25,9 @@ export default function useIsTabletOrMobileScreen() {
   const application = useApplication()
 
   useEffect(() => {
-    const handleResize = () => {
+    const handleResize = debounce(() => {
       setWindowSize(window.innerWidth)
-    }
+    }, 100)
 
     window.addEventListener('resize', handleResize)
     handleResize()

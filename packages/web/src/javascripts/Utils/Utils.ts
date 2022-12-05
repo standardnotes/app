@@ -206,10 +206,12 @@ export const disableIosTextFieldZoom = () => {
   }
 }
 
-export const isMobileScreen = () => !window.matchMedia(MediaQueryBreakpoints.md).matches
+export const isMobileScreen = () => window.matchMedia(MediaQueryBreakpoints.sm).matches
 
 export const isTabletScreen = () =>
-  !window.matchMedia(MediaQueryBreakpoints.sm).matches && !window.matchMedia(MediaQueryBreakpoints.lg).matches
+  !isMobileScreen() &&
+  window.matchMedia(MediaQueryBreakpoints.md).matches &&
+  !window.matchMedia(MediaQueryBreakpoints.lg).matches
 
 export const isTabletOrMobileScreen = () => isMobileScreen() || isTabletScreen()
 

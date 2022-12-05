@@ -22,7 +22,7 @@ export async function animatePaneEntranceTransitionFromOffscreenToTheRight(eleme
     {
       duration: ENTRANCE_DURATION,
       easing: 'ease-in-out',
-      fill: 'forwards',
+      fill: 'both',
     },
   )
 
@@ -50,7 +50,7 @@ export async function animatePaneExitTransitionOffscreenToTheRight(elementId: st
     {
       duration: EXIT_DURATION,
       easing: 'ease-in-out',
-      fill: 'forwards',
+      fill: 'both',
     },
   )
 
