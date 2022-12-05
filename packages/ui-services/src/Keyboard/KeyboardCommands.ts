@@ -17,6 +17,7 @@ export const DELETE_NOTE_KEYBOARD_COMMAND = createKeyboardCommand('DELETE_NOTE_K
 export const TAB_COMMAND = createKeyboardCommand('PLAIN_EDITOR_INSERT_TAB_KEYBOARD_COMMAND')
 export const ESCAPE_COMMAND = createKeyboardCommand('ESCAPE_COMMAND')
 export const TOGGLE_FOCUS_MODE_COMMAND = createKeyboardCommand('TOGGLE_FOCUS_MODE_COMMAND')
+export const TOGGLE_DARK_MODE_COMMAND = createKeyboardCommand('TOGGLE_DARK_MODE_COMMAND')
 export const CHANGE_EDITOR_COMMAND = createKeyboardCommand('CHANGE_EDITOR_COMMAND')
 export const FOCUS_TAGS_INPUT_COMMAND = createKeyboardCommand('FOCUS_TAGS_INPUT_COMMAND')
 export const CREATE_NEW_TAG_COMMAND = createKeyboardCommand('CREATE_NEW_TAG_COMMAND')

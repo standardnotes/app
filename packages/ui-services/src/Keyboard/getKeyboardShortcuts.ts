@@ -23,6 +23,7 @@ import {
   PIN_NOTE_COMMAND,
   SUPER_SHOW_MARKDOWN_PREVIEW,
   OPEN_PREFERENCES_COMMAND,
+  TOGGLE_DARK_MODE_COMMAND,
 } from './KeyboardCommands'
 import { KeyboardKey } from './KeyboardKey'
 import { KeyboardModifier } from './KeyboardModifier'
@@ -92,6 +93,12 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
       command: TOGGLE_FOCUS_MODE_COMMAND,
       key: 'f',
       modifiers: [primaryModifier, KeyboardModifier.Shift],
+    },
+    {
+      command: TOGGLE_DARK_MODE_COMMAND,
+      key: 'd',
+      modifiers: [primaryModifier, KeyboardModifier.Shift],
+      preventDefault: true,
     },
     {
       command: CHANGE_EDITOR_COMMAND,

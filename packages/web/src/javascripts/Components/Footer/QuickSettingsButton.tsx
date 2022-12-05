@@ -1,7 +1,10 @@
 import { WebApplication } from '@/Application/Application'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
+import { FeatureIdentifier, SNTheme } from '@standardnotes/snjs'
+import { TOGGLE_DARK_MODE_COMMAND } from '@standardnotes/ui-services'
 import { classNames } from '@standardnotes/utils'
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
+import { useCommandService } from '../CommandProvider'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import QuickSettingsMenu from '../QuickSettingsMenu/QuickSettingsMenu'
@@ -16,6 +19,21 @@ type Props = {
 
 const QuickSettingsButton = ({ application, isOpen, toggleMenu, quickSettingsMenuController }: Props) => {
   const buttonRef = useRef<HTMLButtonElement>(null)
+  const commandService = useCommandService()
+
+  useEffect(() => {
+    return commandService.addCommandHandler({
+      command: TOGGLE_DARK_MODE_COMMAND,
+      onKeyDown: () => {
+        const darkTheme = application.items
+          .getDisplayableComponents()
+          .find((theme) => theme.package_info.identifier === FeatureIdentifier.DarkTheme) as SNTheme | undefined
+        if (darkTheme) {
+          void application.mutator.toggleTheme(darkTheme)
+        }
+      },
+    })
+  }, [application, commandService])
 
   return (
     <>

@@ -9,6 +9,9 @@ import { isMobileScreen } from '@/Utils'
 import { classNames } from '@standardnotes/utils'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
+import { useCommandService } from '../CommandProvider'
+import { TOGGLE_DARK_MODE_COMMAND } from '@standardnotes/ui-services'
+import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 
 type Props = {
   item: ThemeItem
@@ -16,6 +19,7 @@ type Props = {
 }
 
 const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
+  const commandService = useCommandService()
   const premiumModal = usePremiumModal()
 
   const isThirdPartyTheme = useMemo(
@@ -52,6 +56,12 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
   const isMobile = application.isNativeMobileWeb() || isMobileScreen()
   const shouldHideButton = item.identifier === FeatureIdentifier.DynamicTheme && isMobile
 
+  const darkThemeShortcut = useMemo(() => {
+    if (item.identifier === FeatureIdentifier.DarkTheme) {
+      return commandService.keyboardShortcutForCommand(TOGGLE_DARK_MODE_COMMAND)
+    }
+  }, [commandService, item.identifier])
+
   if (shouldHideButton) {
     return null
   }
@@ -65,10 +75,11 @@ const ThemesMenuButton: FunctionComponent<Props> = ({ application, item }) => {
     </MenuSwitchButtonItem>
   ) : (
     <MenuRadioButtonItem checked={Boolean(item.component?.active)} onClick={onClick}>
-      <span className={item.component?.active ? 'font-semibold' : undefined}>{item.name}</span>
+      <span className={classNames('mr-auto', item.component?.active ? 'font-semibold' : undefined)}>{item.name}</span>
+      {darkThemeShortcut && <KeyboardShortcutIndicator className="mr-2" shortcut={darkThemeShortcut} />}
       {item.component && canActivateTheme ? (
         <div
-          className="ml-auto h-5 w-5 rounded-full"
+          className="h-5 w-5 rounded-full"
           style={{
             backgroundColor: item.component.package_info?.dock_icon?.background_color,
           }}
