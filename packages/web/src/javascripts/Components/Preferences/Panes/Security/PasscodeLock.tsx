@@ -58,7 +58,7 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
   }
 
   const reloadDesktopAutoLockInterval = useCallback(async () => {
-    const interval = await application.getAutolockService()!.getAutoLockInterval()
+    const interval = await application.getAutolockService()?.getAutoLockInterval()
     setSelectedAutoLockInterval(interval)
   }, [application])
 
@@ -86,7 +86,7 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
       return
     }
 
-    await application.getAutolockService()!.setAutoLockInterval(interval)
+    await application.getAutolockService()?.setAutoLockInterval(interval)
     reloadDesktopAutoLockInterval().catch(console.error)
   }
 
@@ -184,6 +184,12 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
     setPasscodeConfirmation(undefined)
   }
 
+  const autolockService = application.getAutolockService()
+
+  if (!autolockService) {
+    return null
+  }
+
   return (
     <>
       <PreferencesGroup>
@@ -248,25 +254,22 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
               <Title>Autolock</Title>
               <Text className="mb-3">The autolock timer begins when the window or tab loses focus.</Text>
               <div className="flex flex-row items-center">
-                {application
-                  .getAutolockService()!
-                  .getAutoLockIntervalOptions()
-                  .map((option) => {
-                    return (
-                      <a
-                        key={option.value}
-                        className={classNames(
-                          'mr-3 cursor-pointer rounded',
-                          option.value === selectedAutoLockInterval
-                            ? 'bg-info px-1.5 py-0.5 text-info-contrast'
-                            : 'text-info',
-                        )}
-                        onClick={() => selectDesktopAutoLockInterval(option.value)}
-                      >
-                        {option.label}
-                      </a>
-                    )
-                  })}
+                {autolockService.getAutoLockIntervalOptions().map((option) => {
+                  return (
+                    <a
+                      key={option.value}
+                      className={classNames(
+                        'mr-3 cursor-pointer rounded',
+                        option.value === selectedAutoLockInterval
+                          ? 'bg-info px-1.5 py-0.5 text-info-contrast'
+                          : 'text-info',
+                      )}
+                      onClick={() => selectDesktopAutoLockInterval(option.value)}
+                    >
+                      {option.label}
+                    </a>
+                  )
+                })}
               </div>
             </PreferencesSegment>
           </PreferencesGroup>

@@ -80,7 +80,7 @@ const Moments: FunctionComponent<Props> = ({ application }: Props) => {
         <div className="flex items-center justify-between">
           <div className="flex items-start">
             <Title>Moments</Title>
-            <Pill style={'warning'}>Labs</Pill>
+            <Pill style={'success'}>Labs</Pill>
             <Pill style={'info'}>Professional</Pill>
           </div>
           <Switch onChange={toggle} checked={momentsEnabled} />

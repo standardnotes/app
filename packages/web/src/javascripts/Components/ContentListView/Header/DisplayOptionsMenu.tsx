@@ -22,6 +22,7 @@ import { classNames } from '@standardnotes/utils'
 import NoSubscriptionBanner from '@/Components/NoSubscriptionBanner/NoSubscriptionBanner'
 import MenuRadioButtonItem from '@/Components/Menu/MenuRadioButtonItem'
 import MenuSwitchButtonItem from '@/Components/Menu/MenuSwitchButtonItem'
+import { Pill } from '@/Components/Preferences/PreferencesComponents/Content'
 
 const DailyEntryModeEnabled = true
 
@@ -365,9 +366,9 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
             <div className="flex flex-col pr-5">
               <div className="flex flex-row items-center">
                 <div className="text-base font-semibold uppercase text-text lg:text-xs">Daily Notebook</div>
-                <div className="ml-2 rounded bg-warning px-1.5 py-[1px] text-[10px] font-bold text-warning-contrast">
+                <Pill className="py-0 px-1.5" style="success">
                   Labs
-                </div>
+                </Pill>
               </div>
               <div className="mt-1">Capture new notes daily with a calendar-based layout</div>
             </div>

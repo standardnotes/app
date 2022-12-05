@@ -51,4 +51,4 @@ export enum FeatureIdentifier {
  */
 export const LegacyFileSafeIdentifier = 'org.standardnotes.legacy.file-safe'
 
-export const ExperimentalFeatures = [FeatureIdentifier.SuperEditor]
+export const ExperimentalFeatures = []

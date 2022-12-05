@@ -24,8 +24,8 @@ const General: FunctionComponent<Props> = ({ viewControllerManager, application,
     <Defaults application={application} />
     <Tools application={application} />
     <SmartViews application={application} featuresController={viewControllerManager.featuresController} />
-    <LabsPane application={application} />
     <Moments application={application} />
+    <LabsPane application={application} />
     <Advanced
       application={application}
       viewControllerManager={viewControllerManager}

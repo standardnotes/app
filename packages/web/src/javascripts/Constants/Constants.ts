@@ -29,6 +29,7 @@ export const SYNC_TIMEOUT_NO_DEBOUNCE = 100
 type EditorMetadata = {
   name: string
   icon: IconType
+  subtleIcon?: IconType
   iconClassName: string
   iconTintNumber: number
 }
@@ -36,8 +37,9 @@ type EditorMetadata = {
 export const SuperEditorMetadata: EditorMetadata = {
   name: 'Super',
   icon: 'file-doc',
+  subtleIcon: 'format-align-left',
   iconClassName: 'text-accessory-tint-4',
-  iconTintNumber: 4,
+  iconTintNumber: 1,
 }
 
 export const PlainEditorMetadata: EditorMetadata = {

@@ -72,13 +72,20 @@ const insertInstalledComponentsInMap = (
   })
 }
 
-const createGroupsFromMap = (map: NoteTypeToEditorRowsMap, application: WebApplication): EditorMenuGroup[] => {
+const createGroupsFromMap = (map: NoteTypeToEditorRowsMap, _application: WebApplication): EditorMenuGroup[] => {
   const groups: EditorMenuGroup[] = [
     {
       icon: 'plain-text',
       iconClassName: 'text-accessory-tint-1',
       title: 'Plain text',
       items: map[NoteType.Plain],
+    },
+    {
+      icon: SuperEditorMetadata.icon,
+      iconClassName: SuperEditorMetadata.iconClassName,
+      title: SuperEditorMetadata.name,
+      items: map[NoteType.Super],
+      featured: true,
     },
     {
       icon: 'rich-text',
@@ -124,16 +131,6 @@ const createGroupsFromMap = (map: NoteTypeToEditorRowsMap, application: WebAppli
     },
   ]
 
-  if (application.features.isExperimentalFeatureEnabled(FeatureIdentifier.SuperEditor)) {
-    groups.splice(1, 0, {
-      icon: SuperEditorMetadata.icon,
-      iconClassName: SuperEditorMetadata.iconClassName,
-      title: SuperEditorMetadata.name,
-      items: map[NoteType.Super],
-      featured: true,
-    })
-  }
-
   return groups
 }
 
@@ -146,7 +143,16 @@ const createBaselineMap = (application: WebApplication): NoteTypeToEditorRowsMap
         noteType: NoteType.Plain,
       },
     ],
-    [NoteType.Super]: [],
+    [NoteType.Super]: [
+      {
+        name: SuperEditorMetadata.name,
+        isEntitled: application.features.getFeatureStatus(FeatureIdentifier.SuperEditor) === FeatureStatus.Entitled,
+        noteType: NoteType.Super,
+        isLabs: true,
+        description:
+          'A new way to edit notes. Type / to bring up the block selection menu, or @ to embed images or link other tags and notes. Type - then space to start a list, or [] then space to start a checklist. Drag and drop an image or file to embed it in your note.',
+      },
+    ],
     [NoteType.RichText]: [],
     [NoteType.Markdown]: [],
     [NoteType.Task]: [],
@@ -154,14 +160,6 @@ const createBaselineMap = (application: WebApplication): NoteTypeToEditorRowsMap
     [NoteType.Spreadsheet]: [],
     [NoteType.Authentication]: [],
     [NoteType.Unknown]: [],
-  }
-
-  if (application.features.isExperimentalFeatureEnabled(FeatureIdentifier.SuperEditor)) {
-    map[NoteType.Super].push({
-      name: SuperEditorMetadata.name,
-      isEntitled: true,
-      noteType: NoteType.Super,
-    })
   }
 
   return map

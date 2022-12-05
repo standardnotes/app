@@ -5,4 +5,6 @@ export type EditorMenuItem = {
   component?: SNComponent
   isEntitled: boolean
   noteType: NoteType
+  isLabs?: boolean
+  description?: string
 }

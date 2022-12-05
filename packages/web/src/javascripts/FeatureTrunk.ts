@@ -4,7 +4,7 @@ export enum FeatureTrunkName {
   Super,
 }
 
-export const FeatureTrunkStatus: Record<FeatureTrunkName, boolean> = {
+const FeatureTrunkStatus: Record<FeatureTrunkName, boolean> = {
   [FeatureTrunkName.Super]: isDev && true,
 }
 
