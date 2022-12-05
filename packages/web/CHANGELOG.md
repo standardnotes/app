@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.118.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.117.5...@standardnotes/web@3.118.0) (2022-12-05)
+
+### Bug Fixes
+
+* Fixed purchase flow padding ([71e20f2](https://github.com/standardnotes/app/commit/71e20f2a2f7422ced99311676181db4b3113fa94))
+
+### Features
+
+* Added keyboard shortcut (Ctrl/Cmd+,) for opening preferences ([7c261af](https://github.com/standardnotes/app/commit/7c261af23018c398d24d695fb024df83928b8189))
+* Show preferences keyboard shortcut in tooltip ([8575b3e](https://github.com/standardnotes/app/commit/8575b3e71487f468102ade9c1fb8bf966231e6e1))
+
 ## [3.117.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.117.4...@standardnotes/web@3.117.5) (2022-12-04)
 
 ### Bug Fixes
