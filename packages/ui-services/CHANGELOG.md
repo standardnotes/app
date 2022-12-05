@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.18.0...@standardnotes/ui-services@1.19.0) (2022-12-05)
+
+### Features
+
+* Added keyboard shortcut to toggle dark theme (Ctrl/Cmd+Shift+D) ([e68c708](https://github.com/standardnotes/app/commit/e68c7086282c5acaaacdfd0030148f1152b98842))
+
 # [1.18.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.17.11...@standardnotes/ui-services@1.18.0) (2022-12-05)
 
 ### Features
