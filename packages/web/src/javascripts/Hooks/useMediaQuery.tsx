@@ -2,10 +2,19 @@ import { useEffect, useState } from 'react'
 
 // Follows https://tailwindcss.com/docs/responsive-design
 export const MediaQueryBreakpoints = {
-  sm: '(min-width: 0px) and (max-width: 767px)',
-  md: '(min-width: 768px) and (max-width: 1024px)',
+  sm: '(max-width: 767px)',
+  md: '(min-width: 768px)',
   lg: '(min-width: 1024px)',
   xl: '(min-width: 1280px)',
+  '2xl': '(min-width:  1536px)',
+  pointerFine: '(pointer: fine)',
+} as const
+
+export const MutuallyExclusiveMediaQueryBreakpoints = {
+  sm: '(min-width: 0px) and (max-width: 767px)',
+  md: '(min-width: 768px) and (max-width: 1023px)',
+  lg: '(min-width: 1024px) and (max-width: 1279px)',
+  xl: '(min-width: 1280px) and (max-width: 1536px)',
   '2xl': '(min-width:  1536px)',
   pointerFine: '(pointer: fine)',
 } as const

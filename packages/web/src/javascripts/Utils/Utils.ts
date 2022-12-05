@@ -1,7 +1,7 @@
 import { DeviceInterface, MobileDeviceInterface, Platform, platformFromString } from '@standardnotes/snjs'
 import { IsDesktopPlatform, IsWebPlatform } from '@/Constants/Version'
 import { EMAIL_REGEX } from '../Constants/Constants'
-import { MediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
+import { MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 
 declare const process: {
   env: {
@@ -206,12 +206,9 @@ export const disableIosTextFieldZoom = () => {
   }
 }
 
-export const isMobileScreen = () => window.matchMedia(MediaQueryBreakpoints.sm).matches
+export const isMobileScreen = () => window.matchMedia(MutuallyExclusiveMediaQueryBreakpoints.sm).matches
 
-export const isTabletScreen = () =>
-  !isMobileScreen() &&
-  window.matchMedia(MediaQueryBreakpoints.md).matches &&
-  !window.matchMedia(MediaQueryBreakpoints.lg).matches
+export const isTabletScreen = () => window.matchMedia(MutuallyExclusiveMediaQueryBreakpoints.md).matches
 
 export const isTabletOrMobileScreen = () => isMobileScreen() || isTabletScreen()
 
