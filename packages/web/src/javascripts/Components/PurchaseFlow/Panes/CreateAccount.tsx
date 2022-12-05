@@ -108,7 +108,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
       <BlueDotIcon className="absolute bottom-[25%] -right-10 h-4 w-4" />
       <DiamondIcon className="absolute top-0 -right-2 -z-[1] h-18 w-18 translate-x-1/2" />
 
-      <div className="mr-0 md:mr-12">
+      <div className="mr-0 lg:mr-12">
         <h1 className="mt-0 mb-2 text-2xl font-bold">Create your free account</h1>
         <div className="mb-4 text-sm font-medium">to continue to Standard Notes.</div>
         <form onSubmit={handleCreateAccount}>
@@ -179,7 +179,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
           />
         </div>
       </div>
-      <CreateAccountIllustration className="hidden md:block" />
+      <CreateAccountIllustration className="hidden lg:block" />
     </div>
   )
 }
