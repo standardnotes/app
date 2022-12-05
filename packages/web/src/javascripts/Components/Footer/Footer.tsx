@@ -20,6 +20,7 @@ import QuickSettingsButton from './QuickSettingsButton'
 import AccountMenuButton from './AccountMenuButton'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import UpgradeNow from './UpgradeNow'
+import PreferencesButton from './PreferencesButton'
 
 type Props = {
   application: WebApplication
@@ -364,16 +365,7 @@ class Footer extends AbstractComponent<Props, State> {
               />
             </div>
             <div className="relative z-footer-bar-item select-none">
-              <StyledTooltip label="Open preferences">
-                <button
-                  onClick={this.openPreferences}
-                  className="flex h-full w-8 cursor-pointer items-center justify-center"
-                >
-                  <div className="h-5">
-                    <Icon type="tune" className="rounded hover:text-info" />
-                  </div>
-                </button>
-              </StyledTooltip>
+              <PreferencesButton openPreferences={this.openPreferences} />
             </div>
             <div className="relative z-footer-bar-item select-none">
               <QuickSettingsButton

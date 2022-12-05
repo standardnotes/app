@@ -18,6 +18,7 @@ const TagsSectionAddButton: FunctionComponent<Props> = ({ tags }) => {
     () => keyboardStringForShortcut(commandService.keyboardShortcutForCommand(CREATE_NEW_TAG_COMMAND)),
     [commandService],
   )
+
   return (
     <IconButton
       focusable={true}
