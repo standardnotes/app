@@ -11,7 +11,7 @@ import {
   PrefKey,
 } from '@standardnotes/models'
 import { UuidString } from '@standardnotes/snjs'
-import { removeFromArray } from '@standardnotes/utils'
+import { removeFromArray, Deferred } from '@standardnotes/utils'
 import { ContentType } from '@standardnotes/common'
 import { ItemViewControllerInterface } from './ItemViewControllerInterface'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
@@ -29,14 +29,16 @@ const NotePreviewCharLimit = 160
 export class NoteViewController implements ItemViewControllerInterface {
   public item!: SNNote
   public dealloced = false
+  public isTemplateNote = false
+  public runtimeId = `${Math.random()}`
+  public needsInit = true
+
   private innerValueChangeObservers: ((note: SNNote, source: PayloadEmitSource) => void)[] = []
   private disposers: (() => void)[] = []
-  public isTemplateNote = false
   private saveTimeout?: ReturnType<typeof setTimeout>
   private defaultTagUuid: UuidString | undefined
   private defaultTag?: SNTag
-  public runtimeId = `${Math.random()}`
-  public needsInit = true
+  private savingLocallyPromise = Deferred<void>()
 
   constructor(
     private application: WebApplication,
@@ -57,7 +59,14 @@ export class NoteViewController implements ItemViewControllerInterface {
   }
 
   deinit(): void {
+    void this.savingLocallyPromise.promise.then(() => {
+      this.performDeinitSafely()
+    })
+  }
+
+  private performDeinitSafely(): void {
     this.dealloced = true
+
     for (const disposer of this.disposers) {
       disposer()
     }
@@ -184,6 +193,8 @@ export class NoteViewController implements ItemViewControllerInterface {
       throw Error('NoteViewController not initialized')
     }
 
+    this.savingLocallyPromise = Deferred<void>()
+
     if (this.saveTimeout) {
       clearTimeout(this.saveTimeout)
     }
@@ -198,7 +209,13 @@ export class NoteViewController implements ItemViewControllerInterface {
 
     return new Promise((resolve) => {
       this.saveTimeout = setTimeout(() => {
-        void this.undebouncedSave({ ...params, onLocalPropagationComplete: resolve })
+        void this.undebouncedSave({
+          ...params,
+          onLocalPropagationComplete: () => {
+            this.savingLocallyPromise.resolve()
+            resolve()
+          },
+        })
       }, syncDebouceMs)
     })
   }
@@ -262,10 +279,10 @@ export class NoteViewController implements ItemViewControllerInterface {
       params.isUserModified,
     )
 
-    params.onLocalPropagationComplete?.()
-
     void this.application.sync.sync().then(() => {
       params.onRemoteSyncComplete?.()
     })
+
+    params.onLocalPropagationComplete?.()
   }
 }
