@@ -1,6 +1,26 @@
 {
   "versions": [
     {
+      "version": "3.118.0",
+      "title": "[3.118.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.117.5...@standardnotes/web@3.118.0) (2022-12-05)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed purchase flow padding ([71e20f2](https://github.com/standardnotes/app/commit/71e20f2a2f7422ced99311676181db4b3113fa94))\n\n### Features\n\n* Added keyboard shortcut (Ctrl/Cmd+,) for opening preferences ([7c261af](https://github.com/standardnotes/app/commit/7c261af23018c398d24d695fb024df83928b8189))\n* Show preferences keyboard shortcut in tooltip ([8575b3e](https://github.com/standardnotes/app/commit/8575b3e71487f468102ade9c1fb8bf966231e6e1))",
+      "parsed": {
+        "_": [
+          "Fixed purchase flow padding (71e20f2)",
+          "Added keyboard shortcut (Ctrl/Cmd+,) for opening preferences (7c261af)",
+          "Show preferences keyboard shortcut in tooltip (8575b3e)"
+        ],
+        "Bug Fixes": [
+          "Fixed purchase flow padding (71e20f2)"
+        ],
+        "Features": [
+          "Added keyboard shortcut (Ctrl/Cmd+,) for opening preferences (7c261af)",
+          "Show preferences keyboard shortcut in tooltip (8575b3e)"
+        ]
+      }
+    },
+    {
       "version": "3.117.5",
       "title": "[3.117.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.117.4...@standardnotes/web@3.117.5) (2022-12-04)",
       "date": null,

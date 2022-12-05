@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.17.11...@standardnotes/ui-services@1.18.0) (2022-12-05)
+
+### Features
+
+* Added keyboard shortcut (Ctrl/Cmd+,) for opening preferences ([7c261af](https://github.com/standardnotes/app/commit/7c261af23018c398d24d695fb024df83928b8189))
+
 ## [1.17.11](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.17.10...@standardnotes/ui-services@1.17.11) (2022-12-04)
 
 **Note:** Version bump only for package @standardnotes/ui-services
