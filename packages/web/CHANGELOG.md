@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.119.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.119.0...@standardnotes/web@3.119.1) (2022-12-05)
+
+### Bug Fixes
+
+* fixes issue where toggled-off panes would reappear after making selection ([a6a0d61](https://github.com/standardnotes/app/commit/a6a0d615c58e6a70737654f6c6c75111a23bfb7e))
+
 # [3.119.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.118.0...@standardnotes/web@3.119.0) (2022-12-05)
 
 ### Features
