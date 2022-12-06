@@ -1,12 +1,6 @@
-import { WebApplication } from '@/Application/Application'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { FilesController } from '@/Controllers/FilesController'
-import { formatDateForContextMenu } from '@/Utils/DateUtils'
-import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
-import { formatSizeToReadableString } from '@standardnotes/filepicker'
-import { ApplicationEvent, ContentType, FileItem, PrefKey, SortableItem } from '@standardnotes/snjs'
-import { ReactNode, useCallback, useEffect, useState } from 'react'
-import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
+import { classNames, SortableItem } from '@standardnotes/snjs'
+import { ReactNode } from 'react'
+import Icon from '../Icon/Icon'
 
 type SortBy = keyof SortableItem
 
@@ -34,7 +28,19 @@ type CreateTableOptions<Data> = {
   columns: Column<Data>[]
 } & TableSortOptions
 
-function createTable<Data>(options: CreateTableOptions<Data>) {
+type TableState<Data> = {
+  headers: {
+    name: string
+    key: keyof Data
+    isSorting: boolean | undefined
+    sortBy?: SortBy
+    sortReversed: boolean | undefined
+    onSortChange: () => void
+  }[]
+  rows: ReactNode[][]
+}
+
+export function createTable<Data>(options: CreateTableOptions<Data>): TableState<Data> {
   const headers = options.columns.map((column) => {
     return {
       name: column.name,
@@ -53,10 +59,7 @@ function createTable<Data>(options: CreateTableOptions<Data>) {
 
   const rows = options.data.map((data) => {
     const cells = options.columns.map((column) => {
-      return {
-        node: column.cell(data),
-        key: data[column.key],
-      }
+      return column.cell(data)
     })
     return cells
   })
@@ -67,81 +70,31 @@ function createTable<Data>(options: CreateTableOptions<Data>) {
   }
 }
 
-const Table = ({ application }: { application: WebApplication; filesController: FilesController }) => {
-  const files = application.items
-    .getDisplayableNotesAndFiles()
-    .filter((item) => item.content_type === ContentType.File) as FileItem[]
-
-  const [sortBy, setSortBy] = useState<keyof SortableItem>(
-    application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy]),
-  )
-  const [sortReversed, setSortReversed] = useState(
-    application.getPreference(PrefKey.SortNotesReverse, PrefDefaults[PrefKey.SortNotesReverse]),
-  )
-
-  useEffect(() => {
-    return application.addEventObserver(async (event) => {
-      if (event === ApplicationEvent.PreferencesChanged) {
-        setSortBy(application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy]))
-        setSortReversed(application.getPreference(PrefKey.SortNotesReverse, PrefDefaults[PrefKey.SortNotesReverse]))
-      }
-    })
-  }, [application])
-
-  const onSortChange = useCallback(
-    async (sortBy: keyof SortableItem, sortReversed: boolean) => {
-      await application.setPreference(PrefKey.SortNotesBy, sortBy)
-      await application.setPreference(PrefKey.SortNotesReverse, sortReversed)
-    },
-    [application],
-  )
-
-  const table = createTable({
-    data: files,
-    sortBy,
-    sortReversed,
-    onSortChange,
-    columns: [
-      {
-        name: 'Name',
-        key: 'title',
-        sortBy: 'title',
-        cell: (file) => {
-          return (
-            <div className="flex items-center gap-2">
-              {getFileIconComponent(getIconForFileType(file.mimeType), 'w-8 h-8 flex-shrink-0')}
-              {file.title}
-            </div>
-          )
-        },
-      },
-      {
-        name: 'Modified',
-        key: 'userModifiedDate',
-        sortBy: 'userModifiedDate',
-        cell: (file) => {
-          return <>{formatDateForContextMenu(file.userModifiedDate)}</>
-        },
-      },
-      {
-        name: 'Size',
-        key: 'decryptedSize',
-        cell: (file) => {
-          return <>{formatSizeToReadableString(file.decryptedSize)}</>
-        },
-      },
-    ],
-  })
-
+function Table<Data>({ table }: { table: TableState<Data> }) {
   return (
-    <table className="block min-h-0 overflow-auto">
+    <table className="block min-h-0 overflow-auto px-3">
       <thead>
         <tr>
           {table.headers.map((header) => {
             return (
-              <th onClick={header.onSortChange} key={header.key}>
-                {header.name}
-                {header.isSorting && <>{header.sortReversed ? '▼' : '▲'}</>}
+              <th
+                className={classNames(
+                  'pt-3 pb-2 text-left text-sm font-medium text-passive-0',
+                  header.sortBy && 'cursor-pointer',
+                )}
+                onClick={header.onSortChange}
+                key={header.key.toString()}
+              >
+                <div className="flex items-center gap-1">
+                  {header.name}
+                  {header.isSorting && (
+                    <Icon
+                      type={header.sortReversed ? 'arrow-up' : 'arrow-down'}
+                      size="custom"
+                      className="h-4.5 w-4.5"
+                    />
+                  )}
+                </div>
               </th>
             )
           })}
@@ -152,7 +105,7 @@ const Table = ({ application }: { application: WebApplication; filesController: 
           return (
             <tr key={index}>
               {row.map((cell) => {
-                return <td key={cell.key?.toString()}>{cell.node}</td>
+                return cell
               })}
             </tr>
           )

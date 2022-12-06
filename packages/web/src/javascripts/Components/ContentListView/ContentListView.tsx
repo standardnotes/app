@@ -37,7 +37,7 @@ import { PanelResizedData } from '@/Types/PanelResizedData'
 import { useForwardedRef } from '@/Hooks/useForwardedRef'
 import { isMobileScreen } from '@/Utils'
 import FloatingAddButton from './FloatingAddButton'
-import Table from '../Table/Table'
+import FilesTableView from '../FilesTableView/FilesTableView'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -329,7 +329,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         ) : null}
         {!dailyMode && renderedItems.length ? (
           selectedTag?.uuid === SystemViewId.Files ? (
-            <Table application={application} filesController={filesController} />
+            <FilesTableView application={application} />
           ) : (
             <ContentList
               items={renderedItems}
