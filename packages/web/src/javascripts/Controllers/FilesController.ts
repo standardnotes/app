@@ -357,11 +357,16 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     try {
       const minimumChunkSize = this.application.files.minimumChunkSize()
 
-      if (fileOrHandle instanceof FileSystemFileHandle && !this.shouldUseStreamingReader) {
+      const fileToUpload =
+        fileOrHandle instanceof File
+          ? fileOrHandle
+          : fileOrHandle instanceof FileSystemFileHandle && this.shouldUseStreamingReader
+          ? await fileOrHandle.getFile()
+          : undefined
+
+      if (!fileToUpload) {
         return
       }
-
-      const fileToUpload = fileOrHandle instanceof File ? fileOrHandle : await fileOrHandle.getFile()
 
       if (this.alertIfFileExceedsSizeLimit(fileToUpload)) {
         return
