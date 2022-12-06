@@ -9,7 +9,7 @@ import {
 } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NOTES } from '@/Constants/Constants'
-import { FileItem, PrefKey, WebAppEvent } from '@standardnotes/snjs'
+import { FileItem, PrefKey, SystemViewId, WebAppEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { forwardRef, useCallback, useEffect, useMemo } from 'react'
 import ContentList from '@/Components/ContentListView/ContentList'
@@ -37,6 +37,7 @@ import { PanelResizedData } from '@/Types/PanelResizedData'
 import { useForwardedRef } from '@/Hooks/useForwardedRef'
 import { isMobileScreen } from '@/Utils'
 import FloatingAddButton from './FloatingAddButton'
+import Table from '../Table/Table'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -323,13 +324,13 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         {!dailyMode && completedFullSync && !renderedItems.length ? (
           <p className="empty-items-list opacity-50">No items.</p>
         ) : null}
-
         {!dailyMode && !completedFullSync && !renderedItems.length ? (
           <p className="empty-items-list opacity-50">Loading...</p>
         ) : null}
-
         {!dailyMode && renderedItems.length ? (
-          <>
+          selectedTag?.uuid === SystemViewId.Files ? (
+            <Table application={application} filesController={filesController} />
+          ) : (
             <ContentList
               items={renderedItems}
               selectedUuids={selectedUuids}
@@ -341,7 +342,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
               notesController={notesController}
               selectionController={selectionController}
             />
-          </>
+          )
         ) : null}
         <div className="absolute bottom-0 h-safe-bottom w-full" />
         {children}
