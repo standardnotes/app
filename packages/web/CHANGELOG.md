@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.120.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.120.2...@standardnotes/web@3.120.3) (2022-12-06)
+
+### Bug Fixes
+
+* Fixed error when trying to upload file ([6a1b6ce](https://github.com/standardnotes/app/commit/6a1b6cef1bab42d9de1a0a396c38cd899529648a))
+
 ## [3.120.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.120.1...@standardnotes/web@3.120.2) (2022-12-06)
 
 ### Bug Fixes
