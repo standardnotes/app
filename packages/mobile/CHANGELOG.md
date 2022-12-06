@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.49.11](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.49.10...@standardnotes/mobile@3.49.11) (2022-12-06)
+
+### Bug Fixes
+
+* fixed issue where camera was not accessible for Moments on Android ([ffbc984](https://github.com/standardnotes/app/commit/ffbc984c5851f3cd286cd0a832111ba707bbd8f5))
+
 ## [3.49.10](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.49.9...@standardnotes/mobile@3.49.10) (2022-12-05)
 
 ### Bug Fixes
