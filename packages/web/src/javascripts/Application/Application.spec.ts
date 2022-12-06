@@ -27,7 +27,7 @@ describe('web application', () => {
   beforeEach(() => {
     const identifier = '123'
 
-    window.matchMedia = jest.fn().mockReturnValue({ matches: true, addListener: jest.fn() })
+    window.matchMedia = jest.fn().mockReturnValue({ matches: false, addListener: jest.fn() })
 
     const device = {
       environment: Environment.Desktop,
