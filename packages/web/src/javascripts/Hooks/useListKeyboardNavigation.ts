@@ -2,7 +2,11 @@ import { KeyboardKey } from '@standardnotes/ui-services'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { useCallback, useEffect, RefObject, useRef } from 'react'
 
-export const useListKeyboardNavigation = (container: RefObject<HTMLElement | null>, initialFocus = 0) => {
+export const useListKeyboardNavigation = (
+  container: RefObject<HTMLElement | null>,
+  initialFocus = 0,
+  shouldAutoFocus = false,
+) => {
   const listItems = useRef<HTMLButtonElement[]>([])
   const focusedItemIndex = useRef<number>(initialFocus)
 
@@ -70,12 +74,16 @@ export const useListKeyboardNavigation = (container: RefObject<HTMLElement | nul
   }, [container, focusItemWithIndex, initialFocus])
 
   useEffect(() => {
+    if (shouldAutoFocus) {
+      containerFocusHandler()
+    }
+  }, [containerFocusHandler, shouldAutoFocus])
+
+  useEffect(() => {
     const containerElement = container.current
-    containerElement?.addEventListener('focus', containerFocusHandler)
     containerElement?.addEventListener('keydown', keyDownHandler)
 
     return () => {
-      containerElement?.removeEventListener('focus', containerFocusHandler)
       containerElement?.removeEventListener('keydown', keyDownHandler)
     }
   }, [container, containerFocusHandler, keyDownHandler])
