@@ -11,7 +11,11 @@ import './index.css';
 import {$isCodeHighlightNode} from '@lexical/code';
 import {$isLinkNode, TOGGLE_LINK_COMMAND} from '@lexical/link';
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {mergeRegister} from '@lexical/utils';
+import {
+  mergeRegister,
+  $findMatchingParent,
+  $getNearestNodeOfType,
+} from '@lexical/utils';
 import {
   $getSelection,
   $isRangeSelection,
@@ -20,7 +24,17 @@ import {
   FORMAT_TEXT_COMMAND,
   LexicalEditor,
   SELECTION_CHANGE_COMMAND,
+  $isRootOrShadowRoot,
+  COMMAND_PRIORITY_CRITICAL,
 } from 'lexical';
+import {$isHeadingNode} from '@lexical/rich-text';
+import {
+  INSERT_UNORDERED_LIST_COMMAND,
+  REMOVE_LIST_COMMAND,
+  $isListNode,
+  ListNode,
+  INSERT_ORDERED_LIST_COMMAND,
+} from '@lexical/list';
 import {useCallback, useEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 
@@ -36,8 +50,25 @@ import {
   LinkIcon,
   SuperscriptIcon,
   SubscriptIcon,
+  ListBulleted,
+  ListNumbered,
 } from '@standardnotes/icons';
 import {IconComponent} from '../../Theme/IconComponent';
+
+const blockTypeToBlockName = {
+  bullet: 'Bulleted List',
+  check: 'Check List',
+  code: 'Code Block',
+  h1: 'Heading 1',
+  h2: 'Heading 2',
+  h3: 'Heading 3',
+  h4: 'Heading 4',
+  h5: 'Heading 5',
+  h6: 'Heading 6',
+  number: 'Numbered List',
+  paragraph: 'Normal',
+  quote: 'Quote',
+};
 
 const IconSize = 15;
 
@@ -52,6 +83,8 @@ function TextFormatFloatingToolbar({
   isStrikethrough,
   isSubscript,
   isSuperscript,
+  isBulletedList,
+  isNumberedList,
 }: {
   editor: LexicalEditor;
   anchorElem: HTMLElement;
@@ -63,6 +96,8 @@ function TextFormatFloatingToolbar({
   isSubscript: boolean;
   isSuperscript: boolean;
   isUnderline: boolean;
+  isBulletedList: boolean;
+  isNumberedList: boolean;
 }): JSX.Element {
   const popupCharStylesEditorRef = useRef<HTMLDivElement | null>(null);
 
@@ -73,6 +108,22 @@ function TextFormatFloatingToolbar({
       editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
     }
   }, [editor, isLink]);
+
+  const formatBulletList = useCallback(() => {
+    if (!isBulletedList) {
+      editor.dispatchCommand(INSERT_UNORDERED_LIST_COMMAND, undefined);
+    } else {
+      editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+    }
+  }, [isBulletedList]);
+
+  const formatNumberedList = useCallback(() => {
+    if (!isNumberedList) {
+      editor.dispatchCommand(INSERT_ORDERED_LIST_COMMAND, undefined);
+    } else {
+      editor.dispatchCommand(REMOVE_LIST_COMMAND, undefined);
+    }
+  }, [isNumberedList]);
 
   const updateTextFormatFloatingToolbar = useCallback(() => {
     const selection = $getSelection();
@@ -226,6 +277,22 @@ function TextFormatFloatingToolbar({
               <LinkIcon />
             </IconComponent>
           </button>
+          <button
+            onClick={formatBulletList}
+            className={'popup-item spaced ' + (isBulletedList ? 'active' : '')}
+            aria-label="Insert bulleted list">
+            <IconComponent size={IconSize}>
+              <ListBulleted />
+            </IconComponent>
+          </button>
+          <button
+            onClick={formatNumberedList}
+            className={'popup-item spaced ' + (isNumberedList ? 'active' : '')}
+            aria-label="Insert numbered list">
+            <IconComponent size={IconSize}>
+              <ListNumbered />
+            </IconComponent>
+          </button>
         </>
       )}
     </div>
@@ -236,6 +303,7 @@ function useFloatingTextFormatToolbar(
   editor: LexicalEditor,
   anchorElem: HTMLElement,
 ): JSX.Element | null {
+  const [activeEditor, setActiveEditor] = useState(editor);
   const [isText, setIsText] = useState(false);
   const [isLink, setIsLink] = useState(false);
   const [isBold, setIsBold] = useState(false);
@@ -245,6 +313,8 @@ function useFloatingTextFormatToolbar(
   const [isSubscript, setIsSubscript] = useState(false);
   const [isSuperscript, setIsSuperscript] = useState(false);
   const [isCode, setIsCode] = useState(false);
+  const [blockType, setBlockType] =
+    useState<keyof typeof blockTypeToBlockName>('paragraph');
 
   const updatePopup = useCallback(() => {
     editor.getEditorState().read(() => {
@@ -268,6 +338,42 @@ function useFloatingTextFormatToolbar(
 
       if (!$isRangeSelection(selection)) {
         return;
+      }
+
+      const anchorNode = selection.anchor.getNode();
+      let element =
+        anchorNode.getKey() === 'root'
+          ? anchorNode
+          : $findMatchingParent(anchorNode, (e) => {
+              const parent = e.getParent();
+              return parent !== null && $isRootOrShadowRoot(parent);
+            });
+
+      if (element === null) {
+        element = anchorNode.getTopLevelElementOrThrow();
+      }
+
+      const elementKey = element.getKey();
+      const elementDOM = activeEditor.getElementByKey(elementKey);
+
+      if (elementDOM !== null) {
+        if ($isListNode(element)) {
+          const parentList = $getNearestNodeOfType<ListNode>(
+            anchorNode,
+            ListNode,
+          );
+          const type = parentList
+            ? parentList.getListType()
+            : element.getListType();
+          setBlockType(type);
+        } else {
+          const type = $isHeadingNode(element)
+            ? element.getTag()
+            : element.getType();
+          if (type in blockTypeToBlockName) {
+            setBlockType(type as keyof typeof blockTypeToBlockName);
+          }
+        }
       }
 
       const node = getSelectedNode(selection);
@@ -298,14 +404,19 @@ function useFloatingTextFormatToolbar(
         setIsText(false);
       }
     });
-  }, [editor]);
+  }, [editor, activeEditor]);
 
   useEffect(() => {
-    document.addEventListener('selectionchange', updatePopup);
-    return () => {
-      document.removeEventListener('selectionchange', updatePopup);
-    };
-  }, [updatePopup]);
+    return editor.registerCommand(
+      SELECTION_CHANGE_COMMAND,
+      (_payload, newEditor) => {
+        setActiveEditor(newEditor);
+        updatePopup();
+        return false;
+      },
+      COMMAND_PRIORITY_CRITICAL,
+    );
+  }, [editor, updatePopup]);
 
   useEffect(() => {
     return mergeRegister(
@@ -336,6 +447,8 @@ function useFloatingTextFormatToolbar(
       isSuperscript={isSuperscript}
       isUnderline={isUnderline}
       isCode={isCode}
+      isBulletedList={blockType === 'bullet'}
+      isNumberedList={blockType === 'number'}
     />,
     anchorElem,
   );

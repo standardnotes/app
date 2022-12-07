@@ -8,7 +8,6 @@ import { WebApplication } from '@/Application/Application'
 import { useBeforeUnload } from '@/Hooks/useBeforeUnload'
 import ChangeEmailForm from './ChangeEmailForm'
 import ChangeEmailSuccess from './ChangeEmailSuccess'
-import { isEmailValid } from '@/Utils'
 
 enum SubmitButtonTitles {
   Default = 'Continue',
@@ -57,18 +56,6 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
     return success
   }
 
-  const validateNewEmail = async () => {
-    if (!isEmailValid(newEmail)) {
-      applicationAlertService
-        .alert('The email you entered has an invalid format. Please review your input and try again.')
-        .catch(console.error)
-
-      return false
-    }
-
-    return true
-  }
-
   const resetProgressState = () => {
     setSubmitButtonTitle(SubmitButtonTitles.Default)
     setIsContinuing(false)
@@ -110,7 +97,7 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
     setIsContinuing(true)
     setSubmitButtonTitle(SubmitButtonTitles.GeneratingKeys)
 
-    const valid = (await validateCurrentPassword()) && (await validateNewEmail())
+    const valid = await validateCurrentPassword()
 
     if (!valid) {
       resetProgressState()
