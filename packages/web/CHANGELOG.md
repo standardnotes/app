@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.121.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.120.3...@standardnotes/web@3.121.0) (2022-12-07)
+
+### Bug Fixes
+
+* Fixed issue where Dark theme could be called 'Focus' in Appearance preferences ([d691d7a](https://github.com/standardnotes/app/commit/d691d7a3b34f7f4249138baa4c3f27b79a9f8e6c))
+* Fixed issue where entering a space or punctuation in Super autocomplete would dismiss menu ([a5b1ff9](https://github.com/standardnotes/app/commit/a5b1ff95957a9d407663d28429785457aef3a1b4))
+
+### Features
+
+* add Indent/Outdent options in Super when on mobile ([a70d100](https://github.com/standardnotes/app/commit/a70d1009a3d8d6be1395bf148a46c3cb2260dcdc))
+
 ## [3.120.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.120.2...@standardnotes/web@3.120.3) (2022-12-06)
 
 ### Bug Fixes
