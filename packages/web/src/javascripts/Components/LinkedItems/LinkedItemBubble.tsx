@@ -10,6 +10,7 @@ import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { getIconForItem } from '@/Utils/Items/Icons/getIconForItem'
 import { useApplication } from '../ApplicationProvider'
 import { getTitleForLinkedTag } from '@/Utils/Items/Display/getTitleForLinkedTag'
+import { getItemTitleInContextOfLinkBubble } from '@/Utils/Items/Search/doesItemMatchSearchQuery'
 
 type Props = {
   link: ItemLink
@@ -117,7 +118,7 @@ const LinkedItemBubble = ({
           {link.type === 'linked-by' && link.item.content_type !== ContentType.Tag && (
             <span className={!isBidirectional ? 'hidden group-focus:block' : ''}>Linked By:</span>
           )}
-          {link.item.title}
+          {getItemTitleInContextOfLinkBubble(link.item)}
         </span>
       </span>
       {showUnlinkButton && (

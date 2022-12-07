@@ -1,12 +1,26 @@
-import { SNTag, WebApplicationInterface, DecryptedItemInterface, ItemContent } from '@standardnotes/snjs'
+import { WebApplicationInterface, DecryptedItemInterface, ItemContent, isNote, isTag } from '@standardnotes/snjs'
+
+export function getItemTitleInContextOfLinkBubble(item: DecryptedItemInterface<ItemContent>) {
+  return item.title && item.title.length > 0 ? item.title : isNote(item) ? item.preview_plain : ''
+}
+
+function getItemSearchableString(item: DecryptedItemInterface<ItemContent>, application: WebApplicationInterface) {
+  if (isNote(item)) {
+    return item.title.length > 0 ? item.title : item.preview_plain
+  } else if (isTag(item)) {
+    return application.items.getTagLongTitle(item)
+  }
+
+  return item.title ?? ''
+}
 
 export function doesItemMatchSearchQuery(
   item: DecryptedItemInterface<ItemContent>,
   searchQuery: string,
   application: WebApplicationInterface,
 ) {
-  const title = item instanceof SNTag ? application.items.getTagLongTitle(item) : item.title ?? ''
-  const matchesQuery = title.toLowerCase().includes(searchQuery.toLowerCase())
+  const title = getItemSearchableString(item, application).toLowerCase()
+  const matchesQuery = title.includes(searchQuery.toLowerCase())
   const isArchivedOrTrashed = item.archived || item.trashed
   const isValidSearchResult = matchesQuery && !isArchivedOrTrashed
 

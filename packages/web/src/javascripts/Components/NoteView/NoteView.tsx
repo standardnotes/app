@@ -905,9 +905,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 </div>
               )}
             </div>
-            {editorMode !== 'super' && (
-              <LinkedItemBubblesContainer linkingController={this.viewControllerManager.linkingController} />
-            )}
+            <LinkedItemBubblesContainer linkingController={this.viewControllerManager.linkingController} />
           </div>
         )}
 
