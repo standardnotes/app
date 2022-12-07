@@ -6,7 +6,8 @@ import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { ContentType, FileItem, SortableItem, PrefKey, ApplicationEvent } from '@standardnotes/snjs'
 import { useState, useEffect, useCallback } from 'react'
 import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
-import Table, { createTable } from '../Table/Table'
+import Popover from '../Popover/Popover'
+import Table, { clickableRowModifier, createTable, rowContextMenuModifier } from '../Table/Table'
 
 type Props = {
   application: WebApplication
@@ -41,11 +42,21 @@ const FilesTableView = ({ application }: Props) => {
     [application],
   )
 
+  const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | undefined>(undefined)
+
   const table = createTable({
     data: files,
     sortBy,
     sortReversed,
     onSortChange,
+    rowModifiers: [
+      clickableRowModifier((file) => {
+        console.log('clicked', file.title)
+      }),
+      rowContextMenuModifier((posX, posY, _file) => {
+        setContextMenuPosition({ x: posX, y: posY })
+      }),
+    ],
     columns: [
       {
         name: 'Name',
@@ -53,7 +64,7 @@ const FilesTableView = ({ application }: Props) => {
         sortBy: 'title',
         cell: (file) => {
           return (
-            <td key={file.title} className="py-2">
+            <td key={file.title} className="py-2 px-3">
               <div className="flex items-center gap-2">
                 {getFileIconComponent(getIconForFileType(file.mimeType), 'w-8 h-8 flex-shrink-0')}
                 {file.title}
@@ -67,19 +78,44 @@ const FilesTableView = ({ application }: Props) => {
         key: 'userModifiedDate',
         sortBy: 'userModifiedDate',
         cell: (file) => {
-          return <td key={file.userModifiedDate.toString()}>{formatDateForContextMenu(file.userModifiedDate)}</td>
+          return (
+            <td className="px-3" key={file.userModifiedDate.toString()}>
+              {formatDateForContextMenu(file.userModifiedDate)}
+            </td>
+          )
         },
       },
       {
         name: 'Size',
         key: 'decryptedSize',
         cell: (file) => {
-          return <td key={file.decryptedSize}>{formatSizeToReadableString(file.decryptedSize)}</td>
+          return (
+            <td className="px-3" key={file.decryptedSize}>
+              {formatSizeToReadableString(file.decryptedSize)}
+            </td>
+          )
         },
       },
     ],
   })
 
-  return <Table table={table} />
+  return (
+    <>
+      <Table table={table} />
+      {contextMenuPosition && (
+        <Popover
+          open={true}
+          anchorPoint={contextMenuPosition}
+          togglePopover={() => {
+            setContextMenuPosition(undefined)
+          }}
+          side="bottom"
+          align="start"
+        >
+          <div className="py-2 px-3">Context menu</div>
+        </Popover>
+      )}
+    </>
+  )
 }
 export default FilesTableView

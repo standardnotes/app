@@ -1,5 +1,5 @@
 import { classNames, SortableItem } from '@standardnotes/snjs'
-import { ReactNode } from 'react'
+import { ComponentPropsWithoutRef, ReactNode } from 'react'
 import Icon from '../Icon/Icon'
 
 type SortBy = keyof SortableItem
@@ -23,9 +23,14 @@ type TableSortOptions =
       onSortChange?: never
     }
 
+type RowProps = ComponentPropsWithoutRef<'tr'>
+
+type RowModifier<Data> = (data: Data) => RowProps
+
 type CreateTableOptions<Data> = {
   data: Data[]
   columns: Column<Data>[]
+  rowModifiers?: RowModifier<Data>[]
 } & TableSortOptions
 
 type TableState<Data> = {
@@ -37,7 +42,28 @@ type TableState<Data> = {
     sortReversed: boolean | undefined
     onSortChange: () => void
   }[]
-  rows: ReactNode[][]
+  rows: {
+    modifiedProps?: RowProps
+    cells: ReactNode[]
+  }[]
+}
+
+export function clickableRowModifier<Data>(onClick: (data: Data) => void): RowModifier<Data> {
+  return (data: Data) => ({
+    className: 'cursor-pointer hover:bg-info-backdrop',
+    onClick: () => onClick(data),
+  })
+}
+
+export function rowContextMenuModifier<Data>(
+  onContextMenu: (posX: number, posY: number, data: Data) => void,
+): RowModifier<Data> {
+  return (data: Data) => ({
+    onContextMenu: (event) => {
+      event.preventDefault()
+      onContextMenu(event.clientX, event.clientY, data)
+    },
+  })
 }
 
 export function createTable<Data>(options: CreateTableOptions<Data>): TableState<Data> {
@@ -61,7 +87,13 @@ export function createTable<Data>(options: CreateTableOptions<Data>): TableState
     const cells = options.columns.map((column) => {
       return column.cell(data)
     })
-    return cells
+    const modifiedProps = options.rowModifiers?.reduce((props, modifier) => {
+      return { ...props, ...modifier(data) }
+    }, {})
+    return {
+      cells,
+      modifiedProps,
+    }
   })
 
   return {
@@ -72,7 +104,7 @@ export function createTable<Data>(options: CreateTableOptions<Data>): TableState
 
 function Table<Data>({ table }: { table: TableState<Data> }) {
   return (
-    <div className="block min-h-0 overflow-auto px-3">
+    <div className="block min-h-0 overflow-auto">
       <table className="w-full">
         <thead>
           <tr>
@@ -80,8 +112,8 @@ function Table<Data>({ table }: { table: TableState<Data> }) {
               return (
                 <th
                   className={classNames(
-                    'pt-3 pb-2 text-left text-sm font-medium text-passive-0',
-                    header.sortBy && 'cursor-pointer',
+                    'px-3 pt-3 pb-2 text-left text-sm font-medium text-passive-0',
+                    header.sortBy && 'cursor-pointer hover:underline',
                   )}
                   onClick={header.onSortChange}
                   key={header.key.toString()}
@@ -104,8 +136,8 @@ function Table<Data>({ table }: { table: TableState<Data> }) {
         <tbody className="whitespace-nowrap">
           {table.rows.map((row, index) => {
             return (
-              <tr key={index}>
-                {row.map((cell) => {
+              <tr key={index} {...row.modifiedProps}>
+                {row.cells.map((cell) => {
                   return cell
                 })}
               </tr>
