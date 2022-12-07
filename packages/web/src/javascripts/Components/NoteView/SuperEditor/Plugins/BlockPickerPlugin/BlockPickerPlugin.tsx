@@ -23,9 +23,12 @@ import Popover from '@/Components/Popover/Popover'
 import { PopoverClassNames } from '../ClassNames'
 import { GetDatetimeBlocks } from './Blocks/DateTime'
 import { isMobileScreen } from '@/Utils'
+import { useApplication } from '@/Components/ApplicationProvider'
+import { GetIndentOutdentBlocks } from './Blocks/IndentOutdent'
 
 export default function BlockPickerMenuPlugin(): JSX.Element {
   const [editor] = useLexicalComposerContext()
+  const application = useApplication()
   const [modal, showModal] = useModal()
   const [queryString, setQueryString] = useState<string | null>(null)
 
@@ -36,9 +39,12 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
   const [popoverOpen, setPopoverOpen] = useState(true)
 
   const options = useMemo(() => {
+    const indentOutdentOptions = application.isNativeMobileWeb() ? GetIndentOutdentBlocks(editor) : []
+
     const baseOptions = [
       GetParagraphBlock(editor),
       ...GetHeadingsBlocks(editor),
+      ...indentOutdentOptions,
       GetTableBlock(() =>
         showModal('Insert Table', (onClose) => <InsertTableDialog activeEditor={editor} onClose={onClose} />),
       ),
@@ -70,7 +76,7 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
           }),
         ]
       : baseOptions
-  }, [editor, queryString, showModal])
+  }, [editor, queryString, showModal, application])
 
   const onSelectOption = useCallback(
     (
