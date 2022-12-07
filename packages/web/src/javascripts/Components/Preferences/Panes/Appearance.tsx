@@ -4,11 +4,19 @@ import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { WebApplication } from '@/Application/Application'
-import { ContentType, FeatureIdentifier, PrefKey, GetFeatures, SNTheme } from '@standardnotes/snjs'
+import {
+  ContentType,
+  FeatureIdentifier,
+  PrefKey,
+  GetFeatures,
+  SNTheme,
+  FindNativeFeature,
+  FeatureStatus,
+  naturalSort,
+} from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useEffect, useState } from 'react'
 import { Subtitle, Title, Text } from '@/Components/Preferences/PreferencesComponents/Content'
-import { sortThemes } from '@/Utils/SortThemes'
 import PreferencesPane from '../PreferencesComponents/PreferencesPane'
 import PreferencesGroup from '../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../PreferencesComponents/PreferencesSegment'
@@ -37,9 +45,8 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
   useEffect(() => {
     const themesAsItems: DropdownItem[] = application.items
       .getDisplayableComponents()
-      .filter((component) => component.isTheme())
-      .filter((component) => !(component as SNTheme).isLayerable())
-      .sort(sortThemes)
+      .filter((component) => component.isTheme() && !(component as SNTheme).isLayerable())
+      .filter((theme) => !FindNativeFeature(theme.identifier))
       .map((theme) => {
         return {
           label: theme.name,
@@ -50,13 +57,14 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
     GetFeatures()
       .filter((feature) => feature.content_type === ContentType.Theme && !feature.layerable)
       .forEach((theme) => {
-        if (themesAsItems.findIndex((item) => item.value === theme.identifier) === -1) {
-          themesAsItems.push({
-            label: theme.name as string,
-            value: theme.identifier,
-            icon: PremiumFeatureIconName,
-          })
-        }
+        themesAsItems.push({
+          label: theme.name as string,
+          value: theme.identifier,
+          icon:
+            application.features.getFeatureStatus(theme.identifier) !== FeatureStatus.Entitled
+              ? PremiumFeatureIconName
+              : undefined,
+        })
       })
 
     themesAsItems.unshift({
@@ -64,7 +72,7 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
       value: 'Default',
     })
 
-    setThemeItems(themesAsItems)
+    setThemeItems(naturalSort(themesAsItems, 'label'))
   }, [application])
 
   const toggleUseDeviceSettings = () => {

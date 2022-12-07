@@ -1,5 +1,5 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import { LexicalTypeaheadMenuPlugin, useBasicTypeaheadTriggerMatch } from '@lexical/react/LexicalTypeaheadMenuPlugin'
+import { LexicalTypeaheadMenuPlugin } from '@lexical/react/LexicalTypeaheadMenuPlugin'
 import { TextNode } from 'lexical'
 import { FunctionComponent, useCallback, useMemo, useState } from 'react'
 import { ItemSelectionItemComponent } from './ItemSelectionItemComponent'
@@ -12,6 +12,7 @@ import { INSERT_BUBBLE_COMMAND, INSERT_FILE_COMMAND } from '../Commands'
 import { useLinkingController } from '../../../../../Controllers/LinkingControllerProvider'
 import { PopoverClassNames } from '../ClassNames'
 import { isMobileScreen } from '@/Utils'
+import { useTypeaheadAllowingSpacesAndPunctuation } from './useTypeaheadAllowingSpacesAndPunctuation'
 
 type Props = {
   currentNote: SNNote
@@ -26,7 +27,7 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
 
   const [queryString, setQueryString] = useState<string | null>('')
 
-  const checkForTriggerMatch = useBasicTypeaheadTriggerMatch('@', {
+  const checkForTriggerMatch = useTypeaheadAllowingSpacesAndPunctuation('@', {
     minLength: 0,
   })
 

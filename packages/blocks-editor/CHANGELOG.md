@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.9.7](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.9.6...@standardnotes/blocks-editor@1.9.7) (2022-12-07)
+
+### Bug Fixes
+
+* improve variance between Super header font sizes and weights ([8b10330](https://github.com/standardnotes/app/commit/8b103307cba41855713b8627cf5d66a6fef6ff52))
+
 ## [1.9.6](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.9.5...@standardnotes/blocks-editor@1.9.6) (2022-11-30)
 
 ### Bug Fixes

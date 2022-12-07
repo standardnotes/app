@@ -6,6 +6,7 @@ import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { observer } from 'mobx-react-lite'
 import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
+import { getItemTitleInContextOfLinkBubble } from '@/Utils/Items/Search/doesItemMatchSearchQuery'
 
 type Props = {
   item: LinkableItem
@@ -16,7 +17,7 @@ const LinkedItemMeta = ({ item, searchQuery }: Props) => {
   const application = useApplication()
   const [icon, className] = getIconForItem(item, application)
   const tagTitle = getTitleForLinkedTag(item, application)
-  const title = item.title ?? ''
+  const title = getItemTitleInContextOfLinkBubble(item)
 
   return (
     <>
