@@ -51,54 +51,56 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
   const handleInputBlur: FocusEventHandler<HTMLInputElement> = useCallback(() => {
     renameDescriptor(inputValue)
     setIsRenaming(false)
-    setInputValue('')
   }, [inputValue, renameDescriptor])
 
   return (
-    <MenuRadioButtonItem
-      className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-2 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
-      onClick={onClick}
-      checked={descriptor.primary}
-    >
-      <div className="ml-2 flex w-full items-center justify-between">
-        {isRenaming ? (
-          <input
-            ref={inputRef}
-            type="text"
-            value={inputValue}
-            onChange={handleChange}
-            onKeyDown={handleInputKeyDown}
-            onBlur={handleInputBlur}
-          />
-        ) : (
-          <div>{descriptor.label}</div>
-        )}
-        {descriptor.primary && !hideOptions && (
-          <div className="flex items-center">
-            <a
-              role="button"
-              className="mr-3 h-5 w-5 cursor-pointer border-0 bg-transparent p-0 hover:bg-contrast"
-              onClick={(e) => {
-                e.stopPropagation()
-                setIsRenaming((isRenaming) => !isRenaming)
-              }}
-            >
-              <Icon type="pencil" className="text-neutral" size="medium" />
-            </a>
-            <a
-              role="button"
-              className="h-5 w-5 cursor-pointer border-0 bg-transparent p-0 hover:bg-contrast"
-              onClick={(e) => {
-                e.stopPropagation()
-                onDelete()
-              }}
-            >
-              <Icon type="trash" className="text-danger" size="medium" />
-            </a>
-          </div>
-        )}
-      </div>
-    </MenuRadioButtonItem>
+    <div className="relative">
+      <MenuRadioButtonItem
+        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-2 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+        onClick={onClick}
+        checked={descriptor.primary}
+      >
+        <div className="ml-2 flex w-full items-center justify-between">
+          {!isRenaming && <div>{descriptor.label}</div>}
+          {descriptor.primary && !hideOptions && (
+            <div className="flex items-center">
+              <a
+                role="button"
+                className="mr-3 flex h-5 w-5 cursor-pointer items-center justify-center border-0 bg-transparent p-0 hover:bg-contrast"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setIsRenaming((isRenaming) => !isRenaming)
+                }}
+              >
+                <Icon type="pencil" className="text-neutral" size="medium" />
+              </a>
+              <a
+                role="button"
+                className="flex h-5 w-5 cursor-pointer items-center justify-center border-0 bg-transparent p-0 hover:bg-contrast"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  onDelete()
+                }}
+              >
+                <Icon type="trash" className="text-danger" size="medium" />
+              </a>
+            </div>
+          )}
+        </div>
+      </MenuRadioButtonItem>
+      {isRenaming && (
+        <input
+          ref={inputRef}
+          type="text"
+          value={inputValue}
+          onChange={handleChange}
+          onKeyDown={handleInputKeyDown}
+          onBlur={handleInputBlur}
+          onClick={(e) => e.stopPropagation()}
+          className="absolute top-1/2 left-11 -translate-y-1/2 bg-default"
+        />
+      )}
+    </div>
   )
 }
 
