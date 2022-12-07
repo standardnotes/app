@@ -329,7 +329,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         ) : null}
         {!dailyMode && renderedItems.length ? (
           selectedTag?.uuid === SystemViewId.Files ? (
-            <FilesTableView application={application} />
+            <FilesTableView application={application} filesController={filesController} />
           ) : (
             <ContentList
               items={renderedItems}

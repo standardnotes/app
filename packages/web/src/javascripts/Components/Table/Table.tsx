@@ -25,7 +25,7 @@ type TableSortOptions =
 
 type RowProps = ComponentPropsWithoutRef<'tr'>
 
-type RowModifier<Data> = (data: Data) => RowProps
+type RowModifier<Data> = (data: Data, existingProps: RowProps) => RowProps
 
 type CreateTableOptions<Data> = {
   data: Data[]
@@ -48,9 +48,16 @@ type TableState<Data> = {
   }[]
 }
 
+export function rowStyleModifier<Data>(className: string): RowModifier<Data> {
+  return (_data, existingProps) => ({
+    className: existingProps.className ? classNames(existingProps.className, className) : className,
+  })
+}
+
 export function clickableRowModifier<Data>(onClick: (data: Data) => void): RowModifier<Data> {
-  return (data: Data) => ({
-    className: 'cursor-pointer hover:bg-info-backdrop',
+  const className = 'cursor-pointer hover:bg-info-backdrop'
+  return (data: Data, existingProps: RowProps) => ({
+    className: existingProps.className ? classNames(existingProps.className, className) : className,
     onClick: () => onClick(data),
   })
 }
@@ -88,7 +95,7 @@ export function createTable<Data>(options: CreateTableOptions<Data>): TableState
       return column.cell(data)
     })
     const modifiedProps = options.rowModifiers?.reduce((props, modifier) => {
-      return { ...props, ...modifier(data) }
+      return { ...props, ...modifier(data, props) }
     }, {})
     return {
       cells,
@@ -113,7 +120,7 @@ function Table<Data>({ table }: { table: TableState<Data> }) {
                 <th
                   className={classNames(
                     'px-3 pt-3 pb-2 text-left text-sm font-medium text-passive-0',
-                    header.sortBy && 'cursor-pointer hover:underline',
+                    header.sortBy && 'cursor-pointer hover:bg-info-backdrop hover:underline',
                   )}
                   onClick={header.onSortChange}
                   key={header.key.toString()}

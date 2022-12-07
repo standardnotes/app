@@ -1,19 +1,22 @@
 import { WebApplication } from '@/Application/Application'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
+import { FilesController } from '@/Controllers/FilesController'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { ContentType, FileItem, SortableItem, PrefKey, ApplicationEvent } from '@standardnotes/snjs'
 import { useState, useEffect, useCallback } from 'react'
+import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
 import Popover from '../Popover/Popover'
-import Table, { clickableRowModifier, createTable, rowContextMenuModifier } from '../Table/Table'
+import Table, { clickableRowModifier, createTable, rowContextMenuModifier, rowStyleModifier } from '../Table/Table'
 
 type Props = {
   application: WebApplication
+  filesController: FilesController
 }
 
-const FilesTableView = ({ application }: Props) => {
+const FilesTableView = ({ application, filesController }: Props) => {
   const files = application.items
     .getDisplayableNotesAndFiles()
     .filter((item) => item.content_type === ContentType.File) as FileItem[]
@@ -50,8 +53,15 @@ const FilesTableView = ({ application }: Props) => {
     sortReversed,
     onSortChange,
     rowModifiers: [
+      rowStyleModifier('underline'),
       clickableRowModifier((file) => {
-        console.log('clicked', file.title)
+        void filesController.handleFileAction({
+          type: PopoverFileItemActionType.PreviewFile,
+          payload: {
+            file,
+            otherFiles: [],
+          },
+        })
       }),
       rowContextMenuModifier((posX, posY, _file) => {
         setContextMenuPosition({ x: posX, y: posY })
