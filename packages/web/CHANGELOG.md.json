@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.122.0",
+      "title": "[3.122.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.121.1...@standardnotes/web@3.122.0) (2022-12-07)",
+      "date": null,
+      "body": "### Features\n\n* add ability to convert selection in Super to bulleted or numbered list ([be4cc4e](https://github.com/standardnotes/app/commit/be4cc4e605100e0a86de214e548e9ed10e2568aa))",
+      "parsed": {
+        "_": [
+          "add ability to convert selection in Super to bulleted or numbered list (be4cc4e)"
+        ],
+        "Features": [
+          "add ability to convert selection in Super to bulleted or numbered list (be4cc4e)"
+        ]
+      }
+    },
+    {
       "version": "3.121.1",
       "title": "[3.121.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.121.0...@standardnotes/web@3.121.1) (2022-12-07)",
       "date": null,

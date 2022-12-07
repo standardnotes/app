@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.122.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.121.1...@standardnotes/web@3.122.0) (2022-12-07)
+
+### Features
+
+* add ability to convert selection in Super to bulleted or numbered list ([be4cc4e](https://github.com/standardnotes/app/commit/be4cc4e605100e0a86de214e548e9ed10e2568aa))
+
 ## [3.121.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.121.0...@standardnotes/web@3.121.1) (2022-12-07)
 
 ### Bug Fixes
