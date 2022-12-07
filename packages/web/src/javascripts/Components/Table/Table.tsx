@@ -72,46 +72,48 @@ export function createTable<Data>(options: CreateTableOptions<Data>): TableState
 
 function Table<Data>({ table }: { table: TableState<Data> }) {
   return (
-    <table className="block min-h-0 overflow-auto px-3">
-      <thead>
-        <tr>
-          {table.headers.map((header) => {
-            return (
-              <th
-                className={classNames(
-                  'pt-3 pb-2 text-left text-sm font-medium text-passive-0',
-                  header.sortBy && 'cursor-pointer',
-                )}
-                onClick={header.onSortChange}
-                key={header.key.toString()}
-              >
-                <div className="flex items-center gap-1">
-                  {header.name}
-                  {header.isSorting && (
-                    <Icon
-                      type={header.sortReversed ? 'arrow-up' : 'arrow-down'}
-                      size="custom"
-                      className="h-4.5 w-4.5"
-                    />
+    <div className="block min-h-0 overflow-auto px-3">
+      <table className="w-full">
+        <thead>
+          <tr>
+            {table.headers.map((header) => {
+              return (
+                <th
+                  className={classNames(
+                    'pt-3 pb-2 text-left text-sm font-medium text-passive-0',
+                    header.sortBy && 'cursor-pointer',
                   )}
-                </div>
-              </th>
+                  onClick={header.onSortChange}
+                  key={header.key.toString()}
+                >
+                  <div className="flex items-center gap-1">
+                    {header.name}
+                    {header.isSorting && (
+                      <Icon
+                        type={header.sortReversed ? 'arrow-up' : 'arrow-down'}
+                        size="custom"
+                        className="h-4.5 w-4.5"
+                      />
+                    )}
+                  </div>
+                </th>
+              )
+            })}
+          </tr>
+        </thead>
+        <tbody className="whitespace-nowrap">
+          {table.rows.map((row, index) => {
+            return (
+              <tr key={index}>
+                {row.map((cell) => {
+                  return cell
+                })}
+              </tr>
             )
           })}
-        </tr>
-      </thead>
-      <tbody className="whitespace-nowrap">
-        {table.rows.map((row, index) => {
-          return (
-            <tr key={index}>
-              {row.map((cell) => {
-                return cell
-              })}
-            </tr>
-          )
-        })}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   )
 }
 
