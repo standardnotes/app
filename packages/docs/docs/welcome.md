@@ -23,8 +23,6 @@ This documentation explains how to get started with using Standard Notes, publis
 - [Self-hosting a Syncing Server](/self-hosting/getting-started)
 - [Developing Extensions](/extensions/intro)
 - [Client Encryption API](/specification/encryption)
-- [Sync API](/specification/sync)
-- [Auth API](/specification/auth)
 
 ## Staying informed
 

@@ -44,11 +44,6 @@ module.exports = {
               position: 'left',
             },
             {
-              to: '/specification/sync',
-              label: 'Server API',
-              position: 'left',
-            },
-            {
               to: '/extensions/intro',
               label: 'Build an Extension',
               position: 'left',
