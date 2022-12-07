@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.19.3](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.19.2...@standardnotes/ui-services@1.19.3) (2022-12-07)
+
+### Bug Fixes
+
+* Fixed workspace menu item rename issue ([45cdab6](https://github.com/standardnotes/app/commit/45cdab6f6c0416e0a01a66e4b4983ff0a52c1afc))
+
 ## [1.19.2](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.19.1...@standardnotes/ui-services@1.19.2) (2022-12-06)
 
 **Note:** Version bump only for package @standardnotes/ui-services
