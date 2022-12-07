@@ -9,4 +9,5 @@ export enum KeyboardKey {
   Escape = 'Escape',
   Home = 'Home',
   End = 'End',
+  Space = ' ',
 }

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.121.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.121.0...@standardnotes/web@3.121.1) (2022-12-07)
+
+### Bug Fixes
+
+* Fixed issue about note UUID not being selectable in menu ([5a0c005](https://github.com/standardnotes/app/commit/5a0c005e8c0373e2f47fa613fc5bfec0e84cdb37))
+* Fixed workspace menu item rename issue ([45cdab6](https://github.com/standardnotes/app/commit/45cdab6f6c0416e0a01a66e4b4983ff0a52c1afc))
+
 # [3.121.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.120.3...@standardnotes/web@3.121.0) (2022-12-07)
 
 ### Bug Fixes

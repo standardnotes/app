@@ -1,4 +1,4 @@
-import { CSSProperties, forwardRef, KeyboardEventHandler, ReactNode, Ref, useCallback, useEffect, useRef } from 'react'
+import { CSSProperties, forwardRef, KeyboardEventHandler, ReactNode, Ref, useCallback, useRef } from 'react'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import { mergeRefs } from '@/Hooks/mergeRefs'
@@ -23,7 +23,6 @@ const Menu = forwardRef(
       style,
       a11yLabel,
       closeMenu,
-      isOpen,
       initialFocus,
       onKeyDown,
       shouldAutoFocus = true,
@@ -44,15 +43,7 @@ const Menu = forwardRef(
       [closeMenu, onKeyDown],
     )
 
-    useListKeyboardNavigation(menuElementRef, initialFocus)
-
-    useEffect(() => {
-      if (isOpen && shouldAutoFocus) {
-        setTimeout(() => {
-          menuElementRef.current?.focus()
-        }, 5)
-      }
-    }, [isOpen, shouldAutoFocus])
+    useListKeyboardNavigation(menuElementRef, initialFocus, shouldAutoFocus)
 
     return (
       <menu
