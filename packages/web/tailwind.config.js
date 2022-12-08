@@ -124,6 +124,7 @@ module.exports = {
       foreground: 'var(--sn-stylekit-foreground-color)',
       contrast: 'var(--sn-stylekit-contrast-background-color)',
       'secondary-contrast': 'var(--sn-stylekit-secondary-contrast-border-color)',
+      'secondary-background': 'var(--sn-stylekit-secondary-background-color)',
       text: 'var(--sn-stylekit-contrast-foreground-color)',
       border: 'var(--sn-stylekit-border-color)',
       'secondary-border': 'var(--sn-stylekit-secondary-border-color)',
