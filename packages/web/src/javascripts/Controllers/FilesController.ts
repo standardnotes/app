@@ -421,6 +421,19 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       addToast({
         type: ToastType.Success,
         message: `Uploaded file "${uploadedFile.name}"`,
+        actions: [
+          {
+            label: 'Open',
+            handler: (toastId) => {
+              void this.handleFileAction({
+                type: PopoverFileItemActionType.PreviewFile,
+                payload: { file: uploadedFile },
+              })
+              dismissToast(toastId)
+            },
+          },
+        ],
+        autoClose: true,
       })
 
       return uploadedFile

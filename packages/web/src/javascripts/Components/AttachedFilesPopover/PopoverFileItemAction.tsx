@@ -40,6 +40,6 @@ export type PopoverFileItemAction =
       type: PopoverFileItemActionType.PreviewFile
       payload: {
         file: FileItem
-        otherFiles: FileItem[]
+        otherFiles?: FileItem[]
       }
     }
