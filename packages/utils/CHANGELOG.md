@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.14.1...@standardnotes/utils@1.15.0) (2022-12-08)
+
+### Features
+
+* Add current Writing Streak to Daily Notebooks ([#2093](https://github.com/standardnotes/app/issues/2093)) ([d149b50](https://github.com/standardnotes/app/commit/d149b500ee3f13f63a1f831e6e0ba29a53e3e416))
+
 ## [1.14.1](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.14.0...@standardnotes/utils@1.14.1) (2022-12-02)
 
 ### Bug Fixes
