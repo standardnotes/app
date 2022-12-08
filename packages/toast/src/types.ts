@@ -12,6 +12,7 @@ type CommonToastProperties = {
   progress?: number
   autoClose?: boolean
   duration?: number
+  pauseOnWindowBlur?: boolean
 }
 
 export type Toast = CommonToastProperties & {
