@@ -3,11 +3,11 @@ import { ApplicationEvent, InternalEventBus, StorageKey } from '@standardnotes/s
 import { isDev } from '@/Utils'
 import { FileItem, PrefKey, sleep, SNTag } from '@standardnotes/snjs'
 import { FilesController } from '../FilesController'
-import { preparePhotoOperation, takePhoto, stopCameraStream } from './CameraUtils'
 import { action, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewController'
 import { WebApplication } from '@/Application/Application'
 import { dateToStringStyle1 } from '@/Utils/DateUtils'
+import { PhotoRecorder } from './PhotoRecorder'
 
 const EVERY_HALF_HOUR = 1000 * 60 * 30
 const EVERY_TEN_SECONDS = 1000 * 10
@@ -100,18 +100,18 @@ export class MomentsService extends AbstractViewController {
       }
     }
 
-    const { canvas, video, stream, width, height } = await preparePhotoOperation()
-
     const filename = `Moment ${dateToStringStyle1(new Date())}.png`
+    const camera = new PhotoRecorder(filename)
+    await camera.initialize()
 
     if (this.application.isMobileDevice) {
       await sleep(DELAY_AFTER_STARTING_CAMERA_TO_ALLOW_MOBILE_AUTOFOCUS)
     }
 
-    let file = await takePhoto(filename, canvas, video, width, height)
+    let file = await camera.takePhoto()
     if (!file) {
       await sleep(1000)
-      file = await takePhoto(filename, canvas, video, width, height)
+      file = await camera.takePhoto()
       if (!file) {
         return undefined
       }
@@ -130,7 +130,7 @@ export class MomentsService extends AbstractViewController {
       }
     }
 
-    stopCameraStream(canvas, video, stream)
+    camera.finish()
 
     return uploadedFile
   }
