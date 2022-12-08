@@ -186,7 +186,7 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
 
   const autolockService = application.getAutolockService()
 
-  if (!autolockService) {
+  if (!autolockService && !isNativeMobileWeb) {
     return null
   }
 
@@ -246,7 +246,7 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
         </PreferencesSegment>
       </PreferencesGroup>
 
-      {hasPasscode && !isNativeMobileWeb && (
+      {hasPasscode && !isNativeMobileWeb && autolockService && (
         <>
           <div className="min-h-3" />
           <PreferencesGroup>
