@@ -13,8 +13,8 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* Fixed issue about note UUID not being selectable in menu ([5a0c005](https://github.com/standardnotes/app/commit/5a0c005e8c0373e2f47fa613fc5bfec0e84cdb37))
-* Fixed workspace menu item rename issue ([45cdab6](https://github.com/standardnotes/app/commit/45cdab6f6c0416e0a01a66e4b4983ff0a52c1afc))
+* Fixed issue where note UUID was not selectable in context menu ([5a0c005](https://github.com/standardnotes/app/commit/5a0c005e8c0373e2f47fa613fc5bfec0e84cdb37))
+* Fixed issue where workspaces could not be renamed ([45cdab6](https://github.com/standardnotes/app/commit/45cdab6f6c0416e0a01a66e4b4983ff0a52c1afc))
 
 # [3.121.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.120.3...@standardnotes/web@3.121.0) (2022-12-07)
 

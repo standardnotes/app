@@ -121,9 +121,13 @@ export class MomentsService extends AbstractViewController {
 
     const uploadedFile = await this.filesController.uploadNewFile(file)
 
-    const defaultTag = this.getDefaultTag()
-    if (defaultTag && uploadedFile) {
-      void this.application.linkingController.linkItems(uploadedFile, defaultTag)
+    if (uploadedFile) {
+      void this.application.linkingController.linkItemToSelectedItem(uploadedFile)
+
+      const defaultTag = this.getDefaultTag()
+      if (defaultTag) {
+        void this.application.linkingController.linkItems(uploadedFile, defaultTag)
+      }
     }
 
     stopCameraStream(canvas, video, stream)
