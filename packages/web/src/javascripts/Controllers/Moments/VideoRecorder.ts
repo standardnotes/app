@@ -13,6 +13,12 @@ export class VideoRecorder {
 
   constructor(private fileName: string) {}
 
+  public static async isSupported(): Promise<boolean> {
+    const devices = await navigator.mediaDevices.enumerateDevices()
+    const hasCamera = devices.some((device) => device.kind === 'videoinput')
+    return hasCamera
+  }
+
   public async initialize() {
     this.stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
     this.recorder = new MediaRecorder(this.stream)

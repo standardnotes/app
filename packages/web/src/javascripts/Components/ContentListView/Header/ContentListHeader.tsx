@@ -9,6 +9,8 @@ import { isTag, VectorIconNameOrEmoji } from '@standardnotes/snjs'
 import RoundIconButton from '@/Components/Button/RoundIconButton'
 import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import AddItemMenuButton from './AddItemMenuButton'
+import { FilesController } from '@/Controllers/FilesController'
 
 type Props = {
   application: WebApplication
@@ -19,6 +21,7 @@ type Props = {
   isFilesSmartView: boolean
   optionsSubtitle?: string
   selectedTag: AnyTag
+  filesController: FilesController
 }
 
 const ContentListHeader = ({
@@ -30,6 +33,7 @@ const ContentListHeader = ({
   isFilesSmartView,
   optionsSubtitle,
   selectedTag,
+  filesController,
 }: Props) => {
   const displayOptionsContainerRef = useRef<HTMLDivElement>(null)
   const displayOptionsButtonRef = useRef<HTMLButtonElement>(null)
@@ -84,23 +88,15 @@ const ContentListHeader = ({
 
   const AddButton = useMemo(() => {
     return (
-      <button
-        className={classNames(
-          'hidden md:flex',
-          'h-8 w-8 hover:brightness-125',
-          'z-editor-title-bar ml-3  cursor-pointer items-center',
-          `justify-center rounded-full border border-solid border-transparent ${
-            isDailyEntry ? 'bg-danger text-danger-contrast' : 'bg-info text-info-contrast'
-          }`,
-        )}
-        title={addButtonLabel}
-        aria-label={addButtonLabel}
-        onClick={addNewItem}
-      >
-        <Icon type="add" size="custom" className="h-5 w-5" />
-      </button>
+      <AddItemMenuButton
+        isInFilesSmartView={isFilesSmartView}
+        isDailyEntry={isDailyEntry}
+        addButtonLabel={addButtonLabel}
+        addNewItem={addNewItem}
+        filesController={filesController}
+      />
     )
-  }, [addButtonLabel, addNewItem, isDailyEntry])
+  }, [addButtonLabel, addNewItem, filesController, isDailyEntry, isFilesSmartView])
 
   const FolderName = useMemo(() => {
     return (
