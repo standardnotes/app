@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.125.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.124.0...@standardnotes/web@3.125.0) (2022-12-08)
+
+### Features
+
+* Added "Open" button to file upload success notification ([#2091](https://github.com/standardnotes/app/issues/2091)) ([220f626](https://github.com/standardnotes/app/commit/220f62665e6daa18020b410b893207eccdfd0b67))
+
 # [3.124.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.123.1...@standardnotes/web@3.124.0) (2022-12-08)
 
 ### Features
