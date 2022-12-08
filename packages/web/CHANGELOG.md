@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.123.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.122.0...@standardnotes/web@3.123.0) (2022-12-08)
+
+### Bug Fixes
+
+* alignment of Loading text in What's New screen ([d360985](https://github.com/standardnotes/app/commit/d3609853c6c6121a5633d72a685723498099edba))
+
+### Features
+
+* Moments will now create a link with the current open note, so you can look back on what you were working on during a moment ([a7ac715](https://github.com/standardnotes/app/commit/a7ac715499fdf3f15a736f68af4bf5a78454742f))
+
 # [3.122.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.121.1...@standardnotes/web@3.122.0) (2022-12-07)
 
 ### Features
