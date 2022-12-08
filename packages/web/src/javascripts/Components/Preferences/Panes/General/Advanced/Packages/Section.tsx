@@ -44,7 +44,7 @@ const PackagesPreferencesSection: FunctionComponent<Props> = ({
   const uninstallExtension = async (extension: AnyPackageType) => {
     application.alertService
       .confirm(
-        'Are you sure you want to uninstall this extension? Note that extensions managed by your subscription will automatically be re-installed on application restart.',
+        'Are you sure you want to uninstall this plugin? Note that plugins managed by your subscription will automatically be re-installed on application restart.',
         'Uninstall Extension?',
         'Uninstall',
         ButtonType.Danger,
@@ -118,10 +118,10 @@ const PackagesPreferencesSection: FunctionComponent<Props> = ({
       <div>
         {!confirmableExtension && (
           <PreferencesSegment>
-            <Subtitle>Install External Package</Subtitle>
+            <Subtitle>Install External Plugin</Subtitle>
             <div className={'mt-2'}>
               <DecoratedInput
-                placeholder={'Enter Package URL'}
+                placeholder={'Enter Plugin URL'}
                 value={customUrl}
                 onChange={(value) => {
                   setCustomUrl(value)
