@@ -18,6 +18,7 @@ type Props = {
   selectedDay?: Date
   selectedDayType?: 'item' | 'template'
   className?: string
+  children?: React.ReactNode
 }
 
 export type InfiniteCalendarInterface = {
@@ -27,7 +28,7 @@ export type InfiniteCalendarInterface = {
 const PageSize = 2
 
 const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
-  ({ activities, onDateSelect, selectedDay, className }: Props, ref) => {
+  ({ activities, onDateSelect, selectedDay, className, children }: Props, ref) => {
     const [expanded, setExpanded] = useState(isMobileScreen() ? false : true)
     const [restoreScrollAfterExpand, setRestoreScrollAfterExpand] = useState(false)
     const scrollerRef = useRef<InfiniteScrollerInterface | null>(null)
@@ -216,6 +217,7 @@ const InfiniteCalendar = forwardRef<InfiniteCalendarInterface, Props>(
             })}
           </InfinteScroller>
         )}
+        {expanded && children}
       </div>
     )
   },
