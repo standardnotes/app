@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.123.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.123.0...@standardnotes/web@3.123.1) (2022-12-08)
+
+### Bug Fixes
+
+* Fixed issue where passcode lock setting was not visible on mobile ([d4af612](https://github.com/standardnotes/app/commit/d4af612fea6960a5233404682aeb1819754b9b8b))
+
 # [3.123.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.122.0...@standardnotes/web@3.123.0) (2022-12-08)
 
 ### Bug Fixes
