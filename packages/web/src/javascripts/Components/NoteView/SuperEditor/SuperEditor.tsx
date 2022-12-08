@@ -168,7 +168,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
               >
                 <BlocksEditor
                   onChange={handleChange}
-                  ignoreFirstChange={false}
+                  ignoreFirstChange={controller.isTemplateNote}
                   className={classNames(
                     'relative h-full resize-none px-4 py-4 focus:shadow-none focus:outline-none',
                     lineHeight && `leading-${lineHeight.toLowerCase()}`,

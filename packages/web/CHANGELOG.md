@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.124.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.123.1...@standardnotes/web@3.124.0) (2022-12-08)
+
+### Features
+
+* Add current Writing Streak to Daily Notebooks ([#2093](https://github.com/standardnotes/app/issues/2093)) ([d149b50](https://github.com/standardnotes/app/commit/d149b500ee3f13f63a1f831e6e0ba29a53e3e416))
+
+## [3.123.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.123.0...@standardnotes/web@3.123.1) (2022-12-08)
+
+### Bug Fixes
+
+* Fixed issue where passcode lock setting was not visible on mobile ([d4af612](https://github.com/standardnotes/app/commit/d4af612fea6960a5233404682aeb1819754b9b8b))
+
 # [3.123.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.122.0...@standardnotes/web@3.123.0) (2022-12-08)
 
 ### Bug Fixes

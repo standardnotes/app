@@ -7,9 +7,9 @@ import { AppPaneId } from '../../Panes/AppPaneMetadata'
 import { createDailyItemsWithToday, createItemsByDateMapping, insertBlanks } from './CreateDailySections'
 import { DailyItemsDay } from './DailyItemsDaySection'
 import { DailyItemCell } from './DailyItemCell'
-import { SNTag } from '@standardnotes/snjs'
+import { SNTag, pluralize } from '@standardnotes/snjs'
 import { CalendarActivity } from '../Calendar/CalendarActivity'
-import { dateToDailyDayIdentifier } from './Utils'
+import { dateToDailyDayIdentifier, getDailyWritingStreak } from './Utils'
 import InfiniteCalendar, { InfiniteCalendarInterface } from '../Calendar/InfiniteCalendar'
 import { InfiniteScrollerInterface, InfinteScroller } from '../InfiniteScroller/InfiniteScroller'
 import { LoggingDomain, log } from '@/Logging'
@@ -49,6 +49,11 @@ const DailyContentList: FunctionComponent<Props> = ({
   const itemsByDateMapping = useMemo(() => {
     return createItemsByDateMapping(items)
   }, [items])
+
+  const currentStreak = useMemo(
+    () => getDailyWritingStreak(todayItem, itemsByDateMapping),
+    [todayItem, itemsByDateMapping],
+  )
 
   useEffect(() => {
     setTodayItem(dailyItems.find((item) => item.isToday) as DailyItemsDay)
@@ -182,7 +187,16 @@ const DailyContentList: FunctionComponent<Props> = ({
         selectedDayType={!selectedDay ? undefined : hasItemsOnSelectedDay ? 'item' : 'template'}
         ref={calendarRef}
         className={'flex-column flex'}
-      />
+      >
+        {currentStreak > 0 && (
+          <div className="flex w-full items-center justify-center border-t border-solid border-border bg-secondary-background p-2">
+            <span className="opacity-50">Current Streak</span>
+            <span className="ml-1.5 font-bold">
+              {currentStreak} {pluralize(currentStreak, 'Day', 'Days')}
+            </span>
+          </div>
+        )}
+      </InfiniteCalendar>
 
       <InfinteScroller
         paginateFront={paginateTop}
