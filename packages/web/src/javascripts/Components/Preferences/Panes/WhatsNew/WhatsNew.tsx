@@ -42,7 +42,11 @@ const WhatsNew = ({ application }: { application: WebApplication }) => {
   }, [changelog, application])
 
   if (!changelog) {
-    return <div>Loading...</div>
+    return (
+      <div className="align-center flex h-full w-full items-center text-center">
+        <span className="w-full font-bold">Loading...</span>
+      </div>
+    )
   }
 
   return (
