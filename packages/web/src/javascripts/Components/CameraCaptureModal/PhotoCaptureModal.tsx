@@ -1,6 +1,7 @@
 import { FilesController } from '@/Controllers/FilesController'
 import { PhotoRecorder } from '@/Controllers/Moments/PhotoRecorder'
 import { classNames } from '@standardnotes/snjs'
+import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Button from '../Button/Button'
 import Dropdown from '../Dropdown/Dropdown'
@@ -62,7 +63,7 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
   const devicesAsDropdownItems = useMemo(() => {
     return recorder.devices
       ? recorder.devices.map((device) => ({
-          label: device.label || 'Camera',
+          label: device.label || `Camera (${device.deviceId.slice(0, 10)})`,
           value: device.deviceId,
         }))
       : []
@@ -102,18 +103,21 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
             </div>
           )}
         </div>
-        {recorder.devices && (
-          <div className="mt-2">
+        {recorder.devices && !capturedPhoto && (
+          <div className="mt-4">
             <label className="text-sm font-medium text-neutral">
               Device:
               <Dropdown
-                portal={false}
                 id={'photo-capture-device-dropdown'}
                 label={'Photo Capture Device'}
                 items={devicesAsDropdownItems}
                 value={recorder.selectedDevice.deviceId}
                 onChange={(value: string) => {
                   void recorder.setDevice(value)
+                }}
+                className={{
+                  wrapper: 'mt-1',
+                  popover: 'z-modal',
                 }}
               />
             </label>
@@ -162,4 +166,4 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
   )
 }
 
-export default PhotoCaptureModal
+export default observer(PhotoCaptureModal)
