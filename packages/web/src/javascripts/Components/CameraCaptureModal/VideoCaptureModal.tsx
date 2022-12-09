@@ -28,14 +28,9 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
 
   useEffect(() => {
     const init = async () => {
-      console.log('start init')
-
       await recorder.initialize()
 
-      console.log('inited recorded')
-
       if (previewRef.current) {
-        console.log('setting previewRef')
         recorder.video.style.position = ''
         recorder.video.style.display = ''
         recorder.video.style.height = '100%'
