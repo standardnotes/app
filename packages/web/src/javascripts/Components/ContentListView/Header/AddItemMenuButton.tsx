@@ -1,4 +1,5 @@
 import PhotoCaptureModal from '@/Components/CameraCaptureModal/PhotoCaptureModal'
+import VideoCaptureModal from '@/Components/CameraCaptureModal/VideoCaptureModal'
 import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
@@ -105,6 +106,14 @@ const AddItemMenuButton = ({
       </Popover>
       {captureType === 'photo' && (
         <PhotoCaptureModal
+          filesController={filesController}
+          close={() => {
+            setCaptureType(undefined)
+          }}
+        />
+      )}
+      {captureType === 'video' && (
+        <VideoCaptureModal
           filesController={filesController}
           close={() => {
             setCaptureType(undefined)

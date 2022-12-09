@@ -1,10 +1,9 @@
 import { FilesController } from '@/Controllers/FilesController'
-import { PhotoRecorder } from '@/Controllers/Moments/PhotoRecorder'
+import { VideoRecorder } from '@/Controllers/Moments/VideoRecorder'
 import { classNames } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import Button from '../Button/Button'
-import Dropdown from '../Dropdown/Dropdown'
 import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
 import ModalDialog from '../Shared/ModalDialog'
@@ -17,11 +16,12 @@ type Props = {
   close: () => void
 }
 
-const PhotoCaptureModal = ({ filesController, close }: Props) => {
+const VideoCaptureModal = ({ filesController, close }: Props) => {
   const [fileName, setFileName] = useState('')
-  const [recorder] = useState(() => new PhotoRecorder())
+  const [recorder, setRecorder] = useState(() => new VideoRecorder(fileName))
   const [isRecorderReady, setIsRecorderReady] = useState(false)
-  const [capturedPhoto, setCapturedPhoto] = useState<File>()
+  const [isRecording, setIsRecording] = useState(false)
+  const [capturedVideo, setCapturedVideo] = useState<File>()
 
   const fileNameInputRef = useRef<HTMLInputElement>(null)
   const previewRef = useRef<HTMLDivElement>(null)
@@ -44,40 +44,34 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
 
     return () => {
       if (recorder.video) {
-        recorder.finish()
+        void recorder.stop()
       }
     }
   }, [recorder])
 
-  const takePhoto = useCallback(async () => {
-    const file = await recorder.takePhoto(fileName)
-    setCapturedPhoto(file)
-  }, [fileName, recorder])
+  const startRecording = useCallback(async () => {
+    await recorder.startRecording()
+    setIsRecording(true)
+  }, [recorder])
 
-  const devicesAsDropdownItems = useMemo(() => {
-    return recorder.devices
-      ? recorder.devices.map((device) => ({
-          label: device.label || `Camera (${device.deviceId.slice(0, 10)})`,
-          value: device.deviceId,
-        }))
-      : []
-  }, [recorder.devices])
-
-  const savePhoto = useCallback(() => {
+  const saveVideo = useCallback(() => {
     if (!fileName) {
       fileNameInputRef.current?.focus()
       return
     }
-    if (!capturedPhoto) {
+    if (!capturedVideo) {
       return
     }
-    void filesController.uploadNewFile(capturedPhoto)
+    const namedFile = new File([capturedVideo], fileName, {
+      type: capturedVideo.type,
+    })
+    void filesController.uploadNewFile(namedFile)
     close()
-  }, [capturedPhoto, close, fileName, filesController])
+  }, [capturedVideo, close, fileName, filesController])
 
   return (
     <ModalDialog>
-      <ModalDialogLabel closeDialog={close}>Take a photo</ModalDialogLabel>
+      <ModalDialogLabel closeDialog={close}>Record a video</ModalDialogLabel>
       <ModalDialogDescription>
         <div className="mb-4 flex flex-col">
           <label className="text-sm font-medium text-neutral">
@@ -102,59 +96,56 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
               </div>
             </div>
           )}
-          <div className={classNames('mt-1 w-full', capturedPhoto && 'hidden')} ref={previewRef}></div>
-          {capturedPhoto && (
+          <div className={classNames('mt-1 w-full', capturedVideo && 'hidden')} ref={previewRef}></div>
+          {capturedVideo && (
             <div className="mt-1 w-full">
-              <img src={URL.createObjectURL(capturedPhoto)} alt="Captured photo" />
+              <video src={URL.createObjectURL(capturedVideo)} controls />
             </div>
           )}
         </div>
-        {recorder.devices && !capturedPhoto && (
-          <div className="mt-4">
-            <label className="text-sm font-medium text-neutral">
-              Device:
-              <Dropdown
-                id={'photo-capture-device-dropdown'}
-                label={'Photo Capture Device'}
-                items={devicesAsDropdownItems}
-                value={recorder.selectedDevice.deviceId}
-                onChange={(value: string) => {
-                  void recorder.setDevice(value)
-                }}
-                className={{
-                  wrapper: 'mt-1',
-                  popover: 'z-modal',
-                }}
-              />
-            </label>
-          </div>
-        )}
       </ModalDialogDescription>
       <ModalDialogButtons>
-        {!capturedPhoto && (
+        {!capturedVideo && !isRecording && (
           <Button
             primary
             colorStyle="danger"
             className="flex items-center gap-2"
             onClick={() => {
-              void takePhoto()
+              void startRecording()
             }}
           >
             <Icon type="camera" />
-            Take photo
+            Start recording
           </Button>
         )}
-        {capturedPhoto && (
+        {!capturedVideo && isRecording && (
+          <Button
+            primary
+            colorStyle="danger"
+            className="flex items-center gap-2"
+            onClick={async () => {
+              const capturedVideo = await recorder.stop()
+              setIsRecording(false)
+              setCapturedVideo(capturedVideo)
+            }}
+          >
+            <Icon type="camera" />
+            Stop recording
+          </Button>
+        )}
+        {capturedVideo && (
           <div className="flex items-center gap-2">
             <Button
               className="flex items-center gap-2"
               onClick={() => {
-                setCapturedPhoto(undefined)
+                setCapturedVideo(undefined)
+                setRecorder(new VideoRecorder(fileName))
+                setIsRecorderReady(false)
               }}
             >
               Retry
             </Button>
-            <Button primary className="flex items-center gap-2" onClick={savePhoto}>
+            <Button primary className="flex items-center gap-2" onClick={saveVideo}>
               <Icon type="download" />
               Save
             </Button>
@@ -165,4 +156,4 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
   )
 }
 
-export default observer(PhotoCaptureModal)
+export default observer(VideoCaptureModal)
