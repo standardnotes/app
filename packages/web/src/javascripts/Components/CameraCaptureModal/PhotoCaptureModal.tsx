@@ -50,10 +50,6 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
   }, [recorder])
 
   const takePhoto = useCallback(async () => {
-    if (!fileName) {
-      fileNameInputRef.current?.focus()
-      return
-    }
     if (recorder instanceof PhotoRecorder) {
       const file = await recorder.takePhoto(fileName)
       setCapturedPhoto(file)
@@ -68,6 +64,18 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
         }))
       : []
   }, [recorder.devices])
+
+  const savePhoto = useCallback(() => {
+    if (!fileName) {
+      fileNameInputRef.current?.focus()
+      return
+    }
+    if (!capturedPhoto) {
+      return
+    }
+    void filesController.uploadNewFile(capturedPhoto)
+    close()
+  }, [capturedPhoto, close, fileName, filesController])
 
   return (
     <ModalDialog>
@@ -148,14 +156,7 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
             >
               Retry
             </Button>
-            <Button
-              primary
-              className="flex items-center gap-2"
-              onClick={() => {
-                void filesController.uploadNewFile(capturedPhoto)
-                close()
-              }}
-            >
+            <Button primary className="flex items-center gap-2" onClick={savePhoto}>
               <Icon type="download" />
               Save
             </Button>
