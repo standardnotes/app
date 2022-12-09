@@ -2,7 +2,7 @@ import { FilesController } from '@/Controllers/FilesController'
 import { VideoRecorder } from '@/Controllers/Moments/VideoRecorder'
 import { classNames } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
@@ -28,9 +28,14 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
 
   useEffect(() => {
     const init = async () => {
+      console.log('start init')
+
       await recorder.initialize()
 
+      console.log('inited recorded')
+
       if (previewRef.current) {
+        console.log('setting previewRef')
         recorder.video.style.position = ''
         recorder.video.style.display = ''
         recorder.video.style.height = '100%'
@@ -69,6 +74,13 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
     close()
   }, [capturedVideo, close, fileName, filesController])
 
+  const capturedVideoObjectURL = useMemo(() => {
+    if (!capturedVideo) {
+      return
+    }
+    return URL.createObjectURL(capturedVideo)
+  }, [capturedVideo])
+
   return (
     <ModalDialog>
       <ModalDialogLabel closeDialog={close}>Record a video</ModalDialogLabel>
@@ -99,7 +111,7 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
           <div className={classNames('mt-1 w-full', capturedVideo && 'hidden')} ref={previewRef}></div>
           {capturedVideo && (
             <div className="mt-1 w-full">
-              <video src={URL.createObjectURL(capturedVideo)} controls />
+              <video src={capturedVideoObjectURL} controls />
             </div>
           )}
         </div>
