@@ -6,7 +6,8 @@ export class PhotoRecorder {
   private height!: number
   private stream!: MediaStream
 
-  constructor(private fileName: string) {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  constructor() {}
 
   public static async isSupported(): Promise<boolean> {
     const devices = await navigator.mediaDevices.enumerateDevices()
@@ -21,6 +22,7 @@ export class PhotoRecorder {
     this.video.playsInline = true
     this.video.style.position = 'absolute'
     this.video.style.display = 'none'
+    this.video.oncontextmenu = (e) => e.preventDefault()
 
     this.canvas = document.createElement('canvas')
 
@@ -39,7 +41,7 @@ export class PhotoRecorder {
     this.canvas.height = this.height
   }
 
-  public async takePhoto(): Promise<File | undefined> {
+  public async takePhoto(fileName: string): Promise<File | undefined> {
     const context = this.canvas.getContext('2d')
     context?.drawImage(this.video, 0, 0, this.width, this.height)
     const dataUrl = this.canvas.toDataURL('image/png')
@@ -52,7 +54,7 @@ export class PhotoRecorder {
 
     const res: Response = await fetch(dataUrl)
     const blob: Blob = await res.blob()
-    const file = new File([blob], this.fileName, { type: 'image/png' })
+    const file = new File([blob], fileName, { type: 'image/png' })
     return file
   }
 

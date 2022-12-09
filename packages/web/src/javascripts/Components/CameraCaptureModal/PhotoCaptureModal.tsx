@@ -1,0 +1,138 @@
+import { FilesController } from '@/Controllers/FilesController'
+import { PhotoRecorder } from '@/Controllers/Moments/PhotoRecorder'
+import { classNames } from '@standardnotes/snjs'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import Button from '../Button/Button'
+import Icon from '../Icon/Icon'
+import DecoratedInput from '../Input/DecoratedInput'
+import ModalDialog from '../Shared/ModalDialog'
+import ModalDialogButtons from '../Shared/ModalDialogButtons'
+import ModalDialogDescription from '../Shared/ModalDialogDescription'
+import ModalDialogLabel from '../Shared/ModalDialogLabel'
+
+type Props = {
+  filesController: FilesController
+  close: () => void
+}
+
+const PhotoCaptureModal = ({ filesController, close }: Props) => {
+  const [fileName, setFileName] = useState('')
+  const [recorder] = useState(() => new PhotoRecorder())
+  const [isRecorderReady, setIsRecorderReady] = useState(false)
+  const [capturedPhoto, setCapturedPhoto] = useState<File>()
+
+  const fileNameInputRef = useRef<HTMLInputElement>(null)
+  const previewRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const init = async () => {
+      await recorder.initialize()
+
+      if (previewRef.current) {
+        recorder.video.style.position = ''
+        recorder.video.style.display = ''
+        recorder.video.style.height = '100%'
+        previewRef.current.append(recorder.video)
+      }
+
+      setIsRecorderReady(true)
+    }
+
+    void init()
+
+    return () => {
+      if (recorder.video) {
+        recorder.finish()
+      }
+    }
+  }, [recorder])
+
+  const takePhoto = useCallback(async () => {
+    if (!fileName) {
+      fileNameInputRef.current?.focus()
+      return
+    }
+    if (recorder instanceof PhotoRecorder) {
+      const file = await recorder.takePhoto(fileName)
+      setCapturedPhoto(file)
+    }
+  }, [fileName, recorder])
+
+  return (
+    <ModalDialog>
+      <ModalDialogLabel closeDialog={close}>Take a photo</ModalDialogLabel>
+      <ModalDialogDescription>
+        <div className="mb-4 flex flex-col">
+          <label className="text-sm font-medium text-neutral">
+            File name:
+            <DecoratedInput
+              className={{
+                container: 'mt-1',
+              }}
+              value={fileName}
+              onChange={(fileName) => setFileName(fileName)}
+              ref={fileNameInputRef}
+            />
+          </label>
+        </div>
+        <div className="mt-2">
+          <div className="text-sm font-medium text-neutral">Preview:</div>
+          {!isRecorderReady && (
+            <div className="mt-1 w-full">
+              <div className="flex h-64 w-full items-center justify-center gap-2 rounded-md bg-contrast text-base">
+                <Icon type="camera" className="text-neutral-300" />
+                Initializing...
+              </div>
+            </div>
+          )}
+          <div className={classNames('mt-1 w-full', capturedPhoto && 'hidden')} ref={previewRef}></div>
+          {capturedPhoto && (
+            <div className="mt-1 w-full">
+              <img src={URL.createObjectURL(capturedPhoto)} alt="Captured photo" />
+            </div>
+          )}
+        </div>
+      </ModalDialogDescription>
+      <ModalDialogButtons>
+        {!capturedPhoto && (
+          <Button
+            primary
+            colorStyle="danger"
+            className="flex items-center gap-2"
+            onClick={() => {
+              void takePhoto()
+            }}
+          >
+            <Icon type="camera" />
+            Take photo
+          </Button>
+        )}
+        {capturedPhoto && (
+          <div className="flex items-center gap-2">
+            <Button
+              className="flex items-center gap-2"
+              onClick={() => {
+                setCapturedPhoto(undefined)
+              }}
+            >
+              Retry
+            </Button>
+            <Button
+              primary
+              className="flex items-center gap-2"
+              onClick={() => {
+                void filesController.uploadNewFile(capturedPhoto)
+                close()
+              }}
+            >
+              <Icon type="download" />
+              Save
+            </Button>
+          </div>
+        )}
+      </ModalDialogButtons>
+    </ModalDialog>
+  )
+}
+
+export default PhotoCaptureModal

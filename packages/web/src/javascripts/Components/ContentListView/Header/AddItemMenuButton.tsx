@@ -1,11 +1,11 @@
-import CameraCaptureModal from '@/Components/CameraCaptureModal/CameraCaptureModal'
+import PhotoCaptureModal from '@/Components/CameraCaptureModal/PhotoCaptureModal'
 import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import Popover from '@/Components/Popover/Popover'
 import { FilesController } from '@/Controllers/FilesController'
 import { PhotoRecorder } from '@/Controllers/Moments/PhotoRecorder'
-import { classNames, sleep } from '@standardnotes/snjs'
+import { classNames } from '@standardnotes/snjs'
 import { useEffect, useRef, useState } from 'react'
 
 type Props = {
@@ -28,7 +28,6 @@ const AddItemMenuButton = ({
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [deviceHasCamera, setDeviceHasCamera] = useState(false)
   const [showCameraCaptureModal, setCameraCaptureModal] = useState(false)
-  const [cameraCaptureType, setCameraCaptureType] = useState<'photo' | 'video'>('photo')
 
   useEffect(() => {
     const setCameraSupport = async () => {
@@ -86,8 +85,6 @@ const AddItemMenuButton = ({
           </MenuItem>
           <MenuItem
             onClick={async () => {
-              setCameraCaptureType('photo')
-              await sleep(100)
               setCameraCaptureModal(true)
               setIsMenuOpen(false)
             }}
@@ -97,10 +94,8 @@ const AddItemMenuButton = ({
           </MenuItem>
           <MenuItem
             onClick={async () => {
-              setCameraCaptureType('video')
-              await sleep(100)
-              setCameraCaptureModal(true)
-              setIsMenuOpen(false)
+              // setCameraCaptureModal(true)
+              // setIsMenuOpen(false)
             }}
           >
             <Icon type="camera" className="mr-2" />
@@ -109,9 +104,8 @@ const AddItemMenuButton = ({
         </Menu>
       </Popover>
       {showCameraCaptureModal && (
-        <CameraCaptureModal
+        <PhotoCaptureModal
           filesController={filesController}
-          type={cameraCaptureType}
           close={() => {
             setCameraCaptureModal(false)
           }}
