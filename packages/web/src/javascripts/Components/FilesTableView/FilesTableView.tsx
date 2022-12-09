@@ -5,11 +5,17 @@ import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { ContentType, FileItem, SortableItem, PrefKey, ApplicationEvent } from '@standardnotes/snjs'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
 import Popover from '../Popover/Popover'
-import Table, { clickableRowModifier, createTable, rowContextMenuModifier, rowStyleModifier } from '../Table/Table'
+import Table, {
+  clickableRowModifier,
+  rowContextMenuModifier,
+  TableColumn,
+  TableRowModifier,
+  useTable,
+} from '../Table/Table'
 
 type Props = {
   application: WebApplication
@@ -47,27 +53,8 @@ const FilesTableView = ({ application, filesController }: Props) => {
 
   const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | undefined>(undefined)
 
-  const table = createTable({
-    data: files,
-    sortBy,
-    sortReversed,
-    onSortChange,
-    rowModifiers: [
-      rowStyleModifier('underline'),
-      clickableRowModifier((file) => {
-        void filesController.handleFileAction({
-          type: PopoverFileItemActionType.PreviewFile,
-          payload: {
-            file,
-            otherFiles: [],
-          },
-        })
-      }),
-      rowContextMenuModifier((posX, posY, _file) => {
-        setContextMenuPosition({ x: posX, y: posY })
-      }),
-    ],
-    columns: [
+  const columnDefs: TableColumn<FileItem>[] = useMemo(
+    () => [
       {
         name: 'Name',
         key: 'title',
@@ -107,6 +94,34 @@ const FilesTableView = ({ application, filesController }: Props) => {
         },
       },
     ],
+    [],
+  )
+
+  const rowModifiers: TableRowModifier<FileItem>[] = useMemo(
+    () => [
+      clickableRowModifier((file) => {
+        void filesController.handleFileAction({
+          type: PopoverFileItemActionType.PreviewFile,
+          payload: {
+            file,
+            otherFiles: [],
+          },
+        })
+      }),
+      rowContextMenuModifier((posX, posY, _file) => {
+        setContextMenuPosition({ x: posX, y: posY })
+      }),
+    ],
+    [filesController],
+  )
+
+  const table = useTable({
+    data: files,
+    sortBy,
+    sortReversed,
+    onSortChange,
+    rowModifiers,
+    columns: columnDefs,
   })
 
   return (

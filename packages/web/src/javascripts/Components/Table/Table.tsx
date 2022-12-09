@@ -1,10 +1,10 @@
 import { classNames, SortableItem } from '@standardnotes/snjs'
-import { ComponentPropsWithoutRef, ReactNode } from 'react'
+import { ComponentPropsWithoutRef, ReactNode, useMemo } from 'react'
 import Icon from '../Icon/Icon'
 
 type SortBy = keyof SortableItem
 
-type Column<Data> = {
+export type TableColumn<Data> = {
   name: string
   key: keyof Data
   sortBy?: SortBy
@@ -25,12 +25,12 @@ type TableSortOptions =
 
 type RowProps = ComponentPropsWithoutRef<'tr'>
 
-type RowModifier<Data> = (data: Data, existingProps: RowProps) => RowProps
+export type TableRowModifier<Data> = (data: Data, existingProps: RowProps) => RowProps
 
 type CreateTableOptions<Data> = {
   data: Data[]
-  columns: Column<Data>[]
-  rowModifiers?: RowModifier<Data>[]
+  columns: TableColumn<Data>[]
+  rowModifiers?: TableRowModifier<Data>[]
 } & TableSortOptions
 
 type TableState<Data> = {
@@ -48,13 +48,13 @@ type TableState<Data> = {
   }[]
 }
 
-export function rowStyleModifier<Data>(className: string): RowModifier<Data> {
+export function rowStyleModifier<Data>(className: string): TableRowModifier<Data> {
   return (_data, existingProps) => ({
     className: existingProps.className ? classNames(existingProps.className, className) : className,
   })
 }
 
-export function clickableRowModifier<Data>(onClick: (data: Data) => void): RowModifier<Data> {
+export function clickableRowModifier<Data>(onClick: (data: Data) => void): TableRowModifier<Data> {
   const className = 'cursor-pointer hover:bg-info-backdrop'
   return (data: Data, existingProps: RowProps) => ({
     className: existingProps.className ? classNames(existingProps.className, className) : className,
@@ -64,7 +64,7 @@ export function clickableRowModifier<Data>(onClick: (data: Data) => void): RowMo
 
 export function rowContextMenuModifier<Data>(
   onContextMenu: (posX: number, posY: number, data: Data) => void,
-): RowModifier<Data> {
+): TableRowModifier<Data> {
   return (data: Data) => ({
     onContextMenu: (event) => {
       event.preventDefault()
@@ -73,40 +73,60 @@ export function rowContextMenuModifier<Data>(
   })
 }
 
-export function createTable<Data>(options: CreateTableOptions<Data>): TableState<Data> {
-  const headers = options.columns.map((column) => {
-    return {
-      name: column.name,
-      key: column.key,
-      isSorting: options.sortBy && options.sortBy === column.sortBy,
-      sortBy: column.sortBy,
-      sortReversed: options.sortReversed,
-      onSortChange: () => {
-        if (!options.onSortChange || !column.sortBy) {
-          return
+export function useTable<Data>({
+  data,
+  columns,
+  sortBy,
+  sortReversed,
+  onSortChange,
+  rowModifiers,
+}: CreateTableOptions<Data>): TableState<Data> {
+  const headers = useMemo(
+    () =>
+      columns.map((column) => {
+        return {
+          name: column.name,
+          key: column.key,
+          isSorting: sortBy && sortBy === column.sortBy,
+          sortBy: column.sortBy,
+          sortReversed: sortReversed,
+          onSortChange: () => {
+            if (!onSortChange || !column.sortBy) {
+              return
+            }
+            onSortChange(column.sortBy, sortBy === column.sortBy ? !sortReversed : false)
+          },
         }
-        options.onSortChange(column.sortBy, options.sortBy === column.sortBy ? !options.sortReversed : false)
-      },
-    }
-  })
+      }),
+    [columns, onSortChange, sortBy, sortReversed],
+  )
 
-  const rows = options.data.map((data) => {
-    const cells = options.columns.map((column) => {
-      return column.cell(data)
-    })
-    const modifiedProps = options.rowModifiers?.reduce((props, modifier) => {
-      return { ...props, ...modifier(data, props) }
-    }, {})
-    return {
-      cells,
-      modifiedProps,
-    }
-  })
+  const rows = useMemo(
+    () =>
+      data.map((data) => {
+        const cells = columns.map((column) => {
+          return column.cell(data)
+        })
+        const modifiedProps = rowModifiers?.reduce((props, modifier) => {
+          return { ...props, ...modifier(data, props) }
+        }, {})
+        return {
+          cells,
+          modifiedProps,
+        }
+      }),
+    [columns, data, rowModifiers],
+  )
 
-  return {
-    headers,
-    rows,
-  }
+  const table = useMemo(
+    () => ({
+      headers,
+      rows,
+    }),
+    [headers, rows],
+  )
+
+  return table
 }
 
 function Table<Data>({ table }: { table: TableState<Data> }) {
