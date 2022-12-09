@@ -27,7 +27,7 @@ const AddItemMenuButton = ({
 
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [deviceHasCamera, setDeviceHasCamera] = useState(false)
-  const [showCameraCaptureModal, setCameraCaptureModal] = useState(false)
+  const [captureType, setCaptureType] = useState<'photo' | 'video'>()
 
   useEffect(() => {
     const setCameraSupport = async () => {
@@ -85,7 +85,7 @@ const AddItemMenuButton = ({
           </MenuItem>
           <MenuItem
             onClick={async () => {
-              setCameraCaptureModal(true)
+              setCaptureType('photo')
               setIsMenuOpen(false)
             }}
           >
@@ -94,8 +94,8 @@ const AddItemMenuButton = ({
           </MenuItem>
           <MenuItem
             onClick={async () => {
-              // setCameraCaptureModal(true)
-              // setIsMenuOpen(false)
+              setCaptureType('video')
+              setIsMenuOpen(false)
             }}
           >
             <Icon type="camera" className="mr-2" />
@@ -103,11 +103,11 @@ const AddItemMenuButton = ({
           </MenuItem>
         </Menu>
       </Popover>
-      {showCameraCaptureModal && (
+      {captureType === 'photo' && (
         <PhotoCaptureModal
           filesController={filesController}
           close={() => {
-            setCameraCaptureModal(false)
+            setCaptureType(undefined)
           }}
         />
       )}

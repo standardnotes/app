@@ -1,5 +1,7 @@
 export class PhotoRecorder {
   public video!: HTMLVideoElement
+  public devices!: MediaDeviceInfo[]
+  public selectedDevice!: MediaDeviceInfo
 
   private canvas!: HTMLCanvasElement
   private width!: number
@@ -15,8 +17,27 @@ export class PhotoRecorder {
     return hasCamera
   }
 
+  public async setDevice(deviceId: string) {
+    this.selectedDevice = this.devices.find((device) => device.deviceId === deviceId) ?? this.devices[0]
+    this.stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        deviceId: this.selectedDevice.deviceId,
+      },
+      audio: false,
+    })
+    this.video.srcObject = this.stream
+  }
+
   public async initialize() {
-    this.stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+    this.devices = (await navigator.mediaDevices.enumerateDevices()).filter((device) => device.kind === 'videoinput')
+    this.selectedDevice = this.devices[0]
+
+    this.stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        deviceId: this.selectedDevice.deviceId,
+      },
+      audio: false,
+    })
 
     this.video = document.createElement('video')
     this.video.playsInline = true

@@ -1,8 +1,9 @@
 import { FilesController } from '@/Controllers/FilesController'
 import { PhotoRecorder } from '@/Controllers/Moments/PhotoRecorder'
 import { classNames } from '@standardnotes/snjs'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Button from '../Button/Button'
+import Dropdown from '../Dropdown/Dropdown'
 import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
 import ModalDialog from '../Shared/ModalDialog'
@@ -58,6 +59,15 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
     }
   }, [fileName, recorder])
 
+  const devicesAsDropdownItems = useMemo(() => {
+    return recorder.devices
+      ? recorder.devices.map((device) => ({
+          label: device.label || 'Camera',
+          value: device.deviceId,
+        }))
+      : []
+  }, [recorder.devices])
+
   return (
     <ModalDialog>
       <ModalDialogLabel closeDialog={close}>Take a photo</ModalDialogLabel>
@@ -92,6 +102,23 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
             </div>
           )}
         </div>
+        {recorder.devices && (
+          <div className="mt-2">
+            <label className="text-sm font-medium text-neutral">
+              Device:
+              <Dropdown
+                portal={false}
+                id={'photo-capture-device-dropdown'}
+                label={'Photo Capture Device'}
+                items={devicesAsDropdownItems}
+                value={recorder.selectedDevice.deviceId}
+                onChange={(value: string) => {
+                  void recorder.setDevice(value)
+                }}
+              />
+            </label>
+          </div>
+        )}
       </ModalDialogDescription>
       <ModalDialogButtons>
         {!capturedPhoto && (
