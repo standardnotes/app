@@ -64,7 +64,9 @@ export class VideoRecorder {
 
   public async stop(): Promise<File> {
     this.video.pause()
-    this.recorder.stop()
+    if (this.recorder.state !== 'inactive') {
+      this.recorder.stop()
+    }
 
     this.video.parentElement?.removeChild(this.video)
     this.canvas.parentElement?.removeChild(this.canvas)

@@ -115,7 +115,6 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
         {!capturedVideo && !isRecording && (
           <Button
             primary
-            colorStyle="danger"
             className="flex items-center gap-2"
             onClick={() => {
               void startRecording()
