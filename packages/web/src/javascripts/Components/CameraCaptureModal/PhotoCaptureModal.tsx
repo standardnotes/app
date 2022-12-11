@@ -19,7 +19,7 @@ type Props = {
 
 const PhotoCaptureModal = ({ filesController, close }: Props) => {
   const [fileName, setFileName] = useState('')
-  const [recorder] = useState(() => new PhotoRecorder())
+  const [recorder, setRecorder] = useState<PhotoRecorder | undefined>(() => new PhotoRecorder())
   const [isRecorderReady, setIsRecorderReady] = useState(false)
   const [capturedPhoto, setCapturedPhoto] = useState<File>()
 
@@ -27,6 +27,12 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
   const previewRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    if (!recorder) {
+      return
+    }
+
+    setIsRecorderReady(false)
+
     const init = async () => {
       await recorder.initialize()
 
@@ -50,18 +56,23 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
   }, [recorder])
 
   const takePhoto = useCallback(async () => {
+    if (!recorder) {
+      return
+    }
+
     const file = await recorder.takePhoto(fileName)
     setCapturedPhoto(file)
+    setRecorder(undefined)
   }, [fileName, recorder])
 
   const devicesAsDropdownItems = useMemo(() => {
-    return recorder.devices
+    return recorder?.devices
       ? recorder.devices.map((device) => ({
           label: device.label || `Camera (${device.deviceId.slice(0, 10)})`,
           value: device.deviceId,
         }))
       : []
-  }, [recorder.devices])
+  }, [recorder?.devices])
 
   const savePhoto = useCallback(() => {
     if (!fileName) {
@@ -109,7 +120,7 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
             </div>
           )}
         </div>
-        {recorder.devices && !capturedPhoto && (
+        {recorder && devicesAsDropdownItems.length > 1 && !capturedPhoto && (
           <div className="mt-4">
             <label className="text-sm font-medium text-neutral">
               Device:
@@ -150,13 +161,14 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
               className="flex items-center gap-2"
               onClick={() => {
                 setCapturedPhoto(undefined)
+                setRecorder(new PhotoRecorder())
               }}
             >
               Retry
             </Button>
             <Button primary className="flex items-center gap-2" onClick={savePhoto}>
-              <Icon type="download" />
-              Save
+              <Icon type="upload" />
+              Upload
             </Button>
           </div>
         )}

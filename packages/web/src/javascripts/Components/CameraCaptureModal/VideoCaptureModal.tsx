@@ -153,8 +153,8 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
               Retry
             </Button>
             <Button primary className="flex items-center gap-2" onClick={saveVideo}>
-              <Icon type="download" />
-              Save
+              <Icon type="upload" />
+              Upload
             </Button>
           </div>
         )}

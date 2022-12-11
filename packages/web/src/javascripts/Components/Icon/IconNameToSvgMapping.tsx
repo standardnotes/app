@@ -107,6 +107,7 @@ export const IconNameToSvgMapping = {
   tune: icons.TuneIcon,
   unarchive: icons.UnarchiveIcon,
   unpin: icons.UnpinIcon,
+  upload: icons.UploadIcon,
   user: icons.UserIcon,
   view: icons.ViewIcon,
   warning: icons.WarningIcon,

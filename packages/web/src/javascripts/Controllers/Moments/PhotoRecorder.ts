@@ -1,5 +1,3 @@
-import { makeObservable, observable } from 'mobx'
-
 export class PhotoRecorder {
   public video!: HTMLVideoElement
   public devices!: MediaDeviceInfo[]
@@ -36,9 +34,6 @@ export class PhotoRecorder {
   public async initialize() {
     this.devices = (await navigator.mediaDevices.enumerateDevices()).filter((device) => device.kind === 'videoinput')
     this.selectedDevice = this.devices[0]
-    makeObservable(this, {
-      selectedDevice: observable,
-    })
 
     this.stream = await navigator.mediaDevices.getUserMedia({
       video: {
