@@ -45,10 +45,11 @@ type CreateTableOptions<Data> = {
 } & TableSortOptions &
   TableSelectionOptions
 
-type TableRow = {
+type TableRow<Data> = {
   id: string
   cells: ReactNode[]
   isSelected: boolean
+  rowData: Data
 }
 
 type Table<Data> = {
@@ -60,8 +61,9 @@ type Table<Data> = {
     sortReversed: boolean | undefined
     onSortChange: () => void
   }[]
-  rows: TableRow[]
+  rows: TableRow<Data>[]
   handleRowClick: (id: string) => MouseEventHandler<HTMLTableRowElement>
+  handleRowDoubleClick: (id: string) => MouseEventHandler<HTMLTableRowElement>
   canSelectRows: boolean
 }
 
@@ -76,6 +78,7 @@ export function useTable<Data>({
   enableMultipleRowSelection,
   selectedRowIds,
   onRowSelectionChange,
+  onRowDoubleClick,
 }: CreateTableOptions<Data>): Table<Data> {
   const [selectedRows, setSelectedRows] = useState<string[]>(selectedRowIds || [])
 
@@ -128,20 +131,37 @@ export function useTable<Data>({
     [columns, onSortChange, sortBy, sortReversed],
   )
 
-  const rows = useMemo(
+  const rows: TableRow<Data>[] = useMemo(
     () =>
-      data.map((data, index) => {
+      data.map((rowData, index) => {
         const cells = columns.map((column) => {
-          return column.cell(data)
+          return column.cell(rowData)
         })
-        const id = getRowId ? getRowId(data) : index.toString()
+        const id = getRowId ? getRowId(rowData) : index.toString()
         return {
           id,
           isSelected: enableRowSelection ? selectedRows.includes(id) : false,
           cells,
+          rowData,
         }
       }),
     [columns, data, enableRowSelection, getRowId, selectedRows],
+  )
+
+  const handleRowDoubleClick = useCallback(
+    (id: string) => {
+      const handler: MouseEventHandler<HTMLTableRowElement> = () => {
+        if (!onRowDoubleClick) {
+          return
+        }
+        const rowData = rows.find((row) => row.id === id)?.rowData
+        if (rowData) {
+          onRowDoubleClick(rowData)
+        }
+      }
+      return handler
+    },
+    [onRowDoubleClick, rows],
   )
 
   const table: Table<Data> = useMemo(
@@ -149,9 +169,10 @@ export function useTable<Data>({
       headers,
       rows,
       handleRowClick,
+      handleRowDoubleClick,
       canSelectRows: enableRowSelection || false,
     }),
-    [enableRowSelection, handleRowClick, headers, rows],
+    [enableRowSelection, handleRowClick, handleRowDoubleClick, headers, rows],
   )
 
   return table
@@ -198,6 +219,7 @@ function Table<Data>({ table }: { table: Table<Data> }) {
                   table.canSelectRows && 'cursor-pointer hover:bg-info-backdrop',
                 )}
                 onClick={table.handleRowClick(row.id)}
+                onDoubleClick={table.handleRowDoubleClick(row.id)}
               >
                 {row.cells.map((cell, index) => {
                   return (

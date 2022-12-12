@@ -1,5 +1,5 @@
 import { FunctionComponent, useCallback, useMemo } from 'react'
-import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
+import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import Icon from '@/Components/Icon/Icon'
 import { observer } from 'mobx-react-lite'
 import { FilesController } from '@/Controllers/FilesController'
@@ -46,7 +46,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
   const onDetach = useCallback(() => {
     const file = selectedFiles[0]
     void handleFileAction({
-      type: PopoverFileItemActionType.DetachFileToNote,
+      type: FileItemActionType.DetachFileToNote,
       payload: { file },
     })
     closeMenu()
@@ -55,7 +55,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
   const onAttach = useCallback(() => {
     const file = selectedFiles[0]
     void handleFileAction({
-      type: PopoverFileItemActionType.AttachFileToNote,
+      type: FileItemActionType.AttachFileToNote,
       payload: { file },
     })
     closeMenu()

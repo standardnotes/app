@@ -6,6 +6,7 @@ import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { ContentType, FileItem, SortableItem, PrefKey, ApplicationEvent } from '@standardnotes/snjs'
 import { useState, useEffect, useCallback, useMemo } from 'react'
+import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
 import Popover from '../Popover/Popover'
 import Table, { TableColumn, useTable } from '../Table/Table'
@@ -91,6 +92,14 @@ const FilesTableView = ({ application, filesController }: Props) => {
     columns: columnDefs,
     enableRowSelection: true,
     enableMultipleRowSelection: true,
+    onRowDoubleClick(data) {
+      void filesController.handleFileAction({
+        type: FileItemActionType.PreviewFile,
+        payload: {
+          file: data,
+        },
+      })
+    },
   })
 
   return (

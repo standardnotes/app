@@ -1,6 +1,6 @@
 import { FileItem } from '@standardnotes/snjs'
 
-export enum PopoverFileItemActionType {
+export enum FileItemActionType {
   AttachFileToNote,
   DetachFileToNote,
   DeleteFile,
@@ -10,34 +10,32 @@ export enum PopoverFileItemActionType {
   PreviewFile,
 }
 
-export type PopoverFileItemAction =
+export type FileItemAction =
   | {
       type: Exclude<
-        PopoverFileItemActionType,
-        | PopoverFileItemActionType.RenameFile
-        | PopoverFileItemActionType.ToggleFileProtection
-        | PopoverFileItemActionType.PreviewFile
+        FileItemActionType,
+        FileItemActionType.RenameFile | FileItemActionType.ToggleFileProtection | FileItemActionType.PreviewFile
       >
       payload: {
         file: FileItem
       }
     }
   | {
-      type: PopoverFileItemActionType.ToggleFileProtection
+      type: FileItemActionType.ToggleFileProtection
       payload: {
         file: FileItem
       }
       callback: (isProtected: boolean) => void
     }
   | {
-      type: PopoverFileItemActionType.RenameFile
+      type: FileItemActionType.RenameFile
       payload: {
         file: FileItem
         name: string
       }
     }
   | {
-      type: PopoverFileItemActionType.PreviewFile
+      type: FileItemActionType.PreviewFile
       payload: {
         file: FileItem
         otherFiles?: FileItem[]

@@ -2,7 +2,7 @@ import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { FilesController } from '@/Controllers/FilesController'
 import { FileItem } from '@standardnotes/snjs'
 import { useState } from 'react'
-import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
+import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { FileContextMenuBackupOption } from '../FileContextMenu/FileContextMenuBackupOption'
 import Icon from '../Icon/Icon'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
@@ -24,7 +24,7 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
         className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         onClick={() => {
           void handleFileAction({
-            type: PopoverFileItemActionType.PreviewFile,
+            type: FileItemActionType.PreviewFile,
             payload: {
               file,
               otherFiles: [],
@@ -41,7 +41,7 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
         className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         onClick={() => {
           handleFileAction({
-            type: PopoverFileItemActionType.ToggleFileProtection,
+            type: FileItemActionType.ToggleFileProtection,
             payload: { file },
             callback: (isProtected: boolean) => {
               setIsFileProtected(isProtected)
@@ -60,7 +60,7 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
         className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         onClick={() => {
           handleFileAction({
-            type: PopoverFileItemActionType.DownloadFile,
+            type: FileItemActionType.DownloadFile,
             payload: { file },
           }).catch(console.error)
           closeMenu()
@@ -83,7 +83,7 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
         className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
         onClick={() => {
           handleFileAction({
-            type: PopoverFileItemActionType.DeleteFile,
+            type: FileItemActionType.DeleteFile,
             payload: { file },
           }).catch(console.error)
           closeMenu()

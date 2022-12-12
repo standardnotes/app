@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import { PopoverFileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
+import { FileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewController'
 import { AppPaneId } from '@/Components/Panes/AppPaneMetadata'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
@@ -209,7 +209,7 @@ export class LinkingController extends AbstractViewController {
       }
     } else if (item instanceof FileItem) {
       await this.filesController.handleFileAction({
-        type: PopoverFileItemActionType.PreviewFile,
+        type: FileItemActionType.PreviewFile,
         payload: {
           file: item,
           otherFiles: [],
