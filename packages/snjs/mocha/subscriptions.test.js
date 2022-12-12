@@ -2,8 +2,8 @@ import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('subscriptions', function () {
-  this.timeout(Factory.TwentySecondTimeout)
+describe.only('subscriptions', function () {
+  this.timeout(50_000)
 
   let application
   let context
@@ -47,6 +47,9 @@ describe('subscriptions', function () {
       payAmount: 59.00
     })
     await Factory.sleep(2)
+
+    await Factory.signOutAndBackIn(application, context.email, context.password)
+    await Factory.sleep(0.1)
   })
 
   it('should invite a user by email to a shared subscription', async () => {
@@ -59,17 +62,12 @@ describe('subscriptions', function () {
     expect(newlyCreatedInvite.status).to.equal('sent')
   })
 
-  it('should not invite a user by email if the limit of shared subscription is breached', async () => {
+  it.only('should not invite a user by email if the limit of shared subscription is breached', async () => {
     await subscriptionManager.inviteToSubscription('test1@test.te')
-    await Factory.sleep(0.2)
     await subscriptionManager.inviteToSubscription('test2@test.te')
-    await Factory.sleep(0.2)
     await subscriptionManager.inviteToSubscription('test3@test.te')
-    await Factory.sleep(0.2)
     await subscriptionManager.inviteToSubscription('test4@test.te')
-    await Factory.sleep(0.2)
     await subscriptionManager.inviteToSubscription('test5@test.te')
-    await Factory.sleep(0.2)
 
     let existingInvites = await subscriptionManager.listSubscriptionInvitations()
 

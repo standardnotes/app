@@ -128,6 +128,7 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
   }
 
   private setSession(session: Session, persist = true): void {
+    console.log('Setting session', session)
     this.httpService.setAuthorizationToken(session.authorizationValue)
 
     this.apiService.setSession(session, persist)
