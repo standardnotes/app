@@ -28,6 +28,7 @@ type CreateTableOptions<Data> = {
   data: Data[]
   columns: TableColumn<Data>[]
   rowModifiers?: TableRowModifier<Data>[]
+  getRowId?: (data: Data) => string
 } & TableSortOptions
 
 type Table<Data> = {
@@ -40,6 +41,7 @@ type Table<Data> = {
     onSortChange: () => void
   }[]
   rows: {
+    id: string
     modifiedProps?: TableRowProps
     cells: ReactNode[]
   }[]
@@ -52,6 +54,7 @@ export function useTable<Data>({
   sortReversed,
   onSortChange,
   rowModifiers,
+  getRowId,
 }: CreateTableOptions<Data>): Table<Data> {
   const headers = useMemo(
     () =>
@@ -75,7 +78,7 @@ export function useTable<Data>({
 
   const rows = useMemo(
     () =>
-      data.map((data) => {
+      data.map((data, index) => {
         const cells = columns.map((column) => {
           return column.cell(data)
         })
@@ -83,11 +86,12 @@ export function useTable<Data>({
           return { ...props, ...modifier(data, props) }
         }, {})
         return {
+          id: getRowId ? getRowId(data) : index.toString(),
           cells,
           modifiedProps,
         }
       }),
-    [columns, data, rowModifiers],
+    [columns, data, getRowId, rowModifiers],
   )
 
   const table = useMemo(
@@ -133,9 +137,9 @@ function Table<Data>({ table }: { table: Table<Data> }) {
           </tr>
         </thead>
         <tbody className="whitespace-nowrap">
-          {table.rows.map((row, index) => {
+          {table.rows.map((row) => {
             return (
-              <tr key={index} {...row.modifiedProps}>
+              <tr key={row.id} {...row.modifiedProps}>
                 {row.cells.map((cell, index) => {
                   return (
                     <td key={index} className="py-2 px-3">

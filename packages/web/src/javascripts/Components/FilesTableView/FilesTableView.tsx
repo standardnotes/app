@@ -100,12 +100,15 @@ const FilesTableView = ({ application, filesController }: Props) => {
     [filesController],
   )
 
+  const getRowId = useCallback((file: FileItem) => file.uuid, [])
+
   const table = useTable({
     data: files,
     sortBy,
     sortReversed,
     onSortChange,
     rowModifiers,
+    getRowId,
     columns: columnDefs,
   })
 
