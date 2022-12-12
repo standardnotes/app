@@ -1,6 +1,7 @@
 import { classNames, SortableItem } from '@standardnotes/snjs'
 import { ComponentPropsWithoutRef, ReactNode, useMemo } from 'react'
 import Icon from '../Icon/Icon'
+import { TableRowModifier } from './RowModifiers'
 
 type SortBy = keyof SortableItem
 
@@ -23,9 +24,7 @@ type TableSortOptions =
       onSortChange?: never
     }
 
-type RowProps = ComponentPropsWithoutRef<'tr'>
-
-export type TableRowModifier<Data> = (data: Data, existingProps: RowProps) => RowProps
+export type TableRowProps = ComponentPropsWithoutRef<'tr'>
 
 type CreateTableOptions<Data> = {
   data: Data[]
@@ -33,7 +32,7 @@ type CreateTableOptions<Data> = {
   rowModifiers?: TableRowModifier<Data>[]
 } & TableSortOptions
 
-type TableState<Data> = {
+type Table<Data> = {
   headers: {
     name: string
     key: keyof Data
@@ -43,34 +42,9 @@ type TableState<Data> = {
     onSortChange: () => void
   }[]
   rows: {
-    modifiedProps?: RowProps
+    modifiedProps?: TableRowProps
     cells: ReactNode[]
   }[]
-}
-
-export function rowStyleModifier<Data>(className: string): TableRowModifier<Data> {
-  return (_data, existingProps) => ({
-    className: existingProps.className ? classNames(existingProps.className, className) : className,
-  })
-}
-
-export function clickableRowModifier<Data>(onClick: (data: Data) => void): TableRowModifier<Data> {
-  const className = 'cursor-pointer hover:bg-info-backdrop'
-  return (data: Data, existingProps: RowProps) => ({
-    className: existingProps.className ? classNames(existingProps.className, className) : className,
-    onClick: () => onClick(data),
-  })
-}
-
-export function rowContextMenuModifier<Data>(
-  onContextMenu: (posX: number, posY: number, data: Data) => void,
-): TableRowModifier<Data> {
-  return (data: Data) => ({
-    onContextMenu: (event) => {
-      event.preventDefault()
-      onContextMenu(event.clientX, event.clientY, data)
-    },
-  })
 }
 
 export function useTable<Data>({
@@ -80,7 +54,7 @@ export function useTable<Data>({
   sortReversed,
   onSortChange,
   rowModifiers,
-}: CreateTableOptions<Data>): TableState<Data> {
+}: CreateTableOptions<Data>): Table<Data> {
   const headers = useMemo(
     () =>
       columns.map((column) => {
@@ -129,7 +103,7 @@ export function useTable<Data>({
   return table
 }
 
-function Table<Data>({ table }: { table: TableState<Data> }) {
+function Table<Data>({ table }: { table: Table<Data> }) {
   return (
     <div className="block min-h-0 overflow-auto">
       <table className="w-full">

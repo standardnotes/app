@@ -9,13 +9,8 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
 import Popover from '../Popover/Popover'
-import Table, {
-  clickableRowModifier,
-  rowContextMenuModifier,
-  TableColumn,
-  TableRowModifier,
-  useTable,
-} from '../Table/Table'
+import Table, { TableColumn, useTable } from '../Table/Table'
+import { TableRowModifier, clickableRowModifier, rowContextMenuModifier } from '../Table/RowModifiers'
 
 type Props = {
   application: WebApplication
