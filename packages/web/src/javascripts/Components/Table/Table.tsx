@@ -1,7 +1,6 @@
 import { classNames, SortableItem } from '@standardnotes/snjs'
-import { ReactNode, useMemo } from 'react'
+import { MouseEventHandler, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import Icon from '../Icon/Icon'
-import { TableRowModifier, TableRowProps } from './RowModifiers'
 
 type SortBy = keyof SortableItem
 
@@ -24,12 +23,33 @@ type TableSortOptions =
       onSortChange?: never
     }
 
+type TableSelectionOptions =
+  | {
+      enableRowSelection: boolean
+      enableMultipleRowSelection?: boolean
+      selectedRowIds?: string[]
+      onRowSelectionChange?: (rowIds: string[]) => void
+    }
+  | {
+      enableRowSelection?: never
+      enableMultipleRowSelection?: never
+      selectedRowIds?: never
+      onRowSelectionChange?: never
+    }
+
 type CreateTableOptions<Data> = {
   data: Data[]
   columns: TableColumn<Data>[]
-  rowModifiers?: TableRowModifier<Data>[]
   getRowId?: (data: Data) => string
-} & TableSortOptions
+  onRowDoubleClick?: (data: Data) => void
+} & TableSortOptions &
+  TableSelectionOptions
+
+type TableRow = {
+  id: string
+  cells: ReactNode[]
+  isSelected: boolean
+}
 
 type Table<Data> = {
   headers: {
@@ -40,11 +60,9 @@ type Table<Data> = {
     sortReversed: boolean | undefined
     onSortChange: () => void
   }[]
-  rows: {
-    id: string
-    modifiedProps?: TableRowProps
-    cells: ReactNode[]
-  }[]
+  rows: TableRow[]
+  handleRowClick: (id: string) => MouseEventHandler<HTMLTableRowElement>
+  canSelectRows: boolean
 }
 
 export function useTable<Data>({
@@ -53,9 +71,43 @@ export function useTable<Data>({
   sortBy,
   sortReversed,
   onSortChange,
-  rowModifiers,
   getRowId,
+  enableRowSelection,
+  enableMultipleRowSelection,
+  selectedRowIds,
+  onRowSelectionChange,
 }: CreateTableOptions<Data>): Table<Data> {
+  const [selectedRows, setSelectedRows] = useState<string[]>(selectedRowIds || [])
+
+  useEffect(() => {
+    if (selectedRowIds) {
+      setSelectedRows(selectedRowIds)
+    }
+  }, [selectedRowIds])
+
+  useEffect(() => {
+    if (onRowSelectionChange) {
+      onRowSelectionChange(selectedRows)
+    }
+  }, [selectedRows, onRowSelectionChange])
+
+  const handleRowClick = useCallback(
+    (id: string) => {
+      const handler: MouseEventHandler<HTMLTableRowElement> = (event) => {
+        if (!enableRowSelection) {
+          return
+        }
+        if (event.ctrlKey && enableMultipleRowSelection) {
+          setSelectedRows((prev) => [...prev, id])
+        } else {
+          setSelectedRows([id])
+        }
+      }
+      return handler
+    },
+    [enableMultipleRowSelection, enableRowSelection],
+  )
+
   const headers = useMemo(
     () =>
       columns.map((column) => {
@@ -82,24 +134,24 @@ export function useTable<Data>({
         const cells = columns.map((column) => {
           return column.cell(data)
         })
-        const modifiedProps = rowModifiers?.reduce((props, modifier) => {
-          return { ...props, ...modifier(data, props) }
-        }, {})
+        const id = getRowId ? getRowId(data) : index.toString()
         return {
-          id: getRowId ? getRowId(data) : index.toString(),
+          id,
+          isSelected: enableRowSelection ? selectedRows.includes(id) : false,
           cells,
-          modifiedProps,
         }
       }),
-    [columns, data, getRowId, rowModifiers],
+    [columns, data, enableRowSelection, getRowId, selectedRows],
   )
 
-  const table = useMemo(
+  const table: Table<Data> = useMemo(
     () => ({
       headers,
       rows,
+      handleRowClick,
+      canSelectRows: enableRowSelection || false,
     }),
-    [headers, rows],
+    [enableRowSelection, handleRowClick, headers, rows],
   )
 
   return table
@@ -139,7 +191,14 @@ function Table<Data>({ table }: { table: Table<Data> }) {
         <tbody className="whitespace-nowrap">
           {table.rows.map((row) => {
             return (
-              <tr key={row.id} {...row.modifiedProps}>
+              <tr
+                key={row.id}
+                className={classNames(
+                  row.isSelected && 'bg-info-backdrop',
+                  table.canSelectRows && 'cursor-pointer hover:bg-info-backdrop',
+                )}
+                onClick={table.handleRowClick(row.id)}
+              >
                 {row.cells.map((cell, index) => {
                   return (
                     <td key={index} className="py-2 px-3">

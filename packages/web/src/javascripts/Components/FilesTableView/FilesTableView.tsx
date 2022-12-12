@@ -6,11 +6,9 @@ import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { ContentType, FileItem, SortableItem, PrefKey, ApplicationEvent } from '@standardnotes/snjs'
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
 import Popover from '../Popover/Popover'
 import Table, { TableColumn, useTable } from '../Table/Table'
-import { TableRowModifier, clickableRowModifier, rowContextMenuModifier } from '../Table/RowModifiers'
 
 type Props = {
   application: WebApplication
@@ -82,24 +80,6 @@ const FilesTableView = ({ application, filesController }: Props) => {
     [],
   )
 
-  const rowModifiers: TableRowModifier<FileItem>[] = useMemo(
-    () => [
-      clickableRowModifier((file) => {
-        void filesController.handleFileAction({
-          type: PopoverFileItemActionType.PreviewFile,
-          payload: {
-            file,
-            otherFiles: [],
-          },
-        })
-      }),
-      rowContextMenuModifier((posX, posY, _file) => {
-        setContextMenuPosition({ x: posX, y: posY })
-      }),
-    ],
-    [filesController],
-  )
-
   const getRowId = useCallback((file: FileItem) => file.uuid, [])
 
   const table = useTable({
@@ -107,9 +87,10 @@ const FilesTableView = ({ application, filesController }: Props) => {
     sortBy,
     sortReversed,
     onSortChange,
-    rowModifiers,
     getRowId,
     columns: columnDefs,
+    enableRowSelection: true,
+    enableMultipleRowSelection: true,
   })
 
   return (
