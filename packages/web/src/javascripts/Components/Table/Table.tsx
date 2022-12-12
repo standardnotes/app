@@ -101,7 +101,7 @@ export function useTable<Data>({
           return
         }
         if (event.ctrlKey && enableMultipleRowSelection) {
-          setSelectedRows((prev) => [...prev, id])
+          setSelectedRows((prev) => (prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]))
         } else {
           setSelectedRows([id])
         }
@@ -216,7 +216,7 @@ function Table<Data>({ table }: { table: Table<Data> }) {
                 key={row.id}
                 className={classNames(
                   row.isSelected && 'bg-info-backdrop',
-                  table.canSelectRows && 'cursor-pointer hover:bg-info-backdrop',
+                  table.canSelectRows && 'cursor-pointer hover:bg-contrast',
                 )}
                 onClick={table.handleRowClick(row.id)}
                 onDoubleClick={table.handleRowDoubleClick(row.id)}
