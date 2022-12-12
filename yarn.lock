@@ -4241,18 +4241,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@newrelic/native-metrics@npm:^9.0.0":
-  version: 9.0.0
-  resolution: "@newrelic/native-metrics@npm:9.0.0"
-  dependencies:
-    https-proxy-agent: ^5.0.0
-    nan: ^2.16.0
-    node-gyp: latest
-    semver: ^5.5.1
-  checksum: 94e73055417a360f257c50af25a09378b038572feba630c96027f746243ccfb7fdf16f69ab9448983d41a1dc11c3ff6407094db208aa1751d972d7335676b74c
-  languageName: node
-  linkType: hard
-
 "@nicolo-ribaudo/eslint-scope-5-internals@npm:5.1.1-v1":
   version: 5.1.1-v1
   resolution: "@nicolo-ribaudo/eslint-scope-5-internals@npm:5.1.1-v1"
@@ -6023,13 +6011,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/settings@npm:^1.18.3":
-  version: 1.18.3
-  resolution: "@standardnotes/settings@npm:1.18.3"
+"@standardnotes/settings@npm:^1.18.4":
+  version: 1.18.4
+  resolution: "@standardnotes/settings@npm:1.18.4"
   dependencies:
-    "@newrelic/native-metrics": ^9.0.0
     reflect-metadata: ^0.1.13
-  checksum: f5668249b2728c7a002daab339da2225a05956dab5da23c1d102dcd207a5be839195ed5b99a6591d69350d7723a536c23a7492dd00d75b268132219e48432cb3
+  checksum: 73017d19517c5719a3611385b76a5a3273f03c570c42da79656d0df04cb539f6a5eeb7a5d7db30a8ffc7fd0ef4c801924ff27093f84b2c40ad1542b0397745ac
   languageName: node
   linkType: hard
 
@@ -6109,7 +6096,7 @@ __metadata:
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/security": ^1.7.0
     "@standardnotes/services": "workspace:*"
-    "@standardnotes/settings": ^1.18.3
+    "@standardnotes/settings": ^1.18.4
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/sncrypto-web": "workspace:*"
     "@standardnotes/utils": "workspace:*"
@@ -21310,7 +21297,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nan@npm:^2.12.1, nan@npm:^2.13.2, nan@npm:^2.14.0, nan@npm:^2.16.0, nan@npm:^2.17.0":
+"nan@npm:^2.12.1, nan@npm:^2.13.2, nan@npm:^2.14.0, nan@npm:^2.17.0":
   version: 2.17.0
   resolution: "nan@npm:2.17.0"
   dependencies:
@@ -26985,7 +26972,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:2 || 3 || 4 || 5, semver@npm:^5.4.1, semver@npm:^5.5.0, semver@npm:^5.5.1, semver@npm:^5.6.0":
+"semver@npm:2 || 3 || 4 || 5, semver@npm:^5.4.1, semver@npm:^5.5.0, semver@npm:^5.6.0":
   version: 5.7.1
   resolution: "semver@npm:5.7.1"
   bin:
