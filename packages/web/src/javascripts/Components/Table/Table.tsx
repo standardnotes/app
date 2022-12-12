@@ -164,8 +164,12 @@ function Table<Data>({ table }: { table: TableState<Data> }) {
           {table.rows.map((row, index) => {
             return (
               <tr key={index} {...row.modifiedProps}>
-                {row.cells.map((cell) => {
-                  return cell
+                {row.cells.map((cell, index) => {
+                  return (
+                    <td key={index} className="py-2 px-3">
+                      {cell}
+                    </td>
+                  )
                 })}
               </tr>
             )

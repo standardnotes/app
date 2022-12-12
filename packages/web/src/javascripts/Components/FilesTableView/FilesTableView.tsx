@@ -61,12 +61,10 @@ const FilesTableView = ({ application, filesController }: Props) => {
         sortBy: 'title',
         cell: (file) => {
           return (
-            <td key={file.title} className="py-2 px-3">
-              <div className="flex items-center gap-2">
-                {getFileIconComponent(getIconForFileType(file.mimeType), 'w-8 h-8 flex-shrink-0')}
-                {file.title}
-              </div>
-            </td>
+            <div className="flex items-center gap-2">
+              {getFileIconComponent(getIconForFileType(file.mimeType), 'w-8 h-8 flex-shrink-0')}
+              {file.title}
+            </div>
           )
         },
       },
@@ -75,22 +73,14 @@ const FilesTableView = ({ application, filesController }: Props) => {
         key: 'userModifiedDate',
         sortBy: 'userModifiedDate',
         cell: (file) => {
-          return (
-            <td className="px-3" key={file.userModifiedDate.toString()}>
-              {formatDateForContextMenu(file.userModifiedDate)}
-            </td>
-          )
+          return formatDateForContextMenu(file.userModifiedDate)
         },
       },
       {
         name: 'Size',
         key: 'decryptedSize',
         cell: (file) => {
-          return (
-            <td className="px-3" key={file.decryptedSize}>
-              {formatSizeToReadableString(file.decryptedSize)}
-            </td>
-          )
+          return formatSizeToReadableString(file.decryptedSize)
         },
       },
     ],
