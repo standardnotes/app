@@ -1,7 +1,7 @@
 import { classNames, SortableItem } from '@standardnotes/snjs'
-import { ComponentPropsWithoutRef, ReactNode, useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 import Icon from '../Icon/Icon'
-import { TableRowModifier } from './RowModifiers'
+import { TableRowModifier, TableRowProps } from './RowModifiers'
 
 type SortBy = keyof SortableItem
 
@@ -23,8 +23,6 @@ type TableSortOptions =
       sortReversed?: never
       onSortChange?: never
     }
-
-export type TableRowProps = ComponentPropsWithoutRef<'tr'>
 
 type CreateTableOptions<Data> = {
   data: Data[]

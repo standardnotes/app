@@ -1,5 +1,7 @@
 import { classNames } from '@standardnotes/snjs'
-import { TableRowProps } from './Table'
+import { ComponentPropsWithoutRef } from 'react'
+
+export type TableRowProps = ComponentPropsWithoutRef<'tr'>
 
 export type TableRowModifier<Data> = (data: Data, existingProps: TableRowProps) => TableRowProps
 
