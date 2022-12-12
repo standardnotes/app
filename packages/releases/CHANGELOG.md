@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.43](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.4.42...@standardnotes/releases@1.4.43) (2022-12-08)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.4.42](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.4.41...@standardnotes/releases@1.4.42) (2022-12-08)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.4.41](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.4.40...@standardnotes/releases@1.4.41) (2022-12-08)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.4.40](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.4.39...@standardnotes/releases@1.4.40) (2022-12-08)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.4.39](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.4.38...@standardnotes/releases@1.4.39) (2022-12-07)
+
+**Note:** Version bump only for package @standardnotes/releases
+
 ## [1.4.38](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.4.37...@standardnotes/releases@1.4.38) (2022-12-07)
 
 **Note:** Version bump only for package @standardnotes/releases

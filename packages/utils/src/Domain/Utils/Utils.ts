@@ -687,3 +687,7 @@ export function useBoolean(value: boolean | undefined, defaultValue: boolean): b
 export function spaceSeparatedStrings(...strings: string[]): string {
   return strings.join(' ')
 }
+
+export function pluralize(count: number, singular: string, plural: string): string {
+  return count === 1 ? singular : plural
+}

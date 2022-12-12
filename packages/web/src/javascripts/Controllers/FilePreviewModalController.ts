@@ -22,9 +22,11 @@ export class FilePreviewModalController {
     this.currentFile = currentFile
   }
 
-  activate = (currentFile: FileItem, otherFiles: FileItem[]) => {
+  activate = (currentFile: FileItem, otherFiles?: FileItem[]) => {
     this.currentFile = currentFile
-    this.otherFiles = otherFiles
+    if (otherFiles) {
+      this.otherFiles = otherFiles
+    }
     this.isOpen = true
   }
 

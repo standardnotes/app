@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.19.6](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.19.5...@standardnotes/ui-services@1.19.6) (2022-12-08)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.19.5](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.19.4...@standardnotes/ui-services@1.19.5) (2022-12-08)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.19.4](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.19.3...@standardnotes/ui-services@1.19.4) (2022-12-07)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
 ## [1.19.3](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.19.2...@standardnotes/ui-services@1.19.3) (2022-12-07)
 
 ### Bug Fixes

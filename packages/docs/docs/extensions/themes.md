@@ -90,7 +90,7 @@ _Note that font and font sizes do not apply to mobile; only desktop/web._
   --sn-stylekit-sans-serif-font: -apple-system, BlinkMacSystemFont, 'Segoe UI',
     'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
     'Helvetica Neue', sans-serif;
-    
+
   --sn-stylekit-grey-1:  #72767e;
   --sn-stylekit-grey-2:  #bbbec4;
   --sn-stylekit-grey-3:  #dfe1e4;
@@ -98,7 +98,7 @@ _Note that font and font sizes do not apply to mobile; only desktop/web._
   --sn-stylekit-grey-4-opacity-variant:  #bbbec43d;
   --sn-stylekit-grey-5:  #f4f5f7;
   --sn-stylekit-grey-6:  #e5e5e5;
-  
+
   --sn-stylekit-accessory-tint-color-1:  #086dd6;
   --sn-stylekit-accessory-tint-color-2:  #ea6595;
   --sn-stylekit-accessory-tint-color-3:  #ebad00;
@@ -106,6 +106,53 @@ _Note that font and font sizes do not apply to mobile; only desktop/web._
   --sn-stylekit-accessory-tint-color-5:  #1aa772;
   --sn-stylekit-accessory-tint-color-6:  #f28c52;
 }
+```
+
+### Optional Overrides
+
+```css
+  --modal-background-color: var(--sn-stylekit-background-color);
+
+  --editor-header-bar-background-color: var(--sn-stylekit-background-color);
+  --editor-background-color: var(--sn-stylekit-editor-background-color);
+  --editor-foreground-color: var(--sn-stylekit-editor-foreground-color);
+  --editor-title-bar-border-bottom-color: var(--sn-stylekit-border-color);
+  --editor-title-input-color: var(--sn-stylekit-editor-foreground-color);
+  --editor-pane-background-color: var(--sn-stylekit-background-color);
+  --editor-pane-editor-background-color: var(--sn-stylekit-editor-background-color);
+  --editor-pane-editor-foreground-color: var(--sn-stylekit-editor-foreground-color);
+  --editor-pane-component-stack-item-background-color: var(--sn-stylekit-background-color);
+
+  --text-selection-color: var(--sn-stylekit-info-contrast-color);
+  --text-selection-background-color: var(--sn-stylekit-info-color);
+
+  --note-preview-progress-color: var(--sn-stylekit-info-color);
+  --note-preview-progress-background-color: var(--sn-stylekit-passive-color-4-opacity-variant);
+
+  --note-preview-selected-progress-color: var(--sn-stylekit-secondary-background-color);
+  --note-preview-selected-progress-background-color: var(--sn-stylekit-passive-color-4-opacity-variant);
+
+  --items-column-background-color: var(--sn-stylekit-background-color);
+  --items-column-items-background-color: var(--sn-stylekit-background-color);
+  --items-column-border-left-color: var(--sn-stylekit-border-color);
+  --items-column-border-right-color: var(--sn-stylekit-border-color);
+  --items-column-search-background-color: var(--sn-stylekit-contrast-background-color);
+  --item-cell-selected-background-color: var(--sn-stylekit-contrast-background-color);
+  --item-cell-selected-border-left-color: var(--sn-stylekit-info-color);
+
+  --navigation-column-background-color: var(--sn-stylekit-secondary-background-color);
+  --navigation-section-title-color: var(--sn-stylekit-secondary-foreground-color);
+  --navigation-item-text-color: var(--sn-stylekit-secondary-foreground-color);
+  --navigation-item-count-color: var(--sn-stylekit-neutral-color);
+  --navigation-item-selected-background-color: rgb(253, 253, 253);
+
+  --preferences-navigation-icon-color: var(--sn-stylekit-neutral-color);
+  --preferences-navigation-selected-background-color: var(--sn-stylekit-info-backdrop-color);
+
+  --dropdown-menu-radio-button-inactive-color: var(--sn-stylekit-passive-color-1);
+
+  --panel-resizer-background-color: var(--sn-stylekit-secondary-contrast-background-color);
+  --link-element-color: var(--sn-stylekit-info-color);
 ```
 
 In order to get SN to display a dock icon for your theme (a circle in the lower right corner of the app that allows you to quickly toggle themes), add the following payload into the your ext.json file when [publishing your theme](/extensions/publishing):

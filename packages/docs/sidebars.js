@@ -14,11 +14,7 @@ module.exports = {
         ],
       },
       {
-        API: [
-          'specification/encryption',
-          'specification/sync',
-          'specification/auth',
-        ],
+        API: ['specification/encryption'],
       },
       {
         Extensions: [

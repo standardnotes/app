@@ -61,10 +61,11 @@ export const addToast = action(toastStore, 'addToast', (store: WritableAtom<Toas
 If you want to update an existing toast, use the \`updateToast()\` function instead.`)
   }
 
-  const toast = {
+  const toast: Toast = {
     ...options,
     id,
     dismissed: false,
+    pauseOnWindowBlur: options.pauseOnWindowBlur ?? true,
   }
 
   store.set([...existingToasts, toast])

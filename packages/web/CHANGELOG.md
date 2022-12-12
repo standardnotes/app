@@ -3,12 +3,46 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.125.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.124.0...@standardnotes/web@3.125.0) (2022-12-08)
+
+### Features
+
+* Added "Open" button to file upload success notification ([#2091](https://github.com/standardnotes/app/issues/2091)) ([220f626](https://github.com/standardnotes/app/commit/220f62665e6daa18020b410b893207eccdfd0b67))
+
+# [3.124.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.123.1...@standardnotes/web@3.124.0) (2022-12-08)
+
+### Features
+
+* Add current Writing Streak to Daily Notebooks ([#2093](https://github.com/standardnotes/app/issues/2093)) ([d149b50](https://github.com/standardnotes/app/commit/d149b500ee3f13f63a1f831e6e0ba29a53e3e416))
+
+## [3.123.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.123.0...@standardnotes/web@3.123.1) (2022-12-08)
+
+### Bug Fixes
+
+* Fixed issue where passcode lock setting was not visible on mobile ([d4af612](https://github.com/standardnotes/app/commit/d4af612fea6960a5233404682aeb1819754b9b8b))
+
+# [3.123.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.122.0...@standardnotes/web@3.123.0) (2022-12-08)
+
+### Bug Fixes
+
+* alignment of Loading text in What's New screen ([d360985](https://github.com/standardnotes/app/commit/d3609853c6c6121a5633d72a685723498099edba))
+
+### Features
+
+* Moments will now create a link with the current open note, so you can look back on what you were working on during a moment ([a7ac715](https://github.com/standardnotes/app/commit/a7ac715499fdf3f15a736f68af4bf5a78454742f))
+
+# [3.122.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.121.1...@standardnotes/web@3.122.0) (2022-12-07)
+
+### Features
+
+* add ability to convert selection in Super to bulleted or numbered list ([be4cc4e](https://github.com/standardnotes/app/commit/be4cc4e605100e0a86de214e548e9ed10e2568aa))
+
 ## [3.121.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.121.0...@standardnotes/web@3.121.1) (2022-12-07)
 
 ### Bug Fixes
 
-* Fixed issue about note UUID not being selectable in menu ([5a0c005](https://github.com/standardnotes/app/commit/5a0c005e8c0373e2f47fa613fc5bfec0e84cdb37))
-* Fixed workspace menu item rename issue ([45cdab6](https://github.com/standardnotes/app/commit/45cdab6f6c0416e0a01a66e4b4983ff0a52c1afc))
+* Fixed issue where note UUID was not selectable in context menu ([5a0c005](https://github.com/standardnotes/app/commit/5a0c005e8c0373e2f47fa613fc5bfec0e84cdb37))
+* Fixed issue where workspaces could not be renamed ([45cdab6](https://github.com/standardnotes/app/commit/45cdab6f6c0416e0a01a66e4b4983ff0a52c1afc))
 
 # [3.121.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.120.3...@standardnotes/web@3.121.0) (2022-12-07)
 

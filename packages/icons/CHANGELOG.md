@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.6.1...@standardnotes/icons@1.7.0) (2022-12-07)
+
+### Features
+
+* add ability to convert selection in Super to bulleted or numbered list ([be4cc4e](https://github.com/standardnotes/app/commit/be4cc4e605100e0a86de214e548e9ed10e2568aa))
+
 ## [1.6.1](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.6.0...@standardnotes/icons@1.6.1) (2022-11-28)
 
 ### Bug Fixes

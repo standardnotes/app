@@ -112,6 +112,7 @@ import LineWidthIcon from './ic-line-width.svg'
 import LinkIcon from './ic-link.svg'
 import LinkOffIcon from './ic-link-off.svg'
 import ListBulleted from './ic-list-bulleted.svg'
+import ListNumbered from './ic-list-numbered.svg'
 import ListedFilledIcon from './ic-listed-filled.svg'
 import ListedIcon from './ic-listed.svg'
 import LockFilledIcon from './ic-lock-filled.svg'
@@ -318,6 +319,7 @@ export {
   ListBulleted,
   ListedFilledIcon,
   ListedIcon,
+  ListNumbered,
   LockFilledIcon,
   LockIcon,
   MarkdownIcon,
