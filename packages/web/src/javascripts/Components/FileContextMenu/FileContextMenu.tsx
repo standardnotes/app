@@ -13,6 +13,7 @@ type Props = {
 
 const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, selectionController }) => {
   const { showFileContextMenu, setShowFileContextMenu, fileContextMenuLocation } = filesController
+  const { selectedFiles } = selectionController
 
   return (
     <Popover
@@ -25,7 +26,7 @@ const FileContextMenu: FunctionComponent<Props> = observer(({ filesController, s
       <Menu a11yLabel="File context menu" isOpen={showFileContextMenu}>
         <FileMenuOptions
           filesController={filesController}
-          selectionController={selectionController}
+          selectedFiles={selectedFiles}
           closeMenu={() => setShowFileContextMenu(false)}
           shouldShowRenameOption={false}
           shouldShowAttachOption={false}
