@@ -1,5 +1,6 @@
 import { FilesController } from '@/Controllers/FilesController'
 import { PhotoRecorder } from '@/Controllers/Moments/PhotoRecorder'
+import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 import { classNames } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -18,7 +19,7 @@ type Props = {
 }
 
 const PhotoCaptureModal = ({ filesController, close }: Props) => {
-  const [fileName, setFileName] = useState('')
+  const [fileName, setFileName] = useState(formatDateAndTimeForNote(new Date()))
   const [recorder, setRecorder] = useState<PhotoRecorder | undefined>(() => new PhotoRecorder())
   const [isRecorderReady, setIsRecorderReady] = useState(false)
   const [capturedPhoto, setCapturedPhoto] = useState<File>()
