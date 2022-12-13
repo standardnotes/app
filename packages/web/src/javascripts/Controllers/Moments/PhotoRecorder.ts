@@ -1,20 +1,52 @@
 export class PhotoRecorder {
   public video!: HTMLVideoElement
+  public devices!: MediaDeviceInfo[]
+  public selectedDevice!: MediaDeviceInfo
 
   private canvas!: HTMLCanvasElement
   private width!: number
   private height!: number
   private stream!: MediaStream
 
-  constructor(private fileName: string) {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  constructor() {}
+
+  public static async isSupported(): Promise<boolean> {
+    const devices = await navigator.mediaDevices.enumerateDevices()
+    const hasCamera = devices.some((device) => device.kind === 'videoinput')
+    return hasCamera
+  }
+
+  public async setDevice(deviceId: string) {
+    this.selectedDevice = this.devices.find((device) => device.deviceId === deviceId) ?? this.devices[0]
+    this.stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        deviceId: this.selectedDevice.deviceId,
+      },
+      audio: false,
+    })
+    this.video.srcObject = this.stream
+
+    await this.video.play()
+    await this.awaitVideoReady(this.video)
+  }
 
   public async initialize() {
-    this.stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+    this.devices = (await navigator.mediaDevices.enumerateDevices()).filter((device) => device.kind === 'videoinput')
+    this.selectedDevice = this.devices[0]
+
+    this.stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        deviceId: this.selectedDevice.deviceId,
+      },
+      audio: false,
+    })
 
     this.video = document.createElement('video')
     this.video.playsInline = true
     this.video.style.position = 'absolute'
     this.video.style.display = 'none'
+    this.video.oncontextmenu = (e) => e.preventDefault()
 
     this.canvas = document.createElement('canvas')
 
@@ -33,7 +65,7 @@ export class PhotoRecorder {
     this.canvas.height = this.height
   }
 
-  public async takePhoto(): Promise<File | undefined> {
+  public async takePhoto(fileName: string): Promise<File | undefined> {
     const context = this.canvas.getContext('2d')
     context?.drawImage(this.video, 0, 0, this.width, this.height)
     const dataUrl = this.canvas.toDataURL('image/png')
@@ -46,7 +78,7 @@ export class PhotoRecorder {
 
     const res: Response = await fetch(dataUrl)
     const blob: Blob = await res.blob()
-    const file = new File([blob], this.fileName, { type: 'image/png' })
+    const file = new File([blob], fileName, { type: 'image/png' })
     return file
   }
 
