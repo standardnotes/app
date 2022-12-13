@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.156.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.156.1...@standardnotes/snjs@2.156.2) (2022-12-13)
+
+### Bug Fixes
+
+* **snjs:** remove @newrelic/native-metrics by upgrading @standardnotes/settings ([7f41564](https://github.com/standardnotes/app/commit/7f415643283f418886a641deb7539f1e256e6a3d))
+
 ## [2.156.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.156.0...@standardnotes/snjs@2.156.1) (2022-12-08)
 
 **Note:** Version bump only for package @standardnotes/snjs
