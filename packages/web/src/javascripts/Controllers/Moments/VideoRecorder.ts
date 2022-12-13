@@ -13,6 +13,12 @@ export class VideoRecorder {
 
   constructor(private fileName: string) {}
 
+  public static async isSupported(): Promise<boolean> {
+    const devices = await navigator.mediaDevices.enumerateDevices()
+    const hasCamera = devices.some((device) => device.kind === 'videoinput')
+    return hasCamera
+  }
+
   public async initialize() {
     this.stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
     this.recorder = new MediaRecorder(this.stream)
@@ -58,7 +64,9 @@ export class VideoRecorder {
 
   public async stop(): Promise<File> {
     this.video.pause()
-    this.recorder.stop()
+    if (this.recorder.state !== 'inactive') {
+      this.recorder.stop()
+    }
 
     this.video.parentElement?.removeChild(this.video)
     this.canvas.parentElement?.removeChild(this.canvas)

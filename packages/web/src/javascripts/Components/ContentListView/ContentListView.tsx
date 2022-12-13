@@ -303,6 +303,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
                 isFilesSmartView={isFilesSmartView}
                 optionsSubtitle={optionsSubtitle}
                 selectedTag={selectedTag}
+                filesController={filesController}
               />
             )}
             <SearchBar itemListController={itemListController} searchOptionsController={searchOptionsController} />

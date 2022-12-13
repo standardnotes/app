@@ -1,5 +1,5 @@
 import { classNames } from '@standardnotes/utils'
-import { Fragment, FunctionComponent, ReactNode } from 'react'
+import { FunctionComponent, ReactNode } from 'react'
 
 type Props = {
   className?: string
@@ -9,16 +9,7 @@ type Props = {
 const ModalDialogButtons: FunctionComponent<Props> = ({ children, className }) => (
   <>
     <hr className="m-0 h-[1px] border-none bg-border" />
-    <div className={classNames('flex items-center justify-end px-4 py-4', className)}>
-      {children != undefined && Array.isArray(children)
-        ? children.map((child, idx, arr) => (
-            <Fragment key={idx}>
-              {child}
-              {idx < arr.length - 1 ? <div className="min-w-3" /> : undefined}
-            </Fragment>
-          ))
-        : children}
-    </div>
+    <div className={classNames('flex items-center justify-end gap-3 px-4 py-4', className)}>{children}</div>
   </>
 )
 

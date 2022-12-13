@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.126.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.125.0...@standardnotes/web@3.126.0) (2022-12-13)
+
+### Features
+
+* Ability to record videos and capture photos directly in app by selecting + in Files view ([#2095](https://github.com/standardnotes/app/issues/2095)) ([d4b63e4](https://github.com/standardnotes/app/commit/d4b63e4ea6e82ba17ebb02da3ca1cfc9ced92b57))
+
 # [3.125.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.124.0...@standardnotes/web@3.125.0) (2022-12-08)
 
 ### Features

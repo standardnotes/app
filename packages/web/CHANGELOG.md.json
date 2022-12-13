@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.126.0",
+      "title": "[3.126.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.125.0...@standardnotes/web@3.126.0) (2022-12-13)",
+      "date": null,
+      "body": "### Features\n\n* Ability to record videos and capture photos directly in app by selecting + in Files view ([#2095](https://github.com/standardnotes/app/issues/2095)) ([d4b63e4](https://github.com/standardnotes/app/commit/d4b63e4ea6e82ba17ebb02da3ca1cfc9ced92b57))",
+      "parsed": {
+        "_": [
+          "Ability to record videos and capture photos directly in app by selecting + in Files view (#2095) (d4b63e4)"
+        ],
+        "Features": [
+          "Ability to record videos and capture photos directly in app by selecting + in Files view (#2095) (d4b63e4)"
+        ]
+      }
+    },
+    {
       "version": "3.125.0",
       "title": "[3.125.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.124.0...@standardnotes/web@3.125.0) (2022-12-08)",
       "date": null,
