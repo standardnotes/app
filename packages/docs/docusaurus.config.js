@@ -162,7 +162,7 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/standardnotes/docs/edit/main/',
+          editUrl: 'https://github.com/standardnotes/app/blob/main/packages/docs/',
           routeBasePath: '/',
           remarkPlugins: [math],
           rehypePlugins: [katex],
