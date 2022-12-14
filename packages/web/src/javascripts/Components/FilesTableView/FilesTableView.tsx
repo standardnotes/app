@@ -12,6 +12,8 @@ import Popover from '../Popover/Popover'
 import Table from '../Table/Table'
 import { TableColumn } from '../Table/CommonTypes'
 import { useTable } from '../Table/useTable'
+import Menu from '../Menu/Menu'
+import FileMenuOptions from '../FileContextMenu/FileMenuOptions'
 
 type Props = {
   application: WebApplication
@@ -47,6 +49,7 @@ const FilesTableView = ({ application, filesController }: Props) => {
     [application],
   )
 
+  const [contextMenuFile, setContextMenuFile] = useState<FileItem | undefined>(undefined)
   const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | undefined>(undefined)
 
   const columnDefs: TableColumn<FileItem>[] = useMemo(
@@ -91,33 +94,47 @@ const FilesTableView = ({ application, filesController }: Props) => {
     columns: columnDefs,
     enableRowSelection: true,
     enableMultipleRowSelection: true,
-    onRowDoubleClick(data) {
+    onRowDoubleClick(file) {
       void filesController.handleFileAction({
         type: FileItemActionType.PreviewFile,
         payload: {
-          file: data,
+          file,
         },
       })
     },
-    onRowContextMenu(x, y) {
+    onRowContextMenu(x, y, file) {
       setContextMenuPosition({ x, y })
+      setContextMenuFile(file)
     },
   })
 
   return (
     <>
       <Table table={table} />
-      {contextMenuPosition && (
+      {contextMenuPosition && contextMenuFile && (
         <Popover
           open={true}
           anchorPoint={contextMenuPosition}
           togglePopover={() => {
             setContextMenuPosition(undefined)
+            setContextMenuFile(undefined)
           }}
           side="bottom"
           align="start"
+          className="py-2"
         >
-          <div className="py-2 px-3">Context menu</div>
+          <Menu a11yLabel="File context menu" isOpen={true}>
+            <FileMenuOptions
+              closeMenu={() => {
+                setContextMenuPosition(undefined)
+                setContextMenuFile(undefined)
+              }}
+              filesController={filesController}
+              shouldShowRenameOption={false}
+              shouldShowAttachOption={false}
+              selectedFiles={[contextMenuFile]}
+            />
+          </Menu>
         </Popover>
       )}
     </>
