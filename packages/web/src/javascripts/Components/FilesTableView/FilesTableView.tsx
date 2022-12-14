@@ -105,7 +105,17 @@ const FilesTableView = ({ application, filesController }: Props) => {
           return (
             <div className="flex items-center gap-3">
               {getFileIconComponent(getIconForFileType(file.mimeType), 'w-6 h-6 flex-shrink-0')}
-              <span className="text-sm">{file.title}</span>
+              <span className="text-sm font-medium">{file.title}</span>
+              {file.protected && (
+                <span className="flex items-center" title="File is protected">
+                  <Icon
+                    ariaLabel="File is protected"
+                    type="lock-filled"
+                    className="h-3.5 w-3.5 text-passive-1"
+                    size="custom"
+                  />
+                </span>
+              )}
             </div>
           )
         },
