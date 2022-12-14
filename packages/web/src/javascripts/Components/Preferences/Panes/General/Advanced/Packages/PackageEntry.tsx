@@ -70,6 +70,10 @@ const PackageEntry: FunctionComponent<PackageEntryProps> = ({ application, exten
 
       <div className="my-1" />
 
+      {isThirdParty && (
+        <div>Version: {extension.thirdPartyPackageInfo.version}</div>
+      )}
+
       {isThirdParty && localInstallable && (
         <UseHosted offlineOnly={offlineOnly} toggleOfflineOnly={toggleOfflineOnly} />
       )}
