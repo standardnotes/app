@@ -14,6 +14,7 @@ export type TableRow<Data> = {
   cells: ReactNode[]
   isSelected: boolean
   rowData: Data
+  rowActions?: ReactNode
 }
 
 export type TableHeader = {

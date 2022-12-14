@@ -5,7 +5,7 @@ import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { ContentType, FileItem, SortableItem, PrefKey, ApplicationEvent } from '@standardnotes/snjs'
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
 import Popover from '../Popover/Popover'
@@ -14,6 +14,49 @@ import { TableColumn } from '../Table/CommonTypes'
 import { useTable } from '../Table/useTable'
 import Menu from '../Menu/Menu'
 import FileMenuOptions from '../FileContextMenu/FileMenuOptions'
+import Icon from '../Icon/Icon'
+
+const ContextMenuCell = ({ file, filesController }: { file: FileItem; filesController: FilesController }) => {
+  const [contextMenuVisible, setContextMenuVisible] = useState(false)
+  const anchorElementRef = useRef<HTMLButtonElement>(null)
+
+  return (
+    <>
+      <button
+        ref={anchorElementRef}
+        onClick={(event) => {
+          event.preventDefault()
+          event.stopPropagation()
+          setContextMenuVisible((visible) => !visible)
+        }}
+      >
+        <Icon type="more" />
+      </button>
+      <Popover
+        open={contextMenuVisible}
+        anchorElement={anchorElementRef.current}
+        togglePopover={() => {
+          setContextMenuVisible(false)
+        }}
+        side="bottom"
+        align="start"
+        className="py-2"
+      >
+        <Menu a11yLabel="File context menu" isOpen={contextMenuVisible}>
+          <FileMenuOptions
+            closeMenu={() => {
+              setContextMenuVisible(false)
+            }}
+            filesController={filesController}
+            shouldShowRenameOption={false}
+            shouldShowAttachOption={false}
+            selectedFiles={[file]}
+          />
+        </Menu>
+      </Popover>
+    </>
+  )
+}
 
 type Props = {
   application: WebApplication
@@ -106,6 +149,7 @@ const FilesTableView = ({ application, filesController }: Props) => {
       setContextMenuPosition({ x, y })
       setContextMenuFile(file)
     },
+    rowActions: (file) => <ContextMenuCell file={file} filesController={filesController} />,
   })
 
   return (

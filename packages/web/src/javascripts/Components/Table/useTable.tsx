@@ -1,4 +1,4 @@
-import { MouseEventHandler, useCallback, useEffect, useMemo, useState } from 'react'
+import { MouseEventHandler, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { Table, TableColumn, TableRow, TableSortBy } from './CommonTypes'
 
 type TableSortOptions =
@@ -27,13 +27,18 @@ type TableSelectionOptions =
       onRowSelectionChange?: never
     }
 
-export type UseTableOptions<Data> = {
-  data: Data[]
-  columns: TableColumn<Data>[]
+type TableRowOptions<Data> = {
   getRowId?: (data: Data) => string
   onRowDoubleClick?: (data: Data) => void
   onRowContextMenu?: (x: number, y: number, data: Data) => void
-} & TableSortOptions &
+  rowActions?: (data: Data) => ReactNode
+}
+
+export type UseTableOptions<Data> = {
+  data: Data[]
+  columns: TableColumn<Data>[]
+} & TableRowOptions<Data> &
+  TableSortOptions &
   TableSelectionOptions
 
 export function useTable<Data>({
@@ -49,6 +54,7 @@ export function useTable<Data>({
   onRowSelectionChange,
   onRowDoubleClick,
   onRowContextMenu,
+  rowActions,
 }: UseTableOptions<Data>): Table<Data> {
   const [selectedRows, setSelectedRows] = useState<string[]>(selectedRowIds || [])
 
@@ -90,14 +96,16 @@ export function useTable<Data>({
           return column.cell(rowData)
         })
         const id = getRowId ? getRowId(rowData) : index.toString()
-        return {
+        const row: TableRow<Data> = {
           id,
           isSelected: enableRowSelection ? selectedRows.includes(id) : false,
           cells,
           rowData,
+          rowActions: rowActions ? rowActions(rowData) : undefined,
         }
+        return row
       }),
-    [columns, data, enableRowSelection, getRowId, selectedRows],
+    [columns, data, enableRowSelection, getRowId, rowActions, selectedRows],
   )
 
   const handleRowClick = useCallback(

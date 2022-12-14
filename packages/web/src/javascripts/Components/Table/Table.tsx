@@ -39,6 +39,7 @@ function Table<Data>({ table }: { table: Table<Data> }) {
               <tr
                 key={row.id}
                 className={classNames(
+                  'group relative',
                   row.isSelected && 'bg-info-backdrop',
                   table.canSelectRows && 'cursor-pointer hover:bg-contrast',
                 )}
@@ -53,6 +54,16 @@ function Table<Data>({ table }: { table: Table<Data> }) {
                     </td>
                   )
                 })}
+                {row.rowActions ? (
+                  <div
+                    className={classNames(
+                      'absolute right-3 top-1/2 -translate-y-1/2',
+                      row.isSelected ? '' : 'invisible group-hover:visible',
+                    )}
+                  >
+                    {row.rowActions}
+                  </div>
+                ) : null}
               </tr>
             )
           })}
