@@ -4,7 +4,7 @@ import { FilesController } from '@/Controllers/FilesController'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
-import { ContentType, FileItem, SortableItem, PrefKey, ApplicationEvent } from '@standardnotes/snjs'
+import { ContentType, FileItem, SortableItem, PrefKey, ApplicationEvent, naturalSort } from '@standardnotes/snjs'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
@@ -15,6 +15,8 @@ import { useTable } from '../Table/useTable'
 import Menu from '../Menu/Menu'
 import FileMenuOptions from '../FileContextMenu/FileMenuOptions'
 import Icon from '../Icon/Icon'
+import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
+import LinkedItemBubble from '../LinkedItems/LinkedItemBubble'
 
 const ContextMenuCell = ({ files, filesController }: { files: FileItem[]; filesController: FilesController }) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false)
@@ -133,8 +135,37 @@ const FilesTableView = ({ application, filesController }: Props) => {
           return formatSizeToReadableString(file.decryptedSize)
         },
       },
+      {
+        name: 'Attached to',
+        cell: (file) => {
+          const links = [
+            ...naturalSort(application.items.referencesForItem(file), 'title').map((item) =>
+              createLinkFromItem(item, 'linked'),
+            ),
+            ...naturalSort(application.items.itemsReferencingItem(file), 'title').map((item) =>
+              createLinkFromItem(item, 'linked-by'),
+            ),
+            ...application.items.getSortedTagsForItem(file).map((item) => createLinkFromItem(item, 'linked')),
+          ]
+
+          return (
+            <div className="flex max-w-76 flex-wrap gap-2">
+              {links.map((link) => (
+                <LinkedItemBubble
+                  link={link}
+                  key={link.id}
+                  unlinkItem={async (itemToUnlink) => {
+                    void application.items.unlinkItems(file, itemToUnlink)
+                  }}
+                  isBidirectional={false}
+                />
+              ))}
+            </div>
+          )
+        },
+      },
     ],
-    [],
+    [application.items],
   )
 
   const getRowId = useCallback((file: FileItem) => file.uuid, [])
