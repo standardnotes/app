@@ -34,6 +34,7 @@ export type BaseFeatureDescription = RoleFields & {
   no_mobile?: boolean
   thumbnail_url?: string
   permission_name: PermissionName
+  version?: string
 }
 
 export type ServerFeatureDescription = RoleFields & {
