@@ -101,17 +101,17 @@ export class MomentsService extends AbstractViewController {
     }
 
     const filename = `Moment ${dateToStringStyle1(new Date())}.png`
-    const camera = new PhotoRecorder(filename)
+    const camera = new PhotoRecorder()
     await camera.initialize()
 
     if (this.application.isMobileDevice) {
       await sleep(DELAY_AFTER_STARTING_CAMERA_TO_ALLOW_MOBILE_AUTOFOCUS)
     }
 
-    let file = await camera.takePhoto()
+    let file = await camera.takePhoto(filename)
     if (!file) {
       await sleep(1000)
-      file = await camera.takePhoto()
+      file = await camera.takePhoto(filename)
       if (!file) {
         return undefined
       }

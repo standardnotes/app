@@ -6,6 +6,7 @@ import Icon from '@/Components/Icon/Icon'
 import { DropdownItem } from './DropdownItem'
 import StyledListboxButton from './StyledListboxButton'
 import StyledListboxOption from './StyledListboxOption'
+import { classNames } from '@standardnotes/snjs'
 
 type DropdownProps = {
   id: string
@@ -14,7 +15,11 @@ type DropdownProps = {
   value: string
   onChange: (value: string, item: DropdownItem) => void
   disabled?: boolean
-  className?: string
+  className?: {
+    wrapper?: string
+    button?: string
+    popover?: string
+  }
   fullWidth?: boolean
   portal?: boolean
 }
@@ -63,12 +68,16 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
     onChange(value, selectedItem)
   }
 
+  const wrapperClassName = className?.wrapper ?? ''
+  const buttonClassName = className?.button ?? ''
+  const popoverClassName = className?.popover ?? ''
+
   return (
-    <div className={className}>
+    <div className={wrapperClassName}>
       <VisuallyHidden id={labelId}>{label}</VisuallyHidden>
       <ListboxInput value={value} onChange={handleChange} aria-labelledby={labelId} disabled={disabled}>
         <StyledListboxButton
-          className={`w-full ${!fullWidth ? 'md:w-fit' : ''}`}
+          className={classNames('w-full', !fullWidth && 'md:w-fit', buttonClassName)}
           children={({ value, label, isExpanded }) => {
             const current = items.find((item) => item.value === value)
             const icon = current ? current?.icon : null
@@ -82,7 +91,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
             })
           }}
         />
-        <ListboxPopover portal={portal} className="sn-dropdown sn-dropdown-popover">
+        <ListboxPopover portal={portal} className={classNames('sn-dropdown sn-dropdown-popover', popoverClassName)}>
           <div className="sn-component">
             <ListboxList>
               {items.map((item) => (
