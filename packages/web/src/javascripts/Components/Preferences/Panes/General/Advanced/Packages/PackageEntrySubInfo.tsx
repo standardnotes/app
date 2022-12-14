@@ -1,13 +1,15 @@
 import Button from '@/Components/Button/Button'
+import { ThirdPartyFeatureDescription } from '@standardnotes/features'
 import { FunctionComponent, useState, useRef, useEffect } from 'react'
 
 type Props = {
   extensionName: string
   changeName: (newName: string) => void
   isThirdParty: boolean
+  featureDescription: ThirdPartyFeatureDescription | undefined
 }
 
-const PackageEntrySubInfo: FunctionComponent<Props> = ({ extensionName, changeName, isThirdParty }) => {
+const PackageEntrySubInfo: FunctionComponent<Props> = ({ extensionName, changeName, isThirdParty, featureDescription }) => {
   const [isRenaming, setIsRenaming] = useState(false)
   const [newExtensionName, setNewExtensionName] = useState<string>(extensionName)
 
@@ -40,32 +42,40 @@ const PackageEntrySubInfo: FunctionComponent<Props> = ({ extensionName, changeNa
   }
 
   return (
-    <div className="flex flex-row flex-wrap items-center gap-3">
-      <input
-        ref={inputRef}
-        disabled={!isRenaming || !renameable}
-        autoComplete="off"
-        className="no-border flex-grow bg-default px-0 text-base font-bold text-text"
-        type="text"
-        value={newExtensionName}
-        onChange={({ target: input }) => setNewExtensionName((input as HTMLInputElement)?.value)}
-      />
+    <div>
+      <div className="flex flex-row flex-wrap items-center gap-3">
+        <input
+          ref={inputRef}
+          disabled={!isRenaming || !renameable}
+          autoComplete="off"
+          className="no-border flex-grow bg-default px-0 text-base font-bold text-text"
+          type="text"
+          value={newExtensionName}
+          onChange={({ target: input }) => setNewExtensionName((input as HTMLInputElement)?.value)}
+        />
 
-      {isRenaming && (
-        <>
-          <Button small className="cursor-pointer" onClick={confirmRename}>
-            Confirm
-          </Button>
-          <Button small className="cursor-pointer" onClick={cancelRename}>
-            Cancel
-          </Button>
-        </>
-      )}
+        {isRenaming && (
+          <>
+            <Button small className="cursor-pointer" onClick={confirmRename}>
+              Confirm
+            </Button>
+            <Button small className="cursor-pointer" onClick={cancelRename}>
+              Cancel
+            </Button>
+          </>
+        )}
 
-      {renameable && !isRenaming && (
-        <Button small className="cursor-pointer" onClick={startRenaming}>
-          Rename
-        </Button>
+        {renameable && !isRenaming && (
+          <Button small className="cursor-pointer" onClick={startRenaming}>
+            Rename
+          </Button>
+        )}
+      </div>
+
+      {isThirdParty && featureDescription && (
+        <div className="flex flex-row flex-wrap items-center gap-3">
+          <div className="flex-grow bg-default px-0 text-base text-text">Version: {featureDescription?.version}</div>
+        </div>
       )}
     </div>
   )

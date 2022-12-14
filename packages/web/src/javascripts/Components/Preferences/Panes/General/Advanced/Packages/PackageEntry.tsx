@@ -64,18 +64,28 @@ const PackageEntry: FunctionComponent<PackageEntryProps> = ({ application, exten
 
   const isThirdParty = 'identifier' in extension && application.features.isThirdPartyFeature(extension.identifier)
 
+  const thirdPartyPackageInfo = isThirdParty? extension.thirdPartyPackageInfo: undefined;
+
+  const showThirdPartyMarketingInfo = () => {
+    window.open(thirdPartyPackageInfo?.marketing_url, '_blank')?.focus()
+  }
+
   return (
     <PreferencesSegment classes={'mb-5'}>
-      <PackageEntrySubInfo isThirdParty={isThirdParty} extensionName={extensionName} changeName={changeExtensionName} />
+      <PackageEntrySubInfo isThirdParty={isThirdParty} extensionName={extensionName} featureDescription={thirdPartyPackageInfo} changeName={changeExtensionName} />
 
       <div className="my-1" />
 
-      {isThirdParty && (
-        <div>Version: {extension.thirdPartyPackageInfo.version}</div>
-      )}
-
       {isThirdParty && localInstallable && (
         <UseHosted offlineOnly={offlineOnly} toggleOfflineOnly={toggleOfflineOnly} />
+      )}
+
+      {isThirdParty && thirdPartyPackageInfo && (
+        <div className="mt-2 flex flex-row">
+          <Button small className="cursor-pointer" onClick={showThirdPartyMarketingInfo}>
+            Info
+          </Button>  
+        </div>
       )}
 
       <div className="mt-2 flex flex-row">
