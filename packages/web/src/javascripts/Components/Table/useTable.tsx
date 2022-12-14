@@ -116,13 +116,20 @@ export function useTable<Data>({
         }
         if (event.ctrlKey && enableMultipleRowSelection) {
           setSelectedRows((prev) => (prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]))
+        } else if (event.shiftKey && enableMultipleRowSelection) {
+          const lastSelectedIndex = rows.findIndex((row) => row.id === selectedRows[selectedRows.length - 1])
+          const currentIndex = rows.findIndex((row) => row.id === id)
+          const start = Math.min(lastSelectedIndex, currentIndex)
+          const end = Math.max(lastSelectedIndex, currentIndex)
+          const newSelectedRows = rows.slice(start, end + 1).map((row) => row.id)
+          setSelectedRows(newSelectedRows)
         } else {
           setSelectedRows([id])
         }
       }
       return handler
     },
-    [enableMultipleRowSelection, enableRowSelection],
+    [enableMultipleRowSelection, enableRowSelection, rows, selectedRows],
   )
 
   const handleRowDoubleClick = useCallback(

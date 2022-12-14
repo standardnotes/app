@@ -23,6 +23,7 @@ const ContextMenuCell = ({ file, filesController }: { file: FileItem; filesContr
   return (
     <>
       <button
+        className="rounded-full bg-contrast p-1"
         ref={anchorElementRef}
         onClick={(event) => {
           event.preventDefault()
