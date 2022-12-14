@@ -32,4 +32,7 @@ export type Table<Data> = {
   handleRowDoubleClick: (id: string) => MouseEventHandler<HTMLTableRowElement>
   handleRowContextMenu: (id: string) => MouseEventHandler<HTMLTableRowElement>
   canSelectRows: boolean
+  selectedRows: string[]
+  selectionActions: ReactNode | undefined
+  showSelectionActions: boolean
 }

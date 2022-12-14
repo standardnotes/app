@@ -16,14 +16,14 @@ import Menu from '../Menu/Menu'
 import FileMenuOptions from '../FileContextMenu/FileMenuOptions'
 import Icon from '../Icon/Icon'
 
-const ContextMenuCell = ({ file, filesController }: { file: FileItem; filesController: FilesController }) => {
+const ContextMenuCell = ({ files, filesController }: { files: FileItem[]; filesController: FilesController }) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false)
   const anchorElementRef = useRef<HTMLButtonElement>(null)
 
   return (
     <>
       <button
-        className="rounded-full bg-contrast p-1"
+        className="rounded-full border border-border bg-default p-1"
         ref={anchorElementRef}
         onClick={(event) => {
           event.preventDefault()
@@ -51,7 +51,7 @@ const ContextMenuCell = ({ file, filesController }: { file: FileItem; filesContr
             filesController={filesController}
             shouldShowRenameOption={false}
             shouldShowAttachOption={false}
-            selectedFiles={[file]}
+            selectedFiles={files}
           />
         </Menu>
       </Popover>
@@ -150,7 +150,11 @@ const FilesTableView = ({ application, filesController }: Props) => {
       setContextMenuPosition({ x, y })
       setContextMenuFile(file)
     },
-    rowActions: (file) => <ContextMenuCell file={file} filesController={filesController} />,
+    rowActions: (file) => <ContextMenuCell files={[file]} filesController={filesController} />,
+    selectionActions: (fileIds) => (
+      <ContextMenuCell files={files.filter((file) => fileIds.includes(file.uuid))} filesController={filesController} />
+    ),
+    showSelectionActions: true,
   })
 
   return (

@@ -5,6 +5,12 @@ import { Table } from './CommonTypes'
 function Table<Data>({ table }: { table: Table<Data> }) {
   return (
     <div className="block min-h-0 overflow-auto">
+      {table.showSelectionActions && (
+        <div className="flex items-center justify-between border-b border-border px-3 py-2">
+          <span className="text-info-0 text-sm font-medium">{table.selectedRows.length} selected</span>
+          {table.selectedRows.length > 0 && table.selectionActions}
+        </div>
+      )}
       <table className="w-full">
         <thead>
           <tr>

@@ -19,12 +19,16 @@ type TableSelectionOptions =
       enableMultipleRowSelection?: boolean
       selectedRowIds?: string[]
       onRowSelectionChange?: (rowIds: string[]) => void
+      selectionActions?: (selected: string[]) => ReactNode
+      showSelectionActions?: boolean
     }
   | {
       enableRowSelection?: never
       enableMultipleRowSelection?: never
       selectedRowIds?: never
       onRowSelectionChange?: never
+      selectionActions?: never
+      showSelectionActions?: never
     }
 
 type TableRowOptions<Data> = {
@@ -55,6 +59,8 @@ export function useTable<Data>({
   onRowDoubleClick,
   onRowContextMenu,
   rowActions,
+  selectionActions,
+  showSelectionActions,
 }: UseTableOptions<Data>): Table<Data> {
   const [selectedRows, setSelectedRows] = useState<string[]>(selectedRowIds || [])
 
@@ -173,9 +179,22 @@ export function useTable<Data>({
       handleRowClick,
       handleRowDoubleClick,
       handleRowContextMenu,
+      selectedRows,
       canSelectRows: enableRowSelection || false,
+      selectionActions: selectionActions ? selectionActions(selectedRows) : undefined,
+      showSelectionActions: showSelectionActions || false,
     }),
-    [enableRowSelection, handleRowClick, handleRowContextMenu, handleRowDoubleClick, headers, rows],
+    [
+      enableRowSelection,
+      handleRowClick,
+      handleRowContextMenu,
+      handleRowDoubleClick,
+      headers,
+      rows,
+      selectedRows,
+      selectionActions,
+      showSelectionActions,
+    ],
   )
 
   return table
