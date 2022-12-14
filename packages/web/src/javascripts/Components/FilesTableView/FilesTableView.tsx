@@ -105,7 +105,7 @@ const FilesTableView = ({ application, filesController }: Props) => {
         sortBy: 'title',
         cell: (file) => {
           return (
-            <div className="flex items-center gap-3">
+            <div className="flex max-w-[40vw] items-center gap-3 whitespace-normal">
               {getFileIconComponent(getIconForFileType(file.mimeType), 'w-6 h-6 flex-shrink-0')}
               <span className="text-sm font-medium">{file.title}</span>
               {file.protected && (
@@ -152,6 +152,7 @@ const FilesTableView = ({ application, filesController }: Props) => {
             <div className="flex max-w-76 flex-wrap gap-2">
               {links.map((link) => (
                 <LinkedItemBubble
+                  className="overflow-hidden"
                   link={link}
                   key={link.id}
                   unlinkItem={async (itemToUnlink) => {
