@@ -91,6 +91,9 @@
       "assets/**/*",
       "icon/**/*"
     ],
+    "asarUnpack": [
+      "node_modules/keytar"
+    ],
     "protocols": [
       {
         "name": "Standard Notes",
