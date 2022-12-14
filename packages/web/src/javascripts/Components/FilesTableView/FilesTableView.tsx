@@ -103,9 +103,9 @@ const FilesTableView = ({ application, filesController }: Props) => {
         sortBy: 'title',
         cell: (file) => {
           return (
-            <div className="flex items-center gap-2">
-              {getFileIconComponent(getIconForFileType(file.mimeType), 'w-8 h-8 flex-shrink-0')}
-              {file.title}
+            <div className="flex items-center gap-3">
+              {getFileIconComponent(getIconForFileType(file.mimeType), 'w-6 h-6 flex-shrink-0')}
+              <span className="text-sm">{file.title}</span>
             </div>
           )
         },

@@ -18,7 +18,7 @@ function Table<Data>({ table }: { table: Table<Data> }) {
               return (
                 <th
                   className={classNames(
-                    'px-3 pt-3 pb-2 text-left text-sm font-medium text-passive-0',
+                    'border-b border-border px-3 pt-3 pb-2 text-left text-sm font-medium text-passive-0',
                     header.sortBy && 'cursor-pointer hover:bg-info-backdrop hover:underline',
                   )}
                   onClick={header.onSortChange}
@@ -30,7 +30,7 @@ function Table<Data>({ table }: { table: Table<Data> }) {
                       <Icon
                         type={header.sortReversed ? 'arrow-up' : 'arrow-down'}
                         size="custom"
-                        className="h-4.5 w-4.5"
+                        className="h-4.5 w-4.5 text-passive-1"
                       />
                     )}
                   </div>
@@ -39,7 +39,7 @@ function Table<Data>({ table }: { table: Table<Data> }) {
             })}
           </tr>
         </thead>
-        <tbody className="whitespace-nowrap">
+        <tbody className="divide-y divide-border whitespace-nowrap">
           {table.rows.map((row) => {
             return (
               <tr
@@ -55,7 +55,7 @@ function Table<Data>({ table }: { table: Table<Data> }) {
               >
                 {row.cells.map((cell, index) => {
                   return (
-                    <td key={index} className="py-2 px-3">
+                    <td key={index} className="py-3 px-3">
                       {cell}
                     </td>
                   )
