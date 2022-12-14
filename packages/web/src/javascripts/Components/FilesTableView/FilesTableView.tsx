@@ -9,7 +9,9 @@ import { useState, useEffect, useCallback, useMemo } from 'react'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
 import Popover from '../Popover/Popover'
-import Table, { TableColumn, useTable } from '../Table/Table'
+import Table from '../Table/Table'
+import { TableColumn } from '../Table/CommonTypes'
+import { useTable } from '../Table/useTable'
 
 type Props = {
   application: WebApplication
@@ -51,7 +53,6 @@ const FilesTableView = ({ application, filesController }: Props) => {
     () => [
       {
         name: 'Name',
-        key: 'title',
         sortBy: 'title',
         cell: (file) => {
           return (
@@ -64,7 +65,6 @@ const FilesTableView = ({ application, filesController }: Props) => {
       },
       {
         name: 'Modified',
-        key: 'userModifiedDate',
         sortBy: 'userModifiedDate',
         cell: (file) => {
           return formatDateForContextMenu(file.userModifiedDate)
@@ -72,7 +72,6 @@ const FilesTableView = ({ application, filesController }: Props) => {
       },
       {
         name: 'Size',
-        key: 'decryptedSize',
         cell: (file) => {
           return formatSizeToReadableString(file.decryptedSize)
         },
@@ -99,6 +98,9 @@ const FilesTableView = ({ application, filesController }: Props) => {
           file: data,
         },
       })
+    },
+    onRowContextMenu(x, y) {
+      setContextMenuPosition({ x, y })
     },
   })
 
