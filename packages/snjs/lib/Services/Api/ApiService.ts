@@ -396,8 +396,8 @@ export class SNApiService
     const url = joinPaths(this.host, Paths.v1.refreshSession)
     const session = this.session as Session
     const params = this.params({
-      access_token: session.accessToken,
-      refresh_token: session.refreshToken,
+      access_token: session.accessToken.value,
+      refresh_token: session.refreshToken.value,
     })
     const result = await this.httpService
       .postAbsolute(url, params)
