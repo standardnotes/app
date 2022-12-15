@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.104.25](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.104.24...@standardnotes/desktop@3.104.25) (2022-12-15)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.104.24](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.126.2...@standardnotes/desktop@3.104.24) (2022-12-15)
+
+### Bug Fixes
+
+* **desktop:** Fixed issue where the "Record video" modal would error after stopping recording ([d6fd85e](https://github.com/standardnotes/app/commit/d6fd85e451962e539bada9e207aa0ec65a92f511))
+
 ## [3.104.23](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.104.22...@standardnotes/desktop@3.104.23) (2022-12-14)
 
 **Note:** Version bump only for package @standardnotes/desktop

@@ -12,7 +12,7 @@
         default-src 'self' blob:;
         script-src 'self' 'unsafe-eval';
         worker-src blob:;
-        connect-src * data:;
+        connect-src * data: blob:;
         style-src 'unsafe-inline' 'self' http://localhost:* http://127.0.0.1:45653;
         frame-src * blob:;
       "
