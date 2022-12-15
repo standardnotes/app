@@ -91,9 +91,6 @@
       "assets/**/*",
       "icon/**/*"
     ],
-    "asarUnpack": [
-      "node_modules/keytar"
-    ],
     "protocols": [
       {
         "name": "Standard Notes",
@@ -110,6 +107,9 @@
       "extendInfo": {
         "NSCameraUsageDescription": "Standard Notes requires access to your camera to enable the Moments feature."
       },
+      "asarUnpack": [
+        "node_modules/keytar"
+      ],
       "target": [
         "dmg",
         "zip"
