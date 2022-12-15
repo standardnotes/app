@@ -1,5 +1,4 @@
 import { AnyKeyParamsContent, ContentType, ProtocolVersion } from '@standardnotes/common'
-import { JwtSession } from '../../Services/Session/Sessions/JwtSession'
 import { Migration } from '@Lib/Migrations/Migration'
 import { MigrationServices } from '../MigrationServices'
 import { PreviousSnjsVersion2_0_0 } from '../../Version'
@@ -16,6 +15,7 @@ import {
   PayloadTimestampDefaults,
 } from '@standardnotes/models'
 import { isMobileDevice } from '@standardnotes/services'
+import { LegacySession } from '@standardnotes/domain-core'
 
 interface LegacyStorageContent extends Models.ItemContent {
   storage: unknown
@@ -673,8 +673,10 @@ export class Migration2_0_0 extends Migration {
       }
     }
 
-    const session = new JwtSession(currentToken)
-    this.services.storageService.setValue(Services.StorageKey.Session, session)
+    const sessionOrError = LegacySession.create(currentToken)
+    if (!sessionOrError.isFailed()) {
+      this.services.storageService.setValue(Services.StorageKey.Session, sessionOrError.getValue())
+    }
 
     /** Server has to be migrated separately on mobile */
     if (isEnvironmentMobile(this.services.environment)) {

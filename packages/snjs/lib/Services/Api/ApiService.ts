@@ -34,23 +34,22 @@ import {
   API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS,
 } from '@standardnotes/services'
 import { FilesApiInterface } from '@standardnotes/files'
-
 import { ServerSyncPushContextualPayload, SNFeatureRepo, FileContent } from '@standardnotes/models'
 import * as Responses from '@standardnotes/responses'
+import { LegacySession, Session, SessionToken } from '@standardnotes/domain-core'
+import { HttpResponseMeta } from '@standardnotes/api'
+import { SNRootKeyParams } from '@standardnotes/encryption'
+import { ApiEndpointParam, ClientDisplayableError, CreateValetTokenPayload } from '@standardnotes/responses'
+import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+
 import { HttpParams, HttpRequest, HttpVerb, SNHttpService } from './HttpService'
 import { isUrlFirstParty, TRUSTED_FEATURE_HOSTS } from '@Lib/Hosts'
 import { Paths } from './Paths'
-import { Session } from '../Session/Sessions/Session'
-import { TokenSession } from '../Session/Sessions/TokenSession'
 import { DiskStorageService } from '../Storage/DiskStorageService'
-import { HttpResponseMeta } from '@standardnotes/api'
 import { UuidString } from '../../Types/UuidString'
 import merge from 'lodash/merge'
 import { SettingsServerInterface } from '../Settings/SettingsServerInterface'
 import { Strings } from '@Lib/Strings'
-import { SNRootKeyParams } from '@standardnotes/encryption'
-import { ApiEndpointParam, ClientDisplayableError, CreateValetTokenPayload } from '@standardnotes/responses'
-import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 
 /** Legacy api version field to be specified in params when calling v0 APIs. */
 const V0_API_VERSION = '20200115'
@@ -66,7 +65,7 @@ export class SNApiService
     ItemsServerInterface,
     SettingsServerInterface
 {
-  private session?: Session
+  private session: Session | LegacySession | null
   public user?: Responses.User
   private registering = false
   private authenticating = false
@@ -84,13 +83,15 @@ export class SNApiService
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
+
+    this.session = null
   }
 
   override deinit(): void {
     ;(this.httpService as unknown) = undefined
     ;(this.storageService as unknown) = undefined
     this.invalidSessionObserver = undefined
-    this.session = undefined
+    this.session = null
     super.deinit()
   }
 
@@ -145,14 +146,14 @@ export class SNApiService
     return this.filesHost
   }
 
-  public setSession(session: Session, persist = true): void {
+  public setSession(session: Session | LegacySession, persist = true): void {
     this.session = session
     if (persist) {
       this.storageService.setValue(StorageKey.Session, session)
     }
   }
 
-  public getSession(): Session | undefined {
+  public getSession(): Session | LegacySession | null {
     return this.session
   }
 
@@ -252,7 +253,7 @@ export class SNApiService
       fallbackErrorMessage: API_MESSAGE_GENERIC_INVALID_LOGIN,
       params,
       /** A session is optional here, if valid, endpoint bypasses 2FA and returns additional params */
-      authentication: this.session?.authorizationValue,
+      authentication: this.getSessionAccessToken(),
     })
   }
 
@@ -289,7 +290,7 @@ export class SNApiService
 
   signOut(): Promise<Responses.SignOutResponse> {
     const url = joinPaths(this.host, Paths.v1.signOut)
-    return this.httpService.postAbsolute(url, undefined, this.session?.authorizationValue).catch((errorResponse) => {
+    return this.httpService.postAbsolute(url, undefined, this.getSessionAccessToken()).catch((errorResponse) => {
       return errorResponse
     }) as Promise<Responses.SignOutResponse>
   }
@@ -317,7 +318,7 @@ export class SNApiService
       ...parameters.newKeyParams.getPortableValue(),
     })
     const response = await this.httpService
-      .putAbsolute(url, params, this.session?.authorizationValue)
+      .putAbsolute(url, params, this.getSessionAccessToken())
       .catch(async (errorResponse) => {
         if (Responses.isErrorResponseExpiredToken(errorResponse)) {
           return this.refreshSessionThenRetryRequest({
@@ -353,7 +354,7 @@ export class SNApiService
       [ApiEndpointParam.SyncDlLimit]: limit,
     })
     const response = await this.httpService
-      .postAbsolute(url, params, this.session?.authorizationValue)
+      .postAbsolute(url, params, this.getSessionAccessToken())
       .catch<Responses.HttpResponse>(async (errorResponse) => {
         this.preprocessAuthenticatedErrorResponse(errorResponse)
         if (Responses.isErrorResponseExpiredToken(errorResponse)) {
@@ -378,7 +379,7 @@ export class SNApiService
       return this.httpService
         .runHttp({
           ...httpRequest,
-          authentication: this.session?.authorizationValue,
+          authentication: this.getSessionAccessToken(),
         })
         .catch((errorResponse) => {
           return errorResponse
@@ -393,7 +394,7 @@ export class SNApiService
     }
     this.refreshingSession = true
     const url = joinPaths(this.host, Paths.v1.refreshSession)
-    const session = this.session as TokenSession
+    const session = this.session as Session
     const params = this.params({
       access_token: session.accessToken,
       refresh_token: session.refreshToken,
@@ -401,8 +402,46 @@ export class SNApiService
     const result = await this.httpService
       .postAbsolute(url, params)
       .then(async (response) => {
-        const session = TokenSession.FromApiResponse(response as Responses.SessionRenewalResponse)
-        await this.setSession(session)
+        const sessionRenewalResponse = response as Responses.SessionRenewalResponse
+        if (
+          sessionRenewalResponse.error ||
+          sessionRenewalResponse.data?.error ||
+          !sessionRenewalResponse.data.session
+        ) {
+          return null
+        }
+
+        const accessTokenOrError = SessionToken.create(
+          sessionRenewalResponse.data.session.access_token,
+          sessionRenewalResponse.data.session.access_expiration,
+        )
+        if (accessTokenOrError.isFailed()) {
+          return null
+        }
+        const accessToken = accessTokenOrError.getValue()
+
+        const refreshTokenOrError = SessionToken.create(
+          sessionRenewalResponse.data.session.refresh_token,
+          sessionRenewalResponse.data.session.refresh_expiration,
+        )
+        if (refreshTokenOrError.isFailed()) {
+          return null
+        }
+        const refreshToken = refreshTokenOrError.getValue()
+
+        const sessionOrError = Session.create(
+          accessToken,
+          refreshToken,
+          sessionRenewalResponse.data.session.readonly_access,
+        )
+        if (sessionOrError.isFailed()) {
+          return null
+        }
+        const session = sessionOrError.getValue()
+
+        this.session = session
+
+        this.setSession(session)
         this.processResponse(response)
         return response
       })
@@ -411,6 +450,11 @@ export class SNApiService
         return this.errorResponseWithFallbackMessage(errorResponse, API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL)
       })
     this.refreshingSession = false
+
+    if (result === null) {
+      return this.createErrorResponse(API_MESSAGE_INVALID_SESSION)
+    }
+
     return result
   }
 
@@ -421,7 +465,7 @@ export class SNApiService
     }
     const url = joinPaths(this.host, Paths.v1.sessions)
     const response = await this.httpService
-      .getAbsolute(url, {}, this.session?.authorizationValue)
+      .getAbsolute(url, {}, this.getSessionAccessToken())
       .catch(async (errorResponse) => {
         this.preprocessAuthenticatedErrorResponse(errorResponse)
         if (Responses.isErrorResponseExpiredToken(errorResponse)) {
@@ -444,7 +488,7 @@ export class SNApiService
     }
     const url = joinPaths(this.host, <string>Paths.v1.session(sessionId))
     const response: Responses.RevisionListResponse | Responses.HttpResponse = await this.httpService
-      .deleteAbsolute(url, { uuid: sessionId }, this.session?.authorizationValue)
+      .deleteAbsolute(url, { uuid: sessionId }, this.getSessionAccessToken())
       .catch((error: Responses.HttpResponse) => {
         const errorResponse = error as Responses.HttpResponse
         this.preprocessAuthenticatedErrorResponse(errorResponse)
@@ -467,7 +511,7 @@ export class SNApiService
     }
     const url = joinPaths(this.host, Paths.v1.itemRevisions(itemId))
     const response: Responses.RevisionListResponse | Responses.HttpResponse = await this.httpService
-      .getAbsolute(url, undefined, this.session?.authorizationValue)
+      .getAbsolute(url, undefined, this.getSessionAccessToken())
       .catch((errorResponse: Responses.HttpResponse) => {
         this.preprocessAuthenticatedErrorResponse(errorResponse)
         if (Responses.isErrorResponseExpiredToken(errorResponse)) {
@@ -492,7 +536,7 @@ export class SNApiService
     }
     const url = joinPaths(this.host, Paths.v1.itemRevision(itemId, entry.uuid))
     const response: Responses.SingleRevisionResponse | Responses.HttpResponse = await this.httpService
-      .getAbsolute(url, undefined, this.session?.authorizationValue)
+      .getAbsolute(url, undefined, this.getSessionAccessToken())
       .catch((errorResponse: Responses.HttpResponse) => {
         this.preprocessAuthenticatedErrorResponse(errorResponse)
         if (Responses.isErrorResponseExpiredToken(errorResponse)) {
@@ -510,7 +554,7 @@ export class SNApiService
   async getUserFeatures(userUuid: UuidString): Promise<Responses.HttpResponse | Responses.UserFeaturesResponse> {
     const url = joinPaths(this.host, Paths.v1.userFeatures(userUuid))
     const response = await this.httpService
-      .getAbsolute(url, undefined, this.session?.authorizationValue)
+      .getAbsolute(url, undefined, this.getSessionAccessToken())
       .catch((errorResponse: Responses.HttpResponse) => {
         this.preprocessAuthenticatedErrorResponse(errorResponse)
         if (Responses.isErrorResponseExpiredToken(errorResponse)) {
@@ -550,7 +594,7 @@ export class SNApiService
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.settings(userUuid)),
       fallbackErrorMessage: API_MESSAGE_FAILED_GET_SETTINGS,
-      authentication: this.session?.authorizationValue,
+      authentication: this.getSessionAccessToken(),
     })
   }
 
@@ -568,7 +612,7 @@ export class SNApiService
     return this.tokenRefreshableRequest<Responses.UpdateSettingResponse>({
       verb: HttpVerb.Put,
       url: joinPaths(this.host, Paths.v1.settings(userUuid)),
-      authentication: this.session?.authorizationValue,
+      authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_UPDATE_SETTINGS,
       params,
     })
@@ -578,7 +622,7 @@ export class SNApiService
     return await this.tokenRefreshableRequest<Responses.GetSettingResponse>({
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.setting(userUuid, settingName.toLowerCase() as SettingName)),
-      authentication: this.session?.authorizationValue,
+      authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_GET_SETTINGS,
     })
   }
@@ -593,7 +637,7 @@ export class SNApiService
         this.host,
         Paths.v1.subscriptionSetting(userUuid, settingName.toLowerCase() as SubscriptionSettingName),
       ),
-      authentication: this.session?.authorizationValue,
+      authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_GET_SETTINGS,
     })
   }
@@ -602,7 +646,7 @@ export class SNApiService
     return this.tokenRefreshableRequest<Responses.DeleteSettingResponse>({
       verb: HttpVerb.Delete,
       url: joinPaths(this.host, Paths.v1.setting(userUuid, settingName)),
-      authentication: this.session?.authorizationValue,
+      authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_UPDATE_SETTINGS,
     })
   }
@@ -616,7 +660,7 @@ export class SNApiService
       verb: HttpVerb.Delete,
       url,
       fallbackErrorMessage: API_MESSAGE_FAILED_DELETE_REVISION,
-      authentication: this.session?.authorizationValue,
+      authentication: this.getSessionAccessToken(),
     })
     return response
   }
@@ -635,7 +679,7 @@ export class SNApiService
     const response = await this.tokenRefreshableRequest({
       verb: HttpVerb.Get,
       url,
-      authentication: this.session?.authorizationValue,
+      authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_SUBSCRIPTION_INFO,
     })
     return response
@@ -658,7 +702,7 @@ export class SNApiService
     const response: Responses.HttpResponse | Responses.PostSubscriptionTokensResponse = await this.request({
       verb: HttpVerb.Post,
       url,
-      authentication: this.session?.authorizationValue,
+      authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_ACCESS_PURCHASE,
     })
     return (response as Responses.PostSubscriptionTokensResponse).data?.token
@@ -706,7 +750,7 @@ export class SNApiService
       verb: HttpVerb.Post,
       url: joinPaths(this.host, Paths.v1.listedRegistration(this.user.uuid)),
       fallbackErrorMessage: API_MESSAGE_FAILED_LISTED_REGISTRATION,
-      authentication: this.session?.authorizationValue,
+      authentication: this.getSessionAccessToken(),
     })
   }
 
@@ -725,7 +769,7 @@ export class SNApiService
     const response = await this.tokenRefreshableRequest<Responses.CreateValetTokenResponse>({
       verb: HttpVerb.Post,
       url: url,
-      authentication: this.session?.authorizationValue,
+      authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_CREATE_FILE_TOKEN,
       params,
     })
@@ -860,7 +904,7 @@ export class SNApiService
         integrityPayloads,
       },
       fallbackErrorMessage: API_MESSAGE_GENERIC_INTEGRITY_CHECK_FAIL,
-      authentication: this.session?.authorizationValue,
+      authentication: this.getSessionAccessToken(),
     })
   }
 
@@ -869,7 +913,7 @@ export class SNApiService
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.getSingleItem(itemUuid)),
       fallbackErrorMessage: API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
-      authentication: this.session?.authorizationValue,
+      authentication: this.getSessionAccessToken(),
     })
   }
 
@@ -888,6 +932,18 @@ export class SNApiService
     if (response.status === Responses.StatusCode.HttpStatusInvalidSession && this.session) {
       this.invalidSessionObserver?.(response.error?.tag === ErrorTag.RevokedSession)
     }
+  }
+
+  private getSessionAccessToken(): string | undefined {
+    if (this.session === null) {
+      return undefined
+    }
+
+    if (this.session instanceof Session) {
+      return this.session.accessToken.value
+    }
+
+    return this.session.accessToken
   }
 
   override getDiagnostics(): Promise<DiagnosticInfo | undefined> {

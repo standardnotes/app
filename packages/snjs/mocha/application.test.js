@@ -5,7 +5,7 @@ import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('application instances', () => {
+describe.only('application instances', () => {
   const syncOptions = {
     checkIntegrity: true,
     awaitAll: true,

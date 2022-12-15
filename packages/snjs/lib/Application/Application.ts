@@ -1419,6 +1419,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.options.appVersion,
       SnjsVersion,
       this.apiService.processMetaObject.bind(this.apiService),
+      this.apiService.setSession.bind(this.apiService),
     )
   }
 
