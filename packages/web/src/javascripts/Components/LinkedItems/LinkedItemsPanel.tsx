@@ -25,10 +25,10 @@ const LinkedItemsPanel = ({
   isOpen: boolean
 }) => {
   const {
-    tags,
-    linkedFiles,
+    tagsLinkedToActiveItem: tags,
+    filesLinkedToActiveItem: linkedFiles,
     filesLinkingToActiveItem,
-    notesLinkedToItem,
+    notesLinkedToActiveItem: notesLinkedToItem,
     notesLinkingToActiveItem,
     allItemLinks: allLinkedItems,
     linkItemToSelectedItem,

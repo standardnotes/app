@@ -28,10 +28,10 @@ import { SelectedItemsController } from './SelectedItemsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
 
 export class LinkingController extends AbstractViewController {
-  tags: ItemLink<SNTag>[] = []
-  linkedFiles: ItemLink<FileItem>[] = []
+  tagsLinkedToActiveItem: ItemLink<SNTag>[] = []
+  filesLinkedToActiveItem: ItemLink<FileItem>[] = []
   filesLinkingToActiveItem: ItemLink<FileItem>[] = []
-  notesLinkedToItem: ItemLink<SNNote>[] = []
+  notesLinkedToActiveItem: ItemLink<SNNote>[] = []
   notesLinkingToActiveItem: ItemLink<SNNote>[] = []
   shouldLinkToParentFolders: boolean
   isLinkingPanelOpen = false
@@ -48,10 +48,10 @@ export class LinkingController extends AbstractViewController {
     super(application, eventBus)
 
     makeObservable(this, {
-      tags: observable,
-      linkedFiles: observable,
+      tagsLinkedToActiveItem: observable,
+      filesLinkedToActiveItem: observable,
       filesLinkingToActiveItem: observable,
-      notesLinkedToItem: observable,
+      notesLinkedToActiveItem: observable,
       notesLinkingToActiveItem: observable,
       isLinkingPanelOpen: observable,
 
@@ -113,7 +113,7 @@ export class LinkingController extends AbstractViewController {
   }
 
   get allItemLinks() {
-    return [...this.tags, ...this.linkedFiles, ...this.notesLinkedToItem]
+    return [...this.tagsLinkedToActiveItem, ...this.filesLinkedToActiveItem, ...this.notesLinkedToActiveItem]
   }
 
   get activeItem() {
@@ -135,64 +135,77 @@ export class LinkingController extends AbstractViewController {
     this.reloadNotesLinkingToItem()
   }
 
+  getFilesLinksForItem = (item: LinkableItem | undefined) => {
+    if (!item || this.application.items.isTemplateItem(item)) {
+      return {
+        filesLinkedToItem: [],
+        filesLinkingToItem: [],
+      }
+    }
+
+    const referencesOfItem = naturalSort(this.application.items.referencesForItem(item).filter(isFile), 'title')
+
+    const referencingItem = naturalSort(this.application.items.itemsReferencingItem(item).filter(isFile), 'title')
+
+    if (item.content_type === ContentType.File) {
+      return {
+        filesLinkedToItem: referencesOfItem.map((item) => createLinkFromItem(item, 'linked')),
+        filesLinkingToItem: referencingItem.map((item) => createLinkFromItem(item, 'linked-by')),
+      }
+    } else {
+      return {
+        filesLinkedToItem: referencingItem.map((item) => createLinkFromItem(item, 'linked')),
+        filesLinkingToItem: referencesOfItem.map((item) => createLinkFromItem(item, 'linked-by')),
+      }
+    }
+  }
+
   reloadLinkedFiles() {
-    if (!this.activeItem || this.application.items.isTemplateItem(this.activeItem)) {
-      this.linkedFiles = []
-      this.filesLinkingToActiveItem = []
+    const { filesLinkedToItem, filesLinkingToItem } = this.getFilesLinksForItem(this.activeItem)
+    this.filesLinkedToActiveItem = filesLinkedToItem
+    this.filesLinkingToActiveItem = filesLinkingToItem
+  }
+
+  getLinkedTagsForItem = (item: LinkableItem | undefined) => {
+    if (!item) {
       return
     }
 
-    const referencesOfActiveItem = naturalSort(
-      this.application.items.referencesForItem(this.activeItem).filter(isFile),
-      'title',
-    )
-
-    const referencingActiveItem = naturalSort(
-      this.application.items.itemsReferencingItem(this.activeItem).filter(isFile),
-      'title',
-    )
-
-    if (this.activeItem.content_type === ContentType.File) {
-      this.linkedFiles = referencesOfActiveItem.map((item) => createLinkFromItem(item, 'linked'))
-      this.filesLinkingToActiveItem = referencingActiveItem.map((item) => createLinkFromItem(item, 'linked-by'))
-    } else {
-      this.linkedFiles = referencingActiveItem.map((item) => createLinkFromItem(item, 'linked'))
-      this.filesLinkingToActiveItem = referencesOfActiveItem.map((item) => createLinkFromItem(item, 'linked-by'))
-    }
+    return this.application.items.getSortedTagsForItem(item).map((tag) => createLinkFromItem(tag, 'linked'))
   }
 
   reloadLinkedTags() {
-    if (!this.activeItem) {
+    this.tagsLinkedToActiveItem = this.getLinkedTagsForItem(this.activeItem) || []
+  }
+
+  getLinkedNotesForItem = (item: LinkableItem | undefined) => {
+    if (!item || this.application.items.isTemplateItem(item)) {
+      this.notesLinkedToActiveItem = []
       return
     }
 
-    this.tags = this.application.items
-      .getSortedTagsForItem(this.activeItem)
-      .map((item) => createLinkFromItem(item, 'linked'))
+    return naturalSort(this.application.items.referencesForItem(item).filter(isNote), 'title').map((item) =>
+      createLinkFromItem(item, 'linked'),
+    )
   }
 
   reloadLinkedNotes() {
-    if (!this.activeItem || this.application.items.isTemplateItem(this.activeItem)) {
-      this.notesLinkedToItem = []
-      return
-    }
-
-    this.notesLinkedToItem = naturalSort(
-      this.application.items.referencesForItem(this.activeItem).filter(isNote),
-      'title',
-    ).map((item) => createLinkFromItem(item, 'linked'))
+    this.notesLinkedToActiveItem = this.getLinkedNotesForItem(this.activeItem) || []
   }
 
-  reloadNotesLinkingToItem() {
-    if (!this.activeItem) {
+  getNotesLinkingToItem = (item: LinkableItem | undefined) => {
+    if (!item) {
       this.notesLinkingToActiveItem = []
       return
     }
 
-    this.notesLinkingToActiveItem = naturalSort(
-      this.application.items.itemsReferencingItem(this.activeItem).filter(isNote),
-      'title',
-    ).map((item) => createLinkFromItem(item, 'linked-by'))
+    return naturalSort(this.application.items.itemsReferencingItem(item).filter(isNote), 'title').map((item) =>
+      createLinkFromItem(item, 'linked-by'),
+    )
+  }
+
+  reloadNotesLinkingToItem() {
+    this.notesLinkingToActiveItem = this.getNotesLinkingToItem(this.activeItem) || []
   }
 
   activateItem = async (item: LinkableItem): Promise<AppPaneId | undefined> => {

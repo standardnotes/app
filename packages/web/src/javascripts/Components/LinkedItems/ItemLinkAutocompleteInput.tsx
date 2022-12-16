@@ -37,7 +37,13 @@ const ItemLinkAutocompleteInput = ({
   hoverLabel,
 }: Props) => {
   const application = useApplication()
-  const { tags, linkItemToSelectedItem, createAndAddNewTag, isEntitledToNoteLinking, activeItem } = linkingController
+  const {
+    tagsLinkedToActiveItem: tags,
+    linkItemToSelectedItem,
+    createAndAddNewTag,
+    isEntitledToNoteLinking,
+    activeItem,
+  } = linkingController
 
   const [searchQuery, setSearchQuery] = useState('')
   const { unlinkedItems, shouldShowCreateTag } = getLinkingSearchResults(searchQuery, application, activeItem)

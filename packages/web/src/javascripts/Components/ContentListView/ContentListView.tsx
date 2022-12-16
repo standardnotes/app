@@ -38,6 +38,7 @@ import { useForwardedRef } from '@/Hooks/useForwardedRef'
 import { isMobileScreen } from '@/Utils'
 import FloatingAddButton from './FloatingAddButton'
 import FilesTableView from '../FilesTableView/FilesTableView'
+import { FeaturesController } from '@/Controllers/FeaturesController'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -50,6 +51,7 @@ type Props = {
   selectionController: SelectedItemsController
   searchOptionsController: SearchOptionsController
   linkingController: LinkingController
+  featuresController: FeaturesController
   className?: string
   id: string
   children?: React.ReactNode
@@ -69,6 +71,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       selectionController,
       searchOptionsController,
       linkingController,
+      featuresController,
       className,
       id,
       children,
@@ -330,7 +333,12 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         ) : null}
         {!dailyMode && renderedItems.length ? (
           selectedTag?.uuid === SystemViewId.Files ? (
-            <FilesTableView application={application} filesController={filesController} />
+            <FilesTableView
+              application={application}
+              filesController={filesController}
+              featuresController={featuresController}
+              linkingController={linkingController}
+            />
           ) : (
             <ContentList
               items={renderedItems}

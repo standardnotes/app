@@ -17,6 +17,9 @@ import FileMenuOptions from '../FileContextMenu/FileMenuOptions'
 import Icon from '../Icon/Icon'
 import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
 import LinkedItemBubble from '../LinkedItems/LinkedItemBubble'
+import LinkedItemsPanel from '../LinkedItems/LinkedItemsPanel'
+import { LinkingController } from '@/Controllers/LinkingController'
+import { FeaturesController } from '@/Controllers/FeaturesController'
 
 const ContextMenuCell = ({ files, filesController }: { files: FileItem[]; filesController: FilesController }) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false)
@@ -61,12 +64,62 @@ const ContextMenuCell = ({ files, filesController }: { files: FileItem[]; filesC
   )
 }
 
+const FileLinksCell = ({
+  file,
+  filesController,
+  linkingController,
+  featuresController,
+}: {
+  file: FileItem
+  filesController: FilesController
+  linkingController: LinkingController
+  featuresController: FeaturesController
+}) => {
+  const [contextMenuVisible, setContextMenuVisible] = useState(false)
+  const anchorElementRef = useRef<HTMLButtonElement>(null)
+
+  return (
+    <>
+      <button
+        className="rounded-full border border-border bg-default p-1"
+        ref={anchorElementRef}
+        onClick={(event) => {
+          event.preventDefault()
+          event.stopPropagation()
+          setContextMenuVisible((visible) => !visible)
+        }}
+      >
+        <Icon type="link" />
+      </button>
+      <Popover
+        open={contextMenuVisible}
+        anchorElement={anchorElementRef.current}
+        togglePopover={() => {
+          setContextMenuVisible(false)
+        }}
+        side="bottom"
+        align="start"
+        className="py-2"
+      >
+        <LinkedItemsPanel
+          linkingController={linkingController}
+          filesController={filesController}
+          featuresController={featuresController}
+          isOpen={contextMenuVisible}
+        />
+      </Popover>
+    </>
+  )
+}
+
 type Props = {
   application: WebApplication
   filesController: FilesController
+  featuresController: FeaturesController
+  linkingController: LinkingController
 }
 
-const FilesTableView = ({ application, filesController }: Props) => {
+const FilesTableView = ({ application, filesController, featuresController, linkingController }: Props) => {
   const files = application.items
     .getDisplayableNotesAndFiles()
     .filter((item) => item.content_type === ContentType.File) as FileItem[]
@@ -148,18 +201,21 @@ const FilesTableView = ({ application, filesController }: Props) => {
             ...application.items.getSortedTagsForItem(file).map((item) => createLinkFromItem(item, 'linked')),
           ]
 
+          if (!links.length) {
+            return null
+          }
+
           return (
             <div className="flex max-w-76 flex-wrap gap-2">
-              {links.map((link) => (
-                <LinkedItemBubble
-                  link={link}
-                  key={link.id}
-                  unlinkItem={async (itemToUnlink) => {
-                    void application.items.unlinkItems(file, itemToUnlink)
-                  }}
-                  isBidirectional={false}
-                />
-              ))}
+              <LinkedItemBubble
+                link={links[0]}
+                key={links[0].id}
+                unlinkItem={async (itemToUnlink) => {
+                  void application.items.unlinkItems(file, itemToUnlink)
+                }}
+                isBidirectional={false}
+              />
+              {links.length > 1 && <span>and {links.length - 1} more...</span>}
             </div>
           )
         },
@@ -191,7 +247,31 @@ const FilesTableView = ({ application, filesController }: Props) => {
       setContextMenuPosition({ x, y })
       setContextMenuFile(file)
     },
-    rowActions: (file) => <ContextMenuCell files={[file]} filesController={filesController} />,
+    rowActions: (file) => {
+      const links = [
+        ...naturalSort(application.items.referencesForItem(file), 'title').map((item) =>
+          createLinkFromItem(item, 'linked'),
+        ),
+        ...naturalSort(application.items.itemsReferencingItem(file), 'title').map((item) =>
+          createLinkFromItem(item, 'linked-by'),
+        ),
+        ...application.items.getSortedTagsForItem(file).map((item) => createLinkFromItem(item, 'linked')),
+      ]
+
+      return (
+        <div className="flex items-center gap-2">
+          {links.length > 0 && (
+            <FileLinksCell
+              file={file}
+              filesController={filesController}
+              featuresController={featuresController}
+              linkingController={linkingController}
+            />
+          )}
+          <ContextMenuCell files={[file]} filesController={filesController} />
+        </div>
+      )
+    },
     selectionActions: (fileIds) => (
       <ContextMenuCell files={files.filter((file) => fileIds.includes(file.uuid))} filesController={filesController} />
     ),
