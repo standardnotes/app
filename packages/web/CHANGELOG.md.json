@@ -1,6 +1,28 @@
 {
   "versions": [
     {
+      "version": "3.126.4",
+      "title": "[3.126.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.126.2...@standardnotes/web@3.126.4) (2022-12-15)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.126.2",
+      "title": "[3.126.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.126.0...@standardnotes/web@3.126.2) (2022-12-14)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.126.0",
       "title": "[3.126.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.125.0...@standardnotes/web@3.126.0) (2022-12-13)",
       "date": null,
