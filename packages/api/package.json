@@ -23,7 +23,7 @@
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src --ext .ts",
     "lint:fix": "eslint src --ext .ts --fix",
-    "test": "jest spec --coverage"
+    "test": "jest spec --coverage --passWithNoTests"
   },
   "devDependencies": {
     "@types/jest": "^29.2.3",
