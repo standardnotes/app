@@ -339,8 +339,11 @@ class Footer extends AbstractComponent<Props, State> {
     this.viewControllerManager.quickSettingsMenuController.closeQuickSettingsMenu()
   }
 
-  openPreferences = () => {
+  openPreferences = (openWhatsNew: boolean) => {
     this.clickOutsideQuickSettingsMenu()
+    if (openWhatsNew) {
+      this.viewControllerManager.preferencesController.setCurrentPane('whats-new')
+    }
     this.viewControllerManager.preferencesController.openPreferences()
   }
 
