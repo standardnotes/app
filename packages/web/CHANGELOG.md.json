@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.127.0",
+      "title": "[3.127.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.126.4...@standardnotes/web@3.127.0) (2022-12-16)",
+      "date": null,
+      "body": "### Features\n\n* Added \"Whats New\" indicator to Preferences button ([#2107](https://github.com/standardnotes/app/issues/2107)) ([f559442](https://github.com/standardnotes/app/commit/f559442a6726444f338a43e51d7a872f19bce701))",
+      "parsed": {
+        "_": [
+          "Added \"Whats New\" indicator to Preferences button (#2107) (f559442)"
+        ],
+        "Features": [
+          "Added \"Whats New\" indicator to Preferences button (#2107) (f559442)"
+        ]
+      }
+    },
+    {
       "version": "3.126.4",
       "title": "[3.126.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.126.2...@standardnotes/web@3.126.4) (2022-12-15)",
       "date": null,
