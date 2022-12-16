@@ -2,21 +2,25 @@ import { MapperInterface, Session, SessionToken } from '@standardnotes/domain-co
 
 export class SessionStorageMapper implements MapperInterface<Session, Record<string, unknown>> {
   toDomain(projection: Record<string, unknown>): Session {
-    const { accessTokenString, refreshTokenString, accessExpiration, refreshExpiration, readonlyAccess } = projection
-
-    const accessTokenOrError = SessionToken.create(accessTokenString as string, accessExpiration as number)
+    const accessTokenOrError = SessionToken.create(
+      projection.accessToken as string,
+      projection.accessExpiration as number,
+    )
     if (accessTokenOrError.isFailed()) {
       throw new Error(accessTokenOrError.getError())
     }
     const accessToken = accessTokenOrError.getValue()
 
-    const refreshTokenOrError = SessionToken.create(refreshTokenString as string, refreshExpiration as number)
+    const refreshTokenOrError = SessionToken.create(
+      projection.refreshToken as string,
+      projection.refreshExpiration as number,
+    )
     if (refreshTokenOrError.isFailed()) {
       throw new Error(refreshTokenOrError.getError())
     }
     const refreshToken = refreshTokenOrError.getValue()
 
-    const session = Session.create(accessToken, refreshToken, readonlyAccess as boolean)
+    const session = Session.create(accessToken, refreshToken, projection.readonlyAccess as boolean)
     if (session.isFailed()) {
       throw new Error(session.getError())
     }

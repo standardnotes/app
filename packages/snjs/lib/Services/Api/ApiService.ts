@@ -944,7 +944,7 @@ export class SNApiService
   }
 
   private getSessionAccessToken(): string | undefined {
-    if (this.session === null) {
+    if (!this.session) {
       return undefined
     }
 
