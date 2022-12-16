@@ -675,7 +675,10 @@ export class Migration2_0_0 extends Migration {
 
     const sessionOrError = LegacySession.create(currentToken)
     if (!sessionOrError.isFailed()) {
-      this.services.storageService.setValue(Services.StorageKey.Session, sessionOrError.getValue())
+      this.services.storageService.setValue(
+        Services.StorageKey.Session,
+        this.services.legacySessionStorageMapper.toProjection(sessionOrError.getValue()),
+      )
     }
 
     /** Server has to be migrated separately on mobile */

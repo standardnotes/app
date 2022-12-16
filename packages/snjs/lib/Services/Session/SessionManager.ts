@@ -27,14 +27,13 @@ import { Base64String } from '@standardnotes/sncrypto-common'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { CopyPayloadWithContentOverride } from '@standardnotes/models'
 import { isNullOrUndefined } from '@standardnotes/utils'
-import { LegacySession, Session, SessionToken } from '@standardnotes/domain-core'
+import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
 import { KeyParamsFromApiResponse, SNRootKeyParams, SNRootKey, CreateNewRootKey } from '@standardnotes/encryption'
 import * as Responses from '@standardnotes/responses'
 import { Subscription } from '@standardnotes/security'
 import * as Common from '@standardnotes/common'
 
 import { RemoteSession, RawStorageValue } from './Sessions/Types'
-import { SessionFromRawStorageValue } from './Sessions/Generator'
 import { ShareToken } from './ShareToken'
 import { SNApiService } from '../Api/ApiService'
 import { DiskStorageService } from '../Storage/DiskStorageService'
@@ -81,6 +80,8 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     private challengeService: ChallengeService,
     private webSocketsService: SNWebSocketsService,
     private httpService: HttpServiceInterface,
+    private sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>,
+    private legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -121,9 +122,15 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
 
     const rawSession = this.diskStorageService.getValue<RawStorageValue>(StorageKey.Session)
     if (rawSession) {
-      const session = SessionFromRawStorageValue(rawSession)
-      if (session !== null) {
+      try {
+        const session =
+          'jwt' in rawSession
+            ? this.legacySessionStorageMapper.toDomain(rawSession)
+            : this.sessionStorageMapper.toDomain(rawSession)
+
         this.setSession(session, false)
+      } catch (error) {
+        console.error(`Could not deserialize session from storage: ${(error as Error).message}`)
       }
     }
   }

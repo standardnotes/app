@@ -36,7 +36,7 @@ import {
 import { FilesApiInterface } from '@standardnotes/files'
 import { ServerSyncPushContextualPayload, SNFeatureRepo, FileContent } from '@standardnotes/models'
 import * as Responses from '@standardnotes/responses'
-import { LegacySession, Session, SessionToken } from '@standardnotes/domain-core'
+import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
 import { HttpResponseMeta } from '@standardnotes/api'
 import { SNRootKeyParams } from '@standardnotes/encryption'
 import { ApiEndpointParam, ClientDisplayableError, CreateValetTokenPayload } from '@standardnotes/responses'
@@ -80,6 +80,8 @@ export class SNApiService
     private host: string,
     private inMemoryStore: KeyValueStoreInterface<string>,
     private crypto: PureCryptoInterface,
+    private sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>,
+    private legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -149,7 +151,14 @@ export class SNApiService
   public setSession(session: Session | LegacySession, persist = true): void {
     this.session = session
     if (persist) {
-      this.storageService.setValue(StorageKey.Session, session)
+      let sessionProjection: Record<string, unknown>
+      if (session instanceof Session) {
+        sessionProjection = this.sessionStorageMapper.toProjection(session)
+      } else {
+        sessionProjection = this.legacySessionStorageMapper.toProjection(session)
+      }
+
+      this.storageService.setValue(StorageKey.Session, sessionProjection)
     }
   }
 

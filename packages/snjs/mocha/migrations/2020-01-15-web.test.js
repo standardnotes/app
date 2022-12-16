@@ -5,7 +5,7 @@ import FakeWebCrypto from '../lib/fake_web_crypto.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('2020-01-15 web migration', () => {
+describe.only('2020-01-15 web migration', () => {
   beforeEach(() => {
     localStorage.clear()
   })
