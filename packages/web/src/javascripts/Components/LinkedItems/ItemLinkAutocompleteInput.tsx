@@ -20,6 +20,7 @@ import { ElementIds } from '@/Constants/ElementIDs'
 import Menu from '../Menu/Menu'
 import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
 import { useApplication } from '../ApplicationProvider'
+import { DecryptedItem } from '@standardnotes/snjs'
 
 type Props = {
   linkingController: LinkingController
@@ -27,6 +28,7 @@ type Props = {
   focusedId: string | undefined
   setFocusedId: (id: string) => void
   hoverLabel?: string
+  item: DecryptedItem
 }
 
 const ItemLinkAutocompleteInput = ({
@@ -35,12 +37,17 @@ const ItemLinkAutocompleteInput = ({
   focusedId,
   setFocusedId,
   hoverLabel,
+  item,
 }: Props) => {
   const application = useApplication()
-  const { tags, linkItemToSelectedItem, createAndAddNewTag, isEntitledToNoteLinking, activeItem } = linkingController
+
+  const { getLinkedTagsForItem, linkItemToSelectedItem, createAndAddNewTag, isEntitledToNoteLinking } =
+    linkingController
+
+  const tagsLinkedToItem = getLinkedTagsForItem(item) || []
 
   const [searchQuery, setSearchQuery] = useState('')
-  const { unlinkedItems, shouldShowCreateTag } = getLinkingSearchResults(searchQuery, application, activeItem)
+  const { unlinkedItems, shouldShowCreateTag } = getLinkingSearchResults(searchQuery, application, item)
 
   const [dropdownVisible, setDropdownVisible] = useState(false)
   const [dropdownMaxHeight, setDropdownMaxHeight] = useState<number | 'auto'>('auto')
@@ -122,7 +129,7 @@ const ItemLinkAutocompleteInput = ({
           <input
             ref={inputRef}
             className={classNames(
-              `${tags.length > 0 ? 'w-80' : 'mr-10 w-70'}`,
+              `${tagsLinkedToItem.length > 0 ? 'w-80' : 'mr-10 w-70'}`,
               'bg-transparent text-sm text-text focus:border-b-2 focus:border-solid focus:border-info lg:text-xs',
               'no-border h-7 focus:shadow-none focus:outline-none',
             )}
@@ -141,7 +148,7 @@ const ItemLinkAutocompleteInput = ({
           {areSearchResultsVisible && (
             <DisclosurePanel
               className={classNames(
-                tags.length > 0 ? 'w-80' : 'mr-10 w-70',
+                tagsLinkedToItem.length > 0 ? 'w-80' : 'mr-10 w-70',
                 'absolute z-dropdown-menu flex flex-col overflow-y-auto rounded bg-default py-2 shadow-main',
               )}
               style={{
