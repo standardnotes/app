@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.127.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.126.4...@standardnotes/web@3.127.0) (2022-12-16)
+
+### Features
+
+* Added "Whats New" indicator to Preferences button ([#2107](https://github.com/standardnotes/app/issues/2107)) ([f559442](https://github.com/standardnotes/app/commit/f559442a6726444f338a43e51d7a872f19bce701))
+
 ## [3.126.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.126.2...@standardnotes/web@3.126.4) (2022-12-15)
 
 **Note:** Version bump only for package @standardnotes/web
