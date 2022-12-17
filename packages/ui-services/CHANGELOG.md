@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.19.6...@standardnotes/ui-services@1.20.0) (2022-12-16)
+
+### Features
+
+* Added "Whats New" indicator to Preferences button ([#2107](https://github.com/standardnotes/app/issues/2107)) ([f559442](https://github.com/standardnotes/app/commit/f559442a6726444f338a43e51d7a872f19bce701))
+
 ## [1.19.6](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.19.5...@standardnotes/ui-services@1.19.6) (2022-12-08)
 
 **Note:** Version bump only for package @standardnotes/ui-services
