@@ -177,10 +177,10 @@ const FilesTableView = ({ application, filesController, featuresController, link
         },
       },
       {
-        name: 'Modified',
-        sortBy: 'userModifiedDate',
+        name: 'Upload date',
+        sortBy: 'created_at',
         cell: (file) => {
-          return formatDateForContextMenu(file.userModifiedDate)
+          return formatDateForContextMenu(file.created_at)
         },
       },
       {
