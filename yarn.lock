@@ -5384,6 +5384,7 @@ __metadata:
   resolution: "@standardnotes/api@workspace:packages/api"
   dependencies:
     "@standardnotes/common": ^1.45.0
+    "@standardnotes/domain-core": ^1.11.0
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
@@ -5609,6 +5610,17 @@ __metadata:
     remark-math: ^3.0.1
   languageName: unknown
   linkType: soft
+
+"@standardnotes/domain-core@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "@standardnotes/domain-core@npm:1.11.0"
+  dependencies:
+    reflect-metadata: ^0.1.13
+    shallow-equal-object: ^1.1.1
+    uuid: ^9.0.0
+  checksum: cf4c9b7534338a8d5b8322a472621a2b2dde3cc3fe2d3c3c0eb12a3bdb7ba5f58bdfcc900338e5ba509311eeca6f163d95bffd46c40301532d974f397b57554e
+  languageName: node
+  linkType: hard
 
 "@standardnotes/domain-events@npm:^2.88.0":
   version: 2.88.0
@@ -6088,6 +6100,7 @@ __metadata:
     "@babel/preset-env": "*"
     "@standardnotes/api": "workspace:*"
     "@standardnotes/common": ^1.45.0
+    "@standardnotes/domain-core": ^1.11.0
     "@standardnotes/domain-events": ^2.88.0
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/features": "workspace:*"
@@ -27195,6 +27208,13 @@ __metadata:
   dependencies:
     kind-of: ^6.0.2
   checksum: 39b3dd9630a774aba288a680e7d2901f5c0eae7b8387fc5c8ea559918b29b3da144b7bdb990d7ccd9e11be05508ac9e459ce51d01fd65e583282f6ffafcba2e7
+  languageName: node
+  linkType: hard
+
+"shallow-equal-object@npm:^1.1.1":
+  version: 1.1.1
+  resolution: "shallow-equal-object@npm:1.1.1"
+  checksum: e925aa4511bdf246a10577c983b9c540ea3ea443dbc8f2f336fd398c4ddee682389f19a9f0c2c9e7a99ab62baff5f2f716fbe108729454ff7b9f787d09743cc9
   languageName: node
   linkType: hard
 

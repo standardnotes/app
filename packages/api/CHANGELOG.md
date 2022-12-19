@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.20.21](https://github.com/standardnotes/app/compare/@standardnotes/api@1.20.20...@standardnotes/api@1.20.21) (2022-12-19)
+
+**Note:** Version bump only for package @standardnotes/api
+
+## [1.20.20](https://github.com/standardnotes/app/compare/@standardnotes/api@1.20.19...@standardnotes/api@1.20.20) (2022-12-19)
+
+### Bug Fixes
+
+* **snjs:** refreshing sessions ([#2106](https://github.com/standardnotes/app/issues/2106)) ([bb4f1ff](https://github.com/standardnotes/app/commit/bb4f1ff0990eb5a6f64e76a699fb95540cffdbb4))
+
 ## [1.20.19](https://github.com/standardnotes/app/compare/@standardnotes/api@1.20.18...@standardnotes/api@1.20.19) (2022-12-08)
 
 **Note:** Version bump only for package @standardnotes/api
