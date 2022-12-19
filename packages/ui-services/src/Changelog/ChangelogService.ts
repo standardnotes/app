@@ -1,7 +1,7 @@
 import { Environment } from '@standardnotes/models'
 import { StorageServiceInterface, StorageKey } from '@standardnotes/services'
 import { Changelog, ChangelogVersion } from './Changelog'
-import { ChangelogServiceInterface } from './ChangelogServiceInterface'
+import { ChangelogLastReadVersionListener, ChangelogServiceInterface } from './ChangelogServiceInterface'
 import { LegacyWebToDesktopVersionMapping } from './LegacyDesktopMapping'
 import { LegacyWebToMobileVersionMapping } from './LegacyMobileMapping'
 
@@ -10,8 +10,17 @@ const DesktopDownloadsUrlBase = 'https://github.com/standardnotes/app/releases/t
 
 export class ChangelogService implements ChangelogServiceInterface {
   private changeLog?: Changelog
+  private lastReadChangeListeners: ChangelogLastReadVersionListener[] = []
 
   constructor(private environment: Environment, private diskService: StorageServiceInterface) {}
+
+  public addLastReadChangeListener(listener: ChangelogLastReadVersionListener) {
+    this.lastReadChangeListeners.push(listener)
+
+    return () => {
+      this.lastReadChangeListeners = this.lastReadChangeListeners.filter((l) => l !== listener)
+    }
+  }
 
   private async performDownloadChangelog(): Promise<Changelog> {
     const response = await fetch(WebChangelogUrl)
@@ -47,7 +56,11 @@ export class ChangelogService implements ChangelogServiceInterface {
       return
     }
 
-    this.diskService.setValue(StorageKey.LastReadChangelogVersion, this.changeLog.versions[0].version)
+    const version = this.changeLog.versions[0].version
+    this.diskService.setValue(StorageKey.LastReadChangelogVersion, version)
+    if (version) {
+      this.lastReadChangeListeners.forEach((listener) => listener(version))
+    }
   }
 
   public getLastReadVersion(): string | undefined {
