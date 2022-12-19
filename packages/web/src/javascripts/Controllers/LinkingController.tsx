@@ -164,6 +164,12 @@ export class LinkingController extends AbstractViewController {
     return undefined
   }
 
+  unlinkItems = async (item: LinkableItem, itemToUnlink: LinkableItem) => {
+    await this.application.items.unlinkItems(item, itemToUnlink)
+
+    void this.application.sync.sync()
+  }
+
   unlinkItemFromSelectedItem = async (itemToUnlink: LinkableItem) => {
     const selectedItem = this.selectionController.firstSelectedItem
 
@@ -171,9 +177,7 @@ export class LinkingController extends AbstractViewController {
       return
     }
 
-    await this.application.items.unlinkItems(selectedItem, itemToUnlink)
-
-    void this.application.sync.sync()
+    void this.unlinkItems(selectedItem, itemToUnlink)
   }
 
   ensureActiveItemIsInserted = async () => {
