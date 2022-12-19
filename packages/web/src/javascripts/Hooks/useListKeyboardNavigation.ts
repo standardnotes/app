@@ -57,7 +57,7 @@ export const useListKeyboardNavigation = (
 
   const FIRST_ITEM_FOCUS_TIMEOUT = 20
 
-  const containerFocusHandler = useCallback(() => {
+  const setInitialFocus = useCallback(() => {
     const items = Array.from(container.current?.querySelectorAll('button') as NodeListOf<HTMLButtonElement>)
     listItems.current = items
 
@@ -75,9 +75,9 @@ export const useListKeyboardNavigation = (
 
   useEffect(() => {
     if (shouldAutoFocus) {
-      containerFocusHandler()
+      setInitialFocus()
     }
-  }, [containerFocusHandler, shouldAutoFocus])
+  }, [setInitialFocus, shouldAutoFocus])
 
   useEffect(() => {
     const containerElement = container.current
@@ -86,5 +86,9 @@ export const useListKeyboardNavigation = (
     return () => {
       containerElement?.removeEventListener('keydown', keyDownHandler)
     }
-  }, [container, containerFocusHandler, keyDownHandler])
+  }, [container, setInitialFocus, keyDownHandler])
+
+  return {
+    setInitialFocus,
+  }
 }
