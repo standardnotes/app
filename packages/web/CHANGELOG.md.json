@@ -1,6 +1,58 @@
 {
   "versions": [
     {
+      "version": "3.127.3",
+      "title": "[3.127.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.2...@standardnotes/web@3.127.3) (2022-12-19)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.127.2",
+      "title": "[3.127.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.1...@standardnotes/web@3.127.2) (2022-12-19)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where the first item in item link autcomplete would not be correctly focused (skip e2e) ([df4148f](https://github.com/standardnotes/app/commit/df4148f82489dd04878c85fd9c459e5d9ad8a89b))\n* Fixed white screen issue on mobile ([91f3295](https://github.com/standardnotes/app/commit/91f3295cffd54c7a5de01633add9b6abdb769cdf))",
+      "parsed": {
+        "_": [
+          "Fixed issue where the first item in item link autcomplete would not be correctly focused (skip e2e) (df4148f)",
+          "Fixed white screen issue on mobile (91f3295)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where the first item in item link autcomplete would not be correctly focused (skip e2e) (df4148f)",
+          "Fixed white screen issue on mobile (91f3295)"
+        ]
+      }
+    },
+    {
+      "version": "3.127.1",
+      "title": "[3.127.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.0...@standardnotes/web@3.127.1) (2022-12-19)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.127.0",
+      "title": "[3.127.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.126.4...@standardnotes/web@3.127.0) (2022-12-16)",
+      "date": null,
+      "body": "### Features\n\n* Added \"Whats New\" indicator to Preferences button ([#2107](https://github.com/standardnotes/app/issues/2107)) ([f559442](https://github.com/standardnotes/app/commit/f559442a6726444f338a43e51d7a872f19bce701))",
+      "parsed": {
+        "_": [
+          "Added \"Whats New\" indicator to Preferences button (#2107) (f559442)"
+        ],
+        "Features": [
+          "Added \"Whats New\" indicator to Preferences button (#2107) (f559442)"
+        ]
+      }
+    },
+    {
       "version": "3.126.4",
       "title": "[3.126.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.126.2...@standardnotes/web@3.126.4) (2022-12-15)",
       "date": null,

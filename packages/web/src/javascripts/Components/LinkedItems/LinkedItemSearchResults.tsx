@@ -10,22 +10,24 @@ import { useCallback } from 'react'
 
 type Props = {
   createAndAddNewTag: LinkingController['createAndAddNewTag']
-  linkItemToSelectedItem: LinkingController['linkItemToSelectedItem']
+  linkItems: LinkingController['linkItems']
   results: LinkableItem[]
   searchQuery: string
   shouldShowCreateTag: boolean
   onClickCallback?: () => void
   isEntitledToNoteLinking: boolean
+  item: LinkableItem
 }
 
 const LinkedItemSearchResults = ({
   createAndAddNewTag,
-  linkItemToSelectedItem,
+  linkItems,
   results,
   searchQuery,
   shouldShowCreateTag,
   onClickCallback,
   isEntitledToNoteLinking,
+  item,
 }: Props) => {
   const onClickAddNew = useCallback(
     (searchQuery: string) => {
@@ -44,7 +46,7 @@ const LinkedItemSearchResults = ({
             key={result.uuid}
             className="flex w-full items-center justify-between gap-4 overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground focus:bg-info-backdrop"
             onClick={() => {
-              void linkItemToSelectedItem(result)
+              void linkItems(item, result)
               onClickCallback?.()
             }}
           >

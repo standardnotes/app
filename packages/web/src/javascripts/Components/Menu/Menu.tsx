@@ -1,4 +1,12 @@
-import { CSSProperties, forwardRef, KeyboardEventHandler, ReactNode, Ref, useCallback, useRef } from 'react'
+import {
+  CSSProperties,
+  forwardRef,
+  KeyboardEventHandler,
+  ReactNode,
+  useCallback,
+  useImperativeHandle,
+  useRef,
+} from 'react'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import { mergeRefs } from '@/Hooks/mergeRefs'
@@ -27,7 +35,7 @@ const Menu = forwardRef(
       onKeyDown,
       shouldAutoFocus = true,
     }: MenuProps,
-    forwardedRef: Ref<HTMLMenuElement>,
+    forwardedRef,
   ) => {
     const menuElementRef = useRef<HTMLMenuElement>(null)
 
@@ -43,7 +51,13 @@ const Menu = forwardRef(
       [closeMenu, onKeyDown],
     )
 
-    useListKeyboardNavigation(menuElementRef, initialFocus, shouldAutoFocus)
+    const { setInitialFocus } = useListKeyboardNavigation(menuElementRef, initialFocus, shouldAutoFocus)
+
+    useImperativeHandle(forwardedRef, () => ({
+      focus: () => {
+        setInitialFocus()
+      },
+    }))
 
     return (
       <menu

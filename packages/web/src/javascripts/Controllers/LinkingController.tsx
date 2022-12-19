@@ -4,7 +4,6 @@ import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewCon
 import { AppPaneId } from '@/Components/Panes/AppPaneMetadata'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
-import { ItemLink } from '@/Utils/Items/Search/ItemLink'
 import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import {
   ApplicationEvent,
@@ -28,11 +27,6 @@ import { SelectedItemsController } from './SelectedItemsController'
 import { SubscriptionController } from './Subscription/SubscriptionController'
 
 export class LinkingController extends AbstractViewController {
-  tagsLinkedToActiveItem: ItemLink<SNTag>[] = []
-  filesLinkedToActiveItem: ItemLink<FileItem>[] = []
-  filesLinkingToActiveItem: ItemLink<FileItem>[] = []
-  notesLinkedToActiveItem: ItemLink<SNNote>[] = []
-  notesLinkingToActiveItem: ItemLink<SNNote>[] = []
   shouldLinkToParentFolders: boolean
   isLinkingPanelOpen = false
   private itemListController!: ItemListController
@@ -48,22 +42,11 @@ export class LinkingController extends AbstractViewController {
     super(application, eventBus)
 
     makeObservable(this, {
-      tagsLinkedToActiveItem: observable,
-      filesLinkedToActiveItem: observable,
-      filesLinkingToActiveItem: observable,
-      notesLinkedToActiveItem: observable,
-      notesLinkingToActiveItem: observable,
       isLinkingPanelOpen: observable,
 
-      allItemLinks: computed,
       isEntitledToNoteLinking: computed,
-      selectedItemTitle: computed,
 
       setIsLinkingPanelOpen: action,
-      reloadLinkedFiles: action,
-      reloadLinkedTags: action,
-      reloadLinkedNotes: action,
-      reloadNotesLinkingToItem: action,
     })
 
     this.shouldLinkToParentFolders = application.getPreference(
@@ -89,19 +72,6 @@ export class LinkingController extends AbstractViewController {
     this.itemListController = itemListController
     this.filesController = filesController
     this.subscriptionController = subscriptionController
-
-    this.disposers.push(
-      this.application.streamItems(ContentType.File, () => {
-        this.reloadLinkedFiles()
-      }),
-      this.application.streamItems(ContentType.Tag, () => {
-        this.reloadLinkedTags()
-      }),
-      this.application.streamItems(ContentType.Note, () => {
-        this.reloadLinkedNotes()
-        this.reloadNotesLinkingToItem()
-      }),
-    )
   }
 
   get isEntitledToNoteLinking() {
@@ -112,27 +82,8 @@ export class LinkingController extends AbstractViewController {
     this.isLinkingPanelOpen = open
   }
 
-  get allItemLinks() {
-    return [...this.tagsLinkedToActiveItem, ...this.filesLinkedToActiveItem, ...this.notesLinkedToActiveItem]
-  }
-
   get activeItem() {
     return this.application.itemControllerGroup.activeItemViewController?.item
-  }
-
-  get selectedItemTitle() {
-    return this.selectionController.firstSelectedItem
-      ? this.selectionController.firstSelectedItem.title
-      : this.activeItem
-      ? this.activeItem.title
-      : ''
-  }
-
-  reloadAllLinks() {
-    this.reloadLinkedFiles()
-    this.reloadLinkedTags()
-    this.reloadLinkedNotes()
-    this.reloadNotesLinkingToItem()
   }
 
   getFilesLinksForItem = (item: LinkableItem | undefined) => {
@@ -160,12 +111,6 @@ export class LinkingController extends AbstractViewController {
     }
   }
 
-  reloadLinkedFiles() {
-    const { filesLinkedToItem, filesLinkingToItem } = this.getFilesLinksForItem(this.activeItem)
-    this.filesLinkedToActiveItem = filesLinkedToItem
-    this.filesLinkingToActiveItem = filesLinkingToItem
-  }
-
   getLinkedTagsForItem = (item: LinkableItem | undefined) => {
     if (!item) {
       return
@@ -174,14 +119,9 @@ export class LinkingController extends AbstractViewController {
     return this.application.items.getSortedTagsForItem(item).map((tag) => createLinkFromItem(tag, 'linked'))
   }
 
-  reloadLinkedTags() {
-    this.tagsLinkedToActiveItem = this.getLinkedTagsForItem(this.activeItem) || []
-  }
-
   getLinkedNotesForItem = (item: LinkableItem | undefined) => {
     if (!item || this.application.items.isTemplateItem(item)) {
-      this.notesLinkedToActiveItem = []
-      return
+      return []
     }
 
     return naturalSort(this.application.items.referencesForItem(item).filter(isNote), 'title').map((item) =>
@@ -189,23 +129,14 @@ export class LinkingController extends AbstractViewController {
     )
   }
 
-  reloadLinkedNotes() {
-    this.notesLinkedToActiveItem = this.getLinkedNotesForItem(this.activeItem) || []
-  }
-
   getNotesLinkingToItem = (item: LinkableItem | undefined) => {
     if (!item) {
-      this.notesLinkingToActiveItem = []
-      return
+      return []
     }
 
     return naturalSort(this.application.items.itemsReferencingItem(item).filter(isNote), 'title').map((item) =>
       createLinkFromItem(item, 'linked-by'),
     )
-  }
-
-  reloadNotesLinkingToItem() {
-    this.notesLinkingToActiveItem = this.getNotesLinkingToItem(this.activeItem) || []
   }
 
   activateItem = async (item: LinkableItem): Promise<AppPaneId | undefined> => {
@@ -243,7 +174,6 @@ export class LinkingController extends AbstractViewController {
     await this.application.items.unlinkItems(selectedItem, itemToUnlink)
 
     void this.application.sync.sync()
-    this.reloadAllLinks()
   }
 
   ensureActiveItemIsInserted = async () => {
@@ -253,11 +183,22 @@ export class LinkingController extends AbstractViewController {
     }
   }
 
-  linkItems = async (item: SNNote | FileItem, itemToLink: LinkableItem) => {
+  linkItems = async (item: LinkableItem, itemToLink: LinkableItem) => {
     if (item instanceof SNNote) {
+      if (itemToLink instanceof SNNote && !this.isEntitledToNoteLinking) {
+        void this.publishCrossControllerEventSync(CrossControllerEvent.DisplayPremiumModal, {
+          featureName: 'Note linking',
+        })
+        return
+      }
+
+      if (item.uuid === this.activeItem?.uuid) {
+        await this.ensureActiveItemIsInserted()
+      }
+
       if (itemToLink instanceof FileItem) {
         await this.application.items.associateFileWithNote(itemToLink, item)
-      } else if (itemToLink instanceof SNNote && this.isEntitledToNoteLinking) {
+      } else if (itemToLink instanceof SNNote) {
         await this.application.items.linkNoteToNote(item, itemToLink)
       } else if (itemToLink instanceof SNTag) {
         await this.addTagToItem(itemToLink, item)
@@ -279,7 +220,6 @@ export class LinkingController extends AbstractViewController {
     }
 
     void this.application.sync.sync()
-    this.reloadAllLinks()
   }
 
   linkItemToSelectedItem = async (itemToLink: LinkableItem): Promise<boolean> => {
@@ -320,7 +260,6 @@ export class LinkingController extends AbstractViewController {
       await this.application.items.addTagToFile(item, tag, this.shouldLinkToParentFolders)
     }
 
-    this.reloadLinkedTags()
     this.application.sync.sync().catch(console.error)
   }
 }

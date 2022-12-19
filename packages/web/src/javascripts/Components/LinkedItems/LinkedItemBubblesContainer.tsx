@@ -11,23 +11,30 @@ import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { ItemLink } from '@/Utils/Items/Search/ItemLink'
 import { FOCUS_TAGS_INPUT_COMMAND, keyboardStringForShortcut } from '@standardnotes/ui-services'
 import { useCommandService } from '../CommandProvider'
+import { useApplication } from '../ApplicationProvider'
+import { useItemLinks } from '@/Hooks/useItemLinks'
 
 type Props = {
   linkingController: LinkingController
 }
 
 const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
+  const application = useApplication()
+  const activeItem = application.itemControllerGroup.activeItemViewController?.item
+
   const { toggleAppPane } = useResponsiveAppPane()
 
   const commandService = useCommandService()
 
-  const {
-    allItemLinks,
-    notesLinkingToActiveItem,
-    filesLinkingToActiveItem,
-    unlinkItemFromSelectedItem: unlinkItem,
-    activateItem,
-  } = linkingController
+  const { unlinkItemFromSelectedItem: unlinkItem, activateItem } = linkingController
+
+  const { notesLinkedToItem, filesLinkedToItem, tagsLinkedToItem, notesLinkingToItem, filesLinkingToItem } =
+    useItemLinks(activeItem)
+
+  const allItemsLinkedToItem: ItemLink[] = useMemo(
+    () => new Array<ItemLink>().concat(notesLinkedToItem, filesLinkedToItem, tagsLinkedToItem),
+    [filesLinkedToItem, notesLinkedToItem, tagsLinkedToItem],
+  )
 
   useEffect(() => {
     return commandService.addCommandHandler({
@@ -47,11 +54,11 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
   )
 
   const [focusedId, setFocusedId] = useState<string>()
-  const focusableIds = allItemLinks
+  const focusableIds = allItemsLinkedToItem
     .map((link) => link.id)
     .concat(
-      notesLinkingToActiveItem.map((link) => link.id),
-      filesLinkingToActiveItem.map((link) => link.id),
+      notesLinkingToItem.map((link) => link.id),
+      filesLinkingToItem.map((link) => link.id),
       [ElementIds.ItemLinkAutocompleteInput],
     )
 
@@ -84,9 +91,9 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
   )
 
   const isItemBidirectionallyLinked = (link: ItemLink) => {
-    const existsInAllItemLinks = !!allItemLinks.find((item) => link.item.uuid === item.item.uuid)
-    const existsInNotesLinkingToItem = !!notesLinkingToActiveItem.find((item) => link.item.uuid === item.item.uuid)
-    const existsInFilesLinkingToItem = !!filesLinkingToActiveItem.find((item) => link.item.uuid === item.item.uuid)
+    const existsInAllItemLinks = !!allItemsLinkedToItem.find((item) => link.item.uuid === item.item.uuid)
+    const existsInNotesLinkingToItem = !!notesLinkingToItem.find((item) => link.item.uuid === item.item.uuid)
+    const existsInFilesLinkingToItem = !!filesLinkingToItem.find((item) => link.item.uuid === item.item.uuid)
 
     return (
       existsInAllItemLinks &&
@@ -94,16 +101,20 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
     )
   }
 
+  if (!activeItem) {
+    return null
+  }
+
   return (
     <div
       className={classNames(
         'note-view-linking-container hidden min-w-80 max-w-full flex-wrap items-center gap-2 bg-transparent md:-mr-2 md:flex',
-        allItemLinks.length || notesLinkingToActiveItem.length ? 'mt-1' : 'mt-0.5',
+        allItemsLinkedToItem.length || notesLinkingToItem.length ? 'mt-1' : 'mt-0.5',
       )}
     >
-      {allItemLinks
-        .concat(notesLinkingToActiveItem)
-        .concat(filesLinkingToActiveItem)
+      {allItemsLinkedToItem
+        .concat(notesLinkingToItem)
+        .concat(filesLinkingToItem)
         .map((link) => (
           <LinkedItemBubble
             link={link}
@@ -123,6 +134,7 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
         focusPreviousItem={focusPreviousItem}
         setFocusedId={setFocusedId}
         hoverLabel={`Focus input to add a link (${shortcut})`}
+        item={activeItem}
       />
     </div>
   )

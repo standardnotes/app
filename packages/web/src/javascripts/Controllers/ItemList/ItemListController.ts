@@ -245,8 +245,6 @@ export class ItemListController extends AbstractViewController implements Intern
 
     await this.application.itemControllerGroup.createItemController({ note })
 
-    this.linkingController.reloadAllLinks()
-
     await this.publishCrossControllerEventSync(CrossControllerEvent.ActiveEditorChanged)
   }
 
@@ -262,8 +260,6 @@ export class ItemListController extends AbstractViewController implements Intern
     }
 
     await this.application.itemControllerGroup.createItemController({ file })
-
-    this.linkingController.reloadAllLinks()
   }
 
   setCompletedFullSync = (completed: boolean) => {
@@ -658,8 +654,6 @@ export class ItemListController extends AbstractViewController implements Intern
     const useTitle = title || this.titleForNewNote(createdAt)
 
     const controller = await this.createNewNoteController(useTitle, createdAt, autofocusBehavior)
-
-    this.linkingController.reloadAllLinks()
 
     this.selectionController.scrollToItem(controller.item)
   }
