@@ -290,7 +290,7 @@ export class ChallengeService extends AbstractService implements ChallengeServic
     if (operation.isFinished()) {
       this.deleteChallengeOperation(operation)
 
-      const observers = this.challengeObservers[challenge.id]
+      const observers = this.challengeObservers[challenge.id] || []
       observers.forEach(clearChallengeObserver)
       observers.length = 0
 
