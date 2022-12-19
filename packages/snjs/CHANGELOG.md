@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.156.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.156.2...@standardnotes/snjs@2.156.3) (2022-12-19)
+
+### Bug Fixes
+
+* **snjs:** refreshing sessions ([#2106](https://github.com/standardnotes/app/issues/2106)) ([bb4f1ff](https://github.com/standardnotes/app/commit/bb4f1ff0990eb5a6f64e76a699fb95540cffdbb4))
+
 ## [2.156.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.156.1...@standardnotes/snjs@2.156.2) (2022-12-13)
 
 ### Bug Fixes
