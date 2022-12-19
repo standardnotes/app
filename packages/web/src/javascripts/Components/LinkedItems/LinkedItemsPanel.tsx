@@ -12,32 +12,37 @@ import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
 import LinkedItemSearchResults from './LinkedItemSearchResults'
 import { LinkedItemsSectionItem } from './LinkedItemsSectionItem'
+import { DecryptedItem } from '@standardnotes/snjs'
 
 const LinkedItemsPanel = ({
   linkingController,
   filesController,
   featuresController,
   isOpen,
+  item,
 }: {
   linkingController: LinkingController
   filesController: FilesController
   featuresController: FeaturesController
   isOpen: boolean
+  item: DecryptedItem
 }) => {
   const {
-    tags,
-    linkedFiles,
-    filesLinkingToActiveItem,
-    notesLinkedToItem,
-    notesLinkingToActiveItem,
-    allItemLinks: allLinkedItems,
-    linkItemToSelectedItem,
+    getLinkedTagsForItem,
+    getFilesLinksForItem,
+    getLinkedNotesForItem,
+    getNotesLinkingToItem,
+    linkItems,
     unlinkItemFromSelectedItem,
     activateItem,
     createAndAddNewTag,
     isEntitledToNoteLinking,
-    activeItem,
   } = linkingController
+
+  const tagsLinkedToItem = getLinkedTagsForItem(item) || []
+  const { filesLinkedToItem, filesLinkingToItem } = getFilesLinksForItem(item)
+  const notesLinkedToItem = getLinkedNotesForItem(item) || []
+  const notesLinkingToItem = getNotesLinkingToItem(item) || []
 
   const { entitledToFiles } = featuresController
   const application = useApplication()
@@ -45,11 +50,7 @@ const LinkedItemsPanel = ({
   const searchInputRef = useRef<HTMLInputElement | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const isSearching = !!searchQuery.length
-  const { linkedResults, unlinkedItems, shouldShowCreateTag } = getLinkingSearchResults(
-    searchQuery,
-    application,
-    activeItem,
-  )
+  const { linkedResults, unlinkedItems, shouldShowCreateTag } = getLinkingSearchResults(searchQuery, application, item)
 
   useEffect(() => {
     if (isOpen && searchInputRef.current) {
@@ -64,7 +65,7 @@ const LinkedItemsPanel = ({
     }
 
     void filesController.selectAndUploadNewFiles((file) => {
-      void linkItemToSelectedItem(file)
+      void linkItems(item, file)
     })
   }
 
@@ -73,7 +74,7 @@ const LinkedItemsPanel = ({
       <form
         className={classNames(
           'sticky top-0 z-10 bg-default px-2.5 pt-2.5',
-          allLinkedItems.length || linkedResults.length || unlinkedItems.length || notesLinkingToActiveItem.length
+          linkedResults.length || unlinkedItems.length || notesLinkingToItem.length
             ? 'border-b border-border pb-2.5'
             : 'pb-1',
         )}
@@ -105,7 +106,7 @@ const LinkedItemsPanel = ({
                 <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Unlinked</div>
                 <LinkedItemSearchResults
                   createAndAddNewTag={createAndAddNewTag}
-                  linkItemToSelectedItem={linkItemToSelectedItem}
+                  linkItems={linkItems}
                   results={unlinkedItems}
                   searchQuery={searchQuery}
                   shouldShowCreateTag={shouldShowCreateTag}
@@ -114,6 +115,7 @@ const LinkedItemsPanel = ({
                     setSearchQuery('')
                     searchInputRef.current?.focus()
                   }}
+                  item={item}
                 />
               </div>
             )}
@@ -137,11 +139,11 @@ const LinkedItemsPanel = ({
           </>
         ) : (
           <>
-            {!!tags.length && (
+            {!!tagsLinkedToItem.length && (
               <div>
                 <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Linked Tags</div>
                 <div className="my-1">
-                  {tags.map((link) => (
+                  {tagsLinkedToItem.map((link) => (
                     <LinkedItemsSectionItem
                       key={link.id}
                       item={link.item}
@@ -165,7 +167,7 @@ const LinkedItemsPanel = ({
                   <Icon type="add" />
                   Upload and link file(s)
                 </button>
-                {linkedFiles.map((link) => (
+                {filesLinkedToItem.map((link) => (
                   <LinkedItemsSectionItem
                     key={link.id}
                     item={link.item}
@@ -178,13 +180,13 @@ const LinkedItemsPanel = ({
               </div>
             </div>
 
-            {!!filesLinkingToActiveItem.length && (
+            {!!filesLinkingToItem.length && (
               <div>
                 <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">
                   Files Linking To Current File
                 </div>
                 <div className="my-1">
-                  {filesLinkingToActiveItem.map((link) => (
+                  {filesLinkingToItem.map((link) => (
                     <LinkedItemsSectionItem
                       key={link.id}
                       item={link.item}
@@ -214,13 +216,13 @@ const LinkedItemsPanel = ({
                 </div>
               </div>
             )}
-            {!!notesLinkingToActiveItem.length && (
+            {!!notesLinkingToItem.length && (
               <div>
                 <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">
                   Notes Linking To This Note
                 </div>
                 <div className="my-1">
-                  {notesLinkingToActiveItem.map((link) => (
+                  {notesLinkingToItem.map((link) => (
                     <LinkedItemsSectionItem
                       key={link.id}
                       item={link.item}
