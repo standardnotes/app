@@ -1,4 +1,5 @@
 import { MouseEventHandler, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { useApplication } from '../ApplicationProvider'
 import { Table, TableColumn, TableRow, TableSortBy } from './CommonTypes'
 
 type TableSortOptions =
@@ -62,6 +63,7 @@ export function useTable<Data>({
   selectionActions,
   showSelectionActions,
 }: UseTableOptions<Data>): Table<Data> {
+  const application = useApplication()
   const [selectedRows, setSelectedRows] = useState<string[]>(selectedRowIds || [])
 
   useEffect(() => {
@@ -120,7 +122,8 @@ export function useTable<Data>({
         if (!enableRowSelection) {
           return
         }
-        if (event.ctrlKey && enableMultipleRowSelection) {
+        const isCmdOrCtrlPressed = application.keyboardService.isMac ? event.metaKey : event.ctrlKey
+        if (isCmdOrCtrlPressed && enableMultipleRowSelection) {
           setSelectedRows((prev) => (prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]))
         } else if (event.shiftKey && enableMultipleRowSelection) {
           const lastSelectedIndex = rows.findIndex((row) => row.id === selectedRows[selectedRows.length - 1])
