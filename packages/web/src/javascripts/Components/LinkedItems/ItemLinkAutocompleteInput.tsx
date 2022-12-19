@@ -41,8 +41,7 @@ const ItemLinkAutocompleteInput = ({
 }: Props) => {
   const application = useApplication()
 
-  const { getLinkedTagsForItem, linkItemToSelectedItem, createAndAddNewTag, isEntitledToNoteLinking } =
-    linkingController
+  const { getLinkedTagsForItem, linkItems, createAndAddNewTag, isEntitledToNoteLinking } = linkingController
 
   const tagsLinkedToItem = getLinkedTagsForItem(item) || []
 
@@ -166,7 +165,8 @@ const ItemLinkAutocompleteInput = ({
               >
                 <LinkedItemSearchResults
                   createAndAddNewTag={createAndAddNewTag}
-                  linkItemToSelectedItem={linkItemToSelectedItem}
+                  linkItems={linkItems}
+                  item={item}
                   results={unlinkedItems}
                   searchQuery={searchQuery}
                   shouldShowCreateTag={shouldShowCreateTag}

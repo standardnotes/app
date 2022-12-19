@@ -183,11 +183,22 @@ export class LinkingController extends AbstractViewController {
     }
   }
 
-  linkItems = async (item: SNNote | FileItem, itemToLink: LinkableItem) => {
+  linkItems = async (item: LinkableItem, itemToLink: LinkableItem) => {
     if (item instanceof SNNote) {
+      if (itemToLink instanceof SNNote && !this.isEntitledToNoteLinking) {
+        void this.publishCrossControllerEventSync(CrossControllerEvent.DisplayPremiumModal, {
+          featureName: 'Note linking',
+        })
+        return
+      }
+
+      if (item.uuid === this.activeItem?.uuid) {
+        await this.ensureActiveItemIsInserted()
+      }
+
       if (itemToLink instanceof FileItem) {
         await this.application.items.associateFileWithNote(itemToLink, item)
-      } else if (itemToLink instanceof SNNote && this.isEntitledToNoteLinking) {
+      } else if (itemToLink instanceof SNNote) {
         await this.application.items.linkNoteToNote(item, itemToLink)
       } else if (itemToLink instanceof SNTag) {
         await this.addTagToItem(itemToLink, item)

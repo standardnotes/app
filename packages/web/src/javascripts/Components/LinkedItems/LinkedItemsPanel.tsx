@@ -32,7 +32,7 @@ const LinkedItemsPanel = ({
     getFilesLinksForItem,
     getLinkedNotesForItem,
     getNotesLinkingToItem,
-    linkItemToSelectedItem,
+    linkItems,
     unlinkItemFromSelectedItem,
     activateItem,
     createAndAddNewTag,
@@ -65,7 +65,7 @@ const LinkedItemsPanel = ({
     }
 
     void filesController.selectAndUploadNewFiles((file) => {
-      void linkItemToSelectedItem(file)
+      void linkItems(item, file)
     })
   }
 
@@ -106,7 +106,7 @@ const LinkedItemsPanel = ({
                 <div className="mt-3 mb-1 px-3 text-menu-item font-semibold uppercase text-passive-0">Unlinked</div>
                 <LinkedItemSearchResults
                   createAndAddNewTag={createAndAddNewTag}
-                  linkItemToSelectedItem={linkItemToSelectedItem}
+                  linkItems={linkItems}
                   results={unlinkedItems}
                   searchQuery={searchQuery}
                   shouldShowCreateTag={shouldShowCreateTag}
@@ -115,6 +115,7 @@ const LinkedItemsPanel = ({
                     setSearchQuery('')
                     searchInputRef.current?.focus()
                   }}
+                  item={item}
                 />
               </div>
             )}
