@@ -106,6 +106,7 @@ const FileLinksCell = ({
           filesController={filesController}
           featuresController={featuresController}
           isOpen={contextMenuVisible}
+          item={file}
         />
       </Popover>
     </>
