@@ -83,5 +83,8 @@
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-merge": "^5.8.0"
+  },
+  "dependencies": {
+    "@standardnotes/domain-core": "^1.11.0"
   }
 }

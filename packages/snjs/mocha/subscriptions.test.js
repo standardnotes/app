@@ -2,7 +2,7 @@ import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.skip('subscriptions', function () {
+describe('subscriptions', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let application
