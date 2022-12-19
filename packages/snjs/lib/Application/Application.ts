@@ -82,6 +82,9 @@ import { SNLog } from '../Log'
 import { ChallengeResponse, ListedClientInterface } from '../Services'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
+import { LegacySession, MapperInterface, Session } from '@standardnotes/domain-core'
+import { SessionStorageMapper } from '@Lib/Services/Mapping/SessionStorageMapper'
+import { LegacySessionStorageMapper } from '@Lib/Services/Mapping/LegacySessionStorageMapper'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -154,6 +157,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private integrityService!: ExternalServices.IntegrityService
   private statusService!: ExternalServices.StatusService
   private filesBackupService?: FilesBackupService
+  private declare sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>
+  private declare legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>
 
   private internalEventBus!: ExternalServices.InternalEventBusInterface
 
@@ -1078,6 +1083,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private constructServices() {
+    this.createMappers()
     this.createPayloadManager()
     this.createItemManager()
     this.createDiskStorageManager()
@@ -1169,6 +1175,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.mutatorService as unknown) = undefined
     ;(this.filesBackupService as unknown) = undefined
     ;(this.statusService as unknown) = undefined
+    ;(this.sessionStorageMapper as unknown) = undefined
+    ;(this.legacySessionStorageMapper as unknown) = undefined
 
     this.services = []
   }
@@ -1289,6 +1297,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       environment: this.environment,
       identifier: this.identifier,
       internalEventBus: this.internalEventBus,
+      legacySessionStorageMapper: this.legacySessionStorageMapper,
     })
     this.services.push(this.migrationService)
   }
@@ -1335,6 +1344,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.options.defaultHost,
       this.inMemoryStore,
       this.options.crypto,
+      this.sessionStorageMapper,
+      this.legacySessionStorageMapper,
       this.internalEventBus,
     )
     this.services.push(this.apiService)
@@ -1419,7 +1430,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.options.appVersion,
       SnjsVersion,
       this.apiService.processMetaObject.bind(this.apiService),
+      this.apiService.setSession.bind(this.apiService),
     )
+  }
+
+  private createMappers() {
+    this.sessionStorageMapper = new SessionStorageMapper()
+    this.legacySessionStorageMapper = new LegacySessionStorageMapper()
   }
 
   private createPayloadManager() {
@@ -1497,6 +1514,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.challengeService,
       this.webSocketsService,
       this.httpService,
+      this.sessionStorageMapper,
+      this.legacySessionStorageMapper,
       this.internalEventBus,
     )
     this.serviceObservers.push(

@@ -27,21 +27,19 @@ import { Base64String } from '@standardnotes/sncrypto-common'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { CopyPayloadWithContentOverride } from '@standardnotes/models'
 import { isNullOrUndefined } from '@standardnotes/utils'
-import { JwtSession } from './Sessions/JwtSession'
+import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
 import { KeyParamsFromApiResponse, SNRootKeyParams, SNRootKey, CreateNewRootKey } from '@standardnotes/encryption'
+import * as Responses from '@standardnotes/responses'
+import { Subscription } from '@standardnotes/security'
+import * as Common from '@standardnotes/common'
+
 import { RemoteSession, RawStorageValue } from './Sessions/Types'
-import { Session } from './Sessions/Session'
-import { SessionFromRawStorageValue } from './Sessions/Generator'
 import { ShareToken } from './ShareToken'
 import { SNApiService } from '../Api/ApiService'
 import { DiskStorageService } from '../Storage/DiskStorageService'
 import { SNWebSocketsService } from '../Api/WebsocketsService'
 import { Strings } from '@Lib/Strings'
-import { Subscription } from '@standardnotes/security'
-import { TokenSession } from './Sessions/TokenSession'
 import { UuidString } from '@Lib/Types/UuidString'
-import * as Common from '@standardnotes/common'
-import * as Responses from '@standardnotes/responses'
 import { ChallengeService } from '../Challenge'
 import {
   ApiCallError,
@@ -82,6 +80,8 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     private challengeService: ChallengeService,
     private webSocketsService: SNWebSocketsService,
     private httpService: HttpServiceInterface,
+    private sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>,
+    private legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -122,13 +122,23 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
 
     const rawSession = this.diskStorageService.getValue<RawStorageValue>(StorageKey.Session)
     if (rawSession) {
-      const session = SessionFromRawStorageValue(rawSession)
-      this.setSession(session, false)
+      try {
+        const session =
+          'jwt' in rawSession
+            ? this.legacySessionStorageMapper.toDomain(rawSession)
+            : this.sessionStorageMapper.toDomain(rawSession)
+
+        this.setSession(session, false)
+      } catch (error) {
+        console.error(`Could not deserialize session from storage: ${(error as Error).message}`)
+      }
     }
   }
 
-  private setSession(session: Session, persist = true): void {
-    this.httpService.setAuthorizationToken(session.authorizationValue)
+  private setSession(session: Session | LegacySession, persist = true): void {
+    if (session instanceof Session) {
+      this.httpService.setSession(session)
+    }
 
     this.apiService.setSession(session, persist)
 
@@ -158,7 +168,7 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
   public async signOut() {
     this.setUser(undefined)
     const session = this.apiService.getSession()
-    if (session && session.canExpire()) {
+    if (session && session instanceof Session) {
       await this.apiService.signOut()
       this.webSocketsService.closeWebSocketConnection()
     }
@@ -560,17 +570,17 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     if (!session) {
       return new ClientDisplayableError('Cannot generate share token without active session')
     }
-    if (!(session instanceof TokenSession)) {
+    if (!(session instanceof Session)) {
       return new ClientDisplayableError('Cannot generate share token with non-token session')
     }
 
     const keyParams = (await this.protocolService.getRootKeyParams()) as SNRootKeyParams
 
     const payload: ShareToken = {
-      accessToken: session.accessToken,
-      refreshToken: session.refreshToken,
-      accessExpiration: session.accessExpiration,
-      refreshExpiration: session.refreshExpiration,
+      accessToken: session.accessToken.value,
+      refreshToken: session.refreshToken.value,
+      accessExpiration: session.accessToken.expiresAt,
+      refreshExpiration: session.refreshToken.expiresAt,
       readonlyAccess: true,
       masterKey: this.protocolService.getRootKey()?.masterKey as string,
       keyParams: keyParams.content,
@@ -597,7 +607,7 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
 
     const user = sharePayload.user
 
-    const session = new TokenSession(
+    const session = this.createSession(
       sharePayload.accessToken,
       sharePayload.accessExpiration,
       sharePayload.refreshToken,
@@ -605,13 +615,15 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
       sharePayload.readonlyAccess,
     )
 
-    await this.populateSession(rootKey, user, session, sharePayload.host)
+    if (session !== null) {
+      await this.populateSession(rootKey, user, session, sharePayload.host)
+    }
   }
 
   private async populateSession(
     rootKey: SNRootKey,
     user: Responses.User,
-    session: Session,
+    session: Session | LegacySession,
     host: string,
     wrappingKey?: SNRootKey,
   ) {
@@ -629,14 +641,17 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
   }
 
   private async handleAuthResponse(body: UserRegistrationResponseBody, rootKey: SNRootKey, wrappingKey?: SNRootKey) {
-    const session = new TokenSession(
+    const session = this.createSession(
       body.session.access_token,
       body.session.access_expiration,
       body.session.refresh_token,
       body.session.refresh_expiration,
       body.session.readonly_access,
     )
-    await this.populateSession(rootKey, body.user, session, this.apiService.getHost(), wrappingKey)
+
+    if (session !== null) {
+      await this.populateSession(rootKey, body.user, session, this.apiService.getHost(), wrappingKey)
+    }
   }
 
   /**
@@ -652,12 +667,49 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
 
     const isLegacyJwtResponse = data.token != undefined
     if (isLegacyJwtResponse) {
-      const session = new JwtSession(data.token as string)
-      await this.populateSession(rootKey, user, session, this.apiService.getHost(), wrappingKey)
+      const sessionOrError = LegacySession.create(data.token as string)
+      if (!sessionOrError.isFailed()) {
+        await this.populateSession(rootKey, user, sessionOrError.getValue(), this.apiService.getHost(), wrappingKey)
+      }
     } else if (data.session) {
-      const session = TokenSession.FromApiResponse(response)
-      await this.populateSession(rootKey, user, session, this.apiService.getHost(), wrappingKey)
+      const session = this.createSession(
+        data.session.access_token,
+        data.session.access_expiration,
+        data.session.refresh_token,
+        data.session.refresh_expiration,
+        data.session.readonly_access,
+      )
+      if (session !== null) {
+        await this.populateSession(rootKey, user, session, this.apiService.getHost(), wrappingKey)
+      }
     }
+  }
+
+  private createSession(
+    accessTokenValue: string,
+    accessExpiration: number,
+    refreshTokenValue: string,
+    refreshExpiration: number,
+    readonlyAccess: boolean,
+  ): Session | null {
+    const accessTokenOrError = SessionToken.create(accessTokenValue, accessExpiration)
+    if (accessTokenOrError.isFailed()) {
+      return null
+    }
+    const accessToken = accessTokenOrError.getValue()
+
+    const refreshTokenOrError = SessionToken.create(refreshTokenValue, refreshExpiration)
+    if (refreshTokenOrError.isFailed()) {
+      return null
+    }
+    const refreshToken = refreshTokenOrError.getValue()
+
+    const sessionOrError = Session.create(accessToken, refreshToken, readonlyAccess)
+    if (sessionOrError.isFailed()) {
+      return null
+    }
+
+    return sessionOrError.getValue()
   }
 
   override getDiagnostics(): Promise<DiagnosticInfo | undefined> {

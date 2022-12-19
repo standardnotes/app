@@ -1,5 +1,7 @@
 import { isString, joinPaths, sleep } from '@standardnotes/utils'
 import { Environment } from '@standardnotes/models'
+import { Session, SessionToken } from '@standardnotes/domain-core'
+
 import { HttpRequestParams } from './HttpRequestParams'
 import { HttpVerb } from './HttpVerb'
 import { HttpRequest } from './HttpRequest'
@@ -10,21 +12,26 @@ import { XMLHttpRequestState } from './XMLHttpRequestState'
 import { ErrorMessage } from '../Error/ErrorMessage'
 import { HttpResponseMeta } from './HttpResponseMeta'
 import { HttpErrorResponseBody } from './HttpErrorResponseBody'
+import { Paths } from '../Server/Auth/Paths'
+import { SessionRefreshResponse } from '../Response/Auth/SessionRefreshResponse'
 
 export class HttpService implements HttpServiceInterface {
-  private authorizationToken?: string
+  private session: Session | null
   private __latencySimulatorMs?: number
-  private host!: string
+  private declare host: string
 
   constructor(
     private environment: Environment,
     private appVersion: string,
     private snjsVersion: string,
     private updateMetaCallback: (meta: HttpResponseMeta) => void,
-  ) {}
+    private refreshSessionCallback: (session: Session) => void,
+  ) {
+    this.session = null
+  }
 
-  setAuthorizationToken(authorizationToken: string): void {
-    this.authorizationToken = authorizationToken
+  setSession(session: Session): void {
+    this.session = session
   }
 
   setHost(host: string): void {
@@ -36,7 +43,7 @@ export class HttpService implements HttpServiceInterface {
       url: joinPaths(this.host, path),
       params,
       verb: HttpVerb.Get,
-      authentication: authentication ?? this.authorizationToken,
+      authentication: authentication ?? this.session?.accessToken.value,
     })
   }
 
@@ -45,7 +52,7 @@ export class HttpService implements HttpServiceInterface {
       url: joinPaths(this.host, path),
       params,
       verb: HttpVerb.Post,
-      authentication: authentication ?? this.authorizationToken,
+      authentication: authentication ?? this.session?.accessToken.value,
     })
   }
 
@@ -54,7 +61,7 @@ export class HttpService implements HttpServiceInterface {
       url: joinPaths(this.host, path),
       params,
       verb: HttpVerb.Put,
-      authentication: authentication ?? this.authorizationToken,
+      authentication: authentication ?? this.session?.accessToken.value,
     })
   }
 
@@ -63,7 +70,7 @@ export class HttpService implements HttpServiceInterface {
       url: joinPaths(this.host, path),
       params,
       verb: HttpVerb.Patch,
-      authentication: authentication ?? this.authorizationToken,
+      authentication: authentication ?? this.session?.accessToken.value,
     })
   }
 
@@ -72,7 +79,7 @@ export class HttpService implements HttpServiceInterface {
       url: joinPaths(this.host, path),
       params,
       verb: HttpVerb.Delete,
-      authentication: authentication ?? this.authorizationToken,
+      authentication: authentication ?? this.session?.accessToken.value,
     })
   }
 
@@ -89,7 +96,66 @@ export class HttpService implements HttpServiceInterface {
       this.updateMetaCallback(response.meta)
     }
 
+    if (response.status === HttpStatusCode.ExpiredAccessToken) {
+      const isSessionRefreshed = await this.refreshSession()
+      if (!isSessionRefreshed) {
+        return response
+      }
+
+      httpRequest.authentication = this.session?.accessToken.value
+
+      return this.runHttp(httpRequest)
+    }
+
     return response
+  }
+
+  private async refreshSession(): Promise<boolean> {
+    if (this.session === null) {
+      return false
+    }
+
+    const response = (await this.post(joinPaths(this.host, Paths.v1.refreshSession), {
+      access_token: this.session.accessToken.value,
+      refresh_token: this.session.refreshToken.value,
+    })) as SessionRefreshResponse
+
+    if (response.data.error) {
+      return false
+    }
+
+    if (response.meta) {
+      this.updateMetaCallback(response.meta)
+    }
+
+    const accessTokenOrError = SessionToken.create(
+      response.data.session.access_token,
+      response.data.session.access_expiration,
+    )
+    if (accessTokenOrError.isFailed()) {
+      return false
+    }
+    const accessToken = accessTokenOrError.getValue()
+
+    const refreshTokenOrError = SessionToken.create(
+      response.data.session.refresh_token,
+      response.data.session.refresh_expiration,
+    )
+    if (refreshTokenOrError.isFailed()) {
+      return false
+    }
+    const refreshToken = refreshTokenOrError.getValue()
+
+    const sessionOrError = Session.create(accessToken, refreshToken, response.data.session.readonly_access)
+    if (sessionOrError.isFailed()) {
+      return false
+    }
+
+    this.setSession(sessionOrError.getValue())
+
+    this.refreshSessionCallback(this.session)
+
+    return true
   }
 
   private createRequestBody(httpRequest: HttpRequest): string | Uint8Array | undefined {

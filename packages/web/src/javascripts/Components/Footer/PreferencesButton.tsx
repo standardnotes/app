@@ -22,10 +22,11 @@ const PreferencesButton = ({ openPreferences }: Props) => {
   const [changelogLastReadVersion, setChangelogLastReadVersion] = useState(() =>
     application.changelogService.getLastReadVersion(),
   )
-  const isChangelogUnread = useMemo(
-    () => (changelogLastReadVersion ? compareSemVersions(application.version, changelogLastReadVersion) > 0 : false),
-    [application.version, changelogLastReadVersion],
-  )
+  const isChangelogUnread = useMemo(() => {
+    return changelogLastReadVersion && !application.isNativeMobileWeb()
+      ? compareSemVersions(application.version, changelogLastReadVersion) > 0
+      : false
+  }, [application, changelogLastReadVersion])
   useEffect(
     () => application.changelogService.addLastReadChangeListener(setChangelogLastReadVersion),
     [application.changelogService],
