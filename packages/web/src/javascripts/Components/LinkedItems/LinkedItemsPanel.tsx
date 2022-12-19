@@ -13,6 +13,7 @@ import DecoratedInput from '../Input/DecoratedInput'
 import LinkedItemSearchResults from './LinkedItemSearchResults'
 import { LinkedItemsSectionItem } from './LinkedItemsSectionItem'
 import { DecryptedItem } from '@standardnotes/snjs'
+import { useItemLinks } from '@/Hooks/useItemLinks'
 
 const LinkedItemsPanel = ({
   linkingController,
@@ -27,22 +28,10 @@ const LinkedItemsPanel = ({
   isOpen: boolean
   item: DecryptedItem
 }) => {
-  const {
-    getLinkedTagsForItem,
-    getFilesLinksForItem,
-    getLinkedNotesForItem,
-    getNotesLinkingToItem,
-    linkItems,
-    unlinkItems,
-    activateItem,
-    createAndAddNewTag,
-    isEntitledToNoteLinking,
-  } = linkingController
+  const { linkItems, unlinkItems, activateItem, createAndAddNewTag, isEntitledToNoteLinking } = linkingController
 
-  const tagsLinkedToItem = getLinkedTagsForItem(item) || []
-  const { filesLinkedToItem, filesLinkingToItem } = getFilesLinksForItem(item)
-  const notesLinkedToItem = getLinkedNotesForItem(item) || []
-  const notesLinkingToItem = getNotesLinkingToItem(item) || []
+  const { notesLinkedToItem, notesLinkingToItem, filesLinkedToItem, filesLinkingToItem, tagsLinkedToItem } =
+    useItemLinks(item)
 
   const { entitledToFiles } = featuresController
   const application = useApplication()

@@ -11,7 +11,6 @@ import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { ItemLink } from '@/Utils/Items/Search/ItemLink'
 import { FOCUS_TAGS_INPUT_COMMAND, keyboardStringForShortcut } from '@standardnotes/ui-services'
 import { useCommandService } from '../CommandProvider'
-import { useApplication } from '../ApplicationProvider'
 import { useItemLinks } from '@/Hooks/useItemLinks'
 
 type Props = {
@@ -19,14 +18,11 @@ type Props = {
 }
 
 const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
-  const application = useApplication()
-  const activeItem = application.itemControllerGroup.activeItemViewController?.item
-
   const { toggleAppPane } = useResponsiveAppPane()
 
   const commandService = useCommandService()
 
-  const { unlinkItemFromSelectedItem: unlinkItem, activateItem } = linkingController
+  const { activeItem, unlinkItemFromSelectedItem: unlinkItem, activateItem } = linkingController
 
   const { notesLinkedToItem, filesLinkedToItem, tagsLinkedToItem, notesLinkingToItem, filesLinkingToItem } =
     useItemLinks(activeItem)
