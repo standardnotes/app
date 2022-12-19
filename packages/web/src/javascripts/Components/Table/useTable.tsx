@@ -138,7 +138,7 @@ export function useTable<Data>({
       }
       return handler
     },
-    [enableMultipleRowSelection, enableRowSelection, rows, selectedRows],
+    [application.keyboardService.isMac, enableMultipleRowSelection, enableRowSelection, rows, selectedRows],
   )
 
   const handleRowDoubleClick = useCallback(
