@@ -2,7 +2,7 @@ import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('subscriptions', function () {
+describe.skip('subscriptions', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let application
@@ -96,7 +96,7 @@ describe('subscriptions', function () {
     expect(existingInvites.filter(invite => invite.status === 'canceled').length).to.equal(1)
   })
 
-  it.skip('should invite a user by email if the limit of shared subscription is restored', async () => {
+  it('should invite a user by email if the limit of shared subscription is restored', async () => {
     await subscriptionManager.inviteToSubscription('test1@test.te')
     await subscriptionManager.inviteToSubscription('test2@test.te')
     await subscriptionManager.inviteToSubscription('test3@test.te')
