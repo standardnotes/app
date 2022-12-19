@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.156.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.156.5...@standardnotes/snjs@2.156.6) (2022-12-19)
+
+### Bug Fixes
+
+* **snjs:** skip subscriptions test suite until fixed ([a1ec13d](https://github.com/standardnotes/app/commit/a1ec13d0b08550fea778fd96cf4030778d988d85))
+
 ## [2.156.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.156.4...@standardnotes/snjs@2.156.5) (2022-12-19)
 
 ### Bug Fixes
