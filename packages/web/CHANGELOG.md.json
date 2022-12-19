@@ -1,6 +1,22 @@
 {
   "versions": [
     {
+      "version": "3.127.2",
+      "title": "[3.127.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.1...@standardnotes/web@3.127.2) (2022-12-19)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where the first item in item link autcomplete would not be correctly focused (skip e2e) ([df4148f](https://github.com/standardnotes/app/commit/df4148f82489dd04878c85fd9c459e5d9ad8a89b))\n* Fixed white screen issue on mobile ([91f3295](https://github.com/standardnotes/app/commit/91f3295cffd54c7a5de01633add9b6abdb769cdf))",
+      "parsed": {
+        "_": [
+          "Fixed issue where the first item in item link autcomplete would not be correctly focused (skip e2e) (df4148f)",
+          "Fixed white screen issue on mobile (91f3295)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where the first item in item link autcomplete would not be correctly focused (skip e2e) (df4148f)",
+          "Fixed white screen issue on mobile (91f3295)"
+        ]
+      }
+    },
+    {
       "version": "3.127.1",
       "title": "[3.127.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.0...@standardnotes/web@3.127.1) (2022-12-19)",
       "date": null,
