@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "3.127.3",
+      "title": "[3.127.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.2...@standardnotes/web@3.127.3) (2022-12-19)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.127.2",
       "title": "[3.127.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.1...@standardnotes/web@3.127.2) (2022-12-19)",
       "date": null,

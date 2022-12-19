@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.156.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.156.4...@standardnotes/snjs@2.156.5) (2022-12-19)
+
+### Bug Fixes
+
+* **snjs:** mark flaky subscription test as skipped until fixed ([b8bf8ca](https://github.com/standardnotes/app/commit/b8bf8ca1120b5b12dca6c332d0e8523d3a9dcbe5))
+
 ## [2.156.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.156.3...@standardnotes/snjs@2.156.4) (2022-12-19)
 
 **Note:** Version bump only for package @standardnotes/snjs
