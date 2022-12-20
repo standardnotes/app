@@ -8,7 +8,7 @@ import {
   SELECT_ALL_ITEMS_KEYBOARD_COMMAND,
 } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
-import { PANEL_NAME_NOTES } from '@/Constants/Constants'
+import { FilesTableViewLabsKey, PANEL_NAME_NOTES } from '@/Constants/Constants'
 import { FileItem, PrefKey, SystemViewId, WebAppEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { forwardRef, useCallback, useEffect, useMemo } from 'react'
@@ -284,6 +284,9 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       }
     }, [selectedUuids, innerRef, isCurrentNoteTemplate, renderedItems, panes])
 
+    const isFilesTableViewEnabled = (application.getValue(FilesTableViewLabsKey) as boolean) || false
+    const shouldShowFilesTableView = isFilesTableViewEnabled && selectedTag?.uuid === SystemViewId.Files
+
     return (
       <div
         id={id}
@@ -304,12 +307,16 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
                 addButtonLabel={addButtonLabel}
                 addNewItem={addNewItem}
                 isFilesSmartView={isFilesSmartView}
+                isFilesTableViewEnabled={isFilesTableViewEnabled}
                 optionsSubtitle={optionsSubtitle}
                 selectedTag={selectedTag}
                 filesController={filesController}
+                itemListController={itemListController}
               />
             )}
-            <SearchBar itemListController={itemListController} searchOptionsController={searchOptionsController} />
+            {!isFilesTableViewEnabled && (
+              <SearchBar itemListController={itemListController} searchOptionsController={searchOptionsController} />
+            )}
             <NoAccountWarning
               accountMenuController={accountMenuController}
               noAccountWarningController={noAccountWarningController}
@@ -332,7 +339,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
           <p className="empty-items-list opacity-50">Loading...</p>
         ) : null}
         {!dailyMode && renderedItems.length ? (
-          selectedTag?.uuid === SystemViewId.Files ? (
+          shouldShowFilesTableView ? (
             <FilesTableView
               application={application}
               filesController={filesController}

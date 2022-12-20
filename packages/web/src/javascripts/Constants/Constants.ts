@@ -48,3 +48,5 @@ export const PlainEditorMetadata: EditorMetadata = {
   iconClassName: 'text-accessory-tint-1',
   iconTintNumber: 1,
 }
+
+export const FilesTableViewLabsKey = 'files-table-view'

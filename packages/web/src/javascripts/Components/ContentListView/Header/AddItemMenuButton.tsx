@@ -44,12 +44,8 @@ const AddItemMenuButton = ({
     <>
       <button
         className={classNames(
-          'hidden md:flex',
-          'h-8 w-8 hover:brightness-125',
-          'z-editor-title-bar ml-3  cursor-pointer items-center',
-          `justify-center rounded-full border border-solid border-transparent ${
-            isDailyEntry ? 'bg-danger text-danger-contrast' : 'bg-info text-info-contrast'
-          }`,
+          'z-editor-title-bar hidden h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-transparent hover:brightness-125 md:flex',
+          isDailyEntry ? 'bg-danger text-danger-contrast' : 'bg-info text-info-contrast',
         )}
         title={addButtonLabel}
         aria-label={addButtonLabel}
