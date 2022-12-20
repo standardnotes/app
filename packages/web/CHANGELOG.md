@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.127.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.7...@standardnotes/web@3.127.8) (2022-12-20)
+
+### Bug Fixes
+
+* Fixed issue where Moments-related toasts would not get correctly dismissed ([eceb46b](https://github.com/standardnotes/app/commit/eceb46bed7117c8bf5ea34d87a800f8bf02881ac))
+* Increased interval between Moments capturing photos ([e4b3028](https://github.com/standardnotes/app/commit/e4b3028d673a037f2740939b294cf6301db0d529))
+
 ## [3.127.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.6...@standardnotes/web@3.127.7) (2022-12-20)
 
 ### Bug Fixes
