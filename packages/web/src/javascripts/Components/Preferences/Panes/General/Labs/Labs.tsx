@@ -7,7 +7,6 @@ import PreferencesGroup from '../../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
 import LabsFeature from './LabsFeature'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
-import { FilesTableViewLabsKey } from '@/Constants/Constants'
 
 type ExperimentalFeatureItem = {
   identifier: FeatureIdentifier
@@ -25,13 +24,8 @@ type Props = {
   }
 }
 
-const hasTemporaryFeatureToggles = true
-
 const LabsPane: FunctionComponent<Props> = ({ application }) => {
   const [experimentalFeatures, setExperimentalFeatures] = useState<ExperimentalFeatureItem[]>([])
-  const [isFilesTableViewEnabled, setIsFilesTableViewEnabled] = useState<boolean>(
-    () => (application.getValue(FilesTableViewLabsKey) as boolean) || false,
-  )
 
   const reloadExperimentalFeatures = useCallback(() => {
     const experimentalFeatures = application.features.getExperimentalFeatures().map((featureIdentifier) => {
@@ -83,16 +77,7 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
               </Fragment>
             )
           })}
-          <LabsFeature
-            name="Files Table View"
-            description="Replaces the current Files view with a table view. Requires reload."
-            toggleFeature={() => {
-              application.setValue(FilesTableViewLabsKey, !isFilesTableViewEnabled)
-              setIsFilesTableViewEnabled(!isFilesTableViewEnabled)
-            }}
-            isEnabled={isFilesTableViewEnabled}
-          />
-          {experimentalFeatures.length === 0 && !hasTemporaryFeatureToggles && (
+          {experimentalFeatures.length === 0 && (
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <Text>No experimental features available.</Text>
