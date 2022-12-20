@@ -28,7 +28,7 @@ export class MomentsService extends AbstractViewController {
         if (this.isEnabled) {
           void this.beginTakingPhotos()
         }
-      }, ApplicationEvent.Launched),
+      }, ApplicationEvent.LocalDataLoaded),
     )
 
     makeObservable(this, {
