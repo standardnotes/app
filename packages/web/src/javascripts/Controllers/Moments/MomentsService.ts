@@ -9,7 +9,7 @@ import { WebApplication } from '@/Application/Application'
 import { dateToStringStyle1 } from '@/Utils/DateUtils'
 import { PhotoRecorder } from './PhotoRecorder'
 
-const EVERY_HALF_HOUR = 1000 * 60 * 30
+const EVERY_HOUR = 1000 * 60 * 60
 const EVERY_TEN_SECONDS = 1000 * 10
 const DEBUG_MODE = isDev && false
 
@@ -68,7 +68,7 @@ export class MomentsService extends AbstractViewController {
       () => {
         void this.takePhoto()
       },
-      DEBUG_MODE ? EVERY_TEN_SECONDS : EVERY_HALF_HOUR,
+      DEBUG_MODE ? EVERY_TEN_SECONDS : EVERY_HOUR,
     )
   }
 
