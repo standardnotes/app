@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.127.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.6...@standardnotes/web@3.127.7) (2022-12-20)
+
+### Bug Fixes
+
+* Added potential fix for issue where some video would show as not supported ([a7add80](https://github.com/standardnotes/app/commit/a7add80633ea603f7883db2dbc1f886d40450979))
+
 ## [3.127.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.5...@standardnotes/web@3.127.6) (2022-12-20)
 
 **Note:** Version bump only for package @standardnotes/web
