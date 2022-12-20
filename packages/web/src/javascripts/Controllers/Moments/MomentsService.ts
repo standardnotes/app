@@ -123,7 +123,10 @@ export class MomentsService extends AbstractViewController {
     const uploadedFile = await this.filesController.uploadNewFile(file)
 
     if (uploadedFile) {
-      void this.application.linkingController.linkItemToSelectedItem(uploadedFile)
+      const isAppInForeground = document.visibilityState === 'visible'
+      if (isAppInForeground) {
+        void this.application.linkingController.linkItemToSelectedItem(uploadedFile)
+      }
 
       const defaultTag = this.getDefaultTag()
       if (defaultTag) {
