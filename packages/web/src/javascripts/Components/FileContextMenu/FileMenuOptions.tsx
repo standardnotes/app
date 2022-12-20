@@ -1,9 +1,8 @@
 import { FunctionComponent, useCallback, useMemo } from 'react'
-import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
+import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import Icon from '@/Components/Icon/Icon'
 import { observer } from 'mobx-react-lite'
 import { FilesController } from '@/Controllers/FilesController'
-import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
@@ -11,27 +10,27 @@ import { AppPaneId } from '../Panes/AppPaneMetadata'
 import MenuItem from '../Menu/MenuItem'
 import { FileContextMenuBackupOption } from './FileContextMenuBackupOption'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
+import { FileItem } from '@standardnotes/snjs'
 
 type Props = {
   closeMenu: () => void
   filesController: FilesController
-  selectionController: SelectedItemsController
   isFileAttachedToNote?: boolean
   renameToggleCallback?: (isRenamingFile: boolean) => void
   shouldShowRenameOption: boolean
   shouldShowAttachOption: boolean
+  selectedFiles: FileItem[]
 }
 
 const FileMenuOptions: FunctionComponent<Props> = ({
   closeMenu,
   filesController,
-  selectionController,
   isFileAttachedToNote,
   renameToggleCallback,
   shouldShowRenameOption,
   shouldShowAttachOption,
+  selectedFiles,
 }) => {
-  const { selectedFiles } = selectionController
   const { handleFileAction } = filesController
   const { toggleAppPane } = useResponsiveAppPane()
 
@@ -46,7 +45,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
   const onDetach = useCallback(() => {
     const file = selectedFiles[0]
     void handleFileAction({
-      type: PopoverFileItemActionType.DetachFileToNote,
+      type: FileItemActionType.DetachFileToNote,
       payload: { file },
     })
     closeMenu()
@@ -55,7 +54,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
   const onAttach = useCallback(() => {
     const file = selectedFiles[0]
     void handleFileAction({
-      type: PopoverFileItemActionType.AttachFileToNote,
+      type: FileItemActionType.AttachFileToNote,
       payload: { file },
     })
     closeMenu()
@@ -86,7 +85,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       <MenuSwitchButtonItem
         checked={hasProtectedFiles}
         onChange={(hasProtectedFiles) => {
-          void filesController.setProtectionForFiles(hasProtectedFiles, selectionController.selectedFiles)
+          void filesController.setProtectionForFiles(hasProtectedFiles, selectedFiles)
         }}
       >
         <Icon type="lock" className="mr-2 text-neutral" />
@@ -95,7 +94,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       <HorizontalSeparator classes="my-1" />
       <MenuItem
         onClick={() => {
-          void filesController.downloadFiles(selectionController.selectedFiles)
+          void filesController.downloadFiles(selectedFiles)
         }}
       >
         <Icon type="download" className="mr-2 text-neutral" />
@@ -114,7 +113,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       <MenuItem
         onClick={() => {
           closeMenuAndToggleFilesList()
-          void filesController.deleteFilesPermanently(selectionController.selectedFiles)
+          void filesController.deleteFilesPermanently(selectedFiles)
         }}
       >
         <Icon type="trash" className="mr-2 text-danger" />

@@ -9,7 +9,7 @@ import {
 } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NOTES } from '@/Constants/Constants'
-import { FileItem, PrefKey, WebAppEvent } from '@standardnotes/snjs'
+import { FileItem, PrefKey, SystemViewId, WebAppEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { forwardRef, useCallback, useEffect, useMemo } from 'react'
 import ContentList from '@/Components/ContentListView/ContentList'
@@ -37,6 +37,9 @@ import { PanelResizedData } from '@/Types/PanelResizedData'
 import { useForwardedRef } from '@/Hooks/useForwardedRef'
 import { isMobileScreen } from '@/Utils'
 import FloatingAddButton from './FloatingAddButton'
+import FilesTableView from '../FilesTableView/FilesTableView'
+import { FeaturesController } from '@/Controllers/FeaturesController'
+import { featureTrunkEnabled, FeatureTrunkName } from '@/FeatureTrunk'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -49,6 +52,7 @@ type Props = {
   selectionController: SelectedItemsController
   searchOptionsController: SearchOptionsController
   linkingController: LinkingController
+  featuresController: FeaturesController
   className?: string
   id: string
   children?: React.ReactNode
@@ -68,6 +72,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       selectionController,
       searchOptionsController,
       linkingController,
+      featuresController,
       className,
       id,
       children,
@@ -280,6 +285,9 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       }
     }, [selectedUuids, innerRef, isCurrentNoteTemplate, renderedItems, panes])
 
+    const isFilesTableViewEnabled = featureTrunkEnabled(FeatureTrunkName.FilesTableView)
+    const shouldShowFilesTableView = isFilesTableViewEnabled && selectedTag?.uuid === SystemViewId.Files
+
     return (
       <div
         id={id}
@@ -300,12 +308,16 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
                 addButtonLabel={addButtonLabel}
                 addNewItem={addNewItem}
                 isFilesSmartView={isFilesSmartView}
+                isFilesTableViewEnabled={isFilesTableViewEnabled}
                 optionsSubtitle={optionsSubtitle}
                 selectedTag={selectedTag}
                 filesController={filesController}
+                itemListController={itemListController}
               />
             )}
-            <SearchBar itemListController={itemListController} searchOptionsController={searchOptionsController} />
+            {!isFilesTableViewEnabled && (
+              <SearchBar itemListController={itemListController} searchOptionsController={searchOptionsController} />
+            )}
             <NoAccountWarning
               accountMenuController={accountMenuController}
               noAccountWarningController={noAccountWarningController}
@@ -324,13 +336,18 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         {!dailyMode && completedFullSync && !renderedItems.length ? (
           <p className="empty-items-list opacity-50">No items.</p>
         ) : null}
-
         {!dailyMode && !completedFullSync && !renderedItems.length ? (
           <p className="empty-items-list opacity-50">Loading...</p>
         ) : null}
-
         {!dailyMode && renderedItems.length ? (
-          <>
+          shouldShowFilesTableView ? (
+            <FilesTableView
+              application={application}
+              filesController={filesController}
+              featuresController={featuresController}
+              linkingController={linkingController}
+            />
+          ) : (
             <ContentList
               items={renderedItems}
               selectedUuids={selectedUuids}
@@ -342,7 +359,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
               notesController={notesController}
               selectionController={selectionController}
             />
-          </>
+          )
         ) : null}
         <div className="absolute bottom-0 h-safe-bottom w-full" />
         {children}

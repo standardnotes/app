@@ -3,7 +3,6 @@ import { FilesController } from '@/Controllers/FilesController'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { observer } from 'mobx-react-lite'
 import { useRef, useCallback } from 'react'
-import { useApplication } from '../ApplicationProvider'
 import RoundIconButton from '../Button/RoundIconButton'
 import Popover from '../Popover/Popover'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
@@ -17,10 +16,7 @@ type Props = {
 }
 
 const LinkedItemsButton = ({ linkingController, filesController, onClickPreprocessing, featuresController }: Props) => {
-  const application = useApplication()
-  const activeItem = application.itemControllerGroup.activeItemViewController?.item
-
-  const { isLinkingPanelOpen, setIsLinkingPanelOpen } = linkingController
+  const { activeItem, isLinkingPanelOpen, setIsLinkingPanelOpen } = linkingController
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const toggleMenu = useCallback(async () => {

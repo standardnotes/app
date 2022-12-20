@@ -303,6 +303,7 @@ const PanesSystemComponent = () => {
               selectionController={viewControllerManager.selectionController}
               searchOptionsController={viewControllerManager.searchOptionsController}
               linkingController={viewControllerManager.linkingController}
+              featuresController={viewControllerManager.featuresController}
             >
               {showPanelResizers && listRef && (
                 <PanelResizer

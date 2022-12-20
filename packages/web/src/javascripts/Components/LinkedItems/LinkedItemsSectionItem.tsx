@@ -9,7 +9,7 @@ import { FileItem } from '@standardnotes/snjs'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { useRef, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
-import { PopoverFileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
+import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import Icon from '../Icon/Icon'
 import MenuItem from '../Menu/MenuItem'
 import Popover from '../Popover/Popover'
@@ -46,7 +46,7 @@ export const LinkedItemsSectionItem = ({
       return
     }
     await handleFileAction({
-      type: PopoverFileItemActionType.RenameFile,
+      type: FileItemActionType.RenameFile,
       payload: {
         file: item,
         name: name,

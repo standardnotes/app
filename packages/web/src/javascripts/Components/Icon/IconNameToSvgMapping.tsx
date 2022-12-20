@@ -2,6 +2,8 @@ import * as icons from '@standardnotes/icons'
 
 export const IconNameToSvgMapping = {
   'account-circle': icons.AccountCircleIcon,
+  'arrow-up': icons.ArrowUpIcon,
+  'arrow-down': icons.ArrowDownIcon,
   'arrow-left': icons.ArrowLeftIcon,
   'arrow-right': icons.ArrowRightIcon,
   'arrows-sort-down': icons.ArrowsSortDownIcon,

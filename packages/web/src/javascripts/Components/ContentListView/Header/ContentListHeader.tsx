@@ -11,6 +11,8 @@ import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import AddItemMenuButton from './AddItemMenuButton'
 import { FilesController } from '@/Controllers/FilesController'
+import SearchButton from './SearchButton'
+import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 
 type Props = {
   application: WebApplication
@@ -19,9 +21,11 @@ type Props = {
   addButtonLabel: string
   addNewItem: () => void
   isFilesSmartView: boolean
+  isFilesTableViewEnabled: boolean
   optionsSubtitle?: string
   selectedTag: AnyTag
   filesController: FilesController
+  itemListController: ItemListController
 }
 
 const ContentListHeader = ({
@@ -31,9 +35,11 @@ const ContentListHeader = ({
   addButtonLabel,
   addNewItem,
   isFilesSmartView,
+  isFilesTableViewEnabled,
   optionsSubtitle,
   selectedTag,
   filesController,
+  itemListController,
 }: Props) => {
   const displayOptionsContainerRef = useRef<HTMLDivElement>(null)
   const displayOptionsButtonRef = useRef<HTMLButtonElement>(null)
@@ -98,6 +104,14 @@ const ContentListHeader = ({
     )
   }, [addButtonLabel, addNewItem, filesController, isDailyEntry, isFilesSmartView])
 
+  const SearchBarButton = useMemo(() => {
+    if (!isFilesSmartView || !isFilesTableViewEnabled) {
+      return null
+    }
+
+    return <SearchButton itemListController={itemListController} />
+  }, [isFilesSmartView, isFilesTableViewEnabled, itemListController])
+
   const FolderName = useMemo(() => {
     return (
       <div className="flex min-w-0 flex-grow flex-col break-words pt-1 lg:pt-0">
@@ -125,13 +139,14 @@ const ContentListHeader = ({
       <div className={'flex w-full justify-between md:flex'}>
         <NavigationMenuButton />
         {FolderName}
-        <div className="flex">
+        <div className="flex items-center gap-3">
+          {SearchBarButton}
           {OptionsMenu}
           {AddButton}
         </div>
       </div>
     )
-  }, [OptionsMenu, AddButton, FolderName])
+  }, [FolderName, SearchBarButton, OptionsMenu, AddButton])
 
   const TabletLayout = useMemo(() => {
     return (

@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import { PopoverFileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
+import { FileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewController'
 import { AppPaneId } from '@/Components/Panes/AppPaneMetadata'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
@@ -153,7 +153,7 @@ export class LinkingController extends AbstractViewController {
       }
     } else if (item instanceof FileItem) {
       await this.filesController.handleFileAction({
-        type: PopoverFileItemActionType.PreviewFile,
+        type: FileItemActionType.PreviewFile,
         payload: {
           file: item,
           otherFiles: [],
@@ -164,6 +164,12 @@ export class LinkingController extends AbstractViewController {
     return undefined
   }
 
+  unlinkItems = async (item: LinkableItem, itemToUnlink: LinkableItem) => {
+    await this.application.items.unlinkItems(item, itemToUnlink)
+
+    void this.application.sync.sync()
+  }
+
   unlinkItemFromSelectedItem = async (itemToUnlink: LinkableItem) => {
     const selectedItem = this.selectionController.firstSelectedItem
 
@@ -171,9 +177,7 @@ export class LinkingController extends AbstractViewController {
       return
     }
 
-    await this.application.items.unlinkItems(selectedItem, itemToUnlink)
-
-    void this.application.sync.sync()
+    void this.unlinkItems(selectedItem, itemToUnlink)
   }
 
   ensureActiveItemIsInserted = async () => {

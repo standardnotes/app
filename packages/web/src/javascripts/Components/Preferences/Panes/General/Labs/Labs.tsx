@@ -18,6 +18,8 @@ type ExperimentalFeatureItem = {
 
 type Props = {
   application: {
+    setValue: WebApplication['setValue']
+    getValue: WebApplication['getValue']
     features: WebApplication['features']
   }
 }

@@ -4,10 +4,7 @@ import {
   OnChunkCallbackNoProgress,
 } from '@standardnotes/files'
 import { FilePreviewModalController } from './FilePreviewModalController'
-import {
-  PopoverFileItemAction,
-  PopoverFileItemActionType,
-} from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
+import { FileItemAction, FileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 import { BYTES_IN_ONE_MEGABYTE } from '@/Constants/Constants'
 import { confirmDialog } from '@standardnotes/ui-services'
 import { Strings, StringUtils } from '@/Constants/Strings'
@@ -34,8 +31,8 @@ import { AbstractViewController } from './Abstract/AbstractViewController'
 import { NotesController } from './NotesController/NotesController'
 import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
 
-const UnprotectedFileActions = [PopoverFileItemActionType.ToggleFileProtection]
-const NonMutatingFileActions = [PopoverFileItemActionType.DownloadFile, PopoverFileItemActionType.PreviewFile]
+const UnprotectedFileActions = [FileItemActionType.ToggleFileProtection]
+const NonMutatingFileActions = [FileItemActionType.DownloadFile, FileItemActionType.PreviewFile]
 
 type FileContextMenuLocation = { x: number; y: number }
 
@@ -195,7 +192,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
   }
 
   handleFileAction = async (
-    action: PopoverFileItemAction,
+    action: FileItemAction,
   ): Promise<{
     didHandleAction: boolean
   }> => {
@@ -215,27 +212,27 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     }
 
     switch (action.type) {
-      case PopoverFileItemActionType.AttachFileToNote:
+      case FileItemActionType.AttachFileToNote:
         await this.attachFileToSelectedNote(file)
         break
-      case PopoverFileItemActionType.DetachFileToNote:
+      case FileItemActionType.DetachFileToNote:
         await this.detachFileFromNote(file)
         break
-      case PopoverFileItemActionType.DeleteFile:
+      case FileItemActionType.DeleteFile:
         await this.deleteFile(file)
         break
-      case PopoverFileItemActionType.DownloadFile:
+      case FileItemActionType.DownloadFile:
         await this.downloadFile(file)
         break
-      case PopoverFileItemActionType.ToggleFileProtection: {
+      case FileItemActionType.ToggleFileProtection: {
         const isProtected = await this.toggleFileProtection(file)
         action.callback(isProtected)
         break
       }
-      case PopoverFileItemActionType.RenameFile:
+      case FileItemActionType.RenameFile:
         await this.renameFile(file, action.payload.name)
         break
-      case PopoverFileItemActionType.PreviewFile:
+      case FileItemActionType.PreviewFile:
         this.filePreviewModalController.activate(file, action.payload.otherFiles)
         break
     }
@@ -426,7 +423,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
             label: 'Open',
             handler: (toastId) => {
               void this.handleFileAction({
-                type: PopoverFileItemActionType.PreviewFile,
+                type: FileItemActionType.PreviewFile,
                 payload: { file: uploadedFile },
               })
               dismissToast(toastId)
