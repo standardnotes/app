@@ -83,7 +83,11 @@ const PreviewComponent: FunctionComponent<Props> = ({
   }
 
   if (file.mimeType.startsWith('video/')) {
-    return <video className="h-full w-full" src={objectUrl} controls autoPlay />
+    return (
+      <video className="h-full w-full" controls autoPlay>
+        <source src={objectUrl} type={file.mimeType} />
+      </video>
+    )
   }
 
   if (file.mimeType.startsWith('audio/')) {
