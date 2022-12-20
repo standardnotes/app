@@ -235,10 +235,6 @@ export class NoteViewController implements ItemViewControllerInterface {
 
     const isTemplate = this.isTemplateNote
 
-    if (typeof document !== 'undefined' && document.hidden) {
-      void this.application.alertService.alert(InfoStrings.SavingWhileDocumentHidden)
-    }
-
     if (isTemplate) {
       await this.insertTemplatedNote()
     }
