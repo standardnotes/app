@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.156.8](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.156.7...@standardnotes/snjs@2.156.8) (2022-12-21)
+
+### Bug Fixes
+
+* **api:** handling expired token responses ([#2113](https://github.com/standardnotes/app/issues/2113)) ([2696b07](https://github.com/standardnotes/app/commit/2696b07759104fb1d40781897f69e63133ad824a))
+
 ## [2.156.7](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.156.6...@standardnotes/snjs@2.156.7) (2022-12-20)
 
 **Note:** Version bump only for package @standardnotes/snjs
