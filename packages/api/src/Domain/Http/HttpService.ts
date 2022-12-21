@@ -115,7 +115,7 @@ export class HttpService implements HttpServiceInterface {
       return false
     }
 
-    const response = (await this.post(joinPaths(this.host, Paths.v1.refreshSession), {
+    const response = (await this.post(Paths.v1.refreshSession, {
       access_token: this.session.accessToken.value,
       refresh_token: this.session.refreshToken.value,
     })) as SessionRefreshResponse
@@ -265,13 +265,12 @@ export class HttpService implements HttpServiceInterface {
     } catch (error) {
       console.error(error)
     }
-    if (httpStatus >= HttpStatusCode.Success && httpStatus < HttpStatusCode.MultipleChoices) {
-      resolve(response)
-    } else {
+    if (httpStatus >= HttpStatusCode.Success && httpStatus < HttpStatusCode.InternalServerError) {
       if (httpStatus === HttpStatusCode.Forbidden && response.data && response.data.error !== undefined) {
         ;(response.data as HttpErrorResponseBody).error.message = ErrorMessage.RateLimited
       }
-
+      resolve(response)
+    } else {
       reject(response)
     }
   }
