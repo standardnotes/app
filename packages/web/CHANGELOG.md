@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.127.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.9...@standardnotes/web@3.127.10) (2022-12-22)
+
+### Bug Fixes
+
+* Disabled Moments photo capture when app is passcode or biometrics locked ([#2114](https://github.com/standardnotes/app/issues/2114)) ([94c2802](https://github.com/standardnotes/app/commit/94c280256e0a71fb8078f0d0e4d7ad2b6d3c1462))
+
 ## [3.127.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.8...@standardnotes/web@3.127.9) (2022-12-21)
 
 **Note:** Version bump only for package @standardnotes/web

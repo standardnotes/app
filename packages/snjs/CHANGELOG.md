@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.156.9](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.156.8...@standardnotes/snjs@2.156.9) (2022-12-22)
+
+### Bug Fixes
+
+* Disabled Moments photo capture when app is passcode or biometrics locked ([#2114](https://github.com/standardnotes/app/issues/2114)) ([94c2802](https://github.com/standardnotes/app/commit/94c280256e0a71fb8078f0d0e4d7ad2b6d3c1462))
+
 ## [2.156.8](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.156.7...@standardnotes/snjs@2.156.8) (2022-12-21)
 
 ### Bug Fixes
