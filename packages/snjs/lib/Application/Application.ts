@@ -178,7 +178,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private launched = false
   /** Whether the application has been destroyed via .deinit() */
   public dealloced = false
-  public isBiometricsSoftLockEngaged = false
+  private isBiometricsSoftLockEngaged = false
   private revokingSession = false
   private handledFullSyncStage = false
 
@@ -941,7 +941,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.protocolService.hasPasscode()
   }
 
-  async isLocked() {
+  async isLocked(): Promise<boolean> {
     if (!this.started) {
       return Promise.resolve(true)
     }
