@@ -178,6 +178,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private launched = false
   /** Whether the application has been destroyed via .deinit() */
   public dealloced = false
+  public isBiometricsSoftLockEngaged = false
   private revokingSession = false
   private handledFullSyncStage = false
 
@@ -940,11 +941,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.protocolService.hasPasscode()
   }
 
-  isLocked(): Promise<boolean> {
+  async isLocked() {
     if (!this.started) {
       return Promise.resolve(true)
     }
-    return this.challengeService.isPasscodeLocked()
+    const isPasscodeLocked = await this.challengeService.isPasscodeLocked()
+    return isPasscodeLocked || this.isBiometricsSoftLockEngaged
   }
 
   public async lock(): Promise<void> {
@@ -964,10 +966,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     void this.promptForCustomChallenge(challenge)
 
+    this.isBiometricsSoftLockEngaged = true
     void this.notifyEvent(ApplicationEvent.BiometricsSoftLockEngaged)
 
     this.addChallengeObserver(challenge, {
       onComplete: () => {
+        this.isBiometricsSoftLockEngaged = false
         void this.notifyEvent(ApplicationEvent.BiometricsSoftLockDisengaged)
       },
     })

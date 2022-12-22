@@ -17,7 +17,6 @@ const DELAY_AFTER_STARTING_CAMERA_TO_ALLOW_MOBILE_AUTOFOCUS = 2000
 
 export class MomentsService extends AbstractViewController {
   isEnabled = false
-  isBiometricsSoftLockEngaged = false
   private intervalReference: ReturnType<typeof setInterval> | undefined
 
   constructor(application: WebApplication, private filesController: FilesController, eventBus: InternalEventBus) {
@@ -32,11 +31,9 @@ export class MomentsService extends AbstractViewController {
       }, ApplicationEvent.LocalDataLoaded),
       application.addEventObserver(async () => {
         this.disableMoments()
-        this.isBiometricsSoftLockEngaged = true
       }, ApplicationEvent.BiometricsSoftLockEngaged),
       application.addEventObserver(async () => {
         this.enableMoments()
-        this.isBiometricsSoftLockEngaged = false
       }, ApplicationEvent.BiometricsSoftLockDisengaged),
     )
 
@@ -90,7 +87,7 @@ export class MomentsService extends AbstractViewController {
   }
 
   public takePhoto = async (): Promise<FileItem | undefined> => {
-    const isAppLocked = (await this.application.isLocked()) || this.isBiometricsSoftLockEngaged
+    const isAppLocked = await this.application.isLocked()
 
     if (isAppLocked) {
       return
