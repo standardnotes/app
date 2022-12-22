@@ -61,7 +61,7 @@ export const UpgradePrompt = ({
         )}
         {application.isNativeIOS() && (
           <div className="mt-2">
-            <div className="mb-2 font-bold">The Professional Plan costs $99.99/year and includes benefits like</div>
+            <div className="mb-2 font-bold">The Professional Plan costs $119.99/year and includes benefits like</div>
             <ul className="list-inside list-[circle]">
               <li>100GB encrypted file storage</li>
               <li>Access to all note types, including markdown, rich text, authenticator, tasks, and spreadsheets</li>
