@@ -28,7 +28,13 @@ export class MomentsService extends AbstractViewController {
         if (this.isEnabled) {
           void this.beginTakingPhotos()
         }
-      }, ApplicationEvent.Launched),
+      }, ApplicationEvent.LocalDataLoaded),
+      application.addEventObserver(async () => {
+        this.disableMoments()
+      }, ApplicationEvent.BiometricsSoftLockEngaged),
+      application.addEventObserver(async () => {
+        this.enableMoments()
+      }, ApplicationEvent.BiometricsSoftLockDisengaged),
     )
 
     makeObservable(this, {
@@ -80,7 +86,13 @@ export class MomentsService extends AbstractViewController {
     }
   }
 
-  public async takePhoto(): Promise<FileItem | undefined> {
+  public takePhoto = async (): Promise<FileItem | undefined> => {
+    const isAppLocked = await this.application.isLocked()
+
+    if (isAppLocked) {
+      return
+    }
+
     const toastId = addToast({
       type: ToastType.Loading,
       message: 'Capturing Moment...',
@@ -123,7 +135,10 @@ export class MomentsService extends AbstractViewController {
     const uploadedFile = await this.filesController.uploadNewFile(file)
 
     if (uploadedFile) {
-      void this.application.linkingController.linkItemToSelectedItem(uploadedFile)
+      const isAppInForeground = document.visibilityState === 'visible'
+      if (isAppInForeground) {
+        void this.application.linkingController.linkItemToSelectedItem(uploadedFile)
+      }
 
       const defaultTag = this.getDefaultTag()
       if (defaultTag) {
