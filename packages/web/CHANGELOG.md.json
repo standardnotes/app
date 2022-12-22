@@ -1,6 +1,33 @@
 {
   "versions": [
     {
+      "version": "3.127.9",
+      "title": "[3.127.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.8...@standardnotes/web@3.127.9) (2022-12-21)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.127.8",
+      "title": "[3.127.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.7...@standardnotes/web@3.127.8) (2022-12-20)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where Moments-related toasts would not get correctly dismissed ([eceb46b](https://github.com/standardnotes/app/commit/eceb46bed7117c8bf5ea34d87a800f8bf02881ac))\n* Increased interval between Moments capturing photos ([e4b3028](https://github.com/standardnotes/app/commit/e4b3028d673a037f2740939b294cf6301db0d529))",
+      "parsed": {
+        "_": [
+          "Fixed issue where Moments-related toasts would not get correctly dismissed (eceb46b)",
+          "Increased interval between Moments capturing photos (e4b3028)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where Moments-related toasts would not get correctly dismissed (eceb46b)",
+          "Increased interval between Moments capturing photos (e4b3028)"
+        ]
+      }
+    },
+    {
       "version": "3.127.7",
       "title": "[3.127.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.6...@standardnotes/web@3.127.7) (2022-12-20)",
       "date": null,

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.20.22](https://github.com/standardnotes/app/compare/@standardnotes/api@1.20.21...@standardnotes/api@1.20.22) (2022-12-21)
+
+### Bug Fixes
+
+* **api:** handling expired token responses ([#2113](https://github.com/standardnotes/app/issues/2113)) ([2696b07](https://github.com/standardnotes/app/commit/2696b07759104fb1d40781897f69e63133ad824a))
+
 ## [1.20.21](https://github.com/standardnotes/app/compare/@standardnotes/api@1.20.20...@standardnotes/api@1.20.21) (2022-12-19)
 
 **Note:** Version bump only for package @standardnotes/api
