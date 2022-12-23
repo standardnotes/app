@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.127.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.10...@standardnotes/web@3.127.11) (2022-12-23)
+
+### Bug Fixes
+
+* Fixed issue where Super note would convert whole line into tag even after closing menu ([35b0073](https://github.com/standardnotes/app/commit/35b00737bf13ceb8e66d64c67925f2fe9df2587c))
+
 ## [3.127.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.9...@standardnotes/web@3.127.10) (2022-12-22)
 
 ### Bug Fixes
