@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.127.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.11...@standardnotes/web@3.127.12) (2022-12-23)
+
+### Bug Fixes
+
+* Made Moments-related toast messages dismissable ([c59d824](https://github.com/standardnotes/app/commit/c59d82424012f98638625e057f88124982ad0734))
+
 ## [3.127.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.10...@standardnotes/web@3.127.11) (2022-12-23)
 
 ### Bug Fixes
