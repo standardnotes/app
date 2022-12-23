@@ -21,6 +21,7 @@ import DraggableBlockPlugin from '../Lexical/Plugins/DraggableBlockPlugin';
 import CodeHighlightPlugin from '../Lexical/Plugins/CodeHighlightPlugin';
 import FloatingTextFormatToolbarPlugin from '../Lexical/Plugins/FloatingTextFormatToolbarPlugin';
 import FloatingLinkEditorPlugin from '../Lexical/Plugins/FloatingLinkEditorPlugin';
+import {TabIndentationPlugin} from '../Lexical/Plugins/TabIndentationPlugin';
 import {truncateString} from './Utils';
 import {SuperEditorContentId} from './Constants';
 import {classNames} from '@standardnotes/utils';
@@ -107,7 +108,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
             </div>
           </div>
         }
-        placeholder=""
+        placeholder={null}
         ErrorBoundary={LexicalErrorBoundary}
       />
       <ListPlugin />
@@ -125,6 +126,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <TwitterPlugin />
       <YouTubePlugin />
       <CollapsiblePlugin />
+      <TabIndentationPlugin />
       {!readonly && floatingAnchorElem && (
         <>
           <FloatingTextFormatToolbarPlugin anchorElem={floatingAnchorElem} />

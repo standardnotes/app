@@ -12,6 +12,7 @@ import {mergeRegister} from '@lexical/utils';
 import {
   $getNearestNodeFromDOMNode,
   $getNodeByKey,
+  $getRoot,
   COMMAND_PRIORITY_HIGH,
   COMMAND_PRIORITY_LOW,
   DRAGOVER_COMMAND,
@@ -58,8 +59,7 @@ function getCurrentIndex(keysLength: number): number {
 }
 
 function getTopLevelNodeKeys(editor: LexicalEditor): string[] {
-  const root = editor.getEditorState()._nodeMap.get('root');
-  return root ? root.__children : [];
+  return editor.getEditorState().read(() => $getRoot().getChildrenKeys());
 }
 
 function elementContainingEventLocation(
