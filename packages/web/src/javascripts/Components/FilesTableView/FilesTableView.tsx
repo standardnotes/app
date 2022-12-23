@@ -20,6 +20,7 @@ import LinkedItemBubble from '../LinkedItems/LinkedItemBubble'
 import LinkedItemsPanel from '../LinkedItems/LinkedItemsPanel'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { FeaturesController } from '@/Controllers/FeaturesController'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 const ContextMenuCell = ({ files, filesController }: { files: FileItem[]; filesController: FilesController }) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false)
@@ -152,6 +153,8 @@ const FilesTableView = ({ application, filesController, featuresController, link
   const [contextMenuFile, setContextMenuFile] = useState<FileItem | undefined>(undefined)
   const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | undefined>(undefined)
 
+  const isSmallBreakpoint = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
   const columnDefs: TableColumn<FileItem>[] = useMemo(
     () => [
       {
@@ -182,15 +185,18 @@ const FilesTableView = ({ application, filesController, featuresController, link
         cell: (file) => {
           return formatDateForContextMenu(file.created_at)
         },
+        hidden: isSmallBreakpoint,
       },
       {
         name: 'Size',
         cell: (file) => {
           return formatSizeToReadableString(file.decryptedSize)
         },
+        hidden: isSmallBreakpoint,
       },
       {
         name: 'Attached to',
+        hidden: isSmallBreakpoint,
         cell: (file) => {
           const links = [
             ...naturalSort(application.items.referencesForItem(file), 'title').map((item) =>
@@ -223,7 +229,7 @@ const FilesTableView = ({ application, filesController, featuresController, link
         },
       },
     ],
-    [application.items],
+    [application.items, isSmallBreakpoint],
   )
 
   const getRowId = useCallback((file: FileItem) => file.uuid, [])

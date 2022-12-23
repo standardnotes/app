@@ -7,11 +7,17 @@ export type TableColumn<Data> = {
   name: string
   sortBy?: TableSortBy
   cell: (data: Data) => ReactNode
+  hidden?: boolean
+}
+
+type TableCell = {
+  render: ReactNode
+  hidden: boolean
 }
 
 export type TableRow<Data> = {
   id: string
-  cells: ReactNode[]
+  cells: TableCell[]
   isSelected: boolean
   rowData: Data
   rowActions?: ReactNode
@@ -23,11 +29,14 @@ export type TableHeader = {
   sortBy?: TableSortBy
   sortReversed: boolean | undefined
   onSortChange: () => void
+  hidden: boolean
 }
 
 export type Table<Data> = {
   headers: TableHeader[]
   rows: TableRow<Data>[]
+  rowCount: number
+  colCount: number
   handleRowClick: (id: string) => MouseEventHandler<HTMLTableRowElement>
   handleRowDoubleClick: (id: string) => MouseEventHandler<HTMLTableRowElement>
   handleRowContextMenu: (id: string) => MouseEventHandler<HTMLTableRowElement>

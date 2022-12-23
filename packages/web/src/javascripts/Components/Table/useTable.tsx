@@ -1,6 +1,6 @@
 import { MouseEventHandler, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
-import { Table, TableColumn, TableRow, TableSortBy } from './CommonTypes'
+import { Table, TableColumn, TableHeader, TableRow, TableSortBy } from './CommonTypes'
 
 type TableSortOptions =
   | {
@@ -78,7 +78,7 @@ export function useTable<Data>({
     }
   }, [selectedRows, onRowSelectionChange])
 
-  const headers = useMemo(
+  const headers: TableHeader[] = useMemo(
     () =>
       columns.map((column) => {
         return {
@@ -92,6 +92,7 @@ export function useTable<Data>({
             }
             onSortChange(column.sortBy, sortBy === column.sortBy ? !sortReversed : false)
           },
+          hidden: column.hidden || false,
         }
       }),
     [columns, onSortChange, sortBy, sortReversed],
@@ -101,7 +102,10 @@ export function useTable<Data>({
     () =>
       data.map((rowData, index) => {
         const cells = columns.map((column) => {
-          return column.cell(rowData)
+          return {
+            render: column.cell(rowData),
+            hidden: column.hidden || false,
+          }
         })
         const id = getRowId ? getRowId(rowData) : index.toString()
         const row: TableRow<Data> = {
@@ -175,10 +179,15 @@ export function useTable<Data>({
     [onRowContextMenu, rows],
   )
 
+  const colCount = useMemo(() => columns.length, [columns])
+  const rowCount = useMemo(() => data.length, [data.length])
+
   const table: Table<Data> = useMemo(
     () => ({
       headers,
       rows,
+      colCount,
+      rowCount,
       handleRowClick,
       handleRowDoubleClick,
       handleRowContextMenu,
@@ -188,11 +197,13 @@ export function useTable<Data>({
       showSelectionActions: showSelectionActions || false,
     }),
     [
+      colCount,
       enableRowSelection,
       handleRowClick,
       handleRowContextMenu,
       handleRowDoubleClick,
       headers,
+      rowCount,
       rows,
       selectedRows,
       selectionActions,

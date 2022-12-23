@@ -3,18 +3,36 @@ import Icon from '../Icon/Icon'
 import { Table } from './CommonTypes'
 
 function Table<Data>({ table }: { table: Table<Data> }) {
+  const {
+    headers,
+    rows,
+    colCount,
+    rowCount,
+    handleRowClick,
+    handleRowContextMenu,
+    handleRowDoubleClick,
+    selectedRows,
+    selectionActions,
+    canSelectRows,
+    showSelectionActions,
+  } = table
+
   return (
     <div className="block min-h-0 overflow-auto">
-      {table.showSelectionActions && table.selectedRows.length >= 2 && (
+      {showSelectionActions && selectedRows.length >= 2 && (
         <div className="flex items-center justify-between border-b border-border px-3 py-2">
-          <span className="text-info-0 text-sm font-medium">{table.selectedRows.length} selected</span>
-          {table.selectedRows.length > 0 && table.selectionActions}
+          <span className="text-info-0 text-sm font-medium">{selectedRows.length} selected</span>
+          {selectedRows.length > 0 && selectionActions}
         </div>
       )}
-      <table className="w-full">
+      <table className="w-full" role="grid" aria-colcount={colCount} aria-rowcount={rowCount}>
         <thead>
           <tr>
-            {table.headers.map((header, index) => {
+            {headers.map((header, index) => {
+              if (header.hidden) {
+                return null
+              }
+
               return (
                 <th
                   className={classNames(
@@ -40,23 +58,27 @@ function Table<Data>({ table }: { table: Table<Data> }) {
           </tr>
         </thead>
         <tbody className="divide-y divide-border whitespace-nowrap">
-          {table.rows.map((row) => {
+          {rows.map((row) => {
             return (
               <tr
                 key={row.id}
                 className={classNames(
                   'group relative',
                   row.isSelected && 'bg-info-backdrop',
-                  table.canSelectRows && 'cursor-pointer hover:bg-contrast',
+                  canSelectRows && 'cursor-pointer hover:bg-contrast',
                 )}
-                onClick={table.handleRowClick(row.id)}
-                onDoubleClick={table.handleRowDoubleClick(row.id)}
-                onContextMenu={table.handleRowContextMenu(row.id)}
+                onClick={handleRowClick(row.id)}
+                onDoubleClick={handleRowDoubleClick(row.id)}
+                onContextMenu={handleRowContextMenu(row.id)}
               >
                 {row.cells.map((cell, index) => {
+                  if (cell.hidden) {
+                    return null
+                  }
+
                   return (
                     <td key={index} className="py-3 px-3">
-                      {cell}
+                      {cell.render}
                     </td>
                   )
                 })}
