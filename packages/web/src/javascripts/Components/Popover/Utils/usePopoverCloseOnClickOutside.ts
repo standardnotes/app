@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 type Options = {
   popoverElement: HTMLElement | null
   anchorElement: HTMLElement | null | undefined
-  togglePopover: () => void
+  togglePopover?: () => void
   childPopovers: Set<string>
   disabled?: boolean
 }
@@ -34,7 +34,7 @@ export const usePopoverCloseOnClickOutside = ({
 
       if (!isDescendantOfMenu && !isAnchorElement && !isDescendantOfChildPopover && !isDescendantOfChallengeModal) {
         if (!disabled) {
-          togglePopover()
+          togglePopover?.()
         }
       }
     }

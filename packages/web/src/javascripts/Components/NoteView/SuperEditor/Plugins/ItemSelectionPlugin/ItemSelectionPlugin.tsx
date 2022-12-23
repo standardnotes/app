@@ -31,8 +31,6 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
     minLength: 0,
   })
 
-  const [popoverOpen, setPopoverOpen] = useState(true)
-
   const onSelectOption = useCallback(
     (selectedOption: ItemOption, nodeToRemove: TextNode | null, closeMenu: () => void, matchingString: string) => {
       editor.update(() => {
@@ -40,7 +38,6 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
           nodeToRemove.remove()
         }
         selectedOption.options.onSelect(matchingString)
-        setPopoverOpen(false)
         closeMenu()
       })
     },
@@ -92,12 +89,6 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
       onSelectOption={onSelectOption}
       triggerFn={checkForTriggerMatch}
       options={options}
-      onClose={() => {
-        setPopoverOpen(false)
-      }}
-      onOpen={() => {
-        setPopoverOpen(true)
-      }}
       menuRenderFn={(anchorElementRef, { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex }) => {
         if (!anchorElementRef.current || !options.length) {
           return null
@@ -107,10 +98,7 @@ export const ItemSelectionPlugin: FunctionComponent<Props> = ({ currentNote }) =
           <Popover
             align="start"
             anchorElement={anchorElementRef.current}
-            open={popoverOpen}
-            togglePopover={() => {
-              setPopoverOpen((prevValue) => !prevValue)
-            }}
+            open={true}
             disableMobileFullscreenTakeover={true}
             side={isMobileScreen() ? 'top' : 'bottom'}
             maxHeight={(mh) => mh / 2}

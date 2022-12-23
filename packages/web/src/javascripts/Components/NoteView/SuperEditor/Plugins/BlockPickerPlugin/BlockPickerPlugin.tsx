@@ -36,8 +36,6 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
     minLength: 0,
   })
 
-  const [popoverOpen, setPopoverOpen] = useState(true)
-
   const options = useMemo(() => {
     const indentOutdentOptions = application.isNativeMobileWeb() ? GetIndentOutdentBlocks(editor) : []
 
@@ -90,7 +88,6 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
           nodeToRemove.remove()
         }
         selectedOption.onSelect(matchingString)
-        setPopoverOpen(false)
         closeMenu()
       })
     },
@@ -105,12 +102,6 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
         onSelectOption={onSelectOption}
         triggerFn={checkForTriggerMatch}
         options={options}
-        onClose={() => {
-          setPopoverOpen(false)
-        }}
-        onOpen={() => {
-          setPopoverOpen(true)
-        }}
         menuRenderFn={(anchorElementRef, { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex }) => {
           if (!anchorElementRef.current || !options.length) {
             return null
@@ -120,10 +111,7 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
             <Popover
               align="start"
               anchorElement={anchorElementRef.current}
-              open={popoverOpen}
-              togglePopover={() => {
-                setPopoverOpen((prevValue) => !prevValue)
-              }}
+              open={true}
               disableMobileFullscreenTakeover={true}
               side={isMobileScreen() ? 'top' : 'bottom'}
               maxHeight={(mh) => mh / 2}

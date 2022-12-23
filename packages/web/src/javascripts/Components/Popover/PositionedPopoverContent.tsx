@@ -90,7 +90,7 @@ const PositionedPopoverContent = ({
         onKeyDown={(event) => {
           if (event.key === 'Escape') {
             event.stopPropagation()
-            togglePopover()
+            togglePopover?.()
             if (anchorElement) {
               anchorElement.focus()
             }

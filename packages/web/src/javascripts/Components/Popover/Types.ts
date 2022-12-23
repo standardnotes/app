@@ -35,7 +35,7 @@ type CommonPopoverProps = {
   children: ReactNode
   side?: PopoverSide
   overrideZIndex?: string
-  togglePopover: () => void
+  togglePopover?: () => void
   className?: string
   disableClickOutside?: boolean
   disableMobileFullscreenTakeover?: boolean
