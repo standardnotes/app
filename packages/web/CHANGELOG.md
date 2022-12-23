@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.127.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.12...@standardnotes/web@3.127.13) (2022-12-23)
+
+### Bug Fixes
+
+* Fixed issue where navigating to a Daily Notebook on iOS would cause editor panel to be offscreen ([fe36009](https://github.com/standardnotes/app/commit/fe36009482ff1615612ca965abb956318d8bc626))
+
 ## [3.127.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.11...@standardnotes/web@3.127.12) (2022-12-23)
 
 ### Bug Fixes
