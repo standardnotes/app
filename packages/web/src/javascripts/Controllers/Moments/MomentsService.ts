@@ -94,7 +94,7 @@ export class MomentsService extends AbstractViewController {
     }
 
     const toastId = addToast({
-      type: ToastType.Loading,
+      type: ToastType.Regular,
       message: 'Capturing Moment...',
       pauseOnWindowBlur: false,
     })
