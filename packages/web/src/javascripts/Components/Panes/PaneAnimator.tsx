@@ -28,6 +28,8 @@ export async function animatePaneEntranceTransitionFromOffscreenToTheRight(eleme
 
   await animation.finished
 
+  performSafariAnimationFix(element)
+
   animation.finish()
 }
 
@@ -57,4 +59,22 @@ export async function animatePaneExitTransitionOffscreenToTheRight(elementId: st
   await animation.finished
 
   animation.finish()
+}
+
+/**
+ * Safari has a bug where animations don't properly commit sometimes and a tap on the screen or click anywhere fixes it.
+ * The workaround here is just to get Safari to recompute the element layout. This issue manifests itself when selecting
+ * a Daily Notebook tag from navigation whereby two pane animations are simulatensouly triggered (the items panel, then
+ * the editor panel), causing Safari to get tripped up.
+ */
+function performSafariAnimationFix(element: HTMLElement): void {
+  const isSafari = /Safari/.test(navigator.userAgent) || /AppleWebKit/.test(navigator.userAgent)
+  if (!isSafari) {
+    return
+  }
+
+  element.style.opacity = '0.999'
+  setTimeout(() => {
+    element.style.opacity = '1.0'
+  }, 0)
 }
