@@ -192,9 +192,10 @@ export function AutoEmbedDialog({
   const embedResult =
     text != null && urlMatch != null ? embedConfig.parseUrl(text) : null;
 
-  const onClick = () => {
-    if (embedResult != null) {
-      embedConfig.insertNode(editor, embedResult);
+  const onClick = async () => {
+    const result = await embedResult;
+    if (result != null) {
+      embedConfig.insertNode(editor, result);
       onClose();
     }
   };
