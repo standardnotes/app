@@ -46,8 +46,6 @@ function TableRow<Data>({
             key={index}
             className={classNames(
               'relative overflow-hidden border-b border-border py-3 px-3',
-              /* index === 0 && 'ml-3',
-              index === array.length - 1 && 'mr-3', */
               row.isSelected && 'bg-info-backdrop',
               canSelectRows && 'cursor-pointer',
               canSelectRows && isHovered && 'bg-contrast',
