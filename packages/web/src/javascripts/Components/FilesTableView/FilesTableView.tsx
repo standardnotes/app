@@ -154,6 +154,8 @@ const FilesTableView = ({ application, filesController, featuresController, link
   const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | undefined>(undefined)
 
   const isSmallBreakpoint = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+  const isMediumBreakpoint = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.md)
+  const isLargeBreakpoint = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.lg)
 
   const columnDefs: TableColumn<FileItem>[] = useMemo(
     () => [
@@ -196,7 +198,7 @@ const FilesTableView = ({ application, filesController, featuresController, link
       },
       {
         name: 'Attached to',
-        hidden: isSmallBreakpoint,
+        hidden: isSmallBreakpoint || isMediumBreakpoint || isLargeBreakpoint,
         cell: (file) => {
           const links = [
             ...naturalSort(application.items.referencesForItem(file), 'title').map((item) =>
@@ -229,7 +231,7 @@ const FilesTableView = ({ application, filesController, featuresController, link
         },
       },
     ],
-    [application.items, isSmallBreakpoint],
+    [application.items, isLargeBreakpoint, isMediumBreakpoint, isSmallBreakpoint],
   )
 
   const getRowId = useCallback((file: FileItem) => file.uuid, [])
