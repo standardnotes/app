@@ -55,11 +55,17 @@ function TableRow<Data>({
             {row.rowActions && index === array.length - 1 && (
               <div
                 className={classNames(
-                  'absolute right-3 top-1/2 -translate-y-1/2',
+                  'absolute right-0 top-0 flex h-full items-center p-2',
                   row.isSelected ? '' : isHovered ? '' : 'invisible',
                 )}
               >
-                {row.rowActions}
+                <div className="z-[1]">{row.rowActions}</div>
+                <div
+                  className={classNames(
+                    'absolute top-0 right-0 z-0 h-full w-full backdrop-blur-[2px]',
+                    row.isSelected ? '' : isHovered ? '' : 'invisible',
+                  )}
+                />
               </div>
             )}
           </div>
