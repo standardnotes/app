@@ -162,9 +162,9 @@ const FilesTableView = ({ application, filesController, featuresController, link
         sortBy: 'title',
         cell: (file) => {
           return (
-            <div className="flex max-w-[40vw] items-center gap-3 whitespace-normal">
+            <div className="flex items-center gap-3 whitespace-normal">
               {getFileIconComponent(getIconForFileType(file.mimeType), 'w-6 h-6 flex-shrink-0')}
-              <span className="text-sm font-medium">{file.title}</span>
+              <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">{file.title}</span>
               {file.protected && (
                 <span className="flex items-center" title="File is protected">
                   <Icon
