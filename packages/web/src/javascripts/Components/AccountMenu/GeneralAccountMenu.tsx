@@ -84,6 +84,17 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
     setMenuPane(AccountMenuPane.SignIn)
   }, [setMenuPane])
 
+  const openFileSend = useCallback(() => {
+    const link = 'https://filesend.standardnotes.com/'
+
+    if (application.isNativeMobileWeb()) {
+      application.mobileDevice().openUrl(link)
+      return
+    }
+
+    window.open(link, '_blank')
+  }, [application])
+
   const CREATE_ACCOUNT_INDEX = 1
   const SWITCHER_INDEX = 0
 
@@ -171,6 +182,10 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
             Help &amp; feedback
           </div>
           <span className="text-neutral">v{application.version}</span>
+        </MenuItem>
+        <MenuItem onClick={openFileSend}>
+          <Icon type="open-in" className={iconClassName} />
+          Open FileSend
         </MenuItem>
         {user ? (
           <>

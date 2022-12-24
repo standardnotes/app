@@ -1,11 +1,12 @@
 import { observer } from 'mobx-react-lite'
-import { FunctionComponent, useMemo } from 'react'
+import { FunctionComponent, useCallback, useMemo } from 'react'
 import styled from 'styled-components'
 import Dropdown from '../Dropdown/Dropdown'
 import { DropdownItem } from '../Dropdown/DropdownItem'
 import PreferencesMenuItem from './PreferencesComponents/MenuItem'
 import { PreferencesMenu } from './PreferencesMenu'
 import { PreferenceId } from '@standardnotes/ui-services'
+import { useApplication } from '../ApplicationProvider'
 
 type Props = {
   menu: PreferencesMenu
@@ -25,17 +26,31 @@ const StyledDropdown = styled(Dropdown)`
 `
 
 const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
+  const application = useApplication()
   const { selectedPaneId, selectPane, menuItems } = menu
 
   const dropdownMenuItems: DropdownItem[] = useMemo(
     () =>
-      menuItems.map((menuItem) => ({
-        icon: menuItem.icon,
-        label: menuItem.label,
-        value: menuItem.id,
-      })),
+      menuItems
+        .filter((pref) => pref.id !== 'filesend')
+        .map((menuItem) => ({
+          icon: menuItem.icon,
+          label: menuItem.label,
+          value: menuItem.id,
+        })),
     [menuItems],
   )
+
+  const openFileSend = useCallback(() => {
+    const link = 'https://filesend.standardnotes.com/'
+
+    if (application.isNativeMobileWeb()) {
+      application.mobileDevice().openUrl(link)
+      return
+    }
+
+    window.open(link, '_blank')
+  }, [application])
 
   return (
     <div className="border-t border-border bg-default px-5 pt-2 md:border-0 md:bg-contrast md:px-0 md:py-0">
@@ -47,7 +62,13 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
             label={pref.label}
             selected={pref.selected}
             hasBubble={pref.hasBubble}
-            onClick={() => selectPane(pref.id)}
+            onClick={() => {
+              if (pref.id === 'filesend') {
+                openFileSend()
+                return
+              }
+              selectPane(pref.id)
+            }}
           />
         ))}
       </div>
