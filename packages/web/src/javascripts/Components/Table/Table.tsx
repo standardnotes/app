@@ -45,7 +45,7 @@ function TableRow<Data>({
             aria-colindex={cell.colIndex + 1}
             key={index}
             className={classNames(
-              'relative overflow-hidden border-b border-border py-3 px-3',
+              'relative flex items-center overflow-hidden border-b border-border py-3 px-3',
               row.isSelected && 'bg-info-backdrop',
               canSelectRows && 'cursor-pointer',
               canSelectRows && isHovered && 'bg-contrast',
@@ -132,7 +132,7 @@ function Table<Data>({ table }: { table: Table<Data> }) {
               )
             })}
         </div>
-        <div className="contents divide-y divide-border whitespace-nowrap">
+        <div className="contents whitespace-nowrap">
           {rows.map((row, index) => (
             <TableRow
               row={row}
