@@ -11,6 +11,7 @@ export const IconNameToSvgMapping = {
   'attachment-file': icons.AttachmentFileIcon,
   'check-bold': icons.CheckBoldIcon,
   'check-circle': icons.CheckCircleIcon,
+  'check-circle-filled': icons.CheckCircleFilledIcon,
   'chevron-down': icons.ChevronDownIcon,
   'chevron-left': icons.ChevronLeftIcon,
   'chevron-right': icons.ChevronRightIcon,

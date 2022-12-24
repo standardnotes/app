@@ -4,7 +4,15 @@ import { FilesController } from '@/Controllers/FilesController'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
-import { ContentType, FileItem, SortableItem, PrefKey, ApplicationEvent, naturalSort } from '@standardnotes/snjs'
+import {
+  ContentType,
+  FileItem,
+  SortableItem,
+  PrefKey,
+  ApplicationEvent,
+  naturalSort,
+  FileBackupRecord,
+} from '@standardnotes/snjs'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { getFileIconComponent } from '../FilePreview/getFileIconComponent'
@@ -21,6 +29,7 @@ import LinkedItemsPanel from '../LinkedItems/LinkedItemsPanel'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { useApplication } from '../ApplicationProvider'
 
 const ContextMenuCell = ({ files, filesController }: { files: FileItem[]; filesController: FilesController }) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false)
@@ -114,6 +123,37 @@ const FileLinksCell = ({
   )
 }
 
+const FileNameCell = ({ file }: { file: FileItem }) => {
+  const application = useApplication()
+  const [backupInfo, setBackupInfo] = useState<FileBackupRecord | undefined>(undefined)
+
+  useEffect(() => {
+    void application.fileBackups?.getFileBackupInfo(file).then(setBackupInfo)
+  }, [application, file])
+
+  return (
+    <div className="flex items-center gap-3 whitespace-normal">
+      <span className="relative">
+        {getFileIconComponent(getIconForFileType(file.mimeType), 'w-6 h-6 flex-shrink-0')}
+        {backupInfo && (
+          <div
+            className="absolute bottom-1 right-1 translate-x-1/2 translate-y-1/2 rounded-full bg-default text-success"
+            title="File is backed up locally"
+          >
+            <Icon size="small" type="check-circle-filled" />
+          </div>
+        )}
+      </span>
+      <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">{file.title}</span>
+      {file.protected && (
+        <span className="flex items-center" title="File is protected">
+          <Icon ariaLabel="File is protected" type="lock-filled" className="h-3.5 w-3.5 text-passive-1" size="custom" />
+        </span>
+      )}
+    </div>
+  )
+}
+
 type Props = {
   application: WebApplication
   filesController: FilesController
@@ -162,24 +202,7 @@ const FilesTableView = ({ application, filesController, featuresController, link
       {
         name: 'Name',
         sortBy: 'title',
-        cell: (file) => {
-          return (
-            <div className="flex items-center gap-3 whitespace-normal">
-              {getFileIconComponent(getIconForFileType(file.mimeType), 'w-6 h-6 flex-shrink-0')}
-              <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">{file.title}</span>
-              {file.protected && (
-                <span className="flex items-center" title="File is protected">
-                  <Icon
-                    ariaLabel="File is protected"
-                    type="lock-filled"
-                    className="h-3.5 w-3.5 text-passive-1"
-                    size="custom"
-                  />
-                </span>
-              )}
-            </div>
-          )
-        },
+        cell: (file) => <FileNameCell file={file} />,
       },
       {
         name: 'Upload date',
