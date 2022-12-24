@@ -23,10 +23,6 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
     return null
   }
 
-  if (!application.isAuthorizedToRenderItem(currentFile)) {
-    return null
-  }
-
   const [showFileInfoPanel, setShowFileInfoPanel] = useState(false)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 

@@ -250,6 +250,7 @@ const FilesTableView = ({ application, filesController, featuresController, link
         type: FileItemActionType.PreviewFile,
         payload: {
           file,
+          otherFiles: files,
         },
       })
     },
