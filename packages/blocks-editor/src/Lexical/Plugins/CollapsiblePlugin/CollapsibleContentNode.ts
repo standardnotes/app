@@ -24,21 +24,24 @@ type SerializedCollapsibleContentNode = Spread<
 >;
 
 export class CollapsibleContentNode extends ElementNode {
-  static getType(): string {
+  static override getType(): string {
     return 'collapsible-content';
   }
 
-  static clone(node: CollapsibleContentNode): CollapsibleContentNode {
+  static override clone(node: CollapsibleContentNode): CollapsibleContentNode {
     return new CollapsibleContentNode(node.__key);
   }
 
-  createDOM(config: EditorConfig): HTMLElement {
+  override createDOM(config: EditorConfig): HTMLElement {
     const dom = document.createElement('div');
     dom.classList.add('Collapsible__content');
     return dom;
   }
 
-  updateDOM(prevNode: CollapsibleContentNode, dom: HTMLElement): boolean {
+  override updateDOM(
+    prevNode: CollapsibleContentNode,
+    dom: HTMLElement,
+  ): boolean {
     return false;
   }
 
@@ -46,17 +49,17 @@ export class CollapsibleContentNode extends ElementNode {
     return {};
   }
 
-  static importJSON(
+  static override importJSON(
     serializedNode: SerializedCollapsibleContentNode,
   ): CollapsibleContentNode {
     return $createCollapsibleContentNode();
   }
 
-  isShadowRoot(): boolean {
+  override isShadowRoot(): boolean {
     return true;
   }
 
-  exportJSON(): SerializedCollapsibleContentNode {
+  override exportJSON(): SerializedCollapsibleContentNode {
     return {
       ...super.exportJSON(),
       type: 'collapsible-content',

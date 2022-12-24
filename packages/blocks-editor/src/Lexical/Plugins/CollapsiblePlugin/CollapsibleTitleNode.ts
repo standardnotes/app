@@ -31,21 +31,34 @@ type SerializedCollapsibleTitleNode = Spread<
 >;
 
 export class CollapsibleTitleNode extends ElementNode {
-  static getType(): string {
+  static override getType(): string {
     return 'collapsible-title';
   }
 
-  static clone(node: CollapsibleTitleNode): CollapsibleTitleNode {
+  static override clone(node: CollapsibleTitleNode): CollapsibleTitleNode {
     return new CollapsibleTitleNode(node.__key);
   }
 
-  createDOM(config: EditorConfig, editor: LexicalEditor): HTMLElement {
+  override createDOM(config: EditorConfig, editor: LexicalEditor): HTMLElement {
     const dom = document.createElement('summary');
     dom.classList.add('Collapsible__title');
+    dom.onclick = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      editor.update(() => {
+        const containerNode = this.getParentOrThrow();
+        if ($isCollapsibleContainerNode(containerNode)) {
+          containerNode.toggleOpen();
+        }
+      });
+    };
     return dom;
   }
 
-  updateDOM(prevNode: CollapsibleTitleNode, dom: HTMLElement): boolean {
+  override updateDOM(
+    prevNode: CollapsibleTitleNode,
+    dom: HTMLElement,
+  ): boolean {
     return false;
   }
 
@@ -53,13 +66,13 @@ export class CollapsibleTitleNode extends ElementNode {
     return {};
   }
 
-  static importJSON(
+  static override importJSON(
     serializedNode: SerializedCollapsibleTitleNode,
   ): CollapsibleTitleNode {
     return $createCollapsibleTitleNode();
   }
 
-  exportJSON(): SerializedCollapsibleTitleNode {
+  override exportJSON(): SerializedCollapsibleTitleNode {
     return {
       ...super.exportJSON(),
       type: 'collapsible-title',
@@ -67,12 +80,12 @@ export class CollapsibleTitleNode extends ElementNode {
     };
   }
 
-  collapseAtStart(_selection: RangeSelection): boolean {
+  override collapseAtStart(_selection: RangeSelection): boolean {
     this.getParentOrThrow().insertBefore(this);
     return true;
   }
 
-  insertNewAfter(): ElementNode {
+  override insertNewAfter(): ElementNode {
     const containerNode = this.getParentOrThrow();
 
     if (!$isCollapsibleContainerNode(containerNode)) {

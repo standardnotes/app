@@ -20,6 +20,7 @@ type SerializedCollapsibleContainerNode = Spread<
   {
     type: 'collapsible-container';
     version: 1;
+    open: boolean;
   },
   SerializedElementNode
 >;
@@ -29,25 +30,27 @@ export class CollapsibleContainerNode extends ElementNode {
 
   constructor(open: boolean, key?: NodeKey) {
     super(key);
-    this.__open = open;
+    this.__open = open ?? false;
   }
 
-  static getType(): string {
+  static override getType(): string {
     return 'collapsible-container';
   }
 
-  static clone(node: CollapsibleContainerNode): CollapsibleContainerNode {
+  static override clone(
+    node: CollapsibleContainerNode,
+  ): CollapsibleContainerNode {
     return new CollapsibleContainerNode(node.__open, node.__key);
   }
 
-  createDOM(config: EditorConfig): HTMLElement {
+  override createDOM(config: EditorConfig): HTMLElement {
     const dom = document.createElement('details');
     dom.classList.add('Collapsible__container');
     dom.open = this.__open;
     return dom;
   }
 
-  updateDOM(
+  override updateDOM(
     prevNode: CollapsibleContainerNode,
     dom: HTMLDetailsElement,
   ): boolean {
@@ -62,18 +65,19 @@ export class CollapsibleContainerNode extends ElementNode {
     return {};
   }
 
-  static importJSON(
+  static override importJSON(
     serializedNode: SerializedCollapsibleContainerNode,
   ): CollapsibleContainerNode {
-    const node = $createCollapsibleContainerNode();
+    const node = $createCollapsibleContainerNode(serializedNode.open);
     return node;
   }
 
-  exportJSON(): SerializedCollapsibleContainerNode {
+  override exportJSON(): SerializedCollapsibleContainerNode {
     return {
       ...super.exportJSON(),
       type: 'collapsible-container',
       version: 1,
+      open: this.__open,
     };
   }
 
@@ -91,8 +95,10 @@ export class CollapsibleContainerNode extends ElementNode {
   }
 }
 
-export function $createCollapsibleContainerNode(): CollapsibleContainerNode {
-  return new CollapsibleContainerNode(true);
+export function $createCollapsibleContainerNode(
+  open: boolean,
+): CollapsibleContainerNode {
+  return new CollapsibleContainerNode(open);
 }
 
 export function $isCollapsibleContainerNode(
