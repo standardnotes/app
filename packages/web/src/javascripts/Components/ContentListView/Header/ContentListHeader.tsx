@@ -13,6 +13,7 @@ import AddItemMenuButton from './AddItemMenuButton'
 import { FilesController } from '@/Controllers/FilesController'
 import SearchButton from './SearchButton'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
+import { isMobileScreen } from '@/Utils'
 
 type Props = {
   application: WebApplication
@@ -105,7 +106,7 @@ const ContentListHeader = ({
   }, [addButtonLabel, addNewItem, filesController, isDailyEntry, isFilesSmartView])
 
   const SearchBarButton = useMemo(() => {
-    if (!isFilesSmartView || !isFilesTableViewEnabled) {
+    if (!isFilesSmartView || !isFilesTableViewEnabled || isMobileScreen()) {
       return null
     }
 

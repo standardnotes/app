@@ -12,9 +12,10 @@ import { ElementIds } from '@/Constants/ElementIDs'
 type Props = {
   itemListController: ItemListController
   searchOptionsController: SearchOptionsController
+  hideOptions?: boolean
 }
 
-const SearchBar = ({ itemListController, searchOptionsController }: Props) => {
+const SearchBar = ({ itemListController, searchOptionsController, hideOptions = false }: Props) => {
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   const { noteFilterText, setNoteFilterText, clearFilterText, onFilterEnter } = itemListController
@@ -66,7 +67,7 @@ const SearchBar = ({ itemListController, searchOptionsController }: Props) => {
         roundedFull
       />
 
-      {(focusedSearch || noteFilterText) && (
+      {(focusedSearch || noteFilterText) && !hideOptions && (
         <div className="animate-fade-from-top">
           <SearchOptions searchOptions={searchOptionsController} />
         </div>

@@ -315,8 +315,12 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
                 itemListController={itemListController}
               />
             )}
-            {!isFilesTableViewEnabled && (
-              <SearchBar itemListController={itemListController} searchOptionsController={searchOptionsController} />
+            {(!isFilesTableViewEnabled || isMobileScreen()) && (
+              <SearchBar
+                itemListController={itemListController}
+                searchOptionsController={searchOptionsController}
+                hideOptions={shouldShowFilesTableView}
+              />
             )}
             <NoAccountWarning
               accountMenuController={accountMenuController}
