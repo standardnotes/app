@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.10.2...@standardnotes/blocks-editor@1.11.0) (2022-12-24)
+
+### Features
+
+* Persist collapsible block state in Super notes ([#2119](https://github.com/standardnotes/app/issues/2119)) ([577318e](https://github.com/standardnotes/app/commit/577318e208367dc52caf2d76fd87419eaead7ed4))
+
 ## [1.10.2](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.10.1...@standardnotes/blocks-editor@1.10.2) (2022-12-23)
 
 **Note:** Version bump only for package @standardnotes/blocks-editor
