@@ -238,9 +238,9 @@ const FilesTableView = ({ application, filesController, featuresController, link
           }
 
           return (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 overflow-hidden">
               <LinkedItemBubble
-                className="overflow-hidden"
+                className="overflow-hidden border border-transparent hover:border-border focus:border-info focus:shadow-none"
                 link={links[0]}
                 key={links[0].id}
                 unlinkItem={async (itemToUnlink) => {
@@ -248,7 +248,7 @@ const FilesTableView = ({ application, filesController, featuresController, link
                 }}
                 isBidirectional={false}
               />
-              {links.length > 1 && <span>and {links.length - 1} more...</span>}
+              {links.length - 1 > 1 && <span>and {links.length - 1} more...</span>}
             </div>
           )
         },

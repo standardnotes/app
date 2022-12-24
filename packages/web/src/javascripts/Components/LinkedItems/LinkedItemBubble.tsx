@@ -100,7 +100,7 @@ const LinkedItemBubble = ({
     <button
       ref={ref}
       className={classNames(
-        'group h-6 cursor-pointer items-center rounded border-0 bg-passive-4-opacity-variant py-2 pl-1 pr-2 text-sm',
+        'group h-6 cursor-pointer items-center rounded bg-passive-4-opacity-variant py-2 pl-1 pr-2 text-sm',
         'text-text hover:bg-contrast focus:bg-contrast lg:text-xs',
         inlineFlex ? 'inline-flex' : 'flex',
         className,
