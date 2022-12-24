@@ -13,6 +13,7 @@ export type TableColumn<Data> = {
 type TableCell = {
   render: ReactNode
   hidden: boolean
+  colIndex: number
 }
 
 export type TableRow<Data> = {
@@ -30,6 +31,7 @@ export type TableHeader = {
   sortReversed: boolean | undefined
   onSortChange: () => void
   hidden: boolean
+  colIndex: number
 }
 
 export type Table<Data> = {

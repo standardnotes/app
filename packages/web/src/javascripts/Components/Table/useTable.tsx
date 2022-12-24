@@ -80,7 +80,7 @@ export function useTable<Data>({
 
   const headers: TableHeader[] = useMemo(
     () =>
-      columns.map((column) => {
+      columns.map((column, index) => {
         return {
           name: column.name,
           isSorting: sortBy && sortBy === column.sortBy,
@@ -93,6 +93,7 @@ export function useTable<Data>({
             onSortChange(column.sortBy, sortBy === column.sortBy ? !sortReversed : false)
           },
           hidden: column.hidden || false,
+          colIndex: index,
         }
       }),
     [columns, onSortChange, sortBy, sortReversed],
@@ -101,10 +102,11 @@ export function useTable<Data>({
   const rows: TableRow<Data>[] = useMemo(
     () =>
       data.map((rowData, index) => {
-        const cells = columns.map((column) => {
+        const cells = columns.map((column, index) => {
           return {
             render: column.cell(rowData),
             hidden: column.hidden || false,
+            colIndex: index,
           }
         })
         const id = getRowId ? getRowId(rowData) : index.toString()

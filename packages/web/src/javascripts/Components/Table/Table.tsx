@@ -5,7 +5,7 @@ import { Table, TableRow } from './CommonTypes'
 
 function TableRow<Data>({
   row,
-  index,
+  index: rowIndex,
   canSelectRows,
   handleRowClick,
   handleRowContextMenu,
@@ -25,6 +25,7 @@ function TableRow<Data>({
   return (
     <div
       role="row"
+      aria-rowindex={rowIndex + 2}
       className="group relative contents"
       onMouseEnter={() => {
         setIsHovered(true)
@@ -40,6 +41,8 @@ function TableRow<Data>({
         return (
           <div
             role="gridcell"
+            aria-rowindex={rowIndex + 2}
+            aria-colindex={cell.colIndex + 1}
             key={index}
             className={classNames(
               'relative overflow-hidden border-b border-border py-3 px-3',
@@ -97,13 +100,16 @@ function Table<Data>({ table }: { table: Table<Data> }) {
         aria-colcount={colCount}
         aria-rowcount={rowCount}
       >
-        <div role="row" className="contents">
+        <div role="row" aria-rowindex={1} className="contents">
           {headers
             .filter((header) => !header.hidden)
             .map((header, index) => {
               return (
                 <div
                   role="columnheader"
+                  aria-rowindex={1}
+                  aria-colindex={header.colIndex + 1}
+                  aria-sort={header.isSorting ? (header.sortReversed ? 'descending' : 'ascending') : 'none'}
                   className={classNames(
                     'border-b border-border px-3 pt-3 pb-2 text-left text-sm font-medium text-passive-0',
                     header.sortBy && 'cursor-pointer hover:bg-info-backdrop hover:underline',
