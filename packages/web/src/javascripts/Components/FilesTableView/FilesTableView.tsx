@@ -215,7 +215,7 @@ const FilesTableView = ({ application, filesController, featuresController, link
           }
 
           return (
-            <div className="flex max-w-76 flex-wrap gap-2">
+            <div className="flex items-center gap-2">
               <LinkedItemBubble
                 className="overflow-hidden"
                 link={links[0]}
