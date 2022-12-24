@@ -259,26 +259,14 @@ const FilesTableView = ({ application, filesController, featuresController, link
       setContextMenuFile(file)
     },
     rowActions: (file) => {
-      const links = [
-        ...naturalSort(application.items.referencesForItem(file), 'title').map((item) =>
-          createLinkFromItem(item, 'linked'),
-        ),
-        ...naturalSort(application.items.itemsReferencingItem(file), 'title').map((item) =>
-          createLinkFromItem(item, 'linked-by'),
-        ),
-        ...application.items.getSortedTagsForItem(file).map((item) => createLinkFromItem(item, 'linked')),
-      ]
-
       return (
         <div className="flex items-center gap-2">
-          {links.length > 0 && (
-            <FileLinksCell
-              file={file}
-              filesController={filesController}
-              featuresController={featuresController}
-              linkingController={linkingController}
-            />
-          )}
+          <FileLinksCell
+            file={file}
+            filesController={filesController}
+            featuresController={featuresController}
+            linkingController={linkingController}
+          />
           <ContextMenuCell files={[file]} filesController={filesController} />
         </div>
       )
