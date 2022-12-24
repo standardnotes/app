@@ -9,10 +9,11 @@ import { DisplayableListItemProps } from './Types/DisplayableListItemProps'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { useContextMenuEvent } from '@/Hooks/useContextMenuEvent'
 import { classNames } from '@standardnotes/utils'
+import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
 import { useApplication } from '../ApplicationProvider'
+import Icon from '../Icon/Icon'
 import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
-import ListItemFlagIcons from './ListItemFlagIcons'
 
 const FileListItemCard: FunctionComponent<DisplayableListItemProps<FileItem>> = ({
   filesController,
@@ -74,36 +75,55 @@ const FileListItemCard: FunctionComponent<DisplayableListItemProps<FileItem>> = 
   }, [file, onSelect, setPaneLayout])
 
   const IconComponent = () =>
-    getFileIconComponent(getIconForFileType((file as FileItem).mimeType), 'w-5 h-5 flex-shrink-0')
+    getFileIconComponent(getIconForFileType((file as FileItem).mimeType), 'w-10 h-10 flex-shrink-0')
 
   useContextMenuEvent(listItemRef, openContextMenu)
 
   return (
     <div
       ref={listItemRef}
-      className={classNames(
-        'content-list-item flex w-full cursor-pointer items-stretch text-text',
-        selected && 'selected border-l-2px border-solid border-info',
-      )}
+      className={classNames('flex max-h-[300px] w-[190px] cursor-pointer px-1 pt-2 text-text md:w-[200px]')}
       id={file.uuid}
       onClick={onClick}
     >
-      {!hideIcon ? (
-        <div className="mr-0 flex flex-col items-center justify-between p-4.5 pr-3">
-          <IconComponent />
+      <div
+        className={`flex flex-col justify-between overflow-hidden rounded bg-passive-5 pt-5 transition-all hover:bg-passive-4 ${
+          selected ? 'border-[1px] border-solid border-info' : 'border-[1px] border-solid border-border'
+        }`}
+      >
+        <div className={'px-5'}>
+          {!hideIcon ? (
+            <div className="mr-0">
+              <IconComponent />
+            </div>
+          ) : (
+            <div className="pr-4" />
+          )}
+          <div className="min-w-0 flex-grow py-4 px-0">
+            <div className="line-clamp-2 overflow-hidden text-editor font-semibold">
+              <div className="break-word line-clamp-2 mr-2 overflow-hidden">{file.title}</div>
+            </div>
+            <ListItemMetadata item={file} hideDate={hideDate} sortBy={sortBy} />
+            <ListItemTags hideTags={hideTags} tags={tags} />
+            <ListItemConflictIndicator item={file} />
+          </div>
         </div>
-      ) : (
-        <div className="pr-4" />
-      )}
-      <div className="min-w-0 flex-grow border-b border-solid border-border py-4 px-0">
-        <div className="flex items-start justify-between overflow-hidden text-base font-semibold leading-[1.3]">
-          <div className="break-word mr-2">{file.title}</div>
+        <div
+          className={classNames(
+            'border-t-[1px] border-solid border-border p-3 text-xs font-bold',
+            selected ? 'bg-info text-info-contrast' : 'bg-passive-4 text-neutral',
+          )}
+        >
+          <div className="flex justify-between">
+            {formatSizeToReadableString(file.decryptedSize)}
+            {backupInfo && (
+              <div title="File is backed up locally">
+                <Icon type="check-circle" />
+              </div>
+            )}
+          </div>
         </div>
-        <ListItemMetadata item={file} hideDate={hideDate} sortBy={sortBy} />
-        <ListItemTags hideTags={hideTags} tags={tags} />
-        <ListItemConflictIndicator item={file} />
       </div>
-      <ListItemFlagIcons className="p-4" item={file} isFileBackedUp={!!backupInfo} />
     </div>
   )
 }

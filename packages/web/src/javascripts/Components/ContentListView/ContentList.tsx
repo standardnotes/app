@@ -13,6 +13,7 @@ import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/utils'
 import { ContentType, SNTag } from '@standardnotes/snjs'
+import { featureTrunkEnabled, FeatureTrunkName } from '@/FeatureTrunk'
 
 type Props = {
   application: WebApplication
@@ -97,6 +98,8 @@ const ContentList: FunctionComponent<Props> = ({
 
   const hasNotes = items.some((item) => item.content_type === ContentType.Note)
 
+  const isFilesTableViewEnabled = featureTrunkEnabled(FeatureTrunkName.FilesTableView)
+
   return (
     <div
       className={classNames(
@@ -132,8 +135,8 @@ const ContentList: FunctionComponent<Props> = ({
             onSelect={selectItem}
             tags={getTagsForItem(item)}
             notesController={notesController}
-            isPreviousItemTiled={previousItem?.content_type === ContentType.File}
-            isNextItemTiled={nextItem?.content_type === ContentType.File}
+            isPreviousItemTiled={previousItem?.content_type === ContentType.File && !isFilesTableViewEnabled}
+            isNextItemTiled={nextItem?.content_type === ContentType.File && !isFilesTableViewEnabled}
           />
         )
       })}

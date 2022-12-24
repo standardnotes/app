@@ -12,10 +12,17 @@ type Props = {
   }
   hasFiles?: boolean
   hasBorder?: boolean
+  isFileBackedUp?: boolean
   className?: string
 }
 
-const ListItemFlagIcons: FunctionComponent<Props> = ({ item, hasFiles = false, hasBorder = true, className }) => {
+const ListItemFlagIcons: FunctionComponent<Props> = ({
+  item,
+  hasFiles = false,
+  hasBorder = true,
+  isFileBackedUp = false,
+  className,
+}) => {
   return (
     <div className={`flex items-start ${hasBorder && 'border-b border-solid border-border'} ${className} pl-0`}>
       {item.locked && (
@@ -46,6 +53,11 @@ const ListItemFlagIcons: FunctionComponent<Props> = ({ item, hasFiles = false, h
       {item.starred && (
         <span className="ml-1.5 flex items-center" title="Starred">
           <Icon ariaLabel="Starred" type="star-filled" className="text-warning" size="medium" />
+        </span>
+      )}
+      {isFileBackedUp && (
+        <span className="ml-1.5 flex items-center" title="File is backed up locally">
+          <Icon ariaLabel="File is backed up locally" type="check-circle" className="text-info" size="medium" />
         </span>
       )}
     </div>
