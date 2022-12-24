@@ -1,6 +1,5 @@
-import { useAutoElementRect } from '@/Hooks/useElementRect'
 import { classNames } from '@standardnotes/snjs'
-import { useRef, useState } from 'react'
+import { useState } from 'react'
 import Icon from '../Icon/Icon'
 import { Table, TableRow } from './CommonTypes'
 
@@ -19,18 +18,12 @@ function TableRow<Data>({
   handleRowContextMenu: Table<Data>['handleRowContextMenu']
   handleRowDoubleClick: Table<Data>['handleRowDoubleClick']
 }) {
-  const rowRef = useRef<HTMLDivElement>(null)
-  const rect = useAutoElementRect(rowRef.current)
-
   const [isHovered, setIsHovered] = useState(false)
 
-  if (index == 0) {
-    console.log('rect', rect)
-  }
+  const visibleCells = row.cells.filter((cell) => !cell.hidden)
 
   return (
     <div
-      ref={rowRef}
       role="row"
       className="group relative contents"
       onMouseEnter={() => {
@@ -43,39 +36,34 @@ function TableRow<Data>({
       onDoubleClick={handleRowDoubleClick(row.id)}
       onContextMenu={handleRowContextMenu(row.id)}
     >
-      {row.cells
-        .filter((cell) => !cell.hidden)
-        .map((cell, index, array) => {
-          return (
-            <div
-              role="gridcell"
-              key={index}
-              className={classNames(
-                'overflow-hidden border-b border-border py-3 px-3',
-                index === 0 && 'ml-3',
-                index === array.length - 1 && 'mr-3',
-                row.isSelected && 'bg-info-backdrop',
-                canSelectRows && 'cursor-pointer',
-                canSelectRows && isHovered && 'bg-contrast',
-              )}
-            >
-              {cell.render}
-            </div>
-          )
-        })}
-      {row.rowActions ? (
-        <div
-          className={classNames(
-            'absolute right-3',
-            // row.isSelected ? '' : 'invisible group-hover:visible',
-          )}
-          style={{
-            top: index * 48 + 48,
-          }}
-        >
-          {row.rowActions}
-        </div>
-      ) : null}
+      {visibleCells.map((cell, index, array) => {
+        return (
+          <div
+            role="gridcell"
+            key={index}
+            className={classNames(
+              'relative overflow-hidden border-b border-border py-3 px-3',
+              index === 0 && 'ml-3',
+              index === array.length - 1 && 'mr-3',
+              row.isSelected && 'bg-info-backdrop',
+              canSelectRows && 'cursor-pointer',
+              canSelectRows && isHovered && 'bg-contrast',
+            )}
+          >
+            {cell.render}
+            {row.rowActions && index === array.length - 1 && (
+              <div
+                className={classNames(
+                  'absolute right-3 top-1/2 -translate-y-1/2',
+                  row.isSelected ? '' : isHovered ? '' : 'invisible',
+                )}
+              >
+                {row.rowActions}
+              </div>
+            )}
+          </div>
+        )
+      })}
     </div>
   )
 }
