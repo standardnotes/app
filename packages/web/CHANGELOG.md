@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.128.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.14...@standardnotes/web@3.128.0) (2022-12-24)
+
+### Features
+
+* Added FileSend links to general account menu and preferences menu ([4f07b91](https://github.com/standardnotes/app/commit/4f07b915f0a60632a9e537b3b0394290d25fa071))
+
 ## [3.127.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.127.13...@standardnotes/web@3.127.14) (2022-12-24)
 
 **Note:** Version bump only for package @standardnotes/web

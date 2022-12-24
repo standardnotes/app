@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.21.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.20.4...@standardnotes/ui-services@1.21.0) (2022-12-24)
+
+### Features
+
+* Added FileSend links to general account menu and preferences menu ([4f07b91](https://github.com/standardnotes/app/commit/4f07b915f0a60632a9e537b3b0394290d25fa071))
+
 ## [1.20.4](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.20.3...@standardnotes/ui-services@1.20.4) (2022-12-21)
 
 **Note:** Version bump only for package @standardnotes/ui-services
