@@ -13,7 +13,6 @@ import {
   NoteContent,
   SmartView,
   SystemViewId,
-  SmartViewPayloads,
 } from '@standardnotes/models'
 import { createNoteWithTitle } from '../../Spec/SpecUtils'
 
