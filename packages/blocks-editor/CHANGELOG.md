@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.11.3...@standardnotes/blocks-editor@1.12.0) (2022-12-26)
+
+### Features
+
+* Clicking the link option in Super notes will automatically add the selected text as the link ([326e1a4](https://github.com/standardnotes/app/commit/326e1a455bb510d795f357123f617618267848cc))
+
 ## [1.11.3](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.11.2...@standardnotes/blocks-editor@1.11.3) (2022-12-24)
 
 **Note:** Version bump only for package @standardnotes/blocks-editor
