@@ -2,6 +2,8 @@ import {
   CollectionSort,
   CollectionSortProperty,
   IconType,
+  isSmartView,
+  isSystemView,
   PrefKey,
   SystemViewId,
   TagMutator,
@@ -32,11 +34,15 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   isFilesSmartView,
   selectedTag,
 }) => {
-  const [currentMode, setCurrentMode] = useState<PreferenceMode>(selectedTag.preferences ? 'tag' : 'global')
+  const isSystemTag = isSmartView(selectedTag) && isSystemView(selectedTag)
+  const selectedTagPreferences = isSystemTag
+    ? application.getPreference(PrefKey.SystemViewPreferences)?.[selectedTag.uuid as SystemViewId]
+    : selectedTag.preferences
+  const [currentMode, setCurrentMode] = useState<PreferenceMode>(selectedTagPreferences ? 'tag' : 'global')
   const [preferences, setPreferences] = useState<TagPreferences>({})
-  const hasSubscription = application.hasValidSubscription()
+  const hasSubscription = /* application.hasValidSubscription() */ true
   const controlsDisabled = currentMode === 'tag' && !hasSubscription
-  const isDailyEntry = selectedTag.preferences?.entryMode === 'daily'
+  const isDailyEntry = selectedTagPreferences?.entryMode === 'daily'
 
   const reloadPreferences = useCallback(() => {
     const globalValues: TagPreferences = {
@@ -68,24 +74,59 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     } else {
       setPreferences({
         ...globalValues,
-        ...selectedTag.preferences,
+        ...selectedTagPreferences,
       })
     }
-  }, [currentMode, setPreferences, selectedTag, application])
+  }, [application, currentMode, selectedTagPreferences])
 
   useEffect(() => {
     reloadPreferences()
   }, [reloadPreferences])
 
+  const changeGlobalPreferences = useCallback(
+    async (properties: Partial<TagPreferences>) => {
+      for (const key of Object.keys(properties)) {
+        const value = properties[key as keyof TagPreferences]
+        await application.setPreference(key as PrefKey, value).catch(console.error)
+
+        reloadPreferences()
+      }
+    },
+    [application, reloadPreferences],
+  )
+
+  const changeSystemViewPreferences = useCallback(
+    async (properties: Partial<TagPreferences>) => {
+      if (!selectedTag) {
+        return
+      }
+
+      if (!isSystemTag) {
+        return
+      }
+
+      const systemViewPreferences = application.getPreference(PrefKey.SystemViewPreferences) || {}
+      const systemViewPreferencesForTag = systemViewPreferences[selectedTag.uuid as SystemViewId] || {}
+
+      await application.setPreference(PrefKey.SystemViewPreferences, {
+        ...systemViewPreferences,
+        [selectedTag.uuid as SystemViewId]: {
+          ...systemViewPreferencesForTag,
+          ...properties,
+        },
+      })
+
+      reloadPreferences()
+    },
+    [application, isSystemTag, reloadPreferences, selectedTag],
+  )
+
   const changePreferences = useCallback(
     async (properties: Partial<TagPreferences>) => {
       if (currentMode === 'global') {
-        for (const key of Object.keys(properties)) {
-          const value = properties[key as keyof TagPreferences]
-          await application.setPreference(key as PrefKey, value).catch(console.error)
-
-          reloadPreferences()
-        }
+        await changeGlobalPreferences(properties)
+      } else if (isSystemTag) {
+        await changeSystemViewPreferences(properties)
       } else {
         await application.mutator.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
           mutator.preferences = {
@@ -95,14 +136,23 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         })
       }
     },
-    [reloadPreferences, application, currentMode, selectedTag],
+    [currentMode, isSystemTag, changeGlobalPreferences, changeSystemViewPreferences, application.mutator, selectedTag],
   )
 
-  const resetTagPreferences = useCallback(() => {
+  const resetTagPreferences = useCallback(async () => {
+    if (isSystemTag) {
+      await application.setPreference(PrefKey.SystemViewPreferences, {
+        ...application.getPreference(PrefKey.SystemViewPreferences),
+        [selectedTag.uuid as SystemViewId]: undefined,
+      })
+      reloadPreferences()
+      return
+    }
+
     void application.mutator.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
       mutator.preferences = undefined
     })
-  }, [application, selectedTag])
+  }, [application, isSystemTag, reloadPreferences, selectedTag])
 
   const toggleSortReverse = useCallback(() => {
     void changePreferences({ sortReverse: !preferences.sortReverse })
@@ -360,7 +410,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         </>
       )}
 
-      {currentMode === 'tag' && DailyEntryModeEnabled && (
+      {currentMode === 'tag' && !isSystemTag && DailyEntryModeEnabled && (
         <>
           <MenuItemSeparator />
           <MenuSwitchButtonItem

@@ -20,6 +20,8 @@ import {
   useBoolean,
   isTag,
   isFile,
+  isSmartView,
+  isSystemView,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -502,10 +504,14 @@ export class ItemListController extends AbstractViewController implements Intern
     const newDisplayOptions = {} as DisplayOptions
     const newWebDisplayOptions = {} as WebDisplayOptions
     const selectedTag = this.navigationController.selected
+    const isSystemTag = selectedTag && isSmartView(selectedTag) && isSystemView(selectedTag)
+    const selectedTagPreferences = isSystemTag
+      ? this.application.getPreference(PrefKey.SystemViewPreferences)?.[selectedTag.uuid as SystemViewId]
+      : selectedTag?.preferences
 
     const currentSortBy = this.displayOptions.sortBy
     let sortBy =
-      selectedTag?.preferences?.sortBy ||
+      selectedTagPreferences?.sortBy ||
       this.application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy])
     if (sortBy === CollectionSort.UpdatedAt || (sortBy as string) === 'client_updated_at') {
       sortBy = CollectionSort.UpdatedAt
@@ -515,49 +521,49 @@ export class ItemListController extends AbstractViewController implements Intern
     const currentSortDirection = this.displayOptions.sortDirection
     newDisplayOptions.sortDirection =
       useBoolean(
-        selectedTag?.preferences?.sortReverse,
+        selectedTagPreferences?.sortReverse,
         this.application.getPreference(PrefKey.SortNotesReverse, PrefDefaults[PrefKey.SortNotesReverse]),
       ) === false
         ? 'dsc'
         : 'asc'
 
     newDisplayOptions.includeArchived = useBoolean(
-      selectedTag?.preferences?.showArchived,
+      selectedTagPreferences?.showArchived,
       this.application.getPreference(PrefKey.NotesShowArchived, PrefDefaults[PrefKey.NotesShowArchived]),
     )
 
     newDisplayOptions.includeTrashed = useBoolean(
-      selectedTag?.preferences?.showTrashed,
+      selectedTagPreferences?.showTrashed,
       this.application.getPreference(PrefKey.NotesShowTrashed, PrefDefaults[PrefKey.NotesShowTrashed]),
     )
 
     newDisplayOptions.includePinned = !useBoolean(
-      selectedTag?.preferences?.hidePinned,
+      selectedTagPreferences?.hidePinned,
       this.application.getPreference(PrefKey.NotesHidePinned, PrefDefaults[PrefKey.NotesHidePinned]),
     )
 
     newDisplayOptions.includeProtected = !useBoolean(
-      selectedTag?.preferences?.hideProtected,
+      selectedTagPreferences?.hideProtected,
       this.application.getPreference(PrefKey.NotesHideProtected, PrefDefaults[PrefKey.NotesHideProtected]),
     )
 
     newWebDisplayOptions.hideNotePreview = useBoolean(
-      selectedTag?.preferences?.hideNotePreview,
+      selectedTagPreferences?.hideNotePreview,
       this.application.getPreference(PrefKey.NotesHideNotePreview, PrefDefaults[PrefKey.NotesHideNotePreview]),
     )
 
     newWebDisplayOptions.hideDate = useBoolean(
-      selectedTag?.preferences?.hideDate,
+      selectedTagPreferences?.hideDate,
       this.application.getPreference(PrefKey.NotesHideDate, PrefDefaults[PrefKey.NotesHideDate]),
     )
 
     newWebDisplayOptions.hideTags = useBoolean(
-      selectedTag?.preferences?.hideTags,
+      selectedTagPreferences?.hideTags,
       this.application.getPreference(PrefKey.NotesHideTags, PrefDefaults[PrefKey.NotesHideTags]),
     )
 
     newWebDisplayOptions.hideEditorIcon = useBoolean(
-      selectedTag?.preferences?.hideEditorIcon,
+      selectedTagPreferences?.hideEditorIcon,
       this.application.getPreference(PrefKey.NotesHideEditorIcon, PrefDefaults[PrefKey.NotesHideEditorIcon]),
     )
 
