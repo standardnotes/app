@@ -54,6 +54,7 @@ import {
   ListNumbered,
 } from '@standardnotes/icons';
 import {IconComponent} from '../../Theme/IconComponent';
+import {sanitizeUrl} from '../../Utils/sanitizeUrl';
 
 const blockTypeToBlockName = {
   bullet: 'Bulleted List',
@@ -103,7 +104,15 @@ function TextFormatFloatingToolbar({
 
   const insertLink = useCallback(() => {
     if (!isLink) {
-      editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://');
+      editor.update(() => {
+        const selection = $getSelection();
+        const textContent = selection?.getTextContent();
+        if (!textContent) {
+          editor.dispatchCommand(TOGGLE_LINK_COMMAND, 'https://');
+          return;
+        }
+        editor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl(textContent));
+      });
     } else {
       editor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
     }
