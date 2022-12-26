@@ -6237,7 +6237,6 @@ __metadata:
     "@types/jest": ^29.2.3
     "@typescript-eslint/eslint-plugin": "*"
     "@typescript-eslint/parser": "*"
-    dayjs: ^1.11.7
     eslint: "*"
     eslint-plugin-prettier: "*"
     jest: ^29.3.1

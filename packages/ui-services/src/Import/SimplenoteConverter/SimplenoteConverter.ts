@@ -1,65 +1,55 @@
 import { UuidGenerator } from '@standardnotes/utils'
-import dayjs from 'dayjs'
-import customParseFormat from 'dayjs/plugin/customParseFormat'
-import utc from 'dayjs/plugin/utc'
-dayjs.extend(customParseFormat)
-dayjs.extend(utc)
 
-const dateFormat = 'YYYYMMDDTHHmmss'
+type SimplenoteItem = {
+  creationDate: string
+  lastModified: string
+  content: string
+}
+
+type SimplenoteData = {
+  activeNotes: SimplenoteItem[]
+  trashedNotes: SimplenoteItem[]
+}
 
 export class SimplenoteConverter {
-  parse(data: string, filename: string) {
-    const processParsedNotes = (
-      notes: {
-        creationDate: string
-        lastModified: string
-        content: string
-      }[],
-      trashed = false,
-    ) => {
-      return notes.reverse().map((noteItem) => {
-        const createDate = dayjs.utc(noteItem.creationDate, dateFormat).toDate()
-        const updateDate = dayjs.utc(noteItem.lastModified, dateFormat).toDate()
-        const noteContent = noteItem.content.split('\r\n')
+  createNoteFromItem(item: SimplenoteItem, trashed: boolean) {
+    const createdAtDate = new Date(item.creationDate)
+    const updatedAtDate = new Date(item.lastModified)
 
-        let title
-        let content
+    const splitItemContent = item.content.split('\r\n')
+    const hasTitleAndContent = splitItemContent.length === 2
+    const title =
+      hasTitleAndContent && splitItemContent[0].length ? splitItemContent[0] : createdAtDate.toLocaleString()
+    const content = hasTitleAndContent && splitItemContent[1].length ? splitItemContent[1] : item.content
 
-        if (noteContent.length === 2 && noteContent[1].length > 0) {
-          title = noteContent[0]
-          content = noteContent[1]
-        } else {
-          title = filename.split('.')[0]
-          content = noteItem.content
-        }
-
-        return {
-          created_at: createDate,
-          updated_at: updateDate,
-          uuid: UuidGenerator.GenerateUuid(),
-          content_type: 'Note',
-          content: {
-            title,
-            text: content,
-            references: [],
-            appData: {
-              'org.standardnotes.sn': {
-                client_updated_at: updateDate,
-                trashed,
-              },
-            },
+    return {
+      created_at: createdAtDate,
+      updated_at: updatedAtDate,
+      uuid: UuidGenerator.GenerateUuid(),
+      content_type: 'Note',
+      content: {
+        title,
+        text: content,
+        references: [],
+        appData: {
+          'org.standardnotes.sn': {
+            client_updated_at: updatedAtDate,
+            trashed,
           },
-        }
-      })
+        },
+      },
     }
+  }
 
+  parse(data: string) {
     try {
-      const parsed = JSON.parse(data)
-      const activeNotes = processParsedNotes(parsed.activeNotes)
-      const trashedNotes = processParsedNotes(parsed.trashedNotes, true)
+      const parsed = JSON.parse(data) as SimplenoteData
+      const activeNotes = parsed.activeNotes.reverse().map((item) => this.createNoteFromItem(item, false))
+      const trashedNotes = parsed.trashedNotes.reverse().map((item) => this.createNoteFromItem(item, true))
 
       return [...activeNotes, ...trashedNotes]
-    } catch (e) {
+    } catch (error) {
+      console.error(error)
       return null
     }
   }
