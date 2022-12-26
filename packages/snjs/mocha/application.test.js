@@ -26,8 +26,8 @@ describe('application instances', () => {
     expect(app1.payloadManager).to.not.equal(app2.payloadManager)
 
     await Factory.createMappedNote(app1)
-    expect(app1.itemManager.items.length).length.to.equal(BaseItemCounts.DefaultItems + 1)
-    expect(app2.itemManager.items.length).to.equal(BaseItemCounts.DefaultItems)
+    expect(app1.itemManager.items.length).length.to.equal(BaseItemCounts.DefaultItems + BaseItemCounts.SystemViews + 1)
+    expect(app2.itemManager.items.length).to.equal(BaseItemCounts.DefaultItems + BaseItemCounts.SystemViews)
     await Factory.safeDeinit(app1)
     await Factory.safeDeinit(app2)
   })
