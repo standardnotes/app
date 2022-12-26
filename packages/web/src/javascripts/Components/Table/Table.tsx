@@ -1,5 +1,5 @@
 import { classNames } from '@standardnotes/snjs'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import Icon from '../Icon/Icon'
 import { Table, TableRow } from './CommonTypes'
 
@@ -26,6 +26,7 @@ function TableRow<Data>({
     <div
       role="row"
       aria-rowindex={rowIndex + 2}
+      {...(canSelectRows ? { 'aria-selected': row.isSelected } : {})}
       className="group relative contents"
       onMouseEnter={() => {
         setIsHovered(true)
@@ -75,7 +76,27 @@ function TableRow<Data>({
   )
 }
 
+const MinTableRowHeight = 41
+const MinRowsToDisplay = 20
+const PageSize = Math.ceil(document.documentElement.clientHeight / MinTableRowHeight) || MinRowsToDisplay
+const PageScrollThreshold = 200
+
 function Table<Data>({ table }: { table: Table<Data> }) {
+  const [rowsToDisplay, setRowsToDisplay] = useState<number>(PageSize)
+  const paginate = useCallback(() => {
+    setRowsToDisplay((cellsToDisplay) => cellsToDisplay + PageSize)
+  }, [])
+  const onScroll = useCallback(
+    (event: React.UIEvent<HTMLDivElement, UIEvent>) => {
+      const offset = PageScrollThreshold
+      const element = event.target as HTMLElement
+      if (element.scrollTop + element.offsetHeight >= element.scrollHeight - offset) {
+        paginate()
+      }
+    },
+    [paginate],
+  )
+
   const {
     headers,
     rows,
@@ -87,11 +108,12 @@ function Table<Data>({ table }: { table: Table<Data> }) {
     selectedRows,
     selectionActions,
     canSelectRows,
+    canSelectMultipleRows,
     showSelectionActions,
   } = table
 
   return (
-    <div className="block min-h-0 overflow-auto">
+    <div className="block min-h-0 overflow-auto" onScroll={onScroll}>
       {showSelectionActions && selectedRows.length >= 2 && (
         <div className="flex items-center justify-between border-b border-border px-3 py-2">
           <span className="text-info-0 text-sm font-medium">{selectedRows.length} selected</span>
@@ -103,6 +125,7 @@ function Table<Data>({ table }: { table: Table<Data> }) {
         role="grid"
         aria-colcount={colCount}
         aria-rowcount={rowCount}
+        aria-multiselectable={canSelectMultipleRows}
       >
         <div role="row" aria-rowindex={1} className="contents">
           {headers
@@ -139,7 +162,7 @@ function Table<Data>({ table }: { table: Table<Data> }) {
             })}
         </div>
         <div className="contents whitespace-nowrap">
-          {rows.map((row, index) => (
+          {rows.slice(0, rowsToDisplay).map((row, index) => (
             <TableRow
               row={row}
               key={row.id}

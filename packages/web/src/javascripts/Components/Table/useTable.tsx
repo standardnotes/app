@@ -195,11 +195,13 @@ export function useTable<Data>({
       handleRowContextMenu,
       selectedRows,
       canSelectRows: enableRowSelection || false,
+      canSelectMultipleRows: enableMultipleRowSelection || false,
       selectionActions: selectionActions ? selectionActions(selectedRows) : undefined,
       showSelectionActions: showSelectionActions || false,
     }),
     [
       colCount,
+      enableMultipleRowSelection,
       enableRowSelection,
       handleRowClick,
       handleRowContextMenu,
