@@ -2,8 +2,6 @@ import {
   CollectionSort,
   CollectionSortProperty,
   IconType,
-  isSmartView,
-  isSystemView,
   PrefKey,
   SystemViewId,
   TagMutator,
@@ -34,7 +32,6 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   isFilesSmartView,
   selectedTag,
 }) => {
-  const isSystemTag = isSmartView(selectedTag) && isSystemView(selectedTag)
   const [currentMode, setCurrentMode] = useState<PreferenceMode>(selectedTag.preferences ? 'tag' : 'global')
   const [preferences, setPreferences] = useState<TagPreferences>({})
   const hasSubscription = application.hasValidSubscription()
@@ -212,7 +209,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       <div className={classNames('mt-1.5 flex w-full justify-between px-3', !controlsDisabled && 'mb-3')}>
         <div className="flex items-center gap-1.5">
           <TabButton label="Global" mode="global" />
-          {!isSystemTag && <TabButton label={selectedTag.title} icon={selectedTag.iconString} mode="tag" />}
+          <TabButton label={selectedTag.title} icon={selectedTag.iconString} mode="tag" />
         </div>
         {currentMode === 'tag' && (
           <button className="text-base lg:text-sm" onClick={resetTagPreferences}>

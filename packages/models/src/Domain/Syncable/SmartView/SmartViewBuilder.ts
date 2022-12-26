@@ -1,6 +1,5 @@
 import { DecryptedPayload } from './../../Abstract/Payload/Implementations/DecryptedPayload'
 import { SNNote } from '../Note/Note'
-import { SmartView } from './SmartView'
 import { SmartViewContent } from './SmartViewContent'
 import { SystemViewId } from './SystemViewId'
 import { ItemWithTags } from '../../Runtime/Display/Search/ItemWithTags'
@@ -12,78 +11,66 @@ import { PayloadTimestampDefaults } from '../../Abstract/Payload'
 import { FilterDisplayOptions } from '../../Runtime/Display'
 import { FileItem } from '../File'
 
-export function BuildSmartViews(options: FilterDisplayOptions): SmartView[] {
-  const notes = new SmartView(
-    new DecryptedPayload({
-      uuid: SystemViewId.AllNotes,
-      content_type: ContentType.SmartView,
-      ...PayloadTimestampDefaults(),
-      content: FillItemContent<SmartViewContent>({
-        title: 'Notes',
-        predicate: allNotesPredicate(options).toJson(),
-      }),
+export function SmartViewPayloads(options: FilterDisplayOptions): DecryptedPayload[] {
+  const notes = new DecryptedPayload({
+    uuid: SystemViewId.AllNotes,
+    content_type: ContentType.SmartView,
+    ...PayloadTimestampDefaults(),
+    content: FillItemContent<SmartViewContent>({
+      title: 'Notes',
+      predicate: allNotesPredicate(options).toJson(),
     }),
-  )
+  })
 
-  const files = new SmartView(
-    new DecryptedPayload({
-      uuid: SystemViewId.Files,
-      content_type: ContentType.SmartView,
-      ...PayloadTimestampDefaults(),
-      content: FillItemContent<SmartViewContent>({
-        title: 'Files',
-        predicate: filesPredicate(options).toJson(),
-      }),
+  const files = new DecryptedPayload({
+    uuid: SystemViewId.Files,
+    content_type: ContentType.SmartView,
+    ...PayloadTimestampDefaults(),
+    content: FillItemContent<SmartViewContent>({
+      title: 'Files',
+      predicate: filesPredicate(options).toJson(),
     }),
-  )
+  })
 
-  const archived = new SmartView(
-    new DecryptedPayload({
-      uuid: SystemViewId.ArchivedNotes,
-      content_type: ContentType.SmartView,
-      ...PayloadTimestampDefaults(),
-      content: FillItemContent<SmartViewContent>({
-        title: 'Archived',
-        predicate: archivedNotesPredicate(options).toJson(),
-      }),
+  const archived = new DecryptedPayload({
+    uuid: SystemViewId.ArchivedNotes,
+    content_type: ContentType.SmartView,
+    ...PayloadTimestampDefaults(),
+    content: FillItemContent<SmartViewContent>({
+      title: 'Archived',
+      predicate: archivedNotesPredicate(options).toJson(),
     }),
-  )
+  })
 
-  const trash = new SmartView(
-    new DecryptedPayload({
-      uuid: SystemViewId.TrashedNotes,
-      content_type: ContentType.SmartView,
-      ...PayloadTimestampDefaults(),
-      content: FillItemContent<SmartViewContent>({
-        title: 'Trash',
-        predicate: trashedNotesPredicate(options).toJson(),
-      }),
+  const trash = new DecryptedPayload({
+    uuid: SystemViewId.TrashedNotes,
+    content_type: ContentType.SmartView,
+    ...PayloadTimestampDefaults(),
+    content: FillItemContent<SmartViewContent>({
+      title: 'Trash',
+      predicate: trashedNotesPredicate(options).toJson(),
     }),
-  )
+  })
 
-  const untagged = new SmartView(
-    new DecryptedPayload({
-      uuid: SystemViewId.UntaggedNotes,
-      content_type: ContentType.SmartView,
-      ...PayloadTimestampDefaults(),
-      content: FillItemContent<SmartViewContent>({
-        title: 'Untagged',
-        predicate: untaggedNotesPredicate(options).toJson(),
-      }),
+  const untagged = new DecryptedPayload({
+    uuid: SystemViewId.UntaggedNotes,
+    content_type: ContentType.SmartView,
+    ...PayloadTimestampDefaults(),
+    content: FillItemContent<SmartViewContent>({
+      title: 'Untagged',
+      predicate: untaggedNotesPredicate(options).toJson(),
     }),
-  )
+  })
 
-  const starred = new SmartView(
-    new DecryptedPayload({
-      uuid: SystemViewId.StarredNotes,
-      content_type: ContentType.SmartView,
-      ...PayloadTimestampDefaults(),
-      content: FillItemContent<SmartViewContent>({
-        title: 'Starred',
-        predicate: starredNotesPredicate(options).toJson(),
-      }),
+  const starred = new DecryptedPayload({
+    uuid: SystemViewId.StarredNotes,
+    content_type: ContentType.SmartView,
+    ...PayloadTimestampDefaults(),
+    content: FillItemContent<SmartViewContent>({
+      title: 'Starred',
+      predicate: starredNotesPredicate(options).toJson(),
     }),
-  )
+  })
 
   return [notes, files, starred, archived, trash, untagged]
 }

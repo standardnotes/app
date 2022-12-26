@@ -8,7 +8,14 @@ import * as Models from '@standardnotes/models'
 import * as Services from '@standardnotes/services'
 import { PayloadManagerChangeData } from '../Payloads'
 import { DiagnosticInfo, ItemsClientInterface, ItemRelationshipDirection } from '@standardnotes/services'
-import { CollectionSort, DecryptedItemInterface, ItemContent, SmartViewDefaultIconName } from '@standardnotes/models'
+import {
+  CollectionSort,
+  DecryptedItemInterface,
+  isSystemView,
+  ItemContent,
+  SmartViewDefaultIconName,
+  SmartViewPayloads,
+} from '@standardnotes/models'
 
 type ItemsChangeObserver<I extends Models.DecryptedItemInterface = Models.DecryptedItemInterface> = {
   contentType: ContentType[]
@@ -30,7 +37,6 @@ export class ItemManager
   private unsubChangeObserver: () => void
   private observers: ItemsChangeObserver[] = []
   private collection!: Models.ItemCollection
-  private systemSmartViews: Models.SmartView[]
   private tagItemsIndex!: Models.TagItemsIndex
 
   private navigationDisplayController!: Models.ItemDisplayController<Models.SNNote | Models.FileItem>
@@ -47,14 +53,16 @@ export class ItemManager
   ) {
     super(internalEventBus)
     this.payloadManager = payloadManager
-    this.systemSmartViews = this.rebuildSystemSmartViews({})
     this.createCollection()
     this.unsubChangeObserver = this.payloadManager.addObserver(ContentType.Any, this.setPayloads.bind(this))
+    this.addSystemViews()
   }
 
-  private rebuildSystemSmartViews(criteria: Models.FilterDisplayOptions): Models.SmartView[] {
-    this.systemSmartViews = Models.BuildSmartViews(criteria)
-    return this.systemSmartViews
+  private addSystemViews() {
+    const smartViewPayloads = SmartViewPayloads({})
+    smartViewPayloads.forEach(async (payload) => {
+      await this.payloadManager.emitPayload(payload, Models.PayloadEmitSource.LocalInserted)
+    })
   }
 
   private createCollection() {
@@ -142,8 +150,6 @@ export class ItemManager
         override.includeArchived = true
       }
     }
-
-    this.rebuildSystemSmartViews({ ...options, ...override })
 
     const mostRecentVersionOfTags = options.tags
       ?.map((tag) => {
@@ -1275,6 +1281,10 @@ export class ItemManager
     ) as Models.SNNote[]
   }
 
+  public get systemSmartViews(): Models.SmartView[] {
+    return this.smartViewDisplayController.items().filter((view) => isSystemView(view)) as Models.SmartView[]
+  }
+
   public get allNotesSmartView(): Models.SmartView {
     return this.systemSmartViews.find((tag) => tag.uuid === Models.SystemViewId.AllNotes) as Models.SmartView
   }
@@ -1307,8 +1317,18 @@ export class ItemManager
    * Returns all smart views, sorted by title.
    */
   public getSmartViews(): Models.SmartView[] {
-    const userTags = this.smartViewDisplayController.items()
-    return this.systemSmartViews.concat(userTags)
+    return this.smartViewDisplayController.items().sort(
+      // Sort system views first
+      (a, b) => {
+        if (isSystemView(a) && !isSystemView(b)) {
+          return -1
+        } else if (!isSystemView(a) && isSystemView(b)) {
+          return 1
+        } else {
+          return 0
+        }
+      },
+    )
   }
 
   /**
