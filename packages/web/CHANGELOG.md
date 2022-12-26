@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.128.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.128.7...@standardnotes/web@3.128.8) (2022-12-26)
+
+### Bug Fixes
+
+* Fixed issue where right-clicking system view would open "Edit smart view" modal ([044a4fc](https://github.com/standardnotes/app/commit/044a4fc36b1af773ed490943e5a02a6e4c442252))
+
 ## [3.128.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.128.6...@standardnotes/web@3.128.7) (2022-12-26)
 
 **Note:** Version bump only for package @standardnotes/web
