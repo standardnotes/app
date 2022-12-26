@@ -408,7 +408,7 @@ describe('itemManager', () => {
 
       expect(!!item).toEqual(true)
       /* Template items should never be added to the record */
-      expect(itemManager.items).toHaveLength(SmartViewPayloads({}).length)
+      expect(itemManager.items).toHaveLength(0)
       expect(itemManager.getDisplayableNotes()).toHaveLength(0)
     })
 

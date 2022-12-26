@@ -4,7 +4,6 @@ import * as Defaults from './Defaults.js'
 
 export const BaseItemCounts = {
   DefaultItems: ['ItemsKey', 'UserPreferences', 'DarkTheme'].length,
-  SystemViews: ['NotesView', 'FilesView', 'StarredView', 'ArchivedView', 'TrashView', 'UntaggedView'].length,
 }
 
 export function createApplicationWithOptions({ identifier, environment, platform, host, crypto, device }) {
