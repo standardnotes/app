@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.128.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.128.5...@standardnotes/web@3.128.6) (2022-12-26)
+
+### Bug Fixes
+
+* Fixed issue where adding child tag to note would also add all parent tags even though the related setting was turned off ([e798b71](https://github.com/standardnotes/app/commit/e798b71b9fb2cb566be2043f9873bcbf3cea2d25))
+
 ## [3.128.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.128.4...@standardnotes/web@3.128.5) (2022-12-26)
 
 **Note:** Version bump only for package @standardnotes/web
