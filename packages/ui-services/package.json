@@ -21,7 +21,8 @@
     "@standardnotes/services": "workspace:^",
     "@standardnotes/styles": "workspace:^",
     "@standardnotes/toast": "workspace:^",
-    "@standardnotes/utils": "workspace:^"
+    "@standardnotes/utils": "workspace:^",
+    "dayjs": "^1.11.7"
   },
   "devDependencies": {
     "@types/jest": "^29.2.3",
