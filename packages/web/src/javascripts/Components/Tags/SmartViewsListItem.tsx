@@ -102,6 +102,9 @@ const SmartViewsListItem: FunctionComponent<Props> = ({ view, tagsState, setEdit
         onContextMenu={(event) => {
           event.preventDefault()
           event.stopPropagation()
+          if (isSystemView(view)) {
+            return
+          }
           onClickEdit()
         }}
         style={{
