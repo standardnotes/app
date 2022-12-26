@@ -13,6 +13,7 @@ import {
   NoteContent,
   SmartView,
   SystemViewId,
+  SmartViewPayloads,
 } from '@standardnotes/models'
 import { createNoteWithTitle } from '../../Spec/SpecUtils'
 
@@ -407,7 +408,7 @@ describe('itemManager', () => {
 
       expect(!!item).toEqual(true)
       /* Template items should never be added to the record */
-      expect(itemManager.items).toHaveLength(0)
+      expect(itemManager.items).toHaveLength(SmartViewPayloads({}).length)
       expect(itemManager.getDisplayableNotes()).toHaveLength(0)
     })
 
