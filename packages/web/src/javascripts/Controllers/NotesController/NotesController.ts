@@ -2,7 +2,15 @@ import { destroyAllObjectProperties } from '@/Utils'
 import { confirmDialog, PIN_NOTE_COMMAND, STAR_NOTE_COMMAND } from '@standardnotes/ui-services'
 import { StringEmptyTrash, Strings, StringUtils } from '@/Constants/Strings'
 import { MENU_MARGIN_FROM_APP_BORDER } from '@/Constants/Constants'
-import { SNNote, NoteMutator, ContentType, SNTag, TagMutator, InternalEventBus } from '@standardnotes/snjs'
+import {
+  SNNote,
+  NoteMutator,
+  ContentType,
+  SNTag,
+  InternalEventBus,
+  PrefKey,
+  ApplicationEvent,
+} from '@standardnotes/snjs'
 import { makeObservable, observable, action, computed, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
@@ -10,8 +18,10 @@ import { SelectedItemsController } from '../SelectedItemsController'
 import { ItemListController } from '../ItemList/ItemListController'
 import { NavigationController } from '../Navigation/NavigationController'
 import { NotesControllerInterface } from './NotesControllerInterface'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 export class NotesController extends AbstractViewController implements NotesControllerInterface {
+  shouldLinkToParentFolders: boolean
   lastSelectedNote: SNNote | undefined
   contextMenuOpen = false
   contextMenuPosition: { top?: number; left: number; bottom?: number } = {
@@ -59,6 +69,11 @@ export class NotesController extends AbstractViewController implements NotesCont
       unselectNotes: action,
     })
 
+    this.shouldLinkToParentFolders = application.getPreference(
+      PrefKey.NoteAddToParentFolders,
+      PrefDefaults[PrefKey.NoteAddToParentFolders],
+    )
+
     this.disposers.push(
       this.application.keyboardService.addCommandHandler({
         command: PIN_NOTE_COMMAND,
@@ -71,6 +86,12 @@ export class NotesController extends AbstractViewController implements NotesCont
         onKeyDown: () => {
           this.toggleStarSelectedNotes()
         },
+      }),
+      this.application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
+        this.shouldLinkToParentFolders = this.application.getPreference(
+          PrefKey.NoteAddToParentFolders,
+          PrefDefaults[PrefKey.NoteAddToParentFolders],
+        )
       }),
     )
   }
@@ -339,15 +360,9 @@ export class NotesController extends AbstractViewController implements NotesCont
 
   async addTagToSelectedNotes(tag: SNTag): Promise<void> {
     const selectedNotes = this.getSelectedNotesList()
-    const parentChainTags = this.application.items.getTagParentChain(tag)
-    const tagsToAdd = [...parentChainTags, tag]
     await Promise.all(
-      tagsToAdd.map(async (tag) => {
-        await this.application.mutator.changeItem<TagMutator>(tag, (mutator) => {
-          for (const note of selectedNotes) {
-            mutator.addNote(note)
-          }
-        })
+      selectedNotes.map(async (note) => {
+        await this.application.items.addTagToNote(note, tag, this.shouldLinkToParentFolders)
       }),
     )
     this.application.sync.sync().catch(console.error)
