@@ -235,6 +235,7 @@ const FilesTableView = ({ application, filesController, featuresController, link
       },
       {
         name: 'Size',
+        sortBy: 'decryptedSize',
         cell: (file) => {
           return formatSizeToReadableString(file.decryptedSize)
         },

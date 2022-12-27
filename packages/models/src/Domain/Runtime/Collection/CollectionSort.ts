@@ -7,6 +7,7 @@ export interface SortableItem {
   userModifiedDate: Date
   title?: string
   pinned: boolean
+  decryptedSize?: number
 }
 
 export const CollectionSort: Record<string, keyof SortableItem> = {
