@@ -1,4 +1,10 @@
-import { classNames, FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
+import {
+  classNames,
+  DecryptedTransferPayload,
+  FeatureIdentifier,
+  FeatureStatus,
+  NoteContent,
+} from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
 import MenuItem from '../Menu/MenuItem'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
@@ -6,7 +12,7 @@ import { useRef, useState } from 'react'
 import Popover from '../Popover/Popover'
 import Menu from '../Menu/Menu'
 import { ClassicFileReader } from '@standardnotes/filepicker'
-import { AegisToAuthenticatorConverter } from '@standardnotes/ui-services'
+import { AegisToAuthenticatorConverter, SimplenoteConverter } from '@standardnotes/ui-services'
 import { useApplication } from '../ApplicationProvider'
 
 const iconClassName = classNames('mr-2 text-neutral', MenuItemIconSize)
@@ -15,6 +21,13 @@ const ImportMenuOption = () => {
   const application = useApplication()
   const anchorRef = useRef<HTMLButtonElement>(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+
+  const createNoteFromTransferPayload = async (payload: DecryptedTransferPayload<NoteContent>) => {
+    const notePayload = application.items.createPayloadFromObject(payload)
+    const noteItem = application.items.createItemFromPayload(notePayload)
+    await application.mutator.insertItem(noteItem)
+    void application.sync.sync()
+  }
 
   const togglePopover = () => {
     setIsMenuOpen((isOpen) => !isOpen)
@@ -61,8 +74,13 @@ const ImportMenuOption = () => {
             Evernote
           </MenuItem>
           <MenuItem
-            onClick={() => {
-              setIsMenuOpen((isOpen) => !isOpen)
+            onClick={async () => {
+              const files = await ClassicFileReader.selectFiles()
+              files.forEach(async (file) => {
+                const converter = new SimplenoteConverter(application)
+                const noteTransferPayloads = await converter.convertSimplenoteBackupFileToNotes(file)
+                noteTransferPayloads.forEach((payload) => void createNoteFromTransferPayload(payload))
+              })
             }}
           >
             <Icon type="rich-text" className={iconClassName} />
@@ -79,10 +97,7 @@ const ImportMenuOption = () => {
                   file,
                   isEntitledToAuthenticator,
                 )
-                const notePayload = application.items.createPayloadFromObject(noteTransferPayload)
-                const noteItem = application.items.createItemFromPayload(notePayload)
-                await application.mutator.insertItem(noteItem)
-                void application.sync.sync()
+                void createNoteFromTransferPayload(noteTransferPayload)
               })
             }}
           >
