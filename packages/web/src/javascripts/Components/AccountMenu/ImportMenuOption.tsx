@@ -12,7 +12,7 @@ import { useRef, useState } from 'react'
 import Popover from '../Popover/Popover'
 import Menu from '../Menu/Menu'
 import { ClassicFileReader } from '@standardnotes/filepicker'
-import { AegisToAuthenticatorConverter, SimplenoteConverter } from '@standardnotes/ui-services'
+import { AegisToAuthenticatorConverter, GoogleKeepConverter, SimplenoteConverter } from '@standardnotes/ui-services'
 import { useApplication } from '../ApplicationProvider'
 
 const iconClassName = classNames('mr-2 text-neutral', MenuItemIconSize)
@@ -58,8 +58,13 @@ const ImportMenuOption = () => {
             Plaintext
           </MenuItem>
           <MenuItem
-            onClick={() => {
-              setIsMenuOpen((isOpen) => !isOpen)
+            onClick={async () => {
+              const files = await ClassicFileReader.selectFiles()
+              files.forEach(async (file) => {
+                const converter = new GoogleKeepConverter(application)
+                const noteTransferPayload = await converter.convertGoogleKeepBackupFileToNote(file, false)
+                void createNoteFromTransferPayload(noteTransferPayload)
+              })
             }}
           >
             <Icon type="plain-text" className={iconClassName} />
