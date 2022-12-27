@@ -17,7 +17,6 @@ import {
   DisplayOptions,
   ItemsKeyInterface,
   ItemContent,
-  DecryptedPayload,
 } from '@standardnotes/models'
 
 export interface ItemsClientInterface {
@@ -37,15 +36,6 @@ export interface ItemsClientInterface {
   createItemFromPayload(payload: DecryptedPayloadInterface): DecryptedItemInterface
 
   createPayloadFromObject(object: DecryptedTransferPayload): DecryptedPayloadInterface
-
-  createTemplateItem<
-    C extends ItemContent = ItemContent,
-    I extends DecryptedItemInterface<C> = DecryptedItemInterface<C>,
-  >(
-    contentType: ContentType,
-    content?: C,
-    override?: Partial<DecryptedPayload<C>>,
-  ): I
 
   get trashedItems(): SNNote[]
 

@@ -1,4 +1,4 @@
-import { classNames, ContentType, DecryptedPayload } from '@standardnotes/snjs'
+import { classNames, FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
 import MenuItem from '../Menu/MenuItem'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
@@ -71,15 +71,18 @@ const ImportMenuOption = () => {
           <MenuItem
             onClick={async () => {
               const files = await ClassicFileReader.selectFiles()
+              const isEntitledToAuthenticator =
+                application.features.getFeatureStatus(FeatureIdentifier.TokenVaultEditor) === FeatureStatus.Entitled
               files.forEach(async (file) => {
                 const converter = new AegisToAuthenticatorConverter(application)
-                const noteTransferPayload = await converter.convertAegisBackupFileToNote(file)
-                const noteItem = application.items.createTemplateItem(
-                  ContentType.Note,
-                  noteTransferPayload.content,
-                  new DecryptedPayload(noteTransferPayload),
+                const noteTransferPayload = await converter.convertAegisBackupFileToNote(
+                  file,
+                  isEntitledToAuthenticator,
                 )
-                await application.items.insertItem(noteItem)
+                const notePayload = application.items.createPayloadFromObject(noteTransferPayload)
+                const noteItem = application.items.createItemFromPayload(notePayload)
+                await application.mutator.insertItem(noteItem)
+                void application.sync.sync()
               })
             }}
           >

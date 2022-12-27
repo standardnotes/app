@@ -33,6 +33,7 @@ export class AegisToAuthenticatorConverter {
       lastModified: number
       name: string
     },
+    addEditorInfo: boolean,
   ): DecryptedTransferPayload<NoteContent> {
     return {
       created_at: new Date(file.lastModified),
@@ -44,14 +45,19 @@ export class AegisToAuthenticatorConverter {
       content: {
         title: file.name.split('.')[0],
         text: JSON.stringify(entries),
-        noteType: NoteType.Authentication,
-        editorIdentifier: FeatureIdentifier.TokenVaultEditor,
         references: [],
+        ...(addEditorInfo && {
+          noteType: NoteType.Authentication,
+          editorIdentifier: FeatureIdentifier.TokenVaultEditor,
+        }),
       },
     }
   }
 
-  async convertAegisBackupFileToNote(file: File): Promise<DecryptedTransferPayload<NoteContent>> {
+  async convertAegisBackupFileToNote(
+    file: File,
+    addEditorInfo: boolean,
+  ): Promise<DecryptedTransferPayload<NoteContent>> {
     const content = await readFileAsText(file)
 
     const entries = this.parseEntries(content)
@@ -60,7 +66,7 @@ export class AegisToAuthenticatorConverter {
       throw new Error('Could not parse entries')
     }
 
-    return this.createNoteFromEntries(entries, file)
+    return this.createNoteFromEntries(entries, file, addEditorInfo)
   }
 
   parseEntries(data: string): AuthenticatorEntry[] | null {
