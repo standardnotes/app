@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.40.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.39.3...@standardnotes/models@1.40.0) (2022-12-27)
+
+### Features
+
+* Allow changing per-view display preferences for system views ([#2120](https://github.com/standardnotes/app/issues/2120)) ([dc33aef](https://github.com/standardnotes/app/commit/dc33aef6608a364107a884ad2f26c14bceea23b7))
+
 ## [1.39.3](https://github.com/standardnotes/app/compare/@standardnotes/models@1.39.2...@standardnotes/models@1.39.3) (2022-12-08)
 
 **Note:** Version bump only for package @standardnotes/models

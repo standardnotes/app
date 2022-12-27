@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.129.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.128.11...@standardnotes/web@3.129.0) (2022-12-27)
+
+### Features
+
+* Allow changing per-view display preferences for system views ([#2120](https://github.com/standardnotes/app/issues/2120)) ([dc33aef](https://github.com/standardnotes/app/commit/dc33aef6608a364107a884ad2f26c14bceea23b7))
+
 ## [3.128.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.128.10...@standardnotes/web@3.128.11) (2022-12-27)
 
 **Note:** Version bump only for package @standardnotes/web
