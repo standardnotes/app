@@ -1,4 +1,16 @@
-<?xml version="1.0" ?>
+const json = {
+  color: 'DEFAULT',
+  isTrashed: false,
+  isPinned: false,
+  isArchived: false,
+  textContent: 'This is a test.',
+  title: 'Testing 1',
+  userEditedTimestampUsec: 1618528050144000,
+}
+
+export const jsonTestData = JSON.stringify(json)
+
+export const htmlTestData = `<?xml version="1.0" ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <title>Testing 2</title>
 <style type="text/css">
@@ -275,4 +287,4 @@ Apr 15, 2021, 7:07:43 PM</div>
 <div class="content">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</div>
 
 
-</div></body></html>
+</div></body></html>`
