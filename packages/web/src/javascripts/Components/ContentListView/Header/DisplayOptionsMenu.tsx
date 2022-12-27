@@ -432,7 +432,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         </>
       )}
 
-      {!shouldHideNonApplicableOptions && (
+      {!shouldHideNonApplicableOptions && (!isSystemTag || currentMode === 'global') && (
         <>
           <MenuItemSeparator />
           <NewNotePreferences
