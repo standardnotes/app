@@ -182,6 +182,9 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       }
     }, [isFilesSmartView, filesController, createNewNote, toggleAppPane, application])
 
+    const isFilesTableViewEnabled = featureTrunkEnabled(FeatureTrunkName.FilesTableView)
+    const shouldShowFilesTableView = isFilesTableViewEnabled && selectedTag?.uuid === SystemViewId.Files
+
     useEffect(() => {
       const searchBarElement = document.getElementById(ElementIds.SearchBar)
       /**
@@ -204,6 +207,9 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
             if (searchBarElement === document.activeElement) {
               searchBarElement?.blur()
             }
+            if (shouldShowFilesTableView) {
+              return
+            }
             selectNextItem()
           },
         },
@@ -211,6 +217,9 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
           command: PREVIOUS_LIST_ITEM_KEYBOARD_COMMAND,
           element: document.body,
           onKeyDown: () => {
+            if (shouldShowFilesTableView) {
+              return
+            }
             selectPreviousItem()
           },
         },
@@ -252,6 +261,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       selectNextItem,
       selectPreviousItem,
       selectionController,
+      shouldShowFilesTableView,
     ])
 
     const shortcutForCreate = useMemo(
@@ -284,9 +294,6 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         innerRef.current?.style.removeProperty('width')
       }
     }, [selectedUuids, innerRef, isCurrentNoteTemplate, renderedItems, panes])
-
-    const isFilesTableViewEnabled = featureTrunkEnabled(FeatureTrunkName.FilesTableView)
-    const shouldShowFilesTableView = isFilesTableViewEnabled && selectedTag?.uuid === SystemViewId.Files
 
     return (
       <div
