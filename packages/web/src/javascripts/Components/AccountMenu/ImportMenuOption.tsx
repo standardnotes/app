@@ -5,12 +5,10 @@ import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 import { useRef, useState } from 'react'
 import Popover from '../Popover/Popover'
 import Menu from '../Menu/Menu'
-import { useApplication } from '../ApplicationProvider'
 
 const iconClassName = classNames('mr-2 text-neutral', MenuItemIconSize)
 
 const ImportMenuOption = () => {
-  const application = useApplication()
   const anchorRef = useRef<HTMLButtonElement>(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
