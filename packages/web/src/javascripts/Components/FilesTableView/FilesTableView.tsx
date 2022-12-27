@@ -12,6 +12,7 @@ import {
   ApplicationEvent,
   naturalSort,
   FileBackupRecord,
+  SystemViewId,
 } from '@standardnotes/snjs'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
@@ -166,26 +167,46 @@ const FilesTableView = ({ application, filesController, featuresController, link
     .getDisplayableNotesAndFiles()
     .filter((item) => item.content_type === ContentType.File) as FileItem[]
 
-  const [sortBy, setSortBy] = useState<keyof SortableItem>(
-    application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy]),
-  )
-  const [sortReversed, setSortReversed] = useState(
-    application.getPreference(PrefKey.SortNotesReverse, PrefDefaults[PrefKey.SortNotesReverse]),
-  )
+  const getSortByPreference = useCallback(() => {
+    const globalPrefValue = application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy])
+    const filesViewPrefValue = application.getPreference(PrefKey.SystemViewPreferences)?.[SystemViewId.Files]?.sortBy
+
+    return filesViewPrefValue ?? globalPrefValue
+  }, [application])
+
+  const getSortReversedPreference = useCallback(() => {
+    const globalPrefValue = application.getPreference(PrefKey.SortNotesReverse, PrefDefaults[PrefKey.SortNotesReverse])
+    const filesViewPrefValue = application.getPreference(PrefKey.SystemViewPreferences)?.[SystemViewId.Files]
+      ?.sortReverse
+
+    return filesViewPrefValue ?? globalPrefValue
+  }, [application])
+
+  const [sortBy, setSortBy] = useState<keyof SortableItem>(() => getSortByPreference())
+  const [sortReversed, setSortReversed] = useState(() => getSortReversedPreference())
 
   useEffect(() => {
     return application.addEventObserver(async (event) => {
       if (event === ApplicationEvent.PreferencesChanged) {
-        setSortBy(application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy]))
-        setSortReversed(application.getPreference(PrefKey.SortNotesReverse, PrefDefaults[PrefKey.SortNotesReverse]))
+        setSortBy(getSortByPreference())
+        setSortReversed(getSortReversedPreference())
       }
     })
-  }, [application])
+  }, [application, getSortByPreference, getSortReversedPreference])
 
   const onSortChange = useCallback(
     async (sortBy: keyof SortableItem, sortReversed: boolean) => {
-      await application.setPreference(PrefKey.SortNotesBy, sortBy)
-      await application.setPreference(PrefKey.SortNotesReverse, sortReversed)
+      const systemViewPreferences = application.getPreference(PrefKey.SystemViewPreferences) || {}
+      const filesViewPreferences = systemViewPreferences[SystemViewId.Files] || {}
+
+      await application.setPreference(PrefKey.SystemViewPreferences, {
+        ...systemViewPreferences,
+        [SystemViewId.Files]: {
+          ...filesViewPreferences,
+          sortBy,
+          sortReverse: sortReversed,
+        },
+      })
     },
     [application],
   )
