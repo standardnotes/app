@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.156.11](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.156.10...@standardnotes/snjs@2.156.11) (2022-12-27)
+
+### Bug Fixes
+
+* **snjs:** skip workspaces tests as they are a pending backlog feature ([8311271](https://github.com/standardnotes/app/commit/8311271a49fe707adc4e26c7b465861e65ee9006))
+
 ## [2.156.10](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.156.9...@standardnotes/snjs@2.156.10) (2022-12-27)
 
 ### Bug Fixes
