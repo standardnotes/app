@@ -72,7 +72,7 @@ export function getDefaultHost() {
 }
 
 export async function publishMockedEvent(eventType, eventPayload) {
-  await fetch(`${Defaults.getDefaultMockedEventServiceUrl()}/events`, {
+  const response = await fetch(`${Defaults.getDefaultMockedEventServiceUrl()}/events`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -83,6 +83,10 @@ export async function publishMockedEvent(eventType, eventPayload) {
       eventPayload,
     }),
   })
+
+  if (!response.ok) {
+    console.error(`Failed to publish mocked event: ${response.status} ${response.statusText}`)
+  }
 }
 
 export function createApplicationWithFakeCrypto(identifier, environment, platform, host) {
