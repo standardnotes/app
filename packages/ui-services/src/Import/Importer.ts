@@ -1,5 +1,5 @@
 import { WebApplicationInterface } from '@standardnotes/services'
-import { DecryptedTransferPayload } from '@standardnotes/snjs/dist/@types'
+import { DecryptedTransferPayload } from '@standardnotes/snjs'
 
 export class Importer {
   constructor(protected application: WebApplicationInterface) {}
