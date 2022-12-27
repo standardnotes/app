@@ -18,4 +18,5 @@ export interface WebApplicationInterface extends ApplicationInterface {
   handleAndroidBackButtonPressed(): void
   addAndroidBackHandlerEventListener(listener: () => boolean): (() => void) | undefined
   setAndroidBackHandlerFallbackListener(listener: () => boolean): void
+  generateUUID(): string
 }

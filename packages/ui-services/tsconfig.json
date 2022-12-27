@@ -4,6 +4,7 @@
     "skipLibCheck": true,
     "rootDir": "./src",
     "outDir": "./dist",
+    "allowSyntheticDefaultImports": true,
     "jsx": "react-jsx"
   },
   "include": ["src/**/*"],
