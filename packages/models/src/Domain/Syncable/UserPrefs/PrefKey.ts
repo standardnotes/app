@@ -1,5 +1,7 @@
 import { CollectionSortProperty } from '../../Runtime/Collection/CollectionSort'
 import { EditorIdentifier, FeatureIdentifier } from '@standardnotes/features'
+import { SystemViewId } from '../SmartView'
+import { TagPreferences } from '../Tag'
 
 export enum PrefKey {
   TagsPanelWidth = 'tagsPanelWidth',
@@ -40,6 +42,7 @@ export enum PrefKey {
   DarkMode = 'darkMode',
   DefaultEditorIdentifier = 'defaultEditorIdentifier',
   MomentsDefaultTagUuid = 'momentsDefaultTagUuid',
+  SystemViewPreferences = 'systemViewPreferences',
 }
 
 export enum NewNoteTitleFormat {
@@ -105,4 +108,5 @@ export type PrefValue = {
   [PrefKey.DarkMode]: boolean
   [PrefKey.DefaultEditorIdentifier]: EditorIdentifier
   [PrefKey.MomentsDefaultTagUuid]: string | undefined
+  [PrefKey.SystemViewPreferences]: Partial<Record<SystemViewId, TagPreferences>>
 }
