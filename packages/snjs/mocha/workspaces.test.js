@@ -2,7 +2,7 @@ import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('workspaces', function () {
+describe.skip('workspaces', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let ownerContext
