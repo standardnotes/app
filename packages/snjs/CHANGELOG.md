@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.156.10](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.156.9...@standardnotes/snjs@2.156.10) (2022-12-27)
+
+### Bug Fixes
+
+* **snjs:** add error log upon not being able to reach the mock event publisher ([dd41082](https://github.com/standardnotes/app/commit/dd41082e7174a6068d1d7741e007867fc03a5da8))
+
 ## [2.156.9](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.156.8...@standardnotes/snjs@2.156.9) (2022-12-22)
 
 ### Bug Fixes
