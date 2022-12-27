@@ -627,8 +627,14 @@ export class ItemListController extends AbstractViewController implements Intern
       return this.noteFilterText
     }
 
+    const selectedTag = this.navigationController.selected
+    const isSystemTag = selectedTag && isSmartView(selectedTag) && isSystemView(selectedTag)
+    const selectedTagPreferences = isSystemTag
+      ? this.application.getPreference(PrefKey.SystemViewPreferences)?.[selectedTag.uuid as SystemViewId]
+      : selectedTag?.preferences
+
     const titleFormat =
-      this.navigationController.selected?.preferences?.newNoteTitleFormat ||
+      selectedTagPreferences?.newNoteTitleFormat ||
       this.application.getPreference(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat])
 
     if (titleFormat === NewNoteTitleFormat.CurrentNoteCount) {

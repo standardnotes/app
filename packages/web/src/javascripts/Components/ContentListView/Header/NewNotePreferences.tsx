@@ -1,4 +1,13 @@
-import { FeatureIdentifier, NewNoteTitleFormat, PrefKey, EditorIdentifier, TagPreferences } from '@standardnotes/snjs'
+import {
+  FeatureIdentifier,
+  NewNoteTitleFormat,
+  PrefKey,
+  EditorIdentifier,
+  TagPreferences,
+  isSmartView,
+  isSystemView,
+  SystemViewId,
+} from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { ChangeEventHandler, FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
@@ -31,6 +40,11 @@ const NewNotePreferences: FunctionComponent<Props> = ({
   changePreferencesCallback,
   disabled,
 }: Props) => {
+  const isSystemTag = isSmartView(selectedTag) && isSystemView(selectedTag)
+  const selectedTagPreferences = isSystemTag
+    ? application.getPreference(PrefKey.SystemViewPreferences)?.[selectedTag.uuid as SystemViewId]
+    : selectedTag.preferences
+
   const [editorItems, setEditorItems] = useState<DropdownItem[]>([])
   const [defaultEditorIdentifier, setDefaultEditorIdentifier] = useState<EditorIdentifier>(
     FeatureIdentifier.PlainEditor,
@@ -45,15 +59,15 @@ const NewNotePreferences: FunctionComponent<Props> = ({
   }, [application])
 
   const reloadPreferences = useCallback(() => {
-    if (mode === 'tag' && selectedTag.preferences?.editorIdentifier) {
-      setDefaultEditorIdentifier(selectedTag.preferences?.editorIdentifier)
+    if (mode === 'tag' && selectedTagPreferences?.editorIdentifier) {
+      setDefaultEditorIdentifier(selectedTagPreferences?.editorIdentifier)
     } else {
       const globalDefault = getGlobalEditorDefaultIdentifier()
       setDefaultEditorIdentifier(globalDefault)
     }
 
-    if (mode === 'tag' && selectedTag.preferences?.newNoteTitleFormat) {
-      setNewNoteTitleFormat(selectedTag.preferences?.newNoteTitleFormat)
+    if (mode === 'tag' && selectedTagPreferences?.newNoteTitleFormat) {
+      setNewNoteTitleFormat(selectedTagPreferences?.newNoteTitleFormat)
     } else {
       setNewNoteTitleFormat(
         application.getPreference(PrefKey.NewNoteTitleFormat, PrefDefaults[PrefKey.NewNoteTitleFormat]),
@@ -61,22 +75,21 @@ const NewNotePreferences: FunctionComponent<Props> = ({
     }
   }, [
     mode,
-    selectedTag,
-    application,
+    selectedTagPreferences?.editorIdentifier,
+    selectedTagPreferences?.newNoteTitleFormat,
     getGlobalEditorDefaultIdentifier,
-    setDefaultEditorIdentifier,
-    setNewNoteTitleFormat,
+    application,
   ])
 
   useEffect(() => {
-    if (mode === 'tag' && selectedTag.preferences?.customNoteTitleFormat) {
-      setCustomNoteTitleFormat(selectedTag.preferences?.customNoteTitleFormat)
+    if (mode === 'tag' && selectedTagPreferences?.customNoteTitleFormat) {
+      setCustomNoteTitleFormat(selectedTagPreferences?.customNoteTitleFormat)
     } else {
       setCustomNoteTitleFormat(
         application.getPreference(PrefKey.CustomNoteTitleFormat, PrefDefaults[PrefKey.CustomNoteTitleFormat]),
       )
     }
-  }, [application, mode, selectedTag])
+  }, [application, mode, selectedTag, selectedTagPreferences?.customNoteTitleFormat])
 
   useEffect(() => {
     void reloadPreferences()
