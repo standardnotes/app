@@ -1,10 +1,4 @@
-import {
-  classNames,
-  DecryptedTransferPayload,
-  FeatureIdentifier,
-  FeatureStatus,
-  NoteContent,
-} from '@standardnotes/snjs'
+import { classNames, FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
 import Icon from '../Icon/Icon'
 import MenuItem from '../Menu/MenuItem'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
@@ -12,7 +6,12 @@ import { useRef, useState } from 'react'
 import Popover from '../Popover/Popover'
 import Menu from '../Menu/Menu'
 import { ClassicFileReader } from '@standardnotes/filepicker'
-import { AegisToAuthenticatorConverter, GoogleKeepConverter, SimplenoteConverter } from '@standardnotes/ui-services'
+import {
+  AegisToAuthenticatorConverter,
+  EvernoteConverter,
+  GoogleKeepConverter,
+  SimplenoteConverter,
+} from '@standardnotes/ui-services'
 import { useApplication } from '../ApplicationProvider'
 
 const iconClassName = classNames('mr-2 text-neutral', MenuItemIconSize)
@@ -21,13 +20,6 @@ const ImportMenuOption = () => {
   const application = useApplication()
   const anchorRef = useRef<HTMLButtonElement>(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
-
-  const createNoteFromTransferPayload = async (payload: DecryptedTransferPayload<NoteContent>) => {
-    const notePayload = application.items.createPayloadFromObject(payload)
-    const noteItem = application.items.createItemFromPayload(notePayload)
-    await application.mutator.insertItem(noteItem)
-    void application.sync.sync()
-  }
 
   const togglePopover = () => {
     setIsMenuOpen((isOpen) => !isOpen)
@@ -63,7 +55,7 @@ const ImportMenuOption = () => {
               files.forEach(async (file) => {
                 const converter = new GoogleKeepConverter(application)
                 const noteTransferPayload = await converter.convertGoogleKeepBackupFileToNote(file, false)
-                void createNoteFromTransferPayload(noteTransferPayload)
+                void converter.importFromTransferPayloads([noteTransferPayload])
               })
             }}
           >
@@ -71,8 +63,13 @@ const ImportMenuOption = () => {
             Google Keep
           </MenuItem>
           <MenuItem
-            onClick={() => {
-              setIsMenuOpen((isOpen) => !isOpen)
+            onClick={async () => {
+              const files = await ClassicFileReader.selectFiles()
+              files.forEach(async (file) => {
+                const converter = new EvernoteConverter(application)
+                const noteAndTagPayloads = await converter.convertENEXFileToNotesAndTags(file, true)
+                void converter.importFromTransferPayloads(noteAndTagPayloads)
+              })
             }}
           >
             <Icon type="rich-text" className={iconClassName} />
@@ -84,7 +81,7 @@ const ImportMenuOption = () => {
               files.forEach(async (file) => {
                 const converter = new SimplenoteConverter(application)
                 const noteTransferPayloads = await converter.convertSimplenoteBackupFileToNotes(file)
-                noteTransferPayloads.forEach((payload) => void createNoteFromTransferPayload(payload))
+                void converter.importFromTransferPayloads(noteTransferPayloads)
               })
             }}
           >
@@ -102,7 +99,7 @@ const ImportMenuOption = () => {
                   file,
                   isEntitledToAuthenticator,
                 )
-                void createNoteFromTransferPayload(noteTransferPayload)
+                void converter.importFromTransferPayloads([noteTransferPayload])
               })
             }}
           >

@@ -2,6 +2,7 @@ import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 import { readFileAsText } from '../Utils'
 import { WebApplicationInterface } from '@standardnotes/services'
+import { Importer } from '../Importer'
 
 type SimplenoteItem = {
   creationDate: string
@@ -14,8 +15,10 @@ type SimplenoteData = {
   trashedNotes: SimplenoteItem[]
 }
 
-export class SimplenoteConverter {
-  constructor(protected application: WebApplicationInterface) {}
+export class SimplenoteConverter extends Importer {
+  constructor(protected override application: WebApplicationInterface) {
+    super(application)
+  }
 
   createNoteFromItem(item: SimplenoteItem, trashed: boolean): DecryptedTransferPayload<NoteContent> {
     const createdAtDate = new Date(item.creationDate)

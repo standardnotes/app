@@ -2,6 +2,7 @@ import { WebApplicationInterface } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/common'
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { readFileAsText } from '../Utils'
+import { Importer } from '../Importer'
 
 type GoogleKeepJsonNote = {
   color: string
@@ -13,8 +14,10 @@ type GoogleKeepJsonNote = {
   userEditedTimestampUsec: number
 }
 
-export class GoogleKeepConverter {
-  constructor(protected application: WebApplicationInterface) {}
+export class GoogleKeepConverter extends Importer {
+  constructor(protected override application: WebApplicationInterface) {
+    super(application)
+  }
 
   async convertGoogleKeepBackupFileToNote(
     file: File,
