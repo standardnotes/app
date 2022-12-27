@@ -1,12 +1,18 @@
+import { WebApplicationInterface } from '@standardnotes/services'
 import { SimplenoteConverter } from './SimplenoteConverter'
 import data from './testData'
-import { UuidGenerator } from '@standardnotes/utils'
-
-UuidGenerator.SetGenerator(() => String(Math.random()))
 
 describe('SimplenoteConverter', () => {
+  let application: WebApplicationInterface
+
+  beforeEach(() => {
+    application = {
+      generateUUID: jest.fn().mockReturnValue('uuid'),
+    } as any
+  })
+
   it('should parse', () => {
-    const converter = new SimplenoteConverter()
+    const converter = new SimplenoteConverter(application)
 
     const result = converter.parse(data)
 

@@ -1,7 +1,8 @@
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
-import { UuidGenerator } from '@standardnotes/utils'
 import { ContentType } from '@standardnotes/common'
 import { readFileAsText } from '../Utils'
+import { FeatureIdentifier, NoteType } from '@standardnotes/features'
+import { WebApplicationInterface } from '@standardnotes/services'
 
 type AegisData = {
   db: {
@@ -24,6 +25,8 @@ type AuthenticatorEntry = {
 }
 
 export class AegisToAuthenticatorConverter {
+  constructor(protected application: WebApplicationInterface) {}
+
   createNoteFromEntries(
     entries: AuthenticatorEntry[],
     file: {
@@ -36,11 +39,13 @@ export class AegisToAuthenticatorConverter {
       created_at_timestamp: file.lastModified,
       updated_at: new Date(file.lastModified),
       updated_at_timestamp: file.lastModified,
-      uuid: UuidGenerator.GenerateUuid(),
+      uuid: this.application.generateUUID(),
       content_type: ContentType.Note,
       content: {
         title: file.name.split('.')[0],
         text: JSON.stringify(entries),
+        noteType: NoteType.Authentication,
+        editorIdentifier: FeatureIdentifier.TokenVaultEditor,
         references: [],
       },
     }

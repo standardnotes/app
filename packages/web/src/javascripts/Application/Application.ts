@@ -430,4 +430,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       this.getViewControllerManager().preferencesController.setCurrentPane(pane)
     }
   }
+
+  generateUUID(): string {
+    return this.options.crypto.generateUUID()
+  }
 }

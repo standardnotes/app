@@ -17,6 +17,7 @@ import {
   DisplayOptions,
   ItemsKeyInterface,
   ItemContent,
+  DecryptedPayload,
 } from '@standardnotes/models'
 
 export interface ItemsClientInterface {
@@ -37,6 +38,15 @@ export interface ItemsClientInterface {
 
   createPayloadFromObject(object: DecryptedTransferPayload): DecryptedPayloadInterface
 
+  createTemplateItem<
+    C extends ItemContent = ItemContent,
+    I extends DecryptedItemInterface<C> = DecryptedItemInterface<C>,
+  >(
+    contentType: ContentType,
+    content?: C,
+    override?: Partial<DecryptedPayload<C>>,
+  ): I
+
   get trashedItems(): SNNote[]
 
   setPrimaryItemDisplayOptions(options: DisplayOptions): void
@@ -54,6 +64,8 @@ export interface ItemsClientInterface {
   getDisplayableComponents(): (SNComponent | SNTheme)[]
 
   getItems<T extends DecryptedItemInterface>(contentType: ContentType | ContentType[]): T[]
+
+  insertItem(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
 
   notesMatchingSmartView(view: SmartView): SNNote[]
 

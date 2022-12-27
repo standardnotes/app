@@ -1,7 +1,7 @@
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
-import { UuidGenerator } from '@standardnotes/utils'
 import { ContentType } from '@standardnotes/common'
 import { readFileAsText } from '../Utils'
+import { WebApplicationInterface } from '@standardnotes/services'
 
 type SimplenoteItem = {
   creationDate: string
@@ -15,6 +15,8 @@ type SimplenoteData = {
 }
 
 export class SimplenoteConverter {
+  constructor(protected application: WebApplicationInterface) {}
+
   createNoteFromItem(item: SimplenoteItem, trashed: boolean): DecryptedTransferPayload<NoteContent> {
     const createdAtDate = new Date(item.creationDate)
     const updatedAtDate = new Date(item.lastModified)
@@ -30,7 +32,7 @@ export class SimplenoteConverter {
       created_at_timestamp: createdAtDate.getTime(),
       updated_at: updatedAtDate,
       updated_at_timestamp: updatedAtDate.getTime(),
-      uuid: UuidGenerator.GenerateUuid(),
+      uuid: this.application.generateUUID(),
       content_type: ContentType.Note,
       content: {
         title,
