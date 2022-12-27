@@ -1,4 +1,7 @@
+import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { UuidGenerator } from '@standardnotes/utils'
+import { ContentType } from '@standardnotes/common'
+import { readFileAsText } from '../Utils'
 
 type SimplenoteItem = {
   creationDate: string
@@ -12,7 +15,7 @@ type SimplenoteData = {
 }
 
 export class SimplenoteConverter {
-  createNoteFromItem(item: SimplenoteItem, trashed: boolean) {
+  createNoteFromItem(item: SimplenoteItem, trashed: boolean): DecryptedTransferPayload<NoteContent> {
     const createdAtDate = new Date(item.creationDate)
     const updatedAtDate = new Date(item.lastModified)
 
@@ -24,21 +27,35 @@ export class SimplenoteConverter {
 
     return {
       created_at: createdAtDate,
+      created_at_timestamp: createdAtDate.getTime(),
       updated_at: updatedAtDate,
+      updated_at_timestamp: updatedAtDate.getTime(),
       uuid: UuidGenerator.GenerateUuid(),
-      content_type: 'Note',
+      content_type: ContentType.Note,
       content: {
         title,
         text: content,
         references: [],
+        trashed,
         appData: {
           'org.standardnotes.sn': {
             client_updated_at: updatedAtDate,
-            trashed,
           },
         },
       },
     }
+  }
+
+  async convertSimplenoteBackupFileToNotes(file: File): Promise<DecryptedTransferPayload<NoteContent>[]> {
+    const content = await readFileAsText(file)
+
+    const notes = this.parse(content)
+
+    if (!notes) {
+      throw new Error('Could not parse notes')
+    }
+
+    return notes
   }
 
   parse(data: string) {

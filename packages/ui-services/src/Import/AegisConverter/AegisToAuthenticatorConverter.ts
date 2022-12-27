@@ -1,3 +1,8 @@
+import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
+import { UuidGenerator } from '@standardnotes/utils'
+import { ContentType } from '@standardnotes/common'
+import { readFileAsText } from '../Utils'
+
 type AegisData = {
   db: {
     entries: {
@@ -19,7 +24,41 @@ type AuthenticatorEntry = {
 }
 
 export class AegisToAuthenticatorConverter {
-  parse(data: string): AuthenticatorEntry[] | null {
+  createNoteFromEntries(
+    entries: AuthenticatorEntry[],
+    file: {
+      lastModified: number
+      name: string
+    },
+  ): DecryptedTransferPayload<NoteContent> {
+    return {
+      created_at: new Date(file.lastModified),
+      created_at_timestamp: file.lastModified,
+      updated_at: new Date(file.lastModified),
+      updated_at_timestamp: file.lastModified,
+      uuid: UuidGenerator.GenerateUuid(),
+      content_type: ContentType.Note,
+      content: {
+        title: file.name.split('.')[0],
+        text: JSON.stringify(entries),
+        references: [],
+      },
+    }
+  }
+
+  async convertAegisBackupFileToNote(file: File): Promise<DecryptedTransferPayload<NoteContent>> {
+    const content = await readFileAsText(file)
+
+    const entries = this.parseEntries(content)
+
+    if (!entries) {
+      throw new Error('Could not parse entries')
+    }
+
+    return this.createNoteFromEntries(entries, file)
+  }
+
+  parseEntries(data: string): AuthenticatorEntry[] | null {
     try {
       const json = JSON.parse(data) as AegisData
       const entries = json.db.entries.map((entry) => {
