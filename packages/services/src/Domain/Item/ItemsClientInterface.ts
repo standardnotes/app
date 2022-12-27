@@ -55,6 +55,8 @@ export interface ItemsClientInterface {
 
   getItems<T extends DecryptedItemInterface>(contentType: ContentType | ContentType[]): T[]
 
+  insertItem(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
+
   notesMatchingSmartView(view: SmartView): SNNote[]
 
   addNoteCountChangeObserver(observer: TagItemCountChangeObserver): () => void

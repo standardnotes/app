@@ -46,6 +46,8 @@ function selectFiles(): Promise<File[]> {
         files.push(file)
       }
       resolve(files)
+      // Reset input value so that onchange is triggered again if the same file is selected
+      input.value = ''
     }
     input.click()
   })

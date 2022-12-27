@@ -315,7 +315,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
                 itemListController={itemListController}
               />
             )}
-            {(!isFilesTableViewEnabled || isMobileScreen()) && (
+            {(!shouldShowFilesTableView || isMobileScreen()) && (
               <SearchBar
                 itemListController={itemListController}
                 searchOptionsController={searchOptionsController}
