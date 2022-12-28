@@ -38,6 +38,8 @@ export enum FeatureIdentifier {
   TaskEditor = 'org.standardnotes.simple-task-editor',
   TokenVaultEditor = 'org.standardnotes.token-vault',
 
+  FilesTableView = 'org.standardnotes.files-table-view',
+
   DeprecatedBoldEditor = 'org.standardnotes.bold-editor',
   DeprecatedMarkdownBasicEditor = 'org.standardnotes.simple-markdown-editor',
   DeprecatedMarkdownMathEditor = 'org.standardnotes.fancy-markdown-editor',
@@ -51,4 +53,4 @@ export enum FeatureIdentifier {
  */
 export const LegacyFileSafeIdentifier = 'org.standardnotes.legacy.file-safe'
 
-export const ExperimentalFeatures = []
+export const ExperimentalFeatures = [FeatureIdentifier.FilesTableView]

@@ -1,6 +1,7 @@
 import {
   CollectionSort,
   CollectionSortProperty,
+  FeatureIdentifier,
   IconType,
   isSmartView,
   isSystemView,
@@ -24,7 +25,6 @@ import NoSubscriptionBanner from '@/Components/NoSubscriptionBanner/NoSubscripti
 import MenuRadioButtonItem from '@/Components/Menu/MenuRadioButtonItem'
 import MenuSwitchButtonItem from '@/Components/Menu/MenuSwitchButtonItem'
 import { Pill } from '@/Components/Preferences/PreferencesComponents/Content'
-import { featureTrunkEnabled, FeatureTrunkName } from '@/FeatureTrunk'
 
 const DailyEntryModeEnabled = true
 
@@ -250,7 +250,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     )
   }
 
-  const isFilesTableViewEnabled = featureTrunkEnabled(FeatureTrunkName.FilesTableView)
+  const isFilesTableViewEnabled = application.features.isExperimentalFeatureEnabled(FeatureIdentifier.FilesTableView)
   const shouldHideNonApplicableOptions = isFilesTableViewEnabled && selectedTag?.uuid === SystemViewId.Files
 
   return (

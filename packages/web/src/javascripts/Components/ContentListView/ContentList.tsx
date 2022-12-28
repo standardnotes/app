@@ -12,8 +12,7 @@ import { NavigationController } from '@/Controllers/Navigation/NavigationControl
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/utils'
-import { ContentType, SNTag } from '@standardnotes/snjs'
-import { featureTrunkEnabled, FeatureTrunkName } from '@/FeatureTrunk'
+import { ContentType, FeatureIdentifier, SNTag } from '@standardnotes/snjs'
 
 type Props = {
   application: WebApplication
@@ -98,7 +97,7 @@ const ContentList: FunctionComponent<Props> = ({
 
   const hasNotes = items.some((item) => item.content_type === ContentType.Note)
 
-  const isFilesTableViewEnabled = featureTrunkEnabled(FeatureTrunkName.FilesTableView)
+  const isFilesTableViewEnabled = application.features.isExperimentalFeatureEnabled(FeatureIdentifier.FilesTableView)
 
   return (
     <div

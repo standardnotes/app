@@ -1,5 +1,4 @@
-import { featureTrunkEnabled, FeatureTrunkName } from '@/FeatureTrunk'
-import { ContentType, FileItem, SNNote } from '@standardnotes/snjs'
+import { ContentType, FeatureIdentifier, FileItem, SNNote } from '@standardnotes/snjs'
 import React, { FunctionComponent } from 'react'
 import FileListItem from './FileListItem'
 import FileListItemCard from './FileListItemCard'
@@ -8,7 +7,9 @@ import { AbstractListItemProps, doListItemPropsMeritRerender } from './Types/Abs
 import { ListableContentItem } from './Types/ListableContentItem'
 
 const ContentListItem: FunctionComponent<AbstractListItemProps<ListableContentItem>> = (props) => {
-  const isFilesTableViewEnabled = featureTrunkEnabled(FeatureTrunkName.FilesTableView)
+  const isFilesTableViewEnabled = props.application.features.isExperimentalFeatureEnabled(
+    FeatureIdentifier.FilesTableView,
+  )
 
   switch (props.item.content_type) {
     case ContentType.Note:
