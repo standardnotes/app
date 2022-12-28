@@ -97,16 +97,24 @@ export class MomentsService extends AbstractViewController {
       return
     }
 
-    const toastId = addToast({
-      type: ToastType.Regular,
-      message: 'Capturing Moment...',
-      pauseOnWindowBlur: false,
-    })
+    const isAppInForeground = document.visibilityState === 'visible'
+
+    let toastId: string | undefined
+
+    if (isAppInForeground) {
+      toastId = addToast({
+        type: ToastType.Regular,
+        message: 'Capturing Moment...',
+        pauseOnWindowBlur: false,
+      })
+    }
 
     if (this.application.desktopDevice) {
       const granted = await this.application.desktopDevice.askForMediaAccess('camera')
       if (!granted) {
-        dismissToast(toastId)
+        if (toastId) {
+          dismissToast(toastId)
+        }
         addToast({
           type: ToastType.Error,
           message: 'Please enable Camera permissions for Standard Notes to enable Moments.',
@@ -134,12 +142,13 @@ export class MomentsService extends AbstractViewController {
       }
     }
 
-    dismissToast(toastId)
+    if (toastId) {
+      dismissToast(toastId)
+    }
 
     const uploadedFile = await this.filesController.uploadNewFile(file)
 
     if (uploadedFile) {
-      const isAppInForeground = document.visibilityState === 'visible'
       if (isAppInForeground) {
         void this.application.linkingController.linkItemToSelectedItem(uploadedFile)
       }
