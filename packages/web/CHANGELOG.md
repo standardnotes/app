@@ -7,7 +7,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Bug Fixes
 
-* Fixed issue where Moments would capture even after disabling ([#2122](https://github.com/standardnotes/app/issues/2122)) ([2611c69](https://github.com/standardnotes/app/commit/2611c690b08c2c9654a5030eef74d6418d5e6b4e))
+* Fixed issue where Moments on mobile would not be properly disabled until app restart ([#2122](https://github.com/standardnotes/app/issues/2122)) ([2611c69](https://github.com/standardnotes/app/commit/2611c690b08c2c9654a5030eef74d6418d5e6b4e))
 
 ## [3.129.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.129.0...@standardnotes/web@3.129.1) (2022-12-27)
 
