@@ -141,12 +141,12 @@ Due to mounted volumes, we recommend running the setup as a root user. If you wi
 
 ## Install Standard Notes
 
-1. Clone the `standalone` repo:
+1. Clone the `self-hosted` repo:
 
     ```shell
     cd ~
-    git clone --single-branch --branch main https://github.com/standardnotes/standalone.git
-    cd standalone
+    git clone --single-branch --branch main https://github.com/standardnotes/self-hosted.git
+    cd self-hosted
     ```
 
 1. Initialize default configuration files:
@@ -165,14 +165,8 @@ Due to mounted volumes, we recommend running the setup as a root user. If you wi
 1. Generate random values for the necessary environment variables:
 
     ```shell
-    sed -i "s/auth_jwt_secret/$(openssl rand -hex 32)/g" .env
-    sed -i "s/legacy_jwt_secret/$(openssl rand -hex 32)/g" docker/auth.env
-    sed -i "s/secret_key/$(openssl rand -hex 32)/g" docker/auth.env
-    sed -i "s/server_key/$(openssl rand -hex 32)/g" docker/auth.env
-    sed -i "s/secret/$(openssl rand -hex 32)/g" docker/auth.env
+    ./server.sh generate-keys
     ```
-
-    **Note:** If you are running `sed` on macOS or BSD, change instances of `sed -i` to `sed -i ''`.
 
 1. (Optional) Restart the server:
 
@@ -217,7 +211,7 @@ Due to mounted volumes, we recommend running the setup as a root user. If you wi
     syncing-server-js-worker-standalone   "./wait-for.sh db 33…"   syncing-server-js-worker   running
     ```
 
-    Your Standard Notes server is ready once all the services have a `STATUS` of `Up`. This process took about 11 minutes on a Ubuntu 20.04 server with 2GB RAM and 1 CPU.
+    Your Standard Notes server is ready once all the services have a `STATUS` of `Up`. This process took about 11 minutes on a Ubuntu 20.04 server with 2GB RAM and 1 CPU. If you want to control when this process finishes you can run `./server.sh wait-for-startup`.
 
 1. You should be able now to check that the syncing server is running by checking `http://localhost:3000/healthcheck`. You must do this on the server:
 
