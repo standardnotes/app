@@ -68,6 +68,10 @@ export class MomentsService extends AbstractViewController {
   }
 
   private beginTakingPhotos() {
+    if (this.intervalReference) {
+      clearInterval(this.intervalReference)
+    }
+
     void this.takePhoto()
 
     this.intervalReference = setInterval(
