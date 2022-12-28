@@ -201,6 +201,10 @@ import UserSwitch from './ic-user-switch.svg'
 import ViewIcon from './ic-view.svg'
 import WarningIcon from './ic-warning.svg'
 import WindowIcon from './ic-window.svg'
+import EvernoteIcon from './ic-evernote.svg'
+import GoogleKeepIcon from './ic-gkeep.svg'
+import SimplenoteIcon from './ic-simplenote.svg'
+import AegisIcon from './ic-aegis.svg'
 
 export {
   AccessibilityIcon,
@@ -406,4 +410,8 @@ export {
   ViewIcon,
   WarningIcon,
   WindowIcon,
+  EvernoteIcon,
+  GoogleKeepIcon,
+  SimplenoteIcon,
+  AegisIcon,
 }

@@ -116,4 +116,8 @@ export const IconNameToSvgMapping = {
   view: icons.ViewIcon,
   warning: icons.WarningIcon,
   window: icons.WindowIcon,
+  evernote: icons.EvernoteIcon,
+  gkeep: icons.GoogleKeepIcon,
+  simplenote: icons.SimplenoteIcon,
+  aegis: icons.AegisIcon,
 }
