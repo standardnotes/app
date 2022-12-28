@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.130.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.129.3...@standardnotes/web@3.130.0) (2022-12-28)
+
+### Features
+
+* Added "Files Table View" to Labs ([b764296](https://github.com/standardnotes/app/commit/b764296c8f831d06f854dcf2982e644c27e14e7c))
+
 ## [3.129.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.129.2...@standardnotes/web@3.129.3) (2022-12-28)
 
 **Note:** Version bump only for package @standardnotes/web
