@@ -138,6 +138,9 @@ export class EvernoteConverter extends Importer {
     }
 
     const allItems: DecryptedTransferPayload[] = [...notes, ...tags]
+    if (allItems.length === 0) {
+      throw new Error('Could not parse any notes or tags from Evernote file.')
+    }
     if (defaultTag) {
       allItems.push(defaultTag)
     }
