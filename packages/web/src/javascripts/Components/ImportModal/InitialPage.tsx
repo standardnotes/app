@@ -1,5 +1,5 @@
 import { ClassicFileReader } from '@standardnotes/filepicker'
-import { Importer, NoteImportType } from '@standardnotes/ui-services'
+import { NoteImportType } from '@standardnotes/ui-services'
 import { useCallback } from 'react'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
@@ -14,21 +14,9 @@ const ImportModalInitialPage = ({ dispatch }: Props) => {
     async (service?: NoteImportType) => {
       const files = await ClassicFileReader.selectFiles()
 
-      const filteredFiles: File[] = []
-
-      for (const file of files) {
-        if (!service) {
-          filteredFiles.push(file)
-        }
-
-        if (service === (await Importer.detectService(file))) {
-          filteredFiles.push(file)
-        }
-      }
-
       dispatch({
         type: 'setFiles',
-        files: filteredFiles,
+        files,
         service,
       })
     },

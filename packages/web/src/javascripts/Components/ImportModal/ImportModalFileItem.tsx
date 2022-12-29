@@ -112,6 +112,7 @@ export const ImportModalFileItem = ({
         </div>
       )}
       {file.status === 'success' && <Icon type="check-circle-filled" className="text-success" />}
+      {file.status === 'error' && <Icon type="warning" className="text-danger" />}
     </div>
   )
 }
