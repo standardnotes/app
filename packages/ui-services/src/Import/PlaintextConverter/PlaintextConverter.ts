@@ -16,8 +16,8 @@ export class PlaintextConverter {
 
     const { name } = parseFileName(file.name)
 
-    const createdAtDate = new Date(file.lastModified)
-    const updatedAtDate = new Date(file.lastModified)
+    const createdAtDate = file.lastModified ? new Date(file.lastModified) : new Date()
+    const updatedAtDate = file.lastModified ? new Date(file.lastModified) : new Date()
 
     return {
       created_at: createdAtDate,
