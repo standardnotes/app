@@ -29,11 +29,13 @@ export class MomentsService extends AbstractViewController {
           void this.beginTakingPhotos()
         }
       }, ApplicationEvent.LocalDataLoaded),
+
       application.addEventObserver(async () => {
-        this.disableMoments()
+        this.pauseMoments()
       }, ApplicationEvent.BiometricsSoftLockEngaged),
+
       application.addEventObserver(async () => {
-        this.enableMoments()
+        this.resumeMoments()
       }, ApplicationEvent.BiometricsSoftLockDisengaged),
     )
 
@@ -67,7 +69,23 @@ export class MomentsService extends AbstractViewController {
     clearInterval(this.intervalReference)
   }
 
+  private pauseMoments(): void {
+    clearInterval(this.intervalReference)
+  }
+
+  private resumeMoments(): void {
+    if (!this.isEnabled) {
+      return
+    }
+
+    void this.beginTakingPhotos()
+  }
+
   private beginTakingPhotos() {
+    if (this.intervalReference) {
+      clearInterval(this.intervalReference)
+    }
+
     void this.takePhoto()
 
     this.intervalReference = setInterval(
@@ -93,16 +111,24 @@ export class MomentsService extends AbstractViewController {
       return
     }
 
-    const toastId = addToast({
-      type: ToastType.Regular,
-      message: 'Capturing Moment...',
-      pauseOnWindowBlur: false,
-    })
+    const isAppInForeground = document.visibilityState === 'visible'
+
+    let toastId: string | undefined
+
+    if (isAppInForeground) {
+      toastId = addToast({
+        type: ToastType.Regular,
+        message: 'Capturing Moment...',
+        pauseOnWindowBlur: false,
+      })
+    }
 
     if (this.application.desktopDevice) {
       const granted = await this.application.desktopDevice.askForMediaAccess('camera')
       if (!granted) {
-        dismissToast(toastId)
+        if (toastId) {
+          dismissToast(toastId)
+        }
         addToast({
           type: ToastType.Error,
           message: 'Please enable Camera permissions for Standard Notes to enable Moments.',
@@ -130,12 +156,13 @@ export class MomentsService extends AbstractViewController {
       }
     }
 
-    dismissToast(toastId)
+    if (toastId) {
+      dismissToast(toastId)
+    }
 
     const uploadedFile = await this.filesController.uploadNewFile(file)
 
     if (uploadedFile) {
-      const isAppInForeground = document.visibilityState === 'visible'
       if (isAppInForeground) {
         void this.application.linkingController.linkItemToSelectedItem(uploadedFile)
       }

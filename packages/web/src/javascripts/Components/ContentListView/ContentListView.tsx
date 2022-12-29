@@ -9,7 +9,7 @@ import {
 } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NOTES } from '@/Constants/Constants'
-import { FileItem, PrefKey, SystemViewId, WebAppEvent } from '@standardnotes/snjs'
+import { FeatureIdentifier, FileItem, PrefKey, SystemViewId, WebAppEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { forwardRef, useCallback, useEffect, useMemo } from 'react'
 import ContentList from '@/Components/ContentListView/ContentList'
@@ -39,7 +39,6 @@ import { isMobileScreen } from '@/Utils'
 import FloatingAddButton from './FloatingAddButton'
 import FilesTableView from '../FilesTableView/FilesTableView'
 import { FeaturesController } from '@/Controllers/FeaturesController'
-import { featureTrunkEnabled, FeatureTrunkName } from '@/FeatureTrunk'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -182,7 +181,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       }
     }, [isFilesSmartView, filesController, createNewNote, toggleAppPane, application])
 
-    const isFilesTableViewEnabled = featureTrunkEnabled(FeatureTrunkName.FilesTableView)
+    const isFilesTableViewEnabled = application.features.isExperimentalFeatureEnabled(FeatureIdentifier.FilesTableView)
     const shouldShowFilesTableView = isFilesTableViewEnabled && selectedTag?.uuid === SystemViewId.Files
 
     useEffect(() => {

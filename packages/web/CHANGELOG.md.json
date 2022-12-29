@@ -1,6 +1,75 @@
 {
   "versions": [
     {
+      "version": "3.130.3",
+      "title": "[3.130.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.130.2...@standardnotes/web@3.130.3) (2022-12-29)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where converting a note to Super from the note options menu would not work ([df4acbb](https://github.com/standardnotes/app/commit/df4acbb1bcd9f3bb11717dac47c31c97a1de4ff5))\n* Fixed issue where Super note font size would shift on first load ([113d3be](https://github.com/standardnotes/app/commit/113d3bebb43451ec2c815eabc255dfb790a91431))",
+      "parsed": {
+        "_": [
+          "Fixed issue where converting a note to Super from the note options menu would not work (df4acbb)",
+          "Fixed issue where Super note font size would shift on first load (113d3be)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where converting a note to Super from the note options menu would not work (df4acbb)",
+          "Fixed issue where Super note font size would shift on first load (113d3be)"
+        ]
+      }
+    },
+    {
+      "version": "3.130.2",
+      "title": "[3.130.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.130.0...@standardnotes/web@3.130.2) (2022-12-29)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where Moments could incorrectly get engaged during biometrics unlocking ([8e3ae80](https://github.com/standardnotes/app/commit/8e3ae80aa09c0c60e4f3ad08497fd656a1231465))",
+      "parsed": {
+        "_": [
+          "Fixed issue where Moments could incorrectly get engaged during biometrics unlocking (8e3ae80)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where Moments could incorrectly get engaged during biometrics unlocking (8e3ae80)"
+        ]
+      }
+    },
+    {
+      "version": "3.130.0",
+      "title": "[3.130.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.129.3...@standardnotes/web@3.130.0) (2022-12-28)",
+      "date": null,
+      "body": "### Features\n\n* Added \"Files Table View\" to Labs ([b764296](https://github.com/standardnotes/app/commit/b764296c8f831d06f854dcf2982e644c27e14e7c))",
+      "parsed": {
+        "_": [
+          "Added \"Files Table View\" to Labs (b764296)"
+        ],
+        "Features": [
+          "Added \"Files Table View\" to Labs (b764296)"
+        ]
+      }
+    },
+    {
+      "version": "3.129.3",
+      "title": "[3.129.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.129.2...@standardnotes/web@3.129.3) (2022-12-28)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.129.2",
+      "title": "[3.129.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.129.1...@standardnotes/web@3.129.2) (2022-12-28)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where Moments on mobile would not be properly disabled until app restart ([#2122](https://github.com/standardnotes/app/issues/2122)) ([2611c69](https://github.com/standardnotes/app/commit/2611c690b08c2c9654a5030eef74d6418d5e6b4e))",
+      "parsed": {
+        "_": [
+          "Fixed issue where Moments on mobile would not be properly disabled until app restart (#2122) (2611c69)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where Moments on mobile would not be properly disabled until app restart (#2122) (2611c69)"
+        ]
+      }
+    },
+    {
       "version": "3.129.1",
       "title": "[3.129.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.129.0...@standardnotes/web@3.129.1) (2022-12-27)",
       "date": null,
