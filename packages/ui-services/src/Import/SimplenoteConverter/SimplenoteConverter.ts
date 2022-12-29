@@ -15,9 +15,30 @@ type SimplenoteData = {
   trashedNotes: SimplenoteItem[]
 }
 
+const isSimplenoteEntry = (entry: any): boolean => entry.id && entry.content && entry.creationDate && entry.lastModified
+
 export class SimplenoteConverter extends Importer {
   constructor(protected override application: WebApplicationInterface) {
     super(application)
+  }
+
+  static isValidSimplenoteJson(json: any): boolean {
+    return (
+      (json.activeNotes && json.activeNotes.every(isSimplenoteEntry)) ||
+      (json.trashedNotes && json.trashedNotes.every(isSimplenoteEntry))
+    )
+  }
+
+  async convertSimplenoteBackupFileToNotes(file: File): Promise<DecryptedTransferPayload<NoteContent>[]> {
+    const content = await readFileAsText(file)
+
+    const notes = this.parse(content)
+
+    if (!notes) {
+      throw new Error('Could not parse notes')
+    }
+
+    return notes
   }
 
   createNoteFromItem(item: SimplenoteItem, trashed: boolean): DecryptedTransferPayload<NoteContent> {
@@ -49,18 +70,6 @@ export class SimplenoteConverter extends Importer {
         },
       },
     }
-  }
-
-  async convertSimplenoteBackupFileToNotes(file: File): Promise<DecryptedTransferPayload<NoteContent>[]> {
-    const content = await readFileAsText(file)
-
-    const notes = this.parse(content)
-
-    if (!notes) {
-      throw new Error('Could not parse notes')
-    }
-
-    return notes
   }
 
   parse(data: string) {

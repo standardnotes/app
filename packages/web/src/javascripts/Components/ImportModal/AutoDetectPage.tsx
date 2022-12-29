@@ -1,29 +1,10 @@
 import { parseFileName } from '@standardnotes/filepicker'
 import { classNames } from '@standardnotes/snjs'
+import { AegisToAuthenticatorConverter, GoogleKeepConverter, SimplenoteConverter } from '@standardnotes/ui-services'
 import { readFileAsText } from '@standardnotes/ui-services/src/Import/Utils'
 import { useEffect, useState } from 'react'
 import Icon from '../Icon/Icon'
 import { ImportModalAvailableServices, ImportModalFile } from './Types'
-
-const AegisEntryTypes = ['hotp', 'totp', 'steam', 'yandex'] as const
-
-const aegisHeuristic = (json: any): boolean =>
-  json.db && json.db.entries && json.db.entries.every((entry: any) => AegisEntryTypes.includes(entry.type))
-
-const googleKeepHeuristic = (json: any): boolean =>
-  json.title &&
-  json.textContent &&
-  json.userEditedTimestampUsec &&
-  typeof json.isArchived === 'boolean' &&
-  typeof json.isTrashed === 'boolean' &&
-  typeof json.isPinned === 'boolean' &&
-  json.color
-
-const isSimplenoteEntry = (entry: any): boolean => entry.id && entry.content && entry.creationDate && entry.lastModified
-
-const simplenoteHeuristic = (json: any): boolean =>
-  (json.activeNotes && json.activeNotes.every(isSimplenoteEntry)) ||
-  (json.trashedNotes && json.trashedNotes.every(isSimplenoteEntry))
 
 const detectService = async (file: File): Promise<ImportModalAvailableServices | null> => {
   const content = await readFileAsText(file)
@@ -37,15 +18,15 @@ const detectService = async (file: File): Promise<ImportModalAvailableServices |
   try {
     const json = JSON.parse(content)
 
-    if (aegisHeuristic(json)) {
+    if (AegisToAuthenticatorConverter.isValidAegisJson(json)) {
       return 'aegis'
     }
 
-    if (googleKeepHeuristic(json)) {
+    if (GoogleKeepConverter.isValidGoogleKeepJson(json)) {
       return 'google-keep'
     }
 
-    if (simplenoteHeuristic(json)) {
+    if (SimplenoteConverter.isValidSimplenoteJson(json)) {
       return 'simplenote'
     }
   } catch {
@@ -93,7 +74,7 @@ const ImportModalAutoDetectFile = ({ file }: { file: ImportModalFile }) => {
         <div>{file.file.name}</div>
         <div className="text-xs opacity-75">
           {detectedService
-            ? 'Ready to import'
+            ? 'Detected service. Ready to parse.'
             : detectedService == null
             ? 'Could not auto-detect service. Please select manually.'
             : 'Detecting service...'}

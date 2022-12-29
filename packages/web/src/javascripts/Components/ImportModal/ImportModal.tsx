@@ -43,6 +43,8 @@ const ImportModal = () => {
   const [state, dispatch] = useReducer(reducer, initialState)
   const { files, selectedService } = state
 
+  console.log(files)
+
   return (
     <ModalDialog>
       <ModalDialogLabel

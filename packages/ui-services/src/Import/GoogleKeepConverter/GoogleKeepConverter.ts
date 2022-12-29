@@ -99,9 +99,24 @@ export class GoogleKeepConverter extends Importer {
     return
   }
 
+  static isValidGoogleKeepJson(json: any): boolean {
+    return (
+      json.title &&
+      json.textContent &&
+      json.userEditedTimestampUsec &&
+      typeof json.isArchived === 'boolean' &&
+      typeof json.isTrashed === 'boolean' &&
+      typeof json.isPinned === 'boolean' &&
+      json.color
+    )
+  }
+
   tryParseAsJson(data: string): DecryptedTransferPayload<NoteContent> | null {
     try {
       const parsed = JSON.parse(data) as GoogleKeepJsonNote
+      if (!GoogleKeepConverter.isValidGoogleKeepJson(parsed)) {
+        return null
+      }
       const date = new Date(parsed.userEditedTimestampUsec / 1000)
       return {
         created_at: date,
