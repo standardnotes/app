@@ -1,3 +1,5 @@
+export * from './Authenticator/AuthenticatorServer'
+export * from './Authenticator/AuthenticatorServerInterface'
 export * from './Subscription/SubscriptionServer'
 export * from './Subscription/SubscriptionServerInterface'
 export * from './User/UserServer'
