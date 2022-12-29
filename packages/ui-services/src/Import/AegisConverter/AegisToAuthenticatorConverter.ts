@@ -3,7 +3,6 @@ import { ContentType } from '@standardnotes/common'
 import { readFileAsText } from '../Utils'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
 import { WebApplicationInterface } from '@standardnotes/services'
-import { Importer } from '../Importer'
 
 type AegisData = {
   db: {
@@ -27,10 +26,8 @@ type AuthenticatorEntry = {
   notes: string
 }
 
-export class AegisToAuthenticatorConverter extends Importer {
-  constructor(protected override application: WebApplicationInterface) {
-    super(application)
-  }
+export class AegisToAuthenticatorConverter {
+  constructor(protected application: WebApplicationInterface) {}
 
   static isValidAegisJson(json: any): boolean {
     return json.db && json.db.entries && json.db.entries.every((entry: any) => AegisEntryTypes.includes(entry.type))

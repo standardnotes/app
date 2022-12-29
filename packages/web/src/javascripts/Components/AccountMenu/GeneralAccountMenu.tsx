@@ -14,8 +14,6 @@ import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { formatLastSyncDate } from '@/Utils/DateUtils'
 import Spinner from '@/Components/Spinner/Spinner'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
-import ImportMenuOption from './ImportMenuOption'
-import { featureTrunkEnabled, FeatureTrunkName } from '@/FeatureTrunk'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -189,7 +187,6 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
           <Icon type="open-in" className={iconClassName} />
           Open FileSend
         </MenuItem>
-        {featureTrunkEnabled(FeatureTrunkName.ImportTools) && <ImportMenuOption />}
         {user ? (
           <>
             <MenuItemSeparator />

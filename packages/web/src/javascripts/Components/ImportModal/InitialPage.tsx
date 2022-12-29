@@ -1,4 +1,5 @@
 import { ClassicFileReader } from '@standardnotes/filepicker'
+import { NoteImportType } from '@standardnotes/ui-services'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import { ImportModalAction } from './Types'
@@ -8,19 +9,20 @@ type Props = {
 }
 
 const ImportModalInitialPage = ({ dispatch }: Props) => {
-  const selectFiles = async () => {
+  const selectFiles = async (service?: NoteImportType) => {
     const files = await ClassicFileReader.selectFiles()
 
     dispatch({
       type: 'setFiles',
       files,
+      service,
     })
   }
 
   return (
     <>
       <button
-        onClick={selectFiles}
+        onClick={() => selectFiles()}
         className="flex min-h-[30vh] w-full flex-col items-center justify-center gap-2 rounded border-2 border-dashed border-info hover:border-4"
       >
         <div className="text-lg font-semibold">Drag and drop files to auto-detect and import</div>
@@ -36,13 +38,7 @@ const ImportModalInitialPage = ({ dispatch }: Props) => {
         <Button
           className="flex items-center bg-[#14cc45] !py-2 text-[#000]"
           primary
-          onClick={async () => {
-            await selectFiles()
-            dispatch({
-              type: 'setSelectedService',
-              selectedService: 'evernote',
-            })
-          }}
+          onClick={() => selectFiles('evernote')}
         >
           <Icon type="evernote" className="mr-2" />
           Evernote
@@ -50,45 +46,16 @@ const ImportModalInitialPage = ({ dispatch }: Props) => {
         <Button
           className="flex items-center bg-[#fbbd00] !py-2 text-[#000]"
           primary
-          onClick={async () => {
-            await selectFiles()
-
-            dispatch({
-              type: 'setSelectedService',
-              selectedService: 'google-keep',
-            })
-          }}
+          onClick={() => selectFiles('google-keep')}
         >
           <Icon type="gkeep" className="mr-2" />
           Google Keep
         </Button>
-        <Button
-          className="flex items-center bg-[#3360cc] !py-2"
-          primary
-          onClick={async () => {
-            await selectFiles()
-
-            dispatch({
-              type: 'setSelectedService',
-              selectedService: 'simplenote',
-            })
-          }}
-        >
+        <Button className="flex items-center bg-[#3360cc] !py-2" primary onClick={() => selectFiles('simplenote')}>
           <Icon type="simplenote" className="mr-2" />
           Simplenote
         </Button>
-        <Button
-          className="flex items-center bg-[#0d47a1] !py-2"
-          primary
-          onClick={async () => {
-            await selectFiles()
-
-            dispatch({
-              type: 'setSelectedService',
-              selectedService: 'aegis',
-            })
-          }}
-        >
+        <Button className="flex items-center bg-[#0d47a1] !py-2" primary onClick={() => selectFiles('aegis')}>
           <Icon type="aegis" className="mr-2" />
           Aegis Authenticator
         </Button>

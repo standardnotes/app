@@ -2,7 +2,6 @@ import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 import { readFileAsText } from '../Utils'
 import { WebApplicationInterface } from '@standardnotes/services'
-import { Importer } from '../Importer'
 
 type SimplenoteItem = {
   creationDate: string
@@ -17,10 +16,8 @@ type SimplenoteData = {
 
 const isSimplenoteEntry = (entry: any): boolean => entry.id && entry.content && entry.creationDate && entry.lastModified
 
-export class SimplenoteConverter extends Importer {
-  constructor(protected override application: WebApplicationInterface) {
-    super(application)
-  }
+export class SimplenoteConverter {
+  constructor(protected application: WebApplicationInterface) {}
 
   static isValidSimplenoteJson(json: any): boolean {
     return (

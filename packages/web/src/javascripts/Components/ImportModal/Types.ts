@@ -1,18 +1,26 @@
 import { DecryptedTransferPayload } from '@standardnotes/snjs'
+import { NoteImportType } from '@standardnotes/ui-services'
 
-export type ImportModalAvailableServices = 'evernote' | 'google-keep' | 'simplenote' | 'aegis'
+type ImportModalFileCommon = {
+  id: string
+  file: File
+  service: NoteImportType | undefined
+}
 
 export type ImportModalFile =
-  | { file: File; status: 'pending' }
-  | { file: File; status: 'success'; payloads: DecryptedTransferPayload[] }
-  | { file: File; status: 'error'; error: Error }
+  | ({ status: 'pending' } & ImportModalFileCommon)
+  | ({
+      status: 'success'
+      payloads: DecryptedTransferPayload[]
+    } & ImportModalFileCommon)
+  | ({ status: 'error'; error: Error } & ImportModalFileCommon)
 
 export type ImportModalState = {
   files: ImportModalFile[]
-  selectedService: ImportModalAvailableServices | undefined
+  selectedService: NoteImportType | undefined
 }
 
 export type ImportModalAction =
-  | { type: 'setFiles'; files: File[] }
+  | { type: 'setFiles'; files: File[]; service?: NoteImportType }
   | { type: 'updateFile'; file: ImportModalFile }
-  | { type: 'setSelectedService'; selectedService: ImportModalAvailableServices }
+  | { type: 'setSelectedService'; selectedService: NoteImportType }
