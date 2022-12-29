@@ -188,7 +188,7 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
           Open FileSend
         </MenuItem>
         <MenuItem onClick={() => viewControllerManager.isImportModalVisible.set(true)}>
-          <Icon type="upload" className={iconClassName} />
+          <Icon type="archive" className={iconClassName} />
           Import
         </MenuItem>
         {user ? (
