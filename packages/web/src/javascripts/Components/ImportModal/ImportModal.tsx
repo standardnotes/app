@@ -149,7 +149,7 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
       <ModalDialogButtons>
         {files.length > 0 && files.every((file) => file.status === 'ready') && (
           <Button primary onClick={parseAndImport}>
-            Parse & import
+            Import
           </Button>
         )}
         <Button onClick={closeDialog}>

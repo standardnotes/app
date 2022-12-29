@@ -67,7 +67,7 @@ export const ImportModalFileItem = ({
         <div className="flex flex-col">
           <div>{file.file.name}</div>
           <div className="text-xs opacity-75">
-            {file.status === 'ready' && 'Ready to parse.'}
+            {file.status === 'ready' && 'Ready to import'}
             {file.status === 'pending' && 'Could not auto-detect service. Please select manually.'}
             {file.status === 'parsing' && 'Parsing...'}
             {file.status === 'importing' && 'Importing...'}
