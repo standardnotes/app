@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.130.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.130.4...@standardnotes/web@3.130.5) (2022-12-29)
+
+### Bug Fixes
+
+* Use regular file list on mobile instead of table view ([cd5bd16](https://github.com/standardnotes/app/commit/cd5bd1640c555f8953f07eaacf1d7dc01711f029))
+
 ## [3.130.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.130.3...@standardnotes/web@3.130.4) (2022-12-29)
 
 **Note:** Version bump only for package @standardnotes/web
