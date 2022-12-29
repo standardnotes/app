@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.21.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.20.26...@standardnotes/api@1.21.0) (2022-12-29)
+
+### Features
+
+* **api:** add authenticators api ([#2124](https://github.com/standardnotes/app/issues/2124)) ([59e8b5c](https://github.com/standardnotes/app/commit/59e8b5c8b5b61ef1cd8f291798c45860736a1296))
+
 ## [1.20.26](https://github.com/standardnotes/app/compare/@standardnotes/api@1.20.25...@standardnotes/api@1.20.26) (2022-12-29)
 
 **Note:** Version bump only for package @standardnotes/api
