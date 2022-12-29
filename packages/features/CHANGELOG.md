@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.57.0](https://github.com/standardnotes/app/compare/@standardnotes/features@1.56.0...@standardnotes/features@1.57.0) (2022-12-28)
+
+### Features
+
+* Added "Files Table View" to Labs ([b764296](https://github.com/standardnotes/app/commit/b764296c8f831d06f854dcf2982e644c27e14e7c))
+
 # [1.56.0](https://github.com/standardnotes/app/compare/@standardnotes/features@1.55.3...@standardnotes/features@1.56.0) (2022-12-05)
 
 ### Features
