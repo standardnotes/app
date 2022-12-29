@@ -1,4 +1,8 @@
 import {
+  AuthenticatorApiService,
+  AuthenticatorApiServiceInterface,
+  AuthenticatorServer,
+  AuthenticatorServerInterface,
   HttpService,
   HttpServiceInterface,
   SubscriptionApiService,
@@ -63,6 +67,8 @@ import {
   CredentialsChangeFunctionResponse,
   SessionStrings,
   AccountEvent,
+  AuthenticatorClientInterface,
+  AuthenticatorManager,
 } from '@standardnotes/services'
 import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateUsername } from '@standardnotes/encryption'
@@ -159,6 +165,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private filesBackupService?: FilesBackupService
   private declare sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>
   private declare legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>
+  private declare authenticatorApiService: AuthenticatorApiServiceInterface
+  private declare authenticatorServer: AuthenticatorServerInterface
+  private declare authenticatorManager: AuthenticatorClientInterface
 
   private internalEventBus!: ExternalServices.InternalEventBusInterface
 
@@ -1134,6 +1143,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createMutatorService()
     this.createListedService()
     this.createActionsManager()
+    this.createAuthenticatorServer()
+    this.createAuthenticatorApiService()
+    this.createAuthenticatorManager()
   }
 
   private clearServices() {
@@ -1181,6 +1193,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.statusService as unknown) = undefined
     ;(this.sessionStorageMapper as unknown) = undefined
     ;(this.legacySessionStorageMapper as unknown) = undefined
+    ;(this.authenticatorApiService as unknown) = undefined
+    ;(this.authenticatorServer as unknown) = undefined
+    ;(this.authenticatorManager as unknown) = undefined
 
     this.services = []
   }
@@ -1704,5 +1719,17 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private createStatusService(): void {
     this.statusService = new ExternalServices.StatusService(this.internalEventBus)
     this.services.push(this.statusService)
+  }
+
+  private createAuthenticatorServer() {
+    this.authenticatorServer = new AuthenticatorServer(this.httpService)
+  }
+
+  private createAuthenticatorApiService() {
+    this.authenticatorApiService = new AuthenticatorApiService(this.authenticatorServer)
+  }
+
+  private createAuthenticatorManager() {
+    this.authenticatorManager = new AuthenticatorManager(this.authenticatorApiService, this.internalEventBus)
   }
 }

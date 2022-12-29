@@ -1,3 +1,6 @@
+export * from './Authenticator/AuthenticatorApiOperations'
+export * from './Authenticator/AuthenticatorApiService'
+export * from './Authenticator/AuthenticatorApiServiceInterface'
 export * from './Subscription/SubscriptionApiOperations'
 export * from './Subscription/SubscriptionApiService'
 export * from './Subscription/SubscriptionApiServiceInterface'
