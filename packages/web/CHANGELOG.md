@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.130.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.130.0...@standardnotes/web@3.130.2) (2022-12-29)
+
+### Bug Fixes
+
+* Fixed issue where Moments could incorrectly get engaged during biometrics unlocking ([8e3ae80](https://github.com/standardnotes/app/commit/8e3ae80aa09c0c60e4f3ad08497fd656a1231465))
+
 # [3.130.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.129.3...@standardnotes/web@3.130.0) (2022-12-28)
 
 ### Features
