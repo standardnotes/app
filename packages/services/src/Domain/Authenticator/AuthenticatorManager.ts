@@ -22,7 +22,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
         return []
       }
 
-      return result.data
+      return result.data.authenticators
     } catch (error) {
       return []
     }
@@ -36,7 +36,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
         return false
       }
 
-      return result.data.success
+      return true
     } catch (error) {
       return false
     }
