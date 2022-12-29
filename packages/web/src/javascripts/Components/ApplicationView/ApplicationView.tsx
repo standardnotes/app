@@ -230,7 +230,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                       application={application}
                       viewControllerManager={viewControllerManager}
                     />
-                    <ImportModal />
+                    <ImportModal viewControllerManager={viewControllerManager} />
                   </>
                   {application.routeService.isDotOrg && <DotOrgNotice />}
                 </div>

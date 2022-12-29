@@ -1,5 +1,7 @@
+import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { UuidGenerator } from '@standardnotes/snjs'
 import { Importer } from '@standardnotes/ui-services'
+import { observer } from 'mobx-react-lite'
 import { useCallback, useReducer, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
 import Button from '../Button/Button'
@@ -51,9 +53,12 @@ const initialState: ImportModalState = {
   files: [],
 }
 
-const ImportModal = () => {
+const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewControllerManager }) => {
   const application = useApplication()
-  const [importer] = useState(() => new Importer(application))
+  const [importer] = useState(() => {
+    console.log('ran initializer')
+    return new Importer(application)
+  })
   const [state, dispatch] = useReducer(reducer, initialState)
   const { files } = state
   const filesRef = useStateRef(files)
@@ -121,10 +126,15 @@ const ImportModal = () => {
   }, [filesRef, importer])
 
   const closeDialog = useCallback(() => {
+    viewControllerManager.isImportModalVisible.set(false)
     dispatch({
       type: 'clearFiles',
     })
-  }, [])
+  }, [viewControllerManager.isImportModalVisible])
+
+  if (!viewControllerManager.isImportModalVisible.get()) {
+    return null
+  }
 
   return (
     <ModalDialog>
@@ -155,4 +165,4 @@ const ImportModal = () => {
   )
 }
 
-export default ImportModal
+export default observer(ImportModal)
