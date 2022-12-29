@@ -1,12 +1,13 @@
 import { parseFileName } from '@standardnotes/filepicker'
-import { WebApplicationInterface } from '@standardnotes/services'
-import { DecryptedTransferPayload } from '@standardnotes/snjs'
+import { FeatureStatus, WebApplicationInterface } from '@standardnotes/services'
+import { FeatureIdentifier } from '@standardnotes/features'
 import { AegisToAuthenticatorConverter } from './AegisConverter/AegisToAuthenticatorConverter'
 import { EvernoteConverter } from './EvernoteConverter/EvernoteConverter'
 import { GoogleKeepConverter } from './GoogleKeepConverter/GoogleKeepConverter'
 import { PlaintextConverter } from './PlaintextConverter/PlaintextConverter'
 import { SimplenoteConverter } from './SimplenoteConverter/SimplenoteConverter'
 import { readFileAsText } from './Utils'
+import { DecryptedTransferPayload } from '@standardnotes/models'
 
 export type NoteImportType = 'plaintext' | 'evernote' | 'google-keep' | 'simplenote' | 'aegis'
 
@@ -61,7 +62,9 @@ export class Importer {
 
   async getPayloadsFromFile(file: File, type: NoteImportType): Promise<DecryptedTransferPayload[]> {
     if (type === 'aegis') {
-      return [await this.aegisConverter.convertAegisBackupFileToNote(file, false)]
+      const isEntitledToAuthenticator =
+        this.application.features.getFeatureStatus(FeatureIdentifier.TokenVaultEditor) === FeatureStatus.Entitled
+      return [await this.aegisConverter.convertAegisBackupFileToNote(file, isEntitledToAuthenticator)]
     } else if (type === 'google-keep') {
       return [await this.googleKeepConverter.convertGoogleKeepBackupFileToNote(file, true)]
     } else if (type === 'simplenote') {
