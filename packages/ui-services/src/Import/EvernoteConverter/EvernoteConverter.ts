@@ -2,7 +2,6 @@ import { ContentType } from '@standardnotes/common'
 import { WebApplicationInterface } from '@standardnotes/services'
 import { DecryptedTransferPayload, NoteContent, TagContent } from '@standardnotes/models'
 import { readFileAsText } from '../Utils'
-import { Importer } from '../Importer'
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat'
 import utc from 'dayjs/plugin/utc'
@@ -11,10 +10,8 @@ dayjs.extend(utc)
 
 const dateFormat = 'YYYYMMDDTHHmmss'
 
-export class EvernoteConverter extends Importer {
-  constructor(protected override application: WebApplicationInterface) {
-    super(application)
-  }
+export class EvernoteConverter {
+  constructor(protected application: WebApplicationInterface) {}
 
   async convertENEXFileToNotesAndTags(file: File, stripHTML: boolean): Promise<DecryptedTransferPayload[]> {
     const content = await readFileAsText(file)
@@ -138,6 +135,9 @@ export class EvernoteConverter extends Importer {
     }
 
     const allItems: DecryptedTransferPayload[] = [...notes, ...tags]
+    if (allItems.length === 0) {
+      throw new Error('Could not parse any notes or tags from Evernote file.')
+    }
     if (defaultTag) {
       allItems.push(defaultTag)
     }

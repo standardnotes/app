@@ -69,6 +69,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   readonly paneController: PaneController
 
   public isSessionsModalVisible = false
+  public isImportModalVisible = observable.box(false)
 
   private appEventObserverRemovers: (() => void)[] = []
   private eventBus: InternalEventBus

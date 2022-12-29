@@ -2,7 +2,6 @@ import { WebApplicationInterface } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/common'
 import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 import { readFileAsText } from '../Utils'
-import { Importer } from '../Importer'
 
 type GoogleKeepJsonNote = {
   color: string
@@ -14,10 +13,8 @@ type GoogleKeepJsonNote = {
   userEditedTimestampUsec: number
 }
 
-export class GoogleKeepConverter extends Importer {
-  constructor(protected override application: WebApplicationInterface) {
-    super(application)
-  }
+export class GoogleKeepConverter {
+  constructor(protected application: WebApplicationInterface) {}
 
   async convertGoogleKeepBackupFileToNote(
     file: File,
@@ -99,9 +96,24 @@ export class GoogleKeepConverter extends Importer {
     return
   }
 
+  static isValidGoogleKeepJson(json: any): boolean {
+    return (
+      json.title &&
+      json.textContent &&
+      json.userEditedTimestampUsec &&
+      typeof json.isArchived === 'boolean' &&
+      typeof json.isTrashed === 'boolean' &&
+      typeof json.isPinned === 'boolean' &&
+      json.color
+    )
+  }
+
   tryParseAsJson(data: string): DecryptedTransferPayload<NoteContent> | null {
     try {
       const parsed = JSON.parse(data) as GoogleKeepJsonNote
+      if (!GoogleKeepConverter.isValidGoogleKeepJson(parsed)) {
+        return null
+      }
       const date = new Date(parsed.userEditedTimestampUsec / 1000)
       return {
         created_at: date,

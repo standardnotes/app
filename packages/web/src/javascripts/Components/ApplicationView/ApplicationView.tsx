@@ -28,6 +28,7 @@ import CommandProvider from '../CommandProvider'
 import PanesSystemComponent from '../Panes/PanesSystemComponent'
 import DotOrgNotice from './DotOrgNotice'
 import LinkingControllerProvider from '@/Controllers/LinkingControllerProvider'
+import ImportModal from '../ImportModal/ImportModal'
 
 type Props = {
   application: WebApplication
@@ -229,6 +230,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                       application={application}
                       viewControllerManager={viewControllerManager}
                     />
+                    <ImportModal viewControllerManager={viewControllerManager} />
                   </>
                   {application.routeService.isDotOrg && <DotOrgNotice />}
                 </div>

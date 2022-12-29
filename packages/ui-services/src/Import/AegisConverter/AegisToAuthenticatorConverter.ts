@@ -3,7 +3,6 @@ import { ContentType } from '@standardnotes/common'
 import { readFileAsText } from '../Utils'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
 import { WebApplicationInterface } from '@standardnotes/services'
-import { Importer } from '../Importer'
 
 type AegisData = {
   db: {
@@ -18,6 +17,8 @@ type AegisData = {
   }
 }
 
+const AegisEntryTypes = ['hotp', 'totp', 'steam', 'yandex'] as const
+
 type AuthenticatorEntry = {
   service: string
   account: string
@@ -25,9 +26,26 @@ type AuthenticatorEntry = {
   notes: string
 }
 
-export class AegisToAuthenticatorConverter extends Importer {
-  constructor(protected override application: WebApplicationInterface) {
-    super(application)
+export class AegisToAuthenticatorConverter {
+  constructor(protected application: WebApplicationInterface) {}
+
+  static isValidAegisJson(json: any): boolean {
+    return json.db && json.db.entries && json.db.entries.every((entry: any) => AegisEntryTypes.includes(entry.type))
+  }
+
+  async convertAegisBackupFileToNote(
+    file: File,
+    addEditorInfo: boolean,
+  ): Promise<DecryptedTransferPayload<NoteContent>> {
+    const content = await readFileAsText(file)
+
+    const entries = this.parseEntries(content)
+
+    if (!entries) {
+      throw new Error('Could not parse entries')
+    }
+
+    return this.createNoteFromEntries(entries, file, addEditorInfo)
   }
 
   createNoteFromEntries(
@@ -55,21 +73,6 @@ export class AegisToAuthenticatorConverter extends Importer {
         }),
       },
     }
-  }
-
-  async convertAegisBackupFileToNote(
-    file: File,
-    addEditorInfo: boolean,
-  ): Promise<DecryptedTransferPayload<NoteContent>> {
-    const content = await readFileAsText(file)
-
-    const entries = this.parseEntries(content)
-
-    if (!entries) {
-      throw new Error('Could not parse entries')
-    }
-
-    return this.createNoteFromEntries(entries, file, addEditorInfo)
   }
 
   parseEntries(data: string): AuthenticatorEntry[] | null {

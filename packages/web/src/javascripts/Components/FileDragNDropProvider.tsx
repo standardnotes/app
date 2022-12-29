@@ -8,6 +8,7 @@ import { StreamingFileReader } from '@standardnotes/filepicker'
 import { FileItem } from '@standardnotes/snjs'
 import { useMemo, useState, createContext, ReactNode, useRef, useCallback, useEffect, useContext, memo } from 'react'
 import Portal from './Portal/Portal'
+import { ElementIds } from '@/Constants/ElementIDs'
 
 type FileDragTargetData = {
   tooltipText: string
@@ -221,18 +222,24 @@ const FileDragNDropProvider = ({ application, children, featuresController, file
   )
 
   useEffect(() => {
-    window.addEventListener('dragstart', handleDragStart)
-    window.addEventListener('dragenter', handleDragIn)
-    window.addEventListener('dragleave', handleDragOut)
-    window.addEventListener('dragover', handleDrag)
-    window.addEventListener('drop', handleDrop)
+    const appGroupRoot = document.getElementById(ElementIds.RootId)
+
+    if (!appGroupRoot) {
+      return
+    }
+
+    appGroupRoot.addEventListener('dragstart', handleDragStart)
+    appGroupRoot.addEventListener('dragenter', handleDragIn)
+    appGroupRoot.addEventListener('dragleave', handleDragOut)
+    appGroupRoot.addEventListener('dragover', handleDrag)
+    appGroupRoot.addEventListener('drop', handleDrop)
 
     return () => {
-      window.removeEventListener('dragstart', handleDragStart)
-      window.removeEventListener('dragenter', handleDragIn)
-      window.removeEventListener('dragleave', handleDragOut)
-      window.removeEventListener('dragover', handleDrag)
-      window.removeEventListener('drop', handleDrop)
+      appGroupRoot.removeEventListener('dragstart', handleDragStart)
+      appGroupRoot.removeEventListener('dragenter', handleDragIn)
+      appGroupRoot.removeEventListener('dragleave', handleDragOut)
+      appGroupRoot.removeEventListener('dragover', handleDrag)
+      appGroupRoot.removeEventListener('drop', handleDrop)
     }
   }, [handleDragIn, handleDrop, handleDrag, handleDragOut, handleDragStart])
 
