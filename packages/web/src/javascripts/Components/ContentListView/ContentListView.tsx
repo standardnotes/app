@@ -35,10 +35,10 @@ import { ListableContentItem } from './Types/ListableContentItem'
 import { FeatureName } from '@/Controllers/FeatureName'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { useForwardedRef } from '@/Hooks/useForwardedRef'
-import { isMobileScreen } from '@/Utils'
 import FloatingAddButton from './FloatingAddButton'
 import FilesTableView from '../FilesTableView/FilesTableView'
 import { FeaturesController } from '@/Controllers/FeaturesController'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -181,8 +181,10 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       }
     }, [isFilesSmartView, filesController, createNewNote, toggleAppPane, application])
 
+    const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
     const isFilesTableViewEnabled = application.features.isExperimentalFeatureEnabled(FeatureIdentifier.FilesTableView)
-    const shouldShowFilesTableView = isFilesTableViewEnabled && selectedTag?.uuid === SystemViewId.Files
+    const shouldShowFilesTableView =
+      isFilesTableViewEnabled && !isMobileScreen && selectedTag?.uuid === SystemViewId.Files
 
     useEffect(() => {
       const searchBarElement = document.getElementById(ElementIds.SearchBar)
@@ -301,7 +303,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         aria-label={'Notes & Files'}
         ref={innerRef}
       >
-        {isMobileScreen() && (
+        {isMobileScreen && (
           <FloatingAddButton onClick={addNewItem} label={addButtonLabel} style={dailyMode ? 'danger' : 'info'} />
         )}
         <div id="items-title-bar" className="section-title-bar border-b border-solid border-border">
@@ -321,7 +323,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
                 itemListController={itemListController}
               />
             )}
-            {(!shouldShowFilesTableView || isMobileScreen()) && (
+            {(!shouldShowFilesTableView || isMobileScreen) && (
               <SearchBar
                 itemListController={itemListController}
                 searchOptionsController={searchOptionsController}

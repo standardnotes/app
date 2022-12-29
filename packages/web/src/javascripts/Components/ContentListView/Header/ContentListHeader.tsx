@@ -8,12 +8,11 @@ import { NavigationMenuButton } from '@/Components/NavigationMenu/NavigationMenu
 import { isTag, VectorIconNameOrEmoji } from '@standardnotes/snjs'
 import RoundIconButton from '@/Components/Button/RoundIconButton'
 import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
-import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { MediaQueryBreakpoints, MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import AddItemMenuButton from './AddItemMenuButton'
 import { FilesController } from '@/Controllers/FilesController'
 import SearchButton from './SearchButton'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
-import { isMobileScreen } from '@/Utils'
 
 type Props = {
   application: WebApplication
@@ -46,6 +45,7 @@ const ContentListHeader = ({
   const displayOptionsButtonRef = useRef<HTMLButtonElement>(null)
   const isDailyEntry = isTag(selectedTag) && selectedTag.isDailyEntry
 
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const matchesMd = useMediaQuery(MediaQueryBreakpoints.md)
   const isTouchScreen = !useMediaQuery(MediaQueryBreakpoints.pointerFine)
   const isTablet = matchesMd && isTouchScreen
@@ -106,12 +106,12 @@ const ContentListHeader = ({
   }, [addButtonLabel, addNewItem, filesController, isDailyEntry, isFilesSmartView])
 
   const SearchBarButton = useMemo(() => {
-    if (!isFilesSmartView || !isFilesTableViewEnabled || isMobileScreen()) {
+    if (!isFilesSmartView || !isFilesTableViewEnabled || isMobileScreen) {
       return null
     }
 
     return <SearchButton itemListController={itemListController} />
-  }, [isFilesSmartView, isFilesTableViewEnabled, itemListController])
+  }, [isFilesSmartView, isFilesTableViewEnabled, isMobileScreen, itemListController])
 
   const FolderName = useMemo(() => {
     return (
