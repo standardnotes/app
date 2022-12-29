@@ -1,4 +1,4 @@
-import { classNames, ContentType, DecryptedTransferPayload } from '@standardnotes/snjs'
+import { classNames, ContentType, DecryptedTransferPayload, pluralize } from '@standardnotes/snjs'
 import { Importer, NoteImportType } from '@standardnotes/ui-services'
 import { Dispatch, useCallback, useEffect } from 'react'
 import Icon from '../Icon/Icon'
@@ -70,6 +70,11 @@ export const ImportModalFileItem = ({
       ? file.payloads.filter((payload) => payload.content_type === ContentType.Tag)
       : []
 
+  const payloadsImportMessage =
+    `Ready to import ${notePayloads.length} ` +
+    pluralize(notePayloads.length, 'note', 'notes') +
+    (tagPayloads.length > 0 ? ` and ${tagPayloads.length} ${pluralize(tagPayloads.length, 'tag', 'tags')}` : '')
+
   return (
     <div
       className={classNames(
@@ -87,10 +92,8 @@ export const ImportModalFileItem = ({
           <div>{file.file.name}</div>
           <div className="text-xs opacity-75">
             {file.status === 'ready'
-              ? notePayloads.length || tagPayloads.length
-                ? `Ready to import ${notePayloads.length} notes ${
-                    tagPayloads.length > 0 ? `and ${tagPayloads.length} tags` : ''
-                  }`
+              ? notePayloads.length > 1 || tagPayloads.length
+                ? payloadsImportMessage
                 : 'Ready to import'
               : null}
             {file.status === 'pending' && 'Could not auto-detect service. Please select manually.'}
