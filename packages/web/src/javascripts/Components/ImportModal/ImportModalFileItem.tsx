@@ -72,7 +72,7 @@ export const ImportModalFileItem = ({
             {file.status === 'parsing' && 'Parsing...'}
             {file.status === 'importing' && 'Importing...'}
             {file.status === 'error' && `${file.error}`}
-            {file.status === 'success' && 'Imported successfully!'}
+            {file.status === 'success' && file.successMessage}
           </div>
         </div>
       </div>

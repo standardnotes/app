@@ -11,7 +11,7 @@ export type ImportModalFile = (
   | { status: 'ready' }
   | { status: 'parsing' }
   | { status: 'importing' }
-  | { status: 'success' }
+  | { status: 'success'; successMessage: string }
   | { status: 'error'; error: Error }
 ) &
   ImportModalFileCommon

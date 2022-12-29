@@ -1,5 +1,5 @@
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { UuidGenerator } from '@standardnotes/snjs'
+import { ContentType, UuidGenerator } from '@standardnotes/snjs'
 import { Importer } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useReducer, useState } from 'react'
@@ -91,11 +91,20 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
 
           try {
             await importer.importFromTransferPayloads(payloads)
+
+            const notesImported = payloads.filter((payload) => payload.content_type === ContentType.Note)
+            const tagsImported = payloads.filter((payload) => payload.content_type === ContentType.Tag)
+
+            const successMessage = `Successfully imported ${notesImported.length} note(s) ${
+              tagsImported.length > 0 ? `and ${tagsImported.length} tag(s)` : ''
+            }`
+
             dispatch({
               type: 'updateFile',
               file: {
                 ...file,
                 status: 'success',
+                successMessage,
               },
             })
           } catch (error) {
