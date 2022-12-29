@@ -1,3 +1,4 @@
+import { DecryptedTransferPayload } from '@standardnotes/models'
 import { NoteImportType } from '@standardnotes/ui-services'
 
 type ImportModalFileCommon = {
@@ -8,7 +9,7 @@ type ImportModalFileCommon = {
 
 export type ImportModalFile = (
   | { status: 'pending' }
-  | { status: 'ready' }
+  | { status: 'ready'; payloads?: DecryptedTransferPayload[] }
   | { status: 'parsing' }
   | { status: 'importing' }
   | { status: 'success'; successMessage: string }

@@ -1,5 +1,5 @@
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { ContentType, UuidGenerator } from '@standardnotes/snjs'
+import { ContentType, DecryptedTransferPayload, UuidGenerator } from '@standardnotes/snjs'
 import { Importer } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useReducer, useState } from 'react'
@@ -12,7 +12,7 @@ import ModalDialogDescription from '../Shared/ModalDialogDescription'
 import ModalDialogLabel from '../Shared/ModalDialogLabel'
 import { ImportModalFileItem } from './ImportModalFileItem'
 import ImportModalInitialPage from './InitialPage'
-import { ImportModalAction, ImportModalState } from './Types'
+import { ImportModalAction, ImportModalFile, ImportModalState } from './Types'
 
 const reducer = (state: ImportModalState, action: ImportModalAction): ImportModalState => {
   switch (action.type) {
@@ -60,6 +60,48 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
   const { files } = state
   const filesRef = useStateRef(files)
 
+  const importFromPayloads = useCallback(
+    async (file: ImportModalFile, payloads: DecryptedTransferPayload[]) => {
+      dispatch({
+        type: 'updateFile',
+        file: {
+          ...file,
+          status: 'importing',
+        },
+      })
+
+      try {
+        await importer.importFromTransferPayloads(payloads)
+
+        const notesImported = payloads.filter((payload) => payload.content_type === ContentType.Note)
+        const tagsImported = payloads.filter((payload) => payload.content_type === ContentType.Tag)
+
+        const successMessage = `Successfully imported ${notesImported.length} note(s) ${
+          tagsImported.length > 0 ? `and ${tagsImported.length} tag(s)` : ''
+        }`
+
+        dispatch({
+          type: 'updateFile',
+          file: {
+            ...file,
+            status: 'success',
+            successMessage,
+          },
+        })
+      } catch (error) {
+        dispatch({
+          type: 'updateFile',
+          file: {
+            ...file,
+            status: 'error',
+            error: error instanceof Error ? error : new Error('Could not import file'),
+          },
+        })
+      }
+    },
+    [importer],
+  )
+
   const parseAndImport = useCallback(async () => {
     const files = filesRef.current
     if (files.length === 0) {
@@ -68,6 +110,11 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
     for (const file of files) {
       if (!file.service) {
         return
+      }
+
+      if (file.status === 'ready' && file.payloads) {
+        void importFromPayloads(file, file.payloads)
+        continue
       }
 
       dispatch({
@@ -80,43 +127,8 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
 
       void importer
         .getPayloadsFromFile(file.file, file.service)
-        .then(async (payloads) => {
-          dispatch({
-            type: 'updateFile',
-            file: {
-              ...file,
-              status: 'importing',
-            },
-          })
-
-          try {
-            await importer.importFromTransferPayloads(payloads)
-
-            const notesImported = payloads.filter((payload) => payload.content_type === ContentType.Note)
-            const tagsImported = payloads.filter((payload) => payload.content_type === ContentType.Tag)
-
-            const successMessage = `Successfully imported ${notesImported.length} note(s) ${
-              tagsImported.length > 0 ? `and ${tagsImported.length} tag(s)` : ''
-            }`
-
-            dispatch({
-              type: 'updateFile',
-              file: {
-                ...file,
-                status: 'success',
-                successMessage,
-              },
-            })
-          } catch (error) {
-            dispatch({
-              type: 'updateFile',
-              file: {
-                ...file,
-                status: 'error',
-                error: error instanceof Error ? error : new Error('Could not import file'),
-              },
-            })
-          }
+        .then((payloads) => {
+          void importFromPayloads(file, payloads)
         })
         .catch((error) => {
           dispatch({
@@ -129,7 +141,7 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
           })
         })
     }
-  }, [filesRef, importer])
+  }, [filesRef, importFromPayloads, importer])
 
   const closeDialog = useCallback(() => {
     viewControllerManager.isImportModalVisible.set(false)
@@ -150,7 +162,7 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
         {files.length > 0 && (
           <div className="divide-y divide-border">
             {files.map((file) => (
-              <ImportModalFileItem file={file} key={file.id} dispatch={dispatch} />
+              <ImportModalFileItem file={file} key={file.id} dispatch={dispatch} importer={importer} />
             ))}
           </div>
         )}

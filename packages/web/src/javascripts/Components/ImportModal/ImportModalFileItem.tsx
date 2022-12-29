@@ -1,4 +1,4 @@
-import { classNames } from '@standardnotes/snjs'
+import { classNames, ContentType, DecryptedTransferPayload } from '@standardnotes/snjs'
 import { Importer, NoteImportType } from '@standardnotes/ui-services'
 import { Dispatch, useCallback, useEffect } from 'react'
 import Icon from '../Icon/Icon'
@@ -23,33 +23,52 @@ const NoteImportTypeIcons: Record<NoteImportType, string> = {
 export const ImportModalFileItem = ({
   file,
   dispatch,
+  importer,
 }: {
   file: ImportModalFile
   dispatch: Dispatch<ImportModalAction>
+  importer: Importer
 }) => {
   const setFileService = useCallback(
-    (service: NoteImportType | null) => {
+    async (service: NoteImportType | null) => {
+      let payloads: DecryptedTransferPayload[] | undefined
+      try {
+        payloads = service ? await importer.getPayloadsFromFile(file.file, service) : undefined
+      } catch {
+        //
+      }
+
       dispatch({
         type: 'updateFile',
         file: {
           ...file,
           service,
           status: service ? 'ready' : 'pending',
+          payloads,
         },
       })
     },
-    [dispatch, file],
+    [dispatch, file, importer],
   )
 
   useEffect(() => {
     const detect = async () => {
       const detectedService = await Importer.detectService(file.file)
-      setFileService(detectedService)
+      void setFileService(detectedService)
     }
     if (file.service === undefined) {
       void detect()
     }
   }, [dispatch, file, setFileService])
+
+  const notePayloads =
+    file.status === 'ready' && file.payloads
+      ? file.payloads.filter((payload) => payload.content_type === ContentType.Note)
+      : []
+  const tagPayloads =
+    file.status === 'ready' && file.payloads
+      ? file.payloads.filter((payload) => payload.content_type === ContentType.Tag)
+      : []
 
   return (
     <div
@@ -67,7 +86,13 @@ export const ImportModalFileItem = ({
         <div className="flex flex-col">
           <div>{file.file.name}</div>
           <div className="text-xs opacity-75">
-            {file.status === 'ready' && 'Ready to import'}
+            {file.status === 'ready'
+              ? notePayloads.length || tagPayloads.length
+                ? `Ready to import ${notePayloads.length} notes ${
+                    tagPayloads.length > 0 ? `and ${tagPayloads.length} tags` : ''
+                  }`
+                : 'Ready to import'
+              : null}
             {file.status === 'pending' && 'Could not auto-detect service. Please select manually.'}
             {file.status === 'parsing' && 'Parsing...'}
             {file.status === 'importing' && 'Importing...'}
@@ -84,7 +109,7 @@ export const ImportModalFileItem = ({
               event.preventDefault()
               const form = event.target as HTMLFormElement
               const service = form.elements[0] as HTMLSelectElement
-              setFileService(service.value as NoteImportType)
+              void setFileService(service.value as NoteImportType)
             }}
           >
             <select className="mr-2 rounded border border-border bg-default px-2 py-1 text-sm">
