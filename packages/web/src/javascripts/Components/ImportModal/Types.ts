@@ -4,7 +4,7 @@ import { NoteImportType } from '@standardnotes/ui-services'
 type ImportModalFileCommon = {
   id: string
   file: File
-  service: NoteImportType | undefined
+  service: NoteImportType | null | undefined
 }
 
 export type ImportModalFile =
@@ -17,10 +17,8 @@ export type ImportModalFile =
 
 export type ImportModalState = {
   files: ImportModalFile[]
-  selectedService: NoteImportType | undefined
 }
 
 export type ImportModalAction =
   | { type: 'setFiles'; files: File[]; service?: NoteImportType }
   | { type: 'updateFile'; file: ImportModalFile }
-  | { type: 'setSelectedService'; selectedService: NoteImportType }
