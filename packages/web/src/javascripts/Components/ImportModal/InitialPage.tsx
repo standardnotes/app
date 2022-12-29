@@ -78,7 +78,7 @@ const ImportModalInitialPage = ({ dispatch }: Props) => {
           Plaintext
         </Button>
         <Button
-          className="flex items-center bg-accessory-tint-2 !py-2 text-text"
+          className="flex items-center bg-accessory-tint-4 !py-2"
           primary
           onClick={() => selectFiles('plaintext')}
         >
