@@ -136,8 +136,12 @@ export const SuperEditor: FunctionComponent<Props> = ({
     return disposer
   }, [controller, controller.item.uuid])
 
-  const [lineHeight, setLineHeight] = useState<EditorLineHeight>(PrefDefaults[PrefKey.EditorLineHeight])
-  const [fontSize, setFontSize] = useState<EditorFontSize | undefined>()
+  const [lineHeight, setLineHeight] = useState<EditorLineHeight>(() =>
+    application.getPreference(PrefKey.EditorLineHeight, PrefDefaults[PrefKey.EditorLineHeight]),
+  )
+  const [fontSize, setFontSize] = useState<EditorFontSize | undefined>(() =>
+    application.getPreference(PrefKey.EditorFontSize, PrefDefaults[PrefKey.EditorFontSize]),
+  )
 
   const reloadPreferences = useCallback(() => {
     const lineHeight = application.getPreference(PrefKey.EditorLineHeight, PrefDefaults[PrefKey.EditorLineHeight])
