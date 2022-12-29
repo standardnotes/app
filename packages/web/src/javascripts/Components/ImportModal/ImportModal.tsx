@@ -1,5 +1,5 @@
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { ContentType, DecryptedTransferPayload, UuidGenerator } from '@standardnotes/snjs'
+import { ContentType, DecryptedTransferPayload, pluralize, SNTag, TagContent, UuidGenerator } from '@standardnotes/snjs'
 import { Importer } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useReducer, useState } from 'react'
@@ -41,9 +41,13 @@ const reducer = (state: ImportModalState, action: ImportModalAction): ImportModa
         ...state,
         files: state.files.filter((file) => file.id !== action.id),
       }
-    case 'clearFiles':
+    case 'setImportTag':
       return {
         ...state,
+        importTag: action.tag,
+      }
+    case 'clearState':
+      return {
         files: [],
       }
   }
@@ -76,9 +80,12 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
         const notesImported = payloads.filter((payload) => payload.content_type === ContentType.Note)
         const tagsImported = payloads.filter((payload) => payload.content_type === ContentType.Tag)
 
-        const successMessage = `Successfully imported ${notesImported.length} note(s) ${
-          tagsImported.length > 0 ? `and ${tagsImported.length} tag(s)` : ''
-        }`
+        const successMessage =
+          `Successfully imported ${notesImported.length} ` +
+          pluralize(notesImported.length, 'note', 'notes') +
+          (tagsImported.length > 0
+            ? ` and ${tagsImported.length} ${pluralize(tagsImported.length, 'tag', 'tags')}`
+            : '')
 
         dispatch({
           type: 'updateFile',
@@ -107,13 +114,15 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
     if (files.length === 0) {
       return
     }
+    const importedPayloads: DecryptedTransferPayload[] = []
     for (const file of files) {
       if (!file.service) {
         return
       }
 
       if (file.status === 'ready' && file.payloads) {
-        void importFromPayloads(file, file.payloads)
+        await importFromPayloads(file, file.payloads)
+        importedPayloads.push(...file.payloads)
         continue
       }
 
@@ -125,30 +134,61 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
         },
       })
 
-      void importer
-        .getPayloadsFromFile(file.file, file.service)
-        .then((payloads) => {
-          void importFromPayloads(file, payloads)
+      try {
+        const payloads = await importer.getPayloadsFromFile(file.file, file.service)
+        await importFromPayloads(file, payloads)
+        importedPayloads.push(...payloads)
+      } catch (error) {
+        dispatch({
+          type: 'updateFile',
+          file: {
+            ...file,
+            status: 'error',
+            error: error instanceof Error ? error : new Error('Could not import file'),
+          },
         })
-        .catch((error) => {
-          dispatch({
-            type: 'updateFile',
-            file: {
-              ...file,
-              status: 'error',
-              error,
-            },
-          })
-        })
+      }
+    }
+    const currentDate = new Date()
+    const importTagPayload: DecryptedTransferPayload<TagContent> = {
+      uuid: UuidGenerator.GenerateUuid(),
+      created_at: currentDate,
+      created_at_timestamp: currentDate.getTime(),
+      updated_at: currentDate,
+      updated_at_timestamp: currentDate.getTime(),
+      content_type: ContentType.Tag,
+      content: {
+        title: `Imported on ${currentDate.toLocaleString()}`,
+        expanded: false,
+        iconString: '',
+        references: importedPayloads
+          .filter((payload) => payload.content_type === ContentType.Note)
+          .map((payload) => ({
+            content_type: ContentType.Note,
+            uuid: payload.uuid,
+          })),
+      },
+    }
+    const [importTag] = await importer.importFromTransferPayloads([importTagPayload])
+    if (importTag) {
+      dispatch({
+        type: 'setImportTag',
+        tag: importTag as SNTag,
+      })
     }
   }, [filesRef, importFromPayloads, importer])
 
   const closeDialog = useCallback(() => {
     viewControllerManager.isImportModalVisible.set(false)
+    if (state.importTag) {
+      void viewControllerManager.navigationController.setSelectedTag(state.importTag, 'all', {
+        userTriggered: true,
+      })
+    }
     dispatch({
-      type: 'clearFiles',
+      type: 'clearState',
     })
-  }, [viewControllerManager.isImportModalVisible])
+  }, [state.importTag, viewControllerManager.isImportModalVisible, viewControllerManager.navigationController])
 
   if (!viewControllerManager.isImportModalVisible.get()) {
     return null

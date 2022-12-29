@@ -1,4 +1,4 @@
-import { DecryptedTransferPayload } from '@standardnotes/models'
+import { DecryptedTransferPayload, SNTag } from '@standardnotes/models'
 import { NoteImportType } from '@standardnotes/ui-services'
 
 type ImportModalFileCommon = {
@@ -19,10 +19,12 @@ export type ImportModalFile = (
 
 export type ImportModalState = {
   files: ImportModalFile[]
+  importTag?: SNTag
 }
 
 export type ImportModalAction =
   | { type: 'setFiles'; files: File[]; service?: NoteImportType }
   | { type: 'updateFile'; file: ImportModalFile }
   | { type: 'removeFile'; id: ImportModalFile['id'] }
-  | { type: 'clearFiles' }
+  | { type: 'setImportTag'; tag: SNTag }
+  | { type: 'clearState' }

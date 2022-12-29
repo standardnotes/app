@@ -78,11 +78,14 @@ export class Importer {
     return []
   }
 
-  async importFromTransferPayloads(payloads: DecryptedTransferPayload[]): Promise<void> {
-    for (const payload of payloads) {
-      const itemPayload = this.application.items.createPayloadFromObject(payload)
-      const item = this.application.items.createItemFromPayload(itemPayload)
-      await this.application.mutator.insertItem(item)
-    }
+  async importFromTransferPayloads(payloads: DecryptedTransferPayload[]) {
+    const insertedItems = await Promise.all(
+      payloads.map(async (payload) => {
+        const itemPayload = this.application.items.createPayloadFromObject(payload)
+        const item = this.application.items.createItemFromPayload(itemPayload)
+        return this.application.mutator.insertItem(item)
+      }),
+    )
+    return insertedItems
   }
 }
