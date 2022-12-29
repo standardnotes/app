@@ -1,20 +1,10 @@
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
-import {
-  useEffect,
-  ReactNode,
-  useMemo,
-  createContext,
-  useCallback,
-  useContext,
-  memo,
-  useRef,
-  useLayoutEffect,
-  MutableRefObject,
-} from 'react'
+import { useEffect, ReactNode, useMemo, createContext, useCallback, useContext, memo } from 'react'
 import { AppPaneId } from './AppPaneMetadata'
 import { PaneController } from '../../Controllers/PaneController/PaneController'
 import { observer } from 'mobx-react-lite'
 import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
+import { useStateRef } from './useStateRef'
 
 type ResponsivePaneData = {
   selectedPane: AppPaneId
@@ -53,16 +43,6 @@ type ChildrenProps = {
 type ProviderProps = {
   paneController: PaneController
 } & ChildrenProps
-
-function useStateRef<State>(state: State): MutableRefObject<State> {
-  const ref = useRef<State>(state)
-
-  useLayoutEffect(() => {
-    ref.current = state
-  }, [state])
-
-  return ref
-}
 
 const MemoizedChildren = memo(({ children }: ChildrenProps) => <>{children}</>)
 

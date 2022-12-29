@@ -2,6 +2,7 @@ import { parseFileName } from '@standardnotes/filepicker'
 import { WebApplicationInterface } from '@standardnotes/services'
 import { DecryptedTransferPayload } from '@standardnotes/snjs'
 import { AegisToAuthenticatorConverter } from './AegisConverter/AegisToAuthenticatorConverter'
+import { EvernoteConverter } from './EvernoteConverter/EvernoteConverter'
 import { GoogleKeepConverter } from './GoogleKeepConverter/GoogleKeepConverter'
 import { PlaintextConverter } from './PlaintextConverter/PlaintextConverter'
 import { SimplenoteConverter } from './SimplenoteConverter/SimplenoteConverter'
@@ -10,7 +11,19 @@ import { readFileAsText } from './Utils'
 export type NoteImportType = 'plaintext' | 'evernote' | 'google-keep' | 'simplenote' | 'aegis'
 
 export class Importer {
-  constructor(protected application: WebApplicationInterface) {}
+  aegisConverter: AegisToAuthenticatorConverter
+  googleKeepConverter: GoogleKeepConverter
+  simplenoteConverter: SimplenoteConverter
+  plaintextConverter: PlaintextConverter
+  evernoteConverter: EvernoteConverter
+
+  constructor(protected application: WebApplicationInterface) {
+    this.aegisConverter = new AegisToAuthenticatorConverter(application)
+    this.googleKeepConverter = new GoogleKeepConverter(application)
+    this.simplenoteConverter = new SimplenoteConverter(application)
+    this.plaintextConverter = new PlaintextConverter(application)
+    this.evernoteConverter = new EvernoteConverter(application)
+  }
 
   static detectService = async (file: File): Promise<NoteImportType | null> => {
     const content = await readFileAsText(file)
@@ -44,6 +57,22 @@ export class Importer {
     }
 
     return null
+  }
+
+  async getPayloadsFromFile(file: File, type: NoteImportType): Promise<DecryptedTransferPayload[]> {
+    if (type === 'aegis') {
+      return [await this.aegisConverter.convertAegisBackupFileToNote(file, false)]
+    } else if (type === 'google-keep') {
+      return [await this.googleKeepConverter.convertGoogleKeepBackupFileToNote(file, true)]
+    } else if (type === 'simplenote') {
+      return await this.simplenoteConverter.convertSimplenoteBackupFileToNotes(file)
+    } else if (type === 'evernote') {
+      return await this.evernoteConverter.convertENEXFileToNotesAndTags(file, false)
+    } else if (type === 'plaintext') {
+      return [await this.plaintextConverter.convertPlaintextFileToNote(file)]
+    }
+
+    return []
   }
 
   async importFromTransferPayloads(payloads: DecryptedTransferPayload[]): Promise<void> {
