@@ -55,10 +55,7 @@ const initialState: ImportModalState = {
 
 const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewControllerManager }) => {
   const application = useApplication()
-  const [importer] = useState(() => {
-    console.log('ran initializer')
-    return new Importer(application)
-  })
+  const [importer] = useState(() => new Importer(application))
   const [state, dispatch] = useReducer(reducer, initialState)
   const { files } = state
   const filesRef = useStateRef(files)
