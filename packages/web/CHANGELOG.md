@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.130.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.130.2...@standardnotes/web@3.130.3) (2022-12-29)
+
+### Bug Fixes
+
+* Fixed issue where converting a note to Super from the note options menu would not work ([df4acbb](https://github.com/standardnotes/app/commit/df4acbb1bcd9f3bb11717dac47c31c97a1de4ff5))
+* Fixed issue where Super note font size would shift on first load ([113d3be](https://github.com/standardnotes/app/commit/113d3bebb43451ec2c815eabc255dfb790a91431))
+
 ## [3.130.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.130.0...@standardnotes/web@3.130.2) (2022-12-29)
 
 ### Bug Fixes
