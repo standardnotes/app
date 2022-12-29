@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.131.0",
+      "title": "[3.131.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.130.5...@standardnotes/web@3.131.0) (2022-12-29)",
+      "date": null,
+      "body": "### Features\n\n* Added \"Import\" option in the account menu that allows you to import from plaintext/markdown files, Evernote exports, Simplenote exports, Google Keep exports and also convert Aegis exports to TokenVault notes ([6e4bf24](https://github.com/standardnotes/app/commit/6e4bf2417abbd88cbac1fd34ae8306041fa2279f))",
+      "parsed": {
+        "_": [
+          "Added \"Import\" option in the account menu that allows you to import from plaintext/markdown files, Evernote exports, Simplenote exports, Google Keep exports and also convert Aegis exports to TokenVault notes (6e4bf24)"
+        ],
+        "Features": [
+          "Added \"Import\" option in the account menu that allows you to import from plaintext/markdown files, Evernote exports, Simplenote exports, Google Keep exports and also convert Aegis exports to TokenVault notes (6e4bf24)"
+        ]
+      }
+    },
+    {
       "version": "3.130.5",
       "title": "[3.130.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.130.4...@standardnotes/web@3.130.5) (2022-12-29)",
       "date": null,

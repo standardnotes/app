@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.22.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.21.6...@standardnotes/ui-services@1.22.0) (2022-12-29)
+
+### Features
+
+* Added "Import" option in the account menu that allows you to import from plaintext/markdown files, Evernote exports, Simplenote exports, Google Keep exports and also convert Aegis exports to TokenVault notes ([6e4bf24](https://github.com/standardnotes/app/commit/6e4bf2417abbd88cbac1fd34ae8306041fa2279f))
+
 ## [1.21.6](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.21.5...@standardnotes/ui-services@1.21.6) (2022-12-29)
 
 **Note:** Version bump only for package @standardnotes/ui-services
