@@ -24,3 +24,4 @@ export type ImportModalAction =
   | { type: 'setFiles'; files: File[]; service?: NoteImportType }
   | { type: 'updateFile'; file: ImportModalFile }
   | { type: 'removeFile'; id: ImportModalFile['id'] }
+  | { type: 'clearFiles' }

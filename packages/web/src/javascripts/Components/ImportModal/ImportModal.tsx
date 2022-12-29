@@ -1,32 +1,16 @@
-import { classNames, UuidGenerator } from '@standardnotes/snjs'
-import { Importer, NoteImportType } from '@standardnotes/ui-services'
-import { Dispatch, useCallback, useEffect, useReducer, useState } from 'react'
+import { UuidGenerator } from '@standardnotes/snjs'
+import { Importer } from '@standardnotes/ui-services'
+import { useCallback, useReducer, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
 import Button from '../Button/Button'
-import Icon from '../Icon/Icon'
 import { useStateRef } from '../Panes/useStateRef'
 import ModalDialog from '../Shared/ModalDialog'
 import ModalDialogButtons from '../Shared/ModalDialogButtons'
 import ModalDialogDescription from '../Shared/ModalDialogDescription'
 import ModalDialogLabel from '../Shared/ModalDialogLabel'
+import { ImportModalFileItem } from './ImportModalFileItem'
 import ImportModalInitialPage from './InitialPage'
-import { ImportModalAction, ImportModalFile, ImportModalState } from './Types'
-
-const ServiceColors: Record<NoteImportType, string> = {
-  evernote: 'bg-[#14cc45] text-[#000]',
-  simplenote: 'bg-[#3360cc] text-default',
-  'google-keep': 'bg-[#fbbd00] text-[#000]',
-  aegis: 'bg-[#0d47a1] text-default',
-  plaintext: 'bg-default border border-border',
-}
-
-const ServiceIcons: Record<NoteImportType, string> = {
-  evernote: 'evernote',
-  simplenote: 'simplenote',
-  'google-keep': 'gkeep',
-  aegis: 'aegis',
-  plaintext: 'plain-text',
-}
+import { ImportModalAction, ImportModalState } from './Types'
 
 const reducer = (state: ImportModalState, action: ImportModalAction): ImportModalState => {
   switch (action.type) {
@@ -55,94 +39,16 @@ const reducer = (state: ImportModalState, action: ImportModalAction): ImportModa
         ...state,
         files: state.files.filter((file) => file.id !== action.id),
       }
+    case 'clearFiles':
+      return {
+        ...state,
+        files: [],
+      }
   }
 }
 
 const initialState: ImportModalState = {
   files: [],
-}
-
-const ImportModalFileItem = ({ file, dispatch }: { file: ImportModalFile; dispatch: Dispatch<ImportModalAction> }) => {
-  const setFileService = useCallback(
-    (service: NoteImportType | null) => {
-      dispatch({
-        type: 'updateFile',
-        file: {
-          ...file,
-          service,
-          status: service ? 'ready' : 'pending',
-        },
-      })
-    },
-    [dispatch, file],
-  )
-
-  useEffect(() => {
-    const detect = async () => {
-      const detectedService = await Importer.detectService(file.file)
-      setFileService(detectedService)
-    }
-    if (file.service === undefined) {
-      void detect()
-    }
-  }, [dispatch, file, setFileService])
-
-  return (
-    <div className="flex items-center py-2 px-2">
-      {file.service && (
-        <div className={classNames('mr-4 rounded p-2', ServiceColors[file.service])}>
-          <Icon type={ServiceIcons[file.service]} size="medium" />
-        </div>
-      )}
-      <div className="mr-auto flex flex-col">
-        <div>{file.file.name}</div>
-        <div className="text-xs opacity-75">
-          {file.status === 'ready' && 'Ready to parse.'}
-          {file.status === 'pending' && 'Could not auto-detect service. Please select manually.'}
-          {file.status === 'parsing' && 'Parsing...'}
-          {file.status === 'importing' && 'Importing...'}
-          {file.status === 'error' && `${file.error}`}
-          {file.status === 'success' && 'Imported successfully!'}
-        </div>
-      </div>
-      {file.service == null && (
-        <>
-          <form
-            className="flex items-center"
-            onSubmit={(event) => {
-              event.preventDefault()
-              const form = event.target as HTMLFormElement
-              const service = form.elements[0] as HTMLSelectElement
-              setFileService(service.value as NoteImportType)
-            }}
-          >
-            <select className="mr-2 rounded border border-border bg-default px-2 py-1 text-sm">
-              <option value="evernote">Evernote</option>
-              <option value="simplenote">Simplenote</option>
-              <option value="google-keep">Google Keep</option>
-              <option value="aegis">Aegis</option>
-              <option value="plaintext">Plaintext</option>
-            </select>
-            <button type="submit" className="rounded border border-border bg-default p-1.5 hover:bg-contrast">
-              <Icon type="check" size="medium" />
-            </button>
-          </form>
-          <button
-            className="ml-2 rounded border border-border bg-default p-1.5 hover:bg-contrast"
-            onClick={() => {
-              dispatch({
-                type: 'removeFile',
-                id: file.id,
-              })
-            }}
-          >
-            <Icon type="close" size="medium" />
-          </button>
-        </>
-      )}
-      {file.status === 'success' && <Icon type="check-circle-filled" className="text-success" />}
-    </div>
-  )
 }
 
 const ImportModal = () => {
@@ -214,15 +120,15 @@ const ImportModal = () => {
     }
   }, [filesRef, importer])
 
+  const closeDialog = useCallback(() => {
+    dispatch({
+      type: 'clearFiles',
+    })
+  }, [])
+
   return (
     <ModalDialog>
-      <ModalDialogLabel
-        closeDialog={function (): void {
-          //
-        }}
-      >
-        Import
-      </ModalDialogLabel>
+      <ModalDialogLabel closeDialog={closeDialog}>Import</ModalDialogLabel>
       <ModalDialogDescription>
         {!files.length && <ImportModalInitialPage dispatch={dispatch} />}
         {files.length > 0 && (
@@ -239,7 +145,7 @@ const ImportModal = () => {
             Parse & import
           </Button>
         )}
-        <Button>
+        <Button onClick={closeDialog}>
           {files.length > 0 && files.every((file) => file.status === 'success' || file.status === 'error')
             ? 'Close'
             : 'Cancel'}

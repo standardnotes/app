@@ -1,5 +1,6 @@
 import { ClassicFileReader } from '@standardnotes/filepicker'
 import { Importer, NoteImportType } from '@standardnotes/ui-services'
+import { useCallback } from 'react'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import { ImportModalAction } from './Types'
@@ -9,33 +10,36 @@ type Props = {
 }
 
 const ImportModalInitialPage = ({ dispatch }: Props) => {
-  const selectFiles = async (service?: NoteImportType) => {
-    const files = await ClassicFileReader.selectFiles()
+  const selectFiles = useCallback(
+    async (service?: NoteImportType) => {
+      const files = await ClassicFileReader.selectFiles()
 
-    const filteredFiles: File[] = []
+      const filteredFiles: File[] = []
 
-    for (const file of files) {
-      if (!service) {
-        filteredFiles.push(file)
+      for (const file of files) {
+        if (!service) {
+          filteredFiles.push(file)
+        }
+
+        if (service === (await Importer.detectService(file))) {
+          filteredFiles.push(file)
+        }
       }
 
-      if (service === (await Importer.detectService(file))) {
-        filteredFiles.push(file)
-      }
-    }
-
-    dispatch({
-      type: 'setFiles',
-      files: filteredFiles,
-      service,
-    })
-  }
+      dispatch({
+        type: 'setFiles',
+        files: filteredFiles,
+        service,
+      })
+    },
+    [dispatch],
+  )
 
   return (
     <>
       <button
         onClick={() => selectFiles()}
-        className="flex min-h-[30vh] w-full flex-col items-center justify-center gap-2 rounded border-2 border-dashed border-info hover:border-4"
+        className="flex min-h-[30vh] w-full flex-col items-center justify-center gap-2 rounded border-2 border-dashed border-info p-2 hover:border-4"
       >
         <div className="text-lg font-semibold">Drag and drop files to auto-detect and import</div>
         <div className="text-sm">Or click to open file picker</div>
