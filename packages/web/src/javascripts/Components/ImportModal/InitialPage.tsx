@@ -73,6 +73,18 @@ const ImportModalInitialPage = ({ dispatch }: Props) => {
           <Icon type="aegis" className="mr-2" />
           Aegis Authenticator
         </Button>
+        <Button className="flex items-center bg-info !py-2" onClick={() => selectFiles('plaintext')} primary>
+          <Icon type="plain-text" className="mr-2" />
+          Plaintext
+        </Button>
+        <Button
+          className="flex items-center bg-accessory-tint-2 !py-2 text-text"
+          primary
+          onClick={() => selectFiles('plaintext')}
+        >
+          <Icon type="markdown" className="mr-2" />
+          Markdown
+        </Button>
       </div>
     </>
   )
