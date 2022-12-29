@@ -29,11 +29,13 @@ export class MomentsService extends AbstractViewController {
           void this.beginTakingPhotos()
         }
       }, ApplicationEvent.LocalDataLoaded),
+
       application.addEventObserver(async () => {
-        this.disableMoments()
+        this.pauseMoments()
       }, ApplicationEvent.BiometricsSoftLockEngaged),
+
       application.addEventObserver(async () => {
-        this.enableMoments()
+        this.resumeMoments()
       }, ApplicationEvent.BiometricsSoftLockDisengaged),
     )
 
@@ -65,6 +67,18 @@ export class MomentsService extends AbstractViewController {
     this.isEnabled = false
 
     clearInterval(this.intervalReference)
+  }
+
+  private pauseMoments(): void {
+    clearInterval(this.intervalReference)
+  }
+
+  private resumeMoments(): void {
+    if (!this.isEnabled) {
+      return
+    }
+
+    void this.beginTakingPhotos()
   }
 
   private beginTakingPhotos() {
