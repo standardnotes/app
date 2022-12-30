@@ -1,3 +1,4 @@
+import { Username, Uuid } from '@standardnotes/domain-core'
 import {
   ListAuthenticatorsResponse,
   DeleteAuthenticatorResponse,
@@ -9,19 +10,19 @@ import {
 
 export interface AuthenticatorApiServiceInterface {
   list(): Promise<ListAuthenticatorsResponse>
-  delete(authenticatorId: string): Promise<DeleteAuthenticatorResponse>
+  delete(authenticatorId: Uuid): Promise<DeleteAuthenticatorResponse>
   generateRegistrationOptions(
-    userUuid: string,
-    username: string,
+    userUuid: Uuid,
+    username: Username,
   ): Promise<GenerateAuthenticatorRegistrationOptionsResponse>
   verifyRegistrationResponse(
-    userUuid: string,
+    userUuid: Uuid,
     name: string,
     registrationCredential: Record<string, unknown>,
   ): Promise<VerifyAuthenticatorRegistrationResponseResponse>
   generateAuthenticationOptions(): Promise<GenerateAuthenticatorAuthenticationOptionsResponse>
   verifyAuthenticationResponse(
-    userUuid: string,
+    userUuid: Uuid,
     authenticationCredential: Record<string, unknown>,
   ): Promise<VerifyAuthenticatorAuthenticationResponseResponse>
 }

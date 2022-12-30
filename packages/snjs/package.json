@@ -36,6 +36,7 @@
     "@babel/preset-env": "*",
     "@standardnotes/api": "workspace:*",
     "@standardnotes/common": "^1.45.0",
+    "@standardnotes/domain-core": "^1.11.0",
     "@standardnotes/domain-events": "^2.88.0",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/features": "workspace:*",
@@ -83,8 +84,5 @@
     "webpack": "*",
     "webpack-cli": "*",
     "webpack-merge": "^5.8.0"
-  },
-  "dependencies": {
-    "@standardnotes/domain-core": "^1.11.0"
   }
 }

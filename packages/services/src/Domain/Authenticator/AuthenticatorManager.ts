@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 import { AuthenticatorApiServiceInterface } from '@standardnotes/api'
+import { Uuid, Username } from '@standardnotes/domain-core'
 
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
@@ -28,7 +29,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
     }
   }
 
-  async delete(authenticatorId: string): Promise<boolean> {
+  async delete(authenticatorId: Uuid): Promise<boolean> {
     try {
       const result = await this.authenticatorApiService.delete(authenticatorId)
 
@@ -42,7 +43,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
     }
   }
 
-  async generateRegistrationOptions(userUuid: string, username: string): Promise<Record<string, unknown> | null> {
+  async generateRegistrationOptions(userUuid: Uuid, username: Username): Promise<Record<string, unknown> | null> {
     try {
       const result = await this.authenticatorApiService.generateRegistrationOptions(userUuid, username)
 
@@ -57,7 +58,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
   }
 
   async verifyRegistrationResponse(
-    userUuid: string,
+    userUuid: Uuid,
     name: string,
     registrationCredential: Record<string, unknown>,
   ): Promise<boolean> {
@@ -93,7 +94,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
   }
 
   async verifyAuthenticationResponse(
-    userUuid: string,
+    userUuid: Uuid,
     authenticationCredential: Record<string, unknown>,
   ): Promise<boolean> {
     try {

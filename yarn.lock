@@ -5329,6 +5329,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@simplewebauthn/browser@npm:^6.2.2":
+  version: 6.2.2
+  resolution: "@simplewebauthn/browser@npm:6.2.2"
+  checksum: 896de5ff32cf2f5bf3f1fe35da83755a07affc66be94c888ab47360f9850b1ac8c8a60efe3c780a3747942e9f4f41728401c8bda3bfa47e4f90120c85f4f9b65
+  languageName: node
+  linkType: hard
+
 "@sinclair/typebox@npm:^0.24.1":
   version: 0.24.46
   resolution: "@sinclair/typebox@npm:0.24.46"
@@ -6004,6 +6011,7 @@ __metadata:
     "@standardnotes/api": "workspace:^"
     "@standardnotes/auth": ^3.19.4
     "@standardnotes/common": ^1.45.0
+    "@standardnotes/domain-core": ^1.11.0
     "@standardnotes/encryption": "workspace:^"
     "@standardnotes/files": "workspace:^"
     "@standardnotes/models": "workspace:^"
@@ -6287,6 +6295,7 @@ __metadata:
     "@reach/listbox": ^0.18.0
     "@reach/tooltip": ^0.18.0
     "@reach/visually-hidden": ^0.18.0
+    "@simplewebauthn/browser": ^6.2.2
     "@standardnotes/authenticator": ^2.3.9
     "@standardnotes/autobiography-theme": ^1.2.7
     "@standardnotes/blocks-editor": "workspace:*"

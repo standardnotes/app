@@ -2,6 +2,7 @@ import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { FunctionComponent } from 'react'
 import TwoFactorAuthWrapper from './TwoFactorAuth/TwoFactorAuthWrapper'
+import U2FWrapper from './U2F/U2FWrapper'
 import { MfaProps } from './TwoFactorAuth/MfaProps'
 import Encryption from './Encryption'
 import PasscodeLock from './PasscodeLock'
@@ -28,6 +29,7 @@ const Security: FunctionComponent<SecurityProps> = (props) => {
       )}
       <Protections application={props.application} />
       <TwoFactorAuthWrapper mfaProvider={props.mfaProvider} userProvider={props.userProvider} />
+      <U2FWrapper mfaProvider={props.mfaProvider} userProvider={props.userProvider} />
       {isNativeMobileWeb && <MultitaskingPrivacy application={props.application} />}
       <PasscodeLock viewControllerManager={props.viewControllerManager} application={props.application} />
       {isNativeMobileWeb && <BiometricsLock application={props.application} />}

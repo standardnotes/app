@@ -250,6 +250,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.workspaceManager
   }
 
+  get authenticators(): ExternalServices.AuthenticatorClientInterface {
+    return this.authenticatorManager
+  }
+
   public get files(): FilesClientInterface {
     return this.fileService
   }

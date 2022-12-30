@@ -12,6 +12,7 @@ import {
   VerifyAuthenticatorAuthenticationResponseResponse,
 } from '../../Response'
 import { AuthenticatorServerInterface } from '../../Server/Authenticator/AuthenticatorServerInterface'
+import { Username, Uuid } from '@standardnotes/domain-core'
 
 export class AuthenticatorApiService implements AuthenticatorApiServiceInterface {
   private operationsInProgress: Map<AuthenticatorApiOperations, boolean>
@@ -38,7 +39,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
     }
   }
 
-  async delete(authenticatorId: string): Promise<DeleteAuthenticatorResponse> {
+  async delete(authenticatorId: Uuid): Promise<DeleteAuthenticatorResponse> {
     if (this.operationsInProgress.get(AuthenticatorApiOperations.Delete)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }
@@ -47,7 +48,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
 
     try {
       const response = await this.authenticatorServer.delete({
-        authenticatorId,
+        authenticatorId: authenticatorId.value,
       })
 
       return response
@@ -59,8 +60,8 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
   }
 
   async generateRegistrationOptions(
-    userUuid: string,
-    username: string,
+    userUuid: Uuid,
+    username: Username,
   ): Promise<GenerateAuthenticatorRegistrationOptionsResponse> {
     if (this.operationsInProgress.get(AuthenticatorApiOperations.GenerateRegistrationOptions)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
@@ -70,8 +71,8 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
 
     try {
       const response = await this.authenticatorServer.generateRegistrationOptions({
-        username,
-        userUuid,
+        username: username.value,
+        userUuid: userUuid.value,
       })
 
       return response
@@ -83,7 +84,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
   }
 
   async verifyRegistrationResponse(
-    userUuid: string,
+    userUuid: Uuid,
     name: string,
     registrationCredential: Record<string, unknown>,
   ): Promise<VerifyAuthenticatorRegistrationResponseResponse> {
@@ -95,7 +96,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
 
     try {
       const response = await this.authenticatorServer.verifyRegistrationResponse({
-        userUuid,
+        userUuid: userUuid.value,
         name,
         registrationCredential,
       })
@@ -127,7 +128,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
   }
 
   async verifyAuthenticationResponse(
-    userUuid: string,
+    userUuid: Uuid,
     authenticationCredential: Record<string, unknown>,
   ): Promise<VerifyAuthenticatorAuthenticationResponseResponse> {
     if (this.operationsInProgress.get(AuthenticatorApiOperations.VerifyAuthenticationResponse)) {
@@ -139,7 +140,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
     try {
       const response = await this.authenticatorServer.verifyAuthenticationResponse({
         authenticationCredential,
-        userUuid,
+        userUuid: userUuid.value,
       })
 
       return response
