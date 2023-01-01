@@ -42,12 +42,6 @@ jobs:
         with:
           lane: 'android dev'
           subdirectory: 'packages/mobile'
-
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@main
-        with:
-          path: packages/mobile
   ios:
     env:
       ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD: true

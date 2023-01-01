@@ -180,12 +180,6 @@ jobs:
       - name: Generate Checksums
         run: node scripts/sums.mjs
 
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@main
-        with:
-          path: packages/desktop
-
       - name: Generate Release Notes
         uses: ./actions/release-notes
         with:

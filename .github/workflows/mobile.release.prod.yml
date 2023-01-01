@@ -43,12 +43,6 @@ jobs:
           lane: 'android prod'
           subdirectory: 'packages/mobile'
 
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@main
-        with:
-          path: packages/mobile
-
       - name: Generate Release Notes
         uses: ./actions/release-notes
         with:
@@ -60,8 +54,8 @@ jobs:
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.CI_PAT_TOKEN }}
-          tag_name: "@standardnotes/mobile@${{ steps.package-version.outputs.current-version}}"
-          name: "Mobile ${{ steps.package-version.outputs.current-version }}"
+          tag_name: "@standardnotes/mobile@${{ env.PACKAGE_VERSION }}"
+          name: "Mobile ${{ env.PACKAGE_VERSION }}"
           body: ${{ steps.release-notes.outputs.result }}
           prerelease: true
           draft: false

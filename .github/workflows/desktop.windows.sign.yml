@@ -53,8 +53,3 @@ jobs:
         with:
           name: assets
           path: packages/desktop/dist
-      - name: get-npm-version
-        id: package-version
-        uses: martinbeentjes/npm-get-version-action@main
-        with:
-          path: packages/desktop
