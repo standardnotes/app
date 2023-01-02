@@ -1,9 +1,11 @@
+import AsyncStorage from '@react-native-community/async-storage'
 import SNReactNative from '@standardnotes/react-native-utils'
 import { AppleIAPReceipt } from '@standardnotes/services'
 import {
   AppleIAPProductId,
   ApplicationIdentifier,
   Environment,
+  LegacyMobileKeychainStructure,
   LegacyRawKeychainValue,
   MobileDeviceInterface,
   NamespacedRootKeyInKeychain,
@@ -36,15 +38,11 @@ import {
   unlink,
   writeFile,
 } from 'react-native-fs'
-import { MMKV } from 'react-native-mmkv'
 import { hide, show } from 'react-native-privacy-snapshot'
 import Share from 'react-native-share'
 import { AndroidBackHandlerService } from '../AndroidBackHandlerService'
 import { PurchaseManager } from '../PurchaseManager'
 import { AppStateObserverService } from './../AppStateObserverService'
-import { isLegacyMobileKeychain } from './Database/isLegacyMobileKeychain'
-import { isLegacyIdentifier } from './Database/LEGACY_IDENTIFIER'
-import { showLoadFailForItemIds } from './Database/showLoadFailForItemIds'
 import Keychain from './Keychain'
 
 export type BiometricsType = 'Fingerprint' | 'Face ID' | 'Biometrics' | 'Touch ID'
@@ -55,6 +53,41 @@ export enum MobileDeviceEvent {
 
 type MobileDeviceEventHandler = (event: MobileDeviceEvent) => void
 
+/**
+ * This identifier was the database name used in Standard Notes web/desktop.
+ */
+const LEGACY_IDENTIFIER = 'standardnotes'
+
+/**
+ * We use this function to decide if we need to prefix the identifier in getDatabaseKeyPrefix or not.
+ * It is also used to decide if the raw or the namespaced keychain is used.
+ * @param identifier The ApplicationIdentifier
+ */
+const isLegacyIdentifier = function (identifier: ApplicationIdentifier) {
+  return identifier && identifier === LEGACY_IDENTIFIER
+}
+
+function isLegacyMobileKeychain(
+  x: LegacyMobileKeychainStructure | RawKeychainValue,
+): x is LegacyMobileKeychainStructure {
+  return x.ak != undefined
+}
+
+const showLoadFailForItemIds = (failedItemIds: string[]) => {
+  let text =
+    'The following items could not be loaded. This may happen if you are in low-memory conditions, or if the note is very large in size. We recommend breaking up large notes into smaller chunks using the desktop or web app.\n\nItems:\n'
+  let index = 0
+  text += failedItemIds.map((id) => {
+    let result = id
+    if (index !== failedItemIds.length - 1) {
+      result += '\n'
+    }
+    index++
+    return result
+  })
+  Alert.alert('Unable to load item(s)', text)
+}
+
 export class MobileDevice implements MobileDeviceInterface {
   environment: Environment.Mobile = Environment.Mobile
   platform: SNPlatform.Ios | SNPlatform.Android = Platform.OS === 'ios' ? SNPlatform.Ios : SNPlatform.Android
@@ -62,18 +95,12 @@ export class MobileDevice implements MobileDeviceInterface {
   public isDarkMode = false
   public statusBarBgColor: string | undefined
   private componentUrls: Map<UuidString, string> = new Map()
-  private databases: Record<ApplicationIdentifier, MMKV> = {}
 
   constructor(
     private stateObserverService?: AppStateObserverService,
     private androidBackHandlerService?: AndroidBackHandlerService,
     private colorSchemeService?: ColorSchemeObserverService,
   ) {}
-
-  /** Non-application specific DB that stores global RawStorageKey values */
-  private getSharedGlobalDb() {
-    return this.findOrCreateDatabase('rawStorage')
-  }
 
   purchaseSubscriptionIAP(plan: AppleIAPProductId): Promise<AppleIAPReceipt | undefined> {
     return PurchaseManager.getInstance().purchase(plan)
@@ -109,63 +136,96 @@ export class MobileDevice implements MobileDeviceInterface {
     }
   }
 
-  private findOrCreateDatabase(identifier: ApplicationIdentifier): MMKV {
-    const existing = this.databases[identifier]
-    if (existing) {
-      return existing
+  private getDatabaseKeyPrefix(identifier: ApplicationIdentifier) {
+    if (identifier && !isLegacyIdentifier(identifier)) {
+      return `${identifier}-Item-`
+    } else {
+      return 'Item-'
     }
-    const newDb = new MMKV({ id: identifier })
-    this.databases[identifier] = newDb
-    return newDb
   }
 
-  private getDatabaseKeyPrefix() {
-    return 'Item-'
-  }
-
-  private keyForPayloadId(id: string) {
-    return `${this.getDatabaseKeyPrefix()}${id}`
+  private keyForPayloadId(id: string, identifier: ApplicationIdentifier) {
+    return `${this.getDatabaseKeyPrefix(identifier)}${id}`
   }
 
   async getDatabaseKeys(identifier: string): Promise<string[]> {
-    const db = this.findOrCreateDatabase(identifier)
-    const keys = db.getAllKeys()
+    const keys = await AsyncStorage.getAllKeys()
     const filtered = keys.filter((key) => {
-      return key.startsWith(this.getDatabaseKeyPrefix())
+      return key.startsWith(this.getDatabaseKeyPrefix(identifier))
     })
     return filtered
   }
 
-  private async getDatabaseKeyValues(identifier: string, keys: string[]) {
-    const db = this.findOrCreateDatabase(identifier)
-
-    const results: (TransferPayload | unknown)[] = []
-
-    const failedItemIds: string[] = []
-    for (const key of keys) {
+  private async getRawStorageKeyValues(keys: string[]) {
+    const results: { key: string; value: unknown }[] = []
+    if (Platform.OS === 'android') {
+      for (const key of keys) {
+        try {
+          const item = await AsyncStorage.getItem(key)
+          if (item) {
+            results.push({ key, value: item })
+          }
+        } catch (e) {
+          console.error('Error getting item', key, e)
+        }
+      }
+    } else {
       try {
-        const item = db.getString(key)
-        if (item) {
-          try {
-            results.push(JSON.parse(item) as TransferPayload)
-          } catch (e) {
-            results.push(item)
+        for (const item of await AsyncStorage.multiGet(keys)) {
+          if (item[1]) {
+            results.push({ key: item[0], value: item[1] })
           }
         }
       } catch (e) {
-        console.error('Error getting item', key, e)
-        failedItemIds.push(key)
+        console.error('Error getting items', e)
       }
     }
-    if (failedItemIds.length > 0) {
-      showLoadFailForItemIds(failedItemIds)
-    }
+    return results
+  }
 
+  private async getDatabaseKeyValues(keys: string[]) {
+    const results: (TransferPayload | unknown)[] = []
+
+    if (Platform.OS === 'android') {
+      const failedItemIds: string[] = []
+      for (const key of keys) {
+        try {
+          const item = await AsyncStorage.getItem(key)
+          if (item) {
+            try {
+              results.push(JSON.parse(item) as TransferPayload)
+            } catch (e) {
+              results.push(item)
+            }
+          }
+        } catch (e) {
+          console.error('Error getting item', key, e)
+          failedItemIds.push(key)
+        }
+      }
+      if (failedItemIds.length > 0) {
+        showLoadFailForItemIds(failedItemIds)
+      }
+    } else {
+      try {
+        for (const item of await AsyncStorage.multiGet(keys)) {
+          if (item[1]) {
+            try {
+              results.push(JSON.parse(item[1]))
+            } catch (e) {
+              results.push(item[1])
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Error getting items', e)
+      }
+    }
     return results
   }
 
   async getRawStorageValue(key: string) {
-    const item = this.getSharedGlobalDb().getString(key)
+    const item = await AsyncStorage.getItem(key)
     if (item) {
       try {
         return JSON.parse(item)
@@ -186,36 +246,20 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   async getAllRawStorageKeyValues() {
-    const keys = this.getSharedGlobalDb().getAllKeys()
-
-    const db = this.getSharedGlobalDb()
-
-    const results: { key: string; value: unknown }[] = []
-
-    for (const key of keys) {
-      try {
-        const item = db.getString(key)
-        if (item) {
-          results.push({ key, value: item })
-        }
-      } catch (e) {
-        console.error('Error getting item', key, e)
-      }
-    }
-
-    return results
+    const keys = await AsyncStorage.getAllKeys()
+    return this.getRawStorageKeyValues(keys)
   }
 
-  async setRawStorageValue(key: string, value: string) {
-    this.getSharedGlobalDb().set(key, JSON.stringify(value))
+  setRawStorageValue(key: string, value: string): Promise<void> {
+    return AsyncStorage.setItem(key, JSON.stringify(value))
   }
 
-  async removeRawStorageValue(key: string) {
-    return this.getSharedGlobalDb().delete(key)
+  removeRawStorageValue(key: string): Promise<void> {
+    return AsyncStorage.removeItem(key)
   }
 
-  async removeAllRawStorageValues() {
-    return this.getSharedGlobalDb().clearAll()
+  removeAllRawStorageValues(): Promise<void> {
+    return AsyncStorage.clear()
   }
 
   openDatabase(): Promise<{ isNewDatabase?: boolean | undefined } | undefined> {
@@ -226,14 +270,14 @@ export class MobileDevice implements MobileDeviceInterface {
     identifier: ApplicationIdentifier,
   ): Promise<T[]> {
     const keys = await this.getDatabaseKeys(identifier)
-    return this.getDatabaseKeyValues(identifier, keys) as Promise<T[]>
+    return this.getDatabaseKeyValues(keys) as Promise<T[]>
   }
 
   async getRawDatabasePayloadsForKeys<T extends TransferPayload = TransferPayload>(
-    identifier: ApplicationIdentifier,
+    _identifier: ApplicationIdentifier,
     keys: string[],
   ): Promise<T[]> {
-    return this.getDatabaseKeyValues(identifier, keys) as Promise<T[]>
+    return this.getDatabaseKeyValues(keys) as Promise<T[]>
   }
 
   saveRawDatabasePayload(payload: TransferPayload, identifier: ApplicationIdentifier): Promise<void> {
@@ -244,23 +288,20 @@ export class MobileDevice implements MobileDeviceInterface {
     if (payloads.length === 0) {
       return
     }
-
-    const db = this.findOrCreateDatabase(identifier)
-    for (const payload of payloads) {
-      db.set(this.keyForPayloadId(payload.uuid), JSON.stringify(payload))
-    }
+    await Promise.all(
+      payloads.map((item) => {
+        return AsyncStorage.setItem(this.keyForPayloadId(item.uuid, identifier), JSON.stringify(item))
+      }),
+    )
   }
 
-  async removeRawDatabasePayloadWithId(id: string, identifier: ApplicationIdentifier) {
-    const db = this.findOrCreateDatabase(identifier)
-    db.delete(this.keyForPayloadId(id))
+  removeRawDatabasePayloadWithId(id: string, identifier: ApplicationIdentifier): Promise<void> {
+    return this.removeRawStorageValue(this.keyForPayloadId(id, identifier))
   }
 
   async removeAllRawDatabasePayloads(identifier: ApplicationIdentifier): Promise<void> {
     const keys = await this.getDatabaseKeys(identifier)
-    for (const key of keys) {
-      await this.removeRawDatabasePayloadWithId(key, identifier)
-    }
+    return AsyncStorage.multiRemove(keys)
   }
 
   async getNamespacedKeychainValue(

@@ -226,15 +226,10 @@ export class SNSyncService
    * Used in tandem with `loadDatabasePayloads`
    */
   public async getDatabasePayloads(): Promise<FullyFormedTransferPayload[]> {
-    const start = new Date()
-    const result = await this.storageService.getAllRawPayloads().catch((error) => {
+    return this.storageService.getAllRawPayloads().catch((error) => {
       void this.notifyEvent(SyncEvent.DatabaseReadError, error)
       throw error
     })
-    const end = new Date()
-    const duration = end.getTime() - start.getTime()
-    console.log(`Database read took ${duration}ms`)
-    return result
   }
 
   private async processItemsKeysFirstDuringDatabaseLoad(
