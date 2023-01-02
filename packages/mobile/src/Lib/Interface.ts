@@ -148,16 +148,12 @@ export class MobileDevice implements MobileDeviceInterface {
     return `${this.getDatabaseKeyPrefix(identifier)}${id}`
   }
 
-  private async getAllDatabaseKeys(identifier: ApplicationIdentifier) {
+  async getDatabaseKeys(identifier: string): Promise<string[]> {
     const keys = await AsyncStorage.getAllKeys()
     const filtered = keys.filter((key) => {
       return key.startsWith(this.getDatabaseKeyPrefix(identifier))
     })
     return filtered
-  }
-
-  getDatabaseKeys(): Promise<string[]> {
-    return AsyncStorage.getAllKeys()
   }
 
   private async getRawStorageKeyValues(keys: string[]) {
@@ -273,7 +269,14 @@ export class MobileDevice implements MobileDeviceInterface {
   async getAllRawDatabasePayloads<T extends TransferPayload = TransferPayload>(
     identifier: ApplicationIdentifier,
   ): Promise<T[]> {
-    const keys = await this.getAllDatabaseKeys(identifier)
+    const keys = await this.getDatabaseKeys(identifier)
+    return this.getDatabaseKeyValues(keys) as Promise<T[]>
+  }
+
+  async getRawDatabasePayloadsForKeys<T extends TransferPayload = TransferPayload>(
+    _identifier: ApplicationIdentifier,
+    keys: string[],
+  ): Promise<T[]> {
     return this.getDatabaseKeyValues(keys) as Promise<T[]>
   }
 
@@ -297,7 +300,7 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   async removeAllRawDatabasePayloads(identifier: ApplicationIdentifier): Promise<void> {
-    const keys = await this.getAllDatabaseKeys(identifier)
+    const keys = await this.getDatabaseKeys(identifier)
     return AsyncStorage.multiRemove(keys)
   }
 

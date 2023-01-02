@@ -1,3 +1,4 @@
+import { log, LoggingDomain } from './../../Logging'
 import { AccountSyncOperation } from '@Lib/Services/Sync/Account/Operation'
 import { ContentType } from '@standardnotes/common'
 import {
@@ -260,6 +261,8 @@ export class SNSyncService
    * await getting the raw payloads from storage
    */
   public async loadDatabasePayloads(rawPayloads: FullyFormedTransferPayload[]): Promise<void> {
+    log(LoggingDomain.DatabaseLoad, 'Loading database payloads', rawPayloads.length)
+
     if (this.databaseLoaded) {
       throw 'Attempting to initialize already initialized local database.'
     }
@@ -289,6 +292,8 @@ export class SNSyncService
 
     await this.processItemsKeysFirstDuringDatabaseLoad(itemsKeyPayloads)
 
+    log(LoggingDomain.DatabaseLoad, 'Processing priority payloads', contentTypePriorityPayloads.length)
+
     await this.processPayloadBatch(contentTypePriorityPayloads)
 
     /**
@@ -316,6 +321,7 @@ export class SNSyncService
     currentPosition?: number,
     payloadCount?: number,
   ) {
+    log(LoggingDomain.DatabaseLoad, 'Processing batch at index', currentPosition, 'length', batch.length)
     const encrypted: EncryptedPayloadInterface[] = []
     const nonencrypted: (DecryptedPayloadInterface | DeletedPayloadInterface)[] = []
 
@@ -386,7 +392,7 @@ export class SNSyncService
   }
 
   public async markAllItemsAsNeedingSyncAndPersist(): Promise<void> {
-    this.log('Marking all items as needing sync')
+    log(LoggingDomain.Sync, 'Marking all items as needing sync')
 
     const items = this.itemManager.items
     const payloads = items.map((item) => {
@@ -444,7 +450,7 @@ export class SNSyncService
 
     const promise = this.spawnQueue[0]
     removeFromIndex(this.spawnQueue, 0)
-    this.log('Syncing again from spawn queue')
+    log(LoggingDomain.Sync, 'Syncing again from spawn queue')
 
     return this.sync({
       queueStrategy: SyncQueueStrategy.ForceSpawnNew,
@@ -506,7 +512,7 @@ export class SNSyncService
 
   public async sync(options: Partial<SyncOptions> = {}): Promise<unknown> {
     if (this.clientLocked) {
-      this.log('Sync locked by client')
+      log(LoggingDomain.Sync, 'Sync locked by client')
       return
     }
 
@@ -571,7 +577,8 @@ export class SNSyncService
     if (shouldExecuteSync) {
       this.syncLock = true
     } else {
-      this.log(
+      log(
+        LoggingDomain.Sync,
         !canExecuteSync
           ? 'Another function call has begun preparing for sync.'
           : syncInProgress
@@ -659,7 +666,7 @@ export class SNSyncService
     source: SyncSource,
     mode: SyncMode = SyncMode.Default,
   ) {
-    this.log('Syncing offline user', 'source:', source, 'mode:', mode, 'payloads:', payloads)
+    log(LoggingDomain.Sync, 'Syncing offline user', 'source:', source, 'mode:', mode, 'payloads:', payloads)
 
     const operation = new OfflineSyncOperation(payloads, async (type, response) => {
       if (this.dealloced) {
@@ -727,7 +734,8 @@ export class SNSyncService
       this.apiService,
     )
 
-    this.log(
+    log(
+      LoggingDomain.Sync,
       'Syncing online user',
       'source',
       SyncSource[source],
@@ -843,7 +851,7 @@ export class SNSyncService
   }
 
   private async handleOfflineResponse(response: OfflineSyncResponse) {
-    this.log('Offline Sync Response', response)
+    log(LoggingDomain.Sync, 'Offline Sync Response', response)
 
     const masterCollection = this.payloadManager.getMasterCollection()
 
@@ -861,7 +869,7 @@ export class SNSyncService
   }
 
   private handleErrorServerResponse(response: ServerSyncResponse) {
-    this.log('Sync Error', response)
+    log(LoggingDomain.Sync, 'Sync Error', response)
 
     if (response.status === INVALID_SESSION_RESPONSE_STATUS) {
       void this.notifyEvent(SyncEvent.InvalidSession)
@@ -904,7 +912,8 @@ export class SNSyncService
       historyMap,
     )
 
-    this.log(
+    log(
+      LoggingDomain.Sync,
       'Online Sync Response',
       'Operator ID',
       operation.id,
@@ -1060,7 +1069,7 @@ export class SNSyncService
   }
 
   private async syncAgainByHandlingRequestsWaitingInResolveQueue(options: SyncOptions) {
-    this.log('Syncing again from resolve queue')
+    log(LoggingDomain.Sync, 'Syncing again from resolve queue')
     const promise = this.sync({
       source: SyncSource.ResolveQueue,
       checkIntegrity: options.checkIntegrity,

@@ -6,9 +6,9 @@ import {
   RawKeychainValue,
   TransferPayload,
   NamespacedRootKeyInKeychain,
-  extendArray,
   WebOrDesktopDeviceInterface,
   Platform,
+  FullyFormedTransferPayload,
 } from '@standardnotes/snjs'
 import { Database } from '../Database'
 
@@ -115,6 +115,13 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     return this.databaseForIdentifier(identifier).getAllPayloads()
   }
 
+  getRawDatabasePayloadsForKeys<T extends FullyFormedTransferPayload = FullyFormedTransferPayload>(
+    identifier: string,
+    keys: string[],
+  ): Promise<T[]> {
+    return this.databaseForIdentifier(identifier).getPayloadsForKeys(keys)
+  }
+
   async saveRawDatabasePayload(payload: TransferPayload, identifier: ApplicationIdentifier) {
     return this.databaseForIdentifier(identifier).savePayload(payload)
   }
@@ -141,14 +148,9 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     return keychain[identifier]
   }
 
-  async getDatabaseKeys(): Promise<string[]> {
-    const keys: string[] = []
-
-    for (const database of this.databases) {
-      extendArray(keys, await database.getAllKeys())
-    }
-
-    return keys
+  async getDatabaseKeys(identifier: string): Promise<string[]> {
+    const database = this.databaseForIdentifier(identifier)
+    return database.getAllKeys()
   }
 
   async setNamespacedKeychainValue(value: NamespacedRootKeyInKeychain, identifier: ApplicationIdentifier) {

@@ -41,7 +41,7 @@ export interface DeviceInterface {
   /**
    * In a key/value database, this function returns just the keys.
    */
-  getDatabaseKeys(): Promise<string[]>
+  getDatabaseKeys(identifier: string): Promise<string[]>
 
   /**
    * Remove all keychain and database data from device.
@@ -54,6 +54,11 @@ export interface DeviceInterface {
 
   getAllRawDatabasePayloads<T extends FullyFormedTransferPayload = FullyFormedTransferPayload>(
     identifier: ApplicationIdentifier,
+  ): Promise<T[]>
+
+  getRawDatabasePayloadsForKeys<T extends FullyFormedTransferPayload = FullyFormedTransferPayload>(
+    identifier: ApplicationIdentifier,
+    keys: string[],
   ): Promise<T[]>
 
   saveRawDatabasePayload(payload: TransferPayload, identifier: ApplicationIdentifier): Promise<void>

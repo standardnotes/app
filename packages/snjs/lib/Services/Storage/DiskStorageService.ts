@@ -20,6 +20,7 @@ import {
   PayloadTimestampDefaults,
   LocalStorageEncryptedContextualPayload,
   Environment,
+  FullyFormedTransferPayload,
 } from '@standardnotes/models'
 
 /**
@@ -377,8 +378,16 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     await this.immediatelyPersistValuesToDisk()
   }
 
-  public async getAllRawPayloads() {
+  public async getAllRawPayloads(): Promise<FullyFormedTransferPayload[]> {
     return this.deviceInterface.getAllRawDatabasePayloads(this.identifier)
+  }
+
+  public async getRawPayloadsForKeys(keys: string[]): Promise<FullyFormedTransferPayload[]> {
+    return this.deviceInterface.getRawDatabasePayloadsForKeys(this.identifier, keys)
+  }
+
+  getDatabaseKeys(): Promise<string[]> {
+    return this.deviceInterface.getDatabaseKeys(this.identifier)
   }
 
   public async savePayload(payload: FullyFormedPayloadInterface): Promise<void> {
@@ -482,7 +491,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
         currentPersistPromise: this.currentPersistPromise != undefined,
         isStorageWrapped: this.isStorageWrapped(),
         allRawPayloadsCount: (await this.getAllRawPayloads()).length,
-        databaseKeys: await this.deviceInterface.getDatabaseKeys(),
+        databaseKeys: await this.deviceInterface.getDatabaseKeys(this.identifier),
       },
     }
   }
