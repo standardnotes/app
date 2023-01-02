@@ -9,8 +9,6 @@
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIcons</key>
-	<key>RCTAsyncStorageExcludeFromBackup</key>
-	<false/>
 	<dict>
 		<key>CFBundleAlternateIcons</key>
 		<dict>
