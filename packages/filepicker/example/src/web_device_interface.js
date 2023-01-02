@@ -18,17 +18,6 @@ export default class WebDeviceInterface {
     }
   }
 
-  async getAllRawStorageKeyValues() {
-    const results = []
-    for (const key of Object.keys(localStorage)) {
-      results.push({
-        key: key,
-        value: localStorage[key],
-      })
-    }
-    return results
-  }
-
   async setRawStorageValue(key, value) {
     localStorage.setItem(key, value)
   }

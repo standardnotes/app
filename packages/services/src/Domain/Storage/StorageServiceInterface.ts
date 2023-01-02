@@ -8,7 +8,6 @@ import { StoragePersistencePolicies, StorageValueModes } from './StorageTypes'
 
 export interface StorageServiceInterface {
   getAllRawPayloads(): Promise<FullyFormedTransferPayload[]>
-  getDatabaseKeys(): Promise<string[]>
   getRawPayloadsForKeys(keys: string[]): Promise<FullyFormedTransferPayload[]>
   getValue<T>(key: string, mode?: StorageValueModes, defaultValue?: T): T
   canDecryptWithKey(key: RootKeyInterface): Promise<boolean>

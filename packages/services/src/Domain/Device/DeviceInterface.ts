@@ -21,8 +21,6 @@ export interface DeviceInterface {
 
   getJsonParsedRawStorageValue(key: string): Promise<unknown | undefined>
 
-  getAllRawStorageKeyValues(): Promise<{ key: string; value: unknown }[]>
-
   setRawStorageValue(key: string, value: string): Promise<void>
 
   removeRawStorageValue(key: string): Promise<void>
@@ -37,11 +35,6 @@ export interface DeviceInterface {
    * @returns { isNewDatabase } - True if the database was newly created
    */
   openDatabase(identifier: ApplicationIdentifier): Promise<{ isNewDatabase?: boolean } | undefined>
-
-  /**
-   * In a key/value database, this function returns just the keys.
-   */
-  getDatabaseKeys(identifier: string): Promise<string[]>
 
   /**
    * Remove all keychain and database data from device.

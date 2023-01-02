@@ -33,9 +33,6 @@ describe('application', () => {
       }
       return undefined
     })
-    device.getDatabaseKeys = async () => {
-      return Promise.resolve(['1', '2', '3'])
-    }
 
     application = new SNApplication({
       environment: Environment.Mobile,

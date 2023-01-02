@@ -72,17 +72,6 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     return result
   }
 
-  async getAllRawStorageKeyValues() {
-    const results = []
-    for (const key of Object.keys(localStorage)) {
-      results.push({
-        key: key,
-        value: localStorage[key],
-      })
-    }
-    return results
-  }
-
   async setRawStorageValue(key: string, value: string) {
     localStorage.setItem(key, value)
   }
@@ -146,11 +135,6 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     }
 
     return keychain[identifier]
-  }
-
-  async getDatabaseKeys(identifier: string): Promise<string[]> {
-    const database = this.databaseForIdentifier(identifier)
-    return database.getAllKeys()
   }
 
   async setNamespacedKeychainValue(value: NamespacedRootKeyInKeychain, identifier: ApplicationIdentifier) {

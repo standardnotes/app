@@ -386,10 +386,6 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     return this.deviceInterface.getRawDatabasePayloadsForKeys(this.identifier, keys)
   }
 
-  getDatabaseKeys(): Promise<string[]> {
-    return this.deviceInterface.getDatabaseKeys(this.identifier)
-  }
-
   public async savePayload(payload: FullyFormedPayloadInterface): Promise<void> {
     return this.savePayloads([payload])
   }
@@ -491,7 +487,6 @@ export class DiskStorageService extends Services.AbstractService implements Serv
         currentPersistPromise: this.currentPersistPromise != undefined,
         isStorageWrapped: this.isStorageWrapped(),
         allRawPayloadsCount: (await this.getAllRawPayloads()).length,
-        databaseKeys: await this.deviceInterface.getDatabaseKeys(this.identifier),
       },
     }
   }
