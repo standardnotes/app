@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage'
 
-export class KeyValueStore {
+export class LegacyKeyValueStore {
   set(key: string, value: string): Promise<void> {
     return AsyncStorage.setItem(key, JSON.stringify(value))
   }

@@ -44,8 +44,8 @@ import { AndroidBackHandlerService } from '../AndroidBackHandlerService'
 import { AppStateObserverService } from '../AppStateObserverService'
 import { PurchaseManager } from '../PurchaseManager'
 import { Database } from './Database/Database'
-import { KeyValueStore } from './Database/KeyValueStore'
 import { isLegacyIdentifier, isLegacyMobileKeychain } from './Database/LegacyIdentifier'
+import { LegacyKeyValueStore } from './Database/LegacyKeyValueStore'
 import Keychain from './Keychain'
 
 export type BiometricsType = 'Fingerprint' | 'Face ID' | 'Biometrics' | 'Touch ID'
@@ -63,8 +63,8 @@ export class MobileDevice implements MobileDeviceInterface {
   public isDarkMode = false
   public statusBarBgColor: string | undefined
   private componentUrls: Map<UuidString, string> = new Map()
-  private database = new Database()
-  private keyValueStore = new KeyValueStore()
+  private keyValueStore = new LegacyKeyValueStore()
+  private databases = new Map<string, Database>()
 
   constructor(
     private stateObserverService?: AppStateObserverService,
@@ -74,6 +74,17 @@ export class MobileDevice implements MobileDeviceInterface {
 
   purchaseSubscriptionIAP(plan: AppleIAPProductId): Promise<AppleIAPReceipt | undefined> {
     return PurchaseManager.getInstance().purchase(plan)
+  }
+
+  private findOrCreateDatabase(identifier: ApplicationIdentifier): Database {
+    const existing = this.databases.get(identifier)
+    if (existing) {
+      return existing
+    }
+
+    const newDb = new Database(identifier)
+    this.databases.set(identifier, newDb)
+    return newDb
   }
 
   deinit() {
@@ -127,22 +138,22 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   getDatabaseLoadChunks(options: DatabaseLoadOptions, identifier: string): Promise<DatabaseLoadChunkResponse> {
-    return this.database.getLoadChunks(options, identifier)
+    return this.findOrCreateDatabase(identifier).getLoadChunks(options)
   }
 
   async getAllDatabaseEntries<T extends TransferPayload = TransferPayload>(
     identifier: ApplicationIdentifier,
   ): Promise<T[]> {
-    const keys = await this.database.getAllKeys(identifier)
-    const payloads = await this.database.multiGet<T>(keys)
+    const keys = await this.findOrCreateDatabase(identifier).getAllKeys()
+    const payloads = await this.findOrCreateDatabase(identifier).multiGet<T>(keys)
     return payloads
   }
 
   async getDatabaseEntries<T extends TransferPayload = TransferPayload>(
-    _identifier: ApplicationIdentifier,
+    identifier: ApplicationIdentifier,
     keys: string[],
   ): Promise<T[]> {
-    return this.database.multiGet<T>(keys)
+    return this.findOrCreateDatabase(identifier).multiGet<T>(keys)
   }
 
   saveDatabaseEntry(payload: TransferPayload, identifier: ApplicationIdentifier): Promise<void> {
@@ -150,15 +161,15 @@ export class MobileDevice implements MobileDeviceInterface {
   }
 
   async saveDatabaseEntries(payloads: TransferPayload[], identifier: ApplicationIdentifier): Promise<void> {
-    return this.database.setItems(payloads, identifier)
+    return this.findOrCreateDatabase(identifier).setItems(payloads)
   }
 
   removeDatabaseEntry(id: string, identifier: ApplicationIdentifier): Promise<void> {
-    return this.database.deleteItem(id, identifier)
+    return this.findOrCreateDatabase(identifier).deleteItem(id)
   }
 
   async removeAllDatabaseEntries(identifier: ApplicationIdentifier): Promise<void> {
-    return this.database.deleteAll(identifier)
+    return this.findOrCreateDatabase(identifier).deleteAll()
   }
 
   async getNamespacedKeychainValue(

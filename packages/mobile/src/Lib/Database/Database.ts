@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-community/async-storage'
 import {
-  ApplicationIdentifier,
   DatabaseLoadChunk,
   DatabaseLoadChunkResponse,
   DatabaseLoadOptions,
@@ -10,32 +9,38 @@ import {
 import { Platform } from 'react-native'
 import { DatabaseInterface } from './DatabaseInterface'
 import { DatabaseMetadata } from './DatabaseMetadata'
+import { FlashKeyValueStore } from './FlashKeyValueStore'
 import { isLegacyIdentifier } from './LegacyIdentifier'
 import { showLoadFailForItemIds } from './showLoadFailForItemIds'
 
 export class Database implements DatabaseInterface {
-  private metadataStore = new DatabaseMetadata(this)
+  private metadataStore: DatabaseMetadata
+
+  constructor(private identifier: string) {
+    const flashStorage = new FlashKeyValueStore(identifier)
+    this.metadataStore = new DatabaseMetadata(identifier, flashStorage)
+  }
 
   public async needsMigration(): Promise<boolean> {
     return this.metadataStore.needsMigration()
   }
 
-  private databaseKeyForPayloadId(id: string, identifier: ApplicationIdentifier) {
-    return `${this.getDatabaseKeyPrefix(identifier)}${id}`
+  private databaseKeyForPayloadId(id: string) {
+    return `${this.getDatabaseKeyPrefix()}${id}`
   }
 
-  private getDatabaseKeyPrefix(identifier: ApplicationIdentifier) {
-    if (identifier && !isLegacyIdentifier(identifier)) {
-      return `${identifier}-Item-`
+  private getDatabaseKeyPrefix() {
+    if (this.identifier && !isLegacyIdentifier(this.identifier)) {
+      return `${this.identifier}-Item-`
     } else {
       return 'Item-'
     }
   }
 
-  async getAllKeys(identifier: string): Promise<string[]> {
+  async getAllKeys(): Promise<string[]> {
     const keys = await AsyncStorage.getAllKeys()
     const filtered = keys.filter((key) => {
-      return key.startsWith(this.getDatabaseKeyPrefix(identifier))
+      return key.startsWith(this.getDatabaseKeyPrefix())
     })
     return filtered
   }
@@ -44,18 +49,18 @@ export class Database implements DatabaseInterface {
     return AsyncStorage.multiRemove(keys)
   }
 
-  async deleteItem(itemUuid: string, appIdentifier: string): Promise<void> {
-    const key = this.databaseKeyForPayloadId(itemUuid, appIdentifier)
-    await this.metadataStore.deleteMetadataItem(itemUuid, appIdentifier)
+  async deleteItem(itemUuid: string): Promise<void> {
+    const key = this.databaseKeyForPayloadId(itemUuid)
+    this.metadataStore.deleteMetadataItem(itemUuid)
     return this.multiDelete([key])
   }
 
-  async deleteAll(identifier: ApplicationIdentifier): Promise<void> {
-    const keys = await this.getAllKeys(identifier)
+  async deleteAll(): Promise<void> {
+    const keys = await this.getAllKeys()
     return this.multiDelete(keys)
   }
 
-  async setItems(items: TransferPayload[], identifier: ApplicationIdentifier): Promise<void> {
+  async setItems(items: TransferPayload[]): Promise<void> {
     if (items.length === 0) {
       return
     }
@@ -63,26 +68,26 @@ export class Database implements DatabaseInterface {
     await Promise.all(
       items.map((item) => {
         return Promise.all([
-          AsyncStorage.setItem(this.databaseKeyForPayloadId(item.uuid, identifier), JSON.stringify(item)),
-          this.metadataStore.setMetadataForPayloads([item], identifier),
+          AsyncStorage.setItem(this.databaseKeyForPayloadId(item.uuid), JSON.stringify(item)),
+          this.metadataStore.setMetadataForPayloads([item]),
         ])
       }),
     )
   }
 
-  async getLoadChunks(options: DatabaseLoadOptions, identifier: string): Promise<DatabaseLoadChunkResponse> {
-    const metadataItems = await this.metadataStore.getAllMetadataItems()
+  async getLoadChunks(options: DatabaseLoadOptions): Promise<DatabaseLoadChunkResponse> {
+    const metadataItems = this.metadataStore.getAllMetadataItems()
     const sorted = GetSortedPayloadsByPriority(metadataItems, options)
 
     const itemsKeysChunk: DatabaseLoadChunk = {
-      keys: sorted.itemsKeyPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid, identifier)),
+      keys: sorted.itemsKeyPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid)),
     }
 
     const contentTypePriorityChunk: DatabaseLoadChunk = {
-      keys: sorted.contentTypePriorityPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid, identifier)),
+      keys: sorted.contentTypePriorityPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid)),
     }
 
-    const remainingKeys = sorted.remainingPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid, identifier))
+    const remainingKeys = sorted.remainingPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid))
 
     const remainingKeysChunks: DatabaseLoadChunk[] = []
     for (let i = 0; i < remainingKeys.length; i += options.batchSize) {
