@@ -177,6 +177,10 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     window.ReactNativeWebView.postMessage('[web log] ' + args.join(' '));
   }
 
+  console.error = (...args) => {
+    window.ReactNativeWebView.postMessage('[web log] ' + args.join(' '));
+  }
+
   ${WebProcessDeviceInterface}
   ${WebProcessMessageSender}
 
