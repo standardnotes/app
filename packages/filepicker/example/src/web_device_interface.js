@@ -46,7 +46,7 @@ export default class WebDeviceInterface {
     return `${this._getDatabaseKeyPrefix(identifier)}${id}`
   }
 
-  async getAllRawDatabasePayloads(identifier) {
+  async getAllDatabaseEntries(identifier) {
     const models = []
     for (const key in localStorage) {
       if (key.startsWith(this._getDatabaseKeyPrefix(identifier))) {
@@ -56,21 +56,21 @@ export default class WebDeviceInterface {
     return models
   }
 
-  async saveRawDatabasePayload(payload, identifier) {
+  async saveDatabaseEntry(payload, identifier) {
     localStorage.setItem(this._keyForPayloadId(payload.uuid, identifier), JSON.stringify(payload))
   }
 
-  async saveRawDatabasePayloads(payloads, identifier) {
+  async saveDatabaseEntries(payloads, identifier) {
     for (const payload of payloads) {
-      await this.saveRawDatabasePayload(payload, identifier)
+      await this.saveDatabaseEntry(payload, identifier)
     }
   }
 
-  async removeRawDatabasePayloadWithId(id, identifier) {
+  async removeDatabaseEntry(id, identifier) {
     localStorage.removeItem(this._keyForPayloadId(id, identifier))
   }
 
-  async removeAllRawDatabasePayloads(identifier) {
+  async removeAllDatabaseEntries(identifier) {
     for (const key in localStorage) {
       if (key.startsWith(this._getDatabaseKeyPrefix(identifier))) {
         delete localStorage[key]

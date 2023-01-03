@@ -1,8 +1,10 @@
 import SNReactNative from '@standardnotes/react-native-utils'
-import { AppleIAPReceipt } from '@standardnotes/services'
 import {
   AppleIAPProductId,
+  AppleIAPReceipt,
   ApplicationIdentifier,
+  DatabaseLoadChunkResponse,
+  DatabaseLoadOptions,
   Environment,
   LegacyRawKeychainValue,
   MobileDeviceInterface,
@@ -124,7 +126,11 @@ export class MobileDevice implements MobileDeviceInterface {
     return Promise.resolve({ isNewDatabase: false })
   }
 
-  async getAllRawDatabasePayloads<T extends TransferPayload = TransferPayload>(
+  getDatabaseLoadChunks(options: DatabaseLoadOptions, identifier: string): Promise<DatabaseLoadChunkResponse> {
+    return this.database.getLoadChunks(options, identifier)
+  }
+
+  async getAllDatabaseEntries<T extends TransferPayload = TransferPayload>(
     identifier: ApplicationIdentifier,
   ): Promise<T[]> {
     const keys = await this.database.getAllKeys(identifier)
@@ -132,26 +138,26 @@ export class MobileDevice implements MobileDeviceInterface {
     return payloads
   }
 
-  async getRawDatabasePayloadsForKeys<T extends TransferPayload = TransferPayload>(
+  async getDatabaseEntries<T extends TransferPayload = TransferPayload>(
     _identifier: ApplicationIdentifier,
     keys: string[],
   ): Promise<T[]> {
     return this.database.multiGet<T>(keys)
   }
 
-  saveRawDatabasePayload(payload: TransferPayload, identifier: ApplicationIdentifier): Promise<void> {
-    return this.saveRawDatabasePayloads([payload], identifier)
+  saveDatabaseEntry(payload: TransferPayload, identifier: ApplicationIdentifier): Promise<void> {
+    return this.saveDatabaseEntries([payload], identifier)
   }
 
-  async saveRawDatabasePayloads(payloads: TransferPayload[], identifier: ApplicationIdentifier): Promise<void> {
+  async saveDatabaseEntries(payloads: TransferPayload[], identifier: ApplicationIdentifier): Promise<void> {
     return this.database.setItems(payloads, identifier)
   }
 
-  removeRawDatabasePayloadWithId(id: string, identifier: ApplicationIdentifier): Promise<void> {
+  removeDatabaseEntry(id: string, identifier: ApplicationIdentifier): Promise<void> {
     return this.database.deleteItem(id, identifier)
   }
 
-  async removeAllRawDatabasePayloads(identifier: ApplicationIdentifier): Promise<void> {
+  async removeAllDatabaseEntries(identifier: ApplicationIdentifier): Promise<void> {
     return this.database.deleteAll(identifier)
   }
 

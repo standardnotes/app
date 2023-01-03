@@ -25,7 +25,7 @@ describe('application', () => {
 
     device = {} as jest.Mocked<DeviceInterface>
     device.openDatabase = jest.fn().mockResolvedValue(true)
-    device.getAllRawDatabasePayloads = jest.fn().mockReturnValue([])
+    device.getAllDatabaseEntries = jest.fn().mockReturnValue([])
     device.setRawStorageValue = jest.fn()
     device.getRawStorageValue = jest.fn().mockImplementation((key) => {
       if (key === namespacedKey(identifier, RawStorageKey.SnjsVersion)) {

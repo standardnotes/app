@@ -19,7 +19,6 @@ import { SNHistoryManager } from '../History/HistoryManager'
 import { SNLog } from '@Lib/Log'
 import { SNSessionManager } from '../Session/SessionManager'
 import { DiskStorageService } from '../Storage/DiskStorageService'
-import { GetSortedPayloadsByPriority } from '@Lib/Services/Sync/Utils'
 import { SyncClientInterface } from './SyncClientInterface'
 import { SyncPromise } from './Types'
 import { SyncOpStatus } from '@Lib/Services/Sync/SyncOpStatus'
@@ -75,6 +74,7 @@ import {
   SyncServiceInterface,
   DiagnosticInfo,
   EncryptionService,
+  DeviceInterface,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -143,6 +143,8 @@ export class SNSyncService
     private payloadManager: PayloadManager,
     private apiService: SNApiService,
     private historyService: SNHistoryManager,
+    private device: DeviceInterface,
+    private identifier: string,
     private readonly options: ApplicationSyncOptions,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
@@ -235,6 +237,10 @@ export class SNSyncService
   private async processItemsKeysFirstDuringDatabaseLoad(
     itemsKeysPayloads: FullyFormedPayloadInterface[],
   ): Promise<void> {
+    if (itemsKeysPayloads.length === 0) {
+      return
+    }
+
     const encryptedItemsKeysPayloads = itemsKeysPayloads.filter(isEncryptedPayload)
 
     const originallyDecryptedItemsKeysPayloads = itemsKeysPayloads.filter(
@@ -260,41 +266,35 @@ export class SNSyncService
    * They are fed as a parameter so that callers don't have to await the loading, but can
    * await getting the raw payloads from storage
    */
-  public async loadDatabasePayloads(rawPayloads: FullyFormedTransferPayload[]): Promise<void> {
-    log(LoggingDomain.DatabaseLoad, 'Loading database payloads', rawPayloads.length)
+  public async loadDatabasePayloads(): Promise<void> {
+    log(LoggingDomain.DatabaseLoad, 'Loading database payloads')
 
     if (this.databaseLoaded) {
       throw 'Attempting to initialize already initialized local database.'
     }
 
-    if (rawPayloads.length === 0) {
-      this.databaseLoaded = true
-      this.opStatus.setDatabaseLoadStatus(0, 0, true)
-      return
-    }
+    const chunks = await this.device.getDatabaseLoadChunks(
+      {
+        batchSize: this.options.loadBatchSize,
+        contentTypePriority: this.localLoadPriorty,
+        uuidPriority: this.launchPriorityUuids,
+      },
+      this.identifier,
+    )
 
-    const unsortedPayloads = rawPayloads
-      .map((rawPayload) => {
+    const itemsKeyEntries = await this.device.getDatabaseEntries(this.identifier, chunks.itemsKeys.keys)
+    const itemsKeyPayloads = itemsKeyEntries
+      .map((entry) => {
         try {
-          return CreatePayload(rawPayload, PayloadSource.Constructor)
+          return CreatePayload(entry, PayloadSource.Constructor)
         } catch (e) {
-          console.error('Creating payload fail+ed', e)
+          console.error('Creating payload failed', e)
           return undefined
         }
       })
       .filter(isNotUndefined)
 
-    const { itemsKeyPayloads, contentTypePriorityPayloads, remainingPayloads } = GetSortedPayloadsByPriority(
-      unsortedPayloads,
-      this.localLoadPriorty,
-      this.launchPriorityUuids,
-    )
-
     await this.processItemsKeysFirstDuringDatabaseLoad(itemsKeyPayloads)
-
-    log(LoggingDomain.DatabaseLoad, 'Processing priority payloads', contentTypePriorityPayloads.length)
-
-    await this.processPayloadBatch(contentTypePriorityPayloads)
 
     /**
      * Map in batches to give interface a chance to update. Note that total decryption
@@ -302,14 +302,23 @@ export class SNSyncService
      * batches will result in the same time spent. It's the emitting/painting/rendering
      * that requires batch size optimization.
      */
-    const payloadCount = remainingPayloads.length
-    const batchSize = this.options.loadBatchSize
-    const numBatches = Math.ceil(payloadCount / batchSize)
+    const payloadCount = chunks.remainingChunksItemCount
+    let totalProcessedCount = 0
+    for (const chunk of chunks.remainingChunks) {
+      const dbEntries = await this.device.getDatabaseEntries(this.identifier, chunk.keys)
+      const payloads = dbEntries
+        .map((entry) => {
+          try {
+            return CreatePayload(entry, PayloadSource.Constructor)
+          } catch (e) {
+            console.error('Creating payload failed', e)
+            return undefined
+          }
+        })
+        .filter(isNotUndefined)
 
-    for (let batchIndex = 0; batchIndex < numBatches; batchIndex++) {
-      const currentPosition = batchIndex * batchSize
-      const batch = remainingPayloads.slice(currentPosition, currentPosition + batchSize)
-      await this.processPayloadBatch(batch, currentPosition, payloadCount)
+      await this.processPayloadBatch(payloads, totalProcessedCount, payloadCount)
+      totalProcessedCount += payloads.length
     }
 
     this.databaseLoaded = true

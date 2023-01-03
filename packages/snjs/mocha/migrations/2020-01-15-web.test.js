@@ -69,7 +69,7 @@ describe('2020-01-15 web migration', () => {
     const notePayload = Factory.createNotePayload()
     const noteEncryptionParams = await operator003.generateEncryptedParametersAsync(notePayload, accountKey)
     const noteEncryptedPayload = new EncryptedPayload({ ...notePayload, ...noteEncryptionParams })
-    await application.deviceInterface.saveRawDatabasePayload(noteEncryptedPayload, application.identifier)
+    await application.deviceInterface.saveDatabaseEntry(noteEncryptedPayload, application.identifier)
 
     /** Run migration */
     await application.prepareForLaunch({
@@ -163,7 +163,7 @@ describe('2020-01-15 web migration', () => {
     const notePayload = Factory.createNotePayload()
     const noteEncryptionParams = await operator003.generateEncryptedParametersAsync(notePayload, passcodeKey)
     const noteEncryptedPayload = new EncryptedPayload({ ...notePayload, ...noteEncryptionParams })
-    await application.deviceInterface.saveRawDatabasePayload(noteEncryptedPayload, application.identifier)
+    await application.deviceInterface.saveDatabaseEntry(noteEncryptedPayload, application.identifier)
 
     await application.prepareForLaunch({
       receiveChallenge: async (challenge) => {
@@ -241,7 +241,7 @@ describe('2020-01-15 web migration', () => {
     const notePayload = Factory.createNotePayload()
     const noteEncryptionParams = await operator003.generateEncryptedParametersAsync(notePayload, accountKey)
     const noteEncryptedPayload = new EncryptedPayload({ ...notePayload, ...noteEncryptionParams })
-    await application.deviceInterface.saveRawDatabasePayload(noteEncryptedPayload, application.identifier)
+    await application.deviceInterface.saveDatabaseEntry(noteEncryptedPayload, application.identifier)
 
     /** Run migration */
     const promptValueReply = (prompts) => {
@@ -336,7 +336,7 @@ describe('2020-01-15 web migration', () => {
 
     /** Create item and store it in db */
     const notePayload = Factory.createNotePayload()
-    await application.deviceInterface.saveRawDatabasePayload(notePayload.ejected(), application.identifier)
+    await application.deviceInterface.saveDatabaseEntry(notePayload.ejected(), application.identifier)
 
     /** Run migration */
     await application.prepareForLaunch({
@@ -404,7 +404,7 @@ describe('2020-01-15 web migration', () => {
     const notePayload = Factory.createNotePayload()
     const noteEncryptionParams = await operator001.generateEncryptedParametersAsync(notePayload, accountKey)
     const noteEncryptedPayload = new EncryptedPayload({ ...notePayload, ...noteEncryptionParams })
-    await application.deviceInterface.saveRawDatabasePayload(noteEncryptedPayload, application.identifier)
+    await application.deviceInterface.saveDatabaseEntry(noteEncryptedPayload, application.identifier)
 
     /** Run migration */
     const promptValueReply = (prompts) => {
@@ -533,7 +533,7 @@ describe('2020-01-15 web migration', () => {
     const notePayload = Factory.createNotePayload()
     const noteEncryptionParams = await operator002.generateEncryptedParametersAsync(notePayload, accountKey)
     const noteEncryptedPayload = new EncryptedPayload({ ...notePayload, ...noteEncryptionParams })
-    await application.deviceInterface.saveRawDatabasePayload(noteEncryptedPayload, application.identifier)
+    await application.deviceInterface.saveDatabaseEntry(noteEncryptedPayload, application.identifier)
 
     /** Runs migration */
     await application.prepareForLaunch({

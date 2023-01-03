@@ -170,7 +170,7 @@ export class BaseMigration extends Migration {
 
     /** Choose an item to decrypt against */
     const allItems = (
-      await this.services.deviceInterface.getAllRawDatabasePayloads<EncryptedTransferPayload>(this.services.identifier)
+      await this.services.deviceInterface.getAllDatabaseEntries<EncryptedTransferPayload>(this.services.identifier)
     ).map((p) => new EncryptedPayload(p))
 
     let itemToDecrypt = allItems.find((item) => {

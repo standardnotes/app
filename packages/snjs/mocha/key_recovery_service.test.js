@@ -664,12 +664,12 @@ describe('key recovery service', function () {
     await Factory.awaitFunctionInvokation(appA.keyRecoveryService, 'handleDecryptionOfAllKeysMatchingCorrectRootKey')
 
     /** Stored version of items key should use new root key */
-    const stored = (await appA.deviceInterface.getAllRawDatabasePayloads(appA.identifier)).find(
+    const stored = (await appA.deviceInterface.getAllDatabaseEntries(appA.identifier)).find(
       (payload) => payload.uuid === newDefaultKey.uuid,
     )
     const storedParams = await appA.protocolService.getKeyEmbeddedKeyParams(new EncryptedPayload(stored))
 
-    const correctStored = (await appB.deviceInterface.getAllRawDatabasePayloads(appB.identifier)).find(
+    const correctStored = (await appB.deviceInterface.getAllDatabaseEntries(appB.identifier)).find(
       (payload) => payload.uuid === newDefaultKey.uuid,
     )
 

@@ -1,5 +1,12 @@
 import AsyncStorage from '@react-native-community/async-storage'
-import { ApplicationIdentifier, TransferPayload } from '@standardnotes/snjs'
+import {
+  ApplicationIdentifier,
+  DatabaseLoadChunk,
+  DatabaseLoadChunkResponse,
+  DatabaseLoadOptions,
+  GetSortedPayloadsByPriority,
+  TransferPayload,
+} from '@standardnotes/snjs'
 import { Platform } from 'react-native'
 import { DatabaseInterface } from './DatabaseInterface'
 import { DatabaseMetadata } from './DatabaseMetadata'
@@ -39,7 +46,8 @@ export class Database implements DatabaseInterface {
 
   async deleteItem(itemUuid: string, appIdentifier: string): Promise<void> {
     const key = this.databaseKeyForPayloadId(itemUuid, appIdentifier)
-    return AsyncStorage.removeItem(key)
+    await this.metadataStore.deleteMetadataItem(itemUuid, appIdentifier)
+    return this.multiDelete([key])
   }
 
   async deleteAll(identifier: ApplicationIdentifier): Promise<void> {
@@ -60,6 +68,36 @@ export class Database implements DatabaseInterface {
         ])
       }),
     )
+  }
+
+  async getLoadChunks(options: DatabaseLoadOptions, identifier: string): Promise<DatabaseLoadChunkResponse> {
+    const metadataItems = await this.metadataStore.getAllMetadataItems()
+    const sorted = GetSortedPayloadsByPriority(metadataItems, options)
+
+    const itemsKeysChunk: DatabaseLoadChunk = {
+      keys: sorted.itemsKeyPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid, identifier)),
+    }
+
+    const contentTypePriorityChunk: DatabaseLoadChunk = {
+      keys: sorted.contentTypePriorityPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid, identifier)),
+    }
+
+    const remainingKeys = sorted.remainingPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid, identifier))
+
+    const remainingKeysChunks: DatabaseLoadChunk[] = []
+    for (let i = 0; i < remainingKeys.length; i += options.batchSize) {
+      remainingKeysChunks.push({
+        keys: remainingKeys.slice(i, i + options.batchSize),
+      })
+    }
+
+    const result: DatabaseLoadChunkResponse = {
+      itemsKeys: itemsKeysChunk,
+      remainingChunks: [contentTypePriorityChunk, ...remainingKeysChunks],
+      remainingChunksItemCount: sorted.contentTypePriorityPayloads.length + sorted.remainingPayloads.length,
+    }
+
+    return result
   }
 
   async multiGet<T>(keys: string[]): Promise<T[]> {

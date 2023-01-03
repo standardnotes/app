@@ -379,11 +379,11 @@ export class DiskStorageService extends Services.AbstractService implements Serv
   }
 
   public async getAllRawPayloads(): Promise<FullyFormedTransferPayload[]> {
-    return this.deviceInterface.getAllRawDatabasePayloads(this.identifier)
+    return this.deviceInterface.getAllDatabaseEntries(this.identifier)
   }
 
   public async getRawPayloadsForKeys(keys: string[]): Promise<FullyFormedTransferPayload[]> {
-    return this.deviceInterface.getRawDatabasePayloadsForKeys(this.identifier, keys)
+    return this.deviceInterface.getDatabaseEntries(this.identifier, keys)
   }
 
   public async savePayload(payload: FullyFormedPayloadInterface): Promise<void> {
@@ -437,7 +437,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     const exportedDeleted = deleted.map(CreateDeletedLocalStorageContextPayload)
 
     return this.executeCriticalFunction(async () => {
-      return this.deviceInterface?.saveRawDatabasePayloads(
+      return this.deviceInterface?.saveDatabaseEntries(
         [...exportedEncrypted, ...exportedDecrypted, ...exportedDeleted],
         this.identifier,
       )
@@ -454,13 +454,13 @@ export class DiskStorageService extends Services.AbstractService implements Serv
 
   public async deletePayloadWithId(uuid: Uuid) {
     return this.executeCriticalFunction(async () => {
-      return this.deviceInterface.removeRawDatabasePayloadWithId(uuid, this.identifier)
+      return this.deviceInterface.removeDatabaseEntry(uuid, this.identifier)
     })
   }
 
   public async clearAllPayloads() {
     return this.executeCriticalFunction(async () => {
-      return this.deviceInterface.removeAllRawDatabasePayloads(this.identifier)
+      return this.deviceInterface.removeAllDatabaseEntries(this.identifier)
     })
   }
 

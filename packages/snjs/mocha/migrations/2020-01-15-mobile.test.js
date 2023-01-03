@@ -74,7 +74,7 @@ describe('2020-01-15 mobile migration', () => {
       const notePayload = Factory.createNotePayload()
       const noteEncryptionParams = await operator003.generateEncryptedParametersAsync(notePayload, accountKey)
       const noteEncryptedPayload = new EncryptedPayload({ ...notePayload, ...noteEncryptionParams })
-      await application.deviceInterface.saveRawDatabasePayload(noteEncryptedPayload, application.identifier)
+      await application.deviceInterface.saveDatabaseEntry(noteEncryptedPayload, application.identifier)
       /** setup options */
       const lastExportDate = '2020:02'
       await application.deviceInterface.setRawStorageValue('LastExportDateKey', lastExportDate)
@@ -213,7 +213,7 @@ describe('2020-01-15 mobile migration', () => {
     const notePayload = Factory.createNotePayload()
     const noteEncryptionParams = await operator003.generateEncryptedParametersAsync(notePayload, passcodeKey)
     const noteEncryptedPayload = new EncryptedPayload({ ...notePayload, ...noteEncryptionParams })
-    await application.deviceInterface.saveRawDatabasePayload(noteEncryptedPayload, application.identifier)
+    await application.deviceInterface.saveDatabaseEntry(noteEncryptedPayload, application.identifier)
     /** setup options */
     await application.deviceInterface.setRawStorageValue('DoNotShowAgainUnsupportedEditorsKey', true)
     const options = JSON.stringify({
@@ -324,7 +324,7 @@ describe('2020-01-15 mobile migration', () => {
     const notePayload = Factory.createNotePayload()
     const noteEncryptionParams = await operator003.generateEncryptedParametersAsync(notePayload, passcodeKey)
     const noteEncryptedPayload = new EncryptedPayload({ ...notePayload, ...noteEncryptionParams })
-    await application.deviceInterface.saveRawDatabasePayload(noteEncryptedPayload, application.identifier)
+    await application.deviceInterface.saveDatabaseEntry(noteEncryptedPayload, application.identifier)
     /** setup options */
     await application.deviceInterface.setRawStorageValue('DoNotShowAgainUnsupportedEditorsKey', true)
     const options = JSON.stringify({
@@ -406,7 +406,7 @@ describe('2020-01-15 mobile migration', () => {
     const notePayload = Factory.createNotePayload()
     const noteEncryptionParams = await operator003.generateEncryptedParametersAsync(notePayload, accountKey)
     const noteEncryptedPayload = new EncryptedPayload({ ...notePayload, ...noteEncryptionParams })
-    await application.deviceInterface.saveRawDatabasePayload(noteEncryptedPayload, application.identifier)
+    await application.deviceInterface.saveDatabaseEntry(noteEncryptedPayload, application.identifier)
     /** setup options */
     const lastExportDate = '2020:02'
     await application.deviceInterface.setRawStorageValue('LastExportDateKey', lastExportDate)
@@ -526,7 +526,7 @@ describe('2020-01-15 mobile migration', () => {
     const notePayload = Factory.createNotePayload()
     const noteEncryptionParams = await operator003.generateEncryptedParametersAsync(notePayload, accountKey)
     const noteEncryptedPayload = new EncryptedPayload({ ...notePayload, ...noteEncryptionParams })
-    await application.deviceInterface.saveRawDatabasePayload(noteEncryptedPayload, application.identifier)
+    await application.deviceInterface.saveDatabaseEntry(noteEncryptedPayload, application.identifier)
 
     /** Run migration */
     const promptValueReply = (prompts) => {
@@ -613,7 +613,7 @@ describe('2020-01-15 mobile migration', () => {
     const notePayload = Factory.createNotePayload()
     const noteEncryptionParams = await operator002.generateEncryptedParametersAsync(notePayload, accountKey)
     const noteEncryptedPayload = new EncryptedPayload({ ...notePayload, ...noteEncryptionParams })
-    await application.deviceInterface.saveRawDatabasePayload(noteEncryptedPayload, application.identifier)
+    await application.deviceInterface.saveDatabaseEntry(noteEncryptedPayload, application.identifier)
 
     /** Run migration */
     const promptValueReply = (prompts) => {
@@ -683,7 +683,7 @@ describe('2020-01-15 mobile migration', () => {
     const notePayload = Factory.createNotePayload()
     const noteEncryptionParams = await operator001.generateEncryptedParametersAsync(notePayload, accountKey)
     const noteEncryptedPayload = new EncryptedPayload({ ...notePayload, ...noteEncryptionParams })
-    await application.deviceInterface.saveRawDatabasePayload(noteEncryptedPayload, application.identifier)
+    await application.deviceInterface.saveDatabaseEntry(noteEncryptedPayload, application.identifier)
 
     /** Run migration */
     const promptValueReply = (prompts) => {
@@ -796,7 +796,7 @@ describe('2020-01-15 mobile migration', () => {
     await application.deviceInterface.setRawStorageValue(NonwrappedStorageKey.MobileFirstRun, false)
     /** Create encrypted item and store it in db */
     const notePayload = Factory.createNotePayload()
-    await application.deviceInterface.saveRawDatabasePayload(notePayload.ejected(), application.identifier)
+    await application.deviceInterface.saveDatabaseEntry(notePayload.ejected(), application.identifier)
     /** setup options */
     await application.deviceInterface.setRawStorageValue('DoNotShowAgainUnsupportedEditorsKey', true)
     const options = JSON.stringify({
@@ -933,7 +933,7 @@ describe('2020-01-15 mobile migration', () => {
       const notePayload = Factory.createNotePayload()
       const noteEncryptionParams = await operator003.generateEncryptedParametersAsync(notePayload, accountKey)
       const noteEncryptedPayload = new EncryptedPayload({ ...notePayload, ...noteEncryptionParams })
-      await application.deviceInterface.saveRawDatabasePayload(noteEncryptedPayload, application.identifier)
+      await application.deviceInterface.saveDatabaseEntry(noteEncryptedPayload, application.identifier)
       /** setup options */
       const lastExportDate = '2020:02'
       await application.deviceInterface.setRawStorageValue('LastExportDateKey', lastExportDate)

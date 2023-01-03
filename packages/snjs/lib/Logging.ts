@@ -8,7 +8,7 @@ export enum LoggingDomain {
 }
 
 const LoggingStatus: Record<LoggingDomain, boolean> = {
-  [LoggingDomain.DatabaseLoad]: true,
+  [LoggingDomain.DatabaseLoad]: false,
   [LoggingDomain.Sync]: false,
 }
 

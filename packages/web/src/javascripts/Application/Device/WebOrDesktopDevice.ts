@@ -100,30 +100,30 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     }) as Promise<{ isNewDatabase?: boolean } | undefined>
   }
 
-  async getAllRawDatabasePayloads(identifier: ApplicationIdentifier) {
+  async getAllDatabaseEntries(identifier: ApplicationIdentifier) {
     return this.databaseForIdentifier(identifier).getAllPayloads()
   }
 
-  getRawDatabasePayloadsForKeys<T extends FullyFormedTransferPayload = FullyFormedTransferPayload>(
+  getDatabaseEntries<T extends FullyFormedTransferPayload = FullyFormedTransferPayload>(
     identifier: string,
     keys: string[],
   ): Promise<T[]> {
     return this.databaseForIdentifier(identifier).getPayloadsForKeys(keys)
   }
 
-  async saveRawDatabasePayload(payload: TransferPayload, identifier: ApplicationIdentifier) {
+  async saveDatabaseEntry(payload: TransferPayload, identifier: ApplicationIdentifier) {
     return this.databaseForIdentifier(identifier).savePayload(payload)
   }
 
-  async saveRawDatabasePayloads(payloads: TransferPayload[], identifier: ApplicationIdentifier) {
+  async saveDatabaseEntries(payloads: TransferPayload[], identifier: ApplicationIdentifier) {
     return this.databaseForIdentifier(identifier).savePayloads(payloads)
   }
 
-  async removeRawDatabasePayloadWithId(id: string, identifier: ApplicationIdentifier) {
+  async removeDatabaseEntry(id: string, identifier: ApplicationIdentifier) {
     return this.databaseForIdentifier(identifier).deletePayload(id)
   }
 
-  async removeAllRawDatabasePayloads(identifier: ApplicationIdentifier) {
+  async removeAllDatabaseEntries(identifier: ApplicationIdentifier) {
     return this.databaseForIdentifier(identifier).clearAllPayloads()
   }
 

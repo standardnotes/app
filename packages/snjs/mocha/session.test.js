@@ -642,7 +642,7 @@ describe('server session', function () {
     await app2Deinit
 
     const deviceInterface = new WebDeviceInterface()
-    const payloads = await deviceInterface.getAllRawDatabasePayloads(app2identifier)
+    const payloads = await deviceInterface.getAllDatabaseEntries(app2identifier)
     expect(payloads).to.be.empty
   })
 
@@ -670,7 +670,7 @@ describe('server session', function () {
     await app2Deinit
 
     const deviceInterface = new WebDeviceInterface()
-    const payloads = await deviceInterface.getAllRawDatabasePayloads(app2identifier)
+    const payloads = await deviceInterface.getAllDatabaseEntries(app2identifier)
     expect(payloads).to.be.empty
   })
 

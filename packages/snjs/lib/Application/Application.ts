@@ -410,7 +410,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     await this.notifyEvent(ApplicationEvent.Launched)
     await this.handleStage(ExternalServices.ApplicationStage.Launched_10)
 
-    const databasePayloads = await this.syncService.getDatabasePayloads()
+    // const databasePayloads = await this.syncService.getDatabasePayloads()
     await this.handleStage(ExternalServices.ApplicationStage.LoadingDatabase_11)
 
     if (this.createdNewDatabase) {
@@ -421,7 +421,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
      * before local data has been loaded fully. We await only initial
      * `getDatabasePayloads` to lock in on database state.
      */
-    const loadPromise = this.syncService.loadDatabasePayloads(databasePayloads).then(async () => {
+    const loadPromise = this.syncService.loadDatabasePayloads().then(async () => {
       if (this.dealloced) {
         throw 'Application has been destroyed.'
       }
@@ -1573,6 +1573,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.payloadManager,
       this.apiService,
       this.historyManager,
+      this.deviceInterface,
+      this.identifier,
       {
         loadBatchSize: this.options.loadBatchSize,
       },

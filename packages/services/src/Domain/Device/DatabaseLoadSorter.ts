@@ -1,6 +1,6 @@
-import { UuidString } from '@Lib/Types'
-import { ContentType } from '@standardnotes/common'
-import { FullyFormedPayloadInterface } from '@standardnotes/models'
+import { DatabaseItemMetadata } from './DatabaseItemMetadata'
+import { DatabaseLoadOptions } from './DatabaseLoadOptions'
+import { ContentType, Uuid } from '@standardnotes/common'
 
 /**
  * Sorts payloads according by most recently modified first, according to the priority,
@@ -8,11 +8,11 @@ import { FullyFormedPayloadInterface } from '@standardnotes/models'
  * the earlier it will appear in the resulting sorted array.
  */
 function SortPayloadsByRecentAndContentPriority(
-  payloads: FullyFormedPayloadInterface[],
+  payloads: DatabaseItemMetadata[],
   contentTypePriorityList: ContentType[],
-): FullyFormedPayloadInterface[] {
+): DatabaseItemMetadata[] {
   return payloads.sort((a, b) => {
-    const dateResult = new Date(b.serverUpdatedAt).getTime() - new Date(a.serverUpdatedAt).getTime()
+    const dateResult = new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
 
     let aPriority = 0
     let bPriority = 0
@@ -46,11 +46,11 @@ function SortPayloadsByRecentAndContentPriority(
  * the earlier it will appear in the resulting sorted array.
  */
 function SortPayloadsByRecentAndUuidPriority(
-  payloads: FullyFormedPayloadInterface[],
-  uuidPriorityList: UuidString[],
-): FullyFormedPayloadInterface[] {
+  payloads: DatabaseItemMetadata[],
+  uuidPriorityList: Uuid[],
+): DatabaseItemMetadata[] {
   return payloads.sort((a, b) => {
-    const dateResult = new Date(b.serverUpdatedAt).getTime() - new Date(a.serverUpdatedAt).getTime()
+    const dateResult = new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
 
     let aPriority = 0
     let bPriority = 0
@@ -79,24 +79,23 @@ function SortPayloadsByRecentAndUuidPriority(
 }
 
 export function GetSortedPayloadsByPriority(
-  payloads: FullyFormedPayloadInterface[],
-  contentTypePriorityList: ContentType[],
-  uuidPriorityList: UuidString[],
+  payloads: DatabaseItemMetadata[],
+  options: DatabaseLoadOptions,
 ): {
-  itemsKeyPayloads: FullyFormedPayloadInterface[]
-  contentTypePriorityPayloads: FullyFormedPayloadInterface[]
-  remainingPayloads: FullyFormedPayloadInterface[]
+  itemsKeyPayloads: DatabaseItemMetadata[]
+  contentTypePriorityPayloads: DatabaseItemMetadata[]
+  remainingPayloads: DatabaseItemMetadata[]
 } {
-  const itemsKeyPayloads: FullyFormedPayloadInterface[] = []
-  const contentTypePriorityPayloads: FullyFormedPayloadInterface[] = []
-  const remainingPayloads: FullyFormedPayloadInterface[] = []
+  const itemsKeyPayloads: DatabaseItemMetadata[] = []
+  const contentTypePriorityPayloads: DatabaseItemMetadata[] = []
+  const remainingPayloads: DatabaseItemMetadata[] = []
 
   for (let index = 0; index < payloads.length; index++) {
     const payload = payloads[index]
 
     if (payload.content_type === ContentType.ItemsKey) {
       itemsKeyPayloads.push(payload)
-    } else if (contentTypePriorityList.includes(payload.content_type)) {
+    } else if (options.contentTypePriority.includes(payload.content_type)) {
       contentTypePriorityPayloads.push(payload)
     } else {
       remainingPayloads.push(payload)
@@ -107,8 +106,8 @@ export function GetSortedPayloadsByPriority(
     itemsKeyPayloads,
     contentTypePriorityPayloads: SortPayloadsByRecentAndContentPriority(
       contentTypePriorityPayloads,
-      contentTypePriorityList,
+      options.contentTypePriority,
     ),
-    remainingPayloads: SortPayloadsByRecentAndUuidPriority(remainingPayloads, uuidPriorityList),
+    remainingPayloads: SortPayloadsByRecentAndUuidPriority(remainingPayloads, options.uuidPriority),
   }
 }

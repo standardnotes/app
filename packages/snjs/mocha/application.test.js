@@ -110,7 +110,7 @@ describe('application instances', () => {
        * app deinit. */
       await Factory.sleep(MaximumWaitTime - 0.05)
       /** Access any deviceInterface function */
-      app.diskStorageService.deviceInterface.getAllRawDatabasePayloads(app.identifier)
+      app.diskStorageService.deviceInterface.getAllDatabaseEntries(app.identifier)
     })
     await app.lock()
   })

@@ -6,6 +6,7 @@ import {
   NamespacedRootKeyInKeychain,
   Environment,
 } from '@standardnotes/models'
+import { DatabaseLoadOptions, DatabaseLoadChunkResponse } from './DatabaseLoadOptions'
 
 /**
  * Platforms must override this class to provide platform specific utilities
@@ -36,6 +37,11 @@ export interface DeviceInterface {
    */
   openDatabase(identifier: ApplicationIdentifier): Promise<{ isNewDatabase?: boolean } | undefined>
 
+  getDatabaseLoadChunks(
+    options: DatabaseLoadOptions,
+    identifier: ApplicationIdentifier,
+  ): Promise<DatabaseLoadChunkResponse>
+
   /**
    * Remove all keychain and database data from device.
    * @param workspaceIdentifiers An array of identifiers present during time of function call. Used in case
@@ -45,22 +51,22 @@ export interface DeviceInterface {
    */
   clearAllDataFromDevice(workspaceIdentifiers: ApplicationIdentifier[]): Promise<{ killsApplication: boolean }>
 
-  getAllRawDatabasePayloads<T extends FullyFormedTransferPayload = FullyFormedTransferPayload>(
+  getAllDatabaseEntries<T extends FullyFormedTransferPayload = FullyFormedTransferPayload>(
     identifier: ApplicationIdentifier,
   ): Promise<T[]>
 
-  getRawDatabasePayloadsForKeys<T extends FullyFormedTransferPayload = FullyFormedTransferPayload>(
+  getDatabaseEntries<T extends FullyFormedTransferPayload = FullyFormedTransferPayload>(
     identifier: ApplicationIdentifier,
     keys: string[],
   ): Promise<T[]>
 
-  saveRawDatabasePayload(payload: TransferPayload, identifier: ApplicationIdentifier): Promise<void>
+  saveDatabaseEntry(payload: TransferPayload, identifier: ApplicationIdentifier): Promise<void>
 
-  saveRawDatabasePayloads(payloads: TransferPayload[], identifier: ApplicationIdentifier): Promise<void>
+  saveDatabaseEntries(payloads: TransferPayload[], identifier: ApplicationIdentifier): Promise<void>
 
-  removeRawDatabasePayloadWithId(id: string, identifier: ApplicationIdentifier): Promise<void>
+  removeDatabaseEntry(id: string, identifier: ApplicationIdentifier): Promise<void>
 
-  removeAllRawDatabasePayloads(identifier: ApplicationIdentifier): Promise<void>
+  removeAllDatabaseEntries(identifier: ApplicationIdentifier): Promise<void>
 
   getNamespacedKeychainValue(identifier: ApplicationIdentifier): Promise<NamespacedRootKeyInKeychain | undefined>
 

@@ -735,7 +735,7 @@ describe('importing', function () {
       }),
     )
     await application.deviceInterface.setRawStorageValue('standardnotes-snjs_version', '2.0.11')
-    await application.deviceInterface.saveRawDatabasePayload(
+    await application.deviceInterface.saveDatabaseEntry(
       {
         content:
           '003:9f2c7527eb8b2a1f8bfb3ea6b885403b6886bce2640843ebd57a6c479cbf7597:58e3322b-269a-4be3-a658-b035dffcd70f:9140b23a0fa989e224e292049f133154:SESTNOgIGf2+ZqmJdFnGU4EMgQkhKOzpZNoSzx76SJaImsayzctAgbUmJ+UU2gSQAHADS3+Z5w11bXvZgIrStTsWriwvYkNyyKmUPadKHNSBwOk4WeBZpWsA9gtI5zgI04Q5pvb8hS+kNW2j1DjM4YWqd0JQxMOeOrMIrxr/6Awn5TzYE+9wCbXZdYHyvRQcp9ui/G02ZJ67IA86vNEdjTTBAAWipWqTqKH9VDZbSQ2W/IOKfIquB373SFDKZb1S1NmBFvcoG2G7w//fAl/+ehYiL6UdiNH5MhXCDAOTQRFNfOh57HFDWVnz1VIp8X+VAPy6d9zzQH+8aws1JxHq/7BOhXrFE8UCueV6kERt9njgQxKJzd9AH32ShSiUB9X/sPi0fUXbS178xAZMJrNx3w==:eyJwd19ub25jZSI6IjRjYjEwM2FhODljZmY0NTYzYTkxMWQzZjM5NjU4M2NlZmM2ODMzYzY2Zjg4MGZiZWUwNmJkYTk0YzMxZjg2OGIiLCJwd19jb3N0IjoxMTAwMDAsImlkZW50aWZpZXIiOiJub3YyMzIyQGJpdGFyLmlvIiwidmVyc2lvbiI6IjAwMyIsIm9yaWdpbmF0aW9uIjoicmVnaXN0cmF0aW9uIn0=',

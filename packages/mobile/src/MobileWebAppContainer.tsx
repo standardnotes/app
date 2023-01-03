@@ -7,7 +7,7 @@ import { OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTy
 import { AndroidBackHandlerService } from './AndroidBackHandlerService'
 import { AppStateObserverService } from './AppStateObserverService'
 import { ColorSchemeObserverService } from './ColorSchemeObserverService'
-import { MobileDevice, MobileDeviceEvent } from './Lib/MobileDeviceInterface'
+import { MobileDevice, MobileDeviceEvent } from './Lib/MobileDevice'
 import { IsDev } from './Lib/Utils'
 
 const LoggingEnabled = IsDev

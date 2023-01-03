@@ -1,7 +1,6 @@
 import AsyncStorage from '@react-native-community/async-storage'
-import { TransferPayload } from '@standardnotes/snjs'
+import { DatabaseItemMetadata, TransferPayload } from '@standardnotes/snjs'
 import { DatabaseInterface } from './DatabaseInterface'
-import { ItemMetadata } from './ItemMetadata'
 
 const DidRunMigrationKey = 'didRunMetadataMigration'
 
@@ -25,15 +24,20 @@ export class DatabaseMetadata {
     for (const payload of payloads) {
       const { uuid, content_type, updated_at } = payload
       const key = this.keyForUuid(uuid, appIdentifier)
-      const metadata: ItemMetadata = { content_type, updated_at }
+      const metadata: DatabaseItemMetadata = { uuid, content_type, updated_at }
       await AsyncStorage.setItem(key, JSON.stringify(metadata))
     }
   }
 
-  async getAllMetadataItems(): Promise<ItemMetadata[]> {
+  async deleteMetadataItem(itemUuid: string, appIdentifier: string) {
+    const key = this.keyForUuid(itemUuid, appIdentifier)
+    await AsyncStorage.removeItem(key)
+  }
+
+  async getAllMetadataItems(): Promise<DatabaseItemMetadata[]> {
     const keys = await AsyncStorage.getAllKeys()
     const metadataKeys = keys.filter((key) => key.endsWith('-Metadata'))
-    const metadataItems = await this.database.multiGet<ItemMetadata>(metadataKeys)
+    const metadataItems = await this.database.multiGet<DatabaseItemMetadata>(metadataKeys)
     return metadataItems
   }
 }
