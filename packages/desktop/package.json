@@ -80,7 +80,6 @@
     "webpack-merge": "^5.8.0"
   },
   "build": {
-    "electronVersion": "17.4.2",
     "appId": "org.standardnotes.standardnotes",
     "artifactName": "standard-notes-${version}-${os}-${arch}.${ext}",
     "afterSign": "scripts/notarizeMac.js",
