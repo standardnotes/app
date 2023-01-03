@@ -20,6 +20,10 @@ import {
 type ResultRect = {
   top: number;
   left: number;
+  bottom: number;
+  right: number;
+  x: number;
+  y: number;
   width: number;
   height: number;
 };
@@ -60,12 +64,17 @@ export const useSuperSearchContext = () => {
 const createSearchHighlightElement = (
   rect: ResultRect,
   isCurrentResult: boolean,
-  containerElement?: Element,
+  rootElement: Element,
+  containerElement: Element,
 ) => {
+  const rootElementRect = rootElement.getBoundingClientRect();
+
   const highlightElement = document.createElement('div');
   highlightElement.style.position = 'absolute';
   highlightElement.style.zIndex = '1000';
-  highlightElement.style.transform = `translate(${rect.left}px, ${rect.top}px)`;
+  highlightElement.style.transform = `translate(${
+    rect.left - rootElementRect.left
+  }px, ${rect.top - rootElementRect.top}px)`;
   highlightElement.style.width = `${rect.width}px`;
   highlightElement.style.height = `${rect.height}px`;
   highlightElement.style.backgroundColor = 'var(--sn-stylekit-info-color)';
@@ -73,7 +82,7 @@ const createSearchHighlightElement = (
   highlightElement.className =
     'search-highlight' + (isCurrentResult ? ' current' : '');
 
-  containerElement?.appendChild(highlightElement);
+  containerElement.appendChild(highlightElement);
 };
 
 export const SuperSearchContextProvider = ({
@@ -109,7 +118,10 @@ export const SuperSearchContextProvider = ({
           element.remove();
         });
       Array.from(result.rectList).forEach((rect) => {
-        createSearchHighlightElement(rect, true, containerElement);
+        if (!containerElement) {
+          return;
+        }
+        createSearchHighlightElement(rect, true, rootElement, containerElement);
       });
     });
   }, [currentResultIndex, results]);
@@ -218,17 +230,17 @@ const SearchDialog = ({closeDialog}: {closeDialog: () => void}) => {
         </span>
       )}
       <button
-        className="border-border flex items-center rounded border p-1.5"
+        className="border-border hover:bg-contrast flex items-center rounded border p-1.5"
         onClick={goToPreviousResult}>
         <ArrowUpIcon className="text-text h-4 w-4 fill-current" />
       </button>
       <button
-        className="border-border flex items-center rounded border p-1.5"
+        className="border-border hover:bg-contrast flex items-center rounded border p-1.5"
         onClick={goToNextResult}>
         <ArrowDownIcon className="text-text h-4 w-4 fill-current" />
       </button>
       <button
-        className="border-border flex items-center rounded border p-1.5"
+        className="border-border hover:bg-contrast flex items-center rounded border p-1.5"
         onClick={() => {
           setSearchQuery('');
           closeDialog();
@@ -242,7 +254,8 @@ const SearchDialog = ({closeDialog}: {closeDialog: () => void}) => {
 export const SearchPlugin = () => {
   const [editor] = useLexicalComposerContext();
   const [showDialog, setShowDialog] = useState(false);
-  const {searchQuery, addResult, clearResults} = useSuperSearchContext();
+  const {searchQuery, results, addResult, clearResults} =
+    useSuperSearchContext();
 
   useEffect(() => {
     return editor.registerCommand<KeyboardEvent>(
@@ -316,8 +329,12 @@ export const SearchPlugin = () => {
             range.setEnd(textNode, endIndex);
 
             const rectList = Array.from(range.getClientRects()).map((rect) => ({
-              top: rect.top - (containerElementRect?.top || 0),
-              left: rect.left - (containerElementRect?.left || 0),
+              top: rect.top,
+              left: rect.left,
+              bottom: rect.bottom,
+              right: rect.right,
+              x: rect.x,
+              y: rect.y,
               width: rect.width,
               height: rect.height,
             }));
@@ -325,12 +342,6 @@ export const SearchPlugin = () => {
             addResult({
               nodeKey: node.getKey(),
               rectList,
-            });
-
-            requestAnimationFrame(() => {
-              rectList.forEach((rect) =>
-                createSearchHighlightElement(rect, false, containerElement),
-              );
             });
           } catch (error) {}
         });
@@ -380,6 +391,77 @@ export const SearchPlugin = () => {
       root?.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  useEffect(() => {
+    let root: HTMLElement | null | undefined;
+    let highlightContainer: HTMLElement | undefined;
+
+    editor.getEditorState().read(() => {
+      root = editor.getRootElement();
+      highlightContainer = root?.parentElement?.getElementsByClassName(
+        'search-highlight-container',
+      )[0] as HTMLElement | undefined;
+    });
+
+    if (!root) {
+      return;
+    }
+
+    const handleScroll = () => {
+      if (!root) {
+        return;
+      }
+
+      document.querySelectorAll('.search-highlight').forEach((element) => {
+        element.remove();
+      });
+
+      results.forEach((result) => {
+        if (!root) {
+          return;
+        }
+
+        const {rectList} = result;
+        const firstRect = rectList[0];
+
+        const isFirstRectVisible =
+          firstRect.top >= 0 &&
+          firstRect.top >= root.scrollTop &&
+          firstRect.bottom <= root.clientHeight + root.scrollTop;
+
+        if (isFirstRectVisible) {
+          rectList.forEach((rect) => {
+            if (!root) {
+              return;
+            }
+
+            if (!highlightContainer) {
+              return;
+            }
+
+            createSearchHighlightElement(rect, false, root, highlightContainer);
+          });
+        }
+      });
+    };
+
+    let timeout: number | undefined;
+    const handleScrollDebounced = () => {
+      if (timeout) {
+        clearTimeout(timeout);
+      }
+
+      timeout = window.setTimeout(() => {
+        handleScroll();
+      }, 10);
+    };
+
+    root.addEventListener('scroll', handleScrollDebounced);
+
+    return () => {
+      root?.removeEventListener('scroll', handleScrollDebounced);
+    };
+  }, [editor, results]);
 
   return (
     <>
