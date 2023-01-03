@@ -72,7 +72,6 @@ describe('application', () => {
           currentPersistPromise: false,
           isStorageWrapped: false,
           allRawPayloadsCount: 0,
-          databaseKeys: ['1', '2', '3'],
         },
         encryption: expect.objectContaining({
           getLatestVersion: '004',

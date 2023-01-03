@@ -59,6 +59,36 @@ export default class WebDeviceInterface {
     return models
   }
 
+  async getDatabaseLoadChunks(options, identifier) {
+    const entries = await this.getAllDatabaseEntries(identifier)
+    const sorted = GetSortedPayloadsByPriority(entries, options)
+
+    const itemsKeysChunk = {
+      entries: sorted.itemsKeyPayloads,
+    }
+
+    const contentTypePriorityChunk = {
+      entries: sorted.contentTypePriorityPayloads,
+    }
+
+    const remainingPayloadsChunks = []
+    for (let i = 0; i < sorted.remainingPayloads.length; i += options.batchSize) {
+      remainingPayloadsChunks.push({
+        entries: sorted.remainingPayloads.slice(i, i + options.batchSize),
+      })
+    }
+
+    const result = {
+      fullEntries: {
+        itemsKeys: itemsKeysChunk,
+        remainingChunks: [contentTypePriorityChunk, ...remainingPayloadsChunks],
+      },
+      remainingChunksItemCount: sorted.contentTypePriorityPayloads.length + sorted.remainingPayloads.length,
+    }
+
+    return result
+  }
+
   async saveDatabaseEntry(payload, identifier) {
     localStorage.setItem(this._keyForPayloadId(payload.uuid, identifier), JSON.stringify(payload))
   }

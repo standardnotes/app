@@ -116,12 +116,12 @@ describe('GetSortedPayloadsByPriority', () => {
       {
         content_type: ContentType.Note,
         uuid: unprioritizedNoteUuid,
-        serverUpdatedAt: new Date(1),
+        updated_at: new Date(1),
       } as FullyFormedPayloadInterface,
       {
         content_type: ContentType.Tag,
         uuid: unprioritizedTagUuid,
-        serverUpdatedAt: new Date(2),
+        updated_at: new Date(2),
       } as FullyFormedPayloadInterface,
       {
         content_type: ContentType.Note,
