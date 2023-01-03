@@ -382,10 +382,6 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     return this.deviceInterface.getAllDatabaseEntries(this.identifier)
   }
 
-  public async getRawPayloadsForKeys(keys: string[]): Promise<FullyFormedTransferPayload[]> {
-    return this.deviceInterface.getDatabaseEntries(this.identifier, keys)
-  }
-
   public async savePayload(payload: FullyFormedPayloadInterface): Promise<void> {
     return this.savePayloads([payload])
   }
