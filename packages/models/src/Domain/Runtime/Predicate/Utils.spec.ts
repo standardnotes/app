@@ -1,5 +1,5 @@
 import { dateFromDSLDateString } from './Utils'
-import { addDaysToDate, addHoursToDate } from '@standardnotes/utils'
+import { addDaysToDate, addHoursToDate, addMonthsToDate, addYearsToDate } from '@standardnotes/utils'
 
 describe('Predicate Utils', () => {
   describe('dateFromDSLDateString', () => {
@@ -15,12 +15,12 @@ describe('Predicate Utils', () => {
 
     it('should return a date object with the correct month', () => {
       const date = dateFromDSLDateString('1.months.ago')
-      expect(date.getMonth()).toEqual(new Date().getMonth() - 1)
+      expect(date.getMonth()).toEqual(addMonthsToDate(new Date(), -1).getMonth())
     })
 
     it('should return a date object with the correct year', () => {
       const date = dateFromDSLDateString('1.years.ago')
-      expect(date.getFullYear()).toEqual(new Date().getFullYear() - 1)
+      expect(date.getFullYear()).toEqual(addYearsToDate(new Date(), -1).getFullYear())
     })
   })
 })

@@ -1,3 +1,10 @@
+export function addHoursToDate(date: Date, hours: number) {
+  const result = new Date(date)
+  result.setHours(result.getHours() + hours)
+
+  return result
+}
+
 /** Negative numbers are supported as well */
 export function addDaysToDate(date: Date, days: number) {
   const result = new Date(date)
@@ -6,9 +13,16 @@ export function addDaysToDate(date: Date, days: number) {
   return result
 }
 
-export function addHoursToDate(date: Date, hours: number) {
+export function addMonthsToDate(date: Date, months: number) {
   const result = new Date(date)
-  result.setHours(result.getHours() + hours)
+  result.setMonth(result.getMonth() + months)
+
+  return result
+}
+
+export function addYearsToDate(date: Date, years: number) {
+  const result = new Date(date)
+  result.setFullYear(result.getFullYear() + years)
 
   return result
 }
