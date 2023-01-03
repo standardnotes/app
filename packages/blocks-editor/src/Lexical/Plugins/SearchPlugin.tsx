@@ -322,13 +322,15 @@ export const SearchPlugin = () => {
               height: rect.height,
             }));
 
-            rectList.forEach((rect) =>
-              createSearchHighlightElement(rect, false, containerElement),
-            );
-
             addResult({
               nodeKey: node.getKey(),
               rectList,
+            });
+
+            requestAnimationFrame(() => {
+              rectList.forEach((rect) =>
+                createSearchHighlightElement(rect, false, containerElement),
+              );
             });
           } catch (error) {}
         });
