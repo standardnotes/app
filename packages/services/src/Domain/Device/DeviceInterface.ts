@@ -2,7 +2,6 @@ import { ApplicationIdentifier } from '@standardnotes/common'
 import {
   FullyFormedTransferPayload,
   TransferPayload,
-  LegacyRawKeychainValue,
   NamespacedRootKeyInKeychain,
   Environment,
 } from '@standardnotes/models'
@@ -77,8 +76,6 @@ export interface DeviceInterface {
   setNamespacedKeychainValue(value: NamespacedRootKeyInKeychain, identifier: ApplicationIdentifier): Promise<void>
 
   clearNamespacedKeychainValue(identifier: ApplicationIdentifier): Promise<void>
-
-  setLegacyRawKeychainValue(value: LegacyRawKeychainValue): Promise<void>
 
   clearRawKeychainValue(): Promise<void>
 

@@ -2,7 +2,6 @@ import {
   SNApplication,
   ApplicationIdentifier,
   Environment,
-  LegacyRawKeychainValue,
   RawKeychainValue,
   TransferPayload,
   NamespacedRootKeyInKeychain,
@@ -207,10 +206,6 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     if (win) {
       win.focus()
     }
-  }
-
-  setLegacyRawKeychainValue(value: LegacyRawKeychainValue): Promise<void> {
-    return this.setKeychainValue(value)
   }
 
   abstract getKeychainValue(): Promise<RawKeychainValue>

@@ -110,12 +110,6 @@ export default class WebDeviceInterface {
     localStorage.setItem(KEYCHAIN_STORAGE_KEY, JSON.stringify(keychain))
   }
 
-  /** Allows unit tests to set legacy keychain structure as it was <= 003 */
-  // eslint-disable-next-line camelcase
-  async setLegacyRawKeychainValue(value) {
-    localStorage.setItem(KEYCHAIN_STORAGE_KEY, JSON.stringify(value))
-  }
-
   async getRawKeychainValue() {
     const keychain = localStorage.getItem(KEYCHAIN_STORAGE_KEY)
     return JSON.parse(keychain)

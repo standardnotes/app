@@ -165,7 +165,6 @@ export class BaseMigration extends Migration {
   }
 
   private async repairMissingKeychain() {
-    const version = (await this.getStoredVersion()) as string
     const rawAccountParams = await this.reader.getAccountKeyParams()
 
     /** Choose an item to decrypt against */
@@ -226,21 +225,10 @@ export class BaseMigration extends Migration {
             )
           } else {
             /**
-             * If decryption succeeds, store the generated account key where it is expected,
-             * either in top-level keychain in 1.0.0, and namespaced location in 2.0.0+.
+             * If decryption succeeds, store the generated account key where it is expected.
              */
-            if (version === PreviousSnjsVersion1_0_0) {
-              /** Store in top level keychain */
-              await this.services.deviceInterface.setLegacyRawKeychainValue({
-                mk: rootKey.masterKey,
-                ak: rootKey.dataAuthenticationKey as string,
-                version: accountParams.version,
-              })
-            } else {
-              /** Store in namespaced location */
-              const rawKey = rootKey.getKeychainValue()
-              await this.services.deviceInterface.setNamespacedKeychainValue(rawKey, this.services.identifier)
-            }
+            const rawKey = rootKey.getKeychainValue()
+            await this.services.deviceInterface.setNamespacedKeychainValue(rawKey, this.services.identifier)
             resolve(true)
             this.services.challengeService.completeChallenge(challenge)
           }

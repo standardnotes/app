@@ -1,4 +1,4 @@
-import { ApplicationIdentifier, LegacyMobileKeychainStructure, RawKeychainValue } from '@standardnotes/snjs'
+import { ApplicationIdentifier } from '@standardnotes/snjs'
 
 /**
  * This identifier was the database name used in Standard Notes web/desktop.
@@ -12,10 +12,4 @@ const LEGACY_IDENTIFIER = 'standardnotes'
  */
 export const isLegacyIdentifier = function (identifier: ApplicationIdentifier) {
   return identifier && identifier === LEGACY_IDENTIFIER
-}
-
-export function isLegacyMobileKeychain(
-  x: LegacyMobileKeychainStructure | RawKeychainValue,
-): x is LegacyMobileKeychainStructure {
-  return x.ak != undefined
 }

@@ -6,7 +6,6 @@ import {
   DatabaseKeysLoadChunkResponse,
   DatabaseLoadOptions,
   Environment,
-  LegacyRawKeychainValue,
   MobileDeviceInterface,
   NamespacedRootKeyInKeychain,
   Platform as SNPlatform,
@@ -44,7 +43,7 @@ import { AndroidBackHandlerService } from '../AndroidBackHandlerService'
 import { AppStateObserverService } from '../AppStateObserverService'
 import { PurchaseManager } from '../PurchaseManager'
 import { Database } from './Database/Database'
-import { isLegacyIdentifier, isLegacyMobileKeychain } from './Database/LegacyIdentifier'
+import { isLegacyIdentifier } from './Database/LegacyIdentifier'
 import { LegacyKeyValueStore } from './Database/LegacyKeyValueStore'
 import Keychain from './Keychain'
 
@@ -99,10 +98,6 @@ export class MobileDevice implements MobileDeviceInterface {
   consoleLog(...args: unknown[]): void {
     // eslint-disable-next-line no-console
     console.log(args)
-  }
-
-  async setLegacyRawKeychainValue(value: LegacyRawKeychainValue): Promise<void> {
-    await Keychain.setKeys(value)
   }
 
   public async getJsonParsedRawStorageValue(key: string): Promise<unknown | undefined> {
@@ -170,56 +165,6 @@ export class MobileDevice implements MobileDeviceInterface {
     return this.findOrCreateDatabase(identifier).deleteAll()
   }
 
-  async getNamespacedKeychainValue(
-    identifier: ApplicationIdentifier,
-  ): Promise<NamespacedRootKeyInKeychain | undefined> {
-    const keychain = await this.getRawKeychainValue()
-
-    if (!keychain) {
-      return
-    }
-
-    const namespacedValue = keychain[identifier]
-
-    if (!namespacedValue && isLegacyIdentifier(identifier)) {
-      return keychain as unknown as NamespacedRootKeyInKeychain
-    }
-
-    return namespacedValue
-  }
-
-  async setNamespacedKeychainValue(
-    value: NamespacedRootKeyInKeychain,
-    identifier: ApplicationIdentifier,
-  ): Promise<void> {
-    let keychain = await this.getRawKeychainValue()
-
-    if (!keychain) {
-      keychain = {}
-    }
-
-    await Keychain.setKeys({
-      ...keychain,
-      [identifier]: value,
-    })
-  }
-
-  async clearNamespacedKeychainValue(identifier: ApplicationIdentifier): Promise<void> {
-    const keychain = await this.getRawKeychainValue()
-
-    if (!keychain) {
-      return
-    }
-
-    if (!keychain[identifier] && isLegacyIdentifier(identifier) && isLegacyMobileKeychain(keychain)) {
-      await this.clearRawKeychainValue()
-      return
-    }
-
-    delete keychain[identifier]
-    await Keychain.setKeys(keychain)
-  }
-
   async getDeviceBiometricsAvailability() {
     try {
       await FingerprintScanner.isSensorAvailable()
@@ -280,6 +225,51 @@ export class MobileDevice implements MobileDeviceInterface {
     this.stateObserverService?.stopIgnoringStateChanges()
 
     return result
+  }
+
+  async getNamespacedKeychainValue(
+    identifier: ApplicationIdentifier,
+  ): Promise<NamespacedRootKeyInKeychain | undefined> {
+    const keychain = await this.getRawKeychainValue()
+
+    if (!keychain) {
+      return
+    }
+
+    const namespacedValue = keychain[identifier]
+
+    if (!namespacedValue && isLegacyIdentifier(identifier)) {
+      return keychain as unknown as NamespacedRootKeyInKeychain
+    }
+
+    return namespacedValue
+  }
+
+  async setNamespacedKeychainValue(
+    value: NamespacedRootKeyInKeychain,
+    identifier: ApplicationIdentifier,
+  ): Promise<void> {
+    let keychain = await this.getRawKeychainValue()
+
+    if (!keychain) {
+      keychain = {}
+    }
+
+    await Keychain.setKeys({
+      ...keychain,
+      [identifier]: value,
+    })
+  }
+
+  async clearNamespacedKeychainValue(identifier: ApplicationIdentifier): Promise<void> {
+    const keychain = await this.getRawKeychainValue()
+
+    if (!keychain) {
+      return
+    }
+
+    delete keychain[identifier]
+    await Keychain.setKeys(keychain)
   }
 
   async getRawKeychainValue(): Promise<RawKeychainValue | undefined> {

@@ -10,22 +10,3 @@ export interface NamespacedRootKeyInKeychain {
 }
 
 export type RootKeyContentInStorage = RootKeyContentSpecialized
-
-export interface LegacyRawKeychainValue {
-  mk: string
-  ak: string
-  version: ProtocolVersion
-}
-
-export type LegacyMobileKeychainStructure = {
-  offline?: {
-    timing?: unknown
-    pw?: string
-  }
-  encryptedAccountKeys?: unknown
-  mk: string
-  pw: string
-  ak: string
-  version?: string
-  jwt?: string
-}
