@@ -13,17 +13,20 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 
+type ResultRect = {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+};
+
 type SearchResult = {
   nodeKey: string;
-  rectList: {
-    top: number;
-    left: number;
-    width: number;
-    height: number;
-  }[];
+  rectList: ResultRect[];
 };
 
 type SuperSearchContextData = {
@@ -55,12 +58,7 @@ export const useSuperSearchContext = () => {
 };
 
 const createSearchHighlightElement = (
-  rect: {
-    top: number;
-    left: number;
-    width: number;
-    height: number;
-  },
+  rect: ResultRect,
   isCurrentResult: boolean,
   containerElement?: Element,
 ) => {
@@ -178,6 +176,8 @@ export const SuperSearchContextProvider = ({
 };
 
 const SearchDialog = ({closeDialog}: {closeDialog: () => void}) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const {
     searchQuery,
     setSearchQuery,
@@ -186,6 +186,10 @@ const SearchDialog = ({closeDialog}: {closeDialog: () => void}) => {
     goToPreviousResult,
     currentResultIndex,
   } = useSuperSearchContext();
+
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
 
   return (
     <div
@@ -203,8 +207,9 @@ const SearchDialog = ({closeDialog}: {closeDialog: () => void}) => {
         type="text"
         placeholder="Search"
         value={searchQuery}
-        className="border-border rounded border p-1 px-2"
         onChange={(e) => setSearchQuery(e.target.value)}
+        className="border-border rounded border p-1 px-2"
+        ref={inputRef}
       />
       {results.length > 0 && (
         <span className="text-text">
