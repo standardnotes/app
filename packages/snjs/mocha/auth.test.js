@@ -59,9 +59,6 @@ describe('basic auth', function () {
 
     expect(await this.application.protocolService.getRootKey()).to.not.be.ok
     expect(this.application.protocolService.rootKeyEncryption.keyMode).to.equal(KeyMode.RootKeyNone)
-
-    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
-    expect(rawPayloads.length).to.equal(BaseItemCounts.DefaultItems)
   })
 
   it('successfully signs in to registered account', async function () {

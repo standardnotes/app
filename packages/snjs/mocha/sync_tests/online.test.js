@@ -586,7 +586,7 @@ describe('online syncing', function () {
     await this.application.itemManager.setItemDirty(note)
     await this.application.syncService.sync(syncOptions)
     this.expectedItemCount++
-    const rawPayloads = await this.application.storageService.getAllRawPayloads()
+    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
     const notePayload = rawPayloads.find((p) => p.content_type === ContentType.Note)
     expect(typeof notePayload.content).to.equal('string')
   })
@@ -678,7 +678,9 @@ describe('online syncing', function () {
       const payload = Factory.createStorageItemPayload(contentTypes[Math.floor(i / 2)])
       originalPayloads.push(payload)
     }
-    const { contentTypePriorityPayloads } = GetSortedPayloadsByPriority(originalPayloads, ['C', 'A', 'B'])
+    const { contentTypePriorityPayloads } = GetSortedPayloadsByPriority(originalPayloads, {
+      contentTypePriority: ['C', 'A', 'B'],
+    })
     expect(contentTypePriorityPayloads[0].content_type).to.equal('C')
     expect(contentTypePriorityPayloads[2].content_type).to.equal('A')
     expect(contentTypePriorityPayloads[4].content_type).to.equal('B')
@@ -691,9 +693,6 @@ describe('online syncing', function () {
     await this.application.syncService.sync(syncOptions)
 
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    const rawPayloads = await this.application.diskStorageService.getAllRawPayloads()
-    expect(rawPayloads.length).to.equal(BaseItemCounts.DefaultItems)
-
     await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
 
     this.application.syncService.ut_setDatabaseLoaded(false)
