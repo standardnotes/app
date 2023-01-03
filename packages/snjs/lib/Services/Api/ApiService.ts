@@ -115,15 +115,7 @@ export class SNApiService
 
   public loadHost(): string {
     const storedValue = this.storageService.getValue<string | undefined>(StorageKey.ServerHost)
-    this.host =
-      storedValue ||
-      this.host ||
-      ((
-        window as {
-          _default_sync_server?: string
-        }
-      )._default_sync_server as string)
-
+    this.host = storedValue || this.host
     return this.host
   }
 

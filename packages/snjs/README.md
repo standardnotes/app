@@ -40,16 +40,18 @@ Object.assign(window, SNLibrary);
 
 ### E2E Tests
 
-To run a stable server environment for E2E tests that is up to date with production, clone the [e2e repository](https://github.com/standardnotes/e2e), then run:
+To run a stable server environment for E2E tests that is up to date with production, clone the [self-hosted repository](https://github.com/standardnotes/self-hosted), then run:
 
+In self-hosted repo:
 ```
-yarn install --immutable
-yarn start:local-server
+yarn && yarn start
 ```
 Wait for the `All services are up!` message.
 
 Once the server infrastructure is ready, and you've built all packages, you can run the test suite in the browser via:
 
+
+In app repo:
 ```
 yarn start:server:e2e
 ```
