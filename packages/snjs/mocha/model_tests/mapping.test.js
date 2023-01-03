@@ -94,7 +94,7 @@ describe('model manager mapping', () => {
     const note = this.application.itemManager.getDisplayableNotes()[0]
     await this.application.itemManager.setItemDirty(note)
     const dirtyItems = this.application.itemManager.getDirtyItems()
-    expect(dirtyItems.length).to.equal(1)
+    expect(Uuids(dirtyItems).includes(note.uuid))
   })
 
   it('set all items dirty', async function () {

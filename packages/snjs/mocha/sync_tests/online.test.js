@@ -218,14 +218,21 @@ describe('online syncing', function () {
   it('retrieving new items should not mark them as dirty', async function () {
     const originalNote = await Factory.createSyncedNote(this.application)
     this.expectedItemCount++
+
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
-    this.application.syncService.addEventObserver((event) => {
-      if (event === SyncEvent.SingleRoundTripSyncCompleted) {
-        const note = this.application.items.findItem(originalNote.uuid)
-        expect(note.dirty).to.not.be.ok
-      }
+    const promise = new Promise((resolve) => {
+      this.application.syncService.addEventObserver(async (event) => {
+        if (event === SyncEvent.SingleRoundTripSyncCompleted) {
+          const note = this.application.items.findItem(originalNote.uuid)
+          if (note) {
+            expect(note.dirty).to.not.be.ok
+            resolve()
+          }
+        }
+      })
     })
     await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
+    await promise
   })
 
   it('allows saving of data after sign out', async function () {

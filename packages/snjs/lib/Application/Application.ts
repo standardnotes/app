@@ -427,6 +427,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       await this.syncService.sync({
         mode: ExternalServices.SyncMode.DownloadFirst,
         source: ExternalServices.SyncSource.External,
+        sourceDescription: 'Application Launch',
       })
     })
     if (awaitDatabaseLoad) {
@@ -460,7 +461,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private beginAutoSyncTimer() {
     this.autoSyncInterval = setInterval(() => {
       this.syncService.log('Syncing from autosync')
-      void this.sync.sync()
+      void this.sync.sync({ sourceDescription: 'Auto Sync' })
     }, DEFAULT_AUTO_SYNC_INTERVAL)
   }
 
@@ -1539,10 +1540,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
         switch (event) {
           case InternalServices.SessionEvent.Restored: {
             void (async () => {
-              await this.sync.sync()
+              await this.sync.sync({ sourceDescription: 'Session restored pre key creation' })
               if (this.protocolService.needsNewRootKeyBasedItemsKey()) {
                 void this.protocolService.createNewDefaultItemsKey().then(() => {
-                  void this.sync.sync()
+                  void this.sync.sync({ sourceDescription: 'Session restored post key creation' })
                 })
               }
             })()

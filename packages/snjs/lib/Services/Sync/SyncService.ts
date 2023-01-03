@@ -573,7 +573,7 @@ export class SNSyncService
    *                  (before reaching opStatus.setDidBegin).
    * 2. syncOpInProgress: If a sync() call is in flight to the server.
    */
-  private configureSyncLock() {
+  private configureSyncLock(options: SyncOptions) {
     const syncInProgress = this.opStatus.syncInProgress
     const databaseLoaded = this.databaseLoaded
     const canExecuteSync = !this.syncLock
@@ -589,6 +589,7 @@ export class SNSyncService
           : syncInProgress
           ? 'Attempting to sync while existing sync in progress.'
           : 'Attempting to sync before local database has loaded.',
+        options,
       )
     }
 
@@ -668,10 +669,20 @@ export class SNSyncService
 
   private createOfflineSyncOperation(
     payloads: (DeletedPayloadInterface | DecryptedPayloadInterface)[],
-    source: SyncSource,
-    mode: SyncMode = SyncMode.Default,
+    options: SyncOptions,
   ) {
-    log(LoggingDomain.Sync, 'Syncing offline user', 'source:', source, 'mode:', mode, 'payloads:', payloads)
+    log(
+      LoggingDomain.Sync,
+      'Syncing offline user',
+      'source:',
+      SyncSource[options.source],
+      'sourceDesc',
+      options.sourceDescription,
+      'mode:',
+      options.mode && SyncMode[options.mode],
+      'payloads:',
+      payloads,
+    )
 
     const operation = new OfflineSyncOperation(payloads, async (type, response) => {
       if (this.dealloced) {
@@ -782,14 +793,14 @@ export class SNSyncService
       const { uploadPayloads } = this.getOfflineSyncParameters(payloads, options.mode)
 
       return {
-        operation: this.createOfflineSyncOperation(uploadPayloads, options.source, options.mode),
+        operation: this.createOfflineSyncOperation(uploadPayloads, options),
         mode: options.mode || SyncMode.Default,
       }
     }
   }
 
   private async performSync(options: SyncOptions): Promise<unknown> {
-    const { shouldExecuteSync, releaseLock } = this.configureSyncLock()
+    const { shouldExecuteSync, releaseLock } = this.configureSyncLock(options)
 
     const { items, beginDate, frozenDirtyIndex, neverSyncedDeleted } = await this.prepareForSync(options)
 

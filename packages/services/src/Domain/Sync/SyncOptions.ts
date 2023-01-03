@@ -11,6 +11,7 @@ export type SyncOptions = {
   checkIntegrity?: boolean
   /** Internally used to keep track of how sync requests were spawned. */
   source: SyncSource
+  sourceDescription?: string
   /** Whether to await any sync requests that may be queued from this call. */
   awaitAll?: boolean
   /**
