@@ -25,7 +25,7 @@ describe('application', () => {
 
     device = {} as jest.Mocked<DeviceInterface>
     device.openDatabase = jest.fn().mockResolvedValue(true)
-    device.getAllRawDatabasePayloads = jest.fn().mockReturnValue([])
+    device.getAllDatabaseEntries = jest.fn().mockReturnValue([])
     device.setRawStorageValue = jest.fn()
     device.getRawStorageValue = jest.fn().mockImplementation((key) => {
       if (key === namespacedKey(identifier, RawStorageKey.SnjsVersion)) {
@@ -33,9 +33,6 @@ describe('application', () => {
       }
       return undefined
     })
-    device.getDatabaseKeys = async () => {
-      return Promise.resolve(['1', '2', '3'])
-    }
 
     application = new SNApplication({
       environment: Environment.Mobile,
@@ -75,7 +72,6 @@ describe('application', () => {
           currentPersistPromise: false,
           isStorageWrapped: false,
           allRawPayloadsCount: 0,
-          databaseKeys: ['1', '2', '3'],
         },
         encryption: expect.objectContaining({
           getLatestVersion: '004',

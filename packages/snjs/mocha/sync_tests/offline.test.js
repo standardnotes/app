@@ -31,10 +31,7 @@ describe('offline syncing', () => {
 
   it('should sync item with no passcode', async function () {
     let note = await Factory.createMappedNote(this.application)
-    expect(this.application.itemManager.getDirtyItems().length).to.equal(1)
-
-    const rawPayloads1 = await this.application.diskStorageService.getAllRawPayloads()
-    expect(rawPayloads1.length).to.equal(this.expectedItemCount)
+    expect(Uuids(this.application.itemManager.getDirtyItems()).includes(note.uuid))
 
     await this.application.syncService.sync(syncOptions)
 

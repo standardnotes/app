@@ -2,10 +2,14 @@ import { ApplicationIdentifier } from '@standardnotes/common'
 import {
   FullyFormedTransferPayload,
   TransferPayload,
-  LegacyRawKeychainValue,
   NamespacedRootKeyInKeychain,
   Environment,
 } from '@standardnotes/models'
+import {
+  DatabaseLoadOptions,
+  DatabaseKeysLoadChunkResponse,
+  DatabaseFullEntryLoadChunkResponse,
+} from './DatabaseLoadOptions'
 
 /**
  * Platforms must override this class to provide platform specific utilities
@@ -20,8 +24,6 @@ export interface DeviceInterface {
   getRawStorageValue(key: string): Promise<string | undefined>
 
   getJsonParsedRawStorageValue(key: string): Promise<unknown | undefined>
-
-  getAllRawStorageKeyValues(): Promise<{ key: string; value: unknown }[]>
 
   setRawStorageValue(key: string, value: string): Promise<void>
 
@@ -38,10 +40,10 @@ export interface DeviceInterface {
    */
   openDatabase(identifier: ApplicationIdentifier): Promise<{ isNewDatabase?: boolean } | undefined>
 
-  /**
-   * In a key/value database, this function returns just the keys.
-   */
-  getDatabaseKeys(): Promise<string[]>
+  getDatabaseLoadChunks(
+    options: DatabaseLoadOptions,
+    identifier: ApplicationIdentifier,
+  ): Promise<DatabaseKeysLoadChunkResponse | DatabaseFullEntryLoadChunkResponse>
 
   /**
    * Remove all keychain and database data from device.
@@ -52,25 +54,28 @@ export interface DeviceInterface {
    */
   clearAllDataFromDevice(workspaceIdentifiers: ApplicationIdentifier[]): Promise<{ killsApplication: boolean }>
 
-  getAllRawDatabasePayloads<T extends FullyFormedTransferPayload = FullyFormedTransferPayload>(
+  getAllDatabaseEntries<T extends FullyFormedTransferPayload = FullyFormedTransferPayload>(
     identifier: ApplicationIdentifier,
   ): Promise<T[]>
 
-  saveRawDatabasePayload(payload: TransferPayload, identifier: ApplicationIdentifier): Promise<void>
+  getDatabaseEntries<T extends FullyFormedTransferPayload = FullyFormedTransferPayload>(
+    identifier: ApplicationIdentifier,
+    keys: string[],
+  ): Promise<T[]>
 
-  saveRawDatabasePayloads(payloads: TransferPayload[], identifier: ApplicationIdentifier): Promise<void>
+  saveDatabaseEntry(payload: TransferPayload, identifier: ApplicationIdentifier): Promise<void>
 
-  removeRawDatabasePayloadWithId(id: string, identifier: ApplicationIdentifier): Promise<void>
+  saveDatabaseEntries(payloads: TransferPayload[], identifier: ApplicationIdentifier): Promise<void>
 
-  removeAllRawDatabasePayloads(identifier: ApplicationIdentifier): Promise<void>
+  removeDatabaseEntry(id: string, identifier: ApplicationIdentifier): Promise<void>
+
+  removeAllDatabaseEntries(identifier: ApplicationIdentifier): Promise<void>
 
   getNamespacedKeychainValue(identifier: ApplicationIdentifier): Promise<NamespacedRootKeyInKeychain | undefined>
 
   setNamespacedKeychainValue(value: NamespacedRootKeyInKeychain, identifier: ApplicationIdentifier): Promise<void>
 
   clearNamespacedKeychainValue(identifier: ApplicationIdentifier): Promise<void>
-
-  setLegacyRawKeychainValue(value: LegacyRawKeychainValue): Promise<void>
 
   clearRawKeychainValue(): Promise<void>
 

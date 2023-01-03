@@ -140,6 +140,39 @@ export class Database {
     })
   }
 
+  /**
+   * This function is actually unused, but implemented to conform to protocol in case it is eventually needed.
+   * We could remove implementation and throw instead, but it might be better to offer a functional alternative instead.
+   */
+  public async getPayloadsForKeys(keys: string[]): Promise<any[]> {
+    const db = (await this.openDatabase()) as IDBDatabase
+    return new Promise((resolve) => {
+      const objectStore = db.transaction(STORE_NAME).objectStore(STORE_NAME)
+      const payloads: any = []
+      let numComplete = 0
+      for (const key of keys) {
+        const getRequest = objectStore.get(key)
+        getRequest.onsuccess = (event) => {
+          const target = event.target as any
+          const result = target.result
+          if (result) {
+            payloads.push(result)
+          }
+          numComplete++
+          if (numComplete === keys.length) {
+            resolve(payloads)
+          }
+        }
+        getRequest.onerror = () => {
+          numComplete++
+          if (numComplete === keys.length) {
+            resolve(payloads)
+          }
+        }
+      }
+    })
+  }
+
   public async getAllKeys(): Promise<string[]> {
     const db = (await this.openDatabase()) as IDBDatabase
 

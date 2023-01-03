@@ -7,7 +7,7 @@ import { OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTy
 import { AndroidBackHandlerService } from './AndroidBackHandlerService'
 import { AppStateObserverService } from './AppStateObserverService'
 import { ColorSchemeObserverService } from './ColorSchemeObserverService'
-import { MobileDevice, MobileDeviceEvent } from './Lib/Interface'
+import { MobileDevice, MobileDeviceEvent } from './Lib/MobileDevice'
 import { IsDev } from './Lib/Utils'
 
 const LoggingEnabled = IsDev
@@ -174,6 +174,10 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   const injectedJS = `
 
   console.log = (...args) => {
+    window.ReactNativeWebView.postMessage('[web log] ' + args.join(' '));
+  }
+
+  console.error = (...args) => {
     window.ReactNativeWebView.postMessage('[web log] ' + args.join(' '));
   }
 

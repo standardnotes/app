@@ -22,6 +22,7 @@
     "clean": "rm -fr dist",
     "prebuild": "yarn clean",
     "build": "yarn tsc && webpack --config webpack.prod.js",
+    "watch": "webpack --config webpack.prod.js --watch",
     "docs": "jsdoc -c jsdoc.json",
     "tsc": "tsc --project lib/tsconfig.json && tscpaths -p lib/tsconfig.json -s lib -o dist/@types",
     "lint": "yarn lint:eslint lib",

@@ -5,9 +5,7 @@ import { DeviceInterface } from '@standardnotes/services'
 import { StorageReader } from './Reader'
 import * as ReaderClasses from './Versions'
 
-function ReaderClassForVersion(
-  version: string,
-): typeof ReaderClasses.StorageReader2_0_0 | typeof ReaderClasses.StorageReader1_0_0 {
+function ReaderClassForVersion(version: string): typeof ReaderClasses.StorageReader2_0_0 {
   /** Sort readers by newest first */
   const allReaders = Object.values(ReaderClasses).sort((a, b) => {
     return compareSemVersions(a.version(), b.version()) * -1
