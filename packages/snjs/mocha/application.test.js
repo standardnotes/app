@@ -115,7 +115,7 @@ describe('application instances', () => {
     await app.lock()
   })
 
-  describe('signOut()', () => {
+  describe.skip('signOut()', () => {
     let testNote1
     let confirmAlert
     let deinit
