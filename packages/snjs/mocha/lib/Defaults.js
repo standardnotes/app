@@ -1,5 +1,7 @@
+export const DefaultServerPort = 3123
+
 export function getDefaultHost() {
-  return 'http://localhost:3123'
+  return `http://localhost:${DefaultServerPort}`
 }
 
 export function getDefaultMockedEventServiceUrl() {

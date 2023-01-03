@@ -178,7 +178,7 @@ Due to mounted volumes, we recommend running the setup as a root user. If you wi
 1. Once the server has finished rebooting, log back into the server and start the Standard Notes server process:
 
     ```shell
-    cd standalone
+    cd self-hosted
     ./server.sh start
     ```
 
