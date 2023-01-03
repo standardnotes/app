@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.52.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.51.1...@standardnotes/services@1.52.0) (2023-01-03)
+
+### Features
+
+* improve initial load performance on mobile ([#2126](https://github.com/standardnotes/app/issues/2126)) ([3c332a3](https://github.com/standardnotes/app/commit/3c332a35f6024c46020a1d6ac68a5df989804142))
+
 ## [1.51.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.51.0...@standardnotes/services@1.51.1) (2023-01-03)
 
 **Note:** Version bump only for package @standardnotes/services

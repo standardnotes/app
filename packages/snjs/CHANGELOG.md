@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.158.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.157.1...@standardnotes/snjs@2.158.0) (2023-01-03)
+
+### Features
+
+* improve initial load performance on mobile ([#2126](https://github.com/standardnotes/app/issues/2126)) ([3c332a3](https://github.com/standardnotes/app/commit/3c332a35f6024c46020a1d6ac68a5df989804142))
+
 ## [2.157.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.157.0...@standardnotes/snjs@2.157.1) (2023-01-03)
 
 **Note:** Version bump only for package @standardnotes/snjs

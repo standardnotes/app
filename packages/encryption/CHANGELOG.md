@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.19.33](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.32...@standardnotes/encryption@1.19.33) (2023-01-03)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
 ## [1.19.32](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.31...@standardnotes/encryption@1.19.32) (2023-01-03)
 
 **Note:** Version bump only for package @standardnotes/encryption
