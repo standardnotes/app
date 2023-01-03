@@ -418,18 +418,24 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
      * We don't want to await this, as we want to begin allowing the app to function
      * before local data has been loaded fully.
      */
-    const loadPromise = this.syncService.loadDatabasePayloads().then(async () => {
-      if (this.dealloced) {
-        throw 'Application has been destroyed.'
-      }
-      await this.handleStage(ExternalServices.ApplicationStage.LoadedDatabase_12)
-      this.beginAutoSyncTimer()
-      await this.syncService.sync({
-        mode: ExternalServices.SyncMode.DownloadFirst,
-        source: ExternalServices.SyncSource.External,
-        sourceDescription: 'Application Launch',
+    const loadPromise = this.syncService
+      .loadDatabasePayloads()
+      .then(async () => {
+        if (this.dealloced) {
+          throw 'Application has been destroyed.'
+        }
+        await this.handleStage(ExternalServices.ApplicationStage.LoadedDatabase_12)
+        this.beginAutoSyncTimer()
+        await this.syncService.sync({
+          mode: ExternalServices.SyncMode.DownloadFirst,
+          source: ExternalServices.SyncSource.External,
+          sourceDescription: 'Application Launch',
+        })
       })
-    })
+      .catch((error) => {
+        void this.notifyEvent(ApplicationEvent.LocalDatabaseReadError, error)
+        throw error
+      })
     if (awaitDatabaseLoad) {
       await loadPromise
     }
