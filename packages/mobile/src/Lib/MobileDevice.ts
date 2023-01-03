@@ -3,7 +3,7 @@ import {
   AppleIAPProductId,
   AppleIAPReceipt,
   ApplicationIdentifier,
-  DatabaseLoadChunkResponse,
+  DatabaseKeysLoadChunkResponse,
   DatabaseLoadOptions,
   Environment,
   LegacyRawKeychainValue,
@@ -137,7 +137,7 @@ export class MobileDevice implements MobileDeviceInterface {
     return Promise.resolve({ isNewDatabase: false })
   }
 
-  getDatabaseLoadChunks(options: DatabaseLoadOptions, identifier: string): Promise<DatabaseLoadChunkResponse> {
+  getDatabaseLoadChunks(options: DatabaseLoadOptions, identifier: string): Promise<DatabaseKeysLoadChunkResponse> {
     return this.findOrCreateDatabase(identifier).getLoadChunks(options)
   }
 

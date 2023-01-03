@@ -9,6 +9,10 @@ import {
   WebOrDesktopDeviceInterface,
   Platform,
   FullyFormedTransferPayload,
+  DatabaseLoadOptions,
+  GetSortedPayloadsByPriority,
+  DatabaseFullEntryLoadChunk,
+  DatabaseFullEntryLoadChunkResponse,
 } from '@standardnotes/snjs'
 import { Database } from '../Database'
 
@@ -98,6 +102,39 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
           reject(error)
         })
     }) as Promise<{ isNewDatabase?: boolean } | undefined>
+  }
+
+  async getDatabaseLoadChunks(
+    options: DatabaseLoadOptions,
+    identifier: string,
+  ): Promise<DatabaseFullEntryLoadChunkResponse> {
+    const entries = await this.getAllDatabaseEntries(identifier)
+    const sorted = GetSortedPayloadsByPriority(entries, options)
+
+    const itemsKeysChunk: DatabaseFullEntryLoadChunk = {
+      entries: sorted.itemsKeyPayloads,
+    }
+
+    const contentTypePriorityChunk: DatabaseFullEntryLoadChunk = {
+      entries: sorted.contentTypePriorityPayloads,
+    }
+
+    const remainingPayloadsChunks: DatabaseFullEntryLoadChunk[] = []
+    for (let i = 0; i < sorted.remainingPayloads.length; i += options.batchSize) {
+      remainingPayloadsChunks.push({
+        entries: sorted.remainingPayloads.slice(i, i + options.batchSize),
+      })
+    }
+
+    const result: DatabaseFullEntryLoadChunkResponse = {
+      fullEntries: {
+        itemsKeys: itemsKeysChunk,
+        remainingChunks: [contentTypePriorityChunk, ...remainingPayloadsChunks],
+      },
+      remainingChunksItemCount: sorted.contentTypePriorityPayloads.length + sorted.remainingPayloads.length,
+    }
+
+    return result
   }
 
   async getAllDatabaseEntries(identifier: ApplicationIdentifier) {

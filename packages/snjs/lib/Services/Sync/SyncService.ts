@@ -33,7 +33,6 @@ import {
   DeltaOutOfSync,
   ImmutablePayloadCollection,
   CreatePayload,
-  FullyFormedTransferPayload,
   isEncryptedPayload,
   isDecryptedPayload,
   EncryptedPayloadInterface,
@@ -75,6 +74,8 @@ import {
   DiagnosticInfo,
   EncryptionService,
   DeviceInterface,
+  isFullEntryLoadChunkResponse,
+  isChunkFullEntry,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -224,16 +225,6 @@ export class SNSyncService
     return this.databaseLoaded
   }
 
-  /**
-   * Used in tandem with `loadDatabasePayloads`
-   */
-  public async getDatabasePayloads(): Promise<FullyFormedTransferPayload[]> {
-    return this.storageService.getAllRawPayloads().catch((error) => {
-      void this.notifyEvent(SyncEvent.DatabaseReadError, error)
-      throw error
-    })
-  }
-
   private async processItemsKeysFirstDuringDatabaseLoad(
     itemsKeysPayloads: FullyFormedPayloadInterface[],
   ): Promise<void> {
@@ -261,11 +252,6 @@ export class SNSyncService
     )
   }
 
-  /**
-   * @param rawPayloads - use `getDatabasePayloads` to get these payloads.
-   * They are fed as a parameter so that callers don't have to await the loading, but can
-   * await getting the raw payloads from storage
-   */
   public async loadDatabasePayloads(): Promise<void> {
     log(LoggingDomain.DatabaseLoad, 'Loading database payloads')
 
@@ -282,7 +268,10 @@ export class SNSyncService
       this.identifier,
     )
 
-    const itemsKeyEntries = await this.device.getDatabaseEntries(this.identifier, chunks.itemsKeys.keys)
+    const itemsKeyEntries = isFullEntryLoadChunkResponse(chunks)
+      ? chunks.fullEntries.itemsKeys.entries
+      : await this.device.getDatabaseEntries(this.identifier, chunks.keys.itemsKeys.keys)
+
     const itemsKeyPayloads = itemsKeyEntries
       .map((entry) => {
         try {
@@ -304,8 +293,15 @@ export class SNSyncService
      */
     const payloadCount = chunks.remainingChunksItemCount
     let totalProcessedCount = 0
-    for (const chunk of chunks.remainingChunks) {
-      const dbEntries = await this.device.getDatabaseEntries(this.identifier, chunk.keys)
+
+    const remainingChunks = isFullEntryLoadChunkResponse(chunks)
+      ? chunks.fullEntries.remainingChunks
+      : chunks.keys.remainingChunks
+
+    for (const chunk of remainingChunks) {
+      const dbEntries = isChunkFullEntry(chunk)
+        ? chunk.entries
+        : await this.device.getDatabaseEntries(this.identifier, chunk.keys)
       const payloads = dbEntries
         .map((entry) => {
           try {

@@ -6,7 +6,11 @@ import {
   NamespacedRootKeyInKeychain,
   Environment,
 } from '@standardnotes/models'
-import { DatabaseLoadOptions, DatabaseLoadChunkResponse } from './DatabaseLoadOptions'
+import {
+  DatabaseLoadOptions,
+  DatabaseKeysLoadChunkResponse,
+  DatabaseFullEntryLoadChunkResponse,
+} from './DatabaseLoadOptions'
 
 /**
  * Platforms must override this class to provide platform specific utilities
@@ -40,7 +44,7 @@ export interface DeviceInterface {
   getDatabaseLoadChunks(
     options: DatabaseLoadOptions,
     identifier: ApplicationIdentifier,
-  ): Promise<DatabaseLoadChunkResponse>
+  ): Promise<DatabaseKeysLoadChunkResponse | DatabaseFullEntryLoadChunkResponse>
 
   /**
    * Remove all keychain and database data from device.

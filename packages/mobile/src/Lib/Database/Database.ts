@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-community/async-storage'
 import {
-  DatabaseLoadChunk,
-  DatabaseLoadChunkResponse,
+  DatabaseKeysLoadChunk,
+  DatabaseKeysLoadChunkResponse,
   DatabaseLoadOptions,
   GetSortedPayloadsByPriority,
   TransferPayload,
@@ -75,30 +75,32 @@ export class Database implements DatabaseInterface {
     )
   }
 
-  async getLoadChunks(options: DatabaseLoadOptions): Promise<DatabaseLoadChunkResponse> {
+  async getLoadChunks(options: DatabaseLoadOptions): Promise<DatabaseKeysLoadChunkResponse> {
     const metadataItems = this.metadataStore.getAllMetadataItems()
     const sorted = GetSortedPayloadsByPriority(metadataItems, options)
 
-    const itemsKeysChunk: DatabaseLoadChunk = {
+    const itemsKeysChunk: DatabaseKeysLoadChunk = {
       keys: sorted.itemsKeyPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid)),
     }
 
-    const contentTypePriorityChunk: DatabaseLoadChunk = {
+    const contentTypePriorityChunk: DatabaseKeysLoadChunk = {
       keys: sorted.contentTypePriorityPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid)),
     }
 
     const remainingKeys = sorted.remainingPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid))
 
-    const remainingKeysChunks: DatabaseLoadChunk[] = []
+    const remainingKeysChunks: DatabaseKeysLoadChunk[] = []
     for (let i = 0; i < remainingKeys.length; i += options.batchSize) {
       remainingKeysChunks.push({
         keys: remainingKeys.slice(i, i + options.batchSize),
       })
     }
 
-    const result: DatabaseLoadChunkResponse = {
-      itemsKeys: itemsKeysChunk,
-      remainingChunks: [contentTypePriorityChunk, ...remainingKeysChunks],
+    const result: DatabaseKeysLoadChunkResponse = {
+      keys: {
+        itemsKeys: itemsKeysChunk,
+        remainingChunks: [contentTypePriorityChunk, ...remainingKeysChunks],
+      },
       remainingChunksItemCount: sorted.contentTypePriorityPayloads.length + sorted.remainingPayloads.length,
     }
 

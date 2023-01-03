@@ -7,10 +7,10 @@ import { ContentType, Uuid } from '@standardnotes/common'
  * whereby the earlier a content_type appears in the priorityList,
  * the earlier it will appear in the resulting sorted array.
  */
-function SortPayloadsByRecentAndContentPriority(
-  payloads: DatabaseItemMetadata[],
+function SortPayloadsByRecentAndContentPriority<T extends DatabaseItemMetadata = DatabaseItemMetadata>(
+  payloads: T[],
   contentTypePriorityList: ContentType[],
-): DatabaseItemMetadata[] {
+): T[] {
   return payloads.sort((a, b) => {
     const dateResult = new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
 
@@ -45,10 +45,10 @@ function SortPayloadsByRecentAndContentPriority(
  * whereby the earlier a uuid appears in the priorityList,
  * the earlier it will appear in the resulting sorted array.
  */
-function SortPayloadsByRecentAndUuidPriority(
-  payloads: DatabaseItemMetadata[],
+function SortPayloadsByRecentAndUuidPriority<T extends DatabaseItemMetadata = DatabaseItemMetadata>(
+  payloads: T[],
   uuidPriorityList: Uuid[],
-): DatabaseItemMetadata[] {
+): T[] {
   return payloads.sort((a, b) => {
     const dateResult = new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
 
@@ -78,17 +78,17 @@ function SortPayloadsByRecentAndUuidPriority(
   })
 }
 
-export function GetSortedPayloadsByPriority(
-  payloads: DatabaseItemMetadata[],
+export function GetSortedPayloadsByPriority<T extends DatabaseItemMetadata = DatabaseItemMetadata>(
+  payloads: T[],
   options: DatabaseLoadOptions,
 ): {
-  itemsKeyPayloads: DatabaseItemMetadata[]
-  contentTypePriorityPayloads: DatabaseItemMetadata[]
-  remainingPayloads: DatabaseItemMetadata[]
+  itemsKeyPayloads: T[]
+  contentTypePriorityPayloads: T[]
+  remainingPayloads: T[]
 } {
-  const itemsKeyPayloads: DatabaseItemMetadata[] = []
-  const contentTypePriorityPayloads: DatabaseItemMetadata[] = []
-  const remainingPayloads: DatabaseItemMetadata[] = []
+  const itemsKeyPayloads: T[] = []
+  const contentTypePriorityPayloads: T[] = []
+  const remainingPayloads: T[] = []
 
   for (let index = 0; index < payloads.length; index++) {
     const payload = payloads[index]

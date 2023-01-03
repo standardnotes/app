@@ -410,16 +410,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     await this.notifyEvent(ApplicationEvent.Launched)
     await this.handleStage(ExternalServices.ApplicationStage.Launched_10)
 
-    // const databasePayloads = await this.syncService.getDatabasePayloads()
     await this.handleStage(ExternalServices.ApplicationStage.LoadingDatabase_11)
-
     if (this.createdNewDatabase) {
       await this.syncService.onNewDatabaseCreated()
     }
     /**
      * We don't want to await this, as we want to begin allowing the app to function
-     * before local data has been loaded fully. We await only initial
-     * `getDatabasePayloads` to lock in on database state.
+     * before local data has been loaded fully.
      */
     const loadPromise = this.syncService.loadDatabasePayloads().then(async () => {
       if (this.dealloced) {

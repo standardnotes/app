@@ -579,7 +579,7 @@ describe('online syncing', function () {
     await this.application.itemManager.setItemDirty(note)
     await this.application.syncService.sync(syncOptions)
     this.expectedItemCount++
-    const rawPayloads = await this.application.syncService.getDatabasePayloads()
+    const rawPayloads = await this.application.storageService.getAllRawPayloads()
     const notePayload = rawPayloads.find((p) => p.content_type === ContentType.Note)
     expect(typeof notePayload.content).to.equal('string')
   })
@@ -651,8 +651,7 @@ describe('online syncing', function () {
     await this.application.syncService.clearSyncPositionTokens()
     await this.application.payloadManager.resetState()
     await this.application.itemManager.resetState()
-    const databasePayloads = await this.application.diskStorageService.getAllRawPayloads()
-    await this.application.syncService.loadDatabasePayloads(databasePayloads)
+    await this.application.syncService.loadDatabasePayloads()
     await this.application.syncService.sync(syncOptions)
 
     const newRawPayloads = await this.application.diskStorageService.getAllRawPayloads()
@@ -691,8 +690,7 @@ describe('online syncing', function () {
     await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
 
     this.application.syncService.ut_setDatabaseLoaded(false)
-    const databasePayloads = await this.application.diskStorageService.getAllRawPayloads()
-    await this.application.syncService.loadDatabasePayloads(databasePayloads)
+    await this.application.syncService.loadDatabasePayloads()
     await this.application.syncService.sync(syncOptions)
 
     const items = await this.application.itemManager.items
