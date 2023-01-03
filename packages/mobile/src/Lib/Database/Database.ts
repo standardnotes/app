@@ -21,10 +21,6 @@ export class Database implements DatabaseInterface {
     this.metadataStore = new DatabaseMetadata(identifier, flashStorage)
   }
 
-  public async needsMigration(): Promise<boolean> {
-    return this.metadataStore.needsMigration()
-  }
-
   private databaseKeyForPayloadId(id: string) {
     return `${this.getDatabaseKeyPrefix()}${id}`
   }
@@ -35,6 +31,11 @@ export class Database implements DatabaseInterface {
     } else {
       return 'Item-'
     }
+  }
+
+  async getAllEntries<T extends TransferPayload = TransferPayload>(): Promise<T[]> {
+    const keys = await this.getAllKeys()
+    return this.multiGet(keys)
   }
 
   async getAllKeys(): Promise<string[]> {
@@ -76,7 +77,13 @@ export class Database implements DatabaseInterface {
   }
 
   async getLoadChunks(options: DatabaseLoadOptions): Promise<DatabaseKeysLoadChunkResponse> {
-    const metadataItems = this.metadataStore.getAllMetadataItems()
+    let metadataItems = this.metadataStore.getAllMetadataItems()
+
+    if (metadataItems.length === 0) {
+      const allEntries = await this.getAllEntries()
+      metadataItems = this.metadataStore.runMigration(allEntries)
+    }
+
     const sorted = GetSortedPayloadsByPriority(metadataItems, options)
 
     const itemsKeysChunk: DatabaseKeysLoadChunk = {

@@ -144,9 +144,7 @@ export class MobileDevice implements MobileDeviceInterface {
   async getAllDatabaseEntries<T extends TransferPayload = TransferPayload>(
     identifier: ApplicationIdentifier,
   ): Promise<T[]> {
-    const keys = await this.findOrCreateDatabase(identifier).getAllKeys()
-    const payloads = await this.findOrCreateDatabase(identifier).multiGet<T>(keys)
-    return payloads
+    return this.findOrCreateDatabase(identifier).getAllEntries()
   }
 
   async getDatabaseEntries<T extends TransferPayload = TransferPayload>(
