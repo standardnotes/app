@@ -1,4 +1,10 @@
-import {FunctionComponent, useCallback, useState} from 'react';
+import {
+  FunctionComponent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
 import {ContentEditable} from '@lexical/react/LexicalContentEditable';
 import {OnChangePlugin} from '@lexical/react/LexicalOnChangePlugin';
@@ -26,6 +32,10 @@ import {truncateString} from './Utils';
 import {SuperEditorContentId} from './Constants';
 import {classNames} from '@standardnotes/utils';
 import {MarkdownTransformers} from './MarkdownTransformers';
+import {
+  SearchPlugin,
+  SuperSearchContextProvider,
+} from '../Lexical/Plugins/SearchPlugin';
 
 type BlocksEditorProps = {
   onChange?: (value: string, preview: string) => void;
@@ -91,12 +101,12 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
   };
 
   return (
-    <>
+    <SuperSearchContextProvider>
       {children}
       <RichTextPlugin
         contentEditable={
           <div id="blocks-editor" className="editor-scroller h-full">
-            <div className="editor" ref={onRef}>
+            <div className="editor z-0" ref={onRef}>
               <ContentEditable
                 id={SuperEditorContentId}
                 className={classNames(
@@ -105,6 +115,9 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
                 )}
                 spellCheck={spellcheck}
               />
+              <div className="absolute top-0 left-0 z-[-1] h-full w-full overflow-hidden">
+                <div className="search-highlight-container absolute top-0 left-0 z-[-1] w-full overflow-visible" />
+              </div>
             </div>
           </div>
         }
@@ -134,6 +147,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
           <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
         </>
       )}
-    </>
+      <SearchPlugin />
+    </SuperSearchContextProvider>
   );
 };
