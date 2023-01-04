@@ -17,20 +17,11 @@ import {
   useState,
 } from 'react';
 
-type ResultRect = {
-  top: number;
-  left: number;
-  bottom: number;
-  right: number;
-  x: number;
-  y: number;
-  width: number;
-  height: number;
-};
-
 type SearchResult = {
   nodeKey: string;
-  rectList: ResultRect[];
+  rectList: DOMRect[];
+  startIndex: number;
+  endIndex: number;
 };
 
 type SuperSearchContextData = {
@@ -62,12 +53,26 @@ export const useSuperSearchContext = () => {
 };
 
 const createSearchHighlightElement = (
-  rect: ResultRect,
-  isCurrentResult: boolean,
+  {
+    rect,
+    isCurrentResult,
+    ...result
+  }: {
+    rect: DOMRect;
+    isCurrentResult: boolean;
+  } & SearchResult,
   rootElement: Element,
   containerElement: Element,
 ) => {
   const rootElementRect = rootElement.getBoundingClientRect();
+
+  const id = `search-${result.nodeKey}-${result.startIndex}-${result.endIndex}`;
+
+  const existingHighlightElement = document.getElementById(id);
+
+  if (existingHighlightElement) {
+    return;
+  }
 
   const highlightElement = document.createElement('div');
   highlightElement.style.position = 'absolute';
@@ -81,8 +86,19 @@ const createSearchHighlightElement = (
   highlightElement.style.opacity = isCurrentResult ? '0.5' : '0.25';
   highlightElement.className =
     'search-highlight' + (isCurrentResult ? ' current' : '');
+  highlightElement.id = id;
 
   containerElement.appendChild(highlightElement);
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (!entry.isIntersecting) {
+        highlightElement.remove();
+        observer.disconnect();
+      }
+    });
+  });
+  observer.observe(highlightElement);
 };
 
 export const SuperSearchContextProvider = ({
@@ -121,7 +137,15 @@ export const SuperSearchContextProvider = ({
         if (!containerElement) {
           return;
         }
-        createSearchHighlightElement(rect, true, rootElement, containerElement);
+        createSearchHighlightElement(
+          {
+            ...result,
+            rect,
+            isCurrentResult: true,
+          },
+          rootElement,
+          containerElement,
+        );
       });
     });
   }, [currentResultIndex, results]);
@@ -328,6 +352,8 @@ export const SearchPlugin = () => {
             addResult({
               nodeKey: node.getKey(),
               rectList,
+              startIndex,
+              endIndex,
             });
           } catch (error) {}
         });
@@ -394,10 +420,6 @@ export const SearchPlugin = () => {
     }
 
     const createVisibleHighlights = () => {
-      document.querySelectorAll('.search-highlight').forEach((element) => {
-        element.remove();
-      });
-
       results.forEach((result) => {
         if (!root) {
           return;
@@ -424,8 +446,11 @@ export const SearchPlugin = () => {
               }
 
               createSearchHighlightElement(
-                rect,
-                false,
+                {
+                  ...result,
+                  rect,
+                  isCurrentResult: false,
+                },
                 root,
                 highlightContainer,
               );
@@ -453,6 +478,10 @@ export const SearchPlugin = () => {
         handleScroll();
       });
     };
+
+    document.querySelectorAll('.search-highlight').forEach((element) => {
+      element.remove();
+    });
 
     createVisibleHighlights();
 
