@@ -323,16 +323,7 @@ export const SearchPlugin = () => {
             range.setStart(textNode, startIndex);
             range.setEnd(textNode, endIndex);
 
-            const rectList = Array.from(range.getClientRects()).map((rect) => ({
-              top: rect.top,
-              left: rect.left,
-              bottom: rect.bottom,
-              right: rect.right,
-              x: rect.x,
-              y: rect.y,
-              width: rect.width,
-              height: rect.height,
-            }));
+            const rectList = Array.from(range.getClientRects());
 
             addResult({
               nodeKey: node.getKey(),
