@@ -14,7 +14,6 @@ import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { formatLastSyncDate } from '@/Utils/DateUtils'
 import Spinner from '@/Components/Spinner/Spinner'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
-import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -85,21 +84,8 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
     setMenuPane(AccountMenuPane.SignIn)
   }, [setMenuPane])
 
-  const openFileSend = useCallback(() => {
-    const link = 'https://filesend.standardnotes.com/'
-
-    if (application.isNativeMobileWeb()) {
-      application.mobileDevice().openUrl(link)
-      return
-    }
-
-    window.open(link, '_blank')
-  }, [application])
-
   const CREATE_ACCOUNT_INDEX = 1
   const SWITCHER_INDEX = 0
-
-  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   return (
     <>
@@ -186,12 +172,6 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
           </div>
           <span className="text-neutral">v{application.version}</span>
         </MenuItem>
-        {isMobileScreen && (
-          <MenuItem onClick={openFileSend}>
-            <Icon type="open-in" className={iconClassName} />
-            Open FileSend
-          </MenuItem>
-        )}
         <MenuItem onClick={() => viewControllerManager.isImportModalVisible.set(true)}>
           <Icon type="archive" className={iconClassName} />
           Import
