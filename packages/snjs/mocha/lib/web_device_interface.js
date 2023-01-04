@@ -21,17 +21,6 @@ export default class WebDeviceInterface {
     }
   }
 
-  async getAllRawStorageKeyValues() {
-    const results = []
-    for (const key of Object.keys(localStorage)) {
-      results.push({
-        key: key,
-        value: localStorage[key],
-      })
-    }
-    return results
-  }
-
   async setRawStorageValue(key, value) {
     localStorage.setItem(key, value)
   }
@@ -60,7 +49,7 @@ export default class WebDeviceInterface {
     return `${this._getDatabaseKeyPrefix(identifier)}${id}`
   }
 
-  async getAllRawDatabasePayloads(identifier) {
+  async getAllDatabaseEntries(identifier) {
     const models = []
     for (const key in localStorage) {
       if (key.startsWith(this._getDatabaseKeyPrefix(identifier))) {
@@ -70,21 +59,51 @@ export default class WebDeviceInterface {
     return models
   }
 
-  async saveRawDatabasePayload(payload, identifier) {
+  async getDatabaseLoadChunks(options, identifier) {
+    const entries = await this.getAllDatabaseEntries(identifier)
+    const sorted = GetSortedPayloadsByPriority(entries, options)
+
+    const itemsKeysChunk = {
+      entries: sorted.itemsKeyPayloads,
+    }
+
+    const contentTypePriorityChunk = {
+      entries: sorted.contentTypePriorityPayloads,
+    }
+
+    const remainingPayloadsChunks = []
+    for (let i = 0; i < sorted.remainingPayloads.length; i += options.batchSize) {
+      remainingPayloadsChunks.push({
+        entries: sorted.remainingPayloads.slice(i, i + options.batchSize),
+      })
+    }
+
+    const result = {
+      fullEntries: {
+        itemsKeys: itemsKeysChunk,
+        remainingChunks: [contentTypePriorityChunk, ...remainingPayloadsChunks],
+      },
+      remainingChunksItemCount: sorted.contentTypePriorityPayloads.length + sorted.remainingPayloads.length,
+    }
+
+    return result
+  }
+
+  async saveDatabaseEntry(payload, identifier) {
     localStorage.setItem(this._keyForPayloadId(payload.uuid, identifier), JSON.stringify(payload))
   }
 
-  async saveRawDatabasePayloads(payloads, identifier) {
+  async saveDatabaseEntries(payloads, identifier) {
     for (const payload of payloads) {
-      await this.saveRawDatabasePayload(payload, identifier)
+      await this.saveDatabaseEntry(payload, identifier)
     }
   }
 
-  async removeRawDatabasePayloadWithId(id, identifier) {
+  async removeDatabaseEntry(id, identifier) {
     localStorage.removeItem(this._keyForPayloadId(id, identifier))
   }
 
-  async removeAllRawDatabasePayloads(identifier) {
+  async removeAllDatabaseEntries(identifier) {
     for (const key in localStorage) {
       if (key.startsWith(this._getDatabaseKeyPrefix(identifier))) {
         delete localStorage[key]
@@ -124,12 +143,6 @@ export default class WebDeviceInterface {
     localStorage.setItem(KEYCHAIN_STORAGE_KEY, JSON.stringify(keychain))
   }
 
-  /** Allows unit tests to set legacy keychain structure as it was <= 003 */
-  // eslint-disable-next-line camelcase
-  async setLegacyRawKeychainValue(value) {
-    localStorage.setItem(KEYCHAIN_STORAGE_KEY, JSON.stringify(value))
-  }
-
   async getRawKeychainValue() {
     const keychain = localStorage.getItem(KEYCHAIN_STORAGE_KEY)
     return JSON.parse(keychain)
@@ -139,19 +152,13 @@ export default class WebDeviceInterface {
     localStorage.removeItem(KEYCHAIN_STORAGE_KEY)
   }
 
-  performSoftReset() {
+  performSoftReset() {}
 
-  }
-
-  performHardReset() {
-
-  }
+  performHardReset() {}
 
   isDeviceDestroyed() {
     return false
   }
 
-  deinit() {
-
-  }
+  deinit() {}
 }

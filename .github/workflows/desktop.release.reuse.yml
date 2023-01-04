@@ -74,7 +74,7 @@ jobs:
       - name: Compile for AppImage
         run: yarn run webpack --config desktop.webpack.prod.js
       - name: AppImage
-        run: yarn run electron-builder --linux --x64 --ia32 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
+        run: yarn run electron-builder --linux --x64 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
       - name: AppImageX64
         run: yarn run electron-builder --linux --x64 -c.linux.target=AppImage --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
       - name: AppImageArm64
@@ -83,7 +83,7 @@ jobs:
       - name: Deb
         run: |
           yarn run webpack --config desktop.webpack.prod.js --env deb
-          yarn run electron-builder --linux --x64 --ia32 -c.linux.target=deb --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
+          yarn run electron-builder --linux --x64 -c.linux.target=deb --publish=never --c.extraMetadata.version=${{ env.APP_VERSION }}
       - name: DebArm64
         env:
           npm_config_target_arch: 'arm64'

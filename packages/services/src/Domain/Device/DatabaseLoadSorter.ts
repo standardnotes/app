@@ -1,18 +1,18 @@
-import { UuidString } from '@Lib/Types'
-import { ContentType } from '@standardnotes/common'
-import { FullyFormedPayloadInterface } from '@standardnotes/models'
+import { DatabaseItemMetadata } from './DatabaseItemMetadata'
+import { DatabaseLoadOptions } from './DatabaseLoadOptions'
+import { ContentType, Uuid } from '@standardnotes/common'
 
 /**
  * Sorts payloads according by most recently modified first, according to the priority,
  * whereby the earlier a content_type appears in the priorityList,
  * the earlier it will appear in the resulting sorted array.
  */
-function SortPayloadsByRecentAndContentPriority(
-  payloads: FullyFormedPayloadInterface[],
+function SortPayloadsByRecentAndContentPriority<T extends DatabaseItemMetadata = DatabaseItemMetadata>(
+  payloads: T[],
   contentTypePriorityList: ContentType[],
-): FullyFormedPayloadInterface[] {
+): T[] {
   return payloads.sort((a, b) => {
-    const dateResult = new Date(b.serverUpdatedAt).getTime() - new Date(a.serverUpdatedAt).getTime()
+    const dateResult = new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
 
     let aPriority = 0
     let bPriority = 0
@@ -45,12 +45,12 @@ function SortPayloadsByRecentAndContentPriority(
  * whereby the earlier a uuid appears in the priorityList,
  * the earlier it will appear in the resulting sorted array.
  */
-function SortPayloadsByRecentAndUuidPriority(
-  payloads: FullyFormedPayloadInterface[],
-  uuidPriorityList: UuidString[],
-): FullyFormedPayloadInterface[] {
+function SortPayloadsByRecentAndUuidPriority<T extends DatabaseItemMetadata = DatabaseItemMetadata>(
+  payloads: T[],
+  uuidPriorityList: Uuid[],
+): T[] {
   return payloads.sort((a, b) => {
-    const dateResult = new Date(b.serverUpdatedAt).getTime() - new Date(a.serverUpdatedAt).getTime()
+    const dateResult = new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
 
     let aPriority = 0
     let bPriority = 0
@@ -78,25 +78,24 @@ function SortPayloadsByRecentAndUuidPriority(
   })
 }
 
-export function GetSortedPayloadsByPriority(
-  payloads: FullyFormedPayloadInterface[],
-  contentTypePriorityList: ContentType[],
-  uuidPriorityList: UuidString[],
+export function GetSortedPayloadsByPriority<T extends DatabaseItemMetadata = DatabaseItemMetadata>(
+  payloads: T[],
+  options: DatabaseLoadOptions,
 ): {
-  itemsKeyPayloads: FullyFormedPayloadInterface[]
-  contentTypePriorityPayloads: FullyFormedPayloadInterface[]
-  remainingPayloads: FullyFormedPayloadInterface[]
+  itemsKeyPayloads: T[]
+  contentTypePriorityPayloads: T[]
+  remainingPayloads: T[]
 } {
-  const itemsKeyPayloads: FullyFormedPayloadInterface[] = []
-  const contentTypePriorityPayloads: FullyFormedPayloadInterface[] = []
-  const remainingPayloads: FullyFormedPayloadInterface[] = []
+  const itemsKeyPayloads: T[] = []
+  const contentTypePriorityPayloads: T[] = []
+  const remainingPayloads: T[] = []
 
   for (let index = 0; index < payloads.length; index++) {
     const payload = payloads[index]
 
     if (payload.content_type === ContentType.ItemsKey) {
       itemsKeyPayloads.push(payload)
-    } else if (contentTypePriorityList.includes(payload.content_type)) {
+    } else if (options.contentTypePriority.includes(payload.content_type)) {
       contentTypePriorityPayloads.push(payload)
     } else {
       remainingPayloads.push(payload)
@@ -107,8 +106,8 @@ export function GetSortedPayloadsByPriority(
     itemsKeyPayloads,
     contentTypePriorityPayloads: SortPayloadsByRecentAndContentPriority(
       contentTypePriorityPayloads,
-      contentTypePriorityList,
+      options.contentTypePriority,
     ),
-    remainingPayloads: SortPayloadsByRecentAndUuidPriority(remainingPayloads, uuidPriorityList),
+    remainingPayloads: SortPayloadsByRecentAndUuidPriority(remainingPayloads, options.uuidPriority),
   }
 }

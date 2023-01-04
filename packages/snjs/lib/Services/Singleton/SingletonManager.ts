@@ -133,7 +133,7 @@ export class SNSingletonManager extends AbstractService {
      * of a download-first request.
      */
     if (handled.length > 0 && eventSource === SyncEvent.SyncCompletedWithAllItemsUploaded) {
-      await this.syncService?.sync()
+      await this.syncService?.sync({ sourceDescription: 'Resolve singletons for items' })
     }
   }
 
@@ -190,7 +190,7 @@ export class SNSingletonManager extends AbstractService {
         }
       })
 
-      await this.syncService.sync()
+      await this.syncService.sync({ sourceDescription: 'Find or create singleton, before any sync has completed' })
 
       removeObserver()
 
@@ -224,7 +224,7 @@ export class SNSingletonManager extends AbstractService {
 
     const item = await this.itemManager.emitItemFromPayload(dirtyPayload, PayloadEmitSource.LocalInserted)
 
-    void this.syncService.sync()
+    void this.syncService.sync({ sourceDescription: 'After find or create singleton' })
 
     return item as T
   }

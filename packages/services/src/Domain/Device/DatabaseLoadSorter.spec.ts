@@ -1,6 +1,6 @@
 import { ContentType } from '@standardnotes/common'
 import { FullyFormedPayloadInterface } from '@standardnotes/models'
-import { GetSortedPayloadsByPriority } from './Utils'
+import { GetSortedPayloadsByPriority } from './DatabaseLoadSorter'
 
 describe('GetSortedPayloadsByPriority', () => {
   let payloads: FullyFormedPayloadInterface[] = []
@@ -26,11 +26,11 @@ describe('GetSortedPayloadsByPriority', () => {
       } as FullyFormedPayloadInterface,
     ]
 
-    const { itemsKeyPayloads, contentTypePriorityPayloads, remainingPayloads } = GetSortedPayloadsByPriority(
-      payloads,
+    const { itemsKeyPayloads, contentTypePriorityPayloads, remainingPayloads } = GetSortedPayloadsByPriority(payloads, {
       contentTypePriority,
-      launchPriorityUuids,
-    )
+      uuidPriority: launchPriorityUuids,
+      batchSize: 1000,
+    })
 
     expect(itemsKeyPayloads.length).toBe(1)
     expect(itemsKeyPayloads[0].content_type).toBe(ContentType.ItemsKey)
@@ -84,11 +84,11 @@ describe('GetSortedPayloadsByPriority', () => {
 
     launchPriorityUuids = [prioritizedNoteUuid, prioritizedTagUuid]
 
-    const { itemsKeyPayloads, contentTypePriorityPayloads, remainingPayloads } = GetSortedPayloadsByPriority(
-      payloads,
+    const { itemsKeyPayloads, contentTypePriorityPayloads, remainingPayloads } = GetSortedPayloadsByPriority(payloads, {
       contentTypePriority,
-      launchPriorityUuids,
-    )
+      uuidPriority: launchPriorityUuids,
+      batchSize: 1000,
+    })
 
     expect(itemsKeyPayloads.length).toBe(1)
     expect(itemsKeyPayloads[0].content_type).toBe(ContentType.ItemsKey)
@@ -116,12 +116,12 @@ describe('GetSortedPayloadsByPriority', () => {
       {
         content_type: ContentType.Note,
         uuid: unprioritizedNoteUuid,
-        serverUpdatedAt: new Date(1),
+        updated_at: new Date(1),
       } as FullyFormedPayloadInterface,
       {
         content_type: ContentType.Tag,
         uuid: unprioritizedTagUuid,
-        serverUpdatedAt: new Date(2),
+        updated_at: new Date(2),
       } as FullyFormedPayloadInterface,
       {
         content_type: ContentType.Note,
@@ -135,7 +135,11 @@ describe('GetSortedPayloadsByPriority', () => {
 
     launchPriorityUuids = [prioritizedNoteUuid, prioritizedTagUuid]
 
-    const { remainingPayloads } = GetSortedPayloadsByPriority(payloads, contentTypePriority, launchPriorityUuids)
+    const { remainingPayloads } = GetSortedPayloadsByPriority(payloads, {
+      contentTypePriority,
+      uuidPriority: launchPriorityUuids,
+      batchSize: 1000,
+    })
 
     expect(remainingPayloads.length).toBe(4)
     expect(remainingPayloads[0].uuid).toBe(prioritizedNoteUuid)

@@ -83,7 +83,7 @@ export class SNPreferencesService
 
     void this.notifyEvent(PreferencesServiceEvent.PreferencesChanged)
 
-    void this.syncService.sync()
+    void this.syncService.sync({ sourceDescription: 'PreferencesService.setValue' })
   }
 
   private async reload() {

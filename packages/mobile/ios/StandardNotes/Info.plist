@@ -100,7 +100,7 @@
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Photo library is optionally used to select files to upload or QR code images from your photo library.</string>
 	<key>NSMicrophoneUsageDescription</key>
-    <string>Microphone is optionally used to capture videos.</string>
+	<string>Microphone is optionally used to capture videos.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>AntDesign.ttf</string>
@@ -147,5 +147,7 @@
 	<false/>
 	<key>supportsAlternateIcons</key>
 	<true/>
+	<key>RCTAsyncStorageExcludeFromBackup</key>
+	<false/>
 </dict>
 </plist>

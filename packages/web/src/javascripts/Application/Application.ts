@@ -21,6 +21,8 @@ import {
   DecryptedItem,
   EditorIdentifier,
   FeatureIdentifier,
+  Environment,
+  ApplicationOptionsDefaults,
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
 import { PanelResizedData } from '@/Types/PanelResizedData'
@@ -75,6 +77,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       defaultHost: defaultSyncServerHost,
       appVersion: deviceInterface.appVersion,
       webSocketUrl: webSocketUrl,
+      loadBatchSize:
+        deviceInterface.environment === Environment.Mobile ? 100 : ApplicationOptionsDefaults.loadBatchSize,
     })
 
     makeObservable(this, {

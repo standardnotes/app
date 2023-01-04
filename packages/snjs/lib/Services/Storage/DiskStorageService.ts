@@ -20,6 +20,7 @@ import {
   PayloadTimestampDefaults,
   LocalStorageEncryptedContextualPayload,
   Environment,
+  FullyFormedTransferPayload,
 } from '@standardnotes/models'
 
 /**
@@ -377,8 +378,8 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     await this.immediatelyPersistValuesToDisk()
   }
 
-  public async getAllRawPayloads() {
-    return this.deviceInterface.getAllRawDatabasePayloads(this.identifier)
+  public async getAllRawPayloads(): Promise<FullyFormedTransferPayload[]> {
+    return this.deviceInterface.getAllDatabaseEntries(this.identifier)
   }
 
   public async savePayload(payload: FullyFormedPayloadInterface): Promise<void> {
@@ -432,7 +433,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     const exportedDeleted = deleted.map(CreateDeletedLocalStorageContextPayload)
 
     return this.executeCriticalFunction(async () => {
-      return this.deviceInterface?.saveRawDatabasePayloads(
+      return this.deviceInterface?.saveDatabaseEntries(
         [...exportedEncrypted, ...exportedDecrypted, ...exportedDeleted],
         this.identifier,
       )
@@ -449,13 +450,13 @@ export class DiskStorageService extends Services.AbstractService implements Serv
 
   public async deletePayloadWithId(uuid: Uuid) {
     return this.executeCriticalFunction(async () => {
-      return this.deviceInterface.removeRawDatabasePayloadWithId(uuid, this.identifier)
+      return this.deviceInterface.removeDatabaseEntry(uuid, this.identifier)
     })
   }
 
   public async clearAllPayloads() {
     return this.executeCriticalFunction(async () => {
-      return this.deviceInterface.removeAllRawDatabasePayloads(this.identifier)
+      return this.deviceInterface.removeAllDatabaseEntries(this.identifier)
     })
   }
 
@@ -482,7 +483,6 @@ export class DiskStorageService extends Services.AbstractService implements Serv
         currentPersistPromise: this.currentPersistPromise != undefined,
         isStorageWrapped: this.isStorageWrapped(),
         allRawPayloadsCount: (await this.getAllRawPayloads()).length,
-        databaseKeys: await this.deviceInterface.getDatabaseKeys(),
       },
     }
   }

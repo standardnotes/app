@@ -17,8 +17,6 @@
     const syncServerHostName = urlParams.get('sync_server_host_name') ?? 'syncing-server-proxy';
     const bail = urlParams.get('bail') === 'false' ? false : true;
 
-    window._default_sync_server = `http://${syncServerHostName}:3123`;
-
     Object.assign(window, SNCrypto);
 
     Object.assign(window, SNLibrary);
@@ -82,8 +80,6 @@
   <script type="module" src="protection.test.js"></script>
   <script type="module" src="singletons.test.js"></script>
   <script type="module" src="migrations/migration.test.js"></script>
-  <script type="module" src="migrations/2020-01-15-web.test.js"></script>
-  <script type="module" src="migrations/2020-01-15-mobile.test.js"></script>
   <script type="module" src="migrations/tags-to-folders.test.js"></script>
   <script type="module" src="history.test.js"></script>
   <script type="module" src="actions.test.js"></script>

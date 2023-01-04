@@ -1,7 +1,6 @@
 import { ApplicationIdentifier, ContentType } from '@standardnotes/common'
 import { BackupFile, DecryptedItemInterface, ItemStream, Platform, PrefKey, PrefValue } from '@standardnotes/models'
 import { FilesClientInterface } from '@standardnotes/files'
-
 import { AlertService } from '../Alert/AlertService'
 import { ComponentManagerInterface } from '../Component/ComponentManagerInterface'
 import { ApplicationEvent } from '../Event/ApplicationEvent'

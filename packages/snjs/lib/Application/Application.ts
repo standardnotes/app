@@ -410,28 +410,32 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     await this.notifyEvent(ApplicationEvent.Launched)
     await this.handleStage(ExternalServices.ApplicationStage.Launched_10)
 
-    const databasePayloads = await this.syncService.getDatabasePayloads()
     await this.handleStage(ExternalServices.ApplicationStage.LoadingDatabase_11)
-
     if (this.createdNewDatabase) {
       await this.syncService.onNewDatabaseCreated()
     }
     /**
      * We don't want to await this, as we want to begin allowing the app to function
-     * before local data has been loaded fully. We await only initial
-     * `getDatabasePayloads` to lock in on database state.
+     * before local data has been loaded fully.
      */
-    const loadPromise = this.syncService.loadDatabasePayloads(databasePayloads).then(async () => {
-      if (this.dealloced) {
-        throw 'Application has been destroyed.'
-      }
-      await this.handleStage(ExternalServices.ApplicationStage.LoadedDatabase_12)
-      this.beginAutoSyncTimer()
-      await this.syncService.sync({
-        mode: ExternalServices.SyncMode.DownloadFirst,
-        source: ExternalServices.SyncSource.External,
+    const loadPromise = this.syncService
+      .loadDatabasePayloads()
+      .then(async () => {
+        if (this.dealloced) {
+          throw 'Application has been destroyed.'
+        }
+        await this.handleStage(ExternalServices.ApplicationStage.LoadedDatabase_12)
+        this.beginAutoSyncTimer()
+        await this.syncService.sync({
+          mode: ExternalServices.SyncMode.DownloadFirst,
+          source: ExternalServices.SyncSource.External,
+          sourceDescription: 'Application Launch',
+        })
       })
-    })
+      .catch((error) => {
+        void this.notifyEvent(ApplicationEvent.LocalDatabaseReadError, error)
+        throw error
+      })
     if (awaitDatabaseLoad) {
       await loadPromise
     }
@@ -463,7 +467,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private beginAutoSyncTimer() {
     this.autoSyncInterval = setInterval(() => {
       this.syncService.log('Syncing from autosync')
-      void this.sync.sync()
+      void this.sync.sync({ sourceDescription: 'Auto Sync' })
     }, DEFAULT_AUTO_SYNC_INTERVAL)
   }
 
@@ -1542,10 +1546,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
         switch (event) {
           case InternalServices.SessionEvent.Restored: {
             void (async () => {
-              await this.sync.sync()
+              await this.sync.sync({ sourceDescription: 'Session restored pre key creation' })
               if (this.protocolService.needsNewRootKeyBasedItemsKey()) {
                 void this.protocolService.createNewDefaultItemsKey().then(() => {
-                  void this.sync.sync()
+                  void this.sync.sync({ sourceDescription: 'Session restored post key creation' })
                 })
               }
             })()
@@ -1573,6 +1577,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.payloadManager,
       this.apiService,
       this.historyManager,
+      this.deviceInterface,
+      this.identifier,
       {
         loadBatchSize: this.options.loadBatchSize,
       },

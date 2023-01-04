@@ -1,7 +1,13 @@
-import { FullyFormedPayloadInterface, PayloadInterface, RootKeyInterface } from '@standardnotes/models'
+import {
+  FullyFormedPayloadInterface,
+  PayloadInterface,
+  RootKeyInterface,
+  FullyFormedTransferPayload,
+} from '@standardnotes/models'
 import { StoragePersistencePolicies, StorageValueModes } from './StorageTypes'
 
 export interface StorageServiceInterface {
+  getAllRawPayloads(): Promise<FullyFormedTransferPayload[]>
   getValue<T>(key: string, mode?: StorageValueModes, defaultValue?: T): T
   canDecryptWithKey(key: RootKeyInterface): Promise<boolean>
   savePayload(payload: PayloadInterface): Promise<void>

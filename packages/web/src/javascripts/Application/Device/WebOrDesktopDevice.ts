@@ -2,13 +2,16 @@ import {
   SNApplication,
   ApplicationIdentifier,
   Environment,
-  LegacyRawKeychainValue,
   RawKeychainValue,
   TransferPayload,
   NamespacedRootKeyInKeychain,
-  extendArray,
   WebOrDesktopDeviceInterface,
   Platform,
+  FullyFormedTransferPayload,
+  DatabaseLoadOptions,
+  GetSortedPayloadsByPriority,
+  DatabaseFullEntryLoadChunk,
+  DatabaseFullEntryLoadChunkResponse,
 } from '@standardnotes/snjs'
 import { Database } from '../Database'
 
@@ -72,17 +75,6 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     return result
   }
 
-  async getAllRawStorageKeyValues() {
-    const results = []
-    for (const key of Object.keys(localStorage)) {
-      results.push({
-        key: key,
-        value: localStorage[key],
-      })
-    }
-    return results
-  }
-
   async setRawStorageValue(key: string, value: string) {
     localStorage.setItem(key, value)
   }
@@ -111,23 +103,63 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     }) as Promise<{ isNewDatabase?: boolean } | undefined>
   }
 
-  async getAllRawDatabasePayloads(identifier: ApplicationIdentifier) {
+  async getDatabaseLoadChunks(
+    options: DatabaseLoadOptions,
+    identifier: string,
+  ): Promise<DatabaseFullEntryLoadChunkResponse> {
+    const entries = await this.getAllDatabaseEntries(identifier)
+    const sorted = GetSortedPayloadsByPriority(entries, options)
+
+    const itemsKeysChunk: DatabaseFullEntryLoadChunk = {
+      entries: sorted.itemsKeyPayloads,
+    }
+
+    const contentTypePriorityChunk: DatabaseFullEntryLoadChunk = {
+      entries: sorted.contentTypePriorityPayloads,
+    }
+
+    const remainingPayloadsChunks: DatabaseFullEntryLoadChunk[] = []
+    for (let i = 0; i < sorted.remainingPayloads.length; i += options.batchSize) {
+      remainingPayloadsChunks.push({
+        entries: sorted.remainingPayloads.slice(i, i + options.batchSize),
+      })
+    }
+
+    const result: DatabaseFullEntryLoadChunkResponse = {
+      fullEntries: {
+        itemsKeys: itemsKeysChunk,
+        remainingChunks: [contentTypePriorityChunk, ...remainingPayloadsChunks],
+      },
+      remainingChunksItemCount: sorted.contentTypePriorityPayloads.length + sorted.remainingPayloads.length,
+    }
+
+    return result
+  }
+
+  async getAllDatabaseEntries(identifier: ApplicationIdentifier) {
     return this.databaseForIdentifier(identifier).getAllPayloads()
   }
 
-  async saveRawDatabasePayload(payload: TransferPayload, identifier: ApplicationIdentifier) {
+  getDatabaseEntries<T extends FullyFormedTransferPayload = FullyFormedTransferPayload>(
+    identifier: string,
+    keys: string[],
+  ): Promise<T[]> {
+    return this.databaseForIdentifier(identifier).getPayloadsForKeys(keys)
+  }
+
+  async saveDatabaseEntry(payload: TransferPayload, identifier: ApplicationIdentifier) {
     return this.databaseForIdentifier(identifier).savePayload(payload)
   }
 
-  async saveRawDatabasePayloads(payloads: TransferPayload[], identifier: ApplicationIdentifier) {
+  async saveDatabaseEntries(payloads: TransferPayload[], identifier: ApplicationIdentifier) {
     return this.databaseForIdentifier(identifier).savePayloads(payloads)
   }
 
-  async removeRawDatabasePayloadWithId(id: string, identifier: ApplicationIdentifier) {
+  async removeDatabaseEntry(id: string, identifier: ApplicationIdentifier) {
     return this.databaseForIdentifier(identifier).deletePayload(id)
   }
 
-  async removeAllRawDatabasePayloads(identifier: ApplicationIdentifier) {
+  async removeAllDatabaseEntries(identifier: ApplicationIdentifier) {
     return this.databaseForIdentifier(identifier).clearAllPayloads()
   }
 
@@ -139,16 +171,6 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     }
 
     return keychain[identifier]
-  }
-
-  async getDatabaseKeys(): Promise<string[]> {
-    const keys: string[] = []
-
-    for (const database of this.databases) {
-      extendArray(keys, await database.getAllKeys())
-    }
-
-    return keys
   }
 
   async setNamespacedKeychainValue(value: NamespacedRootKeyInKeychain, identifier: ApplicationIdentifier) {
@@ -184,10 +206,6 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     if (win) {
       win.focus()
     }
-  }
-
-  setLegacyRawKeychainValue(value: LegacyRawKeychainValue): Promise<void> {
-    return this.setKeychainValue(value)
   }
 
   abstract getKeychainValue(): Promise<RawKeychainValue>

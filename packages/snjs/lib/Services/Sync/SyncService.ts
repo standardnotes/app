@@ -1,3 +1,4 @@
+import { log, LoggingDomain } from './../../Logging'
 import { AccountSyncOperation } from '@Lib/Services/Sync/Account/Operation'
 import { ContentType } from '@standardnotes/common'
 import {
@@ -18,7 +19,6 @@ import { SNHistoryManager } from '../History/HistoryManager'
 import { SNLog } from '@Lib/Log'
 import { SNSessionManager } from '../Session/SessionManager'
 import { DiskStorageService } from '../Storage/DiskStorageService'
-import { GetSortedPayloadsByPriority } from '@Lib/Services/Sync/Utils'
 import { SyncClientInterface } from './SyncClientInterface'
 import { SyncPromise } from './Types'
 import { SyncOpStatus } from '@Lib/Services/Sync/SyncOpStatus'
@@ -33,7 +33,6 @@ import {
   DeltaOutOfSync,
   ImmutablePayloadCollection,
   CreatePayload,
-  FullyFormedTransferPayload,
   isEncryptedPayload,
   isDecryptedPayload,
   EncryptedPayloadInterface,
@@ -74,6 +73,9 @@ import {
   SyncServiceInterface,
   DiagnosticInfo,
   EncryptionService,
+  DeviceInterface,
+  isFullEntryLoadChunkResponse,
+  isChunkFullEntry,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -142,6 +144,8 @@ export class SNSyncService
     private payloadManager: PayloadManager,
     private apiService: SNApiService,
     private historyService: SNHistoryManager,
+    private device: DeviceInterface,
+    private identifier: string,
     private readonly options: ApplicationSyncOptions,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
@@ -221,19 +225,13 @@ export class SNSyncService
     return this.databaseLoaded
   }
 
-  /**
-   * Used in tandem with `loadDatabasePayloads`
-   */
-  public async getDatabasePayloads(): Promise<FullyFormedTransferPayload[]> {
-    return this.storageService.getAllRawPayloads().catch((error) => {
-      void this.notifyEvent(SyncEvent.DatabaseReadError, error)
-      throw error
-    })
-  }
-
   private async processItemsKeysFirstDuringDatabaseLoad(
     itemsKeysPayloads: FullyFormedPayloadInterface[],
   ): Promise<void> {
+    if (itemsKeysPayloads.length === 0) {
+      return
+    }
+
     const encryptedItemsKeysPayloads = itemsKeysPayloads.filter(isEncryptedPayload)
 
     const originallyDecryptedItemsKeysPayloads = itemsKeysPayloads.filter(
@@ -254,42 +252,38 @@ export class SNSyncService
     )
   }
 
-  /**
-   * @param rawPayloads - use `getDatabasePayloads` to get these payloads.
-   * They are fed as a parameter so that callers don't have to await the loading, but can
-   * await getting the raw payloads from storage
-   */
-  public async loadDatabasePayloads(rawPayloads: FullyFormedTransferPayload[]): Promise<void> {
+  public async loadDatabasePayloads(): Promise<void> {
+    log(LoggingDomain.DatabaseLoad, 'Loading database payloads')
+
     if (this.databaseLoaded) {
       throw 'Attempting to initialize already initialized local database.'
     }
 
-    if (rawPayloads.length === 0) {
-      this.databaseLoaded = true
-      this.opStatus.setDatabaseLoadStatus(0, 0, true)
-      return
-    }
+    const chunks = await this.device.getDatabaseLoadChunks(
+      {
+        batchSize: this.options.loadBatchSize,
+        contentTypePriority: this.localLoadPriorty,
+        uuidPriority: this.launchPriorityUuids,
+      },
+      this.identifier,
+    )
 
-    const unsortedPayloads = rawPayloads
-      .map((rawPayload) => {
+    const itemsKeyEntries = isFullEntryLoadChunkResponse(chunks)
+      ? chunks.fullEntries.itemsKeys.entries
+      : await this.device.getDatabaseEntries(this.identifier, chunks.keys.itemsKeys.keys)
+
+    const itemsKeyPayloads = itemsKeyEntries
+      .map((entry) => {
         try {
-          return CreatePayload(rawPayload, PayloadSource.Constructor)
+          return CreatePayload(entry, PayloadSource.Constructor)
         } catch (e) {
-          console.error('Creating payload fail+ed', e)
+          console.error('Creating payload failed', e)
           return undefined
         }
       })
       .filter(isNotUndefined)
 
-    const { itemsKeyPayloads, contentTypePriorityPayloads, remainingPayloads } = GetSortedPayloadsByPriority(
-      unsortedPayloads,
-      this.localLoadPriorty,
-      this.launchPriorityUuids,
-    )
-
     await this.processItemsKeysFirstDuringDatabaseLoad(itemsKeyPayloads)
-
-    await this.processPayloadBatch(contentTypePriorityPayloads)
 
     /**
      * Map in batches to give interface a chance to update. Note that total decryption
@@ -297,14 +291,30 @@ export class SNSyncService
      * batches will result in the same time spent. It's the emitting/painting/rendering
      * that requires batch size optimization.
      */
-    const payloadCount = remainingPayloads.length
-    const batchSize = this.options.loadBatchSize
-    const numBatches = Math.ceil(payloadCount / batchSize)
+    const payloadCount = chunks.remainingChunksItemCount
+    let totalProcessedCount = 0
 
-    for (let batchIndex = 0; batchIndex < numBatches; batchIndex++) {
-      const currentPosition = batchIndex * batchSize
-      const batch = remainingPayloads.slice(currentPosition, currentPosition + batchSize)
-      await this.processPayloadBatch(batch, currentPosition, payloadCount)
+    const remainingChunks = isFullEntryLoadChunkResponse(chunks)
+      ? chunks.fullEntries.remainingChunks
+      : chunks.keys.remainingChunks
+
+    for (const chunk of remainingChunks) {
+      const dbEntries = isChunkFullEntry(chunk)
+        ? chunk.entries
+        : await this.device.getDatabaseEntries(this.identifier, chunk.keys)
+      const payloads = dbEntries
+        .map((entry) => {
+          try {
+            return CreatePayload(entry, PayloadSource.Constructor)
+          } catch (e) {
+            console.error('Creating payload failed', e)
+            return undefined
+          }
+        })
+        .filter(isNotUndefined)
+
+      await this.processPayloadBatch(payloads, totalProcessedCount, payloadCount)
+      totalProcessedCount += payloads.length
     }
 
     this.databaseLoaded = true
@@ -316,6 +326,7 @@ export class SNSyncService
     currentPosition?: number,
     payloadCount?: number,
   ) {
+    log(LoggingDomain.DatabaseLoad, 'Processing batch at index', currentPosition, 'length', batch.length)
     const encrypted: EncryptedPayloadInterface[] = []
     const nonencrypted: (DecryptedPayloadInterface | DeletedPayloadInterface)[] = []
 
@@ -386,7 +397,7 @@ export class SNSyncService
   }
 
   public async markAllItemsAsNeedingSyncAndPersist(): Promise<void> {
-    this.log('Marking all items as needing sync')
+    log(LoggingDomain.Sync, 'Marking all items as needing sync')
 
     const items = this.itemManager.items
     const payloads = items.map((item) => {
@@ -444,7 +455,7 @@ export class SNSyncService
 
     const promise = this.spawnQueue[0]
     removeFromIndex(this.spawnQueue, 0)
-    this.log('Syncing again from spawn queue')
+    log(LoggingDomain.Sync, 'Syncing again from spawn queue')
 
     return this.sync({
       queueStrategy: SyncQueueStrategy.ForceSpawnNew,
@@ -506,7 +517,7 @@ export class SNSyncService
 
   public async sync(options: Partial<SyncOptions> = {}): Promise<unknown> {
     if (this.clientLocked) {
-      this.log('Sync locked by client')
+      log(LoggingDomain.Sync, 'Sync locked by client')
       return
     }
 
@@ -562,7 +573,7 @@ export class SNSyncService
    *                  (before reaching opStatus.setDidBegin).
    * 2. syncOpInProgress: If a sync() call is in flight to the server.
    */
-  private configureSyncLock() {
+  private configureSyncLock(options: SyncOptions) {
     const syncInProgress = this.opStatus.syncInProgress
     const databaseLoaded = this.databaseLoaded
     const canExecuteSync = !this.syncLock
@@ -571,12 +582,14 @@ export class SNSyncService
     if (shouldExecuteSync) {
       this.syncLock = true
     } else {
-      this.log(
+      log(
+        LoggingDomain.Sync,
         !canExecuteSync
           ? 'Another function call has begun preparing for sync.'
           : syncInProgress
           ? 'Attempting to sync while existing sync in progress.'
           : 'Attempting to sync before local database has loaded.',
+        options,
       )
     }
 
@@ -656,10 +669,20 @@ export class SNSyncService
 
   private createOfflineSyncOperation(
     payloads: (DeletedPayloadInterface | DecryptedPayloadInterface)[],
-    source: SyncSource,
-    mode: SyncMode = SyncMode.Default,
+    options: SyncOptions,
   ) {
-    this.log('Syncing offline user', 'source:', source, 'mode:', mode, 'payloads:', payloads)
+    log(
+      LoggingDomain.Sync,
+      'Syncing offline user',
+      'source:',
+      SyncSource[options.source],
+      'sourceDesc',
+      options.sourceDescription,
+      'mode:',
+      options.mode && SyncMode[options.mode],
+      'payloads:',
+      payloads,
+    )
 
     const operation = new OfflineSyncOperation(payloads, async (type, response) => {
       if (this.dealloced) {
@@ -727,7 +750,8 @@ export class SNSyncService
       this.apiService,
     )
 
-    this.log(
+    log(
+      LoggingDomain.Sync,
       'Syncing online user',
       'source',
       SyncSource[source],
@@ -769,14 +793,14 @@ export class SNSyncService
       const { uploadPayloads } = this.getOfflineSyncParameters(payloads, options.mode)
 
       return {
-        operation: this.createOfflineSyncOperation(uploadPayloads, options.source, options.mode),
+        operation: this.createOfflineSyncOperation(uploadPayloads, options),
         mode: options.mode || SyncMode.Default,
       }
     }
   }
 
   private async performSync(options: SyncOptions): Promise<unknown> {
-    const { shouldExecuteSync, releaseLock } = this.configureSyncLock()
+    const { shouldExecuteSync, releaseLock } = this.configureSyncLock(options)
 
     const { items, beginDate, frozenDirtyIndex, neverSyncedDeleted } = await this.prepareForSync(options)
 
@@ -843,7 +867,7 @@ export class SNSyncService
   }
 
   private async handleOfflineResponse(response: OfflineSyncResponse) {
-    this.log('Offline Sync Response', response)
+    log(LoggingDomain.Sync, 'Offline Sync Response', response)
 
     const masterCollection = this.payloadManager.getMasterCollection()
 
@@ -861,7 +885,7 @@ export class SNSyncService
   }
 
   private handleErrorServerResponse(response: ServerSyncResponse) {
-    this.log('Sync Error', response)
+    log(LoggingDomain.Sync, 'Sync Error', response)
 
     if (response.status === INVALID_SESSION_RESPONSE_STATUS) {
       void this.notifyEvent(SyncEvent.InvalidSession)
@@ -904,7 +928,8 @@ export class SNSyncService
       historyMap,
     )
 
-    this.log(
+    log(
+      LoggingDomain.Sync,
       'Online Sync Response',
       'Operator ID',
       operation.id,
@@ -1060,7 +1085,7 @@ export class SNSyncService
   }
 
   private async syncAgainByHandlingRequestsWaitingInResolveQueue(options: SyncOptions) {
-    this.log('Syncing again from resolve queue')
+    log(LoggingDomain.Sync, 'Syncing again from resolve queue')
     const promise = this.sync({
       source: SyncSource.ResolveQueue,
       checkIntegrity: options.checkIntegrity,
