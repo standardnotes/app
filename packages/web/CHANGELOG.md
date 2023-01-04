@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.133.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.132.3...@standardnotes/web@3.133.0) (2023-01-04)
+
+### Features
+
+* Added "Add tag" option to file context menu ([ba4b6a5](https://github.com/standardnotes/app/commit/ba4b6a580b2b18d2c383475c8723fb66fa9fecdf))
+* Added file options menu to file preview modal ([e57b28f](https://github.com/standardnotes/app/commit/e57b28fe29f230754c247bf2a769355a7fbd30cb))
+
 ## [3.132.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.132.2...@standardnotes/web@3.132.3) (2023-01-04)
 
 **Note:** Version bump only for package @standardnotes/web
