@@ -251,6 +251,8 @@ const SearchDialog = ({closeDialog}: {closeDialog: () => void}) => {
   );
 };
 
+const EditorScrollOffset = 100;
+
 export const SearchPlugin = () => {
   const [editor] = useLexicalComposerContext();
   const [showDialog, setShowDialog] = useState(false);
@@ -416,7 +418,8 @@ export const SearchPlugin = () => {
         const isFirstRectVisible =
           firstRect.top >= 0 &&
           firstRect.top >= root.scrollTop &&
-          firstRect.bottom <= root.clientHeight + root.scrollTop;
+          firstRect.bottom <=
+            root.clientHeight + root.scrollTop + EditorScrollOffset;
 
         if (isFirstRectVisible) {
           setTimeout(() => {
