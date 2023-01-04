@@ -293,13 +293,6 @@ export const SearchPlugin = () => {
     }
 
     editor.getEditorState().read(() => {
-      const rootElement = editor.getRootElement();
-      const containerElement =
-        rootElement?.parentElement?.getElementsByClassName(
-          'search-highlight-container',
-        )[0];
-      const containerElementRect = containerElement?.getBoundingClientRect();
-
       const textNodes = $nodesOfType(TextNode);
 
       textNodes.forEach((node) => {
@@ -407,11 +400,7 @@ export const SearchPlugin = () => {
       return;
     }
 
-    const handleScroll = () => {
-      if (!root) {
-        return;
-      }
-
+    const createVisibleHighlights = () => {
       document.querySelectorAll('.search-highlight').forEach((element) => {
         element.remove();
       });
@@ -445,6 +434,14 @@ export const SearchPlugin = () => {
       });
     };
 
+    const handleScroll = () => {
+      if (!root) {
+        return;
+      }
+
+      createVisibleHighlights();
+    };
+
     let timeout: number | undefined;
     const handleScrollDebounced = () => {
       if (timeout) {
@@ -453,8 +450,10 @@ export const SearchPlugin = () => {
 
       timeout = window.setTimeout(() => {
         handleScroll();
-      }, 10);
+      }, 5);
     };
+
+    createVisibleHighlights();
 
     root.addEventListener('scroll', handleScrollDebounced);
 
