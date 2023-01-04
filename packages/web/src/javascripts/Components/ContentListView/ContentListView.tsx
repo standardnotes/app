@@ -358,6 +358,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
               filesController={filesController}
               featuresController={featuresController}
               linkingController={linkingController}
+              navigationController={navigationController}
             />
           ) : (
             <ContentList

@@ -112,6 +112,8 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
               <FileOptionsPanel
                 filesController={viewControllerManager.filesController}
                 selectionController={viewControllerManager.selectionController}
+                linkingController={viewControllerManager.linkingController}
+                navigationController={viewControllerManager.navigationController}
               />
             </div>
           </div>

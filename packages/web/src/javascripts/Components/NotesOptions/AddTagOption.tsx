@@ -2,22 +2,28 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
-import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import Popover from '../Popover/Popover'
-import { IconType } from '@standardnotes/snjs'
+import { classNames, DecryptedItemInterface, IconType, SNTag } from '@standardnotes/snjs'
 import { getTitleForLinkedTag } from '@/Utils/Items/Display/getTitleForLinkedTag'
 import { useApplication } from '../ApplicationProvider'
 import MenuItem from '../Menu/MenuItem'
 import Menu from '../Menu/Menu'
+import { LinkingController } from '@/Controllers/LinkingController'
 
 type Props = {
   navigationController: NavigationController
-  notesController: NotesController
+  linkingController: LinkingController
+  selectedItems: DecryptedItemInterface[]
   iconClassName: string
 }
 
-const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesController, iconClassName }) => {
+const AddTagOption: FunctionComponent<Props> = ({
+  navigationController,
+  linkingController,
+  selectedItems,
+  iconClassName,
+}) => {
   const application = useApplication()
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -27,6 +33,18 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
   const toggleMenu = useCallback(() => {
     setIsOpen((isOpen) => !isOpen)
   }, [])
+
+  const isTagLinkedToSelectedItems = (tag: SNTag) => {
+    return selectedItems.every((item) => application.getItemTags(item).find((itemTag) => itemTag.uuid === tag.uuid))
+  }
+
+  const linkTagToSelectedItems = (tag: SNTag) => {
+    selectedItems.forEach((item) => linkingController.linkItems(item, tag))
+  }
+
+  const unlinkTagFromSelectedItems = (tag: SNTag) => {
+    selectedItems.forEach((item) => linkingController.unlinkItems(item, tag))
+  }
 
   return (
     <div ref={menuContainerRef}>
@@ -59,9 +77,7 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
             <MenuItem
               key={tag.uuid}
               onClick={() => {
-                notesController.isTagInSelectedNotes(tag)
-                  ? notesController.removeTagFromSelectedNotes(tag).catch(console.error)
-                  : notesController.addTagToSelectedNotes(tag).catch(console.error)
+                isTagLinkedToSelectedItems(tag) ? unlinkTagFromSelectedItems(tag) : linkTagToSelectedItems(tag)
               }}
             >
               {tag.iconString && (
@@ -72,8 +88,10 @@ const AddTagOption: FunctionComponent<Props> = ({ navigationController, notesCon
                 />
               )}
               <span
-                className={`overflow-hidden overflow-ellipsis whitespace-nowrap
-                        ${notesController.isTagInSelectedNotes(tag) ? 'font-bold' : ''}`}
+                className={classNames(
+                  'overflow-hidden overflow-ellipsis whitespace-nowrap',
+                  isTagLinkedToSelectedItems(tag) ? 'font-bold' : '',
+                )}
               >
                 {getTitleForLinkedTag(tag, application)?.longTitle}
               </span>

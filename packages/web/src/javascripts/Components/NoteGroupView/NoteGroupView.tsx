@@ -118,6 +118,8 @@ class NoteGroupView extends AbstractComponent<Props, State> {
           <MultipleSelectedFiles
             filesController={this.viewControllerManager.filesController}
             selectionController={this.viewControllerManager.selectionController}
+            navigationController={this.viewControllerManager.navigationController}
+            linkingController={this.viewControllerManager.linkingController}
           />
         )}
         {shouldNotShowMultipleSelectedItems && hasControllers && (

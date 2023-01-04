@@ -11,10 +11,16 @@ import MenuItem from '../Menu/MenuItem'
 import { FileContextMenuBackupOption } from './FileContextMenuBackupOption'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import { FileItem } from '@standardnotes/snjs'
+import AddTagOption from '../NotesOptions/AddTagOption'
+import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
+import { LinkingController } from '@/Controllers/LinkingController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 
 type Props = {
   closeMenu: () => void
   filesController: FilesController
+  linkingController: LinkingController
+  navigationController: NavigationController
   isFileAttachedToNote?: boolean
   renameToggleCallback?: (isRenamingFile: boolean) => void
   shouldShowRenameOption: boolean
@@ -25,6 +31,8 @@ type Props = {
 const FileMenuOptions: FunctionComponent<Props> = ({
   closeMenu,
   filesController,
+  linkingController,
+  navigationController,
   isFileAttachedToNote,
   renameToggleCallback,
   shouldShowRenameOption,
@@ -82,6 +90,12 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           ) : null}
         </>
       )}
+      <AddTagOption
+        navigationController={navigationController}
+        linkingController={linkingController}
+        selectedItems={selectedFiles}
+        iconClassName={`text-neutral mr-2 ${MenuItemIconSize}`}
+      />
       <MenuSwitchButtonItem
         checked={hasProtectedFiles}
         onChange={(hasProtectedFiles) => {

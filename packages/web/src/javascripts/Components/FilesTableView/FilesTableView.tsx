@@ -31,8 +31,19 @@ import { LinkingController } from '@/Controllers/LinkingController'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useApplication } from '../ApplicationProvider'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 
-const ContextMenuCell = ({ files, filesController }: { files: FileItem[]; filesController: FilesController }) => {
+const ContextMenuCell = ({
+  files,
+  filesController,
+  navigationController,
+  linkingController,
+}: {
+  files: FileItem[]
+  filesController: FilesController
+  navigationController: NavigationController
+  linkingController: LinkingController
+}) => {
   const [contextMenuVisible, setContextMenuVisible] = useState(false)
   const anchorElementRef = useRef<HTMLButtonElement>(null)
 
@@ -61,6 +72,8 @@ const ContextMenuCell = ({ files, filesController }: { files: FileItem[]; filesC
       >
         <Menu a11yLabel="File context menu" isOpen={contextMenuVisible}>
           <FileMenuOptions
+            linkingController={linkingController}
+            navigationController={navigationController}
             closeMenu={() => {
               setContextMenuVisible(false)
             }}
@@ -160,9 +173,16 @@ type Props = {
   filesController: FilesController
   featuresController: FeaturesController
   linkingController: LinkingController
+  navigationController: NavigationController
 }
 
-const FilesTableView = ({ application, filesController, featuresController, linkingController }: Props) => {
+const FilesTableView = ({
+  application,
+  filesController,
+  featuresController,
+  linkingController,
+  navigationController,
+}: Props) => {
   const files = application.items
     .getDisplayableNotesAndFiles()
     .filter((item) => item.content_type === ContentType.File) as FileItem[]
@@ -312,12 +332,22 @@ const FilesTableView = ({ application, filesController, featuresController, link
             featuresController={featuresController}
             linkingController={linkingController}
           />
-          <ContextMenuCell files={[file]} filesController={filesController} />
+          <ContextMenuCell
+            files={[file]}
+            filesController={filesController}
+            linkingController={linkingController}
+            navigationController={navigationController}
+          />
         </div>
       )
     },
     selectionActions: (fileIds) => (
-      <ContextMenuCell files={files.filter((file) => fileIds.includes(file.uuid))} filesController={filesController} />
+      <ContextMenuCell
+        files={files.filter((file) => fileIds.includes(file.uuid))}
+        filesController={filesController}
+        linkingController={linkingController}
+        navigationController={navigationController}
+      />
     ),
     showSelectionActions: true,
   })
@@ -347,6 +377,8 @@ const FilesTableView = ({ application, filesController, featuresController, link
               shouldShowRenameOption={false}
               shouldShowAttachOption={false}
               selectedFiles={[contextMenuFile]}
+              linkingController={linkingController}
+              navigationController={navigationController}
             />
           </Menu>
         </Popover>

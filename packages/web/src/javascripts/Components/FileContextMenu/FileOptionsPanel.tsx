@@ -6,13 +6,22 @@ import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import Popover from '../Popover/Popover'
 import RoundIconButton from '../Button/RoundIconButton'
 import Menu from '../Menu/Menu'
+import { LinkingController } from '@/Controllers/LinkingController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 
 type Props = {
   filesController: FilesController
   selectionController: SelectedItemsController
+  linkingController: LinkingController
+  navigationController: NavigationController
 }
 
-const FilesOptionsPanel = ({ filesController, selectionController }: Props) => {
+const FilesOptionsPanel = ({
+  filesController,
+  linkingController,
+  navigationController,
+  selectionController,
+}: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
@@ -25,6 +34,8 @@ const FilesOptionsPanel = ({ filesController, selectionController }: Props) => {
         <Menu a11yLabel="File options panel" isOpen={isOpen}>
           <FileMenuOptions
             filesController={filesController}
+            linkingController={linkingController}
+            navigationController={navigationController}
             selectedFiles={selectionController.selectedFiles}
             closeMenu={() => {
               setIsOpen(false)

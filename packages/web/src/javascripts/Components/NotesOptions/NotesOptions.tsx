@@ -42,6 +42,7 @@ const NotesOptions = ({
   application,
   navigationController,
   notesController,
+  linkingController,
   historyModalController,
   closeMenu,
 }: NotesOptionsProps) => {
@@ -214,7 +215,8 @@ const NotesOptions = ({
         <AddTagOption
           iconClassName={iconClass}
           navigationController={navigationController}
-          notesController={notesController}
+          selectedItems={notes}
+          linkingController={linkingController}
         />
       )}
       <MenuItem

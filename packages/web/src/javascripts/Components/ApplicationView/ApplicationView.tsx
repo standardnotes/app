@@ -216,6 +216,8 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                     <FileContextMenuWrapper
                       filesController={viewControllerManager.filesController}
                       selectionController={viewControllerManager.selectionController}
+                      navigationController={viewControllerManager.navigationController}
+                      linkingController={viewControllerManager.linkingController}
                     />
                     <PurchaseFlowWrapper application={application} viewControllerManager={viewControllerManager} />
                     <ConfirmSignoutContainer
