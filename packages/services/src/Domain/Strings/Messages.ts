@@ -182,5 +182,6 @@ export const ErrorAlertStrings = {
 
 export const KeychainRecoveryStrings = {
   Title: 'Restore Keychain',
-  Text: "We've detected that your keychain has been wiped. This can happen when restoring your device from a backup. Please enter your account password to restore your account keys.",
+  Text: (email: string) =>
+    `We've detected that your keychain has been wiped. This can happen when restoring your device from a backup. Please enter your account password for "${email}" to restore your account keys.`,
 }
