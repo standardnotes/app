@@ -20,16 +20,24 @@ describe('application instances', () => {
   })
 
   it('two distinct applications should not share model manager state', async () => {
-    const app1 = await Factory.createAndInitializeApplication('app1')
-    const app2 = await Factory.createAndInitializeApplication('app2')
-    expect(app1.payloadManager).to.equal(app1.payloadManager)
-    expect(app1.payloadManager).to.not.equal(app2.payloadManager)
+    const context1 = await Factory.createAppContext({ identifier: 'app1' })
+    const context2 = await Factory.createAppContext({ identifier: 'app2' })
+    await Promise.all([
+      context1.launch(),
+      context1.awaitUserPrefsSingletonCreation(),
+      context2.launch(),
+      context2.awaitUserPrefsSingletonCreation(),
+    ])
 
-    await Factory.createMappedNote(app1)
-    expect(app1.itemManager.items.length).length.to.equal(BaseItemCounts.DefaultItems + 1)
-    expect(app2.itemManager.items.length).to.equal(BaseItemCounts.DefaultItems)
-    await Factory.safeDeinit(app1)
-    await Factory.safeDeinit(app2)
+    expect(context1.application.payloadManager).to.equal(context1.application.payloadManager)
+    expect(context1.application.payloadManager).to.not.equal(context2.application.payloadManager)
+
+    await Factory.createMappedNote(context1.application)
+    expect(context1.application.itemManager.items.length).length.to.equal(BaseItemCounts.DefaultItems + 1)
+    expect(context2.application.itemManager.items.length).to.equal(BaseItemCounts.DefaultItems)
+
+    await context1.deinit()
+    await context2.deinit()
   })
 
   it('two distinct applications should not share storage manager state', async () => {

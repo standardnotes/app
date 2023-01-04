@@ -189,6 +189,31 @@ export class AppContext {
     })
   }
 
+  awaitUserPrefsSingletonCreation() {
+    const preferences = this.application.preferencesService.preferences
+    console.log('awaitUserPrefsSingletonCreation > preferences', preferences)
+    if (preferences) {
+      return
+    }
+
+    let didCompleteRelevantSync = false
+    return new Promise((resolve) => {
+      this.application.syncService.addEventObserver((eventName, data) => {
+        if (!didCompleteRelevantSync) {
+          if (data?.savedPayloads) {
+            const matching = data.savedPayloads.find((p) => {
+              return p.content_type === ContentType.UserPrefs
+            })
+            if (matching) {
+              didCompleteRelevantSync = true
+              resolve()
+            }
+          }
+        }
+      })
+    })
+  }
+
   async launch({ awaitDatabaseLoad = true, receiveChallenge } = { awaitDatabaseLoad: true }) {
     await this.application.prepareForLaunch({
       receiveChallenge: receiveChallenge || this.handleChallenge,
