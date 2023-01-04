@@ -419,16 +419,23 @@ export const SearchPlugin = () => {
           firstRect.bottom <= root.clientHeight + root.scrollTop;
 
         if (isFirstRectVisible) {
-          rectList.forEach((rect) => {
-            if (!root) {
-              return;
-            }
+          setTimeout(() => {
+            rectList.forEach((rect) => {
+              if (!root) {
+                return;
+              }
 
-            if (!highlightContainer) {
-              return;
-            }
+              if (!highlightContainer) {
+                return;
+              }
 
-            createSearchHighlightElement(rect, false, root, highlightContainer);
+              createSearchHighlightElement(
+                rect,
+                false,
+                root,
+                highlightContainer,
+              );
+            });
           });
         }
       });
@@ -450,7 +457,7 @@ export const SearchPlugin = () => {
 
       timeout = window.setTimeout(() => {
         handleScroll();
-      }, 5);
+      });
     };
 
     createVisibleHighlights();
