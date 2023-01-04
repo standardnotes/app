@@ -420,9 +420,9 @@ export const SearchPlugin = () => {
     }
 
     const createVisibleHighlights = () => {
-      results.forEach((result) => {
+      const visibleResults = results.filter((result) => {
         if (!root) {
-          return;
+          return false;
         }
 
         const {rectList} = result;
@@ -434,29 +434,31 @@ export const SearchPlugin = () => {
           firstRect.bottom <=
             root.clientHeight + root.scrollTop + EditorScrollOffset;
 
-        if (isFirstRectVisible) {
-          setTimeout(() => {
-            rectList.forEach((rect) => {
-              if (!root) {
-                return;
-              }
+        return isFirstRectVisible;
+      });
 
-              if (!highlightContainer) {
-                return;
-              }
+      setTimeout(() => {
+        visibleResults.forEach((result) => {
+          result.rectList.forEach((rect) => {
+            if (!root) {
+              return;
+            }
 
-              createSearchHighlightElement(
-                {
-                  ...result,
-                  rect,
-                  isCurrentResult: false,
-                },
-                root,
-                highlightContainer,
-              );
-            });
+            if (!highlightContainer) {
+              return;
+            }
+
+            createSearchHighlightElement(
+              {
+                ...result,
+                rect,
+                isCurrentResult: false,
+              },
+              root,
+              highlightContainer,
+            );
           });
-        }
+        });
       });
     };
 
