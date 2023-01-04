@@ -11,15 +11,17 @@ import { ItemListController } from './ItemListController'
 import { ItemsReloadSource } from './ItemsReloadSource'
 
 describe('item list controller', () => {
+  let application: WebApplication
   let controller: ItemListController
   let navigationController: NavigationController
   let selectionController: SelectedItemsController
 
   beforeEach(() => {
-    const application = {} as jest.Mocked<WebApplication>
+    application = {} as jest.Mocked<WebApplication>
     application.streamItems = jest.fn()
     application.addEventObserver = jest.fn()
     application.addWebEventObserver = jest.fn()
+    application.isNativeMobileWeb = jest.fn().mockReturnValue(false)
 
     navigationController = {} as jest.Mocked<NavigationController>
     selectionController = {} as jest.Mocked<SelectedItemsController>
@@ -48,6 +50,12 @@ describe('item list controller', () => {
         get: () => new Set(),
         configurable: true,
       })
+    })
+
+    it('should return false is platform is native mobile web', () => {
+      application.isNativeMobileWeb = jest.fn().mockReturnValue(true)
+
+      expect(controller.shouldSelectFirstItem(ItemsReloadSource.TagChange)).toBe(false)
     })
 
     it('should return false first item is file', () => {

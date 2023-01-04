@@ -3,10 +3,14 @@ export interface ApplicationSyncOptions {
    * The size of the item batch to decrypt and render upon application load.
    */
   loadBatchSize: number
+
+  sleepBetweenBatches: number
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface ApplicationDisplayOptions {}
+export interface ApplicationDisplayOptions {
+  allowNoteSelectionStatePersistence: boolean
+  allowMultipleSelection: boolean
+}
 
 export interface ApplicationOptionalConfiguratioOptions {
   /**
