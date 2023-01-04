@@ -16,7 +16,9 @@ describe('basic auth', function () {
   beforeEach(async function () {
     localStorage.clear()
     this.expectedItemCount = BaseItemCounts.DefaultItems
-    this.application = await Factory.createInitAppWithFakeCrypto()
+    this.context = await Factory.createAppContext()
+    await this.context.launch()
+    this.application = this.context.application
     this.email = UuidGenerator.GenerateUuid()
     this.password = UuidGenerator.GenerateUuid()
   })
@@ -402,7 +404,7 @@ describe('basic auth', function () {
       await this.application.syncService.markAllItemsAsNeedingSyncAndPersist()
       await this.application.syncService.sync(syncOptions)
 
-      this.application = await Factory.signOutApplicationAndReturnNew(this.application)
+      this.application = await this.context.signout()
 
       expect(this.application.itemManager.items.length).to.equal(BaseItemCounts.DefaultItems)
       expect(this.application.payloadManager.invalidPayloads.length).to.equal(0)

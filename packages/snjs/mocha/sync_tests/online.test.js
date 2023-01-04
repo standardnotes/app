@@ -95,7 +95,7 @@ describe('online syncing', function () {
 
     await this.application.sync.sync(syncOptions)
 
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
+    this.application = await this.context.signout()
 
     expect(this.application.itemManager.items.length).to.equal(BaseItemCounts.DefaultItems)
 

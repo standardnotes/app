@@ -21,7 +21,9 @@ describe('app models', () => {
 
   beforeEach(async function () {
     this.expectedItemCount = BaseItemCounts.DefaultItems
-    this.application = await Factory.createInitAppWithFakeCrypto()
+    this.context = await Factory.createAppContext()
+    this.application = this.context.application
+    await this.context.launch()
   })
 
   afterEach(async function () {

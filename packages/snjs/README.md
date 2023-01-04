@@ -53,7 +53,7 @@ Once the server infrastructure is ready, and you've built all packages, you can 
 
 In app repo:
 ```
-yarn start:server:e2e
+yarn e2e
 ```
 
 Once you are finished you can close the running local server on E2E repo by typing:

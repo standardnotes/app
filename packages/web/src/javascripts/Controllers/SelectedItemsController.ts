@@ -11,6 +11,7 @@ import {
   InternalEventBus,
   isFile,
   Uuids,
+  isNote,
 } from '@standardnotes/snjs'
 import { SelectionControllerPersistableValue } from '@standardnotes/ui-services'
 import { action, computed, makeObservable, observable, reaction, runInAction } from 'mobx'
@@ -77,8 +78,14 @@ export class SelectedItemsController
     if (!state) {
       return
     }
+
     if (!this.selectedUuids.size && state.selectedUuids.length > 0) {
-      void this.selectUuids(state.selectedUuids)
+      if (!this.application.options.allowNoteSelectionStatePersistence) {
+        const items = this.application.items.findItems(state.selectedUuids).filter((item) => !isNote(item))
+        void this.selectUuids(Uuids(items))
+      } else {
+        void this.selectUuids(state.selectedUuids)
+      }
     }
   }
 
@@ -264,20 +271,22 @@ export class SelectedItemsController
 
     log(LoggingDomain.Selection, 'Select item', item.uuid)
 
+    const supportsMultipleSelection = this.application.options.allowMultipleSelection
     const hasMeta = this.keyboardService.activeModifiers.has(KeyboardModifier.Meta)
     const hasCtrl = this.keyboardService.activeModifiers.has(KeyboardModifier.Ctrl)
     const hasShift = this.keyboardService.activeModifiers.has(KeyboardModifier.Shift)
     const hasMoreThanOneSelected = this.selectedItemsCount > 1
     const isAuthorizedForAccess = await this.application.protections.authorizeItemAccess(item)
 
-    if (userTriggered && (hasMeta || hasCtrl)) {
+    if (supportsMultipleSelection && userTriggered && (hasMeta || hasCtrl)) {
       if (this.selectedUuids.has(uuid) && hasMoreThanOneSelected) {
         this.removeSelectedItem(uuid)
       } else if (isAuthorizedForAccess) {
-        this.setSelectedUuids(this.selectedUuids.add(uuid))
+        this.selectedUuids.add(uuid)
+        this.setSelectedUuids(this.selectedUuids)
         this.lastSelectedItem = item
       }
-    } else if (userTriggered && hasShift) {
+    } else if (supportsMultipleSelection && userTriggered && hasShift) {
       await this.selectItemsRange({ selectedItem: item })
     } else {
       const shouldSelectNote = hasMoreThanOneSelected || !this.selectedUuids.has(uuid)
