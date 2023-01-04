@@ -163,6 +163,13 @@ export class AppContext {
     return newApplication
   }
 
+  async signout() {
+    await this.application.user.signOut()
+    await this.initialize()
+    await this.launch()
+    return this.application
+  }
+
   syncWithIntegrityCheck() {
     return this.application.sync.sync({ checkIntegrity: true, awaitAll: true })
   }
@@ -189,11 +196,36 @@ export class AppContext {
     })
   }
 
+  awaitUserPrefsSingletonCreation() {
+    const preferences = this.application.preferencesService.preferences
+    if (preferences) {
+      return
+    }
+
+    let didCompleteRelevantSync = false
+    return new Promise((resolve) => {
+      this.application.syncService.addEventObserver((eventName, data) => {
+        if (!didCompleteRelevantSync) {
+          if (data?.savedPayloads) {
+            const matching = data.savedPayloads.find((p) => {
+              return p.content_type === ContentType.UserPrefs
+            })
+            if (matching) {
+              didCompleteRelevantSync = true
+              resolve()
+            }
+          }
+        }
+      })
+    })
+  }
+
   async launch({ awaitDatabaseLoad = true, receiveChallenge } = { awaitDatabaseLoad: true }) {
     await this.application.prepareForLaunch({
       receiveChallenge: receiveChallenge || this.handleChallenge,
     })
     await this.application.launch(awaitDatabaseLoad)
+    await this.awaitUserPrefsSingletonCreation()
   }
 
   async deinit() {

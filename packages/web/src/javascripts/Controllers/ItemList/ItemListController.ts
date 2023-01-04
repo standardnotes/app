@@ -414,6 +414,10 @@ export class ItemListController extends AbstractViewController implements Intern
   }
 
   shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource) => {
+    if (this.application.isNativeMobileWeb()) {
+      return false
+    }
+
     const item = this.getFirstNonProtectedItem()
     if (item && isFile(item)) {
       return false

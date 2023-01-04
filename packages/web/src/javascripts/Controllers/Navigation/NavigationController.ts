@@ -196,10 +196,13 @@ export class NavigationController
   }
 
   hydrateFromPersistedValue = (state: NavigationControllerPersistableValue | undefined) => {
-    if (!state) {
+    const uuidsToPreventHydrationOf: string[] = [SystemViewId.Files]
+
+    if (!state || uuidsToPreventHydrationOf.includes(state.selectedTagUuid)) {
       void this.selectHomeNavigationView()
       return
     }
+
     if (state.selectedTagUuid) {
       this.selectedUuid = state.selectedTagUuid
       this.selectHydratedTagOrDefault()

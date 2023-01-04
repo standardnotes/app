@@ -89,7 +89,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       return
     }
 
-    void application.sessions.populateSessionFromDemoShareToken(token)
+    void application.user.populateSessionFromDemoShareToken(token)
   }, [application])
 
   const onAppLaunch = useCallback(() => {

@@ -1,3 +1,4 @@
+import { Base64String } from '@standardnotes/sncrypto-common'
 import { EncryptionProviderInterface, SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
 import { HttpResponse, SignInResponse, User } from '@standardnotes/responses'
 import { KeyParamsOrigination, UserRequestType } from '@standardnotes/common'
@@ -468,6 +469,11 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
     } finally {
       dismissBlockingDialog()
     }
+  }
+
+  public async populateSessionFromDemoShareToken(token: Base64String): Promise<void> {
+    await this.sessionManager.populateSessionFromDemoShareToken(token)
+    await this.notifyEvent(AccountEvent.SignedInOrRegistered)
   }
 
   private async setPasscodeWithoutWarning(passcode: string, origination: KeyParamsOrigination) {

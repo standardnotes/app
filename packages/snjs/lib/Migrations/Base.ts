@@ -1,4 +1,4 @@
-import { AnyKeyParamsContent } from '@standardnotes/common'
+import { AnyKeyParamsContent, KeyParamsContent004 } from '@standardnotes/common'
 import { EncryptedPayload, EncryptedTransferPayload, isErrorDecryptingPayload } from '@standardnotes/models'
 import { PreviousSnjsVersion1_0_0, PreviousSnjsVersion2_0_0, SnjsVersion } from '../Version'
 import { Migration } from '@Lib/Migrations/Migration'
@@ -165,7 +165,7 @@ export class BaseMigration extends Migration {
   }
 
   private async repairMissingKeychain() {
-    const rawAccountParams = await this.reader.getAccountKeyParams()
+    const rawAccountParams = (await this.reader.getAccountKeyParams()) as AnyKeyParamsContent
 
     /** Choose an item to decrypt against */
     const allItems = (
@@ -196,14 +196,14 @@ export class BaseMigration extends Migration {
       ChallengeReason.Custom,
       false,
       KeychainRecoveryStrings.Title,
-      KeychainRecoveryStrings.Text,
+      KeychainRecoveryStrings.Text((rawAccountParams as KeyParamsContent004).identifier),
     )
 
     return new Promise((resolve) => {
       this.services.challengeService.addChallengeObserver(challenge, {
         onNonvalidatedSubmit: async (challengeResponse) => {
           const password = challengeResponse.values[0].value as string
-          const accountParams = this.services.protocolService.createKeyParams(rawAccountParams as AnyKeyParamsContent)
+          const accountParams = this.services.protocolService.createKeyParams(rawAccountParams)
           const rootKey = await this.services.protocolService.computeRootKey(password, accountParams)
 
           /** TS can't detect we returned early above if itemToDecrypt is null */
