@@ -14,7 +14,9 @@ describe('notes and tags', () => {
 
   beforeEach(async function () {
     this.expectedItemCount = BaseItemCounts.DefaultItems
-    this.application = await Factory.createInitAppWithFakeCrypto()
+    this.context = await Factory.createAppContext()
+    await this.context.launch()
+    this.application = this.context.application
   })
 
   afterEach(async function () {

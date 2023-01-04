@@ -13,6 +13,7 @@ describe('importing', function () {
   let application
   let email
   let password
+  let context
 
   beforeEach(function () {
     localStorage.clear()
@@ -20,11 +21,16 @@ describe('importing', function () {
 
   const setup = async ({ fakeCrypto }) => {
     expectedItemCount = BaseItemCounts.DefaultItems
+
     if (fakeCrypto) {
-      application = await Factory.createInitAppWithFakeCrypto()
+      context = await Factory.createAppContext()
     } else {
-      application = await Factory.createInitAppWithRealCrypto()
+      context = await Factory.createAppContextWithRealCrypto()
     }
+
+    await context.launch()
+    application = context.application
+
     email = UuidGenerator.GenerateUuid()
     password = UuidGenerator.GenerateUuid()
     Factory.handlePasswordChallenges(application, password)

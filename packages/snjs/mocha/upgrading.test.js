@@ -7,7 +7,11 @@ const expect = chai.expect
 describe('upgrading', () => {
   beforeEach(async function () {
     localStorage.clear()
-    this.application = await Factory.createInitAppWithFakeCrypto()
+
+    this.context = await Factory.createAppContext()
+    await this.context.launch()
+
+    this.application = this.context.application
     this.email = UuidGenerator.GenerateUuid()
     this.password = UuidGenerator.GenerateUuid()
     this.passcode = '1234'

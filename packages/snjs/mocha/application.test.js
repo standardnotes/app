@@ -22,12 +22,7 @@ describe('application instances', () => {
   it('two distinct applications should not share model manager state', async () => {
     const context1 = await Factory.createAppContext({ identifier: 'app1' })
     const context2 = await Factory.createAppContext({ identifier: 'app2' })
-    await Promise.all([
-      context1.launch(),
-      context1.awaitUserPrefsSingletonCreation(),
-      context2.launch(),
-      context2.awaitUserPrefsSingletonCreation(),
-    ])
+    await Promise.all([context1.launch(), context2.launch()])
 
     expect(context1.application.payloadManager).to.equal(context1.application.payloadManager)
     expect(context1.application.payloadManager).to.not.equal(context2.application.payloadManager)

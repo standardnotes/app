@@ -163,6 +163,13 @@ export class AppContext {
     return newApplication
   }
 
+  async signout() {
+    await this.application.user.signOut()
+    await this.initialize()
+    await this.launch()
+    return this.application
+  }
+
   syncWithIntegrityCheck() {
     return this.application.sync.sync({ checkIntegrity: true, awaitAll: true })
   }
@@ -219,6 +226,7 @@ export class AppContext {
       receiveChallenge: receiveChallenge || this.handleChallenge,
     })
     await this.application.launch(awaitDatabaseLoad)
+    await this.awaitUserPrefsSingletonCreation()
   }
 
   async deinit() {
