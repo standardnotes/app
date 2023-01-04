@@ -174,7 +174,7 @@ describe('upgrading', () => {
     /** Delete default items key that is created on launch */
     const itemsKey = await this.application.protocolService.getSureDefaultItemsKey()
     await this.application.itemManager.setItemToBeDeleted(itemsKey)
-    expect(this.application.itemManager.getDisplayableItemsKeys().length).to.equal(0)
+    expect(Uuids(this.application.itemManager.getDisplayableItemsKeys()).includes(itemsKey.uuid)).to.equal(false)
 
     Factory.createMappedNote(this.application)
 

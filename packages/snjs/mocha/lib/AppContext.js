@@ -198,7 +198,6 @@ export class AppContext {
 
   awaitUserPrefsSingletonCreation() {
     const preferences = this.application.preferencesService.preferences
-    console.log('awaitUserPrefsSingletonCreation > preferences', preferences)
     if (preferences) {
       return
     }
