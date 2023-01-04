@@ -66,7 +66,7 @@ const createSearchHighlightElement = (
 ) => {
   const rootElementRect = rootElement.getBoundingClientRect();
 
-  const id = `search-${result.nodeKey}-${result.startIndex}-${result.endIndex}`;
+  const id = `search-${result.nodeKey}-${result.startIndex}-${result.endIndex}-${isCurrentResult}`;
 
   const existingHighlightElement = document.getElementById(id);
 
