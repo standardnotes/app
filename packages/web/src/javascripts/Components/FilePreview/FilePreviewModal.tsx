@@ -10,6 +10,9 @@ import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import FilePreview from './FilePreview'
 import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
+import FileMenuOptions from '../FileContextMenu/FileMenuOptions'
+import Menu from '../Menu/Menu'
+import Popover from '../Popover/Popover'
 
 type Props = {
   application: WebApplication
@@ -23,7 +26,9 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
     return null
   }
 
+  const [showOptionsMenu, setShowOptionsMenu] = useState(false)
   const [showFileInfoPanel, setShowFileInfoPanel] = useState(false)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   const keyDownHandler: KeyboardEventHandler = useCallback(
@@ -91,6 +96,38 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
               <span className="ml-3 font-medium">{currentFile.name}</span>
             </div>
             <div className="flex items-center">
+              <button
+                className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
+                onClick={() => setShowOptionsMenu((show) => !show)}
+                ref={menuButtonRef}
+              >
+                <Icon type="more" className="text-neutral" />
+              </button>
+              <Popover
+                open={showOptionsMenu}
+                anchorElement={menuButtonRef.current}
+                togglePopover={() => {
+                  setShowOptionsMenu(false)
+                }}
+                side="bottom"
+                align="start"
+                className="py-2"
+                overrideZIndex="z-modal"
+              >
+                <Menu a11yLabel="File context menu" isOpen={showOptionsMenu}>
+                  <FileMenuOptions
+                    filesController={viewControllerManager.filesController}
+                    linkingController={viewControllerManager.linkingController}
+                    navigationController={viewControllerManager.navigationController}
+                    selectedFiles={[currentFile]}
+                    closeMenu={() => {
+                      setShowOptionsMenu(false)
+                    }}
+                    shouldShowRenameOption={false}
+                    shouldShowAttachOption={false}
+                  />
+                </Menu>
+              </Popover>
               <button
                 className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
                 onClick={() => setShowFileInfoPanel((show) => !show)}
