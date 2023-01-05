@@ -117,7 +117,7 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
               />
             </div>
           </div>
-          <LinkedItemBubblesContainer linkingController={viewControllerManager.linkingController} />
+          <LinkedItemBubblesContainer item={file} linkingController={viewControllerManager.linkingController} />
         </div>
       </div>
       <div className="flex min-h-0 flex-grow flex-col">
