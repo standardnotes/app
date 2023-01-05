@@ -26,7 +26,7 @@ export class AuthApiService implements AuthApiServiceInterface {
     this.operationsInProgress.set(AuthApiOperations.GenerateRecoveryCodes, true)
 
     try {
-      const response = await this.authServer.generateRecoveryCodes({})
+      const response = await this.authServer.generateRecoveryCodes()
 
       return response
     } catch (error) {

@@ -1,8 +1,4 @@
-import {
-  GenerateRecoveryCodesRequestParams,
-  RecoveryKeyParamsRequestParams,
-  SignInWithRecoveryCodesRequestParams,
-} from '../../Request'
+import { RecoveryKeyParamsRequestParams, SignInWithRecoveryCodesRequestParams } from '../../Request'
 import {
   GenerateRecoveryCodesResponse,
   RecoveryKeyParamsResponse,
@@ -10,7 +6,7 @@ import {
 } from '../../Response'
 
 export interface AuthServerInterface {
-  generateRecoveryCodes(params: GenerateRecoveryCodesRequestParams): Promise<GenerateRecoveryCodesResponse>
+  generateRecoveryCodes(): Promise<GenerateRecoveryCodesResponse>
   recoveryKeyParams(params: RecoveryKeyParamsRequestParams): Promise<RecoveryKeyParamsResponse>
   signInWithRecoveryCodes(params: SignInWithRecoveryCodesRequestParams): Promise<SignInWithRecoveryCodesResponse>
 }

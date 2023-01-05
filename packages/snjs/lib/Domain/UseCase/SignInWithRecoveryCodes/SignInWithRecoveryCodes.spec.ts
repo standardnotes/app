@@ -1,18 +1,16 @@
 import {
   AuthClientInterface,
-  ItemManagerInterface,
+  InternalEventBusInterface,
   KeyValueStoreInterface,
   SessionsClientInterface,
-  StorageServiceInterface,
-  SyncServiceInterface,
-  UserClientInterface,
 } from '@standardnotes/services'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { AnyKeyParamsContent } from '@standardnotes/common'
+import { DecryptedPayloadInterface, RootKeyContent, RootKeyInterface } from '@standardnotes/models'
+import { SessionBody } from '@standardnotes/responses'
 
 import { SignInWithRecoveryCodes } from './SignInWithRecoveryCodes'
-import { AnyKeyParamsContent } from '@standardnotes/common'
-import { DecryptedPayloadInterface, RootKeyContent, RootKeyInterface, SessionBody } from '@Lib/../dist/@types'
 
 describe('SignInWithRecoveryCodes', () => {
   let authManager: AuthClientInterface
@@ -20,10 +18,7 @@ describe('SignInWithRecoveryCodes', () => {
   let inMemoryStore: KeyValueStoreInterface<string>
   let crypto: PureCryptoInterface
   let sessionManager: SessionsClientInterface
-  let syncService: SyncServiceInterface
-  let storageService: StorageServiceInterface
-  let itemManager: ItemManagerInterface
-  let userService: UserClientInterface
+  let internalEventBus: InternalEventBusInterface
 
   const createUseCase = () => new SignInWithRecoveryCodes(
     authManager,
@@ -31,10 +26,7 @@ describe('SignInWithRecoveryCodes', () => {
     inMemoryStore,
     crypto,
     sessionManager,
-    syncService,
-    storageService,
-    itemManager,
-    userService,
+    internalEventBus,
   )
 
   beforeEach(() => {
@@ -82,21 +74,8 @@ describe('SignInWithRecoveryCodes', () => {
     sessionManager = {} as jest.Mocked<SessionsClientInterface>
     sessionManager.handleAuthentication = jest.fn()
 
-    syncService = {} as jest.Mocked<SyncServiceInterface>
-    syncService.lockSyncing = jest.fn()
-    syncService.unlockSyncing = jest.fn()
-    syncService.resetSyncState = jest.fn()
-    syncService.downloadFirstSync = jest.fn()
-
-    storageService = {} as jest.Mocked<StorageServiceInterface>
-    storageService.setPersistencePolicy = jest.fn()
-    storageService.clearAllPayloads = jest.fn()
-
-    itemManager = {} as jest.Mocked<ItemManagerInterface>
-    itemManager.removeAllItemsFromMemory = jest.fn()
-
-    userService = {} as jest.Mocked<UserClientInterface>
-    userService.handleSignIn = jest.fn()
+    internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
+    internalEventBus.publishSync = jest.fn()
   })
 
   it('should fail if an account already exists', async () => {

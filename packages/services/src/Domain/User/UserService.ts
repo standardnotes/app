@@ -1,7 +1,7 @@
 import { Base64String } from '@standardnotes/sncrypto-common'
 import { EncryptionProviderInterface, SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
 import { HttpResponse, SignInResponse, User } from '@standardnotes/responses'
-import { KeyParamsOrigination, UserRequestType } from '@standardnotes/common'
+import { Either, KeyParamsOrigination, UserRequestType } from '@standardnotes/common'
 import { UuidGenerator } from '@standardnotes/utils'
 import { UserApiServiceInterface, UserRegistrationResponseBody } from '@standardnotes/api'
 
@@ -25,6 +25,8 @@ import { DeinitSource } from '../Application/DeinitSource'
 import { StoragePersistencePolicies } from '../Storage/StorageTypes'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { ProtectionsClientInterface } from '../Protection/ProtectionClientInterface'
+import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
+import { InternalEventInterface } from '../Internal/InternalEventInterface'
 
 export type CredentialsChangeFunctionResponse = { error?: { message: string } }
 export type AccountServiceResponse = HttpResponse
@@ -34,11 +36,25 @@ export enum AccountEvent {
   SignedOut = 'SignedOut',
 }
 
-type AccountEventData = {
+export interface SignedInOrRegisteredEventPayload {
+  ephemeral: boolean
+  mergeLocal: boolean
+  awaitSync: boolean
+  checkIntegrity: boolean
+}
+
+export interface SignedOutEventPayload {
   source: DeinitSource
 }
 
-export class UserService extends AbstractService<AccountEvent, AccountEventData> implements UserClientInterface {
+export interface AccountEventData {
+  payload: Either<SignedInOrRegisteredEventPayload, SignedOutEventPayload>
+}
+
+export class UserService
+  extends AbstractService<AccountEvent, AccountEventData>
+  implements UserClientInterface, InternalEventHandlerInterface
+{
   private signingIn = false
   private registering = false
 
@@ -60,8 +76,41 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
     super(internalEventBus)
   }
 
-  async handleSignIn(): Promise<void> {
-    await this.notifyEvent(AccountEvent.SignedInOrRegistered)
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === AccountEvent.SignedInOrRegistered) {
+      const payload = (event.payload as AccountEventData).payload as SignedInOrRegisteredEventPayload
+      this.syncService.resetSyncState()
+
+      await this.storageService.setPersistencePolicy(
+        payload.ephemeral ? StoragePersistencePolicies.Ephemeral : StoragePersistencePolicies.Default,
+      )
+
+      if (payload.mergeLocal) {
+        await this.syncService.markAllItemsAsNeedingSyncAndPersist()
+      } else {
+        void this.itemManager.removeAllItemsFromMemory()
+        await this.clearDatabase()
+      }
+
+      this.unlockSyncing()
+
+      const syncPromise = this.syncService
+        .downloadFirstSync(1_000, {
+          checkIntegrity: payload.checkIntegrity,
+          awaitAll: payload.awaitSync,
+        })
+        .then(() => {
+          if (!payload.awaitSync) {
+            void this.protocolService.decryptErroredPayloads()
+          }
+        })
+
+      if (payload.awaitSync) {
+        await syncPromise
+
+        await this.protocolService.decryptErroredPayloads()
+      }
+    }
   }
 
   public override deinit(): void {
@@ -101,26 +150,16 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
       this.lockSyncing()
       const response = await this.sessionManager.register(email, password, ephemeral)
 
-      this.syncService.resetSyncState()
+      await this.notifyEvent(AccountEvent.SignedInOrRegistered, {
+        payload: {
+          ephemeral,
+          mergeLocal,
+          awaitSync: true,
+          checkIntegrity: false,
+        },
+      })
 
-      await this.storageService.setPersistencePolicy(
-        ephemeral ? StoragePersistencePolicies.Ephemeral : StoragePersistencePolicies.Default,
-      )
-
-      if (mergeLocal) {
-        await this.syncService.markAllItemsAsNeedingSyncAndPersist()
-      } else {
-        await this.itemManager.removeAllItemsFromMemory()
-        await this.clearDatabase()
-      }
-
-      await this.notifyEvent(AccountEvent.SignedInOrRegistered)
-
-      this.unlockSyncing()
       this.registering = false
-
-      await this.syncService.downloadFirstSync(300)
-      void this.protocolService.decryptErroredPayloads()
 
       return response
     } catch (error) {
@@ -160,39 +199,14 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
       const result = await this.sessionManager.signIn(email, password, strict, ephemeral)
 
       if (!result.response.error) {
-        this.syncService.resetSyncState()
-
-        await this.storageService.setPersistencePolicy(
-          ephemeral ? StoragePersistencePolicies.Ephemeral : StoragePersistencePolicies.Default,
-        )
-
-        if (mergeLocal) {
-          await this.syncService.markAllItemsAsNeedingSyncAndPersist()
-        } else {
-          void this.itemManager.removeAllItemsFromMemory()
-          await this.clearDatabase()
-        }
-
-        await this.notifyEvent(AccountEvent.SignedInOrRegistered)
-
-        this.unlockSyncing()
-
-        const syncPromise = this.syncService
-          .downloadFirstSync(1_000, {
+        await this.notifyEvent(AccountEvent.SignedInOrRegistered, {
+          payload: {
+            mergeLocal,
+            awaitSync,
+            ephemeral,
             checkIntegrity: true,
-            awaitAll: awaitSync,
-          })
-          .then(() => {
-            if (!awaitSync) {
-              void this.protocolService.decryptErroredPayloads()
-            }
-          })
-
-        if (awaitSync) {
-          await syncPromise
-
-          await this.protocolService.decryptErroredPayloads()
-        }
+          },
+        })
       } else {
         this.unlockSyncing()
       }
@@ -271,15 +285,14 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
     )
 
     if (!response.error) {
-      await this.notifyEvent(AccountEvent.SignedInOrRegistered)
-
-      this.unlockSyncing()
-
-      void this.syncService.downloadFirstSync(1_000, {
-        checkIntegrity: true,
+      await this.notifyEvent(AccountEvent.SignedInOrRegistered, {
+        payload: {
+          mergeLocal: true,
+          awaitSync: true,
+          ephemeral: false,
+          checkIntegrity: true,
+        },
       })
-
-      void this.protocolService.decryptErroredPayloads()
     }
 
     this.unlockSyncing()
@@ -314,7 +327,7 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
       await this.sessionManager.signOut()
       await this.protocolService.deleteWorkspaceSpecificKeyStateFromDevice()
       await this.storageService.clearAllData()
-      await this.notifyEvent(AccountEvent.SignedOut, { source })
+      await this.notifyEvent(AccountEvent.SignedOut, { payload: { source } })
     }
 
     if (force) {
@@ -477,7 +490,14 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
 
   public async populateSessionFromDemoShareToken(token: Base64String): Promise<void> {
     await this.sessionManager.populateSessionFromDemoShareToken(token)
-    await this.notifyEvent(AccountEvent.SignedInOrRegistered)
+    await this.notifyEvent(AccountEvent.SignedInOrRegistered, {
+      payload: {
+        ephemeral: false,
+        mergeLocal: false,
+        checkIntegrity: false,
+        awaitSync: true,
+      },
+    })
   }
 
   private async setPasscodeWithoutWarning(passcode: string, origination: KeyParamsOrigination) {

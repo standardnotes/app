@@ -1,7 +1,6 @@
 import { ApplicationIdentifier, ContentType } from '@standardnotes/common'
 import { BackupFile, DecryptedItemInterface, ItemStream, Platform, PrefKey, PrefValue } from '@standardnotes/models'
 import { FilesClientInterface } from '@standardnotes/files'
-import { UseCaseInterface } from '@standardnotes/domain-core'
 
 import { AlertService } from '../Alert/AlertService'
 import { ComponentManagerInterface } from '../Component/ComponentManagerInterface'
@@ -59,5 +58,4 @@ export interface ApplicationInterface {
   readonly platform: Platform
   deviceInterface: DeviceInterface
   alertService: AlertService
-  get signInWithRecoveryCodes(): UseCaseInterface<void>
 }

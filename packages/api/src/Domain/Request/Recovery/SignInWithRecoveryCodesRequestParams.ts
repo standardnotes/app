@@ -4,5 +4,4 @@ export interface SignInWithRecoveryCodesRequestParams {
   password: string
   codeVerifier: string
   recoveryCodes: string
-  [additionalParam: string]: unknown
 }

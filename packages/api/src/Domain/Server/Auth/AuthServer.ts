@@ -1,9 +1,5 @@
 import { HttpServiceInterface } from '../../Http/HttpServiceInterface'
-import {
-  GenerateRecoveryCodesRequestParams,
-  RecoveryKeyParamsRequestParams,
-  SignInWithRecoveryCodesRequestParams,
-} from '../../Request'
+import { RecoveryKeyParamsRequestParams, SignInWithRecoveryCodesRequestParams } from '../../Request'
 import {
   GenerateRecoveryCodesResponse,
   RecoveryKeyParamsResponse,
@@ -15,8 +11,8 @@ import { Paths } from './Paths'
 export class AuthServer implements AuthServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
 
-  async generateRecoveryCodes(params: GenerateRecoveryCodesRequestParams): Promise<GenerateRecoveryCodesResponse> {
-    const response = await this.httpService.post(Paths.v1.generateRecoveryCodes, params)
+  async generateRecoveryCodes(): Promise<GenerateRecoveryCodesResponse> {
+    const response = await this.httpService.post(Paths.v1.generateRecoveryCodes)
 
     return response as GenerateRecoveryCodesResponse
   }

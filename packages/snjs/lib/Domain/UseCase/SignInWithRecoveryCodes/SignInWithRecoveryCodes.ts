@@ -1,18 +1,16 @@
 import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 import { CopyPayloadWithContentOverride } from '@standardnotes/models'
 import {
+  AccountEvent,
   AuthClientInterface,
   EXPIRED_PROTOCOL_VERSION,
-  ItemManagerInterface,
+  InternalEventBusInterface,
+  InternalEventPublishStrategy,
   KeyValueStoreInterface,
   SessionsClientInterface,
   StorageKey,
-  StoragePersistencePolicies,
-  StorageServiceInterface,
-  SyncServiceInterface,
   UNSUPPORTED_KEY_DERIVATION,
   UNSUPPORTED_PROTOCOL_VERSION,
-  UserClientInterface,
 } from '@standardnotes/services'
 import { CreateAnyKeyParams, EncryptionProviderInterface, SNRootKey } from '@standardnotes/encryption'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -26,18 +24,11 @@ export class SignInWithRecoveryCodes implements UseCaseInterface<void> {
     private inMemoryStore: KeyValueStoreInterface<string>,
     private crypto: PureCryptoInterface,
     private sessionManager: SessionsClientInterface,
-    private syncService: SyncServiceInterface,
-    private storageService: StorageServiceInterface,
-    private itemManager: ItemManagerInterface,
-    private userService: UserClientInterface,
+    private internalEventBus: InternalEventBusInterface,
   ) {}
 
   async execute(dto: SignInWithRecoveryCodesDTO): Promise<Result<void>> {
-    this.syncService.lockSyncing()
-
     if (this.protocolService.hasAccount()) {
-      this.syncService.unlockSyncing()
-
       return Result.fail('Tried to sign in when an account already exists.')
     }
 
@@ -52,16 +43,12 @@ export class SignInWithRecoveryCodes implements UseCaseInterface<void> {
     })
 
     if (recoveryKeyParams === false) {
-      this.syncService.unlockSyncing()
-
       return Result.fail('Could not retrieve recovery key params')
     }
 
     const rootKeyParams = CreateAnyKeyParams(recoveryKeyParams)
 
     if (!this.protocolService.supportedVersions().includes(rootKeyParams.version)) {
-      this.syncService.unlockSyncing()
-
       if (this.protocolService.isVersionNewerThanLibraryVersion(rootKeyParams.version)) {
         return Result.fail(UNSUPPORTED_PROTOCOL_VERSION)
       }
@@ -70,8 +57,6 @@ export class SignInWithRecoveryCodes implements UseCaseInterface<void> {
     }
 
     if (!this.protocolService.platformSupportsKeyDerivation(rootKeyParams)) {
-      this.syncService.unlockSyncing()
-
       return Result.fail(UNSUPPORTED_KEY_DERIVATION)
     }
 
@@ -85,8 +70,6 @@ export class SignInWithRecoveryCodes implements UseCaseInterface<void> {
     })
 
     if (signInResult === false) {
-      this.syncService.unlockSyncing()
-
       return Result.fail('Could not sign in with recovery codes')
     }
 
@@ -104,22 +87,20 @@ export class SignInWithRecoveryCodes implements UseCaseInterface<void> {
       rootKey: expandedRootKey,
     })
 
-    this.syncService.resetSyncState()
-
-    await this.storageService.setPersistencePolicy(StoragePersistencePolicies.Default)
-
-    void this.itemManager.removeAllItemsFromMemory()
-
-    await this.storageService.clearAllPayloads()
-
-    await this.userService.handleSignIn()
-
-    this.syncService.unlockSyncing()
-
-    void this.syncService.downloadFirstSync(1_000, {
-      checkIntegrity: true,
-      awaitAll: false,
-    })
+    await this.internalEventBus.publishSync(
+      {
+        type: AccountEvent.SignedInOrRegistered,
+        payload: {
+          payload: {
+            ephemeral: false,
+            mergeLocal: false,
+            awaitSync: true,
+            checkIntegrity: false,
+          },
+        },
+      },
+      InternalEventPublishStrategy.SEQUENCE,
+    )
 
     return Result.ok()
   }

@@ -3,5 +3,4 @@ export interface RecoveryKeyParamsRequestParams {
   username: string
   codeChallenge: string
   recoveryCodes: string
-  [additionalParam: string]: unknown
 }

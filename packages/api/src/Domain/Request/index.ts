@@ -5,7 +5,6 @@ export * from './Authenticator/GenerateAuthenticatorRegistrationOptionsRequestPa
 export * from './Authenticator/ListAuthenticatorsRequestParams'
 export * from './Authenticator/VerifyAuthenticatorAuthenticationResponseRequestParams'
 export * from './Authenticator/VerifyAuthenticatorRegistrationResponseRequestParams'
-export * from './Recovery/GenerateRecoveryCodesRequestParams'
 export * from './Recovery/RecoveryKeyParamsRequestParams'
 export * from './Recovery/SignInWithRecoveryCodesRequestParams'
 export * from './Subscription/AppleIAPConfirmRequestParams'
