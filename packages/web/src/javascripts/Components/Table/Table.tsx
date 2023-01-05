@@ -45,8 +45,10 @@ function TableRow<Data>({
       onFocus={() => {
         setIsFocused(true)
       }}
-      onBlur={() => {
-        setIsFocused(false)
+      onBlur={(event) => {
+        if (!event.relatedTarget?.closest(`[id="${row.id}"]`)) {
+          setIsFocused(false)
+        }
       }}
     >
       {visibleCells.map((cell, index, array) => {
@@ -70,6 +72,7 @@ function TableRow<Data>({
                 className={classNames(
                   'absolute right-0 top-0 flex h-full items-center p-2',
                   row.isSelected ? '' : isHoveredOrFocused ? '' : 'invisible',
+                  isFocused && 'visible',
                 )}
               >
                 <div className="z-[1]">{row.rowActions}</div>
@@ -274,8 +277,12 @@ function Table<Data>({ table }: { table: Table<Data> }) {
           break
         }
         case KeyboardKey.Space: {
+          const target = event.target as HTMLElement
           const currentRowId = currentRow?.id
           if (!currentRowId) {
+            return
+          }
+          if (target.getAttribute('role') !== 'gridcell') {
             return
           }
           event.preventDefault()
