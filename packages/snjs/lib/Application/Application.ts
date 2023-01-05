@@ -259,10 +259,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.workspaceManager
   }
 
-  get auth(): ExternalServices.AuthClientInterface {
-    return this.authManager
-  }
-
   get signInWithRecoveryCodes(): UseCaseInterface<void> {
     return this._signInWithRecoveryCodes
   }

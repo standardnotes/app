@@ -17,7 +17,6 @@ import { StorageValueModes } from '../Storage/StorageTypes'
 import { DeinitMode } from './DeinitMode'
 import { DeinitSource } from './DeinitSource'
 import { UserClientInterface } from '../User/UserClientInterface'
-import { AuthClientInterface } from '../Auth/AuthClientInterface'
 
 export interface ApplicationInterface {
   deinit(mode: DeinitMode, source: DeinitSource): void
@@ -53,7 +52,6 @@ export interface ApplicationInterface {
   get files(): FilesClientInterface
   get subscriptions(): SubscriptionClientInterface
   get workspaces(): WorkspaceClientInterface
-  get auth(): AuthClientInterface
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform
   deviceInterface: DeviceInterface
