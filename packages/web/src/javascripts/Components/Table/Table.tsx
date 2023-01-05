@@ -132,39 +132,17 @@ function Table<Data>({ table }: { table: Table<Data> }) {
   const focusedRowIndex = useRef<number>(0)
   const focusedCellIndex = useRef<number>(0)
 
-  const isChildOfGrid = useCallback(
-    (element: Element | null) => {
-      if (!element) {
-        return false
-      }
-      if (element.closest(`#table-${id}`)) {
-        return true
-      }
-      return false
-    },
-    [id],
-  )
-
-  const onFocus: React.FocusEventHandler = useCallback(
-    (event) => {
-      const target = event.target as HTMLElement
-      const row = target.closest('[role="row"]') as HTMLElement
-      const cell = target.closest('[role="gridcell"],[role="columnheader"]') as HTMLElement
-      if (row) {
-        focusedRowIndex.current = parseInt(row.getAttribute('aria-rowindex') || '0')
-      }
-      if (cell) {
-        focusedCellIndex.current = parseInt(cell.getAttribute('aria-colindex') || '0')
-      }
-      if (event.relatedTarget && isChildOfGrid(event.relatedTarget)) {
-        event.relatedTarget.setAttribute('tabIndex', '-1')
-      }
-      if (event.target) {
-        event.target.setAttribute('tabIndex', '0')
-      }
-    },
-    [isChildOfGrid],
-  )
+  const onFocus: React.FocusEventHandler = useCallback((event) => {
+    const target = event.target as HTMLElement
+    const row = target.closest('[role="row"]') as HTMLElement
+    const cell = target.closest('[role="gridcell"],[role="columnheader"]') as HTMLElement
+    if (row) {
+      focusedRowIndex.current = parseInt(row.getAttribute('aria-rowindex') || '0')
+    }
+    if (cell) {
+      focusedCellIndex.current = parseInt(cell.getAttribute('aria-colindex') || '0')
+    }
+  }, [])
 
   const onBlur: React.FocusEventHandler = useCallback((event) => {
     const activeElement = document.activeElement as HTMLElement
