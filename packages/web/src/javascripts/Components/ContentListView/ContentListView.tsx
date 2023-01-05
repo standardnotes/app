@@ -36,9 +36,10 @@ import { FeatureName } from '@/Controllers/FeatureName'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { useForwardedRef } from '@/Hooks/useForwardedRef'
 import FloatingAddButton from './FloatingAddButton'
-import FilesTableView from '../FilesTableView/FilesTableView'
+import ContentTableView from '../ContentTableView/ContentTableView'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -52,6 +53,7 @@ type Props = {
   searchOptionsController: SearchOptionsController
   linkingController: LinkingController
   featuresController: FeaturesController
+  historyModalController: HistoryModalController
   className?: string
   id: string
   children?: React.ReactNode
@@ -72,6 +74,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       searchOptionsController,
       linkingController,
       featuresController,
+      historyModalController,
       className,
       id,
       children,
@@ -353,12 +356,15 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         ) : null}
         {!dailyMode && renderedItems.length ? (
           shouldShowFilesTableView ? (
-            <FilesTableView
+            <ContentTableView
+              items={items}
               application={application}
               filesController={filesController}
               featuresController={featuresController}
               linkingController={linkingController}
               navigationController={navigationController}
+              notesController={notesController}
+              historyModalController={historyModalController}
             />
           ) : (
             <ContentList

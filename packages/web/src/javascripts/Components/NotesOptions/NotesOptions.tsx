@@ -39,6 +39,7 @@ const iconClassWarning = `text-warning mr-2 ${iconSize}`
 const iconClassSuccess = `text-success mr-2 ${iconSize}`
 
 const NotesOptions = ({
+  notes,
   application,
   navigationController,
   notesController,
@@ -61,7 +62,6 @@ const NotesOptions = ({
     return notesMatchingAttribute.length > notesNotMatchingAttribute.length
   }
 
-  const notes = notesController.selectedNotes
   const hidePreviews = toggleOn((note) => note.hidePreview)
   const locked = toggleOn((note) => note.locked)
   const protect = toggleOn((note) => note.protected)

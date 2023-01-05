@@ -5,7 +5,6 @@ import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import {
-  ContentType,
   FileItem,
   SortableItem,
   PrefKey,
@@ -13,6 +12,8 @@ import {
   naturalSort,
   FileBackupRecord,
   SystemViewId,
+  DecryptedItemInterface,
+  SNNote,
 } from '@standardnotes/snjs'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
@@ -32,20 +33,41 @@ import { FeaturesController } from '@/Controllers/FeaturesController'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useApplication } from '../ApplicationProvider'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import { getIconAndTintForNoteType } from '@/Utils/Items/Icons/getIconAndTintForNoteType'
+import NotesOptions from '../NotesOptions/NotesOptions'
+import { NotesController } from '@/Controllers/NotesController/NotesController'
+import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 
 const ContextMenuCell = ({
-  files,
+  items,
   filesController,
   navigationController,
   linkingController,
+  notesController,
+  historyModalController,
 }: {
-  files: FileItem[]
+  items: DecryptedItemInterface[]
   filesController: FilesController
   navigationController: NavigationController
   linkingController: LinkingController
+  notesController: NotesController
+  historyModalController: HistoryModalController
 }) => {
+  const application = useApplication()
   const [contextMenuVisible, setContextMenuVisible] = useState(false)
   const anchorElementRef = useRef<HTMLButtonElement>(null)
+
+  const allItemsAreNotes = useMemo(() => {
+    return items.every((item) => item instanceof SNNote)
+  }, [items])
+
+  const allItemsAreFiles = useMemo(() => {
+    return items.every((item) => item instanceof FileItem)
+  }, [items])
+
+  if (!allItemsAreNotes && !allItemsAreFiles) {
+    return null
+  }
 
   return (
     <>
@@ -71,30 +93,45 @@ const ContextMenuCell = ({
         className="py-2"
       >
         <Menu a11yLabel="File context menu" isOpen={contextMenuVisible}>
-          <FileMenuOptions
-            linkingController={linkingController}
-            navigationController={navigationController}
-            closeMenu={() => {
-              setContextMenuVisible(false)
-            }}
-            filesController={filesController}
-            shouldShowRenameOption={false}
-            shouldShowAttachOption={false}
-            selectedFiles={files}
-          />
+          {allItemsAreFiles && (
+            <FileMenuOptions
+              linkingController={linkingController}
+              navigationController={navigationController}
+              closeMenu={() => {
+                setContextMenuVisible(false)
+              }}
+              filesController={filesController}
+              shouldShowRenameOption={false}
+              shouldShowAttachOption={false}
+              selectedFiles={items as FileItem[]}
+            />
+          )}
+          {allItemsAreNotes && (
+            <NotesOptions
+              notes={items as SNNote[]}
+              application={application}
+              navigationController={navigationController}
+              notesController={notesController}
+              linkingController={linkingController}
+              historyModalController={historyModalController}
+              closeMenu={() => {
+                setContextMenuVisible(false)
+              }}
+            />
+          )}
         </Menu>
       </Popover>
     </>
   )
 }
 
-const FileLinksCell = ({
-  file,
+const ItemLinksCell = ({
+  item,
   filesController,
   linkingController,
   featuresController,
 }: {
-  file: FileItem
+  item: DecryptedItemInterface
   filesController: FilesController
   linkingController: LinkingController
   featuresController: FeaturesController
@@ -130,25 +167,38 @@ const FileLinksCell = ({
           filesController={filesController}
           featuresController={featuresController}
           isOpen={contextMenuVisible}
-          item={file}
+          item={item}
         />
       </Popover>
     </>
   )
 }
 
-const FileNameCell = ({ file }: { file: FileItem }) => {
+const ItemNameCell = ({ item }: { item: DecryptedItemInterface }) => {
   const application = useApplication()
   const [backupInfo, setBackupInfo] = useState<FileBackupRecord | undefined>(undefined)
+  const isItemFile = item instanceof FileItem
+
+  const noteType =
+    item instanceof SNNote
+      ? item.noteType || application.componentManager.editorForNote(item)?.package_info.note_type
+      : undefined
+  const [noteIcon, noteIconTint] = getIconAndTintForNoteType(noteType)
 
   useEffect(() => {
-    void application.fileBackups?.getFileBackupInfo(file).then(setBackupInfo)
-  }, [application, file])
+    if (isItemFile) {
+      void application.fileBackups?.getFileBackupInfo(item).then(setBackupInfo)
+    }
+  }, [application, isItemFile, item])
 
   return (
     <div className="flex items-center gap-3 whitespace-normal">
       <span className="relative">
-        {getFileIconComponent(getIconForFileType(file.mimeType), 'w-6 h-6 flex-shrink-0')}
+        {isItemFile ? (
+          getFileIconComponent(getIconForFileType(item.mimeType), 'w-6 h-6 flex-shrink-0')
+        ) : (
+          <Icon type={noteIcon} className={`text-accessory-tint-${noteIconTint}`} />
+        )}
         {backupInfo && (
           <div
             className="absolute bottom-1 right-1 translate-x-1/2 translate-y-1/2 rounded-full bg-default text-success"
@@ -158,8 +208,8 @@ const FileNameCell = ({ file }: { file: FileItem }) => {
           </div>
         )}
       </span>
-      <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">{file.title}</span>
-      {file.protected && (
+      <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">{item.title}</span>
+      {item.protected && (
         <span className="flex items-center" title="File is protected">
           <Icon ariaLabel="File is protected" type="lock-filled" className="h-3.5 w-3.5 text-passive-1" size="custom" />
         </span>
@@ -170,22 +220,26 @@ const FileNameCell = ({ file }: { file: FileItem }) => {
 
 type Props = {
   application: WebApplication
+  items: DecryptedItemInterface[]
   filesController: FilesController
   featuresController: FeaturesController
   linkingController: LinkingController
   navigationController: NavigationController
+  notesController: NotesController
+  historyModalController: HistoryModalController
 }
 
-const FilesTableView = ({
+const ContentTableView = ({
   application,
+  items,
   filesController,
   featuresController,
   linkingController,
   navigationController,
+  notesController,
+  historyModalController,
 }: Props) => {
-  const files = application.items
-    .getDisplayableNotesAndFiles()
-    .filter((item) => item.content_type === ContentType.File) as FileItem[]
+  const listHasFiles = items.some((item) => item instanceof FileItem)
 
   const getSortByPreference = useCallback(() => {
     const globalPrefValue = application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy])
@@ -231,48 +285,48 @@ const FilesTableView = ({
     [application],
   )
 
-  const [contextMenuFile, setContextMenuFile] = useState<FileItem | undefined>(undefined)
+  const [contextMenuItem, setContextMenuItem] = useState<DecryptedItemInterface | undefined>(undefined)
   const [contextMenuPosition, setContextMenuPosition] = useState<{ x: number; y: number } | undefined>(undefined)
 
   const isSmallBreakpoint = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const isMediumBreakpoint = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.md)
   const isLargeBreakpoint = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.lg)
 
-  const columnDefs: TableColumn<FileItem>[] = useMemo(
+  const columnDefs: TableColumn<DecryptedItemInterface>[] = useMemo(
     () => [
       {
         name: 'Name',
         sortBy: 'title',
-        cell: (file) => <FileNameCell file={file} />,
+        cell: (item) => <ItemNameCell item={item} />,
       },
       {
         name: 'Upload date',
         sortBy: 'created_at',
-        cell: (file) => {
-          return formatDateForContextMenu(file.created_at)
+        cell: (item) => {
+          return formatDateForContextMenu(item.created_at)
         },
         hidden: isSmallBreakpoint,
       },
       {
         name: 'Size',
         sortBy: 'decryptedSize',
-        cell: (file) => {
-          return formatSizeToReadableString(file.decryptedSize)
+        cell: (item) => {
+          return item instanceof FileItem ? formatSizeToReadableString(item.decryptedSize) : null
         },
-        hidden: isSmallBreakpoint,
+        hidden: isSmallBreakpoint || !listHasFiles,
       },
       {
         name: 'Attached to',
         hidden: isSmallBreakpoint || isMediumBreakpoint || isLargeBreakpoint,
-        cell: (file) => {
+        cell: (item) => {
           const links = [
-            ...naturalSort(application.items.referencesForItem(file), 'title').map((item) =>
+            ...naturalSort(application.items.referencesForItem(item), 'title').map((item) =>
               createLinkFromItem(item, 'linked'),
             ),
-            ...naturalSort(application.items.itemsReferencingItem(file), 'title').map((item) =>
+            ...naturalSort(application.items.itemsReferencingItem(item), 'title').map((item) =>
               createLinkFromItem(item, 'linked-by'),
             ),
-            ...application.items.getSortedTagsForItem(file).map((item) => createLinkFromItem(item, 'linked')),
+            ...application.items.getSortedTagsForItem(item).map((item) => createLinkFromItem(item, 'linked')),
           ]
 
           if (!links.length) {
@@ -286,7 +340,7 @@ const FilesTableView = ({
                 link={links[0]}
                 key={links[0].id}
                 unlinkItem={async (itemToUnlink) => {
-                  void application.items.unlinkItems(file, itemToUnlink)
+                  void application.items.unlinkItems(item, itemToUnlink)
                 }}
                 isBidirectional={false}
               />
@@ -296,13 +350,13 @@ const FilesTableView = ({
         },
       },
     ],
-    [application.items, isLargeBreakpoint, isMediumBreakpoint, isSmallBreakpoint],
+    [application.items, isLargeBreakpoint, isMediumBreakpoint, isSmallBreakpoint, listHasFiles],
   )
 
-  const getRowId = useCallback((file: FileItem) => file.uuid, [])
+  const getRowId = useCallback((item: DecryptedItemInterface) => item.uuid, [])
 
   const table = useTable({
-    data: files,
+    data: items,
     sortBy,
     sortReversed,
     onSortChange,
@@ -310,80 +364,103 @@ const FilesTableView = ({
     columns: columnDefs,
     enableRowSelection: true,
     enableMultipleRowSelection: true,
-    onRowActivate(file) {
-      void filesController.handleFileAction({
-        type: FileItemActionType.PreviewFile,
-        payload: {
-          file,
-          otherFiles: files,
-        },
-      })
+    onRowActivate(item) {
+      if (item instanceof FileItem) {
+        void filesController.handleFileAction({
+          type: FileItemActionType.PreviewFile,
+          payload: {
+            file: item,
+            otherFiles: items.filter((i) => i instanceof FileItem) as FileItem[],
+          },
+        })
+      }
     },
     onRowContextMenu(x, y, file) {
       setContextMenuPosition({ x, y })
-      setContextMenuFile(file)
+      setContextMenuItem(file)
     },
-    rowActions: (file) => {
+    rowActions: (item) => {
       return (
         <div className="flex items-center gap-2">
-          <FileLinksCell
-            file={file}
+          <ItemLinksCell
+            item={item}
             filesController={filesController}
             featuresController={featuresController}
             linkingController={linkingController}
           />
           <ContextMenuCell
-            files={[file]}
+            items={[item]}
             filesController={filesController}
             linkingController={linkingController}
             navigationController={navigationController}
+            notesController={notesController}
+            historyModalController={historyModalController}
           />
         </div>
       )
     },
-    selectionActions: (fileIds) => (
+    selectionActions: (itemIds) => (
       <ContextMenuCell
-        files={files.filter((file) => fileIds.includes(file.uuid))}
+        items={items.filter((item) => itemIds.includes(item.uuid))}
         filesController={filesController}
         linkingController={linkingController}
         navigationController={navigationController}
+        notesController={notesController}
+        historyModalController={historyModalController}
       />
     ),
     showSelectionActions: true,
   })
 
+  const closeContextMenu = () => {
+    setContextMenuPosition(undefined)
+    setContextMenuItem(undefined)
+  }
+
   return (
     <>
       <Table table={table} />
-      {contextMenuPosition && contextMenuFile && (
+      {contextMenuPosition && contextMenuItem && (
         <Popover
           open={true}
           anchorPoint={contextMenuPosition}
           togglePopover={() => {
             setContextMenuPosition(undefined)
-            setContextMenuFile(undefined)
+            setContextMenuItem(undefined)
           }}
           side="bottom"
           align="start"
           className="py-2"
         >
-          <Menu a11yLabel="File context menu" isOpen={true}>
-            <FileMenuOptions
-              closeMenu={() => {
-                setContextMenuPosition(undefined)
-                setContextMenuFile(undefined)
-              }}
-              filesController={filesController}
-              shouldShowRenameOption={false}
-              shouldShowAttachOption={false}
-              selectedFiles={[contextMenuFile]}
-              linkingController={linkingController}
-              navigationController={navigationController}
-            />
-          </Menu>
+          {contextMenuItem instanceof FileItem && (
+            <Menu a11yLabel="File context menu" isOpen={true}>
+              <FileMenuOptions
+                closeMenu={closeContextMenu}
+                filesController={filesController}
+                shouldShowRenameOption={false}
+                shouldShowAttachOption={false}
+                selectedFiles={[contextMenuItem]}
+                linkingController={linkingController}
+                navigationController={navigationController}
+              />
+            </Menu>
+          )}
+          {contextMenuItem instanceof SNNote && (
+            <Menu className="select-none" a11yLabel="Note context menu" isOpen={true}>
+              <NotesOptions
+                notes={[contextMenuItem]}
+                application={application}
+                navigationController={navigationController}
+                notesController={notesController}
+                linkingController={linkingController}
+                historyModalController={historyModalController}
+                closeMenu={closeContextMenu}
+              />
+            </Menu>
+          )}
         </Popover>
       )}
     </>
   )
 }
-export default FilesTableView
+export default ContentTableView

@@ -162,7 +162,8 @@ function Table<Data>({ table }: { table: Table<Data> }) {
       const currentRow = Array.from(allRenderedRows).find(
         (row) => row.getAttribute('aria-rowindex') === focusedRowIndex.current.toString(),
       )
-      const allFocusableCells = currentRow?.querySelectorAll<HTMLElement>('[tabindex]')
+      const allFocusableCells = Array.from(currentRow ? currentRow.querySelectorAll<HTMLElement>('[tabindex]') : [])
+      const allRenderedColumnsLength = headers.length
 
       const focusCell = (rowIndex: number, colIndex: number) => {
         const row = gridElement.querySelector(`[role="row"][aria-rowindex="${rowIndex}"]`)
@@ -190,20 +191,42 @@ function Table<Data>({ table }: { table: Table<Data> }) {
             focusCell(nextRow, focusedCellIndex.current)
           }
           break
-        case KeyboardKey.Left:
+        case KeyboardKey.Left: {
           event.preventDefault()
-          if (focusedCellIndex.current > 1) {
-            const previousCell = focusedCellIndex.current - 1
-            focusCell(focusedRowIndex.current, previousCell)
+          if (!allFocusableCells) {
+            return
           }
+          const currentCellIndex = allFocusableCells.findIndex(
+            (cell) => parseInt(cell.getAttribute('aria-colindex') || '0') === focusedCellIndex.current,
+          )
+          if (currentCellIndex === 0) {
+            return
+          }
+          const previousCell = allFocusableCells[currentCellIndex - 1]
+          if (!previousCell) {
+            return
+          }
+          previousCell.focus()
           break
-        case KeyboardKey.Right:
+        }
+        case KeyboardKey.Right: {
           event.preventDefault()
-          if (focusedCellIndex.current < colCount) {
-            const nextCell = focusedCellIndex.current + 1
-            focusCell(focusedRowIndex.current, nextCell)
+          if (!allFocusableCells) {
+            return
           }
+          const currentCellIndex = allFocusableCells.findIndex(
+            (cell) => parseInt(cell.getAttribute('aria-colindex') || '0') === focusedCellIndex.current,
+          )
+          if (currentCellIndex === allFocusableCells.length - 1) {
+            return
+          }
+          const nextCell = allFocusableCells[currentCellIndex + 1]
+          if (!nextCell) {
+            return
+          }
+          nextCell.focus()
           break
+        }
         case KeyboardKey.Home:
           event.preventDefault()
           if (event.ctrlKey) {
@@ -225,7 +248,7 @@ function Table<Data>({ table }: { table: Table<Data> }) {
         case KeyboardKey.End: {
           event.preventDefault()
           if (event.ctrlKey) {
-            focusCell(allRenderedRows.length, headers.length || colCount)
+            focusCell(allRenderedRows.length, allRenderedColumnsLength || colCount)
             return
           }
           if (!allFocusableCells) {
@@ -338,7 +361,7 @@ function Table<Data>({ table }: { table: Table<Data> }) {
   return (
     <div className="block min-h-0 overflow-auto" onScroll={onScroll}>
       {showSelectionActions && selectedRows.length >= 2 && (
-        <div className="flex items-center justify-between border-b border-border px-3 py-2">
+        <div className="sticky top-0 z-[2] flex items-center justify-between border-b border-border bg-default px-3 py-2">
           <span className="text-info-0 text-sm font-medium">{selectedRows.length} selected</span>
           {selectedRows.length > 0 && selectionActions}
         </div>

@@ -47,6 +47,7 @@ const NotesContextMenu = ({
     >
       <Menu className="select-none" a11yLabel="Note context menu" isOpen={contextMenuOpen}>
         <NotesOptions
+          notes={notesController.selectedNotes}
           application={application}
           navigationController={navigationController}
           notesController={notesController}
