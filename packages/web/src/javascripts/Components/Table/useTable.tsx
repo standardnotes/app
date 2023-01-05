@@ -1,4 +1,5 @@
-import { MouseEventHandler, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { UuidGenerator } from '@standardnotes/snjs'
+import { MouseEventHandler, ReactNode, useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import { useApplication } from '../ApplicationProvider'
 import { Table, TableColumn, TableHeader, TableRow, TableSortBy } from './CommonTypes'
 
@@ -65,6 +66,7 @@ export function useTable<Data>({
 }: UseTableOptions<Data>): Table<Data> {
   const application = useApplication()
   const [selectedRows, setSelectedRows] = useState<string[]>(selectedRowIds || [])
+  const id = useRef(UuidGenerator.GenerateUuid())
 
   useEffect(() => {
     if (selectedRowIds) {
@@ -186,6 +188,7 @@ export function useTable<Data>({
 
   const table: Table<Data> = useMemo(
     () => ({
+      id: id.current,
       headers,
       rows,
       colCount,

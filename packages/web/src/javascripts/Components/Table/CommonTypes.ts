@@ -35,6 +35,7 @@ export type TableHeader = {
 }
 
 export type Table<Data> = {
+  id: string
   headers: TableHeader[]
   rows: TableRow<Data>[]
   rowCount: number
