@@ -10,4 +10,5 @@ export interface UserClientInterface {
   signOut(force?: boolean, source?: DeinitSource): Promise<void>
   submitUserRequest(requestType: UserRequestType): Promise<boolean>
   populateSessionFromDemoShareToken(token: Base64String): Promise<void>
+  handleSignIn(): Promise<void>
 }

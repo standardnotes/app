@@ -1,6 +1,8 @@
 import { ApplicationIdentifier, ContentType } from '@standardnotes/common'
 import { BackupFile, DecryptedItemInterface, ItemStream, Platform, PrefKey, PrefValue } from '@standardnotes/models'
 import { FilesClientInterface } from '@standardnotes/files'
+import { UseCaseInterface } from '@standardnotes/domain-core'
+
 import { AlertService } from '../Alert/AlertService'
 import { ComponentManagerInterface } from '../Component/ComponentManagerInterface'
 import { ApplicationEvent } from '../Event/ApplicationEvent'
@@ -16,6 +18,7 @@ import { StorageValueModes } from '../Storage/StorageTypes'
 import { DeinitMode } from './DeinitMode'
 import { DeinitSource } from './DeinitSource'
 import { UserClientInterface } from '../User/UserClientInterface'
+import { AuthClientInterface } from '../Auth/AuthClientInterface'
 
 export interface ApplicationInterface {
   deinit(mode: DeinitMode, source: DeinitSource): void
@@ -51,8 +54,10 @@ export interface ApplicationInterface {
   get files(): FilesClientInterface
   get subscriptions(): SubscriptionClientInterface
   get workspaces(): WorkspaceClientInterface
+  get auth(): AuthClientInterface
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform
   deviceInterface: DeviceInterface
   alertService: AlertService
+  get signInWithRecoveryCodes(): UseCaseInterface<void>
 }

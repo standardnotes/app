@@ -1,8 +1,12 @@
 import {
+  AuthApiService,
+  AuthApiServiceInterface,
   AuthenticatorApiService,
   AuthenticatorApiServiceInterface,
   AuthenticatorServer,
   AuthenticatorServerInterface,
+  AuthServer,
+  AuthServerInterface,
   HttpService,
   HttpServiceInterface,
   SubscriptionApiService,
@@ -69,6 +73,8 @@ import {
   AccountEvent,
   AuthenticatorClientInterface,
   AuthenticatorManager,
+  AuthClientInterface,
+  AuthManager,
 } from '@standardnotes/services'
 import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateUsername } from '@standardnotes/encryption'
@@ -88,9 +94,10 @@ import { SNLog } from '../Log'
 import { ChallengeResponse, ListedClientInterface } from '../Services'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
-import { LegacySession, MapperInterface, Session } from '@standardnotes/domain-core'
+import { LegacySession, MapperInterface, Session, UseCaseInterface } from '@standardnotes/domain-core'
 import { SessionStorageMapper } from '@Lib/Services/Mapping/SessionStorageMapper'
 import { LegacySessionStorageMapper } from '@Lib/Services/Mapping/LegacySessionStorageMapper'
+import { SignInWithRecoveryCodes } from '@Lib/Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -168,6 +175,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare authenticatorApiService: AuthenticatorApiServiceInterface
   private declare authenticatorServer: AuthenticatorServerInterface
   private declare authenticatorManager: AuthenticatorClientInterface
+  private declare authApiService: AuthApiServiceInterface
+  private declare authServer: AuthServerInterface
+  private declare authManager: AuthClientInterface
+
+  private declare _signInWithRecoveryCodes: SignInWithRecoveryCodes
 
   private internalEventBus!: ExternalServices.InternalEventBusInterface
 
@@ -248,6 +260,14 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   get workspaces(): ExternalServices.WorkspaceClientInterface {
     return this.workspaceManager
+  }
+
+  get auth(): ExternalServices.AuthClientInterface {
+    return this.authManager
+  }
+
+  get signInWithRecoveryCodes(): UseCaseInterface<void> {
+    return this._signInWithRecoveryCodes
   }
 
   public get files(): FilesClientInterface {
@@ -1150,6 +1170,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createAuthenticatorServer()
     this.createAuthenticatorApiService()
     this.createAuthenticatorManager()
+    this.createAuthServer()
+    this.createAuthApiService()
+    this.createAuthManager()
+
+    this.createUseCases()
   }
 
   private clearServices() {
@@ -1200,6 +1225,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.authenticatorApiService as unknown) = undefined
     ;(this.authenticatorServer as unknown) = undefined
     ;(this.authenticatorManager as unknown) = undefined
+    ;(this.authApiService as unknown) = undefined
+    ;(this.authServer as unknown) = undefined
+    ;(this.authManager as unknown) = undefined
+    ;(this._signInWithRecoveryCodes as unknown) = undefined
 
     this.services = []
   }
@@ -1738,5 +1767,31 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   private createAuthenticatorManager() {
     this.authenticatorManager = new AuthenticatorManager(this.authenticatorApiService, this.internalEventBus)
+  }
+
+  private createAuthServer() {
+    this.authServer = new AuthServer(this.httpService)
+  }
+
+  private createAuthApiService() {
+    this.authApiService = new AuthApiService(this.authServer)
+  }
+
+  private createAuthManager() {
+    this.authManager = new AuthManager(this.authApiService, this.internalEventBus)
+  }
+
+  private createUseCases() {
+    this._signInWithRecoveryCodes = new SignInWithRecoveryCodes(
+      this.authManager,
+      this.protocolService,
+      this.inMemoryStore,
+      this.options.crypto,
+      this.sessionManager,
+      this.syncService,
+      this.diskStorageService,
+      this.itemManager,
+      this.userService,
+    )
   }
 }

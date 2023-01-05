@@ -60,6 +60,10 @@ export class UserService extends AbstractService<AccountEvent, AccountEventData>
     super(internalEventBus)
   }
 
+  async handleSignIn(): Promise<void> {
+    await this.notifyEvent(AccountEvent.SignedInOrRegistered)
+  }
+
   public override deinit(): void {
     super.deinit()
     ;(this.sessionManager as unknown) = undefined

@@ -1,7 +1,8 @@
 import { UserRegistrationResponseBody } from '@standardnotes/api'
 import { ProtocolVersion } from '@standardnotes/common'
+import { SNRootKey } from '@standardnotes/encryption'
 import { RootKeyInterface } from '@standardnotes/models'
-import { ClientDisplayableError, HttpResponse, SignInResponse, User } from '@standardnotes/responses'
+import { ClientDisplayableError, HttpResponse, SessionBody, SignInResponse, User } from '@standardnotes/responses'
 import { Base64String } from '@standardnotes/sncrypto-common'
 
 import { SessionManagerResponse } from './SessionManagerResponse'
@@ -31,4 +32,13 @@ export interface SessionsClientInterface {
     wrappingKey?: RootKeyInterface
     newEmail?: string
   }): Promise<SessionManagerResponse>
+  handleAuthentication(dto: {
+    session: SessionBody
+    user: {
+      uuid: string
+      email: string
+    }
+    rootKey: SNRootKey
+    wrappingKey?: SNRootKey
+  }): Promise<void>
 }

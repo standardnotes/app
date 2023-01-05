@@ -32,6 +32,9 @@ export interface EncryptionProviderInterface {
   getKeyEmbeddedKeyParams(key: EncryptedPayloadInterface): SNRootKeyParams | undefined
   computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<RootKeyInterface>
   supportedVersions(): ProtocolVersion[]
+  isVersionNewerThanLibraryVersion(version: ProtocolVersion): boolean
+  platformSupportsKeyDerivation(keyParams: SNRootKeyParams): boolean
+  computeWrappingKey(passcode: string): Promise<RootKeyInterface>
   getUserVersion(): ProtocolVersion | undefined
   decryptBackupFile(
     file: BackupFile,
