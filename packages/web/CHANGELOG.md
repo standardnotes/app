@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.134.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.133.0...@standardnotes/web@3.134.0) (2023-01-05)
+
+### Features
+
+* Added linked items container & autocomplete input to file preview modal ([22c6e2c](https://github.com/standardnotes/app/commit/22c6e2c56c656cdbbc9788e5e9dc9112b22a9127))
+
 # [3.133.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.132.3...@standardnotes/web@3.133.0) (2023-01-04)
 
 ### Features

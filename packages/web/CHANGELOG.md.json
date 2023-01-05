@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.134.0",
+      "title": "[3.134.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.133.0...@standardnotes/web@3.134.0) (2023-01-05)",
+      "date": null,
+      "body": "### Features\n\n* Added linked items container & autocomplete input to file preview modal ([22c6e2c](https://github.com/standardnotes/app/commit/22c6e2c56c656cdbbc9788e5e9dc9112b22a9127))",
+      "parsed": {
+        "_": [
+          "Added linked items container & autocomplete input to file preview modal (22c6e2c)"
+        ],
+        "Features": [
+          "Added linked items container & autocomplete input to file preview modal (22c6e2c)"
+        ]
+      }
+    },
+    {
       "version": "3.133.0",
       "title": "[3.133.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.132.3...@standardnotes/web@3.133.0) (2023-01-04)",
       "date": null,
