@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.135.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.134.0...@standardnotes/web@3.135.0) (2023-01-05)
+
+### Features
+
+* Added keyboard navigation to Files table view ([#2131](https://github.com/standardnotes/app/issues/2131)) ([ba017d4](https://github.com/standardnotes/app/commit/ba017d42f5145a3f9fb4a4610d7582bd8571b29c))
+
 # [3.134.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.133.0...@standardnotes/web@3.134.0) (2023-01-05)
 
 ### Features
