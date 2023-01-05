@@ -1,6 +1,5 @@
 import { UuidGenerator } from '@standardnotes/snjs'
 import { MouseEventHandler, ReactNode, useCallback, useEffect, useMemo, useState, useRef } from 'react'
-import { useApplication } from '../ApplicationProvider'
 import { Table, TableColumn, TableHeader, TableRow, TableSortBy } from './CommonTypes'
 
 type TableSortOptions =
@@ -64,7 +63,6 @@ export function useTable<Data>({
   selectionActions,
   showSelectionActions,
 }: UseTableOptions<Data>): Table<Data> {
-  const application = useApplication()
   const [selectedRows, setSelectedRows] = useState<string[]>(selectedRowIds || [])
   const id = useRef(UuidGenerator.GenerateUuid())
 
@@ -124,29 +122,42 @@ export function useTable<Data>({
     [columns, data, enableRowSelection, getRowId, rowActions, selectedRows],
   )
 
-  const handleRowClick = useCallback(
+  const selectRow = useCallback(
     (id: string) => {
-      const handler: MouseEventHandler<HTMLTableRowElement> = (event) => {
-        if (!enableRowSelection) {
-          return
-        }
-        const isCmdOrCtrlPressed = application.keyboardService.isMac ? event.metaKey : event.ctrlKey
-        if (isCmdOrCtrlPressed && enableMultipleRowSelection) {
-          setSelectedRows((prev) => (prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]))
-        } else if (event.shiftKey && enableMultipleRowSelection) {
-          const lastSelectedIndex = rows.findIndex((row) => row.id === selectedRows[selectedRows.length - 1])
-          const currentIndex = rows.findIndex((row) => row.id === id)
-          const start = Math.min(lastSelectedIndex, currentIndex)
-          const end = Math.max(lastSelectedIndex, currentIndex)
-          const newSelectedRows = rows.slice(start, end + 1).map((row) => row.id)
-          setSelectedRows(newSelectedRows)
-        } else {
-          setSelectedRows([id])
-        }
+      if (!enableRowSelection) {
+        return
       }
-      return handler
+
+      setSelectedRows([id])
     },
-    [application.keyboardService.isMac, enableMultipleRowSelection, enableRowSelection, rows, selectedRows],
+    [enableRowSelection],
+  )
+
+  const multiSelectRow = useCallback(
+    (id: string) => {
+      if (!enableRowSelection || !enableMultipleRowSelection) {
+        return
+      }
+
+      setSelectedRows((prev) => (prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]))
+    },
+    [enableMultipleRowSelection, enableRowSelection],
+  )
+
+  const rangeSelectUpToRow = useCallback(
+    (id: string) => {
+      if (!enableRowSelection || !enableMultipleRowSelection) {
+        return
+      }
+
+      const lastSelectedIndex = rows.findIndex((row) => row.id === selectedRows[selectedRows.length - 1])
+      const currentIndex = rows.findIndex((row) => row.id === id)
+      const start = Math.min(lastSelectedIndex, currentIndex)
+      const end = Math.max(lastSelectedIndex, currentIndex)
+      const newSelectedRows = rows.slice(start, end + 1).map((row) => row.id)
+      setSelectedRows(newSelectedRows)
+    },
+    [enableMultipleRowSelection, enableRowSelection, rows, selectedRows],
   )
 
   const handleActivateRow = useCallback(
@@ -190,7 +201,9 @@ export function useTable<Data>({
       rows,
       colCount,
       rowCount,
-      handleRowClick,
+      selectRow,
+      multiSelectRow,
+      rangeSelectUpToRow,
       handleActivateRow,
       handleRowContextMenu,
       selectedRows,
@@ -200,16 +213,18 @@ export function useTable<Data>({
       showSelectionActions: showSelectionActions || false,
     }),
     [
-      colCount,
-      enableMultipleRowSelection,
-      enableRowSelection,
-      handleRowClick,
-      handleRowContextMenu,
-      handleActivateRow,
       headers,
-      rowCount,
       rows,
+      colCount,
+      rowCount,
+      selectRow,
+      multiSelectRow,
+      rangeSelectUpToRow,
+      handleActivateRow,
+      handleRowContextMenu,
       selectedRows,
+      enableRowSelection,
+      enableMultipleRowSelection,
       selectionActions,
       showSelectionActions,
     ],

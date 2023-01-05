@@ -1,6 +1,7 @@
 import { classNames } from '@standardnotes/snjs'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { useCallback, useState, useRef } from 'react'
+import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
 import { Table, TableRow } from './CommonTypes'
 
@@ -15,7 +16,7 @@ function TableRow<Data>({
   row: TableRow<Data>
   index: number
   canSelectRows: Table<Data>['canSelectRows']
-  handleRowClick: Table<Data>['handleRowClick']
+  handleRowClick: (event: React.MouseEvent<HTMLDivElement, MouseEvent>, id: string) => void
   handleRowContextMenu: Table<Data>['handleRowContextMenu']
   handleActivateRow: Table<Data>['handleActivateRow']
 }) {
@@ -38,7 +39,7 @@ function TableRow<Data>({
       onMouseLeave={() => {
         setIsHovered(false)
       }}
-      onClick={handleRowClick(row.id)}
+      onClick={(event) => handleRowClick(event, row.id)}
       onDoubleClick={() => handleActivateRow(row.id)}
       onContextMenu={handleRowContextMenu(row.id)}
       onFocus={() => {
@@ -93,6 +94,8 @@ const PageSize = Math.ceil(document.documentElement.clientHeight / MinTableRowHe
 const PageScrollThreshold = 200
 
 function Table<Data>({ table }: { table: Table<Data> }) {
+  const application = useApplication()
+
   const [rowsToDisplay, setRowsToDisplay] = useState<number>(PageSize)
   const paginate = useCallback(() => {
     setRowsToDisplay((cellsToDisplay) => cellsToDisplay + PageSize)
@@ -114,7 +117,9 @@ function Table<Data>({ table }: { table: Table<Data> }) {
     rows,
     colCount,
     rowCount,
-    handleRowClick,
+    selectRow,
+    multiSelectRow,
+    rangeSelectUpToRow,
     handleRowContextMenu,
     handleActivateRow,
     selectedRows,
@@ -288,10 +293,61 @@ function Table<Data>({ table }: { table: Table<Data> }) {
             event.preventDefault()
             handleActivateRow(currentRowId)
           }
+          break
+        }
+        case KeyboardKey.Space: {
+          const currentRowId = currentRow?.id
+          if (!currentRowId) {
+            return
+          }
+          event.preventDefault()
+          const isCmdOrCtrlPressed = application.keyboardService.isMac ? event.metaKey : event.ctrlKey
+          if (isCmdOrCtrlPressed && canSelectMultipleRows) {
+            multiSelectRow(currentRowId)
+          } else if (event.shiftKey && canSelectMultipleRows) {
+            rangeSelectUpToRow(currentRowId)
+          } else {
+            selectRow(currentRowId)
+          }
+          break
         }
       }
     },
-    [colCount, handleActivateRow, headers.length, rowCount],
+    [
+      application.keyboardService.isMac,
+      canSelectMultipleRows,
+      colCount,
+      handleActivateRow,
+      headers.length,
+      multiSelectRow,
+      rangeSelectUpToRow,
+      rowCount,
+      selectRow,
+    ],
+  )
+
+  const handleRowClick = useCallback(
+    (event: React.MouseEvent, rowId: string) => {
+      if (!canSelectRows) {
+        return
+      }
+      const isCmdOrCtrlPressed = application.keyboardService.isMac ? event.metaKey : event.ctrlKey
+      if (isCmdOrCtrlPressed && canSelectMultipleRows) {
+        multiSelectRow(rowId)
+      } else if (event.shiftKey && canSelectMultipleRows) {
+        rangeSelectUpToRow(rowId)
+      } else {
+        selectRow(rowId)
+      }
+    },
+    [
+      application.keyboardService.isMac,
+      canSelectMultipleRows,
+      canSelectRows,
+      multiSelectRow,
+      rangeSelectUpToRow,
+      selectRow,
+    ],
   )
 
   return (

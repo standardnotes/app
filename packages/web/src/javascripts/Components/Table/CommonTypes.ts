@@ -40,7 +40,9 @@ export type Table<Data> = {
   rows: TableRow<Data>[]
   rowCount: number
   colCount: number
-  handleRowClick: (id: string) => MouseEventHandler<HTMLTableRowElement>
+  selectRow: (id: string) => void
+  multiSelectRow: (id: string) => void
+  rangeSelectUpToRow: (id: string) => void
   handleActivateRow: (id: string) => void
   handleRowContextMenu: (id: string) => MouseEventHandler<HTMLTableRowElement>
   canSelectRows: boolean
