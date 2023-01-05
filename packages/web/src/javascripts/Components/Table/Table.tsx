@@ -171,7 +171,10 @@ function Table<Data>({ table }: { table: Table<Data> }) {
   const onKeyDown: React.KeyboardEventHandler = useCallback(
     (event) => {
       const gridElement = event.currentTarget
-      const currentRow = gridElement.querySelector(`[role="row"][aria-rowindex="${focusedRowIndex.current}"]`)
+      const allRenderedRows = gridElement.querySelectorAll<HTMLElement>('[role="row"]')
+      const currentRow = Array.from(allRenderedRows).find(
+        (row) => row.getAttribute('aria-rowindex') === focusedRowIndex.current.toString(),
+      )
       const allFocusableCells = currentRow?.querySelectorAll<HTMLElement>('[tabindex]')
 
       const focusCell = (rowIndex: number, colIndex: number) => {
@@ -234,6 +237,10 @@ function Table<Data>({ table }: { table: Table<Data> }) {
           break
         case KeyboardKey.End: {
           event.preventDefault()
+          if (event.ctrlKey) {
+            focusCell(allRenderedRows.length, headers.length || colCount)
+            return
+          }
           if (!allFocusableCells) {
             return
           }
@@ -247,9 +254,38 @@ function Table<Data>({ table }: { table: Table<Data> }) {
           }
           break
         }
+        case KeyboardKey.PageUp: {
+          event.preventDefault()
+          const previousRow = focusedRowIndex.current - 5
+          if (previousRow > 0) {
+            focusCell(previousRow, focusedCellIndex.current)
+          } else {
+            focusCell(1, focusedCellIndex.current)
+          }
+          break
+        }
+        case KeyboardKey.PageDown: {
+          event.preventDefault()
+          const nextRow = focusedRowIndex.current + 5
+          if (nextRow <= allRenderedRows.length) {
+            focusCell(nextRow, focusedCellIndex.current)
+          } else {
+            focusCell(allRenderedRows.length, focusedCellIndex.current)
+          }
+          break
+        }
+        case KeyboardKey.Space:
+        case KeyboardKey.Enter: {
+          const target = event.target as HTMLElement
+          const closestColumnHeader = target.closest<HTMLElement>('[role="columnheader"]')
+          if (closestColumnHeader && closestColumnHeader.getAttribute('data-can-sort')) {
+            event.preventDefault()
+            closestColumnHeader.click()
+          }
+        }
       }
     },
-    [colCount, rowCount],
+    [colCount, headers.length, rowCount],
   )
 
   return (
