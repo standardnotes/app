@@ -10,4 +10,6 @@ export enum KeyboardKey {
   Home = 'Home',
   End = 'End',
   Space = ' ',
+  PageUp = 'PageUp',
+  PageDown = 'PageDown',
 }
