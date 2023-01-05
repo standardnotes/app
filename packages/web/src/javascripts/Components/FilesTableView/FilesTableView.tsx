@@ -310,7 +310,7 @@ const FilesTableView = ({
     columns: columnDefs,
     enableRowSelection: true,
     enableMultipleRowSelection: true,
-    onRowDoubleClick(file) {
+    onRowActivate(file) {
       void filesController.handleFileAction({
         type: FileItemActionType.PreviewFile,
         payload: {

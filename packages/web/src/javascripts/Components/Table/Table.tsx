@@ -10,14 +10,14 @@ function TableRow<Data>({
   canSelectRows,
   handleRowClick,
   handleRowContextMenu,
-  handleRowDoubleClick,
+  handleActivateRow,
 }: {
   row: TableRow<Data>
   index: number
   canSelectRows: Table<Data>['canSelectRows']
   handleRowClick: Table<Data>['handleRowClick']
   handleRowContextMenu: Table<Data>['handleRowContextMenu']
-  handleRowDoubleClick: Table<Data>['handleRowDoubleClick']
+  handleActivateRow: Table<Data>['handleActivateRow']
 }) {
   const [isHovered, setIsHovered] = useState(false)
   const [isFocused, setIsFocused] = useState(false)
@@ -28,6 +28,7 @@ function TableRow<Data>({
   return (
     <div
       role="row"
+      id={row.id}
       aria-rowindex={rowIndex + 2}
       {...(canSelectRows ? { 'aria-selected': row.isSelected } : {})}
       className="group relative contents"
@@ -38,7 +39,7 @@ function TableRow<Data>({
         setIsHovered(false)
       }}
       onClick={handleRowClick(row.id)}
-      onDoubleClick={handleRowDoubleClick(row.id)}
+      onDoubleClick={() => handleActivateRow(row.id)}
       onContextMenu={handleRowContextMenu(row.id)}
       onFocus={() => {
         setIsFocused(true)
@@ -115,7 +116,7 @@ function Table<Data>({ table }: { table: Table<Data> }) {
     rowCount,
     handleRowClick,
     handleRowContextMenu,
-    handleRowDoubleClick,
+    handleActivateRow,
     selectedRows,
     selectionActions,
     canSelectRows,
@@ -274,18 +275,23 @@ function Table<Data>({ table }: { table: Table<Data> }) {
           }
           break
         }
-        case KeyboardKey.Space:
         case KeyboardKey.Enter: {
           const target = event.target as HTMLElement
           const closestColumnHeader = target.closest<HTMLElement>('[role="columnheader"]')
           if (closestColumnHeader && closestColumnHeader.getAttribute('data-can-sort')) {
             event.preventDefault()
             closestColumnHeader.click()
+            return
+          }
+          const currentRowId = currentRow?.id
+          if (currentRowId) {
+            event.preventDefault()
+            handleActivateRow(currentRowId)
           }
         }
       }
     },
-    [colCount, headers.length, rowCount],
+    [colCount, handleActivateRow, headers.length, rowCount],
   )
 
   return (
@@ -353,7 +359,7 @@ function Table<Data>({ table }: { table: Table<Data> }) {
               canSelectRows={canSelectRows}
               handleRowClick={handleRowClick}
               handleRowContextMenu={handleRowContextMenu}
-              handleRowDoubleClick={handleRowDoubleClick}
+              handleActivateRow={handleActivateRow}
             />
           ))}
         </div>

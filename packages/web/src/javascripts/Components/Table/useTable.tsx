@@ -35,7 +35,7 @@ type TableSelectionOptions =
 
 type TableRowOptions<Data> = {
   getRowId?: (data: Data) => string
-  onRowDoubleClick?: (data: Data) => void
+  onRowActivate?: (data: Data) => void
   onRowContextMenu?: (x: number, y: number, data: Data) => void
   rowActions?: (data: Data) => ReactNode
 }
@@ -58,7 +58,7 @@ export function useTable<Data>({
   enableMultipleRowSelection,
   selectedRowIds,
   onRowSelectionChange,
-  onRowDoubleClick,
+  onRowActivate,
   onRowContextMenu,
   rowActions,
   selectionActions,
@@ -149,20 +149,17 @@ export function useTable<Data>({
     [application.keyboardService.isMac, enableMultipleRowSelection, enableRowSelection, rows, selectedRows],
   )
 
-  const handleRowDoubleClick = useCallback(
+  const handleActivateRow = useCallback(
     (id: string) => {
-      const handler: MouseEventHandler<HTMLTableRowElement> = () => {
-        if (!onRowDoubleClick) {
-          return
-        }
-        const rowData = rows.find((row) => row.id === id)?.rowData
-        if (rowData) {
-          onRowDoubleClick(rowData)
-        }
+      if (!onRowActivate) {
+        return
       }
-      return handler
+      const rowData = rows.find((row) => row.id === id)?.rowData
+      if (rowData) {
+        onRowActivate(rowData)
+      }
     },
-    [onRowDoubleClick, rows],
+    [onRowActivate, rows],
   )
 
   const handleRowContextMenu = useCallback(
@@ -194,7 +191,7 @@ export function useTable<Data>({
       colCount,
       rowCount,
       handleRowClick,
-      handleRowDoubleClick,
+      handleActivateRow,
       handleRowContextMenu,
       selectedRows,
       canSelectRows: enableRowSelection || false,
@@ -208,7 +205,7 @@ export function useTable<Data>({
       enableRowSelection,
       handleRowClick,
       handleRowContextMenu,
-      handleRowDoubleClick,
+      handleActivateRow,
       headers,
       rowCount,
       rows,
