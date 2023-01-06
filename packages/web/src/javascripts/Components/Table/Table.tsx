@@ -186,7 +186,7 @@ function Table<Data>({ table }: { table: Table<Data> }) {
           break
         case KeyboardKey.Down:
           event.preventDefault()
-          if (focusedRowIndex.current < rowCount) {
+          if (focusedRowIndex.current <= rowCount) {
             const nextRow = focusedRowIndex.current + 1
             focusCell(nextRow, focusedCellIndex.current)
           }
