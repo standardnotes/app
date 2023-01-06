@@ -412,7 +412,7 @@ export const SearchPlugin = () => {
       highlightContainer.style.height = `${root.clientHeight}px`;
     });
     resizeHandler.observe(root);
-    root.addEventListener('scroll', handleScroll);
+    root.addEventListener('scroll', handleScroll, {passive: true});
 
     return () => {
       resizeHandler.disconnect();
@@ -507,7 +507,7 @@ export const SearchPlugin = () => {
 
     createVisibleHighlights();
 
-    root.addEventListener('scroll', handleScrollDebounced);
+    root.addEventListener('scroll', handleScrollDebounced, {passive: true});
 
     return () => {
       root?.removeEventListener('scroll', handleScrollDebounced);
