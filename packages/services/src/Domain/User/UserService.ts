@@ -150,7 +150,7 @@ export class UserService
       this.lockSyncing()
       const response = await this.sessionManager.register(email, password, ephemeral)
 
-      await this.notifyEvent(AccountEvent.SignedInOrRegistered, {
+      await this.notifyEventSync(AccountEvent.SignedInOrRegistered, {
         payload: {
           ephemeral,
           mergeLocal,
@@ -199,7 +199,8 @@ export class UserService
       const result = await this.sessionManager.signIn(email, password, strict, ephemeral)
 
       if (!result.response.error) {
-        await this.notifyEvent(AccountEvent.SignedInOrRegistered, {
+        const notifyingFunction = awaitSync ? this.notifyEventSync.bind(this) : this.notifyEvent.bind(this)
+        await notifyingFunction(AccountEvent.SignedInOrRegistered, {
           payload: {
             mergeLocal,
             awaitSync,
