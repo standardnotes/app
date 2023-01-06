@@ -517,6 +517,7 @@ export const SearchPlugin = () => {
   return (
     <>
       {showDialog && <SearchDialog closeDialog={() => setShowDialog(false)} />}
+      {/** @TODO Replace with better mobile UX */}
       <div className="absolute top-4 left-[1rem] md:hidden">
         <button
           className="border-border bg-default rounded-full border p-1"
