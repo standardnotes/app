@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.136.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.135.1...@standardnotes/web@3.136.0) (2023-01-06)
+
+### Features
+
+* Added per-tag preference to use table layout and removed "Files Table View" from Labs ([dd8ccde](https://github.com/standardnotes/app/commit/dd8ccdeadc6c2fd7f7ccd66f2dc4b0081616fb2b))
+
 ## [3.135.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.135.0...@standardnotes/web@3.135.1) (2023-01-05)
 
 **Note:** Version bump only for package @standardnotes/web
