@@ -98,13 +98,13 @@ export class GoogleKeepConverter {
 
   static isValidGoogleKeepJson(json: any): boolean {
     return (
-      json.title &&
-      json.textContent &&
-      json.userEditedTimestampUsec &&
+      typeof json.title === 'string' &&
+      typeof json.textContent === 'string' &&
+      typeof json.userEditedTimestampUsec === 'number' &&
       typeof json.isArchived === 'boolean' &&
       typeof json.isTrashed === 'boolean' &&
       typeof json.isPinned === 'boolean' &&
-      json.color
+      typeof json.color === 'string'
     )
   }
 
