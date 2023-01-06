@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.136.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.136.1...@standardnotes/web@3.136.2) (2023-01-06)
+
+### Bug Fixes
+
+* Fixed issue where the "Attached to" in table view would report an extra number of links ([482c4d1](https://github.com/standardnotes/app/commit/482c4d1ca4499ae4e80f592176648ee2c03f16b8))
+
 ## [3.136.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.136.0...@standardnotes/web@3.136.1) (2023-01-06)
 
 **Note:** Version bump only for package @standardnotes/web
