@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.23.3](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.23.2...@standardnotes/ui-services@1.23.3) (2023-01-06)
+
+### Bug Fixes
+
+* Fixed issue where the importer would not correctly parse Google Keep JSON notes ([2e79fc4](https://github.com/standardnotes/app/commit/2e79fc412c8b57b175381c4f59593a03906d89a1))
+
 ## [1.23.2](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.23.1...@standardnotes/ui-services@1.23.2) (2023-01-06)
 
 **Note:** Version bump only for package @standardnotes/ui-services
