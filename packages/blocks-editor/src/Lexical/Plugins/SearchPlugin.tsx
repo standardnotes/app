@@ -13,6 +13,7 @@ import {
 } from 'react';
 
 type SearchResult = {
+  node: Text;
   rectList: DOMRect[];
   startIndex: number;
   endIndex: number;
@@ -121,6 +122,9 @@ export const SuperSearchContextProvider = ({
         .forEach((element) => {
           element.remove();
         });
+      result.node.parentElement?.scrollIntoView({
+        block: 'center',
+      });
       Array.from(result.rectList).forEach((rect) => {
         if (!containerElement) {
           return;
@@ -349,6 +353,7 @@ export const SearchPlugin = () => {
               const rectList = Array.from(range.getClientRects());
 
               addResult({
+                node,
                 rectList,
                 startIndex,
                 endIndex,
