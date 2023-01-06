@@ -433,6 +433,10 @@ export const SearchPlugin = () => {
         const {rectList} = result;
         const firstRect = rectList[0];
 
+        if (!firstRect) {
+          return false;
+        }
+
         const isFirstRectVisible =
           firstRect.top >= 0 &&
           firstRect.top >= root.scrollTop &&

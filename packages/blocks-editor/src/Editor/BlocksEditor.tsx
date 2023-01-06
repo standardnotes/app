@@ -109,8 +109,8 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
                 )}
                 spellCheck={spellcheck}
               />
-              <div className="absolute top-0 left-0 z-[-1] h-full w-full overflow-hidden">
-                <div className="search-highlight-container absolute top-0 left-0 z-[-1] w-full overflow-visible" />
+              <div className="pointer-events-none absolute top-0 left-0 h-full w-full overflow-hidden">
+                <div className="search-highlight-container pointer-events-none absolute top-0 left-0 w-full overflow-visible" />
               </div>
             </div>
           </div>
