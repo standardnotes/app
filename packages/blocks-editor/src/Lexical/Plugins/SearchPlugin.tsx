@@ -364,7 +364,7 @@ export const SearchPlugin = () => {
       });
     };
 
-    const timeout = setTimeout(handleSearch, 100);
+    const timeout = setTimeout(handleSearch, 20);
 
     return () => {
       clearTimeout(timeout);
