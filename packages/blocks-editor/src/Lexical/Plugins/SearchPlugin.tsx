@@ -20,7 +20,6 @@ import {debounce} from '../Utils/debounce';
 
 type SearchResult = {
   node: Text;
-  rectList: DOMRect[];
   startIndex: number;
   endIndex: number;
 };
@@ -54,52 +53,42 @@ export const useSuperSearchContext = () => {
 };
 
 const createSearchHighlightElement = (
-  {
-    rect,
-    isCurrentResult,
-    ...result
-  }: {
-    rect: DOMRect;
-    isCurrentResult: boolean;
-  } & SearchResult,
+  result: SearchResult,
   rootElement: Element,
   containerElement: Element,
 ) => {
   const rootElementRect = rootElement.getBoundingClientRect();
 
-  const id = `search-${result.startIndex}-${result.endIndex}-${isCurrentResult}`;
+  const range = document.createRange();
+  range.setStart(result.node, result.startIndex);
+  range.setEnd(result.node, result.endIndex);
 
-  const existingHighlightElement = document.getElementById(id);
+  const rects = range.getClientRects();
 
-  if (existingHighlightElement) {
-    return;
-  }
+  Array.from(rects).forEach((rect, index) => {
+    const id = `search-${result.startIndex}-${result.endIndex}-${index}`;
 
-  const highlightElement = document.createElement('div');
-  highlightElement.style.position = 'absolute';
-  highlightElement.style.zIndex = '1000';
-  highlightElement.style.transform = `translate(${
-    rect.left - rootElementRect.left
-  }px, ${rect.top - rootElementRect.top}px)`;
-  highlightElement.style.width = `${rect.width}px`;
-  highlightElement.style.height = `${rect.height}px`;
-  highlightElement.style.backgroundColor = 'var(--sn-stylekit-info-color)';
-  highlightElement.style.opacity = isCurrentResult ? '0.5' : '0.25';
-  highlightElement.className =
-    'search-highlight' + (isCurrentResult ? ' current' : '');
-  highlightElement.id = id;
+    const existingHighlightElement = document.getElementById(id);
 
-  containerElement.appendChild(highlightElement);
+    if (existingHighlightElement) {
+      return;
+    }
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (!entry.isIntersecting) {
-        highlightElement.remove();
-        observer.disconnect();
-      }
-    });
+    const highlightElement = document.createElement('div');
+    highlightElement.style.position = 'absolute';
+    highlightElement.style.zIndex = '1000';
+    highlightElement.style.transform = `translate(${
+      rect.left - rootElementRect.left
+    }px, ${rect.top - rootElementRect.top}px)`;
+    highlightElement.style.width = `${rect.width}px`;
+    highlightElement.style.height = `${rect.height}px`;
+    highlightElement.style.backgroundColor = 'var(--sn-stylekit-info-color)';
+    highlightElement.style.opacity = '0.5';
+    highlightElement.className = 'search-highlight';
+    highlightElement.id = id;
+
+    containerElement.appendChild(highlightElement);
   });
-  observer.observe(highlightElement);
 };
 
 export const SuperSearchContextProvider = ({
@@ -123,28 +112,16 @@ export const SuperSearchContextProvider = ({
         rootElement?.parentElement?.getElementsByClassName(
           'search-highlight-container',
         )[0];
-      document
-        .querySelectorAll('.search-highlight.current')
-        .forEach((element) => {
-          element.remove();
-        });
+      document.querySelectorAll('.search-highlight').forEach((element) => {
+        element.remove();
+      });
       result.node.parentElement?.scrollIntoView({
         block: 'center',
       });
-      Array.from(result.rectList).forEach((rect) => {
-        if (!containerElement) {
-          return;
-        }
-        createSearchHighlightElement(
-          {
-            ...result,
-            rect,
-            isCurrentResult: true,
-          },
-          rootElement,
-          containerElement,
-        );
-      });
+      if (!rootElement || !containerElement) {
+        return;
+      }
+      createSearchHighlightElement(result, rootElement, containerElement);
     });
   }, [currentResultIndex, results]);
 
@@ -273,8 +250,6 @@ const SearchDialog = ({closeDialog}: {closeDialog: () => void}) => {
   );
 };
 
-const EditorScrollOffset = 100;
-
 const textNodesInElement = (element: HTMLElement) => {
   const textNodes: Text[] = [];
   const walk = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
@@ -289,8 +264,7 @@ const textNodesInElement = (element: HTMLElement) => {
 export const SearchPlugin = () => {
   const [editor] = useLexicalComposerContext();
   const [showDialog, setShowDialog] = useState(false);
-  const {searchQuery, results, addResult, clearResults} =
-    useSuperSearchContext();
+  const {searchQuery, addResult, clearResults} = useSuperSearchContext();
 
   useEffect(() => {
     return editor.registerCommand<KeyboardEvent>(
@@ -350,20 +324,11 @@ export const SearchPlugin = () => {
           const startIndex = index;
           const endIndex = startIndex + searchQuery.length;
 
-          try {
-            const range = document.createRange();
-            range.setStart(node, startIndex);
-            range.setEnd(node, endIndex);
-
-            const rectList = Array.from(range.getClientRects());
-
-            addResult({
-              node,
-              rectList,
-              startIndex,
-              endIndex,
-            });
-          } catch (error) {}
+          addResult({
+            node,
+            startIndex,
+            endIndex,
+          });
         });
       });
     });
@@ -374,143 +339,6 @@ export const SearchPlugin = () => {
   useEffect(() => {
     debouncedHandleSearch(searchQuery);
   }, [searchQuery]);
-
-  useEffect(() => {
-    let root: HTMLElement | null | undefined;
-    let highlightContainer: HTMLElement | undefined;
-
-    editor.getEditorState().read(() => {
-      root = editor.getRootElement();
-      highlightContainer = root?.parentElement?.getElementsByClassName(
-        'search-highlight-container',
-      )[0] as HTMLElement | undefined;
-    });
-
-    if (!root) {
-      return;
-    }
-
-    if (!highlightContainer) {
-      return;
-    }
-
-    const handleScroll = () => {
-      if (!root || !highlightContainer) {
-        return;
-      }
-
-      highlightContainer.style.transform = `translateY(-${root.scrollTop}px)`;
-    };
-
-    const resizeHandler = new ResizeObserver(() => {
-      if (!root || !highlightContainer) {
-        return;
-      }
-
-      highlightContainer.style.height = `${root.clientHeight}px`;
-    });
-    resizeHandler.observe(root);
-    root.addEventListener('scroll', handleScroll, {passive: true});
-
-    return () => {
-      resizeHandler.disconnect();
-      root?.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  useEffect(() => {
-    let root: HTMLElement | null | undefined;
-    let highlightContainer: HTMLElement | undefined;
-
-    editor.getEditorState().read(() => {
-      root = editor.getRootElement();
-      highlightContainer = root?.parentElement?.getElementsByClassName(
-        'search-highlight-container',
-      )[0] as HTMLElement | undefined;
-    });
-
-    if (!root) {
-      return;
-    }
-
-    const createVisibleHighlights = () => {
-      const visibleResults = results.filter((result) => {
-        if (!root) {
-          return false;
-        }
-
-        const {rectList} = result;
-        const firstRect = rectList[0];
-
-        if (!firstRect) {
-          return false;
-        }
-
-        const isFirstRectVisible =
-          firstRect.top >= 0 &&
-          firstRect.top >= root.scrollTop &&
-          firstRect.bottom <=
-            root.clientHeight + root.scrollTop + EditorScrollOffset;
-
-        return isFirstRectVisible;
-      });
-
-      setTimeout(() => {
-        visibleResults.forEach((result) => {
-          result.rectList.forEach((rect) => {
-            if (!root) {
-              return;
-            }
-
-            if (!highlightContainer) {
-              return;
-            }
-
-            createSearchHighlightElement(
-              {
-                ...result,
-                rect,
-                isCurrentResult: false,
-              },
-              root,
-              highlightContainer,
-            );
-          });
-        });
-      });
-    };
-
-    const handleScroll = () => {
-      if (!root) {
-        return;
-      }
-
-      createVisibleHighlights();
-    };
-
-    let timeout: number | undefined;
-    const handleScrollDebounced = () => {
-      if (timeout) {
-        clearTimeout(timeout);
-      }
-
-      timeout = window.setTimeout(() => {
-        handleScroll();
-      });
-    };
-
-    document.querySelectorAll('.search-highlight').forEach((element) => {
-      element.remove();
-    });
-
-    createVisibleHighlights();
-
-    root.addEventListener('scroll', handleScrollDebounced, {passive: true});
-
-    return () => {
-      root?.removeEventListener('scroll', handleScrollDebounced);
-    };
-  }, [editor, results]);
 
   return (
     <>
