@@ -1,5 +1,10 @@
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
-import {ArrowDownIcon, ArrowUpIcon, CloseIcon} from '@standardnotes/icons';
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  CloseIcon,
+  SearchIcon,
+} from '@standardnotes/icons';
 import {COMMAND_PRIORITY_EDITOR, KEY_MODIFIER_COMMAND} from 'lexical';
 import {
   createContext,
@@ -11,6 +16,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import {debounce} from '../Utils/debounce';
 
 type SearchResult = {
   node: Text;
@@ -310,65 +316,65 @@ export const SearchPlugin = () => {
     );
   }, []);
 
-  useEffect(() => {
-    const handleSearch = () => {
-      document.querySelectorAll('.search-highlight').forEach((element) => {
-        element.remove();
-      });
+  const handleSearch = useCallback((searchQuery: string) => {
+    document.querySelectorAll('.search-highlight').forEach((element) => {
+      element.remove();
+    });
 
-      clearResults();
+    clearResults();
 
-      if (!searchQuery) {
+    if (!searchQuery) {
+      return;
+    }
+
+    editor.getEditorState().read(() => {
+      const rootElement = editor.getRootElement();
+
+      if (!rootElement) {
         return;
       }
 
-      editor.getEditorState().read(() => {
-        const rootElement = editor.getRootElement();
+      const textNodes = textNodesInElement(rootElement);
 
-        if (!rootElement) {
-          return;
+      textNodes.forEach((node) => {
+        const text = node.textContent || '';
+
+        const indices: number[] = [];
+        let index = -1;
+
+        while ((index = text.indexOf(searchQuery, index + 1)) !== -1) {
+          indices.push(index);
         }
 
-        const textNodes = textNodesInElement(rootElement);
+        indices.forEach((index) => {
+          const startIndex = index;
+          const endIndex = startIndex + searchQuery.length;
 
-        textNodes.forEach((node) => {
-          const text = node.textContent || '';
+          try {
+            const range = document.createRange();
+            range.setStart(node, startIndex);
+            range.setEnd(node, endIndex);
 
-          const indices: number[] = [];
-          let index = -1;
+            const rectList = Array.from(range.getClientRects());
 
-          while ((index = text.indexOf(searchQuery, index + 1)) !== -1) {
-            indices.push(index);
-          }
+            console.log(searchQuery);
 
-          indices.forEach((index) => {
-            const startIndex = index;
-            const endIndex = startIndex + searchQuery.length;
-
-            try {
-              const range = document.createRange();
-              range.setStart(node, startIndex);
-              range.setEnd(node, endIndex);
-
-              const rectList = Array.from(range.getClientRects());
-
-              addResult({
-                node,
-                rectList,
-                startIndex,
-                endIndex,
-              });
-            } catch (error) {}
-          });
+            addResult({
+              node,
+              rectList,
+              startIndex,
+              endIndex,
+            });
+          } catch (error) {}
         });
       });
-    };
+    });
+  }, []);
 
-    const timeout = setTimeout(handleSearch, 20);
+  const debouncedHandleSearch = useMemo(() => debounce(handleSearch, 250), []);
 
-    return () => {
-      clearTimeout(timeout);
-    };
+  useEffect(() => {
+    debouncedHandleSearch(searchQuery);
   }, [searchQuery]);
 
   useEffect(() => {
@@ -511,6 +517,13 @@ export const SearchPlugin = () => {
   return (
     <>
       {showDialog && <SearchDialog closeDialog={() => setShowDialog(false)} />}
+      <div className="absolute top-4 left-[1rem] md:hidden">
+        <button
+          className="border-border bg-default rounded-full border p-1"
+          onClick={() => setShowDialog(true)}>
+          <SearchIcon className="text-text h-4 w-4 fill-current" />
+        </button>
+      </div>
     </>
   );
 };
