@@ -78,7 +78,11 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       appVersion: deviceInterface.appVersion,
       webSocketUrl: webSocketUrl,
       loadBatchSize:
-        deviceInterface.environment === Environment.Mobile ? 100 : ApplicationOptionsDefaults.loadBatchSize,
+        deviceInterface.environment === Environment.Mobile ? 250 : ApplicationOptionsDefaults.loadBatchSize,
+      sleepBetweenBatches:
+        deviceInterface.environment === Environment.Mobile ? 250 : ApplicationOptionsDefaults.sleepBetweenBatches,
+      allowMultipleSelection: deviceInterface.environment !== Environment.Mobile,
+      allowNoteSelectionStatePersistence: deviceInterface.environment !== Environment.Mobile,
     })
 
     makeObservable(this, {

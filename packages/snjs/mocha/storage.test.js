@@ -16,7 +16,9 @@ describe('storage manager', function () {
   beforeEach(async function () {
     localStorage.clear()
     this.expectedKeyCount = BASE_KEY_COUNT
-    this.application = await Factory.createInitAppWithFakeCrypto(Environment.Mobile)
+    this.context = await Factory.createAppContext()
+    await this.context.launch()
+    this.application = this.context.application
     this.email = UuidGenerator.GenerateUuid()
     this.password = UuidGenerator.GenerateUuid()
   })
@@ -221,7 +223,8 @@ describe('storage manager', function () {
     expect(decrypted.content).to.be.an.instanceof(Object)
   })
 
-  it('disabling storage encryption should store items without encryption', async function () {
+  /** @TODO: Storage encryption disable is no longer available, remove tests and associated functionality */
+  it.skip('disabling storage encryption should store items without encryption', async function () {
     await Factory.registerUserToApplication({
       application: this.application,
       email: this.email,

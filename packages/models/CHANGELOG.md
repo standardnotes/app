@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.42.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.41.1...@standardnotes/models@1.42.0) (2023-01-06)
+
+### Features
+
+* Added per-tag preference to use table layout and removed "Files Table View" from Labs ([dd8ccde](https://github.com/standardnotes/app/commit/dd8ccdeadc6c2fd7f7ccd66f2dc4b0081616fb2b))
+
+## [1.41.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.41.0...@standardnotes/models@1.41.1) (2023-01-04)
+
+**Note:** Version bump only for package @standardnotes/models
+
 # [1.41.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.40.4...@standardnotes/models@1.41.0) (2023-01-03)
 
 ### Features

@@ -12,7 +12,7 @@ import { NavigationController } from '@/Controllers/Navigation/NavigationControl
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/utils'
-import { ContentType, FeatureIdentifier, SNTag } from '@standardnotes/snjs'
+import { ContentType, SNTag } from '@standardnotes/snjs'
 
 type Props = {
   application: WebApplication
@@ -97,8 +97,6 @@ const ContentList: FunctionComponent<Props> = ({
 
   const hasNotes = items.some((item) => item.content_type === ContentType.Note)
 
-  const isFilesTableViewEnabled = application.features.isExperimentalFeatureEnabled(FeatureIdentifier.FilesTableView)
-
   return (
     <div
       className={classNames(
@@ -112,13 +110,7 @@ const ContentList: FunctionComponent<Props> = ({
       onKeyDown={onKeyDown}
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
     >
-      {items.map((item, index) => {
-        const previousIndex = index - 1
-        const previousItem = previousIndex >= 0 ? items[previousIndex] : undefined
-
-        const nextIndex = index + 1
-        const nextItem = nextIndex < items.length ? items[nextIndex] : undefined
-
+      {items.map((item) => {
         return (
           <ContentListItem
             key={item.uuid}
@@ -134,8 +126,6 @@ const ContentList: FunctionComponent<Props> = ({
             onSelect={selectItem}
             tags={getTagsForItem(item)}
             notesController={notesController}
-            isPreviousItemTiled={previousItem?.content_type === ContentType.File && !isFilesTableViewEnabled}
-            isNextItemTiled={nextItem?.content_type === ContentType.File && !isFilesTableViewEnabled}
           />
         )
       })}

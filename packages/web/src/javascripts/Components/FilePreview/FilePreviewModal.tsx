@@ -10,6 +10,10 @@ import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import FilePreview from './FilePreview'
 import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
+import FileMenuOptions from '../FileContextMenu/FileMenuOptions'
+import Menu from '../Menu/Menu'
+import Popover from '../Popover/Popover'
+import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 
 type Props = {
   application: WebApplication
@@ -23,7 +27,10 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
     return null
   }
 
+  const [showLinkedBubblesContainer, setShowLinkedBubblesContainer] = useState(false)
+  const [showOptionsMenu, setShowOptionsMenu] = useState(false)
   const [showFileInfoPanel, setShowFileInfoPanel] = useState(false)
+  const menuButtonRef = useRef<HTMLButtonElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
 
   const keyDownHandler: KeyboardEventHandler = useCallback(
@@ -93,6 +100,44 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
             <div className="flex items-center">
               <button
                 className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
+                onClick={() => setShowLinkedBubblesContainer((show) => !show)}
+              >
+                <Icon type="link" className="text-neutral" />
+              </button>
+              <button
+                className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
+                onClick={() => setShowOptionsMenu((show) => !show)}
+                ref={menuButtonRef}
+              >
+                <Icon type="more" className="text-neutral" />
+              </button>
+              <Popover
+                open={showOptionsMenu}
+                anchorElement={menuButtonRef.current}
+                togglePopover={() => {
+                  setShowOptionsMenu(false)
+                }}
+                side="bottom"
+                align="start"
+                className="py-2"
+                overrideZIndex="z-modal"
+              >
+                <Menu a11yLabel="File context menu" isOpen={showOptionsMenu}>
+                  <FileMenuOptions
+                    filesController={viewControllerManager.filesController}
+                    linkingController={viewControllerManager.linkingController}
+                    navigationController={viewControllerManager.navigationController}
+                    selectedFiles={[currentFile]}
+                    closeMenu={() => {
+                      setShowOptionsMenu(false)
+                    }}
+                    shouldShowRenameOption={false}
+                    shouldShowAttachOption={false}
+                  />
+                </Menu>
+              </Popover>
+              <button
+                className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
                 onClick={() => setShowFileInfoPanel((show) => !show)}
               >
                 <Icon type="info" className="text-neutral" />
@@ -107,6 +152,14 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
               </button>
             </div>
           </div>
+          {showLinkedBubblesContainer && (
+            <div className="-mt-1 border-b border-border py-1.5 px-3.5">
+              <LinkedItemBubblesContainer
+                linkingController={viewControllerManager.linkingController}
+                item={currentFile}
+              />
+            </div>
+          )}
           <div className="flex min-h-0 flex-grow">
             <div className="relative flex max-w-full flex-grow items-center justify-center">
               <FilePreview file={currentFile} application={application} key={currentFile.uuid} />

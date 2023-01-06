@@ -27,8 +27,12 @@ export const ToastTimer: FunctionComponent<Props> = ({ toast, index }) => {
   const remainingTimeRef = useRef(duration)
 
   const dismissToastOnEnd = useCallback(() => {
+    if (!shouldAutoClose) {
+      return
+    }
+
     dismissToast(toast.id)
-  }, [toast.id])
+  }, [shouldAutoClose, toast.id])
 
   const clearTimer = useCallback(() => {
     if (toastTimerIdRef.current) {

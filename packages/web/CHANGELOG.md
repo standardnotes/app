@@ -3,6 +3,39 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.136.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.135.1...@standardnotes/web@3.136.0) (2023-01-06)
+
+### Features
+
+* Added per-tag preference to use table layout and removed "Files Table View" from Labs ([dd8ccde](https://github.com/standardnotes/app/commit/dd8ccdeadc6c2fd7f7ccd66f2dc4b0081616fb2b))
+
+## [3.135.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.135.0...@standardnotes/web@3.135.1) (2023-01-05)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.135.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.134.0...@standardnotes/web@3.135.0) (2023-01-05)
+
+### Features
+
+* Added keyboard navigation to Files table view ([#2131](https://github.com/standardnotes/app/issues/2131)) ([ba017d4](https://github.com/standardnotes/app/commit/ba017d42f5145a3f9fb4a4610d7582bd8571b29c))
+
+# [3.134.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.133.0...@standardnotes/web@3.134.0) (2023-01-05)
+
+### Features
+
+* Added linked items container & autocomplete input to file preview modal ([22c6e2c](https://github.com/standardnotes/app/commit/22c6e2c56c656cdbbc9788e5e9dc9112b22a9127))
+
+# [3.133.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.132.3...@standardnotes/web@3.133.0) (2023-01-04)
+
+### Features
+
+* Added "Add tag" option to file context menu ([ba4b6a5](https://github.com/standardnotes/app/commit/ba4b6a580b2b18d2c383475c8723fb66fa9fecdf))
+* Added file options menu to file preview modal ([e57b28f](https://github.com/standardnotes/app/commit/e57b28fe29f230754c247bf2a769355a7fbd30cb))
+
+## [3.132.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.132.2...@standardnotes/web@3.132.3) (2023-01-04)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.132.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.132.0...@standardnotes/web@3.132.2) (2023-01-04)
 
 **Note:** Version bump only for package @standardnotes/web

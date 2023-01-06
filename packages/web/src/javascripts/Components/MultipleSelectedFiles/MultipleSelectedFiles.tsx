@@ -5,13 +5,22 @@ import { useCallback } from 'react'
 import FileOptionsPanel from '../FileContextMenu/FileOptionsPanel'
 import { FilesController } from '@/Controllers/FilesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
+import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import { LinkingController } from '@/Controllers/LinkingController'
 
 type Props = {
   filesController: FilesController
   selectionController: SelectedItemsController
+  linkingController: LinkingController
+  navigationController: NavigationController
 }
 
-const MultipleSelectedFiles = ({ filesController, selectionController }: Props) => {
+const MultipleSelectedFiles = ({
+  filesController,
+  selectionController,
+  linkingController,
+  navigationController,
+}: Props) => {
   const count = selectionController.selectedFilesCount
 
   const cancelMultipleSelection = useCallback(() => {
@@ -23,7 +32,12 @@ const MultipleSelectedFiles = ({ filesController, selectionController }: Props) 
       <div className="flex w-full items-center justify-between p-4">
         <h1 className="m-0 text-lg font-bold">{count} selected files</h1>
         <div>
-          <FileOptionsPanel filesController={filesController} selectionController={selectionController} />
+          <FileOptionsPanel
+            filesController={filesController}
+            selectionController={selectionController}
+            linkingController={linkingController}
+            navigationController={navigationController}
+          />
         </div>
       </div>
       <div className="flex min-h-full w-full max-w-md flex-grow flex-col items-center justify-center">

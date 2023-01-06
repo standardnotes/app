@@ -18,4 +18,5 @@ export interface TagPreferences {
   editorIdentifier?: EditorIdentifier
   entryMode?: 'normal' | 'daily'
   panelWidth?: number
+  useTableView?: boolean
 }

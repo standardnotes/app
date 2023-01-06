@@ -3,6 +3,28 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.23.2](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.23.1...@standardnotes/ui-services@1.23.2) (2023-01-06)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.23.1](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.23.0...@standardnotes/ui-services@1.23.1) (2023-01-05)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+# [1.23.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.22.4...@standardnotes/ui-services@1.23.0) (2023-01-05)
+
+### Features
+
+* Added keyboard navigation to Files table view ([#2131](https://github.com/standardnotes/app/issues/2131)) ([ba017d4](https://github.com/standardnotes/app/commit/ba017d42f5145a3f9fb4a4610d7582bd8571b29c))
+
+## [1.22.4](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.22.3...@standardnotes/ui-services@1.22.4) (2023-01-04)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.22.3](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.22.2...@standardnotes/ui-services@1.22.3) (2023-01-04)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
 ## [1.22.2](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.22.1...@standardnotes/ui-services@1.22.2) (2023-01-03)
 
 **Note:** Version bump only for package @standardnotes/ui-services

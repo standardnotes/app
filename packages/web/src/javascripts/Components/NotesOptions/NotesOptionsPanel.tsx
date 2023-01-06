@@ -55,6 +55,7 @@ const NotesOptionsPanel = ({
       >
         <Menu a11yLabel="Note options menu" isOpen={isOpen}>
           <NotesOptions
+            notes={notesController.selectedNotes}
             application={application}
             navigationController={navigationController}
             notesController={notesController}

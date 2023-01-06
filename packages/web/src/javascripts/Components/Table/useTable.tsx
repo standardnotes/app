@@ -1,5 +1,5 @@
-import { MouseEventHandler, ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
-import { useApplication } from '../ApplicationProvider'
+import { UuidGenerator } from '@standardnotes/snjs'
+import { MouseEventHandler, ReactNode, useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import { Table, TableColumn, TableHeader, TableRow, TableSortBy } from './CommonTypes'
 
 type TableSortOptions =
@@ -34,7 +34,7 @@ type TableSelectionOptions =
 
 type TableRowOptions<Data> = {
   getRowId?: (data: Data) => string
-  onRowDoubleClick?: (data: Data) => void
+  onRowActivate?: (data: Data) => void
   onRowContextMenu?: (x: number, y: number, data: Data) => void
   rowActions?: (data: Data) => ReactNode
 }
@@ -57,14 +57,14 @@ export function useTable<Data>({
   enableMultipleRowSelection,
   selectedRowIds,
   onRowSelectionChange,
-  onRowDoubleClick,
+  onRowActivate,
   onRowContextMenu,
   rowActions,
   selectionActions,
   showSelectionActions,
 }: UseTableOptions<Data>): Table<Data> {
-  const application = useApplication()
   const [selectedRows, setSelectedRows] = useState<string[]>(selectedRowIds || [])
+  const id = useRef(UuidGenerator.GenerateUuid())
 
   useEffect(() => {
     if (selectedRowIds) {
@@ -122,45 +122,55 @@ export function useTable<Data>({
     [columns, data, enableRowSelection, getRowId, rowActions, selectedRows],
   )
 
-  const handleRowClick = useCallback(
+  const selectRow = useCallback(
     (id: string) => {
-      const handler: MouseEventHandler<HTMLTableRowElement> = (event) => {
-        if (!enableRowSelection) {
-          return
-        }
-        const isCmdOrCtrlPressed = application.keyboardService.isMac ? event.metaKey : event.ctrlKey
-        if (isCmdOrCtrlPressed && enableMultipleRowSelection) {
-          setSelectedRows((prev) => (prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]))
-        } else if (event.shiftKey && enableMultipleRowSelection) {
-          const lastSelectedIndex = rows.findIndex((row) => row.id === selectedRows[selectedRows.length - 1])
-          const currentIndex = rows.findIndex((row) => row.id === id)
-          const start = Math.min(lastSelectedIndex, currentIndex)
-          const end = Math.max(lastSelectedIndex, currentIndex)
-          const newSelectedRows = rows.slice(start, end + 1).map((row) => row.id)
-          setSelectedRows(newSelectedRows)
-        } else {
-          setSelectedRows([id])
-        }
+      if (!enableRowSelection) {
+        return
       }
-      return handler
+
+      setSelectedRows([id])
     },
-    [application.keyboardService.isMac, enableMultipleRowSelection, enableRowSelection, rows, selectedRows],
+    [enableRowSelection],
   )
 
-  const handleRowDoubleClick = useCallback(
+  const multiSelectRow = useCallback(
     (id: string) => {
-      const handler: MouseEventHandler<HTMLTableRowElement> = () => {
-        if (!onRowDoubleClick) {
-          return
-        }
-        const rowData = rows.find((row) => row.id === id)?.rowData
-        if (rowData) {
-          onRowDoubleClick(rowData)
-        }
+      if (!enableRowSelection || !enableMultipleRowSelection) {
+        return
       }
-      return handler
+
+      setSelectedRows((prev) => (prev.includes(id) ? prev.filter((rowId) => rowId !== id) : [...prev, id]))
     },
-    [onRowDoubleClick, rows],
+    [enableMultipleRowSelection, enableRowSelection],
+  )
+
+  const rangeSelectUpToRow = useCallback(
+    (id: string) => {
+      if (!enableRowSelection || !enableMultipleRowSelection) {
+        return
+      }
+
+      const lastSelectedIndex = rows.findIndex((row) => row.id === selectedRows[selectedRows.length - 1])
+      const currentIndex = rows.findIndex((row) => row.id === id)
+      const start = Math.min(lastSelectedIndex, currentIndex)
+      const end = Math.max(lastSelectedIndex, currentIndex)
+      const newSelectedRows = rows.slice(start, end + 1).map((row) => row.id)
+      setSelectedRows(newSelectedRows)
+    },
+    [enableMultipleRowSelection, enableRowSelection, rows, selectedRows],
+  )
+
+  const handleActivateRow = useCallback(
+    (id: string) => {
+      if (!onRowActivate) {
+        return
+      }
+      const rowData = rows.find((row) => row.id === id)?.rowData
+      if (rowData) {
+        onRowActivate(rowData)
+      }
+    },
+    [onRowActivate, rows],
   )
 
   const handleRowContextMenu = useCallback(
@@ -186,12 +196,15 @@ export function useTable<Data>({
 
   const table: Table<Data> = useMemo(
     () => ({
+      id: id.current,
       headers,
       rows,
       colCount,
       rowCount,
-      handleRowClick,
-      handleRowDoubleClick,
+      selectRow,
+      multiSelectRow,
+      rangeSelectUpToRow,
+      handleActivateRow,
       handleRowContextMenu,
       selectedRows,
       canSelectRows: enableRowSelection || false,
@@ -200,16 +213,18 @@ export function useTable<Data>({
       showSelectionActions: showSelectionActions || false,
     }),
     [
-      colCount,
-      enableMultipleRowSelection,
-      enableRowSelection,
-      handleRowClick,
-      handleRowContextMenu,
-      handleRowDoubleClick,
       headers,
-      rowCount,
       rows,
+      colCount,
+      rowCount,
+      selectRow,
+      multiSelectRow,
+      rangeSelectUpToRow,
+      handleActivateRow,
+      handleRowContextMenu,
       selectedRows,
+      enableRowSelection,
+      enableMultipleRowSelection,
       selectionActions,
       showSelectionActions,
     ],

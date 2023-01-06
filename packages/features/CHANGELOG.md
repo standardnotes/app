@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.58.0](https://github.com/standardnotes/app/compare/@standardnotes/features@1.57.1...@standardnotes/features@1.58.0) (2023-01-06)
+
+### Features
+
+* Added per-tag preference to use table layout and removed "Files Table View" from Labs ([dd8ccde](https://github.com/standardnotes/app/commit/dd8ccdeadc6c2fd7f7ccd66f2dc4b0081616fb2b))
+
 ## [1.57.1](https://github.com/standardnotes/app/compare/@standardnotes/features@1.57.0...@standardnotes/features@1.57.1) (2022-12-29)
 
 **Note:** Version bump only for package @standardnotes/features

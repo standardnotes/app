@@ -1581,6 +1581,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.identifier,
       {
         loadBatchSize: this.options.loadBatchSize,
+        sleepBetweenBatches: this.options.sleepBetweenBatches,
       },
       this.internalEventBus,
     )

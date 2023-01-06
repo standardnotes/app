@@ -14,6 +14,7 @@ import {
   InternalEventPublishStrategy,
   VectorIconNameOrEmoji,
   isTag,
+  PrefKey,
 } from '@standardnotes/snjs'
 import { action, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -196,10 +197,13 @@ export class NavigationController
   }
 
   hydrateFromPersistedValue = (state: NavigationControllerPersistableValue | undefined) => {
-    if (!state) {
+    const uuidsToPreventHydrationOf: string[] = [SystemViewId.Files]
+
+    if (!state || uuidsToPreventHydrationOf.includes(state.selectedTagUuid)) {
       void this.selectHomeNavigationView()
       return
     }
+
     if (state.selectedTagUuid) {
       this.selectedUuid = state.selectedTagUuid
       this.selectHydratedTagOrDefault()
@@ -263,6 +267,14 @@ export class NavigationController
 
   isTagFilesView(tag: AnyTag): boolean {
     return tag.uuid === SystemViewId.Files
+  }
+
+  tagUsesTableView(tag: AnyTag): boolean {
+    const isSystemView = tag instanceof SmartView && Object.values(SystemViewId).includes(tag.uuid as SystemViewId)
+    const useTableView = isSystemView
+      ? this.application.getPreference(PrefKey.SystemViewPreferences)?.[tag.uuid as SystemViewId]
+      : tag?.preferences
+    return Boolean(useTableView)
   }
 
   public isInAnySystemView(): boolean {
@@ -463,8 +475,8 @@ export class NavigationController
         .catch(console.error)
     }
 
-    if (tag && this.isTagFilesView(tag)) {
-      this.application.paneController.setPaneLayout(PaneLayout.FilesView)
+    if (tag && (this.isTagFilesView(tag) || this.tagUsesTableView(tag))) {
+      this.application.paneController.setPaneLayout(PaneLayout.TableView)
     } else if (userTriggered) {
       this.application.paneController.setPaneLayout(PaneLayout.ItemSelection)
     }

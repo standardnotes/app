@@ -6,7 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/utils'
-import { ContentType } from '@standardnotes/snjs'
+import { ContentType, DecryptedItemInterface } from '@standardnotes/snjs'
 import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 import { ItemLink } from '@/Utils/Items/Search/ItemLink'
 import { FOCUS_TAGS_INPUT_COMMAND, keyboardStringForShortcut } from '@standardnotes/ui-services'
@@ -15,17 +15,18 @@ import { useItemLinks } from '@/Hooks/useItemLinks'
 
 type Props = {
   linkingController: LinkingController
+  item: DecryptedItemInterface
 }
 
-const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
+const LinkedItemBubblesContainer = ({ item, linkingController }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
   const commandService = useCommandService()
 
-  const { activeItem, unlinkItemFromSelectedItem: unlinkItem, activateItem } = linkingController
+  const { unlinkItemFromSelectedItem: unlinkItem, activateItem } = linkingController
 
   const { notesLinkedToItem, filesLinkedToItem, tagsLinkedToItem, notesLinkingToItem, filesLinkingToItem } =
-    useItemLinks(activeItem)
+    useItemLinks(item)
 
   const allItemsLinkedToItem: ItemLink[] = useMemo(
     () => new Array<ItemLink>().concat(notesLinkedToItem, filesLinkedToItem, tagsLinkedToItem),
@@ -97,10 +98,6 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
     )
   }
 
-  if (!activeItem) {
-    return null
-  }
-
   return (
     <div
       className={classNames(
@@ -130,7 +127,7 @@ const LinkedItemBubblesContainer = ({ linkingController }: Props) => {
         focusPreviousItem={focusPreviousItem}
         setFocusedId={setFocusedId}
         hoverLabel={`Focus input to add a link (${shortcut})`}
-        item={activeItem}
+        item={item}
       />
     </div>
   )

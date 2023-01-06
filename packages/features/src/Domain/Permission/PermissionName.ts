@@ -40,5 +40,4 @@ export enum PermissionName {
   TwoFactorAuth = 'server:two-factor-auth',
   SubscriptionSharing = 'server:subscription-sharing',
   SuperEditor = 'editor:super-editor',
-  FilesTableView = 'app:files-table-view',
 }

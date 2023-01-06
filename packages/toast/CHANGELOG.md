@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.17](https://github.com/standardnotes/app/compare/@standardnotes/toast@1.3.16...@standardnotes/toast@1.3.17) (2023-01-04)
+
+**Note:** Version bump only for package @standardnotes/toast
+
+## [1.3.16](https://github.com/standardnotes/app/compare/@standardnotes/toast@1.3.15...@standardnotes/toast@1.3.16) (2023-01-04)
+
+### Bug Fixes
+
+* Fixed issue where file upload toast would close before completion if you switched windows ([30dda73](https://github.com/standardnotes/app/commit/30dda73e9078bbccf91c3f43307250c84a17e8bd))
+
 ## [1.3.15](https://github.com/standardnotes/app/compare/@standardnotes/toast@1.3.14...@standardnotes/toast@1.3.15) (2022-12-29)
 
 **Note:** Version bump only for package @standardnotes/toast

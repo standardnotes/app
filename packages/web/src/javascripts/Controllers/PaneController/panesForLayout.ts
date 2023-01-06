@@ -11,20 +11,20 @@ export function panesForLayout(layout: PaneLayout, application: WebApplication):
     } else if (
       layout === PaneLayout.ItemSelection ||
       layout === PaneLayout.Editing ||
-      layout === PaneLayout.FilesView
+      layout === PaneLayout.TableView
     ) {
       return [AppPaneId.Items, AppPaneId.Editor]
     }
   } else if (screen.isMobile) {
     if (layout === PaneLayout.TagSelection) {
       return [AppPaneId.Navigation]
-    } else if (layout === PaneLayout.ItemSelection || layout === PaneLayout.FilesView) {
+    } else if (layout === PaneLayout.ItemSelection || layout === PaneLayout.TableView) {
       return [AppPaneId.Navigation, AppPaneId.Items]
     } else if (layout === PaneLayout.Editing) {
       return [AppPaneId.Navigation, AppPaneId.Items, AppPaneId.Editor]
     }
   } else {
-    if (layout === PaneLayout.FilesView) {
+    if (layout === PaneLayout.TableView) {
       return [AppPaneId.Navigation, AppPaneId.Items]
     } else {
       return [AppPaneId.Navigation, AppPaneId.Items, AppPaneId.Editor]

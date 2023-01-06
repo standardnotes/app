@@ -9,7 +9,7 @@ import {
 } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
 import { PANEL_NAME_NOTES } from '@/Constants/Constants'
-import { FeatureIdentifier, FileItem, PrefKey, SystemViewId, WebAppEvent } from '@standardnotes/snjs'
+import { FileItem, PrefKey, WebAppEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { forwardRef, useCallback, useEffect, useMemo } from 'react'
 import ContentList from '@/Components/ContentListView/ContentList'
@@ -36,9 +36,11 @@ import { FeatureName } from '@/Controllers/FeatureName'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { useForwardedRef } from '@/Hooks/useForwardedRef'
 import FloatingAddButton from './FloatingAddButton'
-import FilesTableView from '../FilesTableView/FilesTableView'
+import ContentTableView from '../ContentTableView/ContentTableView'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
+import { PaneController } from '@/Controllers/PaneController/PaneController'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -52,6 +54,8 @@ type Props = {
   searchOptionsController: SearchOptionsController
   linkingController: LinkingController
   featuresController: FeaturesController
+  historyModalController: HistoryModalController
+  paneController: PaneController
   className?: string
   id: string
   children?: React.ReactNode
@@ -72,6 +76,8 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       searchOptionsController,
       linkingController,
       featuresController,
+      historyModalController,
+      paneController,
       className,
       id,
       children,
@@ -91,6 +97,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       renderedItems,
       items,
       isCurrentNoteTemplate,
+      isTableViewEnabled,
     } = itemListController
 
     const innerRef = useForwardedRef(ref)
@@ -182,9 +189,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
     }, [isFilesSmartView, filesController, createNewNote, toggleAppPane, application])
 
     const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
-    const isFilesTableViewEnabled = application.features.isExperimentalFeatureEnabled(FeatureIdentifier.FilesTableView)
-    const shouldShowFilesTableView =
-      isFilesTableViewEnabled && !isMobileScreen && selectedTag?.uuid === SystemViewId.Files
+    const shouldUseTableView = (isFilesSmartView || isTableViewEnabled) && !isMobileScreen
 
     useEffect(() => {
       const searchBarElement = document.getElementById(ElementIds.SearchBar)
@@ -208,7 +213,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
             if (searchBarElement === document.activeElement) {
               searchBarElement?.blur()
             }
-            if (shouldShowFilesTableView) {
+            if (shouldUseTableView) {
               return
             }
             selectNextItem()
@@ -218,7 +223,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
           command: PREVIOUS_LIST_ITEM_KEYBOARD_COMMAND,
           element: document.body,
           onKeyDown: () => {
-            if (shouldShowFilesTableView) {
+            if (shouldUseTableView) {
               return
             }
             selectPreviousItem()
@@ -262,7 +267,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       selectNextItem,
       selectPreviousItem,
       selectionController,
-      shouldShowFilesTableView,
+      shouldUseTableView,
     ])
 
     const shortcutForCreate = useMemo(
@@ -316,18 +321,19 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
                 addButtonLabel={addButtonLabel}
                 addNewItem={addNewItem}
                 isFilesSmartView={isFilesSmartView}
-                isFilesTableViewEnabled={isFilesTableViewEnabled}
+                isTableViewEnabled={isTableViewEnabled}
                 optionsSubtitle={optionsSubtitle}
                 selectedTag={selectedTag}
                 filesController={filesController}
                 itemListController={itemListController}
+                paneController={paneController}
               />
             )}
-            {(!shouldShowFilesTableView || isMobileScreen) && (
+            {(!shouldUseTableView || isMobileScreen) && (
               <SearchBar
                 itemListController={itemListController}
                 searchOptionsController={searchOptionsController}
-                hideOptions={shouldShowFilesTableView}
+                hideOptions={shouldUseTableView}
               />
             )}
             <NoAccountWarning
@@ -352,12 +358,16 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
           <p className="empty-items-list opacity-50">Loading...</p>
         ) : null}
         {!dailyMode && renderedItems.length ? (
-          shouldShowFilesTableView ? (
-            <FilesTableView
+          shouldUseTableView ? (
+            <ContentTableView
+              items={items}
               application={application}
               filesController={filesController}
               featuresController={featuresController}
               linkingController={linkingController}
+              navigationController={navigationController}
+              notesController={notesController}
+              historyModalController={historyModalController}
             />
           ) : (
             <ContentList

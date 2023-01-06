@@ -1,7 +1,6 @@
 import {
   CollectionSort,
   CollectionSortProperty,
-  FeatureIdentifier,
   IconType,
   isSmartView,
   isSystemView,
@@ -25,6 +24,8 @@ import NoSubscriptionBanner from '@/Components/NoSubscriptionBanner/NoSubscripti
 import MenuRadioButtonItem from '@/Components/Menu/MenuRadioButtonItem'
 import MenuSwitchButtonItem from '@/Components/Menu/MenuSwitchButtonItem'
 import { Pill } from '@/Components/Preferences/PreferencesComponents/Content'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 
 const DailyEntryModeEnabled = true
 
@@ -33,6 +34,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   isOpen,
   isFilesSmartView,
   selectedTag,
+  paneController,
 }) => {
   const isSystemTag = isSmartView(selectedTag) && isSystemView(selectedTag)
   const selectedTagPreferences = isSystemTag
@@ -217,6 +219,14 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     void changePreferences({ entryMode: isDailyEntry ? 'normal' : 'daily' })
   }, [isDailyEntry, changePreferences])
 
+  const toggleTableView = useCallback(() => {
+    const useTableView = !preferences.useTableView
+    void changePreferences({ useTableView })
+    if (useTableView) {
+      paneController.setPaneLayout(PaneLayout.TableView)
+    }
+  }, [preferences.useTableView, changePreferences, paneController])
+
   const TabButton: FunctionComponent<{
     label: string
     mode: PreferenceMode
@@ -250,8 +260,9 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     )
   }
 
-  const isFilesTableViewEnabled = application.features.isExperimentalFeatureEnabled(FeatureIdentifier.FilesTableView)
-  const shouldHideNonApplicableOptions = isFilesTableViewEnabled && selectedTag?.uuid === SystemViewId.Files
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+  const isTableViewEnabled = Boolean(isFilesSmartView || preferences.useTableView)
+  const shouldHideNonApplicableOptions = isTableViewEnabled && !isMobileScreen
 
   return (
     <Menu className="text-sm" a11yLabel="Notes list options menu" isOpen={isOpen}>
@@ -410,7 +421,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         </>
       )}
 
-      {currentMode === 'tag' && !isSystemTag && DailyEntryModeEnabled && (
+      {currentMode === 'tag' && !isSystemTag && DailyEntryModeEnabled && !isTableViewEnabled && (
         <>
           <MenuItemSeparator />
           <MenuSwitchButtonItem
@@ -427,6 +438,28 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
                 </Pill>
               </div>
               <div className="mt-1">Capture new notes daily with a calendar-based layout</div>
+            </div>
+          </MenuSwitchButtonItem>
+        </>
+      )}
+
+      {currentMode === 'tag' && !isSystemTag && !isDailyEntry && (
+        <>
+          <MenuItemSeparator />
+          <MenuSwitchButtonItem
+            disabled={controlsDisabled}
+            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+            checked={isTableViewEnabled}
+            onChange={toggleTableView}
+          >
+            <div className="flex flex-col pr-5">
+              <div className="flex flex-row items-center">
+                <div className="text-base font-semibold uppercase text-text lg:text-xs">Table view</div>
+                <Pill className="py-0 px-1.5" style="success">
+                  Labs
+                </Pill>
+              </div>
+              <div className="mt-1">Display the notes & files in the current tag in a table layout</div>
             </div>
           </MenuSwitchButtonItem>
         </>

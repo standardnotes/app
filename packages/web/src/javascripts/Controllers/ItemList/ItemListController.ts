@@ -1,5 +1,5 @@
 import { ListableContentItem } from '@/Components/ContentListView/Types/ListableContentItem'
-import { destroyAllObjectProperties } from '@/Utils'
+import { destroyAllObjectProperties, isMobileScreen } from '@/Utils'
 import {
   ApplicationEvent,
   CollectionSort,
@@ -71,6 +71,7 @@ export class ItemListController extends AbstractViewController implements Intern
     hideNotePreview: false,
     hideEditorIcon: false,
   }
+  isTableViewEnabled = false
   private reloadItemsPromise?: Promise<unknown>
 
   override deinit() {
@@ -414,6 +415,10 @@ export class ItemListController extends AbstractViewController implements Intern
   }
 
   shouldSelectFirstItem = (itemsReloadSource: ItemsReloadSource) => {
+    if (this.application.isNativeMobileWeb()) {
+      return false
+    }
+
     const item = this.getFirstNonProtectedItem()
     if (item && isFile(item)) {
       return false
@@ -447,6 +452,10 @@ export class ItemListController extends AbstractViewController implements Intern
       this.selectionController.deselectItem(activeItem)
 
       if (this.shouldSelectFirstItem(itemsReloadSource)) {
+        if (this.isTableViewEnabled && !isMobileScreen()) {
+          return
+        }
+
         log(LoggingDomain.Selection, 'Selecting next item after closing active one')
         this.selectionController.selectNextItem({ userTriggered: false })
       }
@@ -508,6 +517,8 @@ export class ItemListController extends AbstractViewController implements Intern
     const selectedTagPreferences = isSystemTag
       ? this.application.getPreference(PrefKey.SystemViewPreferences)?.[selectedTag.uuid as SystemViewId]
       : selectedTag?.preferences
+
+    this.isTableViewEnabled = Boolean(selectedTagPreferences?.useTableView)
 
     const currentSortBy = this.displayOptions.sortBy
     let sortBy =
@@ -724,6 +735,10 @@ export class ItemListController extends AbstractViewController implements Intern
 
   selectFirstItem = async () => {
     const item = this.getFirstNonProtectedItem()
+
+    if (this.isTableViewEnabled && !isMobileScreen()) {
+      return
+    }
 
     if (item) {
       log(LoggingDomain.Selection, 'Selecting first item', item.uuid)

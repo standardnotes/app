@@ -39,9 +39,11 @@ const iconClassWarning = `text-warning mr-2 ${iconSize}`
 const iconClassSuccess = `text-success mr-2 ${iconSize}`
 
 const NotesOptions = ({
+  notes,
   application,
   navigationController,
   notesController,
+  linkingController,
   historyModalController,
   closeMenu,
 }: NotesOptionsProps) => {
@@ -60,7 +62,6 @@ const NotesOptions = ({
     return notesMatchingAttribute.length > notesNotMatchingAttribute.length
   }
 
-  const notes = notesController.selectedNotes
   const hidePreviews = toggleOn((note) => note.hidePreview)
   const locked = toggleOn((note) => note.locked)
   const protect = toggleOn((note) => note.protected)
@@ -214,7 +215,8 @@ const NotesOptions = ({
         <AddTagOption
           iconClassName={iconClass}
           navigationController={navigationController}
-          notesController={notesController}
+          selectedItems={notes}
+          linkingController={linkingController}
         />
       )}
       <MenuItem

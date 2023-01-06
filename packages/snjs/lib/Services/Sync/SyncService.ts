@@ -298,6 +298,9 @@ export class SNSyncService
       ? chunks.fullEntries.remainingChunks
       : chunks.keys.remainingChunks
 
+    let chunkIndex = 0
+    const ChunkIndexOfContentTypePriorityItems = 0
+
     for (const chunk of remainingChunks) {
       const dbEntries = isChunkFullEntry(chunk)
         ? chunk.entries
@@ -314,7 +317,14 @@ export class SNSyncService
         .filter(isNotUndefined)
 
       await this.processPayloadBatch(payloads, totalProcessedCount, payloadCount)
+
+      const shouldSleepOnlyAfterFirstRegularBatch = chunkIndex > ChunkIndexOfContentTypePriorityItems
+      if (shouldSleepOnlyAfterFirstRegularBatch) {
+        await sleep(this.options.sleepBetweenBatches, false, 'Sleeping to allow interface to update')
+      }
+
       totalProcessedCount += payloads.length
+      chunkIndex++
     }
 
     this.databaseLoaded = true
@@ -353,8 +363,6 @@ export class SNSyncService
     if (currentPosition != undefined && payloadCount != undefined) {
       this.opStatus.setDatabaseLoadStatus(currentPosition, payloadCount, false)
     }
-
-    await sleep(1, false)
   }
 
   private setLastSyncToken(token: string) {

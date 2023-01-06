@@ -13,6 +13,7 @@ import AddItemMenuButton from './AddItemMenuButton'
 import { FilesController } from '@/Controllers/FilesController'
 import SearchButton from './SearchButton'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
+import { PaneController } from '@/Controllers/PaneController/PaneController'
 
 type Props = {
   application: WebApplication
@@ -21,11 +22,12 @@ type Props = {
   addButtonLabel: string
   addNewItem: () => void
   isFilesSmartView: boolean
-  isFilesTableViewEnabled: boolean
+  isTableViewEnabled: boolean
   optionsSubtitle?: string
   selectedTag: AnyTag
   filesController: FilesController
   itemListController: ItemListController
+  paneController: PaneController
 }
 
 const ContentListHeader = ({
@@ -35,11 +37,12 @@ const ContentListHeader = ({
   addButtonLabel,
   addNewItem,
   isFilesSmartView,
-  isFilesTableViewEnabled,
+  isTableViewEnabled,
   optionsSubtitle,
   selectedTag,
   filesController,
   itemListController,
+  paneController,
 }: Props) => {
   const displayOptionsContainerRef = useRef<HTMLDivElement>(null)
   const displayOptionsButtonRef = useRef<HTMLButtonElement>(null)
@@ -79,19 +82,13 @@ const ContentListHeader = ({
               isFilesSmartView={isFilesSmartView}
               isOpen={showDisplayOptionsMenu}
               selectedTag={selectedTag}
+              paneController={paneController}
             />
           </Popover>
         </div>
       </div>
     )
-  }, [
-    showDisplayOptionsMenu,
-    toggleDisplayOptionsMenu,
-    displayOptionsButtonRef,
-    application,
-    isFilesSmartView,
-    selectedTag,
-  ])
+  }, [showDisplayOptionsMenu, toggleDisplayOptionsMenu, application, isFilesSmartView, selectedTag, paneController])
 
   const AddButton = useMemo(() => {
     return (
@@ -106,12 +103,12 @@ const ContentListHeader = ({
   }, [addButtonLabel, addNewItem, filesController, isDailyEntry, isFilesSmartView])
 
   const SearchBarButton = useMemo(() => {
-    if (!isFilesSmartView || !isFilesTableViewEnabled || isMobileScreen) {
+    if (!isTableViewEnabled || isMobileScreen) {
       return null
     }
 
     return <SearchButton itemListController={itemListController} />
-  }, [isFilesSmartView, isFilesTableViewEnabled, isMobileScreen, itemListController])
+  }, [isTableViewEnabled, isMobileScreen, itemListController])
 
   const FolderName = useMemo(() => {
     return (
