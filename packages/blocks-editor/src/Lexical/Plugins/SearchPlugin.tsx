@@ -1,11 +1,6 @@
 import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
 import {ArrowDownIcon, ArrowUpIcon, CloseIcon} from '@standardnotes/icons';
-import {
-  $nodesOfType,
-  COMMAND_PRIORITY_EDITOR,
-  KEY_MODIFIER_COMMAND,
-  TextNode,
-} from 'lexical';
+import {COMMAND_PRIORITY_EDITOR, KEY_MODIFIER_COMMAND} from 'lexical';
 import {
   createContext,
   ReactNode,
@@ -18,7 +13,6 @@ import {
 } from 'react';
 
 type SearchResult = {
-  nodeKey: string;
   rectList: DOMRect[];
   startIndex: number;
   endIndex: number;
@@ -66,7 +60,7 @@ const createSearchHighlightElement = (
 ) => {
   const rootElementRect = rootElement.getBoundingClientRect();
 
-  const id = `search-${result.nodeKey}-${result.startIndex}-${result.endIndex}-${isCurrentResult}`;
+  const id = `search-${result.startIndex}-${result.endIndex}-${isCurrentResult}`;
 
   const existingHighlightElement = document.getElementById(id);
 
@@ -122,12 +116,6 @@ export const SuperSearchContextProvider = ({
         rootElement?.parentElement?.getElementsByClassName(
           'search-highlight-container',
         )[0];
-      const element = editor.getElementByKey(result.nodeKey);
-      if (element) {
-        element.scrollIntoView({
-          block: 'center',
-        });
-      }
       document
         .querySelectorAll('.search-highlight.current')
         .forEach((element) => {
@@ -277,6 +265,17 @@ const SearchDialog = ({closeDialog}: {closeDialog: () => void}) => {
 
 const EditorScrollOffset = 100;
 
+const textNodesInElement = (element: HTMLElement) => {
+  const textNodes: Text[] = [];
+  const walk = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null);
+  let node = walk.nextNode();
+  while (node) {
+    textNodes.push(node as Text);
+    node = walk.nextNode();
+  }
+  return textNodes;
+};
+
 export const SearchPlugin = () => {
   const [editor] = useLexicalComposerContext();
   const [showDialog, setShowDialog] = useState(false);
@@ -308,57 +307,63 @@ export const SearchPlugin = () => {
   }, []);
 
   useEffect(() => {
-    document.querySelectorAll('.search-highlight').forEach((element) => {
-      element.remove();
-    });
+    const handleSearch = () => {
+      document.querySelectorAll('.search-highlight').forEach((element) => {
+        element.remove();
+      });
 
-    clearResults();
+      clearResults();
 
-    if (!searchQuery) {
-      return;
-    }
+      if (!searchQuery) {
+        return;
+      }
 
-    editor.getEditorState().read(() => {
-      const textNodes = $nodesOfType(TextNode);
+      editor.getEditorState().read(() => {
+        const rootElement = editor.getRootElement();
 
-      textNodes.forEach((node) => {
-        const text = node.getTextContent();
-
-        const domElement = editor._keyToDOMMap.get(node.getKey());
-        if (!domElement) {
+        if (!rootElement) {
           return;
         }
 
-        const indices: number[] = [];
-        let index = -1;
+        const textNodes = textNodesInElement(rootElement);
 
-        while ((index = text.indexOf(searchQuery, index + 1)) !== -1) {
-          indices.push(index);
-        }
+        textNodes.forEach((node) => {
+          const text = node.textContent || '';
 
-        indices.forEach((index) => {
-          const startIndex = index;
-          const endIndex = startIndex + searchQuery.length;
+          const indices: number[] = [];
+          let index = -1;
 
-          const textNode = domElement.childNodes[0];
+          while ((index = text.indexOf(searchQuery, index + 1)) !== -1) {
+            indices.push(index);
+          }
 
-          try {
-            const range = document.createRange();
-            range.setStart(textNode, startIndex);
-            range.setEnd(textNode, endIndex);
+          indices.forEach((index) => {
+            const startIndex = index;
+            const endIndex = startIndex + searchQuery.length;
 
-            const rectList = Array.from(range.getClientRects());
+            try {
+              const range = document.createRange();
+              range.setStart(node, startIndex);
+              range.setEnd(node, endIndex);
 
-            addResult({
-              nodeKey: node.getKey(),
-              rectList,
-              startIndex,
-              endIndex,
-            });
-          } catch (error) {}
+              const rectList = Array.from(range.getClientRects());
+
+              addResult({
+                rectList,
+                startIndex,
+                endIndex,
+              });
+            } catch (error) {}
+          });
         });
       });
-    });
+    };
+
+    const timeout = setTimeout(handleSearch, 100);
+
+    return () => {
+      clearTimeout(timeout);
+    };
   }, [searchQuery]);
 
   useEffect(() => {
