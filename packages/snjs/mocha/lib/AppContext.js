@@ -220,6 +220,16 @@ export class AppContext {
     })
   }
 
+  awaitUserPrefsSingletonResolution() {
+    return new Promise((resolve) => {
+      this.application.preferencesService.addEventObserver((eventName) => {
+        if (eventName === PreferencesServiceEvent.PreferencesChanged) {
+          resolve()
+        }
+      })
+    })
+  }
+
   async launch({ awaitDatabaseLoad = true, receiveChallenge } = { awaitDatabaseLoad: true }) {
     await this.application.prepareForLaunch({
       receiveChallenge: receiveChallenge || this.handleChallenge,

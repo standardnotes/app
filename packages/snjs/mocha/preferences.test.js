@@ -74,10 +74,16 @@ describe('preferences', function () {
     await register.call(this)
     await this.application.setPreference('editorLeft', 300)
     await this.application.sync.sync()
-    this.application = await Factory.signOutApplicationAndReturnNew(this.application)
+
+    this.application = await this.context.signout()
+
     await this.application.setPreference('editorLeft', 200)
     await this.application.signIn(this.email, this.password)
+
+    const promise = this.context.awaitUserPrefsSingletonResolution()
     await this.application.sync.sync({ awaitAll: true })
+    await promise
+
     const editorLeft = this.application.getPreference('editorLeft')
     expect(editorLeft).to.equal(300)
   })
