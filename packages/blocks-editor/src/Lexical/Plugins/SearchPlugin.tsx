@@ -357,8 +357,6 @@ export const SearchPlugin = () => {
 
             const rectList = Array.from(range.getClientRects());
 
-            console.log(searchQuery);
-
             addResult({
               node,
               rectList,
