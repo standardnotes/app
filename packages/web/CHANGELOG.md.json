@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.136.3",
+      "title": "[3.136.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.136.2...@standardnotes/web@3.136.3) (2023-01-07)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where search button would not show up in Files view ([340f4f7](https://github.com/standardnotes/app/commit/340f4f7f09c28f7818cb4a7f1ccaa387ef0283c9))",
+      "parsed": {
+        "_": [
+          "Fixed issue where search button would not show up in Files view (340f4f7)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where search button would not show up in Files view (340f4f7)"
+        ]
+      }
+    },
+    {
       "version": "3.136.2",
       "title": "[3.136.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.136.1...@standardnotes/web@3.136.2) (2023-01-06)",
       "date": null,
