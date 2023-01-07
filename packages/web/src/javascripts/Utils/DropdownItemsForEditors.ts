@@ -1,4 +1,4 @@
-import { FeatureIdentifier } from '@standardnotes/snjs'
+import { FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
 import { ComponentArea, NoteType } from '@standardnotes/features'
 import { WebApplication } from '@/Application/Application'
 import { PlainEditorMetadata, SuperEditorMetadata } from '@/Constants/Constants'
@@ -46,13 +46,15 @@ export function getDropdownItemsForAllEditors(application: WebApplication): Edit
 
   options.push(plaintextOption)
 
-  options.push({
-    icon: SuperEditorMetadata.icon,
-    iconClassName: SuperEditorMetadata.iconClassName,
-    label: SuperEditorMetadata.name,
-    value: FeatureIdentifier.SuperEditor,
-    isLabs: true,
-  })
+  if (application.features.getFeatureStatus(FeatureIdentifier.SuperEditor) === FeatureStatus.Entitled) {
+    options.push({
+      icon: SuperEditorMetadata.icon,
+      iconClassName: SuperEditorMetadata.iconClassName,
+      label: SuperEditorMetadata.name,
+      value: FeatureIdentifier.SuperEditor,
+      isLabs: true,
+    })
+  }
 
   options.sort((a, b) => {
     return a.label.toLowerCase() < b.label.toLowerCase() ? -1 : 1
