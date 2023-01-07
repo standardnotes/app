@@ -9,7 +9,6 @@ import {
   SortableItem,
   PrefKey,
   ApplicationEvent,
-  naturalSort,
   FileBackupRecord,
   SystemViewId,
   DecryptedItemInterface,
@@ -25,7 +24,6 @@ import { useTable } from '../Table/useTable'
 import Menu from '../Menu/Menu'
 import FileMenuOptions from '../FileContextMenu/FileMenuOptions'
 import Icon from '../Icon/Icon'
-import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
 import LinkedItemBubble from '../LinkedItems/LinkedItemBubble'
 import LinkedItemsPanel from '../LinkedItems/LinkedItemsPanel'
 import { LinkingController } from '@/Controllers/LinkingController'
@@ -37,6 +35,8 @@ import { getIconAndTintForNoteType } from '@/Utils/Items/Icons/getIconAndTintFor
 import NotesOptions from '../NotesOptions/NotesOptions'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
+import { useItemLinks } from '@/Hooks/useItemLinks'
+import { ItemLink } from '@/Utils/Items/Search/ItemLink'
 
 const ContextMenuCell = ({
   items,
@@ -218,6 +218,38 @@ const ItemNameCell = ({ item }: { item: DecryptedItemInterface }) => {
   )
 }
 
+const AttachedToCell = ({ item }: { item: DecryptedItemInterface }) => {
+  const { notesLinkedToItem, notesLinkingToItem, filesLinkedToItem, filesLinkingToItem, tagsLinkedToItem } =
+    useItemLinks(item)
+  const application = useApplication()
+
+  const allLinks: ItemLink[] = (notesLinkedToItem as ItemLink[]).concat(
+    notesLinkingToItem,
+    filesLinkedToItem,
+    filesLinkingToItem,
+    tagsLinkedToItem,
+  )
+
+  if (!allLinks.length) {
+    return null
+  }
+
+  return (
+    <div className="flex items-center gap-2 overflow-hidden">
+      <LinkedItemBubble
+        className="overflow-hidden border border-transparent hover:border-border focus:border-info focus:shadow-none"
+        link={allLinks[0]}
+        key={allLinks[0].id}
+        unlinkItem={async (itemToUnlink) => {
+          void application.items.unlinkItems(item, itemToUnlink)
+        }}
+        isBidirectional={false}
+      />
+      {allLinks.length - 1 >= 1 && <span>and {allLinks.length - 1} more...</span>}
+    </div>
+  )
+}
+
 type Props = {
   application: WebApplication
   items: DecryptedItemInterface[]
@@ -318,39 +350,10 @@ const ContentTableView = ({
       {
         name: 'Attached to',
         hidden: isSmallBreakpoint || isMediumBreakpoint || isLargeBreakpoint,
-        cell: (item) => {
-          const links = [
-            ...naturalSort(application.items.referencesForItem(item), 'title').map((item) =>
-              createLinkFromItem(item, 'linked'),
-            ),
-            ...naturalSort(application.items.itemsReferencingItem(item), 'title').map((item) =>
-              createLinkFromItem(item, 'linked-by'),
-            ),
-            ...application.items.getSortedTagsForItem(item).map((item) => createLinkFromItem(item, 'linked')),
-          ]
-
-          if (!links.length) {
-            return null
-          }
-
-          return (
-            <div className="flex items-center gap-2 overflow-hidden">
-              <LinkedItemBubble
-                className="overflow-hidden border border-transparent hover:border-border focus:border-info focus:shadow-none"
-                link={links[0]}
-                key={links[0].id}
-                unlinkItem={async (itemToUnlink) => {
-                  void application.items.unlinkItems(item, itemToUnlink)
-                }}
-                isBidirectional={false}
-              />
-              {links.length - 1 > 1 && <span>and {links.length - 1} more...</span>}
-            </div>
-          )
-        },
+        cell: (item) => <AttachedToCell item={item} />,
       },
     ],
-    [application.items, isLargeBreakpoint, isMediumBreakpoint, isSmallBreakpoint, listHasFiles],
+    [isLargeBreakpoint, isMediumBreakpoint, isSmallBreakpoint, listHasFiles],
   )
 
   const getRowId = useCallback((item: DecryptedItemInterface) => item.uuid, [])
