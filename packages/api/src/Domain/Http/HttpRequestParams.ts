@@ -1,1 +1,1 @@
-export type HttpRequestParams = Record<string, unknown>
+export type HttpRequestParams = unknown

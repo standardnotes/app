@@ -1,3 +1,6 @@
+export * from './Auth/AuthApiOperations'
+export * from './Auth/AuthApiService'
+export * from './Auth/AuthApiServiceInterface'
 export * from './Authenticator/AuthenticatorApiOperations'
 export * from './Authenticator/AuthenticatorApiService'
 export * from './Authenticator/AuthenticatorApiServiceInterface'
