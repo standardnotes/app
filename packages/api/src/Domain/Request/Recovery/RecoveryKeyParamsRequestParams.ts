@@ -1,6 +1,6 @@
 export interface RecoveryKeyParamsRequestParams {
-  apiVersion: string
+  api_version: string
   username: string
-  codeChallenge: string
-  recoveryCodes: string
+  code_challenge: string
+  recovery_codes: string
 }
