@@ -3,7 +3,7 @@ import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.only('account recovery', function () {
+describe('account recovery', function () {
   this.timeout(Factory.ThirtySecondTimeout)
 
   let application
@@ -43,7 +43,7 @@ describe.only('account recovery', function () {
     expect(generatedRecoveryCodesAfterFirstCall.getValue()).to.equal(fetchedRecoveryCodesOnTheSecondCall.getValue())
   })
 
-  it.only('should allow to sign in with recovery codes', async () => {
+  it('should allow to sign in with recovery codes', async () => {
     const generatedRecoveryCodes = await application.getRecoveryCodes.execute()
 
     application = await Factory.signOutApplicationAndReturnNew(application)
@@ -53,7 +53,7 @@ describe.only('account recovery', function () {
     await application.signInWithRecoveryCodes.execute({
       recoveryCodes: generatedRecoveryCodes.getValue(),
       username: context.email,
-      password: context.paswword,
+      password: context.password,
     })
 
     expect(await application.protocolService.getRootKey()).to.be.ok
@@ -62,12 +62,12 @@ describe.only('account recovery', function () {
   it('should automatically generate new recovery codes after recovery sign in', async () => {
     const generatedRecoveryCodes = await application.getRecoveryCodes.execute()
 
-    await application.user.signOut()
+    application = await Factory.signOutApplicationAndReturnNew(application)
 
     await application.signInWithRecoveryCodes.execute({
       recoveryCodes: generatedRecoveryCodes.getValue(),
       username: context.email,
-      password: context.paswword,
+      password: context.password,
     })
 
     const recoveryCodesAfterRecoverySignIn = await application.getRecoveryCodes.execute()
@@ -84,12 +84,12 @@ describe.only('account recovery', function () {
 
     const generatedRecoveryCodes = await application.getRecoveryCodes.execute()
 
-    await application.user.signOut()
+    application = await Factory.signOutApplicationAndReturnNew(application)
 
     await application.signInWithRecoveryCodes.execute({
       recoveryCodes: generatedRecoveryCodes.getValue(),
       username: context.email,
-      password: context.paswword,
+      password: context.password,
     })
 
     expect(await application.isMfaActivated()).to.equal(false)
@@ -98,7 +98,7 @@ describe.only('account recovery', function () {
   it('should not allow to sign in with recovery codes and invalid credentials', async () => {
     const generatedRecoveryCodes = await application.getRecoveryCodes.execute()
 
-    await application.user.signOut()
+    application = await Factory.signOutApplicationAndReturnNew(application)
 
     expect(await application.protocolService.getRootKey()).to.not.be.ok
 
@@ -114,7 +114,7 @@ describe.only('account recovery', function () {
   it('should not allow to sign in with invalid recovery codes', async () => {
     await application.getRecoveryCodes.execute()
 
-    await application.user.signOut()
+    application = await Factory.signOutApplicationAndReturnNew(application)
 
     expect(await application.protocolService.getRootKey()).to.not.be.ok
 
@@ -128,7 +128,7 @@ describe.only('account recovery', function () {
   })
 
   it('should not allow to sign in with recovery codes if user has none', async () => {
-    await application.user.signOut()
+    application = await Factory.signOutApplicationAndReturnNew(application)
 
     expect(await application.protocolService.getRootKey()).to.not.be.ok
 
