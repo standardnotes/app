@@ -97,6 +97,7 @@ import { SessionStorageMapper } from '@Lib/Services/Mapping/SessionStorageMapper
 import { LegacySessionStorageMapper } from '@Lib/Services/Mapping/LegacySessionStorageMapper'
 import { SignInWithRecoveryCodes } from '@Lib/Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes'
 import { UseCaseContainerInterface } from '@Lib/Domain/UseCase/UseCaseContainerInterface'
+import { GetRecoveryCodes } from '@Lib/Domain/UseCase/GetRecoveryCodes/GetRecoveryCodes'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -177,6 +178,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare authManager: AuthClientInterface
 
   private declare _signInWithRecoveryCodes: SignInWithRecoveryCodes
+  private declare _getRecoveryCodes: GetRecoveryCodes
 
   private internalEventBus!: ExternalServices.InternalEventBusInterface
 
@@ -261,6 +263,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   get signInWithRecoveryCodes(): UseCaseInterface<void> {
     return this._signInWithRecoveryCodes
+  }
+
+  get getRecoveryCodes(): UseCaseInterface<string> {
+    return this._getRecoveryCodes
   }
 
   public get files(): FilesClientInterface {
@@ -1218,6 +1224,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.authenticatorManager as unknown) = undefined
     ;(this.authManager as unknown) = undefined
     ;(this._signInWithRecoveryCodes as unknown) = undefined
+    ;(this._getRecoveryCodes as unknown) = undefined
 
     this.services = []
   }
@@ -1776,5 +1783,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.sessionManager,
       this.internalEventBus,
     )
+
+    this._getRecoveryCodes = new GetRecoveryCodes(this.authManager, this.settingsService)
   }
 }
