@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.23.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.22.0...@standardnotes/api@1.23.0) (2023-01-09)
+
+### Features
+
+* **snjs:** add account recovery e2e test suite ([#2134](https://github.com/standardnotes/app/issues/2134)) ([8deeae5](https://github.com/standardnotes/app/commit/8deeae5a16191da7b4aad2ddc568e714fbeef8b8))
+
 # [1.22.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.21.4...@standardnotes/api@1.22.0) (2023-01-09)
 
 ### Features
