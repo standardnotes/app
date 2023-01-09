@@ -1,7 +1,7 @@
 export interface SignInWithRecoveryCodesRequestParams {
-  apiVersion: string
+  api_version: string
   username: string
   password: string
-  codeVerifier: string
-  recoveryCodes: string
+  code_verifier: string
+  recovery_codes: string
 }

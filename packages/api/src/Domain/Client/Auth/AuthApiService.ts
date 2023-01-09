@@ -49,8 +49,10 @@ export class AuthApiService implements AuthApiServiceInterface {
 
     try {
       const response = await this.authServer.recoveryKeyParams({
-        apiVersion: ApiVersion.v0,
-        ...dto,
+        api_version: ApiVersion.v0,
+        code_challenge: dto.codeChallenge,
+        recovery_codes: dto.recoveryCodes,
+        username: dto.username,
       })
 
       return response
@@ -75,8 +77,11 @@ export class AuthApiService implements AuthApiServiceInterface {
 
     try {
       const response = await this.authServer.signInWithRecoveryCodes({
-        apiVersion: ApiVersion.v0,
-        ...dto,
+        api_version: ApiVersion.v0,
+        code_verifier: dto.codeVerifier,
+        password: dto.password,
+        recovery_codes: dto.recoveryCodes,
+        username: dto.username,
       })
 
       return response
