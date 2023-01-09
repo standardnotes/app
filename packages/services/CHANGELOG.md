@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.53.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.52.2...@standardnotes/services@1.53.0) (2023-01-09)
+
+### Features
+
+* **snjs:** add sign in with recovery codes use case ([#2130](https://github.com/standardnotes/app/issues/2130)) ([be028ff](https://github.com/standardnotes/app/commit/be028ff87bb5306fc266b70567cbea8a13547e7e))
+
 ## [1.52.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.52.1...@standardnotes/services@1.52.2) (2023-01-06)
 
 **Note:** Version bump only for package @standardnotes/services
