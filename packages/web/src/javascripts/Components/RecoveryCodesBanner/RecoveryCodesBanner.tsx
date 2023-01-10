@@ -3,6 +3,7 @@ import { useState } from 'react'
 
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
+import StyledTooltip from '../StyledTooltip/StyledTooltip'
 
 const RecoveryCodesBanner = ({ application }: { application: WebApplication }) => {
   const [recoveryCodes, setRecoveryCodes] = useState<string>()
@@ -35,7 +36,19 @@ const RecoveryCodesBanner = ({ application }: { application: WebApplication }) =
         </Button>
       )}
       {recoveryCodes && (
-        <div className="mt-2 rounded border border-border py-2 px-3 text-sm font-semibold">{recoveryCodes}</div>
+        <div className="group relative mt-2 rounded border border-border py-2 px-3 text-sm font-semibold">
+          <StyledTooltip label="Copy to clipboard" className="!z-modal">
+            <button
+              className="absolute top-2 right-2 flex rounded border border-border p-1 opacity-0 hover:bg-contrast focus:opacity-100 group-hover:opacity-100"
+              onClick={() => {
+                void navigator.clipboard.writeText(recoveryCodes)
+              }}
+            >
+              <Icon type="copy" size="small" />
+            </button>
+          </StyledTooltip>
+          {recoveryCodes}
+        </div>
       )}
     </div>
   )
