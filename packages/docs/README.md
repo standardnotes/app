@@ -154,7 +154,7 @@ When possible, use path names when linking between docs (see #1 above). This imp
 Please follow the following writing style guide. These guidelines are open for discussion and are subject to change as we see fit, but we should be consistent about them:
 
 - Add periods to complete sentences in lists.
-- Use "sign in to" instead of "sign into" to be consistent with the [web app](https://app.standardnotes.org).
+- Use "sign in to" instead of "sign into" to be consistent with the [web app](https://app.standardnotes.com).
 - Hyphenate `open-source` when using the phrase as an adjective (see [Merriam-Webster's](https://www.merriam-webster.com/dictionary/open-source)).
 - The _-n't_ contractions are fine, but try to avoid using noun-verb contractions, such as ("you're" or "you've"). (See [Google's convention](https://developers.google.com/style/contractions)).
 

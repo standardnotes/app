@@ -20,7 +20,7 @@ hide_table_of_contents: false
 
 ## Requirements
 
-In order to upload files you have to have an active subscription for your user. Read the [subscriptions](./subscriptions.md) page on instructions how to setup a subscription for yourself.
+In order to upload files you have to have an active subscription for your user. Read the [subscriptions](./subscriptions.md/) page on instructions how to setup a subscription for yourself.
 
 ## Troubleshooting
 
