@@ -93,7 +93,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
   };
 
   return (
-    <SuperSearchContextProvider>
+    <>
       {children}
       <RichTextPlugin
         contentEditable={
@@ -137,7 +137,9 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
           <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
         </>
       )}
-      <SearchPlugin />
-    </SuperSearchContextProvider>
+      <SuperSearchContextProvider>
+        <SearchPlugin />
+      </SuperSearchContextProvider>
+    </>
   );
 };
