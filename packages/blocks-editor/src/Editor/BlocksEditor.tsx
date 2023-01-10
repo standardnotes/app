@@ -27,7 +27,7 @@ import {SuperEditorContentId} from './Constants';
 import {classNames} from '@standardnotes/utils';
 import {MarkdownTransformers} from './MarkdownTransformers';
 import {SearchPlugin} from '../Lexical/Plugins/SearchPlugin/SearchPlugin';
-import {SuperSearchContextProvider} from 'src/Lexical/Plugins/SearchPlugin/Context';
+import {SuperSearchContextProvider} from '../Lexical/Plugins/SearchPlugin/Context';
 
 type BlocksEditorProps = {
   onChange?: (value: string, preview: string) => void;
