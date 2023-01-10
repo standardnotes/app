@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.161.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.160.0...@standardnotes/snjs@2.161.0) (2023-01-09)
+
+### Features
+
+* **snjs:** add account recovery e2e test suite ([#2134](https://github.com/standardnotes/app/issues/2134)) ([8deeae5](https://github.com/standardnotes/app/commit/8deeae5a16191da7b4aad2ddc568e714fbeef8b8))
+
+# [2.160.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.159.0...@standardnotes/snjs@2.160.0) (2023-01-09)
+
+### Features
+
+* **snjs:** add getting recovery codes ([#2132](https://github.com/standardnotes/app/issues/2132)) ([10751ea](https://github.com/standardnotes/app/commit/10751ea2edb2ca48e4493b87053383f27460ef75))
+
+# [2.159.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.158.2...@standardnotes/snjs@2.159.0) (2023-01-09)
+
+### Features
+
+* **snjs:** add sign in with recovery codes use case ([#2130](https://github.com/standardnotes/app/issues/2130)) ([be028ff](https://github.com/standardnotes/app/commit/be028ff87bb5306fc266b70567cbea8a13547e7e))
+
 ## [2.158.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.158.1...@standardnotes/snjs@2.158.2) (2023-01-06)
 
 **Note:** Version bump only for package @standardnotes/snjs

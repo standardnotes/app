@@ -276,9 +276,9 @@ export class HttpService implements HttpServiceInterface {
   }
 
   private urlForUrlAndParams(url: string, params: HttpRequestParams) {
-    const keyValueString = Object.keys(params)
+    const keyValueString = Object.keys(params as Record<string, unknown>)
       .map((key) => {
-        return key + '=' + encodeURIComponent(params[key] as string)
+        return key + '=' + encodeURIComponent((params as Record<string, unknown>)[key] as string)
       })
       .join('&')
 

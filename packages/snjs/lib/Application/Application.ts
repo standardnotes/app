@@ -1,8 +1,10 @@
 import {
+  AuthApiService,
   AuthenticatorApiService,
   AuthenticatorApiServiceInterface,
   AuthenticatorServer,
   AuthenticatorServerInterface,
+  AuthServer,
   HttpService,
   HttpServiceInterface,
   SubscriptionApiService,
@@ -69,6 +71,8 @@ import {
   AccountEvent,
   AuthenticatorClientInterface,
   AuthenticatorManager,
+  AuthClientInterface,
+  AuthManager,
 } from '@standardnotes/services'
 import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateUsername } from '@standardnotes/encryption'
@@ -88,9 +92,12 @@ import { SNLog } from '../Log'
 import { ChallengeResponse, ListedClientInterface } from '../Services'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
-import { LegacySession, MapperInterface, Session } from '@standardnotes/domain-core'
+import { LegacySession, MapperInterface, Session, UseCaseInterface } from '@standardnotes/domain-core'
 import { SessionStorageMapper } from '@Lib/Services/Mapping/SessionStorageMapper'
 import { LegacySessionStorageMapper } from '@Lib/Services/Mapping/LegacySessionStorageMapper'
+import { SignInWithRecoveryCodes } from '@Lib/Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes'
+import { UseCaseContainerInterface } from '@Lib/Domain/UseCase/UseCaseContainerInterface'
+import { GetRecoveryCodes } from '@Lib/Domain/UseCase/GetRecoveryCodes/GetRecoveryCodes'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -106,7 +113,7 @@ type ApplicationObserver = {
 
 type ObserverRemover = () => void
 
-export class SNApplication implements ApplicationInterface, AppGroupManagedApplication {
+export class SNApplication implements ApplicationInterface, AppGroupManagedApplication, UseCaseContainerInterface {
   onDeinit!: ExternalServices.DeinitCallback
 
   /**
@@ -168,6 +175,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare authenticatorApiService: AuthenticatorApiServiceInterface
   private declare authenticatorServer: AuthenticatorServerInterface
   private declare authenticatorManager: AuthenticatorClientInterface
+  private declare authManager: AuthClientInterface
+
+  private declare _signInWithRecoveryCodes: SignInWithRecoveryCodes
+  private declare _getRecoveryCodes: GetRecoveryCodes
 
   private internalEventBus!: ExternalServices.InternalEventBusInterface
 
@@ -248,6 +259,14 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   get workspaces(): ExternalServices.WorkspaceClientInterface {
     return this.workspaceManager
+  }
+
+  get signInWithRecoveryCodes(): UseCaseInterface<void> {
+    return this._signInWithRecoveryCodes
+  }
+
+  get getRecoveryCodes(): UseCaseInterface<string> {
+    return this._getRecoveryCodes
   }
 
   public get files(): FilesClientInterface {
@@ -1150,6 +1169,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createAuthenticatorServer()
     this.createAuthenticatorApiService()
     this.createAuthenticatorManager()
+    this.createAuthManager()
+
+    this.createUseCases()
   }
 
   private clearServices() {
@@ -1200,6 +1222,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.authenticatorApiService as unknown) = undefined
     ;(this.authenticatorServer as unknown) = undefined
     ;(this.authenticatorManager as unknown) = undefined
+    ;(this.authManager as unknown) = undefined
+    ;(this._signInWithRecoveryCodes as unknown) = undefined
+    ;(this._getRecoveryCodes as unknown) = undefined
 
     this.services = []
   }
@@ -1212,6 +1237,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.internalEventBus.addEventHandler(this.featuresService, ExternalServices.ApiServiceEvent.MetaReceived)
     this.internalEventBus.addEventHandler(this.integrityService, ExternalServices.SyncEvent.SyncRequestsIntegrityCheck)
     this.internalEventBus.addEventHandler(this.syncService, ExternalServices.IntegrityEvent.IntegrityCheckCompleted)
+    this.internalEventBus.addEventHandler(this.userService, AccountEvent.SignedInOrRegistered)
   }
 
   private clearInternalEventBus(): void {
@@ -1348,7 +1374,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
           case AccountEvent.SignedOut: {
             await this.notifyEvent(ApplicationEvent.SignedOut)
             await this.prepareForDeinit()
-            this.deinit(this.getDeinitMode(), data?.source || DeinitSource.SignOut)
+            this.deinit(this.getDeinitMode(), data?.payload.source || DeinitSource.SignOut)
             break
           }
           default: {
@@ -1738,5 +1764,26 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   private createAuthenticatorManager() {
     this.authenticatorManager = new AuthenticatorManager(this.authenticatorApiService, this.internalEventBus)
+  }
+
+  private createAuthManager() {
+    const authServer = new AuthServer(this.httpService)
+
+    const authApiService = new AuthApiService(authServer)
+
+    this.authManager = new AuthManager(authApiService, this.internalEventBus)
+  }
+
+  private createUseCases() {
+    this._signInWithRecoveryCodes = new SignInWithRecoveryCodes(
+      this.authManager,
+      this.protocolService,
+      this.inMemoryStore,
+      this.options.crypto,
+      this.sessionManager,
+      this.internalEventBus,
+    )
+
+    this._getRecoveryCodes = new GetRecoveryCodes(this.authManager, this.settingsService)
   }
 }
