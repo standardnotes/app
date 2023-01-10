@@ -70,7 +70,7 @@ export class SignInWithRecoveryCodes implements UseCaseInterface<void> {
     })
 
     if (signInResult === false) {
-      return Result.fail('Could not sign in with recovery codes')
+      return Result.fail('Could not sign in with recovery code')
     }
 
     this.inMemoryStore.removeValue(StorageKey.CodeVerifier)

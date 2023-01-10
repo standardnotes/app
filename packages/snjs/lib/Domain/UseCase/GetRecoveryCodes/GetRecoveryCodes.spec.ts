@@ -17,7 +17,7 @@ describe('GetRecoveryCodes', () => {
     settingsClient.getSetting = jest.fn().mockResolvedValue('existing-recovery-codes')
   })
 
-  it('should return existing recovery codes if they exist', async () => {
+  it('should return existing recovery code if they exist', async () => {
     const useCase = createUseCase()
 
     const result = await useCase.execute()
@@ -25,7 +25,7 @@ describe('GetRecoveryCodes', () => {
     expect(result.getValue()).toBe('existing-recovery-codes')
   })
 
-  it('should generate recovery codes if they do not exist', async () => {
+  it('should generate recovery code if they do not exist', async () => {
     settingsClient.getSetting = jest.fn().mockResolvedValue(undefined)
 
     const useCase = createUseCase()
@@ -35,7 +35,7 @@ describe('GetRecoveryCodes', () => {
     expect(result.getValue()).toBe('recovery-codes')
   })
 
-  it('should return error if recovery codes could not be generated', async () => {
+  it('should return error if recovery code could not be generated', async () => {
     settingsClient.getSetting = jest.fn().mockResolvedValue(undefined)
     authClient.generateRecoveryCodes = jest.fn().mockResolvedValue(false)
 

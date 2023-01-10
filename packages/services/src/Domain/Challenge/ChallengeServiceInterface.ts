@@ -20,6 +20,7 @@ export interface ChallengeServiceInterface extends AbstractService {
     subheading?: string,
   ): ChallengeInterface
   completeChallenge(challenge: ChallengeInterface): void
+  promptForAccountPassword(): Promise<boolean>
   getWrappingKeyIfApplicable(passcode?: string): Promise<
     | {
         canceled?: undefined

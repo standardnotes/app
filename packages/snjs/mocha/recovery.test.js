@@ -25,7 +25,7 @@ describe('account recovery', function () {
     localStorage.clear()
   })
 
-  it('should get the same recovery codes at each consecutive call', async () => {
+  it('should get the same recovery code at each consecutive call', async () => {
     let recoveryCodesSetting = await application.settings.getSetting(SettingName.RecoveryCodes)
     expect(recoveryCodesSetting).to.equal(undefined)
 
@@ -39,7 +39,7 @@ describe('account recovery', function () {
     expect(generatedRecoveryCodesAfterFirstCall.getValue()).to.equal(fetchedRecoveryCodesOnTheSecondCall.getValue())
   })
 
-  it('should allow to sign in with recovery codes', async () => {
+  it('should allow to sign in with recovery code', async () => {
     const generatedRecoveryCodes = await application.getRecoveryCodes.execute()
 
     application = await context.signout()
@@ -55,7 +55,7 @@ describe('account recovery', function () {
     expect(await application.protocolService.getRootKey()).to.be.ok
   })
 
-  it('should automatically generate new recovery codes after recovery sign in', async () => {
+  it('should automatically generate new recovery code after recovery sign in', async () => {
     const generatedRecoveryCodes = await application.getRecoveryCodes.execute()
 
     application = await context.signout()
@@ -91,7 +91,7 @@ describe('account recovery', function () {
     expect(await application.isMfaActivated()).to.equal(false)
   })
 
-  it('should not allow to sign in with recovery codes and invalid credentials', async () => {
+  it('should not allow to sign in with recovery code and invalid credentials', async () => {
     const generatedRecoveryCodes = await application.getRecoveryCodes.execute()
 
     application = await context.signout()
@@ -107,7 +107,7 @@ describe('account recovery', function () {
     expect(await application.protocolService.getRootKey()).to.not.be.ok
   })
 
-  it('should not allow to sign in with invalid recovery codes', async () => {
+  it('should not allow to sign in with invalid recovery code', async () => {
     await application.getRecoveryCodes.execute()
 
     application = await context.signout()
@@ -115,7 +115,7 @@ describe('account recovery', function () {
     expect(await application.protocolService.getRootKey()).to.not.be.ok
 
     await application.signInWithRecoveryCodes.execute({
-      recoveryCodes: 'invalid recovery codes',
+      recoveryCodes: 'invalid recovery code',
       username: context.email,
       password: context.paswword,
     })
@@ -123,7 +123,7 @@ describe('account recovery', function () {
     expect(await application.protocolService.getRootKey()).to.not.be.ok
   })
 
-  it('should not allow to sign in with recovery codes if user has none', async () => {
+  it('should not allow to sign in with recovery code if user has none', async () => {
     application = await context.signout()
 
     expect(await application.protocolService.getRootKey()).to.not.be.ok
