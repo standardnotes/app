@@ -107,9 +107,7 @@ const MobilePopoverContent = ({
     <Portal>
       <div
         ref={mergeRefs([popoverElement, animationCallbackRef])}
-        className={classNames(
-          'absolute top-0 left-0 z-modal h-full w-full origin-bottom overflow-y-auto bg-default opacity-0',
-        )}
+        className="absolute top-0 left-0 z-modal flex h-full w-full origin-bottom flex-col bg-default opacity-0"
       >
         <div className="flex items-center justify-between border-b border-border py-2.5 px-3 text-base">
           <div />
@@ -118,7 +116,7 @@ const MobilePopoverContent = ({
             Done
           </button>
         </div>
-        <div className={className}>{children}</div>
+        <div className={classNames('h-full overflow-y-auto', className)}>{children}</div>
       </div>
     </Portal>
   )
