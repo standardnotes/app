@@ -26,8 +26,8 @@ const RecoveryCodesBanner = ({ application }: { application: WebApplication }) =
         <h1 className="sk-h3 m-0 text-sm font-semibold">Save your recovery codes</h1>
       </div>
       <p className="col-start-1 col-end-3 m-0 mt-1 text-sm">
-        Please save and keep your recovery codes in a safe place other than this account. They are the last resort in
-        case you lose your device and are locked out of your account.
+        Your recovery codes allow you access to your account in the event you lose your 2FA authenticating device or
+        app. Save your recovery codes in a safe place outside your account.
       </p>
       {errorMessage && <div>{errorMessage}</div>}
       {!recoveryCodes && (
