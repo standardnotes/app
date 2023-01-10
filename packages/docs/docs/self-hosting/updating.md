@@ -22,7 +22,7 @@ hide_table_of_contents: false
 
 These instructions make the following assumptions:
 
-- You have an existing standalone infrastructure running with our [docker setup](./docker.md)
+- You have an existing standalone infrastructure running with our [docker setup](./docker.md/)
 
 ## Updating
 

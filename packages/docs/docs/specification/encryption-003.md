@@ -157,6 +157,6 @@ For every received item:
 
 Join the [Discord group](https://standardnotes.com/discord) to discuss implementation details and ask any questions you may have.
 
-You can also email [help@standardnotes.org](mailto:help@standardnotes.com).
+You can also email [help@standardnotes.com](mailto:help@standardnotes.com).
 
 Follow [@standardnotes on Twitter](https://twitter.com/standardnotes) for updates and announcements.

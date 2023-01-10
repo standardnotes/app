@@ -53,4 +53,4 @@ We use AGPL-3.0-or-later to protect the community. Without the license, large te
 
 Operating systems such as MacOS, Windows, and Linux allow users to build their own desktop apps and run them on their computer as they please. Similarly, Standard Notes allows developers to build their own editors and use them in their Standard Notes app as they please. Therefore, you can think of Standard Notes as an operating system. The possibilities for building editors (apps) for the Standard Notes operating system are almost endless. Some possibilities to get you started include editors for code, markdown, rich text, passwords, bookmarks, calendars, charts, grids, kanban boards, presentation slides, spreadsheets, timelines, to-do lists, two-factor authentication codes, and other structured secrets. Think of a problem that you want to solve, and try building an editor to solve it.
 
-[Get Started with Building Editors →](./editors-getting-started.md)
+[Get Started with Building Editors →](./editors-getting-started.md/)

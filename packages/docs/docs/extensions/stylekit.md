@@ -16,7 +16,7 @@ hide_table_of_contents: false
 
 Each of the Standard Notes themes use a common set of CSS variables. With the Standard Notes StyleKit, you can use those variables inside the editors.
 
-You can find a list of variables [here](/extensions/themes).
+You can find a list of variables [here](/extensions/themes/).
 
 ## License
 

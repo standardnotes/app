@@ -99,7 +99,7 @@ const HelpAndFeedback = ({ application }: { application: WebApplication }) => {
           <LinkButton
             className="mt-3"
             label="Go to the forum"
-            link="https://forum.standardnotes.org/"
+            link="https://standardnotes.com/forum"
             onClick={handleClick}
           />
         </PreferencesSegment>

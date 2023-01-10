@@ -19,7 +19,7 @@ Themes allow you to customize the look and feel of the Standard Notes app on all
 
 You can view the [source code](https://github.com/sn-extensions/solarized-dark-theme) of our official themes in order to best understand how to create your own theme.
 
-For how to install a theme, please see [Publishing](/extensions/publishing).
+For how to install a theme, please see [Publishing](/extensions/publishing/).
 
 ## Creating a theme
 
@@ -155,7 +155,7 @@ _Note that font and font sizes do not apply to mobile; only desktop/web._
   --link-element-color: var(--sn-stylekit-info-color);
 ```
 
-In order to get SN to display a dock icon for your theme (a circle in the lower right corner of the app that allows you to quickly toggle themes), add the following payload into the your ext.json file when [publishing your theme](/extensions/publishing):
+In order to get SN to display a dock icon for your theme (a circle in the lower right corner of the app that allows you to quickly toggle themes), add the following payload into the your ext.json file when [publishing your theme](/extensions/publishing/):
 
 ```json
 "dock_icon": {
@@ -176,4 +176,4 @@ Since v3.9.15, the items in the notes list use a new variable for the background
 
 ## Licensing
 
-Our themes are provided open-source mainly for educational and quality purposes. You're free to install them on your own servers, but please consider subscribing to [Standard Notes Extended](https://standardnotes.com/extensions) to help sustain future development of the Standard Notes ecosystem.
+Our themes are provided open-source mainly for educational and quality purposes. You're free to install them on your own servers, but please consider subscribing to [Standard Notes Extended](https://standardnotes.com/plans) to help sustain future development of the Standard Notes ecosystem.

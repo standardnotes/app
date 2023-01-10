@@ -17,7 +17,7 @@ hide_title: false
 hide_table_of_contents: false
 ---
 
-If you are experiencing issues with signing in to the apps, you may want to clear the app’s storage. Before proceeding, please sign in to the [web](https://app.standardnotes.org) app (in a different browser, if needed) to confirm that notes, tags, and other items on your notes syncing account that were modified or created on another device were saved and synced to our servers.
+If you are experiencing issues with signing in to the apps, you may want to clear the app’s storage. Before proceeding, please sign in to the [web](https://app.standardnotes.com) app (in a different browser, if needed) to confirm that notes, tags, and other items on your notes syncing account that were modified or created on another device were saved and synced to our servers.
 
 :::warning
 If you do not have an account, do not proceed with these steps until a fix has been made available. You may have some luck in simply entering in your password or passcode several times until the app unlocks.
@@ -25,7 +25,7 @@ If you do not have an account, do not proceed with these steps until a fix has b
 
 ## Mobile
 
-**Please note:** Reinstalling the app on mobile devices may download a backup of your app from the cloud and you might run into the same issue again. Clearing the cache alone is usually not enough to reset the app. If you have an [account](https://app.standardnotes.org) with us and can verify that your changes have synced, then clearing the app's storage will not result in the loss of your notes.
+**Please note:** Reinstalling the app on mobile devices may download a backup of your app from the cloud and you might run into the same issue again. Clearing the cache alone is usually not enough to reset the app. If you have an [account](https://app.standardnotes.com) with us and can verify that your changes have synced, then clearing the app's storage will not result in the loss of your notes.
 
 ### [Android](https://play.google.com/store/apps/details?id=com.standardnotes&hl=en_US)
 
@@ -47,9 +47,9 @@ If you do not have an account, do not proceed with these steps until a fix has b
 4. From there, please reinstall the app and sign in again.
    - You can enable the setting to backup the app to iCloud again, if you would like.
 
-## [Desktop](https://standardnotes.com/download) and [Web](https://app.standardnotes.org)
+## [Desktop](https://standardnotes.com/download) and [Web](https://app.standardnotes.com)
 
-The methods for clearing the storage of the [desktop](https://standardnotes.com/download) and [web](https://app.standardnotes.org) apps are largely similar but require toggling the developer tools, which requires different sets of steps.
+The methods for clearing the storage of the [desktop](https://standardnotes.com/download) and [web](https://app.standardnotes.com) apps are largely similar but require toggling the developer tools, which requires different sets of steps.
 
 ### Desktop
 

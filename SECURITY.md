@@ -3,9 +3,9 @@ Thank you for your work in helping keep Standard Notes safe and secure. If you b
 # Disclosure Policy
 
 - Let us know as soon as possible upon discovery of a potential security issue, and we'll make every
-  effort to quickly resolve the issue. Please email [security@standardnotes.org](mailto:security@standardnotes.org) for a direct response.
+  effort to quickly resolve the issue. Please email [security@standardnotes.com](mailto:security@standardnotes.com) for a direct response.
 - Provide us a reasonable amount of time to resolve the issue before any disclosure to the public or a
-  third-party. We may publicly disclose the issue before resolving it, if appropriate. 
+  third-party. We may publicly disclose the issue before resolving it, if appropriate.
 - Make a good faith effort to avoid privacy violations, destruction of data, and interruption or
   degradation of our service. Only interact with accounts you own or with explicit permission of the
   account holder.
