@@ -29,7 +29,7 @@ import {MarkdownTransformers} from './MarkdownTransformers';
 import {
   SearchPlugin,
   SuperSearchContextProvider,
-} from '../Lexical/Plugins/SearchPlugin';
+} from '../Lexical/Plugins/SearchPlugin/SearchPlugin';
 
 type BlocksEditorProps = {
   onChange?: (value: string, preview: string) => void;
