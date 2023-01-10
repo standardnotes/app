@@ -97,7 +97,7 @@ const MobilePopoverContent = ({
     <Portal>
       <div
         ref={setPopoverElement}
-        className="absolute top-0 left-0 z-modal flex h-full w-full origin-bottom flex-col bg-default opacity-0"
+        className="absolute top-0 left-0 z-modal flex h-full w-full origin-bottom flex-col bg-default pt-safe-top pb-safe-bottom opacity-0"
       >
         <div className="flex items-center justify-between border-b border-border py-2.5 px-3 text-base">
           <div />
