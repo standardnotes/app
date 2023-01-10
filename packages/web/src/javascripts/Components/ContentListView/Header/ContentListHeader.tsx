@@ -76,6 +76,7 @@ const ContentListHeader = ({
             togglePopover={toggleDisplayOptionsMenu}
             align="start"
             className="py-2"
+            title="Display options"
           >
             <DisplayOptionsMenu
               application={application}

@@ -28,6 +28,12 @@ const MobilePopoverContent = ({
         return
       }
 
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+      if (prefersReducedMotion) {
+        return
+      }
+
       if (open) {
         node.animate(
           [
@@ -84,7 +90,7 @@ const MobilePopoverContent = ({
         ref={animationCallbackRef}
         className={classNames('absolute top-0 left-0 z-modal h-full w-full origin-bottom bg-default opacity-0')}
       >
-        <div className="flex items-center justify-between border-b border-border py-2 px-3 text-base">
+        <div className="flex items-center justify-between border-b border-border py-2.5 px-3 text-base">
           <div />
           <div className="font-semibold">{title}</div>
           <button className="font-semibold" onClick={requestClose}>
