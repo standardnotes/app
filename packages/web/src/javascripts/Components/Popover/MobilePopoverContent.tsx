@@ -1,7 +1,6 @@
-import { mergeRefs } from '@/Hooks/mergeRefs'
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 import { classNames } from '@standardnotes/snjs'
-import { ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useLayoutEffect, useState } from 'react'
 import Portal from '../Portal/Portal'
 
 const MobilePopoverContent = ({
@@ -17,7 +16,7 @@ const MobilePopoverContent = ({
   title: string
   className?: string
 }) => {
-  const popoverElement = useRef<HTMLDivElement>(null)
+  const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
 
   const [isMounted, setIsMounted] = useState(() => open)
   useEffect(() => {
@@ -26,68 +25,67 @@ const MobilePopoverContent = ({
     }
   }, [open])
 
-  const animationCallbackRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      if (!node) {
-        return
-      }
+  useEffect(() => {
+    const node = popoverElement
 
-      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    if (!node) {
+      return
+    }
 
-      if (prefersReducedMotion) {
-        return
-      }
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-      if (open) {
-        node.animate(
-          [
-            {
-              opacity: 0,
-              transform: 'scaleY(0)',
-            },
-            {
-              opacity: 1,
-              transform: 'scaleY(1)',
-            },
-          ],
+    if (prefersReducedMotion) {
+      return
+    }
+
+    if (open) {
+      node.animate(
+        [
           {
-            easing: 'ease-in-out',
-            duration: 150,
-            fill: 'forwards',
+            opacity: 0,
+            transform: 'scaleY(0)',
           },
-        )
-      } else {
-        const animation = node.animate(
-          [
-            {
-              opacity: 1,
-              transform: 'scaleY(1)',
-            },
-            {
-              opacity: 0,
-              transform: 'scaleY(0)',
-            },
-          ],
           {
-            easing: 'ease-in-out',
-            duration: 150,
-            fill: 'forwards',
+            opacity: 1,
+            transform: 'scaleY(1)',
           },
-        )
-        animation.finished
-          .then(() => {
-            setIsMounted(false)
-          })
-          .catch(console.error)
-      }
-    },
-    [open],
-  )
+        ],
+        {
+          easing: 'ease-in-out',
+          duration: 150,
+          fill: 'forwards',
+        },
+      )
+    } else {
+      const animation = node.animate(
+        [
+          {
+            opacity: 1,
+            transform: 'scaleY(1)',
+          },
+          {
+            opacity: 0,
+            transform: 'scaleY(0)',
+          },
+        ],
+        {
+          easing: 'ease-in-out',
+          duration: 150,
+          fill: 'forwards',
+        },
+      )
+      animation.finished
+        .then(() => {
+          setIsMounted(false)
+        })
+        .catch(console.error)
+    }
+  }, [open, popoverElement])
 
   useDisableBodyScrollOnMobile()
 
   const correctInitialScrollForOverflowedContent = useCallback(() => {
-    const element = popoverElement.current
+    const element = popoverElement
     if (element) {
       setTimeout(() => {
         element.scrollTop = 0
@@ -106,7 +104,7 @@ const MobilePopoverContent = ({
   return (
     <Portal>
       <div
-        ref={mergeRefs([popoverElement, animationCallbackRef])}
+        ref={setPopoverElement}
         className="absolute top-0 left-0 z-modal flex h-full w-full origin-bottom flex-col bg-default opacity-0"
       >
         <div className="flex items-center justify-between border-b border-border py-2.5 px-3 text-base">
