@@ -9,7 +9,7 @@ import TwoFactorSwitch from './TwoFactorSwitch'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import { WebApplication } from '@/Application/Application'
-import RecoveryCodesBanner from '@/Components/RecoveryCodesBanner/RecoveryCodesBanner'
+import RecoveryCodeBanner from '@/Components/RecoveryCodeBanner/RecoveryCodeBanner'
 
 type Props = {
   auth: TwoFactorAuth
@@ -40,7 +40,7 @@ const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application }) => {
         {auth.status !== 'fetching' && is2FAEnabled(auth.status) && (
           <PreferencesSegment>
             <div className="mt-3">
-              <RecoveryCodesBanner application={application} />
+              <RecoveryCodeBanner application={application} />
             </div>
           </PreferencesSegment>
         )}
