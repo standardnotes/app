@@ -30,25 +30,36 @@ type PopoverAnchorPointProps = {
   anchorElement?: never
 }
 
+type PopoverMutuallyExclusiveProps =
+  | {
+      togglePopover: () => void
+      disableMobileFullscreenTakeover?: never
+    }
+  | {
+      togglePopover?: never
+      disableMobileFullscreenTakeover: boolean
+    }
+
 type CommonPopoverProps = {
   align?: PopoverAlignment
   children: ReactNode
   side?: PopoverSide
   overrideZIndex?: string
-  togglePopover?: () => void
   className?: string
   disableClickOutside?: boolean
-  disableMobileFullscreenTakeover?: boolean
   maxHeight?: (calculatedMaxHeight: number) => number
+  title: string
 }
 
 export type PopoverContentProps = CommonPopoverProps & {
   anchorElement?: HTMLElement | null
   anchorPoint?: Point
   childPopovers: Set<string>
+  togglePopover?: () => void
+  disableMobileFullscreenTakeover?: boolean
   id: string
 }
 
 export type PopoverProps =
-  | (CommonPopoverProps & PopoverAnchorElementProps)
-  | (CommonPopoverProps & PopoverAnchorPointProps)
+  | (CommonPopoverProps & PopoverMutuallyExclusiveProps & PopoverAnchorElementProps)
+  | (CommonPopoverProps & PopoverMutuallyExclusiveProps & PopoverAnchorPointProps)

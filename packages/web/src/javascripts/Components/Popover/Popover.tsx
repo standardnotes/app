@@ -1,6 +1,8 @@
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import { UuidGenerator } from '@standardnotes/snjs'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react'
+import MobilePopoverContent from './MobilePopoverContent'
 import PositionedPopoverContent from './PositionedPopoverContent'
 import { PopoverProps } from './Types'
 
@@ -38,6 +40,7 @@ const Popover = ({
   open,
   overrideZIndex,
   side,
+  title,
   togglePopover,
   disableClickOutside,
   disableMobileFullscreenTakeover,
@@ -87,6 +90,23 @@ const Popover = ({
     }
   }, [addAndroidBackHandler, open, togglePopover])
 
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
+  if (isMobileScreen && !disableMobileFullscreenTakeover) {
+    return (
+      <MobilePopoverContent
+        open={open}
+        requestClose={() => {
+          togglePopover?.()
+        }}
+        title={title}
+        className={className}
+      >
+        {children}
+      </MobilePopoverContent>
+    )
+  }
+
   return open ? (
     <PopoverContext.Provider value={contextValue}>
       <PositionedPopoverContent
@@ -95,13 +115,14 @@ const Popover = ({
         anchorPoint={anchorPoint}
         childPopovers={childPopovers}
         className={`popover-content-container ${className ?? ''}`}
-        id={popoverId.current}
-        overrideZIndex={overrideZIndex}
-        side={side}
-        togglePopover={togglePopover}
         disableClickOutside={disableClickOutside}
         disableMobileFullscreenTakeover={disableMobileFullscreenTakeover}
+        id={popoverId.current}
         maxHeight={maxHeight}
+        overrideZIndex={overrideZIndex}
+        side={side}
+        title={title}
+        togglePopover={togglePopover}
       >
         {children}
       </PositionedPopoverContent>
