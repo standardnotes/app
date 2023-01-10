@@ -39,7 +39,7 @@ const RecoveryCodesBanner = ({ application }: { application: WebApplication }) =
         <div className="group relative mt-2 rounded border border-border py-2 px-3 text-sm font-semibold">
           <StyledTooltip label="Copy to clipboard" className="!z-modal">
             <button
-              className="absolute top-2 right-2 flex rounded border border-border p-1 opacity-0 hover:bg-contrast focus:opacity-100 group-hover:opacity-100"
+              className="absolute top-2 right-2 flex rounded border border-border bg-default p-1 opacity-0 hover:bg-contrast focus:opacity-100 group-hover:opacity-100"
               onClick={() => {
                 void navigator.clipboard.writeText(recoveryCodes)
               }}
