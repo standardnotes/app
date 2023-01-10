@@ -144,6 +144,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
               <Icon type={icon || SmartViewDefaultIconName} />
             </button>
             <Popover
+              title="Choose icon"
               open={shouldShowIconPicker}
               anchorElement={iconPickerButtonRef.current}
               togglePopover={toggleIconPicker}

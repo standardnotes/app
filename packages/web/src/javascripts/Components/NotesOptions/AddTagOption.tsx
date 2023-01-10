@@ -65,6 +65,7 @@ const AddTagOption: FunctionComponent<Props> = ({
         <Icon type="chevron-right" className="text-neutral" />
       </MenuItem>
       <Popover
+        title="Add tag"
         togglePopover={toggleMenu}
         anchorElement={buttonRef.current}
         open={isOpen}

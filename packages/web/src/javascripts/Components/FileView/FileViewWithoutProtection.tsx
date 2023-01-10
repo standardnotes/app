@@ -101,6 +101,7 @@ const FileViewWithoutProtection = ({ application, viewControllerManager, file }:
                 icon="info"
               />
               <Popover
+                title="Details"
                 open={isFileInfoPanelOpen}
                 togglePopover={toggleFileInfoPanel}
                 anchorElement={fileInfoButtonRef.current}

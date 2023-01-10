@@ -47,6 +47,7 @@ const NotesOptionsPanel = ({
     <>
       <RoundIconButton label="Note options menu" onClick={toggleMenu} ref={buttonRef} icon="more" />
       <Popover
+        title="Note options"
         disableClickOutside={disableClickOutside}
         togglePopover={toggleMenu}
         anchorElement={buttonRef.current}

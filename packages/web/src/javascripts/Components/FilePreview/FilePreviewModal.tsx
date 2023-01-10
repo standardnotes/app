@@ -112,6 +112,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
                 <Icon type="more" className="text-neutral" />
               </button>
               <Popover
+                title="File options"
                 open={showOptionsMenu}
                 anchorElement={menuButtonRef.current}
                 togglePopover={() => {

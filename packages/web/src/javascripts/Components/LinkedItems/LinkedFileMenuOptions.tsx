@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import { FileContextMenuBackupOption } from '../FileContextMenu/FileContextMenuBackupOption'
 import Icon from '../Icon/Icon'
+import MenuItem from '../Menu/MenuItem'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import Switch from '../Switch/Switch'
 
@@ -20,8 +21,7 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
 
   return (
     <>
-      <button
-        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+      <MenuItem
         onClick={() => {
           void handleFileAction({
             type: FileItemActionType.PreviewFile,
@@ -35,10 +35,10 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
       >
         <Icon type="file" className="mr-2 text-neutral" />
         Preview file
-      </button>
+      </MenuItem>
       <HorizontalSeparator classes="my-1" />
-      <button
-        className="flex w-full cursor-pointer items-center justify-between border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+      <MenuItem
+        className="justify-between"
         onClick={() => {
           handleFileAction({
             type: FileItemActionType.ToggleFileProtection,
@@ -54,10 +54,9 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
           Password protect
         </span>
         <Switch className="pointer-events-none px-0" tabIndex={FOCUSABLE_BUT_NOT_TABBABLE} checked={isFileProtected} />
-      </button>
+      </MenuItem>
       <HorizontalSeparator classes="my-1" />
-      <button
-        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+      <MenuItem
         onClick={() => {
           handleFileAction({
             type: FileItemActionType.DownloadFile,
@@ -68,9 +67,8 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
       >
         <Icon type="download" className="mr-2 text-neutral" />
         Download
-      </button>
-      <button
-        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+      </MenuItem>
+      <MenuItem
         onClick={() => {
           setIsRenamingFile(true)
           closeMenu()
@@ -78,9 +76,8 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
       >
         <Icon type="pencil" className="mr-2 text-neutral" />
         Rename
-      </button>
-      <button
-        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-1.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none"
+      </MenuItem>
+      <MenuItem
         onClick={() => {
           handleFileAction({
             type: FileItemActionType.DeleteFile,
@@ -91,7 +88,7 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
       >
         <Icon type="trash" className="mr-2 text-danger" />
         <span className="text-danger">Delete permanently</span>
-      </button>
+      </MenuItem>
 
       <FileContextMenuBackupOption file={file} />
     </>

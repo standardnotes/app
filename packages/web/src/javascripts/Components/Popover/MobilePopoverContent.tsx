@@ -1,5 +1,7 @@
+import { mergeRefs } from '@/Hooks/mergeRefs'
+import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 import { classNames } from '@standardnotes/snjs'
-import { ReactNode, useCallback, useEffect, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import Portal from '../Portal/Portal'
 
 const MobilePopoverContent = ({
@@ -15,6 +17,8 @@ const MobilePopoverContent = ({
   title: string
   className?: string
 }) => {
+  const popoverElement = useRef<HTMLDivElement>(null)
+
   const [isMounted, setIsMounted] = useState(() => open)
   useEffect(() => {
     if (open) {
@@ -80,6 +84,21 @@ const MobilePopoverContent = ({
     [open],
   )
 
+  useDisableBodyScrollOnMobile()
+
+  const correctInitialScrollForOverflowedContent = useCallback(() => {
+    const element = popoverElement.current
+    if (element) {
+      setTimeout(() => {
+        element.scrollTop = 0
+      }, 10)
+    }
+  }, [popoverElement])
+
+  useLayoutEffect(() => {
+    correctInitialScrollForOverflowedContent()
+  }, [popoverElement, correctInitialScrollForOverflowedContent])
+
   if (!isMounted) {
     return null
   }
@@ -87,7 +106,7 @@ const MobilePopoverContent = ({
   return (
     <Portal>
       <div
-        ref={animationCallbackRef}
+        ref={mergeRefs([popoverElement, animationCallbackRef])}
         className={classNames('absolute top-0 left-0 z-modal h-full w-full origin-bottom bg-default opacity-0')}
       >
         <div className="flex items-center justify-between border-b border-border py-2.5 px-3 text-base">

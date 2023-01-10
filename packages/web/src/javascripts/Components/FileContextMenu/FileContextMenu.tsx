@@ -22,6 +22,7 @@ const FileContextMenu: FunctionComponent<Props> = observer(
 
     return (
       <Popover
+        title="File options"
         open={showFileContextMenu}
         anchorPoint={fileContextMenuLocation}
         togglePopover={() => setShowFileContextMenu(!showFileContextMenu)}

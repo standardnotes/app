@@ -52,6 +52,7 @@ const SuperNoteOptions = ({ note, markdownShortcut, enableSuperMarkdownPreview }
         <Icon type="chevron-right" className="ml-auto text-neutral" />
       </MenuItem>
       <Popover
+        title="Export note"
         side="left"
         align="start"
         open={isExportMenuOpen}

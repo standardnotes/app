@@ -61,6 +61,7 @@ const AddItemMenuButton = ({
         <Icon type="add" size="custom" className="h-5 w-5" />
       </button>
       <Popover
+        title="Add item"
         open={canShowMenu && isMenuOpen}
         anchorElement={addItemButtonRef.current}
         togglePopover={() => {
