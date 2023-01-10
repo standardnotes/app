@@ -12,6 +12,7 @@ type Props = {
   disabled?: boolean
   onPrivateUsernameModeChange?: (isPrivate: boolean, identifier?: string) => void
   onStrictSignInChange?: (isStrictSignIn: boolean) => void
+  onRecoveryCodesChange?: (isRecoveryCodes: boolean, recoveryCodes?: string) => void
   children?: ReactNode
 }
 
@@ -21,6 +22,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
   disabled = false,
   onPrivateUsernameModeChange,
   onStrictSignInChange,
+  onRecoveryCodesChange,
   children,
 }) => {
   const { server, setServer, enableServerOption, setEnableServerOption } = viewControllerManager.accountMenuController
@@ -28,6 +30,9 @@ const AdvancedOptions: FunctionComponent<Props> = ({
 
   const [isPrivateUsername, setIsPrivateUsername] = useState(false)
   const [privateUsername, setPrivateUsername] = useState('')
+
+  const [isRecoveryCodes, setIsRecoveryCodes] = useState(false)
+  const [recoveryCodes, setRecoveryCodes] = useState('')
 
   const [isStrictSignin, setIsStrictSignin] = useState(false)
 
@@ -60,6 +65,28 @@ const AdvancedOptions: FunctionComponent<Props> = ({
   const handlePrivateUsernameNameChange = useCallback((name: string) => {
     setPrivateUsername(name)
   }, [])
+
+  const handleIsRecoveryCodesChange = useCallback(() => {
+    const newValue = !isRecoveryCodes
+    setIsRecoveryCodes(newValue)
+    onRecoveryCodesChange?.(newValue)
+
+    if (!isRecoveryCodes) {
+      setIsPrivateUsername(false)
+      setIsStrictSignin(false)
+      setEnableServerOption(false)
+    }
+  }, [isRecoveryCodes, setIsPrivateUsername, setIsStrictSignin, setEnableServerOption, onRecoveryCodesChange])
+
+  const handleRecoveryCodesChange = useCallback(
+    (recoveryCodes: string) => {
+      setRecoveryCodes(recoveryCodes)
+      if (recoveryCodes) {
+        onRecoveryCodesChange?.(true, recoveryCodes)
+      }
+    },
+    [onRecoveryCodesChange],
+  )
 
   const handleServerOptionChange: ChangeEventHandler<HTMLInputElement> = useCallback(
     (e) => {
@@ -108,7 +135,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
               name="private-workspace"
               label="Private username mode"
               checked={isPrivateUsername}
-              disabled={disabled}
+              disabled={disabled || isRecoveryCodes}
               onChange={handleIsPrivateUsernameChange}
             />
             <a href="https://standardnotes.com/help/80" target="_blank" rel="noopener noreferrer" title="Learn more">
@@ -125,7 +152,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
                 placeholder="Username"
                 value={privateUsername}
                 onChange={handlePrivateUsernameNameChange}
-                disabled={disabled}
+                disabled={disabled || isRecoveryCodes}
                 spellcheck={false}
                 autocomplete={false}
               />
@@ -138,7 +165,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
                 name="use-strict-signin"
                 label="Use strict sign-in"
                 checked={isStrictSignin}
-                disabled={disabled}
+                disabled={disabled || isRecoveryCodes}
                 onChange={handleStrictSigninChange}
               />
               <a
@@ -152,12 +179,41 @@ const AdvancedOptions: FunctionComponent<Props> = ({
             </div>
           )}
 
+          <div className="mb-1 flex items-center justify-between">
+            <Checkbox
+              name="recovery-codes"
+              label="Recovery codes"
+              checked={isRecoveryCodes}
+              disabled={disabled}
+              onChange={handleIsRecoveryCodesChange}
+            />
+            <a href="https://standardnotes.com/help/80" target="_blank" rel="noopener noreferrer" title="Learn more">
+              <Icon type="info" className="text-neutral" />
+            </a>
+          </div>
+
+          {isRecoveryCodes && (
+            <>
+              <DecoratedInput
+                className={{ container: 'mb-2' }}
+                left={[<Icon type="security" className="text-neutral" />]}
+                type="text"
+                placeholder="Recovery codes"
+                value={recoveryCodes}
+                onChange={handleRecoveryCodesChange}
+                disabled={disabled}
+                spellcheck={false}
+                autocomplete={false}
+              />
+            </>
+          )}
+
           <Checkbox
             name="custom-sync-server"
             label="Custom sync server"
             checked={enableServerOption}
             onChange={handleServerOptionChange}
-            disabled={disabled}
+            disabled={disabled || isRecoveryCodes}
           />
           <DecoratedInput
             type="text"
@@ -165,7 +221,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
             placeholder="https://api.standardnotes.com"
             value={server}
             onChange={handleSyncServerChange}
-            disabled={!enableServerOption && !disabled}
+            disabled={!enableServerOption && !disabled && !isRecoveryCodes}
           />
         </div>
       ) : null}
