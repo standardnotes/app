@@ -388,7 +388,7 @@ export class SNProtectionService extends AbstractService<ProtectionEvent> implem
       if (isNullOrUndefined(length)) {
         SNLog.error(Error('No valid protection session length found. Got ' + length))
       } else {
-        await this.setSessionLength(length as UnprotectedAccessSecondsDuration)
+        this.setSessionLength(length as UnprotectedAccessSecondsDuration)
       }
       return true
     } else {

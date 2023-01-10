@@ -9,7 +9,13 @@ const RecoveryCodeBanner = ({ application }: { application: WebApplication }) =>
   const [recoveryCode, setRecoveryCode] = useState<string>()
   const [errorMessage, setErrorMessage] = useState<string>()
 
-  const onClick = async () => {
+  const onClickShow = async () => {
+    const authorized = await application.challenges.promptForAccountPassword()
+
+    if (!authorized) {
+      return
+    }
+
     const recoveryCodeOrError = await application.getRecoveryCodes.execute()
     if (recoveryCodeOrError.isFailed()) {
       setErrorMessage(recoveryCodeOrError.getError())
@@ -31,7 +37,7 @@ const RecoveryCodeBanner = ({ application }: { application: WebApplication }) =>
       </p>
       {errorMessage && <div>{errorMessage}</div>}
       {!recoveryCode && (
-        <Button primary small className="col-start-1 col-end-3 mt-3 justify-self-start uppercase" onClick={onClick}>
+        <Button primary small className="col-start-1 col-end-3 mt-3 justify-self-start uppercase" onClick={onClickShow}>
           Show Recovery Code
         </Button>
       )}
