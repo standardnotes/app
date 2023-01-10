@@ -35,9 +35,7 @@ const RecoveryCodesBanner = ({ application }: { application: WebApplication }) =
         </Button>
       )}
       {recoveryCodes && (
-        <p>
-          <strong>{recoveryCodes}</strong>
-        </p>
+        <div className="mt-2 rounded border border-border py-2 px-3 text-sm font-semibold">{recoveryCodes}</div>
       )}
     </div>
   )

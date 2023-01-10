@@ -39,7 +39,9 @@ const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application }) => {
         )}
         {auth.status !== 'fetching' && is2FAEnabled(auth.status) && (
           <PreferencesSegment>
-            <RecoveryCodesBanner application={application} />
+            <div className="mt-3">
+              <RecoveryCodesBanner application={application} />
+            </div>
           </PreferencesSegment>
         )}
       </PreferencesGroup>
