@@ -104,7 +104,7 @@ const SessionsModalContent: FunctionComponent<{
 
   return (
     <>
-      <ModalDialog onDismiss={close} className="sessions-modal max-h-[90vh]">
+      <ModalDialog open={true} requestClose={close} className="sessions-modal max-h-[90vh]">
         <ModalDialogLabel
           headerButtons={
             <Button small colorStyle="info" onClick={refresh}>

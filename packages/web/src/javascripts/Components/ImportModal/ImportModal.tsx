@@ -5,7 +5,7 @@ import { observer } from 'mobx-react-lite'
 import { useCallback, useReducer, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
 import Button from '../Button/Button'
-import { useStateRef } from '../Panes/useStateRef'
+import { useStateRef } from '../../Hooks/useStateRef'
 import ModalDialog from '../Shared/ModalDialog'
 import ModalDialogButtons from '../Shared/ModalDialogButtons'
 import ModalDialogDescription from '../Shared/ModalDialogDescription'
@@ -190,12 +190,8 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
     })
   }, [state.importTag, viewControllerManager.isImportModalVisible, viewControllerManager.navigationController])
 
-  if (!viewControllerManager.isImportModalVisible.get()) {
-    return null
-  }
-
   return (
-    <ModalDialog>
+    <ModalDialog open={viewControllerManager.isImportModalVisible.get()} requestClose={closeDialog}>
       <ModalDialogLabel closeDialog={closeDialog}>Import</ModalDialogLabel>
       <ModalDialogDescription>
         {!files.length && <ImportModalInitialPage dispatch={dispatch} />}

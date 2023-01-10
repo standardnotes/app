@@ -1,6 +1,8 @@
+import { EnterFromBelowAnimation, ExitToBelowAnimation } from '@/Constants/Animations'
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
+import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
 import { classNames } from '@standardnotes/snjs'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode } from 'react'
 import Portal from '../Portal/Portal'
 
 const MobilePopoverContent = ({
@@ -16,76 +18,14 @@ const MobilePopoverContent = ({
   title: string
   className?: string
 }) => {
-  const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
-
-  const [isMounted, setIsMounted] = useState(() => open)
-  useEffect(() => {
-    if (open) {
-      setIsMounted(open)
-    }
-  }, [open])
-
-  useEffect(() => {
-    const node = popoverElement
-
-    if (!node) {
-      return
-    }
-
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-
-    if (prefersReducedMotion) {
-      return
-    }
-
-    if (open) {
-      const animation = node.animate(
-        [
-          {
-            opacity: 0,
-            transform: 'scaleY(0)',
-          },
-          {
-            opacity: 1,
-            transform: 'scaleY(1)',
-          },
-        ],
-        {
-          easing: 'ease-in-out',
-          duration: 150,
-          fill: 'forwards',
-        },
-      )
-      animation.finished
-        .then(() => {
-          node.scrollTop = 0
-        })
-        .catch(console.error)
-    } else {
-      const animation = node.animate(
-        [
-          {
-            opacity: 1,
-            transform: 'scaleY(1)',
-          },
-          {
-            opacity: 0,
-            transform: 'scaleY(0)',
-          },
-        ],
-        {
-          easing: 'ease-in-out',
-          duration: 150,
-          fill: 'forwards',
-        },
-      )
-      animation.finished
-        .then(() => {
-          setIsMounted(false)
-        })
-        .catch(console.error)
-    }
-  }, [open, popoverElement])
+  const [isMounted, setPopoverElement] = useLifecycleAnimation({
+    open,
+    enter: EnterFromBelowAnimation,
+    enterCallback: (element) => {
+      element.scrollTop = 0
+    },
+    exit: ExitToBelowAnimation,
+  })
 
   useDisableBodyScrollOnMobile()
 
