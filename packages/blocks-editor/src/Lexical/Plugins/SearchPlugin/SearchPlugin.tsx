@@ -7,11 +7,12 @@ import {createSearchHighlightElement} from './createSearchHighlightElement';
 import {useSuperSearchContext} from './Context';
 import {SearchDialog} from './SearchDialog';
 import {getAllTextNodesInElement} from './getAllTextNodesInElement';
+import {SearchResult} from './Types';
 
 export const SearchPlugin = () => {
   const [editor] = useLexicalComposerContext();
   const [showDialog, setShowDialog] = useState(false);
-  const {searchQuery, currentResultIndex, results, addResult, clearResults} =
+  const {searchQuery, currentResultIndex, results, setResults, clearResults} =
     useSuperSearchContext();
 
   useEffect(() => {
@@ -58,6 +59,8 @@ export const SearchPlugin = () => {
 
       const textNodes = getAllTextNodesInElement(rootElement);
 
+      const results: SearchResult[] = [];
+
       textNodes.forEach((node) => {
         const text = node.textContent || '';
 
@@ -72,13 +75,14 @@ export const SearchPlugin = () => {
           const startIndex = index;
           const endIndex = startIndex + searchQuery.length;
 
-          addResult({
+          results.push({
             node,
             startIndex,
             endIndex,
           });
         });
-      });
+      }),
+        setResults(results);
     });
   }, []);
 

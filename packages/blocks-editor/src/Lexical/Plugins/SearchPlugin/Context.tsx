@@ -13,6 +13,7 @@ type SuperSearchContextData = {
   setSearchQuery: (searchQuery: string) => void;
   results: SearchResult[];
   addResult: (result: SearchResult) => void;
+  setResults: (results: SearchResult[]) => void;
   clearResults: () => void;
   currentResultIndex: number;
   setCurrentResultIndex: (currentResultIndex: number) => void;
@@ -82,6 +83,7 @@ export const SuperSearchContextProvider = ({
       results,
       addResult,
       clearResults,
+      setResults,
       currentResultIndex,
       setCurrentResultIndex,
       goToNextResult,
@@ -93,6 +95,7 @@ export const SuperSearchContextProvider = ({
       results,
       addResult,
       clearResults,
+      setResults,
       currentResultIndex,
       setCurrentResultIndex,
       goToNextResult,
