@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.35...@standardnotes/encryption@1.20.0) (2023-01-09)
+
+### Features
+
+* **snjs:** add sign in with recovery codes use case ([#2130](https://github.com/standardnotes/app/issues/2130)) ([be028ff](https://github.com/standardnotes/app/commit/be028ff87bb5306fc266b70567cbea8a13547e7e))
+
 ## [1.19.35](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.19.34...@standardnotes/encryption@1.19.35) (2023-01-06)
 
 **Note:** Version bump only for package @standardnotes/encryption

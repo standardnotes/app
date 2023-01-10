@@ -24,7 +24,7 @@ import {
   Challenge,
 } from '@standardnotes/services'
 import { Base64String } from '@standardnotes/sncrypto-common'
-import { ClientDisplayableError } from '@standardnotes/responses'
+import { ClientDisplayableError, SessionBody } from '@standardnotes/responses'
 import { CopyPayloadWithContentOverride } from '@standardnotes/models'
 import { isNullOrUndefined } from '@standardnotes/utils'
 import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
@@ -306,7 +306,12 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
       throw new ApiCallError((registerResponse.data as HttpErrorResponseBody).error.message)
     }
 
-    await this.handleAuthResponse(registerResponse.data, rootKey, wrappingKey)
+    await this.handleAuthentication({
+      rootKey,
+      wrappingKey,
+      session: registerResponse.data.session,
+      user: registerResponse.data.user,
+    })
 
     return registerResponse.data
   }
@@ -640,22 +645,30 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     this.setSession(session)
   }
 
-  private async handleAuthResponse(body: UserRegistrationResponseBody, rootKey: SNRootKey, wrappingKey?: SNRootKey) {
+  async handleAuthentication(dto: {
+    session: SessionBody
+    user: {
+      uuid: string
+      email: string
+    }
+    rootKey: SNRootKey
+    wrappingKey?: SNRootKey
+  }): Promise<void> {
     const session = this.createSession(
-      body.session.access_token,
-      body.session.access_expiration,
-      body.session.refresh_token,
-      body.session.refresh_expiration,
-      body.session.readonly_access,
+      dto.session.access_token,
+      dto.session.access_expiration,
+      dto.session.refresh_token,
+      dto.session.refresh_expiration,
+      dto.session.readonly_access,
     )
 
     if (session !== null) {
-      await this.populateSession(rootKey, body.user, session, this.apiService.getHost(), wrappingKey)
+      await this.populateSession(dto.rootKey, dto.user, session, this.apiService.getHost(), dto.wrappingKey)
     }
   }
 
   /**
-   * @deprecated use handleAuthResponse instead
+   * @deprecated use handleAuthentication instead
    */
   private async handleSuccessAuthResponse(
     response: Responses.SignInResponse | Responses.ChangeCredentialsResponse,

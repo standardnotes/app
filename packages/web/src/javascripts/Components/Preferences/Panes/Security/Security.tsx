@@ -27,7 +27,11 @@ const Security: FunctionComponent<SecurityProps> = (props) => {
         <ErroredItems viewControllerManager={props.viewControllerManager} />
       )}
       <Protections application={props.application} />
-      <TwoFactorAuthWrapper mfaProvider={props.mfaProvider} userProvider={props.userProvider} />
+      <TwoFactorAuthWrapper
+        mfaProvider={props.mfaProvider}
+        userProvider={props.userProvider}
+        application={props.application}
+      />
       {isNativeMobileWeb && <MultitaskingPrivacy application={props.application} />}
       <PasscodeLock viewControllerManager={props.viewControllerManager} application={props.application} />
       {isNativeMobileWeb && <BiometricsLock application={props.application} />}

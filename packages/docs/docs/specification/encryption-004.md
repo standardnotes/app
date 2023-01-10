@@ -17,7 +17,7 @@ hide_table_of_contents: false
 
 The 004 protocol upgrade centers around a system that makes it easy and painless to upgrade to a future protocol version, as well as more modern cryptographic primitives.
 
-This page is a copy of the specification file located at [github.com/standardnotes/snjs](https://github.com/standardnotes/snjs/blob/master/packages/snjs/specification.md).
+This page is a copy of the specification file located at [github.com/standardnotes/snjs](https://github.com/standardnotes/app/blob/main/packages/snjs/specification.md).
 
 ## Introduction
 
@@ -338,8 +338,8 @@ result = ['004', nonce, ciphertext, encoded_authenticated_data].join(':')
 
 ## Next Steps
 
-Join the [Discord group](https://standardnotes.com/Discord) to discuss implementation details and ask any questions you may have.
+Join the [Discord group](https://standardnotes.com/discord) to discuss implementation details and ask any questions you may have.
 
-You can also email [help@standardnotes.org](mailto:help@standardnotes.com).
+You can also email [help@standardnotes.com](mailto:help@standardnotes.com).
 
 Follow [@standardnotes on Twitter](https://twitter.com/standardnotes) for updates and announcements.

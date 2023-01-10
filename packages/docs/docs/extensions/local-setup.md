@@ -42,7 +42,7 @@ To get your extension running locally, both of these components must be hosted o
 
 1. In your extension's root directory, create a file called `ext.json`.
 
-1. Place, at minimum, the following key/value pairs. For the full listing of keys, see the [Publishing guide](/extensions/publishing).
+1. Place, at minimum, the following key/value pairs. For the full listing of keys, see the [Publishing guide](/extensions/publishing/).
 
    ```json
    {
@@ -56,7 +56,7 @@ To get your extension running locally, both of these components must be hosted o
    ```
 
    The `url` should point to where your extension's index.html is hosted on your local server.
-   The `area` describes what kind of extension this will be. A list of valid values can be found in the [Publishing guide](/extensions/publishing).
+   The `area` describes what kind of extension this will be. A list of valid values can be found in the [Publishing guide](/extensions/publishing/).
 
 1. In your browser, open http://localhost:8001/ext.json and make sure you see the JSON file content from above.
 
@@ -82,4 +82,4 @@ If you're creating a theme, you would follow the same instructions, and for `are
 
 ### Publishing
 
-Once you're ready to ship your extension in a production environment, check out the [Publishing guide](/extensions/publishing) to learn more about configuring your extension to autoupdate and be installed in an offline environment.
+Once you're ready to ship your extension in a production environment, check out the [Publishing guide](/extensions/publishing/) to learn more about configuring your extension to autoupdate and be installed in an offline environment.

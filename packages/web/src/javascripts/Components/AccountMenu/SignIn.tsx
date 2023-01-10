@@ -23,6 +23,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
   const { notesAndTagsCount } = viewControllerManager.accountMenuController
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [recoveryCodes, setRecoveryCodes] = useState('')
   const [error, setError] = useState('')
   const [isEphemeral, setIsEphemeral] = useState(false)
 
@@ -30,6 +31,8 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
   const [isSigningIn, setIsSigningIn] = useState(false)
   const [shouldMergeLocal, setShouldMergeLocal] = useState(true)
   const [isPrivateUsername, setIsPrivateUsername] = useState(false)
+
+  const [isRecoverySignIn, setIsRecoverySignIn] = useState(false)
 
   const emailInputRef = useRef<HTMLInputElement>(null)
   const passwordInputRef = useRef<HTMLInputElement>(null)
@@ -72,6 +75,16 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
     setIsStrictSignin(!isStrictSignin)
   }, [isStrictSignin])
 
+  const onRecoveryCodesChange = useCallback(
+    (newIsRecoverySignIn: boolean, recoveryCodes?: string) => {
+      setIsRecoverySignIn(newIsRecoverySignIn)
+      if (newIsRecoverySignIn && recoveryCodes) {
+        setRecoveryCodes(recoveryCodes)
+      }
+    },
+    [setRecoveryCodes],
+  )
+
   const handleShouldMergeChange = useCallback(() => {
     setShouldMergeLocal(!shouldMergeLocal)
   }, [shouldMergeLocal])
@@ -100,6 +113,34 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
       })
   }, [viewControllerManager, application, email, isEphemeral, isStrictSignin, password, shouldMergeLocal])
 
+  const recoverySignIn = useCallback(() => {
+    setIsSigningIn(true)
+    emailInputRef?.current?.blur()
+    passwordInputRef?.current?.blur()
+
+    application.signInWithRecoveryCodes
+      .execute({
+        recoveryCodes,
+        username: email,
+        password: password,
+      })
+      .then((result) => {
+        if (result.isFailed()) {
+          throw new Error(result.getError())
+        }
+        viewControllerManager.accountMenuController.closeAccountMenu()
+      })
+      .catch((err) => {
+        console.error(err)
+        setError(err.message ?? err.toString())
+        setPassword('')
+        passwordInputRef?.current?.blur()
+      })
+      .finally(() => {
+        setIsSigningIn(false)
+      })
+  }, [viewControllerManager, application, email, password, recoveryCodes])
+
   const onPrivateUsernameChange = useCallback(
     (newisPrivateUsername: boolean, privateUsernameIdentifier?: string) => {
       setIsPrivateUsername(newisPrivateUsername)
@@ -124,9 +165,14 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
         return
       }
 
+      if (isRecoverySignIn) {
+        recoverySignIn()
+        return
+      }
+
       signIn()
     },
-    [email, password, signIn],
+    [email, password, isRecoverySignIn, signIn, recoverySignIn],
   )
 
   const handleKeyDown: KeyboardEventHandler = useCallback(
@@ -188,7 +234,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
           name="is-ephemeral"
           label="Stay signed in"
           checked={!isEphemeral}
-          disabled={isSigningIn}
+          disabled={isSigningIn || isRecoverySignIn}
           onChange={handleEphemeralChange}
         />
         {notesAndTagsCount > 0 ? (
@@ -208,6 +254,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
         disabled={isSigningIn}
         onPrivateUsernameModeChange={onPrivateUsernameChange}
         onStrictSignInChange={handleStrictSigninChange}
+        onRecoveryCodesChange={onRecoveryCodesChange}
       />
     </>
   )

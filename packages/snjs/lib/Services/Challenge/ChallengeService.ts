@@ -15,6 +15,7 @@ import {
   ChallengePromptInterface,
   ChallengePrompt,
   EncryptionService,
+  ChallengeStrings,
 } from '@standardnotes/services'
 import { ChallengeResponse } from './ChallengeResponse'
 import { ChallengeOperation } from './ChallengeOperation'
@@ -107,6 +108,27 @@ export class ChallengeService extends AbstractService implements ChallengeServic
     }
     const value = response.getValueForType(ChallengeValidation.LocalPasscode)
     return value.value as string
+  }
+
+  async promptForAccountPassword(): Promise<boolean> {
+    if (!this.protocolService.hasAccount()) {
+      throw Error('Requiring account password for challenge with no account')
+    }
+
+    const response = await this.promptForChallengeResponse(
+      new Challenge(
+        [new ChallengePrompt(ChallengeValidation.AccountPassword)],
+        ChallengeReason.Custom,
+        true,
+        ChallengeStrings.EnterAccountPassword,
+      ),
+    )
+
+    if (response) {
+      return true
+    } else {
+      return false
+    }
   }
 
   /**

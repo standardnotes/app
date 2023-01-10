@@ -24,7 +24,7 @@ The web application is an optional process that you must spin up separately. How
 
 The fastest and easiest way to get up and running is to use our automated Docker setup. All you need is a Linux server and the latest version of [Docker](https://docs.docker.com/get-started).
 
-[Check out our Docker instructions page to get started →](./docker.md)
+[Check out our Docker instructions page to get started →](./docker.md/)
 
 :::
 
@@ -68,5 +68,5 @@ If you would like to self-host the actual Standard Notes web application, visit 
 
 ## Self-hosting without Docker?
 
-Configuring the full Standard Notes architecture manually can be challenging without detailed study. We do not offer support for this method of self-hosting. [The only supported self-hosting method is to use Docker →](./docker.md)
+Configuring the full Standard Notes architecture manually can be challenging without detailed study. We do not offer support for this method of self-hosting. [The only supported self-hosting method is to use Docker →](./docker.md/)
 

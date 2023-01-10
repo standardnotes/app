@@ -1,0 +1,23 @@
+import { AuthClientInterface } from '@standardnotes/services'
+import { Result, UseCaseInterface } from '@standardnotes/domain-core'
+import { SettingName } from '@standardnotes/settings'
+
+import { SettingsClientInterface } from '@Lib/Services/Settings/SettingsClientInterface'
+
+export class GetRecoveryCodes implements UseCaseInterface<string> {
+  constructor(private authClient: AuthClientInterface, private settingsClient: SettingsClientInterface) {}
+
+  async execute(): Promise<Result<string>> {
+    const existingRecoveryCodes = await this.settingsClient.getSetting(SettingName.RecoveryCodes)
+    if (existingRecoveryCodes !== undefined) {
+      return Result.ok(existingRecoveryCodes)
+    }
+
+    const generatedRecoveryCodes = await this.authClient.generateRecoveryCodes()
+    if (generatedRecoveryCodes === false) {
+      return Result.fail('Could not generate recovery code')
+    }
+
+    return Result.ok(generatedRecoveryCodes)
+  }
+}

@@ -1,19 +1,22 @@
 import { FunctionComponent } from 'react'
 import { Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { observer } from 'mobx-react-lite'
-import { is2FAActivation, TwoFactorAuth } from '../TwoFactorAuth'
+import { is2FAActivation, is2FAEnabled, TwoFactorAuth } from '../TwoFactorAuth'
 import TwoFactorActivationView from '../TwoFactorActivationView'
 import TwoFactorTitle from './TwoFactorTitle'
 import TwoFactorDescription from './TwoFactorDescription'
 import TwoFactorSwitch from './TwoFactorSwitch'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
+import { WebApplication } from '@/Application/Application'
+import RecoveryCodeBanner from '@/Components/RecoveryCodeBanner/RecoveryCodeBanner'
 
 type Props = {
   auth: TwoFactorAuth
+  application: WebApplication
 }
 
-const TwoFactorAuthView: FunctionComponent<Props> = ({ auth }) => {
+const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application }) => {
   return (
     <>
       <PreferencesGroup>
@@ -32,6 +35,13 @@ const TwoFactorAuthView: FunctionComponent<Props> = ({ auth }) => {
         {auth.errorMessage != null && (
           <PreferencesSegment>
             <Text className="text-danger">{auth.errorMessage}</Text>
+          </PreferencesSegment>
+        )}
+        {auth.status !== 'fetching' && is2FAEnabled(auth.status) && (
+          <PreferencesSegment>
+            <div className="mt-3">
+              <RecoveryCodeBanner application={application} />
+            </div>
           </PreferencesSegment>
         )}
       </PreferencesGroup>
