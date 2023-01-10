@@ -182,7 +182,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
           <div className="mb-1 flex items-center justify-between">
             <Checkbox
               name="recovery-codes"
-              label="Use recovery codes"
+              label="Use recovery code"
               checked={isRecoveryCodes}
               disabled={disabled}
               onChange={handleIsRecoveryCodesChange}
@@ -195,7 +195,7 @@ const AdvancedOptions: FunctionComponent<Props> = ({
                 className={{ container: 'mb-2' }}
                 left={[<Icon type="security" className="text-neutral" />]}
                 type="text"
-                placeholder="Recovery codes"
+                placeholder="Recovery code"
                 value={recoveryCodes}
                 onChange={handleRecoveryCodesChange}
                 disabled={disabled}

@@ -150,17 +150,17 @@ describe('SignInWithRecoveryCodes', () => {
     expect(result.getError()).toEqual('The protocol version associated with your account is outdated and no longer supported by this application. Please visit standardnotes.com/help/security for more information.')
   })
 
-  it('should fail if the sign in with recovery codes fails', async () => {
+  it('should fail if the sign in with recovery code fails', async () => {
     authManager.signInWithRecoveryCodes = jest.fn().mockReturnValue(false)
 
     const useCase = createUseCase()
     const result = await useCase.execute({ recoveryCodes: 'recovery-codes', password: 'foobar', username: 'test@test.te' })
 
     expect(result.isFailed()).toBe(true)
-    expect(result.getError()).toEqual('Could not sign in with recovery codes')
+    expect(result.getError()).toEqual('Could not sign in with recovery code')
   })
 
-  it('should sign in with recovery codes', async () => {
+  it('should sign in with recovery code', async () => {
     authManager.signInWithRecoveryCodes = jest.fn().mockReturnValue({
       keyParams: {} as AnyKeyParamsContent,
       session: {} as SessionBody,

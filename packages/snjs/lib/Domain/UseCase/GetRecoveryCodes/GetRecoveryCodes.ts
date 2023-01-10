@@ -15,7 +15,7 @@ export class GetRecoveryCodes implements UseCaseInterface<string> {
 
     const generatedRecoveryCodes = await this.authClient.generateRecoveryCodes()
     if (generatedRecoveryCodes === false) {
-      return Result.fail('Could not generate recovery codes')
+      return Result.fail('Could not generate recovery code')
     }
 
     return Result.ok(generatedRecoveryCodes)
