@@ -1,6 +1,6 @@
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 import { classNames } from '@standardnotes/snjs'
-import { ReactNode, useCallback, useEffect, useLayoutEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import Portal from '../Portal/Portal'
 
 const MobilePopoverContent = ({
@@ -39,7 +39,7 @@ const MobilePopoverContent = ({
     }
 
     if (open) {
-      node.animate(
+      const animation = node.animate(
         [
           {
             opacity: 0,
@@ -56,6 +56,11 @@ const MobilePopoverContent = ({
           fill: 'forwards',
         },
       )
+      animation.finished
+        .then(() => {
+          node.scrollTop = 0
+        })
+        .catch(console.error)
     } else {
       const animation = node.animate(
         [
@@ -83,19 +88,6 @@ const MobilePopoverContent = ({
   }, [open, popoverElement])
 
   useDisableBodyScrollOnMobile()
-
-  const correctInitialScrollForOverflowedContent = useCallback(() => {
-    const element = popoverElement
-    if (element) {
-      setTimeout(() => {
-        element.scrollTop = 0
-      }, 10)
-    }
-  }, [popoverElement])
-
-  useLayoutEffect(() => {
-    correctInitialScrollForOverflowedContent()
-  }, [popoverElement, correctInitialScrollForOverflowedContent])
 
   if (!isMounted) {
     return null
