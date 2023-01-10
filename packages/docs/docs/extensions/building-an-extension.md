@@ -57,7 +57,7 @@ In this example, we'll use our blank-slate ReactJS template to build a utility b
 
 1. You should now see "Blank Slate" at the bottom left of your notes. Clicking on it should raise a little window which displays "Your component is ready". If you try in your browser, it is possible that the window instead remains white. This is most likely due to your browser blocking Mixed Content page. Search online for how to enable it for your browser.
 
-More detailed instructions on setting up your local environment can be found in the [Local Setup tutorial](/extensions/local-setup).
+More detailed instructions on setting up your local environment can be found in the [Local Setup tutorial](/extensions/local-setup/).
 
 ## Writing the App
 
@@ -136,8 +136,8 @@ Areas tell Standard Notes where to display a particular component. The current l
 
 There are an unlimited number of things you can build with components that do anything from nested folders in the tags pane and autocomplete in the editor pane, to pushing notes to GitHub or WordPress.
 
-To see how we built [our own components](https://standardnotes.com/extensions), study the source code [available here](https://github.com/sn-extensions).
+To see how we built [our own components](https://standardnotes.com/features), study the source code [available here](https://github.com/standardnotes/plugins).
 
-For questions on development, [post in the forum](https://forum.standardnotes.org) or [join our Discord](https://standardnotes.com/discord).
+For questions on development, [post in the forum](https://standardnotes.com/forum) or [join our Discord](https://standardnotes.com/discord).
 
-If you'd like to support Standard Notes and use our secure hosting to install all the components we have to offer, consider purchasing the [Extended subscription](https://standardnotes.com/extended).
+If you'd like to support Standard Notes and use our secure hosting to install all the components we have to offer, consider purchasing the [Extended subscription](https://standardnotes.com/plans).

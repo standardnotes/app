@@ -226,7 +226,7 @@ Due to mounted volumes, we recommend running the setup as a root user. If you wi
 
 ## Securing your server
 
-To start using your new server with the Standard Notes app at `app.standardnotes.com,` you have to configure an HTTPS reverse proxy. Head over to [Securing HTTP traffic of your Sync server](./https-support.md) for more information on how to set up a reverse proxy.
+To start using your new server with the Standard Notes app at `app.standardnotes.com,` you have to configure an HTTPS reverse proxy. Head over to [Securing HTTP traffic of your Sync server](./https-support.md/) for more information on how to set up a reverse proxy.
 
 ## Using your new server
 

@@ -23,7 +23,7 @@ These instructions will enable you to secure HTTP traffic of your standalone inf
 
 #### Pre-requisites
 
-- Your standalone infrastructure is running on our [docker](./docker.md) setup
+- Your standalone infrastructure is running on our [docker](./docker.md/) setup
 - You've installed `nginx` in your server.
 - You've configured a domain name (or subdomain) to point to your server's IP address.
 

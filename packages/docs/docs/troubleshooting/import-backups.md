@@ -26,7 +26,7 @@ hide_table_of_contents: false
 We are aware of issues with importing backups belonging to another account when that account is still registered, such as when you are [changing your account email](https://standardnotes.com/help/7/how-can-i-change-my-account-email). If you are signed in to your new account, some tags are duplicated and are not properly assigned to notes and a significant number of notes, tags and/or editors are not imported. We are working on a fix. As a temporary workaround, you can import the backup while signed out of the app before signing in to the new account. Then, when you sign in, choose to merge local data (this is an option that is on by default).
 
 :::note
-For the best experience, use a backup that was exported from the [web](https://app.standardnotes.org) or desktop app. A backup that was generated from [CloudLink](https://standardnotes.com/help/27/how-do-i-enable-dropbox-google-drive-or-onedrive-backups) may not work as well.
+For the best experience, use a backup that was exported from the [web](https://app.standardnotes.com) or desktop app. A backup that was generated from [CloudLink](https://standardnotes.com/help/27/how-do-i-enable-dropbox-google-drive-or-onedrive-backups) may not work as well.
 :::
 
 ## Clear your account
@@ -39,7 +39,7 @@ There are two ways to clear your account: delete everything using the free Batch
 
 After clearing your new account, please download a backup from your old account and import it into your new account while merging local data:
 
-1. Open the [web app](https://app.standardnotes.org) or desktop app.
+1. Open the [web app](https://app.standardnotes.com) or desktop app.
 
 2. Export an encrypted or decrypted backup from your old account via the **Account** menu at the bottom left corner of the app.
 

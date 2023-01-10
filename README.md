@@ -37,7 +37,7 @@ Join us on
 
 - [Discord](https://standardnotes.com/discord)
 - [Twitter](https://twitter.com/StandardNotes)
-- [Forum](https://forum.standardnotes.org)
+- [Forum](https://standardnotes.com/forum)
 
 Developers can create and publish their own extensions. Visit the [documentation hub](https://docs.standardnotes.com/) to learn more.
 

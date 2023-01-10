@@ -20,16 +20,16 @@ This documentation explains how to get started with using Standard Notes, publis
 
 ## Topics
 
-- [Self-hosting a Syncing Server](/self-hosting/getting-started)
-- [Developing Extensions](/extensions/intro)
-- [Client Encryption API](/specification/encryption)
+- [Self-hosting a Syncing Server](/self-hosting/getting-started/)
+- [Developing Extensions](/extensions/intro/)
+- [Client Encryption API](/specification/encryption/)
 
 ## Staying informed
 
 - [GitHub](https://github.com/standardnotes)
 - [Discord](https://standardnotes.com/discord)
 - [Twitter](https://twitter.com/standardnotes)
-- [Blog](https://blog.standardnotes.org)
+- [Blog](https://standardnotes.com/blog)
 
 ## Something missing?
 

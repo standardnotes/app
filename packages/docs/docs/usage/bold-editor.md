@@ -36,7 +36,7 @@ Changing the editor for a note to the Bold Editor will add `html` tags around ea
 
 If you want to convert a note from HTML to plaintext, you will need to remove these tags manually or by using a separate text editor such as [VS Code](https://code.visualstudio.com/) or [Atom](https://atom.io) because we do not yet have a "find and replace" feature. If you would like to test the Bold Editor with your note, you can restore a previous copy of the note in the Session History. If you restore an old copy, then any changes made with the Bold Editor will be lost.
 
-The search feature in the [Minimist editor](https://standardnotes.com/extensions/markdown-minimist) may help you remove the tags manually.
+The search feature in the [Minimist editor](https://standardnotes.com/features/markdown-minimist) may help you remove the tags manually.
 
 ## Keyboard Shortcuts
 

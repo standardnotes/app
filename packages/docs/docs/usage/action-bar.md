@@ -50,7 +50,7 @@ The Action Bar is written in JavaScript and compiled with Grunt.
 1. Clone the [action-bar](https://github.com/standardnotes/action-bar) repository from GitHub.
 2. Run `npm install` to install required dependencies.
 3. Ensure that either the Standard Notes desktop app is available for use or the web app is accessible. Use both locally or with an Extended account (or the extension will not load).
-4. Follow the instructions [here](/extensions/local-setup) to setup the extension locally.
+4. Follow the instructions [here](/extensions/local-setup/) to setup the extension locally.
    - For the `area` property, use `editor-stack`
 5. Begin development! Upon making any changes to the code, run `grunt` to build the files to the `dist` folder.
 
