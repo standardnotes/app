@@ -182,14 +182,11 @@ const AdvancedOptions: FunctionComponent<Props> = ({
           <div className="mb-1 flex items-center justify-between">
             <Checkbox
               name="recovery-codes"
-              label="Recovery codes"
+              label="Use recovery codes"
               checked={isRecoveryCodes}
               disabled={disabled}
               onChange={handleIsRecoveryCodesChange}
             />
-            <a href="https://standardnotes.com/help/80" target="_blank" rel="noopener noreferrer" title="Learn more">
-              <Icon type="info" className="text-neutral" />
-            </a>
           </div>
 
           {isRecoveryCodes && (
