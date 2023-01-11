@@ -58,7 +58,7 @@ const ComplexCompoundExampleCode = `{
 }
 `
 
-const AddSmartViewModal = ({ controller, platform }: Props) => {
+const AddSmartViewModalContent = observer(({ controller, platform }: Props) => {
   const {
     isSaving,
     title,
@@ -118,7 +118,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
   }, [isCustomJsonValidPredicate, tabState.activeTab])
 
   return (
-    <ModalDialog>
+    <>
       <ModalDialogLabel closeDialog={closeModal}>Add Smart View</ModalDialogLabel>
       <ModalDialogDescription>
         <div className="flex flex-col gap-4">
@@ -230,6 +230,14 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
           {isSaving ? <Spinner className="h-4.5 w-4.5" /> : canSave ? 'Save' : 'Validate'}
         </Button>
       </ModalDialogButtons>
+    </>
+  )
+})
+
+const AddSmartViewModal = ({ controller, platform }: Props) => {
+  return (
+    <ModalDialog isOpen={controller.isAddingSmartView} close={controller.closeModal}>
+      <AddSmartViewModalContent controller={controller} platform={platform} />
     </ModalDialog>
   )
 }
