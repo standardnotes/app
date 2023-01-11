@@ -101,8 +101,14 @@ export const SearchPlugin = () => {
   const handleEditorChange = useMemo(() => debounce(handleSearch, 500), [handleSearch])
 
   useEffect(() => {
+    if (!query) {
+      dispatch({ type: 'clear-results' })
+      dispatch({ type: 'set-current-result-index', index: -1 })
+      return
+    }
+
     void handleQueryChange(query, isCaseSensitiveRef.current)
-  }, [handleQueryChange, isCaseSensitiveRef, query])
+  }, [dispatch, handleQueryChange, isCaseSensitiveRef, query])
 
   useEffect(() => {
     const handleCaseSensitiveChange = () => {
@@ -158,6 +164,9 @@ export const SearchPlugin = () => {
   }, [addReplaceEventListener, currentResultIndexRef, editor, handleSearch, isCaseSensitiveRef, queryRef, resultsRef])
 
   useEffect(() => {
+    document.querySelectorAll('.search-highlight').forEach((element) => {
+      element.remove()
+    })
     if (currentResultIndex === -1) {
       return
     }
@@ -165,9 +174,6 @@ export const SearchPlugin = () => {
     editor.getEditorState().read(() => {
       const rootElement = editor.getRootElement()
       const containerElement = rootElement?.parentElement?.getElementsByClassName('search-highlight-container')[0]
-      document.querySelectorAll('.search-highlight').forEach((element) => {
-        element.remove()
-      })
       result.node.parentElement?.scrollIntoView({
         block: 'center',
       })

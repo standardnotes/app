@@ -72,7 +72,7 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
               })
             }}
             onKeyDown={(event) => {
-              if (event.key === 'Enter') {
+              if (event.key === 'Enter' && results.length) {
                 if (event.shiftKey) {
                   dispatch({
                     type: 'go-to-previous-result',
@@ -163,7 +163,7 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
                 setReplaceQuery(e.target.value)
               }}
               onKeyDown={(event) => {
-                if (event.key === 'Enter' && replaceQuery) {
+                if (event.key === 'Enter' && replaceQuery && results.length) {
                   if (event.ctrlKey && event.altKey) {
                     dispatchReplaceEvent({
                       type: 'all',
