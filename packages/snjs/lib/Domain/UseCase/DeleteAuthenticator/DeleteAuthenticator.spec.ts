@@ -26,7 +26,7 @@ describe('DeleteAuthenticator', () => {
     const result = await useCase.execute({ authenticatorId: 'invalid' })
 
     expect(result.isFailed()).toBe(true)
-    expect(result.getError()).toBe('Could not delete authenticator: Invalid UUID')
+    expect(result.getError()).toBe('Could not delete authenticator: Given value is not a valid uuid: invalid')
   })
 
   it('should fail if authenticator client fails to delete authenticator', async () => {
