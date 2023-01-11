@@ -12,9 +12,12 @@ import { useStateRef } from '../../Utils/useStateRef'
 export const SearchPlugin = () => {
   const [editor] = useLexicalComposerContext()
   const [showDialog, setShowDialog] = useState(false)
-  const { query, currentResultIndex, results, isCaseSensitive, dispatch } = useSuperSearchContext()
+  const { query, currentResultIndex, results, isCaseSensitive, dispatch, addReplaceEventListener } =
+    useSuperSearchContext()
   const queryRef = useStateRef(query)
+  const currentResultIndexRef = useStateRef(currentResultIndex)
   const isCaseSensitiveRef = useStateRef(isCaseSensitive)
+  const resultsRef = useStateRef(results)
 
   useEffect(() => {
     return editor.registerCommand<KeyboardEvent>(
@@ -114,6 +117,37 @@ export const SearchPlugin = () => {
       void handleEditorChange(queryRef.current, isCaseSensitiveRef.current)
     })
   }, [editor, handleEditorChange, isCaseSensitiveRef, queryRef])
+
+  useEffect(() => {
+    return addReplaceEventListener((event) => {
+      const { replace, type } = event
+
+      if (type === 'next') {
+        editor.update(() => {
+          const result = resultsRef.current[currentResultIndexRef.current]
+          if (!result) {
+            return
+          }
+          const { node, startIndex, endIndex } = result
+          const text = node.textContent || ''
+          const newText = text.slice(0, startIndex) + replace + text.slice(endIndex)
+          node.textContent = newText
+          editor.blur()
+        })
+      } else if (type === 'all') {
+        editor.update(() => {
+          resultsRef.current.forEach((result) => {
+            const { node, startIndex, endIndex } = result
+            const text = node.textContent || ''
+            const newText = text.slice(0, startIndex) + replace + text.slice(endIndex)
+            node.textContent = newText
+            editor.blur()
+          })
+          editor.blur()
+        })
+      }
+    })
+  }, [addReplaceEventListener, currentResultIndexRef, editor, resultsRef])
 
   useEffect(() => {
     if (currentResultIndex === -1) {

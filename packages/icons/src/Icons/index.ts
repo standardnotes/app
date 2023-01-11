@@ -205,6 +205,8 @@ import EvernoteIcon from './ic-evernote.svg'
 import GoogleKeepIcon from './ic-gkeep.svg'
 import SimplenoteIcon from './ic-simplenote.svg'
 import AegisIcon from './ic-aegis.svg'
+import ReplaceIcon from './ic-replace.svg'
+import ReplaceAllIcon from './ic-replace-all.svg'
 
 export {
   AccessibilityIcon,
@@ -414,4 +416,6 @@ export {
   GoogleKeepIcon,
   SimplenoteIcon,
   AegisIcon,
+  ReplaceIcon,
+  ReplaceAllIcon,
 }

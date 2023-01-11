@@ -20,3 +20,8 @@ export type SuperSearchContextAction =
   | { type: 'go-to-previous-result' }
   | { type: 'set-case-sensitive'; isCaseSensitive: boolean }
   | { type: 'reset-search' }
+
+export type SuperSearchReplaceEvent = {
+  type: 'next' | 'all'
+  replace: string
+}
