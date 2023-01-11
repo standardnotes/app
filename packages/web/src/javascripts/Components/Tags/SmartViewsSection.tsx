@@ -53,9 +53,7 @@ const SmartViewsSection: FunctionComponent<Props> = ({ application, navigationCo
         featuresController={featuresController}
         setEditingSmartView={editSmartViewModalController.setView}
       />
-      {!!editSmartViewModalController.view && (
-        <EditSmartViewModal controller={editSmartViewModalController} platform={application.platform} />
-      )}
+      <EditSmartViewModal controller={editSmartViewModalController} platform={application.platform} />
       <AddSmartViewModal controller={addSmartViewModalController} platform={application.platform} />
     </section>
   )
