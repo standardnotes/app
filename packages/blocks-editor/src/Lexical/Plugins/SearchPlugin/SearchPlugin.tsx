@@ -30,12 +30,13 @@ export const SearchPlugin = () => {
         event.stopPropagation()
 
         setShowDialog((show) => !show)
+        dispatch({ type: 'reset-search' })
 
         return true
       },
       COMMAND_PRIORITY_EDITOR,
     )
-  }, [editor])
+  }, [dispatch, editor])
 
   const handleSearch = useCallback(
     (query: string, isCaseSensitive: boolean) => {
