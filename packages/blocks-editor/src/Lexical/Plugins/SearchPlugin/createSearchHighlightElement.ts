@@ -26,7 +26,7 @@ export const createSearchHighlightElement = (
     highlightElement.style.position = 'absolute'
     highlightElement.style.zIndex = '1000'
     highlightElement.style.transform = `translate(${rect.left - rootElementRect.left}px, ${
-      rect.top - rootElementRect.top
+      rect.top - rootElementRect.top + rootElement.scrollTop
     }px)`
     highlightElement.style.width = `${rect.width}px`
     highlightElement.style.height = `${rect.height}px`

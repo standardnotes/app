@@ -171,6 +171,45 @@ export const SearchPlugin = () => {
     })
   }, [currentResultIndex, editor, results])
 
+  useEffect(() => {
+    let containerElement: HTMLElement | null | undefined
+    let rootElement: HTMLElement | null | undefined
+
+    editor.getEditorState().read(() => {
+      rootElement = editor.getRootElement()
+      containerElement = rootElement?.parentElement?.querySelector('.search-highlight-container')
+    })
+
+    if (!rootElement || !containerElement) {
+      return
+    }
+
+    const resizeObserver = new ResizeObserver(() => {
+      if (!rootElement || !containerElement) {
+        return
+      }
+
+      containerElement.style.height = `${rootElement.scrollHeight}px`
+      containerElement.style.overflow = 'visible'
+    })
+    resizeObserver.observe(rootElement)
+
+    const handleScroll = () => {
+      if (!rootElement || !containerElement) {
+        return
+      }
+
+      containerElement.style.top = `-${rootElement.scrollTop}px`
+    }
+
+    rootElement.addEventListener('scroll', handleScroll)
+
+    return () => {
+      resizeObserver.disconnect()
+      rootElement?.removeEventListener('scroll', handleScroll)
+    }
+  }, [editor])
+
   return (
     <>
       {showDialog && (
