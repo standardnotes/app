@@ -132,7 +132,8 @@ export const SearchPlugin = () => {
           const text = node.textContent || ''
           const newText = text.slice(0, startIndex) + replace + text.slice(endIndex)
           node.textContent = newText
-          editor.blur()
+
+          void handleSearch(queryRef.current, isCaseSensitiveRef.current)
         })
       } else if (type === 'all') {
         editor.update(() => {
@@ -141,13 +142,13 @@ export const SearchPlugin = () => {
             const text = node.textContent || ''
             const newText = text.slice(0, startIndex) + replace + text.slice(endIndex)
             node.textContent = newText
-            editor.blur()
           })
-          editor.blur()
+
+          void handleSearch(queryRef.current, isCaseSensitiveRef.current)
         })
       }
     })
-  }, [addReplaceEventListener, currentResultIndexRef, editor, resultsRef])
+  }, [addReplaceEventListener, currentResultIndexRef, editor, handleSearch, isCaseSensitiveRef, queryRef, resultsRef])
 
   useEffect(() => {
     if (currentResultIndex === -1) {
