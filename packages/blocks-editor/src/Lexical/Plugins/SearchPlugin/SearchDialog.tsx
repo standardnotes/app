@@ -30,7 +30,7 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
   }, [])
 
   return (
-    <div className="absolute right-6 top-4 flex rounded border border-border bg-default">
+    <div className="absolute right-6 top-4 flex select-none rounded border border-border bg-default">
       <button
         className="focus:ring-none border-r border-border px-1 hover:bg-contrast focus:shadow-inner focus:shadow-info"
         onClick={() => {
