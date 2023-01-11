@@ -7,16 +7,16 @@ import { EnterFromBelowAnimation, ExitToBelowAnimation } from '@/Constants/Anima
 
 type Props = {
   children: ReactNode
-  open: boolean
-  requestClose: () => void
+  isOpen: boolean
+  close: () => void
   className?: string
 }
 
-const MobileModalDialog = ({ open, children, requestClose, className }: Props) => {
+const MobileModalDialog = ({ isOpen, children, close, className }: Props) => {
   const ldRef = useRef<HTMLButtonElement>(null)
 
   const [isMounted, setElement] = useLifecycleAnimation({
-    open,
+    open: isOpen,
     enter: EnterFromBelowAnimation,
     exit: ExitToBelowAnimation,
   })
@@ -28,7 +28,7 @@ const MobileModalDialog = ({ open, children, requestClose, className }: Props) =
   }
 
   return (
-    <AlertDialogOverlay leastDestructiveRef={ldRef} onDismiss={requestClose}>
+    <AlertDialogOverlay leastDestructiveRef={ldRef} onDismiss={close}>
       <AlertDialogContent tabIndex={0} ref={setElement} className={classNames('m-0 h-full w-full p-0', className)}>
         {children}
       </AlertDialogContent>

@@ -6,30 +6,30 @@ import MobileModalDialog from './MobileModalDialog'
 
 type Props = {
   children: ReactNode
-  open: boolean
-  requestClose: () => void
+  isOpen: boolean
+  close: () => void
   className?: string
 }
 
-const ModalDialog = ({ open, children, requestClose, className }: Props) => {
+const ModalDialog = ({ isOpen, children, close, className }: Props) => {
   const ldRef = useRef<HTMLButtonElement>(null)
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   if (isMobileScreen) {
     return (
-      <MobileModalDialog open={open} requestClose={requestClose} className={className}>
+      <MobileModalDialog isOpen={isOpen} close={close} className={className}>
         {children}
       </MobileModalDialog>
     )
   }
 
-  if (!open) {
+  if (!isOpen) {
     return null
   }
 
   return (
-    <AlertDialogOverlay className="px-4 md:px-0" leastDestructiveRef={ldRef} onDismiss={requestClose}>
+    <AlertDialogOverlay className="px-4 md:px-0" leastDestructiveRef={ldRef} onDismiss={close}>
       <AlertDialogContent
         tabIndex={0}
         className={classNames(
