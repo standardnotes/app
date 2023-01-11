@@ -123,23 +123,25 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
             <span className="sr-only">Case sensitive</span>
           </label>
           <button
-            className="flex items-center rounded border border-border p-1.5 hover:bg-contrast"
+            className="flex items-center rounded border border-border p-1.5 hover:bg-contrast disabled:cursor-not-allowed"
             onClick={() => {
               dispatch({
                 type: 'go-to-previous-result',
               })
             }}
+            disabled={results.length < 1}
             title="Previous result (Shift + Enter)"
           >
             <ArrowUpIcon className="h-4 w-4 fill-current text-text" />
           </button>
           <button
-            className="flex items-center rounded border border-border p-1.5 hover:bg-contrast"
+            className="flex items-center rounded border border-border p-1.5 hover:bg-contrast disabled:cursor-not-allowed"
             onClick={() => {
               dispatch({
                 type: 'go-to-next-result',
               })
             }}
+            disabled={results.length < 1}
             title="Next result (Enter)"
           >
             <ArrowDownIcon className="h-4 w-4 fill-current text-text" />
@@ -183,25 +185,27 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
               ref={focusOnMount}
             />
             <button
-              className="flex items-center rounded border border-border p-1.5 hover:bg-contrast"
+              className="flex items-center rounded border border-border p-1.5 hover:bg-contrast disabled:cursor-not-allowed"
               onClick={() => {
                 dispatchReplaceEvent({
                   type: 'next',
                   replace: replaceQuery,
                 })
               }}
+              disabled={results.length < 1 || replaceQuery.length < 1}
               title="Replace (Ctrl + Enter)"
             >
               <ReplaceIcon className="h-4 w-4 fill-current text-text" />
             </button>
             <button
-              className="flex items-center rounded border border-border p-1.5 hover:bg-contrast"
+              className="flex items-center rounded border border-border p-1.5 hover:bg-contrast disabled:cursor-not-allowed"
               onClick={() => {
                 dispatchReplaceEvent({
                   type: 'all',
                   replace: replaceQuery,
                 })
               }}
+              disabled={results.length < 1 || replaceQuery.length < 1}
               title="Replace all (Ctrl + Alt + Enter)"
             >
               <ReplaceAllIcon className="h-4 w-4 fill-current text-text" />
