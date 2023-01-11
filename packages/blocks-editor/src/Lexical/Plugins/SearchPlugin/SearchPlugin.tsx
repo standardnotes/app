@@ -212,14 +212,13 @@ export const SearchPlugin = () => {
 
   return (
     <>
-      {showDialog && (
-        <SearchDialog
-          closeDialog={() => {
-            setShowDialog(false)
-            dispatch({ type: 'reset-search' })
-          }}
-        />
-      )}
+      <SearchDialog
+        open={showDialog}
+        closeDialog={() => {
+          setShowDialog(false)
+          dispatch({ type: 'reset-search' })
+        }}
+      />
     </>
   )
 }

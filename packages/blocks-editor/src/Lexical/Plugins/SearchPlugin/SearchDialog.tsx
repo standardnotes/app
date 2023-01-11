@@ -6,22 +6,16 @@ import {
   ReplaceAllIcon,
   ArrowRightIcon,
 } from '@standardnotes/icons'
-import { classNames } from '@standardnotes/snjs'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { classNames, EnterFromTopAnimation, ExitToTopAnimation, useLifecycleAnimation } from '@standardnotes/utils'
+import { useCallback, useState } from 'react'
 import { useSuperSearchContext } from './Context'
 
-export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
-  const searchInputRef = useRef<HTMLInputElement>(null)
-
+export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog: () => void }) => {
   const { query, results, currentResultIndex, isCaseSensitive, dispatch, dispatchReplaceEvent } =
     useSuperSearchContext()
 
   const [isReplaceMode, setIsReplaceMode] = useState(false)
   const [replaceQuery, setReplaceQuery] = useState('')
-
-  useEffect(() => {
-    searchInputRef.current?.focus()
-  }, [])
 
   const focusOnMount = useCallback((node: HTMLInputElement | null) => {
     if (node) {
@@ -29,13 +23,22 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
     }
   }, [])
 
+  const [isMounted, setElement] = useLifecycleAnimation({
+    open,
+    enter: EnterFromTopAnimation,
+    exit: ExitToTopAnimation,
+  })
+
+  if (!isMounted) {
+    return null
+  }
+
   return (
-    <div className="absolute right-6 top-4 flex select-none rounded border border-border bg-default">
+    <div className="absolute right-6 top-4 flex select-none rounded border border-border bg-default" ref={setElement}>
       <button
         className="focus:ring-none border-r border-border px-1 hover:bg-contrast focus:shadow-inner focus:shadow-info"
         onClick={() => {
           setIsReplaceMode((isReplaceMode) => !isReplaceMode)
-          searchInputRef.current?.focus()
         }}
         title="Toggle Replace Mode"
       >
@@ -88,7 +91,7 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
               }
             }}
             className="rounded border border-border bg-default p-1 px-2"
-            ref={searchInputRef}
+            ref={focusOnMount}
           />
           {results.length > 0 ? (
             <span className="min-w-[10ch] text-text">
