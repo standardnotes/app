@@ -11,6 +11,7 @@ import ModalDialog from '@/Components/Shared/ModalDialog'
 import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
 import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
+import Icon from '@/Components/Icon/Icon'
 
 type Props = {
   activation: TwoFactorActivation
@@ -63,12 +64,16 @@ const SaveSecretKey: FunctionComponent<Props> = ({ activation: act }) => {
             <Bullet />
             <div className="min-w-1" />
             <div className="text-sm">
-              You can use this key to generate codes if you lose access to your authenticator app.{' '}
+              You can use this key to generate codes if you lose access to your authenticator app.
+              <br />
               <a
                 target="_blank"
+                rel="noreferrer noopener"
+                className="underline hover:no-underline"
                 href="https://standardnotes.com/help/22/what-happens-if-i-lose-my-2fa-device-and-my-secret-key"
               >
                 Learn more
+                <Icon className="ml-1 inline" type="open-in" size="small" />
               </a>
             </div>
           </div>
