@@ -191,7 +191,7 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
   }, [state.importTag, viewControllerManager.isImportModalVisible, viewControllerManager.navigationController])
 
   return (
-    <ModalDialog open={viewControllerManager.isImportModalVisible.get()} requestClose={closeDialog}>
+    <ModalDialog isOpen={viewControllerManager.isImportModalVisible.get()} close={closeDialog}>
       <ModalDialogLabel closeDialog={closeDialog}>Import</ModalDialogLabel>
       <ModalDialogDescription>
         {!files.length && <ImportModalInitialPage dispatch={dispatch} />}
