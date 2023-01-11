@@ -29,7 +29,11 @@ const MobileModalDialog = ({ isOpen, children, close, className }: Props) => {
 
   return (
     <AlertDialogOverlay leastDestructiveRef={ldRef} onDismiss={close}>
-      <AlertDialogContent tabIndex={0} ref={setElement} className={classNames('m-0 h-full w-full p-0', className)}>
+      <AlertDialogContent
+        tabIndex={0}
+        ref={setElement}
+        className={classNames('m-0 flex h-full w-full flex-col overflow-hidden p-0', className)}
+      >
         {children}
       </AlertDialogContent>
     </AlertDialogOverlay>
