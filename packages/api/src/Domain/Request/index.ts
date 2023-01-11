@@ -1,7 +1,5 @@
 export * from './ApiEndpointParam'
 export * from './Authenticator/DeleteAuthenticatorRequestParams'
-export * from './Authenticator/GenerateAuthenticatorAuthenticationOptionsRequestParams'
-export * from './Authenticator/GenerateAuthenticatorRegistrationOptionsRequestParams'
 export * from './Authenticator/ListAuthenticatorsRequestParams'
 export * from './Authenticator/VerifyAuthenticatorAuthenticationResponseRequestParams'
 export * from './Authenticator/VerifyAuthenticatorRegistrationResponseRequestParams'
