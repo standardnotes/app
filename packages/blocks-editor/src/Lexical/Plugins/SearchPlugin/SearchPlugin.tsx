@@ -1,17 +1,20 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { COMMAND_PRIORITY_EDITOR, KEY_MODIFIER_COMMAND } from 'lexical'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { debounce } from '../../Utils/debounce'
 import { createSearchHighlightElement } from './createSearchHighlightElement'
 import { useSuperSearchContext } from './Context'
 import { SearchDialog } from './SearchDialog'
 import { getAllTextNodesInElement } from './getAllTextNodesInElement'
 import { SuperSearchResult } from './Types'
+import { useStateRef } from '../../Utils/useStateRef'
 
 export const SearchPlugin = () => {
   const [editor] = useLexicalComposerContext()
   const [showDialog, setShowDialog] = useState(false)
   const { query, currentResultIndex, results, isCaseSensitive, dispatch } = useSuperSearchContext()
+  const queryRef = useStateRef(query)
+  const isCaseSensitiveRef = useStateRef(isCaseSensitive)
 
   useEffect(() => {
     return editor.registerCommand<KeyboardEvent>(
@@ -90,11 +93,26 @@ export const SearchPlugin = () => {
     [dispatch, editor],
   )
 
-  const debouncedHandleSearch = useMemo(() => debounce(handleSearch, 250), [handleSearch])
+  const handleQueryOrCaseChange = useMemo(() => debounce(handleSearch, 250), [handleSearch])
+  const handleEditorChange = useMemo(() => debounce(handleSearch, 500), [handleSearch])
 
   useEffect(() => {
-    void debouncedHandleSearch(query, isCaseSensitive)
-  }, [debouncedHandleSearch, isCaseSensitive, query])
+    void handleQueryOrCaseChange(query, isCaseSensitive)
+  }, [handleQueryOrCaseChange, isCaseSensitive, query])
+
+  useLayoutEffect(() => {
+    return editor.registerUpdateListener(({ dirtyElements, dirtyLeaves, prevEditorState, tags }) => {
+      if (
+        (dirtyElements.size === 0 && dirtyLeaves.size === 0) ||
+        tags.has('history-merge') ||
+        prevEditorState.isEmpty()
+      ) {
+        return
+      }
+
+      void handleEditorChange(queryRef.current, isCaseSensitiveRef.current)
+    })
+  }, [editor, handleEditorChange, isCaseSensitiveRef, queryRef])
 
   useEffect(() => {
     if (currentResultIndex === -1) {
