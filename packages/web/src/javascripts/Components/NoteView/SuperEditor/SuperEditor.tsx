@@ -38,6 +38,8 @@ import GetMarkdownPlugin, { GetMarkdownPluginInterface } from './Plugins/GetMark
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin'
 import { getPlaintextFontSize } from '@/Utils/getPlaintextFontSize'
 import ReadonlyPlugin from './Plugins/ReadonlyPlugin/ReadonlyPlugin'
+import { SuperSearchContextProvider } from './Plugins/SearchPlugin/Context'
+import { SearchPlugin } from './Plugins/SearchPlugin/SearchPlugin'
 
 const NotePreviewCharLimit = 160
 
@@ -197,6 +199,9 @@ export const SuperEditor: FunctionComponent<Props> = ({
                   <ExportPlugin />
                   <ReadonlyPlugin note={note.current} />
                   {controller.isTemplateNote ? <AutoFocusPlugin /> : null}
+                  <SuperSearchContextProvider>
+                    <SearchPlugin />
+                  </SuperSearchContextProvider>
                 </BlocksEditor>
               </BlocksEditorComposer>
             </FilesControllerProvider>

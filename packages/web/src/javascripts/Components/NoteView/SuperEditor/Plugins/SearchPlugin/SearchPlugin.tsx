@@ -1,13 +1,12 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { $getNearestNodeFromDOMNode, COMMAND_PRIORITY_EDITOR, KEY_MODIFIER_COMMAND, TextNode } from 'lexical'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { debounce } from '../../Utils/debounce'
 import { createSearchHighlightElement } from './createSearchHighlightElement'
 import { useSuperSearchContext } from './Context'
 import { SearchDialog } from './SearchDialog'
 import { getAllTextNodesInElement } from './getAllTextNodesInElement'
 import { SuperSearchResult } from './Types'
-import { useStateRef } from '@standardnotes/utils'
+import { debounce, useStateRef } from '@standardnotes/utils'
 
 export const SearchPlugin = () => {
   const [editor] = useLexicalComposerContext()
