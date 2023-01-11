@@ -32,7 +32,7 @@ import PasswordPlugin from './Plugins/PasswordPlugin/PasswordPlugin'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { useCommandService } from '@/Components/CommandProvider'
 import { SUPER_SHOW_MARKDOWN_PREVIEW } from '@standardnotes/ui-services'
-import { SuperNoteMarkdownPreview } from './SuperNoteMarkdownPreview'
+import { SuperNoteMarkdownPreviewModal } from './SuperNoteMarkdownPreview'
 import { ExportPlugin } from './Plugins/ExportPlugin/ExportPlugin'
 import GetMarkdownPlugin, { GetMarkdownPluginInterface } from './Plugins/GetMarkdownPlugin/GetMarkdownPlugin'
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin'
@@ -201,8 +201,11 @@ export const SuperEditor: FunctionComponent<Props> = ({
               </BlocksEditorComposer>
             </FilesControllerProvider>
           </LinkingControllerProvider>
-
-          {showMarkdownPreview && <SuperNoteMarkdownPreview note={note.current} closeDialog={closeMarkdownPreview} />}
+          <SuperNoteMarkdownPreviewModal
+            isOpen={showMarkdownPreview}
+            note={note.current}
+            closeDialog={closeMarkdownPreview}
+          />
         </>
       </ErrorBoundary>
     </div>
