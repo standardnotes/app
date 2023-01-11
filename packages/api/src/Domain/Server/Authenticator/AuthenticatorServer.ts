@@ -2,9 +2,7 @@ import { HttpServiceInterface } from '../../Http/HttpServiceInterface'
 import {
   ListAuthenticatorsRequestParams,
   DeleteAuthenticatorRequestParams,
-  GenerateAuthenticatorRegistrationOptionsRequestParams,
   VerifyAuthenticatorRegistrationResponseRequestParams,
-  GenerateAuthenticatorAuthenticationOptionsRequestParams,
   VerifyAuthenticatorAuthenticationResponseRequestParams,
 } from '../../Request'
 import {
@@ -33,10 +31,8 @@ export class AuthenticatorServer implements AuthenticatorServerInterface {
     return response as DeleteAuthenticatorResponse
   }
 
-  async generateRegistrationOptions(
-    params: GenerateAuthenticatorRegistrationOptionsRequestParams,
-  ): Promise<GenerateAuthenticatorRegistrationOptionsResponse> {
-    const response = await this.httpService.get(Paths.v1.generateRegistrationOptions, params)
+  async generateRegistrationOptions(): Promise<GenerateAuthenticatorRegistrationOptionsResponse> {
+    const response = await this.httpService.get(Paths.v1.generateRegistrationOptions)
 
     return response as GenerateAuthenticatorRegistrationOptionsResponse
   }
@@ -49,10 +45,8 @@ export class AuthenticatorServer implements AuthenticatorServerInterface {
     return response as VerifyAuthenticatorRegistrationResponseResponse
   }
 
-  async generateAuthenticationOptions(
-    params: GenerateAuthenticatorAuthenticationOptionsRequestParams,
-  ): Promise<GenerateAuthenticatorAuthenticationOptionsResponse> {
-    const response = await this.httpService.get(Paths.v1.generateAuthenticationOptions, params)
+  async generateAuthenticationOptions(): Promise<GenerateAuthenticatorAuthenticationOptionsResponse> {
+    const response = await this.httpService.get(Paths.v1.generateAuthenticationOptions)
 
     return response as GenerateAuthenticatorAuthenticationOptionsResponse
   }
