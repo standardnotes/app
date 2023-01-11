@@ -35,6 +35,20 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
             query: e.target.value,
           })
         }}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter') {
+            if (event.shiftKey) {
+              dispatch({
+                type: 'go-to-previous-result',
+              })
+              return
+            }
+
+            dispatch({
+              type: 'go-to-next-result',
+            })
+          }
+        }}
         className="border-border rounded border p-1 px-2"
         ref={inputRef}
       />
@@ -46,13 +60,13 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
       )}
       <label
         className={classNames(
-          'border-border focus-within:shadow-info relative flex items-center rounded border py-1 px-1.5 shadow',
+          'border-border focus-within:ring-info relative flex items-center rounded border py-1 px-1.5 focus-within:ring-2 focus-within:ring-offset-2',
           isCaseSensitive ? 'bg-info text-info-contrast' : 'hover:bg-contrast',
         )}
       >
         <input
           type="checkbox"
-          className="absolute top-0 left-0 z-[1] m-0 h-full w-full cursor-pointer p-0 opacity-0 shadow-none outline-none"
+          className="absolute top-0 left-0 z-[1] m-0 h-full w-full cursor-pointer border border-transparent p-0 opacity-0 shadow-none outline-none"
           checked={isCaseSensitive}
           onChange={(e) => {
             dispatch({
