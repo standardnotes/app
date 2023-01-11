@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.137.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.136.8...@standardnotes/web@3.137.0) (2023-01-10)
+
+### Features
+
+* recovery codes UI (recovery sign in + get recovery codes) ([#2139](https://github.com/standardnotes/app/issues/2139)) ([5e6c901](https://github.com/standardnotes/app/commit/5e6c901c21e7e9df77cad79d1738124130c3a6cb))
+
+## [3.136.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.136.7...@standardnotes/web@3.136.8) (2023-01-10)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.136.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.136.6...@standardnotes/web@3.136.7) (2023-01-10)
 
 **Note:** Version bump only for package @standardnotes/web

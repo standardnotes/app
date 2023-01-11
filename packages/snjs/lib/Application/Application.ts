@@ -333,6 +333,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.actionsManager
   }
 
+  public get challenges(): ExternalServices.ChallengeServiceInterface {
+    return this.challengeService
+  }
+
   public computePrivateUsername(username: string): Promise<string | undefined> {
     return ComputePrivateUsername(this.options.crypto, username)
   }
@@ -823,10 +827,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     }
   }
 
-  public promptForCustomChallenge(challenge: Challenge): Promise<ChallengeResponse | undefined> {
-    return this.challengeService?.promptForChallengeResponse(challenge)
-  }
-
   public addChallengeObserver(challenge: Challenge, observer: InternalServices.ChallengeObserver): () => void {
     return this.challengeService.addChallengeObserver(challenge, observer)
   }
@@ -996,7 +996,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       false,
     )
 
-    void this.promptForCustomChallenge(challenge)
+    void this.challengeService.promptForChallengeResponse(challenge)
 
     this.isBiometricsSoftLockEngaged = true
     void this.notifyEvent(ApplicationEvent.BiometricsSoftLockEngaged)

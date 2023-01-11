@@ -57,12 +57,12 @@ module.exports = {
         },
         {
           href: 'https://app.standardnotes.com',
-          label: 'Encrypted Notes App',
+          label: 'Standard Notes Web App',
           position: 'right',
         },
         {
           href: 'https://standardnotes.com',
-          label: 'Standard Notes Website',
+          label: 'Our Website — Encrypted Notes App',
           position: 'right',
         },
         {
@@ -71,8 +71,8 @@ module.exports = {
           position: 'right',
         },
         {
-          href: 'https://blog.standardnotes.com',
-          label: 'Blog',
+          href: 'https://standardnotes.com/blog',
+          label: 'Privacy & Security Blog',
           position: 'right',
         },
         {
@@ -152,7 +152,7 @@ module.exports = {
   scripts: [
     {
       src: 'https://plausible.standardnotes.com/js/plausible.js',
-      "data-domain": 'docs.standardnotes.com',
+      'data-domain': 'docs.standardnotes.com',
       defer: true,
     },
   ],
@@ -162,7 +162,8 @@ module.exports = {
       {
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/standardnotes/app/blob/main/packages/docs/',
+          editUrl:
+            'https://github.com/standardnotes/app/blob/main/packages/docs/',
           routeBasePath: '/',
           remarkPlugins: [math],
           rehypePlugins: [katex],
