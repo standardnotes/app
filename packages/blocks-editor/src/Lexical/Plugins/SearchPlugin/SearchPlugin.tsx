@@ -7,7 +7,7 @@ import { useSuperSearchContext } from './Context'
 import { SearchDialog } from './SearchDialog'
 import { getAllTextNodesInElement } from './getAllTextNodesInElement'
 import { SuperSearchResult } from './Types'
-import { useStateRef } from '../../Utils/useStateRef'
+import { useStateRef } from '@standardnotes/utils'
 
 export const SearchPlugin = () => {
   const [editor] = useLexicalComposerContext()

@@ -4,7 +4,7 @@ import { AppPaneId } from './AppPaneMetadata'
 import { PaneController } from '../../Controllers/PaneController/PaneController'
 import { observer } from 'mobx-react-lite'
 import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
-import { useStateRef } from './useStateRef'
+import { useStateRef } from '@standardnotes/utils'
 
 type ResponsivePaneData = {
   selectedPane: AppPaneId
