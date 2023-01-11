@@ -58,10 +58,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
     }
   }
 
-  async generateRegistrationOptions(
-    userUuid: string,
-    username: string,
-  ): Promise<GenerateAuthenticatorRegistrationOptionsResponse> {
+  async generateRegistrationOptions(): Promise<GenerateAuthenticatorRegistrationOptionsResponse> {
     if (this.operationsInProgress.get(AuthenticatorApiOperations.GenerateRegistrationOptions)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }
@@ -69,10 +66,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
     this.operationsInProgress.set(AuthenticatorApiOperations.GenerateRegistrationOptions, true)
 
     try {
-      const response = await this.authenticatorServer.generateRegistrationOptions({
-        username,
-        userUuid,
-      })
+      const response = await this.authenticatorServer.generateRegistrationOptions()
 
       return response
     } catch (error) {
@@ -116,7 +110,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
     this.operationsInProgress.set(AuthenticatorApiOperations.GenerateAuthenticationOptions, true)
 
     try {
-      const response = await this.authenticatorServer.generateAuthenticationOptions({})
+      const response = await this.authenticatorServer.generateAuthenticationOptions()
 
       return response
     } catch (error) {

@@ -10,10 +10,7 @@ import {
 export interface AuthenticatorApiServiceInterface {
   list(): Promise<ListAuthenticatorsResponse>
   delete(authenticatorId: string): Promise<DeleteAuthenticatorResponse>
-  generateRegistrationOptions(
-    userUuid: string,
-    username: string,
-  ): Promise<GenerateAuthenticatorRegistrationOptionsResponse>
+  generateRegistrationOptions(): Promise<GenerateAuthenticatorRegistrationOptionsResponse>
   verifyRegistrationResponse(
     userUuid: string,
     name: string,
