@@ -103,8 +103,8 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
           )}
           <label
             className={classNames(
-              'relative flex items-center rounded border border-border py-1 px-1.5 focus-within:ring-2 focus-within:ring-info focus-within:ring-offset-2 focus-within:ring-offset-default',
-              isCaseSensitive ? 'bg-info text-info-contrast' : 'hover:bg-contrast',
+              'relative flex items-center rounded border py-1 px-1.5 focus-within:ring-2 focus-within:ring-info focus-within:ring-offset-2 focus-within:ring-offset-default',
+              isCaseSensitive ? 'border-info bg-info text-info-contrast' : 'border-border hover:bg-contrast',
             )}
             title="Case sensitive (Alt + C)"
           >
