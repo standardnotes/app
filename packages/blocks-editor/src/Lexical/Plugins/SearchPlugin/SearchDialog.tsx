@@ -1,11 +1,12 @@
 import { ArrowDownIcon, ArrowUpIcon, CloseIcon } from '@standardnotes/icons'
+import { classNames } from '@standardnotes/snjs'
 import { useEffect, useRef } from 'react'
 import { useSuperSearchContext } from './Context'
 
 export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const { query, results, currentResultIndex, dispatch } = useSuperSearchContext()
+  const { query, results, currentResultIndex, isCaseSensitive, dispatch } = useSuperSearchContext()
 
   useEffect(() => {
     inputRef.current?.focus()
@@ -13,7 +14,7 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
 
   return (
     <div
-      className="bg-default border-border absolute right-6 top-4 flex items-center gap-2 rounded border py-2 px-2"
+      className="border-border bg-default absolute right-6 top-4 flex items-center gap-2 rounded border py-2 px-2"
       onKeyDown={(event) => {
         if (event.key === 'Escape') {
           closeDialog()
@@ -43,6 +44,26 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
           {results.length} results
         </span>
       )}
+      <label
+        className={classNames(
+          'border-border focus-within:shadow-info relative flex items-center rounded border py-1 px-1.5 shadow',
+          isCaseSensitive ? 'bg-info text-info-contrast' : 'hover:bg-contrast',
+        )}
+      >
+        <input
+          type="checkbox"
+          className="absolute top-0 left-0 z-[1] m-0 h-full w-full cursor-pointer p-0 opacity-0 shadow-none outline-none"
+          checked={isCaseSensitive}
+          onChange={(e) => {
+            dispatch({
+              type: 'set-case-sensitive',
+              isCaseSensitive: e.target.checked,
+            })
+          }}
+        />
+        <span aria-hidden>Aa</span>
+        <span className="sr-only">Case sensitive</span>
+      </label>
       <button
         className="border-border hover:bg-contrast flex items-center rounded border p-1.5"
         onClick={() => {

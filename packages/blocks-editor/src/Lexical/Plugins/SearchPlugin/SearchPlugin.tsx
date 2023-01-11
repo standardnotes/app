@@ -12,7 +12,7 @@ import { SuperSearchResult } from './Types'
 export const SearchPlugin = () => {
   const [editor] = useLexicalComposerContext()
   const [showDialog, setShowDialog] = useState(false)
-  const { query, currentResultIndex, results, dispatch } = useSuperSearchContext()
+  const { query, currentResultIndex, results, isCaseSensitive, dispatch } = useSuperSearchContext()
 
   useEffect(() => {
     return editor.registerCommand<KeyboardEvent>(
@@ -36,14 +36,13 @@ export const SearchPlugin = () => {
   }, [editor])
 
   const handleSearch = useCallback(
-    (searchQuery: string) => {
+    (query: string, isCaseSensitive: boolean) => {
       document.querySelectorAll('.search-highlight').forEach((element) => {
         element.remove()
       })
 
-      dispatch({ type: 'clear-results' })
-
-      if (!searchQuery) {
+      if (!query) {
+        dispatch({ type: 'clear-results' })
         return
       }
 
@@ -64,13 +63,16 @@ export const SearchPlugin = () => {
           const indices: number[] = []
           let index = -1
 
-          while ((index = text.indexOf(searchQuery, index + 1)) !== -1) {
+          const textWithCase = isCaseSensitive ? text : text.toLowerCase()
+          const queryWithCase = isCaseSensitive ? query : query.toLowerCase()
+
+          while ((index = textWithCase.indexOf(queryWithCase, index + 1)) !== -1) {
             indices.push(index)
           }
 
           indices.forEach((index) => {
             const startIndex = index
-            const endIndex = startIndex + searchQuery.length
+            const endIndex = startIndex + query.length
 
             results.push({
               node,
@@ -92,8 +94,8 @@ export const SearchPlugin = () => {
   const debouncedHandleSearch = useMemo(() => debounce(handleSearch, 250), [handleSearch])
 
   useEffect(() => {
-    void debouncedHandleSearch(query)
-  }, [debouncedHandleSearch, query])
+    void debouncedHandleSearch(query, isCaseSensitive)
+  }, [debouncedHandleSearch, isCaseSensitive, query])
 
   useEffect(() => {
     if (currentResultIndex === -1) {

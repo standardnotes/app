@@ -1,10 +1,7 @@
 import { createContext, ReactNode, useContext, useMemo, useReducer } from 'react'
-import { SuperSearchContextAction, SuperSearchContextState, SuperSearchResult } from './Types'
+import { SuperSearchContextAction, SuperSearchContextState } from './Types'
 
-type SuperSearchContextData = {
-  query: string
-  results: SuperSearchResult[]
-  currentResultIndex: number
+type SuperSearchContextData = SuperSearchContextState & {
   dispatch: React.Dispatch<SuperSearchContextAction>
 }
 
@@ -41,11 +38,13 @@ const searchContextReducer = (
       return {
         ...state,
         results: action.results,
+        currentResultIndex: action.results.length > 0 ? 0 : -1,
       }
     case 'clear-results':
       return {
         ...state,
         results: [],
+        currentResultIndex: -1,
       }
     case 'set-current-result-index':
       return {
@@ -60,13 +59,12 @@ const searchContextReducer = (
     case 'go-to-next-result':
       return {
         ...state,
-        currentResultIndex:
-          state.currentResultIndex + 1 < state.results.length ? state.currentResultIndex + 1 : state.currentResultIndex,
+        currentResultIndex: state.currentResultIndex + 1 < state.results.length ? state.currentResultIndex + 1 : 0,
       }
     case 'go-to-previous-result':
       return {
         ...state,
-        currentResultIndex: state.currentResultIndex - 1 >= 0 ? state.currentResultIndex - 1 : state.currentResultIndex,
+        currentResultIndex: state.currentResultIndex - 1 >= 0 ? state.currentResultIndex - 1 : state.results.length - 1,
       }
     case 'reset-search':
       return { ...initialState }
@@ -75,16 +73,17 @@ const searchContextReducer = (
 
 export const SuperSearchContextProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(searchContextReducer, initialState)
-  const { query, results, currentResultIndex } = state
+  const { query, results, currentResultIndex, isCaseSensitive } = state
 
   const value = useMemo(
     () => ({
       query,
       results,
       currentResultIndex,
+      isCaseSensitive,
       dispatch,
     }),
-    [query, results, currentResultIndex],
+    [query, results, currentResultIndex, isCaseSensitive],
   )
 
   return <SuperSearchContext.Provider value={value}>{children}</SuperSearchContext.Provider>
