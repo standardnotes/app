@@ -1,6 +1,10 @@
-import { SearchResult } from './Types'
+import { SuperSearchResult } from './Types'
 
-export const createSearchHighlightElement = (result: SearchResult, rootElement: Element, containerElement: Element) => {
+export const createSearchHighlightElement = (
+  result: SuperSearchResult,
+  rootElement: Element,
+  containerElement: Element,
+) => {
   const rootElementRect = rootElement.getBoundingClientRect()
 
   const range = document.createRange()

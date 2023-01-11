@@ -7,12 +7,12 @@ import { createSearchHighlightElement } from './createSearchHighlightElement'
 import { useSuperSearchContext } from './Context'
 import { SearchDialog } from './SearchDialog'
 import { getAllTextNodesInElement } from './getAllTextNodesInElement'
-import { SearchResult } from './Types'
+import { SuperSearchResult } from './Types'
 
 export const SearchPlugin = () => {
   const [editor] = useLexicalComposerContext()
   const [showDialog, setShowDialog] = useState(false)
-  const { searchQuery, currentResultIndex, results, setResults, clearResults } = useSuperSearchContext()
+  const { query, currentResultIndex, results, dispatch } = useSuperSearchContext()
 
   useEffect(() => {
     return editor.registerCommand<KeyboardEvent>(
@@ -41,7 +41,7 @@ export const SearchPlugin = () => {
         element.remove()
       })
 
-      clearResults()
+      dispatch({ type: 'clear-results' })
 
       if (!searchQuery) {
         return
@@ -56,7 +56,7 @@ export const SearchPlugin = () => {
 
         const textNodes = getAllTextNodesInElement(rootElement)
 
-        const results: SearchResult[] = []
+        const results: SuperSearchResult[] = []
 
         textNodes.forEach((node) => {
           const text = node.textContent || ''
@@ -78,18 +78,22 @@ export const SearchPlugin = () => {
               endIndex,
             })
           })
-        }),
-          setResults(results)
+        })
+
+        dispatch({
+          type: 'set-results',
+          results,
+        })
       })
     },
-    [clearResults, editor, setResults],
+    [dispatch, editor],
   )
 
   const debouncedHandleSearch = useMemo(() => debounce(handleSearch, 250), [handleSearch])
 
   useEffect(() => {
-    void debouncedHandleSearch(searchQuery)
-  }, [debouncedHandleSearch, searchQuery])
+    void debouncedHandleSearch(query)
+  }, [debouncedHandleSearch, query])
 
   useEffect(() => {
     if (currentResultIndex === -1) {
@@ -114,7 +118,14 @@ export const SearchPlugin = () => {
 
   return (
     <>
-      {showDialog && <SearchDialog closeDialog={() => setShowDialog(false)} />}
+      {showDialog && (
+        <SearchDialog
+          closeDialog={() => {
+            setShowDialog(false)
+            dispatch({ type: 'reset-search' })
+          }}
+        />
+      )}
       {/** @TODO Replace with better mobile UX */}
       <div className="absolute top-4 left-[1rem] md:hidden">
         <button className="border-border bg-default rounded-full border p-1" onClick={() => setShowDialog(true)}>

@@ -5,8 +5,7 @@ import { useSuperSearchContext } from './Context'
 export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const { searchQuery, setSearchQuery, results, goToNextResult, goToPreviousResult, currentResultIndex } =
-    useSuperSearchContext()
+  const { query, results, currentResultIndex, dispatch } = useSuperSearchContext()
 
   useEffect(() => {
     inputRef.current?.focus()
@@ -28,8 +27,13 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
       <input
         type="text"
         placeholder="Search"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+        value={query}
+        onChange={(e) => {
+          dispatch({
+            type: 'set-query',
+            query: e.target.value,
+          })
+        }}
         className="border-border rounded border p-1 px-2"
         ref={inputRef}
       />
@@ -41,20 +45,27 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
       )}
       <button
         className="border-border hover:bg-contrast flex items-center rounded border p-1.5"
-        onClick={goToPreviousResult}
+        onClick={() => {
+          dispatch({
+            type: 'go-to-previous-result',
+          })
+        }}
       >
         <ArrowUpIcon className="text-text h-4 w-4 fill-current" />
       </button>
       <button
         className="border-border hover:bg-contrast flex items-center rounded border p-1.5"
-        onClick={goToNextResult}
+        onClick={() => {
+          dispatch({
+            type: 'go-to-next-result',
+          })
+        }}
       >
         <ArrowDownIcon className="text-text h-4 w-4 fill-current" />
       </button>
       <button
         className="border-border hover:bg-contrast flex items-center rounded border p-1.5"
         onClick={() => {
-          setSearchQuery('')
           closeDialog()
         }}
       >
