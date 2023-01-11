@@ -6,10 +6,10 @@
  *
  */
 
-import './Modal.css';
+import './Modal.css'
 
-import {ReactNode, useEffect, useRef} from 'react';
-import {createPortal} from 'react-dom';
+import { ReactNode, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 
 function PortalImpl({
   onClose,
@@ -17,68 +17,60 @@ function PortalImpl({
   title,
   closeOnClickOutside,
 }: {
-  children: ReactNode;
-  closeOnClickOutside: boolean;
-  onClose: () => void;
-  title: string;
+  children: ReactNode
+  closeOnClickOutside: boolean
+  onClose: () => void
+  title: string
 }) {
-  const modalRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (modalRef.current !== null) {
-      modalRef.current.focus();
+      modalRef.current.focus()
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
-    let modalOverlayElement: HTMLElement | null = null;
+    let modalOverlayElement: HTMLElement | null = null
     const handler = (event: KeyboardEvent) => {
       if (event.keyCode === 27) {
-        onClose();
+        onClose()
       }
-    };
+    }
     const clickOutsideHandler = (event: MouseEvent) => {
-      const target = event.target;
-      if (
-        modalRef.current !== null &&
-        !modalRef.current.contains(target as Node) &&
-        closeOnClickOutside
-      ) {
-        onClose();
+      const target = event.target
+      if (modalRef.current !== null && !modalRef.current.contains(target as Node) && closeOnClickOutside) {
+        onClose()
       }
-    };
+    }
     if (modalRef.current !== null) {
-      modalOverlayElement = modalRef.current?.parentElement;
+      modalOverlayElement = modalRef.current?.parentElement
       if (modalOverlayElement !== null) {
-        modalOverlayElement?.addEventListener('click', clickOutsideHandler);
+        modalOverlayElement?.addEventListener('click', clickOutsideHandler)
       }
     }
 
-    window.addEventListener('keydown', handler);
+    window.addEventListener('keydown', handler)
 
     return () => {
-      window.removeEventListener('keydown', handler);
+      window.removeEventListener('keydown', handler)
       if (modalOverlayElement !== null) {
-        modalOverlayElement?.removeEventListener('click', clickOutsideHandler);
+        modalOverlayElement?.removeEventListener('click', clickOutsideHandler)
       }
-    };
-  }, [closeOnClickOutside, onClose]);
+    }
+  }, [closeOnClickOutside, onClose])
 
   return (
     <div className="Modal__overlay" role="dialog">
       <div className="Modal__modal" tabIndex={-1} ref={modalRef}>
         <h2 className="Modal__title">{title}</h2>
-        <button
-          className="Modal__closeButton"
-          aria-label="Close modal"
-          type="button"
-          onClick={onClose}>
+        <button className="Modal__closeButton" aria-label="Close modal" type="button" onClick={onClose}>
           ✕
         </button>
         <div className="Modal__content">{children}</div>
       </div>
     </div>
-  );
+  )
 }
 
 export default function Modal({
@@ -87,18 +79,15 @@ export default function Modal({
   title,
   closeOnClickOutside = false,
 }: {
-  children: ReactNode;
-  closeOnClickOutside?: boolean;
-  onClose: () => void;
-  title: string;
+  children: ReactNode
+  closeOnClickOutside?: boolean
+  onClose: () => void
+  title: string
 }): JSX.Element {
   return createPortal(
-    <PortalImpl
-      onClose={onClose}
-      title={title}
-      closeOnClickOutside={closeOnClickOutside}>
+    <PortalImpl onClose={onClose} title={title} closeOnClickOutside={closeOnClickOutside}>
       {children}
     </PortalImpl>,
     document.body,
-  );
+  )
 }

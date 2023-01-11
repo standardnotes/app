@@ -6,15 +6,15 @@
  *
  */
 
-import './Input.css';
+import './Input.css'
 
 type Props = Readonly<{
-  'data-test-id'?: string;
-  label: string;
-  onChange: (val: string) => void;
-  placeholder?: string;
-  value: string;
-}>;
+  'data-test-id'?: string
+  label: string
+  onChange: (val: string) => void
+  placeholder?: string
+  value: string
+}>
 
 export default function TextInput({
   label,
@@ -32,10 +32,10 @@ export default function TextInput({
         placeholder={placeholder}
         value={value}
         onChange={(e) => {
-          onChange(e.target.value);
+          onChange(e.target.value)
         }}
         data-test-id={dataTestId}
       />
     </div>
-  );
+  )
 }

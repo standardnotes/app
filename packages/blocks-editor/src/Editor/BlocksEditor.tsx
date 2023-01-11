@@ -1,41 +1,41 @@
-import {FunctionComponent, useCallback, useState} from 'react';
-import {RichTextPlugin} from '@lexical/react/LexicalRichTextPlugin';
-import {ContentEditable} from '@lexical/react/LexicalContentEditable';
-import {OnChangePlugin} from '@lexical/react/LexicalOnChangePlugin';
-import {CheckListPlugin} from '@lexical/react/LexicalCheckListPlugin';
-import {ClearEditorPlugin} from '@lexical/react/LexicalClearEditorPlugin';
-import {MarkdownShortcutPlugin} from '@lexical/react/LexicalMarkdownShortcutPlugin';
-import {TablePlugin} from '@lexical/react/LexicalTablePlugin';
-import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
-import {HashtagPlugin} from '@lexical/react/LexicalHashtagPlugin';
-import {HistoryPlugin} from '@lexical/react/LexicalHistoryPlugin';
-import {LinkPlugin} from '@lexical/react/LexicalLinkPlugin';
-import {ListPlugin} from '@lexical/react/LexicalListPlugin';
-import {$getRoot, EditorState, LexicalEditor} from 'lexical';
-import HorizontalRulePlugin from '../Lexical/Plugins/HorizontalRulePlugin';
-import TwitterPlugin from '../Lexical/Plugins/TwitterPlugin';
-import YouTubePlugin from '../Lexical/Plugins/YouTubePlugin';
-import AutoEmbedPlugin from '../Lexical/Plugins/AutoEmbedPlugin';
-import CollapsiblePlugin from '../Lexical/Plugins/CollapsiblePlugin';
-import DraggableBlockPlugin from '../Lexical/Plugins/DraggableBlockPlugin';
-import CodeHighlightPlugin from '../Lexical/Plugins/CodeHighlightPlugin';
-import FloatingTextFormatToolbarPlugin from '../Lexical/Plugins/FloatingTextFormatToolbarPlugin';
-import FloatingLinkEditorPlugin from '../Lexical/Plugins/FloatingLinkEditorPlugin';
-import {TabIndentationPlugin} from '../Lexical/Plugins/TabIndentationPlugin';
-import {truncateString} from './Utils';
-import {SuperEditorContentId} from './Constants';
-import {classNames} from '@standardnotes/utils';
-import {MarkdownTransformers} from './MarkdownTransformers';
+import { FunctionComponent, useCallback, useState } from 'react'
+import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin'
+import { ContentEditable } from '@lexical/react/LexicalContentEditable'
+import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin'
+import { CheckListPlugin } from '@lexical/react/LexicalCheckListPlugin'
+import { ClearEditorPlugin } from '@lexical/react/LexicalClearEditorPlugin'
+import { MarkdownShortcutPlugin } from '@lexical/react/LexicalMarkdownShortcutPlugin'
+import { TablePlugin } from '@lexical/react/LexicalTablePlugin'
+import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary'
+import { HashtagPlugin } from '@lexical/react/LexicalHashtagPlugin'
+import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
+import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin'
+import { ListPlugin } from '@lexical/react/LexicalListPlugin'
+import { $getRoot, EditorState, LexicalEditor } from 'lexical'
+import HorizontalRulePlugin from '../Lexical/Plugins/HorizontalRulePlugin'
+import TwitterPlugin from '../Lexical/Plugins/TwitterPlugin'
+import YouTubePlugin from '../Lexical/Plugins/YouTubePlugin'
+import AutoEmbedPlugin from '../Lexical/Plugins/AutoEmbedPlugin'
+import CollapsiblePlugin from '../Lexical/Plugins/CollapsiblePlugin'
+import DraggableBlockPlugin from '../Lexical/Plugins/DraggableBlockPlugin'
+import CodeHighlightPlugin from '../Lexical/Plugins/CodeHighlightPlugin'
+import FloatingTextFormatToolbarPlugin from '../Lexical/Plugins/FloatingTextFormatToolbarPlugin'
+import FloatingLinkEditorPlugin from '../Lexical/Plugins/FloatingLinkEditorPlugin'
+import { TabIndentationPlugin } from '../Lexical/Plugins/TabIndentationPlugin'
+import { truncateString } from './Utils'
+import { SuperEditorContentId } from './Constants'
+import { classNames } from '@standardnotes/utils'
+import { MarkdownTransformers } from './MarkdownTransformers'
 
 type BlocksEditorProps = {
-  onChange?: (value: string, preview: string) => void;
-  className?: string;
-  children?: React.ReactNode;
-  previewLength?: number;
-  spellcheck?: boolean;
-  ignoreFirstChange?: boolean;
-  readonly?: boolean;
-};
+  onChange?: (value: string, preview: string) => void
+  className?: string
+  children?: React.ReactNode
+  previewLength?: number
+  spellcheck?: boolean
+  ignoreFirstChange?: boolean
+  readonly?: boolean
+}
 
 export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
   onChange,
@@ -46,49 +46,50 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
   ignoreFirstChange = false,
   readonly,
 }) => {
-  const [didIgnoreFirstChange, setDidIgnoreFirstChange] = useState(false);
+  const [didIgnoreFirstChange, setDidIgnoreFirstChange] = useState(false)
   const handleChange = useCallback(
     (editorState: EditorState, _editor: LexicalEditor) => {
       if (ignoreFirstChange && !didIgnoreFirstChange) {
-        setDidIgnoreFirstChange(true);
-        return;
+        setDidIgnoreFirstChange(true)
+        return
       }
 
       editorState.read(() => {
-        const childrenNodes = $getRoot().getAllTextNodes().slice(0, 2);
-        let previewText = '';
+        const childrenNodes = $getRoot().getAllTextNodes().slice(0, 2)
+        let previewText = ''
         childrenNodes.forEach((node, index) => {
-          previewText += node.getTextContent();
+          previewText += node.getTextContent()
           if (index !== childrenNodes.length - 1) {
-            previewText += '\n';
+            previewText += '\n'
           }
-        });
+        })
 
         if (previewLength) {
-          previewText = truncateString(previewText, previewLength);
+          previewText = truncateString(previewText, previewLength)
         }
 
         try {
-          const stringifiedEditorState = JSON.stringify(editorState.toJSON());
-          onChange?.(stringifiedEditorState, previewText);
+          const stringifiedEditorState = JSON.stringify(editorState.toJSON())
+          onChange?.(stringifiedEditorState, previewText)
         } catch (error) {
           window.alert(
             `An invalid change was made inside the Super editor. Your change was not saved. Please report this error to the team: ${error}`,
-          );
+          )
         }
-      });
+      })
     },
+    // Ignoring 'ignoreFirstChange' and 'previewLength'
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [onChange, didIgnoreFirstChange],
-  );
+  )
 
-  const [floatingAnchorElem, setFloatingAnchorElem] =
-    useState<HTMLDivElement | null>(null);
+  const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null)
 
   const onRef = (_floatingAnchorElem: HTMLDivElement) => {
     if (_floatingAnchorElem !== null) {
-      setFloatingAnchorElem(_floatingAnchorElem);
+      setFloatingAnchorElem(_floatingAnchorElem)
     }
-  };
+  }
 
   return (
     <>
@@ -99,10 +100,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
             <div className="editor" ref={onRef}>
               <ContentEditable
                 id={SuperEditorContentId}
-                className={classNames(
-                  'ContentEditable__root overflow-y-auto',
-                  className,
-                )}
+                className={classNames('ContentEditable__root overflow-y-auto', className)}
                 spellCheck={spellcheck}
               />
             </div>
@@ -135,5 +133,5 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
         </>
       )}
     </>
-  );
-};
+  )
+}
