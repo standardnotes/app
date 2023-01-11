@@ -87,7 +87,7 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
                 })
               }
             }}
-            className="rounded border border-border p-1 px-2"
+            className="rounded border border-border bg-default p-1 px-2"
             ref={searchInputRef}
           />
           {results.length > 0 ? (
@@ -100,7 +100,7 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
           )}
           <label
             className={classNames(
-              'relative flex items-center rounded border border-border py-1 px-1.5 focus-within:ring-2 focus-within:ring-info focus-within:ring-offset-2',
+              'relative flex items-center rounded border border-border py-1 px-1.5 focus-within:ring-2 focus-within:ring-info focus-within:ring-offset-2 focus-within:ring-offset-default',
               isCaseSensitive ? 'bg-info text-info-contrast' : 'hover:bg-contrast',
             )}
             title="Case sensitive (Alt + C)"
@@ -176,7 +176,7 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
                   event.preventDefault()
                 }
               }}
-              className="rounded border border-border p-1 px-2"
+              className="rounded border border-border bg-default p-1 px-2"
               ref={focusOnMount}
             />
             <button
