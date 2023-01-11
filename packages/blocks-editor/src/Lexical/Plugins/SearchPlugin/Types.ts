@@ -1,5 +1,5 @@
 export type SearchResult = {
-  node: Text;
-  startIndex: number;
-  endIndex: number;
-};
+  node: Text
+  startIndex: number
+  endIndex: number
+}
