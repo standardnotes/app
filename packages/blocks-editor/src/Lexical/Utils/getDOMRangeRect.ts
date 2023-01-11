@@ -5,23 +5,20 @@
  * LICENSE file in the root directory of this source tree.
  *
  */
-export function getDOMRangeRect(
-  nativeSelection: Selection,
-  rootElement: HTMLElement,
-): DOMRect {
-  const domRange = nativeSelection.getRangeAt(0);
+export function getDOMRangeRect(nativeSelection: Selection, rootElement: HTMLElement): DOMRect {
+  const domRange = nativeSelection.getRangeAt(0)
 
-  let rect;
+  let rect
 
   if (nativeSelection.anchorNode === rootElement) {
-    let inner = rootElement;
+    let inner = rootElement
     while (inner.firstElementChild != null) {
-      inner = inner.firstElementChild as HTMLElement;
+      inner = inner.firstElementChild as HTMLElement
     }
-    rect = inner.getBoundingClientRect();
+    rect = inner.getBoundingClientRect()
   } else {
-    rect = domRange.getBoundingClientRect();
+    rect = domRange.getBoundingClientRect()
   }
 
-  return rect;
+  return rect
 }
