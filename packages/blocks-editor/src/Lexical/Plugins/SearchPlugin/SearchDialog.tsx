@@ -14,7 +14,7 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
 
   return (
     <div
-      className="border-border bg-default absolute right-6 top-4 flex items-center gap-2 rounded border py-2 px-2"
+      className="absolute right-6 top-4 flex items-center gap-2 rounded border border-border bg-default py-2 px-2"
       onKeyDown={(event) => {
         if (event.key === 'Escape') {
           closeDialog()
@@ -49,7 +49,7 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
             })
           }
         }}
-        className="border-border rounded border p-1 px-2"
+        className="rounded border border-border p-1 px-2"
         ref={inputRef}
       />
       {results.length > 0 && (
@@ -60,7 +60,7 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
       )}
       <label
         className={classNames(
-          'border-border focus-within:ring-info relative flex items-center rounded border py-1 px-1.5 focus-within:ring-2 focus-within:ring-offset-2',
+          'relative flex items-center rounded border border-border py-1 px-1.5 focus-within:ring-2 focus-within:ring-info focus-within:ring-offset-2',
           isCaseSensitive ? 'bg-info text-info-contrast' : 'hover:bg-contrast',
         )}
       >
@@ -79,32 +79,32 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
         <span className="sr-only">Case sensitive</span>
       </label>
       <button
-        className="border-border hover:bg-contrast flex items-center rounded border p-1.5"
+        className="flex items-center rounded border border-border p-1.5 hover:bg-contrast"
         onClick={() => {
           dispatch({
             type: 'go-to-previous-result',
           })
         }}
       >
-        <ArrowUpIcon className="text-text h-4 w-4 fill-current" />
+        <ArrowUpIcon className="h-4 w-4 fill-current text-text" />
       </button>
       <button
-        className="border-border hover:bg-contrast flex items-center rounded border p-1.5"
+        className="flex items-center rounded border border-border p-1.5 hover:bg-contrast"
         onClick={() => {
           dispatch({
             type: 'go-to-next-result',
           })
         }}
       >
-        <ArrowDownIcon className="text-text h-4 w-4 fill-current" />
+        <ArrowDownIcon className="h-4 w-4 fill-current text-text" />
       </button>
       <button
-        className="border-border hover:bg-contrast flex items-center rounded border p-1.5"
+        className="flex items-center rounded border border-border p-1.5 hover:bg-contrast"
         onClick={() => {
           closeDialog()
         }}
       >
-        <CloseIcon className="text-text h-4 w-4 fill-current" />
+        <CloseIcon className="h-4 w-4 fill-current text-text" />
       </button>
     </div>
   )

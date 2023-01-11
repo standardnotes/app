@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * MIT License
 
@@ -23,24 +24,19 @@ SOFTWARE.
  */
 
 export type Options<Result> = {
-  isImmediate?: boolean;
-  maxWait?: number;
-  callback?: (data: Result) => void;
-};
+  isImmediate?: boolean
+  maxWait?: number
+  callback?: (data: Result) => void
+}
 
-export interface DebouncedFunction<
-  Args extends any[],
-  F extends (...args: Args) => any,
-> {
-  (this: ThisParameterType<F>, ...args: Args & Parameters<F>): Promise<
-    ReturnType<F>
-  >;
-  cancel: (reason?: any) => void;
+export interface DebouncedFunction<Args extends any[], F extends (...args: Args) => any> {
+  (this: ThisParameterType<F>, ...args: Args & Parameters<F>): Promise<ReturnType<F>>
+  cancel: (reason?: any) => void
 }
 
 interface DebouncedPromise<FunctionReturn> {
-  resolve: (result: FunctionReturn) => void;
-  reject: (reason?: any) => void;
+  resolve: (result: FunctionReturn) => void
+  reject: (reason?: any) => void
 }
 
 export function debounce<Args extends any[], F extends (...args: Args) => any>(
@@ -48,67 +44,65 @@ export function debounce<Args extends any[], F extends (...args: Args) => any>(
   waitMilliseconds = 50,
   options: Options<ReturnType<F>> = {},
 ): DebouncedFunction<Args, F> {
-  let timeoutId: ReturnType<typeof setTimeout> | undefined;
-  const isImmediate = options.isImmediate ?? false;
-  const callback = options.callback ?? false;
-  const maxWait = options.maxWait;
-  let lastInvokeTime = Date.now();
+  let timeoutId: ReturnType<typeof setTimeout> | undefined
+  const isImmediate = options.isImmediate ?? false
+  const callback = options.callback ?? false
+  const maxWait = options.maxWait
+  let lastInvokeTime = Date.now()
 
-  let promises: DebouncedPromise<ReturnType<F>>[] = [];
+  let promises: DebouncedPromise<ReturnType<F>>[] = []
 
   function nextInvokeTimeout() {
     if (maxWait !== undefined) {
-      const timeSinceLastInvocation = Date.now() - lastInvokeTime;
+      const timeSinceLastInvocation = Date.now() - lastInvokeTime
 
       if (timeSinceLastInvocation + waitMilliseconds >= maxWait) {
-        return maxWait - timeSinceLastInvocation;
+        return maxWait - timeSinceLastInvocation
       }
     }
 
-    return waitMilliseconds;
+    return waitMilliseconds
   }
 
-  const debouncedFunction = function (
-    this: ThisParameterType<F>,
-    ...args: Parameters<F>
-  ) {
-    const context = this;
+  const debouncedFunction = function (this: ThisParameterType<F>, ...args: Parameters<F>) {
+    // eslint-disable-next-line no-invalid-this, @typescript-eslint/no-this-alias
+    const context = this
     return new Promise<ReturnType<F>>((resolve, reject) => {
       const invokeFunction = function () {
-        timeoutId = undefined;
-        lastInvokeTime = Date.now();
+        timeoutId = undefined
+        lastInvokeTime = Date.now()
         if (!isImmediate) {
-          const result = func.apply(context, args);
-          callback && callback(result);
-          promises.forEach(({resolve}) => resolve(result));
-          promises = [];
+          const result = func.apply(context, args)
+          callback && callback(result)
+          promises.forEach(({ resolve }) => resolve(result))
+          promises = []
         }
-      };
+      }
 
-      const shouldCallNow = isImmediate && timeoutId === undefined;
+      const shouldCallNow = isImmediate && timeoutId === undefined
 
       if (timeoutId !== undefined) {
-        clearTimeout(timeoutId);
+        clearTimeout(timeoutId)
       }
 
-      timeoutId = setTimeout(invokeFunction, nextInvokeTimeout());
+      timeoutId = setTimeout(invokeFunction, nextInvokeTimeout())
 
       if (shouldCallNow) {
-        const result = func.apply(context, args);
-        callback && callback(result);
-        return resolve(result);
+        const result = func.apply(context, args)
+        callback && callback(result)
+        return resolve(result)
       }
-      promises.push({resolve, reject});
-    });
-  };
+      promises.push({ resolve, reject })
+    })
+  }
 
   debouncedFunction.cancel = function (reason?: any) {
     if (timeoutId !== undefined) {
-      clearTimeout(timeoutId);
+      clearTimeout(timeoutId)
     }
-    promises.forEach(({reject}) => reject(reason));
-    promises = [];
-  };
+    promises.forEach(({ reject }) => reject(reason))
+    promises = []
+  }
 
-  return debouncedFunction;
+  return debouncedFunction
 }
