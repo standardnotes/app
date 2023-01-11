@@ -1,5 +1,4 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import { SearchIcon } from '@standardnotes/icons'
 import { COMMAND_PRIORITY_EDITOR, KEY_MODIFIER_COMMAND } from 'lexical'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { debounce } from '../../Utils/debounce'
@@ -128,12 +127,6 @@ export const SearchPlugin = () => {
           }}
         />
       )}
-      {/** @TODO Replace with better mobile UX */}
-      <div className="absolute top-4 left-[1rem] md:hidden">
-        <button className="border-border bg-default rounded-full border p-1" onClick={() => setShowDialog(true)}>
-          <SearchIcon className="text-text h-4 w-4 fill-current" />
-        </button>
-      </div>
     </>
   )
 }
