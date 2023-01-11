@@ -91,12 +91,12 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
             ref={searchInputRef}
           />
           {results.length > 0 ? (
-            <span className="min-w-[10ch] text-center text-text">
+            <span className="min-w-[10ch] text-text">
               {currentResultIndex > -1 ? currentResultIndex + 1 + ' of ' : null}
               {results.length}
             </span>
           ) : (
-            <span className="min-w-[10ch] text-center text-text">No results</span>
+            <span className="min-w-[10ch] text-text">No results</span>
           )}
           <label
             className={classNames(
