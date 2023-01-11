@@ -97,12 +97,19 @@ export const SearchPlugin = () => {
     [dispatch, editor],
   )
 
-  const handleQueryOrCaseChange = useMemo(() => debounce(handleSearch, 250), [handleSearch])
+  const handleQueryChange = useMemo(() => debounce(handleSearch, 250), [handleSearch])
   const handleEditorChange = useMemo(() => debounce(handleSearch, 500), [handleSearch])
 
   useEffect(() => {
-    void handleQueryOrCaseChange(query, isCaseSensitive)
-  }, [handleQueryOrCaseChange, isCaseSensitive, query])
+    void handleQueryChange(query, isCaseSensitiveRef.current)
+  }, [handleQueryChange, isCaseSensitiveRef, query])
+
+  useEffect(() => {
+    const handleCaseSensitiveChange = () => {
+      void handleSearch(queryRef.current, isCaseSensitive)
+    }
+    handleCaseSensitiveChange()
+  }, [handleSearch, isCaseSensitive, queryRef])
 
   useLayoutEffect(() => {
     return editor.registerUpdateListener(({ dirtyElements, dirtyLeaves, prevEditorState, tags }) => {
