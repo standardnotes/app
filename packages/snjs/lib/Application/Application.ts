@@ -1,9 +1,7 @@
 import {
   AuthApiService,
   AuthenticatorApiService,
-  AuthenticatorApiServiceInterface,
   AuthenticatorServer,
-  AuthenticatorServerInterface,
   AuthServer,
   HttpService,
   HttpServiceInterface,
@@ -98,6 +96,10 @@ import { LegacySessionStorageMapper } from '@Lib/Services/Mapping/LegacySessionS
 import { SignInWithRecoveryCodes } from '@Lib/Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes'
 import { UseCaseContainerInterface } from '@Lib/Domain/UseCase/UseCaseContainerInterface'
 import { GetRecoveryCodes } from '@Lib/Domain/UseCase/GetRecoveryCodes/GetRecoveryCodes'
+import { AddAuthenticator } from '@Lib/Domain/UseCase/AddAuthenticator/AddAuthenticator'
+import { ListAuthenticators } from '@Lib/Domain/UseCase/ListAuthenticators/ListAuthenticators'
+import { DeleteAuthenticator } from '@Lib/Domain/UseCase/DeleteAuthenticator/DeleteAuthenticator'
+import { VerifyAuthenticator } from '@Lib/Domain/UseCase/VerifyAuthenticator/VerifyAuthenticator'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -172,13 +174,15 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private filesBackupService?: FilesBackupService
   private declare sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>
   private declare legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>
-  private declare authenticatorApiService: AuthenticatorApiServiceInterface
-  private declare authenticatorServer: AuthenticatorServerInterface
   private declare authenticatorManager: AuthenticatorClientInterface
   private declare authManager: AuthClientInterface
 
   private declare _signInWithRecoveryCodes: SignInWithRecoveryCodes
   private declare _getRecoveryCodes: GetRecoveryCodes
+  private declare _addAuthenticator: AddAuthenticator
+  private declare _listAuthenticators: ListAuthenticators
+  private declare _deleteAuthenticator: DeleteAuthenticator
+  private declare _verifyAuthenticator: VerifyAuthenticator
 
   private internalEventBus!: ExternalServices.InternalEventBusInterface
 
@@ -267,6 +271,22 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   get getRecoveryCodes(): UseCaseInterface<string> {
     return this._getRecoveryCodes
+  }
+
+  get addAuthenticator(): UseCaseInterface<void> {
+    return this._addAuthenticator
+  }
+
+  get listAuthenticators(): UseCaseInterface<Array<{ id: string; name: string }>> {
+    return this._listAuthenticators
+  }
+
+  get deleteAuthenticator(): UseCaseInterface<void> {
+    return this._deleteAuthenticator
+  }
+
+  get verifyAuthenticator(): UseCaseInterface<void> {
+    return this._verifyAuthenticator
   }
 
   public get files(): FilesClientInterface {
@@ -1166,8 +1186,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createMutatorService()
     this.createListedService()
     this.createActionsManager()
-    this.createAuthenticatorServer()
-    this.createAuthenticatorApiService()
     this.createAuthenticatorManager()
     this.createAuthManager()
 
@@ -1219,12 +1237,14 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.statusService as unknown) = undefined
     ;(this.sessionStorageMapper as unknown) = undefined
     ;(this.legacySessionStorageMapper as unknown) = undefined
-    ;(this.authenticatorApiService as unknown) = undefined
-    ;(this.authenticatorServer as unknown) = undefined
     ;(this.authenticatorManager as unknown) = undefined
     ;(this.authManager as unknown) = undefined
     ;(this._signInWithRecoveryCodes as unknown) = undefined
     ;(this._getRecoveryCodes as unknown) = undefined
+    ;(this._addAuthenticator as unknown) = undefined
+    ;(this._listAuthenticators as unknown) = undefined
+    ;(this._deleteAuthenticator as unknown) = undefined
+    ;(this._verifyAuthenticator as unknown) = undefined
 
     this.services = []
   }
@@ -1754,16 +1774,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.services.push(this.statusService)
   }
 
-  private createAuthenticatorServer() {
-    this.authenticatorServer = new AuthenticatorServer(this.httpService)
-  }
-
-  private createAuthenticatorApiService() {
-    this.authenticatorApiService = new AuthenticatorApiService(this.authenticatorServer)
-  }
-
   private createAuthenticatorManager() {
-    this.authenticatorManager = new AuthenticatorManager(this.authenticatorApiService, this.internalEventBus)
+    const authenticatorServer = new AuthenticatorServer(this.httpService)
+
+    const authenticatorApiService = new AuthenticatorApiService(authenticatorServer)
+
+    this.authenticatorManager = new AuthenticatorManager(authenticatorApiService, this.internalEventBus)
   }
 
   private createAuthManager() {
@@ -1785,5 +1801,19 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     )
 
     this._getRecoveryCodes = new GetRecoveryCodes(this.authManager, this.settingsService)
+
+    this._addAuthenticator = new AddAuthenticator(
+      this.authenticatorManager,
+      this.options.u2fAuthenticatorRegistrationPromptFunction,
+    )
+
+    this._listAuthenticators = new ListAuthenticators(this.authenticatorManager)
+
+    this._deleteAuthenticator = new DeleteAuthenticator(this.authenticatorManager)
+
+    this._verifyAuthenticator = new VerifyAuthenticator(
+      this.authenticatorManager,
+      this.options.u2fAuthenticatorVerificationPromptFunction,
+    )
   }
 }
