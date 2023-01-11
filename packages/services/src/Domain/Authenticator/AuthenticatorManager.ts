@@ -29,9 +29,9 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
     }
   }
 
-  async delete(authenticatorId: string): Promise<boolean> {
+  async delete(authenticatorId: Uuid): Promise<boolean> {
     try {
-      const result = await this.authenticatorApiService.delete(authenticatorId)
+      const result = await this.authenticatorApiService.delete(authenticatorId.value)
 
       if (result.data.error) {
         return false

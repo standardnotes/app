@@ -97,6 +97,9 @@ import { SignInWithRecoveryCodes } from '@Lib/Domain/UseCase/SignInWithRecoveryC
 import { UseCaseContainerInterface } from '@Lib/Domain/UseCase/UseCaseContainerInterface'
 import { GetRecoveryCodes } from '@Lib/Domain/UseCase/GetRecoveryCodes/GetRecoveryCodes'
 import { AddAuthenticator } from '@Lib/Domain/UseCase/AddAuthenticator/AddAuthenticator'
+import { ListAuthenticators } from '@Lib/Domain/UseCase/ListAuthenticators/ListAuthenticators'
+import { DeleteAuthenticator } from '@Lib/Domain/UseCase/DeleteAuthenticator/DeleteAuthenticator'
+import { VerifyAuthenticator } from '@Lib/Domain/UseCase/VerifyAuthenticator/VerifyAuthenticator'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -177,6 +180,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare _signInWithRecoveryCodes: SignInWithRecoveryCodes
   private declare _getRecoveryCodes: GetRecoveryCodes
   private declare _addAuthenticator: AddAuthenticator
+  private declare _listAuthenticators: ListAuthenticators
+  private declare _deleteAuthenticator: DeleteAuthenticator
+  private declare _verifyAuthenticator: VerifyAuthenticator
 
   private internalEventBus!: ExternalServices.InternalEventBusInterface
 
@@ -269,6 +275,18 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   get addAuthenticator(): UseCaseInterface<void> {
     return this._addAuthenticator
+  }
+
+  get listAuthenticators(): UseCaseInterface<Array<{ id: string; name: string }>> {
+    return this._listAuthenticators
+  }
+
+  get deleteAuthenticator(): UseCaseInterface<void> {
+    return this._deleteAuthenticator
+  }
+
+  get verifyAuthenticator(): UseCaseInterface<void> {
+    return this._verifyAuthenticator
   }
 
   public get files(): FilesClientInterface {
@@ -1224,6 +1242,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this._signInWithRecoveryCodes as unknown) = undefined
     ;(this._getRecoveryCodes as unknown) = undefined
     ;(this._addAuthenticator as unknown) = undefined
+    ;(this._listAuthenticators as unknown) = undefined
+    ;(this._deleteAuthenticator as unknown) = undefined
+    ;(this._verifyAuthenticator as unknown) = undefined
 
     this.services = []
   }
@@ -1784,6 +1805,15 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this._addAuthenticator = new AddAuthenticator(
       this.authenticatorManager,
       this.options.u2fAuthenticatorRegistrationPromptFunction,
+    )
+
+    this._listAuthenticators = new ListAuthenticators(this.authenticatorManager)
+
+    this._deleteAuthenticator = new DeleteAuthenticator(this.authenticatorManager)
+
+    this._verifyAuthenticator = new VerifyAuthenticator(
+      this.authenticatorManager,
+      this.options.u2fAuthenticatorVerificationPromptFunction,
     )
   }
 }
