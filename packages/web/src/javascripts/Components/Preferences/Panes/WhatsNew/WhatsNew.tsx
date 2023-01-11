@@ -49,6 +49,10 @@ const WhatsNew = ({ application }: { application: WebApplication }) => {
     )
   }
 
+  const firstValidVersionIndex = changelog.versions.findIndex(
+    (version) => version.version && (getSectionItems(version, 'Bug Fixes') || getSectionItems(version, 'Features')),
+  )
+
   return (
     <PreferencesPane>
       {changelog.versions.map((version, index) => {
@@ -65,12 +69,12 @@ const WhatsNew = ({ application }: { application: WebApplication }) => {
 
         const isUnreadVersion = lastReadVersion && compareSemVersions(version.version, lastReadVersion) > 0
 
-        const isLatest = index === 0
+        const isLatest = index === firstValidVersionIndex
         const isDesktopEnvironment = isDesktopApplication()
         const showDownloadLink = isDesktopEnvironment && isLatest
 
         return (
-          <PreferencesGroup>
+          <PreferencesGroup key={version.version}>
             <div key={version.version}>
               <div className="flex justify-between">
                 <div className="flex items-start">

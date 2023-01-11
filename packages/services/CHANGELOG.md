@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.55.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.55.0...@standardnotes/services@1.55.1) (2023-01-11)
+
+### Bug Fixes
+
+* **snjs:** simplify authenticator api for generating options ([#2147](https://github.com/standardnotes/app/issues/2147)) ([5d20a53](https://github.com/standardnotes/app/commit/5d20a53e6ea9ec08fdc1403a36a1b371ffaf9cd2))
+
+# [1.55.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.54.0...@standardnotes/services@1.55.0) (2023-01-11)
+
+### Features
+
+* **snjs:** add authenticator use cases ([#2145](https://github.com/standardnotes/app/issues/2145)) ([5864ea8](https://github.com/standardnotes/app/commit/5864ea84e719a5ac26db6ff93e80f51b46751c54))
+
 # [1.54.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.53.2...@standardnotes/services@1.54.0) (2023-01-10)
 
 ### Features

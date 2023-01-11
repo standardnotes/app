@@ -1,6 +1,39 @@
 {
   "versions": [
     {
+      "version": "3.137.3",
+      "title": "[3.137.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.137.2...@standardnotes/web@3.137.3) (2023-01-11)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.137.2",
+      "title": "[3.137.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.137.1...@standardnotes/web@3.137.2) (2023-01-11)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.137.1",
+      "title": "[3.137.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.137.0...@standardnotes/web@3.137.1) (2023-01-11)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.137.0",
       "title": "[3.137.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.136.8...@standardnotes/web@3.137.0) (2023-01-10)",
       "date": null,

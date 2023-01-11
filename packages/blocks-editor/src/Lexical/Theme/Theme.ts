@@ -1,4 +1,4 @@
-import type {EditorThemeClasses} from 'lexical';
+import type { EditorThemeClasses } from 'lexical'
 
 const BlocksEditorTheme: EditorThemeClasses = {
   characterLimit: 'Lexical__characterLimit',
@@ -57,13 +57,7 @@ const BlocksEditorTheme: EditorThemeClasses = {
     nested: {
       listitem: 'Lexical__nestedListItem',
     },
-    olDepth: [
-      'Lexical__ol1',
-      'Lexical__ol2',
-      'Lexical__ol3',
-      'Lexical__ol4',
-      'Lexical__ol5',
-    ],
+    olDepth: ['Lexical__ol1', 'Lexical__ol2', 'Lexical__ol3', 'Lexical__ol4', 'Lexical__ol5'],
     ul: 'Lexical__ul',
   },
   ltr: 'Lexical__ltr',
@@ -96,6 +90,6 @@ const BlocksEditorTheme: EditorThemeClasses = {
     underline: 'Lexical__textUnderline',
     underlineStrikethrough: 'Lexical__textUnderlineStrikethrough',
   },
-};
+}
 
-export default BlocksEditorTheme;
+export default BlocksEditorTheme

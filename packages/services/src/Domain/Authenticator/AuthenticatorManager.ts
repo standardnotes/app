@@ -1,6 +1,7 @@
 /* istanbul ignore file */
 
 import { AuthenticatorApiServiceInterface } from '@standardnotes/api'
+import { Uuid } from '@standardnotes/domain-core'
 
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
@@ -28,9 +29,9 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
     }
   }
 
-  async delete(authenticatorId: string): Promise<boolean> {
+  async delete(authenticatorId: Uuid): Promise<boolean> {
     try {
-      const result = await this.authenticatorApiService.delete(authenticatorId)
+      const result = await this.authenticatorApiService.delete(authenticatorId.value)
 
       if (result.data.error) {
         return false
@@ -42,9 +43,9 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
     }
   }
 
-  async generateRegistrationOptions(userUuid: string, username: string): Promise<Record<string, unknown> | null> {
+  async generateRegistrationOptions(): Promise<Record<string, unknown> | null> {
     try {
-      const result = await this.authenticatorApiService.generateRegistrationOptions(userUuid, username)
+      const result = await this.authenticatorApiService.generateRegistrationOptions()
 
       if (result.data.error) {
         return null
@@ -57,13 +58,13 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
   }
 
   async verifyRegistrationResponse(
-    userUuid: string,
+    userUuid: Uuid,
     name: string,
     registrationCredential: Record<string, unknown>,
   ): Promise<boolean> {
     try {
       const result = await this.authenticatorApiService.verifyRegistrationResponse(
-        userUuid,
+        userUuid.value,
         name,
         registrationCredential,
       )
@@ -93,11 +94,14 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
   }
 
   async verifyAuthenticationResponse(
-    userUuid: string,
+    userUuid: Uuid,
     authenticationCredential: Record<string, unknown>,
   ): Promise<boolean> {
     try {
-      const result = await this.authenticatorApiService.verifyAuthenticationResponse(userUuid, authenticationCredential)
+      const result = await this.authenticatorApiService.verifyAuthenticationResponse(
+        userUuid.value,
+        authenticationCredential,
+      )
 
       if (result.data.error) {
         return false

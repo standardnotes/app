@@ -165,16 +165,16 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
             </MenuItem>
           </>
         )}
+        <MenuItem onClick={() => viewControllerManager.isImportModalVisible.set(true)}>
+          <Icon type="archive" className={iconClassName} />
+          Import
+        </MenuItem>
         <MenuItem className="justify-between" onClick={openHelp}>
           <div className="flex items-center">
             <Icon type="help" className={iconClassName} />
             Help &amp; feedback
           </div>
           <span className="text-neutral">v{application.version}</span>
-        </MenuItem>
-        <MenuItem onClick={() => viewControllerManager.isImportModalVisible.set(true)}>
-          <Icon type="archive" className={iconClassName} />
-          Import
         </MenuItem>
         {user ? (
           <>

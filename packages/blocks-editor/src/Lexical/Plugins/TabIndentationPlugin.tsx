@@ -6,7 +6,7 @@
  *
  */
 
-import {useLexicalComposerContext} from '@lexical/react/LexicalComposerContext';
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import {
   $getSelection,
   $isRangeSelection,
@@ -14,8 +14,8 @@ import {
   INDENT_CONTENT_COMMAND,
   KEY_TAB_COMMAND,
   OUTDENT_CONTENT_COMMAND,
-} from 'lexical';
-import {useEffect} from 'react';
+} from 'lexical'
+import { useEffect } from 'react'
 
 /**
  * This plugin adds the ability to indent content using the tab key. Generally, we don't
@@ -23,28 +23,25 @@ import {useEffect} from 'react';
  * users, causing focus to become trapped within the editor.
  */
 export function TabIndentationPlugin(): null {
-  const [editor] = useLexicalComposerContext();
+  const [editor] = useLexicalComposerContext()
 
   useEffect(() => {
     return editor.registerCommand<KeyboardEvent>(
       KEY_TAB_COMMAND,
       (event) => {
-        const selection = $getSelection();
+        const selection = $getSelection()
 
         if (!$isRangeSelection(selection)) {
-          return false;
+          return false
         }
 
-        event.preventDefault();
+        event.preventDefault()
 
-        return editor.dispatchCommand(
-          event.shiftKey ? OUTDENT_CONTENT_COMMAND : INDENT_CONTENT_COMMAND,
-          undefined,
-        );
+        return editor.dispatchCommand(event.shiftKey ? OUTDENT_CONTENT_COMMAND : INDENT_CONTENT_COMMAND, undefined)
       },
       COMMAND_PRIORITY_EDITOR,
-    );
-  });
+    )
+  })
 
-  return null;
+  return null
 }

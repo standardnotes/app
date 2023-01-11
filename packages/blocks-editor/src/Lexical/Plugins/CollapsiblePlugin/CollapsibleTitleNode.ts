@@ -17,59 +17,54 @@ import {
   RangeSelection,
   SerializedElementNode,
   Spread,
-} from 'lexical';
+} from 'lexical'
 
-import {$isCollapsibleContainerNode} from './CollapsibleContainerNode';
-import {$isCollapsibleContentNode} from './CollapsibleContentNode';
+import { $isCollapsibleContainerNode } from './CollapsibleContainerNode'
+import { $isCollapsibleContentNode } from './CollapsibleContentNode'
 
 type SerializedCollapsibleTitleNode = Spread<
   {
-    type: 'collapsible-title';
-    version: 1;
+    type: 'collapsible-title'
+    version: 1
   },
   SerializedElementNode
->;
+>
 
 export class CollapsibleTitleNode extends ElementNode {
   static override getType(): string {
-    return 'collapsible-title';
+    return 'collapsible-title'
   }
 
   static override clone(node: CollapsibleTitleNode): CollapsibleTitleNode {
-    return new CollapsibleTitleNode(node.__key);
+    return new CollapsibleTitleNode(node.__key)
   }
 
-  override createDOM(config: EditorConfig, editor: LexicalEditor): HTMLElement {
-    const dom = document.createElement('summary');
-    dom.classList.add('Collapsible__title');
+  override createDOM(_config: EditorConfig, editor: LexicalEditor): HTMLElement {
+    const dom = document.createElement('summary')
+    dom.classList.add('Collapsible__title')
     dom.onclick = (event) => {
-      event.preventDefault();
-      event.stopPropagation();
+      event.preventDefault()
+      event.stopPropagation()
       editor.update(() => {
-        const containerNode = this.getParentOrThrow();
+        const containerNode = this.getParentOrThrow()
         if ($isCollapsibleContainerNode(containerNode)) {
-          containerNode.toggleOpen();
+          containerNode.toggleOpen()
         }
-      });
-    };
-    return dom;
+      })
+    }
+    return dom
   }
 
-  override updateDOM(
-    prevNode: CollapsibleTitleNode,
-    dom: HTMLElement,
-  ): boolean {
-    return false;
+  override updateDOM(_prevNode: CollapsibleTitleNode, _dom: HTMLElement): boolean {
+    return false
   }
 
   static importDOM(): DOMConversionMap | null {
-    return {};
+    return {}
   }
 
-  static override importJSON(
-    serializedNode: SerializedCollapsibleTitleNode,
-  ): CollapsibleTitleNode {
-    return $createCollapsibleTitleNode();
+  static override importJSON(_serializedNode: SerializedCollapsibleTitleNode): CollapsibleTitleNode {
+    return $createCollapsibleTitleNode()
   }
 
   override exportJSON(): SerializedCollapsibleTitleNode {
@@ -77,53 +72,47 @@ export class CollapsibleTitleNode extends ElementNode {
       ...super.exportJSON(),
       type: 'collapsible-title',
       version: 1,
-    };
+    }
   }
 
   override collapseAtStart(_selection: RangeSelection): boolean {
-    this.getParentOrThrow().insertBefore(this);
-    return true;
+    this.getParentOrThrow().insertBefore(this)
+    return true
   }
 
   override insertNewAfter(): ElementNode {
-    const containerNode = this.getParentOrThrow();
+    const containerNode = this.getParentOrThrow()
 
     if (!$isCollapsibleContainerNode(containerNode)) {
-      throw new Error(
-        'CollapsibleTitleNode expects to be child of CollapsibleContainerNode',
-      );
+      throw new Error('CollapsibleTitleNode expects to be child of CollapsibleContainerNode')
     }
 
     if (containerNode.getOpen()) {
-      const contentNode = this.getNextSibling();
+      const contentNode = this.getNextSibling()
       if (!$isCollapsibleContentNode(contentNode)) {
-        throw new Error(
-          'CollapsibleTitleNode expects to have CollapsibleContentNode sibling',
-        );
+        throw new Error('CollapsibleTitleNode expects to have CollapsibleContentNode sibling')
       }
 
-      const firstChild = contentNode.getFirstChild();
+      const firstChild = contentNode.getFirstChild()
       if ($isElementNode(firstChild)) {
-        return firstChild;
+        return firstChild
       } else {
-        const paragraph = $createParagraphNode();
-        contentNode.append(paragraph);
-        return paragraph;
+        const paragraph = $createParagraphNode()
+        contentNode.append(paragraph)
+        return paragraph
       }
     } else {
-      const paragraph = $createParagraphNode();
-      containerNode.insertAfter(paragraph);
-      return paragraph;
+      const paragraph = $createParagraphNode()
+      containerNode.insertAfter(paragraph)
+      return paragraph
     }
   }
 }
 
 export function $createCollapsibleTitleNode(): CollapsibleTitleNode {
-  return new CollapsibleTitleNode();
+  return new CollapsibleTitleNode()
 }
 
-export function $isCollapsibleTitleNode(
-  node: LexicalNode | null | undefined,
-): node is CollapsibleTitleNode {
-  return node instanceof CollapsibleTitleNode;
+export function $isCollapsibleTitleNode(node: LexicalNode | null | undefined): node is CollapsibleTitleNode {
+  return node instanceof CollapsibleTitleNode
 }

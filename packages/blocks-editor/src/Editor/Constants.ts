@@ -1,1 +1,1 @@
-export const SuperEditorContentId = 'super-editor-content';
+export const SuperEditorContentId = 'super-editor-content'
