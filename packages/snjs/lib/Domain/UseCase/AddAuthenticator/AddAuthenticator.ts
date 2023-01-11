@@ -1,5 +1,5 @@
 import { AuthenticatorClientInterface } from '@standardnotes/services'
-import { Result, UseCaseInterface, Username, Uuid, Validator } from '@standardnotes/domain-core'
+import { Result, UseCaseInterface, Uuid, Validator } from '@standardnotes/domain-core'
 
 import { AddAuthenticatorDTO } from './AddAuthenticatorDTO'
 
@@ -24,12 +24,6 @@ export class AddAuthenticator implements UseCaseInterface<void> {
     }
     const userUuid = userUuidOrError.getValue()
 
-    const usernameOrError = Username.create(dto.username)
-    if (usernameOrError.isFailed()) {
-      return Result.fail(`Could not generate authenticator registration options: ${usernameOrError.getError()}`)
-    }
-    const username = usernameOrError.getValue()
-
     const authenticatorNameValidatorResult = Validator.isNotEmpty(dto.authenticatorName)
     if (authenticatorNameValidatorResult.isFailed()) {
       return Result.fail(
@@ -37,7 +31,7 @@ export class AddAuthenticator implements UseCaseInterface<void> {
       )
     }
 
-    const registrationOptions = await this.authenticatorClient.generateRegistrationOptions(userUuid, username)
+    const registrationOptions = await this.authenticatorClient.generateRegistrationOptions()
     if (registrationOptions === null) {
       return Result.fail('Could not generate authenticator registration options')
     }
