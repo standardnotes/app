@@ -78,7 +78,7 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
   }, [capturedVideo])
 
   return (
-    <ModalDialog>
+    <ModalDialog isOpen={true} close={close}>
       <ModalDialogLabel closeDialog={close}>Record a video</ModalDialogLabel>
       <ModalDialogDescription>
         <div className="mb-4 flex flex-col">
