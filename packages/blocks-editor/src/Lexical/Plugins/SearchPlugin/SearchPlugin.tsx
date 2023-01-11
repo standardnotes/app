@@ -1,5 +1,5 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import { COMMAND_PRIORITY_EDITOR, KEY_MODIFIER_COMMAND } from 'lexical'
+import { $getNearestNodeFromDOMNode, COMMAND_PRIORITY_EDITOR, KEY_MODIFIER_COMMAND, TextNode } from 'lexical'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { debounce } from '../../Utils/debounce'
 import { createSearchHighlightElement } from './createSearchHighlightElement'
@@ -135,31 +135,35 @@ export const SearchPlugin = () => {
     return addReplaceEventListener((event) => {
       const { replace, type } = event
 
-      if (type === 'next') {
-        editor.update(() => {
+      const replaceResult = (result: SuperSearchResult, scrollIntoView = false) => {
+        const { node, startIndex, endIndex } = result
+        const lexicalNode = $getNearestNodeFromDOMNode(node)
+        if (!lexicalNode) {
+          return
+        }
+        if (lexicalNode instanceof TextNode) {
+          lexicalNode.spliceText(startIndex, endIndex - startIndex, replace, true)
+        }
+        if (scrollIntoView && node.parentElement) {
+          node.parentElement.scrollIntoView({
+            block: 'center',
+          })
+        }
+      }
+
+      editor.update(() => {
+        if (type === 'next') {
           const result = resultsRef.current[currentResultIndexRef.current]
           if (!result) {
             return
           }
-          const { node, startIndex, endIndex } = result
-          const text = node.textContent || ''
-          const newText = text.slice(0, startIndex) + replace + text.slice(endIndex)
-          node.textContent = newText
+          replaceResult(result, true)
+        } else if (type === 'all') {
+          resultsRef.current.forEach((result) => replaceResult(result))
+        }
 
-          void handleSearch(queryRef.current, isCaseSensitiveRef.current)
-        })
-      } else if (type === 'all') {
-        editor.update(() => {
-          resultsRef.current.forEach((result) => {
-            const { node, startIndex, endIndex } = result
-            const text = node.textContent || ''
-            const newText = text.slice(0, startIndex) + replace + text.slice(endIndex)
-            node.textContent = newText
-          })
-
-          void handleSearch(queryRef.current, isCaseSensitiveRef.current)
-        })
-      }
+        void handleSearch(queryRef.current, isCaseSensitiveRef.current)
+      })
     })
   }, [addReplaceEventListener, currentResultIndexRef, editor, handleSearch, isCaseSensitiveRef, queryRef, resultsRef])
 
