@@ -37,6 +37,7 @@ export const SearchDialog = ({ closeDialog }: { closeDialog: () => void }) => {
           setIsReplaceMode((isReplaceMode) => !isReplaceMode)
           searchInputRef.current?.focus()
         }}
+        title="Toggle Replace Mode"
       >
         {isReplaceMode ? (
           <ArrowDownIcon className="h-4 w-4 fill-text" />
