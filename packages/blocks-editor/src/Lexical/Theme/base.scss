@@ -921,24 +921,12 @@ body {
 
   .sticky-note.yellow {
     border-top: 1px solid #fdfd86;
-    background: linear-gradient(
-      135deg,
-      #ffff88 81%,
-      #ffff88 82%,
-      #ffff88 82%,
-      #ffffc6 100%
-    );
+    background: linear-gradient(135deg, #ffff88 81%, #ffff88 82%, #ffff88 82%, #ffffc6 100%);
   }
 
   .sticky-note.pink {
     border-top: 1px solid #e7d1e4;
-    background: linear-gradient(
-      135deg,
-      #f7cbe8 81%,
-      #f7cbe8 82%,
-      #f7cbe8 82%,
-      #e7bfe1 100%
-    );
+    background: linear-gradient(135deg, #f7cbe8 81%, #f7cbe8 82%, #f7cbe8 82%, #e7bfe1 100%);
   }
 
   .sticky-note-container.dragging {

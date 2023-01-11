@@ -6,57 +6,45 @@
  *
  */
 
-import {
-  DOMConversionMap,
-  EditorConfig,
-  ElementNode,
-  LexicalNode,
-  SerializedElementNode,
-  Spread,
-} from 'lexical';
+import { DOMConversionMap, EditorConfig, ElementNode, LexicalNode, SerializedElementNode, Spread } from 'lexical'
 
 type SerializedCollapsibleContentNode = Spread<
   {
-    type: 'collapsible-content';
-    version: 1;
+    type: 'collapsible-content'
+    version: 1
   },
   SerializedElementNode
->;
+>
 
 export class CollapsibleContentNode extends ElementNode {
   static override getType(): string {
-    return 'collapsible-content';
+    return 'collapsible-content'
   }
 
   static override clone(node: CollapsibleContentNode): CollapsibleContentNode {
-    return new CollapsibleContentNode(node.__key);
+    return new CollapsibleContentNode(node.__key)
   }
 
-  override createDOM(config: EditorConfig): HTMLElement {
-    const dom = document.createElement('div');
-    dom.classList.add('Collapsible__content');
-    return dom;
+  override createDOM(_config: EditorConfig): HTMLElement {
+    const dom = document.createElement('div')
+    dom.classList.add('Collapsible__content')
+    return dom
   }
 
-  override updateDOM(
-    prevNode: CollapsibleContentNode,
-    dom: HTMLElement,
-  ): boolean {
-    return false;
+  override updateDOM(_prevNode: CollapsibleContentNode, _dom: HTMLElement): boolean {
+    return false
   }
 
   static importDOM(): DOMConversionMap | null {
-    return {};
+    return {}
   }
 
-  static override importJSON(
-    serializedNode: SerializedCollapsibleContentNode,
-  ): CollapsibleContentNode {
-    return $createCollapsibleContentNode();
+  static override importJSON(_serializedNode: SerializedCollapsibleContentNode): CollapsibleContentNode {
+    return $createCollapsibleContentNode()
   }
 
   override isShadowRoot(): boolean {
-    return true;
+    return true
   }
 
   override exportJSON(): SerializedCollapsibleContentNode {
@@ -64,16 +52,14 @@ export class CollapsibleContentNode extends ElementNode {
       ...super.exportJSON(),
       type: 'collapsible-content',
       version: 1,
-    };
+    }
   }
 }
 
 export function $createCollapsibleContentNode(): CollapsibleContentNode {
-  return new CollapsibleContentNode();
+  return new CollapsibleContentNode()
 }
 
-export function $isCollapsibleContentNode(
-  node: LexicalNode | null | undefined,
-): node is CollapsibleContentNode {
-  return node instanceof CollapsibleContentNode;
+export function $isCollapsibleContentNode(node: LexicalNode | null | undefined): node is CollapsibleContentNode {
+  return node instanceof CollapsibleContentNode
 }

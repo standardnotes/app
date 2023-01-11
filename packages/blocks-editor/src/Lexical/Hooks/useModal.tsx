@@ -6,38 +6,35 @@
  *
  */
 
-import {useCallback, useMemo, useState} from 'react';
+import { useCallback, useMemo, useState } from 'react'
 
-import Modal from '../UI/Modal';
+import Modal from '../UI/Modal'
 
 export default function useModal(): [
   JSX.Element | null,
   (title: string, showModal: (onClose: () => void) => JSX.Element) => void,
 ] {
   const [modalContent, setModalContent] = useState<null | {
-    closeOnClickOutside: boolean;
-    content: JSX.Element;
-    title: string;
-  }>(null);
+    closeOnClickOutside: boolean
+    content: JSX.Element
+    title: string
+  }>(null)
 
   const onClose = useCallback(() => {
-    setModalContent(null);
-  }, []);
+    setModalContent(null)
+  }, [])
 
   const modal = useMemo(() => {
     if (modalContent === null) {
-      return null;
+      return null
     }
-    const {title, content, closeOnClickOutside} = modalContent;
+    const { title, content, closeOnClickOutside } = modalContent
     return (
-      <Modal
-        onClose={onClose}
-        title={title}
-        closeOnClickOutside={closeOnClickOutside}>
+      <Modal onClose={onClose} title={title} closeOnClickOutside={closeOnClickOutside}>
         {content}
       </Modal>
-    );
-  }, [modalContent, onClose]);
+    )
+  }, [modalContent, onClose])
 
   const showModal = useCallback(
     (
@@ -50,10 +47,10 @@ export default function useModal(): [
         closeOnClickOutside,
         content: getContent(onClose),
         title,
-      });
+      })
     },
     [onClose],
-  );
+  )
 
-  return [modal, showModal];
+  return [modal, showModal]
 }

@@ -35,7 +35,7 @@
   border-radius: 0px;
 }
 .Modal__title {
-  color:var(--sn-stylekit-foreground-color);
+  color: var(--sn-stylekit-foreground-color);
   margin: 0px;
   padding-bottom: 15px;
   border-bottom: 1px solid var(--sn-stylekit-border-color);
