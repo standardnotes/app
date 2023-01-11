@@ -23,7 +23,6 @@ describe('AddAuthenticator', () => {
 
     const result = await useCase.execute({
       userUuid: 'invalid',
-      username: 'username',
       authenticatorName: 'authenticatorName',
     })
 
@@ -31,25 +30,11 @@ describe('AddAuthenticator', () => {
     expect(result.getError()).toBe('Could not generate authenticator registration options: Given value is not a valid uuid: invalid')
   })
 
-  it('should return error if username is invalid', async () => {
-    const useCase = createUseCase()
-
-    const result = await useCase.execute({
-      userUuid: '00000000-0000-0000-0000-000000000000',
-      username: '',
-      authenticatorName: 'authenticatorName',
-    })
-
-    expect(result.isFailed()).toBe(true)
-    expect(result.getError()).toBe('Could not generate authenticator registration options: Username cannot be empty')
-  })
-
   it('should return error if authenticatorName is invalid', async () => {
     const useCase = createUseCase()
 
     const result = await useCase.execute({
       userUuid: '00000000-0000-0000-0000-000000000000',
-      username: 'username',
       authenticatorName: '',
     })
 
@@ -64,7 +49,6 @@ describe('AddAuthenticator', () => {
 
     const result = await useCase.execute({
       userUuid: '00000000-0000-0000-0000-000000000000',
-      username: 'username',
       authenticatorName: 'authenticator',
     })
 
@@ -79,7 +63,6 @@ describe('AddAuthenticator', () => {
 
     const result = await useCase.execute({
       userUuid: '00000000-0000-0000-0000-000000000000',
-      username: 'username',
       authenticatorName: 'authenticator',
     })
 
@@ -96,7 +79,6 @@ describe('AddAuthenticator', () => {
 
     const result = await useCase.execute({
       userUuid: '00000000-0000-0000-0000-000000000000',
-      username: 'username',
       authenticatorName: 'authenticator',
     })
 
@@ -111,7 +93,7 @@ describe('AddAuthenticator', () => {
 
     const result = await useCase.execute({
       userUuid: '00000000-0000-0000-0000-000000000000',
-      username: 'username',
+
       authenticatorName: 'authenticator',
     })
 
@@ -124,7 +106,6 @@ describe('AddAuthenticator', () => {
 
     const result = await useCase.execute({
       userUuid: '00000000-0000-0000-0000-000000000000',
-      username: 'username',
       authenticatorName: 'authenticator',
     })
 
@@ -136,7 +117,6 @@ describe('AddAuthenticator', () => {
 
     const result = await useCase.execute({
       userUuid: '00000000-0000-0000-0000-000000000000',
-      username: 'username',
       authenticatorName: 'authenticator',
     })
 
