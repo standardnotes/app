@@ -146,7 +146,6 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
       command: SUPER_TOGGLE_SEARCH,
       key: 'f',
       modifiers: [primaryModifier],
-      // preventDefault: true,
     },
     {
       command: SUPER_SHOW_MARKDOWN_PREVIEW,

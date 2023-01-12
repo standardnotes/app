@@ -46,9 +46,7 @@ export const SearchPlugin = () => {
           setShowDialog(newValue)
           dispatch({ type: 'reset-search' })
           if (!newValue) {
-            editor.update(() => {
-              editor.focus()
-            })
+            editor.focus()
           }
         },
       },
@@ -248,6 +246,7 @@ export const SearchPlugin = () => {
         closeDialog={() => {
           setShowDialog(false)
           dispatch({ type: 'reset-search' })
+          editor.focus()
         }}
       />
     </>
