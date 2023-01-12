@@ -1,3 +1,5 @@
+import { EnterFromTopAnimation, ExitToTopAnimation } from '@/Constants/AnimationConfigs'
+import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
 import {
   ArrowDownIcon,
   ArrowUpIcon,
@@ -6,7 +8,7 @@ import {
   ReplaceAllIcon,
   ArrowRightIcon,
 } from '@standardnotes/icons'
-import { classNames, EnterFromTopAnimation, ExitToTopAnimation, useLifecycleAnimation } from '@standardnotes/utils'
+import { classNames } from '@standardnotes/utils'
 import { useCallback, useState } from 'react'
 import { useSuperSearchContext } from './Context'
 

@@ -6,9 +6,10 @@ import { useSuperSearchContext } from './Context'
 import { SearchDialog } from './SearchDialog'
 import { getAllTextNodesInElement } from './getAllTextNodesInElement'
 import { SuperSearchResult } from './Types'
-import { debounce, useStateRef } from '@standardnotes/utils'
+import { debounce } from '@standardnotes/utils'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { SUPER_TOGGLE_SEARCH } from '@standardnotes/ui-services'
+import { useStateRef } from '@/Hooks/useStateRef'
 
 export const SearchPlugin = () => {
   const application = useApplication()
