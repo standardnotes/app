@@ -24,6 +24,8 @@ const initialState: SuperSearchContextState = {
   results: [],
   currentResultIndex: -1,
   isCaseSensitive: false,
+  isSearchActive: false,
+  isReplaceMode: false,
 }
 
 const searchContextReducer = (
@@ -53,11 +55,25 @@ const searchContextReducer = (
         ...state,
         currentResultIndex: action.index,
       }
-    case 'set-case-sensitive':
+    case 'toggle-search':
+      return {
+        ...initialState,
+        isSearchActive: !state.isSearchActive,
+      }
+    case 'toggle-case-sensitive':
       return {
         ...state,
-        isCaseSensitive: action.isCaseSensitive,
+        isCaseSensitive: !state.isCaseSensitive,
       }
+    case 'toggle-replace-mode': {
+      const toggledValue = !state.isReplaceMode
+
+      return {
+        ...state,
+        isSearchActive: toggledValue && !state.isSearchActive ? true : state.isSearchActive,
+        isReplaceMode: toggledValue,
+      }
+    }
     case 'go-to-next-result':
       return {
         ...state,
@@ -85,7 +101,6 @@ const searchContextReducer = (
 
 export const SuperSearchContextProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(searchContextReducer, initialState)
-  const { query, results, currentResultIndex, isCaseSensitive } = state
 
   const replaceEventListeners = useRef(new Set<(type: SuperSearchReplaceEvent) => void>())
 
@@ -103,15 +118,12 @@ export const SuperSearchContextProvider = ({ children }: { children: ReactNode }
 
   const value = useMemo(
     () => ({
-      query,
-      results,
-      currentResultIndex,
-      isCaseSensitive,
+      ...state,
       dispatch,
       addReplaceEventListener,
       dispatchReplaceEvent,
     }),
-    [query, results, currentResultIndex, isCaseSensitive, addReplaceEventListener, dispatchReplaceEvent],
+    [addReplaceEventListener, dispatchReplaceEvent, state],
   )
 
   return <SuperSearchContext.Provider value={value}>{children}</SuperSearchContext.Provider>

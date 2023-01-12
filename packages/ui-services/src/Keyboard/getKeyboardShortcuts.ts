@@ -28,6 +28,7 @@ import {
   SUPER_SEARCH_TOGGLE_CASE_SENSITIVE,
   SUPER_SEARCH_NEXT_RESULT,
   SUPER_SEARCH_PREVIOUS_RESULT,
+  SUPER_SEARCH_TOGGLE_REPLACE_MODE,
 } from './KeyboardCommands'
 import { KeyboardKey } from './KeyboardKey'
 import { KeyboardModifier } from './KeyboardModifier'
@@ -148,6 +149,11 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
     {
       command: SUPER_TOGGLE_SEARCH,
       key: 'f',
+      modifiers: [primaryModifier],
+    },
+    {
+      command: SUPER_SEARCH_TOGGLE_REPLACE_MODE,
+      key: 'h',
       modifiers: [primaryModifier],
     },
     {

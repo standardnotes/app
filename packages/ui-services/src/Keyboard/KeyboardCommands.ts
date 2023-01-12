@@ -28,10 +28,9 @@ export const PIN_NOTE_COMMAND = createKeyboardCommand('PIN_NOTE_COMMAND')
 
 export const SUPER_TOGGLE_SEARCH = createKeyboardCommand('SUPER_TOGGLE_SEARCH')
 export const SUPER_SEARCH_TOGGLE_CASE_SENSITIVE = createKeyboardCommand('SUPER_SEARCH_TOGGLE_CASE_SENSITIVE')
+export const SUPER_SEARCH_TOGGLE_REPLACE_MODE = createKeyboardCommand('SUPER_SEARCH_TOGGLE_REPLACE_MODE')
 export const SUPER_SEARCH_NEXT_RESULT = createKeyboardCommand('SUPER_SEARCH_NEXT_RESULT')
 export const SUPER_SEARCH_PREVIOUS_RESULT = createKeyboardCommand('SUPER_SEARCH_PREVIOUS_RESULT')
-export const SUPER_SEARCH_REPLACE_NEXT = createKeyboardCommand('SUPER_SEARCH_REPLACE_NEXT')
-export const SUPER_SEARCH_REPLACE_ALL = createKeyboardCommand('SUPER_SEARCH_REPLACE_ALL')
 export const SUPER_SHOW_MARKDOWN_PREVIEW = createKeyboardCommand('SUPER_SHOW_MARKDOWN_PREVIEW')
 
 export const SUPER_EXPORT_JSON = createKeyboardCommand('SUPER_EXPORT_JSON')

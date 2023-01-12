@@ -1,6 +1,6 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { $getNearestNodeFromDOMNode, TextNode } from 'lexical'
-import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useMemo } from 'react'
 import { createSearchHighlightElement } from './createSearchHighlightElement'
 import { useSuperSearchContext } from './Context'
 import { SearchDialog } from './SearchDialog'
@@ -12,6 +12,7 @@ import {
   SUPER_SEARCH_NEXT_RESULT,
   SUPER_SEARCH_PREVIOUS_RESULT,
   SUPER_SEARCH_TOGGLE_CASE_SENSITIVE,
+  SUPER_SEARCH_TOGGLE_REPLACE_MODE,
   SUPER_TOGGLE_SEARCH,
 } from '@standardnotes/ui-services'
 import { useStateRef } from '@/Hooks/useStateRef'
@@ -19,14 +20,18 @@ import { useStateRef } from '@/Hooks/useStateRef'
 export const SearchPlugin = () => {
   const application = useApplication()
   const [editor] = useLexicalComposerContext()
-  const [showDialog, setShowDialog] = useState(false)
-  const showDialogRef = useStateRef(showDialog)
-  const { query, currentResultIndex, results, isCaseSensitive, dispatch, addReplaceEventListener } =
+  const { query, currentResultIndex, results, isCaseSensitive, isSearchActive, dispatch, addReplaceEventListener } =
     useSuperSearchContext()
   const queryRef = useStateRef(query)
   const currentResultIndexRef = useStateRef(currentResultIndex)
   const isCaseSensitiveRef = useStateRef(isCaseSensitive)
   const resultsRef = useStateRef(results)
+
+  useEffect(() => {
+    if (!isSearchActive) {
+      editor.focus()
+    }
+  }, [editor, isSearchActive])
 
   useEffect(() => {
     const isFocusInEditor = () => {
@@ -45,12 +50,18 @@ export const SearchPlugin = () => {
           }
           event.preventDefault()
           event.stopPropagation()
-          const newValue = !showDialogRef.current
-          setShowDialog(newValue)
-          dispatch({ type: 'reset-search' })
-          if (!newValue) {
-            editor.focus()
+          dispatch({ type: 'toggle-search' })
+        },
+      },
+      {
+        command: SUPER_SEARCH_TOGGLE_REPLACE_MODE,
+        onKeyDown: (event) => {
+          if (!isFocusInEditor()) {
+            return
           }
+          event.preventDefault()
+          event.stopPropagation()
+          dispatch({ type: 'toggle-replace-mode' })
         },
       },
       {
@@ -60,8 +71,7 @@ export const SearchPlugin = () => {
             return
           }
           dispatch({
-            type: 'set-case-sensitive',
-            isCaseSensitive: !isCaseSensitiveRef.current,
+            type: 'toggle-case-sensitive',
           })
         },
       },
@@ -92,7 +102,7 @@ export const SearchPlugin = () => {
         },
       },
     ])
-  }, [application.keyboardService, dispatch, editor, isCaseSensitiveRef, showDialogRef])
+  }, [application.keyboardService, dispatch, editor])
 
   const handleSearch = useCallback(
     (query: string, isCaseSensitive: boolean) => {
@@ -283,9 +293,9 @@ export const SearchPlugin = () => {
   return (
     <>
       <SearchDialog
-        open={showDialog}
+        open={isSearchActive}
         closeDialog={() => {
-          setShowDialog(false)
+          dispatch({ type: 'toggle-search' })
           dispatch({ type: 'reset-search' })
           editor.focus()
         }}

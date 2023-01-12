@@ -12,6 +12,7 @@ import {
 import {
   keyboardStringForShortcut,
   SUPER_SEARCH_TOGGLE_CASE_SENSITIVE,
+  SUPER_SEARCH_TOGGLE_REPLACE_MODE,
   SUPER_TOGGLE_SEARCH,
 } from '@standardnotes/ui-services'
 import { classNames } from '@standardnotes/utils'
@@ -19,10 +20,9 @@ import { useCallback, useMemo, useState } from 'react'
 import { useSuperSearchContext } from './Context'
 
 export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog: () => void }) => {
-  const { query, results, currentResultIndex, isCaseSensitive, dispatch, dispatchReplaceEvent } =
+  const { query, results, currentResultIndex, isCaseSensitive, isReplaceMode, dispatch, dispatchReplaceEvent } =
     useSuperSearchContext()
 
-  const [isReplaceMode, setIsReplaceMode] = useState(false)
   const [replaceQuery, setReplaceQuery] = useState('')
 
   const focusOnMount = useCallback((node: HTMLInputElement | null) => {
@@ -42,6 +42,10 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
     () => keyboardStringForShortcut(commandService.keyboardShortcutForCommand(SUPER_TOGGLE_SEARCH)),
     [commandService],
   )
+  const toggleReplaceShortcut = useMemo(
+    () => keyboardStringForShortcut(commandService.keyboardShortcutForCommand(SUPER_SEARCH_TOGGLE_REPLACE_MODE)),
+    [commandService],
+  )
   const caseSensitivityShortcut = useMemo(
     () => keyboardStringForShortcut(commandService.keyboardShortcutForCommand(SUPER_SEARCH_TOGGLE_CASE_SENSITIVE)),
     [commandService],
@@ -59,9 +63,9 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
       <button
         className="focus:ring-none border-r border-border px-1 hover:bg-contrast focus:shadow-inner focus:shadow-info"
         onClick={() => {
-          setIsReplaceMode((isReplaceMode) => !isReplaceMode)
+          dispatch({ type: 'toggle-replace-mode' })
         }}
-        title="Toggle Replace Mode"
+        title={`Toggle Replace Mode (${toggleReplaceShortcut})`}
       >
         {isReplaceMode ? (
           <ArrowDownIcon className="h-4 w-4 fill-text" />
@@ -123,10 +127,9 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
               type="checkbox"
               className="absolute top-0 left-0 z-[1] m-0 h-full w-full cursor-pointer border border-transparent p-0 opacity-0 shadow-none outline-none"
               checked={isCaseSensitive}
-              onChange={(e) => {
+              onChange={() => {
                 dispatch({
-                  type: 'set-case-sensitive',
-                  isCaseSensitive: e.target.checked,
+                  type: 'toggle-case-sensitive',
                 })
               }}
             />

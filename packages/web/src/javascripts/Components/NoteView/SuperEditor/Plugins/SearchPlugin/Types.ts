@@ -9,6 +9,8 @@ export type SuperSearchContextState = {
   results: SuperSearchResult[]
   currentResultIndex: number
   isCaseSensitive: boolean
+  isSearchActive: boolean
+  isReplaceMode: boolean
 }
 
 export type SuperSearchContextAction =
@@ -18,7 +20,9 @@ export type SuperSearchContextAction =
   | { type: 'set-current-result-index'; index: number }
   | { type: 'go-to-next-result' }
   | { type: 'go-to-previous-result' }
-  | { type: 'set-case-sensitive'; isCaseSensitive: boolean }
+  | { type: 'toggle-case-sensitive' }
+  | { type: 'toggle-replace-mode' }
+  | { type: 'toggle-search' }
   | { type: 'reset-search' }
 
 export type SuperSearchReplaceEvent = {
