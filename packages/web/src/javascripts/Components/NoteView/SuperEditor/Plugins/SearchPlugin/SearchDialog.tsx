@@ -54,10 +54,6 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
           if (event.key === 'Escape') {
             closeDialog()
           }
-          if (event.ctrlKey && event.key === 'f') {
-            event.preventDefault()
-            closeDialog()
-          }
         }}
       >
         <div className="flex items-center gap-2">

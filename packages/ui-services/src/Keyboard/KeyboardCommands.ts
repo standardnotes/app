@@ -25,6 +25,7 @@ export const OPEN_NOTE_HISTORY_COMMAND = createKeyboardCommand('OPEN_NOTE_HISTOR
 export const CAPTURE_SAVE_COMMAND = createKeyboardCommand('CAPTURE_SAVE_COMMAND')
 export const STAR_NOTE_COMMAND = createKeyboardCommand('STAR_NOTE_COMMAND')
 export const PIN_NOTE_COMMAND = createKeyboardCommand('PIN_NOTE_COMMAND')
+export const SUPER_TOGGLE_SEARCH = createKeyboardCommand('SUPER_TOGGLE_SEARCH')
 export const SUPER_SHOW_MARKDOWN_PREVIEW = createKeyboardCommand('SUPER_SHOW_MARKDOWN_PREVIEW')
 export const SUPER_EXPORT_JSON = createKeyboardCommand('SUPER_EXPORT_JSON')
 export const SUPER_EXPORT_MARKDOWN = createKeyboardCommand('SUPER_EXPORT_MARKDOWN')

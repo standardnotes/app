@@ -24,6 +24,7 @@ import {
   SUPER_SHOW_MARKDOWN_PREVIEW,
   OPEN_PREFERENCES_COMMAND,
   TOGGLE_DARK_MODE_COMMAND,
+  SUPER_TOGGLE_SEARCH,
 } from './KeyboardCommands'
 import { KeyboardKey } from './KeyboardKey'
 import { KeyboardModifier } from './KeyboardModifier'
@@ -140,6 +141,12 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
       key: 'p',
       modifiers: [primaryModifier, KeyboardModifier.Shift],
       preventDefault: true,
+    },
+    {
+      command: SUPER_TOGGLE_SEARCH,
+      key: 'f',
+      modifiers: [primaryModifier],
+      // preventDefault: true,
     },
     {
       command: SUPER_SHOW_MARKDOWN_PREVIEW,

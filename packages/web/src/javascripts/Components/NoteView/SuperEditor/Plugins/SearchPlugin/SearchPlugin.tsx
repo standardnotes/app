@@ -1,5 +1,5 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import { $getNearestNodeFromDOMNode, COMMAND_PRIORITY_EDITOR, KEY_MODIFIER_COMMAND, TextNode } from 'lexical'
+import { $getNearestNodeFromDOMNode, TextNode } from 'lexical'
 import { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { createSearchHighlightElement } from './createSearchHighlightElement'
 import { useSuperSearchContext } from './Context'
@@ -7,10 +7,14 @@ import { SearchDialog } from './SearchDialog'
 import { getAllTextNodesInElement } from './getAllTextNodesInElement'
 import { SuperSearchResult } from './Types'
 import { debounce, useStateRef } from '@standardnotes/utils'
+import { useApplication } from '@/Components/ApplicationProvider'
+import { SUPER_TOGGLE_SEARCH } from '@standardnotes/ui-services'
 
 export const SearchPlugin = () => {
+  const application = useApplication()
   const [editor] = useLexicalComposerContext()
   const [showDialog, setShowDialog] = useState(false)
+  const showDialogRef = useStateRef(showDialog)
   const { query, currentResultIndex, results, isCaseSensitive, dispatch, addReplaceEventListener } =
     useSuperSearchContext()
   const queryRef = useStateRef(query)
@@ -19,26 +23,37 @@ export const SearchPlugin = () => {
   const resultsRef = useStateRef(results)
 
   useEffect(() => {
-    return editor.registerCommand<KeyboardEvent>(
-      KEY_MODIFIER_COMMAND,
-      (event: KeyboardEvent) => {
-        const isCmdF = event.key === 'f' && !event.altKey && (event.metaKey || event.ctrlKey)
+    let rootElement: HTMLElement | null | undefined
 
-        if (!isCmdF) {
-          return false
-        }
+    editor.getEditorState().read(() => {
+      rootElement = editor.getRootElement()
+    })
 
-        event.preventDefault()
-        event.stopPropagation()
+    if (!rootElement) {
+      return
+    }
 
-        setShowDialog((show) => !show)
-        dispatch({ type: 'reset-search' })
-
-        return true
+    return application.keyboardService.addCommandHandlers([
+      {
+        command: SUPER_TOGGLE_SEARCH,
+        onKeyDown: (event) => {
+          if (!document.activeElement || !document.activeElement.closest('.blocks-editor')) {
+            return
+          }
+          event.preventDefault()
+          event.stopPropagation()
+          const newValue = !showDialogRef.current
+          setShowDialog(newValue)
+          dispatch({ type: 'reset-search' })
+          if (!newValue) {
+            editor.update(() => {
+              editor.focus()
+            })
+          }
+        },
       },
-      COMMAND_PRIORITY_EDITOR,
-    )
-  }, [dispatch, editor])
+    ])
+  }, [application.keyboardService, dispatch, editor, showDialogRef])
 
   const handleSearch = useCallback(
     (query: string, isCaseSensitive: boolean) => {

@@ -164,51 +164,48 @@ export const SuperEditor: FunctionComponent<Props> = ({
   return (
     <div className="font-editor relative h-full w-full">
       <ErrorBoundary>
-        <>
-          <LinkingControllerProvider controller={linkingController}>
-            <FilesControllerProvider controller={filesController}>
-              <BlocksEditorComposer
-                readonly={note.current.locked}
-                initialValue={note.current.text}
-                nodes={[FileNode, BubbleNode]}
+        <LinkingControllerProvider controller={linkingController}>
+          <FilesControllerProvider controller={filesController}>
+            <BlocksEditorComposer
+              readonly={note.current.locked}
+              initialValue={note.current.text}
+              nodes={[FileNode, BubbleNode]}
+            >
+              <BlocksEditor
+                onChange={handleChange}
+                ignoreFirstChange={controller.isTemplateNote}
+                className={classNames(
+                  'blocks-editor relative h-full resize-none px-4 py-4 focus:shadow-none focus:outline-none',
+                  lineHeight && `leading-${lineHeight.toLowerCase()}`,
+                  fontSize ? getPlaintextFontSize(fontSize) : 'text-base',
+                )}
+                previewLength={NotePreviewCharLimit}
+                spellcheck={spellcheck}
               >
-                <BlocksEditor
-                  onChange={handleChange}
-                  ignoreFirstChange={controller.isTemplateNote}
-                  className={classNames(
-                    'relative h-full resize-none px-4 py-4 focus:shadow-none focus:outline-none',
-                    lineHeight && `leading-${lineHeight.toLowerCase()}`,
-                    fontSize ? getPlaintextFontSize(fontSize) : 'text-base',
-                  )}
-                  previewLength={NotePreviewCharLimit}
-                  spellcheck={spellcheck}
-                >
-                  <ItemSelectionPlugin currentNote={note.current} />
-                  <FilePlugin />
-                  <ItemBubblePlugin />
-                  <BlockPickerMenuPlugin />
-                  <GetMarkdownPlugin ref={getMarkdownPlugin} />
-                  <DatetimePlugin />
-                  <PasswordPlugin />
-                  <AutoLinkPlugin />
-                  <ChangeContentCallbackPlugin
-                    providerCallback={(callback) => (changeEditorFunction.current = callback)}
-                  />
-                  <NodeObserverPlugin nodeType={BubbleNode} onRemove={handleBubbleRemove} />
-                  <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
-                  <ExportPlugin />
-                  <ReadonlyPlugin note={note.current} />
-                  {controller.isTemplateNote ? <AutoFocusPlugin /> : null}
-                  <SuperSearchContextProvider>
-                    <SearchPlugin />
-                  </SuperSearchContextProvider>
-                </BlocksEditor>
-              </BlocksEditorComposer>
-            </FilesControllerProvider>
-          </LinkingControllerProvider>
-
-          {showMarkdownPreview && <SuperNoteMarkdownPreview note={note.current} closeDialog={closeMarkdownPreview} />}
-        </>
+                <ItemSelectionPlugin currentNote={note.current} />
+                <FilePlugin />
+                <ItemBubblePlugin />
+                <BlockPickerMenuPlugin />
+                <GetMarkdownPlugin ref={getMarkdownPlugin} />
+                <DatetimePlugin />
+                <PasswordPlugin />
+                <AutoLinkPlugin />
+                <ChangeContentCallbackPlugin
+                  providerCallback={(callback) => (changeEditorFunction.current = callback)}
+                />
+                <NodeObserverPlugin nodeType={BubbleNode} onRemove={handleBubbleRemove} />
+                <NodeObserverPlugin nodeType={FileNode} onRemove={handleBubbleRemove} />
+                <ExportPlugin />
+                <ReadonlyPlugin note={note.current} />
+                {controller.isTemplateNote ? <AutoFocusPlugin /> : null}
+                <SuperSearchContextProvider>
+                  <SearchPlugin />
+                </SuperSearchContextProvider>
+              </BlocksEditor>
+            </BlocksEditorComposer>
+          </FilesControllerProvider>
+        </LinkingControllerProvider>
+        {showMarkdownPreview && <SuperNoteMarkdownPreview note={note.current} closeDialog={closeMarkdownPreview} />}
       </ErrorBoundary>
     </div>
   )
