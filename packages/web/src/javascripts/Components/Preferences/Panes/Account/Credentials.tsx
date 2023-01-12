@@ -55,9 +55,11 @@ const Credentials: FunctionComponent<Props> = ({ application }: Props) => {
             Current password was set on <span className="font-bold">{passwordCreatedOn}</span>
           </Text>
           <Button className="mt-3 min-w-20" label="Change password" onClick={presentPasswordWizard} />
-          {isChangeEmailDialogOpen && (
-            <ChangeEmail onCloseDialog={() => setIsChangeEmailDialogOpen(false)} application={application} />
-          )}
+          <ChangeEmail
+            isOpen={isChangeEmailDialogOpen}
+            onCloseDialog={() => setIsChangeEmailDialogOpen(false)}
+            application={application}
+          />
         </PreferencesSegment>
       </PreferencesGroup>
       <PasswordWizardContent
