@@ -17,6 +17,7 @@ type Props = {
 }
 
 const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application }) => {
+  const canShowActivationModal = auth.status !== 'fetching' && is2FAActivation(auth.status)
   return (
     <>
       <PreferencesGroup>
@@ -45,9 +46,7 @@ const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application }) => {
           </PreferencesSegment>
         )}
       </PreferencesGroup>
-      {auth.status !== 'fetching' && is2FAActivation(auth.status) && (
-        <TwoFactorActivationView activation={auth.status} />
-      )}
+      {canShowActivationModal && <TwoFactorActivationView isOpen={canShowActivationModal} activation={auth.status} />}
     </>
   )
 }

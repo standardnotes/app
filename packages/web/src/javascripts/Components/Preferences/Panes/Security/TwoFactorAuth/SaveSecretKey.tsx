@@ -7,7 +7,6 @@ import CopyButton from './CopyButton'
 import Bullet from './Bullet'
 import { downloadSecretKey } from './download-secret-key'
 import { TwoFactorActivation } from './TwoFactorActivation'
-import ModalDialog from '@/Components/Shared/ModalDialog'
 import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
 import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
@@ -30,7 +29,7 @@ const SaveSecretKey: FunctionComponent<Props> = ({ activation: act }) => {
     />
   )
   return (
-    <ModalDialog>
+    <>
       <ModalDialogLabel
         closeDialog={() => {
           act.cancelActivation()
@@ -83,7 +82,7 @@ const SaveSecretKey: FunctionComponent<Props> = ({ activation: act }) => {
         <Button className="min-w-20" label="Back" onClick={() => act.openScanQRCode()} />
         <Button className="min-w-20" primary label="Next" onClick={() => act.openVerification()} />
       </ModalDialogButtons>
-    </ModalDialog>
+    </>
   )
 }
 
