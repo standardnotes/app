@@ -1,7 +1,6 @@
 import { SNComponent } from '@standardnotes/snjs'
 import { useCallback } from 'react'
 import Button from '@/Components/Button/Button'
-import ModalDialog from '../Shared/ModalDialog'
 import ModalDialogLabel from '../Shared/ModalDialogLabel'
 import ModalDialogDescription from '../Shared/ModalDialogDescription'
 import ModalDialogButtons from '../Shared/ModalDialogButtons'
@@ -13,7 +12,7 @@ type Props = {
   permissionsString: string
 }
 
-const PermissionsModal = ({ callback, component, dismiss, permissionsString }: Props) => {
+const PermissionsModalContent = ({ callback, component, dismiss, permissionsString }: Props) => {
   const accept = useCallback(() => {
     callback(true)
     dismiss()
@@ -25,7 +24,7 @@ const PermissionsModal = ({ callback, component, dismiss, permissionsString }: P
   }, [callback, dismiss])
 
   return (
-    <ModalDialog className="w-full md:!w-[350px]">
+    <>
       <ModalDialogLabel closeDialog={deny}>Activate Component</ModalDialogLabel>
       <ModalDialogDescription>
         <div className="text-base">
@@ -47,8 +46,8 @@ const PermissionsModal = ({ callback, component, dismiss, permissionsString }: P
           Continue
         </Button>
       </ModalDialogButtons>
-    </ModalDialog>
+    </>
   )
 }
 
-export default PermissionsModal
+export default PermissionsModalContent
