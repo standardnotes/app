@@ -36,7 +36,10 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
   }
 
   return (
-    <div className="absolute right-6 top-4 flex select-none rounded border border-border bg-default" ref={setElement}>
+    <div
+      className="absolute right-6 top-4 z-10 flex select-none rounded border border-border bg-default"
+      ref={setElement}
+    >
       <button
         className="focus:ring-none border-r border-border px-1 hover:bg-contrast focus:shadow-inner focus:shadow-info"
         onClick={() => {
