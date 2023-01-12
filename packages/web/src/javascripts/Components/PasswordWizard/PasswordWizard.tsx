@@ -38,7 +38,7 @@ type FormData = {
   status?: string
 }
 
-class PasswordWizard extends AbstractComponent<Props, State> {
+class PasswordWizardContent extends AbstractComponent<Props, State> {
   private currentPasswordInput = createRef<HTMLInputElement>()
 
   constructor(props: Props) {
@@ -228,72 +228,80 @@ class PasswordWizard extends AbstractComponent<Props, State> {
 
   override render() {
     return (
-      <div className="sn-component" id="password-wizard">
-        <ModalDialog>
-          <ModalDialogLabel closeDialog={this.dismiss}>{this.state.title}</ModalDialogLabel>
-          <ModalDialogDescription>
-            {this.state.step === Steps.PasswordStep && (
-              <div className="flex flex-col pb-1.5">
-                <form>
-                  <label htmlFor="password-wiz-current-password" className="mb-1 block">
-                    Current Password
-                  </label>
+      <>
+        <ModalDialogLabel closeDialog={this.dismiss}>{this.state.title}</ModalDialogLabel>
+        <ModalDialogDescription>
+          {this.state.step === Steps.PasswordStep && (
+            <div className="flex flex-col pb-1.5">
+              <form>
+                <label htmlFor="password-wiz-current-password" className="mb-1 block">
+                  Current Password
+                </label>
 
-                  <DecoratedPasswordInput
-                    ref={this.currentPasswordInput}
-                    id="password-wiz-current-password"
-                    value={this.state.formData.currentPassword}
-                    onChange={this.handleCurrentPasswordInputChange}
-                    type="password"
-                  />
+                <DecoratedPasswordInput
+                  ref={this.currentPasswordInput}
+                  id="password-wiz-current-password"
+                  value={this.state.formData.currentPassword}
+                  onChange={this.handleCurrentPasswordInputChange}
+                  type="password"
+                />
 
-                  <div className="min-h-2" />
+                <div className="min-h-2" />
 
-                  <label htmlFor="password-wiz-new-password" className="mb-1 block">
-                    New Password
-                  </label>
+                <label htmlFor="password-wiz-new-password" className="mb-1 block">
+                  New Password
+                </label>
 
-                  <DecoratedPasswordInput
-                    id="password-wiz-new-password"
-                    value={this.state.formData.newPassword}
-                    onChange={this.handleNewPasswordInputChange}
-                    type="password"
-                  />
+                <DecoratedPasswordInput
+                  id="password-wiz-new-password"
+                  value={this.state.formData.newPassword}
+                  onChange={this.handleNewPasswordInputChange}
+                  type="password"
+                />
 
-                  <div className="min-h-2" />
+                <div className="min-h-2" />
 
-                  <label htmlFor="password-wiz-confirm-new-password" className="mb-1 block">
-                    Confirm New Password
-                  </label>
+                <label htmlFor="password-wiz-confirm-new-password" className="mb-1 block">
+                  Confirm New Password
+                </label>
 
-                  <DecoratedPasswordInput
-                    id="password-wiz-confirm-new-password"
-                    value={this.state.formData.newPasswordConfirmation}
-                    onChange={this.handleNewPasswordConfirmationInputChange}
-                    type="password"
-                  />
-                </form>
-              </div>
-            )}
-            {this.state.step === Steps.FinishStep && (
-              <div className="flex flex-col">
-                <div className="mb-1 font-bold text-info">Your password has been successfully changed.</div>
-                <p className="sk-p">
-                  Please ensure you are running the latest version of Standard Notes on all platforms to ensure maximum
-                  compatibility.
-                </p>
-              </div>
-            )}
-          </ModalDialogDescription>
-          <ModalDialogButtons>
-            <Button primary onClick={this.nextStep} disabled={this.state.lockContinue} className="min-w-20">
-              {this.state.continueTitle}
-            </Button>
-          </ModalDialogButtons>
-        </ModalDialog>
-      </div>
+                <DecoratedPasswordInput
+                  id="password-wiz-confirm-new-password"
+                  value={this.state.formData.newPasswordConfirmation}
+                  onChange={this.handleNewPasswordConfirmationInputChange}
+                  type="password"
+                />
+              </form>
+            </div>
+          )}
+          {this.state.step === Steps.FinishStep && (
+            <div className="flex flex-col">
+              <div className="mb-1 font-bold text-info">Your password has been successfully changed.</div>
+              <p className="sk-p">
+                Please ensure you are running the latest version of Standard Notes on all platforms to ensure maximum
+                compatibility.
+              </p>
+            </div>
+          )}
+        </ModalDialogDescription>
+        <ModalDialogButtons>
+          <Button primary onClick={this.nextStep} disabled={this.state.lockContinue} className="min-w-20">
+            {this.state.continueTitle}
+          </Button>
+        </ModalDialogButtons>
+      </>
     )
   }
+}
+
+const PasswordWizard = (props: Props & { isOpen: boolean }) => {
+  return (
+    <div className="sn-component" id="password-wizard">
+      <ModalDialog isOpen={props.isOpen} close={props.dismissModal}>
+        <PasswordWizardContent {...props} />
+      </ModalDialog>
+    </div>
+  )
 }
 
 export default PasswordWizard
