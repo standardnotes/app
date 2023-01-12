@@ -443,7 +443,7 @@ function useDraggableBlockMenu(editor: LexicalEditor, anchorElem: HTMLElement, i
         onTouchEnd={onTouchEnd}
       >
         <div className={isEditable ? 'icon' : ''}>
-          <BlockIcon className="text-text pointer-events-none" />
+          <BlockIcon className="pointer-events-none text-text" />
         </div>
       </div>
       <div className="draggable-block-target-line" ref={targetLineRef} />

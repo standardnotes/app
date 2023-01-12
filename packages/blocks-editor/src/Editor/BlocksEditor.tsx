@@ -97,12 +97,13 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       <RichTextPlugin
         contentEditable={
           <div id="blocks-editor" className="editor-scroller h-full">
-            <div className="editor" ref={onRef}>
+            <div className="editor z-0 overflow-hidden" ref={onRef}>
               <ContentEditable
                 id={SuperEditorContentId}
                 className={classNames('ContentEditable__root overflow-y-auto', className)}
                 spellCheck={spellcheck}
               />
+              <div className="search-highlight-container pointer-events-none absolute top-0 left-0 h-full w-full" />
             </div>
           </div>
         }
