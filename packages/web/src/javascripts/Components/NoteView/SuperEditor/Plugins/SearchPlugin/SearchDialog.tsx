@@ -1,4 +1,4 @@
-import { EnterFromTopAnimation, ExitToTopAnimation } from '@/Constants/AnimationConfigs'
+import { TranslateFromTopAnimation, TranslateToTopAnimation } from '@/Constants/AnimationConfigs'
 import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
 import {
   ArrowDownIcon,
@@ -27,8 +27,8 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
 
   const [isMounted, setElement] = useLifecycleAnimation({
     open,
-    enter: EnterFromTopAnimation,
-    exit: ExitToTopAnimation,
+    enter: TranslateFromTopAnimation,
+    exit: TranslateToTopAnimation,
   })
 
   if (!isMounted) {
