@@ -61,12 +61,22 @@ const searchContextReducer = (
     case 'go-to-next-result':
       return {
         ...state,
-        currentResultIndex: state.currentResultIndex + 1 < state.results.length ? state.currentResultIndex + 1 : 0,
+        currentResultIndex:
+          state.results.length < 1
+            ? -1
+            : state.currentResultIndex + 1 < state.results.length
+            ? state.currentResultIndex + 1
+            : 0,
       }
     case 'go-to-previous-result':
       return {
         ...state,
-        currentResultIndex: state.currentResultIndex - 1 >= 0 ? state.currentResultIndex - 1 : state.results.length - 1,
+        currentResultIndex:
+          state.results.length < 1
+            ? -1
+            : state.currentResultIndex - 1 >= 0
+            ? state.currentResultIndex - 1
+            : state.results.length - 1,
       }
     case 'reset-search':
       return { ...initialState }

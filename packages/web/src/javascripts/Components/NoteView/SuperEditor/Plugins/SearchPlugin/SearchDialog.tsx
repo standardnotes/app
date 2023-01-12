@@ -1,3 +1,4 @@
+import { useCommandService } from '@/Components/CommandProvider'
 import { TranslateFromTopAnimation, TranslateToTopAnimation } from '@/Constants/AnimationConfigs'
 import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
 import {
@@ -8,8 +9,13 @@ import {
   ReplaceAllIcon,
   ArrowRightIcon,
 } from '@standardnotes/icons'
+import {
+  keyboardStringForShortcut,
+  SUPER_SEARCH_TOGGLE_CASE_SENSITIVE,
+  SUPER_TOGGLE_SEARCH,
+} from '@standardnotes/ui-services'
 import { classNames } from '@standardnotes/utils'
-import { useCallback, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { useSuperSearchContext } from './Context'
 
 export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog: () => void }) => {
@@ -30,6 +36,16 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
     enter: TranslateFromTopAnimation,
     exit: TranslateToTopAnimation,
   })
+
+  const commandService = useCommandService()
+  const searchToggleShortcut = useMemo(
+    () => keyboardStringForShortcut(commandService.keyboardShortcutForCommand(SUPER_TOGGLE_SEARCH)),
+    [commandService],
+  )
+  const caseSensitivityShortcut = useMemo(
+    () => keyboardStringForShortcut(commandService.keyboardShortcutForCommand(SUPER_SEARCH_TOGGLE_CASE_SENSITIVE)),
+    [commandService],
+  )
 
   if (!isMounted) {
     return null
@@ -84,12 +100,6 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
                   type: 'go-to-next-result',
                 })
               }
-              if (event.altKey && event.key === 'c') {
-                dispatch({
-                  type: 'set-case-sensitive',
-                  isCaseSensitive: !isCaseSensitive,
-                })
-              }
             }}
             className="rounded border border-border bg-default p-1 px-2"
             ref={focusOnMount}
@@ -107,7 +117,7 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
               'relative flex items-center rounded border py-1 px-1.5 focus-within:ring-2 focus-within:ring-info focus-within:ring-offset-2 focus-within:ring-offset-default',
               isCaseSensitive ? 'border-info bg-info text-info-contrast' : 'border-border hover:bg-contrast',
             )}
-            title="Case sensitive (Alt + C)"
+            title={`Case sensitive (${caseSensitivityShortcut})`}
           >
             <input
               type="checkbox"
@@ -152,7 +162,7 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
             onClick={() => {
               closeDialog()
             }}
-            title="Close (Esc)"
+            title={`Close (${searchToggleShortcut})`}
           >
             <CloseIcon className="h-4 w-4 fill-current text-text" />
           </button>

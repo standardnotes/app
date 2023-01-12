@@ -8,7 +8,12 @@ import { getAllTextNodesInElement } from './getAllTextNodesInElement'
 import { SuperSearchResult } from './Types'
 import { debounce } from '@standardnotes/utils'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { SUPER_TOGGLE_SEARCH } from '@standardnotes/ui-services'
+import {
+  SUPER_SEARCH_NEXT_RESULT,
+  SUPER_SEARCH_PREVIOUS_RESULT,
+  SUPER_SEARCH_TOGGLE_CASE_SENSITIVE,
+  SUPER_TOGGLE_SEARCH,
+} from '@standardnotes/ui-services'
 import { useStateRef } from '@/Hooks/useStateRef'
 
 export const SearchPlugin = () => {
@@ -24,21 +29,18 @@ export const SearchPlugin = () => {
   const resultsRef = useStateRef(results)
 
   useEffect(() => {
-    let rootElement: HTMLElement | null | undefined
-
-    editor.getEditorState().read(() => {
-      rootElement = editor.getRootElement()
-    })
-
-    if (!rootElement) {
-      return
+    const isFocusInEditor = () => {
+      if (!document.activeElement || !document.activeElement.closest('.blocks-editor')) {
+        return false
+      }
+      return true
     }
 
     return application.keyboardService.addCommandHandlers([
       {
         command: SUPER_TOGGLE_SEARCH,
         onKeyDown: (event) => {
-          if (!document.activeElement || !document.activeElement.closest('.blocks-editor')) {
+          if (!isFocusInEditor()) {
             return
           }
           event.preventDefault()
@@ -51,8 +53,46 @@ export const SearchPlugin = () => {
           }
         },
       },
+      {
+        command: SUPER_SEARCH_TOGGLE_CASE_SENSITIVE,
+        onKeyDown() {
+          if (!isFocusInEditor()) {
+            return
+          }
+          dispatch({
+            type: 'set-case-sensitive',
+            isCaseSensitive: !isCaseSensitiveRef.current,
+          })
+        },
+      },
+      {
+        command: SUPER_SEARCH_NEXT_RESULT,
+        onKeyDown(event) {
+          if (!isFocusInEditor()) {
+            return
+          }
+          event.preventDefault()
+          event.stopPropagation()
+          dispatch({
+            type: 'go-to-next-result',
+          })
+        },
+      },
+      {
+        command: SUPER_SEARCH_PREVIOUS_RESULT,
+        onKeyDown(event) {
+          if (!isFocusInEditor()) {
+            return
+          }
+          event.preventDefault()
+          event.stopPropagation()
+          dispatch({
+            type: 'go-to-previous-result',
+          })
+        },
+      },
     ])
-  }, [application.keyboardService, dispatch, editor, showDialogRef])
+  }, [application.keyboardService, dispatch, editor, isCaseSensitiveRef, showDialogRef])
 
   const handleSearch = useCallback(
     (query: string, isCaseSensitive: boolean) => {

@@ -25,6 +25,9 @@ import {
   OPEN_PREFERENCES_COMMAND,
   TOGGLE_DARK_MODE_COMMAND,
   SUPER_TOGGLE_SEARCH,
+  SUPER_SEARCH_TOGGLE_CASE_SENSITIVE,
+  SUPER_SEARCH_NEXT_RESULT,
+  SUPER_SEARCH_PREVIOUS_RESULT,
 } from './KeyboardCommands'
 import { KeyboardKey } from './KeyboardKey'
 import { KeyboardModifier } from './KeyboardModifier'
@@ -146,6 +149,20 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
       command: SUPER_TOGGLE_SEARCH,
       key: 'f',
       modifiers: [primaryModifier],
+    },
+    {
+      command: SUPER_SEARCH_TOGGLE_CASE_SENSITIVE,
+      key: 'c',
+      modifiers: [KeyboardModifier.Alt],
+    },
+    {
+      command: SUPER_SEARCH_NEXT_RESULT,
+      key: 'F3',
+    },
+    {
+      command: SUPER_SEARCH_PREVIOUS_RESULT,
+      key: 'F3',
+      modifiers: [KeyboardModifier.Shift],
     },
     {
       command: SUPER_SHOW_MARKDOWN_PREVIEW,
