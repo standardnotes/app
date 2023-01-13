@@ -85,7 +85,6 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
-    this.loggingEnabled = true
     apiService.setInvalidSessionObserver((revoked) => {
       if (revoked) {
         void this.notifyEvent(SessionEvent.Revoked)

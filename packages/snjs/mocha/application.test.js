@@ -71,6 +71,9 @@ describe('application instances', () => {
       Platform.MacWeb,
       Factory.getDefaultHost(),
     )
+    const sessionManager = app.sessions
+    sessionManager.loggingEnabled = true
+
     await Factory.registerUserToApplication({
       application: app,
       email: UuidGenerator.GenerateUuid(),

@@ -38,6 +38,7 @@ export class AppContext {
   enableLogging() {
     const syncService = this.application.syncService
     const payloadManager = this.application.payloadManager
+    const sessionManager = this.application.sessions
 
     syncService.getServiceName = () => {
       return `${this.identifier}—SyncService`
@@ -45,9 +46,13 @@ export class AppContext {
     payloadManager.getServiceName = () => {
       return `${this.identifier}-PayloadManager`
     }
+    sessionManager.getServiceName = () => {
+      return `${this.identifier}-SessionManager`
+    }
 
     syncService.loggingEnabled = true
     payloadManager.loggingEnabled = true
+    sessionManager.loggingEnabled = true
   }
 
   async initialize() {
