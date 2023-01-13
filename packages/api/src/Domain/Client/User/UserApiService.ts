@@ -62,21 +62,17 @@ export class UserApiService implements UserApiServiceInterface {
   }): Promise<UserRegistrationResponse> {
     this.lockOperation(UserApiOperations.Registering)
 
-    try {
-      const response = await this.userServer.register({
-        [ApiEndpointParam.ApiVersion]: ApiVersion.v0,
-        password: registerDTO.serverPassword,
-        email: registerDTO.email,
-        ephemeral: registerDTO.ephemeral,
-        ...registerDTO.keyParams.getPortableValue(),
-      })
+    const response = await this.userServer.register({
+      [ApiEndpointParam.ApiVersion]: ApiVersion.v0,
+      password: registerDTO.serverPassword,
+      email: registerDTO.email,
+      ephemeral: registerDTO.ephemeral,
+      ...registerDTO.keyParams.getPortableValue(),
+    })
 
-      this.unlockOperation(UserApiOperations.Registering)
+    this.unlockOperation(UserApiOperations.Registering)
 
-      return response
-    } catch (error) {
-      throw new ApiCallError(ErrorMessage.GenericRegistrationFail)
-    }
+    return response
   }
 
   private lockOperation(operation: UserApiOperations): void {

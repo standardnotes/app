@@ -85,6 +85,7 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
+    this.loggingEnabled = true
     apiService.setInvalidSessionObserver((revoked) => {
       if (revoked) {
         void this.notifyEvent(SessionEvent.Revoked)
@@ -300,7 +301,14 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
     const serverPassword = rootKey.serverPassword as string
     const keyParams = rootKey.keyParams
 
-    const registerResponse = await this.userApiService.register({ email, serverPassword, keyParams, ephemeral })
+    let registerResponse
+    try {
+      registerResponse = await this.userApiService.register({ email, serverPassword, keyParams, ephemeral })
+    } catch (error) {
+      this.log('Registration failed', (error as Error).message)
+
+      throw new ApiCallError(ErrorMessage.GenericRegistrationFail)
+    }
 
     if ('error' in registerResponse.data) {
       throw new ApiCallError((registerResponse.data as HttpErrorResponseBody).error.message)
