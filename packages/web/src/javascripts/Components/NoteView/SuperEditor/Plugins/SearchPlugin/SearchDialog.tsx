@@ -1,14 +1,9 @@
+import Button from '@/Components/Button/Button'
 import { useCommandService } from '@/Components/CommandProvider'
+import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { TranslateFromTopAnimation, TranslateToTopAnimation } from '@/Constants/AnimationConfigs'
 import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
-import {
-  ArrowDownIcon,
-  ArrowUpIcon,
-  CloseIcon,
-  ReplaceIcon,
-  ReplaceAllIcon,
-  ArrowRightIcon,
-} from '@standardnotes/icons'
+import { ArrowDownIcon, ArrowUpIcon, CloseIcon, ArrowRightIcon } from '@standardnotes/icons'
 import {
   keyboardStringForShortcut,
   SUPER_SEARCH_TOGGLE_CASE_SENSITIVE,
@@ -82,14 +77,17 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
         }}
       >
         <div className="flex items-center gap-2">
-          <input
-            type="text"
+          <DecoratedInput
             placeholder="Search"
+            className={{
+              container: classNames('flex-grow !text-[length:inherit]', !query.length && '!py-1'),
+              right: '!py-1',
+            }}
             value={query}
-            onChange={(e) => {
+            onChange={(query) => {
               dispatch({
                 type: 'set-query',
-                query: e.target.value,
+                query,
               })
             }}
             onKeyDown={(event) => {
@@ -105,17 +103,18 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
                 })
               }
             }}
-            className="rounded border border-border bg-default p-1 px-2"
             ref={focusOnMount}
+            right={[
+              <div className="min-w-[7ch] max-w-[7ch] flex-shrink-0 whitespace-nowrap text-right">
+                {query.length > 0 && (
+                  <>
+                    {currentResultIndex > -1 ? currentResultIndex + 1 + ' / ' : null}
+                    {results.length}
+                  </>
+                )}
+              </div>,
+            ]}
           />
-          {results.length > 0 ? (
-            <span className="min-w-[10ch] text-text">
-              {currentResultIndex > -1 ? currentResultIndex + 1 + ' of ' : null}
-              {results.length}
-            </span>
-          ) : (
-            <span className="min-w-[10ch] text-text">No results</span>
-          )}
           <label
             className={classNames(
               'relative flex items-center rounded border py-1 px-1.5 focus-within:ring-2 focus-within:ring-info focus-within:ring-offset-2 focus-within:ring-offset-default',
@@ -198,8 +197,8 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
               className="rounded border border-border bg-default p-1 px-2"
               ref={focusOnMount}
             />
-            <button
-              className="flex items-center rounded border border-border p-1.5 hover:bg-contrast disabled:cursor-not-allowed"
+            <Button
+              small
               onClick={() => {
                 dispatchReplaceEvent({
                   type: 'next',
@@ -209,10 +208,10 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
               disabled={results.length < 1 || replaceQuery.length < 1}
               title="Replace (Ctrl + Enter)"
             >
-              <ReplaceIcon className="h-4 w-4 fill-current text-text" />
-            </button>
-            <button
-              className="flex items-center rounded border border-border p-1.5 hover:bg-contrast disabled:cursor-not-allowed"
+              Replace
+            </Button>
+            <Button
+              small
               onClick={() => {
                 dispatchReplaceEvent({
                   type: 'all',
@@ -222,8 +221,8 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
               disabled={results.length < 1 || replaceQuery.length < 1}
               title="Replace all (Ctrl + Alt + Enter)"
             >
-              <ReplaceAllIcon className="h-4 w-4 fill-current text-text" />
-            </button>
+              Replace all
+            </Button>
           </div>
         )}
       </div>

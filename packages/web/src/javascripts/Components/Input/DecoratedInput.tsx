@@ -1,3 +1,4 @@
+import { classNames } from '@standardnotes/utils'
 import { forwardRef, Fragment, Ref } from 'react'
 import { DecoratedInputProps } from './DecoratedInputProps'
 
@@ -41,12 +42,18 @@ const DecoratedInput = forwardRef(
   ) => {
     const hasLeftDecorations = Boolean(left?.length)
     const hasRightDecorations = Boolean(right?.length)
-    const classNames = getClassNames(hasLeftDecorations, hasRightDecorations, roundedFull)
+    const computedClassNames = getClassNames(hasLeftDecorations, hasRightDecorations, roundedFull)
 
     return (
-      <div className={`${classNames.container} ${disabled ? classNames.disabled : ''} ${className?.container}`}>
+      <div
+        className={classNames(
+          computedClassNames.container,
+          disabled ? computedClassNames.disabled : '',
+          className?.container,
+        )}
+      >
         {left && (
-          <div className="flex items-center px-2 py-1.5">
+          <div className={classNames('flex items-center px-2 py-1.5', className?.left)}>
             {left.map((leftChild, index) => (
               <Fragment key={index}>{leftChild}</Fragment>
             ))}
@@ -55,7 +62,7 @@ const DecoratedInput = forwardRef(
 
         <input
           autoComplete={autocomplete ? 'on' : 'off'}
-          className={`${classNames.input} ${disabled ? classNames.disabled : ''} ${className?.input}`}
+          className={`${computedClassNames.input} ${disabled ? computedClassNames.disabled : ''} ${className?.input}`}
           data-lpignore={type !== 'password' ? true : false}
           disabled={disabled}
           id={id}
@@ -73,7 +80,7 @@ const DecoratedInput = forwardRef(
         />
 
         {right && (
-          <div className="flex items-center px-2 py-1.5">
+          <div className={classNames('flex items-center px-2 py-1.5', className?.right)}>
             {right.map((rightChild, index) => (
               <div className={index > 0 ? 'ml-3' : ''} key={index}>
                 {rightChild}
