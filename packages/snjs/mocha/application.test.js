@@ -6,6 +6,9 @@ chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('application instances', () => {
+  let application1
+  let application2
+
   const syncOptions = {
     checkIntegrity: true,
     awaitAll: true,
@@ -17,6 +20,12 @@ describe('application instances', () => {
 
   afterEach(async () => {
     localStorage.clear()
+    if (application1 !== undefined) {
+      await Factory.safeDeinit(application1)
+    }
+    if (application2 !== undefined) {
+      await Factory.safeDeinit(application2)
+    }
   })
 
   it('two distinct applications should not share model manager state', async () => {
@@ -36,86 +45,84 @@ describe('application instances', () => {
   })
 
   it('two distinct applications should not share storage manager state', async () => {
-    const app1 = await Factory.createAndInitializeApplication('app1')
-    const app2 = await Factory.createAndInitializeApplication('app2')
+    application1 = await Factory.createAndInitializeApplication('app1')
+    application2 = await Factory.createAndInitializeApplication('app2')
 
-    await Factory.createMappedNote(app1)
-    await app1.syncService.sync(syncOptions)
+    await Factory.createMappedNote(application1)
+    await application1.syncService.sync(syncOptions)
 
-    expect((await app1.diskStorageService.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems + 1)
-    expect((await app2.diskStorageService.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems)
+    expect((await application1.diskStorageService.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems + 1)
+    expect((await application2.diskStorageService.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems)
 
-    await Factory.createMappedNote(app2)
-    await app2.syncService.sync(syncOptions)
+    await Factory.createMappedNote(application2)
+    await application2.syncService.sync(syncOptions)
 
-    expect((await app1.diskStorageService.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems + 1)
-    expect((await app2.diskStorageService.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems + 1)
-    await Factory.safeDeinit(app1)
-    await Factory.safeDeinit(app2)
+    expect((await application1.diskStorageService.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems + 1)
+    expect((await application2.diskStorageService.getAllRawPayloads()).length).length.to.equal(BaseItemCounts.DefaultItems + 1)
   })
 
   it('deinit application while storage persisting should be handled gracefully', async () => {
     /** This test will always succeed but should be observed for console exceptions */
-    const app = await Factory.createAndInitializeApplication('app')
+    application1 = await Factory.createAndInitializeApplication('app')
     /** Don't await */
-    app.diskStorageService.persistValuesToDisk()
-    await app.prepareForDeinit()
-    await Factory.safeDeinit(app)
+    application1.diskStorageService.persistValuesToDisk()
+    await application1.prepareForDeinit()
+    await Factory.safeDeinit(application1)
   })
 
   it('changing default host should not affect already signed in accounts', async () => {
     /** This test will always succeed but should be observed for console exceptions */
-    const app = await Factory.createAndInitializeApplication(
+    application1 = await Factory.createAndInitializeApplication(
       'app',
       Environment.Web,
       Platform.MacWeb,
       Factory.getDefaultHost(),
     )
     await Factory.registerUserToApplication({
-      application: app,
+      application: application1,
       email: UuidGenerator.GenerateUuid(),
       password: 'password',
     })
-    await app.prepareForDeinit()
-    await Factory.safeDeinit(app)
+    await application1.prepareForDeinit()
+    await Factory.safeDeinit(application1)
 
     /** Recreate app with different host */
-    const recreatedApp = await Factory.createAndInitializeApplication(
+    application2 = await Factory.createAndInitializeApplication(
       'app',
       Environment.Web,
       Platform.MacWeb,
       'http://nonsense.host',
     )
 
-    expect(recreatedApp.getHost()).to.not.equal('http://nonsense.host')
-    expect(recreatedApp.getHost()).to.equal(Factory.getDefaultHost())
+    expect(application2.getHost()).to.not.equal('http://nonsense.host')
+    expect(application2.getHost()).to.equal(Factory.getDefaultHost())
   })
 
   it('signing out application should delete snjs_version', async () => {
     const identifier = 'app'
-    const app = await Factory.createAndInitializeApplication(identifier)
+    application1 = await Factory.createAndInitializeApplication(identifier)
 
     expect(localStorage.getItem(`${identifier}-snjs_version`)).to.be.ok
 
-    await app.user.signOut()
+    await application1.user.signOut()
 
     expect(localStorage.getItem(`${identifier}-snjs_version`)).to.not.be.ok
   })
 
   it('locking application while critical func in progress should wait up to a limit', async () => {
     /** This test will always succeed but should be observed for console exceptions */
-    const app = await Factory.createAndInitializeApplication('app')
+    application1 = await Factory.createAndInitializeApplication('app')
     /** Don't await */
     const MaximumWaitTime = 0.5
-    app.diskStorageService.executeCriticalFunction(async () => {
+    application1.diskStorageService.executeCriticalFunction(async () => {
       /** If we sleep less than the maximum, locking should occur safely.
        * If we sleep more than the maximum, locking should occur with exception on
        * app deinit. */
       await Factory.sleep(MaximumWaitTime - 0.05)
       /** Access any deviceInterface function */
-      app.diskStorageService.deviceInterface.getAllDatabaseEntries(app.identifier)
+      application1.diskStorageService.deviceInterface.getAllDatabaseEntries(application1.identifier)
     })
-    await app.lock()
+    await application1.lock()
   })
 
   describe.skip('signOut()', () => {
