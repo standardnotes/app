@@ -1,4 +1,42 @@
-type AlertButtonStyle = 'small' | 'outlined' | 'contrast' | 'neutral' | 'info' | 'warning' | 'danger' | 'success'
+type AlertButtonStyle = 'default' | 'contrast' | 'neutral' | 'info' | 'warning' | 'danger' | 'success'
+
+const getColorsForNormalVariant = (style: AlertButtonStyle) => {
+  switch (style) {
+    case 'default':
+      return 'bg-default text-text'
+    case 'contrast':
+      return 'bg-default text-contrast'
+    case 'neutral':
+      return 'bg-default text-neutral'
+    case 'info':
+      return 'bg-default text-info'
+    case 'warning':
+      return 'bg-default text-warning'
+    case 'danger':
+      return 'bg-default text-danger'
+    case 'success':
+      return 'bg-default text-success'
+  }
+}
+
+const getColorsForPrimaryVariant = (style: AlertButtonStyle) => {
+  switch (style) {
+    case 'default':
+      return 'bg-default text-foreground'
+    case 'contrast':
+      return 'bg-contrast text-text'
+    case 'neutral':
+      return 'bg-neutral text-neutral-contrast'
+    case 'info':
+      return 'bg-info text-info-contrast'
+    case 'warning':
+      return 'bg-warning text-warning-contrast'
+    case 'danger':
+      return 'bg-danger text-danger-contrast'
+    case 'success':
+      return 'bg-success text-success-contrast'
+  }
+}
 
 type AlertButton = {
   text: string
@@ -23,7 +61,15 @@ export class SKAlert {
   buttonsString() {
     const genButton = function (buttonDesc: AlertButton, index: number) {
       return `
-        <button id='button-${index}' class='font-bold px-2.5 py-2 text-base lg:text-xs text-info-contrast bg-${buttonDesc.style}'>
+        <button id='button-${index}' class='font-bold px-4 py-1.5 rounded text-base lg:text-sm ${
+        buttonDesc.primary ? 'no-border ' : 'border-solid border-border border '
+      } ${
+        buttonDesc.primary
+          ? 'hover:brightness-125 focus:outline-none focus:brightness-125 '
+          : 'focus:bg-contrast focus:outline-none hover:bg-contrast '
+      } ${
+        buttonDesc.primary ? getColorsForPrimaryVariant(buttonDesc.style) : getColorsForNormalVariant(buttonDesc.style)
+      }'>
           <div class='sk-label'>${buttonDesc.text}</div>
         </button>
       `
@@ -36,7 +82,7 @@ export class SKAlert {
       .join('')
 
     const str = `
-      <div class='sk-button-group'>
+      <div class='flex items-center justify-end gap-2 w-full'>
         ${buttonString}
       </div>
     `
@@ -57,7 +103,7 @@ export class SKAlert {
       buttonsTemplate = ''
       panelStyle = 'style="padding-bottom: 8px"'
     }
-    const titleTemplate = this.title ? `<div class='mb-1 font-bold text-lg lg:text-base'>${this.title}</div>` : ''
+    const titleTemplate = this.title ? `<div class='mb-1 font-bold text-lg'>${this.title}</div>` : ''
     const messageTemplate = this.text ? `<p class='sk-p text-base lg:text-sm'>${this.text}</p>` : ''
 
     const template = `

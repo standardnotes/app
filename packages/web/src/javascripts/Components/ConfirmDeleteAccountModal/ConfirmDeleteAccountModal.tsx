@@ -25,22 +25,20 @@ const ConfirmDeleteAccountModal = ({ application, viewControllerManager }: Props
           <div className="sk-panel">
             <div className="sk-panel-content">
               <div className="sk-panel-section">
-                <AlertDialogLabel className="sk-h3 sk-panel-section-title">Delete account?</AlertDialogLabel>
+                <AlertDialogLabel className="text-lg font-bold">Delete account?</AlertDialogLabel>
                 <AlertDialogDescription className="sk-panel-row">
                   <div>
-                    <p className="text-foreground">{STRING_DELETE_ACCOUNT_CONFIRMATION}</p>
+                    <p className="text-base text-foreground lg:text-sm">{STRING_DELETE_ACCOUNT_CONFIRMATION}</p>
                   </div>
                 </AlertDialogDescription>
 
-                <div className="my-1 mt-4 flex gap-2">
-                  <Button primary small colorStyle="neutral" rounded={false} ref={cancelRef} onClick={closeDialog}>
+                <div className="my-1 mt-4 flex justify-end gap-2">
+                  <Button ref={cancelRef} onClick={closeDialog}>
                     Cancel
                   </Button>
                   <Button
                     primary
-                    small
                     colorStyle="danger"
-                    rounded={false}
                     onClick={() => {
                       application.user.deleteAccount().catch(console.error)
                       closeDialog()

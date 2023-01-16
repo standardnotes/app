@@ -38,14 +38,14 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
           <div className="sk-panel">
             <div className="sk-panel-content">
               <div className="sk-panel-section">
-                <AlertDialogLabel className="sk-h3 sk-panel-section-title">Sign out workspace?</AlertDialogLabel>
+                <AlertDialogLabel className="text-lg font-bold">Sign out workspace?</AlertDialogLabel>
                 <AlertDialogDescription className="sk-panel-row">
                   <div>
-                    <p className="text-foreground">{STRING_SIGN_OUT_CONFIRMATION}</p>
+                    <p className="text-base text-foreground lg:text-sm">{STRING_SIGN_OUT_CONFIRMATION}</p>
                     {showWorkspaceWarning && (
                       <>
                         <br />
-                        <p className="text-foreground">
+                        <p className="text-base text-foreground lg:text-sm">
                           <strong>Note: </strong>
                           Because you have other workspaces signed in, this sign out may leave logs and other metadata
                           of your session on this device. For a more robust sign out that performs a hard clear of all
@@ -83,15 +83,13 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
                   </div>
                 )}
 
-                <div className="my-1 mt-4 flex gap-2">
-                  <Button primary small colorStyle="neutral" rounded={false} ref={cancelRef} onClick={closeDialog}>
+                <div className="my-1 mt-4 flex justify-end gap-2">
+                  <Button ref={cancelRef} onClick={closeDialog}>
                     Cancel
                   </Button>
                   <Button
                     primary
-                    small
                     colorStyle="danger"
-                    rounded={false}
                     onClick={() => {
                       if (deleteLocalBackups) {
                         application.signOutAndDeleteLocalBackups().catch(console.error)

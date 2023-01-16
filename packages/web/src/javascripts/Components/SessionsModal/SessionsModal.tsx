@@ -166,28 +166,17 @@ const SessionsModalContent: FunctionComponent<{
               <div className="sk-panel">
                 <div className="sk-panel-content">
                   <div className="sk-panel-section">
-                    <AlertDialogLabel className="sk-h3 sk-panel-section-title">
-                      {SessionStrings.RevokeTitle}
-                    </AlertDialogLabel>
+                    <AlertDialogLabel className="text-lg font-bold">{SessionStrings.RevokeTitle}</AlertDialogLabel>
                     <AlertDialogDescription className="sk-panel-row">
-                      <p>{SessionStrings.RevokeText}</p>
+                      <p className="text-base text-foreground lg:text-sm">{SessionStrings.RevokeText}</p>
                     </AlertDialogDescription>
-                    <div className="my-1 flex gap-2">
-                      <Button
-                        primary
-                        small
-                        colorStyle="neutral"
-                        rounded={false}
-                        ref={cancelRevokeRef}
-                        onClick={closeRevokeSessionAlert}
-                      >
+                    <div className="my-1 mt-4 flex justify-end gap-2">
+                      <Button ref={cancelRevokeRef} onClick={closeRevokeSessionAlert}>
                         <span>{SessionStrings.RevokeCancelButton}</span>
                       </Button>
                       <Button
                         primary
-                        small
                         colorStyle="danger"
-                        rounded={false}
                         onClick={() => {
                           closeRevokeSessionAlert()
                           revokeSession(confirmRevokingSessionUuid).catch(console.error)

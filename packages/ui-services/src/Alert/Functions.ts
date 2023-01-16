@@ -22,7 +22,7 @@ export function confirmDialog({
       buttons: [
         {
           text: cancelButtonText,
-          style: 'neutral',
+          style: 'default',
           action() {
             resolve(false)
           },
@@ -30,6 +30,7 @@ export function confirmDialog({
         {
           text: confirmButtonText,
           style: confirmButtonStyle,
+          primary: true,
           action() {
             resolve(true)
           },
@@ -56,7 +57,7 @@ export function alertDialog({
       buttons: [
         {
           text: closeButtonText,
-          style: 'neutral',
+          style: 'default',
           action: resolve,
         },
       ],
