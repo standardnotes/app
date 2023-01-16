@@ -25,8 +25,6 @@ describe('history manager', () => {
     beforeEach(async function () {
       this.application = await Factory.createInitAppWithFakeCrypto()
       this.historyManager = this.application.historyManager
-      this.listRevisions = this.application.listRevisions
-      this.getRevision = this.application.getRevision
       this.payloadManager = this.application.payloadManager
       /** Automatically optimize after every revision by setting this to 0 */
       this.historyManager.itemRevisionThreshold = 0
@@ -284,13 +282,13 @@ describe('history manager', () => {
       this.payloadManager = this.application.payloadManager
       const item = await Factory.createSyncedNote(this.application)
       await this.application.syncService.sync(syncOptions)
-      const itemHistory = await this.listRevisions.execute({ itemUuid: item.uuid }).getValue()
+      const itemHistory = await this.application.listRevisions.execute({ itemUuid: item.uuid }).getValue()
       expect(itemHistory).to.be.undefined
     })
 
     it('create basic history entries 2', async function () {
       const item = await Factory.createSyncedNote(this.application)
-      let itemHistory = await this.listRevisions.execute({ itemUuid: item.uuid }).getValue()
+      let itemHistory = await this.application.listRevisions.execute({ itemUuid: item.uuid }).getValue()
 
       /** Server history should save initial revision */
       expect(itemHistory).to.be.ok
@@ -298,7 +296,7 @@ describe('history manager', () => {
 
       /** Sync within 5 minutes, should not create a new entry */
       await Factory.markDirtyAndSyncItem(this.application, item)
-      itemHistory = await this.listRevisions.execute({ itemUuid: item.uuid }).getValue()
+      itemHistory = await this.application.listRevisions.execute({ itemUuid: item.uuid }).getValue()
       expect(itemHistory.length).to.equal(1)
 
       /** Sync with different contents, should not create a new entry */
@@ -311,7 +309,7 @@ describe('history manager', () => {
         undefined,
         syncOptions,
       )
-      itemHistory = await this.listRevisions.execute({ itemUuid: item.uuid }).getValue()
+      itemHistory = await this.application.listRevisions.execute({ itemUuid: item.uuid }).getValue()
       expect(itemHistory.length).to.equal(1)
     })
 
@@ -330,11 +328,11 @@ describe('history manager', () => {
         undefined,
         syncOptions,
       )
-      let itemHistory = await this.listRevisions.execute({ itemUuid: item.uuid }).getValue()
+      let itemHistory = await this.application.listRevisions.execute({ itemUuid: item.uuid }).getValue()
       expect(itemHistory.length).to.equal(2)
 
       const oldestEntry = lastElement(itemHistory)
-      let revisionFromServer = await this.getRevision.execute({ itemUuid: item.uuid, revisionUuid: oldestEntry.uuid }).getValue()
+      let revisionFromServer = await this.application.getRevision.execute({ itemUuid: item.uuid, revisionUuid: oldestEntry.uuid }).getValue()
       expect(revisionFromServer).to.be.ok
 
       let payloadFromServer = revisionFromServer.payload
@@ -352,8 +350,8 @@ describe('history manager', () => {
       const dupe = await this.application.itemManager.duplicateItem(note, true)
       await Factory.markDirtyAndSyncItem(this.application, dupe)
 
-      const dupeHistory = await this.listRevisions.execute({ itemUuid: dupe.uuid }).getValue()
-      const dupeRevision = await this.getRevision.execute({ itemUuid: dupe.uuid, revisionUuid: dupeHistory[0].uuid }).getValue()
+      const dupeHistory = await this.application.listRevisions.execute({ itemUuid: dupe.uuid }).getValue()
+      const dupeRevision = await this.application.getRevision.execute({ itemUuid: dupe.uuid, revisionUuid: dupeHistory[0].uuid }).getValue()
       expect(dupeRevision.payload.uuid).to.equal(dupe.uuid)
     })
 
@@ -378,8 +376,8 @@ describe('history manager', () => {
       await Factory.markDirtyAndSyncItem(this.application, dupe)
 
       const expectedRevisions = 3
-      const noteHistory = await this.listRevisions.execute({ itemUuid: note.uuid }).getValue()
-      const dupeHistory = await this.listRevisions.execute({ itemUuid: dupe.uuid }).getValue()
+      const noteHistory = await this.application.listRevisions.execute({ itemUuid: note.uuid }).getValue()
+      const dupeHistory = await this.application.listRevisions.execute({ itemUuid: dupe.uuid }).getValue()
       expect(noteHistory.length).to.equal(expectedRevisions)
       expect(dupeHistory.length).to.equal(expectedRevisions)
     })
@@ -400,11 +398,11 @@ describe('history manager', () => {
 
       const dupe = await this.application.itemManager.duplicateItem(note, true)
       await Factory.markDirtyAndSyncItem(this.application, dupe)
-      const itemHistory = await this.listRevisions.execute({ itemUuid: dupe.uuid }).getValue()
+      const itemHistory = await this.application.listRevisions.execute({ itemUuid: dupe.uuid }).getValue()
       expect(itemHistory.length).to.be.above(1)
       const oldestRevision = lastElement(itemHistory)
 
-      const fetched = await this.getRevision.execute({ itemUuid: dupe.uuid, revisionUuid: oldestRevision.uuid }).getValue()
+      const fetched = await this.application.getRevision.execute({ itemUuid: dupe.uuid, revisionUuid: oldestRevision.uuid }).getValue()
       expect(fetched.payload.errorDecrypting).to.not.be.ok
       expect(fetched.payload.content.title).to.equal(changedText)
     })
