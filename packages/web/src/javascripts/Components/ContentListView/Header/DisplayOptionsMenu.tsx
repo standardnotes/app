@@ -459,7 +459,7 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
                   Labs
                 </Pill>
               </div>
-              <div className="mt-1">Display the notes & files in the current tag in a table layout</div>
+              <div className="mt-1">Display the notes and files in the current tag in a table layout</div>
             </div>
           </MenuSwitchButtonItem>
         </>
