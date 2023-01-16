@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.138.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.138.0...@standardnotes/web@3.138.1) (2023-01-16)
+
+### Bug Fixes
+
+* Fixed issue where opening a Super note would change its modified date (skip e2e) ([3923358](https://github.com/standardnotes/app/commit/392335899ad6b2466cf58ff92bea4d3a36419d94))
+
 # [3.138.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.137.3...@standardnotes/web@3.138.0) (2023-01-12)
 
 ### Bug Fixes
