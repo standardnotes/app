@@ -130,7 +130,14 @@ export class NoteHistoryController {
 
     try {
       this.setSelectedEntry(entry)
-      const remoteRevision = await this.application.historyManager.fetchRemoteRevision(this.note, entry)
+      const remoteRevisionOrError = await this.application.getRevision.execute({
+        itemUuid: this.note.uuid,
+        revisionUuid: entry.uuid,
+      })
+      if (remoteRevisionOrError.isFailed()) {
+        throw new Error(remoteRevisionOrError.getError())
+      }
+      const remoteRevision = remoteRevisionOrError.getValue()
       this.setSelectedRevision(remoteRevision)
     } catch (err) {
       this.clearSelection()
@@ -234,9 +241,13 @@ export class NoteHistoryController {
     if (this.note) {
       this.setIsFetchingRemoteHistory(true)
       try {
-        const initialRemoteHistory = await this.application.historyManager.remoteHistoryForItem(this.note)
+        const revisionsListOrError = await this.application.listRevisions.execute({ itemUuid: this.note.uuid })
+        if (revisionsListOrError.isFailed()) {
+          throw new Error(revisionsListOrError.getError())
+        }
+        const revisionsList = revisionsListOrError.getValue()
 
-        this.setRemoteHistory(sortRevisionListIntoGroups<RevisionListEntry>(initialRemoteHistory))
+        this.setRemoteHistory(sortRevisionListIntoGroups<RevisionListEntry>(revisionsList))
       } catch (err) {
         console.error(err)
       } finally {
@@ -354,10 +365,12 @@ export class NoteHistoryController {
       return
     }
 
-    const response = await this.application.historyManager.deleteRemoteRevision(this.note, revisionEntry)
-
-    if (response.error?.message) {
-      throw new Error(response.error.message)
+    const deleteRevisionOrError = await this.application.deleteRevision.execute({
+      itemUuid: this.note.uuid,
+      revisionUuid: revisionEntry.uuid,
+    })
+    if (deleteRevisionOrError.isFailed()) {
+      throw new Error(deleteRevisionOrError.getError())
     }
 
     this.clearSelection()
