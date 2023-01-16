@@ -21,6 +21,8 @@ This guide walks you through the process of installing the self-hosted backend o
 
 Due to mounted volumes, we recommend running the setup as a root user. If you wish to run it as a non-root user, please see Docker's [post-installation steps for Linux](https://docs.docker.com/engine/install/linux-postinstall#manage-docker-as-a-non-root-user).
 
+If you're self-hosting on an OS other than Linux, skip to the [installation](/self-hosting/docker#install-standard-notes) instructions below.
+
 ## Prerequisities
 
 1. Update your `apt` repositories and upgrade any out-of-date packages:
@@ -168,29 +170,25 @@ Due to mounted volumes, we recommend running the setup as a root user. If you wi
     ./server.sh generate-keys
     ```
 
-1. (Optional) Restart the server:
+2. **Customize ports and endpoints**:
+   - By default, the server will run on port `3000`. If you have a different service running on that port, you can customize the port on which you want to run the infrastructure by editing the `EXPOSED_PORT` variable in the `.env` file.
+   - Edit `FILES_SERVER_URL` to the final public-facing URL of your server. For example, if you are self-hosting on a server on your local network which you know has an IP of 10.0.1.2, set this value to http://10.0.1.2:3125. Read more about [configuring your setup for files.](/self-hosting/file-uploads)
+
+3. Start the Standard Notes server process:
 
     ```shell
-    reboot
-    ```
-
-1. (Optional) By default, the syncing server will run on port `3000`. If you have a different service running on that port, you can customize the port on which you want to run the infrastructure by editing the `EXPOSED_PORT` variable in the `.env` file.
-1. Once the server has finished rebooting, log back into the server and start the Standard Notes server process:
-
-    ```shell
-    cd self-hosted
     ./server.sh start
     ```
 
     Docker will start outputting lots of information about the containers it is pulling in and installing. This process took about 8 minutes on a Ubuntu 20.04 server with 2GB RAM and 1 CPU.
 
-1. Once Docker has finished installing, the Standard Notes install script will output:
+4. Once Docker has finished installing, the Standard Notes install script will output:
 
     ```plaintext
     Infrastructure started. Give it a moment to warm up. If you wish, please run the './server.sh logs' command to see details.
     ```
 
-1. Check the status of your server:
+5. Check the status of your server:
 
     ```shell
     ./server.sh status
@@ -213,7 +211,7 @@ Due to mounted volumes, we recommend running the setup as a root user. If you wi
 
     Your Standard Notes server is ready once all the services have a `STATUS` of `Up`. This process took about 11 minutes on a Ubuntu 20.04 server with 2GB RAM and 1 CPU. If you want to control when this process finishes you can run `./server.sh wait-for-startup`.
 
-1. You should be able now to check that the syncing server is running by checking `http://localhost:3000/healthcheck`. You must do this on the server:
+6. You should be able now to check that the syncing server is running by checking `http://localhost:3000/healthcheck`. You must do this on the server:
 
     ```bash
     curl http://localhost:3000/healthcheck
@@ -222,7 +220,7 @@ Due to mounted volumes, we recommend running the setup as a root user. If you wi
 
     If you changed the `EXPOSED_PORT` variable, check `http://localhost:{EXPOSED_PORT}/healthcheck`.
 
-1. You're done!
+7. You're done!
 
 ## Securing your server
 
