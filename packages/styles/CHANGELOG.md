@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.4](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.7.3...@standardnotes/styles@1.7.4) (2023-01-16)
+
+**Note:** Version bump only for package @standardnotes/styles
+
 ## [1.7.3](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.7.2...@standardnotes/styles@1.7.3) (2023-01-16)
 
 **Note:** Version bump only for package @standardnotes/styles
