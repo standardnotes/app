@@ -10,6 +10,7 @@ import ModalDialogLabel from '../Shared/ModalDialogLabel'
 import ModalDialogDescription from '../Shared/ModalDialogDescription'
 import Spinner from '@/Components/Spinner/Spinner'
 import Button from '@/Components/Button/Button'
+import Icon from '../Icon/Icon'
 
 type Session = RemoteSession & {
   revoking?: true
@@ -102,6 +103,9 @@ const SessionsModalContent: FunctionComponent<{
     [],
   )
 
+  const closeRevokeConfirmationDialog = () => {
+    setRevokingSessionUuid('')
+  }
   return (
     <>
       <ModalDialog onDismiss={close} className="sessions-modal max-h-[90vh]">
@@ -154,19 +158,21 @@ const SessionsModalContent: FunctionComponent<{
         </ModalDialogDescription>
       </ModalDialog>
       {confirmRevokingSessionUuid && (
-        <AlertDialog
-          onDismiss={() => {
-            setRevokingSessionUuid('')
-          }}
-          leastDestructiveRef={cancelRevokeRef}
-          className="p-0"
-        >
+        <AlertDialog onDismiss={closeRevokeConfirmationDialog} leastDestructiveRef={cancelRevokeRef} className="p-0">
           <div className="sk-modal-content">
             <div className="sn-component">
               <div className="sk-panel">
                 <div className="sk-panel-content">
                   <div className="sk-panel-section">
-                    <AlertDialogLabel className="text-lg font-bold">{SessionStrings.RevokeTitle}</AlertDialogLabel>
+                    <AlertDialogLabel className="flex items-center justify-between text-lg font-bold">
+                      {SessionStrings.RevokeTitle}
+                      <button
+                        className="rounded p-1 font-bold hover:bg-contrast"
+                        onClick={closeRevokeConfirmationDialog}
+                      >
+                        <Icon type="close" />
+                      </button>
+                    </AlertDialogLabel>
                     <AlertDialogDescription className="sk-panel-row">
                       <p className="text-base text-foreground lg:text-sm">{SessionStrings.RevokeText}</p>
                     </AlertDialogDescription>
