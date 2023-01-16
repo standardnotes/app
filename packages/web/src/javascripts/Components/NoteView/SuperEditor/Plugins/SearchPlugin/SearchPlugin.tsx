@@ -28,12 +28,6 @@ export const SearchPlugin = () => {
   const resultsRef = useStateRef(results)
 
   useEffect(() => {
-    if (!isSearchActive) {
-      editor.focus()
-    }
-  }, [editor, isSearchActive])
-
-  useEffect(() => {
     const isFocusInEditor = () => {
       if (!document.activeElement || !document.activeElement.closest('.blocks-editor')) {
         return false
@@ -51,6 +45,7 @@ export const SearchPlugin = () => {
           event.preventDefault()
           event.stopPropagation()
           dispatch({ type: 'toggle-search' })
+          editor.focus()
         },
       },
       {
