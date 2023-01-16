@@ -1,6 +1,7 @@
 import FakeWebCrypto from './fake_web_crypto.js'
 import * as Applications from './Applications.js'
 import * as Utils from './Utils.js'
+import * as Defaults from './Defaults.js'
 import { createNotePayload } from './Items.js'
 
 UuidGenerator.SetGenerator(new FakeWebCrypto().generateUUID)
@@ -11,28 +12,13 @@ const MaximumSyncOptions = {
 }
 
 export class AppContext {
-  constructor({ identifier, crypto, email, password, passcode } = {}) {
-    if (!identifier) {
-      identifier = `${Math.random()}`
-    }
-
-    if (!email) {
-      email = UuidGenerator.GenerateUuid()
-    }
-
-    if (!password) {
-      password = UuidGenerator.GenerateUuid()
-    }
-
-    if (!passcode) {
-      passcode = 'mypasscode'
-    }
-
-    this.identifier = identifier
+  constructor({ identifier, crypto, email, password, passcode, host } = {}) {
+    this.identifier = identifier || `${Math.random()}`
     this.crypto = crypto
-    this.email = email
-    this.password = password
-    this.passcode = passcode
+    this.email = email || UuidGenerator.GenerateUuid()
+    this.password = password || UuidGenerator.GenerateUuid()
+    this.passcode = passcode || 'mypasscode'
+    this.host = host || Defaults.getDefaultHost()
   }
 
   enableLogging() {
@@ -55,7 +41,7 @@ export class AppContext {
       this.identifier,
       undefined,
       undefined,
-      undefined,
+      this.host,
       this.crypto || new FakeWebCrypto(),
     )
   }
