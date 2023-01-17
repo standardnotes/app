@@ -6,6 +6,8 @@ export type DecoratedInputProps = {
   className?: {
     container?: string
     input?: string
+    left?: string
+    right?: string
   }
   disabled?: boolean
   id?: string

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.8.0...@standardnotes/icons@1.9.0) (2023-01-12)
+
+### Features
+
+* Added search and replace to Super notes on web/desktop. Press Ctrl+F in a super note to toggle search. (skip e2e) ([#2128](https://github.com/standardnotes/app/issues/2128)) ([8104522](https://github.com/standardnotes/app/commit/8104522658b45c3a5e4d220318a1a3ca60ca4267))
+
 # [1.8.0](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.7.0...@standardnotes/icons@1.8.0) (2022-12-29)
 
 ### Features

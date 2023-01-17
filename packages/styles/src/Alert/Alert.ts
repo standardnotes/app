@@ -1,4 +1,42 @@
-type AlertButtonStyle = 'small' | 'outlined' | 'contrast' | 'neutral' | 'info' | 'warning' | 'danger' | 'success'
+type AlertButtonStyle = 'default' | 'contrast' | 'neutral' | 'info' | 'warning' | 'danger' | 'success'
+
+const getColorsForNormalVariant = (style: AlertButtonStyle) => {
+  switch (style) {
+    case 'default':
+      return 'bg-default text-text'
+    case 'contrast':
+      return 'bg-default text-contrast'
+    case 'neutral':
+      return 'bg-default text-neutral'
+    case 'info':
+      return 'bg-default text-info'
+    case 'warning':
+      return 'bg-default text-warning'
+    case 'danger':
+      return 'bg-default text-danger'
+    case 'success':
+      return 'bg-default text-success'
+  }
+}
+
+const getColorsForPrimaryVariant = (style: AlertButtonStyle) => {
+  switch (style) {
+    case 'default':
+      return 'bg-default text-foreground'
+    case 'contrast':
+      return 'bg-contrast text-text'
+    case 'neutral':
+      return 'bg-neutral text-neutral-contrast'
+    case 'info':
+      return 'bg-info text-info-contrast'
+    case 'warning':
+      return 'bg-warning text-warning-contrast'
+    case 'danger':
+      return 'bg-danger text-danger-contrast'
+    case 'success':
+      return 'bg-success text-success-contrast'
+  }
+}
 
 type AlertButton = {
   text: string
@@ -23,7 +61,15 @@ export class SKAlert {
   buttonsString() {
     const genButton = function (buttonDesc: AlertButton, index: number) {
       return `
-        <button id='button-${index}' class='font-bold px-2.5 py-2 text-base lg:text-xs text-info-contrast bg-${buttonDesc.style}'>
+        <button id='button-${index}' class='font-bold px-4 py-1.5 rounded text-base lg:text-sm ${
+        buttonDesc.primary ? 'no-border ' : 'border-solid border-border border '
+      } ${
+        buttonDesc.primary
+          ? 'hover:brightness-125 focus:outline-none focus:brightness-125 '
+          : 'focus:bg-contrast focus:outline-none hover:bg-contrast '
+      } ${
+        buttonDesc.primary ? getColorsForPrimaryVariant(buttonDesc.style) : getColorsForNormalVariant(buttonDesc.style)
+      }'>
           <div class='sk-label'>${buttonDesc.text}</div>
         </button>
       `
@@ -36,7 +82,7 @@ export class SKAlert {
       .join('')
 
     const str = `
-      <div class='sk-button-group'>
+      <div class='flex items-center justify-end gap-2 w-full'>
         ${buttonString}
       </div>
     `
@@ -57,7 +103,14 @@ export class SKAlert {
       buttonsTemplate = ''
       panelStyle = 'style="padding-bottom: 8px"'
     }
-    const titleTemplate = this.title ? `<div class='mb-1 font-bold text-lg lg:text-base'>${this.title}</div>` : ''
+    const titleTemplate = this.title
+      ? `<div class='mb-1 font-bold text-lg flex items-center justify-between'>
+          ${this.title}
+          <button id="close-button" class="rounded p-1 font-bold hover:bg-contrast" onClick={closeDialog}>
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.2459 5.92925C15.5704 5.60478 15.5704 5.07872 15.2459 4.75425C14.9214 4.42978 14.3954 4.42978 14.0709 4.75425L10.0001 8.82508L5.92925 4.75425C5.60478 4.42978 5.07872 4.42978 4.75425 4.75425C4.42978 5.07872 4.42978 5.60478 4.75425 5.92925L8.82508 10.0001L4.75425 14.0709C4.42978 14.3954 4.42978 14.9214 4.75425 15.2459C5.07872 15.5704 5.60478 15.5704 5.92925 15.2459L10.0001 11.1751L14.0709 15.2459C14.3954 15.5704 14.9214 15.5704 15.2459 15.2459C15.5704 14.9214 15.5704 14.3954 15.2459 14.0709L11.1751 10.0001L15.2459 5.92925Z" /></svg>
+          </button>
+         </div>`
+      : ''
     const messageTemplate = this.text ? `<p class='sk-p text-base lg:text-sm'>${this.text}</p>` : ''
 
     const template = `
@@ -122,6 +175,13 @@ export class SKAlert {
           buttonElem.focus()
         }
       })
+    }
+
+    const closeButton = this.element.querySelector<HTMLButtonElement>('#close-button')
+    if (closeButton) {
+      closeButton.onclick = () => {
+        this.dismiss()
+      }
     }
   }
 }

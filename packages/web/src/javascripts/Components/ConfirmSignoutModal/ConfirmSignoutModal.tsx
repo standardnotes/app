@@ -1,4 +1,4 @@
-import { FunctionComponent, useEffect, useRef, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import { STRING_SIGN_OUT_CONFIRMATION } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/Application'
@@ -7,6 +7,7 @@ import { observer } from 'mobx-react-lite'
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { isDesktopApplication } from '@/Utils'
 import Button from '@/Components/Button/Button'
+import Icon from '../Icon/Icon'
 
 type Props = {
   application: WebApplication
@@ -18,9 +19,9 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
   const [deleteLocalBackups, setDeleteLocalBackups] = useState(false)
 
   const cancelRef = useRef<HTMLButtonElement>(null)
-  function closeDialog() {
+  const closeDialog = useCallback(() => {
     viewControllerManager.accountMenuController.setSigningOut(false)
-  }
+  }, [viewControllerManager.accountMenuController])
 
   const [localBackupsCount, setLocalBackupsCount] = useState(0)
 
@@ -31,6 +32,15 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
   const workspaces = applicationGroup.getDescriptors()
   const showWorkspaceWarning = workspaces.length > 1 && isDesktopApplication()
 
+  const confirm = useCallback(() => {
+    if (deleteLocalBackups) {
+      application.signOutAndDeleteLocalBackups().catch(console.error)
+    } else {
+      application.user.signOut().catch(console.error)
+    }
+    closeDialog()
+  }, [application, closeDialog, deleteLocalBackups])
+
   return (
     <AlertDialog onDismiss={closeDialog} leastDestructiveRef={cancelRef} className="max-w-[600px] p-0">
       <div className="sk-modal-content">
@@ -38,14 +48,19 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
           <div className="sk-panel">
             <div className="sk-panel-content">
               <div className="sk-panel-section">
-                <AlertDialogLabel className="sk-h3 sk-panel-section-title">Sign out workspace?</AlertDialogLabel>
+                <AlertDialogLabel className="flex items-center justify-between text-lg font-bold">
+                  Sign out workspace?
+                  <button className="rounded p-1 font-bold hover:bg-contrast" onClick={closeDialog}>
+                    <Icon type="close" />
+                  </button>
+                </AlertDialogLabel>
                 <AlertDialogDescription className="sk-panel-row">
                   <div>
-                    <p className="text-foreground">{STRING_SIGN_OUT_CONFIRMATION}</p>
+                    <p className="text-base text-foreground lg:text-sm">{STRING_SIGN_OUT_CONFIRMATION}</p>
                     {showWorkspaceWarning && (
                       <>
                         <br />
-                        <p className="text-foreground">
+                        <p className="text-base text-foreground lg:text-sm">
                           <strong>Note: </strong>
                           Because you have other workspaces signed in, this sign out may leave logs and other metadata
                           of your session on this device. For a more robust sign out that performs a hard clear of all
@@ -83,24 +98,11 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
                   </div>
                 )}
 
-                <div className="my-1 mt-4 flex gap-2">
-                  <Button primary small colorStyle="neutral" rounded={false} ref={cancelRef} onClick={closeDialog}>
+                <div className="my-1 mt-4 flex justify-end gap-2">
+                  <Button ref={cancelRef} onClick={closeDialog}>
                     Cancel
                   </Button>
-                  <Button
-                    primary
-                    small
-                    colorStyle="danger"
-                    rounded={false}
-                    onClick={() => {
-                      if (deleteLocalBackups) {
-                        application.signOutAndDeleteLocalBackups().catch(console.error)
-                      } else {
-                        application.user.signOut().catch(console.error)
-                      }
-                      closeDialog()
-                    }}
-                  >
+                  <Button primary colorStyle="danger" onClick={confirm}>
                     {application.hasAccount() ? 'Sign Out' : 'Delete Workspace'}
                   </Button>
                 </div>

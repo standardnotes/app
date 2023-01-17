@@ -64,31 +64,25 @@ describe('application instances', () => {
   })
 
   it('changing default host should not affect already signed in accounts', async () => {
-    /** This test will always succeed but should be observed for console exceptions */
-    const app = await Factory.createAndInitializeApplication(
-      'app',
-      Environment.Web,
-      Platform.MacWeb,
-      Factory.getDefaultHost(),
-    )
-    await Factory.registerUserToApplication({
-      application: app,
-      email: UuidGenerator.GenerateUuid(),
-      password: 'password',
+    const contextA = await Factory.createAppContext({
+      identifier: 'app',
+      host: Factory.getDefaultHost(),
     })
-    await app.prepareForDeinit()
-    await Factory.safeDeinit(app)
+    await contextA.launch()
+    await contextA.register()
+    await contextA.deinit()
 
     /** Recreate app with different host */
-    const recreatedApp = await Factory.createAndInitializeApplication(
-      'app',
-      Environment.Web,
-      Platform.MacWeb,
-      'http://nonsense.host',
-    )
+    const recreatedContext = await Factory.createAppContext({
+      identifier: 'app',
+      host: 'http://nonsense.host'
+    })
+    await recreatedContext.launch()
 
-    expect(recreatedApp.getHost()).to.not.equal('http://nonsense.host')
-    expect(recreatedApp.getHost()).to.equal(Factory.getDefaultHost())
+    expect(recreatedContext.application.getHost()).to.not.equal('http://nonsense.host')
+    expect(recreatedContext.application.getHost()).to.equal(Factory.getDefaultHost())
+
+    await recreatedContext.deinit()
   })
 
   it('signing out application should delete snjs_version', async () => {

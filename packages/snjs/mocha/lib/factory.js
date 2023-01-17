@@ -51,8 +51,8 @@ export async function createAppContextWithRealCrypto(identifier) {
   return createAppContext({ identifier, crypto: new SNWebCrypto() })
 }
 
-export async function createAppContext({ identifier, crypto, email, password } = {}) {
-  const context = new AppContext({ identifier, crypto, email, password })
+export async function createAppContext({ identifier, crypto, email, password, host } = {}) {
+  const context = new AppContext({ identifier, crypto, email, password, host })
   await context.initialize()
   return context
 }

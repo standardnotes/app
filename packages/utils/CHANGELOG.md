@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.16.0](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.15.2...@standardnotes/utils@1.16.0) (2023-01-12)
+
+### Features
+
+* Added search and replace to Super notes on web/desktop. Press Ctrl+F in a super note to toggle search. (skip e2e) ([#2128](https://github.com/standardnotes/app/issues/2128)) ([8104522](https://github.com/standardnotes/app/commit/8104522658b45c3a5e4d220318a1a3ca60ca4267))
+
 ## [1.15.2](https://github.com/standardnotes/app/compare/@standardnotes/utils@1.15.1...@standardnotes/utils@1.15.2) (2023-01-04)
 
 **Note:** Version bump only for package @standardnotes/utils

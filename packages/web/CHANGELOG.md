@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.138.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.138.2...@standardnotes/web@3.138.3) (2023-01-16)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.138.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.138.1...@standardnotes/web@3.138.2) (2023-01-16)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.138.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.138.0...@standardnotes/web@3.138.1) (2023-01-16)
+
+### Bug Fixes
+
+* Fixed issue where opening a Super note would change its modified date (skip e2e) ([3923358](https://github.com/standardnotes/app/commit/392335899ad6b2466cf58ff92bea4d3a36419d94))
+
+# [3.138.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.137.3...@standardnotes/web@3.138.0) (2023-01-12)
+
+### Bug Fixes
+
+* Fixed issue where "Open downloads" button would not show up for the latest version in "Whats New" ([00466c7](https://github.com/standardnotes/app/commit/00466c731ee11b5eed7595a3fe46320b1e45cec7))
+
+### Features
+
+* Added search and replace to Super notes on web/desktop. Press Ctrl+F in a super note to toggle search. (skip e2e) ([#2128](https://github.com/standardnotes/app/issues/2128)) ([8104522](https://github.com/standardnotes/app/commit/8104522658b45c3a5e4d220318a1a3ca60ca4267))
+
 ## [3.137.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.137.2...@standardnotes/web@3.137.3) (2023-01-11)
 
 **Note:** Version bump only for package @standardnotes/web

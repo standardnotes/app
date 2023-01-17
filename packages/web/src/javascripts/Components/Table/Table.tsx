@@ -59,7 +59,7 @@ function TableRow<Data>({
             aria-colindex={cell.colIndex + 1}
             key={index}
             className={classNames(
-              'relative flex items-center overflow-hidden border-b border-border py-3 px-3 focus:border-info',
+              'relative flex items-center overflow-hidden border-b border-border py-4 px-3 focus:border-info',
               row.isSelected && 'bg-info-backdrop',
               canSelectRows && 'cursor-pointer',
               canSelectRows && isHoveredOrFocused && 'bg-contrast',
@@ -91,7 +91,7 @@ function TableRow<Data>({
   )
 }
 
-const MinTableRowHeight = 41
+const MinTableRowHeight = 50
 const MinRowsToDisplay = 20
 const PageSize = Math.ceil(document.documentElement.clientHeight / MinTableRowHeight) || MinRowsToDisplay
 const PageScrollThreshold = 200

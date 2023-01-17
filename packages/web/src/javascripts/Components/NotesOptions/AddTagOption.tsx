@@ -59,7 +59,7 @@ const AddTagOption: FunctionComponent<Props> = ({
         ref={buttonRef}
       >
         <div className="flex items-center">
-          <Icon type="hashtag" className={`${iconClassName} mr-2 text-neutral`} />
+          <Icon type="hashtag" className={iconClassName} />
           Add tag
         </div>
         <Icon type="chevron-right" className="text-neutral" />

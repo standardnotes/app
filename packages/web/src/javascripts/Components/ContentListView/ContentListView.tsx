@@ -41,6 +41,7 @@ import { FeaturesController } from '@/Controllers/FeaturesController'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 import { PaneController } from '@/Controllers/PaneController/PaneController'
+import EmptyFilesView from './EmptyFilesView'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -352,7 +353,11 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
           />
         )}
         {!dailyMode && completedFullSync && !renderedItems.length ? (
-          <p className="empty-items-list opacity-50">No items.</p>
+          isFilesSmartView ? (
+            <EmptyFilesView addNewItem={addNewItem} />
+          ) : (
+            <p className="empty-items-list opacity-50">No items.</p>
+          )
         ) : null}
         {!dailyMode && !completedFullSync && !renderedItems.length ? (
           <p className="empty-items-list opacity-50">Loading...</p>
