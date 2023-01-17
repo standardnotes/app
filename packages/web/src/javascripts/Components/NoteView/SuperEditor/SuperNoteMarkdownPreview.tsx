@@ -34,7 +34,7 @@ export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ note, close
   }, [])
 
   return (
-    <>
+    <ModalDialog>
       <ModalDialogLabel closeDialog={closeDialog}>Markdown Preview</ModalDialogLabel>
       <ModalDialogDescription>
         <div className="relative w-full">
@@ -60,14 +60,6 @@ export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ note, close
           </Button>
         </div>
       </ModalDialogButtons>
-    </>
-  )
-}
-
-export const SuperNoteMarkdownPreviewModal = ({ isOpen, note, closeDialog }: Props & { isOpen: boolean }) => {
-  return (
-    <ModalDialog isOpen={isOpen} close={closeDialog}>
-      <SuperNoteMarkdownPreview note={note} closeDialog={closeDialog} />
     </ModalDialog>
   )
 }
