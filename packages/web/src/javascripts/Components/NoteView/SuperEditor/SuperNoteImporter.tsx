@@ -21,12 +21,7 @@ type Props = {
   onConvertComplete: () => void
 }
 
-export const SuperNoteImporterModalContent: FunctionComponent<Props> = ({
-  note,
-  application,
-  closeDialog,
-  onConvertComplete,
-}) => {
+export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application, closeDialog, onConvertComplete }) => {
   const isSeamlessConvert = note.text.length === 0
   const [lastValue, setLastValue] = useState({ text: '', previewPlain: '' })
 
@@ -92,7 +87,7 @@ export const SuperNoteImporterModalContent: FunctionComponent<Props> = ({
   }
 
   return (
-    <>
+    <ModalDialog>
       <ModalDialogLabel closeDialog={closeDialog}>
         Convert to Super note
         <p className="text-sm font-normal text-neutral">
@@ -132,14 +127,6 @@ export const SuperNoteImporterModalContent: FunctionComponent<Props> = ({
           </div>
         </div>
       </ModalDialogButtons>
-    </>
-  )
-}
-
-export const SuperNoteImporterModal = ({ open, ...props }: Props & { open: boolean }) => {
-  return (
-    <ModalDialog isOpen={open} close={props.closeDialog}>
-      <SuperNoteImporterModalContent {...props} />
     </ModalDialog>
   )
 }
