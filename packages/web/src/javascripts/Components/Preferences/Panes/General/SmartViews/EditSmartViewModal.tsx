@@ -17,7 +17,7 @@ type Props = {
   platform: Platform
 }
 
-const EditSmartViewModalContent = observer(({ controller, platform }: Props) => {
+const EditSmartViewModal = ({ controller, platform }: Props) => {
   const {
     view,
     title,
@@ -68,7 +68,7 @@ const EditSmartViewModalContent = observer(({ controller, platform }: Props) => 
   }
 
   return (
-    <>
+    <ModalDialog>
       <ModalDialogLabel closeDialog={closeDialog}>Edit Smart View "{view.title}"</ModalDialogLabel>
       <ModalDialogDescription>
         <div className="flex flex-col gap-4">
@@ -94,7 +94,6 @@ const EditSmartViewModalContent = observer(({ controller, platform }: Props) => 
               <Icon type={icon || SmartViewDefaultIconName} />
             </button>
             <Popover
-              title="Choose icon"
               open={shouldShowIconPicker}
               anchorElement={iconPickerButtonRef.current}
               togglePopover={toggleIconPicker}
@@ -148,14 +147,6 @@ const EditSmartViewModalContent = observer(({ controller, platform }: Props) => 
           Cancel
         </Button>
       </ModalDialogButtons>
-    </>
-  )
-})
-
-const EditSmartViewModal = ({ controller, platform }: Props) => {
-  return (
-    <ModalDialog isOpen={!!controller.view} close={controller.closeDialog}>
-      <EditSmartViewModalContent controller={controller} platform={platform} />
     </ModalDialog>
   )
 }
