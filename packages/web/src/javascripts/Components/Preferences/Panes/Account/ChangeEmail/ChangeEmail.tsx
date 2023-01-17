@@ -126,27 +126,21 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
   }
 
   return (
-    <>
-      <ModalDialogLabel closeDialog={handleDialogClose}>Change Email</ModalDialogLabel>
-      <ModalDialogDescription className="flex flex-row items-center px-4.5">
-        {currentStep === Steps.InitialStep && (
-          <ChangeEmailForm setNewEmail={setNewEmail} setCurrentPassword={setCurrentPassword} />
-        )}
-        {currentStep === Steps.FinishStep && <ChangeEmailSuccess />}
-      </ModalDialogDescription>
-      <ModalDialogButtons className="px-4.5">
-        <Button className="min-w-20" primary label={submitButtonTitle} onClick={handleSubmit} />
-      </ModalDialogButtons>
-    </>
+    <div>
+      <ModalDialog>
+        <ModalDialogLabel closeDialog={handleDialogClose}>Change Email</ModalDialogLabel>
+        <ModalDialogDescription className="flex flex-row items-center px-4.5">
+          {currentStep === Steps.InitialStep && (
+            <ChangeEmailForm setNewEmail={setNewEmail} setCurrentPassword={setCurrentPassword} />
+          )}
+          {currentStep === Steps.FinishStep && <ChangeEmailSuccess />}
+        </ModalDialogDescription>
+        <ModalDialogButtons className="px-4.5">
+          <Button className="min-w-20" primary label={submitButtonTitle} onClick={handleSubmit} />
+        </ModalDialogButtons>
+      </ModalDialog>
+    </div>
   )
 }
 
-const ChangeEmailModal = (props: Props & { isOpen: boolean }) => {
-  return (
-    <ModalDialog isOpen={props.isOpen} close={props.onCloseDialog}>
-      <ChangeEmail {...props} />
-    </ModalDialog>
-  )
-}
-
-export default ChangeEmailModal
+export default ChangeEmail
