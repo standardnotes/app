@@ -3,7 +3,7 @@ import { AlertDialogContent, AlertDialogOverlay } from '@reach/alert-dialog'
 import { classNames } from '@standardnotes/utils'
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
-import { EnterFromBelowAnimation, ExitToBelowAnimation } from '@/Constants/Animations'
+import { EnterFromBelowAnimation, ExitToBelowAnimation } from '@/Constants/AnimationConfigs'
 
 type Props = {
   children: ReactNode

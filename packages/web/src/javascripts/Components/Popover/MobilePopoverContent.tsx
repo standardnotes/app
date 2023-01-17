@@ -1,4 +1,4 @@
-import { EnterFromBelowAnimation, ExitToBelowAnimation } from '@/Constants/Animations'
+import { EnterFromBelowAnimation, ExitToBelowAnimation } from '@/Constants/AnimationConfigs'
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
 import { classNames } from '@standardnotes/snjs'
