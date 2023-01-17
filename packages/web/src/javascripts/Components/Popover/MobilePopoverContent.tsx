@@ -1,4 +1,4 @@
-import { EnterFromBelowAnimation, ExitToBelowAnimation } from '@/Constants/AnimationConfigs'
+import { TranslateFromBelowAnimation, TranslateToBelowAnimation } from '@/Constants/AnimationConfigs'
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
 import { classNames } from '@standardnotes/snjs'
@@ -20,11 +20,11 @@ const MobilePopoverContent = ({
 }) => {
   const [isMounted, setPopoverElement] = useLifecycleAnimation({
     open,
-    enter: EnterFromBelowAnimation,
+    enter: TranslateFromBelowAnimation,
     enterCallback: (element) => {
       element.scrollTop = 0
     },
-    exit: ExitToBelowAnimation,
+    exit: TranslateToBelowAnimation,
   })
 
   useDisableBodyScrollOnMobile()
