@@ -4,6 +4,7 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent } from 'react'
 import Bullet from './Bullet'
 import { TwoFactorActivation } from './TwoFactorActivation'
+import ModalDialog from '@/Components/Shared/ModalDialog'
 import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
 import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
@@ -16,7 +17,7 @@ const Verification: FunctionComponent<Props> = ({ activation: act }) => {
   const secretKeyClass = act.verificationStatus === 'invalid-secret' ? 'border-danger' : ''
   const authTokenClass = act.verificationStatus === 'invalid-auth-code' ? 'border-danger' : ''
   return (
-    <>
+    <ModalDialog>
       <ModalDialogLabel closeDialog={act.cancelActivation}>Step 3 of 3 - Verification</ModalDialogLabel>
       <ModalDialogDescription className="h-33 flex flex-row items-center">
         <div className="flex flex-grow flex-col gap-4">
@@ -56,7 +57,7 @@ const Verification: FunctionComponent<Props> = ({ activation: act }) => {
         <Button className="min-w-20" label="Back" onClick={act.openSaveSecretKey} />
         <Button className="min-w-20" primary label="Next" onClick={act.enable2FA} />
       </ModalDialogButtons>
-    </>
+    </ModalDialog>
   )
 }
 
