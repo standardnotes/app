@@ -7,7 +7,7 @@ import { dateToLocalizedString } from '@standardnotes/snjs'
 import { useCallback, useState, FunctionComponent } from 'react'
 import ChangeEmail from '@/Components/Preferences/Panes/Account/ChangeEmail/ChangeEmail'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import PasswordWizardContent from '@/Components/PasswordWizard/PasswordWizard'
+import PasswordWizard from '@/Components/PasswordWizard/PasswordWizard'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 
@@ -55,18 +55,14 @@ const Credentials: FunctionComponent<Props> = ({ application }: Props) => {
             Current password was set on <span className="font-bold">{passwordCreatedOn}</span>
           </Text>
           <Button className="mt-3 min-w-20" label="Change password" onClick={presentPasswordWizard} />
-          <ChangeEmail
-            isOpen={isChangeEmailDialogOpen}
-            onCloseDialog={() => setIsChangeEmailDialogOpen(false)}
-            application={application}
-          />
+          {isChangeEmailDialogOpen && (
+            <ChangeEmail onCloseDialog={() => setIsChangeEmailDialogOpen(false)} application={application} />
+          )}
         </PreferencesSegment>
       </PreferencesGroup>
-      <PasswordWizardContent
-        isOpen={shouldShowPasswordWizard}
-        application={application}
-        dismissModal={dismissPasswordWizard}
-      />
+      {shouldShowPasswordWizard ? (
+        <PasswordWizard application={application} dismissModal={dismissPasswordWizard} />
+      ) : null}
     </>
   )
 }
