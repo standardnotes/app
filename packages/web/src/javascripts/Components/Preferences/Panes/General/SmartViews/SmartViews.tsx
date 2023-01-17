@@ -88,8 +88,12 @@ const SmartViews = ({ application, featuresController }: Props) => {
           )}
         </PreferencesSegment>
       </PreferencesGroup>
-      <EditSmartViewModal controller={editSmartViewModalController} platform={application.platform} />
-      <AddSmartViewModal controller={addSmartViewModalController} platform={application.platform} />
+      {!!editSmartViewModalController.view && (
+        <EditSmartViewModal controller={editSmartViewModalController} platform={application.platform} />
+      )}
+      {addSmartViewModalController.isAddingSmartView && (
+        <AddSmartViewModal controller={addSmartViewModalController} platform={application.platform} />
+      )}
     </>
   )
 }
