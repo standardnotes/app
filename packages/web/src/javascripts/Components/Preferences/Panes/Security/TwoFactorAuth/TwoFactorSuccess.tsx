@@ -1,4 +1,5 @@
 import Button from '@/Components/Button/Button'
+import ModalDialog from '@/Components/Shared/ModalDialog'
 import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
 import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
@@ -12,7 +13,7 @@ type Props = {
 }
 
 const TwoFactorSuccess: FunctionComponent<Props> = ({ activation: act }) => (
-  <>
+  <ModalDialog>
     <ModalDialogLabel closeDialog={act.finishActivation}>Successfully Enabled</ModalDialogLabel>
     <ModalDialogDescription className="flex flex-row items-center">
       <div className="flex flex-row items-center justify-center pt-2">
@@ -22,7 +23,7 @@ const TwoFactorSuccess: FunctionComponent<Props> = ({ activation: act }) => (
     <ModalDialogButtons>
       <Button className="min-w-20" primary label="Finish" onClick={act.finishActivation} />
     </ModalDialogButtons>
-  </>
+  </ModalDialog>
 )
 
 export default observer(TwoFactorSuccess)
