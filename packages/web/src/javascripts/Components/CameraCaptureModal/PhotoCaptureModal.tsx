@@ -88,7 +88,7 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
   }, [capturedPhoto, close, fileName, filesController])
 
   return (
-    <ModalDialog isOpen={true} close={close}>
+    <ModalDialog>
       <ModalDialogLabel closeDialog={close}>Take a photo</ModalDialogLabel>
       <ModalDialogDescription>
         <div className="mb-4 flex flex-col">
