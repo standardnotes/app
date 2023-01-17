@@ -42,12 +42,13 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
                 {!subscriptionState.allInvitationsUsed && (
                   <Button className="min-w-20" label="Invite" onClick={() => setIsInviteDialogOpen(true)} />
                 )}
-                <Invite
-                  isOpen={isInviteDialogOpen}
-                  onCloseDialog={() => setIsInviteDialogOpen(false)}
-                  application={application}
-                  subscriptionState={subscriptionState}
-                />
+                {isInviteDialogOpen && (
+                  <Invite
+                    onCloseDialog={() => setIsInviteDialogOpen(false)}
+                    application={application}
+                    subscriptionState={subscriptionState}
+                  />
+                )}
               </div>
             ) : (
               <NoProSubscription application={application} />
