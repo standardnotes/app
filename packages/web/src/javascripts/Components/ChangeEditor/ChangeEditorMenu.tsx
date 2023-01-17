@@ -10,7 +10,7 @@ import { EditorMenuItem } from '@/Components/NotesOptions/EditorMenuItem'
 import { createEditorMenuGroups } from '../../Utils/createEditorMenuGroups'
 import { reloadFont } from '../NoteView/FontFunctions'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
-import { SuperNoteImporterModal } from '../NoteView/SuperEditor/SuperNoteImporter'
+import { SuperNoteImporter } from '../NoteView/SuperEditor/SuperNoteImporter'
 import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
 import { Pill } from '../Preferences/PreferencesComponents/Content'
 
@@ -220,9 +220,8 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
             )
           })}
       </Menu>
-      {note && (
-        <SuperNoteImporterModal
-          open={showSuperImporter}
+      {showSuperImporter && note && (
+        <SuperNoteImporter
           note={note}
           application={application}
           onConvertComplete={handleSuperNoteConversionCompletion}
