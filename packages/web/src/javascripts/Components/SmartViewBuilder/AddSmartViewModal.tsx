@@ -58,7 +58,7 @@ const ComplexCompoundExampleCode = `{
 }
 `
 
-const AddSmartViewModalContent = observer(({ controller, platform }: Props) => {
+const AddSmartViewModal = ({ controller, platform }: Props) => {
   const {
     isSaving,
     title,
@@ -118,7 +118,7 @@ const AddSmartViewModalContent = observer(({ controller, platform }: Props) => {
   }, [isCustomJsonValidPredicate, tabState.activeTab])
 
   return (
-    <>
+    <ModalDialog>
       <ModalDialogLabel closeDialog={closeModal}>Add Smart View</ModalDialogLabel>
       <ModalDialogDescription>
         <div className="flex flex-col gap-4">
@@ -144,7 +144,6 @@ const AddSmartViewModalContent = observer(({ controller, platform }: Props) => {
               <Icon type={icon || SmartViewDefaultIconName} />
             </button>
             <Popover
-              title="Choose icon"
               open={shouldShowIconPicker}
               anchorElement={iconPickerButtonRef.current}
               togglePopover={toggleIconPicker}
@@ -230,14 +229,6 @@ const AddSmartViewModalContent = observer(({ controller, platform }: Props) => {
           {isSaving ? <Spinner className="h-4.5 w-4.5" /> : canSave ? 'Save' : 'Validate'}
         </Button>
       </ModalDialogButtons>
-    </>
-  )
-})
-
-const AddSmartViewModal = ({ controller, platform }: Props) => {
-  return (
-    <ModalDialog isOpen={controller.isAddingSmartView} close={controller.closeModal}>
-      <AddSmartViewModalContent controller={controller} platform={platform} />
     </ModalDialog>
   )
 }
