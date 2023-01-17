@@ -13,6 +13,11 @@ export async function openSubscriptionDashboard(application: SNApplication) {
     return
   }
 
+  if (application.deviceInterface.environment === Environment.Desktop) {
+    window.open(url, '_blank')
+    return
+  }
+
   const windowProxy = window.open('', '_blank')
   ;(windowProxy as WindowProxy).location = url
 }

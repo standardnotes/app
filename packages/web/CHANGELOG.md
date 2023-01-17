@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.138.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.138.4...@standardnotes/web@3.138.5) (2023-01-17)
+
+### Bug Fixes
+
+* **desktop:** Fixed issue where the "Manage subscription" button would not work on desktop ([eb79e10](https://github.com/standardnotes/app/commit/eb79e106db14effc7090141e820f8c8d2fecb513))
+
 ## [3.138.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.138.3...@standardnotes/web@3.138.4) (2023-01-17)
 
 **Note:** Version bump only for package @standardnotes/web
