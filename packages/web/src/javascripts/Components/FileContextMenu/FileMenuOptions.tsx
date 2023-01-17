@@ -102,7 +102,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           void filesController.setProtectionForFiles(hasProtectedFiles, selectedFiles)
         }}
       >
-        <Icon type="lock" className="mr-2 text-neutral" />
+        <Icon type="lock" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
         Password protect
       </MenuSwitchButtonItem>
       <HorizontalSeparator classes="my-1" />
@@ -111,7 +111,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           void filesController.downloadFiles(selectedFiles)
         }}
       >
-        <Icon type="download" className="mr-2 text-neutral" />
+        <Icon type="download" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
         Download
       </MenuItem>
       {shouldShowRenameOption && (
@@ -120,7 +120,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
             renameToggleCallback?.(true)
           }}
         >
-          <Icon type="pencil" className="mr-2 text-neutral" />
+          <Icon type="pencil" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
           Rename
         </MenuItem>
       )}
@@ -130,7 +130,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
           void filesController.deleteFilesPermanently(selectedFiles)
         }}
       >
-        <Icon type="trash" className="mr-2 text-danger" />
+        <Icon type="trash" className={`mr-2 text-danger ${MenuItemIconSize}`} />
         <span className="text-danger">Delete permanently</span>
       </MenuItem>
 

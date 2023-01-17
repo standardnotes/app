@@ -3,6 +3,7 @@ import MenuItem from '../Menu/MenuItem'
 import { useApplication } from '../ApplicationProvider'
 import { FileBackupRecord, FileItem } from '@standardnotes/snjs'
 import { dateToStringStyle1 } from '@/Utils/DateUtils'
+import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 
 export const FileContextMenuBackupOption: FunctionComponent<{ file: FileItem }> = ({ file }) => {
   const application = useApplication()
@@ -28,7 +29,7 @@ export const FileContextMenuBackupOption: FunctionComponent<{ file: FileItem }> 
       {backupInfo && (
         <MenuItem
           icon={'check-circle'}
-          iconClassName={'text-success mt-1'}
+          iconClassName={`text-success mt-1 ${MenuItemIconSize}`}
           className={'items-start'}
           onClick={openFileBackup}
         >
@@ -43,7 +44,7 @@ export const FileContextMenuBackupOption: FunctionComponent<{ file: FileItem }> 
         <MenuItem
           icon={'safe-square'}
           className={'items-start'}
-          iconClassName={'text-neutral mt-1'}
+          iconClassName={`text-neutral mt-1 ${MenuItemIconSize}`}
           onClick={configureFileBackups}
         >
           <div className="ml-2">
