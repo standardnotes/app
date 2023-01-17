@@ -110,25 +110,19 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
   }
 
   return (
-    <>
-      <ModalDialogLabel closeDialog={handleDialogClose}>Share your Subscription</ModalDialogLabel>
-      <ModalDialogDescription className="flex flex-row items-center px-4.5">
-        {currentStep === Steps.InitialStep && <InviteForm setInviteeEmail={setInviteeEmail} />}
-        {currentStep === Steps.FinishStep && <InviteSuccess />}
-      </ModalDialogDescription>
-      <ModalDialogButtons className="px-4.5">
-        <Button className="min-w-20" primary label={submitButtonTitle} onClick={handleSubmit} />
-      </ModalDialogButtons>
-    </>
+    <div>
+      <ModalDialog>
+        <ModalDialogLabel closeDialog={handleDialogClose}>Share your Subscription</ModalDialogLabel>
+        <ModalDialogDescription className="flex flex-row items-center px-4.5">
+          {currentStep === Steps.InitialStep && <InviteForm setInviteeEmail={setInviteeEmail} />}
+          {currentStep === Steps.FinishStep && <InviteSuccess />}
+        </ModalDialogDescription>
+        <ModalDialogButtons className="px-4.5">
+          <Button className="min-w-20" primary label={submitButtonTitle} onClick={handleSubmit} />
+        </ModalDialogButtons>
+      </ModalDialog>
+    </div>
   )
 }
 
-const InviteModal = (props: Props & { isOpen: boolean }) => {
-  return (
-    <ModalDialog isOpen={props.isOpen} close={props.onCloseDialog}>
-      <Invite {...props} />
-    </ModalDialog>
-  )
-}
-
-export default InviteModal
+export default Invite
