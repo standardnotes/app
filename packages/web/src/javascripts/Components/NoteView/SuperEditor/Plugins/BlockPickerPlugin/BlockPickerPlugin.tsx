@@ -109,6 +109,7 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
 
           return (
             <Popover
+              title="Block picker"
               align="start"
               anchorElement={anchorElementRef.current}
               open={true}

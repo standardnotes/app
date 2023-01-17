@@ -41,6 +41,7 @@ const AccountMenuButton = ({
         </button>
       </StyledTooltip>
       <Popover
+        title="Account"
         anchorElement={buttonRef.current}
         open={isOpen}
         togglePopover={toggleMenu}

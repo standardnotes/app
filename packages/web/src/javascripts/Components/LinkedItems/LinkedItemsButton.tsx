@@ -36,7 +36,13 @@ const LinkedItemsButton = ({ linkingController, filesController, onClickPreproce
       <StyledTooltip label="Linked items panel">
         <RoundIconButton label="Linked items panel" onClick={toggleMenu} ref={buttonRef} icon="link" />
       </StyledTooltip>
-      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isLinkingPanelOpen} className="pb-2">
+      <Popover
+        title="Linked items"
+        togglePopover={toggleMenu}
+        anchorElement={buttonRef.current}
+        open={isLinkingPanelOpen}
+        className="pb-2"
+      >
         <LinkedItemsPanel
           item={activeItem}
           isOpen={isLinkingPanelOpen}

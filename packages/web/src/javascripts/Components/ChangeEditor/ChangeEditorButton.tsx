@@ -68,6 +68,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({
         iconClassName={`text-accessory-tint-${selectedEditorIconTint}`}
       />
       <Popover
+        title="Change note type"
         togglePopover={toggleMenu}
         disableClickOutside={isClickOutsideDisabled}
         anchorElement={buttonRef.current}

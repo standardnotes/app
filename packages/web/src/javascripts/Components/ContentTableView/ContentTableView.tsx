@@ -83,6 +83,7 @@ const ContextMenuCell = ({
         <Icon type="more" />
       </button>
       <Popover
+        title="File options"
         open={contextMenuVisible}
         anchorElement={anchorElementRef.current}
         togglePopover={() => {
@@ -153,6 +154,7 @@ const ItemLinksCell = ({
         <Icon type="link" />
       </button>
       <Popover
+        title="Linked items"
         open={contextMenuVisible}
         anchorElement={anchorElementRef.current}
         togglePopover={() => {
@@ -425,6 +427,7 @@ const ContentTableView = ({
       <Table table={table} />
       {contextMenuPosition && contextMenuItem && (
         <Popover
+          title="Options"
           open={true}
           anchorPoint={contextMenuPosition}
           togglePopover={() => {

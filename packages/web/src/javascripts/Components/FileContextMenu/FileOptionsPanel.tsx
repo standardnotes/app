@@ -30,7 +30,13 @@ const FilesOptionsPanel = ({
   return (
     <>
       <RoundIconButton label="File options menu" onClick={toggleMenu} ref={buttonRef} icon="more" />
-      <Popover togglePopover={toggleMenu} anchorElement={buttonRef.current} open={isOpen} className="py-2">
+      <Popover
+        title="File options"
+        togglePopover={toggleMenu}
+        anchorElement={buttonRef.current}
+        open={isOpen}
+        className="py-2"
+      >
         <Menu a11yLabel="File options panel" isOpen={isOpen}>
           <FileMenuOptions
             filesController={filesController}

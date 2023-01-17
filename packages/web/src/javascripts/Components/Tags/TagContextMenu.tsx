@@ -64,6 +64,7 @@ const TagContextMenu = ({ navigationController, isEntitledToFolders, selectedTag
 
   return (
     <Popover
+      title="Tag options"
       open={contextMenuOpen}
       anchorPoint={contextMenuClickLocation}
       togglePopover={() => navigationController.setContextMenuOpen(!contextMenuOpen)}

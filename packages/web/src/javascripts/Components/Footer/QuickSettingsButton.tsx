@@ -49,6 +49,7 @@ const QuickSettingsButton = ({ application, isOpen, toggleMenu, quickSettingsMen
         </button>
       </StyledTooltip>
       <Popover
+        title="Quick settings"
         togglePopover={toggleMenu}
         anchorElement={buttonRef.current}
         open={isOpen}

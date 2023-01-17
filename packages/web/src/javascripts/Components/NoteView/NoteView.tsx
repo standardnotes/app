@@ -905,10 +905,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 </div>
               )}
             </div>
-            <LinkedItemBubblesContainer
-              item={this.note}
-              linkingController={this.viewControllerManager.linkingController}
-            />
+            <div className="hidden md:block">
+              <LinkedItemBubblesContainer
+                item={this.note}
+                linkingController={this.viewControllerManager.linkingController}
+              />
+            </div>
           </div>
         )}
 

@@ -32,6 +32,7 @@ const WorkspaceSwitcherOption: FunctionComponent<Props> = ({ mainApplicationGrou
         <Icon type="chevron-right" className={`text-neutral ${MenuItemIconSize}`} />
       </MenuItem>
       <Popover
+        title="Switch workspace"
         align="end"
         anchorElement={buttonRef.current}
         className="py-2"

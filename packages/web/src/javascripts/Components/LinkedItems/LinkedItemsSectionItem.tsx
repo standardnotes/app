@@ -98,6 +98,7 @@ export const LinkedItemsSectionItem = ({
         <Icon type="more" className="text-neutral" />
       </button>
       <Popover
+        title="Options"
         open={isMenuOpen}
         togglePopover={toggleMenu}
         anchorElement={menuButtonRef.current}

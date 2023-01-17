@@ -112,6 +112,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
                 <Icon type="more" className="text-neutral" />
               </button>
               <Popover
+                title="File options"
                 open={showOptionsMenu}
                 anchorElement={menuButtonRef.current}
                 togglePopover={() => {
@@ -153,7 +154,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
             </div>
           </div>
           {showLinkedBubblesContainer && (
-            <div className="-mt-1 border-b border-border py-1.5 px-3.5">
+            <div className="-mt-1 min-h-0 flex-shrink-0 border-b border-border py-1.5 px-3.5">
               <LinkedItemBubblesContainer
                 linkingController={viewControllerManager.linkingController}
                 item={currentFile}

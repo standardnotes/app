@@ -101,7 +101,7 @@ const LinkedItemBubblesContainer = ({ item, linkingController }: Props) => {
   return (
     <div
       className={classNames(
-        'note-view-linking-container hidden min-w-80 max-w-full flex-wrap items-center gap-2 bg-transparent md:-mr-2 md:flex',
+        'note-view-linking-container flex min-w-80 max-w-full flex-wrap items-center gap-2 bg-transparent md:-mr-2',
         allItemsLinkedToItem.length || notesLinkingToItem.length ? 'mt-1' : 'mt-0.5',
       )}
     >

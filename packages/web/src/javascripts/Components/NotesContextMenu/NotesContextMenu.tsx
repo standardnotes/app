@@ -35,6 +35,7 @@ const NotesContextMenu = ({
 
   return (
     <Popover
+      title="Note options"
       align="start"
       anchorPoint={{
         x: contextMenuClickLocation.x,
