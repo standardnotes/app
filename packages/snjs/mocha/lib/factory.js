@@ -290,6 +290,7 @@ export async function storagePayloadCount(application) {
  * Controlled via docker/syncing-server-js.env
  */
 export const ServerRevisionFrequency = 1.1
+export const ServerRevisionCreationDelay = 1
 
 export function yesterday() {
   return new Date(new Date().setDate(new Date().getDate() - 1))

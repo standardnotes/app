@@ -17,7 +17,7 @@ export class RevisionServer implements RevisionServerInterface {
   }
 
   async getRevision(params: GetRevisionRequestParams): Promise<GetRevisionResponse> {
-    const response = await this.httpService.post(Paths.v2.getRevision(params.itemUuid, params.revisionUuid))
+    const response = await this.httpService.get(Paths.v2.getRevision(params.itemUuid, params.revisionUuid))
 
     return response as GetRevisionResponse
   }
