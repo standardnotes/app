@@ -75,6 +75,7 @@ import {
   AuthManager,
   RevisionClientInterface,
   RevisionManager,
+  ApiServiceEvent,
 } from '@standardnotes/services'
 import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateUsername } from '@standardnotes/encryption'
@@ -1288,6 +1289,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.internalEventBus.addEventHandler(this.integrityService, ExternalServices.SyncEvent.SyncRequestsIntegrityCheck)
     this.internalEventBus.addEventHandler(this.syncService, ExternalServices.IntegrityEvent.IntegrityCheckCompleted)
     this.internalEventBus.addEventHandler(this.userService, AccountEvent.SignedInOrRegistered)
+    this.internalEventBus.addEventHandler(this.sessionManager, ApiServiceEvent.SessionRefreshed)
   }
 
   private clearInternalEventBus(): void {

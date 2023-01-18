@@ -22,6 +22,10 @@ import {
   UNSUPPORTED_KEY_DERIVATION,
   UNSUPPORTED_PROTOCOL_VERSION,
   Challenge,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
+  ApiServiceEvent,
+  SessionRefreshedData,
 } from '@standardnotes/services'
 import { Base64String } from '@standardnotes/sncrypto-common'
 import { ClientDisplayableError, SessionBody } from '@standardnotes/responses'
@@ -67,7 +71,10 @@ export enum SessionEvent {
  * server credentials, such as the session token. It also exposes methods for registering
  * for a new account, signing into an existing one, or changing an account password.
  */
-export class SNSessionManager extends AbstractService<SessionEvent> implements SessionsClientInterface {
+export class SNSessionManager
+  extends AbstractService<SessionEvent>
+  implements SessionsClientInterface, InternalEventHandlerInterface
+{
   private user?: Responses.User
   private isSessionRenewChallengePresented = false
 
@@ -92,6 +99,12 @@ export class SNSessionManager extends AbstractService<SessionEvent> implements S
         void this.reauthenticateInvalidSession()
       }
     })
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === ApiServiceEvent.SessionRefreshed) {
+      this.httpService.setSession((event.payload as SessionRefreshedData).session)
+    }
   }
 
   override deinit(): void {

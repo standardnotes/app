@@ -10,7 +10,6 @@ import {
   ItemsServerInterface,
   StorageKey,
   ApiServiceEvent,
-  MetaReceivedData,
   DiagnosticInfo,
   KeyValueStoreInterface,
   API_MESSAGE_GENERIC_SYNC_FAIL,
@@ -31,6 +30,7 @@ import {
   API_MESSAGE_INVALID_SESSION,
   API_MESSAGE_LOGIN_IN_PROGRESS,
   API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS,
+  ApiServiceEventData,
 } from '@standardnotes/services'
 import { FilesApiInterface } from '@standardnotes/files'
 import { ServerSyncPushContextualPayload, SNFeatureRepo, FileContent } from '@standardnotes/models'
@@ -56,7 +56,7 @@ const V0_API_VERSION = '20200115'
 type InvalidSessionObserver = (revoked: boolean) => void
 
 export class SNApiService
-  extends AbstractService<ApiServiceEvent.MetaReceived, MetaReceivedData>
+  extends AbstractService<ApiServiceEvent, ApiServiceEventData>
   implements
     ApiServiceInterface,
     FilesApiInterface,
@@ -443,6 +443,11 @@ export class SNApiService
 
         this.setSession(session)
         this.processResponse(response)
+
+        await this.notifyEventSync(ApiServiceEvent.SessionRefreshed, {
+          session,
+        })
+
         return response
       })
       .catch((errorResponse) => {
