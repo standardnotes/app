@@ -15,7 +15,8 @@ import {
   HistoryEntry,
   NoteHistoryEntry,
   PayloadEmitSource,
-  RevisionListEntry,
+  RevisionMetadata,
+  RoleName,
   SNNote,
 } from '@standardnotes/snjs'
 import { makeObservable, observable, action } from 'mobx'
@@ -29,7 +30,7 @@ type LegacyHistory = Action[]
 
 type SelectedRevision = HistoryEntry | LegacyHistoryEntry | undefined
 
-type SelectedEntry = RevisionListEntry | NoteHistoryEntry | Action | undefined
+type SelectedEntry = RevisionMetadata | NoteHistoryEntry | Action | undefined
 
 export enum RevisionContentState {
   Idle,
@@ -114,12 +115,12 @@ export class NoteHistoryController {
     this.contentState = contentState
   }
 
-  selectRemoteRevision = async (entry: RevisionListEntry) => {
+  selectRemoteRevision = async (entry: RevisionMetadata) => {
     if (!this.note) {
       return
     }
 
-    if (!this.application.features.hasMinimumRole(entry.required_role)) {
+    if (!this.application.features.hasMinimumRole(entry.required_role as RoleName)) {
       this.setContentState(RevisionContentState.NotEntitled)
       this.setSelectedRevision(undefined)
       return
@@ -218,7 +219,7 @@ export class NoteHistoryController {
     }
   }
 
-  selectPrevOrNextRemoteRevision = (revisionEntry: RevisionListEntry) => {
+  selectPrevOrNextRemoteRevision = (revisionEntry: RevisionMetadata) => {
     const currentIndex = this.flattenedRemoteHistory.findIndex((entry) => entry?.uuid === revisionEntry.uuid)
 
     const previousEntry = this.flattenedRemoteHistory[currentIndex - 1]
@@ -247,7 +248,7 @@ export class NoteHistoryController {
         }
         const revisionsList = revisionsListOrError.getValue()
 
-        this.setRemoteHistory(sortRevisionListIntoGroups<RevisionListEntry>(revisionsList))
+        this.setRemoteHistory(sortRevisionListIntoGroups<RevisionMetadata>(revisionsList))
       } catch (err) {
         console.error(err)
       } finally {
@@ -352,7 +353,7 @@ export class NoteHistoryController {
     this.selectionController.selectItem(duplicatedItem.uuid).catch(console.error)
   }
 
-  deleteRemoteRevision = async (revisionEntry: RevisionListEntry) => {
+  deleteRemoteRevision = async (revisionEntry: RevisionMetadata) => {
     const shouldDelete = await this.application.alertService.confirm(
       'Are you sure you want to delete this revision?',
       'Delete revision?',

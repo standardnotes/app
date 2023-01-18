@@ -1,6 +1,7 @@
 export * from './Application'
 export * from './ApplicationGroup'
 export * from './Client'
+export * from './Domain'
 export * from './Log'
 export * from './Migrations'
 export * from './Services'
