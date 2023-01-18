@@ -346,80 +346,82 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
           ) : null}
         </div>
       </MenuRadioButtonItem>
-      {!shouldHideNonApplicableOptions && (
-        <>
-          <MenuItemSeparator />
-          <div className="px-3 py-1 text-base font-semibold uppercase text-text lg:text-xs">View</div>
-          {!isFilesSmartView && (
+      <>
+        <MenuItemSeparator />
+        <div className="px-3 py-1 text-base font-semibold uppercase text-text lg:text-xs">View</div>
+        {!shouldHideNonApplicableOptions && !isFilesSmartView && (
+          <MenuSwitchButtonItem
+            disabled={controlsDisabled}
+            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+            checked={!preferences.hideNotePreview}
+            onChange={toggleHidePreview}
+          >
+            <div className="max-w-3/4 flex flex-col">Show note preview</div>
+          </MenuSwitchButtonItem>
+        )}
+        <MenuSwitchButtonItem
+          disabled={controlsDisabled}
+          className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+          checked={!preferences.hideDate}
+          onChange={toggleHideDate}
+        >
+          Show date
+        </MenuSwitchButtonItem>
+        <MenuSwitchButtonItem
+          disabled={controlsDisabled}
+          className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+          checked={!preferences.hideTags}
+          onChange={toggleHideTags}
+        >
+          Show tags
+        </MenuSwitchButtonItem>
+        <MenuSwitchButtonItem
+          disabled={controlsDisabled}
+          className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+          checked={!preferences.hideEditorIcon}
+          onChange={toggleEditorIcon}
+        >
+          Show icon
+        </MenuSwitchButtonItem>
+        {!shouldHideNonApplicableOptions && (
+          <>
+            <MenuItemSeparator />
+            <div className="px-3 py-1 text-base font-semibold uppercase text-text lg:text-xs">Other</div>
             <MenuSwitchButtonItem
               disabled={controlsDisabled}
               className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-              checked={!preferences.hideNotePreview}
-              onChange={toggleHidePreview}
+              checked={!preferences.hidePinned}
+              onChange={toggleHidePinned}
             >
-              <div className="max-w-3/4 flex flex-col">Show note preview</div>
+              Show pinned
             </MenuSwitchButtonItem>
-          )}
-          <MenuSwitchButtonItem
-            disabled={controlsDisabled}
-            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-            checked={!preferences.hideDate}
-            onChange={toggleHideDate}
-          >
-            Show date
-          </MenuSwitchButtonItem>
-          <MenuSwitchButtonItem
-            disabled={controlsDisabled}
-            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-            checked={!preferences.hideTags}
-            onChange={toggleHideTags}
-          >
-            Show tags
-          </MenuSwitchButtonItem>
-          <MenuSwitchButtonItem
-            disabled={controlsDisabled}
-            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-            checked={!preferences.hideEditorIcon}
-            onChange={toggleEditorIcon}
-          >
-            Show icon
-          </MenuSwitchButtonItem>
-          <MenuItemSeparator />
-          <div className="px-3 py-1 text-base font-semibold uppercase text-text lg:text-xs">Other</div>
-          <MenuSwitchButtonItem
-            disabled={controlsDisabled}
-            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-            checked={!preferences.hidePinned}
-            onChange={toggleHidePinned}
-          >
-            Show pinned
-          </MenuSwitchButtonItem>
-          <MenuSwitchButtonItem
-            disabled={controlsDisabled}
-            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-            checked={!preferences.hideProtected}
-            onChange={toggleHideProtected}
-          >
-            Show protected
-          </MenuSwitchButtonItem>
-          <MenuSwitchButtonItem
-            disabled={controlsDisabled}
-            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-            checked={Boolean(preferences.showArchived)}
-            onChange={toggleShowArchived}
-          >
-            Show archived
-          </MenuSwitchButtonItem>
-          <MenuSwitchButtonItem
-            disabled={controlsDisabled}
-            className="py-1 hover:bg-contrast focus:bg-info-backdrop"
-            checked={Boolean(preferences.showTrashed)}
-            onChange={toggleShowTrashed}
-          >
-            Show trashed
-          </MenuSwitchButtonItem>
-        </>
-      )}
+            <MenuSwitchButtonItem
+              disabled={controlsDisabled}
+              className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+              checked={!preferences.hideProtected}
+              onChange={toggleHideProtected}
+            >
+              Show protected
+            </MenuSwitchButtonItem>
+            <MenuSwitchButtonItem
+              disabled={controlsDisabled}
+              className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+              checked={Boolean(preferences.showArchived)}
+              onChange={toggleShowArchived}
+            >
+              Show archived
+            </MenuSwitchButtonItem>
+            <MenuSwitchButtonItem
+              disabled={controlsDisabled}
+              className="py-1 hover:bg-contrast focus:bg-info-backdrop"
+              checked={Boolean(preferences.showTrashed)}
+              onChange={toggleShowTrashed}
+            >
+              Show trashed
+            </MenuSwitchButtonItem>
+          </>
+        )}
+      </>
 
       {currentMode === 'tag' && !isSystemTag && DailyEntryModeEnabled && !isTableViewEnabled && (
         <>
