@@ -4,7 +4,7 @@ import Icon from '@/Components/Icon/Icon'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
 import { previewHistoryEntryTitle } from './utils'
-import { FeaturesClientInterface, RevisionListEntry } from '@standardnotes/snjs'
+import { FeaturesClientInterface, RevisionMetadata, RoleName } from '@standardnotes/snjs'
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 import Spinner from '@/Components/Spinner/Spinner'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
@@ -46,7 +46,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
               {group.entries.map((entry) => (
                 <HistoryListItem
                   key={entry.uuid}
-                  isSelected={(selectedEntry as RevisionListEntry)?.uuid === entry.uuid}
+                  isSelected={(selectedEntry as RevisionMetadata)?.uuid === entry.uuid}
                   onClick={() => {
                     void selectRemoteRevision(entry)
                     onSelectRevision()
@@ -54,7 +54,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
                 >
                   <div className="flex flex-grow items-center justify-between">
                     <div>{previewHistoryEntryTitle(entry)}</div>
-                    {!features.hasMinimumRole(entry.required_role) && (
+                    {!features.hasMinimumRole(entry.required_role as RoleName) && (
                       <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />
                     )}
                   </div>

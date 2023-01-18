@@ -42,8 +42,6 @@ export const API_MESSAGE_FAILED_SUBSCRIPTION_INFO = "Failed to get subscription'
 
 export const API_MESSAGE_FAILED_ACCESS_PURCHASE = 'Failed to access purchase flow.'
 
-export const API_MESSAGE_FAILED_DELETE_REVISION = 'Failed to delete revision.'
-
 export const API_MESSAGE_FAILED_OFFLINE_FEATURES = 'Failed to get offline features.'
 export const API_MESSAGE_UNTRUSTED_EXTENSIONS_WARNING = `The extension you are attempting to install comes from an
   untrusted source. Untrusted extensions may lower the security of your data. Do you want to continue?`

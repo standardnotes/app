@@ -5,6 +5,8 @@ import {
   AuthServer,
   HttpService,
   HttpServiceInterface,
+  RevisionApiService,
+  RevisionServer,
   SubscriptionApiService,
   SubscriptionApiServiceInterface,
   SubscriptionServer,
@@ -71,6 +73,8 @@ import {
   AuthenticatorManager,
   AuthClientInterface,
   AuthManager,
+  RevisionClientInterface,
+  RevisionManager,
 } from '@standardnotes/services'
 import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
 import { ComputePrivateUsername } from '@standardnotes/encryption'
@@ -80,6 +84,7 @@ import {
   DecryptedItemInterface,
   EncryptedItemInterface,
   Environment,
+  HistoryEntry,
   ItemStream,
   Platform,
 } from '@standardnotes/models'
@@ -100,6 +105,10 @@ import { AddAuthenticator } from '@Lib/Domain/UseCase/AddAuthenticator/AddAuthen
 import { ListAuthenticators } from '@Lib/Domain/UseCase/ListAuthenticators/ListAuthenticators'
 import { DeleteAuthenticator } from '@Lib/Domain/UseCase/DeleteAuthenticator/DeleteAuthenticator'
 import { VerifyAuthenticator } from '@Lib/Domain/UseCase/VerifyAuthenticator/VerifyAuthenticator'
+import { ListRevisions } from '@Lib/Domain/UseCase/ListRevisions/ListRevisions'
+import { GetRevision } from '@Lib/Domain/UseCase/GetRevision/GetRevision'
+import { DeleteRevision } from '@Lib/Domain/UseCase/DeleteRevision/DeleteRevision'
+import { RevisionMetadata } from '@Lib/Domain/Revision/RevisionMetadata'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -176,6 +185,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>
   private declare authenticatorManager: AuthenticatorClientInterface
   private declare authManager: AuthClientInterface
+  private declare revisionManager: RevisionClientInterface
 
   private declare _signInWithRecoveryCodes: SignInWithRecoveryCodes
   private declare _getRecoveryCodes: GetRecoveryCodes
@@ -183,6 +193,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare _listAuthenticators: ListAuthenticators
   private declare _deleteAuthenticator: DeleteAuthenticator
   private declare _verifyAuthenticator: VerifyAuthenticator
+  private declare _listRevisions: ListRevisions
+  private declare _getRevision: GetRevision
+  private declare _deleteRevision: DeleteRevision
 
   private internalEventBus!: ExternalServices.InternalEventBusInterface
 
@@ -287,6 +300,18 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   get verifyAuthenticator(): UseCaseInterface<void> {
     return this._verifyAuthenticator
+  }
+
+  get listRevisions(): UseCaseInterface<Array<RevisionMetadata>> {
+    return this._listRevisions
+  }
+
+  get getRevision(): UseCaseInterface<HistoryEntry> {
+    return this._getRevision
+  }
+
+  get deleteRevision(): UseCaseInterface<void> {
+    return this._deleteRevision
   }
 
   public get files(): FilesClientInterface {
@@ -1188,6 +1213,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createActionsManager()
     this.createAuthenticatorManager()
     this.createAuthManager()
+    this.createRevisionManager()
 
     this.createUseCases()
   }
@@ -1239,12 +1265,16 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.legacySessionStorageMapper as unknown) = undefined
     ;(this.authenticatorManager as unknown) = undefined
     ;(this.authManager as unknown) = undefined
+    ;(this.revisionManager as unknown) = undefined
     ;(this._signInWithRecoveryCodes as unknown) = undefined
     ;(this._getRecoveryCodes as unknown) = undefined
     ;(this._addAuthenticator as unknown) = undefined
     ;(this._listAuthenticators as unknown) = undefined
     ;(this._deleteAuthenticator as unknown) = undefined
     ;(this._verifyAuthenticator as unknown) = undefined
+    ;(this._listRevisions as unknown) = undefined
+    ;(this._getRevision as unknown) = undefined
+    ;(this._deleteRevision as unknown) = undefined
 
     this.services = []
   }
@@ -1683,8 +1713,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.historyManager = new InternalServices.SNHistoryManager(
       this.itemManager,
       this.diskStorageService,
-      this.apiService,
-      this.protocolService,
       this.deviceInterface,
       this.internalEventBus,
     )
@@ -1790,6 +1818,14 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.authManager = new AuthManager(authApiService, this.internalEventBus)
   }
 
+  private createRevisionManager() {
+    const revisionServer = new RevisionServer(this.httpService)
+
+    const revisionApiService = new RevisionApiService(revisionServer)
+
+    this.revisionManager = new RevisionManager(revisionApiService, this.internalEventBus)
+  }
+
   private createUseCases() {
     this._signInWithRecoveryCodes = new SignInWithRecoveryCodes(
       this.authManager,
@@ -1815,5 +1851,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.authenticatorManager,
       this.options.u2fAuthenticatorVerificationPromptFunction,
     )
+
+    this._listRevisions = new ListRevisions(this.revisionManager)
+
+    this._getRevision = new GetRevision(this.revisionManager, this.protocolService)
+
+    this._deleteRevision = new DeleteRevision(this.revisionManager)
   }
 }

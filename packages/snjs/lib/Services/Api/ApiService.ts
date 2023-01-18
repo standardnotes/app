@@ -18,7 +18,6 @@ import {
   API_MESSAGE_CHANGE_CREDENTIALS_IN_PROGRESS,
   API_MESSAGE_FAILED_ACCESS_PURCHASE,
   API_MESSAGE_FAILED_CREATE_FILE_TOKEN,
-  API_MESSAGE_FAILED_DELETE_REVISION,
   API_MESSAGE_FAILED_GET_SETTINGS,
   API_MESSAGE_FAILED_LISTED_REGISTRATION,
   API_MESSAGE_FAILED_OFFLINE_ACTIVATION,
@@ -488,7 +487,7 @@ export class SNApiService
       return preprocessingError
     }
     const url = joinPaths(this.host, <string>Paths.v1.session(sessionId))
-    const response: Responses.RevisionListResponse | Responses.HttpResponse = await this.httpService
+    const response: Responses.SessionListResponse | Responses.HttpResponse = await this.httpService
       .deleteAbsolute(url, { uuid: sessionId }, this.getSessionAccessToken())
       .catch((error: Responses.HttpResponse) => {
         const errorResponse = error as Responses.HttpResponse
@@ -496,53 +495,6 @@ export class SNApiService
         if (Responses.isErrorResponseExpiredToken(errorResponse)) {
           return this.refreshSessionThenRetryRequest({
             verb: HttpVerb.Delete,
-            url,
-          })
-        }
-        return this.errorResponseWithFallbackMessage(errorResponse, API_MESSAGE_GENERIC_SYNC_FAIL)
-      })
-    this.processResponse(response)
-    return response
-  }
-
-  async getItemRevisions(itemId: UuidString): Promise<Responses.RevisionListResponse | Responses.HttpResponse> {
-    const preprocessingError = this.preprocessingError()
-    if (preprocessingError) {
-      return preprocessingError
-    }
-    const url = joinPaths(this.host, Paths.v1.itemRevisions(itemId))
-    const response: Responses.RevisionListResponse | Responses.HttpResponse = await this.httpService
-      .getAbsolute(url, undefined, this.getSessionAccessToken())
-      .catch((errorResponse: Responses.HttpResponse) => {
-        this.preprocessAuthenticatedErrorResponse(errorResponse)
-        if (Responses.isErrorResponseExpiredToken(errorResponse)) {
-          return this.refreshSessionThenRetryRequest({
-            verb: HttpVerb.Get,
-            url,
-          })
-        }
-        return this.errorResponseWithFallbackMessage(errorResponse, API_MESSAGE_GENERIC_SYNC_FAIL)
-      })
-    this.processResponse(response)
-    return response
-  }
-
-  async getRevision(
-    entry: Responses.RevisionListEntry,
-    itemId: UuidString,
-  ): Promise<Responses.SingleRevisionResponse | Responses.HttpResponse> {
-    const preprocessingError = this.preprocessingError()
-    if (preprocessingError) {
-      return preprocessingError
-    }
-    const url = joinPaths(this.host, Paths.v1.itemRevision(itemId, entry.uuid))
-    const response: Responses.SingleRevisionResponse | Responses.HttpResponse = await this.httpService
-      .getAbsolute(url, undefined, this.getSessionAccessToken())
-      .catch((errorResponse: Responses.HttpResponse) => {
-        this.preprocessAuthenticatedErrorResponse(errorResponse)
-        if (Responses.isErrorResponseExpiredToken(errorResponse)) {
-          return this.refreshSessionThenRetryRequest({
-            verb: HttpVerb.Get,
             url,
           })
         }
@@ -650,20 +602,6 @@ export class SNApiService
       authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_UPDATE_SETTINGS,
     })
-  }
-
-  async deleteRevision(
-    itemUuid: UuidString,
-    entry: Responses.RevisionListEntry,
-  ): Promise<Responses.MinimalHttpResponse> {
-    const url = joinPaths(this.host, Paths.v1.itemRevision(itemUuid, entry.uuid))
-    const response = await this.tokenRefreshableRequest({
-      verb: HttpVerb.Delete,
-      url,
-      fallbackErrorMessage: API_MESSAGE_FAILED_DELETE_REVISION,
-      authentication: this.getSessionAccessToken(),
-    })
-    return response
   }
 
   public downloadFeatureUrl(url: string): Promise<Responses.HttpResponse> {

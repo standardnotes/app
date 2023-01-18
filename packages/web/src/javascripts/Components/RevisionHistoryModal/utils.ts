@@ -1,5 +1,5 @@
 import { DAYS_IN_A_WEEK, DAYS_IN_A_YEAR } from '@/Constants/Constants'
-import { HistoryEntry, NoteHistoryEntry, RevisionListEntry } from '@standardnotes/snjs'
+import { HistoryEntry, NoteHistoryEntry, RevisionMetadata } from '@standardnotes/snjs'
 import { calculateDifferenceBetweenDatesInDays } from '../../Utils/CalculateDifferenceBetweenDatesInDays'
 
 export type HistoryModalMobileTab = 'Content' | 'List'
@@ -9,14 +9,14 @@ export type LegacyHistoryEntry = {
   created_at: string
 }
 
-type RevisionEntry = RevisionListEntry | NoteHistoryEntry | LegacyHistoryEntry
+type RevisionEntry = RevisionMetadata | NoteHistoryEntry | LegacyHistoryEntry
 
 export type ListGroup<EntryType extends RevisionEntry> = {
   title: string
   entries: EntryType[] | undefined
 }
 
-export type RemoteRevisionListGroup = ListGroup<RevisionListEntry>
+export type RemoteRevisionListGroup = ListGroup<RevisionMetadata>
 export type SessionRevisionListGroup = ListGroup<NoteHistoryEntry>
 
 export const formatDateAsMonthYearString = (date: Date) => {
@@ -28,7 +28,7 @@ export const formatDateAsMonthYearString = (date: Date) => {
 
 export const getGroupIndexForEntry = (entry: RevisionEntry, groups: ListGroup<RevisionEntry>[]) => {
   const todayAsDate = new Date()
-  const entryDate = new Date((entry as RevisionListEntry).created_at ?? (entry as NoteHistoryEntry).payload.updated_at)
+  const entryDate = new Date((entry as RevisionMetadata).created_at ?? (entry as NoteHistoryEntry).payload.updated_at)
 
   const differenceBetweenDatesInDays = calculateDifferenceBetweenDatesInDays(todayAsDate, entryDate)
 
@@ -81,7 +81,7 @@ export const sortRevisionListIntoGroups = <EntryType extends RevisionEntry>(revi
     } else {
       addBeforeLastGroup({
         title: formatDateAsMonthYearString(
-          new Date((entry as RevisionListEntry).created_at ?? (entry as NoteHistoryEntry).payload.updated_at),
+          new Date((entry as RevisionMetadata).created_at ?? (entry as NoteHistoryEntry).payload.updated_at),
         ),
         entries: [entry],
       })
@@ -91,6 +91,6 @@ export const sortRevisionListIntoGroups = <EntryType extends RevisionEntry>(revi
   return sortedGroups
 }
 
-export const previewHistoryEntryTitle = (revision: RevisionListEntry | LegacyHistoryEntry) => {
+export const previewHistoryEntryTitle = (revision: RevisionMetadata | LegacyHistoryEntry) => {
   return new Date(revision.created_at).toLocaleString()
 }

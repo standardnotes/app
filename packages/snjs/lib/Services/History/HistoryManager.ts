@@ -1,13 +1,11 @@
-import { ContentType, Uuid } from '@standardnotes/common'
-import { isNullOrUndefined, removeFromArray } from '@standardnotes/utils'
+import { ContentType } from '@standardnotes/common'
+import { removeFromArray } from '@standardnotes/utils'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
-import { SNApiService } from '@Lib/Services/Api/ApiService'
 import { DiskStorageService } from '@Lib/Services/Storage/DiskStorageService'
 import { UuidString } from '../../Types/UuidString'
 import * as Models from '@standardnotes/models'
-import * as Responses from '@standardnotes/responses'
-import { isErrorDecryptingPayload, PayloadTimestampDefaults, SNNote } from '@standardnotes/models'
-import { AbstractService, EncryptionService, DeviceInterface, InternalEventBusInterface } from '@standardnotes/services'
+import { SNNote } from '@standardnotes/models'
+import { AbstractService, DeviceInterface, InternalEventBusInterface } from '@standardnotes/services'
 
 /** The amount of revisions per item above which should call for an optimization. */
 const DefaultItemRevisionsThreshold = 20
@@ -46,8 +44,6 @@ export class SNHistoryManager extends AbstractService {
   constructor(
     private itemManager: ItemManager,
     private storageService: DiskStorageService,
-    private apiService: SNApiService,
-    private protocolService: EncryptionService,
     public deviceInterface: DeviceInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
@@ -118,78 +114,6 @@ export class SNHistoryManager extends AbstractService {
       copy[key] = value.slice()
     }
     return Object.freeze(copy)
-  }
-
-  /**
-   * Fetches a list of revisions from the server for an item. These revisions do not
-   * include the item's content. Instead, each revision's content must be fetched
-   * individually upon selection via `fetchRemoteRevision`.
-   */
-  async remoteHistoryForItem(item: Models.SNNote): Promise<Responses.RevisionListEntry[] | undefined> {
-    const response = await this.apiService.getItemRevisions(item.uuid)
-    if (response.error || isNullOrUndefined(response.data)) {
-      return undefined
-    }
-    return (response as Responses.RevisionListResponse).data
-  }
-
-  /**
-   * Expands on a revision fetched via `remoteHistoryForItem` by getting a revision's
-   * complete fields (including encrypted content).
-   */
-  async fetchRemoteRevision(
-    note: Models.SNNote,
-    entry: Responses.RevisionListEntry,
-  ): Promise<Models.HistoryEntry | undefined> {
-    const revisionResponse = await this.apiService.getRevision(entry, note.uuid)
-    if (revisionResponse.error || isNullOrUndefined(revisionResponse.data)) {
-      return undefined
-    }
-    const revision = (revisionResponse as Responses.SingleRevisionResponse).data
-
-    const serverPayload = new Models.EncryptedPayload({
-      ...PayloadTimestampDefaults(),
-      ...revision,
-      updated_at: new Date(revision.updated_at),
-      created_at: new Date(revision.created_at),
-      waitingForKey: false,
-      errorDecrypting: false,
-    })
-
-    /**
-     * When an item is duplicated, its revisions also carry over to the newly created item.
-     * However since the new item has a different UUID than the source item, we must decrypt
-     * these olders revisions (which have not been mutated after copy) with the source item's
-     * uuid.
-     */
-    const embeddedParams = this.protocolService.getEmbeddedPayloadAuthenticatedData(serverPayload)
-    const sourceItemUuid = embeddedParams?.u as Uuid | undefined
-
-    const payload = serverPayload.copy({
-      uuid: sourceItemUuid || revision.item_uuid,
-    })
-
-    if (!Models.isRemotePayloadAllowed(payload)) {
-      console.error('Remote payload is disallowed', payload)
-      return undefined
-    }
-
-    const encryptedPayload = new Models.EncryptedPayload(payload)
-
-    const decryptedPayload = await this.protocolService.decryptSplitSingle<Models.NoteContent>({
-      usesItemsKeyWithKeyLookup: { items: [encryptedPayload] },
-    })
-
-    if (isErrorDecryptingPayload(decryptedPayload)) {
-      return undefined
-    }
-
-    return new Models.HistoryEntry(decryptedPayload)
-  }
-
-  async deleteRemoteRevision(note: SNNote, entry: Responses.RevisionListEntry): Promise<Responses.MinimalHttpResponse> {
-    const response = await this.apiService.deleteRevision(note.uuid, entry)
-    return response
   }
 
   /**
