@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.140.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.139.0...@standardnotes/web@3.140.0) (2023-01-18)
+
+### Bug Fixes
+
+* Fixed issue where table view would not sort correctly outside of Files view ([066a0b4](https://github.com/standardnotes/app/commit/066a0b4c65bb6356e4ca04e43529f10a2df4d97a))
+
+### Features
+
+* Added ability to hide date/tags columns and icons in table view ([3c869fe](https://github.com/standardnotes/app/commit/3c869fe6934a73b5bbb569286aea08fbbda4b1ba))
+
 # [3.139.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.138.6...@standardnotes/web@3.139.0) (2023-01-18)
 
 ### Features
