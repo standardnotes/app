@@ -21,11 +21,6 @@ updates:
       interval: "daily"
 
   - package-ecosystem: "npm"
-    directory: "/packages/docs"
-    schedule:
-      interval: "daily"
-
-  - package-ecosystem: "npm"
     directory: "/packages/encryption"
     schedule:
       interval: "daily"

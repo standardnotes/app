@@ -10,7 +10,6 @@ actions
 **/dist
 **/coverage
 **/node_modules
-packages/docs
 packages/mobile/android
 packages/mobile/ios
 packages/mobile/html
