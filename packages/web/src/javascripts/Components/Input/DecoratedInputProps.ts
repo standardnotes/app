@@ -22,5 +22,6 @@ export type DecoratedInputProps = {
   title?: string
   type?: React.HTMLInputTypeAttribute
   value?: string
+  defaultValue?: string
   roundedFull?: boolean
 }

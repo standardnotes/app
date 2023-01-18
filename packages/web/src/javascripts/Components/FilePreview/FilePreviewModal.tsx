@@ -14,6 +14,9 @@ import FileMenuOptions from '../FileContextMenu/FileMenuOptions'
 import Menu from '../Menu/Menu'
 import Popover from '../Popover/Popover'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
+import StyledTooltip from '../StyledTooltip/StyledTooltip'
+import DecoratedInput from '../Input/DecoratedInput'
+import { mergeRefs } from '@/Hooks/mergeRefs'
 
 type Props = {
   application: WebApplication
@@ -27,6 +30,8 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
     return null
   }
 
+  const [isRenaming, setIsRenaming] = useState(false)
+  const renameInputRef = useRef<HTMLInputElement>(null)
   const [showLinkedBubblesContainer, setShowLinkedBubblesContainer] = useState(false)
   const [showOptionsMenu, setShowOptionsMenu] = useState(false)
   const [showFileInfoPanel, setShowFileInfoPanel] = useState(false)
@@ -75,6 +80,25 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
     [currentFile.mimeType],
   )
 
+  const focusInputOnMount = useCallback((input: HTMLInputElement | null) => {
+    if (input) {
+      input.focus()
+    }
+  }, [])
+
+  const handleRename = useCallback(async () => {
+    if (renameInputRef.current) {
+      const newName = renameInputRef.current.value
+      if (newName && newName !== currentFile.name) {
+        await application.items.renameFile(currentFile, newName)
+        setIsRenaming(false)
+        setCurrentFile(application.items.findSureItem(currentFile.uuid))
+        return
+      }
+      setIsRenaming(false)
+    }
+  }, [application.items, currentFile, setCurrentFile])
+
   return (
     <DialogOverlay
       className="sn-component"
@@ -92,25 +116,62 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
           tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
           onKeyDown={keyDownHandler}
         >
-          <div className="min-h-6 flex flex-shrink-0 items-center justify-between border-0 border-b border-solid border-border px-4 py-3 focus:shadow-none">
+          <div className="min-h-6 flex flex-shrink-0 flex-wrap items-center justify-between gap-2 border-0 border-b border-solid border-border px-4 py-3 focus:shadow-none">
             <div className="flex items-center">
               <div className="h-6 w-6">{IconComponent}</div>
-              <span className="ml-3 font-medium">{currentFile.name}</span>
+              {isRenaming ? (
+                <DecoratedInput
+                  defaultValue={currentFile.name}
+                  className={{ container: 'ml-3', input: 'p-1', right: 'items-stretch !p-0' }}
+                  onKeyDown={(event) => {
+                    if (event.key === KeyboardKey.Enter) {
+                      void handleRename()
+                    }
+                  }}
+                  right={[
+                    <button
+                      className="flex h-full items-center justify-center border-l border-border px-2 py-1.5 text-neutral hover:bg-passive-4"
+                      title="Submit"
+                      onClick={handleRename}
+                    >
+                      <Icon type="check" size="small" />
+                    </button>,
+                  ]}
+                  ref={mergeRefs([renameInputRef, focusInputOnMount])}
+                />
+              ) : (
+                <span className="ml-3 font-medium">{currentFile.name}</span>
+              )}
             </div>
             <div className="flex items-center">
-              <button
-                className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
-                onClick={() => setShowLinkedBubblesContainer((show) => !show)}
-              >
-                <Icon type="link" className="text-neutral" />
-              </button>
-              <button
-                className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
-                onClick={() => setShowOptionsMenu((show) => !show)}
-                ref={menuButtonRef}
-              >
-                <Icon type="more" className="text-neutral" />
-              </button>
+              <StyledTooltip label="Rename file" className="!z-modal">
+                <button
+                  className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
+                  onClick={() => setIsRenaming((isRenaming) => !isRenaming)}
+                  aria-label="Rename file"
+                >
+                  <Icon type="pencil-filled" className="text-neutral" />
+                </button>
+              </StyledTooltip>
+              <StyledTooltip label="Show linked items" className="!z-modal">
+                <button
+                  className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
+                  onClick={() => setShowLinkedBubblesContainer((show) => !show)}
+                  aria-label="Show linked items"
+                >
+                  <Icon type="link" className="text-neutral" />
+                </button>
+              </StyledTooltip>
+              <StyledTooltip label="Show file options" className="!z-modal">
+                <button
+                  className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
+                  onClick={() => setShowOptionsMenu((show) => !show)}
+                  ref={menuButtonRef}
+                  aria-label="Show file options"
+                >
+                  <Icon type="more" className="text-neutral" />
+                </button>
+              </StyledTooltip>
               <Popover
                 title="File options"
                 open={showOptionsMenu}
@@ -137,12 +198,15 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
                   />
                 </Menu>
               </Popover>
-              <button
-                className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
-                onClick={() => setShowFileInfoPanel((show) => !show)}
-              >
-                <Icon type="info" className="text-neutral" />
-              </button>
+              <StyledTooltip label="Show file info" className="!z-modal">
+                <button
+                  className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
+                  onClick={() => setShowFileInfoPanel((show) => !show)}
+                  aria-label="Show file info"
+                >
+                  <Icon type="info" className="text-neutral" />
+                </button>
+              </StyledTooltip>
               <button
                 ref={closeButtonRef}
                 onClick={dismiss}

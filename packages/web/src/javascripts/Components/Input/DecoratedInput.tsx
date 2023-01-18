@@ -36,6 +36,7 @@ const DecoratedInput = forwardRef(
       type = 'text',
       title,
       value,
+      defaultValue,
       roundedFull,
     }: DecoratedInputProps,
     ref: Ref<HTMLInputElement>,
@@ -76,6 +77,7 @@ const DecoratedInput = forwardRef(
           title={title}
           type={type}
           value={value}
+          defaultValue={defaultValue}
           spellCheck={spellcheck}
         />
 
