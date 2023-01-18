@@ -5,7 +5,7 @@ import { createNoteParams } from './lib/Items.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('history manager', () => {
+describe.only('history manager', () => {
   const largeCharacterChange = 25
 
   const syncOptions = {
@@ -345,6 +345,7 @@ describe('history manager', () => {
       )
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
+      console.log(`Listing revisions for item ${item.uuid}`)
       const itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: item.uuid })
       expect(itemHistoryOrError.isFailed()).to.equal(false)
 
