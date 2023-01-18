@@ -330,6 +330,7 @@ describe.only('history manager', () => {
 
     it('returns revisions from server', async function () {
       let item = await Factory.createSyncedNote(this.application)
+      await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
       await Factory.sleep(Factory.ServerRevisionFrequency)
       /** Sync with different contents, should create new entry */
