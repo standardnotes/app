@@ -303,6 +303,8 @@ const ContentTableView = ({
             sortReverse: sortReversed,
           },
         })
+
+        return
       }
 
       await application.mutator.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
