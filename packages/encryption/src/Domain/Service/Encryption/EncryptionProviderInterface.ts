@@ -12,6 +12,9 @@ import { ClientDisplayableError } from '@standardnotes/responses'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
 import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
 import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
+import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
+import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
+import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
 
 export interface EncryptionProviderInterface {
   encryptSplitSingle(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface>
@@ -67,4 +70,7 @@ export interface EncryptionProviderInterface {
   reencryptItemsKeys(): Promise<void>
   getSureDefaultItemsKey(): ItemsKeyInterface
   getRootKeyParams(): Promise<SNRootKeyParams | undefined>
+  getEmbeddedPayloadAuthenticatedData(
+    payload: EncryptedPayloadInterface,
+  ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined
 }

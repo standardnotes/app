@@ -1,5 +1,5 @@
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
-import { RevisionListEntry } from '@standardnotes/snjs'
+import { RevisionMetadata } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useState } from 'react'
 import Button from '@/Components/Button/Button'
@@ -36,7 +36,7 @@ const HistoryModalFooter = ({ dismissModal, noteHistoryController }: Props) => {
     }
 
     setIsDeletingRevision(true)
-    await deleteRemoteRevision(selectedEntry as RevisionListEntry)
+    await deleteRemoteRevision(selectedEntry as RevisionMetadata)
     setIsDeletingRevision(false)
   }, [deleteRemoteRevision, selectedEntry])
 
@@ -45,13 +45,13 @@ const HistoryModalFooter = ({ dismissModal, noteHistoryController }: Props) => {
       <Button className="py-1.35" label="Close" onClick={dismissModal} />
       {selectedRevision && (
         <>
-          {(selectedEntry as RevisionListEntry).uuid && (
+          {(selectedEntry as RevisionMetadata).uuid && (
             <Button className="md:ml-auto" onClick={deleteSelectedRevision}>
               {isDeletingRevision ? <Spinner className="my-1 h-3 w-3" /> : 'Delete this revision'}
             </Button>
           )}
           <Button
-            className={!(selectedEntry as RevisionListEntry).uuid ? 'md:ml-auto' : ''}
+            className={!(selectedEntry as RevisionMetadata).uuid ? 'md:ml-auto' : ''}
             label="Restore as a copy"
             onClick={restoreAsCopy}
           />
