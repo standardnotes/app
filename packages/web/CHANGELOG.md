@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.139.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.138.6...@standardnotes/web@3.139.0) (2023-01-18)
+
+### Features
+
+* Added rename option to file preview modal ([aa88966](https://github.com/standardnotes/app/commit/aa8896678315de67551c786e64aec7dfd10479e3))
+* **snjs:** add revisions api v2 ([#2154](https://github.com/standardnotes/app/issues/2154)) ([880a537](https://github.com/standardnotes/app/commit/880a537774ddcefaedb0d4e5dc50b363f4b93e01))
+
 ## [3.138.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.138.5...@standardnotes/web@3.138.6) (2023-01-17)
 
 **Note:** Version bump only for package @standardnotes/web

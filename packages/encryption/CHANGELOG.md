@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.21.0](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.20.1...@standardnotes/encryption@1.21.0) (2023-01-18)
+
+### Features
+
+* **snjs:** add revisions api v2 ([#2154](https://github.com/standardnotes/app/issues/2154)) ([880a537](https://github.com/standardnotes/app/commit/880a537774ddcefaedb0d4e5dc50b363f4b93e01))
+
 ## [1.20.1](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.20.0...@standardnotes/encryption@1.20.1) (2023-01-12)
 
 **Note:** Version bump only for package @standardnotes/encryption

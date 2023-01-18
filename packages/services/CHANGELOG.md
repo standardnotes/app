@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.56.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.55.2...@standardnotes/services@1.56.0) (2023-01-18)
+
+### Bug Fixes
+
+* **snjs:** notify http service of refresh session ([271db1c](https://github.com/standardnotes/app/commit/271db1c3dcf663633cb23465c24e1aeef1a9d829))
+
+### Features
+
+* **snjs:** add revisions api v2 ([#2154](https://github.com/standardnotes/app/issues/2154)) ([880a537](https://github.com/standardnotes/app/commit/880a537774ddcefaedb0d4e5dc50b363f4b93e01))
+
 ## [1.55.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.55.1...@standardnotes/services@1.55.2) (2023-01-12)
 
 **Note:** Version bump only for package @standardnotes/services

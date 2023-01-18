@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.164.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.163.7...@standardnotes/snjs@2.164.0) (2023-01-18)
+
+### Bug Fixes
+
+* **snjs:** history revisions specs ([24cda40](https://github.com/standardnotes/app/commit/24cda40ddea31ffc9a3af60acb456d8eb9fe21af))
+* **snjs:** increase revision creation delay in specs ([d734574](https://github.com/standardnotes/app/commit/d734574a7e12566aff8d9dce4d98381f713bbcca))
+* **snjs:** notify http service of refresh session ([271db1c](https://github.com/standardnotes/app/commit/271db1c3dcf663633cb23465c24e1aeef1a9d829))
+
+### Features
+
+* **snjs:** add revisions api v2 ([#2154](https://github.com/standardnotes/app/issues/2154)) ([880a537](https://github.com/standardnotes/app/commit/880a537774ddcefaedb0d4e5dc50b363f4b93e01))
+
 ## [2.163.7](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.163.6...@standardnotes/snjs@2.163.7) (2023-01-17)
 
 **Note:** Version bump only for package @standardnotes/snjs
