@@ -1,4 +1,4 @@
-import { EncryptedPayloadInterface, HistoryEntry, isRemotePayloadAllowed } from '@standardnotes/models'
+import { EncryptedPayloadInterface, HistoryEntry } from '@standardnotes/models'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { RevisionClientInterface } from '@standardnotes/services'
 jest.mock('@standardnotes/models', () => {
@@ -9,6 +9,7 @@ jest.mock('@standardnotes/models', () => {
     isRemotePayloadAllowed: jest.fn(),
   }
 })
+const isRemotePayloadAllowed = require('@standardnotes/models').isRemotePayloadAllowed
 
 import { Revision } from '../../Revision/Revision'
 
