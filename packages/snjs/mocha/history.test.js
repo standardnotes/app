@@ -258,6 +258,8 @@ describe('history manager', () => {
   })
 
   describe('remote', function () {
+    this.timeout(Factory.TwentySecondTimeout)
+
     beforeEach(async function () {
       this.application = await Factory.createInitAppWithFakeCrypto()
       this.historyManager = this.application.historyManager
@@ -300,7 +302,7 @@ describe('history manager', () => {
       /** Server history should save initial revision */
       expect(itemHistory.length).to.equal(1)
 
-      /** Sync within 5 minutes, should not create a new entry */
+      /** Sync within 5 seconds (ENV VAR dependend on self-hosted setup), should not create a new entry */
       await Factory.markDirtyAndSyncItem(this.application, item)
       itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: item.uuid })
       expect(itemHistoryOrError.isFailed()).to.equal(false)
@@ -318,6 +320,7 @@ describe('history manager', () => {
         undefined,
         syncOptions,
       )
+      await Factory.sleep(Factory.ServerRevisionCreationDelay)
       itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: item.uuid })
       expect(itemHistoryOrError.isFailed()).to.equal(false)
 
@@ -369,6 +372,7 @@ describe('history manager', () => {
       await Factory.markDirtyAndSyncItem(this.application, note)
       const dupe = await this.application.itemManager.duplicateItem(note, true)
       await Factory.markDirtyAndSyncItem(this.application, dupe)
+
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
       const dupeHistoryOrError = await this.application.listRevisions.execute({ itemUuid: dupe.uuid })
@@ -382,14 +386,9 @@ describe('history manager', () => {
       expect(dupeRevision.payload.uuid).to.equal(dupe.uuid)
     })
 
-    it.skip('revisions count matches original for duplicated items', async function () {
-      /**
-       * We can't handle duplicate item revision because the server copies over revisions
-       * via a background job which we can't predict the timing of. This test is thus invalid.
-       */
+    it('revisions count matches original for duplicated items', async function () {
       const note = await Factory.createSyncedNote(this.application)
 
-      /** Make a few changes to note */
       await Factory.sleep(Factory.ServerRevisionFrequency)
       await Factory.markDirtyAndSyncItem(this.application, note)
 
@@ -402,7 +401,9 @@ describe('history manager', () => {
       const dupe = await this.application.itemManager.duplicateItem(note, true)
       await Factory.markDirtyAndSyncItem(this.application, dupe)
 
-      const expectedRevisions = 3
+      await Factory.sleep(Factory.ServerRevisionCreationDelay)
+
+      const expectedRevisions = 4
       const noteHistoryOrError = await this.application.listRevisions.execute({ itemUuid: note.uuid })
       expect(noteHistoryOrError.isFailed()).to.equal(false)
       const noteHistory = noteHistoryOrError.getValue()
@@ -412,18 +413,14 @@ describe('history manager', () => {
       const dupeHistory = dupeHistoryOrError.getValue()
 
       expect(noteHistory.length).to.equal(expectedRevisions)
-      expect(dupeHistory.length).to.equal(expectedRevisions)
+      expect(dupeHistory.length).to.equal(expectedRevisions + 1)
     })
 
-    it.skip('can decrypt revisions for duplicate_of items', async function () {
-      /**
-       * We can't handle duplicate item revision because the server copies over revisions
-       * via a background job which we can't predict the timing of. This test is thus invalid.
-       */
+    it('can decrypt revisions for duplicate_of items', async function () {
       const note = await Factory.createSyncedNote(this.application)
       await Factory.sleep(Factory.ServerRevisionFrequency)
+
       const changedText = `${Math.random()}`
-      /** Make a few changes to note */
       await this.application.mutator.changeAndSaveItem(note, (mutator) => {
         mutator.title = changedText
       })
@@ -431,14 +428,17 @@ describe('history manager', () => {
 
       const dupe = await this.application.itemManager.duplicateItem(note, true)
       await Factory.markDirtyAndSyncItem(this.application, dupe)
+
+      await Factory.sleep(Factory.ServerRevisionCreationDelay)
+
       const itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: dupe.uuid })
       expect(itemHistoryOrError.isFailed()).to.equal(false)
 
       const itemHistory = itemHistoryOrError.getValue()
       expect(itemHistory.length).to.be.above(1)
-      const oldestRevision = lastElement(itemHistory)
+      const newestRevision = itemHistory[0]
 
-      const fetchedOrError = await this.application.getRevision.execute({ itemUuid: dupe.uuid, revisionUuid: oldestRevision.uuid })
+      const fetchedOrError = await this.application.getRevision.execute({ itemUuid: dupe.uuid, revisionUuid: newestRevision.uuid })
       expect(fetchedOrError.isFailed()).to.equal(false)
 
       const fetched = fetchedOrError.getValue()
