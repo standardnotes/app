@@ -12,6 +12,8 @@ import {
   DecryptedItemInterface,
   SNNote,
   TagMutator,
+  isSystemView,
+  isSmartView,
 } from '@standardnotes/snjs'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
@@ -304,6 +306,11 @@ const ContentTableView = ({
           },
         })
 
+        return
+      }
+
+      const isNonFilesSystemView = isSmartView(selectedTag) && isSystemView(selectedTag)
+      if (isNonFilesSystemView) {
         return
       }
 
