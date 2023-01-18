@@ -1,5 +1,4 @@
 import { WebApplication } from '@/Application/Application'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { FilesController } from '@/Controllers/FilesController'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { getIconForFileType } from '@/Utils/Items/Icons/getIconForFileType'
@@ -8,11 +7,11 @@ import {
   FileItem,
   SortableItem,
   PrefKey,
-  ApplicationEvent,
   FileBackupRecord,
   SystemViewId,
   DecryptedItemInterface,
   SNNote,
+  TagMutator,
 } from '@standardnotes/snjs'
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
@@ -37,6 +36,7 @@ import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 import { useItemLinks } from '@/Hooks/useItemLinks'
 import { ItemLink } from '@/Utils/Items/Search/ItemLink'
+import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 
 const ContextMenuCell = ({
   items,
@@ -176,7 +176,7 @@ const ItemLinksCell = ({
   )
 }
 
-const ItemNameCell = ({ item }: { item: DecryptedItemInterface }) => {
+const ItemNameCell = ({ item, hideIcon }: { item: DecryptedItemInterface; hideIcon: boolean }) => {
   const application = useApplication()
   const [backupInfo, setBackupInfo] = useState<FileBackupRecord | undefined>(undefined)
   const isItemFile = item instanceof FileItem
@@ -196,11 +196,13 @@ const ItemNameCell = ({ item }: { item: DecryptedItemInterface }) => {
   return (
     <div className="flex items-center gap-3 whitespace-normal">
       <span className="relative">
-        {isItemFile ? (
-          getFileIconComponent(getIconForFileType(item.mimeType), 'w-6 h-6 flex-shrink-0')
-        ) : (
-          <Icon type={noteIcon} className={`text-accessory-tint-${noteIconTint}`} />
-        )}
+        {!hideIcon ? (
+          isItemFile ? (
+            getFileIconComponent(getIconForFileType(item.mimeType), 'w-6 h-6 flex-shrink-0')
+          ) : (
+            <Icon type={noteIcon} className={`text-accessory-tint-${noteIconTint}`} />
+          )
+        ) : null}
         {backupInfo && (
           <div
             className="absolute bottom-1 right-1 translate-x-1/2 translate-y-1/2 rounded-full bg-default text-success"
@@ -261,6 +263,7 @@ type Props = {
   navigationController: NavigationController
   notesController: NotesController
   historyModalController: HistoryModalController
+  itemListController: ItemListController
 }
 
 const ContentTableView = ({
@@ -272,51 +275,45 @@ const ContentTableView = ({
   navigationController,
   notesController,
   historyModalController,
+  itemListController,
 }: Props) => {
   const listHasFiles = items.some((item) => item instanceof FileItem)
 
-  const getSortByPreference = useCallback(() => {
-    const globalPrefValue = application.getPreference(PrefKey.SortNotesBy, PrefDefaults[PrefKey.SortNotesBy])
-    const filesViewPrefValue = application.getPreference(PrefKey.SystemViewPreferences)?.[SystemViewId.Files]?.sortBy
-
-    return filesViewPrefValue ?? globalPrefValue
-  }, [application])
-
-  const getSortReversedPreference = useCallback(() => {
-    const globalPrefValue = application.getPreference(PrefKey.SortNotesReverse, PrefDefaults[PrefKey.SortNotesReverse])
-    const filesViewPrefValue = application.getPreference(PrefKey.SystemViewPreferences)?.[SystemViewId.Files]
-      ?.sortReverse
-
-    return filesViewPrefValue ?? globalPrefValue
-  }, [application])
-
-  const [sortBy, setSortBy] = useState<keyof SortableItem>(() => getSortByPreference())
-  const [sortReversed, setSortReversed] = useState(() => getSortReversedPreference())
-
-  useEffect(() => {
-    return application.addEventObserver(async (event) => {
-      if (event === ApplicationEvent.PreferencesChanged) {
-        setSortBy(getSortByPreference())
-        setSortReversed(getSortReversedPreference())
-      }
-    })
-  }, [application, getSortByPreference, getSortReversedPreference])
+  const { sortBy, sortDirection } = itemListController.displayOptions
+  const sortReversed = sortDirection === 'asc'
+  const { hideDate, hideEditorIcon: hideIcon, hideTags } = itemListController.webDisplayOptions
 
   const onSortChange = useCallback(
     async (sortBy: keyof SortableItem, sortReversed: boolean) => {
-      const systemViewPreferences = application.getPreference(PrefKey.SystemViewPreferences) || {}
-      const filesViewPreferences = systemViewPreferences[SystemViewId.Files] || {}
+      const selectedTag = navigationController.selected
 
-      await application.setPreference(PrefKey.SystemViewPreferences, {
-        ...systemViewPreferences,
-        [SystemViewId.Files]: {
-          ...filesViewPreferences,
+      if (!selectedTag) {
+        return
+      }
+
+      if (selectedTag.uuid === SystemViewId.Files) {
+        const systemViewPreferences = application.getPreference(PrefKey.SystemViewPreferences) || {}
+        const filesViewPreferences = systemViewPreferences[SystemViewId.Files] || {}
+
+        await application.setPreference(PrefKey.SystemViewPreferences, {
+          ...systemViewPreferences,
+          [SystemViewId.Files]: {
+            ...filesViewPreferences,
+            sortBy,
+            sortReverse: sortReversed,
+          },
+        })
+      }
+
+      await application.mutator.changeAndSaveItem<TagMutator>(selectedTag, (mutator) => {
+        mutator.preferences = {
+          ...mutator.preferences,
           sortBy,
           sortReverse: sortReversed,
-        },
+        }
       })
     },
-    [application],
+    [application, navigationController.selected],
   )
 
   const [contextMenuItem, setContextMenuItem] = useState<DecryptedItemInterface | undefined>(undefined)
@@ -331,7 +328,7 @@ const ContentTableView = ({
       {
         name: 'Name',
         sortBy: 'title',
-        cell: (item) => <ItemNameCell item={item} />,
+        cell: (item) => <ItemNameCell item={item} hideIcon={hideIcon} />,
       },
       {
         name: 'Upload date',
@@ -339,7 +336,7 @@ const ContentTableView = ({
         cell: (item) => {
           return formatDateForContextMenu(item.created_at)
         },
-        hidden: isSmallBreakpoint,
+        hidden: isSmallBreakpoint || hideDate,
       },
       {
         name: 'Size',
@@ -351,11 +348,11 @@ const ContentTableView = ({
       },
       {
         name: 'Attached to',
-        hidden: isSmallBreakpoint || isMediumBreakpoint || isLargeBreakpoint,
+        hidden: isSmallBreakpoint || isMediumBreakpoint || isLargeBreakpoint || hideTags,
         cell: (item) => <AttachedToCell item={item} />,
       },
     ],
-    [isLargeBreakpoint, isMediumBreakpoint, isSmallBreakpoint, listHasFiles],
+    [hideDate, hideIcon, hideTags, isLargeBreakpoint, isMediumBreakpoint, isSmallBreakpoint, listHasFiles],
   )
 
   const getRowId = useCallback((item: DecryptedItemInterface) => item.uuid, [])

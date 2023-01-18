@@ -373,6 +373,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
               navigationController={navigationController}
               notesController={notesController}
               historyModalController={historyModalController}
+              itemListController={itemListController}
             />
           ) : (
             <ContentList
