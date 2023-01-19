@@ -3,7 +3,6 @@ import { NoteType, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
-import ModalDialog from '@/Components/Shared/ModalDialog'
 import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
 import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
@@ -87,7 +86,7 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
   }
 
   return (
-    <ModalDialog>
+    <>
       <ModalDialogLabel closeDialog={closeDialog}>
         Convert to Super note
         <p className="text-sm font-normal text-neutral">
@@ -127,6 +126,6 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
           </div>
         </div>
       </ModalDialogButtons>
-    </ModalDialog>
+    </>
   )
 }

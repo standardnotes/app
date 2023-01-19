@@ -13,6 +13,7 @@ import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/Premium
 import { SuperNoteImporter } from '../NoteView/SuperEditor/SuperNoteImporter'
 import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
 import { Pill } from '../Preferences/PreferencesComponents/Content'
+import ModalDialog from '../Shared/ModalDialog'
 
 type ChangeEditorMenuProps = {
   application: WebApplication
@@ -220,13 +221,15 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
             )
           })}
       </Menu>
-      {showSuperImporter && note && (
-        <SuperNoteImporter
-          note={note}
-          application={application}
-          onConvertComplete={handleSuperNoteConversionCompletion}
-          closeDialog={() => setShowSuperImporter(false)}
-        />
+      {note && (
+        <ModalDialog isOpen={showSuperImporter} onDismiss={() => setShowSuperImporter(false)}>
+          <SuperNoteImporter
+            note={note}
+            application={application}
+            onConvertComplete={handleSuperNoteConversionCompletion}
+            closeDialog={() => setShowSuperImporter(false)}
+          />
+        </ModalDialog>
       )}
     </>
   )
