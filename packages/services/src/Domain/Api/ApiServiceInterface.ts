@@ -1,7 +1,7 @@
 import { Either } from '@standardnotes/common'
-import { Role } from '@standardnotes/auth'
 import { FilesApiInterface } from '@standardnotes/files'
 import { Session } from '@standardnotes/domain-core'
+import { Role } from '@standardnotes/security'
 
 import { AbstractService } from '../Service/AbstractService'
 
