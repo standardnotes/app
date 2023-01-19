@@ -232,6 +232,7 @@ export class SNApiService
     email: string
     mfaKeyPath?: string
     mfaCode?: string
+    authenticatorResponse?: Record<string, unknown>
   }): Promise<Responses.KeyParamsResponse | Responses.HttpResponse> {
     const codeVerifier = this.crypto.generateRandomKey(256)
     this.inMemoryStore.setValue(StorageKey.CodeVerifier, codeVerifier)
@@ -245,6 +246,10 @@ export class SNApiService
 
     if (dto.mfaKeyPath !== undefined && dto.mfaCode !== undefined) {
       params[dto.mfaKeyPath] = dto.mfaCode
+    }
+
+    if (dto.authenticatorResponse) {
+      params.authenticator_response = dto.authenticatorResponse
     }
 
     return this.request({

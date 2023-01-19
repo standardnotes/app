@@ -4,7 +4,6 @@ const AuthenticatorPaths = {
   generateRegistrationOptions: '/v1/authenticators/generate-registration-options',
   verifyRegistrationResponse: '/v1/authenticators/verify-registration',
   generateAuthenticationOptions: '/v1/authenticators/generate-authentication-options',
-  verifyAuthenticationResponse: '/v1/authenticators/verify-authentication',
 }
 
 export const Paths = {

@@ -11,6 +11,7 @@ import ErroredItems from './ErroredItems'
 import PreferencesPane from '@/Components/Preferences/PreferencesComponents/PreferencesPane'
 import BiometricsLock from '@/Components/Preferences/Panes/Security/BiometricsLock'
 import MultitaskingPrivacy from '@/Components/Preferences/Panes/Security/MultitaskingPrivacy'
+import U2FWrapper from './U2F/U2FWrapper'
 
 interface SecurityProps extends MfaProps {
   viewControllerManager: ViewControllerManager
@@ -32,6 +33,7 @@ const Security: FunctionComponent<SecurityProps> = (props) => {
         userProvider={props.userProvider}
         application={props.application}
       />
+      <U2FWrapper userProvider={props.userProvider} application={props.application} />
       {isNativeMobileWeb && <MultitaskingPrivacy application={props.application} />}
       <PasscodeLock viewControllerManager={props.viewControllerManager} application={props.application} />
       {isNativeMobileWeb && <BiometricsLock application={props.application} />}

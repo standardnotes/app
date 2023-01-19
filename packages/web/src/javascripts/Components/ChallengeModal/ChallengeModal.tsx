@@ -70,6 +70,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [shouldShowSubmitButton, setShouldShowSubmitButton] = useState(true)
   const [, setProcessingPrompts] = useState<ChallengePrompt[]>([])
   const [bypassModalFocusLock, setBypassModalFocusLock] = useState(false)
 
@@ -180,13 +181,23 @@ const ChallengeModal: FunctionComponent<Props> = ({
   }, [application, challenge, onDismiss])
 
   const biometricPrompt = challenge.prompts.find((prompt) => prompt.validation === ChallengeValidation.Biometric)
+  const authenticatorPrompt = challenge.prompts.find(
+    (prompt) => prompt.validation === ChallengeValidation.Authenticator,
+  )
   const hasOnlyBiometricPrompt = challenge.prompts.length === 1 && !!biometricPrompt
-  const wasBiometricInputSuccessful = biometricPrompt && !!values[biometricPrompt.id].value
+  const hasOnlyAuthenticatorPrompt = challenge.prompts.length === 1 && !!authenticatorPrompt
+  const wasBiometricInputSuccessful = !!biometricPrompt && !!values[biometricPrompt.id].value
+  const wasAuthenticatorInputSuccessful = !!authenticatorPrompt && !!values[authenticatorPrompt.id].value
   const hasSecureTextPrompt = challenge.prompts.some((prompt) => prompt.secureTextEntry)
 
   useEffect(() => {
-    const shouldAutoSubmit = hasOnlyBiometricPrompt && wasBiometricInputSuccessful
+    const shouldAutoSubmit =
+      (hasOnlyBiometricPrompt && wasBiometricInputSuccessful) ||
+      (hasOnlyAuthenticatorPrompt && wasAuthenticatorInputSuccessful)
+    setShouldShowSubmitButton(!(hasOnlyBiometricPrompt || hasOnlyAuthenticatorPrompt))
+
     const shouldFocusSecureTextPrompt = hasSecureTextPrompt && wasBiometricInputSuccessful
+
     if (shouldAutoSubmit) {
       submit()
     } else if (shouldFocusSecureTextPrompt) {
@@ -195,7 +206,14 @@ const ChallengeModal: FunctionComponent<Props> = ({
       ) as HTMLInputElement | null
       secureTextEntry?.focus()
     }
-  }, [wasBiometricInputSuccessful, hasOnlyBiometricPrompt, submit, hasSecureTextPrompt])
+  }, [
+    wasBiometricInputSuccessful,
+    hasOnlyBiometricPrompt,
+    submit,
+    hasSecureTextPrompt,
+    hasOnlyAuthenticatorPrompt,
+    wasAuthenticatorInputSuccessful,
+  ])
 
   useEffect(() => {
     const removeListener = application.addAndroidBackHandlerEventListener(() => {
@@ -289,12 +307,15 @@ const ChallengeModal: FunctionComponent<Props> = ({
                 index={index}
                 onValueChange={onValueChange}
                 isInvalid={values[prompt.id].invalid}
+                contextData={prompt.contextData}
               />
             ))}
           </form>
-          <Button primary disabled={isProcessing} className="mt-1 mb-3.5 min-w-76" onClick={submit}>
-            {isProcessing ? 'Generating Keys...' : 'Submit'}
-          </Button>
+          {shouldShowSubmitButton && (
+            <Button primary disabled={isProcessing} className="mt-1 mb-3.5 min-w-76" onClick={submit}>
+              {isProcessing ? 'Generating Keys...' : 'Submit'}
+            </Button>
+          )}
           {shouldShowForgotPasscode && (
             <Button
               className="flex min-w-76 items-center justify-center"

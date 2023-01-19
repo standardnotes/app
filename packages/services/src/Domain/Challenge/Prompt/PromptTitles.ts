@@ -6,4 +6,5 @@ export const ChallengePromptTitle = {
   Biometrics: 'Biometrics',
   RememberFor: 'Remember For',
   Mfa: 'Two-factor Authentication Code',
+  U2F: 'Security Key',
 }

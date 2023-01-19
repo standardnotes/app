@@ -4,7 +4,6 @@ import {
   GenerateAuthenticatorRegistrationOptionsResponse,
   VerifyAuthenticatorRegistrationResponseResponse,
   GenerateAuthenticatorAuthenticationOptionsResponse,
-  VerifyAuthenticatorAuthenticationResponseResponse,
 } from '../../Response'
 
 export interface AuthenticatorApiServiceInterface {
@@ -14,11 +13,7 @@ export interface AuthenticatorApiServiceInterface {
   verifyRegistrationResponse(
     userUuid: string,
     name: string,
-    registrationCredential: Record<string, unknown>,
+    attestationResponse: Record<string, unknown>,
   ): Promise<VerifyAuthenticatorRegistrationResponseResponse>
-  generateAuthenticationOptions(): Promise<GenerateAuthenticatorAuthenticationOptionsResponse>
-  verifyAuthenticationResponse(
-    userUuid: string,
-    authenticationCredential: Record<string, unknown>,
-  ): Promise<VerifyAuthenticatorAuthenticationResponseResponse>
+  generateAuthenticationOptions(username: string): Promise<GenerateAuthenticatorAuthenticationOptionsResponse>
 }
