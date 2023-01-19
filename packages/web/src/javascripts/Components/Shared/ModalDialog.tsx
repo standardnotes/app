@@ -1,15 +1,32 @@
 import { useRef, ReactNode } from 'react'
 import { AlertDialogContent, AlertDialogOverlay } from '@reach/alert-dialog'
 import { classNames } from '@standardnotes/utils'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import MobileModalDialog from './MobileModalDialog'
 
 type Props = {
   children: ReactNode
+  isOpen?: boolean
   onDismiss?: () => void
   className?: string
 }
 
-const ModalDialog = ({ children, onDismiss, className }: Props) => {
+const ModalDialog = ({ children, isOpen, onDismiss, className }: Props) => {
   const ldRef = useRef<HTMLButtonElement>(null)
+
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
+  if (isMobileScreen) {
+    return (
+      <MobileModalDialog isOpen={isOpen} onDismiss={onDismiss} className={className}>
+        {children}
+      </MobileModalDialog>
+    )
+  }
+
+  if (typeof isOpen === 'boolean' && !isOpen) {
+    return null
+  }
 
   return (
     <AlertDialogOverlay className="p-0 md:px-0" leastDestructiveRef={ldRef} onDismiss={onDismiss}>
