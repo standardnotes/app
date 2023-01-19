@@ -1,6 +1,5 @@
 import { FunctionComponent, useState } from 'react'
 
-import ModalDialog from '@/Components/Shared/ModalDialog'
 import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
 import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
@@ -110,18 +109,16 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
   }
 
   return (
-    <div>
-      <ModalDialog>
-        <ModalDialogLabel closeDialog={handleDialogClose}>Share your Subscription</ModalDialogLabel>
-        <ModalDialogDescription className="px-4.5">
-          {currentStep === Steps.InitialStep && <InviteForm setInviteeEmail={setInviteeEmail} />}
-          {currentStep === Steps.FinishStep && <InviteSuccess />}
-        </ModalDialogDescription>
-        <ModalDialogButtons className="px-4.5">
-          <Button className="min-w-20" primary label={submitButtonTitle} onClick={handleSubmit} />
-        </ModalDialogButtons>
-      </ModalDialog>
-    </div>
+    <>
+      <ModalDialogLabel closeDialog={handleDialogClose}>Share your Subscription</ModalDialogLabel>
+      <ModalDialogDescription className="px-4.5">
+        {currentStep === Steps.InitialStep && <InviteForm setInviteeEmail={setInviteeEmail} />}
+        {currentStep === Steps.FinishStep && <InviteSuccess />}
+      </ModalDialogDescription>
+      <ModalDialogButtons className="px-4.5">
+        <Button className="min-w-20" primary label={submitButtonTitle} onClick={handleSubmit} />
+      </ModalDialogButtons>
+    </>
   )
 }
 
