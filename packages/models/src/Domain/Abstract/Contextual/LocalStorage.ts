@@ -1,4 +1,3 @@
-import { Uuid } from '@standardnotes/common'
 import { ContextPayload } from './ContextPayload'
 import { ItemContent } from '../Content/ItemContent'
 import { DecryptedPayloadInterface, DeletedPayloadInterface, EncryptedPayloadInterface } from '../Payload'
@@ -19,7 +18,7 @@ export interface LocalStorageEncryptedContextualPayload extends ContextPayload {
   created_at_timestamp: number
   created_at: Date
   dirty: boolean
-  duplicate_of: Uuid | undefined
+  duplicate_of: string | undefined
   enc_item_key: string
   errorDecrypting: boolean
   items_key_id: string | undefined
@@ -34,7 +33,7 @@ export interface LocalStorageDecryptedContextualPayload<C extends ItemContent = 
   created_at: Date
   deleted: false
   dirty: boolean
-  duplicate_of?: Uuid
+  duplicate_of?: string
   updated_at_timestamp: number
   updated_at: Date
 }
@@ -45,7 +44,7 @@ export interface LocalStorageDeletedContextualPayload extends ContextPayload {
   created_at: Date
   deleted: true
   dirty: true
-  duplicate_of?: Uuid
+  duplicate_of?: string
   updated_at_timestamp: number
   updated_at: Date
 }

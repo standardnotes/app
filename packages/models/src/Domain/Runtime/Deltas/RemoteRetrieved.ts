@@ -2,7 +2,7 @@ import { ImmutablePayloadCollection } from './../Collection/Payload/ImmutablePay
 import { ConflictDelta } from './Conflict'
 import { isErrorDecryptingPayload, isDecryptedPayload } from '../../Abstract/Payload/Interfaces/TypeCheck'
 import { FullyFormedPayloadInterface, PayloadEmitSource } from '../../Abstract/Payload'
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { HistoryMap } from '../History'
 import { ServerSyncPushContextualPayload } from '../../Abstract/Contextual/ServerSyncPush'
 import { payloadByFinalizingSyncState } from './Utilities/ApplyDirtyState'
@@ -18,7 +18,7 @@ export class DeltaRemoteRetrieved implements SyncDeltaInterface {
     readonly historyMap: HistoryMap,
   ) {}
 
-  private isUuidOfPayloadCurrentlySavingOrSaved(uuid: Uuid): boolean {
+  private isUuidOfPayloadCurrentlySavingOrSaved(uuid: string): boolean {
     return this.itemsSavedOrSaving.find((i) => i.uuid === uuid) != undefined
   }
 

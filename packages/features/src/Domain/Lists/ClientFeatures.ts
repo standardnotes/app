@@ -1,7 +1,8 @@
 import { ClientFeatureDescription } from '../Feature/FeatureDescription'
 import { PermissionName } from '../Permission/PermissionName'
 import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
-import { RoleName, SubscriptionName } from '@standardnotes/common'
+import { SubscriptionName } from '@standardnotes/common'
+import { RoleName } from '@standardnotes/domain-core'
 
 export function clientFeatures(): ClientFeatureDescription[] {
   return [
@@ -19,7 +20,7 @@ export function clientFeatures(): ClientFeatureDescription[] {
       permission_name: PermissionName.SuperEditor,
       description:
         'Type / to bring up the block selection menu, or @ to embed images or link other tags and notes. Type - then space to start a list, or [] then space to start a checklist. Drag and drop an image or file to embed it in your note.',
-      availableInRoles: [RoleName.PlusUser, RoleName.ProUser],
+      availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
     },
     {
       availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],

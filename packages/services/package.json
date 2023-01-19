@@ -18,8 +18,8 @@
   "dependencies": {
     "@standardnotes/api": "workspace:^",
     "@standardnotes/auth": "^3.19.4",
-    "@standardnotes/common": "^1.45.0",
-    "@standardnotes/domain-core": "^1.11.0",
+    "@standardnotes/common": "^1.46.3",
+    "@standardnotes/domain-core": "^1.11.1",
     "@standardnotes/encryption": "workspace:^",
     "@standardnotes/files": "workspace:^",
     "@standardnotes/models": "workspace:^",

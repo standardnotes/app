@@ -1,6 +1,6 @@
 import { DatabaseItemMetadata } from './DatabaseItemMetadata'
 import { DatabaseLoadOptions } from './DatabaseLoadOptions'
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 
 /**
  * Sorts payloads according by most recently modified first, according to the priority,
@@ -47,7 +47,7 @@ function SortPayloadsByRecentAndContentPriority<T extends DatabaseItemMetadata =
  */
 function SortPayloadsByRecentAndUuidPriority<T extends DatabaseItemMetadata = DatabaseItemMetadata>(
   payloads: T[],
-  uuidPriorityList: Uuid[],
+  uuidPriorityList: string[],
 ): T[] {
   return payloads.sort((a, b) => {
     const dateResult = new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()

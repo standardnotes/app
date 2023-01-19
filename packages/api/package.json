@@ -36,8 +36,8 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.45.0",
-    "@standardnotes/domain-core": "^1.11.0",
+    "@standardnotes/common": "^1.46.3",
+    "@standardnotes/domain-core": "^1.11.1",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",

@@ -7,7 +7,6 @@ import {
   Invitation,
   InvitationStatus,
   SubscriptionClientInterface,
-  Uuid,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { WebApplication } from '../../Application/Application'
@@ -157,7 +156,7 @@ export class SubscriptionController extends AbstractViewController {
     return success
   }
 
-  async cancelSubscriptionInvitation(invitationUuid: Uuid): Promise<boolean> {
+  async cancelSubscriptionInvitation(invitationUuid: string): Promise<boolean> {
     const success = await this.subscriptionManager.cancelInvitation(invitationUuid)
 
     if (success) {

@@ -26,7 +26,8 @@
   },
   "dependencies": {
     "@standardnotes/auth": "^3.19.4",
-    "@standardnotes/common": "^1.45.0",
+    "@standardnotes/common": "^1.46.3",
+    "@standardnotes/domain-core": "^1.11.1",
     "@standardnotes/security": "^1.7.0",
     "reflect-metadata": "^0.1.13"
   },

@@ -8,7 +8,8 @@ import {
   isString,
 } from '@standardnotes/utils'
 import { ClientDisplayableError, UserFeaturesResponse } from '@standardnotes/responses'
-import { ContentType, RoleName } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
+import { RoleName } from '@standardnotes/domain-core'
 import { FillItemContent, PayloadEmitSource } from '@standardnotes/models'
 import { ItemManager } from '../Items/ItemManager'
 import { LEGACY_PROD_EXT_ORIGIN, PROD_OFFLINE_FEATURES_URL } from '../../Hosts'
@@ -57,7 +58,7 @@ export class SNFeaturesService
   implements FeaturesClientInterface, InternalEventHandlerInterface
 {
   private deinited = false
-  private roles: RoleName[] = []
+  private roles: string[] = []
   private features: FeaturesImports.FeatureDescription[] = []
   private enabledExperimentalFeatures: FeaturesImports.FeatureIdentifier[] = []
   private removeWebSocketsServiceObserver: () => void
@@ -363,14 +364,14 @@ export class SNFeaturesService
   }
 
   public initializeFromDisk(): void {
-    this.roles = this.storageService.getValue<RoleName[]>(StorageKey.UserRoles, undefined, [])
+    this.roles = this.storageService.getValue<string[]>(StorageKey.UserRoles, undefined, [])
 
     this.features = this.storageService.getValue(StorageKey.UserFeatures, undefined, [])
 
     this.enabledExperimentalFeatures = this.storageService.getValue(StorageKey.ExperimentalFeatures, undefined, [])
   }
 
-  public async updateRolesAndFetchFeatures(userUuid: UuidString, roles: RoleName[]): Promise<void> {
+  public async updateRolesAndFetchFeatures(userUuid: UuidString, roles: string[]): Promise<void> {
     const previousRoles = this.roles
 
     const userRolesChanged = this.haveRolesChanged(roles)
@@ -403,7 +404,7 @@ export class SNFeaturesService
     }
   }
 
-  async setRoles(roles: RoleName[]): Promise<void> {
+  async setRoles(roles: string[]): Promise<void> {
     const rolesChanged = !arraysEqual(this.roles, roles)
 
     this.roles = roles
@@ -469,7 +470,7 @@ export class SNFeaturesService
   }
 
   rolesIncludePaidSubscription(): boolean {
-    const unpaidRoles = [RoleName.CoreUser]
+    const unpaidRoles = [RoleName.NAMES.CoreUser]
     return this.roles.some((role) => !unpaidRoles.includes(role))
   }
 
@@ -477,16 +478,16 @@ export class SNFeaturesService
     return this.rolesIncludePaidSubscription() || this.hasOfflineRepo()
   }
 
-  public rolesBySorting(roles: RoleName[]): RoleName[] {
-    return Object.values(RoleName).filter((role) => roles.includes(role))
+  public rolesBySorting(roles: string[]): string[] {
+    return Object.values(RoleName.NAMES).filter((role) => roles.includes(role))
   }
 
-  public hasMinimumRole(role: RoleName): boolean {
-    const sortedAllRoles = Object.values(RoleName)
+  public hasMinimumRole(role: string): boolean {
+    const sortedAllRoles = Object.values(RoleName.NAMES)
 
     const sortedUserRoles = this.rolesBySorting(this.roles)
 
-    const highestUserRoleIndex = sortedAllRoles.indexOf(lastElement(sortedUserRoles) as RoleName)
+    const highestUserRoleIndex = sortedAllRoles.indexOf(lastElement(sortedUserRoles) as string)
 
     const indexOfRoleToCheck = sortedAllRoles.indexOf(role)
 
@@ -556,7 +557,7 @@ export class SNFeaturesService
 
     const expired = feature.expires_at && new Date(feature.expires_at).getTime() < new Date().getTime()
     if (expired) {
-      if (!this.roles.includes(feature.role_name as RoleName)) {
+      if (!this.roles.includes(feature.role_name as string)) {
         return FeatureStatus.NotInCurrentPlan
       } else {
         return FeatureStatus.InCurrentPlanButExpired
@@ -566,7 +567,7 @@ export class SNFeaturesService
     return FeatureStatus.Entitled
   }
 
-  private haveRolesChanged(roles: RoleName[]): boolean {
+  private haveRolesChanged(roles: string[]): boolean {
     return roles.some((role) => !this.roles.includes(role)) || this.roles.some((role) => !roles.includes(role))
   }
 

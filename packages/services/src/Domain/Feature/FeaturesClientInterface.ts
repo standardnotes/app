@@ -1,6 +1,5 @@
 import { FeatureDescription, FeatureIdentifier } from '@standardnotes/features'
 import { SNComponent } from '@standardnotes/models'
-import { RoleName } from '@standardnotes/common'
 
 import { FeatureStatus } from './FeatureStatus'
 import { SetOfflineFeaturesFunctionResponse } from './SetOfflineFeaturesFunctionResponse'
@@ -12,7 +11,7 @@ export interface FeaturesClientInterface {
 
   getFeatureStatus(featureId: FeatureIdentifier): FeatureStatus
 
-  hasMinimumRole(role: RoleName): boolean
+  hasMinimumRole(role: string): boolean
 
   setOfflineFeaturesCode(code: string): Promise<SetOfflineFeaturesFunctionResponse>
 

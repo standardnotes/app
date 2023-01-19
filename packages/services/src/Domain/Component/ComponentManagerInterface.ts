@@ -1,4 +1,3 @@
-import { Uuid } from '@standardnotes/common'
 import { ComponentArea, FeatureIdentifier } from '@standardnotes/features'
 import { ActionObserver, PermissionDialog, SNComponent, SNNote } from '@standardnotes/models'
 
@@ -15,7 +14,7 @@ export interface ComponentManagerInterface {
   destroyComponentViewer(viewer: ComponentViewerInterface): void
   createComponentViewer(
     component: SNComponent,
-    contextItem?: Uuid,
+    contextItem?: string,
     actionObserver?: ActionObserver,
     urlOverride?: string,
   ): ComponentViewerInterface

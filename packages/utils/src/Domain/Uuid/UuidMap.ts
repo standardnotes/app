@@ -1,4 +1,3 @@
-import { Uuid } from '@standardnotes/common'
 import { addIfUnique, removeFromArray } from '../Utils/Utils'
 
 /**
@@ -7,9 +6,9 @@ import { addIfUnique, removeFromArray } from '../Utils/Utils'
  */
 export class UuidMap {
   /** uuid to uuids that we have a relationship with */
-  private directMap: Partial<Record<Uuid, Uuid[]>> = {}
+  private directMap: Partial<Record<string, string[]>> = {}
   /** uuid to uuids that have a relationship with us */
-  private inverseMap: Partial<Record<Uuid, Uuid[]>> = {}
+  private inverseMap: Partial<Record<string, string[]>> = {}
 
   public makeCopy(): UuidMap {
     const copy = new UuidMap()
@@ -18,25 +17,25 @@ export class UuidMap {
     return copy
   }
 
-  public getDirectRelationships(uuid: Uuid): Uuid[] {
+  public getDirectRelationships(uuid: string): string[] {
     return this.directMap[uuid] || []
   }
 
-  public getInverseRelationships(uuid: Uuid): Uuid[] {
+  public getInverseRelationships(uuid: string): string[] {
     return this.inverseMap[uuid] || []
   }
 
-  public establishRelationship(uuidA: Uuid, uuidB: Uuid): void {
+  public establishRelationship(uuidA: string, uuidB: string): void {
     this.establishDirectRelationship(uuidA, uuidB)
     this.establishInverseRelationship(uuidA, uuidB)
   }
 
-  public deestablishRelationship(uuidA: Uuid, uuidB: Uuid): void {
+  public deestablishRelationship(uuidA: string, uuidB: string): void {
     this.deestablishDirectRelationship(uuidA, uuidB)
     this.deestablishInverseRelationship(uuidA, uuidB)
   }
 
-  public setAllRelationships(uuid: Uuid, relationships: Uuid[]): void {
+  public setAllRelationships(uuid: string, relationships: string[]): void {
     const previousDirect = this.directMap[uuid] || []
     this.directMap[uuid] = relationships
 
@@ -53,7 +52,7 @@ export class UuidMap {
     }
   }
 
-  public removeFromMap(uuid: Uuid): void {
+  public removeFromMap(uuid: string): void {
     /** Items that we reference */
     const directReferences = this.directMap[uuid] || []
     for (const directReference of directReferences) {
@@ -69,25 +68,25 @@ export class UuidMap {
     delete this.inverseMap[uuid]
   }
 
-  private establishDirectRelationship(uuidA: Uuid, uuidB: Uuid): void {
+  private establishDirectRelationship(uuidA: string, uuidB: string): void {
     const index = this.directMap[uuidA] || []
     addIfUnique(index, uuidB)
     this.directMap[uuidA] = index
   }
 
-  private establishInverseRelationship(uuidA: Uuid, uuidB: Uuid): void {
+  private establishInverseRelationship(uuidA: string, uuidB: string): void {
     const inverseIndex = this.inverseMap[uuidB] || []
     addIfUnique(inverseIndex, uuidA)
     this.inverseMap[uuidB] = inverseIndex
   }
 
-  private deestablishDirectRelationship(uuidA: Uuid, uuidB: Uuid): void {
+  private deestablishDirectRelationship(uuidA: string, uuidB: string): void {
     const index = this.directMap[uuidA] || []
     removeFromArray(index, uuidB)
     this.directMap[uuidA] = index
   }
 
-  private deestablishInverseRelationship(uuidA: Uuid, uuidB: Uuid): void {
+  private deestablishInverseRelationship(uuidA: string, uuidB: string): void {
     const inverseIndex = this.inverseMap[uuidB] || []
     removeFromArray(inverseIndex, uuidA)
     this.inverseMap[uuidB] = inverseIndex

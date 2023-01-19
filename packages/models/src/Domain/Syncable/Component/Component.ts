@@ -1,5 +1,5 @@
 import { isValidUrl } from '@standardnotes/utils'
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import {
   FeatureIdentifier,
   ThirdPartyFeatureDescription,
@@ -159,11 +159,11 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
     return SNComponent.associativeAreas().includes(this.area)
   }
 
-  public isExplicitlyEnabledForItem(uuid: Uuid): boolean {
+  public isExplicitlyEnabledForItem(uuid: string): boolean {
     return this.associatedItemIds.indexOf(uuid) !== -1
   }
 
-  public isExplicitlyDisabledForItem(uuid: Uuid): boolean {
+  public isExplicitlyDisabledForItem(uuid: string): boolean {
     return this.disassociatedItemIds.indexOf(uuid) !== -1
   }
 

@@ -1,5 +1,4 @@
 import { addIfUnique, removeFromArray } from '@standardnotes/utils'
-import { Uuid } from '@standardnotes/common'
 import { ComponentPermission, FeatureDescription } from '@standardnotes/features'
 import { AppDataField } from '../../Abstract/Item/Types/AppDataField'
 import { ComponentContent } from './ComponentContent'
@@ -46,23 +45,23 @@ export class ComponentMutator extends DecryptedItemMutator<ComponentContent> {
     this.mutableContent.offlineOnly = offlineOnly
   }
 
-  public associateWithItem(uuid: Uuid): void {
+  public associateWithItem(uuid: string): void {
     const associated = this.mutableContent.associatedItemIds || []
     addIfUnique(associated, uuid)
     this.mutableContent.associatedItemIds = associated
   }
 
-  public disassociateWithItem(uuid: Uuid): void {
+  public disassociateWithItem(uuid: string): void {
     const disassociated = this.mutableContent.disassociatedItemIds || []
     addIfUnique(disassociated, uuid)
     this.mutableContent.disassociatedItemIds = disassociated
   }
 
-  public removeAssociatedItemId(uuid: Uuid): void {
+  public removeAssociatedItemId(uuid: string): void {
     removeFromArray(this.mutableContent.associatedItemIds || [], uuid)
   }
 
-  public removeDisassociatedItemId(uuid: Uuid): void {
+  public removeDisassociatedItemId(uuid: string): void {
     removeFromArray(this.mutableContent.disassociatedItemIds || [], uuid)
   }
 
