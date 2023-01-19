@@ -1,4 +1,3 @@
-import ModalDialog from '@/Components/Shared/ModalDialog'
 import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
 import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
@@ -126,20 +125,18 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
   }
 
   return (
-    <div>
-      <ModalDialog>
-        <ModalDialogLabel closeDialog={handleDialogClose}>Change Email</ModalDialogLabel>
-        <ModalDialogDescription className="px-4.5">
-          {currentStep === Steps.InitialStep && (
-            <ChangeEmailForm setNewEmail={setNewEmail} setCurrentPassword={setCurrentPassword} />
-          )}
-          {currentStep === Steps.FinishStep && <ChangeEmailSuccess />}
-        </ModalDialogDescription>
-        <ModalDialogButtons className="px-4.5">
-          <Button className="min-w-20" primary label={submitButtonTitle} onClick={handleSubmit} />
-        </ModalDialogButtons>
-      </ModalDialog>
-    </div>
+    <>
+      <ModalDialogLabel closeDialog={handleDialogClose}>Change Email</ModalDialogLabel>
+      <ModalDialogDescription className="px-4.5">
+        {currentStep === Steps.InitialStep && (
+          <ChangeEmailForm setNewEmail={setNewEmail} setCurrentPassword={setCurrentPassword} />
+        )}
+        {currentStep === Steps.FinishStep && <ChangeEmailSuccess />}
+      </ModalDialogDescription>
+      <ModalDialogButtons className="px-4.5">
+        <Button className="min-w-20" primary label={submitButtonTitle} onClick={handleSubmit} />
+      </ModalDialogButtons>
+    </>
   )
 }
 
