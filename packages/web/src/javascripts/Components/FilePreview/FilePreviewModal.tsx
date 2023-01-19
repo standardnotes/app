@@ -42,7 +42,7 @@ const FilePreviewModal: FunctionComponent<Props> = observer(({ application, view
     (event) => {
       const KeysToHandle: string[] = [KeyboardKey.Left, KeyboardKey.Right, KeyboardKey.Escape]
 
-      if (!KeysToHandle.includes(event.key)) {
+      if (!KeysToHandle.includes(event.key) || event.target === renameInputRef.current) {
         return
       }
 
