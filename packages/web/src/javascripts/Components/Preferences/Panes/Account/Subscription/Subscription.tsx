@@ -15,7 +15,7 @@ type Props = {
 
 const Subscription: FunctionComponent<Props> = ({ application, viewControllerManager }: Props) => {
   const subscriptionState = viewControllerManager.subscriptionController
-  const { userSubscription } = subscriptionState
+  const { onlineSubscription: userSubscription } = subscriptionState
 
   const now = new Date().getTime()
 

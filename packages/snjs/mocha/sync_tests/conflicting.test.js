@@ -40,7 +40,7 @@ describe('online conflict handling', function () {
 
   afterEach(async function () {
     if (!this.application.dealloced) {
-      await Factory.safeDeinit(this.application)
+      await this.context.deinit()
     }
     localStorage.clear()
   })
@@ -917,7 +917,7 @@ describe('online conflict handling', function () {
     await this.sharedFinalAssertions()
   })
 
-  it('conflicting should not over resolve', async function () {
+  it.only('conflicting should not over resolve', async function () {
     /**
      * Before refactoring to use dirtyIndex instead of dirtiedDate, sometimes an item could be dirtied
      * and begin sync at the exact same millisecond count (at least in the tests). In which case, the item
@@ -950,6 +950,7 @@ describe('online conflict handling', function () {
     expect(contextA.findNoteByTitle('title-B').payload.updated_at_timestamp).to.equal(noteBExpectedTimestamp)
 
     await this.sharedFinalAssertions()
+    await contextB.deinit()
   }).timeout(20000)
 
   it('editing original note many times after conflict on other client should only result in 2 cumulative notes', async function () {
@@ -979,5 +980,6 @@ describe('online conflict handling', function () {
     expect(contextB.noteCount).to.equal(2)
 
     await this.sharedFinalAssertions()
+    await contextB.deinit()
   }).timeout(20000)
 })

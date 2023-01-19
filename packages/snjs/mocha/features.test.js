@@ -184,7 +184,7 @@ describe('features', () => {
   })
 
   it('should provide feature', async () => {
-    const feature = application.features.getUserFeature(FeatureIdentifier.PlusEditor)
+    const feature = application.features.getFeatureThatOriginallyCameFromServer(FeatureIdentifier.PlusEditor)
     expect(feature).to.containSubset(plusEditorFeature)
   })
 

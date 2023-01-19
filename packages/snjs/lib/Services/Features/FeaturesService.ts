@@ -155,7 +155,7 @@ export class SNFeaturesService
     if (stage === ApplicationStage.FullSyncCompleted_13) {
       void this.mapClientControlledFeaturesToItems()
 
-      if (!this.rolesIncludePaidSubscription()) {
+      if (!this.hasFirstPartyOnlineSubscription()) {
         const offlineRepo = this.getOfflineRepo()
         if (offlineRepo) {
           void this.downloadOfflineFeatures(offlineRepo)
@@ -194,7 +194,7 @@ export class SNFeaturesService
   }
 
   public enableExperimentalFeature(identifier: FeaturesImports.FeatureIdentifier): void {
-    const feature = this.getUserFeature(identifier)
+    const feature = this.getFeatureThatOriginallyCameFromServer(identifier)
 
     this.enabledExperimentalFeatures.push(identifier)
 
@@ -363,6 +363,24 @@ export class SNFeaturesService
     }
   }
 
+  hasFirstPartyOnlineSubscription(): boolean {
+    return this.sessionManager.isSignedIntoFirstPartyServer() && this.rolesIncludePaidSubscription()
+  }
+
+  hasFirstPartySubscription(): boolean {
+    if (this.hasFirstPartyOnlineSubscription()) {
+      return true
+    }
+
+    const offlineRepo = this.getOfflineRepo()
+    if (!offlineRepo) {
+      return false
+    }
+
+    const hasFirstPartyOfflineSubscription = offlineRepo.content.offlineFeaturesUrl === PROD_OFFLINE_FEATURES_URL
+    return hasFirstPartyOfflineSubscription
+  }
+
   public initializeFromDisk(): void {
     this.roles = this.storageService.getValue<string[]>(StorageKey.UserRoles, undefined, [])
 
@@ -465,7 +483,9 @@ export class SNFeaturesService
     return nativeFeatureCopy
   }
 
-  public getUserFeature(featureId: FeaturesImports.FeatureIdentifier): FeaturesImports.FeatureDescription | undefined {
+  public getFeatureThatOriginallyCameFromServer(
+    featureId: FeaturesImports.FeatureIdentifier,
+  ): FeaturesImports.FeatureDescription | undefined {
     return this.features.find((feature) => feature.identifier === featureId)
   }
 
@@ -508,12 +528,6 @@ export class SNFeaturesService
     }
 
     const nativeFeature = FeaturesImports.FindNativeFeature(featureId)
-    if (nativeFeature && nativeFeature.availableInRoles) {
-      const hasRole = this.roles.some((role) => nativeFeature.availableInRoles?.includes(role))
-      if (hasRole) {
-        return FeatureStatus.Entitled
-      }
-    }
 
     const isDeprecated = this.isFeatureDeprecated(featureId)
     if (isDeprecated) {
@@ -550,17 +564,33 @@ export class SNFeaturesService
       return FeatureStatus.NoUserSubscription
     }
 
-    const feature = this.getUserFeature(featureId)
-    if (!feature) {
-      return FeatureStatus.NotInCurrentPlan
+    const featureFromServer = this.getFeatureThatOriginallyCameFromServer(featureId)
+    if (featureFromServer) {
+      const expired =
+        featureFromServer.expires_at && new Date(featureFromServer.expires_at).getTime() < new Date().getTime()
+      if (expired) {
+        if (!this.roles.includes(featureFromServer.role_name as string)) {
+          return FeatureStatus.NotInCurrentPlan
+        } else {
+          return FeatureStatus.InCurrentPlanButExpired
+        }
+      }
     }
 
-    const expired = feature.expires_at && new Date(feature.expires_at).getTime() < new Date().getTime()
-    if (expired) {
-      if (!this.roles.includes(feature.role_name as string)) {
+    if (nativeFeature) {
+      if (!this.hasFirstPartySubscription()) {
         return FeatureStatus.NotInCurrentPlan
-      } else {
-        return FeatureStatus.InCurrentPlanButExpired
+      }
+
+      if (nativeFeature.availableInRoles) {
+        const hasRole = this.roles.some((role) => {
+          return nativeFeature.availableInRoles?.includes(role)
+        })
+        if (!hasRole) {
+          return FeatureStatus.NotInCurrentPlan
+        }
+      } else if (featureFromServer && !this.roles.includes(featureFromServer.role_name as string)) {
+        return FeatureStatus.NotInCurrentPlan
       }
     }
 

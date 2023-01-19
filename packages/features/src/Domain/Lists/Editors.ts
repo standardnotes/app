@@ -4,6 +4,7 @@ import { PermissionName } from '../Permission/PermissionName'
 import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
 import { NoteType } from '../Component/NoteType'
 import { FillEditorComponentDefaults } from './Utilities/FillEditorComponentDefaults'
+import { RoleName } from '@standardnotes/domain-core'
 
 export function editors(): EditorFeatureDescription[] {
   const code: EditorFeatureDescription = FillEditorComponentDefaults({
@@ -20,6 +21,7 @@ export function editors(): EditorFeatureDescription[] {
       'Syntax highlighting and convenient keyboard shortcuts for over 120 programming' +
       ' languages. Ideal for code snippets and procedures.',
     thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/editors/code.jpg',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const plus: EditorFeatureDescription = FillEditorComponentDefaults({
@@ -33,6 +35,7 @@ export function editors(): EditorFeatureDescription[] {
     description:
       'From highlighting to custom font sizes and colors, to tables and lists, this editor is perfect for crafting any document.',
     thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/editors/plus-editor.jpg',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const markdown: EditorFeatureDescription = FillEditorComponentDefaults({
@@ -46,6 +49,7 @@ export function editors(): EditorFeatureDescription[] {
     description:
       'A fully featured Markdown editor that supports live preview, a styling toolbar, and split pane support.',
     thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/editors/adv-markdown.jpg',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const markdownAlt: EditorFeatureDescription = FillEditorComponentDefaults({
@@ -59,6 +63,7 @@ export function editors(): EditorFeatureDescription[] {
     description:
       'A WYSIWYG-style Markdown editor that renders Markdown in preview-mode while you type without displaying any syntax.',
     index_path: 'build/index.html',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const task: EditorFeatureDescription = FillEditorComponentDefaults({
@@ -73,6 +78,7 @@ export function editors(): EditorFeatureDescription[] {
     description:
       'A great way to manage short-term and long-term to-do"s. You can mark tasks as completed, change their order, and edit the text naturally in place.',
     thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/editors/task-editor.jpg',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const tokenvault: EditorFeatureDescription = FillEditorComponentDefaults({
@@ -86,6 +92,7 @@ export function editors(): EditorFeatureDescription[] {
     description:
       'Encrypt and protect your 2FA secrets for all your internet accounts. Authenticator handles your 2FA secrets so that you never lose them again, or have to start over when you get a new device.',
     thumbnail_url: 'https://standard-notes.s3.amazonaws.com/screenshots/models/editors/token-vault.png',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const spreadsheets: EditorFeatureDescription = FillEditorComponentDefaults({
@@ -99,6 +106,7 @@ export function editors(): EditorFeatureDescription[] {
     description:
       'A powerful spreadsheet editor with formatting and formula support. Not recommended for large data sets, as encryption of such data may decrease editor performance.',
     thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/editors/spreadsheets.png',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   return [code, plus, markdown, markdownAlt, task, tokenvault, spreadsheets]

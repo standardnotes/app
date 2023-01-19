@@ -1,6 +1,5 @@
 export const APPLICATION_DEFAULT_HOSTS = [
   'api.standardnotes.com',
-  'api-dev.standardnotes.com',
   'sync.standardnotes.org',
   'syncing-server-demo.standardnotes.com',
 ]
@@ -8,17 +7,13 @@ export const APPLICATION_DEFAULT_HOSTS = [
 export const FILES_DEFAULT_HOSTS = ['files.standardnotes.com', 'files-dev.standardnotes.com']
 
 export const TRUSTED_FEATURE_HOSTS = [
-  'api-dev.standardnotes.com',
   'api.standardnotes.com',
   'extensions.standardnotes.com',
   'extensions.standardnotes.org',
-  'extensions-server-dev.standardnotes.org',
-  'extensions-server-dev.standardnotes.com',
   'features.standardnotes.com',
 ]
 
 export enum ExtensionsServerURL {
-  Dev = 'https://extensions-server-dev.standardnotes.org',
   Prod = 'https://extensions.standardnotes.org',
 }
 

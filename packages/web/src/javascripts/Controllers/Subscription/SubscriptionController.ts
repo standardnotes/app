@@ -17,14 +17,15 @@ import { Subscription } from './SubscriptionType'
 export class SubscriptionController extends AbstractViewController {
   private readonly ALLOWED_SUBSCRIPTION_INVITATIONS = 5
 
-  userSubscription: Subscription | undefined = undefined
+  onlineSubscription: Subscription | undefined = undefined
   availableSubscriptions: AvailableSubscriptions | undefined = undefined
   subscriptionInvitations: Invitation[] | undefined = undefined
   hasAccount: boolean
+  hasFirstPartySubscription: boolean
 
   override deinit() {
     super.deinit()
-    ;(this.userSubscription as unknown) = undefined
+    ;(this.onlineSubscription as unknown) = undefined
     ;(this.availableSubscriptions as unknown) = undefined
     ;(this.subscriptionInvitations as unknown) = undefined
 
@@ -38,12 +39,14 @@ export class SubscriptionController extends AbstractViewController {
   ) {
     super(application, eventBus)
     this.hasAccount = application.hasAccount()
+    this.hasFirstPartySubscription = application.features.hasFirstPartySubscription()
 
     makeObservable(this, {
-      userSubscription: observable,
+      onlineSubscription: observable,
       availableSubscriptions: observable,
       subscriptionInvitations: observable,
       hasAccount: observable,
+      hasFirstPartySubscription: observable,
 
       userSubscriptionName: computed,
       userSubscriptionExpirationDate: computed,
@@ -83,6 +86,7 @@ export class SubscriptionController extends AbstractViewController {
       application.addEventObserver(async () => {
         this.getSubscriptionInfo().catch(console.error)
         this.reloadSubscriptionInvitations().catch(console.error)
+        this.hasFirstPartySubscription = application.features.hasFirstPartySubscription()
       }, ApplicationEvent.UserRolesChanged),
     )
   }
@@ -90,20 +94,20 @@ export class SubscriptionController extends AbstractViewController {
   get userSubscriptionName(): string {
     if (
       this.availableSubscriptions &&
-      this.userSubscription &&
-      this.availableSubscriptions[this.userSubscription.planName]
+      this.onlineSubscription &&
+      this.availableSubscriptions[this.onlineSubscription.planName]
     ) {
-      return this.availableSubscriptions[this.userSubscription.planName].name
+      return this.availableSubscriptions[this.onlineSubscription.planName].name
     }
     return ''
   }
 
   get userSubscriptionExpirationDate(): Date | undefined {
-    if (!this.userSubscription) {
+    if (!this.onlineSubscription) {
       return undefined
     }
 
-    return new Date(convertTimestampToMilliseconds(this.userSubscription.endsAt))
+    return new Date(convertTimestampToMilliseconds(this.onlineSubscription.endsAt))
   }
 
   get isUserSubscriptionExpired(): boolean {
@@ -115,11 +119,11 @@ export class SubscriptionController extends AbstractViewController {
   }
 
   get isUserSubscriptionCanceled(): boolean {
-    return Boolean(this.userSubscription?.cancelled)
+    return Boolean(this.onlineSubscription?.cancelled)
   }
 
   hasValidSubscription(): boolean {
-    return this.userSubscription != undefined && !this.isUserSubscriptionExpired && !this.isUserSubscriptionCanceled
+    return this.onlineSubscription != undefined && !this.isUserSubscriptionExpired && !this.isUserSubscriptionCanceled
   }
 
   get usedInvitationsCount(): number {
@@ -139,7 +143,7 @@ export class SubscriptionController extends AbstractViewController {
   }
 
   public setUserSubscription(subscription: Subscription): void {
-    this.userSubscription = subscription
+    this.onlineSubscription = subscription
   }
 
   public setAvailableSubscriptions(subscriptions: AvailableSubscriptions): void {
