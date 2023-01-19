@@ -12,11 +12,11 @@ const ModalDialog = ({ children, onDismiss, className }: Props) => {
   const ldRef = useRef<HTMLButtonElement>(null)
 
   return (
-    <AlertDialogOverlay className="px-4 md:px-0" leastDestructiveRef={ldRef} onDismiss={onDismiss}>
+    <AlertDialogOverlay className="p-0 md:px-0" leastDestructiveRef={ldRef} onDismiss={onDismiss}>
       <AlertDialogContent
         tabIndex={0}
         className={classNames(
-          'flex max-h-[85vh] w-full flex-col rounded border border-solid border-border bg-default p-0 shadow-main md:w-160',
+          'm-0 flex h-full w-full flex-col border-solid border-border bg-default p-0 shadow-main md:max-h-[85vh] md:w-160 md:rounded md:border',
           className,
         )}
       >

@@ -10,6 +10,7 @@ import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/Pre
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import { WebApplication } from '@/Application/Application'
 import RecoveryCodeBanner from '@/Components/RecoveryCodeBanner/RecoveryCodeBanner'
+import ModalDialog from '@/Components/Shared/ModalDialog'
 
 type Props = {
   auth: TwoFactorAuth
@@ -46,7 +47,9 @@ const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application }) => {
         )}
       </PreferencesGroup>
       {auth.status !== 'fetching' && is2FAActivation(auth.status) && (
-        <TwoFactorActivationView activation={auth.status} />
+        <ModalDialog>
+          <TwoFactorActivationView activation={auth.status} />
+        </ModalDialog>
       )}
     </>
   )

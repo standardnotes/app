@@ -108,7 +108,7 @@ const SessionsModalContent: FunctionComponent<{
   }
   return (
     <>
-      <ModalDialog onDismiss={close} className="sessions-modal max-h-[90vh]">
+      <ModalDialog onDismiss={close} className="sessions-modal md:max-h-[90vh]">
         <ModalDialogLabel
           headerButtons={
             <Button small colorStyle="info" onClick={refresh}>
@@ -119,7 +119,7 @@ const SessionsModalContent: FunctionComponent<{
         >
           Active Sessions
         </ModalDialogLabel>
-        <ModalDialogDescription className="overflow-y-auto">
+        <ModalDialogDescription>
           {refreshing ? (
             <div className="flex items-center gap-2">
               <Spinner className="h-3 w-3" />
