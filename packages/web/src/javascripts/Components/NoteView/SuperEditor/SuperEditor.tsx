@@ -205,7 +205,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
             </BlocksEditorComposer>
           </FilesControllerProvider>
         </LinkingControllerProvider>
-        {showMarkdownPreview && <SuperNoteMarkdownPreview note={note.current} closeDialog={closeMarkdownPreview} />}
+        <SuperNoteMarkdownPreview isOpen={showMarkdownPreview} note={note.current} closeDialog={closeMarkdownPreview} />
       </ErrorBoundary>
     </div>
   )
