@@ -1,7 +1,7 @@
 import { FeatureDescription } from '@standardnotes/features'
 import { isNullOrUndefined, joinPaths } from '@standardnotes/utils'
 import { SettingName, SubscriptionSettingName } from '@standardnotes/settings'
-import { Uuid, ErrorTag } from '@standardnotes/common'
+import { ErrorTag } from '@standardnotes/common'
 import {
   AbstractService,
   ApiServiceInterface,
@@ -852,7 +852,7 @@ export class SNApiService
     })
   }
 
-  async getSingleItem(itemUuid: Uuid): Promise<Responses.GetSingleItemResponse> {
+  async getSingleItem(itemUuid: string): Promise<Responses.GetSingleItemResponse> {
     return await this.tokenRefreshableRequest<Responses.GetSingleItemResponse>({
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.getSingleItem(itemUuid)),

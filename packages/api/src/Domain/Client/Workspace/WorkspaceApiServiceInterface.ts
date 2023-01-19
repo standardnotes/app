@@ -1,4 +1,4 @@
-import { Uuid, WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
+import { WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
 
 import { WorkspaceKeyshareInitiatingResponse } from '../../Response/Workspace/WorkspaceKeyshareInitiatingResponse'
 import { WorkspaceCreationResponse } from '../../Response/Workspace/WorkspaceCreationResponse'
@@ -17,20 +17,20 @@ export interface WorkspaceApiServiceInterface {
   }): Promise<WorkspaceCreationResponse>
   inviteToWorkspace(dto: {
     inviteeEmail: string
-    workspaceUuid: Uuid
+    workspaceUuid: string
     accessLevel: WorkspaceAccessLevel
   }): Promise<WorkspaceInvitationResponse>
   acceptInvite(dto: {
-    inviteUuid: Uuid
-    userUuid: Uuid
+    inviteUuid: string
+    userUuid: string
     publicKey: string
     encryptedPrivateKey: string
   }): Promise<WorkspaceInvitationAcceptingResponse>
   listWorkspaces(): Promise<WorkspaceListResponse>
-  listWorkspaceUsers(dto: { workspaceUuid: Uuid }): Promise<WorkspaceUserListResponse>
+  listWorkspaceUsers(dto: { workspaceUuid: string }): Promise<WorkspaceUserListResponse>
   initiateKeyshare(dto: {
-    workspaceUuid: Uuid
-    userUuid: Uuid
+    workspaceUuid: string
+    userUuid: string
     encryptedWorkspaceKey: string
   }): Promise<WorkspaceKeyshareInitiatingResponse>
 }

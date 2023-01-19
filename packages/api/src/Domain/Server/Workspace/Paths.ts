@@ -1,13 +1,11 @@
-import { Uuid } from '@standardnotes/common'
-
 const WorkspacePaths = {
   createWorkspace: '/v1/workspaces',
   listWorkspaces: '/v1/workspaces',
-  listWorkspaceUsers: (uuid: Uuid) => `/v1/workspaces/${uuid}/users`,
-  initiateKeyshare: (worksapceUuid: Uuid, userUuid: Uuid) =>
+  listWorkspaceUsers: (uuid: string) => `/v1/workspaces/${uuid}/users`,
+  initiateKeyshare: (worksapceUuid: string, userUuid: string) =>
     `/v1/workspaces/${worksapceUuid}/users/${userUuid}/keyshare`,
-  inviteToWorkspace: (uuid: Uuid) => `/v1/workspaces/${uuid}/invites`,
-  acceptInvite: (uuid: Uuid) => `/v1/invites/${uuid}/accept`,
+  inviteToWorkspace: (uuid: string) => `/v1/workspaces/${uuid}/invites`,
+  acceptInvite: (uuid: string) => `/v1/invites/${uuid}/accept`,
 }
 
 export const Paths = {

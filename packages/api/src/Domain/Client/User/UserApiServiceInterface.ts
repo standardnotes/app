@@ -1,4 +1,4 @@
-import { UserRequestType, Uuid } from '@standardnotes/common'
+import { UserRequestType } from '@standardnotes/common'
 import { type RootKeyParamsInterface } from '@standardnotes/models'
 
 import { UserDeletionResponse } from '../../Response/User/UserDeletionResponse'
@@ -12,6 +12,6 @@ export interface UserApiServiceInterface {
     keyParams: RootKeyParamsInterface
     ephemeral: boolean
   }): Promise<UserRegistrationResponse>
-  submitUserRequest(dto: { userUuid: Uuid; requestType: UserRequestType }): Promise<UserRequestResponse>
+  submitUserRequest(dto: { userUuid: string; requestType: UserRequestType }): Promise<UserRequestResponse>
   deleteAccount(userUuid: string): Promise<UserDeletionResponse>
 }

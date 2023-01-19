@@ -1,5 +1,5 @@
 import { ComponentPermission } from '../Component/ComponentPermission'
-import { ContentType, RoleName, SubscriptionName } from '@standardnotes/common'
+import { ContentType, SubscriptionName } from '@standardnotes/common'
 import { ComponentArea } from '../Component/ComponentArea'
 import { PermissionName } from '../Permission/PermissionName'
 import { FeatureIdentifier } from './FeatureIdentifier'
@@ -9,11 +9,11 @@ import { ThemeDockIcon } from '../Component/ThemeDockIcon'
 
 type RoleFields = {
   /** Server populated */
-  role_name?: RoleName
+  role_name?: string
 
   /** Statically populated. Non-influencing; used as a reference by other static consumers (such as email service) */
   availableInSubscriptions: SubscriptionName[]
-  availableInRoles?: RoleName[]
+  availableInRoles?: string[]
 }
 
 export type BaseFeatureDescription = RoleFields & {

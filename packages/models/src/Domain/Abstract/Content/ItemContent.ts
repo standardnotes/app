@@ -1,4 +1,3 @@
-import { Uuid } from '@standardnotes/common'
 import { AppData, DefaultAppDomain } from '../Item/Types/DefaultAppDomain'
 import { ContentReference } from '../Reference/ContentReference'
 import { AppDataField } from '../Item/Types/AppDataField'
@@ -8,7 +7,7 @@ export interface SpecializedContent {}
 
 export interface ItemContent {
   references: ContentReference[]
-  conflict_of?: Uuid
+  conflict_of?: string
   protected?: boolean
   trashed?: boolean
   pinned?: boolean

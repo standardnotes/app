@@ -1,4 +1,4 @@
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { PayloadsChangeObserver, QueueElement, PayloadsChangeObserverCallback, EmitQueue } from './Types'
 import { removeFromArray, Uuids } from '@standardnotes/utils'
 import {
@@ -66,11 +66,11 @@ export class PayloadManager extends AbstractService implements PayloadManagerInt
     this.collection = new PayloadCollection()
   }
 
-  public find(uuids: Uuid[]): FullyFormedPayloadInterface[] {
+  public find(uuids: string[]): FullyFormedPayloadInterface[] {
     return this.collection.findAll(uuids)
   }
 
-  public findOne(uuid: Uuid): FullyFormedPayloadInterface | undefined {
+  public findOne(uuid: string): FullyFormedPayloadInterface | undefined {
     return this.collection.findAll([uuid])[0]
   }
 
@@ -288,7 +288,7 @@ export class PayloadManager extends AbstractService implements PayloadManagerInt
    * and marks the items as dirty.
    * @returns Resulting items
    */
-  public async importPayloads(payloads: DecryptedPayloadInterface[], historyMap: HistoryMap): Promise<Uuid[]> {
+  public async importPayloads(payloads: DecryptedPayloadInterface[], historyMap: HistoryMap): Promise<string[]> {
     const sourcedPayloads = payloads.map((p) => p.copy(undefined, PayloadSource.FileImport))
 
     const delta = new DeltaFileImport(this.getMasterCollection(), sourcedPayloads, historyMap)

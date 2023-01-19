@@ -1,4 +1,3 @@
-import { Uuid } from '@standardnotes/common'
 import { FileBackupsConstantsV1 } from './FileBackupsConstantsV1'
 
 export type FileBackupRecord = {
@@ -12,5 +11,5 @@ export type FileBackupRecord = {
 
 export interface FileBackupsMapping {
   version: typeof FileBackupsConstantsV1.Version
-  files: Record<Uuid, FileBackupRecord>
+  files: Record<string, FileBackupRecord>
 }

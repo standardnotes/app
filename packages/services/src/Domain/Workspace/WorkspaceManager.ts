@@ -1,5 +1,5 @@
 import { WorkspaceApiServiceInterface, Workspace, WorkspaceUser } from '@standardnotes/api'
-import { Uuid, WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
+import { WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { WorkspaceClientInterface } from './WorkspaceClientInterface'
@@ -79,7 +79,7 @@ export class WorkspaceManager extends AbstractService implements WorkspaceClient
 
   async inviteToWorkspace(dto: {
     inviteeEmail: string
-    workspaceUuid: Uuid
+    workspaceUuid: string
     accessLevel: WorkspaceAccessLevel
   }): Promise<{ uuid: string } | null> {
     try {

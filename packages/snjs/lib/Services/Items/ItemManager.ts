@@ -1,4 +1,4 @@
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { assert, naturalSort, removeFromArray, UuidGenerator, Uuids } from '@standardnotes/utils'
 import { ItemsKeyMutator, SNItemsKey } from '@standardnotes/encryption'
 import { PayloadManager } from '../Payloads/PayloadManager'
@@ -240,7 +240,7 @@ export class ItemManager
     return this.collection.findAll(uuids)
   }
 
-  private findSystemSmartView(uuid: Uuid): Models.SmartView | undefined {
+  private findSystemSmartView(uuid: string): Models.SmartView | undefined {
     return this.systemSmartViews.find((view) => view.uuid === uuid)
   }
 

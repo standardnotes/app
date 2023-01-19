@@ -1,4 +1,4 @@
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { PayloadEmitSource, FileItem, CreateEncryptedBackupFileContextPayload } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
@@ -20,7 +20,7 @@ import { log, LoggingDomain } from '../Logging'
 
 export class FilesBackupService extends AbstractService implements BackupServiceInterface {
   private itemsObserverDisposer: () => void
-  private pendingFiles = new Set<Uuid>()
+  private pendingFiles = new Set<string>()
   private mappingCache?: FileBackupsMapping['files']
 
   constructor(

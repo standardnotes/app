@@ -1,6 +1,6 @@
-import { MicrosecondsTimestamp, Uuid } from '@standardnotes/common'
+import { MicrosecondsTimestamp } from '@standardnotes/common'
 
 export type IntegrityPayload = {
-  uuid: Uuid
+  uuid: string
   updated_at_timestamp: MicrosecondsTimestamp
 }

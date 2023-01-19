@@ -4,7 +4,7 @@ import Icon from '@/Components/Icon/Icon'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import HistoryListItem from './HistoryListItem'
 import { previewHistoryEntryTitle } from './utils'
-import { FeaturesClientInterface, RevisionMetadata, RoleName } from '@standardnotes/snjs'
+import { FeaturesClientInterface, RevisionMetadata } from '@standardnotes/snjs'
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 import Spinner from '@/Components/Spinner/Spinner'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
@@ -54,7 +54,7 @@ const RemoteHistoryList: FunctionComponent<RemoteHistoryListProps> = ({
                 >
                   <div className="flex flex-grow items-center justify-between">
                     <div>{previewHistoryEntryTitle(entry)}</div>
-                    {!features.hasMinimumRole(entry.required_role as RoleName) && (
+                    {!features.hasMinimumRole(entry.required_role) && (
                       <Icon type={PremiumFeatureIconName} className={PremiumFeatureIconClass} />
                     )}
                   </div>

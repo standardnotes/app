@@ -1,5 +1,4 @@
 import { dateToLocalizedString, useBoolean } from '@standardnotes/utils'
-import { Uuid } from '@standardnotes/common'
 import { DecryptedTransferPayload } from './../../TransferPayload/Interfaces/DecryptedTransferPayload'
 import { AppDataField } from '../Types/AppDataField'
 import { ComponentDataDomain, DefaultAppDomain } from '../Types/DefaultAppDomain'
@@ -15,7 +14,7 @@ export class DecryptedItem<C extends ItemContent = ItemContent>
   extends GenericItem<DecryptedPayloadInterface<C>>
   implements DecryptedItemInterface<C>
 {
-  public readonly conflictOf?: Uuid
+  public readonly conflictOf?: string
   public readonly protected: boolean = false
   public readonly trashed: boolean = false
   public readonly pinned: boolean = false

@@ -1,4 +1,4 @@
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { ComponentPermission } from '@standardnotes/features'
 
 import { IncomingComponentItemPayload } from './IncomingComponentItemPayload'
@@ -14,7 +14,7 @@ export type MessageData = Partial<{
   permissions?: ComponentPermission[]
   /** Related to the component-registered action */
   componentData?: Record<string, unknown>
-  uuid?: Uuid
+  uuid?: string
   environment?: string
   platform?: string
   activeThemeUrls?: string[]

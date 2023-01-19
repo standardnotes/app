@@ -1,5 +1,3 @@
-import { Uuid } from '@standardnotes/common'
-
 import { AppleIAPConfirmResponse } from './../../Response/Subscription/AppleIAPConfirmResponse'
 import { AppleIAPConfirmRequestParams } from '../../Request'
 import { SubscriptionInviteAcceptResponse } from '../../Response/Subscription/SubscriptionInviteAcceptResponse'
@@ -10,7 +8,7 @@ import { SubscriptionInviteResponse } from '../../Response/Subscription/Subscrip
 export interface SubscriptionApiServiceInterface {
   invite(inviteeEmail: string): Promise<SubscriptionInviteResponse>
   listInvites(): Promise<SubscriptionInviteListResponse>
-  cancelInvite(inviteUuid: Uuid): Promise<SubscriptionInviteCancelResponse>
-  acceptInvite(inviteUuid: Uuid): Promise<SubscriptionInviteAcceptResponse>
+  cancelInvite(inviteUuid: string): Promise<SubscriptionInviteCancelResponse>
+  acceptInvite(inviteUuid: string): Promise<SubscriptionInviteAcceptResponse>
   confirmAppleIAP(params: AppleIAPConfirmRequestParams): Promise<AppleIAPConfirmResponse>
 }
