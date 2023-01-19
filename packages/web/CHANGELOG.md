@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.140.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.140.0...@standardnotes/web@3.140.1) (2023-01-19)
+
+### Bug Fixes
+
+* Fixed issue where using arrow keys while renaming file would navigate to another file ([2d63b74](https://github.com/standardnotes/app/commit/2d63b7431a1e6afcd9e6cf8b48c6c8e580221001))
+
 # [3.140.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.139.0...@standardnotes/web@3.140.0) (2023-01-18)
 
 ### Bug Fixes
