@@ -7,6 +7,7 @@ import { WebApplication } from '@/Application/Application'
 import { useBeforeUnload } from '@/Hooks/useBeforeUnload'
 import ChangeEmailForm from './ChangeEmailForm'
 import ChangeEmailSuccess from './ChangeEmailSuccess'
+import MobileModalAction from '@/Components/Shared/MobileModalAction'
 
 enum SubmitButtonTitles {
   Default = 'Continue',
@@ -126,16 +127,24 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
 
   return (
     <>
-      <ModalDialogLabel closeDialog={handleDialogClose}>Change Email</ModalDialogLabel>
+      <ModalDialogLabel
+        leftMobileButton={<MobileModalAction action={handleDialogClose}>Cancel</MobileModalAction>}
+        rightMobileButton={<MobileModalAction action={handleSubmit}>{submitButtonTitle}</MobileModalAction>}
+        closeDialog={handleDialogClose}
+      >
+        Change Email
+      </ModalDialogLabel>
       <ModalDialogDescription className="px-4.5">
         {currentStep === Steps.InitialStep && (
           <ChangeEmailForm setNewEmail={setNewEmail} setCurrentPassword={setCurrentPassword} />
         )}
         {currentStep === Steps.FinishStep && <ChangeEmailSuccess />}
       </ModalDialogDescription>
-      <ModalDialogButtons className="px-4.5">
-        <Button className="min-w-20" primary label={submitButtonTitle} onClick={handleSubmit} />
-      </ModalDialogButtons>
+      <div className="hidden md:block">
+        <ModalDialogButtons className="px-4.5">
+          <Button className="min-w-20" primary label={submitButtonTitle} onClick={handleSubmit} />
+        </ModalDialogButtons>
+      </div>
     </>
   )
 }
