@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.164.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.3...@standardnotes/snjs@2.164.4) (2023-01-20)
+
+### Bug Fixes
+
+* **snjs:** bring back history tests and fix handlinf of error with revisions ([cb9c160](https://github.com/standardnotes/app/commit/cb9c16047ebea7134c1aadaf89a8023497358a8e))
+* **snjs:** remove isFailed() checks during tests in order for getValue() to give a meaningful exception ([6a7ff42](https://github.com/standardnotes/app/commit/6a7ff423ff82bd6eb7fbfbc95f4b1ebda36cc842))
+* **snjs:** signed out fetching revisions test ([21a4eb0](https://github.com/standardnotes/app/commit/21a4eb0cf00add2c4cf2e69e55c55cb9fd50c239))
+
 ## [2.164.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.2...@standardnotes/snjs@2.164.3) (2023-01-20)
 
 **Note:** Version bump only for package @standardnotes/snjs

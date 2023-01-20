@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.56.4](https://github.com/standardnotes/app/compare/@standardnotes/services@1.56.3...@standardnotes/services@1.56.4) (2023-01-20)
+
+### Bug Fixes
+
+* **snjs:** bring back history tests and fix handlinf of error with revisions ([cb9c160](https://github.com/standardnotes/app/commit/cb9c16047ebea7134c1aadaf89a8023497358a8e))
+
 ## [1.56.3](https://github.com/standardnotes/app/compare/@standardnotes/services@1.56.2...@standardnotes/services@1.56.3) (2023-01-20)
 
 **Note:** Version bump only for package @standardnotes/services
