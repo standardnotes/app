@@ -52,20 +52,6 @@ export function editors(): EditorFeatureDescription[] {
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
-  const markdownAlt: EditorFeatureDescription = FillEditorComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
-    name: 'Markdown Alternative',
-    identifier: FeatureIdentifier.MarkdownVisualEditor,
-    note_type: NoteType.Markdown,
-    file_type: 'md',
-    permission_name: PermissionName.MarkdownVisualEditor,
-    spellcheckControl: true,
-    description:
-      'A WYSIWYG-style Markdown editor that renders Markdown in preview-mode while you type without displaying any syntax.',
-    index_path: 'build/index.html',
-    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
-  })
-
   const task: EditorFeatureDescription = FillEditorComponentDefaults({
     availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     name: 'Checklist',
@@ -109,5 +95,5 @@ export function editors(): EditorFeatureDescription[] {
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
-  return [code, plus, markdown, markdownAlt, task, tokenvault, spreadsheets]
+  return [code, plus, markdown, task, tokenvault, spreadsheets]
 }
