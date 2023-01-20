@@ -58,7 +58,8 @@ export class SNFeaturesService
   implements FeaturesClientInterface, InternalEventHandlerInterface
 {
   private deinited = false
-  private roles: string[] = []
+  private onlineRoles: string[] = []
+  private offlineRoles: string[] = []
   private features: FeaturesImports.FeatureDescription[] = []
   private enabledExperimentalFeatures: FeaturesImports.FeatureIdentifier[] = []
   private removeWebSocketsServiceObserver: () => void
@@ -87,7 +88,7 @@ export class SNFeaturesService
         const {
           payload: { userUuid, currentRoles },
         } = data as UserRolesChangedEvent
-        await this.updateRolesAndFetchFeatures(userUuid, currentRoles)
+        await this.updateOnlineRolesAndFetchFeatures(userUuid, currentRoles)
       }
     })
 
@@ -124,6 +125,16 @@ export class SNFeaturesService
     })
   }
 
+  public initializeFromDisk(): void {
+    this.onlineRoles = this.storageService.getValue<string[]>(StorageKey.UserRoles, undefined, [])
+
+    this.offlineRoles = this.storageService.getValue<string[]>(StorageKey.OfflineUserRoles, undefined, [])
+
+    this.features = this.storageService.getValue(StorageKey.UserFeatures, undefined, [])
+
+    this.enabledExperimentalFeatures = this.storageService.getValue(StorageKey.ExperimentalFeatures, undefined, [])
+  }
+
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === ApiServiceEvent.MetaReceived) {
       if (!this.syncService) {
@@ -142,7 +153,7 @@ export class SNFeaturesService
       }
 
       const { userUuid, userRoles } = event.payload as MetaReceivedData
-      await this.updateRolesAndFetchFeatures(
+      await this.updateOnlineRolesAndFetchFeatures(
         userUuid,
         userRoles.map((role) => role.name),
       )
@@ -155,7 +166,7 @@ export class SNFeaturesService
     if (stage === ApplicationStage.FullSyncCompleted_13) {
       void this.mapClientControlledFeaturesToItems()
 
-      if (!this.rolesIncludePaidSubscription()) {
+      if (!this.hasFirstPartyOnlineSubscription()) {
         const offlineRepo = this.getOfflineRepo()
         if (offlineRepo) {
           void this.downloadOfflineFeatures(offlineRepo)
@@ -194,7 +205,7 @@ export class SNFeaturesService
   }
 
   public enableExperimentalFeature(identifier: FeaturesImports.FeatureIdentifier): void {
-    const feature = this.getUserFeature(identifier)
+    const feature = this.getFeatureThatOriginallyCameFromServer(identifier)
 
     this.enabledExperimentalFeatures.push(identifier)
 
@@ -309,10 +320,14 @@ export class SNFeaturesService
     repo: Models.SNFeatureRepo,
   ): Promise<SetOfflineFeaturesFunctionResponse | ClientDisplayableError> {
     const result = await this.apiService.downloadOfflineFeaturesFromRepo(repo)
+
     if (result instanceof ClientDisplayableError) {
       return result
     }
+
     await this.didDownloadFeatures(result.features)
+    await this.setOfflineRoles(result.roles)
+
     return undefined
   }
 
@@ -363,18 +378,29 @@ export class SNFeaturesService
     }
   }
 
-  public initializeFromDisk(): void {
-    this.roles = this.storageService.getValue<string[]>(StorageKey.UserRoles, undefined, [])
-
-    this.features = this.storageService.getValue(StorageKey.UserFeatures, undefined, [])
-
-    this.enabledExperimentalFeatures = this.storageService.getValue(StorageKey.ExperimentalFeatures, undefined, [])
+  hasFirstPartyOnlineSubscription(): boolean {
+    return this.sessionManager.isSignedIntoFirstPartyServer() && this.onlineRolesIncludePaidSubscription()
   }
 
-  public async updateRolesAndFetchFeatures(userUuid: UuidString, roles: string[]): Promise<void> {
-    const previousRoles = this.roles
+  hasFirstPartySubscription(): boolean {
+    if (this.hasFirstPartyOnlineSubscription()) {
+      return true
+    }
 
-    const userRolesChanged = this.haveRolesChanged(roles)
+    const offlineRepo = this.getOfflineRepo()
+    if (!offlineRepo) {
+      return false
+    }
+
+    const hasFirstPartyOfflineSubscription = offlineRepo.content.offlineFeaturesUrl === PROD_OFFLINE_FEATURES_URL
+    return hasFirstPartyOfflineSubscription
+  }
+
+  async updateOnlineRolesAndFetchFeatures(userUuid: UuidString, roles: string[]): Promise<void> {
+    const previousRoles = this.onlineRoles
+
+    const userRolesChanged =
+      roles.some((role) => !this.onlineRoles.includes(role)) || this.onlineRoles.some((role) => !roles.includes(role))
 
     const isInitialLoadRolesChange = previousRoles.length === 0 && userRolesChanged
 
@@ -384,7 +410,7 @@ export class SNFeaturesService
 
     this.needsInitialFeaturesUpdate = false
 
-    await this.setRoles(roles)
+    await this.setOnlineRoles(roles)
 
     const shouldDownloadRoleBasedFeatures = !this.hasOfflineRepo()
 
@@ -398,22 +424,34 @@ export class SNFeaturesService
     }
 
     if (userRolesChanged && !isInitialLoadRolesChange) {
-      if (this.rolesIncludePaidSubscription()) {
+      if (this.onlineRolesIncludePaidSubscription()) {
         await this.notifyEvent(FeaturesEvent.DidPurchaseSubscription)
       }
     }
   }
 
-  async setRoles(roles: string[]): Promise<void> {
-    const rolesChanged = !arraysEqual(this.roles, roles)
+  async setOnlineRoles(roles: string[]): Promise<void> {
+    const rolesChanged = !arraysEqual(this.onlineRoles, roles)
 
-    this.roles = roles
+    this.onlineRoles = roles
 
     if (rolesChanged) {
       void this.notifyEvent(FeaturesEvent.UserRolesChanged)
     }
 
-    this.storageService.setValue(StorageKey.UserRoles, this.roles)
+    this.storageService.setValue(StorageKey.UserRoles, this.onlineRoles)
+  }
+
+  async setOfflineRoles(roles: string[]): Promise<void> {
+    const rolesChanged = !arraysEqual(this.offlineRoles, roles)
+
+    this.offlineRoles = roles
+
+    if (rolesChanged) {
+      void this.notifyEvent(FeaturesEvent.UserRolesChanged)
+    }
+
+    this.storageService.setValue(StorageKey.OfflineUserRoles, this.offlineRoles)
   }
 
   public async didDownloadFeatures(features: FeaturesImports.FeatureDescription[]): Promise<void> {
@@ -465,17 +503,19 @@ export class SNFeaturesService
     return nativeFeatureCopy
   }
 
-  public getUserFeature(featureId: FeaturesImports.FeatureIdentifier): FeaturesImports.FeatureDescription | undefined {
+  public getFeatureThatOriginallyCameFromServer(
+    featureId: FeaturesImports.FeatureIdentifier,
+  ): FeaturesImports.FeatureDescription | undefined {
     return this.features.find((feature) => feature.identifier === featureId)
   }
 
-  rolesIncludePaidSubscription(): boolean {
+  onlineRolesIncludePaidSubscription(): boolean {
     const unpaidRoles = [RoleName.NAMES.CoreUser]
-    return this.roles.some((role) => !unpaidRoles.includes(role))
+    return this.onlineRoles.some((role) => !unpaidRoles.includes(role))
   }
 
-  public hasPaidOnlineOrOfflineSubscription(): boolean {
-    return this.rolesIncludePaidSubscription() || this.hasOfflineRepo()
+  hasPaidAnyPartyOnlineOrOfflineSubscription(): boolean {
+    return this.onlineRolesIncludePaidSubscription() || this.hasOfflineRepo()
   }
 
   public rolesBySorting(roles: string[]): string[] {
@@ -485,7 +525,7 @@ export class SNFeaturesService
   public hasMinimumRole(role: string): boolean {
     const sortedAllRoles = Object.values(RoleName.NAMES)
 
-    const sortedUserRoles = this.rolesBySorting(this.roles)
+    const sortedUserRoles = this.rolesBySorting(this.rolesToUseForFeatureCheck())
 
     const highestUserRoleIndex = sortedAllRoles.indexOf(lastElement(sortedUserRoles) as string)
 
@@ -508,16 +548,10 @@ export class SNFeaturesService
     }
 
     const nativeFeature = FeaturesImports.FindNativeFeature(featureId)
-    if (nativeFeature && nativeFeature.availableInRoles) {
-      const hasRole = this.roles.some((role) => nativeFeature.availableInRoles?.includes(role))
-      if (hasRole) {
-        return FeatureStatus.Entitled
-      }
-    }
 
     const isDeprecated = this.isFeatureDeprecated(featureId)
     if (isDeprecated) {
-      if (this.hasPaidOnlineOrOfflineSubscription()) {
+      if (this.hasPaidAnyPartyOnlineOrOfflineSubscription()) {
         return FeatureStatus.Entitled
       } else {
         return FeatureStatus.NoUserSubscription
@@ -538,7 +572,7 @@ export class SNFeaturesService
       return FeatureStatus.Entitled
     }
 
-    if (this.hasPaidOnlineOrOfflineSubscription()) {
+    if (this.hasPaidAnyPartyOnlineOrOfflineSubscription()) {
       if (!this.completedSuccessfulFeaturesRetrieval) {
         const hasCachedFeatures = this.features.length > 0
         const temporarilyAllowUntilServerUpdates = !hasCachedFeatures
@@ -550,25 +584,27 @@ export class SNFeaturesService
       return FeatureStatus.NoUserSubscription
     }
 
-    const feature = this.getUserFeature(featureId)
-    if (!feature) {
-      return FeatureStatus.NotInCurrentPlan
-    }
-
-    const expired = feature.expires_at && new Date(feature.expires_at).getTime() < new Date().getTime()
-    if (expired) {
-      if (!this.roles.includes(feature.role_name as string)) {
+    if (nativeFeature) {
+      if (!this.hasFirstPartySubscription()) {
         return FeatureStatus.NotInCurrentPlan
-      } else {
-        return FeatureStatus.InCurrentPlanButExpired
+      }
+
+      const roles = this.rolesToUseForFeatureCheck()
+      if (nativeFeature.availableInRoles) {
+        const hasRole = roles.some((role) => {
+          return nativeFeature.availableInRoles?.includes(role)
+        })
+        if (!hasRole) {
+          return FeatureStatus.NotInCurrentPlan
+        }
       }
     }
 
     return FeatureStatus.Entitled
   }
 
-  private haveRolesChanged(roles: string[]): boolean {
-    return roles.some((role) => !this.roles.includes(role)) || this.roles.some((role) => !roles.includes(role))
+  private rolesToUseForFeatureCheck(): string[] {
+    return this.hasFirstPartyOnlineSubscription() ? this.onlineRoles : this.offlineRoles
   }
 
   private componentContentForNativeFeatureDescription(feature: FeaturesImports.FeatureDescription): Models.ItemContent {
@@ -776,7 +812,8 @@ export class SNFeaturesService
     ;(this.removeWebSocketsServiceObserver as unknown) = undefined
     this.removefeatureReposObserver()
     ;(this.removefeatureReposObserver as unknown) = undefined
-    ;(this.roles as unknown) = undefined
+    ;(this.onlineRoles as unknown) = undefined
+    ;(this.offlineRoles as unknown) = undefined
     ;(this.storageService as unknown) = undefined
     ;(this.apiService as unknown) = undefined
     ;(this.itemManager as unknown) = undefined
@@ -793,7 +830,7 @@ export class SNFeaturesService
   override getDiagnostics(): Promise<DiagnosticInfo | undefined> {
     return Promise.resolve({
       features: {
-        roles: this.roles,
+        roles: this.onlineRoles,
         features: this.features,
         enabledExperimentalFeatures: this.enabledExperimentalFeatures,
         needsInitialFeaturesUpdate: this.needsInitialFeaturesUpdate,

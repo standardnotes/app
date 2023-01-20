@@ -1,5 +1,4 @@
 export enum FeatureIdentifier {
-  AccountSwitcher = 'com.standardnotes.account-switcher',
   CloudLink = 'org.standardnotes.cloudlink',
   DailyDropboxBackup = 'org.standardnotes.daily-dropbox-backup',
   DailyEmailBackup = 'org.standardnotes.daily-email-backup',
@@ -21,7 +20,6 @@ export enum FeatureIdentifier {
   AutobiographyTheme = 'org.standardnotes.theme-autobiography',
   DynamicTheme = 'org.standardnotes.theme-dynamic',
   DarkTheme = 'org.standardnotes.theme-focus',
-  FocusMode = 'org.standardnotes.focus-mode',
   FuturaTheme = 'org.standardnotes.theme-futura',
   MidnightTheme = 'org.standardnotes.theme-midnight',
   SolarizedDarkTheme = 'org.standardnotes.theme-solarized-dark',

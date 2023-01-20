@@ -654,7 +654,7 @@ export class SNApiService
 
   public async downloadOfflineFeaturesFromRepo(
     repo: SNFeatureRepo,
-  ): Promise<{ features: FeatureDescription[] } | ClientDisplayableError> {
+  ): Promise<{ features: FeatureDescription[]; roles: string[] } | ClientDisplayableError> {
     try {
       const featuresUrl = repo.offlineFeaturesUrl
       const extensionKey = repo.offlineKey
@@ -678,8 +678,10 @@ export class SNApiService
       if (response.error) {
         return ClientDisplayableError.FromError(response.error)
       }
+      const data = (response as Responses.GetOfflineFeaturesResponse).data
       return {
-        features: (response as Responses.GetOfflineFeaturesResponse).data?.features || [],
+        features: data?.features || [],
+        roles: data?.roles || [],
       }
     } catch {
       return new ClientDisplayableError(API_MESSAGE_FAILED_OFFLINE_ACTIVATION)

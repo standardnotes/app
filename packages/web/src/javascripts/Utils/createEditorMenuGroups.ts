@@ -6,6 +6,7 @@ import {
   ComponentArea,
   FeatureDescription,
   GetFeatures,
+  FindNativeFeature,
   NoteType,
   FeatureIdentifier,
 } from '@standardnotes/snjs'
@@ -149,8 +150,7 @@ const createBaselineMap = (application: WebApplication): NoteTypeToEditorRowsMap
         isEntitled: application.features.getFeatureStatus(FeatureIdentifier.SuperEditor) === FeatureStatus.Entitled,
         noteType: NoteType.Super,
         isLabs: true,
-        description:
-          'A new way to edit notes. Type / to bring up the block selection menu, or @ to embed images or link other tags and notes. Type - then space to start a list, or [] then space to start a checklist. Drag and drop an image or file to embed it in your note.',
+        description: FindNativeFeature(FeatureIdentifier.SuperEditor)?.description,
       },
     ],
     [NoteType.RichText]: [],

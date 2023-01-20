@@ -10,6 +10,7 @@ import { NoteType } from '../Component/NoteType'
 import { FillEditorComponentDefaults } from './Utilities/FillEditorComponentDefaults'
 import { ComponentAction } from '../Component/ComponentAction'
 import { ComponentArea } from '../Component/ComponentArea'
+import { RoleName } from '@standardnotes/domain-core'
 
 export function GetDeprecatedFeatures(): FeatureDescription[] {
   const bold: EditorFeatureDescription = FillEditorComponentDefaults({
@@ -37,6 +38,7 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
     permission_name: PermissionName.BoldEditor,
     description: 'A simple and peaceful rich editor that helps you write and think clearly.',
     thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/editors/bold.jpg',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const markdownBasic: EditorFeatureDescription = FillEditorComponentDefaults({
@@ -50,6 +52,7 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
     permission_name: PermissionName.MarkdownBasicEditor,
     description: 'A Markdown editor with dynamic split-pane preview.',
     thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/editors/simple-markdown.jpg',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const markdownMinimist: EditorFeatureDescription = FillEditorComponentDefaults({
@@ -64,6 +67,7 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
     deprecated: true,
     description: 'A minimal Markdown editor with live rendering and in-text search via Ctrl/Cmd + F',
     thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/editors/min-markdown.jpg',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const markdownMath: EditorFeatureDescription = FillEditorComponentDefaults({
@@ -78,6 +82,7 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
     index_path: 'index.html',
     description: 'A beautiful split-pane Markdown editor with synced-scroll, LaTeX support, and colorful syntax.',
     thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/editors/fancy-markdown.jpg',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   const filesafe: IframeComponentFeatureDescription = FillEditorComponentDefaults({
@@ -104,6 +109,7 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
     description:
       'Encrypted attachments for your notes using your Dropbox, Google Drive, or WebDAV server. Limited to 50MB per file.',
     thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/FileSafe-banner.png',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
   return [bold, markdownBasic, markdownMinimist, markdownMath, filesafe]

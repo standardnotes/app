@@ -60,8 +60,8 @@ describe('features', () => {
 
   describe('new user roles received on api response meta', () => {
     it('should save roles and features', async () => {
-      expect(application.featuresService.roles).to.have.lengthOf(1)
-      expect(application.featuresService.roles[0]).to.equal('CORE_USER')
+      expect(application.featuresService.onlineRoles).to.have.lengthOf(1)
+      expect(application.featuresService.onlineRoles[0]).to.equal('CORE_USER')
 
       expect(application.featuresService.features).to.have.lengthOf(3)
       expect(application.featuresService.features[0]).to.containSubset(midnightThemeFeature)
@@ -115,7 +115,7 @@ describe('features', () => {
       // Wipe items from initial sync
       await application.itemManager.removeAllItemsFromMemory()
       // Wipe roles from initial sync
-      await application.featuresService.setRoles([])
+      await application.featuresService.setOnlineRoles([])
       // Create pre-existing item for theme without all the info
       await application.itemManager.createItem(
         ContentType.Theme,
@@ -165,7 +165,7 @@ describe('features', () => {
         .find((theme) => theme.identifier === midnightThemeFeature.identifier)
 
       // Wipe roles from initial sync
-      await application.featuresService.setRoles([])
+      await application.featuresService.setOnlineRoles([])
 
       // Call sync intentionally to get roles again in meta
       await application.sync.sync()
@@ -184,7 +184,7 @@ describe('features', () => {
   })
 
   it('should provide feature', async () => {
-    const feature = application.features.getUserFeature(FeatureIdentifier.PlusEditor)
+    const feature = application.features.getFeatureThatOriginallyCameFromServer(FeatureIdentifier.PlusEditor)
     expect(feature).to.containSubset(plusEditorFeature)
   })
 
