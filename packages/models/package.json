@@ -21,11 +21,13 @@
     "lint": "eslint src --ext .ts",
     "test": "jest"
   },
+  "dependencies": {
+    "@standardnotes/utils": "workspace:*"
+  },
   "devDependencies": {
     "@standardnotes/common": "^1.46.4",
     "@standardnotes/features": "workspace:*",
     "@standardnotes/responses": "workspace:*",
-    "@standardnotes/utils": "workspace:*",
     "@types/jest": "^29.2.3",
     "@types/lodash": "^4.14.189",
     "@typescript-eslint/eslint-plugin": "*",
