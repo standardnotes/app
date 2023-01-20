@@ -10,6 +10,7 @@ import Button from '@/Components/Button/Button'
 import ImportPlugin from './Plugins/ImportPlugin/ImportPlugin'
 import { NoteViewController } from '../Controller/NoteViewController'
 import { spaceSeparatedStrings } from '@standardnotes/utils'
+import MobileModalAction from '@/Components/Shared/MobileModalAction'
 
 const NotePreviewCharLimit = 160
 
@@ -87,7 +88,17 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
 
   return (
     <>
-      <ModalDialogLabel closeDialog={closeDialog}>Convert to Super note</ModalDialogLabel>
+      <ModalDialogLabel
+        leftMobileButton={
+          <MobileModalAction type="cancel" action={closeDialog}>
+            Cancel
+          </MobileModalAction>
+        }
+        rightMobileButton={<MobileModalAction action={confirmConvert}>Convert</MobileModalAction>}
+        closeDialog={closeDialog}
+      >
+        Convert to Super note
+      </ModalDialogLabel>
       <div className="border-b border-border px-4 py-4 text-sm font-normal text-neutral md:py-3">
         The following is a preview of how your note will look when converted to Super. Super notes use a custom format
         under the hood. Converting your note will transition it from plaintext to the custom Super format.
@@ -115,7 +126,7 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
           <div>
             <Button onClick={convertAsIs}>Convert As-Is</Button>
           </div>
-          <div className="flex">
+          <div className="hidden md:flex">
             <Button onClick={closeDialog}>Cancel</Button>
             <div className="min-w-3" />
             <Button primary onClick={confirmConvert}>
