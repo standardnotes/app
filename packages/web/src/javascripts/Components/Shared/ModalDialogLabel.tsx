@@ -4,15 +4,25 @@ import Icon from '@/Components/Icon/Icon'
 import { classNames } from '@standardnotes/utils'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import { isIOS } from '@/Utils'
+import MobileModalAction from './MobileModalAction'
 
 type Props = {
   closeDialog: () => void
   className?: string
   headerButtons?: ReactNode
+  leftMobileButton?: ReactNode
+  rightMobileButton?: ReactNode
   children?: ReactNode
 }
 
-const ModalDialogLabel: FunctionComponent<Props> = ({ children, closeDialog, className, headerButtons }) => {
+const ModalDialogLabel: FunctionComponent<Props> = ({
+  children,
+  closeDialog,
+  className,
+  headerButtons,
+  leftMobileButton,
+  rightMobileButton,
+}) => {
   const addAndroidBackHandler = useAndroidBackHandler()
 
   useEffect(() => {
@@ -36,8 +46,14 @@ const ModalDialogLabel: FunctionComponent<Props> = ({ children, closeDialog, cla
       )}
     >
       <div className="flex w-full flex-row items-center justify-between">
-        <div className="md:hidden" />
-        <div className="overflow-hidden text-ellipsis whitespace-nowrap text-base font-semibold text-text md:flex-grow md:text-lg">
+        {leftMobileButton ? leftMobileButton : <div className="md:hidden" />}
+        <div
+          className={classNames(
+            'overflow-hidden text-ellipsis whitespace-nowrap text-base font-semibold text-text md:flex-grow md:text-lg',
+            leftMobileButton && 'ml-4 md:ml-0',
+            'mr-4 md:mr-0',
+          )}
+        >
           {children}
         </div>
         <div className="hidden items-center gap-2 md:flex">
@@ -46,12 +62,7 @@ const ModalDialogLabel: FunctionComponent<Props> = ({ children, closeDialog, cla
             <Icon type="close" />
           </button>
         </div>
-        <button
-          className="ml-2 text-base font-medium text-info active:shadow-none active:outline-none md:hidden"
-          onClick={closeDialog}
-        >
-          Done
-        </button>
+        {rightMobileButton ? rightMobileButton : <MobileModalAction children="Done" action={closeDialog} />}
       </div>
       <hr className="h-1px no-border m-0 bg-border" />
     </AlertDialogLabel>

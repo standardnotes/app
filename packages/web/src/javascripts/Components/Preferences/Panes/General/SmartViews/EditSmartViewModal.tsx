@@ -2,6 +2,7 @@ import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import IconPicker from '@/Components/Icon/IconPicker'
 import Popover from '@/Components/Popover/Popover'
+import MobileModalAction from '@/Components/Shared/MobileModalAction'
 import ModalDialog from '@/Components/Shared/ModalDialog'
 import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
 import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
@@ -69,9 +70,23 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
 
   return (
     <ModalDialog>
-      <ModalDialogLabel closeDialog={closeDialog}>Edit Smart View "{view.title}"</ModalDialogLabel>
+      <ModalDialogLabel
+        leftMobileButton={
+          <MobileModalAction type="cancel" disabled={isSaving} action={closeDialog}>
+            Cancel
+          </MobileModalAction>
+        }
+        rightMobileButton={
+          <MobileModalAction disabled={isSaving} action={saveSmartView}>
+            {isSaving ? <Spinner className="h-4.5 w-4.5" /> : 'Save'}
+          </MobileModalAction>
+        }
+        closeDialog={closeDialog}
+      >
+        Edit Smart View "{view.title}"
+      </ModalDialogLabel>
       <ModalDialogDescription>
-        <div className="flex flex-col gap-4">
+        <div className="flex h-full flex-col gap-4">
           <div className="flex items-center gap-2.5">
             <div className="text-sm font-semibold">Title:</div>
             <input
@@ -115,9 +130,9 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
               </div>
             </Popover>
           </div>
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-grow flex-col gap-2.5">
             <div className="text-sm font-semibold">Predicate:</div>
-            <div className="flex flex-col overflow-hidden rounded-md border border-border">
+            <div className="flex flex-grow flex-col overflow-hidden rounded-md border border-border">
               <textarea
                 className="h-full min-h-[10rem] w-full flex-grow resize-none bg-default py-1.5 px-2.5 font-mono text-sm"
                 value={predicateJson}
@@ -141,10 +156,10 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
         <Button className="mr-auto" disabled={isSaving} onClick={deleteView} colorStyle="danger">
           Delete
         </Button>
-        <Button disabled={isSaving} onClick={saveSmartView} primary colorStyle="info">
+        <Button className="hidden md:block" disabled={isSaving} onClick={saveSmartView} primary colorStyle="info">
           {isSaving ? <Spinner className="h-4.5 w-4.5" /> : 'Save'}
         </Button>
-        <Button disabled={isSaving} onClick={closeDialog}>
+        <Button className="hidden md:block" disabled={isSaving} onClick={closeDialog}>
           Cancel
         </Button>
       </ModalDialogButtons>

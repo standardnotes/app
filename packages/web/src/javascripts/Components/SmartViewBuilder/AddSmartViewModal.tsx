@@ -18,6 +18,7 @@ import TabsContainer from '../Tabs/TabsContainer'
 import CopyableCodeBlock from '../Shared/CopyableCodeBlock'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { classNames } from '@standardnotes/utils'
+import MobileModalAction from '../Shared/MobileModalAction'
 
 type Props = {
   controller: AddSmartViewModalController
@@ -119,9 +120,23 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
 
   return (
     <ModalDialog>
-      <ModalDialogLabel closeDialog={closeModal}>Add Smart View</ModalDialogLabel>
+      <ModalDialogLabel
+        leftMobileButton={
+          <MobileModalAction type="cancel" disabled={isSaving} action={closeModal}>
+            Cancel
+          </MobileModalAction>
+        }
+        rightMobileButton={
+          <MobileModalAction disabled={isSaving} action={save}>
+            {isSaving ? <Spinner className="h-4.5 w-4.5" /> : canSave ? 'Save' : 'Validate'}
+          </MobileModalAction>
+        }
+        closeDialog={closeModal}
+      >
+        Add Smart View
+      </ModalDialogLabel>
       <ModalDialogDescription>
-        <div className="flex flex-col gap-4">
+        <div className="flex h-full flex-col gap-4">
           <div className="flex items-center gap-2.5">
             <div className="text-sm font-semibold">Title:</div>
             <input
@@ -165,9 +180,10 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
               </div>
             </Popover>
           </div>
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-grow flex-col gap-2.5">
             <div className="text-sm font-semibold">Predicate:</div>
             <TabsContainer
+              className="flex flex-grow flex-col"
               tabs={[
                 {
                   id: 'builder',
@@ -183,7 +199,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
               <TabPanel state={tabState} id="builder" className="flex flex-col gap-2.5 p-4">
                 <CompoundPredicateBuilder controller={predicateController} />
               </TabPanel>
-              <TabPanel state={tabState} id="custom" className="flex flex-col">
+              <TabPanel state={tabState} id="custom" className="flex flex-grow flex-col">
                 <textarea
                   className="h-full min-h-[10rem] w-full flex-grow resize-none bg-default py-1.5 px-2.5 font-mono text-sm"
                   value={customPredicateJson}
@@ -222,14 +238,16 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
           </div>
         </div>
       </ModalDialogDescription>
-      <ModalDialogButtons>
-        <Button disabled={isSaving} onClick={closeModal} className="mr-auto">
-          Cancel
-        </Button>
-        <Button disabled={isSaving} onClick={save} colorStyle={canSave ? 'info' : 'default'} primary={canSave}>
-          {isSaving ? <Spinner className="h-4.5 w-4.5" /> : canSave ? 'Save' : 'Validate'}
-        </Button>
-      </ModalDialogButtons>
+      <div className="hidden md:block">
+        <ModalDialogButtons>
+          <Button disabled={isSaving} onClick={closeModal} className="mr-auto">
+            Cancel
+          </Button>
+          <Button disabled={isSaving} onClick={save} colorStyle={canSave ? 'info' : 'default'} primary={canSave}>
+            {isSaving ? <Spinner className="h-4.5 w-4.5" /> : canSave ? 'Save' : 'Validate'}
+          </Button>
+        </ModalDialogButtons>
+      </div>
     </ModalDialog>
   )
 }
