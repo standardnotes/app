@@ -17,7 +17,3 @@ export function GetFeaturesForSubscription(subscription: SubscriptionName): Feat
 export function FindNativeFeature(identifier: FeatureIdentifier): FeatureDescription | undefined {
   return GetFeatures().find((f) => f.identifier === identifier)
 }
-
-export function isFeatureClientFeature(identifier: FeatureIdentifier): boolean {
-  return !!clientFeatures().find((f) => f.identifier === identifier)
-}

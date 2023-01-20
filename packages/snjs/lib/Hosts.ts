@@ -1,10 +1,6 @@
-export const APPLICATION_DEFAULT_HOSTS = [
-  'api.standardnotes.com',
-  'sync.standardnotes.org',
-  'syncing-server-demo.standardnotes.com',
-]
+export const APPLICATION_DEFAULT_HOSTS = ['api.standardnotes.com', 'sync.standardnotes.org']
 
-export const FILES_DEFAULT_HOSTS = ['files.standardnotes.com', 'files-dev.standardnotes.com']
+export const FILES_DEFAULT_HOSTS = ['files.standardnotes.com']
 
 export const TRUSTED_FEATURE_HOSTS = [
   'api.standardnotes.com',
