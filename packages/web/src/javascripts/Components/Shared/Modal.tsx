@@ -78,6 +78,7 @@ const Modal = ({ state, children }: Props) => {
 
   const leftSlotAction = actions.find((action) => action.mobileSlot === 'left')
   const rightSlotAction = actions.find((action) => action.mobileSlot === 'right')
+  const hasNonSlotActions = actions.some((action) => !action.mobileSlot)
 
   return (
     <AlertDialogOverlay
@@ -90,13 +91,13 @@ const Modal = ({ state, children }: Props) => {
         tabIndex={0}
         className={classNames(
           'm-0 flex h-full w-full flex-col border-solid border-border bg-default p-0 md:h-auto md:max-h-[85vh] md:w-160 md:rounded md:border md:shadow-main',
+          actions.length <= 1 && 'md:pb-3',
         )}
       >
         <AlertDialogLabel
           className={classNames(
             'flex flex-shrink-0 items-center justify-between rounded-t border-b border-solid border-border bg-default py-1.5 px-1 text-text md:px-4.5 md:py-3',
             isIOS() && 'pt-safe-top',
-            // className,
           )}
         >
           <div className="grid w-full grid-cols-[0.35fr_1fr_0.35fr] flex-row items-center justify-between gap-2 md:flex md:gap-0">
@@ -139,24 +140,29 @@ const Modal = ({ state, children }: Props) => {
           <hr className="h-1px no-border m-0 bg-border" />
         </AlertDialogLabel>
         <ModalDialogDescription>{children}</ModalDialogDescription>
-        <div
-          className={classNames(
-            'hidden items-center justify-end gap-3 border-border px-4 py-4 md:flex md:border-t',
-            isIOS() && 'pb-safe-bottom',
-          )}
-        >
-          {actions.map((action) => (
-            <Button
-              primary={action.type === 'primary'}
-              key={action.label}
-              onClick={action.onClick}
-              className={action.type === 'cancel' ? 'mr-auto' : ''}
-              disabled={action.disabled}
-            >
-              {action.label}
-            </Button>
-          ))}
-        </div>
+        {actions.length > 1 && (
+          <div
+            className={classNames(
+              'items-center justify-end gap-3 border-t border-border px-4 py-4',
+              isIOS() && 'pb-safe-bottom',
+              hasNonSlotActions ? 'flex' : 'hidden md:flex',
+            )}
+          >
+            {actions.map((action) => {
+              return !action.mobileSlot ? (
+                <Button
+                  primary={action.type === 'primary'}
+                  key={action.label}
+                  onClick={action.onClick}
+                  className={action.type === 'cancel' ? 'mr-auto' : ''}
+                  disabled={action.disabled}
+                >
+                  {action.label}
+                </Button>
+              ) : null
+            })}
+          </div>
+        )}
       </AlertDialogContent>
     </AlertDialogOverlay>
   )

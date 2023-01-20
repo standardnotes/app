@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 
 type Action = {
   label: string
@@ -11,14 +11,14 @@ type Action = {
 
 type Config = {
   title: string
-  isOpen?: boolean
-  close?: () => void
+  isOpen: boolean
+  close: () => void
   actions?: Action[]
   dismissOnOverlayClick?: boolean
 }
 
 export const useModalState = (config: Config) => {
-  const [isOpen, setIsOpen] = useState(() => config.isOpen || false)
+  const { isOpen, close } = config
   const actions = useMemo(() => {
     if (!config.actions) {
       return []
@@ -42,14 +42,7 @@ export const useModalState = (config: Config) => {
       })
       .filter((action) => !action.hidden)
   }, [config.actions])
-  const close = config.close ?? (() => setIsOpen(false))
   const dismissOnOverlayClick = config.dismissOnOverlayClick ?? true
-
-  useEffect(() => {
-    if (typeof config.isOpen === 'boolean') {
-      setIsOpen(config.isOpen)
-    }
-  }, [config.isOpen])
 
   return {
     title: config.title,

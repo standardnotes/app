@@ -3,14 +3,11 @@ import { NoteType, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
-import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
-import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
-import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
-import Button from '@/Components/Button/Button'
 import ImportPlugin from './Plugins/ImportPlugin/ImportPlugin'
 import { NoteViewController } from '../Controller/NoteViewController'
 import { spaceSeparatedStrings } from '@standardnotes/utils'
-import MobileModalAction from '@/Components/Shared/MobileModalAction'
+import { useModalState } from '@/Components/Shared/ModalState'
+import Modal from '@/Components/Shared/Modal'
 
 const NotePreviewCharLimit = 160
 
@@ -82,59 +79,57 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
     onConvertComplete()
   }, [closeDialog, application, note, onConvertComplete, performConvert])
 
+  const modalState = useModalState({
+    title: 'Convert to Super note',
+    isOpen: true,
+    close: closeDialog,
+    actions: [
+      {
+        label: 'Cancel',
+        onClick: closeDialog,
+        type: 'cancel',
+        mobileSlot: 'left',
+      },
+      {
+        label: 'Convert',
+        onClick: confirmConvert,
+        mobileSlot: 'right',
+        type: 'primary',
+      },
+      {
+        label: 'Convert As-Is',
+        onClick: convertAsIs,
+        type: 'secondary',
+      },
+    ],
+  })
+
   if (isSeamlessConvert) {
     return null
   }
 
   return (
-    <>
-      <ModalDialogLabel
-        leftMobileButton={
-          <MobileModalAction type="cancel" action={closeDialog}>
-            Cancel
-          </MobileModalAction>
-        }
-        rightMobileButton={<MobileModalAction action={confirmConvert}>Convert</MobileModalAction>}
-        closeDialog={closeDialog}
-      >
-        Convert to Super note
-      </ModalDialogLabel>
+    <Modal state={modalState}>
       <div className="border-b border-border px-4 py-4 text-sm font-normal text-neutral md:py-3">
         The following is a preview of how your note will look when converted to Super. Super notes use a custom format
         under the hood. Converting your note will transition it from plaintext to the custom Super format.
       </div>
-      <ModalDialogDescription>
-        <div className="relative w-full">
-          <ErrorBoundary>
-            <BlocksEditorComposer readonly initialValue={undefined}>
-              <BlocksEditor
-                readonly
-                onChange={handleChange}
-                ignoreFirstChange={false}
-                className="relative resize-none text-base focus:shadow-none focus:outline-none"
-                previewLength={NotePreviewCharLimit}
-                spellcheck={note.spellcheck}
-              >
-                <ImportPlugin text={note.text} format={format} />
-              </BlocksEditor>
-            </BlocksEditorComposer>
-          </ErrorBoundary>
-        </div>
-      </ModalDialogDescription>
-      <ModalDialogButtons>
-        <div className="flex w-full justify-between">
-          <div>
-            <Button onClick={convertAsIs}>Convert As-Is</Button>
-          </div>
-          <div className="hidden md:flex">
-            <Button onClick={closeDialog}>Cancel</Button>
-            <div className="min-w-3" />
-            <Button primary onClick={confirmConvert}>
-              Convert to Super
-            </Button>
-          </div>
-        </div>
-      </ModalDialogButtons>
-    </>
+      <div className="relative w-full px-4 py-4">
+        <ErrorBoundary>
+          <BlocksEditorComposer readonly initialValue={undefined}>
+            <BlocksEditor
+              readonly
+              onChange={handleChange}
+              ignoreFirstChange={false}
+              className="relative resize-none text-base focus:shadow-none focus:outline-none"
+              previewLength={NotePreviewCharLimit}
+              spellcheck={note.spellcheck}
+            >
+              <ImportPlugin text={note.text} format={format} />
+            </BlocksEditor>
+          </BlocksEditorComposer>
+        </ErrorBoundary>
+      </div>
+    </Modal>
   )
 }
