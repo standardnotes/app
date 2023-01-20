@@ -155,4 +155,18 @@ describe('GetRevision', () => {
 
     expect(result.isFailed()).toBe(true)
   })
+
+  it('should fail if revision manager throws', async () => {
+    revisionManager.getRevision = jest.fn().mockRejectedValue(new Error('error'))
+
+    const useCase = createUseCase()
+
+    const result = await useCase.execute({
+      itemUuid: '00000000-0000-0000-0000-000000000000',
+      revisionUuid: '00000000-0000-0000-0000-000000000000',
+    })
+
+    expect(result.isFailed()).toBe(true)
+    expect(result.getError()).toEqual('Could not get revision: error')
+  })
 })

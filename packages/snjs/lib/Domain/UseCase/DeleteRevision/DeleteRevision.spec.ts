@@ -46,4 +46,18 @@ describe('DeleteRevision', () => {
     expect(result.isFailed()).toBe(true)
     expect(result.getError()).toEqual('Could not delete revision: Given value is not a valid uuid: invalid')
   })
+
+  it('should fail if revision manager throws', async () => {
+    const useCase = createUseCase()
+
+    revisionManager.deleteRevision = jest.fn().mockRejectedValue(new Error('error'))
+
+    const result = await useCase.execute({
+      itemUuid: '00000000-0000-0000-0000-000000000000',
+      revisionUuid: '00000000-0000-0000-0000-000000000000',
+    })
+
+    expect(result.isFailed()).toBe(true)
+    expect(result.getError()).toEqual('Could not delete revision: error')
+  })
 })

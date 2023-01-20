@@ -1,11 +1,9 @@
-import { Uuid } from '@standardnotes/common'
-
 import { MutationType } from '../Types/MutationType'
 
 import { ItemMutator } from './ItemMutator'
 
 export type TransactionalMutation = {
-  itemUuid: Uuid
+  itemUuid: string
   mutate: (mutator: ItemMutator) => void
   mutationType?: MutationType
 }

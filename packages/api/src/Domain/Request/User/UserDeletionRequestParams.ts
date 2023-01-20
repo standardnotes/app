@@ -1,6 +1,4 @@
-import { Uuid } from '@standardnotes/common'
-
 export type UserDeletionRequestParams = {
-  userUuid: Uuid
+  userUuid: string
   [additionalParam: string]: unknown
 }

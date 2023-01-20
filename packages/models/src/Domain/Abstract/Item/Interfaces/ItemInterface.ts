@@ -1,4 +1,4 @@
-import { Uuid, ContentType } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { TransferPayload } from './../../TransferPayload/Interfaces/TransferPayload'
 import { PayloadInterface } from '../../Payload/Interfaces/PayloadInterface'
 import { PredicateInterface } from '../../../Runtime/Predicate/Interface'
@@ -8,12 +8,12 @@ import { SingletonStrategy } from '../Types/SingletonStrategy'
 
 export interface ItemInterface<P extends PayloadInterface = PayloadInterface> {
   payload: P
-  readonly conflictOf?: Uuid
-  readonly duplicateOf?: Uuid
+  readonly conflictOf?: string
+  readonly duplicateOf?: string
   readonly createdAtString?: string
   readonly updatedAtString?: string
 
-  uuid: Uuid
+  uuid: string
 
   content_type: ContentType
   created_at: Date

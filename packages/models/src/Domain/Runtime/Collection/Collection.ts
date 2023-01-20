@@ -1,11 +1,11 @@
 import { extendArray, isObject, isString, UuidMap } from '@standardnotes/utils'
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { remove } from 'lodash'
 import { ItemContent } from '../../Abstract/Content/ItemContent'
 import { ContentReference } from '../../Abstract/Item'
 
 export interface CollectionElement {
-  uuid: Uuid
+  uuid: string
   content_type: ContentType
   dirty?: boolean
   deleted?: boolean
@@ -32,17 +32,17 @@ export abstract class Collection<
   Encrypted extends EncryptedCollectionElement,
   Deleted extends DeletedCollectionElement,
 > {
-  readonly map: Partial<Record<Uuid, Element>> = {}
+  readonly map: Partial<Record<string, Element>> = {}
   readonly typedMap: Partial<Record<ContentType, Element[]>> = {}
 
   /** An array of uuids of items that are dirty */
-  dirtyIndex: Set<Uuid> = new Set()
+  dirtyIndex: Set<string> = new Set()
 
   /** An array of uuids of items that are not marked as deleted */
-  nondeletedIndex: Set<Uuid> = new Set()
+  nondeletedIndex: Set<string> = new Set()
 
   /** An array of uuids of items that are errorDecrypting or waitingForKey */
-  invalidsIndex: Set<Uuid> = new Set()
+  invalidsIndex: Set<string> = new Set()
 
   readonly referenceMap: UuidMap
 
@@ -73,7 +73,7 @@ export abstract class Collection<
 
   constructor(
     copy = false,
-    mapCopy?: Partial<Record<Uuid, Element>>,
+    mapCopy?: Partial<Record<string, Element>>,
     typedMapCopy?: Partial<Record<ContentType, Element[]>>,
     referenceMapCopy?: UuidMap,
     conflictMapCopy?: UuidMap,
@@ -89,7 +89,7 @@ export abstract class Collection<
     }
   }
 
-  public uuids(): Uuid[] {
+  public uuids(): string[] {
     return Object.keys(this.map)
   }
 
@@ -105,7 +105,7 @@ export abstract class Collection<
         return this.typedMap[contentType]?.slice() || []
       }
     } else {
-      return Object.keys(this.map).map((uuid: Uuid) => {
+      return Object.keys(this.map).map((uuid: string) => {
         return this.map[uuid]
       }) as Element[]
     }
@@ -129,7 +129,7 @@ export abstract class Collection<
     return this.findAll(uuids)
   }
 
-  public findAll(uuids: Uuid[]): Element[] {
+  public findAll(uuids: string[]): Element[] {
     const results: Element[] = []
 
     for (const id of uuids) {
@@ -142,11 +142,11 @@ export abstract class Collection<
     return results
   }
 
-  public find(uuid: Uuid): Element | undefined {
+  public find(uuid: string): Element | undefined {
     return this.map[uuid]
   }
 
-  public has(uuid: Uuid): boolean {
+  public has(uuid: string): boolean {
     return this.find(uuid) != undefined
   }
 
@@ -154,7 +154,7 @@ export abstract class Collection<
    * If an item is not found, an `undefined` element
    * will be inserted into the array.
    */
-  public findAllIncludingBlanks<E extends Element>(uuids: Uuid[]): (E | Deleted | undefined)[] {
+  public findAllIncludingBlanks<E extends Element>(uuids: string[]): (E | Deleted | undefined)[] {
     const results: (E | Deleted | undefined)[] = []
 
     for (const id of uuids) {
@@ -219,11 +219,11 @@ export abstract class Collection<
     }
   }
 
-  public uuidReferencesForUuid(uuid: Uuid): Uuid[] {
+  public uuidReferencesForUuid(uuid: string): string[] {
     return this.referenceMap.getDirectRelationships(uuid)
   }
 
-  public uuidsThatReferenceUuid(uuid: Uuid): Uuid[] {
+  public uuidsThatReferenceUuid(uuid: string): string[] {
     return this.referenceMap.getInverseRelationships(uuid)
   }
 
@@ -232,7 +232,7 @@ export abstract class Collection<
     return this.findAll(uuids)
   }
 
-  public conflictsOf(uuid: Uuid): Element[] {
+  public conflictsOf(uuid: string): Element[] {
     const uuids = this.conflictMap.getDirectRelationships(uuid)
     return this.findAll(uuids)
   }

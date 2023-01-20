@@ -17,7 +17,7 @@ import {
 } from '@standardnotes/snjs'
 import { WebApplication } from '@/Application/Application'
 import Button from '@/Components/Button/Button'
-import { isDev, openInNewTab } from '@/Utils'
+import { openInNewTab } from '@/Utils'
 import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import { KeyboardKey } from '@standardnotes/ui-services'
 
@@ -61,7 +61,7 @@ const CloudBackupProvider: FunctionComponent<Props> = ({ application, providerNa
     }
     event.stopPropagation()
 
-    const authUrl = application.getCloudProviderIntegrationUrl(providerName, isDev)
+    const authUrl = application.getCloudProviderIntegrationUrl(providerName)
     openInNewTab(authUrl)
     setAuthBegan(true)
   }

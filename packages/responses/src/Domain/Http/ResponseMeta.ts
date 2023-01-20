@@ -1,9 +1,8 @@
 import { Role } from '@standardnotes/security'
-import { Uuid } from '@standardnotes/common'
 
 export type ResponseMeta = {
   auth: {
-    userUuid?: Uuid
+    userUuid?: string
     roles?: Role[]
   }
   server: {

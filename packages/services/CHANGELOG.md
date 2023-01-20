@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.56.6](https://github.com/standardnotes/app/compare/@standardnotes/services@1.56.5...@standardnotes/services@1.56.6) (2023-01-20)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.56.5](https://github.com/standardnotes/app/compare/@standardnotes/services@1.56.4...@standardnotes/services@1.56.5) (2023-01-20)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.56.4](https://github.com/standardnotes/app/compare/@standardnotes/services@1.56.3...@standardnotes/services@1.56.4) (2023-01-20)
+
+### Bug Fixes
+
+* **snjs:** bring back history tests and fix handlinf of error with revisions ([cb9c160](https://github.com/standardnotes/app/commit/cb9c16047ebea7134c1aadaf89a8023497358a8e))
+
+## [1.56.3](https://github.com/standardnotes/app/compare/@standardnotes/services@1.56.2...@standardnotes/services@1.56.3) (2023-01-20)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.56.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.56.1...@standardnotes/services@1.56.2) (2023-01-19)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.56.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.56.0...@standardnotes/services@1.56.1) (2023-01-19)
+
+**Note:** Version bump only for package @standardnotes/services
+
 # [1.56.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.55.2...@standardnotes/services@1.56.0) (2023-01-18)
 
 ### Bug Fixes

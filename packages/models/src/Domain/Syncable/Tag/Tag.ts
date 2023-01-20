@@ -1,5 +1,5 @@
 import { VectorIconNameOrEmoji, IconType } from './../../Utilities/Icon/IconType'
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { DecryptedItem } from '../../Abstract/Item/Implementations/DecryptedItem'
 import { ItemInterface } from '../../Abstract/Item/Interfaces/ItemInterface'
 import { ContentReference } from '../../Abstract/Reference/ContentReference'
@@ -41,7 +41,7 @@ export class SNTag extends DecryptedItem<TagContent> implements TagContentSpecia
     return this.noteReferences.length
   }
 
-  public get parentId(): Uuid | undefined {
+  public get parentId(): string | undefined {
     const reference = this.references.find(isTagToParentTagReference)
     return reference?.uuid
   }

@@ -1,4 +1,4 @@
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { Copy, extendArray, UuidGenerator } from '@standardnotes/utils'
 import { SNLog } from '../../Log'
 import { isErrorDecryptingParameters, SNRootKey } from '@standardnotes/encryption'
@@ -448,7 +448,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     await Promise.all(payloads.map((payload) => this.deletePayloadWithId(payload.uuid)))
   }
 
-  public async deletePayloadWithId(uuid: Uuid) {
+  public async deletePayloadWithId(uuid: string) {
     return this.executeCriticalFunction(async () => {
       return this.deviceInterface.removeDatabaseEntry(uuid, this.identifier)
     })

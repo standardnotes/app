@@ -29,8 +29,14 @@ export class GetRevision implements UseCaseInterface<HistoryEntry> {
     }
     const revisionUuid = revisionUuidOrError.getValue()
 
-    const revision = await this.revisionManager.getRevision(itemUuid, revisionUuid)
-    if (revision === null) {
+    let revision
+    try {
+      revision = await this.revisionManager.getRevision(itemUuid, revisionUuid)
+    } catch (error) {
+      return Result.fail(`Could not get revision: ${(error as Error).message}`)
+    }
+
+    if (!revision) {
       return Result.fail('Could not get revision: Revision not found')
     }
 

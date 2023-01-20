@@ -65,5 +65,11 @@ export function serverFeatures(): ServerFeatureDescription[] {
       identifier: FeatureIdentifier.SubscriptionSharing,
       permission_name: PermissionName.SubscriptionSharing,
     },
+    {
+      availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
+      name: 'Listed Custom Domain',
+      identifier: FeatureIdentifier.ListedCustomDomain,
+      permission_name: PermissionName.ListedCustomDomain,
+    },
   ]
 }

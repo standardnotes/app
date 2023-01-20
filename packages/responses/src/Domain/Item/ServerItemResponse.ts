@@ -1,4 +1,4 @@
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 
 export interface ServerItemResponse {
   content_type: ContentType
@@ -6,7 +6,7 @@ export interface ServerItemResponse {
   created_at_timestamp: number
   created_at: Date
   deleted: boolean
-  duplicate_of?: Uuid
+  duplicate_of?: string
   enc_item_key: string
   items_key_id?: string
   updated_at_timestamp: number

@@ -7,7 +7,7 @@ export class PackageProvider {
   static async load(application: WebApplication): Promise<PackageProvider | undefined> {
     const response = await application.getAvailableSubscriptions()
 
-    if (response instanceof ClientDisplayableError) {
+    if (!response || response instanceof ClientDisplayableError) {
       return undefined
     }
 

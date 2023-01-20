@@ -1,7 +1,7 @@
 import { FeatureDescription } from '@standardnotes/features'
 import { isNullOrUndefined, joinPaths } from '@standardnotes/utils'
 import { SettingName, SubscriptionSettingName } from '@standardnotes/settings'
-import { Uuid, ErrorTag } from '@standardnotes/common'
+import { ErrorTag } from '@standardnotes/common'
 import {
   AbstractService,
   ApiServiceInterface,
@@ -654,7 +654,7 @@ export class SNApiService
 
   public async downloadOfflineFeaturesFromRepo(
     repo: SNFeatureRepo,
-  ): Promise<{ features: FeatureDescription[] } | ClientDisplayableError> {
+  ): Promise<{ features: FeatureDescription[]; roles: string[] } | ClientDisplayableError> {
     try {
       const featuresUrl = repo.offlineFeaturesUrl
       const extensionKey = repo.offlineKey
@@ -678,8 +678,10 @@ export class SNApiService
       if (response.error) {
         return ClientDisplayableError.FromError(response.error)
       }
+      const data = (response as Responses.GetOfflineFeaturesResponse).data
       return {
-        features: (response as Responses.GetOfflineFeaturesResponse).data?.features || [],
+        features: data?.features || [],
+        roles: data?.roles || [],
       }
     } catch {
       return new ClientDisplayableError(API_MESSAGE_FAILED_OFFLINE_ACTIVATION)
@@ -852,7 +854,7 @@ export class SNApiService
     })
   }
 
-  async getSingleItem(itemUuid: Uuid): Promise<Responses.GetSingleItemResponse> {
+  async getSingleItem(itemUuid: string): Promise<Responses.GetSingleItemResponse> {
     return await this.tokenRefreshableRequest<Responses.GetSingleItemResponse>({
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.getSingleItem(itemUuid)),

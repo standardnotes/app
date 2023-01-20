@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/responses",
-  "version": "1.13.0",
+  "version": "1.13.4",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -33,9 +33,9 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.45.0",
+    "@standardnotes/common": "^1.46.4",
     "@standardnotes/features": "workspace:*",
-    "@standardnotes/security": "^1.7.0",
+    "@standardnotes/security": "^1.7.5",
     "reflect-metadata": "^0.1.13"
   }
 }

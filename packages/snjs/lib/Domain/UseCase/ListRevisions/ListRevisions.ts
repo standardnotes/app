@@ -15,8 +15,12 @@ export class ListRevisions implements UseCaseInterface<Array<RevisionMetadata>> 
     }
     const itemUuid = itemUuidOrError.getValue()
 
-    const revisions = await this.revisionManager.listRevisions(itemUuid)
+    try {
+      const revisions = await this.revisionManager.listRevisions(itemUuid)
 
-    return Result.ok(revisions)
+      return Result.ok(revisions)
+    } catch (error) {
+      return Result.fail(`Could not list item revisions: ${(error as Error).message}`)
+    }
   }
 }

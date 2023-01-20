@@ -1,7 +1,7 @@
-import { UserRequestType, Uuid } from '@standardnotes/common'
+import { UserRequestType } from '@standardnotes/common'
 
 export type UserRequestRequestParams = {
-  userUuid: Uuid
+  userUuid: string
   requestType: UserRequestType
   [additionalParam: string]: unknown
 }

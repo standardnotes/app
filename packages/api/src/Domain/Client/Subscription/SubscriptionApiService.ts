@@ -10,7 +10,6 @@ import { SubscriptionInviteAcceptResponse } from '../../Response/Subscription/Su
 
 import { SubscriptionApiServiceInterface } from './SubscriptionApiServiceInterface'
 import { SubscriptionApiOperations } from './SubscriptionApiOperations'
-import { Uuid } from '@standardnotes/common'
 import { AppleIAPConfirmResponse } from './../../Response/Subscription/AppleIAPConfirmResponse'
 import { AppleIAPConfirmRequestParams } from '../../Request'
 
@@ -83,7 +82,7 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
     }
   }
 
-  async acceptInvite(inviteUuid: Uuid): Promise<SubscriptionInviteAcceptResponse> {
+  async acceptInvite(inviteUuid: string): Promise<SubscriptionInviteAcceptResponse> {
     if (this.operationsInProgress.get(SubscriptionApiOperations.AcceptingInvite)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }

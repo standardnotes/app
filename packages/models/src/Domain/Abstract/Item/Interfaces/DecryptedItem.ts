@@ -1,4 +1,3 @@
-import { Uuid } from '@standardnotes/common'
 import { AppDataField } from '../Types/AppDataField'
 import { ComponentDataDomain, DefaultAppDomain } from '../Types/DefaultAppDomain'
 import { ContentReference } from '../../Reference/ContentReference'
@@ -15,8 +14,8 @@ export interface DecryptedItemInterface<C extends ItemContent = ItemContent>
     SortableItem,
     SearchableItem {
   readonly content: C
-  readonly conflictOf?: Uuid
-  readonly duplicateOf?: Uuid
+  readonly conflictOf?: string
+  readonly duplicateOf?: string
   readonly protected: boolean
   readonly trashed: boolean
   readonly pinned: boolean
