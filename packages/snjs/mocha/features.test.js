@@ -115,7 +115,7 @@ describe('features', () => {
       // Wipe items from initial sync
       await application.itemManager.removeAllItemsFromMemory()
       // Wipe roles from initial sync
-      await application.featuresService.setRoles([])
+      await application.featuresService.setOnlineRoles([])
       // Create pre-existing item for theme without all the info
       await application.itemManager.createItem(
         ContentType.Theme,
@@ -165,7 +165,7 @@ describe('features', () => {
         .find((theme) => theme.identifier === midnightThemeFeature.identifier)
 
       // Wipe roles from initial sync
-      await application.featuresService.setRoles([])
+      await application.featuresService.setOnlineRoles([])
 
       // Call sync intentionally to get roles again in meta
       await application.sync.sync()

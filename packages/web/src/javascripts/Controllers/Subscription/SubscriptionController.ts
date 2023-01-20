@@ -67,9 +67,18 @@ export class SubscriptionController extends AbstractViewController {
           this.reloadSubscriptionInvitations().catch(console.error)
         }
         runInAction(() => {
+          this.hasFirstPartySubscription = application.features.hasFirstPartySubscription()
           this.hasAccount = application.hasAccount()
         })
       }, ApplicationEvent.Launched),
+    )
+
+    this.disposers.push(
+      application.addEventObserver(async () => {
+        runInAction(() => {
+          this.hasFirstPartySubscription = application.features.hasFirstPartySubscription()
+        })
+      }, ApplicationEvent.LocalDataLoaded),
     )
 
     this.disposers.push(
@@ -86,7 +95,9 @@ export class SubscriptionController extends AbstractViewController {
       application.addEventObserver(async () => {
         this.getSubscriptionInfo().catch(console.error)
         this.reloadSubscriptionInvitations().catch(console.error)
-        this.hasFirstPartySubscription = application.features.hasFirstPartySubscription()
+        runInAction(() => {
+          this.hasFirstPartySubscription = application.features.hasFirstPartySubscription()
+        })
       }, ApplicationEvent.UserRolesChanged),
     )
   }

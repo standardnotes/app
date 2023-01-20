@@ -64,7 +64,10 @@ export const UpgradePrompt = ({
             <div className="mb-2 font-bold">The Professional Plan costs $119.99/year and includes benefits like</div>
             <ul className="list-inside list-[circle]">
               <li>100GB encrypted file storage</li>
-              <li>Access to all note types, including markdown, rich text, authenticator, tasks, and spreadsheets</li>
+              <li>
+                Access to all note types, including Super, markdown, rich text, authenticator, tasks, and spreadsheets
+              </li>
+              <li>Access to Daily Notebooks and Moments journals</li>
               <li>Note history going back indefinitely</li>
               <li>Nested folders for your tags</li>
               <li>Premium support</li>
@@ -79,7 +82,7 @@ export const UpgradePrompt = ({
           className="no-border w-full cursor-pointer rounded bg-info py-2 font-bold text-info-contrast hover:brightness-125 focus:brightness-125"
           ref={ctaRef}
         >
-          Upgrade
+          {application.isNativeIOS() ? 'Start Free Trial' : 'Upgrade'}
         </button>
       </div>
     </>

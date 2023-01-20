@@ -13,7 +13,7 @@ type Props = {
 const UpgradeNow = ({ application, featuresController, subscriptionContoller }: Props) => {
   const shouldShowCTA = !featuresController.hasFolders
   const hasAccount = subscriptionContoller.hasAccount
-  const hasSubscription = subscriptionContoller.hasAccount
+  const hasAccessToFeatures = subscriptionContoller.hasFirstPartySubscription
 
   const onClick = useCallback(() => {
     if (hasAccount && application.isNativeIOS()) {
@@ -23,16 +23,20 @@ const UpgradeNow = ({ application, featuresController, subscriptionContoller }: 
     }
   }, [application, hasAccount])
 
-  return shouldShowCTA ? (
+  if (!shouldShowCTA || hasAccessToFeatures) {
+    return null
+  }
+
+  return (
     <div className="flex h-full items-center px-2">
       <button
         className="rounded bg-info py-0.5 px-1.5 text-sm font-bold uppercase text-info-contrast hover:brightness-125 lg:text-xs"
         onClick={onClick}
       >
-        {hasAccount ? 'Unlock features' : 'Sign up to sync'}
+        {!hasAccount ? 'Sign up to sync' : 'Unlock features'}
       </button>
     </div>
-  ) : null
+  )
 }
 
 export default observer(UpgradeNow)
