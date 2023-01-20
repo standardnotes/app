@@ -10,6 +10,7 @@ import MarkdownPreviewPlugin from './Plugins/MarkdownPreviewPlugin/MarkdownPrevi
 import { FileNode } from './Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import { BubbleNode } from './Plugins/ItemBubblePlugin/Nodes/BubbleNode'
 import { copyTextToClipboard } from '../../../Utils/copyTextToClipboard'
+import MobileModalAction from '@/Components/Shared/MobileModalAction'
 
 type Props = {
   note: SNNote
@@ -34,7 +35,12 @@ export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ note, close
 
   return (
     <>
-      <ModalDialogLabel closeDialog={closeDialog}>Markdown Preview</ModalDialogLabel>
+      <ModalDialogLabel
+        leftMobileButton={<MobileModalAction action={copy}>Copy</MobileModalAction>}
+        closeDialog={closeDialog}
+      >
+        Markdown Preview
+      </ModalDialogLabel>
       <ModalDialogDescription>
         <div className="relative w-full">
           <ErrorBoundary>
@@ -50,15 +56,14 @@ export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ note, close
           </ErrorBoundary>
         </div>
       </ModalDialogDescription>
-      <ModalDialogButtons>
-        <div className="flex">
+      <div className="hidden md:block">
+        <ModalDialogButtons>
           <Button onClick={closeDialog}>Close</Button>
-          <div className="min-w-3" />
           <Button primary onClick={copy}>
             {didCopy ? 'Copied' : 'Copy'}
           </Button>
-        </div>
-      </ModalDialogButtons>
+        </ModalDialogButtons>
+      </div>
     </>
   )
 }
