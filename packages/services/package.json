@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@standardnotes/api": "workspace:^",
-    "@standardnotes/common": "^1.46.3",
+    "@standardnotes/common": "^1.46.4",
     "@standardnotes/domain-core": "^1.11.1",
     "@standardnotes/encryption": "workspace:^",
     "@standardnotes/files": "workspace:^",

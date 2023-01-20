@@ -4372,7 +4372,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/api@workspace:packages/api"
   dependencies:
-    "@standardnotes/common": ^1.46.3
+    "@standardnotes/common": ^1.46.4
     "@standardnotes/domain-core": ^1.11.1
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/models": "workspace:*"
@@ -4503,12 +4503,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/common@npm:^1.46.3":
-  version: 1.46.3
-  resolution: "@standardnotes/common@npm:1.46.3"
+"@standardnotes/common@npm:^1.46.4":
+  version: 1.46.4
+  resolution: "@standardnotes/common@npm:1.46.4"
   dependencies:
     reflect-metadata: ^0.1.13
-  checksum: 0fa509e30431a740ed142274c4f21ae03d74b6e05bcd4f028d89a3f1a6566de792bbd7c37b1b92587138dd6ea10459eead5a8cad2150f9f2268481615d390dee
+  checksum: 6d21999a1df420040a8dfa5eb3157744320cd0a610f2a1b911a86b44a66bf23d07235dd543fe5849e853ac6e8e944bd14f5cc0f6ef2ad4f264b5cea55066ebcb
   languageName: node
   linkType: hard
 
@@ -4639,7 +4639,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/encryption@workspace:packages/encryption"
   dependencies:
-    "@standardnotes/common": ^1.46.3
+    "@standardnotes/common": ^1.46.4
     "@standardnotes/config": 2.4.3
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
@@ -4662,7 +4662,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/features@workspace:packages/features"
   dependencies:
-    "@standardnotes/common": ^1.46.3
+    "@standardnotes/common": ^1.46.4
     "@standardnotes/domain-core": ^1.11.1
     "@standardnotes/security": ^1.7.5
     "@types/jest": ^29.2.3
@@ -4692,7 +4692,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/filepicker@workspace:packages/filepicker"
   dependencies:
-    "@standardnotes/common": ^1.46.3
+    "@standardnotes/common": ^1.46.4
     "@standardnotes/files": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^29.2.3
@@ -4712,7 +4712,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/files@workspace:packages/files"
   dependencies:
-    "@standardnotes/common": ^1.46.3
+    "@standardnotes/common": ^1.46.4
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
@@ -4876,7 +4876,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/models@workspace:packages/models"
   dependencies:
-    "@standardnotes/common": ^1.46.3
+    "@standardnotes/common": ^1.46.4
     "@standardnotes/features": "workspace:*"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/utils": "workspace:*"
@@ -4923,7 +4923,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/responses@workspace:packages/responses"
   dependencies:
-    "@standardnotes/common": ^1.46.3
+    "@standardnotes/common": ^1.46.4
     "@standardnotes/features": "workspace:*"
     "@standardnotes/security": ^1.7.5
     "@types/jest": ^29.2.3
@@ -4972,7 +4972,7 @@ __metadata:
   resolution: "@standardnotes/services@workspace:packages/services"
   dependencies:
     "@standardnotes/api": "workspace:^"
-    "@standardnotes/common": ^1.46.3
+    "@standardnotes/common": ^1.46.4
     "@standardnotes/domain-core": ^1.11.1
     "@standardnotes/encryption": "workspace:^"
     "@standardnotes/files": "workspace:^"
@@ -5069,7 +5069,7 @@ __metadata:
     "@babel/core": "*"
     "@babel/preset-env": "*"
     "@standardnotes/api": "workspace:*"
-    "@standardnotes/common": ^1.46.3
+    "@standardnotes/common": ^1.46.4
     "@standardnotes/domain-core": ^1.11.1
     "@standardnotes/domain-events": ^2.106.0
     "@standardnotes/encryption": "workspace:*"
@@ -5197,7 +5197,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/ui-services@workspace:packages/ui-services"
   dependencies:
-    "@standardnotes/common": ^1.46.3
+    "@standardnotes/common": ^1.46.4
     "@standardnotes/features": "workspace:^"
     "@standardnotes/filepicker": "workspace:^"
     "@standardnotes/services": "workspace:^"
@@ -5219,7 +5219,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/utils@workspace:packages/utils"
   dependencies:
-    "@standardnotes/common": ^1.46.3
+    "@standardnotes/common": ^1.46.4
     "@types/dompurify": ^2.4.0
     "@types/jest": ^29.2.3
     "@types/jsdom": ^20.0.1

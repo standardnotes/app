@@ -22,7 +22,7 @@
     "test": "jest"
   },
   "devDependencies": {
-    "@standardnotes/common": "^1.46.3",
+    "@standardnotes/common": "^1.46.4",
     "@standardnotes/features": "workspace:*",
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/utils": "workspace:*",
