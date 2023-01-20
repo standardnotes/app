@@ -13,7 +13,7 @@ import ModalDialogDescription from './ModalDialogDescription'
 
 export type ModalAction = {
   label: NonNullable<ReactNode>
-  type: 'primary' | 'secondary' | 'cancel'
+  type: 'primary' | 'secondary' | 'destructive' | 'cancel'
   onClick: () => void
   mobileSlot?: 'left' | 'right'
   hidden?: boolean
@@ -38,6 +38,12 @@ const Modal = ({ title, isOpen, close, actions = [], dismissOnOverlayClick = tru
             return -1
           }
           if (b.type === 'cancel') {
+            return 1
+          }
+          if (a.type === 'destructive') {
+            return -1
+          }
+          if (b.type === 'destructive') {
             return 1
           }
           if (a.type === 'secondary') {
@@ -130,6 +136,9 @@ const Modal = ({ title, isOpen, close, actions = [], dismissOnOverlayClick = tru
   const rightSlotAction = sortedActions.find((action) => action.mobileSlot === 'right')
   const hasNonSlotActions = sortedActions.some((action) => !action.mobileSlot)
   const hasCancelAction = sortedActions.some((action) => action.type === 'cancel')
+  const firstNonNegativeActionIndex = sortedActions.findIndex(
+    (action) => action.type !== 'cancel' && action.type !== 'destructive',
+  )
 
   return (
     <AlertDialogOverlay
@@ -197,15 +206,17 @@ const Modal = ({ title, isOpen, close, actions = [], dismissOnOverlayClick = tru
             hasNonSlotActions ? 'flex' : 'hidden md:flex',
           )}
         >
-          {sortedActions.map((action) => (
+          {sortedActions.map((action, index) => (
             <Button
               primary={action.type === 'primary'}
+              colorStyle={action.type === 'destructive' ? 'danger' : undefined}
               key={action.label.toString()}
               onClick={action.onClick}
               className={classNames(
-                action.type === 'cancel' ? 'mr-auto' : '',
                 action.mobileSlot ? 'hidden md:block' : '',
+                index === firstNonNegativeActionIndex && 'ml-auto',
               )}
+              data-type={action.type}
               disabled={action.disabled}
             >
               {action.label}

@@ -1,16 +1,11 @@
-import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import IconPicker from '@/Components/Icon/IconPicker'
 import Popover from '@/Components/Popover/Popover'
-import MobileModalAction from '@/Components/Shared/MobileModalAction'
-import ModalDialog from '@/Components/Shared/ModalDialog'
-import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
-import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
-import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
+import Modal, { ModalAction } from '@/Components/Shared/Modal'
 import Spinner from '@/Components/Spinner/Spinner'
 import { Platform, SmartViewDefaultIconName, VectorIconNameOrEmoji } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { EditSmartViewModalController } from './EditSmartViewModalController'
 
 type Props = {
@@ -64,28 +59,39 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
     }
   }, [isPredicateJsonValid])
 
+  const modalActions = useMemo(
+    (): ModalAction[] => [
+      {
+        label: 'Delete',
+        onClick: deleteView,
+        disabled: isSaving,
+        type: 'destructive',
+      },
+      {
+        label: 'Cancel',
+        onClick: closeDialog,
+        disabled: isSaving,
+        type: 'cancel',
+        mobileSlot: 'left',
+      },
+      {
+        label: isSaving ? <Spinner className="h-4.5 w-4.5" /> : 'Save',
+        onClick: saveSmartView,
+        disabled: isSaving,
+        type: 'primary',
+        mobileSlot: 'right',
+      },
+    ],
+    [closeDialog, deleteView, isSaving, saveSmartView],
+  )
+
   if (!view) {
     return null
   }
 
   return (
-    <ModalDialog>
-      <ModalDialogLabel
-        leftMobileButton={
-          <MobileModalAction type="cancel" disabled={isSaving} action={closeDialog}>
-            Cancel
-          </MobileModalAction>
-        }
-        rightMobileButton={
-          <MobileModalAction disabled={isSaving} action={saveSmartView}>
-            {isSaving ? <Spinner className="h-4.5 w-4.5" /> : 'Save'}
-          </MobileModalAction>
-        }
-        closeDialog={closeDialog}
-      >
-        Edit Smart View "{view.title}"
-      </ModalDialogLabel>
-      <ModalDialogDescription>
+    <Modal title={`Edit Smart View "${view.title}"`} isOpen={true} close={closeDialog} actions={modalActions}>
+      <div className="px-4 py-4">
         <div className="flex h-full flex-col gap-4">
           <div className="flex items-center gap-2.5">
             <div className="text-sm font-semibold">Title:</div>
@@ -151,19 +157,8 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
             </div>
           </div>
         </div>
-      </ModalDialogDescription>
-      <ModalDialogButtons>
-        <Button className="mr-auto" disabled={isSaving} onClick={deleteView} colorStyle="danger">
-          Delete
-        </Button>
-        <Button className="hidden md:block" disabled={isSaving} onClick={saveSmartView} primary colorStyle="info">
-          {isSaving ? <Spinner className="h-4.5 w-4.5" /> : 'Save'}
-        </Button>
-        <Button className="hidden md:block" disabled={isSaving} onClick={closeDialog}>
-          Cancel
-        </Button>
-      </ModalDialogButtons>
-    </ModalDialog>
+      </div>
+    </Modal>
   )
 }
 
