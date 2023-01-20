@@ -19,8 +19,12 @@ export class DeleteRevision implements UseCaseInterface<void> {
     }
     const revisionUuid = revisionUuidOrError.getValue()
 
-    await this.revisionManager.deleteRevision(itemUuid, revisionUuid)
+    try {
+      await this.revisionManager.deleteRevision(itemUuid, revisionUuid)
 
-    return Result.ok()
+      return Result.ok()
+    } catch (error) {
+      return Result.fail(`Could not delete revision: ${(error as Error).message}`)
+    }
   }
 }
