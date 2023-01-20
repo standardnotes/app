@@ -13,6 +13,7 @@ import ModalDialogLabel from '../Shared/ModalDialogLabel'
 import { ImportModalFileItem } from './ImportModalFileItem'
 import ImportModalInitialPage from './InitialPage'
 import { ImportModalAction, ImportModalFile, ImportModalState } from './Types'
+import MobileModalAction from '../Shared/MobileModalAction'
 
 const reducer = (state: ImportModalState, action: ImportModalAction): ImportModalState => {
   switch (action.type) {
@@ -190,9 +191,25 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
     })
   }, [state.importTag, viewControllerManager.isImportModalVisible, viewControllerManager.navigationController])
 
+  const isReadyToImport = files.length > 0 && files.every((file) => file.status === 'ready')
+  const importSuccessOrError =
+    files.length > 0 && files.every((file) => file.status === 'success' || file.status === 'error')
+
   return (
     <ModalDialog isOpen={viewControllerManager.isImportModalVisible.get()} onDismiss={closeDialog}>
-      <ModalDialogLabel closeDialog={closeDialog}>Import</ModalDialogLabel>
+      <ModalDialogLabel
+        leftMobileButton={
+          <MobileModalAction type="cancel" action={closeDialog}>
+            {importSuccessOrError ? 'Close' : 'Cancel'}
+          </MobileModalAction>
+        }
+        rightMobileButton={
+          isReadyToImport ? <MobileModalAction action={parseAndImport}>Import</MobileModalAction> : <div />
+        }
+        closeDialog={closeDialog}
+      >
+        Import
+      </ModalDialogLabel>
       <ModalDialogDescription>
         {!files.length && <ImportModalInitialPage dispatch={dispatch} />}
         {files.length > 0 && (
@@ -203,18 +220,16 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
           </div>
         )}
       </ModalDialogDescription>
-      <ModalDialogButtons>
-        {files.length > 0 && files.every((file) => file.status === 'ready') && (
-          <Button primary onClick={parseAndImport}>
-            Import
-          </Button>
-        )}
-        <Button onClick={closeDialog}>
-          {files.length > 0 && files.every((file) => file.status === 'success' || file.status === 'error')
-            ? 'Close'
-            : 'Cancel'}
-        </Button>
-      </ModalDialogButtons>
+      <div className="hidden md:block">
+        <ModalDialogButtons>
+          {isReadyToImport && (
+            <Button primary onClick={parseAndImport}>
+              Import
+            </Button>
+          )}
+          <Button onClick={closeDialog}>{importSuccessOrError ? 'Close' : 'Cancel'}</Button>
+        </ModalDialogButtons>
+      </div>
     </ModalDialog>
   )
 }
