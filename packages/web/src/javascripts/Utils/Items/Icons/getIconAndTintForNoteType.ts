@@ -4,6 +4,8 @@ import { IconType } from '@standardnotes/models'
 
 export function getIconAndTintForNoteType(noteType?: NoteType, subtle?: boolean): [IconType, number] {
   switch (noteType) {
+    case NoteType.Plain:
+      return [PlainEditorMetadata.icon, PlainEditorMetadata.iconTintNumber]
     case NoteType.RichText:
       return ['rich-text', 1]
     case NoteType.Markdown:
@@ -22,6 +24,6 @@ export function getIconAndTintForNoteType(noteType?: NoteType, subtle?: boolean)
         SuperEditorMetadata.iconTintNumber,
       ]
     default:
-      return [PlainEditorMetadata.icon, PlainEditorMetadata.iconTintNumber]
+      return ['editor', PlainEditorMetadata.iconTintNumber]
   }
 }
