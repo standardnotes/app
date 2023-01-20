@@ -277,7 +277,7 @@ describe('history manager', () => {
       await Factory.safeDeinit(this.application)
     })
 
-    it('response from server should be empty if not signed in', async function () {
+    it('response from server should be failed if not signed in', async function () {
       await this.application.user.signOut()
       this.application = await Factory.createInitAppWithFakeCrypto()
       this.historyManager = this.application.historyManager
@@ -286,7 +286,7 @@ describe('history manager', () => {
       await this.application.syncService.sync(syncOptions)
       const itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: item.uuid })
 
-      expect(itemHistoryOrError.getValue().length).to.equal(0)
+      expect(itemHistoryOrError.isFailed()).to.equal(true)
     })
 
     it('create basic history entries 2', async function () {
