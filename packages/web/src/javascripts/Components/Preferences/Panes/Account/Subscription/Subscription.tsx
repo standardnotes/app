@@ -15,7 +15,7 @@ type Props = {
 
 const Subscription: FunctionComponent<Props> = ({ application, viewControllerManager }: Props) => {
   const subscriptionState = viewControllerManager.subscriptionController
-  const { onlineSubscription: userSubscription } = subscriptionState
+  const { onlineSubscription } = subscriptionState
 
   const now = new Date().getTime()
 
@@ -25,7 +25,7 @@ const Subscription: FunctionComponent<Props> = ({ application, viewControllerMan
         <div className="flex flex-row items-center">
           <div className="flex flex-grow flex-col">
             <Title>Subscription</Title>
-            {userSubscription && userSubscription.endsAt > now ? (
+            {onlineSubscription && onlineSubscription.endsAt > now ? (
               <SubscriptionInformation subscriptionState={subscriptionState} application={application} />
             ) : (
               <NoSubscription application={application} />
