@@ -598,12 +598,12 @@ export class SNComponentManager
   }
 
   editorForNote(note: SNNote): SNComponent | undefined {
-    if (note.editorIdentifier) {
-      return this.componentWithIdentifier(note.editorIdentifier)
-    }
-
     if (note.noteType === NoteType.Plain || note.noteType === NoteType.Super) {
       return undefined
+    }
+
+    if (note.editorIdentifier) {
+      return this.componentWithIdentifier(note.editorIdentifier)
     }
 
     return this.legacyGetEditorForNote(note)
