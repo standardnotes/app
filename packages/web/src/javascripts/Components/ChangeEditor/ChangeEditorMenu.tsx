@@ -221,16 +221,16 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
             )
           })}
       </Menu>
-      {note && (
-        <ModalDialog isOpen={showSuperImporter} onDismiss={() => setShowSuperImporter(false)}>
+      <ModalDialog isOpen={showSuperImporter} onDismiss={() => setShowSuperImporter(false)}>
+        {note && (
           <SuperNoteImporter
             note={note}
             application={application}
             onConvertComplete={handleSuperNoteConversionCompletion}
             closeDialog={() => setShowSuperImporter(false)}
           />
-        </ModalDialog>
-      )}
+        )}
+      </ModalDialog>
     </>
   )
 }

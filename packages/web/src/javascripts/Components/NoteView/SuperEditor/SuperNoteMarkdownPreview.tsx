@@ -2,7 +2,6 @@ import { SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useState } from 'react'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
-import ModalDialog from '@/Components/Shared/ModalDialog'
 import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
 import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
 import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
@@ -14,11 +13,10 @@ import { copyTextToClipboard } from '../../../Utils/copyTextToClipboard'
 
 type Props = {
   note: SNNote
-  isOpen: boolean
   closeDialog: () => void
 }
 
-export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ isOpen, note, closeDialog }) => {
+export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ note, closeDialog }) => {
   const [markdown, setMarkdown] = useState('')
   const [didCopy, setDidCopy] = useState(false)
 
@@ -35,7 +33,7 @@ export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ isOpen, not
   }, [])
 
   return (
-    <ModalDialog isOpen={isOpen} onDismiss={closeDialog}>
+    <>
       <ModalDialogLabel closeDialog={closeDialog}>Markdown Preview</ModalDialogLabel>
       <ModalDialogDescription>
         <div className="relative w-full">
@@ -61,6 +59,6 @@ export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ isOpen, not
           </Button>
         </div>
       </ModalDialogButtons>
-    </ModalDialog>
+    </>
   )
 }

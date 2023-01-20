@@ -87,13 +87,11 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
 
   return (
     <>
-      <ModalDialogLabel closeDialog={closeDialog}>
-        Convert to Super note
-        <p className="text-sm font-normal text-neutral">
-          The following is a preview of how your note will look when converted to Super. Super notes use a custom format
-          under the hood. Converting your note will transition it from plaintext to the custom Super format.
-        </p>
-      </ModalDialogLabel>
+      <ModalDialogLabel closeDialog={closeDialog}>Convert to Super note</ModalDialogLabel>
+      <div className="border-b border-border px-4 py-4 text-sm font-normal text-neutral md:py-3">
+        The following is a preview of how your note will look when converted to Super. Super notes use a custom format
+        under the hood. Converting your note will transition it from plaintext to the custom Super format.
+      </div>
       <ModalDialogDescription>
         <div className="relative w-full">
           <ErrorBoundary>
