@@ -12,7 +12,7 @@ import MobileModalAction from './MobileModalAction'
 import ModalDialogDescription from './ModalDialogDescription'
 
 export type ModalAction = {
-  label: string
+  label: NonNullable<ReactNode>
   type: 'primary' | 'secondary' | 'cancel'
   onClick: () => void
   mobileSlot?: 'left' | 'right'
@@ -200,7 +200,7 @@ const Modal = ({ title, isOpen, close, actions = [], dismissOnOverlayClick = tru
           {sortedActions.map((action) => (
             <Button
               primary={action.type === 'primary'}
-              key={action.label}
+              key={action.label.toString()}
               onClick={action.onClick}
               className={classNames(
                 action.type === 'cancel' ? 'mr-auto' : '',
