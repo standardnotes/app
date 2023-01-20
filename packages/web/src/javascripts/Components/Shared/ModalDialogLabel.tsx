@@ -37,15 +37,17 @@ const ModalDialogLabel: FunctionComponent<Props> = ({ children, closeDialog, cla
     >
       <div className="flex w-full flex-row items-center justify-between">
         <div className="md:hidden" />
-        <div className="text-base font-semibold text-text md:flex-grow md:text-lg">{children}</div>
+        <div className="overflow-hidden text-ellipsis whitespace-nowrap text-base font-semibold text-text md:flex-grow md:text-lg">
+          {children}
+        </div>
         <div className="hidden items-center gap-2 md:flex">
           {headerButtons}
-          <button tabIndex={0} className="rounded p-1 font-bold hover:bg-contrast" onClick={closeDialog}>
+          <button tabIndex={0} className="ml-2 rounded p-1 font-bold hover:bg-contrast" onClick={closeDialog}>
             <Icon type="close" />
           </button>
         </div>
         <button
-          className="text-base font-medium text-info active:shadow-none active:outline-none md:hidden"
+          className="ml-2 text-base font-medium text-info active:shadow-none active:outline-none md:hidden"
           onClick={closeDialog}
         >
           Done
