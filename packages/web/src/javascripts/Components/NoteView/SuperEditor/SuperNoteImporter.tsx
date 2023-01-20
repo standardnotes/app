@@ -1,13 +1,12 @@
 import { WebApplication } from '@/Application/Application'
 import { NoteType, SNNote } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback, useEffect, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import ImportPlugin from './Plugins/ImportPlugin/ImportPlugin'
 import { NoteViewController } from '../Controller/NoteViewController'
 import { spaceSeparatedStrings } from '@standardnotes/utils'
-import { useModalState } from '@/Components/Shared/ModalState'
-import Modal from '@/Components/Shared/Modal'
+import Modal, { ModalAction } from '@/Components/Shared/Modal'
 
 const NotePreviewCharLimit = 160
 
@@ -79,11 +78,8 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
     onConvertComplete()
   }, [closeDialog, application, note, onConvertComplete, performConvert])
 
-  const modalState = useModalState({
-    title: 'Convert to Super note',
-    isOpen: true,
-    close: closeDialog,
-    actions: [
+  const modalActions: ModalAction[] = useMemo(
+    () => [
       {
         label: 'Cancel',
         onClick: closeDialog,
@@ -102,14 +98,15 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
         type: 'secondary',
       },
     ],
-  })
+    [closeDialog, confirmConvert, convertAsIs],
+  )
 
   if (isSeamlessConvert) {
     return null
   }
 
   return (
-    <Modal state={modalState}>
+    <Modal title="Convert to Super note" isOpen={true} close={closeDialog} actions={modalActions}>
       <div className="border-b border-border px-4 py-4 text-sm font-normal text-neutral md:py-3">
         The following is a preview of how your note will look when converted to Super. Super notes use a custom format
         under the hood. Converting your note will transition it from plaintext to the custom Super format.

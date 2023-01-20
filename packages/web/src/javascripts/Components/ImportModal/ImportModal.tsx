@@ -2,14 +2,13 @@ import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { ContentType, DecryptedTransferPayload, pluralize, SNTag, TagContent, UuidGenerator } from '@standardnotes/snjs'
 import { Importer } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
-import { useCallback, useReducer, useState } from 'react'
+import { useCallback, useMemo, useReducer, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
 import { useStateRef } from '@/Hooks/useStateRef'
 import { ImportModalFileItem } from './ImportModalFileItem'
 import ImportModalInitialPage from './InitialPage'
 import { ImportModalAction, ImportModalFile, ImportModalState } from './Types'
-import { useModalState } from '../Shared/ModalState'
-import Modal from '../Shared/Modal'
+import Modal, { ModalAction } from '../Shared/Modal'
 
 const reducer = (state: ImportModalState, action: ImportModalAction): ImportModalState => {
   switch (action.type) {
@@ -191,11 +190,8 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
   const importSuccessOrError =
     files.length > 0 && files.every((file) => file.status === 'success' || file.status === 'error')
 
-  const modalState = useModalState({
-    title: 'Import',
-    isOpen: viewControllerManager.isImportModalVisible.get(),
-    close: closeDialog,
-    actions: [
+  const modalActions: ModalAction[] = useMemo(
+    () => [
       {
         label: 'Import',
         type: 'primary',
@@ -210,11 +206,17 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
         mobileSlot: 'left',
       },
     ],
-    dismissOnOverlayClick: files.length === 0,
-  })
+    [closeDialog, importSuccessOrError, isReadyToImport, parseAndImport],
+  )
 
   return (
-    <Modal state={modalState}>
+    <Modal
+      title="Import"
+      isOpen={viewControllerManager.isImportModalVisible.get()}
+      close={closeDialog}
+      actions={modalActions}
+      dismissOnOverlayClick={files.length === 0}
+    >
       <div className="px-4 py-4">
         {!files.length && <ImportModalInitialPage dispatch={dispatch} />}
         {files.length > 0 && (

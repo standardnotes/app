@@ -1,13 +1,8 @@
 import { WebApplication } from '@/Application/Application'
 import { createRef } from 'react'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
-import Button from '@/Components/Button/Button'
 import DecoratedPasswordInput from '../Input/DecoratedPasswordInput'
-import ModalDialog from '../Shared/ModalDialog'
-import ModalDialogLabel from '../Shared/ModalDialogLabel'
-import ModalDialogDescription from '../Shared/ModalDialogDescription'
-import ModalDialogButtons from '../Shared/ModalDialogButtons'
-import MobileModalAction from '../Shared/MobileModalAction'
+import Modal from '../Shared/Modal'
 
 interface Props {
   application: WebApplication
@@ -230,19 +225,27 @@ class PasswordWizard extends AbstractComponent<Props, State> {
   override render() {
     return (
       <div className="sn-component" id="password-wizard">
-        <ModalDialog>
-          <ModalDialogLabel
-            leftMobileButton={<MobileModalAction action={this.dismiss}>Cancel</MobileModalAction>}
-            rightMobileButton={
-              <MobileModalAction action={this.nextStep} disabled={this.state.lockContinue}>
-                {this.state.continueTitle}
-              </MobileModalAction>
-            }
-            closeDialog={this.dismiss}
-          >
-            {this.state.title}
-          </ModalDialogLabel>
-          <ModalDialogDescription>
+        <Modal
+          title={this.state.title}
+          isOpen={true}
+          close={this.dismiss}
+          actions={[
+            {
+              label: 'Cancel',
+              onClick: this.dismiss,
+              type: 'cancel',
+              mobileSlot: 'left',
+            },
+            {
+              label: this.state.continueTitle,
+              onClick: this.nextStep,
+              type: 'primary',
+              mobileSlot: 'right',
+              disabled: this.state.lockContinue,
+            },
+          ]}
+        >
+          <div className="px-4 py-4">
             {this.state.step === Steps.PasswordStep && (
               <div className="flex flex-col pb-1.5">
                 <form>
@@ -295,15 +298,8 @@ class PasswordWizard extends AbstractComponent<Props, State> {
                 </p>
               </div>
             )}
-          </ModalDialogDescription>
-          <div className="hidden md:block">
-            <ModalDialogButtons>
-              <Button primary onClick={this.nextStep} disabled={this.state.lockContinue} className="min-w-20">
-                {this.state.continueTitle}
-              </Button>
-            </ModalDialogButtons>
           </div>
-        </ModalDialog>
+        </Modal>
       </div>
     )
   }

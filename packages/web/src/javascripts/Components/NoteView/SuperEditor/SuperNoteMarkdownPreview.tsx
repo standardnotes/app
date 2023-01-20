@@ -1,13 +1,12 @@
 import { SNNote } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback, useState } from 'react'
+import { FunctionComponent, useCallback, useMemo, useState } from 'react'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import MarkdownPreviewPlugin from './Plugins/MarkdownPreviewPlugin/MarkdownPreviewPlugin'
 import { FileNode } from './Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import { BubbleNode } from './Plugins/ItemBubblePlugin/Nodes/BubbleNode'
 import { copyTextToClipboard } from '../../../Utils/copyTextToClipboard'
-import Modal from '@/Components/Shared/Modal'
-import { useModalState } from '@/Components/Shared/ModalState'
+import Modal, { ModalAction } from '@/Components/Shared/Modal'
 
 type Props = {
   note: SNNote
@@ -30,11 +29,8 @@ export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ note, close
     setMarkdown(markdown)
   }, [])
 
-  const modalState = useModalState({
-    title: 'Markdown Preview',
-    isOpen: true,
-    close: closeDialog,
-    actions: [
+  const modalActions: ModalAction[] = useMemo(
+    () => [
       {
         label: didCopy ? 'Copied' : 'Copy',
         type: 'primary',
@@ -42,10 +38,11 @@ export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ note, close
         mobileSlot: 'left',
       },
     ],
-  })
+    [copy, didCopy],
+  )
 
   return (
-    <Modal state={modalState}>
+    <Modal title="Markdown Preview" isOpen={true} close={closeDialog} actions={modalActions}>
       <div className="relative w-full px-4 py-4">
         <ErrorBoundary>
           <BlocksEditorComposer readonly initialValue={note.text} nodes={[FileNode, BubbleNode]}>

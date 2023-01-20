@@ -5,20 +5,53 @@ import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import { isIOS } from '@/Utils'
 import { AlertDialogOverlay, AlertDialogContent, AlertDialogLabel } from '@reach/alert-dialog'
 import { classNames } from '@standardnotes/snjs'
-import { ReactNode, useEffect, useRef } from 'react'
+import { ReactNode, useEffect, useMemo, useRef } from 'react'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import MobileModalAction from './MobileModalAction'
 import ModalDialogDescription from './ModalDialogDescription'
-import { ModalState } from './ModalState'
+
+export type ModalAction = {
+  label: string
+  type: 'primary' | 'secondary' | 'cancel'
+  onClick: () => void
+  mobileSlot?: 'left' | 'right'
+  hidden?: boolean
+  disabled?: boolean
+}
 
 type Props = {
-  state: ModalState
+  title: string
+  isOpen: boolean
+  close: () => void
+  actions?: ModalAction[]
+  dismissOnOverlayClick?: boolean
   children: ReactNode
 }
 
-const Modal = ({ state, children }: Props) => {
-  const { title, actions, isOpen, dismissOnOverlayClick, close } = state
+const Modal = ({ title, isOpen, close, actions = [], dismissOnOverlayClick = true, children }: Props) => {
+  const sortedActions = useMemo(
+    () =>
+      actions
+        .sort((a, b) => {
+          if (a.type === 'cancel') {
+            return -1
+          }
+          if (b.type === 'cancel') {
+            return 1
+          }
+          if (a.type === 'secondary') {
+            return -1
+          }
+          if (b.type === 'secondary') {
+            return 1
+          }
+          return 0
+        })
+        .filter((action) => !action.hidden),
+    [actions],
+  )
+
   const closeFnRef = useStateRef(close)
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
@@ -93,10 +126,10 @@ const Modal = ({ state, children }: Props) => {
     return null
   }
 
-  const leftSlotAction = actions.find((action) => action.mobileSlot === 'left')
-  const rightSlotAction = actions.find((action) => action.mobileSlot === 'right')
-  const hasNonSlotActions = actions.some((action) => !action.mobileSlot)
-  const hasCancelAction = actions.some((action) => action.type === 'cancel')
+  const leftSlotAction = sortedActions.find((action) => action.mobileSlot === 'left')
+  const rightSlotAction = sortedActions.find((action) => action.mobileSlot === 'right')
+  const hasNonSlotActions = sortedActions.some((action) => !action.mobileSlot)
+  const hasCancelAction = sortedActions.some((action) => action.type === 'cancel')
 
   return (
     <AlertDialogOverlay
@@ -150,7 +183,7 @@ const Modal = ({ state, children }: Props) => {
               >
                 {rightSlotAction.label}
               </MobileModalAction>
-            ) : actions.length === 0 || !hasCancelAction ? (
+            ) : sortedActions.length === 0 || !hasCancelAction ? (
               <MobileModalAction children="Done" action={close} />
             ) : null}
           </div>
@@ -164,7 +197,7 @@ const Modal = ({ state, children }: Props) => {
             hasNonSlotActions ? 'flex' : 'hidden md:flex',
           )}
         >
-          {actions.map((action) => (
+          {sortedActions.map((action) => (
             <Button
               primary={action.type === 'primary'}
               key={action.label}
