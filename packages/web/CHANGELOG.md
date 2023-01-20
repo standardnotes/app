@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.140.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.140.6...@standardnotes/web@3.140.8) (2023-01-20)
+
+### Bug Fixes
+
+* fixed issue with third party editors not loading ([#2174](https://github.com/standardnotes/app/issues/2174)) ([e7214ea](https://github.com/standardnotes/app/commit/e7214ea73ad5d3026d958c79022d2238a4d1cfdc))
+
 ## [3.140.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.140.5...@standardnotes/web@3.140.6) (2023-01-20)
 
 **Note:** Version bump only for package @standardnotes/web
