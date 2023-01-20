@@ -1,4 +1,3 @@
-import { Uuid } from '@standardnotes/common'
 import { remove } from 'lodash'
 import { ImmutablePayloadCollection } from '../../Runtime/Collection/Payload/ImmutablePayloadCollection'
 import { ContentReference } from '../../Abstract/Reference/ContentReference'
@@ -12,7 +11,7 @@ export function PayloadsByUpdatingReferencingPayloadReferences(
   payload: DecryptedPayloadInterface,
   baseCollection: ImmutablePayloadCollection<FullyFormedPayloadInterface>,
   add: FullyFormedPayloadInterface[] = [],
-  removeIds: Uuid[] = [],
+  removeIds: string[] = [],
 ): SyncResolvedPayload[] {
   const referencingPayloads = baseCollection.elementsReferencingElement(payload).filter(isDecryptedPayload)
 

@@ -1,6 +1,5 @@
-import { FeatureDescription, FeatureIdentifier } from '@standardnotes/features'
+import { FeatureIdentifier } from '@standardnotes/features'
 import { SNComponent } from '@standardnotes/models'
-import { RoleName } from '@standardnotes/common'
 
 import { FeatureStatus } from './FeatureStatus'
 import { SetOfflineFeaturesFunctionResponse } from './SetOfflineFeaturesFunctionResponse'
@@ -8,11 +7,11 @@ import { SetOfflineFeaturesFunctionResponse } from './SetOfflineFeaturesFunction
 export interface FeaturesClientInterface {
   downloadExternalFeature(urlOrCode: string): Promise<SNComponent | undefined>
 
-  getUserFeature(featureId: FeatureIdentifier): FeatureDescription | undefined
-
   getFeatureStatus(featureId: FeatureIdentifier): FeatureStatus
 
-  hasMinimumRole(role: RoleName): boolean
+  hasFirstPartySubscription(): boolean
+
+  hasMinimumRole(role: string): boolean
 
   setOfflineFeaturesCode(code: string): Promise<SetOfflineFeaturesFunctionResponse>
 

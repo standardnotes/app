@@ -75,7 +75,7 @@ export class LinkingController extends AbstractViewController {
   }
 
   get isEntitledToNoteLinking() {
-    return !!this.subscriptionController.userSubscription
+    return !!this.subscriptionController.onlineSubscription
   }
 
   setIsLinkingPanelOpen = (open: boolean) => {

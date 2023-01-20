@@ -1,8 +1,8 @@
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { ItemContent } from '../../Content/ItemContent'
 
 export interface TransferPayload<C extends ItemContent = ItemContent> {
-  uuid: Uuid
+  uuid: string
   content_type: ContentType
   content: C | string | undefined
   deleted?: boolean
@@ -19,5 +19,5 @@ export interface TransferPayload<C extends ItemContent = ItemContent> {
   lastSyncBegan?: Date
   lastSyncEnd?: Date
 
-  duplicate_of?: Uuid
+  duplicate_of?: string
 }

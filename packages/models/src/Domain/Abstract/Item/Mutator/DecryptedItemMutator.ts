@@ -2,7 +2,6 @@ import { DecryptedItemInterface } from './../Interfaces/DecryptedItem'
 import { Copy } from '@standardnotes/utils'
 import { MutationType } from '../Types/MutationType'
 import { PrefKey } from '../../../Syncable/UserPrefs/PrefKey'
-import { Uuid } from '@standardnotes/common'
 import { ItemContent } from '../../Content/ItemContent'
 import { AppDataField } from '../Types/AppDataField'
 import { DefaultAppDomain, DomainDataValueType, ItemDomainKey } from '../Types/DefaultAppDomain'
@@ -66,7 +65,7 @@ export class DecryptedItemMutator<C extends ItemContent = ItemContent> extends I
     this.setAppDataItem(AppDataField.UserModifiedDate, date)
   }
 
-  public set conflictOf(conflictOf: Uuid | undefined) {
+  public set conflictOf(conflictOf: string | undefined) {
     this.mutableContent.conflict_of = conflictOf
   }
 

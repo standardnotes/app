@@ -277,7 +277,7 @@ describe('history manager', () => {
       await Factory.safeDeinit(this.application)
     })
 
-    it('response from server should be empty if not signed in', async function () {
+    it('response from server should be failed if not signed in', async function () {
       await this.application.user.signOut()
       this.application = await Factory.createInitAppWithFakeCrypto()
       this.historyManager = this.application.historyManager
@@ -286,8 +286,7 @@ describe('history manager', () => {
       await this.application.syncService.sync(syncOptions)
       const itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: item.uuid })
 
-      expect(itemHistoryOrError.isFailed()).to.equal(false)
-      expect(itemHistoryOrError.getValue().length).to.equal(0)
+      expect(itemHistoryOrError.isFailed()).to.equal(true)
     })
 
     it('create basic history entries 2', async function () {
@@ -295,8 +294,6 @@ describe('history manager', () => {
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
       let itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: item.uuid })
-      expect(itemHistoryOrError.isFailed()).to.equal(false)
-
       let itemHistory = itemHistoryOrError.getValue()
 
       /** Server history should save initial revision */
@@ -305,8 +302,6 @@ describe('history manager', () => {
       /** Sync within 5 seconds (ENV VAR dependend on self-hosted setup), should not create a new entry */
       await Factory.markDirtyAndSyncItem(this.application, item)
       itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: item.uuid })
-      expect(itemHistoryOrError.isFailed()).to.equal(false)
-
       itemHistory = itemHistoryOrError.getValue()
       expect(itemHistory.length).to.equal(1)
 
@@ -322,8 +317,6 @@ describe('history manager', () => {
       )
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
       itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: item.uuid })
-      expect(itemHistoryOrError.isFailed()).to.equal(false)
-
       itemHistory = itemHistoryOrError.getValue()
       expect(itemHistory.length).to.equal(1)
     })
@@ -346,15 +339,11 @@ describe('history manager', () => {
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
       const itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: item.uuid })
-      expect(itemHistoryOrError.isFailed()).to.equal(false)
-
       const itemHistory = itemHistoryOrError.getValue()
       expect(itemHistory.length).to.equal(2)
 
       const oldestEntry = lastElement(itemHistory)
       let revisionFromServerOrError = await this.application.getRevision.execute({ itemUuid: item.uuid, revisionUuid: oldestEntry.uuid })
-      expect(revisionFromServerOrError.isFailed()).to.equal(false)
-
       const revisionFromServer = revisionFromServerOrError.getValue()
       expect(revisionFromServer).to.be.ok
 
@@ -376,12 +365,9 @@ describe('history manager', () => {
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
       const dupeHistoryOrError = await this.application.listRevisions.execute({ itemUuid: dupe.uuid })
-      expect(dupeHistoryOrError.isFailed()).to.equal(false)
       const dupeHistory = dupeHistoryOrError.getValue()
 
       const dupeRevisionOrError = await this.application.getRevision.execute({ itemUuid: dupe.uuid, revisionUuid: dupeHistory[0].uuid })
-      expect(dupeRevisionOrError.isFailed()).to.equal(false)
-
       const dupeRevision = dupeRevisionOrError.getValue()
       expect(dupeRevision.payload.uuid).to.equal(dupe.uuid)
     })
@@ -405,11 +391,9 @@ describe('history manager', () => {
 
       const expectedRevisions = 4
       const noteHistoryOrError = await this.application.listRevisions.execute({ itemUuid: note.uuid })
-      expect(noteHistoryOrError.isFailed()).to.equal(false)
       const noteHistory = noteHistoryOrError.getValue()
 
       const dupeHistoryOrError = await this.application.listRevisions.execute({ itemUuid: dupe.uuid })
-      expect(dupeHistoryOrError.isFailed()).to.equal(false)
       const dupeHistory = dupeHistoryOrError.getValue()
 
       expect(noteHistory.length).to.equal(expectedRevisions)
@@ -432,15 +416,11 @@ describe('history manager', () => {
       await Factory.sleep(Factory.ServerRevisionCreationDelay)
 
       const itemHistoryOrError = await this.application.listRevisions.execute({ itemUuid: dupe.uuid })
-      expect(itemHistoryOrError.isFailed()).to.equal(false)
-
       const itemHistory = itemHistoryOrError.getValue()
       expect(itemHistory.length).to.be.above(1)
       const newestRevision = itemHistory[0]
 
       const fetchedOrError = await this.application.getRevision.execute({ itemUuid: dupe.uuid, revisionUuid: newestRevision.uuid })
-      expect(fetchedOrError.isFailed()).to.equal(false)
-
       const fetched = fetchedOrError.getValue()
       expect(fetched.payload.errorDecrypting).to.not.be.ok
       expect(fetched.payload.content.title).to.equal(changedText)

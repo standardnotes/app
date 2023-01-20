@@ -1,5 +1,3 @@
-import { Uuid } from '@standardnotes/common'
-
 export type RawJwtPayload = {
   jwt?: string
 }
@@ -15,7 +13,7 @@ export type RawSessionPayload = {
 export type RawStorageValue = RawJwtPayload | RawSessionPayload
 
 export type RemoteSession = {
-  uuid: Uuid
+  uuid: string
   updated_at: Date
   device_info: string
   current: boolean

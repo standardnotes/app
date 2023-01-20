@@ -1052,5 +1052,7 @@ describe('online syncing', function () {
     await contextB.sync()
 
     expect(contextB.application.items.allCountableNotesCount()).to.equal(0)
+
+    await contextB.deinit()
   })
 })

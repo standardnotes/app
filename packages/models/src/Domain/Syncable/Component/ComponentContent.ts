@@ -1,5 +1,4 @@
 import { ComponentArea, ComponentPermission } from '@standardnotes/features'
-import { Uuid } from '@standardnotes/common'
 import { ItemContent } from '../../Abstract/Content/ItemContent'
 import { ComponentPackageInfo } from './PackageInfo'
 
@@ -30,7 +29,7 @@ export interface ComponentInterface {
   legacy_url?: string
   isMobileDefault: boolean
   isDeprecated: boolean
-  isExplicitlyEnabledForItem(uuid: Uuid): boolean
+  isExplicitlyEnabledForItem(uuid: string): boolean
 }
 
 export type ComponentContent = ComponentInterface & ItemContent

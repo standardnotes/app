@@ -1,7 +1,7 @@
-import { Either, Uuid } from '@standardnotes/common'
-import { Role } from '@standardnotes/auth'
+import { Either } from '@standardnotes/common'
 import { FilesApiInterface } from '@standardnotes/files'
 import { Session } from '@standardnotes/domain-core'
+import { Role } from '@standardnotes/security'
 
 import { AbstractService } from '../Service/AbstractService'
 
@@ -13,7 +13,7 @@ export enum ApiServiceEvent {
 }
 
 export type MetaReceivedData = {
-  userUuid: Uuid
+  userUuid: string
   userRoles: Role[]
 }
 

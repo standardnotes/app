@@ -1,12 +1,12 @@
 import { SyncResolvedParams, SyncResolvedPayload } from './../../../Runtime/Deltas/Utilities/SyncResolvedPayload'
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { ItemContent } from '../../Content/ItemContent'
 import { TransferPayload } from '../../TransferPayload/Interfaces/TransferPayload'
 import { PayloadSource } from '../Types/PayloadSource'
 
 export interface PayloadInterface<T extends TransferPayload = TransferPayload, C extends ItemContent = ItemContent> {
   readonly source: PayloadSource
-  readonly uuid: Uuid
+  readonly uuid: string
   readonly content_type: ContentType
   content: C | string | undefined
   deleted: boolean
@@ -26,7 +26,7 @@ export interface PayloadInterface<T extends TransferPayload = TransferPayload, C
   readonly lastSyncBegan?: Date
   readonly lastSyncEnd?: Date
 
-  readonly duplicate_of?: Uuid
+  readonly duplicate_of?: string
 
   /**
    * "Ejected" means a payload for

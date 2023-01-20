@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import {
   SNNote,
   FileItem,
@@ -129,14 +129,14 @@ export interface ItemsClientInterface {
   /**
    * Finds an item by UUID.
    */
-  findItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: Uuid): T | undefined
+  findItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T | undefined
 
   /**
    * Finds an item by predicate.
    */
-  findItems<T extends DecryptedItemInterface>(uuids: Uuid[]): T[]
+  findItems<T extends DecryptedItemInterface>(uuids: string[]): T[]
 
-  findSureItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: Uuid): T
+  findSureItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T
 
   /**
    * Finds an item by predicate.

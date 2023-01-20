@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/snjs",
-  "version": "2.164.0",
+  "version": "2.164.6",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -36,14 +36,14 @@
     "@babel/core": "*",
     "@babel/preset-env": "*",
     "@standardnotes/api": "workspace:*",
-    "@standardnotes/common": "^1.45.0",
-    "@standardnotes/domain-events": "^2.88.0",
+    "@standardnotes/common": "^1.46.4",
+    "@standardnotes/domain-events": "^2.106.0",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/features": "workspace:*",
     "@standardnotes/files": "workspace:*",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
-    "@standardnotes/security": "^1.7.0",
+    "@standardnotes/security": "^1.7.5",
     "@standardnotes/services": "workspace:*",
     "@standardnotes/settings": "^1.19.0",
     "@standardnotes/sncrypto-common": "workspace:*",
@@ -86,6 +86,6 @@
     "webpack-merge": "^5.8.0"
   },
   "dependencies": {
-    "@standardnotes/domain-core": "^1.11.0"
+    "@standardnotes/domain-core": "^1.11.1"
   }
 }

@@ -1,6 +1,4 @@
-import { Uuid } from '@standardnotes/common'
-
 export type SubscriptionInviteAcceptRequestParams = {
-  inviteUuid: Uuid
+  inviteUuid: string
   [additionalParam: string]: unknown
 }

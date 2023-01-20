@@ -1,4 +1,4 @@
-import { Uuid, WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
+import { WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
 import { Workspace, WorkspaceUser } from '@standardnotes/api'
 
 export interface WorkspaceClientInterface {
@@ -11,20 +11,20 @@ export interface WorkspaceClientInterface {
   }): Promise<{ uuid: string } | null>
   inviteToWorkspace(dto: {
     inviteeEmail: string
-    workspaceUuid: Uuid
+    workspaceUuid: string
     accessLevel: WorkspaceAccessLevel
   }): Promise<{ uuid: string } | null>
   acceptInvite(dto: {
-    inviteUuid: Uuid
-    userUuid: Uuid
+    inviteUuid: string
+    userUuid: string
     publicKey: string
     encryptedPrivateKey: string
   }): Promise<{ success: boolean }>
   listWorkspaces(): Promise<{ ownedWorkspaces: Array<Workspace>; joinedWorkspaces: Array<Workspace> }>
-  listWorkspaceUsers(dto: { workspaceUuid: Uuid }): Promise<{ users: Array<WorkspaceUser> }>
+  listWorkspaceUsers(dto: { workspaceUuid: string }): Promise<{ users: Array<WorkspaceUser> }>
   initiateKeyshare(dto: {
-    workspaceUuid: Uuid
-    userUuid: Uuid
+    workspaceUuid: string
+    userUuid: string
     encryptedWorkspaceKey: string
   }): Promise<{ success: boolean }>
 }

@@ -645,6 +645,8 @@ describe('keys', function () {
 
     expect(Object.keys(clientBUndecryptables).length).to.equal(1)
     expect(Object.keys(clientAUndecryptables).length).to.equal(0)
+
+    await contextB.deinit()
   })
 
   describe('changing password on 003 client while signed into 004 client should', function () {

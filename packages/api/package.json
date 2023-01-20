@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/api",
-  "version": "1.24.0",
+  "version": "1.24.5",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -36,12 +36,12 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.45.0",
-    "@standardnotes/domain-core": "^1.11.0",
+    "@standardnotes/common": "^1.46.4",
+    "@standardnotes/domain-core": "^1.11.1",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
-    "@standardnotes/security": "^1.7.0",
+    "@standardnotes/security": "^1.7.5",
     "@standardnotes/utils": "workspace:*",
     "reflect-metadata": "^0.1.13"
   }

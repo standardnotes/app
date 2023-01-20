@@ -1,4 +1,4 @@
-import { UserRequestType, Uuid } from '@standardnotes/common'
+import { UserRequestType } from '@standardnotes/common'
 import { PreferenceId } from './../Preferences/PreferenceId'
 import { DemoParams } from './Params/DemoParams'
 import { OnboardingParams } from './Params/OnboardingParams'
@@ -41,7 +41,7 @@ export class RouteParser implements RouteParserInterface {
     this.checkForProperRouteType(RouteType.AcceptSubscriptionInvite)
 
     return {
-      inviteUuid: this.searchParams.get(RootQueryParam.AcceptSubscriptionInvite) as Uuid,
+      inviteUuid: this.searchParams.get(RootQueryParam.AcceptSubscriptionInvite) as string,
     }
   }
 

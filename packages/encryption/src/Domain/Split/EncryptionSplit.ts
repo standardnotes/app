@@ -1,4 +1,3 @@
-import { Uuid } from '@standardnotes/common'
 import { DecryptedPayloadInterface, EncryptedPayloadInterface, PayloadInterface } from '@standardnotes/models'
 import { EncryptionTypeSplit } from './EncryptionTypeSplit'
 import { KeyedDecryptionSplit } from './KeyedDecryptionSplit'
@@ -36,7 +35,7 @@ export function CreateDecryptionSplitWithKeyLookup(
   return result
 }
 
-export function FindPayloadInEncryptionSplit(uuid: Uuid, split: KeyedEncryptionSplit): DecryptedPayloadInterface {
+export function FindPayloadInEncryptionSplit(uuid: string, split: KeyedEncryptionSplit): DecryptedPayloadInterface {
   const inUsesItemsKey = split.usesItemsKey?.items.find((item: PayloadInterface) => item.uuid === uuid)
   if (inUsesItemsKey) {
     return inUsesItemsKey
@@ -60,7 +59,7 @@ export function FindPayloadInEncryptionSplit(uuid: Uuid, split: KeyedEncryptionS
   throw Error('Cannot find payload in encryption split')
 }
 
-export function FindPayloadInDecryptionSplit(uuid: Uuid, split: KeyedDecryptionSplit): EncryptedPayloadInterface {
+export function FindPayloadInDecryptionSplit(uuid: string, split: KeyedDecryptionSplit): EncryptedPayloadInterface {
   const inUsesItemsKey = split.usesItemsKey?.items.find((item: PayloadInterface) => item.uuid === uuid)
   if (inUsesItemsKey) {
     return inUsesItemsKey

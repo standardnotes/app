@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { InvitationStatus, Uuid } from '@standardnotes/snjs'
+import { InvitationStatus } from '@standardnotes/snjs'
 
 import { SubtitleLight, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
@@ -25,7 +25,7 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
     [InvitationStatus.Declined, InvitationStatus.Canceled].includes(invitation.status),
   )
 
-  const handleCancel = async (invitationUuid: Uuid) => {
+  const handleCancel = async (invitationUuid: string) => {
     if (lockContinue) {
       application.alertService.alert('Cancelation already in progress.').catch(console.error)
 

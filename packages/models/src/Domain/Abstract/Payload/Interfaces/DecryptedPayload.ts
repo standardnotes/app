@@ -1,4 +1,3 @@
-import { Uuid } from '@standardnotes/common'
 import { DecryptedTransferPayload } from './../../TransferPayload/Interfaces/DecryptedTransferPayload'
 import { ItemContent } from '../../Content/ItemContent'
 import { ContentReference } from '../../Reference/ContentReference'
@@ -11,5 +10,5 @@ export interface DecryptedPayloadInterface<C extends ItemContent = ItemContent>
 
   ejected(): DecryptedTransferPayload<C>
   get references(): ContentReference[]
-  getReference(uuid: Uuid): ContentReference
+  getReference(uuid: string): ContentReference
 }

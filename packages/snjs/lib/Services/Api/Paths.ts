@@ -1,4 +1,3 @@
-import { Uuid } from '@standardnotes/common'
 import { SettingName, SubscriptionSettingName } from '@standardnotes/settings'
 
 const FilesPaths = {
@@ -12,7 +11,7 @@ const FilesPaths = {
 
 const UserPaths = {
   changeCredentials: (userUuid: string) => `/v1/users/${userUuid}/attributes/credentials`,
-  deleteAccount: (userUuid: Uuid) => `/v1/users/${userUuid}`,
+  deleteAccount: (userUuid: string) => `/v1/users/${userUuid}`,
   keyParams: '/v1/login-params',
   refreshSession: '/v1/sessions/refresh',
   register: '/v1/users',
@@ -24,23 +23,23 @@ const UserPaths = {
 
 const ItemsPaths = {
   checkIntegrity: '/v1/items/check-integrity',
-  getSingleItem: (uuid: Uuid) => `/v1/items/${uuid}`,
+  getSingleItem: (uuid: string) => `/v1/items/${uuid}`,
   itemRevisions: (itemUuid: string) => `/v1/items/${itemUuid}/revisions`,
   itemRevision: (itemUuid: string, revisionUuid: string) => `/v1/items/${itemUuid}/revisions/${revisionUuid}`,
   sync: '/v1/items',
 }
 
 const SettingsPaths = {
-  settings: (userUuid: Uuid) => `/v1/users/${userUuid}/settings`,
-  setting: (userUuid: Uuid, settingName: SettingName) => `/v1/users/${userUuid}/settings/${settingName}`,
-  subscriptionSetting: (userUuid: Uuid, settingName: SubscriptionSettingName) =>
+  settings: (userUuid: string) => `/v1/users/${userUuid}/settings`,
+  setting: (userUuid: string, settingName: SettingName) => `/v1/users/${userUuid}/settings/${settingName}`,
+  subscriptionSetting: (userUuid: string, settingName: SubscriptionSettingName) =>
     `/v1/users/${userUuid}/subscription-settings/${settingName}`,
 }
 
 const SubscriptionPaths = {
   offlineFeatures: '/v1/offline/features',
   purchase: '/v1/purchase',
-  subscription: (userUuid: Uuid) => `/v1/users/${userUuid}/subscription`,
+  subscription: (userUuid: string) => `/v1/users/${userUuid}/subscription`,
   subscriptionTokens: '/v1/subscription-tokens',
   userFeatures: (userUuid: string) => `/v1/users/${userUuid}/features`,
 }
@@ -55,7 +54,7 @@ const UserPathsV2 = {
 }
 
 const ListedPaths = {
-  listedRegistration: (userUuid: Uuid) => `/v1/users/${userUuid}/integrations/listed`,
+  listedRegistration: (userUuid: string) => `/v1/users/${userUuid}/integrations/listed`,
 }
 
 export const Paths = {

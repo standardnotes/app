@@ -1160,8 +1160,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.apiService.isThirdPartyHostUsed()
   }
 
-  public getCloudProviderIntegrationUrl(cloudProviderName: Settings.CloudProvider, isDevEnvironment: boolean): string {
-    return this.settingsService.getCloudProviderIntegrationUrl(cloudProviderName, isDevEnvironment)
+  public getCloudProviderIntegrationUrl(cloudProviderName: Settings.CloudProvider): string {
+    return this.settingsService.getCloudProviderIntegrationUrl(cloudProviderName)
   }
 
   private constructServices() {
