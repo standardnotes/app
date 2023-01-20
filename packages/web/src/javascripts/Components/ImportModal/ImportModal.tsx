@@ -215,14 +215,16 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
 
   return (
     <Modal state={modalState}>
-      {!files.length && <ImportModalInitialPage dispatch={dispatch} />}
-      {files.length > 0 && (
-        <div className="divide-y divide-border">
-          {files.map((file) => (
-            <ImportModalFileItem file={file} key={file.id} dispatch={dispatch} importer={importer} />
-          ))}
-        </div>
-      )}
+      <div className="px-4 py-4">
+        {!files.length && <ImportModalInitialPage dispatch={dispatch} />}
+        {files.length > 0 && (
+          <div className="divide-y divide-border">
+            {files.map((file) => (
+              <ImportModalFileItem file={file} key={file.id} dispatch={dispatch} importer={importer} />
+            ))}
+          </div>
+        )}
+      </div>
     </Modal>
   )
 }

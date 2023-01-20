@@ -2,15 +2,12 @@ import { SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useState } from 'react'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
-import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
-import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
-import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
-import Button from '@/Components/Button/Button'
 import MarkdownPreviewPlugin from './Plugins/MarkdownPreviewPlugin/MarkdownPreviewPlugin'
 import { FileNode } from './Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import { BubbleNode } from './Plugins/ItemBubblePlugin/Nodes/BubbleNode'
 import { copyTextToClipboard } from '../../../Utils/copyTextToClipboard'
-import MobileModalAction from '@/Components/Shared/MobileModalAction'
+import Modal from '@/Components/Shared/Modal'
+import { useModalState } from '@/Components/Shared/ModalState'
 
 type Props = {
   note: SNNote
@@ -33,37 +30,35 @@ export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ note, close
     setMarkdown(markdown)
   }, [])
 
+  const modalState = useModalState({
+    title: 'Markdown Preview',
+    isOpen: true,
+    close: closeDialog,
+    actions: [
+      {
+        label: didCopy ? 'Copied' : 'Copy',
+        type: 'primary',
+        onClick: copy,
+        mobileSlot: 'left',
+      },
+    ],
+  })
+
   return (
-    <>
-      <ModalDialogLabel
-        leftMobileButton={<MobileModalAction action={copy}>Copy</MobileModalAction>}
-        closeDialog={closeDialog}
-      >
-        Markdown Preview
-      </ModalDialogLabel>
-      <ModalDialogDescription>
-        <div className="relative w-full">
-          <ErrorBoundary>
-            <BlocksEditorComposer readonly initialValue={note.text} nodes={[FileNode, BubbleNode]}>
-              <BlocksEditor
-                readonly
-                className="relative resize-none text-base focus:shadow-none focus:outline-none"
-                spellcheck={note.spellcheck}
-              >
-                <MarkdownPreviewPlugin onMarkdown={onMarkdown} />
-              </BlocksEditor>
-            </BlocksEditorComposer>
-          </ErrorBoundary>
-        </div>
-      </ModalDialogDescription>
-      <div className="hidden md:block">
-        <ModalDialogButtons>
-          <Button onClick={closeDialog}>Close</Button>
-          <Button primary onClick={copy}>
-            {didCopy ? 'Copied' : 'Copy'}
-          </Button>
-        </ModalDialogButtons>
+    <Modal state={modalState}>
+      <div className="relative w-full px-4 py-4">
+        <ErrorBoundary>
+          <BlocksEditorComposer readonly initialValue={note.text} nodes={[FileNode, BubbleNode]}>
+            <BlocksEditor
+              readonly
+              className="relative resize-none text-base focus:shadow-none focus:outline-none"
+              spellcheck={note.spellcheck}
+            >
+              <MarkdownPreviewPlugin onMarkdown={onMarkdown} />
+            </BlocksEditor>
+          </BlocksEditorComposer>
+        </ErrorBoundary>
       </div>
-    </>
+    </Modal>
   )
 }

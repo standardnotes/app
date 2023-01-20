@@ -40,7 +40,6 @@ import { getPlaintextFontSize } from '@/Utils/getPlaintextFontSize'
 import ReadonlyPlugin from './Plugins/ReadonlyPlugin/ReadonlyPlugin'
 import { SuperSearchContextProvider } from './Plugins/SearchPlugin/Context'
 import { SearchPlugin } from './Plugins/SearchPlugin/SearchPlugin'
-import ModalDialog from '@/Components/Shared/ModalDialog'
 
 const NotePreviewCharLimit = 160
 
@@ -206,9 +205,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
             </BlocksEditorComposer>
           </FilesControllerProvider>
         </LinkingControllerProvider>
-        <ModalDialog isOpen={showMarkdownPreview} onDismiss={closeMarkdownPreview}>
-          <SuperNoteMarkdownPreview note={note.current} closeDialog={closeMarkdownPreview} />
-        </ModalDialog>
+        {showMarkdownPreview && <SuperNoteMarkdownPreview note={note.current} closeDialog={closeMarkdownPreview} />}
       </ErrorBoundary>
     </div>
   )
