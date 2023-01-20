@@ -40,7 +40,7 @@ const ModalDialogLabel: FunctionComponent<Props> = ({
   return (
     <AlertDialogLabel
       className={classNames(
-        'flex flex-shrink-0 items-center justify-between rounded-t border-b border-solid border-border bg-default py-2.5 px-1 text-text md:px-4.5 md:py-3',
+        'flex flex-shrink-0 items-center justify-between rounded-t border-b border-solid border-border bg-default py-1.5 px-1 text-text md:px-4.5 md:py-3',
         isIOS() && 'pt-safe-top',
         className,
       )}
