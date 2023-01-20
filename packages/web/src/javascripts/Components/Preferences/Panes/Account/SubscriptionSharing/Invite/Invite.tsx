@@ -10,9 +10,10 @@ import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionC
 
 import InviteForm from './InviteForm'
 import InviteSuccess from './InviteSuccess'
+import MobileModalAction from '@/Components/Shared/MobileModalAction'
 
 enum SubmitButtonTitles {
-  Default = 'Send Invite',
+  Default = 'Send',
   Sending = 'Sending...',
   Finish = 'Finish',
 }
@@ -110,14 +111,22 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
 
   return (
     <>
-      <ModalDialogLabel closeDialog={handleDialogClose}>Share your Subscription</ModalDialogLabel>
+      <ModalDialogLabel
+        leftMobileButton={<MobileModalAction action={handleDialogClose}>Cancel</MobileModalAction>}
+        rightMobileButton={<MobileModalAction action={handleSubmit}>{submitButtonTitle}</MobileModalAction>}
+        closeDialog={handleDialogClose}
+      >
+        Share your Subscription
+      </ModalDialogLabel>
       <ModalDialogDescription className="px-4.5">
         {currentStep === Steps.InitialStep && <InviteForm setInviteeEmail={setInviteeEmail} />}
         {currentStep === Steps.FinishStep && <InviteSuccess />}
       </ModalDialogDescription>
-      <ModalDialogButtons className="px-4.5">
-        <Button className="min-w-20" primary label={submitButtonTitle} onClick={handleSubmit} />
-      </ModalDialogButtons>
+      <div className="hidden md:block">
+        <ModalDialogButtons className="px-4.5">
+          <Button className="min-w-20" primary label={submitButtonTitle} onClick={handleSubmit} />
+        </ModalDialogButtons>
+      </div>
     </>
   )
 }

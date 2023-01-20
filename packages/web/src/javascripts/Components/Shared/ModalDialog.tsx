@@ -33,7 +33,7 @@ const ModalDialog = ({ children, isOpen, onDismiss, className }: Props) => {
       <AlertDialogContent
         tabIndex={0}
         className={classNames(
-          'm-0 flex h-full w-full flex-col border-solid border-border bg-default p-0 shadow-main md:max-h-[85vh] md:w-160 md:rounded md:border',
+          'm-0 flex w-full flex-col border-solid border-border bg-default p-0 shadow-main md:max-h-[85vh] md:w-160 md:rounded md:border',
           className,
         )}
       >
