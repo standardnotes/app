@@ -61,6 +61,7 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
     identifier: FeatureIdentifier.DeprecatedMarkdownVisualEditor,
     note_type: NoteType.Markdown,
     file_type: 'md',
+    deprecated: true,
     permission_name: PermissionName.MarkdownVisualEditor,
     spellcheckControl: true,
     description:
