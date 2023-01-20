@@ -584,19 +584,6 @@ export class SNFeaturesService
       return FeatureStatus.NoUserSubscription
     }
 
-    const featureFromServer = this.getFeatureThatOriginallyCameFromServer(featureId)
-    if (featureFromServer) {
-      const expired =
-        featureFromServer.expires_at && new Date(featureFromServer.expires_at).getTime() < new Date().getTime()
-      if (expired) {
-        if (!this.rolesToUseForFeatureCheck().includes(featureFromServer.role_name as string)) {
-          return FeatureStatus.NotInCurrentPlan
-        } else {
-          return FeatureStatus.InCurrentPlanButExpired
-        }
-      }
-    }
-
     if (nativeFeature) {
       if (!this.hasFirstPartySubscription()) {
         return FeatureStatus.NotInCurrentPlan
@@ -610,8 +597,6 @@ export class SNFeaturesService
         if (!hasRole) {
           return FeatureStatus.NotInCurrentPlan
         }
-      } else if (featureFromServer && !roles.includes(featureFromServer.role_name as string)) {
-        return FeatureStatus.NotInCurrentPlan
       }
     }
 
