@@ -917,7 +917,7 @@ describe('online conflict handling', function () {
     await this.sharedFinalAssertions()
   })
 
-  it.only('conflicting should not over resolve', async function () {
+  it('conflicting should not over resolve', async function () {
     /**
      * Before refactoring to use dirtyIndex instead of dirtiedDate, sometimes an item could be dirtied
      * and begin sync at the exact same millisecond count (at least in the tests). In which case, the item
