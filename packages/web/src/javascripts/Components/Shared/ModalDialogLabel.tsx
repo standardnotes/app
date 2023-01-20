@@ -44,7 +44,10 @@ const ModalDialogLabel: FunctionComponent<Props> = ({ children, closeDialog, cla
             <Icon type="close" />
           </button>
         </div>
-        <button className="text-base font-semibold active:shadow-none active:outline-none" onClick={closeDialog}>
+        <button
+          className="text-base font-medium text-info active:shadow-none active:outline-none"
+          onClick={closeDialog}
+        >
           Done
         </button>
       </div>
