@@ -40,18 +40,16 @@ const ModalDialogLabel: FunctionComponent<Props> = ({
   return (
     <AlertDialogLabel
       className={classNames(
-        'flex flex-shrink-0 items-center justify-between rounded-t border-b border-solid border-border bg-default py-2.5 px-3 text-text md:px-4.5 md:py-3',
+        'flex flex-shrink-0 items-center justify-between rounded-t border-b border-solid border-border bg-default py-2.5 px-1 text-text md:px-4.5 md:py-3',
         isIOS() && 'pt-safe-top',
         className,
       )}
     >
-      <div className="flex w-full flex-row items-center justify-between">
+      <div className="grid w-full grid-cols-[0.35fr_1fr_0.35fr] flex-row items-center justify-between gap-2 md:flex md:gap-0">
         {leftMobileButton ? leftMobileButton : <div className="md:hidden" />}
         <div
           className={classNames(
-            'overflow-hidden text-ellipsis whitespace-nowrap text-base font-semibold text-text md:flex-grow md:text-lg',
-            leftMobileButton && 'ml-4 md:ml-0',
-            'mr-4 md:mr-0',
+            'overflow-hidden text-ellipsis whitespace-nowrap text-center text-base font-semibold text-text md:flex-grow md:text-left md:text-lg',
           )}
         >
           {children}
