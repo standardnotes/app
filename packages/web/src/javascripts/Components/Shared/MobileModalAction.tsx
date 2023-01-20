@@ -11,7 +11,7 @@ const MobileModalAction = ({ children, action, type = 'submit', className, ...pr
   return (
     <button
       className={classNames(
-        'py-1 text-base font-medium active:shadow-none active:outline-none disabled:text-neutral md:hidden',
+        'py-1 px-1 text-base font-medium active:shadow-none active:outline-none disabled:text-neutral md:hidden',
         type === 'submit' ? 'text-info' : 'text-danger',
         className,
       )}

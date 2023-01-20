@@ -7,6 +7,7 @@ import ModalDialog from '../Shared/ModalDialog'
 import ModalDialogLabel from '../Shared/ModalDialogLabel'
 import ModalDialogDescription from '../Shared/ModalDialogDescription'
 import ModalDialogButtons from '../Shared/ModalDialogButtons'
+import MobileModalAction from '../Shared/MobileModalAction'
 
 interface Props {
   application: WebApplication
@@ -230,7 +231,17 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     return (
       <div className="sn-component" id="password-wizard">
         <ModalDialog>
-          <ModalDialogLabel closeDialog={this.dismiss}>{this.state.title}</ModalDialogLabel>
+          <ModalDialogLabel
+            leftMobileButton={<MobileModalAction action={this.dismiss}>Cancel</MobileModalAction>}
+            rightMobileButton={
+              <MobileModalAction action={this.nextStep} disabled={this.state.lockContinue}>
+                {this.state.continueTitle}
+              </MobileModalAction>
+            }
+            closeDialog={this.dismiss}
+          >
+            {this.state.title}
+          </ModalDialogLabel>
           <ModalDialogDescription>
             {this.state.step === Steps.PasswordStep && (
               <div className="flex flex-col pb-1.5">
@@ -285,11 +296,13 @@ class PasswordWizard extends AbstractComponent<Props, State> {
               </div>
             )}
           </ModalDialogDescription>
-          <ModalDialogButtons>
-            <Button primary onClick={this.nextStep} disabled={this.state.lockContinue} className="min-w-20">
-              {this.state.continueTitle}
-            </Button>
-          </ModalDialogButtons>
+          <div className="hidden md:block">
+            <ModalDialogButtons>
+              <Button primary onClick={this.nextStep} disabled={this.state.lockContinue} className="min-w-20">
+                {this.state.continueTitle}
+              </Button>
+            </ModalDialogButtons>
+          </div>
         </ModalDialog>
       </div>
     )
