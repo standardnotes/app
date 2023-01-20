@@ -147,7 +147,7 @@ describe('featuresService', () => {
 
       const manager = createManager(Environment.Desktop, Platform.MacDesktop)
       expect(
-        manager.areRequestedPermissionsValid(nativeComponent(FeatureIdentifier.MarkdownVisualEditor), permissions),
+        manager.areRequestedPermissionsValid(nativeComponent(FeatureIdentifier.MarkdownProEditor), permissions),
       ).toEqual(true)
     })
 
