@@ -1,9 +1,11 @@
 import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
 import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
+import { useStateRef } from '@/Hooks/useStateRef'
+import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import { isIOS } from '@/Utils'
 import { AlertDialogOverlay, AlertDialogContent, AlertDialogLabel } from '@reach/alert-dialog'
 import { classNames } from '@standardnotes/snjs'
-import { ReactNode, useRef } from 'react'
+import { ReactNode, useEffect, useRef } from 'react'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import MobileModalAction from './MobileModalAction'
@@ -17,6 +19,7 @@ type Props = {
 
 const Modal = ({ state, children }: Props) => {
   const { title, actions, isOpen, dismissOnOverlayClick, close } = state
+  const closeFnRef = useStateRef(close)
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
@@ -71,6 +74,20 @@ const Modal = ({ state, children }: Props) => {
   )
 
   const ldRef = useRef<HTMLButtonElement>(null)
+
+  const addAndroidBackHandler = useAndroidBackHandler()
+
+  useEffect(() => {
+    const removeListener = addAndroidBackHandler(() => {
+      closeFnRef.current()
+      return true
+    })
+    return () => {
+      if (removeListener) {
+        removeListener()
+      }
+    }
+  }, [addAndroidBackHandler, closeFnRef])
 
   if (!isMounted) {
     return null
