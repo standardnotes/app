@@ -28,7 +28,13 @@ function createFileInputOrReturnExisting(): HTMLInputElement {
   fileInput = document.createElement('input')
   fileInput.id = FileInputId
   fileInput.type = 'file'
-  fileInput.className = 'absolute top-0 left-0 -z-50 h-px w-px opacity-0'
+  fileInput.style.position = 'absolute'
+  fileInput.style.top = '0'
+  fileInput.style.left = '0'
+  fileInput.style.height = '1px'
+  fileInput.style.width = '1px'
+  fileInput.style.opacity = '0'
+  fileInput.style.zIndex = '-50'
   fileInput.multiple = true
   document.body.appendChild(fileInput)
 
