@@ -1,8 +1,6 @@
-import { Uuid } from '@standardnotes/common'
-
 export type WorkspaceKeyshareInitiatingRequestParams = {
-  userUuid: Uuid
-  workspaceUuid: Uuid
+  userUuid: string
+  workspaceUuid: string
   encryptedWorkspaceKey: string
   [additionalParam: string]: unknown
 }

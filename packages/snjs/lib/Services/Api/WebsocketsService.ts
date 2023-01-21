@@ -80,7 +80,7 @@ export class SNWebSocketsService extends AbstractService<WebSocketsServiceEvent,
 
       return response.data.token
     } catch (error) {
-      console.error((error as Error).message)
+      console.error('Caught error:', (error as Error).message)
 
       return undefined
     }

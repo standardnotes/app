@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/features",
-  "version": "1.58.0",
+  "version": "1.58.5",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -25,9 +25,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "@standardnotes/auth": "^3.19.4",
-    "@standardnotes/common": "^1.45.0",
-    "@standardnotes/security": "^1.7.0",
+    "@standardnotes/common": "^1.46.4",
+    "@standardnotes/domain-core": "^1.11.1",
+    "@standardnotes/security": "^1.7.5",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {

@@ -99,7 +99,7 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
               <Subtitle>Disable sign-in notification emails</Subtitle>
               <Text>
                 Disables email notifications when a new sign-in occurs on your account. (Email notifications are
-                available to paid subscribers).
+                available only to paid subscribers).
               </Text>
             </div>
             {isLoading ? (

@@ -1,5 +1,5 @@
 import { removeFromArray } from '@standardnotes/utils'
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { isTag, SNTag } from '../../../Syncable/Tag/Tag'
 import { SNIndex } from '../../Index/SNIndex'
 import { ItemCollection } from './ItemCollection'
@@ -7,12 +7,12 @@ import { ItemDelta } from '../../Index/ItemDelta'
 import { isDecryptedItem, ItemInterface } from '../../../Abstract/Item'
 
 type AllNotesUuidSignifier = undefined
-export type TagItemCountChangeObserver = (tagUuid: Uuid | AllNotesUuidSignifier) => void
+export type TagItemCountChangeObserver = (tagUuid: string | AllNotesUuidSignifier) => void
 
 export class TagItemsIndex implements SNIndex {
-  private tagToItemsMap: Partial<Record<Uuid, Set<Uuid>>> = {}
-  private allCountableItems = new Set<Uuid>()
-  private countableItemsByType = new Map<ContentType, Set<Uuid>>()
+  private tagToItemsMap: Partial<Record<string, Set<string>>> = {}
+  private allCountableItems = new Set<string>()
+  private countableItemsByType = new Map<ContentType, Set<string>>()
 
   constructor(private collection: ItemCollection, public observers: TagItemCountChangeObserver[] = []) {}
 
@@ -32,7 +32,7 @@ export class TagItemsIndex implements SNIndex {
     }
   }
 
-  private notifyObservers(tagUuid: Uuid | undefined) {
+  private notifyObservers(tagUuid: string | undefined) {
     for (const observer of this.observers) {
       observer(tagUuid)
     }
@@ -119,7 +119,7 @@ export class TagItemsIndex implements SNIndex {
     }
   }
 
-  private setForTag(uuid: Uuid): Set<Uuid> {
+  private setForTag(uuid: string): Set<string> {
     let set = this.tagToItemsMap[uuid]
     if (!set) {
       set = new Set()

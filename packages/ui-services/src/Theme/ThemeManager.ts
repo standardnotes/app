@@ -1,5 +1,5 @@
 import { dismissToast, ToastType, addTimedToast } from '@standardnotes/toast'
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import {
   CreateDecryptedLocalStorageContextPayload,
   LocalStorageDecryptedContextualPayload,
@@ -23,7 +23,7 @@ const TimeBeforeApplyingColorScheme = 5
 const DefaultThemeIdentifier = 'Default'
 
 export class ThemeManager extends AbstractService {
-  private activeThemes: Uuid[] = []
+  private activeThemes: string[] = []
   private unregisterDesktop?: () => void
   private unregisterStream!: () => void
   private lastUseDeviceThemeSettings = false

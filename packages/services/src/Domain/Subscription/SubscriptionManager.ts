@@ -3,7 +3,6 @@ import { SubscriptionApiServiceInterface } from '@standardnotes/api'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { SubscriptionClientInterface } from './SubscriptionClientInterface'
-import { Uuid } from '@standardnotes/common'
 import { AppleIAPReceipt } from './AppleIAPReceipt'
 
 export class SubscriptionManager extends AbstractService implements SubscriptionClientInterface {
@@ -48,7 +47,7 @@ export class SubscriptionManager extends AbstractService implements Subscription
     }
   }
 
-  async cancelInvitation(inviteUuid: Uuid): Promise<boolean> {
+  async cancelInvitation(inviteUuid: string): Promise<boolean> {
     try {
       const result = await this.subscriptionApiService.cancelInvite(inviteUuid)
 

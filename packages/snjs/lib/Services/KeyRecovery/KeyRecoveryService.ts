@@ -15,7 +15,7 @@ import { DiskStorageService } from '../Storage/DiskStorageService'
 import { PayloadManager } from '../Payloads/PayloadManager'
 import { ChallengeService } from '../Challenge'
 import { SNApiService } from '@Lib/Services/Api/ApiService'
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { ItemManager } from '../Items/ItemManager'
 import { removeFromArray, Uuids } from '@standardnotes/utils'
 import { ClientDisplayableError, KeyParamsResponse } from '@standardnotes/responses'
@@ -240,7 +240,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
     this.persistUndecryptables(record)
   }
 
-  private removeFromUndecryptables(keyIds: Uuid[]) {
+  private removeFromUndecryptables(keyIds: string[]) {
     const record = this.getUndecryptables()
 
     for (const id of keyIds) {

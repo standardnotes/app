@@ -1,4 +1,4 @@
-import { Uuid, WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
+import { WorkspaceAccessLevel, WorkspaceType } from '@standardnotes/common'
 
 import { ErrorMessage } from '../../Error/ErrorMessage'
 import { ApiCallError } from '../../Error/ApiCallError'
@@ -96,7 +96,7 @@ export class WorkspaceApiService implements WorkspaceApiServiceInterface {
 
   async inviteToWorkspace(dto: {
     inviteeEmail: string
-    workspaceUuid: Uuid
+    workspaceUuid: string
     accessLevel: WorkspaceAccessLevel
   }): Promise<WorkspaceInvitationResponse> {
     this.lockOperation(WorkspaceApiOperations.Inviting)

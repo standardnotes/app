@@ -1,4 +1,3 @@
-import { Uuid } from '@standardnotes/common'
 import { FileDownloadProgress } from '../Types/FileDownloadProgress'
 import { FileBackupRecord, FileBackupsMapping } from './FileBackupsMapping'
 
@@ -8,7 +7,7 @@ export type FileBackupReadChunkResponse = { chunk: Uint8Array; isLast: boolean; 
 export interface FileBackupsDevice {
   getFilesBackupsMappingFile(): Promise<FileBackupsMapping>
   saveFilesBackupsFile(
-    uuid: Uuid,
+    uuid: string,
     metaFile: string,
     downloadRequest: {
       chunkSizes: number[]

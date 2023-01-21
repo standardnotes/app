@@ -1,6 +1,4 @@
-import { Uuid } from '@standardnotes/common'
-
 export type WorkspaceUserListRequestParams = {
-  workspaceUuid: Uuid
+  workspaceUuid: string
   [additionalParam: string]: unknown
 }

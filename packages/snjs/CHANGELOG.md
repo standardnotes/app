@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.164.7](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.6...@standardnotes/snjs@2.164.7) (2023-01-20)
+
+### Bug Fixes
+
+* fixed issue with third party editors not loading ([#2174](https://github.com/standardnotes/app/issues/2174)) ([e7214ea](https://github.com/standardnotes/app/commit/e7214ea73ad5d3026d958c79022d2238a4d1cfdc))
+
+## [2.164.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.5...@standardnotes/snjs@2.164.6) (2023-01-20)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.164.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.4...@standardnotes/snjs@2.164.5) (2023-01-20)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.164.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.3...@standardnotes/snjs@2.164.4) (2023-01-20)
+
+### Bug Fixes
+
+* **snjs:** bring back history tests and fix handlinf of error with revisions ([cb9c160](https://github.com/standardnotes/app/commit/cb9c16047ebea7134c1aadaf89a8023497358a8e))
+* **snjs:** remove isFailed() checks during tests in order for getValue() to give a meaningful exception ([6a7ff42](https://github.com/standardnotes/app/commit/6a7ff423ff82bd6eb7fbfbc95f4b1ebda36cc842))
+* **snjs:** signed out fetching revisions test ([21a4eb0](https://github.com/standardnotes/app/commit/21a4eb0cf00add2c4cf2e69e55c55cb9fd50c239))
+
+## [2.164.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.2...@standardnotes/snjs@2.164.3) (2023-01-20)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.164.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.1...@standardnotes/snjs@2.164.2) (2023-01-19)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.164.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.0...@standardnotes/snjs@2.164.1) (2023-01-19)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
 # [2.164.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.163.7...@standardnotes/snjs@2.164.0) (2023-01-18)
 
 ### Bug Fixes

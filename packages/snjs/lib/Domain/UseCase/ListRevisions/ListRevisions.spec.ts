@@ -29,4 +29,15 @@ describe('ListRevisions', () => {
     expect(result.isFailed()).toBe(true)
     expect(result.getError()).toEqual('Could not list item revisions: Given value is not a valid uuid: invalid')
   })
+
+  it('should fail if revision manager throws', async () => {
+    const useCase = createUseCase()
+
+    revisionManager.listRevisions = jest.fn().mockRejectedValue(new Error('error'))
+
+    const result = await useCase.execute({ itemUuid: '00000000-0000-0000-0000-000000000000' })
+
+    expect(result.isFailed()).toBe(true)
+    expect(result.getError()).toEqual('Could not list item revisions: error')
+  })
 })

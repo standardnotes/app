@@ -1,4 +1,3 @@
-import { Uuid } from '@standardnotes/common'
 import { ItemContent } from '../Content/ItemContent'
 import { DecryptedPayloadInterface, DeletedPayloadInterface, isDecryptedPayload } from '../Payload'
 import { ContextPayload } from './ContextPayload'
@@ -7,7 +6,7 @@ export interface OfflineSyncPushContextualPayload extends ContextPayload {
   content: ItemContent | undefined
   created_at_timestamp: number
   created_at: Date
-  duplicate_of?: Uuid
+  duplicate_of?: string
   updated_at_timestamp: number
   updated_at: Date
 }

@@ -1,7 +1,7 @@
-import { Uuid, WorkspaceAccessLevel } from '@standardnotes/common'
+import { WorkspaceAccessLevel } from '@standardnotes/common'
 
 export type WorkspaceInvitationRequestParams = {
-  workspaceUuid: Uuid
+  workspaceUuid: string
   inviteeEmail: string
   accessLevel: WorkspaceAccessLevel
   [additionalParam: string]: unknown

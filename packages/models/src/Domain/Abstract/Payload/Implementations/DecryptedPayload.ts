@@ -1,4 +1,3 @@
-import { Uuid } from '@standardnotes/common'
 import { Copy } from '@standardnotes/utils'
 import { SyncResolvedParams, SyncResolvedPayload } from '../../../Runtime/Deltas/Utilities/SyncResolvedPayload'
 import { FillItemContent, ItemContent } from '../../Content/ItemContent'
@@ -29,7 +28,7 @@ export class DecryptedPayload<
     return this.content.references || []
   }
 
-  public getReference(uuid: Uuid): ContentReference {
+  public getReference(uuid: string): ContentReference {
     const result = this.references.find((ref) => ref.uuid === uuid)
 
     if (!result) {

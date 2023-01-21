@@ -16,7 +16,6 @@ import {
   NoteHistoryEntry,
   PayloadEmitSource,
   RevisionMetadata,
-  RoleName,
   SNNote,
 } from '@standardnotes/snjs'
 import { makeObservable, observable, action } from 'mobx'
@@ -120,7 +119,7 @@ export class NoteHistoryController {
       return
     }
 
-    if (!this.application.features.hasMinimumRole(entry.required_role as RoleName)) {
+    if (!this.application.features.hasMinimumRole(entry.required_role)) {
       this.setContentState(RevisionContentState.NotEntitled)
       this.setSelectedRevision(undefined)
       return

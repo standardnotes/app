@@ -3,6 +3,35 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.42.8](https://github.com/standardnotes/app/compare/@standardnotes/models@1.42.7...@standardnotes/models@1.42.8) (2023-01-20)
+
+### Bug Fixes
+
+* fixed issue with third party editors not loading ([#2174](https://github.com/standardnotes/app/issues/2174)) ([e7214ea](https://github.com/standardnotes/app/commit/e7214ea73ad5d3026d958c79022d2238a4d1cfdc))
+
+## [1.42.7](https://github.com/standardnotes/app/compare/@standardnotes/models@1.42.6...@standardnotes/models@1.42.7) (2023-01-20)
+
+### Bug Fixes
+
+* **models:** dependency declaration ([beccfb1](https://github.com/standardnotes/app/commit/beccfb16b361ba70bd4f7c09d5840d73ed6e85da))
+* **models:** dependency on utils declaration ([e9a1012](https://github.com/standardnotes/app/commit/e9a10123fed9e2883e3d2af38939b1608d7b2ffa))
+
+## [1.42.6](https://github.com/standardnotes/app/compare/@standardnotes/models@1.42.5...@standardnotes/models@1.42.6) (2023-01-20)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.42.5](https://github.com/standardnotes/app/compare/@standardnotes/models@1.42.4...@standardnotes/models@1.42.5) (2023-01-20)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.42.4](https://github.com/standardnotes/app/compare/@standardnotes/models@1.42.3...@standardnotes/models@1.42.4) (2023-01-19)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.42.3](https://github.com/standardnotes/app/compare/@standardnotes/models@1.42.2...@standardnotes/models@1.42.3) (2023-01-19)
+
+**Note:** Version bump only for package @standardnotes/models
+
 ## [1.42.2](https://github.com/standardnotes/app/compare/@standardnotes/models@1.42.1...@standardnotes/models@1.42.2) (2023-01-18)
 
 **Note:** Version bump only for package @standardnotes/models

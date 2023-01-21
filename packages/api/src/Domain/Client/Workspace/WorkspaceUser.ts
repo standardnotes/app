@@ -1,11 +1,11 @@
-import { Uuid, WorkspaceAccessLevel, WorkspaceUserStatus } from '@standardnotes/common'
+import { WorkspaceAccessLevel, WorkspaceUserStatus } from '@standardnotes/common'
 
 export type WorkspaceUser = {
-  uuid: Uuid
+  uuid: string
   accessLevel: WorkspaceAccessLevel
-  userUuid: Uuid
+  userUuid: string
   userDisplayName: string | null
-  workspaceUuid: Uuid
+  workspaceUuid: string
   encryptedWorkspaceKey: string | null
   publicKey: string | null
   encryptedPrivateKey: string | null

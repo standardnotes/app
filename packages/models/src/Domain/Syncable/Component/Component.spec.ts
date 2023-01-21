@@ -68,7 +68,7 @@ describe('component model', () => {
     expect(component.noteType).toEqual(NoteType.Authentication)
   })
 
-  it('should return plain as noteType if no note type defined in package_info', () => {
+  it('should return unknown as noteType if no note type defined in package_info', () => {
     const component = new SNComponent(
       new DecryptedPayload(
         {
@@ -83,6 +83,6 @@ describe('component model', () => {
       ),
     )
 
-    expect(component.noteType).toEqual(NoteType.Plain)
+    expect(component.noteType).toEqual(NoteType.Unknown)
   })
 })

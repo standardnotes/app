@@ -1,6 +1,6 @@
 import { ItemContent } from './../../../Abstract/Content/ItemContent'
 import { EncryptedItemInterface } from './../../../Abstract/Item/Interfaces/EncryptedItem'
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { SNIndex } from '../../Index/SNIndex'
 import { isDecryptedItem } from '../../../Abstract/Item/Interfaces/TypeCheck'
 import { DecryptedItemInterface } from '../../../Abstract/Item/Interfaces/DecryptedItem'
@@ -24,7 +24,7 @@ export class ItemCollection
     this.discard(delta.discarded)
   }
 
-  public findDecrypted<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: Uuid): T | undefined {
+  public findDecrypted<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T | undefined {
     const result = this.find(uuid)
 
     if (!result) {
@@ -34,12 +34,12 @@ export class ItemCollection
     return isDecryptedItem(result) ? (result as T) : undefined
   }
 
-  public findAllDecrypted<T extends DecryptedItemInterface = DecryptedItemInterface>(uuids: Uuid[]): T[] {
+  public findAllDecrypted<T extends DecryptedItemInterface = DecryptedItemInterface>(uuids: string[]): T[] {
     return this.findAll(uuids).filter(isDecryptedItem) as T[]
   }
 
   public findAllDecryptedWithBlanks<C extends ItemContent = ItemContent>(
-    uuids: Uuid[],
+    uuids: string[],
   ): (DecryptedItemInterface<C> | undefined)[] {
     const results = this.findAllIncludingBlanks(uuids)
     const mapped = results.map((i) => {

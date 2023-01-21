@@ -34,6 +34,7 @@ export enum StorageKey {
   StorageEncryptionPolicy = 'storage_policy',
   WebSocketUrl = 'webSocket_url',
   UserRoles = 'user_roles',
+  OfflineUserRoles = 'offline_user_roles',
   UserFeatures = 'user_features',
   ExperimentalFeatures = 'experimental_features',
   DeinitMode = 'deinit_mode',

@@ -1,4 +1,4 @@
-import { ContentType, Uuid } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { dateToLocalizedString, deepFreeze } from '@standardnotes/utils'
 import { TransferPayload } from './../../TransferPayload/Interfaces/TransferPayload'
 import { ItemContentsDiffer } from '../../../Utilities/Item/ItemContentsDiffer'
@@ -13,7 +13,7 @@ import { isDecryptedItem, isDeletedItem, isEncryptedErroredItem } from '../Inter
 
 export abstract class GenericItem<P extends PayloadInterface = PayloadInterface> implements ItemInterface<P> {
   payload: P
-  public readonly duplicateOf?: Uuid
+  public readonly duplicateOf?: string
   public readonly createdAtString?: string
   public updatedAtString?: string
   public userModifiedDate: Date
