@@ -30,12 +30,12 @@ export enum FeatureIdentifier {
 
   CodeEditor = 'org.standardnotes.code-editor',
   MarkdownProEditor = 'org.standardnotes.advanced-markdown-editor',
-  MarkdownVisualEditor = 'org.standardnotes.markdown-visual-editor',
   PlusEditor = 'org.standardnotes.plus-editor',
   SheetsEditor = 'org.standardnotes.standard-sheets',
   TaskEditor = 'org.standardnotes.simple-task-editor',
   TokenVaultEditor = 'org.standardnotes.token-vault',
 
+  DeprecatedMarkdownVisualEditor = 'org.standardnotes.markdown-visual-editor',
   DeprecatedBoldEditor = 'org.standardnotes.bold-editor',
   DeprecatedMarkdownBasicEditor = 'org.standardnotes.simple-markdown-editor',
   DeprecatedMarkdownMathEditor = 'org.standardnotes.fancy-markdown-editor',

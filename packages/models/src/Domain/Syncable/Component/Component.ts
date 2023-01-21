@@ -180,7 +180,7 @@ export class SNComponent extends DecryptedItem<ComponentContent> implements Comp
   }
 
   public get noteType(): NoteType {
-    return this.package_info.note_type || NoteType.Plain
+    return this.package_info.note_type || NoteType.Unknown
   }
 
   public get isDeprecated(): boolean {

@@ -55,6 +55,21 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
+  const markdownAlt: EditorFeatureDescription = FillEditorComponentDefaults({
+    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
+    name: 'Markdown Alternative',
+    identifier: FeatureIdentifier.DeprecatedMarkdownVisualEditor,
+    note_type: NoteType.Markdown,
+    file_type: 'md',
+    deprecated: true,
+    permission_name: PermissionName.MarkdownVisualEditor,
+    spellcheckControl: true,
+    description:
+      'A WYSIWYG-style Markdown editor that renders Markdown in preview-mode while you type without displaying any syntax.',
+    index_path: 'build/index.html',
+    availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
+  })
+
   const markdownMinimist: EditorFeatureDescription = FillEditorComponentDefaults({
     availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     name: 'Minimal Markdown',
@@ -112,5 +127,5 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
-  return [bold, markdownBasic, markdownMinimist, markdownMath, filesafe]
+  return [bold, markdownBasic, markdownMinimist, markdownMath, markdownAlt, filesafe]
 }
