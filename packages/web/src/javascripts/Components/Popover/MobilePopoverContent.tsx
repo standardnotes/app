@@ -4,6 +4,12 @@ import { classNames } from '@standardnotes/snjs'
 import { ReactNode } from 'react'
 import Portal from '../Portal/Portal'
 
+const DisableScroll = () => {
+  useDisableBodyScrollOnMobile()
+
+  return null
+}
+
 const MobilePopoverContent = ({
   open,
   requestClose,
@@ -64,14 +70,13 @@ const MobilePopoverContent = ({
     },
   })
 
-  useDisableBodyScrollOnMobile()
-
   if (!isMounted) {
     return null
   }
 
   return (
     <Portal>
+      <DisableScroll />
       <div
         ref={setPopoverElement}
         className="absolute top-0 left-0 z-modal flex h-full w-full origin-bottom flex-col bg-default pt-safe-top pb-safe-bottom opacity-0"
