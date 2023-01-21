@@ -30,6 +30,7 @@ type Props = {
     overlay?: string
     content?: string
   }
+  customFooter?: ReactNode
   children: ReactNode
 }
 
@@ -40,6 +41,7 @@ const Modal = ({
   actions = [],
   dismissOnOverlayClick = true,
   className = {},
+  customFooter,
   children,
 }: Props) => {
   const sortedActions = useMemo(
@@ -192,7 +194,6 @@ const Modal = ({
               {title}
             </div>
             <div className="hidden items-center gap-2 md:flex">
-              {/* {headerButtons} */}
               <button tabIndex={0} className="ml-2 rounded p-1 font-bold hover:bg-contrast" onClick={close}>
                 <Icon type="close" />
               </button>
@@ -212,30 +213,34 @@ const Modal = ({
           <hr className="h-1px no-border m-0 bg-border" />
         </AlertDialogLabel>
         <ModalDialogDescription>{children}</ModalDialogDescription>
-        <div
-          className={classNames(
-            'items-center justify-end gap-3 border-t border-border px-4 py-4',
-            isIOS() && 'pb-safe-bottom',
-            hasNonSlotActions ? 'flex' : 'hidden md:flex',
-          )}
-        >
-          {sortedActions.map((action, index) => (
-            <Button
-              primary={action.type === 'primary'}
-              colorStyle={action.type === 'destructive' ? 'danger' : undefined}
-              key={action.label.toString()}
-              onClick={action.onClick}
-              className={classNames(
-                action.mobileSlot ? 'hidden md:block' : '',
-                index === firstNonNegativeActionIndex && 'ml-auto',
-              )}
-              data-type={action.type}
-              disabled={action.disabled}
-            >
-              {action.label}
-            </Button>
-          ))}
-        </div>
+        {customFooter
+          ? customFooter
+          : sortedActions.length > 0 && (
+              <div
+                className={classNames(
+                  'items-center justify-end gap-3 border-t border-border px-4 py-4',
+                  isIOS() && 'pb-safe-bottom',
+                  hasNonSlotActions ? 'flex' : 'hidden md:flex',
+                )}
+              >
+                {sortedActions.map((action, index) => (
+                  <Button
+                    primary={action.type === 'primary'}
+                    colorStyle={action.type === 'destructive' ? 'danger' : undefined}
+                    key={action.label.toString()}
+                    onClick={action.onClick}
+                    className={classNames(
+                      action.mobileSlot ? 'hidden md:block' : '',
+                      index === firstNonNegativeActionIndex && 'ml-auto',
+                    )}
+                    data-type={action.type}
+                    disabled={action.disabled}
+                  >
+                    {action.label}
+                  </Button>
+                ))}
+              </div>
+            )}
       </AlertDialogContent>
     </AlertDialogOverlay>
   )

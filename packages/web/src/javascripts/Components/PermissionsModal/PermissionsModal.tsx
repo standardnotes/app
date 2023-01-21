@@ -1,10 +1,8 @@
 import { SNComponent } from '@standardnotes/snjs'
 import { useCallback } from 'react'
 import Button from '@/Components/Button/Button'
-import ModalDialog from '../Shared/ModalDialog'
-import ModalDialogLabel from '../Shared/ModalDialogLabel'
-import ModalDialogDescription from '../Shared/ModalDialogDescription'
 import ModalDialogButtons from '../Shared/ModalDialogButtons'
+import Modal from '../Shared/Modal'
 
 type Props = {
   callback: (approved: boolean) => void
@@ -25,9 +23,31 @@ const PermissionsModal = ({ callback, component, dismiss, permissionsString }: P
   }, [callback, dismiss])
 
   return (
-    <ModalDialog className="w-full md:!w-[350px]">
-      <ModalDialogLabel closeDialog={deny}>Activate Component</ModalDialogLabel>
-      <ModalDialogDescription>
+    <Modal
+      title="Activate Component"
+      isOpen={true}
+      close={deny}
+      actions={[
+        { label: 'Cancel', onClick: deny, type: 'cancel', mobileSlot: 'left' },
+        {
+          label: 'Continue',
+          onClick: accept,
+          type: 'primary',
+          mobileSlot: 'right',
+        },
+      ]}
+      className={{ content: 'md:!w-[350px]' }}
+      customFooter={
+        <div className="hidden md:block">
+          <ModalDialogButtons>
+            <Button primary fullWidth onClick={accept} className="block">
+              Continue
+            </Button>
+          </ModalDialogButtons>
+        </div>
+      }
+    >
+      <div className="px-4 py-4">
         <div className="text-base">
           <strong>{component.displayName}</strong>
           {' would like to interact with your '}
@@ -41,13 +61,8 @@ const PermissionsModal = ({ callback, component, dismiss, permissionsString }: P
             </a>
           </p>
         </div>
-      </ModalDialogDescription>
-      <ModalDialogButtons>
-        <Button primary fullWidth onClick={accept} className="block">
-          Continue
-        </Button>
-      </ModalDialogButtons>
-    </ModalDialog>
+      </div>
+    </Modal>
   )
 }
 
