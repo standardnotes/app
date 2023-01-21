@@ -291,10 +291,12 @@ const ChallengeModal: FunctionComponent<Props> = ({
             isIOS() && 'pt-safe-top',
           )}
         >
-          {challenge.cancelable && (
+          {challenge.cancelable ? (
             <MobileModalAction type="cancel" action={cancelChallenge}>
               Cancel
             </MobileModalAction>
+          ) : (
+            <div className="mr-auto" />
           )}
           <div className="mx-auto text-base font-semibold text-text">Authenticate</div>
           <div className="ml-auto" />
@@ -308,14 +310,14 @@ const ChallengeModal: FunctionComponent<Props> = ({
             <Icon type="close" className="text-neutral" />
           </button>
         )}
-        <div className="flex flex-col items-center p-8">
+        <div className="flex w-full flex-col items-center p-8">
           <ProtectedIllustration className="mb-4 h-30 w-30" />
           <div className="mb-3 max-w-76 text-center text-lg font-bold">{challenge.heading}</div>
           {challenge.subheading && (
             <div className="break-word mb-4 max-w-76 text-center text-sm">{challenge.subheading}</div>
           )}
           <form
-            className="flex min-w-76 flex-col items-center"
+            className="flex w-full max-w-76 flex-col items-center md:min-w-76"
             onSubmit={(e) => {
               e.preventDefault()
               submit()
