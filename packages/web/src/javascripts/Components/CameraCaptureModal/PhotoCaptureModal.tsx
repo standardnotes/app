@@ -4,14 +4,10 @@ import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 import { classNames } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import Button from '../Button/Button'
 import Dropdown from '../Dropdown/Dropdown'
 import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
-import ModalDialog from '../Shared/ModalDialog'
-import ModalDialogButtons from '../Shared/ModalDialogButtons'
-import ModalDialogDescription from '../Shared/ModalDialogDescription'
-import ModalDialogLabel from '../Shared/ModalDialogLabel'
+import Modal from '../Shared/Modal'
 
 type Props = {
   filesController: FilesController
@@ -87,10 +83,44 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
     close()
   }, [capturedPhoto, close, fileName, filesController])
 
+  const retryPhoto = () => {
+    setCapturedPhoto(undefined)
+    setRecorder(new PhotoRecorder())
+  }
   return (
-    <ModalDialog>
-      <ModalDialogLabel closeDialog={close}>Take a photo</ModalDialogLabel>
-      <ModalDialogDescription>
+    <Modal
+      isOpen={true}
+      title="Take a photo"
+      close={close}
+      actions={[
+        {
+          label: 'Capture',
+          onClick: takePhoto,
+          type: 'primary',
+          mobileSlot: 'right',
+          hidden: !!capturedPhoto,
+        },
+        {
+          label: 'Upload',
+          onClick: savePhoto,
+          type: 'primary',
+          mobileSlot: 'right',
+          hidden: !capturedPhoto,
+        },
+        {
+          label: 'Cancel',
+          onClick: close,
+          type: 'cancel',
+          mobileSlot: 'left',
+        },
+        {
+          label: 'Retry',
+          onClick: retryPhoto,
+          type: 'secondary',
+        },
+      ]}
+    >
+      <div className="px-4 py-4">
         <div className="mb-4 flex flex-col">
           <label className="text-sm font-medium text-neutral">
             File name:
@@ -141,40 +171,8 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
             </label>
           </div>
         )}
-      </ModalDialogDescription>
-      <ModalDialogButtons>
-        {!capturedPhoto && (
-          <Button
-            primary
-            colorStyle="danger"
-            className="flex items-center gap-2"
-            onClick={() => {
-              void takePhoto()
-            }}
-          >
-            <Icon type="camera" />
-            Take photo
-          </Button>
-        )}
-        {capturedPhoto && (
-          <div className="flex items-center gap-2">
-            <Button
-              className="flex items-center gap-2"
-              onClick={() => {
-                setCapturedPhoto(undefined)
-                setRecorder(new PhotoRecorder())
-              }}
-            >
-              Retry
-            </Button>
-            <Button primary className="flex items-center gap-2" onClick={savePhoto}>
-              <Icon type="upload" />
-              Upload
-            </Button>
-          </div>
-        )}
-      </ModalDialogButtons>
-    </ModalDialog>
+      </div>
+    </Modal>
   )
 }
 
