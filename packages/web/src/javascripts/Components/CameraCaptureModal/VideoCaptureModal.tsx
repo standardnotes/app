@@ -4,13 +4,9 @@ import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 import { classNames } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
-import ModalDialog from '../Shared/ModalDialog'
-import ModalDialogButtons from '../Shared/ModalDialogButtons'
-import ModalDialogDescription from '../Shared/ModalDialogDescription'
-import ModalDialogLabel from '../Shared/ModalDialogLabel'
+import Modal from '../Shared/Modal'
 
 type Props = {
   filesController: FilesController
@@ -77,10 +73,60 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
     return URL.createObjectURL(capturedVideo)
   }, [capturedVideo])
 
+  const stopRecording = async () => {
+    const capturedVideo = await recorder.stop()
+    setIsRecording(false)
+    setCapturedVideo(capturedVideo)
+  }
+
+  const retryRecording = () => {
+    setCapturedVideo(undefined)
+    setRecorder(new VideoRecorder(fileName))
+    setIsRecorderReady(false)
+  }
+
   return (
-    <ModalDialog>
-      <ModalDialogLabel closeDialog={close}>Record a video</ModalDialogLabel>
-      <ModalDialogDescription>
+    <Modal
+      title="Record a video"
+      isOpen={true}
+      close={close}
+      actions={[
+        {
+          label: 'Cancel',
+          onClick: close,
+          type: 'cancel',
+          mobileSlot: 'left',
+        },
+        {
+          label: 'Record',
+          onClick: startRecording,
+          type: 'primary',
+          mobileSlot: 'right',
+          hidden: !!capturedVideo || isRecording,
+        },
+        {
+          label: 'Stop',
+          onClick: stopRecording,
+          type: 'primary',
+          mobileSlot: 'right',
+          hidden: !!capturedVideo || !isRecording,
+        },
+        {
+          label: 'Retry',
+          onClick: retryRecording,
+          type: 'secondary',
+          hidden: !capturedVideo,
+        },
+        {
+          label: 'Upload',
+          onClick: saveVideo,
+          type: 'primary',
+          mobileSlot: 'right',
+          hidden: !capturedVideo,
+        },
+      ]}
+    >
+      <div className="px-4 py-4">
         <div className="mb-4 flex flex-col">
           <label className="text-sm font-medium text-neutral">
             File name:
@@ -111,55 +157,8 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
             </div>
           )}
         </div>
-      </ModalDialogDescription>
-      <ModalDialogButtons>
-        {!capturedVideo && !isRecording && (
-          <Button
-            primary
-            className="flex items-center gap-2"
-            onClick={() => {
-              void startRecording()
-            }}
-          >
-            <Icon type="camera" />
-            Start recording
-          </Button>
-        )}
-        {!capturedVideo && isRecording && (
-          <Button
-            primary
-            colorStyle="danger"
-            className="flex items-center gap-2"
-            onClick={async () => {
-              const capturedVideo = await recorder.stop()
-              setIsRecording(false)
-              setCapturedVideo(capturedVideo)
-            }}
-          >
-            <Icon type="camera" />
-            Stop recording
-          </Button>
-        )}
-        {capturedVideo && (
-          <div className="flex items-center gap-2">
-            <Button
-              className="flex items-center gap-2"
-              onClick={() => {
-                setCapturedVideo(undefined)
-                setRecorder(new VideoRecorder(fileName))
-                setIsRecorderReady(false)
-              }}
-            >
-              Retry
-            </Button>
-            <Button primary className="flex items-center gap-2" onClick={saveVideo}>
-              <Icon type="upload" />
-              Upload
-            </Button>
-          </div>
-        )}
-      </ModalDialogButtons>
-    </ModalDialog>
+      </div>
+    </Modal>
   )
 }
 
