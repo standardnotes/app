@@ -26,10 +26,22 @@ type Props = {
   close: () => void
   actions?: ModalAction[]
   dismissOnOverlayClick?: boolean
+  className?: {
+    overlay?: string
+    content?: string
+  }
   children: ReactNode
 }
 
-const Modal = ({ title, isOpen, close, actions = [], dismissOnOverlayClick = true, children }: Props) => {
+const Modal = ({
+  title,
+  isOpen,
+  close,
+  actions = [],
+  dismissOnOverlayClick = true,
+  className = {},
+  children,
+}: Props) => {
   const sortedActions = useMemo(
     () =>
       actions
@@ -142,7 +154,7 @@ const Modal = ({ title, isOpen, close, actions = [], dismissOnOverlayClick = tru
 
   return (
     <AlertDialogOverlay
-      className="p-0 opacity-0 md:px-0 md:opacity-100"
+      className={classNames('p-0 opacity-0 md:px-0 md:opacity-100', className.overlay)}
       leastDestructiveRef={ldRef}
       onDismiss={dismissOnOverlayClick ? close : undefined}
       ref={setElement}
@@ -151,6 +163,7 @@ const Modal = ({ title, isOpen, close, actions = [], dismissOnOverlayClick = tru
         tabIndex={0}
         className={classNames(
           'm-0 flex h-full w-full flex-col border-solid border-border bg-default p-0 md:h-auto md:max-h-[85vh] md:w-160 md:rounded md:border md:shadow-main',
+          className.content,
         )}
       >
         <AlertDialogLabel

@@ -1,16 +1,14 @@
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { SNApplication, SessionStrings, UuidString, isNullOrUndefined, RemoteSession } from '@standardnotes/snjs'
-import { FunctionComponent, useState, useEffect, useRef, useMemo } from 'react'
+import { FunctionComponent, useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { Alert } from '@reach/alert'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
-import ModalDialog from '../Shared/ModalDialog'
-import ModalDialogLabel from '../Shared/ModalDialogLabel'
-import ModalDialogDescription from '../Shared/ModalDialogDescription'
 import Spinner from '@/Components/Spinner/Spinner'
 import Button from '@/Components/Button/Button'
 import Icon from '../Icon/Icon'
+import Modal, { ModalAction } from '../Shared/Modal'
 
 type Session = RemoteSession & {
   revoking?: true
@@ -82,7 +80,7 @@ const SessionsModalContent: FunctionComponent<{
   viewControllerManager: ViewControllerManager
   application: SNApplication
 }> = ({ viewControllerManager, application }) => {
-  const close = () => viewControllerManager.closeSessionsModal()
+  const close = useCallback(() => viewControllerManager.closeSessionsModal(), [viewControllerManager])
 
   const [sessions, refresh, refreshing, revokeSession, errorMessage] = useSessions(application)
 
@@ -106,20 +104,37 @@ const SessionsModalContent: FunctionComponent<{
   const closeRevokeConfirmationDialog = () => {
     setRevokingSessionUuid('')
   }
+
+  const sessionModalActions = useMemo(
+    (): ModalAction[] => [
+      {
+        label: 'Close',
+        onClick: close,
+        type: 'cancel',
+        mobileSlot: 'left',
+      },
+      {
+        label: 'Refresh',
+        onClick: refresh,
+        type: 'primary',
+        mobileSlot: 'right',
+      },
+    ],
+    [close, refresh],
+  )
+
   return (
     <>
-      <ModalDialog onDismiss={close} className="sessions-modal md:max-h-[90vh]">
-        <ModalDialogLabel
-          headerButtons={
-            <Button small colorStyle="info" onClick={refresh}>
-              Refresh
-            </Button>
-          }
-          closeDialog={close}
-        >
-          Active Sessions
-        </ModalDialogLabel>
-        <ModalDialogDescription>
+      <Modal
+        title="Active Sessions"
+        isOpen={true}
+        close={close}
+        actions={sessionModalActions}
+        className={{
+          overlay: 'sessions-modal',
+        }}
+      >
+        <div className="px-4 py-4">
           {refreshing ? (
             <div className="flex items-center gap-2">
               <Spinner className="h-3 w-3" />
@@ -155,8 +170,8 @@ const SessionsModalContent: FunctionComponent<{
               )}
             </>
           )}
-        </ModalDialogDescription>
-      </ModalDialog>
+        </div>
+      </Modal>
       {confirmRevokingSessionUuid && (
         <AlertDialog onDismiss={closeRevokeConfirmationDialog} leastDestructiveRef={cancelRevokeRef} className="p-0">
           <div className="sk-modal-content">
