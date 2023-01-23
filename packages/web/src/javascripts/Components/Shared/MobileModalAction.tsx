@@ -12,8 +12,8 @@ const MobileModalAction = ({ children, action, type = 'primary', slot, className
   return (
     <button
       className={classNames(
-        'py-1 px-1 text-base font-semibold focus:shadow-none focus:outline-none active:shadow-none active:outline-none disabled:text-neutral md:hidden',
-        slot === 'left' ? 'text-left' : 'text-right',
+        'flex overflow-hidden text-ellipsis whitespace-nowrap py-1 px-1 text-base font-semibold focus:shadow-none focus:outline-none active:shadow-none active:outline-none disabled:text-neutral md:hidden',
+        slot === 'left' ? 'justify-start text-left' : 'justify-end text-right',
         type === 'cancel' || type === 'destructive' ? 'text-danger' : 'text-info',
         className,
       )}

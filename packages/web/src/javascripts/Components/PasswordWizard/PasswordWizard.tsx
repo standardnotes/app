@@ -3,6 +3,8 @@ import { createRef } from 'react'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import DecoratedPasswordInput from '../Input/DecoratedPasswordInput'
 import Modal from '../Shared/Modal'
+import { isMobileScreen } from '@/Utils'
+import Spinner from '../Spinner/Spinner'
 
 interface Props {
   application: WebApplication
@@ -21,6 +23,8 @@ type State = {
 }
 
 const DEFAULT_CONTINUE_TITLE = 'Continue'
+const GENERATING_CONTINUE_TITLE = 'Generating Keys...'
+const FINISH_CONTINUE_TITLE = 'Finish'
 
 enum Steps {
   PasswordStep = 1,
@@ -85,7 +89,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     this.setState({
       isContinuing: true,
       showSpinner: true,
-      continueTitle: 'Generating Keys...',
+      continueTitle: GENERATING_CONTINUE_TITLE,
     })
 
     const valid = await this.validateCurrentPassword()
@@ -103,7 +107,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     this.setState({
       isContinuing: false,
       showSpinner: false,
-      continueTitle: 'Finish',
+      continueTitle: FINISH_CONTINUE_TITLE,
       step: Steps.FinishStep,
     })
   }
@@ -236,7 +240,12 @@ class PasswordWizard extends AbstractComponent<Props, State> {
               mobileSlot: 'left',
             },
             {
-              label: this.state.continueTitle,
+              label:
+                this.state.continueTitle === GENERATING_CONTINUE_TITLE && isMobileScreen() ? (
+                  <Spinner className="h-4 w-4" />
+                ) : (
+                  this.state.continueTitle
+                ),
               onClick: this.nextStep,
               type: 'primary',
               mobileSlot: 'right',
