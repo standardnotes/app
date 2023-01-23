@@ -42,6 +42,7 @@ import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/u
 import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 import { PaneController } from '@/Controllers/PaneController/PaneController'
 import EmptyFilesView from './EmptyFilesView'
+import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -86,7 +87,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
     },
     ref,
   ) => {
-    const { toggleAppPane, panes } = useResponsiveAppPane()
+    const { setPaneLayout, panes } = useResponsiveAppPane()
     const { selectedUuids, selectNextItem, selectPreviousItem } = selectionController
     const { selected: selectedTag, selectedAsTag } = navigationController
     const {
@@ -185,9 +186,9 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
         void filesController.selectAndUploadNewFiles()
       } else {
         await createNewNote()
-        toggleAppPane(AppPaneId.Editor)
+        setPaneLayout(PaneLayout.Editing)
       }
-    }, [isFilesSmartView, filesController, createNewNote, toggleAppPane, application])
+    }, [isFilesSmartView, application, filesController, createNewNote, setPaneLayout])
 
     const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
     const shouldUseTableView = (isFilesSmartView || isTableViewEnabled) && !isMobileScreen
