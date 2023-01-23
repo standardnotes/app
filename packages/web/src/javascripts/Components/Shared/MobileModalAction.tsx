@@ -11,7 +11,7 @@ const MobileModalAction = ({ children, action, type = 'primary', className, ...p
   return (
     <button
       className={classNames(
-        'py-1 px-1 text-base font-medium focus:shadow-none focus:outline-none active:shadow-none active:outline-none disabled:text-neutral md:hidden',
+        'py-1 px-1 text-base font-semibold focus:shadow-none focus:outline-none active:shadow-none active:outline-none disabled:text-neutral md:hidden',
         type === 'cancel' || type === 'destructive' ? 'text-danger' : 'text-info',
         className,
       )}

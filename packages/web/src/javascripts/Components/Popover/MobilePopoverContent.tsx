@@ -84,7 +84,7 @@ const MobilePopoverContent = ({
         <div className="flex items-center justify-between border-b border-border py-2.5 px-3 text-base">
           <div />
           <div className="font-semibold">{title}</div>
-          <button className="font-medium text-info active:shadow-none active:outline-none" onClick={requestClose}>
+          <button className="font-semibold text-info active:shadow-none active:outline-none" onClick={requestClose}>
             Done
           </button>
         </div>
