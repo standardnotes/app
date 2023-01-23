@@ -129,9 +129,7 @@ const Modal = ({
   const rightSlotAction = sortedActions.find((action) => action.mobileSlot === 'right')
   const hasNonSlotActions = sortedActions.some((action) => !action.mobileSlot)
   const hasCancelAction = sortedActions.some((action) => action.type === 'cancel')
-  const firstNonNegativeActionIndex = sortedActions.findIndex(
-    (action) => action.type !== 'cancel' && action.type !== 'destructive',
-  )
+  const firstPrimaryActionIndex = sortedActions.findIndex((action) => action.type === 'primary')
 
   return (
     <AlertDialogOverlay
@@ -198,7 +196,7 @@ const Modal = ({
           : sortedActions.length > 0 && (
               <div
                 className={classNames(
-                  'items-center justify-end gap-3 border-t border-border px-4 py-4',
+                  'items-center justify-start gap-3 border-t border-border py-2 px-2.5 md:px-4 md:py-4',
                   isIOS() && 'pb-safe-bottom',
                   hasNonSlotActions ? 'flex' : 'hidden md:flex',
                 )}
@@ -211,10 +209,11 @@ const Modal = ({
                     onClick={action.onClick}
                     className={classNames(
                       action.mobileSlot ? 'hidden md:block' : '',
-                      index === firstNonNegativeActionIndex && 'ml-auto',
+                      index === firstPrimaryActionIndex && 'ml-auto',
                     )}
                     data-type={action.type}
                     disabled={action.disabled}
+                    small={isMobileScreen}
                   >
                     {action.label}
                   </Button>
