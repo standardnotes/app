@@ -79,17 +79,15 @@ const Modal = ({
       enter: {
         keyframes: [
           {
-            opacity: 0.25,
-            transform: 'translateY(1rem)',
+            transform: 'translateY(100%)',
           },
           {
-            opacity: 1,
             transform: 'translateY(0)',
           },
         ],
         options: {
           easing: 'cubic-bezier(.36,.66,.04,1)',
-          duration: 150,
+          duration: 250,
           fill: 'forwards',
         },
         initialStyle: {
@@ -102,17 +100,15 @@ const Modal = ({
       exit: {
         keyframes: [
           {
-            opacity: 1,
             transform: 'translateY(0)',
           },
           {
-            opacity: 0,
-            transform: 'translateY(1rem)',
+            transform: 'translateY(100%)',
           },
         ],
         options: {
           easing: 'cubic-bezier(.36,.66,.04,1)',
-          duration: 150,
+          duration: 250,
           fill: 'forwards',
         },
         initialStyle: {
@@ -139,7 +135,7 @@ const Modal = ({
 
   return (
     <AlertDialogOverlay
-      className={classNames('p-0 opacity-0 md:px-0 md:opacity-100', className.overlay)}
+      className={classNames('p-0 md:px-0 md:opacity-100', className.overlay)}
       leastDestructiveRef={ldRef}
       onDismiss={dismissOnOverlayClick ? close : undefined}
       ref={setElement}
