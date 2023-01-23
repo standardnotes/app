@@ -243,7 +243,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
           )}
         >
           {challenge.cancelable ? (
-            <MobileModalAction type="cancel" action={cancelChallenge}>
+            <MobileModalAction slot="left" type="cancel" action={cancelChallenge}>
               Cancel
             </MobileModalAction>
           ) : (

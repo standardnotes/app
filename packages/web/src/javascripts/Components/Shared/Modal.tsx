@@ -83,8 +83,8 @@ const Modal = ({ title, close, actions = [], className = {}, customHeader, custo
         ) : (
           <AlertDialogLabel
             className={classNames(
-              'flex flex-shrink-0 items-center justify-between rounded-t border-b border-solid border-border bg-default py-1.5 px-1 text-text md:px-4.5 md:py-3',
-              isIOS() && 'pt-safe-top',
+              'flex flex-shrink-0 items-center justify-between rounded-t border-b border-solid border-border bg-default text-text md:px-4.5 md:py-3',
+              isIOS() ? 'pt-safe-top' : 'py-1.5 px-2',
             )}
           >
             <div className="grid w-full grid-cols-[0.35fr_1fr_0.35fr] flex-row items-center justify-between gap-2 md:flex md:gap-0">
@@ -93,17 +93,14 @@ const Modal = ({ title, close, actions = [], className = {}, customHeader, custo
                   type={leftSlotAction.type}
                   action={leftSlotAction.onClick}
                   disabled={leftSlotAction.disabled}
+                  slot="left"
                 >
                   {leftSlotAction.label}
                 </MobileModalAction>
               ) : (
                 <div className="md:hidden" />
               )}
-              <div
-                className={classNames(
-                  'overflow-hidden text-ellipsis whitespace-nowrap text-center text-base font-semibold text-text md:flex-grow md:text-left md:text-lg',
-                )}
-              >
+              <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-base font-semibold text-text md:flex-grow md:text-left md:text-lg">
                 {title}
               </div>
               <div className="hidden items-center gap-2 md:flex">
@@ -116,11 +113,12 @@ const Modal = ({ title, close, actions = [], className = {}, customHeader, custo
                   type={rightSlotAction.type}
                   action={rightSlotAction.onClick}
                   disabled={rightSlotAction.disabled}
+                  slot="right"
                 >
                   {rightSlotAction.label}
                 </MobileModalAction>
               ) : sortedActions.length === 0 || !hasCancelAction ? (
-                <MobileModalAction children="Done" action={close} />
+                <MobileModalAction children="Done" action={close} slot="right" />
               ) : null}
             </div>
           </AlertDialogLabel>

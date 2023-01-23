@@ -60,7 +60,11 @@ const ModalDialogLabel: FunctionComponent<Props> = ({
             <Icon type="close" />
           </button>
         </div>
-        {rightMobileButton ? rightMobileButton : <MobileModalAction children="Done" action={closeDialog} />}
+        {rightMobileButton ? (
+          rightMobileButton
+        ) : (
+          <MobileModalAction slot="right" children="Done" action={closeDialog} />
+        )}
       </div>
       <hr className="h-1px no-border m-0 bg-border" />
     </AlertDialogLabel>

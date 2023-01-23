@@ -4,14 +4,16 @@ import { ComponentPropsWithoutRef, ReactNode } from 'react'
 type Props = {
   children: ReactNode
   action: () => void
+  slot: 'left' | 'right'
   type?: 'primary' | 'secondary' | 'destructive' | 'cancel'
 } & Omit<ComponentPropsWithoutRef<'button'>, 'onClick' | 'type'>
 
-const MobileModalAction = ({ children, action, type = 'primary', className, ...props }: Props) => {
+const MobileModalAction = ({ children, action, type = 'primary', slot, className, ...props }: Props) => {
   return (
     <button
       className={classNames(
         'py-1 px-1 text-base font-semibold focus:shadow-none focus:outline-none active:shadow-none active:outline-none disabled:text-neutral md:hidden',
+        slot === 'left' ? 'text-left' : 'text-right',
         type === 'cancel' || type === 'destructive' ? 'text-danger' : 'text-info',
         className,
       )}
