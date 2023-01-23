@@ -89,8 +89,10 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
             selectPane(paneId as PreferenceId)
           }}
           classNameOverride={{
-            popover: 'z-modal',
+            wrapper: 'relative',
+            popover: 'bottom-full w-full max-h-max',
           }}
+          portal={false}
         />
       </div>
     </div>
