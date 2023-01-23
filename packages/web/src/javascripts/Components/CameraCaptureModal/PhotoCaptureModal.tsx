@@ -163,7 +163,7 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
                 onChange={(value: string) => {
                   void recorder.setDevice(value)
                 }}
-                className={{
+                classNameOverride={{
                   wrapper: 'mt-1',
                   popover: 'z-modal',
                 }}

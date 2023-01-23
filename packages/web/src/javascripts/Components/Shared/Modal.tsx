@@ -28,7 +28,9 @@ type Props = {
   className?: {
     overlay?: string
     content?: string
+    description?: string
   }
+  customHeader?: ReactNode
   customFooter?: ReactNode
   children: ReactNode
 }
@@ -40,6 +42,7 @@ const Modal = ({
   actions = [],
   dismissOnOverlayClick = true,
   className = {},
+  customHeader,
   customFooter,
   children,
 }: Props) => {
@@ -146,51 +149,54 @@ const Modal = ({
           className.content,
         )}
       >
-        <AlertDialogLabel
-          className={classNames(
-            'flex flex-shrink-0 items-center justify-between rounded-t border-b border-solid border-border bg-default py-1.5 px-1 text-text md:px-4.5 md:py-3',
-            isIOS() && 'pt-safe-top',
-          )}
-        >
-          <div className="grid w-full grid-cols-[0.35fr_1fr_0.35fr] flex-row items-center justify-between gap-2 md:flex md:gap-0">
-            {leftSlotAction ? (
-              <MobileModalAction
-                type={leftSlotAction.type}
-                action={leftSlotAction.onClick}
-                disabled={leftSlotAction.disabled}
-              >
-                {leftSlotAction.label}
-              </MobileModalAction>
-            ) : (
-              <div className="md:hidden" />
+        {customHeader ? (
+          customHeader
+        ) : (
+          <AlertDialogLabel
+            className={classNames(
+              'flex flex-shrink-0 items-center justify-between rounded-t border-b border-solid border-border bg-default py-1.5 px-1 text-text md:px-4.5 md:py-3',
+              isIOS() && 'pt-safe-top',
             )}
-            <div
-              className={classNames(
-                'overflow-hidden text-ellipsis whitespace-nowrap text-center text-base font-semibold text-text md:flex-grow md:text-left md:text-lg',
+          >
+            <div className="grid w-full grid-cols-[0.35fr_1fr_0.35fr] flex-row items-center justify-between gap-2 md:flex md:gap-0">
+              {leftSlotAction ? (
+                <MobileModalAction
+                  type={leftSlotAction.type}
+                  action={leftSlotAction.onClick}
+                  disabled={leftSlotAction.disabled}
+                >
+                  {leftSlotAction.label}
+                </MobileModalAction>
+              ) : (
+                <div className="md:hidden" />
               )}
-            >
-              {title}
-            </div>
-            <div className="hidden items-center gap-2 md:flex">
-              <button tabIndex={0} className="ml-2 rounded p-1 font-bold hover:bg-contrast" onClick={close}>
-                <Icon type="close" />
-              </button>
-            </div>
-            {rightSlotAction ? (
-              <MobileModalAction
-                type={rightSlotAction.type}
-                action={rightSlotAction.onClick}
-                disabled={rightSlotAction.disabled}
+              <div
+                className={classNames(
+                  'overflow-hidden text-ellipsis whitespace-nowrap text-center text-base font-semibold text-text md:flex-grow md:text-left md:text-lg',
+                )}
               >
-                {rightSlotAction.label}
-              </MobileModalAction>
-            ) : sortedActions.length === 0 || !hasCancelAction ? (
-              <MobileModalAction children="Done" action={close} />
-            ) : null}
-          </div>
-          <hr className="h-1px no-border m-0 bg-border" />
-        </AlertDialogLabel>
-        <ModalDialogDescription>{children}</ModalDialogDescription>
+                {title}
+              </div>
+              <div className="hidden items-center gap-2 md:flex">
+                <button tabIndex={0} className="ml-2 rounded p-1 font-bold hover:bg-contrast" onClick={close}>
+                  <Icon type="close" />
+                </button>
+              </div>
+              {rightSlotAction ? (
+                <MobileModalAction
+                  type={rightSlotAction.type}
+                  action={rightSlotAction.onClick}
+                  disabled={rightSlotAction.disabled}
+                >
+                  {rightSlotAction.label}
+                </MobileModalAction>
+              ) : sortedActions.length === 0 || !hasCancelAction ? (
+                <MobileModalAction children="Done" action={close} />
+              ) : null}
+            </div>
+          </AlertDialogLabel>
+        )}
+        <ModalDialogDescription className={className.description}>{children}</ModalDialogDescription>
         {customFooter
           ? customFooter
           : sortedActions.length > 0 && (

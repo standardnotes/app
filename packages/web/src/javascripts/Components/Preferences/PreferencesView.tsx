@@ -4,12 +4,11 @@ import { observer } from 'mobx-react-lite'
 import { PreferencesMenu } from './PreferencesMenu'
 import PreferencesCanvas from './PreferencesCanvas'
 import { PreferencesProps } from './PreferencesProps'
-import { isIOS } from '@/Utils'
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
-import { classNames } from '@standardnotes/utils'
-import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import { ESCAPE_COMMAND } from '@standardnotes/ui-services'
+import Modal from '../Shared/Modal'
+import { AlertDialogLabel } from '@reach/alert-dialog'
 
 const PreferencesView: FunctionComponent<PreferencesProps> = ({
   application,
@@ -18,8 +17,6 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
   userProvider,
   mfaProvider,
 }) => {
-  const isDesktopScreen = useMediaQuery(MediaQueryBreakpoints.md)
-
   const menu = useMemo(
     () => new PreferencesMenu(application, viewControllerManager.enableUnfinishedFeatures),
     [viewControllerManager.enableUnfinishedFeatures, application],
@@ -56,26 +53,29 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
   }, [addAndroidBackHandler, closePreferences])
 
   return (
-    <div
-      className={classNames(
-        'absolute top-0 left-0 z-preferences flex h-full w-full flex-col bg-default pt-safe-top',
-        isIOS() ? 'pb-safe-bottom' : 'pb-2 md:pb-0',
-      )}
-      style={{
-        top: !isDesktopScreen ? `${document.documentElement.scrollTop}px` : '',
+    <Modal
+      isOpen={true}
+      close={closePreferences}
+      title="Preferences"
+      className={{
+        overlay: 'p-0',
+        content: 'md:h-full md:!max-h-full md:w-full',
+        description: 'flex flex-col',
       }}
+      customHeader={
+        <AlertDialogLabel className="flex w-full flex-row items-center justify-between border-b border-solid border-border bg-default px-3 py-2 md:p-3">
+          <div className="hidden h-8 w-8 md:block" />
+          <h1 className="text-base font-bold md:text-lg">Your preferences for Standard Notes</h1>
+          <RoundIconButton
+            onClick={() => {
+              closePreferences()
+            }}
+            icon="close"
+            label="Close preferences"
+          />
+        </AlertDialogLabel>
+      }
     >
-      <div className="flex w-full flex-row items-center justify-between border-b border-solid border-border bg-default px-3 py-2 md:p-3">
-        <div className="hidden h-8 w-8 md:block" />
-        <h1 className="text-base font-bold md:text-lg">Your preferences for Standard Notes</h1>
-        <RoundIconButton
-          onClick={() => {
-            closePreferences()
-          }}
-          icon="close"
-          label="Close preferences"
-        />
-      </div>
       <PreferencesCanvas
         menu={menu}
         application={application}
@@ -84,7 +84,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
         userProvider={userProvider}
         mfaProvider={mfaProvider}
       />
-    </div>
+    </Modal>
   )
 }
 

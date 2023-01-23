@@ -15,7 +15,7 @@ type DropdownProps = {
   value: string
   onChange: (value: string, item: DropdownItem) => void
   disabled?: boolean
-  className?: {
+  classNameOverride?: {
     wrapper?: string
     button?: string
     popover?: string
@@ -56,7 +56,7 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
   value,
   onChange,
   disabled,
-  className,
+  classNameOverride = {},
   fullWidth,
   portal = true,
 }) => {
@@ -68,16 +68,12 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
     onChange(value, selectedItem)
   }
 
-  const wrapperClassName = className?.wrapper ?? ''
-  const buttonClassName = className?.button ?? ''
-  const popoverClassName = className?.popover ?? ''
-
   return (
-    <div className={wrapperClassName}>
+    <div className={classNameOverride.wrapper}>
       <VisuallyHidden id={labelId}>{label}</VisuallyHidden>
       <ListboxInput value={value} onChange={handleChange} aria-labelledby={labelId} disabled={disabled}>
         <StyledListboxButton
-          className={classNames('w-full', !fullWidth && 'md:w-fit', buttonClassName)}
+          className={classNames('w-full', !fullWidth && 'md:w-fit', classNameOverride.button)}
           children={({ value, label, isExpanded }) => {
             const current = items.find((item) => item.value === value)
             const icon = current ? current?.icon : null
@@ -91,7 +87,10 @@ const Dropdown: FunctionComponent<DropdownProps> = ({
             })
           }}
         />
-        <ListboxPopover portal={portal} className={classNames('sn-dropdown sn-dropdown-popover', popoverClassName)}>
+        <ListboxPopover
+          portal={portal}
+          className={classNames('sn-dropdown sn-dropdown-popover', classNameOverride.popover)}
+        >
           <div className="sn-component">
             <ListboxList>
               {items.map((item) => (
