@@ -1,5 +1,5 @@
 import { classNames } from '@standardnotes/snjs'
-import { ComponentPropsWithoutRef, ReactNode } from 'react'
+import { ComponentPropsWithoutRef, ForwardedRef, forwardRef, ReactNode } from 'react'
 
 type Props = {
   children: ReactNode
@@ -8,21 +8,24 @@ type Props = {
   type?: 'primary' | 'secondary' | 'destructive' | 'cancel'
 } & Omit<ComponentPropsWithoutRef<'button'>, 'onClick' | 'type'>
 
-const MobileModalAction = ({ children, action, type = 'primary', slot, className, ...props }: Props) => {
-  return (
-    <button
-      className={classNames(
-        'flex overflow-hidden text-ellipsis whitespace-nowrap py-1 px-1 text-base font-semibold focus:shadow-none focus:outline-none active:shadow-none active:outline-none disabled:text-neutral md:hidden',
-        slot === 'left' ? 'justify-start text-left' : 'justify-end text-right',
-        type === 'cancel' || type === 'destructive' ? 'text-danger' : 'text-info',
-        className,
-      )}
-      onClick={action}
-      {...props}
-    >
-      {children}
-    </button>
-  )
-}
+const MobileModalAction = forwardRef(
+  ({ children, action, type = 'primary', slot, className, ...props }: Props, ref: ForwardedRef<HTMLButtonElement>) => {
+    return (
+      <button
+        ref={ref}
+        className={classNames(
+          'flex whitespace-nowrap py-1 px-1 text-base font-semibold focus:shadow-none focus:outline-none active:shadow-none active:outline-none disabled:text-neutral md:hidden',
+          slot === 'left' ? 'justify-start text-left' : 'justify-end text-right',
+          type === 'cancel' || type === 'destructive' ? 'text-danger' : 'text-info',
+          className,
+        )}
+        onClick={action}
+        {...props}
+      >
+        {children}
+      </button>
+    )
+  },
+)
 
 export default MobileModalAction

@@ -3,11 +3,12 @@ import { createPortal } from 'react-dom'
 
 type Props = {
   children: ReactNode
+  disabled?: boolean
 }
 
 const randomPortalId = () => Math.random()
 
-const Portal = ({ children }: Props) => {
+const Portal = ({ children, disabled = false }: Props) => {
   const [container, setContainer] = useState<HTMLElement>()
 
   useEffect(() => {
@@ -17,6 +18,10 @@ const Portal = ({ children }: Props) => {
     setContainer(container)
     return () => container.remove()
   }, [])
+
+  if (disabled) {
+    return <>{children}</>
+  }
 
   return container ? createPortal(children, container) : null
 }

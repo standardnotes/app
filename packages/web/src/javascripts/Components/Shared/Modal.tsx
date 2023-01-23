@@ -2,9 +2,10 @@ import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/u
 import { isIOS } from '@/Utils'
 import { AlertDialogContent, AlertDialogLabel } from '@reach/alert-dialog'
 import { classNames } from '@standardnotes/snjs'
-import { ReactNode, useMemo } from 'react'
+import { ReactNode, useMemo, useRef, useState } from 'react'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
+import Popover from '../Popover/Popover'
 import MobileModalAction from './MobileModalAction'
 import ModalAndroidBackHandler from './ModalAndroidBackHandler'
 import ModalDialogDescription from './ModalDialogDescription'
@@ -62,11 +63,14 @@ const Modal = ({ title, close, actions = [], className = {}, customHeader, custo
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
-  const leftSlotAction = sortedActions.find((action) => action.mobileSlot === 'left')
   const rightSlotAction = sortedActions.find((action) => action.mobileSlot === 'right')
-  const hasNonSlotActions = sortedActions.some((action) => !action.mobileSlot)
   const hasCancelAction = sortedActions.some((action) => action.type === 'cancel')
   const firstPrimaryActionIndex = sortedActions.findIndex((action) => action.type === 'primary')
+
+  const nonPrimaryActions = sortedActions.filter((action) => action.type !== 'primary')
+
+  const [showAdvanced, setShowAdvanced] = useState(false)
+  const advancedOptionRef = useRef<HTMLButtonElement>(null)
 
   return (
     <>
@@ -88,14 +92,51 @@ const Modal = ({ title, close, actions = [], className = {}, customHeader, custo
             )}
           >
             <div className="grid w-full grid-cols-[0.35fr_1fr_0.35fr] flex-row items-center justify-between gap-2 md:flex md:gap-0">
-              {leftSlotAction ? (
+              {nonPrimaryActions.length > 1 ? (
+                <>
+                  <MobileModalAction
+                    type="secondary"
+                    action={() => setShowAdvanced((show) => !show)}
+                    slot="left"
+                    ref={advancedOptionRef}
+                  >
+                    <div className="rounded-full border border-border p-0.5">
+                      <Icon type="more" />
+                    </div>
+                  </MobileModalAction>
+                  <Popover
+                    title="Advanced"
+                    open={showAdvanced}
+                    anchorElement={advancedOptionRef.current}
+                    disableMobileFullscreenTakeover={true}
+                    togglePopover={() => setShowAdvanced((show) => !show)}
+                    align="start"
+                    portal={false}
+                    className="w-1/2 !min-w-0 divide-y divide-border border border-border"
+                  >
+                    {nonPrimaryActions.map((action, index) => (
+                      <button
+                        className={classNames(
+                          'p-2 text-base font-semibold hover:bg-contrast focus:bg-info-backdrop focus:shadow-none focus:outline-none',
+                          action.type === 'destructive' && 'text-danger',
+                        )}
+                        key={index}
+                        onClick={action.onClick}
+                        disabled={action.disabled}
+                      >
+                        {action.label}
+                      </button>
+                    ))}
+                  </Popover>
+                </>
+              ) : nonPrimaryActions.length === 1 ? (
                 <MobileModalAction
-                  type={leftSlotAction.type}
-                  action={leftSlotAction.onClick}
-                  disabled={leftSlotAction.disabled}
+                  type={nonPrimaryActions[0].type}
+                  action={nonPrimaryActions[0].onClick}
+                  disabled={nonPrimaryActions[0].disabled}
                   slot="left"
                 >
-                  {leftSlotAction.label}
+                  {nonPrimaryActions[0].label}
                 </MobileModalAction>
               ) : (
                 <div className="md:hidden" />
@@ -129,9 +170,8 @@ const Modal = ({ title, close, actions = [], className = {}, customHeader, custo
           : sortedActions.length > 0 && (
               <div
                 className={classNames(
-                  'items-center justify-start gap-3 border-t border-border py-2 px-2.5 md:px-4 md:py-4',
+                  'hidden items-center justify-start gap-3 border-t border-border py-2 px-2.5 md:flex md:px-4 md:py-4',
                   isIOS() && 'pb-safe-bottom',
-                  hasNonSlotActions ? 'flex' : 'hidden md:flex',
                 )}
               >
                 {sortedActions.map((action, index) => (
