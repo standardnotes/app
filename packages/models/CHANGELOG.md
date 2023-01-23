@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.42.11](https://github.com/standardnotes/app/compare/@standardnotes/models@1.42.10...@standardnotes/models@1.42.11) (2023-01-23)
+
+### Bug Fixes
+
+* **models:** displaced dependencies ([9dc25cb](https://github.com/standardnotes/app/commit/9dc25cbb449cd45a3a34eb68fa5304f67f74b6c2))
+
 ## [1.42.10](https://github.com/standardnotes/app/compare/@standardnotes/models@1.42.9...@standardnotes/models@1.42.10) (2023-01-23)
 
 ### Bug Fixes
