@@ -305,8 +305,8 @@ const ChallengeModal: FunctionComponent<Props> = ({
             <Icon type="close" className="text-neutral" />
           </button>
         )}
-        <div className="flex w-full flex-col items-center p-8">
-          <ProtectedIllustration className="mb-4 h-30 w-30" />
+        <div className="flex min-h-0 w-full flex-grow flex-col items-center overflow-auto p-8">
+          <ProtectedIllustration className="mb-4 h-30 w-30 flex-shrink-0" />
           <div className="mb-3 max-w-76 text-center text-lg font-bold">{challenge.heading}</div>
           {challenge.subheading && (
             <div className="break-word mb-4 max-w-76 text-center text-sm">{challenge.subheading}</div>
