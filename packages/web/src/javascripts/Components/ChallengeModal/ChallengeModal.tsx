@@ -217,17 +217,15 @@ const ChallengeModal: FunctionComponent<Props> = ({
       enter: {
         keyframes: [
           {
-            opacity: 0.25,
-            transform: 'translateY(1rem)',
+            transform: 'translateY(100%)',
           },
           {
-            opacity: 1,
             transform: 'translateY(0)',
           },
         ],
         options: {
           easing: 'cubic-bezier(.36,.66,.04,1)',
-          duration: 150,
+          duration: 250,
           fill: 'forwards',
         },
         initialStyle: {
@@ -240,17 +238,15 @@ const ChallengeModal: FunctionComponent<Props> = ({
       exit: {
         keyframes: [
           {
-            opacity: 1,
             transform: 'translateY(0)',
           },
           {
-            opacity: 0,
-            transform: 'translateY(1rem)',
+            transform: 'translateY(100%)',
           },
         ],
         options: {
           easing: 'cubic-bezier(.36,.66,.04,1)',
-          duration: 150,
+          duration: 250,
           fill: 'forwards',
         },
         initialStyle: {
