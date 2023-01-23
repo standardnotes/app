@@ -224,7 +224,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
 
   override render() {
     return (
-      <div className="sn-component" id="password-wizard">
+      <div className="sn-component h-full w-full md:h-auto md:w-auto" id="password-wizard">
         <Modal
           title={this.state.title}
           close={this.dismiss}
