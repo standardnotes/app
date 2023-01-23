@@ -90,7 +90,7 @@ const EditSmartViewModal = ({ controller, platform }: Props) => {
   }
 
   return (
-    <Modal title={`Edit Smart View "${view.title}"`} isOpen={true} close={closeDialog} actions={modalActions}>
+    <Modal title={`Edit Smart View "${view.title}"`} close={closeDialog} actions={modalActions}>
       <div className="px-4 py-4">
         <div className="flex h-full flex-col gap-4">
           <div className="flex items-center gap-2.5">
