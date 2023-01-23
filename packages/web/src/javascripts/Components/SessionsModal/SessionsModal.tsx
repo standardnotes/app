@@ -9,6 +9,7 @@ import Spinner from '@/Components/Spinner/Spinner'
 import Button from '@/Components/Button/Button'
 import Icon from '../Icon/Icon'
 import Modal, { ModalAction } from '../Shared/Modal'
+import ModalOverlay from '../Shared/ModalOverlay'
 
 type Session = RemoteSession & {
   revoking?: true
@@ -125,15 +126,7 @@ const SessionsModalContent: FunctionComponent<{
 
   return (
     <>
-      <Modal
-        title="Active Sessions"
-        isOpen={true}
-        close={close}
-        actions={sessionModalActions}
-        className={{
-          overlay: 'sessions-modal',
-        }}
-      >
+      <Modal title="Active Sessions" close={close} actions={sessionModalActions}>
         <div className="px-4 py-4">
           {refreshing ? (
             <div className="flex items-center gap-2">
@@ -221,11 +214,15 @@ const SessionsModal: FunctionComponent<{
   viewControllerManager: ViewControllerManager
   application: WebApplication
 }> = ({ viewControllerManager, application }) => {
-  if (viewControllerManager.isSessionsModalVisible) {
-    return <SessionsModalContent application={application} viewControllerManager={viewControllerManager} />
-  } else {
-    return null
-  }
+  return (
+    <ModalOverlay
+      isOpen={viewControllerManager.isSessionsModalVisible}
+      onDismiss={viewControllerManager.closeSessionsModal}
+      className="sessions-modal"
+    >
+      <SessionsModalContent application={application} viewControllerManager={viewControllerManager} />
+    </ModalOverlay>
+  )
 }
 
 export default observer(SessionsModal)

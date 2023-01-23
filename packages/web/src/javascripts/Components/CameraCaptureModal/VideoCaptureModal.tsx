@@ -88,7 +88,6 @@ const VideoCaptureModal = ({ filesController, close }: Props) => {
   return (
     <Modal
       title="Record a video"
-      isOpen={true}
       close={close}
       actions={[
         {

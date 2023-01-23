@@ -1,9 +1,8 @@
-import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
 import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { isIOS } from '@/Utils'
-import { AlertDialogOverlay, AlertDialogContent, AlertDialogLabel } from '@reach/alert-dialog'
+import { AlertDialogContent, AlertDialogLabel } from '@reach/alert-dialog'
 import { classNames } from '@standardnotes/snjs'
-import { ReactNode, useMemo, useRef } from 'react'
+import { ReactNode, useMemo } from 'react'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import MobileModalAction from './MobileModalAction'
@@ -21,12 +20,9 @@ export type ModalAction = {
 
 type Props = {
   title: string
-  isOpen: boolean
   close: () => void
   actions?: ModalAction[]
-  dismissOnOverlayClick?: boolean
   className?: {
-    overlay?: string
     content?: string
     description?: string
   }
@@ -35,17 +31,7 @@ type Props = {
   children: ReactNode
 }
 
-const Modal = ({
-  title,
-  isOpen,
-  close,
-  actions = [],
-  dismissOnOverlayClick = true,
-  className = {},
-  customHeader,
-  customFooter,
-  children,
-}: Props) => {
+const Modal = ({ title, close, actions = [], className = {}, customHeader, customFooter, children }: Props) => {
   const sortedActions = useMemo(
     () =>
       actions
@@ -76,58 +62,6 @@ const Modal = ({
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
-  const [isMounted, setElement] = useLifecycleAnimation(
-    {
-      open: isOpen,
-      enter: {
-        keyframes: [
-          {
-            transform: 'translateY(100%)',
-          },
-          {
-            transform: 'translateY(0)',
-          },
-        ],
-        options: {
-          easing: 'cubic-bezier(.36,.66,.04,1)',
-          duration: 250,
-          fill: 'forwards',
-        },
-        initialStyle: {
-          transformOrigin: 'bottom',
-        },
-      },
-      enterCallback: (element) => {
-        element.scrollTop = 0
-      },
-      exit: {
-        keyframes: [
-          {
-            transform: 'translateY(0)',
-          },
-          {
-            transform: 'translateY(100%)',
-          },
-        ],
-        options: {
-          easing: 'cubic-bezier(.36,.66,.04,1)',
-          duration: 250,
-          fill: 'forwards',
-        },
-        initialStyle: {
-          transformOrigin: 'bottom',
-        },
-      },
-    },
-    !isMobileScreen,
-  )
-
-  const ldRef = useRef<HTMLButtonElement>(null)
-
-  if (!isMounted) {
-    return null
-  }
-
   const leftSlotAction = sortedActions.find((action) => action.mobileSlot === 'left')
   const rightSlotAction = sortedActions.find((action) => action.mobileSlot === 'right')
   const hasNonSlotActions = sortedActions.some((action) => !action.mobileSlot)
@@ -135,12 +69,7 @@ const Modal = ({
   const firstPrimaryActionIndex = sortedActions.findIndex((action) => action.type === 'primary')
 
   return (
-    <AlertDialogOverlay
-      className={classNames('p-0 md:px-0 md:opacity-100', className.overlay)}
-      leastDestructiveRef={ldRef}
-      onDismiss={dismissOnOverlayClick ? close : undefined}
-      ref={setElement}
-    >
+    <>
       <ModalAndroidBackHandler close={close} />
       <AlertDialogContent
         tabIndex={0}
@@ -227,7 +156,7 @@ const Modal = ({
               </div>
             )}
       </AlertDialogContent>
-    </AlertDialogOverlay>
+    </>
   )
 }
 

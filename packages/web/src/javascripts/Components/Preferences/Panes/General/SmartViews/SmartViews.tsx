@@ -15,6 +15,7 @@ import NoSubscriptionBanner from '@/Components/NoSubscriptionBanner/NoSubscripti
 import { EditSmartViewModalController } from './EditSmartViewModalController'
 import { STRING_DELETE_TAG } from '@/Constants/Strings'
 import { confirmDialog } from '@standardnotes/ui-services'
+import ModalOverlay from '@/Components/Shared/ModalOverlay'
 
 type NewType = {
   application: WebApplication
@@ -88,12 +89,15 @@ const SmartViews = ({ application, featuresController }: Props) => {
           )}
         </PreferencesSegment>
       </PreferencesGroup>
-      {!!editSmartViewModalController.view && (
+      <ModalOverlay isOpen={!!editSmartViewModalController.view} onDismiss={editSmartViewModalController.closeDialog}>
         <EditSmartViewModal controller={editSmartViewModalController} platform={application.platform} />
-      )}
-      {addSmartViewModalController.isAddingSmartView && (
+      </ModalOverlay>
+      <ModalOverlay
+        isOpen={addSmartViewModalController.isAddingSmartView}
+        onDismiss={addSmartViewModalController.closeModal}
+      >
         <AddSmartViewModal controller={addSmartViewModalController} platform={application.platform} />
-      )}
+      </ModalOverlay>
     </>
   )
 }

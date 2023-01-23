@@ -1,6 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { ApplicationEvent, PermissionDialog } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
+import ModalOverlay from '../Shared/ModalOverlay'
 import PermissionsModal from './PermissionsModal'
 
 type Props = {
@@ -42,14 +43,18 @@ const PermissionsModalWrapper: FunctionComponent<Props> = ({ application }) => {
     }
   }, [application, onAppStart])
 
-  return dialog ? (
-    <PermissionsModal
-      callback={dialog.callback}
-      dismiss={dismissPermissionsDialog}
-      component={dialog.component}
-      permissionsString={dialog.permissionsString}
-    />
-  ) : null
+  return (
+    <ModalOverlay isOpen={!!dialog}>
+      {dialog && (
+        <PermissionsModal
+          callback={dialog.callback}
+          dismiss={dismissPermissionsDialog}
+          component={dialog.component}
+          permissionsString={dialog.permissionsString}
+        />
+      )}
+    </ModalOverlay>
+  )
 }
 
 export default PermissionsModalWrapper

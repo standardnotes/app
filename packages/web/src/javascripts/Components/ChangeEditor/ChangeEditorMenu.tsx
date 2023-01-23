@@ -13,6 +13,7 @@ import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/Premium
 import { SuperNoteImporter } from '../NoteView/SuperEditor/SuperNoteImporter'
 import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
 import { Pill } from '../Preferences/PreferencesComponents/Content'
+import ModalOverlay from '../Shared/ModalOverlay'
 
 type ChangeEditorMenuProps = {
   application: WebApplication
@@ -174,6 +175,8 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     closeMenu()
   }, [note, pendingSuperItem, selectNonComponent, closeMenu])
 
+  const closeSuperNoteImporter = () => setShowSuperImporter(false)
+
   return (
     <>
       <Menu className="pt-0.5 pb-1" a11yLabel="Change note type menu" isOpen={isVisible}>
@@ -220,14 +223,16 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
             )
           })}
       </Menu>
-      {note && showSuperImporter && (
-        <SuperNoteImporter
-          note={note}
-          application={application}
-          onConvertComplete={handleSuperNoteConversionCompletion}
-          closeDialog={() => setShowSuperImporter(false)}
-        />
-      )}
+      <ModalOverlay isOpen={showSuperImporter} onDismiss={closeSuperNoteImporter}>
+        {note && (
+          <SuperNoteImporter
+            note={note}
+            application={application}
+            onConvertComplete={handleSuperNoteConversionCompletion}
+            closeDialog={closeSuperNoteImporter}
+          />
+        )}
+      </ModalOverlay>
     </>
   )
 }

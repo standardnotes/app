@@ -14,6 +14,7 @@ import InvitationsList from './InvitationsList'
 import Invite from './Invite/Invite'
 import Button from '@/Components/Button/Button'
 import SharingStatusText from './SharingStatusText'
+import ModalOverlay from '@/Components/Shared/ModalOverlay'
 
 type Props = {
   application: WebApplication
@@ -27,6 +28,8 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
 
   const isSubscriptionSharingFeatureAvailable =
     application.features.getFeatureStatus(FeatureIdentifier.SubscriptionSharing) === FeatureStatus.Entitled
+
+  const closeInviteDialog = () => setIsInviteDialogOpen(false)
 
   return (
     <PreferencesGroup>
@@ -42,13 +45,13 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
                 {!subscriptionState.allInvitationsUsed && (
                   <Button className="min-w-20" label="Invite" onClick={() => setIsInviteDialogOpen(true)} />
                 )}
-                {isInviteDialogOpen && (
+                <ModalOverlay isOpen={isInviteDialogOpen} onDismiss={closeInviteDialog}>
                   <Invite
-                    onCloseDialog={() => setIsInviteDialogOpen(false)}
+                    onCloseDialog={closeInviteDialog}
                     application={application}
                     subscriptionState={subscriptionState}
                   />
-                )}
+                </ModalOverlay>
               </div>
             ) : (
               <NoProSubscription application={application} />

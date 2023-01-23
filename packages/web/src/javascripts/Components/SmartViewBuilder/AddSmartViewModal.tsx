@@ -140,7 +140,7 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
   )
 
   return (
-    <Modal title="Add Smart View" isOpen={true} close={closeModal} actions={modalActions}>
+    <Modal title="Add Smart View" close={closeModal} actions={modalActions}>
       <div className="px-4 py-4">
         <div className="flex h-full flex-col gap-4">
           <div className="flex items-center gap-2.5">

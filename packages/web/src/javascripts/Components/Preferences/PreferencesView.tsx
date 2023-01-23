@@ -56,12 +56,10 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
 
   return (
     <Modal
-      isOpen={true}
       close={closePreferences}
       title="Preferences"
       className={{
-        overlay: 'p-0',
-        content: 'md:h-full md:!max-h-full md:w-full',
+        content: 'md:h-full md:!max-h-full md:!w-full',
         description: 'flex flex-col',
       }}
       customHeader={

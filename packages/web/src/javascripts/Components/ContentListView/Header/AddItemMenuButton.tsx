@@ -4,6 +4,7 @@ import Icon from '@/Components/Icon/Icon'
 import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import Popover from '@/Components/Popover/Popover'
+import ModalOverlay from '@/Components/Shared/ModalOverlay'
 import { FilesController } from '@/Controllers/FilesController'
 import { PhotoRecorder } from '@/Controllers/Moments/PhotoRecorder'
 import { classNames } from '@standardnotes/snjs'
@@ -39,6 +40,10 @@ const AddItemMenuButton = ({
   }, [])
 
   const canShowMenu = isInFilesSmartView && deviceHasCamera
+
+  const closeCaptureModal = () => {
+    setCaptureType(undefined)
+  }
 
   return (
     <>
@@ -101,22 +106,12 @@ const AddItemMenuButton = ({
           </MenuItem>
         </Menu>
       </Popover>
-      {captureType === 'photo' && (
-        <PhotoCaptureModal
-          filesController={filesController}
-          close={() => {
-            setCaptureType(undefined)
-          }}
-        />
-      )}
-      {captureType === 'video' && (
-        <VideoCaptureModal
-          filesController={filesController}
-          close={() => {
-            setCaptureType(undefined)
-          }}
-        />
-      )}
+      <ModalOverlay isOpen={captureType === 'photo'} onDismiss={closeCaptureModal}>
+        <PhotoCaptureModal filesController={filesController} close={closeCaptureModal} />
+      </ModalOverlay>
+      <ModalOverlay isOpen={captureType === 'video'} onDismiss={closeCaptureModal}>
+        <VideoCaptureModal filesController={filesController} close={closeCaptureModal} />
+      </ModalOverlay>
     </>
   )
 }

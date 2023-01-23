@@ -140,7 +140,7 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
   )
 
   return (
-    <Modal title="Change Email" isOpen={true} close={handleDialogClose} actions={modalActions}>
+    <Modal title="Change Email" close={handleDialogClose} actions={modalActions}>
       <div className="px-4.5 py-4">
         {currentStep === Steps.InitialStep && (
           <ChangeEmailForm setNewEmail={setNewEmail} setCurrentPassword={setCurrentPassword} />

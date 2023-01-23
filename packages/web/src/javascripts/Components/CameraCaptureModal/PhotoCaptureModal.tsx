@@ -89,7 +89,6 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
   }
   return (
     <Modal
-      isOpen={true}
       title="Take a photo"
       close={close}
       actions={[

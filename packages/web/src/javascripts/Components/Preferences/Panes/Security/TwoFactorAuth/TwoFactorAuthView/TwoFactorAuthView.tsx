@@ -11,6 +11,7 @@ import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/P
 import { WebApplication } from '@/Application/Application'
 import RecoveryCodeBanner from '@/Components/RecoveryCodeBanner/RecoveryCodeBanner'
 import Modal, { ModalAction } from '@/Components/Shared/Modal'
+import ModalOverlay from '@/Components/Shared/ModalOverlay'
 
 type Props = {
   auth: TwoFactorAuth
@@ -114,14 +115,11 @@ const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application }) => {
           </PreferencesSegment>
         )}
       </PreferencesGroup>
-      <Modal
-        title={activationModalTitle}
-        isOpen={shouldShowActivationModal}
-        close={closeActivationModal}
-        actions={activationModalActions}
-      >
-        {shouldShowActivationModal && <TwoFactorActivationView activation={auth.status} />}
-      </Modal>
+      <ModalOverlay isOpen={shouldShowActivationModal} onDismiss={closeActivationModal}>
+        <Modal title={activationModalTitle} close={closeActivationModal} actions={activationModalActions}>
+          {shouldShowActivationModal && <TwoFactorActivationView activation={auth.status} />}
+        </Modal>
+      </ModalOverlay>
     </>
   )
 }

@@ -227,7 +227,6 @@ class PasswordWizard extends AbstractComponent<Props, State> {
       <div className="sn-component" id="password-wizard">
         <Modal
           title={this.state.title}
-          isOpen={true}
           close={this.dismiss}
           actions={[
             {

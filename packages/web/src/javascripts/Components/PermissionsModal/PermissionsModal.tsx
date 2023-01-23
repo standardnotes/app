@@ -25,7 +25,6 @@ const PermissionsModal = ({ callback, component, dismiss, permissionsString }: P
   return (
     <Modal
       title="Activate Component"
-      isOpen={true}
       close={deny}
       actions={[
         { label: 'Cancel', onClick: deny, type: 'cancel', mobileSlot: 'left' },

@@ -10,6 +10,7 @@ import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import PasswordWizard from '@/Components/PasswordWizard/PasswordWizard'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import ModalOverlay from '@/Components/Shared/ModalOverlay'
 
 type Props = {
   application: WebApplication
@@ -33,6 +34,8 @@ const Credentials: FunctionComponent<Props> = ({ application }: Props) => {
     setShouldShowPasswordWizard(false)
   }, [])
 
+  const closeChangeEmailDialog = () => setIsChangeEmailDialogOpen(false)
+
   return (
     <>
       <PreferencesGroup>
@@ -55,14 +58,14 @@ const Credentials: FunctionComponent<Props> = ({ application }: Props) => {
             Current password was set on <span className="font-bold">{passwordCreatedOn}</span>
           </Text>
           <Button className="mt-3 min-w-20" label="Change password" onClick={presentPasswordWizard} />
-          {isChangeEmailDialogOpen && (
-            <ChangeEmail onCloseDialog={() => setIsChangeEmailDialogOpen(false)} application={application} />
-          )}
+          <ModalOverlay isOpen={isChangeEmailDialogOpen} onDismiss={closeChangeEmailDialog}>
+            <ChangeEmail onCloseDialog={closeChangeEmailDialog} application={application} />
+          </ModalOverlay>
         </PreferencesSegment>
       </PreferencesGroup>
-      {shouldShowPasswordWizard ? (
+      <ModalOverlay isOpen={shouldShowPasswordWizard} onDismiss={dismissPasswordWizard}>
         <PasswordWizard application={application} dismissModal={dismissPasswordWizard} />
-      ) : null}
+      </ModalOverlay>
     </>
   )
 }

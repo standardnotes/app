@@ -42,7 +42,7 @@ export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ note, close
   )
 
   return (
-    <Modal title="Markdown Preview" isOpen={true} close={closeDialog} actions={modalActions}>
+    <Modal title="Markdown Preview" close={closeDialog} actions={modalActions}>
       <div className="relative w-full px-4 py-4">
         <ErrorBoundary>
           <BlocksEditorComposer readonly initialValue={note.text} nodes={[FileNode, BubbleNode]}>
