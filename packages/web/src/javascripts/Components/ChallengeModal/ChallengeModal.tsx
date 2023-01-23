@@ -22,7 +22,7 @@ import { InputValue } from './InputValue'
 import { isIOS, isMobileScreen } from '@/Utils'
 import { classNames } from '@standardnotes/utils'
 import MobileModalAction from '../Shared/MobileModalAction'
-import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
+import { useModalAnimation } from '../Shared/useModalAnimation'
 
 type Props = {
   application: WebApplication
@@ -211,51 +211,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
     }
   }, [application, cancelChallenge, challenge.cancelable])
 
-  const [isMounted, setElement] = useLifecycleAnimation(
-    {
-      open: !!challenge.prompts.length,
-      enter: {
-        keyframes: [
-          {
-            transform: 'translateY(100%)',
-          },
-          {
-            transform: 'translateY(0)',
-          },
-        ],
-        options: {
-          easing: 'cubic-bezier(.36,.66,.04,1)',
-          duration: 250,
-          fill: 'forwards',
-        },
-        initialStyle: {
-          transformOrigin: 'bottom',
-        },
-      },
-      enterCallback: (element) => {
-        element.scrollTop = 0
-      },
-      exit: {
-        keyframes: [
-          {
-            transform: 'translateY(0)',
-          },
-          {
-            transform: 'translateY(100%)',
-          },
-        ],
-        options: {
-          easing: 'cubic-bezier(.36,.66,.04,1)',
-          duration: 250,
-          fill: 'forwards',
-        },
-        initialStyle: {
-          transformOrigin: 'bottom',
-        },
-      },
-    },
-    !isMobileScreen(),
-  )
+  const [isMounted, setElement] = useModalAnimation(!!challenge.prompts.length)
 
   if (!isMounted) {
     return null

@@ -1,8 +1,7 @@
-import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
-import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { AlertDialogOverlay } from '@reach/alert-dialog'
 import { classNames } from '@standardnotes/snjs'
 import { ReactNode, useRef } from 'react'
+import { useModalAnimation } from './useModalAnimation'
 
 type Props = {
   isOpen: boolean
@@ -14,53 +13,7 @@ type Props = {
 const ModalOverlay = ({ isOpen, onDismiss, children, className }: Props) => {
   const ldRef = useRef<HTMLButtonElement>(null)
 
-  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
-
-  const [isMounted, setElement] = useLifecycleAnimation(
-    {
-      open: isOpen,
-      enter: {
-        keyframes: [
-          {
-            transform: 'translateY(100%)',
-          },
-          {
-            transform: 'translateY(0)',
-          },
-        ],
-        options: {
-          easing: 'cubic-bezier(.36,.66,.04,1)',
-          duration: 250,
-          fill: 'forwards',
-        },
-        initialStyle: {
-          transformOrigin: 'bottom',
-        },
-      },
-      enterCallback: (element) => {
-        element.scrollTop = 0
-      },
-      exit: {
-        keyframes: [
-          {
-            transform: 'translateY(0)',
-          },
-          {
-            transform: 'translateY(100%)',
-          },
-        ],
-        options: {
-          easing: 'cubic-bezier(.36,.66,.04,1)',
-          duration: 250,
-          fill: 'forwards',
-        },
-        initialStyle: {
-          transformOrigin: 'bottom',
-        },
-      },
-    },
-    !isMobileScreen,
-  )
+  const [isMounted, setElement] = useModalAnimation(isOpen)
 
   if (!isMounted) {
     return null
