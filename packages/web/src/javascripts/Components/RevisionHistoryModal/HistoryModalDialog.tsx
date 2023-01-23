@@ -1,19 +1,20 @@
 import { getPlatformString } from '@/Utils'
 import { classNames } from '@standardnotes/utils'
 import { DialogOverlay, DialogContent } from '@reach/dialog'
-import { ReactNode } from 'react'
+import { ForwardedRef, forwardRef, ReactNode } from 'react'
 
 type Props = {
   children: ReactNode
   onDismiss: () => void
 }
 
-const HistoryModalDialog = ({ children, onDismiss }: Props) => {
+const HistoryModalDialog = forwardRef(({ children, onDismiss }: Props, ref: ForwardedRef<HTMLDivElement>) => {
   return (
     <DialogOverlay
       className={`sn-component ${getPlatformString()}`}
       onDismiss={onDismiss}
       aria-label="Note revision history"
+      ref={ref}
     >
       <DialogContent
         aria-label="Note revision history"
@@ -26,6 +27,6 @@ const HistoryModalDialog = ({ children, onDismiss }: Props) => {
       </DialogContent>
     </DialogOverlay>
   )
-}
+})
 
 export default HistoryModalDialog

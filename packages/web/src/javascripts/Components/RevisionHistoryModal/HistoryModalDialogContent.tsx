@@ -46,6 +46,7 @@ const HistoryModalDialogContent = ({
         >
           Content
         </button>
+        <div className="mx-auto text-base font-semibold">History</div>
         <button className="ml-auto mr-2 rounded-full border border-border p-1.5" onClick={dismissModal}>
           <Icon type="close" className="h-4 w-4" />
         </button>

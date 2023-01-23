@@ -4,6 +4,7 @@ import HistoryModalDialogContent from './HistoryModalDialogContent'
 import HistoryModalDialog from './HistoryModalDialog'
 import { RevisionHistoryModalProps } from './RevisionHistoryModalProps'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
+import { useModalAnimation } from '../Shared/useModalAnimation'
 
 const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
   application,
@@ -14,7 +15,9 @@ const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
 }) => {
   const addAndroidBackHandler = useAndroidBackHandler()
 
-  const isOpen = !!historyModalController.note
+  const isOpen = Boolean(
+    historyModalController.note && application.isAuthorizedToRenderItem(historyModalController.note),
+  )
 
   useEffect(() => {
     let removeListener: (() => void) | undefined
@@ -33,24 +36,24 @@ const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
     }
   }, [addAndroidBackHandler, historyModalController, isOpen])
 
-  if (!historyModalController.note) {
-    return null
-  }
+  const [isMounted, setElement] = useModalAnimation(isOpen)
 
-  if (!application.isAuthorizedToRenderItem(historyModalController.note)) {
+  if (!isMounted) {
     return null
   }
 
   return (
-    <HistoryModalDialog onDismiss={historyModalController.dismissModal}>
-      <HistoryModalDialogContent
-        application={application}
-        dismissModal={historyModalController.dismissModal}
-        note={historyModalController.note}
-        notesController={notesController}
-        selectionController={selectionController}
-        subscriptionController={subscriptionController}
-      />
+    <HistoryModalDialog onDismiss={historyModalController.dismissModal} ref={setElement}>
+      {!!historyModalController.note && (
+        <HistoryModalDialogContent
+          application={application}
+          dismissModal={historyModalController.dismissModal}
+          note={historyModalController.note}
+          notesController={notesController}
+          selectionController={selectionController}
+          subscriptionController={subscriptionController}
+        />
+      )}
     </HistoryModalDialog>
   )
 }
