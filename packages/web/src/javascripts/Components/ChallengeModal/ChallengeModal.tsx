@@ -238,19 +238,21 @@ const ChallengeModal: FunctionComponent<Props> = ({
       >
         <div
           className={classNames(
-            'flex w-full items-center border-b border-solid border-border py-1.5 px-1.5 md:hidden',
+            'w-full border-b border-solid border-border py-1.5 px-1.5 md:hidden',
             isIOS() && 'pt-safe-top',
           )}
         >
-          {challenge.cancelable ? (
-            <MobileModalAction slot="left" type="cancel" action={cancelChallenge}>
-              Cancel
-            </MobileModalAction>
-          ) : (
-            <div className="mr-auto" />
-          )}
-          <div className="mx-auto text-base font-semibold text-text">Authenticate</div>
-          <div className="ml-auto" />
+          <div className="grid w-full grid-cols-[0.35fr_1fr_0.35fr] gap-2">
+            {challenge.cancelable ? (
+              <MobileModalAction slot="left" type="cancel" action={cancelChallenge}>
+                Cancel
+              </MobileModalAction>
+            ) : (
+              <div />
+            )}
+            <div className="flex items-center justify-center text-base font-semibold text-text">Authenticate</div>
+            <div />
+          </div>
         </div>
         {challenge.cancelable && (
           <button
