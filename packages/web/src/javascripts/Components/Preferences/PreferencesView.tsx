@@ -9,6 +9,8 @@ import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import { ESCAPE_COMMAND } from '@standardnotes/ui-services'
 import Modal from '../Shared/Modal'
 import { AlertDialogLabel } from '@reach/alert-dialog'
+import { classNames } from '@standardnotes/snjs'
+import { isIOS } from '@/Utils'
 
 const PreferencesView: FunctionComponent<PreferencesProps> = ({
   application,
@@ -63,7 +65,12 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
         description: 'flex flex-col',
       }}
       customHeader={
-        <AlertDialogLabel className="flex w-full flex-row items-center justify-between border-b border-solid border-border bg-default px-3 py-2 md:p-3">
+        <AlertDialogLabel
+          className={classNames(
+            'flex w-full flex-row items-center justify-between border-b border-solid border-border bg-default px-3 pb-2 md:p-3',
+            isIOS() ? 'pt-safe-top' : 'pt-2',
+          )}
+        >
           <div className="hidden h-8 w-8 md:block" />
           <h1 className="text-base font-bold md:text-lg">Your preferences for Standard Notes</h1>
           <RoundIconButton
