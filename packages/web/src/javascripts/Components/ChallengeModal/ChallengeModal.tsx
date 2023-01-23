@@ -279,10 +279,9 @@ const ChallengeModal: FunctionComponent<Props> = ({
       <DialogContent
         aria-label="Challenge modal"
         className={classNames(
-          'challenge-modal relative m-0 flex h-full w-full flex-col items-center rounded border-solid border-border p-0 md:h-auto md:w-auto md:border',
+          'challenge-modal relative m-0 flex h-full w-full flex-col items-center rounded border-solid border-border bg-default p-0 md:h-auto md:w-auto md:border',
           !isMobileScreen() && 'shadow-overlay-light',
           isMobileOverlay && 'shadow-overlay-light border border-solid border-border',
-          isFullScreenBlocker && isMobileScreen() ? 'bg-passive-5' : 'bg-default',
         )}
       >
         <div
