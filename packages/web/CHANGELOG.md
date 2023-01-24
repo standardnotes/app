@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.141.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.140.14...@standardnotes/web@3.141.0) (2023-01-24)
+
+### Features
+
+* Added ability to change the note type of multiple notes at once ([#2180](https://github.com/standardnotes/app/issues/2180)) ([af6ae81](https://github.com/standardnotes/app/commit/af6ae81e1d4af4cc3ecd528eddf101eadc923fc9))
+
 ## [3.140.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.140.13...@standardnotes/web@3.140.14) (2023-01-24)
 
 **Note:** Version bump only for package @standardnotes/web

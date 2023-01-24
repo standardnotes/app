@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.141.0",
+      "title": "[3.141.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.140.14...@standardnotes/web@3.141.0) (2023-01-24)",
+      "date": null,
+      "body": "### Features\n\n* Added ability to change the note type of multiple notes at once ([#2180](https://github.com/standardnotes/app/issues/2180)) ([af6ae81](https://github.com/standardnotes/app/commit/af6ae81e1d4af4cc3ecd528eddf101eadc923fc9))",
+      "parsed": {
+        "_": [
+          "Added ability to change the note type of multiple notes at once (#2180) (af6ae81)"
+        ],
+        "Features": [
+          "Added ability to change the note type of multiple notes at once (#2180) (af6ae81)"
+        ]
+      }
+    },
+    {
       "version": "3.140.14",
       "title": "[3.140.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.140.13...@standardnotes/web@3.140.14) (2023-01-24)",
       "date": null,
