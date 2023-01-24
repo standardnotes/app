@@ -1,6 +1,7 @@
 export enum ErrorTag {
   MfaInvalid = 'mfa-invalid',
   MfaRequired = 'mfa-required',
+  U2FRequired = 'u2f-required',
   RefreshTokenInvalid = 'invalid-refresh-token',
   RefreshTokenExpired = 'expired-refresh-token',
   AccessTokenExpired = 'expired-access-token',
