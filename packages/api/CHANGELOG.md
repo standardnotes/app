@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.24.10](https://github.com/standardnotes/app/compare/@standardnotes/api@1.24.9...@standardnotes/api@1.24.10) (2023-01-24)
+
+### Bug Fixes
+
+* **api:** add u2f required error tag ([9bdda2b](https://github.com/standardnotes/app/commit/9bdda2b60a2a85d32b0896dc6e307d27b76d42a8))
+
 ## [1.24.9](https://github.com/standardnotes/app/compare/@standardnotes/api@1.24.8...@standardnotes/api@1.24.9) (2023-01-23)
 
 **Note:** Version bump only for package @standardnotes/api
