@@ -61,13 +61,23 @@ const Modal = ({ title, close, actions = [], className = {}, customHeader, custo
     [actions],
   )
 
+  const primaryActions = sortedActions.filter((action) => action.type === 'primary')
+  if (primaryActions.length > 1) {
+    throw new Error('Modal can only have 1 primary action')
+  }
+
+  const cancelActions = sortedActions.filter((action) => action.type === 'cancel')
+  if (cancelActions.length > 1) {
+    throw new Error('Modal can only have 1 cancel action')
+  }
+
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   const rightSlotAction = sortedActions.find((action) => action.mobileSlot === 'right')
   const hasCancelAction = sortedActions.some((action) => action.type === 'cancel')
   const firstPrimaryActionIndex = sortedActions.findIndex((action) => action.type === 'primary')
 
-  const nonPrimaryActions = sortedActions.filter((action) => action.type !== 'primary')
+  const extraActions = sortedActions.filter((action) => action.type !== 'primary')
 
   const [showAdvanced, setShowAdvanced] = useState(false)
   const advancedOptionRef = useRef<HTMLButtonElement>(null)
@@ -92,57 +102,73 @@ const Modal = ({ title, close, actions = [], className = {}, customHeader, custo
             )}
           >
             <div className="grid w-full grid-cols-[0.35fr_1fr_0.35fr] flex-row items-center justify-between gap-2 md:flex md:gap-0">
-              {nonPrimaryActions.length > 1 ? (
-                <>
-                  <MobileModalAction
-                    type="secondary"
-                    action={() => setShowAdvanced((show) => !show)}
-                    slot="left"
-                    ref={advancedOptionRef}
-                  >
-                    <div className="rounded-full border border-border p-0.5">
-                      <Icon type="more" />
-                    </div>
-                  </MobileModalAction>
-                  <Popover
-                    title="Advanced"
-                    open={showAdvanced}
-                    anchorElement={advancedOptionRef.current}
-                    disableMobileFullscreenTakeover={true}
-                    togglePopover={() => setShowAdvanced((show) => !show)}
-                    align="start"
-                    portal={false}
-                    className="w-1/2 !min-w-0 divide-y divide-border border border-border"
-                  >
-                    {nonPrimaryActions.map((action, index) => (
-                      <button
-                        className={classNames(
-                          'p-2 text-base font-semibold hover:bg-contrast focus:bg-info-backdrop focus:shadow-none focus:outline-none',
-                          action.type === 'destructive' && 'text-danger',
-                        )}
-                        key={index}
-                        onClick={action.onClick}
-                        disabled={action.disabled}
-                      >
-                        {action.label}
-                      </button>
-                    ))}
-                  </Popover>
-                </>
-              ) : nonPrimaryActions.length === 1 ? (
+              {extraActions.length > 1 ? (
+                <div className="flex items-center gap-2">
+                  {cancelActions[0] && (
+                    <MobileModalAction
+                      type="cancel"
+                      action={cancelActions[0].onClick}
+                      slot="left"
+                      disabled={cancelActions[0].disabled}
+                    >
+                      {cancelActions[0].label}
+                    </MobileModalAction>
+                  )}
+                </div>
+              ) : extraActions.length === 1 ? (
                 <MobileModalAction
-                  type={nonPrimaryActions[0].type}
-                  action={nonPrimaryActions[0].onClick}
-                  disabled={nonPrimaryActions[0].disabled}
+                  type={extraActions[0].type}
+                  action={extraActions[0].onClick}
+                  disabled={extraActions[0].disabled}
                   slot="left"
                 >
-                  {nonPrimaryActions[0].label}
+                  {extraActions[0].label}
                 </MobileModalAction>
               ) : (
                 <div className="md:hidden" />
               )}
-              <div className="overflow-hidden text-ellipsis whitespace-nowrap text-center text-base font-semibold text-text md:flex-grow md:text-left md:text-lg">
-                {title}
+              <div className="flex items-center gap-2 overflow-hidden text-center text-base font-semibold text-text md:flex-grow md:text-left md:text-lg">
+                {extraActions.length > 1 && (
+                  <>
+                    <MobileModalAction
+                      type="secondary"
+                      action={() => setShowAdvanced((show) => !show)}
+                      slot="left"
+                      ref={advancedOptionRef}
+                    >
+                      <div className="rounded-full border border-border p-0.5">
+                        <Icon type="more" />
+                      </div>
+                    </MobileModalAction>
+                    <Popover
+                      title="Advanced"
+                      open={showAdvanced}
+                      anchorElement={advancedOptionRef.current}
+                      disableMobileFullscreenTakeover={true}
+                      togglePopover={() => setShowAdvanced((show) => !show)}
+                      align="start"
+                      portal={false}
+                      className="w-1/2 !min-w-0 divide-y divide-border border border-border"
+                    >
+                      {extraActions
+                        .filter((action) => action.type !== 'cancel')
+                        .map((action, index) => (
+                          <button
+                            className={classNames(
+                              'p-2 text-base font-semibold hover:bg-contrast focus:bg-info-backdrop focus:shadow-none focus:outline-none',
+                              action.type === 'destructive' && 'text-danger',
+                            )}
+                            key={index}
+                            onClick={action.onClick}
+                            disabled={action.disabled}
+                          >
+                            {action.label}
+                          </button>
+                        ))}
+                    </Popover>
+                  </>
+                )}
+                <span className="overflow-hidden text-ellipsis whitespace-nowrap ">{title}</span>
               </div>
               <div className="hidden items-center gap-2 md:flex">
                 <button tabIndex={0} className="ml-2 rounded p-1 font-bold hover:bg-contrast" onClick={close}>
