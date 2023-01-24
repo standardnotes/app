@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import HistoryListContainer from './HistoryListContainer'
 import { RevisionHistoryModalContentProps } from './RevisionHistoryModalProps'
 import HistoryModalFooter from './HistoryModalFooter'
@@ -8,6 +8,8 @@ import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryCont
 import Icon from '../Icon/Icon'
 import { classNames } from '@standardnotes/utils'
 import { HistoryModalMobileTab } from './utils'
+import MobileModalAction from '../Shared/MobileModalAction'
+import Popover from '../Popover/Popover'
 
 const HistoryModalDialogContent = ({
   application,
@@ -19,37 +21,52 @@ const HistoryModalDialogContent = ({
 }: RevisionHistoryModalContentProps) => {
   const [noteHistoryController] = useState(() => new NoteHistoryController(application, note, selectionController))
 
-  const [selectedMobileTab, setSelectedMobileTab] = useState<HistoryModalMobileTab>('Content')
+  const [selectedMobileTab, setSelectedMobileTab] = useState<HistoryModalMobileTab>('List')
+  const tabOptionRef = useRef<HTMLButtonElement>(null)
+  const [showTabMenu, setShowTabMenu] = useState(false)
+  const toggleTabMenu = () => setShowTabMenu((show) => !show)
 
   return (
     <>
-      <div className="flex items-center border-b border-border md:hidden">
-        <button
-          className={classNames(
-            'relative cursor-pointer border-0 bg-default px-3 py-2.5 text-sm focus:shadow-inner',
-            selectedMobileTab === 'List' ? 'font-medium text-info shadow-bottom' : 'text-text',
-          )}
-          onClick={() => {
-            setSelectedMobileTab('List')
-          }}
+      <div className="grid w-full grid-cols-[0.35fr_1fr_0.35fr] items-center gap-2 border-b border-border py-1 px-2 md:hidden">
+        <MobileModalAction type="secondary" action={toggleTabMenu} slot="left" ref={tabOptionRef}>
+          <div className="rounded-full border border-border p-0.5">
+            <Icon type="more" />
+          </div>
+        </MobileModalAction>
+        <Popover
+          title="Advanced"
+          open={showTabMenu}
+          anchorElement={tabOptionRef.current}
+          disableMobileFullscreenTakeover={true}
+          togglePopover={toggleTabMenu}
+          align="start"
+          portal={false}
+          className="w-1/2 !min-w-0 divide-y divide-border border border-border"
         >
-          List
-        </button>
-        <button
-          className={classNames(
-            'relative cursor-pointer border-0 bg-default px-3 py-2.5 text-sm focus:shadow-inner',
-            selectedMobileTab === 'Content' ? 'font-medium text-info shadow-bottom' : 'text-text',
-          )}
-          onClick={() => {
-            setSelectedMobileTab('Content')
-          }}
-        >
-          Content
-        </button>
-        <div className="mx-auto text-base font-semibold">History</div>
-        <button className="ml-auto mr-2 rounded-full border border-border p-1.5" onClick={dismissModal}>
-          <Icon type="close" className="h-4 w-4" />
-        </button>
+          <button
+            onClick={() => {
+              setSelectedMobileTab('List')
+              toggleTabMenu()
+            }}
+            className="p-1.5 text-base font-semibold hover:bg-contrast focus:bg-info-backdrop focus:shadow-none focus:outline-none"
+          >
+            List
+          </button>
+          <button
+            onClick={() => {
+              setSelectedMobileTab('Content')
+              toggleTabMenu()
+            }}
+            className="p-1.5 text-base font-semibold hover:bg-contrast focus:bg-info-backdrop focus:shadow-none focus:outline-none"
+          >
+            Content
+          </button>
+        </Popover>
+        <div className="text-center text-base font-semibold">History</div>
+        <MobileModalAction type="primary" slot="right" action={dismissModal}>
+          Done
+        </MobileModalAction>
       </div>
       <div className="flex min-h-0 flex-grow">
         <div
