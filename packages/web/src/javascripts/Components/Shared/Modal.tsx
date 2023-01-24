@@ -73,11 +73,12 @@ const Modal = ({ title, close, actions = [], className = {}, customHeader, custo
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
+  const leftSlotAction = sortedActions.find((action) => action.mobileSlot === 'left')
   const rightSlotAction = sortedActions.find((action) => action.mobileSlot === 'right')
   const hasCancelAction = sortedActions.some((action) => action.type === 'cancel')
   const firstPrimaryActionIndex = sortedActions.findIndex((action) => action.type === 'primary')
 
-  const extraActions = sortedActions.filter((action) => action.type !== 'primary')
+  const extraActions = sortedActions.filter((action) => action.type !== 'primary' && action.type !== 'cancel')
 
   const [showAdvanced, setShowAdvanced] = useState(false)
   const advancedOptionRef = useRef<HTMLButtonElement>(null)
@@ -102,33 +103,20 @@ const Modal = ({ title, close, actions = [], className = {}, customHeader, custo
             )}
           >
             <div className="grid w-full grid-cols-[0.35fr_1fr_0.35fr] flex-row items-center justify-between gap-2 md:flex md:gap-0">
-              {extraActions.length > 1 ? (
-                <div className="flex items-center gap-2">
-                  {cancelActions[0] && (
-                    <MobileModalAction
-                      type="cancel"
-                      action={cancelActions[0].onClick}
-                      slot="left"
-                      disabled={cancelActions[0].disabled}
-                    >
-                      {cancelActions[0].label}
-                    </MobileModalAction>
-                  )}
-                </div>
-              ) : extraActions.length === 1 ? (
+              {leftSlotAction ? (
                 <MobileModalAction
-                  type={extraActions[0].type}
-                  action={extraActions[0].onClick}
-                  disabled={extraActions[0].disabled}
+                  type={leftSlotAction.type}
+                  action={leftSlotAction.onClick}
+                  disabled={leftSlotAction.disabled}
                   slot="left"
                 >
-                  {extraActions[0].label}
+                  {leftSlotAction.label}
                 </MobileModalAction>
               ) : (
                 <div className="md:hidden" />
               )}
-              <div className="flex items-center gap-2 overflow-hidden text-center text-base font-semibold text-text md:flex-grow md:text-left md:text-lg">
-                {extraActions.length > 1 && (
+              <div className="flex items-center justify-center gap-2 overflow-hidden text-center text-base font-semibold text-text md:flex-grow md:text-left md:text-lg">
+                {extraActions.length > 0 && (
                   <>
                     <MobileModalAction
                       type="secondary"
