@@ -10,6 +10,7 @@ import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 import { LinkingController } from '@/Controllers/LinkingController'
+import ChangeMultipleButton from '../ChangeEditor/ChangeMultipleButton'
 
 type Props = {
   application: WebApplication
@@ -39,6 +40,9 @@ const MultipleSelectedNotes = ({
       <div className="flex w-full items-center justify-between p-4">
         <h1 className="m-0 text-lg font-bold">{count} selected notes</h1>
         <div className="flex">
+          <div className="mr-3">
+            <ChangeMultipleButton application={application} notesController={notesController} />
+          </div>
           <div className="mr-3">
             <PinNoteButton notesController={notesController} />
           </div>
