@@ -9,7 +9,7 @@ import InviteSuccess from './InviteSuccess'
 import Modal, { ModalAction } from '@/Components/Shared/Modal'
 
 enum SubmitButtonTitles {
-  Default = 'Send',
+  Default = 'Invite',
   Sending = 'Sending...',
   Finish = 'Finish',
 }
@@ -120,15 +120,17 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
         onClick: handleSubmit,
         type: 'primary',
         mobileSlot: 'right',
+        disabled: lockContinue,
       },
       {
         label: 'Cancel',
         onClick: handleDialogClose,
         type: 'cancel',
         mobileSlot: 'left',
+        hidden: currentStep === Steps.FinishStep,
       },
     ],
-    [handleDialogClose, handleSubmit, submitButtonTitle],
+    [currentStep, handleDialogClose, handleSubmit, lockContinue, submitButtonTitle],
   )
 
   return (
