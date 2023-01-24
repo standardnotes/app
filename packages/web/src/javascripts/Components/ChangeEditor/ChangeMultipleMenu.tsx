@@ -126,17 +126,18 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
 
   const showSuperImporter = itemToBeSelected?.noteType === NoteType.Super && confirmationQueue.length > 0
 
-  const closeSuperNoteImporter = useCallback(() => {
+  const closeCurrentSuperNoteImporter = useCallback(() => {
     const remainingNotes = confirmationQueue.slice(1)
 
     if (remainingNotes.length === 0) {
       setItemToBeSelected(undefined)
       setConfirmationQueue([])
+      setDisableClickOutside(false)
       return
     }
 
     setConfirmationQueue(remainingNotes)
-  }, [confirmationQueue])
+  }, [confirmationQueue, setDisableClickOutside])
 
   const handleSuperNoteConversionCompletion = useCallback(() => {
     if (!itemToBeSelected) {
@@ -145,15 +146,8 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
 
     void selectNonComponent(itemToBeSelected, confirmationQueue[0])
 
-    const remainingNotes = confirmationQueue.slice(1)
-
-    if (remainingNotes.length === 0) {
-      closeSuperNoteImporter()
-      return
-    }
-
-    setConfirmationQueue(remainingNotes)
-  }, [closeSuperNoteImporter, confirmationQueue, itemToBeSelected, selectNonComponent])
+    closeCurrentSuperNoteImporter()
+  }, [closeCurrentSuperNoteImporter, confirmationQueue, itemToBeSelected, selectNonComponent])
 
   return (
     <>
@@ -186,13 +180,13 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
           </Fragment>
         ))}
       </Menu>
-      <ModalOverlay isOpen={showSuperImporter} onDismiss={closeSuperNoteImporter}>
+      <ModalOverlay isOpen={showSuperImporter} onDismiss={closeCurrentSuperNoteImporter}>
         {confirmationQueue[0] && (
           <SuperNoteImporter
             note={confirmationQueue[0]}
             application={application}
             onConvertComplete={handleSuperNoteConversionCompletion}
-            closeDialog={closeSuperNoteImporter}
+            closeDialog={closeCurrentSuperNoteImporter}
           />
         )}
       </ModalOverlay>
