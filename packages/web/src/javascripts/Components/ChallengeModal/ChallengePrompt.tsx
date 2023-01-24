@@ -99,14 +99,16 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
               return (
                 <label
                   key={option.label}
-                  className={`cursor-pointer rounded px-2 py-1.5 focus-within:ring-2 focus-within:ring-info ${
+                  className={`relative flex cursor-pointer items-center justify-center rounded px-2 py-1.5 text-center focus-within:ring-2 focus-within:ring-info ${
                     selected ? 'bg-default font-semibold text-foreground' : 'text-passive-0 hover:bg-passive-3'
                   }`}
                 >
                   <input
                     type="radio"
                     name={`session-duration-${prompt.id}`}
-                    className={'m-0 appearance-none focus:shadow-none focus:outline-none'}
+                    className={
+                      'absolute top-0 left-0 m-0 h-px w-px appearance-none focus:shadow-none focus:outline-none'
+                    }
                     style={{
                       marginRight: 0,
                     }}

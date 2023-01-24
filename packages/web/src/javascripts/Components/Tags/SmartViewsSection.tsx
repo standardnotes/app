@@ -8,6 +8,7 @@ import { FunctionComponent, useCallback, useMemo } from 'react'
 import IconButton from '../Button/IconButton'
 import EditSmartViewModal from '../Preferences/Panes/General/SmartViews/EditSmartViewModal'
 import { EditSmartViewModalController } from '../Preferences/Panes/General/SmartViews/EditSmartViewModalController'
+import ModalOverlay from '../Shared/ModalOverlay'
 import AddSmartViewModal from '../SmartViewBuilder/AddSmartViewModal'
 import { AddSmartViewModalController } from '../SmartViewBuilder/AddSmartViewModalController'
 import SmartViewsList from './SmartViewsList'
@@ -53,12 +54,15 @@ const SmartViewsSection: FunctionComponent<Props> = ({ application, navigationCo
         featuresController={featuresController}
         setEditingSmartView={editSmartViewModalController.setView}
       />
-      {!!editSmartViewModalController.view && (
+      <ModalOverlay isOpen={!!editSmartViewModalController.view} onDismiss={editSmartViewModalController.closeDialog}>
         <EditSmartViewModal controller={editSmartViewModalController} platform={application.platform} />
-      )}
-      {addSmartViewModalController.isAddingSmartView && (
+      </ModalOverlay>
+      <ModalOverlay
+        isOpen={addSmartViewModalController.isAddingSmartView}
+        onDismiss={addSmartViewModalController.closeModal}
+      >
         <AddSmartViewModal controller={addSmartViewModalController} platform={application.platform} />
-      )}
+      </ModalOverlay>
     </section>
   )
 }

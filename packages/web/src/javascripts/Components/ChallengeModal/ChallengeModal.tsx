@@ -19,8 +19,10 @@ import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { ChallengeModalValues } from './ChallengeModalValues'
 import { InputValue } from './InputValue'
-import { isMobileScreen } from '@/Utils'
+import { isIOS, isMobileScreen } from '@/Utils'
 import { classNames } from '@standardnotes/utils'
+import MobileModalAction from '../Shared/MobileModalAction'
+import { useModalAnimation } from '../Shared/useModalAnimation'
 
 type Props = {
   application: WebApplication
@@ -209,98 +211,121 @@ const ChallengeModal: FunctionComponent<Props> = ({
     }
   }, [application, cancelChallenge, challenge.cancelable])
 
-  if (!challenge.prompts) {
+  const [isMounted, setElement] = useModalAnimation(!!challenge.prompts.length)
+
+  if (!isMounted) {
     return null
   }
 
   const isFullScreenBlocker = challenge.reason === ChallengeReason.ApplicationUnlock
   const isMobileOverlay = isMobileScreen() && !isFullScreenBlocker
 
-  const contentClasses = classNames(
-    'challenge-modal relative flex flex-col items-center rounded border-solid border-border p-8 md:border',
-    !isMobileScreen() && 'shadow-overlay-light',
-    isMobileOverlay && 'border border-solid border-border shadow-overlay-light',
-    isFullScreenBlocker && isMobileScreen() ? 'bg-passive-5' : 'bg-default',
-  )
-
   return (
     <DialogOverlay
-      className={`sn-component ${isFullScreenBlocker ? 'bg-passive-5' : ''}`}
+      className={`sn-component p-0 ${isFullScreenBlocker ? 'bg-passive-5' : ''}`}
       onDismiss={cancelChallenge}
       dangerouslyBypassFocusLock={bypassModalFocusLock}
       key={challenge.id}
+      ref={setElement}
     >
-      <DialogContent aria-label="Challenge modal" className={contentClasses}>
+      <DialogContent
+        aria-label="Challenge modal"
+        className={classNames(
+          'challenge-modal relative m-0 flex h-full w-full flex-col items-center rounded border-solid border-border bg-default p-0 md:h-auto md:w-auto md:border',
+          !isMobileScreen() && 'shadow-overlay-light',
+          isMobileOverlay && 'shadow-overlay-light border border-solid border-border',
+        )}
+      >
+        <div
+          className={classNames(
+            'w-full border-b border-solid border-border py-1.5 px-1.5 md:hidden',
+            isIOS() && 'pt-safe-top',
+          )}
+        >
+          <div className="grid w-full grid-cols-[0.35fr_1fr_0.35fr] gap-2">
+            {challenge.cancelable ? (
+              <MobileModalAction slot="left" type="cancel" action={cancelChallenge}>
+                Cancel
+              </MobileModalAction>
+            ) : (
+              <div />
+            )}
+            <div className="flex items-center justify-center text-base font-semibold text-text">Authenticate</div>
+            <div />
+          </div>
+        </div>
         {challenge.cancelable && (
           <button
             onClick={cancelChallenge}
             aria-label="Close modal"
-            className="absolute top-4 right-4 flex cursor-pointer border-0 bg-transparent p-1"
+            className="absolute top-4 right-4 hidden cursor-pointer border-0 bg-transparent p-1 md:flex"
           >
             <Icon type="close" className="text-neutral" />
           </button>
         )}
-        <ProtectedIllustration className="mb-4 h-30 w-30" />
-        <div className="mb-3 max-w-76 text-center text-lg font-bold">{challenge.heading}</div>
-        {challenge.subheading && (
-          <div className="break-word mb-4 max-w-76 text-center text-sm">{challenge.subheading}</div>
-        )}
-        <form
-          className="flex min-w-76 flex-col items-center"
-          onSubmit={(e) => {
-            e.preventDefault()
-            submit()
-          }}
-          ref={promptsContainerRef}
-        >
-          {challenge.prompts.map((prompt, index) => (
-            <ChallengeModalPrompt
-              application={application}
-              key={prompt.id}
-              prompt={prompt}
-              values={values}
-              index={index}
-              onValueChange={onValueChange}
-              isInvalid={values[prompt.id].invalid}
-            />
-          ))}
-        </form>
-        <Button primary disabled={isProcessing} className="mt-1 mb-3.5 min-w-76" onClick={submit}>
-          {isProcessing ? 'Generating Keys...' : 'Submit'}
-        </Button>
-        {shouldShowForgotPasscode && (
-          <Button
-            className="flex min-w-76 items-center justify-center"
-            onClick={() => {
-              setBypassModalFocusLock(true)
-              application.alertService
-                .confirm(
-                  'If you forgot your local passcode, your only option is to clear your local data from this device and sign back in to your account.',
-                  'Forgot passcode?',
-                  'Delete local data',
-                  ButtonType.Danger,
-                )
-                .then((shouldDeleteLocalData) => {
-                  if (shouldDeleteLocalData) {
-                    application.user.signOut().catch(console.error)
-                  }
-                })
-                .catch(console.error)
-                .finally(() => {
-                  setBypassModalFocusLock(false)
-                })
+        <div className="flex min-h-0 w-full flex-grow flex-col items-center overflow-auto p-8">
+          <ProtectedIllustration className="mb-4 h-30 w-30 flex-shrink-0" />
+          <div className="mb-3 max-w-76 text-center text-lg font-bold">{challenge.heading}</div>
+          {challenge.subheading && (
+            <div className="break-word mb-4 max-w-76 text-center text-sm">{challenge.subheading}</div>
+          )}
+          <form
+            className="flex w-full max-w-76 flex-col items-center md:min-w-76"
+            onSubmit={(e) => {
+              e.preventDefault()
+              submit()
             }}
+            ref={promptsContainerRef}
           >
-            <Icon type="help" className="mr-2 text-neutral" />
-            Forgot passcode?
+            {challenge.prompts.map((prompt, index) => (
+              <ChallengeModalPrompt
+                application={application}
+                key={prompt.id}
+                prompt={prompt}
+                values={values}
+                index={index}
+                onValueChange={onValueChange}
+                isInvalid={values[prompt.id].invalid}
+              />
+            ))}
+          </form>
+          <Button primary disabled={isProcessing} className="mt-1 mb-3.5 min-w-76" onClick={submit}>
+            {isProcessing ? 'Generating Keys...' : 'Submit'}
           </Button>
-        )}
-        {shouldShowWorkspaceSwitcher && (
-          <LockscreenWorkspaceSwitcher
-            mainApplicationGroup={mainApplicationGroup}
-            viewControllerManager={viewControllerManager}
-          />
-        )}
+          {shouldShowForgotPasscode && (
+            <Button
+              className="flex min-w-76 items-center justify-center"
+              onClick={() => {
+                setBypassModalFocusLock(true)
+                application.alertService
+                  .confirm(
+                    'If you forgot your local passcode, your only option is to clear your local data from this device and sign back in to your account.',
+                    'Forgot passcode?',
+                    'Delete local data',
+                    ButtonType.Danger,
+                  )
+                  .then((shouldDeleteLocalData) => {
+                    if (shouldDeleteLocalData) {
+                      application.user.signOut().catch(console.error)
+                    }
+                  })
+                  .catch(console.error)
+                  .finally(() => {
+                    setBypassModalFocusLock(false)
+                  })
+              }}
+            >
+              <Icon type="help" className="mr-2 text-neutral" />
+              Forgot passcode?
+            </Button>
+          )}
+          {shouldShowWorkspaceSwitcher && (
+            <LockscreenWorkspaceSwitcher
+              mainApplicationGroup={mainApplicationGroup}
+              viewControllerManager={viewControllerManager}
+            />
+          )}
+        </div>
       </DialogContent>
     </DialogOverlay>
   )

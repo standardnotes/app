@@ -2,17 +2,14 @@ import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { ContentType, DecryptedTransferPayload, pluralize, SNTag, TagContent, UuidGenerator } from '@standardnotes/snjs'
 import { Importer } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
-import { useCallback, useReducer, useState } from 'react'
+import { useCallback, useMemo, useReducer, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
-import Button from '../Button/Button'
 import { useStateRef } from '@/Hooks/useStateRef'
-import ModalDialog from '../Shared/ModalDialog'
-import ModalDialogButtons from '../Shared/ModalDialogButtons'
-import ModalDialogDescription from '../Shared/ModalDialogDescription'
-import ModalDialogLabel from '../Shared/ModalDialogLabel'
 import { ImportModalFileItem } from './ImportModalFileItem'
 import ImportModalInitialPage from './InitialPage'
 import { ImportModalAction, ImportModalFile, ImportModalState } from './Types'
+import Modal, { ModalAction } from '../Shared/Modal'
+import ModalOverlay from '../Shared/ModalOverlay'
 
 const reducer = (state: ImportModalState, action: ImportModalAction): ImportModalState => {
   switch (action.type) {
@@ -190,36 +187,44 @@ const ImportModal = ({ viewControllerManager }: { viewControllerManager: ViewCon
     })
   }, [state.importTag, viewControllerManager.isImportModalVisible, viewControllerManager.navigationController])
 
-  if (!viewControllerManager.isImportModalVisible.get()) {
-    return null
-  }
+  const isReadyToImport = files.length > 0 && files.every((file) => file.status === 'ready')
+  const importSuccessOrError =
+    files.length > 0 && files.every((file) => file.status === 'success' || file.status === 'error')
+
+  const modalActions: ModalAction[] = useMemo(
+    () => [
+      {
+        label: 'Import',
+        type: 'primary',
+        onClick: parseAndImport,
+        hidden: !isReadyToImport,
+        mobileSlot: 'right',
+      },
+      {
+        label: importSuccessOrError ? 'Close' : 'Cancel',
+        type: 'cancel',
+        onClick: closeDialog,
+        mobileSlot: 'left',
+      },
+    ],
+    [closeDialog, importSuccessOrError, isReadyToImport, parseAndImport],
+  )
 
   return (
-    <ModalDialog>
-      <ModalDialogLabel closeDialog={closeDialog}>Import</ModalDialogLabel>
-      <ModalDialogDescription>
-        {!files.length && <ImportModalInitialPage dispatch={dispatch} />}
-        {files.length > 0 && (
-          <div className="divide-y divide-border">
-            {files.map((file) => (
-              <ImportModalFileItem file={file} key={file.id} dispatch={dispatch} importer={importer} />
-            ))}
-          </div>
-        )}
-      </ModalDialogDescription>
-      <ModalDialogButtons>
-        {files.length > 0 && files.every((file) => file.status === 'ready') && (
-          <Button primary onClick={parseAndImport}>
-            Import
-          </Button>
-        )}
-        <Button onClick={closeDialog}>
-          {files.length > 0 && files.every((file) => file.status === 'success' || file.status === 'error')
-            ? 'Close'
-            : 'Cancel'}
-        </Button>
-      </ModalDialogButtons>
-    </ModalDialog>
+    <ModalOverlay isOpen={viewControllerManager.isImportModalVisible.get()} onDismiss={closeDialog}>
+      <Modal title="Import" close={closeDialog} actions={modalActions}>
+        <div className="px-4 py-4">
+          {!files.length && <ImportModalInitialPage dispatch={dispatch} />}
+          {files.length > 0 && (
+            <div className="divide-y divide-border">
+              {files.map((file) => (
+                <ImportModalFileItem file={file} key={file.id} dispatch={dispatch} importer={importer} />
+              ))}
+            </div>
+          )}
+        </div>
+      </Modal>
+    </ModalOverlay>
   )
 }
 

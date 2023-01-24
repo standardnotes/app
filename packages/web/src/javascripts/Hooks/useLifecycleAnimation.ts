@@ -20,21 +20,18 @@ type Options = {
  * @param exitCallback A callback to run after the exit animation finishes
  * @returns A tuple containing whether the element can be mounted and a ref callback to set the element
  */
-export const useLifecycleAnimation = ({
-  open,
-  enter,
-  enterCallback,
-  exit,
-  exitCallback,
-}: Options): [boolean, RefCallback<HTMLElement | null>] => {
+export const useLifecycleAnimation = (
+  { open, enter, enterCallback, exit, exitCallback }: Options,
+  disabled = false,
+): [boolean, RefCallback<HTMLElement | null>] => {
   const [element, setElement] = useState<HTMLElement | null>(null)
 
   const [isMounted, setIsMounted] = useState(() => open)
   useEffect(() => {
-    if (open) {
+    if (disabled || open) {
       setIsMounted(open)
     }
-  }, [open])
+  }, [disabled, open])
 
   // Using "state ref"s to prevent changes from re-running the effect below
   // We only want changes to `open` and `element` to re-run the effect
@@ -45,6 +42,11 @@ export const useLifecycleAnimation = ({
 
   useEffect(() => {
     if (!element) {
+      return
+    }
+
+    if (disabled) {
+      setIsMounted(open)
       return
     }
 
@@ -88,7 +90,7 @@ export const useLifecycleAnimation = ({
         })
         .catch(console.error)
     }
-  }, [open, element, enterRef, enterCallbackRef, exitRef, exitCallbackRef])
+  }, [open, element, enterRef, enterCallbackRef, exitRef, exitCallbackRef, disabled])
 
   return [isMounted, setElement]
 }

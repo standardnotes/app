@@ -1,3 +1,3 @@
-export const classNames = (...values: (string | boolean | undefined)[]): string => {
+export const classNames = (...values: any[]): string => {
   return values.map((value) => (typeof value === 'string' ? value : null)).join(' ')
 }

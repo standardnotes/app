@@ -1,19 +1,15 @@
-import { FunctionComponent, useState } from 'react'
+import { FunctionComponent, useCallback, useMemo, useState } from 'react'
 
-import ModalDialog from '@/Components/Shared/ModalDialog'
-import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
-import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
-import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
-import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/Application/Application'
 import { isEmailValid } from '@/Utils'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 
 import InviteForm from './InviteForm'
 import InviteSuccess from './InviteSuccess'
+import Modal, { ModalAction } from '@/Components/Shared/Modal'
 
 enum SubmitButtonTitles {
-  Default = 'Send Invite',
+  Default = 'Invite',
   Sending = 'Sending...',
   Finish = 'Finish',
 }
@@ -36,7 +32,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
   const [lockContinue, setLockContinue] = useState(false)
   const [currentStep, setCurrentStep] = useState(Steps.InitialStep)
 
-  const validateInviteeEmail = async () => {
+  const validateInviteeEmail = useCallback(async () => {
     if (!isEmailValid(inviteeEmail)) {
       application.alertService
         .alert('The email you entered has an invalid format. Please review your input and try again.')
@@ -46,22 +42,22 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
     }
 
     return true
-  }
+  }, [application.alertService, inviteeEmail])
 
-  const handleDialogClose = () => {
+  const handleDialogClose = useCallback(() => {
     if (lockContinue) {
       application.alertService.alert('Cannot close window until pending tasks are complete.').catch(console.error)
     } else {
       onCloseDialog()
     }
-  }
+  }, [application.alertService, lockContinue, onCloseDialog])
 
   const resetProgressState = () => {
     setSubmitButtonTitle(SubmitButtonTitles.Default)
     setIsContinuing(false)
   }
 
-  const processInvite = async () => {
+  const processInvite = useCallback(async () => {
     setLockContinue(true)
 
     const success = await subscriptionState.sendSubscriptionInvitation(inviteeEmail)
@@ -69,9 +65,9 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
     setLockContinue(false)
 
     return success
-  }
+  }, [inviteeEmail, subscriptionState])
 
-  const handleSubmit = async () => {
+  const handleSubmit = useCallback(async () => {
     if (lockContinue || isContinuing) {
       return
     }
@@ -107,21 +103,43 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
     setIsContinuing(false)
     setSubmitButtonTitle(SubmitButtonTitles.Finish)
     setCurrentStep(Steps.FinishStep)
-  }
+  }, [
+    application.alertService,
+    currentStep,
+    handleDialogClose,
+    isContinuing,
+    lockContinue,
+    processInvite,
+    validateInviteeEmail,
+  ])
+
+  const modalActions = useMemo(
+    (): ModalAction[] => [
+      {
+        label: submitButtonTitle,
+        onClick: handleSubmit,
+        type: 'primary',
+        mobileSlot: 'right',
+        disabled: lockContinue,
+      },
+      {
+        label: 'Cancel',
+        onClick: handleDialogClose,
+        type: 'cancel',
+        mobileSlot: 'left',
+        hidden: currentStep === Steps.FinishStep,
+      },
+    ],
+    [currentStep, handleDialogClose, handleSubmit, lockContinue, submitButtonTitle],
+  )
 
   return (
-    <div>
-      <ModalDialog>
-        <ModalDialogLabel closeDialog={handleDialogClose}>Share your Subscription</ModalDialogLabel>
-        <ModalDialogDescription className="flex flex-row items-center px-4.5">
-          {currentStep === Steps.InitialStep && <InviteForm setInviteeEmail={setInviteeEmail} />}
-          {currentStep === Steps.FinishStep && <InviteSuccess />}
-        </ModalDialogDescription>
-        <ModalDialogButtons className="px-4.5">
-          <Button className="min-w-20" primary label={submitButtonTitle} onClick={handleSubmit} />
-        </ModalDialogButtons>
-      </ModalDialog>
-    </div>
+    <Modal title="Share your Subscription" close={handleDialogClose} actions={modalActions}>
+      <div className="px-4.5 py-4">
+        {currentStep === Steps.InitialStep && <InviteForm setInviteeEmail={setInviteeEmail} />}
+        {currentStep === Steps.FinishStep && <InviteSuccess />}
+      </div>
+    </Modal>
   )
 }
 

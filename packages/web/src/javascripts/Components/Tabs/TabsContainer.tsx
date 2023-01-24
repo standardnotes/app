@@ -1,3 +1,4 @@
+import { classNames } from '@standardnotes/snjs'
 import Tab from './Tab'
 import TabList from './TabList'
 import { TabState } from './useTabState'
@@ -9,11 +10,12 @@ type Props = {
   }[]
   state: TabState
   children: React.ReactNode
+  className?: string
 }
 
-const TabsContainer = ({ tabs, state, children }: Props) => {
+const TabsContainer = ({ tabs, state, className, children }: Props) => {
   return (
-    <div className="overflow-hidden rounded-md border border-border">
+    <div className={classNames('overflow-hidden rounded-md border border-border', className)}>
       <TabList state={state} className="border-b border-border">
         {tabs.map(({ id, title }) => (
           <Tab key={id} id={id} className="first:rounded-tl-md">

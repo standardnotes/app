@@ -1,12 +1,10 @@
 import { WebApplication } from '@/Application/Application'
 import { createRef } from 'react'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
-import Button from '@/Components/Button/Button'
 import DecoratedPasswordInput from '../Input/DecoratedPasswordInput'
-import ModalDialog from '../Shared/ModalDialog'
-import ModalDialogLabel from '../Shared/ModalDialogLabel'
-import ModalDialogDescription from '../Shared/ModalDialogDescription'
-import ModalDialogButtons from '../Shared/ModalDialogButtons'
+import Modal from '../Shared/Modal'
+import { isMobileScreen } from '@/Utils'
+import Spinner from '../Spinner/Spinner'
 
 interface Props {
   application: WebApplication
@@ -25,6 +23,8 @@ type State = {
 }
 
 const DEFAULT_CONTINUE_TITLE = 'Continue'
+const GENERATING_CONTINUE_TITLE = 'Generating Keys...'
+const FINISH_CONTINUE_TITLE = 'Finish'
 
 enum Steps {
   PasswordStep = 1,
@@ -89,7 +89,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     this.setState({
       isContinuing: true,
       showSpinner: true,
-      continueTitle: 'Generating Keys...',
+      continueTitle: GENERATING_CONTINUE_TITLE,
     })
 
     const valid = await this.validateCurrentPassword()
@@ -107,7 +107,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
     this.setState({
       isContinuing: false,
       showSpinner: false,
-      continueTitle: 'Finish',
+      continueTitle: FINISH_CONTINUE_TITLE,
       step: Steps.FinishStep,
     })
   }
@@ -228,10 +228,32 @@ class PasswordWizard extends AbstractComponent<Props, State> {
 
   override render() {
     return (
-      <div className="sn-component" id="password-wizard">
-        <ModalDialog>
-          <ModalDialogLabel closeDialog={this.dismiss}>{this.state.title}</ModalDialogLabel>
-          <ModalDialogDescription>
+      <div className="sn-component h-full w-full md:h-auto md:w-auto" id="password-wizard">
+        <Modal
+          title={this.state.title}
+          close={this.dismiss}
+          actions={[
+            {
+              label: 'Cancel',
+              onClick: this.dismiss,
+              type: 'cancel',
+              mobileSlot: 'left',
+            },
+            {
+              label:
+                this.state.continueTitle === GENERATING_CONTINUE_TITLE && isMobileScreen() ? (
+                  <Spinner className="h-4 w-4" />
+                ) : (
+                  this.state.continueTitle
+                ),
+              onClick: this.nextStep,
+              type: 'primary',
+              mobileSlot: 'right',
+              disabled: this.state.lockContinue,
+            },
+          ]}
+        >
+          <div className="px-4 py-4">
             {this.state.step === Steps.PasswordStep && (
               <div className="flex flex-col pb-1.5">
                 <form>
@@ -284,13 +306,8 @@ class PasswordWizard extends AbstractComponent<Props, State> {
                 </p>
               </div>
             )}
-          </ModalDialogDescription>
-          <ModalDialogButtons>
-            <Button primary onClick={this.nextStep} disabled={this.state.lockContinue} className="min-w-20">
-              {this.state.continueTitle}
-            </Button>
-          </ModalDialogButtons>
-        </ModalDialog>
+          </div>
+        </Modal>
       </div>
     )
   }

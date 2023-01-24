@@ -2,9 +2,7 @@ import { useDocumentRect } from '@/Hooks/useDocumentRect'
 import { useAutoElementRect } from '@/Hooks/useElementRect'
 import { classNames } from '@standardnotes/utils'
 import { useCallback, useLayoutEffect, useState } from 'react'
-import Icon from '../Icon/Icon'
 import Portal from '../Portal/Portal'
-import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { getPositionedPopoverStyles } from './GetPositionedPopoverStyles'
 import { PopoverContentProps } from './Types'
 import { usePopoverCloseOnClickOutside } from './Utils/usePopoverCloseOnClickOutside'
@@ -25,6 +23,7 @@ const PositionedPopoverContent = ({
   disableClickOutside,
   disableMobileFullscreenTakeover,
   maxHeight,
+  portal = true,
 }: PopoverContentProps) => {
   const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
   const popoverRect = useAutoElementRect(popoverElement)
@@ -72,7 +71,7 @@ const PositionedPopoverContent = ({
   }, [popoverElement, correctInitialScrollForOverflowedContent])
 
   return (
-    <Portal>
+    <Portal disabled={!portal}>
       <div
         className={classNames(
           'absolute top-0 left-0 flex w-full min-w-80 cursor-auto flex-col',
@@ -81,6 +80,7 @@ const PositionedPopoverContent = ({
           overrideZIndex ? overrideZIndex : 'z-dropdown-menu',
           !isDesktopScreen && !disableMobileFullscreenTakeover ? 'pt-safe-top pb-safe-bottom' : '',
           isDesktopScreen || disableMobileFullscreenTakeover ? 'invisible' : '',
+          className,
         )}
         style={{
           ...styles,
@@ -97,15 +97,7 @@ const PositionedPopoverContent = ({
           }
         }}
       >
-        <div className={classNames(disableMobileFullscreenTakeover && 'hidden', 'md:hidden')}>
-          <div className="flex items-center justify-end px-3 pt-2">
-            <button className="rounded-full border border-border p-1" onClick={togglePopover}>
-              <Icon type="close" className="h-6 w-6" />
-            </button>
-          </div>
-          <HorizontalSeparator classes="my-2" />
-        </div>
-        <div className={className}>{children}</div>
+        {children}
       </div>
     </Portal>
   )

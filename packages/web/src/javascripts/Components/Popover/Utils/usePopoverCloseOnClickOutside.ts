@@ -1,4 +1,3 @@
-import { MediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { useEffect } from 'react'
 
 type Options = {
@@ -18,19 +17,14 @@ export const usePopoverCloseOnClickOutside = ({
 }: Options) => {
   useEffect(() => {
     const closeIfClickedOutside = (event: MouseEvent) => {
-      const matchesMediumBreakpoint = matchMedia(MediaQueryBreakpoints.md).matches
-
-      if (!matchesMediumBreakpoint) {
-        return
-      }
-
       const target = event.target as Element
 
       const isDescendantOfMenu = popoverElement?.contains(target)
       const isAnchorElement = anchorElement ? anchorElement === event.target || anchorElement.contains(target) : false
       const closestPopoverId = target.closest('[data-popover]')?.getAttribute('data-popover')
       const isDescendantOfChildPopover = closestPopoverId && childPopovers.has(closestPopoverId)
-      const isDescendantOfModal = !!target.closest('[aria-modal="true"]')
+      const isPopoverInModal = popoverElement?.closest('[aria-modal="true"]')
+      const isDescendantOfModal = isPopoverInModal ? false : !!target.closest('[aria-modal="true"]')
 
       if (!isDescendantOfMenu && !isAnchorElement && !isDescendantOfChildPopover && !isDescendantOfModal) {
         if (!disabled) {

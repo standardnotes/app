@@ -4,6 +4,7 @@ import PreferencesView from './PreferencesView'
 import { PreferencesViewWrapperProps } from './PreferencesViewWrapperProps'
 import { useCommandService } from '../CommandProvider'
 import { OPEN_PREFERENCES_COMMAND } from '@standardnotes/ui-services'
+import ModalOverlay from '../Shared/ModalOverlay'
 
 const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = ({
   viewControllerManager,
@@ -18,18 +19,16 @@ const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = (
     })
   }, [commandService, viewControllerManager])
 
-  if (!viewControllerManager.preferencesController?.isOpen) {
-    return null
-  }
-
   return (
-    <PreferencesView
-      closePreferences={() => viewControllerManager.preferencesController.closePreferences()}
-      application={application}
-      viewControllerManager={viewControllerManager}
-      mfaProvider={application}
-      userProvider={application}
-    />
+    <ModalOverlay isOpen={viewControllerManager.preferencesController?.isOpen} className="p-0">
+      <PreferencesView
+        closePreferences={() => viewControllerManager.preferencesController.closePreferences()}
+        application={application}
+        viewControllerManager={viewControllerManager}
+        mfaProvider={application}
+        userProvider={application}
+      />
+    </ModalOverlay>
   )
 }
 

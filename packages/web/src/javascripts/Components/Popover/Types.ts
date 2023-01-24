@@ -30,16 +30,6 @@ type PopoverAnchorPointProps = {
   anchorElement?: never
 }
 
-type PopoverMutuallyExclusiveProps =
-  | {
-      togglePopover: () => void
-      disableMobileFullscreenTakeover?: never
-    }
-  | {
-      togglePopover?: never
-      disableMobileFullscreenTakeover: boolean
-    }
-
 type CommonPopoverProps = {
   align?: PopoverAlignment
   children: ReactNode
@@ -48,7 +38,10 @@ type CommonPopoverProps = {
   className?: string
   disableClickOutside?: boolean
   maxHeight?: (calculatedMaxHeight: number) => number
+  togglePopover?: () => void
+  disableMobileFullscreenTakeover?: boolean
   title: string
+  portal?: boolean
 }
 
 export type PopoverContentProps = CommonPopoverProps & {
@@ -61,5 +54,5 @@ export type PopoverContentProps = CommonPopoverProps & {
 }
 
 export type PopoverProps =
-  | (CommonPopoverProps & PopoverMutuallyExclusiveProps & PopoverAnchorElementProps)
-  | (CommonPopoverProps & PopoverMutuallyExclusiveProps & PopoverAnchorPointProps)
+  | (CommonPopoverProps & PopoverAnchorElementProps)
+  | (CommonPopoverProps & PopoverAnchorPointProps)
