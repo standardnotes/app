@@ -19,9 +19,10 @@ const getGroupId = (group: EditorMenuGroup) => group.title.toLowerCase().replace
 type Props = {
   application: WebApplication
   notes: SNNote[]
+  setDisableClickOutside: (value: boolean) => void
 }
 
-const ChangeMultipleMenu = ({ application, notes }: Props) => {
+const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Props) => {
   const premiumModal = usePremiumModal()
 
   const [itemToBeSelected, setItemToBeSelected] = useState<EditorMenuItem | undefined>()
@@ -79,6 +80,7 @@ const ChangeMultipleMenu = ({ application, notes }: Props) => {
       }
 
       if (itemToBeSelected.noteType === NoteType.Super) {
+        setDisableClickOutside(true)
         setItemToBeSelected(itemToBeSelected)
         setConfirmationQueue(notes)
         return
@@ -108,14 +110,23 @@ const ChangeMultipleMenu = ({ application, notes }: Props) => {
         void selectNonComponent(itemToBeSelected, note)
       }
     },
-    [application, hasSelectedLockedNotes, notes, premiumModal, selectComponent, selectNonComponent],
+    [
+      application.alertService,
+      application.componentManager,
+      hasSelectedLockedNotes,
+      notes,
+      premiumModal,
+      selectComponent,
+      selectNonComponent,
+      setDisableClickOutside,
+    ],
   )
 
   const groupsWithItems = groups.filter((group) => group.items && group.items.length)
 
   const showSuperImporter = itemToBeSelected?.noteType === NoteType.Super && confirmationQueue.length > 0
 
-  const closeSuperNoteImporter = () => {
+  const closeSuperNoteImporter = useCallback(() => {
     const remainingNotes = confirmationQueue.slice(1)
 
     if (remainingNotes.length === 0) {
@@ -125,9 +136,9 @@ const ChangeMultipleMenu = ({ application, notes }: Props) => {
     }
 
     setConfirmationQueue(remainingNotes)
-  }
+  }, [confirmationQueue])
 
-  const handleSuperNoteConversionCompletion = () => {
+  const handleSuperNoteConversionCompletion = useCallback(() => {
     if (!itemToBeSelected) {
       return
     }
@@ -142,7 +153,7 @@ const ChangeMultipleMenu = ({ application, notes }: Props) => {
     }
 
     setConfirmationQueue(remainingNotes)
-  }
+  }, [closeSuperNoteImporter, confirmationQueue, itemToBeSelected, selectNonComponent])
 
   return (
     <>

@@ -4,15 +4,13 @@ import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
 import { WebApplication } from '@/Application/Application'
 import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
 import Button from '../Button/Button'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback } from 'react'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 import { LinkingController } from '@/Controllers/LinkingController'
-import RoundIconButton from '../Button/RoundIconButton'
-import Popover from '../Popover/Popover'
-import ChangeMultipleMenu from '../ChangeEditor/ChangeMultipleMenu'
+import ChangeMultipleButton from '../ChangeEditor/ChangeMultipleButton'
 
 type Props = {
   application: WebApplication
@@ -31,10 +29,6 @@ const MultipleSelectedNotes = ({
   selectionController,
   historyModalController,
 }: Props) => {
-  const changeButtonRef = useRef<HTMLButtonElement>(null)
-  const [isChangeMenuOpen, setIsChangeMenuOpen] = useState(false)
-  const toggleMenu = () => setIsChangeMenuOpen((open) => !open)
-
   const count = notesController.selectedNotesCount
 
   const cancelMultipleSelection = useCallback(() => {
@@ -47,23 +41,7 @@ const MultipleSelectedNotes = ({
         <h1 className="m-0 text-lg font-bold">{count} selected notes</h1>
         <div className="flex">
           <div className="mr-3">
-            <RoundIconButton
-              label={'Change note type'}
-              onClick={toggleMenu}
-              ref={changeButtonRef}
-              icon="plain-text"
-              // iconClassName={`text-accessory-tint-${selectedEditorIconTint}`}
-            />
-            <Popover
-              title="Change note type"
-              togglePopover={toggleMenu}
-              disableClickOutside={/* isClickOutsideDisabled */ true}
-              anchorElement={changeButtonRef.current}
-              open={isChangeMenuOpen}
-              className="pt-2 md:pt-0"
-            >
-              <ChangeMultipleMenu application={application} notes={notesController.selectedNotes} />
-            </Popover>
+            <ChangeMultipleButton application={application} notesController={notesController} />
           </div>
           <div className="mr-3">
             <PinNoteButton notesController={notesController} />
