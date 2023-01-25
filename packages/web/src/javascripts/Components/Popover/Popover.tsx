@@ -102,6 +102,7 @@ const Popover = ({
         }}
         title={title}
         className={className}
+        id={popoverId.current}
       >
         {children}
       </MobilePopoverContent>

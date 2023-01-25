@@ -117,9 +117,8 @@ async function configureWindow(remoteBridge: CrossProcessBridge) {
   } else {
     /* Use custom title bar. Take the sn-titlebar-height off of
     the app content height so its not overflowing */
-    sheet.insertRule('body { padding-top: var(--sn-desktop-titlebar-height); }', sheet.cssRules.length)
     sheet.insertRule(
-      '@media screen and (max-width: 768px) { [data-popover] { padding-top: calc(var(--sn-desktop-titlebar-height) + 0.5rem); } }',
+      'body, [data-reach-dialog-overlay], [data-mobile-popover] { padding-top: var(--sn-desktop-titlebar-height) !important; }',
       sheet.cssRules.length,
     )
     sheet.insertRule(

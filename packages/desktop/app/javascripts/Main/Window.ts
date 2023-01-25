@@ -202,7 +202,7 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
   initializeZoomManager(window, appState.store)
 
   const backupsManager = createBackupsManager(window.webContents, appState)
-  const updateManager = setupUpdates(window, appState, backupsManager)
+  // const updateManager = setupUpdates(window, appState, backupsManager)
   const trayManager = createTrayManager(window, appState.store)
   const spellcheckerManager = createSpellcheckerManager(appState.store, window.webContents, appLocale)
   const mediaManager = new MediaManager()
@@ -224,7 +224,7 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
 
   return {
     backupsManager,
-    updateManager,
+    // updateManager,
     trayManager,
     spellcheckerManager,
     menuManager,

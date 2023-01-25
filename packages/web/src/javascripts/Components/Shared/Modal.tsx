@@ -136,7 +136,7 @@ const Modal = ({ title, close, actions = [], className = {}, customHeader, custo
                       togglePopover={() => setShowAdvanced((show) => !show)}
                       align="start"
                       portal={false}
-                      className="w-1/2 !min-w-0 divide-y divide-border border border-border"
+                      className="!fixed w-1/2 !min-w-0 divide-y divide-border border border-border"
                     >
                       {extraActions
                         .filter((action) => action.type !== 'cancel')
