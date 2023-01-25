@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.142.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.141.0...@standardnotes/web@3.142.0) (2023-01-25)
+
+### Features
+
+* Links in Super notes will get auto-linked when they're pasted or typed ([1b696fa](https://github.com/standardnotes/app/commit/1b696fa50440bf5ff6f0a3a92ba9c2a775e374d6))
+
 # [3.141.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.140.14...@standardnotes/web@3.141.0) (2023-01-24)
 
 ### Features
