@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.142.0",
+      "title": "[3.142.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.141.0...@standardnotes/web@3.142.0) (2023-01-25)",
+      "date": null,
+      "body": "### Features\n\n* Links in Super notes will get auto-linked when they're pasted or typed ([1b696fa](https://github.com/standardnotes/app/commit/1b696fa50440bf5ff6f0a3a92ba9c2a775e374d6))",
+      "parsed": {
+        "_": [
+          "Links in Super notes will get auto-linked when they're pasted or typed (1b696fa)"
+        ],
+        "Features": [
+          "Links in Super notes will get auto-linked when they're pasted or typed (1b696fa)"
+        ]
+      }
+    },
+    {
       "version": "3.141.0",
       "title": "[3.141.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.140.14...@standardnotes/web@3.141.0) (2023-01-24)",
       "date": null,
