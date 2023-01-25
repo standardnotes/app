@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.104.109](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.142.0...@standardnotes/desktop@3.104.109) (2023-01-25)
+
+### Bug Fixes
+
+* Fixed issue where popover/modal headers would get cut off by desktop titlebar ([a8c0be4](https://github.com/standardnotes/app/commit/a8c0be4f6327a48ae5e30c45ab4b8acc0c8ad612))
+
 ## [3.104.108](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.141.0...@standardnotes/desktop@3.104.108) (2023-01-25)
 
 **Note:** Version bump only for package @standardnotes/desktop
