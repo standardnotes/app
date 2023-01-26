@@ -233,7 +233,17 @@ const ChallengeModal: FunctionComponent<Props> = ({
           ),
         }}
         customHeader={<></>}
+        customFooter={<></>}
         disableCustomHeader={isMobileScreen}
+        actions={[
+          {
+            label: 'Cancel',
+            onClick: cancelChallenge,
+            type: 'primary',
+            hidden: !challenge.cancelable,
+            mobileSlot: 'right',
+          },
+        ]}
       >
         {challenge.cancelable && (
           <button
