@@ -18,12 +18,10 @@ import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { ChallengeModalValues } from './ChallengeModalValues'
 import { InputValue } from './InputValue'
-import { isIOS, isMobileScreen } from '@/Utils'
 import { classNames } from '@standardnotes/utils'
-import MobileModalAction from '../Modal/MobileModalAction'
-import MobileModalHeader from '../Modal/MobileModalHeader'
 import ModalOverlay from '../Modal/ModalOverlay'
 import Modal from '../Modal/Modal'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type Props = {
   application: WebApplication
@@ -212,8 +210,9 @@ const ChallengeModal: FunctionComponent<Props> = ({
     }
   }, [application, cancelChallenge, challenge.cancelable])
 
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const isFullScreenBlocker = challenge.reason === ChallengeReason.ApplicationUnlock
-  const isMobileOverlay = isMobileScreen() && !isFullScreenBlocker
+  const isMobileOverlay = isMobileScreen && !isFullScreenBlocker
 
   return (
     <ModalOverlay
@@ -228,30 +227,14 @@ const ChallengeModal: FunctionComponent<Props> = ({
         close={cancelChallenge}
         className={{
           content: classNames(
-            'challenge-modal relative m-0 flex h-full w-full flex-col items-center rounded border-solid border-border bg-default p-0 md:h-auto md:w-auto md:border',
-            !isMobileScreen() && 'shadow-overlay-light',
+            'challenge-modal relative m-0 flex h-full w-full flex-col items-center rounded border-solid border-border bg-default p-0 md:h-auto md:!w-auto md:border',
+            !isMobileScreen && 'shadow-overlay-light',
             isMobileOverlay && 'shadow-overlay-light border border-solid border-border',
           ),
         }}
+        customHeader={<></>}
+        disableCustomHeader={isMobileScreen}
       >
-        {/* <div
-          className={classNames(
-            'w-full border-b border-solid border-border py-1.5 px-1.5 md:hidden',
-            isIOS() && 'pt-safe-top',
-          )}
-        >
-          <MobileModalHeader>
-            {challenge.cancelable ? (
-              <MobileModalAction slot="left" type="cancel" action={cancelChallenge}>
-                Cancel
-              </MobileModalAction>
-            ) : (
-              <div />
-            )}
-            <div className="flex items-center justify-center text-base font-semibold text-text">Authenticate</div>
-            <div />
-          </MobileModalHeader>
-        </div> */}
         {challenge.cancelable && (
           <button
             onClick={cancelChallenge}
