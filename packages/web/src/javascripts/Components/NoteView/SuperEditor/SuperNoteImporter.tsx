@@ -6,7 +6,7 @@ import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import ImportPlugin from './Plugins/ImportPlugin/ImportPlugin'
 import { NoteViewController } from '../Controller/NoteViewController'
 import { spaceSeparatedStrings } from '@standardnotes/utils'
-import Modal, { ModalAction } from '@/Components/Shared/Modal'
+import Modal, { ModalAction } from '@/Components/Modal/Modal'
 
 const NotePreviewCharLimit = 160
 

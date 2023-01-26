@@ -13,7 +13,7 @@ import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/Premium
 import { SuperNoteImporter } from '../NoteView/SuperEditor/SuperNoteImporter'
 import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
 import { Pill } from '../Preferences/PreferencesComponents/Content'
-import ModalOverlay from '../Shared/ModalOverlay'
+import ModalOverlay from '../Modal/ModalOverlay'
 
 type ChangeEditorMenuProps = {
   application: WebApplication

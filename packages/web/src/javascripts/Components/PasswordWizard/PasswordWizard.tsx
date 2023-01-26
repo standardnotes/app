@@ -2,7 +2,7 @@ import { WebApplication } from '@/Application/Application'
 import { createRef } from 'react'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import DecoratedPasswordInput from '../Input/DecoratedPasswordInput'
-import Modal from '../Shared/Modal'
+import Modal from '../Modal/Modal'
 import { isMobileScreen } from '@/Utils'
 import Spinner from '../Spinner/Spinner'
 

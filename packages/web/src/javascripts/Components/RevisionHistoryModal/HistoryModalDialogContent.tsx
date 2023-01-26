@@ -8,8 +8,9 @@ import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryCont
 import Icon from '../Icon/Icon'
 import { classNames } from '@standardnotes/utils'
 import { HistoryModalMobileTab } from './utils'
-import MobileModalAction from '../Shared/MobileModalAction'
+import MobileModalAction from '../Modal/MobileModalAction'
 import Popover from '../Popover/Popover'
+import MobileModalHeader from '../Modal/MobileModalHeader'
 
 const HistoryModalDialogContent = ({
   application,
@@ -28,7 +29,7 @@ const HistoryModalDialogContent = ({
 
   return (
     <>
-      <div className="grid w-full grid-cols-[0.35fr_1fr_0.35fr] items-center gap-2 border-b border-border py-1 px-2 md:hidden">
+      <MobileModalHeader className="items-center border-b border-border py-1 px-2 md:hidden">
         <MobileModalAction type="secondary" action={toggleTabMenu} slot="left" ref={tabOptionRef}>
           <div className="rounded-full border border-border p-0.5">
             <Icon type="more" />
@@ -67,7 +68,7 @@ const HistoryModalDialogContent = ({
         <MobileModalAction type="primary" slot="right" action={dismissModal}>
           Done
         </MobileModalAction>
-      </div>
+      </MobileModalHeader>
       <div className="flex min-h-0 flex-grow">
         <div
           className={classNames(

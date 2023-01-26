@@ -14,7 +14,7 @@ import InvitationsList from './InvitationsList'
 import Invite from './Invite/Invite'
 import Button from '@/Components/Button/Button'
 import SharingStatusText from './SharingStatusText'
-import ModalOverlay from '@/Components/Shared/ModalOverlay'
+import ModalOverlay from '@/Components/Modal/ModalOverlay'
 
 type Props = {
   application: WebApplication

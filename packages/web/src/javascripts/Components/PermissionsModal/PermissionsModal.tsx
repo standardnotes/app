@@ -1,8 +1,8 @@
 import { SNComponent } from '@standardnotes/snjs'
 import { useCallback } from 'react'
 import Button from '@/Components/Button/Button'
-import ModalDialogButtons from '../Shared/ModalDialogButtons'
-import Modal from '../Shared/Modal'
+import ModalDialogButtons from '../Modal/ModalDialogButtons'
+import Modal from '../Modal/Modal'
 
 type Props = {
   callback: (approved: boolean) => void
@@ -37,13 +37,11 @@ const PermissionsModal = ({ callback, component, dismiss, permissionsString }: P
       ]}
       className={{ content: 'md:!w-[350px]' }}
       customFooter={
-        <div className="hidden md:block">
-          <ModalDialogButtons>
-            <Button primary fullWidth onClick={accept} className="block">
-              Continue
-            </Button>
-          </ModalDialogButtons>
-        </div>
+        <ModalDialogButtons className="hidden md:flex">
+          <Button primary fullWidth onClick={accept} className="block">
+            Continue
+          </Button>
+        </ModalDialogButtons>
       }
     >
       <div className="px-4 py-4">

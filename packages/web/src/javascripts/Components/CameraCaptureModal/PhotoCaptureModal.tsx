@@ -7,7 +7,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Dropdown from '../Dropdown/Dropdown'
 import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
-import Modal from '../Shared/Modal'
+import Modal from '../Modal/Modal'
 
 type Props = {
   filesController: FilesController

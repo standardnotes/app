@@ -1,5 +1,4 @@
 import { WebApplication } from '@/Application/Application'
-import { DialogContent, DialogOverlay } from '@reach/dialog'
 import {
   ButtonType,
   Challenge,
@@ -21,8 +20,10 @@ import { ChallengeModalValues } from './ChallengeModalValues'
 import { InputValue } from './InputValue'
 import { isIOS, isMobileScreen } from '@/Utils'
 import { classNames } from '@standardnotes/utils'
-import MobileModalAction from '../Shared/MobileModalAction'
-import { useModalAnimation } from '../Shared/useModalAnimation'
+import MobileModalAction from '../Modal/MobileModalAction'
+import MobileModalHeader from '../Modal/MobileModalHeader'
+import ModalOverlay from '../Modal/ModalOverlay'
+import Modal from '../Modal/Modal'
 
 type Props = {
   application: WebApplication
@@ -211,38 +212,35 @@ const ChallengeModal: FunctionComponent<Props> = ({
     }
   }, [application, cancelChallenge, challenge.cancelable])
 
-  const [isMounted, setElement] = useModalAnimation(!!challenge.prompts.length)
-
-  if (!isMounted) {
-    return null
-  }
-
   const isFullScreenBlocker = challenge.reason === ChallengeReason.ApplicationUnlock
   const isMobileOverlay = isMobileScreen() && !isFullScreenBlocker
 
   return (
-    <DialogOverlay
+    <ModalOverlay
+      isOpen={true}
       className={`sn-component p-0 ${isFullScreenBlocker ? 'bg-passive-5' : ''}`}
       onDismiss={cancelChallenge}
       dangerouslyBypassFocusLock={bypassModalFocusLock}
       key={challenge.id}
-      ref={setElement}
     >
-      <DialogContent
-        aria-label="Challenge modal"
-        className={classNames(
-          'challenge-modal relative m-0 flex h-full w-full flex-col items-center rounded border-solid border-border bg-default p-0 md:h-auto md:w-auto md:border',
-          !isMobileScreen() && 'shadow-overlay-light',
-          isMobileOverlay && 'shadow-overlay-light border border-solid border-border',
-        )}
+      <Modal
+        title="Authenticate"
+        close={cancelChallenge}
+        className={{
+          content: classNames(
+            'challenge-modal relative m-0 flex h-full w-full flex-col items-center rounded border-solid border-border bg-default p-0 md:h-auto md:w-auto md:border',
+            !isMobileScreen() && 'shadow-overlay-light',
+            isMobileOverlay && 'shadow-overlay-light border border-solid border-border',
+          ),
+        }}
       >
-        <div
+        {/* <div
           className={classNames(
             'w-full border-b border-solid border-border py-1.5 px-1.5 md:hidden',
             isIOS() && 'pt-safe-top',
           )}
         >
-          <div className="grid w-full grid-cols-[0.35fr_1fr_0.35fr] gap-2">
+          <MobileModalHeader>
             {challenge.cancelable ? (
               <MobileModalAction slot="left" type="cancel" action={cancelChallenge}>
                 Cancel
@@ -252,8 +250,8 @@ const ChallengeModal: FunctionComponent<Props> = ({
             )}
             <div className="flex items-center justify-center text-base font-semibold text-text">Authenticate</div>
             <div />
-          </div>
-        </div>
+          </MobileModalHeader>
+        </div> */}
         {challenge.cancelable && (
           <button
             onClick={cancelChallenge}
@@ -326,8 +324,8 @@ const ChallengeModal: FunctionComponent<Props> = ({
             />
           )}
         </div>
-      </DialogContent>
-    </DialogOverlay>
+      </Modal>
+    </ModalOverlay>
   )
 }
 

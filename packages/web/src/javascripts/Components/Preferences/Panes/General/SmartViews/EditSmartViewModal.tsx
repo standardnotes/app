@@ -1,7 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import IconPicker from '@/Components/Icon/IconPicker'
 import Popover from '@/Components/Popover/Popover'
-import Modal, { ModalAction } from '@/Components/Shared/Modal'
+import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import Spinner from '@/Components/Spinner/Spinner'
 import { Platform, SmartViewDefaultIconName, VectorIconNameOrEmoji } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'

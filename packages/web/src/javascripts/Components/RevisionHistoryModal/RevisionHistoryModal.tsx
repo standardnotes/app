@@ -4,7 +4,7 @@ import HistoryModalDialogContent from './HistoryModalDialogContent'
 import HistoryModalDialog from './HistoryModalDialog'
 import { RevisionHistoryModalProps } from './RevisionHistoryModalProps'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
-import { useModalAnimation } from '../Shared/useModalAnimation'
+import { useModalAnimation } from '../Modal/useModalAnimation'
 
 const RevisionHistoryModal: FunctionComponent<RevisionHistoryModalProps> = ({
   application,

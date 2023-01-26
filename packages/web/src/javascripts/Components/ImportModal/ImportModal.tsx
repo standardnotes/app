@@ -8,8 +8,8 @@ import { useStateRef } from '@/Hooks/useStateRef'
 import { ImportModalFileItem } from './ImportModalFileItem'
 import ImportModalInitialPage from './InitialPage'
 import { ImportModalAction, ImportModalFile, ImportModalState } from './Types'
-import Modal, { ModalAction } from '../Shared/Modal'
-import ModalOverlay from '../Shared/ModalOverlay'
+import Modal, { ModalAction } from '../Modal/Modal'
+import ModalOverlay from '../Modal/ModalOverlay'
 
 const reducer = (state: ImportModalState, action: ImportModalAction): ImportModalState => {
   switch (action.type) {

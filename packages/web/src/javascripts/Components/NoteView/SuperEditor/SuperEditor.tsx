@@ -40,7 +40,7 @@ import { getPlaintextFontSize } from '@/Utils/getPlaintextFontSize'
 import ReadonlyPlugin from './Plugins/ReadonlyPlugin/ReadonlyPlugin'
 import { SuperSearchContextProvider } from './Plugins/SearchPlugin/Context'
 import { SearchPlugin } from './Plugins/SearchPlugin/SearchPlugin'
-import ModalOverlay from '@/Components/Shared/ModalOverlay'
+import ModalOverlay from '@/Components/Modal/ModalOverlay'
 
 const NotePreviewCharLimit = 160
 

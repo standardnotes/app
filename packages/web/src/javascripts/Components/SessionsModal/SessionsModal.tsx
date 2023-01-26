@@ -8,8 +8,8 @@ import { observer } from 'mobx-react-lite'
 import Spinner from '@/Components/Spinner/Spinner'
 import Button from '@/Components/Button/Button'
 import Icon from '../Icon/Icon'
-import Modal, { ModalAction } from '../Shared/Modal'
-import ModalOverlay from '../Shared/ModalOverlay'
+import Modal, { ModalAction } from '../Modal/Modal'
+import ModalOverlay from '../Modal/ModalOverlay'
 
 type Session = RemoteSession & {
   revoking?: true

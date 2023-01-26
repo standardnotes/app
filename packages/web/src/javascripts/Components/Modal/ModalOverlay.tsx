@@ -1,18 +1,16 @@
-import { AlertDialogOverlay } from '@reach/alert-dialog'
+import { DialogOverlay, DialogOverlayProps } from '@reach/dialog'
 import { classNames } from '@standardnotes/snjs'
-import { ReactNode, useRef } from 'react'
-import { useModalAnimation } from './useModalAnimation'
+import { ReactNode } from 'react'
+import { useModalAnimation } from '../Modal/useModalAnimation'
 
 type Props = {
   isOpen: boolean
   onDismiss?: () => void
   children: ReactNode
   className?: string
-}
+} & DialogOverlayProps
 
-const ModalOverlay = ({ isOpen, onDismiss, children, className }: Props) => {
-  const ldRef = useRef<HTMLButtonElement>(null)
-
+const ModalOverlay = ({ isOpen, onDismiss, children, className, ...props }: Props) => {
   const [isMounted, setElement] = useModalAnimation(isOpen)
 
   if (!isMounted) {
@@ -20,14 +18,14 @@ const ModalOverlay = ({ isOpen, onDismiss, children, className }: Props) => {
   }
 
   return (
-    <AlertDialogOverlay
+    <DialogOverlay
       className={classNames('p-0 md:px-0 md:opacity-100', className)}
-      leastDestructiveRef={ldRef}
       onDismiss={onDismiss}
       ref={setElement}
+      {...props}
     >
       {children}
-    </AlertDialogOverlay>
+    </DialogOverlay>
   )
 }
 

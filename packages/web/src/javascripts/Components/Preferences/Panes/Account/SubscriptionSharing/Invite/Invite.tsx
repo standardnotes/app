@@ -6,7 +6,7 @@ import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionC
 
 import InviteForm from './InviteForm'
 import InviteSuccess from './InviteSuccess'
-import Modal, { ModalAction } from '@/Components/Shared/Modal'
+import Modal, { ModalAction } from '@/Components/Modal/Modal'
 
 enum SubmitButtonTitles {
   Default = 'Invite',

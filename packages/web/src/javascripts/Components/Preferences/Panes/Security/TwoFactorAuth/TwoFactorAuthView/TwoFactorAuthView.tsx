@@ -10,8 +10,8 @@ import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/Pre
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import { WebApplication } from '@/Application/Application'
 import RecoveryCodeBanner from '@/Components/RecoveryCodeBanner/RecoveryCodeBanner'
-import Modal, { ModalAction } from '@/Components/Shared/Modal'
-import ModalOverlay from '@/Components/Shared/ModalOverlay'
+import Modal, { ModalAction } from '@/Components/Modal/Modal'
+import ModalOverlay from '@/Components/Modal/ModalOverlay'
 
 type Props = {
   auth: TwoFactorAuth

@@ -3,7 +3,7 @@ import { WebApplication } from '@/Application/Application'
 import { useBeforeUnload } from '@/Hooks/useBeforeUnload'
 import ChangeEmailForm from './ChangeEmailForm'
 import ChangeEmailSuccess from './ChangeEmailSuccess'
-import Modal, { ModalAction } from '@/Components/Shared/Modal'
+import Modal, { ModalAction } from '@/Components/Modal/Modal'
 
 enum SubmitButtonTitles {
   Default = 'Continue',

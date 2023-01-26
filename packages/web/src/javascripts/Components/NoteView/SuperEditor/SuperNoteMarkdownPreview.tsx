@@ -6,7 +6,7 @@ import MarkdownPreviewPlugin from './Plugins/MarkdownPreviewPlugin/MarkdownPrevi
 import { FileNode } from './Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import { BubbleNode } from './Plugins/ItemBubblePlugin/Nodes/BubbleNode'
 import { copyTextToClipboard } from '../../../Utils/copyTextToClipboard'
-import Modal, { ModalAction } from '@/Components/Shared/Modal'
+import Modal, { ModalAction } from '@/Components/Modal/Modal'
 
 type Props = {
   note: SNNote

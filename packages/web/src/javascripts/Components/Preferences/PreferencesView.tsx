@@ -7,8 +7,7 @@ import { PreferencesProps } from './PreferencesProps'
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import { ESCAPE_COMMAND } from '@standardnotes/ui-services'
-import Modal from '../Shared/Modal'
-import { AlertDialogLabel } from '@reach/alert-dialog'
+import Modal from '../Modal/Modal'
 import { classNames } from '@standardnotes/snjs'
 import { isIOS } from '@/Utils'
 
@@ -63,7 +62,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
         description: 'flex flex-col',
       }}
       customHeader={
-        <AlertDialogLabel
+        <div
           className={classNames(
             'flex w-full flex-row items-center justify-between border-b border-solid border-border bg-default px-3 pb-2 md:p-3',
             isIOS() ? 'pt-safe-top' : 'pt-2',
@@ -78,7 +77,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
             icon="close"
             label="Close preferences"
           />
-        </AlertDialogLabel>
+        </div>
       }
     >
       <PreferencesCanvas

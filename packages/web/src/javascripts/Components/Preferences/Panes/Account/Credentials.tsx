@@ -10,7 +10,7 @@ import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import PasswordWizard from '@/Components/PasswordWizard/PasswordWizard'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
-import ModalOverlay from '@/Components/Shared/ModalOverlay'
+import ModalOverlay from '@/Components/Modal/ModalOverlay'
 
 type Props = {
   application: WebApplication

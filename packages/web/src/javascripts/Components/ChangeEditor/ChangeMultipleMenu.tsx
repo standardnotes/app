@@ -12,7 +12,7 @@ import { EditorMenuGroup } from '../NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '../NotesOptions/EditorMenuItem'
 import { SuperNoteImporter } from '../NoteView/SuperEditor/SuperNoteImporter'
 import { Pill } from '../Preferences/PreferencesComponents/Content'
-import ModalOverlay from '../Shared/ModalOverlay'
+import ModalOverlay from '../Modal/ModalOverlay'
 
 const getGroupId = (group: EditorMenuGroup) => group.title.toLowerCase().replace(/\s/, '-')
 

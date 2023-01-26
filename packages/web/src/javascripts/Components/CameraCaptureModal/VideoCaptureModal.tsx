@@ -6,7 +6,7 @@ import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Icon from '../Icon/Icon'
 import DecoratedInput from '../Input/DecoratedInput'
-import Modal from '../Shared/Modal'
+import Modal from '../Modal/Modal'
 
 type Props = {
   filesController: FilesController

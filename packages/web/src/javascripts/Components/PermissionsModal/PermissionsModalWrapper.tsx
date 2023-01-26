@@ -1,7 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import { ApplicationEvent, PermissionDialog } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
-import ModalOverlay from '../Shared/ModalOverlay'
+import ModalOverlay from '../Modal/ModalOverlay'
 import PermissionsModal from './PermissionsModal'
 
 type Props = {

@@ -4,7 +4,7 @@ import PreferencesView from './PreferencesView'
 import { PreferencesViewWrapperProps } from './PreferencesViewWrapperProps'
 import { useCommandService } from '../CommandProvider'
 import { OPEN_PREFERENCES_COMMAND } from '@standardnotes/ui-services'
-import ModalOverlay from '../Shared/ModalOverlay'
+import ModalOverlay from '../Modal/ModalOverlay'
 
 const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = ({
   viewControllerManager,

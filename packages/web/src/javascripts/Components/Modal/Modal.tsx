@@ -1,14 +1,14 @@
 import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { isIOS } from '@/Utils'
-import { AlertDialogContent, AlertDialogLabel } from '@reach/alert-dialog'
+import { DialogContent } from '@reach/dialog'
 import { classNames } from '@standardnotes/snjs'
 import { ReactNode, useMemo, useRef, useState } from 'react'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import Popover from '../Popover/Popover'
 import MobileModalAction from './MobileModalAction'
+import MobileModalHeader from './MobileModalHeader'
 import ModalAndroidBackHandler from './ModalAndroidBackHandler'
-import ModalDialogDescription from './ModalDialogDescription'
 
 export type ModalAction = {
   label: NonNullable<ReactNode>
@@ -28,11 +28,21 @@ type Props = {
     description?: string
   }
   customHeader?: ReactNode
+  disableCustomHeader?: boolean
   customFooter?: ReactNode
   children: ReactNode
 }
 
-const Modal = ({ title, close, actions = [], className = {}, customHeader, customFooter, children }: Props) => {
+const Modal = ({
+  title,
+  close,
+  actions = [],
+  className = {},
+  customHeader,
+  disableCustomHeader = false,
+  customFooter,
+  children,
+}: Props) => {
   const sortedActions = useMemo(
     () =>
       actions
@@ -75,7 +85,6 @@ const Modal = ({ title, close, actions = [], className = {}, customHeader, custo
 
   const leftSlotAction = sortedActions.find((action) => action.mobileSlot === 'left')
   const rightSlotAction = sortedActions.find((action) => action.mobileSlot === 'right')
-  const hasCancelAction = sortedActions.some((action) => action.type === 'cancel')
   const firstPrimaryActionIndex = sortedActions.findIndex((action) => action.type === 'primary')
 
   const extraActions = sortedActions.filter((action) => action.type !== 'primary' && action.type !== 'cancel')
@@ -86,23 +95,24 @@ const Modal = ({ title, close, actions = [], className = {}, customHeader, custo
   return (
     <>
       <ModalAndroidBackHandler close={close} />
-      <AlertDialogContent
+      <DialogContent
         tabIndex={0}
         className={classNames(
           'm-0 flex h-full w-full flex-col border-solid border-border bg-default p-0 md:h-auto md:max-h-[85vh] md:w-160 md:rounded md:border md:shadow-main',
           className.content,
         )}
+        aria-label={title}
       >
-        {customHeader ? (
+        {customHeader && !disableCustomHeader ? (
           customHeader
         ) : (
-          <AlertDialogLabel
+          <div
             className={classNames(
-              'flex flex-shrink-0 items-center justify-between rounded-t border-b border-solid border-border bg-default text-text md:px-4.5 md:py-3',
-              isIOS() ? 'pt-safe-top' : 'py-1.5 px-2',
+              'flex w-full flex-shrink-0 items-center justify-between rounded-t border-b border-solid border-border bg-default text-text md:px-4.5 md:py-3',
+              isIOS() ? 'px-2 pt-safe-top pb-1.5' : 'py-1.5 px-2',
             )}
           >
-            <div className="grid w-full grid-cols-[0.35fr_1fr_0.35fr] flex-row items-center justify-between gap-2 md:flex md:gap-0">
+            <MobileModalHeader className="flex-row items-center justify-between md:flex md:gap-0">
               {leftSlotAction ? (
                 <MobileModalAction
                   type={leftSlotAction.type}
@@ -172,13 +182,11 @@ const Modal = ({ title, close, actions = [], className = {}, customHeader, custo
                 >
                   {rightSlotAction.label}
                 </MobileModalAction>
-              ) : sortedActions.length === 0 || !hasCancelAction ? (
-                <MobileModalAction children="Done" action={close} slot="right" />
               ) : null}
-            </div>
-          </AlertDialogLabel>
+            </MobileModalHeader>
+          </div>
         )}
-        <ModalDialogDescription className={className.description}>{children}</ModalDialogDescription>
+        <div className={classNames('flex-grow overflow-y-auto', className.description)}>{children}</div>
         {customFooter
           ? customFooter
           : sortedActions.length > 0 && (
@@ -207,7 +215,7 @@ const Modal = ({ title, close, actions = [], className = {}, customHeader, custo
                 ))}
               </div>
             )}
-      </AlertDialogContent>
+      </DialogContent>
     </>
   )
 }

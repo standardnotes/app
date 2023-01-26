@@ -2,8 +2,9 @@ import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobi
 import { classNames } from '@standardnotes/snjs'
 import { ReactNode } from 'react'
 import Portal from '../Portal/Portal'
-import MobileModalAction from '../Shared/MobileModalAction'
-import { useModalAnimation } from '../Shared/useModalAnimation'
+import MobileModalAction from '../Modal/MobileModalAction'
+import { useModalAnimation } from '../Modal/useModalAnimation'
+import MobileModalHeader from '../Modal/MobileModalHeader'
 
 const DisableScroll = () => {
   useDisableBodyScrollOnMobile()
@@ -41,13 +42,13 @@ const MobilePopoverContent = ({
         data-popover={id}
         data-mobile-popover
       >
-        <div className="grid w-full grid-cols-[0.35fr_1fr_0.35fr] gap-2 border-b border-border py-1.5 px-2 text-base">
+        <MobileModalHeader className="border-b border-border py-1.5 px-2 text-base">
           <div />
           <div className="flex items-center justify-center font-semibold">{title}</div>
           <MobileModalAction type="primary" slot="right" action={requestClose}>
             Done
           </MobileModalAction>
-        </div>
+        </MobileModalHeader>
         <div className={classNames('h-full overflow-y-auto', className)}>{children}</div>
       </div>
     </Portal>

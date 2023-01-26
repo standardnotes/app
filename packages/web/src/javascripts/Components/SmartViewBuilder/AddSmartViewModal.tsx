@@ -13,7 +13,7 @@ import TabsContainer from '../Tabs/TabsContainer'
 import CopyableCodeBlock from '../Shared/CopyableCodeBlock'
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { classNames } from '@standardnotes/utils'
-import Modal, { ModalAction } from '../Shared/Modal'
+import Modal, { ModalAction } from '../Modal/Modal'
 
 type Props = {
   controller: AddSmartViewModalController

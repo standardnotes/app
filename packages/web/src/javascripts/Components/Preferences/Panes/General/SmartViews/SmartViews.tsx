@@ -15,7 +15,7 @@ import NoSubscriptionBanner from '@/Components/NoSubscriptionBanner/NoSubscripti
 import { EditSmartViewModalController } from './EditSmartViewModalController'
 import { STRING_DELETE_TAG } from '@/Constants/Strings'
 import { confirmDialog } from '@standardnotes/ui-services'
-import ModalOverlay from '@/Components/Shared/ModalOverlay'
+import ModalOverlay from '@/Components/Modal/ModalOverlay'
 
 type NewType = {
   application: WebApplication
