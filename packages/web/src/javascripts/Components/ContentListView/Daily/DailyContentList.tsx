@@ -4,7 +4,12 @@ import { ItemListController } from '@/Controllers/ItemList/ItemListController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'
 import { useResponsiveAppPane } from '../../Panes/ResponsivePaneProvider'
 import { AppPaneId } from '../../Panes/AppPaneMetadata'
-import { createDailyItemsWithToday, createItemsByDateMapping, insertBlanks } from './CreateDailySections'
+import {
+  createDailyItemsWithToday,
+  createItemsByDateMapping,
+  insertBlanks,
+  templateEntryForDate,
+} from './CreateDailySections'
 import { DailyItemsDay } from './DailyItemsDaySection'
 import { DailyItemCell } from './DailyItemCell'
 import { SNTag, pluralize } from '@standardnotes/snjs'
@@ -161,19 +166,15 @@ const DailyContentList: FunctionComponent<Props> = ({
 
   const onCalendarSelect = useCallback(
     (date: Date) => {
-      const dailyItem = dailyItemForDate(date)
-      if (dailyItem) {
-        const items = itemsByDateMapping[dailyItem.id]
-        if (items?.length > 0) {
-          void onClickItem(dailyItem, items[0], false)
-        } else if (dailyItem) {
-          void onClickTemplate(dailyItem.date)
-        }
-      } else {
-        void onClickTemplate(date)
+      const dailyItem = templateEntryForDate(date)
+      const items = itemsByDateMapping[dailyItem.id]
+      if (items?.length > 0) {
+        void onClickItem(dailyItem, items[0], false)
+      } else if (dailyItem) {
+        void onClickTemplate(dailyItem.date)
       }
     },
-    [onClickItem, onClickTemplate, dailyItemForDate, itemsByDateMapping],
+    [onClickItem, onClickTemplate, itemsByDateMapping],
   )
 
   const hasItemsOnSelectedDay = selectedDay && itemsByDateMapping[dateToDailyDayIdentifier(selectedDay)]?.length > 0
