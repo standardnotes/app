@@ -44,6 +44,19 @@ Object.assign(window, SNLibrary);
 
 To run a stable server environment for E2E tests that is up to date with production, clone the [self-hosted repository](https://github.com/standardnotes/self-hosted). Make sure you have everything set up configuration wise as in self-hosting docs. In particular, make sure the env files are created and proper values for keys are set up.
 
+Make sure you have the following value in the env vars mentioned below. It's important to have low token TTLs for the purpose of the suite. For the most up to date values it's best to check `self-hosted` github workflows. At the moment of writting the recommended values are:
+```
+# docker/auth.env
+...
+ACCESS_TOKEN_AGE=4
+REFRESH_TOKEN_AGE=10
+EPHEMERAL_SESSION_AGE=300
+
+# .env
+...
+REVISIONS_FREQUENCY=5
+```
+
 #### Start Server For Tests (SELF-HOSTED)
 
 In the `self-hosted` folder run:
