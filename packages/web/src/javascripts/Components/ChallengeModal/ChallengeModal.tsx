@@ -70,7 +70,6 @@ const ChallengeModal: FunctionComponent<Props> = ({
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
-  const [shouldShowSubmitButton, setShouldShowSubmitButton] = useState(true)
   const [, setProcessingPrompts] = useState<ChallengePrompt[]>([])
   const [bypassModalFocusLock, setBypassModalFocusLock] = useState(false)
 
@@ -189,12 +188,12 @@ const ChallengeModal: FunctionComponent<Props> = ({
   const wasBiometricInputSuccessful = !!biometricPrompt && !!values[biometricPrompt.id].value
   const wasAuthenticatorInputSuccessful = !!authenticatorPrompt && !!values[authenticatorPrompt.id].value
   const hasSecureTextPrompt = challenge.prompts.some((prompt) => prompt.secureTextEntry)
+  const shouldShowSubmitButton = !(hasOnlyBiometricPrompt || hasOnlyAuthenticatorPrompt)
 
   useEffect(() => {
     const shouldAutoSubmit =
       (hasOnlyBiometricPrompt && wasBiometricInputSuccessful) ||
       (hasOnlyAuthenticatorPrompt && wasAuthenticatorInputSuccessful)
-    setShouldShowSubmitButton(!(hasOnlyBiometricPrompt || hasOnlyAuthenticatorPrompt))
 
     const shouldFocusSecureTextPrompt = hasSecureTextPrompt && wasBiometricInputSuccessful
 
