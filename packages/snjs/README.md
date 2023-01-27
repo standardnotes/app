@@ -40,26 +40,33 @@ Object.assign(window, SNLibrary);
 
 ### E2E Tests
 
-To run a stable server environment for E2E tests that is up to date with production, clone the [self-hosted repository](https://github.com/standardnotes/self-hosted), then run:
+#### Prerequisites
 
-In self-hosted repo:
+To run a stable server environment for E2E tests that is up to date with production, clone the [self-hosted repository](https://github.com/standardnotes/self-hosted). Make sure you have everything set up configuration wise as in self-hosting docs. In particular, make sure the env files are created and proper values for keys are set up.
+
+#### Start Server For Tests (SELF-HOSTED)
+
+In the `self-hosted` folder run:
+
 ```
-yarn && yarn start
+EXPOSED_PORT=3123 ./server.sh start && ./server.sh wait-for-startup
 ```
-Wait for the `All services are up!` message.
 
-Once the server infrastructure is ready, and you've built all packages, you can run the test suite in the browser via:
+Wait for the services to be up.
 
+#### Run Test Suite (APP)
 
-In app repo:
+Once the server infrastructure is ready, and you've built all packages, you can run the test suite in the browser.
+
+In the `app` folder run:
+
 ```
 yarn e2e
 ```
 
-Once you are finished you can close the running local server on E2E repo by typing:
-```
-yarn stop:local-server
-```
+#### Troubleshooting
+
+Before running the E2E test suite you might want to run in the `app` folder `yarn build:snjs` to make sure you are running the test suite against the most recent changes you have locally.
 
 ### Unit Tests
 
