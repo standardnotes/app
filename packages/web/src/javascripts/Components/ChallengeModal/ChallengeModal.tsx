@@ -22,6 +22,7 @@ import { classNames } from '@standardnotes/utils'
 import ModalOverlay from '../Modal/ModalOverlay'
 import Modal from '../Modal/Modal'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { useAutoElementRect } from '@/Hooks/useElementRect'
 
 type Props = {
   application: WebApplication
@@ -214,6 +215,11 @@ const ChallengeModal: FunctionComponent<Props> = ({
   const isFullScreenBlocker = challenge.reason === ChallengeReason.ApplicationUnlock
   const isMobileOverlay = isMobileScreen && !isFullScreenBlocker
 
+  const [modalElement, setModalElement] = useState<HTMLDivElement | null>(null)
+  const modalElementRect = useAutoElementRect(modalElement, {
+    updateOnWindowResize: true,
+  })
+
   return (
     <ModalOverlay
       isOpen={true}
@@ -221,6 +227,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
       onDismiss={cancelChallenge}
       dangerouslyBypassFocusLock={bypassModalFocusLock}
       key={challenge.id}
+      ref={setModalElement}
     >
       <Modal
         title="Authenticate"
@@ -255,7 +262,12 @@ const ChallengeModal: FunctionComponent<Props> = ({
           </button>
         )}
         <div className="flex min-h-0 w-full flex-grow flex-col items-center overflow-auto p-8">
-          <ProtectedIllustration className="mb-4 h-30 w-30 flex-shrink-0" />
+          <ProtectedIllustration
+            className={classNames(
+              'mb-4 h-30 w-30 flex-shrink-0',
+              modalElementRect && modalElementRect.height < 500 ? 'hidden' : '',
+            )}
+          />
           <div className="mb-3 max-w-76 text-center text-lg font-bold">{challenge.heading}</div>
           {challenge.subheading && (
             <div className="break-word mb-4 max-w-76 text-center text-sm">{challenge.subheading}</div>
