@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.164.13](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.12...@standardnotes/snjs@2.164.13) (2023-01-27)
+
+### Bug Fixes
+
+* **snjs:** instructions on running the e2e test suite ([0877f16](https://github.com/standardnotes/app/commit/0877f1672d69e2456559ff4c383c8c7d4c3ad782))
+
 ## [2.164.12](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.11...@standardnotes/snjs@2.164.12) (2023-01-24)
 
 **Note:** Version bump only for package @standardnotes/snjs
