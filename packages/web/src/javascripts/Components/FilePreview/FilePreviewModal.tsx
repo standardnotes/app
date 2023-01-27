@@ -1,5 +1,4 @@
 import { WebApplication } from '@/Application/Application'
-import { DialogContent } from '@reach/dialog'
 import { FunctionComponent, KeyboardEventHandler, useCallback, useMemo, useRef, useState } from 'react'
 import { getFileIconComponent } from './getFileIconComponent'
 import Icon from '@/Components/Icon/Icon'
@@ -20,6 +19,8 @@ import { mergeRefs } from '@/Hooks/mergeRefs'
 import { classNames } from '@standardnotes/snjs'
 import { isIOS } from '@/Utils'
 import ModalOverlay from '../Modal/ModalOverlay'
+import Modal from '../Modal/Modal'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type Props = {
   application: WebApplication
@@ -104,23 +105,63 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
     }
   }, [application.items, currentFile, setCurrentFile])
 
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
+  const toggleOptionsMenu = () => setShowOptionsMenu((show) => !show)
+  const closeOptionsMenu = () => setShowOptionsMenu(false)
+  const toggleInfoPanel = () => setShowFileInfoPanel((show) => !show)
+  const toggleLinkedBubblesContainer = () => setShowLinkedBubblesContainer((show) => !show)
+
   if (!currentFile) {
     return null
   }
 
   return (
-    <DialogContent
-      className={classNames(
-        'm-0 flex h-full w-full flex-col rounded bg-[color:var(--modal-background-color)] p-0 shadow-main md:max-h-[90%] md:max-w-[90%]',
-        isIOS() && 'pt-safe-top',
-      )}
+    <Modal
+      title={currentFile.name}
+      close={dismiss}
+      className={{
+        content: classNames(
+          'm-0 flex h-full w-full flex-col rounded bg-[color:var(--modal-background-color)] p-0 shadow-main md:!h-full md:max-h-[90%] md:!w-full md:max-w-[90%]',
+          isIOS() && 'pt-safe-top',
+        ),
+      }}
+      actions={[
+        {
+          label: 'Done',
+          type: 'primary',
+          onClick: dismiss,
+          hidden: !isMobileScreen,
+          mobileSlot: 'right',
+        },
+        {
+          label: 'Show file options',
+          type: 'secondary',
+          onClick: toggleOptionsMenu,
+          hidden: !isMobileScreen,
+        },
+        {
+          label: `${showFileInfoPanel ? 'Hide' : 'Show'} file info`,
+          type: 'secondary',
+          onClick: toggleInfoPanel,
+          hidden: !isMobileScreen,
+        },
+        {
+          label: `${showLinkedBubblesContainer ? 'Hide' : 'Show'} links section`,
+          type: 'secondary',
+          onClick: toggleLinkedBubblesContainer,
+          hidden: !isMobileScreen,
+        },
+      ]}
+      customHeader={<></>}
+      disableCustomHeader={isMobileScreen}
     >
       <div
         className="flex h-full w-full flex-col focus:shadow-none focus:outline-none"
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
         onKeyDown={keyDownHandler}
       >
-        <div className="min-h-6 flex flex-shrink-0 flex-wrap items-center justify-between gap-2 border-0 border-b border-solid border-border px-4 py-3 focus:shadow-none">
+        <div className="min-h-6 hidden flex-shrink-0 flex-wrap items-center justify-between gap-2 border-0 border-b border-solid border-border px-4 py-3 focus:shadow-none md:flex">
           <div className="flex items-center">
             <div className="h-6 w-6">{IconComponent}</div>
             {isRenaming ? (
@@ -160,7 +201,7 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
             <StyledTooltip label="Show linked items" className="!z-modal">
               <button
                 className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
-                onClick={() => setShowLinkedBubblesContainer((show) => !show)}
+                onClick={toggleLinkedBubblesContainer}
                 aria-label="Show linked items"
               >
                 <Icon type="link" className="text-neutral" />
@@ -169,7 +210,7 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
             <StyledTooltip label="Show file options" className="!z-modal">
               <button
                 className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
-                onClick={() => setShowOptionsMenu((show) => !show)}
+                onClick={toggleOptionsMenu}
                 ref={menuButtonRef}
                 aria-label="Show file options"
               >
@@ -180,9 +221,7 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
               title="File options"
               open={showOptionsMenu}
               anchorElement={menuButtonRef.current}
-              togglePopover={() => {
-                setShowOptionsMenu(false)
-              }}
+              togglePopover={closeOptionsMenu}
               side="bottom"
               align="start"
               className="py-2"
@@ -194,9 +233,7 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
                   linkingController={viewControllerManager.linkingController}
                   navigationController={viewControllerManager.navigationController}
                   selectedFiles={[currentFile]}
-                  closeMenu={() => {
-                    setShowOptionsMenu(false)
-                  }}
+                  closeMenu={closeOptionsMenu}
                   shouldShowRenameOption={false}
                   shouldShowAttachOption={false}
                 />
@@ -205,7 +242,7 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
             <StyledTooltip label="Show file info" className="!z-modal">
               <button
                 className="mr-4 flex cursor-pointer rounded border border-solid border-border bg-transparent p-1.5 hover:bg-contrast"
-                onClick={() => setShowFileInfoPanel((show) => !show)}
+                onClick={toggleInfoPanel}
                 aria-label="Show file info"
               >
                 <Icon type="info" className="text-neutral" />
@@ -229,14 +266,19 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
             />
           </div>
         )}
-        <div className="flex min-h-0 flex-grow">
-          <div className="relative flex max-w-full flex-grow items-center justify-center">
+        <div className="flex min-h-0 flex-grow flex-col-reverse md:flex-row">
+          <div
+            className={classNames(
+              'relative flex max-w-full flex-grow items-center justify-center',
+              showFileInfoPanel && 'border-t border-border md:border-b-0 md:border-r',
+            )}
+          >
             <FilePreview file={currentFile} application={application} key={currentFile.uuid} />
           </div>
           {showFileInfoPanel && <FilePreviewInfoPanel file={currentFile} />}
         </div>
       </div>
-    </DialogContent>
+    </Modal>
   )
 })
 

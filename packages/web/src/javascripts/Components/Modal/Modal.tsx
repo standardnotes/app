@@ -146,7 +146,7 @@ const Modal = ({
                       togglePopover={() => setShowAdvanced((show) => !show)}
                       align="start"
                       portal={false}
-                      className="!fixed w-1/2 !min-w-0 divide-y divide-border border border-border"
+                      className="!fixed divide-y divide-border border border-border"
                     >
                       {extraActions
                         .filter((action) => action.type !== 'cancel')
@@ -157,7 +157,10 @@ const Modal = ({
                               action.type === 'destructive' && 'text-danger',
                             )}
                             key={index}
-                            onClick={action.onClick}
+                            onClick={() => {
+                              action.onClick()
+                              setShowAdvanced(false)
+                            }}
                             disabled={action.disabled}
                           >
                             {action.label}

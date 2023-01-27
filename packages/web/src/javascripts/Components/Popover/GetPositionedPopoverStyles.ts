@@ -5,6 +5,8 @@ import { PopoverAlignment, PopoverSide } from './Types'
 import { OppositeSide, checkCollisions, getNonCollidingAlignment, getOverflows } from './Utils/Collisions'
 import { getAppRect, getPopoverMaxHeight, getPositionedPopoverRect } from './Utils/Rect'
 
+const percentOf = (percent: number, value: number) => (percent / 100) * value
+
 const getStylesFromRect = (
   rect: DOMRect,
   options: {
@@ -15,16 +17,18 @@ const getStylesFromRect = (
   const { disableMobileFullscreenTakeover = false, maxHeight = 'none' } = options
 
   const canApplyMaxHeight = maxHeight !== 'none' && (!isMobileScreen() || disableMobileFullscreenTakeover)
+  const shouldApplyMobileWidth = isMobileScreen() && disableMobileFullscreenTakeover
+  const marginForMobile = percentOf(10, window.innerWidth)
 
   return {
     willChange: 'transform',
-    transform: `translate(${rect.x}px, ${rect.y}px)`,
+    transform: `translate(${shouldApplyMobileWidth ? marginForMobile / 2 : rect.x}px, ${rect.y}px)`,
     visibility: 'visible',
     ...(canApplyMaxHeight && {
       maxHeight: `${maxHeight}px`,
     }),
-    ...(disableMobileFullscreenTakeover && {
-      maxWidth: `${window.innerWidth - rect.x * 2}px`,
+    ...(shouldApplyMobileWidth && {
+      width: `${window.innerWidth - marginForMobile}px`,
     }),
   }
 }
