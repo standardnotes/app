@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.164.14](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.13...@standardnotes/snjs@2.164.14) (2023-01-27)
+
+### Bug Fixes
+
+* **snjs:** recommended token ttls for e2e ([ed3f355](https://github.com/standardnotes/app/commit/ed3f3556d5a7a4882454dd625956636ef971199d))
+
 ## [2.164.13](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.12...@standardnotes/snjs@2.164.13) (2023-01-27)
 
 ### Bug Fixes
