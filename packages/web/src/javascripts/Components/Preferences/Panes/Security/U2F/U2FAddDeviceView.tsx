@@ -3,12 +3,9 @@ import { observer } from 'mobx-react-lite'
 import { UseCaseInterface } from '@standardnotes/snjs'
 
 import DecoratedInput from '@/Components/Input/DecoratedInput'
-import Button from '@/Components/Button/Button'
-import ModalDialog from '@/Components/Shared/ModalDialog'
-import ModalDialogButtons from '@/Components/Shared/ModalDialogButtons'
-import ModalDialogDescription from '@/Components/Shared/ModalDialogDescription'
-import ModalDialogLabel from '@/Components/Shared/ModalDialogLabel'
 import { UserProvider } from '@/Components/Preferences/Providers'
+import Modal from '@/Components/Modal/Modal'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type Props = {
   userProvider: UserProvider
@@ -55,26 +52,42 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({
     await onDeviceAdded()
   }, [deviceName, setErrorMessage, userProvider, addAuthenticator, onDeviceAddingModalToggle, onDeviceAdded])
 
+  const closeModal = () => {
+    onDeviceAddingModalToggle(false)
+  }
+
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
   return (
-    <ModalDialog>
-      <ModalDialogLabel
-        closeDialog={() => {
-          onDeviceAddingModalToggle(false)
-        }}
-      >
-        Add U2F Device
-      </ModalDialogLabel>
-      <ModalDialogDescription className="h-33 flex flex-col items-center gap-5 md:flex-row">
-        <div className="w-25 h-25 flex items-center justify-center bg-info">...Some Cool Device Picture Here...</div>
-        <div className="flex flex-grow flex-col gap-2">
-          <DecoratedInput className={{ container: 'w-92 ml-4' }} value={deviceName} onChange={handleDeviceNameChange} />
-        </div>
-        {errorMessage && <div className="text-error">{errorMessage}</div>}
-      </ModalDialogDescription>
-      <ModalDialogButtons>
-        <Button className="min-w-20" label="Add Device" onClick={handleAddDeviceClick} />
-      </ModalDialogButtons>
-    </ModalDialog>
+    <Modal
+      title="Add U2F Device"
+      close={closeModal}
+      actions={[
+        {
+          label: 'Cancel',
+          type: 'cancel',
+          onClick: closeModal,
+          mobileSlot: 'left',
+          hidden: !isMobileScreen,
+        },
+        {
+          label: (
+            <>
+              Add <span className="hidden md:inline">Device</span>
+            </>
+          ),
+          type: 'primary',
+          onClick: handleAddDeviceClick,
+          mobileSlot: 'right',
+        },
+      ]}
+    >
+      <div className="w-25 h-25 flex items-center justify-center bg-info">...Some Cool Device Picture Here...</div>
+      <div className="flex flex-grow flex-col gap-2">
+        <DecoratedInput className={{ container: 'w-92 ml-4' }} value={deviceName} onChange={handleDeviceNameChange} />
+      </div>
+      {errorMessage && <div className="text-error">{errorMessage}</div>}
+    </Modal>
   )
 }
 
