@@ -17,7 +17,6 @@ import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import DecoratedInput from '../Input/DecoratedInput'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 import { classNames } from '@standardnotes/snjs'
-import { isIOS } from '@/Utils'
 import ModalOverlay from '../Modal/ModalOverlay'
 import Modal from '../Modal/Modal'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
@@ -123,7 +122,6 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
       className={{
         content: classNames(
           'm-0 flex h-full w-full flex-col rounded bg-[color:var(--modal-background-color)] p-0 shadow-main md:!h-full md:max-h-[90%] md:!w-full md:max-w-[90%]',
-          isIOS() && 'pt-safe-top',
         ),
       }}
       actions={[
