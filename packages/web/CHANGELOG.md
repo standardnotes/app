@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.142.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.142.7...@standardnotes/web@3.142.8) (2023-01-28)
+
+### Bug Fixes
+
+* Fixed issue where reduced motion preference would not be honored for some animations ([3d9c9e8](https://github.com/standardnotes/app/commit/3d9c9e8565306e2f00eeb3f9ca4f03495bbed688))
+
 ## [3.142.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.142.6...@standardnotes/web@3.142.7) (2023-01-28)
 
 ### Bug Fixes
