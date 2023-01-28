@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.142.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.142.6...@standardnotes/web@3.142.7) (2023-01-28)
+
+### Bug Fixes
+
+* fixed issue where clicking on calendar cell in daily mode would not open correct note ([#2185](https://github.com/standardnotes/app/issues/2185)) ([96bfe89](https://github.com/standardnotes/app/commit/96bfe89c2a0bfda039ef3dc833b741e87669f6f0))
+
 ## [3.142.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.142.5...@standardnotes/web@3.142.6) (2023-01-27)
 
 **Note:** Version bump only for package @standardnotes/web
