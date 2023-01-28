@@ -59,21 +59,12 @@ export default class TinyGesture<Element extends HTMLElement = HTMLElement> {
     this.element.addEventListener('touchstart', this._onTouchStart, passiveIfSupported)
     this.element.addEventListener('touchmove', this._onTouchMove, passiveIfSupported)
     this.element.addEventListener('touchend', this._onTouchEnd, passiveIfSupported)
-
-    if (this.opts.mouseSupport && !('ontouchstart' in window)) {
-      this.element.addEventListener('mousedown', this._onTouchStart, passiveIfSupported)
-      document.addEventListener('mousemove', this._onTouchMove, passiveIfSupported)
-      document.addEventListener('mouseup', this._onTouchEnd, passiveIfSupported)
-    }
   }
 
   destroy() {
     this.element.removeEventListener('touchstart', this._onTouchStart)
     this.element.removeEventListener('touchmove', this._onTouchMove)
     this.element.removeEventListener('touchend', this._onTouchEnd)
-    this.element.removeEventListener('mousedown', this._onTouchStart)
-    document.removeEventListener('mousemove', this._onTouchMove)
-    document.removeEventListener('mouseup', this._onTouchEnd)
     clearTimeout(this.longPressTimer ?? undefined)
     clearTimeout(this.doubleTapTimer ?? undefined)
   }
@@ -104,15 +95,13 @@ export default class TinyGesture<Element extends HTMLElement = HTMLElement> {
     }
   }
 
-  onTouchStart(event: MouseEvent | TouchEvent) {
+  onTouchStart(event: TouchEvent) {
     this.thresholdX = this.opts.threshold('x', this)
     this.thresholdY = this.opts.threshold('y', this)
     this.disregardVelocityThresholdX = this.opts.disregardVelocityThreshold('x', this)
     this.disregardVelocityThresholdY = this.opts.disregardVelocityThreshold('y', this)
-    this.touchStartX =
-      event.type === 'mousedown' ? (event as MouseEvent).screenX : (event as TouchEvent).changedTouches[0].screenX
-    this.touchStartY =
-      event.type === 'mousedown' ? (event as MouseEvent).screenY : (event as TouchEvent).changedTouches[0].screenY
+    this.touchStartX = event.changedTouches[0].screenX
+    this.touchStartY = event.changedTouches[0].screenY
     this.touchMoveX = null
     this.touchMoveY = null
     this.touchEndX = null
@@ -123,18 +112,11 @@ export default class TinyGesture<Element extends HTMLElement = HTMLElement> {
     this.fire('panstart', event)
   }
 
-  onTouchMove(event: MouseEvent | TouchEvent) {
-    if (event.type === 'mousemove' && (!this.touchStartX || this.touchEndX !== null)) {
-      return
-    }
-    const touchMoveX =
-      (event.type === 'mousemove' ? (event as MouseEvent).screenX : (event as TouchEvent).changedTouches[0].screenX) -
-      (this.touchStartX ?? 0)
+  onTouchMove(event: TouchEvent) {
+    const touchMoveX = event.changedTouches[0].screenX - (this.touchStartX ?? 0)
     this.velocityX = touchMoveX - (this.touchMoveX ?? 0)
     this.touchMoveX = touchMoveX
-    const touchMoveY =
-      (event.type === 'mousemove' ? (event as MouseEvent).screenY : (event as TouchEvent).changedTouches[0].screenY) -
-      (this.touchStartY ?? 0)
+    const touchMoveY = event.changedTouches[0].screenY - (this.touchStartY ?? 0)
     this.velocityY = touchMoveY - (this.touchMoveY ?? 0)
     this.touchMoveY = touchMoveY
     const absTouchMoveX = Math.abs(this.touchMoveX)
@@ -155,14 +137,9 @@ export default class TinyGesture<Element extends HTMLElement = HTMLElement> {
     this.fire('panmove', event)
   }
 
-  onTouchEnd(event: MouseEvent | TouchEvent) {
-    if (event.type === 'mouseup' && (!this.touchStartX || this.touchEndX !== null)) {
-      return
-    }
-    this.touchEndX =
-      event.type === 'mouseup' ? (event as MouseEvent).screenX : (event as TouchEvent).changedTouches[0].screenX
-    this.touchEndY =
-      event.type === 'mouseup' ? (event as MouseEvent).screenY : (event as TouchEvent).changedTouches[0].screenY
+  onTouchEnd(event: TouchEvent) {
+    this.touchEndX = event.changedTouches[0].screenX
+    this.touchEndY = event.changedTouches[0].screenY
     this.fire('panend', event)
     clearTimeout(this.longPressTimer ?? undefined)
 
@@ -237,7 +214,6 @@ export default class TinyGesture<Element extends HTMLElement = HTMLElement> {
     diagonalLimit: Math.tan(((45 * 1.5) / 180) * Math.PI),
     longPressTime: 500,
     doubleTapTime: 300,
-    mouseSupport: true,
   }
 }
 
@@ -247,23 +223,22 @@ export interface Options<Element extends HTMLElement = HTMLElement> {
   doubleTapTime: number
   disregardVelocityThreshold(type: 'x' | 'y', self: TinyGesture<Element>): number
   longPressTime: number
-  mouseSupport: boolean
   pressThreshold: number
   threshold(type: 'x' | 'y', self: TinyGesture<Element>): number
   velocityThreshold: number
 }
 
 export interface Events {
-  doubletap: MouseEvent | TouchEvent
-  longpress: MouseEvent | TouchEvent
-  panend: MouseEvent | TouchEvent
-  panmove: MouseEvent | TouchEvent
-  panstart: MouseEvent | TouchEvent
-  swipedown: MouseEvent | TouchEvent
-  swipeleft: MouseEvent | TouchEvent
-  swiperight: MouseEvent | TouchEvent
-  swipeup: MouseEvent | TouchEvent
-  tap: MouseEvent | TouchEvent
+  doubletap: TouchEvent
+  longpress: TouchEvent
+  panend: TouchEvent
+  panmove: TouchEvent
+  panstart: TouchEvent
+  swipedown: TouchEvent
+  swipeleft: TouchEvent
+  swiperight: TouchEvent
+  swipeup: TouchEvent
+  tap: TouchEvent
 }
 
 export type Handler<E> = (event: E) => void
