@@ -19,6 +19,7 @@ import {
 } from '@/Components/Panes/PaneAnimator'
 import { isPanesChangeLeafDismiss, isPanesChangePush } from '@/Controllers/PaneController/panesForLayout'
 import { log, LoggingDomain } from '@/Logging'
+import { useMediaQuery } from '@/Hooks/useMediaQuery'
 
 const NAVIGATION_PANEL_MIN_WIDTH = 48
 const ITEMS_PANEL_MIN_WIDTH = 200
@@ -53,7 +54,8 @@ const PanesSystemComponent = () => {
 
   const [_editorRef, setEditorRef] = useState<HTMLDivElement | null>(null)
 
-  const animationsSupported = isMobile
+  const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
+  const animationsSupported = isMobile && !prefersReducedMotion
 
   useEffect(() => {
     if (!animationsSupported) {
