@@ -12,22 +12,20 @@ export const usePaneSwipeGesture = (direction: 'left' | 'right', onSwipeEnd: () 
       return
     }
 
-    const gesture = new TinyGesture(element, {})
+    const gesture = new TinyGesture(element)
 
     const handlePanMove = gesture.on('panmove', () => {
-      const isSwipingHorizontally =
-        gesture.swipingDirection === 'pre-horizontal' || gesture.swipingDirection === 'horizontal'
+      const isSwipingHorizontally = gesture.swipingDirection !== 'vertical'
       if (!isSwipingHorizontally) {
         return
       }
-      if (!gesture.touchMoveX) {
+      if (gesture.touchMoveX === null) {
         return
       }
-      if (gesture.touchMoveX > 0 && direction === 'right') {
-        element.style.left = `${gesture.touchMoveX}px`
-      }
-      if (gesture.touchMoveX < 0 && direction === 'left') {
-        element.style.left = `${gesture.touchMoveX}px`
+      if (direction === 'right') {
+        element.style.left = `${Math.max(gesture.touchMoveX, 0)}px`
+      } else {
+        element.style.left = `${Math.min(gesture.touchMoveX, 0)}px`
       }
     })
 
