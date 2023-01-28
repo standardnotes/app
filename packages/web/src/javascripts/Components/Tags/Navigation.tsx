@@ -44,8 +44,30 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
     })
   }, [application])
 
-  const NavigationFooter = useMemo(() => {
-    return (
+  return (
+    <div
+      id={id}
+      className={classNames(
+        className,
+        'sn-component section pb-[50px] md:pb-0',
+        'h-full max-h-full overflow-hidden pt-safe-top md:h-full md:max-h-full md:min-h-0',
+      )}
+      ref={ref}
+    >
+      <div
+        id="navigation-content"
+        className={classNames(
+          'flex-grow overflow-y-auto overflow-x-hidden md:overflow-y-hidden md:hover:overflow-y-auto',
+          'md:hover:[overflow-y:_overlay] pointer-coarse:md:overflow-y-auto',
+        )}
+      >
+        <SmartViewsSection
+          application={application}
+          featuresController={viewControllerManager.featuresController}
+          navigationController={viewControllerManager.navigationController}
+        />
+        <TagsSection viewControllerManager={viewControllerManager} />
+      </div>
       <div
         className={classNames(
           'fixed bottom-0 flex min-h-[50px] w-full items-center border-t border-border bg-contrast',
@@ -100,35 +122,6 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
           icon="themes"
         />
       </div>
-    )
-  }, [application, viewControllerManager, hasPasscode, setPaneLayout])
-
-  return (
-    <div
-      id={id}
-      className={classNames(
-        className,
-        'sn-component section pb-[50px] md:pb-0',
-        'h-full max-h-full overflow-hidden pt-safe-top md:h-full md:max-h-full md:min-h-0',
-      )}
-      ref={ref}
-    >
-      <div
-        id="navigation-content"
-        className={classNames(
-          'flex-grow overflow-y-auto overflow-x-hidden md:overflow-y-hidden md:hover:overflow-y-auto',
-          'md:hover:[overflow-y:_overlay] pointer-coarse:md:overflow-y-auto',
-        )}
-      >
-        <SmartViewsSection
-          application={application}
-          featuresController={viewControllerManager.featuresController}
-          navigationController={viewControllerManager.navigationController}
-        />
-        <TagsSection viewControllerManager={viewControllerManager} />
-      </div>
-      {NavigationFooter}
-
       {children}
     </div>
   )
