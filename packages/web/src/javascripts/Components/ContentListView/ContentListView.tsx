@@ -43,6 +43,8 @@ import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalCo
 import { PaneController } from '@/Controllers/PaneController/PaneController'
 import EmptyFilesView from './EmptyFilesView'
 import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
+import { usePaneGesture } from '../Panes/usePaneGesture'
+import { mergeRefs } from '@/Hooks/mergeRefs'
 
 type Props = {
   accountMenuController: AccountMenuController
@@ -303,12 +305,21 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       }
     }, [selectedUuids, innerRef, isCurrentNoteTemplate, renderedItems, panes])
 
+    const [setElement] = usePaneGesture({
+      onSwipeRight: () => {
+        setPaneLayout(PaneLayout.TagSelection)
+      },
+      onSwipeLeft: () => {
+        setPaneLayout(PaneLayout.Editing)
+      },
+    })
+
     return (
       <div
         id={id}
         className={classNames(className, 'sn-component section h-full overflow-hidden pt-safe-top')}
         aria-label={'Notes & Files'}
-        ref={innerRef}
+        ref={mergeRefs([innerRef, setElement])}
       >
         {isMobileScreen && (
           <FloatingAddButton onClick={addNewItem} label={addButtonLabel} style={dailyMode ? 'danger' : 'info'} />
