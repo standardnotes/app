@@ -12,7 +12,7 @@ import { isIOS } from '@/Utils'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
 import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
-import { usePaneGesture } from '../Panes/usePaneGesture'
+import { usePaneSwipeGesture } from '../Panes/usePaneGesture'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 
 type Props = {
@@ -46,11 +46,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
     })
   }, [application])
 
-  const [setElement] = usePaneGesture({
-    onSwipeLeft: () => {
-      setPaneLayout(PaneLayout.ItemSelection)
-    },
-  })
+  const [setElement] = usePaneSwipeGesture('left', () => setPaneLayout(PaneLayout.ItemSelection))
 
   return (
     <div

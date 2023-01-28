@@ -43,7 +43,7 @@ import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalCo
 import { PaneController } from '@/Controllers/PaneController/PaneController'
 import EmptyFilesView from './EmptyFilesView'
 import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
-import { usePaneGesture } from '../Panes/usePaneGesture'
+import { usePaneSwipeGesture } from '../Panes/usePaneGesture'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 
 type Props = {
@@ -305,14 +305,7 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       }
     }, [selectedUuids, innerRef, isCurrentNoteTemplate, renderedItems, panes])
 
-    const [setElement] = usePaneGesture({
-      onSwipeRight: () => {
-        setPaneLayout(PaneLayout.TagSelection)
-      },
-      onSwipeLeft: () => {
-        setPaneLayout(PaneLayout.Editing)
-      },
-    })
+    const [setElement] = usePaneSwipeGesture('right', () => setPaneLayout(PaneLayout.TagSelection))
 
     return (
       <div

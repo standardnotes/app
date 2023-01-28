@@ -3,7 +3,7 @@ import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 import { ForwardedRef, forwardRef } from 'react'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
-import { usePaneGesture } from '../Panes/usePaneGesture'
+import { usePaneSwipeGesture } from '../Panes/usePaneGesture'
 import NoteGroupView from './NoteGroupView'
 
 type Props = {
@@ -15,10 +15,8 @@ type Props = {
 const EditorPane = forwardRef(({ application, className, id }: Props, ref: ForwardedRef<HTMLDivElement>) => {
   const { setPaneLayout } = useResponsiveAppPane()
 
-  const [setElement] = usePaneGesture({
-    onSwipeRight: () => {
-      setPaneLayout(PaneLayout.ItemSelection)
-    },
+  const [setElement] = usePaneSwipeGesture('right', () => {
+    setPaneLayout(PaneLayout.ItemSelection)
   })
 
   return (

@@ -1,47 +1,62 @@
 import { useStateRef } from '@/Hooks/useStateRef'
 import { useEffect, useState } from 'react'
-import TouchSweep from './touchsweep'
+import TinyGesture from './TinyGesture'
 
-export const usePaneGesture = ({
-  onSwipeLeft,
-  onSwipeRight,
-}: {
-  onSwipeLeft?: () => void
-  onSwipeRight?: () => void
-} = {}) => {
+export const usePaneSwipeGesture = (direction: 'left' | 'right', onSwipeEnd: () => void) => {
   const [element, setElement] = useState<HTMLElement | null>(null)
 
-  const onSwipeLeftRef = useStateRef(onSwipeLeft)
-  const onSwipeRightRef = useStateRef(onSwipeRight)
+  const onSwipeEndRef = useStateRef(onSwipeEnd)
 
   useEffect(() => {
     if (!element) {
       return
     }
 
-    const touchSweep = new TouchSweep(element, {}, 40)
+    const gesture = new TinyGesture(element, {})
 
-    const handleSwipeLeft = (e: Event): void => {
-      if (onSwipeLeftRef.current) {
-        onSwipeLeftRef.current()
+    const handlePanMove = gesture.on('panmove', () => {
+      const isSwipingHorizontally =
+        gesture.swipingDirection === 'pre-horizontal' || gesture.swipingDirection === 'horizontal'
+      if (!isSwipingHorizontally) {
+        return
       }
-    }
-
-    const handleSwipeRight = (e: Event): void => {
-      if (onSwipeRightRef.current) {
-        onSwipeRightRef.current()
+      if (!gesture.touchMoveX) {
+        return
       }
-    }
+      if (gesture.touchMoveX > 0 && direction === 'right') {
+        element.style.left = `${gesture.touchMoveX}px`
+      }
+      if (gesture.touchMoveX < 0 && direction === 'left') {
+        element.style.left = `${gesture.touchMoveX}px`
+      }
+    })
 
-    element.addEventListener('swipeleft', handleSwipeLeft)
-    element.addEventListener('swiperight', handleSwipeRight)
+    const handlePanEnd = gesture.on('panend', () => {
+      if (!gesture.touchMoveX) {
+        return
+      }
+      /* if (gesture.touchMoveX > 40) {
+        onSwipeEndRef.current()
+      } else {
+        element.style.left = ''
+      } */
+      if (gesture.touchMoveX > 40 && direction === 'right') {
+        onSwipeEndRef.current()
+        return
+      }
+      if (gesture.touchMoveX < -40 && direction === 'left') {
+        onSwipeEndRef.current()
+        return
+      }
+      element.style.left = ''
+    })
 
     return () => {
-      element.removeEventListener('swipeleft', handleSwipeLeft)
-      element.removeEventListener('swiperight', handleSwipeRight)
-      touchSweep.unbind()
+      handlePanMove?.cancel()
+      handlePanEnd?.cancel()
+      gesture.destroy()
     }
-  }, [element, onSwipeLeftRef, onSwipeRightRef])
+  }, [direction, element, onSwipeEndRef])
 
   return [setElement]
 }
