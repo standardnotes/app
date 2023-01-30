@@ -1,4 +1,5 @@
 import { WebApplication } from '@/Application/Application'
+import { exportSuperNote } from '@/Components/NoteView/SuperEditor/SuperNoteExporter'
 import { FeatureIdentifier, NoteType, PrefKey, SNNote } from '@standardnotes/snjs'
 
 export const getNoteFormat = (application: WebApplication, note: SNNote) => {
@@ -37,7 +38,8 @@ export const getNoteBlob = (application: WebApplication, note: SNNote) => {
       type = 'text/plain'
       break
   }
-  const blob = new Blob([note.text], {
+  const content = note.noteType === NoteType.Super ? exportSuperNote(note, format) : note.text
+  const blob = new Blob([content], {
     type,
   })
   return blob

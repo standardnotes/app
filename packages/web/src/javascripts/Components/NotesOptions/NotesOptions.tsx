@@ -165,6 +165,8 @@ const NotesOptions = ({
     return null
   }
 
+  const isOnlySuperNoteSelected = notes.length === 1 && notes[0].noteType === NoteType.Super
+
   return (
     <>
       {notes.length === 1 && (
@@ -251,7 +253,7 @@ const NotesOptions = ({
           {pinShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={pinShortcut} />}
         </MenuItem>
       )}
-      {notes[0].noteType !== NoteType.Super && (
+      {!isOnlySuperNoteSelected && (
         <>
           <MenuItem
             onClick={() => {
