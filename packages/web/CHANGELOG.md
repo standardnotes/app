@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.142.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.142.8...@standardnotes/web@3.142.9) (2023-01-30)
+
+### Bug Fixes
+
+* Fixed issue where dropdowns in preferences would not be visible ([c29e0f5](https://github.com/standardnotes/app/commit/c29e0f511d27e94d5943fc9b4186d05f19b325f6))
+
 ## [3.142.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.142.7...@standardnotes/web@3.142.8) (2023-01-28)
 
 ### Bug Fixes
