@@ -124,6 +124,9 @@ const EmailBackups = ({ application }: Props) => {
                 items={emailFrequencyOptions}
                 value={emailFrequency}
                 onChange={handleEmailFrequencyChange}
+                classNameOverride={{
+                  popover: '!z-modal',
+                }}
               />
             )}
           </div>
