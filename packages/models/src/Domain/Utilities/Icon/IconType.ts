@@ -15,6 +15,7 @@ export type IconType =
   | 'arrow-right'
   | 'arrow-up'
   | 'arrows-horizontal'
+  | 'arrows-vertical'
   | 'arrows-sort-down'
   | 'arrows-sort-up'
   | 'asterisk'

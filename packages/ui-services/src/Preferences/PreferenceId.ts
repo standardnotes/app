@@ -11,6 +11,7 @@ const PREFERENCE_IDS = [
   'help-feedback',
   'whats-new',
   'filesend',
+  'import-export',
 ] as const
 
 export type PreferenceId = typeof PREFERENCE_IDS[number]

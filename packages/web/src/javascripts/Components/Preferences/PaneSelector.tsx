@@ -10,6 +10,7 @@ import Listed from './Panes/Listed/Listed'
 import HelpAndFeedback from './Panes/HelpFeedback'
 import { PreferencesProps } from './PreferencesProps'
 import WhatsNew from './Panes/WhatsNew/WhatsNew'
+import ImportExport from './Panes/ImportExport'
 
 const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu }> = ({
   menu,
@@ -54,6 +55,8 @@ const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu
       return <HelpAndFeedback application={application} />
     case 'whats-new':
       return <WhatsNew application={application} />
+    case 'import-export':
+      return <ImportExport application={application} />
     default:
       return (
         <General

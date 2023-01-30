@@ -1,10 +1,18 @@
 import { WebApplication } from '@/Application/Application'
-import { SNNote } from '@standardnotes/snjs'
+import { FeatureIdentifier, NoteType, PrefKey, SNNote } from '@standardnotes/snjs'
 
 export const getNoteFormat = (application: WebApplication, note: SNNote) => {
   const editor = application.componentManager.editorForNote(note)
-  const format = editor?.package_info?.file_type || 'txt'
-  return format
+  const identifier = editor
+    ? editor.identifier
+    : note.noteType === NoteType.Super
+    ? FeatureIdentifier.SuperEditor
+    : FeatureIdentifier.PlainEditor
+
+  const defaultFormat = editor?.package_info?.file_type || 'txt'
+  const preferredFormat = application.getPreference(PrefKey.NoteExportTypes)?.[identifier]
+
+  return preferredFormat || defaultFormat
 }
 
 export const getNoteFileName = (application: WebApplication, note: SNNote): string => {
