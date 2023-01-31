@@ -17,6 +17,13 @@ export function setFloatingElemPosition(
 ): void {
   const scrollerElem = anchorElem.parentElement
 
+  const isMobileScreen = window.innerWidth < 768
+
+  if (isMobileScreen) {
+    floatingElem.style.opacity = '1'
+    return
+  }
+
   if (targetRect === null || !scrollerElem) {
     floatingElem.style.opacity = '0'
     floatingElem.style.transform = 'translate(-10000px, -10000px)'

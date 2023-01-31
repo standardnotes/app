@@ -99,6 +99,9 @@ const EditorDefaults = ({ application }: Props) => {
                 items={fontSizeDropdownOptions}
                 value={fontSize}
                 onChange={handleFontSizeChange}
+                classNameOverride={{
+                  popover: '!z-modal',
+                }}
               />
             </div>
           </div>
@@ -113,6 +116,9 @@ const EditorDefaults = ({ application }: Props) => {
                 items={lineHeightDropdownOptions}
                 value={lineHeight}
                 onChange={handleLineHeightChange}
+                classNameOverride={{
+                  popover: '!z-modal',
+                }}
               />
             </div>
           </div>

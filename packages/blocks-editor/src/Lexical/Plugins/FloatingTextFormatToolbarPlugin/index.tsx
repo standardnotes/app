@@ -316,7 +316,7 @@ function TextFormatFloatingToolbar({
 
 function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLElement): JSX.Element | null {
   const [activeEditor, setActiveEditor] = useState(editor)
-  const [isText, setIsText] = useState(false)
+  const [isVisible, setIsVisible] = useState(false)
   const [isLink, setIsLink] = useState(false)
   const [isBold, setIsBold] = useState(false)
   const [isItalic, setIsItalic] = useState(false)
@@ -337,11 +337,17 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
       const nativeSelection = window.getSelection()
       const rootElement = editor.getRootElement()
 
+      const isMobile = window.matchMedia('(max-width: 768px)').matches
+
       if (
         nativeSelection !== null &&
         (!$isRangeSelection(selection) || rootElement === null || !rootElement.contains(nativeSelection.anchorNode))
       ) {
-        setIsText(false)
+        if (isMobile) {
+          setIsVisible(true)
+        } else {
+          setIsVisible(false)
+        }
         return
       }
 
@@ -398,9 +404,11 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
       }
 
       if (!$isCodeHighlightNode(selection.anchor.getNode()) && selection.getTextContent() !== '') {
-        setIsText($isTextNode(node))
+        setIsVisible($isTextNode(node))
+      } else if (isMobile) {
+        setIsVisible(true)
       } else {
-        setIsText(false)
+        setIsVisible(false)
       }
     })
   }, [editor, activeEditor])
@@ -424,13 +432,13 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
       }),
       editor.registerRootListener(() => {
         if (editor.getRootElement() === null) {
-          setIsText(false)
+          setIsVisible(false)
         }
       }),
     )
   }, [editor, updatePopup])
 
-  if (!isText || isLink) {
+  if (!isVisible || isLink) {
     return null
   }
 
