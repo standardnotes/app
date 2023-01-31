@@ -114,5 +114,8 @@
   "lint-staged": {
     "app/**/*.{js,ts,jsx,tsx}": "eslint --cache --fix",
     "app/**/*.{js,ts,jsx,tsx,css,md}": "prettier --write"
+  },
+  "dependencies": {
+    "@lexical/headless": "^0.7.6"
   }
 }

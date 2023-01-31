@@ -32,6 +32,8 @@ import { iconClass } from './ClassNames'
 import SuperNoteOptions from './SuperNoteOptions'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import MenuItem from '../Menu/MenuItem'
+import ModalOverlay from '../Modal/ModalOverlay'
+import SuperExportModal from './SuperExportModal'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -93,6 +95,11 @@ const NotesOptions = ({
       removeAltKeyObserver()
     }
   }, [application])
+
+  const [showExportSuperModal, setShowExportSuperModal] = useState(false)
+  const closeSuperExportModal = useCallback(() => {
+    setShowExportSuperModal(false)
+  }, [])
 
   const downloadSelectedItems = useCallback(async () => {
     if (notes.length === 1) {
@@ -164,6 +171,8 @@ const NotesOptions = ({
   if (notes.length === 0) {
     return null
   }
+
+  const isOnlySuperNoteSelected = notes.length === 1 && notes[0].noteType === NoteType.Super
 
   return (
     <>
@@ -251,13 +260,22 @@ const NotesOptions = ({
           {pinShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={pinShortcut} />}
         </MenuItem>
       )}
-      {notes[0].noteType !== NoteType.Super && (
+      {!isOnlySuperNoteSelected && (
         <>
           <MenuItem
             onClick={() => {
-              application.isNativeMobileWeb()
-                ? void shareSelectedNotes(application, notes)
-                : void downloadSelectedItems()
+              if (application.isNativeMobileWeb()) {
+                void shareSelectedNotes(application, notes)
+              } else {
+                const hasSuperNote = notes.some((note) => note.noteType === NoteType.Super)
+
+                if (hasSuperNote) {
+                  setShowExportSuperModal(true)
+                  return
+                }
+
+                void downloadSelectedItems()
+              }
             }}
           >
             <Icon type={application.platform === Platform.Android ? 'share' : 'download'} className={iconClass} />
@@ -374,6 +392,10 @@ const NotesOptions = ({
           <NoteSizeWarning note={notes[0]} />
         </>
       ) : null}
+
+      <ModalOverlay isOpen={showExportSuperModal} onDismiss={closeSuperExportModal}>
+        <SuperExportModal exportNotes={downloadSelectedItems} close={closeSuperExportModal} />
+      </ModalOverlay>
     </>
   )
 }
