@@ -6,7 +6,7 @@ import { getSelectedNode } from '@standardnotes/blocks-editor/src/Lexical/Utils/
 import { sanitizeUrl } from '@standardnotes/blocks-editor/src/Lexical/Utils/sanitizeUrl'
 import { $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND } from 'lexical'
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
-import { useCallback, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { GetAlignmentBlocks } from '../Blocks/Alignment'
 import { GetBulletedListBlock } from '../Blocks/BulletedList'
 import { GetChecklistBlock } from '../Blocks/Checklist'
@@ -29,6 +29,7 @@ const MobileToolbarPlugin = () => {
   const [editor] = useLexicalComposerContext()
   const [modal, showModal] = useModal()
 
+  const [isInEditor, setIsInEditor] = useState(false)
   const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   const insertLink = useCallback(() => {
@@ -124,7 +125,26 @@ const MobileToolbarPlugin = () => {
     [editor, insertLink, showModal],
   )
 
-  if (!isMobile) {
+  useEffect(() => {
+    const rootElement = editor.getRootElement()
+
+    if (!rootElement) {
+      return
+    }
+
+    const handleFocus = () => setIsInEditor(true)
+    const handleBlur = () => setIsInEditor(false)
+
+    rootElement.addEventListener('focus', handleFocus)
+    rootElement.addEventListener('blur', handleBlur)
+
+    return () => {
+      rootElement.removeEventListener('focus', handleFocus)
+      rootElement.removeEventListener('blur', handleBlur)
+    }
+  }, [editor])
+
+  if (!isMobile || !isInEditor) {
     return null
   }
 
@@ -143,6 +163,7 @@ const MobileToolbarPlugin = () => {
               className="flex items-center justify-center rounded py-3 px-3"
               aria-label={item.name}
               onClick={item.onSelect}
+              key={item.name}
             >
               <Icon type={item.iconName} size="medium" />
             </button>
