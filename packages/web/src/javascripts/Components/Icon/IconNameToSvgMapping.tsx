@@ -60,6 +60,7 @@ export const IconNameToSvgMapping = {
   'trash-sweep': icons.TrashSweepIcon,
   'user-add': icons.UserAddIcon,
   'user-switch': icons.UserSwitch,
+  paragraph: icons.TextParagraphLongIcon,
   accessibility: icons.AccessibilityIcon,
   add: icons.AddIcon,
   aegis: icons.AegisIcon,

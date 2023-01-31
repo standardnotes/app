@@ -140,11 +140,11 @@ const MobileToolbarPlugin = () => {
         {items.map((item) => {
           return (
             <button
-              className="flex items-center justify-center rounded px-2 pt-1.5 pb-2"
+              className="flex items-center justify-center rounded py-3 px-3"
               aria-label={item.name}
               onClick={item.onSelect}
             >
-              <Icon type={item.iconName} size="normal" className="mt-0.5" />
+              <Icon type={item.iconName} size="medium" />
             </button>
           )
         })}
