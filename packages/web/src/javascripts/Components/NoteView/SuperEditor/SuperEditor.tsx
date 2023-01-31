@@ -41,6 +41,7 @@ import ReadonlyPlugin from './Plugins/ReadonlyPlugin/ReadonlyPlugin'
 import { SuperSearchContextProvider } from './Plugins/SearchPlugin/Context'
 import { SearchPlugin } from './Plugins/SearchPlugin/SearchPlugin'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
+import MobileToolbarPlugin from './Plugins/MobileToolbarPlugin/MobileToolbarPlugin'
 
 const NotePreviewCharLimit = 160
 
@@ -202,6 +203,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 <SuperSearchContextProvider>
                   <SearchPlugin />
                 </SuperSearchContextProvider>
+                <MobileToolbarPlugin />
               </BlocksEditor>
             </BlocksEditorComposer>
           </FilesControllerProvider>

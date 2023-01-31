@@ -6,25 +6,25 @@ import useModal from '@standardnotes/blocks-editor/src/Lexical/Hooks/useModal'
 import { InsertTableDialog } from '@standardnotes/blocks-editor/src/Lexical/Plugins/TablePlugin'
 import { BlockPickerOption } from './BlockPickerOption'
 import { BlockPickerMenuItem } from './BlockPickerMenuItem'
-import { GetNumberedListBlock } from './Blocks/NumberedList'
-import { GetBulletedListBlock } from './Blocks/BulletedList'
-import { GetChecklistBlock } from './Blocks/Checklist'
-import { GetDividerBlock } from './Blocks/Divider'
-import { GetCollapsibleBlock } from './Blocks/Collapsible'
-import { GetDynamicPasswordBlocks, GetPasswordBlocks } from './Blocks/Password'
-import { GetParagraphBlock } from './Blocks/Paragraph'
-import { GetHeadingsBlocks } from './Blocks/Headings'
-import { GetQuoteBlock } from './Blocks/Quote'
-import { GetAlignmentBlocks } from './Blocks/Alignment'
-import { GetCodeBlock } from './Blocks/Code'
-import { GetEmbedsBlocks } from './Blocks/Embeds'
-import { GetDynamicTableBlocks, GetTableBlock } from './Blocks/Table'
+import { GetNumberedListBlockOption } from './Options/NumberedList'
+import { GetBulletedListBlockOption } from './Options/BulletedList'
+import { GetChecklistBlockOption } from './Options/Checklist'
+import { GetDividerBlockOption } from './Options/Divider'
+import { GetCollapsibleBlockOption } from './Options/Collapsible'
+import { GetDynamicPasswordBlocks, GetPasswordBlockOption } from './Options/Password'
+import { GetParagraphBlockOption } from './Options/Paragraph'
+import { GetHeadingsBlockOptions } from './Options/Headings'
+import { GetQuoteBlockOption } from './Options/Quote'
+import { GetAlignmentBlockOptions } from './Options/Alignment'
+import { GetCodeBlockOption } from './Options/Code'
+import { GetEmbedsBlockOptions } from './Options/Embeds'
+import { GetDynamicTableBlocks, GetTableBlockOption } from './Options/Table'
 import Popover from '@/Components/Popover/Popover'
 import { PopoverClassNames } from '../ClassNames'
-import { GetDatetimeBlocks } from './Blocks/DateTime'
+import { GetDatetimeBlockOptions } from './Options/DateTime'
 import { isMobileScreen } from '@/Utils'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { GetIndentOutdentBlocks } from './Blocks/IndentOutdent'
+import { GetIndentOutdentBlockOptions } from './Options/IndentOutdent'
 
 export default function BlockPickerMenuPlugin(): JSX.Element {
   const [editor] = useLexicalComposerContext()
@@ -37,26 +37,26 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
   })
 
   const options = useMemo(() => {
-    const indentOutdentOptions = application.isNativeMobileWeb() ? GetIndentOutdentBlocks(editor) : []
+    const indentOutdentOptions = application.isNativeMobileWeb() ? GetIndentOutdentBlockOptions(editor) : []
 
     const baseOptions = [
-      GetParagraphBlock(editor),
-      ...GetHeadingsBlocks(editor),
+      GetParagraphBlockOption(editor),
+      ...GetHeadingsBlockOptions(editor),
       ...indentOutdentOptions,
-      GetTableBlock(() =>
+      GetTableBlockOption(() =>
         showModal('Insert Table', (onClose) => <InsertTableDialog activeEditor={editor} onClose={onClose} />),
       ),
-      GetNumberedListBlock(editor),
-      GetBulletedListBlock(editor),
-      GetChecklistBlock(editor),
-      GetQuoteBlock(editor),
-      GetCodeBlock(editor),
-      GetDividerBlock(editor),
-      ...GetDatetimeBlocks(editor),
-      ...GetAlignmentBlocks(editor),
-      ...GetPasswordBlocks(editor),
-      GetCollapsibleBlock(editor),
-      ...GetEmbedsBlocks(editor),
+      GetNumberedListBlockOption(editor),
+      GetBulletedListBlockOption(editor),
+      GetChecklistBlockOption(editor),
+      GetQuoteBlockOption(editor),
+      GetCodeBlockOption(editor),
+      GetDividerBlockOption(editor),
+      ...GetDatetimeBlockOptions(editor),
+      ...GetAlignmentBlockOptions(editor),
+      GetPasswordBlockOption(editor),
+      GetCollapsibleBlockOption(editor),
+      ...GetEmbedsBlockOptions(editor),
     ]
 
     const dynamicOptions = [
