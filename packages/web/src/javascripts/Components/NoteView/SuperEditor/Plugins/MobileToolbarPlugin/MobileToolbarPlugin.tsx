@@ -23,6 +23,7 @@ import { GetPasswordBlock } from '../Blocks/Password'
 import { GetQuoteBlock } from '../Blocks/Quote'
 import { GetTableBlock } from '../Blocks/Table'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { classNames } from '@standardnotes/snjs'
 
 const MobileToolbarPlugin = () => {
   const [editor] = useLexicalComposerContext()
@@ -130,15 +131,20 @@ const MobileToolbarPlugin = () => {
   return (
     <>
       {modal}
-      <div className="absolute bottom-0 left-0 z-10 flex w-full items-center gap-1 overflow-x-auto bg-contrast">
+      <div
+        className={classNames(
+          'absolute bottom-0 left-0 z-10 flex w-full items-center gap-1 overflow-x-auto bg-contrast',
+          '[&::-webkit-scrollbar]:h-0',
+        )}
+      >
         {items.map((item) => {
           return (
             <button
-              className="flex items-center justify-center rounded py-1.5 px-2"
+              className="flex items-center justify-center rounded px-2 pt-1.5 pb-2"
               aria-label={item.name}
               onClick={item.onSelect}
             >
-              <Icon type={item.iconName} size="normal" className="mt-1.5" />
+              <Icon type={item.iconName} size="normal" className="mt-0.5" />
             </button>
           )
         })}
