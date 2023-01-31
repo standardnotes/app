@@ -164,7 +164,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
   }, [reloadPreferences, application])
 
   return (
-    <div className="font-editor relative h-full w-full">
+    <div className="font-editor relative flex h-full w-full flex-col md:block">
       <ErrorBoundary>
         <LinkingControllerProvider controller={linkingController}>
           <FilesControllerProvider controller={filesController}>

@@ -153,7 +153,7 @@ const MobileToolbarPlugin = () => {
       {modal}
       <div
         className={classNames(
-          'absolute bottom-0 left-0 z-10 flex w-full items-center gap-1 overflow-x-auto border-t border-border bg-contrast',
+          'flex w-full flex-shrink-0 items-center gap-1 overflow-x-auto border-t border-border bg-contrast',
           '[&::-webkit-scrollbar]:h-0',
         )}
       >
