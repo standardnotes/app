@@ -12,6 +12,7 @@ export const IconNameToSvgMapping = {
   'arrow-up': icons.ArrowUpIcon,
   'arrows-sort-down': icons.ArrowsSortDownIcon,
   'arrows-sort-up': icons.ArrowsSortUpIcon,
+  'arrows-vertical': icons.ArrowsVerticalIcon,
   'attachment-file': icons.AttachmentFileIcon,
   'check-bold': icons.CheckBoldIcon,
   'check-circle-filled': icons.CheckCircleFilledIcon,

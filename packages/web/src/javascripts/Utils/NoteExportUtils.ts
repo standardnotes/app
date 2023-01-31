@@ -1,10 +1,19 @@
 import { WebApplication } from '@/Application/Application'
-import { SNNote } from '@standardnotes/snjs'
+import { exportSuperNote } from '@/Components/NoteView/SuperEditor/SuperNoteExporter'
+import { NoteType, PrefKey, SNNote } from '@standardnotes/snjs'
 
 export const getNoteFormat = (application: WebApplication, note: SNNote) => {
   const editor = application.componentManager.editorForNote(note)
-  const format = editor?.package_info?.file_type || 'txt'
-  return format
+
+  const isSuperNote = note.noteType === NoteType.Super
+
+  if (isSuperNote) {
+    const superNoteExportFormatPref = application.getPreference(PrefKey.SuperNoteExportFormat) || 'json'
+
+    return superNoteExportFormatPref
+  }
+
+  return editor?.package_info?.file_type || 'txt'
 }
 
 export const getNoteFileName = (application: WebApplication, note: SNNote): string => {
@@ -29,7 +38,8 @@ export const getNoteBlob = (application: WebApplication, note: SNNote) => {
       type = 'text/plain'
       break
   }
-  const blob = new Blob([note.text], {
+  const content = note.noteType === NoteType.Super ? exportSuperNote(note, format) : note.text
+  const blob = new Blob([content], {
     type,
   })
   return blob

@@ -3008,6 +3008,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lexical/headless@npm:^0.7.6":
+  version: 0.7.6
+  resolution: "@lexical/headless@npm:0.7.6"
+  peerDependencies:
+    lexical: 0.7.6
+  checksum: 9dd9cacba2a45a2e9b0fce5e8ccda1642f7c7c1f04ecf96b2393c1534004f55c04dcce819d88fd61c47204f78b3864fa67ffb4611c94806548b307c622498352
+  languageName: node
+  linkType: hard
+
 "@lexical/history@npm:0.7.6":
   version: 0.7.6
   resolution: "@lexical/history@npm:0.7.6"
@@ -5247,6 +5256,7 @@ __metadata:
     "@babel/plugin-transform-react-jsx": ^7.19.0
     "@babel/preset-env": "*"
     "@babel/preset-typescript": ^7.18.6
+    "@lexical/headless": ^0.7.6
     "@lexical/react": 0.7.6
     "@pmmmwh/react-refresh-webpack-plugin": ^0.5.10
     "@reach/alert": ^0.18.0

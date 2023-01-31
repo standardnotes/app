@@ -42,6 +42,7 @@ import { SuperSearchContextProvider } from './Plugins/SearchPlugin/Context'
 import { SearchPlugin } from './Plugins/SearchPlugin/SearchPlugin'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import MobileToolbarPlugin from './Plugins/MobileToolbarPlugin/MobileToolbarPlugin'
+import { SuperEditorNodes } from './SuperEditorNodes'
 
 const NotePreviewCharLimit = 160
 
@@ -171,7 +172,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
             <BlocksEditorComposer
               readonly={note.current.locked}
               initialValue={note.current.text}
-              nodes={[FileNode, BubbleNode]}
+              nodes={SuperEditorNodes}
             >
               <BlocksEditor
                 onChange={handleChange}
