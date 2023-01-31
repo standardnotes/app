@@ -22,10 +22,13 @@ import { GetParagraphBlock } from '../Blocks/Paragraph'
 import { GetPasswordBlock } from '../Blocks/Password'
 import { GetQuoteBlock } from '../Blocks/Quote'
 import { GetTableBlock } from '../Blocks/Table'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 const MobileToolbarPlugin = () => {
   const [editor] = useLexicalComposerContext()
   const [modal, showModal] = useModal()
+
+  const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   const insertLink = useCallback(() => {
     const selection = $getSelection()
@@ -119,6 +122,10 @@ const MobileToolbarPlugin = () => {
     ],
     [editor, insertLink, showModal],
   )
+
+  if (!isMobile) {
+    return null
+  }
 
   return (
     <>
