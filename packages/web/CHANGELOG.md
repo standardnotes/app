@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.143.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.142.10...@standardnotes/web@3.143.0) (2023-01-31)
+
+### Features
+
+* Allow exporting multiple Super notes and select what format to export them to ([#2191](https://github.com/standardnotes/app/issues/2191)) ([506a1e8](https://github.com/standardnotes/app/commit/506a1e83f108ecb1f9a2d2e0acb55c4f21be50ae))
+
 ## [3.142.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.142.9...@standardnotes/web@3.142.10) (2023-01-31)
 
 **Note:** Version bump only for package @standardnotes/web

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.43.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.42.13...@standardnotes/models@1.43.0) (2023-01-31)
+
+### Features
+
+* Allow exporting multiple Super notes and select what format to export them to ([#2191](https://github.com/standardnotes/app/issues/2191)) ([506a1e8](https://github.com/standardnotes/app/commit/506a1e83f108ecb1f9a2d2e0acb55c4f21be50ae))
+
 ## [1.42.13](https://github.com/standardnotes/app/compare/@standardnotes/models@1.42.12...@standardnotes/models@1.42.13) (2023-01-31)
 
 **Note:** Version bump only for package @standardnotes/models
