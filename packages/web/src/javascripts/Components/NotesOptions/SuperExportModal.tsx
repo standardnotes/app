@@ -50,7 +50,7 @@ const SuperExportModal = ({ exportNotes, close }: Props) => {
           id="export-format-dropdown"
           label="Super notes export format"
           items={[
-            { label: 'JSON', value: 'json' },
+            { label: 'Keep as Super', value: 'json' },
             { label: 'Markdown', value: 'md' },
             { label: 'HTML', value: 'html' },
           ]}
