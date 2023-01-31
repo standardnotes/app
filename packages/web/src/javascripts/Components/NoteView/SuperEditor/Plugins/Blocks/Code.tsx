@@ -6,7 +6,7 @@ import { LexicalIconName } from '@/Components/Icon/LexicalIcons'
 export function GetCodeBlock(editor: LexicalEditor) {
   return {
     name: 'Code',
-    iconName: 'lexical-code' as LexicalIconName,
+    iconName: 'code' as LexicalIconName,
     keywords: ['javascript', 'python', 'js', 'codeblock'],
     onSelect: () =>
       editor.update(() => {

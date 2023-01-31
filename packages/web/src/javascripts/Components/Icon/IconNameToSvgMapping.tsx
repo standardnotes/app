@@ -2,6 +2,10 @@ import * as icons from '@standardnotes/icons'
 
 export const IconNameToSvgMapping = {
   'account-circle': icons.AccountCircleIcon,
+  'align-center': icons.FormatAlignCenterIcon,
+  'align-justify': icons.FormatAlignJustifyIcon,
+  'align-left': icons.FormatAlignLeftIcon,
+  'align-right': icons.FormatAlignRightIcon,
   'arrow-down': icons.ArrowDownIcon,
   'arrow-left': icons.ArrowLeftIcon,
   'arrow-right': icons.ArrowRightIcon,
@@ -60,7 +64,6 @@ export const IconNameToSvgMapping = {
   'trash-sweep': icons.TrashSweepIcon,
   'user-add': icons.UserAddIcon,
   'user-switch': icons.UserSwitch,
-  paragraph: icons.TextParagraphLongIcon,
   accessibility: icons.AccessibilityIcon,
   add: icons.AddIcon,
   aegis: icons.AegisIcon,
@@ -96,6 +99,7 @@ export const IconNameToSvgMapping = {
   markdown: icons.MarkdownIcon,
   more: icons.MoreIcon,
   notes: icons.NotesIcon,
+  paragraph: icons.TextParagraphLongIcon,
   password: icons.PasswordIcon,
   pencil: icons.PencilIcon,
   pin: icons.PinIcon,
