@@ -38,7 +38,7 @@ export function clientFeatures(): FeatureDescription[] {
     {
       name: 'Encrypted files',
       availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
-      availableInRoles: [RoleName.NAMES.ProUser],
+      availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
       identifier: FeatureIdentifier.Files,
       permission_name: PermissionName.Files,
       description: '',

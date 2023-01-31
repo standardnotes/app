@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.14.1...@standardnotes/blocks-editor@1.15.0) (2023-01-31)
+
+### Features
+
+* Changed floating toolbar in Super to be always visible above keyboard on mobile ([#2188](https://github.com/standardnotes/app/issues/2188)) ([ba67f8b](https://github.com/standardnotes/app/commit/ba67f8b8ce664d79a4374b6d36003db8789e5de0))
+
 ## [1.14.1](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.14.0...@standardnotes/blocks-editor@1.14.1) (2023-01-25)
 
 **Note:** Version bump only for package @standardnotes/blocks-editor
