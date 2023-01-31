@@ -31,7 +31,6 @@ const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'accessibility', label: 'Accessibility', icon: 'accessibility' },
   { id: 'get-free-month', label: 'Get a free month', icon: 'star' },
   { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
-  { id: 'import-export', label: 'Import/Export', icon: 'arrows-vertical' },
 ]
 
 const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
@@ -43,7 +42,6 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
   { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
-  { id: 'import-export', label: 'Import/Export', icon: 'arrows-vertical' },
   { id: 'filesend', label: 'FileSend', icon: 'open-in' },
 ]
 

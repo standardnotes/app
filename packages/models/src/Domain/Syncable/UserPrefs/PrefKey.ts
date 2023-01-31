@@ -1,5 +1,5 @@
 import { CollectionSortProperty } from '../../Runtime/Collection/CollectionSort'
-import { EditorFeatureDescription, EditorIdentifier, FeatureIdentifier } from '@standardnotes/features'
+import { EditorIdentifier, FeatureIdentifier } from '@standardnotes/features'
 import { SystemViewId } from '../SmartView'
 import { TagPreferences } from '../Tag'
 
@@ -43,7 +43,7 @@ export enum PrefKey {
   DefaultEditorIdentifier = 'defaultEditorIdentifier',
   MomentsDefaultTagUuid = 'momentsDefaultTagUuid',
   SystemViewPreferences = 'systemViewPreferences',
-  NoteExportTypes = 'noteExportTypes',
+  SuperNoteExportFormat = 'superNoteExportFormat',
 }
 
 export enum NewNoteTitleFormat {
@@ -110,5 +110,5 @@ export type PrefValue = {
   [PrefKey.DefaultEditorIdentifier]: EditorIdentifier
   [PrefKey.MomentsDefaultTagUuid]: string | undefined
   [PrefKey.SystemViewPreferences]: Partial<Record<SystemViewId, TagPreferences>>
-  [PrefKey.NoteExportTypes]: Partial<Record<EditorIdentifier, EditorFeatureDescription['file_type']>>
+  [PrefKey.SuperNoteExportFormat]: 'json' | 'md' | 'html'
 }
