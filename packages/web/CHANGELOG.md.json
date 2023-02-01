@@ -1,6 +1,22 @@
 {
   "versions": [
     {
+      "version": "3.144.3",
+      "title": "[3.144.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.2...@standardnotes/web@3.144.3) (2023-02-01)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where clicking on the toolbar would dismiss the keyboard & toolbar ([9da8f4e](https://github.com/standardnotes/app/commit/9da8f4e419b5810f6c99af21276ed0062829877d))\n* Fixed issue where converting to Super would result in empty note ([cf4e348](https://github.com/standardnotes/app/commit/cf4e34858fcb898199ed102194d2d068c7d1d2db))",
+      "parsed": {
+        "_": [
+          "Fixed issue where clicking on the toolbar would dismiss the keyboard & toolbar (9da8f4e)",
+          "Fixed issue where converting to Super would result in empty note (cf4e348)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where clicking on the toolbar would dismiss the keyboard & toolbar (9da8f4e)",
+          "Fixed issue where converting to Super would result in empty note (cf4e348)"
+        ]
+      }
+    },
+    {
       "version": "3.144.2",
       "title": "[3.144.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.1...@standardnotes/web@3.144.2) (2023-02-01)",
       "date": null,

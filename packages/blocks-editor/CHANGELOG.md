@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.3](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.16.2...@standardnotes/blocks-editor@1.16.3) (2023-02-01)
+
+### Bug Fixes
+
+* Fixed issue where converting to Super would result in empty note ([cf4e348](https://github.com/standardnotes/app/commit/cf4e34858fcb898199ed102194d2d068c7d1d2db))
+
 ## [1.16.2](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.16.1...@standardnotes/blocks-editor@1.16.2) (2023-02-01)
 
 **Note:** Version bump only for package @standardnotes/blocks-editor

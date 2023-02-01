@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.43.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.43.0...@standardnotes/models@1.43.1) (2023-02-01)
+
+### Bug Fixes
+
+* **models:** filter out items with unknown content type ([#2192](https://github.com/standardnotes/app/issues/2192)) ([b3cfb87](https://github.com/standardnotes/app/commit/b3cfb87c7fa3521e9fae6987fdad97e43f28e965))
+
 # [1.43.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.42.13...@standardnotes/models@1.43.0) (2023-01-31)
 
 ### Features
