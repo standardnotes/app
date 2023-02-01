@@ -49,9 +49,15 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
       }
 
       biometricsButtonRef.current?.click()
-    } else {
-      inputRef.current?.focus()
+      return
     }
+
+    const parentForm = inputRef.current?.closest('form')
+    if (parentForm?.contains(document.activeElement)) {
+      return
+    }
+
+    inputRef.current?.focus()
   }, [application, prompt.id, prompt.validation, values])
 
   useEffect(() => {
