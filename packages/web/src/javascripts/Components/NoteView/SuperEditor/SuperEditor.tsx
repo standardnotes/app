@@ -44,7 +44,7 @@ import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import MobileToolbarPlugin from './Plugins/MobileToolbarPlugin/MobileToolbarPlugin'
 import { SuperEditorNodes } from './SuperEditorNodes'
 
-const NotePreviewCharLimit = 160
+export const SuperNotePreviewCharLimit = 160
 
 type Props = {
   application: WebApplication
@@ -182,7 +182,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                   lineHeight && `leading-${lineHeight.toLowerCase()}`,
                   fontSize ? getPlaintextFontSize(fontSize) : 'text-base',
                 )}
-                previewLength={NotePreviewCharLimit}
+                previewLength={SuperNotePreviewCharLimit}
                 spellcheck={spellcheck}
               >
                 <ItemSelectionPlugin currentNote={note.current} />
