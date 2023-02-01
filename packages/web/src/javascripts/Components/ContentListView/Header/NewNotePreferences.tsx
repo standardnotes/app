@@ -147,7 +147,9 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         <div className="mt-3 text-mobile-menu-item md:text-menu-item">Note Type</div>
         <div className="mt-2">
           <Dropdown
-            portal={false}
+            classNameOverride={{
+              popover: 'z-modal',
+            }}
             disabled={disabled}
             fullWidth={true}
             id="def-editor-dropdown"
@@ -162,7 +164,9 @@ const NewNotePreferences: FunctionComponent<Props> = ({
         <div className="mt-3 text-mobile-menu-item md:text-menu-item">Title Format</div>
         <div className="mt-2">
           <Dropdown
-            portal={false}
+            classNameOverride={{
+              popover: 'z-modal',
+            }}
             disabled={disabled}
             fullWidth={true}
             id="def-new-note-title-format"
