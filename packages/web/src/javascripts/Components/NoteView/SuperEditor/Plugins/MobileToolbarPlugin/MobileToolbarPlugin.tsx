@@ -6,7 +6,7 @@ import { getSelectedNode } from '@standardnotes/blocks-editor/src/Lexical/Utils/
 import { sanitizeUrl } from '@standardnotes/blocks-editor/src/Lexical/Utils/sanitizeUrl'
 import { $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND } from 'lexical'
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { GetAlignmentBlocks } from '../Blocks/Alignment'
 import { GetBulletedListBlock } from '../Blocks/BulletedList'
 import { GetChecklistBlock } from '../Blocks/Checklist'
@@ -31,6 +31,8 @@ const MobileToolbarPlugin = () => {
 
   const [isInEditor, setIsInEditor] = useState(false)
   const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
+  const toolbarRef = useRef<HTMLDivElement>(null)
 
   const insertLink = useCallback(() => {
     const selection = $getSelection()
@@ -133,7 +135,12 @@ const MobileToolbarPlugin = () => {
     }
 
     const handleFocus = () => setIsInEditor(true)
-    const handleBlur = () => setIsInEditor(false)
+    const handleBlur = (event: FocusEvent) => {
+      if (toolbarRef.current?.contains(event.relatedTarget as Node)) {
+        return
+      }
+      setIsInEditor(false)
+    }
 
     rootElement.addEventListener('focus', handleFocus)
     rootElement.addEventListener('blur', handleBlur)
@@ -151,7 +158,7 @@ const MobileToolbarPlugin = () => {
   return (
     <>
       {modal}
-      <div className="flex w-full flex-shrink-0 border-t border-border bg-contrast">
+      <div className="flex w-full flex-shrink-0 border-t border-border bg-contrast" ref={toolbarRef}>
         <div className={classNames('flex items-center gap-1 overflow-x-auto', '[&::-webkit-scrollbar]:h-0')}>
           {items.map((item) => {
             return (
