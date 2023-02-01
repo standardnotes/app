@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.144.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.2...@standardnotes/web@3.144.3) (2023-02-01)
+
+### Bug Fixes
+
+* Fixed issue where clicking on the toolbar would dismiss the keyboard & toolbar ([9da8f4e](https://github.com/standardnotes/app/commit/9da8f4e419b5810f6c99af21276ed0062829877d))
+* Fixed issue where converting to Super would result in empty note ([cf4e348](https://github.com/standardnotes/app/commit/cf4e34858fcb898199ed102194d2d068c7d1d2db))
+
 ## [3.144.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.1...@standardnotes/web@3.144.2) (2023-02-01)
 
 ### Bug Fixes
