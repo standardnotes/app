@@ -1,12 +1,15 @@
 import { BlockPickerOption } from '../BlockPickerOption'
 import { LexicalEditor } from 'lexical'
 import { INSERT_TABLE_COMMAND } from '@lexical/table'
+import { GetTableBlock } from '../../Blocks/Table'
+import { LexicalIconName } from '@/Components/Icon/LexicalIcons'
 
-export function GetTableBlock(onSelect: () => void) {
-  return new BlockPickerOption('Table', {
-    iconName: 'table',
-    keywords: ['table', 'grid', 'spreadsheet', 'rows', 'columns'],
-    onSelect,
+export function GetTableBlockOption(onSelect: () => void) {
+  const block = GetTableBlock(onSelect)
+  return new BlockPickerOption(block.name, {
+    iconName: block.iconName as LexicalIconName,
+    keywords: block.keywords,
+    onSelect: block.onSelect,
   })
 }
 

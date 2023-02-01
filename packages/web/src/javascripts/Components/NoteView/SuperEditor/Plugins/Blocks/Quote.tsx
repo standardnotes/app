@@ -1,10 +1,10 @@
-import { BlockPickerOption } from '../BlockPickerOption'
 import { $wrapNodes } from '@lexical/selection'
 import { $getSelection, $isRangeSelection, LexicalEditor } from 'lexical'
 import { $createQuoteNode } from '@lexical/rich-text'
 
 export function GetQuoteBlock(editor: LexicalEditor) {
-  return new BlockPickerOption('Quote', {
+  return {
+    name: 'Quote',
     iconName: 'quote',
     keywords: ['block quote'],
     onSelect: () =>
@@ -14,5 +14,5 @@ export function GetQuoteBlock(editor: LexicalEditor) {
           $wrapNodes(selection, () => $createQuoteNode())
         }
       }),
-  })
+  }
 }

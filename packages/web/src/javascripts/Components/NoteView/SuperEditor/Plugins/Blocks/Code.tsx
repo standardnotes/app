@@ -1,11 +1,12 @@
-import { BlockPickerOption } from '../BlockPickerOption'
 import { $wrapNodes } from '@lexical/selection'
 import { $getSelection, $isRangeSelection, LexicalEditor } from 'lexical'
 import { $createCodeNode } from '@lexical/code'
+import { LexicalIconName } from '@/Components/Icon/LexicalIcons'
 
 export function GetCodeBlock(editor: LexicalEditor) {
-  return new BlockPickerOption('Code', {
-    iconName: 'lexical-code',
+  return {
+    name: 'Code',
+    iconName: 'code' as LexicalIconName,
     keywords: ['javascript', 'python', 'js', 'codeblock'],
     onSelect: () =>
       editor.update(() => {
@@ -21,5 +22,5 @@ export function GetCodeBlock(editor: LexicalEditor) {
           }
         }
       }),
-  })
+  }
 }

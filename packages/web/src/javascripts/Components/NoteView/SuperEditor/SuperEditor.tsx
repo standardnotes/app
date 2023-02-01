@@ -41,6 +41,7 @@ import ReadonlyPlugin from './Plugins/ReadonlyPlugin/ReadonlyPlugin'
 import { SuperSearchContextProvider } from './Plugins/SearchPlugin/Context'
 import { SearchPlugin } from './Plugins/SearchPlugin/SearchPlugin'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
+import MobileToolbarPlugin from './Plugins/MobileToolbarPlugin/MobileToolbarPlugin'
 import { SuperEditorNodes } from './SuperEditorNodes'
 
 const NotePreviewCharLimit = 160
@@ -164,7 +165,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
   }, [reloadPreferences, application])
 
   return (
-    <div className="font-editor relative h-full w-full">
+    <div className="font-editor relative flex h-full w-full flex-col md:block">
       <ErrorBoundary>
         <LinkingControllerProvider controller={linkingController}>
           <FilesControllerProvider controller={filesController}>
@@ -203,6 +204,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 <SuperSearchContextProvider>
                   <SearchPlugin />
                 </SuperSearchContextProvider>
+                <MobileToolbarPlugin />
               </BlocksEditor>
             </BlocksEditorComposer>
           </FilesControllerProvider>

@@ -13,21 +13,6 @@
   will-change: transform;
 }
 
-@media screen and (max-width: 768px) {
-  .floating-text-format-popup {
-    top: auto;
-    bottom: 0;
-    width: 100%;
-    overflow-x: scroll;
-    opacity: 1;
-  }
-  .floating-text-format-popup::-webkit-scrollbar {
-    width: 0px;
-    height: 0px;
-    background: transparent;
-  }
-}
-
 .floating-text-format-popup button.popup-item {
   border: 0;
   display: flex;
