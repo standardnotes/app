@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.144.0",
+      "title": "[3.144.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.143.0...@standardnotes/web@3.144.0) (2023-02-01)",
+      "date": null,
+      "body": "### Features\n\n* Added above-keyboard toolbar to Super notes on mobile for formatting & selecting blocks ([#2189](https://github.com/standardnotes/app/issues/2189)) ([4a3f9f1](https://github.com/standardnotes/app/commit/4a3f9f12e7742e162f330b3c90810aa8ce110fc8))",
+      "parsed": {
+        "_": [
+          "Added above-keyboard toolbar to Super notes on mobile for formatting & selecting blocks (#2189) (4a3f9f1)"
+        ],
+        "Features": [
+          "Added above-keyboard toolbar to Super notes on mobile for formatting & selecting blocks (#2189) (4a3f9f1)"
+        ]
+      }
+    },
+    {
       "version": "3.143.0",
       "title": "[3.143.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.142.10...@standardnotes/web@3.143.0) (2023-01-31)",
       "date": null,

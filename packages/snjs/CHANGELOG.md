@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.165.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.16...@standardnotes/snjs@2.165.0) (2023-02-01)
+
+### Features
+
+* Added above-keyboard toolbar to Super notes on mobile for formatting & selecting blocks ([#2189](https://github.com/standardnotes/app/issues/2189)) ([4a3f9f1](https://github.com/standardnotes/app/commit/4a3f9f12e7742e162f330b3c90810aa8ce110fc8))
+
 ## [2.164.16](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.15...@standardnotes/snjs@2.164.16) (2023-01-31)
 
 **Note:** Version bump only for package @standardnotes/snjs
