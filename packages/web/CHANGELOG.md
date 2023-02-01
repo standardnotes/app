@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.144.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.1...@standardnotes/web@3.144.2) (2023-02-01)
+
+### Bug Fixes
+
+* Fixed issue where the first input in the challenge modal would get focused when typing in another input ([9be4f5b](https://github.com/standardnotes/app/commit/9be4f5b4cd9092550063ef67bb5ea86d91a6432c))
+
 ## [3.144.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.0...@standardnotes/web@3.144.1) (2023-02-01)
 
 **Note:** Version bump only for package @standardnotes/web
