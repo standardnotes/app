@@ -1,3 +1,4 @@
+import { ContentType } from '@standardnotes/common'
 import { isObject, isString } from '@standardnotes/utils'
 import { DecryptedTransferPayload } from './DecryptedTransferPayload'
 import { DeletedTransferPayload } from './DeletedTransferPayload'
@@ -24,5 +25,6 @@ export function isDeletedTransferPayload(payload: TransferPayload): payload is D
 
 export function isCorruptTransferPayload(payload: TransferPayload): boolean {
   const invalidDeletedState = payload.deleted === true && payload.content != undefined
-  return payload.uuid == undefined || invalidDeletedState
+
+  return payload.uuid == undefined || invalidDeletedState || payload.content_type === ContentType.Unknown
 }
