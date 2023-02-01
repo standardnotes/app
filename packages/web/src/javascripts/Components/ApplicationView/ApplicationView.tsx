@@ -1,5 +1,5 @@
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
-import { getPlatformString } from '@/Utils'
+import { getPlatformString, isIOS } from '@/Utils'
 import { ApplicationEvent, Challenge, removeFromArray, WebAppEvent } from '@standardnotes/snjs'
 import { alertDialog, RouteType } from '@standardnotes/ui-services'
 import { WebApplication } from '@/Application/Application'
@@ -29,6 +29,7 @@ import PanesSystemComponent from '../Panes/PanesSystemComponent'
 import DotOrgNotice from './DotOrgNotice'
 import LinkingControllerProvider from '@/Controllers/LinkingControllerProvider'
 import ImportModal from '../ImportModal/ImportModal'
+import IosKeyboardClose from '../IosKeyboardClose/IosKeyboardClose'
 
 type Props = {
   application: WebApplication
@@ -235,6 +236,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                     <ImportModal viewControllerManager={viewControllerManager} />
                   </>
                   {application.routeService.isDotOrg && <DotOrgNotice />}
+                  {isIOS() && <IosKeyboardClose />}
                 </div>
               </LinkingControllerProvider>
             </PremiumModalProvider>

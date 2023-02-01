@@ -151,24 +151,27 @@ const MobileToolbarPlugin = () => {
   return (
     <>
       {modal}
-      <div
-        className={classNames(
-          'flex w-full flex-shrink-0 items-center gap-1 overflow-x-auto border-t border-border bg-contrast',
-          '[&::-webkit-scrollbar]:h-0',
-        )}
-      >
-        {items.map((item) => {
-          return (
-            <button
-              className="flex items-center justify-center rounded py-3 px-3"
-              aria-label={item.name}
-              onClick={item.onSelect}
-              key={item.name}
-            >
-              <Icon type={item.iconName} size="medium" />
-            </button>
-          )
-        })}
+      <div className="flex w-full flex-shrink-0 border-t border-border bg-contrast">
+        <div className={classNames('flex items-center gap-1 overflow-x-auto', '[&::-webkit-scrollbar]:h-0')}>
+          {items.map((item) => {
+            return (
+              <button
+                className="flex items-center justify-center rounded py-3 px-3"
+                aria-label={item.name}
+                onClick={item.onSelect}
+                key={item.name}
+              >
+                <Icon type={item.iconName} size="medium" />
+              </button>
+            )
+          })}
+        </div>
+        <button
+          className="flex flex-shrink-0 items-center justify-center rounded border-l border-border py-3 px-3"
+          aria-label="Dismiss keyboard"
+        >
+          <Icon type="keyboard-close" size="medium" />
+        </button>
       </div>
     </>
   )

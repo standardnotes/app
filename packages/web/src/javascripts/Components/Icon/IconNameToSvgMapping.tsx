@@ -40,6 +40,7 @@ export const IconNameToSvgMapping = {
   'format-align-right': icons.FormatAlignRightIcon,
   'fullscreen-exit': icons.FullscreenExitIcon,
   'hashtag-off': icons.HashtagOffIcon,
+  'keyboard-close': icons.KeyboardCloseIcon,
   'link-off': icons.LinkOffIcon,
   'list-bulleted': icons.ListBulleted,
   'list-numbered': icons.ListNumbered,

@@ -51,6 +51,22 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
 
     const keyboardShowListener = Keyboard.addListener('keyboardWillShow', () => {
       device.reloadStatusBarStyle(false)
+      webViewRef.current?.postMessage(
+        JSON.stringify({
+          reactNativeEvent: ReactNativeToWebEvent.KeyboardWillShow,
+          messageType: 'event',
+        }),
+      )
+    })
+
+    const keyboardWillHideListener = Keyboard.addListener('keyboardWillHide', () => {
+      device.reloadStatusBarStyle(false)
+      webViewRef.current?.postMessage(
+        JSON.stringify({
+          reactNativeEvent: ReactNativeToWebEvent.KeyboardWillHide,
+          messageType: 'event',
+        }),
+      )
     })
 
     const keyboardHideListener = Keyboard.addListener('keyboardDidHide', () => {
@@ -85,6 +101,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       keyboardHideListener.remove()
       keyboardWillChangeFrame.remove()
       keyboardDidChangeFrame.remove()
+      keyboardWillHideListener.remove()
     }
   }, [webViewRef, stateService, device, androidBackHandlerService, colorSchemeService])
 
@@ -275,6 +292,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
       onRenderProcessGone={() => {
         webViewRef.current?.reload()
       }}
+      hideKeyboardAccessoryView={true}
       onShouldStartLoadWithRequest={onShouldStartLoadWithRequest}
       allowFileAccess={true}
       allowUniversalAccessFromFileURLs={true}
