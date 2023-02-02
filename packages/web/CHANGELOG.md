@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.145.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.5...@standardnotes/web@3.145.0) (2023-02-02)
+
+### Features
+
+* Added language selection dropdown in Super when cursor is in a code block ([0785ea6](https://github.com/standardnotes/app/commit/0785ea6531a2d76001b9111f97df6cdd2077af5a))
+
 ## [3.144.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.4...@standardnotes/web@3.144.5) (2023-02-02)
 
 ### Bug Fixes
