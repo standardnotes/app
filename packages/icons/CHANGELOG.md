@@ -3,6 +3,32 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.10.5](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.10.4...@standardnotes/icons@1.10.5) (2023-02-02)
+
+**Note:** Version bump only for package @standardnotes/icons
+
+## [1.10.4](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.10.3...@standardnotes/icons@1.10.4) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/icons
+
+## [1.10.3](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.10.2...@standardnotes/icons@1.10.3) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/icons
+
+## [1.10.2](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.10.1...@standardnotes/icons@1.10.2) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/icons
+
+## [1.10.1](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.10.0...@standardnotes/icons@1.10.1) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/icons
+
+# [1.10.0](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.9.0...@standardnotes/icons@1.10.0) (2023-02-01)
+
+### Features
+
+* Added above-keyboard toolbar to Super notes on mobile for formatting & selecting blocks ([#2189](https://github.com/standardnotes/app/issues/2189)) ([4a3f9f1](https://github.com/standardnotes/app/commit/4a3f9f12e7742e162f330b3c90810aa8ce110fc8))
+
 # [1.9.0](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.8.0...@standardnotes/icons@1.9.0) (2023-01-12)
 
 ### Features

@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.24.24](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.23...@standardnotes/ui-services@1.24.24) (2023-02-02)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.23](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.22...@standardnotes/ui-services@1.24.23) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.22](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.21...@standardnotes/ui-services@1.24.22) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.21](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.20...@standardnotes/ui-services@1.24.21) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.20](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.19...@standardnotes/ui-services@1.24.20) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.19](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.18...@standardnotes/ui-services@1.24.19) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.18](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.17...@standardnotes/ui-services@1.24.18) (2023-01-31)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.17](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.16...@standardnotes/ui-services@1.24.17) (2023-01-31)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
 ## [1.24.16](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.15...@standardnotes/ui-services@1.24.16) (2023-01-24)
 
 **Note:** Version bump only for package @standardnotes/ui-services

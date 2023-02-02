@@ -41,8 +41,11 @@ import ReadonlyPlugin from './Plugins/ReadonlyPlugin/ReadonlyPlugin'
 import { SuperSearchContextProvider } from './Plugins/SearchPlugin/Context'
 import { SearchPlugin } from './Plugins/SearchPlugin/SearchPlugin'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
+import MobileToolbarPlugin from './Plugins/MobileToolbarPlugin/MobileToolbarPlugin'
+import { SuperEditorNodes } from './SuperEditorNodes'
+import CodeOptionsPlugin from './Plugins/CodeOptionsPlugin/CodeOptions'
 
-const NotePreviewCharLimit = 160
+export const SuperNotePreviewCharLimit = 160
 
 type Props = {
   application: WebApplication
@@ -163,14 +166,14 @@ export const SuperEditor: FunctionComponent<Props> = ({
   }, [reloadPreferences, application])
 
   return (
-    <div className="font-editor relative h-full w-full">
+    <div className="font-editor relative flex h-full w-full flex-col md:block">
       <ErrorBoundary>
         <LinkingControllerProvider controller={linkingController}>
           <FilesControllerProvider controller={filesController}>
             <BlocksEditorComposer
               readonly={note.current.locked}
               initialValue={note.current.text}
-              nodes={[FileNode, BubbleNode]}
+              nodes={SuperEditorNodes}
             >
               <BlocksEditor
                 onChange={handleChange}
@@ -180,7 +183,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                   lineHeight && `leading-${lineHeight.toLowerCase()}`,
                   fontSize ? getPlaintextFontSize(fontSize) : 'text-base',
                 )}
-                previewLength={NotePreviewCharLimit}
+                previewLength={SuperNotePreviewCharLimit}
                 spellcheck={spellcheck}
               >
                 <ItemSelectionPlugin currentNote={note.current} />
@@ -202,6 +205,8 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 <SuperSearchContextProvider>
                   <SearchPlugin />
                 </SuperSearchContextProvider>
+                <MobileToolbarPlugin />
+                <CodeOptionsPlugin />
               </BlocksEditor>
             </BlocksEditorComposer>
           </FilesControllerProvider>

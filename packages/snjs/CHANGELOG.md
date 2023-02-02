@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.165.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.165.4...@standardnotes/snjs@2.165.5) (2023-02-02)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.165.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.165.3...@standardnotes/snjs@2.165.4) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.165.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.165.2...@standardnotes/snjs@2.165.3) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.165.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.165.1...@standardnotes/snjs@2.165.2) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.165.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.165.0...@standardnotes/snjs@2.165.1) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+# [2.165.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.16...@standardnotes/snjs@2.165.0) (2023-02-01)
+
+### Features
+
+* Added above-keyboard toolbar to Super notes on mobile for formatting & selecting blocks ([#2189](https://github.com/standardnotes/app/issues/2189)) ([4a3f9f1](https://github.com/standardnotes/app/commit/4a3f9f12e7742e162f330b3c90810aa8ce110fc8))
+
+## [2.164.16](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.15...@standardnotes/snjs@2.164.16) (2023-01-31)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.164.15](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.14...@standardnotes/snjs@2.164.15) (2023-01-31)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
 ## [2.164.14](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.164.13...@standardnotes/snjs@2.164.14) (2023-01-27)
 
 ### Bug Fixes

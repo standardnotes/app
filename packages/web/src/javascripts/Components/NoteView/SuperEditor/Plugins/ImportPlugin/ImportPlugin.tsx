@@ -3,9 +3,19 @@ import { useEffect } from 'react'
 import { $convertFromMarkdownString, TRANSFORMERS } from '@lexical/markdown'
 import { $generateNodesFromDOM } from '@lexical/html'
 import { $createParagraphNode, $createRangeSelection } from 'lexical'
+import { handleEditorChange } from '@standardnotes/blocks-editor/src/Editor/Utils'
+import { SuperNotePreviewCharLimit } from '../../SuperEditor'
 
 /** Note that markdown conversion does not insert new lines. See: https://github.com/facebook/lexical/issues/2815 */
-export default function ImportPlugin({ text, format }: { text: string; format: 'md' | 'html' }): JSX.Element | null {
+export default function ImportPlugin({
+  text,
+  format,
+  onChange,
+}: {
+  text: string
+  format: 'md' | 'html'
+  onChange: (value: string, preview: string) => void
+}): JSX.Element | null {
   const [editor] = useLexicalComposerContext()
 
   useEffect(() => {
@@ -27,6 +37,14 @@ export default function ImportPlugin({ text, format }: { text: string; format: '
       }
     })
   }, [editor, text, format])
+
+  useEffect(() => {
+    return editor.registerUpdateListener(({ editorState }) => {
+      editorState.read(() => {
+        handleEditorChange(editorState, SuperNotePreviewCharLimit, onChange)
+      })
+    })
+  }, [editor, onChange])
 
   return null
 }

@@ -3,6 +3,67 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.145.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.5...@standardnotes/web@3.145.0) (2023-02-02)
+
+### Features
+
+* Added language selection dropdown in Super when cursor is in a code block ([0785ea6](https://github.com/standardnotes/app/commit/0785ea6531a2d76001b9111f97df6cdd2077af5a))
+
+## [3.144.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.4...@standardnotes/web@3.144.5) (2023-02-02)
+
+### Bug Fixes
+
+* Fixed issue where Super toolbar would close on clicking on iOS ([7a3f376](https://github.com/standardnotes/app/commit/7a3f3761fc44896ba316975bcb62a27b2d54283a))
+
+## [3.144.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.3...@standardnotes/web@3.144.4) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.144.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.2...@standardnotes/web@3.144.3) (2023-02-01)
+
+### Bug Fixes
+
+* Fixed issue where clicking on the toolbar would dismiss the keyboard & toolbar ([9da8f4e](https://github.com/standardnotes/app/commit/9da8f4e419b5810f6c99af21276ed0062829877d))
+* Fixed issue where converting to Super would result in empty note ([cf4e348](https://github.com/standardnotes/app/commit/cf4e34858fcb898199ed102194d2d068c7d1d2db))
+
+## [3.144.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.1...@standardnotes/web@3.144.2) (2023-02-01)
+
+### Bug Fixes
+
+* Fixed issue where the first input in the challenge modal would get focused when typing in another input ([9be4f5b](https://github.com/standardnotes/app/commit/9be4f5b4cd9092550063ef67bb5ea86d91a6432c))
+
+## [3.144.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.0...@standardnotes/web@3.144.1) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.144.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.143.0...@standardnotes/web@3.144.0) (2023-02-01)
+
+### Features
+
+* Added above-keyboard toolbar to Super notes on mobile for formatting & selecting blocks ([#2189](https://github.com/standardnotes/app/issues/2189)) ([4a3f9f1](https://github.com/standardnotes/app/commit/4a3f9f12e7742e162f330b3c90810aa8ce110fc8))
+
+# [3.143.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.142.10...@standardnotes/web@3.143.0) (2023-01-31)
+
+### Features
+
+* Allow exporting multiple Super notes and select what format to export them to ([#2191](https://github.com/standardnotes/app/issues/2191)) ([506a1e8](https://github.com/standardnotes/app/commit/506a1e83f108ecb1f9a2d2e0acb55c4f21be50ae))
+
+## [3.142.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.142.9...@standardnotes/web@3.142.10) (2023-01-31)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.142.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.142.8...@standardnotes/web@3.142.9) (2023-01-30)
+
+### Bug Fixes
+
+* Fixed issue where dropdowns in preferences would not be visible ([c29e0f5](https://github.com/standardnotes/app/commit/c29e0f511d27e94d5943fc9b4186d05f19b325f6))
+
+## [3.142.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.142.7...@standardnotes/web@3.142.8) (2023-01-28)
+
+### Bug Fixes
+
+* Fixed issue where reduced motion preference would not be honored for some animations ([3d9c9e8](https://github.com/standardnotes/app/commit/3d9c9e8565306e2f00eeb3f9ca4f03495bbed688))
+
 ## [3.142.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.142.6...@standardnotes/web@3.142.7) (2023-01-28)
 
 ### Bug Fixes

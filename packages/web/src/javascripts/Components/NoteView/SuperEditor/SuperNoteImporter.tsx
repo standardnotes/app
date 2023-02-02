@@ -122,7 +122,7 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
               previewLength={NotePreviewCharLimit}
               spellcheck={note.spellcheck}
             >
-              <ImportPlugin text={note.text} format={format} />
+              <ImportPlugin text={note.text} format={format} onChange={handleChange} />
             </BlocksEditor>
           </BlocksEditorComposer>
         </ErrorBoundary>

@@ -133,6 +133,9 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
                   value={autoLightTheme}
                   onChange={changeAutoLightTheme}
                   disabled={!useDeviceSettings}
+                  classNameOverride={{
+                    popover: '!z-modal',
+                  }}
                 />
               </div>
             </div>
@@ -148,6 +151,9 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
                   value={autoDarkTheme}
                   onChange={changeAutoDarkTheme}
                   disabled={!useDeviceSettings}
+                  classNameOverride={{
+                    popover: '!z-modal',
+                  }}
                 />
               </div>
             </div>

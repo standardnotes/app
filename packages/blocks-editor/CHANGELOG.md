@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.16.5](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.16.4...@standardnotes/blocks-editor@1.16.5) (2023-02-02)
+
+**Note:** Version bump only for package @standardnotes/blocks-editor
+
+## [1.16.4](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.16.3...@standardnotes/blocks-editor@1.16.4) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/blocks-editor
+
+## [1.16.3](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.16.2...@standardnotes/blocks-editor@1.16.3) (2023-02-01)
+
+### Bug Fixes
+
+* Fixed issue where converting to Super would result in empty note ([cf4e348](https://github.com/standardnotes/app/commit/cf4e34858fcb898199ed102194d2d068c7d1d2db))
+
+## [1.16.2](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.16.1...@standardnotes/blocks-editor@1.16.2) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/blocks-editor
+
+## [1.16.1](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.16.0...@standardnotes/blocks-editor@1.16.1) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/blocks-editor
+
+# [1.16.0](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.15.0...@standardnotes/blocks-editor@1.16.0) (2023-02-01)
+
+### Features
+
+* Added above-keyboard toolbar to Super notes on mobile for formatting & selecting blocks ([#2189](https://github.com/standardnotes/app/issues/2189)) ([4a3f9f1](https://github.com/standardnotes/app/commit/4a3f9f12e7742e162f330b3c90810aa8ce110fc8))
+
+# [1.15.0](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.14.1...@standardnotes/blocks-editor@1.15.0) (2023-01-31)
+
+### Features
+
+* Changed floating toolbar in Super to be always visible above keyboard on mobile ([#2188](https://github.com/standardnotes/app/issues/2188)) ([ba67f8b](https://github.com/standardnotes/app/commit/ba67f8b8ce664d79a4374b6d36003db8789e5de0))
+
 ## [1.14.1](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.14.0...@standardnotes/blocks-editor@1.14.1) (2023-01-25)
 
 **Note:** Version bump only for package @standardnotes/blocks-editor

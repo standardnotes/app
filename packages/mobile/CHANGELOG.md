@@ -3,6 +3,52 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.51.6](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.51.5...@standardnotes/mobile@3.51.6) (2023-02-02)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.51.5](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.51.4...@standardnotes/mobile@3.51.5) (2023-02-02)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.51.4](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.51.3...@standardnotes/mobile@3.51.4) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.51.3](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.51.2...@standardnotes/mobile@3.51.3) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.51.2](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.51.1...@standardnotes/mobile@3.51.2) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.51.1](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.51.0...@standardnotes/mobile@3.51.1) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+# [3.51.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.50.55...@standardnotes/mobile@3.51.0) (2023-02-01)
+
+### Features
+
+* Added above-keyboard toolbar to Super notes on mobile for formatting & selecting blocks ([#2189](https://github.com/standardnotes/app/issues/2189)) ([4a3f9f1](https://github.com/standardnotes/app/commit/4a3f9f12e7742e162f330b3c90810aa8ce110fc8))
+
+## [3.50.55](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.50.54...@standardnotes/mobile@3.50.55) (2023-01-31)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.50.54](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.50.53...@standardnotes/mobile@3.50.54) (2023-01-31)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.50.53](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.50.52...@standardnotes/mobile@3.50.53) (2023-01-30)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.50.52](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.50.51...@standardnotes/mobile@3.50.52) (2023-01-28)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
 ## [3.50.51](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.50.50...@standardnotes/mobile@3.50.51) (2023-01-28)
 
 **Note:** Version bump only for package @standardnotes/mobile

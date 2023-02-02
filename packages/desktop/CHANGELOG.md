@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.104.126](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.144.5...@standardnotes/desktop@3.104.126) (2023-02-02)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.104.125](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.144.4...@standardnotes/desktop@3.104.125) (2023-02-02)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.104.124](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.144.3...@standardnotes/desktop@3.104.124) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.104.123](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.144.2...@standardnotes/desktop@3.104.123) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.104.122](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.144.1...@standardnotes/desktop@3.104.122) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.104.121](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.144.0...@standardnotes/desktop@3.104.121) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.104.120](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.143.0...@standardnotes/desktop@3.104.120) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.104.119](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.142.10...@standardnotes/desktop@3.104.119) (2023-01-31)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.104.118](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.142.9...@standardnotes/desktop@3.104.118) (2023-01-31)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.104.117](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.142.8...@standardnotes/desktop@3.104.117) (2023-01-30)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.104.116](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.142.7...@standardnotes/desktop@3.104.116) (2023-01-28)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
 ## [3.104.115](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.142.6...@standardnotes/desktop@3.104.115) (2023-01-28)
 
 **Note:** Version bump only for package @standardnotes/desktop

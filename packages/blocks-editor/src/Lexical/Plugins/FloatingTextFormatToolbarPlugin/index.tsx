@@ -337,6 +337,12 @@ function useFloatingTextFormatToolbar(editor: LexicalEditor, anchorElem: HTMLEle
       const nativeSelection = window.getSelection()
       const rootElement = editor.getRootElement()
 
+      const isMobile = window.matchMedia('(max-width: 768px)').matches
+
+      if (isMobile) {
+        return
+      }
+
       if (
         nativeSelection !== null &&
         (!$isRangeSelection(selection) || rootElement === null || !rootElement.contains(nativeSelection.anchorNode))

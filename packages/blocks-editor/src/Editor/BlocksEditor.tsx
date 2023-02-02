@@ -11,7 +11,7 @@ import { HashtagPlugin } from '@lexical/react/LexicalHashtagPlugin'
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
 import { LinkPlugin } from '@lexical/react/LexicalLinkPlugin'
 import { ListPlugin } from '@lexical/react/LexicalListPlugin'
-import { $getRoot, EditorState, LexicalEditor } from 'lexical'
+import { EditorState, LexicalEditor } from 'lexical'
 import HorizontalRulePlugin from '../Lexical/Plugins/HorizontalRulePlugin'
 import TwitterPlugin from '../Lexical/Plugins/TwitterPlugin'
 import YouTubePlugin from '../Lexical/Plugins/YouTubePlugin'
@@ -22,7 +22,7 @@ import CodeHighlightPlugin from '../Lexical/Plugins/CodeHighlightPlugin'
 import FloatingTextFormatToolbarPlugin from '../Lexical/Plugins/FloatingTextFormatToolbarPlugin'
 import FloatingLinkEditorPlugin from '../Lexical/Plugins/FloatingLinkEditorPlugin'
 import { TabIndentationPlugin } from '../Lexical/Plugins/TabIndentationPlugin'
-import { truncateString } from './Utils'
+import { handleEditorChange } from './Utils'
 import { SuperEditorContentId } from './Constants'
 import { classNames } from '@standardnotes/utils'
 import { MarkdownTransformers } from './MarkdownTransformers'
@@ -55,27 +55,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
       }
 
       editorState.read(() => {
-        const childrenNodes = $getRoot().getAllTextNodes().slice(0, 2)
-        let previewText = ''
-        childrenNodes.forEach((node, index) => {
-          previewText += node.getTextContent()
-          if (index !== childrenNodes.length - 1) {
-            previewText += '\n'
-          }
-        })
-
-        if (previewLength) {
-          previewText = truncateString(previewText, previewLength)
-        }
-
-        try {
-          const stringifiedEditorState = JSON.stringify(editorState.toJSON())
-          onChange?.(stringifiedEditorState, previewText)
-        } catch (error) {
-          window.alert(
-            `An invalid change was made inside the Super editor. Your change was not saved. Please report this error to the team: ${error}`,
-          )
-        }
+        handleEditorChange(editorState, previewLength, onChange)
       })
     },
     // Ignoring 'ignoreFirstChange' and 'previewLength'
@@ -93,10 +73,9 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
 
   return (
     <>
-      {children}
       <RichTextPlugin
         contentEditable={
-          <div id="blocks-editor" className="editor-scroller h-full">
+          <div id="blocks-editor" className="editor-scroller h-full min-h-0">
             <div className="editor z-0 overflow-hidden" ref={onRef}>
               <ContentEditable
                 id={SuperEditorContentId}
@@ -133,6 +112,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
           <DraggableBlockPlugin anchorElem={floatingAnchorElem} />
         </>
       )}
+      {children}
     </>
   )
 }

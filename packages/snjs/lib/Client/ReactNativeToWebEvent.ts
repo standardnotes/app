@@ -7,4 +7,6 @@ export enum ReactNativeToWebEvent {
   ColorSchemeChanged = 'ColorSchemeChanged',
   KeyboardFrameWillChange = 'KeyboardFrameWillChange',
   KeyboardFrameDidChange = 'KeyboardFrameDidChange',
+  KeyboardWillShow = 'KeyboardWillShow',
+  KeyboardWillHide = 'KeyboardWillHide',
 }

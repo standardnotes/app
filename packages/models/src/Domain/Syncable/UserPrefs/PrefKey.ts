@@ -43,6 +43,7 @@ export enum PrefKey {
   DefaultEditorIdentifier = 'defaultEditorIdentifier',
   MomentsDefaultTagUuid = 'momentsDefaultTagUuid',
   SystemViewPreferences = 'systemViewPreferences',
+  SuperNoteExportFormat = 'superNoteExportFormat',
 }
 
 export enum NewNoteTitleFormat {
@@ -109,4 +110,5 @@ export type PrefValue = {
   [PrefKey.DefaultEditorIdentifier]: EditorIdentifier
   [PrefKey.MomentsDefaultTagUuid]: string | undefined
   [PrefKey.SystemViewPreferences]: Partial<Record<SystemViewId, TagPreferences>>
+  [PrefKey.SuperNoteExportFormat]: 'json' | 'md' | 'html'
 }

@@ -7,6 +7,12 @@
 
   &[data-reach-listbox-popover] {
     background: var(--sn-stylekit-background-color);
+
+    &:focus-within {
+      outline: none;
+      box-shadow: none;
+      border: 1px solid var(--sn-stylekit-border-color);
+    }
   }
 }
 
