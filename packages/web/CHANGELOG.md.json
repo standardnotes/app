@@ -1,6 +1,31 @@
 {
   "versions": [
     {
+      "version": "3.144.5",
+      "title": "[3.144.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.4...@standardnotes/web@3.144.5) (2023-02-02)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where Super toolbar would close on clicking on iOS ([7a3f376](https://github.com/standardnotes/app/commit/7a3f3761fc44896ba316975bcb62a27b2d54283a))",
+      "parsed": {
+        "_": [
+          "Fixed issue where Super toolbar would close on clicking on iOS (7a3f376)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where Super toolbar would close on clicking on iOS (7a3f376)"
+        ]
+      }
+    },
+    {
+      "version": "3.144.4",
+      "title": "[3.144.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.3...@standardnotes/web@3.144.4) (2023-02-01)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.144.3",
       "title": "[3.144.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.2...@standardnotes/web@3.144.3) (2023-02-01)",
       "date": null,

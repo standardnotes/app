@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.144.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.4...@standardnotes/web@3.144.5) (2023-02-02)
+
+### Bug Fixes
+
+* Fixed issue where Super toolbar would close on clicking on iOS ([7a3f376](https://github.com/standardnotes/app/commit/7a3f3761fc44896ba316975bcb62a27b2d54283a))
+
+## [3.144.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.3...@standardnotes/web@3.144.4) (2023-02-01)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.144.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.2...@standardnotes/web@3.144.3) (2023-02-01)
 
 ### Bug Fixes

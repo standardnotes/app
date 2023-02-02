@@ -30,6 +30,7 @@ const MobileToolbarPlugin = () => {
   const [modal, showModal] = useModal()
 
   const [isInEditor, setIsInEditor] = useState(false)
+  const [isInToolbar, setIsInToolbar] = useState(false)
   const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   const toolbarRef = useRef<HTMLDivElement>(null)
@@ -151,14 +152,34 @@ const MobileToolbarPlugin = () => {
     }
   }, [editor])
 
-  if (!isMobile || !isInEditor) {
+  useEffect(() => {
+    if (!toolbarRef.current) {
+      return
+    }
+
+    const toolbar = toolbarRef.current
+
+    const handleFocus = () => setIsInToolbar(true)
+    const handleBlur = () => setIsInToolbar(false)
+
+    toolbar.addEventListener('focus', handleFocus)
+    toolbar.addEventListener('blur', handleBlur)
+
+    return () => {
+      toolbar?.removeEventListener('focus', handleFocus)
+      toolbar?.removeEventListener('blur', handleBlur)
+    }
+  }, [])
+
+  const isFocusInEditorOrToolbar = isInEditor || isInToolbar
+  if (!isMobile || !isFocusInEditorOrToolbar) {
     return null
   }
 
   return (
     <>
       {modal}
-      <div className="flex w-full flex-shrink-0 border-t border-border bg-contrast" ref={toolbarRef}>
+      <div tabIndex={-1} className="flex w-full flex-shrink-0 border-t border-border bg-contrast" ref={toolbarRef}>
         <div className={classNames('flex items-center gap-1 overflow-x-auto', '[&::-webkit-scrollbar]:h-0')}>
           {items.map((item) => {
             return (
