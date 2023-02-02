@@ -43,6 +43,7 @@ import { SearchPlugin } from './Plugins/SearchPlugin/SearchPlugin'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import MobileToolbarPlugin from './Plugins/MobileToolbarPlugin/MobileToolbarPlugin'
 import { SuperEditorNodes } from './SuperEditorNodes'
+import CodeOptionsPlugin from './Plugins/CodeOptionsPlugin/CodeOptions'
 
 export const SuperNotePreviewCharLimit = 160
 
@@ -205,6 +206,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                   <SearchPlugin />
                 </SuperSearchContextProvider>
                 <MobileToolbarPlugin />
+                <CodeOptionsPlugin />
               </BlocksEditor>
             </BlocksEditorComposer>
           </FilesControllerProvider>
