@@ -1,18 +1,23 @@
 import { useStateRef } from '@/Hooks/useStateRef'
 import { useEffect, useState } from 'react'
 import { Direction, Pan, PointerListener } from 'contactjs'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 let panActive = false
-let animationFrameId = null
 let ticking = false
 
-export const usePaneSwipeGesture = (direction: 'left' | 'right', onSwipeEnd: () => void) => {
+export const usePaneSwipeGesture = (direction: 'left' | 'right', onSwipeEnd: (element: HTMLElement) => void) => {
   const [element, setElement] = useState<HTMLElement | null>(null)
 
   const onSwipeEndRef = useStateRef(onSwipeEnd)
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   useEffect(() => {
     if (!element) {
+      return
+    }
+
+    if (!isMobileScreen) {
       return
     }
 
@@ -24,7 +29,7 @@ export const usePaneSwipeGesture = (direction: 'left' | 'right', onSwipeEnd: () 
       supportedGestures: [panRecognizer],
     })
 
-    function onPan(event) {
+    function onPan(event: any) {
       if (panActive == false) {
         panActive = true
       }
@@ -37,14 +42,25 @@ export const usePaneSwipeGesture = (direction: 'left' | 'right', onSwipeEnd: () 
 
     element.addEventListener('panright', onPan)
 
-    function onPanEnd(event) {
+    function onPanEnd(event: any) {
       if (ticking) {
         setTimeout(function () {
           onPanEnd(event)
         }, 100)
       } else {
         panActive = false
-        onSwipeEndRef.current()
+
+        if (!element) {
+          return
+        }
+
+        if (direction === 'right' && event.detail.global.deltaX > 40) {
+          onSwipeEndRef.current(element)
+        } else if (direction === 'left' && event.detail.global.deltaX < -40) {
+          onSwipeEndRef.current(element)
+        } else {
+          requestElementUpdate(0)
+        }
       }
     }
 
@@ -52,13 +68,12 @@ export const usePaneSwipeGesture = (direction: 'left' | 'right', onSwipeEnd: () 
 
     function requestElementUpdate(x: number) {
       if (!ticking) {
-        animationFrameId = requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
           if (!element) {
             return
           }
           element.style.left = `${direction === 'right' ? Math.max(x, 0) : Math.min(x, 0)}px`
 
-          animationFrameId = null
           ticking = false
         })
 
@@ -72,7 +87,7 @@ export const usePaneSwipeGesture = (direction: 'left' | 'right', onSwipeEnd: () 
       element.removeEventListener('panright', onPan)
       element.removeEventListener('panend', onPanEnd)
     }
-  }, [direction, element, onSwipeEndRef])
+  }, [direction, element, isMobileScreen, onSwipeEndRef])
 
   return [setElement]
 }
