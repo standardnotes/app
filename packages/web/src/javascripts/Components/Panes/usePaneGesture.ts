@@ -1,6 +1,10 @@
 import { useStateRef } from '@/Hooks/useStateRef'
 import { useEffect, useState } from 'react'
-import TinyGesture from './TinyGesture'
+import { Direction, Pan, PointerListener } from 'contactjs'
+
+let panActive = false
+let animationFrameId = null
+let ticking = false
 
 export const usePaneSwipeGesture = (direction: 'left' | 'right', onSwipeEnd: () => void) => {
   const [element, setElement] = useState<HTMLElement | null>(null)
@@ -12,47 +16,61 @@ export const usePaneSwipeGesture = (direction: 'left' | 'right', onSwipeEnd: () 
       return
     }
 
-    const gesture = new TinyGesture(element)
-
-    const handlePanMove = gesture.on('panmove', () => {
-      const isSwipingHorizontally = gesture.swipingDirection !== 'vertical'
-      if (!isSwipingHorizontally) {
-        return
-      }
-      if (gesture.touchMoveX === null) {
-        return
-      }
-      if (direction === 'right') {
-        element.style.left = `${Math.max(gesture.touchMoveX, 0)}px`
-      } else {
-        element.style.left = `${Math.min(gesture.touchMoveX, 0)}px`
-      }
+    const panRecognizer = new Pan(element, {
+      supportedDirections: direction === 'left' ? [Direction.Left] : [Direction.Right],
     })
 
-    const handlePanEnd = gesture.on('panend', () => {
-      if (!gesture.touchMoveX) {
-        return
-      }
-      /* if (gesture.touchMoveX > 40) {
-        onSwipeEndRef.current()
-      } else {
-        element.style.left = ''
-      } */
-      if (gesture.touchMoveX > 40 && direction === 'right') {
-        onSwipeEndRef.current()
-        return
-      }
-      if (gesture.touchMoveX < -40 && direction === 'left') {
-        onSwipeEndRef.current()
-        return
-      }
-      element.style.left = ''
+    const pointerListener = new PointerListener(element, {
+      supportedGestures: [panRecognizer],
     })
+
+    function onPan(event) {
+      if (panActive == false) {
+        panActive = true
+      }
+
+      const x = event.detail.global.deltaX
+      requestElementUpdate(x)
+    }
+
+    element.addEventListener('panleft', onPan)
+
+    element.addEventListener('panright', onPan)
+
+    function onPanEnd(event) {
+      if (ticking) {
+        setTimeout(function () {
+          onPanEnd(event)
+        }, 100)
+      } else {
+        panActive = false
+        onSwipeEndRef.current()
+      }
+    }
+
+    element.addEventListener('panend', onPanEnd)
+
+    function requestElementUpdate(x: number) {
+      if (!ticking) {
+        animationFrameId = requestAnimationFrame(function () {
+          if (!element) {
+            return
+          }
+          element.style.left = `${direction === 'right' ? Math.max(x, 0) : Math.min(x, 0)}px`
+
+          animationFrameId = null
+          ticking = false
+        })
+
+        ticking = true
+      }
+    }
 
     return () => {
-      handlePanMove?.cancel()
-      handlePanEnd?.cancel()
-      gesture.destroy()
+      pointerListener.destroy()
+      element.removeEventListener('panleft', onPan)
+      element.removeEventListener('panright', onPan)
+      element.removeEventListener('panend', onPanEnd)
     }
   }, [direction, element, onSwipeEndRef])
 
