@@ -14,6 +14,26 @@ export const usePaneSwipeGesture = (
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   useEffect(() => {
+    const styleElement = document.createElement('style')
+    styleElement.innerHTML = `
+      .panning-pane::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: linear-gradient(to right, rgba(0, 0, 0, 0.1) 1%, rgba(0, 0, 0, 0) 90%);
+      }
+    `
+    document.head.appendChild(styleElement)
+
+    return () => {
+      document.head.removeChild(styleElement)
+    }
+  }, [])
+
+  useEffect(() => {
     if (!element) {
       return
     }
@@ -31,8 +51,13 @@ export const usePaneSwipeGesture = (
     })
 
     function onPan(event: any) {
+      if (!element) {
+        return
+      }
+
       const x = event.detail.global.deltaX
       requestElementUpdate(x)
+      element.classList.add('panning-pane')
     }
 
     let ticking = false
@@ -54,6 +79,8 @@ export const usePaneSwipeGesture = (
         } else {
           requestElementUpdate(0)
         }
+
+        element.classList.remove('panning-pane')
       }
     }
 
