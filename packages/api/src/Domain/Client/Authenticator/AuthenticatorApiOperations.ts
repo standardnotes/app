@@ -4,5 +4,4 @@ export enum AuthenticatorApiOperations {
   GenerateRegistrationOptions,
   GenerateAuthenticationOptions,
   VerifyRegistrationResponse,
-  VerifyAuthenticationResponse,
 }

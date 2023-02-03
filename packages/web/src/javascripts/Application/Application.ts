@@ -25,6 +25,7 @@ import {
   ApplicationOptionsDefaults,
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
+import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { isAndroid, isDesktopApplication, isIOS } from '@/Utils'
 import { DesktopManager } from './Device/DesktopManager'
@@ -83,6 +84,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
         deviceInterface.environment === Environment.Mobile ? 250 : ApplicationOptionsDefaults.sleepBetweenBatches,
       allowMultipleSelection: deviceInterface.environment !== Environment.Mobile,
       allowNoteSelectionStatePersistence: deviceInterface.environment !== Environment.Mobile,
+      u2fAuthenticatorRegistrationPromptFunction: startRegistration,
+      u2fAuthenticatorVerificationPromptFunction: startAuthentication,
     })
 
     makeObservable(this, {

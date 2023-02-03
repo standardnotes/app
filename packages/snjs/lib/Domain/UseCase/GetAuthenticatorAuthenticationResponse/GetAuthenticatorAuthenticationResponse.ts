@@ -1,9 +1,8 @@
 import { AuthenticatorClientInterface } from '@standardnotes/services'
-import { Result, UseCaseInterface, Uuid } from '@standardnotes/domain-core'
+import { Result, UseCaseInterface, Username } from '@standardnotes/domain-core'
+import { GetAuthenticatorAuthenticationResponseDTO } from './GetAuthenticatorAuthenticationResponseDTO'
 
-import { VerifyAuthenticatorDTO } from './VerifyAuthenticatorDTO'
-
-export class VerifyAuthenticator implements UseCaseInterface<void> {
+export class GetAuthenticatorAuthenticationResponse implements UseCaseInterface<Record<string, unknown>> {
   constructor(
     private authenticatorClient: AuthenticatorClientInterface,
     private authenticatorVerificationPromptFunction?: (
@@ -11,20 +10,20 @@ export class VerifyAuthenticator implements UseCaseInterface<void> {
     ) => Promise<Record<string, unknown>>,
   ) {}
 
-  async execute(dto: VerifyAuthenticatorDTO): Promise<Result<void>> {
+  async execute(dto: GetAuthenticatorAuthenticationResponseDTO): Promise<Result<Record<string, unknown>>> {
     if (!this.authenticatorVerificationPromptFunction) {
       return Result.fail(
         'Could not generate authenticator authentication options: No authenticator verification prompt function provided',
       )
     }
 
-    const userUuidOrError = Uuid.create(dto.userUuid)
-    if (userUuidOrError.isFailed()) {
-      return Result.fail(`Could not generate authenticator authentication options: ${userUuidOrError.getError()}`)
+    const usernameOrError = Username.create(dto.username)
+    if (usernameOrError.isFailed()) {
+      return Result.fail(`Could not generate authenticator authentication options: ${usernameOrError.getError()}`)
     }
-    const userUuid = userUuidOrError.getValue()
+    const username = usernameOrError.getValue()
 
-    const authenticationOptions = await this.authenticatorClient.generateAuthenticationOptions()
+    const authenticationOptions = await this.authenticatorClient.generateAuthenticationOptions(username)
     if (authenticationOptions === null) {
       return Result.fail('Could not generate authenticator authentication options')
     }
@@ -36,14 +35,6 @@ export class VerifyAuthenticator implements UseCaseInterface<void> {
       return Result.fail(`Could not generate authenticator authentication options: ${(error as Error).message}`)
     }
 
-    const verificationResponse = await this.authenticatorClient.verifyAuthenticationResponse(
-      userUuid,
-      authenticatorResponse,
-    )
-    if (!verificationResponse) {
-      return Result.fail('Could not generate authenticator authentication options')
-    }
-
-    return Result.ok()
+    return Result.ok(authenticatorResponse)
   }
 }

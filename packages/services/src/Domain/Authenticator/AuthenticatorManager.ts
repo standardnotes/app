@@ -1,7 +1,7 @@
 /* istanbul ignore file */
 
 import { AuthenticatorApiServiceInterface } from '@standardnotes/api'
-import { Uuid } from '@standardnotes/domain-core'
+import { Username, Uuid } from '@standardnotes/domain-core'
 
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
@@ -79,9 +79,9 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
     }
   }
 
-  async generateAuthenticationOptions(): Promise<Record<string, unknown> | null> {
+  async generateAuthenticationOptions(username: Username): Promise<Record<string, unknown> | null> {
     try {
-      const result = await this.authenticatorApiService.generateAuthenticationOptions()
+      const result = await this.authenticatorApiService.generateAuthenticationOptions(username.value)
 
       if (result.data.error) {
         return null
@@ -90,26 +90,6 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
       return result.data.options
     } catch (error) {
       return null
-    }
-  }
-
-  async verifyAuthenticationResponse(
-    userUuid: Uuid,
-    authenticationCredential: Record<string, unknown>,
-  ): Promise<boolean> {
-    try {
-      const result = await this.authenticatorApiService.verifyAuthenticationResponse(
-        userUuid.value,
-        authenticationCredential,
-      )
-
-      if (result.data.error) {
-        return false
-      }
-
-      return result.data.success
-    } catch (error) {
-      return false
     }
   }
 }

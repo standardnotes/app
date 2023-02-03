@@ -105,11 +105,11 @@ import { GetRecoveryCodes } from '@Lib/Domain/UseCase/GetRecoveryCodes/GetRecove
 import { AddAuthenticator } from '@Lib/Domain/UseCase/AddAuthenticator/AddAuthenticator'
 import { ListAuthenticators } from '@Lib/Domain/UseCase/ListAuthenticators/ListAuthenticators'
 import { DeleteAuthenticator } from '@Lib/Domain/UseCase/DeleteAuthenticator/DeleteAuthenticator'
-import { VerifyAuthenticator } from '@Lib/Domain/UseCase/VerifyAuthenticator/VerifyAuthenticator'
 import { ListRevisions } from '@Lib/Domain/UseCase/ListRevisions/ListRevisions'
 import { GetRevision } from '@Lib/Domain/UseCase/GetRevision/GetRevision'
 import { DeleteRevision } from '@Lib/Domain/UseCase/DeleteRevision/DeleteRevision'
 import { RevisionMetadata } from '@Lib/Domain/Revision/RevisionMetadata'
+import { GetAuthenticatorAuthenticationResponse } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationResponse/GetAuthenticatorAuthenticationResponse'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -193,7 +193,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare _addAuthenticator: AddAuthenticator
   private declare _listAuthenticators: ListAuthenticators
   private declare _deleteAuthenticator: DeleteAuthenticator
-  private declare _verifyAuthenticator: VerifyAuthenticator
+  private declare _getAuthenticatorAuthenticationResponse: GetAuthenticatorAuthenticationResponse
   private declare _listRevisions: ListRevisions
   private declare _getRevision: GetRevision
   private declare _deleteRevision: DeleteRevision
@@ -299,8 +299,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this._deleteAuthenticator
   }
 
-  get verifyAuthenticator(): UseCaseInterface<void> {
-    return this._verifyAuthenticator
+  get getAuthenticatorAuthenticationResponse(): UseCaseInterface<Record<string, unknown>> {
+    return this._getAuthenticatorAuthenticationResponse
   }
 
   get listRevisions(): UseCaseInterface<Array<RevisionMetadata>> {
@@ -1272,7 +1272,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this._addAuthenticator as unknown) = undefined
     ;(this._listAuthenticators as unknown) = undefined
     ;(this._deleteAuthenticator as unknown) = undefined
-    ;(this._verifyAuthenticator as unknown) = undefined
+    ;(this._getAuthenticatorAuthenticationResponse as unknown) = undefined
     ;(this._listRevisions as unknown) = undefined
     ;(this._getRevision as unknown) = undefined
     ;(this._deleteRevision as unknown) = undefined
@@ -1849,7 +1849,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     this._deleteAuthenticator = new DeleteAuthenticator(this.authenticatorManager)
 
-    this._verifyAuthenticator = new VerifyAuthenticator(
+    this._getAuthenticatorAuthenticationResponse = new GetAuthenticatorAuthenticationResponse(
       this.authenticatorManager,
       this.options.u2fAuthenticatorVerificationPromptFunction,
     )

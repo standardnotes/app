@@ -9,7 +9,6 @@ import {
   GenerateAuthenticatorRegistrationOptionsResponse,
   VerifyAuthenticatorRegistrationResponseResponse,
   GenerateAuthenticatorAuthenticationOptionsResponse,
-  VerifyAuthenticatorAuthenticationResponseResponse,
 } from '../../Response'
 import { AuthenticatorServerInterface } from '../../Server/Authenticator/AuthenticatorServerInterface'
 
@@ -79,7 +78,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
   async verifyRegistrationResponse(
     userUuid: string,
     name: string,
-    registrationCredential: Record<string, unknown>,
+    attestationResponse: Record<string, unknown>,
   ): Promise<VerifyAuthenticatorRegistrationResponseResponse> {
     if (this.operationsInProgress.get(AuthenticatorApiOperations.VerifyRegistrationResponse)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
@@ -91,7 +90,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
       const response = await this.authenticatorServer.verifyRegistrationResponse({
         userUuid,
         name,
-        registrationCredential,
+        attestationResponse,
       })
 
       return response
@@ -102,7 +101,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
     }
   }
 
-  async generateAuthenticationOptions(): Promise<GenerateAuthenticatorAuthenticationOptionsResponse> {
+  async generateAuthenticationOptions(username: string): Promise<GenerateAuthenticatorAuthenticationOptionsResponse> {
     if (this.operationsInProgress.get(AuthenticatorApiOperations.GenerateAuthenticationOptions)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }
@@ -110,37 +109,15 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
     this.operationsInProgress.set(AuthenticatorApiOperations.GenerateAuthenticationOptions, true)
 
     try {
-      const response = await this.authenticatorServer.generateAuthenticationOptions()
-
-      return response
-    } catch (error) {
-      throw new ApiCallError(ErrorMessage.GenericFail)
-    } finally {
-      this.operationsInProgress.set(AuthenticatorApiOperations.GenerateAuthenticationOptions, false)
-    }
-  }
-
-  async verifyAuthenticationResponse(
-    userUuid: string,
-    authenticationCredential: Record<string, unknown>,
-  ): Promise<VerifyAuthenticatorAuthenticationResponseResponse> {
-    if (this.operationsInProgress.get(AuthenticatorApiOperations.VerifyAuthenticationResponse)) {
-      throw new ApiCallError(ErrorMessage.GenericInProgress)
-    }
-
-    this.operationsInProgress.set(AuthenticatorApiOperations.VerifyAuthenticationResponse, true)
-
-    try {
-      const response = await this.authenticatorServer.verifyAuthenticationResponse({
-        authenticationCredential,
-        userUuid,
+      const response = await this.authenticatorServer.generateAuthenticationOptions({
+        username,
       })
 
       return response
     } catch (error) {
       throw new ApiCallError(ErrorMessage.GenericFail)
     } finally {
-      this.operationsInProgress.set(AuthenticatorApiOperations.VerifyAuthenticationResponse, false)
+      this.operationsInProgress.set(AuthenticatorApiOperations.GenerateAuthenticationOptions, false)
     }
   }
 }

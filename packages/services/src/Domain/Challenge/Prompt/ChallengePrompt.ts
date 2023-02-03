@@ -20,6 +20,7 @@ export class ChallengePrompt implements ChallengePromptInterface {
     public readonly secureTextEntry = true,
     public readonly keyboardType?: ChallengeKeyboardType,
     public readonly initialValue?: ChallengeRawValue,
+    public readonly contextData?: Record<string, unknown>,
   ) {
     switch (this.validation) {
       case ChallengeValidation.AccountPassword:
@@ -34,6 +35,11 @@ export class ChallengePrompt implements ChallengePromptInterface {
         break
       case ChallengeValidation.Biometric:
         this.title = title ?? ChallengePromptTitle.Biometrics
+        this.placeholder = placeholder ?? ''
+        this.validates = true
+        break
+      case ChallengeValidation.Authenticator:
+        this.title = title ?? ChallengePromptTitle.U2F
         this.placeholder = placeholder ?? ''
         this.validates = true
         break

@@ -1,4 +1,4 @@
-import { Uuid } from '@standardnotes/domain-core'
+import { Username, Uuid } from '@standardnotes/domain-core'
 
 export interface AuthenticatorClientInterface {
   list(): Promise<Array<{ id: string; name: string }>>
@@ -9,6 +9,5 @@ export interface AuthenticatorClientInterface {
     name: string,
     registrationCredential: Record<string, unknown>,
   ): Promise<boolean>
-  generateAuthenticationOptions(): Promise<Record<string, unknown> | null>
-  verifyAuthenticationResponse(userUuid: Uuid, authenticationCredential: Record<string, unknown>): Promise<boolean>
+  generateAuthenticationOptions(username: Username): Promise<Record<string, unknown> | null>
 }

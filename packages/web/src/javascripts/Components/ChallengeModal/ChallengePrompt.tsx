@@ -11,6 +11,7 @@ import { ChallengeModalValues } from './ChallengeModalValues'
 import { WebApplication } from '@/Application/Application'
 import { InputValue } from './InputValue'
 import BiometricsPrompt from './BiometricsPrompt'
+import U2FPrompt from './U2FPrompt'
 
 type Props = {
   application: WebApplication
@@ -19,6 +20,7 @@ type Props = {
   index: number
   onValueChange: (value: InputValue['value'], prompt: ChallengePrompt) => void
   isInvalid: boolean
+  contextData?: Record<string, unknown>
 }
 
 const ChallengeModalPrompt: FunctionComponent<Props> = ({
@@ -28,9 +30,11 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
   index,
   onValueChange,
   isInvalid,
+  contextData,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null)
   const biometricsButtonRef = useRef<HTMLButtonElement>(null)
+  const authenticatorButtonRef = useRef<HTMLButtonElement>(null)
 
   const activatePrompt = useCallback(async () => {
     if (prompt.validation === ChallengeValidation.Biometric) {
@@ -136,6 +140,14 @@ const ChallengeModalPrompt: FunctionComponent<Props> = ({
           onValueChange={onValueChange}
           prompt={prompt}
           buttonRef={biometricsButtonRef}
+        />
+      ) : prompt.validation === ChallengeValidation.Authenticator ? (
+        <U2FPrompt
+          application={application}
+          onValueChange={onValueChange}
+          prompt={prompt}
+          buttonRef={authenticatorButtonRef}
+          contextData={contextData}
         />
       ) : prompt.secureTextEntry ? (
         <DecoratedPasswordInput
