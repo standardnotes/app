@@ -1,4 +1,4 @@
-import { FeatureStatus, FeatureIdentifier, SessionsClientInterface } from '@standardnotes/snjs'
+import { FeatureStatus, FeatureIdentifier } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useState } from 'react'
 
