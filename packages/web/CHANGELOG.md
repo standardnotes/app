@@ -11,11 +11,6 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ## [3.145.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.145.0...@standardnotes/web@3.145.1) (2023-02-03)
 
-### Bug Fixes
-
-* **web:** disable subscription sharing on demo ([de5973e](https://github.com/standardnotes/app/commit/de5973e15f21fcaff0225834f1c09f295ad83368))
-* **web:** remove unused import ([9e15ea7](https://github.com/standardnotes/app/commit/9e15ea78f88e361d5152ea5fcf1b52444d59ab6e))
-
 # [3.145.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.5...@standardnotes/web@3.145.0) (2023-02-02)
 
 ### Features
