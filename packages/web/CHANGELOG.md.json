@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "3.146.1",
+      "title": "[3.146.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.146.0...@standardnotes/web@3.146.1) (2023-02-03)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.146.0",
       "title": "[3.146.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.145.1...@standardnotes/web@3.146.0) (2023-02-03)",
       "date": null,
@@ -12,6 +23,15 @@
         "Features": [
           "dev: add u2f ui for managing devices and signing in (#2182) (9414774)"
         ]
+      }
+    },
+    {
+      "version": "3.145.1",
+      "title": "[3.145.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.145.0...@standardnotes/web@3.145.1) (2023-02-03)",
+      "date": null,
+      "body": "",
+      "parsed": {
+        "_": []
       }
     },
     {
