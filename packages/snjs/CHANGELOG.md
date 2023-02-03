@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.165.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.165.5...@standardnotes/snjs@2.165.6) (2023-02-03)
+
+### Bug Fixes
+
+* **web:** disable subscription sharing on demo ([de5973e](https://github.com/standardnotes/app/commit/de5973e15f21fcaff0225834f1c09f295ad83368))
+
 ## [2.165.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.165.4...@standardnotes/snjs@2.165.5) (2023-02-02)
 
 **Note:** Version bump only for package @standardnotes/snjs

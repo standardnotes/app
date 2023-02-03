@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.56.18](https://github.com/standardnotes/app/compare/@standardnotes/services@1.56.17...@standardnotes/services@1.56.18) (2023-02-03)
+
+### Bug Fixes
+
+* **web:** disable subscription sharing on demo ([de5973e](https://github.com/standardnotes/app/commit/de5973e15f21fcaff0225834f1c09f295ad83368))
+
 ## [1.56.17](https://github.com/standardnotes/app/compare/@standardnotes/services@1.56.16...@standardnotes/services@1.56.17) (2023-02-02)
 
 **Note:** Version bump only for package @standardnotes/services
