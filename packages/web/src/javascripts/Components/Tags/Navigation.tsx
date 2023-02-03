@@ -46,10 +46,14 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
     })
   }, [application])
 
-  const [setElement] = usePaneSwipeGesture('left', (element) => {
-    setPaneLayout(PaneLayout.ItemSelection)
-    element.style.left = '0'
-  })
+  const [setElement] = usePaneSwipeGesture(
+    'left',
+    (element) => {
+      setPaneLayout(PaneLayout.ItemSelection)
+      element.style.left = '0'
+    },
+    'swipe',
+  )
 
   return (
     <div

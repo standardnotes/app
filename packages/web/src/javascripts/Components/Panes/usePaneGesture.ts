@@ -3,10 +3,11 @@ import { useEffect, useState } from 'react'
 import { Direction, Pan, PointerListener } from 'contactjs'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
-let panActive = false
-let ticking = false
-
-export const usePaneSwipeGesture = (direction: 'left' | 'right', onSwipeEnd: (element: HTMLElement) => void) => {
+export const usePaneSwipeGesture = (
+  direction: 'left' | 'right',
+  onSwipeEnd: (element: HTMLElement) => void,
+  gesture: 'pan' | 'swipe' = 'pan',
+) => {
   const [element, setElement] = useState<HTMLElement | null>(null)
 
   const onSwipeEndRef = useStateRef(onSwipeEnd)
@@ -30,17 +31,11 @@ export const usePaneSwipeGesture = (direction: 'left' | 'right', onSwipeEnd: (el
     })
 
     function onPan(event: any) {
-      if (panActive == false) {
-        panActive = true
-      }
-
       const x = event.detail.global.deltaX
       requestElementUpdate(x)
     }
 
-    element.addEventListener('panleft', onPan)
-
-    element.addEventListener('panright', onPan)
+    let ticking = false
 
     function onPanEnd(event: any) {
       if (ticking) {
@@ -48,8 +43,6 @@ export const usePaneSwipeGesture = (direction: 'left' | 'right', onSwipeEnd: (el
           onPanEnd(event)
         }, 100)
       } else {
-        panActive = false
-
         if (!element) {
           return
         }
@@ -63,8 +56,6 @@ export const usePaneSwipeGesture = (direction: 'left' | 'right', onSwipeEnd: (el
         }
       }
     }
-
-    element.addEventListener('panend', onPanEnd)
 
     function requestElementUpdate(x: number) {
       if (!ticking) {
@@ -81,13 +72,33 @@ export const usePaneSwipeGesture = (direction: 'left' | 'right', onSwipeEnd: (el
       }
     }
 
+    if (gesture === 'pan') {
+      element.addEventListener('panleft', onPan)
+      element.addEventListener('panright', onPan)
+      element.addEventListener('panend', onPanEnd)
+    } else {
+      if (direction === 'left') {
+        element.addEventListener('swipeleft', onPanEnd)
+      } else {
+        element.addEventListener('swiperight', onPanEnd)
+      }
+    }
+
     return () => {
       pointerListener.destroy()
-      element.removeEventListener('panleft', onPan)
-      element.removeEventListener('panright', onPan)
-      element.removeEventListener('panend', onPanEnd)
+      if (gesture === 'pan') {
+        element.removeEventListener('panleft', onPan)
+        element.removeEventListener('panright', onPan)
+        element.removeEventListener('panend', onPanEnd)
+      } else {
+        if (direction === 'left') {
+          element.removeEventListener('swipeleft', onPanEnd)
+        } else {
+          element.removeEventListener('swiperight', onPanEnd)
+        }
+      }
     }
-  }, [direction, element, isMobileScreen, onSwipeEndRef])
+  }, [direction, element, gesture, isMobileScreen, onSwipeEndRef])
 
   return [setElement]
 }
