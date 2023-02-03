@@ -77,6 +77,7 @@ export class SNSessionManager
 {
   private user?: Responses.User
   private isSessionRenewChallengePresented = false
+  private session?: Session | LegacySession
 
   constructor(
     private diskStorageService: DiskStorageService,
@@ -149,6 +150,8 @@ export class SNSessionManager
   }
 
   private setSession(session: Session | LegacySession, persist = true): void {
+    this.session = session
+
     if (session instanceof Session) {
       this.httpService.setSession(session)
     }
@@ -168,6 +171,18 @@ export class SNSessionManager
 
   public getUser(): Responses.User | undefined {
     return this.user
+  }
+
+  isCurrentSessionReadOnly(): boolean | undefined {
+    if (this.session === undefined) {
+      return undefined
+    }
+
+    if (this.session instanceof LegacySession) {
+      return false
+    }
+
+    return this.session.isReadOnly()
   }
 
   public getSureUser() {
