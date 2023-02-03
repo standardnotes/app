@@ -2,7 +2,7 @@ import {
   ListAuthenticatorsRequestParams,
   DeleteAuthenticatorRequestParams,
   VerifyAuthenticatorRegistrationResponseRequestParams,
-  VerifyAuthenticatorAuthenticationResponseRequestParams,
+  GenerateAuthenticatorAuthenticationOptionsRequestParams,
 } from '../../Request'
 import {
   ListAuthenticatorsResponse,
@@ -10,7 +10,6 @@ import {
   GenerateAuthenticatorRegistrationOptionsResponse,
   VerifyAuthenticatorRegistrationResponseResponse,
   GenerateAuthenticatorAuthenticationOptionsResponse,
-  VerifyAuthenticatorAuthenticationResponseResponse,
 } from '../../Response'
 
 export interface AuthenticatorServerInterface {
@@ -20,8 +19,7 @@ export interface AuthenticatorServerInterface {
   verifyRegistrationResponse(
     params: VerifyAuthenticatorRegistrationResponseRequestParams,
   ): Promise<VerifyAuthenticatorRegistrationResponseResponse>
-  generateAuthenticationOptions(): Promise<GenerateAuthenticatorAuthenticationOptionsResponse>
-  verifyAuthenticationResponse(
-    params: VerifyAuthenticatorAuthenticationResponseRequestParams,
-  ): Promise<VerifyAuthenticatorAuthenticationResponseResponse>
+  generateAuthenticationOptions(
+    params: GenerateAuthenticatorAuthenticationOptionsRequestParams,
+  ): Promise<GenerateAuthenticatorAuthenticationOptionsResponse>
 }

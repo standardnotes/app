@@ -93,6 +93,8 @@ export class ChallengeService extends AbstractService implements ChallengeServic
         return this.protocolService.validateAccountPassword(value.value as string)
       case ChallengeValidation.Biometric:
         return { valid: value.value === true }
+      case ChallengeValidation.Authenticator:
+        return { valid: 'id' in (value.value as Record<string, unknown>) }
       case ChallengeValidation.ProtectionSessionDuration:
         return { valid: isValidProtectionSessionLength(value.value) }
       default:

@@ -9,7 +9,7 @@ export interface UseCaseContainerInterface {
   get addAuthenticator(): UseCaseInterface<void>
   get listAuthenticators(): UseCaseInterface<Array<{ id: string; name: string }>>
   get deleteAuthenticator(): UseCaseInterface<void>
-  get verifyAuthenticator(): UseCaseInterface<void>
+  get getAuthenticatorAuthenticationResponse(): UseCaseInterface<Record<string, unknown>>
   get listRevisions(): UseCaseInterface<Array<RevisionMetadata>>
   get getRevision(): UseCaseInterface<HistoryEntry>
   get deleteRevision(): UseCaseInterface<void>

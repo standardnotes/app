@@ -48,6 +48,7 @@ import { ChallengeService } from '../Challenge'
 import {
   ApiCallError,
   ErrorMessage,
+  ErrorTag,
   HttpErrorResponseBody,
   HttpServiceInterface,
   UserApiServiceInterface,
@@ -77,6 +78,7 @@ export class SNSessionManager
 {
   private user?: Responses.User
   private isSessionRenewChallengePresented = false
+  private session?: Session | LegacySession
 
   constructor(
     private diskStorageService: DiskStorageService,
@@ -149,6 +151,8 @@ export class SNSessionManager
   }
 
   private setSession(session: Session | LegacySession, persist = true): void {
+    this.session = session
+
     if (session instanceof Session) {
       this.httpService.setSession(session)
     }
@@ -168,6 +172,18 @@ export class SNSessionManager
 
   public getUser(): Responses.User | undefined {
     return this.user
+  }
+
+  isCurrentSessionReadOnly(): boolean | undefined {
+    if (this.session === undefined) {
+      return undefined
+    }
+
+    if (this.session instanceof LegacySession) {
+      return false
+    }
+
+    return this.session.isReadOnly()
   }
 
   public getSureUser() {
@@ -269,6 +285,35 @@ export class SNSessionManager
     return (response as Responses.GetAvailableSubscriptionsResponse).data!
   }
 
+  private async promptForU2FVerification(username: string): Promise<Record<string, unknown> | undefined> {
+    const challenge = new Challenge(
+      [
+        new ChallengePrompt(
+          ChallengeValidation.Authenticator,
+          ChallengePromptTitle.U2F,
+          undefined,
+          false,
+          undefined,
+          undefined,
+          {
+            username,
+          },
+        ),
+      ],
+      ChallengeReason.Custom,
+      true,
+      SessionStrings.InputU2FDevice,
+    )
+
+    const response = await this.challengeService.promptForChallengeResponse(challenge)
+
+    if (!response) {
+      return undefined
+    }
+
+    return response.values[0].value as Record<string, unknown>
+  }
+
   private async promptForMfaValue(): Promise<string | undefined> {
     const challenge = new Challenge(
       [
@@ -329,31 +374,28 @@ export class SNSessionManager
     return registerResponse.data
   }
 
-  private async retrieveKeyParams(
-    email: string,
-    mfaKeyPath?: string,
-    mfaCode?: string,
-  ): Promise<{
+  private async retrieveKeyParams(dto: {
+    email: string
+    mfaKeyPath?: string
+    mfaCode?: string
+    authenticatorResponse?: Record<string, unknown>
+  }): Promise<{
     keyParams?: SNRootKeyParams
     response: Responses.KeyParamsResponse | Responses.HttpResponse
     mfaKeyPath?: string
     mfaCode?: string
   }> {
-    const response = await this.apiService.getAccountKeyParams({
-      email,
-      mfaKeyPath,
-      mfaCode,
-    })
+    const response = await this.apiService.getAccountKeyParams(dto)
 
     if (response.error || isNullOrUndefined(response.data)) {
-      if (mfaCode) {
+      if (dto.mfaCode) {
         await this.alertService.alert(SignInStrings.IncorrectMfa)
       }
-      if (response.error?.payload?.mfa_key) {
-        /** Prompt for MFA code and try again */
-        const inputtedCode = await this.promptForMfaValue()
-        if (!inputtedCode) {
-          /** User dismissed window without input */
+
+      if ([ErrorTag.U2FRequired, ErrorTag.MfaRequired].includes(response.error?.tag as ErrorTag)) {
+        const isU2FRequired = response.error?.tag === ErrorTag.U2FRequired
+        const result = isU2FRequired ? await this.promptForU2FVerification(dto.email) : await this.promptForMfaValue()
+        if (!result) {
           return {
             response: this.apiService.createErrorResponse(
               SignInStrings.SignInCanceledMissingMfa,
@@ -361,19 +403,25 @@ export class SNSessionManager
             ),
           }
         }
-        return this.retrieveKeyParams(email, response.error.payload.mfa_key, inputtedCode)
+
+        return this.retrieveKeyParams({
+          email: dto.email,
+          mfaKeyPath: isU2FRequired ? undefined : response.error?.payload?.mfa_key,
+          mfaCode: isU2FRequired ? undefined : (result as string),
+          authenticatorResponse: isU2FRequired ? (result as Record<string, unknown>) : undefined,
+        })
       } else {
         return { response }
       }
     }
     /** Make sure to use client value for identifier/email */
-    const keyParams = KeyParamsFromApiResponse(response as Responses.KeyParamsResponse, email)
+    const keyParams = KeyParamsFromApiResponse(response as Responses.KeyParamsResponse, dto.email)
     if (!keyParams || !keyParams.version) {
       return {
         response: this.apiService.createErrorResponse(API_MESSAGE_FALLBACK_LOGIN_FAIL),
       }
     }
-    return { keyParams, response, mfaKeyPath, mfaCode }
+    return { keyParams, response, mfaKeyPath: dto.mfaKeyPath, mfaCode: dto.mfaCode }
   }
 
   public async signIn(
@@ -410,7 +458,9 @@ export class SNSessionManager
     ephemeral = false,
     minAllowedVersion?: Common.ProtocolVersion,
   ): Promise<SessionManagerResponse> {
-    const paramsResult = await this.retrieveKeyParams(email)
+    const paramsResult = await this.retrieveKeyParams({
+      email,
+    })
     if (paramsResult.response.error) {
       return {
         response: paramsResult.response,

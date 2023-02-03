@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.25.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.24.16...@standardnotes/api@1.25.0) (2023-02-03)
+
+### Features
+
+* **dev:** add u2f ui for managing devices and signing in ([#2182](https://github.com/standardnotes/app/issues/2182)) ([9414774](https://github.com/standardnotes/app/commit/9414774e89c5c21b0c2178652ded72033065e8d2))
+
 ## [1.24.16](https://github.com/standardnotes/app/compare/@standardnotes/api@1.24.15...@standardnotes/api@1.24.16) (2023-02-02)
 
 **Note:** Version bump only for package @standardnotes/api

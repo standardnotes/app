@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.146.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.145.1...@standardnotes/web@3.146.0) (2023-02-03)
+
+### Features
+
+* **dev:** add u2f ui for managing devices and signing in ([#2182](https://github.com/standardnotes/app/issues/2182)) ([9414774](https://github.com/standardnotes/app/commit/9414774e89c5c21b0c2178652ded72033065e8d2))
+
+## [3.145.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.145.0...@standardnotes/web@3.145.1) (2023-02-03)
+
+### Bug Fixes
+
+* **web:** disable subscription sharing on demo ([de5973e](https://github.com/standardnotes/app/commit/de5973e15f21fcaff0225834f1c09f295ad83368))
+* **web:** remove unused import ([9e15ea7](https://github.com/standardnotes/app/commit/9e15ea78f88e361d5152ea5fcf1b52444d59ab6e))
+
 # [3.145.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.144.5...@standardnotes/web@3.145.0) (2023-02-02)
 
 ### Features

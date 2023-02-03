@@ -26,8 +26,11 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
 
   const subscriptionState = viewControllerManager.subscriptionController
 
+  const isReadOnlySession = application.sessions.isCurrentSessionReadOnly()
+
   const isSubscriptionSharingFeatureAvailable =
-    application.features.getFeatureStatus(FeatureIdentifier.SubscriptionSharing) === FeatureStatus.Entitled
+    application.features.getFeatureStatus(FeatureIdentifier.SubscriptionSharing) === FeatureStatus.Entitled &&
+    !isReadOnlySession
 
   const closeInviteDialog = () => setIsInviteDialogOpen(false)
 

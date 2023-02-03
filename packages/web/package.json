@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.145.0",
+  "version": "3.146.0",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes.",
@@ -116,6 +116,7 @@
     "app/**/*.{js,ts,jsx,tsx,css,md}": "prettier --write"
   },
   "dependencies": {
-    "@lexical/headless": "^0.7.6"
+    "@lexical/headless": "^0.7.6",
+    "@simplewebauthn/browser": "^7.0.0"
   }
 }
