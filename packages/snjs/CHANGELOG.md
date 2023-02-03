@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.166.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.165.6...@standardnotes/snjs@2.166.0) (2023-02-03)
+
+### Features
+
+* **dev:** add u2f ui for managing devices and signing in ([#2182](https://github.com/standardnotes/app/issues/2182)) ([9414774](https://github.com/standardnotes/app/commit/9414774e89c5c21b0c2178652ded72033065e8d2))
+
 ## [2.165.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.165.5...@standardnotes/snjs@2.165.6) (2023-02-03)
 
 ### Bug Fixes
