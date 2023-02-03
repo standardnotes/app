@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "3.146.1",
+      "title": "[3.146.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.146.0...@standardnotes/web@3.146.1) (2023-02-03)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.146.0",
       "title": "[3.146.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.145.1...@standardnotes/web@3.146.0) (2023-02-03)",
       "date": null,
@@ -18,16 +29,9 @@
       "version": "3.145.1",
       "title": "[3.145.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.145.0...@standardnotes/web@3.145.1) (2023-02-03)",
       "date": null,
-      "body": "### Bug Fixes\n\n* **web:** disable subscription sharing on demo ([de5973e](https://github.com/standardnotes/app/commit/de5973e15f21fcaff0225834f1c09f295ad83368))\n* **web:** remove unused import ([9e15ea7](https://github.com/standardnotes/app/commit/9e15ea78f88e361d5152ea5fcf1b52444d59ab6e))",
+      "body": "",
       "parsed": {
-        "_": [
-          "web: disable subscription sharing on demo (de5973e)",
-          "web: remove unused import (9e15ea7)"
-        ],
-        "Bug Fixes": [
-          "web: disable subscription sharing on demo (de5973e)",
-          "web: remove unused import (9e15ea7)"
-        ]
+        "_": []
       }
     },
     {
