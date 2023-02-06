@@ -108,7 +108,11 @@ const MobileToolbarPlugin = () => {
       {
         name: 'Link',
         iconName: 'link',
-        onSelect: insertLink,
+        onSelect: () => {
+          editor.update(() => {
+            insertLink()
+          })
+        },
       },
       {
         name: 'Search',
