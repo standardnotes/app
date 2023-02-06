@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.147.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.146.2...@standardnotes/web@3.147.0) (2023-02-06)
+
+### Bug Fixes
+
+* Fixed issue where toggling a link from Super mobile toolbar didn't work ([cfc6022](https://github.com/standardnotes/app/commit/cfc6022fbb5a71c886c88bab499a79676129395d))
+
+### Features
+
+* Added search button to Super mobile toolbar ([9808262](https://github.com/standardnotes/app/commit/9808262e9e26a9ecd3069ff342f853db5cab06a8))
+
 ## [3.146.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.146.1...@standardnotes/web@3.146.2) (2023-02-03)
 
 **Note:** Version bump only for package @standardnotes/web
