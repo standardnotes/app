@@ -24,8 +24,11 @@ import { GetQuoteBlock } from '../Blocks/Quote'
 import { GetTableBlock } from '../Blocks/Table'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { classNames } from '@standardnotes/snjs'
+import { SUPER_TOGGLE_SEARCH } from '@standardnotes/ui-services'
+import { useApplication } from '@/Components/ApplicationProvider'
 
 const MobileToolbarPlugin = () => {
+  const application = useApplication()
   const [editor] = useLexicalComposerContext()
   const [modal, showModal] = useModal()
 
@@ -107,6 +110,13 @@ const MobileToolbarPlugin = () => {
         iconName: 'link',
         onSelect: insertLink,
       },
+      {
+        name: 'Search',
+        iconName: 'search',
+        onSelect: () => {
+          application.keyboardService.triggerCommand(SUPER_TOGGLE_SEARCH)
+        },
+      },
       GetParagraphBlock(editor),
       ...GetHeadingsBlocks(editor),
       ...GetIndentOutdentBlocks(editor),
@@ -125,7 +135,7 @@ const MobileToolbarPlugin = () => {
       GetCollapsibleBlock(editor),
       ...GetEmbedsBlocks(editor),
     ],
-    [editor, insertLink, showModal],
+    [application.keyboardService, editor, insertLink, showModal],
   )
 
   useEffect(() => {
