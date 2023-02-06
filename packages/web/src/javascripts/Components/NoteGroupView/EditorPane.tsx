@@ -23,7 +23,7 @@ const EditorPane = forwardRef(({ application, className, id }: Props, ref: Forwa
     <div
       id={id}
       ref={mergeRefs([ref, setElement])}
-      className={`flex h-full flex-grow flex-col pt-safe-top ${className}`}
+      className={`flex h-full flex-grow flex-col bg-default pt-safe-top ${className}`}
     >
       <NoteGroupView className={className} application={application} />
     </div>

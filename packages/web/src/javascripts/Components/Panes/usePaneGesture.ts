@@ -14,28 +14,6 @@ export const usePaneSwipeGesture = (
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   useEffect(() => {
-    const styleElement = document.createElement('style')
-    styleElement.innerHTML = `
-      .panning-pane::after {
-        content: '';
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        background: var(--sn-stylekit-background-color);
-        opacity: var(--pan-percent, 0);
-        z-index: var(--z-index-modal);
-      }
-    `
-    document.head.appendChild(styleElement)
-
-    return () => {
-      document.head.removeChild(styleElement)
-    }
-  }, [])
-
-  useEffect(() => {
     if (!element) {
       return
     }
@@ -60,7 +38,6 @@ export const usePaneSwipeGesture = (
 
       const x = event.detail.global.deltaX
       requestElementUpdate(x)
-      element.classList.add('panning-pane')
     }
 
     let ticking = false
@@ -84,7 +61,8 @@ export const usePaneSwipeGesture = (
           requestElementUpdate(0)
         }
 
-        element.classList.remove('panning-pane')
+        element.parentElement?.querySelector('.pane-swipe-overlay')?.remove()
+        element.parentElement?.style.removeProperty('--pan-percent')
       }
     }
 
@@ -94,9 +72,30 @@ export const usePaneSwipeGesture = (
           if (!element) {
             return
           }
+
+          let overlayElement: HTMLElement | null = element.parentElement!.querySelector('.pane-swipe-overlay')
+          if (!overlayElement) {
+            overlayElement = document.createElement('div')
+            overlayElement.className = 'pane-swipe-overlay'
+            overlayElement.style.position = 'fixed'
+            overlayElement.style.top = '0'
+            overlayElement.style.left = '0'
+            overlayElement.style.width = '100%'
+            overlayElement.style.height = '100%'
+            overlayElement.style.pointerEvents = 'none'
+            overlayElement.style.backgroundColor = '#000'
+            overlayElement.style.opacity = 'var(--pan-percent, 0)'
+            overlayElement.style.willChange = 'opacity'
+
+            element.before(overlayElement)
+          }
+
           const currentLeft = parseInt(element.style.left || '0')
-          element.style.left = `${direction === 'right' ? Math.max(x, 0) : Math.min(x, 0)}px`
-          element.style.setProperty('--pan-percent', `${Math.min(Math.abs(currentLeft / 200), 0.85)}`)
+          const newLeft = direction === 'right' ? Math.max(x, 0) : Math.min(x, 0)
+          element.style.left = `${newLeft}px`
+
+          const percent = Math.min(window.innerWidth / currentLeft / 10, 0.85)
+          element.parentElement!.style.setProperty('--pan-percent', `${percent}`)
 
           ticking = false
         })
