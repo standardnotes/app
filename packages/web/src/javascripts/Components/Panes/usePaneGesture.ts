@@ -94,7 +94,7 @@ export const usePaneSwipeGesture = (
           const newLeft = direction === 'right' ? Math.max(x, 0) : Math.min(x, 0)
           element.style.left = `${newLeft}px`
 
-          const percent = Math.min(window.innerWidth / currentLeft / 10, 0.85)
+          const percent = Math.min(window.innerWidth / currentLeft / 10, 0.45)
           element.parentElement!.style.setProperty('--pan-percent', `${percent}`)
 
           ticking = false
