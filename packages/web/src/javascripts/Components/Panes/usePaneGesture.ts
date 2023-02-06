@@ -23,7 +23,8 @@ export const usePaneSwipeGesture = (
         bottom: 0;
         left: 0;
         right: 0;
-        background: linear-gradient(to right, rgba(0, 0, 0, 0.1) 1%, rgba(0, 0, 0, 0) 90%);
+        background: rgba(200, 200, 200, var(--pan-percent, 0));
+        z-index: var(--z-index-editor-title-bar);
       }
     `
     document.head.appendChild(styleElement)
@@ -90,7 +91,9 @@ export const usePaneSwipeGesture = (
           if (!element) {
             return
           }
+          const currentLeft = parseInt(element.style.left || '0')
           element.style.left = `${direction === 'right' ? Math.max(x, 0) : Math.min(x, 0)}px`
+          element.style.setProperty('--pan-percent', `${Math.min(Math.abs(currentLeft / 200), 0.75)}`)
 
           ticking = false
         })
