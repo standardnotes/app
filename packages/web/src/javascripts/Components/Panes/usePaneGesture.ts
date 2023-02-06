@@ -1,6 +1,6 @@
 import { useStateRef } from '@/Hooks/useStateRef'
 import { useEffect, useState } from 'react'
-import { Direction, Pan, PointerListener } from 'contactjs'
+import { Direction, Pan, PointerListener, type GestureEventData } from 'contactjs'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 export const usePaneSwipeGesture = (
@@ -52,7 +52,8 @@ export const usePaneSwipeGesture = (
       supportedGestures: [panRecognizer],
     })
 
-    function onPan(event: any) {
+    function onPan(e: unknown) {
+      const event = e as CustomEvent<GestureEventData>
       if (!element) {
         return
       }
@@ -64,7 +65,8 @@ export const usePaneSwipeGesture = (
 
     let ticking = false
 
-    function onPanEnd(event: any) {
+    function onPanEnd(e: unknown) {
+      const event = e as CustomEvent<GestureEventData>
       if (ticking) {
         setTimeout(function () {
           onPanEnd(event)
