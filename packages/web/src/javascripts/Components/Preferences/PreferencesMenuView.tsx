@@ -7,7 +7,7 @@ import PreferencesMenuItem from './PreferencesComponents/MenuItem'
 import { PreferencesMenu } from './PreferencesMenu'
 import { PreferenceId } from '@standardnotes/ui-services'
 import { useApplication } from '../ApplicationProvider'
-import { classNames } from '@standardnotes/snjs'
+import { classNames, Environment } from '@standardnotes/snjs'
 import { isIOS } from '@/Utils'
 
 type Props = {
@@ -48,6 +48,9 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
 
     if (application.isNativeMobileWeb()) {
       application.mobileDevice().openUrl(link)
+      return
+    } else if (application.environment === Environment.Desktop) {
+      application.desktopDevice?.openUrl(link)
       return
     }
 
