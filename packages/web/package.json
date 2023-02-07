@@ -118,6 +118,6 @@
   "dependencies": {
     "@lexical/headless": "^0.7.7",
     "@simplewebauthn/browser": "^7.0.0",
-    "contactjs": "^2.1.5"
+    "contactjs": "2.1.5"
   }
 }

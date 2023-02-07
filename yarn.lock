@@ -5307,7 +5307,7 @@ __metadata:
     autoprefixer: ^10.4.13
     babel-loader: ^9.1.0
     circular-dependency-plugin: ^5.2.2
-    contactjs: ^2.1.5
+    contactjs: 2.1.5
     copy-webpack-plugin: ^11.0.0
     css-loader: "*"
     dayjs: ^1.11.7
@@ -9170,7 +9170,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"contactjs@npm:^2.1.5":
+"contactjs@npm:2.1.5":
   version: 2.1.5
   resolution: "contactjs@npm:2.1.5"
   checksum: 5be3d66835e5a78a16abe6cdbf0c2f4a44471086e313ef8550c6747026cca9e7ff5144fdaaf6b4307cb296baf0fd394ca63758354e58099f1fde3c6756a390c3
