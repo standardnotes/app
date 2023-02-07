@@ -11,9 +11,11 @@ import {
   $isElementNode,
   DOMConversionMap,
   EditorConfig,
+  ElementFormatType,
   ElementNode,
   LexicalEditor,
   LexicalNode,
+  NodeKey,
   RangeSelection,
   SerializedElementNode,
   Spread,
@@ -35,13 +37,22 @@ export class CollapsibleTitleNode extends ElementNode {
     return 'collapsible-title'
   }
 
+  constructor({ formatType, key }: { formatType?: ElementFormatType; key?: NodeKey }) {
+    super(key)
+    if (formatType) {
+      super.setFormat(formatType)
+    }
+  }
+
   static override clone(node: CollapsibleTitleNode): CollapsibleTitleNode {
-    return new CollapsibleTitleNode(node.__key)
+    return new CollapsibleTitleNode({ key: node.__key })
   }
 
   override createDOM(_config: EditorConfig, editor: LexicalEditor): HTMLElement {
     const dom = document.createElement('summary')
     dom.classList.add('Collapsible__title')
+    const format = this.getFormatType()
+    dom.style.textAlign = format
     dom.onclick = (event) => {
       event.preventDefault()
       event.stopPropagation()
@@ -63,8 +74,8 @@ export class CollapsibleTitleNode extends ElementNode {
     return {}
   }
 
-  static override importJSON(_serializedNode: SerializedCollapsibleTitleNode): CollapsibleTitleNode {
-    return $createCollapsibleTitleNode()
+  static override importJSON(serializedNode: SerializedCollapsibleTitleNode): CollapsibleTitleNode {
+    return $createCollapsibleTitleNode(serializedNode.format)
   }
 
   override exportJSON(): SerializedCollapsibleTitleNode {
@@ -109,8 +120,10 @@ export class CollapsibleTitleNode extends ElementNode {
   }
 }
 
-export function $createCollapsibleTitleNode(): CollapsibleTitleNode {
-  return new CollapsibleTitleNode()
+export function $createCollapsibleTitleNode(formatType?: ElementFormatType): CollapsibleTitleNode {
+  return new CollapsibleTitleNode({
+    formatType,
+  })
 }
 
 export function $isCollapsibleTitleNode(node: LexicalNode | null | undefined): node is CollapsibleTitleNode {
