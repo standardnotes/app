@@ -1,5 +1,5 @@
 import { useStateRef } from '@/Hooks/useStateRef'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Direction, Pan, PointerListener, type GestureEventData } from 'contactjs'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
@@ -8,6 +8,7 @@ export const usePaneSwipeGesture = (
   onSwipeEnd: (element: HTMLElement) => void,
   gesture: 'pan' | 'swipe' = 'pan',
 ) => {
+  const overlayElementRef = useRef<HTMLElement | null>(null)
   const [element, setElement] = useState<HTMLElement | null>(null)
 
   const onSwipeEndRef = useStateRef(onSwipeEnd)
@@ -61,8 +62,7 @@ export const usePaneSwipeGesture = (
           requestElementUpdate(0)
         }
 
-        element.parentElement?.querySelector('.pane-swipe-overlay')?.remove()
-        element.parentElement?.style.removeProperty('--pan-percent')
+        overlayElementRef.current?.remove()
       }
     }
 
@@ -73,10 +73,8 @@ export const usePaneSwipeGesture = (
             return
           }
 
-          let overlayElement: HTMLElement | null = element.parentElement!.querySelector('.pane-swipe-overlay')
-          if (!overlayElement) {
-            overlayElement = document.createElement('div')
-            overlayElement.className = 'pane-swipe-overlay'
+          if (!overlayElementRef.current) {
+            const overlayElement = document.createElement('div')
             overlayElement.style.position = 'fixed'
             overlayElement.style.top = '0'
             overlayElement.style.left = '0'
@@ -84,10 +82,11 @@ export const usePaneSwipeGesture = (
             overlayElement.style.height = '100%'
             overlayElement.style.pointerEvents = 'none'
             overlayElement.style.backgroundColor = '#000'
-            overlayElement.style.opacity = 'var(--pan-percent, 0)'
+            overlayElement.style.opacity = '0'
             overlayElement.style.willChange = 'opacity'
 
             element.before(overlayElement)
+            overlayElementRef.current = overlayElement
           }
 
           const currentLeft = parseInt(element.style.left || '0')
@@ -95,7 +94,10 @@ export const usePaneSwipeGesture = (
           element.style.left = `${newLeft}px`
 
           const percent = Math.min(window.innerWidth / currentLeft / 10, 0.45)
-          element.parentElement!.style.setProperty('--pan-percent', `${percent}`)
+          overlayElementRef.current.animate([{ opacity: percent }], {
+            duration: 0,
+            fill: 'forwards',
+          })
 
           ticking = false
         })
