@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.148.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.147.0...@standardnotes/web@3.148.0) (2023-02-07)
+
+### Bug Fixes
+
+* **desktop:** Fixed issue where some links on desktop would not correctly open in the browser ([f0d49f6](https://github.com/standardnotes/app/commit/f0d49f6b21316779367cc9fb344571331ebc58b0))
+
+### Features
+
+* Added swipe gestures for dismissing panes on mobile ([#2201](https://github.com/standardnotes/app/issues/2201)) ([1d052c3](https://github.com/standardnotes/app/commit/1d052c3dd11c4aac1884a7d80e491d13b1f0da7c))
+
 # [3.147.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.146.2...@standardnotes/web@3.147.0) (2023-02-06)
 
 ### Bug Fixes
