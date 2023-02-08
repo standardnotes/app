@@ -46,7 +46,7 @@ export const useLongPressEvent = (
     }
 
     elementRef.current.removeEventListener('pointerdown', createLongPressTimeout)
-    elementRef.current.addEventListener('pointermove', clearLongPressTimeout)
+    elementRef.current.removeEventListener('pointermove', clearLongPressTimeout)
     elementRef.current.removeEventListener('pointercancel', clearLongPressTimeout)
     elementRef.current.removeEventListener('pointerup', clearLongPressTimeout)
   }, [clearLongPressTimeout, createLongPressTimeout, elementRef])
