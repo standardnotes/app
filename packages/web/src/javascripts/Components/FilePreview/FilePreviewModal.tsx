@@ -82,9 +82,9 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
     return currentFile ? getFileIconComponent(getIconForFileType(currentFile.mimeType), 'w-6 h-6 flex-shrink-0') : null
   }, [currentFile])
 
-  const focusInputOnMount = useCallback((input: HTMLInputElement | null) => {
-    if (input) {
-      input.focus()
+  const focusElementOnMount = useCallback((element: HTMLElement | null) => {
+    if (element) {
+      element.focus()
     }
   }, [])
 
@@ -158,6 +158,7 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
         className="flex h-full w-full flex-col focus:shadow-none focus:outline-none"
         tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
         onKeyDown={keyDownHandler}
+        ref={focusElementOnMount}
       >
         <div className="min-h-6 hidden flex-shrink-0 flex-wrap items-center justify-between gap-2 border-0 border-b border-solid border-border px-4 py-3 focus:shadow-none md:flex">
           <div className="flex items-center">
@@ -180,7 +181,7 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
                     <Icon type="check" size="small" />
                   </button>,
                 ]}
-                ref={mergeRefs([renameInputRef, focusInputOnMount])}
+                ref={mergeRefs([renameInputRef, focusElementOnMount])}
               />
             ) : (
               <span className="ml-3 font-medium">{currentFile.name}</span>
