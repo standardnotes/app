@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.149.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.148.5...@standardnotes/web@3.149.0) (2023-02-09)
+
+### Bug Fixes
+
+* Fixed issue where keyboard navigation in file preview modal would not work until you clicked inside ([ae6bd4c](https://github.com/standardnotes/app/commit/ae6bd4c07f75cca4067bcc26be17a890d07073b1))
+
+### Features
+
+* Added button to allow collapsing the linked items container ([82b0926](https://github.com/standardnotes/app/commit/82b092673e92190c374197c3b1d0f353c102dac1))
+
 ## [3.148.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.148.4...@standardnotes/web@3.148.5) (2023-02-09)
 
 **Note:** Version bump only for package @standardnotes/web
