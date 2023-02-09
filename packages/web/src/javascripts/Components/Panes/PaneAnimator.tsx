@@ -43,9 +43,6 @@ export async function animatePaneExitTransitionOffscreenToTheRight(elementId: st
   const animation = element.animate(
     [
       {
-        transform: 'translateX(0)',
-      },
-      {
         transform: 'translateX(100%)',
       },
     ],

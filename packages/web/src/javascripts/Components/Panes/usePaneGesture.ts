@@ -89,11 +89,10 @@ export const usePaneSwipeGesture = (
             overlayElementRef.current = overlayElement
           }
 
-          const currentLeft = parseInt(element.style.left || '0')
           const newLeft = direction === 'right' ? Math.max(x, 0) : Math.min(x, 0)
-          element.style.left = `${newLeft}px`
+          element.animate([{ transform: `translate3d(${newLeft}px,0,0)` }], { duration: 0, fill: 'forwards' })
 
-          const percent = Math.min(window.innerWidth / currentLeft / 10, 0.45)
+          const percent = Math.min(window.innerWidth / newLeft / 10, 0.45)
           overlayElementRef.current.animate([{ opacity: percent }], {
             duration: 0,
             fill: 'forwards',
