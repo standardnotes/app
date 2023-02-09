@@ -116,7 +116,7 @@
     "app/**/*.{js,ts,jsx,tsx,css,md}": "prettier --write"
   },
   "dependencies": {
-    "@lexical/headless": "^0.7.7",
+    "@lexical/headless": "^0.8.0",
     "@simplewebauthn/browser": "^7.0.0",
     "contactjs": "2.1.5"
   }
