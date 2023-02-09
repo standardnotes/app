@@ -63,6 +63,7 @@ export const usePaneSwipeGesture = (
         }
 
         overlayElementRef.current?.remove()
+        overlayElementRef.current = null
       }
     }
 
