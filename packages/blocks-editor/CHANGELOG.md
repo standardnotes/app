@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.17.0](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.16.11...@standardnotes/blocks-editor@1.17.0) (2023-02-10)
+
+### Features
+
+* Added markdown horizontal rule syntax to Super notes ([033e73b](https://github.com/standardnotes/app/commit/033e73b18938620a4865aabe9650afd2d663ed75))
+
 ## [1.16.11](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.16.10...@standardnotes/blocks-editor@1.16.11) (2023-02-10)
 
 **Note:** Version bump only for package @standardnotes/blocks-editor
