@@ -62,8 +62,20 @@ export const usePaneSwipeGesture = (
           requestElementUpdate(0)
         }
 
-        overlayElementRef.current?.remove()
-        overlayElementRef.current = null
+        if (overlayElementRef.current) {
+          overlayElementRef.current
+            .animate([{ opacity: 0 }], {
+              duration: 5,
+              fill: 'forwards',
+            })
+            .finished.then(() => {
+              if (overlayElementRef.current) {
+                overlayElementRef.current.remove()
+                overlayElementRef.current = null
+              }
+            })
+            .catch(console.error)
+        }
       }
     }
 
