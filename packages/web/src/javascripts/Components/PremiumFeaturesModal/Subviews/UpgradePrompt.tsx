@@ -82,7 +82,7 @@ export const UpgradePrompt = ({
           className="no-border w-full cursor-pointer rounded bg-info py-2 font-bold text-info-contrast hover:brightness-125 focus:brightness-125"
           ref={ctaRef}
         >
-          {application.isNativeIOS() ? 'Start Free Trial' : 'Upgrade'}
+          Upgrade
         </button>
       </div>
     </>
