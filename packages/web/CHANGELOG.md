@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.149.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.149.3...@standardnotes/web@3.149.4) (2023-02-11)
+
+### Bug Fixes
+
+* **mobile:** fixes issue where app would not load on iOS 13 + 14 ([088804d](https://github.com/standardnotes/app/commit/088804dee1764ee18893d7f1b809075cb68b1f57))
+
 ## [3.149.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.149.2...@standardnotes/web@3.149.3) (2023-02-10)
 
 **Note:** Version bump only for package @standardnotes/web

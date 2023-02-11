@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.149.4",
+      "title": "[3.149.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.149.3...@standardnotes/web@3.149.4) (2023-02-11)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* **mobile:** fixes issue where app would not load on iOS 13 + 14 ([088804d](https://github.com/standardnotes/app/commit/088804dee1764ee18893d7f1b809075cb68b1f57))",
+      "parsed": {
+        "_": [
+          "mobile: fixes issue where app would not load on iOS 13 + 14 (088804d)"
+        ],
+        "Bug Fixes": [
+          "mobile: fixes issue where app would not load on iOS 13 + 14 (088804d)"
+        ]
+      }
+    },
+    {
       "version": "3.149.3",
       "title": "[3.149.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.149.2...@standardnotes/web@3.149.3) (2023-02-10)",
       "date": null,
