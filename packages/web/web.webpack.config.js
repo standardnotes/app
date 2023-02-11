@@ -66,9 +66,10 @@ module.exports = (env) => {
         {
           test: /\.(js|tsx?)$/,
           /**
-           * @standardnotes/common uses class properties which we need to run through our babel rules.
+           * Exclude all node_modules, except for those we need to run through our babel rules because
+           * they may contain class properties and other ES6+ syntax.
            */
-          exclude: /node_modules\/(?!(@standardnotes\/common))/,
+          exclude: /node_modules\/(?!(@standardnotes\/common|@standardnotes\/domain-core|contactjs))/,
           use: [
             'babel-loader',
             {
