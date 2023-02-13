@@ -5,7 +5,7 @@ import ApplicationView from '@/Components/ApplicationView/ApplicationView'
 import { WebOrDesktopDevice } from '@/Application/Device/WebOrDesktopDevice'
 import { ApplicationGroupEvent, ApplicationGroupEventData, DeinitSource } from '@standardnotes/snjs'
 import { DialogContent, DialogOverlay } from '@reach/dialog'
-import { isDesktopApplication } from '@/Utils'
+import { getPlatformString, isDesktopApplication } from '@/Utils'
 import DeallocateHandler from '../DeallocateHandler/DeallocateHandler'
 
 type Props = {
@@ -59,6 +59,11 @@ class ApplicationGroupView extends Component<Props, State> {
     this.state = {}
 
     this.group.initialize().catch(console.error)
+
+    const platformString = getPlatformString()
+    if (!document.body.classList.contains(platformString)) {
+      document.body.classList.add(platformString)
+    }
   }
 
   deinit() {
