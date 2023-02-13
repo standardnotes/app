@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.149.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.149.4...@standardnotes/web@3.149.5) (2023-02-13)
+
+### Bug Fixes
+
+* Fixed issue where scrollbar theming would not be correctly applied in some sections ([74384ba](https://github.com/standardnotes/app/commit/74384ba322686a7a0dc42077b8f5459ca6270afc))
+
 ## [3.149.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.149.3...@standardnotes/web@3.149.4) (2023-02-11)
 
 ### Bug Fixes
