@@ -63,7 +63,7 @@ export class PendingImageNode extends DecoratorBlockNode {
   }
 
   decorate(): JSX.Element {
-    return <PendingImageComponent src={this.__src} />
+    return <PendingImageComponent node={this} src={this.__src} />
   }
 }
 
