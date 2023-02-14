@@ -27,7 +27,7 @@ const PendingImageComponent = ({ src, node }: { src: string; node: PendingImageN
 
         const filesController = application.getViewControllerManager().filesController
 
-        const uploadedFile = await filesController.uploadNewFile(file)
+        const uploadedFile = await filesController.uploadNewFile(file, false)
 
         if (!uploadedFile) {
           return
