@@ -52,7 +52,7 @@
     "prettier": "^2.7.1",
     "prettier-plugin-organize-imports": "^3.2.0",
     "react": "18.2.0",
-    "react-native": "0.70.6",
+    "react-native": "0.71.3",
     "react-native-file-viewer": "^2.1.5",
     "react-native-fingerprint-scanner": "standardnotes/react-native-fingerprint-scanner#b55d1c0ca627a87a130f758603f12911fbac200f",
     "react-native-flag-secure-android": "standardnotes/react-native-flag-secure-android#cb08e74583c22a5d912842459b35ebbbb4bcd852",
