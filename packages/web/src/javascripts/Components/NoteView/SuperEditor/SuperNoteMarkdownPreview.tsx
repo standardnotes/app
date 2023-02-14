@@ -3,10 +3,9 @@ import { FunctionComponent, useCallback, useMemo, useState } from 'react'
 import { BlocksEditor, BlocksEditorComposer } from '@standardnotes/blocks-editor'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import MarkdownPreviewPlugin from './Plugins/MarkdownPreviewPlugin/MarkdownPreviewPlugin'
-import { FileNode } from './Plugins/EncryptedFilePlugin/Nodes/FileNode'
-import { BubbleNode } from './Plugins/ItemBubblePlugin/Nodes/BubbleNode'
 import { copyTextToClipboard } from '../../../Utils/copyTextToClipboard'
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
+import { SuperEditorNodes } from './SuperEditorNodes'
 
 type Props = {
   note: SNNote
@@ -45,7 +44,7 @@ export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ note, close
     <Modal title="Markdown Preview" close={closeDialog} actions={modalActions}>
       <div className="relative w-full px-4 py-4">
         <ErrorBoundary>
-          <BlocksEditorComposer readonly initialValue={note.text} nodes={[FileNode, BubbleNode]}>
+          <BlocksEditorComposer readonly initialValue={note.text} nodes={SuperEditorNodes}>
             <BlocksEditor
               readonly
               className="relative resize-none text-base focus:shadow-none focus:outline-none"

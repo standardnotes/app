@@ -7,8 +7,7 @@ import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import { BlocksEditorComposer, BlocksEditor } from '@standardnotes/blocks-editor'
-import { FileNode } from '../NoteView/SuperEditor/Plugins/EncryptedFilePlugin/Nodes/FileNode'
-import { BubbleNode } from '../NoteView/SuperEditor/Plugins/ItemBubblePlugin/Nodes/BubbleNode'
+import { SuperEditorNodes } from '../NoteView/SuperEditor/SuperEditorNodes'
 
 const ABSOLUTE_CENTER_CLASSNAME = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
 
@@ -68,7 +67,7 @@ const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> =
             <BlocksEditorComposer
               readonly
               initialValue={selectedRevision?.payload.content.text}
-              nodes={[FileNode, BubbleNode]}
+              nodes={SuperEditorNodes}
             >
               <BlocksEditor
                 readonly
