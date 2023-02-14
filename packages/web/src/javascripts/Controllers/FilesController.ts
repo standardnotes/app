@@ -350,7 +350,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
   public async uploadNewFile(
     fileOrHandle: File | FileSystemFileHandle,
-    showProgressToast = true,
+    showToast = true,
   ): Promise<FileItem | undefined> {
     let toastId: string | undefined
 
@@ -384,7 +384,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
       const initialProgress = operation.getProgress().percentComplete
 
-      if (showProgressToast) {
+      if (showToast) {
         toastId = addToast({
           type: ToastType.Progress,
           message: `Uploading file "${fileToUpload.name}" (${initialProgress}%)`,
@@ -424,23 +424,25 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
       if (toastId) {
         dismissToast(toastId)
       }
-      addToast({
-        type: ToastType.Success,
-        message: `Uploaded file "${uploadedFile.name}"`,
-        actions: [
-          {
-            label: 'Open',
-            handler: (toastId) => {
-              void this.handleFileAction({
-                type: FileItemActionType.PreviewFile,
-                payload: { file: uploadedFile },
-              })
-              dismissToast(toastId)
+      if (showToast) {
+        addToast({
+          type: ToastType.Success,
+          message: `Uploaded file "${uploadedFile.name}"`,
+          actions: [
+            {
+              label: 'Open',
+              handler: (toastId) => {
+                void this.handleFileAction({
+                  type: FileItemActionType.PreviewFile,
+                  payload: { file: uploadedFile },
+                })
+                dismissToast(toastId)
+              },
             },
-          },
-        ],
-        autoClose: true,
-      })
+          ],
+          autoClose: true,
+        })
+      }
 
       return uploadedFile
     } catch (error) {
