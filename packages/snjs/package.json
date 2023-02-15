@@ -37,7 +37,7 @@
     "@babel/preset-env": "*",
     "@standardnotes/api": "workspace:*",
     "@standardnotes/common": "^1.46.4",
-    "@standardnotes/domain-core": "^1.11.1",
+    "@standardnotes/domain-core": "^1.11.3",
     "@standardnotes/domain-events": "^2.106.0",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/features": "workspace:*",

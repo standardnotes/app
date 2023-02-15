@@ -4387,7 +4387,7 @@ __metadata:
   resolution: "@standardnotes/api@workspace:packages/api"
   dependencies:
     "@standardnotes/common": ^1.46.4
-    "@standardnotes/domain-core": ^1.11.1
+    "@standardnotes/domain-core": ^1.11.3
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
@@ -4600,14 +4600,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/domain-core@npm:^1.11.1":
-  version: 1.11.1
-  resolution: "@standardnotes/domain-core@npm:1.11.1"
+"@standardnotes/domain-core@npm:^1.11.3":
+  version: 1.11.3
+  resolution: "@standardnotes/domain-core@npm:1.11.3"
   dependencies:
-    reflect-metadata: ^0.1.13
-    shallow-equal-object: ^1.1.1
     uuid: ^9.0.0
-  checksum: 98af016a83bab8a60001bea9aa1c13607b2ecfff72bb901d709ac6b3d2c3d7f33e5e1289158c03d2a91ad5aa5afc586bfcc3efa3e0dda776ecddc10f3eb4eff9
+  checksum: a8591ed17fa6c862a65fcb33bdd10eaa9cc711f0230b213e598dc60687db045af7705ea319122b23f604ba90cd4b2b60e75bb13aeb06ac0b09d92b884b7e64fc
   languageName: node
   linkType: hard
 
@@ -4677,7 +4675,7 @@ __metadata:
   resolution: "@standardnotes/features@workspace:packages/features"
   dependencies:
     "@standardnotes/common": ^1.46.4
-    "@standardnotes/domain-core": ^1.11.1
+    "@standardnotes/domain-core": ^1.11.3
     "@standardnotes/security": ^1.7.5
     "@types/jest": ^29.2.3
     "@typescript-eslint/eslint-plugin": "*"
@@ -4987,7 +4985,7 @@ __metadata:
   dependencies:
     "@standardnotes/api": "workspace:^"
     "@standardnotes/common": ^1.46.4
-    "@standardnotes/domain-core": ^1.11.1
+    "@standardnotes/domain-core": ^1.11.3
     "@standardnotes/encryption": "workspace:^"
     "@standardnotes/files": "workspace:^"
     "@standardnotes/models": "workspace:^"
@@ -5084,7 +5082,7 @@ __metadata:
     "@babel/preset-env": "*"
     "@standardnotes/api": "workspace:*"
     "@standardnotes/common": ^1.46.4
-    "@standardnotes/domain-core": ^1.11.1
+    "@standardnotes/domain-core": ^1.11.3
     "@standardnotes/domain-events": ^2.106.0
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/features": "workspace:*"
@@ -20445,13 +20443,6 @@ __metadata:
   dependencies:
     kind-of: ^6.0.2
   checksum: 39b3dd9630a774aba288a680e7d2901f5c0eae7b8387fc5c8ea559918b29b3da144b7bdb990d7ccd9e11be05508ac9e459ce51d01fd65e583282f6ffafcba2e7
-  languageName: node
-  linkType: hard
-
-"shallow-equal-object@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "shallow-equal-object@npm:1.1.1"
-  checksum: e925aa4511bdf246a10577c983b9c540ea3ea443dbc8f2f336fd398c4ddee682389f19a9f0c2c9e7a99ab62baff5f2f716fbe108729454ff7b9f787d09743cc9
   languageName: node
   linkType: hard
 
