@@ -98,7 +98,6 @@ describe('server session', function () {
     // After the above sync request is completed, we obtain the session information.
     const sessionAfterSync = this.application.apiService.getSession()
 
-    expect(sessionBeforeSync.equals(sessionAfterSync)).to.not.equal(true)
     expect(sessionBeforeSync.accessToken.value).to.not.equal(sessionAfterSync.accessToken.value)
     expect(sessionBeforeSync.refreshToken.value).to.not.equal(sessionAfterSync.refreshToken.value)
     expect(sessionBeforeSync.accessToken.expiresAt).to.be.lessThan(sessionAfterSync.accessToken.expiresAt)

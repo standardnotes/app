@@ -37,7 +37,7 @@
   },
   "dependencies": {
     "@standardnotes/common": "^1.46.4",
-    "@standardnotes/domain-core": "^1.11.1",
+    "@standardnotes/domain-core": "^1.11.3",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
