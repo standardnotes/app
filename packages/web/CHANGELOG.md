@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.149.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.149.7...@standardnotes/web@3.149.8) (2023-02-16)
+
+### Bug Fixes
+
+* Fixes issue where pasting in a new Super note would not save it ([91a8023](https://github.com/standardnotes/app/commit/91a8023fa480adbf9c1e99f2af922facf1fb8d9e))
+
 ## [3.149.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.149.6...@standardnotes/web@3.149.7) (2023-02-15)
 
 **Note:** Version bump only for package @standardnotes/web

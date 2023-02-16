@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.17.2](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.17.1...@standardnotes/blocks-editor@1.17.2) (2023-02-16)
+
+### Bug Fixes
+
+* Fixes issue where pasting in a new Super note would not save it ([91a8023](https://github.com/standardnotes/app/commit/91a8023fa480adbf9c1e99f2af922facf1fb8d9e))
+
 ## [1.17.1](https://github.com/standardnotes/app/compare/@standardnotes/blocks-editor@1.17.0...@standardnotes/blocks-editor@1.17.1) (2023-02-13)
 
 **Note:** Version bump only for package @standardnotes/blocks-editor
