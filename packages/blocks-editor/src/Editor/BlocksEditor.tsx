@@ -58,9 +58,7 @@ export const BlocksEditor: FunctionComponent<BlocksEditorProps> = ({
         handleEditorChange(editorState, previewLength, onChange)
       })
     },
-    // Ignoring 'ignoreFirstChange' and 'previewLength'
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [onChange, didIgnoreFirstChange],
+    [ignoreFirstChange, didIgnoreFirstChange, previewLength, onChange],
   )
 
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null)

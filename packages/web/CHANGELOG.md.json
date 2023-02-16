@@ -1,6 +1,31 @@
 {
   "versions": [
     {
+      "version": "3.149.8",
+      "title": "[3.149.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.149.7...@standardnotes/web@3.149.8) (2023-02-16)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixes issue where pasting in a new Super note would not save it ([91a8023](https://github.com/standardnotes/app/commit/91a8023fa480adbf9c1e99f2af922facf1fb8d9e))",
+      "parsed": {
+        "_": [
+          "Fixes issue where pasting in a new Super note would not save it (91a8023)"
+        ],
+        "Bug Fixes": [
+          "Fixes issue where pasting in a new Super note would not save it (91a8023)"
+        ]
+      }
+    },
+    {
+      "version": "3.149.7",
+      "title": "[3.149.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.149.6...@standardnotes/web@3.149.7) (2023-02-15)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.149.6",
       "title": "[3.149.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.149.5...@standardnotes/web@3.149.6) (2023-02-13)",
       "date": null,
