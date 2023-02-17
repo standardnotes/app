@@ -10,7 +10,7 @@ import Menu from '../Menu/Menu'
 import MenuItem from '../Menu/MenuItem'
 import { EditorMenuGroup } from '../NotesOptions/EditorMenuGroup'
 import { EditorMenuItem } from '../NotesOptions/EditorMenuItem'
-import { SuperNoteImporter } from '../NoteView/SuperEditor/SuperNoteImporter'
+import { SuperNoteImporter } from '../SuperEditor/SuperNoteImporter'
 import { Pill } from '../Preferences/PreferencesComponents/Content'
 import ModalOverlay from '../Modal/ModalOverlay'
 

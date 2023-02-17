@@ -40,7 +40,6 @@
     "@reach/visually-hidden": "^0.18.0",
     "@standardnotes/authenticator": "^2.3.9",
     "@standardnotes/autobiography-theme": "^1.2.7",
-    "@standardnotes/blocks-editor": "workspace:*",
     "@standardnotes/bold-editor": "^1.6.4",
     "@standardnotes/classic-code-editor": "^1.5.7",
     "@standardnotes/dynamic-theme": "^1.2.8",

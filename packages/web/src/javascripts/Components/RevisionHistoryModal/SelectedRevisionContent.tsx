@@ -6,9 +6,8 @@ import ComponentView from '@/Components/ComponentView/ComponentView'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { NoteHistoryController } from '@/Controllers/NoteHistory/NoteHistoryController'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
-import { BlocksEditorComposer, BlocksEditor } from '@standardnotes/blocks-editor'
-import { FileNode } from '../NoteView/SuperEditor/Plugins/EncryptedFilePlugin/Nodes/FileNode'
-import { BubbleNode } from '../NoteView/SuperEditor/Plugins/ItemBubblePlugin/Nodes/BubbleNode'
+import { BlocksEditor } from '../SuperEditor/BlocksEditor'
+import { BlocksEditorComposer } from '../SuperEditor/BlocksEditorComposer'
 
 const ABSOLUTE_CENTER_CLASSNAME = 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
 
@@ -64,15 +63,11 @@ const SelectedRevisionContent: FunctionComponent<SelectedRevisionContentProps> =
         </div>
       ) : note?.noteType === NoteType.Super ? (
         <ErrorBoundary>
-          <div className="blocks-editor w-full flex-grow overflow-hidden overflow-y-auto p-4">
-            <BlocksEditorComposer
-              readonly
-              initialValue={selectedRevision?.payload.content.text}
-              nodes={[FileNode, BubbleNode]}
-            >
+          <div className="w-full flex-grow overflow-hidden overflow-y-auto">
+            <BlocksEditorComposer readonly initialValue={selectedRevision?.payload.content.text}>
               <BlocksEditor
                 readonly
-                className="relative resize-none text-base focus:shadow-none focus:outline-none"
+                className="blocks-editor relative h-full resize-none p-4 text-base focus:shadow-none focus:outline-none"
                 spellcheck={note.spellcheck}
               ></BlocksEditor>
             </BlocksEditorComposer>
