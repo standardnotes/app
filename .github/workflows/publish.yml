@@ -49,22 +49,21 @@ jobs:
       - name: Test
         run: yarn test
 
-  E2E Test Suite:
-    if: "${{ contains(github.event.head_commit.message, 'skip e2e') == false && contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
-    needs: Build
-    steps:
       - name: Login to Docker Hub
+        if: "${{ contains(github.event.head_commit.message, 'skip e2e') == false }}"
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Publish SNJS Docker image for E2E testing
+        if: "${{ contains(github.event.head_commit.message, 'skip e2e') == false }}"
         run: |
           yarn docker build @standardnotes/snjs -t standardnotes/snjs:${{ github.sha }}
           docker push standardnotes/snjs:${{ github.sha }}
 
       - name: Run E2E test suite
+        if: "${{ contains(github.event.head_commit.message, 'skip e2e') == false }}"
         uses: convictional/trigger-workflow-and-wait@master
         with:
           owner: standardnotes
@@ -77,10 +76,6 @@ jobs:
           trigger_workflow: true
           wait_workflow: true
 
-  Version & Publish:
-    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
-    needs: [Build, E2E Test Suite]
-    steps:
       - name: Bump version
         run: yarn release:prod
 
@@ -94,4 +89,3 @@ jobs:
         run: |
           docker tag standardnotes/snjs:${{ github.sha }} standardnotes/snjs:latest
           docker push standardnotes/snjs:latest
-
