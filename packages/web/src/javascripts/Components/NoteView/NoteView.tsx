@@ -27,7 +27,7 @@ import {
 } from '@standardnotes/snjs'
 import { confirmDialog, DELETE_NOTE_KEYBOARD_COMMAND, KeyboardKey } from '@standardnotes/ui-services'
 import { ChangeEventHandler, createRef, KeyboardEventHandler, RefObject } from 'react'
-import { SuperEditor } from './SuperEditor/SuperEditor'
+import { SuperEditor } from '../SuperEditor/SuperEditor'
 import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 import LinkedItemsButton from '../LinkedItems/LinkedItemsButton'
@@ -41,7 +41,7 @@ import {
   transactionForAssociateComponentWithCurrentNote,
   transactionForDisassociateComponentWithCurrentNote,
 } from './TransactionFunctions'
-import { SuperEditorContentId } from '@standardnotes/blocks-editor'
+import { SuperEditorContentId } from '../SuperEditor/Constants'
 import { NoteViewController } from './Controller/NoteViewController'
 import { PlainEditor, PlainEditorInterface } from './PlainEditor/PlainEditor'
 
