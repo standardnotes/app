@@ -78,7 +78,7 @@ jobs:
           trigger_workflow: true
           wait_workflow: true
 
-  Version & Publish:
+  version-publish:
     if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     needs: [Build, e2e-test-suite]
     runs-on: ubuntu-latest
