@@ -52,6 +52,7 @@ jobs:
   E2E Test Suite:
     if: "${{ contains(github.event.head_commit.message, 'skip e2e') == false && contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     needs: Build
+    runs-on: ubuntu-latest
     steps:
       - name: Login to Docker Hub
         uses: docker/login-action@v2
@@ -80,6 +81,7 @@ jobs:
   Version & Publish:
     if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     needs: [Build, E2E Test Suite]
+    runs-on: ubuntu-latest
     steps:
       - name: Bump version
         run: yarn release:prod
