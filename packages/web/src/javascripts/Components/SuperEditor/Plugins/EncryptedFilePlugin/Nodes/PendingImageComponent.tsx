@@ -5,7 +5,7 @@ import { useEffect } from 'react'
 import { $createFileNode } from './FileUtils'
 import { PendingImageNode } from './PendingImageNode'
 
-const CORSProxyLink = 'http://localhost:8080'
+const CORSProxyLink = 'http://localhost:1337'
 
 const PendingImageComponent = ({ src, node }: { src: string; node: PendingImageNode }) => {
   const application = useApplication()

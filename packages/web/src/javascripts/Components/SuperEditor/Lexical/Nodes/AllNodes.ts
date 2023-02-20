@@ -14,6 +14,7 @@ import { CollapsibleContentNode } from '../../Plugins/CollapsiblePlugin/Collapsi
 import { CollapsibleTitleNode } from '../../Plugins/CollapsiblePlugin/CollapsibleTitleNode'
 import { FileNode } from '../../Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import { BubbleNode } from '../../Plugins/ItemBubblePlugin/Nodes/BubbleNode'
+import { PendingImageNode } from '../../Plugins/EncryptedFilePlugin/Nodes/PendingImageNode'
 
 export const BlockEditorNodes = [
   AutoLinkNode,
@@ -38,4 +39,5 @@ export const BlockEditorNodes = [
   YouTubeNode,
   FileNode,
   BubbleNode,
+  PendingImageNode,
 ]
