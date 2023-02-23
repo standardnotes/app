@@ -83,7 +83,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.3.1",
     "jest-environment-jsdom": "^29.3.1",
-    "lexical": "0.8.0",
+    "lexical": "0.8.1",
     "lint-staged": ">=13",
     "mini-css-extract-plugin": "^2.7.2",
     "minimatch": "^5.1.1",
