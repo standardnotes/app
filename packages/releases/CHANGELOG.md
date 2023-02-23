@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.171](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.4.170...@standardnotes/releases@1.4.171) (2023-02-23)
+
+**Note:** Version bump only for package @standardnotes/releases
+
 ## [1.4.170](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.4.169...@standardnotes/releases@1.4.170) (2023-02-23)
 
 **Note:** Version bump only for package @standardnotes/releases
