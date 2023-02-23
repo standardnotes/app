@@ -51,7 +51,7 @@ const UnencryptedImageComponent = ({ src, node }: { src: string; node: Unencrypt
   const canShowSaveButton = application.isNativeMobileWeb() || isDesktopApplication()
 
   return (
-    <div className="relative flex min-h-[2rem]">
+    <div className="relative flex min-h-[2rem] flex-col items-center gap-2.5">
       <img
         src={src}
         onLoad={() => {
@@ -61,7 +61,7 @@ const UnencryptedImageComponent = ({ src, node }: { src: string; node: Unencrypt
       {didImageLoad && canShowSaveButton && (
         <button
           className={classNames(
-            'absolute bottom-4 right-4 flex items-center gap-2.5 rounded border border-border bg-default px-2.5 py-1.5',
+            'flex items-center gap-2.5 rounded border border-border bg-default px-2.5 py-1.5',
             !isSaving && 'hover:bg-info hover:text-info-contrast',
           )}
           onClick={fetchAndUploadImage}
