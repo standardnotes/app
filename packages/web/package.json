@@ -28,7 +28,7 @@
     "@babel/plugin-transform-react-jsx": "^7.19.0",
     "@babel/preset-env": "*",
     "@babel/preset-typescript": "^7.18.6",
-    "@lexical/react": "0.8.0",
+    "@lexical/react": "0.8.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@reach/alert": "^0.18.0",
     "@reach/alert-dialog": "^0.18.0",
