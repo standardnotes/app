@@ -1,5 +1,5 @@
 import { DecoratorBlockNode, SerializedDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
-import { DOMConversionMap, Spread } from 'lexical'
+import { DOMConversionMap, DOMExportOutput, Spread } from 'lexical'
 import UnencryptedImageComponent from './UnencryptedImageComponent'
 
 type SerializedUnencryptedImageNode = Spread<
@@ -60,6 +60,12 @@ export class UnencryptedImageNode extends DecoratorBlockNode {
         }
       },
     }
+  }
+
+  exportDOM(): DOMExportOutput {
+    const element = document.createElement('img')
+    element.setAttribute('src', this.__src)
+    return { element }
   }
 
   decorate(): JSX.Element {
