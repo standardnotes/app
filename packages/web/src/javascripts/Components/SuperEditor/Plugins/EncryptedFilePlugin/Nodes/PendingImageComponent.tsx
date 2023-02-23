@@ -5,8 +5,6 @@ import { useEffect } from 'react'
 import { $createFileNode } from './FileUtils'
 import { PendingImageNode } from './PendingImageNode'
 
-const CORSProxyLink = 'http://localhost:1337'
-
 const PendingImageComponent = ({ src, node }: { src: string; node: PendingImageNode }) => {
   const application = useApplication()
   const [editor] = useLexicalComposerContext()
@@ -16,7 +14,7 @@ const PendingImageComponent = ({ src, node }: { src: string; node: PendingImageN
 
     const fetchImage = async () => {
       try {
-        const response = await fetch(`${CORSProxyLink}/${src}`, { signal: abortController.signal })
+        const response = await fetch(src, { signal: abortController.signal })
 
         if (!response.ok) {
           return
