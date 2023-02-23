@@ -27,7 +27,7 @@ const UnencryptedImageComponent = ({ src, node }: { src: string; node: Unencrypt
       const blob = await response.blob()
       const file = new File([blob], src, { type: blob.type })
 
-      const filesController = application.getViewControllerManager().filesController
+      const { filesController, linkingController } = application.getViewControllerManager()
 
       const uploadedFile = await filesController.uploadNewFile(file, false)
 
@@ -39,6 +39,8 @@ const UnencryptedImageComponent = ({ src, node }: { src: string; node: Unencrypt
         const fileNode = $createFileNode(uploadedFile.uuid)
         node.replace(fileNode)
       })
+
+      void linkingController.linkItemToSelectedItem(uploadedFile)
     } catch (error) {
       console.error(error)
     } finally {
