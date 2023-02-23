@@ -14,7 +14,7 @@ import { CollapsibleContentNode } from '../../Plugins/CollapsiblePlugin/Collapsi
 import { CollapsibleTitleNode } from '../../Plugins/CollapsiblePlugin/CollapsibleTitleNode'
 import { FileNode } from '../../Plugins/EncryptedFilePlugin/Nodes/FileNode'
 import { BubbleNode } from '../../Plugins/ItemBubblePlugin/Nodes/BubbleNode'
-import { UnencryptedImageNode } from '../../Plugins/UnencryptedImagePlugin/UnencryptedImageNode'
+import { RemoteImageNode } from '../../Plugins/RemoteImagePlugin/RemoteImageNode'
 
 export const BlockEditorNodes = [
   AutoLinkNode,
@@ -39,5 +39,5 @@ export const BlockEditorNodes = [
   YouTubeNode,
   FileNode,
   BubbleNode,
-  UnencryptedImageNode,
+  RemoteImageNode,
 ]

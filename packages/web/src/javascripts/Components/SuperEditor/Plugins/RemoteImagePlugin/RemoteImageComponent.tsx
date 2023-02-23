@@ -6,9 +6,9 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { classNames } from '@standardnotes/snjs'
 import { useCallback, useState } from 'react'
 import { $createFileNode } from '../EncryptedFilePlugin/Nodes/FileUtils'
-import { UnencryptedImageNode } from './UnencryptedImageNode'
+import { RemoteImageNode } from './RemoteImageNode'
 
-const UnencryptedImageComponent = ({ src, node }: { src: string; node: UnencryptedImageNode }) => {
+const RemoteImageComponent = ({ src, node }: { src: string; node: RemoteImageNode }) => {
   const application = useApplication()
   const [editor] = useLexicalComposerContext()
 
@@ -84,4 +84,4 @@ const UnencryptedImageComponent = ({ src, node }: { src: string; node: Unencrypt
   )
 }
 
-export default UnencryptedImageComponent
+export default RemoteImageComponent

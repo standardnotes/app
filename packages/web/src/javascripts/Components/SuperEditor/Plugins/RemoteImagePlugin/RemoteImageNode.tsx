@@ -1,8 +1,8 @@
 import { DecoratorBlockNode, SerializedDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
 import { DOMConversionMap, DOMExportOutput, Spread } from 'lexical'
-import UnencryptedImageComponent from './UnencryptedImageComponent'
+import RemoteImageComponent from './RemoteImageComponent'
 
-type SerializedUnencryptedImageNode = Spread<
+type SerializedRemoteImageNode = Spread<
   {
     version: 1
     type: 'unencrypted-image'
@@ -11,7 +11,7 @@ type SerializedUnencryptedImageNode = Spread<
   SerializedDecoratorBlockNode
 >
 
-export class UnencryptedImageNode extends DecoratorBlockNode {
+export class RemoteImageNode extends DecoratorBlockNode {
   __src: string
 
   static getType(): string {
@@ -23,16 +23,16 @@ export class UnencryptedImageNode extends DecoratorBlockNode {
     this.__src = src
   }
 
-  static clone(node: UnencryptedImageNode): UnencryptedImageNode {
-    return new UnencryptedImageNode(node.__src)
+  static clone(node: RemoteImageNode): RemoteImageNode {
+    return new RemoteImageNode(node.__src)
   }
 
-  static importJSON(serializedNode: SerializedUnencryptedImageNode): UnencryptedImageNode {
-    const node = $createUnencryptedImageNode(serializedNode.src)
+  static importJSON(serializedNode: SerializedRemoteImageNode): RemoteImageNode {
+    const node = $createRemoteImageNode(serializedNode.src)
     return node
   }
 
-  exportJSON(): SerializedUnencryptedImageNode {
+  exportJSON(): SerializedRemoteImageNode {
     return {
       ...super.exportJSON(),
       src: this.__src,
@@ -53,7 +53,7 @@ export class UnencryptedImageNode extends DecoratorBlockNode {
               return null
             }
             return {
-              node: $createUnencryptedImageNode(domNode.currentSrc || domNode.src),
+              node: $createRemoteImageNode(domNode.currentSrc || domNode.src),
             }
           },
           priority: 2,
@@ -69,10 +69,10 @@ export class UnencryptedImageNode extends DecoratorBlockNode {
   }
 
   decorate(): JSX.Element {
-    return <UnencryptedImageComponent node={this} src={this.__src} />
+    return <RemoteImageComponent node={this} src={this.__src} />
   }
 }
 
-export function $createUnencryptedImageNode(src: string): UnencryptedImageNode {
-  return new UnencryptedImageNode(src)
+export function $createRemoteImageNode(src: string): RemoteImageNode {
+  return new RemoteImageNode(src)
 }
