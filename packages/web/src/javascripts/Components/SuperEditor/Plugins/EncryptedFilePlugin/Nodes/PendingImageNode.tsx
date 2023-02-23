@@ -1,4 +1,5 @@
 import { DecoratorBlockNode, SerializedDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
+import { Platform } from '@standardnotes/snjs'
 import { DOMConversionMap, Spread } from 'lexical'
 import PendingImageComponent from './PendingImageComponent'
 
@@ -45,6 +46,13 @@ export class PendingImageNode extends DecoratorBlockNode {
     return {
       img: (domNode: HTMLDivElement) => {
         if (domNode.tagName !== 'IMG') {
+          return null
+        }
+        if (
+          window.platform === Platform.LinuxWeb ||
+          window.platform === Platform.WindowsWeb ||
+          window.platform === Platform.MacWeb
+        ) {
           return null
         }
         return {
