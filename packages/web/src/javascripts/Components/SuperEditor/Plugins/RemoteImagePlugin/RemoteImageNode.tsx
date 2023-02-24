@@ -1,5 +1,5 @@
 import { DecoratorBlockNode, SerializedDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
-import { DOMConversionMap, DOMExportOutput, Spread } from 'lexical'
+import { DOMConversionMap, DOMExportOutput, LexicalNode, Spread } from 'lexical'
 import RemoteImageComponent from './RemoteImageComponent'
 
 type SerializedRemoteImageNode = Spread<
@@ -71,6 +71,10 @@ export class RemoteImageNode extends DecoratorBlockNode {
   decorate(): JSX.Element {
     return <RemoteImageComponent node={this} src={this.__src} />
   }
+}
+
+export function $isRemoteImageNode(node: RemoteImageNode | LexicalNode | null | undefined): node is RemoteImageNode {
+  return node instanceof RemoteImageNode
 }
 
 export function $createRemoteImageNode(src: string): RemoteImageNode {
