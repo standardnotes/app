@@ -25,6 +25,8 @@ import { GetDatetimeBlockOptions } from './Options/DateTime'
 import { isMobileScreen } from '@/Utils'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { GetIndentOutdentBlockOptions } from './Options/IndentOutdent'
+import { GetRemoteImageBlockOption } from './Options/RemoteImage'
+import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
 
 export default function BlockPickerMenuPlugin(): JSX.Element {
   const [editor] = useLexicalComposerContext()
@@ -46,6 +48,9 @@ export default function BlockPickerMenuPlugin(): JSX.Element {
       GetTableBlockOption(() =>
         showModal('Insert Table', (onClose) => <InsertTableDialog activeEditor={editor} onClose={onClose} />),
       ),
+      GetRemoteImageBlockOption(() => {
+        showModal('Insert image from URL', (onClose) => <InsertRemoteImageDialog onClose={onClose} />)
+      }),
       GetNumberedListBlockOption(editor),
       GetBulletedListBlockOption(editor),
       GetChecklistBlockOption(editor),
