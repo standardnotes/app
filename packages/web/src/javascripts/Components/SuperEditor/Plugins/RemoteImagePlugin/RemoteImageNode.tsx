@@ -6,29 +6,32 @@ type SerializedRemoteImageNode = Spread<
   {
     version: 1
     type: 'unencrypted-image'
+    alt: string | undefined
     src: string
   },
   SerializedDecoratorBlockNode
 >
 
 export class RemoteImageNode extends DecoratorBlockNode {
+  __alt: string | undefined
   __src: string
 
   static getType(): string {
     return 'unencrypted-image'
   }
 
-  constructor(src: string) {
+  constructor(src: string, alt?: string) {
     super()
     this.__src = src
+    this.__alt = alt
   }
 
   static clone(node: RemoteImageNode): RemoteImageNode {
-    return new RemoteImageNode(node.__src)
+    return new RemoteImageNode(node.__src, node.__alt)
   }
 
   static importJSON(serializedNode: SerializedRemoteImageNode): RemoteImageNode {
-    const node = $createRemoteImageNode(serializedNode.src)
+    const node = $createRemoteImageNode(serializedNode.src, serializedNode.alt)
     return node
   }
 
@@ -36,6 +39,7 @@ export class RemoteImageNode extends DecoratorBlockNode {
     return {
       ...super.exportJSON(),
       src: this.__src,
+      alt: this.__alt,
       version: 1,
       type: 'unencrypted-image',
     }
@@ -53,7 +57,7 @@ export class RemoteImageNode extends DecoratorBlockNode {
               return null
             }
             return {
-              node: $createRemoteImageNode(domNode.currentSrc || domNode.src),
+              node: $createRemoteImageNode(domNode.currentSrc || domNode.src, domNode.alt),
             }
           },
           priority: 2,
@@ -64,12 +68,15 @@ export class RemoteImageNode extends DecoratorBlockNode {
 
   exportDOM(): DOMExportOutput {
     const element = document.createElement('img')
+    if (this.__alt) {
+      element.setAttribute('alt', this.__alt)
+    }
     element.setAttribute('src', this.__src)
     return { element }
   }
 
   decorate(): JSX.Element {
-    return <RemoteImageComponent node={this} src={this.__src} />
+    return <RemoteImageComponent node={this} src={this.__src} alt={this.__alt} />
   }
 }
 
@@ -77,6 +84,6 @@ export function $isRemoteImageNode(node: RemoteImageNode | LexicalNode | null | 
   return node instanceof RemoteImageNode
 }
 
-export function $createRemoteImageNode(src: string): RemoteImageNode {
-  return new RemoteImageNode(src)
+export function $createRemoteImageNode(src: string, alt?: string): RemoteImageNode {
+  return new RemoteImageNode(src, alt)
 }

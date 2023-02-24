@@ -46,13 +46,13 @@ const IMAGE: TextMatchTransformer = {
       return null
     }
 
-    return `![${node.__src}](${node.__src})`
+    return `![${node.__alt ? node.__alt : 'image'}](${node.__src})`
   },
   importRegExp: /!(?:\[([^[]*)\])(?:\(([^(]+)\))/,
   regExp: /!(?:\[([^[]*)\])(?:\(([^(]+)\))$/,
   replace: (textNode, match) => {
-    const [, , src] = match
-    const imageNode = $createRemoteImageNode(src)
+    const [, alt, src] = match
+    const imageNode = $createRemoteImageNode(src, alt)
     textNode.replace(imageNode)
   },
   trigger: ')',

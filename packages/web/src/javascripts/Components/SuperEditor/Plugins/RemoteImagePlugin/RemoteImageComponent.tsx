@@ -8,7 +8,7 @@ import { useCallback, useState } from 'react'
 import { $createFileNode } from '../EncryptedFilePlugin/Nodes/FileUtils'
 import { RemoteImageNode } from './RemoteImageNode'
 
-const RemoteImageComponent = ({ src, node }: { src: string; node: RemoteImageNode }) => {
+const RemoteImageComponent = ({ src, alt, node }: { src: string; alt?: string; node: RemoteImageNode }) => {
   const application = useApplication()
   const [editor] = useLexicalComposerContext()
 
@@ -53,6 +53,7 @@ const RemoteImageComponent = ({ src, node }: { src: string; node: RemoteImageNod
   return (
     <div className="relative flex min-h-[2rem] flex-col items-center gap-2.5">
       <img
+        alt={alt}
         src={src}
         onLoad={() => {
           setDidImageLoad(true)
