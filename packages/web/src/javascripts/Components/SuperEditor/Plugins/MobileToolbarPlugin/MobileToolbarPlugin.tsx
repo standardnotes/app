@@ -26,6 +26,8 @@ import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/u
 import { classNames } from '@standardnotes/snjs'
 import { SUPER_TOGGLE_SEARCH } from '@standardnotes/ui-services'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { GetRemoteImageBlock } from '../Blocks/RemoteImage'
+import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
 
 const MobileToolbarPlugin = () => {
   const application = useApplication()
@@ -127,6 +129,9 @@ const MobileToolbarPlugin = () => {
       GetTableBlock(() =>
         showModal('Insert Table', (onClose) => <InsertTableDialog activeEditor={editor} onClose={onClose} />),
       ),
+      GetRemoteImageBlock(() => {
+        showModal('Insert image from URL', (onClose) => <InsertRemoteImageDialog onClose={onClose} />)
+      }),
       GetNumberedListBlock(editor),
       GetBulletedListBlock(editor),
       GetChecklistBlock(editor),

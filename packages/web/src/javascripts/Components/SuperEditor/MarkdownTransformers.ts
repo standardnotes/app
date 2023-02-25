@@ -4,6 +4,7 @@ import {
   ElementTransformer,
   TEXT_FORMAT_TRANSFORMERS,
   TEXT_MATCH_TRANSFORMERS,
+  TextMatchTransformer,
 } from '@lexical/markdown'
 
 import {
@@ -12,6 +13,11 @@ import {
   $isHorizontalRuleNode,
 } from '@lexical/react/LexicalHorizontalRuleNode'
 import { LexicalNode } from 'lexical'
+import {
+  $createRemoteImageNode,
+  $isRemoteImageNode,
+  RemoteImageNode,
+} from './Plugins/RemoteImagePlugin/RemoteImageNode'
 
 const HorizontalRule: ElementTransformer = {
   dependencies: [HorizontalRuleNode],
@@ -33,8 +39,29 @@ const HorizontalRule: ElementTransformer = {
   type: 'element',
 }
 
+const IMAGE: TextMatchTransformer = {
+  dependencies: [RemoteImageNode],
+  export: (node) => {
+    if (!$isRemoteImageNode(node)) {
+      return null
+    }
+
+    return `![${node.__alt ? node.__alt : 'image'}](${node.__src})`
+  },
+  importRegExp: /!(?:\[([^[]*)\])(?:\(([^(]+)\))/,
+  regExp: /!(?:\[([^[]*)\])(?:\(([^(]+)\))$/,
+  replace: (textNode, match) => {
+    const [, alt, src] = match
+    const imageNode = $createRemoteImageNode(src, alt)
+    textNode.replace(imageNode)
+  },
+  trigger: ')',
+  type: 'text-match',
+}
+
 export const MarkdownTransformers = [
   CHECK_LIST,
+  IMAGE,
   ...ELEMENT_TRANSFORMERS,
   ...TEXT_FORMAT_TRANSFORMERS,
   ...TEXT_MATCH_TRANSFORMERS,
