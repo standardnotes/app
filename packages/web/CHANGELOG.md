@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.150.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.149.11...@standardnotes/web@3.150.0) (2023-02-25)
+
+### Features
+
+* Added "Image from URL" option and markdown image syntax support to Super. Also allows pasting images from copied web content ([#2218](https://github.com/standardnotes/app/issues/2218)) ([a15fc1e](https://github.com/standardnotes/app/commit/a15fc1ed1ddc1f273cc1cd267bd6cf20cc7e8219))
+
 ## [3.149.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.149.10...@standardnotes/web@3.149.11) (2023-02-24)
 
 **Note:** Version bump only for package @standardnotes/web
