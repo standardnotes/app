@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.150.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.1...@standardnotes/web@3.150.2) (2023-02-27)
+
+### Bug Fixes
+
+* Fixes issue where the Super mobile toolbar would not correctly close on dismissing keyboard ([b3263bf](https://github.com/standardnotes/app/commit/b3263bfdabdec719073632bbf7e3b1c47ae4b841))
+
 ## [3.150.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.0...@standardnotes/web@3.150.1) (2023-02-27)
 
 ### Bug Fixes
