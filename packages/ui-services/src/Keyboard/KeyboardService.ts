@@ -189,6 +189,7 @@ export class KeyboardService {
     this.commandHandlers.push(observer)
 
     const thislessObservers = this.commandHandlers
+    console.log(thislessObservers)
     return () => {
       observer.onKeyDown = undefined
       observer.onKeyDown = undefined
