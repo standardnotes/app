@@ -2,7 +2,7 @@ import {
   ApiEndpointParam,
   ConflictParams,
   ConflictType,
-  Error,
+  HttpError,
   RawSyncResponse,
   ServerItemResponse,
 } from '@standardnotes/responses'
@@ -40,8 +40,8 @@ export class ServerSyncResponse {
     deepFreeze(this)
   }
 
-  public get error(): Error | undefined {
-    return this.rawResponse.error || this.rawResponse.data?.error
+  public get error(): HttpError | undefined {
+    return this.rawResponse.data?.error || this.rawResponse.data?.error
   }
 
   public get status(): number {
@@ -110,6 +110,6 @@ export class ServerSyncResponse {
   }
 
   public get hasError(): boolean {
-    return !isNullOrUndefined(this.rawResponse.error)
+    return !isNullOrUndefined(this.rawResponse.data?.error)
   }
 }

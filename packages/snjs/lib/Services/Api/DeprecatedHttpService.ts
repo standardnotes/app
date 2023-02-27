@@ -1,4 +1,10 @@
-import { DeprecatedHttpResponse, DeprecatedStatusCode } from '@standardnotes/responses'
+import {
+  DeprecatedHttpResponse,
+  DeprecatedStatusCode,
+  HttpRequestParams,
+  HttpVerb,
+  HttpRequest,
+} from '@standardnotes/responses'
 import { isString } from '@standardnotes/utils'
 import { SnjsVersion } from '@Lib/Version'
 import {
@@ -9,28 +15,7 @@ import {
 } from '@standardnotes/services'
 import { Environment } from '@standardnotes/models'
 
-export enum HttpVerb {
-  Get = 'GET',
-  Post = 'POST',
-  Put = 'PUT',
-  Patch = 'PATCH',
-  Delete = 'DELETE',
-}
-
 const REQUEST_READY_STATE_COMPLETED = 4
-
-export type HttpParams = Record<string, unknown>
-
-export type HttpRequest = {
-  url: string
-  params?: HttpParams
-  rawBytes?: Uint8Array
-  verb: HttpVerb
-  authentication?: string
-  customHeaders?: Record<string, string>[]
-  responseType?: XMLHttpRequestResponseType
-  external?: boolean
-}
 
 /**
  * A non-SNJS specific wrapper for XMLHttpRequests
@@ -44,25 +29,33 @@ export class DeprecatedHttpService extends AbstractService {
     super(internalEventBus)
   }
 
-  public async getAbsolute(url: string, params?: HttpParams, authentication?: string): Promise<DeprecatedHttpResponse> {
+  public async getAbsolute(
+    url: string,
+    params?: HttpRequestParams,
+    authentication?: string,
+  ): Promise<DeprecatedHttpResponse> {
     return this.runHttp({ url, params, verb: HttpVerb.Get, authentication })
   }
 
   public async postAbsolute(
     url: string,
-    params?: HttpParams,
+    params?: HttpRequestParams,
     authentication?: string,
   ): Promise<DeprecatedHttpResponse> {
     return this.runHttp({ url, params, verb: HttpVerb.Post, authentication })
   }
 
-  public async putAbsolute(url: string, params?: HttpParams, authentication?: string): Promise<DeprecatedHttpResponse> {
+  public async putAbsolute(
+    url: string,
+    params?: HttpRequestParams,
+    authentication?: string,
+  ): Promise<DeprecatedHttpResponse> {
     return this.runHttp({ url, params, verb: HttpVerb.Put, authentication })
   }
 
   public async patchAbsolute(
     url: string,
-    params: HttpParams,
+    params: HttpRequestParams,
     authentication?: string,
   ): Promise<DeprecatedHttpResponse> {
     return this.runHttp({ url, params, verb: HttpVerb.Patch, authentication })
@@ -70,7 +63,7 @@ export class DeprecatedHttpService extends AbstractService {
 
   public async deleteAbsolute(
     url: string,
-    params?: HttpParams,
+    params?: HttpRequestParams,
     authentication?: string,
   ): Promise<DeprecatedHttpResponse> {
     return this.runHttp({ url, params, verb: HttpVerb.Delete, authentication })
@@ -96,7 +89,7 @@ export class DeprecatedHttpService extends AbstractService {
   private createXmlRequest(httpRequest: HttpRequest) {
     const request = new XMLHttpRequest()
     if (httpRequest.params && httpRequest.verb === HttpVerb.Get && Object.keys(httpRequest.params).length > 0) {
-      httpRequest.url = this.urlForUrlAndParams(httpRequest.url, httpRequest.params)
+      httpRequest.url = this.urlForUrlAndParams(httpRequest.url, httpRequest.params as Record<string, unknown>)
     }
     request.open(httpRequest.verb, httpRequest.url, true)
     request.responseType = httpRequest.responseType ?? ''
@@ -215,7 +208,7 @@ export class DeprecatedHttpService extends AbstractService {
     }
   }
 
-  private urlForUrlAndParams(url: string, params: HttpParams) {
+  private urlForUrlAndParams(url: string, params: Record<string, unknown>) {
     const keyValueString = Object.keys(params)
       .map((key) => {
         return key + '=' + encodeURIComponent(params[key] as string)

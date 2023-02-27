@@ -1,7 +1,7 @@
-import { DeprecatedMinimalHttpResponse } from '../Http/DeprecatedMinimalHttpResponses'
+import { HttpResponse } from '../Http/HttpResponse'
 import { SettingData } from './SettingData'
 
-export type ListSettingsResponse = DeprecatedMinimalHttpResponse & {
+export type ListSettingsResponse = HttpResponse & {
   data?: {
     settings?: SettingData[]
   }

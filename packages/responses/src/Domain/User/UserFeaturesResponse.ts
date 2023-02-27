@@ -1,6 +1,6 @@
-import { DeprecatedHttpResponse } from '../Http/DeprecatedHttpResponse'
+import { HttpResponse } from '../Http/HttpResponse'
 import { UserFeaturesData } from './UserFeaturesData'
 
-export type UserFeaturesResponse = DeprecatedHttpResponse & {
+export type UserFeaturesResponse = HttpResponse & {
   data: UserFeaturesData
 }

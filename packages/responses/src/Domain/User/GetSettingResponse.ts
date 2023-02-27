@@ -1,7 +1,7 @@
-import { DeprecatedMinimalHttpResponse } from '../Http/DeprecatedMinimalHttpResponses'
+import { HttpResponse } from '../Http/HttpResponse'
 import { SettingData } from './SettingData'
 
-export type GetSettingResponse = DeprecatedMinimalHttpResponse & {
+export type GetSettingResponse = HttpResponse & {
   data?: {
     success?: boolean
     setting?: SettingData

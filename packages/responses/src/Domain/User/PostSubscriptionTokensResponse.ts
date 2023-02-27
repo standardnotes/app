@@ -1,6 +1,6 @@
-import { DeprecatedMinimalHttpResponse } from '../Http/DeprecatedMinimalHttpResponses'
+import { HttpResponse } from '../Http/HttpResponse'
 
-export type PostSubscriptionTokensResponse = DeprecatedMinimalHttpResponse & {
+export type PostSubscriptionTokensResponse = HttpResponse & {
   data?: {
     token: string
   }

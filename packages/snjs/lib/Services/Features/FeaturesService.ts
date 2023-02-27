@@ -417,7 +417,7 @@ export class SNFeaturesService
     if (shouldDownloadRoleBasedFeatures) {
       const featuresResponse = await this.apiService.getUserFeatures(userUuid)
 
-      if (!featuresResponse.error && featuresResponse.data && !this.deinited) {
+      if (!featuresResponse.data?.error && featuresResponse.data && !this.deinited) {
         const features = (featuresResponse as UserFeaturesResponse).data.features
         await this.didDownloadFeatures(features)
       }
@@ -747,7 +747,7 @@ export class SNFeaturesService
 
   private async performDownloadExternalFeature(url: string): Promise<Models.SNComponent | undefined> {
     const response = await this.apiService.downloadFeatureUrl(url)
-    if (response.error) {
+    if (response.data?.error) {
       await this.alertService.alert(API_MESSAGE_FAILED_DOWNLOADING_EXTENSION)
       return undefined
     }

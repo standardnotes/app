@@ -243,7 +243,7 @@ export class FileService extends AbstractService implements FilesClientInterface
 
     const result = await this.api.deleteFile(tokenResult)
 
-    if (result.error) {
+    if (result.data?.error) {
       const deleteAnyway = await this.alertService.confirm(
         spaceSeparatedStrings(
           'This file could not be deleted from the server, possibly because you are attempting to delete a file item',
@@ -257,7 +257,7 @@ export class FileService extends AbstractService implements FilesClientInterface
       )
 
       if (!deleteAnyway) {
-        return ClientDisplayableError.FromError(result.error)
+        return ClientDisplayableError.FromError(result.data?.error)
       }
     }
 

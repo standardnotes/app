@@ -1,4 +1,4 @@
-import { HttpResponse } from '@standardnotes/api'
+import { HttpResponse } from '@standardnotes/responses'
 import { AnyKeyParamsContent } from '@standardnotes/common'
 import { RootKeyInterface } from '@standardnotes/models'
 

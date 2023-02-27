@@ -31,10 +31,10 @@ export class SettingsGateway {
   }
 
   async listSettings() {
-    const { error, data } = await this.settingsApi.listSettings(this.userUuid)
+    const { data } = await this.settingsApi.listSettings(this.userUuid)
 
-    if (error != undefined) {
-      throw new Error(error.message)
+    if (data?.error != undefined) {
+      throw new Error(data?.error.message)
     }
 
     if (data == undefined || data.settings == undefined) {
@@ -53,8 +53,8 @@ export class SettingsGateway {
       return undefined
     }
 
-    if (response.error != undefined) {
-      throw new Error(response.error.message)
+    if (response.data?.error != undefined) {
+      throw new Error(response.data?.error.message)
     }
 
     return response?.data?.setting?.value ?? undefined
@@ -67,8 +67,8 @@ export class SettingsGateway {
       return undefined
     }
 
-    if (response.error != undefined) {
-      throw new Error(response.error.message)
+    if (response.data?.error != undefined) {
+      throw new Error(response.data?.error.message)
     }
 
     return response?.data?.setting?.value ?? undefined
@@ -82,24 +82,24 @@ export class SettingsGateway {
       return false
     }
 
-    if (response.error != undefined) {
-      throw new Error(response.error.message)
+    if (response.data?.error != undefined) {
+      throw new Error(response.data?.error.message)
     }
 
     return response.data?.success ?? false
   }
 
   async updateSetting(name: SettingName, payload: string, sensitive: boolean): Promise<void> {
-    const { error } = await this.settingsApi.updateSetting(this.userUuid, name, payload, sensitive)
-    if (error != undefined) {
-      throw new Error(error.message)
+    const { data } = await this.settingsApi.updateSetting(this.userUuid, name, payload, sensitive)
+    if (data?.error != undefined) {
+      throw new Error(data?.error.message)
     }
   }
 
   async deleteSetting(name: SettingName): Promise<void> {
-    const { error } = await this.settingsApi.deleteSetting(this.userUuid, name)
-    if (error != undefined) {
-      throw new Error(error.message)
+    const { data } = await this.settingsApi.deleteSetting(this.userUuid, name)
+    if (data?.error != undefined) {
+      throw new Error(data?.error.message)
     }
   }
 

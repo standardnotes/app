@@ -22,7 +22,6 @@ import {
   WebSocketApiServiceInterface,
   WebSocketServer,
   WebSocketServerInterface,
-  HttpResponse,
 } from '@standardnotes/api'
 import * as Common from '@standardnotes/common'
 import * as ExternalServices from '@standardnotes/services'
@@ -600,11 +599,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.syncService.isDatabaseLoaded()
   }
 
-  public getSessions(): Promise<(HttpResponse & { data: InternalServices.RemoteSession[] }) | HttpResponse> {
+  public getSessions(): Promise<
+    (Responses.HttpResponse & { data: InternalServices.RemoteSession[] }) | Responses.HttpResponse
+  > {
     return this.sessionManager.getSessionsList()
   }
 
-  public async revokeSession(sessionId: UuidString): Promise<HttpResponse | undefined> {
+  public async revokeSession(sessionId: UuidString): Promise<Responses.HttpResponse | undefined> {
     if (await this.protectionService.authorizeSessionRevoking()) {
       return this.sessionManager.revokeSession(sessionId)
     }
@@ -938,7 +939,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ephemeral = false,
     mergeLocal = true,
     awaitSync = false,
-  ): Promise<HttpResponse | Responses.SignInResponse> {
+  ): Promise<Responses.HttpResponse | Responses.SignInResponse> {
     return this.userService.signIn(email, password, strict, ephemeral, mergeLocal, awaitSync)
   }
 

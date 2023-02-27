@@ -1,3 +1,3 @@
-import { DeprecatedHttpResponse } from '../Http/DeprecatedHttpResponse'
+import { HttpResponse } from '../Http/HttpResponse'
 
-export type SignOutResponse = DeprecatedHttpResponse & Record<string, unknown>
+export type SignOutResponse = HttpResponse & Record<string, unknown>

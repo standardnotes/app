@@ -1,5 +1,5 @@
-import { DeprecatedMinimalHttpResponse } from '../Http/DeprecatedMinimalHttpResponses'
+import { HttpResponse } from '../Http/HttpResponse'
 
-export type UploadFileChunkResponse = DeprecatedMinimalHttpResponse & {
+export type UploadFileChunkResponse = HttpResponse & {
   success: boolean
 }

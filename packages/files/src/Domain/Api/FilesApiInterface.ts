@@ -1,8 +1,4 @@
-import {
-  StartUploadSessionResponse,
-  DeprecatedMinimalHttpResponse,
-  ClientDisplayableError,
-} from '@standardnotes/responses'
+import { StartUploadSessionResponse, HttpResponse, ClientDisplayableError } from '@standardnotes/responses'
 import { FileContent } from '@standardnotes/models'
 
 export interface FilesApiInterface {
@@ -20,7 +16,7 @@ export interface FilesApiInterface {
     onBytesReceived: (bytes: Uint8Array) => Promise<void>,
   ): Promise<ClientDisplayableError | undefined>
 
-  deleteFile(apiToken: string): Promise<DeprecatedMinimalHttpResponse>
+  deleteFile(apiToken: string): Promise<HttpResponse>
 
   createFileValetToken(
     remoteIdentifier: string,

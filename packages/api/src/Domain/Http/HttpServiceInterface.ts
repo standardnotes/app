@@ -1,9 +1,5 @@
 import { Session } from '@standardnotes/domain-core'
-import { HttpRequest } from './HttpRequest'
-
-import { HttpRequestParams } from './HttpRequestParams'
-import { HttpResponse } from './HttpResponse'
-import { HttpResponseMeta } from './HttpResponseMeta'
+import { HttpRequest, HttpRequestParams, HttpResponse, HttpResponseMeta } from '@standardnotes/responses'
 
 export interface HttpServiceInterface {
   setHost(host: string): void

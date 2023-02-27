@@ -283,7 +283,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
 
     const signInResponse = await this.userService.correctiveSignIn(rootKey)
 
-    if (!signInResponse.error) {
+    if (!signInResponse.data?.error) {
       void this.alertService.alert(KeyRecoveryStrings.KeyRecoveryRootKeyReplaced)
 
       return rootKey
@@ -335,7 +335,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
       email: identifier,
     })
 
-    if (!paramsResponse.error && paramsResponse.data) {
+    if (!paramsResponse.data?.error && paramsResponse.data) {
       return KeyParamsFromApiResponse(paramsResponse as KeyParamsResponse)
     } else {
       return undefined

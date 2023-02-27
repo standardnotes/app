@@ -1,5 +1,5 @@
-import { DeprecatedMinimalHttpResponse } from '../Http/DeprecatedMinimalHttpResponses'
+import { HttpResponse } from '../Http/HttpResponse'
 
-export type DownloadFileChunkResponse = DeprecatedMinimalHttpResponse & {
+export type DownloadFileChunkResponse = HttpResponse & {
   data: ArrayBuffer
 }

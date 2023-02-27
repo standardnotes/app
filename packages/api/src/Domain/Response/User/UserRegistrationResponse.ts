@@ -1,5 +1,4 @@
-import { HttpErrorResponseBody } from '../../Http/HttpErrorResponseBody'
-import { HttpResponse } from '../../Http/HttpResponse'
+import { HttpErrorResponseBody, HttpResponse } from '@standardnotes/responses'
 import { UserRegistrationResponseBody } from './UserRegistrationResponseBody'
 
 export interface UserRegistrationResponse extends HttpResponse {

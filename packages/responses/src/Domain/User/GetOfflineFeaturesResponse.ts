@@ -1,7 +1,7 @@
 import { FeatureDescription } from '@standardnotes/features'
-import { DeprecatedMinimalHttpResponse } from '../Http/DeprecatedMinimalHttpResponses'
+import { HttpResponse } from '../Http/HttpResponse'
 
-export type GetOfflineFeaturesResponse = DeprecatedMinimalHttpResponse & {
+export type GetOfflineFeaturesResponse = HttpResponse & {
   data?: {
     features: FeatureDescription[]
     roles: string[]

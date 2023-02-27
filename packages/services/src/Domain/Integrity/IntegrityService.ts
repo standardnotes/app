@@ -2,7 +2,7 @@ import { IntegrityEvent } from './IntegrityEvent'
 import { AbstractService } from '../Service/AbstractService'
 import { ItemsServerInterface } from '../Item/ItemsServerInterface'
 import { IntegrityApiInterface } from './IntegrityApiInterface'
-import { GetSingleItemResponse } from '@standardnotes/responses'
+import { GetSingleItemResponse, ServerItemResponse } from '@standardnotes/responses'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
@@ -30,8 +30,8 @@ export class IntegrityService
     }
 
     const integrityCheckResponse = await this.integrityApi.checkIntegrity(this.payloadManager.integrityPayloads)
-    if (integrityCheckResponse.error !== undefined) {
-      this.log(`Could not obtain integrity check: ${integrityCheckResponse.error}`)
+    if (integrityCheckResponse.data.error !== undefined) {
+      this.log(`Could not obtain integrity check: ${integrityCheckResponse.data.error}`)
 
       return
     }
@@ -43,15 +43,19 @@ export class IntegrityService
 
     const serverItemResponses = await Promise.all(serverItemResponsePromises)
 
-    const rawPayloads = []
+    const rawPayloads: ServerItemResponse[] = []
     for (const serverItemResponse of serverItemResponses) {
-      if (serverItemResponse.data === undefined || serverItemResponse.error || !('item' in serverItemResponse.data)) {
-        this.log(`Could not obtain item for integrity adjustments: ${serverItemResponse.error}`)
+      if (
+        serverItemResponse.data == undefined ||
+        serverItemResponse.data.error ||
+        !('item' in serverItemResponse.data)
+      ) {
+        this.log(`Could not obtain item for integrity adjustments: ${serverItemResponse.data.error}`)
 
         continue
       }
 
-      rawPayloads.push(serverItemResponse.data.item)
+      rawPayloads.push(serverItemResponse.data.item as ServerItemResponse)
     }
 
     await this.notifyEventSync(IntegrityEvent.IntegrityCheckCompleted, {

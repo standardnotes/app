@@ -1,6 +1,5 @@
 import { Either } from '@standardnotes/common'
-import { HttpErrorResponseBody } from '../../Http/HttpErrorResponseBody'
-import { HttpResponse } from '../../Http/HttpResponse'
+import { HttpErrorResponseBody, HttpResponse } from '@standardnotes/responses'
 
 import { UserDeletionResponseBody } from './UserDeletionResponseBody'
 

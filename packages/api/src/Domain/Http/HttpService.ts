@@ -1,17 +1,19 @@
 import { isString, joinPaths, sleep } from '@standardnotes/utils'
 import { Environment } from '@standardnotes/models'
 import { Session, SessionToken } from '@standardnotes/domain-core'
-import { HttpStatusCode } from '@standardnotes/responses'
-
-import { HttpRequestParams } from './HttpRequestParams'
-import { HttpVerb } from './HttpVerb'
-import { HttpRequest } from './HttpRequest'
-import { HttpResponse } from './HttpResponse'
+import {
+  HttpStatusCode,
+  HttpRequestParams,
+  HttpVerb,
+  HttpRequest,
+  HttpResponse,
+  HttpResponseMeta,
+  HttpErrorResponseBody,
+} from '@standardnotes/responses'
 import { HttpServiceInterface } from './HttpServiceInterface'
 import { XMLHttpRequestState } from './XMLHttpRequestState'
 import { ErrorMessage } from '../Error/ErrorMessage'
-import { HttpResponseMeta } from './HttpResponseMeta'
-import { HttpErrorResponseBody } from './HttpErrorResponseBody'
+
 import { Paths } from '../Server/Auth/Paths'
 import { SessionRefreshResponse } from '../Response/Auth/SessionRefreshResponse'
 

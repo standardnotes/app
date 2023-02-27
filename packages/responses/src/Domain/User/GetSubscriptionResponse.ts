@@ -1,7 +1,7 @@
 import { Subscription } from '@standardnotes/security'
-import { DeprecatedMinimalHttpResponse } from '../Http/DeprecatedMinimalHttpResponses'
+import { HttpResponse } from '../Http/HttpResponse'
 
-export type GetSubscriptionResponse = DeprecatedMinimalHttpResponse & {
+export type GetSubscriptionResponse = HttpResponse & {
   data?: {
     subscription?: Subscription
   }

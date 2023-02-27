@@ -28,7 +28,14 @@ import {
   SessionRefreshedData,
 } from '@standardnotes/services'
 import { Base64String } from '@standardnotes/sncrypto-common'
-import { ClientDisplayableError, SessionBody } from '@standardnotes/responses'
+import {
+  ClientDisplayableError,
+  SessionBody,
+  ErrorTag,
+  HttpErrorResponseBody,
+  HttpResponse,
+  HttpResponseBody,
+} from '@standardnotes/responses'
 import { CopyPayloadWithContentOverride } from '@standardnotes/models'
 import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
 import { KeyParamsFromApiResponse, SNRootKeyParams, SNRootKey, CreateNewRootKey } from '@standardnotes/encryption'
@@ -47,13 +54,9 @@ import { ChallengeService } from '../Challenge'
 import {
   ApiCallError,
   ErrorMessage,
-  ErrorTag,
-  HttpErrorResponseBody,
   HttpServiceInterface,
   UserApiServiceInterface,
   UserRegistrationResponseBody,
-  HttpResponse,
-  HttpResponseBody,
 } from '@standardnotes/api'
 
 export const MINIMUM_PASSWORD_LENGTH = 8
@@ -249,7 +252,7 @@ export class SNSessionManager
             this.diskStorageService.isEphemeralSession(),
             currentKeyParams?.version,
           )
-          if (signInResult.response.error) {
+          if (signInResult.response.data?.error) {
             this.challengeService.setValidationStatusForChallenge(challenge, challengeResponse!.values[1], false)
             onResponse?.(signInResult.response)
           } else {
@@ -466,7 +469,7 @@ export class SNSessionManager
     })
     if (paramsResult.response.data && 'error' in paramsResult.response.data) {
       return {
-        response: paramsResult.response as HttpResponse,
+        response: paramsResult.response,
       }
     }
     const keyParams = paramsResult.keyParams!
@@ -592,7 +595,7 @@ export class SNSessionManager
   public async getSessionsList(): Promise<(HttpResponse & { data: RemoteSession[] }) | HttpResponse> {
     const response = await this.apiService.getSessionsList()
     if (!response.data || response.data.error) {
-      return response as HttpResponse
+      return response
     }
 
     const typedResponse = response as HttpResponse & { data: HttpResponseBody & RemoteSession[] }
@@ -606,7 +609,7 @@ export class SNSessionManager
       }))
       .sort((s1: RemoteSession, s2: RemoteSession) => (s1.updated_at < s2.updated_at ? 1 : -1))
 
-    return response as HttpResponse
+    return response
   }
 
   public async revokeSession(sessionId: UuidString): Promise<HttpResponse> {
@@ -630,7 +633,7 @@ export class SNSessionManager
     newRootKey: SNRootKey,
     wrappingKey?: SNRootKey,
   ): Promise<SessionManagerResponse> {
-    if (!response.error && response.data) {
+    if (response.data && !response.data.error) {
       await this.handleSuccessAuthResponse(response as Responses.ChangeCredentialsResponse, newRootKey, wrappingKey)
     }
     return {

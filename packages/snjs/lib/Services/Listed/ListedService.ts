@@ -63,7 +63,7 @@ export class ListedService extends AbstractService implements ListedClientInterf
   public async requestNewListedAccount(): Promise<ListedAccount | undefined> {
     const accountsBeforeRequest = await this.getSettingsBasedListedAccounts()
     const response = await this.apiService.registerForListedAccount()
-    if (response.error) {
+    if (response.data?.error) {
       return undefined
     }
     const MaxAttempts = 4
@@ -99,7 +99,7 @@ export class ListedService extends AbstractService implements ListedClientInterf
     const response = (await this.httpSerivce.getAbsolute(url).catch((error) => {
       console.error(error)
     })) as ListedAccountInfoResponse
-    if (!response || response.error || !response.data || isString(response.data)) {
+    if (!response || response.data?.error || !response.data || isString(response.data)) {
       return undefined
     }
 

@@ -1,6 +1,6 @@
 import { Base64String } from '@standardnotes/sncrypto-common'
 import { EncryptionProviderInterface, SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
-import { DeprecatedHttpResponse, SignInResponse, User } from '@standardnotes/responses'
+import { HttpResponse, SignInResponse, User, HttpError } from '@standardnotes/responses'
 import { Either, KeyParamsOrigination, UserRequestType } from '@standardnotes/common'
 import { UuidGenerator } from '@standardnotes/utils'
 import { UserApiServiceInterface, UserRegistrationResponseBody } from '@standardnotes/api'
@@ -28,8 +28,8 @@ import { ProtectionsClientInterface } from '../Protection/ProtectionClientInterf
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
 
-export type CredentialsChangeFunctionResponse = { error?: { message: string } }
-export type AccountServiceResponse = DeprecatedHttpResponse
+export type CredentialsChangeFunctionResponse = { error?: HttpError }
+export type AccountServiceResponse = HttpResponse
 
 export enum AccountEvent {
   SignedInOrRegistered = 'SignedInOrRegistered',
@@ -198,7 +198,7 @@ export class UserService
 
       const result = await this.sessionManager.signIn(email, password, strict, ephemeral)
 
-      if (!result.response.error) {
+      if (!result.response.data?.error) {
         const notifyingFunction = awaitSync ? this.notifyEventSync.bind(this) : this.notifyEvent.bind(this)
         await notifyingFunction(AccountEvent.SignedInOrRegistered, {
           payload: {
@@ -276,7 +276,7 @@ export class UserService
    * for missing keys or storage values. Unlike regular sign in, this doesn't worry about
    * performing one of marking all items as needing sync or deleting all local data.
    */
-  public async correctiveSignIn(rootKey: SNRootKey): Promise<DeprecatedHttpResponse | SignInResponse> {
+  public async correctiveSignIn(rootKey: SNRootKey): Promise<HttpResponse | SignInResponse> {
     this.lockSyncing()
 
     const response = await this.sessionManager.bypassChecksAndSignInWithRootKey(
@@ -285,7 +285,7 @@ export class UserService
       false,
     )
 
-    if (!response.error) {
+    if (!response.data?.error) {
       await this.notifyEvent(AccountEvent.SignedInOrRegistered, {
         payload: {
           mergeLocal: true,
@@ -592,7 +592,7 @@ export class UserService
 
     this.unlockSyncing()
 
-    if (!result.response.error) {
+    if (!result.response.data?.error) {
       const rollback = await this.protocolService.createNewItemsKeyWithRollback()
       await this.protocolService.reencryptItemsKeys()
       await this.syncService.sync({ awaitAll: true })
@@ -614,7 +614,7 @@ export class UserService
       }
     }
 
-    return result.response
+    return result.response.data || {}
   }
 
   private async recomputeRootKeysForCredentialChange(parameters: {

@@ -1,4 +1,4 @@
-import { DeprecatedHttpResponse } from '../Http/DeprecatedHttpResponse'
+import { HttpResponse } from '../Http/HttpResponse'
 import { SessionListEntry } from './SessionListEntry'
 
-export type SessionListResponse = DeprecatedHttpResponse & { data: SessionListEntry[] }
+export type SessionListResponse = HttpResponse & { data: SessionListEntry[] }
