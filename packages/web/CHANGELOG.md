@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.150.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.0...@standardnotes/web@3.150.1) (2023-02-27)
+
+### Bug Fixes
+
+* Fixes issue where preferences view would not close after pressing Escape ([6c120ff](https://github.com/standardnotes/app/commit/6c120ffde2c01309d146505ec52a07e504310595))
+
 # [3.150.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.149.11...@standardnotes/web@3.150.0) (2023-02-25)
 
 ### Features
