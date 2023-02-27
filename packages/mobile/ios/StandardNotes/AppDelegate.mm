@@ -19,12 +19,6 @@
   NSString *CFBundleIdentifier = [[[NSBundle mainBundle] infoDictionary] objectForKey:@"CFBundleIdentifier"];
 
   NSDictionary * initialProperties = @{@"env" : [CFBundleIdentifier isEqualToString:@"com.standardnotes.standardnotes.dev"] ? @"dev" : @"prod"};
-  
-  RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
-                                                   moduleName:@"StandardNotes"
-                                            initialProperties:initialProperties];
-
-  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
 
   self.moduleName = @"StandardNotes";
   self.initialProps = @{};
