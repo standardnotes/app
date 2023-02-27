@@ -1,5 +1,5 @@
 export * from './ApiService'
-export * from './HttpService'
+export * from './DeprecatedHttpService'
 export * from './Paths'
 export * from '../Session/SessionManager'
 export * from './WebsocketsService'

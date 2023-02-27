@@ -1,3 +1,3 @@
-import { MinimalHttpResponse } from '../Http/MinimalHttpResponses'
+import { DeprecatedMinimalHttpResponse } from '../Http/DeprecatedMinimalHttpResponses'
 
-export type UpdateSettingResponse = MinimalHttpResponse
+export type UpdateSettingResponse = DeprecatedMinimalHttpResponse

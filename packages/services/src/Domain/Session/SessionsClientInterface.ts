@@ -1,8 +1,8 @@
-import { UserRegistrationResponseBody } from '@standardnotes/api'
+import { UserRegistrationResponseBody, HttpResponse } from '@standardnotes/api'
 import { ProtocolVersion } from '@standardnotes/common'
 import { SNRootKey } from '@standardnotes/encryption'
 import { RootKeyInterface } from '@standardnotes/models'
-import { ClientDisplayableError, HttpResponse, SessionBody, SignInResponse, User } from '@standardnotes/responses'
+import { ClientDisplayableError, SessionBody, SignInResponse, User } from '@standardnotes/responses'
 import { Base64String } from '@standardnotes/sncrypto-common'
 
 import { SessionManagerResponse } from './SessionManagerResponse'

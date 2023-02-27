@@ -1,6 +1,6 @@
-import { MinimalHttpResponse } from '../Http/MinimalHttpResponses'
+import { DeprecatedMinimalHttpResponse } from '../Http/DeprecatedMinimalHttpResponses'
 import { CreateValetTokenResponseData } from './CreateValetTokenResponseData'
 
-export type CreateValetTokenResponse = MinimalHttpResponse & {
+export type CreateValetTokenResponse = DeprecatedMinimalHttpResponse & {
   data: CreateValetTokenResponseData
 }

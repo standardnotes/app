@@ -1,6 +1,6 @@
 import { Base64String } from '@standardnotes/sncrypto-common'
 import { EncryptionProviderInterface, SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
-import { HttpResponse, SignInResponse, User } from '@standardnotes/responses'
+import { DeprecatedHttpResponse, SignInResponse, User } from '@standardnotes/responses'
 import { Either, KeyParamsOrigination, UserRequestType } from '@standardnotes/common'
 import { UuidGenerator } from '@standardnotes/utils'
 import { UserApiServiceInterface, UserRegistrationResponseBody } from '@standardnotes/api'
@@ -29,7 +29,7 @@ import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerI
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
 
 export type CredentialsChangeFunctionResponse = { error?: { message: string } }
-export type AccountServiceResponse = HttpResponse
+export type AccountServiceResponse = DeprecatedHttpResponse
 
 export enum AccountEvent {
   SignedInOrRegistered = 'SignedInOrRegistered',
@@ -276,7 +276,7 @@ export class UserService
    * for missing keys or storage values. Unlike regular sign in, this doesn't worry about
    * performing one of marking all items as needing sync or deleting all local data.
    */
-  public async correctiveSignIn(rootKey: SNRootKey): Promise<HttpResponse | SignInResponse> {
+  public async correctiveSignIn(rootKey: SNRootKey): Promise<DeprecatedHttpResponse | SignInResponse> {
     this.lockSyncing()
 
     const response = await this.sessionManager.bypassChecksAndSignInWithRootKey(

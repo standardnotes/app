@@ -2,7 +2,7 @@ import { isString, lastElement, sleep } from '@standardnotes/utils'
 import { UuidString } from '@Lib/Types/UuidString'
 import { ContentType } from '@standardnotes/common'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
-import { SNHttpService } from '../Api/HttpService'
+import { DeprecatedHttpService } from '../Api/DeprecatedHttpService'
 import { SettingName } from '@standardnotes/settings'
 import { SNSettingsService } from '../Settings/SNSettingsService'
 import { ListedClientInterface } from './ListedClientInterface'
@@ -17,7 +17,7 @@ export class ListedService extends AbstractService implements ListedClientInterf
     private apiService: SNApiService,
     private itemManager: ItemManager,
     private settingsService: SNSettingsService,
-    private httpSerivce: SNHttpService,
+    private httpSerivce: DeprecatedHttpService,
     private protectionService: SNProtectionService,
     private mutatorService: MutatorClientInterface,
     protected override internalEventBus: InternalEventBusInterface,

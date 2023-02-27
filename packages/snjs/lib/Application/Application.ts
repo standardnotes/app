@@ -22,6 +22,7 @@ import {
   WebSocketApiServiceInterface,
   WebSocketServer,
   WebSocketServerInterface,
+  HttpResponse,
 } from '@standardnotes/api'
 import * as Common from '@standardnotes/common'
 import * as ExternalServices from '@standardnotes/services'
@@ -133,7 +134,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   /**
    * @deprecated will be fully replaced by @standardnotes/api::HttpService
    */
-  private deprecatedHttpService!: InternalServices.SNHttpService
+  private deprecatedHttpService!: InternalServices.DeprecatedHttpService
   private declare httpService: HttpServiceInterface
   private payloadManager!: InternalServices.PayloadManager
   public protocolService!: EncryptionService
@@ -599,13 +600,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.syncService.isDatabaseLoaded()
   }
 
-  public getSessions(): Promise<
-    (Responses.HttpResponse & { data: InternalServices.RemoteSession[] }) | Responses.HttpResponse
-  > {
+  public getSessions(): Promise<(HttpResponse & { data: InternalServices.RemoteSession[] }) | HttpResponse> {
     return this.sessionManager.getSessionsList()
   }
 
-  public async revokeSession(sessionId: UuidString): Promise<Responses.HttpResponse | undefined> {
+  public async revokeSession(sessionId: UuidString): Promise<HttpResponse | undefined> {
     if (await this.protectionService.authorizeSessionRevoking()) {
       return this.sessionManager.revokeSession(sessionId)
     }
@@ -939,7 +938,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ephemeral = false,
     mergeLocal = true,
     awaitSync = false,
-  ): Promise<Responses.HttpResponse | Responses.SignInResponse> {
+  ): Promise<HttpResponse | Responses.SignInResponse> {
     return this.userService.signIn(email, password, strict, ephemeral, mergeLocal, awaitSync)
   }
 
@@ -1161,8 +1160,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.diskStorageService.provideEncryptionProvider(this.protocolService)
     this.createChallengeService()
     this.createLegacyHttpManager()
-    this.createApiService()
-    this.createHttpService()
+    this.createHttpServiceAndApiService()
     this.createUserServer()
     this.createUserRequestServer()
     this.createUserApiService()
@@ -1419,20 +1417,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.services.push(this.userService)
   }
 
-  private createApiService() {
-    this.apiService = new InternalServices.SNApiService(
-      this.deprecatedHttpService,
-      this.diskStorageService,
-      this.options.defaultHost,
-      this.inMemoryStore,
-      this.options.crypto,
-      this.sessionStorageMapper,
-      this.legacySessionStorageMapper,
-      this.internalEventBus,
-    )
-    this.services.push(this.apiService)
-  }
-
   private createUserApiService() {
     this.userApiService = new UserApiService(this.userServer, this.userRequestServer)
   }
@@ -1486,7 +1470,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createLegacyHttpManager() {
-    this.deprecatedHttpService = new InternalServices.SNHttpService(
+    this.deprecatedHttpService = new InternalServices.DeprecatedHttpService(
       this.environment,
       this.options.appVersion,
       this.internalEventBus,
@@ -1494,11 +1478,22 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.services.push(this.deprecatedHttpService)
   }
 
-  private createHttpService() {
-    this.httpService = new HttpService(
-      this.environment,
-      this.options.appVersion,
-      SnjsVersion,
+  private createHttpServiceAndApiService() {
+    this.httpService = new HttpService(this.environment, this.options.appVersion, SnjsVersion)
+
+    this.apiService = new InternalServices.SNApiService(
+      this.httpService,
+      this.diskStorageService,
+      this.options.defaultHost,
+      this.inMemoryStore,
+      this.options.crypto,
+      this.sessionStorageMapper,
+      this.legacySessionStorageMapper,
+      this.internalEventBus,
+    )
+    this.services.push(this.apiService)
+
+    this.httpService.setCallbacks(
       this.apiService.processMetaObject.bind(this.apiService),
       this.apiService.setSession.bind(this.apiService),
     )

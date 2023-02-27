@@ -1,7 +1,9 @@
 import { Session } from '@standardnotes/domain-core'
+import { HttpRequest } from './HttpRequest'
 
 import { HttpRequestParams } from './HttpRequestParams'
 import { HttpResponse } from './HttpResponse'
+import { HttpResponseMeta } from './HttpResponseMeta'
 
 export interface HttpServiceInterface {
   setHost(host: string): void
@@ -11,4 +13,9 @@ export interface HttpServiceInterface {
   put(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse>
   patch(path: string, params: HttpRequestParams, authentication?: string): Promise<HttpResponse>
   delete(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse>
+  runHttp(httpRequest: HttpRequest): Promise<HttpResponse>
+  setCallbacks(
+    updateMetaCallback: (meta: HttpResponseMeta) => void,
+    refreshSessionCallback: (session: Session) => void,
+  ): void
 }

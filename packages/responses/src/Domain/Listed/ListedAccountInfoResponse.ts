@@ -1,6 +1,6 @@
-import { HttpResponse } from '../Http/HttpResponse'
+import { DeprecatedHttpResponse } from '../Http/DeprecatedHttpResponse'
 import { ListedAccountInfo } from './ListedAccountInfo'
 
-export type ListedAccountInfoResponse = HttpResponse & {
+export type ListedAccountInfoResponse = DeprecatedHttpResponse & {
   data: ListedAccountInfo
 }

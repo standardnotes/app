@@ -1,6 +1,6 @@
 import { Role } from '@standardnotes/security'
 
-export type ResponseMeta = {
+export type DeprecatedResponseMeta = {
   auth: {
     userUuid?: string
     roles?: Role[]

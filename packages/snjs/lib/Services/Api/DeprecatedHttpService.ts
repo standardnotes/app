@@ -1,4 +1,4 @@
-import { HttpResponse, StatusCode } from '@standardnotes/responses'
+import { DeprecatedHttpResponse, DeprecatedStatusCode } from '@standardnotes/responses'
 import { isString } from '@standardnotes/utils'
 import { SnjsVersion } from '@Lib/Version'
 import {
@@ -35,7 +35,7 @@ export type HttpRequest = {
 /**
  * A non-SNJS specific wrapper for XMLHttpRequests
  */
-export class SNHttpService extends AbstractService {
+export class DeprecatedHttpService extends AbstractService {
   constructor(
     private readonly environment: Environment,
     private readonly appVersion: string,
@@ -44,27 +44,39 @@ export class SNHttpService extends AbstractService {
     super(internalEventBus)
   }
 
-  public async getAbsolute(url: string, params?: HttpParams, authentication?: string): Promise<HttpResponse> {
+  public async getAbsolute(url: string, params?: HttpParams, authentication?: string): Promise<DeprecatedHttpResponse> {
     return this.runHttp({ url, params, verb: HttpVerb.Get, authentication })
   }
 
-  public async postAbsolute(url: string, params?: HttpParams, authentication?: string): Promise<HttpResponse> {
+  public async postAbsolute(
+    url: string,
+    params?: HttpParams,
+    authentication?: string,
+  ): Promise<DeprecatedHttpResponse> {
     return this.runHttp({ url, params, verb: HttpVerb.Post, authentication })
   }
 
-  public async putAbsolute(url: string, params?: HttpParams, authentication?: string): Promise<HttpResponse> {
+  public async putAbsolute(url: string, params?: HttpParams, authentication?: string): Promise<DeprecatedHttpResponse> {
     return this.runHttp({ url, params, verb: HttpVerb.Put, authentication })
   }
 
-  public async patchAbsolute(url: string, params: HttpParams, authentication?: string): Promise<HttpResponse> {
+  public async patchAbsolute(
+    url: string,
+    params: HttpParams,
+    authentication?: string,
+  ): Promise<DeprecatedHttpResponse> {
     return this.runHttp({ url, params, verb: HttpVerb.Patch, authentication })
   }
 
-  public async deleteAbsolute(url: string, params?: HttpParams, authentication?: string): Promise<HttpResponse> {
+  public async deleteAbsolute(
+    url: string,
+    params?: HttpParams,
+    authentication?: string,
+  ): Promise<DeprecatedHttpResponse> {
     return this.runHttp({ url, params, verb: HttpVerb.Delete, authentication })
   }
 
-  public async runHttp(httpRequest: HttpRequest): Promise<HttpResponse> {
+  public async runHttp(httpRequest: HttpRequest): Promise<DeprecatedHttpResponse> {
     const request = this.createXmlRequest(httpRequest)
 
     return this.runRequest(request, this.createRequestBody(httpRequest))
@@ -116,7 +128,7 @@ export class SNHttpService extends AbstractService {
     return request
   }
 
-  private async runRequest(request: XMLHttpRequest, body?: string | Uint8Array): Promise<HttpResponse> {
+  private async runRequest(request: XMLHttpRequest, body?: string | Uint8Array): Promise<DeprecatedHttpResponse> {
     return new Promise((resolve, reject) => {
       request.onreadystatechange = () => {
         this.stateChangeHandlerForRequest(request, resolve, reject)
@@ -127,14 +139,14 @@ export class SNHttpService extends AbstractService {
 
   private stateChangeHandlerForRequest(
     request: XMLHttpRequest,
-    resolve: (response: HttpResponse) => void,
-    reject: (response: HttpResponse) => void,
+    resolve: (response: DeprecatedHttpResponse) => void,
+    reject: (response: DeprecatedHttpResponse) => void,
   ) {
     if (request.readyState !== REQUEST_READY_STATE_COMPLETED) {
       return
     }
     const httpStatus = request.status
-    const response: HttpResponse = {
+    const response: DeprecatedHttpResponse = {
       status: httpStatus,
       headers: new Map<string, string | null>(),
     }
@@ -152,7 +164,7 @@ export class SNHttpService extends AbstractService {
     })
 
     try {
-      if (httpStatus !== StatusCode.HttpStatusNoContent) {
+      if (httpStatus !== DeprecatedStatusCode.HttpStatusNoContent) {
         let body
 
         const contentTypeHeader = response.headers?.get('content-type') || response.headers?.get('Content-Type')
@@ -177,10 +189,13 @@ export class SNHttpService extends AbstractService {
     } catch (error) {
       console.error(error)
     }
-    if (httpStatus >= StatusCode.HttpStatusMinSuccess && httpStatus <= StatusCode.HttpStatusMaxSuccess) {
+    if (
+      httpStatus >= DeprecatedStatusCode.HttpStatusMinSuccess &&
+      httpStatus <= DeprecatedStatusCode.HttpStatusMaxSuccess
+    ) {
       resolve(response)
     } else {
-      if (httpStatus === StatusCode.HttpStatusForbidden) {
+      if (httpStatus === DeprecatedStatusCode.HttpStatusForbidden) {
         response.error = {
           message: API_MESSAGE_RATE_LIMITED,
           status: httpStatus,

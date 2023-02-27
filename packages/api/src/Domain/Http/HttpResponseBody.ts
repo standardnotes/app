@@ -1,1 +1,1 @@
-export type HttpResponseBody = Record<string, unknown>
+export type HttpResponseBody = Record<string, unknown> & { error?: never }

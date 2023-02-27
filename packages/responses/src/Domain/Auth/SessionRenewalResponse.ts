@@ -1,6 +1,6 @@
-import { HttpResponse } from '../Http/HttpResponse'
+import { DeprecatedHttpResponse } from '../Http/DeprecatedHttpResponse'
 import { SessionRenewalData } from './SessionRenewalData'
 
-export type SessionRenewalResponse = HttpResponse & {
+export type SessionRenewalResponse = DeprecatedHttpResponse & {
   data: SessionRenewalData
 }

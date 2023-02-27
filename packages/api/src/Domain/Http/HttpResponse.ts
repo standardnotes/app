@@ -1,4 +1,4 @@
-import { HttpStatusCode } from './HttpStatusCode'
+import { HttpStatusCode } from '@standardnotes/responses'
 import { HttpResponseBody } from './HttpResponseBody'
 import { HttpErrorResponseBody } from './HttpErrorResponseBody'
 import { HttpResponseMeta } from './HttpResponseMeta'

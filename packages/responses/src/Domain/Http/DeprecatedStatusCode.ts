@@ -1,7 +1,6 @@
-export enum StatusCode {
+export enum DeprecatedStatusCode {
   LocalValidationError = 10,
   CanceledMfa = 11,
-  UnknownError = 12,
 
   HttpStatusMinSuccess = 200,
   HttpStatusNoContent = 204,

@@ -1,5 +1,5 @@
-import { MinimalHttpResponse } from '../Http/MinimalHttpResponses'
+import { DeprecatedMinimalHttpResponse } from '../Http/DeprecatedMinimalHttpResponses'
 
-export type ListedRegistrationResponse = MinimalHttpResponse & {
+export type ListedRegistrationResponse = DeprecatedMinimalHttpResponse & {
   data?: unknown
 }

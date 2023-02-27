@@ -1,6 +1,6 @@
-import { HttpResponse } from '../Http/HttpResponse'
+import { DeprecatedHttpResponse } from '../Http/DeprecatedHttpResponse'
 import { KeyParamsData } from './KeyParamsData'
 
-export type KeyParamsResponse = HttpResponse & {
+export type KeyParamsResponse = DeprecatedHttpResponse & {
   data: KeyParamsData
 }

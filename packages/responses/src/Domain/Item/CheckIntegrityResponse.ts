@@ -1,7 +1,7 @@
-import { MinimalHttpResponse } from '../Http/MinimalHttpResponses'
+import { DeprecatedMinimalHttpResponse } from '../Http/DeprecatedMinimalHttpResponses'
 import { IntegrityPayload } from './IntegrityPayload'
 
-export type CheckIntegrityResponse = MinimalHttpResponse & {
+export type CheckIntegrityResponse = DeprecatedMinimalHttpResponse & {
   data: {
     mismatches: IntegrityPayload[]
   }

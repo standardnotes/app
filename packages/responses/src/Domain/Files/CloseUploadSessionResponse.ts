@@ -1,6 +1,6 @@
-import { MinimalHttpResponse } from '../Http/MinimalHttpResponses'
+import { DeprecatedMinimalHttpResponse } from '../Http/DeprecatedMinimalHttpResponses'
 
-export type CloseUploadSessionResponse = MinimalHttpResponse & {
+export type CloseUploadSessionResponse = DeprecatedMinimalHttpResponse & {
   success: boolean
   message: string
 }

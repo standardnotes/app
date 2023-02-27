@@ -1,7 +1,7 @@
 import { SettingsList } from './SettingsList'
 import { SettingName, SensitiveSettingName, SubscriptionSettingName } from '@standardnotes/settings'
 import { API_MESSAGE_INVALID_SESSION } from '@standardnotes/services'
-import { StatusCode, User } from '@standardnotes/responses'
+import { HttpStatusCode, User } from '@standardnotes/responses'
 import { SettingsServerInterface } from './SettingsServerInterface'
 
 /**
@@ -49,7 +49,7 @@ export class SettingsGateway {
     const response = await this.settingsApi.getSetting(this.userUuid, name)
 
     // Backend responds with 400 when setting doesn't exist
-    if (response.status === StatusCode.HttpBadRequest) {
+    if (response.status === HttpStatusCode.BadRequest) {
       return undefined
     }
 
@@ -63,7 +63,7 @@ export class SettingsGateway {
   async getSubscriptionSetting(name: SubscriptionSettingName): Promise<string | undefined> {
     const response = await this.settingsApi.getSubscriptionSetting(this.userUuid, name)
 
-    if (response.status === StatusCode.HttpBadRequest) {
+    if (response.status === HttpStatusCode.BadRequest) {
       return undefined
     }
 
@@ -78,7 +78,7 @@ export class SettingsGateway {
     const response = await this.settingsApi.getSetting(this.userUuid, name)
 
     // Backend responds with 400 when setting doesn't exist
-    if (response.status === StatusCode.HttpBadRequest) {
+    if (response.status === HttpStatusCode.BadRequest) {
       return false
     }
 

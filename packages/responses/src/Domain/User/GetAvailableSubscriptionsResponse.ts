@@ -1,6 +1,6 @@
-import { MinimalHttpResponse } from '../Http/MinimalHttpResponses'
+import { DeprecatedMinimalHttpResponse } from '../Http/DeprecatedMinimalHttpResponses'
 import { AvailableSubscriptions } from './AvailableSubscriptions'
 
-export type GetAvailableSubscriptionsResponse = MinimalHttpResponse & {
+export type GetAvailableSubscriptionsResponse = DeprecatedMinimalHttpResponse & {
   data?: AvailableSubscriptions
 }

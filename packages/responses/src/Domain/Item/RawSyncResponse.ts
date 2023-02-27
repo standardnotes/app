@@ -1,4 +1,4 @@
-import { HttpResponse } from '../Http/HttpResponse'
+import { DeprecatedHttpResponse } from '../Http/DeprecatedHttpResponse'
 import { RawSyncData } from './RawSyncData'
 
-export type RawSyncResponse = HttpResponse & { data: RawSyncData }
+export type RawSyncResponse = DeprecatedHttpResponse & { data: RawSyncData }

@@ -1,7 +1,7 @@
-import { MinimalHttpResponse } from '../Http/MinimalHttpResponses'
+import { DeprecatedMinimalHttpResponse } from '../Http/DeprecatedMinimalHttpResponses'
 import { ServerItemResponse } from './ServerItemResponse'
 
-export type GetSingleItemResponse = MinimalHttpResponse & {
+export type GetSingleItemResponse = DeprecatedMinimalHttpResponse & {
   data:
     | {
         success: true
