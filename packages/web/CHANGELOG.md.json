@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.150.3",
+      "title": "[3.150.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.2...@standardnotes/web@3.150.3) (2023-02-27)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where links container toggle would correctly hide in focus mode ([9101464](https://github.com/standardnotes/app/commit/91014648bb2807b0bfe1910ba2bcbb67897019e8))",
+      "parsed": {
+        "_": [
+          "Fixed issue where links container toggle would correctly hide in focus mode (9101464)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where links container toggle would correctly hide in focus mode (9101464)"
+        ]
+      }
+    },
+    {
       "version": "3.150.2",
       "title": "[3.150.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.1...@standardnotes/web@3.150.2) (2023-02-27)",
       "date": null,

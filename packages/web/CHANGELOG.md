@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.150.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.2...@standardnotes/web@3.150.3) (2023-02-27)
+
+### Bug Fixes
+
+* Fixed issue where links container toggle would correctly hide in focus mode ([9101464](https://github.com/standardnotes/app/commit/91014648bb2807b0bfe1910ba2bcbb67897019e8))
+
 ## [3.150.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.1...@standardnotes/web@3.150.2) (2023-02-27)
 
 ### Bug Fixes
