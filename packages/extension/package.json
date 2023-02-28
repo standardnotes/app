@@ -1,0 +1,14 @@
+{
+  "name": "@standardnotes/extension",
+  "description": "Standard Notes companion browser extension",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "webpack --config ./webpack.config.js",
+    "build-firefox": "yarn build && web-ext build --source-dir ./dist"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "11.0.0",
+    "web-ext": "^7.5.0",
+    "webpack": "*"
+  }
+}

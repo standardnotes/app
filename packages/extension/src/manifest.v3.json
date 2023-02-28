@@ -1,0 +1,5 @@
+{
+  "manifest-version": 3,
+  "name": "Standard Notes",
+  "permissions": ["activeTab", "storage"]
+}

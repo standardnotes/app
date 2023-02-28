@@ -1,0 +1,10 @@
+{
+  "manifest_version": 2,
+  "name": "Standard Notes",
+  "version": "1.0.0",
+  "permissions": ["activeTab", "storage"],
+  "browser_action": {
+    "default_popup": "popup/index.html"
+  },
+  "content_security_policy": "default-src 'self' blob:; script-src 'self' 'sha256-QT/x2+RWuYkghaHS+95A//xFwbS5lXcRyG0x3/GpRUk=' 'wasm-eval' 'wasm-unsafe-eval'; worker-src blob:; connect-src * data: blob:; style-src 'unsafe-inline' 'self'; frame-src * blob:; img-src * data: blob:;"
+}
