@@ -114,7 +114,7 @@ export class HttpService implements HttpServiceInterface {
     const response = await this.runRequest<T>(request, this.createRequestBody(httpRequest))
 
     if (response.meta) {
-      this.updateMetaCallback(response.meta)
+      this.updateMetaCallback?.(response.meta)
     }
 
     if (response.status === HttpStatusCode.ExpiredAccessToken) {
@@ -153,7 +153,7 @@ export class HttpService implements HttpServiceInterface {
     }
 
     if (response.meta) {
-      this.updateMetaCallback(response.meta)
+      this.updateMetaCallback?.(response.meta)
     }
 
     const accessTokenOrError = SessionToken.create(

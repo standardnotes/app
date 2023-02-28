@@ -236,13 +236,13 @@ describe('basic auth', function () {
     await this.application.register(this.email, this.password)
     const newPassword = '123456'
     const response = await this.application.changePassword(this.password, newPassword)
-    expect(response.data.error).to.be.ok
+    expect(response.error).to.be.ok
   }).timeout(20000)
 
   it('fails to change password when current password is incorrect', async function () {
     await this.application.register(this.email, this.password)
     const response = await this.application.changePassword('Invalid password', 'New password')
-    expect(response.data.error).to.be.ok
+    expect(response.error).to.be.ok
 
     /** Ensure we can still log in */
     this.application = await Factory.signOutAndBackIn(this.application, this.email, this.password)
@@ -301,7 +301,7 @@ describe('basic auth', function () {
 
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
 
-    expect(response.data.error).to.not.be.ok
+    expect(response.error).to.not.be.ok
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
     expect(this.application.payloadManager.invalidPayloads.length).to.equal(0)
 
