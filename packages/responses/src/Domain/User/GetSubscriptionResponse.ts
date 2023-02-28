@@ -1,6 +1,5 @@
 import { Subscription } from '@standardnotes/security'
-import { HttpSuccessResponse } from '../Http/HttpResponse'
 
-export type GetSubscriptionResponse = HttpSuccessResponse<{
+export type GetSubscriptionResponse = {
   subscription?: Subscription
-}>
+}

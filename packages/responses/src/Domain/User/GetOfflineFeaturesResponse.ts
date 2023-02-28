@@ -1,7 +1,6 @@
 import { FeatureDescription } from '@standardnotes/features'
-import { HttpSuccessResponse } from '../Http/HttpResponse'
 
-export type GetOfflineFeaturesResponse = HttpSuccessResponse<{
+export type GetOfflineFeaturesResponse = {
   features: FeatureDescription[]
   roles: string[]
-}>
+}

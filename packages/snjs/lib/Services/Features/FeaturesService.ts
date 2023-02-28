@@ -7,7 +7,7 @@ import {
   lastElement,
   isString,
 } from '@standardnotes/utils'
-import { ClientDisplayableError, UserFeaturesResponse } from '@standardnotes/responses'
+import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import { ContentType } from '@standardnotes/common'
 import { RoleName } from '@standardnotes/domain-core'
 import { FillItemContent, PayloadEmitSource } from '@standardnotes/models'
@@ -417,8 +417,8 @@ export class SNFeaturesService
     if (shouldDownloadRoleBasedFeatures) {
       const featuresResponse = await this.apiService.getUserFeatures(userUuid)
 
-      if (!featuresResponse.data?.error && featuresResponse.data && !this.deinited) {
-        const features = (featuresResponse as UserFeaturesResponse).data.features
+      if (!isErrorResponse(featuresResponse) && !this.deinited) {
+        const features = featuresResponse.data.features
         await this.didDownloadFeatures(features)
       }
     }

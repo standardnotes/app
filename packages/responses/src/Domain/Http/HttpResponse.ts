@@ -3,6 +3,8 @@ import { HttpResponseMeta } from './HttpResponseMeta'
 import { HttpHeaders } from './HttpHeaders'
 import { HttpStatusCode } from './HttpStatusCode'
 
+type AnySuccessRecord = Record<string, unknown> & { error?: never }
+
 interface HttpResponseBase {
   status: HttpStatusCode
   meta?: HttpResponseMeta
@@ -10,15 +12,15 @@ interface HttpResponseBase {
 }
 
 export interface HttpErrorResponse extends HttpResponseBase {
-  data?: HttpErrorResponseBody
+  data: HttpErrorResponseBody
 }
 
-export interface HttpSuccessResponse<T = Record<string, unknown> & { error?: never }> extends HttpResponseBase {
-  data?: T
+export interface HttpSuccessResponse<T = AnySuccessRecord> extends HttpResponseBase {
+  data: T
 }
 
-export type HttpResponse<T = Record<string, unknown> & { error?: never }> = HttpErrorResponse | HttpSuccessResponse<T>
+export type HttpResponse<T = AnySuccessRecord> = HttpErrorResponse | HttpSuccessResponse<T>
 
-export function isErrorResponse(response: HttpResponse): response is HttpErrorResponse {
-  return !response.data || response.data?.error != undefined
+export function isErrorResponse<T>(response: HttpResponse<T>): response is HttpErrorResponse {
+  return !response.data || (response.data as HttpErrorResponseBody)?.error != undefined
 }

@@ -1,4 +1,4 @@
-import { ClientDisplayableError } from '@standardnotes/responses'
+import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import { ContentType } from '@standardnotes/common'
 import {
   FileItem,
@@ -101,7 +101,7 @@ export class FileService extends AbstractService implements FilesClientInterface
 
     const uploadSessionStarted = await this.api.startUploadSession(tokenResult)
 
-    if (!uploadSessionStarted.uploadId) {
+    if (isErrorResponse(uploadSessionStarted) || !uploadSessionStarted.data.uploadId) {
       return new ClientDisplayableError('Could not start upload session')
     }
 

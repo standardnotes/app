@@ -2,7 +2,7 @@ import { StartUploadSessionResponse, HttpResponse, ClientDisplayableError } from
 import { FileContent } from '@standardnotes/models'
 
 export interface FilesApiInterface {
-  startUploadSession(apiToken: string): Promise<StartUploadSessionResponse>
+  startUploadSession(apiToken: string): Promise<HttpResponse<StartUploadSessionResponse>>
 
   uploadFileBytes(apiToken: string, chunkId: number, encryptedBytes: Uint8Array): Promise<boolean>
 

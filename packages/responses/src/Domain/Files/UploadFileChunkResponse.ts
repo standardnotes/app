@@ -1,5 +1,3 @@
-import { HttpSuccessResponse } from '../Http/HttpResponse'
-
-export type UploadFileChunkResponse = HttpSuccessResponse<{
+export type UploadFileChunkResponse = {
   success: boolean
-}>
+}

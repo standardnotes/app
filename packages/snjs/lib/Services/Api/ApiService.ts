@@ -61,7 +61,6 @@ import {
   IntegrityPayload,
   CheckIntegrityResponse,
   GetSingleItemResponse,
-  HttpErrorResponseBody,
   HttpResponse,
   HttpResponseMeta,
   ErrorTag,
@@ -73,6 +72,7 @@ import {
   CreateValetTokenPayload,
   HttpErrorResponse,
   HttpSuccessResponse,
+  isErrorResponse,
 } from '@standardnotes/responses'
 import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
 import { HttpServiceInterface } from '@standardnotes/api'
@@ -206,12 +206,13 @@ export class SNApiService
     return params
   }
 
-  public createErrorResponse(message: string, status?: HttpStatusCode, tag?: ErrorTag): HttpResponse {
+  public createErrorResponse(message: string, status?: HttpStatusCode, tag?: ErrorTag): HttpErrorResponse {
     return { data: { error: { message, tag } }, status: status ?? HttpStatusCode.BadRequest }
   }
 
-  private errorResponseWithFallbackMessage(response: HttpResponse, message: string) {
-    const errorData = response.data as HttpErrorResponseBody
+  private errorResponseWithFallbackMessage(response: HttpErrorResponse, message: string): HttpErrorResponse {
+    const errorData = response.data
+
     if (!errorData.error.message) {
       errorData.error = {
         ...errorData.error,
@@ -235,13 +236,13 @@ export class SNApiService
     }
   }
 
-  private processSuccessResponseForMetaBody(response: HttpResponse) {
+  private processSuccessResponseForMetaBody<T>(response: HttpSuccessResponse<T>) {
     if (response.meta) {
       this.processMetaObject(response.meta)
     }
   }
 
-  private async request(params: {
+  private async request<T>(params: {
     verb: HttpVerb
     url: string
     fallbackErrorMessage: string
@@ -251,17 +252,17 @@ export class SNApiService
     customHeaders?: Record<string, string>[]
     responseType?: XMLHttpRequestResponseType
     external?: boolean
-  }) {
+  }): Promise<HttpResponse<T>> {
     try {
-      const response = await this.httpService.runHttp(params)
-      if (response?.data?.error) {
+      const response = await this.httpService.runHttp<T>(params)
+      if (isErrorResponse(response)) {
         return this.errorResponseWithFallbackMessage(response, params.fallbackErrorMessage)
       } else {
         this.processSuccessResponseForMetaBody(response)
         return response
       }
     } catch (errorResponse) {
-      return this.errorResponseWithFallbackMessage(errorResponse as HttpResponse, params.fallbackErrorMessage)
+      return this.errorResponseWithFallbackMessage(errorResponse as HttpErrorResponse, params.fallbackErrorMessage)
     }
   }
 
@@ -272,7 +273,7 @@ export class SNApiService
     email: string
     mfaCode?: string
     authenticatorResponse?: Record<string, unknown>
-  }): Promise<KeyParamsResponse | HttpResponse> {
+  }): Promise<HttpResponse<KeyParamsResponse>> {
     const codeVerifier = this.crypto.generateRandomKey(256)
     this.inMemoryStore.setValue(StorageKey.CodeVerifier, codeVerifier)
 
@@ -305,9 +306,9 @@ export class SNApiService
     email: string
     serverPassword: string
     ephemeral: boolean
-  }): Promise<SignInResponse | HttpResponse> {
+  }): Promise<HttpResponse<SignInResponse>> {
     if (this.authenticating) {
-      return this.createErrorResponse(API_MESSAGE_LOGIN_IN_PROGRESS, HttpStatusCode.BadRequest) as SignInResponse
+      return this.createErrorResponse(API_MESSAGE_LOGIN_IN_PROGRESS, HttpStatusCode.BadRequest)
     }
     this.authenticating = true
     const url = joinPaths(this.host, Paths.v2.signIn)
@@ -318,7 +319,7 @@ export class SNApiService
       code_verifier: this.inMemoryStore.getValue(StorageKey.CodeVerifier) as string,
     })
 
-    const response = await this.request({
+    const response = await this.request<SignInResponse>({
       verb: HttpVerb.Post,
       url,
       params,
@@ -332,8 +333,8 @@ export class SNApiService
     return response
   }
 
-  signOut(): Promise<SignOutResponse> {
-    return this.httpService.post(Paths.v1.signOut, undefined, this.getSessionAccessToken()) as Promise<SignOutResponse>
+  signOut(): Promise<HttpResponse<SignOutResponse>> {
+    return this.httpService.post<SignOutResponse>(Paths.v1.signOut, undefined, this.getSessionAccessToken())
   }
 
   async changeCredentials(parameters: {
@@ -342,7 +343,7 @@ export class SNApiService
     newServerPassword: string
     newKeyParams: SNRootKeyParams
     newEmail?: string
-  }): Promise<ChangeCredentialsResponse | HttpResponse> {
+  }): Promise<HttpResponse<ChangeCredentialsResponse>> {
     if (this.changing) {
       return this.createErrorResponse(API_MESSAGE_CHANGE_CREDENTIALS_IN_PROGRESS, HttpStatusCode.BadRequest)
     }
@@ -359,11 +360,11 @@ export class SNApiService
       ...parameters.newKeyParams.getPortableValue(),
     })
 
-    const response = await this.httpService.put(path, params, this.getSessionAccessToken())
+    const response = await this.httpService.put<ChangeCredentialsResponse>(path, params, this.getSessionAccessToken())
 
     this.changing = false
 
-    if (response?.data?.error) {
+    if (isErrorResponse(response)) {
       return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_CHANGE_CREDENTIALS_FAIL)
     }
 
@@ -377,7 +378,7 @@ export class SNApiService
     lastSyncToken: string,
     paginationToken: string,
     limit: number,
-  ): Promise<RawSyncResponse | HttpResponse> {
+  ): Promise<HttpResponse<RawSyncResponse>> {
     const preprocessingError = this.preprocessingError()
     if (preprocessingError) {
       return preprocessingError
@@ -389,9 +390,9 @@ export class SNApiService
       [ApiEndpointParam.PaginationToken]: paginationToken,
       [ApiEndpointParam.SyncDlLimit]: limit,
     })
-    const response = await this.httpService.post(path, params, this.getSessionAccessToken())
+    const response = await this.httpService.post<RawSyncResponse>(path, params, this.getSessionAccessToken())
 
-    if (response.data?.error) {
+    if (isErrorResponse(response)) {
       this.preprocessAuthenticatedErrorResponse(response)
       return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_SYNC_FAIL)
     }
@@ -401,7 +402,7 @@ export class SNApiService
     return response
   }
 
-  async refreshSession(): Promise<SessionRenewalResponse | HttpResponse> {
+  async refreshSession(): Promise<HttpResponse<SessionRenewalResponse>> {
     const preprocessingError = this.preprocessingError()
     if (preprocessingError) {
       return preprocessingError
@@ -415,51 +416,48 @@ export class SNApiService
       refresh_token: session.refreshToken.value,
     })
 
-    const response = await this.httpService.post(Paths.v1.refreshSession, params).then(async (response) => {
-      const sessionRenewalResponse = response as SessionRenewalResponse
-      if (sessionRenewalResponse.data?.error || !sessionRenewalResponse.data.session) {
-        return null
-      }
+    const response = await this.httpService
+      .post<SessionRenewalResponse>(Paths.v1.refreshSession, params)
+      .then(async (response) => {
+        if (isErrorResponse(response) || !response.data.session) {
+          return null
+        }
 
-      const accessTokenOrError = SessionToken.create(
-        sessionRenewalResponse.data.session.access_token,
-        sessionRenewalResponse.data.session.access_expiration,
-      )
-      if (accessTokenOrError.isFailed()) {
-        return null
-      }
-      const accessToken = accessTokenOrError.getValue()
+        const accessTokenOrError = SessionToken.create(
+          response.data.session.access_token,
+          response.data.session.access_expiration,
+        )
+        if (accessTokenOrError.isFailed()) {
+          return null
+        }
+        const accessToken = accessTokenOrError.getValue()
 
-      const refreshTokenOrError = SessionToken.create(
-        sessionRenewalResponse.data.session.refresh_token,
-        sessionRenewalResponse.data.session.refresh_expiration,
-      )
-      if (refreshTokenOrError.isFailed()) {
-        return null
-      }
-      const refreshToken = refreshTokenOrError.getValue()
+        const refreshTokenOrError = SessionToken.create(
+          response.data.session.refresh_token,
+          response.data.session.refresh_expiration,
+        )
+        if (refreshTokenOrError.isFailed()) {
+          return null
+        }
+        const refreshToken = refreshTokenOrError.getValue()
 
-      const sessionOrError = Session.create(
-        accessToken,
-        refreshToken,
-        sessionRenewalResponse.data.session.readonly_access,
-      )
-      if (sessionOrError.isFailed()) {
-        return null
-      }
-      const session = sessionOrError.getValue()
+        const sessionOrError = Session.create(accessToken, refreshToken, response.data.session.readonly_access)
+        if (sessionOrError.isFailed()) {
+          return null
+        }
+        const session = sessionOrError.getValue()
 
-      this.session = session
+        this.session = session
 
-      this.setSession(session)
-      this.processSuccessResponseForMetaBody(response)
+        this.setSession(session)
+        this.processSuccessResponseForMetaBody(response)
 
-      await this.notifyEventSync(ApiServiceEvent.SessionRefreshed, {
-        session,
+        await this.notifyEventSync(ApiServiceEvent.SessionRefreshed, {
+          session,
+        })
+
+        return response
       })
-
-      return response
-    })
 
     this.refreshingSession = false
 
@@ -467,7 +465,7 @@ export class SNApiService
       return this.createErrorResponse(API_MESSAGE_INVALID_SESSION, HttpStatusCode.BadRequest)
     }
 
-    if (response?.data?.error) {
+    if (isErrorResponse(response)) {
       this.preprocessAuthenticatedErrorResponse(response)
       return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL)
     }
@@ -475,15 +473,15 @@ export class SNApiService
     return response
   }
 
-  async getSessionsList(): Promise<SessionListResponse | HttpResponse> {
+  async getSessionsList(): Promise<HttpResponse<SessionListResponse>> {
     const preprocessingError = this.preprocessingError()
     if (preprocessingError) {
       return preprocessingError
     }
     const path = Paths.v1.sessions
-    const response = await this.httpService.get(path, {}, this.getSessionAccessToken())
+    const response = await this.httpService.get<SessionListResponse>(path, {}, this.getSessionAccessToken())
 
-    if (response?.data?.error) {
+    if (isErrorResponse(response)) {
       this.preprocessAuthenticatedErrorResponse(response)
       return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_SYNC_FAIL)
     }
@@ -493,19 +491,19 @@ export class SNApiService
     return response
   }
 
-  async deleteSession(sessionId: UuidString): Promise<HttpResponse> {
+  async deleteSession(sessionId: UuidString): Promise<HttpResponse<SessionListResponse>> {
     const preprocessingError = this.preprocessingError()
     if (preprocessingError) {
       return preprocessingError
     }
     const path = Paths.v1.session(sessionId)
-    const response: SessionListResponse | HttpResponse = await this.httpService.delete(
+    const response = await this.httpService.delete<SessionListResponse>(
       path,
       { uuid: sessionId },
       this.getSessionAccessToken(),
     )
 
-    if (response?.data?.error) {
+    if (isErrorResponse(response)) {
       this.preprocessAuthenticatedErrorResponse(response)
       return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_SYNC_FAIL)
     }
@@ -514,11 +512,11 @@ export class SNApiService
     return response
   }
 
-  async getUserFeatures(userUuid: UuidString): Promise<HttpResponse | UserFeaturesResponse> {
+  async getUserFeatures(userUuid: UuidString): Promise<HttpResponse<UserFeaturesResponse>> {
     const path = Paths.v1.userFeatures(userUuid)
-    const response = await this.httpService.get(path, undefined, this.getSessionAccessToken())
+    const response = await this.httpService.get<UserFeaturesResponse>(path, undefined, this.getSessionAccessToken())
 
-    if (response?.data?.error) {
+    if (isErrorResponse(response)) {
       this.preprocessAuthenticatedErrorResponse(response)
       return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_SYNC_FAIL)
     }
@@ -527,26 +525,26 @@ export class SNApiService
     return response
   }
 
-  private async tokenRefreshableRequest<T extends HttpSuccessResponse>(
+  private async tokenRefreshableRequest<T>(
     params: HttpRequest & { fallbackErrorMessage: string },
-  ): Promise<T | HttpErrorResponse> {
+  ): Promise<HttpResponse<T>> {
     const preprocessingError = this.preprocessingError()
     if (preprocessingError) {
-      return preprocessingError as T
+      return preprocessingError
     }
 
-    const response: T | HttpErrorResponse = await this.httpService.runHttp(params)
+    const response = await this.httpService.runHttp<T>(params)
 
-    if (response?.data?.error) {
+    if (isErrorResponse(response)) {
       this.preprocessAuthenticatedErrorResponse(response)
-      return this.errorResponseWithFallbackMessage(response, params.fallbackErrorMessage) as T
+      return this.errorResponseWithFallbackMessage(response, params.fallbackErrorMessage)
     }
 
     this.processSuccessResponseForMetaBody(response)
-    return response as T
+    return response
   }
 
-  async listSettings(userUuid: UuidString): Promise<ListSettingsResponse> {
+  async listSettings(userUuid: UuidString): Promise<HttpResponse<ListSettingsResponse>> {
     return await this.tokenRefreshableRequest<ListSettingsResponse>({
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.settings(userUuid)),
@@ -560,7 +558,7 @@ export class SNApiService
     settingName: string,
     settingValue: string | null,
     sensitive: boolean,
-  ): Promise<UpdateSettingResponse> {
+  ): Promise<HttpResponse<UpdateSettingResponse>> {
     const params = {
       name: settingName,
       value: settingValue,
@@ -575,7 +573,7 @@ export class SNApiService
     })
   }
 
-  async getSetting(userUuid: UuidString, settingName: SettingName): Promise<GetSettingResponse> {
+  async getSetting(userUuid: UuidString, settingName: SettingName): Promise<HttpResponse<GetSettingResponse>> {
     return await this.tokenRefreshableRequest<GetSettingResponse>({
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.setting(userUuid, settingName.toLowerCase() as SettingName)),
@@ -587,7 +585,7 @@ export class SNApiService
   async getSubscriptionSetting(
     userUuid: UuidString,
     settingName: SubscriptionSettingName,
-  ): Promise<GetSettingResponse> {
+  ): Promise<HttpResponse<GetSettingResponse>> {
     return await this.tokenRefreshableRequest<GetSettingResponse>({
       verb: HttpVerb.Get,
       url: joinPaths(
@@ -599,7 +597,7 @@ export class SNApiService
     })
   }
 
-  async deleteSetting(userUuid: UuidString, settingName: SettingName): Promise<DeleteSettingResponse> {
+  async deleteSetting(userUuid: UuidString, settingName: SettingName): Promise<HttpResponse<DeleteSettingResponse>> {
     return this.tokenRefreshableRequest<DeleteSettingResponse>({
       verb: HttpVerb.Delete,
       url: joinPaths(this.host, Paths.v1.setting(userUuid, settingName)),
@@ -617,37 +615,39 @@ export class SNApiService
     })
   }
 
-  public async getSubscription(userUuid: string): Promise<HttpErrorResponse | GetSubscriptionResponse> {
+  public async getSubscription(userUuid: string): Promise<HttpResponse<GetSubscriptionResponse>> {
     const url = joinPaths(this.host, Paths.v1.subscription(userUuid))
-    const response = await this.tokenRefreshableRequest({
+    return this.tokenRefreshableRequest({
       verb: HttpVerb.Get,
       url,
       authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_SUBSCRIPTION_INFO,
     })
-
-    return response
   }
 
-  public async getAvailableSubscriptions(): Promise<HttpResponse | GetAvailableSubscriptionsResponse> {
+  public async getAvailableSubscriptions(): Promise<HttpResponse<GetAvailableSubscriptionsResponse>> {
     const url = joinPaths(this.host, Paths.v2.subscriptions)
-    const response = await this.request({
+    return this.request({
       verb: HttpVerb.Get,
       url,
       fallbackErrorMessage: API_MESSAGE_FAILED_SUBSCRIPTION_INFO,
     })
-    return response
   }
 
   public async getNewSubscriptionToken(): Promise<string | undefined> {
     const url = joinPaths(this.host, Paths.v1.subscriptionTokens)
-    const response: HttpResponse | PostSubscriptionTokensResponse = await this.request({
+    const response = await this.request<PostSubscriptionTokensResponse>({
       verb: HttpVerb.Post,
       url,
       authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_ACCESS_PURCHASE,
     })
-    return (response as PostSubscriptionTokensResponse).data?.token
+
+    if (isErrorResponse(response)) {
+      return undefined
+    }
+
+    return response.data.token
   }
 
   public async downloadOfflineFeaturesFromRepo(
@@ -666,17 +666,17 @@ export class SNApiService
         return new ClientDisplayableError('This offline features host is not in the trusted allowlist.')
       }
 
-      const response: HttpResponse | GetOfflineFeaturesResponse = await this.request({
+      const response = await this.request<GetOfflineFeaturesResponse>({
         verb: HttpVerb.Get,
         url: featuresUrl,
         fallbackErrorMessage: API_MESSAGE_FAILED_OFFLINE_FEATURES,
         customHeaders: [{ key: 'x-offline-token', value: extensionKey }],
       })
 
-      if (response.data?.error) {
-        return ClientDisplayableError.FromError((response.data as HttpErrorResponseBody).error)
+      if (isErrorResponse(response)) {
+        return ClientDisplayableError.FromError(response.data.error)
       }
-      const data = (response as GetOfflineFeaturesResponse).data
+      const data = response.data
       return {
         features: data?.features || [],
         roles: data?.roles || [],
@@ -686,11 +686,11 @@ export class SNApiService
     }
   }
 
-  public async registerForListedAccount(): Promise<ListedRegistrationResponse> {
+  public async registerForListedAccount(): Promise<HttpResponse<ListedRegistrationResponse>> {
     if (!this.user) {
       throw Error('Cannot register for Listed without user account.')
     }
-    return await this.tokenRefreshableRequest<ListedRegistrationResponse>({
+    return this.tokenRefreshableRequest<ListedRegistrationResponse>({
       verb: HttpVerb.Post,
       url: joinPaths(this.host, Paths.v1.listedRegistration(this.user.uuid)),
       fallbackErrorMessage: API_MESSAGE_FAILED_LISTED_REGISTRATION,
@@ -718,6 +718,10 @@ export class SNApiService
       params,
     })
 
+    if (isErrorResponse(response)) {
+      return new ClientDisplayableError(response.data?.error?.message as string)
+    }
+
     if (!response.data?.success) {
       return new ClientDisplayableError(response.data?.reason as string, undefined, response.data?.reason as string)
     }
@@ -725,30 +729,26 @@ export class SNApiService
     return response.data?.valetToken
   }
 
-  public async startUploadSession(apiToken: string): Promise<StartUploadSessionResponse> {
+  public async startUploadSession(apiToken: string): Promise<HttpResponse<StartUploadSessionResponse>> {
     const url = joinPaths(this.getFilesHost(), Paths.v1.startUploadSession)
 
-    const response: HttpResponse | StartUploadSessionResponse = await this.tokenRefreshableRequest({
+    return this.tokenRefreshableRequest({
       verb: HttpVerb.Post,
       url,
       customHeaders: [{ key: 'x-valet-token', value: apiToken }],
       fallbackErrorMessage: Strings.Network.Files.FailedStartUploadSession,
     })
-
-    return response as StartUploadSessionResponse
   }
 
-  public async deleteFile(apiToken: string): Promise<HttpResponse> {
+  public async deleteFile(apiToken: string): Promise<HttpResponse<StartUploadSessionResponse>> {
     const url = joinPaths(this.getFilesHost(), Paths.v1.deleteFile)
 
-    const response: HttpResponse | StartUploadSessionResponse = await this.tokenRefreshableRequest({
+    return this.tokenRefreshableRequest({
       verb: HttpVerb.Delete,
       url,
       customHeaders: [{ key: 'x-valet-token', value: apiToken }],
       fallbackErrorMessage: Strings.Network.Files.FailedDeleteFile,
     })
-
-    return response
   }
 
   public async uploadFileBytes(apiToken: string, chunkId: number, encryptedBytes: Uint8Array): Promise<boolean> {
@@ -757,7 +757,7 @@ export class SNApiService
     }
     const url = joinPaths(this.getFilesHost(), Paths.v1.uploadFileChunk)
 
-    const response: HttpResponse | UploadFileChunkResponse = await this.tokenRefreshableRequest({
+    const response = await this.tokenRefreshableRequest<UploadFileChunkResponse>({
       verb: HttpVerb.Post,
       url,
       rawBytes: encryptedBytes,
@@ -769,20 +769,28 @@ export class SNApiService
       fallbackErrorMessage: Strings.Network.Files.FailedUploadFileChunk,
     })
 
-    return (response as UploadFileChunkResponse).success
+    if (isErrorResponse(response)) {
+      return false
+    }
+
+    return response.data.success
   }
 
   public async closeUploadSession(apiToken: string): Promise<boolean> {
     const url = joinPaths(this.getFilesHost(), Paths.v1.closeUploadSession)
 
-    const response: HttpResponse | CloseUploadSessionResponse = await this.tokenRefreshableRequest({
+    const response = await this.tokenRefreshableRequest<CloseUploadSessionResponse>({
       verb: HttpVerb.Post,
       url,
       customHeaders: [{ key: 'x-valet-token', value: apiToken }],
       fallbackErrorMessage: Strings.Network.Files.FailedCloseUploadSession,
     })
 
-    return (response as CloseUploadSessionResponse).success
+    if (isErrorResponse(response)) {
+      return false
+    }
+
+    return response.data.success
   }
 
   public getFilesDownloadUrl(): string {
@@ -799,21 +807,24 @@ export class SNApiService
     const url = this.getFilesDownloadUrl()
     const pullChunkSize = file.encryptedChunkSizes[chunkIndex]
 
-    const response: HttpResponse | DownloadFileChunkResponse =
-      await this.tokenRefreshableRequest<DownloadFileChunkResponse>({
-        verb: HttpVerb.Get,
-        url,
-        customHeaders: [
-          { key: 'x-valet-token', value: apiToken },
-          {
-            key: 'x-chunk-size',
-            value: pullChunkSize.toString(),
-          },
-          { key: 'range', value: `bytes=${contentRangeStart}-` },
-        ],
-        fallbackErrorMessage: Strings.Network.Files.FailedDownloadFileChunk,
-        responseType: 'arraybuffer',
-      })
+    const response = await this.tokenRefreshableRequest<DownloadFileChunkResponse>({
+      verb: HttpVerb.Get,
+      url,
+      customHeaders: [
+        { key: 'x-valet-token', value: apiToken },
+        {
+          key: 'x-chunk-size',
+          value: pullChunkSize.toString(),
+        },
+        { key: 'range', value: `bytes=${contentRangeStart}-` },
+      ],
+      fallbackErrorMessage: Strings.Network.Files.FailedDownloadFileChunk,
+      responseType: 'arraybuffer',
+    })
+
+    if (isErrorResponse(response)) {
+      return new ClientDisplayableError(response.data?.error?.message as string)
+    }
 
     const contentRangeHeader = (<Map<string, string | null>>response.headers).get('content-range')
     if (!contentRangeHeader) {
@@ -829,7 +840,7 @@ export class SNApiService
     const rangeEnd = +matches[3]
     const totalSize = +matches[4]
 
-    const bytesReceived = new Uint8Array(response.data as ArrayBuffer)
+    const bytesReceived = new Uint8Array(response.data)
 
     await onBytesReceived(bytesReceived)
 
@@ -840,8 +851,8 @@ export class SNApiService
     return undefined
   }
 
-  async checkIntegrity(integrityPayloads: IntegrityPayload[]): Promise<CheckIntegrityResponse> {
-    return await this.tokenRefreshableRequest<CheckIntegrityResponse>({
+  async checkIntegrity(integrityPayloads: IntegrityPayload[]): Promise<HttpResponse<CheckIntegrityResponse>> {
+    return this.tokenRefreshableRequest<CheckIntegrityResponse>({
       verb: HttpVerb.Post,
       url: joinPaths(this.host, Paths.v1.checkIntegrity),
       params: {
@@ -852,8 +863,8 @@ export class SNApiService
     })
   }
 
-  async getSingleItem(itemUuid: string): Promise<GetSingleItemResponse> {
-    return await this.tokenRefreshableRequest<GetSingleItemResponse>({
+  async getSingleItem(itemUuid: string): Promise<HttpResponse<GetSingleItemResponse>> {
+    return this.tokenRefreshableRequest<GetSingleItemResponse>({
       verb: HttpVerb.Get,
       url: joinPaths(this.host, Paths.v1.getSingleItem(itemUuid)),
       fallbackErrorMessage: API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
@@ -875,7 +886,7 @@ export class SNApiService
 
   private preprocessAuthenticatedErrorResponse(response: HttpResponse) {
     if (response.status === HttpStatusCode.Unauthorized && this.session) {
-      this.invalidSessionObserver?.((response.data as HttpErrorResponseBody).error?.tag === ErrorTag.RevokedSession)
+      this.invalidSessionObserver?.(response.data.error?.tag === ErrorTag.RevokedSession)
     }
   }
 

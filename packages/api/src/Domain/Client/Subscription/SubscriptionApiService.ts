@@ -3,14 +3,15 @@ import { ApiCallError } from '../../Error/ApiCallError'
 import { ApiVersion } from '../../Api/ApiVersion'
 import { ApiEndpointParam } from '../../Request/ApiEndpointParam'
 import { SubscriptionServerInterface } from '../../Server/Subscription/SubscriptionServerInterface'
-import { SubscriptionInviteResponse } from '../../Response/Subscription/SubscriptionInviteResponse'
-import { SubscriptionInviteListResponse } from '../../Response/Subscription/SubscriptionInviteListResponse'
-import { SubscriptionInviteCancelResponse } from '../../Response/Subscription/SubscriptionInviteCancelResponse'
-import { SubscriptionInviteAcceptResponse } from '../../Response/Subscription/SubscriptionInviteAcceptResponse'
+import { AppleIAPConfirmResponseBody } from './../../Response/Subscription/AppleIAPConfirmResponseBody'
+import { SubscriptionInviteAcceptResponseBody } from '../../Response/Subscription/SubscriptionInviteAcceptResponseBody'
+import { SubscriptionInviteCancelResponseBody } from '../../Response/Subscription/SubscriptionInviteCancelResponseBody'
+import { SubscriptionInviteListResponseBody } from '../../Response/Subscription/SubscriptionInviteListResponseBody'
+import { SubscriptionInviteResponseBody } from '../../Response/Subscription/SubscriptionInviteResponseBody'
+import { HttpResponse } from '@standardnotes/responses'
 
 import { SubscriptionApiServiceInterface } from './SubscriptionApiServiceInterface'
 import { SubscriptionApiOperations } from './SubscriptionApiOperations'
-import { AppleIAPConfirmResponse } from './../../Response/Subscription/AppleIAPConfirmResponse'
 import { AppleIAPConfirmRequestParams } from '../../Request'
 
 export class SubscriptionApiService implements SubscriptionApiServiceInterface {
@@ -20,7 +21,7 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
     this.operationsInProgress = new Map()
   }
 
-  async listInvites(): Promise<SubscriptionInviteListResponse> {
+  async listInvites(): Promise<HttpResponse<SubscriptionInviteListResponseBody>> {
     if (this.operationsInProgress.get(SubscriptionApiOperations.ListingInvites)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }
@@ -40,7 +41,7 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
     }
   }
 
-  async cancelInvite(inviteUuid: string): Promise<SubscriptionInviteCancelResponse> {
+  async cancelInvite(inviteUuid: string): Promise<HttpResponse<SubscriptionInviteCancelResponseBody>> {
     if (this.operationsInProgress.get(SubscriptionApiOperations.CancelingInvite)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }
@@ -61,7 +62,7 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
     }
   }
 
-  async invite(inviteeEmail: string): Promise<SubscriptionInviteResponse> {
+  async invite(inviteeEmail: string): Promise<HttpResponse<SubscriptionInviteResponseBody>> {
     if (this.operationsInProgress.get(SubscriptionApiOperations.Inviting)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }
@@ -82,7 +83,7 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
     }
   }
 
-  async acceptInvite(inviteUuid: string): Promise<SubscriptionInviteAcceptResponse> {
+  async acceptInvite(inviteUuid: string): Promise<HttpResponse<SubscriptionInviteAcceptResponseBody>> {
     if (this.operationsInProgress.get(SubscriptionApiOperations.AcceptingInvite)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }
@@ -102,7 +103,7 @@ export class SubscriptionApiService implements SubscriptionApiServiceInterface {
     }
   }
 
-  async confirmAppleIAP(params: AppleIAPConfirmRequestParams): Promise<AppleIAPConfirmResponse> {
+  async confirmAppleIAP(params: AppleIAPConfirmRequestParams): Promise<HttpResponse<AppleIAPConfirmResponseBody>> {
     if (this.operationsInProgress.get(SubscriptionApiOperations.ConfirmAppleIAP)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }

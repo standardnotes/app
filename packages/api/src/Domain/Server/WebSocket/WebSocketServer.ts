@@ -1,6 +1,7 @@
 import { HttpServiceInterface } from '../../Http/HttpServiceInterface'
 import { WebSocketConnectionTokenRequestParams } from '../../Request/WebSocket/WebSocketConnectionTokenRequestParams'
-import { WebSocketConnectionTokenResponse } from '../../Response/WebSocket/WebSocketConnectionTokenResponse'
+import { HttpResponse } from '@standardnotes/responses'
+import { WebSocketConnectionTokenResponseBody } from '../../Response/WebSocket/WebSocketConnectionTokenResponseBody'
 import { Paths } from './Paths'
 import { WebSocketServerInterface } from './WebSocketServerInterface'
 
@@ -9,9 +10,7 @@ export class WebSocketServer implements WebSocketServerInterface {
 
   async createConnectionToken(
     params: WebSocketConnectionTokenRequestParams,
-  ): Promise<WebSocketConnectionTokenResponse> {
-    const response = await this.httpService.post(Paths.v1.createConnectionToken, params)
-
-    return response as WebSocketConnectionTokenResponse
+  ): Promise<HttpResponse<WebSocketConnectionTokenResponseBody>> {
+    return this.httpService.post(Paths.v1.createConnectionToken, params)
   }
 }

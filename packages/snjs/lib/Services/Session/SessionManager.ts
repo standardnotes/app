@@ -32,20 +32,24 @@ import {
   ClientDisplayableError,
   SessionBody,
   ErrorTag,
-  HttpErrorResponseBody,
   HttpResponse,
-  HttpErrorResponse,
   isErrorResponse,
+  SessionListEntry,
+  User,
+  AvailableSubscriptions,
+  KeyParamsResponse,
+  SignInResponse,
+  ChangeCredentialsResponse,
+  SessionListResponse,
   HttpSuccessResponse,
 } from '@standardnotes/responses'
 import { CopyPayloadWithContentOverride } from '@standardnotes/models'
 import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
 import { KeyParamsFromApiResponse, SNRootKeyParams, SNRootKey, CreateNewRootKey } from '@standardnotes/encryption'
-import * as Responses from '@standardnotes/responses'
 import { Subscription } from '@standardnotes/security'
 import * as Common from '@standardnotes/common'
 
-import { RemoteSession, RawStorageValue } from './Sessions/Types'
+import { RawStorageValue } from './Sessions/Types'
 import { ShareToken } from './ShareToken'
 import { SNApiService } from '../Api/ApiService'
 import { DiskStorageService } from '../Storage/DiskStorageService'
@@ -82,7 +86,7 @@ export class SNSessionManager
   extends AbstractService<SessionEvent>
   implements SessionsClientInterface, InternalEventHandlerInterface
 {
-  private user?: Responses.User
+  private user?: User
   private isSessionRenewChallengePresented = false
   private session?: Session | LegacySession
 
@@ -126,7 +130,7 @@ export class SNSessionManager
     super.deinit()
   }
 
-  private setUser(user?: Responses.User) {
+  private setUser(user?: User) {
     this.user = user
     this.apiService.setUser(user)
   }
@@ -176,7 +180,7 @@ export class SNSessionManager
     return this.apiService.getSession() == undefined
   }
 
-  public getUser(): Responses.User | undefined {
+  public getUser(): User | undefined {
     return this.user
   }
 
@@ -193,7 +197,7 @@ export class SNSessionManager
   }
 
   public getSureUser() {
-    return this.user as Responses.User
+    return this.user as User
   }
 
   public getSession() {
@@ -269,26 +273,26 @@ export class SNSessionManager
     })
   }
 
-  public async getSubscription(): Promise<ClientDisplayableError | Subscription> {
+  public async getSubscription(): Promise<ClientDisplayableError | Subscription | undefined> {
     const result = await this.apiService.getSubscription(this.getSureUser().uuid)
 
-    if (result.data?.error) {
-      return ClientDisplayableError.FromError(result.data.error)
+    if (isErrorResponse(result)) {
+      return ClientDisplayableError.FromError(result.data?.error)
     }
 
-    const subscription = (result as Responses.GetSubscriptionResponse).data!.subscription!
+    const subscription = result.data.subscription
 
     return subscription
   }
 
-  public async getAvailableSubscriptions(): Promise<Responses.AvailableSubscriptions | ClientDisplayableError> {
+  public async getAvailableSubscriptions(): Promise<AvailableSubscriptions | ClientDisplayableError> {
     const response = await this.apiService.getAvailableSubscriptions()
 
-    if (response.data?.error) {
+    if (isErrorResponse(response)) {
       return ClientDisplayableError.FromError(response.data.error)
     }
 
-    return (response as Responses.GetAvailableSubscriptionsResponse).data!
+    return response.data
   }
 
   private async promptForU2FVerification(username: string): Promise<Record<string, unknown> | undefined> {
@@ -386,17 +390,17 @@ export class SNSessionManager
     authenticatorResponse?: Record<string, unknown>
   }): Promise<{
     keyParams?: SNRootKeyParams
-    response: Responses.KeyParamsResponse | HttpResponse
+    response: HttpResponse<KeyParamsResponse>
     mfaCode?: string
   }> {
     const response = await this.apiService.getAccountKeyParams(dto)
 
-    if (!response.data || response.data.error) {
+    if (isErrorResponse(response) || !response.data) {
       if (dto.mfaCode) {
         await this.alertService.alert(SignInStrings.IncorrectMfa)
       }
 
-      const error = (response.data as HttpErrorResponseBody | undefined)?.error
+      const error = isErrorResponse(response) ? response.data.error : undefined
 
       if (response.data && [ErrorTag.U2FRequired, ErrorTag.MfaRequired].includes(error?.tag as ErrorTag)) {
         const isU2FRequired = error?.tag === ErrorTag.U2FRequired
@@ -421,7 +425,7 @@ export class SNSessionManager
       }
     }
     /** Make sure to use client value for identifier/email */
-    const keyParams = KeyParamsFromApiResponse(response as Responses.KeyParamsResponse, dto.email)
+    const keyParams = KeyParamsFromApiResponse(response.data, dto.email)
     if (!keyParams || !keyParams.version) {
       return {
         response: this.apiService.createErrorResponse(API_MESSAGE_FALLBACK_LOGIN_FAIL),
@@ -467,7 +471,7 @@ export class SNSessionManager
     const paramsResult = await this.retrieveKeyParams({
       email,
     })
-    if (paramsResult.response.data?.error) {
+    if (isErrorResponse(paramsResult.response)) {
       return {
         response: paramsResult.response,
       }
@@ -537,7 +541,7 @@ export class SNSessionManager
     email: string,
     rootKey: SNRootKey,
     ephemeral = false,
-  ): Promise<Responses.SignInResponse | HttpResponse> {
+  ): Promise<HttpResponse<SignInResponse>> {
     const { wrappingKey, canceled } = await this.challengeService.getWrappingKeyIfApplicable()
 
     if (canceled) {
@@ -554,18 +558,18 @@ export class SNSessionManager
       ephemeral,
     })
 
-    if (!signInResponse.data || signInResponse.data.error) {
+    if (!signInResponse.data || isErrorResponse(signInResponse)) {
       return signInResponse
     }
 
-    const updatedKeyParams = (signInResponse as Responses.SignInResponse).data.key_params
+    const updatedKeyParams = signInResponse.data.key_params
     const expandedRootKey = new SNRootKey(
       CopyPayloadWithContentOverride(rootKey.payload, {
         keyParams: updatedKeyParams || rootKey.keyParams.getPortableValue(),
       }),
     )
 
-    await this.handleSuccessAuthResponse(signInResponse as Responses.SignInResponse, expandedRootKey, wrappingKey)
+    await this.handleSuccessAuthResponse(signInResponse, expandedRootKey, wrappingKey)
 
     return signInResponse
   }
@@ -585,60 +589,54 @@ export class SNSessionManager
       newEmail: parameters.newEmail,
     })
 
-    return this.processChangeCredentialsResponse(
-      response as Responses.ChangeCredentialsResponse,
-      parameters.newRootKey,
-      parameters.wrappingKey,
-    )
+    return this.processChangeCredentialsResponse(response, parameters.newRootKey, parameters.wrappingKey)
   }
 
-  public async getSessionsList(): Promise<HttpSuccessResponse<RemoteSession[]> | HttpErrorResponse> {
+  public async getSessionsList(): Promise<HttpResponse<SessionListEntry[]>> {
     const response = await this.apiService.getSessionsList()
+
     if (isErrorResponse(response)) {
       return response
     }
 
-    const typedResponse = response
-
-    const typedData = typedResponse.data as RemoteSession[]
-
-    ;(typedResponse.data as RemoteSession[]) = typedData
-      .map<RemoteSession>((session) => ({
-        ...session,
-        updated_at: new Date(session.updated_at),
-      }))
-      .sort((s1: RemoteSession, s2: RemoteSession) => (s1.updated_at < s2.updated_at ? 1 : -1))
+    response.data = response.data.sort((s1: SessionListEntry, s2: SessionListEntry) => {
+      return new Date(s1.updated_at) < new Date(s2.updated_at) ? 1 : -1
+    })
 
     return response
   }
 
-  public async revokeSession(sessionId: UuidString): Promise<HttpResponse> {
-    const response = await this.apiService.deleteSession(sessionId)
-    return response
+  public async revokeSession(sessionId: UuidString): Promise<HttpResponse<SessionListResponse>> {
+    return this.apiService.deleteSession(sessionId)
   }
 
   public async revokeAllOtherSessions(): Promise<void> {
     const response = await this.getSessionsList()
-    if (!response.data || response.data.error) {
-      const error = (response.data as HttpErrorResponseBody | undefined)?.error
+    if (isErrorResponse(response) || !response.data) {
+      const error = isErrorResponse(response) ? response.data?.error : undefined
       throw new Error(error?.message ?? API_MESSAGE_GENERIC_SYNC_FAIL)
     }
-    const sessions = response.data as RemoteSession[]
-    const otherSessions = sessions.filter((session) => !session.current)
+
+    const otherSessions = response.data.filter((session) => !session.current)
     await Promise.all(otherSessions.map((session) => this.revokeSession(session.uuid)))
   }
 
   private async processChangeCredentialsResponse(
-    response: Responses.ChangeCredentialsResponse,
+    response: HttpResponse<ChangeCredentialsResponse>,
     newRootKey: SNRootKey,
     wrappingKey?: SNRootKey,
   ): Promise<SessionManagerResponse> {
-    if (response.data && !response.data.error) {
-      await this.handleSuccessAuthResponse(response as Responses.ChangeCredentialsResponse, newRootKey, wrappingKey)
+    if (isErrorResponse(response)) {
+      return {
+        response: response,
+      }
     }
+
+    await this.handleSuccessAuthResponse(response, newRootKey, wrappingKey)
+
     return {
       response: response,
-      keyParams: (response as Responses.ChangeCredentialsResponse).data?.key_params,
+      keyParams: response.data?.key_params,
     }
   }
 
@@ -699,7 +697,7 @@ export class SNSessionManager
 
   private async populateSession(
     rootKey: SNRootKey,
-    user: Responses.User,
+    user: User,
     session: Session | LegacySession,
     host: string,
     wrappingKey?: SNRootKey,
@@ -743,17 +741,17 @@ export class SNSessionManager
    * @deprecated use handleAuthentication instead
    */
   private async handleSuccessAuthResponse(
-    response: Responses.SignInResponse | Responses.ChangeCredentialsResponse,
+    response: HttpSuccessResponse<SignInResponse | ChangeCredentialsResponse>,
     rootKey: SNRootKey,
     wrappingKey?: SNRootKey,
   ) {
     const { data } = response
-    const user = data.user as Responses.User
+    const user = data.user
 
     const isLegacyJwtResponse = data.token != undefined
     if (isLegacyJwtResponse) {
       const sessionOrError = LegacySession.create(data.token as string)
-      if (!sessionOrError.isFailed()) {
+      if (!sessionOrError.isFailed() && user) {
         await this.populateSession(rootKey, user, sessionOrError.getValue(), this.apiService.getHost(), wrappingKey)
       }
     } else if (data.session) {
@@ -764,7 +762,7 @@ export class SNSessionManager
         data.session.refresh_expiration,
         data.session.readonly_access,
       )
-      if (session !== null) {
+      if (session !== null && user) {
         await this.populateSession(rootKey, user, session, this.apiService.getHost(), wrappingKey)
       }
     }

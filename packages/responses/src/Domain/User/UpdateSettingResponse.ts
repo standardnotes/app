@@ -1,3 +1,1 @@
-import { HttpResponse } from '../Http/HttpResponse'
-
-export type UpdateSettingResponse = HttpResponse
+export type UpdateSettingResponse = unknown

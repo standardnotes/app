@@ -1,7 +1,6 @@
-import { HttpSuccessResponse } from '../Http/HttpResponse'
 import { SettingData } from './SettingData'
 
-export type GetSettingResponse = HttpSuccessResponse<{
+export type GetSettingResponse = {
   success?: boolean
   setting?: SettingData
-}>
+}

@@ -1,6 +1,4 @@
-import { HttpSuccessResponse } from '../Http/HttpResponse'
-
-export type StartUploadSessionResponse = HttpSuccessResponse<{
+export type StartUploadSessionResponse = {
   success: boolean
   uploadId: string
-}>
+}

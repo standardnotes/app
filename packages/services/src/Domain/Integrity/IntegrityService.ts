@@ -2,7 +2,7 @@ import { IntegrityEvent } from './IntegrityEvent'
 import { AbstractService } from '../Service/AbstractService'
 import { ItemsServerInterface } from '../Item/ItemsServerInterface'
 import { IntegrityApiInterface } from './IntegrityApiInterface'
-import { GetSingleItemResponse, ServerItemResponse } from '@standardnotes/responses'
+import { GetSingleItemResponse, HttpResponse, isErrorResponse, ServerItemResponse } from '@standardnotes/responses'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
@@ -30,13 +30,13 @@ export class IntegrityService
     }
 
     const integrityCheckResponse = await this.integrityApi.checkIntegrity(this.payloadManager.integrityPayloads)
-    if (integrityCheckResponse.data.error !== undefined) {
+    if (isErrorResponse(integrityCheckResponse)) {
       this.log(`Could not obtain integrity check: ${integrityCheckResponse.data.error}`)
 
       return
     }
 
-    const serverItemResponsePromises: Promise<GetSingleItemResponse>[] = []
+    const serverItemResponsePromises: Promise<HttpResponse<GetSingleItemResponse>>[] = []
     for (const mismatch of integrityCheckResponse.data.mismatches) {
       serverItemResponsePromises.push(this.itemApi.getSingleItem(mismatch.uuid))
     }
@@ -47,10 +47,14 @@ export class IntegrityService
     for (const serverItemResponse of serverItemResponses) {
       if (
         serverItemResponse.data == undefined ||
-        serverItemResponse.data.error ||
+        isErrorResponse(serverItemResponse) ||
         !('item' in serverItemResponse.data)
       ) {
-        this.log(`Could not obtain item for integrity adjustments: ${serverItemResponse.data.error}`)
+        this.log(
+          `Could not obtain item for integrity adjustments: ${
+            isErrorResponse(serverItemResponse) ? serverItemResponse.data.error : ''
+          }`,
+        )
 
         continue
       }

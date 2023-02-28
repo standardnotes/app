@@ -1,5 +1,3 @@
-import { HttpSuccessResponse } from '../Http/HttpResponse'
-
-export type PostSubscriptionTokensResponse = HttpSuccessResponse<{
+export type PostSubscriptionTokensResponse = {
   token: string
-}>
+}

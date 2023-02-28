@@ -1,5 +1,5 @@
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { SNApplication, SessionStrings, UuidString, RemoteSession } from '@standardnotes/snjs'
+import { SNApplication, SessionStrings, UuidString, SessionListEntry } from '@standardnotes/snjs'
 import { FunctionComponent, useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { Alert } from '@reach/alert'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
@@ -11,7 +11,7 @@ import Icon from '../Icon/Icon'
 import Modal, { ModalAction } from '../Modal/Modal'
 import ModalOverlay from '../Modal/ModalOverlay'
 
-type Session = RemoteSession & {
+type Session = SessionListEntry & {
   revoking?: true
 }
 
@@ -35,7 +35,7 @@ function useSessions(
           setErrorMessage('An unknown error occured while loading sessions.')
         }
       } else {
-        const sessions = response.data as RemoteSession[]
+        const sessions = response.data as SessionListEntry[]
         setSessions(sessions)
         setErrorMessage('')
       }
@@ -62,7 +62,7 @@ function useSessions(
     setSessions(sessionsDuringRevoke)
 
     const response = await responsePromise
-    if (isNullOrUndefined(response)) {
+    if (!response) {
       setSessions(sessionsBeforeRevoke)
     } else if (response.data?.error) {
       if (response.data?.error.message) {

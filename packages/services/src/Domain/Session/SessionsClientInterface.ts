@@ -25,7 +25,7 @@ export interface SessionsClientInterface {
     email: string,
     rootKey: RootKeyInterface,
     ephemeral: boolean,
-  ): Promise<SignInResponse | HttpResponse>
+  ): Promise<HttpResponse<SignInResponse>>
   signOut(): Promise<void>
   changeCredentials(parameters: {
     currentServerPassword: string

@@ -5,12 +5,13 @@ import {
   DeleteAuthenticatorRequestParams,
   VerifyAuthenticatorRegistrationResponseRequestParams,
 } from '../../Request'
+import { HttpResponse } from '@standardnotes/responses'
 import {
-  ListAuthenticatorsResponse,
-  DeleteAuthenticatorResponse,
-  GenerateAuthenticatorRegistrationOptionsResponse,
-  VerifyAuthenticatorRegistrationResponse,
-  GenerateAuthenticatorAuthenticationOptionsResponse,
+  ListAuthenticatorsResponseBody,
+  DeleteAuthenticatorResponseBody,
+  GenerateAuthenticatorRegistrationOptionsResponseBody,
+  VerifyAuthenticatorRegistrationResponseBody,
+  GenerateAuthenticatorAuthenticationOptionsResponseBody,
 } from '../../Response'
 import { AuthenticatorServerInterface } from './AuthenticatorServerInterface'
 import { Paths } from './Paths'
@@ -18,37 +19,27 @@ import { Paths } from './Paths'
 export class AuthenticatorServer implements AuthenticatorServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
 
-  async list(params: ListAuthenticatorsRequestParams): Promise<ListAuthenticatorsResponse> {
-    const response = await this.httpService.get(Paths.v1.listAuthenticators, params)
-
-    return response as ListAuthenticatorsResponse
+  async list(params: ListAuthenticatorsRequestParams): Promise<HttpResponse<ListAuthenticatorsResponseBody>> {
+    return this.httpService.get(Paths.v1.listAuthenticators, params)
   }
 
-  async delete(params: DeleteAuthenticatorRequestParams): Promise<DeleteAuthenticatorResponse> {
-    const response = await this.httpService.delete(Paths.v1.deleteAuthenticator(params.authenticatorId), params)
-
-    return response as DeleteAuthenticatorResponse
+  async delete(params: DeleteAuthenticatorRequestParams): Promise<HttpResponse<DeleteAuthenticatorResponseBody>> {
+    return this.httpService.delete(Paths.v1.deleteAuthenticator(params.authenticatorId), params)
   }
 
-  async generateRegistrationOptions(): Promise<GenerateAuthenticatorRegistrationOptionsResponse> {
-    const response = await this.httpService.get(Paths.v1.generateRegistrationOptions)
-
-    return response as GenerateAuthenticatorRegistrationOptionsResponse
+  async generateRegistrationOptions(): Promise<HttpResponse<GenerateAuthenticatorRegistrationOptionsResponseBody>> {
+    return this.httpService.get(Paths.v1.generateRegistrationOptions)
   }
 
   async verifyRegistrationResponse(
     params: VerifyAuthenticatorRegistrationResponseRequestParams,
-  ): Promise<VerifyAuthenticatorRegistrationResponse> {
-    const response = await this.httpService.post(Paths.v1.verifyRegistrationResponse, params)
-
-    return response as VerifyAuthenticatorRegistrationResponse
+  ): Promise<HttpResponse<VerifyAuthenticatorRegistrationResponseBody>> {
+    return this.httpService.post(Paths.v1.verifyRegistrationResponse, params)
   }
 
   async generateAuthenticationOptions(
     params: GenerateAuthenticatorAuthenticationOptionsRequestParams,
-  ): Promise<GenerateAuthenticatorAuthenticationOptionsResponse> {
-    const response = await this.httpService.post(Paths.v1.generateAuthenticationOptions, params)
-
-    return response as GenerateAuthenticatorAuthenticationOptionsResponse
+  ): Promise<HttpResponse<GenerateAuthenticatorAuthenticationOptionsResponseBody>> {
+    return this.httpService.post(Paths.v1.generateAuthenticationOptions, params)
   }
 }

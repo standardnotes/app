@@ -83,7 +83,7 @@ import {
   ItemStream,
   Platform,
 } from '@standardnotes/models'
-import { ClientDisplayableError } from '@standardnotes/responses'
+import { ClientDisplayableError, SessionListEntry } from '@standardnotes/responses'
 
 import { SnjsVersion } from './../Version'
 import { SNLog } from '../Log'
@@ -599,13 +599,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.syncService.isDatabaseLoaded()
   }
 
-  public getSessions(): Promise<
-    (Responses.HttpResponse & { data: InternalServices.RemoteSession[] }) | Responses.HttpResponse
-  > {
+  public getSessions(): Promise<Responses.HttpResponse<SessionListEntry[]>> {
     return this.sessionManager.getSessionsList()
   }
 
-  public async revokeSession(sessionId: UuidString): Promise<Responses.HttpResponse | undefined> {
+  public async revokeSession(
+    sessionId: UuidString,
+  ): Promise<Responses.HttpResponse<Responses.SessionListResponse> | undefined> {
     if (await this.protectionService.authorizeSessionRevoking()) {
       return this.sessionManager.revokeSession(sessionId)
     }
@@ -627,7 +627,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return Common.compareVersions(userVersion, Common.ProtocolVersion.V004) >= 0
   }
 
-  public async getUserSubscription(): Promise<Subscription | Responses.ClientDisplayableError> {
+  public async getUserSubscription(): Promise<Subscription | Responses.ClientDisplayableError | undefined> {
     return this.sessionManager.getSubscription()
   }
 
@@ -939,7 +939,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ephemeral = false,
     mergeLocal = true,
     awaitSync = false,
-  ): Promise<Responses.HttpResponse | Responses.SignInResponse> {
+  ): Promise<Responses.HttpResponse<Responses.SignInResponse>> {
     return this.userService.signIn(email, password, strict, ephemeral, mergeLocal, awaitSync)
   }
 

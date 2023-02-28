@@ -1,7 +1,6 @@
-import { HttpSuccessResponse } from '../Http/HttpResponse'
 import { ServerItemResponse } from './ServerItemResponse'
 
-export type GetSingleItemResponse = HttpSuccessResponse<
+export type GetSingleItemResponse =
   | {
       success: true
       item: ServerItemResponse
@@ -10,4 +9,3 @@ export type GetSingleItemResponse = HttpSuccessResponse<
       success: false
       message: string
     }
->
