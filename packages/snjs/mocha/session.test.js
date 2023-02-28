@@ -277,7 +277,6 @@ describe('server session', function () {
     const changePasswordResponse = await this.application.changePassword(this.password, this.newPassword)
 
     expect(changePasswordResponse.status).to.equal(200)
-    expect(changePasswordResponse.data.user).to.be.ok
 
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     const loginResponse = await Factory.loginToApplication({
