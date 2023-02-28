@@ -251,16 +251,16 @@ export class SNSessionManager
           const email = challengeResponse.values[0].value as string
           const password = challengeResponse.values[1].value as string
           const currentKeyParams = this.protocolService.getAccountKeyParams()
-          const signInResult = await this.signIn(
+          const { response } = await this.signIn(
             email,
             password,
             false,
             this.diskStorageService.isEphemeralSession(),
             currentKeyParams?.version,
           )
-          if (signInResult.response.data?.error) {
+          if (isErrorResponse(response)) {
             this.challengeService.setValidationStatusForChallenge(challenge, challengeResponse!.values[1], false)
-            onResponse?.(signInResult.response)
+            onResponse?.(response)
           } else {
             resolve()
             this.challengeService.completeChallenge(challenge)
@@ -443,7 +443,7 @@ export class SNSessionManager
   ): Promise<SessionManagerResponse> {
     const result = await this.performSignIn(email, password, strict, ephemeral, minAllowedVersion)
     if (
-      result.response.data?.error &&
+      isErrorResponse(result.response) &&
       result.response.data.error.tag !== ErrorTag.ClientValidationError &&
       result.response.data.error.tag !== ErrorTag.ClientCanceledMfa
     ) {

@@ -18,7 +18,7 @@ import { SNApiService } from '@Lib/Services/Api/ApiService'
 import { ContentType } from '@standardnotes/common'
 import { ItemManager } from '../Items/ItemManager'
 import { removeFromArray, Uuids } from '@standardnotes/utils'
-import { ClientDisplayableError, isErrorResponse, KeyParamsResponse } from '@standardnotes/responses'
+import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import {
   AlertService,
   AbstractService,
@@ -336,7 +336,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
     })
 
     if (!isErrorResponse(paramsResponse)) {
-      return KeyParamsFromApiResponse(paramsResponse as KeyParamsResponse)
+      return KeyParamsFromApiResponse(paramsResponse.data)
     } else {
       return undefined
     }
