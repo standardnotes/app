@@ -154,7 +154,7 @@ describe('fileService', () => {
     const alertMock = (alertService.confirm = jest.fn().mockReturnValue(true))
     const deleteItemMock = (itemManager.setItemToBeDeleted = jest.fn())
 
-    apiService.deleteFile = jest.fn().mockReturnValue({ error: true })
+    apiService.deleteFile = jest.fn().mockReturnValue({ data: { error: true } })
 
     await fileService.deleteFile(file)
 
