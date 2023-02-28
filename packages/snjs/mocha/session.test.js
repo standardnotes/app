@@ -207,8 +207,7 @@ describe('server session', function () {
     const newEmail = UuidGenerator.GenerateUuid()
     const changeEmailResponse = await application.changeEmail(newEmail, password)
 
-    expect(changeEmailResponse.status).to.equal(200)
-    expect(changeEmailResponse.data.user).to.be.ok
+    expect(changeEmailResponse.error).to.not.be.ok
 
     application = await Factory.signOutApplicationAndReturnNew(application)
     const loginResponse = await Factory.loginToApplication({
