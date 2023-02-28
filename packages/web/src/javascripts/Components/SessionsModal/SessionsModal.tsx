@@ -1,5 +1,5 @@
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { SNApplication, SessionStrings, UuidString, SessionListEntry } from '@standardnotes/snjs'
+import { SNApplication, SessionStrings, UuidString, SessionListEntry, isErrorResponse } from '@standardnotes/snjs'
 import { FunctionComponent, useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { Alert } from '@reach/alert'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
@@ -28,8 +28,8 @@ function useSessions(
       setRefreshing(true)
 
       const response = await application.getSessions()
-      if (!response.data || response.data?.error) {
-        if (response.data?.error.message) {
+      if (isErrorResponse(response)) {
+        if (response.data?.error?.message) {
           setErrorMessage(response.data?.error.message)
         } else {
           setErrorMessage('An unknown error occured while loading sessions.')
@@ -64,11 +64,9 @@ function useSessions(
     const response = await responsePromise
     if (!response) {
       setSessions(sessionsBeforeRevoke)
-    } else if (response.data?.error) {
+    } else if (isErrorResponse(response)) {
       if (response.data?.error.message) {
-        setErrorMessage(response.data?.error.message)
-      } else {
-        setErrorMessage('An unknown error occured while revoking the session.')
+        setErrorMessage(response.data?.error.message || 'An unknown error occured while revoking the session.')
       }
       setSessions(sessionsBeforeRevoke)
     } else {
@@ -147,7 +145,7 @@ const SessionsModalContent: FunctionComponent<{
                         <span className="font-bold text-info">Current session</span>
                       ) : (
                         <>
-                          <p>Signed in on {formatter.format(session.updated_at)}</p>
+                          <p>Signed in on {formatter.format(new Date(session.updated_at))}</p>
                           <Button
                             primary
                             small
