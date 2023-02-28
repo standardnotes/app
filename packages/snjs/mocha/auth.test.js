@@ -68,7 +68,7 @@ describe('basic auth', function () {
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     const response = await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
-    expect(response.error).to.not.be.ok
+    expect(response.data.error).to.not.be.ok
     expect(await this.application.protocolService.getRootKey()).to.be.ok
   }).timeout(20000)
 
@@ -78,7 +78,7 @@ describe('basic auth', function () {
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     const response = await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
-    expect(response.error).to.not.be.ok
+    expect(response.data.error).to.not.be.ok
     expect(await this.application.protocolService.getRootKey()).to.be.ok
 
     let error
@@ -110,7 +110,7 @@ describe('basic auth', function () {
       (async () => {
         const response = await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
         expect(response).to.be.ok
-        expect(response.error).to.not.be.ok
+        expect(response.data.error).to.not.be.ok
         expect(await this.application.protocolService.getRootKey()).to.be.ok
       })(),
       (async () => {
@@ -133,7 +133,7 @@ describe('basic auth', function () {
       (async () => {
         const response = await this.application.register(this.email, this.password)
         expect(response).to.be.ok
-        expect(response.error).to.not.be.ok
+        expect(response.data.error).to.not.be.ok
         expect(await this.application.protocolService.getRootKey()).to.be.ok
       })(),
       (async () => {
@@ -157,12 +157,12 @@ describe('basic auth', function () {
 
     let response = await this.application.signIn(this.email, 'wrong password', undefined, undefined, undefined, true)
     expect(response).to.have.property('status', 401)
-    expect(response.error).to.be.ok
+    expect(response.data.error).to.be.ok
 
     response = await this.application.signIn(this.email, this.password, undefined, undefined, undefined, true)
 
     expect(response.status).to.equal(200)
-    expect(response).to.not.haveOwnProperty('error')
+    expect(response.data).to.not.haveOwnProperty('error')
   }).timeout(20000)
 
   it('server retrieved key params should use our client inputted value for identifier', async function () {
@@ -203,7 +203,7 @@ describe('basic auth', function () {
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     const response = await this.application.signIn(uppercase, this.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
-    expect(response.error).to.not.be.ok
+    expect(response.data.error).to.not.be.ok
     expect(await this.application.protocolService.getRootKey()).to.be.ok
   }).timeout(20000)
 
@@ -219,7 +219,7 @@ describe('basic auth', function () {
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     const response = await this.application.signIn(withspace, this.password, undefined, undefined, undefined, true)
     expect(response).to.be.ok
-    expect(response.error).to.not.be.ok
+    expect(response.data.error).to.not.be.ok
     expect(await this.application.protocolService.getRootKey()).to.be.ok
   }).timeout(20000)
 
@@ -228,7 +228,7 @@ describe('basic auth', function () {
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     const response = await this.application.signIn(this.email, 'wrongpassword', undefined, undefined, undefined, true)
     expect(response).to.be.ok
-    expect(response.error).to.be.ok
+    expect(response.data.error).to.be.ok
     expect(await this.application.protocolService.getRootKey()).to.not.be.ok
   }).timeout(20000)
 
@@ -236,13 +236,13 @@ describe('basic auth', function () {
     await this.application.register(this.email, this.password)
     const newPassword = '123456'
     const response = await this.application.changePassword(this.password, newPassword)
-    expect(response.error).to.be.ok
+    expect(response.data.error).to.be.ok
   }).timeout(20000)
 
   it('fails to change password when current password is incorrect', async function () {
     await this.application.register(this.email, this.password)
     const response = await this.application.changePassword('Invalid password', 'New password')
-    expect(response.error).to.be.ok
+    expect(response.data.error).to.be.ok
 
     /** Ensure we can still log in */
     this.application = await Factory.signOutAndBackIn(this.application, this.email, this.password)
@@ -301,7 +301,7 @@ describe('basic auth', function () {
 
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
 
-    expect(response.error).to.not.be.ok
+    expect(response.data.error).to.not.be.ok
     expect(this.application.itemManager.items.length).to.equal(this.expectedItemCount)
     expect(this.application.payloadManager.invalidPayloads.length).to.equal(0)
 
@@ -337,7 +337,7 @@ describe('basic auth', function () {
     const signinResponse = await this.application.signIn(this.email, newPassword, undefined, undefined, undefined, true)
 
     expect(signinResponse).to.be.ok
-    expect(signinResponse.error).to.not.be.ok
+    expect(signinResponse.data.error).to.not.be.ok
 
     expect(await this.application.protocolService.getRootKey()).to.be.ok
 
@@ -420,7 +420,7 @@ describe('basic auth', function () {
       )
 
       expect(signinResponse).to.be.ok
-      expect(signinResponse.error).to.not.be.ok
+      expect(signinResponse.data.error).to.not.be.ok
       expect(await this.application.protocolService.getRootKey()).to.be.ok
     }
   }).timeout(80000)
