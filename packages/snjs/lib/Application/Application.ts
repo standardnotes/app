@@ -897,6 +897,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       service.deinit()
     }
 
+    this.httpService.deinit()
+    ;(this.httpService as unknown) = undefined
+
     this.options.crypto.deinit()
     ;(this.options as unknown) = undefined
 

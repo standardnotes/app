@@ -39,6 +39,12 @@ export class HttpService implements HttpServiceInterface {
     this.refreshSessionCallback = refreshSessionCallback
   }
 
+  public deinit(): void {
+    this.session = null
+    ;(this.updateMetaCallback as unknown) = undefined
+    ;(this.refreshSessionCallback as unknown) = undefined
+  }
+
   setSession(session: Session): void {
     this.session = session
   }

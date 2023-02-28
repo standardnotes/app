@@ -14,4 +14,5 @@ export interface HttpServiceInterface {
     updateMetaCallback: (meta: HttpResponseMeta) => void,
     refreshSessionCallback: (session: Session) => void,
   ): void
+  deinit(): void
 }
