@@ -229,19 +229,15 @@ export class HttpService implements HttpServiceInterface {
   }
 
   private async runRequest<T>(request: XMLHttpRequest, body?: string | Uint8Array): Promise<HttpResponse<T>> {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       request.onreadystatechange = () => {
-        this.stateChangeHandlerForRequest(request, resolve, reject)
+        this.stateChangeHandlerForRequest(request, resolve)
       }
       request.send(body)
     })
   }
 
-  private stateChangeHandlerForRequest<T>(
-    request: XMLHttpRequest,
-    resolve: (response: HttpResponse<T>) => void,
-    reject: (response: HttpErrorResponse) => void,
-  ) {
+  private stateChangeHandlerForRequest<T>(request: XMLHttpRequest, resolve: (response: HttpResponse<T>) => void) {
     if (request.readyState !== XMLHttpRequestState.Completed) {
       return
     }
@@ -313,7 +309,7 @@ export class HttpService implements HttpServiceInterface {
           message: 'Unknown error',
         }
       }
-      reject(response as HttpErrorResponse)
+      resolve(response as HttpErrorResponse)
     }
   }
 
