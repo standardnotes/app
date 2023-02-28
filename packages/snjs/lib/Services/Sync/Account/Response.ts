@@ -84,7 +84,7 @@ export class ServerSyncResponse {
         return conflict.type === ConflictType.UuidConflict
       })
       .map((conflict) => {
-        return conflict.unsaved_item || (conflict.item as ServerItemResponse)
+        return conflict.unsaved_item || conflict.item!
       })
   }
 
@@ -94,7 +94,7 @@ export class ServerSyncResponse {
         return conflict.type === ConflictType.ConflictingData
       })
       .map((conflict) => {
-        return conflict.server_item || (conflict.item as ServerItemResponse)
+        return conflict.server_item || conflict.item!
       })
   }
 
@@ -108,7 +108,7 @@ export class ServerSyncResponse {
         )
       })
       .map((conflict) => {
-        return conflict.unsaved_item as ServerItemResponse
+        return conflict.unsaved_item!
       })
   }
 

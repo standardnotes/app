@@ -59,7 +59,7 @@ export class IntegrityService
         continue
       }
 
-      rawPayloads.push(serverItemResponse.data.item as ServerItemResponse)
+      rawPayloads.push(serverItemResponse.data.item)
     }
 
     await this.notifyEventSync(IntegrityEvent.IntegrityCheckCompleted, {
