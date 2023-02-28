@@ -1,4 +1,4 @@
-import { HttpResponse } from '../Http/HttpResponse'
+import { HttpSuccessResponse } from './../Http/HttpResponse'
 import { SessionListEntry } from './SessionListEntry'
 
-export type SessionListResponse = HttpResponse & { data: SessionListEntry[] }
+export type SessionListResponse = HttpSuccessResponse<SessionListEntry[]>

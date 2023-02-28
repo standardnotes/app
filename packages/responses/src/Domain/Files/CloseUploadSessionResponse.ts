@@ -1,6 +1,3 @@
-import { HttpResponse } from '../Http/HttpResponse'
+import { HttpSuccessResponse } from '../Http/HttpResponse'
 
-export type CloseUploadSessionResponse = HttpResponse & {
-  success: boolean
-  message: string
-}
+export type CloseUploadSessionResponse = HttpSuccessResponse<{ success: boolean; message: string }>

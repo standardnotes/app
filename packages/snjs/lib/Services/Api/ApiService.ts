@@ -71,6 +71,8 @@ import {
   ApiEndpointParam,
   ClientDisplayableError,
   CreateValetTokenPayload,
+  HttpErrorResponse,
+  HttpSuccessResponse,
 } from '@standardnotes/responses'
 import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
 import { HttpServiceInterface } from '@standardnotes/api'
@@ -525,15 +527,15 @@ export class SNApiService
     return response
   }
 
-  private async tokenRefreshableRequest<T extends HttpResponse>(
+  private async tokenRefreshableRequest<T extends HttpSuccessResponse>(
     params: HttpRequest & { fallbackErrorMessage: string },
-  ): Promise<T> {
+  ): Promise<T | HttpErrorResponse> {
     const preprocessingError = this.preprocessingError()
     if (preprocessingError) {
       return preprocessingError as T
     }
 
-    const response: T | HttpResponse = await this.httpService.runHttp(params)
+    const response: T | HttpErrorResponse = await this.httpService.runHttp(params)
 
     if (response?.data?.error) {
       this.preprocessAuthenticatedErrorResponse(response)
@@ -615,7 +617,7 @@ export class SNApiService
     })
   }
 
-  public async getSubscription(userUuid: string): Promise<HttpResponse | GetSubscriptionResponse> {
+  public async getSubscription(userUuid: string): Promise<HttpErrorResponse | GetSubscriptionResponse> {
     const url = joinPaths(this.host, Paths.v1.subscription(userUuid))
     const response = await this.tokenRefreshableRequest({
       verb: HttpVerb.Get,
@@ -623,6 +625,7 @@ export class SNApiService
       authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_SUBSCRIPTION_INFO,
     })
+
     return response
   }
 

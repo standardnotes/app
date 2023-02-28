@@ -1,8 +1,6 @@
 import { Subscription } from '@standardnotes/security'
-import { HttpResponse } from '../Http/HttpResponse'
+import { HttpSuccessResponse } from '../Http/HttpResponse'
 
-export type GetSubscriptionResponse = HttpResponse & {
-  data?: {
-    subscription?: Subscription
-  }
-}
+export type GetSubscriptionResponse = HttpSuccessResponse<{
+  subscription?: Subscription
+}>

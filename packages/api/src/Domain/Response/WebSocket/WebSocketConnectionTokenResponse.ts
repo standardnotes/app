@@ -1,8 +1,4 @@
-import { Either } from '@standardnotes/common'
-
-import { HttpErrorResponseBody, HttpResponse } from '@standardnotes/responses'
 import { WebSocketConnectionTokenResponseBody } from './WebSocketConnectionTokenResponseBody'
+import { HttpSuccessResponse } from '@standardnotes/responses'
 
-export interface WebSocketConnectionTokenResponse extends HttpResponse {
-  data: Either<WebSocketConnectionTokenResponseBody, HttpErrorResponseBody>
-}
+export type WebSocketConnectionTokenResponse = HttpSuccessResponse<WebSocketConnectionTokenResponseBody>

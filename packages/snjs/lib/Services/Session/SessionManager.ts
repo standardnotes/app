@@ -34,7 +34,9 @@ import {
   ErrorTag,
   HttpErrorResponseBody,
   HttpResponse,
-  HttpResponseBody,
+  HttpErrorResponse,
+  isErrorResponse,
+  HttpSuccessResponse,
 } from '@standardnotes/responses'
 import { CopyPayloadWithContentOverride } from '@standardnotes/models'
 import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
@@ -270,9 +272,8 @@ export class SNSessionManager
   public async getSubscription(): Promise<ClientDisplayableError | Subscription> {
     const result = await this.apiService.getSubscription(this.getSureUser().uuid)
 
-    if (result.data && 'error' in result.data) {
-      const error = (result.data as HttpErrorResponseBody).error
-      return ClientDisplayableError.FromError(error)
+    if (result.data?.error) {
+      return ClientDisplayableError.FromError(result.data.error)
     }
 
     const subscription = (result as Responses.GetSubscriptionResponse).data!.subscription!
@@ -283,9 +284,8 @@ export class SNSessionManager
   public async getAvailableSubscriptions(): Promise<Responses.AvailableSubscriptions | ClientDisplayableError> {
     const response = await this.apiService.getAvailableSubscriptions()
 
-    if (response.data && 'error' in response.data) {
-      const error = (response.data as HttpErrorResponseBody).error
-      return ClientDisplayableError.FromError(error)
+    if (response.data?.error) {
+      return ClientDisplayableError.FromError(response.data.error)
     }
 
     return (response as Responses.GetAvailableSubscriptionsResponse).data!
@@ -367,7 +367,7 @@ export class SNSessionManager
     const registerResponse = await this.userApiService.register({ email, serverPassword, keyParams, ephemeral })
 
     if ('error' in registerResponse.data) {
-      throw new ApiCallError((registerResponse.data as HttpErrorResponseBody).error.message)
+      throw new ApiCallError(registerResponse.data.error.message)
     }
 
     await this.handleAuthentication({
@@ -467,7 +467,7 @@ export class SNSessionManager
     const paramsResult = await this.retrieveKeyParams({
       email,
     })
-    if (paramsResult.response.data && 'error' in paramsResult.response.data) {
+    if (paramsResult.response.data?.error) {
       return {
         response: paramsResult.response,
       }
@@ -592,13 +592,13 @@ export class SNSessionManager
     )
   }
 
-  public async getSessionsList(): Promise<(HttpResponse & { data: RemoteSession[] }) | HttpResponse> {
+  public async getSessionsList(): Promise<HttpSuccessResponse<RemoteSession[]> | HttpErrorResponse> {
     const response = await this.apiService.getSessionsList()
-    if (!response.data || response.data.error) {
+    if (isErrorResponse(response)) {
       return response
     }
 
-    const typedResponse = response as HttpResponse & { data: HttpResponseBody & RemoteSession[] }
+    const typedResponse = response
 
     const typedData = typedResponse.data as RemoteSession[]
 

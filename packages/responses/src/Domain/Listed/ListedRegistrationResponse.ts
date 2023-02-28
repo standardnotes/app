@@ -1,5 +1,3 @@
-import { HttpResponse } from '../Http/HttpResponse'
+import { HttpSuccessResponse } from '../Http/HttpResponse'
 
-export type ListedRegistrationResponse = HttpResponse & {
-  data?: unknown
-}
+export type ListedRegistrationResponse = HttpSuccessResponse

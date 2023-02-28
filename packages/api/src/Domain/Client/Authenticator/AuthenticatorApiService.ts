@@ -7,7 +7,7 @@ import {
   ListAuthenticatorsResponse,
   DeleteAuthenticatorResponse,
   GenerateAuthenticatorRegistrationOptionsResponse,
-  VerifyAuthenticatorRegistrationResponseResponse,
+  VerifyAuthenticatorRegistrationResponse,
   GenerateAuthenticatorAuthenticationOptionsResponse,
 } from '../../Response'
 import { AuthenticatorServerInterface } from '../../Server/Authenticator/AuthenticatorServerInterface'
@@ -79,7 +79,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
     userUuid: string,
     name: string,
     attestationResponse: Record<string, unknown>,
-  ): Promise<VerifyAuthenticatorRegistrationResponseResponse> {
+  ): Promise<VerifyAuthenticatorRegistrationResponse> {
     if (this.operationsInProgress.get(AuthenticatorApiOperations.VerifyRegistrationResponse)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }

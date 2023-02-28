@@ -9,7 +9,7 @@ import {
   ListAuthenticatorsResponse,
   DeleteAuthenticatorResponse,
   GenerateAuthenticatorRegistrationOptionsResponse,
-  VerifyAuthenticatorRegistrationResponseResponse,
+  VerifyAuthenticatorRegistrationResponse,
   GenerateAuthenticatorAuthenticationOptionsResponse,
 } from '../../Response'
 import { AuthenticatorServerInterface } from './AuthenticatorServerInterface'
@@ -38,10 +38,10 @@ export class AuthenticatorServer implements AuthenticatorServerInterface {
 
   async verifyRegistrationResponse(
     params: VerifyAuthenticatorRegistrationResponseRequestParams,
-  ): Promise<VerifyAuthenticatorRegistrationResponseResponse> {
+  ): Promise<VerifyAuthenticatorRegistrationResponse> {
     const response = await this.httpService.post(Paths.v1.verifyRegistrationResponse, params)
 
-    return response as VerifyAuthenticatorRegistrationResponseResponse
+    return response as VerifyAuthenticatorRegistrationResponse
   }
 
   async generateAuthenticationOptions(

@@ -1,8 +1,6 @@
-import { HttpResponse } from '../Http/HttpResponse'
+import { HttpSuccessResponse } from '../Http/HttpResponse'
 import { IntegrityPayload } from './IntegrityPayload'
 
-export type CheckIntegrityResponse = HttpResponse & {
-  data: {
-    mismatches: IntegrityPayload[]
-  }
-}
+export type CheckIntegrityResponse = HttpSuccessResponse<{
+  mismatches: IntegrityPayload[]
+}>

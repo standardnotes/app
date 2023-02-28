@@ -1,9 +1,7 @@
-import { HttpResponse } from '../Http/HttpResponse'
+import { HttpSuccessResponse } from '../Http/HttpResponse'
 import { SettingData } from './SettingData'
 
-export type GetSettingResponse = HttpResponse & {
-  data?: {
-    success?: boolean
-    setting?: SettingData
-  }
-}
+export type GetSettingResponse = HttpSuccessResponse<{
+  success?: boolean
+  setting?: SettingData
+}>

@@ -1,8 +1,4 @@
-import { Either } from '@standardnotes/common'
-import { HttpErrorResponseBody, HttpResponse } from '@standardnotes/responses'
-
 import { UserDeletionResponseBody } from './UserDeletionResponseBody'
+import { HttpSuccessResponse } from '@standardnotes/responses'
 
-export interface UserDeletionResponse extends HttpResponse {
-  data: Either<UserDeletionResponseBody, HttpErrorResponseBody>
-}
+export type UserDeletionResponse = HttpSuccessResponse<UserDeletionResponseBody>

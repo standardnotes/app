@@ -1,6 +1,4 @@
-import { HttpResponse } from '../Http/HttpResponse'
+import { HttpSuccessResponse } from '../Http/HttpResponse'
 import { UserFeaturesData } from './UserFeaturesData'
 
-export type UserFeaturesResponse = HttpResponse & {
-  data: UserFeaturesData
-}
+export type UserFeaturesResponse = HttpSuccessResponse<UserFeaturesData>

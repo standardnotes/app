@@ -1,5 +1,5 @@
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { SNApplication, SessionStrings, UuidString, isNullOrUndefined, RemoteSession } from '@standardnotes/snjs'
+import { SNApplication, SessionStrings, UuidString, RemoteSession } from '@standardnotes/snjs'
 import { FunctionComponent, useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { Alert } from '@reach/alert'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
@@ -26,10 +26,11 @@ function useSessions(
   useEffect(() => {
     ;(async () => {
       setRefreshing(true)
+
       const response = await application.getSessions()
-      if ('error' in response || isNullOrUndefined(response.data)) {
-        if (response.error?.message) {
-          setErrorMessage(response.error.message)
+      if (!response.data || response.data?.error) {
+        if (response.data?.error.message) {
+          setErrorMessage(response.data?.error.message)
         } else {
           setErrorMessage('An unknown error occured while loading sessions.')
         }
@@ -38,6 +39,7 @@ function useSessions(
         setSessions(sessions)
         setErrorMessage('')
       }
+
       setRefreshing(false)
     })().catch(console.error)
   }, [application, lastRefreshDate])
@@ -62,9 +64,9 @@ function useSessions(
     const response = await responsePromise
     if (isNullOrUndefined(response)) {
       setSessions(sessionsBeforeRevoke)
-    } else if ('error' in response) {
-      if (response.error?.message) {
-        setErrorMessage(response.error?.message)
+    } else if (response.data?.error) {
+      if (response.data?.error.message) {
+        setErrorMessage(response.data?.error.message)
       } else {
         setErrorMessage('An unknown error occured while revoking the session.')
       }

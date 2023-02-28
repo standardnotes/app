@@ -1,5 +1,3 @@
-import { HttpResponse } from '../Http/HttpResponse'
+import { HttpSuccessResponse } from '../Http/HttpResponse'
 
-export type DownloadFileChunkResponse = HttpResponse & {
-  data: ArrayBuffer
-}
+export type DownloadFileChunkResponse = HttpSuccessResponse<ArrayBuffer>

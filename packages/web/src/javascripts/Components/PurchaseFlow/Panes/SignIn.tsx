@@ -70,8 +70,8 @@ const SignIn: FunctionComponent<Props> = ({ viewControllerManager, application }
 
     try {
       const response = await application.signIn(email, password)
-      if (response.error || response.data?.error) {
-        throw new Error(response.error?.message || response.data?.error?.message)
+      if (response.data?.error) {
+        throw new Error(response.data.error?.message || response.data?.error?.message)
       } else {
         viewControllerManager.purchaseFlowController.closePurchaseFlow()
         viewControllerManager.purchaseFlowController.openPurchaseFlow()

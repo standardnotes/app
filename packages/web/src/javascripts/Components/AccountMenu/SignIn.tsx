@@ -97,8 +97,8 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
     application
       .signIn(email, password, isStrictSignin, isEphemeral, shouldMergeLocal)
       .then((res) => {
-        if (res.error) {
-          throw new Error(res.error.message)
+        if (res.data?.error) {
+          throw new Error(res.data?.error.message)
         }
         viewControllerManager.accountMenuController.closeAccountMenu()
       })

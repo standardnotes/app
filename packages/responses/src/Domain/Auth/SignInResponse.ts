@@ -1,6 +1,4 @@
-import { HttpResponse } from '../Http/HttpResponse'
+import { HttpSuccessResponse } from '../Http/HttpResponse'
 import { SignInData } from './SignInData'
 
-export type SignInResponse = HttpResponse & {
-  data: SignInData
-}
+export type SignInResponse = HttpSuccessResponse<SignInData>

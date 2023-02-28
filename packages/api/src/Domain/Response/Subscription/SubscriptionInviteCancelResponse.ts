@@ -1,8 +1,4 @@
-import { Either } from '@standardnotes/common'
-
-import { HttpErrorResponseBody, HttpResponse } from '@standardnotes/responses'
 import { SubscriptionInviteCancelResponseBody } from './SubscriptionInviteCancelResponseBody'
+import { HttpSuccessResponse } from '@standardnotes/responses'
 
-export interface SubscriptionInviteCancelResponse extends HttpResponse {
-  data: Either<SubscriptionInviteCancelResponseBody, HttpErrorResponseBody>
-}
+export type SubscriptionInviteCancelResponse = HttpSuccessResponse<SubscriptionInviteCancelResponseBody>

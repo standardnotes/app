@@ -9,6 +9,8 @@ import {
   HttpResponse,
   HttpResponseMeta,
   HttpErrorResponseBody,
+  HttpErrorResponse,
+  HttpSuccessResponse,
 } from '@standardnotes/responses'
 import { HttpServiceInterface } from './HttpServiceInterface'
 import { XMLHttpRequestState } from './XMLHttpRequestState'
@@ -46,7 +48,11 @@ export class HttpService implements HttpServiceInterface {
     this.host = host
   }
 
-  async get(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse> {
+  async get<T extends HttpSuccessResponse>(
+    path: string,
+    params?: HttpRequestParams,
+    authentication?: string,
+  ): Promise<HttpResponse<T>> {
     return this.runHttp({
       url: joinPaths(this.host, path),
       params,
@@ -55,7 +61,11 @@ export class HttpService implements HttpServiceInterface {
     })
   }
 
-  async post(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse> {
+  async post<T extends HttpSuccessResponse>(
+    path: string,
+    params?: HttpRequestParams,
+    authentication?: string,
+  ): Promise<HttpResponse<T>> {
     return this.runHttp({
       url: joinPaths(this.host, path),
       params,
@@ -64,7 +74,11 @@ export class HttpService implements HttpServiceInterface {
     })
   }
 
-  async put(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse> {
+  async put<T extends HttpSuccessResponse>(
+    path: string,
+    params?: HttpRequestParams,
+    authentication?: string,
+  ): Promise<HttpResponse<T>> {
     return this.runHttp({
       url: joinPaths(this.host, path),
       params,
@@ -73,7 +87,11 @@ export class HttpService implements HttpServiceInterface {
     })
   }
 
-  async patch(path: string, params: HttpRequestParams, authentication?: string): Promise<HttpResponse> {
+  async patch<T extends HttpSuccessResponse>(
+    path: string,
+    params: HttpRequestParams,
+    authentication?: string,
+  ): Promise<HttpResponse<T>> {
     return this.runHttp({
       url: joinPaths(this.host, path),
       params,
@@ -82,7 +100,11 @@ export class HttpService implements HttpServiceInterface {
     })
   }
 
-  async delete(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse> {
+  async delete<T extends HttpSuccessResponse>(
+    path: string,
+    params?: HttpRequestParams,
+    authentication?: string,
+  ): Promise<HttpResponse<T>> {
     return this.runHttp({
       url: joinPaths(this.host, path),
       params,
@@ -91,7 +113,7 @@ export class HttpService implements HttpServiceInterface {
     })
   }
 
-  async runHttp(httpRequest: HttpRequest): Promise<HttpResponse> {
+  async runHttp<T extends HttpSuccessResponse>(httpRequest: HttpRequest): Promise<HttpResponse<T>> {
     if (this.inProgressRefreshSessionPromise) {
       await this.inProgressRefreshSessionPromise
 
@@ -104,7 +126,7 @@ export class HttpService implements HttpServiceInterface {
       await sleep(this.__latencySimulatorMs, true)
     }
 
-    const response = await this.runRequest(request, this.createRequestBody(httpRequest))
+    const response = await this.runRequest<T>(request, this.createRequestBody(httpRequest))
 
     if (response.meta) {
       this.updateMetaCallback(response.meta)
@@ -136,10 +158,10 @@ export class HttpService implements HttpServiceInterface {
       return false
     }
 
-    const response = (await this.post(Paths.v1.refreshSession, {
+    const response = await this.post<SessionRefreshResponse>(Paths.v1.refreshSession, {
       access_token: this.session.accessToken.value,
       refresh_token: this.session.refreshToken.value,
-    })) as SessionRefreshResponse
+    })
 
     if (response.data.error) {
       return false
@@ -227,7 +249,7 @@ export class HttpService implements HttpServiceInterface {
     return request
   }
 
-  private async runRequest(request: XMLHttpRequest, body?: string | Uint8Array): Promise<HttpResponse> {
+  private async runRequest<T>(request: XMLHttpRequest, body?: string | Uint8Array): Promise<HttpResponse<T>> {
     return new Promise((resolve, reject) => {
       request.onreadystatechange = () => {
         this.stateChangeHandlerForRequest(request, resolve, reject)
@@ -236,16 +258,16 @@ export class HttpService implements HttpServiceInterface {
     })
   }
 
-  private stateChangeHandlerForRequest(
+  private stateChangeHandlerForRequest<T>(
     request: XMLHttpRequest,
-    resolve: (response: HttpResponse) => void,
-    reject: (response: HttpResponse) => void,
+    resolve: (response: HttpResponse<T>) => void,
+    reject: (response: HttpErrorResponse) => void,
   ) {
     if (request.readyState !== XMLHttpRequestState.Completed) {
       return
     }
     const httpStatus = request.status
-    const response: HttpResponse = {
+    const response: HttpResponse<T> = {
       status: httpStatus,
       headers: new Map<string, string | null>(),
     }
@@ -294,7 +316,7 @@ export class HttpService implements HttpServiceInterface {
       }
       resolve(response)
     } else {
-      reject(response)
+      reject(response as HttpErrorResponse)
     }
   }
 

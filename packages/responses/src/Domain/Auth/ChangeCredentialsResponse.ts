@@ -1,6 +1,4 @@
-import { HttpResponse } from '../Http/HttpResponse'
+import { HttpSuccessResponse } from '../Http/HttpResponse'
 import { ChangeCredentialsData } from './ChangeCredentialsData'
 
-export type ChangeCredentialsResponse = HttpResponse & {
-  data: ChangeCredentialsData
-}
+export type ChangeCredentialsResponse = HttpSuccessResponse<ChangeCredentialsData>

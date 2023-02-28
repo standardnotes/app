@@ -1,6 +1,4 @@
-import { HttpErrorResponseBody, HttpResponse } from '@standardnotes/responses'
 import { UserRegistrationResponseBody } from './UserRegistrationResponseBody'
+import { HttpSuccessResponse } from '@standardnotes/responses'
 
-export interface UserRegistrationResponse extends HttpResponse {
-  data: UserRegistrationResponseBody | HttpErrorResponseBody
-}
+export type UserRegistrationResponse = HttpSuccessResponse<UserRegistrationResponseBody>

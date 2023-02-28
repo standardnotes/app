@@ -1,4 +1,4 @@
-import { HttpResponse } from '../Http/HttpResponse'
+import { HttpSuccessResponse } from '../Http/HttpResponse'
 import { RawSyncData } from './RawSyncData'
 
-export type RawSyncResponse = HttpResponse & { data: RawSyncData }
+export type RawSyncResponse = HttpSuccessResponse<RawSyncData>
