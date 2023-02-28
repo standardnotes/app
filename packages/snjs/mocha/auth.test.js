@@ -133,7 +133,7 @@ describe('basic auth', function () {
       (async () => {
         const response = await this.application.register(this.email, this.password)
         expect(response).to.be.ok
-        expect(response.data.error).to.not.be.ok
+        expect(response.error).to.not.be.ok
         expect(await this.application.protocolService.getRootKey()).to.be.ok
       })(),
       (async () => {
