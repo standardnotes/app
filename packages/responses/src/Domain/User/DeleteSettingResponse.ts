@@ -1,3 +1,3 @@
-import { MinimalHttpResponse } from '../Http/MinimalHttpResponses'
+import { HttpResponse } from '../Http/HttpResponse'
 
-export type DeleteSettingResponse = MinimalHttpResponse
+export type DeleteSettingResponse = HttpResponse

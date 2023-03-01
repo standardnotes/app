@@ -1,12 +1,15 @@
+import { HttpResponse } from '@standardnotes/responses'
 import { RecoveryKeyParamsRequestParams, SignInWithRecoveryCodesRequestParams } from '../../Request'
 import {
-  GenerateRecoveryCodesResponse,
-  RecoveryKeyParamsResponse,
-  SignInWithRecoveryCodesResponse,
+  GenerateRecoveryCodesResponseBody,
+  RecoveryKeyParamsResponseBody,
+  SignInWithRecoveryCodesResponseBody,
 } from '../../Response'
 
 export interface AuthServerInterface {
-  generateRecoveryCodes(): Promise<GenerateRecoveryCodesResponse>
-  recoveryKeyParams(params: RecoveryKeyParamsRequestParams): Promise<RecoveryKeyParamsResponse>
-  signInWithRecoveryCodes(params: SignInWithRecoveryCodesRequestParams): Promise<SignInWithRecoveryCodesResponse>
+  generateRecoveryCodes(): Promise<HttpResponse<GenerateRecoveryCodesResponseBody>>
+  recoveryKeyParams(params: RecoveryKeyParamsRequestParams): Promise<HttpResponse<RecoveryKeyParamsResponseBody>>
+  signInWithRecoveryCodes(
+    params: SignInWithRecoveryCodesRequestParams,
+  ): Promise<HttpResponse<SignInWithRecoveryCodesResponseBody>>
 }

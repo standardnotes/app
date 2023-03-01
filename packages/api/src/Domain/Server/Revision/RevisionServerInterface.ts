@@ -1,12 +1,13 @@
+import { HttpResponse } from '@standardnotes/responses'
 import { DeleteRevisionRequestParams } from '../../Request/Revision/DeleteRevisionRequestParams'
 import { GetRevisionRequestParams } from '../../Request/Revision/GetRevisionRequestParams'
 import { ListRevisionsRequestParams } from '../../Request/Revision/ListRevisionsRequestParams'
-import { DeleteRevisionResponse } from '../../Response/Revision/DeleteRevisionResponse'
-import { GetRevisionResponse } from '../../Response/Revision/GetRevisionResponse'
-import { ListRevisionsResponse } from '../../Response/Revision/ListRevisionsResponse'
+import { DeleteRevisionResponseBody } from '../../Response/Revision/DeleteRevisionResponseBody'
+import { GetRevisionResponseBody } from '../../Response/Revision/GetRevisionResponseBody'
+import { ListRevisionsResponseBody } from '../../Response/Revision/ListRevisionsResponseBody'
 
 export interface RevisionServerInterface {
-  listRevisions(params: ListRevisionsRequestParams): Promise<ListRevisionsResponse>
-  getRevision(params: GetRevisionRequestParams): Promise<GetRevisionResponse>
-  deleteRevision(params: DeleteRevisionRequestParams): Promise<DeleteRevisionResponse>
+  listRevisions(params: ListRevisionsRequestParams): Promise<HttpResponse<ListRevisionsResponseBody>>
+  getRevision(params: GetRevisionRequestParams): Promise<HttpResponse<GetRevisionResponseBody>>
+  deleteRevision(params: DeleteRevisionRequestParams): Promise<HttpResponse<DeleteRevisionResponseBody>>
 }

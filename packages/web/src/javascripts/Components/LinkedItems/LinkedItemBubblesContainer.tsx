@@ -145,6 +145,7 @@ const LinkedItemBubblesContainer = ({ item, linkingController }: Props) => {
       </div>
       {itemsToDisplay.length > 0 && (
         <RoundIconButton
+          id="toggle-linking-container"
           label="Toggle linked items container"
           onClick={() => {
             setIsCollapsed((isCollapsed) => !isCollapsed)

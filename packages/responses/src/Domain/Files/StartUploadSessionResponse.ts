@@ -1,6 +1,4 @@
-import { MinimalHttpResponse } from '../Http/MinimalHttpResponses'
-
-export type StartUploadSessionResponse = MinimalHttpResponse & {
+export type StartUploadSessionResponse = {
   success: boolean
   uploadId: string
 }

@@ -1,5 +1,6 @@
-import { WebSocketConnectionTokenResponse } from '../../Response'
+import { HttpResponse } from '@standardnotes/responses'
+import { WebSocketConnectionTokenResponseBody } from '../../Response'
 
 export interface WebSocketApiServiceInterface {
-  createConnectionToken(): Promise<WebSocketConnectionTokenResponse>
+  createConnectionToken(): Promise<HttpResponse<WebSocketConnectionTokenResponseBody>>
 }

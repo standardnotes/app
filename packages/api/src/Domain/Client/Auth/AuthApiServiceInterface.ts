@@ -1,20 +1,21 @@
+import { HttpResponse } from '@standardnotes/responses'
 import {
-  GenerateRecoveryCodesResponse,
-  RecoveryKeyParamsResponse,
-  SignInWithRecoveryCodesResponse,
+  GenerateRecoveryCodesResponseBody,
+  RecoveryKeyParamsResponseBody,
+  SignInWithRecoveryCodesResponseBody,
 } from '../../Response'
 
 export interface AuthApiServiceInterface {
-  generateRecoveryCodes(): Promise<GenerateRecoveryCodesResponse>
+  generateRecoveryCodes(): Promise<HttpResponse<GenerateRecoveryCodesResponseBody>>
   recoveryKeyParams(dto: {
     username: string
     codeChallenge: string
     recoveryCodes: string
-  }): Promise<RecoveryKeyParamsResponse>
+  }): Promise<HttpResponse<RecoveryKeyParamsResponseBody>>
   signInWithRecoveryCodes(dto: {
     username: string
     password: string
     codeVerifier: string
     recoveryCodes: string
-  }): Promise<SignInWithRecoveryCodesResponse>
+  }): Promise<HttpResponse<SignInWithRecoveryCodesResponseBody>>
 }

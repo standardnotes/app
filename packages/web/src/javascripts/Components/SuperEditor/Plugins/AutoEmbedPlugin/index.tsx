@@ -24,6 +24,7 @@ import Button from '../../Lexical/UI/Button'
 import { DialogActions } from '../../Lexical/UI/Dialog'
 import { INSERT_TWEET_COMMAND } from '../TwitterPlugin'
 import { INSERT_YOUTUBE_COMMAND } from '../YouTubePlugin'
+import { classNames } from '@standardnotes/snjs'
 
 interface PlaygroundEmbedConfig extends EmbedConfig {
   // Human readable name of the embeded content e.g. Tweet or Google Map.
@@ -127,15 +128,11 @@ function AutoEmbedMenuItem({
   onMouseEnter: () => void
   option: AutoEmbedOption
 }) {
-  let className = 'item'
-  if (isSelected) {
-    className += ' selected'
-  }
   return (
     <li
       key={option.key}
       tabIndex={-1}
-      className={className}
+      className={classNames('cursor-pointer rounded px-2 py-1', isSelected && 'bg-info-backdrop')}
       ref={option.setRefElement}
       role="option"
       aria-selected={isSelected}
@@ -160,8 +157,8 @@ function AutoEmbedMenu({
   options: Array<AutoEmbedOption>
 }) {
   return (
-    <div className="typeahead-popover">
-      <ul>
+    <div className="typeahead-popover min-w-max rounded border border-border bg-default p-1">
+      <ul className="list-none">
         {options.map((option: AutoEmbedOption, i: number) => (
           <AutoEmbedMenuItem
             index={i}

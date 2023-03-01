@@ -24,7 +24,7 @@ declare global {
   }
 }
 
-import { disableIosTextFieldZoom } from '@/Utils'
+import { disableIosTextFieldZoom, getPlatform } from '@/Utils'
 import { IsWebPlatform, WebAppVersion } from '@/Constants/Version'
 import { DesktopManagerInterface, Platform, SNLog } from '@standardnotes/snjs'
 import ApplicationGroupView from './Components/ApplicationGroupView/ApplicationGroupView'
@@ -101,7 +101,7 @@ if (IsWebPlatform) {
 
   setTimeout(() => {
     const device = window.reactNativeDevice || new WebDevice(WebAppVersion)
-    window.platform = device.platform
+    window.platform = getPlatform(device)
 
     startApplication(window.defaultSyncServer, device, window.enabledUnfinishedFeatures, window.websocketUrl).catch(
       console.error,

@@ -26,6 +26,8 @@ import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/u
 import { classNames } from '@standardnotes/snjs'
 import { SUPER_TOGGLE_SEARCH } from '@standardnotes/ui-services'
 import { useApplication } from '@/Components/ApplicationProvider'
+import { GetRemoteImageBlock } from '../Blocks/RemoteImage'
+import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
 
 const MobileToolbarPlugin = () => {
   const application = useApplication()
@@ -127,6 +129,9 @@ const MobileToolbarPlugin = () => {
       GetTableBlock(() =>
         showModal('Insert Table', (onClose) => <InsertTableDialog activeEditor={editor} onClose={onClose} />),
       ),
+      GetRemoteImageBlock(() => {
+        showModal('Insert image from URL', (onClose) => <InsertRemoteImageDialog onClose={onClose} />)
+      }),
       GetNumberedListBlock(editor),
       GetBulletedListBlock(editor),
       GetChecklistBlock(editor),
@@ -193,8 +198,12 @@ const MobileToolbarPlugin = () => {
   return (
     <>
       {modal}
-      <div tabIndex={-1} className="flex w-full flex-shrink-0 border-t border-border bg-contrast" ref={toolbarRef}>
-        <div className={classNames('flex items-center gap-1 overflow-x-auto', '[&::-webkit-scrollbar]:h-0')}>
+      <div className="flex w-full flex-shrink-0 border-t border-border bg-contrast">
+        <div
+          tabIndex={-1}
+          className={classNames('flex items-center gap-1 overflow-x-auto', '[&::-webkit-scrollbar]:h-0')}
+          ref={toolbarRef}
+        >
           {items.map((item) => {
             return (
               <button

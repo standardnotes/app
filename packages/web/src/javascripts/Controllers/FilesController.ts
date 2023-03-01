@@ -348,8 +348,11 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     })
   }
 
-  public async uploadNewFile(fileOrHandle: File | FileSystemFileHandle): Promise<FileItem | undefined> {
-    let toastId = ''
+  public async uploadNewFile(
+    fileOrHandle: File | FileSystemFileHandle,
+    showToast = true,
+  ): Promise<FileItem | undefined> {
+    let toastId: string | undefined
 
     try {
       const minimumChunkSize = this.application.files.minimumChunkSize()
@@ -381,20 +384,24 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
 
       const initialProgress = operation.getProgress().percentComplete
 
-      toastId = addToast({
-        type: ToastType.Progress,
-        message: `Uploading file "${fileToUpload.name}" (${initialProgress}%)`,
-        progress: initialProgress,
-      })
+      if (showToast) {
+        toastId = addToast({
+          type: ToastType.Progress,
+          message: `Uploading file "${fileToUpload.name}" (${initialProgress}%)`,
+          progress: initialProgress,
+        })
+      }
 
       const onChunk: OnChunkCallbackNoProgress = async ({ data, index, isLast }) => {
         await this.application.files.pushBytesForUpload(operation, data, index, isLast)
 
         const percentComplete = Math.round(operation.getProgress().percentComplete)
-        updateToast(toastId, {
-          message: `Uploading file "${fileToUpload.name}" (${percentComplete}%)`,
-          progress: percentComplete,
-        })
+        if (toastId) {
+          updateToast(toastId, {
+            message: `Uploading file "${fileToUpload.name}" (${percentComplete}%)`,
+            progress: percentComplete,
+          })
+        }
       }
 
       const fileResult = await this.reader.readFile(fileToUpload, minimumChunkSize, onChunk)
@@ -414,30 +421,34 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
         throw new Error('Unable to close upload session')
       }
 
-      dismissToast(toastId)
-      addToast({
-        type: ToastType.Success,
-        message: `Uploaded file "${uploadedFile.name}"`,
-        actions: [
-          {
-            label: 'Open',
-            handler: (toastId) => {
-              void this.handleFileAction({
-                type: FileItemActionType.PreviewFile,
-                payload: { file: uploadedFile },
-              })
-              dismissToast(toastId)
+      if (toastId) {
+        dismissToast(toastId)
+      }
+      if (showToast) {
+        addToast({
+          type: ToastType.Success,
+          message: `Uploaded file "${uploadedFile.name}"`,
+          actions: [
+            {
+              label: 'Open',
+              handler: (toastId) => {
+                void this.handleFileAction({
+                  type: FileItemActionType.PreviewFile,
+                  payload: { file: uploadedFile },
+                })
+                dismissToast(toastId)
+              },
             },
-          },
-        ],
-        autoClose: true,
-      })
+          ],
+          autoClose: true,
+        })
+      }
 
       return uploadedFile
     } catch (error) {
       console.error(error)
 
-      if (toastId.length > 0) {
+      if (toastId) {
         dismissToast(toastId)
       }
       addToast({

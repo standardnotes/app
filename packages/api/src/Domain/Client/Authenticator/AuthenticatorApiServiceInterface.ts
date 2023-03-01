@@ -1,19 +1,22 @@
+import { HttpResponse } from '@standardnotes/responses'
 import {
-  ListAuthenticatorsResponse,
-  DeleteAuthenticatorResponse,
-  GenerateAuthenticatorRegistrationOptionsResponse,
-  VerifyAuthenticatorRegistrationResponseResponse,
-  GenerateAuthenticatorAuthenticationOptionsResponse,
+  ListAuthenticatorsResponseBody,
+  DeleteAuthenticatorResponseBody,
+  GenerateAuthenticatorRegistrationOptionsResponseBody,
+  VerifyAuthenticatorRegistrationResponseBody,
+  GenerateAuthenticatorAuthenticationOptionsResponseBody,
 } from '../../Response'
 
 export interface AuthenticatorApiServiceInterface {
-  list(): Promise<ListAuthenticatorsResponse>
-  delete(authenticatorId: string): Promise<DeleteAuthenticatorResponse>
-  generateRegistrationOptions(): Promise<GenerateAuthenticatorRegistrationOptionsResponse>
+  list(): Promise<HttpResponse<ListAuthenticatorsResponseBody>>
+  delete(authenticatorId: string): Promise<HttpResponse<DeleteAuthenticatorResponseBody>>
+  generateRegistrationOptions(): Promise<HttpResponse<GenerateAuthenticatorRegistrationOptionsResponseBody>>
   verifyRegistrationResponse(
     userUuid: string,
     name: string,
     attestationResponse: Record<string, unknown>,
-  ): Promise<VerifyAuthenticatorRegistrationResponseResponse>
-  generateAuthenticationOptions(username: string): Promise<GenerateAuthenticatorAuthenticationOptionsResponse>
+  ): Promise<HttpResponse<VerifyAuthenticatorRegistrationResponseBody>>
+  generateAuthenticationOptions(
+    username: string,
+  ): Promise<HttpResponse<GenerateAuthenticatorAuthenticationOptionsResponseBody>>
 }

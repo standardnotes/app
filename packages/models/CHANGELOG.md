@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.43.5](https://github.com/standardnotes/app/compare/@standardnotes/models@1.43.4...@standardnotes/models@1.43.5) (2023-03-01)
+
+**Note:** Version bump only for package @standardnotes/models
+
 ## [1.43.4](https://github.com/standardnotes/app/compare/@standardnotes/models@1.43.3...@standardnotes/models@1.43.4) (2023-02-15)
 
 **Note:** Version bump only for package @standardnotes/models

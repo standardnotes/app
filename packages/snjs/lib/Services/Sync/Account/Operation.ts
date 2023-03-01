@@ -3,7 +3,6 @@ import { arrayByDifference, nonSecureRandomIdentifier, subtractFromArray } from 
 import { ServerSyncResponse } from '@Lib/Services/Sync/Account/Response'
 import { ResponseSignalReceiver, SyncSignal } from '@Lib/Services/Sync/Signals'
 import { SNApiService } from '../../Api/ApiService'
-import { RawSyncResponse } from '@standardnotes/responses'
 
 export const SyncUpDownLimit = 150
 
@@ -56,12 +55,7 @@ export class AccountSyncOperation {
     })
     const payloads = this.popPayloads(this.upLimit)
 
-    const rawResponse = (await this.apiService.sync(
-      payloads,
-      this.lastSyncToken,
-      this.paginationToken,
-      this.downLimit,
-    )) as RawSyncResponse
+    const rawResponse = await this.apiService.sync(payloads, this.lastSyncToken, this.paginationToken, this.downLimit)
 
     const response = new ServerSyncResponse(rawResponse)
     this.responses.push(response)

@@ -1,14 +1,15 @@
-import { AppleIAPConfirmResponse } from './../../Response/Subscription/AppleIAPConfirmResponse'
 import { AppleIAPConfirmRequestParams } from '../../Request'
-import { SubscriptionInviteAcceptResponse } from '../../Response/Subscription/SubscriptionInviteAcceptResponse'
-import { SubscriptionInviteCancelResponse } from '../../Response/Subscription/SubscriptionInviteCancelResponse'
-import { SubscriptionInviteListResponse } from '../../Response/Subscription/SubscriptionInviteListResponse'
-import { SubscriptionInviteResponse } from '../../Response/Subscription/SubscriptionInviteResponse'
+import { AppleIAPConfirmResponseBody } from './../../Response/Subscription/AppleIAPConfirmResponseBody'
+import { SubscriptionInviteAcceptResponseBody } from '../../Response/Subscription/SubscriptionInviteAcceptResponseBody'
+import { SubscriptionInviteCancelResponseBody } from '../../Response/Subscription/SubscriptionInviteCancelResponseBody'
+import { SubscriptionInviteListResponseBody } from '../../Response/Subscription/SubscriptionInviteListResponseBody'
+import { SubscriptionInviteResponseBody } from '../../Response/Subscription/SubscriptionInviteResponseBody'
+import { HttpResponse } from '@standardnotes/responses'
 
 export interface SubscriptionApiServiceInterface {
-  invite(inviteeEmail: string): Promise<SubscriptionInviteResponse>
-  listInvites(): Promise<SubscriptionInviteListResponse>
-  cancelInvite(inviteUuid: string): Promise<SubscriptionInviteCancelResponse>
-  acceptInvite(inviteUuid: string): Promise<SubscriptionInviteAcceptResponse>
-  confirmAppleIAP(params: AppleIAPConfirmRequestParams): Promise<AppleIAPConfirmResponse>
+  invite(inviteeEmail: string): Promise<HttpResponse<SubscriptionInviteResponseBody>>
+  listInvites(): Promise<HttpResponse<SubscriptionInviteListResponseBody>>
+  cancelInvite(inviteUuid: string): Promise<HttpResponse<SubscriptionInviteCancelResponseBody>>
+  acceptInvite(inviteUuid: string): Promise<HttpResponse<SubscriptionInviteAcceptResponseBody>>
+  confirmAppleIAP(params: AppleIAPConfirmRequestParams): Promise<HttpResponse<AppleIAPConfirmResponseBody>>
 }
