@@ -211,13 +211,8 @@ export class SNApiService
   }
 
   private errorResponseWithFallbackMessage(response: HttpErrorResponse, message: string): HttpErrorResponse {
-    const errorData = response.data
-
-    if (!errorData.error.message) {
-      errorData.error = {
-        ...errorData.error,
-        message,
-      }
+    if (!response.data.error.message) {
+      response.data.error.message = message
     }
 
     return response
@@ -420,7 +415,7 @@ export class SNApiService
       .post<SessionRenewalResponse>(Paths.v1.refreshSession, params)
       .then(async (response) => {
         if (isErrorResponse(response) || !response.data.session) {
-          return null
+          return response
         }
 
         const accessTokenOrError = SessionToken.create(
