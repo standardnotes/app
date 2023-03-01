@@ -1,6 +1,7 @@
+import { HttpResponse } from '@standardnotes/responses'
 import { UserRequestRequestParams } from '../../Request/UserRequest/UserRequestRequestParams'
-import { UserRequestResponse } from '../../Response/UserRequest/UserRequestResponse'
+import { UserRequestResponseBody } from '../../Response/UserRequest/UserRequestResponseBody'
 
 export interface UserRequestServerInterface {
-  submitUserRequest(params: UserRequestRequestParams): Promise<UserRequestResponse>
+  submitUserRequest(params: UserRequestRequestParams): Promise<HttpResponse<UserRequestResponseBody>>
 }

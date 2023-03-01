@@ -1,9 +1,6 @@
-import { MinimalHttpResponse } from '../Http/MinimalHttpResponses'
 import { SettingData } from './SettingData'
 
-export type GetSettingResponse = MinimalHttpResponse & {
-  data?: {
-    success?: boolean
-    setting?: SettingData
-  }
+export type GetSettingResponse = {
+  success?: boolean
+  setting?: SettingData
 }

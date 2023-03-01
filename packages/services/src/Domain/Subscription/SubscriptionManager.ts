@@ -4,6 +4,7 @@ import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface
 import { AbstractService } from '../Service/AbstractService'
 import { SubscriptionClientInterface } from './SubscriptionClientInterface'
 import { AppleIAPReceipt } from './AppleIAPReceipt'
+import { isErrorResponse } from '@standardnotes/responses'
 
 export class SubscriptionManager extends AbstractService implements SubscriptionClientInterface {
   constructor(
@@ -17,7 +18,7 @@ export class SubscriptionManager extends AbstractService implements Subscription
     try {
       const result = await this.subscriptionApiService.acceptInvite(inviteUuid)
 
-      if (result.data.error) {
+      if (isErrorResponse(result)) {
         return { success: false, message: result.data.error.message }
       }
 
@@ -29,9 +30,13 @@ export class SubscriptionManager extends AbstractService implements Subscription
 
   async listSubscriptionInvitations(): Promise<Invitation[]> {
     try {
-      const response = await this.subscriptionApiService.listInvites()
+      const result = await this.subscriptionApiService.listInvites()
 
-      return response.data.invitations ?? []
+      if (isErrorResponse(result)) {
+        return []
+      }
+
+      return result.data.invitations ?? []
     } catch (error) {
       return []
     }
@@ -40,6 +45,10 @@ export class SubscriptionManager extends AbstractService implements Subscription
   async inviteToSubscription(inviteeEmail: string): Promise<boolean> {
     try {
       const result = await this.subscriptionApiService.invite(inviteeEmail)
+
+      if (isErrorResponse(result)) {
+        return false
+      }
 
       return result.data.success === true
     } catch (error) {
@@ -50,6 +59,10 @@ export class SubscriptionManager extends AbstractService implements Subscription
   async cancelInvitation(inviteUuid: string): Promise<boolean> {
     try {
       const result = await this.subscriptionApiService.cancelInvite(inviteUuid)
+
+      if (isErrorResponse(result)) {
+        return false
+      }
 
       return result.data.success === true
     } catch (error) {
@@ -67,7 +80,7 @@ export class SubscriptionManager extends AbstractService implements Subscription
         subscription_token: subscriptionToken,
       })
 
-      if (result.data.error) {
+      if (isErrorResponse(result)) {
         return { success: false, message: result.data.error.message }
       }
 

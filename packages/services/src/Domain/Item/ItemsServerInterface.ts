@@ -1,5 +1,5 @@
-import { GetSingleItemResponse } from '@standardnotes/responses'
+import { GetSingleItemResponse, HttpResponse } from '@standardnotes/responses'
 
 export interface ItemsServerInterface {
-  getSingleItem(itemUuid: string): Promise<GetSingleItemResponse>
+  getSingleItem(itemUuid: string): Promise<HttpResponse<GetSingleItemResponse>>
 }

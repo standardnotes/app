@@ -1,8 +1,8 @@
-import { StartUploadSessionResponse, MinimalHttpResponse, ClientDisplayableError } from '@standardnotes/responses'
+import { StartUploadSessionResponse, HttpResponse, ClientDisplayableError } from '@standardnotes/responses'
 import { FileContent } from '@standardnotes/models'
 
 export interface FilesApiInterface {
-  startUploadSession(apiToken: string): Promise<StartUploadSessionResponse>
+  startUploadSession(apiToken: string): Promise<HttpResponse<StartUploadSessionResponse>>
 
   uploadFileBytes(apiToken: string, chunkId: number, encryptedBytes: Uint8Array): Promise<boolean>
 
@@ -16,7 +16,7 @@ export interface FilesApiInterface {
     onBytesReceived: (bytes: Uint8Array) => Promise<void>,
   ): Promise<ClientDisplayableError | undefined>
 
-  deleteFile(apiToken: string): Promise<MinimalHttpResponse>
+  deleteFile(apiToken: string): Promise<HttpResponse>
 
   createFileValetToken(
     remoteIdentifier: string,

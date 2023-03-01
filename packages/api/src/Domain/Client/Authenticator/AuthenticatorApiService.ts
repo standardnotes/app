@@ -1,14 +1,15 @@
 import { ErrorMessage } from '../../Error/ErrorMessage'
 import { ApiCallError } from '../../Error/ApiCallError'
+import { HttpResponse } from '@standardnotes/responses'
 
 import { AuthenticatorApiServiceInterface } from './AuthenticatorApiServiceInterface'
 import { AuthenticatorApiOperations } from './AuthenticatorApiOperations'
 import {
-  ListAuthenticatorsResponse,
-  DeleteAuthenticatorResponse,
-  GenerateAuthenticatorRegistrationOptionsResponse,
-  VerifyAuthenticatorRegistrationResponseResponse,
-  GenerateAuthenticatorAuthenticationOptionsResponse,
+  ListAuthenticatorsResponseBody,
+  DeleteAuthenticatorResponseBody,
+  GenerateAuthenticatorRegistrationOptionsResponseBody,
+  VerifyAuthenticatorRegistrationResponseBody,
+  GenerateAuthenticatorAuthenticationOptionsResponseBody,
 } from '../../Response'
 import { AuthenticatorServerInterface } from '../../Server/Authenticator/AuthenticatorServerInterface'
 
@@ -19,7 +20,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
     this.operationsInProgress = new Map()
   }
 
-  async list(): Promise<ListAuthenticatorsResponse> {
+  async list(): Promise<HttpResponse<ListAuthenticatorsResponseBody>> {
     if (this.operationsInProgress.get(AuthenticatorApiOperations.List)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }
@@ -37,7 +38,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
     }
   }
 
-  async delete(authenticatorId: string): Promise<DeleteAuthenticatorResponse> {
+  async delete(authenticatorId: string): Promise<HttpResponse<DeleteAuthenticatorResponseBody>> {
     if (this.operationsInProgress.get(AuthenticatorApiOperations.Delete)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }
@@ -57,7 +58,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
     }
   }
 
-  async generateRegistrationOptions(): Promise<GenerateAuthenticatorRegistrationOptionsResponse> {
+  async generateRegistrationOptions(): Promise<HttpResponse<GenerateAuthenticatorRegistrationOptionsResponseBody>> {
     if (this.operationsInProgress.get(AuthenticatorApiOperations.GenerateRegistrationOptions)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }
@@ -79,7 +80,7 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
     userUuid: string,
     name: string,
     attestationResponse: Record<string, unknown>,
-  ): Promise<VerifyAuthenticatorRegistrationResponseResponse> {
+  ): Promise<HttpResponse<VerifyAuthenticatorRegistrationResponseBody>> {
     if (this.operationsInProgress.get(AuthenticatorApiOperations.VerifyRegistrationResponse)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }
@@ -101,7 +102,9 @@ export class AuthenticatorApiService implements AuthenticatorApiServiceInterface
     }
   }
 
-  async generateAuthenticationOptions(username: string): Promise<GenerateAuthenticatorAuthenticationOptionsResponse> {
+  async generateAuthenticationOptions(
+    username: string,
+  ): Promise<HttpResponse<GenerateAuthenticatorAuthenticationOptionsResponseBody>> {
     if (this.operationsInProgress.get(AuthenticatorApiOperations.GenerateAuthenticationOptions)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }

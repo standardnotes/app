@@ -1,6 +1,6 @@
 import { AuthApiServiceInterface } from '@standardnotes/api'
 import { AnyKeyParamsContent } from '@standardnotes/common'
-import { SessionBody } from '@standardnotes/responses'
+import { isErrorResponse, SessionBody } from '@standardnotes/responses'
 
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
@@ -18,7 +18,7 @@ export class AuthManager extends AbstractService implements AuthClientInterface 
     try {
       const result = await this.authApiService.generateRecoveryCodes()
 
-      if (result.data.error) {
+      if (isErrorResponse(result)) {
         return false
       }
 
@@ -35,8 +35,7 @@ export class AuthManager extends AbstractService implements AuthClientInterface 
   }): Promise<AnyKeyParamsContent | false> {
     try {
       const result = await this.authApiService.recoveryKeyParams(dto)
-
-      if (result.data.error) {
+      if (isErrorResponse(result)) {
         return false
       }
 
@@ -66,7 +65,7 @@ export class AuthManager extends AbstractService implements AuthClientInterface 
     try {
       const result = await this.authApiService.signInWithRecoveryCodes(dto)
 
-      if (result.data.error) {
+      if (isErrorResponse(result)) {
         return false
       }
 

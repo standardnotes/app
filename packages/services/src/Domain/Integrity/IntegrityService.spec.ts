@@ -100,7 +100,9 @@ describe('IntegrityService', () => {
 
   it('should not publish mismatches if checking integrity fails', async () => {
     integrityApi.checkIntegrity = jest.fn().mockReturnValue({
-      error: 'Ooops',
+      data: {
+        error: 'Ooops',
+      },
     })
 
     await createService().handleEvent({
@@ -121,7 +123,9 @@ describe('IntegrityService', () => {
       },
     })
     itemApi.getSingleItem = jest.fn().mockReturnValue({
-      error: 'Ooops',
+      data: {
+        error: 'Ooops',
+      },
     })
 
     await createService().handleEvent({

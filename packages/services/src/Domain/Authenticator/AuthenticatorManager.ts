@@ -2,6 +2,7 @@
 
 import { AuthenticatorApiServiceInterface } from '@standardnotes/api'
 import { Username, Uuid } from '@standardnotes/domain-core'
+import { isErrorResponse } from '@standardnotes/responses'
 
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
@@ -19,7 +20,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
     try {
       const result = await this.authenticatorApiService.list()
 
-      if (result.data.error) {
+      if (isErrorResponse(result)) {
         return []
       }
 
@@ -32,8 +33,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
   async delete(authenticatorId: Uuid): Promise<boolean> {
     try {
       const result = await this.authenticatorApiService.delete(authenticatorId.value)
-
-      if (result.data.error) {
+      if (isErrorResponse(result)) {
         return false
       }
 
@@ -47,7 +47,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
     try {
       const result = await this.authenticatorApiService.generateRegistrationOptions()
 
-      if (result.data.error) {
+      if (isErrorResponse(result)) {
         return null
       }
 
@@ -69,7 +69,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
         registrationCredential,
       )
 
-      if (result.data.error) {
+      if (isErrorResponse(result)) {
         return false
       }
 
@@ -83,7 +83,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
     try {
       const result = await this.authenticatorApiService.generateAuthenticationOptions(username.value)
 
-      if (result.data.error) {
+      if (isErrorResponse(result)) {
         return null
       }
 

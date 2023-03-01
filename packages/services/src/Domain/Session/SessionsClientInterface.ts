@@ -2,7 +2,7 @@ import { UserRegistrationResponseBody } from '@standardnotes/api'
 import { ProtocolVersion } from '@standardnotes/common'
 import { SNRootKey } from '@standardnotes/encryption'
 import { RootKeyInterface } from '@standardnotes/models'
-import { ClientDisplayableError, HttpResponse, SessionBody, SignInResponse, User } from '@standardnotes/responses'
+import { ClientDisplayableError, SessionBody, SignInResponse, User, HttpResponse } from '@standardnotes/responses'
 import { Base64String } from '@standardnotes/sncrypto-common'
 
 import { SessionManagerResponse } from './SessionManagerResponse'
@@ -25,7 +25,7 @@ export interface SessionsClientInterface {
     email: string,
     rootKey: RootKeyInterface,
     ephemeral: boolean,
-  ): Promise<SignInResponse | HttpResponse>
+  ): Promise<HttpResponse<SignInResponse>>
   signOut(): Promise<void>
   changeCredentials(parameters: {
     currentServerPassword: string
