@@ -26,18 +26,6 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
         onValueChange(event.data.assertionResponse, prompt)
       }
     }
-
-    const iframe = (
-      <iframe
-        ref={iframeRef}
-        src="https://app.standardnotes.com/u2f"
-        className="h-96 w-full"
-        title="U2F"
-        allow="publickey-credentials-get"
-        id="u2f"
-      />
-    )
-
     if (iframeRef.current) {
       iframeRef.current.onload = () => {
         if (iframeRef.current?.contentWindow) {
@@ -49,7 +37,16 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
       }
     }
 
-    return iframe
+    return (
+      <iframe
+        ref={iframeRef}
+        src="https://app.standardnotes.com/u2f"
+        className="h-96 w-full"
+        title="U2F"
+        allow="publickey-credentials-get"
+        id="u2f"
+      />
+    )
   }
 
   return (
