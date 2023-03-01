@@ -33,9 +33,9 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.46.4",
+    "@standardnotes/common": "^1.46.6",
     "@standardnotes/features": "workspace:*",
-    "@standardnotes/security": "^1.7.5",
+    "@standardnotes/security": "^1.7.6",
     "reflect-metadata": "^0.1.13"
   }
 }

@@ -13,10 +13,7 @@ export * from '@standardnotes/encryption'
 export * from '@standardnotes/features'
 export * from '@standardnotes/files'
 export * from '@standardnotes/models'
-
 export * from '@standardnotes/responses'
-export { ErrorTag } from '@standardnotes/responses'
-
 export * from '@standardnotes/services'
 export * from '@standardnotes/settings'
 export * from '@standardnotes/utils'

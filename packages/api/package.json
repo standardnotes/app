@@ -36,12 +36,12 @@
     "typescript": "*"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.46.4",
+    "@standardnotes/common": "^1.46.6",
     "@standardnotes/domain-core": "^1.11.3",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/models": "workspace:*",
     "@standardnotes/responses": "workspace:*",
-    "@standardnotes/security": "^1.7.5",
+    "@standardnotes/security": "^1.7.6",
     "@standardnotes/utils": "workspace:*",
     "reflect-metadata": "^0.1.13"
   }

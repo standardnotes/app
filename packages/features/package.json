@@ -25,9 +25,9 @@
     "test": "jest"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.46.4",
+    "@standardnotes/common": "^1.46.6",
     "@standardnotes/domain-core": "^1.11.3",
-    "@standardnotes/security": "^1.7.5",
+    "@standardnotes/security": "^1.7.6",
     "reflect-metadata": "^0.1.13"
   },
   "devDependencies": {
