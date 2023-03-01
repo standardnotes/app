@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+    <meta content="viewport-fit=cover, width=device-width, initial-scale=1" name="viewport"/>
+    <title>U2F Authentication</title>
+    <link rel="stylesheet" media="all" href="./app.css" debug="false" />
+    <script src="https://unpkg.com/@simplewebauthn/browser@7.1.0/dist/bundle/index.umd.min.js" integrity="sha384-m2G0mSNS2Gn8Xc2Ldz8YiR1Xu+Tu7GJhj+nhW5C5ZC/zywvvYEObm2CcklYwTuCI" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div class="u2f-container">
+      <div class="u2f-content">
+        <div class="u2f-title">U2F Authentication</div>
+        <div class="u2f-description">Please insert your U2F device and press the button to authenticate.</div>
+        <div class="u2f-form">
+          <form id="u2f-form">
+            <div class="u2f-form-group">
+              <button id="btnBegin" type="button">Authenticate</button>
+            </div>
+            <div class="u2f-form-group">
+              <span id="info"></span>
+              <span id="success"></span>
+              <span id="error"></span>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script>
+      const { startAuthentication } = SimpleWebAuthnBrowser;
+
+      const button = document.getElementById('btnBegin');
+      const elemInfo = document.getElementById('info');
+      const elemSuccess = document.getElementById('success');
+      const elemError = document.getElementById('error');
+
+      let username = null;
+      let source = null;
+
+      window.onmessage = (event) => {
+        if (event.data.username) {
+          username = event.data.username;
+          source = event.source;
+        }
+      };
+
+      button.addEventListener('click', async () => {
+        elemSuccess.innerHTML = '';
+        elemError.innerHTML = '';
+        elemInfo.inertHTML = '';
+
+        try {
+          if (!username || !source) {
+            throw new Error('No username provided');
+          }
+
+          const response = await fetch('https://api.standardnotes.com/v1/authenticators/generate-authentication-options', {
+            method: 'POST',
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username
+            })
+          });
+
+          let assertionResponse;
+
+          const jsonResponse = await response.json();
+          if (!jsonResponse.data || !jsonResponse.data.options) {
+            throw new Error('No options returned from server');
+          }
+
+          elemInfo.innerHTML = 'Waiting for U2F device...';
+
+          assertionResponse = await startAuthentication(jsonResponse.data.options);
+
+          source.postMessage({
+            assertionResponse,
+          }, '*');
+
+          elemInfo.innerHTML = '';
+          elemSuccess.innerHTML = 'Authentication successful!';
+        } catch (error) {
+          elemInfo.innerHTML = '';
+          elemError.innerText = error;
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,6 +1,7 @@
 import { WebApplication } from '@/Application/Application'
+import { isDesktopApplication } from '@/Utils'
 import { ChallengePrompt } from '@standardnotes/services'
-import { RefObject, useState } from 'react'
+import { RefObject, useRef, useState } from 'react'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import { InputValue } from './InputValue'
@@ -16,6 +17,40 @@ type Props = {
 const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData }: Props) => {
   const [authenticatorResponse, setAuthenticatorResponse] = useState<Record<string, unknown> | null>(null)
   const [error, setError] = useState('')
+  const iframeRef = useRef<HTMLIFrameElement>(null)
+
+  if (isDesktopApplication()) {
+    window.onmessage = (event) => {
+      if (event.data.assertionResponse) {
+        setAuthenticatorResponse(event.data.assertionResponse)
+        onValueChange(event.data.assertionResponse, prompt)
+      }
+    }
+
+    const iframe = (
+      <iframe
+        ref={iframeRef}
+        src="https://app.standardnotes.com/u2f"
+        className="h-96 w-full"
+        title="U2F"
+        allow="publickey-credentials-get"
+        id="u2f"
+      />
+    )
+
+    if (iframeRef.current) {
+      iframeRef.current.onload = () => {
+        if (iframeRef.current?.contentWindow) {
+          iframeRef.current.contentWindow.postMessage(
+            { username: (contextData as Record<string, unknown>).username },
+            '*',
+          )
+        }
+      }
+    }
+
+    return iframe
+  }
 
   return (
     <div className="min-w-76">

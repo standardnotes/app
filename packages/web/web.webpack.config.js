@@ -46,6 +46,7 @@ module.exports = (env) => {
           { from: 'src/index.html' },
           { from: 'src/manifest.webmanifest' },
           { from: 'src/robots.txt' },
+          { from: 'src/u2f', to: 'u2f' },
         ],
       }),
     ],
