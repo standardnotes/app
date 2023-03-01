@@ -30,6 +30,8 @@ jobs:
       - run: yarn build:mobile
       - name: Ruby Setup for Fastlane
         uses: ruby/setup-ruby@v1
+        with:
+          working-directory: 'packages/mobile'
       - name: fastlane
         uses: maierj/fastlane-action@v1.4.0
         env:
@@ -88,6 +90,8 @@ jobs:
         run: echo "${{ secrets.APPSTORE_CONNECT_KEY }}" > ios/Authkey.p8
       - name: Ruby Setup for Fastlane
         uses: ruby/setup-ruby@v1
+        with:
+          working-directory: 'packages/mobile'
       - name: Setup fastlane
         uses: maierj/fastlane-action@v1.4.0
         env:
