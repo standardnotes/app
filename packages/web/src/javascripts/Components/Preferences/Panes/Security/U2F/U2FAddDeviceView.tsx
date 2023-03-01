@@ -82,11 +82,21 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({
         },
       ]}
     >
-      <div className="w-25 h-25 flex items-center justify-center bg-info">...Some Cool Device Picture Here...</div>
-      <div className="flex flex-grow flex-col gap-2">
-        <DecoratedInput className={{ container: 'w-92 ml-4' }} value={deviceName} onChange={handleDeviceNameChange} />
+      <div className="flex px-4 py-4">
+        <div className="w-25 h-25 flex items-center justify-center bg-info">...Some Cool Device Picture Here...</div>
+        <div className="ml-4 flex flex-grow flex-col gap-1">
+          <label htmlFor="u2f-device-name" className="text-sm font-semibold">
+            Device Name:
+          </label>
+          <DecoratedInput
+            id="u2f-device-name"
+            className={{ container: 'w-92' }}
+            value={deviceName}
+            onChange={handleDeviceNameChange}
+          />
+          {errorMessage && <div className="mt-1.5 text-danger">{errorMessage}</div>}
+        </div>
       </div>
-      {errorMessage && <div className="text-error">{errorMessage}</div>}
     </Modal>
   )
 }

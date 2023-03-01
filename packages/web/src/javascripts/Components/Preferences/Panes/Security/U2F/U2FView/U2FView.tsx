@@ -12,6 +12,7 @@ import Button from '@/Components/Button/Button'
 import U2FAddDeviceView from '../U2FAddDeviceView'
 import U2FDevicesList from './U2FDevicesList'
 import { isDesktopApplication } from '@/Utils'
+import ModalOverlay from '@/Components/Modal/ModalOverlay'
 
 type Props = {
   application: WebApplication
@@ -66,14 +67,14 @@ const U2FView: FunctionComponent<Props> = ({ application, userProvider }) => {
           />
         </PreferencesSegment>
       </PreferencesGroup>
-      {showDeviceAddingModal && (
+      <ModalOverlay isOpen={showDeviceAddingModal}>
         <U2FAddDeviceView
           onDeviceAddingModalToggle={setShowDeviceAddingModal}
           onDeviceAdded={loadAuthenticatorDevices}
           userProvider={userProvider}
           addAuthenticator={application.addAuthenticator}
         />
-      )}
+      </ModalOverlay>
     </>
   )
 }
