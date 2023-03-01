@@ -11,6 +11,7 @@ import U2FDescription from './U2FDescription'
 import Button from '@/Components/Button/Button'
 import U2FAddDeviceView from '../U2FAddDeviceView'
 import U2FDevicesList from './U2FDevicesList'
+import { isDesktopApplication } from '@/Utils'
 
 type Props = {
   application: WebApplication
@@ -51,7 +52,7 @@ const U2FView: FunctionComponent<Props> = ({ application, userProvider }) => {
               <U2FDescription userProvider={userProvider} />
             </div>
             <PreferencesSegment>
-              <Button label="Add Device" primary onClick={handleAddDeviceClick} />
+              <Button disabled={isDesktopApplication()} label="Add Device" primary onClick={handleAddDeviceClick} />
             </PreferencesSegment>
           </div>
         </PreferencesSegment>
