@@ -2,12 +2,12 @@ import { isString, lastElement, sleep } from '@standardnotes/utils'
 import { UuidString } from '@Lib/Types/UuidString'
 import { ContentType } from '@standardnotes/common'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
-import { SNHttpService } from '../Api/HttpService'
+import { DeprecatedHttpService } from '../Api/DeprecatedHttpService'
 import { SettingName } from '@standardnotes/settings'
 import { SNSettingsService } from '../Settings/SNSettingsService'
 import { ListedClientInterface } from './ListedClientInterface'
 import { SNApiService } from '../Api/ApiService'
-import { ListedAccount, ListedAccountInfo, ListedAccountInfoResponse } from '@standardnotes/responses'
+import { isErrorResponse, ListedAccount, ListedAccountInfo, ListedAccountInfoResponse } from '@standardnotes/responses'
 import { NoteMutator, SNActionsExtension, SNNote } from '@standardnotes/models'
 import { AbstractService, InternalEventBusInterface, MutatorClientInterface } from '@standardnotes/services'
 import { SNProtectionService } from '../Protection'
@@ -17,7 +17,7 @@ export class ListedService extends AbstractService implements ListedClientInterf
     private apiService: SNApiService,
     private itemManager: ItemManager,
     private settingsService: SNSettingsService,
-    private httpSerivce: SNHttpService,
+    private httpSerivce: DeprecatedHttpService,
     private protectionService: SNProtectionService,
     private mutatorService: MutatorClientInterface,
     protected override internalEventBus: InternalEventBusInterface,
@@ -63,7 +63,7 @@ export class ListedService extends AbstractService implements ListedClientInterf
   public async requestNewListedAccount(): Promise<ListedAccount | undefined> {
     const accountsBeforeRequest = await this.getSettingsBasedListedAccounts()
     const response = await this.apiService.registerForListedAccount()
-    if (response.error) {
+    if (isErrorResponse(response)) {
       return undefined
     }
     const MaxAttempts = 4
@@ -99,11 +99,12 @@ export class ListedService extends AbstractService implements ListedClientInterf
     const response = (await this.httpSerivce.getAbsolute(url).catch((error) => {
       console.error(error)
     })) as ListedAccountInfoResponse
-    if (!response || response.error || !response.data || isString(response.data)) {
+
+    if (!response || response.data?.error || !response.data || isString(response.data)) {
       return undefined
     }
 
-    return response.data
+    return response
   }
 
   private async getSettingsBasedListedAccounts(): Promise<ListedAccount[]> {

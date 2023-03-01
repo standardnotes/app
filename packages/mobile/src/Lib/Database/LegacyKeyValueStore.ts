@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 export class LegacyKeyValueStore {
   set(key: string, value: string): Promise<void> {

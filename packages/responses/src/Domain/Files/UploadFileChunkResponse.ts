@@ -1,5 +1,3 @@
-import { MinimalHttpResponse } from '../Http/MinimalHttpResponses'
-
-export type UploadFileChunkResponse = MinimalHttpResponse & {
+export type UploadFileChunkResponse = {
   success: boolean
 }

@@ -11,10 +11,3 @@ export type RawSessionPayload = {
 }
 
 export type RawStorageValue = RawJwtPayload | RawSessionPayload
-
-export type RemoteSession = {
-  uuid: string
-  updated_at: Date
-  device_info: string
-  current: boolean
-}

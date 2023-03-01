@@ -1,3 +1,3 @@
-import { HttpResponse } from '../Http/HttpResponse'
+import { HttpSuccessResponse } from '../Http/HttpResponse'
 
-export type SignOutResponse = HttpResponse & Record<string, unknown>
+export type SignOutResponse = HttpSuccessResponse

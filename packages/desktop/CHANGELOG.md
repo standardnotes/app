@@ -3,6 +3,44 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.105.7](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.6...@standardnotes/desktop@3.105.7) (2023-03-01)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.105.6](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.5...@standardnotes/desktop@3.105.6) (2023-03-01)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.105.5](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.4...@standardnotes/desktop@3.105.5) (2023-03-01)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.105.4](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.3...@standardnotes/desktop@3.105.4) (2023-03-01)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.105.3](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.2...@standardnotes/desktop@3.105.3) (2023-02-27)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.105.2](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.1...@standardnotes/desktop@3.105.2) (2023-02-27)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.105.1](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.0...@standardnotes/desktop@3.105.1) (2023-02-27)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+# [3.105.0](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.149.11...@standardnotes/desktop@3.105.0) (2023-02-25)
+
+### Features
+
+* Added "Image from URL" option and markdown image syntax support to Super. Also allows pasting images from copied web content ([#2218](https://github.com/standardnotes/app/issues/2218)) ([a15fc1e](https://github.com/standardnotes/app/commit/a15fc1ed1ddc1f273cc1cd267bd6cf20cc7e8219))
+
+## [3.104.149](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.149.10...@standardnotes/desktop@3.104.149) (2023-02-24)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
 ## [3.104.148](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.149.9...@standardnotes/desktop@3.104.148) (2023-02-23)
 
 **Note:** Version bump only for package @standardnotes/desktop

@@ -1,3 +1,4 @@
+import { isErrorResponse } from '@standardnotes/responses'
 import { UserRolesChangedEvent } from '@standardnotes/domain-events'
 import { AbstractService, InternalEventBusInterface, StorageKey } from '@standardnotes/services'
 import { WebSocketApiServiceInterface } from '@standardnotes/api'
@@ -72,7 +73,7 @@ export class SNWebSocketsService extends AbstractService<WebSocketsServiceEvent,
   private async createWebSocketConnectionToken(): Promise<string | undefined> {
     try {
       const response = await this.webSocketApiService.createConnectionToken()
-      if (response.data.error) {
+      if (isErrorResponse(response)) {
         console.error(response.data.error)
 
         return undefined

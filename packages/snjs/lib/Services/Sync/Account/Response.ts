@@ -2,7 +2,9 @@ import {
   ApiEndpointParam,
   ConflictParams,
   ConflictType,
-  Error,
+  HttpError,
+  HttpResponse,
+  isErrorResponse,
   RawSyncResponse,
   ServerItemResponse,
 } from '@standardnotes/responses'
@@ -12,24 +14,31 @@ import {
   ServerSyncSavedContextualPayload,
   FilteredServerItem,
 } from '@standardnotes/models'
-import { deepFreeze, isNullOrUndefined } from '@standardnotes/utils'
+import { deepFreeze } from '@standardnotes/utils'
 
 export class ServerSyncResponse {
-  public readonly rawResponse: RawSyncResponse
   public readonly savedPayloads: ServerSyncSavedContextualPayload[]
   public readonly retrievedPayloads: FilteredServerItem[]
   public readonly uuidConflictPayloads: FilteredServerItem[]
   public readonly dataConflictPayloads: FilteredServerItem[]
   public readonly rejectedPayloads: FilteredServerItem[]
 
-  constructor(rawResponse: RawSyncResponse) {
+  private successResponseData: RawSyncResponse | undefined
+
+  constructor(public rawResponse: HttpResponse<RawSyncResponse>) {
     this.rawResponse = rawResponse
 
-    this.savedPayloads = FilterDisallowedRemotePayloadsAndMap(rawResponse.data?.saved_items || []).map((rawItem) => {
-      return CreateServerSyncSavedPayload(rawItem)
-    })
+    if (!isErrorResponse(rawResponse)) {
+      this.successResponseData = rawResponse.data
+    }
 
-    this.retrievedPayloads = FilterDisallowedRemotePayloadsAndMap(rawResponse.data?.retrieved_items || [])
+    this.savedPayloads = FilterDisallowedRemotePayloadsAndMap(this.successResponseData?.saved_items || []).map(
+      (rawItem) => {
+        return CreateServerSyncSavedPayload(rawItem)
+      },
+    )
+
+    this.retrievedPayloads = FilterDisallowedRemotePayloadsAndMap(this.successResponseData?.retrieved_items || [])
 
     this.dataConflictPayloads = FilterDisallowedRemotePayloadsAndMap(this.rawDataConflictItems)
 
@@ -40,8 +49,8 @@ export class ServerSyncResponse {
     deepFreeze(this)
   }
 
-  public get error(): Error | undefined {
-    return this.rawResponse.error || this.rawResponse.data?.error
+  public get error(): HttpError | undefined {
+    return isErrorResponse(this.rawResponse) ? this.rawResponse.data?.error : undefined
   }
 
   public get status(): number {
@@ -49,11 +58,11 @@ export class ServerSyncResponse {
   }
 
   public get lastSyncToken(): string | undefined {
-    return this.rawResponse.data?.[ApiEndpointParam.LastSyncToken]
+    return this.successResponseData?.[ApiEndpointParam.LastSyncToken]
   }
 
   public get paginationToken(): string | undefined {
-    return this.rawResponse.data?.[ApiEndpointParam.PaginationToken]
+    return this.successResponseData?.[ApiEndpointParam.PaginationToken]
   }
 
   public get numberOfItemsInvolved(): number {
@@ -75,7 +84,7 @@ export class ServerSyncResponse {
         return conflict.type === ConflictType.UuidConflict
       })
       .map((conflict) => {
-        return conflict.unsaved_item || (conflict.item as ServerItemResponse)
+        return conflict.unsaved_item || conflict.item!
       })
   }
 
@@ -85,7 +94,7 @@ export class ServerSyncResponse {
         return conflict.type === ConflictType.ConflictingData
       })
       .map((conflict) => {
-        return conflict.server_item || (conflict.item as ServerItemResponse)
+        return conflict.server_item || conflict.item!
       })
   }
 
@@ -99,17 +108,17 @@ export class ServerSyncResponse {
         )
       })
       .map((conflict) => {
-        return conflict.unsaved_item as ServerItemResponse
+        return conflict.unsaved_item!
       })
   }
 
   private get rawConflictObjects(): ConflictParams[] {
-    const conflicts = this.rawResponse.data?.conflicts || []
-    const legacyConflicts = this.rawResponse.data?.unsaved || []
+    const conflicts = this.successResponseData?.conflicts || []
+    const legacyConflicts = this.successResponseData?.unsaved || []
     return conflicts.concat(legacyConflicts)
   }
 
   public get hasError(): boolean {
-    return !isNullOrUndefined(this.rawResponse.error)
+    return this.error != undefined
   }
 }

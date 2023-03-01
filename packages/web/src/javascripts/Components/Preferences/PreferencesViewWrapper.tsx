@@ -20,7 +20,11 @@ const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = (
   }, [commandService, viewControllerManager])
 
   return (
-    <ModalOverlay isOpen={viewControllerManager.preferencesController?.isOpen} className="p-0">
+    <ModalOverlay
+      isOpen={viewControllerManager.preferencesController.isOpen}
+      onDismiss={viewControllerManager.preferencesController.closePreferences}
+      className="p-0"
+    >
       <PreferencesView
         closePreferences={() => viewControllerManager.preferencesController.closePreferences()}
         application={application}

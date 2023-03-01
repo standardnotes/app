@@ -4,7 +4,8 @@ import { ApiCallError } from '../../Error/ApiCallError'
 import { WebSocketApiServiceInterface } from './WebSocketApiServiceInterface'
 import { WebSocketApiOperations } from './WebSocketApiOperations'
 import { WebSocketServerInterface } from '../../Server'
-import { WebSocketConnectionTokenResponse } from '../../Response'
+import { HttpResponse } from '@standardnotes/responses'
+import { WebSocketConnectionTokenResponseBody } from '../../Response'
 
 export class WebSocketApiService implements WebSocketApiServiceInterface {
   private operationsInProgress: Map<WebSocketApiOperations, boolean>
@@ -13,7 +14,7 @@ export class WebSocketApiService implements WebSocketApiServiceInterface {
     this.operationsInProgress = new Map()
   }
 
-  async createConnectionToken(): Promise<WebSocketConnectionTokenResponse> {
+  async createConnectionToken(): Promise<HttpResponse<WebSocketConnectionTokenResponseBody>> {
     if (this.operationsInProgress.get(WebSocketApiOperations.CreatingConnectionToken)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }

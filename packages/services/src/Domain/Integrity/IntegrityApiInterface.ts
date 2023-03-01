@@ -1,5 +1,5 @@
-import { CheckIntegrityResponse, IntegrityPayload } from '@standardnotes/responses'
+import { CheckIntegrityResponse, IntegrityPayload, HttpResponse } from '@standardnotes/responses'
 
 export interface IntegrityApiInterface {
-  checkIntegrity(integrityPayloads: IntegrityPayload[]): Promise<CheckIntegrityResponse>
+  checkIntegrity(integrityPayloads: IntegrityPayload[]): Promise<HttpResponse<CheckIntegrityResponse>>
 }

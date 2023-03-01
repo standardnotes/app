@@ -44,6 +44,7 @@ import { SearchPlugin } from './Plugins/SearchPlugin/SearchPlugin'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import MobileToolbarPlugin from './Plugins/MobileToolbarPlugin/MobileToolbarPlugin'
 import CodeOptionsPlugin from './Plugins/CodeOptionsPlugin/CodeOptions'
+import RemoteImagePlugin from './Plugins/RemoteImagePlugin/RemoteImagePlugin'
 
 export const SuperNotePreviewCharLimit = 160
 
@@ -202,6 +203,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 </SuperSearchContextProvider>
                 <MobileToolbarPlugin />
                 <CodeOptionsPlugin />
+                <RemoteImagePlugin />
               </BlocksEditor>
             </BlocksEditorComposer>
           </FilesControllerProvider>

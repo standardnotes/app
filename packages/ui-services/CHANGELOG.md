@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.24.29](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.28...@standardnotes/ui-services@1.24.29) (2023-03-01)
+
+### Bug Fixes
+
+* Fixes issue where preferences view would not close after pressing Escape ([6c120ff](https://github.com/standardnotes/app/commit/6c120ffde2c01309d146505ec52a07e504310595))
+
 ## [1.24.28](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.27...@standardnotes/ui-services@1.24.28) (2023-02-23)
 
 **Note:** Version bump only for package @standardnotes/ui-services

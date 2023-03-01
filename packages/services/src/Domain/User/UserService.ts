@@ -1,6 +1,6 @@
 import { Base64String } from '@standardnotes/sncrypto-common'
 import { EncryptionProviderInterface, SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
-import { HttpResponse, SignInResponse, User } from '@standardnotes/responses'
+import { HttpResponse, SignInResponse, User, HttpError, isErrorResponse } from '@standardnotes/responses'
 import { Either, KeyParamsOrigination, UserRequestType } from '@standardnotes/common'
 import { UuidGenerator } from '@standardnotes/utils'
 import { UserApiServiceInterface, UserRegistrationResponseBody } from '@standardnotes/api'
@@ -28,8 +28,7 @@ import { ProtectionsClientInterface } from '../Protection/ProtectionClientInterf
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
 
-export type CredentialsChangeFunctionResponse = { error?: { message: string } }
-export type AccountServiceResponse = HttpResponse
+export type CredentialsChangeFunctionResponse = { error?: HttpError }
 
 export enum AccountEvent {
   SignedInOrRegistered = 'SignedInOrRegistered',
@@ -181,7 +180,7 @@ export class UserService
     ephemeral = false,
     mergeLocal = true,
     awaitSync = false,
-  ): Promise<AccountServiceResponse> {
+  ): Promise<HttpResponse<SignInResponse>> {
     if (this.protocolService.hasAccount()) {
       throw Error('Tried to sign in when an account already exists.')
     }
@@ -196,9 +195,9 @@ export class UserService
       /** Prevent a timed sync from occuring while signing in. */
       this.lockSyncing()
 
-      const result = await this.sessionManager.signIn(email, password, strict, ephemeral)
+      const { response } = await this.sessionManager.signIn(email, password, strict, ephemeral)
 
-      if (!result.response.error) {
+      if (!isErrorResponse(response)) {
         const notifyingFunction = awaitSync ? this.notifyEventSync.bind(this) : this.notifyEvent.bind(this)
         await notifyingFunction(AccountEvent.SignedInOrRegistered, {
           payload: {
@@ -212,7 +211,7 @@ export class UserService
         this.unlockSyncing()
       }
 
-      return result.response
+      return response
     } finally {
       this.signingIn = false
     }
@@ -237,7 +236,7 @@ export class UserService
 
     const uuid = this.sessionManager.getSureUser().uuid
     const response = await this.userApiService.deleteAccount(uuid)
-    if (response.data.error) {
+    if (isErrorResponse(response)) {
       return {
         error: true,
         message: response.data.error.message,
@@ -261,7 +260,7 @@ export class UserService
         requestType,
       })
 
-      if (result.data.error) {
+      if (isErrorResponse(result)) {
         return false
       }
 
@@ -276,7 +275,7 @@ export class UserService
    * for missing keys or storage values. Unlike regular sign in, this doesn't worry about
    * performing one of marking all items as needing sync or deleting all local data.
    */
-  public async correctiveSignIn(rootKey: SNRootKey): Promise<HttpResponse | SignInResponse> {
+  public async correctiveSignIn(rootKey: SNRootKey): Promise<HttpResponse<SignInResponse>> {
     this.lockSyncing()
 
     const response = await this.sessionManager.bypassChecksAndSignInWithRootKey(
@@ -285,7 +284,7 @@ export class UserService
       false,
     )
 
-    if (!response.error) {
+    if (!isErrorResponse(response)) {
       await this.notifyEvent(AccountEvent.SignedInOrRegistered, {
         payload: {
           mergeLocal: true,
@@ -583,7 +582,7 @@ export class UserService
     this.lockSyncing()
 
     /** Now, change the credentials on the server. Roll back on failure */
-    const result = await this.sessionManager.changeCredentials({
+    const { response } = await this.sessionManager.changeCredentials({
       currentServerPassword: rootKeys.currentRootKey.serverPassword as string,
       newRootKey: rootKeys.newRootKey,
       wrappingKey,
@@ -592,29 +591,31 @@ export class UserService
 
     this.unlockSyncing()
 
-    if (!result.response.error) {
-      const rollback = await this.protocolService.createNewItemsKeyWithRollback()
-      await this.protocolService.reencryptItemsKeys()
-      await this.syncService.sync({ awaitAll: true })
-
-      const defaultItemsKey = this.protocolService.getSureDefaultItemsKey()
-      const itemsKeyWasSynced = !defaultItemsKey.neverSynced
-
-      if (!itemsKeyWasSynced) {
-        await this.sessionManager.changeCredentials({
-          currentServerPassword: rootKeys.newRootKey.serverPassword as string,
-          newRootKey: rootKeys.currentRootKey,
-          wrappingKey,
-        })
-        await this.protocolService.reencryptItemsKeys()
-        await rollback()
-        await this.syncService.sync({ awaitAll: true })
-
-        return { error: Error(Messages.CredentialsChangeStrings.Failed) }
-      }
+    if (isErrorResponse(response)) {
+      return { error: Error(response.data.error?.message) }
     }
 
-    return result.response
+    const rollback = await this.protocolService.createNewItemsKeyWithRollback()
+    await this.protocolService.reencryptItemsKeys()
+    await this.syncService.sync({ awaitAll: true })
+
+    const defaultItemsKey = this.protocolService.getSureDefaultItemsKey()
+    const itemsKeyWasSynced = !defaultItemsKey.neverSynced
+
+    if (!itemsKeyWasSynced) {
+      await this.sessionManager.changeCredentials({
+        currentServerPassword: rootKeys.newRootKey.serverPassword as string,
+        newRootKey: rootKeys.currentRootKey,
+        wrappingKey,
+      })
+      await this.protocolService.reencryptItemsKeys()
+      await rollback()
+      await this.syncService.sync({ awaitAll: true })
+
+      return { error: Error(Messages.CredentialsChangeStrings.Failed) }
+    }
+
+    return {}
   }
 
   private async recomputeRootKeysForCredentialChange(parameters: {
