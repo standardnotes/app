@@ -5118,13 +5118,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/markdown-visual@npm:^1.3.1":
-  version: 1.3.1
-  resolution: "@standardnotes/markdown-visual@npm:1.3.1"
+"@standardnotes/markdown-visual@npm:^1.3.2":
+  version: 1.3.2
+  resolution: "@standardnotes/markdown-visual@npm:1.3.2"
   dependencies:
     "@standardnotes/editor-kit": "github:standardnotes/editor-kit#50ffb15c935a297b082eb00ffd031adc05080d7f"
     "@standardnotes/styles": 1.6.1
-  checksum: 5d18f55aabbc0e0cfd91fad527a3321318e0a3d5743929da4bdf39e9965c9cb5a085765f0b05d53d329f633000eb81a7c3859cd677d8fd5b01a1080a45f5e0a7
+  checksum: 1c97c0baead932688ba01c0446a2995cd7c304aba7d00a0de280b87ad027c31c84b3be19199ed4779632767fcd16271db304c083dfe886f28864c32d3386c187
   languageName: node
   linkType: hard
 
@@ -5596,7 +5596,7 @@ __metadata:
     "@standardnotes/markdown-hybrid": ^1.7.7
     "@standardnotes/markdown-math": ^1.4.2
     "@standardnotes/markdown-minimal": ^1.3.0
-    "@standardnotes/markdown-visual": ^1.3.1
+    "@standardnotes/markdown-visual": ^1.3.2
     "@standardnotes/midnight-theme": ^1.4.6
     "@standardnotes/rich-text": ^1.8.7
     "@standardnotes/simple-task-editor": ^1.3.10
