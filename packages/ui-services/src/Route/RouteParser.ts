@@ -89,9 +89,7 @@ export class RouteParser implements RouteParserInterface {
       return RouteType.Onboarding
     }
 
-    const isDesktopIndex = this.url.protocol === 'file:' && this.path.endsWith('index.html')
-
-    if (this.path !== RootRoutes.None && !isDesktopIndex) {
+    if (this.path !== RootRoutes.None) {
       return RouteType.None
     }
 
