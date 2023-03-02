@@ -44,7 +44,7 @@ import {
   HttpSuccessResponse,
 } from '@standardnotes/responses'
 import { CopyPayloadWithContentOverride } from '@standardnotes/models'
-import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
+import { LegacySession, MapperInterface, Result, Session, SessionToken } from '@standardnotes/domain-core'
 import { KeyParamsFromApiResponse, SNRootKeyParams, SNRootKey, CreateNewRootKey } from '@standardnotes/encryption'
 import { Subscription } from '@standardnotes/security'
 import * as Common from '@standardnotes/common'
@@ -682,17 +682,20 @@ export class SNSessionManager
 
     const user = sharePayload.user
 
-    const session = this.createSession(
+    const sessionOrError = this.createSession(
       sharePayload.accessToken,
       sharePayload.accessExpiration,
       sharePayload.refreshToken,
       sharePayload.refreshExpiration,
       sharePayload.readonlyAccess,
     )
+    if (sessionOrError.isFailed()) {
+      console.error(sessionOrError.getError())
 
-    if (session !== null) {
-      await this.populateSession(rootKey, user, session, sharePayload.host)
+      return
     }
+
+    await this.populateSession(rootKey, user, sessionOrError.getValue(), sharePayload.host)
   }
 
   private async populateSession(
@@ -724,17 +727,26 @@ export class SNSessionManager
     rootKey: SNRootKey
     wrappingKey?: SNRootKey
   }): Promise<void> {
-    const session = this.createSession(
+    const sessionOrError = this.createSession(
       dto.session.access_token,
       dto.session.access_expiration,
       dto.session.refresh_token,
       dto.session.refresh_expiration,
       dto.session.readonly_access,
     )
+    if (sessionOrError.isFailed()) {
+      console.error(sessionOrError.getError())
 
-    if (session !== null) {
-      await this.populateSession(dto.rootKey, dto.user, session, this.apiService.getHost(), dto.wrappingKey)
+      return
     }
+
+    await this.populateSession(
+      dto.rootKey,
+      dto.user,
+      sessionOrError.getValue(),
+      this.apiService.getHost(),
+      dto.wrappingKey,
+    )
   }
 
   /**
@@ -755,16 +767,25 @@ export class SNSessionManager
         await this.populateSession(rootKey, user, sessionOrError.getValue(), this.apiService.getHost(), wrappingKey)
       }
     } else if (data.session) {
-      const session = this.createSession(
+      const sessionOrError = this.createSession(
         data.session.access_token,
         data.session.access_expiration,
         data.session.refresh_token,
         data.session.refresh_expiration,
         data.session.readonly_access,
       )
-      if (session !== null && user) {
-        await this.populateSession(rootKey, user, session, this.apiService.getHost(), wrappingKey)
+      if (sessionOrError.isFailed()) {
+        console.error(sessionOrError.getError())
+
+        return
       }
+      if (!user) {
+        console.error('No user in response')
+
+        return
+      }
+
+      await this.populateSession(rootKey, user, sessionOrError.getValue(), this.apiService.getHost(), wrappingKey)
     }
   }
 
@@ -774,25 +795,25 @@ export class SNSessionManager
     refreshTokenValue: string,
     refreshExpiration: number,
     readonlyAccess: boolean,
-  ): Session | null {
+  ): Result<Session> {
     const accessTokenOrError = SessionToken.create(accessTokenValue, accessExpiration)
     if (accessTokenOrError.isFailed()) {
-      return null
+      return Result.fail(`Could not create session: ${accessTokenOrError.getError()}`)
     }
     const accessToken = accessTokenOrError.getValue()
 
     const refreshTokenOrError = SessionToken.create(refreshTokenValue, refreshExpiration)
     if (refreshTokenOrError.isFailed()) {
-      return null
+      return Result.fail(`Could not create session: ${refreshTokenOrError.getError()}`)
     }
     const refreshToken = refreshTokenOrError.getValue()
 
     const sessionOrError = Session.create(accessToken, refreshToken, readonlyAccess)
     if (sessionOrError.isFailed()) {
-      return null
+      return Result.fail(`Could not create session: ${sessionOrError.getError()}`)
     }
 
-    return sessionOrError.getValue()
+    return Result.ok(sessionOrError.getValue())
   }
 
   override getDiagnostics(): Promise<DiagnosticInfo | undefined> {
