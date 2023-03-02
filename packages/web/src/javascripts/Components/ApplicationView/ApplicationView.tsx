@@ -173,7 +173,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     return <AndroidBackHandlerProvider application={application}>{renderChallenges()}</AndroidBackHandlerProvider>
   }
 
-  if (route.type === RouteType.U2F) {
+  if (route.type === RouteType.AppViewRoute && route.appViewRouteParam === 'u2f') {
     return (
       <ApplicationProvider application={application}>
         <U2FAuthView />

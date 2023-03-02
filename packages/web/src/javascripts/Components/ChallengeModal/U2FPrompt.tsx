@@ -39,7 +39,7 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
     return (
       <iframe
         ref={iframeRef}
-        src="https://app.standardnotes.com/?u2f=true"
+        src="https://app.standardnotes.com/?route=u2f"
         className="h-50 w-full"
         title="U2F"
         allow="publickey-credentials-get"

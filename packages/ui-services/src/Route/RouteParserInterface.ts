@@ -1,3 +1,4 @@
+import { AppViewRouteParam } from './Params/AppViewRouteParams'
 import { DemoParams } from './Params/DemoParams'
 import { OnboardingParams } from './Params/OnboardingParams'
 import { PurchaseParams } from './Params/PurchaseParams'
@@ -13,5 +14,6 @@ export interface RouteParserInterface {
   get onboardingParams(): OnboardingParams
   get subscriptionInviteParams(): SubscriptionInviteParams
   get userRequestParams(): UserRequestParams
+  get appViewRouteParam(): AppViewRouteParam | undefined
   get type(): RouteType
 }
