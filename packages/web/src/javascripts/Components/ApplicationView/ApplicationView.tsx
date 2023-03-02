@@ -30,6 +30,7 @@ import DotOrgNotice from './DotOrgNotice'
 import LinkingControllerProvider from '@/Controllers/LinkingControllerProvider'
 import ImportModal from '../ImportModal/ImportModal'
 import IosKeyboardClose from '../IosKeyboardClose/IosKeyboardClose'
+import U2FAuthView from '../U2FAuthView/U2FAuthView'
 
 type Props = {
   application: WebApplication
@@ -166,8 +167,18 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     ))
   }, [viewControllerManager, challenges, mainApplicationGroup, removeChallenge, application])
 
+  const route = application.routeService.getRoute()
+
   if (!renderAppContents) {
     return <AndroidBackHandlerProvider application={application}>{renderChallenges()}</AndroidBackHandlerProvider>
+  }
+
+  if (route.type === RouteType.U2F) {
+    return (
+      <ApplicationProvider application={application}>
+        <U2FAuthView />
+      </ApplicationProvider>
+    )
   }
 
   return (

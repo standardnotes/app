@@ -89,7 +89,9 @@ export class RouteParser implements RouteParserInterface {
       return RouteType.Onboarding
     }
 
-    if (this.path !== RootRoutes.None) {
+    const isDesktopIndex = this.url.protocol === 'file:' && this.path.endsWith('index.html')
+
+    if (this.path !== RootRoutes.None && !isDesktopIndex) {
       return RouteType.None
     }
 
@@ -99,6 +101,7 @@ export class RouteParser implements RouteParserInterface {
       [RootQueryParam.DemoToken, RouteType.Demo],
       [RootQueryParam.AcceptSubscriptionInvite, RouteType.AcceptSubscriptionInvite],
       [RootQueryParam.UserRequest, RouteType.UserRequest],
+      [RootQueryParam.U2F, RouteType.U2F],
     ])
 
     for (const rootQueryParam of rootQueryParametersMap.keys()) {
