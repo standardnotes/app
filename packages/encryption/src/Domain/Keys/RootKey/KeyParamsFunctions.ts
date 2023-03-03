@@ -48,13 +48,13 @@ export function CreateAnyKeyParams(keyParams: AnyKeyParamsContent) {
 
 export function KeyParamsFromApiResponse(response: KeyParamsResponse, identifier?: string) {
   const rawKeyParams: AnyKeyParamsContent = {
-    identifier: identifier || response.data.identifier!,
-    pw_cost: response.data.pw_cost!,
-    pw_nonce: response.data.pw_nonce!,
-    pw_salt: response.data.pw_salt!,
-    version: ProtocolVersionForKeyParams(response.data),
-    origination: response.data.origination,
-    created: response.data.created,
+    identifier: identifier || response.identifier!,
+    pw_cost: response.pw_cost!,
+    pw_nonce: response.pw_nonce!,
+    pw_salt: response.pw_salt!,
+    version: ProtocolVersionForKeyParams(response),
+    origination: response.origination,
+    created: response.created,
   }
   return CreateAnyKeyParams(rawKeyParams)
 }

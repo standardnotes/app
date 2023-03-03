@@ -4772,12 +4772,12 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/api@workspace:packages/api"
   dependencies:
-    "@standardnotes/common": ^1.46.4
+    "@standardnotes/common": ^1.46.6
     "@standardnotes/domain-core": ^1.11.3
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
-    "@standardnotes/security": ^1.7.5
+    "@standardnotes/security": ^1.7.6
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^29.2.3
     "@types/lodash": ^4.14.189
@@ -4892,6 +4892,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/common@npm:^1.46.6":
+  version: 1.46.6
+  resolution: "@standardnotes/common@npm:1.46.6"
+  dependencies:
+    reflect-metadata: ^0.1.13
+  checksum: 295f0765e81f3f6054c1eed596be2b48266ee651efdf8d7bb2eadcf1e22312b286872a163342f4c32de4fceea4ff67dabf2d64a1041723716bd30658c502bd81
+  languageName: node
+  linkType: hard
+
 "@standardnotes/component-relay@github:standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d, @standardnotes/component-relay@standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d":
   version: 2.3.0
   resolution: "@standardnotes/component-relay@https://github.com/standardnotes/component-relay.git#commit=839ff5db9bc92db9d42cad8d202ddc4df729597d"
@@ -4975,14 +4984,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/domain-events@npm:^2.106.0":
-  version: 2.106.0
-  resolution: "@standardnotes/domain-events@npm:2.106.0"
+"@standardnotes/domain-events@npm:^2.108.1":
+  version: 2.108.1
+  resolution: "@standardnotes/domain-events@npm:2.108.1"
   dependencies:
-    "@standardnotes/features": ^1.58.1
-    "@standardnotes/predicates": 1.6.4
-    "@standardnotes/security": 1.7.5
-  checksum: db98a6b4ef5181a02862a3989df2d8f0a4929044456583c9ffda767c31c5dec676a4da82d1fe581ffc6e35a977a05b071a2a8646fee2a4bdbdf1b265ccbb70d8
+    "@standardnotes/predicates": 1.6.5
+    "@standardnotes/security": 1.7.6
+  checksum: 492bec98838664c3033041df5d25d610e8e8fb0a69358f8dc660fe4a5cb65a9fa3ee6b62829af2edcd1d59640c66926a0c72f0ae0cbdb1804292b6ec02485f9d
   languageName: node
   linkType: hard
 
@@ -5017,7 +5025,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/encryption@workspace:packages/encryption"
   dependencies:
-    "@standardnotes/common": ^1.46.4
+    "@standardnotes/common": ^1.46.6
     "@standardnotes/config": 2.4.3
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
@@ -5046,24 +5054,6 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/features@^1.58.1, @standardnotes/features@workspace:*, @standardnotes/features@workspace:^, @standardnotes/features@workspace:packages/features":
-  version: 0.0.0-use.local
-  resolution: "@standardnotes/features@workspace:packages/features"
-  dependencies:
-    "@standardnotes/common": ^1.46.4
-    "@standardnotes/domain-core": ^1.11.3
-    "@standardnotes/security": ^1.7.5
-    "@types/jest": ^29.2.3
-    "@typescript-eslint/eslint-plugin": "*"
-    eslint: "*"
-    eslint-plugin-prettier: "*"
-    jest: ^29.3.1
-    reflect-metadata: ^0.1.13
-    ts-jest: ^29.0.3
-    typescript: 4.9.3
-  languageName: unknown
-  linkType: soft
-
 "@standardnotes/features@npm:1.54.0":
   version: 1.54.0
   resolution: "@standardnotes/features@npm:1.54.0"
@@ -5076,11 +5066,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/features@workspace:*, @standardnotes/features@workspace:^, @standardnotes/features@workspace:packages/features":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/features@workspace:packages/features"
+  dependencies:
+    "@standardnotes/common": ^1.46.6
+    "@standardnotes/domain-core": ^1.11.3
+    "@standardnotes/security": ^1.7.6
+    "@types/jest": ^29.2.3
+    "@typescript-eslint/eslint-plugin": "*"
+    eslint: "*"
+    eslint-plugin-prettier: "*"
+    jest: ^29.3.1
+    reflect-metadata: ^0.1.13
+    ts-jest: ^29.0.3
+    typescript: 4.9.3
+  languageName: unknown
+  linkType: soft
+
 "@standardnotes/filepicker@workspace:*, @standardnotes/filepicker@workspace:^, @standardnotes/filepicker@workspace:packages/filepicker":
   version: 0.0.0-use.local
   resolution: "@standardnotes/filepicker@workspace:packages/filepicker"
   dependencies:
-    "@standardnotes/common": ^1.46.4
+    "@standardnotes/common": ^1.46.6
     "@standardnotes/files": "workspace:*"
     "@standardnotes/utils": "workspace:*"
     "@types/jest": ^29.2.3
@@ -5195,10 +5203,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/markdown-visual@npm:^1.0.7":
-  version: 1.0.7
-  resolution: "@standardnotes/markdown-visual@npm:1.0.7"
-  checksum: 8827893f0953beb03ff6da77304968dfdf9a7144022c770947b56de16aee006ce9550cdf114fa2751bc836b0092924f2dd352049b91d6d67c0fd12b88b36d74c
+"@standardnotes/markdown-visual@npm:^1.3.2":
+  version: 1.3.2
+  resolution: "@standardnotes/markdown-visual@npm:1.3.2"
+  dependencies:
+    "@standardnotes/editor-kit": "github:standardnotes/editor-kit#50ffb15c935a297b082eb00ffd031adc05080d7f"
+    "@standardnotes/styles": 1.6.1
+  checksum: 1c97c0baead932688ba01c0446a2995cd7c304aba7d00a0de280b87ad027c31c84b3be19199ed4779632767fcd16271db304c083dfe886f28864c32d3386c187
   languageName: node
   linkType: hard
 
@@ -5264,7 +5275,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/models@workspace:packages/models"
   dependencies:
-    "@standardnotes/common": ^1.46.4
+    "@standardnotes/common": ^1.46.6
     "@standardnotes/features": "workspace:*"
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/utils": "workspace:^"
@@ -5281,10 +5292,10 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/predicates@npm:1.6.4":
-  version: 1.6.4
-  resolution: "@standardnotes/predicates@npm:1.6.4"
-  checksum: 6d7235896a6d591f6e33d2d0b89c58850d357095d26e1d74264db1d77164a8f1f6673f4095c660719992f2aa8411cfbfe79781f004c3eb2aa82a761e34827f60
+"@standardnotes/predicates@npm:1.6.5":
+  version: 1.6.5
+  resolution: "@standardnotes/predicates@npm:1.6.5"
+  checksum: 6bdd927062f8dcbd65f99b93d48bbbbcbe0c525517a5b5827c90a8b22286c99a95c0bb1cdda401e4fe5940e02a04b03e8616596d479d52bad1c783d9953e8d0b
   languageName: node
   linkType: hard
 
@@ -5311,9 +5322,9 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/responses@workspace:packages/responses"
   dependencies:
-    "@standardnotes/common": ^1.46.4
+    "@standardnotes/common": ^1.46.6
     "@standardnotes/features": "workspace:*"
-    "@standardnotes/security": ^1.7.5
+    "@standardnotes/security": ^1.7.6
     "@types/jest": ^29.2.3
     "@typescript-eslint/eslint-plugin": "*"
     eslint: "*"
@@ -5334,13 +5345,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/security@npm:1.7.5, @standardnotes/security@npm:^1.7.5":
-  version: 1.7.5
-  resolution: "@standardnotes/security@npm:1.7.5"
+"@standardnotes/security@npm:1.7.6, @standardnotes/security@npm:^1.7.6":
+  version: 1.7.6
+  resolution: "@standardnotes/security@npm:1.7.6"
   dependencies:
     jsonwebtoken: ^9.0.0
     reflect-metadata: ^0.1.13
-  checksum: 69d180d25936cad64ee19d8932aedff60b91f4a25f96084e0a686b228773aba856f50c3da265d426d64160dff28f20d9d7980a625bce00fc6a47416caa4e130e
+  checksum: 1d6f2c74e0a69ab8693880e7e1d71e167a43a9f23ff9bd0434db8aadc41ae779841d53905fea0498350dab58df16ec319184dc42ff2dcef8d559ce8f2589ce9c
   languageName: node
   linkType: hard
 
@@ -5352,6 +5363,16 @@ __metadata:
     jsonwebtoken: ^8.5.1
     reflect-metadata: ^0.1.13
   checksum: 66e822264461b365ac3e7b2431610b727add6d54b3b4b49d5d49d996a7a122bffdd4ae004c24d91256c051cba4080103e1732affaf1924ec46ebc6db0de20e8b
+  languageName: node
+  linkType: hard
+
+"@standardnotes/security@npm:^1.7.5":
+  version: 1.7.5
+  resolution: "@standardnotes/security@npm:1.7.5"
+  dependencies:
+    jsonwebtoken: ^9.0.0
+    reflect-metadata: ^0.1.13
+  checksum: 69d180d25936cad64ee19d8932aedff60b91f4a25f96084e0a686b228773aba856f50c3da265d426d64160dff28f20d9d7980a625bce00fc6a47416caa4e130e
   languageName: node
   linkType: hard
 
@@ -5381,12 +5402,12 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/settings@npm:^1.19.0":
-  version: 1.19.0
-  resolution: "@standardnotes/settings@npm:1.19.0"
+"@standardnotes/settings@npm:^1.19.1":
+  version: 1.19.1
+  resolution: "@standardnotes/settings@npm:1.19.1"
   dependencies:
     reflect-metadata: ^0.1.13
-  checksum: 85816e5d25e2a4cfe014dbe371bc30902b1bb194f5d3c021fe754678ff9bd693255f1d209a66c4375334b1edd40a8f4133480a20a85b88859b3cfbff1a570cc9
+  checksum: d99d49d4401ac8c973284d8637195c0441e6f73b7e01e9eb4ab14feb27c6d2e928a493d944ed67ea1d6f229bf5ea839b5dd667c373b917aed321bb32972daacb
   languageName: node
   linkType: hard
 
@@ -5457,17 +5478,17 @@ __metadata:
     "@babel/core": "*"
     "@babel/preset-env": "*"
     "@standardnotes/api": "workspace:*"
-    "@standardnotes/common": ^1.46.4
+    "@standardnotes/common": ^1.46.6
     "@standardnotes/domain-core": ^1.11.3
-    "@standardnotes/domain-events": ^2.106.0
+    "@standardnotes/domain-events": ^2.108.1
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/features": "workspace:*"
     "@standardnotes/files": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
-    "@standardnotes/security": ^1.7.5
+    "@standardnotes/security": ^1.7.6
     "@standardnotes/services": "workspace:*"
-    "@standardnotes/settings": ^1.19.0
+    "@standardnotes/settings": ^1.19.1
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/sncrypto-web": "workspace:*"
     "@standardnotes/utils": "workspace:*"
@@ -5585,7 +5606,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/ui-services@workspace:packages/ui-services"
   dependencies:
-    "@standardnotes/common": ^1.46.4
+    "@standardnotes/common": ^1.46.6
     "@standardnotes/features": "workspace:^"
     "@standardnotes/filepicker": "workspace:^"
     "@standardnotes/services": "workspace:^"
@@ -5607,7 +5628,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/utils@workspace:packages/utils"
   dependencies:
-    "@standardnotes/common": ^1.46.4
+    "@standardnotes/common": ^1.46.6
     "@types/dompurify": ^2.4.0
     "@types/jest": ^29.2.3
     "@types/jsdom": ^20.0.1
@@ -5660,7 +5681,7 @@ __metadata:
     "@standardnotes/markdown-hybrid": ^1.7.7
     "@standardnotes/markdown-math": ^1.4.2
     "@standardnotes/markdown-minimal": ^1.3.0
-    "@standardnotes/markdown-visual": ^1.0.7
+    "@standardnotes/markdown-visual": ^1.3.2
     "@standardnotes/midnight-theme": ^1.4.6
     "@standardnotes/rich-text": ^1.8.7
     "@standardnotes/simple-task-editor": ^1.3.10

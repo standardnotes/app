@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/ui-services",
-  "version": "1.24.28",
+  "version": "1.24.30",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -15,7 +15,7 @@
     "test": "jest spec"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.46.4",
+    "@standardnotes/common": "^1.46.6",
     "@standardnotes/features": "workspace:^",
     "@standardnotes/filepicker": "workspace:^",
     "@standardnotes/services": "workspace:^",

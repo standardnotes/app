@@ -1,9 +1,10 @@
 import { UserRequestType } from '@standardnotes/common'
 import { type RootKeyParamsInterface } from '@standardnotes/models'
+import { HttpResponse } from '@standardnotes/responses'
 
-import { UserDeletionResponse } from '../../Response/User/UserDeletionResponse'
-import { UserRegistrationResponse } from '../../Response/User/UserRegistrationResponse'
-import { UserRequestResponse } from '../../Response/UserRequest/UserRequestResponse'
+import { UserDeletionResponseBody } from '../../Response/User/UserDeletionResponseBody'
+import { UserRegistrationResponseBody } from '../../Response/User/UserRegistrationResponseBody'
+import { UserRequestResponseBody } from '../../Response/UserRequest/UserRequestResponseBody'
 
 export interface UserApiServiceInterface {
   register(registerDTO: {
@@ -11,7 +12,10 @@ export interface UserApiServiceInterface {
     serverPassword: string
     keyParams: RootKeyParamsInterface
     ephemeral: boolean
-  }): Promise<UserRegistrationResponse>
-  submitUserRequest(dto: { userUuid: string; requestType: UserRequestType }): Promise<UserRequestResponse>
-  deleteAccount(userUuid: string): Promise<UserDeletionResponse>
+  }): Promise<HttpResponse<UserRegistrationResponseBody>>
+  submitUserRequest(dto: {
+    userUuid: string
+    requestType: UserRequestType
+  }): Promise<HttpResponse<UserRequestResponseBody>>
+  deleteAccount(userUuid: string): Promise<HttpResponse<UserDeletionResponseBody>>
 }

@@ -2,7 +2,7 @@ import { removeFromArray } from '@standardnotes/utils'
 import { SNRootKey } from '@standardnotes/encryption'
 import { ChallengeService } from '../Challenge'
 import { ListedService } from '../Listed/ListedService'
-import { ActionResponse, HttpResponse } from '@standardnotes/responses'
+import { ActionResponse, DeprecatedHttpResponse } from '@standardnotes/responses'
 import { ContentType } from '@standardnotes/common'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import {
@@ -24,7 +24,7 @@ import {
 } from '@standardnotes/models'
 import { SNSyncService } from '../Sync/SyncService'
 import { PayloadManager } from '../Payloads/PayloadManager'
-import { SNHttpService } from '../Api/HttpService'
+import { DeprecatedHttpService } from '../Api/DeprecatedHttpService'
 import {
   AbstractService,
   DeviceInterface,
@@ -61,7 +61,7 @@ export class SNActionsService extends AbstractService {
     private itemManager: ItemManager,
     private alertService: AlertService,
     public deviceInterface: DeviceInterface,
-    private httpService: SNHttpService,
+    private httpService: DeprecatedHttpService,
     private payloadManager: PayloadManager,
     private protocolService: EncryptionService,
     private syncService: SNSyncService,
@@ -185,7 +185,7 @@ export class SNActionsService extends AbstractService {
           message: 'An issue occurred while processing this action. Please try again.',
         }
         void this.alertService.alert(error.message)
-        return { error } as HttpResponse
+        return { error } as DeprecatedHttpResponse
       })
 
     return response as ActionResponse

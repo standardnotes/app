@@ -195,7 +195,7 @@ export class SubscriptionController extends AbstractViewController {
   private async getSubscription() {
     try {
       const subscription = await this.application.getUserSubscription()
-      if (!(subscription instanceof ClientDisplayableError)) {
+      if (!(subscription instanceof ClientDisplayableError) && subscription) {
         this.setUserSubscription(subscription)
       }
     } catch (error) {
