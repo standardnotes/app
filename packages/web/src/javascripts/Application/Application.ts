@@ -426,6 +426,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     this.getViewControllerManager().accountMenuController.setShow(true)
   }
 
+  hideAccountMenu(): void {
+    this.getViewControllerManager().accountMenuController.setShow(false)
+  }
+
   geDefaultEditorIdentifier(currentTag?: SNTag): EditorIdentifier {
     return (
       currentTag?.preferences?.editorIdentifier ||

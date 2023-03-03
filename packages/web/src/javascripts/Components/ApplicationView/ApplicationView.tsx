@@ -90,7 +90,11 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
       return
     }
 
-    void application.user.populateSessionFromDemoShareToken(token)
+    const status = application.status.addMessage('Preparing demo...')
+    void application.user.populateSessionFromDemoShareToken(token).then(() => {
+      application.status.removeMessage(status)
+      application.hideAccountMenu()
+    })
   }, [application])
 
   const onAppLaunch = useCallback(() => {
