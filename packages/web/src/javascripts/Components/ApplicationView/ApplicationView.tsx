@@ -30,7 +30,6 @@ import DotOrgNotice from './DotOrgNotice'
 import LinkingControllerProvider from '@/Controllers/LinkingControllerProvider'
 import ImportModal from '../ImportModal/ImportModal'
 import IosKeyboardClose from '../IosKeyboardClose/IosKeyboardClose'
-import U2FAuthIframe from '../U2FAuthIframe/U2FAuthIframe'
 
 type Props = {
   application: WebApplication
@@ -167,18 +166,8 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     ))
   }, [viewControllerManager, challenges, mainApplicationGroup, removeChallenge, application])
 
-  const route = application.routeService.getRoute()
-
   if (!renderAppContents) {
     return <AndroidBackHandlerProvider application={application}>{renderChallenges()}</AndroidBackHandlerProvider>
-  }
-
-  if (route.type === RouteType.AppViewRoute && route.appViewRouteParam === 'u2f') {
-    return (
-      <ApplicationProvider application={application}>
-        <U2FAuthIframe />
-      </ApplicationProvider>
-    )
   }
 
   return (

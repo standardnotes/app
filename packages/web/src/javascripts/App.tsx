@@ -36,6 +36,8 @@ import { WebApplication } from './Application/Application'
 import { createRoot, Root } from 'react-dom/client'
 import { ElementIds } from './Constants/ElementIDs'
 import { setDefaultMonospaceFont } from './setDefaultMonospaceFont'
+import { RouteParser, RouteType } from '@standardnotes/ui-services'
+import U2FAuthIframe from './Components/U2FAuthIframe/U2FAuthIframe'
 
 let keyCount = 0
 const getKey = () => {
@@ -70,6 +72,13 @@ const startApplication: StartApplication = async function startApplication(
     disableIosTextFieldZoom()
 
     setDefaultMonospaceFont(device.platform)
+
+    const route = new RouteParser(window.location.href)
+
+    if (route.type === RouteType.AppViewRoute && route.appViewRouteParam === 'u2f') {
+      root.render(<U2FAuthIframe />)
+      return
+    }
 
     root.render(
       <ApplicationGroupView

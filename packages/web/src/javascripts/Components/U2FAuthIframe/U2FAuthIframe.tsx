@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import Button from '../Button/Button'
 import { startAuthentication } from '@simplewebauthn/browser'
-import { useApplication } from '../ApplicationProvider'
 
 /**
  * An iframe for use in the desktop and mobile application that allows them to load app.standardnotes.com to perform
  * U2F authentication. Web applications do not need this iframe, as they can perform U2F authentication directly.
  */
 const U2FAuthIframe = () => {
-  const application = useApplication()
   const [username, setUsername] = useState('')
   const [source, setSource] = useState<MessageEvent['source'] | null>(null)
   const NATIVE_CLIENT_ORIGIN = 'file://'
@@ -54,7 +52,7 @@ const U2FAuthIframe = () => {
         throw new Error('No username provided')
       }
 
-      const response = await fetch(`${application.getHost()}/v1/authenticators/generate-authentication-options`, {
+      const response = await fetch(`${window.defaultSyncServer}/v1/authenticators/generate-authentication-options`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -88,7 +86,7 @@ const U2FAuthIframe = () => {
       setError(error.toString())
       console.error(error.toString())
     }
-  }, [application, source, username])
+  }, [source, username])
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-2">
