@@ -18,7 +18,7 @@ const U2FDescription: FunctionComponent<Props> = ({ userProvider }) => {
 
   return (
     <div>
-      <Text>Authenticate with a U2F hardware device.</Text>
+      <Text>Authenticate with a U2F hardware device such as Yubikey.</Text>
       {!application.isFullU2FClient && (
         <Text className="italic">Please visit the web app in order to add a U2F Device.</Text>
       )}
