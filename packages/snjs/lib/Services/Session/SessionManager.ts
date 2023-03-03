@@ -45,7 +45,7 @@ import {
 } from '@standardnotes/responses'
 import { CopyPayloadWithContentOverride } from '@standardnotes/models'
 import { LegacySession, MapperInterface, Result, Session, SessionToken } from '@standardnotes/domain-core'
-import { KeyParamsFromApiResponse, SNRootKeyParams, SNRootKey, CreateNewRootKey } from '@standardnotes/encryption'
+import { KeyParamsFromApiResponse, SNRootKeyParams, SNRootKey } from '@standardnotes/encryption'
 import { Subscription } from '@standardnotes/security'
 import * as Common from '@standardnotes/common'
 
@@ -640,32 +640,6 @@ export class SNSessionManager
     }
   }
 
-  public async createDemoShareToken(): Promise<Base64String | ClientDisplayableError> {
-    const session = this.getSession()
-    if (!session) {
-      return new ClientDisplayableError('Cannot generate share token without active session')
-    }
-    if (!(session instanceof Session)) {
-      return new ClientDisplayableError('Cannot generate share token with non-token session')
-    }
-
-    const keyParams = (await this.protocolService.getRootKeyParams()) as SNRootKeyParams
-
-    const payload: ShareToken = {
-      accessToken: session.accessToken.value,
-      refreshToken: session.refreshToken.value,
-      accessExpiration: session.accessToken.expiresAt,
-      refreshExpiration: session.refreshToken.expiresAt,
-      readonlyAccess: true,
-      masterKey: this.protocolService.getRootKey()?.masterKey as string,
-      keyParams: keyParams.content,
-      user: this.getSureUser(),
-      host: this.apiService.getHost(),
-    }
-
-    return this.protocolService.crypto.base64Encode(JSON.stringify(payload))
-  }
-
   private decodeDemoShareToken(token: Base64String): ShareToken {
     const jsonString = this.protocolService.crypto.base64Decode(token)
     return JSON.parse(jsonString)
@@ -674,28 +648,7 @@ export class SNSessionManager
   public async populateSessionFromDemoShareToken(token: Base64String): Promise<void> {
     const sharePayload = this.decodeDemoShareToken(token)
 
-    const rootKey = CreateNewRootKey({
-      masterKey: sharePayload.masterKey,
-      keyParams: sharePayload.keyParams,
-      version: sharePayload.keyParams.version,
-    })
-
-    const user = sharePayload.user
-
-    const sessionOrError = this.createSession(
-      sharePayload.accessToken,
-      sharePayload.accessExpiration,
-      sharePayload.refreshToken,
-      sharePayload.refreshExpiration,
-      sharePayload.readonlyAccess,
-    )
-    if (sessionOrError.isFailed()) {
-      console.error(sessionOrError.getError())
-
-      return
-    }
-
-    await this.populateSession(rootKey, user, sessionOrError.getValue(), sharePayload.host)
+    await this.signIn(sharePayload.email, sharePayload.password, false, true)
   }
 
   private async populateSession(
