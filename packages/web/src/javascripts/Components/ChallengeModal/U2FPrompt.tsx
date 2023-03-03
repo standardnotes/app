@@ -1,5 +1,4 @@
 import { WebApplication } from '@/Application/Application'
-import { isDesktopApplication } from '@/Utils'
 import { ChallengePrompt } from '@standardnotes/services'
 import { RefObject, useRef, useState } from 'react'
 import Button from '../Button/Button'
@@ -20,7 +19,7 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
   const iframeRef = useRef<HTMLIFrameElement>(null)
   const U2F_IFRAME_ORIGIN = 'https://app.standardnotes.com/?route=u2f'
 
-  if (isDesktopApplication()) {
+  if (!application.isFullU2FClient) {
     window.onmessage = (event) => {
       const eventDoesNotComeFromU2FIFrame = event.origin !== U2F_IFRAME_ORIGIN
       if (eventDoesNotComeFromU2FIFrame) {
@@ -64,18 +63,18 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
         onClick={async () => {
           if (!contextData || contextData.username === undefined) {
             setError('No username provided')
-
             return
           }
 
           const authenticatorResponseOrError = await application.getAuthenticatorAuthenticationResponse.execute({
             username: contextData.username,
           })
+
           if (authenticatorResponseOrError.isFailed()) {
             setError(authenticatorResponseOrError.getError())
-
             return
           }
+
           const authenticatorResponse = authenticatorResponseOrError.getValue()
 
           setAuthenticatorResponse(authenticatorResponse)

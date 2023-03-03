@@ -3,25 +3,29 @@ import Button from '../Button/Button'
 import { startAuthentication } from '@simplewebauthn/browser'
 import { useApplication } from '../ApplicationProvider'
 
-const U2FAuthView = () => {
+/**
+ * An iframe for use in the desktop and mobile application that allows them to load app.standardnotes.com to perform
+ * U2F authentication. Web applications do not need this iframe, as they can perform U2F authentication directly.
+ */
+const U2FAuthIframe = () => {
   const application = useApplication()
   const [username, setUsername] = useState('')
   const [source, setSource] = useState<MessageEvent['source'] | null>(null)
-  const DESKTOP_APP_ORIGIN = 'file://'
+  const NATIVE_CLIENT_ORIGIN = 'file://'
 
   useEffect(() => {
     window.parent.postMessage(
       {
         mountedAuthView: true,
       },
-      DESKTOP_APP_ORIGIN,
+      NATIVE_CLIENT_ORIGIN,
     )
   }, [])
 
   useEffect(() => {
     const messageHandler = (event: MessageEvent) => {
-      const eventDoesNotComeFromDesktopApp = event.origin !== DESKTOP_APP_ORIGIN
-      if (eventDoesNotComeFromDesktopApp) {
+      const eventDoesNotComeFromNativeClient = event.origin !== NATIVE_CLIENT_ORIGIN
+      if (eventDoesNotComeFromNativeClient) {
         return
       }
 
@@ -73,7 +77,7 @@ const U2FAuthView = () => {
         {
           assertionResponse,
         },
-        DESKTOP_APP_ORIGIN,
+        NATIVE_CLIENT_ORIGIN,
       )
 
       setInfo('Authentication successful!')
@@ -88,7 +92,7 @@ const U2FAuthView = () => {
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-2">
-      <div className="mb-2 text-center">Please insert your U2F device and press the button to authenticate.</div>
+      <div className="mb-2 text-center">Insert your U2F device and press the button to authenticate.</div>
       <Button onClick={beginAuthentication}>Authenticate</Button>
       <div>{info}</div>
       <div className="text-danger">{error}</div>
@@ -96,4 +100,4 @@ const U2FAuthView = () => {
   )
 }
 
-export default U2FAuthView
+export default U2FAuthIframe

@@ -30,7 +30,7 @@ import DotOrgNotice from './DotOrgNotice'
 import LinkingControllerProvider from '@/Controllers/LinkingControllerProvider'
 import ImportModal from '../ImportModal/ImportModal'
 import IosKeyboardClose from '../IosKeyboardClose/IosKeyboardClose'
-import U2FAuthView from '../U2FAuthView/U2FAuthView'
+import U2FAuthIframe from '../U2FAuthIframe/U2FAuthIframe'
 
 type Props = {
   application: WebApplication
@@ -176,7 +176,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   if (route.type === RouteType.AppViewRoute && route.appViewRouteParam === 'u2f') {
     return (
       <ApplicationProvider application={application}>
-        <U2FAuthView />
+        <U2FAuthIframe />
       </ApplicationProvider>
     )
   }
