@@ -7,18 +7,24 @@ const U2FAuthView = () => {
   const application = useApplication()
   const [username, setUsername] = useState('')
   const [source, setSource] = useState<MessageEvent['source'] | null>(null)
+  const DESKTOP_APP_ORIGIN = 'file://'
 
   useEffect(() => {
     window.parent.postMessage(
       {
         mountedAuthView: true,
       },
-      '*',
+      DESKTOP_APP_ORIGIN,
     )
   }, [])
 
   useEffect(() => {
     const messageHandler = (event: MessageEvent) => {
+      const eventDoesNotComeFromDesktopApp = event.origin !== DESKTOP_APP_ORIGIN
+      if (eventDoesNotComeFromDesktopApp) {
+        return
+      }
+
       if (event.data.username) {
         setUsername(event.data.username)
         setSource(event.source)
@@ -67,7 +73,7 @@ const U2FAuthView = () => {
         {
           assertionResponse,
         },
-        '*',
+        DESKTOP_APP_ORIGIN,
       )
 
       setInfo('Authentication successful!')
@@ -76,7 +82,7 @@ const U2FAuthView = () => {
         return
       }
       setError(error.toString())
-      console.error(error)
+      console.error(error.toString())
     }
   }, [application, source, username])
 

@@ -18,14 +18,20 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
   const [authenticatorResponse, setAuthenticatorResponse] = useState<Record<string, unknown> | null>(null)
   const [error, setError] = useState('')
   const iframeRef = useRef<HTMLIFrameElement>(null)
+  const U2F_IFRAME_ORIGIN = 'https://app.standardnotes.com/?route=u2f'
 
   if (isDesktopApplication()) {
     window.onmessage = (event) => {
+      const eventDoesNotComeFromU2FIFrame = event.origin !== U2F_IFRAME_ORIGIN
+      if (eventDoesNotComeFromU2FIFrame) {
+        return
+      }
+
       if (event.data.mountedAuthView) {
         if (iframeRef.current?.contentWindow) {
           iframeRef.current.contentWindow.postMessage(
             { username: (contextData as Record<string, unknown>).username },
-            '*',
+            U2F_IFRAME_ORIGIN,
           )
         }
         return
@@ -39,7 +45,7 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
     return (
       <iframe
         ref={iframeRef}
-        src="https://app.standardnotes.com/?route=u2f"
+        src={U2F_IFRAME_ORIGIN}
         className="h-50 w-full"
         title="U2F"
         allow="publickey-credentials-get"
