@@ -4,4 +4,5 @@ export enum RootQueryParam {
   DemoToken = 'demo-token',
   AcceptSubscriptionInvite = 'accept-subscription-invite',
   UserRequest = 'user-request',
+  AppViewRoute = 'route',
 }

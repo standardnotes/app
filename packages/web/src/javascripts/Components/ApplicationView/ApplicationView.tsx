@@ -30,6 +30,7 @@ import DotOrgNotice from './DotOrgNotice'
 import LinkingControllerProvider from '@/Controllers/LinkingControllerProvider'
 import ImportModal from '../ImportModal/ImportModal'
 import IosKeyboardClose from '../IosKeyboardClose/IosKeyboardClose'
+import ExtensionView from '../ExtensionView/ExtensionView'
 
 type Props = {
   application: WebApplication
@@ -168,6 +169,12 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
 
   if (!renderAppContents) {
     return <AndroidBackHandlerProvider application={application}>{renderChallenges()}</AndroidBackHandlerProvider>
+  }
+
+  const route = application.routeService.getRoute()
+
+  if (route.type === RouteType.AppViewRoute && route.appViewRouteParam === 'extension') {
+    return <ExtensionView />
   }
 
   return (

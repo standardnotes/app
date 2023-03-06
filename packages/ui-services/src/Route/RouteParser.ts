@@ -1,5 +1,6 @@
 import { UserRequestType } from '@standardnotes/common'
 import { PreferenceId } from './../Preferences/PreferenceId'
+import { AppViewRouteParam, ValidAppViewRoutes } from './Params/AppViewRouteParams'
 import { DemoParams } from './Params/DemoParams'
 import { OnboardingParams } from './Params/OnboardingParams'
 import { PurchaseParams } from './Params/PurchaseParams'
@@ -78,6 +79,18 @@ export class RouteParser implements RouteParserInterface {
     }
   }
 
+  get appViewRouteParam(): AppViewRouteParam | undefined {
+    this.checkForProperRouteType(RouteType.AppViewRoute)
+
+    const appViewRoute = this.searchParams.get(RootQueryParam.AppViewRoute) as AppViewRouteParam
+
+    if (!ValidAppViewRoutes.includes(appViewRoute)) {
+      return
+    }
+
+    return this.searchParams.get(RootQueryParam.AppViewRoute) as AppViewRouteParam
+  }
+
   private checkForProperRouteType(type: RouteType): void {
     if (this.parsedType !== type) {
       throw new Error('Accessing invalid params')
@@ -89,7 +102,9 @@ export class RouteParser implements RouteParserInterface {
       return RouteType.Onboarding
     }
 
-    if (this.path !== RootRoutes.None) {
+    const isIndexPath = this.path.endsWith('index.html')
+
+    if (this.path !== RootRoutes.None && !isIndexPath) {
       return RouteType.None
     }
 
@@ -99,6 +114,7 @@ export class RouteParser implements RouteParserInterface {
       [RootQueryParam.DemoToken, RouteType.Demo],
       [RootQueryParam.AcceptSubscriptionInvite, RouteType.AcceptSubscriptionInvite],
       [RootQueryParam.UserRequest, RouteType.UserRequest],
+      [RootQueryParam.AppViewRoute, RouteType.AppViewRoute],
     ])
 
     for (const rootQueryParam of rootQueryParametersMap.keys()) {
