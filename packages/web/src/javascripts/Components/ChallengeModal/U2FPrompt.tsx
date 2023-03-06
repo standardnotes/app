@@ -22,6 +22,7 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
     return (
       <U2FPromptIframeContainer
         contextData={contextData}
+        apiHost={application.getHost() || window.defaultSyncServer}
         onResponse={(response) => {
           onValueChange(response, prompt)
         }}

@@ -1,14 +1,17 @@
 import { log, LoggingDomain } from '@/Logging'
+import { isDev } from '@/Utils'
 import { useEffect, useRef } from 'react'
 
 type Props = {
   contextData?: Record<string, unknown>
   onResponse: (response: string) => void
+  apiHost: string
 }
 
-const U2FPromptIframeContainer = ({ contextData, onResponse }: Props) => {
+const U2F_IFRAME_ORIGIN = isDev ? 'http://localhost:3001/?route=u2f' : 'https://app.standardnotes.com/?route=u2f'
+
+const U2FPromptIframeContainer = ({ contextData, onResponse, apiHost }: Props) => {
   const iframeRef = useRef<HTMLIFrameElement>(null)
-  const U2F_IFRAME_ORIGIN = 'https://app.standardnotes.com/?route=u2f'
 
   useEffect(() => {
     const messageHandler = (event: MessageEvent) => {
@@ -28,7 +31,7 @@ const U2FPromptIframeContainer = ({ contextData, onResponse }: Props) => {
         if (iframeRef.current?.contentWindow) {
           log(LoggingDomain.U2F, 'Sending contextData to U2F iframe', contextData)
           iframeRef.current.contentWindow.postMessage(
-            { username: (contextData as Record<string, unknown>).username },
+            { username: (contextData as Record<string, unknown>).username, apiHost },
             U2F_IFRAME_ORIGIN,
           )
         }
@@ -46,7 +49,7 @@ const U2FPromptIframeContainer = ({ contextData, onResponse }: Props) => {
     return () => {
       window.removeEventListener('message', messageHandler)
     }
-  }, [contextData, onResponse])
+  }, [contextData, onResponse, apiHost])
 
   return (
     <iframe

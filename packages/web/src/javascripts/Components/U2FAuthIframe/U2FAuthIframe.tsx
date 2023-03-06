@@ -9,6 +9,7 @@ import { log, LoggingDomain } from '@/Logging'
  */
 const U2FAuthIframe = () => {
   const [username, setUsername] = useState('')
+  const [apiHost, setApiHost] = useState<string | null>(null)
   const [source, setSource] = useState<MessageEvent['source'] | null>(null)
   const NATIVE_CLIENT_ORIGIN = 'file://'
 
@@ -24,6 +25,7 @@ const U2FAuthIframe = () => {
   useEffect(() => {
     const messageHandler = (event: MessageEvent) => {
       log(LoggingDomain.U2F, 'U2F iframe received message', event)
+
       const eventDoesNotComeFromNativeClient = event.origin !== NATIVE_CLIENT_ORIGIN
       if (eventDoesNotComeFromNativeClient) {
         log(LoggingDomain.U2F, 'Not setting username; origin does not match', event.origin, NATIVE_CLIENT_ORIGIN)
@@ -32,6 +34,7 @@ const U2FAuthIframe = () => {
 
       if (event.data.username) {
         setUsername(event.data.username)
+        setApiHost(event.data.apiHost)
         setSource(event.source)
       }
     }
@@ -55,7 +58,7 @@ const U2FAuthIframe = () => {
         throw new Error('No username provided')
       }
 
-      const response = await fetch(`${window.defaultSyncServer}/v1/authenticators/generate-authentication-options`, {
+      const response = await fetch(`${apiHost}/v1/authenticators/generate-authentication-options`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +92,7 @@ const U2FAuthIframe = () => {
       setError(error.toString())
       console.error(error.toString())
     }
-  }, [source, username])
+  }, [source, username, apiHost])
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-2">
