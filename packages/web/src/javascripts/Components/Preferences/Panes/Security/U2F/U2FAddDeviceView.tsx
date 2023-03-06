@@ -85,13 +85,15 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({
       <div className="flex px-4 py-4">
         <div className="ml-4 flex flex-grow flex-col gap-1">
           <label htmlFor="u2f-device-name" className="mb-2 text-sm font-semibold">
-            Device Name:
+            Device Name
           </label>
           <DecoratedInput
+            autofocus
             id="u2f-device-name"
             className={{ container: 'w-92' }}
             value={deviceName}
             onChange={handleDeviceNameChange}
+            onEnter={handleAddDeviceClick}
           />
           {errorMessage && <div className="mt-1.5 text-danger">{errorMessage}</div>}
         </div>

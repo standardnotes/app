@@ -60,7 +60,7 @@ const U2FView: FunctionComponent<Props> = ({ application, userProvider }) => {
             onDeviceDeleted={loadAuthenticatorDevices}
           />
           <Button
-            className='mt-1'
+            className="mt-1"
             disabled={!application.isFullU2FClient}
             label="Add Device"
             primary

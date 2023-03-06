@@ -1,7 +1,7 @@
 import { FunctionComponent, useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 
-import { Subtitle, Text } from '@/Components/Preferences/PreferencesComponents/Content'
+import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/Application'
 import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
@@ -36,11 +36,11 @@ const U2FDevicesList: FunctionComponent<Props> = ({ application, devices, onErro
       {devices.length > 0 && (
         <>
           <Subtitle>Devices</Subtitle>
-          <div className='flex flex-grow flex-col divide-y divide-border'>
+          <div className="flex flex-grow flex-col divide-y divide-border">
             {devices.map((device) => (
-              <div className='flex items-center py-2' key={`device-${device.id}`}>
+              <div className="flex items-center py-2" key={`device-${device.id}`}>
                 <Icon type="security" />
-                <div className="text-sm ml-2 mr-auto">{device.name}</div>
+                <div className="ml-2 mr-auto text-sm">{device.name}</div>
                 <Button
                   small
                   key={device.id}
