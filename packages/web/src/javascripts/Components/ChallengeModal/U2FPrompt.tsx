@@ -1,9 +1,10 @@
 import { WebApplication } from '@/Application/Application'
 import { ChallengePrompt } from '@standardnotes/services'
-import { RefObject, useRef, useState } from 'react'
+import { RefObject, useState } from 'react'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import { InputValue } from './InputValue'
+import U2FPromptIframeContainer from './U2FPromptIframeContainer'
 
 type Props = {
   application: WebApplication
@@ -16,39 +17,14 @@ type Props = {
 const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData }: Props) => {
   const [authenticatorResponse, setAuthenticatorResponse] = useState<Record<string, unknown> | null>(null)
   const [error, setError] = useState('')
-  const iframeRef = useRef<HTMLIFrameElement>(null)
-  const U2F_IFRAME_ORIGIN = 'https://app.standardnotes.com/?route=u2f'
 
   if (!application.isFullU2FClient) {
-    window.onmessage = (event) => {
-      const eventDoesNotComeFromU2FIFrame = event.origin !== U2F_IFRAME_ORIGIN
-      if (eventDoesNotComeFromU2FIFrame) {
-        return
-      }
-
-      if (event.data.mountedAuthView) {
-        if (iframeRef.current?.contentWindow) {
-          iframeRef.current.contentWindow.postMessage(
-            { username: (contextData as Record<string, unknown>).username },
-            U2F_IFRAME_ORIGIN,
-          )
-        }
-        return
-      }
-      if (event.data.assertionResponse) {
-        setAuthenticatorResponse(event.data.assertionResponse)
-        onValueChange(event.data.assertionResponse, prompt)
-      }
-    }
-
     return (
-      <iframe
-        ref={iframeRef}
-        src={U2F_IFRAME_ORIGIN}
-        className="h-50 w-full"
-        title="U2F"
-        allow="publickey-credentials-get"
-        id="u2f"
+      <U2FPromptIframeContainer
+        contextData={contextData}
+        onResponse={(response) => {
+          onValueChange(response, prompt)
+        }}
       />
     )
   }

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import Button from '../Button/Button'
 import { startAuthentication } from '@simplewebauthn/browser'
+import { log, LoggingDomain } from '@/Logging'
 
 /**
  * An iframe for use in the desktop and mobile application that allows them to load app.standardnotes.com to perform
@@ -22,8 +23,10 @@ const U2FAuthIframe = () => {
 
   useEffect(() => {
     const messageHandler = (event: MessageEvent) => {
+      log(LoggingDomain.U2F, 'U2F iframe received message', event)
       const eventDoesNotComeFromNativeClient = event.origin !== NATIVE_CLIENT_ORIGIN
       if (eventDoesNotComeFromNativeClient) {
+        log(LoggingDomain.U2F, 'Not setting username; origin does not match', event.origin, NATIVE_CLIENT_ORIGIN)
         return
       }
 
@@ -90,10 +93,12 @@ const U2FAuthIframe = () => {
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-2">
-      <div className="mb-2 text-center">Insert your U2F device and press the button to authenticate.</div>
+      <div className="mb-2 text-center">Insert your U2F device, then press the button below to authenticate.</div>
       <Button onClick={beginAuthentication}>Authenticate</Button>
-      <div>{info}</div>
-      <div className="text-danger">{error}</div>
+      <div className="mt-2">
+        <div>{info}</div>
+        <div className="text-danger">{error}</div>
+      </div>
     </div>
   )
 }
