@@ -67,7 +67,7 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
           }
 
           const authenticatorResponseOrError = await application.getAuthenticatorAuthenticationResponse.execute({
-            username: contextData.username,
+            username: contextData.username as string,
           })
 
           if (authenticatorResponseOrError.isFailed()) {

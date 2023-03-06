@@ -1,6 +1,6 @@
 import { FunctionComponent, useCallback, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { UseCaseInterface } from '@standardnotes/snjs'
+import { AddAuthenticator } from '@standardnotes/snjs'
 
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { UserProvider } from '@/Components/Preferences/Providers'
@@ -9,7 +9,7 @@ import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/u
 
 type Props = {
   userProvider: UserProvider
-  addAuthenticator: UseCaseInterface<void>
+  addAuthenticator: AddAuthenticator
   onDeviceAddingModalToggle: (show: boolean) => void
   onDeviceAdded: () => Promise<void>
 }
