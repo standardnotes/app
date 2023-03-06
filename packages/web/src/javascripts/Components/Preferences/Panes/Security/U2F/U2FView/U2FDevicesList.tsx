@@ -1,9 +1,10 @@
 import { FunctionComponent, useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 
-import { Text } from '@/Components/Preferences/PreferencesComponents/Content'
+import { Subtitle, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/Application'
 import Button from '@/Components/Button/Button'
+import Icon from '@/Components/Icon/Icon'
 
 type Props = {
   application: WebApplication
@@ -31,24 +32,25 @@ const U2FDevicesList: FunctionComponent<Props> = ({ application, devices, onErro
   )
 
   return (
-    <div className="flex flex-row items-center">
+    <div>
       {devices.length > 0 && (
-        <div className="flex flex-grow flex-col">
-          <div>
-            <Text>Devices:</Text>
+        <>
+          <Subtitle>Devices</Subtitle>
+          <div className='flex flex-grow flex-col divide-y divide-border'>
+            {devices.map((device) => (
+              <div className='flex items-center py-2' key={`device-${device.id}`}>
+                <Icon type="security" />
+                <div className="text-sm ml-2 mr-auto">{device.name}</div>
+                <Button
+                  small
+                  key={device.id}
+                  label="Delete"
+                  onClick={async () => handleDeleteButtonOnClick(device.id)}
+                ></Button>
+              </div>
+            ))}
           </div>
-          {devices.map((device) => (
-            <div key="device-{device.id}">
-              <Text>{device.name}</Text>
-              <Button
-                key={device.id}
-                primary={true}
-                label="Delete"
-                onClick={async () => handleDeleteButtonOnClick(device.id)}
-              ></Button>
-            </div>
-          ))}
-        </div>
+        </>
       )}
     </div>
   )

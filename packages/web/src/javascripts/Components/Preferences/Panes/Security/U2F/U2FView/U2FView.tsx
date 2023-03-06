@@ -46,28 +46,25 @@ const U2FView: FunctionComponent<Props> = ({ application, userProvider }) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <div className="flex flex-row items-center">
-            <div className="flex flex-grow flex-col">
-              <U2FTitle userProvider={userProvider} />
-              <U2FDescription userProvider={userProvider} />
-            </div>
-            <PreferencesSegment>
-              <Button
-                disabled={!application.isFullU2FClient}
-                label="Add Device"
-                primary
-                onClick={handleAddDeviceClick}
-              />
-            </PreferencesSegment>
+          <div className="flex flex-col">
+            <U2FTitle userProvider={userProvider} />
+            <U2FDescription userProvider={userProvider} />
           </div>
         </PreferencesSegment>
-        <PreferencesSegment>
-          {error && <div className="text-red-500">{error}</div>}
+        <PreferencesSegment classes="mt-2">
+          {error && <div className="text-danger">{error}</div>}
           <U2FDevicesList
             application={application}
             devices={devices}
             onError={setError}
             onDeviceDeleted={loadAuthenticatorDevices}
+          />
+          <Button
+            className='mt-1'
+            disabled={!application.isFullU2FClient}
+            label="Add Device"
+            primary
+            onClick={handleAddDeviceClick}
           />
         </PreferencesSegment>
       </PreferencesGroup>
