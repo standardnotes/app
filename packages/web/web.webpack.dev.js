@@ -8,6 +8,7 @@ module.exports = (env, argv) => {
   mergeWithEnvDefaults(env)
   return merge(config(env, argv), {
     mode: 'development',
+    devtool: 'inline-source-map',
     optimization: {
       minimize: false,
     },
