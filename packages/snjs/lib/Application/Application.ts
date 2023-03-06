@@ -79,7 +79,6 @@ import {
   DecryptedItemInterface,
   EncryptedItemInterface,
   Environment,
-  HistoryEntry,
   ItemStream,
   Platform,
 } from '@standardnotes/models'
@@ -90,7 +89,7 @@ import { SNLog } from '../Log'
 import { ChallengeResponse, ListedClientInterface } from '../Services'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
-import { LegacySession, MapperInterface, Session, UseCaseInterface } from '@standardnotes/domain-core'
+import { LegacySession, MapperInterface, Session } from '@standardnotes/domain-core'
 import { SessionStorageMapper } from '@Lib/Services/Mapping/SessionStorageMapper'
 import { LegacySessionStorageMapper } from '@Lib/Services/Mapping/LegacySessionStorageMapper'
 import { SignInWithRecoveryCodes } from '@Lib/Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes'
@@ -102,7 +101,6 @@ import { DeleteAuthenticator } from '@Lib/Domain/UseCase/DeleteAuthenticator/Del
 import { ListRevisions } from '@Lib/Domain/UseCase/ListRevisions/ListRevisions'
 import { GetRevision } from '@Lib/Domain/UseCase/GetRevision/GetRevision'
 import { DeleteRevision } from '@Lib/Domain/UseCase/DeleteRevision/DeleteRevision'
-import { RevisionMetadata } from '@Lib/Domain/Revision/RevisionMetadata'
 import { GetAuthenticatorAuthenticationResponse } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationResponse/GetAuthenticatorAuthenticationResponse'
 
 /** How often to automatically sync, in milliseconds */
@@ -266,39 +264,39 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.subscriptionManager
   }
 
-  get signInWithRecoveryCodes(): UseCaseInterface<void> {
+  get signInWithRecoveryCodes(): SignInWithRecoveryCodes {
     return this._signInWithRecoveryCodes
   }
 
-  get getRecoveryCodes(): UseCaseInterface<string> {
+  get getRecoveryCodes(): GetRecoveryCodes {
     return this._getRecoveryCodes
   }
 
-  get addAuthenticator(): UseCaseInterface<void> {
+  get addAuthenticator(): AddAuthenticator {
     return this._addAuthenticator
   }
 
-  get listAuthenticators(): UseCaseInterface<Array<{ id: string; name: string }>> {
+  get listAuthenticators(): ListAuthenticators {
     return this._listAuthenticators
   }
 
-  get deleteAuthenticator(): UseCaseInterface<void> {
+  get deleteAuthenticator(): DeleteAuthenticator {
     return this._deleteAuthenticator
   }
 
-  get getAuthenticatorAuthenticationResponse(): UseCaseInterface<Record<string, unknown>> {
+  get getAuthenticatorAuthenticationResponse(): GetAuthenticatorAuthenticationResponse {
     return this._getAuthenticatorAuthenticationResponse
   }
 
-  get listRevisions(): UseCaseInterface<Array<RevisionMetadata>> {
+  get listRevisions(): ListRevisions {
     return this._listRevisions
   }
 
-  get getRevision(): UseCaseInterface<HistoryEntry> {
+  get getRevision(): GetRevision {
     return this._getRevision
   }
 
-  get deleteRevision(): UseCaseInterface<void> {
+  get deleteRevision(): DeleteRevision {
     return this._deleteRevision
   }
 

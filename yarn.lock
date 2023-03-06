@@ -4622,10 +4622,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@simplewebauthn/browser@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "@simplewebauthn/browser@npm:7.0.0"
-  checksum: eb8d7e2d923649c116275cc9bfbabfa27a180cd33dbf9d6a28c7aa9460ea79cd25204c9a7d76ed8cc24764da4a09b5939209aa30e9b295b9d54e497bb9b652a4
+"@simplewebauthn/browser@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "@simplewebauthn/browser@npm:7.1.0"
+  checksum: 925e26607536cd9223e474229df216cc32bc06fac569f27e03c6d31ff502f3dbf6f5a9500caaa37a9abf1632fc99fd582a6596672b7f5468920a74618e1aec6e
   languageName: node
   linkType: hard
 
@@ -5582,7 +5582,7 @@ __metadata:
     "@reach/listbox": ^0.18.0
     "@reach/tooltip": ^0.18.0
     "@reach/visually-hidden": ^0.18.0
-    "@simplewebauthn/browser": ^7.0.0
+    "@simplewebauthn/browser": ^7.1.0
     "@standardnotes/authenticator": ^2.3.9
     "@standardnotes/autobiography-theme": ^1.2.7
     "@standardnotes/bold-editor": ^1.6.4

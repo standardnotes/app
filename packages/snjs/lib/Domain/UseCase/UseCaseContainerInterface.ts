@@ -1,16 +1,21 @@
-import { HistoryEntry } from '@standardnotes/models'
-import { UseCaseInterface } from '@standardnotes/domain-core'
-
-import { RevisionMetadata } from '../Revision/RevisionMetadata'
+import { AddAuthenticator } from './AddAuthenticator/AddAuthenticator'
+import { GetRecoveryCodes } from './GetRecoveryCodes/GetRecoveryCodes'
+import { SignInWithRecoveryCodes } from './SignInWithRecoveryCodes/SignInWithRecoveryCodes'
+import { ListAuthenticators } from './ListAuthenticators/ListAuthenticators'
+import { DeleteAuthenticator } from './DeleteAuthenticator/DeleteAuthenticator'
+import { GetAuthenticatorAuthenticationResponse } from './GetAuthenticatorAuthenticationResponse/GetAuthenticatorAuthenticationResponse'
+import { ListRevisions } from './ListRevisions/ListRevisions'
+import { GetRevision } from './GetRevision/GetRevision'
+import { DeleteRevision } from './DeleteRevision/DeleteRevision'
 
 export interface UseCaseContainerInterface {
-  get signInWithRecoveryCodes(): UseCaseInterface<void>
-  get getRecoveryCodes(): UseCaseInterface<string>
-  get addAuthenticator(): UseCaseInterface<void>
-  get listAuthenticators(): UseCaseInterface<Array<{ id: string; name: string }>>
-  get deleteAuthenticator(): UseCaseInterface<void>
-  get getAuthenticatorAuthenticationResponse(): UseCaseInterface<Record<string, unknown>>
-  get listRevisions(): UseCaseInterface<Array<RevisionMetadata>>
-  get getRevision(): UseCaseInterface<HistoryEntry>
-  get deleteRevision(): UseCaseInterface<void>
+  get signInWithRecoveryCodes(): SignInWithRecoveryCodes
+  get getRecoveryCodes(): GetRecoveryCodes
+  get addAuthenticator(): AddAuthenticator
+  get listAuthenticators(): ListAuthenticators
+  get deleteAuthenticator(): DeleteAuthenticator
+  get getAuthenticatorAuthenticationResponse(): GetAuthenticatorAuthenticationResponse
+  get listRevisions(): ListRevisions
+  get getRevision(): GetRevision
+  get deleteRevision(): DeleteRevision
 }
