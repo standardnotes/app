@@ -8,8 +8,10 @@
     "build-firefox": "yarn build && web-ext build --source-dir ./dist"
   },
   "devDependencies": {
+    "babel-loader": "^9.1.0",
     "copy-webpack-plugin": "11.0.0",
     "web-ext": "^7.5.0",
+    "webextension-polyfill": "^0.10.0",
     "webpack": "*"
   }
 }

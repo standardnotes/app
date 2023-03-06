@@ -5048,8 +5048,10 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/extension@workspace:packages/extension"
   dependencies:
+    babel-loader: ^9.1.0
     copy-webpack-plugin: 11.0.0
     web-ext: ^7.5.0
+    webextension-polyfill: ^0.10.0
     webpack: "*"
   languageName: unknown
   linkType: soft
@@ -24708,6 +24710,13 @@ __metadata:
   version: 3.2.1
   resolution: "web-streams-polyfill@npm:3.2.1"
   checksum: b119c78574b6d65935e35098c2afdcd752b84268e18746606af149e3c424e15621b6f1ff0b42b2676dc012fc4f0d313f964b41a4b5031e525faa03997457da02
+  languageName: node
+  linkType: hard
+
+"webextension-polyfill@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "webextension-polyfill@npm:0.10.0"
+  checksum: 4a59036bda571360c2c0b2fb03fe1dc244f233946bcf9a6766f677956c40fd14d270aaa69cdba95e4ac521014afbe4008bfa5959d0ac39f91c990eb206587f91
   languageName: node
   linkType: hard
 
