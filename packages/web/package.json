@@ -88,8 +88,8 @@
     "lint-staged": ">=13",
     "mini-css-extract-plugin": "^2.7.2",
     "minimatch": "^5.1.1",
-    "mobx": "^6.7.0",
-    "mobx-react-lite": "^3.4.0",
+    "mobx": "^6.8.0",
+    "mobx-react-lite": "^3.4.2",
     "node-sass": "^8.0.0",
     "npm-check-updates": "*",
     "postcss": "^8.4.19",
@@ -101,9 +101,9 @@
     "react-dom": "^18.2.0",
     "react-refresh": "^0.14.0",
     "sass-loader": "*",
-    "styled-components": "^5.3.6",
+    "styled-components": "^5.3.8",
     "svg-jest": "^1.0.1",
-    "tailwindcss": "^3.2.4",
+    "tailwindcss": "^3.2.7",
     "ts-jest": "^29.0.3",
     "ts-loader": "^9.4.2",
     "typescript": "*",
@@ -117,7 +117,6 @@
   },
   "dependencies": {
     "@lexical/headless": "0.8.1",
-    "@simplewebauthn/browser": "^7.0.0",
     "contactjs": "2.1.5"
   }
 }
