@@ -73,7 +73,7 @@ export class ArchiveManager {
 
   async getZippedDecryptedItemsBlob(data: BackupFile) {
     const zip = await import('@zip.js/zip.js')
-    const zipWriter = new zip.ZipWriter(new zip.BlobWriter('application/zip'))
+    const zipWriter = new zip.ZipWriter<Blob>(new zip.BlobWriter('application/zip'))
     const items = data.items
 
     const blob = new Blob([JSON.stringify(data, null, 2)], {
@@ -116,7 +116,7 @@ export class ArchiveManager {
 
   async zipData(data: ZippableData): Promise<Blob> {
     const zip = await import('@zip.js/zip.js')
-    const writer = new zip.ZipWriter(new zip.BlobWriter('application/zip'))
+    const writer = new zip.ZipWriter<Blob>(new zip.BlobWriter('application/zip'))
 
     const filenameCounts: Record<string, number> = {}
 

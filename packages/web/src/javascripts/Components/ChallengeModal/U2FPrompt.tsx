@@ -4,6 +4,7 @@ import { RefObject, useState } from 'react'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import { InputValue } from './InputValue'
+import U2FPromptIframeContainer from './U2FPromptIframeContainer'
 
 type Props = {
   application: WebApplication
@@ -17,6 +18,18 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
   const [authenticatorResponse, setAuthenticatorResponse] = useState<Record<string, unknown> | null>(null)
   const [error, setError] = useState('')
 
+  if (!application.isFullU2FClient) {
+    return (
+      <U2FPromptIframeContainer
+        contextData={contextData}
+        apiHost={application.getHost() || window.defaultSyncServer}
+        onResponse={(response) => {
+          onValueChange(response, prompt)
+        }}
+      />
+    )
+  }
+
   return (
     <div className="min-w-76">
       {error && <div className="text-red-500">{error}</div>}
@@ -27,18 +40,18 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
         onClick={async () => {
           if (!contextData || contextData.username === undefined) {
             setError('No username provided')
-
             return
           }
 
           const authenticatorResponseOrError = await application.getAuthenticatorAuthenticationResponse.execute({
-            username: contextData.username,
+            username: contextData.username as string,
           })
+
           if (authenticatorResponseOrError.isFailed()) {
             setError(authenticatorResponseOrError.getError())
-
             return
           }
+
           const authenticatorResponse = authenticatorResponseOrError.getValue()
 
           setAuthenticatorResponse(authenticatorResponse)
