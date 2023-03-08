@@ -1,7 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import Spinner from '@/Components/Spinner/Spinner'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
-import { SubscriptionSettingName } from '@standardnotes/snjs'
+import { SettingName } from '@standardnotes/snjs'
 import { FunctionComponent, useEffect, useState } from 'react'
 import { Subtitle, Title } from '../../PreferencesComponents/Content'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
@@ -19,10 +19,10 @@ const FilesSection: FunctionComponent<Props> = ({ application }) => {
   useEffect(() => {
     const getFilesQuota = async () => {
       const filesQuotaUsed = await application.settings.getSubscriptionSetting(
-        SubscriptionSettingName.FileUploadBytesUsed,
+        SettingName.create(SettingName.NAMES.FileUploadBytesUsed).getValue(),
       )
       const filesQuotaTotal = await application.settings.getSubscriptionSetting(
-        SubscriptionSettingName.FileUploadBytesLimit,
+        SettingName.create(SettingName.NAMES.FileUploadBytesLimit).getValue(),
       )
 
       if (filesQuotaUsed) {

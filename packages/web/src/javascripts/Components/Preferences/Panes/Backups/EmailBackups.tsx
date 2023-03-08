@@ -34,14 +34,14 @@ const EmailBackups = ({ application }: Props) => {
       const userSettings = await application.settings.listSettings()
       setEmailFrequency(
         userSettings.getSettingValue<EmailBackupFrequency>(
-          SettingName.EmailBackupFrequency,
+          SettingName.create(SettingName.NAMES.EmailBackupFrequency).getValue(),
           EmailBackupFrequency.Disabled,
         ),
       )
       setIsFailedBackupEmailMuted(
         convertStringifiedBooleanToBoolean(
           userSettings.getSettingValue<MuteFailedBackupsEmailsOption>(
-            SettingName.MuteFailedBackupsEmails,
+            SettingName.create(SettingName.NAMES.MuteFailedBackupsEmails).getValue(),
             MuteFailedBackupsEmailsOption.NotMuted,
           ),
         ),
@@ -81,7 +81,10 @@ const EmailBackups = ({ application }: Props) => {
     const previousFrequency = emailFrequency
     setEmailFrequency(frequency)
 
-    const updateResult = await updateSetting(SettingName.EmailBackupFrequency, frequency)
+    const updateResult = await updateSetting(
+      SettingName.create(SettingName.NAMES.EmailBackupFrequency).getValue(),
+      frequency,
+    )
     if (!updateResult) {
       setEmailFrequency(previousFrequency)
     }
@@ -91,7 +94,10 @@ const EmailBackups = ({ application }: Props) => {
     const previousValue = isFailedBackupEmailMuted
     setIsFailedBackupEmailMuted(!isFailedBackupEmailMuted)
 
-    const updateResult = await updateSetting(SettingName.MuteFailedBackupsEmails, `${!isFailedBackupEmailMuted}`)
+    const updateResult = await updateSetting(
+      SettingName.create(SettingName.NAMES.MuteFailedBackupsEmails).getValue(),
+      `${!isFailedBackupEmailMuted}`,
+    )
     if (!updateResult) {
       setIsFailedBackupEmailMuted(previousValue)
     }

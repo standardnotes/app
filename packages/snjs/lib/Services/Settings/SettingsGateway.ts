@@ -1,5 +1,5 @@
 import { SettingsList } from './SettingsList'
-import { SettingName, SensitiveSettingName, SubscriptionSettingName } from '@standardnotes/settings'
+import { SettingName } from '@standardnotes/settings'
 import { API_MESSAGE_INVALID_SESSION } from '@standardnotes/services'
 import { HttpStatusCode, isErrorResponse, User } from '@standardnotes/responses'
 import { SettingsServerInterface } from './SettingsServerInterface'
@@ -46,7 +46,7 @@ export class SettingsGateway {
   }
 
   async getSetting(name: SettingName): Promise<string | undefined> {
-    const response = await this.settingsApi.getSetting(this.userUuid, name)
+    const response = await this.settingsApi.getSetting(this.userUuid, name.value)
 
     if (response.status === HttpStatusCode.BadRequest) {
       return undefined
@@ -59,8 +59,12 @@ export class SettingsGateway {
     return response?.data?.setting?.value ?? undefined
   }
 
-  async getSubscriptionSetting(name: SubscriptionSettingName): Promise<string | undefined> {
-    const response = await this.settingsApi.getSubscriptionSetting(this.userUuid, name)
+  async getSubscriptionSetting(name: SettingName): Promise<string | undefined> {
+    if (!name.isASubscriptionSetting()) {
+      throw new Error(`Setting ${name.value} is not a subscription setting`)
+    }
+
+    const response = await this.settingsApi.getSubscriptionSetting(this.userUuid, name.value)
 
     if (response.status === HttpStatusCode.BadRequest) {
       return undefined
@@ -73,8 +77,12 @@ export class SettingsGateway {
     return response?.data?.setting?.value ?? undefined
   }
 
-  async getDoesSensitiveSettingExist(name: SensitiveSettingName): Promise<boolean> {
-    const response = await this.settingsApi.getSetting(this.userUuid, name)
+  async getDoesSensitiveSettingExist(name: SettingName): Promise<boolean> {
+    if (!name.isSensitive()) {
+      throw new Error(`Setting ${name.value} is not sensitive`)
+    }
+
+    const response = await this.settingsApi.getSetting(this.userUuid, name.value)
 
     if (response.status === HttpStatusCode.BadRequest) {
       return false
@@ -88,14 +96,14 @@ export class SettingsGateway {
   }
 
   async updateSetting(name: SettingName, payload: string, sensitive: boolean): Promise<void> {
-    const response = await this.settingsApi.updateSetting(this.userUuid, name, payload, sensitive)
+    const response = await this.settingsApi.updateSetting(this.userUuid, name.value, payload, sensitive)
     if (isErrorResponse(response)) {
       throw new Error(response.data?.error.message)
     }
   }
 
   async deleteSetting(name: SettingName): Promise<void> {
-    const response = await this.settingsApi.deleteSetting(this.userUuid, name)
+    const response = await this.settingsApi.deleteSetting(this.userUuid, name.value)
     if (isErrorResponse(response)) {
       throw new Error(response.data?.error.message)
     }

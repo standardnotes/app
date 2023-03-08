@@ -41,7 +41,7 @@ const CloudLink: FunctionComponent<Props> = ({ application }) => {
       setIsFailedCloudBackupEmailMuted(
         convertStringifiedBooleanToBoolean(
           userSettings.getSettingValue(
-            SettingName.MuteFailedCloudBackupsEmails,
+            SettingName.create(SettingName.NAMES.MuteFailedCloudBackupsEmails).getValue(),
             MuteFailedCloudBackupsEmailsOption.NotMuted,
           ),
         ),
@@ -83,7 +83,7 @@ const CloudLink: FunctionComponent<Props> = ({ application }) => {
     setIsFailedCloudBackupEmailMuted(!isFailedCloudBackupEmailMuted)
 
     const updateResult = await updateSetting(
-      SettingName.MuteFailedCloudBackupsEmails,
+      SettingName.create(SettingName.NAMES.MuteFailedCloudBackupsEmails).getValue(),
       `${!isFailedCloudBackupEmailMuted}`,
     )
     if (!updateResult) {

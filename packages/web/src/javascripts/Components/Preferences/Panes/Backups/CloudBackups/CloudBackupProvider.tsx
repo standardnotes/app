@@ -82,18 +82,18 @@ const CloudBackupProvider: FunctionComponent<Props> = ({ application, providerNa
 
   const backupSettingsData = {
     [CloudProvider.Dropbox]: {
-      backupTokenSettingName: SettingName.DropboxBackupToken,
-      backupFrequencySettingName: SettingName.DropboxBackupFrequency,
+      backupTokenSettingName: SettingName.create(SettingName.NAMES.DropboxBackupToken).getValue(),
+      backupFrequencySettingName: SettingName.create(SettingName.NAMES.DropboxBackupFrequency).getValue(),
       defaultBackupFrequency: DropboxBackupFrequency.Daily,
     },
     [CloudProvider.Google]: {
-      backupTokenSettingName: SettingName.GoogleDriveBackupToken,
-      backupFrequencySettingName: SettingName.GoogleDriveBackupFrequency,
+      backupTokenSettingName: SettingName.create(SettingName.NAMES.GoogleDriveBackupToken).getValue(),
+      backupFrequencySettingName: SettingName.create(SettingName.NAMES.GoogleDriveBackupFrequency).getValue(),
       defaultBackupFrequency: GoogleDriveBackupFrequency.Daily,
     },
     [CloudProvider.OneDrive]: {
-      backupTokenSettingName: SettingName.OneDriveBackupToken,
-      backupFrequencySettingName: SettingName.OneDriveBackupFrequency,
+      backupTokenSettingName: SettingName.create(SettingName.NAMES.OneDriveBackupToken).getValue(),
+      backupFrequencySettingName: SettingName.create(SettingName.NAMES.OneDriveBackupFrequency).getValue(),
       defaultBackupFrequency: OneDriveBackupFrequency.Daily,
     },
   }

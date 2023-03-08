@@ -1,13 +1,7 @@
 import { SNApiService } from '../Api/ApiService'
 import { SettingsGateway } from './SettingsGateway'
 import { SNSessionManager } from '../Session/SessionManager'
-import {
-  CloudProvider,
-  EmailBackupFrequency,
-  SettingName,
-  SensitiveSettingName,
-  SubscriptionSettingName,
-} from '@standardnotes/settings'
+import { CloudProvider, EmailBackupFrequency, SettingName } from '@standardnotes/settings'
 import { ExtensionsServerURL } from '@Lib/Hosts'
 import { AbstractService, InternalEventBusInterface } from '@standardnotes/services'
 import { SettingsClientInterface } from './SettingsClientInterface'
@@ -46,7 +40,7 @@ export class SNSettingsService extends AbstractService implements SettingsClient
     return this.provider.getSetting(name)
   }
 
-  async getSubscriptionSetting(name: SubscriptionSettingName) {
+  async getSubscriptionSetting(name: SettingName) {
     return this.provider.getSubscriptionSetting(name)
   }
 
@@ -54,7 +48,7 @@ export class SNSettingsService extends AbstractService implements SettingsClient
     return this.provider.updateSetting(name, payload, sensitive)
   }
 
-  async getDoesSensitiveSettingExist(name: SensitiveSettingName) {
+  async getDoesSensitiveSettingExist(name: SettingName) {
     return this.provider.getDoesSensitiveSettingExist(name)
   }
 

@@ -8,7 +8,9 @@ export class GetRecoveryCodes implements UseCaseInterface<string> {
   constructor(private authClient: AuthClientInterface, private settingsClient: SettingsClientInterface) {}
 
   async execute(): Promise<Result<string>> {
-    const existingRecoveryCodes = await this.settingsClient.getSetting(SettingName.RecoveryCodes)
+    const existingRecoveryCodes = await this.settingsClient.getSetting(
+      SettingName.create(SettingName.NAMES.RecoveryCodes).getValue(),
+    )
     if (existingRecoveryCodes !== undefined) {
       return Result.ok(existingRecoveryCodes)
     }

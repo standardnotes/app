@@ -40,13 +40,13 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
       const userSettings = await application.settings.listSettings()
       setSignInEmailsMutedValue(
         userSettings.getSettingValue<MuteSignInEmailsOption>(
-          SettingName.MuteSignInEmails,
+          SettingName.create(SettingName.NAMES.MuteSignInEmails).getValue(),
           MuteSignInEmailsOption.NotMuted,
         ),
       ),
         setMarketingEmailsMutedValue(
           userSettings.getSettingValue<MuteMarketingEmailsOption>(
-            SettingName.MuteMarketingEmails,
+            SettingName.create(SettingName.NAMES.MuteMarketingEmails).getValue(),
             MuteMarketingEmailsOption.NotMuted,
           ),
         )
@@ -67,7 +67,10 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
       previousValue === MuteSignInEmailsOption.Muted ? MuteSignInEmailsOption.NotMuted : MuteSignInEmailsOption.Muted
     setSignInEmailsMutedValue(newValue)
 
-    const updateResult = await updateSetting(SettingName.MuteSignInEmails, newValue)
+    const updateResult = await updateSetting(
+      SettingName.create(SettingName.NAMES.MuteSignInEmails).getValue(),
+      newValue,
+    )
 
     if (!updateResult) {
       setSignInEmailsMutedValue(previousValue)
@@ -82,7 +85,10 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
         : MuteMarketingEmailsOption.Muted
     setMarketingEmailsMutedValue(newValue)
 
-    const updateResult = await updateSetting(SettingName.MuteMarketingEmails, newValue)
+    const updateResult = await updateSetting(
+      SettingName.create(SettingName.NAMES.MuteMarketingEmails).getValue(),
+      newValue,
+    )
 
     if (!updateResult) {
       setMarketingEmailsMutedValue(previousValue)
