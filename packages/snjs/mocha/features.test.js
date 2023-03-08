@@ -194,7 +194,7 @@ describe('features', () => {
         return false
       })
 
-      expect(await application.settings.getDoesSensitiveSettingExist(SettingName.ExtensionKey)).to.equal(false)
+      expect(await application.settings.getDoesSensitiveSettingExist(SettingName.create(SettingName.NAMES.ExtensionKey).getValue())).to.equal(false)
 
       const extensionKey = UuidGenerator.GenerateUuid().split('-').join('')
 
