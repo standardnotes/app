@@ -46,7 +46,7 @@
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/security": "^1.7.6",
     "@standardnotes/services": "workspace:*",
-    "@standardnotes/settings": "^1.19.1",
+    "@standardnotes/settings": "^1.20.0",
     "@standardnotes/sncrypto-common": "workspace:*",
     "@standardnotes/sncrypto-web": "workspace:*",
     "@standardnotes/utils": "workspace:*",

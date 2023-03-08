@@ -1,4 +1,4 @@
-import { SettingName, SensitiveSettingName, EmailBackupFrequency } from '@standardnotes/settings'
+import { SettingName, EmailBackupFrequency } from '@standardnotes/settings'
 import { SettingsList } from './SettingsList'
 
 export interface SettingsClientInterface {
@@ -6,7 +6,7 @@ export interface SettingsClientInterface {
 
   getSetting(name: SettingName): Promise<string | undefined>
 
-  getDoesSensitiveSettingExist(name: SensitiveSettingName): Promise<boolean>
+  getDoesSensitiveSettingExist(name: SettingName): Promise<boolean>
 
   updateSetting(name: SettingName, payload: string, sensitive?: boolean): Promise<void>
 

@@ -16,11 +16,17 @@ export class SNMfaService extends AbstractService {
   }
 
   private async saveMfaSetting(secret: string): Promise<void> {
-    return await this.settingsService.updateSetting(SettingName.MfaSecret, secret, true)
+    return await this.settingsService.updateSetting(
+      SettingName.create(SettingName.NAMES.MfaSecret).getValue(),
+      secret,
+      true,
+    )
   }
 
   async isMfaActivated(): Promise<boolean> {
-    const mfaSetting = await this.settingsService.getDoesSensitiveSettingExist(SettingName.MfaSecret)
+    const mfaSetting = await this.settingsService.getDoesSensitiveSettingExist(
+      SettingName.create(SettingName.NAMES.MfaSecret).getValue(),
+    )
     return mfaSetting != false
   }
 
@@ -43,7 +49,7 @@ export class SNMfaService extends AbstractService {
   }
 
   async disableMfa(): Promise<void> {
-    return await this.settingsService.deleteSetting(SettingName.MfaSecret)
+    return await this.settingsService.deleteSetting(SettingName.create(SettingName.NAMES.MfaSecret).getValue())
   }
 
   override deinit(): void {
