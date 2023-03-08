@@ -1,5 +1,6 @@
 {
   "manifest-version": 3,
   "name": "Standard Notes",
-  "permissions": ["activeTab", "storage"]
+  "version": "1.0.0",
+  "permissions": ["activeTab", "storage", "contextMenus"]
 }

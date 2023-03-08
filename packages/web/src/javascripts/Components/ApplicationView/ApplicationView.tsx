@@ -178,7 +178,13 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   const route = application.routeService.getRoute()
 
   if (route.type === RouteType.AppViewRoute && route.appViewRouteParam === 'extension') {
-    return <ExtensionView />
+    return (
+      <ApplicationProvider application={application}>
+        <AndroidBackHandlerProvider application={application}>
+          <ExtensionView viewControllerManager={viewControllerManager} applicationGroup={mainApplicationGroup} />
+        </AndroidBackHandlerProvider>
+      </ApplicationProvider>
+    )
   }
 
   return (

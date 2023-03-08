@@ -17,6 +17,10 @@ module.exports = {
           from: './src/popup/index.html',
           to: './popup/index.html',
         },
+        {
+          from: './images',
+          to: './images',
+        },
       ],
     }),
   ],
