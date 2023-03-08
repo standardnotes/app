@@ -1,8 +1,7 @@
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { SNLogoAltIcon, SNLogoIcon } from '@standardnotes/icons'
+import { SNLogoIcon } from '@standardnotes/icons'
 import { useCallback, useState } from 'react'
-import AccountMenu from '../AccountMenu/AccountMenu'
 import { AccountMenuPane } from '../AccountMenu/AccountMenuPane'
 import MenuPaneSelector from '../AccountMenu/MenuPaneSelector'
 import { useApplication } from '../ApplicationProvider'
@@ -60,27 +59,13 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
       )}
       {user && (
         <div>
+          <div className="px-3 py-2 text-base font-semibold">Web Clipper</div>
           <Menu a11yLabel="Clipping menu" isOpen={true}>
-            <MenuItem>
-              <Icon type="user" className="mr-2 h-6 w-6 text-neutral md:h-5 md:w-5" />
-              Clip full page
-            </MenuItem>
-            <MenuItem>
-              <Icon type="user" className="mr-2 h-6 w-6 text-neutral md:h-5 md:w-5" />
-              Clip article
-            </MenuItem>
-            <MenuItem>
-              <Icon type="user" className="mr-2 h-6 w-6 text-neutral md:h-5 md:w-5" />
-              Clip visible area
-            </MenuItem>
-            <MenuItem>
-              <Icon type="user" className="mr-2 h-6 w-6 text-neutral md:h-5 md:w-5" />
-              Clip current selection
-            </MenuItem>
-            <MenuItem>
-              <Icon type="user" className="mr-2 h-6 w-6 text-neutral md:h-5 md:w-5" />
-              Select nodes to clip
-            </MenuItem>
+            <MenuItem>Clip full page</MenuItem>
+            <MenuItem>Clip article</MenuItem>
+            <MenuItem>Clip visible area</MenuItem>
+            <MenuItem>Clip current selection</MenuItem>
+            <MenuItem>Select nodes to clip</MenuItem>
           </Menu>
         </div>
       )}
