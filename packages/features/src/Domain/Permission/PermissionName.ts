@@ -38,6 +38,7 @@ export enum PermissionName {
   TitaniumTheme = 'theme:titanium',
   TokenVaultEditor = 'editor:token-vault',
   TwoFactorAuth = 'server:two-factor-auth',
+  UniversalSecondFactor = 'server:universal-second-factor',
   SubscriptionSharing = 'server:subscription-sharing',
   SuperEditor = 'editor:super-editor',
 }
