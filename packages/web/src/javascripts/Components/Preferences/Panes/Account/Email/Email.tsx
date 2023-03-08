@@ -1,4 +1,10 @@
-import { MuteMarketingEmailsOption, MuteSignInEmailsOption, SettingName } from '@standardnotes/snjs'
+import {
+  FeatureIdentifier,
+  FeatureStatus,
+  MuteMarketingEmailsOption,
+  MuteSignInEmailsOption,
+  SettingName,
+} from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 
@@ -10,6 +16,7 @@ import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Constants/Strings'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import Spinner from '@/Components/Spinner/Spinner'
+import NoProSubscription from '../NoProSubscription'
 
 type Props = {
   application: WebApplication
@@ -19,6 +26,9 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
   const [signInEmailsMutedValue, setSignInEmailsMutedValue] = useState(MuteSignInEmailsOption.NotMuted)
   const [marketingEmailsMutedValue, setMarketingEmailsMutedValue] = useState(MuteMarketingEmailsOption.NotMuted)
   const [isLoading, setIsLoading] = useState(true)
+
+  const isMuteSignInEmailsFeatureAvailable =
+    application.features.getFeatureStatus(FeatureIdentifier.SignInAlerts) === FeatureStatus.Entitled
 
   const updateSetting = async (settingName: SettingName, payload: string): Promise<boolean> => {
     try {
@@ -103,18 +113,33 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <Subtitle>Disable sign-in notification emails</Subtitle>
-              <Text>
-                Disables email notifications when a new sign-in occurs on your account. (Email notifications are
-                available only to paid subscribers).
-              </Text>
+              {isMuteSignInEmailsFeatureAvailable ? (
+                <Text>
+                  Disables email notifications when a new sign-in occurs on your account. (Email notifications are
+                  available only to paid subscribers).
+                </Text>
+              ) : (
+                <NoProSubscription
+                  application={application}
+                  text={
+                    <span>
+                      Sign-in notification emails are available only on a{' '}
+                      <span className="font-bold">subscription</span> plan. Please upgrade in order to enable sign-in
+                      notifications.
+                    </span>
+                  }
+                />
+              )}
             </div>
             {isLoading ? (
               <Spinner className="ml-2 flex-shrink-0" />
             ) : (
-              <Switch
-                onChange={toggleMuteSignInEmails}
-                checked={signInEmailsMutedValue === MuteSignInEmailsOption.Muted}
-              />
+              isMuteSignInEmailsFeatureAvailable && (
+                <Switch
+                  onChange={toggleMuteSignInEmails}
+                  checked={signInEmailsMutedValue === MuteSignInEmailsOption.Muted}
+                />
+              )
             )}
           </div>
           <HorizontalSeparator classes="my-4" />

@@ -9,7 +9,7 @@ import SignOutWrapper from './SignOutView'
 import FilesSection from './Files'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import SubscriptionSharing from './SubscriptionSharing/SubscriptionSharing'
-import Email from './Email'
+import Email from './Email/Email'
 import DeleteAccount from '@/Components/Preferences/Panes/Account/DeleteAccount'
 
 type Props = {
