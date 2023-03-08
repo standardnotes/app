@@ -29,6 +29,12 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
     setMenuPane(AccountMenuPane.SignIn)
   }, [setMenuPane])
 
+  const [isSigningOut, setIsSigningOut] = useState(false)
+
+  const showSignOutConfirmation = useCallback(() => {
+    setIsSigningOut(true)
+  }, [setIsSigningOut])
+
   return (
     <>
       <div className="flex items-center bg-info p-1 px-3 py-2 text-base font-semibold text-info-contrast">
@@ -57,17 +63,39 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
           closeMenu={() => setMenuPane(undefined)}
         />
       )}
-      {user && (
+      {user && !isSigningOut && (
         <div>
-          <div className="px-3 py-2 text-base font-semibold">Web Clipper</div>
-          <Menu a11yLabel="Clipping menu" isOpen={true}>
+          <Menu a11yLabel="Extension menu" isOpen={true}>
+            <div className="px-3 py-2 text-base font-semibold">Web Clipper</div>
             <MenuItem>Clip full page</MenuItem>
             <MenuItem>Clip article</MenuItem>
             <MenuItem>Clip visible area</MenuItem>
             <MenuItem>Clip current selection</MenuItem>
             <MenuItem>Select nodes to clip</MenuItem>
+            <div className="border-t border-border px-3 pt-2 pb-1 text-base font-semibold">Account</div>
+            <div className="px-3 pb-1 text-sm text-foreground">
+              <div>You're signed in as:</div>
+              <div className="wrap my-0.5 font-bold">{user.email}</div>
+              <span className="text-neutral">{application.getHost()}</span>
+            </div>
+            <MenuItem onClick={showSignOutConfirmation}>
+              <Icon type="signOut" className="mr-2 h-6 w-6 text-neutral" />
+              Sign out
+            </MenuItem>
           </Menu>
         </div>
+      )}
+      {isSigningOut && (
+        <Menu a11yLabel="Sign out confirmation" isOpen={true}>
+          <div className="px-3 pt-2 pb-1 text-base font-semibold">Sign out</div>
+          <div className="px-3 pb-2 text-sm text-foreground">
+            <div>Are you sure you want to sign out?</div>
+          </div>
+          <MenuItem onClick={() => setIsSigningOut(false)}>Cancel</MenuItem>
+          <MenuItem onClick={() => application.user.signOut()} className="!text-danger">
+            Sign out
+          </MenuItem>
+        </Menu>
       )}
     </>
   )
