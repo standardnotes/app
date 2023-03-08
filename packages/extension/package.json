@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "build": "webpack --config ./webpack.config.js",
+    "watch:web": "WEBPACK_DEVTOOL=cheap-module-source-map yarn workspace @standardnotes/web run watch",
     "watch": "webpack --config ./webpack.config.dev.js --watch",
     "build-firefox": "yarn build && web-ext build --source-dir ./dist"
   },

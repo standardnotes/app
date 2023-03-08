@@ -4,6 +4,6 @@ const config = require('./webpack.config.js')
 module.exports = () => {
   return merge(config, {
     mode: 'development',
-    devtool: 'inline-source-map',
+    devtool: 'cheap-module-source-map',
   })
 }
