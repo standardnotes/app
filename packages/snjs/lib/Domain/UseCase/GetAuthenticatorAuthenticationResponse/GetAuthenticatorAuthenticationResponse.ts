@@ -32,6 +32,8 @@ export class GetAuthenticatorAuthenticationResponse implements UseCaseInterface<
     try {
       authenticatorResponse = await this.authenticatorVerificationPromptFunction(authenticationOptions)
     } catch (error) {
+      console.error(error)
+
       return Result.fail(`Could not generate authenticator authentication options: ${(error as Error).message}`)
     }
 
