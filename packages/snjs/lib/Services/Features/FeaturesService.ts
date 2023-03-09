@@ -341,7 +341,11 @@ export class SNFeaturesService
         const userKeyMatch = repoUrl.match(/\w{32,64}/)
         if (userKeyMatch && userKeyMatch.length > 0) {
           const userKey = userKeyMatch[0]
-          await this.settingsService.updateSetting(SettingName.ExtensionKey, userKey, true)
+          await this.settingsService.updateSetting(
+            SettingName.create(SettingName.NAMES.ExtensionKey).getValue(),
+            userKey,
+            true,
+          )
           await this.itemManager.changeFeatureRepo(item, (m) => {
             m.migratedToUserSetting = true
           })

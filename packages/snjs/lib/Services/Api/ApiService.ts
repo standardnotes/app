@@ -1,6 +1,5 @@
 import { FeatureDescription } from '@standardnotes/features'
 import { joinPaths } from '@standardnotes/utils'
-import { SettingName, SubscriptionSettingName } from '@standardnotes/settings'
 import {
   AbstractService,
   ApiServiceInterface,
@@ -568,31 +567,25 @@ export class SNApiService
     })
   }
 
-  async getSetting(userUuid: UuidString, settingName: SettingName): Promise<HttpResponse<GetSettingResponse>> {
+  async getSetting(userUuid: UuidString, settingName: string): Promise<HttpResponse<GetSettingResponse>> {
     return await this.tokenRefreshableRequest<GetSettingResponse>({
       verb: HttpVerb.Get,
-      url: joinPaths(this.host, Paths.v1.setting(userUuid, settingName.toLowerCase() as SettingName)),
+      url: joinPaths(this.host, Paths.v1.setting(userUuid, settingName.toLowerCase())),
       authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_GET_SETTINGS,
     })
   }
 
-  async getSubscriptionSetting(
-    userUuid: UuidString,
-    settingName: SubscriptionSettingName,
-  ): Promise<HttpResponse<GetSettingResponse>> {
+  async getSubscriptionSetting(userUuid: UuidString, settingName: string): Promise<HttpResponse<GetSettingResponse>> {
     return await this.tokenRefreshableRequest<GetSettingResponse>({
       verb: HttpVerb.Get,
-      url: joinPaths(
-        this.host,
-        Paths.v1.subscriptionSetting(userUuid, settingName.toLowerCase() as SubscriptionSettingName),
-      ),
+      url: joinPaths(this.host, Paths.v1.subscriptionSetting(userUuid, settingName.toLowerCase())),
       authentication: this.getSessionAccessToken(),
       fallbackErrorMessage: API_MESSAGE_FAILED_GET_SETTINGS,
     })
   }
 
-  async deleteSetting(userUuid: UuidString, settingName: SettingName): Promise<HttpResponse<DeleteSettingResponse>> {
+  async deleteSetting(userUuid: UuidString, settingName: string): Promise<HttpResponse<DeleteSettingResponse>> {
     return this.tokenRefreshableRequest<DeleteSettingResponse>({
       verb: HttpVerb.Delete,
       url: joinPaths(this.host, Paths.v1.setting(userUuid, settingName)),

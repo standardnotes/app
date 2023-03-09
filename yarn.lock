@@ -5404,12 +5404,13 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/settings@npm:^1.19.1":
-  version: 1.19.1
-  resolution: "@standardnotes/settings@npm:1.19.1"
+"@standardnotes/settings@npm:^1.20.0":
+  version: 1.20.0
+  resolution: "@standardnotes/settings@npm:1.20.0"
   dependencies:
+    "@standardnotes/domain-core": ^1.11.3
     reflect-metadata: ^0.1.13
-  checksum: d99d49d4401ac8c973284d8637195c0441e6f73b7e01e9eb4ab14feb27c6d2e928a493d944ed67ea1d6f229bf5ea839b5dd667c373b917aed321bb32972daacb
+  checksum: 6e8c03107eec03e3d800bb9ced690dbade6713f7ef5e19364aaf06a86a92d2d58ac629d2e948775223ae9798be3ec60edfc5c24a8f7a4d57de959e5937727f44
   languageName: node
   linkType: hard
 
@@ -5490,7 +5491,7 @@ __metadata:
     "@standardnotes/responses": "workspace:*"
     "@standardnotes/security": ^1.7.6
     "@standardnotes/services": "workspace:*"
-    "@standardnotes/settings": ^1.19.1
+    "@standardnotes/settings": ^1.20.0
     "@standardnotes/sncrypto-common": "workspace:*"
     "@standardnotes/sncrypto-web": "workspace:*"
     "@standardnotes/utils": "workspace:*"

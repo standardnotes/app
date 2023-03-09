@@ -108,7 +108,9 @@ export class ListedService extends AbstractService implements ListedClientInterf
   }
 
   private async getSettingsBasedListedAccounts(): Promise<ListedAccount[]> {
-    const response = await this.settingsService.getSetting(SettingName.ListedAuthorSecrets)
+    const response = await this.settingsService.getSetting(
+      SettingName.create(SettingName.NAMES.ListedAuthorSecrets).getValue(),
+    )
     if (!response) {
       return []
     }

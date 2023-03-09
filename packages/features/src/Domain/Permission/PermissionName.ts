@@ -10,7 +10,6 @@ export enum PermissionName {
   DailyEmailBackup = 'server:daily-email-backup',
   DailyGDriveBackup = 'server:daily-gdrive-backup',
   DailyOneDriveBackup = 'server:daily-onedrive-backup',
-  FilesBeta = 'app:files-beta',
   Files = 'app:files',
   FilesMaximumStorageTier = 'server:files-max-storage-tier',
   FilesLowStorageTier = 'server:files-low-storage-tier',
@@ -38,6 +37,7 @@ export enum PermissionName {
   TitaniumTheme = 'theme:titanium',
   TokenVaultEditor = 'editor:token-vault',
   TwoFactorAuth = 'server:two-factor-auth',
+  UniversalSecondFactor = 'server:universal-second-factor',
   SubscriptionSharing = 'server:subscription-sharing',
   SuperEditor = 'editor:super-editor',
 }

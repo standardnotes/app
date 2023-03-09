@@ -1,13 +1,14 @@
-import { FunctionComponent, useState } from 'react'
+import { FunctionComponent, ReactNode, useState } from 'react'
 import { LinkButton, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
 import { WebApplication } from '@/Application/Application'
 
 type Props = {
   application: WebApplication
+  text: ReactNode
 }
 
-const NoProSubscription: FunctionComponent<Props> = ({ application }) => {
+const NoProSubscription: FunctionComponent<Props> = ({ application, text }) => {
   const [isLoadingPurchaseFlow, setIsLoadingPurchaseFlow] = useState(false)
   const [purchaseFlowError, setPurchaseFlowError] = useState<string | undefined>(undefined)
 
@@ -29,10 +30,7 @@ const NoProSubscription: FunctionComponent<Props> = ({ application }) => {
 
   return (
     <>
-      <Text>
-        Subscription sharing is available only on the <span className="font-bold">Professional</span> plan. Please
-        upgrade in order to share your subscription.
-      </Text>
+      <Text>{text}</Text>
       {isLoadingPurchaseFlow && <Text>Redirecting you to the subscription page...</Text>}
       {purchaseFlowError && <Text className="text-danger">{purchaseFlowError}</Text>}
 
