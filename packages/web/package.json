@@ -116,7 +116,7 @@
     "app/**/*.{js,ts,jsx,tsx,css,md}": "prettier --write"
   },
   "dependencies": {
-    "@lexical/headless": "0.8.1",
+    "@lexical/headless": "0.9.0",
     "contactjs": "2.1.5"
   }
 }
