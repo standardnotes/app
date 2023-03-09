@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.166.12](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.11...@standardnotes/snjs@2.166.12) (2023-03-09)
+
+### Reverts
+
+* Revert "chore: add temporary error log on authenticator authentication options generation" ([2fd879b](https://github.com/standardnotes/app/commit/2fd879bb2df57678c87f70b062c0592d1c6c654c))
+
 ## [2.166.11](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.10...@standardnotes/snjs@2.166.11) (2023-03-09)
 
 **Note:** Version bump only for package @standardnotes/snjs
