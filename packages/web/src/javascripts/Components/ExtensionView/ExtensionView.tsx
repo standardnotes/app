@@ -1,13 +1,18 @@
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { SNLogoIcon } from '@standardnotes/icons'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { AccountMenuPane } from '../AccountMenu/AccountMenuPane'
 import MenuPaneSelector from '../AccountMenu/MenuPaneSelector'
 import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
 import Menu from '../Menu/Menu'
 import MenuItem from '../Menu/MenuItem'
+import { runtime, tabs } from 'webextension-polyfill'
+import { BlocksEditorComposer } from '../SuperEditor/BlocksEditorComposer'
+import { BlocksEditor } from '../SuperEditor/BlocksEditor'
+import ImportPlugin from '../SuperEditor/Plugins/ImportPlugin/ImportPlugin'
+import getSelectionHTML from '@standardnotes/extension/src/utils/getSelectionHTML'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -36,6 +41,16 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
   }, [setIsSigningOut])
 
   const [clippedContent, setClippedContent] = useState('')
+  const [convertedSuperContent, setConvertedSuperContent] = useState<any>()
+
+  useEffect(() => {
+    runtime.onMessage.addListener((message, sender, sendResponse) => {
+      console.log(message, sender)
+      if (message.type === 'clip-selection') {
+        setClippedContent(message.payload)
+      }
+    })
+  }, [])
 
   return (
     <>
@@ -43,7 +58,7 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
         <SNLogoIcon className="mr-2 h-6 w-6 fill-info-contrast stroke-info-contrast [fill-rule:evenodd]" />
         Standard Notes
       </div>
-      {!user && !menuPane && (
+      {!user && !menuPane && !clippedContent && (
         <Menu a11yLabel="User account menu" isOpen={true}>
           <MenuItem onClick={activateRegisterPane}>
             <Icon type="user" className="mr-2 h-6 w-6 text-neutral md:h-5 md:w-5" />
@@ -65,14 +80,21 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
           closeMenu={() => setMenuPane(undefined)}
         />
       )}
-      {user && !isSigningOut && (
+      {user && !isSigningOut && !clippedContent && (
         <div>
           <Menu a11yLabel="Extension menu" isOpen={true}>
             <div className="px-3 py-2 text-base font-semibold">Web Clipper</div>
             <MenuItem>Clip full page</MenuItem>
             <MenuItem>Clip article</MenuItem>
             <MenuItem>Clip visible area</MenuItem>
-            <MenuItem>Clip current selection</MenuItem>
+            <MenuItem
+              onClick={async () => {
+                const selectionContent = await getSelectionHTML()
+                setClippedContent(selectionContent)
+              }}
+            >
+              Clip current selection
+            </MenuItem>
             <MenuItem>Select nodes to clip</MenuItem>
             <div className="border-t border-border px-3 pt-2 pb-1 text-base font-semibold">Account</div>
             <div className="px-3 pb-1 text-sm text-foreground">
@@ -87,7 +109,7 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
           </Menu>
         </div>
       )}
-      {isSigningOut && (
+      {isSigningOut && !clippedContent && (
         <Menu a11yLabel="Sign out confirmation" isOpen={true}>
           <div className="px-3 pt-2 pb-1 text-base font-semibold">Sign out</div>
           <div className="px-3 pb-2 text-sm text-foreground">
@@ -99,7 +121,16 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
           </MenuItem>
         </Menu>
       )}
-      {!!clippedContent && <div className="px-3 py-2 text-sm">{clippedContent}</div>}
+      {!!clippedContent && (
+        <div className="px-3">
+          {/* <div className="px-3 py-2 text-sm">{clippedContent}</div> */}
+          <BlocksEditorComposer initialValue={undefined}>
+            <BlocksEditor readonly>
+              <ImportPlugin text={clippedContent} format="html" onChange={(value) => setConvertedSuperContent(value)} />
+            </BlocksEditor>
+          </BlocksEditorComposer>
+        </div>
+      )}
     </>
   )
 }

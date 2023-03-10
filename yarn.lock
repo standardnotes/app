@@ -5740,6 +5740,7 @@ __metadata:
     ts-jest: ^29.0.3
     ts-loader: ^9.4.2
     typescript: "*"
+    webextension-polyfill: ^0.10.0
     webpack: "*"
     webpack-dev-server: "*"
     webpack-merge: ^5.8.0

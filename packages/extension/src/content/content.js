@@ -4,8 +4,6 @@ runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'get-selection') {
     const range = window.getSelection().getRangeAt(0)
 
-    console.log(range.cloneContents())
-
     const result = document.createElement('div')
     result.appendChild(range.cloneContents())
 

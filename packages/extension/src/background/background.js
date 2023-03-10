@@ -1,4 +1,5 @@
 import { runtime, contextMenus, browserAction, tabs } from 'webextension-polyfill'
+import getSelectionHTML from '../utils/getSelectionHTML'
 
 runtime.onInstalled.addListener(() => {
   contextMenus.create({
@@ -8,10 +9,12 @@ runtime.onInstalled.addListener(() => {
   })
 })
 
-contextMenus.onClicked.addListener((info, tab) => {
+contextMenus.onClicked.addListener(async (info, tab) => {
   if (info.menuItemId === 'sn-clip-selection') {
-    tabs.sendMessage(tab.id, { type: 'get-selection' }).then((response) => {
-      console.log(response)
-    })
+    const selectionContent = await getSelectionHTML()
+    browserAction.openPopup()
+    setTimeout(() => {
+      runtime.sendMessage({ type: 'clip-selection', payload: selectionContent })
+    }, 500)
   }
 })
