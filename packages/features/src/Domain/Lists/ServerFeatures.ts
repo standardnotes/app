@@ -12,6 +12,13 @@ export function serverFeatures(): ServerFeatureDescription[] {
       permission_name: PermissionName.TwoFactorAuth,
     },
     {
+      availableInSubscriptions: [],
+      availableInRoles: ['INTERNAL_TEAM_USER'],
+      name: 'U2F authentication',
+      identifier: FeatureIdentifier.UniversalSecondFactor,
+      permission_name: PermissionName.UniversalSecondFactor,
+    },
+    {
       availableInSubscriptions: [SubscriptionName.ProPlan],
       name: 'Unlimited note history',
       identifier: FeatureIdentifier.NoteHistoryUnlimited,
