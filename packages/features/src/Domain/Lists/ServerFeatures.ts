@@ -13,12 +13,6 @@ export function serverFeatures(): ServerFeatureDescription[] {
     },
     {
       availableInSubscriptions: [SubscriptionName.ProPlan],
-      name: 'U2F authentication',
-      identifier: FeatureIdentifier.UniversalSecondFactor,
-      permission_name: PermissionName.UniversalSecondFactor,
-    },
-    {
-      availableInSubscriptions: [SubscriptionName.ProPlan],
       name: 'Unlimited note history',
       identifier: FeatureIdentifier.NoteHistoryUnlimited,
       permission_name: PermissionName.NoteHistoryUnlimited,
