@@ -35,6 +35,8 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
     setIsSigningOut(true)
   }, [setIsSigningOut])
 
+  const [clippedContent, setClippedContent] = useState('')
+
   return (
     <>
       <div className="flex items-center bg-info p-1 px-3 py-2 text-base font-semibold text-info-contrast">
@@ -97,6 +99,7 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
           </MenuItem>
         </Menu>
       )}
+      {!!clippedContent && <div className="px-3 py-2 text-sm">{clippedContent}</div>}
     </>
   )
 }
