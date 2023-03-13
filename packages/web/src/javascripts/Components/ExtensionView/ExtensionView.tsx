@@ -15,6 +15,8 @@ import ImportPlugin from '../SuperEditor/Plugins/ImportPlugin/ImportPlugin'
 import getSelectionHTML from '@standardnotes/extension/src/utils/getSelectionHTML'
 import getFullPageHTML from '@standardnotes/extension/src/utils/getFullPageHTML'
 import getArticleHTML from '@standardnotes/extension/src/utils/getArticleHTML'
+import { $createParagraphNode, $createRangeSelection, LexicalEditor } from 'lexical'
+import { $generateNodesFromDOM } from '../SuperEditor/Lexical/Utils/generateNodesFromDOM'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -47,10 +49,30 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
 
   useEffect(() => {
     runtime.onMessage.addListener((message, sender, sendResponse) => {
-      console.log(message, sender)
       if (message.type === 'clip-selection') {
         setClippedContent(message.payload)
       }
+    })
+  }, [])
+
+  const superContentConversionFn = useCallback((editor: LexicalEditor, text: string) => {
+    editor.update(() => {
+      const parser = new DOMParser()
+      const dom = parser.parseFromString(text, 'text/html')
+      const nodesToInsert = $generateNodesFromDOM(editor, dom).map((node) => {
+        const type = node.getType()
+
+        if (type === 'text' || type === 'link') {
+          const paragraphNode = $createParagraphNode()
+          paragraphNode.append(node)
+          return paragraphNode
+        }
+
+        return node
+      })
+      const selection = $createRangeSelection()
+      const newLineNode = $createParagraphNode()
+      selection.insertNodes([newLineNode, ...nodesToInsert])
     })
   }, [])
 
@@ -139,10 +161,14 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
       )}
       {!!clippedContent && (
         <div className="px-3">
-          {/* <div className="px-3 py-2 text-sm">{clippedContent}</div> */}
           <BlocksEditorComposer initialValue={undefined}>
             <BlocksEditor readonly>
-              <ImportPlugin text={clippedContent} format="html" onChange={(value) => setConvertedSuperContent(value)} />
+              <ImportPlugin
+                text={clippedContent}
+                format="html"
+                onChange={(value) => setConvertedSuperContent(value)}
+                customConversionFn={superContentConversionFn}
+              />
             </BlocksEditor>
           </BlocksEditorComposer>
         </div>
