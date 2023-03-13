@@ -1,4 +1,4 @@
-import { runtime, contextMenus, browserAction, tabs } from 'webextension-polyfill'
+import { runtime, contextMenus, browserAction } from 'webextension-polyfill'
 import getSelectionHTML from '../utils/getSelectionHTML'
 
 runtime.onInstalled.addListener(() => {
@@ -9,7 +9,7 @@ runtime.onInstalled.addListener(() => {
   })
 })
 
-contextMenus.onClicked.addListener(async (info, tab) => {
+contextMenus.onClicked.addListener(async (info) => {
   if (info.menuItemId === 'sn-clip-selection') {
     const selectionContent = await getSelectionHTML()
     browserAction.openPopup()

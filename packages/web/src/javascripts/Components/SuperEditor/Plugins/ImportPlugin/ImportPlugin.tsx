@@ -1,7 +1,7 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { useEffect } from 'react'
 import { $convertFromMarkdownString, TRANSFORMERS } from '@lexical/markdown'
-import { $createParagraphNode, $createRangeSelection, $insertNodes, $isTextNode, LexicalNode, TextNode } from 'lexical'
+import { $createParagraphNode, $createRangeSelection } from 'lexical'
 import { handleEditorChange } from '../../Utils'
 import { SuperNotePreviewCharLimit } from '../../SuperEditor'
 import { $generateNodesFromDOM } from '../../Lexical/Utils/generateNodesFromDOM'
@@ -30,24 +30,20 @@ export default function ImportPlugin({
       } else {
         const parser = new DOMParser()
         const dom = parser.parseFromString(text, 'text/html')
-        // const nodesToInsert: LexicalNode[] = []
-        const nodesToInsert = $generateNodesFromDOM(editor, dom)
-        nodesToInsert.forEach((node) => console.log(node, node.getTextContent(), node instanceof TextNode))
-        // for (const node of generatedNodes) {
-        //   if ($isTextNode(node)) {
-        //     // Wrap text nodes with paragraphNode since they can't be
-        //     // direct children of the root
-        //     const paragraphNode = $createParagraphNode()
-        //     paragraphNode.append(node)
-        //     nodesToInsert.unshift(paragraphNode)
-        //   } else {
-        //     nodesToInsert.unshift(node)
-        //   }
-        // }
-        // const selection = $createRangeSelection()
-        // const newLineNode = $createParagraphNode()
-        // selection.insertNodes([newLineNode, ...nodesToInsert])
-        $insertNodes(nodesToInsert)
+        const nodesToInsert = $generateNodesFromDOM(editor, dom).map((node) => {
+          const type = node.getType()
+
+          if (type === 'text' || type === 'link') {
+            const paragraphNode = $createParagraphNode()
+            paragraphNode.append(node)
+            return paragraphNode
+          }
+
+          return node
+        })
+        const selection = $createRangeSelection()
+        const newLineNode = $createParagraphNode()
+        selection.insertNodes([newLineNode, ...nodesToInsert])
       }
     })
   }, [editor, text, format])

@@ -22,7 +22,6 @@ export function $generateNodesFromDOM(editor: LexicalEditor, dom: Document): Arr
     const element = elements[i]
 
     if (!IGNORE_TAGS.has(element.nodeName)) {
-      console.log(element)
       const lexicalNode = $createNodesFromDOM(element, editor)
 
       if (lexicalNode !== null) {
