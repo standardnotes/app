@@ -13,6 +13,7 @@ import { BlocksEditorComposer } from '../SuperEditor/BlocksEditorComposer'
 import { BlocksEditor } from '../SuperEditor/BlocksEditor'
 import ImportPlugin from '../SuperEditor/Plugins/ImportPlugin/ImportPlugin'
 import getSelectionHTML from '@standardnotes/extension/src/utils/getSelectionHTML'
+import getFullPageHTML from '@standardnotes/extension/src/utils/getFullPageHTML'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -84,7 +85,14 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
         <div>
           <Menu a11yLabel="Extension menu" isOpen={true}>
             <div className="px-3 py-2 text-base font-semibold">Web Clipper</div>
-            <MenuItem>Clip full page</MenuItem>
+            <MenuItem
+              onClick={async () => {
+                const pageContent = await getFullPageHTML()
+                setClippedContent(pageContent)
+              }}
+            >
+              Clip full page
+            </MenuItem>
             <MenuItem>Clip article</MenuItem>
             <MenuItem>Clip visible area</MenuItem>
             <MenuItem

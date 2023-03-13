@@ -2,7 +2,7 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { useEffect } from 'react'
 import { $convertFromMarkdownString, TRANSFORMERS } from '@lexical/markdown'
 import { $generateNodesFromDOM } from '@lexical/html'
-import { $createParagraphNode, $createRangeSelection } from 'lexical'
+import { $createParagraphNode, $createRangeSelection, $isTextNode } from 'lexical'
 import { handleEditorChange } from '../../Utils'
 import { SuperNotePreviewCharLimit } from '../../SuperEditor'
 
@@ -30,7 +30,18 @@ export default function ImportPlugin({
       } else {
         const parser = new DOMParser()
         const dom = parser.parseFromString(text, 'text/html')
-        const nodes = $generateNodesFromDOM(editor, dom)
+        const nodes = $generateNodesFromDOM(editor, dom).map((node) => {
+          if (!$isTextNode(node)) {
+            return node
+          }
+
+          // Wrap text nodes with paragraphNode since they can't be
+          // direct children of the root
+          const paragraphNode = $createParagraphNode()
+          paragraphNode.append(node)
+          return paragraphNode
+        })
+        console.log(nodes)
         const selection = $createRangeSelection()
         const newLineNode = $createParagraphNode()
         selection.insertNodes([newLineNode, ...nodes])
