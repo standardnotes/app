@@ -14,6 +14,7 @@ import { BlocksEditor } from '../SuperEditor/BlocksEditor'
 import ImportPlugin from '../SuperEditor/Plugins/ImportPlugin/ImportPlugin'
 import getSelectionHTML from '@standardnotes/extension/src/utils/getSelectionHTML'
 import getFullPageHTML from '@standardnotes/extension/src/utils/getFullPageHTML'
+import getArticleHTML from '@standardnotes/extension/src/utils/getArticleHTML'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -93,7 +94,14 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
             >
               Clip full page
             </MenuItem>
-            <MenuItem>Clip article</MenuItem>
+            <MenuItem
+              onClick={async () => {
+                const articleContent = await getArticleHTML()
+                setClippedContent(articleContent)
+              }}
+            >
+              Clip article
+            </MenuItem>
             <MenuItem>Clip visible area</MenuItem>
             <MenuItem
               onClick={async () => {

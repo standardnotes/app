@@ -3567,6 +3567,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@mozilla/readability@npm:^0.4.2":
+  version: 0.4.2
+  resolution: "@mozilla/readability@npm:0.4.2"
+  checksum: daeeb1d68ea12a9a2027a932c64bd862f7d0a4d21571cb474883f803a5424dfda792724181822983367cd6f833c6d32b56436ed20cacd990bd6f20585405ada0
+  languageName: node
+  linkType: hard
+
 "@mrmlnc/readdir-enhanced@npm:^2.2.1":
   version: 2.2.1
   resolution: "@mrmlnc/readdir-enhanced@npm:2.2.1"
@@ -5048,6 +5055,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/extension@workspace:packages/extension"
   dependencies:
+    "@mozilla/readability": ^0.4.2
     babel-loader: ^9.1.0
     copy-webpack-plugin: 11.0.0
     web-ext: ^7.5.0
