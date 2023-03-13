@@ -1,10 +1,10 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { useEffect } from 'react'
 import { $convertFromMarkdownString, TRANSFORMERS } from '@lexical/markdown'
-import { $generateNodesFromDOM } from '@lexical/html'
-import { $createParagraphNode, $createRangeSelection, $isTextNode } from 'lexical'
+import { $createParagraphNode, $createRangeSelection, $isTextNode, LexicalNode } from 'lexical'
 import { handleEditorChange } from '../../Utils'
 import { SuperNotePreviewCharLimit } from '../../SuperEditor'
+import { $generateNodesFromDOM } from '../../Lexical/Utils/generateNodesFromDOM'
 
 /** Note that markdown conversion does not insert new lines. See: https://github.com/facebook/lexical/issues/2815 */
 export default function ImportPlugin({
@@ -30,21 +30,22 @@ export default function ImportPlugin({
       } else {
         const parser = new DOMParser()
         const dom = parser.parseFromString(text, 'text/html')
-        const nodes = $generateNodesFromDOM(editor, dom).map((node) => {
-          if (!$isTextNode(node)) {
-            return node
+        const nodesToInsert: LexicalNode[] = []
+        const generatedNodes = $generateNodesFromDOM(editor, dom)
+        for (const node of generatedNodes) {
+          if ($isTextNode(node)) {
+            // Wrap text nodes with paragraphNode since they can't be
+            // direct children of the root
+            const paragraphNode = $createParagraphNode()
+            paragraphNode.append(node)
+            nodesToInsert.unshift(paragraphNode)
+          } else {
+            nodesToInsert.unshift(node)
           }
-
-          // Wrap text nodes with paragraphNode since they can't be
-          // direct children of the root
-          const paragraphNode = $createParagraphNode()
-          paragraphNode.append(node)
-          return paragraphNode
-        })
-        console.log(nodes)
+        }
         const selection = $createRangeSelection()
         const newLineNode = $createParagraphNode()
-        selection.insertNodes([newLineNode, ...nodes])
+        selection.insertNodes([newLineNode, ...nodesToInsert])
       }
     })
   }, [editor, text, format])
