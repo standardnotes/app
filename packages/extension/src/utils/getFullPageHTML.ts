@@ -1,4 +1,5 @@
 import { tabs } from 'webextension-polyfill'
+import { RuntimeMessageTypes } from '../types/message'
 
 export default async function getFullPageHTML() {
   const [activeTab] = await tabs.query({ active: true, currentWindow: true })
@@ -7,5 +8,5 @@ export default async function getFullPageHTML() {
     return
   }
 
-  return await tabs.sendMessage(activeTab.id, { type: 'get-full-page' })
+  return await tabs.sendMessage(activeTab.id, { type: RuntimeMessageTypes.GetFullPage })
 }

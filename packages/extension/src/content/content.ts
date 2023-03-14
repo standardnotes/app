@@ -1,9 +1,10 @@
 import { runtime } from 'webextension-polyfill'
 import { Readability } from '@mozilla/readability'
+import { RuntimeMessage, RuntimeMessageTypes } from '../types/message'
 
-runtime.onMessage.addListener(async (message) => {
+runtime.onMessage.addListener(async (message: RuntimeMessage) => {
   switch (message.type) {
-    case 'get-selection': {
+    case RuntimeMessageTypes.GetSelection: {
       const selection = window.getSelection()
 
       if (!selection) {
@@ -17,10 +18,10 @@ runtime.onMessage.addListener(async (message) => {
 
       return result.innerHTML
     }
-    case 'get-full-page': {
+    case RuntimeMessageTypes.GetFullPage: {
       return document.body.innerHTML
     }
-    case 'get-article': {
+    case RuntimeMessageTypes.GetArticle: {
       const documentClone = document.cloneNode(true) as Document
       const article = new Readability(documentClone).parse()
       if (!article) {

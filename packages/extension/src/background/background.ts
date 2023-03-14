@@ -1,4 +1,5 @@
 import { runtime, contextMenus, browserAction } from 'webextension-polyfill'
+import { RuntimeMessageTypes } from '../types/message'
 import getSelectionHTML from '../utils/getSelectionHTML'
 
 runtime.onInstalled.addListener(() => {
@@ -14,7 +15,7 @@ contextMenus.onClicked.addListener(async (info) => {
     const selectionContent = await getSelectionHTML()
     browserAction.openPopup()
     setTimeout(() => {
-      runtime.sendMessage({ type: 'clip-selection', payload: selectionContent })
+      runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload: selectionContent })
     }, 500)
   }
 })

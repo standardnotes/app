@@ -1,4 +1,5 @@
 import { tabs } from 'webextension-polyfill'
+import { RuntimeMessageTypes } from '../types/message'
 
 export default async function getArticleHTML() {
   const [activeTab] = await tabs.query({ active: true, currentWindow: true })
@@ -7,5 +8,5 @@ export default async function getArticleHTML() {
     return
   }
 
-  return await tabs.sendMessage(activeTab.id, { type: 'get-article' })
+  return await tabs.sendMessage(activeTab.id, { type: RuntimeMessageTypes.GetArticle })
 }

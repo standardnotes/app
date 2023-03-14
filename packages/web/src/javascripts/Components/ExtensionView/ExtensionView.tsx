@@ -17,6 +17,7 @@ import getFullPageHTML from '@standardnotes/extension/src/utils/getFullPageHTML'
 import getArticleHTML from '@standardnotes/extension/src/utils/getArticleHTML'
 import { $createParagraphNode, $createRangeSelection, LexicalEditor } from 'lexical'
 import { $generateNodesFromDOM } from '../SuperEditor/Lexical/Utils/generateNodesFromDOM'
+import { RuntimeMessage, RuntimeMessageTypes } from '@standardnotes/extension/src/types/message'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -48,8 +49,8 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
   const [, setConvertedSuperContent] = useState<string>()
 
   useEffect(() => {
-    runtime.onMessage.addListener((message) => {
-      if (message.type === 'clip-selection') {
+    runtime.onMessage.addListener((message: RuntimeMessage) => {
+      if (message.type === RuntimeMessageTypes.ClipSelection) {
         setClippedContent(message.payload)
       }
     })
