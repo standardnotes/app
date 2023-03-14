@@ -4,6 +4,7 @@ export const RuntimeMessageTypes = {
   HasSelection: 'has-selection',
   GetFullPage: 'get-full-page',
   ClipSelection: 'clip-selection',
+  StartNodeSelection: 'start-node-selection',
 } as const
 
 export type RuntimeMessageType = typeof RuntimeMessageTypes[keyof typeof RuntimeMessageTypes]

@@ -2,8 +2,14 @@ import { runtime } from 'webextension-polyfill'
 import { Readability } from '@mozilla/readability'
 import { RuntimeMessage, RuntimeMessageTypes } from '../types/message'
 
+let isSelectingNodeForClipping = false
+
 runtime.onMessage.addListener(async (message: RuntimeMessage) => {
   switch (message.type) {
+    case RuntimeMessageTypes.StartNodeSelection: {
+      isSelectingNodeForClipping = true
+      return
+    }
     case RuntimeMessageTypes.HasSelection: {
       const selection = window.getSelection()
 
@@ -47,4 +53,50 @@ runtime.onMessage.addListener(async (message: RuntimeMessage) => {
     default:
       return
   }
+})
+
+const nodeOverlayElement = document.createElement('div')
+nodeOverlayElement.style.border = '2px solid #086dd6'
+nodeOverlayElement.style.position = 'fixed'
+nodeOverlayElement.style.top = '0'
+nodeOverlayElement.style.left = '0'
+nodeOverlayElement.style.zIndex = '69420'
+nodeOverlayElement.style.width = window.innerWidth + 'px'
+nodeOverlayElement.style.height = window.innerHeight - 4 + 'px'
+nodeOverlayElement.style.pointerEvents = 'none'
+nodeOverlayElement.style.visibility = 'hidden'
+nodeOverlayElement.id = 'sn-clipper-node-overlay'
+
+document.body.appendChild(nodeOverlayElement)
+
+window.addEventListener('mousemove', (event) => {
+  if (!isSelectingNodeForClipping) {
+    nodeOverlayElement.style.visibility = 'hidden'
+    nodeOverlayElement.style.pointerEvents = 'none'
+    return
+  }
+  nodeOverlayElement.style.visibility = ''
+  const { target } = event
+  if (!target || !(target instanceof HTMLElement)) {
+    return
+  }
+  const targetRect = target.getBoundingClientRect()
+  nodeOverlayElement.style.width = targetRect.width + 'px'
+  nodeOverlayElement.style.height = targetRect.height + 'px'
+  nodeOverlayElement.style.transform = `translate3d(${targetRect.x}px, ${targetRect.y}px, 0)`
+})
+
+window.addEventListener('click', (event) => {
+  if (!isSelectingNodeForClipping) {
+    return
+  }
+  isSelectingNodeForClipping = false
+  event.preventDefault()
+  event.stopPropagation()
+  const { target } = event
+  if (!target || !(target instanceof HTMLElement)) {
+    return
+  }
+  const content = target.outerHTML
+  runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload: content })
 })

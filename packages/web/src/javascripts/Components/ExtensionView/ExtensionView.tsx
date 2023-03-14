@@ -12,10 +12,7 @@ import { runtime } from 'webextension-polyfill'
 import { BlocksEditorComposer } from '../SuperEditor/BlocksEditorComposer'
 import { BlocksEditor } from '../SuperEditor/BlocksEditor'
 import ImportPlugin from '../SuperEditor/Plugins/ImportPlugin/ImportPlugin'
-import getSelectionHTML from '@standardnotes/extension/src/utils/getSelectionHTML'
-import getFullPageHTML from '@standardnotes/extension/src/utils/getFullPageHTML'
-import getArticleHTML from '@standardnotes/extension/src/utils/getArticleHTML'
-import pageHasSelection from '@standardnotes/extension/src/utils/hasSelection'
+import sendMessageToActiveTab from '@standardnotes/extension/src/utils/sendMessageToActiveTab'
 import { $createParagraphNode, $createRangeSelection, LexicalEditor } from 'lexical'
 import { $generateNodesFromDOM } from '../SuperEditor/Lexical/Utils/generateNodesFromDOM'
 import { RuntimeMessage, RuntimeMessageTypes } from '@standardnotes/extension/src/types/message'
@@ -60,8 +57,7 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
 
   useEffect(() => {
     const checkIfPageHasSelection = async () => {
-      console.log(await pageHasSelection())
-      setHasSelection(await pageHasSelection())
+      setHasSelection(await sendMessageToActiveTab(RuntimeMessageTypes.HasSelection))
     }
 
     void checkIfPageHasSelection()
@@ -122,7 +118,7 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
             <div className="px-3 py-2 text-base font-semibold">Web Clipper</div>
             <MenuItem
               onClick={async () => {
-                const pageContent = await getFullPageHTML()
+                const pageContent = await sendMessageToActiveTab(RuntimeMessageTypes.GetFullPage)
                 setClippedContent(pageContent)
               }}
             >
@@ -130,7 +126,7 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
             </MenuItem>
             <MenuItem
               onClick={async () => {
-                const articleContent = await getArticleHTML()
+                const articleContent = await sendMessageToActiveTab(RuntimeMessageTypes.GetArticle)
                 setClippedContent(articleContent)
               }}
             >
@@ -139,13 +135,20 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
             <MenuItem
               disabled={!hasSelection}
               onClick={async () => {
-                const selectionContent = await getSelectionHTML()
+                const selectionContent = await sendMessageToActiveTab(RuntimeMessageTypes.GetSelection)
                 setClippedContent(selectionContent)
               }}
             >
               Clip current selection
             </MenuItem>
-            <MenuItem>Select nodes to clip</MenuItem>
+            <MenuItem
+              onClick={async () => {
+                void sendMessageToActiveTab(RuntimeMessageTypes.StartNodeSelection)
+                window.close()
+              }}
+            >
+              Select nodes to clip
+            </MenuItem>
             <div className="border-t border-border px-3 pt-2 pb-1 text-base font-semibold">Account</div>
             <div className="px-3 pb-1 text-sm text-foreground">
               <div>You're signed in as:</div>

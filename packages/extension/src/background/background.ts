@@ -1,6 +1,6 @@
 import { runtime, contextMenus, browserAction } from 'webextension-polyfill'
-import { RuntimeMessageTypes } from '../types/message'
-import getSelectionHTML from '../utils/getSelectionHTML'
+import { RuntimeMessage, RuntimeMessageTypes } from '../types/message'
+import sendMessageToActiveTab from '../utils/sendMessageToActiveTab'
 
 runtime.onInstalled.addListener(() => {
   contextMenus.create({
@@ -10,12 +10,25 @@ runtime.onInstalled.addListener(() => {
   })
 })
 
+const openPopupAndClipSelection = (content: string) => {
+  browserAction.openPopup()
+  setTimeout(() => {
+    runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload: content })
+  }, 500)
+}
+
+runtime.onMessage.addListener((message: RuntimeMessage) => {
+  if (message.type === RuntimeMessageTypes.ClipSelection) {
+    if (!message.payload) {
+      return
+    }
+    openPopupAndClipSelection(message.payload)
+  }
+})
+
 contextMenus.onClicked.addListener(async (info) => {
   if (info.menuItemId === 'sn-clip-selection') {
-    const selectionContent = await getSelectionHTML()
-    browserAction.openPopup()
-    setTimeout(() => {
-      runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload: selectionContent })
-    }, 500)
+    const selectionContent = await sendMessageToActiveTab(RuntimeMessageTypes.GetSelection)
+    openPopupAndClipSelection(selectionContent)
   }
 })
