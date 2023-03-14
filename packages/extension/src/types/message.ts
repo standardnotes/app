@@ -3,6 +3,7 @@ export const RuntimeMessageTypes = {
   GetSelection: 'get-selection',
   HasSelection: 'has-selection',
   GetFullPage: 'get-full-page',
+  OpenPopupWithSelection: 'open-popup-with-selection',
   ClipSelection: 'clip-selection',
   StartNodeSelection: 'start-node-selection',
 } as const

@@ -98,5 +98,5 @@ window.addEventListener('click', (event) => {
     return
   }
   const content = target.outerHTML
-  runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload: content })
+  runtime.sendMessage({ type: RuntimeMessageTypes.OpenPopupWithSelection, payload: content })
 })

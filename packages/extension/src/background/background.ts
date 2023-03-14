@@ -11,14 +11,13 @@ runtime.onInstalled.addListener(() => {
 })
 
 const openPopupAndClipSelection = (content: string) => {
-  browserAction.openPopup()
-  setTimeout(() => {
+  browserAction.openPopup().then(() => {
     runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload: content })
-  }, 500)
+  })
 }
 
 runtime.onMessage.addListener((message: RuntimeMessage) => {
-  if (message.type === RuntimeMessageTypes.ClipSelection) {
+  if (message.type === RuntimeMessageTypes.OpenPopupWithSelection) {
     if (!message.payload) {
       return
     }
