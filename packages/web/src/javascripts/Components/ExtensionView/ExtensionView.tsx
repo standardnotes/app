@@ -15,6 +15,7 @@ import ImportPlugin from '../SuperEditor/Plugins/ImportPlugin/ImportPlugin'
 import getSelectionHTML from '@standardnotes/extension/src/utils/getSelectionHTML'
 import getFullPageHTML from '@standardnotes/extension/src/utils/getFullPageHTML'
 import getArticleHTML from '@standardnotes/extension/src/utils/getArticleHTML'
+import pageHasSelection from '@standardnotes/extension/src/utils/hasSelection'
 import { $createParagraphNode, $createRangeSelection, LexicalEditor } from 'lexical'
 import { $generateNodesFromDOM } from '../SuperEditor/Lexical/Utils/generateNodesFromDOM'
 import { RuntimeMessage, RuntimeMessageTypes } from '@standardnotes/extension/src/types/message'
@@ -45,6 +46,7 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
     setIsSigningOut(true)
   }, [setIsSigningOut])
 
+  const [hasSelection, setHasSelection] = useState(false)
   const [clippedContent, setClippedContent] = useState('')
   const [, setConvertedSuperContent] = useState<string>()
 
@@ -54,6 +56,15 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
         setClippedContent(message.payload)
       }
     })
+  }, [])
+
+  useEffect(() => {
+    const checkIfPageHasSelection = async () => {
+      console.log(await pageHasSelection())
+      setHasSelection(await pageHasSelection())
+    }
+
+    void checkIfPageHasSelection()
   }, [])
 
   const superContentConversionFn = useCallback((editor: LexicalEditor, text: string) => {
@@ -126,6 +137,7 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
               Clip article
             </MenuItem>
             <MenuItem
+              disabled={!hasSelection}
               onClick={async () => {
                 const selectionContent = await getSelectionHTML()
                 setClippedContent(selectionContent)

@@ -4,11 +4,16 @@ import { RuntimeMessage, RuntimeMessageTypes } from '../types/message'
 
 runtime.onMessage.addListener(async (message: RuntimeMessage) => {
   switch (message.type) {
+    case RuntimeMessageTypes.HasSelection: {
+      const selection = window.getSelection()
+
+      return !!selection && selection.rangeCount > 0
+    }
     case RuntimeMessageTypes.GetSelection: {
       const selection = window.getSelection()
 
-      if (!selection) {
-        return new Error('No selection found')
+      if (!selection || selection.rangeCount < 1) {
+        return
       }
 
       const range = selection.getRangeAt(0)
@@ -25,11 +30,11 @@ runtime.onMessage.addListener(async (message: RuntimeMessage) => {
       const documentClone = document.cloneNode(true) as Document
       const article = new Readability(documentClone).parse()
       if (!article) {
-        return new Error('Could not find article')
+        return
       }
       return article.content
     }
     default:
-      return new Error('No message')
+      return
   }
 })

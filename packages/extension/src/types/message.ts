@@ -1,6 +1,7 @@
 export const RuntimeMessageTypes = {
   GetArticle: 'get-article',
   GetSelection: 'get-selection',
+  HasSelection: 'has-selection',
   GetFullPage: 'get-full-page',
   ClipSelection: 'clip-selection',
 } as const

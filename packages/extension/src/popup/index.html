@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="IE=edge" http-equiv="X-UA-Compatible" />
+    <meta content="viewport-fit=cover, width=device-width, initial-scale=1" name="viewport" />
+    <meta name="theme-color" content="#ffffff" />
 
-<head>
-  <meta charset="utf-8" />
-  <meta content="IE=edge" http-equiv="X-UA-Compatible" />
-  <meta content="viewport-fit=cover, width=device-width, initial-scale=1" name="viewport" />
-  <meta name="theme-color" content="#ffffff">
-
-  <meta http-equiv="Content-Security-Policy" content="
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
         default-src 'self' blob:;
         script-src 'self' 'unsafe-inline' 'wasm-eval' 'wasm-unsafe-eval';
         worker-src blob:;
@@ -15,32 +16,32 @@
         style-src 'unsafe-inline' 'self';
         frame-src * blob:;
         img-src * data: blob:;
-      " />
+      "
+    />
 
-  <title>Standard Notes</title>
+    <title>Standard Notes</title>
 
-  <script>
-    window.defaultSyncServer = "https://api.standardnotes.com";
-    window.defaultFilesHost = "https://files.standardnotes.com";
-    window.enabledUnfinishedFeatures = false;
-    window.websocketUrl = "wss://sockets.standardnotes.com";
-    window.purchaseUrl = "https://standardnotes.com/purchase";
-    window.plansUrl = "https://standardnotes.com/plans";
-    window.dashboardUrl = "https://standardnotes.com/dashboard";
-  </script>
+    <script>
+      window.defaultSyncServer = 'https://api.standardnotes.com'
+      window.defaultFilesHost = 'https://files.standardnotes.com'
+      window.enabledUnfinishedFeatures = false
+      window.websocketUrl = 'wss://sockets.standardnotes.com'
+      window.purchaseUrl = 'https://standardnotes.com/purchase'
+      window.plansUrl = 'https://standardnotes.com/plans'
+      window.dashboardUrl = 'https://standardnotes.com/dashboard'
+    </script>
 
-  <script src="../web/app.js" debug="false"></script>
-  <link rel="stylesheet" media="all" href="../web/app.css" debug="false" />
+    <script src="../web/app.js" debug="false"></script>
+    <link rel="stylesheet" media="all" href="../web/app.css" debug="false" />
 
-  <style>
-    html,
-    body {
-      min-width: 300px;
-    }
-  </style>
-</head>
+    <style>
+      html,
+      body {
+        min-width: 300px;
+        max-width: 350px;
+      }
+    </style>
+  </head>
 
-<body>
-</body>
-
+  <body></body>
 </html>
