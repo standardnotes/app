@@ -7,7 +7,17 @@ runtime.onMessage.addListener(async (message: RuntimeMessage) => {
     case RuntimeMessageTypes.HasSelection: {
       const selection = window.getSelection()
 
-      return !!selection && selection.rangeCount > 0
+      if (!selection) {
+        return false
+      }
+
+      if (selection.rangeCount < 1) {
+        return false
+      }
+
+      const range = selection.getRangeAt(0)
+
+      return !range.collapsed
     }
     case RuntimeMessageTypes.GetSelection: {
       const selection = window.getSelection()
