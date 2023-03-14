@@ -45,10 +45,10 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
   }, [setIsSigningOut])
 
   const [clippedContent, setClippedContent] = useState('')
-  const [convertedSuperContent, setConvertedSuperContent] = useState<any>()
+  const [, setConvertedSuperContent] = useState<string>()
 
   useEffect(() => {
-    runtime.onMessage.addListener((message, sender, sendResponse) => {
+    runtime.onMessage.addListener((message) => {
       if (message.type === 'clip-selection') {
         setClippedContent(message.payload)
       }

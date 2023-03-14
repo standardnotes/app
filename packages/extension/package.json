@@ -9,6 +9,7 @@
     "build-firefox": "yarn build && web-ext build --source-dir ./dist"
   },
   "devDependencies": {
+    "@types/webextension-polyfill": "^0.10.0",
     "babel-loader": "^9.1.0",
     "copy-webpack-plugin": "11.0.0",
     "ts-loader": "^9.4.2",

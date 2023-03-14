@@ -5056,6 +5056,7 @@ __metadata:
   resolution: "@standardnotes/extension@workspace:packages/extension"
   dependencies:
     "@mozilla/readability": ^0.4.2
+    "@types/webextension-polyfill": ^0.10.0
     babel-loader: ^9.1.0
     copy-webpack-plugin: 11.0.0
     ts-loader: ^9.4.2
@@ -6620,6 +6621,13 @@ __metadata:
   version: 1.10.6
   resolution: "@types/verror@npm:1.10.6"
   checksum: 650620b851d42cda6e5f6fa84f4d89c259b3f85f7443ee1c85f4f9a9e1ce7b472640c833ef483d0803f8100d6228a82fb9776f53d5539cfe1d8f06adfb04e10c
+  languageName: node
+  linkType: hard
+
+"@types/webextension-polyfill@npm:^0.10.0":
+  version: 0.10.0
+  resolution: "@types/webextension-polyfill@npm:0.10.0"
+  checksum: 1c6d0b3f6f1b1ba666c86d78d6bf079a5382e0c3084a307021ed19dc711a9fc044d82417e322ce403782e343b0fead8ad46db8d97ea19011fb1d85157e2b9d7f
   languageName: node
   linkType: hard
 

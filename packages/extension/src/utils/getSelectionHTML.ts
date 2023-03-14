@@ -3,7 +3,7 @@ import { tabs } from 'webextension-polyfill'
 export default async function getSelectionHTML() {
   const [activeTab] = await tabs.query({ active: true, currentWindow: true })
 
-  if (!activeTab) {
+  if (!activeTab || !activeTab.id) {
     return
   }
 
