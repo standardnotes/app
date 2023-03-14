@@ -124,7 +124,6 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
             >
               Clip article
             </MenuItem>
-            <MenuItem>Clip visible area</MenuItem>
             <MenuItem
               onClick={async () => {
                 const selectionContent = await getSelectionHTML()

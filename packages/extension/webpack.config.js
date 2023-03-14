@@ -2,8 +2,8 @@ const CopyPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   entry: {
-    background: './src/background/background.js',
-    content: './src/content/content.js',
+    background: './src/background/background.ts',
+    content: './src/content/content.ts',
   },
   output: {
     filename: '[name].js',
@@ -28,14 +28,22 @@ module.exports = {
     }),
   ],
   resolve: {
-    extensions: ['.js'],
+    extensions: ['.js', '.ts'],
   },
   module: {
     rules: [
       {
-        test: /\.js$/,
+        test: /\.(js|ts)$/,
         exclude: /node_modules/,
-        use: ['babel-loader'],
+        use: [
+          'babel-loader',
+          {
+            loader: 'ts-loader',
+            options: {
+              transpileOnly: true,
+            },
+          },
+        ],
       },
     ],
   },
