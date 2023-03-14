@@ -56,11 +56,15 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
   }, [])
 
   useEffect(() => {
-    const checkIfPageHasSelection = async () => {
-      setHasSelection(await sendMessageToActiveTab(RuntimeMessageTypes.HasSelection))
-    }
+    try {
+      const checkIfPageHasSelection = async () => {
+        setHasSelection(await sendMessageToActiveTab(RuntimeMessageTypes.HasSelection))
+      }
 
-    void checkIfPageHasSelection()
+      void checkIfPageHasSelection()
+    } catch (error) {
+      console.error(error)
+    }
   }, [])
 
   const superContentConversionFn = useCallback((editor: LexicalEditor, text: string) => {
@@ -70,6 +74,8 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
       const nodesToInsert = $generateNodesFromDOM(editor, dom).map((node) => {
         const type = node.getType()
 
+        // Wrap text & link nodes with paragraph since they can't
+        // be top-level nodes in Super
         if (type === 'text' || type === 'link') {
           const paragraphNode = $createParagraphNode()
           paragraphNode.append(node)

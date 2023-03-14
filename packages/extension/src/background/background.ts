@@ -2,9 +2,11 @@ import { runtime, contextMenus, browserAction } from 'webextension-polyfill'
 import { RuntimeMessage, RuntimeMessageTypes } from '../types/message'
 import sendMessageToActiveTab from '../utils/sendMessageToActiveTab'
 
+const ClipSelectionContextMenuId = 'sn-clip-selection' as const
+
 runtime.onInstalled.addListener(() => {
   contextMenus.create({
-    id: 'sn-clip-selection',
+    id: ClipSelectionContextMenuId,
     title: 'Clip selection to Standard Notes',
     contexts: ['selection'],
   })
