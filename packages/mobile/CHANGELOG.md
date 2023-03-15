@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.51.53](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.51.52...@standardnotes/mobile@3.51.53) (2023-03-15)
+
+### Bug Fixes
+
+* Disabled pane gesture navigation by default and moved it to Labs since it is unstable ([636de8f](https://github.com/standardnotes/app/commit/636de8fada2f8cb7ef0260de6b7301559147d682))
+
 ## [3.51.52](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.51.51...@standardnotes/mobile@3.51.52) (2023-03-10)
 
 **Note:** Version bump only for package @standardnotes/mobile
