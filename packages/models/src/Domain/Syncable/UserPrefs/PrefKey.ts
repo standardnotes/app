@@ -45,6 +45,7 @@ export enum PrefKey {
   SystemViewPreferences = 'systemViewPreferences',
   SuperNoteExportFormat = 'superNoteExportFormat',
   AuthenticatorNames = 'authenticatorNames',
+  PaneGesturesEnabled = 'paneGesturesEnabled',
 }
 
 export enum NewNoteTitleFormat {
@@ -113,4 +114,5 @@ export type PrefValue = {
   [PrefKey.SystemViewPreferences]: Partial<Record<SystemViewId, TagPreferences>>
   [PrefKey.SuperNoteExportFormat]: 'json' | 'md' | 'html'
   [PrefKey.AuthenticatorNames]: string
+  [PrefKey.PaneGesturesEnabled]: boolean
 }

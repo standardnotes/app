@@ -2,17 +2,28 @@ import { useStateRef } from '@/Hooks/useStateRef'
 import { useEffect, useRef, useState } from 'react'
 import { Direction, Pan, PointerListener, type GestureEventData } from 'contactjs'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { useApplication } from '../ApplicationProvider'
+import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
 
 export const usePaneSwipeGesture = (
   direction: 'left' | 'right',
   onSwipeEnd: (element: HTMLElement) => void,
   gesture: 'pan' | 'swipe' = 'pan',
 ) => {
+  const application = useApplication()
+
   const overlayElementRef = useRef<HTMLElement | null>(null)
   const [element, setElement] = useState<HTMLElement | null>(null)
 
   const onSwipeEndRef = useStateRef(onSwipeEnd)
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
+  const [isEnabled, setIsEnabled] = useState(() => application.getPreference(PrefKey.PaneGesturesEnabled, false))
+  useEffect(() => {
+    return application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
+      setIsEnabled(application.getPreference(PrefKey.PaneGesturesEnabled, false))
+    })
+  }, [application])
 
   useEffect(() => {
     if (!element) {
@@ -20,6 +31,10 @@ export const usePaneSwipeGesture = (
     }
 
     if (!isMobileScreen) {
+      return
+    }
+
+    if (!isEnabled) {
       return
     }
 
@@ -144,7 +159,7 @@ export const usePaneSwipeGesture = (
         }
       }
     }
-  }, [direction, element, gesture, isMobileScreen, onSwipeEndRef])
+  }, [direction, element, gesture, isMobileScreen, onSwipeEndRef, isEnabled])
 
   return [setElement]
 }
