@@ -1,6 +1,6 @@
 import { FunctionComponent, useCallback, useState } from 'react'
 import { observer } from 'mobx-react-lite'
-import { UseCaseInterface } from '@standardnotes/snjs'
+import { AddAuthenticator } from '@standardnotes/snjs'
 
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { UserProvider } from '@/Components/Preferences/Providers'
@@ -9,7 +9,7 @@ import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/u
 
 type Props = {
   userProvider: UserProvider
-  addAuthenticator: UseCaseInterface<void>
+  addAuthenticator: AddAuthenticator
   onDeviceAddingModalToggle: (show: boolean) => void
   onDeviceAdded: () => Promise<void>
 }
@@ -82,11 +82,22 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({
         },
       ]}
     >
-      <div className="w-25 h-25 flex items-center justify-center bg-info">...Some Cool Device Picture Here...</div>
-      <div className="flex flex-grow flex-col gap-2">
-        <DecoratedInput className={{ container: 'w-92 ml-4' }} value={deviceName} onChange={handleDeviceNameChange} />
+      <div className="flex px-4 py-4">
+        <div className="ml-4 flex flex-grow flex-col gap-1">
+          <label htmlFor="u2f-device-name" className="mb-2 text-sm font-semibold">
+            Device Name
+          </label>
+          <DecoratedInput
+            autofocus
+            id="u2f-device-name"
+            className={{ container: 'w-92' }}
+            value={deviceName}
+            onChange={handleDeviceNameChange}
+            onEnter={handleAddDeviceClick}
+          />
+          {errorMessage && <div className="mt-1.5 text-danger">{errorMessage}</div>}
+        </div>
       </div>
-      {errorMessage && <div className="text-error">{errorMessage}</div>}
     </Modal>
   )
 }

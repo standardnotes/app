@@ -21,8 +21,6 @@ type State = {
 type Props = {
   application: WebApplication
   className?: string
-  innerRef: (ref: HTMLDivElement) => void
-  id: string
 }
 
 class NoteGroupView extends AbstractComponent<Props, State> {
@@ -99,11 +97,7 @@ class NoteGroupView extends AbstractComponent<Props, State> {
     const hasControllers = this.state.controllers.length > 0
 
     return (
-      <div
-        id={this.props.id}
-        className={`flex h-full flex-grow flex-col pt-safe-top ${this.props.className}`}
-        ref={this.props.innerRef}
-      >
+      <>
         {this.state.showMultipleSelectedNotes && (
           <MultipleSelectedNotes
             application={this.application}
@@ -138,7 +132,7 @@ class NoteGroupView extends AbstractComponent<Props, State> {
             })}
           </>
         )}
-      </div>
+      </>
     )
   }
 }

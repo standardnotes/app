@@ -28,16 +28,28 @@ import {
   SessionRefreshedData,
 } from '@standardnotes/services'
 import { Base64String } from '@standardnotes/sncrypto-common'
-import { ClientDisplayableError, SessionBody } from '@standardnotes/responses'
+import {
+  ClientDisplayableError,
+  SessionBody,
+  ErrorTag,
+  HttpResponse,
+  isErrorResponse,
+  SessionListEntry,
+  User,
+  AvailableSubscriptions,
+  KeyParamsResponse,
+  SignInResponse,
+  ChangeCredentialsResponse,
+  SessionListResponse,
+  HttpSuccessResponse,
+} from '@standardnotes/responses'
 import { CopyPayloadWithContentOverride } from '@standardnotes/models'
-import { isNullOrUndefined } from '@standardnotes/utils'
-import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
-import { KeyParamsFromApiResponse, SNRootKeyParams, SNRootKey, CreateNewRootKey } from '@standardnotes/encryption'
-import * as Responses from '@standardnotes/responses'
+import { LegacySession, MapperInterface, Result, Session, SessionToken } from '@standardnotes/domain-core'
+import { KeyParamsFromApiResponse, SNRootKeyParams, SNRootKey } from '@standardnotes/encryption'
 import { Subscription } from '@standardnotes/security'
 import * as Common from '@standardnotes/common'
 
-import { RemoteSession, RawStorageValue } from './Sessions/Types'
+import { RawStorageValue } from './Sessions/Types'
 import { ShareToken } from './ShareToken'
 import { SNApiService } from '../Api/ApiService'
 import { DiskStorageService } from '../Storage/DiskStorageService'
@@ -48,8 +60,6 @@ import { ChallengeService } from '../Challenge'
 import {
   ApiCallError,
   ErrorMessage,
-  ErrorTag,
-  HttpErrorResponseBody,
   HttpServiceInterface,
   UserApiServiceInterface,
   UserRegistrationResponseBody,
@@ -76,7 +86,7 @@ export class SNSessionManager
   extends AbstractService<SessionEvent>
   implements SessionsClientInterface, InternalEventHandlerInterface
 {
-  private user?: Responses.User
+  private user?: User
   private isSessionRenewChallengePresented = false
   private session?: Session | LegacySession
 
@@ -120,7 +130,7 @@ export class SNSessionManager
     super.deinit()
   }
 
-  private setUser(user?: Responses.User) {
+  private setUser(user?: User) {
     this.user = user
     this.apiService.setUser(user)
   }
@@ -167,10 +177,10 @@ export class SNSessionManager
   }
 
   public offline() {
-    return isNullOrUndefined(this.apiService.getSession())
+    return this.apiService.getSession() == undefined
   }
 
-  public getUser(): Responses.User | undefined {
+  public getUser(): User | undefined {
     return this.user
   }
 
@@ -187,7 +197,7 @@ export class SNSessionManager
   }
 
   public getSureUser() {
-    return this.user as Responses.User
+    return this.user as User
   }
 
   public getSession() {
@@ -213,7 +223,7 @@ export class SNSessionManager
 
   public async reauthenticateInvalidSession(
     cancelable = true,
-    onResponse?: (response: Responses.HttpResponse) => void,
+    onResponse?: (response: HttpResponse) => void,
   ): Promise<void> {
     if (this.isSessionRenewChallengePresented) {
       return
@@ -241,16 +251,16 @@ export class SNSessionManager
           const email = challengeResponse.values[0].value as string
           const password = challengeResponse.values[1].value as string
           const currentKeyParams = this.protocolService.getAccountKeyParams()
-          const signInResult = await this.signIn(
+          const { response } = await this.signIn(
             email,
             password,
             false,
             this.diskStorageService.isEphemeralSession(),
             currentKeyParams?.version,
           )
-          if (signInResult.response.error) {
+          if (isErrorResponse(response)) {
             this.challengeService.setValidationStatusForChallenge(challenge, challengeResponse!.values[1], false)
-            onResponse?.(signInResult.response)
+            onResponse?.(response)
           } else {
             resolve()
             this.challengeService.completeChallenge(challenge)
@@ -263,26 +273,26 @@ export class SNSessionManager
     })
   }
 
-  public async getSubscription(): Promise<ClientDisplayableError | Subscription> {
+  public async getSubscription(): Promise<ClientDisplayableError | Subscription | undefined> {
     const result = await this.apiService.getSubscription(this.getSureUser().uuid)
 
-    if (result.error) {
-      return ClientDisplayableError.FromError(result.error)
+    if (isErrorResponse(result)) {
+      return ClientDisplayableError.FromError(result.data?.error)
     }
 
-    const subscription = (result as Responses.GetSubscriptionResponse).data!.subscription!
+    const subscription = result.data.subscription
 
     return subscription
   }
 
-  public async getAvailableSubscriptions(): Promise<Responses.AvailableSubscriptions | ClientDisplayableError> {
+  public async getAvailableSubscriptions(): Promise<AvailableSubscriptions | ClientDisplayableError> {
     const response = await this.apiService.getAvailableSubscriptions()
 
-    if (response.error) {
-      return ClientDisplayableError.FromError(response.error)
+    if (isErrorResponse(response)) {
+      return ClientDisplayableError.FromError(response.data.error)
     }
 
-    return (response as Responses.GetAvailableSubscriptionsResponse).data!
+    return response.data
   }
 
   private async promptForU2FVerification(username: string): Promise<Record<string, unknown> | undefined> {
@@ -361,7 +371,7 @@ export class SNSessionManager
     const registerResponse = await this.userApiService.register({ email, serverPassword, keyParams, ephemeral })
 
     if ('error' in registerResponse.data) {
-      throw new ApiCallError((registerResponse.data as HttpErrorResponseBody).error.message)
+      throw new ApiCallError(registerResponse.data.error.message)
     }
 
     await this.handleAuthentication({
@@ -376,37 +386,37 @@ export class SNSessionManager
 
   private async retrieveKeyParams(dto: {
     email: string
-    mfaKeyPath?: string
     mfaCode?: string
     authenticatorResponse?: Record<string, unknown>
   }): Promise<{
     keyParams?: SNRootKeyParams
-    response: Responses.KeyParamsResponse | Responses.HttpResponse
-    mfaKeyPath?: string
+    response: HttpResponse<KeyParamsResponse>
     mfaCode?: string
   }> {
     const response = await this.apiService.getAccountKeyParams(dto)
 
-    if (response.error || isNullOrUndefined(response.data)) {
+    if (isErrorResponse(response) || !response.data) {
       if (dto.mfaCode) {
         await this.alertService.alert(SignInStrings.IncorrectMfa)
       }
 
-      if ([ErrorTag.U2FRequired, ErrorTag.MfaRequired].includes(response.error?.tag as ErrorTag)) {
-        const isU2FRequired = response.error?.tag === ErrorTag.U2FRequired
+      const error = isErrorResponse(response) ? response.data.error : undefined
+
+      if (response.data && [ErrorTag.U2FRequired, ErrorTag.MfaRequired].includes(error?.tag as ErrorTag)) {
+        const isU2FRequired = error?.tag === ErrorTag.U2FRequired
         const result = isU2FRequired ? await this.promptForU2FVerification(dto.email) : await this.promptForMfaValue()
         if (!result) {
           return {
             response: this.apiService.createErrorResponse(
               SignInStrings.SignInCanceledMissingMfa,
-              Responses.StatusCode.CanceledMfa,
+              undefined,
+              ErrorTag.ClientCanceledMfa,
             ),
           }
         }
 
         return this.retrieveKeyParams({
           email: dto.email,
-          mfaKeyPath: isU2FRequired ? undefined : response.error?.payload?.mfa_key,
           mfaCode: isU2FRequired ? undefined : (result as string),
           authenticatorResponse: isU2FRequired ? (result as Record<string, unknown>) : undefined,
         })
@@ -415,13 +425,13 @@ export class SNSessionManager
       }
     }
     /** Make sure to use client value for identifier/email */
-    const keyParams = KeyParamsFromApiResponse(response as Responses.KeyParamsResponse, dto.email)
+    const keyParams = KeyParamsFromApiResponse(response.data, dto.email)
     if (!keyParams || !keyParams.version) {
       return {
         response: this.apiService.createErrorResponse(API_MESSAGE_FALLBACK_LOGIN_FAIL),
       }
     }
-    return { keyParams, response, mfaKeyPath: dto.mfaKeyPath, mfaCode: dto.mfaCode }
+    return { keyParams, response, mfaCode: dto.mfaCode }
   }
 
   public async signIn(
@@ -433,9 +443,9 @@ export class SNSessionManager
   ): Promise<SessionManagerResponse> {
     const result = await this.performSignIn(email, password, strict, ephemeral, minAllowedVersion)
     if (
-      result.response.error &&
-      result.response.error.status !== Responses.StatusCode.LocalValidationError &&
-      result.response.error.status !== Responses.StatusCode.CanceledMfa
+      isErrorResponse(result.response) &&
+      result.response.data.error.tag !== ErrorTag.ClientValidationError &&
+      result.response.data.error.tag !== ErrorTag.ClientCanceledMfa
     ) {
       const cleanedEmail = cleanedEmailString(email)
       if (cleanedEmail !== email) {
@@ -461,7 +471,7 @@ export class SNSessionManager
     const paramsResult = await this.retrieveKeyParams({
       email,
     })
-    if (paramsResult.response.error) {
+    if (isErrorResponse(paramsResult.response)) {
       return {
         response: paramsResult.response,
       }
@@ -512,7 +522,7 @@ export class SNSessionManager
       minAllowedVersion = this.protocolService.getLatestVersion()
     }
 
-    if (!isNullOrUndefined(minAllowedVersion)) {
+    if (minAllowedVersion != undefined) {
       if (!Common.leftVersionGreaterThanOrEqualToRight(keyParams.version, minAllowedVersion)) {
         return {
           response: this.apiService.createErrorResponse(StrictSignInFailed(keyParams.version, minAllowedVersion)),
@@ -521,6 +531,7 @@ export class SNSessionManager
     }
     const rootKey = await this.protocolService.computeRootKey(password, keyParams)
     const signInResponse = await this.bypassChecksAndSignInWithRootKey(email, rootKey, ephemeral)
+
     return {
       response: signInResponse,
     }
@@ -530,13 +541,14 @@ export class SNSessionManager
     email: string,
     rootKey: SNRootKey,
     ephemeral = false,
-  ): Promise<Responses.SignInResponse | Responses.HttpResponse> {
+  ): Promise<HttpResponse<SignInResponse>> {
     const { wrappingKey, canceled } = await this.challengeService.getWrappingKeyIfApplicable()
 
     if (canceled) {
       return this.apiService.createErrorResponse(
         SignInStrings.PasscodeRequired,
-        Responses.StatusCode.LocalValidationError,
+        undefined,
+        ErrorTag.ClientValidationError,
       )
     }
 
@@ -546,18 +558,18 @@ export class SNSessionManager
       ephemeral,
     })
 
-    if (signInResponse.error || !signInResponse.data) {
+    if (!signInResponse.data || isErrorResponse(signInResponse)) {
       return signInResponse
     }
 
-    const updatedKeyParams = (signInResponse as Responses.SignInResponse).data.key_params
+    const updatedKeyParams = signInResponse.data.key_params
     const expandedRootKey = new SNRootKey(
       CopyPayloadWithContentOverride(rootKey.payload, {
         keyParams: updatedKeyParams || rootKey.keyParams.getPortableValue(),
       }),
     )
 
-    await this.handleSuccessAuthResponse(signInResponse as Responses.SignInResponse, expandedRootKey, wrappingKey)
+    await this.handleSuccessAuthResponse(signInResponse, expandedRootKey, wrappingKey)
 
     return signInResponse
   }
@@ -577,86 +589,55 @@ export class SNSessionManager
       newEmail: parameters.newEmail,
     })
 
-    return this.processChangeCredentialsResponse(
-      response as Responses.ChangeCredentialsResponse,
-      parameters.newRootKey,
-      parameters.wrappingKey,
-    )
+    return this.processChangeCredentialsResponse(response, parameters.newRootKey, parameters.wrappingKey)
   }
 
-  public async getSessionsList(): Promise<
-    (Responses.HttpResponse & { data: RemoteSession[] }) | Responses.HttpResponse
-  > {
+  public async getSessionsList(): Promise<HttpResponse<SessionListEntry[]>> {
     const response = await this.apiService.getSessionsList()
-    if (response.error || isNullOrUndefined(response.data)) {
+
+    if (isErrorResponse(response)) {
       return response
     }
-    ;(
-      response as Responses.HttpResponse & {
-        data: RemoteSession[]
-      }
-    ).data = (response as Responses.SessionListResponse).data
-      .map<RemoteSession>((session) => ({
-        ...session,
-        updated_at: new Date(session.updated_at),
-      }))
-      .sort((s1: RemoteSession, s2: RemoteSession) => (s1.updated_at < s2.updated_at ? 1 : -1))
+
+    response.data = response.data.sort((s1: SessionListEntry, s2: SessionListEntry) => {
+      return new Date(s1.updated_at) < new Date(s2.updated_at) ? 1 : -1
+    })
+
     return response
   }
 
-  public async revokeSession(sessionId: UuidString): Promise<Responses.HttpResponse> {
-    const response = await this.apiService.deleteSession(sessionId)
-    return response
+  public async revokeSession(sessionId: UuidString): Promise<HttpResponse<SessionListResponse>> {
+    return this.apiService.deleteSession(sessionId)
   }
 
   public async revokeAllOtherSessions(): Promise<void> {
     const response = await this.getSessionsList()
-    if (response.error != undefined || response.data == undefined) {
-      throw new Error(response.error?.message ?? API_MESSAGE_GENERIC_SYNC_FAIL)
+    if (isErrorResponse(response) || !response.data) {
+      const error = isErrorResponse(response) ? response.data?.error : undefined
+      throw new Error(error?.message ?? API_MESSAGE_GENERIC_SYNC_FAIL)
     }
-    const sessions = response.data as RemoteSession[]
-    const otherSessions = sessions.filter((session) => !session.current)
+
+    const otherSessions = response.data.filter((session) => !session.current)
     await Promise.all(otherSessions.map((session) => this.revokeSession(session.uuid)))
   }
 
   private async processChangeCredentialsResponse(
-    response: Responses.ChangeCredentialsResponse,
+    response: HttpResponse<ChangeCredentialsResponse>,
     newRootKey: SNRootKey,
     wrappingKey?: SNRootKey,
   ): Promise<SessionManagerResponse> {
-    if (!response.error && response.data) {
-      await this.handleSuccessAuthResponse(response as Responses.ChangeCredentialsResponse, newRootKey, wrappingKey)
+    if (isErrorResponse(response)) {
+      return {
+        response: response,
+      }
     }
+
+    await this.handleSuccessAuthResponse(response, newRootKey, wrappingKey)
+
     return {
       response: response,
-      keyParams: (response as Responses.ChangeCredentialsResponse).data?.key_params,
+      keyParams: response.data?.key_params,
     }
-  }
-
-  public async createDemoShareToken(): Promise<Base64String | ClientDisplayableError> {
-    const session = this.getSession()
-    if (!session) {
-      return new ClientDisplayableError('Cannot generate share token without active session')
-    }
-    if (!(session instanceof Session)) {
-      return new ClientDisplayableError('Cannot generate share token with non-token session')
-    }
-
-    const keyParams = (await this.protocolService.getRootKeyParams()) as SNRootKeyParams
-
-    const payload: ShareToken = {
-      accessToken: session.accessToken.value,
-      refreshToken: session.refreshToken.value,
-      accessExpiration: session.accessToken.expiresAt,
-      refreshExpiration: session.refreshToken.expiresAt,
-      readonlyAccess: true,
-      masterKey: this.protocolService.getRootKey()?.masterKey as string,
-      keyParams: keyParams.content,
-      user: this.getSureUser(),
-      host: this.apiService.getHost(),
-    }
-
-    return this.protocolService.crypto.base64Encode(JSON.stringify(payload))
   }
 
   private decodeDemoShareToken(token: Base64String): ShareToken {
@@ -667,30 +648,12 @@ export class SNSessionManager
   public async populateSessionFromDemoShareToken(token: Base64String): Promise<void> {
     const sharePayload = this.decodeDemoShareToken(token)
 
-    const rootKey = CreateNewRootKey({
-      masterKey: sharePayload.masterKey,
-      keyParams: sharePayload.keyParams,
-      version: sharePayload.keyParams.version,
-    })
-
-    const user = sharePayload.user
-
-    const session = this.createSession(
-      sharePayload.accessToken,
-      sharePayload.accessExpiration,
-      sharePayload.refreshToken,
-      sharePayload.refreshExpiration,
-      sharePayload.readonlyAccess,
-    )
-
-    if (session !== null) {
-      await this.populateSession(rootKey, user, session, sharePayload.host)
-    }
+    await this.signIn(sharePayload.email, sharePayload.password, false, true)
   }
 
   private async populateSession(
     rootKey: SNRootKey,
-    user: Responses.User,
+    user: User,
     session: Session | LegacySession,
     host: string,
     wrappingKey?: SNRootKey,
@@ -717,47 +680,65 @@ export class SNSessionManager
     rootKey: SNRootKey
     wrappingKey?: SNRootKey
   }): Promise<void> {
-    const session = this.createSession(
+    const sessionOrError = this.createSession(
       dto.session.access_token,
       dto.session.access_expiration,
       dto.session.refresh_token,
       dto.session.refresh_expiration,
       dto.session.readonly_access,
     )
+    if (sessionOrError.isFailed()) {
+      console.error(sessionOrError.getError())
 
-    if (session !== null) {
-      await this.populateSession(dto.rootKey, dto.user, session, this.apiService.getHost(), dto.wrappingKey)
+      return
     }
+
+    await this.populateSession(
+      dto.rootKey,
+      dto.user,
+      sessionOrError.getValue(),
+      this.apiService.getHost(),
+      dto.wrappingKey,
+    )
   }
 
   /**
    * @deprecated use handleAuthentication instead
    */
   private async handleSuccessAuthResponse(
-    response: Responses.SignInResponse | Responses.ChangeCredentialsResponse,
+    response: HttpSuccessResponse<SignInResponse | ChangeCredentialsResponse>,
     rootKey: SNRootKey,
     wrappingKey?: SNRootKey,
   ) {
     const { data } = response
-    const user = data.user as Responses.User
+    const user = data.user
 
     const isLegacyJwtResponse = data.token != undefined
     if (isLegacyJwtResponse) {
       const sessionOrError = LegacySession.create(data.token as string)
-      if (!sessionOrError.isFailed()) {
+      if (!sessionOrError.isFailed() && user) {
         await this.populateSession(rootKey, user, sessionOrError.getValue(), this.apiService.getHost(), wrappingKey)
       }
     } else if (data.session) {
-      const session = this.createSession(
+      const sessionOrError = this.createSession(
         data.session.access_token,
         data.session.access_expiration,
         data.session.refresh_token,
         data.session.refresh_expiration,
         data.session.readonly_access,
       )
-      if (session !== null) {
-        await this.populateSession(rootKey, user, session, this.apiService.getHost(), wrappingKey)
+      if (sessionOrError.isFailed()) {
+        console.error(sessionOrError.getError())
+
+        return
       }
+      if (!user) {
+        console.error('No user in response')
+
+        return
+      }
+
+      await this.populateSession(rootKey, user, sessionOrError.getValue(), this.apiService.getHost(), wrappingKey)
     }
   }
 
@@ -767,25 +748,25 @@ export class SNSessionManager
     refreshTokenValue: string,
     refreshExpiration: number,
     readonlyAccess: boolean,
-  ): Session | null {
+  ): Result<Session> {
     const accessTokenOrError = SessionToken.create(accessTokenValue, accessExpiration)
     if (accessTokenOrError.isFailed()) {
-      return null
+      return Result.fail(`Could not create session: ${accessTokenOrError.getError()}`)
     }
     const accessToken = accessTokenOrError.getValue()
 
     const refreshTokenOrError = SessionToken.create(refreshTokenValue, refreshExpiration)
     if (refreshTokenOrError.isFailed()) {
-      return null
+      return Result.fail(`Could not create session: ${refreshTokenOrError.getError()}`)
     }
     const refreshToken = refreshTokenOrError.getValue()
 
     const sessionOrError = Session.create(accessToken, refreshToken, readonlyAccess)
     if (sessionOrError.isFailed()) {
-      return null
+      return Result.fail(`Could not create session: ${sessionOrError.getError()}`)
     }
 
-    return sessionOrError.getValue()
+    return Result.ok(sessionOrError.getValue())
   }
 
   override getDiagnostics(): Promise<DiagnosticInfo | undefined> {

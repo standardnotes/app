@@ -1,33 +1,48 @@
 import { isString, joinPaths, sleep } from '@standardnotes/utils'
 import { Environment } from '@standardnotes/models'
 import { Session, SessionToken } from '@standardnotes/domain-core'
-
-import { HttpRequestParams } from './HttpRequestParams'
-import { HttpVerb } from './HttpVerb'
-import { HttpRequest } from './HttpRequest'
-import { HttpResponse } from './HttpResponse'
+import {
+  HttpStatusCode,
+  HttpRequestParams,
+  HttpVerb,
+  HttpRequest,
+  HttpResponse,
+  HttpResponseMeta,
+  HttpErrorResponse,
+  isErrorResponse,
+} from '@standardnotes/responses'
 import { HttpServiceInterface } from './HttpServiceInterface'
-import { HttpStatusCode } from './HttpStatusCode'
 import { XMLHttpRequestState } from './XMLHttpRequestState'
 import { ErrorMessage } from '../Error/ErrorMessage'
-import { HttpResponseMeta } from './HttpResponseMeta'
-import { HttpErrorResponseBody } from './HttpErrorResponseBody'
+
 import { Paths } from '../Server/Auth/Paths'
-import { SessionRefreshResponse } from '../Response/Auth/SessionRefreshResponse'
+import { SessionRefreshResponseBody } from '../Response/Auth/SessionRefreshResponseBody'
 
 export class HttpService implements HttpServiceInterface {
   private session: Session | null
   private __latencySimulatorMs?: number
   private declare host: string
 
-  constructor(
-    private environment: Environment,
-    private appVersion: string,
-    private snjsVersion: string,
-    private updateMetaCallback: (meta: HttpResponseMeta) => void,
-    private refreshSessionCallback: (session: Session) => void,
-  ) {
+  private inProgressRefreshSessionPromise?: Promise<boolean>
+  private updateMetaCallback!: (meta: HttpResponseMeta) => void
+  private refreshSessionCallback!: (session: Session) => void
+
+  constructor(private environment: Environment, private appVersion: string, private snjsVersion: string) {
     this.session = null
+  }
+
+  setCallbacks(
+    updateMetaCallback: (meta: HttpResponseMeta) => void,
+    refreshSessionCallback: (session: Session) => void,
+  ): void {
+    this.updateMetaCallback = updateMetaCallback
+    this.refreshSessionCallback = refreshSessionCallback
+  }
+
+  public deinit(): void {
+    this.session = null
+    ;(this.updateMetaCallback as unknown) = undefined
+    ;(this.refreshSessionCallback as unknown) = undefined
   }
 
   setSession(session: Session): void {
@@ -38,7 +53,7 @@ export class HttpService implements HttpServiceInterface {
     this.host = host
   }
 
-  async get(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse> {
+  async get<T>(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>> {
     return this.runHttp({
       url: joinPaths(this.host, path),
       params,
@@ -47,7 +62,7 @@ export class HttpService implements HttpServiceInterface {
     })
   }
 
-  async post(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse> {
+  async post<T>(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>> {
     return this.runHttp({
       url: joinPaths(this.host, path),
       params,
@@ -56,7 +71,7 @@ export class HttpService implements HttpServiceInterface {
     })
   }
 
-  async put(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse> {
+  async put<T>(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>> {
     return this.runHttp({
       url: joinPaths(this.host, path),
       params,
@@ -65,7 +80,7 @@ export class HttpService implements HttpServiceInterface {
     })
   }
 
-  async patch(path: string, params: HttpRequestParams, authentication?: string): Promise<HttpResponse> {
+  async patch<T>(path: string, params: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>> {
     return this.runHttp({
       url: joinPaths(this.host, path),
       params,
@@ -74,7 +89,7 @@ export class HttpService implements HttpServiceInterface {
     })
   }
 
-  async delete(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse> {
+  async delete<T>(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>> {
     return this.runHttp({
       url: joinPaths(this.host, path),
       params,
@@ -83,23 +98,36 @@ export class HttpService implements HttpServiceInterface {
     })
   }
 
-  private async runHttp(httpRequest: HttpRequest): Promise<HttpResponse> {
+  async runHttp<T>(httpRequest: HttpRequest): Promise<HttpResponse<T>> {
+    if (this.inProgressRefreshSessionPromise) {
+      await this.inProgressRefreshSessionPromise
+
+      httpRequest.authentication = this.session?.accessToken.value
+    }
+
     const request = this.createXmlRequest(httpRequest)
 
     if (this.__latencySimulatorMs) {
       await sleep(this.__latencySimulatorMs, true)
     }
 
-    const response = await this.runRequest(request, this.createRequestBody(httpRequest))
+    const response = await this.runRequest<T>(request, this.createRequestBody(httpRequest))
 
     if (response.meta) {
-      this.updateMetaCallback(response.meta)
+      this.updateMetaCallback?.(response.meta)
     }
 
     if (response.status === HttpStatusCode.ExpiredAccessToken) {
-      const isSessionRefreshed = await this.refreshSession()
-      if (!isSessionRefreshed) {
-        return response
+      if (this.inProgressRefreshSessionPromise) {
+        await this.inProgressRefreshSessionPromise
+      } else {
+        this.inProgressRefreshSessionPromise = this.refreshSession()
+        const isSessionRefreshed = await this.inProgressRefreshSessionPromise
+        this.inProgressRefreshSessionPromise = undefined
+
+        if (!isSessionRefreshed) {
+          return response
+        }
       }
 
       httpRequest.authentication = this.session?.accessToken.value
@@ -115,17 +143,17 @@ export class HttpService implements HttpServiceInterface {
       return false
     }
 
-    const response = (await this.post(Paths.v1.refreshSession, {
+    const response = await this.post<SessionRefreshResponseBody>(Paths.v1.refreshSession, {
       access_token: this.session.accessToken.value,
       refresh_token: this.session.refreshToken.value,
-    })) as SessionRefreshResponse
+    })
 
-    if (response.data.error) {
+    if (isErrorResponse(response)) {
       return false
     }
 
     if (response.meta) {
-      this.updateMetaCallback(response.meta)
+      this.updateMetaCallback?.(response.meta)
     }
 
     const accessTokenOrError = SessionToken.create(
@@ -135,6 +163,7 @@ export class HttpService implements HttpServiceInterface {
     if (accessTokenOrError.isFailed()) {
       return false
     }
+
     const accessToken = accessTokenOrError.getValue()
 
     const refreshTokenOrError = SessionToken.create(
@@ -144,6 +173,7 @@ export class HttpService implements HttpServiceInterface {
     if (refreshTokenOrError.isFailed()) {
       return false
     }
+
     const refreshToken = refreshTokenOrError.getValue()
 
     const sessionOrError = Session.create(accessToken, refreshToken, response.data.session.readonly_access)
@@ -204,27 +234,24 @@ export class HttpService implements HttpServiceInterface {
     return request
   }
 
-  private async runRequest(request: XMLHttpRequest, body?: string | Uint8Array): Promise<HttpResponse> {
-    return new Promise((resolve, reject) => {
+  private async runRequest<T>(request: XMLHttpRequest, body?: string | Uint8Array): Promise<HttpResponse<T>> {
+    return new Promise((resolve) => {
       request.onreadystatechange = () => {
-        this.stateChangeHandlerForRequest(request, resolve, reject)
+        this.stateChangeHandlerForRequest(request, resolve)
       }
       request.send(body)
     })
   }
 
-  private stateChangeHandlerForRequest(
-    request: XMLHttpRequest,
-    resolve: (response: HttpResponse) => void,
-    reject: (response: HttpResponse) => void,
-  ) {
+  private stateChangeHandlerForRequest<T>(request: XMLHttpRequest, resolve: (response: HttpResponse<T>) => void) {
     if (request.readyState !== XMLHttpRequestState.Completed) {
       return
     }
     const httpStatus = request.status
-    const response: HttpResponse = {
+    const response: HttpResponse<T> = {
       status: httpStatus,
       headers: new Map<string, string | null>(),
+      data: {} as T,
     }
 
     const responseHeaderLines = request
@@ -266,12 +293,29 @@ export class HttpService implements HttpServiceInterface {
       console.error(error)
     }
     if (httpStatus >= HttpStatusCode.Success && httpStatus < HttpStatusCode.InternalServerError) {
-      if (httpStatus === HttpStatusCode.Forbidden && response.data && response.data.error !== undefined) {
-        ;(response.data as HttpErrorResponseBody).error.message = ErrorMessage.RateLimited
+      if (
+        httpStatus === HttpStatusCode.Forbidden &&
+        response.data &&
+        (response as HttpErrorResponse).data.error !== undefined
+      ) {
+        ;(response as HttpErrorResponse).data.error.message = ErrorMessage.RateLimited
       }
       resolve(response)
     } else {
-      reject(response)
+      const errorResponse = response as HttpErrorResponse
+      if (!errorResponse.data) {
+        errorResponse.data = {
+          error: {
+            message: 'Unknown error',
+          },
+        }
+      }
+      if (!errorResponse.data.error) {
+        errorResponse.data.error = {
+          message: 'Unknown error',
+        }
+      }
+      resolve(response as HttpErrorResponse)
     }
   }
 

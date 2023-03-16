@@ -1,5 +1,3 @@
-import { SettingName, SubscriptionSettingName } from '@standardnotes/settings'
-
 const FilesPaths = {
   closeUploadSession: '/v1/files/upload/close-session',
   createFileValetToken: '/v1/files/valet-tokens',
@@ -31,8 +29,8 @@ const ItemsPaths = {
 
 const SettingsPaths = {
   settings: (userUuid: string) => `/v1/users/${userUuid}/settings`,
-  setting: (userUuid: string, settingName: SettingName) => `/v1/users/${userUuid}/settings/${settingName}`,
-  subscriptionSetting: (userUuid: string, settingName: SubscriptionSettingName) =>
+  setting: (userUuid: string, settingName: string) => `/v1/users/${userUuid}/settings/${settingName}`,
+  subscriptionSetting: (userUuid: string, settingName: string) =>
     `/v1/users/${userUuid}/subscription-settings/${settingName}`,
 }
 

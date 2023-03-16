@@ -3,12 +3,14 @@ import { UserRequestType } from '@standardnotes/common'
 
 import { ErrorMessage } from '../../Error/ErrorMessage'
 import { ApiCallError } from '../../Error/ApiCallError'
-import { UserRegistrationResponse } from '../../Response/User/UserRegistrationResponse'
 import { UserServerInterface } from '../../Server/User/UserServerInterface'
 import { ApiVersion } from '../../Api/ApiVersion'
 import { ApiEndpointParam } from '../../Request/ApiEndpointParam'
-import { UserRequestResponse } from '../../Response/UserRequest/UserRequestResponse'
-import { UserDeletionResponse } from '../../Response/User/UserDeletionResponse'
+import { HttpResponse } from '@standardnotes/responses'
+
+import { UserDeletionResponseBody } from '../../Response/User/UserDeletionResponseBody'
+import { UserRegistrationResponseBody } from '../../Response/User/UserRegistrationResponseBody'
+import { UserRequestResponseBody } from '../../Response/UserRequest/UserRequestResponseBody'
 import { UserRequestServerInterface } from '../../Server/UserRequest/UserRequestServerInterface'
 
 import { UserApiOperations } from './UserApiOperations'
@@ -21,7 +23,7 @@ export class UserApiService implements UserApiServiceInterface {
     this.operationsInProgress = new Map()
   }
 
-  async deleteAccount(userUuid: string): Promise<UserDeletionResponse> {
+  async deleteAccount(userUuid: string): Promise<HttpResponse<UserDeletionResponseBody>> {
     this.lockOperation(UserApiOperations.DeletingAccount)
 
     try {
@@ -37,7 +39,10 @@ export class UserApiService implements UserApiServiceInterface {
     }
   }
 
-  async submitUserRequest(dto: { userUuid: string; requestType: UserRequestType }): Promise<UserRequestResponse> {
+  async submitUserRequest(dto: {
+    userUuid: string
+    requestType: UserRequestType
+  }): Promise<HttpResponse<UserRequestResponseBody>> {
     this.lockOperation(UserApiOperations.SubmittingRequest)
 
     try {
@@ -59,7 +64,7 @@ export class UserApiService implements UserApiServiceInterface {
     serverPassword: string
     keyParams: RootKeyParamsInterface
     ephemeral: boolean
-  }): Promise<UserRegistrationResponse> {
+  }): Promise<HttpResponse<UserRegistrationResponseBody>> {
     this.lockOperation(UserApiOperations.Registering)
 
     try {

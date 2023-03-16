@@ -3,6 +3,38 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.23](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.22...@standardnotes/encryption@1.21.23) (2023-03-15)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.22](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.21...@standardnotes/encryption@1.21.22) (2023-03-10)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.21](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.20...@standardnotes/encryption@1.21.21) (2023-03-10)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.20](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.19...@standardnotes/encryption@1.21.20) (2023-03-09)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.19](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.18...@standardnotes/encryption@1.21.19) (2023-03-08)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.18](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.17...@standardnotes/encryption@1.21.18) (2023-03-01)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.17](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.16...@standardnotes/encryption@1.21.17) (2023-03-01)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.16](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.15...@standardnotes/encryption@1.21.16) (2023-02-15)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
 ## [1.21.15](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.14...@standardnotes/encryption@1.21.15) (2023-02-02)
 
 **Note:** Version bump only for package @standardnotes/encryption

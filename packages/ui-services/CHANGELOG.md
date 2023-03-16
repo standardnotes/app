@@ -3,6 +3,56 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.24.38](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.37...@standardnotes/ui-services@1.24.38) (2023-03-15)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.37](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.36...@standardnotes/ui-services@1.24.37) (2023-03-10)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.36](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.35...@standardnotes/ui-services@1.24.36) (2023-03-10)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.35](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.34...@standardnotes/ui-services@1.24.35) (2023-03-09)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.34](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.33...@standardnotes/ui-services@1.24.34) (2023-03-08)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.33](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.32...@standardnotes/ui-services@1.24.33) (2023-03-07)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.32](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.31...@standardnotes/ui-services@1.24.32) (2023-03-07)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.31](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.30...@standardnotes/ui-services@1.24.31) (2023-03-03)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.30](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.29...@standardnotes/ui-services@1.24.30) (2023-03-01)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.29](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.28...@standardnotes/ui-services@1.24.29) (2023-03-01)
+
+### Bug Fixes
+
+* Fixes issue where preferences view would not close after pressing Escape ([6c120ff](https://github.com/standardnotes/app/commit/6c120ffde2c01309d146505ec52a07e504310595))
+
+## [1.24.28](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.27...@standardnotes/ui-services@1.24.28) (2023-02-23)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
+## [1.24.27](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.26...@standardnotes/ui-services@1.24.27) (2023-02-15)
+
+**Note:** Version bump only for package @standardnotes/ui-services
+
 ## [1.24.26](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.24.25...@standardnotes/ui-services@1.24.26) (2023-02-03)
 
 **Note:** Version bump only for package @standardnotes/ui-services

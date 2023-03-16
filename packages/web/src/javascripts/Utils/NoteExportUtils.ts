@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/Application'
-import { exportSuperNote } from '@/Components/NoteView/SuperEditor/SuperNoteExporter'
+import { exportSuperNote } from '@/Components/SuperEditor/SuperNoteExporter'
 import { NoteType, PrefKey, SNNote } from '@standardnotes/snjs'
 
 export const getNoteFormat = (application: WebApplication, note: SNNote) => {

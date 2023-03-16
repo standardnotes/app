@@ -9,7 +9,7 @@ import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/Pre
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 
-import NoProSubscription from './NoProSubscription'
+import NoProSubscription from '../NoProSubscription'
 import InvitationsList from './InvitationsList'
 import Invite from './Invite/Invite'
 import Button from '@/Components/Button/Button'
@@ -57,7 +57,15 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
                 </ModalOverlay>
               </div>
             ) : (
-              <NoProSubscription application={application} />
+              <NoProSubscription
+                application={application}
+                text={
+                  <span>
+                    Subscription sharing is available only on the <span className="font-bold">Professional</span> plan.
+                    Please upgrade in order to share your subscription.
+                  </span>
+                }
+              />
             )}
           </div>
         </div>

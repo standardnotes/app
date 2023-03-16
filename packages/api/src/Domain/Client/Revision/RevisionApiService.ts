@@ -1,12 +1,13 @@
 import { ErrorMessage } from '../../Error/ErrorMessage'
 import { ApiCallError } from '../../Error/ApiCallError'
+import { HttpResponse } from '@standardnotes/responses'
 
 import { RevisionApiServiceInterface } from './RevisionApiServiceInterface'
 import { RevisionApiOperations } from './RevisionApiOperations'
 import { RevisionServerInterface } from '../../Server'
-import { DeleteRevisionResponse } from '../../Response/Revision/DeleteRevisionResponse'
-import { GetRevisionResponse } from '../../Response/Revision/GetRevisionResponse'
-import { ListRevisionsResponse } from '../../Response/Revision/ListRevisionsResponse'
+import { DeleteRevisionResponseBody } from '../../Response/Revision/DeleteRevisionResponseBody'
+import { GetRevisionResponseBody } from '../../Response/Revision/GetRevisionResponseBody'
+import { ListRevisionsResponseBody } from '../../Response/Revision/ListRevisionsResponseBody'
 
 export class RevisionApiService implements RevisionApiServiceInterface {
   private operationsInProgress: Map<RevisionApiOperations, boolean>
@@ -15,7 +16,7 @@ export class RevisionApiService implements RevisionApiServiceInterface {
     this.operationsInProgress = new Map()
   }
 
-  async listRevisions(itemUuid: string): Promise<ListRevisionsResponse> {
+  async listRevisions(itemUuid: string): Promise<HttpResponse<ListRevisionsResponseBody>> {
     if (this.operationsInProgress.get(RevisionApiOperations.List)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }
@@ -35,7 +36,7 @@ export class RevisionApiService implements RevisionApiServiceInterface {
     }
   }
 
-  async getRevision(itemUuid: string, revisionUuid: string): Promise<GetRevisionResponse> {
+  async getRevision(itemUuid: string, revisionUuid: string): Promise<HttpResponse<GetRevisionResponseBody>> {
     if (this.operationsInProgress.get(RevisionApiOperations.Get)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }
@@ -56,7 +57,7 @@ export class RevisionApiService implements RevisionApiServiceInterface {
     }
   }
 
-  async deleteRevision(itemUuid: string, revisionUuid: string): Promise<DeleteRevisionResponse> {
+  async deleteRevision(itemUuid: string, revisionUuid: string): Promise<HttpResponse<DeleteRevisionResponseBody>> {
     if (this.operationsInProgress.get(RevisionApiOperations.Delete)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }

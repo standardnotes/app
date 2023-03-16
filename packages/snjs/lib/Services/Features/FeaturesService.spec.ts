@@ -725,7 +725,7 @@ describe('featuresService', () => {
 
       const featuresService = createService()
       await featuresService.migrateFeatureRepoToUserSetting([extensionRepoItem])
-      expect(settingsService.updateSetting).toHaveBeenCalledWith(SettingName.ExtensionKey, extensionKey, true)
+      expect(settingsService.updateSetting).toHaveBeenCalledWith(SettingName.create(SettingName.NAMES.ExtensionKey).getValue(), extensionKey, true)
     })
   })
 

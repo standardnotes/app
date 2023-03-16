@@ -37,12 +37,16 @@
         overflow: hidden;
       }
 
-      .note-view-linking-container {
+      .note-view-linking-container,
+      #toggle-linking-container {
         display: none;
       }
 
-      #editor-title-bar:hover .note-view-linking-container {
-        display: flex;
+      #editor-title-bar:hover {
+        .note-view-linking-container,
+        #toggle-linking-container {
+          display: flex;
+        }
       }
 
       .note-view-options-buttons,

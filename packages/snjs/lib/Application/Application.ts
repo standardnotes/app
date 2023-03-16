@@ -22,10 +22,6 @@ import {
   WebSocketApiServiceInterface,
   WebSocketServer,
   WebSocketServerInterface,
-  WorkspaceApiService,
-  WorkspaceApiServiceInterface,
-  WorkspaceServer,
-  WorkspaceServerInterface,
 } from '@standardnotes/api'
 import * as Common from '@standardnotes/common'
 import * as ExternalServices from '@standardnotes/services'
@@ -57,8 +53,6 @@ import {
   FileService,
   SubscriptionClientInterface,
   SubscriptionManager,
-  WorkspaceClientInterface,
-  WorkspaceManager,
   ChallengePrompt,
   Challenge,
   ErrorAlertStrings,
@@ -85,18 +79,17 @@ import {
   DecryptedItemInterface,
   EncryptedItemInterface,
   Environment,
-  HistoryEntry,
   ItemStream,
   Platform,
 } from '@standardnotes/models'
-import { ClientDisplayableError } from '@standardnotes/responses'
+import { ClientDisplayableError, SessionListEntry } from '@standardnotes/responses'
 
 import { SnjsVersion } from './../Version'
 import { SNLog } from '../Log'
 import { ChallengeResponse, ListedClientInterface } from '../Services'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
-import { LegacySession, MapperInterface, Session, UseCaseInterface } from '@standardnotes/domain-core'
+import { LegacySession, MapperInterface, Session } from '@standardnotes/domain-core'
 import { SessionStorageMapper } from '@Lib/Services/Mapping/SessionStorageMapper'
 import { LegacySessionStorageMapper } from '@Lib/Services/Mapping/LegacySessionStorageMapper'
 import { SignInWithRecoveryCodes } from '@Lib/Domain/UseCase/SignInWithRecoveryCodes/SignInWithRecoveryCodes'
@@ -108,7 +101,6 @@ import { DeleteAuthenticator } from '@Lib/Domain/UseCase/DeleteAuthenticator/Del
 import { ListRevisions } from '@Lib/Domain/UseCase/ListRevisions/ListRevisions'
 import { GetRevision } from '@Lib/Domain/UseCase/GetRevision/GetRevision'
 import { DeleteRevision } from '@Lib/Domain/UseCase/DeleteRevision/DeleteRevision'
-import { RevisionMetadata } from '@Lib/Domain/Revision/RevisionMetadata'
 import { GetAuthenticatorAuthenticationResponse } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationResponse/GetAuthenticatorAuthenticationResponse'
 
 /** How often to automatically sync, in milliseconds */
@@ -139,7 +131,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   /**
    * @deprecated will be fully replaced by @standardnotes/api::HttpService
    */
-  private deprecatedHttpService!: InternalServices.SNHttpService
+  private deprecatedHttpService!: InternalServices.DeprecatedHttpService
   private declare httpService: HttpServiceInterface
   private payloadManager!: InternalServices.PayloadManager
   public protocolService!: EncryptionService
@@ -155,9 +147,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare subscriptionApiService: SubscriptionApiServiceInterface
   private declare subscriptionServer: SubscriptionServerInterface
   private declare subscriptionManager: SubscriptionClientInterface
-  private declare workspaceApiService: WorkspaceApiServiceInterface
-  private declare workspaceServer: WorkspaceServerInterface
-  private declare workspaceManager: WorkspaceClientInterface
   private declare webSocketApiService: WebSocketApiServiceInterface
   private declare webSocketServer: WebSocketServerInterface
   private sessionManager!: InternalServices.SNSessionManager
@@ -275,43 +264,39 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.subscriptionManager
   }
 
-  get workspaces(): ExternalServices.WorkspaceClientInterface {
-    return this.workspaceManager
-  }
-
-  get signInWithRecoveryCodes(): UseCaseInterface<void> {
+  get signInWithRecoveryCodes(): SignInWithRecoveryCodes {
     return this._signInWithRecoveryCodes
   }
 
-  get getRecoveryCodes(): UseCaseInterface<string> {
+  get getRecoveryCodes(): GetRecoveryCodes {
     return this._getRecoveryCodes
   }
 
-  get addAuthenticator(): UseCaseInterface<void> {
+  get addAuthenticator(): AddAuthenticator {
     return this._addAuthenticator
   }
 
-  get listAuthenticators(): UseCaseInterface<Array<{ id: string; name: string }>> {
+  get listAuthenticators(): ListAuthenticators {
     return this._listAuthenticators
   }
 
-  get deleteAuthenticator(): UseCaseInterface<void> {
+  get deleteAuthenticator(): DeleteAuthenticator {
     return this._deleteAuthenticator
   }
 
-  get getAuthenticatorAuthenticationResponse(): UseCaseInterface<Record<string, unknown>> {
+  get getAuthenticatorAuthenticationResponse(): GetAuthenticatorAuthenticationResponse {
     return this._getAuthenticatorAuthenticationResponse
   }
 
-  get listRevisions(): UseCaseInterface<Array<RevisionMetadata>> {
+  get listRevisions(): ListRevisions {
     return this._listRevisions
   }
 
-  get getRevision(): UseCaseInterface<HistoryEntry> {
+  get getRevision(): GetRevision {
     return this._getRevision
   }
 
-  get deleteRevision(): UseCaseInterface<void> {
+  get deleteRevision(): DeleteRevision {
     return this._deleteRevision
   }
 
@@ -612,13 +597,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.syncService.isDatabaseLoaded()
   }
 
-  public getSessions(): Promise<
-    (Responses.HttpResponse & { data: InternalServices.RemoteSession[] }) | Responses.HttpResponse
-  > {
+  public getSessions(): Promise<Responses.HttpResponse<SessionListEntry[]>> {
     return this.sessionManager.getSessionsList()
   }
 
-  public async revokeSession(sessionId: UuidString): Promise<Responses.HttpResponse | undefined> {
+  public async revokeSession(
+    sessionId: UuidString,
+  ): Promise<Responses.HttpResponse<Responses.SessionListResponse> | undefined> {
     if (await this.protectionService.authorizeSessionRevoking()) {
       return this.sessionManager.revokeSession(sessionId)
     }
@@ -640,7 +625,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return Common.compareVersions(userVersion, Common.ProtocolVersion.V004) >= 0
   }
 
-  public async getUserSubscription(): Promise<Subscription | Responses.ClientDisplayableError> {
+  public async getUserSubscription(): Promise<Subscription | Responses.ClientDisplayableError | undefined> {
     return this.sessionManager.getSubscription()
   }
 
@@ -910,6 +895,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       service.deinit()
     }
 
+    this.httpService.deinit()
+    ;(this.httpService as unknown) = undefined
+
     this.options.crypto.deinit()
     ;(this.options as unknown) = undefined
 
@@ -952,7 +940,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ephemeral = false,
     mergeLocal = true,
     awaitSync = false,
-  ): Promise<Responses.HttpResponse | Responses.SignInResponse> {
+  ): Promise<Responses.HttpResponse<Responses.SignInResponse>> {
     return this.userService.signIn(email, password, strict, ephemeral, mergeLocal, awaitSync)
   }
 
@@ -1174,8 +1162,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.diskStorageService.provideEncryptionProvider(this.protocolService)
     this.createChallengeService()
     this.createLegacyHttpManager()
-    this.createApiService()
-    this.createHttpService()
+    this.createHttpServiceAndApiService()
     this.createUserServer()
     this.createUserRequestServer()
     this.createUserApiService()
@@ -1184,9 +1171,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createWebSocketServer()
     this.createWebSocketApiService()
     this.createSubscriptionManager()
-    this.createWorkspaceServer()
-    this.createWorkspaceApiService()
-    this.createWorkspaceManager()
     this.createWebSocketsService()
     this.createSessionManager()
     this.createHistoryManager()
@@ -1235,9 +1219,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.subscriptionApiService as unknown) = undefined
     ;(this.subscriptionServer as unknown) = undefined
     ;(this.subscriptionManager as unknown) = undefined
-    ;(this.workspaceApiService as unknown) = undefined
-    ;(this.workspaceServer as unknown) = undefined
-    ;(this.workspaceManager as unknown) = undefined
     ;(this.webSocketApiService as unknown) = undefined
     ;(this.webSocketServer as unknown) = undefined
     ;(this.sessionManager as unknown) = undefined
@@ -1438,20 +1419,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.services.push(this.userService)
   }
 
-  private createApiService() {
-    this.apiService = new InternalServices.SNApiService(
-      this.deprecatedHttpService,
-      this.diskStorageService,
-      this.options.defaultHost,
-      this.inMemoryStore,
-      this.options.crypto,
-      this.sessionStorageMapper,
-      this.legacySessionStorageMapper,
-      this.internalEventBus,
-    )
-    this.services.push(this.apiService)
-  }
-
   private createUserApiService() {
     this.userApiService = new UserApiService(this.userServer, this.userRequestServer)
   }
@@ -1484,18 +1451,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.subscriptionManager = new SubscriptionManager(this.subscriptionApiService, this.internalEventBus)
   }
 
-  private createWorkspaceServer() {
-    this.workspaceServer = new WorkspaceServer(this.httpService)
-  }
-
-  private createWorkspaceApiService() {
-    this.workspaceApiService = new WorkspaceApiService(this.workspaceServer)
-  }
-
-  private createWorkspaceManager() {
-    this.workspaceManager = new WorkspaceManager(this.workspaceApiService, this.internalEventBus)
-  }
-
   private createItemManager() {
     this.itemManager = new InternalServices.ItemManager(this.payloadManager, this.internalEventBus)
     this.services.push(this.itemManager)
@@ -1517,7 +1472,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createLegacyHttpManager() {
-    this.deprecatedHttpService = new InternalServices.SNHttpService(
+    this.deprecatedHttpService = new InternalServices.DeprecatedHttpService(
       this.environment,
       this.options.appVersion,
       this.internalEventBus,
@@ -1525,11 +1480,22 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.services.push(this.deprecatedHttpService)
   }
 
-  private createHttpService() {
-    this.httpService = new HttpService(
-      this.environment,
-      this.options.appVersion,
-      SnjsVersion,
+  private createHttpServiceAndApiService() {
+    this.httpService = new HttpService(this.environment, this.options.appVersion, SnjsVersion)
+
+    this.apiService = new InternalServices.SNApiService(
+      this.httpService,
+      this.diskStorageService,
+      this.options.defaultHost,
+      this.inMemoryStore,
+      this.options.crypto,
+      this.sessionStorageMapper,
+      this.legacySessionStorageMapper,
+      this.internalEventBus,
+    )
+    this.services.push(this.apiService)
+
+    this.httpService.setCallbacks(
       this.apiService.processMetaObject.bind(this.apiService),
       this.apiService.setSession.bind(this.apiService),
     )
@@ -1809,7 +1775,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     const authenticatorApiService = new AuthenticatorApiService(authenticatorServer)
 
-    this.authenticatorManager = new AuthenticatorManager(authenticatorApiService, this.internalEventBus)
+    this.authenticatorManager = new AuthenticatorManager(
+      authenticatorApiService,
+      this.preferencesService,
+      this.internalEventBus,
+    )
   }
 
   private createAuthManager() {

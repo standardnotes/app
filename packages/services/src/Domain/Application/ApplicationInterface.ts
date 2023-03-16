@@ -9,7 +9,6 @@ import { ApplicationEventCallback } from '../Event/ApplicationEventCallback'
 import { FeaturesClientInterface } from '../Feature/FeaturesClientInterface'
 import { SubscriptionClientInterface } from '../Subscription/SubscriptionClientInterface'
 import { DeviceInterface } from '../Device/DeviceInterface'
-import { WorkspaceClientInterface } from '../Workspace/WorkspaceClientInterface'
 import { ItemsClientInterface } from '../Item/ItemsClientInterface'
 import { MutatorClientInterface } from '../Mutator/MutatorClientInterface'
 import { StorageValueModes } from '../Storage/StorageTypes'
@@ -51,7 +50,6 @@ export interface ApplicationInterface {
   get user(): UserClientInterface
   get files(): FilesClientInterface
   get subscriptions(): SubscriptionClientInterface
-  get workspaces(): WorkspaceClientInterface
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform
   deviceInterface: DeviceInterface

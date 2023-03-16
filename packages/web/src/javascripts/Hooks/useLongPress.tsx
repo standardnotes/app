@@ -35,6 +35,7 @@ export const useLongPressEvent = (
     }
 
     elementRef.current.addEventListener('pointerdown', createLongPressTimeout)
+    elementRef.current.addEventListener('pointermove', clearLongPressTimeout)
     elementRef.current.addEventListener('pointercancel', clearLongPressTimeout)
     elementRef.current.addEventListener('pointerup', clearLongPressTimeout)
   }, [clearLongPressTimeout, createLongPressTimeout, elementRef])
@@ -45,6 +46,7 @@ export const useLongPressEvent = (
     }
 
     elementRef.current.removeEventListener('pointerdown', createLongPressTimeout)
+    elementRef.current.removeEventListener('pointermove', clearLongPressTimeout)
     elementRef.current.removeEventListener('pointercancel', clearLongPressTimeout)
     elementRef.current.removeEventListener('pointerup', clearLongPressTimeout)
   }, [clearLongPressTimeout, createLongPressTimeout, elementRef])

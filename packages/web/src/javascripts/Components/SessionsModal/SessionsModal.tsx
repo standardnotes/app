@@ -1,5 +1,5 @@
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { SNApplication, SessionStrings, UuidString, isNullOrUndefined, RemoteSession } from '@standardnotes/snjs'
+import { SNApplication, SessionStrings, UuidString, SessionListEntry, isErrorResponse } from '@standardnotes/snjs'
 import { FunctionComponent, useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { Alert } from '@reach/alert'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
@@ -11,7 +11,7 @@ import Icon from '../Icon/Icon'
 import Modal, { ModalAction } from '../Modal/Modal'
 import ModalOverlay from '../Modal/ModalOverlay'
 
-type Session = RemoteSession & {
+type Session = SessionListEntry & {
   revoking?: true
 }
 
@@ -26,18 +26,20 @@ function useSessions(
   useEffect(() => {
     ;(async () => {
       setRefreshing(true)
+
       const response = await application.getSessions()
-      if ('error' in response || isNullOrUndefined(response.data)) {
-        if (response.error?.message) {
-          setErrorMessage(response.error.message)
+      if (isErrorResponse(response)) {
+        if (response.data?.error?.message) {
+          setErrorMessage(response.data?.error.message)
         } else {
           setErrorMessage('An unknown error occured while loading sessions.')
         }
       } else {
-        const sessions = response.data as RemoteSession[]
+        const sessions = response.data as SessionListEntry[]
         setSessions(sessions)
         setErrorMessage('')
       }
+
       setRefreshing(false)
     })().catch(console.error)
   }, [application, lastRefreshDate])
@@ -60,13 +62,11 @@ function useSessions(
     setSessions(sessionsDuringRevoke)
 
     const response = await responsePromise
-    if (isNullOrUndefined(response)) {
+    if (!response) {
       setSessions(sessionsBeforeRevoke)
-    } else if ('error' in response) {
-      if (response.error?.message) {
-        setErrorMessage(response.error?.message)
-      } else {
-        setErrorMessage('An unknown error occured while revoking the session.')
+    } else if (isErrorResponse(response)) {
+      if (response.data?.error.message) {
+        setErrorMessage(response.data?.error.message || 'An unknown error occured while revoking the session.')
       }
       setSessions(sessionsBeforeRevoke)
     } else {
@@ -145,7 +145,7 @@ const SessionsModalContent: FunctionComponent<{
                         <span className="font-bold text-info">Current session</span>
                       ) : (
                         <>
-                          <p>Signed in on {formatter.format(session.updated_at)}</p>
+                          <p>Signed in on {formatter.format(new Date(session.updated_at))}</p>
                           <Button
                             primary
                             small

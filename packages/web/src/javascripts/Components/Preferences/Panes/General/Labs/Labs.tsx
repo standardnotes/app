@@ -1,6 +1,6 @@
 import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/Application'
-import { FeatureIdentifier, FeatureStatus, FindNativeFeature } from '@standardnotes/snjs'
+import { ApplicationEvent, FeatureIdentifier, FeatureStatus, FindNativeFeature, PrefKey } from '@standardnotes/snjs'
 import { Fragment, FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import PreferencesGroup from '../../../PreferencesComponents/PreferencesGroup'
@@ -18,14 +18,24 @@ type ExperimentalFeatureItem = {
 
 type Props = {
   application: {
-    setValue: WebApplication['setValue']
-    getValue: WebApplication['getValue']
     features: WebApplication['features']
+    getPreference: WebApplication['getPreference']
+    setPreference: WebApplication['setPreference']
+    addSingleEventObserver: WebApplication['addSingleEventObserver']
   }
 }
 
 const LabsPane: FunctionComponent<Props> = ({ application }) => {
   const [experimentalFeatures, setExperimentalFeatures] = useState<ExperimentalFeatureItem[]>([])
+
+  const [isPaneGesturesEnabled, setIsPaneGesturesEnabled] = useState(() =>
+    application.getPreference(PrefKey.PaneGesturesEnabled, false),
+  )
+  useEffect(() => {
+    return application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
+      setIsPaneGesturesEnabled(application.getPreference(PrefKey.PaneGesturesEnabled, false))
+    })
+  }, [application])
 
   const reloadExperimentalFeatures = useCallback(() => {
     const experimentalFeatures = application.features.getExperimentalFeatures().map((featureIdentifier) => {
@@ -52,6 +62,14 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
       <PreferencesSegment>
         <Title>Labs</Title>
         <div>
+          <LabsFeature
+            name="Pane switch gestures"
+            description="Allows using gestures to navigate"
+            isEnabled={isPaneGesturesEnabled}
+            toggleFeature={() => {
+              void application.setPreference(PrefKey.PaneGesturesEnabled, !isPaneGesturesEnabled)
+            }}
+          />
           {experimentalFeatures.map(({ identifier, name, description, isEnabled, isEntitled }, index) => {
             const toggleFeature = () => {
               if (!isEntitled) {
@@ -77,7 +95,7 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
               </Fragment>
             )
           })}
-          {experimentalFeatures.length === 0 && (
+          {(experimentalFeatures.length === 0 || typeof isPaneGesturesEnabled === 'boolean') && (
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <Text>No experimental features available.</Text>

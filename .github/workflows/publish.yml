@@ -67,9 +67,9 @@ jobs:
         uses: convictional/trigger-workflow-and-wait@master
         with:
           owner: standardnotes
-          repo: self-hosted
+          repo: server
           github_token: ${{ secrets.CI_PAT_TOKEN }}
-          workflow_file_name: testing-with-updating-client-and-server.yml
+          workflow_file_name: e2e-test-suite.yml
           wait_interval: 30
           client_payload: '{"snjs_image_tag": "${{ github.sha }}"}'
           propagate_failure: true

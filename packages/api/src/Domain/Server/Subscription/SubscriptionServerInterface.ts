@@ -1,21 +1,29 @@
-import { AppleIAPConfirmResponse } from './../../Response/Subscription/AppleIAPConfirmResponse'
 import { AppleIAPConfirmRequestParams } from './../../Request/Subscription/AppleIAPConfirmRequestParams'
 import { SubscriptionInviteAcceptRequestParams } from '../../Request/Subscription/SubscriptionInviteAcceptRequestParams'
 import { SubscriptionInviteCancelRequestParams } from '../../Request/Subscription/SubscriptionInviteCancelRequestParams'
 import { SubscriptionInviteDeclineRequestParams } from '../../Request/Subscription/SubscriptionInviteDeclineRequestParams'
 import { SubscriptionInviteListRequestParams } from '../../Request/Subscription/SubscriptionInviteListRequestParams'
 import { SubscriptionInviteRequestParams } from '../../Request/Subscription/SubscriptionInviteRequestParams'
-import { SubscriptionInviteAcceptResponse } from '../../Response/Subscription/SubscriptionInviteAcceptResponse'
-import { SubscriptionInviteCancelResponse } from '../../Response/Subscription/SubscriptionInviteCancelResponse'
-import { SubscriptionInviteDeclineResponse } from '../../Response/Subscription/SubscriptionInviteDeclineResponse'
-import { SubscriptionInviteListResponse } from '../../Response/Subscription/SubscriptionInviteListResponse'
-import { SubscriptionInviteResponse } from '../../Response/Subscription/SubscriptionInviteResponse'
+
+import { AppleIAPConfirmResponseBody } from './../../Response/Subscription/AppleIAPConfirmResponseBody'
+import { SubscriptionInviteAcceptResponseBody } from '../../Response/Subscription/SubscriptionInviteAcceptResponseBody'
+import { SubscriptionInviteCancelResponseBody } from '../../Response/Subscription/SubscriptionInviteCancelResponseBody'
+import { SubscriptionInviteDeclineResponseBody } from '../../Response/Subscription/SubscriptionInviteDeclineResponseBody'
+import { SubscriptionInviteListResponseBody } from '../../Response/Subscription/SubscriptionInviteListResponseBody'
+import { SubscriptionInviteResponseBody } from '../../Response/Subscription/SubscriptionInviteResponseBody'
+import { HttpResponse } from '@standardnotes/responses'
 
 export interface SubscriptionServerInterface {
-  invite(params: SubscriptionInviteRequestParams): Promise<SubscriptionInviteResponse>
-  acceptInvite(params: SubscriptionInviteAcceptRequestParams): Promise<SubscriptionInviteAcceptResponse>
-  declineInvite(params: SubscriptionInviteDeclineRequestParams): Promise<SubscriptionInviteDeclineResponse>
-  cancelInvite(params: SubscriptionInviteCancelRequestParams): Promise<SubscriptionInviteCancelResponse>
-  listInvites(params: SubscriptionInviteListRequestParams): Promise<SubscriptionInviteListResponse>
-  confirmAppleIAP(params: AppleIAPConfirmRequestParams): Promise<AppleIAPConfirmResponse>
+  invite(params: SubscriptionInviteRequestParams): Promise<HttpResponse<SubscriptionInviteResponseBody>>
+  acceptInvite(
+    params: SubscriptionInviteAcceptRequestParams,
+  ): Promise<HttpResponse<SubscriptionInviteAcceptResponseBody>>
+  declineInvite(
+    params: SubscriptionInviteDeclineRequestParams,
+  ): Promise<HttpResponse<SubscriptionInviteDeclineResponseBody>>
+  cancelInvite(
+    params: SubscriptionInviteCancelRequestParams,
+  ): Promise<HttpResponse<SubscriptionInviteCancelResponseBody>>
+  listInvites(params: SubscriptionInviteListRequestParams): Promise<HttpResponse<SubscriptionInviteListResponseBody>>
+  confirmAppleIAP(params: AppleIAPConfirmRequestParams): Promise<HttpResponse<AppleIAPConfirmResponseBody>>
 }

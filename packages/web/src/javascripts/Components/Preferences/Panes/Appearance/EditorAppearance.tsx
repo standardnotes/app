@@ -84,14 +84,14 @@ const EditorDefaults = ({ application }: Props) => {
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <Subtitle>Monospace Font</Subtitle>
-              <Text>Toggles the font style in plaintext notes</Text>
+              <Text>Toggles the font style in plaintext and Super notes</Text>
             </div>
             <Switch onChange={toggleMonospaceFont} checked={monospaceFont} />
           </div>
           <HorizontalSeparator classes="my-4" />
           <div>
             <Subtitle>Font size</Subtitle>
-            <Text>Sets the font size in plaintext notes</Text>
+            <Text>Sets the font size in plaintext and Super notes</Text>
             <div className="mt-2">
               <Dropdown
                 id="def-font-size"
@@ -108,7 +108,7 @@ const EditorDefaults = ({ application }: Props) => {
           <HorizontalSeparator classes="my-4" />
           <div>
             <Subtitle>Line height</Subtitle>
-            <Text>Sets the line height (leading) in plaintext & Super notes</Text>
+            <Text>Sets the line height (leading) in plaintext and Super notes</Text>
             <div className="mt-2">
               <Dropdown
                 id="def-line-height"

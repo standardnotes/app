@@ -15,6 +15,7 @@ export enum FeatureIdentifier {
   SmartFilters = 'org.standardnotes.smart-filters',
   TagNesting = 'org.standardnotes.tag-nesting',
   TwoFactorAuth = 'org.standardnotes.two-factor-auth',
+  UniversalSecondFactor = 'org.standardnotes.universal-second-factor',
   SubscriptionSharing = 'org.standardnotes.subscription-sharing',
 
   AutobiographyTheme = 'org.standardnotes.theme-autobiography',

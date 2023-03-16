@@ -18,7 +18,7 @@ import { SNApiService } from '@Lib/Services/Api/ApiService'
 import { ContentType } from '@standardnotes/common'
 import { ItemManager } from '../Items/ItemManager'
 import { removeFromArray, Uuids } from '@standardnotes/utils'
-import { ClientDisplayableError, KeyParamsResponse } from '@standardnotes/responses'
+import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import {
   AlertService,
   AbstractService,
@@ -283,7 +283,7 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
 
     const signInResponse = await this.userService.correctiveSignIn(rootKey)
 
-    if (!signInResponse.error) {
+    if (!isErrorResponse(signInResponse)) {
       void this.alertService.alert(KeyRecoveryStrings.KeyRecoveryRootKeyReplaced)
 
       return rootKey
@@ -335,8 +335,8 @@ export class SNKeyRecoveryService extends AbstractService<KeyRecoveryEvent, Decr
       email: identifier,
     })
 
-    if (!paramsResponse.error && paramsResponse.data) {
-      return KeyParamsFromApiResponse(paramsResponse as KeyParamsResponse)
+    if (!isErrorResponse(paramsResponse)) {
+      return KeyParamsFromApiResponse(paramsResponse.data)
     } else {
       return undefined
     }

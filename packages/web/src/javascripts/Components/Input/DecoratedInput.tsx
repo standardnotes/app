@@ -1,5 +1,5 @@
 import { classNames } from '@standardnotes/utils'
-import { forwardRef, Fragment, Ref } from 'react'
+import { forwardRef, Fragment, KeyboardEventHandler, Ref, useCallback } from 'react'
 import { DecoratedInputProps } from './DecoratedInputProps'
 
 const getClassNames = (hasLeftDecorations: boolean, hasRightDecorations: boolean, roundedFull?: boolean) => {
@@ -31,6 +31,7 @@ const DecoratedInput = forwardRef(
       onFocus,
       onKeyDown,
       onKeyUp,
+      onEnter,
       placeholder = '',
       right,
       type = 'text',
@@ -38,12 +39,23 @@ const DecoratedInput = forwardRef(
       value,
       defaultValue,
       roundedFull,
+      autofocus = false,
     }: DecoratedInputProps,
     ref: Ref<HTMLInputElement>,
   ) => {
     const hasLeftDecorations = Boolean(left?.length)
     const hasRightDecorations = Boolean(right?.length)
     const computedClassNames = getClassNames(hasLeftDecorations, hasRightDecorations, roundedFull)
+
+    const handleKeyUp: KeyboardEventHandler = useCallback(
+      (e) => {
+        if (e.key === 'Enter') {
+          onEnter?.()
+        }
+        onKeyUp?.(e)
+      },
+      [onKeyUp, onEnter],
+    )
 
     return (
       <div
@@ -63,6 +75,7 @@ const DecoratedInput = forwardRef(
 
         <input
           autoComplete={autocomplete ? 'on' : 'off'}
+          autoFocus={autofocus}
           className={`${computedClassNames.input} ${disabled ? computedClassNames.disabled : ''} ${className?.input}`}
           data-lpignore={type !== 'password' ? true : false}
           disabled={disabled}
@@ -71,7 +84,7 @@ const DecoratedInput = forwardRef(
           onChange={(e) => onChange && onChange((e.target as HTMLInputElement).value)}
           onFocus={onFocus}
           onKeyDown={onKeyDown}
-          onKeyUp={onKeyUp}
+          onKeyUp={handleKeyUp}
           placeholder={placeholder}
           ref={ref}
           title={title}

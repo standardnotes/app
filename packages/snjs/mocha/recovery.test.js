@@ -26,13 +26,13 @@ describe('account recovery', function () {
   })
 
   it('should get the same recovery code at each consecutive call', async () => {
-    let recoveryCodesSetting = await application.settings.getSetting(SettingName.RecoveryCodes)
+    let recoveryCodesSetting = await application.settings.getSetting(SettingName.create(SettingName.NAMES.RecoveryCodes).getValue())
     expect(recoveryCodesSetting).to.equal(undefined)
 
     const generatedRecoveryCodesAfterFirstCall = await application.getRecoveryCodes.execute()
     expect(generatedRecoveryCodesAfterFirstCall.getValue().length).to.equal(49)
 
-    recoveryCodesSetting = await application.settings.getSetting(SettingName.RecoveryCodes)
+    recoveryCodesSetting = await application.settings.getSetting(SettingName.create(SettingName.NAMES.RecoveryCodes).getValue())
     expect(recoveryCodesSetting).to.equal(generatedRecoveryCodesAfterFirstCall.getValue())
 
     const fetchedRecoveryCodesOnTheSecondCall = await application.getRecoveryCodes.execute()

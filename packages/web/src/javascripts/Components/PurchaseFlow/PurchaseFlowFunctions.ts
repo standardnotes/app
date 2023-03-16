@@ -1,5 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import { isDesktopApplication } from '@/Utils'
+import { Environment } from '@standardnotes/snjs'
 import { RouteType } from '@standardnotes/ui-services'
 
 export const getPurchaseFlowUrl = async (application: WebApplication): Promise<string | undefined> => {
@@ -30,6 +31,8 @@ export const loadPurchaseFlowUrl = async (application: WebApplication): Promise<
 
     if (application.isNativeMobileWeb()) {
       application.mobileDevice().openUrl(finalUrl)
+    } else if (application.environment === Environment.Desktop) {
+      application.desktopDevice?.openUrl(finalUrl)
     } else {
       const windowProxy = window.open('', '_blank')
       ;(windowProxy as WindowProxy).location = finalUrl

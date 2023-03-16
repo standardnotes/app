@@ -98,7 +98,6 @@ describe('server session', function () {
     // After the above sync request is completed, we obtain the session information.
     const sessionAfterSync = this.application.apiService.getSession()
 
-    expect(sessionBeforeSync.equals(sessionAfterSync)).to.not.equal(true)
     expect(sessionBeforeSync.accessToken.value).to.not.equal(sessionAfterSync.accessToken.value)
     expect(sessionBeforeSync.refreshToken.value).to.not.equal(sessionAfterSync.refreshToken.value)
     expect(sessionBeforeSync.accessToken.expiresAt).to.be.lessThan(sessionAfterSync.accessToken.expiresAt)
@@ -173,8 +172,8 @@ describe('server session', function () {
     Factory.ignoreChallenges(this.application)
     const syncResponse = await this.application.apiService.sync([])
     expect(syncResponse.status).to.equal(401)
-    expect(syncResponse.error.tag).to.equal('invalid-auth')
-    expect(syncResponse.error.message).to.equal('Invalid login credentials.')
+    expect(syncResponse.data.error.tag).to.equal('invalid-auth')
+    expect(syncResponse.data.error.message).to.equal('Invalid login credentials.')
   })
 
   it('sign out request should be performed successfully and terminate session with expired access token', async function () {
@@ -195,8 +194,8 @@ describe('server session', function () {
     Factory.ignoreChallenges(this.application)
     const syncResponse = await this.application.apiService.sync([])
     expect(syncResponse.status).to.equal(401)
-    expect(syncResponse.error.tag).to.equal('invalid-auth')
-    expect(syncResponse.error.message).to.equal('Invalid login credentials.')
+    expect(syncResponse.data.error.tag).to.equal('invalid-auth')
+    expect(syncResponse.data.error.message).to.equal('Invalid login credentials.')
   })
 
   it('change email request should be successful with a valid access token', async function () {
@@ -208,8 +207,7 @@ describe('server session', function () {
     const newEmail = UuidGenerator.GenerateUuid()
     const changeEmailResponse = await application.changeEmail(newEmail, password)
 
-    expect(changeEmailResponse.status).to.equal(200)
-    expect(changeEmailResponse.data.user).to.be.ok
+    expect(changeEmailResponse.error).to.not.be.ok
 
     application = await Factory.signOutApplicationAndReturnNew(application)
     const loginResponse = await Factory.loginToApplication({
@@ -278,8 +276,7 @@ describe('server session', function () {
 
     const changePasswordResponse = await this.application.changePassword(this.password, this.newPassword)
 
-    expect(changePasswordResponse.status).to.equal(200)
-    expect(changePasswordResponse.data.user).to.be.ok
+    expect(changePasswordResponse.error).to.not.be.ok
 
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     const loginResponse = await Factory.loginToApplication({
@@ -306,8 +303,7 @@ describe('server session', function () {
 
     const changePasswordResponse = await this.application.changePassword(this.password, this.newPassword)
 
-    expect(changePasswordResponse).to.be.ok
-    expect(changePasswordResponse.status).to.equal(200)
+    expect(changePasswordResponse.error).to.not.be.ok
 
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     const loginResponse = await Factory.loginToApplication({
@@ -394,8 +390,8 @@ describe('server session', function () {
     const refreshSessionResponse = await this.application.apiService.refreshSession()
 
     expect(refreshSessionResponse.status).to.equal(400)
-    expect(refreshSessionResponse.error.tag).to.equal('expired-refresh-token')
-    expect(refreshSessionResponse.error.message).to.equal('The refresh token has expired.')
+    expect(refreshSessionResponse.data.error.tag).to.equal('expired-refresh-token')
+    expect(refreshSessionResponse.data.error.message).to.equal('The refresh token has expired.')
 
     /*
       The access token and refresh token should be expired up to this point.
@@ -404,8 +400,8 @@ describe('server session', function () {
     Factory.ignoreChallenges(this.application)
     const syncResponse = await this.application.apiService.sync([])
     expect(syncResponse.status).to.equal(401)
-    expect(syncResponse.error.tag).to.equal('invalid-auth')
-    expect(syncResponse.error.message).to.equal('Invalid login credentials.')
+    expect(syncResponse.data.error.tag).to.equal('invalid-auth')
+    expect(syncResponse.data.error.message).to.equal('Invalid login credentials.')
   })
 
   it('should fail when renewing a session with an invalid refresh token', async function () {
@@ -429,8 +425,8 @@ describe('server session', function () {
     const refreshSessionResponse = await this.application.apiService.refreshSession()
 
     expect(refreshSessionResponse.status).to.equal(400)
-    expect(refreshSessionResponse.error.tag).to.equal('invalid-refresh-token')
-    expect(refreshSessionResponse.error.message).to.equal('The refresh token is not valid.')
+    expect(refreshSessionResponse.data.error.tag).to.equal('invalid-refresh-token')
+    expect(refreshSessionResponse.data.error.message).to.equal('The refresh token is not valid.')
 
     // Access token should remain valid.
     const syncResponse = await this.application.apiService.sync([])
@@ -447,10 +443,10 @@ describe('server session', function () {
     const refreshPromise = this.application.apiService.refreshSession()
     const syncResponse = await this.application.apiService.sync([])
 
-    expect(syncResponse.error).to.be.ok
+    expect(syncResponse.data.error).to.be.ok
 
     const errorMessage = 'Your account session is being renewed with the server. Please try your request again.'
-    expect(syncResponse.error.message).to.be.equal(errorMessage)
+    expect(syncResponse.data.error.message).to.be.equal(errorMessage)
     /** Wait for finish so that test cleans up properly */
     await refreshPromise
   })

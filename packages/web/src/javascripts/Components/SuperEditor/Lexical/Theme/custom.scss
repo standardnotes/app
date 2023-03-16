@@ -1,0 +1,11 @@
+@import '../../Plugins/DraggableBlockPlugin/index.scss';
+
+#typeahead-menu {
+  z-index: 10000;
+}
+
+#blocks-editor {
+  p {
+    color: var(--sn-stylekit-editor-foreground-color);
+  }
+}

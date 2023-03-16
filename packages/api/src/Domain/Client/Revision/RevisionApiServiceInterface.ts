@@ -1,9 +1,10 @@
-import { DeleteRevisionResponse } from '../../Response/Revision/DeleteRevisionResponse'
-import { GetRevisionResponse } from '../../Response/Revision/GetRevisionResponse'
-import { ListRevisionsResponse } from '../../Response/Revision/ListRevisionsResponse'
+import { HttpResponse } from '@standardnotes/responses'
+import { DeleteRevisionResponseBody } from '../../Response/Revision/DeleteRevisionResponseBody'
+import { GetRevisionResponseBody } from '../../Response/Revision/GetRevisionResponseBody'
+import { ListRevisionsResponseBody } from '../../Response/Revision/ListRevisionsResponseBody'
 
 export interface RevisionApiServiceInterface {
-  listRevisions(itemUuid: string): Promise<ListRevisionsResponse>
-  getRevision(itemUuid: string, revisionUuid: string): Promise<GetRevisionResponse>
-  deleteRevision(itemUuid: string, revisionUuid: string): Promise<DeleteRevisionResponse>
+  listRevisions(itemUuid: string): Promise<HttpResponse<ListRevisionsResponseBody>>
+  getRevision(itemUuid: string, revisionUuid: string): Promise<HttpResponse<GetRevisionResponseBody>>
+  deleteRevision(itemUuid: string, revisionUuid: string): Promise<HttpResponse<DeleteRevisionResponseBody>>
 }

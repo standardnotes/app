@@ -7,6 +7,7 @@ import { ChangeEventHandler, FunctionComponent, useEffect, useRef, useState } fr
 import FloatingLabelInput from '@/Components/Input/FloatingLabelInput'
 import { isEmailValid } from '@/Utils'
 import { BlueDotIcon, CircleIcon, DiamondIcon } from '@standardnotes/icons'
+import { isErrorResponse } from '@standardnotes/snjs'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -70,8 +71,8 @@ const SignIn: FunctionComponent<Props> = ({ viewControllerManager, application }
 
     try {
       const response = await application.signIn(email, password)
-      if (response.error || response.data?.error) {
-        throw new Error(response.error?.message || response.data?.error?.message)
+      if (isErrorResponse(response)) {
+        throw new Error(response.data.error?.message)
       } else {
         viewControllerManager.purchaseFlowController.closePurchaseFlow()
         viewControllerManager.purchaseFlowController.openPurchaseFlow()

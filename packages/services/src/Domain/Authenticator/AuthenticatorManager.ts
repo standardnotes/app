@@ -2,14 +2,18 @@
 
 import { AuthenticatorApiServiceInterface } from '@standardnotes/api'
 import { Username, Uuid } from '@standardnotes/domain-core'
+import { isErrorResponse } from '@standardnotes/responses'
+import { PrefKey } from '@standardnotes/models'
 
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { AuthenticatorClientInterface } from './AuthenticatorClientInterface'
+import { PreferenceServiceInterface } from '../Preferences/PreferenceServiceInterface'
 
 export class AuthenticatorManager extends AbstractService implements AuthenticatorClientInterface {
   constructor(
     private authenticatorApiService: AuthenticatorApiServiceInterface,
+    private preferencesService: PreferenceServiceInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -19,11 +23,22 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
     try {
       const result = await this.authenticatorApiService.list()
 
-      if (result.data.error) {
+      if (isErrorResponse(result)) {
         return []
       }
 
-      return result.data.authenticators
+      const authenticatorNames = this.getAuthenticatorNamesFromPreferences()
+
+      const nameDecoratedAuthenticators: { id: string; name: string }[] = result.data.authenticators.map(
+        (authenticator: { id: string }) => ({
+          id: authenticator.id,
+          name: authenticatorNames.has(authenticator.id)
+            ? (authenticatorNames.get(authenticator.id) as string)
+            : 'Security Key',
+        }),
+      )
+
+      return nameDecoratedAuthenticators
     } catch (error) {
       return []
     }
@@ -32,10 +47,14 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
   async delete(authenticatorId: Uuid): Promise<boolean> {
     try {
       const result = await this.authenticatorApiService.delete(authenticatorId.value)
-
-      if (result.data.error) {
+      if (isErrorResponse(result)) {
         return false
       }
+
+      const authenticatorNames = this.getAuthenticatorNamesFromPreferences()
+      authenticatorNames.delete(authenticatorId.value)
+
+      await this.preferencesService.setValue(PrefKey.AuthenticatorNames, JSON.stringify([...authenticatorNames]))
 
       return true
     } catch (error) {
@@ -47,7 +66,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
     try {
       const result = await this.authenticatorApiService.generateRegistrationOptions()
 
-      if (result.data.error) {
+      if (isErrorResponse(result)) {
         return null
       }
 
@@ -69,11 +88,16 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
         registrationCredential,
       )
 
-      if (result.data.error) {
+      if (isErrorResponse(result)) {
         return false
       }
 
-      return result.data.success
+      const authenticatorNames = this.getAuthenticatorNamesFromPreferences()
+      authenticatorNames.set(result.data.id, name)
+
+      await this.preferencesService.setValue(PrefKey.AuthenticatorNames, JSON.stringify([...authenticatorNames]))
+
+      return true
     } catch (error) {
       return false
     }
@@ -83,7 +107,7 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
     try {
       const result = await this.authenticatorApiService.generateAuthenticationOptions(username.value)
 
-      if (result.data.error) {
+      if (isErrorResponse(result)) {
         return null
       }
 
@@ -91,5 +115,19 @@ export class AuthenticatorManager extends AbstractService implements Authenticat
     } catch (error) {
       return null
     }
+  }
+
+  private getAuthenticatorNamesFromPreferences(): Map<string, string> {
+    let authenticatorNames: Map<string, string> = new Map()
+    const authenticatorNamesFromPreferences = this.preferencesService.getValue(PrefKey.AuthenticatorNames)
+    if (authenticatorNamesFromPreferences !== undefined) {
+      try {
+        authenticatorNames = new Map(JSON.parse(authenticatorNamesFromPreferences))
+      } catch (error) {
+        authenticatorNames = new Map()
+      }
+    }
+
+    return authenticatorNames
   }
 }

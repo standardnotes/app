@@ -1,4 +1,4 @@
-$blocks-editor-icons-path: '../../../blocks-editor/src/Lexical/Icons';
+$blocks-editor-icons-path: '../javascripts/Components/SuperEditor/Lexical/Icons';
 
 @import '../../../styles/src/Styles/_colors.scss';
 @import '../../../styles/src/Styles/_panels.scss';
@@ -20,14 +20,15 @@ $blocks-editor-icons-path: '../../../blocks-editor/src/Lexical/Icons';
 @import 'focused';
 @import 'sn';
 @import 'animation';
-@import '../../../blocks-editor/src/Lexical/Theme/lexical.scss';
+@import '../javascripts/Components/SuperEditor/Lexical/Theme/lexical.scss';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
-  ul, ol {
+  ul,
+  ol {
     list-style-type: revert;
   }
 }

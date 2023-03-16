@@ -5,5 +5,6 @@ export enum RouteType {
   AcceptSubscriptionInvite = 'accept-subscription-invite',
   UserRequest = 'user-request',
   Demo = 'demo',
+  AppViewRoute = 'route',
   None = 'none',
 }

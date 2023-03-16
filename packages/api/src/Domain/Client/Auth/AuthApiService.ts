@@ -1,10 +1,11 @@
+import { HttpResponse } from '@standardnotes/responses'
 import { ApiVersion } from '../../Api'
 import { ApiCallError } from '../../Error/ApiCallError'
 import { ErrorMessage } from '../../Error/ErrorMessage'
 import {
-  GenerateRecoveryCodesResponse,
-  RecoveryKeyParamsResponse,
-  SignInWithRecoveryCodesResponse,
+  GenerateRecoveryCodesResponseBody,
+  RecoveryKeyParamsResponseBody,
+  SignInWithRecoveryCodesResponseBody,
 } from '../../Response'
 import { AuthServerInterface } from '../../Server'
 
@@ -18,7 +19,7 @@ export class AuthApiService implements AuthApiServiceInterface {
     this.operationsInProgress = new Map()
   }
 
-  async generateRecoveryCodes(): Promise<GenerateRecoveryCodesResponse> {
+  async generateRecoveryCodes(): Promise<HttpResponse<GenerateRecoveryCodesResponseBody>> {
     if (this.operationsInProgress.get(AuthApiOperations.GenerateRecoveryCodes)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }
@@ -40,7 +41,7 @@ export class AuthApiService implements AuthApiServiceInterface {
     username: string
     codeChallenge: string
     recoveryCodes: string
-  }): Promise<RecoveryKeyParamsResponse> {
+  }): Promise<HttpResponse<RecoveryKeyParamsResponseBody>> {
     if (this.operationsInProgress.get(AuthApiOperations.GetRecoveryKeyParams)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }
@@ -68,7 +69,7 @@ export class AuthApiService implements AuthApiServiceInterface {
     password: string
     codeVerifier: string
     recoveryCodes: string
-  }): Promise<SignInWithRecoveryCodesResponse> {
+  }): Promise<HttpResponse<SignInWithRecoveryCodesResponseBody>> {
     if (this.operationsInProgress.get(AuthApiOperations.SignInWithRecoveryCodes)) {
       throw new ApiCallError(ErrorMessage.GenericInProgress)
     }

@@ -3,6 +3,46 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.57.10](https://github.com/standardnotes/app/compare/@standardnotes/services@1.57.9...@standardnotes/services@1.57.10) (2023-03-15)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.57.9](https://github.com/standardnotes/app/compare/@standardnotes/services@1.57.8...@standardnotes/services@1.57.9) (2023-03-10)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.57.8](https://github.com/standardnotes/app/compare/@standardnotes/services@1.57.7...@standardnotes/services@1.57.8) (2023-03-10)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.57.7](https://github.com/standardnotes/app/compare/@standardnotes/services@1.57.6...@standardnotes/services@1.57.7) (2023-03-09)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.57.6](https://github.com/standardnotes/app/compare/@standardnotes/services@1.57.5...@standardnotes/services@1.57.6) (2023-03-08)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.57.5](https://github.com/standardnotes/app/compare/@standardnotes/services@1.57.4...@standardnotes/services@1.57.5) (2023-03-03)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.57.4](https://github.com/standardnotes/app/compare/@standardnotes/services@1.57.3...@standardnotes/services@1.57.4) (2023-03-01)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.57.3](https://github.com/standardnotes/app/compare/@standardnotes/services@1.57.2...@standardnotes/services@1.57.3) (2023-03-01)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.57.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.57.1...@standardnotes/services@1.57.2) (2023-02-23)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.57.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.57.0...@standardnotes/services@1.57.1) (2023-02-15)
+
+**Note:** Version bump only for package @standardnotes/services
+
 # [1.57.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.56.18...@standardnotes/services@1.57.0) (2023-02-03)
 
 ### Features

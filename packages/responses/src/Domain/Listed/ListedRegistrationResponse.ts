@@ -1,5 +1,1 @@
-import { MinimalHttpResponse } from '../Http/MinimalHttpResponses'
-
-export type ListedRegistrationResponse = MinimalHttpResponse & {
-  data?: unknown
-}
+export type ListedRegistrationResponse = unknown

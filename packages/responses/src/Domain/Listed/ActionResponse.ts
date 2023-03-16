@@ -1,8 +1,8 @@
 import { AnyKeyParamsContent, ContentType } from '@standardnotes/common'
-import { HttpResponse } from '../Http/HttpResponse'
+import { DeprecatedHttpResponse } from '../Http/DeprecatedHttpResponse'
 import { ServerItemResponse } from '../Item/ServerItemResponse'
 
-export type ActionResponse = HttpResponse & {
+export type ActionResponse = DeprecatedHttpResponse & {
   description: string
   supported_types: ContentType[]
   deprecation?: string

@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/models",
-  "version": "1.43.3",
+  "version": "1.43.11",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -22,7 +22,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@standardnotes/common": "^1.46.4",
+    "@standardnotes/common": "^1.46.6",
     "@standardnotes/features": "workspace:*",
     "@standardnotes/responses": "workspace:*",
     "@standardnotes/utils": "workspace:^",

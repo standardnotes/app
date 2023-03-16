@@ -3,6 +3,68 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.166.15](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.14...@standardnotes/snjs@2.166.15) (2023-03-15)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.166.14](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.13...@standardnotes/snjs@2.166.14) (2023-03-10)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.166.13](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.12...@standardnotes/snjs@2.166.13) (2023-03-10)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.166.12](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.11...@standardnotes/snjs@2.166.12) (2023-03-09)
+
+### Reverts
+
+* Revert "chore: add temporary error log on authenticator authentication options generation" ([2fd879b](https://github.com/standardnotes/app/commit/2fd879bb2df57678c87f70b062c0592d1c6c654c))
+
+## [2.166.11](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.10...@standardnotes/snjs@2.166.11) (2023-03-09)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.166.10](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.9...@standardnotes/snjs@2.166.10) (2023-03-09)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.166.9](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.8...@standardnotes/snjs@2.166.9) (2023-03-08)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.166.8](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.7...@standardnotes/snjs@2.166.8) (2023-03-08)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.166.7](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.6...@standardnotes/snjs@2.166.7) (2023-03-07)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.166.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.5...@standardnotes/snjs@2.166.6) (2023-03-03)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.166.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.4...@standardnotes/snjs@2.166.5) (2023-03-02)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.166.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.3...@standardnotes/snjs@2.166.4) (2023-03-01)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.166.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.2...@standardnotes/snjs@2.166.3) (2023-03-01)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.166.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.1...@standardnotes/snjs@2.166.2) (2023-02-23)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.166.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.0...@standardnotes/snjs@2.166.1) (2023-02-15)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
 # [2.166.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.165.6...@standardnotes/snjs@2.166.0) (2023-02-03)
 
 ### Features

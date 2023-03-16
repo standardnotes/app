@@ -426,6 +426,18 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     this.getViewControllerManager().accountMenuController.setShow(true)
   }
 
+  hideAccountMenu(): void {
+    this.getViewControllerManager().accountMenuController.setShow(false)
+  }
+
+  /**
+   * Full U2F clients are only web browser clients. They support adding and removing keys as well as authentication.
+   * The desktop and mobile clients cannot support adding keys.
+   */
+  get isFullU2FClient(): boolean {
+    return this.environment === Environment.Web
+  }
+
   geDefaultEditorIdentifier(currentTag?: SNTag): EditorIdentifier {
     return (
       currentTag?.preferences?.editorIdentifier ||

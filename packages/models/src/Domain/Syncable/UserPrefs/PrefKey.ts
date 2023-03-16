@@ -44,6 +44,8 @@ export enum PrefKey {
   MomentsDefaultTagUuid = 'momentsDefaultTagUuid',
   SystemViewPreferences = 'systemViewPreferences',
   SuperNoteExportFormat = 'superNoteExportFormat',
+  AuthenticatorNames = 'authenticatorNames',
+  PaneGesturesEnabled = 'paneGesturesEnabled',
 }
 
 export enum NewNoteTitleFormat {
@@ -111,4 +113,6 @@ export type PrefValue = {
   [PrefKey.MomentsDefaultTagUuid]: string | undefined
   [PrefKey.SystemViewPreferences]: Partial<Record<SystemViewId, TagPreferences>>
   [PrefKey.SuperNoteExportFormat]: 'json' | 'md' | 'html'
+  [PrefKey.AuthenticatorNames]: string
+  [PrefKey.PaneGesturesEnabled]: boolean
 }

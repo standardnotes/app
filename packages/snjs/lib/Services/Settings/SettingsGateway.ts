@@ -1,7 +1,7 @@
 import { SettingsList } from './SettingsList'
-import { SettingName, SensitiveSettingName, SubscriptionSettingName } from '@standardnotes/settings'
+import { SettingName } from '@standardnotes/settings'
 import { API_MESSAGE_INVALID_SESSION } from '@standardnotes/services'
-import { StatusCode, User } from '@standardnotes/responses'
+import { HttpStatusCode, isErrorResponse, User } from '@standardnotes/responses'
 import { SettingsServerInterface } from './SettingsServerInterface'
 
 /**
@@ -31,75 +31,81 @@ export class SettingsGateway {
   }
 
   async listSettings() {
-    const { error, data } = await this.settingsApi.listSettings(this.userUuid)
+    const response = await this.settingsApi.listSettings(this.userUuid)
 
-    if (error != undefined) {
-      throw new Error(error.message)
+    if (isErrorResponse(response)) {
+      throw new Error(response.data?.error.message)
     }
 
-    if (data == undefined || data.settings == undefined) {
+    if (response.data == undefined || response.data.settings == undefined) {
       return new SettingsList([])
     }
 
-    const settings: SettingsList = new SettingsList(data.settings)
+    const settings: SettingsList = new SettingsList(response.data.settings)
     return settings
   }
 
   async getSetting(name: SettingName): Promise<string | undefined> {
-    const response = await this.settingsApi.getSetting(this.userUuid, name)
+    const response = await this.settingsApi.getSetting(this.userUuid, name.value)
 
-    // Backend responds with 400 when setting doesn't exist
-    if (response.status === StatusCode.HttpBadRequest) {
+    if (response.status === HttpStatusCode.BadRequest) {
       return undefined
     }
 
-    if (response.error != undefined) {
-      throw new Error(response.error.message)
+    if (isErrorResponse(response)) {
+      throw new Error(response.data?.error.message)
     }
 
     return response?.data?.setting?.value ?? undefined
   }
 
-  async getSubscriptionSetting(name: SubscriptionSettingName): Promise<string | undefined> {
-    const response = await this.settingsApi.getSubscriptionSetting(this.userUuid, name)
+  async getSubscriptionSetting(name: SettingName): Promise<string | undefined> {
+    if (!name.isASubscriptionSetting()) {
+      throw new Error(`Setting ${name.value} is not a subscription setting`)
+    }
 
-    if (response.status === StatusCode.HttpBadRequest) {
+    const response = await this.settingsApi.getSubscriptionSetting(this.userUuid, name.value)
+
+    if (response.status === HttpStatusCode.BadRequest) {
       return undefined
     }
 
-    if (response.error != undefined) {
-      throw new Error(response.error.message)
+    if (isErrorResponse(response)) {
+      throw new Error(response.data?.error.message)
     }
 
     return response?.data?.setting?.value ?? undefined
   }
 
-  async getDoesSensitiveSettingExist(name: SensitiveSettingName): Promise<boolean> {
-    const response = await this.settingsApi.getSetting(this.userUuid, name)
+  async getDoesSensitiveSettingExist(name: SettingName): Promise<boolean> {
+    if (!name.isSensitive()) {
+      throw new Error(`Setting ${name.value} is not sensitive`)
+    }
 
-    // Backend responds with 400 when setting doesn't exist
-    if (response.status === StatusCode.HttpBadRequest) {
+    const response = await this.settingsApi.getSetting(this.userUuid, name.value)
+
+    if (response.status === HttpStatusCode.BadRequest) {
       return false
     }
 
-    if (response.error != undefined) {
-      throw new Error(response.error.message)
+    if (isErrorResponse(response)) {
+      throw new Error(response.data?.error.message)
     }
 
     return response.data?.success ?? false
   }
 
   async updateSetting(name: SettingName, payload: string, sensitive: boolean): Promise<void> {
-    const { error } = await this.settingsApi.updateSetting(this.userUuid, name, payload, sensitive)
-    if (error != undefined) {
-      throw new Error(error.message)
+    const response = await this.settingsApi.updateSetting(this.userUuid, name.value, payload, sensitive)
+    if (isErrorResponse(response)) {
+      throw new Error(response.data?.error.message)
     }
   }
 
   async deleteSetting(name: SettingName): Promise<void> {
-    const { error } = await this.settingsApi.deleteSetting(this.userUuid, name)
-    if (error != undefined) {
-      throw new Error(error.message)
+    const response = await this.settingsApi.deleteSetting(this.userUuid, name.value)
+    if (isErrorResponse(response)) {
+      throw new Error(response.data?.error.message)
     }
   }
 

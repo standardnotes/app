@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.13](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.12...@standardnotes/responses@1.13.13) (2023-03-10)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.13.12](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.11...@standardnotes/responses@1.13.12) (2023-03-10)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.13.11](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.10...@standardnotes/responses@1.13.11) (2023-03-08)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.13.10](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.9...@standardnotes/responses@1.13.10) (2023-03-01)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.13.9](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.8...@standardnotes/responses@1.13.9) (2023-03-01)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.13.8](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.7...@standardnotes/responses@1.13.8) (2023-02-15)
+
+**Note:** Version bump only for package @standardnotes/responses
+
 ## [1.13.7](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.6...@standardnotes/responses@1.13.7) (2023-01-31)
 
 **Note:** Version bump only for package @standardnotes/responses

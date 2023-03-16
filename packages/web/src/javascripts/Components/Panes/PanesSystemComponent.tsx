@@ -7,7 +7,6 @@ import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useState } from 'react'
 import { usePrevious } from '../ContentListView/Calendar/usePrevious'
 import ContentListView from '../ContentListView/ContentListView'
-import NoteGroupView from '../NoteGroupView/NoteGroupView'
 import PanelResizer, { PanelResizeType, PanelSide, ResizeFinishCallback } from '../PanelResizer/PanelResizer'
 import { AppPaneId, AppPaneIdToDivId } from './AppPaneMetadata'
 import { useResponsiveAppPane } from './ResponsivePaneProvider'
@@ -20,6 +19,7 @@ import {
 import { isPanesChangeLeafDismiss, isPanesChangePush } from '@/Controllers/PaneController/panesForLayout'
 import { log, LoggingDomain } from '@/Logging'
 import { useMediaQuery } from '@/Hooks/useMediaQuery'
+import EditorPane from '../NoteGroupView/EditorPane'
 
 const NAVIGATION_PANEL_MIN_WIDTH = 48
 const ITEMS_PANEL_MIN_WIDTH = 200
@@ -330,9 +330,9 @@ const PanesSystemComponent = () => {
         } else if (pane === AppPaneId.Editor) {
           return (
             <ErrorBoundary key="editor-pane">
-              <NoteGroupView
+              <EditorPane
                 id={ElementIds.EditorColumn}
-                innerRef={(ref) => setEditorRef(ref)}
+                ref={setEditorRef}
                 className={className}
                 application={application}
               />

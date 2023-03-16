@@ -1,3 +1,1 @@
-import { MinimalHttpResponse } from '../Http/MinimalHttpResponses'
-
-export type UpdateSettingResponse = MinimalHttpResponse
+export type UpdateSettingResponse = unknown

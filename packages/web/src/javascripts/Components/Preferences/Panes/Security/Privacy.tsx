@@ -39,7 +39,7 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
       const userSettings = await application.settings.listSettings()
       setSessionUaLoggingValue(
         userSettings.getSettingValue<LogSessionUserAgentOption>(
-          SettingName.LogSessionUserAgent,
+          SettingName.create(SettingName.NAMES.LogSessionUserAgent).getValue(),
           LogSessionUserAgentOption.Enabled,
         ),
       )
@@ -62,7 +62,10 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
         : LogSessionUserAgentOption.Enabled
     setSessionUaLoggingValue(newValue)
 
-    const updateResult = await updateSetting(SettingName.LogSessionUserAgent, newValue)
+    const updateResult = await updateSetting(
+      SettingName.create(SettingName.NAMES.LogSessionUserAgent).getValue(),
+      newValue,
+    )
 
     if (!updateResult) {
       setSessionUaLoggingValue(previousValue)
