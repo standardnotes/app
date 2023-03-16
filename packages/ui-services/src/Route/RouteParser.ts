@@ -2,6 +2,7 @@ import { UserRequestType } from '@standardnotes/common'
 import { PreferenceId } from './../Preferences/PreferenceId'
 import { AppViewRouteParam, ValidAppViewRoutes } from './Params/AppViewRouteParams'
 import { DemoParams } from './Params/DemoParams'
+import { ExtensionViewParams } from './Params/ExtensionViewParams'
 import { OnboardingParams } from './Params/OnboardingParams'
 import { PurchaseParams } from './Params/PurchaseParams'
 import { SettingsParams } from './Params/SettingsParams'
@@ -89,6 +90,18 @@ export class RouteParser implements RouteParserInterface {
     }
 
     return this.searchParams.get(RootQueryParam.AppViewRoute) as AppViewRouteParam
+  }
+
+  get extensionViewParams(): ExtensionViewParams {
+    const appViewRoute = this.appViewRouteParam
+
+    if (appViewRoute !== 'extension') {
+      throw new Error('Accessing extension view params in non-extension context')
+    }
+
+    return {
+      hasClip: !!this.searchParams.get('has_clip'),
+    }
   }
 
   private checkForProperRouteType(type: RouteType): void {

@@ -1,18 +1,21 @@
-import { runtime, contextMenus, browserAction } from 'webextension-polyfill'
+import { runtime, browserAction, windows } from 'webextension-polyfill'
 import { RuntimeMessage, RuntimeMessageTypes } from '../types/message'
-import sendMessageToActiveTab from '../utils/sendMessageToActiveTab'
 
-const ClipSelectionContextMenuId = 'sn-clip-selection' as const
+const isFirefox = navigator.userAgent.indexOf('Firefox/') !== -1
 
-runtime.onInstalled.addListener(() => {
-  contextMenus.create({
-    id: ClipSelectionContextMenuId,
-    title: 'Clip selection to Standard Notes',
-    contexts: ['selection'],
-  })
-})
+const openPopupAndClipSelection = async (content: string) => {
+  if (isFirefox) {
+    const popupURL = (await browserAction.getPopup({})) + '&has_clip=true'
+    await windows.create({
+      type: 'detached_panel',
+      url: popupURL,
+      width: 300,
+      height: 400,
+    })
+    setTimeout(() => runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload: content }), 500)
+    return
+  }
 
-const openPopupAndClipSelection = (content: string) => {
   browserAction.openPopup().then(() => {
     runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload: content })
   })
@@ -24,12 +27,5 @@ runtime.onMessage.addListener((message: RuntimeMessage) => {
       return
     }
     openPopupAndClipSelection(message.payload)
-  }
-})
-
-contextMenus.onClicked.addListener(async (info) => {
-  if (info.menuItemId === 'sn-clip-selection') {
-    const selectionContent = await sendMessageToActiveTab(RuntimeMessageTypes.GetSelection)
-    openPopupAndClipSelection(selectionContent)
   }
 })

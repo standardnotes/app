@@ -16,13 +16,16 @@ import sendMessageToActiveTab from '@standardnotes/extension/src/utils/sendMessa
 import { $createParagraphNode, $createRangeSelection, LexicalEditor } from 'lexical'
 import { $generateNodesFromDOM } from '../SuperEditor/Lexical/Utils/generateNodesFromDOM'
 import { RuntimeMessage, RuntimeMessageTypes } from '@standardnotes/extension/src/types/message'
+import { RouteParserInterface } from '@standardnotes/ui-services'
+import Spinner from '../Spinner/Spinner'
 
 type Props = {
   viewControllerManager: ViewControllerManager
   applicationGroup: ApplicationGroup
+  routeInfo: RouteParserInterface
 }
 
-const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
+const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: Props) => {
   const application = useApplication()
 
   const user = application.getUser()
@@ -89,6 +92,22 @@ const ExtensionView = ({ viewControllerManager, applicationGroup }: Props) => {
       selection.insertNodes([newLineNode, ...nodesToInsert])
     })
   }, [])
+
+  const isLoadingClip = routeInfo.extensionViewParams.hasClip
+
+  if (isLoadingClip && !clippedContent) {
+    return (
+      <>
+        <div className="flex items-center bg-info p-1 px-3 py-2 text-base font-semibold text-info-contrast">
+          <SNLogoIcon className="mr-2 h-6 w-6 fill-info-contrast stroke-info-contrast [fill-rule:evenodd]" />
+          Standard Notes
+        </div>
+        <div className="flex items-center justify-center px-3 py-3">
+          <Spinner className="h-8 w-7" />
+        </div>
+      </>
+    )
+  }
 
   return (
     <>

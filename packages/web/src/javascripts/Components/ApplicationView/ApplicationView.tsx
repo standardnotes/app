@@ -181,7 +181,11 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     return (
       <ApplicationProvider application={application}>
         <AndroidBackHandlerProvider application={application}>
-          <ExtensionView viewControllerManager={viewControllerManager} applicationGroup={mainApplicationGroup} />
+          <ExtensionView
+            viewControllerManager={viewControllerManager}
+            applicationGroup={mainApplicationGroup}
+            routeInfo={route}
+          />
         </AndroidBackHandlerProvider>
       </ApplicationProvider>
     )
