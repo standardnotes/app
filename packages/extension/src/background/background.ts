@@ -16,8 +16,8 @@ const openPopupAndClipSelection = async (content: string) => {
     return
   }
 
-  browserAction.openPopup().then(() => {
-    runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload: content })
+  void browserAction.openPopup().then(() => {
+    void runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload: content })
   })
 }
 
@@ -26,6 +26,6 @@ runtime.onMessage.addListener((message: RuntimeMessage) => {
     if (!message.payload) {
       return
     }
-    openPopupAndClipSelection(message.payload)
+    void openPopupAndClipSelection(message.payload)
   }
 })

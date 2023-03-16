@@ -72,7 +72,6 @@ document.body.appendChild(nodeOverlayElement)
 window.addEventListener('mousemove', (event) => {
   if (!isSelectingNodeForClipping) {
     nodeOverlayElement.style.visibility = 'hidden'
-    nodeOverlayElement.style.pointerEvents = 'none'
     return
   }
   nodeOverlayElement.style.visibility = ''
@@ -91,6 +90,7 @@ window.addEventListener('click', (event) => {
     return
   }
   isSelectingNodeForClipping = false
+  nodeOverlayElement.style.visibility = 'hidden'
   event.preventDefault()
   event.stopPropagation()
   const { target } = event
@@ -98,5 +98,5 @@ window.addEventListener('click', (event) => {
     return
   }
   const content = target.outerHTML
-  runtime.sendMessage({ type: RuntimeMessageTypes.OpenPopupWithSelection, payload: content })
+  void runtime.sendMessage({ type: RuntimeMessageTypes.OpenPopupWithSelection, payload: content })
 })
