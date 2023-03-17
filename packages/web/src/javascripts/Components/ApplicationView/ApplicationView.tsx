@@ -9,7 +9,7 @@ import PreferencesViewWrapper from '@/Components/Preferences/PreferencesViewWrap
 import ChallengeModal from '@/Components/ChallengeModal/ChallengeModal'
 import NotesContextMenu from '@/Components/NotesContextMenu/NotesContextMenu'
 import PurchaseFlowWrapper from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useState, lazy } from 'react'
 import RevisionHistoryModal from '@/Components/RevisionHistoryModal/RevisionHistoryModal'
 import PremiumModalProvider from '@/Hooks/usePremiumModal'
 import ConfirmSignoutContainer from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
@@ -30,12 +30,13 @@ import DotOrgNotice from './DotOrgNotice'
 import LinkingControllerProvider from '@/Controllers/LinkingControllerProvider'
 import ImportModal from '../ImportModal/ImportModal'
 import IosKeyboardClose from '../IosKeyboardClose/IosKeyboardClose'
-import ExtensionView from '../ExtensionView/ExtensionView'
 
 type Props = {
   application: WebApplication
   mainApplicationGroup: ApplicationGroup
 }
+
+const LazyLoadedExtensionView = lazy(() => import('../ExtensionView/ExtensionView'))
 
 const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicationGroup }) => {
   const platformString = getPlatformString()
@@ -181,7 +182,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     return (
       <ApplicationProvider application={application}>
         <AndroidBackHandlerProvider application={application}>
-          <ExtensionView
+          <LazyLoadedExtensionView
             viewControllerManager={viewControllerManager}
             applicationGroup={mainApplicationGroup}
             routeInfo={route}
