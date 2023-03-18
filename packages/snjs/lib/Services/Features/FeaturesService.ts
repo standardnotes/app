@@ -282,7 +282,7 @@ export class SNFeaturesService
       void this.syncService.sync()
       return this.downloadOfflineFeatures(offlineRepo)
     } catch (err) {
-      return new ClientDisplayableError(API_MESSAGE_FAILED_OFFLINE_ACTIVATION)
+      return new ClientDisplayableError(`${API_MESSAGE_FAILED_OFFLINE_ACTIVATION}, ${err}`)
     }
   }
 
@@ -392,12 +392,12 @@ export class SNFeaturesService
     }
 
     const offlineRepo = this.getOfflineRepo()
-    if (!offlineRepo) {
+    if (!offlineRepo || !offlineRepo.content.offlineFeaturesUrl) {
       return false
     }
 
     const hasFirstPartyOfflineSubscription = offlineRepo.content.offlineFeaturesUrl === PROD_OFFLINE_FEATURES_URL
-    return hasFirstPartyOfflineSubscription
+    return hasFirstPartyOfflineSubscription || new URL(offlineRepo.content.offlineFeaturesUrl).hostname === 'localhost'
   }
 
   async updateOnlineRolesAndFetchFeatures(userUuid: UuidString, roles: string[]): Promise<void> {

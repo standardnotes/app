@@ -7,6 +7,7 @@ export const TRUSTED_FEATURE_HOSTS = [
   'extensions.standardnotes.com',
   'extensions.standardnotes.org',
   'features.standardnotes.com',
+  'localhost',
 ]
 
 export enum ExtensionsServerURL {
