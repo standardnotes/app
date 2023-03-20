@@ -9,15 +9,18 @@ import Icon from '../Icon/Icon'
 import Menu from '../Menu/Menu'
 import MenuItem from '../Menu/MenuItem'
 import { runtime } from 'webextension-polyfill'
-import { BlocksEditorComposer } from '../SuperEditor/BlocksEditorComposer'
-import { BlocksEditor } from '../SuperEditor/BlocksEditor'
-import ImportPlugin from '../SuperEditor/Plugins/ImportPlugin/ImportPlugin'
 import sendMessageToActiveTab from '@standardnotes/extension/src/utils/sendMessageToActiveTab'
-import { $createParagraphNode, $createRangeSelection, LexicalEditor } from 'lexical'
+import { $createParagraphNode, $createRangeSelection } from 'lexical'
 import { $generateNodesFromDOM } from '../SuperEditor/Lexical/Utils/generateNodesFromDOM'
 import { RuntimeMessage, RuntimeMessageTypes } from '@standardnotes/extension/src/types/message'
 import { RouteParserInterface } from '@standardnotes/ui-services'
 import Spinner from '../Spinner/Spinner'
+import NoteView from '../NoteView/NoteView'
+import { ContentType, FeatureIdentifier, NoteContent, NoteType, SNNote } from '@standardnotes/snjs'
+import { NoteViewController } from '../NoteView/Controller/NoteViewController'
+import { createHeadlessEditor } from '@lexical/headless'
+import BlocksEditorTheme from '../SuperEditor/Lexical/Theme/Theme'
+import { BlockEditorNodes } from '../SuperEditor/Lexical/Nodes/AllNodes'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -47,17 +50,6 @@ const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: P
   }, [setIsSigningOut])
 
   const [hasSelection, setHasSelection] = useState(false)
-  const [clippedContent, setClippedContent] = useState('')
-  const [, setConvertedSuperContent] = useState<string>()
-
-  useEffect(() => {
-    runtime.onMessage.addListener((message: RuntimeMessage) => {
-      if (message.type === RuntimeMessageTypes.ClipSelection) {
-        setClippedContent(message.payload)
-      }
-    })
-  }, [])
-
   useEffect(() => {
     try {
       const checkIfPageHasSelection = async () => {
@@ -70,28 +62,83 @@ const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: P
     }
   }, [])
 
-  const superContentConversionFn = useCallback((editor: LexicalEditor, text: string) => {
-    editor.update(() => {
-      const parser = new DOMParser()
-      const dom = parser.parseFromString(text, 'text/html')
-      const nodesToInsert = $generateNodesFromDOM(editor, dom).map((node) => {
-        const type = node.getType()
-
-        // Wrap text & link nodes with paragraph since they can't
-        // be top-level nodes in Super
-        if (type === 'text' || type === 'link') {
-          const paragraphNode = $createParagraphNode()
-          paragraphNode.append(node)
-          return paragraphNode
-        }
-
-        return node
-      })
-      const selection = $createRangeSelection()
-      const newLineNode = $createParagraphNode()
-      selection.insertNodes([newLineNode, ...nodesToInsert])
+  const [clippedContent, setClippedContent] = useState('')
+  useEffect(() => {
+    runtime.onMessage.addListener((message: RuntimeMessage) => {
+      if (message.type === RuntimeMessageTypes.ClipSelection) {
+        setClippedContent(message.payload)
+      }
     })
   }, [])
+
+  const [templateNote, setTemplateNote] = useState<SNNote>()
+  const [templateNoteController, setTemplateNoteController] = useState<NoteViewController>()
+
+  useEffect(() => {
+    if (!clippedContent) {
+      return
+    }
+
+    const headlessSuperEditor = createHeadlessEditor({
+      namespace: 'BlocksEditor',
+      theme: BlocksEditorTheme,
+      editable: false,
+      onError: (error: Error) => console.error(error),
+      nodes: [...BlockEditorNodes],
+    })
+
+    const insertNodesIntoEditor = () =>
+      new Promise<void>((resolve) => {
+        headlessSuperEditor.update(() => {
+          const parser = new DOMParser()
+          const dom = parser.parseFromString(clippedContent, 'text/html')
+          const nodesToInsert = $generateNodesFromDOM(headlessSuperEditor, dom).map((node) => {
+            const type = node.getType()
+
+            // Wrap text & link nodes with paragraph since they can't
+            // be top-level nodes in Super
+            if (type === 'text' || type === 'link') {
+              const paragraphNode = $createParagraphNode()
+              paragraphNode.append(node)
+              return paragraphNode
+            }
+
+            return node
+          })
+          const selection = $createRangeSelection()
+          selection.insertNodes([...nodesToInsert])
+          resolve()
+        })
+      })
+
+    void insertNodesIntoEditor().then(() => {
+      const editorState = headlessSuperEditor.getEditorState().toJSON()
+
+      const templateNote = application.items.createTemplateItem<NoteContent, SNNote>(ContentType.Note, {
+        title: 'New clip',
+        text: JSON.stringify(editorState),
+        references: [],
+        noteType: NoteType.Super,
+        editorIdentifier: FeatureIdentifier.SuperEditor,
+      })
+
+      setTemplateNote(templateNote)
+    })
+  }, [application, clippedContent])
+
+  useEffect(() => {
+    if (!templateNote) {
+      return
+    }
+
+    const controller = new NoteViewController(application, templateNote)
+
+    setTemplateNoteController(controller)
+
+    return () => {
+      controller.deinit()
+    }
+  }, [application, templateNote])
 
   const isLoadingClip = routeInfo.extensionViewParams.hasClip
 
@@ -199,18 +246,9 @@ const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: P
           </MenuItem>
         </Menu>
       )}
-      {!!clippedContent && (
-        <div className="px-3">
-          <BlocksEditorComposer initialValue={undefined}>
-            <BlocksEditor readonly>
-              <ImportPlugin
-                text={clippedContent}
-                format="html"
-                onChange={(value) => setConvertedSuperContent(value)}
-                customConversionFn={superContentConversionFn}
-              />
-            </BlocksEditor>
-          </BlocksEditorComposer>
+      {!!templateNoteController && (
+        <div className="h-full">
+          <NoteView application={application} controller={templateNoteController} />
         </div>
       )}
     </>

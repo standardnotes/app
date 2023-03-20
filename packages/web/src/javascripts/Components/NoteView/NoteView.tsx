@@ -886,7 +886,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                     featuresController={this.viewControllerManager.featuresController}
                   />
                   <ChangeEditorButton
-                    application={this.application}
                     viewControllerManager={this.viewControllerManager}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
@@ -895,7 +894,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
                   <NotesOptionsPanel
-                    application={this.application}
                     navigationController={this.viewControllerManager.navigationController}
                     notesController={this.viewControllerManager.notesController}
                     linkingController={this.viewControllerManager.linkingController}

@@ -181,13 +181,30 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
   if (route.type === RouteType.AppViewRoute && route.appViewRouteParam === 'extension') {
     return (
       <ApplicationProvider application={application}>
-        <AndroidBackHandlerProvider application={application}>
-          <LazyLoadedExtensionView
-            viewControllerManager={viewControllerManager}
-            applicationGroup={mainApplicationGroup}
-            routeInfo={route}
-          />
-        </AndroidBackHandlerProvider>
+        <CommandProvider service={application.keyboardService}>
+          <AndroidBackHandlerProvider application={application}>
+            <ResponsivePaneProvider paneController={application.getViewControllerManager().paneController}>
+              <PremiumModalProvider
+                application={application}
+                featuresController={viewControllerManager.featuresController}
+              >
+                <LinkingControllerProvider controller={viewControllerManager.linkingController}>
+                  <FileDragNDropProvider
+                    application={application}
+                    featuresController={viewControllerManager.featuresController}
+                    filesController={viewControllerManager.filesController}
+                  >
+                    <LazyLoadedExtensionView
+                      viewControllerManager={viewControllerManager}
+                      applicationGroup={mainApplicationGroup}
+                      routeInfo={route}
+                    />
+                  </FileDragNDropProvider>
+                </LinkingControllerProvider>
+              </PremiumModalProvider>
+            </ResponsivePaneProvider>
+          </AndroidBackHandlerProvider>
+        </CommandProvider>
       </ApplicationProvider>
     )
   }

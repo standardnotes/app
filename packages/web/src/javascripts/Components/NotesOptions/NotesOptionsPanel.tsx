@@ -1,7 +1,6 @@
 import { useCallback, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import NotesOptions from './NotesOptions'
-import { WebApplication } from '@/Application/Application'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
@@ -11,7 +10,6 @@ import RoundIconButton from '../Button/RoundIconButton'
 import Menu from '../Menu/Menu'
 
 type Props = {
-  application: WebApplication
   navigationController: NavigationController
   notesController: NotesController
   linkingController: LinkingController
@@ -20,7 +18,6 @@ type Props = {
 }
 
 const NotesOptionsPanel = ({
-  application,
   navigationController,
   notesController,
   linkingController,
@@ -57,7 +54,6 @@ const NotesOptionsPanel = ({
         <Menu a11yLabel="Note options menu" isOpen={isOpen}>
           <NotesOptions
             notes={notesController.selectedNotes}
-            application={application}
             navigationController={navigationController}
             notesController={notesController}
             linkingController={linkingController}
