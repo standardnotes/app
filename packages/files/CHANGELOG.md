@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.14.38](https://github.com/standardnotes/app/compare/@standardnotes/files@1.14.37...@standardnotes/files@1.14.38) (2023-03-15)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.14.37](https://github.com/standardnotes/app/compare/@standardnotes/files@1.14.36...@standardnotes/files@1.14.37) (2023-03-10)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.14.36](https://github.com/standardnotes/app/compare/@standardnotes/files@1.14.35...@standardnotes/files@1.14.36) (2023-03-10)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.14.35](https://github.com/standardnotes/app/compare/@standardnotes/files@1.14.34...@standardnotes/files@1.14.35) (2023-03-09)
+
+**Note:** Version bump only for package @standardnotes/files
+
 ## [1.14.34](https://github.com/standardnotes/app/compare/@standardnotes/files@1.14.33...@standardnotes/files@1.14.34) (2023-03-08)
 
 **Note:** Version bump only for package @standardnotes/files

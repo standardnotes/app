@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.105.25](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.24...@standardnotes/desktop@3.105.25) (2023-03-18)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.105.24](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.23...@standardnotes/desktop@3.105.24) (2023-03-18)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.105.23](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.22...@standardnotes/desktop@3.105.23) (2023-03-15)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.105.22](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.21...@standardnotes/desktop@3.105.22) (2023-03-15)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.105.21](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.20...@standardnotes/desktop@3.105.21) (2023-03-10)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.105.20](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.19...@standardnotes/desktop@3.105.20) (2023-03-10)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.105.19](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.18...@standardnotes/desktop@3.105.19) (2023-03-09)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.105.18](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.17...@standardnotes/desktop@3.105.18) (2023-03-09)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
+## [3.105.17](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.16...@standardnotes/desktop@3.105.17) (2023-03-09)
+
+**Note:** Version bump only for package @standardnotes/desktop
+
 ## [3.105.16](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.150.15...@standardnotes/desktop@3.105.16) (2023-03-08)
 
 **Note:** Version bump only for package @standardnotes/desktop

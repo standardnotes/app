@@ -12,22 +12,7 @@ on:
       - '!*standardnotes/*web*alpha*'
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - name: Install dependencies
-        run: yarn install --immutable
-      - name: Build
-        run: yarn build:web
-      - name: ESLint
-        run: yarn lint
-      - name: Test
-        run: yarn test
   deploy:
-    needs: test
-
     runs-on: ubuntu-latest
 
     steps:

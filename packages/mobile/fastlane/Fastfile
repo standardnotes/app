@@ -28,7 +28,7 @@ platform :ios do
       scheme: scheme,
       output_name: scheme,
       silent: true,
-      xcargs: 'DEBUG_INFORMATION_FORMAT=dwarf-with-dsym'
+      xcargs: 'DEBUG_INFORMATION_FORMAT=dwarf-with-dsym -allowProvisioningUpdates'
     )
 
     build_number

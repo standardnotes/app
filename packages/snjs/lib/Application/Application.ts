@@ -1775,7 +1775,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     const authenticatorApiService = new AuthenticatorApiService(authenticatorServer)
 
-    this.authenticatorManager = new AuthenticatorManager(authenticatorApiService, this.internalEventBus)
+    this.authenticatorManager = new AuthenticatorManager(
+      authenticatorApiService,
+      this.preferencesService,
+      this.internalEventBus,
+    )
   }
 
   private createAuthManager() {

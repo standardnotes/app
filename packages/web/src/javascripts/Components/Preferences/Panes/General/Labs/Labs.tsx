@@ -1,12 +1,13 @@
 import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import { WebApplication } from '@/Application/Application'
-import { FeatureIdentifier, FeatureStatus, FindNativeFeature } from '@standardnotes/snjs'
+import { ApplicationEvent, FeatureIdentifier, FeatureStatus, FindNativeFeature, PrefKey } from '@standardnotes/snjs'
 import { Fragment, FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import PreferencesGroup from '../../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
 import LabsFeature from './LabsFeature'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type ExperimentalFeatureItem = {
   identifier: FeatureIdentifier
@@ -18,14 +19,24 @@ type ExperimentalFeatureItem = {
 
 type Props = {
   application: {
-    setValue: WebApplication['setValue']
-    getValue: WebApplication['getValue']
     features: WebApplication['features']
+    getPreference: WebApplication['getPreference']
+    setPreference: WebApplication['setPreference']
+    addSingleEventObserver: WebApplication['addSingleEventObserver']
   }
 }
 
 const LabsPane: FunctionComponent<Props> = ({ application }) => {
   const [experimentalFeatures, setExperimentalFeatures] = useState<ExperimentalFeatureItem[]>([])
+
+  const [isPaneGesturesEnabled, setIsPaneGesturesEnabled] = useState(() =>
+    application.getPreference(PrefKey.PaneGesturesEnabled, false),
+  )
+  useEffect(() => {
+    return application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
+      setIsPaneGesturesEnabled(application.getPreference(PrefKey.PaneGesturesEnabled, false))
+    })
+  }, [application])
 
   const reloadExperimentalFeatures = useCallback(() => {
     const experimentalFeatures = application.features.getExperimentalFeatures().map((featureIdentifier) => {
@@ -47,11 +58,23 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
 
   const premiumModal = usePremiumModal()
 
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Labs</Title>
         <div>
+          {isMobileScreen && (
+            <LabsFeature
+              name="Pane switch gestures"
+              description="Allows using gestures to navigate"
+              isEnabled={isPaneGesturesEnabled}
+              toggleFeature={() => {
+                void application.setPreference(PrefKey.PaneGesturesEnabled, !isPaneGesturesEnabled)
+              }}
+            />
+          )}
           {experimentalFeatures.map(({ identifier, name, description, isEnabled, isEntitled }, index) => {
             const toggleFeature = () => {
               if (!isEntitled) {
@@ -77,7 +100,7 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
               </Fragment>
             )
           })}
-          {experimentalFeatures.length === 0 && (
+          {(experimentalFeatures.length === 0 || typeof isPaneGesturesEnabled === 'boolean') && (
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <Text>No experimental features available.</Text>

@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.43.11](https://github.com/standardnotes/app/compare/@standardnotes/models@1.43.10...@standardnotes/models@1.43.11) (2023-03-15)
+
+### Bug Fixes
+
+* Disabled pane gesture navigation by default and moved it to Labs since it is unstable ([636de8f](https://github.com/standardnotes/app/commit/636de8fada2f8cb7ef0260de6b7301559147d682))
+
+## [1.43.10](https://github.com/standardnotes/app/compare/@standardnotes/models@1.43.9...@standardnotes/models@1.43.10) (2023-03-10)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.43.9](https://github.com/standardnotes/app/compare/@standardnotes/models@1.43.8...@standardnotes/models@1.43.9) (2023-03-10)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.43.8](https://github.com/standardnotes/app/compare/@standardnotes/models@1.43.7...@standardnotes/models@1.43.8) (2023-03-09)
+
+**Note:** Version bump only for package @standardnotes/models
+
 ## [1.43.7](https://github.com/standardnotes/app/compare/@standardnotes/models@1.43.6...@standardnotes/models@1.43.7) (2023-03-08)
 
 **Note:** Version bump only for package @standardnotes/models
