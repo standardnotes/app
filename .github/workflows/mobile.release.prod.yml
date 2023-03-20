@@ -33,7 +33,7 @@ jobs:
         with:
           working-directory: 'packages/mobile'
       - name: fastlane
-        uses: maierj/fastlane-action@v1.4.0
+        uses: maierj/fastlane-action@v3.0.0
         env:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           BUILD_NUMBER: ${{ github.run_number }}
@@ -93,7 +93,7 @@ jobs:
         with:
           working-directory: 'packages/mobile'
       - name: Setup fastlane
-        uses: maierj/fastlane-action@v1.4.0
+        uses: maierj/fastlane-action@v3.0.0
         env:
           FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
@@ -102,7 +102,7 @@ jobs:
           lane: 'ios setup'
           subdirectory: 'packages/mobile'
       - name: fastlane
-        uses: maierj/fastlane-action@v1.4.0
+        uses: maierj/fastlane-action@v3.0.0
         env:
           APPLE_APP_ID: ${{ secrets.APP_APPLE_ID }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
