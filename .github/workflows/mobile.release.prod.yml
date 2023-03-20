@@ -104,18 +104,18 @@ jobs:
       - name: fastlane
         uses: maierj/fastlane-action@v1.4.0
         env:
-          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
           APPLE_APP_ID: ${{ secrets.APP_APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPSTORE_CONNECT_KEY_ID: ${{ secrets.APPSTORE_CONNECT_KEY_ID }}
           APPSTORE_CONNECT_KEY_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_KEY_ISSUER_ID }}
-          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
-          FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
-          MATCH_CERTIFICATES_URL: ${{ secrets.MATCH_CERTIFICATES_URL }}
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
-          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           BUILD_NUMBER: ${{ github.run_number }}
+          FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+          FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
+          FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+          MATCH_CERTIFICATES_URL: ${{ secrets.MATCH_CERTIFICATES_URL }}
+          MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
         with:
           lane: 'ios prod'
           subdirectory: 'packages/mobile'
