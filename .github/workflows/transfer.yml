@@ -1,0 +1,73 @@
+name: Transfer Values
+
+on: [workflow_dispatch]
+
+jobs:
+  debug:
+    name: Debug
+    runs-on: ubuntu-18.04
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: us-east-1
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Set up transfer file
+      env:
+        ANDROID_KEYSTORE: ${{ secrets.ANDROID_KEYSTORE }}
+        ANDROID_KEYSTORE_ALIAS: ${{ secrets.ANDROID_KEYSTORE_ALIAS }}
+        ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD }}
+        APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        APPSTORE_CONNECT_KEY: ${{ secrets.APPSTORE_CONNECT_KEY }}
+        APPSTORE_CONNECT_KEY_ID: ${{ secrets.APPSTORE_CONNECT_KEY_ID }}
+        APPSTORE_CONNECT_KEY_ISSUER_ID: ${{ secrets.APPSTORE_CONNECT_KEY_ISSUER_ID }}
+        APP_APPLE_ID: ${{ secrets.APP_APPLE_ID }}
+        DEV_ANDROID_KEYSTORE_ALIAS: ${{ secrets.DEV_ANDROID_KEYSTORE_ALIAS }}
+        DEV_ANDROID_KEYSTORE_PASSWORD: ${{ secrets.DEV_ANDROID_KEYSTORE_PASSWORD }}
+        DEV_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD: ${{ secrets.DEV_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD }}
+        DEV_APP_APPLE_ID: ${{ secrets.DEV_APP_APPLE_ID }}
+        DEV_KEYSTORE: ${{ secrets.DEV_KEYSTORE }}
+        DEV_KEYSTORE_PASSPHRASE: ${{ secrets.DEV_KEYSTORE_PASSPHRASE }}
+        FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
+        FASTLANE_PASSWORD: ${{ secrets.FASTLANE_PASSWORD }}
+        FASTLANE_SESSION: ${{ secrets.FASTLANE_SESSION }}
+        FASTLANE_USER: ${{ secrets.FASTLANE_USER }}
+        GOOGLE_PLAY_JSON_KEY_DATA: ${{ secrets.GOOGLE_PLAY_JSON_KEY_DATA }}
+        KEYSTORE_PASSPHRASE: ${{ secrets.KEYSTORE_PASSPHRASE }}
+        MATCH_CERTIFICATES_URL: ${{ secrets.MATCH_CERTIFICATES_URL }}
+        MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
+        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      run: |
+        echo ANDROID_KEYSTORE "$ANDROID_KEYSTORE" >> file.txt
+        echo ANDROID_KEYSTORE_ALIAS "$ANDROID_KEYSTORE_ALIAS" >> file.txt
+        echo ANDROID_KEYSTORE_PASSWORD "$ANDROID_KEYSTORE_PASSWORD" >> file.txt
+        echo ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD "$ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD" >> file.txt
+        echo APPLE_TEAM_ID "$APPLE_TEAM_ID" >> file.txt
+        echo APPSTORE_CONNECT_KEY "$APPSTORE_CONNECT_KEY" >> file.txt
+        echo APPSTORE_CONNECT_KEY_ID "$APPSTORE_CONNECT_KEY_ID" >> file.txt
+        echo APPSTORE_CONNECT_KEY_ISSUER_ID "$APPSTORE_CONNECT_KEY_ISSUER_ID" >> file.txt
+        echo APP_APPLE_ID "$APP_APPLE_ID" >> file.txt
+        echo DEV_ANDROID_KEYSTORE_ALIAS "$DEV_ANDROID_KEYSTORE_ALIAS" >> file.txt
+        echo DEV_ANDROID_KEYSTORE_PASSWORD "$DEV_ANDROID_KEYSTORE_PASSWORD" >> file.txt
+        echo DEV_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD "$DEV_ANDROID_KEYSTORE_PRIVATE_KEY_PASSWORD" >> file.txt
+        echo DEV_APP_APPLE_ID "$DEV_APP_APPLE_ID" >> file.txt
+        echo DEV_KEYSTORE "$DEV_KEYSTORE" >> file.txt
+        echo DEV_KEYSTORE_PASSPHRASE "$DEV_KEYSTORE_PASSPHRASE" >> file.txt
+        echo FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD "$FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD" >> file.txt
+        echo FASTLANE_PASSWORD "$FASTLANE_PASSWORD" >> file.txt
+        echo FASTLANE_SESSION "$FASTLANE_SESSION" >> file.txt
+        echo FASTLANE_USER "$FASTLANE_USER" >> file.txt
+        echo GOOGLE_PLAY_JSON_KEY_DATA "$GOOGLE_PLAY_JSON_KEY_DATA" >> file.txt
+        echo KEYSTORE_PASSPHRASE "$KEYSTORE_PASSPHRASE" >> file.txt
+        echo MATCH_CERTIFICATES_URL "$MATCH_CERTIFICATES_URL" >> file.txt
+        echo MATCH_GIT_BASIC_AUTHORIZATION "$MATCH_GIT_BASIC_AUTHORIZATION" >> file.txt
+        echo MATCH_PASSWORD "$MATCH_PASSWORD" >> file.txt
+        echo SSH_PRIVATE_KEY "$SSH_PRIVATE_KEY" >> file.txt
+
+    - name: Copy file
+      run: aws s3 cp file.txt s3://sn-mobile-transfer/file.txt
