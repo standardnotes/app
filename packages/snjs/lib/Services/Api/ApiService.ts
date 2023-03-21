@@ -648,10 +648,10 @@ export class SNApiService
         throw Error('Cannot download offline repo without url and offlineKEy')
       }
 
-      const { host } = new URL(featuresUrl)
+      const { hostname } = new URL(featuresUrl)
 
-      if (!TRUSTED_FEATURE_HOSTS.includes(host)) {
-        return new ClientDisplayableError('This offline features host is not in the trusted allowlist.')
+      if (!TRUSTED_FEATURE_HOSTS.includes(hostname)) {
+        return new ClientDisplayableError(`The offline features host ${hostname} is not in the trusted allowlist.`)
       }
 
       const response = await this.request<GetOfflineFeaturesResponse>({

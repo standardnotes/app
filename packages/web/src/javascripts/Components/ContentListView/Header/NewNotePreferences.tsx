@@ -17,6 +17,8 @@ import { WebApplication } from '@/Application/Application'
 import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 import { PreferenceMode } from './PreferenceMode'
 import dayjs from 'dayjs'
+import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat'
+dayjs.extend(dayjsAdvancedFormat)
 import { EditorOption, getDropdownItemsForAllEditors } from '@/Utils/DropdownItemsForEditors'
 import { classNames } from '@standardnotes/utils'
 import { NoteTitleFormatOptions } from './NoteTitleFormatOptions'

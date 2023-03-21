@@ -7,6 +7,7 @@ import PreferencesGroup from '../../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegment'
 import LabsFeature from './LabsFeature'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type ExperimentalFeatureItem = {
   identifier: FeatureIdentifier
@@ -57,19 +58,23 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
 
   const premiumModal = usePremiumModal()
 
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Labs</Title>
         <div>
-          <LabsFeature
-            name="Pane switch gestures"
-            description="Allows using gestures to navigate"
-            isEnabled={isPaneGesturesEnabled}
-            toggleFeature={() => {
-              void application.setPreference(PrefKey.PaneGesturesEnabled, !isPaneGesturesEnabled)
-            }}
-          />
+          {isMobileScreen && (
+            <LabsFeature
+              name="Pane switch gestures"
+              description="Allows using gestures to navigate"
+              isEnabled={isPaneGesturesEnabled}
+              toggleFeature={() => {
+                void application.setPreference(PrefKey.PaneGesturesEnabled, !isPaneGesturesEnabled)
+              }}
+            />
+          )}
           {experimentalFeatures.map(({ identifier, name, description, isEnabled, isEntitled }, index) => {
             const toggleFeature = () => {
               if (!isEntitled) {

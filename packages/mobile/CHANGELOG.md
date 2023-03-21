@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.51.59](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.51.58...@standardnotes/mobile@3.51.59) (2023-03-20)
+
+### Reverts
+
+* Revert "chore: fastlane (skip e2e)" ([a63ab6a](https://github.com/standardnotes/app/commit/a63ab6a55523e9d4c447aaeac8e23d4fc2370152))
+
+## [3.51.58](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.51.57...@standardnotes/mobile@3.51.58) (2023-03-20)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.51.57](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.51.56...@standardnotes/mobile@3.51.57) (2023-03-18)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.51.56](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.51.55...@standardnotes/mobile@3.51.56) (2023-03-18)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
 ## [3.51.55](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.51.54...@standardnotes/mobile@3.51.55) (2023-03-15)
 
 **Note:** Version bump only for package @standardnotes/mobile

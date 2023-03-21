@@ -34,6 +34,8 @@ import { NotesController } from '../NotesController/NotesController'
 import { formatDateAndTimeForNote } from '@/Utils/DateUtils'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import dayjs from 'dayjs'
+import dayjsAdvancedFormat from 'dayjs/plugin/advancedFormat'
+dayjs.extend(dayjsAdvancedFormat)
 import { LinkingController } from '../LinkingController'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { log, LoggingDomain } from '@/Logging'
