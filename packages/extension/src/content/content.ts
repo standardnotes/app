@@ -37,10 +37,10 @@ runtime.onMessage.addListener(async (message: RuntimeMessage) => {
       const result = document.createElement('div')
       result.appendChild(range.cloneContents())
 
-      return result.innerHTML
+      return { title: document.title, content: result.innerHTML }
     }
     case RuntimeMessageTypes.GetFullPage: {
-      return document.body.innerHTML
+      return { title: document.title, content: document.body.innerHTML }
     }
     case RuntimeMessageTypes.GetArticle: {
       const documentClone = document.cloneNode(true) as Document
@@ -48,7 +48,7 @@ runtime.onMessage.addListener(async (message: RuntimeMessage) => {
       if (!article) {
         return
       }
-      return article.content
+      return { title: article.title, content: article.content }
     }
     default:
       return
@@ -97,6 +97,10 @@ window.addEventListener('click', (event) => {
   if (!target || !(target instanceof HTMLElement)) {
     return
   }
+  const title = document.title
   const content = target.outerHTML
-  void runtime.sendMessage({ type: RuntimeMessageTypes.OpenPopupWithSelection, payload: content })
+  void runtime.sendMessage({
+    type: RuntimeMessageTypes.OpenPopupWithSelection,
+    payload: { title, content },
+  } as RuntimeMessage)
 })

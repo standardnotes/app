@@ -10,17 +10,15 @@ import Menu from '../Menu/Menu'
 import MenuItem from '../Menu/MenuItem'
 import { runtime } from 'webextension-polyfill'
 import sendMessageToActiveTab from '@standardnotes/extension/src/utils/sendMessageToActiveTab'
-import { $createParagraphNode, $createRangeSelection } from 'lexical'
+import { $createParagraphNode, $createRangeSelection, LexicalEditor } from 'lexical'
 import { $generateNodesFromDOM } from '../SuperEditor/Lexical/Utils/generateNodesFromDOM'
-import { RuntimeMessage, RuntimeMessageTypes } from '@standardnotes/extension/src/types/message'
+import { ClipPayload, RuntimeMessage, RuntimeMessageTypes } from '@standardnotes/extension/src/types/message'
 import { RouteParserInterface } from '@standardnotes/ui-services'
 import Spinner from '../Spinner/Spinner'
-import NoteView from '../NoteView/NoteView'
-import { ContentType, FeatureIdentifier, NoteContent, NoteType, SNNote } from '@standardnotes/snjs'
-import { NoteViewController } from '../NoteView/Controller/NoteViewController'
-import { createHeadlessEditor } from '@lexical/headless'
-import BlocksEditorTheme from '../SuperEditor/Lexical/Theme/Theme'
-import { BlockEditorNodes } from '../SuperEditor/Lexical/Nodes/AllNodes'
+import { BlocksEditorComposer } from '../SuperEditor/BlocksEditorComposer'
+import { BlocksEditor } from '../SuperEditor/BlocksEditor'
+import ImportPlugin from '../SuperEditor/Plugins/ImportPlugin/ImportPlugin'
+import Button from '../Button/Button'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -53,7 +51,7 @@ const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: P
   useEffect(() => {
     try {
       const checkIfPageHasSelection = async () => {
-        setHasSelection(await sendMessageToActiveTab(RuntimeMessageTypes.HasSelection))
+        setHasSelection(Boolean(await sendMessageToActiveTab(RuntimeMessageTypes.HasSelection)))
       }
 
       void checkIfPageHasSelection()
@@ -62,87 +60,41 @@ const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: P
     }
   }, [])
 
-  const [clippedContent, setClippedContent] = useState('')
+  const [clipPayload, setClipPayload] = useState<ClipPayload>()
   useEffect(() => {
     runtime.onMessage.addListener((message: RuntimeMessage) => {
       if (message.type === RuntimeMessageTypes.ClipSelection) {
-        setClippedContent(message.payload)
+        setClipPayload(message.payload)
       }
     })
   }, [])
+  const [, setConvertedSuperContent] = useState<string>()
 
-  const [templateNote, setTemplateNote] = useState<SNNote>()
-  const [templateNoteController, setTemplateNoteController] = useState<NoteViewController>()
+  const superImportFunction = useCallback((editor: LexicalEditor, text: string) => {
+    editor.update(() => {
+      const parser = new DOMParser()
+      const dom = parser.parseFromString(text, 'text/html')
+      const nodesToInsert = $generateNodesFromDOM(editor, dom).map((node) => {
+        const type = node.getType()
 
-  useEffect(() => {
-    if (!clippedContent) {
-      return
-    }
+        // Wrap text & link nodes with paragraph since they can't
+        // be top-level nodes in Super
+        if (type === 'text' || type === 'link') {
+          const paragraphNode = $createParagraphNode()
+          paragraphNode.append(node)
+          return paragraphNode
+        }
 
-    const headlessSuperEditor = createHeadlessEditor({
-      namespace: 'BlocksEditor',
-      theme: BlocksEditorTheme,
-      editable: false,
-      onError: (error: Error) => console.error(error),
-      nodes: [...BlockEditorNodes],
-    })
-
-    const insertNodesIntoEditor = () =>
-      new Promise<void>((resolve) => {
-        headlessSuperEditor.update(() => {
-          const parser = new DOMParser()
-          const dom = parser.parseFromString(clippedContent, 'text/html')
-          const nodesToInsert = $generateNodesFromDOM(headlessSuperEditor, dom).map((node) => {
-            const type = node.getType()
-
-            // Wrap text & link nodes with paragraph since they can't
-            // be top-level nodes in Super
-            if (type === 'text' || type === 'link') {
-              const paragraphNode = $createParagraphNode()
-              paragraphNode.append(node)
-              return paragraphNode
-            }
-
-            return node
-          })
-          const selection = $createRangeSelection()
-          selection.insertNodes([...nodesToInsert])
-          resolve()
-        })
+        return node
       })
-
-    void insertNodesIntoEditor().then(() => {
-      const editorState = headlessSuperEditor.getEditorState().toJSON()
-
-      const templateNote = application.items.createTemplateItem<NoteContent, SNNote>(ContentType.Note, {
-        title: 'New clip',
-        text: JSON.stringify(editorState),
-        references: [],
-        noteType: NoteType.Super,
-        editorIdentifier: FeatureIdentifier.SuperEditor,
-      })
-
-      setTemplateNote(templateNote)
+      const selection = $createRangeSelection()
+      selection.insertNodes([...nodesToInsert])
     })
-  }, [application, clippedContent])
-
-  useEffect(() => {
-    if (!templateNote) {
-      return
-    }
-
-    const controller = new NoteViewController(application, templateNote)
-
-    setTemplateNoteController(controller)
-
-    return () => {
-      controller.deinit()
-    }
-  }, [application, templateNote])
+  }, [])
 
   const isLoadingClip = routeInfo.extensionViewParams.hasClip
 
-  if (isLoadingClip && !clippedContent) {
+  if (isLoadingClip && !clipPayload) {
     return (
       <>
         <div className="flex items-center bg-info p-1 px-3 py-2 text-base font-semibold text-info-contrast">
@@ -162,7 +114,7 @@ const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: P
         <SNLogoIcon className="mr-2 h-6 w-6 fill-info-contrast stroke-info-contrast [fill-rule:evenodd]" />
         Standard Notes
       </div>
-      {!user && !menuPane && !clippedContent && (
+      {!user && !menuPane && !clipPayload && (
         <Menu a11yLabel="User account menu" isOpen={true}>
           <MenuItem onClick={activateRegisterPane}>
             <Icon type="user" className="mr-2 h-6 w-6 text-neutral md:h-5 md:w-5" />
@@ -174,7 +126,7 @@ const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: P
           </MenuItem>
         </Menu>
       )}
-      {!!menuPane && (
+      {!user && !!menuPane && (
         <MenuPaneSelector
           viewControllerManager={viewControllerManager}
           application={application}
@@ -184,22 +136,28 @@ const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: P
           closeMenu={() => setMenuPane(undefined)}
         />
       )}
-      {user && !isSigningOut && !clippedContent && (
+      {user && !isSigningOut && !clipPayload && (
         <div>
           <Menu a11yLabel="Extension menu" isOpen={true}>
             <div className="px-3 py-2 text-base font-semibold">Web Clipper</div>
             <MenuItem
               onClick={async () => {
-                const pageContent = await sendMessageToActiveTab(RuntimeMessageTypes.GetFullPage)
-                setClippedContent(pageContent)
+                const payload = await sendMessageToActiveTab(RuntimeMessageTypes.GetFullPage)
+                if (!payload) {
+                  return
+                }
+                setClipPayload(payload)
               }}
             >
               Clip full page
             </MenuItem>
             <MenuItem
               onClick={async () => {
-                const articleContent = await sendMessageToActiveTab(RuntimeMessageTypes.GetArticle)
-                setClippedContent(articleContent)
+                const payload = await sendMessageToActiveTab(RuntimeMessageTypes.GetArticle)
+                if (!payload) {
+                  return
+                }
+                setClipPayload(payload)
               }}
             >
               Clip article
@@ -207,8 +165,11 @@ const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: P
             <MenuItem
               disabled={!hasSelection}
               onClick={async () => {
-                const selectionContent = await sendMessageToActiveTab(RuntimeMessageTypes.GetSelection)
-                setClippedContent(selectionContent)
+                const payload = await sendMessageToActiveTab(RuntimeMessageTypes.GetSelection)
+                if (!payload) {
+                  return
+                }
+                setClipPayload(payload)
               }}
             >
               Clip current selection
@@ -234,7 +195,7 @@ const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: P
           </Menu>
         </div>
       )}
-      {isSigningOut && !clippedContent && (
+      {isSigningOut && !clipPayload && (
         <Menu a11yLabel="Sign out confirmation" isOpen={true}>
           <div className="px-3 pt-2 pb-1 text-base font-semibold">Sign out</div>
           <div className="px-3 pb-2 text-sm text-foreground">
@@ -246,9 +207,29 @@ const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: P
           </MenuItem>
         </Menu>
       )}
-      {!!templateNoteController && (
-        <div className="h-full">
-          <NoteView application={application} controller={templateNoteController} />
+      {!!clipPayload && (
+        <div className="flex h-full flex-col overflow-hidden">
+          <div className="min-h-0 flex-shrink-0 border-b border-border p-3">
+            <input className="w-full text-base font-semibold" type="text" value={clipPayload.title} />
+          </div>
+          <div className="overflow-y-auto p-3">
+            <BlocksEditorComposer readonly={true} initialValue={undefined}>
+              <BlocksEditor readonly={true}>
+                <ImportPlugin
+                  text={clipPayload.content}
+                  format="html"
+                  onChange={(value) => setConvertedSuperContent(value)}
+                  customImportFunction={superImportFunction}
+                />
+              </BlocksEditor>
+            </BlocksEditorComposer>
+          </div>
+          <div className="min-h-0 flex-shrink-0 border-t border-border p-3">
+            <Button className="flex items-center justify-center" primary fullWidth>
+              <Icon type="save" className="mr-2 h-6 w-6" />
+              Save
+            </Button>
+          </div>
         </div>
       )}
     </>

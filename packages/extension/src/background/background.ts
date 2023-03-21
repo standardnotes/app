@@ -3,7 +3,7 @@ import { RuntimeMessage, RuntimeMessageTypes } from '../types/message'
 
 const isFirefox = navigator.userAgent.indexOf('Firefox/') !== -1
 
-const openPopupAndClipSelection = async (content: string) => {
+const openPopupAndClipSelection = async (payload: { title: string; content: string }) => {
   if (isFirefox) {
     const popupURL = (await browserAction.getPopup({})) + '&has_clip=true'
     await windows.create({
@@ -12,12 +12,12 @@ const openPopupAndClipSelection = async (content: string) => {
       width: 300,
       height: 400,
     })
-    setTimeout(() => runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload: content }), 500)
+    setTimeout(() => runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload }), 500)
     return
   }
 
   void browserAction.openPopup().then(() => {
-    void runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload: content })
+    void runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload })
   })
 }
 

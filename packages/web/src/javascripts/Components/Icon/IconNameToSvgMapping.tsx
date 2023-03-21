@@ -107,6 +107,7 @@ export const IconNameToSvgMapping = {
   pencil: icons.PencilIcon,
   pin: icons.PinIcon,
   restore: icons.RestoreIcon,
+  save: icons.SaveIcon,
   search: icons.SearchIcon,
   security: icons.SecurityIcon,
   server: icons.ServerIcon,

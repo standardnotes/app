@@ -11,12 +11,12 @@ export default function ImportPlugin({
   text,
   format,
   onChange,
-  customConversionFn,
+  customImportFunction,
 }: {
   text: string
   format: 'md' | 'html'
   onChange: (value: string, preview: string) => void
-  customConversionFn?: (editor: LexicalEditor, text: string) => void
+  customImportFunction?: (editor: LexicalEditor, text: string) => void
 }): JSX.Element | null {
   const [editor] = useLexicalComposerContext()
 
@@ -26,8 +26,8 @@ export default function ImportPlugin({
       return
     }
 
-    if (customConversionFn) {
-      customConversionFn(editor, text)
+    if (customImportFunction) {
+      customImportFunction(editor, text)
       return
     }
 
@@ -43,7 +43,7 @@ export default function ImportPlugin({
         selection.insertNodes([newLineNode, ...nodesToInsert])
       }
     })
-  }, [editor, text, format, customConversionFn])
+  }, [editor, text, format, customImportFunction])
 
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {
