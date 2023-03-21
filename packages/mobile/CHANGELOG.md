@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.51.60](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.51.59...@standardnotes/mobile@3.51.60) (2023-03-21)
+
+### Bug Fixes
+
+* gradle version inconsistency ([#2197](https://github.com/standardnotes/app/issues/2197)) ([a42213f](https://github.com/standardnotes/app/commit/a42213f8d52b9ea002774a32b461676b2e00e117))
+
 ## [3.51.59](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.51.58...@standardnotes/mobile@3.51.59) (2023-03-20)
 
 ### Reverts
