@@ -24,7 +24,13 @@ const LinkedItemBubblesContainer = ({ item, linkingController }: Props) => {
 
   const commandService = useCommandService()
 
-  const { unlinkItemFromSelectedItem: unlinkItem, activateItem } = linkingController
+  const { unlinkItems, activateItem } = linkingController
+  const unlinkItem = useCallback(
+    async (itemToUnlink: LinkableItem) => {
+      void unlinkItems(item, itemToUnlink)
+    },
+    [item, unlinkItems],
+  )
 
   const { notesLinkedToItem, filesLinkedToItem, tagsLinkedToItem, notesLinkingToItem, filesLinkingToItem } =
     useItemLinks(item)
