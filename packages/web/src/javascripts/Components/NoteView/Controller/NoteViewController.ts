@@ -38,7 +38,7 @@ export class NoteViewController implements ItemViewControllerInterface {
   private saveTimeout?: ReturnType<typeof setTimeout>
   private defaultTagUuid: UuidString | undefined
   private defaultTag?: SNTag
-  private savingLocallyPromise = Deferred<void>()
+  private savingLocallyPromise: ReturnType<typeof Deferred<void>> | null = null
 
   constructor(
     private application: WebApplication,
@@ -59,6 +59,11 @@ export class NoteViewController implements ItemViewControllerInterface {
   }
 
   deinit(): void {
+    if (!this.savingLocallyPromise) {
+      this.performDeinitSafely()
+      return
+    }
+
     void this.savingLocallyPromise.promise.then(() => {
       this.performDeinitSafely()
     })
@@ -212,7 +217,9 @@ export class NoteViewController implements ItemViewControllerInterface {
         void this.undebouncedSave({
           ...params,
           onLocalPropagationComplete: () => {
-            this.savingLocallyPromise.resolve()
+            if (this.savingLocallyPromise) {
+              this.savingLocallyPromise.resolve()
+            }
             resolve()
           },
         })
