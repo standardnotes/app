@@ -49,6 +49,10 @@ const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: P
 
   const [hasSelection, setHasSelection] = useState(false)
   useEffect(() => {
+    if (!user) {
+      return
+    }
+
     try {
       const checkIfPageHasSelection = async () => {
         setHasSelection(Boolean(await sendMessageToActiveTab(RuntimeMessageTypes.HasSelection)))
@@ -58,7 +62,7 @@ const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: P
     } catch (error) {
       console.error(error)
     }
-  }, [])
+  }, [user])
 
   const [clipPayload, setClipPayload] = useState<ClipPayload>()
   useEffect(() => {
@@ -212,9 +216,9 @@ const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: P
           <div className="min-h-0 flex-shrink-0 border-b border-border p-3">
             <input className="w-full text-base font-semibold" type="text" value={clipPayload.title} />
           </div>
-          <div className="overflow-y-auto p-3">
-            <BlocksEditorComposer readonly={true} initialValue={undefined}>
-              <BlocksEditor readonly={true}>
+          <div className="p-3">
+            <BlocksEditorComposer initialValue={undefined}>
+              <BlocksEditor>
                 <ImportPlugin
                   text={clipPayload.content}
                   format="html"
