@@ -85,12 +85,16 @@ window.addEventListener('mousemove', (event) => {
   nodeOverlayElement.style.transform = `translate3d(${targetRect.x}px, ${targetRect.y}px, 0)`
 })
 
+const disableNodeSelection = () => {
+  isSelectingNodeForClipping = false
+  nodeOverlayElement.style.visibility = 'hidden'
+}
+
 window.addEventListener('click', (event) => {
   if (!isSelectingNodeForClipping) {
     return
   }
-  isSelectingNodeForClipping = false
-  nodeOverlayElement.style.visibility = 'hidden'
+  disableNodeSelection()
   event.preventDefault()
   event.stopPropagation()
   const { target } = event
@@ -110,7 +114,6 @@ window.addEventListener('keydown', (event) => {
     return
   }
   if (event.key === 'Escape') {
-    isSelectingNodeForClipping = false
-    nodeOverlayElement.style.visibility = 'hidden'
+    disableNodeSelection()
   }
 })

@@ -9,8 +9,8 @@ const openPopupAndClipSelection = async (payload: { title: string; content: stri
     await windows.create({
       type: 'detached_panel',
       url: popupURL,
-      width: 300,
-      height: 400,
+      width: 350,
+      height: 450,
     })
     setTimeout(() => runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload }), 500)
     return
