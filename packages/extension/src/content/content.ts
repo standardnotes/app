@@ -104,3 +104,13 @@ window.addEventListener('click', (event) => {
     payload: { title, content },
   } as RuntimeMessage)
 })
+
+window.addEventListener('keydown', (event) => {
+  if (!isSelectingNodeForClipping) {
+    return
+  }
+  if (event.key === 'Escape') {
+    isSelectingNodeForClipping = false
+    nodeOverlayElement.style.visibility = 'hidden'
+  }
+})
