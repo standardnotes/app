@@ -17,9 +17,10 @@ import RoundIconButton from '../Button/RoundIconButton'
 type Props = {
   linkingController: LinkingController
   item: DecryptedItemInterface
+  hideToggle?: boolean
 }
 
-const LinkedItemBubblesContainer = ({ item, linkingController }: Props) => {
+const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = false }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
   const commandService = useCommandService()
@@ -149,7 +150,7 @@ const LinkedItemBubblesContainer = ({ item, linkingController }: Props) => {
           item={item}
         />
       </div>
-      {itemsToDisplay.length > 0 && (
+      {itemsToDisplay.length > 0 && !hideToggle && (
         <RoundIconButton
           id="toggle-linking-container"
           label="Toggle linked items container"

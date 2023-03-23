@@ -25,6 +25,19 @@ export class NoteSyncController {
 
   constructor(private application: WebApplication, private item: SNNote) {}
 
+  deinit() {
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout)
+    }
+    if (this.savingLocallyPromise) {
+      this.savingLocallyPromise.reject()
+    }
+    this.savingLocallyPromise = null
+    this.saveTimeout = undefined
+    ;(this.application as unknown) = undefined
+    ;(this.item as unknown) = undefined
+  }
+
   public async saveAndAwaitLocalPropagation(params: NoteSaveFunctionParams): Promise<void> {
     this.savingLocallyPromise = Deferred<void>()
 
