@@ -1,7 +1,7 @@
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { SNLogoIcon } from '@standardnotes/icons'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { AccountMenuPane } from '../AccountMenu/AccountMenuPane'
 import MenuPaneSelector from '../AccountMenu/MenuPaneSelector'
 import { useApplication } from '../ApplicationProvider'
@@ -10,147 +10,13 @@ import Menu from '../Menu/Menu'
 import MenuItem from '../Menu/MenuItem'
 import { runtime } from 'webextension-polyfill'
 import sendMessageToActiveTab from '@standardnotes/extension/src/utils/sendMessageToActiveTab'
-import { $createParagraphNode, $createRangeSelection } from 'lexical'
-import { $generateNodesFromDOM } from '../SuperEditor/Lexical/Utils/generateNodesFromDOM'
 import { ClipPayload, RuntimeMessage, RuntimeMessageTypes } from '@standardnotes/extension/src/types/message'
-import { confirmDialog, RouteParserInterface } from '@standardnotes/ui-services'
+import { RouteParserInterface } from '@standardnotes/ui-services'
 import Spinner from '../Spinner/Spinner'
-import { BlocksEditorComposer } from '../SuperEditor/BlocksEditorComposer'
-import { BlocksEditor } from '../SuperEditor/BlocksEditor'
-import { ContentType, FeatureIdentifier, NoteContent, NoteType, SNNote } from '@standardnotes/snjs'
-import { createHeadlessEditor } from '@lexical/headless'
-import { BlockEditorNodes } from '../SuperEditor/Lexical/Nodes/AllNodes'
-import BlocksEditorTheme from '../SuperEditor/Lexical/Theme/Theme'
+import { ApplicationEvent, ContentType, FeatureIdentifier, NoteContent, NoteType, SNNote } from '@standardnotes/snjs'
 import { addToast, ToastType } from '@standardnotes/toast'
-import { NoteSyncController } from '@/Controllers/NoteSyncController'
-import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
-import { LinkingController } from '@/Controllers/LinkingController'
-import Button from '../Button/Button'
-
-const getEditorStateJSONFromHTML = async (html: string) => {
-  const editor = createHeadlessEditor({
-    namespace: 'BlocksEditor',
-    theme: BlocksEditorTheme,
-    editable: false,
-    onError: (error: Error) => console.error(error),
-    nodes: [...BlockEditorNodes],
-  })
-
-  await new Promise<void>((resolve) => {
-    editor.update(() => {
-      const parser = new DOMParser()
-      const dom = parser.parseFromString(html, 'text/html')
-      const nodesToInsert = $generateNodesFromDOM(editor, dom).map((node) => {
-        const type = node.getType()
-
-        // Wrap text & link nodes with paragraph since they can't
-        // be top-level nodes in Super
-        if (type === 'text' || type === 'link') {
-          const paragraphNode = $createParagraphNode()
-          paragraphNode.append(node)
-          return paragraphNode
-        }
-
-        return node
-      })
-      const selection = $createRangeSelection()
-      selection.insertNodes(nodesToInsert)
-      resolve()
-    })
-  })
-
-  return JSON.stringify(editor.getEditorState().toJSON())
-}
-
-const ClippedNoteView = ({
-  note,
-  linkingController,
-  clearClip,
-}: {
-  note: SNNote
-  linkingController: LinkingController
-  clearClip: () => void
-}) => {
-  const application = useApplication()
-
-  const syncController = useRef(new NoteSyncController(application, note))
-  useEffect(() => {
-    const currentController = syncController.current
-    return () => {
-      currentController.deinit()
-    }
-  }, [])
-
-  const [title, setTitle] = useState(() => note.title)
-  useEffect(() => {
-    void syncController.current.saveAndAwaitLocalPropagation({
-      title,
-      isUserModified: true,
-      dontGeneratePreviews: true,
-    })
-  }, [application.items, title])
-
-  const handleChange = useCallback(async (value: string, preview: string) => {
-    void syncController.current.saveAndAwaitLocalPropagation({
-      text: value,
-      isUserModified: true,
-      previews: {
-        previewPlain: preview,
-        previewHtml: undefined,
-      },
-    })
-  }, [])
-
-  const discardNote = useCallback(async () => {
-    if (
-      await confirmDialog({
-        text: 'Are you sure you want to discard this clip?',
-        confirmButtonText: 'Discard',
-        confirmButtonStyle: 'danger',
-      })
-    ) {
-      void application.mutator.deleteItem(note)
-      clearClip()
-    }
-  }, [application.mutator, clearClip, note])
-
-  return (
-    <div className="">
-      <div className="border-b border-border p-3">
-        <div className="mb-3 flex w-full items-center gap-3">
-          <Button className="flex items-center justify-center" fullWidth onClick={clearClip}>
-            <Icon type="arrow-left" className="mr-2" />
-            Back
-          </Button>
-          <Button
-            className="flex items-center justify-center"
-            fullWidth
-            primary
-            colorStyle="danger"
-            onClick={discardNote}
-          >
-            <Icon type="trash-filled" className="mr-2" />
-            Discard
-          </Button>
-        </div>
-        <input
-          className="w-full text-base font-semibold"
-          type="text"
-          value={title}
-          onChange={(event) => {
-            setTitle(event.target.value)
-          }}
-        />
-        <LinkedItemBubblesContainer linkingController={linkingController} item={note} hideToggle />
-      </div>
-      <div className="p-3">
-        <BlocksEditorComposer initialValue={note.text}>
-          <BlocksEditor onChange={handleChange}></BlocksEditor>
-        </BlocksEditorComposer>
-      </div>
-    </div>
-  )
-}
+import { getSuperJSONFromClipHTML } from './getSuperJSONFromClipHTML'
+import ClippedNoteView from './ClippedNoteView'
 
 const ExtensionView = ({
   viewControllerManager,
@@ -163,7 +29,18 @@ const ExtensionView = ({
 }) => {
   const application = useApplication()
 
-  const user = application.getUser()
+  const [user, setUser] = useState(() => application.getUser())
+  useEffect(() => {
+    application.addEventObserver(async (event) => {
+      switch (event) {
+        case ApplicationEvent.SignedIn:
+        case ApplicationEvent.SignedOut:
+        case ApplicationEvent.UserRolesChanged:
+          setUser(application.getUser())
+          break
+      }
+    })
+  }, [application])
 
   const [menuPane, setMenuPane] = useState<AccountMenuPane>()
 
@@ -226,7 +103,7 @@ const ExtensionView = ({
         return
       }
 
-      const editorStateJSON = await getEditorStateJSONFromHTML(clipPayload.content)
+      const editorStateJSON = await getSuperJSONFromClipHTML(clipPayload.content)
 
       const note = application.items.createTemplateItem<NoteContent, SNNote>(ContentType.Note, {
         title: clipPayload.title,
