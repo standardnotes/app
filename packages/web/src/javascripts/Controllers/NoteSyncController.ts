@@ -2,11 +2,11 @@ import { WebApplication } from '@/Application/Application'
 import { NoteMutator, SNNote } from '@standardnotes/models'
 import { InfoStrings } from '@standardnotes/snjs'
 import { Deferred } from '@standardnotes/utils'
-import { EditorSaveTimeoutDebounce } from './EditorSaveTimeoutDebounce'
+import { EditorSaveTimeoutDebounce } from '../Components/NoteView/Controller/EditorSaveTimeoutDebounce'
 
 const NotePreviewCharLimit = 160
 
-type UndebouncedSaveParams = {
+export type NoteSaveFunctionParams = {
   title?: string
   text?: string
   bypassDebouncer?: boolean
@@ -17,8 +17,6 @@ type UndebouncedSaveParams = {
   onLocalPropagationComplete?: () => void
   onRemoteSyncComplete?: () => void
 }
-
-export type NoteSaveFunctionParams = Omit<UndebouncedSaveParams, 'onRemoteSyncComplete' | 'onLocalPropagationComplete'>
 
 export class NoteSyncController {
   savingLocallyPromise: ReturnType<typeof Deferred<void>> | null = null
@@ -57,7 +55,7 @@ export class NoteSyncController {
     })
   }
 
-  private async undebouncedSave(params: UndebouncedSaveParams): Promise<void> {
+  private async undebouncedSave(params: NoteSaveFunctionParams): Promise<void> {
     if (!this.application.items.findItem(this.item.uuid)) {
       void this.application.alertService.alert(InfoStrings.InvalidNote)
       return

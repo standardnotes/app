@@ -1,7 +1,7 @@
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { SNLogoIcon } from '@standardnotes/icons'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { AccountMenuPane } from '../AccountMenu/AccountMenuPane'
 import MenuPaneSelector from '../AccountMenu/MenuPaneSelector'
 import { useApplication } from '../ApplicationProvider'
@@ -10,23 +10,112 @@ import Menu from '../Menu/Menu'
 import MenuItem from '../Menu/MenuItem'
 import { runtime } from 'webextension-polyfill'
 import sendMessageToActiveTab from '@standardnotes/extension/src/utils/sendMessageToActiveTab'
-import { $createParagraphNode, $createRangeSelection, LexicalEditor } from 'lexical'
+import { $createParagraphNode, $createRangeSelection } from 'lexical'
 import { $generateNodesFromDOM } from '../SuperEditor/Lexical/Utils/generateNodesFromDOM'
 import { ClipPayload, RuntimeMessage, RuntimeMessageTypes } from '@standardnotes/extension/src/types/message'
 import { RouteParserInterface } from '@standardnotes/ui-services'
 import Spinner from '../Spinner/Spinner'
 import { BlocksEditorComposer } from '../SuperEditor/BlocksEditorComposer'
 import { BlocksEditor } from '../SuperEditor/BlocksEditor'
-import ImportPlugin from '../SuperEditor/Plugins/ImportPlugin/ImportPlugin'
-import Button from '../Button/Button'
+import { ContentType, FeatureIdentifier, NoteContent, NoteType, SNNote } from '@standardnotes/snjs'
+import { createHeadlessEditor } from '@lexical/headless'
+import { BlockEditorNodes } from '../SuperEditor/Lexical/Nodes/AllNodes'
+import BlocksEditorTheme from '../SuperEditor/Lexical/Theme/Theme'
+import { addToast, ToastType } from '@standardnotes/toast'
+import { NoteSyncController } from '@/Controllers/NoteSyncController'
+import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
+import { LinkingController } from '@/Controllers/LinkingController'
 
-type Props = {
+const getEditorStateJSONFromHTML = async (html: string) => {
+  const editor = createHeadlessEditor({
+    namespace: 'BlocksEditor',
+    theme: BlocksEditorTheme,
+    editable: false,
+    onError: (error: Error) => console.error(error),
+    nodes: [...BlockEditorNodes],
+  })
+
+  await new Promise<void>((resolve) => {
+    editor.update(() => {
+      const parser = new DOMParser()
+      const dom = parser.parseFromString(html, 'text/html')
+      const nodesToInsert = $generateNodesFromDOM(editor, dom).map((node) => {
+        const type = node.getType()
+
+        // Wrap text & link nodes with paragraph since they can't
+        // be top-level nodes in Super
+        if (type === 'text' || type === 'link') {
+          const paragraphNode = $createParagraphNode()
+          paragraphNode.append(node)
+          return paragraphNode
+        }
+
+        return node
+      })
+      const selection = $createRangeSelection()
+      selection.insertNodes(nodesToInsert)
+      resolve()
+    })
+  })
+
+  return JSON.stringify(editor.getEditorState().toJSON())
+}
+
+const ClippedNoteView = ({ note, linkingController }: { note: SNNote; linkingController: LinkingController }) => {
+  const application = useApplication()
+  const syncController = useRef(new NoteSyncController(application, note))
+
+  const [title, setTitle] = useState(() => note.title)
+  useEffect(() => {
+    void syncController.current.saveAndAwaitLocalPropagation({
+      title,
+      isUserModified: true,
+      dontGeneratePreviews: true,
+    })
+  }, [application.items, title])
+
+  const handleChange = useCallback(async (value: string, preview: string) => {
+    void syncController.current.saveAndAwaitLocalPropagation({
+      text: value,
+      isUserModified: true,
+      previews: {
+        previewPlain: preview,
+        previewHtml: undefined,
+      },
+    })
+  }, [])
+
+  return (
+    <div className="">
+      <div className="border-b border-border p-3">
+        <input
+          className="w-full text-base font-semibold"
+          type="text"
+          value={title}
+          onChange={(event) => {
+            setTitle(event.target.value)
+          }}
+        />
+        <LinkedItemBubblesContainer linkingController={linkingController} item={note} />
+      </div>
+      <div className="p-3">
+        <BlocksEditorComposer initialValue={note.text}>
+          <BlocksEditor onChange={handleChange}></BlocksEditor>
+        </BlocksEditorComposer>
+      </div>
+    </div>
+  )
+}
+
+const ExtensionView = ({
+  viewControllerManager,
+  applicationGroup,
+  routeInfo,
+}: {
   viewControllerManager: ViewControllerManager
   applicationGroup: ApplicationGroup
   routeInfo: RouteParserInterface
-}
-
-const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: Props) => {
+}) => {
   const application = useApplication()
 
   const user = application.getUser()
@@ -72,29 +161,38 @@ const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: P
       }
     })
   }, [])
-  const [, setConvertedSuperContent] = useState<string>()
 
-  const superImportFunction = useCallback((editor: LexicalEditor, text: string) => {
-    editor.update(() => {
-      const parser = new DOMParser()
-      const dom = parser.parseFromString(text, 'text/html')
-      const nodesToInsert = $generateNodesFromDOM(editor, dom).map((node) => {
-        const type = node.getType()
+  const [clippedNote, setClippedNote] = useState<SNNote>()
+  useEffect(() => {
+    async function createNoteFromClip() {
+      if (!clipPayload) {
+        return
+      }
+      if (!clipPayload.content) {
+        addToast({
+          type: ToastType.Error,
+          message: 'No content to clip',
+        })
+        return
+      }
 
-        // Wrap text & link nodes with paragraph since they can't
-        // be top-level nodes in Super
-        if (type === 'text' || type === 'link') {
-          const paragraphNode = $createParagraphNode()
-          paragraphNode.append(node)
-          return paragraphNode
-        }
+      const editorStateJSON = await getEditorStateJSONFromHTML(clipPayload.content)
 
-        return node
+      const note = application.items.createTemplateItem<NoteContent, SNNote>(ContentType.Note, {
+        title: clipPayload.title,
+        text: editorStateJSON,
+        editorIdentifier: FeatureIdentifier.SuperEditor,
+        noteType: NoteType.Super,
+        references: [],
       })
-      const selection = $createRangeSelection()
-      selection.insertNodes([...nodesToInsert])
-    })
-  }, [])
+
+      void application.items.insertItem(note).then((note) => {
+        setClippedNote(note as SNNote)
+      })
+    }
+
+    void createNoteFromClip()
+  }, [application.items, clipPayload])
 
   const isLoadingClip = routeInfo.extensionViewParams.hasClip
 
@@ -211,30 +309,12 @@ const ExtensionView = ({ viewControllerManager, applicationGroup, routeInfo }: P
           </MenuItem>
         </Menu>
       )}
-      {!!clipPayload && (
-        <div className="flex h-full flex-col overflow-hidden">
-          <div className="min-h-0 flex-shrink-0 border-b border-border p-3">
-            <input className="w-full text-base font-semibold" type="text" value={clipPayload.title} />
-          </div>
-          <div className="p-3">
-            <BlocksEditorComposer initialValue={undefined}>
-              <BlocksEditor>
-                <ImportPlugin
-                  text={clipPayload.content}
-                  format="html"
-                  onChange={(value) => setConvertedSuperContent(value)}
-                  customImportFunction={superImportFunction}
-                />
-              </BlocksEditor>
-            </BlocksEditorComposer>
-          </div>
-          <div className="min-h-0 flex-shrink-0 border-t border-border p-3">
-            <Button className="flex items-center justify-center" primary fullWidth>
-              <Icon type="save" className="mr-2 h-6 w-6" />
-              Save
-            </Button>
-          </div>
-        </div>
+      {!!clippedNote && (
+        <ClippedNoteView
+          note={clippedNote}
+          key={clippedNote.uuid}
+          linkingController={viewControllerManager.linkingController}
+        />
       )}
     </>
   )

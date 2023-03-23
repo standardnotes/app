@@ -7,7 +7,7 @@ import { ContentType } from '@standardnotes/common'
 import { ItemViewControllerInterface } from './ItemViewControllerInterface'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
 import { log, LoggingDomain } from '@/Logging'
-import { NoteSaveFunctionParams, NoteSyncController } from './NoteSyncController'
+import { NoteSaveFunctionParams, NoteSyncController } from '../../../Controllers/NoteSyncController'
 
 export type EditorValues = {
   title: string
