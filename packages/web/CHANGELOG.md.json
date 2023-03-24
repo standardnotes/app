@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.150.29",
+      "title": "[3.150.29](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.28...@standardnotes/web@3.150.29) (2023-03-24)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where pasting an image into Super would not correctly link it to note ([5cd04b1](https://github.com/standardnotes/app/commit/5cd04b147479f9f1a0f2b8ee02aba2cfa652e798))",
+      "parsed": {
+        "_": [
+          "Fixed issue where pasting an image into Super would not correctly link it to note (5cd04b1)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where pasting an image into Super would not correctly link it to note (5cd04b1)"
+        ]
+      }
+    },
+    {
       "version": "3.150.28",
       "title": "[3.150.28](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.27...@standardnotes/web@3.150.28) (2023-03-22)",
       "date": null,
