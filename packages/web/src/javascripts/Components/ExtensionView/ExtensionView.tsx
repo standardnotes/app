@@ -11,12 +11,23 @@ import MenuItem from '../Menu/MenuItem'
 import { runtime } from 'webextension-polyfill'
 import sendMessageToActiveTab from '@standardnotes/extension/src/utils/sendMessageToActiveTab'
 import { ClipPayload, RuntimeMessage, RuntimeMessageTypes } from '@standardnotes/extension/src/types/message'
-import { RouteParserInterface } from '@standardnotes/ui-services'
+import { confirmDialog, RouteParserInterface } from '@standardnotes/ui-services'
 import Spinner from '../Spinner/Spinner'
-import { ApplicationEvent, ContentType, FeatureIdentifier, NoteContent, NoteType, SNNote } from '@standardnotes/snjs'
+import {
+  ApplicationEvent,
+  ContentType,
+  FeatureIdentifier,
+  FeatureStatus,
+  NoteContent,
+  NoteType,
+  SNNote,
+} from '@standardnotes/snjs'
 import { addToast, ToastType } from '@standardnotes/toast'
 import { getSuperJSONFromClipHTML } from './getSuperJSONFromClipHTML'
 import ClippedNoteView from './ClippedNoteView'
+import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
+import Button from '../Button/Button'
+import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 
 const Header = () => (
   <div className="flex items-center bg-info p-1 px-3 py-2 text-base font-semibold text-info-contrast">
@@ -59,11 +70,19 @@ const ExtensionView = ({
     setMenuPane(AccountMenuPane.SignIn)
   }, [setMenuPane])
 
-  const [isSigningOut, setIsSigningOut] = useState(false)
-
-  const showSignOutConfirmation = useCallback(() => {
-    setIsSigningOut(true)
-  }, [setIsSigningOut])
+  const showSignOutConfirmation = useCallback(async () => {
+    if (
+      await confirmDialog({
+        title: 'Sign Out',
+        text: 'Are you sure you want to sign out?',
+        confirmButtonText: 'Sign Out',
+        confirmButtonStyle: 'danger',
+        cancelButtonText: 'Cancel',
+      })
+    ) {
+      await application.user.signOut()
+    }
+  }, [application.user])
 
   const [hasSelection, setHasSelection] = useState(false)
   useEffect(() => {
@@ -128,6 +147,46 @@ const ExtensionView = ({
     void createNoteFromClip()
   }, [application.items, clipPayload])
 
+  const isEntitledToExtension =
+    application.features.getFeatureStatus(FeatureIdentifier.Extension) === FeatureStatus.Entitled
+  const hasSubscription = application.hasValidSubscription()
+  const upgradePlan = useCallback(async () => {
+    if (hasSubscription) {
+      await openSubscriptionDashboard(application)
+    } else {
+      await application.openPurchaseFlow()
+    }
+    window.close()
+  }, [application, hasSubscription])
+
+  if (user && !isEntitledToExtension) {
+    return (
+      <>
+        <Header />
+        {application.features.getFeatureStatus(FeatureIdentifier.Extension)}
+        <div className="px-3 py-3">
+          <div
+            className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-[50%] bg-contrast"
+            aria-hidden={true}
+          >
+            <Icon className={`h-12 w-12 ${PremiumFeatureIconClass}`} size={'custom'} type={PremiumFeatureIconName} />
+          </div>
+          <div className="mb-1 text-center text-lg font-bold">Enable Advanced Features</div>
+          <div className="mb-3 text-center">
+            To take advantage of <span className="font-semibold">Web Clipper</span> and other advanced features, upgrade
+            your current plan.
+          </div>
+          <Button className="mb-2" fullWidth primary onClick={upgradePlan}>
+            Upgrade
+          </Button>
+          <Button fullWidth onClick={showSignOutConfirmation}>
+            Sign out
+          </Button>
+        </div>
+      </>
+    )
+  }
+
   const isLoadingClip = routeInfo.extensionViewParams.hasClip
 
   if (isLoadingClip && !clipPayload) {
@@ -160,14 +219,16 @@ const ExtensionView = ({
       <>
         <Header />
         {menuPane ? (
-          <MenuPaneSelector
-            viewControllerManager={viewControllerManager}
-            application={application}
-            mainApplicationGroup={applicationGroup}
-            menuPane={menuPane}
-            setMenuPane={setMenuPane}
-            closeMenu={() => setMenuPane(undefined)}
-          />
+          <div className="py-1">
+            <MenuPaneSelector
+              viewControllerManager={viewControllerManager}
+              application={application}
+              mainApplicationGroup={applicationGroup}
+              menuPane={menuPane}
+              setMenuPane={setMenuPane}
+              closeMenu={() => setMenuPane(undefined)}
+            />
+          </div>
         ) : (
           <Menu a11yLabel="User account menu" isOpen={true}>
             <MenuItem onClick={activateRegisterPane}>
@@ -180,24 +241,6 @@ const ExtensionView = ({
             </MenuItem>
           </Menu>
         )}
-      </>
-    )
-  }
-
-  if (isSigningOut) {
-    return (
-      <>
-        <Header />
-        <Menu a11yLabel="Sign out confirmation" isOpen={true}>
-          <div className="px-3 pt-2 pb-1 text-base font-semibold">Sign out</div>
-          <div className="px-3 pb-2 text-sm text-foreground">
-            <div>Are you sure you want to sign out?</div>
-          </div>
-          <MenuItem onClick={() => setIsSigningOut(false)}>Cancel</MenuItem>
-          <MenuItem onClick={() => application.user.signOut()} className="!text-danger">
-            Sign out
-          </MenuItem>
-        </Menu>
       </>
     )
   }

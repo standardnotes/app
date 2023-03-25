@@ -27,7 +27,7 @@ export class PurchaseFlowController extends AbstractViewController {
     this.currentPane = currentPane
   }
 
-  openPurchaseFlow = (plan = AppleIAPProductId.ProPlanYearly): void => {
+  openPurchaseFlow = async (plan = AppleIAPProductId.ProPlanYearly) => {
     const user = this.application.getUser()
     if (!user) {
       this.isOpen = true
@@ -35,9 +35,9 @@ export class PurchaseFlowController extends AbstractViewController {
     }
 
     if (this.application.isNativeIOS()) {
-      void this.beginIosIapPurchaseFlow(plan)
+      await this.beginIosIapPurchaseFlow(plan)
     } else {
-      loadPurchaseFlowUrl(this.application).catch(console.error)
+      await loadPurchaseFlowUrl(this.application)
     }
   }
 

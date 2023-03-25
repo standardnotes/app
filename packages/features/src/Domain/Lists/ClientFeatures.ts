@@ -43,5 +43,13 @@ export function clientFeatures(): FeatureDescription[] {
       permission_name: PermissionName.Files,
       description: '',
     },
+    {
+      name: 'Extension',
+      availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
+      availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
+      identifier: FeatureIdentifier.Extension,
+      permission_name: PermissionName.Extension,
+      description: '',
+    },
   ]
 }

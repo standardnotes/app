@@ -410,8 +410,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.getViewControllerManager().subscriptionController.hasValidSubscription()
   }
 
-  openPurchaseFlow(): void {
-    this.getViewControllerManager().purchaseFlowController.openPurchaseFlow()
+  async openPurchaseFlow() {
+    await this.getViewControllerManager().purchaseFlowController.openPurchaseFlow()
   }
 
   addNativeMobileEventListener = (listener: NativeMobileEventListener) => {

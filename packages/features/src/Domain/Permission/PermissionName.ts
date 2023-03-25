@@ -40,4 +40,5 @@ export enum PermissionName {
   UniversalSecondFactor = 'server:universal-second-factor',
   SubscriptionSharing = 'server:subscription-sharing',
   SuperEditor = 'editor:super-editor',
+  Extension = 'app:extension',
 }
