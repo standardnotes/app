@@ -1,4 +1,28 @@
 {
-  "extends": "../../node_modules/@standardnotes/config/src/tsconfig.json",
-  "include": ["src/**/*"]
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "lib": [
+      "ES2022"
+    ],
+    "target": "ES2019",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "allowJs": true,
+    "noEmit": true,
+    "strict": true,
+    "isolatedModules": false,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "newLine": "lf",
+    "declarationDir": "dist/@types",
+    "baseUrl": ".",
+    "typeRoots": [
+      "../../node_modules/@types",
+      "node_modules/@types"
+    ],
+  },
+  "include": [
+    "src/**/*"
+  ]
 }

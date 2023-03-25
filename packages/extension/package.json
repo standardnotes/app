@@ -3,21 +3,28 @@
   "description": "Standard Notes companion browser extension",
   "version": "1.0.0",
   "scripts": {
-    "build": "webpack --config ./webpack.config.js",
-    "build-mv3": "MANIFEST_VERSION=3 webpack --config ./webpack.config.js",
+    "build": "yarn clean && webpack --config ./webpack.config.prod.js",
+    "build-mv3": "yarn clean && MANIFEST_VERSION=3 webpack --config ./webpack.config.prod.js",
     "watch:web": "WEBPACK_DEVTOOL=cheap-module-source-map yarn workspace @standardnotes/web run watch",
     "watch": "webpack --config ./webpack.config.dev.js --watch",
     "watch-mv3": "MANIFEST_VERSION=3 webpack --config ./webpack.config.dev.js --watch",
     "build-firefox": "yarn build && web-ext build --source-dir ./dist",
     "build-chromium": "yarn build-mv3 && web-ext build --source-dir ./dist",
     "run-firefox": "web-ext run -t firefox-desktop --keep-profile-changes -s ./dist",
-    "run-chromium": "web-ext run -t chromium --keep-profile-changes -s ./dist"
+    "run-chromium": "web-ext run -t chromium --keep-profile-changes -s ./dist",
+    "lint": "eslint src/ && yarn tsc",
+    "lint:fix": "eslint src/ --fix",
+    "tsc": "tsc --project tsconfig.json",
+    "clean": "rm -rf dist"
   },
   "devDependencies": {
     "@types/webextension-polyfill": "^0.10.0",
     "babel-loader": "^9.1.0",
     "copy-webpack-plugin": "11.0.0",
+    "eslint": "^8.29.0",
+    "eslint-config-prettier": "^8.5.0",
     "ts-loader": "^9.4.2",
+    "typescript": "*",
     "web-ext": "^7.5.0",
     "webextension-polyfill": "^0.10.0",
     "webpack": "*"
