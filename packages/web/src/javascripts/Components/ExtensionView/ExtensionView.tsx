@@ -48,13 +48,21 @@ const ExtensionView = ({
   const application = useApplication()
 
   const [user, setUser] = useState(() => application.getUser())
+  const [isEntitledToExtension, setIsEntitled] = useState(
+    () => application.features.getFeatureStatus(FeatureIdentifier.Extension) === FeatureStatus.Entitled,
+  )
+  const hasSubscription = application.hasValidSubscription()
   useEffect(() => {
-    application.addEventObserver(async (event) => {
+    return application.addEventObserver(async (event) => {
       switch (event) {
         case ApplicationEvent.SignedIn:
         case ApplicationEvent.SignedOut:
         case ApplicationEvent.UserRolesChanged:
           setUser(application.getUser())
+          setIsEntitled(application.features.getFeatureStatus(FeatureIdentifier.Extension) === FeatureStatus.Entitled)
+          break
+        case ApplicationEvent.FeaturesUpdated:
+          setIsEntitled(application.features.getFeatureStatus(FeatureIdentifier.Extension) === FeatureStatus.Entitled)
           break
       }
     })
@@ -147,9 +155,6 @@ const ExtensionView = ({
     void createNoteFromClip()
   }, [application.items, clipPayload])
 
-  const isEntitledToExtension =
-    application.features.getFeatureStatus(FeatureIdentifier.Extension) === FeatureStatus.Entitled
-  const hasSubscription = application.hasValidSubscription()
   const upgradePlan = useCallback(async () => {
     if (hasSubscription) {
       await openSubscriptionDashboard(application)
@@ -163,7 +168,6 @@ const ExtensionView = ({
     return (
       <>
         <Header />
-        {application.features.getFeatureStatus(FeatureIdentifier.Extension)}
         <div className="px-3 py-3">
           <div
             className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-[50%] bg-contrast"
