@@ -15,10 +15,12 @@ import { $createFileNode } from './Nodes/FileUtils'
 import { $wrapNodeInElement, mergeRegister } from '@lexical/utils'
 import { useFilesController } from '@/Controllers/FilesControllerProvider'
 import { FilesControllerEvent } from '@/Controllers/FilesController'
+import { useLinkingController } from '@/Controllers/LinkingControllerProvider'
 
 export default function FilePlugin(): JSX.Element | null {
   const [editor] = useLexicalComposerContext()
   const filesController = useFilesController()
+  const linkingController = useLinkingController()
 
   useEffect(() => {
     if (!editor.hasNodes([FileNode])) {
@@ -31,6 +33,7 @@ export default function FilePlugin(): JSX.Element | null {
           const uploadedFile = await filesController.uploadNewFile(file)
           if (uploadedFile) {
             editor.dispatchCommand(INSERT_FILE_COMMAND, uploadedFile.uuid)
+            void linkingController.linkItemToSelectedItem(uploadedFile)
           }
         } catch (error) {
           console.error(error)
@@ -67,7 +70,7 @@ export default function FilePlugin(): JSX.Element | null {
         COMMAND_PRIORITY_NORMAL,
       ),
     )
-  }, [editor, filesController])
+  }, [editor, filesController, linkingController])
 
   useEffect(() => {
     const disposer = filesController.addEventObserver((event, data) => {

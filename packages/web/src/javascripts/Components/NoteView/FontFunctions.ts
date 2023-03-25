@@ -6,4 +6,5 @@ export const reloadFont = (monospaceFont?: boolean) => {
   } else {
     root.style.setProperty(propertyName, 'var(--sn-stylekit-sans-serif-font)')
   }
+  document.documentElement.classList.toggle('monospace-font', monospaceFont)
 }

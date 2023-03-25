@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.150.31](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.30...@standardnotes/web@3.150.31) (2023-03-24)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.150.30](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.29...@standardnotes/web@3.150.30) (2023-03-24)
+
+### Bug Fixes
+
+* Fixed issue where ordered list numbers in Super would get cut off when using monospace font ([8bf891f](https://github.com/standardnotes/app/commit/8bf891f8a3e5936196b22bfb689063f5d48c5603))
+
+## [3.150.29](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.28...@standardnotes/web@3.150.29) (2023-03-24)
+
+### Bug Fixes
+
+* Fixed issue where pasting an image into Super would not correctly link it to note ([5cd04b1](https://github.com/standardnotes/app/commit/5cd04b147479f9f1a0f2b8ee02aba2cfa652e798))
+
 ## [3.150.28](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.27...@standardnotes/web@3.150.28) (2023-03-22)
 
 **Note:** Version bump only for package @standardnotes/web
