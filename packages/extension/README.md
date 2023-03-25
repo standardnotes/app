@@ -3,9 +3,10 @@
 ## Development flow
 
 - Run `yarn watch:web` in a terminal to watch changes in the `@standardnotes/web` package
-- Run `yarn watch` in another terminal to watch changes in the extension source
 
 ### Chromium
+
+- Run `yarn watch-mv3` in another terminal to watch changes in the extension source
 
 #### "Load unpacked" method
 
@@ -27,6 +28,8 @@ yarn run-chromium --chromium-profile=PATH/TO/PROFILE
 This method will automatically reload the extension when you make changes
 
 ### Firefox
+
+- Run `yarn watch` in another terminal to watch changes in the extension source
 
 ```console
 yarn run-firefox --firefox-profile=PATH/TO/PROFILE

@@ -1,6 +1,34 @@
 {
-  "manifest-version": 3,
+  "manifest_version": 3,
   "name": "Standard Notes",
   "version": "1.0.0",
-  "permissions": ["activeTab", "storage", "contextMenus"]
+  "permissions": ["activeTab", "storage", "contextMenus"],
+  "action": {
+    "default_popup": "popup/index.html?route=extension"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "icons": {
+    "16": "images/icon16.png",
+    "32": "images/icon32.png",
+    "48": "images/icon48.png",
+    "96": "images/icon96.png",
+    "128": "images/icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "default-src 'self' blob:; script-src 'self' 'wasm-unsafe-eval'; connect-src * data: blob:; style-src 'unsafe-inline' 'self'; frame-src * blob:; img-src * data: blob:;"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{47c90b22-69b6-4f50-ae5a-aaeefad656fe}",
+      "strict_min_version": "42.0"
+    }
+  }
 }

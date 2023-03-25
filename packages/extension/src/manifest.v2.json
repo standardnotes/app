@@ -16,7 +16,7 @@
       "js": ["content.js"]
     }
   ],
-  "content_security_policy": "default-src 'self' blob:; script-src 'self' 'sha256-cPGvq7zUtdNWhS3aHzCGkALbMpzbdViQUuyXZzyr+vY=' 'wasm-eval' 'wasm-unsafe-eval'; worker-src blob:; connect-src * data: blob:; style-src 'unsafe-inline' 'self'; frame-src * blob:; img-src * data: blob:;",
+  "content_security_policy": "default-src 'self' blob:; script-src 'self' 'wasm-eval' 'wasm-unsafe-eval'; worker-src blob:; connect-src * data: blob:; style-src 'unsafe-inline' 'self'; frame-src * blob:; img-src * data: blob:;",
   "icons": {
     "16": "images/icon16.png",
     "32": "images/icon32.png",

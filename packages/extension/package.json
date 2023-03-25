@@ -4,9 +4,12 @@
   "version": "1.0.0",
   "scripts": {
     "build": "webpack --config ./webpack.config.js",
+    "build-mv3": "MANIFEST_VERSION=3 webpack --config ./webpack.config.js",
     "watch:web": "WEBPACK_DEVTOOL=cheap-module-source-map yarn workspace @standardnotes/web run watch",
     "watch": "webpack --config ./webpack.config.dev.js --watch",
+    "watch-mv3": "MANIFEST_VERSION=3 webpack --config ./webpack.config.dev.js --watch",
     "build-firefox": "yarn build && web-ext build --source-dir ./dist",
+    "build-chromium": "yarn build-mv3 && web-ext build --source-dir ./dist",
     "run-firefox": "web-ext run -t firefox-desktop --keep-profile-changes -s ./dist",
     "run-chromium": "web-ext run -t chromium --keep-profile-changes -s ./dist"
   },
