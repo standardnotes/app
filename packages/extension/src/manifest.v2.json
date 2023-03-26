@@ -1,7 +1,6 @@
 {
   "manifest_version": 2,
   "name": "Standard Notes",
-  "version": "1.0.0",
   "permissions": ["activeTab", "storage", "contextMenus"],
   "browser_action": {
     "default_popup": "popup/index.html?route=extension"
