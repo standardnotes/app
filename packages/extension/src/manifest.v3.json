@@ -1,7 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Standard Notes",
-  "permissions": ["activeTab", "storage", "contextMenus"],
+  "description": "Web clipper for Standard Notes",
+  "permissions": ["activeTab", "storage"],
   "action": {
     "default_popup": "popup/index.html?route=extension"
   },
