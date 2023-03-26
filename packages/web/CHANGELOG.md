@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.150.32](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.31...@standardnotes/web@3.150.32) (2023-03-26)
+
+### Bug Fixes
+
+* exception handling ([#2277](https://github.com/standardnotes/app/issues/2277)) ([5a7419b](https://github.com/standardnotes/app/commit/5a7419bf1c83f7d38e5ad157da67ebbed850f609))
+
 ## [3.150.31](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.30...@standardnotes/web@3.150.31) (2023-03-24)
 
 **Note:** Version bump only for package @standardnotes/web

@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.150.32",
+      "title": "[3.150.32](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.31...@standardnotes/web@3.150.32) (2023-03-26)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* exception handling ([#2277](https://github.com/standardnotes/app/issues/2277)) ([5a7419b](https://github.com/standardnotes/app/commit/5a7419bf1c83f7d38e5ad157da67ebbed850f609))",
+      "parsed": {
+        "_": [
+          "exception handling (#2277) (5a7419b)"
+        ],
+        "Bug Fixes": [
+          "exception handling (#2277) (5a7419b)"
+        ]
+      }
+    },
+    {
       "version": "3.150.31",
       "title": "[3.150.31](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.30...@standardnotes/web@3.150.31) (2023-03-24)",
       "date": null,
