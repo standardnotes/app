@@ -55,7 +55,6 @@ const ContextMenuCell = ({
   notesController: NotesController
   historyModalController: HistoryModalController
 }) => {
-  const application = useApplication()
   const [contextMenuVisible, setContextMenuVisible] = useState(false)
   const anchorElementRef = useRef<HTMLButtonElement>(null)
 
@@ -112,7 +111,6 @@ const ContextMenuCell = ({
           {allItemsAreNotes && (
             <NotesOptions
               notes={items as SNNote[]}
-              application={application}
               navigationController={navigationController}
               notesController={notesController}
               linkingController={linkingController}
@@ -461,7 +459,6 @@ const ContentTableView = ({
             <Menu className="select-none" a11yLabel="Note context menu" isOpen={true}>
               <NotesOptions
                 notes={[contextMenuItem]}
-                application={application}
                 navigationController={navigationController}
                 notesController={notesController}
                 linkingController={linkingController}

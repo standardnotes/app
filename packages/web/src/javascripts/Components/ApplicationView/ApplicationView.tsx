@@ -243,7 +243,6 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                   {renderChallenges()}
                   <>
                     <NotesContextMenu
-                      application={application}
                       navigationController={viewControllerManager.navigationController}
                       notesController={viewControllerManager.notesController}
                       linkingController={viewControllerManager.linkingController}

@@ -47,7 +47,6 @@ const MultipleSelectedNotes = ({
             <PinNoteButton notesController={notesController} />
           </div>
           <NotesOptionsPanel
-            application={application}
             navigationController={navigationController}
             notesController={notesController}
             linkingController={linkingController}
