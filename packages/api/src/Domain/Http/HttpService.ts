@@ -310,12 +310,22 @@ export class HttpService implements HttpServiceInterface {
           },
         }
       }
+
+      if (isString(errorResponse.data)) {
+        errorResponse.data = {
+          error: {
+            message: errorResponse.data,
+          },
+        }
+      }
+
       if (!errorResponse.data.error) {
         errorResponse.data.error = {
           message: 'Unknown error',
         }
       }
-      resolve(response as HttpErrorResponse)
+
+      resolve(errorResponse)
     }
   }
 

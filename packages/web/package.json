@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.150.31",
+  "version": "3.150.33",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes.",
@@ -28,7 +28,7 @@
     "@babel/plugin-transform-react-jsx": "^7.19.0",
     "@babel/preset-env": "*",
     "@babel/preset-typescript": "^7.18.6",
-    "@lexical/react": "0.9.0",
+    "@lexical/react": "0.9.1",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@reach/alert": "^0.18.0",
     "@reach/alert-dialog": "^0.18.0",
@@ -84,7 +84,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.3.1",
     "jest-environment-jsdom": "^29.3.1",
-    "lexical": "0.9.0",
+    "lexical": "0.9.1",
     "lint-staged": ">=13",
     "mini-css-extract-plugin": "^2.7.2",
     "minimatch": "^5.1.1",
@@ -117,7 +117,7 @@
     "app/**/*.{js,ts,jsx,tsx,css,md}": "prettier --write"
   },
   "dependencies": {
-    "@lexical/headless": "0.9.0",
+    "@lexical/headless": "0.9.1",
     "contactjs": "2.1.5"
   }
 }

@@ -3,10 +3,10 @@ export class PhotoRecorder {
   public devices!: MediaDeviceInfo[]
   public selectedDevice!: MediaDeviceInfo
 
-  private canvas!: HTMLCanvasElement
+  private canvas?: HTMLCanvasElement
   private width!: number
   private height!: number
-  private stream!: MediaStream
+  private stream?: MediaStream
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   constructor() {}
@@ -33,6 +33,10 @@ export class PhotoRecorder {
 
   public async initialize() {
     this.devices = (await navigator.mediaDevices.enumerateDevices()).filter((device) => device.kind === 'videoinput')
+    if (this.devices.length === 0) {
+      return
+    }
+
     this.selectedDevice = this.devices[0]
 
     this.stream = await navigator.mediaDevices.getUserMedia({
@@ -66,6 +70,10 @@ export class PhotoRecorder {
   }
 
   public async takePhoto(fileName: string): Promise<File | undefined> {
+    if (!this.canvas) {
+      return undefined
+    }
+
     const context = this.canvas.getContext('2d')
     context?.drawImage(this.video, 0, 0, this.width, this.height)
     const dataUrl = this.canvas.toDataURL('image/png')
@@ -83,6 +91,10 @@ export class PhotoRecorder {
   }
 
   public finish() {
+    if (!this.canvas || !this.video) {
+      return
+    }
+
     this.video.pause()
 
     this.video.parentElement?.removeChild(this.video)
@@ -91,7 +103,7 @@ export class PhotoRecorder {
     this.video.remove()
     this.canvas.remove()
 
-    this.stream.getTracks().forEach((track) => {
+    this.stream?.getTracks().forEach((track) => {
       track.stop()
     })
   }
