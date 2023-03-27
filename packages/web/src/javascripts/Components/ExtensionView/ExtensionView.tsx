@@ -154,6 +154,10 @@ const ExtensionView = ({
 
       void application.items.insertItem(note).then((note) => {
         setClippedNote(note as SNNote)
+        addToast({
+          type: ToastType.Success,
+          message: 'Note clipped successfully',
+        })
       })
     }
 

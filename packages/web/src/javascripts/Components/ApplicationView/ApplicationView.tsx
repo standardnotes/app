@@ -199,6 +199,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                       applicationGroup={mainApplicationGroup}
                       routeInfo={route}
                     />
+                    <ToastContainer />
                   </FileDragNDropProvider>
                 </LinkingControllerProvider>
               </PremiumModalProvider>
