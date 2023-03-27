@@ -117,6 +117,6 @@
   },
   "dependencies": {
     "@lexical/headless": "0.9.1",
-    "contactjs": "2.1.5"
+    "contactjs": "2.1.6"
   }
 }
