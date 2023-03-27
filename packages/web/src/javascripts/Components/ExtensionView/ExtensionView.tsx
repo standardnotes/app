@@ -1,6 +1,6 @@
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { SNLogoIcon } from '@standardnotes/icons'
+import { SNLogoFull } from '@standardnotes/icons'
 import { useCallback, useEffect, useState } from 'react'
 import { AccountMenuPane } from '../AccountMenu/AccountMenuPane'
 import MenuPaneSelector from '../AccountMenu/MenuPaneSelector'
@@ -28,11 +28,11 @@ import ClippedNoteView from './ClippedNoteView'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import Button from '../Button/Button'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
+import { useStateRef } from '@/Hooks/useStateRef'
 
 const Header = () => (
-  <div className="flex items-center bg-info p-1 px-3 py-2 text-base font-semibold text-info-contrast">
-    <SNLogoIcon className="mr-2 h-6 w-6 fill-info-contrast stroke-info-contrast [fill-rule:evenodd]" />
-    Standard Notes
+  <div className="flex items-center border-b border-border p-1 px-3 py-2 text-base font-semibold text-info-contrast">
+    <SNLogoFull />
   </div>
 )
 
@@ -51,6 +51,7 @@ const ExtensionView = ({
   const [isEntitledToExtension, setIsEntitled] = useState(
     () => application.features.getFeatureStatus(FeatureIdentifier.Extension) === FeatureStatus.Entitled,
   )
+  const isEntitledRef = useStateRef(isEntitledToExtension)
   const hasSubscription = application.hasValidSubscription()
   useEffect(() => {
     return application.addEventObserver(async (event) => {
@@ -124,6 +125,10 @@ const ExtensionView = ({
 
   const [clippedNote, setClippedNote] = useState<SNNote>()
   useEffect(() => {
+    if (!isEntitledRef.current) {
+      return
+    }
+
     async function createNoteFromClip() {
       if (!clipPayload) {
         setClippedNote(undefined)
@@ -153,7 +158,7 @@ const ExtensionView = ({
     }
 
     void createNoteFromClip()
-  }, [application.items, clipPayload])
+  }, [application.items, clipPayload, isEntitledRef])
 
   const upgradePlan = useCallback(async () => {
     if (hasSubscription) {
@@ -295,7 +300,7 @@ const ExtensionView = ({
               window.close()
             }}
           >
-            Select nodes to clip
+            Select elements to clip
           </MenuItem>
           <div className="border-t border-border px-3 pt-2 pb-1 text-base font-semibold">Account</div>
           <div className="px-3 pb-1 text-sm text-foreground">

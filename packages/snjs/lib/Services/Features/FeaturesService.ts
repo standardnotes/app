@@ -558,7 +558,6 @@ export class SNFeaturesService
       if (this.hasPaidAnyPartyOnlineOrOfflineSubscription()) {
         return FeatureStatus.Entitled
       } else {
-        console.warn(`Feature ${featureId} is deprecated and user has no subscription`)
         return FeatureStatus.NoUserSubscription
       }
     }
@@ -569,7 +568,6 @@ export class SNFeaturesService
         .getDisplayableComponents()
         .find((candidate) => candidate.identifier === featureId)
       if (!component) {
-        console.warn(`Feature ${featureId} is not found in displayable components`)
         return FeatureStatus.NoUserSubscription
       }
       if (component.isExpired) {
@@ -587,7 +585,6 @@ export class SNFeaturesService
         }
       }
     } else {
-      console.warn(`Feature ${featureId} is not found in user roles`)
       return FeatureStatus.NoUserSubscription
     }
 
