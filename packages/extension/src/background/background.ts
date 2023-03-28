@@ -1,24 +1,25 @@
-import { runtime, browserAction, windows } from 'webextension-polyfill'
+import { runtime, action, browserAction, windows, storage } from 'webextension-polyfill'
 import { RuntimeMessage, RuntimeMessageTypes } from '../types/message'
 
 const isFirefox = navigator.userAgent.indexOf('Firefox/') !== -1
 
 const openPopupAndClipSelection = async (payload: { title: string; content: string }) => {
+  await storage.local.set({ clip: payload })
+
   if (isFirefox) {
-    const popupURL = (await browserAction.getPopup({})) + '&has_clip=true'
+    const popupURL = await browserAction.getPopup({})
     await windows.create({
       type: 'detached_panel',
       url: popupURL,
       width: 350,
       height: 450,
     })
-    setTimeout(() => runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload }), 500)
     return
   }
 
-  void browserAction.openPopup().then(() => {
-    void runtime.sendMessage({ type: RuntimeMessageTypes.ClipSelection, payload })
-  })
+  const openPopup = runtime.getManifest().manifest_version === 3 ? action.openPopup : browserAction.openPopup
+
+  void openPopup()
 }
 
 runtime.onMessage.addListener((message: RuntimeMessage) => {

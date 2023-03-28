@@ -4,13 +4,12 @@ export const RuntimeMessageTypes = {
   HasSelection: 'has-selection',
   GetFullPage: 'get-full-page',
   OpenPopupWithSelection: 'open-popup-with-selection',
-  ClipSelection: 'clip-selection',
   StartNodeSelection: 'start-node-selection',
 } as const
 
 export type RuntimeMessageType = typeof RuntimeMessageTypes[keyof typeof RuntimeMessageTypes]
 
-type MessagesWithPayload = typeof RuntimeMessageTypes.ClipSelection | typeof RuntimeMessageTypes.OpenPopupWithSelection
+type MessagesWithClipPayload = typeof RuntimeMessageTypes.OpenPopupWithSelection
 
 export type ClipPayload = {
   title: string
@@ -23,18 +22,14 @@ export type RuntimeMessageReturnTypes = {
   [RuntimeMessageTypes.HasSelection]: boolean
   [RuntimeMessageTypes.GetFullPage]: ClipPayload
   [RuntimeMessageTypes.OpenPopupWithSelection]: void
-  [RuntimeMessageTypes.ClipSelection]: void
   [RuntimeMessageTypes.StartNodeSelection]: void
 }
 
 export type RuntimeMessage =
   | {
-      type: MessagesWithPayload
-      payload: {
-        title: string
-        content: string
-      }
+      type: MessagesWithClipPayload
+      payload: ClipPayload
     }
   | {
-      type: Exclude<RuntimeMessageType, MessagesWithPayload>
+      type: Exclude<RuntimeMessageType, MessagesWithClipPayload>
     }

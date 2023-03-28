@@ -8,11 +8,10 @@ import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
 import Menu from '../Menu/Menu'
 import MenuItem from '../Menu/MenuItem'
-import { runtime } from 'webextension-polyfill'
+import { storage as extensionStorage } from 'webextension-polyfill'
 import sendMessageToActiveTab from '@standardnotes/extension/src/utils/sendMessageToActiveTab'
-import { ClipPayload, RuntimeMessage, RuntimeMessageTypes } from '@standardnotes/extension/src/types/message'
-import { confirmDialog, RouteParserInterface } from '@standardnotes/ui-services'
-import Spinner from '../Spinner/Spinner'
+import { ClipPayload, RuntimeMessageTypes } from '@standardnotes/extension/src/types/message'
+import { confirmDialog } from '@standardnotes/ui-services'
 import {
   ApplicationEvent,
   ContentType,
@@ -39,11 +38,9 @@ const Header = () => (
 const ExtensionView = ({
   viewControllerManager,
   applicationGroup,
-  routeInfo,
 }: {
   viewControllerManager: ViewControllerManager
   applicationGroup: ApplicationGroup
-  routeInfo: RouteParserInterface
 }) => {
   const application = useApplication()
 
@@ -112,11 +109,16 @@ const ExtensionView = ({
 
   const [clipPayload, setClipPayload] = useState<ClipPayload>()
   useEffect(() => {
-    runtime.onMessage.addListener((message: RuntimeMessage) => {
-      if (message.type === RuntimeMessageTypes.ClipSelection) {
-        setClipPayload(message.payload)
+    const getClipFromStorage = async () => {
+      const result = await extensionStorage.local.get('clip')
+      if (!result.clip) {
+        return
       }
-    })
+      setClipPayload(result.clip)
+      void extensionStorage.local.remove('clip')
+    }
+
+    void getClipFromStorage()
   }, [])
 
   const clearClip = useCallback(() => {
@@ -195,19 +197,6 @@ const ExtensionView = ({
           <Button fullWidth onClick={showSignOutConfirmation}>
             Sign out
           </Button>
-        </div>
-      </>
-    )
-  }
-
-  const isLoadingClip = routeInfo.extensionViewParams.hasClip
-
-  if (isLoadingClip && !clipPayload) {
-    return (
-      <>
-        <Header />
-        <div className="flex items-center justify-center px-3 py-3">
-          <Spinner className="h-8 w-7" />
         </div>
       </>
     )

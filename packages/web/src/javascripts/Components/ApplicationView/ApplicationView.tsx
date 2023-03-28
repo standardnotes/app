@@ -197,7 +197,6 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                     <LazyLoadedExtensionView
                       viewControllerManager={viewControllerManager}
                       applicationGroup={mainApplicationGroup}
-                      routeInfo={route}
                     />
                     <ToastContainer />
                   </FileDragNDropProvider>
