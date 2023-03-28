@@ -8,6 +8,22 @@ require('dotenv').config()
 
 module.exports = (env) => {
   mergeWithEnvDefaults(env)
+
+  const copyPluginPatterns = [
+    { from: 'src/favicon', to: 'favicon' },
+    { from: 'src/vendor', to: 'dist' },
+    { from: 'src/404.html' },
+    { from: 'src/422.html' },
+    { from: 'src/500.html' },
+    { from: 'src/index.html' },
+    { from: 'src/manifest.webmanifest' },
+    { from: 'src/robots.txt' },
+  ]
+
+  if (process.env.BUILD_TARGET !== 'extension') {
+    copyPluginPatterns.push({ from: 'src/components', to: 'components' })
+  }
+
   return {
     entry: './src/javascripts/index.ts',
     output: {
@@ -36,17 +52,7 @@ module.exports = (env) => {
         ignoreOrder: true, // Enable to remove warnings about conflicting order
       }),
       new CopyWebpackPlugin({
-        patterns: [
-          { from: 'src/favicon', to: 'favicon' },
-          { from: 'src/vendor', to: 'dist' },
-          { from: 'src/components', to: 'components' },
-          { from: 'src/404.html' },
-          { from: 'src/422.html' },
-          { from: 'src/500.html' },
-          { from: 'src/index.html' },
-          { from: 'src/manifest.webmanifest' },
-          { from: 'src/robots.txt' },
-        ],
+        patterns: copyPluginPatterns,
       }),
     ],
     resolve: {
