@@ -31,7 +31,7 @@
     "@babel/core": "*",
     "@babel/preset-typescript": "^7.18.6",
     "@babel/runtime": "^7.20.1",
-    "@react-native-async-storage/async-storage": "1.17.11",
+    "@react-native-async-storage/async-storage": "1.18.1",
     "@react-native-community/eslint-config": "^3.2.0",
     "@standardnotes/config": "^2.4.3",
     "@standardnotes/react-native-utils": "1.0.1",
