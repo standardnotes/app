@@ -23,6 +23,9 @@ module.exports = (env, argv) => {
             transform: (content) => {
               const manifest = JSON.parse(content.toString())
               manifest.version = package.version
+              if (process.env.EXT_TARGET === 'chromium') {
+                delete manifest.browser_specific_settings
+              }
               return JSON.stringify(manifest, null, 2)
             },
           },
