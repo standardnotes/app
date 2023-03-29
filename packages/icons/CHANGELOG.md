@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.10.6](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.10.5...@standardnotes/icons@1.10.6) (2023-03-29)
+
+### Bug Fixes
+
+* Added backspace button on Super toolbar on Android as a workaround for backspace issue ([08a20e2](https://github.com/standardnotes/app/commit/08a20e25b416e672f0e80518ca66365f7089b4f3))
+
 ## [1.10.5](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.10.4...@standardnotes/icons@1.10.5) (2023-02-02)
 
 **Note:** Version bump only for package @standardnotes/icons
