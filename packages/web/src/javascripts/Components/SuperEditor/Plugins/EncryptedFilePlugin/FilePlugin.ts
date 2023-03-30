@@ -16,8 +16,11 @@ import { $wrapNodeInElement, mergeRegister } from '@lexical/utils'
 import { useFilesController } from '@/Controllers/FilesControllerProvider'
 import { FilesControllerEvent } from '@/Controllers/FilesController'
 import { useLinkingController } from '@/Controllers/LinkingControllerProvider'
+import { useApplication } from '@/Components/ApplicationProvider'
+import { SNNote } from '@standardnotes/snjs'
 
-export default function FilePlugin(): JSX.Element | null {
+export default function FilePlugin({ currentNote }: { currentNote: SNNote }): JSX.Element | null {
+  const application = useApplication()
   const [editor] = useLexicalComposerContext()
   const filesController = useFilesController()
   const linkingController = useLinkingController()
@@ -34,6 +37,9 @@ export default function FilePlugin(): JSX.Element | null {
           if (uploadedFile) {
             editor.dispatchCommand(INSERT_FILE_COMMAND, uploadedFile.uuid)
             void linkingController.linkItemToSelectedItem(uploadedFile)
+            void application.mutator.changeAndSaveItem(uploadedFile, (mutator) => {
+              mutator.protected = currentNote.protected
+            })
           }
         } catch (error) {
           console.error(error)
@@ -70,7 +76,7 @@ export default function FilePlugin(): JSX.Element | null {
         COMMAND_PRIORITY_NORMAL,
       ),
     )
-  }, [editor, filesController, linkingController])
+  }, [application.mutator, currentNote.protected, editor, filesController, linkingController])
 
   useEffect(() => {
     const disposer = filesController.addEventObserver((event, data) => {
