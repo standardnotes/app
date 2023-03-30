@@ -183,7 +183,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
                 spellcheck={spellcheck}
               >
                 <ItemSelectionPlugin currentNote={note.current} />
-                <FilePlugin />
+                <FilePlugin currentNote={note.current} />
                 <ItemBubblePlugin />
                 <BlockPickerMenuPlugin />
                 <GetMarkdownPlugin ref={getMarkdownPlugin} />

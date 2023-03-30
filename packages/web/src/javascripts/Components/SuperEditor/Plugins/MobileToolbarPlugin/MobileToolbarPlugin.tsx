@@ -4,7 +4,7 @@ import useModal from '../../Lexical/Hooks/useModal'
 import { InsertTableDialog } from '../../Plugins/TablePlugin'
 import { getSelectedNode } from '../../Lexical/Utils/getSelectedNode'
 import { sanitizeUrl } from '../../Lexical/Utils/sanitizeUrl'
-import { $getSelection, $isRangeSelection, FORMAT_TEXT_COMMAND } from 'lexical'
+import { $getSelection, $isRangeSelection, DELETE_CHARACTER_COMMAND, FORMAT_TEXT_COMMAND } from 'lexical'
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { GetAlignmentBlocks } from '../Blocks/Alignment'
@@ -23,11 +23,14 @@ import { GetPasswordBlock } from '../Blocks/Password'
 import { GetQuoteBlock } from '../Blocks/Quote'
 import { GetTableBlock } from '../Blocks/Table'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
-import { classNames } from '@standardnotes/snjs'
+import { classNames, Platform } from '@standardnotes/snjs'
 import { SUPER_TOGGLE_SEARCH } from '@standardnotes/ui-services'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { GetRemoteImageBlock } from '../Blocks/RemoteImage'
 import { InsertRemoteImageDialog } from '../RemoteImagePlugin/RemoteImagePlugin'
+import { SKAlert } from '@standardnotes/styles'
+
+const DontShowSuperAndroidBackspaceAlertKey = 'dontShowSuperAndroidBackspaceAlert'
 
 const MobileToolbarPlugin = () => {
   const application = useApplication()
@@ -37,8 +40,10 @@ const MobileToolbarPlugin = () => {
   const [isInEditor, setIsInEditor] = useState(false)
   const [isInToolbar, setIsInToolbar] = useState(false)
   const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+  const isAndroid = application.platform === Platform.Android
 
   const toolbarRef = useRef<HTMLDivElement>(null)
+  const backspaceButtonRef = useRef<HTMLButtonElement>(null)
 
   const insertLink = useCallback(() => {
     const selection = $getSelection()
@@ -156,7 +161,8 @@ const MobileToolbarPlugin = () => {
 
     const handleFocus = () => setIsInEditor(true)
     const handleBlur = (event: FocusEvent) => {
-      if (toolbarRef.current?.contains(event.relatedTarget as Node)) {
+      const elementToBeFocused = event.relatedTarget as Node
+      if (toolbarRef.current?.contains(elementToBeFocused) || elementToBeFocused === backspaceButtonRef.current) {
         return
       }
       setIsInEditor(false)
@@ -179,7 +185,13 @@ const MobileToolbarPlugin = () => {
     const toolbar = toolbarRef.current
 
     const handleFocus = () => setIsInToolbar(true)
-    const handleBlur = () => setIsInToolbar(false)
+    const handleBlur = (event: FocusEvent) => {
+      const elementToBeFocused = event.relatedTarget as Node
+      if (elementToBeFocused === backspaceButtonRef.current) {
+        return
+      }
+      setIsInToolbar(false)
+    }
 
     toolbar.addEventListener('focus', handleFocus)
     toolbar.addEventListener('blur', handleBlur)
@@ -189,6 +201,38 @@ const MobileToolbarPlugin = () => {
       toolbar?.removeEventListener('blur', handleBlur)
     }
   }, [])
+
+  useEffect(() => {
+    if (!isAndroid) {
+      return
+    }
+
+    const dontShowAgain = application.getValue(DontShowSuperAndroidBackspaceAlertKey)
+
+    if (dontShowAgain) {
+      return
+    }
+
+    const alert = new SKAlert({
+      title: 'Android backspace issue',
+      text: 'There is a known issue with Super on Android where pressing the backspace will also delete the character after the cursor. We are working on a fix for this. Please use the backspace button in the toolbar as a workaround.',
+      buttons: [
+        {
+          text: 'OK',
+          style: 'default',
+        },
+        {
+          text: "Don't show again",
+          style: 'default',
+          action: () => {
+            application.setValue(DontShowSuperAndroidBackspaceAlertKey, true)
+          },
+        },
+      ],
+    })
+
+    alert.present()
+  }, [application, isAndroid])
 
   const isFocusInEditorOrToolbar = isInEditor || isInToolbar
   if (!isMobile || !isFocusInEditorOrToolbar) {
@@ -223,6 +267,20 @@ const MobileToolbarPlugin = () => {
         >
           <Icon type="keyboard-close" size="medium" />
         </button>
+        {isAndroid && (
+          <button
+            className="flex flex-shrink-0 items-center justify-center rounded border-l border-border py-3 px-3"
+            aria-label="Backspace"
+            ref={backspaceButtonRef}
+            onClick={() => {
+              editor.update(() => {
+                editor.dispatchCommand(DELETE_CHARACTER_COMMAND, true)
+              })
+            }}
+          >
+            <Icon type="backspace" size="medium" />
+          </button>
+        )}
       </div>
     </>
   )

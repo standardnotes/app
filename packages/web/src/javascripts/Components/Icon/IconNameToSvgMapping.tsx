@@ -73,6 +73,7 @@ export const IconNameToSvgMapping = {
   archive: icons.ArchiveIcon,
   asterisk: icons.AsteriskIcon,
   authenticator: icons.AuthenticatorIcon,
+  backspace: icons.BackspaceIcon,
   bold: icons.BoldIcon,
   camera: icons.CameraIcon,
   check: icons.CheckIcon,

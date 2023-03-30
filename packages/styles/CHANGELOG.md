@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.5](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.7.4...@standardnotes/styles@1.7.5) (2023-03-29)
+
+### Bug Fixes
+
+* Added backspace button on Super toolbar on Android as a workaround for backspace issue ([08a20e2](https://github.com/standardnotes/app/commit/08a20e25b416e672f0e80518ca66365f7089b4f3))
+
 ## [1.7.4](https://github.com/standardnotes/app/compare/@standardnotes/styles@1.7.3...@standardnotes/styles@1.7.4) (2023-01-16)
 
 **Note:** Version bump only for package @standardnotes/styles

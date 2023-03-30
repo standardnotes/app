@@ -41,7 +41,7 @@ const getColorsForPrimaryVariant = (style: AlertButtonStyle) => {
 type AlertButton = {
   text: string
   style: AlertButtonStyle
-  action: () => void
+  action?: () => void
   primary?: boolean
 }
 
@@ -168,7 +168,9 @@ export class SKAlert {
       this.buttons.forEach((buttonDesc, index) => {
         const buttonElem = this.element.querySelector(`#button-${index}`) as HTMLButtonElement
         buttonElem.onclick = () => {
-          buttonDesc.action && buttonDesc.action()
+          if (buttonDesc.action) {
+            buttonDesc.action()
+          }
           this.dismiss()
         }
         if (index === 0) {
