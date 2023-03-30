@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.150.35](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.34...@standardnotes/web@3.150.35) (2023-03-30)
+
+### Bug Fixes
+
+* Files uploaded to a protected Super note will also be marked as protected ([09fd659](https://github.com/standardnotes/app/commit/09fd65903b5e34c7f2b9f805e372efda383c7e4c))
+* Fixed an issue where deleting a file from the preview modal would not correctly navigate to next item or dismiss the modal ([7773bec](https://github.com/standardnotes/app/commit/7773becdec0f5a623337b25a7fd218e5bcfebf13))
+
 ## [3.150.34](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.33...@standardnotes/web@3.150.34) (2023-03-29)
 
 ### Bug Fixes
