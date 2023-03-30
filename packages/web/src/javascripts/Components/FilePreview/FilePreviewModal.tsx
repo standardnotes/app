@@ -51,7 +51,7 @@ const FilePreviewModal = observer(({ application, viewControllerManager }: Props
 
       event.preventDefault()
 
-      const currentFileIndex = otherFiles.findIndex((fileFromArray) => fileFromArray.uuid === currentFile.uuid)
+      const currentFileIndex = otherFiles.findIndex((file) => file.uuid === currentFile.uuid)
 
       switch (event.key) {
         case KeyboardKey.Left: {

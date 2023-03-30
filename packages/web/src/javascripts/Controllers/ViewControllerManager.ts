@@ -51,7 +51,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   readonly accountMenuController: AccountMenuController
   readonly actionsMenuController = new ActionsMenuController()
   readonly featuresController: FeaturesController
-  readonly filePreviewModalController = new FilePreviewModalController()
+  readonly filePreviewModalController: FilePreviewModalController
   readonly filesController: FilesController
   readonly noAccountWarningController: NoAccountWarningController
   readonly notesController: NotesController
@@ -87,6 +87,8 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
     this.eventBus.addEventHandler(this, CrossControllerEvent.RequestValuePersistence)
 
     this.subscriptionManager = application.subscriptions
+
+    this.filePreviewModalController = new FilePreviewModalController(application)
 
     this.quickSettingsMenuController = new QuickSettingsController(application, this.eventBus)
 
@@ -201,6 +203,7 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
     this.appEventObserverRemovers.forEach((remover) => remover())
     this.appEventObserverRemovers.length = 0
     ;(this.device as unknown) = undefined
+    this.filePreviewModalController.deinit()
     ;(this.filePreviewModalController as unknown) = undefined
     ;(this.preferencesController as unknown) = undefined
     ;(this.quickSettingsMenuController as unknown) = undefined
