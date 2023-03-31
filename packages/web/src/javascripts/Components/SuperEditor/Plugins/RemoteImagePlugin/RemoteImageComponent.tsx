@@ -2,13 +2,27 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import Icon from '@/Components/Icon/Icon'
 import Spinner from '@/Components/Spinner/Spinner'
 import { isDesktopApplication } from '@/Utils'
+import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { classNames } from '@standardnotes/snjs'
+import { ElementFormatType, NodeKey } from 'lexical'
 import { useCallback, useState } from 'react'
 import { $createFileNode } from '../EncryptedFilePlugin/Nodes/FileUtils'
 import { RemoteImageNode } from './RemoteImageNode'
 
-const RemoteImageComponent = ({ src, alt, node }: { src: string; alt?: string; node: RemoteImageNode }) => {
+type Props = {
+  src: string
+  alt?: string
+  node: RemoteImageNode
+  className: Readonly<{
+    base: string
+    focus: string
+  }>
+  format: ElementFormatType | null
+  nodeKey: NodeKey
+}
+
+const RemoteImageComponent = ({ className, src, alt, node, format, nodeKey }: Props) => {
   const application = useApplication()
   const [editor] = useLexicalComposerContext()
 
@@ -51,37 +65,39 @@ const RemoteImageComponent = ({ src, alt, node }: { src: string; alt?: string; n
   const canShowSaveButton = application.isNativeMobileWeb() || isDesktopApplication()
 
   return (
-    <div className="relative flex min-h-[2rem] flex-col items-center gap-2.5">
-      <img
-        alt={alt}
-        src={src}
-        onLoad={() => {
-          setDidImageLoad(true)
-        }}
-      />
-      {didImageLoad && canShowSaveButton && (
-        <button
-          className={classNames(
-            'flex items-center gap-2.5 rounded border border-border bg-default px-2.5 py-1.5',
-            !isSaving && 'hover:bg-info hover:text-info-contrast',
-          )}
-          onClick={fetchAndUploadImage}
-          disabled={isSaving}
-        >
-          {isSaving ? (
-            <>
-              <Spinner className="h-4 w-4" />
-              Saving...
-            </>
-          ) : (
-            <>
-              <Icon type="download" />
-              Save image to Files
-            </>
-          )}
-        </button>
-      )}
-    </div>
+    <BlockWithAlignableContents className={className} format={format} nodeKey={nodeKey}>
+      <div className="relative flex min-h-[2rem] flex-col items-center gap-2.5">
+        <img
+          alt={alt}
+          src={src}
+          onLoad={() => {
+            setDidImageLoad(true)
+          }}
+        />
+        {didImageLoad && canShowSaveButton && (
+          <button
+            className={classNames(
+              'flex items-center gap-2.5 rounded border border-border bg-default px-2.5 py-1.5',
+              !isSaving && 'hover:bg-info hover:text-info-contrast',
+            )}
+            onClick={fetchAndUploadImage}
+            disabled={isSaving}
+          >
+            {isSaving ? (
+              <>
+                <Spinner className="h-4 w-4" />
+                Saving...
+              </>
+            ) : (
+              <>
+                <Icon type="download" />
+                Save image to Files
+              </>
+            )}
+          </button>
+        )}
+      </div>
+    </BlockWithAlignableContents>
   )
 }
 
