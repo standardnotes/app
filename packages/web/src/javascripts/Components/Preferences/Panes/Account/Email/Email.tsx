@@ -112,7 +112,7 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
         <div>
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <Subtitle>Sign-in notification emails</Subtitle>
+              <Subtitle>Mute sign-in notification emails</Subtitle>
               {isMuteSignInEmailsFeatureAvailable ? (
                 <Text>
                   Disables email notifications when a new sign-in occurs on your account. (Email notifications are
@@ -145,7 +145,7 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
           <HorizontalSeparator classes="my-4" />
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
-              <Subtitle>Marketing notification emails</Subtitle>
+              <Subtitle>Mute marketing notification emails</Subtitle>
               <Text>Disables email notifications with special deals and promotions.</Text>
             </div>
             {isLoading ? (
