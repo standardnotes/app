@@ -1,5 +1,5 @@
 import { DecoratorBlockNode, SerializedDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
-import { DOMConversionMap, DOMExportOutput, LexicalNode, Spread } from 'lexical'
+import { DOMConversionMap, DOMExportOutput, EditorConfig, LexicalEditor, LexicalNode, Spread } from 'lexical'
 import RemoteImageComponent from './RemoteImageComponent'
 
 type SerializedRemoteImageNode = Spread<
@@ -75,8 +75,23 @@ export class RemoteImageNode extends DecoratorBlockNode {
     return { element }
   }
 
-  decorate(): JSX.Element {
-    return <RemoteImageComponent node={this} src={this.__src} alt={this.__alt} />
+  decorate(_editor: LexicalEditor, config: EditorConfig): JSX.Element {
+    const embedBlockTheme = config.theme.embedBlock || {}
+    const className = {
+      base: embedBlockTheme.base || '',
+      focus: embedBlockTheme.focus || '',
+    }
+
+    return (
+      <RemoteImageComponent
+        className={className}
+        format={this.__format}
+        nodeKey={this.getKey()}
+        node={this}
+        src={this.__src}
+        alt={this.__alt}
+      />
+    )
   }
 }
 
