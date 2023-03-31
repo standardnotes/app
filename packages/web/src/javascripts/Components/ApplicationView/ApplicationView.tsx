@@ -199,6 +199,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                       applicationGroup={mainApplicationGroup}
                     />
                     <ToastContainer />
+                    {renderChallenges()}
                   </FileDragNDropProvider>
                 </LinkingControllerProvider>
               </PremiumModalProvider>
