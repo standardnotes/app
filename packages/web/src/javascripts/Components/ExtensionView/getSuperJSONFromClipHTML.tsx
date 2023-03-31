@@ -1,4 +1,4 @@
-import { $createParagraphNode, $createRangeSelection } from 'lexical'
+import { $createParagraphNode, $getRoot, $insertNodes } from 'lexical'
 import { $generateNodesFromDOM } from '../SuperEditor/Lexical/Utils/generateNodesFromDOM'
 import { createHeadlessEditor } from '@lexical/headless'
 import { BlockEditorNodes } from '../SuperEditor/Lexical/Nodes/AllNodes'
@@ -30,8 +30,11 @@ export const getSuperJSONFromClipHTML = async (html: string) => {
 
         return node
       })
-      const selection = $createRangeSelection()
-      selection.insertNodes(nodesToInsert)
+      $getRoot().select()
+      $insertNodes(nodesToInsert)
+      const paragraphNode = $createParagraphNode()
+      $getRoot().selectEnd()
+      $insertNodes([paragraphNode])
       resolve()
     })
   })
