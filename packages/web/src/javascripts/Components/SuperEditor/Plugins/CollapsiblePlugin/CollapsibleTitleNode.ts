@@ -10,10 +10,10 @@ import {
   $createParagraphNode,
   $isElementNode,
   DOMConversionMap,
-  EditorConfig,
+  DOMConversionOutput,
+  DOMExportOutput,
   ElementFormatType,
   ElementNode,
-  LexicalEditor,
   LexicalNode,
   NodeKey,
   RangeSelection,
@@ -32,6 +32,13 @@ type SerializedCollapsibleTitleNode = Spread<
   SerializedElementNode
 >
 
+export function convertSummaryElement(): DOMConversionOutput | null {
+  const node = $createCollapsibleTitleNode()
+  return {
+    node,
+  }
+}
+
 export class CollapsibleTitleNode extends ElementNode {
   static override getType(): string {
     return 'collapsible-title'
@@ -48,21 +55,11 @@ export class CollapsibleTitleNode extends ElementNode {
     return new CollapsibleTitleNode({ key: node.__key })
   }
 
-  override createDOM(_config: EditorConfig, editor: LexicalEditor): HTMLElement {
+  override createDOM(): HTMLElement {
     const dom = document.createElement('summary')
     dom.classList.add('Collapsible__title')
     const format = this.getFormatType()
     dom.style.textAlign = format
-    dom.onclick = (event) => {
-      event.preventDefault()
-      event.stopPropagation()
-      editor.update(() => {
-        const containerNode = this.getParentOrThrow()
-        if ($isCollapsibleContainerNode(containerNode)) {
-          containerNode.toggleOpen()
-        }
-      })
-    }
     return dom
   }
 
@@ -71,11 +68,23 @@ export class CollapsibleTitleNode extends ElementNode {
   }
 
   static importDOM(): DOMConversionMap | null {
-    return {}
+    return {
+      summary: () => {
+        return {
+          conversion: convertSummaryElement,
+          priority: 1,
+        }
+      },
+    }
   }
 
   static override importJSON(serializedNode: SerializedCollapsibleTitleNode): CollapsibleTitleNode {
     return $createCollapsibleTitleNode(serializedNode.format)
+  }
+
+  exportDOM(): DOMExportOutput {
+    const element = document.createElement('summary')
+    return { element }
   }
 
   override exportJSON(): SerializedCollapsibleTitleNode {
@@ -91,7 +100,7 @@ export class CollapsibleTitleNode extends ElementNode {
     return true
   }
 
-  override insertNewAfter(): ElementNode {
+  override insertNewAfter(_: RangeSelection, restoreSelection = true): ElementNode {
     const containerNode = this.getParentOrThrow()
 
     if (!$isCollapsibleContainerNode(containerNode)) {
@@ -114,7 +123,7 @@ export class CollapsibleTitleNode extends ElementNode {
       }
     } else {
       const paragraph = $createParagraphNode()
-      containerNode.insertAfter(paragraph)
+      containerNode.insertAfter(paragraph, restoreSelection)
       return paragraph
     }
   }

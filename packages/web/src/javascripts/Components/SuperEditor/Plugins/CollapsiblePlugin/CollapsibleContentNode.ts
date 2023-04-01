@@ -6,7 +6,16 @@
  *
  */
 
-import { DOMConversionMap, EditorConfig, ElementNode, LexicalNode, SerializedElementNode, Spread } from 'lexical'
+import {
+  DOMConversionMap,
+  DOMConversionOutput,
+  DOMExportOutput,
+  EditorConfig,
+  ElementNode,
+  LexicalNode,
+  SerializedElementNode,
+  Spread,
+} from 'lexical'
 
 type SerializedCollapsibleContentNode = Spread<
   {
@@ -15,6 +24,13 @@ type SerializedCollapsibleContentNode = Spread<
   },
   SerializedElementNode
 >
+
+export function convertCollapsibleContentElement(): DOMConversionOutput | null {
+  const node = $createCollapsibleContentNode()
+  return {
+    node,
+  }
+}
 
 export class CollapsibleContentNode extends ElementNode {
   static override getType(): string {
@@ -36,7 +52,17 @@ export class CollapsibleContentNode extends ElementNode {
   }
 
   static importDOM(): DOMConversionMap | null {
-    return {}
+    return {
+      div: (domNode: HTMLElement) => {
+        if (!domNode.hasAttribute('data-lexical-collapsible-content')) {
+          return null
+        }
+        return {
+          conversion: convertCollapsibleContentElement,
+          priority: 2,
+        }
+      },
+    }
   }
 
   static override importJSON(_serializedNode: SerializedCollapsibleContentNode): CollapsibleContentNode {
@@ -45,6 +71,12 @@ export class CollapsibleContentNode extends ElementNode {
 
   override isShadowRoot(): boolean {
     return true
+  }
+
+  exportDOM(): DOMExportOutput {
+    const element = document.createElement('div')
+    element.setAttribute('data-lexical-collapsible-content', 'true')
+    return { element }
   }
 
   override exportJSON(): SerializedCollapsibleContentNode {

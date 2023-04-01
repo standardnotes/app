@@ -32,7 +32,7 @@
   border-style: solid;
   border-color: transparent;
   border-width: 4px 6px 4px 6px;
-  border-left-color: #000;
+  border-left-color: var(--sn-stylekit-contrast-color);
   display: block;
   content: '';
   position: absolute;
