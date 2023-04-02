@@ -112,7 +112,7 @@ export class CollapsibleContainerNode extends ElementNode {
   }
 
   getOpen(): boolean {
-    return this.getLatest().__open
+    return this.__open
   }
 
   toggleOpen(): void {

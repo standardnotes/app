@@ -3,8 +3,9 @@ import { $generateNodesFromDOM } from '../SuperEditor/Lexical/Utils/generateNode
 import { createHeadlessEditor } from '@lexical/headless'
 import { BlockEditorNodes } from '../SuperEditor/Lexical/Nodes/AllNodes'
 import BlocksEditorTheme from '../SuperEditor/Lexical/Theme/Theme'
+import { ClipPayload } from '@standardnotes/extension/src/types/message'
 
-export const getSuperJSONFromClipHTML = async (html: string) => {
+export const getSuperJSONFromClipPayload = async (clipPayload: ClipPayload) => {
   const editor = createHeadlessEditor({
     namespace: 'BlocksEditor',
     theme: BlocksEditorTheme,
@@ -16,25 +17,37 @@ export const getSuperJSONFromClipHTML = async (html: string) => {
   await new Promise<void>((resolve) => {
     editor.update(() => {
       const parser = new DOMParser()
-      const dom = parser.parseFromString(html, 'text/html')
-      const nodesToInsert = $generateNodesFromDOM(editor, dom).map((node) => {
-        const type = node.getType()
 
-        // Wrap text & link nodes with paragraph since they can't
-        // be top-level nodes in Super
-        if (type === 'text' || type === 'link') {
-          const paragraphNode = $createParagraphNode()
-          paragraphNode.append(node)
-          return paragraphNode
-        }
-
-        return node
-      })
+      const clipSourceDOM = parser.parseFromString(
+        `<p>Clip source: <a href="${clipPayload.url}">${clipPayload.url}</a></p>`,
+        'text/html',
+      )
+      const clipSourceParagraphNode = $generateNodesFromDOM(editor, clipSourceDOM).concat(
+        $createParagraphNode(),
+        $createParagraphNode(),
+      )
       $getRoot().select()
-      $insertNodes(nodesToInsert)
-      const paragraphNode = $createParagraphNode()
+      $insertNodes(clipSourceParagraphNode)
+
+      const dom = parser.parseFromString(clipPayload.content, 'text/html')
+      const nodesToInsert = $generateNodesFromDOM(editor, dom)
+        .map((node) => {
+          const type = node.getType()
+
+          // Wrap text & link nodes with paragraph since they can't
+          // be top-level nodes in Super
+          if (type === 'text' || type === 'link') {
+            const paragraphNode = $createParagraphNode()
+            paragraphNode.append(node)
+            return paragraphNode
+          }
+
+          return node
+        })
+        .concat($createParagraphNode())
       $getRoot().selectEnd()
-      $insertNodes([paragraphNode])
+      $insertNodes(nodesToInsert)
+
       resolve()
     })
   })

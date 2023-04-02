@@ -22,7 +22,7 @@ import {
   SNNote,
 } from '@standardnotes/snjs'
 import { addToast, ToastType } from '@standardnotes/toast'
-import { getSuperJSONFromClipHTML } from './getSuperJSONFromClipHTML'
+import { getSuperJSONFromClipPayload } from './getSuperJSONFromClipHTML'
 import ClippedNoteView from './ClippedNoteView'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
 import Button from '../Button/Button'
@@ -144,7 +144,7 @@ const ExtensionView = ({
         return
       }
 
-      const editorStateJSON = await getSuperJSONFromClipHTML(clipPayload.content)
+      const editorStateJSON = await getSuperJSONFromClipPayload(clipPayload)
 
       const note = application.items.createTemplateItem<NoteContent, SNNote>(ContentType.Note, {
         title: clipPayload.title,
