@@ -8,8 +8,11 @@
 
 import {
   DOMConversionMap,
+  DOMConversionOutput,
+  DOMExportOutput,
   EditorConfig,
   ElementNode,
+  LexicalEditor,
   LexicalNode,
   NodeKey,
   SerializedElementNode,
@@ -24,6 +27,14 @@ type SerializedCollapsibleContainerNode = Spread<
   },
   SerializedElementNode
 >
+
+export function convertDetailsElement(domNode: HTMLDetailsElement): DOMConversionOutput | null {
+  const isOpen = domNode.open !== undefined ? domNode.open : true
+  const node = $createCollapsibleContainerNode(isOpen)
+  return {
+    node,
+  }
+}
 
 export class CollapsibleContainerNode extends ElementNode {
   __open: boolean
@@ -41,10 +52,16 @@ export class CollapsibleContainerNode extends ElementNode {
     return new CollapsibleContainerNode(node.__open, node.__key)
   }
 
-  override createDOM(_: EditorConfig): HTMLElement {
+  override createDOM(_: EditorConfig, editor: LexicalEditor): HTMLElement {
     const dom = document.createElement('details')
     dom.classList.add('Collapsible__container')
     dom.open = this.__open
+    dom.addEventListener('toggle', () => {
+      const open = editor.getEditorState().read(() => this.getOpen())
+      if (open !== dom.open) {
+        editor.update(() => this.toggleOpen())
+      }
+    })
     return dom
   }
 
@@ -56,13 +73,28 @@ export class CollapsibleContainerNode extends ElementNode {
     return false
   }
 
-  static importDOM(): DOMConversionMap | null {
-    return {}
+  static importDOM(): DOMConversionMap<HTMLDetailsElement> | null {
+    return {
+      details: () => {
+        return {
+          conversion: convertDetailsElement,
+          priority: 1,
+        }
+      },
+    }
   }
 
   static override importJSON(serializedNode: SerializedCollapsibleContainerNode): CollapsibleContainerNode {
     const node = $createCollapsibleContainerNode(serializedNode.open)
     return node
+  }
+
+  exportDOM(): DOMExportOutput {
+    const element = document.createElement('details')
+    if (this.getLatest().__open) {
+      element.setAttribute('open', '')
+    }
+    return { element }
   }
 
   override exportJSON(): SerializedCollapsibleContainerNode {
@@ -80,7 +112,7 @@ export class CollapsibleContainerNode extends ElementNode {
   }
 
   getOpen(): boolean {
-    return this.__open
+    return this.getLatest().__open
   }
 
   toggleOpen(): void {
