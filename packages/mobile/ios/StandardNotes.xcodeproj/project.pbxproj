@@ -674,7 +674,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = Blue;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = HKF9BXSN95;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = StandardNotes/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -689,6 +692,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.standardnotes.standardnotes;
 				PRODUCT_NAME = StandardNotes;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

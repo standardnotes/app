@@ -131,6 +131,7 @@ const CreateAccount: FunctionComponent<Props> = ({
           ref={emailInputRef}
           type="email"
           value={email}
+          spellcheck={false}
         />
         <DecoratedPasswordInput
           className={{ container: 'mb-2' }}

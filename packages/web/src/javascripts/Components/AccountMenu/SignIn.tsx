@@ -210,6 +210,7 @@ const SignInPane: FunctionComponent<Props> = ({ application, viewControllerManag
           onKeyDown={handleKeyDown}
           disabled={isSigningIn || isPrivateUsername}
           ref={emailInputRef}
+          spellcheck={false}
         />
         <DecoratedPasswordInput
           className={{ container: `mb-2 ${error ? 'border-danger' : null}` }}
