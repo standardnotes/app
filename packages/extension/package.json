@@ -3,10 +3,10 @@
   "description": "Standard Notes companion browser extension",
   "version": "1.0.0",
   "scripts": {
-    "build": "yarn clean && webpack --config ./webpack.config.prod.js",
+    "build-mv2": "yarn clean && webpack --config ./webpack.config.prod.js",
     "build-mv3": "yarn clean && MANIFEST_VERSION=3 webpack --config ./webpack.config.prod.js",
     "watch:web": "BUILD_TARGET=extension yarn workspace @standardnotes/web run watch",
-    "watch": "webpack --config ./webpack.config.dev.js --watch",
+    "watch-mv2": "webpack --config ./webpack.config.dev.js --watch",
     "watch-mv3": "MANIFEST_VERSION=3 webpack --config ./webpack.config.dev.js --watch",
     "build-firefox": "BUILD_TARGET=extension yarn build:web && EXT_TARGET=firefox yarn build && web-ext build --source-dir ./dist --overwrite-dest",
     "build-chromium": "BUILD_TARGET=extension yarn build:web && EXT_TARGET=chromium yarn build-mv3 && web-ext build --source-dir ./dist --overwrite-dest",

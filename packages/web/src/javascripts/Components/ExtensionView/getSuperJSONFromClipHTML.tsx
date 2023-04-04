@@ -1,4 +1,4 @@
-import { $createParagraphNode, $getRoot, $insertNodes } from 'lexical'
+import { $createParagraphNode, $getRoot, $insertNodes, LexicalNode } from 'lexical'
 import { $generateNodesFromDOM } from '../SuperEditor/Lexical/Utils/generateNodesFromDOM'
 import { createHeadlessEditor } from '@lexical/headless'
 import { BlockEditorNodes } from '../SuperEditor/Lexical/Nodes/AllNodes'
@@ -30,23 +30,26 @@ export const getSuperJSONFromClipPayload = async (clipPayload: ClipPayload) => {
       $insertNodes(clipSourceParagraphNode)
 
       const dom = parser.parseFromString(clipPayload.content, 'text/html')
-      const nodesToInsert = $generateNodesFromDOM(editor, dom)
-        .map((node) => {
-          const type = node.getType()
+      const generatedNodes = $generateNodesFromDOM(editor, dom)
+      const nodesToInsert: LexicalNode[] = []
+      generatedNodes.forEach((node) => {
+        const type = node.getType()
 
-          // Wrap text & link nodes with paragraph since they can't
-          // be top-level nodes in Super
-          if (type === 'text' || type === 'link') {
-            const paragraphNode = $createParagraphNode()
-            paragraphNode.append(node)
-            return paragraphNode
-          }
+        // Wrap text & link nodes with paragraph since they can't
+        // be top-level nodes in Super
+        if (type === 'text' || type === 'link') {
+          const paragraphNode = $createParagraphNode()
+          paragraphNode.append(node)
+          nodesToInsert.push(paragraphNode)
+          return
+        } else {
+          nodesToInsert.push(node)
+        }
 
-          return node
-        })
-        .concat($createParagraphNode())
+        nodesToInsert.push($createParagraphNode())
+      })
       $getRoot().selectEnd()
-      $insertNodes(nodesToInsert)
+      $insertNodes(nodesToInsert.concat($createParagraphNode()))
 
       resolve()
     })
