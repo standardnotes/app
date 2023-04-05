@@ -3,7 +3,7 @@ import { $generateNodesFromDOM } from '../SuperEditor/Lexical/Utils/generateNode
 import { createHeadlessEditor } from '@lexical/headless'
 import { BlockEditorNodes } from '../SuperEditor/Lexical/Nodes/AllNodes'
 import BlocksEditorTheme from '../SuperEditor/Lexical/Theme/Theme'
-import { ClipPayload } from '@standardnotes/extension/src/types/message'
+import { ClipPayload } from '@standardnotes/clipper/src/types/message'
 
 export const getSuperJSONFromClipPayload = async (clipPayload: ClipPayload) => {
   const editor = createHeadlessEditor({
