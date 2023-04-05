@@ -88,7 +88,8 @@ export class SNFeaturesService
         const {
           payload: { userUuid, currentRoles },
         } = data as UserRolesChangedEvent
-        await this.updateOnlineRolesAndFetchFeatures(userUuid, currentRoles)
+        await this.updateOnlineRoles(currentRoles)
+        await this.fetchFeatures(userUuid)
       }
     })
 
@@ -143,6 +144,9 @@ export class SNFeaturesService
         return
       }
 
+      const { userUuid, userRoles } = event.payload as MetaReceivedData
+      await this.updateOnlineRoles(userRoles.map((role) => role.name))
+
       /**
        * All user data must be downloaded before we map features. Otherwise, feature mapping
        * may think a component doesn't exist and create a new one, when in reality the component
@@ -152,11 +156,7 @@ export class SNFeaturesService
         return
       }
 
-      const { userUuid, userRoles } = event.payload as MetaReceivedData
-      await this.updateOnlineRolesAndFetchFeatures(
-        userUuid,
-        userRoles.map((role) => role.name),
-      )
+      await this.fetchFeatures(userUuid)
     }
   }
 
@@ -400,7 +400,7 @@ export class SNFeaturesService
     return hasFirstPartyOfflineSubscription || new URL(offlineRepo.content.offlineFeaturesUrl).hostname === 'localhost'
   }
 
-  async updateOnlineRolesAndFetchFeatures(userUuid: UuidString, roles: string[]): Promise<void> {
+  async updateOnlineRoles(roles: string[]): Promise<void> {
     const previousRoles = this.onlineRoles
 
     const userRolesChanged =
@@ -412,9 +412,21 @@ export class SNFeaturesService
       return
     }
 
-    this.needsInitialFeaturesUpdate = false
+    if (userRolesChanged && !isInitialLoadRolesChange) {
+      if (this.onlineRolesIncludePaidSubscription()) {
+        await this.notifyEvent(FeaturesEvent.DidPurchaseSubscription)
+      }
+    }
 
     await this.setOnlineRoles(roles)
+  }
+
+  async fetchFeatures(userUuid: UuidString): Promise<void> {
+    if (!this.needsInitialFeaturesUpdate) {
+      return
+    }
+
+    this.needsInitialFeaturesUpdate = false
 
     const shouldDownloadRoleBasedFeatures = !this.hasOfflineRepo()
 
@@ -424,12 +436,6 @@ export class SNFeaturesService
       if (!isErrorResponse(featuresResponse) && !this.deinited) {
         const features = featuresResponse.data.features
         await this.didDownloadFeatures(features)
-      }
-    }
-
-    if (userRolesChanged && !isInitialLoadRolesChange) {
-      if (this.onlineRolesIncludePaidSubscription()) {
-        await this.notifyEvent(FeaturesEvent.DidPurchaseSubscription)
       }
     }
   }
