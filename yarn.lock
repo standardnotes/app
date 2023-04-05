@@ -4872,6 +4872,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/clipper@workspace:packages/clipper":
+  version: 0.0.0-use.local
+  resolution: "@standardnotes/clipper@workspace:packages/clipper"
+  dependencies:
+    "@mozilla/readability": ^0.4.2
+    "@types/webextension-polyfill": ^0.10.0
+    babel-loader: ^9.1.0
+    copy-webpack-plugin: 11.0.0
+    eslint: ^8.29.0
+    eslint-config-prettier: ^8.5.0
+    ts-loader: ^9.4.2
+    typescript: "*"
+    web-ext: ^7.5.0
+    webextension-polyfill: ^0.10.0
+    webpack: "*"
+  languageName: unknown
+  linkType: soft
+
 "@standardnotes/common@npm:1.40.0, @standardnotes/common@npm:^1.23.1":
   version: 1.40.0
   resolution: "@standardnotes/common@npm:1.40.0"
@@ -5048,24 +5066,6 @@ __metadata:
     reflect-metadata: ^0.1.13
     ts-jest: ^29.0.3
     typescript: "*"
-  languageName: unknown
-  linkType: soft
-
-"@standardnotes/extension@workspace:packages/extension":
-  version: 0.0.0-use.local
-  resolution: "@standardnotes/extension@workspace:packages/extension"
-  dependencies:
-    "@mozilla/readability": ^0.4.2
-    "@types/webextension-polyfill": ^0.10.0
-    babel-loader: ^9.1.0
-    copy-webpack-plugin: 11.0.0
-    eslint: ^8.29.0
-    eslint-config-prettier: ^8.5.0
-    ts-loader: ^9.4.2
-    typescript: "*"
-    web-ext: ^7.5.0
-    webextension-polyfill: ^0.10.0
-    webpack: "*"
   languageName: unknown
   linkType: soft
 

@@ -1,4 +1,4 @@
-# @standardnotes/extension
+# @standardnotes/clipper
 
 ## Development flow
 

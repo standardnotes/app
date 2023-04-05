@@ -21,7 +21,7 @@ module.exports = (env) => {
     { from: 'src/.well-known', to: '.well-known' },
   ]
 
-  if (process.env.BUILD_TARGET !== 'extension') {
+  if (process.env.BUILD_TARGET !== 'clipper') {
     copyPluginPatterns.push({ from: 'src/components', to: 'components' })
   }
 

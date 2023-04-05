@@ -36,7 +36,7 @@ type Props = {
   mainApplicationGroup: ApplicationGroup
 }
 
-const LazyLoadedExtensionView = lazy(() => import('../ExtensionView/ExtensionView'))
+const LazyLoadedClipperView = lazy(() => import('../ClipperView/ClipperView'))
 
 const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicationGroup }) => {
   const platformString = getPlatformString()
@@ -194,7 +194,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                     featuresController={viewControllerManager.featuresController}
                     filesController={viewControllerManager.filesController}
                   >
-                    <LazyLoadedExtensionView
+                    <LazyLoadedClipperView
                       viewControllerManager={viewControllerManager}
                       applicationGroup={mainApplicationGroup}
                     />

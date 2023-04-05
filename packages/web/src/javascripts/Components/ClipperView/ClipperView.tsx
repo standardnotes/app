@@ -9,8 +9,8 @@ import Icon from '../Icon/Icon'
 import Menu from '../Menu/Menu'
 import MenuItem from '../Menu/MenuItem'
 import { storage as extensionStorage } from 'webextension-polyfill'
-import sendMessageToActiveTab from '@standardnotes/extension/src/utils/sendMessageToActiveTab'
-import { ClipPayload, RuntimeMessageTypes } from '@standardnotes/extension/src/types/message'
+import sendMessageToActiveTab from '@standardnotes/clipper/src/utils/sendMessageToActiveTab'
+import { ClipPayload, RuntimeMessageTypes } from '@standardnotes/clipper/src/types/message'
 import { confirmDialog } from '@standardnotes/ui-services'
 import {
   ApplicationEvent,
@@ -35,7 +35,7 @@ const Header = () => (
   </div>
 )
 
-const ExtensionView = ({
+const ClipperView = ({
   viewControllerManager,
   applicationGroup,
 }: {
@@ -311,4 +311,4 @@ const ExtensionView = ({
   )
 }
 
-export default ExtensionView
+export default ClipperView
