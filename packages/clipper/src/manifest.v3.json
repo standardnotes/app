@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Standard Notes",
+  "name": "Standard Notes Clipper",
   "description": "Web clipper for Standard Notes",
   "permissions": ["activeTab", "storage"],
   "action": {
@@ -27,7 +27,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "{47c90b22-69b6-4f50-ae5a-aaeefad656fe}",
+      "id": "{9f917dfe-accd-4d3a-9685-33c3ac0ca643}",
       "strict_min_version": "48.0"
     }
   }

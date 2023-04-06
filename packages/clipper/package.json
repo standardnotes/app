@@ -8,7 +8,7 @@
     "watch:web": "BUILD_TARGET=clipper yarn workspace @standardnotes/web run watch",
     "watch-mv2": "webpack --config ./webpack.config.dev.js --watch",
     "watch-mv3": "MANIFEST_VERSION=3 webpack --config ./webpack.config.dev.js --watch",
-    "build-firefox": "BUILD_TARGET=clipper yarn build:web && EXT_TARGET=firefox yarn build && web-ext build --source-dir ./dist --overwrite-dest",
+    "build-firefox": "BUILD_TARGET=clipper yarn build:web && EXT_TARGET=firefox yarn build-mv2 && web-ext build --source-dir ./dist --overwrite-dest",
     "build-chromium": "BUILD_TARGET=clipper yarn build:web && EXT_TARGET=chromium yarn build-mv3 && web-ext build --source-dir ./dist --overwrite-dest",
     "run-firefox": "web-ext run -t firefox-desktop --keep-profile-changes -s ./dist",
     "run-chromium": "web-ext run -t chromium --keep-profile-changes -s ./dist",
