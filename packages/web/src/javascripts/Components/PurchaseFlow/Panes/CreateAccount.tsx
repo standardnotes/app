@@ -89,7 +89,7 @@ const CreateAccount: FunctionComponent<Props> = ({ viewControllerManager, applic
       await application.register(email, password)
 
       viewControllerManager.purchaseFlowController.closePurchaseFlow()
-      viewControllerManager.purchaseFlowController.openPurchaseFlow()
+      void viewControllerManager.purchaseFlowController.openPurchaseFlow()
     } catch (err) {
       console.error(err)
       application.alertService.alert(err as string).catch(console.error)

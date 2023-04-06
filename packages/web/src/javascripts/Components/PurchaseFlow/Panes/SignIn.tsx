@@ -75,7 +75,7 @@ const SignIn: FunctionComponent<Props> = ({ viewControllerManager, application }
         throw new Error(response.data.error?.message)
       } else {
         viewControllerManager.purchaseFlowController.closePurchaseFlow()
-        viewControllerManager.purchaseFlowController.openPurchaseFlow()
+        void viewControllerManager.purchaseFlowController.openPurchaseFlow()
       }
     } catch (err) {
       console.error(err)

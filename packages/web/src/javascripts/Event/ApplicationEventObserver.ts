@@ -45,7 +45,7 @@ export class ApplicationEventObserver implements EventObserverInterface {
           const route = this.routeService.getRoute()
           switch (route.type) {
             case RouteType.Purchase:
-              this.purchaseFlowController.openPurchaseFlow()
+              void this.purchaseFlowController.openPurchaseFlow()
 
               break
             case RouteType.Settings: {
