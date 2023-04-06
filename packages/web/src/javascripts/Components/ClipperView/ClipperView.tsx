@@ -252,7 +252,6 @@ const ClipperView = ({
       <Header />
       <div>
         <Menu a11yLabel="Extension menu" isOpen={true} className="pb-1">
-          <div className="px-3 pt-2 pb-0.5 text-mobile-menu-item font-semibold">Web Clipper</div>
           <MenuItem
             onClick={async () => {
               const payload = await sendMessageToActiveTab(RuntimeMessageTypes.GetFullPage)
@@ -295,8 +294,7 @@ const ClipperView = ({
           >
             Select elements to clip
           </MenuItem>
-          <div className="border-t border-border px-3 pt-2 pb-1 text-mobile-menu-item font-semibold">Account</div>
-          <div className="px-3 pb-1 text-base text-foreground">
+          <div className="border-t border-border px-3 pt-3 pb-1 text-base text-foreground">
             <div>You're signed in as:</div>
             <div className="wrap my-0.5 font-bold">{user.email}</div>
             <span className="text-neutral">{application.getHost()}</span>
