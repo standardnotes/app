@@ -88,8 +88,8 @@ export class SNFeaturesService
         const {
           payload: { userUuid, currentRoles },
         } = data as UserRolesChangedEvent
-        await this.updateOnlineRoles(currentRoles)
-        await this.fetchFeatures(userUuid)
+        const { didChangeRoles } = await this.updateOnlineRoles(currentRoles)
+        await this.fetchFeatures(userUuid, didChangeRoles)
       }
     })
 
@@ -145,7 +145,7 @@ export class SNFeaturesService
       }
 
       const { userUuid, userRoles } = event.payload as MetaReceivedData
-      await this.updateOnlineRoles(userRoles.map((role) => role.name))
+      const { didChangeRoles } = await this.updateOnlineRoles(userRoles.map((role) => role.name))
 
       /**
        * All user data must be downloaded before we map features. Otherwise, feature mapping
@@ -156,7 +156,7 @@ export class SNFeaturesService
         return
       }
 
-      await this.fetchFeatures(userUuid)
+      await this.fetchFeatures(userUuid, didChangeRoles)
     }
   }
 
@@ -400,7 +400,9 @@ export class SNFeaturesService
     return hasFirstPartyOfflineSubscription || new URL(offlineRepo.content.offlineFeaturesUrl).hostname === 'localhost'
   }
 
-  async updateOnlineRoles(roles: string[]): Promise<void> {
+  async updateOnlineRoles(roles: string[]): Promise<{
+    didChangeRoles: boolean
+  }> {
     const previousRoles = this.onlineRoles
 
     const userRolesChanged =
@@ -409,7 +411,9 @@ export class SNFeaturesService
     const isInitialLoadRolesChange = previousRoles.length === 0 && userRolesChanged
 
     if (!userRolesChanged && !this.needsInitialFeaturesUpdate) {
-      return
+      return {
+        didChangeRoles: false,
+      }
     }
 
     if (userRolesChanged && !isInitialLoadRolesChange) {
@@ -419,10 +423,14 @@ export class SNFeaturesService
     }
 
     await this.setOnlineRoles(roles)
+
+    return {
+      didChangeRoles: true,
+    }
   }
 
-  async fetchFeatures(userUuid: UuidString): Promise<void> {
-    if (!this.needsInitialFeaturesUpdate) {
+  async fetchFeatures(userUuid: UuidString, didChangeRoles: boolean): Promise<void> {
+    if (!didChangeRoles && !this.needsInitialFeaturesUpdate) {
       return
     }
 
