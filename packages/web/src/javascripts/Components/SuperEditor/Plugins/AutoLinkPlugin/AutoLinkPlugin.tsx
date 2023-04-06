@@ -1,55 +1,28 @@
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import { AutoLinkPlugin as LexicalAutoLinkPlugin } from '@lexical/react/LexicalAutoLinkPlugin'
-import { COMMAND_PRIORITY_EDITOR, KEY_MODIFIER_COMMAND, $getSelection } from 'lexical'
-import { useEffect } from 'react'
-import { TOGGLE_LINK_COMMAND } from '@lexical/link'
-import { mergeRegister } from '@lexical/utils'
+/**
+ * Copyright (c) Meta Platforms, Inc. and affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ *
+ */
 
-const URL_MATCHER =
+import { AutoLinkPlugin, createLinkMatcherWithRegExp } from '@lexical/react/LexicalAutoLinkPlugin'
+
+const URL_REGEX =
   /((https?:\/\/(www\.)?)|(www\.))[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)/
 
+const EMAIL_REGEX =
+  /(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))/
+
 const MATCHERS = [
-  (text: string) => {
-    const match = URL_MATCHER.exec(text)
-    if (match === null) {
-      return null
-    }
-    const fullMatch = match[0]
-    return {
-      index: match.index,
-      length: fullMatch.length,
-      text: fullMatch,
-      url: fullMatch.startsWith('http') ? fullMatch : `https://${fullMatch}`,
-    }
-  },
+  createLinkMatcherWithRegExp(URL_REGEX, (text) => {
+    return text.startsWith('http') ? text : `https://${text}`
+  }),
+  createLinkMatcherWithRegExp(EMAIL_REGEX, (text) => {
+    return `mailto:${text}`
+  }),
 ]
 
-export default function AutoLinkPlugin(): JSX.Element | null {
-  const [editor] = useLexicalComposerContext()
-
-  useEffect(() => {
-    return mergeRegister(
-      editor.registerCommand(
-        KEY_MODIFIER_COMMAND,
-        (event: KeyboardEvent) => {
-          const isCmdK = event.key === 'k' && !event.altKey && (event.metaKey || event.ctrlKey)
-          if (isCmdK) {
-            const selection = $getSelection()
-            if (selection) {
-              editor.dispatchCommand(TOGGLE_LINK_COMMAND, selection.getTextContent())
-            }
-          }
-
-          return false
-        },
-        COMMAND_PRIORITY_EDITOR,
-      ),
-    )
-  }, [editor])
-
-  return (
-    <>
-      <LexicalAutoLinkPlugin matchers={MATCHERS} />
-    </>
-  )
+export default function LexicalAutoLinkPlugin(): JSX.Element {
+  return <AutoLinkPlugin matchers={MATCHERS} />
 }
