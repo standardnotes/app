@@ -8,7 +8,7 @@ import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
 import Menu from '../Menu/Menu'
 import MenuItem from '../Menu/MenuItem'
-import { storage as extensionStorage } from 'webextension-polyfill'
+import { storage as extensionStorage, windows } from 'webextension-polyfill'
 import sendMessageToActiveTab from '@standardnotes/clipper/src/utils/sendMessageToActiveTab'
 import { ClipPayload, RuntimeMessageTypes } from '@standardnotes/clipper/src/types/message'
 import { confirmDialog } from '@standardnotes/ui-services'
@@ -43,6 +43,19 @@ const ClipperView = ({
   applicationGroup: ApplicationGroup
 }) => {
   const application = useApplication()
+
+  const [currentWindow, setCurrentWindow] = useState<Awaited<ReturnType<typeof windows.getCurrent>>>()
+  useEffect(() => {
+    windows
+      .getCurrent({
+        populate: true,
+      })
+      .then((window) => {
+        setCurrentWindow(window)
+      })
+      .catch(console.error)
+  }, [])
+  const isFirefoxPopup = !!currentWindow && currentWindow.type === 'popup' && currentWindow.incognito === false
 
   const [user, setUser] = useState(() => application.getUser())
   const [isEntitledToExtension, setIsEntitled] = useState(
@@ -211,6 +224,7 @@ const ClipperView = ({
           key={clippedNote.uuid}
           linkingController={viewControllerManager.linkingController}
           clearClip={clearClip}
+          isFirefoxPopup={isFirefoxPopup}
         />
       </>
     )
