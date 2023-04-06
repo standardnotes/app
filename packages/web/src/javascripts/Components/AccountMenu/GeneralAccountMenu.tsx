@@ -102,9 +102,9 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
             <div className="wrap my-0.5 font-bold">{user.email}</div>
             <span className="text-neutral">{application.getHost()}</span>
           </div>
-          <div className="mb-2 flex items-start justify-between px-3">
+          <div className="mb-2 flex items-start justify-between px-3 text-mobile-menu-item md:text-tablet-menu-item lg:text-menu-item">
             {isSyncingInProgress ? (
-              <div className="flex items-center text-base font-semibold text-info lg:text-sm">
+              <div className="flex items-center font-semibold text-info">
                 <Spinner className="mr-2 h-5 w-5" />
                 Syncing...
               </div>
@@ -112,8 +112,8 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
               <div className="flex items-start">
                 <Icon type="check-circle" className={`mr-2 text-success ${MenuItemIconSize}`} />
                 <div>
-                  <div className="text-base font-semibold text-success lg:text-sm">Last synced:</div>
-                  <div className="text-base text-text lg:text-sm">{lastSyncDate}</div>
+                  <div className="font-semibold text-success">Last synced:</div>
+                  <div className="text-text">{lastSyncDate}</div>
                 </div>
               </div>
             )}
