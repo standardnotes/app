@@ -2,6 +2,8 @@ const CopyPlugin = require('copy-webpack-plugin')
 const package = require('./package.json')
 
 module.exports = (env, argv) => {
+  const isProd = !argv.watch
+
   return {
     entry: {
       background: './src/background/background.ts',
@@ -16,6 +18,9 @@ module.exports = (env, argv) => {
           {
             from: '../web/dist',
             to: './web',
+            globOptions: {
+              ignore: isProd ? ['**/app.js.map'] : [],
+            },
           },
           {
             from: `./src/manifest.v${process.env.MANIFEST_VERSION || 2}.json`,
