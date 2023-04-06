@@ -9,15 +9,18 @@ import { NoteSyncController } from '@/Controllers/NoteSyncController'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 import { LinkingController } from '@/Controllers/LinkingController'
 import Button from '../Button/Button'
+import Spinner from '../Spinner/Spinner'
 
 const ClippedNoteView = ({
   note,
   linkingController,
   clearClip,
+  isFirefoxPopup,
 }: {
   note: SNNote
   linkingController: LinkingController
   clearClip: () => void
+  isFirefoxPopup: boolean
 }) => {
   const application = useApplication()
 
@@ -49,6 +52,7 @@ const ClippedNoteView = ({
     })
   }, [])
 
+  const [isDiscarding, setIsDiscarding] = useState(false)
   const discardNote = useCallback(async () => {
     if (
       await confirmDialog({
@@ -57,28 +61,46 @@ const ClippedNoteView = ({
         confirmButtonStyle: 'danger',
       })
     ) {
-      void application.mutator.deleteItem(note)
-      clearClip()
+      setIsDiscarding(true)
+      application.mutator
+        .deleteItem(note)
+        .then(() => {
+          if (isFirefoxPopup) {
+            window.close()
+          }
+          clearClip()
+        })
+        .catch(console.error)
+        .finally(() => setIsDiscarding(false))
     }
-  }, [application.mutator, clearClip, note])
+  }, [application.mutator, clearClip, isFirefoxPopup, note])
 
   return (
     <div className="">
       <div className="border-b border-border p-3">
         <div className="mb-3 flex w-full items-center gap-3">
-          <Button className="flex items-center justify-center" fullWidth onClick={clearClip}>
-            <Icon type="arrow-left" className="mr-2" />
-            Back
-          </Button>
+          {!isFirefoxPopup && (
+            <Button className="flex items-center justify-center" fullWidth onClick={clearClip} disabled={isDiscarding}>
+              <Icon type="arrow-left" className="mr-2" />
+              Back
+            </Button>
+          )}
           <Button
             className="flex items-center justify-center"
             fullWidth
             primary
             colorStyle="danger"
             onClick={discardNote}
+            disabled={isDiscarding}
           >
-            <Icon type="trash-filled" className="mr-2" />
-            Discard
+            {isDiscarding ? (
+              <Spinner className="h-6 w-6 text-danger-contrast" />
+            ) : (
+              <>
+                <Icon type="trash-filled" className="mr-2" />
+                Discard
+              </>
+            )}
           </Button>
         </div>
         <input
