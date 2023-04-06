@@ -18,5 +18,6 @@ export interface WebApplicationInterface extends ApplicationInterface {
   handleAndroidBackButtonPressed(): void
   addAndroidBackHandlerEventListener(listener: () => boolean): (() => void) | undefined
   setAndroidBackHandlerFallbackListener(listener: () => boolean): void
+  handleAndroidU2FAuthenticatorResponse(response: string): void
   generateUUID(): string
 }

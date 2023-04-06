@@ -9,4 +9,5 @@ export enum ReactNativeToWebEvent {
   KeyboardFrameDidChange = 'KeyboardFrameDidChange',
   KeyboardWillShow = 'KeyboardWillShow',
   KeyboardWillHide = 'KeyboardWillHide',
+  U2FAuthenticatorResponseReceived = 'U2FAuthenticatorResponseReceived',
 }

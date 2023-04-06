@@ -1,6 +1,7 @@
 import { WebApplication } from '@/Application/Application'
-import { ChallengePrompt } from '@standardnotes/services'
-import { RefObject, useState } from 'react'
+import { ChallengePrompt, WebAppEvent } from '@standardnotes/services'
+import { RefObject, useEffect, useState } from 'react'
+
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
 import { InputValue } from './InputValue'
@@ -17,6 +18,16 @@ type Props = {
 const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData }: Props) => {
   const [authenticatorResponse, setAuthenticatorResponse] = useState<Record<string, unknown> | null>(null)
   const [error, setError] = useState('')
+
+  useEffect(() => {
+    const disposer = application.addWebEventObserver((event, authenticatorResponse) => {
+      if (event === WebAppEvent.U2FAuthenticatorResponseObtained) {
+        onValueChange(authenticatorResponse as string, prompt)
+      }
+    })
+
+    return disposer
+  }, [application, onValueChange, prompt])
 
   if (!application.isFullU2FClient) {
     return (

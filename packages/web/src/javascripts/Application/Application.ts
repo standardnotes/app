@@ -346,6 +346,10 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     this.notifyWebEvent(WebAppEvent.MobileKeyboardDidChangeFrame, frame)
   }
 
+  handleAndroidU2FAuthenticatorResponse(response: string): void {
+    this.notifyWebEvent(WebAppEvent.U2FAuthenticatorResponseObtained, response)
+  }
+
   private async lockApplicationAfterMobileEventIfApplicable(): Promise<void> {
     const isLocked = await this.isLocked()
     if (isLocked) {

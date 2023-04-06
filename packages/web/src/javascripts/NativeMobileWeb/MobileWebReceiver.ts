@@ -82,7 +82,12 @@ export class MobileWebReceiver {
           messageData as { height: number; contentHeight: number },
         )
         break
+      case ReactNativeToWebEvent.U2FAuthenticatorResponseReceived: {
+        const { authenticatorResponse } = messageData as { authenticatorResponse: string }
 
+        this.application.handleAndroidU2FAuthenticatorResponse(authenticatorResponse)
+        break
+      }
       default:
         break
     }

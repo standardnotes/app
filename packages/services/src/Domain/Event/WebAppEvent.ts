@@ -8,4 +8,5 @@ export enum WebAppEvent {
   WindowDidBlur = 'WindowDidBlur',
   MobileKeyboardDidChangeFrame = 'MobileKeyboardDidChangeFrame',
   MobileKeyboardWillChangeFrame = 'MobileKeyboardWillChangeFrame',
+  U2FAuthenticatorResponseObtained = 'U2FAuthenticatorResponseObtained',
 }
