@@ -16,7 +16,7 @@ import {
   URL_MATCHER,
 } from '@lexical/react/LexicalAutoEmbedPlugin'
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import * as ReactDOM from 'react-dom'
 
 import useModal from '../../Lexical/Hooks/useModal'
@@ -174,6 +174,18 @@ function AutoEmbedMenu({
   )
 }
 
+const debounce = (callback: (text: string) => void, delay: number) => {
+  let timeoutId: number
+
+  return (text: string) => {
+    window.clearTimeout(timeoutId)
+
+    timeoutId = window.setTimeout(() => {
+      callback(text)
+    }, delay)
+  }
+}
+
 export function AutoEmbedDialog({
   embedConfig,
   onClose,
@@ -183,14 +195,26 @@ export function AutoEmbedDialog({
 }): JSX.Element {
   const [text, setText] = useState('')
   const [editor] = useLexicalComposerContext()
+  const [embedResult, setEmbedResult] = useState<EmbedMatchResult | null>(null)
 
-  const urlMatch = URL_MATCHER.exec(text)
-  const embedResult = text != null && urlMatch != null ? embedConfig.parseUrl(text) : null
+  const validateText = useMemo(
+    () =>
+      debounce((inputText: string) => {
+        const urlMatch = URL_MATCHER.exec(inputText)
+        if (embedConfig != null && inputText != null && urlMatch != null) {
+          void Promise.resolve(embedConfig.parseUrl(inputText)).then((parseResult) => {
+            setEmbedResult(parseResult)
+          })
+        } else if (embedResult != null) {
+          setEmbedResult(null)
+        }
+      }, 200),
+    [embedConfig, embedResult],
+  )
 
-  const onClick = async () => {
-    const result = await embedResult
-    if (result != null) {
-      embedConfig.insertNode(editor, result)
+  const onClick = () => {
+    if (embedResult != null) {
+      embedConfig.insertNode(editor, embedResult)
       onClose()
     }
   }
@@ -205,7 +229,9 @@ export function AutoEmbedDialog({
           value={text}
           data-test-id={`${embedConfig.type}-embed-modal-url`}
           onChange={(e) => {
-            setText(e.target.value)
+            const { value } = e.target
+            setText(value)
+            validateText(value)
           }}
         />
       </div>

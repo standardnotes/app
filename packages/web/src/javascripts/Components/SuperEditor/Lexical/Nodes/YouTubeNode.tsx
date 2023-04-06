@@ -6,7 +6,17 @@
  *
  */
 
-import type { EditorConfig, ElementFormatType, LexicalEditor, LexicalNode, NodeKey, Spread } from 'lexical'
+import type {
+  DOMConversionMap,
+  DOMConversionOutput,
+  DOMExportOutput,
+  EditorConfig,
+  ElementFormatType,
+  LexicalEditor,
+  LexicalNode,
+  NodeKey,
+  Spread,
+} from 'lexical'
 
 import { BlockWithAlignableContents } from '@lexical/react/LexicalBlockWithAlignableContents'
 import { DecoratorBlockNode, SerializedDecoratorBlockNode } from '@lexical/react/LexicalDecoratorBlockNode'
@@ -46,6 +56,15 @@ export type SerializedYouTubeNode = Spread<
   SerializedDecoratorBlockNode
 >
 
+function convertYoutubeElement(domNode: HTMLElement): null | DOMConversionOutput {
+  const videoID = domNode.getAttribute('data-lexical-youtube')
+  if (videoID) {
+    const node = $createYouTubeNode(videoID)
+    return { node }
+  }
+  return null
+}
+
 export class YouTubeNode extends DecoratorBlockNode {
   __id: string
 
@@ -69,6 +88,36 @@ export class YouTubeNode extends DecoratorBlockNode {
       type: 'youtube',
       version: 1,
       videoID: this.__id,
+    }
+  }
+
+  exportDOM(): DOMExportOutput {
+    const element = document.createElement('iframe')
+    element.setAttribute('data-lexical-youtube', this.__id)
+    element.setAttribute('width', '560')
+    element.setAttribute('height', '315')
+    element.setAttribute('src', `https://www.youtube.com/embed/${this.__id}`)
+    element.setAttribute('frameborder', '0')
+    element.setAttribute(
+      'allow',
+      'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture',
+    )
+    element.setAttribute('allowfullscreen', 'true')
+    element.setAttribute('title', 'YouTube video')
+    return { element }
+  }
+
+  static importDOM(): DOMConversionMap | null {
+    return {
+      iframe: (domNode: HTMLElement) => {
+        if (!domNode.hasAttribute('data-lexical-youtube')) {
+          return null
+        }
+        return {
+          conversion: convertYoutubeElement,
+          priority: 1,
+        }
+      },
     }
   }
 
