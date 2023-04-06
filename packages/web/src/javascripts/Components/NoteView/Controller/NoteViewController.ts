@@ -2,7 +2,7 @@ import { WebApplication } from '@/Application/Application'
 import { noteTypeForEditorIdentifier } from '@standardnotes/features'
 import { SNNote, SNTag, NoteContent, DecryptedItemInterface, PayloadEmitSource, PrefKey } from '@standardnotes/models'
 import { UuidString } from '@standardnotes/snjs'
-import { removeFromArray, Deferred } from '@standardnotes/utils'
+import { removeFromArray } from '@standardnotes/utils'
 import { ContentType } from '@standardnotes/common'
 import { ItemViewControllerInterface } from './ItemViewControllerInterface'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
@@ -23,10 +23,8 @@ export class NoteViewController implements ItemViewControllerInterface {
 
   private innerValueChangeObservers: ((note: SNNote, source: PayloadEmitSource) => void)[] = []
   private disposers: (() => void)[] = []
-  private saveTimeout?: ReturnType<typeof setTimeout>
   private defaultTagUuid: UuidString | undefined
   private defaultTag?: SNTag
-  private savingLocallyPromise: ReturnType<typeof Deferred<void>> | null = null
 
   private syncController: NoteSyncController
 
@@ -51,12 +49,12 @@ export class NoteViewController implements ItemViewControllerInterface {
   }
 
   deinit(): void {
-    if (!this.savingLocallyPromise) {
+    if (!this.syncController.savingLocallyPromise) {
       this.performDeinitSafely()
       return
     }
 
-    void this.savingLocallyPromise.promise.then(() => {
+    void this.syncController.savingLocallyPromise.promise.then(() => {
       this.performDeinitSafely()
     })
   }
@@ -72,8 +70,6 @@ export class NoteViewController implements ItemViewControllerInterface {
     ;(this.item as unknown) = undefined
 
     this.innerValueChangeObservers.length = 0
-
-    this.saveTimeout = undefined
   }
 
   async initialize(): Promise<void> {
@@ -190,6 +186,6 @@ export class NoteViewController implements ItemViewControllerInterface {
       await this.insertTemplatedNote()
     }
 
-    void this.syncController.saveAndAwaitLocalPropagation(params)
+    await this.syncController.saveAndAwaitLocalPropagation(params)
   }
 }
