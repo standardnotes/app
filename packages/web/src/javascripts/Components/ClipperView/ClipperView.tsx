@@ -31,7 +31,7 @@ import { useStateRef } from '@/Hooks/useStateRef'
 
 const Header = () => (
   <div className="flex items-center border-b border-border p-1 px-3 py-2 text-base font-semibold text-info-contrast">
-    <SNLogoFull />
+    <SNLogoFull className="h-7" />
   </div>
 )
 
@@ -251,8 +251,8 @@ const ClipperView = ({
     <>
       <Header />
       <div>
-        <Menu a11yLabel="Extension menu" isOpen={true}>
-          <div className="px-3 py-2 text-base font-semibold">Web Clipper</div>
+        <Menu a11yLabel="Extension menu" isOpen={true} className="pb-1">
+          <div className="px-3 pt-2 pb-0.5 text-mobile-menu-item font-semibold">Web Clipper</div>
           <MenuItem
             onClick={async () => {
               const payload = await sendMessageToActiveTab(RuntimeMessageTypes.GetFullPage)
@@ -295,8 +295,8 @@ const ClipperView = ({
           >
             Select elements to clip
           </MenuItem>
-          <div className="border-t border-border px-3 pt-2 pb-1 text-base font-semibold">Account</div>
-          <div className="px-3 pb-1 text-sm text-foreground">
+          <div className="border-t border-border px-3 pt-2 pb-1 text-mobile-menu-item font-semibold">Account</div>
+          <div className="px-3 pb-1 text-base text-foreground">
             <div>You're signed in as:</div>
             <div className="wrap my-0.5 font-bold">{user.email}</div>
             <span className="text-neutral">{application.getHost()}</span>
