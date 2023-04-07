@@ -1,6 +1,7 @@
+import { Environment, Platform, RawKeychainValue } from '@standardnotes/models'
+
 import { AppleIAPProductId } from './../Subscription/AppleIAPProductId'
 import { DeviceInterface } from './DeviceInterface'
-import { Environment, Platform, RawKeychainValue } from '@standardnotes/models'
 import { AppleIAPReceipt } from '../Subscription/AppleIAPReceipt'
 
 export interface MobileDeviceInterface extends DeviceInterface {
@@ -25,4 +26,5 @@ export interface MobileDeviceInterface extends DeviceInterface {
   getAppState(): Promise<'active' | 'background' | 'inactive' | 'unknown' | 'extension'>
   getColorScheme(): Promise<'light' | 'dark' | null | undefined>
   purchaseSubscriptionIAP(plan: AppleIAPProductId): Promise<AppleIAPReceipt | undefined>
+  promptForU2FAuthentication(authenticationOptionsJSONString: string): Promise<void>
 }

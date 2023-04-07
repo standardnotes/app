@@ -1,10 +1,10 @@
-import { AuthenticatorClientInterface } from '@standardnotes/services'
-import { Result, UseCaseInterface, Username } from '@standardnotes/domain-core'
+import { Result, UseCaseInterface } from '@standardnotes/domain-core'
 import { GetAuthenticatorAuthenticationResponseDTO } from './GetAuthenticatorAuthenticationResponseDTO'
+import { GetAuthenticatorAuthenticationOptions } from '../GetAuthenticatorAuthenticationOptions/GetAuthenticatorAuthenticationOptions'
 
 export class GetAuthenticatorAuthenticationResponse implements UseCaseInterface<Record<string, unknown>> {
   constructor(
-    private authenticatorClient: AuthenticatorClientInterface,
+    private getAuthenticatorAuthenticationOptions: GetAuthenticatorAuthenticationOptions,
     private authenticatorVerificationPromptFunction?: (
       authenticationOptions: Record<string, unknown>,
     ) => Promise<Record<string, unknown>>,
@@ -17,16 +17,13 @@ export class GetAuthenticatorAuthenticationResponse implements UseCaseInterface<
       )
     }
 
-    const usernameOrError = Username.create(dto.username)
-    if (usernameOrError.isFailed()) {
-      return Result.fail(`Could not generate authenticator authentication options: ${usernameOrError.getError()}`)
+    const authenticationOptionsOrError = await this.getAuthenticatorAuthenticationOptions.execute({
+      username: dto.username,
+    })
+    if (authenticationOptionsOrError.isFailed()) {
+      return Result.fail(authenticationOptionsOrError.getError())
     }
-    const username = usernameOrError.getValue()
-
-    const authenticationOptions = await this.authenticatorClient.generateAuthenticationOptions(username)
-    if (authenticationOptions === null) {
-      return Result.fail('Could not generate authenticator authentication options')
-    }
+    const authenticationOptions = authenticationOptionsOrError.getValue()
 
     let authenticatorResponse
     try {

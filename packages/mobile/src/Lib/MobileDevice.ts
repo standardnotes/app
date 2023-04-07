@@ -22,6 +22,7 @@ import {
   AppStateStatus,
   ColorSchemeName,
   Linking,
+  NativeModules,
   PermissionsAndroid,
   Platform,
   StatusBar,
@@ -70,6 +71,12 @@ export class MobileDevice implements MobileDeviceInterface {
     private androidBackHandlerService?: AndroidBackHandlerService,
     private colorSchemeService?: ColorSchemeObserverService,
   ) {}
+
+  async promptForU2FAuthentication(authenticationOptionsJSONString: string): Promise<void> {
+    const { Fido2ApiModule } = NativeModules
+
+    await Fido2ApiModule.promptForU2FAuthentication(authenticationOptionsJSONString)
+  }
 
   purchaseSubscriptionIAP(plan: AppleIAPProductId): Promise<AppleIAPReceipt | undefined> {
     return PurchaseManager.getInstance().purchase(plan)

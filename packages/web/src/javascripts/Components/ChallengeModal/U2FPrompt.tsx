@@ -1,9 +1,13 @@
-import { WebApplication } from '@/Application/Application'
+import { Username } from '@standardnotes/snjs'
 import { ChallengePrompt, WebAppEvent } from '@standardnotes/services'
 import { RefObject, useEffect, useState } from 'react'
 
+import { WebApplication } from '@/Application/Application'
+import { isAndroid } from '@/Utils'
+
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
+
 import { InputValue } from './InputValue'
 import U2FPromptIframeContainer from './U2FPromptIframeContainer'
 
@@ -29,7 +33,33 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
     return disposer
   }, [application, onValueChange, prompt])
 
-  if (!application.isFullU2FClient) {
+  useEffect(() => {
+    async function promptForU2F() {
+      const usernameOrError = Username.create((contextData as { username: string }).username)
+      if (usernameOrError.isFailed()) {
+        setError(usernameOrError.getError())
+        return
+      }
+      const username = usernameOrError.getValue()
+
+      const authenticatorOptionsOrError = await application.getAuthenticatorAuthenticationOptions.execute({
+        username: username.value,
+      })
+      if (authenticatorOptionsOrError.isFailed()) {
+        setError(authenticatorOptionsOrError.getError())
+        return
+      }
+      const authenticatorOptions = authenticatorOptionsOrError.getValue()
+
+      await application.mobileDevice().promptForU2FAuthentication(JSON.stringify(authenticatorOptions))
+    }
+
+    void promptForU2F()
+  }, [application, contextData, setError])
+
+  const isOnAndroidDevice = isAndroid()
+
+  if (!application.isFullU2FClient && !isOnAndroidDevice) {
     return (
       <U2FPromptIframeContainer
         contextData={contextData}
@@ -44,41 +74,43 @@ const U2FPrompt = ({ application, onValueChange, prompt, buttonRef, contextData 
   return (
     <div className="min-w-76">
       {error && <div className="text-red-500">{error}</div>}
-      <Button
-        primary
-        fullWidth
-        colorStyle={authenticatorResponse ? 'success' : 'info'}
-        onClick={async () => {
-          if (!contextData || contextData.username === undefined) {
-            setError('No username provided')
-            return
-          }
+      {!isOnAndroidDevice && (
+        <Button
+          primary
+          fullWidth
+          colorStyle={authenticatorResponse ? 'success' : 'info'}
+          onClick={async () => {
+            if (!contextData || contextData.username === undefined) {
+              setError('No username provided')
+              return
+            }
 
-          const authenticatorResponseOrError = await application.getAuthenticatorAuthenticationResponse.execute({
-            username: contextData.username as string,
-          })
+            const authenticatorResponseOrError = await application.getAuthenticatorAuthenticationResponse.execute({
+              username: contextData.username as string,
+            })
 
-          if (authenticatorResponseOrError.isFailed()) {
-            setError(authenticatorResponseOrError.getError())
-            return
-          }
+            if (authenticatorResponseOrError.isFailed()) {
+              setError(authenticatorResponseOrError.getError())
+              return
+            }
 
-          const authenticatorResponse = authenticatorResponseOrError.getValue()
+            const authenticatorResponse = authenticatorResponseOrError.getValue()
 
-          setAuthenticatorResponse(authenticatorResponse)
-          onValueChange(authenticatorResponse, prompt)
-        }}
-        ref={buttonRef}
-      >
-        {authenticatorResponse ? (
-          <span className="flex items-center justify-center gap-3">
-            <Icon type="check-circle" />
-            Obtained Device Response
-          </span>
-        ) : (
-          'Authenticate Device'
-        )}
-      </Button>
+            setAuthenticatorResponse(authenticatorResponse)
+            onValueChange(authenticatorResponse, prompt)
+          }}
+          ref={buttonRef}
+        >
+          {authenticatorResponse ? (
+            <span className="flex items-center justify-center gap-3">
+              <Icon type="check-circle" />
+              Obtained Device Response
+            </span>
+          ) : (
+            'Authenticate Device'
+          )}
+        </Button>
+      )}
     </div>
   )
 }
