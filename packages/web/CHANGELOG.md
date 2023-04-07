@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.150.45](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.44...@standardnotes/web@3.150.45) (2023-04-07)
+
+### Bug Fixes
+
+* Added a "Select file" button to File backups section as an alternative to drag-n-drop ([bb04d12](https://github.com/standardnotes/app/commit/bb04d120cca8ef954cb011c27a5df01a3b481180))
+
 ## [3.150.44](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.43...@standardnotes/web@3.150.44) (2023-04-06)
 
 **Note:** Version bump only for package @standardnotes/web
