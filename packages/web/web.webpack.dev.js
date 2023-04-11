@@ -8,6 +8,7 @@ module.exports = (env, argv) => {
   mergeWithEnvDefaults(env)
   return merge(config(env, argv), {
     mode: 'development',
+    devtool: process.env.BUILD_TARGET === 'extension' ? 'cheap-module-source-map' : 'inline-source-map',
     optimization: {
       minimize: false,
     },

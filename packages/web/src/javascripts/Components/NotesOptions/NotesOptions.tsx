@@ -34,6 +34,7 @@ import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import MenuItem from '../Menu/MenuItem'
 import ModalOverlay from '../Modal/ModalOverlay'
 import SuperExportModal from './SuperExportModal'
+import { useApplication } from '../ApplicationProvider'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -42,13 +43,14 @@ const iconClassSuccess = `text-success mr-2 ${iconSize}`
 
 const NotesOptions = ({
   notes,
-  application,
   navigationController,
   notesController,
   linkingController,
   historyModalController,
   closeMenu,
 }: NotesOptionsProps) => {
+  const application = useApplication()
+
   const [altKeyDown, setAltKeyDown] = useState(false)
   const { toggleAppPane } = useResponsiveAppPane()
   const commandService = useCommandService()

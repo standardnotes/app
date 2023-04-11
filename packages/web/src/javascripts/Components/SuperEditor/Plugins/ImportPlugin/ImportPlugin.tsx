@@ -1,20 +1,22 @@
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { useEffect } from 'react'
 import { $convertFromMarkdownString, TRANSFORMERS } from '@lexical/markdown'
-import { $generateNodesFromDOM } from '@lexical/html'
-import { $createParagraphNode, $createRangeSelection } from 'lexical'
+import { $createParagraphNode, $createRangeSelection, LexicalEditor } from 'lexical'
 import { handleEditorChange } from '../../Utils'
 import { SuperNotePreviewCharLimit } from '../../SuperEditor'
+import { $generateNodesFromDOM } from '../../Lexical/Utils/generateNodesFromDOM'
 
 /** Note that markdown conversion does not insert new lines. See: https://github.com/facebook/lexical/issues/2815 */
 export default function ImportPlugin({
   text,
   format,
   onChange,
+  customImportFunction,
 }: {
   text: string
   format: 'md' | 'html'
   onChange: (value: string, preview: string) => void
+  customImportFunction?: (editor: LexicalEditor, text: string) => void
 }): JSX.Element | null {
   const [editor] = useLexicalComposerContext()
 
@@ -24,19 +26,24 @@ export default function ImportPlugin({
       return
     }
 
+    if (customImportFunction) {
+      customImportFunction(editor, text)
+      return
+    }
+
     editor.update(() => {
       if (format === 'md') {
         $convertFromMarkdownString(text, [...TRANSFORMERS])
       } else {
         const parser = new DOMParser()
         const dom = parser.parseFromString(text, 'text/html')
-        const nodes = $generateNodesFromDOM(editor, dom)
+        const nodesToInsert = $generateNodesFromDOM(editor, dom)
         const selection = $createRangeSelection()
         const newLineNode = $createParagraphNode()
-        selection.insertNodes([newLineNode, ...nodes])
+        selection.insertNodes([newLineNode, ...nodesToInsert])
       }
     })
-  }, [editor, text, format])
+  }, [editor, text, format, customImportFunction])
 
   useEffect(() => {
     return editor.registerUpdateListener(({ editorState }) => {

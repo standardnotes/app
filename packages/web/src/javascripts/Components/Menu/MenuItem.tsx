@@ -21,7 +21,7 @@ type MenuItemProps = {
 
 const MenuItem = forwardRef(
   (
-    { children, className = '', icon, iconClassName, tabIndex, shortcut, ...props }: MenuItemProps,
+    { children, className = '', icon, iconClassName, tabIndex, shortcut, disabled, ...props }: MenuItemProps,
     ref: Ref<HTMLButtonElement>,
   ) => {
     return (
@@ -34,9 +34,11 @@ const MenuItem = forwardRef(
             'flex w-full cursor-pointer select-none border-0 bg-transparent px-3 py-2 text-left md:py-1.5',
             'text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground',
             'focus:bg-info-backdrop focus:shadow-none md:text-tablet-menu-item lg:text-menu-item',
+            'disabled:cursor-not-allowed disabled:opacity-60',
             className,
             className.includes('items-') ? '' : 'items-center',
           )}
+          disabled={disabled}
           {...props}
         >
           {shortcut && <KeyboardShortcutIndicator className="mr-2" shortcut={shortcut} />}

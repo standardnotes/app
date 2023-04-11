@@ -1,0 +1,33 @@
+{
+  "manifest_version": 2,
+  "name": "Standard Notes Clipper",
+  "description": "Web clipper for Standard Notes",
+  "permissions": ["activeTab", "storage"],
+  "browser_action": {
+    "default_popup": "popup/index.html?route=extension"
+  },
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "content_security_policy": "default-src 'self'; script-src 'self' 'wasm-eval' 'wasm-unsafe-eval'; worker-src blob:; connect-src * data: blob:; style-src 'unsafe-inline' 'self'; frame-src * blob:; img-src * data: blob:;",
+  "icons": {
+    "16": "images/icon16.png",
+    "32": "images/icon32.png",
+    "48": "images/icon48.png",
+    "96": "images/icon96.png",
+    "128": "images/icon128.png"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "{9f917dfe-accd-4d3a-9685-33c3ac0ca643}",
+      "strict_min_version": "48.0"
+    }
+  }
+}

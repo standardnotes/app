@@ -45,7 +45,7 @@ const PurchaseFlowView: FunctionComponent<PurchaseFlowViewProps> = ({ viewContro
           >
             <Icon type="close" className="text-neutral" />
           </button>
-          <SNLogoFull className="mb-5" />
+          <SNLogoFull className="mb-5 h-7" />
           <PurchaseFlowPaneSelector
             currentPane={currentPane}
             viewControllerManager={viewControllerManager}

@@ -46,7 +46,6 @@ import { NoteViewController } from './Controller/NoteViewController'
 import { PlainEditor, PlainEditorInterface } from './PlainEditor/PlainEditor'
 
 const MinimumStatusDuration = 400
-const NoteEditingDisabledText = 'Note editing disabled.'
 
 function sortAlphabetically(array: SNComponent[]): SNComponent[] {
   return array.sort((a, b) => (a.name.toLowerCase() < b.name.toLowerCase() ? -1 : 1))
@@ -59,12 +58,10 @@ type State = {
   editorStateDidLoad: boolean
   editorTitle: string
   isDesktop?: boolean
-  lockText: string
   marginResizersEnabled?: boolean
   noteLocked: boolean
   noteStatus?: NoteStatus
   saveError?: boolean
-  showLockedIcon: boolean
   showProtectedWarning: boolean
   spellcheck: boolean
   stackComponentViewers: ComponentViewerInterface[]
@@ -116,10 +113,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       editorStateDidLoad: false,
       editorTitle: '',
       isDesktop: isDesktopApplication(),
-      lockText: NoteEditingDisabledText,
       noteStatus: undefined,
       noteLocked: this.controller.item.locked,
-      showLockedIcon: true,
       showProtectedWarning: false,
       spellcheck: true,
       stackComponentViewers: [],
@@ -830,21 +825,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
         {this.state.noteLocked && (
           <EditingDisabledBanner
-            onMouseLeave={() => {
-              this.setState({
-                lockText: NoteEditingDisabledText,
-                showLockedIcon: true,
-              })
-            }}
-            onMouseOver={() => {
-              this.setState({
-                lockText: 'Enable editing',
-                showLockedIcon: false,
-              })
-            }}
             onClick={() => this.viewControllerManager.notesController.setLockSelectedNotes(!this.state.noteLocked)}
-            showLockedIcon={this.state.showLockedIcon}
-            lockText={this.state.lockText}
+            noteLocked={this.state.noteLocked}
           />
         )}
 
@@ -886,7 +868,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                     featuresController={this.viewControllerManager.featuresController}
                   />
                   <ChangeEditorButton
-                    application={this.application}
                     viewControllerManager={this.viewControllerManager}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
@@ -895,7 +876,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
                   <NotesOptionsPanel
-                    application={this.application}
                     navigationController={this.viewControllerManager.navigationController}
                     notesController={this.viewControllerManager.notesController}
                     linkingController={this.viewControllerManager.linkingController}

@@ -1,30 +1,18 @@
 import { WebApplication } from '@/Application/Application'
 import { noteTypeForEditorIdentifier } from '@standardnotes/features'
-import { InfoStrings } from '@standardnotes/services'
-import {
-  NoteMutator,
-  SNNote,
-  SNTag,
-  NoteContent,
-  DecryptedItemInterface,
-  PayloadEmitSource,
-  PrefKey,
-} from '@standardnotes/models'
+import { SNNote, SNTag, NoteContent, DecryptedItemInterface, PayloadEmitSource, PrefKey } from '@standardnotes/models'
 import { UuidString } from '@standardnotes/snjs'
-import { removeFromArray, Deferred } from '@standardnotes/utils'
+import { removeFromArray } from '@standardnotes/utils'
 import { ContentType } from '@standardnotes/common'
 import { ItemViewControllerInterface } from './ItemViewControllerInterface'
 import { TemplateNoteViewControllerOptions } from './TemplateNoteViewControllerOptions'
-import { EditorSaveTimeoutDebounce } from './EditorSaveTimeoutDebounce'
 import { log, LoggingDomain } from '@/Logging'
+import { NoteSaveFunctionParams, NoteSyncController } from '../../../Controllers/NoteSyncController'
 
 export type EditorValues = {
   title: string
   text: string
 }
-
-const StringEllipses = '...'
-const NotePreviewCharLimit = 160
 
 export class NoteViewController implements ItemViewControllerInterface {
   public item!: SNNote
@@ -35,10 +23,10 @@ export class NoteViewController implements ItemViewControllerInterface {
 
   private innerValueChangeObservers: ((note: SNNote, source: PayloadEmitSource) => void)[] = []
   private disposers: (() => void)[] = []
-  private saveTimeout?: ReturnType<typeof setTimeout>
   private defaultTagUuid: UuidString | undefined
   private defaultTag?: SNTag
-  private savingLocallyPromise: ReturnType<typeof Deferred<void>> | null = null
+
+  private syncController: NoteSyncController
 
   constructor(
     private application: WebApplication,
@@ -56,15 +44,17 @@ export class NoteViewController implements ItemViewControllerInterface {
     if (this.defaultTagUuid) {
       this.defaultTag = this.application.items.findItem(this.defaultTagUuid) as SNTag
     }
+
+    this.syncController = new NoteSyncController(this.application, this.item)
   }
 
   deinit(): void {
-    if (!this.savingLocallyPromise) {
+    if (!this.syncController.savingLocallyPromise) {
       this.performDeinitSafely()
       return
     }
 
-    void this.savingLocallyPromise.promise.then(() => {
+    void this.syncController.savingLocallyPromise.promise.then(() => {
       this.performDeinitSafely()
     })
   }
@@ -80,8 +70,6 @@ export class NoteViewController implements ItemViewControllerInterface {
     ;(this.item as unknown) = undefined
 
     this.innerValueChangeObservers.length = 0
-
-    this.saveTimeout = undefined
   }
 
   async initialize(): Promise<void> {
@@ -185,59 +173,11 @@ export class NoteViewController implements ItemViewControllerInterface {
     }
   }
 
-  public async saveAndAwaitLocalPropagation(params: {
-    title?: string
-    text?: string
-    isUserModified: boolean
-    bypassDebouncer?: boolean
-    dontGeneratePreviews?: boolean
-    previews?: { previewPlain: string; previewHtml?: string }
-    customMutate?: (mutator: NoteMutator) => void
-  }): Promise<void> {
+  public async saveAndAwaitLocalPropagation(params: NoteSaveFunctionParams): Promise<void> {
     if (this.needsInit) {
       throw Error('NoteViewController not initialized')
     }
 
-    this.savingLocallyPromise = Deferred<void>()
-
-    if (this.saveTimeout) {
-      clearTimeout(this.saveTimeout)
-    }
-
-    const noDebounce = params.bypassDebouncer || this.application.noAccount()
-
-    const syncDebouceMs = noDebounce
-      ? EditorSaveTimeoutDebounce.ImmediateChange
-      : this.application.isNativeMobileWeb()
-      ? EditorSaveTimeoutDebounce.NativeMobileWeb
-      : EditorSaveTimeoutDebounce.Desktop
-
-    return new Promise((resolve) => {
-      this.saveTimeout = setTimeout(() => {
-        void this.undebouncedSave({
-          ...params,
-          onLocalPropagationComplete: () => {
-            if (this.savingLocallyPromise) {
-              this.savingLocallyPromise.resolve()
-            }
-            resolve()
-          },
-        })
-      }, syncDebouceMs)
-    })
-  }
-
-  private async undebouncedSave(params: {
-    title?: string
-    text?: string
-    bypassDebouncer?: boolean
-    isUserModified?: boolean
-    dontGeneratePreviews?: boolean
-    previews?: { previewPlain: string; previewHtml?: string }
-    customMutate?: (mutator: NoteMutator) => void
-    onLocalPropagationComplete?: () => void
-    onRemoteSyncComplete?: () => void
-  }): Promise<void> {
     log(LoggingDomain.NoteView, 'Saving note', params)
 
     const isTemplate = this.isTemplateNote
@@ -246,46 +186,6 @@ export class NoteViewController implements ItemViewControllerInterface {
       await this.insertTemplatedNote()
     }
 
-    if (!this.application.items.findItem(this.item.uuid)) {
-      void this.application.alertService.alert(InfoStrings.InvalidNote)
-      return
-    }
-
-    await this.application.mutator.changeItem(
-      this.item,
-      (mutator) => {
-        const noteMutator = mutator as NoteMutator
-        if (params.customMutate) {
-          params.customMutate(noteMutator)
-        }
-
-        if (params.title != undefined) {
-          noteMutator.title = params.title
-        }
-
-        if (params.text != undefined) {
-          noteMutator.text = params.text
-        }
-
-        if (params.previews) {
-          noteMutator.preview_plain = params.previews.previewPlain
-          noteMutator.preview_html = params.previews.previewHtml
-        } else if (!params.dontGeneratePreviews && params.text != undefined) {
-          const noteText = params.text || ''
-          const truncate = noteText.length > NotePreviewCharLimit
-          const substring = noteText.substring(0, NotePreviewCharLimit)
-          const previewPlain = substring + (truncate ? StringEllipses : '')
-          noteMutator.preview_plain = previewPlain
-          noteMutator.preview_html = undefined
-        }
-      },
-      params.isUserModified,
-    )
-
-    void this.application.sync.sync().then(() => {
-      params.onRemoteSyncComplete?.()
-    })
-
-    params.onLocalPropagationComplete?.()
+    await this.syncController.saveAndAwaitLocalPropagation(params)
   }
 }

@@ -19,6 +19,34 @@ export const useListKeyboardNavigation = (
     }
   }, [])
 
+  const getNextFocusableIndex = useCallback((currentIndex: number, items: HTMLButtonElement[]) => {
+    let nextIndex = currentIndex + 1
+    if (nextIndex > items.length - 1) {
+      nextIndex = 0
+    }
+    while (items[nextIndex].disabled) {
+      nextIndex++
+      if (nextIndex > items.length - 1) {
+        nextIndex = 0
+      }
+    }
+    return nextIndex
+  }, [])
+
+  const getPreviousFocusableIndex = useCallback((currentIndex: number, items: HTMLButtonElement[]) => {
+    let previousIndex = currentIndex - 1
+    if (previousIndex < 0) {
+      previousIndex = items.length - 1
+    }
+    while (items[previousIndex].disabled) {
+      previousIndex--
+      if (previousIndex < 0) {
+        previousIndex = items.length - 1
+      }
+    }
+    return previousIndex
+  }, [])
+
   useEffect(() => {
     if (container.current) {
       container.current.tabIndex = FOCUSABLE_BUT_NOT_TABBABLE
@@ -37,22 +65,16 @@ export const useListKeyboardNavigation = (
       listItems.current = Array.from(container.current?.querySelectorAll('button') as NodeListOf<HTMLButtonElement>)
 
       if (e.key === KeyboardKey.Up) {
-        let previousIndex = focusedItemIndex.current - 1
-        if (previousIndex < 0) {
-          previousIndex = listItems.current.length - 1
-        }
+        const previousIndex = getPreviousFocusableIndex(focusedItemIndex.current, listItems.current)
         focusItemWithIndex(previousIndex)
       }
 
       if (e.key === KeyboardKey.Down) {
-        let nextIndex = focusedItemIndex.current + 1
-        if (nextIndex > listItems.current.length - 1) {
-          nextIndex = 0
-        }
+        const nextIndex = getNextFocusableIndex(focusedItemIndex.current, listItems.current)
         focusItemWithIndex(nextIndex)
       }
     },
-    [container, focusItemWithIndex],
+    [container, focusItemWithIndex, getNextFocusableIndex, getPreviousFocusableIndex],
   )
 
   const FIRST_ITEM_FOCUS_TIMEOUT = 20
@@ -66,12 +88,13 @@ export const useListKeyboardNavigation = (
     }
 
     const selectedItemIndex = Array.from(items).findIndex((item) => item.dataset.selected)
-    const indexToFocus = selectedItemIndex > -1 ? selectedItemIndex : initialFocus
+    let indexToFocus = selectedItemIndex > -1 ? selectedItemIndex : initialFocus
+    indexToFocus = getNextFocusableIndex(indexToFocus, items)
 
     setTimeout(() => {
       focusItemWithIndex(indexToFocus, items)
     }, FIRST_ITEM_FOCUS_TIMEOUT)
-  }, [container, focusItemWithIndex, initialFocus])
+  }, [container, focusItemWithIndex, getNextFocusableIndex, initialFocus])
 
   useEffect(() => {
     if (shouldAutoFocus) {

@@ -19,7 +19,7 @@ const UpgradeNow = ({ application, featuresController, subscriptionContoller }: 
     if (hasAccount && application.isNativeIOS()) {
       application.showPremiumModal()
     } else {
-      application.openPurchaseFlow()
+      void application.openPurchaseFlow()
     }
   }, [application, hasAccount])
 

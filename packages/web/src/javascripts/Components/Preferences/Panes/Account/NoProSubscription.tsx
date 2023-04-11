@@ -19,7 +19,7 @@ const NoProSubscription: FunctionComponent<Props> = ({ application, text }) => {
       if (application.isNativeIOS()) {
         application.showPremiumModal()
       } else {
-        application.openPurchaseFlow()
+        void application.openPurchaseFlow()
       }
     } catch (e) {
       setPurchaseFlowError(errorMessage)

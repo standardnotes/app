@@ -1,4 +1,3 @@
-import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -7,18 +6,16 @@ import Popover from '../Popover/Popover'
 import RoundIconButton from '../Button/RoundIconButton'
 import { getIconAndTintForNoteType } from '@/Utils/Items/Icons/getIconAndTintForNoteType'
 import { CHANGE_EDITOR_COMMAND, keyboardStringForShortcut } from '@standardnotes/ui-services'
+import { useApplication } from '../ApplicationProvider'
 
 type Props = {
-  application: WebApplication
   viewControllerManager: ViewControllerManager
   onClickPreprocessing?: () => Promise<void>
 }
 
-const ChangeEditorButton: FunctionComponent<Props> = ({
-  application,
-  viewControllerManager,
-  onClickPreprocessing,
-}: Props) => {
+const ChangeEditorButton: FunctionComponent<Props> = ({ viewControllerManager, onClickPreprocessing }: Props) => {
+  const application = useApplication()
+
   const note = viewControllerManager.notesController.firstSelectedNote
   const [isOpen, setIsOpen] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)

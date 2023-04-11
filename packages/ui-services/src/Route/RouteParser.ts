@@ -102,7 +102,9 @@ export class RouteParser implements RouteParserInterface {
       return RouteType.Onboarding
     }
 
-    if (this.path !== RootRoutes.None) {
+    const isIndexPath = this.path.endsWith('index.html')
+
+    if (this.path !== RootRoutes.None && !isIndexPath) {
       return RouteType.None
     }
 

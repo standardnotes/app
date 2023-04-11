@@ -19,7 +19,7 @@ const NoSubscriptionBanner = ({
     if (application.isNativeIOS()) {
       application.showPremiumModal()
     } else {
-      application.openPurchaseFlow()
+      void application.openPurchaseFlow()
     }
   }
 

@@ -36,6 +36,8 @@ export enum FeatureIdentifier {
   TaskEditor = 'org.standardnotes.simple-task-editor',
   TokenVaultEditor = 'org.standardnotes.token-vault',
 
+  Extension = 'org.standardnotes.extension',
+
   DeprecatedMarkdownVisualEditor = 'org.standardnotes.markdown-visual-editor',
   DeprecatedBoldEditor = 'org.standardnotes.bold-editor',
   DeprecatedMarkdownBasicEditor = 'org.standardnotes.simple-markdown-editor',

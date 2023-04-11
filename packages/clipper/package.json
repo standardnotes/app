@@ -1,0 +1,35 @@
+{
+  "name": "@standardnotes/clipper",
+  "description": "Web clipper browser extension for Standard Notes",
+  "version": "1.0.1",
+  "scripts": {
+    "build-mv2": "yarn clean && webpack --config ./webpack.config.prod.js",
+    "build-mv3": "yarn clean && MANIFEST_VERSION=3 webpack --config ./webpack.config.prod.js",
+    "watch:web": "BUILD_TARGET=clipper yarn workspace @standardnotes/web run watch",
+    "watch-mv2": "webpack --config ./webpack.config.dev.js --watch",
+    "watch-mv3": "MANIFEST_VERSION=3 webpack --config ./webpack.config.dev.js --watch",
+    "build-firefox": "BUILD_TARGET=clipper yarn build:web && EXT_TARGET=firefox yarn build-mv2 && web-ext build --source-dir ./dist --overwrite-dest",
+    "build-chromium": "BUILD_TARGET=clipper yarn build:web && EXT_TARGET=chromium yarn build-mv3 && web-ext build --source-dir ./dist --overwrite-dest",
+    "run-firefox": "web-ext run -t firefox-desktop --keep-profile-changes -s ./dist",
+    "run-chromium": "web-ext run -t chromium --keep-profile-changes -s ./dist",
+    "lint": "eslint src/ && yarn tsc",
+    "lint:fix": "eslint src/ --fix",
+    "tsc": "tsc --project tsconfig.json",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "@types/webextension-polyfill": "^0.10.0",
+    "babel-loader": "^9.1.0",
+    "copy-webpack-plugin": "11.0.0",
+    "eslint": "^8.29.0",
+    "eslint-config-prettier": "^8.5.0",
+    "ts-loader": "^9.4.2",
+    "typescript": "*",
+    "web-ext": "^7.5.0",
+    "webextension-polyfill": "^0.10.0",
+    "webpack": "*"
+  },
+  "dependencies": {
+    "@mozilla/readability": "^0.4.2"
+  }
+}

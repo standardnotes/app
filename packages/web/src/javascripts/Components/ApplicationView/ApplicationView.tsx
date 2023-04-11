@@ -9,7 +9,7 @@ import PreferencesViewWrapper from '@/Components/Preferences/PreferencesViewWrap
 import ChallengeModal from '@/Components/ChallengeModal/ChallengeModal'
 import NotesContextMenu from '@/Components/NotesContextMenu/NotesContextMenu'
 import PurchaseFlowWrapper from '@/Components/PurchaseFlow/PurchaseFlowWrapper'
-import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useState, lazy } from 'react'
 import RevisionHistoryModal from '@/Components/RevisionHistoryModal/RevisionHistoryModal'
 import PremiumModalProvider from '@/Hooks/usePremiumModal'
 import ConfirmSignoutContainer from '@/Components/ConfirmSignoutModal/ConfirmSignoutModal'
@@ -35,6 +35,8 @@ type Props = {
   application: WebApplication
   mainApplicationGroup: ApplicationGroup
 }
+
+const LazyLoadedClipperView = lazy(() => import('../ClipperView/ClipperView'))
 
 const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicationGroup }) => {
   const platformString = getPlatformString()
@@ -174,6 +176,40 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     return <AndroidBackHandlerProvider application={application}>{renderChallenges()}</AndroidBackHandlerProvider>
   }
 
+  const route = application.routeService.getRoute()
+
+  if (route.type === RouteType.AppViewRoute && route.appViewRouteParam === 'extension') {
+    return (
+      <ApplicationProvider application={application}>
+        <CommandProvider service={application.keyboardService}>
+          <AndroidBackHandlerProvider application={application}>
+            <ResponsivePaneProvider paneController={application.getViewControllerManager().paneController}>
+              <PremiumModalProvider
+                application={application}
+                featuresController={viewControllerManager.featuresController}
+              >
+                <LinkingControllerProvider controller={viewControllerManager.linkingController}>
+                  <FileDragNDropProvider
+                    application={application}
+                    featuresController={viewControllerManager.featuresController}
+                    filesController={viewControllerManager.filesController}
+                  >
+                    <LazyLoadedClipperView
+                      viewControllerManager={viewControllerManager}
+                      applicationGroup={mainApplicationGroup}
+                    />
+                    <ToastContainer />
+                    {renderChallenges()}
+                  </FileDragNDropProvider>
+                </LinkingControllerProvider>
+              </PremiumModalProvider>
+            </ResponsivePaneProvider>
+          </AndroidBackHandlerProvider>
+        </CommandProvider>
+      </ApplicationProvider>
+    )
+  }
+
   return (
     <ApplicationProvider application={application}>
       <CommandProvider service={application.keyboardService}>
@@ -208,7 +244,6 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                   {renderChallenges()}
                   <>
                     <NotesContextMenu
-                      application={application}
                       navigationController={viewControllerManager.navigationController}
                       notesController={viewControllerManager.notesController}
                       linkingController={viewControllerManager.linkingController}

@@ -17,14 +17,21 @@ import RoundIconButton from '../Button/RoundIconButton'
 type Props = {
   linkingController: LinkingController
   item: DecryptedItemInterface
+  hideToggle?: boolean
 }
 
-const LinkedItemBubblesContainer = ({ item, linkingController }: Props) => {
+const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = false }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
   const commandService = useCommandService()
 
-  const { unlinkItemFromSelectedItem: unlinkItem, activateItem } = linkingController
+  const { unlinkItems, activateItem } = linkingController
+  const unlinkItem = useCallback(
+    async (itemToUnlink: LinkableItem) => {
+      void unlinkItems(item, itemToUnlink)
+    },
+    [item, unlinkItems],
+  )
 
   const { notesLinkedToItem, filesLinkedToItem, tagsLinkedToItem, notesLinkingToItem, filesLinkingToItem } =
     useItemLinks(item)
@@ -143,7 +150,7 @@ const LinkedItemBubblesContainer = ({ item, linkingController }: Props) => {
           item={item}
         />
       </div>
-      {itemsToDisplay.length > 0 && (
+      {itemsToDisplay.length > 0 && !hideToggle && (
         <RoundIconButton
           id="toggle-linking-container"
           label="Toggle linked items container"

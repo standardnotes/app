@@ -1,7 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import NotesOptions from '@/Components/NotesOptions/NotesOptions'
 import { useCallback, useState } from 'react'
-import { WebApplication } from '@/Application/Application'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
 import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
@@ -10,7 +9,6 @@ import { LinkingController } from '@/Controllers/LinkingController'
 import Menu from '../Menu/Menu'
 
 type Props = {
-  application: WebApplication
   navigationController: NavigationController
   notesController: NotesController
   linkingController: LinkingController
@@ -18,7 +16,6 @@ type Props = {
 }
 
 const NotesContextMenu = ({
-  application,
   navigationController,
   notesController,
   linkingController,
@@ -49,7 +46,6 @@ const NotesContextMenu = ({
       <Menu className="select-none" a11yLabel="Note context menu" isOpen={contextMenuOpen}>
         <NotesOptions
           notes={notesController.selectedNotes}
-          application={application}
           navigationController={navigationController}
           notesController={notesController}
           linkingController={linkingController}
