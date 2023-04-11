@@ -37,3 +37,17 @@ yarn run-firefox --firefox-profile=PATH/TO/PROFILE
 
 - You might need to specify the Firefox binary using the `--firefox` or `-f` argument
 - Running `yarn run-firefox` without the `--firefox-profile` argument will create a new temporary profile every time
+
+## Build
+
+## Firefox
+
+```console
+yarn build-firefox
+```
+
+## Chromium
+
+```console
+yarn build-chromium
+```

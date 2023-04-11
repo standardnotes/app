@@ -173,11 +173,12 @@ const ClipperView = ({
           type: ToastType.Success,
           message: 'Note clipped successfully',
         })
+        void application.sync.sync()
       })
     }
 
     void createNoteFromClip()
-  }, [application.items, clipPayload, isEntitledRef])
+  }, [application.items, application.sync, clipPayload, isEntitledRef])
 
   const upgradePlan = useCallback(async () => {
     if (hasSubscription) {
