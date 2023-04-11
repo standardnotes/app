@@ -10,9 +10,9 @@
     "relation": ["delegate_permission/common.handle_all_urls", "delegate_permission/common.get_login_creds"],
     "target": {
       "namespace": "android_app",
-      "package_name": "com.standardnotes",
+      "package_name": "com.standardnotes.dev",
       "sha256_cert_fingerprints": [
-        "58:3F:C4:1B:49:0C:38:0B:56:FB:E9:EE:47:38:1E:B4:EF:53:E0:37:19:A5:50:3F:C1:F2:9D:CD:8E:28:90:2A"
+        "CC:33:62:8B:53:9A:1E:1E:99:F2:75:7C:FC:7C:01:5D:6D:5A:99:D9:DD:93:6A:75:42:4B:08:BD:93:43:10:99"
       ]
     }
   }

@@ -4,7 +4,7 @@ import Button from '@/Components/Button/Button'
 import { FileBackupMetadataFile, FileBackupsConstantsV1, FileItem, FileHandleRead } from '@standardnotes/snjs'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Icon from '@/Components/Icon/Icon'
-import { StreamingFileApi } from '@standardnotes/filepicker'
+import { ClassicFileReader, StreamingFileApi } from '@standardnotes/filepicker'
 import { WebApplication } from '@/Application/Application'
 import EncryptionStatusItem from '../../Security/EncryptionStatusItem'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
@@ -65,6 +65,29 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
     setIsSavingAsDecrypted(false)
   }, [decryptedFileItem, application, binaryFile, fileSystem])
 
+  const handleFileSelection = useCallback(
+    async (file: File) => {
+      const text = await file.text()
+      const type = application.files.isFileNameFileBackupRelated(file.name)
+      if (type === false) {
+        return
+      }
+
+      if (type === 'binary') {
+        void application.alertService.alert('Please drag the metadata file instead of the encrypted data file.')
+        return
+      }
+
+      try {
+        const metadata = JSON.parse(text) as FileBackupMetadataFile
+        setDroppedFile(metadata)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    [application.alertService, application.files],
+  )
+
   const handleDragOver = useCallback((event: DragEvent) => {
     event.stopPropagation()
   }, [])
@@ -93,27 +116,11 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
         return
       }
 
-      const text = await file.text()
-      const type = application.files.isFileNameFileBackupRelated(file.name)
-      if (type === false) {
-        return
-      }
-
-      if (type === 'binary') {
-        void application.alertService.alert('Please drag the metadata file instead of the encrypted data file.')
-        return
-      }
-
-      try {
-        const metadata = JSON.parse(text) as FileBackupMetadataFile
-        setDroppedFile(metadata)
-      } catch (error) {
-        console.error(error)
-      }
+      await handleFileSelection(file).catch(console.error)
 
       event.dataTransfer.clearData()
     },
-    [application],
+    [handleFileSelection],
   )
 
   useEffect(() => {
@@ -132,9 +139,27 @@ const BackupsDropZone: FunctionComponent<Props> = ({ application }) => {
 
   if (!droppedFile) {
     return (
-      <Text>
-        To decrypt a backup file, drag and drop the file's respective <i>metadata.sn.json</i> file here.
-      </Text>
+      <>
+        <Text className="mb-2">
+          To decrypt a backup file, drag and drop the file's respective <i>metadata.sn.json</i> file here or select it
+          below.
+        </Text>
+        <Button
+          onClick={() => {
+            ClassicFileReader.selectFiles()
+              .then(async (files) => {
+                if (files.length === 0) {
+                  return
+                }
+                const file = files[0]
+                handleFileSelection(file).catch(console.error)
+              })
+              .catch(console.error)
+          }}
+        >
+          Select file
+        </Button>
+      </>
     )
   }
 
