@@ -75,7 +75,13 @@ export class MobileDevice implements MobileDeviceInterface {
   async promptForU2FAuthentication(authenticationOptionsJSONString: string): Promise<void> {
     const { Fido2ApiModule } = NativeModules
 
-    await Fido2ApiModule.promptForU2FAuthentication(authenticationOptionsJSONString)
+    try {
+      const response = await Fido2ApiModule.promptForU2FAuthentication(authenticationOptionsJSONString)
+
+      this.consoleLog('Fido2ApiModule.promptForU2FAuthentication response', response)
+    } catch (error) {
+      this.consoleLog('Fido2ApiModule.promptForU2FAuthentication error', (error as Error).message)
+    }
   }
 
   purchaseSubscriptionIAP(plan: AppleIAPProductId): Promise<AppleIAPReceipt | undefined> {
