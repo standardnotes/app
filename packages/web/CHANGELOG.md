@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.150.51](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.50...@standardnotes/web@3.150.51) (2023-04-12)
+
+### Bug Fixes
+
+* Fixed issue where a new note would not be correctly synced after making changes ([9f82426](https://github.com/standardnotes/app/commit/9f824266ac47280c982da3900c107cc8bb239233))
+
 ## [3.150.50](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.49...@standardnotes/web@3.150.50) (2023-04-12)
 
 **Note:** Version bump only for package @standardnotes/web
