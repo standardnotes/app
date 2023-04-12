@@ -354,7 +354,7 @@ class Footer extends AbstractComponent<Props, State> {
           id="footer-bar"
           className="z-footer-bar hidden h-8 w-full select-none items-center justify-between border-t border-border bg-contrast px-3 text-text md:flex"
         >
-          <div className="left flex h-full">
+          <div className="left flex h-full flex-shrink-0">
             <div className="sk-app-bar-item relative z-footer-bar-item ml-0 select-none">
               <AccountMenuButton
                 application={this.application}
@@ -393,14 +393,14 @@ class Footer extends AbstractComponent<Props, State> {
               </Fragment>
             )}
           </div>
-          <div className="center">
+          <div className="center max-h-full overflow-hidden px-4">
             {this.state.arbitraryStatusMessage && (
-              <div className="relative z-footer-bar-item flex select-none items-center text-xs font-bold text-neutral">
+              <div className="relative z-footer-bar-item max-h-full select-none items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs font-bold text-neutral">
                 {this.state.arbitraryStatusMessage}
               </div>
             )}
           </div>
-          <div className="right flex h-full">
+          <div className="right flex h-full flex-shrink-0">
             {this.state.dataUpgradeAvailable && (
               <div
                 onClick={this.securityUpdateClickHandler}
@@ -418,7 +418,7 @@ class Footer extends AbstractComponent<Props, State> {
               </div>
             )}
             {(this.state.outOfSync || this.state.showSyncResolution) && (
-              <div className="relative z-footer-bar-item ml-3 flex select-none items-center">
+              <div className="relative z-footer-bar-item ml-3 flex flex-shrink-0 select-none items-center">
                 {this.state.outOfSync && (
                   <div onClick={this.syncResolutionClickHandler} className="text-xs font-bold text-warning">
                     Potentially Out of Sync
@@ -430,7 +430,7 @@ class Footer extends AbstractComponent<Props, State> {
               </div>
             )}
             {this.state.offline && (
-              <div className="relative z-footer-bar-item ml-3 flex select-none items-center text-xs font-bold">
+              <div className="relative z-footer-bar-item ml-3 flex flex-shrink-0 select-none items-center text-xs font-bold">
                 Offline
               </div>
             )}
