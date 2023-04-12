@@ -26,7 +26,7 @@ export class NoteViewController implements ItemViewControllerInterface {
   private defaultTagUuid: UuidString | undefined
   private defaultTag?: SNTag
 
-  private syncController: NoteSyncController
+  private syncController!: NoteSyncController
 
   constructor(
     private application: WebApplication,
@@ -106,6 +106,7 @@ export class NoteViewController implements ItemViewControllerInterface {
 
       this.isTemplateNote = true
       this.item = note
+      this.syncController.setItem(this.item)
 
       if (this.defaultTagUuid) {
         const tag = this.application.items.findItem(this.defaultTagUuid) as SNTag

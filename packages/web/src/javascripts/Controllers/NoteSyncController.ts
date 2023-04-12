@@ -25,6 +25,10 @@ export class NoteSyncController {
 
   constructor(private application: WebApplication, private item: SNNote) {}
 
+  setItem(item: SNNote) {
+    this.item = item
+  }
+
   deinit() {
     if (this.saveTimeout) {
       clearTimeout(this.saveTimeout)
