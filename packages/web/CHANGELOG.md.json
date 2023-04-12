@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.150.51",
+      "title": "[3.150.51](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.50...@standardnotes/web@3.150.51) (2023-04-12)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where a new note would not be correctly synced after making changes ([9f82426](https://github.com/standardnotes/app/commit/9f824266ac47280c982da3900c107cc8bb239233))",
+      "parsed": {
+        "_": [
+          "Fixed issue where a new note would not be correctly synced after making changes (9f82426)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where a new note would not be correctly synced after making changes (9f82426)"
+        ]
+      }
+    },
+    {
       "version": "3.150.50",
       "title": "[3.150.50](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.49...@standardnotes/web@3.150.50) (2023-04-12)",
       "date": null,
