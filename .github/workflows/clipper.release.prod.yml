@@ -64,7 +64,6 @@ jobs:
         with:
           name: assets
           path: packages/clipper/artifacts
-      - name: 
       - name: Generate Release Notes
         uses: ./actions/release-notes
         with:
