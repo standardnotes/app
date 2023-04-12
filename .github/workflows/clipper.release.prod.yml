@@ -1,0 +1,90 @@
+name: Clipper Github Release
+
+on:
+  push:
+    tags:
+      - '*standardnotes/web*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    defaults:
+      run:
+        working-directory: packages/clipper
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Export version from package.json
+        run:
+          echo "PACKAGE_VERSION=$(grep '"version"' ./package.json | cut -d '"' -f 4 | cut -d "-" -f 1)" >> $GITHUB_ENV
+      - name: Build web package for clipper
+        run: BUILD_TARGET=clipper yarn build:web
+      - name: Build for Chromium (MV3)
+        env:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+        run: |
+          EXT_TARGET=chromium yarn build-mv3
+          zip -r standard-notes-clipper-$PACKAGE_VERSION.chromium.zip dist
+      - name: Upload
+        uses: actions/upload-artifact@v3.0.0
+        with:
+          name: assets
+          path: |
+            packages/clipper/*.chromium.zip
+
+  publish:
+    defaults:
+      run:
+        working-directory: packages/clipper
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Set up Node
+        uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://registry.npmjs.org'
+          node-version-file: '.nvmrc'
+          cache: 'yarn'
+      - name: Install dependencies
+        run: yarn install --immutable
+      - name: Export version from package.json
+        run:
+          echo "PACKAGE_VERSION=$(grep '"version"' ./package.json | cut -d '"' -f 4 | cut -d "-" -f 1)" >> $GITHUB_ENV
+      - uses: actions/download-artifact@v3
+        with:
+          name: assets
+          path: packages/clipper/artifacts
+      - name: 
+      - name: Generate Release Notes
+        uses: ./actions/release-notes
+        with:
+          package: clipper
+        id: release-notes
+        continue-on-error: true
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          token: ${{ secrets.CI_PAT_TOKEN }}
+          tag_name: "@standardnotes/clipper@${{ env.PACKAGE_VERSION }}"
+          name: "Clipper ${{ env.PACKAGE_VERSION }}"
+          body: ${{ steps.release-notes.outputs.result }}
+          draft: false
+          files: packages/clipper/artifacts/*
+      - name: Publish to Chrome Web Store
+        uses: trmcnvn/chrome-addon@v2
+        with:
+          extension: heapafmadojoodklnkhjanbinemaagok
+          zip: packages/clipper/artifacts/standard-notes-clipper-${{ env.PACKAGE_VERSION }}.chromium.zip
+          client-id: ${{ secrets.CHROME_CLIENT_ID }}
+          client-secret: ${{ secrets.CHROME_CLIENT_SECRET }}
+          refresh-token: ${{ secrets.CHROME_REFRESH_TOKEN }}
