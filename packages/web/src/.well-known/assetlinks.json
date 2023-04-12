@@ -15,5 +15,15 @@
         "CC:33:62:8B:53:9A:1E:1E:99:F2:75:7C:FC:7C:01:5D:6D:5A:99:D9:DD:93:6A:75:42:4B:08:BD:93:43:10:99"
       ]
     }
+  },
+  {
+    "relation": ["delegate_permission/common.handle_all_urls", "delegate_permission/common.get_login_creds"],
+    "target": {
+      "namespace": "android_app_prod",
+      "package_name": "com.standardnotes",
+      "sha256_cert_fingerprints": [
+        "CC:33:62:8B:53:9A:1E:1E:99:F2:75:7C:FC:7C:01:5D:6D:5A:99:D9:DD:93:6A:75:42:4B:08:BD:93:43:10:99"
+      ]
+    }
   }
 ]
