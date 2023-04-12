@@ -8,6 +8,7 @@ on:
 
 jobs:
   build:
+    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     defaults:
       run:
         working-directory: packages/clipper
@@ -42,6 +43,7 @@ jobs:
             packages/clipper/*.chromium.zip
 
   publish:
+    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     defaults:
       run:
         working-directory: packages/clipper
