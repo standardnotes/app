@@ -8,7 +8,6 @@ on:
 
 jobs:
   build:
-    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     defaults:
       run:
         working-directory: packages/clipper
@@ -43,11 +42,11 @@ jobs:
             packages/clipper/*.chromium.zip
 
   publish:
-    if: "${{ contains(github.event.head_commit.message, 'chore(release): publish') == false }}"
     defaults:
       run:
         working-directory: packages/clipper
     runs-on: ubuntu-latest
+    needs: [build]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
