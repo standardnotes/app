@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/clipper",
-  "description": "Web clipper browser extension for Standard Notes.",
+  "description": "Web clipper browser extension for Standard Notes",
   "version": "1.0.7",
   "private": true,
   "scripts": {
