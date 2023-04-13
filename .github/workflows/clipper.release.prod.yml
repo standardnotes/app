@@ -33,13 +33,14 @@ jobs:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
         run: |
           EXT_TARGET=chromium yarn build-mv3
-          zip -r standard-notes-clipper-$PACKAGE_VERSION.chromium.zip dist
+          cd dist
+          zip -r standard-notes-clipper-$PACKAGE_VERSION.chromium.zip *
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
         with:
           name: assets
           path: |
-            packages/clipper/*.chromium.zip
+            packages/clipper/dist/*.chromium.zip
 
   publish:
     defaults:
