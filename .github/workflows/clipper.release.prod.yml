@@ -39,18 +39,19 @@ jobs:
       - name: Build for Firefox (MV2)
         env:
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+          WEB_EXT_API_KEY: ${{ secrets.AMO_WEB_EXT_API_KEY }}
+          WEB_EXT_API_SECRET: ${{ secrets.AMO_WEB_EXT_API_SECRET }}
         run: |
           EXT_TARGET=firefox yarn build-mv2
-          cd dist
-          zip -r standard-notes-clipper-$PACKAGE_VERSION.firefox.unsigned.zip *
-          mv standard-notes-clipper-$PACKAGE_VERSION.firefox.unsigned.zip ../
+          web-ext sign --source-dir dist --api-key $WEB_EXT_API_KEY --api-secret $WEB_EXT_API_SECRET --channel=listed
+          mv web-ext-artifacts/*.xpi standard-notes-clipper-$PACKAGE_VERSION.firefox.xpi
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
         with:
           name: assets
           path: |
             packages/clipper/*.chromium.zip
-            packages/clipper/*.firefox.unsigned.zip
+            packages/clipper/*.firefox.xpi
 
   publish:
     defaults:
