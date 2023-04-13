@@ -43,7 +43,7 @@ jobs:
           WEB_EXT_API_SECRET: ${{ secrets.AMO_WEB_EXT_API_SECRET }}
         run: |
           EXT_TARGET=firefox yarn build-mv2
-          yarn web-ext sign --source-dir dist --api-key $WEB_EXT_API_KEY --api-secret $WEB_EXT_API_SECRET --channel=listed
+          yarn web-ext sign --source-dir dist --api-key $WEB_EXT_API_KEY --api-secret $WEB_EXT_API_SECRET --channel=listed --use-submission-api
           mv web-ext-artifacts/*.xpi standard-notes-clipper-$PACKAGE_VERSION.firefox.xpi
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
