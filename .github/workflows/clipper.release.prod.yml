@@ -35,12 +35,22 @@ jobs:
           EXT_TARGET=chromium yarn build-mv3
           cd dist
           zip -r standard-notes-clipper-$PACKAGE_VERSION.chromium.zip *
+          mv standard-notes-clipper-$PACKAGE_VERSION.chromium.zip ../
+      - name: Build for Firefox (MV2)
+        env:
+          PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
+        run: |
+          EXT_TARGET=firefox yarn build-mv2
+          cd dist
+          zip -r standard-notes-clipper-$PACKAGE_VERSION.firefox.unsigned.zip *
+          mv standard-notes-clipper-$PACKAGE_VERSION.firefox.unsigned.zip ../
       - name: Upload
         uses: actions/upload-artifact@v3.0.0
         with:
           name: assets
           path: |
-            packages/clipper/dist/*.chromium.zip
+            packages/clipper/*.chromium.zip
+            packages/clipper/*.firefox.unsigned.zip
 
   publish:
     defaults:
