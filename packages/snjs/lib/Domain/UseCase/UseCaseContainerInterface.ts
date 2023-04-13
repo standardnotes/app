@@ -7,6 +7,7 @@ import { GetAuthenticatorAuthenticationResponse } from './GetAuthenticatorAuthen
 import { ListRevisions } from './ListRevisions/ListRevisions'
 import { GetRevision } from './GetRevision/GetRevision'
 import { DeleteRevision } from './DeleteRevision/DeleteRevision'
+import { GetAuthenticatorAuthenticationOptions } from './GetAuthenticatorAuthenticationOptions/GetAuthenticatorAuthenticationOptions'
 
 export interface UseCaseContainerInterface {
   get signInWithRecoveryCodes(): SignInWithRecoveryCodes
@@ -15,6 +16,7 @@ export interface UseCaseContainerInterface {
   get listAuthenticators(): ListAuthenticators
   get deleteAuthenticator(): DeleteAuthenticator
   get getAuthenticatorAuthenticationResponse(): GetAuthenticatorAuthenticationResponse
+  get getAuthenticatorAuthenticationOptions(): GetAuthenticatorAuthenticationOptions
   get listRevisions(): ListRevisions
   get getRevision(): GetRevision
   get deleteRevision(): DeleteRevision

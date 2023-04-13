@@ -4780,7 +4780,7 @@ __metadata:
   resolution: "@standardnotes/api@workspace:packages/api"
   dependencies:
     "@standardnotes/common": ^1.46.6
-    "@standardnotes/domain-core": ^1.11.3
+    "@standardnotes/domain-core": ^1.12.0
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/models": "workspace:*"
     "@standardnotes/responses": "workspace:*"
@@ -5009,6 +5009,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@standardnotes/domain-core@npm:^1.12.0":
+  version: 1.12.0
+  resolution: "@standardnotes/domain-core@npm:1.12.0"
+  dependencies:
+    uuid: ^9.0.0
+  checksum: 852f15e481546fac621d503ea1cbdf9b2cb3e343d0c4cbe2fea7acc0f751a122d64479b55fa18e032e51d277a56621b9401d6f2d01756eb877eeb3572108e2a6
+  languageName: node
+  linkType: hard
+
 "@standardnotes/domain-events@npm:^2.108.1":
   version: 2.108.1
   resolution: "@standardnotes/domain-events@npm:2.108.1"
@@ -5086,7 +5095,7 @@ __metadata:
   resolution: "@standardnotes/features@workspace:packages/features"
   dependencies:
     "@standardnotes/common": ^1.46.6
-    "@standardnotes/domain-core": ^1.11.3
+    "@standardnotes/domain-core": ^1.12.0
     "@standardnotes/security": ^1.7.6
     "@types/jest": ^29.2.3
     "@typescript-eslint/eslint-plugin": "*"
@@ -5397,7 +5406,7 @@ __metadata:
   dependencies:
     "@standardnotes/api": "workspace:^"
     "@standardnotes/common": ^1.46.4
-    "@standardnotes/domain-core": ^1.11.3
+    "@standardnotes/domain-core": ^1.12.0
     "@standardnotes/encryption": "workspace:^"
     "@standardnotes/files": "workspace:^"
     "@standardnotes/models": "workspace:^"
@@ -5495,7 +5504,7 @@ __metadata:
     "@babel/preset-env": "*"
     "@standardnotes/api": "workspace:*"
     "@standardnotes/common": ^1.46.6
-    "@standardnotes/domain-core": ^1.11.3
+    "@standardnotes/domain-core": ^1.12.0
     "@standardnotes/domain-events": ^2.108.1
     "@standardnotes/encryption": "workspace:*"
     "@standardnotes/features": "workspace:*"

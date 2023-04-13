@@ -22,6 +22,7 @@ import {
   AppStateStatus,
   ColorSchemeName,
   Linking,
+  NativeModules,
   PermissionsAndroid,
   Platform,
   StatusBar,
@@ -70,6 +71,26 @@ export class MobileDevice implements MobileDeviceInterface {
     private androidBackHandlerService?: AndroidBackHandlerService,
     private colorSchemeService?: ColorSchemeObserverService,
   ) {}
+
+  async authenticateWithU2F(authenticationOptionsJSONString: string): Promise<Record<string, unknown> | null> {
+    const { Fido2ApiModule } = NativeModules
+
+    if (!Fido2ApiModule) {
+      this.consoleLog('Fido2ApiModule is not available')
+
+      return null
+    }
+
+    try {
+      const response = await Fido2ApiModule.promptForU2FAuthentication(authenticationOptionsJSONString)
+
+      return response
+    } catch (error) {
+      this.consoleLog(`Fido2ApiModule.authenticateWithU2F error: ${(error as Error).message}`)
+
+      return null
+    }
+  }
 
   purchaseSubscriptionIAP(plan: AppleIAPProductId): Promise<AppleIAPReceipt | undefined> {
     return PurchaseManager.getInstance().purchase(plan)
