@@ -1,7 +1,8 @@
 import { DecryptedTransferPayload } from '@standardnotes/models'
 import { FileBackupsDevice } from '@standardnotes/files'
+import { DesktopServerManagerInterface } from './DesktopServerManagerInterface'
 
-export interface WebClientRequiresDesktopMethods extends FileBackupsDevice {
+export interface WebClientRequiresDesktopMethods extends FileBackupsDevice, DesktopServerManagerInterface {
   localBackupsCount(): Promise<number>
 
   viewlocalBackups(): void

@@ -10,6 +10,7 @@ import Listed from './Panes/Listed/Listed'
 import HelpAndFeedback from './Panes/HelpFeedback'
 import { PreferencesProps } from './PreferencesProps'
 import WhatsNew from './Panes/WhatsNew/WhatsNew'
+import DesktopServer from './Panes/Server/DesktopServer'
 
 const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu }> = ({
   menu,
@@ -31,6 +32,8 @@ const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu
       return <AccountPreferences application={application} viewControllerManager={viewControllerManager} />
     case 'appearance':
       return <Appearance application={application} />
+    case 'server':
+      return <DesktopServer />
     case 'security':
       return (
         <Security

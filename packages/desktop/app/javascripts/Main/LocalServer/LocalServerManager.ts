@@ -1,8 +1,12 @@
-import { LocalServerManagerInterface } from './LocalServerManagerInterface'
+import { AppState } from './../../../AppState'
+import { DesktopServerManagerInterface } from '@web/Application/Device/DesktopSnjsExports'
 import { spawn } from 'child_process'
-const os = require('os')
+import { StoreKeys } from '../Store/StoreKeys'
 const path = require('path')
 const fs = require('fs')
+import { shell } from 'electron'
+import { moveDirContents, openDirectoryPicker } from '../Utils/FileUtils'
+import { Paths } from '../Types/Paths'
 
 type Command = {
   prompt: string
@@ -13,43 +17,106 @@ const CreateCommand = (prompt: string, extraEnv: Record<string, string> = {}): C
   return { prompt, extraEnv }
 }
 
-function runCommand(commandObj: Command, workingDir?: string) {
+function runCommand(commandObj: Command, workingDir?: string): Promise<{ code: number; output: string }> {
   console.log('runCommand', commandObj, workingDir)
   return new Promise((resolve, reject) => {
     const { prompt, extraEnv } = commandObj
-    console.log(prompt, Object.keys(extraEnv).length > 0 ? extraEnv : '')
     const [command, ...args] = prompt.split(' ')
     const options = { env: Object.assign({}, process.env, extraEnv), cwd: workingDir }
     const child = spawn(command, args, options)
-    child.stdout.pipe(process.stdout)
-    child.stderr.pipe(process.stderr)
+    let output = ''
+    child.stdout.on('data', (data) => {
+      output += data.toString()
+      process.stdout.write(data)
+    })
+    child.stderr.on('data', (data) => {
+      output += data.toString()
+      process.stderr.write(data)
+    })
     child.on('error', reject)
     child.on('close', (code) => {
-      if (code! > 0) {
-        reject(code)
-      } else {
-        resolve(code)
-      }
+      resolve({ code: code ?? 0, output })
     })
   })
 }
 
-export class LocalServiceManager implements LocalServerManagerInterface {
-  async start(): Promise<void> {
-    const notesDir = path.join(this.getDocumentsDir(), 'notes')
-    console.log('notesDir', notesDir)
+export class LocalServiceManager implements DesktopServerManagerInterface {
+  constructor(private appState: AppState) {}
+
+  async desktopServerChangeDataDirectory(): Promise<string | undefined> {
+    const newPath = await openDirectoryPicker()
+
+    if (!newPath) {
+      return undefined
+    }
+
+    const oldPath = await this.desktopServerGetDataDirectory()
+
+    if (oldPath) {
+      await this.transferDataToNewLocation(oldPath, newPath)
+    } else {
+      this.appState.store.set(StoreKeys.FileBackupsLocation, newPath)
+    }
+
+    return newPath
+  }
+
+  desktopServerGetDataDirectory(): Promise<string> {
+    const persistedValue = this.appState.store.get(StoreKeys.DesktopServerDataLocation)
+    return Promise.resolve(persistedValue ?? this.getDefaultDataDirectory())
+  }
+
+  private getDefaultDataDirectory(): string {
+    return path.join(this.getDocumentsDir(), 'notes')
+  }
+
+  async desktopServerOpenDataDirectory(): Promise<void> {
+    const location = await this.desktopServerGetDataDirectory()
+
+    void shell.openPath(location)
+  }
+
+  async desktopServerStop(): Promise<void> {
+    const dataDir = await this.desktopServerGetDataDirectory()
+
+    await runCommand(CreateCommand('docker compose down'), dataDir)
+  }
+
+  async desktopServerRestart(): Promise<void> {
+    const dataDir = await this.desktopServerGetDataDirectory()
+
+    await runCommand(CreateCommand('docker compose down'), dataDir)
+    await runCommand(CreateCommand('docker compose up -d'), dataDir)
+  }
+
+  async desktopServerStatus(): Promise<'on' | 'error' | 'warning' | 'off'> {
+    const dataDir = await this.desktopServerGetDataDirectory()
+
+    try {
+      const { output } = await runCommand(CreateCommand('docker compose ps'), dataDir)
+      if (output.includes('Up')) {
+        return 'on'
+      } else if (output.includes('Exit') || output.includes('Error')) {
+        return 'error'
+      } else if (output.includes('Created')) {
+        return 'warning'
+      } else {
+        return 'off'
+      }
+    } catch (e) {
+      return 'error'
+    }
+  }
+
+  private generateRandomKey(length: number): string {
+    return require('crypto').randomBytes(length).toString('hex')
+  }
+
+  async desktopServerInstall(): Promise<void> {
+    const notesDir = await this.desktopServerGetDataDirectory()
     if (!fs.existsSync(notesDir)) {
       fs.mkdirSync(notesDir)
     }
-
-    // inside of "notes", create a file named ".env"
-    const envFile = path.join(notesDir, '.env')
-    await fs.promises.writeFile(envFile, '')
-
-    await runCommand(
-      CreateCommand('curl -o .env https://raw.githubusercontent.com/standardnotes/server/main/.env.sample'),
-      notesDir,
-    )
 
     await runCommand(
       CreateCommand(
@@ -67,24 +134,65 @@ export class LocalServiceManager implements LocalServerManagerInterface {
       notesDir,
     )
 
+    const dockerComposeFilePath = path.join(notesDir, 'docker-compose.yml')
+    const dockerComposeFileContents = fs.readFileSync(dockerComposeFilePath, 'utf8')
+
+    const dbPassword = this.generateRandomKey(32)
+    const updatedDockerComposeFileContents = dockerComposeFileContents.replace(
+      /(MYSQL_(ROOT_)?PASSWORD=)(.*)$/gm,
+      `$1${dbPassword}`,
+    )
+
+    fs.writeFileSync(dockerComposeFilePath, updatedDockerComposeFileContents)
+
+    await runCommand(
+      CreateCommand('curl -o .env https://raw.githubusercontent.com/standardnotes/server/main/.env.sample'),
+      notesDir,
+    )
+
+    const envFilePath = path.join(notesDir, '.env')
+    const envFileContents = fs.readFileSync(envFilePath, 'utf8') as string
+
+    const updatedEnvFileContents = envFileContents
+      .split('\n')
+      .map((line) => {
+        const keyMatch = line.match(/^([A-Z_]+)=(.*)$/)
+        if (
+          keyMatch &&
+          ['AUTH_JWT_SECRET', 'AUTH_SERVER_ENCRYPTION_SERVER_KEY', 'VALET_TOKEN_SECRET', 'DB_PASSWORD'].includes(
+            keyMatch[1],
+          )
+        ) {
+          if (keyMatch[1] === 'DB_PASSWORD') {
+            return `${keyMatch[1]}=${dbPassword}`
+          } else {
+            const keyLength = 32
+            const randomKey = this.generateRandomKey(keyLength)
+            return `${keyMatch[1]}=${randomKey}`
+          }
+        } else {
+          return line
+        }
+      })
+      .join('\n')
+
+    fs.writeFileSync(envFilePath, updatedEnvFileContents)
+  }
+
+  async desktopServerStart(): Promise<void> {
+    const notesDir = await this.desktopServerGetDataDirectory()
+
     await runCommand(CreateCommand('docker compose pull'), notesDir)
     await runCommand(CreateCommand('docker compose up -d'), notesDir)
   }
 
   getDocumentsDir() {
-    // Get the user's home directory
-    const homeDir = os.homedir()
+    return Paths.documentsDir
+  }
 
-    // Determine the Documents directory location based on the operating system
-    let documentsDir
-    if (process.platform === 'win32') {
-      documentsDir = path.join(homeDir, 'Documents')
-    } else if (process.platform === 'darwin') {
-      documentsDir = path.join(homeDir, 'Documents')
-    } else {
-      documentsDir = path.join(homeDir, 'Documents')
-    }
+  private async transferDataToNewLocation(oldPath: string, newPath: string): Promise<void> {
+    await moveDirContents(oldPath, newPath)
 
-    return documentsDir
+    this.appState.store.set(StoreKeys.FileBackupsLocation, newPath)
   }
 }

@@ -77,6 +77,7 @@ export async function createWindowState({
     services.menuManager,
     services.fileBackupsManager,
     services.mediaManager,
+    services.localServerManager,
   )
 
   const shouldOpenUrl = (url: string) => url.startsWith('http') || url.startsWith('mailto')
@@ -208,8 +209,7 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
   const spellcheckerManager = createSpellcheckerManager(appState.store, window.webContents, appLocale)
   const mediaManager = new MediaManager()
 
-  const localServerManager = new LocalServiceManager()
-  void localServerManager.start()
+  const localServerManager = new LocalServiceManager(appState)
 
   if (isTesting()) {
     handleTestMessage(MessageType.SpellCheckerManager, () => spellcheckerManager)

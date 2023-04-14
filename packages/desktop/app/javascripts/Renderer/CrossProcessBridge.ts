@@ -1,7 +1,7 @@
-import { FileBackupsDevice } from '@web/Application/Device/DesktopSnjsExports'
+import { FileBackupsDevice, DesktopServerManagerInterface } from '@web/Application/Device/DesktopSnjsExports'
 import { Component } from '../Main/Packages/PackageManagerInterface'
 
-export interface CrossProcessBridge extends FileBackupsDevice {
+export interface CrossProcessBridge extends FileBackupsDevice, DesktopServerManagerInterface {
   get extServerHost(): string
 
   get useNativeKeychain(): boolean

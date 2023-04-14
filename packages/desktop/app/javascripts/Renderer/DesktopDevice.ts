@@ -25,6 +25,38 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     super(appVersion)
   }
 
+  desktopServerStart(): Promise<void> {
+    return this.remoteBridge.desktopServerStart()
+  }
+
+  desktopServerStop(): Promise<void> {
+    return this.remoteBridge.desktopServerStop()
+  }
+
+  desktopServerRestart(): Promise<void> {
+    return this.remoteBridge.desktopServerRestart()
+  }
+
+  desktopServerStatus(): Promise<'on' | 'error' | 'warning' | 'off'> {
+    return this.remoteBridge.desktopServerStatus()
+  }
+
+  desktopServerInstall(): Promise<void> {
+    return this.remoteBridge.desktopServerInstall()
+  }
+
+  desktopServerChangeDataDirectory(): Promise<string | undefined> {
+    return this.remoteBridge.desktopServerChangeDataDirectory()
+  }
+
+  desktopServerGetDataDirectory(): Promise<string> {
+    return this.remoteBridge.desktopServerGetDataDirectory()
+  }
+
+  desktopServerOpenDataDirectory(): Promise<void> {
+    return this.remoteBridge.desktopServerOpenDataDirectory()
+  }
+
   async getKeychainValue() {
     if (this.useNativeKeychain) {
       const keychainValue = await this.remoteBridge.getKeychainValue()

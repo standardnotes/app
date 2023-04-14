@@ -11,6 +11,7 @@ import {
   FileBackupRecord,
   FileBackupReadToken,
   FileBackupReadChunkResponse,
+  DesktopServerManagerInterface,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { app, BrowserWindow } from 'electron'
 import { BackupsManagerInterface } from '../Backups/BackupsManagerInterface'
@@ -36,6 +37,7 @@ export class RemoteBridge implements CrossProcessBridge {
     private menus: MenuManagerInterface,
     private fileBackups: FileBackupsDevice,
     private media: MediaManagerInterface,
+    private desktopServer: DesktopServerManagerInterface,
   ) {}
 
   get exposableValue(): CrossProcessBridge {
@@ -76,6 +78,14 @@ export class RemoteBridge implements CrossProcessBridge {
       getFileBackupReadToken: this.getFileBackupReadToken.bind(this),
       readNextChunk: this.readNextChunk.bind(this),
       askForMediaAccess: this.askForMediaAccess.bind(this),
+      desktopServerStart: this.desktopServerStart.bind(this),
+      desktopServerStop: this.desktopServerStop.bind(this),
+      desktopServerRestart: this.desktopServerRestart.bind(this),
+      desktopServerStatus: this.desktopServerStatus.bind(this),
+      desktopServerChangeDataDirectory: this.desktopServerChangeDataDirectory.bind(this),
+      desktopServerGetDataDirectory: this.desktopServerGetDataDirectory.bind(this),
+      desktopServerOpenDataDirectory: this.desktopServerOpenDataDirectory.bind(this),
+      desktopServerInstall: this.desktopServerInstall.bind(this),
     }
   }
 
@@ -229,5 +239,37 @@ export class RemoteBridge implements CrossProcessBridge {
 
   askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean> {
     return this.media.askForMediaAccess(type)
+  }
+
+  desktopServerStart(): Promise<void> {
+    return this.desktopServer.desktopServerStart()
+  }
+
+  desktopServerStop(): Promise<void> {
+    return this.desktopServer.desktopServerStop()
+  }
+
+  desktopServerRestart(): Promise<void> {
+    return this.desktopServer.desktopServerRestart()
+  }
+
+  desktopServerStatus(): Promise<'on' | 'error' | 'warning' | 'off'> {
+    return this.desktopServer.desktopServerStatus()
+  }
+
+  desktopServerChangeDataDirectory(): Promise<string | undefined> {
+    return this.desktopServer.desktopServerChangeDataDirectory()
+  }
+
+  desktopServerGetDataDirectory(): Promise<string> {
+    return this.desktopServer.desktopServerGetDataDirectory()
+  }
+
+  desktopServerOpenDataDirectory(): Promise<void> {
+    return this.desktopServer.desktopServerOpenDataDirectory()
+  }
+
+  desktopServerInstall(): Promise<void> {
+    return this.desktopServer.desktopServerInstall()
   }
 }

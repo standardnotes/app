@@ -14,6 +14,7 @@ export enum StoreKeys {
   FileBackupsEnabled = 'fileBackupsEnabled',
   FileBackupsLocation = 'fileBackupsLocation',
   LastRunVersion = 'LastRunVersion',
+  DesktopServerDataLocation = 'DesktopServerDataLocation',
 }
 
 export interface StoreData {
@@ -30,4 +31,5 @@ export interface StoreData {
   [StoreKeys.FileBackupsEnabled]: boolean
   [StoreKeys.FileBackupsLocation]: string
   [StoreKeys.LastRunVersion]: string
+  [StoreKeys.DesktopServerDataLocation]: string
 }
