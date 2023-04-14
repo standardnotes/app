@@ -86,6 +86,8 @@ export class RemoteBridge implements CrossProcessBridge {
       desktopServerGetDataDirectory: this.desktopServerGetDataDirectory.bind(this),
       desktopServerOpenDataDirectory: this.desktopServerOpenDataDirectory.bind(this),
       desktopServerInstall: this.desktopServerInstall.bind(this),
+      desktopServerGetLogs: this.desktopServerGetLogs.bind(this),
+      desktopServerClearLogs: this.desktopServerClearLogs.bind(this),
     }
   }
 
@@ -271,5 +273,13 @@ export class RemoteBridge implements CrossProcessBridge {
 
   desktopServerInstall(): Promise<void> {
     return this.desktopServer.desktopServerInstall()
+  }
+
+  desktopServerGetLogs(): Promise<string[]> {
+    return this.desktopServer.desktopServerGetLogs()
+  }
+
+  desktopServerClearLogs(): Promise<void> {
+    return this.desktopServer.desktopServerClearLogs()
   }
 }

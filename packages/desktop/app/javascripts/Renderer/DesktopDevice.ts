@@ -33,6 +33,14 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.desktopServerStop()
   }
 
+  desktopServerGetLogs(): Promise<string[]> {
+    return this.remoteBridge.desktopServerGetLogs()
+  }
+
+  desktopServerClearLogs(): Promise<void> {
+    return this.remoteBridge.desktopServerClearLogs()
+  }
+
   desktopServerRestart(): Promise<void> {
     return this.remoteBridge.desktopServerRestart()
   }

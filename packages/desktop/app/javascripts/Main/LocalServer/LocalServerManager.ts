@@ -1,47 +1,26 @@
 import { AppState } from './../../../AppState'
 import { DesktopServerManagerInterface } from '@web/Application/Device/DesktopSnjsExports'
-import { spawn } from 'child_process'
 import { StoreKeys } from '../Store/StoreKeys'
-const path = require('path')
-const fs = require('fs')
 import { shell } from 'electron'
 import { moveDirContents, openDirectoryPicker } from '../Utils/FileUtils'
 import { Paths } from '../Types/Paths'
+import { CommandService, CreateCommand } from './CommandService'
 
-type Command = {
-  prompt: string
-  extraEnv: Record<string, string>
-}
-
-const CreateCommand = (prompt: string, extraEnv: Record<string, string> = {}): Command => {
-  return { prompt, extraEnv }
-}
-
-function runCommand(commandObj: Command, workingDir?: string): Promise<{ code: number; output: string }> {
-  console.log('runCommand', commandObj, workingDir)
-  return new Promise((resolve, reject) => {
-    const { prompt, extraEnv } = commandObj
-    const [command, ...args] = prompt.split(' ')
-    const options = { env: Object.assign({}, process.env, extraEnv), cwd: workingDir }
-    const child = spawn(command, args, options)
-    let output = ''
-    child.stdout.on('data', (data) => {
-      output += data.toString()
-      process.stdout.write(data)
-    })
-    child.stderr.on('data', (data) => {
-      output += data.toString()
-      process.stderr.write(data)
-    })
-    child.on('error', reject)
-    child.on('close', (code) => {
-      resolve({ code: code ?? 0, output })
-    })
-  })
-}
+const path = require('path')
+const fs = require('fs')
 
 export class LocalServiceManager implements DesktopServerManagerInterface {
+  private commandService = new CommandService()
+
   constructor(private appState: AppState) {}
+
+  desktopServerGetLogs(): Promise<string[]> {
+    return Promise.resolve(this.commandService.getLogs())
+  }
+
+  desktopServerClearLogs(): Promise<void> {
+    return Promise.resolve(this.commandService.clearLogs())
+  }
 
   async desktopServerChangeDataDirectory(): Promise<string | undefined> {
     const newPath = await openDirectoryPicker()
@@ -79,27 +58,33 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
   async desktopServerStop(): Promise<void> {
     const dataDir = await this.desktopServerGetDataDirectory()
 
-    await runCommand(CreateCommand('docker compose down'), dataDir)
+    await this.commandService.runCommand(CreateCommand('docker compose down'), dataDir)
   }
 
   async desktopServerRestart(): Promise<void> {
     const dataDir = await this.desktopServerGetDataDirectory()
 
-    await runCommand(CreateCommand('docker compose down'), dataDir)
-    await runCommand(CreateCommand('docker compose up -d'), dataDir)
+    await this.commandService.runCommand(CreateCommand('docker compose down'), dataDir)
+    await this.commandService.runCommand(CreateCommand('docker compose up -d'), dataDir)
   }
 
   async desktopServerStatus(): Promise<'on' | 'error' | 'warning' | 'off'> {
     const dataDir = await this.desktopServerGetDataDirectory()
 
     try {
-      const { output } = await runCommand(CreateCommand('docker compose ps'), dataDir)
-      if (output.includes('Up')) {
+      const { output } = await this.commandService.runCommand(CreateCommand('docker compose ps'), dataDir)
+
+      const serviceStatuses = output
+        .split('\n')
+        .slice(1)
+        .map((line) => line.trim().split(/\s+/))
+        .filter((parts) => parts.length === 5)
+        .map(([name, _command, _service, status, _ports]) => ({ name, status }))
+
+      if (serviceStatuses.every((service) => service.status === 'running')) {
         return 'on'
-      } else if (output.includes('Exit') || output.includes('Error')) {
+      } else if (serviceStatuses.some((service) => service.status === 'running')) {
         return 'error'
-      } else if (output.includes('Created')) {
-        return 'warning'
       } else {
         return 'off'
       }
@@ -118,16 +103,16 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
       fs.mkdirSync(notesDir)
     }
 
-    await runCommand(
+    await this.commandService.runCommand(
       CreateCommand(
         'curl -o localstack_bootstrap.sh https://raw.githubusercontent.com/standardnotes/server/main/docker/localstack_bootstrap.sh',
       ),
       notesDir,
     )
 
-    await runCommand(CreateCommand('chmod +x localstack_bootstrap.sh'), notesDir)
+    await this.commandService.runCommand(CreateCommand('chmod +x localstack_bootstrap.sh'), notesDir)
 
-    await runCommand(
+    await this.commandService.runCommand(
       CreateCommand(
         'curl -o docker-compose.yml https://raw.githubusercontent.com/standardnotes/server/main/docker-compose.example.yml',
       ),
@@ -145,7 +130,7 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
 
     fs.writeFileSync(dockerComposeFilePath, updatedDockerComposeFileContents)
 
-    await runCommand(
+    await this.commandService.runCommand(
       CreateCommand('curl -o .env https://raw.githubusercontent.com/standardnotes/server/main/.env.sample'),
       notesDir,
     )
@@ -182,8 +167,8 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
   async desktopServerStart(): Promise<void> {
     const notesDir = await this.desktopServerGetDataDirectory()
 
-    await runCommand(CreateCommand('docker compose pull'), notesDir)
-    await runCommand(CreateCommand('docker compose up -d'), notesDir)
+    await this.commandService.runCommand(CreateCommand('docker compose pull'), notesDir)
+    await this.commandService.runCommand(CreateCommand('docker compose up -d'), notesDir)
   }
 
   getDocumentsDir() {

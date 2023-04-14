@@ -7,4 +7,6 @@ export interface DesktopServerManagerInterface {
   desktopServerChangeDataDirectory(): Promise<string | undefined>
   desktopServerGetDataDirectory(): Promise<string>
   desktopServerOpenDataDirectory(): Promise<void>
+  desktopServerGetLogs(): Promise<string[]>
+  desktopServerClearLogs(): Promise<void>
 }
