@@ -20,7 +20,7 @@ export function editors(): EditorFeatureDescription[] {
     description:
       'Syntax highlighting and convenient keyboard shortcuts for over 120 programming' +
       ' languages. Ideal for code snippets and procedures.',
-    thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/editors/code.jpg',
+    thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/code.jpg',
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
@@ -34,7 +34,7 @@ export function editors(): EditorFeatureDescription[] {
     spellcheckControl: true,
     description:
       'From highlighting to custom font sizes and colors, to tables and lists, this editor is perfect for crafting any document.',
-    thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/editors/plus-editor.jpg',
+    thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/plus-editor.jpg',
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
@@ -48,7 +48,7 @@ export function editors(): EditorFeatureDescription[] {
     spellcheckControl: true,
     description:
       'A fully featured Markdown editor that supports live preview, a styling toolbar, and split pane support.',
-    thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/editors/adv-markdown.jpg',
+    thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/adv-markdown.jpg',
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
@@ -63,7 +63,7 @@ export function editors(): EditorFeatureDescription[] {
     permission_name: PermissionName.TaskEditor,
     description:
       'A great way to manage short-term and long-term to-do"s. You can mark tasks as completed, change their order, and edit the text naturally in place.',
-    thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/editors/task-editor.jpg',
+    thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/task-editor.jpg',
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
@@ -77,7 +77,7 @@ export function editors(): EditorFeatureDescription[] {
     permission_name: PermissionName.TokenVaultEditor,
     description:
       'Encrypt and protect your 2FA secrets for all your internet accounts. Authenticator handles your 2FA secrets so that you never lose them again, or have to start over when you get a new device.',
-    thumbnail_url: 'https://standard-notes.s3.amazonaws.com/screenshots/models/editors/token-vault.png',
+    thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/token-vault.png',
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
@@ -91,7 +91,7 @@ export function editors(): EditorFeatureDescription[] {
     permission_name: PermissionName.SheetsEditor,
     description:
       'A powerful spreadsheet editor with formatting and formula support. Not recommended for large data sets, as encryption of such data may decrease editor performance.',
-    thumbnail_url: 'https://s3.amazonaws.com/standard-notes/screenshots/models/editors/spreadsheets.png',
+    thumbnail_url: 'https://assets.standardnotes.com/screenshots/models/editors/spreadsheets.png',
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
   })
 
