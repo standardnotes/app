@@ -26,6 +26,7 @@ import { checkForUpdate, setupUpdates } from './UpdateManager'
 import { handleTestMessage, send } from './Utils/Testing'
 import { isTesting, lowercaseDriveLetter } from './Utils/Utils'
 import { initializeZoomManager } from './ZoomManager'
+import { LocalServiceManager } from './LocalServer/LocalServerManager'
 
 const WINDOW_DEFAULT_WIDTH = 1100
 const WINDOW_DEFAULT_HEIGHT = 800
@@ -207,6 +208,9 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
   const spellcheckerManager = createSpellcheckerManager(appState.store, window.webContents, appLocale)
   const mediaManager = new MediaManager()
 
+  const localServerManager = new LocalServiceManager()
+  void localServerManager.start()
+
   if (isTesting()) {
     handleTestMessage(MessageType.SpellCheckerManager, () => spellcheckerManager)
   }
@@ -232,6 +236,7 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
     searchManager,
     fileBackupsManager,
     mediaManager,
+    localServerManager,
   }
 }
 
