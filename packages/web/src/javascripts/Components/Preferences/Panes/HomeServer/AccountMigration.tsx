@@ -1,4 +1,4 @@
-import { Subtitle, Title } from '@/Components/Preferences/PreferencesComponents/Content'
+import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
@@ -7,21 +7,28 @@ import DecoratedInput from '@/Components/Input/DecoratedInput'
 import DecoratedPasswordInput from '@/Components/Input/DecoratedPasswordInput'
 import Button from '@/Components/Button/Button'
 import { useCallback, useState } from 'react'
-import { AccountMigrationService } from '@standardnotes/snjs'
+import { AccountMigrationService, AccountMigrationStage } from '@standardnotes/snjs'
 
 const LabelClassName = 'block mb-1'
 
 const AccountMigration = () => {
   const application = useApplication()
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('productivity@standardnotes.com')
+  const [password, setPassword] = useState('password')
   const [server, setServer] = useState('https://api.standardnotes.com')
   const [_isMigrating, setIsMigrating] = useState(false)
+  const [stage, setStage] = useState<AccountMigrationStage>()
+  const [status, setStatus] = useState('')
 
   const beginMigration = useCallback(async () => {
     setIsMigrating(true)
-    const migrationService = new AccountMigrationService(application)
+    const migrationService = new AccountMigrationService(application, (status, stage) => {
+      setStatus(status)
+      if (stage) {
+        setStage(stage)
+      }
+    })
     void migrationService.importAccount(email, password, server)
   }, [application, email, password, server])
 
@@ -75,6 +82,9 @@ const AccountMigration = () => {
           <div className="mt-3 flex flex-row">
             <Button label="Begin Migration" onClick={beginMigration} className="mr-3" />
           </div>
+
+          <Text>Stage: {stage}</Text>
+          <Text>Status: {status}</Text>
         </PreferencesSegment>
       </PreferencesGroup>
     </PreferencesPane>

@@ -140,7 +140,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   /**
    * @deprecated will be fully replaced by @standardnotes/api services
    */
-  private apiService!: InternalServices.SNApiService
+  public apiService!: InternalServices.SNApiService
   private declare userApiService: UserApiServiceInterface
   private declare userServer: UserServerInterface
   private declare userRequestServer: UserRequestServerInterface
