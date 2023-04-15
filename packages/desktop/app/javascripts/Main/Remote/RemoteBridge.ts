@@ -12,6 +12,7 @@ import {
   FileBackupReadToken,
   FileBackupReadChunkResponse,
   DesktopServerManagerInterface,
+  DesktopServerStatus,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { app, BrowserWindow } from 'electron'
 import { BackupsManagerInterface } from '../Backups/BackupsManagerInterface'
@@ -255,7 +256,7 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.desktopServer.desktopServerRestart()
   }
 
-  desktopServerStatus(): Promise<'on' | 'error' | 'warning' | 'off'> {
+  desktopServerStatus(): Promise<DesktopServerStatus> {
     return this.desktopServer.desktopServerStatus()
   }
 

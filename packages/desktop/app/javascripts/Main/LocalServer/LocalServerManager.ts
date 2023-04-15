@@ -1,5 +1,5 @@
 import { AppState } from './../../../AppState'
-import { DesktopServerManagerInterface } from '@web/Application/Device/DesktopSnjsExports'
+import { DesktopServerManagerInterface, DesktopServerStatus } from '@web/Application/Device/DesktopSnjsExports'
 import { StoreKeys } from '../Store/StoreKeys'
 import { shell } from 'electron'
 import { moveDirContents, openDirectoryPicker } from '../Utils/FileUtils'
@@ -8,11 +8,24 @@ import { CommandService, CreateCommand } from './CommandService'
 
 const path = require('path')
 const fs = require('fs')
+const os = require('os')
 
 export class LocalServiceManager implements DesktopServerManagerInterface {
   private commandService = new CommandService()
 
   constructor(private appState: AppState) {}
+
+  private getLocalIP() {
+    const interfaces = os.networkInterfaces()
+    for (const interfaceName in interfaces) {
+      const addresses = interfaces[interfaceName]
+      for (const address of addresses) {
+        if (address.family === 'IPv4' && !address.internal) {
+          return address.address
+        }
+      }
+    }
+  }
 
   desktopServerGetLogs(): Promise<string[]> {
     return Promise.resolve(this.commandService.getLogs())
@@ -68,28 +81,33 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
     await this.commandService.runCommand(CreateCommand('docker compose up -d'), dataDir)
   }
 
-  async desktopServerStatus(): Promise<'on' | 'error' | 'warning' | 'off'> {
+  async desktopServerStatus(): Promise<DesktopServerStatus> {
     const dataDir = await this.desktopServerGetDataDirectory()
 
     try {
       const { output } = await this.commandService.runCommand(CreateCommand('docker compose ps'), dataDir)
 
-      const serviceStatuses = output
+      const lines = output
         .split('\n')
         .slice(1)
         .map((line) => line.trim().split(/\s+/))
-        .filter((parts) => parts.length === 5)
-        .map(([name, _command, _service, status, _ports]) => ({ name, status }))
 
-      if (serviceStatuses.every((service) => service.status === 'running')) {
-        return 'on'
+      const serviceStatuses = lines
+        .filter((parts) => parts.length > 1)
+        .map(([name, _command, _service, status, ports]) => ({ name, status, ports }))
+
+      if (serviceStatuses.every((service) => service.status.includes('running'))) {
+        const httpService = serviceStatuses.find((service) => service.name === 'server_self_hosted')
+        const httpPort = httpService?.ports.split('->')[0].split(':')[1]
+        const url = `http://${this.getLocalIP()}:${httpPort}`
+        return { status: 'on', url: url }
       } else if (serviceStatuses.some((service) => service.status === 'running')) {
-        return 'error'
+        return { status: 'error' }
       } else {
-        return 'off'
+        return { status: 'off' }
       }
     } catch (e) {
-      return 'error'
+      return { status: 'error' }
     }
   }
 

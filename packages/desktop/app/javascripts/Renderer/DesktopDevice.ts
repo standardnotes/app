@@ -6,6 +6,7 @@ import {
   FileBackupRecord,
   FileBackupReadToken,
   FileBackupReadChunkResponse,
+  DesktopServerStatus,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { WebOrDesktopDevice } from '@web/Application/Device/WebOrDesktopDevice'
 import { Component } from '../Main/Packages/PackageManagerInterface'
@@ -45,7 +46,7 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.desktopServerRestart()
   }
 
-  desktopServerStatus(): Promise<'on' | 'error' | 'warning' | 'off'> {
+  desktopServerStatus(): Promise<DesktopServerStatus> {
     return this.remoteBridge.desktopServerStatus()
   }
 

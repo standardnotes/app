@@ -6,11 +6,13 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import Button from '@/Components/Button/Button'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
+import { DesktopServerStatus } from '@standardnotes/snjs'
+import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 
 const DesktopServer = () => {
   const application = useApplication()
   const desktopDevice = application.desktopDevice
-  const [status, setStatus] = useState('')
+  const [status, setStatus] = useState<DesktopServerStatus>()
   const [showLogs, setShowLogs] = useState(false)
   const [logs, setLogs] = useState<string[]>([])
   const logsTextarea = useRef<HTMLTextAreaElement>(null)
@@ -81,12 +83,36 @@ const DesktopServer = () => {
     }
   }, [logs, isAtBottom])
 
+  const getStatusString = useCallback(() => {
+    if (!status) {
+      return undefined
+    }
+
+    if (status.status === 'on') {
+      return (
+        <Text>
+          Accessible on local network via{' '}
+          <a target="_blank" className="font-bold text-info" href={status.url}>
+            {status.url}
+          </a>
+          {'.'}
+        </Text>
+      )
+    } else if (status.status === 'error') {
+      return <Text>'Error'</Text>
+    } else if (status.status === 'off') {
+      return <Text>'Not started'</Text>
+    } else {
+      return <Text>'Unknown'</Text>
+    }
+  }, [status])
+
   if (!desktopDevice) {
     return (
       <PreferencesPane>
         <PreferencesGroup>
           <PreferencesSegment>
-            <Title>Desktop Server</Title>
+            <Title>Home Server</Title>
             <Text>To configure your desktop server, use the Standard Notes desktop application.</Text>
             <div className="h-2 w-full" />
           </PreferencesSegment>
@@ -99,8 +125,8 @@ const DesktopServer = () => {
     <PreferencesPane>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Server</Title>
-          <Text>Status: {status}</Text>
+          <Title>Home Server</Title>
+          {status ? getStatusString() : <Text>Status unavailable</Text>}
           <div className="mt-3 flex flex-row flex-wrap gap-3">
             <Button label="Install" onClick={() => desktopDevice.desktopServerInstall()} />
             <Button label="Start" onClick={() => desktopDevice.desktopServerStart()} />
@@ -125,6 +151,13 @@ const DesktopServer = () => {
             </div>
           )}
           <div className="h-2 w-full" />
+        </PreferencesSegment>
+      </PreferencesGroup>
+
+      <PreferencesGroup>
+        <PreferencesSegment>
+          <Title>Account Transfer Tool</Title>
+          <Subtitle>Migrate your data from another server to your home server.</Subtitle>
         </PreferencesSegment>
       </PreferencesGroup>
     </PreferencesPane>

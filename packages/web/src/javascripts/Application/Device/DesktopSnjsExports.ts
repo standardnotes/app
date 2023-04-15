@@ -11,4 +11,5 @@ export {
   FileBackupReadChunkResponse,
   FileDownloadProgress,
   DesktopServerManagerInterface,
+  DesktopServerStatus,
 } from '@standardnotes/snjs'
