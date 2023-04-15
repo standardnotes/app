@@ -7,7 +7,7 @@ import Button from '@/Components/Button/Button'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { DesktopServerStatus } from '@standardnotes/snjs'
-import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
+import AccountMigration from './AccountMigration'
 
 const DesktopServer = () => {
   const application = useApplication()
@@ -107,59 +107,42 @@ const DesktopServer = () => {
     }
   }, [status])
 
-  if (!desktopDevice) {
-    return (
-      <PreferencesPane>
+  return (
+    <PreferencesPane>
+      {desktopDevice && (
         <PreferencesGroup>
           <PreferencesSegment>
             <Title>Home Server</Title>
-            <Text>To configure your desktop server, use the Standard Notes desktop application.</Text>
+            {status ? getStatusString() : <Text>Status unavailable</Text>}
+            <div className="mt-3 flex flex-row flex-wrap gap-3">
+              <Button label="Install" onClick={() => desktopDevice.desktopServerInstall()} />
+              <Button label="Start" onClick={() => desktopDevice.desktopServerStart()} />
+              <Button label="Stop" onClick={() => desktopDevice.desktopServerStop()} />
+              <Button label="Restart" onClick={() => desktopDevice.desktopServerRestart()} />
+              <Button label="Open Data" onClick={() => desktopDevice.desktopServerOpenDataDirectory()} />
+              <Button label="Refresh Status" onClick={() => refreshStatus()} />
+              <Button label={showLogs ? 'Hide Logs' : 'Show Logs'} onClick={handleShowLogs} />
+            </div>
+
+            {showLogs && (
+              <div className="flex flex-col">
+                <HorizontalSeparator classes="mt-3" />
+                <textarea
+                  ref={logsTextarea}
+                  disabled={true}
+                  className="h-[500px] overflow-y-auto whitespace-pre-wrap bg-contrast p-2"
+                  value={logs.join('\n')}
+                />
+                <HorizontalSeparator classes="mb-3" />
+                <Button label="Clear" onClick={() => desktopDevice.desktopServerClearLogs()} />
+              </div>
+            )}
             <div className="h-2 w-full" />
           </PreferencesSegment>
         </PreferencesGroup>
-      </PreferencesPane>
-    )
-  }
+      )}
 
-  return (
-    <PreferencesPane>
-      <PreferencesGroup>
-        <PreferencesSegment>
-          <Title>Home Server</Title>
-          {status ? getStatusString() : <Text>Status unavailable</Text>}
-          <div className="mt-3 flex flex-row flex-wrap gap-3">
-            <Button label="Install" onClick={() => desktopDevice.desktopServerInstall()} />
-            <Button label="Start" onClick={() => desktopDevice.desktopServerStart()} />
-            <Button label="Stop" onClick={() => desktopDevice.desktopServerStop()} />
-            <Button label="Restart" onClick={() => desktopDevice.desktopServerRestart()} />
-            <Button label="Open Data" onClick={() => desktopDevice.desktopServerOpenDataDirectory()} />
-            <Button label="Refresh Status" onClick={() => refreshStatus()} />
-            <Button label={showLogs ? 'Hide Logs' : 'Show Logs'} onClick={handleShowLogs} />
-          </div>
-
-          {showLogs && (
-            <div className="flex flex-col">
-              <HorizontalSeparator classes="mt-3" />
-              <textarea
-                ref={logsTextarea}
-                disabled={true}
-                className="h-[500px] overflow-y-auto whitespace-pre-wrap bg-contrast p-2"
-                value={logs.join('\n')}
-              />
-              <HorizontalSeparator classes="mb-3" />
-              <Button label="Clear" onClick={() => desktopDevice.desktopServerClearLogs()} />
-            </div>
-          )}
-          <div className="h-2 w-full" />
-        </PreferencesSegment>
-      </PreferencesGroup>
-
-      <PreferencesGroup>
-        <PreferencesSegment>
-          <Title>Account Transfer Tool</Title>
-          <Subtitle>Migrate your data from another server to your home server.</Subtitle>
-        </PreferencesSegment>
-      </PreferencesGroup>
+      <AccountMigration />
     </PreferencesPane>
   )
 }

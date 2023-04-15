@@ -23,6 +23,8 @@ import {
 export interface ItemsClientInterface {
   get invalidItems(): EncryptedItemInterface[]
 
+  get items(): DecryptedItemInterface[]
+
   associateFileWithNote(file: FileItem, note: SNNote): Promise<FileItem>
 
   disassociateFileWithNote(file: FileItem, note: SNNote): Promise<FileItem>

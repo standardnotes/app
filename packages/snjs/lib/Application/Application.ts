@@ -133,7 +133,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
    */
   private deprecatedHttpService!: InternalServices.DeprecatedHttpService
   private declare httpService: HttpServiceInterface
-  private payloadManager!: InternalServices.PayloadManager
+  public payloadManager!: InternalServices.PayloadManager
   public protocolService!: EncryptionService
   private diskStorageService!: InternalServices.DiskStorageService
   private inMemoryStore!: ExternalServices.KeyValueStoreInterface<string>
@@ -151,7 +151,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare webSocketServer: WebSocketServerInterface
   private sessionManager!: InternalServices.SNSessionManager
   private syncService!: InternalServices.SNSyncService
-  private challengeService!: InternalServices.ChallengeService
+  public challengeService!: InternalServices.ChallengeService
   public singletonManager!: InternalServices.SNSingletonManager
   public componentManagerService!: InternalServices.SNComponentManager
   public protectionService!: InternalServices.SNProtectionService

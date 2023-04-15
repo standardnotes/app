@@ -10,7 +10,7 @@ import Listed from './Panes/Listed/Listed'
 import HelpAndFeedback from './Panes/HelpFeedback'
 import { PreferencesProps } from './PreferencesProps'
 import WhatsNew from './Panes/WhatsNew/WhatsNew'
-import DesktopServer from './Panes/HomeServer/DesktopServer'
+import DesktopServer from './Panes/HomeServer/HomeServer'
 
 const PaneSelector: FunctionComponent<PreferencesProps & { menu: PreferencesMenu }> = ({
   menu,

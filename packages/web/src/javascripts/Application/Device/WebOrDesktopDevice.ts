@@ -12,6 +12,7 @@ import {
   GetSortedPayloadsByPriority,
   DatabaseFullEntryLoadChunk,
   DatabaseFullEntryLoadChunkResponse,
+  ApplicationInterface,
 } from '@standardnotes/snjs'
 import { Database } from '../Database'
 
@@ -28,6 +29,12 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     const database = new Database(application.identifier, application.alertService)
 
     this.databases.push(database)
+  }
+
+  removeApplication(application: ApplicationInterface): void {
+    const database = this.databaseForIdentifier(application.identifier)
+    database.deinit()
+    this.databases = this.databases.filter((db) => db !== database)
   }
 
   public async getJsonParsedRawStorageValue(key: string): Promise<unknown | undefined> {
