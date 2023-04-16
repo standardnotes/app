@@ -32,6 +32,8 @@ export interface DeviceInterface {
 
   removeAllRawStorageValues(): Promise<void>
 
+  removeRawStorageValuesForIdentifier(identifier: ApplicationIdentifier): Promise<void>
+
   setApplication(application: ApplicationInterface): void
   removeApplication(application: ApplicationInterface): void
 

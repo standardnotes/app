@@ -3,7 +3,7 @@ import { UuidGenerator } from '@standardnotes/utils'
 import { SNApplication, SyncEvent } from '@Lib/Application'
 import { LoggingDomain, log } from '@Lib/Logging'
 import { FileItem, PayloadEmitSource, PayloadsByDuplicating } from '@standardnotes/models'
-import { ApplicationEvent } from '@standardnotes/services'
+import { ApplicationEvent, DeinitMode, DeinitSource } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/common'
 import { FileDownloader, FileUploader } from '@standardnotes/files'
 
@@ -85,6 +85,8 @@ export class AccountMigrationService {
       await this.applicationImportingTo.payloadManager.emitPayloads(resultingPayloads, PayloadEmitSource.LocalChanged)
     }
 
+    await this.applicationImportingTo.sync.sync({ awaitAll: true })
+
     this.onStatus('Migrating files...', AccountMigrationStage.DownloadingFileData)
 
     const files = this.applicationImportingTo.items.getItems<FileItem>(ContentType.File)
@@ -149,6 +151,7 @@ export class AccountMigrationService {
     log(LoggingDomain.AccountMigration, 'Finished importing items')
 
     device.removeApplication(tempApp)
+    tempApp.deinit(DeinitMode.Hard, DeinitSource.SignOut)
   }
 
   awaitFullSync(tempApp: SNApplication) {

@@ -14,8 +14,8 @@ const LabelClassName = 'block mb-1'
 const AccountMigration = () => {
   const application = useApplication()
 
-  const [email, setEmail] = useState('productivity@standardnotes.com')
-  const [password, setPassword] = useState('password')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [server, setServer] = useState('https://api.standardnotes.com')
   const [_isMigrating, setIsMigrating] = useState(false)
   const [stage, setStage] = useState<AccountMigrationStage>()

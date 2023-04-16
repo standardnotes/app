@@ -85,7 +85,9 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     this.persistencePolicy = persistencePolicy
 
     if (this.persistencePolicy === Services.StoragePersistencePolicies.Ephemeral) {
-      await this.deviceInterface.removeAllRawStorageValues()
+      await this.deviceInterface.clearNamespacedKeychainValue(this.identifier)
+      await this.deviceInterface.removeAllDatabaseEntries(this.identifier)
+      await this.deviceInterface.removeRawStorageValuesForIdentifier(this.identifier)
       await this.clearAllPayloads()
     }
   }

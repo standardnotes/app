@@ -13,6 +13,8 @@ import {
   DatabaseFullEntryLoadChunk,
   DatabaseFullEntryLoadChunkResponse,
   ApplicationInterface,
+  namespacedKey,
+  RawStorageKey,
 } from '@standardnotes/snjs'
 import { Database } from '../Database'
 
@@ -92,6 +94,11 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
 
   async removeAllRawStorageValues() {
     localStorage.clear()
+  }
+
+  async removeRawStorageValuesForIdentifier(identifier: ApplicationIdentifier) {
+    await this.removeRawStorageValue(namespacedKey(identifier, RawStorageKey.SnjsVersion))
+    await this.removeRawStorageValue(namespacedKey(identifier, RawStorageKey.StorageObject))
   }
 
   async openDatabase(identifier: ApplicationIdentifier) {
