@@ -5,6 +5,8 @@ import path from 'path'
 import yauzl from 'yauzl'
 import { removeFromArray } from '../Utils/Utils'
 
+import fse from 'fs-extra'
+
 export const FileDoesNotExist = 'ENOENT'
 export const FileAlreadyExists = 'EEXIST'
 const OperationNotPermitted = 'EPERM'
@@ -30,6 +32,7 @@ export function debouncedJSONDiskWriter(durationMs: number, location: string, da
 export async function openDirectoryPicker(): Promise<string | undefined> {
   const result = await dialog.showOpenDialog({
     properties: ['openDirectory', 'showHiddenFiles', 'createDirectory'],
+    buttonLabel: 'Move Here',
   })
 
   return result.filePaths[0]
@@ -149,6 +152,14 @@ export async function deleteDirContents(dirPath: string): Promise<void> {
 function isChildOfDir(parent: string, potentialChild: string) {
   const relative = path.relative(parent, potentialChild)
   return relative && !relative.startsWith('..') && !path.isAbsolute(relative)
+}
+
+export async function moveDirectory(dir: string, destination: string): Promise<void> {
+  try {
+    await fse.move(dir, destination)
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 export async function moveDirContents(srcDir: string, destDir: string): Promise<void> {

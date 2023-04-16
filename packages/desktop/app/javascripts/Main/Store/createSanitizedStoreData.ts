@@ -26,6 +26,7 @@ export function createSanitizedStoreData(data: any = {}): StoreData {
     [StoreKeys.FileBackupsEnabled]: ensureIsBoolean(data[StoreKeys.FileBackupsEnabled], false),
     [StoreKeys.FileBackupsLocation]: data[StoreKeys.FileBackupsLocation],
     [StoreKeys.LastRunVersion]: data[StoreKeys.LastRunVersion],
+    [StoreKeys.DesktopServerDataLocation]: data[StoreKeys.DesktopServerDataLocation],
   }
 }
 function sanitizeZoomFactor(factor?: any): number {

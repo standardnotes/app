@@ -2,13 +2,15 @@ import { AppState } from './../../../AppState'
 import { DesktopServerManagerInterface, DesktopServerStatus } from '@web/Application/Device/DesktopSnjsExports'
 import { StoreKeys } from '../Store/StoreKeys'
 import { shell } from 'electron'
-import { moveDirContents, openDirectoryPicker } from '../Utils/FileUtils'
+import { moveDirectory, openDirectoryPicker } from '../Utils/FileUtils'
 import { Paths } from '../Types/Paths'
 import { CommandService, CreateCommand } from './CommandService'
 
 const path = require('path')
 const fs = require('fs')
 const os = require('os')
+
+const DataDirectoryName = 'notes'
 
 export class LocalServiceManager implements DesktopServerManagerInterface {
   private commandService = new CommandService()
@@ -36,19 +38,21 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
   }
 
   async desktopServerChangeDataDirectory(): Promise<string | undefined> {
-    const newPath = await openDirectoryPicker()
+    const destination = await openDirectoryPicker()
 
-    if (!newPath) {
+    if (!destination) {
       return undefined
     }
+
+    const newPath = path.join(destination, DataDirectoryName)
 
     const oldPath = await this.desktopServerGetDataDirectory()
 
     if (oldPath) {
-      await this.transferDataToNewLocation(oldPath, newPath)
-    } else {
-      this.appState.store.set(StoreKeys.FileBackupsLocation, newPath)
+      await moveDirectory(oldPath, newPath)
     }
+
+    this.appState.store.set(StoreKeys.DesktopServerDataLocation, newPath)
 
     return newPath
   }
@@ -59,7 +63,7 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
   }
 
   private getDefaultDataDirectory(): string {
-    return path.join(this.getDocumentsDir(), 'notes')
+    return path.join(this.getDocumentsDir(), DataDirectoryName)
   }
 
   async desktopServerOpenDataDirectory(): Promise<void> {
@@ -96,18 +100,18 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
         .filter((parts) => parts.length > 1)
         .map(([name, _command, _service, status, ports]) => ({ name, status, ports }))
 
-      if (serviceStatuses.every((service) => service.status.includes('running'))) {
+      if (serviceStatuses.length > 0 && serviceStatuses.every((service) => service.status.includes('running'))) {
         const httpService = serviceStatuses.find((service) => service.name === 'server_self_hosted')
         const httpPort = httpService?.ports.split('->')[0].split(':')[1]
         const url = `http://${this.getLocalIP()}:${httpPort}`
         return { status: 'on', url: url }
       } else if (serviceStatuses.some((service) => service.status === 'running')) {
-        return { status: 'error' }
+        return { status: 'error', message: output }
       } else {
         return { status: 'off' }
       }
     } catch (e) {
-      return { status: 'error' }
+      return { status: 'error', message: (e as Error).message }
     }
   }
 
@@ -191,11 +195,5 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
 
   getDocumentsDir() {
     return Paths.documentsDir
-  }
-
-  private async transferDataToNewLocation(oldPath: string, newPath: string): Promise<void> {
-    await moveDirContents(oldPath, newPath)
-
-    this.appState.store.set(StoreKeys.FileBackupsLocation, newPath)
   }
 }

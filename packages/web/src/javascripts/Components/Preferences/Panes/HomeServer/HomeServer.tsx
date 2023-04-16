@@ -99,13 +99,22 @@ const DesktopServer = () => {
         </Text>
       )
     } else if (status.status === 'error') {
-      return <Text>'Error'</Text>
+      return <Text>Error: {status.message}</Text>
     } else if (status.status === 'off') {
-      return <Text>'Not started'</Text>
+      return <Text>Not started {status.message ? `:${status.message}` : ''}</Text>
     } else {
-      return <Text>'Unknown'</Text>
+      return <Text>Unknown: {status.message}</Text>
     }
   }, [status])
+
+  const onMoveDirectory = useCallback(() => {
+    if (!desktopDevice || status?.status == 'on') {
+      void application.alertService.alert('Please stop the server before changing the data directory.')
+      return
+    }
+
+    void desktopDevice.desktopServerChangeDataDirectory()
+  }, [desktopDevice, status?.status, application])
 
   return (
     <PreferencesPane>
@@ -120,6 +129,7 @@ const DesktopServer = () => {
               <Button label="Stop" onClick={() => desktopDevice.desktopServerStop()} />
               <Button label="Restart" onClick={() => desktopDevice.desktopServerRestart()} />
               <Button label="Open Data" onClick={() => desktopDevice.desktopServerOpenDataDirectory()} />
+              <Button label="Change Data Location" onClick={onMoveDirectory} />
               <Button label="Refresh Status" onClick={() => refreshStatus()} />
               <Button label={showLogs ? 'Hide Logs' : 'Show Logs'} onClick={handleShowLogs} />
             </div>
@@ -144,7 +154,7 @@ const DesktopServer = () => {
 
       <PreferencesGroup>
         <Title>Local Access</Title>
-        {status?.status === 'on' && (
+        {status?.status === 'on' ? (
           <>
             <Subtitle>
               Your home server can be accessed from any device connected to the same network as this computer using this
@@ -156,6 +166,8 @@ const DesktopServer = () => {
               </a>
             </Text>
           </>
+        ) : (
+          <Subtitle>Start your server to view local connection information.</Subtitle>
         )}
       </PreferencesGroup>
 
@@ -168,14 +180,33 @@ const DesktopServer = () => {
             <a className="text-info" href="https://tailscale.com/">
               Tailscale.com
             </a>{' '}
-            for free
+            for free.
           </li>
           <li className="mt-2">
             Download Tailscale on this computer and complete the Tailscale setup wizard until you are presented with the
             final IP address of your server. It should start with something like 100.xxx...
           </li>
-          <li className="mt-2">Download Tailscale on your mobile device and sign into your Tailscale account</li>
+          <li className="mt-2">Download Tailscale on your mobile device and sign into your Tailscale account.</li>
         </ol>
+      </PreferencesGroup>
+
+      <PreferencesGroup>
+        <Title>Backing Up Your Data</Title>
+        <Subtitle>
+          For automatic backups, you can place your server's data inside of a synced cloud folder, like Dropbox,
+          Tresorit, or iCloud Drive.
+        </Subtitle>
+        <ol className="mt-3 ml-3 list-outside list-decimal">
+          <li>
+            Change your server's data location by selecting "Change Data Location" in the Home Server section above.
+          </li>
+          <li className="mt-2">Select a cloud drive to store your server's data in.</li>
+          <li className="mt-2">Restart your home server.</li>
+        </ol>
+        <Text className="mt-3">
+          Your Standard Notes data is always end-to-end encrypted on disk, so your cloud provider will not be able to
+          read your notes or files.
+        </Text>
       </PreferencesGroup>
 
       <AccountMigration />

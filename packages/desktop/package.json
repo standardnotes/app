@@ -44,7 +44,7 @@
     "electron": "22.1.0",
     "electron-log": "^4.4.8",
     "electron-updater": "^5.3.0",
-    "fs-extra": "^10.1.0",
+    "fs-extra": "^11.1.1",
     "lodash": "^4.17.21",
     "mime-types": "^2.1.35",
     "mobx": "^6.7.0"
@@ -52,6 +52,7 @@
   "devDependencies": {
     "@babel/core": "*",
     "@babel/preset-env": "*",
+    "@types/fs-extra": "^11.0.1",
     "@types/lodash": "^4.14.189",
     "@types/mime-types": "^2.1.1",
     "@types/node": "18",

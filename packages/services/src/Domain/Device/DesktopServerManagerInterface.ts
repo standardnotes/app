@@ -1,6 +1,7 @@
 export type DesktopServerStatus = {
   status: 'on' | 'error' | 'off'
   url?: string
+  message?: string
 }
 
 export interface DesktopServerManagerInterface {
