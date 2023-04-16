@@ -38,7 +38,7 @@ const AccountMigration = () => {
         <PreferencesSegment>
           <Title>Account Transfer Tool</Title>
           <Subtitle>Migrate your data from another server to your home server.</Subtitle>
-          <div className="flex w-full flex-col">
+          <div className="mt-5 flex w-full flex-col">
             <div className="mb-3">
               <label className={LabelClassName} htmlFor="email-input">
                 Account Email:
