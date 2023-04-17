@@ -267,6 +267,7 @@ export class ChallengeService extends AbstractService implements ChallengeServic
 
   private deleteChallengeOperation(operation: ChallengeOperation) {
     const challenge = operation.challenge
+    challenge.customHandler = undefined
     operation.deinit()
 
     delete this.challengeOperations[challenge.id]

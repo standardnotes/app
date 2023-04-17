@@ -4,6 +4,7 @@ import { ChallengeInterface } from './ChallengeInterface'
 import { ChallengePrompt } from './Prompt/ChallengePrompt'
 import { ChallengeReason } from './Types/ChallengeReason'
 import { ChallengeValidation } from './Types/ChallengeValidation'
+import { ChallengeValue } from './Types/ChallengeValue'
 
 /**
  * A challenge is a stateless description of what the client needs to provide
@@ -11,6 +12,7 @@ import { ChallengeValidation } from './Types/ChallengeValidation'
  */
 export class Challenge implements ChallengeInterface {
   public readonly id = Math.random()
+  customHandler?: (challenge: ChallengeInterface, values: ChallengeValue[]) => Promise<void>
 
   constructor(
     public readonly prompts: ChallengePrompt[],
@@ -18,9 +20,7 @@ export class Challenge implements ChallengeInterface {
     public readonly cancelable: boolean,
     public readonly _heading?: string,
     public readonly _subheading?: string,
-  ) {
-    Object.freeze(this)
-  }
+  ) {}
 
   /** Outside of the modal, this is the title of the modal itself */
   get modalTitle(): string {

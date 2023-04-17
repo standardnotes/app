@@ -54,8 +54,15 @@ export class AccountMigrationService {
 
     log(LoggingDomain.AccountMigration, 'Preparing for launch')
     await tempApp.prepareForLaunch({
-      receiveChallenge: this.applicationImportingTo.challengeService.sendChallenge,
+      receiveChallenge: async (challenge) => {
+        challenge.customHandler = async (challenge, values) => {
+          return tempApp.submitValuesForChallenge(challenge, values).catch(console.error)
+        }
+        const response = await this.applicationImportingTo.challengeService.promptForChallengeResponse(challenge)
+        return response
+      },
     })
+
     log(LoggingDomain.AccountMigration, 'Launching')
     await tempApp.launch()
 
