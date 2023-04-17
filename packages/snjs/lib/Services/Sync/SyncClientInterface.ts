@@ -6,12 +6,10 @@ import { AbstractService, SyncEvent, SyncOptions, SyncSource } from '@standardno
 export interface SyncClientInterface
   extends AbstractService<SyncEvent, ServerSyncResponse | OfflineSyncResponse | { source: SyncSource }> {
   setLaunchPriorityUuids(launchPriorityUuids: string[]): void
-
   sync(options?: Partial<SyncOptions>): Promise<unknown>
-
   isOutOfSync(): boolean
-
   getLastSyncDate(): Date | undefined
-
   getSyncStatus(): SyncOpStatus
+  lockSyncing(): void
+  unlockSyncing(): void
 }

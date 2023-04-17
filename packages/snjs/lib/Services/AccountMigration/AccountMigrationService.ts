@@ -2,7 +2,7 @@ import { ClientDisplayableError, isErrorResponse } from '@standardnotes/response
 import { UuidGenerator } from '@standardnotes/utils'
 import { SNApplication, SyncEvent } from '@Lib/Application'
 import { LoggingDomain, log } from '@Lib/Logging'
-import { FileItem, PayloadEmitSource, PayloadsByDuplicating } from '@standardnotes/models'
+import { FileItem, PayloadEmitSource, PayloadsByAlternatingUuid, PayloadsByDuplicating } from '@standardnotes/models'
 import { ApplicationEvent, DeinitMode, DeinitSource } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/common'
 import { FileDownloader, FileUploader } from '@standardnotes/files'
@@ -76,22 +76,25 @@ export class AccountMigrationService {
 
     await this.awaitFullSync(tempApp)
 
-    const items = tempApp.items.items
-    log(LoggingDomain.AccountMigration, `Importing ${items.length} items`)
+    const tempAppItems = tempApp.items.items
+    log(LoggingDomain.AccountMigration, `Importing ${tempAppItems.length} items`)
+    this.onStatus(`Importing ${tempAppItems.length} items...`, AccountMigrationStage.ImportingAccountData)
 
-    this.onStatus(`Importing ${items.length} items...`, AccountMigrationStage.ImportingAccountData)
+    this.applicationImportingTo.sync.lockSyncing()
 
-    for (const item of items) {
-      const payload = item.payload.copy()
-      const resultingPayloads = PayloadsByDuplicating({
-        payload,
-        baseCollection: tempApp.payloadManager.getMasterCollection(),
-        isConflict: false,
-      })
+    const tempAppPayloads = tempAppItems.map((item) => item.payload)
+    await this.applicationImportingTo.payloadManager.emitPayloads(tempAppPayloads, PayloadEmitSource.LocalChanged)
 
+    const importedItems = this.applicationImportingTo.items.items
+    for (const importedItem of importedItems) {
+      const resultingPayloads = PayloadsByAlternatingUuid(
+        importedItem.payload,
+        this.applicationImportingTo.payloadManager.getMasterCollection(),
+      )
       await this.applicationImportingTo.payloadManager.emitPayloads(resultingPayloads, PayloadEmitSource.LocalChanged)
     }
 
+    this.applicationImportingTo.sync.unlockSyncing()
     await this.applicationImportingTo.sync.sync({ awaitAll: true })
 
     this.onStatus('Migrating files...', AccountMigrationStage.DownloadingFileData)
