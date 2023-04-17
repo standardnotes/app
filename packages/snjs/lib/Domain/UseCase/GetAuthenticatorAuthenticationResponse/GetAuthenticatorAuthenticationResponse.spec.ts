@@ -12,7 +12,7 @@ describe('GetAuthenticatorAuthenticationResponse', () => {
 
   beforeEach(() => {
     getAuthenticatorAuthenticationOptions = {} as jest.Mocked<GetAuthenticatorAuthenticationOptions>
-    getAuthenticatorAuthenticationOptions.execute = jest.fn().mockResolvedValue({ foo: 'bar' })
+    getAuthenticatorAuthenticationOptions.execute = jest.fn().mockResolvedValue(Result.ok({ foo: 'bar' }))
 
     authenticatorVerificationPromptFunction = jest.fn()
   })
