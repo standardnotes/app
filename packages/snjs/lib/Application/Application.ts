@@ -102,6 +102,7 @@ import { ListRevisions } from '@Lib/Domain/UseCase/ListRevisions/ListRevisions'
 import { GetRevision } from '@Lib/Domain/UseCase/GetRevision/GetRevision'
 import { DeleteRevision } from '@Lib/Domain/UseCase/DeleteRevision/DeleteRevision'
 import { GetAuthenticatorAuthenticationResponse } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationResponse/GetAuthenticatorAuthenticationResponse'
+import { GetAuthenticatorAuthenticationOptions } from '@Lib/Domain/UseCase/GetAuthenticatorAuthenticationOptions/GetAuthenticatorAuthenticationOptions'
 
 /** How often to automatically sync, in milliseconds */
 const DEFAULT_AUTO_SYNC_INTERVAL = 30_000
@@ -182,6 +183,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare _addAuthenticator: AddAuthenticator
   private declare _listAuthenticators: ListAuthenticators
   private declare _deleteAuthenticator: DeleteAuthenticator
+  private declare _getAuthenticatorAuthenticationOptions: GetAuthenticatorAuthenticationOptions
   private declare _getAuthenticatorAuthenticationResponse: GetAuthenticatorAuthenticationResponse
   private declare _listRevisions: ListRevisions
   private declare _getRevision: GetRevision
@@ -282,6 +284,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   get deleteAuthenticator(): DeleteAuthenticator {
     return this._deleteAuthenticator
+  }
+
+  get getAuthenticatorAuthenticationOptions(): GetAuthenticatorAuthenticationOptions {
+    return this._getAuthenticatorAuthenticationOptions
   }
 
   get getAuthenticatorAuthenticationResponse(): GetAuthenticatorAuthenticationResponse {
@@ -1819,8 +1825,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     this._deleteAuthenticator = new DeleteAuthenticator(this.authenticatorManager)
 
+    this._getAuthenticatorAuthenticationOptions = new GetAuthenticatorAuthenticationOptions(this.authenticatorManager)
+
     this._getAuthenticatorAuthenticationResponse = new GetAuthenticatorAuthenticationResponse(
-      this.authenticatorManager,
+      this._getAuthenticatorAuthenticationOptions,
       this.options.u2fAuthenticatorVerificationPromptFunction,
     )
 

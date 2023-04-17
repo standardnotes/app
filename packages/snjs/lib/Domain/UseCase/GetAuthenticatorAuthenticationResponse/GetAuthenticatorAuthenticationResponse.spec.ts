@@ -1,40 +1,31 @@
-import { AuthenticatorClientInterface } from '@standardnotes/services'
-
 import { GetAuthenticatorAuthenticationResponse } from './GetAuthenticatorAuthenticationResponse'
+import { GetAuthenticatorAuthenticationOptions } from '../GetAuthenticatorAuthenticationOptions/GetAuthenticatorAuthenticationOptions'
+import { Result } from '@standardnotes/domain-core'
 
 describe('GetAuthenticatorAuthenticationResponse', () => {
-  let authenticatorClient: AuthenticatorClientInterface
+  let getAuthenticatorAuthenticationOptions: GetAuthenticatorAuthenticationOptions
   let authenticatorVerificationPromptFunction: (
     authenticationOptions: Record<string, unknown>,
   ) => Promise<Record<string, unknown>>
 
-  const createUseCase = () => new GetAuthenticatorAuthenticationResponse(authenticatorClient, authenticatorVerificationPromptFunction)
+  const createUseCase = () => new GetAuthenticatorAuthenticationResponse(getAuthenticatorAuthenticationOptions, authenticatorVerificationPromptFunction)
 
   beforeEach(() => {
-    authenticatorClient = {} as jest.Mocked<AuthenticatorClientInterface>
-    authenticatorClient.generateAuthenticationOptions = jest.fn().mockResolvedValue({ foo: 'bar' })
+    getAuthenticatorAuthenticationOptions = {} as jest.Mocked<GetAuthenticatorAuthenticationOptions>
+    getAuthenticatorAuthenticationOptions.execute = jest.fn().mockResolvedValue(Result.ok({ foo: 'bar' }))
 
     authenticatorVerificationPromptFunction = jest.fn()
   })
 
-  it('should return an error if username is not provided', async () => {
-    const result = await createUseCase().execute({
-      username: '',
-    })
-
-    expect(result.isFailed()).toBe(true)
-    expect(result.getError()).toBe('Could not generate authenticator authentication options: Username cannot be empty')
-  })
-
-  it('should return an error if authenticator client fails to generate authentication options', async () => {
-    authenticatorClient.generateAuthenticationOptions = jest.fn().mockResolvedValue(null)
+  it('should return an error if it fails to generate authentication options', async () => {
+    getAuthenticatorAuthenticationOptions.execute = jest.fn().mockReturnValue(Result.fail('error'))
 
     const result = await createUseCase().execute({
       username: 'test@test.te',
     })
 
     expect(result.isFailed()).toBe(true)
-    expect(result.getError()).toBe('Could not generate authenticator authentication options')
+    expect(result.getError()).toBe('error')
   })
 
   it('should return an error if authenticator verification prompt function fails', async () => {
@@ -57,7 +48,7 @@ describe('GetAuthenticatorAuthenticationResponse', () => {
   })
 
   it('should return error if authenticatorVerificationPromptFunction is not provided', async () => {
-    const result = await new GetAuthenticatorAuthenticationResponse(authenticatorClient).execute({
+    const result = await new GetAuthenticatorAuthenticationResponse(getAuthenticatorAuthenticationOptions).execute({
       username: 'test@test.te',
     })
 
