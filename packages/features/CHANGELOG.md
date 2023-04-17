@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.59.0](https://github.com/standardnotes/app/compare/@standardnotes/features@1.58.16...@standardnotes/features@1.59.0) (2023-04-17)
+
+### Features
+
+* **mobile:** add U2F support for Android devices ([#2311](https://github.com/standardnotes/app/issues/2311)) ([725f55f](https://github.com/standardnotes/app/commit/725f55fca794b86c245742837af7e4370cebd68c))
+
 ## [1.58.16](https://github.com/standardnotes/app/compare/@standardnotes/features@1.58.15...@standardnotes/features@1.58.16) (2023-04-15)
 
 **Note:** Version bump only for package @standardnotes/features
