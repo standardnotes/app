@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.151.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.151.1...@standardnotes/web@3.151.2) (2023-04-18)
+
+### Bug Fixes
+
+* Fixed issue where the Super note markdown preview modal could not be closed on mobile ([fc137a7](https://github.com/standardnotes/app/commit/fc137a7e7ba5bd9329b97c8197f9cf65a0bbad17))
+
 ## [3.151.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.151.0...@standardnotes/web@3.151.1) (2023-04-18)
 
 **Note:** Version bump only for package @standardnotes/web
