@@ -19,6 +19,7 @@
     "clean": "rm -rf dist"
   },
   "devDependencies": {
+    "@standardnotes/web": "workspace:*",
     "@types/webextension-polyfill": "^0.10.0",
     "babel-loader": "^9.1.0",
     "copy-webpack-plugin": "11.0.0",
@@ -28,8 +29,7 @@
     "typescript": "*",
     "web-ext": "^7.5.0",
     "webextension-polyfill": "^0.10.0",
-    "webpack": "*",
-    "@standardnotes/web": "workspace:*"
+    "webpack": "*"
   },
   "dependencies": {
     "@mozilla/readability": "^0.4.2"
