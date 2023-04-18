@@ -74,27 +74,28 @@ public class Fido2ApiModule extends ReactContextBaseJavaModule {
                       (AuthenticatorAssertionResponse) publicKeyCredential.getResponse();
 
               WritableMap signInResult = Arguments.createMap();
-              signInResult.putString("id", Base64.encodeToString(signedData.getKeyHandle(), Base64.URL_SAFE));
-              signInResult.putString("rawId", Base64.encodeToString(signedData.getKeyHandle(), Base64.URL_SAFE));
+              signInResult.putString("id", Base64.encodeToString(signedData.getKeyHandle(), Base64.URL_SAFE + Base64.NO_WRAP + Base64.NO_PADDING));
+              signInResult.putString("rawId", Base64.encodeToString(signedData.getKeyHandle(), Base64.URL_SAFE + Base64.NO_WRAP + Base64.NO_PADDING));
 
               byte[] extensionOutputsBytes = null;
               AuthenticationExtensionsClientOutputs extensionOutputs = publicKeyCredential.getClientExtensionResults();
               if (extensionOutputs != null) {
                   extensionOutputsBytes = extensionOutputs.serializeToBytes();
                   if (extensionOutputsBytes != null) {
-                    signInResult.putString("clientExtensionResults", Base64.encodeToString(extensionOutputsBytes, Base64.URL_SAFE));
+                    signInResult.putString("clientExtensionResults", Base64.encodeToString(extensionOutputsBytes, Base64.URL_SAFE + Base64.NO_WRAP + Base64.NO_PADDING));
                   }
               }
 
               WritableMap response = Arguments.createMap();
-              response.putString("clientDataJSON", Base64.encodeToString(signedData.getClientDataJSON(), Base64.URL_SAFE));
-              response.putString("authenticatorData", Base64.encodeToString(signedData.getAuthenticatorData(), Base64.URL_SAFE));
-              response.putString("signature", Base64.encodeToString(signedData.getSignature(), Base64.URL_SAFE));
+              response.putString("clientDataJSON", Base64.encodeToString(signedData.getClientDataJSON(), Base64.URL_SAFE + Base64.NO_WRAP + Base64.NO_PADDING));
+              response.putString("authenticatorData", Base64.encodeToString(signedData.getAuthenticatorData(), Base64.URL_SAFE + Base64.NO_WRAP + Base64.NO_PADDING));
+              response.putString("signature", Base64.encodeToString(signedData.getSignature(), Base64.URL_SAFE + Base64.NO_WRAP + Base64.NO_PADDING));
               byte[] userHandle = signedData.getUserHandle();
               if (userHandle != null) {
-                  response.putString("userHandle", Base64.encodeToString(userHandle, Base64.URL_SAFE));
+                  response.putString("userHandle", Base64.encodeToString(userHandle, Base64.URL_SAFE + Base64.NO_WRAP + Base64.NO_PADDING));
               }
               signInResult.putMap("response", response);
+              signInResult.putString("type", PublicKeyCredentialType.PUBLIC_KEY.toString());
 
               signInPromise.resolve(signInResult);
             }
