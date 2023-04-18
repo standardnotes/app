@@ -40,6 +40,7 @@ import { PersistenceService } from './Abstract/PersistenceService'
 import { CrossControllerEvent } from './CrossControllerEvent'
 import { EventObserverInterface } from '@/Event/EventObserverInterface'
 import { ApplicationEventObserver } from '@/Event/ApplicationEventObserver'
+import { ImportModalController } from './ImportModalController'
 
 export class ViewControllerManager implements InternalEventHandlerInterface {
   readonly enableUnfinishedFeatures: boolean = window?.enabledUnfinishedFeatures
@@ -67,9 +68,9 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
   readonly historyModalController: HistoryModalController
   readonly linkingController: LinkingController
   readonly paneController: PaneController
+  readonly importModalController: ImportModalController
 
   public isSessionsModalVisible = false
-  public isImportModalVisible = observable.box(false)
 
   private appEventObserverRemovers: (() => void)[] = []
   private eventBus: InternalEventBus
@@ -153,6 +154,8 @@ export class ViewControllerManager implements InternalEventHandlerInterface {
     )
 
     this.historyModalController = new HistoryModalController(this.application, this.eventBus, this.notesController)
+
+    this.importModalController = new ImportModalController(this.application, this.navigationController)
 
     this.toastService = new ToastService()
 

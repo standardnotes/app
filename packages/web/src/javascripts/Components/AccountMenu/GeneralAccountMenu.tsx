@@ -165,7 +165,12 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
             </MenuItem>
           </>
         )}
-        <MenuItem onClick={() => viewControllerManager.isImportModalVisible.set(true)}>
+        <MenuItem
+          onClick={() => {
+            viewControllerManager.importModalController.setIsVisible(true)
+            viewControllerManager.accountMenuController.closeAccountMenu()
+          }}
+        >
           <Icon type="archive" className={iconClassName} />
           Import
         </MenuItem>

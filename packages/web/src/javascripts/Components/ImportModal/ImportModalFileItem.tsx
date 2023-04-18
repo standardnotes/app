@@ -1,8 +1,9 @@
+import { ImportModalController, ImportModalFile } from '@/Controllers/ImportModalController'
 import { classNames, ContentType, DecryptedTransferPayload, pluralize } from '@standardnotes/snjs'
 import { Importer, NoteImportType } from '@standardnotes/ui-services'
-import { Dispatch, useCallback, useEffect } from 'react'
+import { observer } from 'mobx-react-lite'
+import { useCallback, useEffect } from 'react'
 import Icon from '../Icon/Icon'
-import { ImportModalAction, ImportModalFile } from './Types'
 
 const NoteImportTypeColors: Record<NoteImportType, string> = {
   evernote: 'bg-[#14cc45] text-[#000]',
@@ -20,13 +21,15 @@ const NoteImportTypeIcons: Record<NoteImportType, string> = {
   plaintext: 'plain-text',
 }
 
-export const ImportModalFileItem = ({
+const ImportModalFileItem = ({
   file,
-  dispatch,
+  updateFile,
+  removeFile,
   importer,
 }: {
   file: ImportModalFile
-  dispatch: Dispatch<ImportModalAction>
+  updateFile: ImportModalController['updateFile']
+  removeFile: ImportModalController['removeFile']
   importer: Importer
 }) => {
   const setFileService = useCallback(
@@ -34,21 +37,18 @@ export const ImportModalFileItem = ({
       let payloads: DecryptedTransferPayload[] | undefined
       try {
         payloads = service ? await importer.getPayloadsFromFile(file.file, service) : undefined
-      } catch {
-        //
+      } catch (error) {
+        console.error(error)
       }
 
-      dispatch({
-        type: 'updateFile',
-        file: {
-          ...file,
-          service,
-          status: service ? 'ready' : 'pending',
-          payloads,
-        },
+      updateFile({
+        ...file,
+        service,
+        status: service ? 'ready' : 'pending',
+        payloads,
       })
     },
-    [dispatch, file, importer],
+    [file, importer, updateFile],
   )
 
   useEffect(() => {
@@ -59,7 +59,7 @@ export const ImportModalFileItem = ({
     if (file.service === undefined) {
       void detect()
     }
-  }, [dispatch, file, setFileService])
+  }, [file, setFileService])
 
   const notePayloads =
     file.status === 'ready' && file.payloads
@@ -129,10 +129,7 @@ export const ImportModalFileItem = ({
           <button
             className="ml-2 rounded border border-border bg-default p-1.5 hover:bg-contrast"
             onClick={() => {
-              dispatch({
-                type: 'removeFile',
-                id: file.id,
-              })
+              removeFile(file.id)
             }}
           >
             <Icon type="close" size="medium" />
@@ -144,3 +141,5 @@ export const ImportModalFileItem = ({
     </div>
   )
 }
+
+export default observer(ImportModalFileItem)

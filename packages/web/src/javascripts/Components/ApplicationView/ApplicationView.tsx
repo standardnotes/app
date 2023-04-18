@@ -272,7 +272,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                       application={application}
                       viewControllerManager={viewControllerManager}
                     />
-                    <ImportModal viewControllerManager={viewControllerManager} />
+                    <ImportModal importModalController={viewControllerManager.importModalController} />
                   </>
                   {application.routeService.isDotOrg && <DotOrgNotice />}
                   {isIOS() && <IosKeyboardClose />}
