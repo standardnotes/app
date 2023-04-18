@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.52.1](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.52.0...@standardnotes/mobile@3.52.1) (2023-04-18)
+
+### Bug Fixes
+
+* **mobile:** Android U2F authenticator response encoding ([#2313](https://github.com/standardnotes/app/issues/2313)) ([4adabab](https://github.com/standardnotes/app/commit/4adabab256dd2efde4209d2321564206f6719c69))
+
 # [3.52.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.51.87...@standardnotes/mobile@3.52.0) (2023-04-17)
 
 ### Features
