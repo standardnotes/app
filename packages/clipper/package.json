@@ -28,7 +28,8 @@
     "typescript": "*",
     "web-ext": "^7.5.0",
     "webextension-polyfill": "^0.10.0",
-    "webpack": "*"
+    "webpack": "*",
+    "@standardnotes/web": "workspace:*"
   },
   "dependencies": {
     "@mozilla/readability": "^0.4.2"
