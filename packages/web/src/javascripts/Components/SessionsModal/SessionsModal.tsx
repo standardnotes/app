@@ -1,7 +1,6 @@
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { SNApplication, SessionStrings, UuidString, SessionListEntry, isErrorResponse } from '@standardnotes/snjs'
 import { FunctionComponent, useState, useEffect, useRef, useMemo, useCallback } from 'react'
-import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
 import Spinner from '@/Components/Spinner/Spinner'
@@ -9,6 +8,7 @@ import Button from '@/Components/Button/Button'
 import Icon from '../Icon/Icon'
 import Modal, { ModalAction } from '../Modal/Modal'
 import ModalOverlay from '../Modal/ModalOverlay'
+import AlertDialog from '../AlertDialog/AlertDialog'
 
 type Session = SessionListEntry & {
   revoking?: true
@@ -176,43 +176,30 @@ const SessionsModalContent: FunctionComponent<{
         </div>
       </Modal>
       {confirmRevokingSessionUuid && (
-        <AlertDialog onDismiss={closeRevokeConfirmationDialog} leastDestructiveRef={cancelRevokeRef} className="p-0">
-          <div className="sk-modal-content">
-            <div className="sn-component">
-              <div className="sk-panel">
-                <div className="sk-panel-content">
-                  <div className="sk-panel-section">
-                    <AlertDialogLabel className="flex items-center justify-between text-lg font-bold">
-                      {SessionStrings.RevokeTitle}
-                      <button
-                        className="rounded p-1 font-bold hover:bg-contrast"
-                        onClick={closeRevokeConfirmationDialog}
-                      >
-                        <Icon type="close" />
-                      </button>
-                    </AlertDialogLabel>
-                    <AlertDialogDescription className="sk-panel-row">
-                      <p className="text-base text-foreground lg:text-sm">{SessionStrings.RevokeText}</p>
-                    </AlertDialogDescription>
-                    <div className="my-1 mt-4 flex justify-end gap-2">
-                      <Button ref={cancelRevokeRef} onClick={closeRevokeSessionAlert}>
-                        <span>{SessionStrings.RevokeCancelButton}</span>
-                      </Button>
-                      <Button
-                        primary
-                        colorStyle="danger"
-                        onClick={() => {
-                          closeRevokeSessionAlert()
-                          revokeSession(confirmRevokingSessionUuid).catch(console.error)
-                        }}
-                      >
-                        <span>{SessionStrings.RevokeConfirmButton}</span>
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+        <AlertDialog closeDialog={closeRevokeConfirmationDialog}>
+          <div className="flex items-center justify-between text-lg font-bold">
+            {SessionStrings.RevokeTitle}
+            <button className="rounded p-1 font-bold hover:bg-contrast" onClick={closeRevokeConfirmationDialog}>
+              <Icon type="close" />
+            </button>
+          </div>
+          <div className="sk-panel-row">
+            <p className="text-base text-foreground lg:text-sm">{SessionStrings.RevokeText}</p>
+          </div>
+          <div className="mt-4 flex justify-end gap-2">
+            <Button ref={cancelRevokeRef} onClick={closeRevokeSessionAlert}>
+              <span>{SessionStrings.RevokeCancelButton}</span>
+            </Button>
+            <Button
+              primary
+              colorStyle="danger"
+              onClick={() => {
+                closeRevokeSessionAlert()
+                revokeSession(confirmRevokingSessionUuid).catch(console.error)
+              }}
+            >
+              <span>{SessionStrings.RevokeConfirmButton}</span>
+            </Button>
           </div>
         </AlertDialog>
       )}

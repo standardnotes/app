@@ -1,4 +1,3 @@
-import { AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import { useCallback } from 'react'
 import { WebApplication } from '@/Application/Application'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
@@ -29,7 +28,7 @@ export const UpgradePrompt = ({
 
   return (
     <>
-      <AlertDialogLabel>
+      <div>
         <div className="flex justify-end p-1">
           <button
             className="flex cursor-pointer border-0 bg-transparent p-0"
@@ -46,8 +45,8 @@ export const UpgradePrompt = ({
           <Icon className={`h-12 w-12 ${PremiumFeatureIconClass}`} size={'custom'} type={PremiumFeatureIconName} />
         </div>
         <div className="mb-1 text-center text-lg font-bold">Enable Advanced Features</div>
-      </AlertDialogLabel>
-      <AlertDialogDescription className="mb-2 px-4.5 text-center text-sm text-passive-1">
+      </div>
+      <div className="mb-2 px-4.5 text-center text-sm text-passive-1">
         {featureName && (
           <span>
             To take advantage of <span className="font-semibold">{featureName}</span> and other advanced features,
@@ -74,7 +73,7 @@ export const UpgradePrompt = ({
             </ul>
           </div>
         )}
-      </AlertDialogDescription>
+      </div>
 
       <div className="p-4">
         <button
