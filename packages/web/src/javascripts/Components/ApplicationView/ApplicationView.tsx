@@ -30,6 +30,7 @@ import DotOrgNotice from './DotOrgNotice'
 import LinkingControllerProvider from '@/Controllers/LinkingControllerProvider'
 import ImportModal from '../ImportModal/ImportModal'
 import IosKeyboardClose from '../IosKeyboardClose/IosKeyboardClose'
+import RadixProviders from './RadixProviders'
 
 type Props = {
   application: WebApplication
@@ -180,109 +181,116 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
 
   if (route.type === RouteType.AppViewRoute && route.appViewRouteParam === 'extension') {
     return (
+      <RadixProviders>
+        <ApplicationProvider application={application}>
+          <CommandProvider service={application.keyboardService}>
+            <AndroidBackHandlerProvider application={application}>
+              <ResponsivePaneProvider paneController={application.getViewControllerManager().paneController}>
+                <PremiumModalProvider
+                  application={application}
+                  featuresController={viewControllerManager.featuresController}
+                >
+                  <LinkingControllerProvider controller={viewControllerManager.linkingController}>
+                    <FileDragNDropProvider
+                      application={application}
+                      featuresController={viewControllerManager.featuresController}
+                      filesController={viewControllerManager.filesController}
+                    >
+                      <LazyLoadedClipperView
+                        viewControllerManager={viewControllerManager}
+                        applicationGroup={mainApplicationGroup}
+                      />
+                      <ToastContainer />
+                      {renderChallenges()}
+                    </FileDragNDropProvider>
+                  </LinkingControllerProvider>
+                </PremiumModalProvider>
+              </ResponsivePaneProvider>
+            </AndroidBackHandlerProvider>
+          </CommandProvider>
+        </ApplicationProvider>
+      </RadixProviders>
+    )
+  }
+
+  return (
+    <RadixProviders>
       <ApplicationProvider application={application}>
         <CommandProvider service={application.keyboardService}>
           <AndroidBackHandlerProvider application={application}>
+            <DarkModeHandler application={application} />
             <ResponsivePaneProvider paneController={application.getViewControllerManager().paneController}>
               <PremiumModalProvider
                 application={application}
                 featuresController={viewControllerManager.featuresController}
               >
                 <LinkingControllerProvider controller={viewControllerManager.linkingController}>
-                  <FileDragNDropProvider
-                    application={application}
-                    featuresController={viewControllerManager.featuresController}
-                    filesController={viewControllerManager.filesController}
-                  >
-                    <LazyLoadedClipperView
-                      viewControllerManager={viewControllerManager}
-                      applicationGroup={mainApplicationGroup}
-                    />
-                    <ToastContainer />
+                  <div className={platformString + ' main-ui-view sn-component h-full'}>
+                    <FileDragNDropProvider
+                      application={application}
+                      featuresController={viewControllerManager.featuresController}
+                      filesController={viewControllerManager.filesController}
+                    >
+                      <PanesSystemComponent />
+                    </FileDragNDropProvider>
+                    <>
+                      <Footer application={application} applicationGroup={mainApplicationGroup} />
+                      <SessionsModal application={application} viewControllerManager={viewControllerManager} />
+                      <PreferencesViewWrapper viewControllerManager={viewControllerManager} application={application} />
+                      <RevisionHistoryModal
+                        application={application}
+                        historyModalController={viewControllerManager.historyModalController}
+                        notesController={viewControllerManager.notesController}
+                        selectionController={viewControllerManager.selectionController}
+                        subscriptionController={viewControllerManager.subscriptionController}
+                      />
+                    </>
                     {renderChallenges()}
-                  </FileDragNDropProvider>
+                    <>
+                      <NotesContextMenu
+                        navigationController={viewControllerManager.navigationController}
+                        notesController={viewControllerManager.notesController}
+                        linkingController={viewControllerManager.linkingController}
+                        historyModalController={viewControllerManager.historyModalController}
+                      />
+                      <TagContextMenuWrapper
+                        navigationController={viewControllerManager.navigationController}
+                        featuresController={viewControllerManager.featuresController}
+                      />
+                      <FileContextMenuWrapper
+                        filesController={viewControllerManager.filesController}
+                        selectionController={viewControllerManager.selectionController}
+                        navigationController={viewControllerManager.navigationController}
+                        linkingController={viewControllerManager.linkingController}
+                      />
+                      <PurchaseFlowWrapper application={application} viewControllerManager={viewControllerManager} />
+                      <ConfirmSignoutContainer
+                        applicationGroup={mainApplicationGroup}
+                        viewControllerManager={viewControllerManager}
+                        application={application}
+                      />
+                      <ToastContainer />
+                      <FilePreviewModalWrapper
+                        application={application}
+                        viewControllerManager={viewControllerManager}
+                      />
+                      <PermissionsModalWrapper application={application} />
+                      <ConfirmDeleteAccountContainer
+                        application={application}
+                        viewControllerManager={viewControllerManager}
+                      />
+                      <ImportModal importModalController={viewControllerManager.importModalController} />
+                    </>
+                    {application.routeService.isDotOrg && <DotOrgNotice />}
+                    {isIOS() && <IosKeyboardClose />}
+                  </div>
                 </LinkingControllerProvider>
               </PremiumModalProvider>
             </ResponsivePaneProvider>
           </AndroidBackHandlerProvider>
         </CommandProvider>
       </ApplicationProvider>
-    )
-  }
-
-  return (
-    <ApplicationProvider application={application}>
-      <CommandProvider service={application.keyboardService}>
-        <AndroidBackHandlerProvider application={application}>
-          <DarkModeHandler application={application} />
-          <ResponsivePaneProvider paneController={application.getViewControllerManager().paneController}>
-            <PremiumModalProvider
-              application={application}
-              featuresController={viewControllerManager.featuresController}
-            >
-              <LinkingControllerProvider controller={viewControllerManager.linkingController}>
-                <div className={platformString + ' main-ui-view sn-component h-full'}>
-                  <FileDragNDropProvider
-                    application={application}
-                    featuresController={viewControllerManager.featuresController}
-                    filesController={viewControllerManager.filesController}
-                  >
-                    <PanesSystemComponent />
-                  </FileDragNDropProvider>
-                  <>
-                    <Footer application={application} applicationGroup={mainApplicationGroup} />
-                    <SessionsModal application={application} viewControllerManager={viewControllerManager} />
-                    <PreferencesViewWrapper viewControllerManager={viewControllerManager} application={application} />
-                    <RevisionHistoryModal
-                      application={application}
-                      historyModalController={viewControllerManager.historyModalController}
-                      notesController={viewControllerManager.notesController}
-                      selectionController={viewControllerManager.selectionController}
-                      subscriptionController={viewControllerManager.subscriptionController}
-                    />
-                  </>
-                  {renderChallenges()}
-                  <>
-                    <NotesContextMenu
-                      navigationController={viewControllerManager.navigationController}
-                      notesController={viewControllerManager.notesController}
-                      linkingController={viewControllerManager.linkingController}
-                      historyModalController={viewControllerManager.historyModalController}
-                    />
-                    <TagContextMenuWrapper
-                      navigationController={viewControllerManager.navigationController}
-                      featuresController={viewControllerManager.featuresController}
-                    />
-                    <FileContextMenuWrapper
-                      filesController={viewControllerManager.filesController}
-                      selectionController={viewControllerManager.selectionController}
-                      navigationController={viewControllerManager.navigationController}
-                      linkingController={viewControllerManager.linkingController}
-                    />
-                    <PurchaseFlowWrapper application={application} viewControllerManager={viewControllerManager} />
-                    <ConfirmSignoutContainer
-                      applicationGroup={mainApplicationGroup}
-                      viewControllerManager={viewControllerManager}
-                      application={application}
-                    />
-                    <ToastContainer />
-                    <FilePreviewModalWrapper application={application} viewControllerManager={viewControllerManager} />
-                    <PermissionsModalWrapper application={application} />
-                    <ConfirmDeleteAccountContainer
-                      application={application}
-                      viewControllerManager={viewControllerManager}
-                    />
-                    <ImportModal importModalController={viewControllerManager.importModalController} />
-                  </>
-                  {application.routeService.isDotOrg && <DotOrgNotice />}
-                  {isIOS() && <IosKeyboardClose />}
-                </div>
-              </LinkingControllerProvider>
-            </PremiumModalProvider>
-          </ResponsivePaneProvider>
-        </AndroidBackHandlerProvider>
-      </CommandProvider>
-    </ApplicationProvider>
+    </RadixProviders>
   )
 }
 

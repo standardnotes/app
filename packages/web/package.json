@@ -30,13 +30,11 @@
     "@babel/preset-typescript": "^7.18.6",
     "@lexical/react": "0.9.2",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
-    "@reach/alert": "^0.18.0",
     "@reach/alert-dialog": "^0.18.0",
     "@reach/checkbox": "^0.18.0",
     "@reach/dialog": "^0.18.0",
     "@reach/disclosure": "^0.18.0",
     "@reach/listbox": "^0.18.0",
-    "@reach/tooltip": "^0.18.0",
     "@reach/visually-hidden": "^0.18.0",
     "@simplewebauthn/browser": "^7.1.0",
     "@standardnotes/authenticator": "^2.3.9",
@@ -118,6 +116,7 @@
   },
   "dependencies": {
     "@lexical/headless": "0.9.2",
+    "@radix-ui/react-tooltip": "^1.0.5",
     "contactjs": "2.1.5"
   }
 }
