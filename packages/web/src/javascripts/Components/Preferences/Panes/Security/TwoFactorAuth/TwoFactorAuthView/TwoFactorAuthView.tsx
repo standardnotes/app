@@ -115,7 +115,7 @@ const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application }) => {
           </PreferencesSegment>
         )}
       </PreferencesGroup>
-      <ModalOverlay isOpen={shouldShowActivationModal} onDismiss={closeActivationModal}>
+      <ModalOverlay isOpen={shouldShowActivationModal}>
         <Modal title={activationModalTitle} close={closeActivationModal} actions={activationModalActions}>
           {shouldShowActivationModal && <TwoFactorActivationView activation={auth.status} />}
         </Modal>

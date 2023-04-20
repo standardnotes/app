@@ -238,23 +238,17 @@ const ChallengeModal: FunctionComponent<Props> = ({
   })
 
   return (
-    <ModalOverlay
-      isOpen={true}
-      className={`sn-component p-0 ${isFullScreenBlocker ? 'bg-passive-5' : ''}`}
-      onDismiss={cancelChallenge}
-      dangerouslyBypassFocusLock={bypassModalFocusLock}
-      key={challenge.id}
-      ref={setModalElement}
-    >
+    <ModalOverlay isOpen={true} key={challenge.id} ref={setModalElement}>
       <Modal
         title="Authenticate"
         close={cancelChallenge}
         className={{
           content: classNames(
-            'challenge-modal relative m-0 flex h-full w-full flex-col items-center rounded border-solid border-border bg-default p-0 md:h-auto md:!w-auto md:border',
+            'sn-component challenge-modal relative m-0 flex h-full w-full flex-col items-center rounded border-solid border-border bg-default p-0 md:h-auto md:!w-auto md:border',
             !isMobileScreen && 'shadow-overlay-light',
             isMobileOverlay && 'shadow-overlay-light border border-solid border-border',
           ),
+          backdrop: isFullScreenBlocker ? 'bg-passive-5' : '',
         }}
         customHeader={<></>}
         customFooter={<></>}

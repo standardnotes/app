@@ -48,7 +48,7 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
                 {!subscriptionState.allInvitationsUsed && (
                   <Button className="min-w-20" label="Invite" onClick={() => setIsInviteDialogOpen(true)} />
                 )}
-                <ModalOverlay isOpen={isInviteDialogOpen} onDismiss={closeInviteDialog}>
+                <ModalOverlay isOpen={isInviteDialogOpen}>
                   <Invite
                     onCloseDialog={closeInviteDialog}
                     application={application}

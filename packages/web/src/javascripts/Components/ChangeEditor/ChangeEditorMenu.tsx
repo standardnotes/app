@@ -223,7 +223,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
             )
           })}
       </Menu>
-      <ModalOverlay isOpen={showSuperImporter} onDismiss={closeSuperNoteImporter}>
+      <ModalOverlay isOpen={showSuperImporter}>
         {note && (
           <SuperNoteImporter
             note={note}

@@ -125,7 +125,14 @@ const SessionsModalContent: FunctionComponent<{
 
   return (
     <>
-      <Modal title="Active Sessions" close={close} actions={sessionModalActions}>
+      <Modal
+        title="Active Sessions"
+        close={close}
+        actions={sessionModalActions}
+        className={{
+          content: 'sessions-modal',
+        }}
+      >
         <div className="px-4 py-4">
           {refreshing ? (
             <div className="flex items-center gap-2">
@@ -218,11 +225,7 @@ const SessionsModal: FunctionComponent<{
   application: WebApplication
 }> = ({ viewControllerManager, application }) => {
   return (
-    <ModalOverlay
-      isOpen={viewControllerManager.isSessionsModalVisible}
-      onDismiss={viewControllerManager.closeSessionsModal}
-      className="sessions-modal"
-    >
+    <ModalOverlay isOpen={viewControllerManager.isSessionsModalVisible}>
       <SessionsModalContent application={application} viewControllerManager={viewControllerManager} />
     </ModalOverlay>
   )
