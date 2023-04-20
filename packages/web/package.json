@@ -32,7 +32,6 @@
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@reach/alert-dialog": "^0.18.0",
     "@reach/checkbox": "^0.18.0",
-    "@reach/dialog": "^0.18.0",
     "@reach/disclosure": "^0.18.0",
     "@reach/listbox": "^0.18.0",
     "@reach/visually-hidden": "^0.18.0",

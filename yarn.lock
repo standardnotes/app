@@ -4315,7 +4315,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reach/dialog@npm:0.18.0, @reach/dialog@npm:^0.18.0":
+"@reach/dialog@npm:0.18.0":
   version: 0.18.0
   resolution: "@reach/dialog@npm:0.18.0"
   dependencies:
@@ -5740,7 +5740,6 @@ __metadata:
     "@radix-ui/react-slot": ^1.0.1
     "@reach/alert-dialog": ^0.18.0
     "@reach/checkbox": ^0.18.0
-    "@reach/dialog": ^0.18.0
     "@reach/disclosure": ^0.18.0
     "@reach/listbox": ^0.18.0
     "@reach/visually-hidden": ^0.18.0

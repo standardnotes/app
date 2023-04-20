@@ -1,6 +1,5 @@
 import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { isIOS } from '@/Utils'
-// import { DialogContent } from '@reach/dialog'
 import { classNames } from '@standardnotes/snjs'
 import { ReactNode, useMemo, useRef, useState } from 'react'
 import Button from '../Button/Button'
@@ -104,7 +103,7 @@ const Modal = ({
       <div
         className={classNames(
           'absolute z-[1] m-0 flex h-full w-full flex-col border-solid border-border bg-default p-0 md:h-auto md:max-h-[85vh] md:w-160 md:rounded md:border md:shadow-main',
-          'md:absolute md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:transform',
+          'md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:transform',
           className?.content,
         )}
       >
