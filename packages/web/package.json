@@ -33,7 +33,6 @@
     "@reach/checkbox": "^0.18.0",
     "@reach/disclosure": "^0.18.0",
     "@reach/listbox": "^0.18.0",
-    "@reach/visually-hidden": "^0.18.0",
     "@simplewebauthn/browser": "^7.1.0",
     "@standardnotes/authenticator": "^2.3.9",
     "@standardnotes/autobiography-theme": "^1.2.7",

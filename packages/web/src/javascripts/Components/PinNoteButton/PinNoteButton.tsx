@@ -1,4 +1,3 @@
-import { VisuallyHidden } from '@reach/visually-hidden'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useMemo } from 'react'
 import Icon from '@/Components/Icon/Icon'
@@ -6,6 +5,7 @@ import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { classNames } from '@standardnotes/utils'
 import { keyboardStringForShortcut, PIN_NOTE_COMMAND } from '@standardnotes/ui-services'
 import { useCommandService } from '../CommandProvider'
+import { VisuallyHidden } from '@ariakit/react'
 
 type Props = {
   className?: string

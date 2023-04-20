@@ -4411,18 +4411,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reach/visually-hidden@npm:^0.18.0":
-  version: 0.18.0
-  resolution: "@reach/visually-hidden@npm:0.18.0"
-  dependencies:
-    "@reach/polymorphic": 0.18.0
-  peerDependencies:
-    react: ^16.8.0 || 17.x || 18.x
-    react-dom: ^16.8.0 || 17.x || 18.x
-  checksum: 675ad41121d0ae52a55d3e75ad9e60a4ca7cb91defe756565bf7b8fb3d27553d76f851f9cd069455240ec955465d6e235a8f92b73859e091265607b0cb3358ae
-  languageName: node
-  linkType: hard
-
 "@react-native-async-storage/async-storage@npm:1.17.11":
   version: 1.17.11
   resolution: "@react-native-async-storage/async-storage@npm:1.17.11"
@@ -5709,7 +5697,6 @@ __metadata:
     "@reach/checkbox": ^0.18.0
     "@reach/disclosure": ^0.18.0
     "@reach/listbox": ^0.18.0
-    "@reach/visually-hidden": ^0.18.0
     "@simplewebauthn/browser": ^7.1.0
     "@standardnotes/authenticator": ^2.3.9
     "@standardnotes/autobiography-theme": ^1.2.7
