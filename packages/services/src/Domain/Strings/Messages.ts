@@ -121,7 +121,7 @@ export const SessionStrings = {
   },
   SessionRestored: 'Your session has been successfully restored.',
   EnterMfa: 'Please enter your two-factor authentication code.',
-  InputU2FDevice: 'Please authenticate with your U2F device.',
+  InputU2FDevice: 'Please authenticate with your hardware security key.',
   MfaInputPlaceholder: 'Two-factor authentication code',
   EmailInputPlaceholder: 'Email',
   PasswordInputPlaceholder: 'Password',

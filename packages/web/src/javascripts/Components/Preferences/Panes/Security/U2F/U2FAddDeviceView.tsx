@@ -60,7 +60,7 @@ const U2FAddDeviceView: FunctionComponent<Props> = ({
 
   return (
     <Modal
-      title="Add U2F Device"
+      title="Add Security Key"
       close={closeModal}
       actions={[
         {

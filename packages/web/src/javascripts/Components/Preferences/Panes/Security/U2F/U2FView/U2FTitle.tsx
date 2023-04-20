@@ -10,10 +10,10 @@ type Props = {
 
 const U2FTitle: FunctionComponent<Props> = ({ userProvider }) => {
   if (userProvider.getUser() === undefined) {
-    return <Title>Universal 2nd factor authentication not available</Title>
+    return <Title>Hardware security key authentication not available</Title>
   }
 
-  return <Title>Universal 2nd Factor Authentication</Title>
+  return <Title>Hardware Security Key Authentication</Title>
 }
 
 export default observer(U2FTitle)
