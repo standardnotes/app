@@ -73,7 +73,7 @@ const U2FAuthIframe = () => {
         throw new Error('No options returned from server')
       }
 
-      setInfo('Waiting for U2F device...')
+      setInfo('Waiting for security key...')
 
       const assertionResponse = await startAuthentication(jsonResponse.data.options)
 
@@ -96,7 +96,9 @@ const U2FAuthIframe = () => {
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center gap-2">
-      <div className="mb-2 text-center">Insert your U2F device, then press the button below to authenticate.</div>
+      <div className="mb-2 text-center">
+        Insert your hardware security key, then press the button below to authenticate.
+      </div>
       <Button onClick={beginAuthentication}>Authenticate</Button>
       <div className="mt-2">
         <div>{info}</div>
