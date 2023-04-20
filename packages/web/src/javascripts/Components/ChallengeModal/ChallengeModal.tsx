@@ -71,7 +71,6 @@ const ChallengeModal: FunctionComponent<Props> = ({
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
   const [, setProcessingPrompts] = useState<ChallengePrompt[]>([])
-  const [bypassModalFocusLock, setBypassModalFocusLock] = useState(false)
 
   const shouldShowForgotPasscode = [ChallengeReason.ApplicationUnlock, ChallengeReason.Migration].includes(
     challenge.reason,
@@ -244,7 +243,7 @@ const ChallengeModal: FunctionComponent<Props> = ({
         close={cancelChallenge}
         className={{
           content: classNames(
-            'sn-component challenge-modal relative m-0 flex h-full w-full flex-col items-center rounded border-solid border-border bg-default p-0 md:h-auto md:!w-auto md:border',
+            'sn-component challenge-modal relative m-0 flex h-full w-full flex-col items-center rounded border-solid border-border bg-default p-0 md:h-auto md:!w-max md:border',
             !isMobileScreen && 'shadow-overlay-light',
             isMobileOverlay && 'shadow-overlay-light border border-solid border-border',
           ),
@@ -313,7 +312,6 @@ const ChallengeModal: FunctionComponent<Props> = ({
             <Button
               className="flex min-w-76 items-center justify-center"
               onClick={() => {
-                setBypassModalFocusLock(true)
                 application.alertService
                   .confirm(
                     'If you forgot your local passcode, your only option is to clear your local data from this device and sign back in to your account.',
@@ -327,9 +325,6 @@ const ChallengeModal: FunctionComponent<Props> = ({
                     }
                   })
                   .catch(console.error)
-                  .finally(() => {
-                    setBypassModalFocusLock(false)
-                  })
               }}
             >
               <Icon type="help" className="mr-2 text-neutral" />
