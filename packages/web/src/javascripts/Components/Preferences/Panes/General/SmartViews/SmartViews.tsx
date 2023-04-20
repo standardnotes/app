@@ -89,13 +89,10 @@ const SmartViews = ({ application, featuresController }: Props) => {
           )}
         </PreferencesSegment>
       </PreferencesGroup>
-      <ModalOverlay isOpen={!!editSmartViewModalController.view} onDismiss={editSmartViewModalController.closeDialog}>
+      <ModalOverlay isOpen={!!editSmartViewModalController.view}>
         <EditSmartViewModal controller={editSmartViewModalController} platform={application.platform} />
       </ModalOverlay>
-      <ModalOverlay
-        isOpen={addSmartViewModalController.isAddingSmartView}
-        onDismiss={addSmartViewModalController.closeModal}
-      >
+      <ModalOverlay isOpen={addSmartViewModalController.isAddingSmartView}>
         <AddSmartViewModal controller={addSmartViewModalController} platform={application.platform} />
       </ModalOverlay>
     </>

@@ -33,7 +33,7 @@ const ImportModal = ({ importModalController }: { importModalController: ImportM
   )
 
   return (
-    <ModalOverlay isOpen={isVisible} onDismiss={close}>
+    <ModalOverlay isOpen={isVisible}>
       <Modal title="Import" close={close} actions={modalActions}>
         <div className="px-4 py-4">
           {!files.length && <ImportModalInitialPage setFiles={setFiles} />}

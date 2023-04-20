@@ -1,5 +1,4 @@
 import Icon from '@/Components/Icon/Icon'
-import { AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 
 export const SuccessPrompt = ({
   ctaRef,
@@ -10,7 +9,7 @@ export const SuccessPrompt = ({
 }) => {
   return (
     <>
-      <AlertDialogLabel>
+      <div>
         <div className="flex justify-end p-1">
           <button
             className="flex cursor-pointer border-0 bg-transparent p-0"
@@ -27,11 +26,9 @@ export const SuccessPrompt = ({
           <Icon className={'h-24 w-24 px-7 py-2 text-[50px]'} size={'custom'} type={'🎉'} />
         </div>
         <div className="mb-1 text-center text-lg font-bold">Your purchase was successful!</div>
-      </AlertDialogLabel>
+      </div>
 
-      <AlertDialogDescription className="mb-2 px-4.5 text-center text-sm text-passive-1">
-        Enjoy your new powered up experience.
-      </AlertDialogDescription>
+      <div className="mb-2 px-4.5 text-center text-sm text-passive-1">Enjoy your new powered up experience.</div>
 
       <div className="p-4">
         <button

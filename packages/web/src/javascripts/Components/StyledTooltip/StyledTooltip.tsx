@@ -1,14 +1,27 @@
-import { Tooltip } from '@reach/tooltip'
-import styled from 'styled-components'
+import { classNames } from '@standardnotes/snjs'
+import { ReactNode } from 'react'
+import { Tooltip, TooltipAnchor, useTooltipStore } from '@ariakit/react'
+import { Slot } from '@radix-ui/react-slot'
 
-export default styled(Tooltip)`
-  &[data-reach-tooltip] {
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-    padding: 0.375rem 0.75rem;
-    background-color: var(--sn-stylekit-contrast-background-color);
-    color: var(--sn-stylekit-foreground-color);
-    border-color: var(--sn-stylekit-border-color);
-    z-index: var(--z-index-tooltip);
-  }
-`
+const StyledTooltip = ({ children, className, label }: { children: ReactNode; className?: string; label: string }) => {
+  const tooltip = useTooltipStore()
+
+  return (
+    <>
+      <TooltipAnchor store={tooltip} as={Slot}>
+        {children}
+      </TooltipAnchor>
+      <Tooltip
+        store={tooltip}
+        className={classNames(
+          'z-tooltip rounded border border-border bg-contrast py-1.5 px-3 text-sm text-foreground shadow',
+          className,
+        )}
+      >
+        {label}
+      </Tooltip>
+    </>
+  )
+}
+
+export default StyledTooltip

@@ -58,12 +58,12 @@ const Credentials: FunctionComponent<Props> = ({ application }: Props) => {
             Current password was set on <span className="font-bold">{passwordCreatedOn}</span>
           </Text>
           <Button className="mt-3 min-w-20" label="Change password" onClick={presentPasswordWizard} />
-          <ModalOverlay isOpen={isChangeEmailDialogOpen} onDismiss={closeChangeEmailDialog}>
+          <ModalOverlay isOpen={isChangeEmailDialogOpen}>
             <ChangeEmail onCloseDialog={closeChangeEmailDialog} application={application} />
           </ModalOverlay>
         </PreferencesSegment>
       </PreferencesGroup>
-      <ModalOverlay isOpen={shouldShowPasswordWizard} onDismiss={dismissPasswordWizard}>
+      <ModalOverlay isOpen={shouldShowPasswordWizard}>
         <PasswordWizard application={application} dismissModal={dismissPasswordWizard} />
       </ModalOverlay>
     </>

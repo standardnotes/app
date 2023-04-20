@@ -1,35 +1,37 @@
 import { mergeRefs } from '@/Hooks/mergeRefs'
-import { DialogOverlay, DialogOverlayProps } from '@reach/dialog'
-import { classNames } from '@standardnotes/snjs'
+import { Dialog, useDialogStore } from '@ariakit/react'
 import { ForwardedRef, forwardRef, ReactNode } from 'react'
 import { useModalAnimation } from '../Modal/useModalAnimation'
 
 type Props = {
   isOpen: boolean
-  onDismiss?: () => void
   children: ReactNode
-  className?: string
-} & DialogOverlayProps
+}
 
-const ModalOverlay = forwardRef(
-  ({ isOpen, onDismiss, children, className, ...props }: Props, ref: ForwardedRef<HTMLDivElement>) => {
-    const [isMounted, setElement] = useModalAnimation(isOpen)
+const ModalOverlay = forwardRef(({ isOpen, children, ...props }: Props, ref: ForwardedRef<HTMLDivElement>) => {
+  const [isMounted, setElement] = useModalAnimation(isOpen)
+  const dialog = useDialogStore({
+    open: isMounted,
+  })
 
-    if (!isMounted) {
-      return null
-    }
+  if (!isMounted) {
+    return null
+  }
 
-    return (
-      <DialogOverlay
-        className={classNames('p-0 md:px-0 md:opacity-100', className)}
-        onDismiss={onDismiss}
-        ref={mergeRefs([setElement, ref])}
-        {...props}
-      >
-        {children}
-      </DialogOverlay>
-    )
-  },
-)
+  return (
+    <Dialog
+      tabIndex={0}
+      className="h-full w-full"
+      backdropProps={{
+        className: '!z-modal',
+      }}
+      ref={mergeRefs([setElement, ref])}
+      store={dialog}
+      {...props}
+    >
+      {children}
+    </Dialog>
+  )
+})
 
 export default ModalOverlay

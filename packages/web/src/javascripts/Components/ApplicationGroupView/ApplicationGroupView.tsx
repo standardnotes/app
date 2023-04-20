@@ -4,7 +4,6 @@ import { Component } from 'react'
 import ApplicationView from '@/Components/ApplicationView/ApplicationView'
 import { WebOrDesktopDevice } from '@/Application/Device/WebOrDesktopDevice'
 import { ApplicationGroupEvent, ApplicationGroupEventData, DeinitSource } from '@standardnotes/snjs'
-import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { getPlatformString, isDesktopApplication } from '@/Utils'
 import DeallocateHandler from '../DeallocateHandler/DeallocateHandler'
 
@@ -21,6 +20,20 @@ type State = {
   dealloced?: boolean
   deallocSource?: DeinitSource
   deviceDestroyed?: boolean
+}
+
+const renderDialog = (message: string) => {
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-passive-5" role="alert">
+      <div
+        className={
+          'challenge-modal shadow-overlay-light relative flex max-w-125 flex-col items-center rounded border border-solid border-border bg-default p-6'
+        }
+      >
+        <div className="text-base lg:text-xs">{message}</div>
+      </div>
+    </div>
+  )
 }
 
 class ApplicationGroupView extends Component<Props, State> {
@@ -83,21 +96,6 @@ class ApplicationGroupView extends Component<Props, State> {
   }
 
   override render() {
-    const renderDialog = (message: string) => {
-      return (
-        <DialogOverlay className={'sn-component challenge-modal-overlay'}>
-          <DialogContent
-            aria-label="Switching workspace"
-            className={
-              'challenge-modal shadow-overlay-light relative flex flex-col items-center rounded border border-solid border-border bg-default p-8'
-            }
-          >
-            <div className="text-base lg:text-xs">{message}</div>
-          </DialogContent>
-        </DialogOverlay>
-      )
-    }
-
     if (this.state.deviceDestroyed) {
       const message = `Secure memory has destroyed this application instance. ${
         isDesktopApplication()

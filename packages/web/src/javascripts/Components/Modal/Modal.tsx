@@ -1,6 +1,5 @@
 import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 import { isIOS } from '@/Utils'
-import { DialogContent } from '@reach/dialog'
 import { classNames } from '@standardnotes/snjs'
 import { ReactNode, useMemo, useRef, useState } from 'react'
 import Button from '../Button/Button'
@@ -26,6 +25,7 @@ type Props = {
   className?: {
     content?: string
     description?: string
+    backdrop?: string
   }
   customHeader?: ReactNode
   disableCustomHeader?: boolean
@@ -95,13 +95,17 @@ const Modal = ({
   return (
     <>
       <ModalAndroidBackHandler close={close} />
-      <DialogContent
-        tabIndex={0}
+      <div
+        className={classNames('absolute z-0 h-full w-full bg-passive-5 opacity-0 md:opacity-75', className?.backdrop)}
+        role="presentation"
+        onClick={close}
+      />
+      <div
         className={classNames(
-          'm-0 flex h-full w-full flex-col border-solid border-border bg-default p-0 md:h-auto md:max-h-[85vh] md:w-160 md:rounded md:border md:shadow-main',
-          className.content,
+          'absolute z-[1] m-0 flex h-full w-full flex-col border-solid border-border bg-default p-0 md:h-auto md:max-h-[85vh] md:w-160 md:rounded md:border md:shadow-main',
+          'md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:transform',
+          className?.content,
         )}
-        aria-label={title}
       >
         {customHeader && !disableCustomHeader ? (
           customHeader
@@ -218,7 +222,7 @@ const Modal = ({
                 ))}
               </div>
             )}
-      </DialogContent>
+      </div>
     </>
   )
 }

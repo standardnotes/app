@@ -1,4 +1,4 @@
-import { AlertDialog } from '@reach/alert-dialog'
+import AlertDialog from '../AlertDialog/AlertDialog'
 import { FunctionComponent, useRef } from 'react'
 import { WebApplication } from '@/Application/Application'
 import { PremiumFeatureModalType } from './PremiumFeatureModalType'
@@ -30,9 +30,9 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
   }
 
   return (
-    <AlertDialog leastDestructiveRef={ctaButtonRef} className="p-0">
+    <AlertDialog closeDialog={onClose} className="!max-w-89">
       <div tabIndex={-1} className="sn-component bg-default">
-        <div tabIndex={0} className="max-w-89 rounded bg-default p-4 shadow-main">
+        <div tabIndex={0}>
           {type === PremiumFeatureModalType.UpgradePrompt && (
             <UpgradePrompt
               featureName={featureName}
