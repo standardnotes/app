@@ -1,7 +1,6 @@
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { SNApplication, SessionStrings, UuidString, SessionListEntry, isErrorResponse } from '@standardnotes/snjs'
 import { FunctionComponent, useState, useEffect, useRef, useMemo, useCallback } from 'react'
-import { Alert } from '@reach/alert'
 import { AlertDialog, AlertDialogDescription, AlertDialogLabel } from '@reach/alert-dialog'
 import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
@@ -135,7 +134,11 @@ const SessionsModalContent: FunctionComponent<{
             </div>
           ) : (
             <>
-              {errorMessage && <Alert className="sk-p bold">{errorMessage}</Alert>}
+              {errorMessage && (
+                <div role="alert" className="sk-p bold">
+                  {errorMessage}
+                </div>
+              )}
               {sessions.length > 0 && (
                 <ul>
                   {sessions.map((session) => (
