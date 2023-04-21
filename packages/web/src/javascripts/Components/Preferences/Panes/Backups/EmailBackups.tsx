@@ -125,14 +125,10 @@ const EmailBackups = ({ application }: Props) => {
               <Spinner className="h-4 w-4" />
             ) : (
               <Dropdown
-                id="def-editor-dropdown"
                 label="Select email frequency"
                 items={emailFrequencyOptions}
                 value={emailFrequency}
                 onChange={handleEmailFrequencyChange}
-                classNameOverride={{
-                  popover: '!z-modal',
-                }}
               />
             )}
           </div>

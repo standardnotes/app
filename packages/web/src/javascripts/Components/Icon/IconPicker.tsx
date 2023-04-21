@@ -14,19 +14,10 @@ type Props = {
   platform: Platform
   useIconGrid?: boolean
   iconGridClassName?: string
-  portalDropdown?: boolean
   className?: string
 }
 
-const IconPicker = ({
-  selectedValue,
-  onIconChange,
-  platform,
-  className,
-  useIconGrid,
-  portalDropdown,
-  iconGridClassName,
-}: Props) => {
+const IconPicker = ({ selectedValue, onIconChange, platform, className, useIconGrid, iconGridClassName }: Props) => {
   const iconKeys = useMemo(() => Object.keys(IconNameToSvgMapping), [])
 
   const iconOptions = useMemo(
@@ -127,12 +118,10 @@ const IconPicker = ({
           ) : (
             <Dropdown
               fullWidth={true}
-              id="change-tag-icon-dropdown"
               label="Change the icon for a tag"
               items={iconOptions}
               value={selectedValue as string}
               onChange={handleIconChange}
-              portal={portalDropdown}
             />
           ))}
         {currentType === 'emoji' && (

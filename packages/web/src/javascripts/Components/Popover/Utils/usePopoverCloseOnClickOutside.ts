@@ -23,8 +23,8 @@ export const usePopoverCloseOnClickOutside = ({
       const isAnchorElement = anchorElement ? anchorElement === event.target || anchorElement.contains(target) : false
       const closestPopoverId = target.closest('[data-popover]')?.getAttribute('data-popover')
       const isDescendantOfChildPopover = closestPopoverId && childPopovers.has(closestPopoverId)
-      const isPopoverInModal = popoverElement?.closest('[aria-modal="true"]')
-      const isDescendantOfModal = isPopoverInModal ? false : !!target.closest('[aria-modal="true"]')
+      const isPopoverInModal = popoverElement?.closest('[data-dialog]')
+      const isDescendantOfModal = isPopoverInModal ? false : !!target.closest('[data-dialog]')
 
       if (!isDescendantOfMenu && !isAnchorElement && !isDescendantOfChildPopover && !isDescendantOfModal) {
         if (!disabled) {

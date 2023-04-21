@@ -127,15 +127,11 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
               <Text>Theme to be used for system light mode:</Text>
               <div className="mt-2">
                 <Dropdown
-                  id="auto-light-theme-dropdown"
                   label="Select the automatic light theme"
                   items={themeItems}
                   value={autoLightTheme}
                   onChange={changeAutoLightTheme}
                   disabled={!useDeviceSettings}
-                  classNameOverride={{
-                    popover: '!z-modal',
-                  }}
                 />
               </div>
             </div>
@@ -145,15 +141,11 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
               <Text>Theme to be used for system dark mode:</Text>
               <div className="mt-2">
                 <Dropdown
-                  id="auto-dark-theme-dropdown"
                   label="Select the automatic dark theme"
                   items={themeItems}
                   value={autoDarkTheme}
                   onChange={changeAutoDarkTheme}
                   disabled={!useDeviceSettings}
-                  classNameOverride={{
-                    popover: '!z-modal',
-                  }}
                 />
               </div>
             </div>
