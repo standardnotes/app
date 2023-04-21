@@ -4230,51 +4230,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reach/auto-id@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@reach/auto-id@npm:0.18.0"
-  dependencies:
-    "@reach/utils": 0.18.0
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 75a37a0a09c382dfc358d37f3212cffdea2b4c80c2f555b7fee857af59a46e959324234be8dbb51c476fba0874ed93694254079192b478ce3e9abba5ce63fdec
-  languageName: node
-  linkType: hard
-
-"@reach/disclosure@npm:^0.18.0":
-  version: 0.18.0
-  resolution: "@reach/disclosure@npm:0.18.0"
-  dependencies:
-    "@reach/auto-id": 0.18.0
-    "@reach/polymorphic": 0.18.0
-    "@reach/utils": 0.18.0
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 77866743202a87e1c608fb41a56180b6676894a71b9853a6ca45408c82962f85fb7c3405e10c296518fcba95b0e7a4848ca681a6d8beb6d4574d548e606316d9
-  languageName: node
-  linkType: hard
-
-"@reach/polymorphic@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@reach/polymorphic@npm:0.18.0"
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-  checksum: 0d62260a55c71e0dc95f38867f24b3d699e0bb7ea2273c6fa5a1fa3d804269e2deb63a458f1f1eb7b74c32bc0add3ab31a1c2668c1dee6b2837187876d3c4cc2
-  languageName: node
-  linkType: hard
-
-"@reach/utils@npm:0.18.0":
-  version: 0.18.0
-  resolution: "@reach/utils@npm:0.18.0"
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: eeda20a74c1db71e95680c622371c6efc46e2c767b28902bc43b580654436a34ec7f8b5f63c51a7c4cc8fd48c94066e3215496ba5a053c96e65c7a9bdcdc2687
-  languageName: node
-  linkType: hard
-
 "@react-native-async-storage/async-storage@npm:1.17.11":
   version: 1.17.11
   resolution: "@react-native-async-storage/async-storage@npm:1.17.11"
@@ -5558,7 +5513,6 @@ __metadata:
     "@lexical/react": 0.9.2
     "@pmmmwh/react-refresh-webpack-plugin": ^0.5.10
     "@radix-ui/react-slot": ^1.0.1
-    "@reach/disclosure": ^0.18.0
     "@simplewebauthn/browser": ^7.1.0
     "@standardnotes/authenticator": ^2.3.9
     "@standardnotes/autobiography-theme": ^1.2.7

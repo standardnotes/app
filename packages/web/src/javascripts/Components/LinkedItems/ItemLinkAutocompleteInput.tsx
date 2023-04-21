@@ -1,26 +1,18 @@
-import {
-  ChangeEventHandler,
-  FocusEventHandler,
-  FormEventHandler,
-  KeyboardEventHandler,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
-import { Disclosure, DisclosurePanel } from '@reach/disclosure'
-import { useCloseOnBlur } from '@/Hooks/useCloseOnBlur'
+import { FormEventHandler, KeyboardEventHandler, useDeferredValue, useEffect, useRef } from 'react'
 import { observer } from 'mobx-react-lite'
 import { classNames } from '@standardnotes/utils'
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
-import LinkedItemSearchResults from './LinkedItemSearchResults'
 import { LinkingController } from '@/Controllers/LinkingController'
-import { KeyboardKey } from '@standardnotes/ui-services'
 import { ElementIds } from '@/Constants/ElementIDs'
-import Menu from '../Menu/Menu'
 import { getLinkingSearchResults } from '@/Utils/Items/Search/getSearchResults'
 import { useApplication } from '../ApplicationProvider'
-import { DecryptedItem } from '@standardnotes/snjs'
+import { DecryptedItem, SNNote } from '@standardnotes/snjs'
+import { Combobox, ComboboxItem, ComboboxPopover, useComboboxStore, VisuallyHidden } from '@ariakit/react'
+import LinkedItemMeta from './LinkedItemMeta'
+import { LinkedItemSearchResultsAddTagOption } from './LinkedItemSearchResultsAddTagOption'
+import { Slot } from '@radix-ui/react-slot'
+import Icon from '../Icon/Icon'
+import { PremiumFeatureIconName } from '../Icon/PremiumFeatureIcon'
+import { KeyboardKey } from '@standardnotes/ui-services'
 
 type Props = {
   linkingController: LinkingController
@@ -45,33 +37,13 @@ const ItemLinkAutocompleteInput = ({
 
   const tagsLinkedToItem = getLinkedTagsForItem(item) || []
 
-  const [searchQuery, setSearchQuery] = useState('')
+  const combobox = useComboboxStore()
+  const value = combobox.useState('value')
+  const searchQuery = useDeferredValue(value)
+
   const { unlinkedItems, shouldShowCreateTag } = getLinkingSearchResults(searchQuery, application, item)
 
-  const [dropdownVisible, setDropdownVisible] = useState(false)
-  const [dropdownMaxHeight, setDropdownMaxHeight] = useState<number | 'auto'>('auto')
-
-  const containerRef = useRef<HTMLDivElement>(null)
-  const inputRef = useRef<HTMLInputElement>(null)
-  const searchResultsMenuRef = useRef<HTMLMenuElement>(null)
-
-  const [closeOnBlur] = useCloseOnBlur(containerRef, (visible: boolean) => {
-    setDropdownVisible(visible)
-    setSearchQuery('')
-  })
-
-  const showDropdown = () => {
-    const { clientHeight } = document.documentElement
-    const inputRect = inputRef.current?.getBoundingClientRect()
-    if (inputRect) {
-      setDropdownMaxHeight(clientHeight - inputRect.bottom - 32 * 2)
-      setDropdownVisible(true)
-    }
-  }
-
-  const onSearchQueryChange: ChangeEventHandler<HTMLInputElement> = (event) => {
-    setSearchQuery(event.currentTarget.value)
-  }
+  const inputRef = useRef<HTMLInputElement | null>(null)
 
   const onFormSubmit: FormEventHandler = async (event) => {
     event.preventDefault()
@@ -84,11 +56,6 @@ const ItemLinkAutocompleteInput = ({
     if (focusedId !== ElementIds.ItemLinkAutocompleteInput) {
       setFocusedId(ElementIds.ItemLinkAutocompleteInput)
     }
-    showDropdown()
-  }
-
-  const onBlur: FocusEventHandler = (event) => {
-    closeOnBlur(event)
   }
 
   const onKeyDown: KeyboardEventHandler = (event) => {
@@ -96,12 +63,6 @@ const ItemLinkAutocompleteInput = ({
       case KeyboardKey.Left:
         if (searchQuery.length === 0) {
           focusPreviousItem()
-        }
-        break
-      case KeyboardKey.Down:
-        if (searchQuery.length > 0) {
-          event.preventDefault()
-          searchResultsMenuRef.current?.focus()
         }
         break
     }
@@ -113,70 +74,63 @@ const ItemLinkAutocompleteInput = ({
     }
   }, [focusedId])
 
-  const areSearchResultsVisible = dropdownVisible && (unlinkedItems.length > 0 || shouldShowCreateTag)
-
-  const handleMenuKeyDown: KeyboardEventHandler<HTMLMenuElement> = useCallback((event) => {
-    if (event.key === KeyboardKey.Escape) {
-      inputRef.current?.focus()
-    }
-  }, [])
-
   return (
-    <div ref={containerRef}>
+    <div>
       <form onSubmit={onFormSubmit}>
-        <Disclosure open={dropdownVisible} onChange={showDropdown}>
-          <input
-            ref={inputRef}
+        <label>
+          <VisuallyHidden>Link tags, notes or files</VisuallyHidden>
+          <Combobox
+            store={combobox}
+            placeholder="Link tags, notes, files..."
             className={classNames(
               `${tagsLinkedToItem.length > 0 ? 'w-80' : 'mr-10 w-70'}`,
-              'bg-transparent text-sm text-text focus:border-b-2 focus:border-solid focus:border-info lg:text-xs',
-              'no-border h-7 focus:shadow-none focus:outline-none',
+              'h-7 w-70 bg-transparent text-sm text-text focus:border-b-2 focus:border-info focus:shadow-none focus:outline-none lg:text-xs',
             )}
-            value={searchQuery}
-            onChange={onSearchQueryChange}
-            type="text"
-            placeholder="Link tags, notes, files..."
-            onBlur={onBlur}
+            title={hoverLabel}
+            id={ElementIds.ItemLinkAutocompleteInput}
+            ref={inputRef}
             onFocus={handleFocus}
             onKeyDown={onKeyDown}
-            id={ElementIds.ItemLinkAutocompleteInput}
-            autoComplete="off"
-            title={hoverLabel}
-            aria-label={hoverLabel}
           />
-          {areSearchResultsVisible && (
-            <DisclosurePanel
-              className={classNames(
-                tagsLinkedToItem.length > 0 ? 'w-80' : 'mr-10 w-70',
-                'absolute z-dropdown-menu flex flex-col overflow-y-auto rounded bg-default py-2 shadow-main',
-              )}
-              style={{
-                maxHeight: dropdownMaxHeight,
-              }}
-              onBlur={closeOnBlur}
-              tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
-            >
-              <Menu
-                isOpen={areSearchResultsVisible}
-                a11yLabel="Unlinked items search results"
-                onKeyDown={handleMenuKeyDown}
-                ref={searchResultsMenuRef}
-                shouldAutoFocus={false}
-              >
-                <LinkedItemSearchResults
-                  createAndAddNewTag={createAndAddNewTag}
-                  linkItems={linkItems}
-                  item={item}
-                  results={unlinkedItems}
-                  searchQuery={searchQuery}
-                  shouldShowCreateTag={shouldShowCreateTag}
-                  onClickCallback={() => setSearchQuery('')}
-                  isEntitledToNoteLinking={isEntitledToNoteLinking}
-                />
-              </Menu>
-            </DisclosurePanel>
+        </label>
+        <ComboboxPopover
+          store={combobox}
+          className={classNames(
+            'z-dropdown-menu max-h-[var(--popover-available-height)] w-[var(--popover-anchor-width)] overflow-y-auto rounded bg-default py-2 shadow-main',
+            unlinkedItems.length === 0 && !shouldShowCreateTag && 'hidden',
           )}
-        </Disclosure>
+        >
+          {unlinkedItems.map((result) => {
+            const cannotLinkItem = !isEntitledToNoteLinking && result instanceof SNNote
+
+            return (
+              <ComboboxItem
+                key={result.uuid}
+                className="flex w-full cursor-pointer items-center justify-between gap-4 overflow-hidden py-2 px-3 hover:bg-contrast hover:text-foreground [&[data-active-item]]:bg-info-backdrop"
+                hideOnClick
+                onClick={() => {
+                  linkItems(item, result).catch(console.error)
+                  combobox.setValue('')
+                }}
+              >
+                <LinkedItemMeta item={result} searchQuery={searchQuery} />
+                {cannotLinkItem && <Icon type={PremiumFeatureIconName} className="ml-auto flex-shrink-0 text-info" />}
+              </ComboboxItem>
+            )
+          })}
+          {shouldShowCreateTag && (
+            <ComboboxItem
+              hideOnClick
+              as={Slot}
+              onClick={() => {
+                void createAndAddNewTag(searchQuery)
+                combobox.setValue('')
+              }}
+            >
+              <LinkedItemSearchResultsAddTagOption searchQuery={searchQuery} />
+            </ComboboxItem>
+          )}
+        </ComboboxPopover>
       </form>
     </div>
   )

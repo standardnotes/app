@@ -15,14 +15,14 @@ const AccordionItem: FunctionComponent<Props> = ({ title, className = '', childr
   return (
     <div className={className}>
       <div
-        className={'relative flex cursor-pointer hover:underline'}
+        className="relative flex cursor-pointer items-center justify-between hover:underline"
         onClick={() => {
           setIsExpanded(!isExpanded)
         }}
       >
         <Title>{title}</Title>
         <ArrowDownCheckmarkIcon
-          className={'sn-accordion-arrow-icon absolute right-0'}
+          className="sn-accordion-arrow-icon"
           width={20}
           height={20}
           data-is-expanded={isExpanded}
