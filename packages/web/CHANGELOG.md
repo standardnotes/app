@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.151.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.151.7...@standardnotes/web@3.151.8) (2023-04-21)
+
+### Bug Fixes
+
+* Fixed issue on desktop where custom titlebar would overlap with preferences view header ([87cd75d](https://github.com/standardnotes/app/commit/87cd75d3244e05b3d9dfb26c8ea907564b98826b))
+
 ## [3.151.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.151.6...@standardnotes/web@3.151.7) (2023-04-21)
 
 **Note:** Version bump only for package @standardnotes/web
