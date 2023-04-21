@@ -78,7 +78,6 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
           }}
           classNameOverride={{
             wrapper: 'relative',
-            popover: 'bottom-full w-full max-h-max',
             button: 'focus:outline-none focus:shadow-none focus:ring-none',
           }}
         />
