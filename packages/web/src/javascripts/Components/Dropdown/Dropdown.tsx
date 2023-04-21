@@ -75,7 +75,7 @@ const Dropdown = ({ label, value, onChange, items, disabled, fullWidth, classNam
       <SelectPopover
         store={select}
         className={classNames(
-          'w-[var(--popover-anchor-width)] rounded border border-border bg-default py-1',
+          'max-h-[var(--popover-available-height)] w-[var(--popover-anchor-width)] overflow-y-auto rounded border border-border bg-default py-1',
           classNameOverride.popover,
         )}
       >
