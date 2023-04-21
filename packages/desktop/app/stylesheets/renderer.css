@@ -37,7 +37,6 @@ panel-resizer {
   display: flex;
   justify-content: space-between;
   z-index: 99999;
-  position: absolute;
   width: 100%;
   top: 0;
 }
@@ -83,4 +82,15 @@ input,
 #navigation #navigation-content,
 .panel-resizer {
   -webkit-app-region: no-drag;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+#app-group-root {
+  min-height: 0;
 }
