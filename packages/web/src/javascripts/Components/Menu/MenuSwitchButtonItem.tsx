@@ -4,13 +4,12 @@ import { PlatformedKeyboardShortcut } from '@standardnotes/ui-services'
 import { ComponentPropsWithoutRef, ForwardedRef, forwardRef, ReactNode } from 'react'
 import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
 import Switch from '../Switch/Switch'
-import { SwitchProps } from '../Switch/SwitchProps'
 import MenuListItem from './MenuListItem'
 
 type Props = {
   checked: boolean
   children: ReactNode
-  onChange: NonNullable<SwitchProps['onChange']>
+  onChange: (checked: boolean) => void
   shortcut?: PlatformedKeyboardShortcut
 } & Omit<ComponentPropsWithoutRef<'button'>, 'onChange'>
 
@@ -42,7 +41,7 @@ const MenuSwitchButtonItem = forwardRef(
           <span className="flex flex-grow items-center">{children}</span>
           <div className="flex items-center">
             {shortcut && <KeyboardShortcutIndicator className="mr-2" shortcut={shortcut} />}
-            <Switch disabled={disabled} className="px-0" checked={checked} />
+            <Switch disabled={disabled} className="pointer-events-none px-0" checked={checked} onChange={onChange} />
           </div>
         </button>
       </MenuListItem>

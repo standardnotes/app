@@ -4272,21 +4272,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@reach/checkbox@npm:^0.18.0":
-  version: 0.18.0
-  resolution: "@reach/checkbox@npm:0.18.0"
-  dependencies:
-    "@reach/auto-id": 0.18.0
-    "@reach/machine": 0.18.0
-    "@reach/polymorphic": 0.18.0
-    "@reach/utils": 0.18.0
-  peerDependencies:
-    react: ^16.8.0 || 17.x
-    react-dom: ^16.8.0 || 17.x
-  checksum: 6f40bfb54661af2ae70a161e4275f8f7b36622ea33c74dbcc4370bd2deca71dc468fefc96668a62a1efd690f934d6e5d974f7c8a7e08bdb6b88a4bad960f347e
-  languageName: node
-  linkType: hard
-
 "@reach/descendants@npm:0.18.0":
   version: 0.18.0
   resolution: "@reach/descendants@npm:0.18.0"
@@ -5694,7 +5679,6 @@ __metadata:
     "@lexical/react": 0.9.2
     "@pmmmwh/react-refresh-webpack-plugin": ^0.5.10
     "@radix-ui/react-slot": ^1.0.1
-    "@reach/checkbox": ^0.18.0
     "@reach/disclosure": ^0.18.0
     "@reach/listbox": ^0.18.0
     "@simplewebauthn/browser": ^7.1.0
