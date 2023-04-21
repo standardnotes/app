@@ -94,14 +94,10 @@ const EditorDefaults = ({ application }: Props) => {
             <Text>Sets the font size in plaintext and Super notes</Text>
             <div className="mt-2">
               <Dropdown
-                id="def-font-size"
                 label="Select the font size for plaintext notes"
                 items={fontSizeDropdownOptions}
                 value={fontSize}
                 onChange={handleFontSizeChange}
-                classNameOverride={{
-                  popover: '!z-modal',
-                }}
               />
             </div>
           </div>
@@ -111,14 +107,10 @@ const EditorDefaults = ({ application }: Props) => {
             <Text>Sets the line height (leading) in plaintext and Super notes</Text>
             <div className="mt-2">
               <Dropdown
-                id="def-line-height"
                 label="Select the line height for plaintext notes"
                 items={lineHeightDropdownOptions}
                 value={lineHeight}
                 onChange={handleLineHeightChange}
-                classNameOverride={{
-                  popover: '!z-modal',
-                }}
               />
             </div>
           </div>

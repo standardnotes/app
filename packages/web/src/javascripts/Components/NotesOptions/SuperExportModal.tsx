@@ -47,7 +47,6 @@ const SuperExportModal = ({ exportNotes, close }: Props) => {
           We detected your selection includes Super notes. How do you want to export them?
         </div>
         <Dropdown
-          id="export-format-dropdown"
           label="Super notes export format"
           items={[
             { label: 'Keep as Super', value: 'json' },
@@ -61,7 +60,6 @@ const SuperExportModal = ({ exportNotes, close }: Props) => {
               value as PrefValue[PrefKey.SuperNoteExportFormat],
             )
           }}
-          portal={false}
         />
       </div>
       <div className="text-passive-0">

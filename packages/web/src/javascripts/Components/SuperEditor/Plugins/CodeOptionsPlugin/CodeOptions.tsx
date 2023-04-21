@@ -90,7 +90,6 @@ const CodeOptionsPlugin = () => {
     <>
       <div className="absolute top-2 right-6 rounded border border-border bg-default p-2">
         <Dropdown
-          id="code-language-dropdown"
           label="Change code block language"
           items={CODE_LANGUAGE_OPTIONS.map(([value, label]) => ({
             label,

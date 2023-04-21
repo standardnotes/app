@@ -155,7 +155,6 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
             <label className="text-sm font-medium text-neutral">
               Device:
               <Dropdown
-                id={'photo-capture-device-dropdown'}
                 label={'Photo Capture Device'}
                 items={devicesAsDropdownItems}
                 value={recorder.selectedDevice.deviceId}
@@ -164,7 +163,6 @@ const PhotoCaptureModal = ({ filesController, close }: Props) => {
                 }}
                 classNameOverride={{
                   wrapper: 'mt-1',
-                  popover: 'z-modal',
                 }}
               />
             </label>

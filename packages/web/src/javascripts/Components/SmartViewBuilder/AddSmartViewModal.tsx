@@ -181,7 +181,6 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
                   }}
                   platform={platform}
                   useIconGrid={true}
-                  portalDropdown={false}
                 />
               </div>
             </Popover>

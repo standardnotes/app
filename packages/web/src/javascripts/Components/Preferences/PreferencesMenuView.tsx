@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useMemo } from 'react'
-import styled from 'styled-components'
 import Dropdown from '../Dropdown/Dropdown'
 import { DropdownItem } from '../Dropdown/DropdownItem'
 import PreferencesMenuItem from './PreferencesComponents/MenuItem'
@@ -13,19 +12,6 @@ import { isIOS } from '@/Utils'
 type Props = {
   menu: PreferencesMenu
 }
-
-const StyledDropdown = styled(Dropdown)`
-  [data-reach-listbox-button] {
-    background: var(--sn-stylekit-contrast-background-color);
-    color: var(--sn-stylekit-info-color);
-    font-weight: bold;
-    padding: 0.55rem 0.875rem;
-
-    [data-reach-listbox-arrow] svg {
-      fill: var(--sn-stylekit-info-color);
-    }
-  }
-`
 
 const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
   const application = useApplication()
@@ -83,8 +69,7 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
         ))}
       </div>
       <div className="md:hidden">
-        <StyledDropdown
-          id="preferences-menu"
+        <Dropdown
           items={dropdownMenuItems}
           label="Preferences Menu"
           value={selectedPaneId}
@@ -94,8 +79,8 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
           classNameOverride={{
             wrapper: 'relative',
             popover: 'bottom-full w-full max-h-max',
+            button: 'focus:outline-none focus:shadow-none focus:ring-none',
           }}
-          portal={false}
         />
       </div>
     </div>
