@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.52.13](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.52.12...@standardnotes/mobile@3.52.13) (2023-04-24)
+
+### Bug Fixes
+
+* **mobile:** Fixed issue where files could not downloaded on Android ([a99aaee](https://github.com/standardnotes/app/commit/a99aaee37946a49dbd0b2f18613cb2702067e0cc))
+
 ## [3.52.12](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.52.11...@standardnotes/mobile@3.52.12) (2023-04-24)
 
 **Note:** Version bump only for package @standardnotes/mobile
