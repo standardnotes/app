@@ -5,7 +5,6 @@ import { observer } from 'mobx-react-lite'
 import { useRef, useCallback } from 'react'
 import RoundIconButton from '../Button/RoundIconButton'
 import Popover from '../Popover/Popover'
-import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import LinkedItemsPanel from './LinkedItemsPanel'
 
 type Props = {
@@ -33,9 +32,7 @@ const LinkedItemsButton = ({ linkingController, filesController, onClickPreproce
 
   return (
     <>
-      <StyledTooltip label="Linked items panel">
-        <RoundIconButton label="Linked items panel" onClick={toggleMenu} ref={buttonRef} icon="link" />
-      </StyledTooltip>
+      <RoundIconButton label="Linked items panel" onClick={toggleMenu} ref={buttonRef} icon="link" />
       <Popover
         title="Linked items"
         togglePopover={toggleMenu}

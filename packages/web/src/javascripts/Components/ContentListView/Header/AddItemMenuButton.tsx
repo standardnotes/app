@@ -9,6 +9,7 @@ import { FilesController } from '@/Controllers/FilesController'
 import { PhotoRecorder } from '@/Controllers/Moments/PhotoRecorder'
 import { classNames } from '@standardnotes/snjs'
 import { useEffect, useRef, useState } from 'react'
+import StyledTooltip from '@/Components/StyledTooltip/StyledTooltip'
 
 type Props = {
   isDailyEntry: boolean
@@ -47,24 +48,25 @@ const AddItemMenuButton = ({
 
   return (
     <>
-      <button
-        className={classNames(
-          'z-editor-title-bar hidden h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-transparent hover:brightness-125 md:flex',
-          isDailyEntry ? 'bg-danger text-danger-contrast' : 'bg-info text-info-contrast',
-        )}
-        title={addButtonLabel}
-        aria-label={addButtonLabel}
-        onClick={() => {
-          if (canShowMenu) {
-            setIsMenuOpen((isOpen) => !isOpen)
-          } else {
-            addNewItem()
-          }
-        }}
-        ref={addItemButtonRef}
-      >
-        <Icon type="add" size="custom" className="h-5 w-5" />
-      </button>
+      <StyledTooltip label={addButtonLabel}>
+        <button
+          className={classNames(
+            'z-editor-title-bar hidden h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-solid border-transparent hover:brightness-125 md:flex',
+            isDailyEntry ? 'bg-danger text-danger-contrast' : 'bg-info text-info-contrast',
+          )}
+          aria-label={addButtonLabel}
+          onClick={() => {
+            if (canShowMenu) {
+              setIsMenuOpen((isOpen) => !isOpen)
+            } else {
+              addNewItem()
+            }
+          }}
+          ref={addItemButtonRef}
+        >
+          <Icon type="add" size="custom" className="h-5 w-5" />
+        </button>
+      </StyledTooltip>
       <Popover
         title="Add item"
         open={canShowMenu && isMenuOpen}
