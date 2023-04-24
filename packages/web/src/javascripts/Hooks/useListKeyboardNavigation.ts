@@ -56,6 +56,12 @@ export const useListKeyboardNavigation = (
 
   const keyDownHandler = useCallback(
     (e: KeyboardEvent) => {
+      const isFocusInInput = document.activeElement?.tagName === 'INPUT'
+
+      if (isFocusInInput) {
+        return
+      }
+
       if (e.key === KeyboardKey.Up || e.key === KeyboardKey.Down) {
         e.preventDefault()
       } else {
