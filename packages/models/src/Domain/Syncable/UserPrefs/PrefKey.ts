@@ -42,6 +42,7 @@ export enum PrefKey {
   DarkMode = 'darkMode',
   DefaultEditorIdentifier = 'defaultEditorIdentifier',
   MomentsDefaultTagUuid = 'momentsDefaultTagUuid',
+  ClipperDefaultTagUuid = 'clipperDefaultTagUuid',
   SystemViewPreferences = 'systemViewPreferences',
   SuperNoteExportFormat = 'superNoteExportFormat',
   AuthenticatorNames = 'authenticatorNames',
@@ -111,6 +112,7 @@ export type PrefValue = {
   [PrefKey.DarkMode]: boolean
   [PrefKey.DefaultEditorIdentifier]: EditorIdentifier
   [PrefKey.MomentsDefaultTagUuid]: string | undefined
+  [PrefKey.ClipperDefaultTagUuid]: string | undefined
   [PrefKey.SystemViewPreferences]: Partial<Record<SystemViewId, TagPreferences>>
   [PrefKey.SuperNoteExportFormat]: 'json' | 'md' | 'html'
   [PrefKey.AuthenticatorNames]: string

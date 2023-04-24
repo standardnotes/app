@@ -15,11 +15,14 @@ import { confirmDialog } from '@standardnotes/ui-services'
 import {
   ApplicationEvent,
   ContentType,
+  DecryptedItem,
   FeatureIdentifier,
   FeatureStatus,
   NoteContent,
   NoteType,
+  PrefKey,
   SNNote,
+  SNTag,
 } from '@standardnotes/snjs'
 import { addToast, ToastType } from '@standardnotes/toast'
 import { getSuperJSONFromClipPayload } from './getSuperJSONFromClipHTML'
@@ -28,6 +31,11 @@ import { PremiumFeatureIconClass, PremiumFeatureIconName } from '../Icon/Premium
 import Button from '../Button/Button'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 import { useStateRef } from '@/Hooks/useStateRef'
+import usePreference from '@/Hooks/usePreference'
+import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
+import ItemSelectionDropdown from '../ItemSelectionDropdown/ItemSelectionDropdown'
+import LinkedItemBubble from '../LinkedItems/LinkedItemBubble'
+import StyledTooltip from '../StyledTooltip/StyledTooltip'
 
 const Header = () => (
   <div className="flex items-center border-b border-border p-1 px-3 py-2 text-base font-semibold text-info-contrast">
@@ -77,6 +85,30 @@ const ClipperView = ({
           break
       }
     })
+  }, [application])
+
+  const defaultTagId = usePreference<string>(PrefKey.ClipperDefaultTagUuid)
+  const [defaultTag, setDefaultTag] = useState<SNTag | undefined>()
+
+  useEffect(() => {
+    if (!defaultTagId) {
+      setDefaultTag(undefined)
+      return
+    }
+
+    const tag = application.items.findItem(defaultTagId) as SNTag | undefined
+    setDefaultTag(tag)
+  }, [defaultTagId, application])
+
+  const selectTag = useCallback(
+    (tag: DecryptedItem) => {
+      void application.setPreference(PrefKey.ClipperDefaultTagUuid, tag.uuid)
+    },
+    [application],
+  )
+
+  const unselectTag = useCallback(async () => {
+    void application.setPreference(PrefKey.ClipperDefaultTagUuid, undefined)
   }, [application])
 
   const [menuPane, setMenuPane] = useState<AccountMenuPane>()
@@ -167,18 +199,24 @@ const ClipperView = ({
         references: [],
       })
 
-      void application.items.insertItem(note).then((note) => {
-        setClippedNote(note as SNNote)
-        addToast({
-          type: ToastType.Success,
-          message: 'Note clipped successfully',
-        })
-        void application.sync.sync()
+      const insertedNote = await application.items.insertItem(note)
+
+      if (defaultTag) {
+        await application.linkingController.linkItems(insertedNote, defaultTag)
+      }
+
+      setClippedNote(insertedNote as SNNote)
+
+      addToast({
+        type: ToastType.Success,
+        message: 'Note clipped successfully',
       })
+
+      void application.sync.sync()
     }
 
     void createNoteFromClip()
-  }, [application.items, application.sync, clipPayload, isEntitledRef])
+  }, [application.items, application.linkingController, application.sync, clipPayload, defaultTag, isEntitledRef])
 
   const upgradePlan = useCallback(async () => {
     if (hasSubscription) {
@@ -309,6 +347,34 @@ const ClipperView = ({
           >
             Select elements to clip
           </MenuItem>
+          <div className="border-t border-border px-3 py-3 text-base text-foreground">
+            <div className="flex items-center justify-between">
+              <div className="font-medium">Default tag:</div>
+              {defaultTag && (
+                <StyledTooltip label="Remove default tag" gutter={2}>
+                  <button className="rounded-full p-1 hover:bg-contrast hover:text-info" onClick={unselectTag}>
+                    <Icon type="clear-circle-filled" />
+                  </button>
+                </StyledTooltip>
+              )}
+            </div>
+            {defaultTag && (
+              <div>
+                <LinkedItemBubble
+                  className="m-1 mr-2"
+                  link={createLinkFromItem(defaultTag, 'linked')}
+                  unlinkItem={unselectTag}
+                  isBidirectional={false}
+                  inlineFlex={true}
+                />
+              </div>
+            )}
+            <ItemSelectionDropdown
+              onSelection={selectTag}
+              placeholder="Select tag to save clipped notes to..."
+              contentTypes={[ContentType.Tag]}
+            />
+          </div>
           <div className="border-t border-border px-3 pt-3 pb-1 text-base text-foreground">
             <div>You're signed in as:</div>
             <div className="wrap my-0.5 font-bold">{user.email}</div>
