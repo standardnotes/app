@@ -1,10 +1,19 @@
 import { classNames } from '@standardnotes/snjs'
 import { ReactNode } from 'react'
-import { Tooltip, TooltipAnchor, useTooltipStore } from '@ariakit/react'
+import { Tooltip, TooltipAnchor, TooltipStoreProps, useTooltipStore } from '@ariakit/react'
 import { Slot } from '@radix-ui/react-slot'
 
-const StyledTooltip = ({ children, className, label }: { children: ReactNode; className?: string; label: string }) => {
-  const tooltip = useTooltipStore()
+const StyledTooltip = ({
+  children,
+  className,
+  label,
+  ...props
+}: {
+  children: ReactNode
+  className?: string
+  label: string
+} & Partial<TooltipStoreProps>) => {
+  const tooltip = useTooltipStore(props)
 
   return (
     <>
