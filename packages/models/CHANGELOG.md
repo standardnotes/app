@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.44.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.43.16...@standardnotes/models@1.44.0) (2023-04-24)
+
+### Features
+
+* **clipper:** Added default tag setting to clipper ([2ce2b84](https://github.com/standardnotes/app/commit/2ce2b8410f5053f77d02b93dbb80aad5f33c728c))
+
 ## [1.43.16](https://github.com/standardnotes/app/compare/@standardnotes/models@1.43.15...@standardnotes/models@1.43.16) (2023-04-17)
 
 **Note:** Version bump only for package @standardnotes/models

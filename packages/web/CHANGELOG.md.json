@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.152.0",
+      "title": "[3.152.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.151.10...@standardnotes/web@3.152.0) (2023-04-24)",
+      "date": null,
+      "body": "### Features\n\n* **clipper:** Added default tag setting to clipper ([2ce2b84](https://github.com/standardnotes/app/commit/2ce2b8410f5053f77d02b93dbb80aad5f33c728c))",
+      "parsed": {
+        "_": [
+          "clipper: Added default tag setting to clipper (2ce2b84)"
+        ],
+        "Features": [
+          "clipper: Added default tag setting to clipper (2ce2b84)"
+        ]
+      }
+    },
+    {
       "version": "3.151.10",
       "title": "[3.151.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.151.9...@standardnotes/web@3.151.10) (2023-04-23)",
       "date": null,
