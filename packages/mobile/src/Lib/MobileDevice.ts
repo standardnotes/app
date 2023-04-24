@@ -415,29 +415,13 @@ export class MobileDevice implements MobileDeviceInterface {
     return `${directory}/${filename}`
   }
 
-  async hasStoragePermissionOnAndroid(): Promise<boolean> {
-    if (Platform.OS !== 'android') {
-      return true
-    }
-    const grantedStatus = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)
-    if (grantedStatus === PermissionsAndroid.RESULTS.GRANTED) {
-      return true
-    }
-    Alert.alert(
-      'Storage permissions are required in order to download files. Please accept the permissions prompt and try again.',
-    )
-    return false
-  }
-
   async downloadBase64AsFile(
     base64: string,
     filename: string,
     saveInTempLocation = false,
   ): Promise<string | undefined> {
-    const isGrantedStoragePermissionOnAndroid = await this.hasStoragePermissionOnAndroid()
-
-    if (!isGrantedStoragePermissionOnAndroid) {
-      return
+    if (Platform.OS === 'android') {
+      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)
     }
 
     try {
