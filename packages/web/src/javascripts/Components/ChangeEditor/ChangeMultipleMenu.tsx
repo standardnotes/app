@@ -185,7 +185,7 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
           <SuperNoteImporter
             note={confirmationQueue[0]}
             application={application}
-            onConvertComplete={handleSuperNoteConversionCompletion}
+            onComplete={handleSuperNoteConversionCompletion}
             closeDialog={closeCurrentSuperNoteImporter}
           />
         )}

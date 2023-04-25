@@ -14,6 +14,7 @@ import { SuperNoteImporter } from '../SuperEditor/SuperNoteImporter'
 import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
 import { Pill } from '../Preferences/PreferencesComponents/Content'
 import ModalOverlay from '../Modal/ModalOverlay'
+import SuperNoteConverter from '../SuperEditor/SuperNoteConverter'
 
 type ChangeEditorMenuProps = {
   application: WebApplication
@@ -43,8 +44,12 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   )
   const groups = useMemo(() => createEditorMenuGroups(application, editors), [application, editors])
   const [currentComponent, setCurrentComponent] = useState<SNComponent>()
-  const [showSuperImporter, setShowSuperImporter] = useState(false)
-  const [pendingSuperItem, setPendingSuperItem] = useState<EditorMenuItem | null>(null)
+  const [pendingConversionItem, setPendingConversionItem] = useState<EditorMenuItem | null>(null)
+
+  const showSuperNoteImporter =
+    !!pendingConversionItem && note?.noteType !== NoteType.Super && pendingConversionItem.noteType === NoteType.Super
+  const showSuperNoteConverter =
+    !!pendingConversionItem && note?.noteType === NoteType.Super && pendingConversionItem.noteType !== NoteType.Super
 
   useEffect(() => {
     if (note) {
@@ -114,15 +119,28 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         return
       }
 
-      if (note?.locked) {
+      if (!note) {
+        return
+      }
+
+      if (note.locked) {
         application.alertService.alert(STRING_EDIT_LOCKED_ATTEMPT).catch(console.error)
         return
       }
 
       if (itemToBeSelected.noteType === NoteType.Super) {
-        setPendingSuperItem(itemToBeSelected)
+        if (note.noteType === NoteType.Super) {
+          return
+        }
+
+        setPendingConversionItem(itemToBeSelected)
         handleDisableClickoutsideRequest?.()
-        setShowSuperImporter(true)
+        return
+      }
+
+      if (note.noteType === NoteType.Super) {
+        setPendingConversionItem(itemToBeSelected)
+        handleDisableClickoutsideRequest?.()
         return
       }
 
@@ -139,7 +157,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         }
       }
 
-      if (shouldMakeSelection && note) {
+      if (shouldMakeSelection) {
         if (itemToBeSelected.component) {
           selectComponent(itemToBeSelected.component, note).catch(console.error)
         } else {
@@ -166,16 +184,23 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     ],
   )
 
-  const handleSuperNoteConversionCompletion = useCallback(() => {
-    if (!pendingSuperItem || !note) {
+  const handleConversionCompletion = useCallback(() => {
+    if (!pendingConversionItem || !note) {
       return
     }
 
-    selectNonComponent(pendingSuperItem, note).catch(console.error)
-    closeMenu()
-  }, [note, pendingSuperItem, selectNonComponent, closeMenu])
+    if (pendingConversionItem.component) {
+      selectComponent(pendingConversionItem.component, note).catch(console.error)
+      closeMenu()
+      return
+    }
 
-  const closeSuperNoteImporter = () => setShowSuperImporter(false)
+    selectNonComponent(pendingConversionItem, note).catch(console.error)
+    closeMenu()
+  }, [pendingConversionItem, note, selectNonComponent, closeMenu, selectComponent])
+
+  const closeSuperNoteImporter = () => setPendingConversionItem(null)
+  const closeSuperNoteConverter = () => setPendingConversionItem(null)
 
   return (
     <>
@@ -223,13 +248,23 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
             )
           })}
       </Menu>
-      <ModalOverlay isOpen={showSuperImporter}>
+      <ModalOverlay isOpen={showSuperNoteImporter}>
         {note && (
           <SuperNoteImporter
             note={note}
             application={application}
-            onConvertComplete={handleSuperNoteConversionCompletion}
+            onComplete={handleConversionCompletion}
             closeDialog={closeSuperNoteImporter}
+          />
+        )}
+      </ModalOverlay>
+      <ModalOverlay isOpen={showSuperNoteConverter}>
+        {note && pendingConversionItem && (
+          <SuperNoteConverter
+            note={note}
+            convertTo={pendingConversionItem}
+            closeDialog={closeSuperNoteConverter}
+            onComplete={handleConversionCompletion}
           />
         )}
       </ModalOverlay>

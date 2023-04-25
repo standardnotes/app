@@ -17,9 +17,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 # [3.152.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.151.10...@standardnotes/web@3.152.0) (2023-04-24)
 
-### Features
-
-* **clipper:** Added default tag setting to clipper ([2ce2b84](https://github.com/standardnotes/app/commit/2ce2b8410f5053f77d02b93dbb80aad5f33c728c))
+**Note:** Version bump only for package @standardnotes/web
 
 ## [3.151.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.151.9...@standardnotes/web@3.151.10) (2023-04-23)
 

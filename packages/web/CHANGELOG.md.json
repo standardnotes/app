@@ -40,10 +40,7 @@
       "body": "### Features\n\n* **clipper:** Added default tag setting to clipper ([2ce2b84](https://github.com/standardnotes/app/commit/2ce2b8410f5053f77d02b93dbb80aad5f33c728c))",
       "parsed": {
         "_": [
-          "clipper: Added default tag setting to clipper (2ce2b84)"
-        ],
-        "Features": [
-          "clipper: Added default tag setting to clipper (2ce2b84)"
+          "Note: Version bump only for package @standardnotes/web"
         ]
       }
     },

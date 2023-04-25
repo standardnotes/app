@@ -21,6 +21,7 @@ export const exportSuperNote = (note: SNNote, format: 'txt' | 'md' | 'html' | 'j
 
   headlessEditor.update(() => {
     switch (format) {
+      case 'txt':
       case 'md':
         content = $convertToMarkdownString(MarkdownTransformers)
         break
@@ -28,9 +29,6 @@ export const exportSuperNote = (note: SNNote, format: 'txt' | 'md' | 'html' | 'j
         content = $generateHtmlFromNodes(headlessEditor)
         break
       case 'json':
-        content = JSON.stringify(headlessEditor.toJSON())
-        break
-      case 'txt':
       default:
         content = note.text
         break

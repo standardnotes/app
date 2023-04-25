@@ -15,10 +15,10 @@ type Props = {
   application: WebApplication
   note: SNNote
   closeDialog: () => void
-  onConvertComplete: () => void
+  onComplete: () => void
 }
 
-export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application, closeDialog, onConvertComplete }) => {
+export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application, closeDialog, onComplete }) => {
   const isSeamlessConvert = note.text.length === 0
   const [lastValue, setLastValue] = useState({ text: '', previewPlain: '' })
 
@@ -50,8 +50,8 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
 
     await performConvert(lastValue.text, lastValue.previewPlain)
 
-    onConvertComplete()
-  }, [closeDialog, performConvert, onConvertComplete, lastValue])
+    onComplete()
+  }, [closeDialog, performConvert, onComplete, lastValue])
 
   useEffect(() => {
     if (isSeamlessConvert) {
@@ -76,8 +76,8 @@ export const SuperNoteImporter: FunctionComponent<Props> = ({ note, application,
 
     await performConvert(note.text, note.preview_plain)
 
-    onConvertComplete()
-  }, [closeDialog, application, note, onConvertComplete, performConvert])
+    onComplete()
+  }, [closeDialog, application, note, onComplete, performConvert])
 
   const modalActions: ModalAction[] = useMemo(
     () => [
