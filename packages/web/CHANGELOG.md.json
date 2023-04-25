@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.153.0",
+      "title": "[3.153.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.152.3...@standardnotes/web@3.153.0) (2023-04-25)",
+      "date": null,
+      "body": "### Features\n\n* Changing note type from Super to any other type will now show a conversion dialog ([d2dba42](https://github.com/standardnotes/app/commit/d2dba42403e868a4f7a0d544b8e9bd87357fa8ef))",
+      "parsed": {
+        "_": [
+          "Changing note type from Super to any other type will now show a conversion dialog (d2dba42)"
+        ],
+        "Features": [
+          "Changing note type from Super to any other type will now show a conversion dialog (d2dba42)"
+        ]
+      }
+    },
+    {
       "version": "3.152.3",
       "title": "[3.152.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.152.2...@standardnotes/web@3.152.3) (2023-04-25)",
       "date": null,
@@ -37,7 +51,7 @@
       "version": "3.152.0",
       "title": "[3.152.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.151.10...@standardnotes/web@3.152.0) (2023-04-24)",
       "date": null,
-      "body": "### Features\n\n* **clipper:** Added default tag setting to clipper ([2ce2b84](https://github.com/standardnotes/app/commit/2ce2b8410f5053f77d02b93dbb80aad5f33c728c))",
+      "body": "**Note:** Version bump only for package @standardnotes/web",
       "parsed": {
         "_": [
           "Note: Version bump only for package @standardnotes/web"

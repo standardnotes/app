@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.153.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.152.3...@standardnotes/web@3.153.0) (2023-04-25)
+
+### Features
+
+* Changing note type from Super to any other type will now show a conversion dialog ([d2dba42](https://github.com/standardnotes/app/commit/d2dba42403e868a4f7a0d544b8e9bd87357fa8ef))
+
 ## [3.152.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.152.2...@standardnotes/web@3.152.3) (2023-04-25)
 
 **Note:** Version bump only for package @standardnotes/web
