@@ -498,6 +498,15 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
   }
 
   downloadFiles = async (files: FileItem[]) => {
-    await Promise.all(files.map((file) => this.downloadFile(file)))
+    await Promise.all(
+      files.map((file) =>
+        this.handleFileAction({
+          type: FileItemActionType.DownloadFile,
+          payload: {
+            file,
+          },
+        }),
+      ),
+    )
   }
 }

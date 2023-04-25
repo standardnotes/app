@@ -1,6 +1,7 @@
 import { FilesController } from '@/Controllers/FilesController'
 import { NoPreviewIllustration } from '@standardnotes/icons'
 import { FileItem } from '@standardnotes/snjs'
+import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemAction'
 import Button from '../Button/Button'
 
 type Props = {
@@ -32,7 +33,14 @@ const FilePreviewError = ({ file, filesController, isFilePreviewable, tryAgainCa
             </Button>
             <Button
               onClick={() => {
-                filesController.downloadFile(file).catch(console.error)
+                filesController
+                  .handleFileAction({
+                    type: FileItemActionType.DownloadFile,
+                    payload: {
+                      file,
+                    },
+                  })
+                  .catch(console.error)
               }}
             >
               Download
@@ -47,7 +55,12 @@ const FilePreviewError = ({ file, filesController, isFilePreviewable, tryAgainCa
           <Button
             primary
             onClick={() => {
-              filesController.downloadFile(file).catch(console.error)
+              filesController
+                .handleFileAction({
+                  type: FileItemActionType.DownloadFile,
+                  payload: { file },
+                })
+                .catch(console.error)
             }}
           >
             Download
