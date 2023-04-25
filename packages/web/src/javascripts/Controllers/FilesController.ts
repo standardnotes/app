@@ -246,7 +246,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     }
   }
 
-  public async downloadFile(file: FileItem): Promise<void> {
+  private async downloadFile(file: FileItem): Promise<void> {
     let downloadingToastId = ''
 
     try {
