@@ -18,10 +18,6 @@
     </script>
     <script>
         window.onerror = function (message, source, lineno, colno, error) {
-            var errorString = message + " (" + source + ":" + lineno + ")";
-            if (error) {
-                errorString += "\n" + error.stack;
-            }
             window.ReactNativeWebView.postMessage("appLoadError");
         };
     </script>
