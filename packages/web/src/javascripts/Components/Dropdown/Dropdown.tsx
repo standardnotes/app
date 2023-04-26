@@ -29,6 +29,13 @@ type DropdownProps = {
 const Dropdown = ({ label, value, onChange, items, disabled, fullWidth, classNameOverride = {} }: DropdownProps) => {
   const select = useSelectStore({
     defaultValue: value,
+    renderCallback(props) {
+      const { popoverElement, defaultRenderCallback } = props
+      defaultRenderCallback()
+      if (popoverElement) {
+        popoverElement.style.zIndex = 'var(--z-index-dropdown-menu)'
+      }
+    },
   })
 
   const selectedValue = select.useState('value')
