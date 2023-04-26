@@ -12,8 +12,7 @@ export function serverFeatures(): ServerFeatureDescription[] {
       permission_name: PermissionName.TwoFactorAuth,
     },
     {
-      availableInSubscriptions: [],
-      availableInRoles: ['INTERNAL_TEAM_USER'],
+      availableInSubscriptions: [SubscriptionName.ProPlan],
       name: 'U2F authentication',
       identifier: FeatureIdentifier.UniversalSecondFactor,
       permission_name: PermissionName.UniversalSecondFactor,

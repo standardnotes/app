@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.59.1](https://github.com/standardnotes/app/compare/@standardnotes/features@1.59.0...@standardnotes/features@1.59.1) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/features
+
 # [1.59.0](https://github.com/standardnotes/app/compare/@standardnotes/features@1.58.16...@standardnotes/features@1.59.0) (2023-04-17)
 
 ### Features
