@@ -16,7 +16,15 @@
         window.plansUrl = "https://standardnotes.com/plans";
         window.dashboardUrl = "https://standardnotes.com/dashboard";
     </script>
-
+    <script>
+        window.onerror = function (message, source, lineno, colno, error) {
+            var errorString = message + " (" + source + ":" + lineno + ")";
+            if (error) {
+                errorString += "\n" + error.stack;
+            }
+            window.ReactNativeWebView.postMessage("appLoadError");
+        };
+    </script>
     <script src="web-src/app.js"></script>
 </head>
 
