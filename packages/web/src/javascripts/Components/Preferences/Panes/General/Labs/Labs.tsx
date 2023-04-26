@@ -30,11 +30,11 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
   const [experimentalFeatures, setExperimentalFeatures] = useState<ExperimentalFeatureItem[]>([])
 
   const [isPaneGesturesEnabled, setIsPaneGesturesEnabled] = useState(() =>
-    application.getPreference(PrefKey.PaneGesturesEnabled),
+    application.getPreference(PrefKey.PaneGesturesEnabled, false),
   )
   useEffect(() => {
     return application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
-      setIsPaneGesturesEnabled(application.getPreference(PrefKey.PaneGesturesEnabled))
+      setIsPaneGesturesEnabled(application.getPreference(PrefKey.PaneGesturesEnabled, false))
     })
   }, [application])
 
@@ -69,7 +69,7 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
             <LabsFeature
               name="Pane switch gestures"
               description="Allows using gestures to navigate"
-              isEnabled={!!isPaneGesturesEnabled}
+              isEnabled={isPaneGesturesEnabled}
               toggleFeature={() => {
                 void application.setPreference(PrefKey.PaneGesturesEnabled, !isPaneGesturesEnabled)
               }}
