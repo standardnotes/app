@@ -18,6 +18,9 @@
     </script>
     <script>
         window.onerror = function (message, source, lineno, colno, error) {
+            if (document.readyState === "complete") {
+                return
+            }
             window.ReactNativeWebView.postMessage("appLoadError");
         };
     </script>
