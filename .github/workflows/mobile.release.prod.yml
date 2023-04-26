@@ -71,7 +71,7 @@ jobs:
     defaults:
       run:
         working-directory: packages/mobile
-    runs-on: macos-11
+    runs-on: macos-latest
     timeout-minutes: 90
     steps:
       - name: Checkout code
