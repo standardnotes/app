@@ -42,21 +42,6 @@ export function serverFeatures(): ServerFeatureDescription[] {
       permission_name: PermissionName.SignInAlerts,
     },
     {
-      availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
-      identifier: FeatureIdentifier.DailyDropboxBackup,
-      permission_name: PermissionName.DailyDropboxBackup,
-    },
-    {
-      availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
-      identifier: FeatureIdentifier.DailyGDriveBackup,
-      permission_name: PermissionName.DailyGDriveBackup,
-    },
-    {
-      availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
-      identifier: FeatureIdentifier.DailyOneDriveBackup,
-      permission_name: PermissionName.DailyOneDriveBackup,
-    },
-    {
       availableInSubscriptions: [SubscriptionName.ProPlan],
       identifier: FeatureIdentifier.FilesMaximumStorageTier,
       permission_name: PermissionName.FilesMaximumStorageTier,

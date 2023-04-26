@@ -29,7 +29,6 @@ import * as Models from '@standardnotes/models'
 import * as Responses from '@standardnotes/responses'
 import * as InternalServices from '../Services'
 import * as Utils from '@standardnotes/utils'
-import * as Settings from '@standardnotes/settings'
 import { Subscription } from '@standardnotes/security'
 import { UuidString, ApplicationEventPayload } from '../Types'
 import { applicationEventForSyncEvent } from '@Lib/Application/Event'
@@ -1152,10 +1151,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public isThirdPartyHostUsed(): boolean {
     return this.apiService.isThirdPartyHostUsed()
-  }
-
-  public getCloudProviderIntegrationUrl(cloudProviderName: Settings.CloudProvider): string {
-    return this.settingsService.getCloudProviderIntegrationUrl(cloudProviderName)
   }
 
   private constructServices() {
