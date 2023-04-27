@@ -20,6 +20,7 @@ import { isTesting, last } from '../Utils/Utils'
 import { BackupsManagerInterface } from './BackupsManagerInterface'
 
 function log(...message: any) {
+  // eslint-disable-next-line no-console
   console.log('BackupsManager:', ...message)
 }
 
@@ -36,43 +37,60 @@ export const enum EnsureRecentBackupExists {
 export const BackupsDirectoryName = 'Standard Notes Backups'
 const BackupFileExtension = '.txt'
 
-function backupFileNameToDate(string: string): number {
-  string = path.basename(string, '.txt')
-  const dateTimeDelimiter = string.indexOf('T')
-  const date = string.slice(0, dateTimeDelimiter)
+export class BackupsManager implements BackupsManagerInterface {
+  public backupsLocation: string
+  private backupsDisabled: boolean
+  private needsBackup = false
+  private interval: NodeJS.Timeout | undefined
 
-  const time = string.slice(dateTimeDelimiter + 1).replace(/-/g, ':')
-  return Date.parse(date + 'T' + time)
-}
+  constructor(private webContents: WebContents, private appState: AppState) {
+    this.backupsLocation = appState.store.get(StoreKeys.BackupsLocation)
+    this.backupsDisabled = appState.store.get(StoreKeys.BackupsDisabled)
+    this.needsBackup = false
 
-function dateToSafeFilename(date: Date) {
-  return date.toISOString().replace(/:/g, '-')
-}
+    if (!this.backupsDisabled) {
+      void this.copyDecryptScript(this.backupsLocation)
+    }
 
-async function copyDecryptScript(location: string) {
-  try {
-    await ensureDirectoryExists(location)
-    await fs.copyFile(Paths.decryptScript, path.join(location, path.basename(Paths.decryptScript)))
-  } catch (error) {
-    console.error(error)
+    this.determineLastBackupDate(this.backupsLocation)
+      .then((date) => appState.setBackupCreationDate(date))
+      .catch(console.error)
+
+    if (isTesting()) {
+      handleTestMessage(MessageType.DataArchive, (data: any) => this.saveBackupData(data))
+      handleTestMessage(MessageType.BackupsAreEnabled, () => !this.backupsDisabled)
+      handleTestMessage(MessageType.ToggleBackupsEnabled, this.toggleBackupsStatus)
+      handleTestMessage(MessageType.BackupsLocation, () => this.backupsLocation)
+      handleTestMessage(MessageType.PerformBackup, this.performBackup)
+      handleTestMessage(MessageType.CopyDecryptScript, this.copyDecryptScript)
+      handleTestMessage(MessageType.ChangeBackupsLocation, this.setBackupsLocation)
+    }
   }
-}
 
-export function createBackupsManager(webContents: WebContents, appState: AppState): BackupsManagerInterface {
-  let backupsLocation = appState.store.get(StoreKeys.BackupsLocation)
-  let backupsDisabled = appState.store.get(StoreKeys.BackupsDisabled)
-  let needsBackup = false
+  backupFileNameToDate(string: string): number {
+    string = path.basename(string, '.txt')
+    const dateTimeDelimiter = string.indexOf('T')
+    const date = string.slice(0, dateTimeDelimiter)
 
-  if (!backupsDisabled) {
-    void copyDecryptScript(backupsLocation)
+    const time = string.slice(dateTimeDelimiter + 1).replace(/-/g, ':')
+    return Date.parse(date + 'T' + time)
   }
 
-  determineLastBackupDate(backupsLocation)
-    .then((date) => appState.setBackupCreationDate(date))
-    .catch(console.error)
+  dateToSafeFilename(date: Date) {
+    return date.toISOString().replace(/:/g, '-')
+  }
 
-  async function setBackupsLocation(location: string) {
-    const previousLocation = backupsLocation
+  async copyDecryptScript(location: string) {
+    try {
+      await ensureDirectoryExists(location)
+      await fs.copyFile(Paths.decryptScript, path.join(location, path.basename(Paths.decryptScript)))
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  async setBackupsLocation(location: string) {
+    const previousLocation = this.backupsLocation
     if (previousLocation === location) {
       return
     }
@@ -84,7 +102,7 @@ export function createBackupsManager(webContents: WebContents, appState: AppStat
       .map((fileName) => path.join(previousLocation, fileName))
 
     await moveFiles(backupFiles, newLocation)
-    await copyDecryptScript(newLocation)
+    await this.copyDecryptScript(newLocation)
 
     previousLocationFiles = await fs.readdir(previousLocation)
     if (previousLocationFiles.length === 0 || previousLocationFiles[0] === path.basename(Paths.decryptScript)) {
@@ -92,12 +110,12 @@ export function createBackupsManager(webContents: WebContents, appState: AppStat
     }
 
     /** Wait for the operation to be successful before saving new location */
-    backupsLocation = newLocation
-    appState.store.set(StoreKeys.BackupsLocation, backupsLocation)
+    this.backupsLocation = newLocation
+    this.appState.store.set(StoreKeys.BackupsLocation, this.backupsLocation)
   }
 
-  async function saveBackupData(data: any) {
-    if (backupsDisabled) {
+  async saveBackupData(data: any) {
+    if (this.backupsDisabled) {
       return
     }
 
@@ -105,16 +123,16 @@ export function createBackupsManager(webContents: WebContents, appState: AppStat
     let name: string | undefined
 
     try {
-      name = await writeDataToFile(data)
+      name = await this.writeDataToFile(data)
       log(`Data backup successfully saved: ${name}`)
       success = true
-      appState.setBackupCreationDate(Date.now())
+      this.appState.setBackupCreationDate(Date.now())
     } catch (err) {
       success = false
       logError('An error occurred saving backup file', err)
     }
 
-    webContents.send(MessageToWebApp.FinishedSavingBackup, { success })
+    this.webContents.send(MessageToWebApp.FinishedSavingBackup, { success })
 
     if (isTesting()) {
       send(AppMessageType.SavedBackup)
@@ -123,123 +141,106 @@ export function createBackupsManager(webContents: WebContents, appState: AppStat
     return name
   }
 
-  function performBackup() {
-    if (backupsDisabled) {
+  performBackup() {
+    if (this.backupsDisabled) {
       return
     }
 
-    webContents.send(MessageToWebApp.PerformAutomatedBackup)
+    this.webContents.send(MessageToWebApp.PerformAutomatedBackup)
   }
 
-  async function writeDataToFile(data: any): Promise<string> {
-    await ensureDirectoryExists(backupsLocation)
+  async writeDataToFile(data: any): Promise<string> {
+    await ensureDirectoryExists(this.backupsLocation)
 
-    const name = dateToSafeFilename(new Date()) + BackupFileExtension
-    const filePath = path.join(backupsLocation, name)
+    const name = this.dateToSafeFilename(new Date()) + BackupFileExtension
+    const filePath = path.join(this.backupsLocation, name)
     await fs.writeFile(filePath, data)
     return name
   }
 
-  let interval: NodeJS.Timeout | undefined
-  function beginBackups() {
-    if (interval) {
-      clearInterval(interval)
+  beginBackups() {
+    if (this.interval) {
+      clearInterval(this.interval)
     }
 
-    needsBackup = true
+    this.needsBackup = true
     const hoursInterval = 12
     const seconds = hoursInterval * 60 * 60
     const milliseconds = seconds * 1000
-    interval = setInterval(performBackup, milliseconds)
+    this.interval = setInterval(this.performBackup, milliseconds)
   }
 
-  function toggleBackupsStatus() {
-    backupsDisabled = !backupsDisabled
-    appState.store.set(StoreKeys.BackupsDisabled, backupsDisabled)
+  toggleBackupsStatus() {
+    this.backupsDisabled = !this.backupsDisabled
+    this.appState.store.set(StoreKeys.BackupsDisabled, this.backupsDisabled)
     /** Create a backup on reactivation. */
-    if (!backupsDisabled) {
-      performBackup()
+    if (!this.backupsDisabled) {
+      this.performBackup()
     }
   }
 
-  if (isTesting()) {
-    handleTestMessage(MessageType.DataArchive, (data: any) => saveBackupData(data))
-    handleTestMessage(MessageType.BackupsAreEnabled, () => !backupsDisabled)
-    handleTestMessage(MessageType.ToggleBackupsEnabled, toggleBackupsStatus)
-    handleTestMessage(MessageType.BackupsLocation, () => backupsLocation)
-    handleTestMessage(MessageType.PerformBackup, performBackup)
-    handleTestMessage(MessageType.CopyDecryptScript, copyDecryptScript)
-    handleTestMessage(MessageType.ChangeBackupsLocation, setBackupsLocation)
+  get backupsAreEnabled() {
+    return !this.backupsDisabled
   }
 
-  return {
-    get backupsAreEnabled() {
-      return !backupsDisabled
-    },
-    get backupsLocation() {
-      return backupsLocation
-    },
-    saveBackupData,
-    performBackup,
-    beginBackups,
-    toggleBackupsStatus,
-    async backupsCount(): Promise<number> {
-      let files = await fs.readdir(backupsLocation)
-      files = files.filter((fileName) => fileName.endsWith(BackupFileExtension))
-      return files.length
-    },
-    applicationDidBlur() {
-      if (needsBackup) {
-        needsBackup = false
-        performBackup()
-      }
-    },
-    viewBackups() {
-      void shell.openPath(backupsLocation)
-    },
-    async deleteBackups() {
-      await deleteDirContents(backupsLocation)
-      return copyDecryptScript(backupsLocation)
-    },
-
-    async changeBackupsLocation() {
-      const path = await openDirectoryPicker()
-
-      if (!path) {
-        return
-      }
-
-      try {
-        await setBackupsLocation(path)
-        performBackup()
-      } catch (e) {
-        logError(e)
-        void dialog.showMessageBox({
-          message: str().errorChangingDirectory(e),
-        })
-      }
-    },
+  async backupsCount(): Promise<number> {
+    let files = await fs.readdir(this.backupsLocation)
+    files = files.filter((fileName) => fileName.endsWith(BackupFileExtension))
+    return files.length
   }
-}
+  applicationDidBlur() {
+    if (this.needsBackup) {
+      this.needsBackup = false
+      this.performBackup()
+    }
+  }
+  viewBackups() {
+    void shell.openPath(this.backupsLocation)
+  }
+  async deleteBackups() {
+    await deleteDirContents(this.backupsLocation)
+    return this.copyDecryptScript(this.backupsLocation)
+  }
 
-async function determineLastBackupDate(backupsLocation: string): Promise<number | null> {
-  try {
-    const files = (await fs.readdir(backupsLocation))
-      .filter((filename) => filename.endsWith(BackupFileExtension) && !Number.isNaN(backupFileNameToDate(filename)))
-      .sort()
-    const lastBackupFileName = last(files)
-    if (!lastBackupFileName) {
+  async changeBackupsLocation() {
+    const path = await openDirectoryPicker()
+
+    if (!path) {
+      return
+    }
+
+    try {
+      await this.setBackupsLocation(path)
+      this.performBackup()
+    } catch (e) {
+      logError(e)
+      void dialog.showMessageBox({
+        message: str().errorChangingDirectory(e),
+      })
+    }
+  }
+
+  async determineLastBackupDate(backupsLocation: string): Promise<number | null> {
+    try {
+      const files = (await fs.readdir(backupsLocation))
+        .filter(
+          (filename) => filename.endsWith(BackupFileExtension) && !Number.isNaN(this.backupFileNameToDate(filename)),
+        )
+        .sort()
+      const lastBackupFileName = last(files)
+      if (!lastBackupFileName) {
+        return null
+      }
+      const backupDate = this.backupFileNameToDate(lastBackupFileName)
+      if (Number.isNaN(backupDate)) {
+        return null
+      }
+      return backupDate
+    } catch (error: any) {
+      if (error.code !== FileDoesNotExist) {
+        console.error(error)
+      }
       return null
     }
-    const backupDate = backupFileNameToDate(lastBackupFileName)
-    if (Number.isNaN(backupDate)) {
-      return null
-    }
-    return backupDate
-  } catch (error: any) {
-    if (error.code !== FileDoesNotExist) {
-      console.error(error)
-    }
-    return null
   }
 }

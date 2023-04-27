@@ -6,7 +6,7 @@ import path from 'path'
 import { AppMessageType, MessageType } from '../../../test/TestIpcMessage'
 import { AppState } from '../../AppState'
 import { MessageToWebApp } from '../Shared/IpcMessages'
-import { createBackupsManager } from './Backups/BackupsManager'
+import { BackupsManager } from './Backups/BackupsManager'
 import { BackupsManagerInterface } from './Backups/BackupsManagerInterface'
 import { FilesBackupManager } from './FileBackups/FileBackupsManager'
 import { Keychain } from './Keychain/Keychain'
@@ -201,7 +201,7 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
   const searchManager = initializeSearchManager(window.webContents)
   initializeZoomManager(window, appState.store)
 
-  const backupsManager = createBackupsManager(window.webContents, appState)
+  const backupsManager = new BackupsManager(window.webContents, appState)
   const updateManager = setupUpdates(window, appState, backupsManager)
   const trayManager = createTrayManager(window, appState.store)
   const spellcheckerManager = createSpellcheckerManager(appState.store, window.webContents, appLocale)
