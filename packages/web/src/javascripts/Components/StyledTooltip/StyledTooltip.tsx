@@ -2,6 +2,7 @@ import { classNames } from '@standardnotes/snjs'
 import { ReactNode } from 'react'
 import { Tooltip, TooltipAnchor, TooltipStoreProps, useTooltipStore } from '@ariakit/react'
 import { Slot } from '@radix-ui/react-slot'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 const StyledTooltip = ({
   children,
@@ -13,7 +14,16 @@ const StyledTooltip = ({
   className?: string
   label: string
 } & Partial<TooltipStoreProps>) => {
-  const tooltip = useTooltipStore(props)
+  const tooltip = useTooltipStore({
+    timeout: 350,
+    gutter: 6,
+    ...props,
+  })
+  const isMobile = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
+  if (isMobile) {
+    return <>{children}</>
+  }
 
   return (
     <>
