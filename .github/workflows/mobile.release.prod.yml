@@ -71,7 +71,7 @@ jobs:
     defaults:
       run:
         working-directory: packages/mobile
-    runs-on: macos-latest
+    runs-on: macos-11
     timeout-minutes: 90
     steps:
       - name: Checkout code
@@ -116,7 +116,6 @@ jobs:
           MATCH_GIT_BASIC_AUTHORIZATION: ${{ secrets.MATCH_GIT_BASIC_AUTHORIZATION }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           PACKAGE_VERSION: ${{ env.PACKAGE_VERSION }}
-          ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD: true
         with:
           lane: 'ios prod'
           subdirectory: 'packages/mobile'
