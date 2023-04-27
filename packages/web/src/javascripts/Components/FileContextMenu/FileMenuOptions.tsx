@@ -109,6 +109,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
       <MenuItem
         onClick={() => {
           void filesController.downloadFiles(selectedFiles)
+          closeMenu()
         }}
       >
         <Icon type="download" className={`mr-2 text-neutral ${MenuItemIconSize}`} />
