@@ -23,6 +23,7 @@ import {
   FileItem,
   InternalEventBus,
   isFile,
+  Platform,
 } from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/toast'
 import { action, makeObservable, observable, reaction } from 'mobx'
@@ -498,6 +499,18 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
   }
 
   downloadFiles = async (files: FileItem[]) => {
+    if (this.application.platform === Platform.MacDesktop) {
+      for (const file of files) {
+        await this.handleFileAction({
+          type: FileItemActionType.DownloadFile,
+          payload: {
+            file,
+          },
+        })
+      }
+      return
+    }
+
     await Promise.all(
       files.map((file) =>
         this.handleFileAction({
