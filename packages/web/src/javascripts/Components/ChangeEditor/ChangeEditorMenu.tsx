@@ -22,7 +22,7 @@ type ChangeEditorMenuProps = {
   isVisible: boolean
   note: SNNote | undefined
   onSelect?: (component: SNComponent | undefined) => void
-  handleDisableClickoutsideRequest?: () => void
+  setDisableClickOutside?: (value: boolean) => void
 }
 
 const getGroupId = (group: EditorMenuGroup) => group.title.toLowerCase().replace(/\s/, '-')
@@ -33,7 +33,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
   isVisible,
   note,
   onSelect,
-  handleDisableClickoutsideRequest,
+  setDisableClickOutside,
 }) => {
   const editors = useMemo(
     () =>
@@ -134,13 +134,13 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         }
 
         setPendingConversionItem(itemToBeSelected)
-        handleDisableClickoutsideRequest?.()
+        setDisableClickOutside?.(true)
         return
       }
 
       if (note.noteType === NoteType.Super && note.text.length > 0) {
         setPendingConversionItem(itemToBeSelected)
-        handleDisableClickoutsideRequest?.()
+        setDisableClickOutside?.(true)
         return
       }
 
@@ -172,15 +172,16 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
       }
     },
     [
-      application,
-      closeMenu,
-      currentComponent,
       note,
+      closeMenu,
       onSelect,
       premiumModal,
+      application.alertService,
+      application.componentManager,
+      setDisableClickOutside,
+      currentComponent,
       selectComponent,
       selectNonComponent,
-      handleDisableClickoutsideRequest,
     ],
   )
 
@@ -199,8 +200,14 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
     closeMenu()
   }, [pendingConversionItem, note, selectNonComponent, closeMenu, selectComponent])
 
-  const closeSuperNoteImporter = () => setPendingConversionItem(null)
-  const closeSuperNoteConverter = () => setPendingConversionItem(null)
+  const closeSuperNoteImporter = () => {
+    setPendingConversionItem(null)
+    setDisableClickOutside?.(false)
+  }
+  const closeSuperNoteConverter = () => {
+    setPendingConversionItem(null)
+    setDisableClickOutside?.(false)
+  }
 
   return (
     <>

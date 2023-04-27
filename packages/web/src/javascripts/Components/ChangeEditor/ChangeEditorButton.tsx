@@ -37,10 +37,6 @@ const ChangeEditorButton: FunctionComponent<Props> = ({ viewControllerManager, o
     setIsOpen(willMenuOpen)
   }, [onClickPreprocessing, isOpen])
 
-  const disableClickOutside = useCallback(() => {
-    setIsClickOutsideDisabled(true)
-  }, [])
-
   useEffect(() => {
     return application.keyboardService.addCommandHandler({
       command: CHANGE_EDITOR_COMMAND,
@@ -76,7 +72,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({ viewControllerManager, o
           application={application}
           isVisible={isOpen}
           note={note}
-          handleDisableClickoutsideRequest={disableClickOutside}
+          setDisableClickOutside={setIsClickOutsideDisabled}
           closeMenu={() => {
             setIsOpen(false)
           }}
