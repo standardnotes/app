@@ -188,7 +188,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare _getRevision: GetRevision
   private declare _deleteRevision: DeleteRevision
 
-  private internalEventBus!: ExternalServices.InternalEventBusInterface
+  public internalEventBus!: ExternalServices.InternalEventBusInterface
 
   private eventHandlers: ApplicationObserver[] = []
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

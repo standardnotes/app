@@ -2,21 +2,9 @@ import { DecryptedTransferPayload } from '@standardnotes/models'
 import { FileBackupsDevice } from '@standardnotes/files'
 
 export interface WebClientRequiresDesktopMethods extends FileBackupsDevice {
-  localBackupsCount(): Promise<number>
-
-  viewlocalBackups(): void
-
-  deleteLocalBackups(): Promise<void>
-
   syncComponents(payloads: unknown[]): void
 
-  onMajorDataChange(): void
-
-  onInitialDataLoad(): void
-
   onSearch(text?: string): void
-
-  downloadBackup(): void | Promise<void>
 
   get extensionsServerHost(): string
 

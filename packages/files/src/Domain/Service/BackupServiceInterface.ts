@@ -8,7 +8,7 @@ export interface BackupServiceInterface {
   enableFilesBackups(): Promise<void>
   disableFilesBackups(): Promise<void>
   changeFilesBackupsLocation(): Promise<string | undefined>
-  getFilesBackupsLocation(): Promise<string>
+  getFilesBackupsLocation(): Promise<string | undefined>
   openFilesBackupsLocation(): Promise<void>
   openFileBackup(record: FileBackupRecord): Promise<void>
 }

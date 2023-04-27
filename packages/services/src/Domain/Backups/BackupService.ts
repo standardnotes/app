@@ -86,7 +86,7 @@ export class FilesBackupService extends AbstractService implements BackupService
     return this.device.changeFilesBackupsLocation()
   }
 
-  public getFilesBackupsLocation(): Promise<string> {
+  public getFilesBackupsLocation(): Promise<string | undefined> {
     return this.device.getFilesBackupsLocation()
   }
 

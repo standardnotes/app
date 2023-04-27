@@ -1,3 +1,4 @@
+import { MessageToWebApp } from './../../Shared/IpcMessages'
 import {
   FileBackupRecord,
   FileBackupsDevice,
@@ -6,10 +7,12 @@ import {
   FileBackupReadChunkResponse,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { AppState } from 'app/AppState'
-import { shell } from 'electron'
+import { promises as fs } from 'fs'
+import { WebContents, shell } from 'electron'
 import { StoreKeys } from '../Store/StoreKeys'
 import path from 'path'
 import {
+  deleteDirContents,
   deleteFile,
   ensureDirectoryExists,
   moveDirContents,
@@ -20,6 +23,10 @@ import {
 } from '../Utils/FileUtils'
 import { FileDownloader } from './FileDownloader'
 import { FileReadOperation } from './FileReadOperation'
+import { Paths } from '../Types/Paths'
+
+const TextBackupsDirectoryName = 'Text Backups'
+const TextBackupFileExtension = '.txt'
 
 export const FileBackupsConstantsV1 = {
   Version: '1.0.0',
@@ -30,7 +37,9 @@ export const FileBackupsConstantsV1 = {
 export class FilesBackupManager implements FileBackupsDevice {
   private readOperations: Map<string, FileReadOperation> = new Map()
 
-  constructor(private appState: AppState) {}
+  constructor(private appState: AppState, private webContents: WebContents) {
+    void this.migrateLegacyBackups()
+  }
 
   public isFilesBackupsEnabled(): Promise<boolean> {
     return Promise.resolve(this.appState.store.get(StoreKeys.FileBackupsEnabled))
@@ -108,7 +117,7 @@ export class FilesBackupManager implements FileBackupsDevice {
     }
   }
 
-  public getFilesBackupsLocation(): Promise<string> {
+  public getFilesBackupsLocation(): Promise<string | undefined> {
     return Promise.resolve(this.appState.store.get(StoreKeys.FileBackupsLocation))
   }
 
@@ -141,6 +150,9 @@ export class FilesBackupManager implements FileBackupsDevice {
 
   async openFilesBackupsLocation(): Promise<void> {
     const location = await this.getFilesBackupsLocation()
+    if (!location) {
+      return
+    }
 
     void shell.openPath(location)
   }
@@ -223,5 +235,115 @@ export class FilesBackupManager implements FileBackupsDevice {
     }
 
     return result
+  }
+
+  async isTextBackupsEnabled(): Promise<boolean> {
+    return !this.appState.store.get(StoreKeys.TextBackupsDisabled)
+  }
+
+  async enableTextBackups(): Promise<void> {
+    this.appState.store.set(StoreKeys.TextBackupsDisabled, false)
+  }
+
+  async disableTextBackups(): Promise<void> {
+    this.appState.store.set(StoreKeys.TextBackupsDisabled, true)
+  }
+
+  async getTextBackupsLocation(): Promise<string | undefined> {
+    const directory = await this.getFilesBackupsLocation()
+
+    if (!directory) {
+      return undefined
+    }
+
+    return `${directory}/${TextBackupsDirectoryName}`
+  }
+
+  async getTextBackupsCount(): Promise<number> {
+    const location = await this.getTextBackupsLocation()
+    if (!location) {
+      return 0
+    }
+
+    let files = await fs.readdir(location)
+    files = files.filter((fileName) => fileName.endsWith(TextBackupsDirectoryName))
+    return files.length
+  }
+
+  async performTextBackup(): Promise<void> {
+    if (!(await this.isTextBackupsEnabled())) {
+      return
+    }
+
+    this.webContents.send(MessageToWebApp.PerformAutomatedBackup)
+  }
+
+  async deleteTextBackups(): Promise<void> {
+    const location = await this.getTextBackupsLocation()
+    if (!location) {
+      return
+    }
+
+    await deleteDirContents(location)
+
+    await this.copyDecryptScript(location)
+  }
+
+  async viewTextBackups(): Promise<void> {
+    const location = await this.getTextBackupsLocation()
+    if (!location) {
+      return
+    }
+    void shell.openPath(location)
+  }
+
+  async saveTextBackupData(data: unknown): Promise<void> {
+    const location = await this.getTextBackupsLocation()
+    if (!location || !(await this.isTextBackupsEnabled())) {
+      return
+    }
+
+    let success: boolean
+
+    try {
+      await ensureDirectoryExists(location)
+
+      const name = `${new Date().toISOString().replace(/:/g, '-')}/${TextBackupFileExtension}`
+      const filePath = path.join(location, name)
+      await fs.writeFile(filePath, data as any)
+
+      success = true
+    } catch (err) {
+      success = false
+      console.error('An error occurred saving backup file', err)
+    }
+
+    this.webContents.send(MessageToWebApp.FinishedSavingBackup, { success })
+  }
+
+  async copyDecryptScript(location: string) {
+    try {
+      await ensureDirectoryExists(location)
+      await fs.copyFile(Paths.decryptScript, path.join(location, path.basename(Paths.decryptScript)))
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  async migrateLegacyBackups() {
+    const BackupsDirectoryName = 'Standard Notes Backups'
+    const legacyLocation = this.appState.store.get(StoreKeys.LegacyTextBackupsLocation)
+    const legacyDirectory = `${legacyLocation}/${BackupsDirectoryName}`
+
+    if (!(await fs.stat(legacyDirectory)).isDirectory()) {
+      return
+    }
+
+    const newDirectory = await this.getTextBackupsLocation()
+    if (!newDirectory) {
+      return
+    }
+
+    await moveDirContents(legacyDirectory, newDirectory)
   }
 }

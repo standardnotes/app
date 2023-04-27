@@ -13,7 +13,6 @@ import {
   FileBackupReadChunkResponse,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { app, BrowserWindow } from 'electron'
-import { BackupsManagerInterface } from '../Backups/BackupsManagerInterface'
 import { KeychainInterface } from '../Keychain/KeychainInterface'
 import { MenuManagerInterface } from '../Menus/MenuManagerInterface'
 import { Component, PackageManagerInterface } from '../Packages/PackageManagerInterface'
@@ -29,7 +28,6 @@ export class RemoteBridge implements CrossProcessBridge {
   constructor(
     private window: BrowserWindow,
     private keychain: KeychainInterface,
-    private backups: BackupsManagerInterface,
     private packages: PackageManagerInterface,
     private search: SearchManagerInterface,
     private data: RemoteDataInterface,
@@ -54,15 +52,9 @@ export class RemoteBridge implements CrossProcessBridge {
       getKeychainValue: this.getKeychainValue.bind(this),
       setKeychainValue: this.setKeychainValue.bind(this),
       clearKeychainValue: this.clearKeychainValue.bind(this),
-      localBackupsCount: this.localBackupsCount.bind(this),
-      viewlocalBackups: this.viewlocalBackups.bind(this),
-      deleteLocalBackups: this.deleteLocalBackups.bind(this),
       displayAppMenu: this.displayAppMenu.bind(this),
-      saveDataBackup: this.saveDataBackup.bind(this),
       syncComponents: this.syncComponents.bind(this),
-      onMajorDataChange: this.onMajorDataChange.bind(this),
       onSearch: this.onSearch.bind(this),
-      onInitialDataLoad: this.onInitialDataLoad.bind(this),
       destroyAllData: this.destroyAllData.bind(this),
       getFilesBackupsMappingFile: this.getFilesBackupsMappingFile.bind(this),
       saveFilesBackupsFile: this.saveFilesBackupsFile.bind(this),
@@ -76,6 +68,15 @@ export class RemoteBridge implements CrossProcessBridge {
       getFileBackupReadToken: this.getFileBackupReadToken.bind(this),
       readNextChunk: this.readNextChunk.bind(this),
       askForMediaAccess: this.askForMediaAccess.bind(this),
+      isTextBackupsEnabled: this.isTextBackupsEnabled.bind(this),
+      enableTextBackups: this.enableTextBackups.bind(this),
+      disableTextBackups: this.disableTextBackups.bind(this),
+      getTextBackupsLocation: this.getTextBackupsLocation.bind(this),
+      getTextBackupsCount: this.getTextBackupsCount.bind(this),
+      performTextBackup: this.performTextBackup.bind(this),
+      deleteTextBackups: this.deleteTextBackups.bind(this),
+      viewTextBackups: this.viewTextBackups.bind(this),
+      saveTextBackupData: this.saveTextBackupData.bind(this),
     }
   }
 
@@ -135,40 +136,16 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.keychain.clearKeychainValue()
   }
 
-  async localBackupsCount() {
-    return this.backups.backupsCount()
-  }
-
-  viewlocalBackups() {
-    this.backups.viewBackups()
-  }
-
-  async deleteLocalBackups() {
-    return this.backups.deleteBackups()
-  }
-
   syncComponents(components: Component[]) {
     void this.packages.syncComponents(components)
-  }
-
-  onMajorDataChange() {
-    this.backups.performBackup()
   }
 
   onSearch(text: string) {
     this.search.findInPage(text)
   }
 
-  onInitialDataLoad() {
-    this.backups.beginBackups()
-  }
-
   destroyAllData() {
     this.data.destroySensitiveDirectories()
-  }
-
-  saveDataBackup(data: unknown) {
-    this.backups.saveBackupData(data)
   }
 
   displayAppMenu() {
@@ -215,7 +192,7 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.fileBackups.changeFilesBackupsLocation()
   }
 
-  public getFilesBackupsLocation(): Promise<string> {
+  public getFilesBackupsLocation(): Promise<string | undefined> {
     return this.fileBackups.getFilesBackupsLocation()
   }
 
@@ -225,6 +202,42 @@ export class RemoteBridge implements CrossProcessBridge {
 
   public openFileBackup(record: FileBackupRecord): Promise<void> {
     return this.fileBackups.openFileBackup(record)
+  }
+
+  isTextBackupsEnabled(): Promise<boolean> {
+    return this.fileBackups.isTextBackupsEnabled()
+  }
+
+  enableTextBackups(): Promise<void> {
+    return this.fileBackups.enableTextBackups()
+  }
+
+  disableTextBackups(): Promise<void> {
+    return this.fileBackups.disableTextBackups()
+  }
+
+  getTextBackupsLocation(): Promise<string | undefined> {
+    return this.fileBackups.getTextBackupsLocation()
+  }
+
+  getTextBackupsCount(): Promise<number> {
+    return this.fileBackups.getTextBackupsCount()
+  }
+
+  performTextBackup(): Promise<void> {
+    return this.fileBackups.performTextBackup()
+  }
+
+  deleteTextBackups(): Promise<void> {
+    return this.fileBackups.deleteTextBackups()
+  }
+
+  viewTextBackups(): Promise<void> {
+    return this.fileBackups.viewTextBackups()
+  }
+
+  saveTextBackupData(data: unknown): void {
+    this.fileBackups.saveTextBackupData(data)
   }
 
   askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean> {

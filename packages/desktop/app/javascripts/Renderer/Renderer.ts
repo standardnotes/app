@@ -133,7 +133,7 @@ window.electronMainEvents.handleUpdateAvailable(() => {
 })
 
 window.electronMainEvents.handlePerformAutomatedBackup(() => {
-  void window.device.downloadBackup()
+  void window.device.performTextBackupSave()
 })
 
 window.electronMainEvents.handleFinishedSavingBackup((_: IpcRendererEvent, data: { success: boolean }) => {

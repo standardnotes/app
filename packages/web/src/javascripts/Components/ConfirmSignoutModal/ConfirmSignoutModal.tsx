@@ -26,7 +26,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
   const [localBackupsCount, setLocalBackupsCount] = useState(0)
 
   useEffect(() => {
-    application.desktopDevice?.localBackupsCount().then(setLocalBackupsCount).catch(console.error)
+    application.desktopDevice?.getTextBackupsCount().then(setLocalBackupsCount).catch(console.error)
   }, [viewControllerManager.accountMenuController.signingOut, application.desktopDevice])
 
   const workspaces = applicationGroup.getDescriptors()
@@ -85,7 +85,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
           <button
             className="sk-a ml-1.5 cursor-pointer rounded p-0 capitalize"
             onClick={() => {
-              application.desktopDevice?.viewlocalBackups()
+              void application.desktopDevice?.viewTextBackups()
             }}
           >
             View backup files

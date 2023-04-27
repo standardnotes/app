@@ -18,7 +18,7 @@ type Props = {
 
 const FileBackupsDesktop = ({ application, backupsService }: Props) => {
   const [backupsEnabled, setBackupsEnabled] = useState(false)
-  const [backupsLocation, setBackupsLocation] = useState('')
+  const [backupsLocation, setBackupsLocation] = useState<string | undefined>('')
 
   useEffect(() => {
     void backupsService.isFilesBackupsEnabled().then(setBackupsEnabled)
@@ -85,7 +85,7 @@ const FileBackupsDesktop = ({ application, backupsService }: Props) => {
                 </Text>
 
                 <EncryptionStatusItem
-                  status={backupsLocation}
+                  status={backupsLocation || 'Not Set'}
                   icon={<Icon type="attachment-file" className="min-h-5 min-w-5" />}
                   checkmark={false}
                 />

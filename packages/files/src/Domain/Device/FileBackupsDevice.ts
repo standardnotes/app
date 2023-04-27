@@ -21,7 +21,17 @@ export interface FileBackupsDevice {
   enableFilesBackups(): Promise<void>
   disableFilesBackups(): Promise<void>
   changeFilesBackupsLocation(): Promise<string | undefined>
-  getFilesBackupsLocation(): Promise<string>
+  getFilesBackupsLocation(): Promise<string | undefined>
   openFilesBackupsLocation(): Promise<void>
   openFileBackup(record: FileBackupRecord): Promise<void>
+
+  isTextBackupsEnabled(): Promise<boolean>
+  enableTextBackups(): Promise<void>
+  disableTextBackups(): Promise<void>
+  getTextBackupsLocation(): Promise<string | undefined>
+  getTextBackupsCount(): Promise<number>
+  performTextBackup(): Promise<void>
+  deleteTextBackups(): Promise<void>
+  viewTextBackups(): Promise<void>
+  saveTextBackupData(data: unknown): void
 }

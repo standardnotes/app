@@ -57,16 +57,8 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     this.remoteBridge.syncComponents(components)
   }
 
-  onMajorDataChange() {
-    this.remoteBridge.onMajorDataChange()
-  }
-
   onSearch(text: string) {
     this.remoteBridge.onSearch(text)
-  }
-
-  onInitialDataLoad() {
-    this.remoteBridge.onInitialDataLoad()
   }
 
   async clearAllDataFromDevice(workspaceIdentifiers: string[]): Promise<{ killsApplication: boolean }> {
@@ -77,7 +69,7 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return { killsApplication: true }
   }
 
-  async downloadBackup() {
+  async performTextBackupSave() {
     const receiver = window.webClient
 
     receiver.didBeginBackup()
@@ -85,7 +77,7 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     try {
       const data = await receiver.requestBackupFile()
       if (data) {
-        this.remoteBridge.saveDataBackup(data)
+        this.remoteBridge.saveTextBackupData(data)
       } else {
         receiver.didFinishBackup(false)
       }
@@ -93,18 +85,6 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
       console.error(error)
       receiver.didFinishBackup(false)
     }
-  }
-
-  async localBackupsCount() {
-    return this.remoteBridge.localBackupsCount()
-  }
-
-  viewlocalBackups() {
-    this.remoteBridge.viewlocalBackups()
-  }
-
-  async deleteLocalBackups() {
-    return this.remoteBridge.deleteLocalBackups()
   }
 
   public isFilesBackupsEnabled(): Promise<boolean> {
@@ -123,7 +103,7 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.changeFilesBackupsLocation()
   }
 
-  public getFilesBackupsLocation(): Promise<string> {
+  public getFilesBackupsLocation(): Promise<string | undefined> {
     return this.remoteBridge.getFilesBackupsLocation()
   }
 
@@ -137,6 +117,42 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
 
   openFileBackup(record: FileBackupRecord): Promise<void> {
     return this.remoteBridge.openFileBackup(record)
+  }
+
+  isTextBackupsEnabled(): Promise<boolean> {
+    return this.remoteBridge.isTextBackupsEnabled()
+  }
+
+  enableTextBackups(): Promise<void> {
+    return this.remoteBridge.enableTextBackups()
+  }
+
+  disableTextBackups(): Promise<void> {
+    return this.remoteBridge.disableTextBackups()
+  }
+
+  getTextBackupsLocation(): Promise<string | undefined> {
+    return this.remoteBridge.getTextBackupsLocation()
+  }
+
+  getTextBackupsCount(): Promise<number> {
+    return this.remoteBridge.getTextBackupsCount()
+  }
+
+  performTextBackup(): Promise<void> {
+    return this.remoteBridge.performTextBackup()
+  }
+
+  deleteTextBackups(): Promise<void> {
+    return this.remoteBridge.deleteTextBackups()
+  }
+
+  viewTextBackups(): Promise<void> {
+    return this.remoteBridge.viewTextBackups()
+  }
+
+  saveTextBackupData(data: unknown): void {
+    return this.remoteBridge.saveTextBackupData(data)
   }
 
   async saveFilesBackupsFile(

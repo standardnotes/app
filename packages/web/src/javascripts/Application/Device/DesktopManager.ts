@@ -27,8 +27,24 @@ export class DesktopManager
   dataLoaded = false
   lastSearchedText?: string
 
+  private textBackupsInterval: ReturnType<typeof setInterval> | undefined
+  private needsInitialTextBackup = false
+
   constructor(application: WebApplicationInterface, private device: DesktopDeviceInterface) {
     super(application, new InternalEventBus())
+  }
+
+  beginTextBackupsTimer() {
+    if (this.textBackupsInterval) {
+      clearInterval(this.textBackupsInterval)
+    }
+
+    this.needsInitialTextBackup = true
+
+    const hoursInterval = 12
+    const seconds = hoursInterval * 60 * 60
+    const milliseconds = seconds * 1000
+    this.textBackupsInterval = setInterval(this.device.performTextBackup, milliseconds)
   }
 
   get webApplication() {
@@ -44,14 +60,18 @@ export class DesktopManager
     super.onAppEvent(eventName).catch(console.error)
     if (eventName === ApplicationEvent.LocalDataLoaded) {
       this.dataLoaded = true
-      this.device.onInitialDataLoad()
+      void this.device.isTextBackupsEnabled().then((isEnabled) => {
+        if (isEnabled) {
+          this.beginTextBackupsTimer()
+        }
+      })
     } else if (eventName === ApplicationEvent.MajorDataChange) {
-      this.device.onMajorDataChange()
+      void this.device.performTextBackup()
     }
   }
 
   saveBackup() {
-    this.device.onMajorDataChange()
+    void this.device.performTextBackup()
   }
 
   getExtServerHost(): string {
@@ -111,6 +131,11 @@ export class DesktopManager
 
   windowLostFocus(): void {
     this.webApplication.notifyWebEvent(WebAppEvent.WindowDidBlur)
+
+    if (this.needsInitialTextBackup) {
+      this.needsInitialTextBackup = false
+      void this.device.performTextBackup()
+    }
   }
 
   async onComponentInstallationComplete(componentData: DecryptedTransferPayload<ComponentContent>) {

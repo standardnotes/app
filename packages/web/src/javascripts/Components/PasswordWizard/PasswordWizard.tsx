@@ -153,7 +153,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
   }
 
   async processPasswordChange() {
-    await this.application.downloadBackup()
+    await this.application.performDesktopTextBackup()
 
     this.setState({
       lockContinue: true,
