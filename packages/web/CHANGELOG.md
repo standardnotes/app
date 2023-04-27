@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.153.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.6...@standardnotes/web@3.153.7) (2023-04-27)
+
+### Bug Fixes
+
+* **desktop:** Fixed issue where preferences header & tooltips are overlapped by custom titlebar ([ef27a21](https://github.com/standardnotes/app/commit/ef27a21fb141c4ef1a760cf6fb550e4b713f8f98))
+
 ## [3.153.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.5...@standardnotes/web@3.153.6) (2023-04-27)
 
 **Note:** Version bump only for package @standardnotes/web
