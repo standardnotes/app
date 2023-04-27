@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.153.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.10...@standardnotes/web@3.153.11) (2023-04-27)
+
+### Bug Fixes
+
+* **desktop:** Fixed issue on Mac desktop app where multiple files could not be downloaded ([247ff62](https://github.com/standardnotes/app/commit/247ff6242279f878c01161817038a37c6fbfa4cc))
+
 ## [3.153.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.9...@standardnotes/web@3.153.10) (2023-04-27)
 
 **Note:** Version bump only for package @standardnotes/web
