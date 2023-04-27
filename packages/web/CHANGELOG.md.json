@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.153.7",
+      "title": "[3.153.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.6...@standardnotes/web@3.153.7) (2023-04-27)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* **desktop:** Fixed issue where preferences header & tooltips are overlapped by custom titlebar ([ef27a21](https://github.com/standardnotes/app/commit/ef27a21fb141c4ef1a760cf6fb550e4b713f8f98))",
+      "parsed": {
+        "_": [
+          "desktop: Fixed issue where preferences header & tooltips are overlapped by custom titlebar (ef27a21)"
+        ],
+        "Bug Fixes": [
+          "desktop: Fixed issue where preferences header & tooltips are overlapped by custom titlebar (ef27a21)"
+        ]
+      }
+    },
+    {
       "version": "3.153.6",
       "title": "[3.153.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.5...@standardnotes/web@3.153.6) (2023-04-27)",
       "date": null,
