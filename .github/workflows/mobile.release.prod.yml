@@ -104,6 +104,8 @@ jobs:
       - name: fastlane
         uses: maierj/fastlane-action@v1.4.0
         env:
+          FASTLANE_ITUNES_TRANSPORTER_USE_SHELL_SCRIPT: 1
+          FASTLANE_ITUNES_TRANSPORTER_PATH: /Applications/Transporter.app/Contents/itms
           APPLE_APP_ID: ${{ secrets.APP_APPLE_ID }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPSTORE_CONNECT_KEY_ID: ${{ secrets.APPSTORE_CONNECT_KEY_ID }}
