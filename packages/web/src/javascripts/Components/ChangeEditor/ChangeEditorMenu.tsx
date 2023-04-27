@@ -138,7 +138,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
         return
       }
 
-      if (note.noteType === NoteType.Super) {
+      if (note.noteType === NoteType.Super && note.text.length > 0) {
         setPendingConversionItem(itemToBeSelected)
         handleDisableClickoutsideRequest?.()
         return

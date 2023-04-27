@@ -43,6 +43,10 @@ const SuperNoteConverter = ({
   }, [component, noteType])
 
   const convertedContent = useMemo(() => {
+    if (note.text.length === 0) {
+      return note.text
+    }
+
     return exportSuperNote(note, format)
   }, [format, note])
 
