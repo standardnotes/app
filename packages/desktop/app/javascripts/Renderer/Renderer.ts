@@ -114,6 +114,17 @@ async function configureWindow(remoteBridge: CrossProcessBridge) {
   if (isMacOS || useSystemMenuBar) {
     // !important is important here because #desktop-title-bar has display: flex.
     sheet.insertRule('#desktop-title-bar { display: none !important; }', sheet.cssRules.length)
+  } else {
+    /* Use custom title bar. Take the sn-titlebar-height off of
+    the app content height so its not overflowing */
+    sheet.insertRule(
+      '[data-dialog] { position: relative; height: calc(100vh - var(--sn-desktop-titlebar-height)) !important; margin-top: var(--sn-desktop-titlebar-height) !important; }',
+      sheet.cssRules.length,
+    )
+    sheet.insertRule(
+      '[data-mobile-popover] { padding-top: var(--sn-desktop-titlebar-height) !important; }',
+      sheet.cssRules.length,
+    )
   }
 }
 

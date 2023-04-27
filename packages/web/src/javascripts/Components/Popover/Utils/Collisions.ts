@@ -45,20 +45,21 @@ const OppositeAlignment: Record<Exclude<PopoverAlignment, 'center'>, PopoverAlig
   end: 'start',
 }
 
-export const getNonCollidingAlignment = (
-  finalSide: PopoverSide,
-  preferredAlignment: PopoverAlignment,
-  collisions: RectCollisions,
-  {
-    popoverRect,
-    buttonRect,
-    documentRect,
-  }: {
-    popoverRect: DOMRect
-    buttonRect: DOMRect
-    documentRect: DOMRect
-  },
-): PopoverAlignment => {
+export const getNonCollidingAlignment = ({
+  finalSide,
+  preferredAlignment,
+  collisions,
+  popoverRect,
+  buttonRect,
+  documentRect,
+}: {
+  finalSide: PopoverSide
+  preferredAlignment: PopoverAlignment
+  collisions: RectCollisions
+  popoverRect: DOMRect
+  buttonRect: DOMRect
+  documentRect: DOMRect
+}): PopoverAlignment => {
   const isHorizontalSide = finalSide === 'top' || finalSide === 'bottom'
   const boundToCheckForStart = isHorizontalSide ? 'right' : 'bottom'
   const boundToCheckForEnd = isHorizontalSide ? 'left' : 'top'
