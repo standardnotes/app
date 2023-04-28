@@ -26,9 +26,15 @@ export function initializeApplication(args: { app: Electron.App; ipcMain: Electr
     state,
   })
 
+  console.log('isDev', isDev())
+
   if (isDev()) {
     /** Expose the app's state as a global variable. Useful for debugging */
     ;(global as any).appState = state
+
+    setTimeout(() => {
+      state.windowState?.window.webContents.openDevTools()
+    }, 500)
   }
 }
 

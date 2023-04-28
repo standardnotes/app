@@ -4,7 +4,7 @@ export enum StoreKeys {
   ExtServerHost = 'extServerHost',
   UseSystemMenuBar = 'useSystemMenuBar',
   MenuBarVisible = 'isMenuBarVisible',
-  LegacyTextBackupsLocation = 'backupsLocation',
+  TextBackupsLocation = 'backupsLocation',
   TextBackupsDisabled = 'backupsDisabled',
   MinimizeToTray = 'minimizeToTray',
   EnableAutoUpdate = 'enableAutoUpdates',
@@ -20,7 +20,7 @@ export interface StoreData {
   [StoreKeys.ExtServerHost]: string
   [StoreKeys.UseSystemMenuBar]: boolean
   [StoreKeys.MenuBarVisible]: boolean
-  [StoreKeys.LegacyTextBackupsLocation]: string
+  [StoreKeys.TextBackupsLocation]: string
   [StoreKeys.TextBackupsDisabled]: boolean
   [StoreKeys.MinimizeToTray]: boolean
   [StoreKeys.EnableAutoUpdate]: boolean

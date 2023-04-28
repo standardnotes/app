@@ -1,3 +1,4 @@
+import { LoggingDomain, log } from './../../../Logging'
 import { MessageToWebApp } from './../../Shared/IpcMessages'
 import {
   FileBackupRecord,
@@ -37,9 +38,7 @@ export const FileBackupsConstantsV1 = {
 export class FilesBackupManager implements FileBackupsDevice {
   private readOperations: Map<string, FileReadOperation> = new Map()
 
-  constructor(private appState: AppState, private webContents: WebContents) {
-    void this.migrateLegacyBackups()
-  }
+  constructor(private appState: AppState, private webContents: WebContents) {}
 
   public isFilesBackupsEnabled(): Promise<boolean> {
     return Promise.resolve(this.appState.store.get(StoreKeys.FileBackupsEnabled))
@@ -250,10 +249,11 @@ export class FilesBackupManager implements FileBackupsDevice {
   }
 
   async getTextBackupsLocation(): Promise<string | undefined> {
-    const directory = await this.getFilesBackupsLocation()
+    const directory = this.appState.store.get(StoreKeys.TextBackupsLocation) ?? (await this.getFilesBackupsLocation())
 
     if (!directory) {
-      return undefined
+      const defaultLocation = Paths.documentsDir
+      return `${defaultLocation}/Standard Notes/${TextBackupsDirectoryName}`
     }
 
     return `${directory}/${TextBackupsDirectoryName}`
@@ -272,9 +272,11 @@ export class FilesBackupManager implements FileBackupsDevice {
 
   async performTextBackup(): Promise<void> {
     if (!(await this.isTextBackupsEnabled())) {
+      log(LoggingDomain.Backups, 'Text backups are disabled, returning.')
       return
     }
 
+    log(LoggingDomain.Backups, 'Performing text backup...')
     this.webContents.send(MessageToWebApp.PerformAutomatedBackup)
   }
 
@@ -294,11 +296,14 @@ export class FilesBackupManager implements FileBackupsDevice {
     if (!location) {
       return
     }
+
     void shell.openPath(location)
   }
 
   async saveTextBackupData(data: unknown): Promise<void> {
     const location = await this.getTextBackupsLocation()
+    log(LoggingDomain.Backups, 'Saving text backup data to', location)
+
     if (!location || !(await this.isTextBackupsEnabled())) {
       return
     }
@@ -307,16 +312,16 @@ export class FilesBackupManager implements FileBackupsDevice {
 
     try {
       await ensureDirectoryExists(location)
-
-      const name = `${new Date().toISOString().replace(/:/g, '-')}/${TextBackupFileExtension}`
+      const name = `${new Date().toISOString().replace(/:/g, '-')}${TextBackupFileExtension}`
       const filePath = path.join(location, name)
       await fs.writeFile(filePath, data as any)
-
       success = true
     } catch (err) {
       success = false
       console.error('An error occurred saving backup file', err)
     }
+
+    log(LoggingDomain.Backups, 'Finished saving text backup data', { success })
 
     this.webContents.send(MessageToWebApp.FinishedSavingBackup, { success })
   }
@@ -328,22 +333,5 @@ export class FilesBackupManager implements FileBackupsDevice {
     } catch (error) {
       console.error(error)
     }
-  }
-
-  async migrateLegacyBackups() {
-    const BackupsDirectoryName = 'Standard Notes Backups'
-    const legacyLocation = this.appState.store.get(StoreKeys.LegacyTextBackupsLocation)
-    const legacyDirectory = `${legacyLocation}/${BackupsDirectoryName}`
-
-    if (!(await fs.stat(legacyDirectory)).isDirectory()) {
-      return
-    }
-
-    const newDirectory = await this.getTextBackupsLocation()
-    if (!newDirectory) {
-      return
-    }
-
-    await moveDirContents(legacyDirectory, newDirectory)
   }
 }

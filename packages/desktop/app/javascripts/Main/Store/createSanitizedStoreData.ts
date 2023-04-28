@@ -9,21 +9,22 @@ export function createSanitizedStoreData(data: any = {}): StoreData {
   return {
     [StoreKeys.MenuBarVisible]: ensureIsBoolean(data[StoreKeys.MenuBarVisible], true),
     [StoreKeys.UseSystemMenuBar]: ensureIsBoolean(data[StoreKeys.UseSystemMenuBar], false),
-    [StoreKeys.TextBackupsDisabled]: ensureIsBoolean(data[StoreKeys.TextBackupsDisabled], false),
     [StoreKeys.MinimizeToTray]: ensureIsBoolean(data[StoreKeys.MinimizeToTray], false),
     [StoreKeys.EnableAutoUpdate]: ensureIsBoolean(data[StoreKeys.EnableAutoUpdate], true),
     [StoreKeys.UseNativeKeychain]: isBoolean(data[StoreKeys.UseNativeKeychain])
       ? data[StoreKeys.UseNativeKeychain]
       : null,
     [StoreKeys.ExtServerHost]: data[StoreKeys.ExtServerHost],
-    [StoreKeys.LegacyTextBackupsLocation]: data[StoreKeys.LegacyTextBackupsLocation],
     [StoreKeys.ZoomFactor]: sanitizeZoomFactor(data[StoreKeys.ZoomFactor]),
     [StoreKeys.SelectedSpellCheckerLanguageCodes]: sanitizeSpellCheckerLanguageCodes(
       data[StoreKeys.SelectedSpellCheckerLanguageCodes],
     ),
+    [StoreKeys.LastRunVersion]: data[StoreKeys.LastRunVersion],
+
+    [StoreKeys.TextBackupsLocation]: data[StoreKeys.TextBackupsLocation],
+    [StoreKeys.TextBackupsDisabled]: ensureIsBoolean(data[StoreKeys.TextBackupsDisabled], false),
     [StoreKeys.FileBackupsEnabled]: ensureIsBoolean(data[StoreKeys.FileBackupsEnabled], false),
     [StoreKeys.FileBackupsLocation]: data[StoreKeys.FileBackupsLocation],
-    [StoreKeys.LastRunVersion]: data[StoreKeys.LastRunVersion],
   }
 }
 function sanitizeZoomFactor(factor?: any): number {
