@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.153.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.12...@standardnotes/web@3.153.13) (2023-04-28)
+
+### Bug Fixes
+
+* Fixed issue where removing a collapsible block would unwrap the contents in reverse order ([40179bb](https://github.com/standardnotes/app/commit/40179bba06228acf4015ca1efc552b800ee5da7e))
+
 ## [3.153.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.11...@standardnotes/web@3.153.12) (2023-04-28)
 
 **Note:** Version bump only for package @standardnotes/web

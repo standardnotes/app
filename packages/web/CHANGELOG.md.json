@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.153.13",
+      "title": "[3.153.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.12...@standardnotes/web@3.153.13) (2023-04-28)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where removing a collapsible block would unwrap the contents in reverse order ([40179bb](https://github.com/standardnotes/app/commit/40179bba06228acf4015ca1efc552b800ee5da7e))",
+      "parsed": {
+        "_": [
+          "Fixed issue where removing a collapsible block would unwrap the contents in reverse order (40179bb)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where removing a collapsible block would unwrap the contents in reverse order (40179bb)"
+        ]
+      }
+    },
+    {
       "version": "3.153.12",
       "title": "[3.153.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.11...@standardnotes/web@3.153.12) (2023-04-28)",
       "date": null,
