@@ -11,6 +11,7 @@ import {
   useSelectStore,
   VisuallyHidden,
 } from '@ariakit/react'
+import { KeyboardKey } from '@standardnotes/ui-services'
 
 type DropdownProps = {
   label: string
@@ -59,7 +60,15 @@ const Dropdown = ({ label, value, onChange, items, disabled, fullWidth, classNam
   }, [items, onChange, select, value])
 
   return (
-    <div className={classNameOverride.wrapper}>
+    <div
+      className={classNameOverride.wrapper}
+      onKeyDown={(event) => {
+        if (event.key === KeyboardKey.Escape) {
+          event.stopPropagation()
+          select.toggle()
+        }
+      }}
+    >
       <VisuallyHidden>
         <SelectLabel store={select}>{label}</SelectLabel>
       </VisuallyHidden>

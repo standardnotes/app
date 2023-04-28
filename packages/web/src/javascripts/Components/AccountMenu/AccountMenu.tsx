@@ -5,6 +5,7 @@ import { useCallback, FunctionComponent, KeyboardEventHandler } from 'react'
 import { ApplicationGroup } from '@/Application/ApplicationGroup'
 import { AccountMenuPane } from './AccountMenuPane'
 import MenuPaneSelector from './MenuPaneSelector'
+import { KeyboardKey } from '@standardnotes/ui-services'
 
 export type AccountMenuProps = {
   viewControllerManager: ViewControllerManager
@@ -33,16 +34,14 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({
 
   const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = useCallback(
     (event) => {
-      switch (event.key) {
-        case 'Escape':
-          if (currentPane === AccountMenuPane.GeneralMenu) {
-            closeAccountMenu()
-          } else if (currentPane === AccountMenuPane.ConfirmPassword) {
-            setCurrentPane(AccountMenuPane.Register)
-          } else {
-            setCurrentPane(AccountMenuPane.GeneralMenu)
-          }
-          break
+      if (event.key === KeyboardKey.Escape) {
+        if (currentPane === AccountMenuPane.GeneralMenu) {
+          closeAccountMenu()
+        } else if (currentPane === AccountMenuPane.ConfirmPassword) {
+          setCurrentPane(AccountMenuPane.Register)
+        } else {
+          setCurrentPane(AccountMenuPane.GeneralMenu)
+        }
       }
     },
     [closeAccountMenu, currentPane, setCurrentPane],

@@ -57,8 +57,9 @@ export const useListKeyboardNavigation = (
   const keyDownHandler = useCallback(
     (e: KeyboardEvent) => {
       const isFocusInInput = document.activeElement?.tagName === 'INPUT'
+      const isFocusInListbox = !!document.activeElement?.closest('[role="listbox"]')
 
-      if (isFocusInInput) {
+      if (isFocusInInput || isFocusInListbox) {
         return
       }
 

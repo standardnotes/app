@@ -8,6 +8,7 @@ import { PopoverContentProps } from './Types'
 import { usePopoverCloseOnClickOutside } from './Utils/usePopoverCloseOnClickOutside'
 import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobile'
 import { MediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { KeyboardKey } from '@standardnotes/ui-services'
 
 const PositionedPopoverContent = ({
   align = 'end',
@@ -88,7 +89,7 @@ const PositionedPopoverContent = ({
         ref={setPopoverElement}
         data-popover={id}
         onKeyDown={(event) => {
-          if (event.key === 'Escape') {
+          if (event.key === KeyboardKey.Escape) {
             event.stopPropagation()
             togglePopover?.()
             if (anchorElement) {
