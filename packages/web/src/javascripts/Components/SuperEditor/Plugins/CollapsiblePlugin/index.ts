@@ -9,7 +9,7 @@
 import './Collapsible.css'
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import { $findMatchingParent, mergeRegister } from '@lexical/utils'
+import { $findMatchingParent, mergeRegister, $insertNodeToNearestRoot } from '@lexical/utils'
 import {
   $createParagraphNode,
   $getNodeByKey,
@@ -202,17 +202,14 @@ export default function CollapsiblePlugin(): JSX.Element | null {
         INSERT_COLLAPSIBLE_COMMAND,
         () => {
           editor.update(() => {
-            const selection = $getSelection()
-
-            if (!$isRangeSelection(selection)) {
-              return
-            }
-
             const title = $createCollapsibleTitleNode()
-            const content = $createCollapsibleContentNode().append($createParagraphNode())
-            const container = $createCollapsibleContainerNode(true).append(title, content)
-            selection.insertNodes([container])
-            title.selectStart()
+            $insertNodeToNearestRoot(
+              $createCollapsibleContainerNode(true).append(
+                title,
+                $createCollapsibleContentNode().append($createParagraphNode()),
+              ),
+            )
+            title.select()
           })
 
           return true
