@@ -44,6 +44,10 @@ const Dropdown = ({ label, value, onChange, items, disabled, fullWidth, classNam
   const currentItem = items.find((item) => item.value === selectedValue)
 
   useEffect(() => {
+    select.setValue(value)
+  }, [select, value])
+
+  useEffect(() => {
     return select.subscribe(
       (state) => {
         if (state.value !== value) {
