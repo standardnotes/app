@@ -85,7 +85,7 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
           <button
             className="sk-a ml-1.5 cursor-pointer rounded p-0 capitalize"
             onClick={() => {
-              void application.desktopDevice?.viewTextBackups()
+              void application.desktopDevice?.openTextBackupsLocation()
             }}
           >
             View backup files

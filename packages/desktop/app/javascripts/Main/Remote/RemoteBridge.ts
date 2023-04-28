@@ -72,10 +72,11 @@ export class RemoteBridge implements CrossProcessBridge {
       enableTextBackups: this.enableTextBackups.bind(this),
       disableTextBackups: this.disableTextBackups.bind(this),
       getTextBackupsLocation: this.getTextBackupsLocation.bind(this),
+      changeTextBackupsLocation: this.changeTextBackupsLocation.bind(this),
+      openTextBackupsLocation: this.openTextBackupsLocation.bind(this),
       getTextBackupsCount: this.getTextBackupsCount.bind(this),
       performTextBackup: this.performTextBackup.bind(this),
       deleteTextBackups: this.deleteTextBackups.bind(this),
-      viewTextBackups: this.viewTextBackups.bind(this),
       saveTextBackupData: this.saveTextBackupData.bind(this),
     }
   }
@@ -232,12 +233,16 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.fileBackups.deleteTextBackups()
   }
 
-  viewTextBackups(): Promise<void> {
-    return this.fileBackups.viewTextBackups()
-  }
-
   saveTextBackupData(data: unknown): void {
     this.fileBackups.saveTextBackupData(data)
+  }
+
+  changeTextBackupsLocation(): Promise<string | undefined> {
+    return this.fileBackups.changeTextBackupsLocation()
+  }
+
+  openTextBackupsLocation(): Promise<void> {
+    return this.fileBackups.openTextBackupsLocation()
   }
 
   askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean> {

@@ -19,7 +19,7 @@ import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { log, LoggingDomain } from '../Logging'
 
 export class FilesBackupService extends AbstractService implements BackupServiceInterface {
-  private itemsObserverDisposer: () => void
+  private filesObserverDisposer: () => void
   private pendingFiles = new Set<string>()
   private mappingCache?: FileBackupsMapping['files']
 
@@ -34,7 +34,7 @@ export class FilesBackupService extends AbstractService implements BackupService
   ) {
     super(internalEventBus)
 
-    this.itemsObserverDisposer = items.addObserver<FileItem>(ContentType.File, ({ changed, inserted, source }) => {
+    this.filesObserverDisposer = items.addObserver<FileItem>(ContentType.File, ({ changed, inserted, source }) => {
       const applicableSources = [
         PayloadEmitSource.LocalDatabaseLoaded,
         PayloadEmitSource.RemoteSaved,
@@ -49,7 +49,7 @@ export class FilesBackupService extends AbstractService implements BackupService
 
   override deinit() {
     super.deinit()
-    this.itemsObserverDisposer()
+    this.filesObserverDisposer()
     ;(this.items as unknown) = undefined
     ;(this.api as unknown) = undefined
     ;(this.encryptor as unknown) = undefined

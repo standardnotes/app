@@ -29,9 +29,10 @@ export interface FileBackupsDevice {
   enableTextBackups(): Promise<void>
   disableTextBackups(): Promise<void>
   getTextBackupsLocation(): Promise<string | undefined>
+  changeTextBackupsLocation(): Promise<string | undefined>
+  openTextBackupsLocation(): Promise<void>
   getTextBackupsCount(): Promise<number>
   performTextBackup(): Promise<void>
   deleteTextBackups(): Promise<void>
-  viewTextBackups(): Promise<void>
   saveTextBackupData(data: unknown): void
 }

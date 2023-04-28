@@ -118,7 +118,7 @@ const EmailBackups = ({ application }: Props) => {
         )}
 
         <div className={`${!hasAccount ? 'pointer-events-none cursor-default opacity-50' : ''}`}>
-          <Subtitle>Email frequency</Subtitle>
+          <Subtitle>Frequency</Subtitle>
           <Text>How often to receive backups.</Text>
           <div className="mt-2">
             {isLoading ? (

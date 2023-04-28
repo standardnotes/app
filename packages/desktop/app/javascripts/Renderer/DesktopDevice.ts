@@ -135,6 +135,14 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.getTextBackupsLocation()
   }
 
+  changeTextBackupsLocation(): Promise<string | undefined> {
+    return this.remoteBridge.changeTextBackupsLocation()
+  }
+
+  openTextBackupsLocation(): Promise<void> {
+    return this.remoteBridge.openTextBackupsLocation()
+  }
+
   getTextBackupsCount(): Promise<number> {
     return this.remoteBridge.getTextBackupsCount()
   }
@@ -145,10 +153,6 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
 
   deleteTextBackups(): Promise<void> {
     return this.remoteBridge.deleteTextBackups()
-  }
-
-  viewTextBackups(): Promise<void> {
-    return this.remoteBridge.viewTextBackups()
   }
 
   saveTextBackupData(data: unknown): void {

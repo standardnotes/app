@@ -6,6 +6,7 @@ import DataBackups from './DataBackups'
 import EmailBackups from './EmailBackups'
 import FileBackupsCrossPlatform from './Files/FileBackupsCrossPlatform'
 import { observer } from 'mobx-react-lite'
+import TextBackupsCrossPlatform from './TextBackups/TextBackupsCrossPlatform'
 
 type Props = {
   viewControllerManager: ViewControllerManager
@@ -16,6 +17,7 @@ const Backups: FunctionComponent<Props> = ({ application, viewControllerManager 
   return (
     <PreferencesPane>
       <DataBackups application={application} viewControllerManager={viewControllerManager} />
+      <TextBackupsCrossPlatform application={application} />
       <FileBackupsCrossPlatform application={application} />
       <EmailBackups application={application} />
     </PreferencesPane>

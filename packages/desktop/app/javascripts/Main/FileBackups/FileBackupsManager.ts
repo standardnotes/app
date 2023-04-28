@@ -81,9 +81,9 @@ export class FilesBackupManager implements FileBackupsDevice {
 
     if (oldPath) {
       await this.transferFilesBackupsToNewLocation(oldPath, newPath)
-    } else {
-      this.appState.store.set(StoreKeys.FileBackupsLocation, newPath)
     }
+
+    this.appState.store.set(StoreKeys.FileBackupsLocation, newPath)
 
     return newPath
   }
@@ -291,15 +291,6 @@ export class FilesBackupManager implements FileBackupsDevice {
     await this.copyDecryptScript(location)
   }
 
-  async viewTextBackups(): Promise<void> {
-    const location = await this.getTextBackupsLocation()
-    if (!location) {
-      return
-    }
-
-    void shell.openPath(location)
-  }
-
   async saveTextBackupData(data: unknown): Promise<void> {
     const location = await this.getTextBackupsLocation()
     log(LoggingDomain.Backups, 'Saving text backup data to', location)
@@ -324,6 +315,34 @@ export class FilesBackupManager implements FileBackupsDevice {
     log(LoggingDomain.Backups, 'Finished saving text backup data', { success })
 
     this.webContents.send(MessageToWebApp.FinishedSavingBackup, { success })
+  }
+
+  async changeTextBackupsLocation(): Promise<string | undefined> {
+    const newPath = await openDirectoryPicker()
+
+    if (!newPath) {
+      return undefined
+    }
+
+    const oldPath = await this.getTextBackupsLocation()
+
+    if (oldPath) {
+      await moveDirContents(oldPath, newPath)
+    }
+
+    this.appState.store.set(StoreKeys.TextBackupsLocation, newPath)
+
+    return newPath
+  }
+
+  async openTextBackupsLocation(): Promise<void> {
+    const location = await this.getTextBackupsLocation()
+    log(LoggingDomain.Backups, 'Opening text backups location', location)
+    if (!location) {
+      return
+    }
+
+    void shell.openPath(location)
   }
 
   async copyDecryptScript(location: string) {
