@@ -17,6 +17,22 @@ function getScrollParent(node: HTMLElement | null): HTMLElement | null {
   }
 }
 
+const supportsPassive = (() => {
+  let supportsPassive = false
+  try {
+    const opts = Object.defineProperty({}, 'passive', {
+      get: () => {
+        supportsPassive = true
+      },
+    })
+    window.addEventListener('test', null as never, opts)
+    window.removeEventListener('test', null as never, opts)
+  } catch (e) {
+    /* empty */
+  }
+  return supportsPassive
+})()
+
 export const usePaneSwipeGesture = (
   direction: 'left' | 'right',
   onSwipeEnd: (element: HTMLElement) => void,
@@ -68,10 +84,9 @@ export const usePaneSwipeGesture = (
       closestScrollContainer = getScrollParent(event.target as HTMLElement)
       if (closestScrollContainer) {
         closestScrollContainer.addEventListener('scroll', scrollListener)
-        if (closestScrollContainer.scrollWidth > closestScrollContainer.offsetWidth) {
+
+        if (closestScrollContainer.scrollWidth > closestScrollContainer.clientWidth) {
           scrollContainerAxis = 'x'
-        } else {
-          scrollContainerAxis = 'y'
         }
       } else {
         scrollContainerAxis = null
@@ -185,9 +200,9 @@ export const usePaneSwipeGesture = (
       }
     }
 
-    element.addEventListener('touchstart', touchStartListener)
-    element.addEventListener('touchmove', touchMoveListener)
-    element.addEventListener('touchend', touchEndListener)
+    element.addEventListener('touchstart', touchStartListener, supportsPassive ? { passive: true } : false)
+    element.addEventListener('touchmove', touchMoveListener, supportsPassive ? { passive: true } : false)
+    element.addEventListener('touchend', touchEndListener, supportsPassive ? { passive: true } : false)
 
     return () => {
       element.removeEventListener('touchstart', touchStartListener)
