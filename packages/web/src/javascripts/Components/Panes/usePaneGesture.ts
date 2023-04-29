@@ -1,9 +1,21 @@
 import { useStateRef } from '@/Hooks/useStateRef'
 import { useEffect, useRef, useState } from 'react'
-import { Direction, Pan, PointerListener, type GestureEventData } from 'contactjs'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { useApplication } from '../ApplicationProvider'
 import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
+
+function getScrollParent(node: HTMLElement | null): HTMLElement | null {
+  if (!node) {
+    return null
+  }
+
+  if (node.scrollHeight > node.clientHeight || node.scrollWidth > node.clientWidth) {
+    return node
+  } else {
+    return getScrollParent(node.parentElement)
+  }
+}
 
 export const usePaneSwipeGesture = (
   direction: 'left' | 'right',
@@ -12,16 +24,18 @@ export const usePaneSwipeGesture = (
 ) => {
   const application = useApplication()
 
-  const overlayElementRef = useRef<HTMLElement | null>(null)
+  const underlayElementRef = useRef<HTMLElement | null>(null)
   const [element, setElement] = useState<HTMLElement | null>(null)
 
   const onSwipeEndRef = useStateRef(onSwipeEnd)
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
-  const [isEnabled, setIsEnabled] = useState(() => application.getPreference(PrefKey.PaneGesturesEnabled, false))
+  const [isEnabled, setIsEnabled] = useState(() =>
+    application.getPreference(PrefKey.PaneGesturesEnabled, PrefDefaults[PrefKey.PaneGesturesEnabled]),
+  )
   useEffect(() => {
     return application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
-      setIsEnabled(application.getPreference(PrefKey.PaneGesturesEnabled, false))
+      setIsEnabled(application.getPreference(PrefKey.PaneGesturesEnabled, PrefDefaults[PrefKey.PaneGesturesEnabled]))
     })
   }, [application])
 
@@ -38,126 +52,135 @@ export const usePaneSwipeGesture = (
       return
     }
 
-    const panRecognizer = new Pan(element, {
-      supportedDirections: direction === 'left' ? [Direction.Left] : [Direction.Right],
-    })
+    underlayElementRef.current = element.parentElement?.querySelector(`[data-pane-underlay="${element.id}"]`) || null
 
-    const pointerListener = new PointerListener(element, {
-      supportedGestures: [panRecognizer],
-    })
+    let startX = 0
+    let clientX = 0
+    let closestScrollContainer: HTMLElement | null
+    let scrollContainerAxis: 'x' | 'y' | null = null
+    let canceled = false
 
-    function onPan(e: unknown) {
-      const event = e as CustomEvent<GestureEventData>
-      if (!element) {
+    const scrollListener = () => {
+      canceled = true
+    }
+
+    const touchStartListener = (event: TouchEvent) => {
+      closestScrollContainer = getScrollParent(event.target as HTMLElement)
+      if (closestScrollContainer) {
+        closestScrollContainer.addEventListener('scroll', scrollListener)
+        if (closestScrollContainer.scrollWidth > closestScrollContainer.offsetWidth) {
+          scrollContainerAxis = 'x'
+        } else {
+          scrollContainerAxis = 'y'
+        }
+      } else {
+        scrollContainerAxis = null
+      }
+
+      const touch = event.touches[0]
+
+      startX = touch.clientX
+
+      canceled = false
+    }
+
+    const updateElement = (x: number) => {
+      if (!underlayElementRef.current) {
+        const underlayElement = document.createElement('div')
+        underlayElement.style.position = 'fixed'
+        underlayElement.style.top = '0'
+        underlayElement.style.left = '0'
+        underlayElement.style.width = '100%'
+        underlayElement.style.height = '100%'
+        underlayElement.style.pointerEvents = 'none'
+        underlayElement.style.backgroundColor = '#000'
+        underlayElement.style.opacity = '0'
+        underlayElement.style.willChange = 'opacity'
+        underlayElement.setAttribute('role', 'presentation')
+        underlayElement.ariaHidden = 'true'
+        underlayElement.setAttribute('data-pane-underlay', element.id)
+
+        element.before(underlayElement)
+        underlayElementRef.current = underlayElement
+      }
+
+      element.animate(
+        [
+          {
+            transform: `translate3d(${x}px, 0, 0)`,
+          },
+        ],
+        {
+          duration: 0,
+          fill: 'forwards',
+        },
+      )
+
+      const percent = Math.min(window.innerWidth / x / 10, 0.45)
+      underlayElementRef.current.animate([{ opacity: percent }], {
+        duration: 0,
+        fill: 'forwards',
+      })
+    }
+
+    const touchMoveListener = (event: TouchEvent) => {
+      if (scrollContainerAxis === 'x') {
         return
       }
 
-      const x = event.detail.global.deltaX
-      requestElementUpdate(x)
-    }
+      if (canceled) {
+        updateElement(0)
+        return
+      }
 
-    let ticking = false
+      const touch = event.touches[0]
+      clientX = touch.clientX
+      const deltaX = touch.clientX - startX
 
-    function onPanEnd(e: unknown) {
-      const event = e as CustomEvent<GestureEventData>
-      if (ticking) {
-        setTimeout(function () {
-          onPanEnd(event)
-        }, 100)
-      } else {
-        if (!element) {
-          return
-        }
+      const x = direction === 'right' ? Math.max(deltaX, 0) : Math.min(deltaX, 0)
 
-        if (direction === 'right' && event.detail.global.deltaX > 40) {
-          onSwipeEndRef.current(element)
-        } else if (direction === 'left' && event.detail.global.deltaX < -40) {
-          onSwipeEndRef.current(element)
-        } else {
-          requestElementUpdate(0)
-        }
-
-        if (overlayElementRef.current) {
-          overlayElementRef.current
-            .animate([{ opacity: 0 }], {
-              duration: 5,
-              fill: 'forwards',
-            })
-            .finished.then(() => {
-              if (overlayElementRef.current) {
-                overlayElementRef.current.remove()
-                overlayElementRef.current = null
-              }
-            })
-            .catch(console.error)
-        }
+      if (gesture === 'pan') {
+        updateElement(x)
       }
     }
 
-    function requestElementUpdate(x: number) {
-      if (!ticking) {
-        requestAnimationFrame(function () {
-          if (!element) {
-            return
-          }
+    const touchEndListener = () => {
+      const deltaX = clientX - startX
 
-          if (!overlayElementRef.current) {
-            const overlayElement = document.createElement('div')
-            overlayElement.style.position = 'fixed'
-            overlayElement.style.top = '0'
-            overlayElement.style.left = '0'
-            overlayElement.style.width = '100%'
-            overlayElement.style.height = '100%'
-            overlayElement.style.pointerEvents = 'none'
-            overlayElement.style.backgroundColor = '#000'
-            overlayElement.style.opacity = '0'
-            overlayElement.style.willChange = 'opacity'
+      if ((direction === 'right' && deltaX > 40) || (direction === 'left' && deltaX < -40)) {
+        onSwipeEndRef.current(element)
+      } else {
+        updateElement(0)
+      }
 
-            element.before(overlayElement)
-            overlayElementRef.current = overlayElement
-          }
+      if (closestScrollContainer) {
+        closestScrollContainer.removeEventListener('scroll', scrollListener)
+      }
 
-          const newLeft = direction === 'right' ? Math.max(x, 0) : Math.min(x, 0)
-          element.animate([{ transform: `translate3d(${newLeft}px,0,0)` }], { duration: 0, fill: 'forwards' })
-
-          const percent = Math.min(window.innerWidth / newLeft / 10, 0.45)
-          overlayElementRef.current.animate([{ opacity: percent }], {
-            duration: 0,
+      if (underlayElementRef.current) {
+        underlayElementRef.current
+          .animate([{ opacity: 0 }], {
+            duration: 5,
             fill: 'forwards',
           })
-
-          ticking = false
-        })
-
-        ticking = true
+          .finished.then(() => {
+            if (underlayElementRef.current) {
+              underlayElementRef.current.remove()
+              underlayElementRef.current = null
+            }
+          })
+          .catch(console.error)
       }
     }
 
-    if (gesture === 'pan') {
-      element.addEventListener('panleft', onPan)
-      element.addEventListener('panright', onPan)
-      element.addEventListener('panend', onPanEnd)
-    } else {
-      if (direction === 'left') {
-        element.addEventListener('swipeleft', onPanEnd)
-      } else {
-        element.addEventListener('swiperight', onPanEnd)
-      }
-    }
+    element.addEventListener('touchstart', touchStartListener)
+    element.addEventListener('touchmove', touchMoveListener)
+    element.addEventListener('touchend', touchEndListener)
 
     return () => {
-      pointerListener.destroy()
-      if (gesture === 'pan') {
-        element.removeEventListener('panleft', onPan)
-        element.removeEventListener('panright', onPan)
-        element.removeEventListener('panend', onPanEnd)
-      } else {
-        if (direction === 'left') {
-          element.removeEventListener('swipeleft', onPanEnd)
-        } else {
-          element.removeEventListener('swiperight', onPanEnd)
-        }
-      }
+      element.removeEventListener('touchstart', touchStartListener)
+      element.removeEventListener('touchmove', touchMoveListener)
+      element.removeEventListener('touchend', touchEndListener)
     }
   }, [direction, element, gesture, isMobileScreen, onSwipeEndRef, isEnabled])
 
