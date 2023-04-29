@@ -4,6 +4,17 @@ import { FileBackupRecord, FileBackupsMapping } from './FileBackupsMapping'
 export type FileBackupReadToken = string
 export type FileBackupReadChunkResponse = { chunk: Uint8Array; isLast: boolean; progress: FileDownloadProgress }
 
+type PlaintextNoteRecord = {
+  tag?: string
+  path: string
+}
+
+export type PlaintextBackupsMapping = {
+  version: string
+  /** A note or tag uuid maps to an array of PlaintextNoteRecord */
+  files: Record<string, PlaintextNoteRecord[]>
+}
+
 export interface FileBackupsDevice {
   getFilesBackupsMappingFile(): Promise<FileBackupsMapping>
   saveFilesBackupsFile(
@@ -32,7 +43,16 @@ export interface FileBackupsDevice {
   changeTextBackupsLocation(): Promise<string | undefined>
   openTextBackupsLocation(): Promise<void>
   getTextBackupsCount(): Promise<number>
-  performTextBackup(): Promise<void>
   deleteTextBackups(): Promise<void>
-  saveTextBackupData(data: unknown): void
+  saveTextBackupData(workspaceId: string, data: unknown): Promise<void>
+
+  getPlaintextBackupsMappingFile(): Promise<PlaintextBackupsMapping>
+  persistPlaintextBackupsMappingFile(): Promise<void>
+  isPlaintextBackupsEnabled(): Promise<boolean>
+  enablePlaintextBackups(): Promise<void>
+  disablePlaintextBackups(): Promise<void>
+  getPlaintextBackupsLocation(): Promise<string | undefined>
+  changePlaintextBackupsLocation(): Promise<string | undefined>
+  openPlaintextBackupsLocation(): Promise<void>
+  savePlaintextNoteBackup(workspaceId: string, uuid: string, name: string, tags: string[], data: string): Promise<void>
 }

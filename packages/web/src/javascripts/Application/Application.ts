@@ -269,9 +269,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
   }
 
   performDesktopTextBackup(): void | Promise<void> {
-    if (isDesktopDevice(this.deviceInterface)) {
-      return this.deviceInterface.performTextBackup()
-    }
+    return this.getDesktopService()?.saveDesktopBackup()
   }
 
   async signOutAndDeleteLocalBackups(): Promise<void> {

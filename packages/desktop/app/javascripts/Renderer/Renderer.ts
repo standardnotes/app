@@ -132,14 +132,6 @@ window.electronMainEvents.handleUpdateAvailable(() => {
   window.webClient.updateAvailable()
 })
 
-window.electronMainEvents.handlePerformAutomatedBackup(() => {
-  void window.device.performTextBackupSave()
-})
-
-window.electronMainEvents.handleFinishedSavingBackup((_: IpcRendererEvent, data: { success: boolean }) => {
-  window.webClient.didFinishBackup(data.success)
-})
-
 window.electronMainEvents.handleWindowBlurred(() => {
   window.webClient.windowLostFocus()
 })

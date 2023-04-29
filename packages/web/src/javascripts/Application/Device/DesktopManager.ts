@@ -44,7 +44,7 @@ export class DesktopManager
     const hoursInterval = 12
     const seconds = hoursInterval * 60 * 60
     const milliseconds = seconds * 1000
-    this.textBackupsInterval = setInterval(this.device.performTextBackup, milliseconds)
+    this.textBackupsInterval = setInterval(this.saveDesktopBackup, milliseconds)
   }
 
   get webApplication() {
@@ -66,12 +66,30 @@ export class DesktopManager
         }
       })
     } else if (eventName === ApplicationEvent.MajorDataChange) {
-      void this.device.performTextBackup()
+      void this.saveDesktopBackup()
     }
   }
 
-  saveBackup() {
-    void this.device.performTextBackup()
+  async saveDesktopBackup() {
+    this.webApplication.notifyWebEvent(WebAppEvent.BeganBackupDownload)
+
+    const data = await this.getBackupFile()
+    await this.device.saveTextBackupData(this.application.identifier, data)
+
+    this.webApplication.notifyWebEvent(WebAppEvent.EndedBackupDownload, { success: true })
+  }
+
+  private async getBackupFile(): Promise<string | undefined> {
+    const encrypted = this.application.hasProtectionSources()
+    const data = encrypted
+      ? await this.application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      : await this.application.createDecryptedBackupFile()
+
+    if (data) {
+      return JSON.stringify(data, null, 2)
+    }
+
+    return undefined
   }
 
   getExtServerHost(): string {
@@ -134,7 +152,7 @@ export class DesktopManager
 
     if (this.needsInitialTextBackup) {
       this.needsInitialTextBackup = false
-      void this.device.performTextBackup()
+      void this.saveDesktopBackup()
     }
   }
 
@@ -160,26 +178,5 @@ export class DesktopManager
     for (const observer of this.updateObservers) {
       observer.callback(updatedComponent as SNComponent)
     }
-  }
-
-  async requestBackupFile(): Promise<string | undefined> {
-    const encrypted = this.application.hasProtectionSources()
-    const data = encrypted
-      ? await this.application.createEncryptedBackupFileForAutomatedDesktopBackups()
-      : await this.application.createDecryptedBackupFile()
-
-    if (data) {
-      return JSON.stringify(data, null, 2)
-    }
-
-    return undefined
-  }
-
-  didBeginBackup() {
-    this.webApplication.notifyWebEvent(WebAppEvent.BeganBackupDownload)
-  }
-
-  didFinishBackup(success: boolean) {
-    this.webApplication.notifyWebEvent(WebAppEvent.EndedBackupDownload, { success })
   }
 }

@@ -19,10 +19,4 @@ export interface DesktopClientRequiresWebMethods {
   windowLostFocus(): void
 
   onComponentInstallationComplete(componentData: DecryptedTransferPayload, error: unknown): Promise<void>
-
-  requestBackupFile(): Promise<string | undefined>
-
-  didBeginBackup(): void
-
-  didFinishBackup(success: boolean): void
 }

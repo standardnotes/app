@@ -23,6 +23,10 @@ export function createSanitizedStoreData(data: any = {}): StoreData {
 
     [StoreKeys.TextBackupsLocation]: data[StoreKeys.TextBackupsLocation],
     [StoreKeys.TextBackupsDisabled]: ensureIsBoolean(data[StoreKeys.TextBackupsDisabled], false),
+
+    [StoreKeys.PlaintextBackupsLocation]: data[StoreKeys.PlaintextBackupsLocation],
+    [StoreKeys.PlaintextBackupsEnabled]: ensureIsBoolean(data[StoreKeys.PlaintextBackupsEnabled], false),
+
     [StoreKeys.FileBackupsEnabled]: ensureIsBoolean(data[StoreKeys.FileBackupsEnabled], false),
     [StoreKeys.FileBackupsLocation]: data[StoreKeys.FileBackupsLocation],
   }

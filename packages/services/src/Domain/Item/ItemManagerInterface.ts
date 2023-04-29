@@ -12,6 +12,7 @@ import {
   ItemContent,
   PredicateInterface,
   DecryptedPayload,
+  SNTag,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 
@@ -96,4 +97,10 @@ export interface ItemManagerInterface extends AbstractService {
   subItemsMatchingPredicates<T extends DecryptedItemInterface>(items: T[], predicates: PredicateInterface<T>[]): T[]
   removeAllItemsFromMemory(): Promise<void>
   getDirtyItems(): (DecryptedItemInterface | DeletedItemInterface)[]
+  getTagLongTitle(tag: SNTag): string
+  getSortedTagsForItem(item: DecryptedItemInterface<ItemContent>): SNTag[]
+  referencesForItem<I extends DecryptedItemInterface = DecryptedItemInterface>(
+    itemToLookupUuidFor: DecryptedItemInterface,
+    contentType?: ContentType,
+  ): I[]
 }

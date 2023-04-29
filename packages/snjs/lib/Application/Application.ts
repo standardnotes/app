@@ -1761,6 +1761,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       device,
       this.statusService,
       this.options.crypto,
+      this.identifier,
       this.internalEventBus,
     )
     this.services.push(this.filesBackupService)

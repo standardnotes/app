@@ -11,6 +11,7 @@ import {
   FileBackupRecord,
   FileBackupReadToken,
   FileBackupReadChunkResponse,
+  PlaintextBackupsMapping,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { app, BrowserWindow } from 'electron'
 import { KeychainInterface } from '../Keychain/KeychainInterface'
@@ -75,9 +76,17 @@ export class RemoteBridge implements CrossProcessBridge {
       changeTextBackupsLocation: this.changeTextBackupsLocation.bind(this),
       openTextBackupsLocation: this.openTextBackupsLocation.bind(this),
       getTextBackupsCount: this.getTextBackupsCount.bind(this),
-      performTextBackup: this.performTextBackup.bind(this),
       deleteTextBackups: this.deleteTextBackups.bind(this),
       saveTextBackupData: this.saveTextBackupData.bind(this),
+      getPlaintextBackupsMappingFile: this.getPlaintextBackupsMappingFile.bind(this),
+      persistPlaintextBackupsMappingFile: this.persistPlaintextBackupsMappingFile.bind(this),
+      isPlaintextBackupsEnabled: this.isPlaintextBackupsEnabled.bind(this),
+      enablePlaintextBackups: this.enablePlaintextBackups.bind(this),
+      disablePlaintextBackups: this.disablePlaintextBackups.bind(this),
+      getPlaintextBackupsLocation: this.getPlaintextBackupsLocation.bind(this),
+      changePlaintextBackupsLocation: this.changePlaintextBackupsLocation.bind(this),
+      openPlaintextBackupsLocation: this.openPlaintextBackupsLocation.bind(this),
+      savePlaintextNoteBackup: this.savePlaintextNoteBackup.bind(this),
     }
   }
 
@@ -225,16 +234,12 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.fileBackups.getTextBackupsCount()
   }
 
-  performTextBackup(): Promise<void> {
-    return this.fileBackups.performTextBackup()
-  }
-
   deleteTextBackups(): Promise<void> {
     return this.fileBackups.deleteTextBackups()
   }
 
-  saveTextBackupData(data: unknown): void {
-    this.fileBackups.saveTextBackupData(data)
+  saveTextBackupData(workspaceId: string, data: unknown): Promise<void> {
+    return this.fileBackups.saveTextBackupData(workspaceId, data)
   }
 
   changeTextBackupsLocation(): Promise<string | undefined> {
@@ -243,6 +248,48 @@ export class RemoteBridge implements CrossProcessBridge {
 
   openTextBackupsLocation(): Promise<void> {
     return this.fileBackups.openTextBackupsLocation()
+  }
+
+  getPlaintextBackupsMappingFile(): Promise<PlaintextBackupsMapping> {
+    return this.fileBackups.getPlaintextBackupsMappingFile()
+  }
+
+  persistPlaintextBackupsMappingFile(): Promise<void> {
+    return this.fileBackups.persistPlaintextBackupsMappingFile()
+  }
+
+  isPlaintextBackupsEnabled(): Promise<boolean> {
+    return this.fileBackups.isPlaintextBackupsEnabled()
+  }
+
+  enablePlaintextBackups(): Promise<void> {
+    return this.fileBackups.enablePlaintextBackups()
+  }
+
+  disablePlaintextBackups(): Promise<void> {
+    return this.fileBackups.disablePlaintextBackups()
+  }
+
+  getPlaintextBackupsLocation(): Promise<string | undefined> {
+    return this.fileBackups.getPlaintextBackupsLocation()
+  }
+
+  changePlaintextBackupsLocation(): Promise<string | undefined> {
+    return this.fileBackups.changePlaintextBackupsLocation()
+  }
+
+  openPlaintextBackupsLocation(): Promise<void> {
+    return this.fileBackups.openPlaintextBackupsLocation()
+  }
+
+  savePlaintextNoteBackup(
+    workspaceId: string,
+    uuid: string,
+    name: string,
+    tags: string[],
+    data: string,
+  ): Promise<void> {
+    return this.fileBackups.savePlaintextNoteBackup(workspaceId, uuid, name, tags, data)
   }
 
   askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean> {

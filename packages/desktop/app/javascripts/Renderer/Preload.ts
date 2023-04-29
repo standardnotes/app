@@ -12,12 +12,6 @@ process.once('loaded', function () {
   contextBridge.exposeInMainWorld('electronMainEvents', {
     handleUpdateAvailable: (callback: MainEventCallback) => ipcRenderer.on(MessageToWebApp.UpdateAvailable, callback),
 
-    handlePerformAutomatedBackup: (callback: MainEventCallback) =>
-      ipcRenderer.on(MessageToWebApp.PerformAutomatedBackup, callback),
-
-    handleFinishedSavingBackup: (callback: MainEventCallback) =>
-      ipcRenderer.on(MessageToWebApp.FinishedSavingBackup, callback),
-
     handleWindowBlurred: (callback: MainEventCallback) => ipcRenderer.on(MessageToWebApp.WindowBlurred, callback),
 
     handleWindowFocused: (callback: MainEventCallback) => ipcRenderer.on(MessageToWebApp.WindowFocused, callback),

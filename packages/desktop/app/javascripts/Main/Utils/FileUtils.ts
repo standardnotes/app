@@ -27,9 +27,10 @@ export function debouncedJSONDiskWriter(durationMs: number, location: string, da
   }, durationMs)
 }
 
-export async function openDirectoryPicker(): Promise<string | undefined> {
+export async function openDirectoryPicker(buttonLabel?: string): Promise<string | undefined> {
   const result = await dialog.showOpenDialog({
     properties: ['openDirectory', 'showHiddenFiles', 'createDirectory'],
+    buttonLabel: buttonLabel,
   })
 
   return result.filePaths[0]

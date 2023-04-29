@@ -10,4 +10,5 @@ export {
   FileBackupReadToken,
   FileBackupReadChunkResponse,
   FileDownloadProgress,
+  PlaintextBackupsMapping,
 } from '@standardnotes/snjs'

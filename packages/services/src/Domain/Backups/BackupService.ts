@@ -1,6 +1,12 @@
 import { ContentType } from '@standardnotes/common'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
-import { PayloadEmitSource, FileItem, CreateEncryptedBackupFileContextPayload } from '@standardnotes/models'
+import {
+  PayloadEmitSource,
+  FileItem,
+  CreateEncryptedBackupFileContextPayload,
+  SNNote,
+  SNTag,
+} from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import {
   FilesApiInterface,
@@ -20,6 +26,9 @@ import { log, LoggingDomain } from '../Logging'
 
 export class FilesBackupService extends AbstractService implements BackupServiceInterface {
   private filesObserverDisposer: () => void
+  private notesObserverDisposer: () => void
+  private tagsObserverDisposer: () => void
+
   private pendingFiles = new Set<string>()
   private mappingCache?: FileBackupsMapping['files']
 
@@ -30,6 +39,7 @@ export class FilesBackupService extends AbstractService implements BackupService
     private device: FileBackupsDevice,
     private status: StatusServiceInterface,
     private crypto: PureCryptoInterface,
+    private workspaceId: string,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -40,9 +50,20 @@ export class FilesBackupService extends AbstractService implements BackupService
         PayloadEmitSource.RemoteSaved,
         PayloadEmitSource.RemoteRetrieved,
       ]
-
       if (applicableSources.includes(source)) {
         void this.handleChangedFiles([...changed, ...inserted])
+      }
+    })
+
+    this.notesObserverDisposer = items.addObserver<SNNote>(ContentType.Note, ({ changed, inserted, source }) => {
+      if ([PayloadEmitSource.RemoteSaved, PayloadEmitSource.RemoteRetrieved].includes(source)) {
+        void this.handleChangedNotes([...changed, ...inserted])
+      }
+    })
+
+    this.tagsObserverDisposer = items.addObserver<SNTag>(ContentType.Tag, ({ changed, inserted, source }) => {
+      if ([PayloadEmitSource.RemoteSaved, PayloadEmitSource.RemoteRetrieved].includes(source)) {
+        void this.handleChangedTags([...changed, ...inserted])
       }
     })
   }
@@ -50,6 +71,8 @@ export class FilesBackupService extends AbstractService implements BackupService
   override deinit() {
     super.deinit()
     this.filesObserverDisposer()
+    this.notesObserverDisposer()
+    this.tagsObserverDisposer()
     ;(this.items as unknown) = undefined
     ;(this.api as unknown) = undefined
     ;(this.encryptor as unknown) = undefined
@@ -70,6 +93,16 @@ export class FilesBackupService extends AbstractService implements BackupService
     }
 
     this.backupAllFiles()
+  }
+
+  public async enablePlaintextBackups(): Promise<void> {
+    await this.device.enablePlaintextBackups()
+
+    if (!(await this.device.isPlaintextBackupsEnabled())) {
+      return
+    }
+
+    await this.handleChangedNotes(this.items.getItems<SNNote>(ContentType.Note))
   }
 
   private backupAllFiles(): void {
@@ -148,6 +181,31 @@ export class FilesBackupService extends AbstractService implements BackupService
     }
 
     this.invalidateMappingCache()
+  }
+
+  private async handleChangedNotes(notes: SNNote[]): Promise<void> {
+    if (notes.length === 0 || !(await this.device.isPlaintextBackupsEnabled())) {
+      return
+    }
+
+    for (const note of notes) {
+      const tags = this.items.getSortedTagsForItem(note)
+      const tagNames = tags.map((tag) => this.items.getTagLongTitle(tag))
+      await this.device.savePlaintextNoteBackup(this.workspaceId, note.uuid, note.title, tagNames, note.text)
+    }
+
+    await this.device.persistPlaintextBackupsMappingFile()
+  }
+
+  private async handleChangedTags(tags: SNTag[]): Promise<void> {
+    if (tags.length === 0 || !(await this.device.isPlaintextBackupsEnabled())) {
+      return
+    }
+
+    for (const tag of tags) {
+      const notes = this.items.referencesForItem<SNNote>(tag, ContentType.Note)
+      await this.handleChangedNotes(notes)
+    }
   }
 
   async readEncryptedFileFromBackup(uuid: string, onChunk: OnChunkCallback): Promise<'success' | 'failed' | 'aborted'> {

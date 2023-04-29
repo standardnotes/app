@@ -6,6 +6,7 @@ import {
   FileBackupRecord,
   FileBackupReadToken,
   FileBackupReadChunkResponse,
+  PlaintextBackupsMapping,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { WebOrDesktopDevice } from '@web/Application/Device/WebOrDesktopDevice'
 import { Component } from '../Main/Packages/PackageManagerInterface'
@@ -69,24 +70,6 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return { killsApplication: true }
   }
 
-  async performTextBackupSave() {
-    const receiver = window.webClient
-
-    receiver.didBeginBackup()
-
-    try {
-      const data = await receiver.requestBackupFile()
-      if (data) {
-        this.remoteBridge.saveTextBackupData(data)
-      } else {
-        receiver.didFinishBackup(false)
-      }
-    } catch (error) {
-      console.error(error)
-      receiver.didFinishBackup(false)
-    }
-  }
-
   public isFilesBackupsEnabled(): Promise<boolean> {
     return this.remoteBridge.isFilesBackupsEnabled()
   }
@@ -147,16 +130,54 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.getTextBackupsCount()
   }
 
-  performTextBackup(): Promise<void> {
-    return this.remoteBridge.performTextBackup()
-  }
-
   deleteTextBackups(): Promise<void> {
     return this.remoteBridge.deleteTextBackups()
   }
 
-  saveTextBackupData(data: unknown): void {
-    return this.remoteBridge.saveTextBackupData(data)
+  saveTextBackupData(workspaceId: string, data: unknown): Promise<void> {
+    return this.remoteBridge.saveTextBackupData(workspaceId, data)
+  }
+
+  getPlaintextBackupsMappingFile(): Promise<PlaintextBackupsMapping> {
+    return this.remoteBridge.getPlaintextBackupsMappingFile()
+  }
+
+  persistPlaintextBackupsMappingFile(): Promise<void> {
+    return this.remoteBridge.persistPlaintextBackupsMappingFile()
+  }
+
+  isPlaintextBackupsEnabled(): Promise<boolean> {
+    return this.remoteBridge.isPlaintextBackupsEnabled()
+  }
+
+  enablePlaintextBackups(): Promise<void> {
+    return this.remoteBridge.enablePlaintextBackups()
+  }
+
+  disablePlaintextBackups(): Promise<void> {
+    return this.remoteBridge.disablePlaintextBackups()
+  }
+
+  getPlaintextBackupsLocation(): Promise<string | undefined> {
+    return this.remoteBridge.getPlaintextBackupsLocation()
+  }
+
+  changePlaintextBackupsLocation(): Promise<string | undefined> {
+    return this.remoteBridge.changePlaintextBackupsLocation()
+  }
+
+  openPlaintextBackupsLocation(): Promise<void> {
+    return this.remoteBridge.openPlaintextBackupsLocation()
+  }
+
+  savePlaintextNoteBackup(
+    workspaceId: string,
+    uuid: string,
+    name: string,
+    tags: string[],
+    data: string,
+  ): Promise<void> {
+    return this.remoteBridge.savePlaintextNoteBackup(workspaceId, uuid, name, tags, data)
   }
 
   async saveFilesBackupsFile(
