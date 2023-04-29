@@ -78,7 +78,6 @@ export const usePaneSwipeGesture = (
       }
 
       const touch = event.touches[0]
-
       startX = touch.clientX
 
       canceled = false
@@ -129,13 +128,20 @@ export const usePaneSwipeGesture = (
       }
 
       if (canceled) {
-        updateElement(0)
         return
       }
 
       const touch = event.touches[0]
       clientX = touch.clientX
-      const deltaX = touch.clientX - startX
+
+      const deltaX = clientX - startX
+      if (Math.abs(deltaX) < 15) {
+        return
+      }
+
+      if (closestScrollContainer) {
+        closestScrollContainer.style.touchAction = 'none'
+      }
 
       const x = direction === 'right' ? Math.max(deltaX, 0) : Math.min(deltaX, 0)
 
@@ -145,16 +151,22 @@ export const usePaneSwipeGesture = (
     }
 
     const touchEndListener = () => {
+      if (closestScrollContainer) {
+        closestScrollContainer.removeEventListener('scroll', scrollListener)
+        closestScrollContainer.style.touchAction = ''
+      }
+
+      if (canceled) {
+        updateElement(0)
+        return
+      }
+
       const deltaX = clientX - startX
 
       if ((direction === 'right' && deltaX > 40) || (direction === 'left' && deltaX < -40)) {
         onSwipeEndRef.current(element)
       } else {
         updateElement(0)
-      }
-
-      if (closestScrollContainer) {
-        closestScrollContainer.removeEventListener('scroll', scrollListener)
       }
 
       if (underlayElementRef.current) {
