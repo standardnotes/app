@@ -2,15 +2,29 @@ import { OnChunkCallback } from '../Chunker/OnChunkCallback'
 import { FileBackupRecord } from '../Device/FileBackupsMapping'
 
 export interface BackupServiceInterface {
+  openAllDirectoriesContainingBackupFiles(): void
+
   getFileBackupInfo(file: { uuid: string }): Promise<FileBackupRecord | undefined>
   readEncryptedFileFromBackup(uuid: string, onChunk: OnChunkCallback): Promise<'success' | 'failed' | 'aborted'>
-  isFilesBackupsEnabled(): Promise<boolean>
-  enableFilesBackups(): Promise<void>
-  disableFilesBackups(): Promise<void>
+  isFilesBackupsEnabled(): boolean
+  enableFilesBackups(): void
+  disableFilesBackups(): void
   changeFilesBackupsLocation(): Promise<string | undefined>
-  getFilesBackupsLocation(): Promise<string | undefined>
+  getFilesBackupsLocation(): string | undefined
   openFilesBackupsLocation(): Promise<void>
   openFileBackup(record: FileBackupRecord): Promise<void>
 
-  enablePlaintextBackups(): Promise<void>
+  isTextBackupsEnabled(): boolean
+  enableTextBackups(): void
+  disableTextBackups(): void
+  getTextBackupsLocation(): string | undefined
+  openTextBackupsLocation(): Promise<void>
+  changeTextBackupsLocation(): Promise<string | undefined>
+
+  isPlaintextBackupsEnabled(): boolean
+  enablePlaintextBackups(): void
+  disablePlaintextBackups(): void
+  getPlaintextBackupsLocation(): string | undefined
+  openPlaintextBackupsLocation(): Promise<void>
+  changePlaintextBackupsLocation(): Promise<string | undefined>
 }

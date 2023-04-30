@@ -19,19 +19,19 @@ const TextBackupsDesktop = ({ device }: Props) => {
   const [backupsLocation, setBackupsLocation] = useState<string | undefined>('')
 
   useEffect(() => {
-    void device.isTextBackupsEnabled().then(setBackupsEnabled)
+    void device.isLegacyTextBackupsEnabled().then(setBackupsEnabled)
   }, [device])
 
   useEffect(() => {
     if (backupsEnabled) {
-      void device.getTextBackupsLocation().then(setBackupsLocation)
+      void device.getLegacyTextBackupsLocation().then(setBackupsLocation)
     }
   }, [device, backupsEnabled])
 
   const changeBackupsLocation = useCallback(async () => {
     await device.changeTextBackupsLocation()
 
-    setBackupsLocation(await device.getTextBackupsLocation())
+    setBackupsLocation(await device.getLegacyTextBackupsLocation())
   }, [device])
 
   const openBackupsLocation = useCallback(async () => {
@@ -45,7 +45,7 @@ const TextBackupsDesktop = ({ device }: Props) => {
       await device.enableTextBackups()
     }
 
-    setBackupsEnabled(await device.isTextBackupsEnabled())
+    setBackupsEnabled(await device.isLegacyTextBackupsEnabled())
   }, [device, backupsEnabled])
 
   return (

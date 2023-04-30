@@ -1,23 +1,41 @@
 import { FileDownloadProgress } from '../Types/FileDownloadProgress'
 import { FileBackupRecord, FileBackupsMapping } from './FileBackupsMapping'
 
-export type FileBackupReadToken = string
-export type FileBackupReadChunkResponse = { chunk: Uint8Array; isLast: boolean; progress: FileDownloadProgress }
-
 type PlaintextNoteRecord = {
   tag?: string
   path: string
 }
-
+type UuidString = string
 export type PlaintextBackupsMapping = {
   version: string
-  /** A note or tag uuid maps to an array of PlaintextNoteRecord */
-  files: Record<string, PlaintextNoteRecord[]>
+  files: Record<UuidString, PlaintextNoteRecord[]>
 }
 
-export interface FileBackupsDevice {
-  getFilesBackupsMappingFile(): Promise<FileBackupsMapping>
+export interface FileBackupsDevice
+  extends FileBackupsMethods,
+    LegacyBackupsMethods,
+    PlaintextBackupsMethods,
+    TextBackupsMethods {
+  openLocation(path: string): Promise<void>
+
+  /**
+   * The reason we combine presenting a directory picker and transfering old files to the new location
+   * in one function is so we don't have to expose a general `transferDirectories` function to the web app,
+   * which would give it too much power.
+   * @param appendPath The path to append to the selected directory.
+   */
+  presentDirectoryPickerForLocationChangeAndTransferOld(
+    appendPath: string,
+    oldLocation?: string,
+  ): Promise<string | undefined>
+}
+
+export type FileBackupReadToken = string
+export type FileBackupReadChunkResponse = { chunk: Uint8Array; isLast: boolean; progress: FileDownloadProgress }
+interface FileBackupsMethods {
+  getFilesBackupsMappingFile(location: string): Promise<FileBackupsMapping>
   saveFilesBackupsFile(
+    location: string,
     uuid: string,
     metaFile: string,
     downloadRequest: {
@@ -28,31 +46,23 @@ export interface FileBackupsDevice {
   ): Promise<'success' | 'failed'>
   getFileBackupReadToken(record: FileBackupRecord): Promise<FileBackupReadToken>
   readNextChunk(token: string): Promise<FileBackupReadChunkResponse>
-  isFilesBackupsEnabled(): Promise<boolean>
-  enableFilesBackups(): Promise<void>
-  disableFilesBackups(): Promise<void>
-  changeFilesBackupsLocation(): Promise<string | undefined>
-  getFilesBackupsLocation(): Promise<string | undefined>
-  openFilesBackupsLocation(): Promise<void>
-  openFileBackup(record: FileBackupRecord): Promise<void>
+}
 
-  isTextBackupsEnabled(): Promise<boolean>
-  enableTextBackups(): Promise<void>
-  disableTextBackups(): Promise<void>
-  getTextBackupsLocation(): Promise<string | undefined>
-  changeTextBackupsLocation(): Promise<string | undefined>
-  openTextBackupsLocation(): Promise<void>
-  getTextBackupsCount(): Promise<number>
-  deleteTextBackups(): Promise<void>
-  saveTextBackupData(workspaceId: string, data: unknown): Promise<void>
+interface PlaintextBackupsMethods {
+  getPlaintextBackupsMappingFile(location: string): Promise<PlaintextBackupsMapping>
+  persistPlaintextBackupsMappingFile(location: string): Promise<void>
+  savePlaintextNoteBackup(location: string, uuid: string, name: string, tags: string[], data: string): Promise<void>
+}
 
-  getPlaintextBackupsMappingFile(): Promise<PlaintextBackupsMapping>
-  persistPlaintextBackupsMappingFile(): Promise<void>
-  isPlaintextBackupsEnabled(): Promise<boolean>
-  enablePlaintextBackups(): Promise<void>
-  disablePlaintextBackups(): Promise<void>
-  getPlaintextBackupsLocation(): Promise<string | undefined>
-  changePlaintextBackupsLocation(): Promise<string | undefined>
-  openPlaintextBackupsLocation(): Promise<void>
-  savePlaintextNoteBackup(workspaceId: string, uuid: string, name: string, tags: string[], data: string): Promise<void>
+interface TextBackupsMethods {
+  getDefaultDirectoryForTextBackups(): Promise<string>
+  getTextBackupsCount(location: string): Promise<number>
+  saveTextBackupData(location: string, data: string): Promise<void>
+}
+
+interface LegacyBackupsMethods {
+  isLegacyFilesBackupsEnabled(): Promise<boolean>
+  getLegacyFilesBackupsLocation(): Promise<string | undefined>
+  isLegacyTextBackupsEnabled(): Promise<boolean>
+  getLegacyTextBackupsLocation(): Promise<string | undefined>
 }

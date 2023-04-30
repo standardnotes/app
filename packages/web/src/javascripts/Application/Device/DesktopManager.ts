@@ -60,7 +60,7 @@ export class DesktopManager
     super.onAppEvent(eventName).catch(console.error)
     if (eventName === ApplicationEvent.LocalDataLoaded) {
       this.dataLoaded = true
-      void this.device.isTextBackupsEnabled().then((isEnabled) => {
+      void this.device.isLegacyTextBackupsEnabled().then((isEnabled) => {
         if (isEnabled) {
           this.beginTextBackupsTimer()
         }

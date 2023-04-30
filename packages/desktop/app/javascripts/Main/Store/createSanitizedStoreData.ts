@@ -21,14 +21,10 @@ export function createSanitizedStoreData(data: any = {}): StoreData {
     ),
     [StoreKeys.LastRunVersion]: data[StoreKeys.LastRunVersion],
 
-    [StoreKeys.TextBackupsLocation]: data[StoreKeys.TextBackupsLocation],
-    [StoreKeys.TextBackupsDisabled]: ensureIsBoolean(data[StoreKeys.TextBackupsDisabled], false),
-
-    [StoreKeys.PlaintextBackupsLocation]: data[StoreKeys.PlaintextBackupsLocation],
-    [StoreKeys.PlaintextBackupsEnabled]: ensureIsBoolean(data[StoreKeys.PlaintextBackupsEnabled], false),
-
-    [StoreKeys.FileBackupsEnabled]: ensureIsBoolean(data[StoreKeys.FileBackupsEnabled], false),
-    [StoreKeys.FileBackupsLocation]: data[StoreKeys.FileBackupsLocation],
+    [StoreKeys.LegacyTextBackupsLocation]: data[StoreKeys.LegacyTextBackupsLocation],
+    [StoreKeys.LegacyTextBackupsDisabled]: data[StoreKeys.LegacyTextBackupsDisabled],
+    [StoreKeys.LegacyFileBackupsEnabled]: data[StoreKeys.LegacyFileBackupsEnabled],
+    [StoreKeys.LegacyFileBackupsLocation]: data[StoreKeys.LegacyFileBackupsLocation],
   }
 }
 function sanitizeZoomFactor(factor?: any): number {

@@ -272,12 +272,6 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.getDesktopService()?.saveDesktopBackup()
   }
 
-  async signOutAndDeleteLocalBackups(): Promise<void> {
-    isDesktopDevice(this.deviceInterface) && (await this.deviceInterface.deleteTextBackups())
-
-    return this.user.signOut()
-  }
-
   isGlobalSpellcheckEnabled(): boolean {
     return this.getPreference(PrefKey.EditorSpellcheck, PrefDefaults[PrefKey.EditorSpellcheck])
   }

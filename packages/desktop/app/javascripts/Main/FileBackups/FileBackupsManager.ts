@@ -13,8 +13,6 @@ import { WebContents, shell } from 'electron'
 import { StoreKeys } from '../Store/StoreKeys'
 import path from 'path'
 import {
-  deleteDirContents,
-  deleteFile,
   ensureDirectoryExists,
   moveDirContents,
   openDirectoryPicker,
@@ -28,7 +26,6 @@ import { Paths } from '../Types/Paths'
 
 const TextBackupsDirectoryName = 'Text Backups'
 const TextBackupFileExtension = '.txt'
-const PlaintextBackupsDirectoryName = 'Plaintext Backups'
 
 export const FileBackupsConstantsV1 = {
   Version: '1.0.0',
@@ -42,99 +39,65 @@ export class FilesBackupManager implements FileBackupsDevice {
 
   constructor(private appState: AppState, private webContents: WebContents) {}
 
-  public async isFilesBackupsEnabled(): Promise<boolean> {
-    return this.appState.store.get(StoreKeys.FileBackupsEnabled)
+  public async isLegacyFilesBackupsEnabled(): Promise<boolean> {
+    return this.appState.store.get(StoreKeys.LegacyFileBackupsEnabled)
   }
 
-  public async enableFilesBackups(): Promise<void> {
-    const currentLocation = await this.getFilesBackupsLocation()
-
-    if (!currentLocation) {
-      const result = await this.changeFilesBackupsLocation()
-
-      if (!result) {
-        return
-      }
+  async isLegacyTextBackupsEnabled(): Promise<boolean> {
+    const value = this.appState.store.get(StoreKeys.LegacyTextBackupsDisabled)
+    if (value == undefined) {
+      return false
     }
-
-    this.appState.store.set(StoreKeys.FileBackupsEnabled, true)
-
-    const mapping = this.getMappingFileFromDisk()
-
-    if (!mapping) {
-      await this.saveFilesBackupsMappingFile(this.defaultMappingFileValue())
-    }
+    return !value
   }
 
-  public async disableFilesBackups(): Promise<void> {
-    this.appState.store.set(StoreKeys.FileBackupsEnabled, false)
+  public async getLegacyFilesBackupsLocation(): Promise<string | undefined> {
+    return this.appState.store.get(StoreKeys.LegacyFileBackupsLocation)
   }
 
-  public async changeFilesBackupsLocation(): Promise<string | undefined> {
-    const newPath = await openDirectoryPicker('Select')
+  async getLegacyTextBackupsLocation(): Promise<string | undefined> {
+    const directory = this.appState.store.get(StoreKeys.LegacyTextBackupsLocation)
 
-    if (!newPath) {
+    if (!directory) {
       return undefined
     }
 
-    const oldPath = await this.getFilesBackupsLocation()
+    return `${directory}/${TextBackupsDirectoryName}`
+  }
 
-    if (oldPath) {
-      await this.transferFilesBackupsToNewLocation(oldPath, newPath)
+  public async presentDirectoryPickerForLocationChangeAndTransferOld(
+    appendPath: string,
+    oldLocation?: string,
+  ): Promise<string | undefined> {
+    const selectedDirectory = await openDirectoryPicker('Select')
+
+    if (!selectedDirectory) {
+      return undefined
     }
 
-    this.appState.store.set(StoreKeys.FileBackupsLocation, newPath)
+    const newPath = path.join(selectedDirectory, path.normalize(appendPath))
+
+    if (oldLocation) {
+      await moveDirContents(path.normalize(oldLocation), newPath)
+    }
 
     return newPath
   }
 
-  private async transferFilesBackupsToNewLocation(oldPath: string, newPath: string): Promise<void> {
-    const mapping = await this.getMappingFileFromDisk()
-    if (!mapping) {
-      return
-    }
-
-    const entries = Object.values(mapping.files)
-    for (const entry of entries) {
-      const sourcePath = path.join(oldPath, entry.relativePath)
-      const destinationPath = path.join(newPath, entry.relativePath)
-      await moveDirContents(sourcePath, destinationPath)
-    }
-
-    for (const entry of entries) {
-      entry.absolutePath = path.join(newPath, entry.relativePath)
-    }
-
-    const oldMappingFileLocation = this.getMappingFileLocation()
-
-    this.appState.store.set(StoreKeys.FileBackupsLocation, newPath)
-
-    const result = await this.saveFilesBackupsMappingFile(mapping)
-
-    if (result === 'success') {
-      await deleteFile(oldMappingFileLocation)
-    }
+  private getMappingFilePath(backupsLocation: string): string {
+    return `${backupsLocation}/info.json`
   }
 
-  public async getFilesBackupsLocation(): Promise<string | undefined> {
-    return this.appState.store.get(StoreKeys.FileBackupsLocation)
-  }
-
-  private getMappingFileLocation(): string {
-    const base = this.appState.store.get(StoreKeys.FileBackupsLocation)
-    return `${base}/info.json`
-  }
-
-  private async getMappingFileFromDisk(): Promise<FileBackupsMapping | undefined> {
-    return readJSONFile<FileBackupsMapping>(this.getMappingFileLocation())
+  private async getMappingFileFromDisk(backupsLocation: string): Promise<FileBackupsMapping | undefined> {
+    return readJSONFile<FileBackupsMapping>(this.getMappingFilePath(backupsLocation))
   }
 
   private defaultMappingFileValue(): FileBackupsMapping {
     return { version: FileBackupsConstantsV1.Version, files: {} }
   }
 
-  async getFilesBackupsMappingFile(): Promise<FileBackupsMapping> {
-    const data = await this.getMappingFileFromDisk()
+  async getFilesBackupsMappingFile(backupsLocation: string): Promise<FileBackupsMapping> {
+    const data = await this.getMappingFileFromDisk(backupsLocation)
 
     if (!data) {
       return this.defaultMappingFileValue()
@@ -147,12 +110,7 @@ export class FilesBackupManager implements FileBackupsDevice {
     return data
   }
 
-  async openFilesBackupsLocation(): Promise<void> {
-    const location = await this.getFilesBackupsLocation()
-    if (!location) {
-      return
-    }
-
+  async openLocation(location: string): Promise<void> {
     void shell.openPath(location)
   }
 
@@ -160,13 +118,14 @@ export class FilesBackupManager implements FileBackupsDevice {
     void shell.openPath(record.absolutePath)
   }
 
-  private async saveFilesBackupsMappingFile(file: FileBackupsMapping): Promise<'success' | 'failed'> {
-    await writeJSONFile(this.getMappingFileLocation(), file)
+  private async saveFilesBackupsMappingFile(location: string, file: FileBackupsMapping): Promise<'success' | 'failed'> {
+    await writeJSONFile(this.getMappingFilePath(location), file)
 
     return 'success'
   }
 
   async saveFilesBackupsFile(
+    location: string,
     uuid: string,
     metaFile: string,
     downloadRequest: {
@@ -175,7 +134,7 @@ export class FilesBackupManager implements FileBackupsDevice {
       url: string
     },
   ): Promise<'success' | 'failed'> {
-    const backupsDir = await this.getFilesBackupsLocation()
+    const backupsDir = await this.getLegacyFilesBackupsLocation()
 
     const fileDir = `${backupsDir}/${uuid}`
     const metaFilePath = `${fileDir}/${FileBackupsConstantsV1.MetadataFileName}`
@@ -195,7 +154,7 @@ export class FilesBackupManager implements FileBackupsDevice {
     const result = await downloader.run()
 
     if (result === 'success') {
-      const mapping = await this.getFilesBackupsMappingFile()
+      const mapping = await this.getFilesBackupsMappingFile(location)
 
       mapping.files[uuid] = {
         backedUpOn: new Date(),
@@ -206,7 +165,7 @@ export class FilesBackupManager implements FileBackupsDevice {
         version: FileBackupsConstantsV1.Version,
       }
 
-      await this.saveFilesBackupsMappingFile(mapping)
+      await this.saveFilesBackupsMappingFile(location, mapping)
     }
 
     return result
@@ -236,68 +195,25 @@ export class FilesBackupManager implements FileBackupsDevice {
     return result
   }
 
-  async isTextBackupsEnabled(): Promise<boolean> {
-    return !this.appState.store.get(StoreKeys.TextBackupsDisabled)
+  async getDefaultDirectoryForTextBackups(): Promise<string> {
+    const defaultLocation = Paths.documentsDir
+    return `${defaultLocation}/Standard Notes/${TextBackupsDirectoryName}`
   }
 
-  async enableTextBackups(): Promise<void> {
-    this.appState.store.set(StoreKeys.TextBackupsDisabled, false)
-  }
-
-  async disableTextBackups(): Promise<void> {
-    this.appState.store.set(StoreKeys.TextBackupsDisabled, true)
-  }
-
-  async getTextBackupsLocation(): Promise<string | undefined> {
-    const directory = this.appState.store.get(StoreKeys.TextBackupsLocation) ?? (await this.getFilesBackupsLocation())
-
-    if (!directory) {
-      const defaultLocation = Paths.documentsDir
-      return `${defaultLocation}/Standard Notes/${TextBackupsDirectoryName}`
-    }
-
-    return `${directory}/${TextBackupsDirectoryName}`
-  }
-
-  async getTextBackupsCount(): Promise<number> {
-    const location = await this.getTextBackupsLocation()
-    if (!location) {
-      return 0
-    }
-
+  async getTextBackupsCount(location: string): Promise<number> {
     let files = await fs.readdir(location)
     files = files.filter((fileName) => fileName.endsWith(TextBackupsDirectoryName))
     return files.length
   }
 
-  async deleteTextBackups(): Promise<void> {
-    const location = await this.getTextBackupsLocation()
-    if (!location) {
-      return
-    }
-
-    await deleteDirContents(location)
-
-    await this.copyDecryptScript(location)
-  }
-
-  async saveTextBackupData(workspaceId: string, data: unknown): Promise<void> {
-    const baseBackupsLocation = await this.getTextBackupsLocation()
-    log(LoggingDomain.Backups, 'Saving text backup data to', baseBackupsLocation)
-
-    if (!baseBackupsLocation || !(await this.isTextBackupsEnabled())) {
-      return
-    }
-
-    const workspaceBackupLocation = path.join(baseBackupsLocation, workspaceId)
-
+  async saveTextBackupData(location: string, data: string): Promise<void> {
     let success: boolean
 
     try {
-      await ensureDirectoryExists(workspaceBackupLocation)
+      await ensureDirectoryExists(location)
       const name = `${new Date().toISOString().replace(/:/g, '-')}${TextBackupFileExtension}`
-      const filePath = path.join(workspaceBackupLocation, name)
-      await fs.writeFile(filePath, data as any)
+      const filePath = path.join(location, name)
+      await fs.writeFile(filePath, data)
       success = true
     } catch (err) {
       success = false
@@ -305,34 +221,6 @@ export class FilesBackupManager implements FileBackupsDevice {
     }
 
     log(LoggingDomain.Backups, 'Finished saving text backup data', { success })
-  }
-
-  async changeTextBackupsLocation(): Promise<string | undefined> {
-    const newPath = await openDirectoryPicker('Select')
-
-    if (!newPath) {
-      return undefined
-    }
-
-    const oldPath = await this.getTextBackupsLocation()
-
-    if (oldPath) {
-      await moveDirContents(oldPath, newPath)
-    }
-
-    this.appState.store.set(StoreKeys.TextBackupsLocation, newPath)
-
-    return newPath
-  }
-
-  async openTextBackupsLocation(): Promise<void> {
-    const location = await this.getTextBackupsLocation()
-    log(LoggingDomain.Backups, 'Opening text backups location', location)
-    if (!location) {
-      return
-    }
-
-    void shell.openPath(location)
   }
 
   async copyDecryptScript(location: string) {
@@ -344,17 +232,19 @@ export class FilesBackupManager implements FileBackupsDevice {
     }
   }
 
-  private getPlaintextMappingFileLocation(): string {
-    const base = this.appState.store.get(StoreKeys.PlaintextBackupsLocation)
-    return `${base}/info.json`
+  private getPlaintextMappingFilePath(location: string): string {
+    return `${location}/info.json`
   }
 
-  private async getPlaintextMappingFileFromDisk(): Promise<PlaintextBackupsMapping | undefined> {
-    return readJSONFile<PlaintextBackupsMapping>(this.getPlaintextMappingFileLocation())
+  private async getPlaintextMappingFileFromDisk(location: string): Promise<PlaintextBackupsMapping | undefined> {
+    return readJSONFile<PlaintextBackupsMapping>(this.getPlaintextMappingFilePath(location))
   }
 
-  private async savePlaintextBackupsMappingFile(file: PlaintextBackupsMapping): Promise<'success' | 'failed'> {
-    await writeJSONFile(this.getPlaintextMappingFileLocation(), file)
+  private async savePlaintextBackupsMappingFile(
+    location: string,
+    file: PlaintextBackupsMapping,
+  ): Promise<'success' | 'failed'> {
+    await writeJSONFile(this.getPlaintextMappingFilePath(location), file)
 
     return 'success'
   }
@@ -363,12 +253,12 @@ export class FilesBackupManager implements FileBackupsDevice {
     return { version: '1.0', files: {} }
   }
 
-  async getPlaintextBackupsMappingFile(): Promise<PlaintextBackupsMapping> {
+  async getPlaintextBackupsMappingFile(location: string): Promise<PlaintextBackupsMapping> {
     if (this.plaintextMappingCache) {
       return this.plaintextMappingCache
     }
 
-    const data = await this.getPlaintextMappingFileFromDisk()
+    const data = await this.getPlaintextMappingFileFromDisk(location)
 
     if (!data) {
       return this.defaultPlaintextMappingFileValue()
@@ -379,88 +269,16 @@ export class FilesBackupManager implements FileBackupsDevice {
     return data
   }
 
-  async isPlaintextBackupsEnabled(): Promise<boolean> {
-    return this.appState.store.get(StoreKeys.PlaintextBackupsEnabled)
-  }
-
-  async enablePlaintextBackups(): Promise<void> {
-    const currentLocation = await this.getPlaintextBackupsLocation()
-
-    if (!currentLocation) {
-      const result = await this.changePlaintextBackupsLocation()
-
-      if (!result) {
-        return
-      }
-    }
-
-    this.appState.store.set(StoreKeys.PlaintextBackupsEnabled, true)
-
-    const mapping = this.getPlaintextMappingFileFromDisk()
-
-    if (!mapping) {
-      await this.savePlaintextBackupsMappingFile(this.defaultPlaintextMappingFileValue())
-    }
-  }
-
-  async disablePlaintextBackups(): Promise<void> {
-    this.appState.store.set(StoreKeys.PlaintextBackupsEnabled, false)
-  }
-
-  async getPlaintextBackupsLocation(): Promise<string | undefined> {
-    const location = this.appState.store.get(StoreKeys.PlaintextBackupsLocation)
-    if (!location) {
-      return undefined
-    }
-
-    return `${location}/${PlaintextBackupsDirectoryName}`
-  }
-
-  async changePlaintextBackupsLocation(): Promise<string | undefined> {
-    const newPath = await openDirectoryPicker('Select')
-
-    if (!newPath) {
-      return undefined
-    }
-
-    const oldPath = await this.getPlaintextBackupsLocation()
-
-    if (oldPath) {
-      await moveDirContents(oldPath, newPath)
-    }
-
-    this.appState.store.set(StoreKeys.PlaintextBackupsLocation, newPath)
-
-    return newPath
-  }
-
-  async openPlaintextBackupsLocation(): Promise<void> {
-    const location = await this.getPlaintextBackupsLocation()
-    log(LoggingDomain.Backups, 'Opening plaintext backups location', location)
-    if (!location) {
-      return
-    }
-
-    void shell.openPath(location)
-  }
-
   async savePlaintextNoteBackup(
-    workspaceId: string,
+    location: string,
     uuid: string,
     name: string,
     tags: string[],
     data: string,
   ): Promise<void> {
-    const baseBackupsDir = await this.getPlaintextBackupsLocation()
-    if (!baseBackupsDir) {
-      log(LoggingDomain.Backups, 'Plaintext backups location not set, returning.')
-      return
-    }
+    log(LoggingDomain.Backups, 'Saving plaintext note backup', uuid, 'to', location)
 
-    const workspaceBackupsDir = path.join(baseBackupsDir, workspaceId)
-    log(LoggingDomain.Backups, 'Saving plaintext note backup', uuid, 'to', workspaceBackupsDir)
-
-    const mapping = await this.getPlaintextBackupsMappingFile()
+    const mapping = await this.getPlaintextBackupsMappingFile(location)
     if (!mapping.files[uuid]) {
       mapping.files[uuid] = []
     }
@@ -468,7 +286,7 @@ export class FilesBackupManager implements FileBackupsDevice {
     const removeNoteFromAllDirectories = async () => {
       const records = mapping.files[uuid]
       for (const record of records) {
-        const filePath = path.join(workspaceBackupsDir, record.path)
+        const filePath = path.join(location, record.path)
         await fs.unlink(filePath)
       }
     }
@@ -498,19 +316,19 @@ export class FilesBackupManager implements FileBackupsDevice {
     }
 
     if (tags.length === 0) {
-      await writeFileToPath(workspaceBackupsDir, `${name}.txt`, data)
+      await writeFileToPath(location, `${name}.txt`, data)
     } else {
       for (const tag of tags) {
-        await writeFileToPath(workspaceBackupsDir, `${name}.txt`, data, tag)
+        await writeFileToPath(location, `${name}.txt`, data, tag)
       }
     }
   }
 
-  async persistPlaintextBackupsMappingFile(): Promise<void> {
+  async persistPlaintextBackupsMappingFile(location: string): Promise<void> {
     if (!this.plaintextMappingCache) {
       return
     }
 
-    await this.savePlaintextBackupsMappingFile(this.plaintextMappingCache)
+    await this.savePlaintextBackupsMappingFile(location, this.plaintextMappingCache)
   }
 }

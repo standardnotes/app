@@ -59,20 +59,20 @@ export class RemoteBridge implements CrossProcessBridge {
       destroyAllData: this.destroyAllData.bind(this),
       getFilesBackupsMappingFile: this.getFilesBackupsMappingFile.bind(this),
       saveFilesBackupsFile: this.saveFilesBackupsFile.bind(this),
-      isFilesBackupsEnabled: this.isFilesBackupsEnabled.bind(this),
+      isLegacyFilesBackupsEnabled: this.isLegacyFilesBackupsEnabled.bind(this),
       enableFilesBackups: this.enableFilesBackups.bind(this),
       disableFilesBackups: this.disableFilesBackups.bind(this),
       changeFilesBackupsLocation: this.changeFilesBackupsLocation.bind(this),
-      getFilesBackupsLocation: this.getFilesBackupsLocation.bind(this),
+      getLegacyFilesBackupsLocation: this.getLegacyFilesBackupsLocation.bind(this),
       openFilesBackupsLocation: this.openFilesBackupsLocation.bind(this),
       openFileBackup: this.openFileBackup.bind(this),
       getFileBackupReadToken: this.getFileBackupReadToken.bind(this),
       readNextChunk: this.readNextChunk.bind(this),
       askForMediaAccess: this.askForMediaAccess.bind(this),
-      isTextBackupsEnabled: this.isTextBackupsEnabled.bind(this),
+      isLegacyTextBackupsEnabled: this.isLegacyTextBackupsEnabled.bind(this),
       enableTextBackups: this.enableTextBackups.bind(this),
       disableTextBackups: this.disableTextBackups.bind(this),
-      getTextBackupsLocation: this.getTextBackupsLocation.bind(this),
+      getLegacyTextBackupsLocation: this.getLegacyTextBackupsLocation.bind(this),
       changeTextBackupsLocation: this.changeTextBackupsLocation.bind(this),
       openTextBackupsLocation: this.openTextBackupsLocation.bind(this),
       getTextBackupsCount: this.getTextBackupsCount.bind(this),
@@ -186,8 +186,8 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.fileBackups.readNextChunk(nextToken)
   }
 
-  public isFilesBackupsEnabled(): Promise<boolean> {
-    return this.fileBackups.isFilesBackupsEnabled()
+  public isLegacyFilesBackupsEnabled(): Promise<boolean> {
+    return this.fileBackups.isLegacyFilesBackupsEnabled()
   }
 
   public enableFilesBackups(): Promise<void> {
@@ -202,8 +202,8 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.fileBackups.changeFilesBackupsLocation()
   }
 
-  public getFilesBackupsLocation(): Promise<string | undefined> {
-    return this.fileBackups.getFilesBackupsLocation()
+  public getLegacyFilesBackupsLocation(): Promise<string | undefined> {
+    return this.fileBackups.getLegacyFilesBackupsLocation()
   }
 
   public openFilesBackupsLocation(): Promise<void> {
@@ -214,8 +214,8 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.fileBackups.openFileBackup(record)
   }
 
-  isTextBackupsEnabled(): Promise<boolean> {
-    return this.fileBackups.isTextBackupsEnabled()
+  isLegacyTextBackupsEnabled(): Promise<boolean> {
+    return this.fileBackups.isLegacyTextBackupsEnabled()
   }
 
   enableTextBackups(): Promise<void> {
@@ -226,8 +226,8 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.fileBackups.disableTextBackups()
   }
 
-  getTextBackupsLocation(): Promise<string | undefined> {
-    return this.fileBackups.getTextBackupsLocation()
+  getLegacyTextBackupsLocation(): Promise<string | undefined> {
+    return this.fileBackups.getLegacyTextBackupsLocation()
   }
 
   getTextBackupsCount(): Promise<number> {

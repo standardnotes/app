@@ -42,6 +42,12 @@ export enum StorageKey {
   LaunchPriorityUuids = 'launch_priority_uuids',
   LastReadChangelogVersion = 'last_read_changelog_version',
   MomentsEnabled = 'moments_enabled',
+  TextBackupsEnabled = 'text_backups_enabled',
+  TextBackupsLocation = 'text_backups_location',
+  PlaintextBackupsEnabled = 'plaintext_backups_enabled',
+  PlaintextBackupsLocation = 'plaintext_backups_location',
+  FileBackupsEnabled = 'file_backups_enabled',
+  FileBackupsLocation = 'file_backups_location',
 }
 
 export enum NonwrappedStorageKey {

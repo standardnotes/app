@@ -70,8 +70,8 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return { killsApplication: true }
   }
 
-  public isFilesBackupsEnabled(): Promise<boolean> {
-    return this.remoteBridge.isFilesBackupsEnabled()
+  public isLegacyFilesBackupsEnabled(): Promise<boolean> {
+    return this.remoteBridge.isLegacyFilesBackupsEnabled()
   }
 
   public enableFilesBackups(): Promise<void> {
@@ -86,8 +86,8 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.changeFilesBackupsLocation()
   }
 
-  public getFilesBackupsLocation(): Promise<string | undefined> {
-    return this.remoteBridge.getFilesBackupsLocation()
+  public getLegacyFilesBackupsLocation(): Promise<string | undefined> {
+    return this.remoteBridge.getLegacyFilesBackupsLocation()
   }
 
   async getFilesBackupsMappingFile(): Promise<FileBackupsMapping> {
@@ -102,8 +102,8 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.openFileBackup(record)
   }
 
-  isTextBackupsEnabled(): Promise<boolean> {
-    return this.remoteBridge.isTextBackupsEnabled()
+  isLegacyTextBackupsEnabled(): Promise<boolean> {
+    return this.remoteBridge.isLegacyTextBackupsEnabled()
   }
 
   enableTextBackups(): Promise<void> {
@@ -114,8 +114,8 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.disableTextBackups()
   }
 
-  getTextBackupsLocation(): Promise<string | undefined> {
-    return this.remoteBridge.getTextBackupsLocation()
+  getLegacyTextBackupsLocation(): Promise<string | undefined> {
+    return this.remoteBridge.getLegacyTextBackupsLocation()
   }
 
   changeTextBackupsLocation(): Promise<string | undefined> {

@@ -120,7 +120,7 @@ function migrateSnapStorage() {
           error?.message ?? error,
         )
       }
-      store.set(StoreKeys.TextBackupsLocation, newLocation)
+      store.set(StoreKeys.LegacyTextBackupsLocation, newLocation)
       console.log('Migration: finished moving backups directory.')
     }
   }

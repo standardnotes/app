@@ -11,14 +11,11 @@ export enum StoreKeys {
   UseNativeKeychain = 'useNativeKeychain',
   LastRunVersion = 'LastRunVersion',
 
-  TextBackupsLocation = 'backupsLocation',
-  TextBackupsDisabled = 'backupsDisabled',
+  LegacyTextBackupsLocation = 'backupsLocation',
+  LegacyTextBackupsDisabled = 'backupsDisabled',
 
-  FileBackupsEnabled = 'fileBackupsEnabled',
-  FileBackupsLocation = 'fileBackupsLocation',
-
-  PlaintextBackupsEnabled = 'plaintextBackupsEnabled',
-  PlaintextBackupsLocation = 'plaintextBackupsLocation',
+  LegacyFileBackupsEnabled = 'fileBackupsEnabled',
+  LegacyFileBackupsLocation = 'fileBackupsLocation',
 }
 
 export interface StoreData {
@@ -32,12 +29,9 @@ export interface StoreData {
   [StoreKeys.SelectedSpellCheckerLanguageCodes]: Set<Language> | null
   [StoreKeys.LastRunVersion]: string
 
-  [StoreKeys.TextBackupsLocation]: string
-  [StoreKeys.TextBackupsDisabled]: boolean
+  [StoreKeys.LegacyTextBackupsLocation]: string
+  [StoreKeys.LegacyTextBackupsDisabled]: boolean
 
-  [StoreKeys.FileBackupsEnabled]: boolean
-  [StoreKeys.FileBackupsLocation]: string
-
-  [StoreKeys.PlaintextBackupsEnabled]: boolean
-  [StoreKeys.PlaintextBackupsLocation]: string
+  [StoreKeys.LegacyFileBackupsEnabled]: boolean
+  [StoreKeys.LegacyFileBackupsLocation]: string
 }

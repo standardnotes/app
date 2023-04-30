@@ -21,19 +21,19 @@ const FileBackupsDesktop = ({ application, backupsService }: Props) => {
   const [backupsLocation, setBackupsLocation] = useState<string | undefined>('')
 
   useEffect(() => {
-    void backupsService.isFilesBackupsEnabled().then(setBackupsEnabled)
+    void backupsService.isLegacyFilesBackupsEnabled().then(setBackupsEnabled)
   }, [backupsService])
 
   useEffect(() => {
     if (backupsEnabled) {
-      void backupsService.getFilesBackupsLocation().then(setBackupsLocation)
+      void backupsService.getLegacyFilesBackupsLocation().then(setBackupsLocation)
     }
   }, [backupsService, backupsEnabled])
 
   const changeBackupsLocation = useCallback(async () => {
     await backupsService.changeFilesBackupsLocation()
 
-    setBackupsLocation(await backupsService.getFilesBackupsLocation())
+    setBackupsLocation(await backupsService.getLegacyFilesBackupsLocation())
   }, [backupsService])
 
   const openBackupsLocation = useCallback(async () => {
@@ -47,7 +47,7 @@ const FileBackupsDesktop = ({ application, backupsService }: Props) => {
       await backupsService.enableFilesBackups()
     }
 
-    setBackupsEnabled(await backupsService.isFilesBackupsEnabled())
+    setBackupsEnabled(await backupsService.isLegacyFilesBackupsEnabled())
   }, [backupsService, backupsEnabled])
 
   return (
