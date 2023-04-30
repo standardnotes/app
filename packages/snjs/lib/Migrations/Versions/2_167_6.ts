@@ -19,16 +19,10 @@ export class Migration2_167_6 extends Migration {
       return
     }
 
-    const legacyFileBackupsLocation = await device.getLegacyFilesBackupsLocation()
-    if (legacyFileBackupsLocation) {
-      this.services.storageService.setValue(StorageKey.FileBackupsLocation, legacyFileBackupsLocation)
-      this.services.storageService.setValue(StorageKey.FileBackupsEnabled, true)
-    }
+    this.services.storageService.setValue(StorageKey.FileBackupsLocation, await device.getLegacyFilesBackupsLocation())
+    this.services.storageService.setValue(StorageKey.FileBackupsEnabled, await device.isLegacyFilesBackupsEnabled())
 
-    const legacyTextBackupsLocation = await device.getLegacyTextBackupsLocation()
-    if (legacyTextBackupsLocation) {
-      this.services.storageService.setValue(StorageKey.TextBackupsLocation, legacyTextBackupsLocation)
-      this.services.storageService.setValue(StorageKey.TextBackupsEnabled, true)
-    }
+    this.services.storageService.setValue(StorageKey.TextBackupsLocation, await device.getLegacyTextBackupsLocation())
+    this.services.storageService.setValue(StorageKey.TextBackupsEnabled, await device.isLegacyTextBackupsEnabled())
   }
 }

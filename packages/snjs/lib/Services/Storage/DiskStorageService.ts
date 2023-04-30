@@ -302,7 +302,6 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     domainStorage[key] = value
   }
 
-  public getValue<T>(key: string, defaultValue?: T): T
   public getValue<T>(key: string, mode = Services.StorageValueModes.Default, defaultValue?: T): T {
     if (!this.values) {
       throw Error(`Attempting to get storage key ${key} before loading local storage.`)

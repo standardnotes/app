@@ -213,7 +213,7 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
     spellcheckerManager,
   })
 
-  const fileBackupsManager = new FilesBackupManager(appState, window.webContents)
+  const fileBackupsManager = new FilesBackupManager(appState)
 
   return {
     updateManager,

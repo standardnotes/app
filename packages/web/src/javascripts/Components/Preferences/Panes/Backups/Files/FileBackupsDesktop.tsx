@@ -1,7 +1,6 @@
-import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
 import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import Button from '@/Components/Button/Button'
 import Switch from '@/Components/Switch/Switch'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
@@ -10,30 +9,21 @@ import BackupsDropZone from './BackupsDropZone'
 import EncryptionStatusItem from '../../Security/EncryptionStatusItem'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
+import { BackupServiceInterface } from '@standardnotes/snjs'
+import { useApplication } from '@/Components/ApplicationProvider'
 
 type Props = {
-  application: WebApplication
-  backupsService: NonNullable<WebApplication['fileBackups']>
+  backupsService: BackupServiceInterface
 }
 
-const FileBackupsDesktop = ({ application, backupsService }: Props) => {
-  const [backupsEnabled, setBackupsEnabled] = useState(false)
-  const [backupsLocation, setBackupsLocation] = useState<string | undefined>('')
-
-  useEffect(() => {
-    void backupsService.isLegacyFilesBackupsEnabled().then(setBackupsEnabled)
-  }, [backupsService])
-
-  useEffect(() => {
-    if (backupsEnabled) {
-      void backupsService.getLegacyFilesBackupsLocation().then(setBackupsLocation)
-    }
-  }, [backupsService, backupsEnabled])
+const FileBackupsDesktop = ({ backupsService }: Props) => {
+  const application = useApplication()
+  const [backupsEnabled, setBackupsEnabled] = useState(backupsService.isFilesBackupsEnabled())
+  const [backupsLocation, setBackupsLocation] = useState<string | undefined>(backupsService.getFilesBackupsLocation())
 
   const changeBackupsLocation = useCallback(async () => {
-    await backupsService.changeFilesBackupsLocation()
-
-    setBackupsLocation(await backupsService.getLegacyFilesBackupsLocation())
+    const newLocation = await backupsService.changeFilesBackupsLocation()
+    setBackupsLocation(newLocation)
   }, [backupsService])
 
   const openBackupsLocation = useCallback(async () => {
@@ -42,12 +32,12 @@ const FileBackupsDesktop = ({ application, backupsService }: Props) => {
 
   const toggleBackups = useCallback(async () => {
     if (backupsEnabled) {
-      await backupsService.disableFilesBackups()
+      backupsService.disableFilesBackups()
     } else {
-      await backupsService.enableFilesBackups()
+      backupsService.enableFilesBackups()
     }
 
-    setBackupsEnabled(await backupsService.isLegacyFilesBackupsEnabled())
+    setBackupsEnabled(backupsService.isFilesBackupsEnabled())
   }, [backupsService, backupsEnabled])
 
   return (

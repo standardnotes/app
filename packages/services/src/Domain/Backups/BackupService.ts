@@ -106,7 +106,7 @@ export class FilesBackupService extends AbstractService implements BackupService
   }
 
   isFilesBackupsEnabled(): boolean {
-    return this.storage.getValue(StorageKey.FileBackupsEnabled, false)
+    return this.storage.getValue(StorageKey.FileBackupsEnabled, undefined, false)
   }
 
   getFilesBackupsLocation(): string | undefined {
@@ -114,7 +114,7 @@ export class FilesBackupService extends AbstractService implements BackupService
   }
 
   isTextBackupsEnabled(): boolean {
-    return this.storage.getValue(StorageKey.TextBackupsEnabled, true)
+    return this.storage.getValue(StorageKey.TextBackupsEnabled, undefined, true)
   }
 
   enableTextBackups(): void {
@@ -152,8 +152,17 @@ export class FilesBackupService extends AbstractService implements BackupService
     return newLocation
   }
 
+  async saveTextBackupData(data: string): Promise<void> {
+    const location = this.getTextBackupsLocation()
+    if (!location) {
+      return
+    }
+
+    return this.device.saveTextBackupData(location, data)
+  }
+
   isPlaintextBackupsEnabled(): boolean {
-    return this.storage.getValue(StorageKey.PlaintextBackupsEnabled, false)
+    return this.storage.getValue(StorageKey.PlaintextBackupsEnabled, undefined, false)
   }
 
   async disablePlaintextBackups(): Promise<void> {

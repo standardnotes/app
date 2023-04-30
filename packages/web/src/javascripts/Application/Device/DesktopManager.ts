@@ -74,9 +74,10 @@ export class DesktopManager
     this.webApplication.notifyWebEvent(WebAppEvent.BeganBackupDownload)
 
     const data = await this.getBackupFile()
-    await this.device.saveTextBackupData(this.application.identifier, data)
-
-    this.webApplication.notifyWebEvent(WebAppEvent.EndedBackupDownload, { success: true })
+    if (data) {
+      await this.webApplication.fileBackups?.saveTextBackupData(data)
+      this.webApplication.notifyWebEvent(WebAppEvent.EndedBackupDownload, { success: true })
+    }
   }
 
   private async getBackupFile(): Promise<string | undefined> {

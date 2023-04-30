@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import Button from '@/Components/Button/Button'
 import Switch from '@/Components/Switch/Switch'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
@@ -8,45 +8,34 @@ import Icon from '@/Components/Icon/Icon'
 import EncryptionStatusItem from '../../Security/EncryptionStatusItem'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
-import { DesktopDeviceInterface } from '@standardnotes/snjs'
+import { BackupServiceInterface } from '@standardnotes/snjs'
 
 type Props = {
-  device: DesktopDeviceInterface
+  backupsService: BackupServiceInterface
 }
 
-const TextBackupsDesktop = ({ device }: Props) => {
-  const [backupsEnabled, setBackupsEnabled] = useState(false)
-  const [backupsLocation, setBackupsLocation] = useState<string | undefined>('')
-
-  useEffect(() => {
-    void device.isLegacyTextBackupsEnabled().then(setBackupsEnabled)
-  }, [device])
-
-  useEffect(() => {
-    if (backupsEnabled) {
-      void device.getLegacyTextBackupsLocation().then(setBackupsLocation)
-    }
-  }, [device, backupsEnabled])
+const TextBackupsDesktop = ({ backupsService }: Props) => {
+  const [backupsEnabled, setBackupsEnabled] = useState(backupsService.isTextBackupsEnabled())
+  const [backupsLocation, setBackupsLocation] = useState(backupsService.getTextBackupsLocation())
 
   const changeBackupsLocation = useCallback(async () => {
-    await device.changeTextBackupsLocation()
-
-    setBackupsLocation(await device.getLegacyTextBackupsLocation())
-  }, [device])
+    const newLocation = await backupsService.changeTextBackupsLocation()
+    setBackupsLocation(newLocation)
+  }, [backupsService])
 
   const openBackupsLocation = useCallback(async () => {
-    await device.openTextBackupsLocation()
-  }, [device])
+    await backupsService.openTextBackupsLocation()
+  }, [backupsService])
 
   const toggleBackups = useCallback(async () => {
     if (backupsEnabled) {
-      await device.disableTextBackups()
+      backupsService.disableTextBackups()
     } else {
-      await device.enableTextBackups()
+      backupsService.enableTextBackups()
     }
 
-    setBackupsEnabled(await device.isLegacyTextBackupsEnabled())
-  }, [device, backupsEnabled])
+    setBackupsEnabled(backupsService.isTextBackupsEnabled())
+  }, [backupsEnabled, backupsService])
 
   return (
     <>

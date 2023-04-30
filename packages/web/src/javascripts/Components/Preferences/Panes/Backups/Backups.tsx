@@ -19,7 +19,7 @@ const Backups: FunctionComponent<Props> = ({ application, viewControllerManager 
     <PreferencesPane>
       <DataBackups application={application} viewControllerManager={viewControllerManager} />
       <TextBackupsCrossPlatform application={application} />
-      <PlaintextBackupsCrossPlatform application={application} />
+      <PlaintextBackupsCrossPlatform />
       <FileBackupsCrossPlatform application={application} />
       <EmailBackups application={application} />
     </PreferencesPane>

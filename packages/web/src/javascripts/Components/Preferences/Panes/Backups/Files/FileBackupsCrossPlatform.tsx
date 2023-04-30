@@ -15,7 +15,7 @@ const FileBackupsCrossPlatform = ({ application }: Props) => {
   const fileBackupsService = useMemo(() => application.fileBackups, [application])
 
   return fileBackupsService ? (
-    <FileBackupsDesktop application={application} backupsService={fileBackupsService} />
+    <FileBackupsDesktop backupsService={fileBackupsService} />
   ) : (
     <>
       <PreferencesGroup>

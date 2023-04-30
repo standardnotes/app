@@ -20,6 +20,7 @@ export interface BackupServiceInterface {
   getTextBackupsLocation(): string | undefined
   openTextBackupsLocation(): Promise<void>
   changeTextBackupsLocation(): Promise<string | undefined>
+  saveTextBackupData(data: string): Promise<void>
 
   isPlaintextBackupsEnabled(): boolean
   enablePlaintextBackups(): void

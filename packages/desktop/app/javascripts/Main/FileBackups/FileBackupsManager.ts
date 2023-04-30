@@ -9,7 +9,7 @@ import {
 } from '@web/Application/Device/DesktopSnjsExports'
 import { AppState } from 'app/AppState'
 import { promises as fs } from 'fs'
-import { WebContents, shell } from 'electron'
+import { shell } from 'electron'
 import { StoreKeys } from '../Store/StoreKeys'
 import path from 'path'
 import {
@@ -24,7 +24,6 @@ import { FileDownloader } from './FileDownloader'
 import { FileReadOperation } from './FileReadOperation'
 import { Paths } from '../Types/Paths'
 
-const TextBackupsDirectoryName = 'Text Backups'
 const TextBackupFileExtension = '.txt'
 
 export const FileBackupsConstantsV1 = {
@@ -37,7 +36,7 @@ export class FilesBackupManager implements FileBackupsDevice {
   private readOperations: Map<string, FileReadOperation> = new Map()
   private plaintextMappingCache?: PlaintextBackupsMapping
 
-  constructor(private appState: AppState, private webContents: WebContents) {}
+  constructor(private appState: AppState) {}
 
   public async isLegacyFilesBackupsEnabled(): Promise<boolean> {
     return this.appState.store.get(StoreKeys.LegacyFileBackupsEnabled)
@@ -56,13 +55,13 @@ export class FilesBackupManager implements FileBackupsDevice {
   }
 
   async getLegacyTextBackupsLocation(): Promise<string | undefined> {
-    const directory = this.appState.store.get(StoreKeys.LegacyTextBackupsLocation)
-
-    if (!directory) {
-      return undefined
+    const savedLocation = this.appState.store.get(StoreKeys.LegacyTextBackupsLocation)
+    if (savedLocation) {
+      return savedLocation
     }
 
-    return `${directory}/${TextBackupsDirectoryName}`
+    const LegacyTextBackupsDirectory = 'Standard Notes Backups'
+    return `${Paths.homeDir}/${LegacyTextBackupsDirectory}`
   }
 
   public async presentDirectoryPickerForLocationChangeAndTransferOld(
@@ -195,18 +194,14 @@ export class FilesBackupManager implements FileBackupsDevice {
     return result
   }
 
-  async getDefaultDirectoryForTextBackups(): Promise<string> {
-    const defaultLocation = Paths.documentsDir
-    return `${defaultLocation}/Standard Notes/${TextBackupsDirectoryName}`
-  }
-
   async getTextBackupsCount(location: string): Promise<number> {
     let files = await fs.readdir(location)
-    files = files.filter((fileName) => fileName.endsWith(TextBackupsDirectoryName))
+    files = files.filter((fileName) => fileName.endsWith(TextBackupFileExtension))
     return files.length
   }
 
   async saveTextBackupData(location: string, data: string): Promise<void> {
+    log(LoggingDomain.Backups, 'Saving text backup data', 'to', location)
     let success: boolean
 
     try {

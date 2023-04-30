@@ -55,7 +55,6 @@ interface PlaintextBackupsMethods {
 }
 
 interface TextBackupsMethods {
-  getDefaultDirectoryForTextBackups(): Promise<string>
   getTextBackupsCount(location: string): Promise<number>
   saveTextBackupData(location: string, data: string): Promise<void>
 }

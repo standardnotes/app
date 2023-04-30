@@ -10,10 +10,10 @@ type Props = {
 }
 
 const TextBackupsCrossPlatform = ({ application }: Props) => {
-  const device = useMemo(() => application.desktopDevice, [application])
+  const fileBackupsService = useMemo(() => application.fileBackups, [application])
 
-  return device ? (
-    <TextBackupsDesktop device={device} />
+  return fileBackupsService ? (
+    <TextBackupsDesktop backupsService={fileBackupsService} />
   ) : (
     <>
       <PreferencesGroup>

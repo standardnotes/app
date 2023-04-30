@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import Button from '@/Components/Button/Button'
 import Switch from '@/Components/Switch/Switch'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
@@ -8,47 +8,34 @@ import Icon from '@/Components/Icon/Icon'
 import EncryptionStatusItem from '../../Security/EncryptionStatusItem'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
-import { DesktopDeviceInterface } from '@standardnotes/snjs'
-import { WebApplication } from '@/Application/Application'
+import { BackupServiceInterface } from '@standardnotes/snjs'
 
 type Props = {
-  device: DesktopDeviceInterface
-  backupsService: NonNullable<WebApplication['fileBackups']>
+  backupsService: BackupServiceInterface
 }
 
-const PlaintextBackupsDesktop = ({ device, backupsService }: Props) => {
-  const [backupsEnabled, setBackupsEnabled] = useState(false)
-  const [backupsLocation, setBackupsLocation] = useState<string | undefined>('')
-
-  useEffect(() => {
-    void device.isPlaintextBackupsEnabled().then(setBackupsEnabled)
-  }, [device])
-
-  useEffect(() => {
-    if (backupsEnabled) {
-      void device.getPlaintextBackupsLocation().then(setBackupsLocation)
-    }
-  }, [device, backupsEnabled])
+const PlaintextBackupsDesktop = ({ backupsService }: Props) => {
+  const [backupsEnabled, setBackupsEnabled] = useState(backupsService.isPlaintextBackupsEnabled())
+  const [backupsLocation, setBackupsLocation] = useState(backupsService.getPlaintextBackupsLocation())
 
   const changeBackupsLocation = useCallback(async () => {
-    await device.changePlaintextBackupsLocation()
-
-    setBackupsLocation(await device.getPlaintextBackupsLocation())
-  }, [device])
+    const newLocation = await backupsService.changePlaintextBackupsLocation()
+    setBackupsLocation(newLocation)
+  }, [backupsService])
 
   const openBackupsLocation = useCallback(async () => {
-    await device.openPlaintextBackupsLocation()
-  }, [device])
+    await backupsService.openPlaintextBackupsLocation()
+  }, [backupsService])
 
   const toggleBackups = useCallback(async () => {
     if (backupsEnabled) {
-      await device.disablePlaintextBackups()
+      backupsService.disablePlaintextBackups()
     } else {
-      await backupsService.enablePlaintextBackups()
+      backupsService.enablePlaintextBackups()
     }
 
-    setBackupsEnabled(await device.isPlaintextBackupsEnabled())
-  }, [device, backupsEnabled, backupsService])
+    setBackupsEnabled(backupsService.isPlaintextBackupsEnabled())
+  }, [backupsEnabled, backupsService])
 
   return (
     <>
