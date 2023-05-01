@@ -76,7 +76,7 @@ export const usePaneSwipeGesture = (
     let scrollContainerAxis: 'x' | 'y' | null = null
     let canceled = false
 
-    const TouchMoveThreshold = 15
+    const TouchMoveThreshold = 25
     const SwipeFinishThreshold = 40 + TouchMoveThreshold
 
     const scrollListener = (event: Event) => {
@@ -92,7 +92,7 @@ export const usePaneSwipeGesture = (
     const touchStartListener = (event: TouchEvent) => {
       closestScrollContainer = getScrollParent(event.target as HTMLElement)
       if (closestScrollContainer) {
-        closestScrollContainer.addEventListener('scroll', scrollListener)
+        closestScrollContainer.addEventListener('scroll', scrollListener, supportsPassive ? { passive: true } : false)
 
         if (closestScrollContainer.scrollWidth > closestScrollContainer.clientWidth) {
           scrollContainerAxis = 'x'
@@ -166,7 +166,7 @@ export const usePaneSwipeGesture = (
         return
       }
 
-      if (closestScrollContainer) {
+      if (closestScrollContainer && closestScrollContainer.style.overflowY !== 'hidden') {
         closestScrollContainer.style.overflowY = 'hidden'
       }
 
