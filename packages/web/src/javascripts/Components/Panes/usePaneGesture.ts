@@ -76,6 +76,9 @@ export const usePaneSwipeGesture = (
     let scrollContainerAxis: 'x' | 'y' | null = null
     let canceled = false
 
+    const TouchMoveThreshold = 15
+    const SwipeFinishThreshold = 40 + TouchMoveThreshold
+
     const scrollListener = () => {
       canceled = true
     }
@@ -150,7 +153,6 @@ export const usePaneSwipeGesture = (
       clientX = touch.clientX
 
       const deltaX = clientX - startX
-      const TouchMoveThreshold = 15
 
       if (Math.abs(deltaX) < TouchMoveThreshold) {
         return
@@ -180,9 +182,11 @@ export const usePaneSwipeGesture = (
       }
 
       const deltaX = clientX - startX
-      const SwipeThreshold = 40
 
-      if ((direction === 'right' && deltaX > SwipeThreshold) || (direction === 'left' && deltaX < -SwipeThreshold)) {
+      if (
+        (direction === 'right' && deltaX > SwipeFinishThreshold) ||
+        (direction === 'left' && deltaX < -SwipeFinishThreshold)
+      ) {
         onSwipeEndRef.current(element)
       } else {
         updateElement(0)
