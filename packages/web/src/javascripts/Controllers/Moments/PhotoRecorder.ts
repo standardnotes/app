@@ -12,6 +12,9 @@ export class PhotoRecorder {
   constructor() {}
 
   public static async isSupported(): Promise<boolean> {
+    if (!navigator.mediaDevices) {
+      return false
+    }
     const devices = await navigator.mediaDevices.enumerateDevices()
     const hasCamera = devices.some((device) => device.kind === 'videoinput')
     return hasCamera

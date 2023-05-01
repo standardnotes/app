@@ -109,7 +109,6 @@
   "dependencies": {
     "@ariakit/react": "^0.1.2",
     "@lexical/headless": "0.10.0",
-    "@radix-ui/react-slot": "^1.0.1",
-    "contactjs": "2.1.5"
+    "@radix-ui/react-slot": "^1.0.1"
   }
 }
