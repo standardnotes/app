@@ -1,10 +1,28 @@
 {
   "versions": [
     {
+      "version": "3.154.1",
+      "title": "[3.154.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.154.0...@standardnotes/web@3.154.1) (2023-05-01)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed the issue where imported notes would have incorrect \"Created\" date and time ([9e0e176](https://github.com/standardnotes/app/commit/9e0e176bac5902375b8ada7773931d3d419ce368))\n\n### Reverts\n\n* Revert \"feat: Swipe gestures on mobile are now enabled by default and have been improved. You can disable them from Preferences > General > Labs (#2319)\" ([880ccee](https://github.com/standardnotes/app/commit/880cceecd5df0a941e3e9fcd4753da8d33f29266)), closes [#2319](https://github.com/standardnotes/app/issues/2319)",
+      "parsed": {
+        "_": [
+          "Fixed the issue where imported notes would have incorrect \"Created\" date and time (9e0e176)",
+          "Revert \"feat: Swipe gestures on mobile are now enabled by default and have been improved. You can disable them from Preferences > General > Labs (#2319)\" (880ccee), closes #2319"
+        ],
+        "Bug Fixes": [
+          "Fixed the issue where imported notes would have incorrect \"Created\" date and time (9e0e176)"
+        ],
+        "Reverts": [
+          "Revert \"feat: Swipe gestures on mobile are now enabled by default and have been improved. You can disable them from Preferences > General > Labs (#2319)\" (880ccee), closes #2319"
+        ]
+      }
+    },
+    {
       "version": "3.154.0",
       "title": "[3.154.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.14...@standardnotes/web@3.154.0) (2023-05-01)",
       "date": null,
-      "body": "### Features\n\n* Swipe gestures on mobile are now enabled by default and have been improved. You can disable them from Preferences > General > Labs ([#2319](https://github.com/standardnotes/app/issues/2319)) ([6d326e2](https://github.com/standardnotes/app/commit/6d326e2db4e385273b1d50f98427397ce91e631b))",
+      "body": "**Note:** Version bump only for package @standardnotes/web",
       "parsed": {
         "_": [
           "Note: Version bump only for package @standardnotes/web"
