@@ -3,6 +3,7 @@ export enum MessageToWebApp {
   WindowBlurred = 'window-blurred',
   WindowFocused = 'window-focused',
   InstallComponentComplete = 'install-component-complete',
+  WatchedDirectoriesChanges = 'watched-directories-changes',
 }
 
 export enum MessageToMainProcess {

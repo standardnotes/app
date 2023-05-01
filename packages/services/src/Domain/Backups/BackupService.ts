@@ -7,6 +7,8 @@ import {
   CreateEncryptedBackupFileContextPayload,
   SNNote,
   SNTag,
+  isNote,
+  NoteContent,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import {
@@ -17,6 +19,7 @@ import {
   FileBackupRecord,
   OnChunkCallback,
   BackupServiceInterface,
+  DesktopWatchedDirectoriesChanges,
 } from '@standardnotes/files'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
@@ -26,6 +29,8 @@ import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { StorageKey } from '../Storage/StorageKeys'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
+import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
+import { HistoryServiceInterface } from '../History/HistoryServiceInterface'
 
 const PlaintextBackupsDirectoryName = 'Plaintext Backups'
 export const TextBackupsDirectoryName = 'Text Backups'
@@ -48,6 +53,8 @@ export class FilesBackupService extends AbstractService implements BackupService
     private crypto: PureCryptoInterface,
     private storage: StorageServiceInterface,
     private session: SessionsClientInterface,
+    private payloads: PayloadManagerInterface,
+    private history: HistoryServiceInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -80,6 +87,32 @@ export class FilesBackupService extends AbstractService implements BackupService
         void this.handleChangedTags([...changed, ...inserted])
       }
     })
+  }
+
+  async importWatchedDirectoryChanges(changes: DesktopWatchedDirectoriesChanges): Promise<void> {
+    for (const change of changes) {
+      const existingItem = this.items.findItem(change.itemUuid)
+      if (!existingItem) {
+        continue
+      }
+
+      if (!isNote(existingItem)) {
+        continue
+      }
+
+      const newContent: NoteContent = {
+        ...existingItem.payload.content,
+        preview_html: undefined,
+        preview_plain: undefined,
+        text: change.content,
+      }
+
+      const payloadCopy = existingItem.payload.copy({
+        content: newContent,
+      })
+
+      await this.payloads.importPayloads([payloadCopy], this.history.getHistoryMapCopy())
+    }
   }
 
   override deinit() {
@@ -220,7 +253,6 @@ export class FilesBackupService extends AbstractService implements BackupService
 
     this.storage.setValue(StorageKey.PlaintextBackupsEnabled, true)
     this.storage.setValue(StorageKey.PlaintextBackupsLocation, location)
-    console.log('did set plaintext location', location)
 
     void this.handleChangedNotes(this.items.getItems<SNNote>(ContentType.Note))
   }
@@ -489,5 +521,19 @@ export class FilesBackupService extends AbstractService implements BackupService
     }
 
     return result
+  }
+
+  /**
+   * Not presently used or enabled. It works, but presently has the following edge cases:
+   * 1. Editing the note directly in SN triggers an immediate backup which triggers a file change which triggers the observer
+   * 2. Since changes are based on filenames, a note with the same title as another may not properly map to the correct uuid
+   * 3. Opening the file triggers a watch event from Node's watch API.
+   * 4. Gives web code ability to monitor arbitrary locations. Needs whitelisting mechanism.
+   */
+  private disabledExperimental_monitorPlaintextBackups(): void {
+    const location = this.getPlaintextBackupsLocation()
+    if (location) {
+      void this.device.monitorPlaintextBackupsLocationForChanges(location)
+    }
   }
 }

@@ -1,5 +1,5 @@
 import { DecryptedTransferPayload } from '@standardnotes/models'
-import { FileBackupsDevice } from '@standardnotes/files'
+import { DesktopWatchedDirectoriesChanges, FileBackupsDevice } from '@standardnotes/files'
 
 export interface WebClientRequiresDesktopMethods extends FileBackupsDevice {
   syncComponents(payloads: unknown[]): void
@@ -19,4 +19,6 @@ export interface DesktopClientRequiresWebMethods {
   windowLostFocus(): void
 
   onComponentInstallationComplete(componentData: DecryptedTransferPayload, error: unknown): Promise<void>
+
+  handleWatchedDirectoriesChanges(changes: DesktopWatchedDirectoriesChanges): Promise<void>
 }

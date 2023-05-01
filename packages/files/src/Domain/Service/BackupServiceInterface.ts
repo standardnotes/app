@@ -1,9 +1,11 @@
 import { OnChunkCallback } from '../Chunker/OnChunkCallback'
+import { DesktopWatchedDirectoriesChanges } from '../Device/DesktopWatchedChanges'
 import { FileBackupRecord } from '../Device/FileBackupsMapping'
 
 export interface BackupServiceInterface {
   openAllDirectoriesContainingBackupFiles(): void
   prependWorkspacePathForPath(path: string): string
+  importWatchedDirectoryChanges(changes: DesktopWatchedDirectoriesChanges): Promise<void>
 
   getFileBackupInfo(file: { uuid: string }): Promise<FileBackupRecord | undefined>
   readEncryptedFileFromBackup(uuid: string, onChunk: OnChunkCallback): Promise<'success' | 'failed' | 'aborted'>

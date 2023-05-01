@@ -15,6 +15,7 @@ import {
   WebApplicationInterface,
   WebAppEvent,
   BackupServiceInterface,
+  DesktopWatchedDirectoriesChanges,
 } from '@standardnotes/snjs'
 
 export class DesktopManager
@@ -37,6 +38,10 @@ export class DesktopManager
     private backups: BackupServiceInterface,
   ) {
     super(application, new InternalEventBus())
+  }
+
+  async handleWatchedDirectoriesChanges(changes: DesktopWatchedDirectoriesChanges): Promise<void> {
+    void this.backups.importWatchedDirectoryChanges(changes)
   }
 
   beginTextBackupsTimer() {

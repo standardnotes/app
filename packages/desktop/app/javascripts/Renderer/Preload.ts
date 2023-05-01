@@ -1,22 +1,25 @@
-import { IpcRendererEvent } from 'electron/renderer'
 import { MessageToWebApp } from '../Shared/IpcMessages'
+import { ElectronMainEvents, MainEventHandler } from '../Shared/ElectronMainEvents'
 const { ipcRenderer } = require('electron')
 const RemoteBridge = require('@electron/remote').getGlobal('RemoteBridge')
 const { contextBridge } = require('electron')
 
-type MainEventCallback = (event: IpcRendererEvent, value: any) => void
-
 process.once('loaded', function () {
   contextBridge.exposeInMainWorld('electronRemoteBridge', RemoteBridge.exposableValue)
 
-  contextBridge.exposeInMainWorld('electronMainEvents', {
-    handleUpdateAvailable: (callback: MainEventCallback) => ipcRenderer.on(MessageToWebApp.UpdateAvailable, callback),
+  const mainEvents: ElectronMainEvents = {
+    setUpdateAvailableHandler: (handler: MainEventHandler) => ipcRenderer.on(MessageToWebApp.UpdateAvailable, handler),
 
-    handleWindowBlurred: (callback: MainEventCallback) => ipcRenderer.on(MessageToWebApp.WindowBlurred, callback),
+    setWindowBlurredHandler: (handler: MainEventHandler) => ipcRenderer.on(MessageToWebApp.WindowBlurred, handler),
 
-    handleWindowFocused: (callback: MainEventCallback) => ipcRenderer.on(MessageToWebApp.WindowFocused, callback),
+    setWindowFocusedHandler: (handler: MainEventHandler) => ipcRenderer.on(MessageToWebApp.WindowFocused, handler),
 
-    handleInstallComponentComplete: (callback: MainEventCallback) =>
-      ipcRenderer.on(MessageToWebApp.InstallComponentComplete, callback),
-  })
+    setWatchedDirectoriesChangeHandler: (handler: MainEventHandler) =>
+      ipcRenderer.on(MessageToWebApp.WatchedDirectoriesChanges, handler),
+
+    setInstallComponentCompleteHandler: (handler: MainEventHandler) =>
+      ipcRenderer.on(MessageToWebApp.InstallComponentComplete, handler),
+  }
+
+  contextBridge.exposeInMainWorld('electronMainEvents', mainEvents)
 })

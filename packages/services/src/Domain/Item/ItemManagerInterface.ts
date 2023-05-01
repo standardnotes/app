@@ -103,4 +103,5 @@ export interface ItemManagerInterface extends AbstractService {
     itemToLookupUuidFor: DecryptedItemInterface,
     contentType?: ContentType,
   ): I[]
+  findItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T | undefined
 }

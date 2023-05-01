@@ -1,10 +1,11 @@
 import { FileDownloadProgress } from '../Types/FileDownloadProgress'
-import { FileBackupRecord, FileBackupsMapping } from './FileBackupsMapping'
+import { FileBackupsMapping } from './FileBackupsMapping'
 
 type PlaintextNoteRecord = {
   tag?: string
   path: string
 }
+
 type UuidString = string
 export type PlaintextBackupsMapping = {
   version: string
@@ -28,6 +29,8 @@ export interface FileBackupsDevice
     appendPath: string,
     oldLocation?: string,
   ): Promise<string | undefined>
+
+  monitorPlaintextBackupsLocationForChanges(backupsDirectory: string): Promise<void>
 }
 
 export type FileBackupReadToken = string

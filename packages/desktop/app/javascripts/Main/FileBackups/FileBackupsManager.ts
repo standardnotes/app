@@ -5,10 +5,11 @@ import {
   FileBackupReadToken,
   FileBackupReadChunkResponse,
   PlaintextBackupsMapping,
+  DesktopWatchedDirectoriesChange,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { AppState } from 'app/AppState'
 import { promises as fs } from 'fs'
-import { shell } from 'electron'
+import { WebContents, shell } from 'electron'
 import { StoreKeys } from '../Store/StoreKeys'
 import path from 'path'
 import {
@@ -24,6 +25,7 @@ import {
 import { FileDownloader } from './FileDownloader'
 import { FileReadOperation } from './FileReadOperation'
 import { Paths } from '../Types/Paths'
+import { MessageToWebApp } from '../../Shared/IpcMessages'
 
 const TextBackupFileExtension = '.txt'
 
@@ -37,7 +39,28 @@ export class FilesBackupManager implements FileBackupsDevice {
   private readOperations: Map<string, FileReadOperation> = new Map()
   private plaintextMappingCache?: PlaintextBackupsMapping
 
-  constructor(private appState: AppState) {}
+  constructor(private appState: AppState, private webContents: WebContents) {}
+
+  private async findUuidForPlaintextBackupFileName(
+    backupsDirectory: string,
+    targetFilename: string,
+  ): Promise<string | undefined> {
+    const mapping = await this.getPlaintextBackupsMappingFile(backupsDirectory)
+
+    const uuid = Object.keys(mapping.files).find((uuid) => {
+      const entries = mapping.files[uuid]
+      for (const entry of entries) {
+        const filePath = entry.path
+        const filename = path.basename(filePath)
+        if (filename === targetFilename) {
+          return true
+        }
+      }
+      return false
+    })
+
+    return uuid
+  }
 
   public async migrateLegacyFileBackupsToNewStructure(newLocation: string): Promise<void> {
     const legacyLocation = await this.getLegacyFilesBackupsLocation()
@@ -342,5 +365,42 @@ export class FilesBackupManager implements FileBackupsDevice {
     }
 
     await this.savePlaintextBackupsMappingFile(location, this.plaintextMappingCache)
+  }
+
+  async monitorPlaintextBackupsLocationForChanges(backupsDirectory: string): Promise<void> {
+    const FEATURE_ENABLED = false
+    if (!FEATURE_ENABLED) {
+      return
+    }
+
+    try {
+      const watcher = fs.watch(backupsDirectory, { recursive: true })
+      for await (const event of watcher) {
+        const { eventType, filename } = event
+        if (eventType !== 'change' && eventType !== 'rename') {
+          continue
+        }
+        const itemUuid = await this.findUuidForPlaintextBackupFileName(backupsDirectory, filename)
+        if (itemUuid) {
+          try {
+            const change: DesktopWatchedDirectoriesChange = {
+              itemUuid,
+              path: path.join(backupsDirectory, filename),
+              type: eventType,
+              content: await fs.readFile(path.join(backupsDirectory, filename), 'utf-8'),
+            }
+            this.webContents.send(MessageToWebApp.WatchedDirectoriesChanges, [change])
+          } catch (err) {
+            log(LoggingDomain.Backups, 'Error processing watched change', err)
+            continue
+          }
+        }
+      }
+    } catch (err) {
+      if ((err as Error).name === 'AbortError') {
+        return
+      }
+      throw err
+    }
   }
 }
