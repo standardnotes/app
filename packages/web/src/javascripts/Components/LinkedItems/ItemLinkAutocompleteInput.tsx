@@ -49,6 +49,7 @@ const ItemLinkAutocompleteInput = ({
     event.preventDefault()
     if (searchQuery !== '') {
       await createAndAddNewTag(searchQuery)
+      combobox.setValue('')
     }
   }
 
