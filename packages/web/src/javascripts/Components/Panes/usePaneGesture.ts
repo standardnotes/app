@@ -99,6 +99,8 @@ export const usePaneSwipeGesture = (
       startX = touch.clientX
 
       canceled = false
+
+      element.style.willChange = 'transform'
     }
 
     const updateElement = (x: number) => {
@@ -183,6 +185,8 @@ export const usePaneSwipeGesture = (
 
       const deltaX = clientX - startX
 
+      element.style.willChange = ''
+
       if (
         (direction === 'right' && deltaX > SwipeFinishThreshold) ||
         (direction === 'left' && deltaX < -SwipeFinishThreshold)
@@ -195,7 +199,8 @@ export const usePaneSwipeGesture = (
       if (underlayElementRef.current) {
         underlayElementRef.current
           .animate([{ opacity: 0 }], {
-            duration: 5,
+            easing: 'cubic-bezier(.36,.66,.04,1)',
+            duration: 500,
             fill: 'forwards',
           })
           .finished.then(() => {
