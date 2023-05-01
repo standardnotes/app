@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.154.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.154.0...@standardnotes/web@3.154.1) (2023-05-01)
+
+### Bug Fixes
+
+* Fixed the issue where imported notes would have incorrect "Created" date and time ([9e0e176](https://github.com/standardnotes/app/commit/9e0e176bac5902375b8ada7773931d3d419ce368))
+
+### Reverts
+
+* Revert "feat: Swipe gestures on mobile are now enabled by default and have been improved. You can disable them from Preferences > General > Labs (#2319)" ([880ccee](https://github.com/standardnotes/app/commit/880cceecd5df0a941e3e9fcd4753da8d33f29266)), closes [#2319](https://github.com/standardnotes/app/issues/2319)
+
 # [3.154.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.14...@standardnotes/web@3.154.0) (2023-05-01)
 
 **Note:** Version bump only for package @standardnotes/web
