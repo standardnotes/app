@@ -1,3 +1,5 @@
+import { StorageServiceInterface } from './../Storage/StorageServiceInterface'
+import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { StatusServiceInterface } from './../Status/StatusServiceInterface'
 import { FilesBackupService } from './BackupService'
 import { PureCryptoInterface, StreamEncryptor } from '@standardnotes/sncrypto-common'
@@ -20,6 +22,8 @@ describe('backup service', () => {
   let internalEventBus: InternalEventBusInterface
   let backupService: FilesBackupService
   let device: FileBackupsDevice
+  let session: SessionsClientInterface
+  let storage: StorageServiceInterface
 
   beforeEach(() => {
     apiService = {} as jest.Mocked<ApiServiceInterface>
@@ -41,6 +45,8 @@ describe('backup service', () => {
     device.getFileBackupReadToken = jest.fn()
     device.readNextChunk = jest.fn()
 
+    session = {} as jest.Mocked<SessionsClientInterface>
+
     syncService = {} as jest.Mocked<SyncServiceInterface>
     syncService.sync = jest.fn()
 
@@ -55,7 +61,17 @@ describe('backup service', () => {
     internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
     internalEventBus.publish = jest.fn()
 
-    backupService = new FilesBackupService(itemManager, apiService, encryptor, device, status, crypto, internalEventBus)
+    backupService = new FilesBackupService(
+      itemManager,
+      apiService,
+      encryptor,
+      device,
+      status,
+      crypto,
+      storage,
+      session,
+      internalEventBus,
+    )
 
     crypto.xchacha20StreamInitDecryptor = jest.fn().mockReturnValue({
       state: {},

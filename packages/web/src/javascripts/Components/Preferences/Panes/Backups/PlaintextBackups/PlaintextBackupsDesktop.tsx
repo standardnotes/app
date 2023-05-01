@@ -31,10 +31,11 @@ const PlaintextBackupsDesktop = ({ backupsService }: Props) => {
     if (backupsEnabled) {
       backupsService.disablePlaintextBackups()
     } else {
-      backupsService.enablePlaintextBackups()
+      await backupsService.enablePlaintextBackups()
     }
 
     setBackupsEnabled(backupsService.isPlaintextBackupsEnabled())
+    setBackupsLocation(backupsService.getPlaintextBackupsLocation())
   }, [backupsEnabled, backupsService])
 
   return (
@@ -45,7 +46,9 @@ const PlaintextBackupsDesktop = ({ backupsService }: Props) => {
 
           <div className="flex items-center justify-between">
             <div className="mr-10 flex flex-col">
-              <Subtitle>Automatically save backups of all your notes into plaintext, non-encrypted folders.</Subtitle>
+              <Subtitle>
+                Automatically save backups of all your notes to this computer into plaintext, non-encrypted folders.
+              </Subtitle>
             </div>
             <Switch onChange={toggleBackups} checked={backupsEnabled} />
           </div>
@@ -61,11 +64,9 @@ const PlaintextBackupsDesktop = ({ backupsService }: Props) => {
         {backupsEnabled && (
           <>
             <HorizontalSeparator classes="my-4" />
-
             <PreferencesSegment>
               <>
                 <Text className="mb-3">Plaintext backups are enabled and saved to:</Text>
-
                 <EncryptionStatusItem
                   status={backupsLocation || 'Not Set'}
                   icon={<Icon type="attachment-file" className="min-h-5 min-w-5" />}

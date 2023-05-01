@@ -31,21 +31,24 @@ const TextBackupsDesktop = ({ backupsService }: Props) => {
     if (backupsEnabled) {
       backupsService.disableTextBackups()
     } else {
-      backupsService.enableTextBackups()
+      await backupsService.enableTextBackups()
     }
 
     setBackupsEnabled(backupsService.isTextBackupsEnabled())
+    setBackupsLocation(backupsService.getTextBackupsLocation())
   }, [backupsEnabled, backupsService])
 
   return (
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Automatic Text Backups</Title>
+          <Title>Automatic Encrypted Text Backups</Title>
 
           <div className="flex items-center justify-between">
             <div className="mr-10 flex flex-col">
-              <Subtitle>Automatically save backups of all your note and tag data.</Subtitle>
+              <Subtitle>
+                Automatically save encrypted text backups of all your note and tag data to this computer.
+              </Subtitle>
             </div>
             <Switch onChange={toggleBackups} checked={backupsEnabled} />
           </div>

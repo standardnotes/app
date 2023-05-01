@@ -63,18 +63,20 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
       {hasAnyBackupsEnabled && (
         <div className="flex">
           <div className="sk-panel-row"></div>
-          <p>
-            Local backups are enabled for this workspace. Review your backup files manually to ensure what you want to
-            keep and remove.
-          </p>
-          <button
-            className="sk-a ml-1.5 cursor-pointer rounded p-0 capitalize"
-            onClick={() => {
-              void application.fileBackups?.openAllDirectoriesContainingBackupFiles()
-            }}
-          >
-            View backup files
-          </button>
+          <div>
+            <p>
+              Local backups are enabled for this workspace. Review your backup files manually to decide what to keep and
+              remove.
+            </p>
+            <button
+              className="sk-a cursor-pointer rounded p-0 capitalize"
+              onClick={() => {
+                void application.fileBackups?.openAllDirectoriesContainingBackupFiles()
+              }}
+            >
+              View backup files
+            </button>
+          </div>
         </div>
       )}
 

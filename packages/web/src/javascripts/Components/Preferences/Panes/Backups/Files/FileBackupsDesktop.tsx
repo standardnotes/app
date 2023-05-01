@@ -19,7 +19,7 @@ type Props = {
 const FileBackupsDesktop = ({ backupsService }: Props) => {
   const application = useApplication()
   const [backupsEnabled, setBackupsEnabled] = useState(backupsService.isFilesBackupsEnabled())
-  const [backupsLocation, setBackupsLocation] = useState<string | undefined>(backupsService.getFilesBackupsLocation())
+  const [backupsLocation, setBackupsLocation] = useState(backupsService.getFilesBackupsLocation())
 
   const changeBackupsLocation = useCallback(async () => {
     const newLocation = await backupsService.changeFilesBackupsLocation()
@@ -34,10 +34,11 @@ const FileBackupsDesktop = ({ backupsService }: Props) => {
     if (backupsEnabled) {
       backupsService.disableFilesBackups()
     } else {
-      backupsService.enableFilesBackups()
+      await backupsService.enableFilesBackups()
     }
 
     setBackupsEnabled(backupsService.isFilesBackupsEnabled())
+    setBackupsLocation(backupsService.getFilesBackupsLocation())
   }, [backupsService, backupsEnabled])
 
   return (
@@ -48,7 +49,7 @@ const FileBackupsDesktop = ({ backupsService }: Props) => {
 
           <div className="flex items-center justify-between">
             <div className="mr-10 flex flex-col">
-              <Subtitle>Automatically save encrypted backups of your uploaded files.</Subtitle>
+              <Subtitle>Automatically save encrypted backups of your uploaded files to this computer.</Subtitle>
             </div>
             <Switch onChange={toggleBackups} checked={backupsEnabled} />
           </div>

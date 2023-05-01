@@ -8,7 +8,6 @@ const rendererPath = path.join('file://', __dirname, '/renderer.js')
 import {
   FileBackupsDevice,
   FileBackupsMapping,
-  FileBackupRecord,
   FileBackupReadToken,
   FileBackupReadChunkResponse,
   PlaintextBackupsMapping,
@@ -64,7 +63,7 @@ export class RemoteBridge implements CrossProcessBridge {
       getFileBackupReadToken: this.getFileBackupReadToken.bind(this),
       readNextChunk: this.readNextChunk.bind(this),
       askForMediaAccess: this.askForMediaAccess.bind(this),
-      isLegacyTextBackupsEnabled: this.isLegacyTextBackupsEnabled.bind(this),
+      wasLegacyTextBackupsExplicitlyDisabled: this.wasLegacyTextBackupsExplicitlyDisabled.bind(this),
       getLegacyTextBackupsLocation: this.getLegacyTextBackupsLocation.bind(this),
       saveTextBackupData: this.saveTextBackupData.bind(this),
       savePlaintextNoteBackup: this.savePlaintextNoteBackup.bind(this),
@@ -74,6 +73,8 @@ export class RemoteBridge implements CrossProcessBridge {
       getPlaintextBackupsMappingFile: this.getPlaintextBackupsMappingFile.bind(this),
       persistPlaintextBackupsMappingFile: this.persistPlaintextBackupsMappingFile.bind(this),
       getTextBackupsCount: this.getTextBackupsCount.bind(this),
+      migrateLegacyFileBackupsToNewStructure: this.migrateLegacyFileBackupsToNewStructure.bind(this),
+      getUserDocumentsDirectory: this.getUserDocumentsDirectory.bind(this),
     }
   }
 
@@ -166,8 +167,8 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.fileBackups.saveFilesBackupsFile(location, uuid, metaFile, downloadRequest)
   }
 
-  getFileBackupReadToken(record: FileBackupRecord): Promise<FileBackupReadToken> {
-    return this.fileBackups.getFileBackupReadToken(record)
+  getFileBackupReadToken(filePath: string): Promise<FileBackupReadToken> {
+    return this.fileBackups.getFileBackupReadToken(filePath)
   }
 
   readNextChunk(nextToken: string): Promise<FileBackupReadChunkResponse> {
@@ -182,8 +183,8 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.fileBackups.getLegacyFilesBackupsLocation()
   }
 
-  isLegacyTextBackupsEnabled(): Promise<boolean> {
-    return this.fileBackups.isLegacyTextBackupsEnabled()
+  wasLegacyTextBackupsExplicitlyDisabled(): Promise<boolean> {
+    return this.fileBackups.wasLegacyTextBackupsExplicitlyDisabled()
   }
 
   getLegacyTextBackupsLocation(): Promise<string | undefined> {
@@ -219,6 +220,14 @@ export class RemoteBridge implements CrossProcessBridge {
 
   getTextBackupsCount(location: string): Promise<number> {
     return this.fileBackups.getTextBackupsCount(location)
+  }
+
+  migrateLegacyFileBackupsToNewStructure(newPath: string): Promise<void> {
+    return this.fileBackups.migrateLegacyFileBackupsToNewStructure(newPath)
+  }
+
+  getUserDocumentsDirectory(): Promise<string> {
+    return this.fileBackups.getUserDocumentsDirectory()
   }
 
   askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean> {

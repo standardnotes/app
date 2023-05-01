@@ -3,19 +3,19 @@ import { FileBackupRecord } from '../Device/FileBackupsMapping'
 
 export interface BackupServiceInterface {
   openAllDirectoriesContainingBackupFiles(): void
+  prependWorkspacePathForPath(path: string): string
 
   getFileBackupInfo(file: { uuid: string }): Promise<FileBackupRecord | undefined>
   readEncryptedFileFromBackup(uuid: string, onChunk: OnChunkCallback): Promise<'success' | 'failed' | 'aborted'>
   isFilesBackupsEnabled(): boolean
-  enableFilesBackups(): void
+  enableFilesBackups(): Promise<void>
   disableFilesBackups(): void
   changeFilesBackupsLocation(): Promise<string | undefined>
   getFilesBackupsLocation(): string | undefined
   openFilesBackupsLocation(): Promise<void>
-  openFileBackup(record: FileBackupRecord): Promise<void>
 
   isTextBackupsEnabled(): boolean
-  enableTextBackups(): void
+  enableTextBackups(): Promise<void>
   disableTextBackups(): void
   getTextBackupsLocation(): string | undefined
   openTextBackupsLocation(): Promise<void>
@@ -23,7 +23,7 @@ export interface BackupServiceInterface {
   saveTextBackupData(data: string): Promise<void>
 
   isPlaintextBackupsEnabled(): boolean
-  enablePlaintextBackups(): void
+  enablePlaintextBackups(): Promise<void>
   disablePlaintextBackups(): void
   getPlaintextBackupsLocation(): string | undefined
   openPlaintextBackupsLocation(): Promise<void>

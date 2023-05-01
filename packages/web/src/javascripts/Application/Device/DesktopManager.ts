@@ -14,6 +14,7 @@ import {
   DesktopDeviceInterface,
   WebApplicationInterface,
   WebAppEvent,
+  BackupServiceInterface,
 } from '@standardnotes/snjs'
 
 export class DesktopManager
@@ -30,7 +31,11 @@ export class DesktopManager
   private textBackupsInterval: ReturnType<typeof setInterval> | undefined
   private needsInitialTextBackup = false
 
-  constructor(application: WebApplicationInterface, private device: DesktopDeviceInterface) {
+  constructor(
+    application: WebApplicationInterface,
+    private device: DesktopDeviceInterface,
+    private backups: BackupServiceInterface,
+  ) {
     super(application, new InternalEventBus())
   }
 
@@ -60,11 +65,9 @@ export class DesktopManager
     super.onAppEvent(eventName).catch(console.error)
     if (eventName === ApplicationEvent.LocalDataLoaded) {
       this.dataLoaded = true
-      void this.device.isLegacyTextBackupsEnabled().then((isEnabled) => {
-        if (isEnabled) {
-          this.beginTextBackupsTimer()
-        }
-      })
+      if (this.backups.isTextBackupsEnabled()) {
+        this.beginTextBackupsTimer()
+      }
     } else if (eventName === ApplicationEvent.MajorDataChange) {
       void this.saveDesktopBackup()
     }

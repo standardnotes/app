@@ -1,4 +1,10 @@
-import { ApplicationStage, StorageKey, isDesktopDevice } from '@standardnotes/services'
+import {
+  ApplicationStage,
+  FileBackupsDirectoryName,
+  StorageKey,
+  TextBackupsDirectoryName,
+  isDesktopDevice,
+} from '@standardnotes/services'
 import { Migration } from '@Lib/Migrations/Migration'
 
 export class Migration2_167_6 extends Migration {
@@ -15,14 +21,31 @@ export class Migration2_167_6 extends Migration {
 
   private async migrateStorageKeysForDesktopBackups(): Promise<void> {
     const device = this.services.deviceInterface
-    if (!isDesktopDevice(device)) {
+    if (!isDesktopDevice(device) || !this.services.backups) {
       return
     }
 
-    this.services.storageService.setValue(StorageKey.FileBackupsLocation, await device.getLegacyFilesBackupsLocation())
-    this.services.storageService.setValue(StorageKey.FileBackupsEnabled, await device.isLegacyFilesBackupsEnabled())
+    const fileBackupsEnabled = await device.isLegacyFilesBackupsEnabled()
+    this.services.storageService.setValue(StorageKey.FileBackupsEnabled, fileBackupsEnabled)
 
-    this.services.storageService.setValue(StorageKey.TextBackupsLocation, await device.getLegacyTextBackupsLocation())
-    this.services.storageService.setValue(StorageKey.TextBackupsEnabled, await device.isLegacyTextBackupsEnabled())
+    if (fileBackupsEnabled) {
+      const legacyLocation = await device.getLegacyFilesBackupsLocation()
+      const newLocation = `${legacyLocation}/${this.services.backups.prependWorkspacePathForPath(
+        FileBackupsDirectoryName,
+      )}`
+      await device.migrateLegacyFileBackupsToNewStructure(newLocation)
+      this.services.storageService.setValue(StorageKey.FileBackupsLocation, newLocation)
+    }
+
+    const wasLegacyDisabled = await device.wasLegacyTextBackupsExplicitlyDisabled()
+    if (wasLegacyDisabled) {
+      this.services.storageService.setValue(StorageKey.TextBackupsEnabled, false)
+    } else {
+      const newTextBackupsLocation = `${await device.getLegacyTextBackupsLocation()}/${this.services.backups.prependWorkspacePathForPath(
+        TextBackupsDirectoryName,
+      )}`
+      this.services.storageService.setValue(StorageKey.TextBackupsLocation, newTextBackupsLocation)
+      this.services.storageService.setValue(StorageKey.TextBackupsEnabled, true)
+    }
   }
 }

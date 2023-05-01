@@ -2,7 +2,6 @@ import {
   DesktopDeviceInterface,
   Environment,
   RawKeychainValue,
-  FileBackupRecord,
   FileBackupReadToken,
   FileBackupReadChunkResponse,
   FileBackupsMapping,
@@ -105,8 +104,12 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.getLegacyFilesBackupsLocation()
   }
 
-  isLegacyTextBackupsEnabled(): Promise<boolean> {
-    return this.remoteBridge.isLegacyTextBackupsEnabled()
+  wasLegacyTextBackupsExplicitlyDisabled(): Promise<boolean> {
+    return this.remoteBridge.wasLegacyTextBackupsExplicitlyDisabled()
+  }
+
+  getUserDocumentsDirectory(): Promise<string> {
+    return this.remoteBridge.getUserDocumentsDirectory()
   }
 
   getLegacyTextBackupsLocation(): Promise<string | undefined> {
@@ -134,8 +137,12 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.saveFilesBackupsFile(location, uuid, metaFile, downloadRequest)
   }
 
-  getFileBackupReadToken(record: FileBackupRecord): Promise<FileBackupReadToken> {
-    return this.remoteBridge.getFileBackupReadToken(record)
+  getFileBackupReadToken(filePath: string): Promise<FileBackupReadToken> {
+    return this.remoteBridge.getFileBackupReadToken(filePath)
+  }
+
+  migrateLegacyFileBackupsToNewStructure(newPath: string): Promise<void> {
+    return this.remoteBridge.migrateLegacyFileBackupsToNewStructure(newPath)
   }
 
   readNextChunk(token: string): Promise<FileBackupReadChunkResponse> {

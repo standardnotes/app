@@ -1,3 +1,4 @@
+import { ApplicationStage } from './../Application/ApplicationStage'
 import { ContentType } from '@standardnotes/common'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import {
@@ -24,10 +25,11 @@ import { StatusServiceInterface } from '../Status/StatusServiceInterface'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { StorageKey } from '../Storage/StorageKeys'
+import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 
 const PlaintextBackupsDirectoryName = 'Plaintext Backups'
-const TextBackupsDirectoryName = 'Text Backups'
-const FileBackupsDirectoryName = 'File Backups'
+export const TextBackupsDirectoryName = 'Text Backups'
+export const FileBackupsDirectoryName = 'File Backups'
 
 export class FilesBackupService extends AbstractService implements BackupServiceInterface {
   private filesObserverDisposer: () => void
@@ -45,6 +47,7 @@ export class FilesBackupService extends AbstractService implements BackupService
     private status: StatusServiceInterface,
     private crypto: PureCryptoInterface,
     private storage: StorageServiceInterface,
+    private session: SessionsClientInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -60,14 +63,20 @@ export class FilesBackupService extends AbstractService implements BackupService
       }
     })
 
+    const noteAndTagSources = [
+      PayloadEmitSource.RemoteSaved,
+      PayloadEmitSource.RemoteRetrieved,
+      PayloadEmitSource.OfflineSyncSaved,
+    ]
+
     this.notesObserverDisposer = items.addObserver<SNNote>(ContentType.Note, ({ changed, inserted, source }) => {
-      if ([PayloadEmitSource.RemoteSaved, PayloadEmitSource.RemoteRetrieved].includes(source)) {
+      if (noteAndTagSources.includes(source)) {
         void this.handleChangedNotes([...changed, ...inserted])
       }
     })
 
     this.tagsObserverDisposer = items.addObserver<SNTag>(ContentType.Tag, ({ changed, inserted, source }) => {
-      if ([PayloadEmitSource.RemoteSaved, PayloadEmitSource.RemoteRetrieved].includes(source)) {
+      if (noteAndTagSources.includes(source)) {
         void this.handleChangedTags([...changed, ...inserted])
       }
     })
@@ -85,6 +94,23 @@ export class FilesBackupService extends AbstractService implements BackupService
     ;(this.status as unknown) = undefined
     ;(this.crypto as unknown) = undefined
     ;(this.storage as unknown) = undefined
+    ;(this.session as unknown) = undefined
+  }
+
+  override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
+    if (stage === ApplicationStage.Launched_10) {
+      void this.automaticallyEnableTextBackupsIfPreferenceNotSet()
+    }
+  }
+
+  private async automaticallyEnableTextBackupsIfPreferenceNotSet(): Promise<void> {
+    if (this.storage.getValue(StorageKey.TextBackupsEnabled) == undefined) {
+      this.storage.setValue(StorageKey.TextBackupsEnabled, true)
+      const location = `${await this.device.getUserDocumentsDirectory()}/${this.prependWorkspacePathForPath(
+        TextBackupsDirectoryName,
+      )}`
+      this.storage.setValue(StorageKey.TextBackupsLocation, location)
+    }
   }
 
   openAllDirectoriesContainingBackupFiles(): void {
@@ -117,8 +143,24 @@ export class FilesBackupService extends AbstractService implements BackupService
     return this.storage.getValue(StorageKey.TextBackupsEnabled, undefined, true)
   }
 
-  enableTextBackups(): void {
+  prependWorkspacePathForPath(path: string): string {
+    const workspacePath = this.session.getWorkspaceDisplayIdentifier()
+    return `${workspacePath}/${path}`
+  }
+
+  async enableTextBackups(): Promise<void> {
+    let location = this.getTextBackupsLocation()
+    if (!location) {
+      location = await this.device.presentDirectoryPickerForLocationChangeAndTransferOld(
+        this.prependWorkspacePathForPath(TextBackupsDirectoryName),
+      )
+      if (!location) {
+        return
+      }
+    }
+
     this.storage.setValue(StorageKey.TextBackupsEnabled, true)
+    this.storage.setValue(StorageKey.TextBackupsLocation, location)
   }
 
   disableTextBackups(): void {
@@ -139,7 +181,7 @@ export class FilesBackupService extends AbstractService implements BackupService
   async changeTextBackupsLocation(): Promise<string | undefined> {
     const oldLocation = this.getTextBackupsLocation()
     const newLocation = await this.device.presentDirectoryPickerForLocationChangeAndTransferOld(
-      TextBackupsDirectoryName,
+      this.prependWorkspacePathForPath(TextBackupsDirectoryName),
       oldLocation,
     )
 
@@ -165,8 +207,27 @@ export class FilesBackupService extends AbstractService implements BackupService
     return this.storage.getValue(StorageKey.PlaintextBackupsEnabled, undefined, false)
   }
 
-  async disablePlaintextBackups(): Promise<void> {
+  public async enablePlaintextBackups(): Promise<void> {
+    let location = this.getPlaintextBackupsLocation()
+    if (!location) {
+      location = await this.device.presentDirectoryPickerForLocationChangeAndTransferOld(
+        this.prependWorkspacePathForPath(PlaintextBackupsDirectoryName),
+      )
+      if (!location) {
+        return
+      }
+    }
+
+    this.storage.setValue(StorageKey.PlaintextBackupsEnabled, true)
+    this.storage.setValue(StorageKey.PlaintextBackupsLocation, location)
+    console.log('did set plaintext location', location)
+
+    void this.handleChangedNotes(this.items.getItems<SNNote>(ContentType.Note))
+  }
+
+  disablePlaintextBackups(): void {
     this.storage.setValue(StorageKey.PlaintextBackupsEnabled, false)
+    this.storage.setValue(StorageKey.PlaintextBackupsLocation, undefined)
   }
 
   getPlaintextBackupsLocation(): string | undefined {
@@ -182,8 +243,8 @@ export class FilesBackupService extends AbstractService implements BackupService
 
   async changePlaintextBackupsLocation(): Promise<string | undefined> {
     const oldLocation = this.getPlaintextBackupsLocation()
-    const newLocation = this.device.presentDirectoryPickerForLocationChangeAndTransferOld(
-      PlaintextBackupsDirectoryName,
+    const newLocation = await this.device.presentDirectoryPickerForLocationChangeAndTransferOld(
+      this.prependWorkspacePathForPath(PlaintextBackupsDirectoryName),
       oldLocation,
     )
 
@@ -197,29 +258,20 @@ export class FilesBackupService extends AbstractService implements BackupService
   }
 
   public async enableFilesBackups(): Promise<void> {
-    const directory = await this.device.presentDirectoryPickerForLocationChangeAndTransferOld(FileBackupsDirectoryName)
-    if (!directory) {
-      return
+    let location = this.getFilesBackupsLocation()
+    if (!location) {
+      location = await this.device.presentDirectoryPickerForLocationChangeAndTransferOld(
+        this.prependWorkspacePathForPath(FileBackupsDirectoryName),
+      )
+      if (!location) {
+        return
+      }
     }
 
     this.storage.setValue(StorageKey.FileBackupsEnabled, true)
-    this.storage.setValue(StorageKey.FileBackupsLocation, directory)
+    this.storage.setValue(StorageKey.FileBackupsLocation, location)
 
     this.backupAllFiles()
-  }
-
-  public async enablePlaintextBackups(): Promise<void> {
-    const directory = await this.device.presentDirectoryPickerForLocationChangeAndTransferOld(
-      PlaintextBackupsDirectoryName,
-    )
-    if (!directory) {
-      return
-    }
-
-    this.storage.setValue(StorageKey.PlaintextBackupsEnabled, true)
-    this.storage.setValue(StorageKey.PlaintextBackupsLocation, directory)
-
-    await this.handleChangedNotes(this.items.getItems<SNNote>(ContentType.Note))
   }
 
   private backupAllFiles(): void {
@@ -228,14 +280,14 @@ export class FilesBackupService extends AbstractService implements BackupService
     void this.handleChangedFiles(files)
   }
 
-  public async disableFilesBackups(): Promise<void> {
+  public disableFilesBackups(): void {
     this.storage.setValue(StorageKey.FileBackupsEnabled, false)
   }
 
   public async changeFilesBackupsLocation(): Promise<string | undefined> {
     const oldLocation = this.getFilesBackupsLocation()
     const newLocation = await this.device.presentDirectoryPickerForLocationChangeAndTransferOld(
-      FileBackupsDirectoryName,
+      this.prependWorkspacePathForPath(FileBackupsDirectoryName),
       oldLocation,
     )
     if (!newLocation) {
@@ -356,7 +408,8 @@ export class FilesBackupService extends AbstractService implements BackupService
       return 'failed'
     }
 
-    const token = await this.device.getFileBackupReadToken(fileBackup)
+    const path = `${this.getFilesBackupsLocation()}/${fileBackup.relativePath}`
+    const token = await this.device.getFileBackupReadToken(path)
 
     let readMore = true
     let index = 0

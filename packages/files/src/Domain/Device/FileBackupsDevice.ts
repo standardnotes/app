@@ -44,7 +44,7 @@ interface FileBackupsMethods {
       url: string
     },
   ): Promise<'success' | 'failed'>
-  getFileBackupReadToken(record: FileBackupRecord): Promise<FileBackupReadToken>
+  getFileBackupReadToken(filePath: string): Promise<FileBackupReadToken>
   readNextChunk(token: string): Promise<FileBackupReadChunkResponse>
 }
 
@@ -57,11 +57,13 @@ interface PlaintextBackupsMethods {
 interface TextBackupsMethods {
   getTextBackupsCount(location: string): Promise<number>
   saveTextBackupData(location: string, data: string): Promise<void>
+  getUserDocumentsDirectory(): Promise<string>
 }
 
 interface LegacyBackupsMethods {
+  migrateLegacyFileBackupsToNewStructure(newPath: string): Promise<void>
   isLegacyFilesBackupsEnabled(): Promise<boolean>
   getLegacyFilesBackupsLocation(): Promise<string | undefined>
-  isLegacyTextBackupsEnabled(): Promise<boolean>
+  wasLegacyTextBackupsExplicitlyDisabled(): Promise<boolean>
   getLegacyTextBackupsLocation(): Promise<string | undefined>
 }

@@ -101,6 +101,7 @@ export class SNSessionManager
     private httpService: HttpServiceInterface,
     private sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>,
     private legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>,
+    private workspaceIdentifier: string,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -128,6 +129,14 @@ export class SNSessionManager
     ;(this.webSocketsService as unknown) = undefined
     this.user = undefined
     super.deinit()
+  }
+
+  public getWorkspaceDisplayIdentifier(): string {
+    if (this.user) {
+      return this.user.email
+    } else {
+      return this.workspaceIdentifier
+    }
   }
 
   private setUser(user?: User) {

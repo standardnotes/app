@@ -1,6 +1,5 @@
 import { LoggingDomain, log } from './../../../Logging'
 import {
-  FileBackupRecord,
   FileBackupsDevice,
   FileBackupsMapping,
   FileBackupReadToken,
@@ -13,8 +12,10 @@ import { shell } from 'electron'
 import { StoreKeys } from '../Store/StoreKeys'
 import path from 'path'
 import {
+  deleteFileIfExists,
   ensureDirectoryExists,
   moveDirContents,
+  moveFile,
   openDirectoryPicker,
   readJSONFile,
   writeFile,
@@ -38,16 +39,31 @@ export class FilesBackupManager implements FileBackupsDevice {
 
   constructor(private appState: AppState) {}
 
+  public async migrateLegacyFileBackupsToNewStructure(newLocation: string): Promise<void> {
+    const legacyLocation = await this.getLegacyFilesBackupsLocation()
+    if (!legacyLocation) {
+      return
+    }
+
+    await moveDirContents(legacyLocation, newLocation)
+
+    const legacyMappingLocation = `${newLocation}/info.json`
+    const newMappingLocation = this.getFileBackupsMappingFilePath(newLocation)
+    await ensureDirectoryExists(newMappingLocation)
+    await moveFile(legacyMappingLocation, newMappingLocation)
+  }
+
   public async isLegacyFilesBackupsEnabled(): Promise<boolean> {
     return this.appState.store.get(StoreKeys.LegacyFileBackupsEnabled)
   }
 
-  async isLegacyTextBackupsEnabled(): Promise<boolean> {
+  async wasLegacyTextBackupsExplicitlyDisabled(): Promise<boolean> {
     const value = this.appState.store.get(StoreKeys.LegacyTextBackupsDisabled)
-    if (value == undefined) {
-      return false
-    }
-    return !value
+    return value === true
+  }
+
+  async getUserDocumentsDirectory(): Promise<string> {
+    return Paths.documentsDir
   }
 
   public async getLegacyFilesBackupsLocation(): Promise<string | undefined> {
@@ -76,6 +92,8 @@ export class FilesBackupManager implements FileBackupsDevice {
 
     const newPath = path.join(selectedDirectory, path.normalize(appendPath))
 
+    await ensureDirectoryExists(newPath)
+
     if (oldLocation) {
       await moveDirContents(path.normalize(oldLocation), newPath)
     }
@@ -83,23 +101,23 @@ export class FilesBackupManager implements FileBackupsDevice {
     return newPath
   }
 
-  private getMappingFilePath(backupsLocation: string): string {
-    return `${backupsLocation}/info.json`
+  private getFileBackupsMappingFilePath(backupsLocation: string): string {
+    return `${backupsLocation}/.settings/info.json`
   }
 
-  private async getMappingFileFromDisk(backupsLocation: string): Promise<FileBackupsMapping | undefined> {
-    return readJSONFile<FileBackupsMapping>(this.getMappingFilePath(backupsLocation))
+  private async getFileBackupsMappingFileFromDisk(backupsLocation: string): Promise<FileBackupsMapping | undefined> {
+    return readJSONFile<FileBackupsMapping>(this.getFileBackupsMappingFilePath(backupsLocation))
   }
 
-  private defaultMappingFileValue(): FileBackupsMapping {
+  private defaulFileBackupstMappingFileValue(): FileBackupsMapping {
     return { version: FileBackupsConstantsV1.Version, files: {} }
   }
 
   async getFilesBackupsMappingFile(backupsLocation: string): Promise<FileBackupsMapping> {
-    const data = await this.getMappingFileFromDisk(backupsLocation)
+    const data = await this.getFileBackupsMappingFileFromDisk(backupsLocation)
 
     if (!data) {
-      return this.defaultMappingFileValue()
+      return this.defaulFileBackupstMappingFileValue()
     }
 
     for (const entry of Object.values(data.files)) {
@@ -113,12 +131,8 @@ export class FilesBackupManager implements FileBackupsDevice {
     void shell.openPath(location)
   }
 
-  async openFileBackup(record: FileBackupRecord): Promise<void> {
-    void shell.openPath(record.absolutePath)
-  }
-
   private async saveFilesBackupsMappingFile(location: string, file: FileBackupsMapping): Promise<'success' | 'failed'> {
-    await writeJSONFile(this.getMappingFilePath(location), file)
+    await writeJSONFile(this.getFileBackupsMappingFilePath(location), file)
 
     return 'success'
   }
@@ -157,7 +171,6 @@ export class FilesBackupManager implements FileBackupsDevice {
 
       mapping.files[uuid] = {
         backedUpOn: new Date(),
-        absolutePath: fileDir,
         relativePath: uuid,
         metadataFileName: FileBackupsConstantsV1.MetadataFileName,
         binaryFileName: FileBackupsConstantsV1.BinaryFileName,
@@ -170,8 +183,8 @@ export class FilesBackupManager implements FileBackupsDevice {
     return result
   }
 
-  async getFileBackupReadToken(record: FileBackupRecord): Promise<FileBackupReadToken> {
-    const operation = new FileReadOperation(record)
+  async getFileBackupReadToken(filePath: string): Promise<FileBackupReadToken> {
+    const operation = new FileReadOperation(filePath)
 
     this.readOperations.set(operation.token, operation)
 
@@ -228,7 +241,7 @@ export class FilesBackupManager implements FileBackupsDevice {
   }
 
   private getPlaintextMappingFilePath(location: string): string {
-    return `${location}/info.json`
+    return `${location}/.settings/info.json`
   }
 
   private async getPlaintextMappingFileFromDisk(location: string): Promise<PlaintextBackupsMapping | undefined> {
@@ -253,10 +266,10 @@ export class FilesBackupManager implements FileBackupsDevice {
       return this.plaintextMappingCache
     }
 
-    const data = await this.getPlaintextMappingFileFromDisk(location)
+    let data = await this.getPlaintextMappingFileFromDisk(location)
 
     if (!data) {
-      return this.defaultPlaintextMappingFileValue()
+      data = this.defaultPlaintextMappingFileValue()
     }
 
     this.plaintextMappingCache = data
@@ -282,8 +295,9 @@ export class FilesBackupManager implements FileBackupsDevice {
       const records = mapping.files[uuid]
       for (const record of records) {
         const filePath = path.join(location, record.path)
-        await fs.unlink(filePath)
+        await deleteFileIfExists(filePath)
       }
+      mapping.files[uuid] = []
     }
 
     await removeNoteFromAllDirectories()
@@ -307,6 +321,9 @@ export class FilesBackupManager implements FileBackupsDevice {
           tag: forTag,
           path: path.join(relativePath, filename),
         })
+      } else {
+        existingRecord.path = path.join(relativePath, filename)
+        existingRecord.tag = forTag
       }
     }
 
