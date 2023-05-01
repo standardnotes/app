@@ -7,7 +7,7 @@ import { GoogleKeepConverter } from './GoogleKeepConverter/GoogleKeepConverter'
 import { PlaintextConverter } from './PlaintextConverter/PlaintextConverter'
 import { SimplenoteConverter } from './SimplenoteConverter/SimplenoteConverter'
 import { readFileAsText } from './Utils'
-import { DecryptedTransferPayload } from '@standardnotes/models'
+import { DecryptedTransferPayload, NoteContent } from '@standardnotes/models'
 
 export type NoteImportType = 'plaintext' | 'evernote' | 'google-keep' | 'simplenote' | 'aegis'
 
@@ -81,9 +81,23 @@ export class Importer {
   async importFromTransferPayloads(payloads: DecryptedTransferPayload[]) {
     const insertedItems = await Promise.all(
       payloads.map(async (payload) => {
-        const itemPayload = this.application.items.createPayloadFromObject(payload)
-        const item = this.application.items.createItemFromPayload(itemPayload)
-        return this.application.mutator.insertItem(item)
+        const content = payload.content as NoteContent
+        const note = this.application.mutator.createTemplateItem(
+          payload.content_type,
+          {
+            text: content.text,
+            title: content.title,
+            noteType: content.noteType,
+            editorIdentifier: content.editorIdentifier,
+            references: content.references,
+          },
+          {
+            created_at: payload.created_at,
+            updated_at: payload.updated_at,
+            uuid: payload.uuid,
+          },
+        )
+        return this.application.mutator.insertItem(note)
       }),
     )
     return insertedItems
