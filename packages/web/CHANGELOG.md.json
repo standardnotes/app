@@ -7,10 +7,7 @@
       "body": "### Features\n\n* Swipe gestures on mobile are now enabled by default and have been improved. You can disable them from Preferences > General > Labs ([#2319](https://github.com/standardnotes/app/issues/2319)) ([6d326e2](https://github.com/standardnotes/app/commit/6d326e2db4e385273b1d50f98427397ce91e631b))",
       "parsed": {
         "_": [
-          "Swipe gestures on mobile are now enabled by default and have been improved. You can disable them from Preferences > General > Labs (#2319) (6d326e2)"
-        ],
-        "Features": [
-          "Swipe gestures on mobile are now enabled by default and have been improved. You can disable them from Preferences > General > Labs (#2319) (6d326e2)"
+          "Note: Version bump only for package @standardnotes/web"
         ]
       }
     },
