@@ -79,8 +79,14 @@ export const usePaneSwipeGesture = (
     const TouchMoveThreshold = 15
     const SwipeFinishThreshold = 40 + TouchMoveThreshold
 
-    const scrollListener = () => {
+    const scrollListener = (event: Event) => {
       canceled = true
+
+      setTimeout(() => {
+        if ((event.target as HTMLElement).style.overflowY === 'hidden') {
+          canceled = false
+        }
+      }, 5)
     }
 
     const touchStartListener = (event: TouchEvent) => {
@@ -161,7 +167,7 @@ export const usePaneSwipeGesture = (
       }
 
       if (closestScrollContainer) {
-        closestScrollContainer.style.touchAction = 'none'
+        closestScrollContainer.style.overflowY = 'hidden'
       }
 
       const x =
@@ -175,7 +181,7 @@ export const usePaneSwipeGesture = (
     const touchEndListener = () => {
       if (closestScrollContainer) {
         closestScrollContainer.removeEventListener('scroll', scrollListener)
-        closestScrollContainer.style.touchAction = ''
+        closestScrollContainer.style.overflowY = ''
       }
 
       if (canceled) {
