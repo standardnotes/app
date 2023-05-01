@@ -8,7 +8,6 @@ import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegmen
 import LabsFeature from './LabsFeature'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 type ExperimentalFeatureItem = {
   identifier: FeatureIdentifier
@@ -31,13 +30,11 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
   const [experimentalFeatures, setExperimentalFeatures] = useState<ExperimentalFeatureItem[]>([])
 
   const [isPaneGesturesEnabled, setIsPaneGesturesEnabled] = useState(() =>
-    application.getPreference(PrefKey.PaneGesturesEnabled, PrefDefaults[PrefKey.PaneGesturesEnabled]),
+    application.getPreference(PrefKey.PaneGesturesEnabled, false),
   )
   useEffect(() => {
     return application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
-      setIsPaneGesturesEnabled(
-        application.getPreference(PrefKey.PaneGesturesEnabled, PrefDefaults[PrefKey.PaneGesturesEnabled]),
-      )
+      setIsPaneGesturesEnabled(application.getPreference(PrefKey.PaneGesturesEnabled, false))
     })
   }, [application])
 

@@ -14,7 +14,7 @@ const ListItemTags: FunctionComponent<Props> = ({ hideTags, tags }) => {
   }
 
   return (
-    <div className="mt-1.5 flex flex-wrap gap-2 overflow-hidden text-sm lg:text-xs">
+    <div className="mt-1.5 flex flex-wrap gap-2 text-sm lg:text-xs">
       {tags.map((tag) => (
         <span
           className="inline-flex items-center rounded-sm bg-passive-4-opacity-variant py-1 px-1.5 text-foreground"
