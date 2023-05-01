@@ -150,7 +150,9 @@ export const usePaneSwipeGesture = (
       clientX = touch.clientX
 
       const deltaX = clientX - startX
-      if (Math.abs(deltaX) < 15) {
+      const TouchMoveThreshold = 15
+
+      if (Math.abs(deltaX) < TouchMoveThreshold) {
         return
       }
 
@@ -158,7 +160,8 @@ export const usePaneSwipeGesture = (
         closestScrollContainer.style.touchAction = 'none'
       }
 
-      const x = direction === 'right' ? Math.max(deltaX, 0) : Math.min(deltaX, 0)
+      const x =
+        direction === 'right' ? Math.max(deltaX - TouchMoveThreshold, 0) : Math.min(deltaX + TouchMoveThreshold, 0)
 
       if (gesture === 'pan') {
         updateElement(x)
@@ -177,8 +180,9 @@ export const usePaneSwipeGesture = (
       }
 
       const deltaX = clientX - startX
+      const SwipeThreshold = 40
 
-      if ((direction === 'right' && deltaX > 40) || (direction === 'left' && deltaX < -40)) {
+      if ((direction === 'right' && deltaX > SwipeThreshold) || (direction === 'left' && deltaX < -SwipeThreshold)) {
         onSwipeEndRef.current(element)
       } else {
         updateElement(0)
