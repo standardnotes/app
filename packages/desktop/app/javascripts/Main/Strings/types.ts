@@ -4,7 +4,6 @@ export interface Strings {
   tray: TrayStrings
   extensions: ExtensionsStrings
   updates: UpdateStrings
-  backups: BackupsStrings
 }
 
 interface AppMenuStrings {
@@ -18,8 +17,6 @@ interface AppMenuStrings {
   automaticUpdatesDisabled: string
   disableAutomaticBackups: string
   enableAutomaticBackups: string
-  changeBackupsLocation: string
-  openBackupsLocation: string
   emailSupport: string
   website: string
   gitHub: string
@@ -102,8 +99,4 @@ interface UpdateStrings {
     message: string
   }
   unknownVersionName: string
-}
-
-interface BackupsStrings {
-  errorChangingDirectory(error: any): string
 }

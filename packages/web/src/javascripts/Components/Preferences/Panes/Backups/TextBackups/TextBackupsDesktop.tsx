@@ -9,12 +9,14 @@ import EncryptionStatusItem from '../../Security/EncryptionStatusItem'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import { BackupServiceInterface } from '@standardnotes/snjs'
+import { useApplication } from '@/Components/ApplicationProvider'
 
 type Props = {
   backupsService: BackupServiceInterface
 }
 
 const TextBackupsDesktop = ({ backupsService }: Props) => {
+  const application = useApplication()
   const [backupsEnabled, setBackupsEnabled] = useState(backupsService.isTextBackupsEnabled())
   const [backupsLocation, setBackupsLocation] = useState(backupsService.getTextBackupsLocation())
 
@@ -37,6 +39,10 @@ const TextBackupsDesktop = ({ backupsService }: Props) => {
     setBackupsEnabled(backupsService.isTextBackupsEnabled())
     setBackupsLocation(backupsService.getTextBackupsLocation())
   }, [backupsEnabled, backupsService])
+
+  const performBackup = useCallback(async () => {
+    void application.getDesktopService()?.saveDesktopBackup()
+  }, [application])
 
   return (
     <>
@@ -80,6 +86,15 @@ const TextBackupsDesktop = ({ backupsService }: Props) => {
                   <Button label="Change Location" className={'mr-3 text-xs'} onClick={changeBackupsLocation} />
                 </div>
               </>
+
+              <HorizontalSeparator classes="my-4" />
+
+              <Text className="mb-3">
+                Backups are saved automatically throughout the day. You can perform a one-time backup now below.
+              </Text>
+              <div className="flex flex-row">
+                <Button label="Perform Backup" className={'mr-3 text-xs'} onClick={performBackup} />
+              </div>
             </PreferencesSegment>
           </>
         )}
