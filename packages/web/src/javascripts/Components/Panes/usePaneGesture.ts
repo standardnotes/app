@@ -90,6 +90,9 @@ export const usePaneSwipeGesture = (
     }
 
     const touchStartListener = (event: TouchEvent) => {
+      scrollContainerAxis = null
+      canceled = false
+
       closestScrollContainer = getScrollParent(event.target as HTMLElement)
       if (closestScrollContainer) {
         closestScrollContainer.addEventListener('scroll', scrollListener, supportsPassive ? { passive: true } : false)
@@ -97,14 +100,10 @@ export const usePaneSwipeGesture = (
         if (closestScrollContainer.scrollWidth > closestScrollContainer.clientWidth) {
           scrollContainerAxis = 'x'
         }
-      } else {
-        scrollContainerAxis = null
       }
 
       const touch = event.touches[0]
       startX = touch.clientX
-
-      canceled = false
 
       element.style.willChange = 'transform'
     }
@@ -190,12 +189,13 @@ export const usePaneSwipeGesture = (
       }
 
       const deltaX = clientX - startX
+      const deltaWithMoveThreshold = direction === 'right' ? deltaX - TouchMoveThreshold : deltaX + TouchMoveThreshold
 
       element.style.willChange = ''
 
       if (
-        (direction === 'right' && deltaX > SwipeFinishThreshold) ||
-        (direction === 'left' && deltaX < -SwipeFinishThreshold)
+        (direction === 'right' && deltaWithMoveThreshold > SwipeFinishThreshold) ||
+        (direction === 'left' && deltaWithMoveThreshold < -SwipeFinishThreshold)
       ) {
         onSwipeEndRef.current(element)
       } else {
