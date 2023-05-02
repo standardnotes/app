@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
+import { FunctionComponent, useCallback, useRef } from 'react'
 import { STRING_SIGN_OUT_CONFIRMATION } from '@/Constants/Strings'
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
@@ -8,6 +8,7 @@ import { isDesktopApplication } from '@/Utils'
 import Button from '@/Components/Button/Button'
 import Icon from '../Icon/Icon'
 import AlertDialog from '../AlertDialog/AlertDialog'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 type Props = {
   application: WebApplication
@@ -16,30 +17,24 @@ type Props = {
 }
 
 const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewControllerManager, applicationGroup }) => {
-  const [deleteLocalBackups, setDeleteLocalBackups] = useState(false)
+  const hasAnyBackupsEnabled =
+    application.fileBackups?.isFilesBackupsEnabled() ||
+    application.fileBackups?.isPlaintextBackupsEnabled() ||
+    application.fileBackups?.isTextBackupsEnabled()
 
   const cancelRef = useRef<HTMLButtonElement>(null)
   const closeDialog = useCallback(() => {
     viewControllerManager.accountMenuController.setSigningOut(false)
   }, [viewControllerManager.accountMenuController])
 
-  const [localBackupsCount, setLocalBackupsCount] = useState(0)
-
-  useEffect(() => {
-    application.desktopDevice?.localBackupsCount().then(setLocalBackupsCount).catch(console.error)
-  }, [viewControllerManager.accountMenuController.signingOut, application.desktopDevice])
-
   const workspaces = applicationGroup.getDescriptors()
   const showWorkspaceWarning = workspaces.length > 1 && isDesktopApplication()
 
   const confirm = useCallback(() => {
-    if (deleteLocalBackups) {
-      application.signOutAndDeleteLocalBackups().catch(console.error)
-    } else {
-      application.user.signOut().catch(console.error)
-    }
+    application.user.signOut().catch(console.error)
+
     closeDialog()
-  }, [application, closeDialog, deleteLocalBackups])
+  }, [application, closeDialog])
 
   return (
     <AlertDialog closeDialog={closeDialog}>
@@ -66,31 +61,26 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
         </div>
       </div>
 
-      {localBackupsCount > 0 && (
-        <div className="flex">
-          <div className="sk-panel-row"></div>
-          <label className="flex items-center">
-            <input
-              type="checkbox"
-              checked={deleteLocalBackups}
-              onChange={(event) => {
-                setDeleteLocalBackups((event.target as HTMLInputElement).checked)
-              }}
-            />
-            <span className="ml-2">
-              Delete {localBackupsCount} local backup file
-              {localBackupsCount > 1 ? 's' : ''}
-            </span>
-          </label>
-          <button
-            className="sk-a ml-1.5 cursor-pointer rounded p-0 capitalize"
-            onClick={() => {
-              application.desktopDevice?.viewlocalBackups()
-            }}
-          >
-            View backup files
-          </button>
-        </div>
+      {hasAnyBackupsEnabled && (
+        <>
+          <HorizontalSeparator classes="my-2" />
+          <div className="flex">
+            <div className="sk-panel-row"></div>
+            <div>
+              <p className="text-base text-foreground lg:text-sm">
+                Local backups are enabled for this workspace. Review your backup files manually to decide what to keep.
+              </p>
+              <button
+                className="sk-a mt-2 cursor-pointer rounded p-0 capitalize lg:text-sm"
+                onClick={() => {
+                  void application.fileBackups?.openAllDirectoriesContainingBackupFiles()
+                }}
+              >
+                View backup files
+              </button>
+            </div>
+          </div>
+        </>
       )}
 
       <div className="mt-4 flex justify-end gap-2">

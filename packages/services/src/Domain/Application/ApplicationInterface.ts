@@ -1,6 +1,6 @@
 import { ApplicationIdentifier, ContentType } from '@standardnotes/common'
 import { BackupFile, DecryptedItemInterface, ItemStream, Platform, PrefKey, PrefValue } from '@standardnotes/models'
-import { FilesClientInterface } from '@standardnotes/files'
+import { BackupServiceInterface, FilesClientInterface } from '@standardnotes/files'
 
 import { AlertService } from '../Alert/AlertService'
 import { ComponentManagerInterface } from '../Component/ComponentManagerInterface'
@@ -50,6 +50,7 @@ export interface ApplicationInterface {
   get user(): UserClientInterface
   get files(): FilesClientInterface
   get subscriptions(): SubscriptionClientInterface
+  get fileBackups(): BackupServiceInterface | undefined
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform
   deviceInterface: DeviceInterface

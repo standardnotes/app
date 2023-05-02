@@ -1,5 +1,5 @@
 import { addToast, dismissToast, ToastType } from '@standardnotes/toast'
-import { ApplicationEvent, InternalEventBus, StorageKey } from '@standardnotes/services'
+import { ApplicationEvent, InternalEventBusInterface, StorageKey } from '@standardnotes/services'
 import { isDev } from '@/Utils'
 import { FileItem, PrefKey, sleep, SNTag } from '@standardnotes/snjs'
 import { FilesController } from '../FilesController'
@@ -19,7 +19,11 @@ export class MomentsService extends AbstractViewController {
   isEnabled = false
   private intervalReference: ReturnType<typeof setInterval> | undefined
 
-  constructor(application: WebApplication, private filesController: FilesController, eventBus: InternalEventBus) {
+  constructor(
+    application: WebApplication,
+    private filesController: FilesController,
+    eventBus: InternalEventBusInterface,
+  ) {
     super(application, eventBus)
 
     this.disposers.push(

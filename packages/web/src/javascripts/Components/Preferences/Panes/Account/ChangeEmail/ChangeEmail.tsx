@@ -58,7 +58,7 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
   }
 
   const processEmailChange = useCallback(async () => {
-    await application.downloadBackup()
+    await application.performDesktopTextBackup()
 
     setLockContinue(true)
 

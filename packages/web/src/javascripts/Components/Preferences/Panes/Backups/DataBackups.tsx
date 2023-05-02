@@ -1,4 +1,3 @@
-import { isDesktopApplication } from '@/Utils'
 import { alertDialog, sanitizeFileName } from '@standardnotes/ui-services'
 import {
   STRING_IMPORT_SUCCESS,
@@ -15,7 +14,7 @@ import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useRef, 
 import { WebApplication } from '@/Application/Application'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
-import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
+import { Title, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
@@ -177,14 +176,7 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
       <PreferencesGroup>
         <PreferencesSegment>
           <Title>Data Backups</Title>
-
-          {isDesktopApplication() && (
-            <Text className="mb-3">
-              Backups are automatically created on desktop and can be managed via the "Backups" top-level menu.
-            </Text>
-          )}
-
-          <Subtitle>Download a backup of all your data</Subtitle>
+          <Subtitle>Download a backup of all your text-based data</Subtitle>
 
           {isEncryptionEnabled && (
             <form className="sk-panel-form sk-panel-row">

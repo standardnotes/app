@@ -1,5 +1,5 @@
 import { CrossControllerEvent } from '../CrossControllerEvent'
-import { InternalEventBus, InternalEventPublishStrategy, removeFromArray } from '@standardnotes/snjs'
+import { InternalEventBusInterface, InternalEventPublishStrategy, removeFromArray } from '@standardnotes/snjs'
 import { WebApplication } from '../../Application/Application'
 import { Disposer } from '@/Types/Disposer'
 
@@ -10,7 +10,7 @@ export abstract class AbstractViewController<Event = void, EventData = void> {
   protected disposers: Disposer[] = []
   private eventObservers: ControllerEventObserver<Event, EventData>[] = []
 
-  constructor(public application: WebApplication, protected eventBus: InternalEventBus) {}
+  constructor(public application: WebApplication, protected eventBus: InternalEventBusInterface) {}
 
   protected async publishCrossControllerEventSync(name: CrossControllerEvent, data?: unknown): Promise<void> {
     await this.eventBus.publishSync({ type: name, payload: data }, InternalEventPublishStrategy.SEQUENCE)

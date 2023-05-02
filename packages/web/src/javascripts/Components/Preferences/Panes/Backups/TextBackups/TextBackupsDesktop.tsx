@@ -5,7 +5,6 @@ import Button from '@/Components/Button/Button'
 import Switch from '@/Components/Switch/Switch'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Icon from '@/Components/Icon/Icon'
-import BackupsDropZone from './BackupsDropZone'
 import EncryptionStatusItem from '../../Security/EncryptionStatusItem'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
@@ -16,40 +15,46 @@ type Props = {
   backupsService: BackupServiceInterface
 }
 
-const FileBackupsDesktop = ({ backupsService }: Props) => {
+const TextBackupsDesktop = ({ backupsService }: Props) => {
   const application = useApplication()
-  const [backupsEnabled, setBackupsEnabled] = useState(backupsService.isFilesBackupsEnabled())
-  const [backupsLocation, setBackupsLocation] = useState(backupsService.getFilesBackupsLocation())
+  const [backupsEnabled, setBackupsEnabled] = useState(backupsService.isTextBackupsEnabled())
+  const [backupsLocation, setBackupsLocation] = useState(backupsService.getTextBackupsLocation())
 
   const changeBackupsLocation = useCallback(async () => {
-    const newLocation = await backupsService.changeFilesBackupsLocation()
+    const newLocation = await backupsService.changeTextBackupsLocation()
     setBackupsLocation(newLocation)
   }, [backupsService])
 
   const openBackupsLocation = useCallback(async () => {
-    await backupsService.openFilesBackupsLocation()
+    await backupsService.openTextBackupsLocation()
   }, [backupsService])
 
   const toggleBackups = useCallback(async () => {
     if (backupsEnabled) {
-      backupsService.disableFilesBackups()
+      backupsService.disableTextBackups()
     } else {
-      await backupsService.enableFilesBackups()
+      await backupsService.enableTextBackups()
     }
 
-    setBackupsEnabled(backupsService.isFilesBackupsEnabled())
-    setBackupsLocation(backupsService.getFilesBackupsLocation())
-  }, [backupsService, backupsEnabled])
+    setBackupsEnabled(backupsService.isTextBackupsEnabled())
+    setBackupsLocation(backupsService.getTextBackupsLocation())
+  }, [backupsEnabled, backupsService])
+
+  const performBackup = useCallback(async () => {
+    void application.getDesktopService()?.saveDesktopBackup()
+  }, [application])
 
   return (
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Automatic File Backups</Title>
+          <Title>Automatic Encrypted Text Backups</Title>
 
           <div className="flex items-center justify-between">
             <div className="mr-10 flex flex-col">
-              <Subtitle>Automatically save encrypted backups of your uploaded files to this computer.</Subtitle>
+              <Subtitle>
+                Automatically save encrypted text backups of all your note and tag data to this computer.
+              </Subtitle>
             </div>
             <Switch onChange={toggleBackups} checked={backupsEnabled} />
           </div>
@@ -57,7 +62,7 @@ const FileBackupsDesktop = ({ backupsService }: Props) => {
           {!backupsEnabled && (
             <>
               <HorizontalSeparator classes="mt-2.5 mb-4" />
-              <Text>File backups are not enabled. Enable to choose where your files are backed up.</Text>
+              <Text>Text backups are not enabled. Enable to choose where your data is backed up.</Text>
             </>
           )}
         </PreferencesSegment>
@@ -68,10 +73,7 @@ const FileBackupsDesktop = ({ backupsService }: Props) => {
 
             <PreferencesSegment>
               <>
-                <Text className="mb-3">
-                  Files backups are enabled. When you upload a new file on any device and open this application, files
-                  will be backed up in encrypted form to:
-                </Text>
+                <Text className="mb-3">Text backups are enabled and saved to:</Text>
 
                 <EncryptionStatusItem
                   status={backupsLocation || 'Not Set'}
@@ -84,18 +86,21 @@ const FileBackupsDesktop = ({ backupsService }: Props) => {
                   <Button label="Change Location" className={'mr-3 text-xs'} onClick={changeBackupsLocation} />
                 </div>
               </>
+
+              <HorizontalSeparator classes="my-4" />
+
+              <Text className="mb-3">
+                Backups are saved automatically throughout the day. You can perform a one-time backup now below.
+              </Text>
+              <div className="flex flex-row">
+                <Button label="Perform Backup" className={'mr-3 text-xs'} onClick={performBackup} />
+              </div>
             </PreferencesSegment>
           </>
         )}
-
-        <HorizontalSeparator classes="my-4" />
-
-        <PreferencesSegment>
-          <BackupsDropZone application={application} />
-        </PreferencesSegment>
       </PreferencesGroup>
     </>
   )
 }
 
-export default observer(FileBackupsDesktop)
+export default observer(TextBackupsDesktop)

@@ -54,10 +54,7 @@ export class SNMigrationService extends AbstractService {
         await this.markMigrationsAsDone()
       })
     } else {
-      await this.services.deviceInterface.setRawStorageValue(
-        namespacedKey(this.services.identifier, RawStorageKey.SnjsVersion),
-        SnjsVersion,
-      )
+      await this.markMigrationsAsDone()
     }
   }
 

@@ -343,13 +343,13 @@ export class ItemManager
   /**
    * Returns all items that an item directly references
    */
-  public referencesForItem(
+  public referencesForItem<I extends Models.DecryptedItemInterface = Models.DecryptedItemInterface>(
     itemToLookupUuidFor: Models.DecryptedItemInterface,
     contentType?: ContentType,
-  ): Models.DecryptedItemInterface[] {
-    const item = this.findSureItem(itemToLookupUuidFor.uuid)
+  ): I[] {
+    const item = this.findSureItem<I>(itemToLookupUuidFor.uuid)
     const uuids = item.references.map((ref) => ref.uuid)
-    let references = this.findItems(uuids)
+    let references = this.findItems<I>(uuids)
     if (contentType) {
       references = references.filter((ref) => {
         return ref?.content_type === contentType

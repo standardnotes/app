@@ -14,6 +14,8 @@ import {
   DesktopDeviceInterface,
   WebApplicationInterface,
   WebAppEvent,
+  BackupServiceInterface,
+  DesktopWatchedDirectoriesChanges,
 } from '@standardnotes/snjs'
 
 export class DesktopManager
@@ -27,8 +29,32 @@ export class DesktopManager
   dataLoaded = false
   lastSearchedText?: string
 
-  constructor(application: WebApplicationInterface, private device: DesktopDeviceInterface) {
+  private textBackupsInterval: ReturnType<typeof setInterval> | undefined
+  private needsInitialTextBackup = false
+
+  constructor(
+    application: WebApplicationInterface,
+    private device: DesktopDeviceInterface,
+    private backups: BackupServiceInterface,
+  ) {
     super(application, new InternalEventBus())
+  }
+
+  async handleWatchedDirectoriesChanges(changes: DesktopWatchedDirectoriesChanges): Promise<void> {
+    void this.backups.importWatchedDirectoryChanges(changes)
+  }
+
+  beginTextBackupsTimer() {
+    if (this.textBackupsInterval) {
+      clearInterval(this.textBackupsInterval)
+    }
+
+    this.needsInitialTextBackup = true
+
+    const hoursInterval = 12
+    const seconds = hoursInterval * 60 * 60
+    const milliseconds = seconds * 1000
+    this.textBackupsInterval = setInterval(this.saveDesktopBackup, milliseconds)
   }
 
   get webApplication() {
@@ -44,14 +70,35 @@ export class DesktopManager
     super.onAppEvent(eventName).catch(console.error)
     if (eventName === ApplicationEvent.LocalDataLoaded) {
       this.dataLoaded = true
-      this.device.onInitialDataLoad()
+      if (this.backups.isTextBackupsEnabled()) {
+        this.beginTextBackupsTimer()
+      }
     } else if (eventName === ApplicationEvent.MajorDataChange) {
-      this.device.onMajorDataChange()
+      void this.saveDesktopBackup()
     }
   }
 
-  saveBackup() {
-    this.device.onMajorDataChange()
+  async saveDesktopBackup() {
+    this.webApplication.notifyWebEvent(WebAppEvent.BeganBackupDownload)
+
+    const data = await this.getBackupFile()
+    if (data) {
+      await this.webApplication.fileBackups?.saveTextBackupData(data)
+      this.webApplication.notifyWebEvent(WebAppEvent.EndedBackupDownload, { success: true })
+    }
+  }
+
+  private async getBackupFile(): Promise<string | undefined> {
+    const encrypted = this.application.hasProtectionSources()
+    const data = encrypted
+      ? await this.application.createEncryptedBackupFileForAutomatedDesktopBackups()
+      : await this.application.createDecryptedBackupFile()
+
+    if (data) {
+      return JSON.stringify(data, null, 2)
+    }
+
+    return undefined
   }
 
   getExtServerHost(): string {
@@ -111,6 +158,11 @@ export class DesktopManager
 
   windowLostFocus(): void {
     this.webApplication.notifyWebEvent(WebAppEvent.WindowDidBlur)
+
+    if (this.needsInitialTextBackup) {
+      this.needsInitialTextBackup = false
+      void this.saveDesktopBackup()
+    }
   }
 
   async onComponentInstallationComplete(componentData: DecryptedTransferPayload<ComponentContent>) {
@@ -135,26 +187,5 @@ export class DesktopManager
     for (const observer of this.updateObservers) {
       observer.callback(updatedComponent as SNComponent)
     }
-  }
-
-  async requestBackupFile(): Promise<string | undefined> {
-    const encrypted = this.application.hasProtectionSources()
-    const data = encrypted
-      ? await this.application.createEncryptedBackupFileForAutomatedDesktopBackups()
-      : await this.application.createDecryptedBackupFile()
-
-    if (data) {
-      return JSON.stringify(data, null, 2)
-    }
-
-    return undefined
-  }
-
-  didBeginBackup() {
-    this.webApplication.notifyWebEvent(WebAppEvent.BeganBackupDownload)
-  }
-
-  didFinishBackup(success: boolean) {
-    this.webApplication.notifyWebEvent(WebAppEvent.EndedBackupDownload, { success })
   }
 }

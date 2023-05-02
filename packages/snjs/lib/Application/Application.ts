@@ -188,7 +188,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare _getRevision: GetRevision
   private declare _deleteRevision: DeleteRevision
 
-  private internalEventBus!: ExternalServices.InternalEventBusInterface
+  public internalEventBus!: ExternalServices.InternalEventBusInterface
 
   private eventHandlers: ApplicationObserver[] = []
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1184,13 +1184,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createSettingsService()
     this.createFeaturesService()
     this.createComponentManager()
-    this.createMigrationService()
     this.createMfaService()
 
     this.createStatusService()
     if (isDesktopDevice(this.deviceInterface)) {
       this.createFilesBackupService(this.deviceInterface)
     }
+    this.createMigrationService()
     this.createFileService()
 
     this.createIntegrityService()
@@ -1381,6 +1381,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       identifier: this.identifier,
       internalEventBus: this.internalEventBus,
       legacySessionStorageMapper: this.legacySessionStorageMapper,
+      backups: this.fileBackups,
     })
     this.services.push(this.migrationService)
   }
@@ -1584,6 +1585,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.httpService,
       this.sessionStorageMapper,
       this.legacySessionStorageMapper,
+      this.identifier,
       this.internalEventBus,
     )
     this.serviceObservers.push(
@@ -1761,6 +1763,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       device,
       this.statusService,
       this.options.crypto,
+      this.storage,
+      this.sessions,
+      this.payloadManager,
+      this.historyManager,
       this.internalEventBus,
     )
     this.services.push(this.filesBackupService)

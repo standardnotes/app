@@ -2,11 +2,10 @@ import { compareVersions } from 'compare-versions'
 import { BrowserWindow, dialog, shell } from 'electron'
 import electronLog from 'electron-log'
 import { autoUpdater } from 'electron-updater'
-import { action, autorun, computed, makeObservable, observable } from 'mobx'
+import { action, computed, makeObservable, observable } from 'mobx'
 import { MessageType } from '../../../test/TestIpcMessage'
 import { AppState } from '../../AppState'
 import { MessageToWebApp } from '../Shared/IpcMessages'
-import { BackupsManagerInterface } from './Backups/BackupsManagerInterface'
 import { StoreKeys } from './Store/StoreKeys'
 import { updates as str } from './Strings'
 import { autoUpdatingAvailable } from './Types/Constants'
@@ -84,7 +83,7 @@ export class UpdateState {
 
 let updatesSetup = false
 
-export function setupUpdates(window: BrowserWindow, appState: AppState, backupsManager: BackupsManagerInterface): void {
+export function setupUpdates(window: BrowserWindow, appState: AppState): void {
   if (!autoUpdatingAvailable) {
     return
   }
@@ -97,22 +96,6 @@ export function setupUpdates(window: BrowserWindow, appState: AppState, backupsM
 
   const updateState = appState.updates
 
-  function checkUpdateSafety(): boolean {
-    let canUpdate: boolean
-    if (appState.store.get(StoreKeys.BackupsDisabled)) {
-      canUpdate = true
-    } else {
-      canUpdate = updateState.enableAutoUpdate && isLessThanOneHourFromNow(appState.lastBackupDate)
-    }
-    autoUpdater.autoInstallOnAppQuit = canUpdate
-    autoUpdater.autoDownload = canUpdate
-    return canUpdate
-  }
-  autorun(checkUpdateSafety)
-
-  const oneHour = 1 * 60 * 60 * 1000
-  setInterval(checkUpdateSafety, oneHour)
-
   autoUpdater.on('update-downloaded', (info: { version?: string }) => {
     window.webContents.send(MessageToWebApp.UpdateAvailable, null)
     updateState.autoUpdateHasBeenDownloaded(info.version || null)
@@ -122,10 +105,9 @@ export function setupUpdates(window: BrowserWindow, appState: AppState, backupsM
   autoUpdater.on(MessageToWebApp.UpdateAvailable, (info: { version?: string }) => {
     updateState.checkedForUpdate(info.version || null)
     if (updateState.enableAutoUpdate) {
-      const canUpdate = checkUpdateSafety()
-      if (!canUpdate) {
-        backupsManager.performBackup()
-      }
+      const canUpdate = updateState.enableAutoUpdate
+      autoUpdater.autoInstallOnAppQuit = canUpdate
+      autoUpdater.autoDownload = canUpdate
     }
   })
   autoUpdater.on('update-not-available', (info: { version?: string }) => {
@@ -164,46 +146,21 @@ function quitAndInstall(window: BrowserWindow) {
   }, 0)
 }
 
-function isLessThanOneHourFromNow(date: number | null) {
-  const now = Date.now()
-  const onHourMs = 1 * 60 * 60 * 1000
-  return now - (date ?? 0) < onHourMs
-}
-
 export async function showUpdateInstallationDialog(parentWindow: BrowserWindow, appState: AppState): Promise<void> {
   if (!appState.updates.latestVersion) {
     return
   }
 
-  if (appState.lastBackupDate && isLessThanOneHourFromNow(appState.lastBackupDate)) {
-    const result = await dialog.showMessageBox(parentWindow, {
-      type: 'info',
-      title: str().updateReady.title,
-      message: str().updateReady.message(appState.updates.latestVersion),
-      buttons: [str().updateReady.installLater, str().updateReady.quitAndInstall],
-      cancelId: 0,
-    })
+  const result = await dialog.showMessageBox(parentWindow, {
+    type: 'info',
+    title: str().updateReady.title,
+    message: str().updateReady.message(appState.updates.latestVersion),
+    buttons: [str().updateReady.installLater, str().updateReady.quitAndInstall],
+    cancelId: 0,
+  })
 
-    const buttonIndex = result.response
-    if (buttonIndex === 1) {
-      quitAndInstall(parentWindow)
-    }
-  } else {
-    const cancelId = 0
-    const result = await dialog.showMessageBox({
-      type: 'warning',
-      title: str().updateReady.title,
-      message: str().updateReady.noRecentBackupMessage,
-      detail: str().updateReady.noRecentBackupDetail(appState.lastBackupDate),
-      checkboxLabel: str().updateReady.noRecentBackupChecbox,
-      checkboxChecked: false,
-      buttons: [str().updateReady.installLater, str().updateReady.quitAndInstall],
-      cancelId,
-    })
-
-    if (!result.checkboxChecked || result.response === cancelId) {
-      return
-    }
+  const buttonIndex = result.response
+  if (buttonIndex === 1) {
     quitAndInstall(parentWindow)
   }
 }

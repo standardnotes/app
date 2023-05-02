@@ -10,4 +10,7 @@ export {
   FileBackupReadToken,
   FileBackupReadChunkResponse,
   FileDownloadProgress,
+  PlaintextBackupsMapping,
+  DesktopWatchedDirectoriesChanges,
+  DesktopWatchedDirectoriesChange,
 } from '@standardnotes/snjs'
