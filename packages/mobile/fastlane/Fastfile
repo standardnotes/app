@@ -34,7 +34,7 @@ platform :ios do
     build_number
   end
 
-  def deploy_ios(scheme)
+  def deploy_ios(scheme, is_testflight = false)
     sign_ios
     build_number = build_ios(scheme)
     app_store_connect_api_key(
@@ -55,7 +55,7 @@ platform :ios do
       changelog: 'Fixes and improvements.'
     )
 
-    if is_prod
+    if is_prod && !is_testflight
       upload_to_app_store(
         build_number: build_number,
         submit_for_review: true,
@@ -81,6 +81,11 @@ platform :ios do
   desc 'Deploy production app'
   lane :prod do
     deploy_ios 'StandardNotes'
+  end
+
+  desc 'Deploy prod app to tesflight'
+  lane :testflight do
+    deploy_ios 'StandardNotes', true
   end
 
   desc 'Setup iOS for running on CI'
