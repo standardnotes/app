@@ -5235,6 +5235,7 @@ __metadata:
     "@standardnotes/common": ^1.46.4
     "@standardnotes/domain-core": ^1.12.0
     "@standardnotes/encryption": "workspace:^"
+    "@standardnotes/features": "workspace:^"
     "@standardnotes/files": "workspace:^"
     "@standardnotes/models": "workspace:^"
     "@standardnotes/responses": "workspace:*"

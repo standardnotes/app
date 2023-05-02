@@ -1,3 +1,4 @@
+import { NoteType } from '@standardnotes/features'
 import { ApplicationStage } from './../Application/ApplicationStage'
 import { ContentType } from '@standardnotes/common'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
@@ -20,6 +21,7 @@ import {
   OnChunkCallback,
   BackupServiceInterface,
   DesktopWatchedDirectoriesChanges,
+  SuperConverterServiceInterface,
 } from '@standardnotes/files'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
@@ -43,6 +45,8 @@ export class FilesBackupService extends AbstractService implements BackupService
 
   private pendingFiles = new Set<string>()
   private mappingCache?: FileBackupsMapping['files']
+
+  private markdownConverter!: SuperConverterServiceInterface
 
   constructor(
     private items: ItemManagerInterface,
@@ -87,6 +91,10 @@ export class FilesBackupService extends AbstractService implements BackupService
         void this.handleChangedTags([...changed, ...inserted])
       }
     })
+  }
+
+  setSuperConverter(converter: SuperConverterServiceInterface): void {
+    this.markdownConverter = converter
   }
 
   async importWatchedDirectoryChanges(changes: DesktopWatchedDirectoriesChanges): Promise<void> {
@@ -419,10 +427,15 @@ export class FilesBackupService extends AbstractService implements BackupService
       throw new ClientDisplayableError('No plaintext backups location found')
     }
 
+    if (!this.markdownConverter) {
+      throw 'Super markdown converter not initialized'
+    }
+
     for (const note of notes) {
       const tags = this.items.getSortedTagsForItem(note)
       const tagNames = tags.map((tag) => this.items.getTagLongTitle(tag))
-      await this.device.savePlaintextNoteBackup(location, note.uuid, note.title, tagNames, note.text)
+      const text = note.noteType === NoteType.Super ? this.markdownConverter.convertString(note.text, 'md') : note.text
+      await this.device.savePlaintextNoteBackup(location, note.uuid, note.title, tagNames, text)
     }
 
     await this.device.persistPlaintextBackupsMappingFile(location)

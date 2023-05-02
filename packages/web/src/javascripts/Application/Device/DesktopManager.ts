@@ -1,3 +1,4 @@
+import { InvisibleSuperConverter } from '@/Components/SuperEditor/Tools/InvisibleMarkdownConverter'
 import {
   SNComponent,
   ComponentMutator,
@@ -38,6 +39,9 @@ export class DesktopManager
     private backups: BackupServiceInterface,
   ) {
     super(application, new InternalEventBus())
+
+    const markdownConverter = new InvisibleSuperConverter()
+    backups.setSuperConverter(markdownConverter)
   }
 
   async handleWatchedDirectoriesChanges(changes: DesktopWatchedDirectoriesChanges): Promise<void> {
