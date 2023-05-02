@@ -3,6 +3,44 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.154.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.154.0...@standardnotes/web@3.154.1) (2023-05-01)
+
+### Bug Fixes
+
+* Fixed the issue where imported notes would have incorrect "Created" date and time ([9e0e176](https://github.com/standardnotes/app/commit/9e0e176bac5902375b8ada7773931d3d419ce368))
+
+### Reverts
+
+* Revert "feat: Swipe gestures on mobile are now enabled by default and have been improved. You can disable them from Preferences > General > Labs (#2319)" ([880ccee](https://github.com/standardnotes/app/commit/880cceecd5df0a941e3e9fcd4753da8d33f29266)), closes [#2319](https://github.com/standardnotes/app/issues/2319)
+
+# [3.154.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.14...@standardnotes/web@3.154.0) (2023-05-01)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.153.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.13...@standardnotes/web@3.153.14) (2023-04-28)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.153.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.12...@standardnotes/web@3.153.13) (2023-04-28)
+
+### Bug Fixes
+
+* Fixed issue where removing a collapsible block would unwrap the contents in reverse order ([40179bb](https://github.com/standardnotes/app/commit/40179bba06228acf4015ca1efc552b800ee5da7e))
+
+## [3.153.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.11...@standardnotes/web@3.153.12) (2023-04-28)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.153.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.10...@standardnotes/web@3.153.11) (2023-04-27)
+
+### Bug Fixes
+
+* **desktop:** Fixed issue on Mac desktop app where multiple files could not be downloaded ([247ff62](https://github.com/standardnotes/app/commit/247ff6242279f878c01161817038a37c6fbfa4cc))
+
+## [3.153.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.9...@standardnotes/web@3.153.10) (2023-04-27)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.153.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.153.8...@standardnotes/web@3.153.9) (2023-04-27)
 
 **Note:** Version bump only for package @standardnotes/web

@@ -29,6 +29,7 @@ import { setFloatingElemPosition } from '../../Lexical/Utils/setFloatingElemPosi
 import { LexicalPencilFill } from '@standardnotes/icons'
 import { IconComponent } from '../../Lexical/../Lexical/Theme/IconComponent'
 import { getDOMRangeRect } from '../../Lexical/Utils/getDOMRangeRect'
+import { KeyboardKey } from '@standardnotes/ui-services'
 
 function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anchorElem: HTMLElement }): JSX.Element {
   const editorRef = useRef<HTMLDivElement | null>(null)
@@ -148,7 +149,7 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
             setLinkUrl(event.target.value)
           }}
           onKeyDown={(event) => {
-            if (event.key === 'Enter') {
+            if (event.key === KeyboardKey.Enter) {
               event.preventDefault()
               if (lastSelection !== null) {
                 if (linkUrl !== '') {
@@ -156,7 +157,7 @@ function FloatingLinkEditor({ editor, anchorElem }: { editor: LexicalEditor; anc
                 }
                 setEditMode(false)
               }
-            } else if (event.key === 'Escape') {
+            } else if (event.key === KeyboardKey.Escape) {
               event.preventDefault()
               setEditMode(false)
             }

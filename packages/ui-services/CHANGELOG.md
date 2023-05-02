@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.25.6](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.25.5...@standardnotes/ui-services@1.25.6) (2023-05-01)
+
+### Bug Fixes
+
+* Fixed the issue where imported notes would have incorrect "Created" date and time ([9e0e176](https://github.com/standardnotes/app/commit/9e0e176bac5902375b8ada7773931d3d419ce368))
+
 ## [1.25.5](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.25.4...@standardnotes/ui-services@1.25.5) (2023-04-26)
 
 **Note:** Version bump only for package @standardnotes/ui-services

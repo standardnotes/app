@@ -6,13 +6,9 @@ import { getIsTabletOrMobileScreen } from '@/Hooks/useIsTabletOrMobileScreen'
 export function panesForLayout(layout: PaneLayout, application: WebApplication): AppPaneId[] {
   const screen = getIsTabletOrMobileScreen(application)
   if (screen.isTablet) {
-    if (layout === PaneLayout.TagSelection) {
+    if (layout === PaneLayout.TagSelection || layout === PaneLayout.TableView) {
       return [AppPaneId.Navigation, AppPaneId.Items]
-    } else if (
-      layout === PaneLayout.ItemSelection ||
-      layout === PaneLayout.Editing ||
-      layout === PaneLayout.TableView
-    ) {
+    } else if (layout === PaneLayout.ItemSelection || layout === PaneLayout.Editing) {
       return [AppPaneId.Items, AppPaneId.Editor]
     }
   } else if (screen.isMobile) {

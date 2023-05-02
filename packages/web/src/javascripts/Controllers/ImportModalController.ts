@@ -27,7 +27,7 @@ export class ImportModalController {
   files: ImportModalFile[] = []
   importTag: SNTag | undefined = undefined
 
-  constructor(application: WebApplication, private navigationController: NavigationController) {
+  constructor(private application: WebApplication, private navigationController: NavigationController) {
     makeObservable(this, {
       isVisible: observable,
       setIsVisible: action,
@@ -149,26 +149,18 @@ export class ImportModalController {
       }
     }
     const currentDate = new Date()
-    const importTagPayload: DecryptedTransferPayload<TagContent> = {
-      uuid: UuidGenerator.GenerateUuid(),
-      created_at: currentDate,
-      created_at_timestamp: currentDate.getTime(),
-      updated_at: currentDate,
-      updated_at_timestamp: currentDate.getTime(),
-      content_type: ContentType.Tag,
-      content: {
-        title: `Imported on ${currentDate.toLocaleString()}`,
-        expanded: false,
-        iconString: '',
-        references: importedPayloads
-          .filter((payload) => payload.content_type === ContentType.Note)
-          .map((payload) => ({
-            content_type: ContentType.Note,
-            uuid: payload.uuid,
-          })),
-      },
-    }
-    const [importTag] = await this.importer.importFromTransferPayloads([importTagPayload])
+    const importTagItem = this.application.mutator.createTemplateItem<TagContent, SNTag>(ContentType.Tag, {
+      title: `Imported on ${currentDate.toLocaleString()}`,
+      expanded: false,
+      iconString: '',
+      references: importedPayloads
+        .filter((payload) => payload.content_type === ContentType.Note)
+        .map((payload) => ({
+          content_type: ContentType.Note,
+          uuid: payload.uuid,
+        })),
+    })
+    const importTag = await this.application.mutator.insertItem(importTagItem)
     if (importTag) {
       this.setImportTag(importTag as SNTag)
     }
