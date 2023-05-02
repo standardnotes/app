@@ -350,11 +350,13 @@ export class FilesBackupManager implements FileBackupsDevice {
       }
     }
 
+    const uuidPart = uuid.split('-')[0]
+    const condensedUuidPart = uuidPart.substring(0, 4)
     if (tags.length === 0) {
-      await writeFileToPath(location, `${name}.txt`, data)
+      await writeFileToPath(location, `${name}-${condensedUuidPart}.txt`, data)
     } else {
       for (const tag of tags) {
-        await writeFileToPath(location, `${name}.txt`, data, tag)
+        await writeFileToPath(location, `${name}-${condensedUuidPart}.txt`, data, tag)
       }
     }
   }
