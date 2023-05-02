@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.155.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.155.0...@standardnotes/web@3.155.1) (2023-05-02)
+
+### Bug Fixes
+
+* automatically convert Super notes to Markdown for the Plaintext Backups feature ([75ecf4c](https://github.com/standardnotes/app/commit/75ecf4c393a6bc0ab2d6bf50dcbee21cef520746))
+
 # [3.155.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.154.1...@standardnotes/web@3.155.0) (2023-05-02)
 
 ### Features

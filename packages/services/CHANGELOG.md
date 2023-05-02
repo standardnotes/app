@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.59.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.0...@standardnotes/services@1.59.1) (2023-05-02)
+
+### Bug Fixes
+
+* automatically convert Super notes to Markdown for the Plaintext Backups feature ([75ecf4c](https://github.com/standardnotes/app/commit/75ecf4c393a6bc0ab2d6bf50dcbee21cef520746))
+
 # [1.59.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.58.5...@standardnotes/services@1.59.0) (2023-05-02)
 
 ### Features
