@@ -8,6 +8,7 @@ import { isDesktopApplication } from '@/Utils'
 import Button from '@/Components/Button/Button'
 import Icon from '../Icon/Icon'
 import AlertDialog from '../AlertDialog/AlertDialog'
+import HorizontalSeparator from '../Shared/HorizontalSeparator'
 
 type Props = {
   application: WebApplication
@@ -61,23 +62,25 @@ const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewContro
       </div>
 
       {hasAnyBackupsEnabled && (
-        <div className="flex">
-          <div className="sk-panel-row"></div>
-          <div>
-            <p>
-              Local backups are enabled for this workspace. Review your backup files manually to decide what to keep and
-              remove.
-            </p>
-            <button
-              className="sk-a cursor-pointer rounded p-0 capitalize"
-              onClick={() => {
-                void application.fileBackups?.openAllDirectoriesContainingBackupFiles()
-              }}
-            >
-              View backup files
-            </button>
+        <>
+          <HorizontalSeparator classes="my-2" />
+          <div className="flex">
+            <div className="sk-panel-row"></div>
+            <div>
+              <p className="text-base text-foreground lg:text-sm">
+                Local backups are enabled for this workspace. Review your backup files manually to decide what to keep.
+              </p>
+              <button
+                className="sk-a mt-2 cursor-pointer rounded p-0 capitalize lg:text-sm"
+                onClick={() => {
+                  void application.fileBackups?.openAllDirectoriesContainingBackupFiles()
+                }}
+              >
+                View backup files
+              </button>
+            </div>
           </div>
-        </div>
+        </>
       )}
 
       <div className="mt-4 flex justify-end gap-2">
