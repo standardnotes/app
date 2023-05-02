@@ -68,12 +68,14 @@ export class FilesBackupManager implements FileBackupsDevice {
       return
     }
 
-    await moveDirContents(legacyLocation, newLocation)
+    await ensureDirectoryExists(newLocation)
 
-    const legacyMappingLocation = `${newLocation}/info.json`
+    const legacyMappingLocation = `${legacyLocation}/info.json`
     const newMappingLocation = this.getFileBackupsMappingFilePath(newLocation)
-    await ensureDirectoryExists(newMappingLocation)
+    await ensureDirectoryExists(path.dirname(newMappingLocation))
     await moveFile(legacyMappingLocation, newMappingLocation)
+
+    await moveDirContents(legacyLocation, newLocation)
   }
 
   public async isLegacyFilesBackupsEnabled(): Promise<boolean> {

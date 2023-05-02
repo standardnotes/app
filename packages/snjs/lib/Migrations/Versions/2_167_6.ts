@@ -13,7 +13,7 @@ export class Migration2_167_6 extends Migration {
   }
 
   protected registerStageHandlers(): void {
-    this.registerStageHandler(ApplicationStage.StorageDecrypted_09, async () => {
+    this.registerStageHandler(ApplicationStage.Launched_10, async () => {
       await this.migrateStorageKeysForDesktopBackups()
       this.markDone()
     })

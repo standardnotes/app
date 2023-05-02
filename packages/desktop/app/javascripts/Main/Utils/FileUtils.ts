@@ -64,7 +64,7 @@ export function writeJSONFileSync(filepath: string, data: unknown): void {
   fs.writeFileSync(filepath, JSON.stringify(data, null, 2), 'utf8')
 }
 
-/** Creates the directory if it doesn't exist. Can pass in a filepath as well, only the directory will be used. */
+/** Creates the directory if it doesn't exist. */
 export async function ensureDirectoryExists(dirPath: string): Promise<void> {
   try {
     const stat = await fs.promises.lstat(dirPath)

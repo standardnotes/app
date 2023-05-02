@@ -178,6 +178,7 @@ export class FilesBackupService extends AbstractService implements BackupService
 
   prependWorkspacePathForPath(path: string): string {
     const workspacePath = this.session.getWorkspaceDisplayIdentifier()
+
     return `${workspacePath}/${path}`
   }
 
@@ -476,6 +477,7 @@ export class FilesBackupService extends AbstractService implements BackupService
     const itemsKey = this.items.getDisplayableItemsKeys().find((k) => k.uuid === encryptedFile.items_key_id)
 
     if (!itemsKey) {
+      this.status.removeMessage(messageId)
       return 'failed'
     }
 
@@ -488,6 +490,7 @@ export class FilesBackupService extends AbstractService implements BackupService
     const token = await this.api.createFileValetToken(file.remoteIdentifier, 'read')
 
     if (token instanceof ClientDisplayableError) {
+      this.status.removeMessage(messageId)
       return 'failed'
     }
 
@@ -530,7 +533,7 @@ export class FilesBackupService extends AbstractService implements BackupService
    * 3. Opening the file triggers a watch event from Node's watch API.
    * 4. Gives web code ability to monitor arbitrary locations. Needs whitelisting mechanism.
    */
-  private disabledExperimental_monitorPlaintextBackups(): void {
+  disabledExperimental_monitorPlaintextBackups(): void {
     const location = this.getPlaintextBackupsLocation()
     if (location) {
       void this.device.monitorPlaintextBackupsLocationForChanges(location)
