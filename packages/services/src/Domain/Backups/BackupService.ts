@@ -370,9 +370,14 @@ export class FilesBackupService extends AbstractService implements BackupService
     return record
   }
 
-  public async openFileBackup(record: FileBackupRecord): Promise<void> {
+  public getFileBackupAbsolutePath(record: FileBackupRecord): string {
     const location = this.getFilesBackupsLocation()
-    await this.device.openLocation(`${location}/${record.relativePath}`)
+    return `${location}/${record.relativePath}`
+  }
+
+  public async openFileBackup(record: FileBackupRecord): Promise<void> {
+    const location = this.getFileBackupAbsolutePath(record)
+    await this.device.openLocation(location)
   }
 
   private async handleChangedFiles(files: FileItem[]): Promise<void> {

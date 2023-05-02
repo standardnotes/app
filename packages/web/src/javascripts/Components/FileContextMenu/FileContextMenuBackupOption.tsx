@@ -35,7 +35,7 @@ export const FileContextMenuBackupOption: FunctionComponent<{ file: FileItem }> 
         >
           <div className="ml-2">
             <div className="font-semibold text-success">Backed up on {dateToStringStyle1(backupInfo.backedUpOn)}</div>
-            <div className="text-xs text-neutral">{backupInfo.absolutePath}</div>
+            <div className="text-xs text-neutral">{application.fileBackups?.getFileBackupAbsolutePath(backupInfo)}</div>
           </div>
         </MenuItem>
       )}
