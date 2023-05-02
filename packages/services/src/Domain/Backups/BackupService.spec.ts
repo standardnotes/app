@@ -1,3 +1,5 @@
+import { HistoryServiceInterface } from './../History/HistoryServiceInterface'
+import { PayloadManagerInterface } from './../Payloads/PayloadManagerInterface'
 import { StorageServiceInterface } from './../Storage/StorageServiceInterface'
 import { SessionsClientInterface } from './../Session/SessionsClientInterface'
 import { StatusServiceInterface } from './../Status/StatusServiceInterface'
@@ -24,6 +26,8 @@ describe('backup service', () => {
   let device: FileBackupsDevice
   let session: SessionsClientInterface
   let storage: StorageServiceInterface
+  let payloads: PayloadManagerInterface
+  let history: HistoryServiceInterface
 
   beforeEach(() => {
     apiService = {} as jest.Mocked<ApiServiceInterface>
@@ -61,6 +65,12 @@ describe('backup service', () => {
     internalEventBus = {} as jest.Mocked<InternalEventBusInterface>
     internalEventBus.publish = jest.fn()
 
+    payloads = {} as PayloadManagerInterface
+    history = {} as HistoryServiceInterface
+
+    storage = {} as StorageServiceInterface
+    storage.getValue = jest.fn().mockReturnValue('')
+
     backupService = new FilesBackupService(
       itemManager,
       apiService,
@@ -70,6 +80,8 @@ describe('backup service', () => {
       crypto,
       storage,
       session,
+      payloads,
+      history,
       internalEventBus,
     )
 
