@@ -440,7 +440,7 @@ export class FilesBackupService extends AbstractService implements BackupService
       return 'failed'
     }
 
-    const path = `${this.getFilesBackupsLocation()}/${fileBackup.relativePath}`
+    const path = `${this.getFilesBackupsLocation()}/${fileBackup.relativePath}/${fileBackup.binaryFileName}`
     const token = await this.device.getFileBackupReadToken(path)
 
     let readMore = true

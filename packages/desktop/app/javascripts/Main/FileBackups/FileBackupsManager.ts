@@ -170,9 +170,7 @@ export class FilesBackupManager implements FileBackupsDevice {
       url: string
     },
   ): Promise<'success' | 'failed'> {
-    const backupsDir = await this.getLegacyFilesBackupsLocation()
-
-    const fileDir = `${backupsDir}/${uuid}`
+    const fileDir = `${location}/${uuid}`
     const metaFilePath = `${fileDir}/${FileBackupsConstantsV1.MetadataFileName}`
     const binaryPath = `${fileDir}/${FileBackupsConstantsV1.BinaryFileName}`
 
