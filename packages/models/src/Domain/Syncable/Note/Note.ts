@@ -16,7 +16,7 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
   public readonly preview_plain: string
   public readonly preview_html: string
   public readonly spellcheck?: boolean
-  public readonly line_width?: EditorLineWidth
+  public readonly editorWidth?: EditorLineWidth
   public readonly noteType?: NoteType
   public readonly authorizedForListed: boolean
 
@@ -32,7 +32,7 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
     this.preview_plain = String(this.payload.content.preview_plain || '')
     this.preview_html = String(this.payload.content.preview_html || '')
     this.spellcheck = this.payload.content.spellcheck
-    this.line_width = this.payload.content.line_width
+    this.editorWidth = this.payload.content.editorWidth
     this.noteType = this.payload.content.noteType
     this.editorIdentifier = this.payload.content.editorIdentifier
     this.authorizedForListed = this.payload.content.authorizedForListed || false

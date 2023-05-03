@@ -359,11 +359,17 @@ export class NotesController extends AbstractViewController implements NotesCont
     this.application.sync.sync().catch(console.error)
   }
 
-  async setNoteLineWidth(note: SNNote, line_width: EditorLineWidth) {
+  getEditorWidthForNote(note: SNNote) {
+    return (
+      note.editorWidth ?? this.application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth])
+    )
+  }
+
+  async setNoteEditorWidth(note: SNNote, editorWidth: EditorLineWidth) {
     await this.application.mutator.changeItem<NoteMutator>(
       note,
       (mutator) => {
-        mutator.line_width = line_width
+        mutator.editorWidth = editorWidth
       },
       false,
     )

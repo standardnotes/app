@@ -5,7 +5,7 @@ import Button from '../Button/Button'
 import Modal, { ModalAction } from '../Modal/Modal'
 import ModalDialogButtons from '../Modal/ModalDialogButtons'
 import RadioButtonGroup from '../RadioButtonGroup/RadioButtonGroup'
-import { EditorMargins, EditorMaxWidths } from './LineWidths'
+import { EditorMargins, EditorMaxWidths } from './EditorWidths'
 
 const DoubleSidedArrow = ({ className }: { className?: string }) => {
   return (
@@ -20,7 +20,7 @@ const DoubleSidedArrow = ({ className }: { className?: string }) => {
   )
 }
 
-const LineWidthSelectionModal = ({
+const EditorWidthSelectionModal = ({
   initialValue,
   handleChange,
   close,
@@ -89,7 +89,7 @@ const LineWidthSelectionModal = ({
 
   return (
     <Modal
-      title="Set line width"
+      title="Set editor width"
       close={close}
       customHeader={<></>}
       customFooter={<></>}
@@ -136,4 +136,4 @@ const LineWidthSelectionModal = ({
   )
 }
 
-export default LineWidthSelectionModal
+export default EditorWidthSelectionModal

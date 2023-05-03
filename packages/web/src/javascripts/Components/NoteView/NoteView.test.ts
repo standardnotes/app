@@ -35,6 +35,7 @@ describe('NoteView', () => {
     notesController = {} as jest.Mocked<NotesController>
     notesController.setShowProtectedWarning = jest.fn()
     notesController.getSpellcheckStateForNote = jest.fn()
+    notesController.getEditorWidthForNote = jest.fn()
 
     viewControllerManager = {
       notesController: notesController,

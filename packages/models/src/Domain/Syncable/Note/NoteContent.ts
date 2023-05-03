@@ -9,7 +9,7 @@ export interface NoteContentSpecialized {
   preview_plain?: string
   preview_html?: string
   spellcheck?: boolean
-  line_width?: EditorLineWidth
+  editorWidth?: EditorLineWidth
   noteType?: NoteType
   editorIdentifier?: FeatureIdentifier | string
   authorizedForListed?: boolean

@@ -35,7 +35,7 @@ import MenuItem from '../Menu/MenuItem'
 import ModalOverlay from '../Modal/ModalOverlay'
 import SuperExportModal from './SuperExportModal'
 import { useApplication } from '../ApplicationProvider'
-import LineWidthSelectionModal from '../LineWidthSelectionModal/LineWidthSelectionModal'
+import EditorWidthSelectionModal from '../EditorWidthSelectionModal/EditorWidthSelectionModal'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 const iconSize = MenuItemIconSize
@@ -183,8 +183,8 @@ const NotesOptions = ({
 
   const isOnlySuperNoteSelected = notes.length === 1 && notes[0].noteType === NoteType.Super
 
-  const noteLineWidth =
-    notes[0].line_width ?? application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth])
+  const noteEditorWidth =
+    notes[0].editorWidth ?? application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth])
 
   return (
     <>
@@ -198,7 +198,7 @@ const NotesOptions = ({
           <HorizontalSeparator classes="my-2" />
           <MenuItem onClick={toggleLineWidthModal}>
             <Icon type="line-width" className={iconClass} />
-            Line width
+            Editor width
           </MenuItem>
         </>
       )}
@@ -414,9 +414,9 @@ const NotesOptions = ({
       </ModalOverlay>
 
       <ModalOverlay isOpen={showLineWidthModal}>
-        <LineWidthSelectionModal
-          initialValue={noteLineWidth}
-          handleChange={(value) => notesController.setNoteLineWidth(notes[0], value)}
+        <EditorWidthSelectionModal
+          initialValue={noteEditorWidth}
+          handleChange={(value) => notesController.setNoteEditorWidth(notes[0], value)}
           close={toggleLineWidthModal}
         />
       </ModalOverlay>

@@ -1,7 +1,7 @@
 import { WebApplication } from '@/Application/Application'
 import Dropdown from '@/Components/Dropdown/Dropdown'
 import Icon from '@/Components/Icon/Icon'
-import LineWidthSelectionModal from '@/Components/LineWidthSelectionModal/LineWidthSelectionModal'
+import EditorWidthSelectionModal from '@/Components/EditorWidthSelectionModal/EditorWidthSelectionModal'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
@@ -62,16 +62,16 @@ const EditorDefaults = ({ application }: Props) => {
     [],
   )
 
-  const [lineWidth, setLineWidth] = useState(() =>
+  const [editorWidth, setEditorWidth] = useState(() =>
     application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth]),
   )
 
-  const [showLineWidthModal, setShowLineWidthModal] = useState(false)
-  const toggleLineWidthModal = useCallback(() => {
-    setShowLineWidthModal((show) => !show)
+  const [showEditorWidthModal, setShowEditorWidthModal] = useState(false)
+  const toggleEditorWidthModal = useCallback(() => {
+    setShowEditorWidthModal((show) => !show)
   }, [])
 
-  const handleLineWidthChange = useCallback(
+  const handleEditorWidthChange = useCallback(
     (value: EditorLineWidth) => {
       void application.setPreference(PrefKey.EditorLineWidth, value)
     },
@@ -80,7 +80,7 @@ const EditorDefaults = ({ application }: Props) => {
 
   useEffect(() => {
     return application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
-      setLineWidth(application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth]))
+      setEditorWidth(application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth]))
     })
   }, [application])
 
@@ -124,25 +124,25 @@ const EditorDefaults = ({ application }: Props) => {
           </div>
           <HorizontalSeparator classes="my-4" />
           <div>
-            <Subtitle>Line width</Subtitle>
-            <Text>Sets the max line width for all notes</Text>
+            <Subtitle>Editor width</Subtitle>
+            <Text>Sets the max editor width for all notes</Text>
             <div className="mt-2">
               <button
-                className="flex min-w-55 items-center justify-between rounded border border-border bg-default py-1.5 px-3.5 text-left text-sm text-foreground"
-                onClick={toggleLineWidthModal}
+                className="flex w-full min-w-55 items-center justify-between rounded border border-border bg-default py-1.5 px-3.5 text-left text-base text-foreground md:w-fit lg:text-sm"
+                onClick={toggleEditorWidthModal}
               >
-                {lineWidth === EditorLineWidth.FullWidth ? 'Full width' : lineWidth}
+                {editorWidth === EditorLineWidth.FullWidth ? 'Full width' : editorWidth}
                 <Icon type="chevron-down" size="normal" />
               </button>
             </div>
           </div>
         </div>
       </PreferencesSegment>
-      <ModalOverlay isOpen={showLineWidthModal}>
-        <LineWidthSelectionModal
-          initialValue={lineWidth}
-          handleChange={handleLineWidthChange}
-          close={toggleLineWidthModal}
+      <ModalOverlay isOpen={showEditorWidthModal}>
+        <EditorWidthSelectionModal
+          initialValue={editorWidth}
+          handleChange={handleEditorWidthChange}
+          close={toggleEditorWidthModal}
         />
       </ModalOverlay>
     </PreferencesGroup>

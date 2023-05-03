@@ -44,7 +44,7 @@ import {
 import { SuperEditorContentId } from '../SuperEditor/Constants'
 import { NoteViewController } from './Controller/NoteViewController'
 import { PlainEditor, PlainEditorInterface } from './PlainEditor/PlainEditor'
-import { EditorMargins, EditorMaxWidths } from '../LineWidthSelectionModal/LineWidths'
+import { EditorMargins, EditorMaxWidths } from '../EditorWidthSelectionModal/EditorWidths'
 
 const MinimumStatusDuration = 400
 
@@ -657,9 +657,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
   }
 
   reloadLineWidth() {
-    const editorLineWidth =
-      this.note.line_width ??
-      this.application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth])
+    const editorLineWidth = this.viewControllerManager.notesController.getEditorWidthForNote(this.note)
 
     this.setState({
       editorLineWidth,

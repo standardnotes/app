@@ -32,8 +32,8 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
     this.mutableContent.spellcheck = spellcheck
   }
 
-  set line_width(line_width: EditorLineWidth) {
-    this.mutableContent.line_width = line_width
+  set editorWidth(editorWidth: EditorLineWidth) {
+    this.mutableContent.editorWidth = editorWidth
   }
 
   set noteType(noteType: NoteType) {
