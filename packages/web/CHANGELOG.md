@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.156.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.156.0...@standardnotes/web@3.156.1) (2023-05-03)
+
+**Note:** Version bump only for package @standardnotes/web
+
 # [3.156.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.155.1...@standardnotes/web@3.156.0) (2023-05-03)
 
 ### Features
