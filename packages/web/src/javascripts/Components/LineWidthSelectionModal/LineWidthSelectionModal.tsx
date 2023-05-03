@@ -12,8 +12,8 @@ const DoubleSidedArrow = ({ className }: { className?: string }) => {
     <div
       className={classNames(
         'relative h-[2px] w-full bg-current',
-        'before:absolute before:left-0 before:top-1/2 before:h-0 before:w-0 before:-translate-y-1/2 before:border-r-[6px] before:border-t-[6px] before:border-b-[6px] before:border-current before:border-b-transparent before:border-t-transparent',
-        'after:absolute after:right-0 after:top-1/2 after:h-0 after:w-0 after:-translate-y-1/2 after:border-l-[6px] after:border-t-[6px] after:border-b-[6px] after:border-current after:border-b-transparent after:border-t-transparent',
+        'before:absolute before:-left-px before:top-1/2 before:h-0 before:w-0 before:-translate-y-1/2 before:border-r-[6px] before:border-t-[6px] before:border-b-[6px] before:border-current before:border-b-transparent before:border-t-transparent',
+        'after:absolute after:-right-px after:top-1/2 after:h-0 after:w-0 after:-translate-y-1/2 after:border-l-[6px] after:border-t-[6px] after:border-b-[6px] after:border-current after:border-b-transparent after:border-t-transparent',
         className,
       )}
     />
@@ -85,7 +85,7 @@ const LineWidthSelectionModal = () => {
         disableCustomHeader={isMobileScreen}
         actions={actions}
         className={{
-          content: 'md:min-w-[40vw]',
+          content: 'select-none md:min-w-[40vw]',
           description: 'flex min-h-[50vh] flex-col',
         }}
       >
@@ -99,7 +99,7 @@ const LineWidthSelectionModal = () => {
               value === 'full-width' && 'md:grid-cols-[1fr_95%_1fr]',
             )}
           >
-            <div className="text-center text-passive-2">
+            <div className="text-center text-sm text-passive-2">
               <div className={value !== 'dynamic' ? 'hidden' : ''}>
                 <div className="mb-2">10%</div>
                 <DoubleSidedArrow />
@@ -115,7 +115,7 @@ const LineWidthSelectionModal = () => {
               <DoubleSidedArrow />
               <div className="w-full flex-grow bg-[linear-gradient(transparent_50%,var(--sn-stylekit-info-color)_50%)] bg-[length:100%_2.5rem] bg-repeat-y opacity-10" />
             </div>
-            <div className="text-center text-passive-2">
+            <div className="text-center text-sm text-passive-2">
               <div className={value !== 'dynamic' ? 'hidden' : ''}>
                 <div className="mb-2">10%</div>
                 <DoubleSidedArrow />
