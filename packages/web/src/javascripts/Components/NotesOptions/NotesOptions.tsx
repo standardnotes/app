@@ -1,7 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { NoteType, Platform, PrefKey, SNNote } from '@standardnotes/snjs'
+import { NoteType, Platform, SNNote } from '@standardnotes/snjs'
 import {
   OPEN_NOTE_HISTORY_COMMAND,
   PIN_NOTE_COMMAND,
@@ -36,7 +36,6 @@ import ModalOverlay from '../Modal/ModalOverlay'
 import SuperExportModal from './SuperExportModal'
 import { useApplication } from '../ApplicationProvider'
 import EditorWidthSelectionModal from '../EditorWidthSelectionModal/EditorWidthSelectionModal'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -183,8 +182,7 @@ const NotesOptions = ({
 
   const isOnlySuperNoteSelected = notes.length === 1 && notes[0].noteType === NoteType.Super
 
-  const noteEditorWidth =
-    notes[0].editorWidth ?? application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth])
+  const noteEditorWidth = notesController.getEditorWidthForNote(notes[0])
 
   return (
     <>
