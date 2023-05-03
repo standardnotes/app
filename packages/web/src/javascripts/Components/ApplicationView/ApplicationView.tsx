@@ -30,6 +30,7 @@ import DotOrgNotice from './DotOrgNotice'
 import LinkingControllerProvider from '@/Controllers/LinkingControllerProvider'
 import ImportModal from '../ImportModal/ImportModal'
 import IosKeyboardClose from '../IosKeyboardClose/IosKeyboardClose'
+import LineWidthSelectionModal from '../LineWidthSelectionModal/LineWidthSelectionModal'
 
 type Props = {
   application: WebApplication
@@ -273,6 +274,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                       viewControllerManager={viewControllerManager}
                     />
                     <ImportModal importModalController={viewControllerManager.importModalController} />
+                    <LineWidthSelectionModal />
                   </>
                   {application.routeService.isDotOrg && <DotOrgNotice />}
                   {isIOS() && <IosKeyboardClose />}
