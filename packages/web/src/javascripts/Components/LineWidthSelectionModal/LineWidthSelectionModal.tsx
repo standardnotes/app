@@ -90,46 +90,37 @@ const LineWidthSelectionModal = () => {
         }}
       >
         <div className="flex min-h-0 flex-grow flex-col overflow-hidden rounded bg-passive-5 p-4 pb-0">
-          <div className="flex flex-grow flex-col rounded rounded-b-none bg-default px-2 shadow-[0_1px_4px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.04)] md:px-4">
-            <div className="mb-0 flex w-full py-2.5 text-base">
-              {value === 'dynamic' && (
-                <div className="min-w-[10%] pr-4 text-center text-passive-2">
-                  <div className="mb-3">10%</div>
-                  <DoubleSidedArrow />
-                </div>
-              )}
-              <div
-                className={classNames(
-                  'w-full text-center text-info',
-                  value === 'dynamic' ? 'w-[80%]' : 'w-full',
-                  value === 'narrow' && 'md:mx-auto md:max-w-[60%]',
-                  value === 'wide' && 'md:mx-auto md:max-w-[70%]',
-                )}
-              >
-                <div className="mb-3">
-                  {value === 'narrow' ? 'Max. 512px' : null}
-                  {value === 'wide' ? 'Max. 720px' : null}
-                  {value === 'dynamic' ? '80%' : null}
-                  {value === 'full-width' ? '100%' : null}
-                </div>
+          <div
+            className={classNames(
+              'grid flex-grow grid-cols-[0fr_1fr_0fr] gap-3 rounded rounded-b-none bg-default px-2 pt-4 shadow-[0_1px_4px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-200 md:px-4',
+              value === 'narrow' && 'md:grid-cols-[1fr_60%_1fr]',
+              value === 'wide' && 'md:grid-cols-[1fr_70%_1fr]',
+              value === 'dynamic' && 'md:grid-cols-[1fr_80%_1fr]',
+              value === 'full-width' && 'md:grid-cols-[1fr_95%_1fr]',
+            )}
+          >
+            <div className="text-center text-passive-2">
+              <div className={value !== 'dynamic' ? 'hidden' : ''}>
+                <div className="mb-2">10%</div>
                 <DoubleSidedArrow />
               </div>
-              {value === 'dynamic' && (
-                <div className="min-w-[10%] pl-4 text-center text-passive-2">
-                  <div className="mb-3">10%</div>
-                  <DoubleSidedArrow />
-                </div>
-              )}
             </div>
-            <div
-              className={classNames(
-                'relative min-h-0 w-full flex-grow bg-[linear-gradient(transparent_50%,var(--sn-stylekit-info-color)_50%)] bg-[length:100%_2.5rem] bg-repeat-y opacity-10',
-                value === 'narrow' && 'mx-auto md:max-w-[60%]',
-                value === 'wide' && 'mx-auto md:max-w-[70%]',
-                value === 'dynamic' && 'mx-[calc(10%_+_1rem)] max-w-[calc(80%_-_2rem)] md:mx-[10%] md:max-w-[80%]',
-                value === 'full-width' && 'mx-auto max-w-full',
-              )}
-            />
+            <div className="flex flex-col text-info">
+              <div className="mb-2 text-center text-sm">
+                {value === 'narrow' && 'Max. 512px'}
+                {value === 'wide' && 'Max. 720px'}
+                {value === 'dynamic' && '80%'}
+                {value === 'full-width' && '100%'}
+              </div>
+              <DoubleSidedArrow />
+              <div className="w-full flex-grow bg-[linear-gradient(transparent_50%,var(--sn-stylekit-info-color)_50%)] bg-[length:100%_2.5rem] bg-repeat-y opacity-10" />
+            </div>
+            <div className="text-center text-passive-2">
+              <div className={value !== 'dynamic' ? 'hidden' : ''}>
+                <div className="mb-2">10%</div>
+                <DoubleSidedArrow />
+              </div>
+            </div>
           </div>
         </div>
         <ModalDialogButtons className="justify-center md:justify-between">
