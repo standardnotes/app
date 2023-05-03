@@ -42,7 +42,7 @@ const PlaintextBackupsDesktop = ({ backupsService }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Automatic Plaintext Backups</Title>
+          <Title>Automatic plaintext backups</Title>
 
           <div className="flex items-center justify-between">
             <div className="mr-10 flex flex-col">

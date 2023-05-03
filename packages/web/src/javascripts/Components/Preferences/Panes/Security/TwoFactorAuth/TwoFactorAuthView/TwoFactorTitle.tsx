@@ -12,7 +12,7 @@ const TwoFactorTitle: FunctionComponent<Props> = ({ auth }) => {
     return <Title>Two-factor authentication not available</Title>
   }
 
-  return <Title>Two-Factor Authentication</Title>
+  return <Title>Two-factor authentication</Title>
 }
 
 export default observer(TwoFactorTitle)

@@ -175,7 +175,7 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Data Backups</Title>
+          <Title>Data backups</Title>
           <Subtitle>Download a backup of all your text-based data</Subtitle>
 
           {isEncryptionEnabled && (

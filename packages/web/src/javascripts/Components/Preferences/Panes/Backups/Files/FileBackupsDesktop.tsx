@@ -45,7 +45,7 @@ const FileBackupsDesktop = ({ backupsService }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Automatic File Backups</Title>
+          <Title>Automatic file backups</Title>
 
           <div className="flex items-center justify-between">
             <div className="mr-10 flex flex-col">

@@ -223,28 +223,6 @@ describe('storage manager', function () {
     expect(decrypted.content).to.be.an.instanceof(Object)
   })
 
-  /** @TODO: Storage encryption disable is no longer available, remove tests and associated functionality */
-  it.skip('disabling storage encryption should store items without encryption', async function () {
-    await Factory.registerUserToApplication({
-      application: this.application,
-      email: this.email,
-      password: this.password,
-      ephemeral: false,
-    })
-
-    await this.application.setStorageEncryptionPolicy(StorageEncryptionPolicy.Disabled)
-
-    const payloads = await this.application.diskStorageService.getAllRawPayloads()
-    const payload = payloads[0]
-    expect(typeof payload.content).to.not.equal('string')
-    expect(payload.content.references).to.be.ok
-
-    const identifier = this.application.identifier
-
-    const app = await Factory.createAndInitializeApplication(identifier, Environment.Mobile)
-    expect(app.diskStorageService.encryptionPolicy).to.equal(StorageEncryptionPolicy.Disabled)
-  })
-
   it('stored payloads should not contain metadata fields', async function () {
     await this.application.addPasscode('123')
     await Factory.createSyncedNote(this.application)

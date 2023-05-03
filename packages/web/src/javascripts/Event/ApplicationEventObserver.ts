@@ -23,6 +23,9 @@ import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 import { EventObserverInterface } from './EventObserverInterface'
 import { WebApplication } from '@/Application/Application'
 
+export const JoinWorkspaceSuccessString =
+  'Successfully joined a shared subscription. You may have to sign out and back in for changes to take effect.'
+
 export class ApplicationEventObserver implements EventObserverInterface {
   constructor(
     private application: WebApplication,
@@ -129,7 +132,7 @@ export class ApplicationEventObserver implements EventObserverInterface {
     this.toastService.hideToast(processingToastId)
 
     const toastType = acceptResult.success ? ToastType.Success : ToastType.Error
-    const toastMessage = acceptResult.success ? 'Successfully joined a shared subscription' : acceptResult.message
+    const toastMessage = acceptResult.success ? JoinWorkspaceSuccessString : acceptResult.message
 
     this.toastService.showToast(toastType, toastMessage)
 

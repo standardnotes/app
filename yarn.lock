@@ -4665,13 +4665,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/authenticator@npm:^2.3.9":
-  version: 2.3.9
-  resolution: "@standardnotes/authenticator@npm:2.3.9"
+"@standardnotes/authenticator@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "@standardnotes/authenticator@npm:2.4.0"
   dependencies:
     "@standardnotes/editor-kit": "github:standardnotes/editor-kit#50ffb15c935a297b082eb00ffd031adc05080d7f"
     "@standardnotes/styles": 1.6.1
-  checksum: 781b20747efb7f142fe9c715f6509838e320d6476a83edddd6f484344e484c2ac0f8470372dc318705f4bf22a0ffba2b55cb985e1544607384789d70f35c0865
+  checksum: fdd468add2d0020ce9cc4101b239bffb1ddf2d9c43513de0773feab1b747805bb039e78d8dc61ac6ec01489425d89fa4516612cb0cb82cc222880fb64a0792ae
   languageName: node
   linkType: hard
 
@@ -5515,7 +5515,7 @@ __metadata:
     "@pmmmwh/react-refresh-webpack-plugin": ^0.5.10
     "@radix-ui/react-slot": ^1.0.1
     "@simplewebauthn/browser": ^7.1.0
-    "@standardnotes/authenticator": ^2.3.9
+    "@standardnotes/authenticator": ^2.4.0
     "@standardnotes/autobiography-theme": ^1.2.7
     "@standardnotes/bold-editor": ^1.6.4
     "@standardnotes/classic-code-editor": ^1.5.7

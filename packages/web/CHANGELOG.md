@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.156.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.156.1...@standardnotes/web@3.156.2) (2023-05-03)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.156.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.156.0...@standardnotes/web@3.156.1) (2023-05-03)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.156.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.155.1...@standardnotes/web@3.156.0) (2023-05-03)
+
+### Features
+
+* Added Export option for Authenticator entries ([b117271](https://github.com/standardnotes/app/commit/b117271d617597b1dd83a4878a588e1f7ddc3f97))
+
 ## [3.155.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.155.0...@standardnotes/web@3.155.1) (2023-05-02)
 
 ### Bug Fixes

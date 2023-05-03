@@ -110,7 +110,7 @@ const EmailBackups = ({ application }: Props) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Email Backups</Title>
+        <Title>Email backups</Title>
         {!isDesktopApplication() && (
           <Text className="mb-3">
             Receive daily encrypted email backups of all your notes directly in your email inbox.

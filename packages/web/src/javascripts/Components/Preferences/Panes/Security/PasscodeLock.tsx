@@ -190,7 +190,7 @@ const PasscodeLock = ({ application, viewControllerManager }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Passcode Lock</Title>
+          <Title>Passcode lock</Title>
 
           {!hasPasscode && canAddPasscode && (
             <>

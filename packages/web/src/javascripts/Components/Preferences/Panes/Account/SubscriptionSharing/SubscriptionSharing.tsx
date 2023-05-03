@@ -39,7 +39,7 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
       <PreferencesSegment>
         <div className="flex flex-row items-center">
           <div className="flex flex-grow flex-col">
-            <Title className="mb-2">Subscription Sharing</Title>
+            <Title className="mb-2">Subscription sharing</Title>
             {isSubscriptionSharingFeatureAvailable ? (
               <div>
                 <SharingStatusText subscriptionState={subscriptionState} />
