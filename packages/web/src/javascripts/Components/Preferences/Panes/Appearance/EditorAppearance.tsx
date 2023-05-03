@@ -1,10 +1,13 @@
 import { WebApplication } from '@/Application/Application'
 import Dropdown from '@/Components/Dropdown/Dropdown'
+import Icon from '@/Components/Icon/Icon'
+import LineWidthSelectionModal from '@/Components/LineWidthSelectionModal/LineWidthSelectionModal'
+import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { EditorFontSize, EditorLineHeight, PrefKey } from '@standardnotes/snjs'
-import { useMemo, useState } from 'react'
+import { ApplicationEvent, EditorFontSize, EditorLineHeight, EditorLineWidth, PrefKey } from '@standardnotes/snjs'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Subtitle, Title, Text } from '../../PreferencesComponents/Content'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
@@ -59,28 +62,33 @@ const EditorDefaults = ({ application }: Props) => {
     [],
   )
 
-  const [marginResizers, setMarginResizers] = useState(() =>
-    application.getPreference(PrefKey.EditorResizersEnabled, PrefDefaults[PrefKey.EditorResizersEnabled]),
+  const [lineWidth, setLineWidth] = useState(() =>
+    application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth]),
   )
 
-  const toggleMarginResizers = () => {
-    setMarginResizers(!marginResizers)
-    application.setPreference(PrefKey.EditorResizersEnabled, !marginResizers).catch(console.error)
-  }
+  const [showLineWidthModal, setShowLineWidthModal] = useState(false)
+  const toggleLineWidthModal = useCallback(() => {
+    setShowLineWidthModal((show) => !show)
+  }, [])
+
+  const handleLineWidthChange = useCallback(
+    (value: EditorLineWidth) => {
+      void application.setPreference(PrefKey.EditorLineWidth, value)
+    },
+    [application],
+  )
+
+  useEffect(() => {
+    return application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
+      setLineWidth(application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth]))
+    })
+  }, [application])
 
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Editor Appearance</Title>
         <div className="mt-2">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col">
-              <Subtitle>Margin Resizers</Subtitle>
-              <Text>Allows left and right editor margins to be resized.</Text>
-            </div>
-            <Switch onChange={toggleMarginResizers} checked={marginResizers} />
-          </div>
-          <HorizontalSeparator classes="my-4" />
           <div className="flex items-center justify-between">
             <div className="flex flex-col">
               <Subtitle>Monospace Font</Subtitle>
@@ -114,8 +122,29 @@ const EditorDefaults = ({ application }: Props) => {
               />
             </div>
           </div>
+          <HorizontalSeparator classes="my-4" />
+          <div>
+            <Subtitle>Line width</Subtitle>
+            <Text>Sets the max line width for all notes</Text>
+            <div className="mt-2">
+              <button
+                className="flex min-w-55 items-center justify-between rounded border border-border bg-default py-1.5 px-3.5 text-left text-sm text-foreground"
+                onClick={toggleLineWidthModal}
+              >
+                {lineWidth === EditorLineWidth.FullWidth ? 'Full width' : lineWidth}
+                <Icon type="chevron-down" size="normal" />
+              </button>
+            </div>
+          </div>
         </div>
       </PreferencesSegment>
+      <ModalOverlay isOpen={showLineWidthModal}>
+        <LineWidthSelectionModal
+          initialValue={lineWidth}
+          handleChange={handleLineWidthChange}
+          close={toggleLineWidthModal}
+        />
+      </ModalOverlay>
     </PreferencesGroup>
   )
 }

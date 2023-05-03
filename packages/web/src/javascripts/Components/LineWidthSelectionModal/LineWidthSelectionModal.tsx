@@ -1,10 +1,9 @@
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
-import { classNames } from '@standardnotes/snjs'
-import { useMemo, useState } from 'react'
+import { classNames, EditorLineWidth } from '@standardnotes/snjs'
+import { useCallback, useMemo, useState } from 'react'
 import Button from '../Button/Button'
 import Modal, { ModalAction } from '../Modal/Modal'
 import ModalDialogButtons from '../Modal/ModalDialogButtons'
-import ModalOverlay from '../Modal/ModalOverlay'
 import RadioButtonGroup from '../RadioButtonGroup/RadioButtonGroup'
 
 const DoubleSidedArrow = ({ className }: { className?: string }) => {
@@ -20,47 +19,52 @@ const DoubleSidedArrow = ({ className }: { className?: string }) => {
   )
 }
 
-const LineWidthSelectionModal = () => {
+const LineWidthSelectionModal = ({
+  initialValue,
+  handleChange,
+  close,
+}: {
+  initialValue: EditorLineWidth
+  handleChange: (value: EditorLineWidth) => void
+  close: () => void
+}) => {
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
-  const [value, setValue] = useState<'narrow' | 'wide' | 'dynamic' | 'full-width'>('dynamic')
+  const [value, setValue] = useState<EditorLineWidth>(() => initialValue)
 
   const options = useMemo(
     () => [
       {
         label: 'Narrow',
-        value: 'narrow',
+        value: EditorLineWidth.Narrow,
       },
       {
         label: 'Wide',
-        value: 'wide',
+        value: EditorLineWidth.Wide,
       },
       {
         label: 'Dynamic',
-        value: 'dynamic',
+        value: EditorLineWidth.Dynamic,
       },
       {
         label: 'Full width',
-        value: 'full-width',
+        value: EditorLineWidth.FullWidth,
       },
     ],
     [],
   )
 
-  const cancel = () => {
-    //
-  }
-
-  const accept = () => {
-    //
-  }
+  const accept = useCallback(() => {
+    handleChange(value)
+    close()
+  }, [close, handleChange, value])
 
   const actions = useMemo(
     (): ModalAction[] => [
       {
         label: 'Cancel',
         type: 'cancel',
-        onClick: cancel,
+        onClick: close,
         mobileSlot: 'left',
       },
       {
@@ -70,72 +74,66 @@ const LineWidthSelectionModal = () => {
         mobileSlot: 'right',
       },
     ],
-    [],
+    [accept, close],
   )
 
   return (
-    <ModalOverlay isOpen={true}>
-      <Modal
-        title="Set line width"
-        close={() => {
-          /*empty*/
-        }}
-        customHeader={<></>}
-        customFooter={<></>}
-        disableCustomHeader={isMobileScreen}
-        actions={actions}
-        className={{
-          content: 'select-none md:min-w-[40vw]',
-          description: 'flex min-h-[50vh] flex-col',
-        }}
-      >
-        <div className="flex min-h-0 flex-grow flex-col overflow-hidden rounded bg-passive-5 p-4 pb-0">
-          <div
-            className={classNames(
-              'grid flex-grow grid-cols-[0fr_1fr_0fr] gap-3 rounded rounded-b-none bg-default px-2 pt-4 shadow-[0_1px_4px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-200 md:px-4',
-              value === 'narrow' && 'md:grid-cols-[1fr_60%_1fr]',
-              value === 'wide' && 'md:grid-cols-[1fr_70%_1fr]',
-              value === 'dynamic' && 'md:grid-cols-[1fr_80%_1fr]',
-              value === 'full-width' && 'md:grid-cols-[1fr_95%_1fr]',
-            )}
-          >
-            <div className="text-center text-sm text-passive-2">
-              <div className={value !== 'dynamic' ? 'hidden' : ''}>
-                <div className="mb-2">10%</div>
-                <DoubleSidedArrow />
-              </div>
-            </div>
-            <div className="flex flex-col text-info">
-              <div className="mb-2 text-center text-sm">
-                {value === 'narrow' && 'Max. 512px'}
-                {value === 'wide' && 'Max. 720px'}
-                {value === 'dynamic' && '80%'}
-                {value === 'full-width' && '100%'}
-              </div>
+    <Modal
+      title="Set line width"
+      close={close}
+      customHeader={<></>}
+      customFooter={<></>}
+      disableCustomHeader={isMobileScreen}
+      actions={actions}
+      className={{
+        content: 'select-none md:min-w-[40vw]',
+        description: 'flex min-h-[50vh] flex-col',
+      }}
+    >
+      <div className="flex min-h-0 flex-grow flex-col overflow-hidden rounded bg-passive-5 p-4 pb-0">
+        <div
+          className={classNames(
+            'grid flex-grow grid-cols-[0fr_1fr_0fr] gap-3 rounded rounded-b-none bg-default px-2 pt-4 shadow-[0_1px_4px_rgba(0,0,0,0.12),0_2px_8px_rgba(0,0,0,0.04)] transition-all duration-200 md:px-4',
+            value === EditorLineWidth.Narrow && 'md:grid-cols-[1fr_60%_1fr]',
+            value === EditorLineWidth.Wide && 'md:grid-cols-[1fr_70%_1fr]',
+            value === EditorLineWidth.Dynamic && 'md:grid-cols-[1fr_80%_1fr]',
+            value === EditorLineWidth.FullWidth && 'md:grid-cols-[1fr_95%_1fr]',
+          )}
+        >
+          <div className="text-center text-sm text-passive-2">
+            <div className={value !== EditorLineWidth.Dynamic ? 'hidden' : ''}>
+              <div className="mb-2">10%</div>
               <DoubleSidedArrow />
-              <div className="w-full flex-grow bg-[linear-gradient(transparent_50%,var(--sn-stylekit-info-color)_50%)] bg-[length:100%_2.5rem] bg-repeat-y opacity-10" />
             </div>
-            <div className="text-center text-sm text-passive-2">
-              <div className={value !== 'dynamic' ? 'hidden' : ''}>
-                <div className="mb-2">10%</div>
-                <DoubleSidedArrow />
-              </div>
+          </div>
+          <div className="flex flex-col text-info">
+            <div className="mb-2 text-center text-sm">
+              {value === EditorLineWidth.Narrow && 'Max. 512px'}
+              {value === EditorLineWidth.Wide && 'Max. 720px'}
+              {value === EditorLineWidth.Dynamic && '80%'}
+              {value === EditorLineWidth.FullWidth && '100%'}
+            </div>
+            <DoubleSidedArrow />
+            <div className="w-full flex-grow bg-[linear-gradient(transparent_50%,var(--sn-stylekit-info-color)_50%)] bg-[length:100%_2.5rem] bg-repeat-y opacity-10" />
+          </div>
+          <div className="text-center text-sm text-passive-2">
+            <div className={value !== EditorLineWidth.Dynamic ? 'hidden' : ''}>
+              <div className="mb-2">10%</div>
+              <DoubleSidedArrow />
             </div>
           </div>
         </div>
-        <ModalDialogButtons className="justify-center md:justify-between">
-          <RadioButtonGroup
-            items={options}
-            value={value}
-            onChange={(value) => setValue(value as 'narrow' | 'wide' | 'dynamic' | 'full-width')}
-          />
-          <div className="hidden items-center gap-2 md:flex">
-            <Button>Cancel</Button>
-            <Button primary>OK</Button>
-          </div>
-        </ModalDialogButtons>
-      </Modal>
-    </ModalOverlay>
+      </div>
+      <ModalDialogButtons className="justify-center md:justify-between">
+        <RadioButtonGroup items={options} value={value} onChange={(value) => setValue(value as EditorLineWidth)} />
+        <div className="hidden items-center gap-2 md:flex">
+          <Button onClick={close}>Cancel</Button>
+          <Button onClick={accept} primary>
+            OK
+          </Button>
+        </div>
+      </ModalDialogButtons>
+    </Modal>
   )
 }
 

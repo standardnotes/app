@@ -2,15 +2,7 @@ import { useEffect } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { DropdownItem } from './DropdownItem'
 import { classNames } from '@standardnotes/snjs'
-import {
-  Select,
-  SelectArrow,
-  SelectItem,
-  SelectLabel,
-  SelectPopover,
-  useSelectStore,
-  VisuallyHidden,
-} from '@ariakit/react'
+import { Select, SelectItem, SelectLabel, SelectPopover, useSelectStore, VisuallyHidden } from '@ariakit/react'
 import { KeyboardKey } from '@standardnotes/ui-services'
 
 type DropdownProps = {
@@ -90,7 +82,7 @@ const Dropdown = ({ label, value, onChange, items, disabled, fullWidth, classNam
           ) : null}
           <div className="text-base lg:text-sm">{currentItem?.label}</div>
         </div>
-        <SelectArrow className={classNames('text-passive-1', isExpanded && 'rotate-180')} />
+        <Icon type="chevron-down" size="normal" className={isExpanded ? 'rotate-180' : ''} />
       </Select>
       <SelectPopover
         store={select}
