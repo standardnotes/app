@@ -183,6 +183,9 @@ const NotesOptions = ({
 
   const isOnlySuperNoteSelected = notes.length === 1 && notes[0].noteType === NoteType.Super
 
+  const noteLineWidth =
+    notes[0].line_width ?? application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth])
+
   return (
     <>
       {notes.length === 1 && (
@@ -412,8 +415,8 @@ const NotesOptions = ({
 
       <ModalOverlay isOpen={showLineWidthModal}>
         <LineWidthSelectionModal
-          initialValue={application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth])}
-          handleChange={(value) => application.setPreference(PrefKey.EditorLineWidth, value)}
+          initialValue={noteLineWidth}
+          handleChange={(value) => notesController.setNoteLineWidth(notes[0], value)}
           close={toggleLineWidthModal}
         />
       </ModalOverlay>

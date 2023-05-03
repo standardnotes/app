@@ -274,6 +274,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     this.reloadSpellcheck().catch(console.error)
 
+    this.reloadLineWidth()
+
     const isTemplateNoteInsertedToBeInteractableWithEditor = source === PayloadEmitSource.LocalInserted && note.dirty
     if (isTemplateNoteInsertedToBeInteractableWithEditor) {
       return
@@ -654,16 +656,21 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     }
   }
 
+  reloadLineWidth() {
+    const editorLineWidth =
+      this.note.line_width ??
+      this.application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth])
+
+    this.setState({
+      editorLineWidth,
+    })
+  }
+
   async reloadPreferences() {
     log(LoggingDomain.NoteView, 'Reload preferences')
     const monospaceFont = this.application.getPreference(
       PrefKey.EditorMonospaceEnabled,
       PrefDefaults[PrefKey.EditorMonospaceEnabled],
-    )
-
-    const editorLineWidth = this.application.getPreference(
-      PrefKey.EditorLineWidth,
-      PrefDefaults[PrefKey.EditorLineWidth],
     )
 
     const updateSavingIndicator = this.application.getPreference(
@@ -673,9 +680,10 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     await this.reloadSpellcheck()
 
+    this.reloadLineWidth()
+
     this.setState({
       monospaceFont,
-      editorLineWidth,
       updateSavingIndicator,
     })
 

@@ -5,6 +5,7 @@ import { NoteToNoteReference } from '../../Abstract/Reference/NoteToNoteReferenc
 import { ContentType } from '@standardnotes/common'
 import { ContentReferenceType } from '../../Abstract/Item'
 import { FeatureIdentifier, NoteType } from '@standardnotes/features'
+import { EditorLineWidth } from '../UserPrefs'
 
 export class NoteMutator extends DecryptedItemMutator<NoteContent> {
   set title(title: string) {
@@ -29,6 +30,10 @@ export class NoteMutator extends DecryptedItemMutator<NoteContent> {
 
   set spellcheck(spellcheck: boolean) {
     this.mutableContent.spellcheck = spellcheck
+  }
+
+  set line_width(line_width: EditorLineWidth) {
+    this.mutableContent.line_width = line_width
   }
 
   set noteType(noteType: NoteType) {
