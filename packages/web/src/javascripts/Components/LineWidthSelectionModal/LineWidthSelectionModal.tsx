@@ -5,6 +5,7 @@ import Button from '../Button/Button'
 import Modal, { ModalAction } from '../Modal/Modal'
 import ModalDialogButtons from '../Modal/ModalDialogButtons'
 import RadioButtonGroup from '../RadioButtonGroup/RadioButtonGroup'
+import { EditorMargins, EditorMaxWidths } from './LineWidths'
 
 const DoubleSidedArrow = ({ className }: { className?: string }) => {
   return (
@@ -77,6 +78,15 @@ const LineWidthSelectionModal = ({
     [accept, close],
   )
 
+  const DynamicMargin = (
+    <div className="text-center text-sm text-passive-2">
+      <div className={value !== EditorLineWidth.Dynamic ? 'hidden' : ''}>
+        <div className="mb-2">{EditorMargins[value]}</div>
+        <DoubleSidedArrow />
+      </div>
+    </div>
+  )
+
   return (
     <Modal
       title="Set line width"
@@ -100,28 +110,17 @@ const LineWidthSelectionModal = ({
             value === EditorLineWidth.FullWidth && 'md:grid-cols-[1fr_95%_1fr]',
           )}
         >
-          <div className="text-center text-sm text-passive-2">
-            <div className={value !== EditorLineWidth.Dynamic ? 'hidden' : ''}>
-              <div className="mb-2">10%</div>
-              <DoubleSidedArrow />
-            </div>
-          </div>
+          {DynamicMargin}
           <div className="flex flex-col text-info">
             <div className="mb-2 text-center text-sm">
-              {value === EditorLineWidth.Narrow && 'Max. 512px'}
-              {value === EditorLineWidth.Wide && 'Max. 720px'}
-              {value === EditorLineWidth.Dynamic && '80%'}
-              {value === EditorLineWidth.FullWidth && '100%'}
+              {value === EditorLineWidth.Narrow || value === EditorLineWidth.Wide
+                ? `Max. ${EditorMaxWidths[value]}`
+                : EditorMaxWidths[value]}
             </div>
             <DoubleSidedArrow />
             <div className="w-full flex-grow bg-[linear-gradient(transparent_50%,var(--sn-stylekit-info-color)_50%)] bg-[length:100%_2.5rem] bg-repeat-y opacity-10" />
           </div>
-          <div className="text-center text-sm text-passive-2">
-            <div className={value !== EditorLineWidth.Dynamic ? 'hidden' : ''}>
-              <div className="mb-2">10%</div>
-              <DoubleSidedArrow />
-            </div>
-          </div>
+          {DynamicMargin}
         </div>
       </div>
       <ModalDialogButtons className="justify-center md:justify-between">
