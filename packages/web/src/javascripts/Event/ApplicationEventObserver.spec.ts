@@ -27,7 +27,7 @@ import { PurchaseFlowController } from '@/Controllers/PurchaseFlow/PurchaseFlowC
 import { SyncStatusController } from '@/Controllers/SyncStatusController'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 
-import { ApplicationEventObserver } from './ApplicationEventObserver'
+import { ApplicationEventObserver, JoinWorkspaceSuccessString } from './ApplicationEventObserver'
 import { WebApplication } from '@/Application/Application'
 
 describe('ApplicationEventObserver', () => {
@@ -169,10 +169,7 @@ describe('ApplicationEventObserver', () => {
       await createObserver().handle(ApplicationEvent.Launched)
 
       expect(subscriptionManager.acceptInvitation).toHaveBeenCalledWith('1-2-3')
-      expect(toastService.showToast).toHaveBeenCalledWith(
-        ToastType.Success,
-        'Successfully joined a shared subscription',
-      )
+      expect(toastService.showToast).toHaveBeenCalledWith(ToastType.Success, JoinWorkspaceSuccessString)
       expect(routeService.removeQueryParameterFromURL).toHaveBeenCalledWith(RootQueryParam.AcceptSubscriptionInvite)
     })
 
@@ -278,10 +275,7 @@ describe('ApplicationEventObserver', () => {
       await createObserver().handle(ApplicationEvent.SignedIn)
 
       expect(subscriptionManager.acceptInvitation).toHaveBeenCalledWith('1-2-3')
-      expect(toastService.showToast).toHaveBeenCalledWith(
-        ToastType.Success,
-        'Successfully joined a shared subscription',
-      )
+      expect(toastService.showToast).toHaveBeenCalledWith(ToastType.Success, JoinWorkspaceSuccessString)
       expect(routeService.removeQueryParameterFromURL).toHaveBeenCalledWith(RootQueryParam.AcceptSubscriptionInvite)
     })
 

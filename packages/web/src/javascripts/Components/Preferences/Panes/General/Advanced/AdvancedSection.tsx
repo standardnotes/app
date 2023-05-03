@@ -19,7 +19,7 @@ const Advanced: FunctionComponent<Props> = ({ application, viewControllerManager
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <AccordionItem title={'Advanced Options'}>
+        <AccordionItem title={'Advanced options'}>
           <div className="flex flex-row items-center">
             <div className="flex max-w-full flex-grow flex-col">
               <OfflineSubscription application={application} viewControllerManager={viewControllerManager} />

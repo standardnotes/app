@@ -18,7 +18,7 @@ const TextBackupsCrossPlatform = ({ application }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Automatic Text Backups</Title>
+          <Title>Automatic text backups</Title>
           <Subtitle>Automatically save encrypted and decrypted backups of your note and tag data.</Subtitle>
           <Text className="mt-3">To enable text backups, use the Standard Notes desktop application.</Text>
         </PreferencesSegment>

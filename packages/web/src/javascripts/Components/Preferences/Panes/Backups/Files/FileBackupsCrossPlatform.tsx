@@ -20,7 +20,7 @@ const FileBackupsCrossPlatform = ({ application }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Automatic File Backups</Title>
+          <Title>Automatic file backups</Title>
           <Subtitle>Automatically save encrypted backups of your files.</Subtitle>
           <Text className="mt-3">To enable file backups, use the Standard Notes desktop application.</Text>
         </PreferencesSegment>

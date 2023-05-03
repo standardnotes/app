@@ -62,7 +62,7 @@ const Listed = ({ application }: Props) => {
       {accounts.length > 0 && (
         <PreferencesGroup>
           <PreferencesSegment>
-            <Title>Your {accounts.length === 1 ? 'Blog' : 'Blogs'} on Listed</Title>
+            <Title>Your {accounts.length === 1 ? 'blog' : 'blogs'} on Listed</Title>
             <div className="h-2 w-full" />
             {accounts.map((item, index, array) => {
               return (

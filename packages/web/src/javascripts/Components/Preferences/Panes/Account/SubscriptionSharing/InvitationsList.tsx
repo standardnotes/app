@@ -21,9 +21,6 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
   const activeSubscriptions = subscriptionInvitations?.filter((invitation) =>
     [InvitationStatus.Sent, InvitationStatus.Accepted].includes(invitation.status),
   )
-  const inActiveSubscriptions = subscriptionInvitations?.filter((invitation) =>
-    [InvitationStatus.Declined, InvitationStatus.Canceled].includes(invitation.status),
-  )
 
   const handleCancel = async (invitationUuid: string) => {
     if (lockContinue) {
@@ -51,7 +48,7 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
 
   return (
     <div>
-      <SubtitleLight className="mb-2 text-info">Active Invites:</SubtitleLight>
+      <SubtitleLight className="mb-2 text-info">Active Invites</SubtitleLight>
       {activeSubscriptions?.map((invitation) => (
         <div key={invitation.uuid} className="mt-1 mb-4">
           <Text>
@@ -62,20 +59,6 @@ const InvitationsList = ({ subscriptionState, application }: Props) => {
           )}
         </div>
       ))}
-      {!!inActiveSubscriptions?.length && (
-        <>
-          <SubtitleLight className="mb-2 text-info">Inactive Invites:</SubtitleLight>
-          <div>
-            {inActiveSubscriptions?.map((invitation) => (
-              <div key={invitation.uuid} className="mb-3 first:mt-2">
-                <Text className="mt-1">
-                  {invitation.inviteeIdentifier} <span className="text-info">({invitation.status})</span>
-                </Text>
-              </div>
-            ))}
-          </div>
-        </>
-      )}
       {!subscriptionState.allInvitationsUsed && <HorizontalSeparator classes="my-4" />}
     </div>
   )
