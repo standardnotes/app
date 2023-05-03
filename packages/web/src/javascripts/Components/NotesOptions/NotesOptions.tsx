@@ -1,7 +1,7 @@
 import Icon from '@/Components/Icon/Icon'
 import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback } from 'react'
-import { NoteType, Platform, SNNote } from '@standardnotes/snjs'
+import { NoteType, Platform, PrefKey, SNNote } from '@standardnotes/snjs'
 import {
   OPEN_NOTE_HISTORY_COMMAND,
   PIN_NOTE_COMMAND,
@@ -35,6 +35,8 @@ import MenuItem from '../Menu/MenuItem'
 import ModalOverlay from '../Modal/ModalOverlay'
 import SuperExportModal from './SuperExportModal'
 import { useApplication } from '../ApplicationProvider'
+import LineWidthSelectionModal from '../LineWidthSelectionModal/LineWidthSelectionModal'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -165,6 +167,11 @@ const NotesOptions = ({
     commandService.triggerCommand(SUPER_SHOW_MARKDOWN_PREVIEW)
   }, [commandService])
 
+  const [showLineWidthModal, setShowLineWidthModal] = useState(false)
+  const toggleLineWidthModal = useCallback(() => {
+    setShowLineWidthModal((show) => !show)
+  }, [])
+
   const unauthorized = notes.some((note) => !application.isAuthorizedToRenderItem(note))
   if (unauthorized) {
     return <ProtectedUnauthorizedLabel />
@@ -186,6 +193,10 @@ const NotesOptions = ({
             {historyShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={historyShortcut} />}
           </MenuItem>
           <HorizontalSeparator classes="my-2" />
+          <MenuItem onClick={toggleLineWidthModal}>
+            <Icon type="line-width" className={iconClass} />
+            Line width
+          </MenuItem>
         </>
       )}
       <MenuSwitchButtonItem
@@ -397,6 +408,14 @@ const NotesOptions = ({
 
       <ModalOverlay isOpen={showExportSuperModal}>
         <SuperExportModal exportNotes={downloadSelectedItems} close={closeSuperExportModal} />
+      </ModalOverlay>
+
+      <ModalOverlay isOpen={showLineWidthModal}>
+        <LineWidthSelectionModal
+          initialValue={application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth])}
+          handleChange={(value) => application.setPreference(PrefKey.EditorLineWidth, value)}
+          close={toggleLineWidthModal}
+        />
       </ModalOverlay>
     </>
   )
