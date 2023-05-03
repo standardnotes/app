@@ -1079,15 +1079,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.userService.changePasscode(newPasscode, origination)
   }
 
-  public getStorageEncryptionPolicy(): ExternalServices.StorageEncryptionPolicy {
-    return this.diskStorageService.getStorageEncryptionPolicy()
-  }
-
-  public setStorageEncryptionPolicy(encryptionPolicy: ExternalServices.StorageEncryptionPolicy): Promise<void> {
-    this.diskStorageService.setEncryptionPolicy(encryptionPolicy)
-    return this.protocolService.repersistAllItems()
-  }
-
   public enableEphemeralPersistencePolicy(): Promise<void> {
     return this.diskStorageService.setPersistencePolicy(ExternalServices.StoragePersistencePolicies.Ephemeral)
   }
@@ -1527,7 +1518,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.diskStorageService = new InternalServices.DiskStorageService(
       this.deviceInterface,
       this.identifier,
-      this.environment,
       this.internalEventBus,
     )
     this.services.push(this.diskStorageService)

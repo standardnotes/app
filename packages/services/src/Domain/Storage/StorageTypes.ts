@@ -7,13 +7,8 @@ export enum StoragePersistencePolicies {
   Ephemeral = 2,
 }
 
-export enum StorageEncryptionPolicy {
-  Default = 1,
-  Disabled = 2,
-}
-
 export enum StorageValueModes {
-  /** Stored inside wrapped encrpyed storage object */
+  /** Stored inside wrapped encrypted storage object */
   Default = 1,
   /** Stored outside storage object, unencrypted */
   Nonwrapped = 2,

@@ -1,7 +1,5 @@
 import { DiskStorageService } from './DiskStorageService'
-
 import { InternalEventBus, DeviceInterface, InternalEventBusInterface } from '@standardnotes/services'
-import { Environment } from '@standardnotes/models'
 
 describe('diskStorageService', () => {
   let storageService: DiskStorageService
@@ -12,7 +10,7 @@ describe('diskStorageService', () => {
     internalEventBus = {} as jest.Mocked<InternalEventBus>
     device = {} as jest.Mocked<DeviceInterface>
 
-    storageService = new DiskStorageService(device, 'test', Environment.Desktop, internalEventBus)
+    storageService = new DiskStorageService(device, 'test', internalEventBus)
   })
 
   it('setInitialValues should set unwrapped values as wrapped value if wrapped value is not encrypted', async () => {
