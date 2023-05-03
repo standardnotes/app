@@ -31,7 +31,6 @@ export enum StorageKey {
   ProtectionExpirey = 'SessionExpiresAtKey',
   ProtectionSessionLength = 'SessionLengthKey',
   KeyRecoveryUndecryptableItems = 'key_recovery_undecryptable',
-  StorageEncryptionPolicy = 'storage_policy',
   WebSocketUrl = 'webSocket_url',
   UserRoles = 'user_roles',
   OfflineUserRoles = 'offline_user_roles',
