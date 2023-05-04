@@ -23,8 +23,7 @@ import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 import { EventObserverInterface } from './EventObserverInterface'
 import { WebApplication } from '@/Application/Application'
 
-export const JoinWorkspaceSuccessString =
-  'Successfully joined a shared subscription. You may have to sign out and back in for changes to take effect.'
+export const JoinWorkspaceSuccessString = 'Successfully joined a shared subscription.'
 
 export class ApplicationEventObserver implements EventObserverInterface {
   constructor(
