@@ -29,6 +29,7 @@ import {
   SUPER_SEARCH_NEXT_RESULT,
   SUPER_SEARCH_PREVIOUS_RESULT,
   SUPER_SEARCH_TOGGLE_REPLACE_MODE,
+  CHANGE_EDITOR_WIDTH_COMMAND,
 } from './KeyboardCommands'
 import { KeyboardKey } from './KeyboardKey'
 import { KeyboardModifier } from './KeyboardModifier'
@@ -180,6 +181,12 @@ export function getKeyboardShortcuts(platform: Platform, _environment: Environme
       command: OPEN_PREFERENCES_COMMAND,
       key: ',',
       modifiers: [primaryModifier],
+      preventDefault: true,
+    },
+    {
+      command: CHANGE_EDITOR_WIDTH_COMMAND,
+      key: 'j',
+      modifiers: [primaryModifier, KeyboardModifier.Shift],
       preventDefault: true,
     },
   ]

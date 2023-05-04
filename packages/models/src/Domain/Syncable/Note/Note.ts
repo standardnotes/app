@@ -5,6 +5,7 @@ import { DecryptedItem } from '../../Abstract/Item/Implementations/DecryptedItem
 import { ItemInterface } from '../../Abstract/Item/Interfaces/ItemInterface'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
 import { NoteContent, NoteContentSpecialized } from './NoteContent'
+import { EditorLineWidth } from '../UserPrefs'
 
 export const isNote = (x: ItemInterface): x is SNNote => x.content_type === ContentType.Note
 
@@ -15,6 +16,7 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
   public readonly preview_plain: string
   public readonly preview_html: string
   public readonly spellcheck?: boolean
+  public readonly editorWidth?: EditorLineWidth
   public readonly noteType?: NoteType
   public readonly authorizedForListed: boolean
 
@@ -30,6 +32,7 @@ export class SNNote extends DecryptedItem<NoteContent> implements NoteContentSpe
     this.preview_plain = String(this.payload.content.preview_plain || '')
     this.preview_html = String(this.payload.content.preview_html || '')
     this.spellcheck = this.payload.content.spellcheck
+    this.editorWidth = this.payload.content.editorWidth
     this.noteType = this.payload.content.noteType
     this.editorIdentifier = this.payload.content.editorIdentifier
     this.authorizedForListed = this.payload.content.authorizedForListed || false

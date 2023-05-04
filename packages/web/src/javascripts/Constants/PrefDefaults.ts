@@ -1,4 +1,11 @@
-import { PrefKey, CollectionSort, NewNoteTitleFormat, EditorLineHeight, EditorFontSize } from '@standardnotes/models'
+import {
+  PrefKey,
+  CollectionSort,
+  NewNoteTitleFormat,
+  EditorLineHeight,
+  EditorFontSize,
+  EditorLineWidth,
+} from '@standardnotes/models'
 import { FeatureIdentifier } from '@standardnotes/snjs'
 
 export const PrefDefaults = {
@@ -10,6 +17,7 @@ export const PrefDefaults = {
   [PrefKey.EditorSpellcheck]: true,
   [PrefKey.EditorResizersEnabled]: false,
   [PrefKey.EditorLineHeight]: EditorLineHeight.Normal,
+  [PrefKey.EditorLineWidth]: EditorLineWidth.FullWidth,
   [PrefKey.EditorFontSize]: EditorFontSize.Normal,
   [PrefKey.SortNotesBy]: CollectionSort.CreatedAt,
   [PrefKey.SortNotesReverse]: false,

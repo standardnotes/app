@@ -4,7 +4,6 @@ import { DropdownItem } from './DropdownItem'
 import { classNames } from '@standardnotes/snjs'
 import {
   Select,
-  SelectArrow,
   SelectItem,
   SelectLabel,
   SelectPopover,
@@ -102,7 +101,7 @@ const Dropdown = ({
           ) : null}
           <div className="text-base lg:text-sm">{currentItem?.label}</div>
         </div>
-        <SelectArrow className={classNames('text-passive-1', isExpanded && 'rotate-180')} />
+        <Icon type="chevron-down" size="normal" className={isExpanded ? 'rotate-180' : ''} />
       </Select>
       <SelectPopover
         store={select}

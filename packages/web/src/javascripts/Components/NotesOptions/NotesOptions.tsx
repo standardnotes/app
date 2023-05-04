@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { NoteType, Platform, SNNote } from '@standardnotes/snjs'
 import {
+  CHANGE_EDITOR_WIDTH_COMMAND,
   OPEN_NOTE_HISTORY_COMMAND,
   PIN_NOTE_COMMAND,
   SHOW_HIDDEN_OPTIONS_KEYBOARD_COMMAND,
@@ -165,6 +166,14 @@ const NotesOptions = ({
     commandService.triggerCommand(SUPER_SHOW_MARKDOWN_PREVIEW)
   }, [commandService])
 
+  const toggleLineWidthModal = useCallback(() => {
+    application.keyboardService.triggerCommand(CHANGE_EDITOR_WIDTH_COMMAND)
+  }, [application.keyboardService])
+  const editorWidthShortcut = useMemo(
+    () => application.keyboardService.keyboardShortcutForCommand(CHANGE_EDITOR_WIDTH_COMMAND),
+    [application],
+  )
+
   const unauthorized = notes.some((note) => !application.isAuthorizedToRenderItem(note))
   if (unauthorized) {
     return <ProtectedUnauthorizedLabel />
@@ -186,6 +195,11 @@ const NotesOptions = ({
             {historyShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={historyShortcut} />}
           </MenuItem>
           <HorizontalSeparator classes="my-2" />
+          <MenuItem onClick={toggleLineWidthModal}>
+            <Icon type="line-width" className={iconClass} />
+            Editor width
+            {editorWidthShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={editorWidthShortcut} />}
+          </MenuItem>
         </>
       )}
       <MenuSwitchButtonItem
