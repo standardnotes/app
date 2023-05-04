@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.156.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.156.3...@standardnotes/web@3.156.4) (2023-05-04)
+
+### Bug Fixes
+
+* workspace names now default to account email after signing in. It can later be changed from the workspace switcher menu. ([8385b4e](https://github.com/standardnotes/app/commit/8385b4e89fa0fc3204532adda9d085d9c0fd7996))
+
 ## [3.156.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.156.2...@standardnotes/web@3.156.3) (2023-05-04)
 
 **Note:** Version bump only for package @standardnotes/web

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.168.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.2...@standardnotes/snjs@2.168.3) (2023-05-04)
+
+### Bug Fixes
+
+* workspace names now default to account email after signing in. It can later be changed from the workspace switcher menu. ([8385b4e](https://github.com/standardnotes/app/commit/8385b4e89fa0fc3204532adda9d085d9c0fd7996))
+
 ## [2.168.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.1...@standardnotes/snjs@2.168.2) (2023-05-03)
 
 **Note:** Version bump only for package @standardnotes/snjs
