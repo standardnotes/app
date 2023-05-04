@@ -128,7 +128,7 @@ const EditorWidthSelectionModal = ({
         <div className="hidden items-center gap-2 md:flex">
           <Button onClick={close}>Cancel</Button>
           <Button onClick={accept} primary>
-            OK
+            Apply
           </Button>
         </div>
       </ModalDialogButtons>
