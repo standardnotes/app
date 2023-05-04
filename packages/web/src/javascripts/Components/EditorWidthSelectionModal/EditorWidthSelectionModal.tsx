@@ -11,6 +11,7 @@ import ModalOverlay from '../Modal/ModalOverlay'
 import { CHANGE_EDITOR_WIDTH_COMMAND, ESCAPE_COMMAND } from '@standardnotes/ui-services'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { observer } from 'mobx-react-lite'
+import Switch from '../Switch/Switch'
 
 const DoubleSidedArrow = ({ className }: { className?: string }) => {
   return (
@@ -29,15 +30,18 @@ const EditorWidthSelectionModal = ({
   initialValue,
   handleChange,
   close,
+  isAlreadyGlobal,
 }: {
   initialValue: EditorLineWidth
-  handleChange: (value: EditorLineWidth) => void
+  handleChange: (value: EditorLineWidth, setGlobally: boolean) => void
   close: () => void
+  isAlreadyGlobal: boolean
 }) => {
   const application = useApplication()
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   const [value, setValue] = useState<EditorLineWidth>(() => initialValue)
+  const [setGlobally, setSetGlobally] = useState(isAlreadyGlobal)
 
   const options = useMemo(
     () => [
@@ -62,9 +66,9 @@ const EditorWidthSelectionModal = ({
   )
 
   const accept = useCallback(() => {
-    handleChange(value)
+    handleChange(value, setGlobally)
     close()
-  }, [close, handleChange, value])
+  }, [close, handleChange, setGlobally, value])
 
   const actions = useMemo(
     (): ModalAction[] => [
@@ -139,6 +143,14 @@ const EditorWidthSelectionModal = ({
           {DynamicMargin}
         </div>
       </div>
+      {!isAlreadyGlobal && (
+        <div className="border-t border-border bg-default px-4 py-2">
+          <label className="flex items-center gap-2">
+            <Switch checked={setGlobally} onChange={setSetGlobally} />
+            Set globally (will not apply to current note)
+          </label>
+        </div>
+      )}
       <ModalDialogButtons className="justify-center md:justify-between">
         <RadioButtonGroup items={options} value={value} onChange={(value) => setValue(value as EditorLineWidth)} />
         <div className="hidden items-center gap-2 md:flex">
@@ -166,8 +178,8 @@ const EditorWidthSelectionModalWrapper = () => {
     : application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth])
 
   const setLineWidth = useCallback(
-    (lineWidth: EditorLineWidth) => {
-      if (note) {
+    (lineWidth: EditorLineWidth, setGlobally: boolean) => {
+      if (note && !setGlobally) {
         notesController.setNoteEditorWidth(note, lineWidth).catch(console.error)
       } else {
         application.setPreference(PrefKey.EditorLineWidth, lineWidth).catch(console.error)
@@ -186,6 +198,8 @@ const EditorWidthSelectionModalWrapper = () => {
       onKeyDown: (_, data) => {
         if (typeof data === 'boolean' && data) {
           setIsGlobal(data)
+        } else {
+          setIsGlobal(false)
         }
         toggle()
       },
@@ -194,7 +208,12 @@ const EditorWidthSelectionModalWrapper = () => {
 
   return (
     <ModalOverlay isOpen={isOpen}>
-      <EditorWidthSelectionModal initialValue={lineWidth} handleChange={setLineWidth} close={toggle} />
+      <EditorWidthSelectionModal
+        initialValue={lineWidth}
+        handleChange={setLineWidth}
+        close={toggle}
+        isAlreadyGlobal={isGlobal}
+      />
     </ModalOverlay>
   )
 }
