@@ -58,6 +58,7 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
             wrapper: 'relative',
             button: 'focus:outline-none focus:shadow-none focus:ring-none',
           }}
+          popoverPlacement="top"
         />
       </div>
     </div>

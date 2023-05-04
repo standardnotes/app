@@ -2,7 +2,15 @@ import { useEffect } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { DropdownItem } from './DropdownItem'
 import { classNames } from '@standardnotes/snjs'
-import { Select, SelectItem, SelectLabel, SelectPopover, useSelectStore, VisuallyHidden } from '@ariakit/react'
+import {
+  Select,
+  SelectItem,
+  SelectLabel,
+  SelectPopover,
+  SelectStoreProps,
+  useSelectStore,
+  VisuallyHidden,
+} from '@ariakit/react'
 import { KeyboardKey } from '@standardnotes/ui-services'
 
 type DropdownProps = {
@@ -17,9 +25,19 @@ type DropdownProps = {
     popover?: string
   }
   fullWidth?: boolean
+  popoverPlacement?: SelectStoreProps['placement']
 }
 
-const Dropdown = ({ label, value, onChange, items, disabled, fullWidth, classNameOverride = {} }: DropdownProps) => {
+const Dropdown = ({
+  label,
+  value,
+  onChange,
+  items,
+  disabled,
+  fullWidth,
+  classNameOverride = {},
+  popoverPlacement,
+}: DropdownProps) => {
   const select = useSelectStore({
     defaultValue: value,
     renderCallback(props) {
@@ -29,6 +47,7 @@ const Dropdown = ({ label, value, onChange, items, disabled, fullWidth, classNam
         popoverElement.style.zIndex = 'var(--z-index-dropdown-menu)'
       }
     },
+    placement: popoverPlacement,
   })
 
   const selectedValue = select.useState('value')
