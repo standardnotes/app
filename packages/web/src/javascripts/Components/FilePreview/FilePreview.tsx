@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { concatenateUint8Arrays } from '@/Utils'
 import {
   ApplicationEvent,

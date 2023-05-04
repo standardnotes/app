@@ -1,7 +1,7 @@
 import RevisionContentLocked from './RevisionContentLocked'
 import SelectedRevisionContent from './SelectedRevisionContent'
 import { observer } from 'mobx-react-lite'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 import { NoteHistoryController, RevisionContentState } from '@/Controllers/NoteHistory/NoteHistoryController'

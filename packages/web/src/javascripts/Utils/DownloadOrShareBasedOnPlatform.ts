@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { downloadBlobOnAndroid } from '@/NativeMobileWeb/DownloadBlobOnAndroid'
 import { shareBlobOnMobile } from '@/NativeMobileWeb/ShareBlobOnMobile'
 import { Platform } from '@standardnotes/snjs'

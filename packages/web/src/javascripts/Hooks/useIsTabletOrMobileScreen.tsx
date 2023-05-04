@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { debounce, isMobileScreen, isTabletOrMobileScreen, isTabletScreen } from '@/Utils'
 import { useEffect, useState } from 'react'

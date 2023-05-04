@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'

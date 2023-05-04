@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { useCallback, useEffect, useState } from 'react'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { MobileDeviceInterface } from '@standardnotes/services'
 import { MobileUnlockTiming } from '@standardnotes/snjs'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'

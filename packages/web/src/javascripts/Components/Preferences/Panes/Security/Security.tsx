@@ -1,6 +1,6 @@
 import { FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
 
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { FunctionComponent } from 'react'
 import TwoFactorAuthWrapper from './TwoFactorAuth/TwoFactorAuthWrapper'

@@ -1,5 +1,5 @@
-import { WebApplication } from '@/Application/Application'
-import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { WebApplication } from '@/Application/WebApplication'
+import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useState } from 'react'
@@ -12,7 +12,7 @@ import SignInPane from './SignIn'
 type Props = {
   viewControllerManager: ViewControllerManager
   application: WebApplication
-  mainApplicationGroup: ApplicationGroup
+  mainApplicationGroup: WebApplicationGroup
   menuPane: AccountMenuPane
   setMenuPane: (pane: AccountMenuPane) => void
   closeMenu: () => void

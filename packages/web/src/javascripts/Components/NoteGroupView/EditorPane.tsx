@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 import { mergeRefs } from '@/Hooks/mergeRefs'
 import { ForwardedRef, forwardRef } from 'react'

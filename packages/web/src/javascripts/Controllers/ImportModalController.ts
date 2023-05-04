@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { DecryptedTransferPayload, SNTag, TagContent } from '@standardnotes/models'
 import { ContentType, pluralize, UuidGenerator } from '@standardnotes/snjs'
 import { Importer, NoteImportType } from '@standardnotes/ui-services'

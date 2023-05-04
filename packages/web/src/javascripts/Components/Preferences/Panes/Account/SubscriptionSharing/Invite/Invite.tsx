@@ -1,6 +1,6 @@
 import { FunctionComponent, useCallback, useMemo, useState } from 'react'
 
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { isEmailValid } from '@/Utils'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 

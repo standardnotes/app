@@ -1,6 +1,6 @@
 import AlertDialog from '../AlertDialog/AlertDialog'
 import { FunctionComponent, useRef } from 'react'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { PremiumFeatureModalType } from './PremiumFeatureModalType'
 import { FeatureName } from '@/Controllers/FeatureName'
 import { SuccessPrompt } from './Subviews/SuccessPrompt'

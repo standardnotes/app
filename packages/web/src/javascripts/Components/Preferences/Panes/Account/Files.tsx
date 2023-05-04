@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import Spinner from '@/Components/Spinner/Spinner'
 import { formatSizeToReadableString } from '@standardnotes/filepicker'
 import { SettingName } from '@standardnotes/snjs'

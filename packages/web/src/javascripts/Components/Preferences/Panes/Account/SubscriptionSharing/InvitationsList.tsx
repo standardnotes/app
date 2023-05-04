@@ -5,7 +5,7 @@ import { InvitationStatus } from '@standardnotes/snjs'
 import { SubtitleLight, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 import Button from '@/Components/Button/Button'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 
 type Props = {

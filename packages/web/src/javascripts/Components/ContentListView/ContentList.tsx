@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, KeyboardEventHandler, UIEventHandler, useCallback } from 'react'

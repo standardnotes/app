@@ -8,6 +8,7 @@ import {
   InternalEventBus,
   InternalEventBusInterface,
   RawStorageKey,
+  ApplicationEvent,
 } from '@standardnotes/services'
 import { UuidGenerator } from '@standardnotes/utils'
 import { AppGroupCallback } from './AppGroupCallback'
@@ -71,6 +72,13 @@ export class SNApplicationGroup<D extends DeviceInterface = DeviceInterface> ext
     const application = await this.buildApplication(primaryDescriptor)
 
     this.primaryApplication = application
+
+    application.addEventObserver(async () => {
+      this.renameDescriptor(
+        primaryDescriptor as ApplicationDescriptor,
+        application.sessions.getWorkspaceDisplayIdentifier(),
+      )
+    }, ApplicationEvent.SignedIn)
 
     await this.notifyEvent(ApplicationGroupEvent.PrimaryApplicationSet, { application: application })
   }

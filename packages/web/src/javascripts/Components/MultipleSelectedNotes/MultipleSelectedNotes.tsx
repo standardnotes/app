@@ -1,7 +1,7 @@
 import { IlNotesIcon } from '@standardnotes/icons'
 import { observer } from 'mobx-react-lite'
 import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
 import Button from '../Button/Button'
 import { useCallback } from 'react'

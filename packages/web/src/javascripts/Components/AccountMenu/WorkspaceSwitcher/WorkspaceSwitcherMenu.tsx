@@ -1,4 +1,4 @@
-import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { ApplicationDescriptor, ApplicationGroupEvent, ButtonType } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
@@ -10,7 +10,7 @@ import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import WorkspaceMenuItem from './WorkspaceMenuItem'
 
 type Props = {
-  mainApplicationGroup: ApplicationGroup
+  mainApplicationGroup: WebApplicationGroup
   viewControllerManager: ViewControllerManager
   isOpen: boolean
   hideWorkspaceOptions?: boolean

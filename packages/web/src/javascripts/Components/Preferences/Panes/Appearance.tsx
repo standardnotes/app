@@ -3,7 +3,7 @@ import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import {
   ContentType,
   FeatureIdentifier,

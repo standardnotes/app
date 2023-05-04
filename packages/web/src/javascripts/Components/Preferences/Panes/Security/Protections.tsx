@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { FunctionComponent, useCallback, useState, useEffect } from 'react'
 import { ApplicationEvent } from '@standardnotes/snjs'
 import { isSameDay } from '@/Utils'

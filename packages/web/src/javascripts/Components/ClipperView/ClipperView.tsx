@@ -1,4 +1,4 @@
-import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { SNLogoFull } from '@standardnotes/icons'
 import { useCallback, useEffect, useState } from 'react'
@@ -48,7 +48,7 @@ const ClipperView = ({
   applicationGroup,
 }: {
   viewControllerManager: ViewControllerManager
-  applicationGroup: ApplicationGroup
+  applicationGroup: WebApplicationGroup
 }) => {
   const application = useApplication()
 

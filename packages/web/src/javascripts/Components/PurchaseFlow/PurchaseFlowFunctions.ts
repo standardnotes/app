@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { isDesktopApplication } from '@/Utils'
 import { Environment } from '@standardnotes/snjs'
 import { RouteType } from '@standardnotes/ui-services'

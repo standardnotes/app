@@ -1,6 +1,6 @@
 import { FeatureIdentifier, FeatureStatus } from '@standardnotes/snjs'
 import { ComponentArea, NoteType } from '@standardnotes/features'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { PlainEditorMetadata, SuperEditorMetadata } from '@/Constants/Constants'
 import { getIconAndTintForNoteType } from './Items/Icons/getIconAndTintForNoteType'
 import { DropdownItem } from '@/Components/Dropdown/DropdownItem'

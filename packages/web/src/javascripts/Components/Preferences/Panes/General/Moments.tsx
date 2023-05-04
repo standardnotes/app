@@ -1,5 +1,5 @@
 import { Pill, Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'

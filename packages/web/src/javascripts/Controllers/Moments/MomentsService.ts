@@ -5,7 +5,7 @@ import { FileItem, PrefKey, sleep, SNTag } from '@standardnotes/snjs'
 import { FilesController } from '../FilesController'
 import { action, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewController'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { dateToStringStyle1 } from '@/Utils/DateUtils'
 import { PhotoRecorder } from './PhotoRecorder'
 

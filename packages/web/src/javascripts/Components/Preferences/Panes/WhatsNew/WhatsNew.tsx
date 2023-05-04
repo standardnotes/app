@@ -1,6 +1,6 @@
 import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { useEffect, useMemo, useState } from 'react'
 import { Changelog } from '@standardnotes/ui-services'
 import { LinkButton, Subtitle, Title } from '@/Components/Preferences/PreferencesComponents/Content'

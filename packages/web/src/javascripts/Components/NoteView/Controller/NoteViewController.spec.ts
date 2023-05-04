@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ContentType } from '@standardnotes/common'
 import {
   MutatorService,

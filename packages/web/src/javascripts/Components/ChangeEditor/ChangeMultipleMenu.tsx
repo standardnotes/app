@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { createEditorMenuGroups } from '@/Utils/createEditorMenuGroups'
