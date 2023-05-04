@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react'
 import OfflineSubscription from '@/Components/Preferences/Panes/General/Advanced/OfflineSubscription'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import PackagesPreferencesSection from '@/Components/Preferences/Panes/General/Advanced/Packages/Section'

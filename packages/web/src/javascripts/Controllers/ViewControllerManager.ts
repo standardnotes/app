@@ -7,7 +7,7 @@ import {
   ToastService,
   ToastServiceInterface,
 } from '@standardnotes/ui-services'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { AccountMenuController } from '@/Controllers/AccountMenu/AccountMenuController'
 import { destroyAllObjectProperties } from '@/Utils'
 import {

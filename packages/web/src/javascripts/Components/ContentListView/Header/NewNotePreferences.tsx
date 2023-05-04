@@ -13,7 +13,7 @@ import { ChangeEventHandler, FunctionComponent, useCallback, useEffect, useRef, 
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import Dropdown from '@/Components/Dropdown/Dropdown'
 import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 import { PreferenceMode } from './PreferenceMode'
 import dayjs from 'dayjs'

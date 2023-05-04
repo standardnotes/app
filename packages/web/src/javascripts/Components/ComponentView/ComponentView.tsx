@@ -7,7 +7,7 @@ import {
   ComponentViewerEvent,
   ComponentViewerError,
 } from '@standardnotes/snjs'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import { observer } from 'mobx-react-lite'
 import OfflineRestricted from '@/Components/ComponentView/OfflineRestricted'

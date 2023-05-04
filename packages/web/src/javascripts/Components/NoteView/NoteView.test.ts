@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import {

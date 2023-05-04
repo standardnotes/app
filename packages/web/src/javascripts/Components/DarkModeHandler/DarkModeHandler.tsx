@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
 import { useEffect } from 'react'

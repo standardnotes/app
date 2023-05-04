@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import {
   ButtonType,
   Challenge,
@@ -14,7 +14,7 @@ import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import ChallengeModalPrompt from './ChallengePrompt'
 import LockscreenWorkspaceSwitcher from './LockscreenWorkspaceSwitcher'
-import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { ChallengeModalValues } from './ChallengeModalValues'
 import { InputValue } from './InputValue'
@@ -27,7 +27,7 @@ import { useAutoElementRect } from '@/Hooks/useElementRect'
 type Props = {
   application: WebApplication
   viewControllerManager: ViewControllerManager
-  mainApplicationGroup: ApplicationGroup
+  mainApplicationGroup: WebApplicationGroup
   challenge: Challenge
   onDismiss?: (challenge: Challenge) => void
 }

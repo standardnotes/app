@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import Icon from '../../Icon/Icon'
 import { classNames } from '@standardnotes/utils'

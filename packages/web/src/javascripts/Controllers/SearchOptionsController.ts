@@ -1,6 +1,6 @@
 import { ApplicationEvent, InternalEventBus } from '@standardnotes/snjs'
 import { makeObservable, observable, action, runInAction } from 'mobx'
-import { WebApplication } from '../Application/Application'
+import { WebApplication } from '../Application/WebApplication'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 
 export class SearchOptionsController extends AbstractViewController {

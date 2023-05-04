@@ -1,7 +1,7 @@
 import { Subtitle, Title, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { useMemo } from 'react'
 import TextBackupsDesktop from './TextBackupsDesktop'
 

@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { Action, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useState } from 'react'
 import Spinner from '@/Components/Spinner/Spinner'

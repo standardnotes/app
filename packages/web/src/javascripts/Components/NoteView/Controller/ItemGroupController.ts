@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { removeFromArray } from '@standardnotes/utils'
 import { FileItem, SNNote } from '@standardnotes/snjs'
 import { NoteViewController } from './NoteViewController'

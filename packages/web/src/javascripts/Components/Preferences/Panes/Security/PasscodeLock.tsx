@@ -8,7 +8,7 @@ import {
   StringUtils,
   Strings,
 } from '@/Constants/Strings'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { preventRefreshing } from '@/Utils'
 import { alertDialog } from '@standardnotes/ui-services'
 import { FormEvent, useCallback, useEffect, useRef, useState } from 'react'

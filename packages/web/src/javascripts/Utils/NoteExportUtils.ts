@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { InvisibleSuperConverter } from '@/Components/SuperEditor/Tools/InvisibleMarkdownConverter'
 import { NoteType, PrefKey, SNNote } from '@standardnotes/snjs'
 

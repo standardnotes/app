@@ -1,7 +1,7 @@
 import { SNTag } from '@standardnotes/snjs'
 import { ContentType } from '@standardnotes/common'
 import { InternalEventBus } from '@standardnotes/services'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { LinkingController } from '../LinkingController'
 import { NavigationController } from '../Navigation/NavigationController'
 import { NotesController } from '../NotesController/NotesController'

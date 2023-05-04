@@ -1,6 +1,31 @@
 {
   "versions": [
     {
+      "version": "3.156.4",
+      "title": "[3.156.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.156.3...@standardnotes/web@3.156.4) (2023-05-04)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* workspace names now default to account email after signing in. It can later be changed from the workspace switcher menu. ([8385b4e](https://github.com/standardnotes/app/commit/8385b4e89fa0fc3204532adda9d085d9c0fd7996))",
+      "parsed": {
+        "_": [
+          "workspace names now default to account email after signing in. It can later be changed from the workspace switcher menu. (8385b4e)"
+        ],
+        "Bug Fixes": [
+          "workspace names now default to account email after signing in. It can later be changed from the workspace switcher menu. (8385b4e)"
+        ]
+      }
+    },
+    {
+      "version": "3.156.3",
+      "title": "[3.156.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.156.2...@standardnotes/web@3.156.3) (2023-05-04)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.156.2",
       "title": "[3.156.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.156.1...@standardnotes/web@3.156.2) (2023-05-03)",
       "date": null,

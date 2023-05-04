@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { User as UserType } from '@standardnotes/snjs'
 
 type Props = {

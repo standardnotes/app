@@ -1,5 +1,5 @@
 import { FeatureName } from './FeatureName'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { PremiumFeatureModalType } from '@/Components/PremiumFeaturesModal/PremiumFeatureModalType'
 import { destroyAllObjectProperties } from '@/Utils'
 import {

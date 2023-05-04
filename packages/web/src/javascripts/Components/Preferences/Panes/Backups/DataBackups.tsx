@@ -11,7 +11,7 @@ import {
 } from '@/Constants/Strings'
 import { BackupFile } from '@standardnotes/snjs'
 import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { Title, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'

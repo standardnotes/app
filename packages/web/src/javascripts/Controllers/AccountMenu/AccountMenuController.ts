@@ -1,7 +1,7 @@
 import { destroyAllObjectProperties, isDev } from '@/Utils'
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 import { ApplicationEvent, ContentType, InternalEventBus, SNNote, SNTag } from '@standardnotes/snjs'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 
