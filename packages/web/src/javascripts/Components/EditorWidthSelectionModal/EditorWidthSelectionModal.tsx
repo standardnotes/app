@@ -93,7 +93,7 @@ const EditorWidthSelectionModal = ({
       command: ESCAPE_COMMAND,
       onKeyDown() {
         close()
-        return
+        return true
       },
     })
   }, [application.keyboardService, close])

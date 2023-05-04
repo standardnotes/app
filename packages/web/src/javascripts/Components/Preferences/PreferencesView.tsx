@@ -9,6 +9,8 @@ import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import Modal from '../Modal/Modal'
 import { classNames } from '@standardnotes/snjs'
 import { isIOS } from '@/Utils'
+import { useCommandService } from '../CommandProvider'
+import { ESCAPE_COMMAND } from '@standardnotes/ui-services'
 
 const PreferencesView: FunctionComponent<PreferencesProps> = ({
   application,
@@ -17,6 +19,8 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
   userProvider,
   mfaProvider,
 }) => {
+  const commandService = useCommandService()
+
   const menu = useMemo(
     () => new PreferencesMenu(application, viewControllerManager.enableUnfinishedFeatures),
     [viewControllerManager.enableUnfinishedFeatures, application],
@@ -41,6 +45,16 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
       }
     }
   }, [addAndroidBackHandler, closePreferences])
+
+  useEffect(() => {
+    return commandService.addCommandHandler({
+      command: ESCAPE_COMMAND,
+      onKeyDown: () => {
+        closePreferences()
+        return true
+      },
+    })
+  }, [commandService, closePreferences])
 
   return (
     <Modal
