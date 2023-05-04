@@ -10,6 +10,7 @@ import { useApplication } from '../ApplicationProvider'
 import ModalOverlay from '../Modal/ModalOverlay'
 import { CHANGE_EDITOR_WIDTH_COMMAND, ESCAPE_COMMAND } from '@standardnotes/ui-services'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
+import { observer } from 'mobx-react-lite'
 
 const DoubleSidedArrow = ({ className }: { className?: string }) => {
   return (
@@ -198,4 +199,4 @@ const EditorWidthSelectionModalWrapper = () => {
   )
 }
 
-export default EditorWidthSelectionModalWrapper
+export default observer(EditorWidthSelectionModalWrapper)
