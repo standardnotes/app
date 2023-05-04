@@ -8,6 +8,7 @@ import {
   SelectItem,
   SelectLabel,
   SelectPopover,
+  SelectStoreProps,
   useSelectStore,
   VisuallyHidden,
 } from '@ariakit/react'
@@ -25,9 +26,19 @@ type DropdownProps = {
     popover?: string
   }
   fullWidth?: boolean
+  popoverPlacement?: SelectStoreProps['placement']
 }
 
-const Dropdown = ({ label, value, onChange, items, disabled, fullWidth, classNameOverride = {} }: DropdownProps) => {
+const Dropdown = ({
+  label,
+  value,
+  onChange,
+  items,
+  disabled,
+  fullWidth,
+  classNameOverride = {},
+  popoverPlacement,
+}: DropdownProps) => {
   const select = useSelectStore({
     defaultValue: value,
     renderCallback(props) {
@@ -37,6 +48,7 @@ const Dropdown = ({ label, value, onChange, items, disabled, fullWidth, classNam
         popoverElement.style.zIndex = 'var(--z-index-dropdown-menu)'
       }
     },
+    placement: popoverPlacement,
   })
 
   const selectedValue = select.useState('value')
