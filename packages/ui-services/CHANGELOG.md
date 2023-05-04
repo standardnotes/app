@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.26.0](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.25.10...@standardnotes/ui-services@1.26.0) (2023-05-04)
+
+### Features
+
+* Replaced margin resizers with "Editor width" options. You can set it globally from Preferences > Appearance or per-note from the note options menu ([#2324](https://github.com/standardnotes/app/issues/2324)) ([9fbb845](https://github.com/standardnotes/app/commit/9fbb845b1d3b1ca6a4b064f3b63bdae1cf7777e8))
+
 ## [1.25.10](https://github.com/standardnotes/app/compare/@standardnotes/ui-services@1.25.9...@standardnotes/ui-services@1.25.10) (2023-05-04)
 
 **Note:** Version bump only for package @standardnotes/ui-services
