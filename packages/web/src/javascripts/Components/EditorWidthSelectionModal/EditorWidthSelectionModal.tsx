@@ -1,5 +1,5 @@
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
-import { classNames, EditorLineWidth, PrefKey } from '@standardnotes/snjs'
+import { classNames, EditorLineWidth, PrefKey, SNNote } from '@standardnotes/snjs'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import Button from '../Button/Button'
 import Modal, { ModalAction } from '../Modal/Modal'
@@ -30,18 +30,18 @@ const EditorWidthSelectionModal = ({
   initialValue,
   handleChange,
   close,
-  isAlreadyGlobal,
+  note,
 }: {
   initialValue: EditorLineWidth
   handleChange: (value: EditorLineWidth, setGlobally: boolean) => void
   close: () => void
-  isAlreadyGlobal: boolean
+  note: SNNote | undefined
 }) => {
   const application = useApplication()
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   const [value, setValue] = useState<EditorLineWidth>(() => initialValue)
-  const [setGlobally, setSetGlobally] = useState(isAlreadyGlobal)
+  const [setGlobally, setSetGlobally] = useState(false)
 
   const options = useMemo(
     () => [
@@ -143,11 +143,11 @@ const EditorWidthSelectionModal = ({
           {DynamicMargin}
         </div>
       </div>
-      {!isAlreadyGlobal && (
+      {!!note && (
         <div className="border-t border-border bg-default px-4 py-2">
           <label className="flex items-center gap-2">
             <Switch checked={setGlobally} onChange={setSetGlobally} />
-            Set globally (will not apply to current note)
+            Set globally {note.editorWidth != undefined && '(will not apply to current note)'}
           </label>
         </div>
       )}
@@ -208,12 +208,7 @@ const EditorWidthSelectionModalWrapper = () => {
 
   return (
     <ModalOverlay isOpen={isOpen}>
-      <EditorWidthSelectionModal
-        initialValue={lineWidth}
-        handleChange={setLineWidth}
-        close={toggle}
-        isAlreadyGlobal={isGlobal}
-      />
+      <EditorWidthSelectionModal initialValue={lineWidth} handleChange={setLineWidth} close={toggle} note={note} />
     </ModalOverlay>
   )
 }
