@@ -30,6 +30,7 @@ import DotOrgNotice from './DotOrgNotice'
 import LinkingControllerProvider from '@/Controllers/LinkingControllerProvider'
 import ImportModal from '../ImportModal/ImportModal'
 import IosKeyboardClose from '../IosKeyboardClose/IosKeyboardClose'
+import EditorWidthSelectionModalWrapper from '../EditorWidthSelectionModal/EditorWidthSelectionModal'
 
 type Props = {
   application: WebApplication
@@ -268,6 +269,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                     <ToastContainer />
                     <FilePreviewModalWrapper application={application} viewControllerManager={viewControllerManager} />
                     <PermissionsModalWrapper application={application} />
+                    <EditorWidthSelectionModalWrapper />
                     <ConfirmDeleteAccountContainer
                       application={application}
                       viewControllerManager={viewControllerManager}

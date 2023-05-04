@@ -1,8 +1,6 @@
 import { WebApplication } from '@/Application/Application'
 import Dropdown from '@/Components/Dropdown/Dropdown'
 import Icon from '@/Components/Icon/Icon'
-import EditorWidthSelectionModal from '@/Components/EditorWidthSelectionModal/EditorWidthSelectionModal'
-import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
@@ -11,6 +9,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Subtitle, Title, Text } from '../../PreferencesComponents/Content'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import { CHANGE_EDITOR_WIDTH_COMMAND } from '@standardnotes/ui-services'
 
 type Props = {
   application: WebApplication
@@ -66,17 +65,9 @@ const EditorDefaults = ({ application }: Props) => {
     application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth]),
   )
 
-  const [showEditorWidthModal, setShowEditorWidthModal] = useState(false)
   const toggleEditorWidthModal = useCallback(() => {
-    setShowEditorWidthModal((show) => !show)
-  }, [])
-
-  const handleEditorWidthChange = useCallback(
-    (value: EditorLineWidth) => {
-      void application.setPreference(PrefKey.EditorLineWidth, value)
-    },
-    [application],
-  )
+    application.keyboardService.triggerCommand(CHANGE_EDITOR_WIDTH_COMMAND, true)
+  }, [application.keyboardService])
 
   useEffect(() => {
     return application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
@@ -138,13 +129,6 @@ const EditorDefaults = ({ application }: Props) => {
           </div>
         </div>
       </PreferencesSegment>
-      <ModalOverlay isOpen={showEditorWidthModal}>
-        <EditorWidthSelectionModal
-          initialValue={editorWidth}
-          handleChange={handleEditorWidthChange}
-          close={toggleEditorWidthModal}
-        />
-      </ModalOverlay>
     </PreferencesGroup>
   )
 }

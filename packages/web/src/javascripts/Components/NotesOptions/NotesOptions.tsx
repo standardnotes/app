@@ -3,6 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import { NoteType, Platform, SNNote } from '@standardnotes/snjs'
 import {
+  CHANGE_EDITOR_WIDTH_COMMAND,
   OPEN_NOTE_HISTORY_COMMAND,
   PIN_NOTE_COMMAND,
   SHOW_HIDDEN_OPTIONS_KEYBOARD_COMMAND,
@@ -35,7 +36,6 @@ import MenuItem from '../Menu/MenuItem'
 import ModalOverlay from '../Modal/ModalOverlay'
 import SuperExportModal from './SuperExportModal'
 import { useApplication } from '../ApplicationProvider'
-import EditorWidthSelectionModal from '../EditorWidthSelectionModal/EditorWidthSelectionModal'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -166,10 +166,13 @@ const NotesOptions = ({
     commandService.triggerCommand(SUPER_SHOW_MARKDOWN_PREVIEW)
   }, [commandService])
 
-  const [showLineWidthModal, setShowLineWidthModal] = useState(false)
   const toggleLineWidthModal = useCallback(() => {
-    setShowLineWidthModal((show) => !show)
-  }, [])
+    application.keyboardService.triggerCommand(CHANGE_EDITOR_WIDTH_COMMAND)
+  }, [application.keyboardService])
+  const editorWidthShortcut = useMemo(
+    () => application.keyboardService.keyboardShortcutForCommand(CHANGE_EDITOR_WIDTH_COMMAND),
+    [application],
+  )
 
   const unauthorized = notes.some((note) => !application.isAuthorizedToRenderItem(note))
   if (unauthorized) {
@@ -181,8 +184,6 @@ const NotesOptions = ({
   }
 
   const isOnlySuperNoteSelected = notes.length === 1 && notes[0].noteType === NoteType.Super
-
-  const noteEditorWidth = notesController.getEditorWidthForNote(notes[0])
 
   return (
     <>
@@ -197,6 +198,7 @@ const NotesOptions = ({
           <MenuItem onClick={toggleLineWidthModal}>
             <Icon type="line-width" className={iconClass} />
             Editor width
+            {editorWidthShortcut && <KeyboardShortcutIndicator className="ml-auto" shortcut={editorWidthShortcut} />}
           </MenuItem>
         </>
       )}
@@ -409,14 +411,6 @@ const NotesOptions = ({
 
       <ModalOverlay isOpen={showExportSuperModal}>
         <SuperExportModal exportNotes={downloadSelectedItems} close={closeSuperExportModal} />
-      </ModalOverlay>
-
-      <ModalOverlay isOpen={showLineWidthModal}>
-        <EditorWidthSelectionModal
-          initialValue={noteEditorWidth}
-          handleChange={(value) => notesController.setNoteEditorWidth(notes[0], value)}
-          close={toggleLineWidthModal}
-        />
       </ModalOverlay>
     </>
   )

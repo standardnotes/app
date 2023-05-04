@@ -1,11 +1,15 @@
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
-import { classNames, EditorLineWidth } from '@standardnotes/snjs'
-import { useCallback, useMemo, useState } from 'react'
+import { classNames, EditorLineWidth, PrefKey } from '@standardnotes/snjs'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Button from '../Button/Button'
 import Modal, { ModalAction } from '../Modal/Modal'
 import ModalDialogButtons from '../Modal/ModalDialogButtons'
 import RadioButtonGroup from '../RadioButtonGroup/RadioButtonGroup'
 import { EditorMargins, EditorMaxWidths } from './EditorWidths'
+import { useApplication } from '../ApplicationProvider'
+import ModalOverlay from '../Modal/ModalOverlay'
+import { CHANGE_EDITOR_WIDTH_COMMAND, ESCAPE_COMMAND } from '@standardnotes/ui-services'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 const DoubleSidedArrow = ({ className }: { className?: string }) => {
   return (
@@ -29,6 +33,7 @@ const EditorWidthSelectionModal = ({
   handleChange: (value: EditorLineWidth) => void
   close: () => void
 }) => {
+  const application = useApplication()
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   const [value, setValue] = useState<EditorLineWidth>(() => initialValue)
@@ -77,6 +82,16 @@ const EditorWidthSelectionModal = ({
     ],
     [accept, close],
   )
+
+  useEffect(() => {
+    return application.keyboardService.addCommandHandler({
+      command: ESCAPE_COMMAND,
+      onKeyDown() {
+        close()
+        return
+      },
+    })
+  }, [application.keyboardService, close])
 
   const DynamicMargin = (
     <div className="text-center text-sm text-passive-2">
@@ -136,4 +151,51 @@ const EditorWidthSelectionModal = ({
   )
 }
 
-export default EditorWidthSelectionModal
+const EditorWidthSelectionModalWrapper = () => {
+  const application = useApplication()
+  const { notesController } = application.getViewControllerManager()
+
+  const [isOpen, setIsOpen] = useState(false)
+  const [isGlobal, setIsGlobal] = useState(false)
+
+  const note = notesController.selectedNotesCount === 1 && !isGlobal ? notesController.selectedNotes[0] : undefined
+
+  const lineWidth = note
+    ? notesController.getEditorWidthForNote(note)
+    : application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth])
+
+  const setLineWidth = useCallback(
+    (lineWidth: EditorLineWidth) => {
+      if (note) {
+        notesController.setNoteEditorWidth(note, lineWidth).catch(console.error)
+      } else {
+        application.setPreference(PrefKey.EditorLineWidth, lineWidth).catch(console.error)
+      }
+    },
+    [application, note, notesController],
+  )
+
+  const toggle = useCallback(() => {
+    setIsOpen((open) => !open)
+  }, [])
+
+  useEffect(() => {
+    return application.keyboardService.addCommandHandler({
+      command: CHANGE_EDITOR_WIDTH_COMMAND,
+      onKeyDown: (_, data) => {
+        if (typeof data === 'boolean' && data) {
+          setIsGlobal(data)
+        }
+        toggle()
+      },
+    })
+  }, [application, toggle])
+
+  return (
+    <ModalOverlay isOpen={isOpen}>
+      <EditorWidthSelectionModal initialValue={lineWidth} handleChange={setLineWidth} close={toggle} />
+    </ModalOverlay>
+  )
+}
+
+export default EditorWidthSelectionModalWrapper
