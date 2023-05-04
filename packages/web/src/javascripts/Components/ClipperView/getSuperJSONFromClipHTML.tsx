@@ -1,5 +1,5 @@
 import { $createParagraphNode, $getRoot, $insertNodes, LexicalNode } from 'lexical'
-import { $generateNodesFromDOM } from '../SuperEditor/Lexical/Utils/generateNodesFromDOM'
+import { $generateNodesFromDOM } from '@lexical/html'
 import { createHeadlessEditor } from '@lexical/headless'
 import { BlockEditorNodes } from '../SuperEditor/Lexical/Nodes/AllNodes'
 import BlocksEditorTheme from '../SuperEditor/Lexical/Theme/Theme'

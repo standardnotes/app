@@ -4,7 +4,7 @@ import { $convertFromMarkdownString, TRANSFORMERS } from '@lexical/markdown'
 import { $createParagraphNode, $createRangeSelection, LexicalEditor } from 'lexical'
 import { handleEditorChange } from '../../Utils'
 import { SuperNotePreviewCharLimit } from '../../SuperEditor'
-import { $generateNodesFromDOM } from '../../Lexical/Utils/generateNodesFromDOM'
+import { $generateNodesFromDOM } from '@lexical/html'
 
 /** Note that markdown conversion does not insert new lines. See: https://github.com/facebook/lexical/issues/2815 */
 export default function ImportPlugin({
