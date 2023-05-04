@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.59.3](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.2...@standardnotes/services@1.59.3) (2023-05-04)
+
+### Bug Fixes
+
+* workspace names now default to account email after signing in. It can later be changed from the workspace switcher menu. ([8385b4e](https://github.com/standardnotes/app/commit/8385b4e89fa0fc3204532adda9d085d9c0fd7996))
+
 ## [1.59.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.1...@standardnotes/services@1.59.2) (2023-05-03)
 
 **Note:** Version bump only for package @standardnotes/services

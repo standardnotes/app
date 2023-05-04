@@ -1,7 +1,7 @@
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { SNApplication, SessionStrings, UuidString, SessionListEntry, isErrorResponse } from '@standardnotes/snjs'
 import { FunctionComponent, useState, useEffect, useRef, useMemo, useCallback } from 'react'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import Spinner from '@/Components/Spinner/Spinner'
 import Button from '@/Components/Button/Button'

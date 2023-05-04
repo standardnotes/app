@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { FunctionComponent, KeyboardEventHandler, useCallback, useMemo, useRef, useState } from 'react'
 import { getFileIconComponent } from './getFileIconComponent'
 import Icon from '@/Components/Icon/Icon'

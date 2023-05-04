@@ -1,9 +1,9 @@
 import { FunctionComponent, useCallback, useRef } from 'react'
 import { STRING_SIGN_OUT_CONFIRMATION } from '@/Constants/Strings'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
-import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { isDesktopApplication } from '@/Utils'
 import Button from '@/Components/Button/Button'
 import Icon from '../Icon/Icon'
@@ -13,7 +13,7 @@ import HorizontalSeparator from '../Shared/HorizontalSeparator'
 type Props = {
   application: WebApplication
   viewControllerManager: ViewControllerManager
-  applicationGroup: ApplicationGroup
+  applicationGroup: WebApplicationGroup
 }
 
 const ConfirmSignoutModal: FunctionComponent<Props> = ({ application, viewControllerManager, applicationGroup }) => {

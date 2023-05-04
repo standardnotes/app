@@ -28,7 +28,7 @@ import { SyncStatusController } from '@/Controllers/SyncStatusController'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 
 import { ApplicationEventObserver, JoinWorkspaceSuccessString } from './ApplicationEventObserver'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 
 describe('ApplicationEventObserver', () => {
   let application: WebApplication

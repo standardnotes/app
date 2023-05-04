@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { SMART_TAGS_FEATURE_NAME } from '@/Constants/Constants'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'

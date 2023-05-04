@@ -1,5 +1,5 @@
 import { isSearchResultAlreadyLinkedToItem } from '@/Utils/Items/Search/isSearchResultAlreadyLinkedToItem'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { doesItemMatchSearchQuery } from '@/Utils/Items/Search/doesItemMatchSearchQuery'
 import {
   AnonymousReference,

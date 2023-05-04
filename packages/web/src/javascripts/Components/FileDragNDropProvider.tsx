@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { FilesController } from '@/Controllers/FilesController'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'

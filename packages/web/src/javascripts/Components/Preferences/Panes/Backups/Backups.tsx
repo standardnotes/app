@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { FunctionComponent } from 'react'
 import PreferencesPane from '@/Components/Preferences/PreferencesComponents/PreferencesPane'

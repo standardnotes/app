@@ -1,5 +1,5 @@
 import { ApplicationEvent } from '@standardnotes/snjs'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { autorun, IReactionDisposer, IReactionPublic } from 'mobx'
 import { Component } from 'react'

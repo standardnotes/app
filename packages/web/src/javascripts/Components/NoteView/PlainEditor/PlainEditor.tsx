@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { usePrevious } from '@/Components/ContentListView/Calendar/usePrevious'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { PrefDefaults } from '@/Constants/PrefDefaults'

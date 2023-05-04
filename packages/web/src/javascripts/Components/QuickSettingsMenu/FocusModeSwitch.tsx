@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { FunctionComponent, useCallback, useMemo } from 'react'
 import { isMobileScreen } from '@/Utils'
 import { TOGGLE_FOCUS_MODE_COMMAND } from '@standardnotes/ui-services'

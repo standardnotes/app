@@ -1,6 +1,6 @@
 import SmartViewsSection from '@/Components/Tags/SmartViewsSection'
 import TagsSection from '@/Components/Tags/TagsSection'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ApplicationEvent, PrefKey, WebAppEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { forwardRef, useEffect, useMemo, useState } from 'react'

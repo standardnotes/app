@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 import { PaneController } from '@/Controllers/PaneController/PaneController'
 

@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import Button from '@/Components/Button/Button'
 import { ContentType, isSystemView, SmartView } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'

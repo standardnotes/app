@@ -1,6 +1,6 @@
 import { FileItem } from '@standardnotes/snjs'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import MultipleSelectedNotes from '@/Components/MultipleSelectedNotes/MultipleSelectedNotes'
 import MultipleSelectedFiles from '../MultipleSelectedFiles/MultipleSelectedFiles'
 import { AppPaneId } from '../Panes/AppPaneMetadata'

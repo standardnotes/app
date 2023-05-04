@@ -5,7 +5,7 @@ import Switch from '@/Components/Switch/Switch'
 import Button from '@/Components/Button/Button'
 import PackageEntrySubInfo from './PackageEntrySubInfo'
 import PreferencesSegment from '../../../../PreferencesComponents/PreferencesSegment'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { AnyPackageType } from './Types/AnyPackageType'
 
 const UseHosted: FunctionComponent<{

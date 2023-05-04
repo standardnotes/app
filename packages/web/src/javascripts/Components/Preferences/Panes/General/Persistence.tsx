@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import StyledRadioInput from '@/Components/Radio/StyledRadioInput'
 import { useState } from 'react'
 import { Title } from '../../PreferencesComponents/Content'

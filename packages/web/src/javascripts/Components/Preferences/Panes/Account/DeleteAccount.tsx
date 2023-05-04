@@ -4,7 +4,7 @@ import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Cont
 import Button from '@/Components/Button/Button'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import { ViewControllerManager } from '@Controllers/ViewControllerManager'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 
 type Props = {
   application: WebApplication

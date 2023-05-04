@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react-lite'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { isIOS } from '@/Utils'
 import { useEffect, useState } from 'react'
 import { MobileDeviceInterface } from '@standardnotes/services'

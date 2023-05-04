@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { FileItemActionType } from '@/Components/AttachedFilesPopover/PopoverFileItemAction'
 import { NoteViewController } from '@/Components/NoteView/Controller/NoteViewController'
 import { AppPaneId } from '@/Components/Panes/AppPaneMetadata'

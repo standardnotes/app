@@ -1,6 +1,6 @@
 import { CrossControllerEvent } from '../CrossControllerEvent'
 import { InternalEventBusInterface, InternalEventPublishStrategy, removeFromArray } from '@standardnotes/snjs'
-import { WebApplication } from '../../Application/Application'
+import { WebApplication } from '../../Application/WebApplication'
 import { Disposer } from '@/Types/Disposer'
 
 type ControllerEventObserver<Event = void, EventData = void> = (event: Event, data: EventData) => void

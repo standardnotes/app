@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useState } from 'react'
 
 import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'

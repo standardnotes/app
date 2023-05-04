@@ -1,4 +1,4 @@
-import { WebApplication } from './Application'
+import { WebApplication } from './WebApplication'
 import { ApplicationDescriptor, SNApplicationGroup } from '@standardnotes/snjs'
 import { getPlatform, isDesktopApplication } from '@/Utils'
 import { WebOrDesktopDevice } from '@/Application/Device/WebOrDesktopDevice'
@@ -23,7 +23,7 @@ const createApplication = (
   return application
 }
 
-export class ApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
+export class WebApplicationGroup extends SNApplicationGroup<WebOrDesktopDevice> {
   constructor(private defaultSyncServerHost: string, device: WebOrDesktopDevice, private webSocketUrl: string) {
     super(device)
   }

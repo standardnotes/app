@@ -13,7 +13,7 @@ import {
   EditorLineWidth,
 } from '@standardnotes/snjs'
 import { makeObservable, observable, action, computed, runInAction } from 'mobx'
-import { WebApplication } from '../../Application/Application'
+import { WebApplication } from '../../Application/WebApplication'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { SelectedItemsController } from '../SelectedItemsController'
 import { ItemListController } from '../ItemList/ItemListController'

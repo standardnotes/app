@@ -1,5 +1,5 @@
 import { CHANGE_EDITOR_COMMAND, KeyboardKey } from '@standardnotes/ui-services'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useMemo, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'

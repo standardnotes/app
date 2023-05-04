@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { NoteMutator, SNNote } from '@standardnotes/models'
 import { InfoStrings } from '@standardnotes/snjs'
 import { Deferred } from '@standardnotes/utils'

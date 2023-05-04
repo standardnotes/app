@@ -1,6 +1,6 @@
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { dateToLocalizedString } from '@standardnotes/snjs'

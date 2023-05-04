@@ -1,5 +1,5 @@
 import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import SubscriptionInformation from './SubscriptionInformation'
 import NoSubscription from './NoSubscription'
 import { observer } from 'mobx-react-lite'

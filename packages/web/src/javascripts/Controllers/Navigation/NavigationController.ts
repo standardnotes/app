@@ -17,7 +17,7 @@ import {
   PrefKey,
 } from '@standardnotes/snjs'
 import { action, computed, makeAutoObservable, makeObservable, observable, reaction, runInAction } from 'mobx'
-import { WebApplication } from '../../Application/Application'
+import { WebApplication } from '../../Application/WebApplication'
 import { FeaturesController } from '../FeaturesController'
 import { destroyAllObjectProperties } from '@/Utils'
 import { isValidFutureSiblings, rootTags, tagSiblings } from './Utils'

@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { NoteType, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'

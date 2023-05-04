@@ -1,5 +1,5 @@
-import { WebApplication } from '@/Application/Application'
-import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { WebApplication } from '@/Application/WebApplication'
+import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import { destroyAllObjectProperties, preventRefreshing } from '@/Utils'
 import { ApplicationEvent, ApplicationDescriptor, WebAppEvent } from '@standardnotes/snjs'
@@ -24,7 +24,7 @@ import PreferencesButton from './PreferencesButton'
 
 type Props = {
   application: WebApplication
-  applicationGroup: ApplicationGroup
+  applicationGroup: WebApplicationGroup
 }
 
 type State = {

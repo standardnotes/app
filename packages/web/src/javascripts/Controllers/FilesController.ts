@@ -27,7 +27,7 @@ import {
 } from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/toast'
 import { action, makeObservable, observable, reaction } from 'mobx'
-import { WebApplication } from '../Application/Application'
+import { WebApplication } from '../Application/WebApplication'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { NotesController } from './NotesController/NotesController'
 import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
