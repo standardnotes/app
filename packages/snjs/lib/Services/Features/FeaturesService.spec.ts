@@ -233,7 +233,7 @@ describe('featuresService', () => {
       const { didChangeRoles } = await featuresService.updateOnlineRoles(newRoles)
       await featuresService.fetchFeatures('123', didChangeRoles)
 
-      expect(spy.mock.calls[0][0]).toEqual(FeaturesEvent.DidPurchaseSubscription)
+      expect(spy.mock.calls[1][0]).toEqual(FeaturesEvent.DidPurchaseSubscription)
     })
 
     it('should not notify of subscription purchase on initial roles load after sign in', async () => {
