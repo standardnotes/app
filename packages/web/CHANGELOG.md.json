@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.158.0",
+      "title": "[3.158.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.157.1...@standardnotes/web@3.158.0) (2023-05-05)",
+      "date": null,
+      "body": "### Features\n\n* **clipper:** Added \"Clip as screenshot\" switch to allow clipping content as a screenshot and save it to Files ([0d3b7f7](https://github.com/standardnotes/app/commit/0d3b7f7d94071675c1005bbe64fb11cc91bccf58))",
+      "parsed": {
+        "_": [
+          "clipper: Added \"Clip as screenshot\" switch to allow clipping content as a screenshot and save it to Files (0d3b7f7)"
+        ],
+        "Features": [
+          "clipper: Added \"Clip as screenshot\" switch to allow clipping content as a screenshot and save it to Files (0d3b7f7)"
+        ]
+      }
+    },
+    {
       "version": "3.157.1",
       "title": "[3.157.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.157.0...@standardnotes/web@3.157.1) (2023-05-04)",
       "date": null,
