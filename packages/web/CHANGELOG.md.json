@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "3.158.1",
+      "title": "[3.158.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.158.0...@standardnotes/web@3.158.1) (2023-05-05)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.158.0",
       "title": "[3.158.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.157.1...@standardnotes/web@3.158.0) (2023-05-05)",
       "date": null,
@@ -545,13 +556,13 @@
       "version": "3.150.51",
       "title": "[3.150.51](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.50...@standardnotes/web@3.150.51) (2023-04-12)",
       "date": null,
-      "body": "### Bug Fixes\n\n* Fixed temporary regression where a new note would not be correctly synced after making changes ([9f82426](https://github.com/standardnotes/app/commit/9f824266ac47280c982da3900c107cc8bb239233))",
+      "body": "### Bug Fixes\n\n* Fixed issue where a new note would not be correctly synced after making changes ([9f82426](https://github.com/standardnotes/app/commit/9f824266ac47280c982da3900c107cc8bb239233))",
       "parsed": {
         "_": [
-          "Fixed temporary regression where a new note would not be correctly synced after making changes (9f82426)"
+          "Fixed issue where a new note would not be correctly synced after making changes (9f82426)"
         ],
         "Bug Fixes": [
-          "Fixed temporary regression where a new note would not be correctly synced after making changes (9f82426)"
+          "Fixed issue where a new note would not be correctly synced after making changes (9f82426)"
         ]
       }
     },
@@ -761,6 +772,20 @@
       "parsed": {
         "_": [
           "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.150.32",
+      "title": "[3.150.32](https://github.com/standardnotes/app/compare/@standardnotes/web@3.150.31...@standardnotes/web@3.150.32) (2023-03-26)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* exception handling ([#2277](https://github.com/standardnotes/app/issues/2277)) ([5a7419b](https://github.com/standardnotes/app/commit/5a7419bf1c83f7d38e5ad157da67ebbed850f609))",
+      "parsed": {
+        "_": [
+          "exception handling (#2277) (5a7419b)"
+        ],
+        "Bug Fixes": [
+          "exception handling (#2277) (5a7419b)"
         ]
       }
     },
