@@ -416,13 +416,13 @@ export class SNFeaturesService
       }
     }
 
+    await this.setOnlineRoles(roles)
+
     if (userRolesChanged && !isInitialLoadRolesChange) {
       if (this.onlineRolesIncludePaidSubscription()) {
         await this.notifyEvent(FeaturesEvent.DidPurchaseSubscription)
       }
     }
-
-    await this.setOnlineRoles(roles)
 
     return {
       didChangeRoles: true,
