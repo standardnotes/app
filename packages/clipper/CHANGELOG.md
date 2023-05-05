@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/standardnotes/app/compare/@standardnotes/clipper@1.0.46...@standardnotes/clipper@1.1.0) (2023-05-05)
+
+### Features
+
+* **clipper:** Added "Clip as screenshot" switch to allow clipping content as a screenshot and save it to Files ([0d3b7f7](https://github.com/standardnotes/app/commit/0d3b7f7d94071675c1005bbe64fb11cc91bccf58))
+
 ## [1.0.46](https://github.com/standardnotes/app/compare/@standardnotes/clipper@1.0.45...@standardnotes/clipper@1.0.46) (2023-05-04)
 
 **Note:** Version bump only for package @standardnotes/clipper
