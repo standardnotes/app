@@ -1,7 +1,6 @@
 import { runtime } from 'webextension-polyfill'
 import { Readability } from '@mozilla/readability'
 import { RuntimeMessage, RuntimeMessageTypes } from '../types/message'
-import { toPng } from 'html-to-image'
 
 let isSelectingNodeForClipping = false
 let isScreenshotMode = false
@@ -47,7 +46,9 @@ runtime.onMessage.addListener(async (message: RuntimeMessage) => {
     }
     case RuntimeMessageTypes.GetFullPage: {
       if (isScreenshotMode) {
-        const content = await toPng(document.body)
+        const content = await runtime.sendMessage({
+          type: RuntimeMessageTypes.CaptureVisibleTab,
+        })
         return { title: document.title, content: content, url: window.location.href, isScreenshot: true }
       }
 
@@ -99,6 +100,55 @@ window.addEventListener('mousemove', (event) => {
 const disableNodeSelection = () => {
   isSelectingNodeForClipping = false
   nodeOverlayElement.style.visibility = 'hidden'
+}
+
+const imageFromBase64 = (base64: string) => {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => {
+      resolve(image)
+    }
+    image.onerror = reject
+    image.src = base64
+  })
+}
+
+const toPng = async (element: HTMLElement) => {
+  const visibleTab: string = await runtime.sendMessage({
+    type: RuntimeMessageTypes.CaptureVisibleTab,
+  })
+
+  const image = await imageFromBase64(visibleTab)
+
+  const canvas = document.createElement('canvas')
+
+  canvas.width = image.width
+  canvas.height = image.height
+
+  const context = canvas.getContext('2d')
+
+  if (!context) {
+    throw new Error('Could not get canvas context')
+  }
+
+  context.drawImage(image, 0, 0)
+
+  const elementRect = element.getBoundingClientRect()
+
+  const x = elementRect.x
+  const y = elementRect.y
+
+  const width = elementRect.width
+  const height = elementRect.height
+
+  const imageData = context.getImageData(x, y, width, height)
+
+  canvas.width = width
+  canvas.height = height
+
+  context.putImageData(imageData, 0, 0)
+
+  return canvas.toDataURL('image/png')
 }
 
 window.addEventListener('click', async (event) => {

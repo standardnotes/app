@@ -340,15 +340,9 @@ const ClipperView = ({
                 return
               }
               setClipPayload(payload)
-              if (isScreenshotMode) {
-                addToast({
-                  type: ToastType.Regular,
-                  message: 'Capturing full page...',
-                })
-              }
             }}
           >
-            Clip full page
+            {isScreenshotMode ? 'Capture visible' : 'Clip full page'}
           </MenuItem>
           <MenuItem
             disabled={isScreenshotMode}
@@ -380,7 +374,7 @@ const ClipperView = ({
               window.close()
             }}
           >
-            Select elements to clip
+            Select elements to {isScreenshotMode ? 'capture' : 'clip'}
           </MenuItem>
           <MenuSwitchButtonItem
             checked={isScreenshotMode}
@@ -393,7 +387,7 @@ const ClipperView = ({
           </MenuSwitchButtonItem>
           <div className="border-t border-border px-3 py-3 text-base text-foreground">
             <div className="flex items-center justify-between">
-              <div className="font-medium">Default tag:</div>
+              <div className="font-medium">Default tag</div>
               {defaultTag && (
                 <StyledTooltip label="Remove default tag" gutter={2}>
                   <button className="rounded-full p-1 hover:bg-contrast hover:text-info" onClick={unselectTag}>
