@@ -225,3 +225,7 @@ export const getBase64FromBlob = (blob: Blob) => {
     reader.readAsDataURL(blob)
   })
 }
+
+export const remToPx = (rem: number) => {
+  return rem * parseFloat(getComputedStyle(document.documentElement).fontSize)
+}

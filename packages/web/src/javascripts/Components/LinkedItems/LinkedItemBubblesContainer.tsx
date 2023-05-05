@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import ItemLinkAutocompleteInput from './ItemLinkAutocompleteInput'
 import { LinkingController } from '@/Controllers/LinkingController'
 import LinkedItemBubble from './LinkedItemBubble'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/utils'
@@ -13,6 +13,7 @@ import { FOCUS_TAGS_INPUT_COMMAND, keyboardStringForShortcut } from '@standardno
 import { useCommandService } from '../CommandProvider'
 import { useItemLinks } from '@/Hooks/useItemLinks'
 import RoundIconButton from '../Button/RoundIconButton'
+import { remToPx } from '@/Utils'
 
 type Props = {
   linkingController: LinkingController
@@ -112,6 +113,32 @@ const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = fals
   const visibleItems = isCollapsed ? itemsToDisplay.slice(0, 5) : itemsToDisplay
   const nonVisibleItems = itemsToDisplay.length - visibleItems.length
 
+  const [canShowContainerToggle, setCanShowContainerToggle] = useState(false)
+  const linkContainerRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    const container = linkContainerRef.current
+
+    if (!container) {
+      return
+    }
+
+    const resizeObserver = new ResizeObserver(() => {
+      const LinkInputHeightInRem = 1.75
+
+      if (container.clientHeight > remToPx(LinkInputHeightInRem)) {
+        setCanShowContainerToggle(true)
+      } else {
+        setCanShowContainerToggle(false)
+      }
+    })
+
+    resizeObserver.observe(linkContainerRef.current)
+
+    return () => {
+      resizeObserver.disconnect()
+    }
+  }, [])
+
   return (
     <div
       className={classNames(
@@ -126,6 +153,7 @@ const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = fals
           allItemsLinkedToItem.length || notesLinkingToItem.length ? 'mt-1' : 'mt-0.5',
           isCollapsed ? 'overflow-hidden' : 'flex-wrap',
         )}
+        ref={linkContainerRef}
       >
         {visibleItems.map((link) => (
           <LinkedItemBubble
@@ -150,7 +178,7 @@ const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = fals
           item={item}
         />
       </div>
-      {itemsToDisplay.length > 0 && !hideToggle && (
+      {itemsToDisplay.length > 0 && !hideToggle && canShowContainerToggle && (
         <RoundIconButton
           id="toggle-linking-container"
           label="Toggle linked items container"
