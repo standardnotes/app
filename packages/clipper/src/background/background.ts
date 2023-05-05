@@ -1,9 +1,9 @@
 import { runtime, action, browserAction, windows, storage } from 'webextension-polyfill'
-import { RuntimeMessage, RuntimeMessageTypes } from '../types/message'
+import { ClipPayload, RuntimeMessage, RuntimeMessageTypes } from '../types/message'
 
 const isFirefox = navigator.userAgent.indexOf('Firefox/') !== -1
 
-const openPopupAndClipSelection = async (payload: { title: string; content: string }) => {
+const openPopupAndClipSelection = async (payload: ClipPayload) => {
   await storage.local.set({ clip: payload })
 
   if (isFirefox) {

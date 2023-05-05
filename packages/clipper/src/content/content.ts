@@ -1,13 +1,19 @@
 import { runtime } from 'webextension-polyfill'
 import { Readability } from '@mozilla/readability'
 import { RuntimeMessage, RuntimeMessageTypes } from '../types/message'
+import { toPng } from 'html-to-image'
 
 let isSelectingNodeForClipping = false
+let isScreenshotMode = false
 
 runtime.onMessage.addListener(async (message: RuntimeMessage) => {
   switch (message.type) {
     case RuntimeMessageTypes.StartNodeSelection: {
       isSelectingNodeForClipping = true
+      return
+    }
+    case RuntimeMessageTypes.ToggleScreenshotMode: {
+      isScreenshotMode = message.enabled
       return
     }
     case RuntimeMessageTypes.HasSelection: {
@@ -40,6 +46,11 @@ runtime.onMessage.addListener(async (message: RuntimeMessage) => {
       return { title: document.title, content: result.innerHTML, url: window.location.href }
     }
     case RuntimeMessageTypes.GetFullPage: {
+      if (isScreenshotMode) {
+        const content = await toPng(document.body)
+        return { title: document.title, content: content, url: window.location.href, isScreenshot: true }
+      }
+
       return { title: document.title, content: document.body.innerHTML, url: window.location.href }
     }
     case RuntimeMessageTypes.GetArticle: {
@@ -90,7 +101,7 @@ const disableNodeSelection = () => {
   nodeOverlayElement.style.visibility = 'hidden'
 }
 
-window.addEventListener('click', (event) => {
+window.addEventListener('click', async (event) => {
   if (!isSelectingNodeForClipping) {
     return
   }
@@ -102,10 +113,10 @@ window.addEventListener('click', (event) => {
     return
   }
   const title = document.title
-  const content = target.outerHTML
+  const content = isScreenshotMode ? await toPng(target) : target.outerHTML
   void runtime.sendMessage({
     type: RuntimeMessageTypes.OpenPopupWithSelection,
-    payload: { title, content, url: window.location.href },
+    payload: { title, content, url: window.location.href, isScreenshot: isScreenshotMode },
   } as RuntimeMessage)
 })
 

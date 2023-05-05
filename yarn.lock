@@ -4709,6 +4709,7 @@ __metadata:
     copy-webpack-plugin: 11.0.0
     eslint: ^8.29.0
     eslint-config-prettier: ^8.5.0
+    html-to-image: ^1.11.11
     ts-loader: ^9.4.2
     typescript: "*"
     web-ext: ^7.5.0
@@ -13709,6 +13710,13 @@ __metadata:
   version: 2.0.2
   resolution: "html-escaper@npm:2.0.2"
   checksum: d2df2da3ad40ca9ee3a39c5cc6475ef67c8f83c234475f24d8e9ce0dc80a2c82df8e1d6fa78ddd1e9022a586ea1bd247a615e80a5cd9273d90111ddda7d9e974
+  languageName: node
+  linkType: hard
+
+"html-to-image@npm:^1.11.11":
+  version: 1.11.11
+  resolution: "html-to-image@npm:1.11.11"
+  checksum: b453beca72a697bf06fae4945e5460d1d9b1751e8569a0d721dda9485df1dde093938cc9bd9172b8df5fc23133a53a4d619777b3d22f7211cd8a67e3197ab4e8
   languageName: node
   linkType: hard
 

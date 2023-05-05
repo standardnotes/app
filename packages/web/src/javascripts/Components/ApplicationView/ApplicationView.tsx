@@ -200,6 +200,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                       applicationGroup={mainApplicationGroup}
                     />
                     <ToastContainer />
+                    <FilePreviewModalWrapper application={application} viewControllerManager={viewControllerManager} />
                     {renderChallenges()}
                   </FileDragNDropProvider>
                 </LinkingControllerProvider>

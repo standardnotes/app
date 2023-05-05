@@ -36,6 +36,7 @@ import { createLinkFromItem } from '@/Utils/Items/Search/createLinkFromItem'
 import ItemSelectionDropdown from '../ItemSelectionDropdown/ItemSelectionDropdown'
 import LinkedItemBubble from '../LinkedItems/LinkedItemBubble'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
+import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 
 const Header = () => (
   <div className="flex items-center border-b border-border p-1 px-3 py-2 text-base font-semibold text-info-contrast">
@@ -135,6 +136,14 @@ const ClipperView = ({
     }
   }, [application.user])
 
+  const [isScreenshotMode, setIsScreenshotMode] = useState(false)
+  useEffect(() => {
+    void sendMessageToActiveTab({
+      type: RuntimeMessageTypes.ToggleScreenshotMode,
+      enabled: isScreenshotMode,
+    })
+  }, [isScreenshotMode])
+
   const [hasSelection, setHasSelection] = useState(false)
   useEffect(() => {
     if (!user) {
@@ -143,7 +152,7 @@ const ClipperView = ({
 
     try {
       const checkIfPageHasSelection = async () => {
-        setHasSelection(Boolean(await sendMessageToActiveTab(RuntimeMessageTypes.HasSelection)))
+        setHasSelection(Boolean(await sendMessageToActiveTab({ type: RuntimeMessageTypes.HasSelection })))
       }
 
       void checkIfPageHasSelection()
@@ -188,6 +197,17 @@ const ClipperView = ({
         })
         return
       }
+      if (clipPayload.isScreenshot) {
+        const blob = await fetch(clipPayload.content).then((response) => response.blob())
+
+        const file = new File([blob], `${clipPayload.title} - ${clipPayload.url}.png`, {
+          type: 'image/png',
+        })
+
+        viewControllerManager.filesController.uploadNewFile(file).catch(console.error)
+
+        return
+      }
 
       const editorStateJSON = await getSuperJSONFromClipPayload(clipPayload)
 
@@ -216,7 +236,15 @@ const ClipperView = ({
     }
 
     void createNoteFromClip()
-  }, [application.items, application.linkingController, application.sync, clipPayload, defaultTag, isEntitledRef])
+  }, [
+    application.items,
+    application.linkingController,
+    application.sync,
+    clipPayload,
+    defaultTag,
+    isEntitledRef,
+    viewControllerManager.filesController,
+  ])
 
   const upgradePlan = useCallback(async () => {
     if (hasSubscription) {
@@ -307,18 +335,25 @@ const ClipperView = ({
         <Menu a11yLabel="Extension menu" isOpen={true} className="pb-1">
           <MenuItem
             onClick={async () => {
-              const payload = await sendMessageToActiveTab(RuntimeMessageTypes.GetFullPage)
+              const payload = await sendMessageToActiveTab({ type: RuntimeMessageTypes.GetFullPage })
               if (!payload) {
                 return
               }
               setClipPayload(payload)
+              if (isScreenshotMode) {
+                addToast({
+                  type: ToastType.Regular,
+                  message: 'Capturing full page...',
+                })
+              }
             }}
           >
             Clip full page
           </MenuItem>
           <MenuItem
+            disabled={isScreenshotMode}
             onClick={async () => {
-              const payload = await sendMessageToActiveTab(RuntimeMessageTypes.GetArticle)
+              const payload = await sendMessageToActiveTab({ type: RuntimeMessageTypes.GetArticle })
               if (!payload) {
                 return
               }
@@ -328,25 +363,34 @@ const ClipperView = ({
             Clip article
           </MenuItem>
           <MenuItem
-            disabled={!hasSelection}
+            disabled={!hasSelection || isScreenshotMode}
             onClick={async () => {
-              const payload = await sendMessageToActiveTab(RuntimeMessageTypes.GetSelection)
+              const payload = await sendMessageToActiveTab({ type: RuntimeMessageTypes.GetSelection })
               if (!payload) {
                 return
               }
               setClipPayload(payload)
             }}
           >
-            Clip current selection
+            Clip text selection
           </MenuItem>
           <MenuItem
             onClick={async () => {
-              void sendMessageToActiveTab(RuntimeMessageTypes.StartNodeSelection)
+              void sendMessageToActiveTab({ type: RuntimeMessageTypes.StartNodeSelection })
               window.close()
             }}
           >
             Select elements to clip
           </MenuItem>
+          <MenuSwitchButtonItem
+            checked={isScreenshotMode}
+            onChange={function (checked: boolean): void {
+              setIsScreenshotMode(checked)
+            }}
+            className="flex-row-reverse gap-2"
+          >
+            Clip as screenshot
+          </MenuSwitchButtonItem>
           <div className="border-t border-border px-3 py-3 text-base text-foreground">
             <div className="flex items-center justify-between">
               <div className="font-medium">Default tag:</div>

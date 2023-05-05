@@ -29,6 +29,10 @@ export const getSuperJSONFromClipPayload = async (clipPayload: ClipPayload) => {
       $getRoot().select()
       $insertNodes(clipSourceParagraphNode)
 
+      if (typeof clipPayload.content !== 'string') {
+        throw new Error('Clip payload content is not a string')
+      }
+
       const dom = parser.parseFromString(clipPayload.content, 'text/html')
       const generatedNodes = $generateNodesFromDOM(editor, dom)
       const nodesToInsert: LexicalNode[] = []
