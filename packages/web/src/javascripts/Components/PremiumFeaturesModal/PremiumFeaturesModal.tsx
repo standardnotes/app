@@ -30,7 +30,7 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
   }
 
   return (
-    <AlertDialog closeDialog={onClose} className="!max-w-89">
+    <AlertDialog closeDialog={onClose} className="w-full max-w-[90vw] md:max-w-89">
       <div tabIndex={-1} className="sn-component bg-default">
         <div tabIndex={0}>
           {type === PremiumFeatureModalType.UpgradePrompt && (
