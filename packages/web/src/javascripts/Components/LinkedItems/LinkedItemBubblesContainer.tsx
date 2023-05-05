@@ -13,7 +13,6 @@ import { FOCUS_TAGS_INPUT_COMMAND, keyboardStringForShortcut } from '@standardno
 import { useCommandService } from '../CommandProvider'
 import { useItemLinks } from '@/Hooks/useItemLinks'
 import RoundIconButton from '../Button/RoundIconButton'
-import { remToPx } from '@/Utils'
 
 type Props = {
   linkingController: LinkingController
@@ -114,18 +113,18 @@ const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = fals
   const nonVisibleItems = itemsToDisplay.length - visibleItems.length
 
   const [canShowContainerToggle, setCanShowContainerToggle] = useState(false)
+  const linkInputRef = useRef<HTMLInputElement>(null)
   const linkContainerRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const container = linkContainerRef.current
+    const linkInput = linkInputRef.current
 
-    if (!container) {
+    if (!container || !linkInput) {
       return
     }
 
     const resizeObserver = new ResizeObserver(() => {
-      const LinkInputHeightInRem = 1.75
-
-      if (container.clientHeight > remToPx(LinkInputHeightInRem)) {
+      if (container.clientHeight > linkInput.clientHeight) {
         setCanShowContainerToggle(true)
       } else {
         setCanShowContainerToggle(false)
@@ -138,6 +137,8 @@ const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = fals
       resizeObserver.disconnect()
     }
   }, [])
+
+  const shouldHideToggle = hideToggle || (!canShowContainerToggle && !isCollapsed)
 
   return (
     <div
@@ -176,9 +177,10 @@ const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = fals
           setFocusedId={setFocusedId}
           hoverLabel={`Focus input to add a link (${shortcut})`}
           item={item}
+          ref={linkInputRef}
         />
       </div>
-      {itemsToDisplay.length > 0 && !hideToggle && canShowContainerToggle && (
+      {itemsToDisplay.length > 0 && !shouldHideToggle && (
         <RoundIconButton
           id="toggle-linking-container"
           label="Toggle linked items container"
