@@ -6,6 +6,7 @@ export const RuntimeMessageTypes = {
   OpenPopupWithSelection: 'open-popup-with-selection',
   StartNodeSelection: 'start-node-selection',
   ToggleScreenshotMode: 'toggle-screenshot-mode',
+  CaptureVisibleTab: 'capture-visible-tab',
 } as const
 
 export type RuntimeMessageType = typeof RuntimeMessageTypes[keyof typeof RuntimeMessageTypes]
@@ -24,6 +25,7 @@ export type RuntimeMessageReturnTypes = {
   [RuntimeMessageTypes.GetSelection]: ClipPayload
   [RuntimeMessageTypes.HasSelection]: boolean
   [RuntimeMessageTypes.GetFullPage]: ClipPayload
+  [RuntimeMessageTypes.CaptureVisibleTab]: string
   [RuntimeMessageTypes.OpenPopupWithSelection]: void
   [RuntimeMessageTypes.StartNodeSelection]: void
   [RuntimeMessageTypes.ToggleScreenshotMode]: void
