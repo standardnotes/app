@@ -19,6 +19,8 @@ export interface FileBackupsDevice
     TextBackupsMethods {
   openLocation(path: string): Promise<void>
 
+  joinPaths(...paths: string[]): Promise<string>
+
   /**
    * The reason we combine presenting a directory picker and transfering old files to the new location
    * in one function is so we don't have to expose a general `transferDirectories` function to the web app,

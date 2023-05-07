@@ -76,6 +76,7 @@ export class RemoteBridge implements CrossProcessBridge {
       migrateLegacyFileBackupsToNewStructure: this.migrateLegacyFileBackupsToNewStructure.bind(this),
       getUserDocumentsDirectory: this.getUserDocumentsDirectory.bind(this),
       monitorPlaintextBackupsLocationForChanges: this.monitorPlaintextBackupsLocationForChanges.bind(this),
+      joinPaths: this.joinPaths.bind(this),
     }
   }
 
@@ -233,6 +234,10 @@ export class RemoteBridge implements CrossProcessBridge {
 
   monitorPlaintextBackupsLocationForChanges(backupsDirectory: string): Promise<void> {
     return this.fileBackups.monitorPlaintextBackupsLocationForChanges(backupsDirectory)
+  }
+
+  joinPaths(...paths: string[]): Promise<string> {
+    return this.fileBackups.joinPaths(...paths)
   }
 
   askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean> {

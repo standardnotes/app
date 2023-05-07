@@ -5,7 +5,7 @@ import { SuperConverterServiceInterface } from './SuperConverterServiceInterface
 
 export interface BackupServiceInterface {
   openAllDirectoriesContainingBackupFiles(): void
-  prependWorkspacePathForPath(path: string): string
+  prependWorkspacePathForPath(path: string): Promise<string>
   importWatchedDirectoryChanges(changes: DesktopWatchedDirectoriesChanges): Promise<void>
   setSuperConverter(converter: SuperConverterServiceInterface): void
 
