@@ -1369,6 +1369,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       singletonManager: this.singletonManager,
       featuresService: this.featuresService,
       environment: this.environment,
+      platform: this.platform,
       identifier: this.identifier,
       internalEventBus: this.internalEventBus,
       legacySessionStorageMapper: this.legacySessionStorageMapper,

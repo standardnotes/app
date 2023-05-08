@@ -30,9 +30,11 @@ export class Migration2_167_6 extends Migration {
 
     if (fileBackupsEnabled) {
       const legacyLocation = await device.getLegacyFilesBackupsLocation()
-      const newLocation = `${legacyLocation}/${this.services.backups.prependWorkspacePathForPath(
-        FileBackupsDirectoryName,
-      )}`
+      const newLocation = await device.joinPaths(
+        legacyLocation as string,
+        await this.services.backups.prependWorkspacePathForPath(FileBackupsDirectoryName),
+      )
+
       await device.migrateLegacyFileBackupsToNewStructure(newLocation)
       this.services.storageService.setValue(StorageKey.FileBackupsLocation, newLocation)
     }
@@ -41,9 +43,10 @@ export class Migration2_167_6 extends Migration {
     if (wasLegacyDisabled) {
       this.services.storageService.setValue(StorageKey.TextBackupsEnabled, false)
     } else {
-      const newTextBackupsLocation = `${await device.getLegacyTextBackupsLocation()}/${this.services.backups.prependWorkspacePathForPath(
-        TextBackupsDirectoryName,
-      )}`
+      const newTextBackupsLocation = await device.joinPaths(
+        (await device.getLegacyTextBackupsLocation()) as string,
+        await this.services.backups.prependWorkspacePathForPath(TextBackupsDirectoryName),
+      )
       this.services.storageService.setValue(StorageKey.TextBackupsLocation, newTextBackupsLocation)
       this.services.storageService.setValue(StorageKey.TextBackupsEnabled, true)
     }

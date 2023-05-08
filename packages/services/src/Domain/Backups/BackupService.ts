@@ -184,17 +184,17 @@ export class FilesBackupService extends AbstractService implements BackupService
     return this.storage.getValue(StorageKey.TextBackupsEnabled, undefined, true)
   }
 
-  prependWorkspacePathForPath(path: string): string {
+  async prependWorkspacePathForPath(path: string): Promise<string> {
     const workspacePath = this.session.getWorkspaceDisplayIdentifier()
 
-    return `${workspacePath}/${path}`
+    return this.device.joinPaths(workspacePath, path)
   }
 
   async enableTextBackups(): Promise<void> {
     let location = this.getTextBackupsLocation()
     if (!location) {
       location = await this.device.presentDirectoryPickerForLocationChangeAndTransferOld(
-        this.prependWorkspacePathForPath(TextBackupsDirectoryName),
+        await this.prependWorkspacePathForPath(TextBackupsDirectoryName),
       )
       if (!location) {
         return
@@ -223,7 +223,7 @@ export class FilesBackupService extends AbstractService implements BackupService
   async changeTextBackupsLocation(): Promise<string | undefined> {
     const oldLocation = this.getTextBackupsLocation()
     const newLocation = await this.device.presentDirectoryPickerForLocationChangeAndTransferOld(
-      this.prependWorkspacePathForPath(TextBackupsDirectoryName),
+      await this.prependWorkspacePathForPath(TextBackupsDirectoryName),
       oldLocation,
     )
 
@@ -253,7 +253,7 @@ export class FilesBackupService extends AbstractService implements BackupService
     let location = this.getPlaintextBackupsLocation()
     if (!location) {
       location = await this.device.presentDirectoryPickerForLocationChangeAndTransferOld(
-        this.prependWorkspacePathForPath(PlaintextBackupsDirectoryName),
+        await this.prependWorkspacePathForPath(PlaintextBackupsDirectoryName),
       )
       if (!location) {
         return
@@ -285,7 +285,7 @@ export class FilesBackupService extends AbstractService implements BackupService
   async changePlaintextBackupsLocation(): Promise<string | undefined> {
     const oldLocation = this.getPlaintextBackupsLocation()
     const newLocation = await this.device.presentDirectoryPickerForLocationChangeAndTransferOld(
-      this.prependWorkspacePathForPath(PlaintextBackupsDirectoryName),
+      await this.prependWorkspacePathForPath(PlaintextBackupsDirectoryName),
       oldLocation,
     )
 
@@ -302,7 +302,7 @@ export class FilesBackupService extends AbstractService implements BackupService
     let location = this.getFilesBackupsLocation()
     if (!location) {
       location = await this.device.presentDirectoryPickerForLocationChangeAndTransferOld(
-        this.prependWorkspacePathForPath(FileBackupsDirectoryName),
+        await this.prependWorkspacePathForPath(FileBackupsDirectoryName),
       )
       if (!location) {
         return
@@ -328,7 +328,7 @@ export class FilesBackupService extends AbstractService implements BackupService
   public async changeFilesBackupsLocation(): Promise<string | undefined> {
     const oldLocation = this.getFilesBackupsLocation()
     const newLocation = await this.device.presentDirectoryPickerForLocationChangeAndTransferOld(
-      this.prependWorkspacePathForPath(FileBackupsDirectoryName),
+      await this.prependWorkspacePathForPath(FileBackupsDirectoryName),
       oldLocation,
     )
     if (!newLocation) {

@@ -153,6 +153,10 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.monitorPlaintextBackupsLocationForChanges(backupsDirectory)
   }
 
+  joinPaths(...paths: string[]): Promise<string> {
+    return this.remoteBridge.joinPaths(...paths)
+  }
+
   async performHardReset(): Promise<void> {
     console.error('performHardReset is not yet implemented')
   }

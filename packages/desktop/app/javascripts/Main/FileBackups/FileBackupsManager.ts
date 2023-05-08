@@ -62,6 +62,10 @@ export class FilesBackupManager implements FileBackupsDevice {
     return uuid
   }
 
+  async joinPaths(...paths: string[]): Promise<string> {
+    return path.join(...paths)
+  }
+
   public async migrateLegacyFileBackupsToNewStructure(newLocation: string): Promise<void> {
     const legacyLocation = await this.getLegacyFilesBackupsLocation()
     if (!legacyLocation) {
