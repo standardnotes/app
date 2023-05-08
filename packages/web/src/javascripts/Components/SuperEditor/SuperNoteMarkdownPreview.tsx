@@ -1,5 +1,5 @@
 import { SNNote } from '@standardnotes/snjs'
-import { FunctionComponent, useCallback, useMemo, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
 import MarkdownPreviewPlugin from './Plugins/MarkdownPreviewPlugin/MarkdownPreviewPlugin'
 import { copyTextToClipboard } from '../../Utils/copyTextToClipboard'
@@ -7,6 +7,8 @@ import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import { BlocksEditor } from './BlocksEditor'
 import { BlocksEditorComposer } from './BlocksEditorComposer'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { useApplication } from '../ApplicationProvider'
+import { ESCAPE_COMMAND } from '@standardnotes/ui-services'
 
 type Props = {
   note: SNNote
@@ -14,6 +16,8 @@ type Props = {
 }
 
 export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ note, closeDialog }) => {
+  const application = useApplication()
+
   const [markdown, setMarkdown] = useState('')
   const [didCopy, setDidCopy] = useState(false)
 
@@ -49,6 +53,16 @@ export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ note, close
     ],
     [closeDialog, copy, didCopy, isMobileScreen],
   )
+
+  useEffect(() => {
+    return application.keyboardService.addCommandHandler({
+      command: ESCAPE_COMMAND,
+      onKeyDown: () => {
+        closeDialog()
+        return true
+      },
+    })
+  }, [application.keyboardService, closeDialog])
 
   return (
     <Modal title="Markdown Preview" close={closeDialog} actions={modalActions}>
