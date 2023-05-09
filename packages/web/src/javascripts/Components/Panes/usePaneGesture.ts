@@ -81,7 +81,7 @@ export const usePaneSwipeGesture = (
 
     const TouchMoveThreshold = 25
     const TouchStartThreshold = direction === 'right' ? 25 : window.innerWidth - 25
-    const SwipeFinishThreshold = 40
+    const SwipeFinishThreshold = window.innerWidth / 2.5
 
     const scrollListener = (event: Event) => {
       canceled = true
