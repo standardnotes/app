@@ -8,7 +8,7 @@ import { ApplicationStage } from '../Application/ApplicationStage'
 import { InternalEventPublishStrategy } from '../Internal/InternalEventPublishStrategy'
 import { DiagnosticInfo } from '../Diagnostics/ServiceDiagnostics'
 
-export abstract class AbstractService<EventName = string, EventData = undefined>
+export abstract class AbstractService<EventName = string, EventData = unknown>
   implements ServiceInterface<EventName, EventData>
 {
   private eventObservers: EventObserver<EventName, EventData>[] = []

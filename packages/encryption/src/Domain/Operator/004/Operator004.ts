@@ -293,6 +293,39 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       return {
         uuid: encrypted.uuid,
         content: JSON.parse(content),
+        contentKey,
+      }
+    }
+  }
+
+  public generateDecryptedParametersForSharedItem<C extends ItemContent = ItemContent>(
+    encrypted: Omit<EncryptedParameters, 'items_key_id' | 'enc_item_key'>,
+    contentKey: string,
+  ): DecryptedParameters<C> | ErrorDecryptingParameters {
+    const useAuthenticatedString = this.authenticatedDataToString({
+      u: encrypted.uuid,
+      v: encrypted.version,
+    })
+
+    const contentComponents = this.deconstructEncryptedPayloadString(encrypted.content)
+
+    const content = this.decryptString004(
+      contentComponents.ciphertext,
+      contentKey,
+      contentComponents.nonce,
+      useAuthenticatedString,
+    )
+
+    if (!content) {
+      return {
+        uuid: encrypted.uuid,
+        errorDecrypting: true,
+      }
+    } else {
+      return {
+        uuid: encrypted.uuid,
+        content: JSON.parse(content),
+        contentKey,
       }
     }
   }

@@ -51,6 +51,24 @@ export class ProtocolOperator005 extends SNProtocolOperator004 {
     return this.crypto.sodiumCryptoBoxEasyDecrypt(keyToDecrypt, nonce, senderPublicKey, recipientSecretKey)
   }
 
+  asymmetricAnonymousEncryptKey(keyToEncrypt: HexString, recipientPublicKey: HexString): AsymmetricallyEncryptedKey {
+    const ciphertext = this.crypto.sodiumCryptoBoxAnonymousEncrypt(keyToEncrypt, recipientPublicKey)
+
+    return [AsymmetricCiphertextPrefix, ciphertext].join(':')
+  }
+
+  asymmetricAnonymousDecryptKey(
+    keyToDecrypt: AsymmetricallyEncryptedKey,
+    recipientPublicKey: HexString,
+    recipientSecretKey: HexString,
+  ): Utf8String {
+    const components = keyToDecrypt.split(':')
+
+    const ciphertext = components[1]
+
+    return this.crypto.sodiumCryptoBoxAnonymousDecrypt(ciphertext, recipientPublicKey, recipientSecretKey)
+  }
+
   symmetricEncryptPrivateKey(privateKey: HexString, symmetricKey: HexString): SymmetricallyEncryptedPrivateKey {
     if (symmetricKey.length !== 64) {
       throw new Error('Symmetric key length must be 256 bits')

@@ -1,9 +1,14 @@
 /* istanbul ignore file */
 
-import { FullyFormedPayloadInterface } from '@standardnotes/models'
+import {
+  DecryptedPayloadInterface,
+  EncryptedPayloadInterface,
+  FullyFormedPayloadInterface,
+} from '@standardnotes/models'
 import { SyncOptions } from './SyncOptions'
+import { AbstractService } from '../Service/AbstractService'
 
-export interface SyncServiceInterface {
+export interface SyncServiceInterface extends AbstractService {
   sync(options?: Partial<SyncOptions>): Promise<unknown>
   resetSyncState(): void
   markAllItemsAsNeedingSyncAndPersist(): Promise<void>
@@ -11,4 +16,5 @@ export interface SyncServiceInterface {
   persistPayloads(payloads: FullyFormedPayloadInterface[]): Promise<void>
   lockSyncing(): void
   unlockSyncing(): void
+  getItem(uuid: string): Promise<EncryptedPayloadInterface | DecryptedPayloadInterface | undefined>
 }

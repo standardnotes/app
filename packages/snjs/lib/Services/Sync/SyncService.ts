@@ -1,3 +1,4 @@
+import { isErrorResponse } from '@standardnotes/responses'
 import { log, LoggingDomain } from './../../Logging'
 import { AccountSyncOperation } from '@Lib/Services/Sync/Account/Operation'
 import { ContentType } from '@standardnotes/common'
@@ -76,6 +77,7 @@ import {
   DeviceInterface,
   isFullEntryLoadChunkResponse,
   isChunkFullEntry,
+  ItemsServerInterface,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -100,7 +102,7 @@ const INVALID_SESSION_RESPONSE_STATUS = 401
  * The sync service largely does not perform any task unless it is called upon.
  */
 export class SNSyncService
-  extends AbstractService<SyncEvent, ServerSyncResponse | OfflineSyncResponse | { source: SyncSource }>
+  extends AbstractService
   implements SyncServiceInterface, InternalEventHandlerInterface, SyncClientInterface
 {
   private dirtyIndexAtLastPresyncSave?: number
@@ -144,6 +146,7 @@ export class SNSyncService
     private payloadManager: PayloadManager,
     private apiService: SNApiService,
     private historyService: SNHistoryManager,
+    private itemApi: ItemsServerInterface,
     private device: DeviceInterface,
     private identifier: string,
     private readonly options: ApplicationSyncOptions,
@@ -210,6 +213,29 @@ export class SNSyncService
 
   public getSyncStatus(): SyncOpStatus {
     return this.opStatus
+  }
+
+  public async getItem(uuid: string): Promise<EncryptedPayloadInterface | DecryptedPayloadInterface | undefined> {
+    const itemResponse = await this.itemApi.getSingleItem(uuid)
+    if (itemResponse.data == undefined || isErrorResponse(itemResponse) || !('item' in itemResponse.data)) {
+      return undefined
+    }
+
+    const item = itemResponse.data.item
+
+    const receivedPayloads = FilterDisallowedRemotePayloadsAndMap([item]).map((rawPayload) => {
+      return CreatePayloadFromRawServerItem(rawPayload, PayloadSource.RemoteRetrieved)
+    })
+
+    const payloadSplit = CreateNonDecryptedPayloadSplit(receivedPayloads)
+
+    const encryptionSplit = SplitPayloadsByEncryptionType(payloadSplit.encrypted)
+
+    const keyedSplit = CreateDecryptionSplitWithKeyLookup(encryptionSplit)
+
+    const decryptionResults = await this.protocolService.decryptSplit(keyedSplit)
+
+    return decryptionResults[0]
   }
 
   /**
@@ -634,7 +660,7 @@ export class SNSyncService
   ) {
     this.opStatus.setDidBegin()
 
-    await this.notifyEvent(SyncEvent.SyncWillBegin)
+    await this.notifyEvent(SyncEvent.SyncDidBeginProcessing)
 
     /**
      * Subtract from array as soon as we're sure they'll be called.
@@ -957,7 +983,7 @@ export class SNSyncService
     await Promise.all([
       this.setLastSyncToken(response.lastSyncToken as string),
       this.setPaginationToken(response.paginationToken as string),
-      this.notifyEvent(SyncEvent.SingleRoundTripSyncCompleted, response),
+      this.notifyEvent(SyncEvent.SingleRoundTripSyncCompleted, { ...response, uploadedPayloads: operation.payloads }),
     ])
   }
 

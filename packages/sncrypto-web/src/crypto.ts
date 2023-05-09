@@ -344,6 +344,15 @@ export class SNWebCrypto implements PureCryptoInterface {
     return result
   }
 
+  public sodiumCryptoBoxGenerateKeypair(): PkcKeyPair {
+    const result = sodium.crypto_box_keypair()
+
+    const publicKey = Utils.arrayBufferToHexString(result.publicKey)
+    const privateKey = Utils.arrayBufferToHexString(result.privateKey)
+
+    return { publicKey, privateKey, keyType: result.keyType }
+  }
+
   /**
    * https://doc.libsodium.org/public-key_cryptography/authenticated_encryption
    */
@@ -380,13 +389,25 @@ export class SNWebCrypto implements PureCryptoInterface {
     return result
   }
 
-  public sodiumCryptoBoxGenerateKeypair(): PkcKeyPair {
-    const result = sodium.crypto_box_keypair()
+  sodiumCryptoBoxAnonymousEncrypt(message: Utf8String, recipientPublicKey: HexString): Base64String {
+    const result = sodium.crypto_box_seal(message, Utils.hexStringToArrayBuffer(recipientPublicKey))
 
-    const publicKey = Utils.arrayBufferToHexString(result.publicKey)
-    const privateKey = Utils.arrayBufferToHexString(result.privateKey)
+    return Utils.arrayBufferToBase64(result)
+  }
 
-    return { publicKey, privateKey, keyType: result.keyType }
+  sodiumCryptoBoxAnonymousDecrypt(
+    ciphertext: Base64String,
+    recipientPublicKey: HexString,
+    recipientSecretKey: HexString,
+  ): Utf8String {
+    const result = sodium.crypto_box_seal_open(
+      Utils.base64ToArrayBuffer(ciphertext),
+      Utils.hexStringToArrayBuffer(recipientPublicKey),
+      Utils.hexStringToArrayBuffer(recipientSecretKey),
+      'text',
+    )
+
+    return result
   }
 
   /**

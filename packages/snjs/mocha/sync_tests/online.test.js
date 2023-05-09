@@ -862,7 +862,7 @@ describe('online syncing', function () {
     const newText = `${Math.random()}`
 
     this.application.syncService.addEventObserver(async (eventName) => {
-      if (eventName === SyncEvent.SyncWillBegin && !didPerformMutatation) {
+      if (eventName === SyncEvent.SyncDidBeginProcessing && !didPerformMutatation) {
         didPerformMutatation = true
         await this.application.itemManager.changeItem(note, (mutator) => {
           mutator.text = newText
@@ -1006,7 +1006,7 @@ describe('online syncing', function () {
   it('should call onPresyncSave before sync begins', async function () {
     const events = []
     this.application.syncService.addEventObserver((event) => {
-      if (event === SyncEvent.SyncWillBegin) {
+      if (event === SyncEvent.SyncDidBeginProcessing) {
         events.push('sync-will-begin')
       }
     })

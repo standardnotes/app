@@ -37,6 +37,10 @@ export default class WebDeviceInterface {
     return {}
   }
 
+  clearAllDataFromDevice() {
+    localStorage.clear()
+  }
+
   _getDatabaseKeyPrefix(identifier) {
     if (identifier) {
       return `${identifier}-item-`

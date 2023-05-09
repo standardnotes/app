@@ -133,6 +133,16 @@ export interface PureCryptoInterface {
     assocData: Utf8String,
   ): { message: Uint8Array; tag: SodiumConstant } | false
 
+  sodiumCryptoBoxGenerateKeypair(): PkcKeyPair
+
+  sodiumCryptoBoxAnonymousEncrypt(message: Utf8String, recipientPublicKey: HexString): Base64String
+
+  sodiumCryptoBoxAnonymousDecrypt(
+    ciphertext: Base64String,
+    recipientPublicKey: HexString,
+    recipientSecretKey: HexString,
+  ): Utf8String
+
   sodiumCryptoBoxEasyEncrypt(
     message: Utf8String,
     nonce: HexString,
@@ -146,8 +156,6 @@ export interface PureCryptoInterface {
     senderPublicKey: HexString,
     recipientSecretKey: HexString,
   ): Utf8String
-
-  sodiumCryptoBoxGenerateKeypair(): PkcKeyPair
 
   /**
    * Converts a plain string into base64

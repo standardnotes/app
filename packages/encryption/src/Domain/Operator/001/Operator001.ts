@@ -178,6 +178,7 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
       return {
         uuid: encrypted.uuid,
         content: JSON.parse(content),
+        contentKey: itemKey,
       }
     }
   }

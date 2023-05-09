@@ -1615,6 +1615,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.payloadManager,
       this.apiService,
       this.historyManager,
+      this.apiService,
       this.deviceInterface,
       this.identifier,
       {

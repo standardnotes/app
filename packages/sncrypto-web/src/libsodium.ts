@@ -6,6 +6,8 @@ export {
   crypto_box_easy,
   crypto_box_keypair,
   crypto_box_open_easy,
+  crypto_box_seal_open,
+  crypto_box_seal,
   crypto_pwhash_ALG_DEFAULT,
   crypto_pwhash,
   crypto_secretstream_xchacha20poly1305_init_pull,

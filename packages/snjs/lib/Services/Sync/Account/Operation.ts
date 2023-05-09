@@ -21,7 +21,7 @@ export class AccountSyncOperation {
    * @param receiver   A function that receives callback multiple times during the operation
    */
   constructor(
-    private payloads: ServerSyncPushContextualPayload[],
+    public readonly payloads: ServerSyncPushContextualPayload[],
     private receiver: ResponseSignalReceiver<ServerSyncResponse>,
     private lastSyncToken: string,
     private paginationToken: string,

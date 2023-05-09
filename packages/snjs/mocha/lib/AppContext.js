@@ -182,6 +182,14 @@ export class AppContext {
     })
   }
 
+  callBackWithUploadedPayloads(callback) {
+    return this.application.syncService.addEventObserver((event, data) => {
+      if (event === SyncEvent.SingleRoundTripSyncCompleted) {
+        callback(data.uploadedPayloads)
+      }
+    })
+  }
+
   awaitUserPrefsSingletonCreation() {
     const preferences = this.application.preferencesService.preferences
     if (preferences) {
