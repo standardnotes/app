@@ -193,7 +193,7 @@ export const usePaneSwipeGesture = (
         return
       }
 
-      if (closestScrollContainer && closestScrollContainer.style.overflowY !== 'hidden' && adjustedGesture === 'pan') {
+      if (closestScrollContainer && closestScrollContainer.style.overflowY !== 'hidden') {
         closestScrollContainer.style.overflowY = 'hidden'
       }
 
