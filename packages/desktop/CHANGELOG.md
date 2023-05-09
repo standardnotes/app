@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.106.15](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.158.5...@standardnotes/desktop@3.106.15) (2023-05-09)
+
+### Bug Fixes
+
+* **desktop:** Fixed dropdown height on desktop ([#2328](https://github.com/standardnotes/app/issues/2328)) ([36065d8](https://github.com/standardnotes/app/commit/36065d8320385b52509c089430092fc9ed658c9e))
+
 ## [3.106.14](https://github.com/standardnotes/app/compare/@standardnotes/desktop@3.158.4...@standardnotes/desktop@3.106.14) (2023-05-08)
 
 **Note:** Version bump only for package @standardnotes/desktop

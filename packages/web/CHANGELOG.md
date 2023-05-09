@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.159.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.158.5...@standardnotes/web@3.159.0) (2023-05-09)
+
+### Features
+
+* Swipe gestures on mobile have been improved, and are now enabled by default. You can turn them off from Preferences > General > Labs ([#2321](https://github.com/standardnotes/app/issues/2321)) ([e1bbff1](https://github.com/standardnotes/app/commit/e1bbff14b6111a4f835b9073acb3cba7ce310087))
+
 ## [3.158.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.158.4...@standardnotes/web@3.158.5) (2023-05-08)
 
 **Note:** Version bump only for package @standardnotes/web
