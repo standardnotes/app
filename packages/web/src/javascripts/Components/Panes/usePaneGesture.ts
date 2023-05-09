@@ -76,6 +76,7 @@ export const usePaneSwipeGesture = (
     let scrollContainerAxis: 'x' | 'y' | null = null
     let canceled = false
 
+    const TouchMoveThreshold = 25
     const TouchStartThreshold = direction === 'right' ? 25 : window.innerWidth - 25
     const SwipeFinishThreshold = 40
 
@@ -169,11 +170,16 @@ export const usePaneSwipeGesture = (
 
       const deltaX = clientX - startX
 
+      if (Math.abs(deltaX) < TouchMoveThreshold) {
+        return
+      }
+
       if (closestScrollContainer && closestScrollContainer.style.overflowY !== 'hidden' && gesture === 'pan') {
         closestScrollContainer.style.overflowY = 'hidden'
       }
 
-      const x = direction === 'right' ? Math.max(deltaX, 0) : Math.min(deltaX, 0)
+      const x =
+        direction === 'right' ? Math.max(deltaX - TouchMoveThreshold, 0) : Math.min(deltaX + TouchMoveThreshold, 0)
 
       if (gesture === 'pan') {
         updateElement(x)
