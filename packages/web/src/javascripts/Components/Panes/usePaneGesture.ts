@@ -76,8 +76,8 @@ export const usePaneSwipeGesture = (
     let scrollContainerAxis: 'x' | 'y' | null = null
     let canceled = false
 
-    const TouchMoveThreshold = 25
-    const SwipeFinishThreshold = 40 + TouchMoveThreshold
+    const TouchStartThreshold = direction === 'right' ? 25 : window.innerWidth - 25
+    const SwipeFinishThreshold = 40
 
     const scrollListener = (event: Event) => {
       canceled = true
@@ -93,6 +93,17 @@ export const usePaneSwipeGesture = (
       scrollContainerAxis = null
       canceled = false
 
+      const touch = event.touches[0]
+      startX = touch.clientX
+
+      if (
+        (direction === 'right' && startX > TouchStartThreshold) ||
+        (direction === 'left' && startX < TouchStartThreshold)
+      ) {
+        canceled = true
+        return
+      }
+
       closestScrollContainer = getScrollParent(event.target as HTMLElement)
       if (closestScrollContainer) {
         closestScrollContainer.addEventListener('scroll', scrollListener, supportsPassive ? { passive: true } : false)
@@ -101,9 +112,6 @@ export const usePaneSwipeGesture = (
           scrollContainerAxis = 'x'
         }
       }
-
-      const touch = event.touches[0]
-      startX = touch.clientX
 
       element.style.willChange = 'transform'
     }
@@ -161,16 +169,11 @@ export const usePaneSwipeGesture = (
 
       const deltaX = clientX - startX
 
-      if (Math.abs(deltaX) < TouchMoveThreshold) {
-        return
-      }
-
-      if (closestScrollContainer && closestScrollContainer.style.overflowY !== 'hidden') {
+      if (closestScrollContainer && closestScrollContainer.style.overflowY !== 'hidden' && gesture === 'pan') {
         closestScrollContainer.style.overflowY = 'hidden'
       }
 
-      const x =
-        direction === 'right' ? Math.max(deltaX - TouchMoveThreshold, 0) : Math.min(deltaX + TouchMoveThreshold, 0)
+      const x = direction === 'right' ? Math.max(deltaX, 0) : Math.min(deltaX, 0)
 
       if (gesture === 'pan') {
         updateElement(x)
@@ -189,13 +192,12 @@ export const usePaneSwipeGesture = (
       }
 
       const deltaX = clientX - startX
-      const deltaWithMoveThreshold = direction === 'right' ? deltaX - TouchMoveThreshold : deltaX + TouchMoveThreshold
 
       element.style.willChange = ''
 
       if (
-        (direction === 'right' && deltaWithMoveThreshold > SwipeFinishThreshold) ||
-        (direction === 'left' && deltaWithMoveThreshold < -SwipeFinishThreshold)
+        (direction === 'right' && deltaX > SwipeFinishThreshold) ||
+        (direction === 'left' && deltaX < -SwipeFinishThreshold)
       ) {
         onSwipeEndRef.current(element)
       } else {
