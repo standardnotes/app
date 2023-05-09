@@ -45,6 +45,9 @@ export const usePaneSwipeGesture = (
 
   const onSwipeEndRef = useStateRef(onSwipeEnd)
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+  const prefersReducedMotion = useMediaQuery('(prefers-reduced-motion: reduce)')
+
+  const adjustedGesture = gesture === 'pan' && prefersReducedMotion ? 'swipe' : gesture
 
   const [isEnabled, setIsEnabled] = useState(() =>
     application.getPreference(PrefKey.PaneGesturesEnabled, PrefDefaults[PrefKey.PaneGesturesEnabled]),
@@ -126,7 +129,7 @@ export const usePaneSwipeGesture = (
         underlayElement.style.width = '100%'
         underlayElement.style.height = '100%'
         underlayElement.style.pointerEvents = 'none'
-        if (gesture === 'pan') {
+        if (adjustedGesture === 'pan') {
           underlayElement.style.backgroundColor = '#000'
         } else {
           underlayElement.style.background =
@@ -140,7 +143,7 @@ export const usePaneSwipeGesture = (
         underlayElement.ariaHidden = 'true'
         underlayElement.setAttribute('data-pane-underlay', element.id)
 
-        if (gesture === 'pan') {
+        if (adjustedGesture === 'pan') {
           element.before(underlayElement)
         } else {
           element.after(underlayElement)
@@ -148,7 +151,7 @@ export const usePaneSwipeGesture = (
         underlayElementRef.current = underlayElement
       }
 
-      if (gesture === 'pan') {
+      if (adjustedGesture === 'pan') {
         element.animate(
           [
             {
@@ -163,7 +166,9 @@ export const usePaneSwipeGesture = (
       }
 
       const percent =
-        gesture === 'pan' ? Math.min(window.innerWidth / Math.abs(x) / 10, 0.65) : Math.min(Math.abs(x) / 100, 0.65)
+        adjustedGesture === 'pan'
+          ? Math.min(window.innerWidth / Math.abs(x) / 10, 0.65)
+          : Math.min(Math.abs(x) / 100, 0.65)
       underlayElementRef.current.animate([{ opacity: percent }], {
         duration: 0,
         fill: 'forwards',
@@ -188,11 +193,11 @@ export const usePaneSwipeGesture = (
         return
       }
 
-      if (closestScrollContainer && closestScrollContainer.style.overflowY !== 'hidden' && gesture === 'pan') {
+      if (closestScrollContainer && closestScrollContainer.style.overflowY !== 'hidden' && adjustedGesture === 'pan') {
         closestScrollContainer.style.overflowY = 'hidden'
       }
 
-      if (gesture === 'pan') {
+      if (adjustedGesture === 'pan') {
         const x =
           direction === 'right' ? Math.max(deltaX - TouchMoveThreshold, 0) : Math.min(deltaX + TouchMoveThreshold, 0)
         updateElement(x)
@@ -260,7 +265,7 @@ export const usePaneSwipeGesture = (
       element.removeEventListener('touchend', touchEndListener)
       disposeUnderlay()
     }
-  }, [direction, element, gesture, isMobileScreen, onSwipeEndRef, isEnabled])
+  }, [direction, element, isMobileScreen, onSwipeEndRef, isEnabled, adjustedGesture])
 
   return [setElement]
 }
