@@ -126,30 +126,44 @@ export const usePaneSwipeGesture = (
         underlayElement.style.width = '100%'
         underlayElement.style.height = '100%'
         underlayElement.style.pointerEvents = 'none'
-        underlayElement.style.backgroundColor = '#000'
+        if (gesture === 'pan') {
+          underlayElement.style.backgroundColor = '#000'
+        } else {
+          underlayElement.style.background =
+            direction === 'right'
+              ? 'linear-gradient(to right, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0))'
+              : 'linear-gradient(to left, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0))'
+        }
         underlayElement.style.opacity = '0'
         underlayElement.style.willChange = 'opacity'
         underlayElement.setAttribute('role', 'presentation')
         underlayElement.ariaHidden = 'true'
         underlayElement.setAttribute('data-pane-underlay', element.id)
 
-        element.before(underlayElement)
+        if (gesture === 'pan') {
+          element.before(underlayElement)
+        } else {
+          element.after(underlayElement)
+        }
         underlayElementRef.current = underlayElement
       }
 
-      element.animate(
-        [
+      if (gesture === 'pan') {
+        element.animate(
+          [
+            {
+              transform: `translate3d(${x}px, 0, 0)`,
+            },
+          ],
           {
-            transform: `translate3d(${x}px, 0, 0)`,
+            duration: 0,
+            fill: 'forwards',
           },
-        ],
-        {
-          duration: 0,
-          fill: 'forwards',
-        },
-      )
+        )
+      }
 
-      const percent = Math.min(window.innerWidth / x / 10, 0.45)
+      const percent =
+        gesture === 'pan' ? Math.min(window.innerWidth / Math.abs(x) / 10, 0.65) : Math.min(Math.abs(x) / 100, 0.65)
       underlayElementRef.current.animate([{ opacity: percent }], {
         duration: 0,
         fill: 'forwards',
@@ -178,12 +192,34 @@ export const usePaneSwipeGesture = (
         closestScrollContainer.style.overflowY = 'hidden'
       }
 
-      const x =
-        direction === 'right' ? Math.max(deltaX - TouchMoveThreshold, 0) : Math.min(deltaX + TouchMoveThreshold, 0)
-
       if (gesture === 'pan') {
+        const x =
+          direction === 'right' ? Math.max(deltaX - TouchMoveThreshold, 0) : Math.min(deltaX + TouchMoveThreshold, 0)
+        updateElement(x)
+      } else {
+        const x = direction === 'right' ? Math.max(deltaX, 0) : Math.min(deltaX, 0)
         updateElement(x)
       }
+    }
+
+    const disposeUnderlay = () => {
+      if (!underlayElementRef.current) {
+        return
+      }
+
+      underlayElementRef.current
+        .animate([{ opacity: 0 }], {
+          easing: 'cubic-bezier(.36,.66,.04,1)',
+          duration: 500,
+          fill: 'forwards',
+        })
+        .finished.then(() => {
+          if (underlayElementRef.current) {
+            underlayElementRef.current.remove()
+            underlayElementRef.current = null
+          }
+        })
+        .catch(console.error)
     }
 
     const touchEndListener = () => {
@@ -194,6 +230,7 @@ export const usePaneSwipeGesture = (
 
       if (canceled) {
         updateElement(0)
+        disposeUnderlay()
         return
       }
 
@@ -210,21 +247,7 @@ export const usePaneSwipeGesture = (
         updateElement(0)
       }
 
-      if (underlayElementRef.current) {
-        underlayElementRef.current
-          .animate([{ opacity: 0 }], {
-            easing: 'cubic-bezier(.36,.66,.04,1)',
-            duration: 500,
-            fill: 'forwards',
-          })
-          .finished.then(() => {
-            if (underlayElementRef.current) {
-              underlayElementRef.current.remove()
-              underlayElementRef.current = null
-            }
-          })
-          .catch(console.error)
-      }
+      disposeUnderlay()
     }
 
     element.addEventListener('touchstart', touchStartListener, supportsPassive ? { passive: true } : false)
@@ -235,6 +258,7 @@ export const usePaneSwipeGesture = (
       element.removeEventListener('touchstart', touchStartListener)
       element.removeEventListener('touchmove', touchMoveListener)
       element.removeEventListener('touchend', touchEndListener)
+      disposeUnderlay()
     }
   }, [direction, element, gesture, isMobileScreen, onSwipeEndRef, isEnabled])
 
