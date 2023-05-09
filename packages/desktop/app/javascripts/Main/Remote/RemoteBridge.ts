@@ -8,12 +8,11 @@ const rendererPath = path.join('file://', __dirname, '/renderer.js')
 import {
   FileBackupsDevice,
   FileBackupsMapping,
-  FileBackupRecord,
   FileBackupReadToken,
   FileBackupReadChunkResponse,
+  PlaintextBackupsMapping,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { app, BrowserWindow } from 'electron'
-import { BackupsManagerInterface } from '../Backups/BackupsManagerInterface'
 import { KeychainInterface } from '../Keychain/KeychainInterface'
 import { MenuManagerInterface } from '../Menus/MenuManagerInterface'
 import { Component, PackageManagerInterface } from '../Packages/PackageManagerInterface'
@@ -29,7 +28,6 @@ export class RemoteBridge implements CrossProcessBridge {
   constructor(
     private window: BrowserWindow,
     private keychain: KeychainInterface,
-    private backups: BackupsManagerInterface,
     private packages: PackageManagerInterface,
     private search: SearchManagerInterface,
     private data: RemoteDataInterface,
@@ -54,28 +52,31 @@ export class RemoteBridge implements CrossProcessBridge {
       getKeychainValue: this.getKeychainValue.bind(this),
       setKeychainValue: this.setKeychainValue.bind(this),
       clearKeychainValue: this.clearKeychainValue.bind(this),
-      localBackupsCount: this.localBackupsCount.bind(this),
-      viewlocalBackups: this.viewlocalBackups.bind(this),
-      deleteLocalBackups: this.deleteLocalBackups.bind(this),
       displayAppMenu: this.displayAppMenu.bind(this),
-      saveDataBackup: this.saveDataBackup.bind(this),
       syncComponents: this.syncComponents.bind(this),
-      onMajorDataChange: this.onMajorDataChange.bind(this),
       onSearch: this.onSearch.bind(this),
-      onInitialDataLoad: this.onInitialDataLoad.bind(this),
       destroyAllData: this.destroyAllData.bind(this),
       getFilesBackupsMappingFile: this.getFilesBackupsMappingFile.bind(this),
       saveFilesBackupsFile: this.saveFilesBackupsFile.bind(this),
-      isFilesBackupsEnabled: this.isFilesBackupsEnabled.bind(this),
-      enableFilesBackups: this.enableFilesBackups.bind(this),
-      disableFilesBackups: this.disableFilesBackups.bind(this),
-      changeFilesBackupsLocation: this.changeFilesBackupsLocation.bind(this),
-      getFilesBackupsLocation: this.getFilesBackupsLocation.bind(this),
-      openFilesBackupsLocation: this.openFilesBackupsLocation.bind(this),
-      openFileBackup: this.openFileBackup.bind(this),
+      isLegacyFilesBackupsEnabled: this.isLegacyFilesBackupsEnabled.bind(this),
+      getLegacyFilesBackupsLocation: this.getLegacyFilesBackupsLocation.bind(this),
       getFileBackupReadToken: this.getFileBackupReadToken.bind(this),
       readNextChunk: this.readNextChunk.bind(this),
       askForMediaAccess: this.askForMediaAccess.bind(this),
+      wasLegacyTextBackupsExplicitlyDisabled: this.wasLegacyTextBackupsExplicitlyDisabled.bind(this),
+      getLegacyTextBackupsLocation: this.getLegacyTextBackupsLocation.bind(this),
+      saveTextBackupData: this.saveTextBackupData.bind(this),
+      savePlaintextNoteBackup: this.savePlaintextNoteBackup.bind(this),
+      openLocation: this.openLocation.bind(this),
+      presentDirectoryPickerForLocationChangeAndTransferOld:
+        this.presentDirectoryPickerForLocationChangeAndTransferOld.bind(this),
+      getPlaintextBackupsMappingFile: this.getPlaintextBackupsMappingFile.bind(this),
+      persistPlaintextBackupsMappingFile: this.persistPlaintextBackupsMappingFile.bind(this),
+      getTextBackupsCount: this.getTextBackupsCount.bind(this),
+      migrateLegacyFileBackupsToNewStructure: this.migrateLegacyFileBackupsToNewStructure.bind(this),
+      getUserDocumentsDirectory: this.getUserDocumentsDirectory.bind(this),
+      monitorPlaintextBackupsLocationForChanges: this.monitorPlaintextBackupsLocationForChanges.bind(this),
+      joinPaths: this.joinPaths.bind(this),
     }
   }
 
@@ -135,51 +136,28 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.keychain.clearKeychainValue()
   }
 
-  async localBackupsCount() {
-    return this.backups.backupsCount()
-  }
-
-  viewlocalBackups() {
-    this.backups.viewBackups()
-  }
-
-  async deleteLocalBackups() {
-    return this.backups.deleteBackups()
-  }
-
   syncComponents(components: Component[]) {
     void this.packages.syncComponents(components)
-  }
-
-  onMajorDataChange() {
-    this.backups.performBackup()
   }
 
   onSearch(text: string) {
     this.search.findInPage(text)
   }
 
-  onInitialDataLoad() {
-    this.backups.beginBackups()
-  }
-
   destroyAllData() {
     this.data.destroySensitiveDirectories()
-  }
-
-  saveDataBackup(data: unknown) {
-    this.backups.saveBackupData(data)
   }
 
   displayAppMenu() {
     this.menus.popupMenu()
   }
 
-  getFilesBackupsMappingFile(): Promise<FileBackupsMapping> {
-    return this.fileBackups.getFilesBackupsMappingFile()
+  getFilesBackupsMappingFile(location: string): Promise<FileBackupsMapping> {
+    return this.fileBackups.getFilesBackupsMappingFile(location)
   }
 
   saveFilesBackupsFile(
+    location: string,
     uuid: string,
     metaFile: string,
     downloadRequest: {
@@ -188,43 +166,78 @@ export class RemoteBridge implements CrossProcessBridge {
       url: string
     },
   ): Promise<'success' | 'failed'> {
-    return this.fileBackups.saveFilesBackupsFile(uuid, metaFile, downloadRequest)
+    return this.fileBackups.saveFilesBackupsFile(location, uuid, metaFile, downloadRequest)
   }
 
-  getFileBackupReadToken(record: FileBackupRecord): Promise<FileBackupReadToken> {
-    return this.fileBackups.getFileBackupReadToken(record)
+  getFileBackupReadToken(filePath: string): Promise<FileBackupReadToken> {
+    return this.fileBackups.getFileBackupReadToken(filePath)
   }
 
   readNextChunk(nextToken: string): Promise<FileBackupReadChunkResponse> {
     return this.fileBackups.readNextChunk(nextToken)
   }
 
-  public isFilesBackupsEnabled(): Promise<boolean> {
-    return this.fileBackups.isFilesBackupsEnabled()
+  public isLegacyFilesBackupsEnabled(): Promise<boolean> {
+    return this.fileBackups.isLegacyFilesBackupsEnabled()
   }
 
-  public enableFilesBackups(): Promise<void> {
-    return this.fileBackups.enableFilesBackups()
+  public getLegacyFilesBackupsLocation(): Promise<string | undefined> {
+    return this.fileBackups.getLegacyFilesBackupsLocation()
   }
 
-  public disableFilesBackups(): Promise<void> {
-    return this.fileBackups.disableFilesBackups()
+  wasLegacyTextBackupsExplicitlyDisabled(): Promise<boolean> {
+    return this.fileBackups.wasLegacyTextBackupsExplicitlyDisabled()
   }
 
-  public changeFilesBackupsLocation(): Promise<string | undefined> {
-    return this.fileBackups.changeFilesBackupsLocation()
+  getLegacyTextBackupsLocation(): Promise<string | undefined> {
+    return this.fileBackups.getLegacyTextBackupsLocation()
   }
 
-  public getFilesBackupsLocation(): Promise<string> {
-    return this.fileBackups.getFilesBackupsLocation()
+  saveTextBackupData(location: string, data: string): Promise<void> {
+    return this.fileBackups.saveTextBackupData(location, data)
   }
 
-  public openFilesBackupsLocation(): Promise<void> {
-    return this.fileBackups.openFilesBackupsLocation()
+  savePlaintextNoteBackup(location: string, uuid: string, name: string, tags: string[], data: string): Promise<void> {
+    return this.fileBackups.savePlaintextNoteBackup(location, uuid, name, tags, data)
   }
 
-  public openFileBackup(record: FileBackupRecord): Promise<void> {
-    return this.fileBackups.openFileBackup(record)
+  openLocation(path: string): Promise<void> {
+    return this.fileBackups.openLocation(path)
+  }
+
+  presentDirectoryPickerForLocationChangeAndTransferOld(
+    appendPath: string,
+    oldLocation?: string | undefined,
+  ): Promise<string | undefined> {
+    return this.fileBackups.presentDirectoryPickerForLocationChangeAndTransferOld(appendPath, oldLocation)
+  }
+
+  getPlaintextBackupsMappingFile(location: string): Promise<PlaintextBackupsMapping> {
+    return this.fileBackups.getPlaintextBackupsMappingFile(location)
+  }
+
+  persistPlaintextBackupsMappingFile(location: string): Promise<void> {
+    return this.fileBackups.persistPlaintextBackupsMappingFile(location)
+  }
+
+  getTextBackupsCount(location: string): Promise<number> {
+    return this.fileBackups.getTextBackupsCount(location)
+  }
+
+  migrateLegacyFileBackupsToNewStructure(newPath: string): Promise<void> {
+    return this.fileBackups.migrateLegacyFileBackupsToNewStructure(newPath)
+  }
+
+  getUserDocumentsDirectory(): Promise<string> {
+    return this.fileBackups.getUserDocumentsDirectory()
+  }
+
+  monitorPlaintextBackupsLocationForChanges(backupsDirectory: string): Promise<void> {
+    return this.fileBackups.monitorPlaintextBackupsLocationForChanges(backupsDirectory)
+  }
+
+  joinPaths(...paths: string[]): Promise<string> {
+    return this.fileBackups.joinPaths(...paths)
   }
 
   askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean> {

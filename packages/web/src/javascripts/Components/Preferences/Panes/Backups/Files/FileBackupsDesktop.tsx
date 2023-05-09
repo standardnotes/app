@@ -1,7 +1,6 @@
-import { WebApplication } from '@/Application/Application'
 import { observer } from 'mobx-react-lite'
 import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useState } from 'react'
 import Button from '@/Components/Button/Button'
 import Switch from '@/Components/Switch/Switch'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
@@ -10,30 +9,21 @@ import BackupsDropZone from './BackupsDropZone'
 import EncryptionStatusItem from '../../Security/EncryptionStatusItem'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
+import { BackupServiceInterface } from '@standardnotes/snjs'
+import { useApplication } from '@/Components/ApplicationProvider'
 
 type Props = {
-  application: WebApplication
-  backupsService: NonNullable<WebApplication['fileBackups']>
+  backupsService: BackupServiceInterface
 }
 
-const FileBackupsDesktop = ({ application, backupsService }: Props) => {
-  const [backupsEnabled, setBackupsEnabled] = useState(false)
-  const [backupsLocation, setBackupsLocation] = useState('')
-
-  useEffect(() => {
-    void backupsService.isFilesBackupsEnabled().then(setBackupsEnabled)
-  }, [backupsService])
-
-  useEffect(() => {
-    if (backupsEnabled) {
-      void backupsService.getFilesBackupsLocation().then(setBackupsLocation)
-    }
-  }, [backupsService, backupsEnabled])
+const FileBackupsDesktop = ({ backupsService }: Props) => {
+  const application = useApplication()
+  const [backupsEnabled, setBackupsEnabled] = useState(backupsService.isFilesBackupsEnabled())
+  const [backupsLocation, setBackupsLocation] = useState(backupsService.getFilesBackupsLocation())
 
   const changeBackupsLocation = useCallback(async () => {
-    await backupsService.changeFilesBackupsLocation()
-
-    setBackupsLocation(await backupsService.getFilesBackupsLocation())
+    const newLocation = await backupsService.changeFilesBackupsLocation()
+    setBackupsLocation(newLocation)
   }, [backupsService])
 
   const openBackupsLocation = useCallback(async () => {
@@ -42,25 +32,24 @@ const FileBackupsDesktop = ({ application, backupsService }: Props) => {
 
   const toggleBackups = useCallback(async () => {
     if (backupsEnabled) {
-      await backupsService.disableFilesBackups()
+      backupsService.disableFilesBackups()
     } else {
       await backupsService.enableFilesBackups()
     }
 
-    setBackupsEnabled(await backupsService.isFilesBackupsEnabled())
+    setBackupsEnabled(backupsService.isFilesBackupsEnabled())
+    setBackupsLocation(backupsService.getFilesBackupsLocation())
   }, [backupsService, backupsEnabled])
 
   return (
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>File Backups</Title>
+          <Title>Automatic file backups</Title>
 
           <div className="flex items-center justify-between">
             <div className="mr-10 flex flex-col">
-              <Subtitle>
-                Automatically save encrypted backups of files uploaded on any device to this computer.
-              </Subtitle>
+              <Subtitle>Automatically save encrypted backups of your uploaded files to this computer.</Subtitle>
             </div>
             <Switch onChange={toggleBackups} checked={backupsEnabled} />
           </div>
@@ -85,14 +74,14 @@ const FileBackupsDesktop = ({ application, backupsService }: Props) => {
                 </Text>
 
                 <EncryptionStatusItem
-                  status={backupsLocation}
+                  status={backupsLocation || 'Not Set'}
                   icon={<Icon type="attachment-file" className="min-h-5 min-w-5" />}
                   checkmark={false}
                 />
 
                 <div className="mt-2.5 flex flex-row">
-                  <Button label="Open Backups Location" className={'mr-3 text-xs'} onClick={openBackupsLocation} />
-                  <Button label="Change Backups Location" className={'mr-3 text-xs'} onClick={changeBackupsLocation} />
+                  <Button label="Open Location" className={'mr-3 text-xs'} onClick={openBackupsLocation} />
+                  <Button label="Change Location" className={'mr-3 text-xs'} onClick={changeBackupsLocation} />
                 </div>
               </>
             </PreferencesSegment>

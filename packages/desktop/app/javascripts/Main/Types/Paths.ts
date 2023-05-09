@@ -36,6 +36,9 @@ export const Paths = {
   get userDataDir(): string {
     return app.getPath('userData')
   },
+  get homeDir(): string {
+    return app.getPath('home')
+  },
   get documentsDir(): string {
     return app.getPath('documents')
   },

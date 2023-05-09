@@ -1,6 +1,6 @@
 import { FunctionComponent, useCallback, useMemo, useState } from 'react'
 
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { isEmailValid } from '@/Utils'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 
@@ -134,7 +134,7 @@ const Invite: FunctionComponent<Props> = ({ onCloseDialog, application, subscrip
   )
 
   return (
-    <Modal title="Share your Subscription" close={handleDialogClose} actions={modalActions}>
+    <Modal title="Share Your Subscription" close={handleDialogClose} actions={modalActions}>
       <div className="px-4.5 py-4">
         {currentStep === Steps.InitialStep && <InviteForm setInviteeEmail={setInviteeEmail} />}
         {currentStep === Steps.FinishStep && <InviteSuccess />}

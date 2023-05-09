@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.168.7](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.6...@standardnotes/snjs@2.168.7) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.5...@standardnotes/snjs@2.168.6) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.4...@standardnotes/snjs@2.168.5) (2023-05-05)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.3...@standardnotes/snjs@2.168.4) (2023-05-04)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.2...@standardnotes/snjs@2.168.3) (2023-05-04)
+
+### Bug Fixes
+
+* workspace names now default to account email after signing in. It can later be changed from the workspace switcher menu. ([8385b4e](https://github.com/standardnotes/app/commit/8385b4e89fa0fc3204532adda9d085d9c0fd7996))
+
+## [2.168.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.1...@standardnotes/snjs@2.168.2) (2023-05-03)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.0...@standardnotes/snjs@2.168.1) (2023-05-02)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+# [2.168.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.167.5...@standardnotes/snjs@2.168.0) (2023-05-02)
+
+### Features
+
+* Automatic plaintext backup option in Preferences > Backups will backup your notes and tags into plaintext, unencrypted folders on your computer. In addition, automatic encrypted text backups preference management has moved from the top-level menu in the desktop app to Preferences > Backups. ([#2322](https://github.com/standardnotes/app/issues/2322)) ([7e3db49](https://github.com/standardnotes/app/commit/7e3db49322034aa644c3c99ccf9a5f1b508583aa))
+
 ## [2.167.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.167.4...@standardnotes/snjs@2.167.5) (2023-04-26)
 
 **Note:** Version bump only for package @standardnotes/snjs

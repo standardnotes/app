@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { getBase64FromBlob } from '@/Utils'
 import { FileItem } from '@standardnotes/snjs'
 import { FunctionComponent, useCallback, useEffect, useMemo, useRef } from 'react'

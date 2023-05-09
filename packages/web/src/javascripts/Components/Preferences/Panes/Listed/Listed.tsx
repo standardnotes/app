@@ -1,6 +1,6 @@
 import { Title, Subtitle, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import { observer } from 'mobx-react-lite'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ButtonType, ListedAccount } from '@standardnotes/snjs'
 import { useCallback, useEffect, useState } from 'react'
 import ListedAccountItem from './ListedAccountItem'
@@ -62,7 +62,7 @@ const Listed = ({ application }: Props) => {
       {accounts.length > 0 && (
         <PreferencesGroup>
           <PreferencesSegment>
-            <Title>Your {accounts.length === 1 ? 'Blog' : 'Blogs'} on Listed</Title>
+            <Title>Your {accounts.length === 1 ? 'blog' : 'blogs'} on Listed</Title>
             <div className="h-2 w-full" />
             {accounts.map((item, index, array) => {
               return (

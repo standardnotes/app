@@ -1,5 +1,5 @@
 import { $createParagraphNode, $getRoot, $insertNodes, LexicalNode } from 'lexical'
-import { $generateNodesFromDOM } from '../SuperEditor/Lexical/Utils/generateNodesFromDOM'
+import { $generateNodesFromDOM } from '@lexical/html'
 import { createHeadlessEditor } from '@lexical/headless'
 import { BlockEditorNodes } from '../SuperEditor/Lexical/Nodes/AllNodes'
 import BlocksEditorTheme from '../SuperEditor/Lexical/Theme/Theme'
@@ -28,6 +28,10 @@ export const getSuperJSONFromClipPayload = async (clipPayload: ClipPayload) => {
       )
       $getRoot().select()
       $insertNodes(clipSourceParagraphNode)
+
+      if (typeof clipPayload.content !== 'string') {
+        throw new Error('Clip payload content is not a string')
+      }
 
       const dom = parser.parseFromString(clipPayload.content, 'text/html')
       const generatedNodes = $generateNodesFromDOM(editor, dom)

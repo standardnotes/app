@@ -5,7 +5,7 @@ import { FileBackupMetadataFile, FileBackupsConstantsV1, FileItem, FileHandleRea
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Icon from '@/Components/Icon/Icon'
 import { ClassicFileReader, StreamingFileApi } from '@standardnotes/filepicker'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import EncryptionStatusItem from '../../Security/EncryptionStatusItem'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
 import Spinner from '@/Components/Spinner/Spinner'

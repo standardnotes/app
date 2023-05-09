@@ -3,6 +3,68 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.53.14](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.53.13...@standardnotes/mobile@3.53.14) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.53.13](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.53.12...@standardnotes/mobile@3.53.13) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.53.12](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.53.11...@standardnotes/mobile@3.53.12) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.53.11](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.53.10...@standardnotes/mobile@3.53.11) (2023-05-05)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.53.10](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.53.9...@standardnotes/mobile@3.53.10) (2023-05-05)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.53.9](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.53.8...@standardnotes/mobile@3.53.9) (2023-05-05)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.53.8](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.53.7...@standardnotes/mobile@3.53.8) (2023-05-04)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.53.7](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.53.6...@standardnotes/mobile@3.53.7) (2023-05-04)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.53.6](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.156.3...@standardnotes/mobile@3.53.6) (2023-05-04)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.53.5](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.53.4...@standardnotes/mobile@3.53.5) (2023-05-04)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.53.4](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.156.1...@standardnotes/mobile@3.53.4) (2023-05-03)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.53.3](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.156.0...@standardnotes/mobile@3.53.3) (2023-05-03)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.53.2](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.53.1...@standardnotes/mobile@3.53.2) (2023-05-03)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.53.1](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.53.0...@standardnotes/mobile@3.53.1) (2023-05-02)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+# [3.53.0](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.52.36...@standardnotes/mobile@3.53.0) (2023-05-02)
+
+### Features
+
+* Automatic plaintext backup option in Preferences > Backups will backup your notes and tags into plaintext, unencrypted folders on your computer. In addition, automatic encrypted text backups preference management has moved from the top-level menu in the desktop app to Preferences > Backups. ([#2322](https://github.com/standardnotes/app/issues/2322)) ([7e3db49](https://github.com/standardnotes/app/commit/7e3db49322034aa644c3c99ccf9a5f1b508583aa))
+
 ## [3.52.36](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.52.35...@standardnotes/mobile@3.52.36) (2023-05-01)
 
 **Note:** Version bump only for package @standardnotes/mobile

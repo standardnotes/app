@@ -1,3 +1,4 @@
+import { omitByCopy } from '@standardnotes/utils'
 import { SearchableDecryptedItem } from './Types'
 import { ItemContent } from '../../../Abstract/Content/ItemContent'
 import { DecryptedItem } from '../../../Abstract/Item'
@@ -15,7 +16,12 @@ export class ItemWithTags extends DecryptedItem implements SearchableDecryptedIt
     public readonly tags?: SNTag[],
   ) {
     super(payload)
+    this.transferInItemPropertiesSoRootLevelPredicateKeyPathsCanBeMatched(item)
     this.tags = tags || payload.content.tags
+  }
+
+  transferInItemPropertiesSoRootLevelPredicateKeyPathsCanBeMatched(item: SearchableDecryptedItem) {
+    Object.assign(this, omitByCopy(item, ['title', 'text']))
   }
 
   static Create(payload: DecryptedPayloadInterface<ItemContent>, item: SearchableDecryptedItem, tags?: SNTag[]) {

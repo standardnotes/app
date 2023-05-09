@@ -1,6 +1,6 @@
 import { AppPaneId } from '../../Components/Panes/AppPaneMetadata'
 import { PaneLayout } from './PaneLayout'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { getIsTabletOrMobileScreen } from '@/Hooks/useIsTabletOrMobileScreen'
 
 export function panesForLayout(layout: PaneLayout, application: WebApplication): AppPaneId[] {

@@ -1,6 +1,6 @@
-import { Environment } from '@standardnotes/models'
+import { BackupServiceInterface } from '@standardnotes/files'
+import { Environment, Platform } from '@standardnotes/models'
 import { DeviceInterface, InternalEventBusInterface, EncryptionService } from '@standardnotes/services'
-
 import { SNSessionManager } from '../Services/Session/SessionManager'
 import { ApplicationIdentifier } from '@standardnotes/common'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
@@ -13,10 +13,12 @@ export type MigrationServices = {
   storageService: DiskStorageService
   challengeService: ChallengeService
   sessionManager: SNSessionManager
+  backups?: BackupServiceInterface
   itemManager: ItemManager
   singletonManager: SNSingletonManager
   featuresService: SNFeaturesService
   environment: Environment
+  platform: Platform
   identifier: ApplicationIdentifier
   legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>
   internalEventBus: InternalEventBusInterface

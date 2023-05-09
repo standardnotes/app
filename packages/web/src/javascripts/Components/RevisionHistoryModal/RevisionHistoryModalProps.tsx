@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalController'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { SelectedItemsController } from '@/Controllers/SelectedItemsController'

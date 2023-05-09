@@ -1,5 +1,5 @@
-import { ApplicationGroup } from '@/Application/ApplicationGroup'
-import { WebApplication } from '@/Application/Application'
+import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
+import { WebApplication } from '@/Application/WebApplication'
 import { Component } from 'react'
 import ApplicationView from '@/Components/ApplicationView/ApplicationView'
 import { WebOrDesktopDevice } from '@/Application/Device/WebOrDesktopDevice'
@@ -38,7 +38,7 @@ const renderDialog = (message: string) => {
 
 class ApplicationGroupView extends Component<Props, State> {
   applicationObserverRemover?: () => void
-  private group?: ApplicationGroup
+  private group?: WebApplicationGroup
   private application?: WebApplication
 
   constructor(props: Props) {
@@ -52,7 +52,7 @@ class ApplicationGroupView extends Component<Props, State> {
       return
     }
 
-    this.group = new ApplicationGroup(props.server, props.device, props.websocketUrl)
+    this.group = new WebApplicationGroup(props.server, props.device, props.websocketUrl)
 
     window.mainApplicationGroup = this.group
 

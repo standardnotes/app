@@ -3,6 +3,78 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.158.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.158.4...@standardnotes/web@3.158.5) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.158.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.158.3...@standardnotes/web@3.158.4) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.158.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.158.2...@standardnotes/web@3.158.3) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.158.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.158.1...@standardnotes/web@3.158.2) (2023-05-05)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.158.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.158.0...@standardnotes/web@3.158.1) (2023-05-05)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.158.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.157.1...@standardnotes/web@3.158.0) (2023-05-05)
+
+### Features
+
+* **clipper:** Added "Clip as screenshot" switch to allow clipping content as a screenshot and save it to Files ([0d3b7f7](https://github.com/standardnotes/app/commit/0d3b7f7d94071675c1005bbe64fb11cc91bccf58))
+
+## [3.157.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.157.0...@standardnotes/web@3.157.1) (2023-05-04)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.157.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.156.4...@standardnotes/web@3.157.0) (2023-05-04)
+
+### Features
+
+* Replaced margin resizers with "Editor width" options. You can set it globally from Preferences > Appearance or per-note from the note options menu ([#2324](https://github.com/standardnotes/app/issues/2324)) ([9fbb845](https://github.com/standardnotes/app/commit/9fbb845b1d3b1ca6a4b064f3b63bdae1cf7777e8))
+
+## [3.156.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.156.3...@standardnotes/web@3.156.4) (2023-05-04)
+
+### Bug Fixes
+
+* workspace names now default to account email after signing in. It can later be changed from the workspace switcher menu. ([8385b4e](https://github.com/standardnotes/app/commit/8385b4e89fa0fc3204532adda9d085d9c0fd7996))
+
+## [3.156.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.156.2...@standardnotes/web@3.156.3) (2023-05-04)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.156.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.156.1...@standardnotes/web@3.156.2) (2023-05-03)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.156.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.156.0...@standardnotes/web@3.156.1) (2023-05-03)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.156.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.155.1...@standardnotes/web@3.156.0) (2023-05-03)
+
+### Features
+
+* Added Export option for Authenticator entries ([b117271](https://github.com/standardnotes/app/commit/b117271d617597b1dd83a4878a588e1f7ddc3f97))
+
+## [3.155.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.155.0...@standardnotes/web@3.155.1) (2023-05-02)
+
+### Bug Fixes
+
+* automatically convert Super notes to Markdown for the Plaintext Backups feature ([75ecf4c](https://github.com/standardnotes/app/commit/75ecf4c393a6bc0ab2d6bf50dcbee21cef520746))
+
+# [3.155.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.154.1...@standardnotes/web@3.155.0) (2023-05-02)
+
+### Features
+
+* Automatic plaintext backup option in Preferences > Backups will backup your notes and tags into plaintext, unencrypted folders on your computer. In addition, automatic encrypted text backups preference management has moved from the top-level menu in the desktop app to Preferences > Backups. ([#2322](https://github.com/standardnotes/app/issues/2322)) ([7e3db49](https://github.com/standardnotes/app/commit/7e3db49322034aa644c3c99ccf9a5f1b508583aa))
+
 ## [3.154.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.154.0...@standardnotes/web@3.154.1) (2023-05-01)
 
 ### Bug Fixes

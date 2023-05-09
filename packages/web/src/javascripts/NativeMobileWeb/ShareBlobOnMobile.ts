@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { getBase64FromBlob } from '@/Utils'
 
 export const shareBlobOnMobile = async (application: WebApplication, blob: Blob, filename: string) => {

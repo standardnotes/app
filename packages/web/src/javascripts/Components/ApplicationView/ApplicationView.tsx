@@ -1,8 +1,8 @@
-import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { getPlatformString, isIOS } from '@/Utils'
 import { ApplicationEvent, Challenge, removeFromArray, WebAppEvent } from '@standardnotes/snjs'
 import { alertDialog, RouteType } from '@standardnotes/ui-services'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import Footer from '@/Components/Footer/Footer'
 import SessionsModal from '@/Components/SessionsModal/SessionsModal'
 import PreferencesViewWrapper from '@/Components/Preferences/PreferencesViewWrapper'
@@ -30,10 +30,11 @@ import DotOrgNotice from './DotOrgNotice'
 import LinkingControllerProvider from '@/Controllers/LinkingControllerProvider'
 import ImportModal from '../ImportModal/ImportModal'
 import IosKeyboardClose from '../IosKeyboardClose/IosKeyboardClose'
+import EditorWidthSelectionModalWrapper from '../EditorWidthSelectionModal/EditorWidthSelectionModal'
 
 type Props = {
   application: WebApplication
-  mainApplicationGroup: ApplicationGroup
+  mainApplicationGroup: WebApplicationGroup
 }
 
 const LazyLoadedClipperView = lazy(() => import('../ClipperView/ClipperView'))
@@ -199,6 +200,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                       applicationGroup={mainApplicationGroup}
                     />
                     <ToastContainer />
+                    <FilePreviewModalWrapper application={application} viewControllerManager={viewControllerManager} />
                     {renderChallenges()}
                   </FileDragNDropProvider>
                 </LinkingControllerProvider>
@@ -268,6 +270,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
                     <ToastContainer />
                     <FilePreviewModalWrapper application={application} viewControllerManager={viewControllerManager} />
                     <PermissionsModalWrapper application={application} />
+                    <EditorWidthSelectionModalWrapper />
                     <ConfirmDeleteAccountContainer
                       application={application}
                       viewControllerManager={viewControllerManager}

@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { getBase64FromBlob } from '@/Utils'
 import { Platform } from '@standardnotes/snjs'
 import { addToast, ToastType, dismissToast } from '@standardnotes/toast'

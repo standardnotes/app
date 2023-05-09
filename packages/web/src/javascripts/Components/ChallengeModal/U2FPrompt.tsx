@@ -2,7 +2,7 @@ import { Username } from '@standardnotes/snjs'
 import { ChallengePrompt } from '@standardnotes/services'
 import { RefObject, useState } from 'react'
 
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { isAndroid } from '@/Utils'
 
 import Button from '../Button/Button'

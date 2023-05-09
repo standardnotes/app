@@ -1,9 +1,9 @@
-import { runtime, action, browserAction, windows, storage } from 'webextension-polyfill'
-import { RuntimeMessage, RuntimeMessageTypes } from '../types/message'
+import { runtime, action, browserAction, windows, storage, tabs } from 'webextension-polyfill'
+import { ClipPayload, RuntimeMessage, RuntimeMessageTypes } from '../types/message'
 
 const isFirefox = navigator.userAgent.indexOf('Firefox/') !== -1
 
-const openPopupAndClipSelection = async (payload: { title: string; content: string }) => {
+const openPopupAndClipSelection = async (payload: ClipPayload) => {
   await storage.local.set({ clip: payload })
 
   if (isFirefox) {
@@ -22,11 +22,15 @@ const openPopupAndClipSelection = async (payload: { title: string; content: stri
   void openPopup()
 }
 
-runtime.onMessage.addListener((message: RuntimeMessage) => {
+runtime.onMessage.addListener(async (message: RuntimeMessage) => {
   if (message.type === RuntimeMessageTypes.OpenPopupWithSelection) {
     if (!message.payload) {
       return
     }
     void openPopupAndClipSelection(message.payload)
+  } else if (message.type === RuntimeMessageTypes.CaptureVisibleTab) {
+    return await tabs.captureVisibleTab(undefined, {
+      format: 'png',
+    })
   }
 })

@@ -188,7 +188,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare _getRevision: GetRevision
   private declare _deleteRevision: DeleteRevision
 
-  private internalEventBus!: ExternalServices.InternalEventBusInterface
+  public internalEventBus!: ExternalServices.InternalEventBusInterface
 
   private eventHandlers: ApplicationObserver[] = []
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -1079,15 +1079,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.userService.changePasscode(newPasscode, origination)
   }
 
-  public getStorageEncryptionPolicy(): ExternalServices.StorageEncryptionPolicy {
-    return this.diskStorageService.getStorageEncryptionPolicy()
-  }
-
-  public setStorageEncryptionPolicy(encryptionPolicy: ExternalServices.StorageEncryptionPolicy): Promise<void> {
-    this.diskStorageService.setEncryptionPolicy(encryptionPolicy)
-    return this.protocolService.repersistAllItems()
-  }
-
   public enableEphemeralPersistencePolicy(): Promise<void> {
     return this.diskStorageService.setPersistencePolicy(ExternalServices.StoragePersistencePolicies.Ephemeral)
   }
@@ -1184,13 +1175,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createSettingsService()
     this.createFeaturesService()
     this.createComponentManager()
-    this.createMigrationService()
     this.createMfaService()
 
     this.createStatusService()
     if (isDesktopDevice(this.deviceInterface)) {
       this.createFilesBackupService(this.deviceInterface)
     }
+    this.createMigrationService()
     this.createFileService()
 
     this.createIntegrityService()
@@ -1378,9 +1369,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       singletonManager: this.singletonManager,
       featuresService: this.featuresService,
       environment: this.environment,
+      platform: this.platform,
       identifier: this.identifier,
       internalEventBus: this.internalEventBus,
       legacySessionStorageMapper: this.legacySessionStorageMapper,
+      backups: this.fileBackups,
     })
     this.services.push(this.migrationService)
   }
@@ -1526,7 +1519,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.diskStorageService = new InternalServices.DiskStorageService(
       this.deviceInterface,
       this.identifier,
-      this.environment,
       this.internalEventBus,
     )
     this.services.push(this.diskStorageService)
@@ -1584,6 +1576,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.httpService,
       this.sessionStorageMapper,
       this.legacySessionStorageMapper,
+      this.identifier,
       this.internalEventBus,
     )
     this.serviceObservers.push(
@@ -1761,6 +1754,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       device,
       this.statusService,
       this.options.crypto,
+      this.storage,
+      this.sessions,
+      this.payloadManager,
+      this.historyManager,
       this.internalEventBus,
     )
     this.services.push(this.filesBackupService)

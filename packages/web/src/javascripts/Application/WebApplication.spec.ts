@@ -13,7 +13,7 @@ import {
   SNLog,
   SNTag,
 } from '@standardnotes/snjs'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { WebOrDesktopDevice } from './Device/WebOrDesktopDevice'
 
 describe('web application', () => {

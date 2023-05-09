@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/snjs",
-  "version": "2.167.5",
+  "version": "2.168.7",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -29,7 +29,7 @@
     "lint:eslint": "eslint --ext .ts lib/",
     "lint:fix": "eslint --fix --ext .ts lib/",
     "lint:tsc": "tsc --noEmit --emitDeclarationOnly false --project lib/tsconfig.json",
-    "test": "jest --coverage",
+    "test": "jest",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
   "devDependencies": {

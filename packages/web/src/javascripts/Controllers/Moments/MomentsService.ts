@@ -1,11 +1,11 @@
 import { addToast, dismissToast, ToastType } from '@standardnotes/toast'
-import { ApplicationEvent, InternalEventBus, StorageKey } from '@standardnotes/services'
+import { ApplicationEvent, InternalEventBusInterface, StorageKey } from '@standardnotes/services'
 import { isDev } from '@/Utils'
 import { FileItem, PrefKey, sleep, SNTag } from '@standardnotes/snjs'
 import { FilesController } from '../FilesController'
 import { action, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from '@/Controllers/Abstract/AbstractViewController'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { dateToStringStyle1 } from '@/Utils/DateUtils'
 import { PhotoRecorder } from './PhotoRecorder'
 
@@ -19,7 +19,11 @@ export class MomentsService extends AbstractViewController {
   isEnabled = false
   private intervalReference: ReturnType<typeof setInterval> | undefined
 
-  constructor(application: WebApplication, private filesController: FilesController, eventBus: InternalEventBus) {
+  constructor(
+    application: WebApplication,
+    private filesController: FilesController,
+    eventBus: InternalEventBusInterface,
+  ) {
     super(application, eventBus)
 
     this.disposers.push(

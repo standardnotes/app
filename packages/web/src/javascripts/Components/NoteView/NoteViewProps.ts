@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { NoteViewController } from './Controller/NoteViewController'
 
 export interface NoteViewProps {

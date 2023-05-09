@@ -1,7 +1,7 @@
 import { convertStringifiedBooleanToBoolean, isDesktopApplication } from '@/Utils'
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Constants/Strings'
 import { useCallback, useEffect, useState } from 'react'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import Dropdown from '@/Components/Dropdown/Dropdown'
@@ -110,7 +110,7 @@ const EmailBackups = ({ application }: Props) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Email Backups</Title>
+        <Title>Email backups</Title>
         {!isDesktopApplication() && (
           <Text className="mb-3">
             Receive daily encrypted email backups of all your notes directly in your email inbox.
@@ -118,7 +118,7 @@ const EmailBackups = ({ application }: Props) => {
         )}
 
         <div className={`${!hasAccount ? 'pointer-events-none cursor-default opacity-50' : ''}`}>
-          <Subtitle>Email frequency</Subtitle>
+          <Subtitle>Frequency</Subtitle>
           <Text>How often to receive backups.</Text>
           <div className="mt-2">
             {isLoading ? (

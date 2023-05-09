@@ -19,7 +19,7 @@ declare global {
     platform?: Platform
 
     application?: WebApplication
-    mainApplicationGroup?: ApplicationGroup
+    mainApplicationGroup?: WebApplicationGroup
     MSStream?: unknown
   }
 }
@@ -30,9 +30,9 @@ import { DesktopManagerInterface, Platform, SNLog } from '@standardnotes/snjs'
 import ApplicationGroupView from './Components/ApplicationGroupView/ApplicationGroupView'
 import { WebDevice } from './Application/Device/WebDevice'
 import { StartApplication } from './Application/Device/StartApplication'
-import { ApplicationGroup } from './Application/ApplicationGroup'
+import { WebApplicationGroup } from './Application/WebApplicationGroup'
 import { WebOrDesktopDevice } from './Application/Device/WebOrDesktopDevice'
-import { WebApplication } from './Application/Application'
+import { WebApplication } from './Application/WebApplication'
 import { createRoot, Root } from 'react-dom/client'
 import { ElementIds } from './Constants/ElementIDs'
 import { setDefaultMonospaceFont } from './setDefaultMonospaceFont'

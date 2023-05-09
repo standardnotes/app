@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.15.4](https://github.com/standardnotes/app/compare/@standardnotes/files@1.15.3...@standardnotes/files@1.15.4) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.15.3](https://github.com/standardnotes/app/compare/@standardnotes/files@1.15.2...@standardnotes/files@1.15.3) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.15.2](https://github.com/standardnotes/app/compare/@standardnotes/files@1.15.1...@standardnotes/files@1.15.2) (2023-05-04)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.15.1](https://github.com/standardnotes/app/compare/@standardnotes/files@1.15.0...@standardnotes/files@1.15.1) (2023-05-02)
+
+### Bug Fixes
+
+* automatically convert Super notes to Markdown for the Plaintext Backups feature ([75ecf4c](https://github.com/standardnotes/app/commit/75ecf4c393a6bc0ab2d6bf50dcbee21cef520746))
+
+# [1.15.0](https://github.com/standardnotes/app/compare/@standardnotes/files@1.14.47...@standardnotes/files@1.15.0) (2023-05-02)
+
+### Features
+
+* Automatic plaintext backup option in Preferences > Backups will backup your notes and tags into plaintext, unencrypted folders on your computer. In addition, automatic encrypted text backups preference management has moved from the top-level menu in the desktop app to Preferences > Backups. ([#2322](https://github.com/standardnotes/app/issues/2322)) ([7e3db49](https://github.com/standardnotes/app/commit/7e3db49322034aa644c3c99ccf9a5f1b508583aa))
+
 ## [1.14.47](https://github.com/standardnotes/app/compare/@standardnotes/files@1.14.46...@standardnotes/files@1.14.47) (2023-04-26)
 
 **Note:** Version bump only for package @standardnotes/files

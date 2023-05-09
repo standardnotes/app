@@ -13,8 +13,6 @@ export function createEnglishStrings(): Strings {
       automaticUpdatesDisabled: 'Automatic Updates Disabled',
       disableAutomaticBackups: 'Disable Automatic Backups',
       enableAutomaticBackups: 'Enable Automatic Backups',
-      changeBackupsLocation: 'Change Backups Location',
-      openBackupsLocation: 'Open Backups Location',
       emailSupport: 'Email Support',
       website: 'Website',
       gitHub: 'GitHub',
@@ -145,16 +143,6 @@ export function createEnglishStrings(): Strings {
         message: 'An error occurred while trying to download your ' + 'update file. Please try again.',
       },
       unknownVersionName: 'Unknown',
-    },
-    backups: {
-      errorChangingDirectory(error: any): string {
-        return (
-          'An error occurred while changing your backups directory. ' +
-          'If this issue persists, please contact support with the following ' +
-          'information: \n' +
-          JSON.stringify(error)
-        )
-      },
     },
   }
 }

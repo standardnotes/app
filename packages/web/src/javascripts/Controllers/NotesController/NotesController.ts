@@ -10,9 +10,10 @@ import {
   InternalEventBus,
   PrefKey,
   ApplicationEvent,
+  EditorLineWidth,
 } from '@standardnotes/snjs'
 import { makeObservable, observable, action, computed, runInAction } from 'mobx'
-import { WebApplication } from '../../Application/Application'
+import { WebApplication } from '../../Application/WebApplication'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { SelectedItemsController } from '../SelectedItemsController'
 import { ItemListController } from '../ItemList/ItemListController'
@@ -352,6 +353,23 @@ export class NotesController extends AbstractViewController implements NotesCont
       note,
       (mutator) => {
         mutator.toggleSpellcheck()
+      },
+      false,
+    )
+    this.application.sync.sync().catch(console.error)
+  }
+
+  getEditorWidthForNote(note: SNNote) {
+    return (
+      note.editorWidth ?? this.application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth])
+    )
+  }
+
+  async setNoteEditorWidth(note: SNNote, editorWidth: EditorLineWidth) {
+    await this.application.mutator.changeItem<NoteMutator>(
+      note,
+      (mutator) => {
+        mutator.editorWidth = editorWidth
       },
       false,
     )

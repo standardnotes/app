@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ShouldPersistNoteStateKey } from '@/Components/Preferences/Panes/General/Persistence'
 import { ApplicationEvent, ContentType, InternalEventBus } from '@standardnotes/snjs'
 import { PersistedStateValue, StorageKey } from '@standardnotes/ui-services'

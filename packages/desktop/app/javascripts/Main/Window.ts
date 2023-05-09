@@ -6,8 +6,6 @@ import path from 'path'
 import { AppMessageType, MessageType } from '../../../test/TestIpcMessage'
 import { AppState } from '../../AppState'
 import { MessageToWebApp } from '../Shared/IpcMessages'
-import { createBackupsManager } from './Backups/BackupsManager'
-import { BackupsManagerInterface } from './Backups/BackupsManagerInterface'
 import { FilesBackupManager } from './FileBackups/FileBackupsManager'
 import { Keychain } from './Keychain/Keychain'
 import { MediaManager } from './Media/MediaManager'
@@ -35,7 +33,6 @@ const WINDOW_MIN_HEIGHT = 400
 export interface WindowState {
   window: Electron.BrowserWindow
   menuManager: MenuManagerInterface
-  backupsManager: BackupsManagerInterface
   trayManager: TrayManager
 }
 
@@ -64,7 +61,6 @@ export async function createWindowState({
   ;(global as any).RemoteBridge = new RemoteBridge(
     window,
     Keychain,
-    services.backupsManager,
     services.packageManager,
     services.searchManager,
     {
@@ -93,7 +89,6 @@ export async function createWindowState({
 
   window.on('blur', () => {
     window.webContents.send(MessageToWebApp.WindowBlurred, null)
-    services.backupsManager.applicationDidBlur()
   })
 
   window.once('ready-to-show', () => {
@@ -201,8 +196,7 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
   const searchManager = initializeSearchManager(window.webContents)
   initializeZoomManager(window, appState.store)
 
-  const backupsManager = createBackupsManager(window.webContents, appState)
-  const updateManager = setupUpdates(window, appState, backupsManager)
+  const updateManager = setupUpdates(window, appState)
   const trayManager = createTrayManager(window, appState.store)
   const spellcheckerManager = createSpellcheckerManager(appState.store, window.webContents, appLocale)
   const mediaManager = new MediaManager()
@@ -214,16 +208,14 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
   const menuManager = createMenuManager({
     appState,
     window,
-    backupsManager,
     trayManager,
     store: appState.store,
     spellcheckerManager,
   })
 
-  const fileBackupsManager = new FilesBackupManager(appState)
+  const fileBackupsManager = new FilesBackupManager(appState, window.webContents)
 
   return {
-    backupsManager,
     updateManager,
     trayManager,
     spellcheckerManager,

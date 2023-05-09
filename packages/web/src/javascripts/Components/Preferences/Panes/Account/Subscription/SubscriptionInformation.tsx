@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 import Button from '@/Components/Button/Button'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 import StatusText from './StatusText'
 

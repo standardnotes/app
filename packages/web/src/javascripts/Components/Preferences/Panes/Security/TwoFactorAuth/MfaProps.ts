@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { MfaProvider, UserProvider } from '@/Components/Preferences/Providers'
 
 export interface MfaProps {

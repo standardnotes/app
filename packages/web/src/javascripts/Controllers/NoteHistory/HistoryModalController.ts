@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { InternalEventBus, SNNote } from '@standardnotes/snjs'
 import { OPEN_NOTE_HISTORY_COMMAND } from '@standardnotes/ui-services'
 import { action, makeObservable, observable } from 'mobx'

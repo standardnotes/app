@@ -1,5 +1,5 @@
 import { useCallback } from 'react'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { openSubscriptionDashboard } from '@/Utils/ManageSubscription'
 import Icon from '@/Components/Icon/Icon'
 import { PremiumFeatureIconClass, PremiumFeatureIconName } from '@/Components/Icon/PremiumFeatureIcon'

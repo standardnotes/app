@@ -1,11 +1,11 @@
 import {
   DesktopDeviceInterface,
   Environment,
-  FileBackupsMapping,
   RawKeychainValue,
-  FileBackupRecord,
   FileBackupReadToken,
   FileBackupReadChunkResponse,
+  FileBackupsMapping,
+  PlaintextBackupsMapping,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { WebOrDesktopDevice } from '@web/Application/Device/WebOrDesktopDevice'
 import { Component } from '../Main/Packages/PackageManagerInterface'
@@ -23,6 +23,33 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     appVersion: string,
   ) {
     super(appVersion)
+  }
+
+  openLocation(path: string): Promise<void> {
+    return this.remoteBridge.openLocation(path)
+  }
+
+  presentDirectoryPickerForLocationChangeAndTransferOld(
+    appendPath: string,
+    oldLocation?: string | undefined,
+  ): Promise<string | undefined> {
+    return this.remoteBridge.presentDirectoryPickerForLocationChangeAndTransferOld(appendPath, oldLocation)
+  }
+
+  getFilesBackupsMappingFile(location: string): Promise<FileBackupsMapping> {
+    return this.remoteBridge.getFilesBackupsMappingFile(location)
+  }
+
+  getPlaintextBackupsMappingFile(location: string): Promise<PlaintextBackupsMapping> {
+    return this.remoteBridge.getPlaintextBackupsMappingFile(location)
+  }
+
+  persistPlaintextBackupsMappingFile(location: string): Promise<void> {
+    return this.remoteBridge.persistPlaintextBackupsMappingFile(location)
+  }
+
+  getTextBackupsCount(location: string): Promise<number> {
+    return this.remoteBridge.getTextBackupsCount(location)
   }
 
   async getKeychainValue() {
@@ -57,16 +84,8 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     this.remoteBridge.syncComponents(components)
   }
 
-  onMajorDataChange() {
-    this.remoteBridge.onMajorDataChange()
-  }
-
   onSearch(text: string) {
     this.remoteBridge.onSearch(text)
-  }
-
-  onInitialDataLoad() {
-    this.remoteBridge.onInitialDataLoad()
   }
 
   async clearAllDataFromDevice(workspaceIdentifiers: string[]): Promise<{ killsApplication: boolean }> {
@@ -77,69 +96,36 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return { killsApplication: true }
   }
 
-  async downloadBackup() {
-    const receiver = window.webClient
-
-    receiver.didBeginBackup()
-
-    try {
-      const data = await receiver.requestBackupFile()
-      if (data) {
-        this.remoteBridge.saveDataBackup(data)
-      } else {
-        receiver.didFinishBackup(false)
-      }
-    } catch (error) {
-      console.error(error)
-      receiver.didFinishBackup(false)
-    }
+  public isLegacyFilesBackupsEnabled(): Promise<boolean> {
+    return this.remoteBridge.isLegacyFilesBackupsEnabled()
   }
 
-  async localBackupsCount() {
-    return this.remoteBridge.localBackupsCount()
+  public getLegacyFilesBackupsLocation(): Promise<string | undefined> {
+    return this.remoteBridge.getLegacyFilesBackupsLocation()
   }
 
-  viewlocalBackups() {
-    this.remoteBridge.viewlocalBackups()
+  wasLegacyTextBackupsExplicitlyDisabled(): Promise<boolean> {
+    return this.remoteBridge.wasLegacyTextBackupsExplicitlyDisabled()
   }
 
-  async deleteLocalBackups() {
-    return this.remoteBridge.deleteLocalBackups()
+  getUserDocumentsDirectory(): Promise<string> {
+    return this.remoteBridge.getUserDocumentsDirectory()
   }
 
-  public isFilesBackupsEnabled(): Promise<boolean> {
-    return this.remoteBridge.isFilesBackupsEnabled()
+  getLegacyTextBackupsLocation(): Promise<string | undefined> {
+    return this.remoteBridge.getLegacyTextBackupsLocation()
   }
 
-  public enableFilesBackups(): Promise<void> {
-    return this.remoteBridge.enableFilesBackups()
+  saveTextBackupData(workspaceId: string, data: string): Promise<void> {
+    return this.remoteBridge.saveTextBackupData(workspaceId, data)
   }
 
-  public disableFilesBackups(): Promise<void> {
-    return this.remoteBridge.disableFilesBackups()
-  }
-
-  public changeFilesBackupsLocation(): Promise<string | undefined> {
-    return this.remoteBridge.changeFilesBackupsLocation()
-  }
-
-  public getFilesBackupsLocation(): Promise<string> {
-    return this.remoteBridge.getFilesBackupsLocation()
-  }
-
-  async getFilesBackupsMappingFile(): Promise<FileBackupsMapping> {
-    return this.remoteBridge.getFilesBackupsMappingFile()
-  }
-
-  async openFilesBackupsLocation(): Promise<void> {
-    return this.remoteBridge.openFilesBackupsLocation()
-  }
-
-  openFileBackup(record: FileBackupRecord): Promise<void> {
-    return this.remoteBridge.openFileBackup(record)
+  savePlaintextNoteBackup(location: string, uuid: string, name: string, tags: string[], data: string): Promise<void> {
+    return this.remoteBridge.savePlaintextNoteBackup(location, uuid, name, tags, data)
   }
 
   async saveFilesBackupsFile(
+    location: string,
     uuid: string,
     metaFile: string,
     downloadRequest: {
@@ -148,15 +134,27 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
       url: string
     },
   ): Promise<'success' | 'failed'> {
-    return this.remoteBridge.saveFilesBackupsFile(uuid, metaFile, downloadRequest)
+    return this.remoteBridge.saveFilesBackupsFile(location, uuid, metaFile, downloadRequest)
   }
 
-  getFileBackupReadToken(record: FileBackupRecord): Promise<FileBackupReadToken> {
-    return this.remoteBridge.getFileBackupReadToken(record)
+  getFileBackupReadToken(filePath: string): Promise<FileBackupReadToken> {
+    return this.remoteBridge.getFileBackupReadToken(filePath)
+  }
+
+  migrateLegacyFileBackupsToNewStructure(newPath: string): Promise<void> {
+    return this.remoteBridge.migrateLegacyFileBackupsToNewStructure(newPath)
   }
 
   readNextChunk(token: string): Promise<FileBackupReadChunkResponse> {
     return this.remoteBridge.readNextChunk(token)
+  }
+
+  monitorPlaintextBackupsLocationForChanges(backupsDirectory: string): Promise<void> {
+    return this.remoteBridge.monitorPlaintextBackupsLocationForChanges(backupsDirectory)
+  }
+
+  joinPaths(...paths: string[]): Promise<string> {
+    return this.remoteBridge.joinPaths(...paths)
   }
 
   async performHardReset(): Promise<void> {

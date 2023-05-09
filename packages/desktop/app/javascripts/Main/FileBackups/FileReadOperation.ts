@@ -1,6 +1,5 @@
-import { FileBackupReadChunkResponse, FileBackupRecord } from '@web/Application/Device/DesktopSnjsExports'
+import { FileBackupReadChunkResponse } from '@web/Application/Device/DesktopSnjsExports'
 import fs from 'fs'
-import path from 'path'
 
 const ONE_MB = 1024 * 1024
 const CHUNK_LIMIT = ONE_MB * 5
@@ -11,9 +10,9 @@ export class FileReadOperation {
   private localFileId: number
   private fileLength: number
 
-  constructor(backupRecord: FileBackupRecord) {
-    this.token = backupRecord.absolutePath
-    this.localFileId = fs.openSync(path.join(backupRecord.absolutePath, backupRecord.binaryFileName), 'r')
+  constructor(filePath: string) {
+    this.token = filePath
+    this.localFileId = fs.openSync(filePath, 'r')
     this.fileLength = fs.fstatSync(this.localFileId).size
   }
 

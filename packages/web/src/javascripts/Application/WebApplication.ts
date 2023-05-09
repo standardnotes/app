@@ -17,12 +17,12 @@ import {
   WebApplicationInterface,
   MobileDeviceInterface,
   MobileUnlockTiming,
-  InternalEventBus,
   DecryptedItem,
   EditorIdentifier,
   FeatureIdentifier,
   Environment,
   ApplicationOptionsDefaults,
+  BackupServiceInterface,
 } from '@standardnotes/snjs'
 import { makeObservable, observable } from 'mobx'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
@@ -93,27 +93,26 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     })
 
     deviceInterface.setApplication(this)
-    const internalEventBus = new InternalEventBus()
 
     this.itemControllerGroup = new ItemGroupController(this)
-    this.routeService = new RouteService(this, internalEventBus)
+    this.routeService = new RouteService(this, this.internalEventBus)
 
     this.webServices = {} as WebServices
     this.webServices.keyboardService = new KeyboardService(platform, this.environment)
     this.webServices.archiveService = new ArchiveManager(this)
-    this.webServices.themeService = new ThemeManager(this, internalEventBus)
+    this.webServices.themeService = new ThemeManager(this, this.internalEventBus)
     this.webServices.autolockService = this.isNativeMobileWeb()
       ? undefined
-      : new AutolockService(this, internalEventBus)
+      : new AutolockService(this, this.internalEventBus)
     this.webServices.desktopService = isDesktopDevice(deviceInterface)
-      ? new DesktopManager(this, deviceInterface)
+      ? new DesktopManager(this, deviceInterface, this.fileBackups as BackupServiceInterface)
       : undefined
     this.webServices.viewControllerManager = new ViewControllerManager(this, deviceInterface)
     this.webServices.changelogService = new ChangelogService(this.environment, this.storage)
     this.webServices.momentsService = new MomentsService(
       this,
       this.webServices.viewControllerManager.filesController,
-      internalEventBus,
+      this.internalEventBus,
     )
 
     if (this.isNativeMobileWeb()) {
@@ -181,6 +180,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     for (const observer of this.webEventObservers) {
       observer(event, data)
     }
+
+    this.internalEventBus.publish({ type: event, payload: data })
   }
 
   publishPanelDidResizeEvent(name: string, width: number, collapsed: boolean) {
@@ -268,16 +269,8 @@ export class WebApplication extends SNApplication implements WebApplicationInter
     return this.protocolUpgradeAvailable()
   }
 
-  downloadBackup(): void | Promise<void> {
-    if (isDesktopDevice(this.deviceInterface)) {
-      return this.deviceInterface.downloadBackup()
-    }
-  }
-
-  async signOutAndDeleteLocalBackups(): Promise<void> {
-    isDesktopDevice(this.deviceInterface) && (await this.deviceInterface.deleteLocalBackups())
-
-    return this.user.signOut()
+  performDesktopTextBackup(): void | Promise<void> {
+    return this.getDesktopService()?.saveDesktopBackup()
   }
 
   isGlobalSpellcheckEnabled(): boolean {

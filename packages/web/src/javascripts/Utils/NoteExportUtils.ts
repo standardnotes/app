@@ -1,5 +1,5 @@
-import { WebApplication } from '@/Application/Application'
-import { exportSuperNote } from '@/Components/SuperEditor/SuperNoteExporter'
+import { WebApplication } from '@/Application/WebApplication'
+import { InvisibleSuperConverter } from '@/Components/SuperEditor/Tools/InvisibleMarkdownConverter'
 import { NoteType, PrefKey, SNNote } from '@standardnotes/snjs'
 
 export const getNoteFormat = (application: WebApplication, note: SNNote) => {
@@ -38,7 +38,8 @@ export const getNoteBlob = (application: WebApplication, note: SNNote) => {
       type = 'text/plain'
       break
   }
-  const content = note.noteType === NoteType.Super ? exportSuperNote(note, format) : note.text
+  const content =
+    note.noteType === NoteType.Super ? new InvisibleSuperConverter().convertString(note.text, format) : note.text
   const blob = new Blob([content], {
     type,
   })

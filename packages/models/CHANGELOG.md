@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.45.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.45.0...@standardnotes/models@1.45.1) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/models
+
+# [1.45.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.44.3...@standardnotes/models@1.45.0) (2023-05-04)
+
+### Features
+
+* Replaced margin resizers with "Editor width" options. You can set it globally from Preferences > Appearance or per-note from the note options menu ([#2324](https://github.com/standardnotes/app/issues/2324)) ([9fbb845](https://github.com/standardnotes/app/commit/9fbb845b1d3b1ca6a4b064f3b63bdae1cf7777e8))
+
 ## [1.44.3](https://github.com/standardnotes/app/compare/@standardnotes/models@1.44.2...@standardnotes/models@1.44.3) (2023-04-26)
 
 **Note:** Version bump only for package @standardnotes/models

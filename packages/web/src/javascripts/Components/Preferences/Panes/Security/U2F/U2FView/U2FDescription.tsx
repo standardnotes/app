@@ -18,7 +18,7 @@ const U2FDescription: FunctionComponent<Props> = ({ userProvider }) => {
 
   return (
     <div>
-      <Text>Authenticate with a hardware security key such as Yubikey.</Text>
+      <Text>Authenticate with a hardware security key such as YubiKey.</Text>
       {!application.isFullU2FClient && (
         <Text className="italic">Please visit the web app in order to add a hardware security key.</Text>
       )}

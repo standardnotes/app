@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.59.6](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.5...@standardnotes/services@1.59.6) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.59.5](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.4...@standardnotes/services@1.59.5) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.59.4](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.3...@standardnotes/services@1.59.4) (2023-05-04)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.59.3](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.2...@standardnotes/services@1.59.3) (2023-05-04)
+
+### Bug Fixes
+
+* workspace names now default to account email after signing in. It can later be changed from the workspace switcher menu. ([8385b4e](https://github.com/standardnotes/app/commit/8385b4e89fa0fc3204532adda9d085d9c0fd7996))
+
+## [1.59.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.1...@standardnotes/services@1.59.2) (2023-05-03)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.59.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.0...@standardnotes/services@1.59.1) (2023-05-02)
+
+### Bug Fixes
+
+* automatically convert Super notes to Markdown for the Plaintext Backups feature ([75ecf4c](https://github.com/standardnotes/app/commit/75ecf4c393a6bc0ab2d6bf50dcbee21cef520746))
+
+# [1.59.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.58.5...@standardnotes/services@1.59.0) (2023-05-02)
+
+### Features
+
+* Automatic plaintext backup option in Preferences > Backups will backup your notes and tags into plaintext, unencrypted folders on your computer. In addition, automatic encrypted text backups preference management has moved from the top-level menu in the desktop app to Preferences > Backups. ([#2322](https://github.com/standardnotes/app/issues/2322)) ([7e3db49](https://github.com/standardnotes/app/commit/7e3db49322034aa644c3c99ccf9a5f1b508583aa))
+
 ## [1.58.5](https://github.com/standardnotes/app/compare/@standardnotes/services@1.58.4...@standardnotes/services@1.58.5) (2023-04-26)
 
 **Note:** Version bump only for package @standardnotes/services

@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { noteTypeForEditorIdentifier } from '@standardnotes/features'
 import { SNNote, SNTag, NoteContent, DecryptedItemInterface, PayloadEmitSource, PrefKey } from '@standardnotes/models'
 import { UuidString } from '@standardnotes/snjs'

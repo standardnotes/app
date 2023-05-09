@@ -20,7 +20,6 @@ import { checkForUpdate, openChangelog, showUpdateInstallationDialog } from '../
 import { handleTestMessage } from '../Utils/Testing'
 import { isDev, isTesting } from '../Utils/Utils'
 import { MessageType } from './../../../../test/TestIpcMessage'
-import { BackupsManagerInterface } from './../Backups/BackupsManagerInterface'
 import { SpellcheckerManager } from './../SpellcheckerManager'
 import { MenuManagerInterface } from './MenuManagerInterface'
 
@@ -112,14 +111,12 @@ function suggestionsMenu(
 export function createMenuManager({
   window,
   appState,
-  backupsManager,
   trayManager,
   store,
   spellcheckerManager,
 }: {
   window: Electron.BrowserWindow
   appState: AppState
-  backupsManager: BackupsManagerInterface
   trayManager: TrayManager
   store: Store
   spellcheckerManager?: SpellcheckerManager
@@ -167,7 +164,6 @@ export function createMenuManager({
       editMenu(spellcheckerManager, reload),
       viewMenu(window, store, reload),
       windowMenu(store, trayManager, reload),
-      backupsMenu(backupsManager, reload),
       updateMenu(window, appState),
       ...(isLinux() ? [keyringMenu(window, store)] : []),
       helpMenu(window, shell),
@@ -465,34 +461,6 @@ function minimizeToTrayItem(store: Store, trayManager: TrayManager, reload: () =
       }
       reload()
     },
-  }
-}
-
-function backupsMenu(archiveManager: BackupsManagerInterface, reload: () => any) {
-  return {
-    label: str().backups,
-    submenu: [
-      {
-        label: archiveManager.backupsAreEnabled ? str().disableAutomaticBackups : str().enableAutomaticBackups,
-        click() {
-          archiveManager.toggleBackupsStatus()
-          reload()
-        },
-      },
-      Separator,
-      {
-        label: str().changeBackupsLocation,
-        click() {
-          archiveManager.changeBackupsLocation()
-        },
-      },
-      {
-        label: str().openBackupsLocation,
-        click() {
-          void shell.openPath(archiveManager.backupsLocation)
-        },
-      },
-    ],
   }
 }
 

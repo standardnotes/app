@@ -1,6 +1,6 @@
 import AlertDialog from '../AlertDialog/AlertDialog'
 import { FunctionComponent, useRef } from 'react'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { PremiumFeatureModalType } from './PremiumFeatureModalType'
 import { FeatureName } from '@/Controllers/FeatureName'
 import { SuccessPrompt } from './Subviews/SuccessPrompt'
@@ -30,7 +30,7 @@ const PremiumFeaturesModal: FunctionComponent<Props> = ({
   }
 
   return (
-    <AlertDialog closeDialog={onClose} className="!max-w-89">
+    <AlertDialog closeDialog={onClose} className="w-full max-w-[90vw] md:max-w-89">
       <div tabIndex={-1} className="sn-component bg-default">
         <div tabIndex={0}>
           {type === PremiumFeatureModalType.UpgradePrompt && (

@@ -3,7 +3,7 @@ import { ViewControllerManager } from '@Controllers/ViewControllerManager'
 import { useCallback, useRef } from 'react'
 import { STRING_DELETE_ACCOUNT_CONFIRMATION } from '@/Constants/Strings'
 import Button from '@/Components/Button/Button'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import Icon from '../Icon/Icon'
 import AlertDialog from '../AlertDialog/AlertDialog'
 

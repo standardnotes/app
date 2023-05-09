@@ -1,4 +1,4 @@
-import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'
 import WorkspaceSwitcherMenu from '@/Components/AccountMenu/WorkspaceSwitcher/WorkspaceSwitcherMenu'
@@ -7,7 +7,7 @@ import Icon from '@/Components/Icon/Icon'
 import Popover from '../Popover/Popover'
 
 type Props = {
-  mainApplicationGroup: ApplicationGroup
+  mainApplicationGroup: WebApplicationGroup
   viewControllerManager: ViewControllerManager
 }
 

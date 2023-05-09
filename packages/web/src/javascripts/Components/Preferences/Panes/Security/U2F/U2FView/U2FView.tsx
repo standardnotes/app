@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { UserProvider } from '@/Components/Preferences/Providers'
 
 import U2FTitle from './U2FTitle'

@@ -1,5 +1,5 @@
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
-import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useRef, useState } from 'react'
@@ -10,7 +10,7 @@ import Popover from '@/Components/Popover/Popover'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 
 type Props = {
-  mainApplicationGroup: ApplicationGroup
+  mainApplicationGroup: WebApplicationGroup
   viewControllerManager: ViewControllerManager
 }
 

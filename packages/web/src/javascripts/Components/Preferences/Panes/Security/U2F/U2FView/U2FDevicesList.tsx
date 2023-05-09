@@ -2,7 +2,7 @@ import { FunctionComponent, useCallback } from 'react'
 import { observer } from 'mobx-react-lite'
 
 import { Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 

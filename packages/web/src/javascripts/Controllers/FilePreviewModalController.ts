@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ContentType, FileItem } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
 
