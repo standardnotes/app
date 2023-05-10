@@ -311,8 +311,8 @@ const ClipperView = ({
   }
 
   return (
-    <div className="bg-passive-3 p-2">
-      <Menu a11yLabel="Extension menu" isOpen={true} className="rounded bg-default">
+    <div className="bg-contrast p-2">
+      <Menu a11yLabel="Extension menu" isOpen={true} className="rounded border border-border bg-default">
         <MenuItem
           onClick={async () => {
             const payload = await sendMessageToActiveTab({ type: RuntimeMessageTypes.GetFullPage })
@@ -336,18 +336,20 @@ const ClipperView = ({
         >
           Clip article
         </MenuItem>
-        <MenuItem
-          disabled={!hasSelection || isScreenshotMode}
-          onClick={async () => {
-            const payload = await sendMessageToActiveTab({ type: RuntimeMessageTypes.GetSelection })
-            if (!payload) {
-              return
-            }
-            setClipPayload(payload)
-          }}
-        >
-          Clip text selection
-        </MenuItem>
+        {hasSelection && (
+          <MenuItem
+            disabled={isScreenshotMode}
+            onClick={async () => {
+              const payload = await sendMessageToActiveTab({ type: RuntimeMessageTypes.GetSelection })
+              if (!payload) {
+                return
+              }
+              setClipPayload(payload)
+            }}
+          >
+            Clip text selection
+          </MenuItem>
+        )}
         <MenuItem
           onClick={async () => {
             void sendMessageToActiveTab({ type: RuntimeMessageTypes.StartNodeSelection })
@@ -365,9 +367,9 @@ const ClipperView = ({
         >
           Clip as screenshot
         </MenuSwitchButtonItem>
-        <div className="border-t border-border px-3 py-3 text-base text-foreground">
-          <div className="flex items-center justify-between">
-            <div className="font-medium">Default tag</div>
+        <div className="border-t border-border px-3 py-3  text-foreground">
+          <div className="flex items-center justify-between text-base">
+            <div className="font-bold text-info">Default tag</div>
             {defaultTag && (
               <StyledTooltip label="Remove default tag" gutter={2}>
                 <button className="rounded-full p-1 hover:bg-contrast hover:text-info" onClick={unselectTag}>
@@ -391,6 +393,12 @@ const ClipperView = ({
             onSelection={selectTag}
             placeholder="Select tag to save clipped notes to..."
             contentTypes={[ContentType.Tag]}
+            className={{
+              input: 'text-[0.85rem]',
+            }}
+            comboboxProps={{
+              placement: 'top',
+            }}
           />
         </div>
         <div className="flex items-center border-t border-border text-foreground">
