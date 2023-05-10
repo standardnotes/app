@@ -64,4 +64,22 @@ describe.only('sharing', function () {
 
     expect(sharedItem.content.title).to.equal('changed note title')
   })
+
+  it.only('should be able to download shared item without account', async () => {
+    const note = await context.createSyncedNote('foo', 'bar')
+    const { shareToken, privateKey } = await sharingService.shareItem(note.uuid)
+
+    const offlineContext = await Factory.createAppContextWithRealCrypto()
+    await offlineContext.launch()
+    const offlineSharingService = new SharingService(
+      offlineContext.application.apiService,
+      offlineContext.application.sync,
+      offlineContext.application.options.crypto,
+    )
+
+    const sharedItem = await offlineSharingService.getSharedItem(shareToken, privateKey)
+
+    expect(sharedItem.content.title).to.equal('foo')
+    expect(sharedItem.content.text).to.equal('bar')
+  })
 })

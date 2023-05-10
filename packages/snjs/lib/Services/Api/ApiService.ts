@@ -895,13 +895,10 @@ export class SNApiService
     return this.session.accessToken
   }
 
-  getSharedItem(shareToken: string): Promise<HttpResponse<GetSharedItemResponse>> {
-    return this.tokenRefreshableRequest<GetSharedItemResponse>({
-      verb: HttpVerb.Get,
-      url: joinPaths(this.host, Paths.v1.getSharedItem(shareToken)),
-      fallbackErrorMessage: API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
-      authentication: this.getSessionAccessToken(),
-    })
+  async getSharedItem(shareToken: string): Promise<HttpResponse<GetSharedItemResponse>> {
+    const response = await this.httpService.get<GetSharedItemResponse>(Paths.v1.getSharedItem(shareToken))
+
+    return response
   }
 
   shareItem(params: {

@@ -33,10 +33,12 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
       if (eventName === SyncEvent.SingleRoundTripSyncCompleted && data) {
         const eventData = data as { uploadedPayloads: ServerSyncPushContextualPayload[] }
         const { uploadedPayloads } = eventData
-        for (const payload of uploadedPayloads) {
-          const shareData = this.initiatedShares[payload.uuid]
-          if (shareData) {
-            void this.updateSharedItem(payload.uuid, shareData.shareToken, shareData.publicKey)
+        if (uploadedPayloads) {
+          for (const payload of uploadedPayloads) {
+            const shareData = this.initiatedShares[payload.uuid]
+            if (shareData) {
+              void this.updateSharedItem(payload.uuid, shareData.shareToken, shareData.publicKey)
+            }
           }
         }
       }
