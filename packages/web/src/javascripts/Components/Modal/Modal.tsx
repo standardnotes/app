@@ -1,5 +1,5 @@
 import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
-import { isIOS } from '@/Utils'
+import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 import { classNames } from '@standardnotes/snjs'
 import { ReactNode, useMemo, useRef, useState } from 'react'
 import Button from '../Button/Button'
@@ -92,6 +92,8 @@ const Modal = ({
   const [showAdvanced, setShowAdvanced] = useState(false)
   const advancedOptionRef = useRef<HTMLButtonElement>(null)
 
+  const { hasTopInset, hasBottomInset } = useAvailableSafeAreaPadding()
+
   return (
     <>
       <ModalAndroidBackHandler close={close} />
@@ -112,8 +114,8 @@ const Modal = ({
         ) : (
           <div
             className={classNames(
-              'flex w-full flex-shrink-0 items-center justify-between rounded-t border-b border-solid border-border bg-default text-text md:px-4.5 md:py-3',
-              isIOS() ? 'px-2 pt-safe-top pb-1.5' : 'py-1.5 px-2',
+              'flex w-full flex-shrink-0 items-center justify-between rounded-t border-b border-solid border-border bg-default px-2 text-text md:px-4.5 md:py-3',
+              hasTopInset ? 'pt-safe-top pb-1.5' : 'py-1.5',
             )}
           >
             <MobileModalHeader className="flex-row items-center justify-between md:flex md:gap-0">
@@ -200,7 +202,7 @@ const Modal = ({
               <div
                 className={classNames(
                   'hidden items-center justify-start gap-3 border-t border-border py-2 px-2.5 md:flex md:px-4 md:py-4',
-                  isIOS() && 'pb-safe-bottom',
+                  hasBottomInset && 'pb-safe-bottom',
                 )}
               >
                 {sortedActions.map((action, index) => (

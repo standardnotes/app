@@ -8,12 +8,12 @@ import { classNames } from '@standardnotes/utils'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import UpgradeNow from '../Footer/UpgradeNow'
 import RoundIconButton from '../Button/RoundIconButton'
-import { isIOS } from '@/Utils'
 import { PanelResizedData } from '@/Types/PanelResizedData'
 import { PANEL_NAME_NAVIGATION } from '@/Constants/Constants'
 import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 import { usePaneSwipeGesture } from '../Panes/usePaneGesture'
 import { mergeRefs } from '@/Hooks/mergeRefs'
+import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 
 type Props = {
   application: WebApplication
@@ -55,6 +55,8 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
     'swipe',
   )
 
+  const { hasBottomInset } = useAvailableSafeAreaPadding()
+
   return (
     <div
       id={id}
@@ -83,7 +85,7 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
         className={classNames(
           'fixed bottom-0 flex min-h-[50px] w-full items-center border-t border-border bg-contrast',
           'px-3.5 pt-2.5 md:hidden',
-          isIOS() ? 'pb-safe-bottom' : 'pb-2.5',
+          hasBottomInset ? 'pb-safe-bottom' : 'pb-2.5',
         )}
       >
         <RoundIconButton

@@ -8,9 +8,9 @@ import { useDisableBodyScrollOnMobile } from '@/Hooks/useDisableBodyScrollOnMobi
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import Modal from '../Modal/Modal'
 import { classNames } from '@standardnotes/snjs'
-import { isIOS } from '@/Utils'
 import { useCommandService } from '../CommandProvider'
 import { ESCAPE_COMMAND } from '@standardnotes/ui-services'
+import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 
 const PreferencesView: FunctionComponent<PreferencesProps> = ({
   application,
@@ -56,6 +56,8 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
     })
   }, [commandService, closePreferences])
 
+  const { hasTopInset } = useAvailableSafeAreaPadding()
+
   return (
     <Modal
       close={closePreferences}
@@ -68,7 +70,7 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
         <div
           className={classNames(
             'flex w-full flex-row items-center justify-between border-b border-solid border-border bg-default px-3 pb-2 md:p-3',
-            isIOS() ? 'pt-safe-top' : 'pt-2',
+            hasTopInset ? 'pt-safe-top' : 'pt-2',
           )}
         >
           <div className="hidden h-8 w-8 md:block" />
