@@ -6,7 +6,7 @@ import PreferencesMenuItem from './PreferencesComponents/MenuItem'
 import { PreferencesMenu } from './PreferencesMenu'
 import { PreferenceId } from '@standardnotes/ui-services'
 import { classNames } from '@standardnotes/snjs'
-import { isIOS } from '@/Utils'
+import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 
 type Props = {
   menu: PreferencesMenu
@@ -25,11 +25,13 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
     [menuItems],
   )
 
+  const { hasBottomInset } = useAvailableSafeAreaPadding()
+
   return (
     <div
       className={classNames(
         'border-t border-border bg-default px-5 pt-2 md:border-0 md:bg-contrast md:px-0 md:py-0',
-        isIOS() ? 'pb-safe-bottom' : 'pb-2 md:pb-0',
+        hasBottomInset ? 'pb-safe-bottom' : 'pb-2 md:pb-0',
       )}
     >
       <div className="hidden min-w-55 flex-col overflow-y-auto px-3 py-6 md:flex">
