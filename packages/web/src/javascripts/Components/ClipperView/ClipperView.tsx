@@ -315,6 +315,7 @@ const ClipperView = ({
       <Menu a11yLabel="Extension menu" isOpen={true} className="rounded border border-border bg-default">
         {hasSelection && (
           <MenuItem
+            className="border-b border-border"
             disabled={isScreenshotMode}
             onClick={async () => {
               const payload = await sendMessageToActiveTab({ type: RuntimeMessageTypes.GetSelection })

@@ -41,7 +41,13 @@ const MenuSwitchButtonItem = forwardRef(
           <span className="flex flex-grow items-center">{children}</span>
           <div className="flex items-center">
             {shortcut && <KeyboardShortcutIndicator className="mr-2" shortcut={shortcut} />}
-            <Switch disabled={disabled} className="pointer-events-none px-0" checked={checked} onChange={onChange} />
+            <Switch
+              disabled={disabled}
+              className="pointer-events-none px-0"
+              checked={checked}
+              onChange={onChange}
+              tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
+            />
           </div>
         </button>
       </MenuListItem>
