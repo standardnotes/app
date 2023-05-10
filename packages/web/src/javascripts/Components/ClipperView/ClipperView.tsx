@@ -382,7 +382,10 @@ const ClipperView = ({
                 isBidirectional={false}
               />
               <StyledTooltip label="Remove default tag" gutter={2}>
-                <button className="rounded-full p-1 hover:bg-contrast hover:text-info" onClick={unselectTag}>
+                <button
+                  className="rounded-full p-1 text-neutral hover:bg-contrast hover:text-info"
+                  onClick={unselectTag}
+                >
                   <Icon type="clear-circle-filled" />
                 </button>
               </StyledTooltip>
