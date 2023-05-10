@@ -311,8 +311,23 @@ const ClipperView = ({
   }
 
   return (
-    <div className="bg-contrast p-2">
+    <div className="bg-contrast p-3">
       <Menu a11yLabel="Extension menu" isOpen={true} className="rounded border border-border bg-default">
+        {hasSelection && (
+          <MenuItem
+            disabled={isScreenshotMode}
+            onClick={async () => {
+              const payload = await sendMessageToActiveTab({ type: RuntimeMessageTypes.GetSelection })
+              if (!payload) {
+                return
+              }
+              setClipPayload(payload)
+            }}
+          >
+            <Icon type="paragraph" className="mr-2 text-info" />
+            Clip text selection
+          </MenuItem>
+        )}
         <MenuItem
           onClick={async () => {
             const payload = await sendMessageToActiveTab({ type: RuntimeMessageTypes.GetFullPage })
@@ -322,6 +337,7 @@ const ClipperView = ({
             setClipPayload(payload)
           }}
         >
+          <Icon type="notes-filled" className="mr-2 text-info" />
           {isScreenshotMode ? 'Capture visible' : 'Clip full page'}
         </MenuItem>
         <MenuItem
@@ -334,28 +350,16 @@ const ClipperView = ({
             setClipPayload(payload)
           }}
         >
+          <Icon type="rich-text" className="mr-2 text-info" />
           Clip article
         </MenuItem>
-        {hasSelection && (
-          <MenuItem
-            disabled={isScreenshotMode}
-            onClick={async () => {
-              const payload = await sendMessageToActiveTab({ type: RuntimeMessageTypes.GetSelection })
-              if (!payload) {
-                return
-              }
-              setClipPayload(payload)
-            }}
-          >
-            Clip text selection
-          </MenuItem>
-        )}
         <MenuItem
           onClick={async () => {
             void sendMessageToActiveTab({ type: RuntimeMessageTypes.StartNodeSelection })
             window.close()
           }}
         >
+          <Icon type="dashboard" className="mr-2 text-info" />
           Select elements to {isScreenshotMode ? 'capture' : 'clip'}
         </MenuItem>
         <MenuSwitchButtonItem
@@ -368,25 +372,19 @@ const ClipperView = ({
           Clip as screenshot
         </MenuSwitchButtonItem>
         <div className="border-t border-border px-3 py-3  text-foreground">
-          <div className="flex items-center justify-between text-base">
-            <div className="font-bold text-info">Default tag</div>
-            {defaultTag && (
+          {defaultTag && (
+            <div className="flex items-center justify-between text-base">
+              <LinkedItemBubble
+                className="m-1 mr-2 min-w-0"
+                link={createLinkFromItem(defaultTag, 'linked')}
+                unlinkItem={unselectTag}
+                isBidirectional={false}
+              />
               <StyledTooltip label="Remove default tag" gutter={2}>
                 <button className="rounded-full p-1 hover:bg-contrast hover:text-info" onClick={unselectTag}>
                   <Icon type="clear-circle-filled" />
                 </button>
               </StyledTooltip>
-            )}
-          </div>
-          {defaultTag && (
-            <div>
-              <LinkedItemBubble
-                className="m-1 mr-2"
-                link={createLinkFromItem(defaultTag, 'linked')}
-                unlinkItem={unselectTag}
-                isBidirectional={false}
-                inlineFlex={true}
-              />
             </div>
           )}
           <ItemSelectionDropdown
@@ -405,7 +403,7 @@ const ClipperView = ({
           <Icon type="user" className="mx-2" />
           <div className="flex-grow py-2 text-sm font-semibold">{user.email}</div>
           <button
-            className="flex-shrink-0 border-l border-border py-2 px-2 hover:bg-info-backdrop focus:border-info-backdrop focus:shadow-none focus:outline-none"
+            className="flex-shrink-0 border-l border-border py-2 px-2 hover:bg-info-backdrop focus:bg-info-backdrop focus:shadow-none focus:outline-none"
             onClick={showSignOutConfirmation}
           >
             <Icon type="signOut" className="text-neutral" />
