@@ -1,6 +1,6 @@
 import { ContentType } from '@standardnotes/common'
 
-export type SharedItemsUserShare = {
+export type ItemShareResponseObject = {
   itemUuid: string
   createdAt: Date
   publicKey: string

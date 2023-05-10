@@ -27,6 +27,12 @@ const ItemsPaths = {
   sync: '/v1/items',
 }
 
+const ItemSharePaths = {
+  getSharedItem: (shareToken: string) => `/v1/share/item/${shareToken}`,
+  shareItem: '/v1/share',
+  getUserShares: '/v1/share',
+}
+
 const SettingsPaths = {
   settings: (userUuid: string) => `/v1/users/${userUuid}/settings`,
   setting: (userUuid: string, settingName: string) => `/v1/users/${userUuid}/settings/${settingName}`,
@@ -63,6 +69,7 @@ export const Paths = {
     ...SettingsPaths,
     ...SubscriptionPaths,
     ...UserPaths,
+    ...ItemSharePaths,
   },
   v2: {
     ...SubscriptionPathsV2,

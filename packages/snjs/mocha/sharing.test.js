@@ -8,7 +8,6 @@ describe.only('sharing', function () {
   let application
   let context
   let sharingService
-  let mockApi
 
   afterEach(async function () {
     await Factory.safeDeinit(application)
@@ -25,45 +24,7 @@ describe.only('sharing', function () {
 
     application = context.application
 
-    const mockServerData = {
-      sharedItems: {},
-      items: {},
-    }
-
-    context.callBackWithUploadedPayloads((payloads) => {
-      for (const payload of payloads) {
-        mockServerData.items[payload.uuid] = payload
-      }
-    })
-
-    mockApi = {
-      async getSharedItem(shareToken) {
-        const data = mockServerData.sharedItems[shareToken]
-        const item = mockServerData.items[data.itemUuid]
-        return { item, publicKey: data.publicKey, encryptedContentKey: data.encryptedContentKey }
-      },
-
-      shareItem(params) {
-        const shareToken = UuidGenerator.GenerateUuid()
-        mockServerData.sharedItems[shareToken] = params
-        return { ...params, shareToken }
-      },
-
-      updateSharedItem(params) {
-        const existingData = mockServerData.sharedItems[params.shareToken]
-        mockServerData.sharedItems[params.shareToken] = {
-          ...existingData,
-          ...params
-        }
-        return params
-      },
-
-      getInitiatedShares() {
-        return Object.values(mockServerData.sharedItems)
-      },
-    }
-
-    sharingService = new SharingService(mockApi, application.sync, application.options.crypto)
+    sharingService = new SharingService(application.apiService, application.sync, application.options.crypto)
   })
 
   it('sharing an item should return a share token and a private key', async () => {

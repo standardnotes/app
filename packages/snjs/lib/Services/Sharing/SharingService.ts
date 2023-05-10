@@ -1,3 +1,4 @@
+import { ErrorTag, isErrorResponse } from '@standardnotes/responses'
 import { ProtocolOperator005, isErrorDecryptingParameters } from '@standardnotes/encryption'
 import { AbstractService, InternalEventBusInterface, SyncEvent, SyncServiceInterface } from '@standardnotes/services'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -57,9 +58,12 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
     }
   }
 
-  getInitiatedShares(): Promise<SharedItemsUserShare[]> {
-    const shares = this.apiService.getInitiatedShares()
-    return shares
+  async getInitiatedShares(): Promise<SharedItemsUserShare[]> {
+    const response = await this.apiService.getInitiatedShares()
+    if (isErrorResponse(response)) {
+      return []
+    }
+    return response.data.itemShares
   }
 
   private async updateSharedItem(uuid: string, shareToken: string, publicKey: string) {
@@ -79,11 +83,10 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
       encryptedContentKey: encryptedContentKey,
     })
 
-    if ('error' in shareResponse) {
-      if (shareResponse.error.tag === 'expired') {
+    if (isErrorResponse(shareResponse)) {
+      if (shareResponse.data.error.tag === ErrorTag.ExpiredItemShare) {
         delete this.initiatedShares[uuid]
       }
-      return
     }
 
     void this.notifyEvent(SharingServiceEvent.DidUpdateSharedItem, { uuid })
@@ -111,20 +114,33 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
       publicKey: keypair.publicKey,
     })
 
-    if (shareResponse.shareToken) {
-      this.initiatedShares[uuid] = shareResponse
+    if (isErrorResponse(shareResponse)) {
+      return undefined
     }
 
-    return { shareToken: shareResponse.shareToken, privateKey: keypair.privateKey }
+    if (shareResponse.data.itemShare.shareToken) {
+      this.initiatedShares[uuid] = shareResponse.data.itemShare
+    }
+
+    return { shareToken: shareResponse.data.itemShare.shareToken, privateKey: keypair.privateKey }
   }
 
   public async getSharedItem(shareToken: string, privateKey: string): Promise<DecryptedItemInterface | undefined> {
-    const { item, encryptedContentKey, publicKey } = await this.apiService.getSharedItem(shareToken)
+    const response = await this.apiService.getSharedItem(shareToken)
+    if (isErrorResponse(response)) {
+      return undefined
+    }
+    const { item, itemShare } = response.data
+
     if (!item) {
-      throw new Error('Item not found')
+      throw new Error('Shared item not found')
     }
 
-    const decryptedContentKey = this.operator.asymmetricAnonymousDecryptKey(encryptedContentKey, publicKey, privateKey)
+    const decryptedContentKey = this.operator.asymmetricAnonymousDecryptKey(
+      itemShare.encryptedContentKey,
+      itemShare.publicKey,
+      privateKey,
+    )
 
     const receivedPayloads = FilterDisallowedRemotePayloadsAndMap([item]).map((rawPayload) => {
       return CreatePayloadFromRawServerItem(rawPayload, PayloadSource.RemoteRetrieved)

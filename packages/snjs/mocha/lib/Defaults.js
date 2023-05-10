@@ -1,4 +1,4 @@
-export const DefaultServerPort = 3123
+export const DefaultServerPort = 4000
 
 export function getDefaultHost() {
   return `http://localhost:${DefaultServerPort}`

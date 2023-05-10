@@ -72,6 +72,8 @@ import {
   HttpErrorResponse,
   HttpSuccessResponse,
   isErrorResponse,
+  ItemSharePostResponse,
+  GetUserItemSharesResponse,
 } from '@standardnotes/responses'
 import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
 import { HttpServiceInterface } from '@standardnotes/api'
@@ -86,6 +88,8 @@ import { UuidString } from '../../Types/UuidString'
 import merge from 'lodash/merge'
 import { SettingsServerInterface } from '../Settings/SettingsServerInterface'
 import { Strings } from '@Lib/Strings'
+import { GetSharedItemResponse, SharingApiInterface } from '../Sharing/SharingApiInterface'
+import { SharedItemsUserShare } from '../Sharing/SharedItemsUserShare'
 
 /** Legacy api version field to be specified in params when calling v0 APIs. */
 const V0_API_VERSION = '20200115'
@@ -99,7 +103,8 @@ export class SNApiService
     FilesApiInterface,
     IntegrityApiInterface,
     ItemsServerInterface,
-    SettingsServerInterface
+    SettingsServerInterface,
+    SharingApiInterface
 {
   private session: Session | LegacySession | null
   public user?: User
@@ -888,6 +893,58 @@ export class SNApiService
     }
 
     return this.session.accessToken
+  }
+
+  getSharedItem(shareToken: string): Promise<HttpResponse<GetSharedItemResponse>> {
+    return this.tokenRefreshableRequest<GetSharedItemResponse>({
+      verb: HttpVerb.Get,
+      url: joinPaths(this.host, Paths.v1.getSharedItem(shareToken)),
+      fallbackErrorMessage: API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
+      authentication: this.getSessionAccessToken(),
+    })
+  }
+
+  shareItem(params: {
+    itemUuid: string
+    encryptedContentKey: string
+    publicKey: string
+  }): Promise<HttpResponse<ItemSharePostResponse>> {
+    return this.tokenRefreshableRequest<ItemSharePostResponse>({
+      verb: HttpVerb.Post,
+      url: joinPaths(this.host, Paths.v1.shareItem),
+      params: {
+        itemUuid: params.itemUuid,
+        encryptedContentKey: params.encryptedContentKey,
+        publicKey: params.publicKey,
+      },
+      fallbackErrorMessage: API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
+      authentication: this.getSessionAccessToken(),
+    })
+  }
+
+  updateSharedItem(params: {
+    shareToken: string
+    encryptedContentKey: string
+  }): Promise<HttpResponse<SharedItemsUserShare>> {
+    return this.tokenRefreshableRequest<SharedItemsUserShare>({
+      verb: HttpVerb.Patch,
+      url: joinPaths(this.host, Paths.v1.shareItem),
+      params: {
+        shareToken: params.shareToken,
+        encryptedContentKey: params.encryptedContentKey,
+      },
+      fallbackErrorMessage: API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
+      authentication: this.getSessionAccessToken(),
+    })
+  }
+
+  getInitiatedShares(): Promise<HttpResponse<GetUserItemSharesResponse>> {
+    return this.tokenRefreshableRequest<GetUserItemSharesResponse>({
+      verb: HttpVerb.Get,
+      url: joinPaths(this.host, Paths.v1.getUserShares),
+      fallbackErrorMessage: API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
+      authentication: this.getSessionAccessToken(),
+    })
   }
 
   override getDiagnostics(): Promise<DiagnosticInfo | undefined> {
