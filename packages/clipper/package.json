@@ -23,7 +23,7 @@
     "@types/webextension-polyfill": "^0.10.0",
     "babel-loader": "^9.1.0",
     "copy-webpack-plugin": "11.0.0",
-    "eslint": "^8.29.0",
+    "eslint": "*",
     "eslint-config-prettier": "^8.5.0",
     "ts-loader": "^9.4.2",
     "typescript": "*",
