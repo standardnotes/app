@@ -36,6 +36,5 @@ export const PrefDefaults = {
   [PrefKey.NewNoteTitleFormat]: NewNoteTitleFormat.CurrentDateAndTime,
   [PrefKey.CustomNoteTitleFormat]: 'YYYY-MM-DD [at] hh:mm A',
   [PrefKey.UpdateSavingStatusIndicator]: true,
-  [PrefKey.DarkMode]: false,
   [PrefKey.PaneGesturesEnabled]: true,
 } as const

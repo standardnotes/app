@@ -249,7 +249,6 @@ export class ThemeManager extends AbstractService {
     const setTheme = () => {
       if (themeIdentifier === DefaultThemeIdentifier) {
         toggleActiveTheme()
-        void this.application.setPreference(PrefKey.DarkMode, false)
       } else {
         const theme = themes.find((theme) => theme.package_info.identifier === themeIdentifier)
         if (theme && !theme.active) {
@@ -345,8 +344,6 @@ export class ThemeManager extends AbstractService {
       }
     }
     document.getElementsByTagName('head')[0].appendChild(link)
-
-    void this.application.setPreference(PrefKey.DarkMode, false)
   }
 
   private getBackgroundColor() {

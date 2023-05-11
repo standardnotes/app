@@ -40,7 +40,6 @@ export enum PrefKey {
   NewNoteTitleFormat = 'newNoteTitleFormat',
   CustomNoteTitleFormat = 'customNoteTitleFormat',
   UpdateSavingStatusIndicator = 'updateSavingStatusIndicator',
-  DarkMode = 'darkMode',
   DefaultEditorIdentifier = 'defaultEditorIdentifier',
   MomentsDefaultTagUuid = 'momentsDefaultTagUuid',
   ClipperDefaultTagUuid = 'clipperDefaultTagUuid',
@@ -118,7 +117,6 @@ export type PrefValue = {
   [PrefKey.EditorLineWidth]: EditorLineWidth
   [PrefKey.EditorFontSize]: EditorFontSize
   [PrefKey.UpdateSavingStatusIndicator]: boolean
-  [PrefKey.DarkMode]: boolean
   [PrefKey.DefaultEditorIdentifier]: EditorIdentifier
   [PrefKey.MomentsDefaultTagUuid]: string | undefined
   [PrefKey.ClipperDefaultTagUuid]: string | undefined

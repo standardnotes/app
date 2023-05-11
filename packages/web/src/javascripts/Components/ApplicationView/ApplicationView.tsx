@@ -22,7 +22,6 @@ import FileDragNDropProvider from '../FileDragNDropProvider'
 import ResponsivePaneProvider from '../Panes/ResponsivePaneProvider'
 import AndroidBackHandlerProvider from '@/NativeMobileWeb/useAndroidBackHandler'
 import ConfirmDeleteAccountContainer from '@/Components/ConfirmDeleteAccountModal/ConfirmDeleteAccountModal'
-import DarkModeHandler from '../DarkModeHandler/DarkModeHandler'
 import ApplicationProvider from '../ApplicationProvider'
 import CommandProvider from '../CommandProvider'
 import PanesSystemComponent from '../Panes/PanesSystemComponent'
@@ -216,7 +215,6 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     <ApplicationProvider application={application}>
       <CommandProvider service={application.keyboardService}>
         <AndroidBackHandlerProvider application={application}>
-          <DarkModeHandler application={application} />
           <ResponsivePaneProvider paneController={application.getViewControllerManager().paneController}>
             <PremiumModalProvider
               application={application}
