@@ -1,8 +1,8 @@
-import { ApplicationEvent, PrefKey, PrefValue } from '@standardnotes/snjs'
-import { useEffect, useState } from 'react'
+import { PrefKey, PrefValue } from '@standardnotes/snjs'
 import { useApplication } from '../ApplicationProvider'
 import Dropdown from '../Dropdown/Dropdown'
 import Modal from '../Modal/Modal'
+import usePreference from '@/Hooks/usePreference'
 
 type Props = {
   exportNotes: () => void
@@ -11,14 +11,7 @@ type Props = {
 
 const SuperExportModal = ({ exportNotes, close }: Props) => {
   const application = useApplication()
-  const [superNoteExportFormat, setSuperNoteExportFormat] = useState<PrefValue[PrefKey.SuperNoteExportFormat]>(
-    () => application.getPreference(PrefKey.SuperNoteExportFormat) || 'json',
-  )
-  useEffect(() => {
-    return application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
-      setSuperNoteExportFormat(application.getPreference(PrefKey.SuperNoteExportFormat) || 'json')
-    })
-  }, [application, superNoteExportFormat])
+  const superNoteExportFormat = usePreference(PrefKey.SuperNoteExportFormat)
 
   return (
     <Modal
