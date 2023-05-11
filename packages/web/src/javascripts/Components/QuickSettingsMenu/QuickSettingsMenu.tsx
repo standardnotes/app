@@ -1,13 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
-import {
-  ApplicationEvent,
-  ComponentArea,
-  ContentType,
-  FeatureIdentifier,
-  GetFeatures,
-  PrefKey,
-  SNComponent,
-} from '@standardnotes/snjs'
+import { ComponentArea, ContentType, FeatureIdentifier, GetFeatures, SNComponent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
@@ -18,7 +10,6 @@ import { sortThemes } from '@/Utils/SortThemes'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
 import { QuickSettingsController } from '@/Controllers/QuickSettingsController'
 import PanelSettingsSection from './PanelSettingsSection'
-import { PrefDefaults } from '@/Constants/PrefDefaults'
 import Menu from '../Menu/Menu'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import MenuRadioButtonItem from '../Menu/MenuRadioButtonItem'
@@ -34,24 +25,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
   const [themes, setThemes] = useState<ThemeItem[]>([])
   const [toggleableComponents, setToggleableComponents] = useState<SNComponent[]>([])
 
-  const [isDarkModeOn, setDarkModeOn] = useState(() =>
-    application.getPreference(PrefKey.DarkMode, PrefDefaults[PrefKey.DarkMode]),
-  )
-  const defaultThemeOn =
-    !themes.map((item) => item?.component).find((theme) => theme?.active && !theme.isLayerable()) && !isDarkModeOn
-
-  useEffect(() => {
-    const removeObserver = application.addEventObserver(async (event) => {
-      if (event !== ApplicationEvent.PreferencesChanged) {
-        return
-      }
-
-      const isDarkModeOn = application.getPreference(PrefKey.DarkMode, PrefDefaults[PrefKey.DarkMode])
-      setDarkModeOn(isDarkModeOn)
-    })
-
-    return removeObserver
-  }, [application])
+  const defaultThemeOn = !themes.map((item) => item?.component).find((theme) => theme?.active && !theme.isLayerable())
 
   const prefsButtonRef = useRef<HTMLButtonElement>(null)
   const defaultThemeButtonRef = useRef<HTMLButtonElement>(null)
@@ -145,8 +119,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
 
   const toggleDefaultTheme = useCallback(() => {
     deactivateAnyNonLayerableTheme()
-    void application.setPreference(PrefKey.DarkMode, false)
-  }, [application, deactivateAnyNonLayerableTheme])
+  }, [deactivateAnyNonLayerableTheme])
 
   return (
     <Menu a11yLabel="Quick settings menu" isOpen>
