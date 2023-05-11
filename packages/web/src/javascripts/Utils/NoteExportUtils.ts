@@ -1,5 +1,6 @@
 import { WebApplication } from '@/Application/WebApplication'
 import { InvisibleSuperConverter } from '@/Components/SuperEditor/Tools/InvisibleMarkdownConverter'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { NoteType, PrefKey, SNNote } from '@standardnotes/snjs'
 
 export const getNoteFormat = (application: WebApplication, note: SNNote) => {
@@ -8,7 +9,10 @@ export const getNoteFormat = (application: WebApplication, note: SNNote) => {
   const isSuperNote = note.noteType === NoteType.Super
 
   if (isSuperNote) {
-    const superNoteExportFormatPref = application.getPreference(PrefKey.SuperNoteExportFormat) || 'json'
+    const superNoteExportFormatPref = application.getPreference(
+      PrefKey.SuperNoteExportFormat,
+      PrefDefaults[PrefKey.SuperNoteExportFormat],
+    )
 
     return superNoteExportFormatPref
   }
