@@ -28,15 +28,6 @@ export enum PrefKey {
   AutoLightThemeIdentifier = 'autoLightThemeIdentifier',
   AutoDarkThemeIdentifier = 'autoDarkThemeIdentifier',
   NoteAddToParentFolders = 'noteAddToParentFolders',
-  MobileSortNotesBy = 'mobileSortBy',
-  MobileSortNotesReverse = 'mobileSortReverse',
-  MobileNotesHideNotePreview = 'mobileHideNotePreview',
-  MobileNotesHideDate = 'mobileHideDate',
-  MobileNotesHideTags = 'mobileHideTags',
-  MobileLastExportDate = 'mobileLastExportDate',
-  MobileDoNotShowAgainUnsupportedEditors = 'mobileDoNotShowAgainUnsupportedEditors',
-  MobileSelectedTagUuid = 'mobileSelectedTagUuid',
-  MobileNotesHideEditorIcon = 'mobileHideEditorIcon',
   NewNoteTitleFormat = 'newNoteTitleFormat',
   CustomNoteTitleFormat = 'customNoteTitleFormat',
   UpdateSavingStatusIndicator = 'updateSavingStatusIndicator',
@@ -48,6 +39,7 @@ export enum PrefKey {
   SuperNoteExportFormat = 'superNoteExportFormat',
   AuthenticatorNames = 'authenticatorNames',
   PaneGesturesEnabled = 'paneGesturesEnabled',
+  SyncThemeAcrossDevices = 'syncThemeAcrossDevices',
 }
 
 export enum NewNoteTitleFormat {
@@ -103,15 +95,6 @@ export type PrefValue = {
   [PrefKey.AutoLightThemeIdentifier]: FeatureIdentifier | 'Default' | 'Dark'
   [PrefKey.AutoDarkThemeIdentifier]: FeatureIdentifier | 'Default' | 'Dark'
   [PrefKey.NoteAddToParentFolders]: boolean
-  [PrefKey.MobileSortNotesBy]: CollectionSortProperty
-  [PrefKey.MobileSortNotesReverse]: boolean
-  [PrefKey.MobileNotesHideNotePreview]: boolean
-  [PrefKey.MobileNotesHideDate]: boolean
-  [PrefKey.MobileNotesHideTags]: boolean
-  [PrefKey.MobileLastExportDate]: Date | undefined
-  [PrefKey.MobileDoNotShowAgainUnsupportedEditors]: boolean
-  [PrefKey.MobileSelectedTagUuid]: string | undefined
-  [PrefKey.MobileNotesHideEditorIcon]: boolean
   [PrefKey.NewNoteTitleFormat]: NewNoteTitleFormat
   [PrefKey.CustomNoteTitleFormat]: string
   [PrefKey.EditorLineHeight]: EditorLineHeight
@@ -126,4 +109,5 @@ export type PrefValue = {
   [PrefKey.SuperNoteExportFormat]: 'json' | 'md' | 'html'
   [PrefKey.AuthenticatorNames]: string
   [PrefKey.PaneGesturesEnabled]: boolean
+  [PrefKey.SyncThemeAcrossDevices]: boolean
 }

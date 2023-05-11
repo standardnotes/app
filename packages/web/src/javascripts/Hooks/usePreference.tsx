@@ -1,17 +1,18 @@
 import { useApplication } from '@/Components/ApplicationProvider'
-import { ApplicationEvent, PrefKey } from '@standardnotes/snjs'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
+import { ApplicationEvent, PrefKey, PrefValue } from '@standardnotes/snjs'
 import { useEffect, useState } from 'react'
 
-export default function usePreference<T>(preference: PrefKey) {
+export default function usePreference<Key extends PrefKey, Value extends PrefValue[Key]>(preference: Key) {
   const application = useApplication()
 
-  const [value, setValue] = useState<T>(application.getPreference(preference) as T)
+  const [value, setValue] = useState<Value>(application.getPreference(preference, PrefDefaults[preference]) as Value)
 
   useEffect(() => {
     return application.addEventObserver(async () => {
-      const latestValue = application.getPreference(preference)
+      const latestValue = application.getPreference(preference, PrefDefaults[preference])
 
-      setValue(latestValue as T)
+      setValue(latestValue as Value)
     }, ApplicationEvent.PreferencesChanged)
   }, [application, preference])
 
