@@ -83,6 +83,7 @@ const ClipperView = ({
 
   const defaultTagId = usePreference<string>(PrefKey.ClipperDefaultTagUuid)
   const [defaultTag, setDefaultTag] = useState<SNTag | undefined>()
+  const defaultTagRef = useStateRef(defaultTag)
 
   useEffect(() => {
     if (!defaultTagId) {
@@ -197,7 +198,11 @@ const ClipperView = ({
           type: 'image/png',
         })
 
-        viewControllerManager.filesController.uploadNewFile(file).catch(console.error)
+        const uploadedFile = await viewControllerManager.filesController.uploadNewFile(file).catch(console.error)
+
+        if (uploadedFile && defaultTagRef.current) {
+          await application.linkingController.linkItems(uploadedFile, defaultTagRef.current)
+        }
 
         return
       }
@@ -214,8 +219,8 @@ const ClipperView = ({
 
       const insertedNote = await application.items.insertItem(note)
 
-      if (defaultTag) {
-        await application.linkingController.linkItems(insertedNote, defaultTag)
+      if (defaultTagRef.current) {
+        await application.linkingController.linkItems(insertedNote, defaultTagRef.current)
       }
 
       setClippedNote(insertedNote as SNNote)
@@ -234,7 +239,7 @@ const ClipperView = ({
     application.linkingController,
     application.sync,
     clipPayload,
-    defaultTag,
+    defaultTagRef,
     isEntitledRef,
     viewControllerManager.filesController,
   ])
