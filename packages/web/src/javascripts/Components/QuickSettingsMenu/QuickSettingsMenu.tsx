@@ -26,9 +26,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
   const [themes, setThemes] = useState<ThemeItem[]>([])
   const [toggleableComponents, setToggleableComponents] = useState<SNComponent[]>([])
 
-  const isDarkModeOn = usePreference(PrefKey.DarkMode)
-  const defaultThemeOn =
-    !themes.map((item) => item?.component).find((theme) => theme?.active && !theme.isLayerable()) && !isDarkModeOn
+  const defaultThemeOn = !themes.some((theme) => theme.component?.active && !theme.component.isLayerable())
 
   const prefsButtonRef = useRef<HTMLButtonElement>(null)
   const defaultThemeButtonRef = useRef<HTMLButtonElement>(null)
@@ -122,8 +120,7 @@ const QuickSettingsMenu: FunctionComponent<MenuProps> = ({ application, quickSet
 
   const toggleDefaultTheme = useCallback(() => {
     deactivateAnyNonLayerableTheme()
-    void application.setPreference(PrefKey.DarkMode, false)
-  }, [application, deactivateAnyNonLayerableTheme])
+  }, [deactivateAnyNonLayerableTheme])
 
   const syncThemeAcrossDevices = usePreference(PrefKey.SyncThemeAcrossDevices)
 
