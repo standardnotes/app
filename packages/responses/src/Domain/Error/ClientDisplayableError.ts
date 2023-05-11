@@ -6,4 +6,12 @@ export class ClientDisplayableError {
   static FromError(error: { message: string; tag?: string }) {
     return new ClientDisplayableError(error.message, undefined, error.tag)
   }
+
+  static FromString(text: string) {
+    return new ClientDisplayableError(text)
+  }
+}
+
+export function isClientDisplayableError(error: unknown): error is ClientDisplayableError {
+  return error instanceof ClientDisplayableError
 }

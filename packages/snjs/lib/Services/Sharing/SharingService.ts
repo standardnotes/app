@@ -1,4 +1,4 @@
-import { ErrorTag, isErrorResponse } from '@standardnotes/responses'
+import { ClientDisplayableError, ErrorTag, isErrorResponse } from '@standardnotes/responses'
 import { ProtocolOperator005, isErrorDecryptingParameters } from '@standardnotes/encryption'
 import { AbstractService, InternalEventBusInterface, SyncEvent, SyncServiceInterface } from '@standardnotes/services'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -22,6 +22,7 @@ import {
 import { SharingApiInterface } from './SharingApiInterface'
 import { SharedItemsUserShare } from './SharedItemsUserShare'
 import { ContentType } from '@standardnotes/common'
+import { ShareItemDuration } from './ShareItemDuration'
 
 export class SharingService extends AbstractService<SharingServiceEvent, any> implements SharingServiceInterface {
   private syncObserver: () => void
@@ -77,11 +78,11 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
   private async updateSharedItem(uuid: string, shareToken: string, publicKey: string) {
     const payload = await this.sync.getItem(uuid)
     if (!payload || isEncryptedPayload(payload)) {
-      throw new Error('Could not get share parameters')
+      return ClientDisplayableError.FromString('Could not get share parameters')
     }
 
     if (!payload.contentKey) {
-      throw new Error('Payload content key is missing')
+      return ClientDisplayableError.FromString('Payload content key is missing')
     }
 
     const encryptedContentKey = this.operator.asymmetricAnonymousEncryptKey(payload.contentKey, publicKey)
@@ -102,14 +103,17 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
     return shareResponse
   }
 
-  public async shareItem(uuid: string): Promise<SharingServiceShareItemReturn | undefined> {
+  public async shareItem(
+    uuid: string,
+    duration: ShareItemDuration,
+  ): Promise<SharingServiceShareItemReturn | ClientDisplayableError> {
     const payload = await this.sync.getItem(uuid)
     if (!payload || isEncryptedPayload(payload)) {
-      return undefined
+      return ClientDisplayableError.FromString('Could not get item to share')
     }
 
     if (!payload.contentKey) {
-      return undefined
+      return ClientDisplayableError.FromString('Payload content key is missing')
     }
 
     const keypair = this.operator.generateKeyPair()
@@ -121,12 +125,13 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
       itemUuid: uuid,
       encryptedContentKey: encryptedContentKey,
       publicKey: keypair.publicKey,
+      duration: duration,
       fileRemoteIdentifier:
         payload.content_type === ContentType.File ? (payload.content as FileContent).remoteIdentifier : undefined,
     })
 
     if (isErrorResponse(shareResponse)) {
-      return undefined
+      return ClientDisplayableError.FromError(shareResponse.data.error)
     }
 
     if (shareResponse.data.itemShare.shareToken) {
@@ -139,15 +144,16 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
   public async getSharedItem(
     shareToken: string,
     privateKey: string,
-  ): Promise<SharingServiceGetSharedItemReturn | undefined> {
+  ): Promise<SharingServiceGetSharedItemReturn | ClientDisplayableError> {
     const response = await this.apiService.getSharedItem(shareToken)
     if (isErrorResponse(response)) {
-      return undefined
+      return ClientDisplayableError.FromError(response.data.error)
     }
+
     const { item, itemShare, fileValetToken } = response.data
 
     if (!item) {
-      throw new Error('Shared item not found')
+      return ClientDisplayableError.FromString('Shared item not found')
     }
 
     const decryptedContentKey = this.operator.asymmetricAnonymousDecryptKey(
@@ -163,7 +169,7 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
     const filteredPayload = receivedPayloads[0]
 
     if (!filteredPayload || isDeletedPayload(filteredPayload)) {
-      throw new Error('Shared item is deleted or client rejected')
+      return ClientDisplayableError.FromString('Shared item is deleted or client rejected')
     }
 
     const decryptedParameters = this.operator.generateDecryptedParametersForSharedItem(
@@ -172,7 +178,7 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
     )
 
     if (isErrorDecryptingParameters(decryptedParameters)) {
-      throw new Error('Error decrypting shared item')
+      return ClientDisplayableError.FromString('Error decrypting shared item')
     }
 
     const decryptedPayload = new DecryptedPayload({
@@ -181,7 +187,7 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
     })
 
     if (decryptedPayload.content_type === ContentType.File && !fileValetToken) {
-      throw new Error('File valet token is missing')
+      return ClientDisplayableError.FromString('File valet token is missing')
     }
 
     return {

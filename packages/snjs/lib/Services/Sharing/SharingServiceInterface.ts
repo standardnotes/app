@@ -1,6 +1,8 @@
+import { ClientDisplayableError } from '@standardnotes/responses'
 import { AbstractService } from '@standardnotes/services'
 import { DecryptedItemInterface } from '@standardnotes/models'
 import { SharedItemsUserShare } from './SharedItemsUserShare'
+import { ShareItemDuration } from './ShareItemDuration'
 
 export type SharingServiceShareItemReturn = {
   shareToken: string
@@ -17,9 +19,12 @@ export enum SharingServiceEvent {
 }
 
 export interface SharingServiceInterface extends AbstractService<SharingServiceEvent, any> {
-  shareItem(uuid: string): Promise<SharingServiceShareItemReturn | undefined>
+  shareItem(uuid: string, duration: ShareItemDuration): Promise<SharingServiceShareItemReturn | ClientDisplayableError>
 
-  getInitiatedShares(): Promise<SharedItemsUserShare[]>
+  getInitiatedShares(): Promise<SharedItemsUserShare[] | ClientDisplayableError>
 
-  getSharedItem(shareToken: string, privateKey: string): Promise<SharingServiceGetSharedItemReturn | undefined>
+  getSharedItem(
+    shareToken: string,
+    privateKey: string,
+  ): Promise<SharingServiceGetSharedItemReturn | ClientDisplayableError>
 }

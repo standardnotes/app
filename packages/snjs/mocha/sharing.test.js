@@ -32,7 +32,7 @@ describe.only('sharing', function () {
   describe('note sharing', () => {
     it('sharing an item should return a share token and a private key', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const { shareToken, privateKey } = await sharingService.shareItem(note.uuid)
+      const { shareToken, privateKey } = await sharingService.shareItem(note.uuid, ShareItemDuration.OneDay)
 
       expect(shareToken).to.not.be.undefined
       expect(privateKey).to.not.be.undefined
@@ -40,7 +40,7 @@ describe.only('sharing', function () {
 
     it('should correctly decrypt shared items', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const { shareToken, privateKey } = await sharingService.shareItem(note.uuid)
+      const { shareToken, privateKey } = await sharingService.shareItem(note.uuid, ShareItemDuration.OneDay)
 
       const { item } = await sharingService.getSharedItem(shareToken, privateKey)
 
@@ -59,7 +59,7 @@ describe.only('sharing', function () {
         })
       })
 
-      const { shareToken, privateKey } = await sharingService.shareItem(note.uuid)
+      const { shareToken, privateKey } = await sharingService.shareItem(note.uuid, ShareItemDuration.OneDay)
       await context.changeNoteTitleAndSync(note, 'changed note title')
 
       await updatePromise
@@ -70,7 +70,7 @@ describe.only('sharing', function () {
 
     it('should be able to download shared item without account', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const { shareToken, privateKey } = await sharingService.shareItem(note.uuid)
+      const { shareToken, privateKey } = await sharingService.shareItem(note.uuid, ShareItemDuration.OneDay)
 
       const offlineContext = await Factory.createAppContextWithRealCrypto()
       await offlineContext.launch()
@@ -85,6 +85,24 @@ describe.only('sharing', function () {
       expect(item.content.title).to.equal('foo')
       expect(item.content.text).to.equal('bar')
     })
+
+    it('should expire share immediately after consume', async () => {
+      const note = await context.createSyncedNote('foo', 'bar')
+      const { shareToken, privateKey } = await sharingService.shareItem(note.uuid, ShareItemDuration.AfterConsume)
+
+      await sharingService.getSharedItem(shareToken, privateKey)
+      const secondDownloadResponse = await sharingService.getSharedItem(shareToken, privateKey)
+      expect(isClientDisplayableError(secondDownloadResponse)).to.be.true
+    })
+
+    it('should not expire share immediately after consume', async () => {
+      const note = await context.createSyncedNote('foo', 'bar')
+      const { shareToken, privateKey } = await sharingService.shareItem(note.uuid, ShareItemDuration.OneDay)
+
+      await sharingService.getSharedItem(shareToken, privateKey)
+      const secondDownloadResponse = await sharingService.getSharedItem(shareToken, privateKey)
+      expect(secondDownloadResponse.item).to.not.be.undefined
+    })
   })
 
   describe('file sharing', () => {
@@ -97,7 +115,7 @@ describe.only('sharing', function () {
       const buffer = new Uint8Array(await response.arrayBuffer())
       const file = await Files.uploadFile(context.application.fileService, buffer, 'my-file', 'md', 1000)
 
-      const { shareToken, privateKey } = await sharingService.shareItem(file.uuid)
+      const { shareToken, privateKey } = await sharingService.shareItem(file.uuid, ShareItemDuration.OneDay)
 
       const { item, fileValetToken } = await sharingService.getSharedItem(shareToken, privateKey)
 

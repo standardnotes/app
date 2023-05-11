@@ -92,6 +92,7 @@ import { SharingApiInterface } from '../Sharing/SharingApiInterface'
 import { GetSharedItemResponse } from '../Sharing/GetSharedItemResponse'
 import { SharedItemsUserShare } from '../Sharing/SharedItemsUserShare'
 import { ContentType } from '@standardnotes/common'
+import { ShareItemDuration } from '../Sharing/ShareItemDuration'
 
 /** Legacy api version field to be specified in params when calling v0 APIs. */
 const V0_API_VERSION = '20200115'
@@ -917,6 +918,7 @@ export class SNApiService
     publicKey: string
     fileRemoteIdentifier?: string
     contentType: ContentType
+    duration: ShareItemDuration
   }): Promise<HttpResponse<ItemSharePostResponse>> {
     return this.tokenRefreshableRequest<ItemSharePostResponse>({
       verb: HttpVerb.Post,
@@ -927,6 +929,7 @@ export class SNApiService
         publicKey: params.publicKey,
         fileRemoteIdentifier: params.fileRemoteIdentifier,
         contentType: params.contentType,
+        duration: params.duration,
       },
       fallbackErrorMessage: API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
       authentication: this.getSessionAccessToken(),

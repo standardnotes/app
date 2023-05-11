@@ -2,6 +2,7 @@ import { HttpResponse, ItemSharePostResponse, GetUserItemSharesResponse } from '
 import { SharedItemsUserShare } from './SharedItemsUserShare'
 import { GetSharedItemResponse } from './GetSharedItemResponse'
 import { ContentType } from '@standardnotes/common'
+import { ShareItemDuration } from './ShareItemDuration'
 
 export interface SharingApiInterface {
   getSharedItem(shareToken: string): Promise<HttpResponse<GetSharedItemResponse>>
@@ -12,6 +13,7 @@ export interface SharingApiInterface {
     publicKey: string
     fileRemoteIdentifier?: string
     contentType: ContentType
+    duration: ShareItemDuration
   }): Promise<HttpResponse<ItemSharePostResponse>>
 
   updateSharedItem(params: {
