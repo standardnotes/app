@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { ComponentArea, ContentType, FeatureIdentifier, GetFeatures, PrefKey, SNComponent } from '@standardnotes/snjs'
+import { ComponentArea, ContentType, FeatureIdentifier, GetFeatures, SNComponent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'react'
 import Icon from '@/Components/Icon/Icon'
