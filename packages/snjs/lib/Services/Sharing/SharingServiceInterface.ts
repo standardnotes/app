@@ -7,6 +7,11 @@ export type SharingServiceShareItemReturn = {
   privateKey: string
 }
 
+export type SharingServiceGetSharedItemReturn = {
+  item: DecryptedItemInterface
+  fileValetToken?: string
+}
+
 export enum SharingServiceEvent {
   DidUpdateSharedItem = 'SharingServiceEventDidUpdateSharedItem',
 }
@@ -16,5 +21,5 @@ export interface SharingServiceInterface extends AbstractService<SharingServiceE
 
   getInitiatedShares(): Promise<SharedItemsUserShare[]>
 
-  getSharedItem(shareToken: string, privateKey: string): Promise<DecryptedItemInterface | undefined>
+  getSharedItem(shareToken: string, privateKey: string): Promise<SharingServiceGetSharedItemReturn | undefined>
 }

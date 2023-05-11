@@ -4,8 +4,8 @@ import { AbstractService, InternalEventBusInterface, SyncEvent, SyncServiceInter
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   CreateDecryptedItemFromPayload,
-  DecryptedItemInterface,
   DecryptedPayload,
+  FileContent,
   FilterDisallowedRemotePayloadsAndMap,
   PayloadSource,
   ServerSyncPushContextualPayload,
@@ -13,9 +13,15 @@ import {
   isEncryptedPayload,
 } from '@standardnotes/models'
 import { CreatePayloadFromRawServerItem } from '../Sync/Account/Utilities'
-import { SharingServiceEvent, SharingServiceInterface, SharingServiceShareItemReturn } from './SharingServiceInterface'
+import {
+  SharingServiceEvent,
+  SharingServiceGetSharedItemReturn,
+  SharingServiceInterface,
+  SharingServiceShareItemReturn,
+} from './SharingServiceInterface'
 import { SharingApiInterface } from './SharingApiInterface'
 import { SharedItemsUserShare } from './SharedItemsUserShare'
+import { ContentType } from '@standardnotes/common'
 
 export class SharingService extends AbstractService<SharingServiceEvent, any> implements SharingServiceInterface {
   private syncObserver: () => void
@@ -111,9 +117,12 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
     const encryptedContentKey = this.operator.asymmetricAnonymousEncryptKey(payload.contentKey, keypair.publicKey)
 
     const shareResponse = await this.apiService.shareItem({
+      contentType: payload.content_type,
       itemUuid: uuid,
       encryptedContentKey: encryptedContentKey,
       publicKey: keypair.publicKey,
+      fileRemoteIdentifier:
+        payload.content_type === ContentType.File ? (payload.content as FileContent).remoteIdentifier : undefined,
     })
 
     if (isErrorResponse(shareResponse)) {
@@ -127,12 +136,15 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
     return { shareToken: shareResponse.data.itemShare.shareToken, privateKey: keypair.privateKey }
   }
 
-  public async getSharedItem(shareToken: string, privateKey: string): Promise<DecryptedItemInterface | undefined> {
+  public async getSharedItem(
+    shareToken: string,
+    privateKey: string,
+  ): Promise<SharingServiceGetSharedItemReturn | undefined> {
     const response = await this.apiService.getSharedItem(shareToken)
     if (isErrorResponse(response)) {
       return undefined
     }
-    const { item, itemShare } = response.data
+    const { item, itemShare, fileValetToken } = response.data
 
     if (!item) {
       throw new Error('Shared item not found')
@@ -168,6 +180,13 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
       ...decryptedParameters,
     })
 
-    return CreateDecryptedItemFromPayload(decryptedPayload)
+    if (decryptedPayload.content_type === ContentType.File && !fileValetToken) {
+      throw new Error('File valet token is missing')
+    }
+
+    return {
+      item: CreateDecryptedItemFromPayload(decryptedPayload),
+      fileValetToken,
+    }
   }
 }

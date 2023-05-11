@@ -30,8 +30,8 @@ import {
   API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS,
   ApiServiceEventData,
 } from '@standardnotes/services'
-import { FilesApiInterface } from '@standardnotes/files'
-import { ServerSyncPushContextualPayload, SNFeatureRepo, FileContent } from '@standardnotes/models'
+import { DownloadFileParams, FilesApiInterface } from '@standardnotes/files'
+import { ServerSyncPushContextualPayload, SNFeatureRepo } from '@standardnotes/models'
 import {
   User,
   HttpStatusCode,
@@ -88,8 +88,10 @@ import { UuidString } from '../../Types/UuidString'
 import merge from 'lodash/merge'
 import { SettingsServerInterface } from '../Settings/SettingsServerInterface'
 import { Strings } from '@Lib/Strings'
-import { GetSharedItemResponse, SharingApiInterface } from '../Sharing/SharingApiInterface'
+import { SharingApiInterface } from '../Sharing/SharingApiInterface'
+import { GetSharedItemResponse } from '../Sharing/GetSharedItemResponse'
 import { SharedItemsUserShare } from '../Sharing/SharedItemsUserShare'
+import { ContentType } from '@standardnotes/common'
 
 /** Legacy api version field to be specified in params when calling v0 APIs. */
 const V0_API_VERSION = '20200115'
@@ -786,25 +788,26 @@ export class SNApiService
     return response.data.success
   }
 
-  public getFilesDownloadUrl(): string {
-    return joinPaths(this.getFilesHost(), Paths.v1.downloadFileChunk)
+  public getFilesDownloadUrl(shared?: boolean): string {
+    return joinPaths(this.getFilesHost(), shared ? Paths.v1.downloadSharedFileChunk : Paths.v1.downloadFileChunk)
   }
 
-  public async downloadFile(
-    file: { encryptedChunkSizes: FileContent['encryptedChunkSizes'] },
-    chunkIndex = 0,
-    apiToken: string,
-    contentRangeStart: number,
-    onBytesReceived: (bytes: Uint8Array) => Promise<void>,
-  ): Promise<ClientDisplayableError | undefined> {
-    const url = this.getFilesDownloadUrl()
+  public async downloadFile({
+    file,
+    chunkIndex,
+    valetToken,
+    isSharedDownload,
+    contentRangeStart,
+    onBytesReceived,
+  }: DownloadFileParams): Promise<ClientDisplayableError | undefined> {
+    const url = this.getFilesDownloadUrl(isSharedDownload)
     const pullChunkSize = file.encryptedChunkSizes[chunkIndex]
 
     const response = await this.tokenRefreshableRequest<DownloadFileChunkResponse>({
       verb: HttpVerb.Get,
       url,
       customHeaders: [
-        { key: 'x-valet-token', value: apiToken },
+        { key: 'x-valet-token', value: valetToken },
         {
           key: 'x-chunk-size',
           value: pullChunkSize.toString(),
@@ -838,7 +841,14 @@ export class SNApiService
     await onBytesReceived(bytesReceived)
 
     if (rangeEnd < totalSize - 1) {
-      return this.downloadFile(file, ++chunkIndex, apiToken, rangeStart + pullChunkSize, onBytesReceived)
+      return this.downloadFile({
+        file,
+        chunkIndex: ++chunkIndex,
+        valetToken,
+        isSharedDownload,
+        contentRangeStart: rangeStart + pullChunkSize,
+        onBytesReceived,
+      })
     }
 
     return undefined
@@ -905,6 +915,8 @@ export class SNApiService
     itemUuid: string
     encryptedContentKey: string
     publicKey: string
+    fileRemoteIdentifier?: string
+    contentType: ContentType
   }): Promise<HttpResponse<ItemSharePostResponse>> {
     return this.tokenRefreshableRequest<ItemSharePostResponse>({
       verb: HttpVerb.Post,
@@ -913,6 +925,8 @@ export class SNApiService
         itemUuid: params.itemUuid,
         encryptedContentKey: params.encryptedContentKey,
         publicKey: params.publicKey,
+        fileRemoteIdentifier: params.fileRemoteIdentifier,
+        contentType: params.contentType,
       },
       fallbackErrorMessage: API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
       authentication: this.getSessionAccessToken(),

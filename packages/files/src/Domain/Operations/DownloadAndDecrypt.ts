@@ -28,8 +28,9 @@ export class DownloadAndDecryptFileOperation {
     },
     private readonly crypto: PureCryptoInterface,
     private readonly api: FilesApiInterface,
+    sharedValetToken?: string,
   ) {
-    this.downloader = new FileDownloader(this.file, this.api)
+    this.downloader = new FileDownloader(this.file, this.api, sharedValetToken)
   }
 
   private createDecryptor(): FileDecryptor {

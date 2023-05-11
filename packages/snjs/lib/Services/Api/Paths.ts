@@ -3,6 +3,7 @@ const FilesPaths = {
   createFileValetToken: '/v1/files/valet-tokens',
   deleteFile: '/v1/files',
   downloadFileChunk: '/v1/files',
+  downloadSharedFileChunk: '/v1/sharing/files',
   startUploadSession: '/v1/files/upload/create-session',
   uploadFileChunk: '/v1/files/upload/chunk',
 }
@@ -28,9 +29,9 @@ const ItemsPaths = {
 }
 
 const ItemSharePaths = {
-  getSharedItem: (shareToken: string) => `/v1/share/item/${shareToken}`,
-  shareItem: '/v1/share',
-  getUserShares: '/v1/share',
+  getSharedItem: (shareToken: string) => `/v1/sharing/item/${shareToken}`,
+  shareItem: '/v1/sharing',
+  getUserShares: '/v1/sharing',
 }
 
 const SettingsPaths = {

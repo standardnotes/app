@@ -18,12 +18,20 @@ export async function uploadFile(fileService, buffer, name, ext, chunkSize) {
   return file
 }
 
-export async function downloadFile(fileService, itemManager, remoteIdentifier) {
-  const file = itemManager.getItems(ContentType.File).find((file) => file.remoteIdentifier === remoteIdentifier)
-
+export async function downloadFile(fileService, file) {
   let receivedBytes = new Uint8Array()
 
   await fileService.downloadFile(file, (decryptedBytes) => {
+    receivedBytes = new Uint8Array([...receivedBytes, ...decryptedBytes])
+  })
+
+  return receivedBytes
+}
+
+export async function downloadSharedFile(fileService, file, valetToken) {
+  let receivedBytes = new Uint8Array()
+
+  await fileService.downloadSharedFile(file, valetToken, (decryptedBytes) => {
     receivedBytes = new Uint8Array([...receivedBytes, ...decryptedBytes])
   })
 

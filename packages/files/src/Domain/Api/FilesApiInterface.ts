@@ -1,6 +1,15 @@
 import { StartUploadSessionResponse, HttpResponse, ClientDisplayableError } from '@standardnotes/responses'
 import { FileContent } from '@standardnotes/models'
 
+export type DownloadFileParams = {
+  file: { encryptedChunkSizes: FileContent['encryptedChunkSizes'] }
+  chunkIndex: number
+  valetToken: string
+  isSharedDownload?: boolean
+  contentRangeStart: number
+  onBytesReceived: (bytes: Uint8Array) => Promise<void>
+}
+
 export interface FilesApiInterface {
   startUploadSession(apiToken: string): Promise<HttpResponse<StartUploadSessionResponse>>
 
@@ -8,13 +17,7 @@ export interface FilesApiInterface {
 
   closeUploadSession(apiToken: string): Promise<boolean>
 
-  downloadFile(
-    file: { encryptedChunkSizes: FileContent['encryptedChunkSizes'] },
-    chunkIndex: number,
-    apiToken: string,
-    contentRangeStart: number,
-    onBytesReceived: (bytes: Uint8Array) => Promise<void>,
-  ): Promise<ClientDisplayableError | undefined>
+  downloadFile(params: DownloadFileParams): Promise<ClientDisplayableError | undefined>
 
   deleteFile(apiToken: string): Promise<HttpResponse>
 
@@ -24,5 +27,5 @@ export interface FilesApiInterface {
     unencryptedFileSize?: number,
   ): Promise<string | ClientDisplayableError>
 
-  getFilesDownloadUrl(): string
+  getFilesDownloadUrl(sharedFile?: boolean): string
 }

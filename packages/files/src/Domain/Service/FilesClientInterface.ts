@@ -27,6 +27,12 @@ export interface FilesClientInterface {
     onDecryptedBytes: (bytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
   ): Promise<ClientDisplayableError | undefined>
 
+  downloadSharedFile(
+    file: FileItem,
+    valetToken: string,
+    onDecryptedBytes: (decryptedBytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
+  ): Promise<ClientDisplayableError | undefined>
+
   deleteFile(file: FileItem): Promise<ClientDisplayableError | undefined>
 
   minimumChunkSize(): number

@@ -57,6 +57,8 @@ SYNCING_SERVER_REVISIONS_FREQUENCY=5
 
 Edit `docker-compose.yml` ports and change keypath services.server.ports[0] from port 3000 to 3123.
 
+If running server without docker and as individual node processes, and you need a valid subscription for a test (such as uploading files), you'll need to clone the [mock-event-publisher](https://github.com/standardnotes/mock-event-publisher) and run it locally on port 3124. In the Container.ts file, comment out any SNS_ENDPOINT related lines for running locally.
+
 #### Start Server For Tests
 
 In the `self-hosted` folder run:

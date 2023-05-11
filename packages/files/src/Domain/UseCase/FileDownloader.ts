@@ -25,6 +25,7 @@ export class FileDownloader {
       remoteIdentifier: FileContent['remoteIdentifier']
     },
     private readonly api: FilesApiInterface,
+    private readonly sharedValetToken?: string,
   ) {}
 
   private getProgress(): FileDownloadProgress {
@@ -40,6 +41,10 @@ export class FileDownloader {
   }
 
   public async run(onEncryptedBytes: OnEncryptedBytes): Promise<FileDownloaderResult> {
+    if (this.sharedValetToken) {
+      return this.performDownload(this.sharedValetToken, onEncryptedBytes)
+    }
+
     const tokenResult = await this.getValetToken()
 
     if (tokenResult instanceof ClientDisplayableError) {
@@ -69,7 +74,14 @@ export class FileDownloader {
       await onEncryptedBytes(bytes, this.getProgress(), this.abort)
     }
 
-    const downloadPromise = this.api.downloadFile(this.file, chunkIndex, valetToken, startRange, onRemoteBytesReceived)
+    const downloadPromise = this.api.downloadFile({
+      file: this.file,
+      chunkIndex,
+      valetToken,
+      contentRangeStart: startRange,
+      onBytesReceived: onRemoteBytesReceived,
+      isSharedDownload: !!this.sharedValetToken,
+    })
 
     const result = await Promise.race([this.abortDeferred.promise, downloadPromise])
 

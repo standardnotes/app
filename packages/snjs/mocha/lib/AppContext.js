@@ -2,6 +2,7 @@ import FakeWebCrypto from './fake_web_crypto.js'
 import * as Applications from './Applications.js'
 import * as Utils from './Utils.js'
 import * as Defaults from './Defaults.js'
+import * as Events from './Events.js'
 import { createNotePayload } from './Items.js'
 
 UuidGenerator.SetGenerator(new FakeWebCrypto().generateUUID)
@@ -10,6 +11,8 @@ const MaximumSyncOptions = {
   checkIntegrity: true,
   awaitAll: true,
 }
+
+let GlobalSubscriptionIdCounter = 1001
 
 export class AppContext {
   constructor({ identifier, crypto, email, password, passcode, host } = {}) {
@@ -348,5 +351,24 @@ export class AppContext {
       original: note,
       conflict: this.findNoteByTitle('title-2'),
     }
+  }
+
+  async publicMockSubscriptionPurchaseEvent() {
+    await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
+      userEmail: this.email,
+      subscriptionId: GlobalSubscriptionIdCounter++,
+      subscriptionName: 'PRO_PLAN',
+      subscriptionExpiresAt: (new Date().getTime() + 3_600_000) * 1_000,
+      timestamp: Date.now(),
+      offline: false,
+      discountCode: null,
+      limitedDiscountPurchased: false,
+      newSubscriber: true,
+      totalActiveSubscriptionsCount: 1,
+      userRegisteredAt: 1,
+      billingFrequency: 12,
+      payAmount: 59.0,
+    })
+    await Utils.sleep(2)
   }
 }

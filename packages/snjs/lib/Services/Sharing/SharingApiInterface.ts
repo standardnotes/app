@@ -1,11 +1,7 @@
 import { HttpResponse, ItemSharePostResponse, GetUserItemSharesResponse } from '@standardnotes/responses'
-import { EncryptedPayloadInterface } from '@standardnotes/models'
 import { SharedItemsUserShare } from './SharedItemsUserShare'
-
-export type GetSharedItemResponse = {
-  item: EncryptedPayloadInterface
-  itemShare: SharedItemsUserShare
-}
+import { GetSharedItemResponse } from './GetSharedItemResponse'
+import { ContentType } from '@standardnotes/common'
 
 export interface SharingApiInterface {
   getSharedItem(shareToken: string): Promise<HttpResponse<GetSharedItemResponse>>
@@ -14,6 +10,8 @@ export interface SharingApiInterface {
     itemUuid: string
     encryptedContentKey: string
     publicKey: string
+    fileRemoteIdentifier?: string
+    contentType: ContentType
   }): Promise<HttpResponse<ItemSharePostResponse>>
 
   updateSharedItem(params: {

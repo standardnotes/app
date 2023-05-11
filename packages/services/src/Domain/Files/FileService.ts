@@ -232,6 +232,22 @@ export class FileService extends AbstractService implements FilesClientInterface
     }
   }
 
+  public async downloadSharedFile(
+    file: FileItem,
+    valetToken: string,
+    onDecryptedBytes: (decryptedBytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
+  ): Promise<ClientDisplayableError | undefined> {
+    log(LoggingDomain.FilesService, 'Downloading shared file from network')
+
+    const operation = new DownloadAndDecryptFileOperation(file, this.crypto, this.api, valetToken)
+
+    const result = await operation.run(async ({ decrypted, progress }): Promise<void> => {
+      return onDecryptedBytes(decrypted.decryptedBytes, progress)
+    })
+
+    return result.error
+  }
+
   public async deleteFile(file: FileItem): Promise<ClientDisplayableError | undefined> {
     this.encryptedCache.remove(file.uuid)
 
