@@ -21,7 +21,7 @@ const Moments: FunctionComponent<Props> = ({ application }: Props) => {
   const momentsEnabled = application.momentsService.isEnabled
   const premiumModal = usePremiumModal()
 
-  const defaultTagId = usePreference<string>(PrefKey.MomentsDefaultTagUuid)
+  const defaultTagId = usePreference(PrefKey.MomentsDefaultTagUuid)
   const [defaultTag, setDefaultTag] = useState<SNTag | undefined>()
 
   useEffect(() => {
