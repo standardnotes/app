@@ -81,7 +81,7 @@ const ClipperView = ({
     })
   }, [application])
 
-  const defaultTagId = usePreference<string>(PrefKey.ClipperDefaultTagUuid)
+  const defaultTagId = usePreference(PrefKey.ClipperDefaultTagUuid)
   const [defaultTag, setDefaultTag] = useState<SNTag | undefined>()
   const defaultTagRef = useStateRef(defaultTag)
 
