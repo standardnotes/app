@@ -17,7 +17,6 @@ import {
   PayloadSource,
   ServerSyncPushContextualPayload,
   isDeletedPayload,
-  isEncryptedPayload,
 } from '@standardnotes/models'
 import { CreatePayloadFromRawServerItem } from '../Sync/Account/Utilities'
 import {
@@ -95,16 +94,12 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
     shareToken: string,
     publicKey: string,
   ): Promise<ClientDisplayableError | void> {
-    const payload = await this.sync.getItem(uuid)
-    if (!payload || isEncryptedPayload(payload)) {
+    const getItemResult = await this.sync.getItemAndContentKey(uuid)
+    if (!getItemResult) {
       return ClientDisplayableError.FromString('Could not get item to share')
     }
 
-    if (!payload.contentKey) {
-      return ClientDisplayableError.FromString('Payload content key is missing')
-    }
-
-    const encryptedContentKey = this.operator.asymmetricAnonymousEncryptKey(payload.contentKey, publicKey)
+    const encryptedContentKey = this.operator.asymmetricAnonymousEncryptKey(getItemResult.contentKey, publicKey)
 
     const shareResponse = await this.sharingServer.updateSharedItem({
       shareToken,
@@ -127,27 +122,25 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
     duration: ShareItemDuration,
     appHost: string,
   ): Promise<SharingServiceShareItemReturn | ClientDisplayableError> {
-    const payload = await this.sync.getItem(uuid)
-    if (!payload || isEncryptedPayload(payload)) {
+    const getItemResult = await this.sync.getItemAndContentKey(uuid)
+    if (!getItemResult) {
       return ClientDisplayableError.FromString('Could not get item to share')
-    }
-
-    if (!payload.contentKey) {
-      return ClientDisplayableError.FromString('Payload content key is missing')
     }
 
     const keypair = this.operator.generateKeyPair()
 
-    const encryptedContentKey = this.operator.asymmetricAnonymousEncryptKey(payload.contentKey, keypair.publicKey)
+    const encryptedContentKey = this.operator.asymmetricAnonymousEncryptKey(getItemResult.contentKey, keypair.publicKey)
 
     const shareResponse = await this.sharingServer.shareItem({
-      contentType: payload.content_type,
+      contentType: getItemResult.payload.content_type,
       itemUuid: uuid,
       encryptedContentKey: encryptedContentKey,
       publicKey: keypair.publicKey,
       duration: duration,
       fileRemoteIdentifier:
-        payload.content_type === ContentType.File ? (payload.content as FileContent).remoteIdentifier : undefined,
+        getItemResult.payload.content_type === ContentType.File
+          ? (getItemResult.payload.content as FileContent).remoteIdentifier
+          : undefined,
     })
 
     if (isErrorResponse(shareResponse)) {

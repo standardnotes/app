@@ -57,6 +57,7 @@ import {
   getIncrementedDirtyIndex,
   getCurrentDirtyIndex,
   ItemContent,
+  isErrorDecryptingPayload,
 } from '@standardnotes/models'
 import {
   AbstractService,
@@ -83,6 +84,7 @@ import { OfflineSyncResponse } from './Offline/Response'
 import {
   CreateDecryptionSplitWithKeyLookup,
   CreateEncryptionSplitWithKeyLookup,
+  isErrorDecryptingParameters,
   KeyedDecryptionSplit,
   SplitPayloadsByEncryptionType,
 } from '@standardnotes/encryption'
@@ -215,7 +217,9 @@ export class SNSyncService
     return this.opStatus
   }
 
-  public async getItem(uuid: string): Promise<EncryptedPayloadInterface | DecryptedPayloadInterface | undefined> {
+  public async getItemAndContentKey(
+    uuid: string,
+  ): Promise<{ payload: DecryptedPayloadInterface; contentKey: string } | undefined> {
     const itemResponse = await this.itemApi.getSingleItem(uuid)
     if (itemResponse.data == undefined || isErrorResponse(itemResponse) || !('item' in itemResponse.data)) {
       return undefined
@@ -229,13 +233,16 @@ export class SNSyncService
 
     const payloadSplit = CreateNonDecryptedPayloadSplit(receivedPayloads)
 
-    const encryptionSplit = SplitPayloadsByEncryptionType(payloadSplit.encrypted)
+    const { parameters, payload } = await this.protocolService.decryptPayloadWithKeyLookup(payloadSplit.encrypted[0])
 
-    const keyedSplit = CreateDecryptionSplitWithKeyLookup(encryptionSplit)
+    if (isErrorDecryptingParameters(parameters) || isErrorDecryptingPayload(payload)) {
+      return undefined
+    }
 
-    const decryptionResults = await this.protocolService.decryptSplit(keyedSplit)
-
-    return decryptionResults[0]
+    return {
+      payload,
+      contentKey: parameters.contentKey,
+    }
   }
 
   /**

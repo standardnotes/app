@@ -12,7 +12,8 @@
   "scripts": {
     "lint": "eslint src --ext .ts",
     "format": "prettier --write src",
-    "test": "jest"
+    "test": "jest",
+    "build": "echo 'Empty build script required for yarn topological install'"
   },
   "devDependencies": {
     "@standardnotes/config": "2.4.3",

@@ -349,6 +349,36 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return packagedResults
   }
 
+  async decryptPayloadWithKeyLookup<
+    C extends ItemContent = ItemContent,
+    P extends DecryptedPayloadInterface<C> = DecryptedPayloadInterface<C>,
+  >(
+    payload: EncryptedPayloadInterface,
+  ): Promise<{
+    parameters: DecryptedParameters<C> | ErrorDecryptingParameters
+    payload: P | EncryptedPayloadInterface
+  }> {
+    const decryptedParameters = await this.itemsEncryption.decryptPayloadWithKeyLookup<C>(payload)
+
+    if (isErrorDecryptingParameters(decryptedParameters)) {
+      return {
+        parameters: decryptedParameters,
+        payload: new EncryptedPayload({
+          ...payload.ejected(),
+          ...decryptedParameters,
+        }),
+      }
+    } else {
+      return {
+        parameters: decryptedParameters,
+        payload: new DecryptedPayload<C>({
+          ...payload.ejected(),
+          ...decryptedParameters,
+        }) as P,
+      }
+    }
+  }
+
   /**
    * Returns true if the user's account protocol version is not equal to the latest version.
    */

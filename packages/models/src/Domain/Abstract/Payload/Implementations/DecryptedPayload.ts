@@ -16,13 +16,11 @@ export class DecryptedPayload<
 {
   override readonly content: C
   override readonly deleted: false
-  readonly contentKey?: string
 
   constructor(rawPayload: T, source = PayloadSource.Constructor) {
     super(rawPayload, source)
 
     this.content = Copy(FillItemContent<C>(rawPayload.content))
-    this.contentKey = rawPayload.contentKey
     this.deleted = false
   }
 
@@ -44,7 +42,6 @@ export class DecryptedPayload<
     return {
       ...super.ejected(),
       content: this.content,
-      contentKey: this.contentKey,
       deleted: this.deleted,
     }
   }

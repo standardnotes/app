@@ -1,10 +1,6 @@
 /* istanbul ignore file */
 
-import {
-  DecryptedPayloadInterface,
-  EncryptedPayloadInterface,
-  FullyFormedPayloadInterface,
-} from '@standardnotes/models'
+import { DecryptedPayloadInterface, FullyFormedPayloadInterface } from '@standardnotes/models'
 import { SyncOptions } from './SyncOptions'
 import { AbstractService } from '../Service/AbstractService'
 
@@ -16,5 +12,5 @@ export interface SyncServiceInterface extends AbstractService {
   persistPayloads(payloads: FullyFormedPayloadInterface[]): Promise<void>
   lockSyncing(): void
   unlockSyncing(): void
-  getItem(uuid: string): Promise<EncryptedPayloadInterface | DecryptedPayloadInterface | undefined>
+  getItemAndContentKey(uuid: string): Promise<{ payload: DecryptedPayloadInterface; contentKey: string } | undefined>
 }
