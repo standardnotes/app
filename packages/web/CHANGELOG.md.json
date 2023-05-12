@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.159.7",
+      "title": "[3.159.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.6...@standardnotes/web@3.159.7) (2023-05-12)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where editor column would close after deleting a note on bigger screens ([7affc7e](https://github.com/standardnotes/app/commit/7affc7e5756e6b2f647e3cbbf3f316f641a29466))",
+      "parsed": {
+        "_": [
+          "Fixed issue where editor column would close after deleting a note on bigger screens (7affc7e)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where editor column would close after deleting a note on bigger screens (7affc7e)"
+        ]
+      }
+    },
+    {
       "version": "3.159.6",
       "title": "[3.159.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.5...@standardnotes/web@3.159.6) (2023-05-12)",
       "date": null,
