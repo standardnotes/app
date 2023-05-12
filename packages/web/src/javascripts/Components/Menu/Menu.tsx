@@ -10,6 +10,7 @@ import {
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import { mergeRefs } from '@/Hooks/mergeRefs'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type MenuProps = {
   className?: string
@@ -51,7 +52,13 @@ const Menu = forwardRef(
       [closeMenu, onKeyDown],
     )
 
-    const { setInitialFocus } = useListKeyboardNavigation(menuElementRef, initialFocus, shouldAutoFocus)
+    const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
+    const { setInitialFocus } = useListKeyboardNavigation(
+      menuElementRef,
+      initialFocus,
+      isMobileScreen ? false : shouldAutoFocus,
+    )
 
     useImperativeHandle(forwardedRef, () => ({
       focus: () => {
