@@ -21,9 +21,13 @@ export async function uploadFile(fileService, buffer, name, ext, chunkSize) {
 export async function downloadFile(fileService, file) {
   let receivedBytes = new Uint8Array()
 
-  await fileService.downloadFile(file, (decryptedBytes) => {
+  const error = await fileService.downloadFile(file, (decryptedBytes) => {
     receivedBytes = new Uint8Array([...receivedBytes, ...decryptedBytes])
   })
+
+  if (error) {
+    throw new Error('Could not download file', error.text)
+  }
 
   return receivedBytes
 }
@@ -31,9 +35,13 @@ export async function downloadFile(fileService, file) {
 export async function downloadSharedFile(fileService, file, valetToken) {
   let receivedBytes = new Uint8Array()
 
-  await fileService.downloadSharedFile(file, valetToken, (decryptedBytes) => {
+  const error = await fileService.downloadSharedFile(file, valetToken, (decryptedBytes) => {
     receivedBytes = new Uint8Array([...receivedBytes, ...decryptedBytes])
   })
+
+  if (error) {
+    throw new Error('Could not download shared file', error.text)
+  }
 
   return receivedBytes
 }

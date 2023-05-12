@@ -76,6 +76,7 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
 
   async downloadUserShares(): Promise<void> {
     const shares = await this.getInitiatedShares()
+
     for (const share of shares) {
       this.initiatedShares[share.itemUuid] = share
     }

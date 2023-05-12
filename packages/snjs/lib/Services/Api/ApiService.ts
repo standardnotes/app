@@ -796,7 +796,7 @@ export class SNApiService
     const url = this.getFilesDownloadUrl(isSharedDownload)
     const pullChunkSize = file.encryptedChunkSizes[chunkIndex]
 
-    const response = await this.tokenRefreshableRequest<DownloadFileChunkResponse>({
+    const request: HttpRequest = {
       verb: HttpVerb.Get,
       url,
       customHeaders: [
@@ -807,9 +807,15 @@ export class SNApiService
         },
         { key: 'range', value: `bytes=${contentRangeStart}-` },
       ],
-      fallbackErrorMessage: Strings.Network.Files.FailedDownloadFileChunk,
       responseType: 'arraybuffer',
-    })
+    }
+
+    const response = isSharedDownload
+      ? await this.httpService.runHttp<DownloadFileChunkResponse>(request)
+      : await this.tokenRefreshableRequest<DownloadFileChunkResponse>({
+          ...request,
+          fallbackErrorMessage: Strings.Network.Files.FailedDownloadFileChunk,
+        })
 
     if (isErrorResponse(response)) {
       return new ClientDisplayableError(response.data?.error?.message as string)

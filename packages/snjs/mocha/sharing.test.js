@@ -133,15 +133,13 @@ describe.only('sharing', function () {
       const url = await sharingService.shareItem(file.uuid, ShareItemDuration.OneDay, AppHost)
 
       const { item, fileValetToken } = await sharingService.getSharedItem(url)
-
       expect(fileValetToken).to.not.be.undefined
 
-      const downloadedBytes = await Files.downloadSharedFile(context.application.fileService, item)
-
+      const downloadedBytes = await Files.downloadSharedFile(context.application.fileService, item, fileValetToken)
       expect(downloadedBytes).to.eql(buffer)
     })
 
-    it.only('should be able to download a shared file without account', async () => {
+    it('should be able to download a shared file without account', async () => {
       const response = await fetch('/mocha/assets/small_file.md')
       const buffer = new Uint8Array(await response.arrayBuffer())
       const file = await Files.uploadFile(context.application.fileService, buffer, 'my-file', 'md', 1000)
@@ -155,8 +153,12 @@ describe.only('sharing', function () {
         offlineContext.application.options.crypto,
       )
 
-      const { item } = await offlineSharingService.getSharedItem(url)
-      const downloadedBytes = await Files.downloadSharedFile(offlineContext.application.fileService, item)
+      const { item, fileValetToken } = await offlineSharingService.getSharedItem(url)
+      const downloadedBytes = await Files.downloadSharedFile(
+        offlineContext.application.fileService,
+        item,
+        fileValetToken,
+      )
 
       expect(downloadedBytes).to.eql(buffer)
     })
