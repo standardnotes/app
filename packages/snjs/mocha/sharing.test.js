@@ -90,6 +90,30 @@ describe.only('sharing', function () {
       expect(item.content.text).to.equal('bar')
     })
 
+    it('should fail to update shared item from other account', async () => {
+      const note = await context.createSyncedNote('foo', 'bar')
+      const url = await sharingService.shareItem(note.uuid, ShareItemDuration.OneDay, AppHost)
+
+      const otherContext = await Factory.createAppContextWithRealCrypto()
+      await otherContext.launch()
+      await otherContext.register()
+      const otherSharingService = new SharingService(
+        otherContext.application.httpService,
+        otherContext.application.sync,
+        otherContext.application.options.crypto,
+      )
+
+      const { publicKey } = await otherSharingService.getSharedItem(url)
+      const { shareToken } = otherSharingService.decodeShareUrl(url)
+
+      otherSharingService.sync.getItem = () => {
+        return { contentKey: 'foo' }
+      }
+      const updateResponse = await otherSharingService.updateSharedItem(note.uuid, shareToken, publicKey)
+
+      expect(isClientDisplayableError(updateResponse)).to.be.true
+    })
+
     it('should expire share immediately after consume', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
       const url = await sharingService.shareItem(note.uuid, ShareItemDuration.AfterConsume, AppHost)

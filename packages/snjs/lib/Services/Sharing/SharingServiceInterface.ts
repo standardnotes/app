@@ -8,6 +8,7 @@ export type SharingServiceShareItemReturn = string
 export type SharingServiceGetSharedItemReturn = {
   item: DecryptedItemInterface
   fileValetToken?: string
+  publicKey: string
 }
 
 export enum SharingServiceEvent {

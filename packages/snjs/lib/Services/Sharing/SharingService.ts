@@ -90,10 +90,14 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
     return response.data.itemShares
   }
 
-  private async updateSharedItem(uuid: string, shareToken: string, publicKey: string) {
+  private async updateSharedItem(
+    uuid: string,
+    shareToken: string,
+    publicKey: string,
+  ): Promise<ClientDisplayableError | void> {
     const payload = await this.sync.getItem(uuid)
     if (!payload || isEncryptedPayload(payload)) {
-      return ClientDisplayableError.FromString('Could not get share parameters')
+      return ClientDisplayableError.FromString('Could not get item to share')
     }
 
     if (!payload.contentKey) {
@@ -111,11 +115,11 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
       if (shareResponse.data.error.tag === ErrorTag.ExpiredItemShare) {
         delete this.initiatedShares[uuid]
       }
+
+      return ClientDisplayableError.FromError(shareResponse.data.error)
     }
 
     void this.notifyEvent(SharingServiceEvent.DidUpdateSharedItem, { uuid })
-
-    return shareResponse
   }
 
   public async shareItem(
@@ -211,6 +215,7 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
     return {
       item: CreateDecryptedItemFromPayload(decryptedPayload),
       fileValetToken,
+      publicKey: itemShare.publicKey,
     }
   }
 
