@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.159.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.6...@standardnotes/web@3.159.7) (2023-05-12)
+
+### Bug Fixes
+
+* Fixed issue where editor column would close after deleting a note on bigger screens ([7affc7e](https://github.com/standardnotes/app/commit/7affc7e5756e6b2f647e3cbbf3f316f641a29466))
+
 ## [3.159.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.5...@standardnotes/web@3.159.6) (2023-05-12)
 
 **Note:** Version bump only for package @standardnotes/web
