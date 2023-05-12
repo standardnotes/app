@@ -1,11 +1,14 @@
-import { HttpResponse, ItemSharePostResponse, GetUserItemSharesResponse } from '@standardnotes/responses'
-import { SharedItemsUserShare } from './SharedItemsUserShare'
-import { GetSharedItemResponse } from './GetSharedItemResponse'
 import { ContentType } from '@standardnotes/common'
-import { ShareItemDuration } from './ShareItemDuration'
+import {
+  HttpResponse,
+  GetSharedItemResponse,
+  ItemSharePostResponse,
+  SharedItemsUserShare,
+  GetUserItemSharesResponse,
+} from '@standardnotes/responses'
 
-export interface SharingApiInterface {
-  getSharedItem(shareToken: string): Promise<HttpResponse<GetSharedItemResponse>>
+export interface SharingServerInterface {
+  getSharedItem(shareToken: string, thirdPartyHost?: string): Promise<HttpResponse<GetSharedItemResponse>>
 
   shareItem(params: {
     itemUuid: string
@@ -13,7 +16,7 @@ export interface SharingApiInterface {
     publicKey: string
     fileRemoteIdentifier?: string
     contentType: ContentType
-    duration: ShareItemDuration
+    duration: string
   }): Promise<HttpResponse<ItemSharePostResponse>>
 
   updateSharedItem(params: {

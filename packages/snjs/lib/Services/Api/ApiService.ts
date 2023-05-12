@@ -72,8 +72,6 @@ import {
   HttpErrorResponse,
   HttpSuccessResponse,
   isErrorResponse,
-  ItemSharePostResponse,
-  GetUserItemSharesResponse,
 } from '@standardnotes/responses'
 import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
 import { HttpServiceInterface } from '@standardnotes/api'
@@ -88,11 +86,6 @@ import { UuidString } from '../../Types/UuidString'
 import merge from 'lodash/merge'
 import { SettingsServerInterface } from '../Settings/SettingsServerInterface'
 import { Strings } from '@Lib/Strings'
-import { SharingApiInterface } from '../Sharing/SharingApiInterface'
-import { GetSharedItemResponse } from '../Sharing/GetSharedItemResponse'
-import { SharedItemsUserShare } from '../Sharing/SharedItemsUserShare'
-import { ContentType } from '@standardnotes/common'
-import { ShareItemDuration } from '../Sharing/ShareItemDuration'
 
 /** Legacy api version field to be specified in params when calling v0 APIs. */
 const V0_API_VERSION = '20200115'
@@ -106,8 +99,7 @@ export class SNApiService
     FilesApiInterface,
     IntegrityApiInterface,
     ItemsServerInterface,
-    SettingsServerInterface,
-    SharingApiInterface
+    SettingsServerInterface
 {
   private session: Session | LegacySession | null
   public user?: User
@@ -904,61 +896,6 @@ export class SNApiService
     }
 
     return this.session.accessToken
-  }
-
-  async getSharedItem(shareToken: string): Promise<HttpResponse<GetSharedItemResponse>> {
-    const response = await this.httpService.get<GetSharedItemResponse>(Paths.v1.getSharedItem(shareToken))
-
-    return response
-  }
-
-  shareItem(params: {
-    itemUuid: string
-    encryptedContentKey: string
-    publicKey: string
-    fileRemoteIdentifier?: string
-    contentType: ContentType
-    duration: ShareItemDuration
-  }): Promise<HttpResponse<ItemSharePostResponse>> {
-    return this.tokenRefreshableRequest<ItemSharePostResponse>({
-      verb: HttpVerb.Post,
-      url: joinPaths(this.host, Paths.v1.shareItem),
-      params: {
-        itemUuid: params.itemUuid,
-        encryptedContentKey: params.encryptedContentKey,
-        publicKey: params.publicKey,
-        fileRemoteIdentifier: params.fileRemoteIdentifier,
-        contentType: params.contentType,
-        duration: params.duration,
-      },
-      fallbackErrorMessage: API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
-      authentication: this.getSessionAccessToken(),
-    })
-  }
-
-  updateSharedItem(params: {
-    shareToken: string
-    encryptedContentKey: string
-  }): Promise<HttpResponse<SharedItemsUserShare>> {
-    return this.tokenRefreshableRequest<SharedItemsUserShare>({
-      verb: HttpVerb.Patch,
-      url: joinPaths(this.host, Paths.v1.shareItem),
-      params: {
-        shareToken: params.shareToken,
-        encryptedContentKey: params.encryptedContentKey,
-      },
-      fallbackErrorMessage: API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
-      authentication: this.getSessionAccessToken(),
-    })
-  }
-
-  getInitiatedShares(): Promise<HttpResponse<GetUserItemSharesResponse>> {
-    return this.tokenRefreshableRequest<GetUserItemSharesResponse>({
-      verb: HttpVerb.Get,
-      url: joinPaths(this.host, Paths.v1.getUserShares),
-      fallbackErrorMessage: API_MESSAGE_GENERIC_SINGLE_ITEM_SYNC_FAIL,
-      authentication: this.getSessionAccessToken(),
-    })
   }
 
   override getDiagnostics(): Promise<DiagnosticInfo | undefined> {

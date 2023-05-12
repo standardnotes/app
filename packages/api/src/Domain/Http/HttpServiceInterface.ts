@@ -3,8 +3,10 @@ import { HttpRequest, HttpRequestParams, HttpResponse, HttpResponseMeta } from '
 
 export interface HttpServiceInterface {
   setHost(host: string): void
+  getHost(): string
   setSession(session: Session): void
   get<T>(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>>
+  getExternal<T>(url: string, params?: HttpRequestParams): Promise<HttpResponse<T>>
   post<T>(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>>
   put<T>(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>>
   patch<T>(path: string, params: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>>

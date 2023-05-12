@@ -1,4 +1,11 @@
-import { ClientDisplayableError, ErrorTag, isErrorResponse } from '@standardnotes/responses'
+import { HttpServiceInterface, SharingServer, SharingServerInterface } from '@standardnotes/api'
+import {
+  ClientDisplayableError,
+  ErrorTag,
+  SharedItemsUserShare,
+  isClientDisplayableError,
+  isErrorResponse,
+} from '@standardnotes/responses'
 import { ProtocolOperator005, isErrorDecryptingParameters } from '@standardnotes/encryption'
 import { AbstractService, InternalEventBusInterface, SyncEvent, SyncServiceInterface } from '@standardnotes/services'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -19,23 +26,25 @@ import {
   SharingServiceInterface,
   SharingServiceShareItemReturn,
 } from './SharingServiceInterface'
-import { SharingApiInterface } from './SharingApiInterface'
-import { SharedItemsUserShare } from './SharedItemsUserShare'
 import { ContentType } from '@standardnotes/common'
+import { DecodedSharingUrl, SharingUrlParams, SharingUrlVersion } from './SharingUrl'
+import { isUrlFirstParty } from '@Lib/Hosts'
 import { ShareItemDuration } from './ShareItemDuration'
 
 export class SharingService extends AbstractService<SharingServiceEvent, any> implements SharingServiceInterface {
   private syncObserver: () => void
   private initiatedShares: Record<string, SharedItemsUserShare> = {}
   private operator: ProtocolOperator005
+  private sharingServer: SharingServerInterface
 
   constructor(
-    private apiService: SharingApiInterface,
+    private http: HttpServiceInterface,
     private sync: SyncServiceInterface,
-    crypto: PureCryptoInterface,
+    private crypto: PureCryptoInterface,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
+    this.sharingServer = new SharingServer(http)
     this.syncObserver = sync.addEventObserver(async (eventName, data) => {
       if (eventName === SyncEvent.SingleRoundTripSyncCompleted && data) {
         const eventData = data as { uploadedPayloads: ServerSyncPushContextualPayload[] }
@@ -58,6 +67,11 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
   override deinit(): void {
     super.deinit()
     this.syncObserver()
+    ;(this.http as unknown) = undefined
+    ;(this.sync as unknown) = undefined
+    ;(this.crypto as unknown) = undefined
+    ;(this.operator as unknown) = undefined
+    ;(this.sharingServer as unknown) = undefined
   }
 
   async downloadUserShares(): Promise<void> {
@@ -68,7 +82,7 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
   }
 
   async getInitiatedShares(): Promise<SharedItemsUserShare[]> {
-    const response = await this.apiService.getInitiatedShares()
+    const response = await this.sharingServer.getInitiatedShares()
     if (isErrorResponse(response)) {
       return []
     }
@@ -87,7 +101,7 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
 
     const encryptedContentKey = this.operator.asymmetricAnonymousEncryptKey(payload.contentKey, publicKey)
 
-    const shareResponse = await this.apiService.updateSharedItem({
+    const shareResponse = await this.sharingServer.updateSharedItem({
       shareToken,
       encryptedContentKey: encryptedContentKey,
     })
@@ -106,6 +120,7 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
   public async shareItem(
     uuid: string,
     duration: ShareItemDuration,
+    appHost: string,
   ): Promise<SharingServiceShareItemReturn | ClientDisplayableError> {
     const payload = await this.sync.getItem(uuid)
     if (!payload || isEncryptedPayload(payload)) {
@@ -120,7 +135,7 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
 
     const encryptedContentKey = this.operator.asymmetricAnonymousEncryptKey(payload.contentKey, keypair.publicKey)
 
-    const shareResponse = await this.apiService.shareItem({
+    const shareResponse = await this.sharingServer.shareItem({
       contentType: payload.content_type,
       itemUuid: uuid,
       encryptedContentKey: encryptedContentKey,
@@ -138,14 +153,16 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
       this.initiatedShares[uuid] = shareResponse.data.itemShare
     }
 
-    return { shareToken: shareResponse.data.itemShare.shareToken, privateKey: keypair.privateKey }
+    return this.buildUrlForSharedItem(appHost, shareResponse.data.itemShare.shareToken, keypair.privateKey)
   }
 
-  public async getSharedItem(
-    shareToken: string,
-    privateKey: string,
-  ): Promise<SharingServiceGetSharedItemReturn | ClientDisplayableError> {
-    const response = await this.apiService.getSharedItem(shareToken)
+  public async getSharedItem(url: string): Promise<SharingServiceGetSharedItemReturn | ClientDisplayableError> {
+    const params = this.decodeShareUrl(url)
+    if (isClientDisplayableError(params)) {
+      return params
+    }
+
+    const response = await this.sharingServer.getSharedItem(params.shareToken, params.thirdPartyApiHost)
     if (isErrorResponse(response)) {
       return ClientDisplayableError.FromError(response.data.error)
     }
@@ -159,7 +176,7 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
     const decryptedContentKey = this.operator.asymmetricAnonymousDecryptKey(
       itemShare.encryptedContentKey,
       itemShare.publicKey,
-      privateKey,
+      params.privateKey,
     )
 
     const receivedPayloads = FilterDisallowedRemotePayloadsAndMap([item]).map((rawPayload) => {
@@ -193,6 +210,49 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
     return {
       item: CreateDecryptedItemFromPayload(decryptedPayload),
       fileValetToken,
+    }
+  }
+
+  private buildUrlForSharedItem(appHost: string, shareToken: string, privateKey: string): string {
+    const url = new URL(appHost)
+    url.pathname = '/share'
+
+    const params: SharingUrlParams = {
+      t: shareToken,
+      v: SharingUrlVersion,
+    }
+
+    const host = this.http.getHost()
+    const isThirdPartyHost = !isUrlFirstParty(host)
+    if (isThirdPartyHost) {
+      params.h = host
+    }
+
+    url.searchParams.append('p', this.crypto.base64Encode(JSON.stringify(params)))
+
+    url.hash = privateKey
+    return url.toString()
+  }
+
+  private decodeShareUrl(urlString: string): DecodedSharingUrl | ClientDisplayableError {
+    const url = new URL(urlString)
+    const params = url.searchParams.get('p')
+    if (!params) {
+      return ClientDisplayableError.FromString('Invalid sharing URL')
+    }
+
+    const decodedParams = this.crypto.base64Decode(params)
+    if (!decodedParams) {
+      return ClientDisplayableError.FromString('Invalid sharing URL')
+    }
+
+    const parsedParams = JSON.parse(decodedParams)
+
+    return {
+      shareToken: parsedParams.t,
+      thirdPartyApiHost: parsedParams.h,
+      version: parsedParams.v,
+      privateKey: url.hash.replace('#', ''),
     }
   }
 }

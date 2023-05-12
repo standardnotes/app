@@ -53,12 +53,25 @@ export class HttpService implements HttpServiceInterface {
     this.host = host
   }
 
+  getHost(): string {
+    return this.host
+  }
+
   async get<T>(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>> {
     return this.runHttp({
       url: joinPaths(this.host, path),
       params,
       verb: HttpVerb.Get,
       authentication: authentication ?? this.session?.accessToken.value,
+    })
+  }
+
+  async getExternal<T>(url: string, params?: HttpRequestParams): Promise<HttpResponse<T>> {
+    return this.runHttp({
+      url,
+      params,
+      verb: HttpVerb.Get,
+      external: true,
     })
   }
 
@@ -113,11 +126,11 @@ export class HttpService implements HttpServiceInterface {
 
     const response = await this.runRequest<T>(request, this.createRequestBody(httpRequest))
 
-    if (response.meta) {
+    if (response.meta && !httpRequest.external) {
       this.updateMetaCallback?.(response.meta)
     }
 
-    if (response.status === HttpStatusCode.ExpiredAccessToken) {
+    if (response.status === HttpStatusCode.ExpiredAccessToken && !httpRequest.external) {
       if (this.inProgressRefreshSessionPromise) {
         await this.inProgressRefreshSessionPromise
       } else {

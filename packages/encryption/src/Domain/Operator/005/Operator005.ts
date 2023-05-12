@@ -6,6 +6,7 @@ import { SNProtocolOperator004 } from '../004/Operator004'
 const VersionString = '005'
 const SymmetricCiphertextPrefix = `${VersionString}_KeySym`
 const AsymmetricCiphertextPrefix = `${VersionString}_KeyAsym`
+const AsymmetricAnonymousCiphertextPrefix = `${VersionString}_KeyAsymAnon`
 
 export type AsymmetricallyEncryptedKey = Base64String
 export type SymmetricallyEncryptedPrivateKey = Base64String
@@ -54,7 +55,7 @@ export class ProtocolOperator005 extends SNProtocolOperator004 {
   asymmetricAnonymousEncryptKey(keyToEncrypt: HexString, recipientPublicKey: HexString): AsymmetricallyEncryptedKey {
     const ciphertext = this.crypto.sodiumCryptoBoxAnonymousEncrypt(keyToEncrypt, recipientPublicKey)
 
-    return [AsymmetricCiphertextPrefix, ciphertext].join(':')
+    return [AsymmetricAnonymousCiphertextPrefix, ciphertext].join(':')
   }
 
   asymmetricAnonymousDecryptKey(
