@@ -13,6 +13,16 @@ describe.only('sharing', function () {
   let context
   let sharingService
 
+  let getShareUuidForShareToken = (shareToken) => {
+    for (const shareRecord of Object.values(sharingService.initiatedShares)) {
+      for (const shareItem of Object.values(shareRecord)) {
+        if (shareItem.shareToken === shareToken) {
+          return shareItem.uuid
+        }
+      }
+    }
+  }
+
   afterEach(async function () {
     await Factory.safeDeinit(application)
     localStorage.clear()
@@ -77,6 +87,20 @@ describe.only('sharing', function () {
       expect(item.content.title).to.equal('changed note title')
     })
 
+    it('when updating an expired shared item, should remove from local user shares array', async () => {
+      const note = await context.createSyncedNote('foo', 'bar')
+      const url = await sharingService.shareItem(note.uuid, ShareItemDuration.AfterConsume, AppHost)
+
+      const { publicKey } = await sharingService.getSharedItem(url)
+      const { shareToken } = sharingService.decodeShareUrl(url)
+
+      expect(Object.values(sharingService.initiatedShares[note.uuid]).length).to.equal(1)
+
+      await sharingService.updateSharedItem(note.uuid, getShareUuidForShareToken(shareToken), shareToken, publicKey)
+
+      expect(Object.values(sharingService.initiatedShares[note.uuid]).length).to.equal(0)
+    })
+
     it('should be able to download shared item without account', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
       const url = await sharingService.shareItem(note.uuid, ShareItemDuration.OneDay, AppHost)
@@ -116,7 +140,12 @@ describe.only('sharing', function () {
       otherSharingService.sync.getItem = () => {
         return { contentKey: 'foo' }
       }
-      const updateResponse = await otherSharingService.updateSharedItem(note.uuid, shareToken, publicKey)
+      const updateResponse = await otherSharingService.updateSharedItem(
+        note.uuid,
+        getShareUuidForShareToken(shareToken),
+        shareToken,
+        publicKey,
+      )
 
       expect(isClientDisplayableError(updateResponse)).to.be.true
     })
@@ -150,7 +179,7 @@ describe.only('sharing', function () {
       expect(decoded.thirdPartyApiHost).to.be.undefined
     })
 
-    it.only('should download user shares on sign in', async () => {
+    it('should download user shares on sign in', async () => {
       const otherContext = await Factory.createAppContextWithRealCrypto()
       await otherContext.launch()
       const otherSharingService = new SharingService(
