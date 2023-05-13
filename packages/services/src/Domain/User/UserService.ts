@@ -1,9 +1,15 @@
 import { Base64String } from '@standardnotes/sncrypto-common'
 import { EncryptionProviderInterface, SNRootKey, SNRootKeyParams } from '@standardnotes/encryption'
-import { HttpResponse, SignInResponse, User, HttpError, isErrorResponse } from '@standardnotes/responses'
-import { Either, KeyParamsOrigination, UserRequestType } from '@standardnotes/common'
+import { HttpResponse, SignInResponse, User, isErrorResponse } from '@standardnotes/responses'
+import { KeyParamsOrigination, UserRequestType } from '@standardnotes/common'
 import { UuidGenerator } from '@standardnotes/utils'
 import { UserApiServiceInterface, UserRegistrationResponseBody } from '@standardnotes/api'
+import {
+  AccountEventData,
+  AccountEvent,
+  SignedInOrRegisteredEventPayload,
+  CredentialsChangeFunctionResponse,
+} from '@standardnotes/services'
 
 import * as Messages from '../Strings/Messages'
 import { InfoStrings } from '../Strings/InfoStrings'
@@ -27,28 +33,6 @@ import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { ProtectionsClientInterface } from '../Protection/ProtectionClientInterface'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
-
-export type CredentialsChangeFunctionResponse = { error?: HttpError }
-
-export enum AccountEvent {
-  SignedInOrRegistered = 'SignedInOrRegistered',
-  SignedOut = 'SignedOut',
-}
-
-export interface SignedInOrRegisteredEventPayload {
-  ephemeral: boolean
-  mergeLocal: boolean
-  awaitSync: boolean
-  checkIntegrity: boolean
-}
-
-export interface SignedOutEventPayload {
-  source: DeinitSource
-}
-
-export interface AccountEventData {
-  payload: Either<SignedInOrRegisteredEventPayload, SignedOutEventPayload>
-}
 
 export class UserService
   extends AbstractService<AccountEvent, AccountEventData>
@@ -123,6 +107,10 @@ export class UserService
     ;(this.challengeService as unknown) = undefined
     ;(this.protectionService as unknown) = undefined
     ;(this.userApiService as unknown) = undefined
+  }
+
+  isSignedIn(): boolean {
+    return this.sessionManager.isSignedIn()
   }
 
   /**

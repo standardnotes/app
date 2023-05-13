@@ -7,7 +7,14 @@ import {
   isErrorResponse,
 } from '@standardnotes/responses'
 import { ProtocolOperator005, isErrorDecryptingParameters } from '@standardnotes/encryption'
-import { AbstractService, InternalEventBusInterface, SyncEvent, SyncServiceInterface } from '@standardnotes/services'
+import {
+  AbstractService,
+  AccountEvent,
+  InternalEventBusInterface,
+  SyncEvent,
+  SyncServiceInterface,
+  UserClientInterface,
+} from '@standardnotes/services'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   CreateDecryptedItemFromPayload,
@@ -31,20 +38,22 @@ import { isUrlFirstParty } from '@Lib/Hosts'
 import { ShareItemDuration } from './ShareItemDuration'
 
 export class SharingService extends AbstractService<SharingServiceEvent, any> implements SharingServiceInterface {
-  private syncObserver: () => void
   private initiatedShares: Record<string, SharedItemsUserShare> = {}
   private operator: ProtocolOperator005
   private sharingServer: SharingServerInterface
+  private syncObserverDisposer: () => void
+  private userObserverDisposer?: () => void
 
   constructor(
     private http: HttpServiceInterface,
     private sync: SyncServiceInterface,
+    user: UserClientInterface,
     private crypto: PureCryptoInterface,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
     this.sharingServer = new SharingServer(http)
-    this.syncObserver = sync.addEventObserver(async (eventName, data) => {
+    this.syncObserverDisposer = sync.addEventObserver(async (eventName, data) => {
       if (eventName === SyncEvent.SingleRoundTripSyncCompleted && data) {
         const eventData = data as { uploadedPayloads: ServerSyncPushContextualPayload[] }
         const { uploadedPayloads } = eventData
@@ -60,17 +69,27 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
     })
 
     this.operator = new ProtocolOperator005(crypto)
-    void this.downloadUserShares()
+    if (user.isSignedIn()) {
+      void this.downloadUserShares()
+    } else {
+      this.userObserverDisposer = user.addEventObserver(async (eventName) => {
+        if (eventName === AccountEvent.SignedInOrRegistered) {
+          void this.downloadUserShares()
+        }
+      })
+    }
   }
 
   override deinit(): void {
     super.deinit()
-    this.syncObserver()
     ;(this.http as unknown) = undefined
     ;(this.sync as unknown) = undefined
     ;(this.crypto as unknown) = undefined
     ;(this.operator as unknown) = undefined
     ;(this.sharingServer as unknown) = undefined
+
+    this.syncObserverDisposer()
+    this.userObserverDisposer?.()
   }
 
   async downloadUserShares(): Promise<void> {

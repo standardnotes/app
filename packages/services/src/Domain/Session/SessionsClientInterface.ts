@@ -20,6 +20,7 @@ export interface SessionsClientInterface {
     ephemeral: boolean,
     minAllowedVersion?: ProtocolVersion,
   ): Promise<SessionManagerResponse>
+  isSignedIn(): boolean
   getSureUser(): User
   bypassChecksAndSignInWithRootKey(
     email: string,

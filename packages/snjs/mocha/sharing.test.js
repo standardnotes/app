@@ -28,7 +28,12 @@ describe.only('sharing', function () {
 
     application = context.application
 
-    sharingService = new SharingService(application.httpService, application.sync, application.options.crypto)
+    sharingService = new SharingService(
+      application.httpService,
+      application.sync,
+      application.user,
+      application.options.crypto,
+    )
   })
 
   describe('note sharing', () => {
@@ -81,6 +86,7 @@ describe.only('sharing', function () {
       const offlineSharingService = new SharingService(
         offlineContext.application.httpService,
         offlineContext.application.sync,
+        offlineContext.application.user,
         offlineContext.application.options.crypto,
       )
 
@@ -100,6 +106,7 @@ describe.only('sharing', function () {
       const otherSharingService = new SharingService(
         otherContext.application.httpService,
         otherContext.application.sync,
+        otherContext.application.user,
         otherContext.application.options.crypto,
       )
 
@@ -142,6 +149,22 @@ describe.only('sharing', function () {
       expect(decoded.version).to.equal('1.0')
       expect(decoded.thirdPartyApiHost).to.be.undefined
     })
+
+    it.only('should download user shares on sign in', async () => {
+      const otherContext = await Factory.createAppContextWithRealCrypto()
+      await otherContext.launch()
+      const otherSharingService = new SharingService(
+        otherContext.application.httpService,
+        otherContext.application.sync,
+        otherContext.application.user,
+        otherContext.application.options.crypto,
+      )
+      await otherContext.createSyncedNote('foo', 'bar')
+
+      const downloadSharesSpy = sinon.spy(otherSharingService, 'downloadUserShares')
+      await otherContext.register()
+      expect(downloadSharesSpy.callCount).to.equal(1)
+    })
   })
 
   describe('file sharing', () => {
@@ -174,6 +197,7 @@ describe.only('sharing', function () {
       const offlineSharingService = new SharingService(
         offlineContext.application.httpService,
         offlineContext.application.sync,
+        offlineContext.application.user,
         offlineContext.application.options.crypto,
       )
 

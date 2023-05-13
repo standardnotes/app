@@ -104,7 +104,7 @@ const INVALID_SESSION_RESPONSE_STATUS = 401
  * The sync service largely does not perform any task unless it is called upon.
  */
 export class SNSyncService
-  extends AbstractService
+  extends AbstractService<SyncEvent>
   implements SyncServiceInterface, InternalEventHandlerInterface, SyncClientInterface
 {
   private dirtyIndexAtLastPresyncSave?: number
