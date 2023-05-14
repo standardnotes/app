@@ -1,5 +1,5 @@
 import { ContentType, KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
-import * as Models from '@standardnotes/models'
+
 import {
   CreateDecryptedItemFromPayload,
   FillItemContent,
@@ -7,6 +7,10 @@ import {
   ItemsKeyContent,
   ItemsKeyInterface,
   PayloadTimestampDefaults,
+  DecryptedPayload,
+  DecryptedPayloadInterface,
+  SharedItemsKeyInterface,
+  ShareGroupKeyInterface,
 } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import * as Utils from '@standardnotes/utils'
@@ -21,6 +25,7 @@ import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
 import { SynchronousOperator } from '../Operator'
+import { isSharedItemsKey } from '@standardnotes/snjs/dist/@types'
 
 type V004StringComponents = [version: string, nonce: string, ciphertext: string, authenticatedData: string]
 
@@ -62,7 +67,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
    * The consumer must save/sync this item.
    */
   public createItemsKey(): ItemsKeyInterface {
-    const payload = new Models.DecryptedPayload({
+    const payload = new DecryptedPayload({
       uuid: Utils.UuidGenerator.GenerateUuid(),
       content_type: ContentType.ItemsKey,
       content: this.generateNewItemsKeyContent(),
@@ -194,8 +199,8 @@ export class SNProtocolOperator004 implements SynchronousOperator {
    * decrypt data by regenerating the key based on the attached key params.
    */
   private generateAuthenticatedDataForPayload(
-    payload: Models.DecryptedPayloadInterface,
-    key: ItemsKeyInterface | SNRootKey,
+    payload: DecryptedPayloadInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface | SNRootKey,
   ): ItemAuthenticatedData | RootKeyEncryptedAuthenticatedData {
     const baseData: ItemAuthenticatedData = {
       u: payload.uuid,
@@ -207,7 +212,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
         kp: (key as SNRootKey).keyParams.content,
       }
     } else {
-      if (!isItemsKey(key)) {
+      if (!isItemsKey(key) && !isSharedItemsKey(key)) {
         throw Error('Attempting to use non-items key for regular item.')
       }
       return baseData
@@ -230,29 +235,27 @@ export class SNProtocolOperator004 implements SynchronousOperator {
   }
 
   public generateEncryptedParametersSync(
-    payload: Models.DecryptedPayloadInterface,
-    key: ItemsKeyInterface | SNRootKey,
+    payload: DecryptedPayloadInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface | SNRootKey,
   ): EncryptedParameters {
-    const itemKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
-
+    const contentKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
     const contentPlaintext = JSON.stringify(payload.content)
     const authenticatedData = this.generateAuthenticatedDataForPayload(payload, key)
-    const encryptedContentString = this.generateEncryptedProtocolString(contentPlaintext, itemKey, authenticatedData)
-
-    const encryptedItemKey = this.generateEncryptedProtocolString(itemKey, key.itemsKey, authenticatedData)
+    const encryptedContentString = this.generateEncryptedProtocolString(contentPlaintext, contentKey, authenticatedData)
+    const encryptedContentKey = this.generateEncryptedProtocolString(contentKey, key.itemsKey, authenticatedData)
 
     return {
       uuid: payload.uuid,
       items_key_id: isItemsKey(key) ? key.uuid : undefined,
       content: encryptedContentString,
-      enc_item_key: encryptedItemKey,
+      enc_item_key: encryptedContentKey,
       version: this.version,
     }
   }
 
   public generateDecryptedParametersSync<C extends ItemContent = ItemContent>(
     encrypted: EncryptedParameters,
-    key: ItemsKeyInterface | SNRootKey,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface | SNRootKey,
   ): DecryptedParameters<C> | ErrorDecryptingParameters {
     const contentKeyComponents = this.deconstructEncryptedPayloadString(encrypted.enc_item_key)
     const authenticatedData = this.stringToAuthenticatedData(contentKeyComponents.authenticatedData, {
@@ -277,38 +280,6 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     }
 
     const contentComponents = this.deconstructEncryptedPayloadString(encrypted.content)
-    const content = this.decryptString004(
-      contentComponents.ciphertext,
-      contentKey,
-      contentComponents.nonce,
-      useAuthenticatedString,
-    )
-
-    if (!content) {
-      return {
-        uuid: encrypted.uuid,
-        errorDecrypting: true,
-      }
-    } else {
-      return {
-        uuid: encrypted.uuid,
-        content: JSON.parse(content),
-        contentKey,
-      }
-    }
-  }
-
-  public generateDecryptedParametersForSharedItem<C extends ItemContent = ItemContent>(
-    encrypted: Omit<EncryptedParameters, 'items_key_id' | 'enc_item_key'>,
-    contentKey: string,
-  ): DecryptedParameters<C> | ErrorDecryptingParameters {
-    const useAuthenticatedString = this.authenticatedDataToString({
-      u: encrypted.uuid,
-      v: encrypted.version,
-    })
-
-    const contentComponents = this.deconstructEncryptedPayloadString(encrypted.content)
-
     const content = this.decryptString004(
       contentComponents.ciphertext,
       contentKey,

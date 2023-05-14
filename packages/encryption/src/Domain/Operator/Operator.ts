@@ -1,6 +1,12 @@
 import { KeyParamsOrigination } from '@standardnotes/common'
-import * as Models from '@standardnotes/models'
-import { ItemsKeyInterface, RootKeyInterface } from '@standardnotes/models'
+import {
+  ItemsKeyInterface,
+  RootKeyInterface,
+  SharedItemsKeyInterface,
+  DecryptedPayloadInterface,
+  ItemContent,
+  ShareGroupKeyInterface,
+} from '@standardnotes/models'
 import { SNRootKey } from '../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
 import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } from '../Types/EncryptedParameters'
@@ -56,13 +62,13 @@ export interface SynchronousOperator extends OperatorCommon {
    * items keys), or an ItemsKey (if encrypted regular items)
    */
   generateEncryptedParametersSync(
-    payload: Models.DecryptedPayloadInterface,
-    key: ItemsKeyInterface | RootKeyInterface,
+    payload: DecryptedPayloadInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface | RootKeyInterface,
   ): EncryptedParameters
 
-  generateDecryptedParametersSync<C extends Models.ItemContent = Models.ItemContent>(
+  generateDecryptedParametersSync<C extends ItemContent = ItemContent>(
     encrypted: EncryptedParameters,
-    key: ItemsKeyInterface | RootKeyInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface | RootKeyInterface,
   ): DecryptedParameters<C> | ErrorDecryptingParameters
 }
 
@@ -75,12 +81,12 @@ export interface AsynchronousOperator extends OperatorCommon {
    * items keys), or an ItemsKey (if encrypted regular items)
    */
   generateEncryptedParametersAsync(
-    payload: Models.DecryptedPayloadInterface,
-    key: ItemsKeyInterface | RootKeyInterface,
+    payload: DecryptedPayloadInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface | RootKeyInterface,
   ): Promise<EncryptedParameters>
 
-  generateDecryptedParametersAsync<C extends Models.ItemContent = Models.ItemContent>(
+  generateDecryptedParametersAsync<C extends ItemContent = ItemContent>(
     encrypted: EncryptedParameters,
-    key: ItemsKeyInterface | RootKeyInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface | RootKeyInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters>
 }

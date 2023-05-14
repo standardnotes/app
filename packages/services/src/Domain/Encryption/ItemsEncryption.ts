@@ -9,6 +9,7 @@ import {
   StandardException,
   encryptPayload,
   decryptPayload,
+  ItemContentTypeUsesGroupKeyEncryption,
 } from '@standardnotes/encryption'
 import {
   DecryptedPayload,
@@ -19,11 +20,11 @@ import {
   ItemContent,
   ItemsKeyInterface,
   PayloadEmitSource,
+  SharedItemsKeyInterface,
   SureFindPayload,
+  ShareGroupKeyInterface,
 } from '@standardnotes/models'
-import { Uuids } from '@standardnotes/utils'
 
-import { DiagnosticInfo } from '../Diagnostics/ServiceDiagnostics'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
@@ -70,12 +71,17 @@ export class ItemsEncryptionService extends AbstractService {
     return this.storageService.savePayloads(payloads)
   }
 
-  public getItemsKeys() {
+  public getItemsKeys(): ItemsKeyInterface[] {
     return this.itemManager.getDisplayableItemsKeys()
   }
 
-  public itemsKeyForPayload(payload: EncryptedPayloadInterface): ItemsKeyInterface | undefined {
-    return this.getItemsKeys().find(
+  public itemsKeyForEncryptedPayload(
+    payload: EncryptedPayloadInterface,
+  ): ItemsKeyInterface | SharedItemsKeyInterface | undefined {
+    const itemsKeys = this.getItemsKeys()
+    const sharedItemsKeys = this.itemManager.getItems<SharedItemsKeyInterface>(ContentType.SharedItemsKey)
+
+    return [...itemsKeys, ...sharedItemsKeys].find(
       (key) => key.uuid === payload.items_key_id || key.duplicateOf === payload.items_key_id,
     )
   }
@@ -84,8 +90,31 @@ export class ItemsEncryptionService extends AbstractService {
     return findDefaultItemsKey(this.getItemsKeys())
   }
 
-  private keyToUseForItemEncryption(): ItemsKeyInterface | StandardException {
+  private keyToUseForItemEncryption(
+    payload: DecryptedPayloadInterface,
+  ): ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface | StandardException {
+    const shareGroupKey = this.itemManager.shareGroupKeyReferencingItem(payload)
+    if (shareGroupKey) {
+      const payloadIsSharedItemsKey = ItemContentTypeUsesGroupKeyEncryption(payload.content_type)
+      if (payloadIsSharedItemsKey) {
+        return shareGroupKey
+      }
+
+      const associatedSharedItemsKeys = this.itemManager
+        .referencesForItem<SharedItemsKeyInterface>(shareGroupKey, ContentType.SharedItemsKey)
+        .sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
+
+      const sharedKey = associatedSharedItemsKeys[0]
+
+      if (!sharedKey) {
+        return new StandardException('Cannot find shared items key to use for encryption')
+      }
+
+      return sharedKey
+    }
+
     const defaultKey = this.getDefaultItemsKey()
+
     let result: ItemsKeyInterface | undefined = undefined
 
     if (this.userVersion && this.userVersion !== defaultKey?.keyVersion) {
@@ -107,9 +136,11 @@ export class ItemsEncryptionService extends AbstractService {
     return result
   }
 
-  private keyToUseForDecryptionOfPayload(payload: EncryptedPayloadInterface): ItemsKeyInterface | undefined {
+  private keyToUseForDecryptionOfPayload(
+    payload: EncryptedPayloadInterface,
+  ): ItemsKeyInterface | SharedItemsKeyInterface | undefined {
     if (payload.items_key_id) {
-      const itemsKey = this.itemsKeyForPayload(payload)
+      const itemsKey = this.itemsKeyForEncryptedPayload(payload)
       return itemsKey
     }
 
@@ -118,7 +149,7 @@ export class ItemsEncryptionService extends AbstractService {
   }
 
   public async encryptPayloadWithKeyLookup(payload: DecryptedPayloadInterface): Promise<EncryptedParameters> {
-    const key = this.keyToUseForItemEncryption()
+    const key = this.keyToUseForItemEncryption(payload)
 
     if (key instanceof StandardException) {
       throw Error(key.message)
@@ -129,7 +160,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async encryptPayload(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface,
   ): Promise<EncryptedParameters> {
     if (isEncryptedPayload(payload)) {
       throw Error('Attempting to encrypt already encrypted payload.')
@@ -146,7 +177,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async encryptPayloads(
     payloads: DecryptedPayloadInterface[],
-    key: ItemsKeyInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface,
   ): Promise<EncryptedParameters[]> {
     return Promise.all(payloads.map((payload) => this.encryptPayload(payload, key)))
   }
@@ -173,7 +204,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async decryptPayload<C extends ItemContent = ItemContent>(
     payload: EncryptedPayloadInterface,
-    key: ItemsKeyInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     if (!payload.content) {
       return {
@@ -193,7 +224,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async decryptPayloads<C extends ItemContent = ItemContent>(
     payloads: EncryptedPayloadInterface[],
-    key: ItemsKeyInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface,
   ): Promise<(DecryptedParameters<C> | ErrorDecryptingParameters)[]> {
     return Promise.all(payloads.map((payload) => this.decryptPayload<C>(payload, key)))
   }
@@ -246,16 +277,5 @@ export class ItemsEncryptionService extends AbstractService {
     return searchKeys.find((key) => {
       return key.keyVersion === version
     })
-  }
-
-  override async getDiagnostics(): Promise<DiagnosticInfo | undefined> {
-    const keyForItems = this.keyToUseForItemEncryption()
-    return {
-      itemsEncryption: {
-        itemsKeysIds: Uuids(this.getItemsKeys()),
-        defaultItemsKeyId: this.getDefaultItemsKey()?.uuid,
-        keyToUseForItemEncryptionId: keyForItems instanceof StandardException ? undefined : keyForItems.uuid,
-      },
-    }
   }
 }

@@ -5,26 +5,24 @@ import {
   DecryptedItemInterface,
   DecryptedPayloadInterface,
   HistoryEntryInterface,
-  ItemsKeyContent,
-  ItemsKeyInterface,
+  SharedItemsKeyContent,
+  SharedItemsKeyInterface,
 } from '@standardnotes/models'
 
-export function isItemsKey(x: { content_type: ContentType }): x is ItemsKeyInterface {
-  return x.content_type === ContentType.ItemsKey
+export function isSharedItemsKey(x: { content_type: ContentType }): x is SharedItemsKeyInterface {
+  return x.content_type === ContentType.SharedItemsKey
 }
 
 /**
  * A key used to encrypt other items. Items keys are synced and persisted.
  */
-export class SNItemsKey extends DecryptedItem<ItemsKeyContent> implements ItemsKeyInterface {
+export class SharedItemsKey extends DecryptedItem<SharedItemsKeyContent> implements SharedItemsKeyInterface {
   keyVersion: ProtocolVersion
-  isDefault: boolean | undefined
   itemsKey: string
 
-  constructor(payload: DecryptedPayloadInterface<ItemsKeyContent>) {
+  constructor(payload: DecryptedPayloadInterface<SharedItemsKeyContent>) {
     super(payload)
     this.keyVersion = payload.content.version
-    this.isDefault = payload.content.isDefault
     this.itemsKey = this.payload.content.itemsKey
   }
 
@@ -34,12 +32,5 @@ export class SNItemsKey extends DecryptedItem<ItemsKeyContent> implements ItemsK
     _previousRevision?: HistoryEntryInterface,
   ): ConflictStrategy {
     return ConflictStrategy.KeepBase
-  }
-
-  get dataAuthenticationKey(): string | undefined {
-    if (this.keyVersion === ProtocolVersion.V004) {
-      throw 'Attempting to access legacy data authentication key.'
-    }
-    return this.payload.content.dataAuthenticationKey
   }
 }

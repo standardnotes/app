@@ -4,5 +4,6 @@ export enum ContentReferenceType {
   FileToNote = 'FileToNote',
   FileToFile = 'FileToFile',
   NoteToNote = 'NoteToNote',
-  SharedItemToItem = 'SharedItemToItem',
+  ShareGroupToItem = 'ShareGroupToItem',
+  ShareGroupToSharedItemsKey = 'ShareGroupToSharedItemsKey',
 }

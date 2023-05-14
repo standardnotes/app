@@ -46,7 +46,6 @@ import {
 import { UuidGenerator } from '@standardnotes/utils'
 
 import { DeviceInterface } from '../Device/DeviceInterface'
-import { DiagnosticInfo } from '../Diagnostics/ServiceDiagnostics'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { AbstractService } from '../Service/AbstractService'
@@ -490,7 +489,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     return this.itemManager.getDisplayableItemsKeys()
   }
 
-  public async encrypPayloadWithKeyLookup(payload: DecryptedPayloadInterface): Promise<EncryptedParameters> {
+  private async encrypPayloadWithKeyLookup(payload: DecryptedPayloadInterface): Promise<EncryptedParameters> {
     const key = this.getRootKey()
 
     if (key == undefined) {
@@ -628,20 +627,5 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     }
 
     return rollback
-  }
-
-  override async getDiagnostics(): Promise<DiagnosticInfo | undefined> {
-    return {
-      rootKeyEncryption: {
-        hasRootKey: this.rootKey != undefined,
-        keyMode: KeyMode[this.keyMode],
-        hasRootKeyWrapper: await this.hasRootKeyWrapper(),
-        hasAccount: this.hasAccount(),
-        hasRootKeyEncryptionSource: this.hasRootKeyEncryptionSource(),
-        hasPasscode: this.hasPasscode(),
-        getEncryptionSourceVersion: this.hasRootKeyEncryptionSource() && (await this.getEncryptionSourceVersion()),
-        getUserVersion: this.getUserVersion(),
-      },
-    }
   }
 }

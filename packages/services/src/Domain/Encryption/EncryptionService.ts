@@ -37,6 +37,7 @@ import {
   ItemContent,
   ItemsKeyInterface,
   RootKeyInterface,
+  SharedItemsKeyInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -225,8 +226,10 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     await this.itemsEncryption.decryptErroredPayloads()
   }
 
-  public itemsKeyForPayload(payload: EncryptedPayloadInterface): ItemsKeyInterface | undefined {
-    return this.itemsEncryption.itemsKeyForPayload(payload)
+  public itemsKeyForEncryptedPayload(
+    payload: EncryptedPayloadInterface,
+  ): ItemsKeyInterface | SharedItemsKeyInterface | undefined {
+    return this.itemsEncryption.itemsKeyForEncryptedPayload(payload)
   }
 
   public defaultItemsKeyForItemVersion(
@@ -243,34 +246,43 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   public async encryptSplit(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface[]> {
     const allEncryptedParams: EncryptedParameters[] = []
 
-    if (split.usesRootKey) {
-      const rootKeyEncrypted = await this.rootKeyEncryption.encryptPayloads(
-        split.usesRootKey.items,
-        split.usesRootKey.key,
-      )
+    const {
+      usesRootKey,
+      usesItemsKey,
+      usesGroupKey,
+      usesRootKeyWithKeyLookup,
+      usesItemsKeyWithKeyLookup,
+      usesGroupKeyWithKeyLookup,
+    } = split
+
+    if (usesRootKey) {
+      const rootKeyEncrypted = await this.rootKeyEncryption.encryptPayloads(usesRootKey.items, usesRootKey.key)
       extendArray(allEncryptedParams, rootKeyEncrypted)
     }
 
-    if (split.usesItemsKey) {
-      const itemsKeyEncrypted = await this.itemsEncryption.encryptPayloads(
-        split.usesItemsKey.items,
-        split.usesItemsKey.key,
-      )
+    if (usesItemsKey) {
+      const itemsKeyEncrypted = await this.itemsEncryption.encryptPayloads(usesItemsKey.items, usesItemsKey.key)
       extendArray(allEncryptedParams, itemsKeyEncrypted)
     }
 
-    if (split.usesRootKeyWithKeyLookup) {
-      const rootKeyEncrypted = await this.rootKeyEncryption.encryptPayloadsWithKeyLookup(
-        split.usesRootKeyWithKeyLookup.items,
-      )
+    if (usesGroupKey) {
+      const groupKeyEncrypted = await this.itemsEncryption.encryptPayloads(usesGroupKey.items, usesGroupKey.key)
+      extendArray(allEncryptedParams, groupKeyEncrypted)
+    }
+
+    if (usesRootKeyWithKeyLookup) {
+      const rootKeyEncrypted = await this.rootKeyEncryption.encryptPayloadsWithKeyLookup(usesRootKeyWithKeyLookup.items)
       extendArray(allEncryptedParams, rootKeyEncrypted)
     }
 
-    if (split.usesItemsKeyWithKeyLookup) {
-      const itemsKeyEncrypted = await this.itemsEncryption.encryptPayloadsWithKeyLookup(
-        split.usesItemsKeyWithKeyLookup.items,
-      )
+    if (usesItemsKeyWithKeyLookup) {
+      const itemsKeyEncrypted = await this.itemsEncryption.encryptPayloadsWithKeyLookup(usesItemsKeyWithKeyLookup.items)
       extendArray(allEncryptedParams, itemsKeyEncrypted)
+    }
+
+    if (usesGroupKeyWithKeyLookup) {
+      const groupKeyEncrypted = await this.itemsEncryption.encryptPayloadsWithKeyLookup(usesGroupKeyWithKeyLookup.items)
+      extendArray(allEncryptedParams, groupKeyEncrypted)
     }
 
     const packagedEncrypted = allEncryptedParams.map((encryptedParams) => {
@@ -300,34 +312,49 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   >(split: KeyedDecryptionSplit): Promise<(P | EncryptedPayloadInterface)[]> {
     const resultParams: (DecryptedParameters<C> | ErrorDecryptingParameters)[] = []
 
-    if (split.usesRootKey) {
-      const rootKeyDecrypted = await this.rootKeyEncryption.decryptPayloads<C>(
-        split.usesRootKey.items,
-        split.usesRootKey.key,
-      )
+    const {
+      usesRootKey,
+      usesItemsKey,
+      usesGroupKey,
+      usesRootKeyWithKeyLookup,
+      usesItemsKeyWithKeyLookup,
+      usesGroupKeyWithKeyLookup,
+    } = split
+
+    if (usesRootKey) {
+      const rootKeyDecrypted = await this.rootKeyEncryption.decryptPayloads<C>(usesRootKey.items, usesRootKey.key)
       extendArray(resultParams, rootKeyDecrypted)
     }
 
-    if (split.usesRootKeyWithKeyLookup) {
+    if (usesRootKeyWithKeyLookup) {
       const rootKeyDecrypted = await this.rootKeyEncryption.decryptPayloadsWithKeyLookup<C>(
-        split.usesRootKeyWithKeyLookup.items,
+        usesRootKeyWithKeyLookup.items,
       )
       extendArray(resultParams, rootKeyDecrypted)
     }
 
-    if (split.usesItemsKey) {
-      const itemsKeyDecrypted = await this.itemsEncryption.decryptPayloads<C>(
-        split.usesItemsKey.items,
-        split.usesItemsKey.key,
+    if (usesItemsKey) {
+      const itemsKeyDecrypted = await this.itemsEncryption.decryptPayloads<C>(usesItemsKey.items, usesItemsKey.key)
+      extendArray(resultParams, itemsKeyDecrypted)
+    }
+
+    if (usesItemsKeyWithKeyLookup) {
+      const itemsKeyDecrypted = await this.itemsEncryption.decryptPayloadsWithKeyLookup<C>(
+        usesItemsKeyWithKeyLookup.items,
       )
       extendArray(resultParams, itemsKeyDecrypted)
     }
 
-    if (split.usesItemsKeyWithKeyLookup) {
-      const itemsKeyDecrypted = await this.itemsEncryption.decryptPayloadsWithKeyLookup<C>(
-        split.usesItemsKeyWithKeyLookup.items,
+    if (usesGroupKey) {
+      const groupKeyDecrypted = await this.itemsEncryption.decryptPayloads<C>(usesGroupKey.items, usesGroupKey.key)
+      extendArray(resultParams, groupKeyDecrypted)
+    }
+
+    if (usesGroupKeyWithKeyLookup) {
+      const groupKeyDecrypted = await this.itemsEncryption.decryptPayloadsWithKeyLookup<C>(
+        usesGroupKeyWithKeyLookup.items,
       )
-      extendArray(resultParams, itemsKeyDecrypted)
+      extendArray(resultParams, groupKeyDecrypted)
     }
 
     const packagedResults = resultParams.map((params) => {

@@ -124,7 +124,7 @@ function findKeyToUseForPayload(
   let itemsKey: ItemsKeyInterface | SNRootKey | undefined
 
   if (payload.items_key_id) {
-    itemsKey = protocolService.itemsKeyForPayload(payload)
+    itemsKey = protocolService.itemsKeyForEncryptedPayload(payload)
     if (itemsKey) {
       return itemsKey
     }

@@ -153,7 +153,7 @@ describe('keys', function () {
       },
     })
 
-    const itemsKey = this.application.protocolService.itemsKeyForPayload(encryptedPayload)
+    const itemsKey = this.application.protocolService.itemsKeyForEncryptedPayload(encryptedPayload)
     expect(itemsKey).to.be.ok
   })
 
@@ -166,7 +166,7 @@ describe('keys', function () {
       },
     })
 
-    const itemsKey = this.application.protocolService.itemsKeyForPayload(encryptedPayload)
+    const itemsKey = this.application.protocolService.itemsKeyForEncryptedPayload(encryptedPayload)
     expect(itemsKey).to.be.ok
 
     const decryptedPayload = await this.application.protocolService.decryptSplitSingle({
@@ -187,7 +187,7 @@ describe('keys', function () {
       },
     })
 
-    const itemsKey = this.application.protocolService.itemsKeyForPayload(encryptedPayload)
+    const itemsKey = this.application.protocolService.itemsKeyForEncryptedPayload(encryptedPayload)
 
     await this.application.itemManager.removeItemLocally(itemsKey)
 

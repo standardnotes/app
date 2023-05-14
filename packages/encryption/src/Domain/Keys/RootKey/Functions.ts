@@ -49,3 +49,7 @@ export function ContentTypeUsesRootKeyEncryption(contentType: ContentType): bool
 export function ItemContentTypeUsesRootKeyEncryption(contentType: ContentType): boolean {
   return contentType === ContentType.ItemsKey
 }
+
+export function ItemContentTypeUsesGroupKeyEncryption(contentType: ContentType): boolean {
+  return contentType === ContentType.SharedItemsKey
+}

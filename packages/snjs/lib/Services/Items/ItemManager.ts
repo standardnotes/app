@@ -7,7 +7,7 @@ import { UuidString } from '../../Types/UuidString'
 import * as Models from '@standardnotes/models'
 import * as Services from '@standardnotes/services'
 import { PayloadManagerChangeData } from '../Payloads'
-import { DiagnosticInfo, ItemsClientInterface, ItemRelationshipDirection } from '@standardnotes/services'
+import { ItemsClientInterface, ItemRelationshipDirection } from '@standardnotes/services'
 import { CollectionSort, DecryptedItemInterface, ItemContent, SmartViewDefaultIconName } from '@standardnotes/models'
 
 type ItemsChangeObserver<I extends Models.DecryptedItemInterface = Models.DecryptedItemInterface> = {
@@ -327,7 +327,7 @@ export class ItemManager
    * Returns the items that reference the given item, or an empty array if no results.
    */
   public itemsReferencingItem<I extends Models.DecryptedItemInterface = Models.DecryptedItemInterface>(
-    itemToLookupUuidFor: Models.DecryptedItemInterface,
+    itemToLookupUuidFor: { uuid: UuidString },
     contentType?: ContentType,
   ): I[] {
     const uuids = this.collection.uuidsThatReferenceUuid(itemToLookupUuidFor.uuid)
@@ -338,6 +338,15 @@ export class ItemManager
       })
     }
     return referencing
+  }
+
+  public shareGroupReferencingItem(itemToLookupUuidFor: { uuid: UuidString }): Models.ShareGroup | undefined {
+    const items = this.itemsReferencingItem<Models.ShareGroup>(itemToLookupUuidFor, ContentType.ShareGroup)
+    if (items.length > 0) {
+      throw Error('Multiple share groups referencing item')
+    }
+
+    return items[0]
   }
 
   /**
@@ -1401,13 +1410,5 @@ export class ItemManager
       : itemBReferencesItemA
       ? ItemRelationshipDirection.BReferencesA
       : ItemRelationshipDirection.NoRelationship
-  }
-
-  override getDiagnostics(): Promise<DiagnosticInfo | undefined> {
-    return Promise.resolve({
-      items: {
-        allIds: Uuids(this.collection.all()),
-      },
-    })
   }
 }
