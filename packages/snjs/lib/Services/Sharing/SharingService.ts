@@ -11,6 +11,7 @@ import {
   AbstractService,
   AccountEvent,
   InternalEventBusInterface,
+  ItemManagerInterface,
   SyncEvent,
   SyncServiceInterface,
   UserClientInterface,
@@ -23,7 +24,14 @@ import {
   FilterDisallowedRemotePayloadsAndMap,
   PayloadSource,
   ServerSyncPushContextualPayload,
+  SharedItem,
+  SharedItemContent,
+  SharedItemDuration,
+  SharedItemMutator,
   isDeletedPayload,
+  SharedItemPermission,
+  SharedItemContentSpecialized,
+  FillItemContentSpecialized,
 } from '@standardnotes/models'
 import { CreatePayloadFromRawServerItem } from '../Sync/Account/Utilities'
 import {
@@ -35,13 +43,8 @@ import {
 import { ContentType } from '@standardnotes/common'
 import { DecodedSharingUrl, SharingUrlParams, SharingUrlVersion } from './SharingUrl'
 import { isUrlFirstParty } from '@Lib/Hosts'
-import { ShareItemDuration } from './ShareItemDuration'
 
-type ItemUuid = string
-type ShareItemUuid = string
-
-export class SharingService extends AbstractService<SharingServiceEvent, any> implements SharingServiceInterface {
-  private initiatedShares: Record<ItemUuid, Record<ShareItemUuid, SharedItemsUserShare>> = {}
+export class SharingService extends AbstractService<SharingServiceEvent> implements SharingServiceInterface {
   private operator: ProtocolOperator005
   private sharingServer: SharingServerInterface
   private syncObserverDisposer: () => void
@@ -50,6 +53,7 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
   constructor(
     private http: HttpServiceInterface,
     private sync: SyncServiceInterface,
+    private items: ItemManagerInterface,
     user: UserClientInterface,
     private crypto: PureCryptoInterface,
     eventBus: InternalEventBusInterface,
@@ -68,11 +72,11 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
 
     this.operator = new ProtocolOperator005(crypto)
     if (user.isSignedIn()) {
-      void this.downloadUserShares()
+      // void this.downloadUserShares()
     } else {
       this.userObserverDisposer = user.addEventObserver(async (eventName) => {
         if (eventName === AccountEvent.SignedInOrRegistered) {
-          void this.downloadUserShares()
+          // void this.downloadUserShares()
         }
       })
     }
@@ -80,12 +84,20 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
 
   private async updateSharesForUpdatedItems(pushedPayloads: ServerSyncPushContextualPayload[]): Promise<void> {
     for (const payload of pushedPayloads) {
-      const shareRecordsForItem = this.initiatedShares[payload.uuid] ?? {}
-      const shares = Object.values(shareRecordsForItem)
-      for (const share of shares) {
-        void this.updateSharedItem(payload.uuid, share.uuid, share.shareToken, share.publicKey)
+      const sharedItems = this.sharedItemsForItem(payload.uuid)
+      for (const sharedItem of sharedItems) {
+        void this.updateSharedItemContentKey(sharedItem.uuid)
       }
     }
+  }
+
+  private sharedItemsForItem(itemUuid: string): SharedItem[] {
+    const item = this.items.findItem(itemUuid)
+    if (!item) {
+      return []
+    }
+
+    return this.items.itemsReferencingItem<SharedItem>(item, ContentType.SharedItem)
   }
 
   override deinit(): void {
@@ -100,16 +112,6 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
     this.userObserverDisposer?.()
   }
 
-  async downloadUserShares(): Promise<void> {
-    const shares = await this.getInitiatedShares()
-
-    for (const share of shares) {
-      const record = this.initiatedShares[share.itemUuid] || {}
-      record[share.uuid] = share
-      this.initiatedShares[share.itemUuid] = record
-    }
-  }
-
   async getInitiatedShares(): Promise<SharedItemsUserShare[]> {
     const response = await this.sharingServer.getInitiatedShares()
     if (isErrorResponse(response)) {
@@ -118,38 +120,49 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
     return response.data.itemShares
   }
 
-  private async updateSharedItem(
-    itemUuid: string,
-    shareUuid: string,
-    shareToken: string,
-    publicKey: string,
-  ): Promise<ClientDisplayableError | void> {
-    const getItemResult = await this.sync.getItemAndContentKey(itemUuid)
+  private async updateSharedItemContentKey(sharedItemUuid: string): Promise<ClientDisplayableError | void> {
+    const sharedItem = this.items.findItem<SharedItem>(sharedItemUuid)
+    if (!sharedItem) {
+      return ClientDisplayableError.FromString('Could not find shared item')
+    }
+
+    if (sharedItem.expired) {
+      return ClientDisplayableError.FromString('Shared item has expired')
+    }
+
+    const getItemResult = await this.sync.getItemAndContentKey(sharedItem.itemUuid)
     if (!getItemResult) {
       return ClientDisplayableError.FromString('Could not get item to share')
     }
 
-    const encryptedContentKey = this.operator.asymmetricAnonymousEncryptKey(getItemResult.contentKey, publicKey)
+    const encryptedContentKey = this.operator.asymmetricAnonymousEncryptKey(
+      getItemResult.contentKey,
+      sharedItem.publicKey,
+    )
 
-    const shareResponse = await this.sharingServer.updateSharedItem({
-      shareToken,
+    const shareResponse = await this.sharingServer.updateSharedItemContentKey({
+      shareToken: sharedItem.shareToken,
       encryptedContentKey: encryptedContentKey,
     })
 
     if (isErrorResponse(shareResponse)) {
       if (shareResponse.data.error.tag === ErrorTag.ExpiredItemShare) {
-        delete this.initiatedShares[itemUuid][shareUuid]
+        await this.items.changeItem<SharedItemMutator>(sharedItem, (mutableItem) => {
+          mutableItem.expired = true
+        })
+        void this.sync.sync()
       }
 
       return ClientDisplayableError.FromError(shareResponse.data.error)
     }
 
-    void this.notifyEvent(SharingServiceEvent.DidUpdateSharedItem, { uuid: itemUuid })
+    void this.notifyEvent(SharingServiceEvent.DidUpdateSharedItem, { itemUuid: sharedItem.itemUuid })
   }
 
   public async shareItem(
     itemUuid: string,
-    duration: ShareItemDuration,
+    duration: SharedItemDuration,
+    permissions: SharedItemPermission,
     appHost: string,
   ): Promise<SharingServiceShareItemReturn | ClientDisplayableError> {
     const getItemResult = await this.sync.getItemAndContentKey(itemUuid)
@@ -165,7 +178,7 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
       contentType: getItemResult.payload.content_type,
       itemUuid: itemUuid,
       encryptedContentKey: encryptedContentKey,
-      publicKey: keypair.publicKey,
+      permissions: permissions,
       duration: duration,
       fileRemoteIdentifier:
         getItemResult.payload.content_type === ContentType.File
@@ -177,22 +190,46 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
       return ClientDisplayableError.FromError(shareResponse.data.error)
     }
 
-    if (shareResponse.data.itemShare.shareToken) {
-      const record = this.initiatedShares[itemUuid] || {}
-      record[shareResponse.data.itemShare.uuid] = shareResponse.data.itemShare
-      this.initiatedShares[itemUuid] = record
+    const content: SharedItemContentSpecialized = {
+      itemUuid: itemUuid,
+      shareToken: shareResponse.data.itemShare.shareToken,
+      expired: false,
+      duration: duration,
+      publicKey: keypair.publicKey,
+      privateKey: keypair.privateKey,
+      isUserOriginator: true,
+      permissions: permissions,
     }
 
-    return this.buildUrlForSharedItem(appHost, shareResponse.data.itemShare.shareToken, keypair.privateKey)
+    const sharedItem = await this.items.createItem<SharedItem, SharedItemContent>(
+      ContentType.SharedItem,
+      FillItemContentSpecialized(content),
+      true,
+    )
+
+    const item = this.items.findSureItem(itemUuid)
+
+    await this.items.changeItem<SharedItemMutator>(sharedItem, (mutableItem) => {
+      mutableItem.addItemReference(item)
+    })
+
+    void this.sync.sync()
+
+    return this.buildUrlForSharedItem(
+      appHost,
+      shareResponse.data.itemShare.shareToken,
+      keypair.publicKey,
+      keypair.privateKey,
+    )
   }
 
-  public async getSharedItem(url: string): Promise<SharingServiceGetSharedItemReturn | ClientDisplayableError> {
+  public async downloadSharedItem(url: string): Promise<SharingServiceGetSharedItemReturn | ClientDisplayableError> {
     const params = this.decodeShareUrl(url)
     if (isClientDisplayableError(params)) {
       return params
     }
 
-    const response = await this.sharingServer.getSharedItem(params.shareToken, params.thirdPartyApiHost)
+    const response = await this.sharingServer.downloadSharedItem(params.shareToken, params.thirdPartyApiHost)
     if (isErrorResponse(response)) {
       return ClientDisplayableError.FromError(response.data.error)
     }
@@ -205,7 +242,7 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
 
     const decryptedContentKey = this.operator.asymmetricAnonymousDecryptKey(
       itemShare.encryptedContentKey,
-      itemShare.publicKey,
+      params.publicKey,
       params.privateKey,
     )
 
@@ -239,12 +276,12 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
 
     return {
       item: CreateDecryptedItemFromPayload(decryptedPayload),
+      publicKey: params.publicKey,
       fileValetToken,
-      publicKey: itemShare.publicKey,
     }
   }
 
-  private buildUrlForSharedItem(appHost: string, shareToken: string, privateKey: string): string {
+  private buildUrlForSharedItem(appHost: string, shareToken: string, publicKey: string, privateKey: string): string {
     const url = new URL(appHost)
     url.pathname = '/share'
 
@@ -261,7 +298,7 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
 
     url.searchParams.append('p', this.crypto.base64Encode(JSON.stringify(params)))
 
-    url.hash = privateKey
+    url.hash = `${publicKey}-${privateKey}`
     return url.toString()
   }
 
@@ -279,11 +316,14 @@ export class SharingService extends AbstractService<SharingServiceEvent, any> im
 
     const parsedParams = JSON.parse(decodedParams)
 
+    const hashComponents = url.hash.replace('#', '').split('-')
+
     return {
       shareToken: parsedParams.t,
       thirdPartyApiHost: parsedParams.h,
       version: parsedParams.v,
-      privateKey: url.hash.replace('#', ''),
+      publicKey: hashComponents[0],
+      privateKey: hashComponents[1],
     }
   }
 }

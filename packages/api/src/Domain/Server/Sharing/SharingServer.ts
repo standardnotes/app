@@ -14,18 +14,18 @@ import { joinPaths } from '@standardnotes/utils'
 export class SharingServer implements SharingServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
 
-  async getSharedItem(shareToken: string, thirdPartyHost?: string): Promise<HttpResponse<GetSharedItemResponse>> {
+  async downloadSharedItem(shareToken: string, thirdPartyHost?: string): Promise<HttpResponse<GetSharedItemResponse>> {
     if (thirdPartyHost) {
-      return this.httpService.getExternal(joinPaths(thirdPartyHost, SharingPaths.getSharedItem(shareToken)))
+      return this.httpService.getExternal(joinPaths(thirdPartyHost, SharingPaths.downloadSharedItem(shareToken)))
     } else {
-      return this.httpService.get(SharingPaths.getSharedItem(shareToken))
+      return this.httpService.get(SharingPaths.downloadSharedItem(shareToken))
     }
   }
 
   shareItem(params: {
     itemUuid: string
     encryptedContentKey: string
-    publicKey: string
+    permissions: string
     fileRemoteIdentifier?: string
     contentType: ContentType
     duration: string
@@ -33,14 +33,14 @@ export class SharingServer implements SharingServerInterface {
     return this.httpService.post(SharingPaths.shareItem, {
       itemUuid: params.itemUuid,
       encryptedContentKey: params.encryptedContentKey,
-      publicKey: params.publicKey,
+      permissions: params.permissions,
       fileRemoteIdentifier: params.fileRemoteIdentifier,
       contentType: params.contentType,
       duration: params.duration,
     })
   }
 
-  updateSharedItem(params: {
+  updateSharedItemContentKey(params: {
     shareToken: string
     encryptedContentKey: string
   }): Promise<HttpResponse<SharedItemsUserShare>> {

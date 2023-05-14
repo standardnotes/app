@@ -13,16 +13,6 @@ describe.only('sharing', function () {
   let context
   let sharingService
 
-  let getShareUuidForShareToken = (shareToken) => {
-    for (const shareRecord of Object.values(sharingService.initiatedShares)) {
-      for (const shareItem of Object.values(shareRecord)) {
-        if (shareItem.shareToken === shareToken) {
-          return shareItem.uuid
-        }
-      }
-    }
-  }
-
   afterEach(async function () {
     await Factory.safeDeinit(application)
     localStorage.clear()
@@ -41,6 +31,7 @@ describe.only('sharing', function () {
     sharingService = new SharingService(
       application.httpService,
       application.sync,
+      application.items,
       application.user,
       application.options.crypto,
     )
@@ -49,18 +40,29 @@ describe.only('sharing', function () {
   describe('note sharing', () => {
     it('sharing an item should return a share token and a private key', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const url = await sharingService.shareItem(note.uuid, ShareItemDuration.OneDay, AppHost)
-      const { shareToken, privateKey } = sharingService.decodeShareUrl(url)
+      const url = await sharingService.shareItem(
+        note.uuid,
+        SharedItemDuration.OneDay,
+        SharedItemPermission.Read,
+        AppHost,
+      )
+      const { shareToken, publicKey, privateKey } = sharingService.decodeShareUrl(url)
 
       expect(shareToken).to.not.be.undefined
+      expect(publicKey).to.not.be.undefined
       expect(privateKey).to.not.be.undefined
     })
 
     it('should correctly decrypt shared items', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const url = await sharingService.shareItem(note.uuid, ShareItemDuration.OneDay, AppHost)
+      const url = await sharingService.shareItem(
+        note.uuid,
+        SharedItemDuration.OneDay,
+        SharedItemPermission.Read,
+        AppHost,
+      )
 
-      const { item } = await sharingService.getSharedItem(url)
+      const { item } = await sharingService.downloadSharedItem(url)
 
       expect(item.content.title).to.equal('foo')
       expect(item.content.text).to.equal('bar')
@@ -71,50 +73,65 @@ describe.only('sharing', function () {
 
       const updatePromise = new Promise((resolve) => {
         sharingService.addEventObserver((event, data) => {
-          if (event === SharingServiceEvent.DidUpdateSharedItem && data.uuid === note.uuid) {
+          if (event === SharingServiceEvent.DidUpdateSharedItem && data.itemUuid === note.uuid) {
             resolve()
           }
         })
       })
 
-      const url = await sharingService.shareItem(note.uuid, ShareItemDuration.OneDay, AppHost)
+      const url = await sharingService.shareItem(
+        note.uuid,
+        SharedItemDuration.OneDay,
+        SharedItemPermission.Read,
+        AppHost,
+      )
 
       await context.changeNoteTitleAndSync(note, 'changed note title')
 
       await updatePromise
-      const { item } = await sharingService.getSharedItem(url)
+      const { item } = await sharingService.downloadSharedItem(url)
 
       expect(item.content.title).to.equal('changed note title')
     })
 
-    it('when updating an expired shared item, should remove from local user shares array', async () => {
+    it('when updating an expired shared item, should update local shared item', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const url = await sharingService.shareItem(note.uuid, ShareItemDuration.AfterConsume, AppHost)
+      const url = await sharingService.shareItem(
+        note.uuid,
+        SharedItemDuration.AfterConsume,
+        SharedItemPermission.Read,
+        AppHost,
+      )
 
-      const { publicKey } = await sharingService.getSharedItem(url)
-      const { shareToken } = sharingService.decodeShareUrl(url)
+      await sharingService.downloadSharedItem(url)
+      const sharedItem = sharingService.sharedItemsForItem(note.uuid)[0]
+      expect(sharedItem.expired).to.not.be.ok
 
-      expect(Object.values(sharingService.initiatedShares[note.uuid]).length).to.equal(1)
-
-      await sharingService.updateSharedItem(note.uuid, getShareUuidForShareToken(shareToken), shareToken, publicKey)
-
-      expect(Object.values(sharingService.initiatedShares[note.uuid]).length).to.equal(0)
+      await sharingService.updateSharedItemContentKey(sharedItem.uuid)
+      const updatedSharedItem = sharingService.sharedItemsForItem(note.uuid)[0]
+      expect(updatedSharedItem.expired).to.be.true
     })
 
     it('should be able to download shared item without account', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const url = await sharingService.shareItem(note.uuid, ShareItemDuration.OneDay, AppHost)
+      const url = await sharingService.shareItem(
+        note.uuid,
+        SharedItemDuration.OneDay,
+        SharedItemPermission.Read,
+        AppHost,
+      )
 
       const offlineContext = await Factory.createAppContextWithRealCrypto()
       await offlineContext.launch()
       const offlineSharingService = new SharingService(
         offlineContext.application.httpService,
         offlineContext.application.sync,
+        offlineContext.application.items,
         offlineContext.application.user,
         offlineContext.application.options.crypto,
       )
 
-      const { item } = await offlineSharingService.getSharedItem(url)
+      const { item } = await offlineSharingService.downloadSharedItem(url)
 
       expect(item.content.title).to.equal('foo')
       expect(item.content.text).to.equal('bar')
@@ -122,7 +139,12 @@ describe.only('sharing', function () {
 
     it('should fail to update shared item from other account', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const url = await sharingService.shareItem(note.uuid, ShareItemDuration.OneDay, AppHost)
+      const url = await sharingService.shareItem(
+        note.uuid,
+        SharedItemDuration.OneDay,
+        SharedItemPermission.Read,
+        AppHost,
+      )
 
       const otherContext = await Factory.createAppContextWithRealCrypto()
       await otherContext.launch()
@@ -130,69 +152,65 @@ describe.only('sharing', function () {
       const otherSharingService = new SharingService(
         otherContext.application.httpService,
         otherContext.application.sync,
+        otherContext.application.items,
         otherContext.application.user,
         otherContext.application.options.crypto,
       )
 
-      const { publicKey } = await otherSharingService.getSharedItem(url)
+      await otherSharingService.downloadSharedItem(url)
       const { shareToken } = otherSharingService.decodeShareUrl(url)
 
-      otherSharingService.sync.getItem = () => {
-        return { contentKey: 'foo' }
-      }
-      const updateResponse = await otherSharingService.updateSharedItem(
-        note.uuid,
-        getShareUuidForShareToken(shareToken),
-        shareToken,
-        publicKey,
-      )
+      const updateResponse = await otherSharingService.sharingServer.updateSharedItemContentKey({
+        shareToken: shareToken,
+        encryptedContentKey: 'foo',
+      })
 
-      expect(isClientDisplayableError(updateResponse)).to.be.true
+      expect(isErrorResponse(updateResponse)).to.be.true
     })
 
     it('should expire share immediately after consume', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const url = await sharingService.shareItem(note.uuid, ShareItemDuration.AfterConsume, AppHost)
+      const url = await sharingService.shareItem(
+        note.uuid,
+        SharedItemDuration.AfterConsume,
+        SharedItemPermission.Read,
+        AppHost,
+      )
 
-      await sharingService.getSharedItem(url)
-      const secondDownloadResponse = await sharingService.getSharedItem(url)
+      await sharingService.downloadSharedItem(url)
+      const secondDownloadResponse = await sharingService.downloadSharedItem(url)
       expect(isClientDisplayableError(secondDownloadResponse)).to.be.true
     })
 
     it('should not expire share immediately after consume', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const url = await sharingService.shareItem(note.uuid, ShareItemDuration.OneDay, AppHost)
+      const url = await sharingService.shareItem(
+        note.uuid,
+        SharedItemDuration.OneDay,
+        SharedItemPermission.Read,
+        AppHost,
+      )
 
-      await sharingService.getSharedItem(url)
-      const secondDownloadResponse = await sharingService.getSharedItem(url)
+      await sharingService.downloadSharedItem(url)
+      const secondDownloadResponse = await sharingService.downloadSharedItem(url)
       expect(secondDownloadResponse.item).to.not.be.undefined
     })
 
     it('should decode url', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const url = await sharingService.shareItem(note.uuid, ShareItemDuration.OneDay, AppHost)
+      const url = await sharingService.shareItem(
+        note.uuid,
+        SharedItemDuration.OneDay,
+        SharedItemPermission.Read,
+        AppHost,
+      )
       const decoded = sharingService.decodeShareUrl(url)
 
       expect(decoded.shareToken).to.not.be.undefined
+      expect(decoded.publicKey).to.not.be.undefined
       expect(decoded.privateKey).to.not.be.undefined
       expect(decoded.version).to.equal('1.0')
       expect(decoded.thirdPartyApiHost).to.be.undefined
-    })
-
-    it('should download user shares on sign in', async () => {
-      const otherContext = await Factory.createAppContextWithRealCrypto()
-      await otherContext.launch()
-      const otherSharingService = new SharingService(
-        otherContext.application.httpService,
-        otherContext.application.sync,
-        otherContext.application.user,
-        otherContext.application.options.crypto,
-      )
-      await otherContext.createSyncedNote('foo', 'bar')
-
-      const downloadSharesSpy = sinon.spy(otherSharingService, 'downloadUserShares')
-      await otherContext.register()
-      expect(downloadSharesSpy.callCount).to.equal(1)
     })
   })
 
@@ -206,9 +224,14 @@ describe.only('sharing', function () {
       const buffer = new Uint8Array(await response.arrayBuffer())
       const file = await Files.uploadFile(context.application.fileService, buffer, 'my-file', 'md', 1000)
 
-      const url = await sharingService.shareItem(file.uuid, ShareItemDuration.OneDay, AppHost)
+      const url = await sharingService.shareItem(
+        file.uuid,
+        SharedItemDuration.OneDay,
+        SharedItemPermission.Read,
+        AppHost,
+      )
 
-      const { item, fileValetToken } = await sharingService.getSharedItem(url)
+      const { item, fileValetToken } = await sharingService.downloadSharedItem(url)
       expect(fileValetToken).to.not.be.undefined
 
       const downloadedBytes = await Files.downloadSharedFile(context.application.fileService, item, fileValetToken)
@@ -219,18 +242,24 @@ describe.only('sharing', function () {
       const response = await fetch('/mocha/assets/small_file.md')
       const buffer = new Uint8Array(await response.arrayBuffer())
       const file = await Files.uploadFile(context.application.fileService, buffer, 'my-file', 'md', 1000)
-      const url = await sharingService.shareItem(file.uuid, ShareItemDuration.OneDay, AppHost)
+      const url = await sharingService.shareItem(
+        file.uuid,
+        SharedItemDuration.OneDay,
+        SharedItemPermission.Read,
+        AppHost,
+      )
 
       const offlineContext = await Factory.createAppContextWithRealCrypto()
       await offlineContext.launch()
       const offlineSharingService = new SharingService(
         offlineContext.application.httpService,
         offlineContext.application.sync,
+        offlineContext.application.items,
         offlineContext.application.user,
         offlineContext.application.options.crypto,
       )
 
-      const { item, fileValetToken } = await offlineSharingService.getSharedItem(url)
+      const { item, fileValetToken } = await offlineSharingService.downloadSharedItem(url)
       const downloadedBytes = await Files.downloadSharedFile(
         offlineContext.application.fileService,
         item,

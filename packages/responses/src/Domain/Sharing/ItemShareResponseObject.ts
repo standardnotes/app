@@ -4,7 +4,7 @@ export type ItemShareResponseObject = {
   uuid: string
   itemUuid: string
   createdAt: Date
-  publicKey: string
+  permissions: string
   shareToken: string
   contentType: ContentType
   encryptedContentKey: string

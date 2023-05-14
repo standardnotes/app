@@ -19,7 +19,6 @@ export * from './Settings'
 
 export * from './Sharing/SharingService'
 export * from './Sharing/SharingServiceInterface'
-export * from './Sharing/ShareItemDuration'
 
 export * from './Singleton/SingletonManager'
 export * from './Storage/DiskStorageService'

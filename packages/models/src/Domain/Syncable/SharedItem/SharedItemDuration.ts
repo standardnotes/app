@@ -1,4 +1,4 @@
-export enum ShareItemDuration {
+export enum SharedItemDuration {
   AfterConsume = 'after-consume',
   OneDay = 'one-day',
   ThreeDays = 'three-days',

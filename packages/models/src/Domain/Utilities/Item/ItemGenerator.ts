@@ -1,3 +1,4 @@
+import { SharedItemMutator } from './../../Syncable/SharedItem/SharedItemMutator'
 import { ContentType } from '@standardnotes/common'
 import { EncryptedItem } from '../../Abstract/Item/Implementations/EncryptedItem'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
@@ -34,6 +35,7 @@ import { DeletedItem } from '../../Abstract/Item/Implementations/DeletedItem'
 import { EncryptedItemInterface } from '../../Abstract/Item/Interfaces/EncryptedItem'
 import { DeletedItemInterface } from '../../Abstract/Item/Interfaces/DeletedItem'
 import { SmartViewMutator } from '../../Syncable/SmartView'
+import { SharedItem } from '../../Syncable/SharedItem/SharedItem'
 
 type ItemClass<C extends ItemContent = ItemContent> = new (payload: DecryptedPayloadInterface<C>) => DecryptedItem<C>
 
@@ -52,6 +54,7 @@ const ContentTypeClassMapping: Partial<Record<ContentType, MappingEntry>> = {
     itemClass: SNActionsExtension,
     mutatorClass: ActionsExtensionMutator,
   },
+  [ContentType.SharedItem]: { itemClass: SharedItem, mutatorClass: SharedItemMutator },
   [ContentType.Component]: { itemClass: SNComponent, mutatorClass: ComponentMutator },
   [ContentType.Editor]: { itemClass: SNEditor },
   [ContentType.ExtensionRepo]: { itemClass: SNFeatureRepo },

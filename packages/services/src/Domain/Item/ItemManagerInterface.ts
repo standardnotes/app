@@ -99,9 +99,14 @@ export interface ItemManagerInterface extends AbstractService {
   getDirtyItems(): (DecryptedItemInterface | DeletedItemInterface)[]
   getTagLongTitle(tag: SNTag): string
   getSortedTagsForItem(item: DecryptedItemInterface<ItemContent>): SNTag[]
+  itemsReferencingItem<I extends DecryptedItemInterface = DecryptedItemInterface>(
+    itemToLookupUuidFor: DecryptedItemInterface,
+    contentType?: ContentType,
+  ): I[]
   referencesForItem<I extends DecryptedItemInterface = DecryptedItemInterface>(
     itemToLookupUuidFor: DecryptedItemInterface,
     contentType?: ContentType,
   ): I[]
   findItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T | undefined
+  findSureItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T
 }

@@ -8,18 +8,18 @@ import {
 } from '@standardnotes/responses'
 
 export interface SharingServerInterface {
-  getSharedItem(shareToken: string, thirdPartyHost?: string): Promise<HttpResponse<GetSharedItemResponse>>
+  downloadSharedItem(shareToken: string, thirdPartyHost?: string): Promise<HttpResponse<GetSharedItemResponse>>
 
   shareItem(params: {
     itemUuid: string
     encryptedContentKey: string
-    publicKey: string
+    permissions: string
     fileRemoteIdentifier?: string
     contentType: ContentType
     duration: string
   }): Promise<HttpResponse<ItemSharePostResponse>>
 
-  updateSharedItem(params: {
+  updateSharedItemContentKey(params: {
     shareToken: string
     encryptedContentKey: string
   }): Promise<HttpResponse<SharedItemsUserShare>>

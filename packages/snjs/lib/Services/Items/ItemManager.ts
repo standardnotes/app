@@ -326,12 +326,12 @@ export class ItemManager
   /**
    * Returns the items that reference the given item, or an empty array if no results.
    */
-  public itemsReferencingItem(
+  public itemsReferencingItem<I extends Models.DecryptedItemInterface = Models.DecryptedItemInterface>(
     itemToLookupUuidFor: Models.DecryptedItemInterface,
     contentType?: ContentType,
-  ): Models.DecryptedItemInterface[] {
+  ): I[] {
     const uuids = this.collection.uuidsThatReferenceUuid(itemToLookupUuidFor.uuid)
-    let referencing = this.findItems(uuids)
+    let referencing = this.findItems<I>(uuids)
     if (contentType) {
       referencing = referencing.filter((ref) => {
         return ref?.content_type === contentType

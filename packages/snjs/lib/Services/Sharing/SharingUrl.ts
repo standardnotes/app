@@ -12,6 +12,7 @@ export type SharingUrlParams = {
 export type DecodedSharingUrl = {
   version: string
   shareToken: string
+  publicKey: string
   privateKey: string
   thirdPartyApiHost?: string
 }
