@@ -10,7 +10,8 @@ import {
   DecryptedPayload,
   DecryptedPayloadInterface,
   SharedItemsKeyInterface,
-  ShareGroupKeyInterface,
+  GroupKeyInterface,
+  SharedItemsKeyContent,
 } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import * as Utils from '@standardnotes/utils'
@@ -62,6 +63,15 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return response
   }
 
+  private generateNewSharedItemsKeyContent() {
+    const itemsKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
+    const response = FillItemContent<SharedItemsKeyContent>({
+      itemsKey: itemsKey,
+      version: ProtocolVersion.V004,
+    })
+    return response
+  }
+
   /**
    * Creates a new random items key to use for item encryption.
    * The consumer must save/sync this item.
@@ -71,6 +81,16 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       uuid: Utils.UuidGenerator.GenerateUuid(),
       content_type: ContentType.ItemsKey,
       content: this.generateNewItemsKeyContent(),
+      ...PayloadTimestampDefaults(),
+    })
+    return CreateDecryptedItemFromPayload(payload)
+  }
+
+  public createSharedItemsKey(): SharedItemsKeyInterface {
+    const payload = new DecryptedPayload({
+      uuid: Utils.UuidGenerator.GenerateUuid(),
+      content_type: ContentType.ItemsKey,
+      content: this.generateNewSharedItemsKeyContent(),
       ...PayloadTimestampDefaults(),
     })
     return CreateDecryptedItemFromPayload(payload)
@@ -200,7 +220,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
    */
   private generateAuthenticatedDataForPayload(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface | SNRootKey,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | SNRootKey,
   ): ItemAuthenticatedData | RootKeyEncryptedAuthenticatedData {
     const baseData: ItemAuthenticatedData = {
       u: payload.uuid,
@@ -236,7 +256,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
 
   public generateEncryptedParametersSync(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface | SNRootKey,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | SNRootKey,
   ): EncryptedParameters {
     const contentKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
     const contentPlaintext = JSON.stringify(payload.content)
@@ -255,7 +275,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
 
   public generateDecryptedParametersSync<C extends ItemContent = ItemContent>(
     encrypted: EncryptedParameters,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface | SNRootKey,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | SNRootKey,
   ): DecryptedParameters<C> | ErrorDecryptingParameters {
     const contentKeyComponents = this.deconstructEncryptedPayloadString(encrypted.enc_item_key)
     const authenticatedData = this.stringToAuthenticatedData(contentKeyComponents.authenticatedData, {

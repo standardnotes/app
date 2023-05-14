@@ -9,6 +9,10 @@ export * from './Revision/RevisionServerInterface'
 
 export * from './Sharing/SharingServer'
 export * from './Sharing/SharingServerInterface'
+export * from './Sharing/ShareGroup'
+export * from './Sharing/ShareGroupItem'
+export * from './Sharing/ShareGroupUser'
+export * from './Sharing/ShareGroupPermission'
 
 export * from './Subscription/SubscriptionServer'
 export * from './Subscription/SubscriptionServerInterface'

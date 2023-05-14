@@ -1,4 +1,4 @@
-export enum ShareGroupKeyPermission {
+export enum ShareGroupPermission {
   Read = 'read',
   Write = 'write',
 }

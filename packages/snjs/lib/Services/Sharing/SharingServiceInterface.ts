@@ -1,28 +1,26 @@
-import { ClientDisplayableError, SharedItemsUserShare } from '@standardnotes/responses'
+import { ClientDisplayableError } from '@standardnotes/responses'
 import { AbstractService } from '@standardnotes/services'
-import { DecryptedItemInterface, SharedItemDuration, SharedItemPermission } from '@standardnotes/models'
+import {
+  ShareGroupInterface,
+  ShareGroupUserInterface,
+  ShareGroupItemInterface,
+  ShareGroupPermission,
+} from '@standardnotes/api'
+import { Contact, DecryptedItemInterface } from '@standardnotes/models'
 
-export type SharingServiceShareItemReturn = string
+export enum SharingServiceEvent {}
 
-export type SharingServiceGetSharedItemReturn = {
-  item: DecryptedItemInterface
-  fileValetToken?: string
-  publicKey: string
-}
+export interface SharingServiceInterface extends AbstractService<SharingServiceEvent> {
+  createShareGroup(): Promise<ShareGroupInterface | ClientDisplayableError>
 
-export enum SharingServiceEvent {
-  DidUpdateSharedItem = 'SharingServiceEventDidUpdateSharedItem',
-}
+  addContactToShareGroup(
+    group: ShareGroupInterface,
+    contact: Contact,
+    permissions: ShareGroupPermission,
+  ): Promise<ShareGroupUserInterface | ClientDisplayableError>
 
-export interface SharingServiceInterface extends AbstractService<SharingServiceEvent, any> {
-  shareItem(
-    itemUuid: string,
-    duration: SharedItemDuration,
-    permission: SharedItemPermission,
-    appHost: string,
-  ): Promise<SharingServiceShareItemReturn | ClientDisplayableError>
-
-  getInitiatedShares(): Promise<SharedItemsUserShare[] | ClientDisplayableError>
-
-  downloadSharedItem(url: string): Promise<SharingServiceGetSharedItemReturn | ClientDisplayableError>
+  addItemToShareGroup(
+    group: ShareGroupInterface,
+    item: DecryptedItemInterface,
+  ): Promise<ShareGroupItemInterface | ClientDisplayableError>
 }

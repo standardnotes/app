@@ -1,54 +1,37 @@
-import { HttpServiceInterface, SharingServer, SharingServerInterface } from '@standardnotes/api'
+import { GroupKeyContentSpecialized } from './../../../../models/src/Domain/Syncable/GroupKey/GroupKeyContent'
+import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import {
-  ClientDisplayableError,
-  ErrorTag,
-  SharedItemsUserShare,
-  isClientDisplayableError,
-  isErrorResponse,
-} from '@standardnotes/responses'
-import { ProtocolOperator005, isErrorDecryptingParameters } from '@standardnotes/encryption'
+  HttpServiceInterface,
+  SharingServer,
+  SharingServerInterface,
+  ShareGroupInterface,
+  ShareGroupUserInterface,
+  ShareGroupPermission,
+  ShareGroupItemInterface,
+} from '@standardnotes/api'
+import { ProtocolOperator005 } from '@standardnotes/encryption'
 import {
   AbstractService,
-  AccountEvent,
   InternalEventBusInterface,
   ItemManagerInterface,
-  SyncEvent,
   SyncServiceInterface,
   UserClientInterface,
 } from '@standardnotes/services'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
-  CreateDecryptedItemFromPayload,
-  DecryptedPayload,
-  FileContent,
-  FilterDisallowedRemotePayloadsAndMap,
-  PayloadSource,
-  ServerSyncPushContextualPayload,
-  SharedItem,
-  SharedItemContent,
-  SharedItemDuration,
-  SharedItemMutator,
-  isDeletedPayload,
-  SharedItemPermission,
-  SharedItemContentSpecialized,
+  Contact,
+  DecryptedItemInterface,
   FillItemContentSpecialized,
+  GroupKeyInterface,
+  GroupKeyMutator,
 } from '@standardnotes/models'
-import { CreatePayloadFromRawServerItem } from '../Sync/Account/Utilities'
-import {
-  SharingServiceEvent,
-  SharingServiceGetSharedItemReturn,
-  SharingServiceInterface,
-  SharingServiceShareItemReturn,
-} from './SharingServiceInterface'
+import { SharingServiceEvent, SharingServiceInterface } from './SharingServiceInterface'
 import { ContentType } from '@standardnotes/common'
-import { DecodedSharingUrl, SharingUrlParams, SharingUrlVersion } from './SharingUrl'
-import { isUrlFirstParty } from '@Lib/Hosts'
 
 export class SharingService extends AbstractService<SharingServiceEvent> implements SharingServiceInterface {
   private operator: ProtocolOperator005
   private sharingServer: SharingServerInterface
-  private syncObserverDisposer: () => void
-  private userObserverDisposer?: () => void
+  private user: { publicKey: string; privateKey: string }
 
   constructor(
     private http: HttpServiceInterface,
@@ -60,44 +43,89 @@ export class SharingService extends AbstractService<SharingServiceEvent> impleme
   ) {
     super(eventBus)
     this.sharingServer = new SharingServer(http)
-    this.syncObserverDisposer = sync.addEventObserver(async (eventName, data) => {
-      if (eventName === SyncEvent.SingleRoundTripSyncCompleted && data) {
-        const eventData = data as { uploadedPayloads: ServerSyncPushContextualPayload[] }
-        const { uploadedPayloads } = eventData
-        if (uploadedPayloads) {
-          await this.updateSharesForUpdatedItems(uploadedPayloads)
-        }
-      }
+    this.operator = new ProtocolOperator005(crypto)
+  }
+
+  async createShareGroup(): Promise<ShareGroupInterface | ClientDisplayableError> {
+    const response = await this.sharingServer.createShareGroup()
+
+    if (isErrorResponse(response)) {
+      return ClientDisplayableError.FromError(response.data.error)
+    }
+
+    const groupKeyContent: GroupKeyContentSpecialized = {
+      groupUuid: response.data.uuid,
+      key: this.crypto.generateRandomKey(192),
+      version: this.operator.version,
+    }
+
+    await this.items.createItem<GroupKeyInterface>(
+      ContentType.GroupKey,
+      FillItemContentSpecialized(groupKeyContent),
+      true,
+    )
+
+    const sharedItemsKey = this.operator.createSharedItemsKey()
+    await this.items.insertItem(sharedItemsKey)
+
+    void this.sync.sync()
+
+    return response.data
+  }
+
+  async addContactToShareGroup(
+    group: ShareGroupInterface,
+    contact: Contact,
+    permissions: ShareGroupPermission,
+  ): Promise<ShareGroupUserInterface | ClientDisplayableError> {
+    const groupKey = this.findGroupKeyForGroup(group)
+    if (!groupKey) {
+      return ClientDisplayableError.FromString('Cannot add contact; group key not found')
+    }
+
+    const encryptedGroupKey = this.operator.asymmetricEncryptKey(groupKey.key, this.user.privateKey, contact.publicKey)
+
+    const response = await this.sharingServer.addUserToShareGroup(
+      group.uuid,
+      contact.userUuid,
+      encryptedGroupKey,
+      permissions,
+    )
+
+    if (isErrorResponse(response)) {
+      return ClientDisplayableError.FromError(response.data.error)
+    }
+
+    return response.data
+  }
+
+  async addItemToShareGroup(
+    group: ShareGroupInterface,
+    item: DecryptedItemInterface,
+  ): Promise<ShareGroupItemInterface | ClientDisplayableError> {
+    const groupKey = this.findGroupKeyForGroup(group)
+    if (!groupKey) {
+      return ClientDisplayableError.FromString('Cannot add contact; group key not found')
+    }
+
+    const response = await this.sharingServer.addItemToShareGroup(item.uuid, group.uuid)
+
+    if (isErrorResponse(response)) {
+      return ClientDisplayableError.FromError(response.data.error)
+    }
+
+    await this.items.changeItem<GroupKeyMutator>(groupKey, (mutator) => {
+      mutator.addItemReference(item)
     })
 
-    this.operator = new ProtocolOperator005(crypto)
-    if (user.isSignedIn()) {
-      // void this.downloadUserShares()
-    } else {
-      this.userObserverDisposer = user.addEventObserver(async (eventName) => {
-        if (eventName === AccountEvent.SignedInOrRegistered) {
-          // void this.downloadUserShares()
-        }
-      })
-    }
+    void this.sync.sync()
+
+    return response.data
   }
 
-  private async updateSharesForUpdatedItems(pushedPayloads: ServerSyncPushContextualPayload[]): Promise<void> {
-    for (const payload of pushedPayloads) {
-      const sharedItems = this.sharedItemsForItem(payload.uuid)
-      for (const sharedItem of sharedItems) {
-        void this.updateSharedItemContentKey(sharedItem.uuid)
-      }
-    }
-  }
-
-  private sharedItemsForItem(itemUuid: string): SharedItem[] {
-    const item = this.items.findItem(itemUuid)
-    if (!item) {
-      return []
-    }
-
-    return this.items.itemsReferencingItem<SharedItem>(item, ContentType.SharedItem)
+  private findGroupKeyForGroup(group: ShareGroupInterface): GroupKeyInterface | undefined {
+    const allGroupKeys = this.items.getItems<GroupKeyInterface>(ContentType.GroupKey)
+    return allGroupKeys.find((groupKey) => groupKey.groupUuid === group.uuid)
   }
 
   override deinit(): void {
@@ -107,223 +135,5 @@ export class SharingService extends AbstractService<SharingServiceEvent> impleme
     ;(this.crypto as unknown) = undefined
     ;(this.operator as unknown) = undefined
     ;(this.sharingServer as unknown) = undefined
-
-    this.syncObserverDisposer()
-    this.userObserverDisposer?.()
-  }
-
-  async getInitiatedShares(): Promise<SharedItemsUserShare[]> {
-    const response = await this.sharingServer.getInitiatedShares()
-    if (isErrorResponse(response)) {
-      return []
-    }
-    return response.data.itemShares
-  }
-
-  private async updateSharedItemContentKey(sharedItemUuid: string): Promise<ClientDisplayableError | void> {
-    const sharedItem = this.items.findItem<SharedItem>(sharedItemUuid)
-    if (!sharedItem) {
-      return ClientDisplayableError.FromString('Could not find shared item')
-    }
-
-    if (sharedItem.expired) {
-      return ClientDisplayableError.FromString('Shared item has expired')
-    }
-
-    const getItemResult = await this.sync.getItemAndContentKey(sharedItem.itemUuid)
-    if (!getItemResult) {
-      return ClientDisplayableError.FromString('Could not get item to share')
-    }
-
-    const encryptedContentKey = this.operator.asymmetricAnonymousEncryptKey(
-      getItemResult.contentKey,
-      sharedItem.publicKey,
-    )
-
-    const shareResponse = await this.sharingServer.updateSharedItemContentKey({
-      shareToken: sharedItem.shareToken,
-      encryptedContentKey: encryptedContentKey,
-    })
-
-    if (isErrorResponse(shareResponse)) {
-      if (shareResponse.data.error.tag === ErrorTag.ExpiredItemShare) {
-        await this.items.changeItem<SharedItemMutator>(sharedItem, (mutableItem) => {
-          mutableItem.expired = true
-        })
-        void this.sync.sync()
-      }
-
-      return ClientDisplayableError.FromError(shareResponse.data.error)
-    }
-
-    void this.notifyEvent(SharingServiceEvent.DidUpdateSharedItem, { itemUuid: sharedItem.itemUuid })
-  }
-
-  public async shareItem(
-    itemUuid: string,
-    duration: SharedItemDuration,
-    permissions: SharedItemPermission,
-    appHost: string,
-  ): Promise<SharingServiceShareItemReturn | ClientDisplayableError> {
-    const getItemResult = await this.sync.getItemAndContentKey(itemUuid)
-    if (!getItemResult) {
-      return ClientDisplayableError.FromString('Could not get item to share')
-    }
-
-    const keypair = this.operator.generateKeyPair()
-
-    const encryptedContentKey = this.operator.asymmetricAnonymousEncryptKey(getItemResult.contentKey, keypair.publicKey)
-
-    const shareResponse = await this.sharingServer.shareItem({
-      contentType: getItemResult.payload.content_type,
-      itemUuid: itemUuid,
-      encryptedContentKey: encryptedContentKey,
-      permissions: permissions,
-      duration: duration,
-      fileRemoteIdentifier:
-        getItemResult.payload.content_type === ContentType.File
-          ? (getItemResult.payload.content as FileContent).remoteIdentifier
-          : undefined,
-    })
-
-    if (isErrorResponse(shareResponse)) {
-      return ClientDisplayableError.FromError(shareResponse.data.error)
-    }
-
-    const content: SharedItemContentSpecialized = {
-      itemUuid: itemUuid,
-      shareToken: shareResponse.data.itemShare.shareToken,
-      expired: false,
-      duration: duration,
-      publicKey: keypair.publicKey,
-      privateKey: keypair.privateKey,
-      isUserOriginator: true,
-      permissions: permissions,
-    }
-
-    const sharedItem = await this.items.createItem<SharedItem, SharedItemContent>(
-      ContentType.SharedItem,
-      FillItemContentSpecialized(content),
-      true,
-    )
-
-    const item = this.items.findSureItem(itemUuid)
-
-    await this.items.changeItem<SharedItemMutator>(sharedItem, (mutableItem) => {
-      mutableItem.addItemReference(item)
-    })
-
-    void this.sync.sync()
-
-    return this.buildUrlForSharedItem(
-      appHost,
-      shareResponse.data.itemShare.shareToken,
-      keypair.publicKey,
-      keypair.privateKey,
-    )
-  }
-
-  public async downloadSharedItem(url: string): Promise<SharingServiceGetSharedItemReturn | ClientDisplayableError> {
-    const params = this.decodeShareUrl(url)
-    if (isClientDisplayableError(params)) {
-      return params
-    }
-
-    const response = await this.sharingServer.downloadSharedItem(params.shareToken, params.thirdPartyApiHost)
-    if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromError(response.data.error)
-    }
-
-    const { item, itemShare, fileValetToken } = response.data
-
-    if (!item) {
-      return ClientDisplayableError.FromString('Shared item not found')
-    }
-
-    const decryptedContentKey = this.operator.asymmetricAnonymousDecryptKey(
-      itemShare.encryptedContentKey,
-      params.publicKey,
-      params.privateKey,
-    )
-
-    const receivedPayloads = FilterDisallowedRemotePayloadsAndMap([item]).map((rawPayload) => {
-      return CreatePayloadFromRawServerItem(rawPayload, PayloadSource.RemoteRetrieved)
-    })
-
-    const filteredPayload = receivedPayloads[0]
-
-    if (!filteredPayload || isDeletedPayload(filteredPayload)) {
-      return ClientDisplayableError.FromString('Shared item is deleted or client rejected')
-    }
-
-    const decryptedParameters = this.operator.generateDecryptedParametersForSharedItem(
-      filteredPayload,
-      decryptedContentKey,
-    )
-
-    if (isErrorDecryptingParameters(decryptedParameters)) {
-      return ClientDisplayableError.FromString('Error decrypting shared item')
-    }
-
-    const decryptedPayload = new DecryptedPayload({
-      ...filteredPayload.ejected(),
-      ...decryptedParameters,
-    })
-
-    if (decryptedPayload.content_type === ContentType.File && !fileValetToken) {
-      return ClientDisplayableError.FromString('File valet token is missing')
-    }
-
-    return {
-      item: CreateDecryptedItemFromPayload(decryptedPayload),
-      publicKey: params.publicKey,
-      fileValetToken,
-    }
-  }
-
-  private buildUrlForSharedItem(appHost: string, shareToken: string, publicKey: string, privateKey: string): string {
-    const url = new URL(appHost)
-    url.pathname = '/share'
-
-    const params: SharingUrlParams = {
-      t: shareToken,
-      v: SharingUrlVersion,
-    }
-
-    const host = this.http.getHost()
-    const isThirdPartyHost = !isUrlFirstParty(host)
-    if (isThirdPartyHost) {
-      params.h = host
-    }
-
-    url.searchParams.append('p', this.crypto.base64Encode(JSON.stringify(params)))
-
-    url.hash = `${publicKey}-${privateKey}`
-    return url.toString()
-  }
-
-  private decodeShareUrl(urlString: string): DecodedSharingUrl | ClientDisplayableError {
-    const url = new URL(urlString)
-    const params = url.searchParams.get('p')
-    if (!params) {
-      return ClientDisplayableError.FromString('Invalid sharing URL')
-    }
-
-    const decodedParams = this.crypto.base64Decode(params)
-    if (!decodedParams) {
-      return ClientDisplayableError.FromString('Invalid sharing URL')
-    }
-
-    const parsedParams = JSON.parse(decodedParams)
-
-    const hashComponents = url.hash.replace('#', '').split('-')
-
-    return {
-      shareToken: parsedParams.t,
-      thirdPartyApiHost: parsedParams.h,
-      version: parsedParams.v,
-      publicKey: hashComponents[0],
-      privateKey: hashComponents[1],
-    }
   }
 }

@@ -1,28 +1,18 @@
-import { ContentType } from '@standardnotes/common'
-import {
-  HttpResponse,
-  GetSharedItemResponse,
-  ItemSharePostResponse,
-  SharedItemsUserShare,
-  GetUserItemSharesResponse,
-} from '@standardnotes/responses'
+import { HttpResponse } from '@standardnotes/responses'
+import { ShareGroupInterface } from './ShareGroup'
+import { ShareGroupItemInterface } from './ShareGroupItem'
+import { ShareGroupUserInterface } from './ShareGroupUser'
+import { ShareGroupPermission } from './ShareGroupPermission'
 
 export interface SharingServerInterface {
-  downloadSharedItem(shareToken: string, thirdPartyHost?: string): Promise<HttpResponse<GetSharedItemResponse>>
+  createShareGroup(): Promise<HttpResponse<ShareGroupInterface>>
 
-  shareItem(params: {
-    itemUuid: string
-    encryptedContentKey: string
-    permissions: string
-    fileRemoteIdentifier?: string
-    contentType: ContentType
-    duration: string
-  }): Promise<HttpResponse<ItemSharePostResponse>>
+  addUserToShareGroup(
+    groupUuid: string,
+    userUuid: string,
+    encryptedGroupKey: string,
+    permissions: ShareGroupPermission,
+  ): Promise<HttpResponse<ShareGroupUserInterface>>
 
-  updateSharedItemContentKey(params: {
-    shareToken: string
-    encryptedContentKey: string
-  }): Promise<HttpResponse<SharedItemsUserShare>>
-
-  getInitiatedShares(): Promise<HttpResponse<GetUserItemSharesResponse>>
+  addItemToShareGroup(itemUuid: string, groupUuid: string): Promise<HttpResponse<ShareGroupItemInterface>>
 }

@@ -1,56 +1,35 @@
-import {
-  GetSharedItemResponse,
-  GetUserItemSharesResponse,
-  HttpResponse,
-  ItemSharePostResponse,
-  SharedItemsUserShare,
-} from '@standardnotes/responses'
+import { HttpResponse } from '@standardnotes/responses'
 import { HttpServiceInterface } from '../../Http'
 import { SharingServerInterface } from './SharingServerInterface'
-import { ContentType } from '@standardnotes/common'
 import { SharingPaths } from './Paths'
-import { joinPaths } from '@standardnotes/utils'
+import { ShareGroupInterface } from './ShareGroup'
+import { ShareGroupItemInterface } from './ShareGroupItem'
+import { ShareGroupUserInterface } from './ShareGroupUser'
+import { ShareGroupPermission } from './ShareGroupPermission'
 
 export class SharingServer implements SharingServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
 
-  async downloadSharedItem(shareToken: string, thirdPartyHost?: string): Promise<HttpResponse<GetSharedItemResponse>> {
-    if (thirdPartyHost) {
-      return this.httpService.getExternal(joinPaths(thirdPartyHost, SharingPaths.downloadSharedItem(shareToken)))
-    } else {
-      return this.httpService.get(SharingPaths.downloadSharedItem(shareToken))
-    }
+  createShareGroup(): Promise<HttpResponse<ShareGroupInterface>> {
+    return this.httpService.post(SharingPaths.createShareGroup)
   }
 
-  shareItem(params: {
-    itemUuid: string
-    encryptedContentKey: string
-    permissions: string
-    fileRemoteIdentifier?: string
-    contentType: ContentType
-    duration: string
-  }): Promise<HttpResponse<ItemSharePostResponse>> {
-    return this.httpService.post(SharingPaths.shareItem, {
-      itemUuid: params.itemUuid,
-      encryptedContentKey: params.encryptedContentKey,
-      permissions: params.permissions,
-      fileRemoteIdentifier: params.fileRemoteIdentifier,
-      contentType: params.contentType,
-      duration: params.duration,
+  addUserToShareGroup(
+    groupUuid: string,
+    userUuid: string,
+    encryptedGroupKey: string,
+    permissions: ShareGroupPermission,
+  ): Promise<HttpResponse<ShareGroupUserInterface>> {
+    return this.httpService.post(SharingPaths.addUserToShareGroup(groupUuid), {
+      userUuid,
+      permissions,
+      encryptedGroupKey,
     })
   }
 
-  updateSharedItemContentKey(params: {
-    shareToken: string
-    encryptedContentKey: string
-  }): Promise<HttpResponse<SharedItemsUserShare>> {
-    return this.httpService.patch(SharingPaths.shareItem, {
-      shareToken: params.shareToken,
-      encryptedContentKey: params.encryptedContentKey,
+  addItemToShareGroup(itemUuid: string, groupUuid: string): Promise<HttpResponse<ShareGroupItemInterface>> {
+    return this.httpService.post(SharingPaths.addItemToShareGroup(groupUuid), {
+      itemUuid,
     })
-  }
-
-  getInitiatedShares(): Promise<HttpResponse<GetUserItemSharesResponse>> {
-    return this.httpService.get(SharingPaths.getUserShares)
   }
 }

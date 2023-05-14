@@ -1,12 +1,11 @@
 import { ContentType } from '@standardnotes/common'
-import { ContentReferenceType, DecryptedItemInterface, DecryptedItemMutator } from '../../Abstract/Item'
+import { ContentReferenceType, DecryptedItemMutator } from '../../Abstract/Item'
 import { ShareGroupToItemReference } from '../../Abstract/Reference/ShareGroupToItem'
 import { ShareGroupToSharedItemsKeyReference } from '../../Abstract/Reference/ShareGroupToSharedItemsKey'
-import { SharedItemsKeyInterface } from '../SharedItemsKey/SharedItemsKeyInterface'
-import { ShareGroupKeyContent } from './ShareGroupKeyContent'
+import { GroupKeyContent } from './GroupKeyContent'
 
-export class ShareGroupKeyMutator extends DecryptedItemMutator<ShareGroupKeyContent> {
-  public addItemReference(item: DecryptedItemInterface): void {
+export class GroupKeyMutator extends DecryptedItemMutator<GroupKeyContent> {
+  public addItemReference(item: { uuid: string; content_type: ContentType }): void {
     if (this.immutableItem.isReferencingItem(item)) {
       return
     }
@@ -20,11 +19,11 @@ export class ShareGroupKeyMutator extends DecryptedItemMutator<ShareGroupKeyCont
     this.mutableContent.references.push(reference)
   }
 
-  public removeItemReference(item: DecryptedItemInterface): void {
+  public removeItemReference(item: { uuid: string }): void {
     this.mutableContent.references = this.mutableContent.references.filter((r) => r.uuid !== item.uuid)
   }
 
-  public addSharedItemsKeyReference(item: SharedItemsKeyInterface): void {
+  public addSharedItemsKeyReference(item: { uuid: string; content_type: ContentType }): void {
     if (this.immutableItem.isReferencingItem(item)) {
       return
     }
@@ -38,7 +37,7 @@ export class ShareGroupKeyMutator extends DecryptedItemMutator<ShareGroupKeyCont
     this.mutableContent.references.push(reference)
   }
 
-  public removeSharedItemsKeyReference(item: SharedItemsKeyInterface): void {
+  public removeSharedItemsKeyReference(item: { uuid: string }): void {
     this.mutableContent.references = this.mutableContent.references.filter((r) => r.uuid !== item.uuid)
   }
 }

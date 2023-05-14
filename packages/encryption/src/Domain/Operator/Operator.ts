@@ -5,7 +5,7 @@ import {
   SharedItemsKeyInterface,
   DecryptedPayloadInterface,
   ItemContent,
-  ShareGroupKeyInterface,
+  GroupKeyInterface,
 } from '@standardnotes/models'
 import { SNRootKey } from '../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
@@ -63,12 +63,12 @@ export interface SynchronousOperator extends OperatorCommon {
    */
   generateEncryptedParametersSync(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface | RootKeyInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | RootKeyInterface,
   ): EncryptedParameters
 
   generateDecryptedParametersSync<C extends ItemContent = ItemContent>(
     encrypted: EncryptedParameters,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface | RootKeyInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | RootKeyInterface,
   ): DecryptedParameters<C> | ErrorDecryptingParameters
 }
 
@@ -82,11 +82,11 @@ export interface AsynchronousOperator extends OperatorCommon {
    */
   generateEncryptedParametersAsync(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface | RootKeyInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | RootKeyInterface,
   ): Promise<EncryptedParameters>
 
   generateDecryptedParametersAsync<C extends ItemContent = ItemContent>(
     encrypted: EncryptedParameters,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface | RootKeyInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | RootKeyInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters>
 }

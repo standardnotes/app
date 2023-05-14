@@ -341,7 +341,7 @@ export class ItemManager
   }
 
   public shareGroupReferencingItem(itemToLookupUuidFor: { uuid: UuidString }): Models.ShareGroup | undefined {
-    const items = this.itemsReferencingItem<Models.ShareGroup>(itemToLookupUuidFor, ContentType.ShareGroup)
+    const items = this.itemsReferencingItem<Models.ShareGroup>(itemToLookupUuidFor, ContentType.GroupKey)
     if (items.length > 0) {
       throw Error('Multiple share groups referencing item')
     }

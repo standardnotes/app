@@ -22,7 +22,7 @@ import {
   PayloadEmitSource,
   SharedItemsKeyInterface,
   SureFindPayload,
-  ShareGroupKeyInterface,
+  GroupKeyInterface,
 } from '@standardnotes/models'
 
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
@@ -92,16 +92,16 @@ export class ItemsEncryptionService extends AbstractService {
 
   private keyToUseForItemEncryption(
     payload: DecryptedPayloadInterface,
-  ): ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface | StandardException {
-    const shareGroupKey = this.itemManager.shareGroupKeyReferencingItem(payload)
-    if (shareGroupKey) {
+  ): ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | StandardException {
+    const groupKey = this.itemManager.groupKeyReferencingItem(payload)
+    if (groupKey) {
       const payloadIsSharedItemsKey = ItemContentTypeUsesGroupKeyEncryption(payload.content_type)
       if (payloadIsSharedItemsKey) {
-        return shareGroupKey
+        return groupKey
       }
 
       const associatedSharedItemsKeys = this.itemManager
-        .referencesForItem<SharedItemsKeyInterface>(shareGroupKey, ContentType.SharedItemsKey)
+        .referencesForItem<SharedItemsKeyInterface>(groupKey, ContentType.SharedItemsKey)
         .sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
 
       const sharedKey = associatedSharedItemsKeys[0]
@@ -160,7 +160,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async encryptPayload(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface,
   ): Promise<EncryptedParameters> {
     if (isEncryptedPayload(payload)) {
       throw Error('Attempting to encrypt already encrypted payload.')
@@ -177,7 +177,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async encryptPayloads(
     payloads: DecryptedPayloadInterface[],
-    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface,
   ): Promise<EncryptedParameters[]> {
     return Promise.all(payloads.map((payload) => this.encryptPayload(payload, key)))
   }
@@ -204,7 +204,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async decryptPayload<C extends ItemContent = ItemContent>(
     payload: EncryptedPayloadInterface,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     if (!payload.content) {
       return {
@@ -224,7 +224,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async decryptPayloads<C extends ItemContent = ItemContent>(
     payloads: EncryptedPayloadInterface[],
-    key: ItemsKeyInterface | SharedItemsKeyInterface | ShareGroupKeyInterface,
+    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface,
   ): Promise<(DecryptedParameters<C> | ErrorDecryptingParameters)[]> {
     return Promise.all(payloads.map((payload) => this.decryptPayload<C>(payload, key)))
   }

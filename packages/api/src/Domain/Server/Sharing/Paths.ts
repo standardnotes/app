@@ -1,5 +1,6 @@
 export const SharingPaths = {
-  downloadSharedItem: (shareToken: string) => `/v1/sharing/item/${shareToken}`,
-  shareItem: '/v1/sharing',
-  getUserShares: '/v1/sharing',
+  createShareGroup: '/v1/groups',
+  getShareGroups: '/v1/groups',
+  addUserToShareGroup: (groupUuid: string) => `/v1/groups/${groupUuid}/users`,
+  addItemToShareGroup: (groupUuid: string) => `/v1/groups/${groupUuid}/items`,
 }

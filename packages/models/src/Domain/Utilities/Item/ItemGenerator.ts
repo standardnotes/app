@@ -1,4 +1,4 @@
-import { ShareGroupKeyMutator } from '../../Syncable/ShareGroup/ShareGroupKeyMutator'
+import { GroupKeyMutator } from '../../Syncable/GroupKey/GroupKeyMutator'
 import { ContentType } from '@standardnotes/common'
 import { EncryptedItem } from '../../Abstract/Item/Implementations/EncryptedItem'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
@@ -35,7 +35,9 @@ import { DeletedItem } from '../../Abstract/Item/Implementations/DeletedItem'
 import { EncryptedItemInterface } from '../../Abstract/Item/Interfaces/EncryptedItem'
 import { DeletedItemInterface } from '../../Abstract/Item/Interfaces/DeletedItem'
 import { SmartViewMutator } from '../../Syncable/SmartView'
-import { ShareGroupKey } from '../../Syncable/ShareGroup/ShareGroupKey'
+import { GroupKey } from '../../Syncable/GroupKey/GroupKey'
+import { Contact } from '../../Syncable/Contact/Contact'
+import { ContactMutator } from '../../Syncable/Contact/ContactMutator'
 
 type ItemClass<C extends ItemContent = ItemContent> = new (payload: DecryptedPayloadInterface<C>) => DecryptedItem<C>
 
@@ -54,7 +56,8 @@ const ContentTypeClassMapping: Partial<Record<ContentType, MappingEntry>> = {
     itemClass: SNActionsExtension,
     mutatorClass: ActionsExtensionMutator,
   },
-  [ContentType.ShareGroup]: { itemClass: ShareGroupKey, mutatorClass: ShareGroupKeyMutator },
+  [ContentType.Contact]: { itemClass: Contact, mutatorClass: ContactMutator },
+  [ContentType.GroupKey]: { itemClass: GroupKey, mutatorClass: GroupKeyMutator },
   [ContentType.Component]: { itemClass: SNComponent, mutatorClass: ComponentMutator },
   [ContentType.Editor]: { itemClass: SNEditor },
   [ContentType.ExtensionRepo]: { itemClass: SNFeatureRepo },
