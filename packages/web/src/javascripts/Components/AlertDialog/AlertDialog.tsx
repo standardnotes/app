@@ -22,7 +22,7 @@ const AlertDialog = ({
       />
       <div
         className={classNames(
-          'absolute top-1/2 left-1/2 z-[1] -translate-x-1/2 -translate-y-1/2 rounded border border-border bg-default px-6 py-5 shadow-xl',
+          'absolute top-1/2 left-1/2 z-[1] w-[95vw] -translate-x-1/2 -translate-y-1/2 rounded border border-border bg-default px-6 py-5 shadow-xl md:w-auto',
           !className?.includes('max-w-') && 'max-w-[600px]',
           className,
         )}
