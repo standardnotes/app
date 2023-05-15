@@ -36,8 +36,12 @@ const supportsPassive = (() => {
 export const usePaneSwipeGesture = (
   direction: 'left' | 'right',
   onSwipeEnd: (element: HTMLElement) => void,
-  gesture: 'pan' | 'swipe' = 'pan',
+  options?: {
+    gesture?: 'swipe' | 'pan'
+    requiresStartFromEdge?: boolean
+  },
 ) => {
+  const { gesture = 'pan', requiresStartFromEdge = true } = options || {}
   const application = useApplication()
 
   const underlayElementRef = useRef<HTMLElement | null>(null)
@@ -100,10 +104,11 @@ export const usePaneSwipeGesture = (
       const touch = event.touches[0]
       startX = touch.clientX
 
-      if (
+      const isStartOutOfThreshold =
         (direction === 'right' && startX > TouchStartThreshold) ||
         (direction === 'left' && startX < TouchStartThreshold)
-      ) {
+
+      if (isStartOutOfThreshold && requiresStartFromEdge) {
         canceled = true
         return
       }
@@ -197,6 +202,10 @@ export const usePaneSwipeGesture = (
         closestScrollContainer.style.overflowY = 'hidden'
       }
 
+      if (document.activeElement) {
+        ;(document.activeElement as HTMLElement).blur()
+      }
+
       if (adjustedGesture === 'pan') {
         const x =
           direction === 'right' ? Math.max(deltaX - TouchMoveThreshold, 0) : Math.min(deltaX + TouchMoveThreshold, 0)
@@ -265,7 +274,7 @@ export const usePaneSwipeGesture = (
       element.removeEventListener('touchend', touchEndListener)
       disposeUnderlay()
     }
-  }, [direction, element, isMobileScreen, onSwipeEndRef, isEnabled, adjustedGesture])
+  }, [direction, element, isMobileScreen, onSwipeEndRef, isEnabled, adjustedGesture, requiresStartFromEdge])
 
   return [setElement]
 }

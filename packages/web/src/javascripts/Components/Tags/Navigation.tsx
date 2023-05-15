@@ -52,7 +52,9 @@ const Navigation = forwardRef<HTMLDivElement, Props>(({ application, className, 
       setPaneLayout(PaneLayout.ItemSelection)
       element.style.left = '0'
     },
-    'swipe',
+    {
+      gesture: 'swipe',
+    },
   )
 
   const { hasBottomInset } = useAvailableSafeAreaPadding()
