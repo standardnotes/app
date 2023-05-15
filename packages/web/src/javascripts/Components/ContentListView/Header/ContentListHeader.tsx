@@ -53,17 +53,34 @@ const ContentListHeader = ({
   const isTouchScreen = !useMediaQuery(MediaQueryBreakpoints.pointerFine)
   const isTablet = matchesMd && isTouchScreen
 
-  const [isSyncing, setIsSyncing] = useState(false)
+  const [syncSubtitle, setSyncSubtitle] = useState('')
   const [completedInitialSync, setCompletedInitialSync] = useState(false)
-  const showSyncSubtitle = isMobileScreen && isSyncing && !completedInitialSync
+  const showSyncSubtitle = isMobileScreen && !!syncSubtitle
 
   useEffect(() => {
     return application.addEventObserver(async (event) => {
-      if (event === ApplicationEvent.SyncStatusChanged) {
-        setIsSyncing(application.sync.getSyncStatus().syncInProgress)
-      } else if (event === ApplicationEvent.CompletedInitialSync) {
-        setIsSyncing(false)
+      if (event === ApplicationEvent.CompletedInitialSync) {
         setCompletedInitialSync(true)
+        setSyncSubtitle('')
+        return
+      }
+
+      const syncStatus = application.sync.getSyncStatus()
+      const { localDataDone, localDataCurrent, localDataTotal } = syncStatus.getStats()
+
+      if (event === ApplicationEvent.SyncStatusChanged) {
+        setSyncSubtitle(syncStatus.syncInProgress && !completedInitialSync ? 'Syncing...' : '')
+        return
+      }
+
+      if (event === ApplicationEvent.LocalDataIncrementalLoad || event === ApplicationEvent.LocalDataLoaded) {
+        if (localDataDone) {
+          setSyncSubtitle('')
+          return
+        }
+
+        setSyncSubtitle(`Loading ${localDataCurrent}/${localDataTotal} items...`)
+        return
       }
     })
   }, [application, completedInitialSync])
@@ -147,13 +164,13 @@ const ContentListHeader = ({
           )}
           <div className="flex min-w-0 flex-grow flex-col break-words">
             <div className=" text-2xl font-semibold text-text md:text-lg">{panelTitle}</div>
-            {showSyncSubtitle && <div className="text-xs text-passive-0">Syncing...</div>}
+            {showSyncSubtitle && <div className="text-xs text-passive-0">{syncSubtitle}</div>}
             {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
           </div>
         </div>
       </div>
     )
-  }, [optionsSubtitle, icon, panelTitle, showSyncSubtitle])
+  }, [optionsSubtitle, showSyncSubtitle, icon, panelTitle, syncSubtitle])
 
   const PhoneAndDesktopLayout = useMemo(() => {
     return (
