@@ -32,6 +32,7 @@ import {
   DecryptedPayloadInterface,
   EncryptedPayload,
   EncryptedPayloadInterface,
+  GroupKeyInterface,
   isDecryptedPayload,
   isEncryptedPayload,
   ItemContent,
@@ -40,7 +41,7 @@ import {
   SharedItemsKeyInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   extendArray,
   isNotUndefined,
@@ -491,6 +492,32 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     version?: ProtocolVersion,
   ) {
     return this.rootKeyEncryption.createRootKey(identifier, password, origination, version)
+  }
+
+  createGroupKey(groupUuid: string): GroupKeyInterface {
+    return this.operatorManager.defaultOperator().createGroupKey(groupUuid)
+  }
+
+  createSharedItemsKey(): SharedItemsKeyInterface {
+    return this.operatorManager.defaultOperator().createSharedItemsKey()
+  }
+
+  public generateKeyPair(): PkcKeyPair {
+    const operator = this.operatorManager.defaultOperator()
+    const keypair = operator.generateKeyPair()
+    return keypair
+  }
+
+  encryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, privateKey: string): string {
+    const operator = this.operatorManager.defaultOperator()
+    const encrypted = operator.symmetricEncryptPrivateKey(privateKey, rootKey.masterKey)
+    return encrypted
+  }
+
+  decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | null {
+    const operator = this.operatorManager.defaultOperator()
+    const decrypted = operator.symmetricDecryptPrivateKey(encryptedPrivateKey, rootKey.masterKey)
+    return decrypted
   }
 
   public async decryptBackupFile(

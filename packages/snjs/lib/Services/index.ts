@@ -17,8 +17,8 @@ export * from './Protection'
 export * from './Session'
 export * from './Settings'
 
-export * from './Sharing/SharingService'
-export * from './Sharing/SharingServiceInterface'
+export * from './Groups/GroupsService'
+export * from './Groups/GroupsServiceInterface'
 
 export * from './Singleton/SingletonManager'
 export * from './Storage/DiskStorageService'

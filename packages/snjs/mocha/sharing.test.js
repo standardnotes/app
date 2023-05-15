@@ -28,7 +28,7 @@ describe.only('sharing', function () {
 
     application = context.application
 
-    sharingService = new SharingService(
+    sharingService = new GroupsService(
       application.httpService,
       application.sync,
       application.items,
@@ -73,7 +73,7 @@ describe.only('sharing', function () {
 
       const updatePromise = new Promise((resolve) => {
         sharingService.addEventObserver((event, data) => {
-          if (event === SharingServiceEvent.DidUpdateSharedItem && data.itemUuid === note.uuid) {
+          if (event === GroupsServiceEvent.DidUpdateSharedItem && data.itemUuid === note.uuid) {
             resolve()
           }
         })
@@ -123,7 +123,7 @@ describe.only('sharing', function () {
 
       const offlineContext = await Factory.createAppContextWithRealCrypto()
       await offlineContext.launch()
-      const offlineSharingService = new SharingService(
+      const offlineGroupsService = new GroupsService(
         offlineContext.application.httpService,
         offlineContext.application.sync,
         offlineContext.application.items,
@@ -131,7 +131,7 @@ describe.only('sharing', function () {
         offlineContext.application.options.crypto,
       )
 
-      const { item } = await offlineSharingService.downloadSharedItem(url)
+      const { item } = await offlineGroupsService.downloadSharedItem(url)
 
       expect(item.content.title).to.equal('foo')
       expect(item.content.text).to.equal('bar')
@@ -149,7 +149,7 @@ describe.only('sharing', function () {
       const otherContext = await Factory.createAppContextWithRealCrypto()
       await otherContext.launch()
       await otherContext.register()
-      const otherSharingService = new SharingService(
+      const otherGroupsService = new GroupsService(
         otherContext.application.httpService,
         otherContext.application.sync,
         otherContext.application.items,
@@ -157,10 +157,10 @@ describe.only('sharing', function () {
         otherContext.application.options.crypto,
       )
 
-      await otherSharingService.downloadSharedItem(url)
-      const { shareToken } = otherSharingService.decodeShareUrl(url)
+      await otherGroupsService.downloadSharedItem(url)
+      const { shareToken } = otherGroupsService.decodeShareUrl(url)
 
-      const updateResponse = await otherSharingService.sharingServer.updateSharedItemContentKey({
+      const updateResponse = await otherGroupsService.groupsServer.updateSharedItemContentKey({
         shareToken: shareToken,
         encryptedContentKey: 'foo',
       })
@@ -251,7 +251,7 @@ describe.only('sharing', function () {
 
       const offlineContext = await Factory.createAppContextWithRealCrypto()
       await offlineContext.launch()
-      const offlineSharingService = new SharingService(
+      const offlineGroupsService = new GroupsService(
         offlineContext.application.httpService,
         offlineContext.application.sync,
         offlineContext.application.items,
@@ -259,7 +259,7 @@ describe.only('sharing', function () {
         offlineContext.application.options.crypto,
       )
 
-      const { item, fileValetToken } = await offlineSharingService.downloadSharedItem(url)
+      const { item, fileValetToken } = await offlineGroupsService.downloadSharedItem(url)
       const downloadedBytes = await Files.downloadSharedFile(
         offlineContext.application.fileService,
         item,

@@ -3,7 +3,6 @@ import {
   AbstractService,
   InternalEventBusInterface,
   StorageKey,
-  DiagnosticInfo,
   ChallengePrompt,
   ChallengeValidation,
   ChallengeKeyboardType,
@@ -377,7 +376,17 @@ export class SNSessionManager
     const serverPassword = rootKey.serverPassword as string
     const keyParams = rootKey.keyParams
 
-    const registerResponse = await this.userApiService.register({ email, serverPassword, keyParams, ephemeral })
+    const { publicKey, privateKey } = this.protocolService.generateKeyPair()
+    const encryptedPrivateKey = this.protocolService.encryptPrivateKeyWithRootKey(rootKey, privateKey)
+
+    const registerResponse = await this.userApiService.register({
+      email,
+      serverPassword,
+      keyParams,
+      ephemeral,
+      publicKey,
+      encryptedPrivateKey,
+    })
 
     if ('error' in registerResponse.data) {
       throw new ApiCallError(registerResponse.data.error.message)
@@ -589,6 +598,12 @@ export class SNSessionManager
     wrappingKey?: SNRootKey
     newEmail?: string
   }): Promise<SessionManagerResponse> {
+    const privateKey = this.diskStorageService.getValue<string>(StorageKey.AccountDecryptedPrivateKey)
+    let newEncryptedPrivateKey: string | undefined
+    if (privateKey) {
+      newEncryptedPrivateKey = this.protocolService.encryptPrivateKeyWithRootKey(parameters.newRootKey, privateKey)
+    }
+
     const userUuid = this.user!.uuid
     const response = await this.apiService.changeCredentials({
       userUuid,
@@ -596,6 +611,7 @@ export class SNSessionManager
       newServerPassword: parameters.newRootKey.serverPassword!,
       newKeyParams: parameters.newRootKey.keyParams,
       newEmail: parameters.newEmail,
+      newEncryptedPrivateKey,
     })
 
     return this.processChangeCredentialsResponse(response, parameters.newRootKey, parameters.wrappingKey)
@@ -670,6 +686,11 @@ export class SNSessionManager
     await this.protocolService.setRootKey(rootKey, wrappingKey)
 
     this.setUser(user)
+
+    if (user.encryptedPrivateKey) {
+      const decryptedPrivateKey = this.protocolService.decryptPrivateKeyWithRootKey(rootKey, user.encryptedPrivateKey)
+      this.diskStorageService.setValue(StorageKey.AccountDecryptedPrivateKey, decryptedPrivateKey)
+    }
 
     this.diskStorageService.setValue(StorageKey.User, user)
 
@@ -776,17 +797,5 @@ export class SNSessionManager
     }
 
     return Result.ok(sessionOrError.getValue())
-  }
-
-  override getDiagnostics(): Promise<DiagnosticInfo | undefined> {
-    return Promise.resolve({
-      session: {
-        isSessionRenewChallengePresented: this.isSessionRenewChallengePresented,
-        online: this.online(),
-        offline: this.offline(),
-        isSignedIn: this.isSignedIn(),
-        isSignedIntoFirstPartyServer: this.isSignedIntoFirstPartyServer(),
-      },
-    })
   }
 }

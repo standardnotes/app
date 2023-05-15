@@ -3,7 +3,6 @@ import { ItemContent } from '../../Abstract/Content/ItemContent'
 
 export type GroupKeyContentSpecialized = {
   key: string
-  groupUuid: string
   version: ProtocolVersion
 }
 

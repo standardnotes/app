@@ -3,9 +3,11 @@ import {
   BackupFile,
   DecryptedPayloadInterface,
   EncryptedPayloadInterface,
+  GroupKeyInterface,
   ItemContent,
   ItemsKeyInterface,
   RootKeyInterface,
+  SharedItemsKeyInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 
@@ -15,6 +17,7 @@ import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
+import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
 export interface EncryptionProviderInterface {
   encryptSplitSingle(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface>
@@ -53,6 +56,13 @@ export interface EncryptionProviderInterface {
     origination: KeyParamsOrigination,
     version?: ProtocolVersion,
   ): Promise<RootKeyInterface>
+
+  createSharedItemsKey(): SharedItemsKeyInterface
+  createGroupKey(groupUuid: string): GroupKeyInterface
+  generateKeyPair(): PkcKeyPair
+  encryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, privateKey: string): string
+  decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | null
+
   setNewRootKeyWrapper(wrappingKey: RootKeyInterface): Promise<void>
   removePasscode(): Promise<void>
   validateAccountPassword(password: string): Promise<

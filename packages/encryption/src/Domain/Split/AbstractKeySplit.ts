@@ -3,7 +3,7 @@ import {
   EncryptedPayloadInterface,
   ItemsKeyInterface,
   RootKeyInterface,
-  ShareGroup,
+  Group,
 } from '@standardnotes/models'
 
 export interface AbstractKeySplit<T = EncryptedPayloadInterface | DecryptedPayloadInterface> {
@@ -13,7 +13,7 @@ export interface AbstractKeySplit<T = EncryptedPayloadInterface | DecryptedPaylo
   }
   usesGroupKey?: {
     items: T[]
-    key: ShareGroup
+    key: Group
   }
   usesItemsKey?: {
     items: T[]

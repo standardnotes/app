@@ -1,5 +1,4 @@
 import { ContentType, KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
-
 import {
   CreateDecryptedItemFromPayload,
   FillItemContent,
@@ -12,8 +11,10 @@ import {
   SharedItemsKeyInterface,
   GroupKeyInterface,
   SharedItemsKeyContent,
+  GroupKeyContentSpecialized,
+  GroupKeyContent,
 } from '@standardnotes/models'
-import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
 import * as Utils from '@standardnotes/utils'
 import { V004Algorithm } from '../../Algorithm'
 import { isItemsKey } from '../../Keys/ItemsKey/ItemsKey'
@@ -25,8 +26,9 @@ import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } f
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
-import { SynchronousOperator } from '../Operator'
-import { isSharedItemsKey } from '@standardnotes/snjs/dist/@types'
+import { SynchronousOperator } from '../OperatorInterface'
+import { isSharedItemsKey } from '../../Keys/SharedItemsKey/SharedItemsKey'
+import { AsymmetricallyEncryptedKey, SymmetricallyEncryptedPrivateKey } from '../Types'
 
 type V004StringComponents = [version: string, nonce: string, ciphertext: string, authenticatedData: string]
 
@@ -36,6 +38,10 @@ type V004Components = {
   ciphertext: V004StringComponents[2]
   authenticatedData: V004StringComponents[3]
 }
+
+const SymmetricCiphertextPrefix = `${ProtocolVersion.V004}_KeySym`
+const AsymmetricCiphertextPrefix = `${ProtocolVersion.V004}_KeyAsym`
+const AsymmetricAnonymousCiphertextPrefix = `${ProtocolVersion.V004}_KeyAsymAnon`
 
 const PARTITION_CHARACTER = ':'
 
@@ -70,6 +76,23 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       version: ProtocolVersion.V004,
     })
     return response
+  }
+
+  public createGroupKey(groupUuid: string): GroupKeyInterface {
+    const groupKeyContent: GroupKeyContentSpecialized = {
+      groupUuid: groupUuid,
+      key: this.crypto.generateRandomKey(192),
+      version: ProtocolVersion.V004,
+    }
+
+    const payload = new DecryptedPayload({
+      uuid: Utils.UuidGenerator.GenerateUuid(),
+      content_type: ContentType.GroupKey,
+      content: FillItemContent<GroupKeyContent>(groupKeyContent),
+      ...PayloadTimestampDefaults(),
+    })
+
+    return CreateDecryptedItemFromPayload(payload)
   }
 
   /**
@@ -341,5 +364,78 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       version: ProtocolVersion.V004,
       keyParams: keyParams.getPortableValue(),
     })
+  }
+
+  generateKeyPair(): PkcKeyPair {
+    return this.crypto.sodiumCryptoBoxGenerateKeypair()
+  }
+
+  asymmetricEncryptKey(
+    keyToEncrypt: HexString,
+    senderSecretKey: HexString,
+    recipientPublicKey: HexString,
+  ): AsymmetricallyEncryptedKey {
+    const nonce = this.crypto.generateRandomKey(V004Algorithm.AsymmetricEncryptionNonceLength)
+
+    const ciphertext = this.crypto.sodiumCryptoBoxEasyEncrypt(keyToEncrypt, nonce, senderSecretKey, recipientPublicKey)
+
+    return [AsymmetricCiphertextPrefix, nonce, ciphertext].join(':')
+  }
+
+  asymmetricDecryptKey(
+    keyToDecrypt: AsymmetricallyEncryptedKey,
+    senderPublicKey: HexString,
+    recipientSecretKey: HexString,
+  ): Utf8String {
+    const components = keyToDecrypt.split(':')
+
+    const nonce = components[1]
+
+    return this.crypto.sodiumCryptoBoxEasyDecrypt(keyToDecrypt, nonce, senderPublicKey, recipientSecretKey)
+  }
+
+  asymmetricAnonymousEncryptKey(keyToEncrypt: HexString, recipientPublicKey: HexString): AsymmetricallyEncryptedKey {
+    const ciphertext = this.crypto.sodiumCryptoBoxAnonymousEncrypt(keyToEncrypt, recipientPublicKey)
+
+    return [AsymmetricAnonymousCiphertextPrefix, ciphertext].join(':')
+  }
+
+  asymmetricAnonymousDecryptKey(
+    keyToDecrypt: AsymmetricallyEncryptedKey,
+    recipientPublicKey: HexString,
+    recipientSecretKey: HexString,
+  ): Utf8String {
+    const components = keyToDecrypt.split(':')
+
+    const ciphertext = components[1]
+
+    return this.crypto.sodiumCryptoBoxAnonymousDecrypt(ciphertext, recipientPublicKey, recipientSecretKey)
+  }
+
+  symmetricEncryptPrivateKey(privateKey: HexString, symmetricKey: HexString): SymmetricallyEncryptedPrivateKey {
+    if (symmetricKey.length !== 64) {
+      throw new Error('Symmetric key length must be 256 bits')
+    }
+
+    const nonce = this.crypto.generateRandomKey(V004Algorithm.SymmetricEncryptionNonceLength)
+
+    const encryptedKey = this.crypto.xchacha20Encrypt(privateKey, nonce, symmetricKey)
+
+    return [SymmetricCiphertextPrefix, nonce, encryptedKey].join(':')
+  }
+
+  symmetricDecryptPrivateKey(
+    encryptedPrivateKey: SymmetricallyEncryptedPrivateKey,
+    symmetricKey: HexString,
+  ): HexString | null {
+    if (symmetricKey.length !== 64) {
+      throw new Error('Symmetric key length must be 256 bits')
+    }
+
+    const components = encryptedPrivateKey.split(':')
+
+    const nonce = components[1]
+
+    return this.crypto.xchacha20Decrypt(encryptedPrivateKey, nonce, symmetricKey)
   }
 }

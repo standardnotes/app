@@ -4,7 +4,6 @@ import { GroupKeyContent } from './GroupKeyContent'
 
 export interface GroupKeyInterface extends DecryptedItemInterface<GroupKeyContent> {
   readonly key: string
-  readonly groupUuid: string
   get itemsKey(): string
   get keyVersion(): ProtocolVersion
 }

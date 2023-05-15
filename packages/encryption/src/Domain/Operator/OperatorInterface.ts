@@ -13,6 +13,8 @@ import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } f
 import { ItemAuthenticatedData } from '../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../Types/RootKeyEncryptedAuthenticatedData'
+import { HexString, PkcKeyPair, Utf8String } from '@standardnotes/sncrypto-common'
+import { AsymmetricallyEncryptedKey, SymmetricallyEncryptedPrivateKey } from './Types'
 
 /**w
  * An operator is responsible for performing crypto operations, such as generating keys
@@ -23,6 +25,7 @@ import { RootKeyEncryptedAuthenticatedData } from '../Types/RootKeyEncryptedAuth
  */
 export interface OperatorCommon {
   createItemsKey(): ItemsKeyInterface
+  createSharedItemsKey(): SharedItemsKeyInterface
   /**
    * Returns encryption protocol display name
    */
@@ -51,6 +54,37 @@ export interface OperatorCommon {
    * @param password - Plain string representing raw user password
    */
   createRootKey(identifier: string, password: string, origination: KeyParamsOrigination): Promise<SNRootKey>
+
+  createGroupKey(groupUuid: string): GroupKeyInterface
+
+  generateKeyPair(): PkcKeyPair
+
+  asymmetricEncryptKey(
+    keyToEncrypt: HexString,
+    senderSecretKey: HexString,
+    recipientPublicKey: HexString,
+  ): AsymmetricallyEncryptedKey
+
+  asymmetricDecryptKey(
+    keyToDecrypt: AsymmetricallyEncryptedKey,
+    senderPublicKey: HexString,
+    recipientSecretKey: HexString,
+  ): Utf8String
+
+  asymmetricAnonymousEncryptKey(keyToEncrypt: HexString, recipientPublicKey: HexString): AsymmetricallyEncryptedKey
+
+  asymmetricAnonymousDecryptKey(
+    keyToDecrypt: AsymmetricallyEncryptedKey,
+    recipientPublicKey: HexString,
+    recipientSecretKey: HexString,
+  ): Utf8String
+
+  symmetricEncryptPrivateKey(privateKey: HexString, symmetricKey: HexString): SymmetricallyEncryptedPrivateKey
+
+  symmetricDecryptPrivateKey(
+    encryptedPrivateKey: SymmetricallyEncryptedPrivateKey,
+    symmetricKey: HexString,
+  ): HexString | null
 }
 
 export interface SynchronousOperator extends OperatorCommon {

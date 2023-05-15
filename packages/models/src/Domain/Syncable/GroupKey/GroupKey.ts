@@ -7,7 +7,6 @@ import { ProtocolVersion } from '@standardnotes/common'
 
 export class GroupKey extends DecryptedItem<GroupKeyContent> implements GroupKeyInterface {
   readonly key: string
-  readonly groupUuid: string
   keyVersion: ProtocolVersion
 
   constructor(payload: DecryptedPayloadInterface<GroupKeyContent>) {
@@ -15,7 +14,6 @@ export class GroupKey extends DecryptedItem<GroupKeyContent> implements GroupKey
 
     this.key = this.content.key
     this.keyVersion = payload.content.version
-    this.groupUuid = this.content.groupUuid
   }
 
   override strategyWhenConflictingWithItem(

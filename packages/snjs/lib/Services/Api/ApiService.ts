@@ -336,6 +336,8 @@ export class SNApiService
     currentServerPassword: string
     newServerPassword: string
     newKeyParams: SNRootKeyParams
+    newPublicKey?: string
+    newEncryptedPrivateKey?: string
     newEmail?: string
   }): Promise<HttpResponse<ChangeCredentialsResponse>> {
     if (this.changing) {
@@ -351,6 +353,8 @@ export class SNApiService
       current_password: parameters.currentServerPassword,
       new_password: parameters.newServerPassword,
       new_email: parameters.newEmail,
+      new_public_key: parameters.newPublicKey,
+      new_encrypted_private_key: parameters.newEncryptedPrivateKey,
       ...parameters.newKeyParams.getPortableValue(),
     })
 

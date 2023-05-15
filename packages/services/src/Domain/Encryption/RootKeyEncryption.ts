@@ -52,6 +52,7 @@ import { AbstractService } from '../Service/AbstractService'
 import { StorageKey } from '../Storage/StorageKeys'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { StorageValueModes } from '../Storage/StorageTypes'
+import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
 export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEvent> {
   private rootKey?: RootKeyInterface

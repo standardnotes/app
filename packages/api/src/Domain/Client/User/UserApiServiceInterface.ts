@@ -12,6 +12,8 @@ export interface UserApiServiceInterface {
     serverPassword: string
     keyParams: RootKeyParamsInterface
     ephemeral: boolean
+    publicKey: string
+    encryptedPrivateKey: string
   }): Promise<HttpResponse<UserRegistrationResponseBody>>
   submitUserRequest(dto: {
     userUuid: string

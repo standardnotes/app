@@ -30,6 +30,15 @@ describe('operator 004', () => {
     crypto.generateRandomKey = jest.fn().mockImplementation(() => {
       return 'random-string'
     })
+    crypto.sodiumCryptoBoxGenerateKeypair = jest.fn().mockImplementation(() => {
+      return { privateKey: 'private-key', publicKey: 'public-key', keyType: 'x25519' }
+    })
+    crypto.sodiumCryptoBoxEasyEncrypt = jest.fn().mockImplementation((text: string) => {
+      return `<e>${text}<e>`
+    })
+    crypto.sodiumCryptoBoxEasyDecrypt = jest.fn().mockImplementation((text: string) => {
+      return text.split('<e>')[1]
+    })
 
     operator = new SNProtocolOperator004(crypto)
   })
@@ -92,5 +101,49 @@ describe('operator 004', () => {
       enc_item_key: '004:random-string:<e>random-string<e>:eyJ1IjoiMTIzIiwidiI6IjAwNCJ9',
       version: '004',
     })
+  })
+
+  it('should generateKeyPair', () => {
+    const result = operator.generateKeyPair()
+
+    expect(result).toEqual({ privateKey: 'private-key', publicKey: 'public-key', keyType: 'x25519' })
+  })
+
+  it('should asymmetricEncryptKey', () => {
+    const senderKeypair = operator.generateKeyPair()
+    const recipientKeypair = operator.generateKeyPair()
+
+    const plaintext = 'foo'
+
+    const result = operator.asymmetricEncryptKey(plaintext, senderKeypair.privateKey, recipientKeypair.publicKey)
+
+    expect(result).toEqual(`${'005_KeyAsym'}:random-string:<e>foo<e>`)
+  })
+
+  it('should asymmetricDecryptKey', () => {
+    const senderKeypair = operator.generateKeyPair()
+    const recipientKeypair = operator.generateKeyPair()
+    const plaintext = 'foo'
+    const ciphertext = operator.asymmetricEncryptKey(plaintext, senderKeypair.privateKey, recipientKeypair.publicKey)
+    const decrypted = operator.asymmetricDecryptKey(ciphertext, senderKeypair.publicKey, recipientKeypair.privateKey)
+
+    expect(decrypted).toEqual('foo')
+  })
+
+  it('should symmetricEncryptPrivateKey', () => {
+    const keypair = operator.generateKeyPair()
+    const symmetricKey = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    const encryptedKey = operator.symmetricEncryptPrivateKey(keypair.privateKey, symmetricKey)
+
+    expect(encryptedKey).toEqual(`${'005_KeySym'}:random-string:<e>${keypair.privateKey}<e>`)
+  })
+
+  it('should symmetricDecryptPrivateKey', () => {
+    const keypair = operator.generateKeyPair()
+    const symmetricKey = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
+    const encryptedKey = operator.symmetricEncryptPrivateKey(keypair.privateKey, symmetricKey)
+    const decryptedKey = operator.symmetricDecryptPrivateKey(encryptedKey, symmetricKey)
+
+    expect(decryptedKey).toEqual(keypair.privateKey)
   })
 })

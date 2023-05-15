@@ -64,6 +64,8 @@ export class UserApiService implements UserApiServiceInterface {
     serverPassword: string
     keyParams: RootKeyParamsInterface
     ephemeral: boolean
+    publicKey: string
+    encryptedPrivateKey: string
   }): Promise<HttpResponse<UserRegistrationResponseBody>> {
     this.lockOperation(UserApiOperations.Registering)
 
@@ -73,6 +75,8 @@ export class UserApiService implements UserApiServiceInterface {
         password: registerDTO.serverPassword,
         email: registerDTO.email,
         ephemeral: registerDTO.ephemeral,
+        public_key: registerDTO.publicKey,
+        encrypted_private_key: registerDTO.encryptedPrivateKey,
         ...registerDTO.keyParams.getPortableValue(),
       })
 

@@ -1,7 +1,7 @@
 import { ProtocolVersion, ProtocolVersionLatest } from '@standardnotes/common'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { createOperatorForVersion } from './Functions'
-import { AsynchronousOperator, SynchronousOperator } from './Operator'
+import { AsynchronousOperator, SynchronousOperator } from './OperatorInterface'
 
 export class OperatorManager {
   private operators: Record<string, AsynchronousOperator | SynchronousOperator> = {}
