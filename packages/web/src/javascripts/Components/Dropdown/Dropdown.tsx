@@ -90,7 +90,7 @@ const Dropdown = ({
         updatePosition={(props) => {
           const { updatePosition } = props
           const { popoverElement } = select.getState()
-          updatePosition()
+          updatePosition().catch(console.error)
           if (popoverElement) {
             popoverElement.style.zIndex = 'var(--z-index-dropdown-menu)'
           }
