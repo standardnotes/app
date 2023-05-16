@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { DropdownItem } from './DropdownItem'
 import { classNames } from '@standardnotes/snjs'
@@ -17,7 +16,7 @@ type DropdownProps = {
   label: string
   items: DropdownItem[]
   value: string
-  onChange: (value: string, item: DropdownItem) => void
+  onChange: (value: string) => void
   disabled?: boolean
   classNameOverride?: {
     wrapper?: string
@@ -39,36 +38,14 @@ const Dropdown = ({
   popoverPlacement,
 }: DropdownProps) => {
   const select = useSelectStore({
-    defaultValue: value,
-    renderCallback(props) {
-      const { popoverElement, defaultRenderCallback } = props
-      defaultRenderCallback()
-      if (popoverElement) {
-        popoverElement.style.zIndex = 'var(--z-index-dropdown-menu)'
-      }
-    },
-    placement: popoverPlacement,
+    value,
+    setValue: onChange,
+    placement: popoverPlacement || 'top',
   })
 
-  const selectedValue = select.useState('value')
   const isExpanded = select.useState('open')
 
-  const currentItem = items.find((item) => item.value === selectedValue)
-
-  useEffect(() => {
-    select.setValue(value)
-  }, [select, value])
-
-  useEffect(() => {
-    return select.subscribe(
-      (state) => {
-        if (state.value !== value) {
-          onChange(state.value, items.find((item) => item.value === state.value) as DropdownItem)
-        }
-      },
-      ['value'],
-    )
-  }, [items, onChange, select, value])
+  const currentItem = items.find((item) => item.value === value)
 
   return (
     <div
@@ -109,6 +86,15 @@ const Dropdown = ({
           'max-h-[var(--popover-available-height)] w-[var(--popover-anchor-width)] overflow-y-auto rounded border border-border bg-default py-1',
           classNameOverride.popover,
         )}
+        portal={false}
+        updatePosition={(props) => {
+          const { updatePosition } = props
+          const { popoverElement } = select.getState()
+          updatePosition()
+          if (popoverElement) {
+            popoverElement.style.zIndex = 'var(--z-index-dropdown-menu)'
+          }
+        }}
       >
         {items.map((item) => (
           <SelectItem

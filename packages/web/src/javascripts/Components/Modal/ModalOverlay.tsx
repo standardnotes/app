@@ -6,39 +6,29 @@ import { useModalAnimation } from '../Modal/useModalAnimation'
 type Props = {
   isOpen: boolean
   children: ReactNode
-  portal?: boolean
 }
 
-const ModalOverlay = forwardRef(
-  ({ isOpen, children, portal = true, ...props }: Props, ref: ForwardedRef<HTMLDivElement>) => {
-    const [isMounted, setElement] = useModalAnimation(isOpen)
-    const dialog = useDialogStore({
-      open: isMounted,
-    })
+const ModalOverlay = forwardRef(({ isOpen, children, ...props }: Props, ref: ForwardedRef<HTMLDivElement>) => {
+  const [isMounted, setElement] = useModalAnimation(isOpen)
+  const dialog = useDialogStore({
+    open: isMounted,
+  })
 
-    if (!isMounted) {
-      return null
-    }
+  if (!isMounted) {
+    return null
+  }
 
-    return (
-      <Dialog
-        tabIndex={0}
-        className="h-full w-full"
-        backdropProps={{
-          className: '!z-modal',
-          style: {
-            position: !portal ? 'absolute' : 'fixed',
-          },
-        }}
-        ref={mergeRefs([setElement, ref])}
-        store={dialog}
-        portal={portal}
-        {...props}
-      >
-        {children}
-      </Dialog>
-    )
-  },
-)
+  return (
+    <Dialog
+      tabIndex={0}
+      className="fixed top-0 left-0 z-modal h-full w-full"
+      ref={mergeRefs([setElement, ref])}
+      store={dialog}
+      {...props}
+    >
+      {children}
+    </Dialog>
+  )
+})
 
 export default ModalOverlay
