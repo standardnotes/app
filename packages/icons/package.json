@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/icons",
-  "version": "1.10.10",
+  "version": "1.10.11",
   "private": true,
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
