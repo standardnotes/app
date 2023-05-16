@@ -54,13 +54,11 @@ const ContentListHeader = ({
   const isTablet = matchesMd && isTouchScreen
 
   const [syncSubtitle, setSyncSubtitle] = useState('')
-  const [completedInitialSync, setCompletedInitialSync] = useState(false)
   const showSyncSubtitle = isMobileScreen && !!syncSubtitle
 
   useEffect(() => {
     return application.addEventObserver(async (event) => {
       if (event === ApplicationEvent.CompletedInitialSync) {
-        setCompletedInitialSync(true)
         setSyncSubtitle('')
         return
       }
@@ -69,7 +67,9 @@ const ContentListHeader = ({
       const { localDataDone, localDataCurrent, localDataTotal } = syncStatus.getStats()
 
       if (event === ApplicationEvent.SyncStatusChanged) {
-        setSyncSubtitle(syncStatus.syncInProgress && !completedInitialSync ? 'Syncing...' : '')
+        setSyncSubtitle(
+          syncStatus.syncInProgress && !application.sync.completedOnlineDownloadFirstSync ? 'Syncing...' : '',
+        )
         return
       }
 
@@ -83,7 +83,7 @@ const ContentListHeader = ({
         return
       }
     })
-  }, [application, completedInitialSync])
+  }, [application])
 
   const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false)
 
@@ -163,8 +163,8 @@ const ContentListHeader = ({
             />
           )}
           <div className="flex min-w-0 flex-grow flex-col break-words">
-            <div className=" text-2xl font-semibold text-text md:text-lg">{panelTitle}</div>
-            {showSyncSubtitle && <div className="text-xs text-passive-0">{syncSubtitle}</div>}
+            <div className="text-2xl font-semibold text-text md:text-lg">{panelTitle}</div>
+            {showSyncSubtitle && <div className="-mt-1 text-xs text-passive-0 md:mt-0">{syncSubtitle}</div>}
             {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
           </div>
         </div>

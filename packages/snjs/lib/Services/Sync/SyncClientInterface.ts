@@ -11,4 +11,6 @@ export interface SyncClientInterface {
   getLastSyncDate(): Date | undefined
 
   getSyncStatus(): SyncOpStatus
+
+  completedOnlineDownloadFirstSync: boolean
 }
