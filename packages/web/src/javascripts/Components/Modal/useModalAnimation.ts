@@ -1,6 +1,8 @@
 import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
 import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 
+export const IosModalAnimationEasing = 'cubic-bezier(.36,.66,.04,1)'
+
 export const useModalAnimation = (isOpen: boolean) => {
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
@@ -17,7 +19,7 @@ export const useModalAnimation = (isOpen: boolean) => {
           },
         ],
         options: {
-          easing: 'cubic-bezier(.36,.66,.04,1)',
+          easing: IosModalAnimationEasing,
           duration: 250,
           fill: 'forwards',
         },
@@ -38,7 +40,7 @@ export const useModalAnimation = (isOpen: boolean) => {
           },
         ],
         options: {
-          easing: 'cubic-bezier(.36,.66,.04,1)',
+          easing: IosModalAnimationEasing,
           duration: 250,
           fill: 'forwards',
         },
