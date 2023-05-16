@@ -11,11 +11,23 @@ type Props = {
   children: ReactNode
   onChange: (checked: boolean) => void
   shortcut?: PlatformedKeyboardShortcut
+  forceDesktopStyle?: boolean
 } & Omit<ComponentPropsWithoutRef<'button'>, 'onChange'>
 
 const MenuSwitchButtonItem = forwardRef(
   (
-    { checked, onChange, disabled, onBlur, tabIndex, children, shortcut, className, ...props }: Props,
+    {
+      checked,
+      onChange,
+      disabled,
+      onBlur,
+      tabIndex,
+      children,
+      shortcut,
+      className,
+      forceDesktopStyle,
+      ...props
+    }: Props,
     ref: ForwardedRef<HTMLButtonElement>,
   ) => {
     return (
@@ -47,6 +59,7 @@ const MenuSwitchButtonItem = forwardRef(
               checked={checked}
               onChange={onChange}
               tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
+              forceDesktopStyle={forceDesktopStyle}
             />
           </div>
         </button>
