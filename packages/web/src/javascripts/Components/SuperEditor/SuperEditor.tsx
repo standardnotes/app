@@ -166,8 +166,34 @@ export const SuperEditor: FunctionComponent<Props> = ({
     })
   }, [reloadPreferences, application])
 
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const invalidURLClickFix = (event: MouseEvent) => {
+      if ((event.target as HTMLElement).tagName !== 'A') {
+        return
+      }
+      const isAbsoluteLink = (event.target as HTMLAnchorElement).getAttribute('href')?.startsWith('http')
+      if (!isAbsoluteLink) {
+        event.preventDefault()
+      }
+    }
+
+    const element = ref.current
+
+    if (element) {
+      element.addEventListener('click', invalidURLClickFix)
+    }
+
+    return () => {
+      if (element) {
+        element.removeEventListener('click', invalidURLClickFix)
+      }
+    }
+  }, [])
+
   return (
-    <div className="font-editor relative flex h-full w-full flex-col md:block">
+    <div className="font-editor relative flex h-full w-full flex-col md:block" ref={ref}>
       <ErrorBoundary>
         <LinkingControllerProvider controller={linkingController}>
           <FilesControllerProvider controller={filesController}>
