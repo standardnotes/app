@@ -48,6 +48,11 @@ export enum StorageKey {
   FileBackupsEnabled = 'file_backups_enabled',
   FileBackupsLocation = 'file_backups_location',
   AccountDecryptedPrivateKey = 'account_decrypted_private_key',
+  GroupKeyPrefix = 'group_key_',
+}
+
+export function storageKeyForGroupKey(groupUuid: string) {
+  return `${StorageKey.GroupKeyPrefix}${groupUuid}`
 }
 
 export enum NonwrappedStorageKey {

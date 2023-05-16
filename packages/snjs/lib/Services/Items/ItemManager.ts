@@ -323,13 +323,6 @@ export class ItemManager
     }
   }
 
-  groupKeyForGroup(groupUuid: string): Models.GroupKeyInterface | undefined {
-    const allGroupKeys = this.getItems<Models.GroupKeyInterface>(ContentType.GroupKey)
-    const keysForThisGroup = allGroupKeys.filter((groupKey) => groupKey.group_uuid === groupUuid)
-    const newestFirst = naturalSort(keysForThisGroup, 'created_at', 'desc')
-    return newestFirst[0]
-  }
-
   /**
    * Returns the items that reference the given item, or an empty array if no results.
    */

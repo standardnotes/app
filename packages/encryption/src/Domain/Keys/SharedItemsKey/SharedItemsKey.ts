@@ -9,8 +9,8 @@ import {
   SharedItemsKeyInterface,
 } from '@standardnotes/models'
 
-export function isSharedItemsKey(x: { content_type: ContentType }): x is SharedItemsKeyInterface {
-  return x.content_type === ContentType.SharedItemsKey
+export function isSharedItemsKey(x: unknown): x is SharedItemsKeyInterface {
+  return (x as SharedItemsKeyInterface).content_type === ContentType.SharedItemsKey
 }
 
 /**

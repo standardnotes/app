@@ -1,3 +1,4 @@
+import { GroupUserServerHash } from '../Groups/GroupUserServerHash'
 import { ApiEndpointParam } from './ApiEndpointParam'
 import { ConflictParams } from './ConflictParams'
 import { ServerItemResponse } from './ServerItemResponse'
@@ -10,5 +11,6 @@ export type RawSyncData = {
   saved_items?: ServerItemResponse[]
   conflicts?: ConflictParams[]
   unsaved?: ConflictParams[]
+  group_keys?: GroupUserServerHash[]
   status?: number
 }

@@ -1,16 +1,15 @@
+import { GroupKeyInterface } from './../../Keys/GroupKey/GroupKeyInterface'
 import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
   BackupFile,
   DecryptedPayloadInterface,
   EncryptedPayloadInterface,
-  GroupKeyInterface,
   ItemContent,
   ItemsKeyInterface,
   RootKeyInterface,
   SharedItemsKeyInterface,
 } from '@standardnotes/models'
-import { ClientDisplayableError } from '@standardnotes/responses'
-
+import { ClientDisplayableError, GroupUserServerHash } from '@standardnotes/responses'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
 import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
 import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
@@ -57,6 +56,7 @@ export interface EncryptionProviderInterface {
     version?: ProtocolVersion,
   ): Promise<RootKeyInterface>
 
+  handleRetrievedGroupKeys(hashes: GroupUserServerHash[]): Promise<void>
   createSharedItemsKey(groupUuid: string): SharedItemsKeyInterface
   createGroupKey(groupUuid: string): GroupKeyInterface
   generateKeyPair(): PkcKeyPair

@@ -75,11 +75,6 @@ export * from './Syncable/Tag'
 export * from './Syncable/Theme'
 export * from './Syncable/UserPrefs'
 
-export * from './Syncable/GroupKey/GroupKey'
-export * from './Syncable/GroupKey/GroupKeyMutator'
-export * from './Syncable/GroupKey/GroupKeyContent'
-export * from './Syncable/GroupKey/GroupKeyInterface'
-
 export * from './Syncable/Contact/Contact'
 export * from './Syncable/Contact/ContactMutator'
 export * from './Syncable/Contact/ContactContent'

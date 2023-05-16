@@ -1,3 +1,4 @@
+import { GroupKeyInterface } from './../../Keys/GroupKey/GroupKeyInterface'
 import { ContentType, KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
   CreateDecryptedItemFromPayload,
@@ -9,10 +10,7 @@ import {
   DecryptedPayload,
   DecryptedPayloadInterface,
   SharedItemsKeyInterface,
-  GroupKeyInterface,
   SharedItemsKeyContent,
-  GroupKeyContentSpecialized,
-  GroupKeyContent,
   DecryptedTransferPayload,
 } from '@standardnotes/models'
 import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
@@ -30,6 +28,7 @@ import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedA
 import { SynchronousOperator } from '../OperatorInterface'
 import { isSharedItemsKey } from '../../Keys/SharedItemsKey/SharedItemsKey'
 import { AsymmetricallyEncryptedKey, SymmetricallyEncryptedPrivateKey } from '../Types'
+import { GroupKey } from '../../Keys/GroupKey/GroupKey'
 
 type V004StringComponents = [version: string, nonce: string, ciphertext: string, authenticatedData: string]
 
@@ -71,22 +70,9 @@ export class SNProtocolOperator004 implements SynchronousOperator {
   }
 
   public createGroupKey(groupUuid: string): GroupKeyInterface {
-    const groupKeyContent: GroupKeyContentSpecialized = {
-      key: this.crypto.generateRandomKey(192),
-      version: ProtocolVersion.V004,
-    }
+    const groupKey = new GroupKey(groupUuid, this.crypto.generateRandomKey(192), new Date(), ProtocolVersion.V004)
 
-    const transferPayload: DecryptedTransferPayload = {
-      uuid: Utils.UuidGenerator.GenerateUuid(),
-      content_type: ContentType.GroupKey,
-      group_uuid: groupUuid,
-      content: FillItemContent<GroupKeyContent>(groupKeyContent),
-      ...PayloadTimestampDefaults(),
-    }
-
-    const payload = new DecryptedPayload(transferPayload)
-
-    return CreateDecryptedItemFromPayload(payload)
+    return groupKey
   }
 
   /**
@@ -440,5 +426,11 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     const nonce = components[1]
 
     return this.crypto.xchacha20Decrypt(encryptedPrivateKey, nonce, symmetricKey)
+  }
+
+  versionForEncryptedKey(encryptedKey: string): ProtocolVersion {
+    const firstComponent = encryptedKey.split(':')[0]
+    const version = firstComponent.split('_')[0]
+    return version as ProtocolVersion
   }
 }

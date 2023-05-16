@@ -24,6 +24,9 @@ import {
   ItemsKeyMutator,
   encryptPayload,
   decryptPayload,
+  GroupKeyInterface,
+  GroupKey,
+  ItemContentTypeUsesGroupKeyEncryption,
 } from '@standardnotes/encryption'
 import {
   CreateDecryptedItemFromPayload,
@@ -44,15 +47,13 @@ import {
   RootKeyInterface,
 } from '@standardnotes/models'
 import { UuidGenerator } from '@standardnotes/utils'
-
 import { DeviceInterface } from '../Device/DeviceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { AbstractService } from '../Service/AbstractService'
-import { StorageKey } from '../Storage/StorageKeys'
+import { StorageKey, storageKeyForGroupKey } from '../Storage/StorageKeys'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { StorageValueModes } from '../Storage/StorageTypes'
-import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
 export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEvent> {
   private rootKey?: RootKeyInterface
@@ -491,7 +492,15 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
   }
 
   private async encrypPayloadWithKeyLookup(payload: DecryptedPayloadInterface): Promise<EncryptedParameters> {
-    const key = this.getRootKey()
+    let key: RootKeyInterface | GroupKeyInterface | undefined
+    if (payload.group_uuid) {
+      if (!ItemContentTypeUsesGroupKeyEncryption(payload.content_type)) {
+        throw Error('Attempting to decrypt payload that is not a shared items key with group key.')
+      }
+      key = this.getGroupKey(payload.group_uuid)
+    } else {
+      key = this.getRootKey()
+    }
 
     if (key == undefined) {
       throw Error('Attempting root key encryption with no root key')
@@ -504,7 +513,10 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     return Promise.all(payloads.map((payload) => this.encrypPayloadWithKeyLookup(payload)))
   }
 
-  public async encryptPayload(payload: DecryptedPayloadInterface, key: RootKeyInterface): Promise<EncryptedParameters> {
+  public async encryptPayload(
+    payload: DecryptedPayloadInterface,
+    key: RootKeyInterface | GroupKeyInterface,
+  ): Promise<EncryptedParameters> {
     return encryptPayload(payload, key, this.operatorManager)
   }
 
@@ -515,7 +527,15 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
   public async decryptPayloadWithKeyLookup<C extends ItemContent = ItemContent>(
     payload: EncryptedPayloadInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
-    const key = this.getRootKey()
+    let key: RootKeyInterface | GroupKeyInterface | undefined
+    if (payload.group_uuid) {
+      if (!ItemContentTypeUsesGroupKeyEncryption(payload.content_type)) {
+        throw Error('Attempting to decrypt payload that is not a shared items key with group key.')
+      }
+      key = this.getGroupKey(payload.group_uuid)
+    } else {
+      key = this.getRootKey()
+    }
 
     if (key == undefined) {
       return {
@@ -530,7 +550,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
 
   public async decryptPayload<C extends ItemContent = ItemContent>(
     payload: EncryptedPayloadInterface,
-    key: RootKeyInterface,
+    key: RootKeyInterface | GroupKeyInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     return decryptPayload(payload, key, this.operatorManager)
   }
@@ -628,5 +648,14 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     }
 
     return rollback
+  }
+
+  getGroupKey(groupUuid: string): GroupKeyInterface | undefined {
+    const hash = this.storageService.getValue<GroupKeyInterface>(storageKeyForGroupKey(groupUuid))
+    if (!hash) {
+      return undefined
+    }
+
+    return new GroupKey(hash)
   }
 }

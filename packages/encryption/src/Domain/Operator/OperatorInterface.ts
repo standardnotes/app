@@ -1,11 +1,10 @@
-import { KeyParamsOrigination } from '@standardnotes/common'
+import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
   ItemsKeyInterface,
   RootKeyInterface,
   SharedItemsKeyInterface,
   DecryptedPayloadInterface,
   ItemContent,
-  GroupKeyInterface,
 } from '@standardnotes/models'
 import { SNRootKey } from '../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
@@ -15,6 +14,7 @@ import { LegacyAttachedData } from '../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../Types/RootKeyEncryptedAuthenticatedData'
 import { HexString, PkcKeyPair, Utf8String } from '@standardnotes/sncrypto-common'
 import { AsymmetricallyEncryptedKey, SymmetricallyEncryptedPrivateKey } from './Types'
+import { GroupKeyInterface } from '../Keys/GroupKey/GroupKeyInterface'
 
 /**w
  * An operator is responsible for performing crypto operations, such as generating keys
@@ -85,6 +85,8 @@ export interface OperatorCommon {
     encryptedPrivateKey: SymmetricallyEncryptedPrivateKey,
     symmetricKey: HexString,
   ): HexString | null
+
+  versionForEncryptedKey(encryptedKey: string): ProtocolVersion
 }
 
 export interface SynchronousOperator extends OperatorCommon {

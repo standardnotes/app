@@ -2,6 +2,7 @@ import {
   ApiEndpointParam,
   ConflictParams,
   ConflictType,
+  GroupUserServerHash,
   HttpError,
   HttpResponse,
   isErrorResponse,
@@ -22,6 +23,7 @@ export class ServerSyncResponse {
   public readonly uuidConflictPayloads: FilteredServerItem[]
   public readonly dataConflictPayloads: FilteredServerItem[]
   public readonly rejectedPayloads: FilteredServerItem[]
+  readonly groupKeys: GroupUserServerHash[]
 
   private successResponseData: RawSyncResponse | undefined
 
@@ -45,6 +47,8 @@ export class ServerSyncResponse {
     this.uuidConflictPayloads = FilterDisallowedRemotePayloadsAndMap(this.rawUuidConflictItems)
 
     this.rejectedPayloads = FilterDisallowedRemotePayloadsAndMap(this.rawRejectedPayloads)
+
+    this.groupKeys = this.successResponseData?.group_keys || []
 
     deepFreeze(this)
   }

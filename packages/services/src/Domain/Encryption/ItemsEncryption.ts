@@ -9,7 +9,7 @@ import {
   StandardException,
   encryptPayload,
   decryptPayload,
-  ItemContentTypeUsesGroupKeyEncryption,
+  GroupKeyInterface,
 } from '@standardnotes/encryption'
 import {
   DecryptedPayload,
@@ -22,9 +22,7 @@ import {
   PayloadEmitSource,
   SharedItemsKeyInterface,
   SureFindPayload,
-  GroupKeyInterface,
 } from '@standardnotes/models'
-
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
@@ -94,18 +92,9 @@ export class ItemsEncryptionService extends AbstractService {
     payload: DecryptedPayloadInterface,
   ): ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | StandardException {
     if (payload.group_uuid) {
-      const groupKey = this.itemManager.groupKeyForGroup(payload.group_uuid)
-      if (!groupKey) {
-        return new StandardException('Cannot find group key to use for encryption')
-      }
-
-      const payloadIsSharedItemsKey = ItemContentTypeUsesGroupKeyEncryption(payload.content_type)
-      if (payloadIsSharedItemsKey) {
-        return groupKey
-      }
-
       const associatedSharedItemsKeys = this.itemManager
-        .referencesForItem<SharedItemsKeyInterface>(groupKey, ContentType.SharedItemsKey)
+        .getItems<SharedItemsKeyInterface>(ContentType.SharedItemsKey)
+        .filter((key) => key.group_uuid === payload.group_uuid)
         .sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
 
       const sharedKey = associatedSharedItemsKeys[0]

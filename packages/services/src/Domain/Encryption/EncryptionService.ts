@@ -9,6 +9,8 @@ import {
   findDefaultItemsKey,
   FindPayloadInDecryptionSplit,
   FindPayloadInEncryptionSplit,
+  GroupKey,
+  GroupKeyInterface,
   isErrorDecryptingParameters,
   ItemAuthenticatedData,
   KeyedDecryptionSplit,
@@ -32,7 +34,6 @@ import {
   DecryptedPayloadInterface,
   EncryptedPayload,
   EncryptedPayloadInterface,
-  GroupKeyInterface,
   isDecryptedPayload,
   isEncryptedPayload,
   ItemContent,
@@ -40,7 +41,7 @@ import {
   RootKeyInterface,
   SharedItemsKeyInterface,
 } from '@standardnotes/models'
-import { ClientDisplayableError } from '@standardnotes/responses'
+import { ClientDisplayableError, GroupUserServerHash } from '@standardnotes/responses'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   extendArray,
@@ -74,6 +75,7 @@ import { DiagnosticInfo } from '../Diagnostics/ServiceDiagnostics'
 import { RootKeyEncryptionService } from './RootKeyEncryption'
 import { DecryptBackupFile } from './BackupFileDecryptor'
 import { EncryptionServiceEvent } from './EncryptionServiceEvent'
+import { StorageKey, storageKeyForGroupKey } from '../Storage/StorageKeys'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -168,6 +170,40 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     super.deinit()
   }
 
+  async handleRetrievedGroupKeys(hashes: GroupUserServerHash[]): Promise<void> {
+    if (hashes.length === 0) {
+      return
+    }
+
+    const privateKey = this.storageService.getValue<string>(StorageKey.AccountDecryptedPrivateKey)
+    if (!privateKey) {
+      throw new Error('Private key not found')
+    }
+
+    for (const hash of hashes) {
+      const decryptedKey = this.decryptGroupKeyWithPrivateKey(
+        hash.encrypted_group_key,
+        hash.sender_public_key,
+        privateKey,
+      )
+
+      if (!decryptedKey) {
+        throw new Error('Failed to decrypt group key')
+      }
+
+      const groupKey = new GroupKey({
+        uuid: hash.uuid,
+        groupUuid: hash.group_uuid,
+        key: decryptedKey,
+        updatedAtTimestamp: hash.updated_at_timestamp,
+        senderPublicKey: hash.sender_public_key,
+        keyVersion: this.operatorManager.defaultOperator().versionForEncryptedKey(hash.encrypted_group_key),
+      })
+
+      this.storageService.setValue(storageKeyForGroupKey(hash.group_uuid), groupKey)
+    }
+  }
+
   public async initialize() {
     await this.rootKeyEncryption.initialize()
   }
@@ -260,30 +296,29 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       const rootKeyEncrypted = await this.rootKeyEncryption.encryptPayloads(usesRootKey.items, usesRootKey.key)
       extendArray(allEncryptedParams, rootKeyEncrypted)
     }
+    if (usesRootKeyWithKeyLookup) {
+      const rootKeyEncrypted = await this.rootKeyEncryption.encryptPayloadsWithKeyLookup(usesRootKeyWithKeyLookup.items)
+      extendArray(allEncryptedParams, rootKeyEncrypted)
+    }
+    if (usesGroupKey) {
+      const groupKeyEncrypted = await this.rootKeyEncryption.encryptPayloads(usesGroupKey.items, usesGroupKey.key)
+      extendArray(allEncryptedParams, groupKeyEncrypted)
+    }
+    if (usesGroupKeyWithKeyLookup) {
+      const groupKeyEncrypted = await this.rootKeyEncryption.encryptPayloadsWithKeyLookup(
+        usesGroupKeyWithKeyLookup.items,
+      )
+      extendArray(allEncryptedParams, groupKeyEncrypted)
+    }
 
     if (usesItemsKey) {
       const itemsKeyEncrypted = await this.itemsEncryption.encryptPayloads(usesItemsKey.items, usesItemsKey.key)
       extendArray(allEncryptedParams, itemsKeyEncrypted)
     }
 
-    if (usesGroupKey) {
-      const groupKeyEncrypted = await this.itemsEncryption.encryptPayloads(usesGroupKey.items, usesGroupKey.key)
-      extendArray(allEncryptedParams, groupKeyEncrypted)
-    }
-
-    if (usesRootKeyWithKeyLookup) {
-      const rootKeyEncrypted = await this.rootKeyEncryption.encryptPayloadsWithKeyLookup(usesRootKeyWithKeyLookup.items)
-      extendArray(allEncryptedParams, rootKeyEncrypted)
-    }
-
     if (usesItemsKeyWithKeyLookup) {
       const itemsKeyEncrypted = await this.itemsEncryption.encryptPayloadsWithKeyLookup(usesItemsKeyWithKeyLookup.items)
       extendArray(allEncryptedParams, itemsKeyEncrypted)
-    }
-
-    if (usesGroupKeyWithKeyLookup) {
-      const groupKeyEncrypted = await this.itemsEncryption.encryptPayloadsWithKeyLookup(usesGroupKeyWithKeyLookup.items)
-      extendArray(allEncryptedParams, groupKeyEncrypted)
     }
 
     const packagedEncrypted = allEncryptedParams.map((encryptedParams) => {
@@ -333,6 +368,16 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       )
       extendArray(resultParams, rootKeyDecrypted)
     }
+    if (usesGroupKey) {
+      const groupKeyDecrypted = await this.rootKeyEncryption.decryptPayloads<C>(usesGroupKey.items, usesGroupKey.key)
+      extendArray(resultParams, groupKeyDecrypted)
+    }
+    if (usesGroupKeyWithKeyLookup) {
+      const groupKeyDecrypted = await this.rootKeyEncryption.decryptPayloadsWithKeyLookup<C>(
+        usesGroupKeyWithKeyLookup.items,
+      )
+      extendArray(resultParams, groupKeyDecrypted)
+    }
 
     if (usesItemsKey) {
       const itemsKeyDecrypted = await this.itemsEncryption.decryptPayloads<C>(usesItemsKey.items, usesItemsKey.key)
@@ -344,18 +389,6 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
         usesItemsKeyWithKeyLookup.items,
       )
       extendArray(resultParams, itemsKeyDecrypted)
-    }
-
-    if (usesGroupKey) {
-      const groupKeyDecrypted = await this.itemsEncryption.decryptPayloads<C>(usesGroupKey.items, usesGroupKey.key)
-      extendArray(resultParams, groupKeyDecrypted)
-    }
-
-    if (usesGroupKeyWithKeyLookup) {
-      const groupKeyDecrypted = await this.itemsEncryption.decryptPayloadsWithKeyLookup<C>(
-        usesGroupKeyWithKeyLookup.items,
-      )
-      extendArray(resultParams, groupKeyDecrypted)
     }
 
     const packagedResults = resultParams.map((params) => {
@@ -528,6 +561,12 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     const operator = this.operatorManager.defaultOperator()
     const encrypted = operator.asymmetricEncryptKey(groupKey.key, senderPrivateKey, recipientPublicKey)
     return encrypted
+  }
+
+  decryptGroupKeyWithPrivateKey(encryptedGroupKey: string, senderPublicKey: string, privateKey: string): string | null {
+    const operator = this.operatorManager.defaultOperator()
+    const decrypted = operator.asymmetricDecryptKey(encryptedGroupKey, senderPublicKey, privateKey)
+    return decrypted
   }
 
   public async decryptBackupFile(

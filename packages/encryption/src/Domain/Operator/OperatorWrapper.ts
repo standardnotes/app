@@ -5,7 +5,6 @@ import {
   ItemContent,
   EncryptedPayloadInterface,
   SharedItemsKeyInterface,
-  GroupKeyInterface,
 } from '@standardnotes/models'
 import {
   DecryptedParameters,
@@ -15,6 +14,7 @@ import {
 } from '../Types/EncryptedParameters'
 import { isAsyncOperator } from './Functions'
 import { OperatorManager } from './OperatorManager'
+import { GroupKeyInterface } from '../Keys/GroupKey/GroupKeyInterface'
 
 export async function encryptPayload(
   payload: DecryptedPayloadInterface,

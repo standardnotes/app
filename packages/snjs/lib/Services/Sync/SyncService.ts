@@ -950,6 +950,8 @@ export class SNSyncService
 
     const historyMap = this.historyService.getHistoryMapCopy()
 
+    await this.protocolService.handleRetrievedGroupKeys(response.groupKeys)
+
     const resolver = new ServerSyncResponseResolver(
       {
         retrievedPayloads: await this.processServerPayloads(response.retrievedPayloads, PayloadSource.RemoteRetrieved),

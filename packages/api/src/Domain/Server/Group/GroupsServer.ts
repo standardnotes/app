@@ -1,9 +1,8 @@
-import { HttpResponse } from '@standardnotes/responses'
+import { HttpResponse, GroupUserServerHash } from '@standardnotes/responses'
 import { HttpServiceInterface } from '../../Http'
 import { GroupsServerInterface } from './GroupsServerInterface'
 import { SharingPaths } from './Paths'
 import { GroupInterface } from './Group'
-import { GroupUserInterface } from './GroupUser'
 import { GroupPermission } from './GroupPermission'
 
 export class GroupsServer implements GroupsServerInterface {
@@ -22,7 +21,7 @@ export class GroupsServer implements GroupsServerInterface {
     inviteeUuid: string,
     encryptedGroupKey: string,
     permissions: GroupPermission,
-  ): Promise<HttpResponse<GroupUserInterface>> {
+  ): Promise<HttpResponse<GroupUserServerHash>> {
     return this.httpService.post(SharingPaths.addUserToGroup(groupUuid), {
       inviteeUuid,
       permissions,

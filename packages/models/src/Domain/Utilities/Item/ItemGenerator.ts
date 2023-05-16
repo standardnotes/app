@@ -1,4 +1,3 @@
-import { GroupKeyMutator } from '../../Syncable/GroupKey/GroupKeyMutator'
 import { ContentType } from '@standardnotes/common'
 import { EncryptedItem } from '../../Abstract/Item/Implementations/EncryptedItem'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload/Interfaces/DecryptedPayload'
@@ -35,7 +34,6 @@ import { DeletedItem } from '../../Abstract/Item/Implementations/DeletedItem'
 import { EncryptedItemInterface } from '../../Abstract/Item/Interfaces/EncryptedItem'
 import { DeletedItemInterface } from '../../Abstract/Item/Interfaces/DeletedItem'
 import { SmartViewMutator } from '../../Syncable/SmartView'
-import { GroupKey } from '../../Syncable/GroupKey/GroupKey'
 import { Contact } from '../../Syncable/Contact/Contact'
 import { ContactMutator } from '../../Syncable/Contact/ContactMutator'
 
@@ -57,7 +55,6 @@ const ContentTypeClassMapping: Partial<Record<ContentType, MappingEntry>> = {
     mutatorClass: ActionsExtensionMutator,
   },
   [ContentType.Contact]: { itemClass: Contact, mutatorClass: ContactMutator },
-  [ContentType.GroupKey]: { itemClass: GroupKey, mutatorClass: GroupKeyMutator },
   [ContentType.Component]: { itemClass: SNComponent, mutatorClass: ComponentMutator },
   [ContentType.Editor]: { itemClass: SNEditor },
   [ContentType.ExtensionRepo]: { itemClass: SNFeatureRepo },
