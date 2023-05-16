@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.10.10](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.10.9...@standardnotes/icons@1.10.10) (2023-05-16)
+
+**Note:** Version bump only for package @standardnotes/icons
+
 ## [1.10.9](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.10.8...@standardnotes/icons@1.10.9) (2023-04-11)
 
 **Note:** Version bump only for package @standardnotes/icons
