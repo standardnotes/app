@@ -20,4 +20,5 @@ export interface TransferPayload<C extends ItemContent = ItemContent> {
   lastSyncEnd?: Date
 
   duplicate_of?: string
+  group_uuid?: string
 }

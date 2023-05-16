@@ -14,6 +14,7 @@ export interface ItemInterface<P extends PayloadInterface = PayloadInterface> {
   readonly updatedAtString?: string
 
   uuid: string
+  get group_uuid(): string | undefined
 
   content_type: ContentType
   created_at: Date

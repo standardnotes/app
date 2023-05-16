@@ -25,7 +25,7 @@ import { AsymmetricallyEncryptedKey, SymmetricallyEncryptedPrivateKey } from './
  */
 export interface OperatorCommon {
   createItemsKey(): ItemsKeyInterface
-  createSharedItemsKey(): SharedItemsKeyInterface
+  createSharedItemsKey(groupUuid: string): SharedItemsKeyInterface
   /**
    * Returns encryption protocol display name
    */

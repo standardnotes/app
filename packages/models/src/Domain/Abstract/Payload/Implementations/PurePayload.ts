@@ -33,6 +33,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
   readonly lastSyncEnd?: Date
 
   readonly duplicate_of?: string
+  readonly group_uuid?: string
 
   constructor(rawPayload: T, source = PayloadSource.Constructor) {
     this.source = source
@@ -63,6 +64,8 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
     this.dirtyIndex = rawPayload.dirtyIndex
     this.globalDirtyIndexAtLastSync = rawPayload.globalDirtyIndexAtLastSync
 
+    this.group_uuid = rawPayload.group_uuid
+
     const timeToAllowSubclassesToFinishConstruction = 0
     setTimeout(() => {
       deepFreeze(this)
@@ -85,6 +88,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
       globalDirtyIndexAtLastSync: this.globalDirtyIndexAtLastSync,
       lastSyncBegan: this.lastSyncBegan,
       lastSyncEnd: this.lastSyncEnd,
+      group_uuid: this.group_uuid,
     }
 
     return comprehensive

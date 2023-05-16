@@ -498,8 +498,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.operatorManager.defaultOperator().createGroupKey(groupUuid)
   }
 
-  createSharedItemsKey(): SharedItemsKeyInterface {
-    return this.operatorManager.defaultOperator().createSharedItemsKey()
+  createSharedItemsKey(groupUuid: string): SharedItemsKeyInterface {
+    return this.operatorManager.defaultOperator().createSharedItemsKey(groupUuid)
   }
 
   public generateKeyPair(): PkcKeyPair {
@@ -518,6 +518,16 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     const operator = this.operatorManager.defaultOperator()
     const decrypted = operator.symmetricDecryptPrivateKey(encryptedPrivateKey, rootKey.masterKey)
     return decrypted
+  }
+
+  encryptGroupKeyWithRecipientPublicKey(
+    groupKey: GroupKeyInterface,
+    senderPrivateKey: string,
+    recipientPublicKey: string,
+  ): string {
+    const operator = this.operatorManager.defaultOperator()
+    const encrypted = operator.asymmetricEncryptKey(groupKey.key, senderPrivateKey, recipientPublicKey)
+    return encrypted
   }
 
   public async decryptBackupFile(

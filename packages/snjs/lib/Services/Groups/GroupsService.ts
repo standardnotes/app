@@ -1,4 +1,3 @@
-import { GroupKeyContentSpecialized } from '@standardnotes/models/src/Domain/Syncable/GroupKey/GroupKeyContent'
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import {
   HttpServiceInterface,
@@ -15,9 +14,8 @@ import {
   SessionsClientInterface,
   SyncServiceInterface,
 } from '@standardnotes/services'
-import { Contact, DecryptedItemInterface, GroupKeyInterface, GroupKeyMutator } from '@standardnotes/models'
+import { Contact, DecryptedItemInterface } from '@standardnotes/models'
 import { GroupsServiceEvent, GroupsServiceInterface } from './GroupsServiceInterface'
-import { ContentType } from '@standardnotes/common'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 
 export class GroupsService extends AbstractService<GroupsServiceEvent> implements GroupsServiceInterface {
@@ -43,10 +41,11 @@ export class GroupsService extends AbstractService<GroupsServiceEvent> implement
       return ClientDisplayableError.FromError(response.data.error)
     }
 
-    const groupKey = this.encryption.createGroupKey(response.data.uuid)
+    const groupUuid = response.data.uuid
+    const groupKey = this.encryption.createGroupKey(groupUuid)
     await this.items.insertItem(groupKey)
 
-    const sharedItemsKey = this.encryption.createSharedItemsKey()
+    const sharedItemsKey = this.encryption.createSharedItemsKey(groupUuid)
     await this.items.insertItem(sharedItemsKey)
 
     void this.sync.sync()
@@ -69,12 +68,16 @@ export class GroupsService extends AbstractService<GroupsServiceEvent> implement
     contact: Contact,
     permissions: GroupPermission,
   ): Promise<GroupUserInterface | ClientDisplayableError> {
-    const groupKey = this.findGroupKeyForGroup(group)
+    const groupKey = this.items.groupKeyForGroup(group.uuid)
     if (!groupKey) {
       return ClientDisplayableError.FromString('Cannot add contact; group key not found')
     }
 
-    const encryptedGroupKey = this.operator.asymmetricEncryptKey(groupKey.key, this.user.privateKey, contact.publicKey)
+    const encryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
+      groupKey,
+      this.user.privateKey,
+      contact.publicKey,
+    )
 
     const response = await this.groupsServer.addUserToGroup(
       group.uuid,
@@ -90,41 +93,21 @@ export class GroupsService extends AbstractService<GroupsServiceEvent> implement
     return response.data
   }
 
-  async addItemToGroup(
-    group: GroupInterface,
-    item: DecryptedItemInterface,
-  ): Promise<undefined | ClientDisplayableError> {
-    const groupKey = this.findGroupKeyForGroup(group)
-    if (!groupKey) {
-      return ClientDisplayableError.FromString('Cannot add contact; group key not found')
-    }
-
-    const response = await this.groupsServer.addItemToGroup(item.uuid, group.uuid)
-
-    if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromError(response.data.error)
-    }
-
-    await this.items.changeItem<GroupKeyMutator>(groupKey, (mutator) => {
-      mutator.addItemReference(item)
+  async addItemToGroup(group: GroupInterface, item: DecryptedItemInterface): Promise<void> {
+    await this.items.changeItem(item, (mutator) => {
+      mutator.group_uuid = group.uuid
     })
-
     void this.sync.sync()
-
-    return undefined
-  }
-
-  private findGroupKeyForGroup(group: GroupInterface): GroupKeyInterface | undefined {
-    const allGroupKeys = this.items.getItems<GroupKeyInterface>(ContentType.GroupKey)
-    return allGroupKeys.find((groupKey) => groupKey.groupUuid === group.uuid)
   }
 
   override deinit(): void {
     super.deinit()
     ;(this.http as unknown) = undefined
     ;(this.sync as unknown) = undefined
-    ;(this.crypto as unknown) = undefined
-    ;(this.operator as unknown) = undefined
+    ;(this.encryption as unknown) = undefined
+    ;(this.items as unknown) = undefined
+    ;(this.session as unknown) = undefined
+    ;(this.user as unknown) = undefined
     ;(this.groupsServer as unknown) = undefined
   }
 }

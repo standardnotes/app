@@ -93,8 +93,12 @@ export class ItemsEncryptionService extends AbstractService {
   private keyToUseForItemEncryption(
     payload: DecryptedPayloadInterface,
   ): ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | StandardException {
-    const groupKey = this.itemManager.groupKeyReferencingItem(payload)
-    if (groupKey) {
+    if (payload.group_uuid) {
+      const groupKey = this.itemManager.groupKeyForGroup(payload.group_uuid)
+      if (!groupKey) {
+        return new StandardException('Cannot find group key to use for encryption')
+      }
+
       const payloadIsSharedItemsKey = ItemContentTypeUsesGroupKeyEncryption(payload.content_type)
       if (payloadIsSharedItemsKey) {
         return groupKey

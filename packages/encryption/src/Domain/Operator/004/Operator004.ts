@@ -13,6 +13,7 @@ import {
   SharedItemsKeyContent,
   GroupKeyContentSpecialized,
   GroupKeyContent,
+  DecryptedTransferPayload,
 } from '@standardnotes/models'
 import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
 import * as Utils from '@standardnotes/utils'
@@ -69,28 +70,21 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return response
   }
 
-  private generateNewSharedItemsKeyContent() {
-    const itemsKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
-    const response = FillItemContent<SharedItemsKeyContent>({
-      itemsKey: itemsKey,
-      version: ProtocolVersion.V004,
-    })
-    return response
-  }
-
   public createGroupKey(groupUuid: string): GroupKeyInterface {
     const groupKeyContent: GroupKeyContentSpecialized = {
-      groupUuid: groupUuid,
       key: this.crypto.generateRandomKey(192),
       version: ProtocolVersion.V004,
     }
 
-    const payload = new DecryptedPayload({
+    const transferPayload: DecryptedTransferPayload = {
       uuid: Utils.UuidGenerator.GenerateUuid(),
       content_type: ContentType.GroupKey,
+      group_uuid: groupUuid,
       content: FillItemContent<GroupKeyContent>(groupKeyContent),
       ...PayloadTimestampDefaults(),
-    })
+    }
+
+    const payload = new DecryptedPayload(transferPayload)
 
     return CreateDecryptedItemFromPayload(payload)
   }
@@ -109,13 +103,22 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return CreateDecryptedItemFromPayload(payload)
   }
 
-  public createSharedItemsKey(): SharedItemsKeyInterface {
-    const payload = new DecryptedPayload({
+  public createSharedItemsKey(groupUuid: string): SharedItemsKeyInterface {
+    const key = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
+    const content = FillItemContent<SharedItemsKeyContent>({
+      itemsKey: key,
+      version: ProtocolVersion.V004,
+    })
+
+    const transferPayload: DecryptedTransferPayload = {
       uuid: Utils.UuidGenerator.GenerateUuid(),
       content_type: ContentType.ItemsKey,
-      content: this.generateNewSharedItemsKeyContent(),
+      group_uuid: groupUuid,
+      content: content,
       ...PayloadTimestampDefaults(),
-    })
+    }
+
+    const payload = new DecryptedPayload(transferPayload)
     return CreateDecryptedItemFromPayload(payload)
   }
 

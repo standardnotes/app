@@ -12,5 +12,4 @@ export interface GroupsServerInterface {
     encryptedGroupKey: string,
     permissions: GroupPermission,
   ): Promise<HttpResponse<GroupUserInterface>>
-  addItemToGroup(itemUuid: string, groupUuid: string): Promise<HttpResponse<boolean>>
 }

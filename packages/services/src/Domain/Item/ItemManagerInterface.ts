@@ -104,7 +104,9 @@ export interface ItemManagerInterface extends AbstractService {
     itemToLookupUuidFor: { uuid: string },
     contentType?: ContentType,
   ): I[]
-  groupKeyReferencingItem(itemToLookupUuidFor: { uuid: string }): GroupKey | undefined
+
+  groupKeyForGroup(groupUuid: string): GroupKey | undefined
+
   referencesForItem<I extends DecryptedItemInterface = DecryptedItemInterface>(
     itemToLookupUuidFor: DecryptedItemInterface,
     contentType?: ContentType,

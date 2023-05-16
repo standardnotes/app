@@ -51,6 +51,12 @@ export class ItemMutator<
     })
   }
 
+  public set group_uuid(groupUuid: string | undefined) {
+    this.immutablePayload = this.immutablePayload.copy({
+      group_uuid: groupUuid,
+    })
+  }
+
   public set errorDecrypting(_: boolean) {
     throw Error('This method is no longer implemented')
   }

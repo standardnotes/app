@@ -14,5 +14,5 @@ export interface GroupsServiceInterface extends AbstractService<GroupsServiceEve
     permissions: GroupPermission,
   ): Promise<GroupUserInterface | ClientDisplayableError>
 
-  addItemToGroup(group: GroupInterface, item: DecryptedItemInterface): Promise<undefined | ClientDisplayableError>
+  addItemToGroup(group: GroupInterface, item: DecryptedItemInterface): Promise<void>
 }

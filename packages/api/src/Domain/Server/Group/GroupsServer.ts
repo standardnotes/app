@@ -29,10 +29,4 @@ export class GroupsServer implements GroupsServerInterface {
       encryptedGroupKey,
     })
   }
-
-  addItemToGroup(itemUuid: string, groupUuid: string): Promise<HttpResponse<boolean>> {
-    return this.httpService.post(SharingPaths.addItemToGroup(groupUuid), {
-      itemUuid,
-    })
-  }
 }

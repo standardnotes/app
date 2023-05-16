@@ -57,11 +57,16 @@ export interface EncryptionProviderInterface {
     version?: ProtocolVersion,
   ): Promise<RootKeyInterface>
 
-  createSharedItemsKey(): SharedItemsKeyInterface
+  createSharedItemsKey(groupUuid: string): SharedItemsKeyInterface
   createGroupKey(groupUuid: string): GroupKeyInterface
   generateKeyPair(): PkcKeyPair
   encryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, privateKey: string): string
   decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | null
+  encryptGroupKeyWithRecipientPublicKey(
+    groupKey: GroupKeyInterface,
+    senderPrivateKey: string,
+    recipientPublicKey: string,
+  ): string
 
   setNewRootKeyWrapper(wrappingKey: RootKeyInterface): Promise<void>
   removePasscode(): Promise<void>
