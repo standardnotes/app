@@ -9,7 +9,6 @@ export * from './Revision/RevisionServerInterface'
 
 export * from './Group/GroupsServer'
 export * from './Group/GroupsServerInterface'
-export * from './Group/Group'
 export * from './Group/GroupPermission'
 
 export * from './Subscription/SubscriptionServer'

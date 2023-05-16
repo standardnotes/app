@@ -55,7 +55,7 @@ export interface OperatorCommon {
    */
   createRootKey(identifier: string, password: string, origination: KeyParamsOrigination): Promise<SNRootKey>
 
-  createGroupKey(groupUuid: string): GroupKeyInterface
+  createGroupKeyString(): { key: string; version: ProtocolVersion }
 
   generateKeyPair(): PkcKeyPair
 

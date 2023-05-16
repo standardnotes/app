@@ -1,4 +1,4 @@
-export interface GroupUserServerHash {
+export interface GroupUserKeyServerHash {
   uuid: string
   group_uuid: string
   user_uuid: string

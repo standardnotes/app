@@ -9,7 +9,7 @@ import {
   RootKeyInterface,
   SharedItemsKeyInterface,
 } from '@standardnotes/models'
-import { ClientDisplayableError, GroupUserServerHash } from '@standardnotes/responses'
+import { ClientDisplayableError, GroupUserKeyServerHash } from '@standardnotes/responses'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
 import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
 import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
@@ -56,14 +56,17 @@ export interface EncryptionProviderInterface {
     version?: ProtocolVersion,
   ): Promise<RootKeyInterface>
 
-  handleRetrievedGroupKeys(hashes: GroupUserServerHash[]): Promise<void>
+  getDecryptedPrivateKey(): string | undefined
+  getGroupKey(groupUuid: string): GroupKeyInterface | undefined
+  persistGroupKey(groupKey: GroupKeyInterface): void
+  handleRetrievedGroupKeys(hashes: GroupUserKeyServerHash[]): Promise<void>
   createSharedItemsKey(groupUuid: string): SharedItemsKeyInterface
-  createGroupKey(groupUuid: string): GroupKeyInterface
+  createGroupKeyString(): { key: string; version: ProtocolVersion }
   generateKeyPair(): PkcKeyPair
   encryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, privateKey: string): string
   decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | null
   encryptGroupKeyWithRecipientPublicKey(
-    groupKey: GroupKeyInterface,
+    key: GroupKeyInterface['key'],
     senderPrivateKey: string,
     recipientPublicKey: string,
   ): string

@@ -1,31 +1,34 @@
-import { HttpResponse, GroupUserServerHash } from '@standardnotes/responses'
+import { HttpResponse } from '@standardnotes/responses'
 import { HttpServiceInterface } from '../../Http'
-import { GroupsServerInterface } from './GroupsServerInterface'
+import { AddUserToGroupResponse, CreateGroupResponse, GroupsServerInterface } from './GroupsServerInterface'
 import { SharingPaths } from './Paths'
-import { GroupInterface } from './Group'
 import { GroupPermission } from './GroupPermission'
 
 export class GroupsServer implements GroupsServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
 
-  createGroup(): Promise<HttpResponse<GroupInterface>> {
-    return this.httpService.post(SharingPaths.createGroup)
+  createGroup(params: {
+    creatorPublicKey: string
+    encryptedGroupKey: string
+  }): Promise<HttpResponse<CreateGroupResponse>> {
+    return this.httpService.post(SharingPaths.createGroup, {
+      creator_public_key: params.creatorPublicKey,
+      encrypted_group_key: params.encryptedGroupKey,
+    })
   }
 
-  getUserGroups(): Promise<HttpResponse<GroupInterface[]>> {
-    return this.httpService.get(SharingPaths.getUserGroups)
-  }
-
-  addUserToGroup(
-    groupUuid: string,
-    inviteeUuid: string,
-    encryptedGroupKey: string,
-    permissions: GroupPermission,
-  ): Promise<HttpResponse<GroupUserServerHash>> {
-    return this.httpService.post(SharingPaths.addUserToGroup(groupUuid), {
-      inviteeUuid,
-      permissions,
-      encryptedGroupKey,
+  addUserToGroup(params: {
+    groupUuid: string
+    inviteeUuid: string
+    encryptedGroupKey: string
+    senderPublicKey: string
+    permissions: GroupPermission
+  }): Promise<HttpResponse<AddUserToGroupResponse>> {
+    return this.httpService.post(SharingPaths.addUserToGroup(params.groupUuid), {
+      invitee_uuid: params.inviteeUuid,
+      permissions: params.permissions,
+      encrypted_group_key: params.encryptedGroupKey,
+      sender_public_key: params.senderPublicKey,
     })
   }
 }

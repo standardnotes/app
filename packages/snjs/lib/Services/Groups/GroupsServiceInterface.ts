@@ -1,6 +1,6 @@
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { AbstractService } from '@standardnotes/services'
-import { GroupInterface, GroupPermission, GroupUserServerHash } from '@standardnotes/api'
+import { GroupInterface, GroupPermission, GroupUserKeyServerHash } from '@standardnotes/api'
 import { Contact, DecryptedItemInterface } from '@standardnotes/models'
 
 export enum GroupsServiceEvent {}
@@ -12,7 +12,7 @@ export interface GroupsServiceInterface extends AbstractService<GroupsServiceEve
     group: GroupInterface,
     contact: Contact,
     permissions: GroupPermission,
-  ): Promise<GroupUserServerHash | ClientDisplayableError>
+  ): Promise<GroupUserKeyServerHash | ClientDisplayableError>
 
   addItemToGroup(group: GroupInterface, item: DecryptedItemInterface): Promise<void>
 }

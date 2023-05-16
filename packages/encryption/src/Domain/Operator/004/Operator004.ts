@@ -28,7 +28,6 @@ import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedA
 import { SynchronousOperator } from '../OperatorInterface'
 import { isSharedItemsKey } from '../../Keys/SharedItemsKey/SharedItemsKey'
 import { AsymmetricallyEncryptedKey, SymmetricallyEncryptedPrivateKey } from '../Types'
-import { GroupKey } from '../../Keys/GroupKey/GroupKey'
 
 type V004StringComponents = [version: string, nonce: string, ciphertext: string, authenticatedData: string]
 
@@ -69,10 +68,8 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return response
   }
 
-  public createGroupKey(groupUuid: string): GroupKeyInterface {
-    const groupKey = new GroupKey(groupUuid, this.crypto.generateRandomKey(192), new Date(), ProtocolVersion.V004)
-
-    return groupKey
+  public createGroupKeyString(): { key: string; version: ProtocolVersion } {
+    return { key: this.crypto.generateRandomKey(192), version: ProtocolVersion.V004 }
   }
 
   /**

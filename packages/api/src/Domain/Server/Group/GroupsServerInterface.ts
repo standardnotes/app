@@ -1,16 +1,26 @@
-import { HttpResponse, GroupUserServerHash } from '@standardnotes/responses'
-import { GroupInterface } from './Group'
+import { HttpResponse, GroupUserKeyServerHash, GroupServerHash } from '@standardnotes/responses'
 import { GroupPermission } from './GroupPermission'
 
+export type CreateGroupResponse = {
+  group: GroupServerHash
+  userKey: GroupUserKeyServerHash
+}
+
+export type AddUserToGroupResponse = {
+  groupUserKey: GroupUserKeyServerHash
+}
+
 export interface GroupsServerInterface {
-  createGroup(): Promise<HttpResponse<GroupInterface>>
+  createGroup(params: {
+    creatorPublicKey: string
+    encryptedGroupKey: string
+  }): Promise<HttpResponse<CreateGroupResponse>>
 
-  getUserGroups(): Promise<HttpResponse<GroupInterface[]>>
-
-  addUserToGroup(
-    groupUuid: string,
-    inviteeUuid: string,
-    encryptedGroupKey: string,
-    permissions: GroupPermission,
-  ): Promise<HttpResponse<GroupUserServerHash>>
+  addUserToGroup(params: {
+    groupUuid: string
+    inviteeUuid: string
+    encryptedGroupKey: string
+    senderPublicKey: string
+    permissions: GroupPermission
+  }): Promise<HttpResponse<AddUserToGroupResponse>>
 }

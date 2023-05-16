@@ -1,12 +1,11 @@
-import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import {
-  HttpServiceInterface,
-  GroupsServer,
-  GroupsServerInterface,
-  GroupInterface,
-  GroupUserInterface,
-  GroupPermission,
-} from '@standardnotes/api'
+  ClientDisplayableError,
+  GroupUserKeyServerHash,
+  GroupServerHash,
+  User,
+  isErrorResponse,
+} from '@standardnotes/responses'
+import { HttpServiceInterface, GroupsServer, GroupsServerInterface, GroupPermission } from '@standardnotes/api'
 import {
   AbstractService,
   InternalEventBusInterface,
@@ -16,11 +15,10 @@ import {
 } from '@standardnotes/services'
 import { Contact, DecryptedItemInterface } from '@standardnotes/models'
 import { GroupsServiceEvent, GroupsServiceInterface } from './GroupsServiceInterface'
-import { EncryptionProviderInterface } from '@standardnotes/encryption'
+import { EncryptionProviderInterface, GroupKey } from '@standardnotes/encryption'
 
 export class GroupsService extends AbstractService<GroupsServiceEvent> implements GroupsServiceInterface {
   private groupsServer: GroupsServerInterface
-  private user!: { publicKey: string; privateKey: string }
 
   constructor(
     private http: HttpServiceInterface,
@@ -34,69 +32,102 @@ export class GroupsService extends AbstractService<GroupsServiceEvent> implement
     this.groupsServer = new GroupsServer(http)
   }
 
-  async createGroup(): Promise<GroupInterface | ClientDisplayableError> {
-    const response = await this.groupsServer.createGroup()
+  get user(): User {
+    return this.session.getSureUser()
+  }
+
+  get userPublicKey(): string {
+    const key = this.user.publicKey
+    if (!key) {
+      throw new Error('User public key not found')
+    }
+
+    return key
+  }
+
+  get decryptedPrivateKey(): string {
+    const key = this.encryption.getDecryptedPrivateKey()
+    if (!key) {
+      throw new Error('Decrypted private key not found')
+    }
+
+    return key
+  }
+
+  async createGroup(): Promise<GroupServerHash | ClientDisplayableError> {
+    const { key, version } = this.encryption.createGroupKeyString()
+    const encryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
+      key,
+      this.decryptedPrivateKey,
+      this.userPublicKey,
+    )
+
+    const response = await this.groupsServer.createGroup({
+      creatorPublicKey: this.userPublicKey,
+      encryptedGroupKey: encryptedGroupKey,
+    })
 
     if (isErrorResponse(response)) {
       return ClientDisplayableError.FromError(response.data.error)
     }
 
-    const groupUuid = response.data.uuid
-    const groupKey = this.encryption.createGroupKey(groupUuid)
-    await this.items.insertItem(groupKey)
+    const { group, userKey } = response.data
+
+    const groupUuid = group.uuid
+    const groupKey = new GroupKey({
+      uuid: userKey.uuid,
+      groupUuid: group.uuid,
+      key: key,
+      updatedAtTimestamp: userKey.updated_at_timestamp,
+      senderPublicKey: userKey.sender_public_key,
+      keyVersion: version,
+    })
+    this.encryption.persistGroupKey(groupKey)
 
     const sharedItemsKey = this.encryption.createSharedItemsKey(groupUuid)
     await this.items.insertItem(sharedItemsKey)
 
     void this.sync.sync()
 
-    return response.data
-  }
-
-  async getUserGroups(): Promise<GroupInterface[] | ClientDisplayableError> {
-    const response = await this.groupsServer.getUserGroups()
-
-    if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromError(response.data.error)
-    }
-
-    return response.data
+    return group
   }
 
   async addContactToGroup(
-    group: GroupInterface,
+    group: GroupServerHash,
     contact: Contact,
     permissions: GroupPermission,
-  ): Promise<GroupUserInterface | ClientDisplayableError> {
-    const groupKey = this.items.groupKeyForGroup(group.uuid)
+  ): Promise<GroupUserKeyServerHash | ClientDisplayableError> {
+    const groupKey = this.encryption.getGroupKey(group.uuid)
     if (!groupKey) {
       return ClientDisplayableError.FromString('Cannot add contact; group key not found')
     }
 
     const encryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
-      groupKey,
-      this.user.privateKey,
+      groupKey.key,
+      this.decryptedPrivateKey,
       contact.publicKey,
     )
 
-    const response = await this.groupsServer.addUserToGroup(
-      group.uuid,
-      contact.userUuid,
+    const response = await this.groupsServer.addUserToGroup({
+      groupUuid: group.uuid,
+      inviteeUuid: contact.userUuid,
+      senderPublicKey: this.userPublicKey,
       encryptedGroupKey,
       permissions,
-    )
+    })
 
     if (isErrorResponse(response)) {
       return ClientDisplayableError.FromError(response.data.error)
     }
 
-    return response.data
+    return response.data.groupUserKey
   }
 
-  async addItemToGroup(group: GroupInterface, item: DecryptedItemInterface): Promise<void> {
+  async addItemToGroup(group: GroupServerHash, item: DecryptedItemInterface): Promise<void> {
     await this.items.changeItem(item, (mutator) => {
       mutator.group_uuid = group.uuid
     })
+
     void this.sync.sync()
   }
 

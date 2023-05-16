@@ -41,7 +41,7 @@ import {
   RootKeyInterface,
   SharedItemsKeyInterface,
 } from '@standardnotes/models'
-import { ClientDisplayableError, GroupUserServerHash } from '@standardnotes/responses'
+import { ClientDisplayableError, GroupUserKeyServerHash } from '@standardnotes/responses'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   extendArray,
@@ -170,12 +170,16 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     super.deinit()
   }
 
-  async handleRetrievedGroupKeys(hashes: GroupUserServerHash[]): Promise<void> {
+  getDecryptedPrivateKey(): string | undefined {
+    return this.storageService.getValue<string>(StorageKey.AccountDecryptedPrivateKey)
+  }
+
+  async handleRetrievedGroupKeys(hashes: GroupUserKeyServerHash[]): Promise<void> {
     if (hashes.length === 0) {
       return
     }
 
-    const privateKey = this.storageService.getValue<string>(StorageKey.AccountDecryptedPrivateKey)
+    const privateKey = this.getDecryptedPrivateKey()
     if (!privateKey) {
       throw new Error('Private key not found')
     }
@@ -200,8 +204,12 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
         keyVersion: this.operatorManager.defaultOperator().versionForEncryptedKey(hash.encrypted_group_key),
       })
 
-      this.storageService.setValue(storageKeyForGroupKey(hash.group_uuid), groupKey)
+      this.persistGroupKey(groupKey)
     }
+  }
+
+  persistGroupKey(groupKey: GroupKeyInterface): void {
+    this.storageService.setValue(storageKeyForGroupKey(groupKey.groupUuid), groupKey)
   }
 
   public async initialize() {
@@ -527,8 +535,12 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.rootKeyEncryption.createRootKey(identifier, password, origination, version)
   }
 
-  createGroupKey(groupUuid: string): GroupKeyInterface {
-    return this.operatorManager.defaultOperator().createGroupKey(groupUuid)
+  createGroupKeyString(): { key: string; version: ProtocolVersion } {
+    return this.operatorManager.defaultOperator().createGroupKeyString()
+  }
+
+  getGroupKey(groupUuid: string): GroupKeyInterface | undefined {
+    return this.rootKeyEncryption.getGroupKey(groupUuid)
   }
 
   createSharedItemsKey(groupUuid: string): SharedItemsKeyInterface {
@@ -554,12 +566,12 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   }
 
   encryptGroupKeyWithRecipientPublicKey(
-    groupKey: GroupKeyInterface,
+    key: GroupKeyInterface['key'],
     senderPrivateKey: string,
     recipientPublicKey: string,
   ): string {
     const operator = this.operatorManager.defaultOperator()
-    const encrypted = operator.asymmetricEncryptKey(groupKey.key, senderPrivateKey, recipientPublicKey)
+    const encrypted = operator.asymmetricEncryptKey(key, senderPrivateKey, recipientPublicKey)
     return encrypted
   }
 
