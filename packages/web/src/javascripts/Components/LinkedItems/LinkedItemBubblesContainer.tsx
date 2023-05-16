@@ -144,7 +144,7 @@ const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = fals
     <div
       className={classNames(
         'flex w-full justify-between',
-        itemsToDisplay.length > 0 && 'pt-2',
+        itemsToDisplay.length > 0 && !shouldHideToggle && 'pt-2',
         isCollapsed ? 'gap-4' : 'gap-1',
       )}
     >
