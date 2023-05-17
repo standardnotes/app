@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.160.0",
+      "title": "[3.160.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.17...@standardnotes/web@3.160.0) (2023-05-17)",
+      "date": null,
+      "body": "### Features\n\n* Preferences view layout on mobile has been updated, and can be dismissed by swiping from the right ([e5c580d](https://github.com/standardnotes/app/commit/e5c580deab14a5fb8bea59560d230c22ccc307d4))",
+      "parsed": {
+        "_": [
+          "Preferences view layout on mobile has been updated, and can be dismissed by swiping from the right (e5c580d)"
+        ],
+        "Features": [
+          "Preferences view layout on mobile has been updated, and can be dismissed by swiping from the right (e5c580d)"
+        ]
+      }
+    },
+    {
       "version": "3.159.17",
       "title": "[3.159.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.16...@standardnotes/web@3.159.17) (2023-05-16)",
       "date": null,

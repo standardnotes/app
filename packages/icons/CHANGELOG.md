@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.10.11...@standardnotes/icons@1.11.0) (2023-05-17)
+
+### Features
+
+* Preferences view layout on mobile has been updated, and can be dismissed by swiping from the right ([e5c580d](https://github.com/standardnotes/app/commit/e5c580deab14a5fb8bea59560d230c22ccc307d4))
+
 ## [1.10.11](https://github.com/standardnotes/app/compare/@standardnotes/icons@1.10.10...@standardnotes/icons@1.10.11) (2023-05-16)
 
 **Note:** Version bump only for package @standardnotes/icons
