@@ -62,13 +62,14 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
   const premiumModal = usePremiumModal()
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+  const canShowPaneGesturesOption = isMobileScreen && typeof isPaneGesturesEnabled === 'boolean'
 
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Labs</Title>
         <div>
-          {isMobileScreen && (
+          {canShowPaneGesturesOption && (
             <LabsFeature
               name="Pane switch gestures"
               description="Allows using gestures to navigate"
@@ -103,7 +104,7 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
               </Fragment>
             )
           })}
-          {(experimentalFeatures.length === 0 || typeof isPaneGesturesEnabled === 'boolean') && (
+          {experimentalFeatures.length === 0 && !canShowPaneGesturesOption && (
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <Text>No experimental features available.</Text>

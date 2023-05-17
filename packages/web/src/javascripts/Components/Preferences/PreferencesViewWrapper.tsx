@@ -47,7 +47,11 @@ const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = (
   })
 
   return (
-    <ModalOverlay isOpen={viewControllerManager.preferencesController.isOpen} ref={setElement}>
+    <ModalOverlay
+      isOpen={viewControllerManager.preferencesController.isOpen}
+      ref={setElement}
+      animationVariant="horizontal"
+    >
       <PreferencesView
         closePreferences={viewControllerManager.preferencesController.closePreferences}
         application={application}

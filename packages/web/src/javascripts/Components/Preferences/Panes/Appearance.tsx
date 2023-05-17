@@ -116,7 +116,7 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
         <PreferencesSegment>
           <Title>Themes</Title>
           <div className="mt-2">
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between gap-2 md:items-center">
               <div className="flex flex-col">
                 <Subtitle>Use system color scheme</Subtitle>
                 <Text>Automatically change active theme based on your system settings.</Text>

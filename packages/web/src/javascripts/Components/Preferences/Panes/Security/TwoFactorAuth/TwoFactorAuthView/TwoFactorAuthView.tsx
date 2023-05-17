@@ -91,14 +91,12 @@ const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application }) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row gap-2 md:items-center">
             <div className="flex flex-grow flex-col">
               <TwoFactorTitle auth={auth} />
               <TwoFactorDescription auth={auth} />
             </div>
-            <div className="flex min-w-15 flex-col items-center justify-center">
-              <TwoFactorSwitch auth={auth} />
-            </div>
+            <TwoFactorSwitch auth={auth} />
           </div>
         </PreferencesSegment>
 

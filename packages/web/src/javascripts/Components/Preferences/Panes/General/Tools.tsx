@@ -27,7 +27,7 @@ const Tools: FunctionComponent<Props> = ({ application }: Props) => {
       <PreferencesSegment>
         <Title>Tools</Title>
         <div>
-          <div className="flex items-center justify-between">
+          <div className="flex justify-between gap-2 md:items-center">
             <div className="flex flex-col">
               <Subtitle>Show note saving status while editing</Subtitle>
               <Text>
