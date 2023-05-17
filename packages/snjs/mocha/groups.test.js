@@ -24,30 +24,122 @@ describe.only('groups', function () {
     await context.register()
 
     application = context.application
-
-    groupService = new GroupService(
-      application.httpService,
-      application.sync,
-      application.items,
-      application.protocolService,
-      application.sessions,
-      application.internalEventBus,
-    )
+    groupService = application.groupService
   })
 
-  it('should create keypair during registration', () => {
-    expect(groupService.userPublicKey).to.not.be.undefined
-    expect(groupService.userDecryptedPrivateKey).to.not.be.undefined
+  describe('registration', () => {
+    it('should create keypair during registration', () => {
+      expect(groupService.userPublicKey).to.not.be.undefined
+      expect(groupService.userDecryptedPrivateKey).to.not.be.undefined
+    })
   })
 
-  it.only('should create a group', async () => {
-    const group = await groupService.createGroup()
-    expect(group).to.not.be.undefined
+  describe('contacts', () => {
+    it('should create contact', async () => {
+      const contact = await groupService.createContact({
+        name: 'John Doe',
+        publicKey: 'my_public_key',
+        userUuid: '123',
+        trusted: true,
+      })
 
-    const sharedItemsKeys = application.items.sharedItemsKeysForGroup(group.uuid)
-    expect(sharedItemsKeys.length).to.equal(1)
+      expect(contact).to.not.be.undefined
+      expect(contact.name).to.equal('John Doe')
+      expect(contact.publicKey).to.equal('my_public_key')
+      expect(contact.userUuid).to.equal('123')
+      expect(contact.trusted).to.be.true
+    })
+  })
 
-    const sharedItemsKey = sharedItemsKeys[0]
-    expect(sharedItemsKey instanceof SharedItemsKey).to.be.true
+  describe('groups', () => {
+    const createContactContext = async () => {
+      const contactContext = await Factory.createAppContextWithRealCrypto()
+      await contactContext.launch()
+      await contactContext.register()
+
+      return {
+        contactContext,
+        deinitContactContext: contactContext.deinit.bind(contactContext),
+      }
+    }
+
+    const createContactForUserOfContext = async (otherContext) => {
+      const contact = await groupService.createContact({
+        name: 'John Doe',
+        publicKey: otherContext.application.groupService.userPublicKey,
+        userUuid: otherContext.application.sessions.user.uuid,
+        trusted: true,
+      })
+
+      return contact
+    }
+
+    const createGroupWithInvitedContact = async () => {
+      const group = await groupService.createGroup()
+      const { contactContext, deinitContactContext } = await createContactContext()
+      const contact = await createContactForUserOfContext(contactContext)
+      await groupService.addContactToGroup(group, contact, GroupPermission.Write)
+
+      return { group, contact, contactContext, deinitContactContext }
+    }
+
+    it('should create a group', async () => {
+      const group = await groupService.createGroup()
+      expect(group).to.not.be.undefined
+
+      const sharedItemsKeys = application.items.sharedItemsKeysForGroup(group.uuid)
+      expect(sharedItemsKeys.length).to.equal(1)
+
+      const sharedItemsKey = sharedItemsKeys[0]
+      expect(sharedItemsKey instanceof SharedItemsKey).to.be.true
+    })
+
+    it('should add contact to group', async () => {
+      const group = await groupService.createGroup()
+      const { contactContext, deinitContactContext } = await createContactContext()
+      const contact = await createContactForUserOfContext(contactContext)
+
+      const groupUser = await groupService.addContactToGroup(group, contact, GroupPermission.Write)
+
+      expect(groupUser).to.not.be.undefined
+      expect(groupUser.group_uuid).to.equal(group.uuid)
+      expect(groupUser.user_uuid).to.equal(contact.userUuid)
+      expect(groupUser.encrypted_group_key).to.not.be.undefined
+      expect(groupUser.sender_public_key).to.equal(groupService.userPublicKey)
+      expect(groupUser.permissions).to.equal(GroupPermission.Write)
+      expect(groupUser.updated_at_timestamp).to.not.be.undefined
+
+      await deinitContactContext()
+    })
+
+    it('should add item to group', async () => {
+      const note = await context.createSyncedNote('foo', 'bar')
+      const { group, deinitContactContext } = await createGroupWithInvitedContact()
+
+      await groupService.addItemToGroup(group, note)
+
+      const updatedNote = application.items.findItem(note.uuid)
+      expect(updatedNote.group_uuid).to.equal(group.uuid)
+
+      await deinitContactContext()
+    })
+
+    it.only('should sync group note with receiving contact', async () => {
+      const note = await context.createSyncedNote('foo', 'bar')
+      const { group, contactContext, deinitContactContext } = await createGroupWithInvitedContact()
+      await groupService.addItemToGroup(group, note)
+
+      await context.changeNoteTitle(note, 'new title')
+      await contactContext.sync()
+
+      const receivedNote = contactContext.application.items.findItem(note.uuid)
+
+      expect(receivedNote).to.not.be.undefined
+      expect(receivedNote.group_uuid).to.equal(group.uuid)
+      expect(receivedNote.title).to.equal('new title')
+      expect(receivedNote.text).to.equal(note.text)
+
+      await deinitContactContext()
+    })
   })
 })

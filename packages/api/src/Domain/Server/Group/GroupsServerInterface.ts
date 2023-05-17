@@ -3,7 +3,7 @@ import { GroupPermission } from './GroupPermission'
 
 export type CreateGroupResponse = {
   group: GroupServerHash
-  userKey: GroupUserKeyServerHash
+  groupUserKey: GroupUserKeyServerHash
 }
 
 export type AddUserToGroupResponse = {

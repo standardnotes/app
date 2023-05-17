@@ -826,7 +826,7 @@ export class ItemManager
     return !this.findItem(item.uuid)
   }
 
-  public async insertItem(item: Models.DecryptedItemInterface): Promise<Models.DecryptedItemInterface> {
+  public async insertItem<T extends Models.DecryptedItemInterface>(item: Models.DecryptedItemInterface): Promise<T> {
     return this.emitItemFromPayload(item.payload, Models.PayloadEmitSource.LocalChanged)
   }
 
@@ -840,13 +840,13 @@ export class ItemManager
     )
   }
 
-  public async emitItemFromPayload(
+  public async emitItemFromPayload<T extends Models.DecryptedItemInterface>(
     payload: Models.DecryptedPayloadInterface,
     emitSource: Models.PayloadEmitSource,
-  ): Promise<Models.DecryptedItemInterface> {
+  ): Promise<T> {
     await this.payloadManager.emitPayload(payload, emitSource)
 
-    return this.findSureItem(payload.uuid)
+    return this.findSureItem<T>(payload.uuid)
   }
 
   public async emitItemsFromPayloads(

@@ -13,9 +13,10 @@ import {
   SessionsClientInterface,
   SyncServiceInterface,
 } from '@standardnotes/services'
-import { Contact, DecryptedItemInterface } from '@standardnotes/models'
+import { ContactContent, ContactInterface, DecryptedItemInterface, FillItemContent } from '@standardnotes/models'
 import { GroupServiceEvent, GroupServiceInterface } from './GroupServiceInterface'
 import { EncryptionProviderInterface, GroupKey } from '@standardnotes/encryption'
+import { ContentType } from '@standardnotes/common'
 
 export class GroupService extends AbstractService<GroupServiceEvent> implements GroupServiceInterface {
   private groupsServer: GroupsServerInterface
@@ -71,15 +72,15 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
       return ClientDisplayableError.FromError(response.data.error)
     }
 
-    const { group, userKey } = response.data
+    const { group, groupUserKey } = response.data
 
     const groupUuid = group.uuid
     const groupKey = new GroupKey({
-      uuid: userKey.uuid,
+      uuid: groupUserKey.uuid,
       groupUuid: group.uuid,
       key: key,
-      updatedAtTimestamp: userKey.updated_at_timestamp,
-      senderPublicKey: userKey.sender_public_key,
+      updatedAtTimestamp: groupUserKey.updated_at_timestamp,
+      senderPublicKey: groupUserKey.sender_public_key,
       keyVersion: version,
     })
     this.encryption.persistGroupKey(groupKey)
@@ -92,9 +93,31 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
     return group
   }
 
+  async createContact(params: {
+    name: string
+    publicKey: string
+    userUuid: string
+    trusted: boolean
+  }): Promise<ContactInterface> {
+    const content: ContactContent = FillItemContent<ContactContent>({
+      name: params.name,
+      publicKey: params.publicKey,
+      userUuid: params.userUuid,
+      trusted: params.trusted,
+    })
+    const contactTemplate = this.items.createTemplateItem<ContactContent, ContactInterface>(
+      ContentType.Contact,
+      content,
+    )
+
+    const contact = await this.items.insertItem<ContactInterface>(contactTemplate)
+
+    return contact
+  }
+
   async addContactToGroup(
     group: GroupServerHash,
-    contact: Contact,
+    contact: ContactInterface,
     permissions: GroupPermission,
   ): Promise<GroupUserKeyServerHash | ClientDisplayableError> {
     const groupKey = this.encryption.getGroupKey(group.uuid)
@@ -138,7 +161,6 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
     ;(this.encryption as unknown) = undefined
     ;(this.items as unknown) = undefined
     ;(this.session as unknown) = undefined
-    ;(this.user as unknown) = undefined
     ;(this.groupsServer as unknown) = undefined
   }
 }

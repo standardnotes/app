@@ -53,7 +53,7 @@ export interface ItemManagerInterface extends AbstractService {
     isUserModified?: boolean,
   ): Promise<DecryptedItemInterface[]>
   get items(): DecryptedItemInterface[]
-  insertItem(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
+  insertItem<T extends DecryptedItemInterface>(item: DecryptedItemInterface): Promise<T>
   emitItemFromPayload(payload: DecryptedPayloadInterface, source: PayloadEmitSource): Promise<DecryptedItemInterface>
   getItems<T extends DecryptedItemInterface>(contentType: ContentType | ContentType[]): T[]
   getDisplayableItemsKeys(): ItemsKeyInterface[]

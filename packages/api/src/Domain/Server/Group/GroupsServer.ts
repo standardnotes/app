@@ -26,9 +26,9 @@ export class GroupsServer implements GroupsServerInterface {
   }): Promise<HttpResponse<AddUserToGroupResponse>> {
     return this.httpService.post(SharingPaths.addUserToGroup(params.groupUuid), {
       invitee_uuid: params.inviteeUuid,
-      permissions: params.permissions,
       encrypted_group_key: params.encryptedGroupKey,
       sender_public_key: params.senderPublicKey,
+      permissions: params.permissions,
     })
   }
 }

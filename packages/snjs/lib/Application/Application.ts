@@ -171,6 +171,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private integrityService!: ExternalServices.IntegrityService
   private statusService!: ExternalServices.StatusService
   private filesBackupService?: FilesBackupService
+  private groupService!: InternalServices.GroupServiceInterface
   private declare sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>
   private declare legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>
   private declare authenticatorManager: AuthenticatorClientInterface
@@ -1193,6 +1194,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createRevisionManager()
 
     this.createUseCases()
+    this.createGroupService()
   }
 
   private clearServices() {
@@ -1249,6 +1251,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this._listRevisions as unknown) = undefined
     ;(this._getRevision as unknown) = undefined
     ;(this._deleteRevision as unknown) = undefined
+    ;(this.groupService as unknown) = undefined
 
     this.services = []
   }
@@ -1268,6 +1271,19 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private clearInternalEventBus(): void {
     this.internalEventBus.deinit()
     ;(this.internalEventBus as unknown) = undefined
+  }
+
+  private createGroupService(): void {
+    this.groupService = new InternalServices.GroupService(
+      this.httpService,
+      this.syncService,
+      this.itemManager,
+      this.protocolService,
+      this.sessions,
+      this.internalEventBus,
+    )
+
+    this.services.push(this.groupService)
   }
 
   private createListedService(): void {
