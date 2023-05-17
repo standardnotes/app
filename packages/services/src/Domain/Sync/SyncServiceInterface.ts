@@ -14,4 +14,5 @@ export interface SyncServiceInterface extends AbstractService<SyncEvent> {
   lockSyncing(): void
   unlockSyncing(): void
   getItemAndContentKey(uuid: string): Promise<{ payload: DecryptedPayloadInterface; contentKey: string } | undefined>
+  syncGroupsFromScratch(groupUuids: string[]): Promise<void>
 }

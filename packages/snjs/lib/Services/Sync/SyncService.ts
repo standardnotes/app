@@ -9,7 +9,6 @@ import {
   removeFromIndex,
   sleep,
   subtractFromArray,
-  useBoolean,
 } from '@standardnotes/utils'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { OfflineSyncOperation } from '@Lib/Services/Sync/Offline/Operation'
@@ -649,11 +648,7 @@ export class SNSyncService
     if (useStrategy === SyncQueueStrategy.ResolveOnNext) {
       return this.queueStrategyResolveOnNext()
     } else if (useStrategy === SyncQueueStrategy.ForceSpawnNew) {
-      return this.queueStrategyForceSpawnNew({
-        mode: options.mode,
-        checkIntegrity: options.checkIntegrity,
-        source: options.source,
-      })
+      return this.queueStrategyForceSpawnNew(options)
     } else {
       throw Error(`Unhandled timing strategy ${useStrategy}`)
     }
@@ -758,12 +753,12 @@ export class SNSyncService
 
   private async createServerSyncOperation(
     payloads: ServerSyncPushContextualPayload[],
-    checkIntegrity: boolean,
-    source: SyncSource,
+    options: SyncOptions,
     mode: SyncMode = SyncMode.Default,
   ) {
-    const syncToken = await this.getLastSyncToken()
-    const paginationToken = await this.getPaginationToken()
+    const syncToken = options.groupUuids && options.syncGroupsFromScratch ? undefined : await this.getLastSyncToken()
+    const paginationToken =
+      options.groupUuids && options.syncGroupsFromScratch ? undefined : await this.getPaginationToken()
 
     const operation = new AccountSyncOperation(
       payloads,
@@ -786,20 +781,23 @@ export class SNSyncService
             break
         }
       },
-      syncToken,
-      paginationToken,
       this.apiService,
+      {
+        syncToken,
+        paginationToken,
+        groupUuids: options.groupUuids,
+      },
     )
 
     log(
       LoggingDomain.Sync,
       'Syncing online user',
       'source',
-      SyncSource[source],
+      SyncSource[options.source],
       'operation id',
       operation.id,
       'integrity check',
-      checkIntegrity,
+      options.checkIntegrity,
       'mode',
       SyncMode[mode],
       'syncToken',
@@ -822,12 +820,7 @@ export class SNSyncService
       const { uploadPayloads, syncMode } = await this.getOnlineSyncParameters(payloads, options.mode)
 
       return {
-        operation: await this.createServerSyncOperation(
-          uploadPayloads,
-          useBoolean(options.checkIntegrity, false),
-          options.source,
-          syncMode,
-        ),
+        operation: await this.createServerSyncOperation(uploadPayloads, options, syncMode),
         mode: syncMode,
       }
     } else {
@@ -900,6 +893,7 @@ export class SNSyncService
 
     await this.notifyEventSync(SyncEvent.SyncCompletedWithAllItemsUploadedAndDownloaded, {
       source: options.source,
+      options,
     })
 
     this.resolvePendingSyncRequestsThatMadeItInTimeOfCurrentRequest(inTimeResolveQueue)
@@ -950,7 +944,7 @@ export class SNSyncService
 
     const historyMap = this.historyService.getHistoryMapCopy()
 
-    await this.protocolService.handleRetrievedGroupKeys(response.groupKeys)
+    const groupKeys = response.groupKeys ? await this.protocolService.handleRetrievedGroupKeys(response.groupKeys) : []
 
     const resolver = new ServerSyncResponseResolver(
       {
@@ -989,11 +983,22 @@ export class SNSyncService
       await this.persistPayloads(payloadsToPersist)
     }
 
-    await Promise.all([
-      this.setLastSyncToken(response.lastSyncToken as string),
-      this.setPaginationToken(response.paginationToken as string),
-      this.notifyEvent(SyncEvent.SingleRoundTripSyncCompleted, { ...response, uploadedPayloads: operation.payloads }),
-    ])
+    if (!operation.options.groupUuids) {
+      await Promise.all([
+        this.setLastSyncToken(response.lastSyncToken as string),
+        this.setPaginationToken(response.paginationToken as string),
+      ])
+    }
+
+    await this.notifyEvent(SyncEvent.SingleRoundTripSyncCompleted, {
+      ...response,
+      uploadedPayloads: operation.payloads,
+      options: operation.options,
+    })
+
+    if (groupKeys.length > 0) {
+      void this.notifyEvent(SyncEvent.ReceivedGroupKeys, groupKeys)
+    }
   }
 
   private async processServerPayloads(
@@ -1323,6 +1328,15 @@ export class SNSyncService
     await this.payloadManager.emitDeltaEmit(emit)
 
     await this.persistPayloads(emit.emits)
+  }
+
+  async syncGroupsFromScratch(groupUuids: string[]): Promise<void> {
+    await this.sync({
+      groupUuids,
+      syncGroupsFromScratch: true,
+      queueStrategy: SyncQueueStrategy.ForceSpawnNew,
+      awaitAll: true,
+    })
   }
 
   /** @e2e_testing */

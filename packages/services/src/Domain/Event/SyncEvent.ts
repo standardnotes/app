@@ -22,4 +22,5 @@ export enum SyncEvent {
   DatabaseWriteError = 'database-write-error',
   DatabaseReadError = 'database-read-error',
   SyncRequestsIntegrityCheck = 'sync:requests-integrity-check',
+  ReceivedGroupKeys = 'received-group-keys',
 }

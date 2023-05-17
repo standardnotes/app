@@ -49,6 +49,8 @@ describe.only('groups', function () {
       expect(contact.userUuid).to.equal('123')
       expect(contact.trusted).to.be.true
     })
+
+    it('should mark a contact as untrusted when their public key changes', async () => {})
   })
 
   describe('groups', () => {
@@ -79,6 +81,7 @@ describe.only('groups', function () {
       const { contactContext, deinitContactContext } = await createContactContext()
       const contact = await createContactForUserOfContext(contactContext)
       await groupService.addContactToGroup(group, contact, GroupPermission.Write)
+      await contactContext.sync()
 
       return { group, contact, contactContext, deinitContactContext }
     }
@@ -129,10 +132,10 @@ describe.only('groups', function () {
       const note = await context.createSyncedNote('foo', 'bar')
       const { group, contactContext, deinitContactContext } = await createGroupWithInvitedContact()
 
+      await contactContext.sync()
       await groupService.addItemToGroup(group, note)
       await context.sync()
 
-      await contactContext.clearSyncPositionTokens()
       await contactContext.sync()
 
       const receivedItemsKey = contactContext.application.items.sharedItemsKeysForGroup(group.uuid)[0]
@@ -150,8 +153,31 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
-    it('should download new group invitation keys', async () => {})
+    it.only('should sync a group from scratch when receiving a group invitation', async () => {
+      const group = await groupService.createGroup()
 
-    it('should sync a group from scratch when receiving a group invitation', async () => {})
+      /** Create an item and add it to the group */
+      const note = await context.createSyncedNote('foo', 'bar')
+      await groupService.addItemToGroup(group, note)
+
+      /** Invite a contact */
+      const { contactContext, deinitContactContext } = await createContactContext()
+      const contact = await createContactForUserOfContext(contactContext)
+
+      /** Sync the contact context so that they wouldn't naturally receive changes made before this point */
+      await contactContext.sync()
+
+      await groupService.addContactToGroup(group, contact, GroupPermission.Write)
+
+      /** Contact should now sync and expect to find note */
+      await contactContext.sync()
+      await contactContext.awaitNextSyncGroupFromScratchEvent()
+      const receivedNote = contactContext.application.items.findItem(note.uuid)
+      expect(receivedNote).to.not.be.undefined
+
+      await deinitContactContext()
+    })
+
+    it('changing a groups key should reencrypt the group key for all users', async () => {})
   })
 })

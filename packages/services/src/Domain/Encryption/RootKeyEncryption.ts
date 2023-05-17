@@ -520,7 +520,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     return encryptPayload(payload, key, this.operatorManager)
   }
 
-  public async encryptPayloads(payloads: DecryptedPayloadInterface[], key: RootKeyInterface) {
+  public async encryptPayloads(payloads: DecryptedPayloadInterface[], key: RootKeyInterface | GroupKeyInterface) {
     return Promise.all(payloads.map((payload) => this.encryptPayload(payload, key)))
   }
 

@@ -1,4 +1,3 @@
-export * from './ApiEndpointParam'
 export * from './Authenticator/DeleteAuthenticatorRequestParams'
 export * from './Authenticator/GenerateAuthenticatorAuthenticationOptionsRequestParams'
 export * from './Authenticator/ListAuthenticatorsRequestParams'

@@ -373,9 +373,10 @@ export class SNApiService
 
   async sync(
     payloads: ServerSyncPushContextualPayload[],
-    lastSyncToken: string,
-    paginationToken: string,
+    lastSyncToken: string | undefined,
+    paginationToken: string | undefined,
     limit: number,
+    groupUuids?: string[],
   ): Promise<HttpResponse<RawSyncResponse>> {
     const preprocessingError = this.preprocessingError()
     if (preprocessingError) {
@@ -387,6 +388,7 @@ export class SNApiService
       [ApiEndpointParam.LastSyncToken]: lastSyncToken,
       [ApiEndpointParam.PaginationToken]: paginationToken,
       [ApiEndpointParam.SyncDlLimit]: limit,
+      [ApiEndpointParam.GroupUiuds]: groupUuids,
     })
     const response = await this.httpService.post<RawSyncResponse>(path, params, this.getSessionAccessToken())
 

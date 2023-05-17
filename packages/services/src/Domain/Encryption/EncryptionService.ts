@@ -174,15 +174,17 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.storageService.getValue<string>(StorageKey.AccountDecryptedPrivateKey)
   }
 
-  async handleRetrievedGroupKeys(hashes: GroupUserKeyServerHash[]): Promise<void> {
+  async handleRetrievedGroupKeys(hashes: GroupUserKeyServerHash[]): Promise<GroupKeyInterface[]> {
     if (hashes.length === 0) {
-      return
+      return []
     }
 
     const privateKey = this.getDecryptedPrivateKey()
     if (!privateKey) {
       throw new Error('Private key not found')
     }
+
+    const keys: GroupKeyInterface[] = []
 
     for (const hash of hashes) {
       const decryptedKey = this.decryptGroupKeyWithPrivateKey(
@@ -205,7 +207,10 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       })
 
       this.persistGroupKey(groupKey)
+      keys.push(groupKey)
     }
+
+    return keys
   }
 
   persistGroupKey(groupKey: GroupKeyInterface): void {

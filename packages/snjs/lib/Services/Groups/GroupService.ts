@@ -11,15 +11,17 @@ import {
   InternalEventBusInterface,
   ItemManagerInterface,
   SessionsClientInterface,
+  SyncEvent,
   SyncServiceInterface,
 } from '@standardnotes/services'
 import { ContactContent, ContactInterface, DecryptedItemInterface, FillItemContent } from '@standardnotes/models'
 import { GroupServiceEvent, GroupServiceInterface } from './GroupServiceInterface'
-import { EncryptionProviderInterface, GroupKey } from '@standardnotes/encryption'
+import { EncryptionProviderInterface, GroupKey, GroupKeyInterface } from '@standardnotes/encryption'
 import { ContentType } from '@standardnotes/common'
 
 export class GroupService extends AbstractService<GroupServiceEvent> implements GroupServiceInterface {
   private groupsServer: GroupsServerInterface
+  private syncEventDisposer: () => void
 
   constructor(
     private http: HttpServiceInterface,
@@ -31,6 +33,18 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
   ) {
     super(eventBus)
     this.groupsServer = new GroupsServer(http)
+    this.syncEventDisposer = sync.addEventObserver((event, data) => {
+      if (event === SyncEvent.ReceivedGroupKeys) {
+        const groupKeys = data as GroupKeyInterface[]
+        const groupIds = groupKeys.map((groupKey) => groupKey.groupUuid)
+
+        void this.syncGroupsFromScratch(groupIds)
+      }
+    })
+  }
+
+  private async syncGroupsFromScratch(groupUuids: string[]): Promise<void> {
+    await this.sync.syncGroupsFromScratch(groupUuids)
   }
 
   get user(): User {
@@ -164,5 +178,6 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
     ;(this.items as unknown) = undefined
     ;(this.session as unknown) = undefined
     ;(this.groupsServer as unknown) = undefined
+    this.syncEventDisposer()
   }
 }

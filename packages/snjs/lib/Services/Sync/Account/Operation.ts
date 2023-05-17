@@ -23,15 +23,13 @@ export class AccountSyncOperation {
   constructor(
     public readonly payloads: ServerSyncPushContextualPayload[],
     private receiver: ResponseSignalReceiver<ServerSyncResponse>,
-    private lastSyncToken: string,
-    private paginationToken: string,
     private apiService: SNApiService,
+    public readonly options: {
+      syncToken?: string
+      paginationToken?: string
+      groupUuids?: string[]
+    },
   ) {
-    this.payloads = payloads
-    this.lastSyncToken = lastSyncToken
-    this.paginationToken = paginationToken
-    this.apiService = apiService
-    this.receiver = receiver
     this.pendingPayloads = payloads.slice()
   }
 
@@ -55,13 +53,19 @@ export class AccountSyncOperation {
     })
     const payloads = this.popPayloads(this.upLimit)
 
-    const rawResponse = await this.apiService.sync(payloads, this.lastSyncToken, this.paginationToken, this.downLimit)
+    const rawResponse = await this.apiService.sync(
+      payloads,
+      this.options.syncToken,
+      this.options.paginationToken,
+      this.downLimit,
+      this.options.groupUuids,
+    )
 
     const response = new ServerSyncResponse(rawResponse)
     this.responses.push(response)
 
-    this.lastSyncToken = response.lastSyncToken as string
-    this.paginationToken = response.paginationToken as string
+    this.options.syncToken = response.lastSyncToken as string
+    this.options.paginationToken = response.paginationToken as string
 
     try {
       await this.receiver(SyncSignal.Response, response)
@@ -75,7 +79,7 @@ export class AccountSyncOperation {
   }
 
   get done() {
-    return this.pendingPayloads.length === 0 && !this.paginationToken
+    return this.pendingPayloads.length === 0 && !this.options.paginationToken
   }
 
   private get pendingUploadCount() {

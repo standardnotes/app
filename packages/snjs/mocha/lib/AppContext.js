@@ -185,6 +185,17 @@ export class AppContext {
     })
   }
 
+  awaitNextSyncGroupFromScratchEvent() {
+    return new Promise((resolve) => {
+      const removeObserver = this.application.syncService.addEventObserver((event, data) => {
+        if (event === SyncEvent.SyncCompletedWithAllItemsUploadedAndDownloaded && data?.options?.groupUuids) {
+          removeObserver()
+          resolve(data)
+        }
+      })
+    })
+  }
+
   callBackWithUploadedPayloads(callback) {
     return this.application.syncService.addEventObserver((event, data) => {
       if (event === SyncEvent.SingleRoundTripSyncCompleted) {
