@@ -67,7 +67,7 @@ describe.only('groups', function () {
       const contact = await groupService.createContact({
         name: 'John Doe',
         publicKey: otherContext.application.groupService.userPublicKey,
-        userUuid: otherContext.application.sessions.user.uuid,
+        userUuid: otherContext.userUuid,
         trusted: true,
       })
 
@@ -92,6 +92,7 @@ describe.only('groups', function () {
 
       const sharedItemsKey = sharedItemsKeys[0]
       expect(sharedItemsKey instanceof SharedItemsKey).to.be.true
+      expect(sharedItemsKey.group_uuid).to.equal(group.uuid)
     })
 
     it('should add contact to group', async () => {
@@ -124,22 +125,33 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
-    it.only('should sync group note with receiving contact', async () => {
+    it('should sync group note with receiving contact', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
       const { group, contactContext, deinitContactContext } = await createGroupWithInvitedContact()
-      await groupService.addItemToGroup(group, note)
 
-      await context.changeNoteTitle(note, 'new title')
+      await groupService.addItemToGroup(group, note)
+      await context.sync()
+
+      await contactContext.clearSyncPositionTokens()
       await contactContext.sync()
+
+      const receivedItemsKey = contactContext.application.items.sharedItemsKeysForGroup(group.uuid)[0]
+      expect(receivedItemsKey).to.not.be.undefined
+      expect(receivedItemsKey.group_uuid).to.equal(group.uuid)
+      expect(receivedItemsKey.itemsKey).to.not.be.undefined
 
       const receivedNote = contactContext.application.items.findItem(note.uuid)
 
       expect(receivedNote).to.not.be.undefined
       expect(receivedNote.group_uuid).to.equal(group.uuid)
-      expect(receivedNote.title).to.equal('new title')
+      expect(receivedNote.title).to.equal('foo')
       expect(receivedNote.text).to.equal(note.text)
 
       await deinitContactContext()
     })
+
+    it('should download new group invitation keys', async () => {})
+
+    it('should sync a group from scratch when receiving a group invitation', async () => {})
   })
 })

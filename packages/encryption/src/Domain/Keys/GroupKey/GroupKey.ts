@@ -1,6 +1,10 @@
 import { ProtocolVersion } from '@standardnotes/common'
 import { GroupKeyInterface } from './GroupKeyInterface'
 
+export function isGroupKey(item: unknown): item is GroupKeyInterface {
+  return item instanceof GroupKey
+}
+
 export class GroupKey implements GroupKeyInterface {
   uuid: string
   groupUuid: string

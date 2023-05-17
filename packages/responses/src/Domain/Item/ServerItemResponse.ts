@@ -12,4 +12,5 @@ export interface ServerItemResponse {
   updated_at_timestamp: number
   updated_at: Date
   uuid: string
+  group_uuid?: string
 }

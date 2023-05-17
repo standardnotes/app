@@ -93,8 +93,7 @@ export class ItemsEncryptionService extends AbstractService {
   ): ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | StandardException {
     if (payload.group_uuid) {
       const associatedSharedItemsKeys = this.itemManager
-        .getItems<SharedItemsKeyInterface>(ContentType.SharedItemsKey)
-        .filter((key) => key.group_uuid === payload.group_uuid)
+        .sharedItemsKeysForGroup(payload.group_uuid)
         .sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
 
       const sharedKey = associatedSharedItemsKeys[0]

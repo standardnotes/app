@@ -10,7 +10,6 @@ import {
   sleep,
   subtractFromArray,
   useBoolean,
-  Uuids,
 } from '@standardnotes/utils'
 import { ItemManager } from '@Lib/Services/Items/ItemManager'
 import { OfflineSyncOperation } from '@Lib/Services/Sync/Offline/Operation'
@@ -58,6 +57,8 @@ import {
   getCurrentDirtyIndex,
   ItemContent,
   isErrorDecryptingPayload,
+  SharedItemsKeyContent,
+  SharedItemsKeyInterface,
 } from '@standardnotes/models'
 import {
   AbstractService,
@@ -73,7 +74,6 @@ import {
   SyncOptions,
   SyncQueueStrategy,
   SyncServiceInterface,
-  DiagnosticInfo,
   EncryptionService,
   DeviceInterface,
   isFullEntryLoadChunkResponse,
@@ -1006,7 +1006,7 @@ export class SNSyncService
 
     const results: FullyFormedPayloadInterface[] = [...deleted]
 
-    const { rootKeyEncryption, itemsKeyEncryption } = SplitPayloadsByEncryptionType(encrypted)
+    const { rootKeyEncryption, itemsKeyEncryption, groupKeyEncryption } = SplitPayloadsByEncryptionType(encrypted)
 
     const { results: rootKeyDecryptionResults, map: processedItemsKeys } = await this.decryptServerItemsKeys(
       rootKeyEncryption || [],
@@ -1014,8 +1014,16 @@ export class SNSyncService
 
     extendArray(results, rootKeyDecryptionResults)
 
+    const { results: groupKeyDecryptionResults, map: processedSharedItemsKeys } =
+      await this.decryptServerSharedItemsKeys(groupKeyEncryption || [])
+
+    extendArray(results, groupKeyDecryptionResults)
+
     if (itemsKeyEncryption) {
-      const decryptionResults = await this.decryptProcessedServerPayloads(itemsKeyEncryption, processedItemsKeys)
+      const decryptionResults = await this.decryptProcessedServerPayloads(itemsKeyEncryption, {
+        ...processedItemsKeys,
+        ...processedSharedItemsKeys,
+      })
       extendArray(results, decryptionResults)
     }
 
@@ -1052,17 +1060,48 @@ export class SNSyncService
     }
   }
 
+  private async decryptServerSharedItemsKeys(payloads: EncryptedPayloadInterface[]) {
+    const map: Record<UuidString, DecryptedPayloadInterface<SharedItemsKeyContent>> = {}
+
+    if (payloads.length === 0) {
+      return {
+        results: [],
+        map,
+      }
+    }
+
+    const groupKeySplit: KeyedDecryptionSplit = {
+      usesGroupKeyWithKeyLookup: {
+        items: payloads,
+      },
+    }
+
+    const results = await this.protocolService.decryptSplit<SharedItemsKeyContent>(groupKeySplit)
+
+    results.forEach((result) => {
+      if (isDecryptedPayload<SharedItemsKeyContent>(result) && result.content_type === ContentType.SharedItemsKey) {
+        map[result.uuid] = result
+      }
+    })
+
+    return {
+      results,
+      map,
+    }
+  }
+
   private async decryptProcessedServerPayloads(
     payloads: EncryptedPayloadInterface[],
-    map: Record<UuidString, DecryptedPayloadInterface<ItemsKeyContent>>,
+    map: Record<UuidString, DecryptedPayloadInterface<ItemsKeyContent | SharedItemsKeyContent>>,
   ): Promise<(EncryptedPayloadInterface | DecryptedPayloadInterface)[]> {
     return Promise.all(
       payloads.map(async (encrypted) => {
-        const previouslyProcessedItemsKey: DecryptedPayloadInterface<ItemsKeyContent> | undefined =
-          map[encrypted.items_key_id as string]
+        const previouslyProcessedItemsKey:
+          | DecryptedPayloadInterface<ItemsKeyContent | SharedItemsKeyContent>
+          | undefined = map[encrypted.items_key_id as string]
 
         const itemsKey = previouslyProcessedItemsKey
-          ? (CreateDecryptedItemFromPayload(previouslyProcessedItemsKey) as ItemsKeyInterface)
+          ? (CreateDecryptedItemFromPayload(previouslyProcessedItemsKey) as ItemsKeyInterface | SharedItemsKeyInterface)
           : undefined
 
         const keyedSplit: KeyedDecryptionSplit = {}
@@ -1284,28 +1323,6 @@ export class SNSyncService
     await this.payloadManager.emitDeltaEmit(emit)
 
     await this.persistPayloads(emit.emits)
-  }
-
-  override async getDiagnostics(): Promise<DiagnosticInfo | undefined> {
-    const dirtyUuids = Uuids(this.itemsNeedingSync())
-
-    return {
-      sync: {
-        syncToken: await this.getLastSyncToken(),
-        cursorToken: await this.getPaginationToken(),
-        dirtyIndexAtLastPresyncSave: this.dirtyIndexAtLastPresyncSave,
-        lastSyncDate: this.lastSyncDate,
-        outOfSync: this.outOfSync,
-        completedOnlineDownloadFirstSync: this.completedOnlineDownloadFirstSync,
-        clientLocked: this.clientLocked,
-        databaseLoaded: this.databaseLoaded,
-        syncLock: this.syncLock,
-        dealloced: this.dealloced,
-        itemsNeedingSync: dirtyUuids,
-        itemsNeedingSyncCount: dirtyUuids.length,
-        pendingRequestCount: this.resolveQueue.length + this.spawnQueue.length,
-      },
-    }
   }
 
   /** @e2e_testing */

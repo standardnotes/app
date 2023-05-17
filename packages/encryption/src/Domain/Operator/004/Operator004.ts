@@ -15,9 +15,14 @@ import {
 import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
 import * as Utils from '@standardnotes/utils'
 import { GroupKeyInterface } from './../../Keys/GroupKey/GroupKeyInterface'
+import { isGroupKey } from './../../Keys/GroupKey/GroupKey'
 import { V004Algorithm } from '../../Algorithm'
 import { isItemsKey } from '../../Keys/ItemsKey/ItemsKey'
-import { ContentTypeUsesRootKeyEncryption, CreateNewRootKey } from '../../Keys/RootKey/Functions'
+import {
+  ContentTypeUsesRootKeyEncryption,
+  CreateNewRootKey,
+  ItemContentTypeUsesGroupKeyEncryption,
+} from '../../Keys/RootKey/Functions'
 import { Create004KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
 import { SNRootKey } from '../../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
@@ -69,7 +74,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
   }
 
   public createGroupKeyString(): { key: string; version: ProtocolVersion } {
-    return { key: this.crypto.generateRandomKey(192), version: ProtocolVersion.V004 }
+    return { key: this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength), version: ProtocolVersion.V004 }
   }
 
   /**
@@ -98,6 +103,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       content_type: ContentType.SharedItemsKey,
       group_uuid: groupUuid,
       content: content,
+      dirty: true,
       ...PayloadTimestampDefaults(),
     }
 
@@ -240,6 +246,11 @@ export class SNProtocolOperator004 implements SynchronousOperator {
         ...baseData,
         kp: (key as SNRootKey).keyParams.content,
       }
+    } else if (ItemContentTypeUsesGroupKeyEncryption(payload.content_type)) {
+      if (!isGroupKey(key)) {
+        throw Error('Attempting to use non-group key for group item.')
+      }
+      return baseData
     } else {
       if (!isItemsKey(key) && !isSharedItemsKey(key)) {
         throw Error('Attempting to use non-items key for regular item.')
@@ -275,7 +286,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
 
     return {
       uuid: payload.uuid,
-      items_key_id: isItemsKey(key) ? key.uuid : undefined,
+      items_key_id: isItemsKey(key) || isSharedItemsKey(key) ? key.uuid : undefined,
       content: encryptedContentString,
       enc_item_key: encryptedContentKey,
       version: this.version,

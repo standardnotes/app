@@ -3,8 +3,9 @@ import {
   EncryptedPayloadInterface,
   ItemsKeyInterface,
   RootKeyInterface,
-  Group,
+  SharedItemsKeyInterface,
 } from '@standardnotes/models'
+import { GroupKeyInterface } from '../Keys/GroupKey/GroupKeyInterface'
 
 export interface AbstractKeySplit<T = EncryptedPayloadInterface | DecryptedPayloadInterface> {
   usesRootKey?: {
@@ -13,11 +14,11 @@ export interface AbstractKeySplit<T = EncryptedPayloadInterface | DecryptedPaylo
   }
   usesGroupKey?: {
     items: T[]
-    key: Group
+    key: GroupKeyInterface
   }
   usesItemsKey?: {
     items: T[]
-    key: ItemsKeyInterface
+    key: ItemsKeyInterface | SharedItemsKeyInterface
   }
   usesRootKeyWithKeyLookup?: {
     items: T[]

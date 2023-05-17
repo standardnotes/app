@@ -88,7 +88,7 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
     const sharedItemsKey = this.encryption.createSharedItemsKey(groupUuid)
     await this.items.insertItem(sharedItemsKey)
 
-    void this.sync.sync()
+    await this.sync.sync()
 
     return group
   }
@@ -146,12 +146,14 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
     return response.data.groupUserKey
   }
 
-  async addItemToGroup(group: GroupServerHash, item: DecryptedItemInterface): Promise<void> {
+  async addItemToGroup(group: GroupServerHash, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
     await this.items.changeItem(item, (mutator) => {
       mutator.group_uuid = group.uuid
     })
 
-    void this.sync.sync()
+    await this.sync.sync()
+
+    return this.items.findSureItem(item.uuid)
   }
 
   override deinit(): void {

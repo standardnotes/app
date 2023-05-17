@@ -68,6 +68,7 @@ export function CreateEncryptedLocalStorageContextPayload(
     updated_at: fromPayload.updated_at,
     uuid: fromPayload.uuid,
     waitingForKey: fromPayload.waitingForKey,
+    group_uuid: fromPayload.group_uuid,
   }
 }
 
@@ -85,6 +86,7 @@ export function CreateDecryptedLocalStorageContextPayload(
     updated_at: fromPayload.updated_at,
     uuid: fromPayload.uuid,
     dirty: useBoolean(fromPayload.dirty, false),
+    group_uuid: fromPayload.group_uuid,
   }
 }
 
@@ -102,5 +104,6 @@ export function CreateDeletedLocalStorageContextPayload(
     updated_at_timestamp: fromPayload.updated_at_timestamp,
     updated_at: fromPayload.updated_at,
     uuid: fromPayload.uuid,
+    group_uuid: fromPayload.group_uuid,
   }
 }

@@ -6,4 +6,5 @@ export interface ContextPayload<C extends ItemContent = ItemContent> {
   content_type: ContentType
   content: C | string | undefined
   deleted: boolean
+  group_uuid?: string
 }

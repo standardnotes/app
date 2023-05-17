@@ -29,6 +29,7 @@ export function CreateEncryptedServerSyncPushPayload(
     enc_item_key: fromPayload.enc_item_key,
     items_key_id: fromPayload.items_key_id,
     auth_hash: fromPayload.auth_hash,
+    group_uuid: fromPayload.group_uuid,
   }
 }
 

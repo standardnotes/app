@@ -533,6 +533,10 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
         throw Error('Attempting to decrypt payload that is not a shared items key with group key.')
       }
       key = this.getGroupKey(payload.group_uuid)
+
+      if (!key) {
+        throw Error('Attempting to decrypt shared payload with no group key')
+      }
     } else {
       key = this.getRootKey()
     }

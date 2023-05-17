@@ -243,6 +243,10 @@ export class AppContext {
     await this.application.sync.sync(options || { awaitAll: true })
   }
 
+  async clearSyncPositionTokens() {
+    await this.application.sync.clearSyncPositionTokens()
+  }
+
   async maximumSync() {
     await this.sync(MaximumSyncOptions)
   }
@@ -351,6 +355,10 @@ export class AppContext {
       original: note,
       conflict: this.findNoteByTitle('title-2'),
     }
+  }
+
+  get userUuid() {
+    return this.application.sessions.user.uuid
   }
 
   async publicMockSubscriptionPurchaseEvent() {
