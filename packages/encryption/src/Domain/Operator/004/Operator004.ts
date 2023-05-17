@@ -1,4 +1,3 @@
-import { GroupKeyInterface } from './../../Keys/GroupKey/GroupKeyInterface'
 import { ContentType, KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
   CreateDecryptedItemFromPayload,
@@ -15,6 +14,7 @@ import {
 } from '@standardnotes/models'
 import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
 import * as Utils from '@standardnotes/utils'
+import { GroupKeyInterface } from './../../Keys/GroupKey/GroupKeyInterface'
 import { V004Algorithm } from '../../Algorithm'
 import { isItemsKey } from '../../Keys/ItemsKey/ItemsKey'
 import { ContentTypeUsesRootKeyEncryption, CreateNewRootKey } from '../../Keys/RootKey/Functions'
@@ -95,7 +95,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
 
     const transferPayload: DecryptedTransferPayload = {
       uuid: Utils.UuidGenerator.GenerateUuid(),
-      content_type: ContentType.ItemsKey,
+      content_type: ContentType.SharedItemsKey,
       group_uuid: groupUuid,
       content: content,
       ...PayloadTimestampDefaults(),
@@ -376,8 +376,9 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     const components = keyToDecrypt.split(':')
 
     const nonce = components[1]
+    const keyString = components[2]
 
-    return this.crypto.sodiumCryptoBoxEasyDecrypt(keyToDecrypt, nonce, senderPublicKey, recipientSecretKey)
+    return this.crypto.sodiumCryptoBoxEasyDecrypt(keyString, nonce, senderPublicKey, recipientSecretKey)
   }
 
   asymmetricAnonymousEncryptKey(keyToEncrypt: HexString, recipientPublicKey: HexString): AsymmetricallyEncryptedKey {
@@ -421,8 +422,9 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     const components = encryptedPrivateKey.split(':')
 
     const nonce = components[1]
+    const keyString = components[2]
 
-    return this.crypto.xchacha20Decrypt(encryptedPrivateKey, nonce, symmetricKey)
+    return this.crypto.xchacha20Decrypt(keyString, nonce, symmetricKey)
   }
 
   versionForEncryptedKey(encryptedKey: string): ProtocolVersion {

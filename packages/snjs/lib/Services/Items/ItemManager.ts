@@ -323,6 +323,12 @@ export class ItemManager
     }
   }
 
+  public sharedItemsKeysForGroup(groupUuid: string): Models.SharedItemsKeyInterface[] {
+    return this.getItems<Models.SharedItemsKeyInterface>(ContentType.SharedItemsKey).filter(
+      (key) => key.group_uuid === groupUuid,
+    )
+  }
+
   /**
    * Returns the items that reference the given item, or an empty array if no results.
    */

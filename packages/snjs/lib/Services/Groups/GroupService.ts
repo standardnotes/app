@@ -14,10 +14,10 @@ import {
   SyncServiceInterface,
 } from '@standardnotes/services'
 import { Contact, DecryptedItemInterface } from '@standardnotes/models'
-import { GroupsServiceEvent, GroupsServiceInterface } from './GroupsServiceInterface'
+import { GroupServiceEvent, GroupServiceInterface } from './GroupServiceInterface'
 import { EncryptionProviderInterface, GroupKey } from '@standardnotes/encryption'
 
-export class GroupsService extends AbstractService<GroupsServiceEvent> implements GroupsServiceInterface {
+export class GroupService extends AbstractService<GroupServiceEvent> implements GroupServiceInterface {
   private groupsServer: GroupsServerInterface
 
   constructor(
@@ -45,7 +45,7 @@ export class GroupsService extends AbstractService<GroupsServiceEvent> implement
     return key
   }
 
-  get decryptedPrivateKey(): string {
+  get userDecryptedPrivateKey(): string {
     const key = this.encryption.getDecryptedPrivateKey()
     if (!key) {
       throw new Error('Decrypted private key not found')
@@ -58,7 +58,7 @@ export class GroupsService extends AbstractService<GroupsServiceEvent> implement
     const { key, version } = this.encryption.createGroupKeyString()
     const encryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
       key,
-      this.decryptedPrivateKey,
+      this.userDecryptedPrivateKey,
       this.userPublicKey,
     )
 
@@ -104,7 +104,7 @@ export class GroupsService extends AbstractService<GroupsServiceEvent> implement
 
     const encryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
       groupKey.key,
-      this.decryptedPrivateKey,
+      this.userDecryptedPrivateKey,
       contact.publicKey,
     )
 

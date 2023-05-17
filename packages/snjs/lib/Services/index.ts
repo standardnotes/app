@@ -17,8 +17,8 @@ export * from './Protection'
 export * from './Session'
 export * from './Settings'
 
-export * from './Groups/GroupsService'
-export * from './Groups/GroupsServiceInterface'
+export * from './Groups/GroupService'
+export * from './Groups/GroupServiceInterface'
 
 export * from './Singleton/SingletonManager'
 export * from './Storage/DiskStorageService'

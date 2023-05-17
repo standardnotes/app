@@ -13,7 +13,7 @@ import {
   PredicateInterface,
   DecryptedPayload,
   SNTag,
-  GroupKey,
+  SharedItemsKeyInterface,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 
@@ -104,6 +104,7 @@ export interface ItemManagerInterface extends AbstractService {
     itemToLookupUuidFor: { uuid: string },
     contentType?: ContentType,
   ): I[]
+  sharedItemsKeysForGroup(groupUuid: string): SharedItemsKeyInterface[]
   referencesForItem<I extends DecryptedItemInterface = DecryptedItemInterface>(
     itemToLookupUuidFor: DecryptedItemInterface,
     contentType?: ContentType,
