@@ -83,18 +83,10 @@ const Dropdown = ({
       <SelectPopover
         store={select}
         className={classNames(
-          'max-h-[var(--popover-available-height)] w-[var(--popover-anchor-width)] overflow-y-auto rounded border border-border bg-default py-1',
+          'z-dropdown-menu max-h-[var(--popover-available-height)] w-[var(--popover-anchor-width)] overflow-y-auto rounded border border-border bg-default py-1',
           classNameOverride.popover,
         )}
         portal={false}
-        updatePosition={(props) => {
-          const { updatePosition } = props
-          const { popoverElement } = select.getState()
-          updatePosition().catch(console.error)
-          if (popoverElement) {
-            popoverElement.style.zIndex = 'var(--z-index-dropdown-menu)'
-          }
-        }}
       >
         {items.map((item) => (
           <SelectItem
