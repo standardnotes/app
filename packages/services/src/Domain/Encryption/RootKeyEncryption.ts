@@ -42,9 +42,11 @@ import {
   ItemsKeyContentSpecialized,
   ItemsKeyInterface,
   NamespacedRootKeyInKeychain,
+  PayloadEmitSource,
   PayloadTimestampDefaults,
   RootKeyContent,
   RootKeyInterface,
+  SureFindPayload,
 } from '@standardnotes/models'
 import { UuidGenerator } from '@standardnotes/utils'
 import { DeviceInterface } from '../Device/DeviceInterface'
@@ -54,6 +56,7 @@ import { AbstractService } from '../Service/AbstractService'
 import { StorageKey, storageKeyForGroupKey } from '../Storage/StorageKeys'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { StorageValueModes } from '../Storage/StorageTypes'
+import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
 
 export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEvent> {
   private rootKey?: RootKeyInterface
@@ -65,6 +68,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     private operatorManager: OperatorManager,
     public deviceInterface: DeviceInterface,
     private storageService: StorageServiceInterface,
+    private payloadManager: PayloadManagerInterface,
     private identifier: ApplicationIdentifier,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
@@ -533,10 +537,6 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
         throw Error('Attempting to decrypt payload that is not a shared items key with group key.')
       }
       key = this.getGroupKey(payload.group_uuid)
-
-      if (!key) {
-        throw Error('Attempting to decrypt shared payload with no group key')
-      }
     } else {
       key = this.getRootKey()
     }
@@ -570,6 +570,34 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     key: RootKeyInterface | GroupKeyInterface,
   ): Promise<(DecryptedParameters<C> | ErrorDecryptingParameters)[]> {
     return Promise.all(payloads.map((payload) => this.decryptPayload<C>(payload, key)))
+  }
+
+  public async decryptErroredRootPayloads(): Promise<void> {
+    const payloads = this.payloadManager.invalidPayloads.filter((i) =>
+      [ContentType.ItemsKey, ContentType.SharedItemsKey].includes(i.content_type),
+    )
+    if (payloads.length === 0) {
+      return
+    }
+
+    const resultParams = await this.decryptPayloadsWithKeyLookup(payloads)
+
+    const decryptedPayloads = resultParams.map((params) => {
+      const original = SureFindPayload(payloads, params.uuid)
+      if (isErrorDecryptingParameters(params)) {
+        return new EncryptedPayload({
+          ...original.ejected(),
+          ...params,
+        })
+      } else {
+        return new DecryptedPayload({
+          ...original.ejected(),
+          ...params,
+        })
+      }
+    })
+
+    await this.payloadManager.emitPayloads(decryptedPayloads, PayloadEmitSource.LocalChanged)
   }
 
   /**

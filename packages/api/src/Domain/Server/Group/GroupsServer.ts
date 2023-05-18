@@ -4,6 +4,7 @@ import {
   AddUserToGroupResponse,
   CreateGroupResponse,
   GetGroupUsersResponse,
+  GetManyGroupUserKeysResponse,
   GroupsServerInterface,
   UpdateKeysForGroupMembersKeysParam,
 } from './GroupsServerInterface'
@@ -57,5 +58,9 @@ export class GroupsServer implements GroupsServerInterface {
 
   getGroupUsers(params: { groupUuid: string }): Promise<HttpResponse<GetGroupUsersResponse>> {
     return this.httpService.get(SharingPaths.getGroupUsers(params.groupUuid))
+  }
+
+  getReceivedUserKeysBySender(params: { senderUuid: string }): Promise<HttpResponse<GetManyGroupUserKeysResponse>> {
+    return this.httpService.get(SharingPaths.getReceivedUserKeysBySender(params.senderUuid))
   }
 }

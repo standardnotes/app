@@ -1,6 +1,7 @@
 import { ContactInterface } from '@standardnotes/models'
+import { AbstractService } from '../Service/AbstractService'
 
-export interface ContactServiceInterface {
+export interface ContactServiceInterface extends AbstractService {
   createContact(params: {
     name: string
     publicKey: string

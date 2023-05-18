@@ -9,6 +9,7 @@ describe.only('groups', function () {
   let application
   let context
   let groupService
+  let contactService
 
   afterEach(async function () {
     await Factory.safeDeinit(application)
@@ -25,6 +26,7 @@ describe.only('groups', function () {
 
     application = context.application
     groupService = application.groupService
+    contactService = application.contactService
   })
 
   describe('registration', () => {
@@ -36,7 +38,7 @@ describe.only('groups', function () {
 
   describe('contacts', () => {
     it('should create contact', async () => {
-      const contact = await groupService.createContact({
+      const contact = await contactService.createContact({
         name: 'John Doe',
         publicKey: 'my_public_key',
         userUuid: '123',
@@ -47,7 +49,6 @@ describe.only('groups', function () {
       expect(contact.name).to.equal('John Doe')
       expect(contact.publicKey).to.equal('my_public_key')
       expect(contact.userUuid).to.equal('123')
-      expect(contact.trusted).to.be.true
     })
 
     it('should mark a contact as untrusted when their public key changes', async () => {})
@@ -65,11 +66,11 @@ describe.only('groups', function () {
       }
     }
 
-    const createContactForUserOfContext = async (otherContext) => {
-      const contact = await groupService.createContact({
+    const createContactForUserOfContext = async (contextAddingNewContact, contextImportingContactInfoFrom) => {
+      const contact = await contextAddingNewContact.application.contactService.createContact({
         name: 'John Doe',
-        publicKey: otherContext.application.groupService.userPublicKey,
-        userUuid: otherContext.userUuid,
+        publicKey: contextImportingContactInfoFrom.application.groupService.userPublicKey,
+        userUuid: contextImportingContactInfoFrom.userUuid,
         trusted: true,
       })
 
@@ -79,7 +80,7 @@ describe.only('groups', function () {
     const createGroupWithInvitedContact = async () => {
       const group = await groupService.createGroup()
       const { contactContext, deinitContactContext } = await createContactContext()
-      const contact = await createContactForUserOfContext(contactContext)
+      const contact = await createContactForUserOfContext(context, contactContext)
       await groupService.addContactToGroup(group, contact, GroupPermission.Write)
       await contactContext.sync()
 
@@ -98,10 +99,33 @@ describe.only('groups', function () {
       expect(sharedItemsKey.group_uuid).to.equal(group.uuid)
     })
 
+    it('adding a contact to a group should be trusted to current context and untrusted to other context', async () => {
+      const group = await groupService.createGroup()
+      const { contactContext, deinitContactContext } = await createContactContext()
+
+      const contactContextCallPromise = new Promise((resolve) => {
+        contactContext.application.groupService.promptUserForUntrustedUserKeys = () => {
+          resolve()
+        }
+      })
+
+      const currentContextSpyCount = sinon.spy(groupService, 'promptUserForUntrustedUserKeys')
+
+      const contact = await createContactForUserOfContext(context, contactContext)
+      await groupService.addContactToGroup(group, contact, GroupPermission.Write)
+      await contactContext.sync()
+
+      expect(currentContextSpyCount.callCount).to.equal(0)
+
+      await contactContextCallPromise
+
+      await deinitContactContext()
+    })
+
     it('should add contact to group', async () => {
       const group = await groupService.createGroup()
       const { contactContext, deinitContactContext } = await createContactContext()
-      const contact = await createContactForUserOfContext(contactContext)
+      const contact = await createContactForUserOfContext(context, contactContext)
 
       const groupUser = await groupService.addContactToGroup(group, contact, GroupPermission.Write)
 
@@ -118,6 +142,16 @@ describe.only('groups', function () {
 
     it('should add item to group', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
+      const group = await groupService.createGroup()
+
+      await groupService.addItemToGroup(group, note)
+
+      const updatedNote = application.items.findItem(note.uuid)
+      expect(updatedNote.group_uuid).to.equal(group.uuid)
+    })
+
+    it('should add item to group with contact', async () => {
+      const note = await context.createSyncedNote('foo', 'bar')
       const { group, deinitContactContext } = await createGroupWithInvitedContact()
 
       await groupService.addItemToGroup(group, note)
@@ -128,7 +162,7 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
-    it('should sync group note with receiving contact', async () => {
+    it('received items from untrusted contact should not be decrypted', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
       const { group, contactContext, deinitContactContext } = await createGroupWithInvitedContact()
 
@@ -136,24 +170,88 @@ describe.only('groups', function () {
       await groupService.addItemToGroup(group, note)
       await context.sync()
 
-      await contactContext.sync()
+      const promise = contactContext.awaitNextSyncGroupFromScratchEvent()
+      await contactContext.application.groupService.syncGroupsFromScratch([group.uuid])
+      await promise
 
-      const receivedItemsKey = contactContext.application.items.getSharedItemsKeysForGroup(group.uuid)[0]
+      const receivedItemsKey = contactContext.application.items.invalidItems.find(
+        (item) => item.content_type === ContentType.SharedItemsKey,
+      )
       expect(receivedItemsKey).to.not.be.undefined
       expect(receivedItemsKey.group_uuid).to.equal(group.uuid)
-      expect(receivedItemsKey.itemsKey).to.not.be.undefined
+      expect(receivedItemsKey.errorDecrypting).to.be.true
 
-      const receivedNote = contactContext.application.items.findItem(note.uuid)
+      const receivedNote = contactContext.application.items.invalidItems.find((item) => item.uuid === note.uuid)
 
       expect(receivedNote).to.not.be.undefined
       expect(receivedNote.group_uuid).to.equal(group.uuid)
+      expect(receivedNote.errorDecrypting).to.be.true
+
+      await deinitContactContext()
+    })
+
+    it('received items from previously trusted contact should be decrypted', async () => {
+      const note = await context.createSyncedNote('foo', 'bar')
+      const { contactContext, deinitContactContext } = await createContactContext()
+      const group = await groupService.createGroup()
+
+      await createContactForUserOfContext(contactContext, context)
+      const currentContextContact = await createContactForUserOfContext(context, contactContext)
+
+      contactContext.lockSyncing()
+      await groupService.addContactToGroup(group, currentContextContact, GroupPermission.Write)
+      await groupService.addItemToGroup(group, note)
+
+      const promise = contactContext.awaitNextSyncGroupFromScratchEvent()
+      contactContext.unlockSyncing()
+      await contactContext.sync()
+      await promise
+
+      const receivedItemsKey = contactContext.application.items.getSharedItemsKeysForGroup(group.uuid)[0]
+      expect(receivedItemsKey).to.not.be.undefined
+      expect(receivedItemsKey.itemsKey).to.not.be.undefined
+
+      const receivedNote = contactContext.application.items.findItem(note.uuid)
       expect(receivedNote.title).to.equal('foo')
       expect(receivedNote.text).to.equal(note.text)
 
       await deinitContactContext()
     })
 
-    it.only('should sync a group from scratch when receiving a group invitation', async () => {
+    it('received items from contact who becomes trusted after receipt of items should be decrypted', async () => {
+      const note = await context.createSyncedNote('foo', 'bar')
+      const { contactContext, deinitContactContext } = await createContactContext()
+      const group = await groupService.createGroup()
+
+      const currentContextContact = await createContactForUserOfContext(context, contactContext)
+
+      await groupService.addContactToGroup(group, currentContextContact, GroupPermission.Write)
+      await groupService.addItemToGroup(group, note)
+
+      await contactContext.sync()
+      await groupService.addItemToGroup(group, note)
+      await context.sync()
+
+      const promise = contactContext.awaitNextSyncGroupFromScratchEvent()
+      await contactContext.application.groupService.syncGroupsFromScratch([group.uuid])
+      await promise
+
+      const keysResolvedPromise = contactContext.resolveWhenGroupUserKeysResolved()
+      await createContactForUserOfContext(contactContext, context)
+      await keysResolvedPromise
+
+      const receivedItemsKey = contactContext.application.items.getSharedItemsKeysForGroup(group.uuid)[0]
+      expect(receivedItemsKey).to.not.be.undefined
+      expect(receivedItemsKey.itemsKey).to.not.be.undefined
+
+      const receivedNote = contactContext.application.items.findItem(note.uuid)
+      expect(receivedNote.title).to.equal('foo')
+      expect(receivedNote.text).to.equal(note.text)
+
+      await deinitContactContext()
+    })
+
+    it('should sync a group from scratch when receiving a group invitation', async () => {
       const group = await groupService.createGroup()
 
       /** Create an item and add it to the group */
@@ -162,7 +260,8 @@ describe.only('groups', function () {
 
       /** Invite a contact */
       const { contactContext, deinitContactContext } = await createContactContext()
-      const contact = await createContactForUserOfContext(contactContext)
+      const contact = await createContactForUserOfContext(context, contactContext)
+      await createContactForUserOfContext(contactContext, context)
 
       /** Sync the contact context so that they wouldn't naturally receive changes made before this point */
       await contactContext.sync()
@@ -170,22 +269,20 @@ describe.only('groups', function () {
       await groupService.addContactToGroup(group, contact, GroupPermission.Write)
 
       /** Contact should now sync and expect to find note */
+      const promise = contactContext.awaitNextSyncGroupFromScratchEvent()
       await contactContext.sync()
-      await contactContext.awaitNextSyncGroupFromScratchEvent()
+      await promise
+
       const receivedNote = contactContext.application.items.findItem(note.uuid)
       expect(receivedNote).to.not.be.undefined
 
       await deinitContactContext()
     })
 
-    it('should remove group member', () => {
-
-    })
+    it('should remove group member', () => {})
 
     it('changing a groups key should reencrypt the group key for all users', async () => {})
 
-    it('should rotate key after removing group member', () => {
-
-    })
+    it('should rotate key after removing group member', () => {})
   })
 })

@@ -44,7 +44,7 @@ export class ItemsEncryptionService extends AbstractService {
 
     this.removeItemsObserver = this.itemManager.addObserver([ContentType.ItemsKey], ({ changed, inserted }) => {
       if (changed.concat(inserted).length > 0) {
-        void this.decryptErroredPayloads()
+        void this.decryptErroredItemPayloads()
       }
     })
   }
@@ -221,8 +221,10 @@ export class ItemsEncryptionService extends AbstractService {
     return Promise.all(payloads.map((payload) => this.decryptPayload<C>(payload, key)))
   }
 
-  public async decryptErroredPayloads(): Promise<void> {
-    const payloads = this.payloadManager.invalidPayloads.filter((i) => i.content_type !== ContentType.ItemsKey)
+  public async decryptErroredItemPayloads(): Promise<void> {
+    const payloads = this.payloadManager.invalidPayloads.filter(
+      (i) => ![ContentType.ItemsKey, ContentType.SharedItemsKey].includes(i.content_type),
+    )
     if (payloads.length === 0) {
       return
     }

@@ -312,7 +312,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     )
 
     if (!contentKey) {
-      console.error('Error decrypting itemKey parameters', encrypted)
+      console.error('Error decrypting contentKey from parameters', encrypted)
       return {
         uuid: encrypted.uuid,
         errorDecrypting: true,

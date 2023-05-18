@@ -27,7 +27,6 @@ export class ContactService extends AbstractService implements ContactServiceInt
       name: params.name,
       publicKey: params.publicKey,
       userUuid: params.userUuid,
-      trusted: params.trusted,
     })
     const contactTemplate = this.items.createTemplateItem<ContactContent, ContactInterface>(
       ContentType.Contact,
@@ -36,7 +35,7 @@ export class ContactService extends AbstractService implements ContactServiceInt
 
     const contact = await this.items.insertItem<ContactInterface>(contactTemplate)
 
-    void this.sync.sync()
+    await this.sync.sync()
 
     return contact
   }

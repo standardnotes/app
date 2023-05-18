@@ -757,7 +757,10 @@ export class SNSyncService
     options: SyncOptions,
     mode: SyncMode = SyncMode.Default,
   ) {
-    const syncToken = options.groupUuids && options.syncGroupsFromScratch ? undefined : await this.getLastSyncToken()
+    const syncToken =
+      options.groupUuids && options.groupUuids.length > 0 && options.syncGroupsFromScratch
+        ? undefined
+        : await this.getLastSyncToken()
     const paginationToken =
       options.groupUuids && options.syncGroupsFromScratch ? undefined : await this.getPaginationToken()
 
@@ -946,7 +949,7 @@ export class SNSyncService
     const historyMap = this.historyService.getHistoryMapCopy()
 
     if (response.groupKeys) {
-      await this.notifyEvent(SyncEvent.ReceivedGroupKeys, response.groupKeys as SyncEventReceivedGroupKeysData)
+      await this.notifyEventSync(SyncEvent.ReceivedGroupKeys, response.groupKeys as SyncEventReceivedGroupKeysData)
     }
 
     const resolver = new ServerSyncResponseResolver(

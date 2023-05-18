@@ -23,13 +23,15 @@ import {
   ContactServiceInterface,
   SyncEventReceivedGroupKeysData,
 } from '@standardnotes/services'
-import { ContactInterface, DecryptedItemInterface } from '@standardnotes/models'
+import { ContactInterface, DecryptedItemInterface, PayloadEmitSource } from '@standardnotes/models'
 import { GroupServiceEvent, GroupServiceInterface } from './GroupServiceInterface'
 import { EncryptionProviderInterface, GroupKey } from '@standardnotes/encryption'
+import { ContentType } from '@standardnotes/common'
 
 export class GroupService extends AbstractService<GroupServiceEvent> implements GroupServiceInterface {
   private groupsServer: GroupsServerInterface
   private syncEventDisposer: () => void
+  private itemsEventDisposer: () => void
 
   constructor(
     private http: HttpServiceInterface,
@@ -44,14 +46,32 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
     this.groupsServer = new GroupsServer(http)
     this.syncEventDisposer = sync.addEventObserver(async (event, data) => {
       if (event === SyncEvent.ReceivedGroupKeys) {
-        await this.handleReceivedGroupKeysSyncEvent(data as SyncEventReceivedGroupKeysData)
+        await this.handleReceivedGroupKeys(data as SyncEventReceivedGroupKeysData)
+      }
+    })
+    this.itemsEventDisposer = items.addObserver<ContactInterface>(ContentType.Contact, ({ inserted, source }) => {
+      if (source === PayloadEmitSource.LocalChanged && inserted.length > 0) {
+        void this.handleUpdatedContacts(inserted)
       }
     })
   }
 
-  private async handleReceivedGroupKeysSyncEvent(data: SyncEventReceivedGroupKeysData): Promise<void> {
-    const incomingUserKeys = data as SyncEventReceivedGroupKeysData
+  private async handleUpdatedContacts(contacts: ContactInterface[]): Promise<void> {
+    for (const contact of contacts) {
+      const response = await this.groupsServer.getReceivedUserKeysBySender({ senderUuid: contact.userUuid })
 
+      if (isErrorResponse(response)) {
+        console.error('Failed to get received user keys by sender', contact.userUuid, response)
+        continue
+      }
+
+      const { groupUserKeys } = response.data
+
+      await this.handleReceivedGroupKeys(groupUserKeys)
+    }
+  }
+
+  private async handleReceivedGroupKeys(incomingUserKeys: GroupUserKeyServerHash[]): Promise<void> {
     const untrusted: GroupUserKeyServerHash[] = []
     const trusted: GroupUserKeyServerHash[] = []
 
@@ -72,21 +92,34 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
       trusted.push(userKey)
     }
 
-    await this.encryption.persistTrustedRemoteRetrievedGroupKeys(trusted)
+    const { inserted, changed } = await this.encryption.persistTrustedRemoteRetrievedGroupKeys(trusted)
+    for (const key of [...inserted, ...changed]) {
+      await this.decryptErroredItemsForGroup(key.groupUuid)
+    }
 
-    const groupIdsNeedingSync = trusted.map((groupKey) => groupKey.group_uuid)
-    void this.syncGroupsFromScratch(groupIdsNeedingSync)
+    await this.notifyEventSync(GroupServiceEvent.DidResolveRemoteGroupUserKeys)
+
+    const groupIdsNeedingSyncFromScratch = inserted.map((groupKey) => groupKey.groupUuid)
+    void this.syncGroupsFromScratch(groupIdsNeedingSyncFromScratch)
 
     if (untrusted.length > 0) {
-      void this.promptUserForUntrustedUserKeys(untrusted)
+      await this.promptUserForUntrustedUserKeys(untrusted)
     }
   }
 
-  private async promptUserForUntrustedUserKeys(_untrusted: GroupUserKeyServerHash[]): Promise<void> {
-    throw new Error('Method promptUserForUntrustedUserKeys not implemented')
+  private async decryptErroredItemsForGroup(_groupUuid: string): Promise<void> {
+    await this.encryption.decryptErroredPayloads()
+  }
+
+  private async promptUserForUntrustedUserKeys(untrusted: GroupUserKeyServerHash[]): Promise<void> {
+    console.error('promptUserForUntrustedUserKeys', untrusted)
   }
 
   private async syncGroupsFromScratch(groupUuids: string[]): Promise<void> {
+    if (groupUuids.length === 0) {
+      return
+    }
+
     await this.sync.syncGroupsFromScratch(groupUuids)
   }
 
@@ -254,7 +287,6 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
       updatedKeys.push({
         userUuid: user.user_uuid,
         encryptedGroupKey,
-        senderKeypairId: this.userKeypairId,
         senderPublicKey: this.userPublicKey,
       })
     }
@@ -292,5 +324,6 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
     ;(this.groupsServer as unknown) = undefined
     ;(this.contacts as unknown) = undefined
     this.syncEventDisposer()
+    this.itemsEventDisposer()
   }
 }

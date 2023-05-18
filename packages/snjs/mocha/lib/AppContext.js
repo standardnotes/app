@@ -134,6 +134,16 @@ export class AppContext {
     })
   }
 
+  resolveWhenGroupUserKeysResolved() {
+    return new Promise((resolve) => {
+      this.application.groupService.addEventObserver((eventName) => {
+        if (eventName === GroupServiceEvent.DidResolveRemoteGroupUserKeys) {
+          resolve()
+        }
+      })
+    })
+  }
+
   async awaitSignInEvent() {
     return new Promise((resolve) => {
       this.application.userService.addEventObserver((eventName) => {
@@ -324,6 +334,14 @@ export class AppContext {
     const note = this.application.items.findItem(payload.uuid)
 
     return note
+  }
+
+  lockSyncing() {
+    this.application.syncService.lockSyncing()
+  }
+
+  unlockSyncing() {
+    this.application.syncService.unlockSyncing()
   }
 
   async deleteItemAndSync(item) {

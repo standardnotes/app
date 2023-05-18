@@ -172,6 +172,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private statusService!: ExternalServices.StatusService
   private filesBackupService?: FilesBackupService
   private groupService!: InternalServices.GroupServiceInterface
+  private contactService!: ExternalServices.ContactServiceInterface
   private declare sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>
   private declare legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>
   private declare authenticatorManager: AuthenticatorClientInterface
@@ -1194,6 +1195,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createRevisionManager()
 
     this.createUseCases()
+    this.createContactService()
     this.createGroupService()
   }
 
@@ -1252,6 +1254,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this._getRevision as unknown) = undefined
     ;(this._deleteRevision as unknown) = undefined
     ;(this.groupService as unknown) = undefined
+    ;(this.contactService as unknown) = undefined
 
     this.services = []
   }
@@ -1273,6 +1276,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.internalEventBus as unknown) = undefined
   }
 
+  private createContactService(): void {
+    this.contactService = new InternalServices.ContactService(this.syncService, this.itemManager, this.internalEventBus)
+
+    this.services.push(this.contactService)
+  }
+
   private createGroupService(): void {
     this.groupService = new InternalServices.GroupService(
       this.httpService,
@@ -1280,6 +1289,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.itemManager,
       this.protocolService,
       this.sessions,
+      this.contactService,
       this.internalEventBus,
     )
 

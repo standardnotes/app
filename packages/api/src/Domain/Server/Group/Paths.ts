@@ -5,4 +5,5 @@ export const SharingPaths = {
   removeUserFromGroup: (groupUuid: string, userUuid: string) => `/v1/groups/${groupUuid}/users/${userUuid}`,
   updateKeysForAllGroupMembers: (groupUuid: string) => `/v1/groups/${groupUuid}/users`,
   getGroupUsers: (groupUuid: string) => `/v1/groups/${groupUuid}/users`,
+  getReceivedUserKeysBySender: (senderUuid: string) => `/v1/groups/received-user-keys/${senderUuid}`,
 }

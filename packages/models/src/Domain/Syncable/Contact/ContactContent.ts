@@ -4,7 +4,6 @@ export type ContactContentSpecialized = {
   name: string
   userUuid: string
   publicKey: string
-  trusted: boolean
 }
 
 export type ContactContent = ContactContentSpecialized & ItemContent

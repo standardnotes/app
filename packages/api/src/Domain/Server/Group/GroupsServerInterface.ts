@@ -19,10 +19,13 @@ export type GetGroupUsersResponse = {
   users: GroupUserListingServerHash[]
 }
 
+export type GetManyGroupUserKeysResponse = {
+  groupUserKeys: GroupUserKeyServerHash[]
+}
+
 export type UpdateKeysForGroupMembersKeysParam = {
   userUuid: string
   encryptedGroupKey: string
-  senderKeypairId: string
   senderPublicKey: string
 }[]
 
@@ -50,4 +53,6 @@ export interface GroupsServerInterface {
   }): Promise<HttpResponse<boolean>>
 
   getGroupUsers(params: { groupUuid: string }): Promise<HttpResponse<GetGroupUsersResponse>>
+
+  getReceivedUserKeysBySender(params: { senderUuid: string }): Promise<HttpResponse<GetManyGroupUserKeysResponse>>
 }

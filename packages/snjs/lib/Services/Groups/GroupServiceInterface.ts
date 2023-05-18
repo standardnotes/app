@@ -8,7 +8,9 @@ import { AbstractService } from '@standardnotes/services'
 import { GroupPermission } from '@standardnotes/api'
 import { Contact, DecryptedItemInterface } from '@standardnotes/models'
 
-export enum GroupServiceEvent {}
+export enum GroupServiceEvent {
+  DidResolveRemoteGroupUserKeys = 'DidResolveRemoteGroupUserKeys',
+}
 
 export interface GroupServiceInterface extends AbstractService<GroupServiceEvent> {
   createGroup(): Promise<GroupServerHash | ClientDisplayableError>

@@ -137,6 +137,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       this.operatorManager,
       this.deviceInterface,
       this.storageService,
+      this.payloadManager,
       this.identifier,
       this.internalEventBus,
     )
@@ -174,9 +175,14 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.storageService.getValue<string>(StorageKey.AccountDecryptedPrivateKey)
   }
 
-  async persistTrustedRemoteRetrievedGroupKeys(userKeys: GroupUserKeyServerHash[]): Promise<GroupKeyInterface[]> {
+  async persistTrustedRemoteRetrievedGroupKeys(
+    userKeys: GroupUserKeyServerHash[],
+  ): Promise<{ inserted: GroupKeyInterface[]; changed: GroupKeyInterface[] }> {
     if (userKeys.length === 0) {
-      return []
+      return {
+        inserted: [],
+        changed: [],
+      }
     }
 
     const privateKey = this.getDecryptedPrivateKey()
@@ -184,9 +190,18 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       throw new Error('Private key not found')
     }
 
-    const processed: GroupKeyInterface[] = []
+    const inserted: GroupKeyInterface[] = []
+    const changed: GroupKeyInterface[] = []
 
     for (const userKey of userKeys) {
+      const currentKey = this.getGroupKey(userKey.group_uuid)
+
+      const doesUserAlreadyHaveThisVersionOfKey =
+        currentKey && currentKey.updatedAtTimestamp === userKey.updated_at_timestamp
+      if (doesUserAlreadyHaveThisVersionOfKey) {
+        continue
+      }
+
       const decryptedKey = this.decryptGroupKeyWithPrivateKey(
         userKey.encrypted_group_key,
         userKey.sender_public_key,
@@ -207,10 +222,15 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       })
 
       this.persistGroupKey(groupKey)
-      processed.push(groupKey)
+
+      if (currentKey) {
+        changed.push(groupKey)
+      } else {
+        inserted.push(groupKey)
+      }
     }
 
-    return processed
+    return { inserted, changed }
   }
 
   persistGroupKey(groupKey: GroupKeyInterface): void {
@@ -277,7 +297,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   }
 
   public async decryptErroredPayloads(): Promise<void> {
-    await this.itemsEncryption.decryptErroredPayloads()
+    await this.rootKeyEncryption.decryptErroredRootPayloads()
+    await this.itemsEncryption.decryptErroredItemPayloads()
   }
 
   public itemsKeyForEncryptedPayload(
