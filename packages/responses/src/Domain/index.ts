@@ -26,6 +26,7 @@ export * from './Files/UploadFileChunkResponse'
 
 export * from './Groups/GroupUserKeyServerHash'
 export * from './Groups/GroupServerHash'
+export * from './Groups/GroupUserListingServerHash'
 
 export * from './Http'
 

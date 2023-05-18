@@ -104,7 +104,7 @@ export interface ItemManagerInterface extends AbstractService {
     itemToLookupUuidFor: { uuid: string },
     contentType?: ContentType,
   ): I[]
-  sharedItemsKeysForGroup(groupUuid: string): SharedItemsKeyInterface[]
+  getSharedItemsKeysForGroup(groupUuid: string): SharedItemsKeyInterface[]
   referencesForItem<I extends DecryptedItemInterface = DecryptedItemInterface>(
     itemToLookupUuidFor: DecryptedItemInterface,
     contentType?: ContentType,

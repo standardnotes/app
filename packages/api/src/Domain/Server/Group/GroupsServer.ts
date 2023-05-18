@@ -1,6 +1,12 @@
 import { HttpResponse } from '@standardnotes/responses'
 import { HttpServiceInterface } from '../../Http'
-import { AddUserToGroupResponse, CreateGroupResponse, GroupsServerInterface } from './GroupsServerInterface'
+import {
+  AddUserToGroupResponse,
+  CreateGroupResponse,
+  GetGroupUsersResponse,
+  GroupsServerInterface,
+  UpdateKeysForGroupMembersKeysParam,
+} from './GroupsServerInterface'
 import { SharingPaths } from './Paths'
 import { GroupPermission } from './GroupPermission'
 
@@ -30,5 +36,26 @@ export class GroupsServer implements GroupsServerInterface {
       sender_public_key: params.senderPublicKey,
       permissions: params.permissions,
     })
+  }
+
+  deleteGroup(params: { groupUuid: string }): Promise<HttpResponse<boolean>> {
+    return this.httpService.delete(SharingPaths.deleteGroup(params.groupUuid))
+  }
+
+  removeUserFromGroup(params: { groupUuid: string; userUuid: string }): Promise<HttpResponse<boolean>> {
+    return this.httpService.delete(SharingPaths.removeUserFromGroup(params.groupUuid, params.userUuid))
+  }
+
+  updateKeysForAllGroupMembers(params: {
+    groupUuid: string
+    updatedKeys: UpdateKeysForGroupMembersKeysParam
+  }): Promise<HttpResponse<boolean>> {
+    return this.httpService.patch(SharingPaths.updateKeysForAllGroupMembers(params.groupUuid), {
+      updated_keys: params.updatedKeys,
+    })
+  }
+
+  getGroupUsers(params: { groupUuid: string }): Promise<HttpResponse<GetGroupUsersResponse>> {
+    return this.httpService.get(SharingPaths.getGroupUsers(params.groupUuid))
   }
 }

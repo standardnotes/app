@@ -90,7 +90,7 @@ describe.only('groups', function () {
       const group = await groupService.createGroup()
       expect(group).to.not.be.undefined
 
-      const sharedItemsKeys = application.items.sharedItemsKeysForGroup(group.uuid)
+      const sharedItemsKeys = application.items.getSharedItemsKeysForGroup(group.uuid)
       expect(sharedItemsKeys.length).to.equal(1)
 
       const sharedItemsKey = sharedItemsKeys[0]
@@ -138,7 +138,7 @@ describe.only('groups', function () {
 
       await contactContext.sync()
 
-      const receivedItemsKey = contactContext.application.items.sharedItemsKeysForGroup(group.uuid)[0]
+      const receivedItemsKey = contactContext.application.items.getSharedItemsKeysForGroup(group.uuid)[0]
       expect(receivedItemsKey).to.not.be.undefined
       expect(receivedItemsKey.group_uuid).to.equal(group.uuid)
       expect(receivedItemsKey.itemsKey).to.not.be.undefined
@@ -178,6 +178,14 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
+    it('should remove group member', () => {
+
+    })
+
     it('changing a groups key should reencrypt the group key for all users', async () => {})
+
+    it('should rotate key after removing group member', () => {
+
+    })
   })
 })

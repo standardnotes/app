@@ -268,6 +268,10 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     await this.rootKeyEncryption.reencryptItemsKeys()
   }
 
+  public reencryptSharedItemsKeysForGroup(groupUuid: string): Promise<void> {
+    return this.rootKeyEncryption.reencryptSharedItemsKeysForGroup(groupUuid)
+  }
+
   public async createNewItemsKeyWithRollback(): Promise<() => Promise<void>> {
     return this.rootKeyEncryption.createNewItemsKeyWithRollback()
   }

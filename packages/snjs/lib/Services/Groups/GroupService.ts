@@ -4,8 +4,15 @@ import {
   GroupServerHash,
   User,
   isErrorResponse,
+  GroupUserListingServerHash,
 } from '@standardnotes/responses'
-import { HttpServiceInterface, GroupsServer, GroupsServerInterface, GroupPermission } from '@standardnotes/api'
+import {
+  HttpServiceInterface,
+  GroupsServer,
+  GroupsServerInterface,
+  GroupPermission,
+  UpdateKeysForGroupMembersKeysParam,
+} from '@standardnotes/api'
 import {
   AbstractService,
   InternalEventBusInterface,
@@ -129,6 +136,10 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
     return contact
   }
 
+  findContact(userUuid: string): ContactInterface | undefined {
+    return this.items.getItems<ContactInterface>(ContentType.Contact).filter((item) => item.userUuid === userUuid)[0]
+  }
+
   async addContactToGroup(
     group: GroupServerHash,
     contact: ContactInterface,
@@ -168,6 +179,96 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
     await this.sync.sync()
 
     return this.items.findSureItem(item.uuid)
+  }
+
+  async deleteGroup(groupUuid: string): Promise<boolean> {
+    const response = await this.groupsServer.deleteGroup({ groupUuid })
+
+    if (isErrorResponse(response)) {
+      return false
+    }
+
+    return true
+  }
+
+  async removeUserFromGroup(groupUuid: string, userUuid: string): Promise<boolean> {
+    const response = await this.groupsServer.removeUserFromGroup({ groupUuid, userUuid })
+
+    if (isErrorResponse(response)) {
+      return false
+    }
+
+    return true
+  }
+
+  async getGroupUsers(groupUuid: string): Promise<GroupUserListingServerHash[] | undefined> {
+    const response = await this.groupsServer.getGroupUsers({ groupUuid })
+
+    if (isErrorResponse(response)) {
+      return undefined
+    }
+
+    return response.data.users
+  }
+
+  async rotateGroupKey(groupUuid: string): Promise<void> {
+    const users = await this.getGroupUsers(groupUuid)
+    if (!users) {
+      throw new Error('Cannot rotate group key; users not found')
+    }
+
+    if (users.length === 0) {
+      return
+    }
+
+    const { key, version } = this.encryption.createGroupKeyString()
+
+    const updatedKeys: UpdateKeysForGroupMembersKeysParam = []
+
+    for (const user of users) {
+      if (user.user_uuid === this.user.uuid) {
+        continue
+      }
+
+      const contact = this.findContact(user.user_uuid)
+      if (!contact) {
+        throw new Error('Cannot rotate group key; contact not found')
+      }
+
+      const encryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
+        key,
+        this.userDecryptedPrivateKey,
+        contact.publicKey,
+      )
+
+      updatedKeys.push({
+        userUuid: user.user_uuid,
+        encryptedGroupKey,
+        semderPublicKey: this.userPublicKey,
+      })
+    }
+
+    const groupKey = this.encryption.getGroupKey(groupUuid)
+    if (!groupKey) {
+      throw new Error('Cannot rotate group key; group key not found')
+    }
+
+    const updatedGroupKey = new GroupKey({
+      ...groupKey,
+      key: key,
+      keyVersion: version,
+    })
+
+    this.encryption.persistGroupKey(updatedGroupKey)
+
+    await this.encryption.reencryptSharedItemsKeysForGroup(groupUuid)
+
+    await this.groupsServer.updateKeysForAllGroupMembers({
+      groupUuid,
+      updatedKeys,
+    })
+
+    await this.sync.sync()
   }
 
   override deinit(): void {

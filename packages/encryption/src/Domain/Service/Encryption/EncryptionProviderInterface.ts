@@ -86,6 +86,7 @@ export interface EncryptionProviderInterface {
   >
   createNewItemsKeyWithRollback(): Promise<() => Promise<void>>
   reencryptItemsKeys(): Promise<void>
+  reencryptSharedItemsKeysForGroup(groupUuid: string): Promise<void>
   getSureDefaultItemsKey(): ItemsKeyInterface
   getRootKeyParams(): Promise<SNRootKeyParams | undefined>
   getEmbeddedPayloadAuthenticatedData(

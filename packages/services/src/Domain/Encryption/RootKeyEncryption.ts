@@ -567,7 +567,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
 
   public async decryptPayloads<C extends ItemContent = ItemContent>(
     payloads: EncryptedPayloadInterface[],
-    key: RootKeyInterface,
+    key: RootKeyInterface | GroupKeyInterface,
   ): Promise<(DecryptedParameters<C> | ErrorDecryptingParameters)[]> {
     return Promise.all(payloads.map((payload) => this.decryptPayload<C>(payload, key)))
   }
@@ -586,6 +586,18 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
        * will sync on their own timing
        */
       await this.itemManager.setItemsDirty(itemsKeys)
+    }
+  }
+
+  /**
+   * When the group key changes, we must re-encrypt all shared items
+   * keys with this new group key (by simply re-syncing).
+   */
+  public async reencryptSharedItemsKeysForGroup(groupUuid: string): Promise<void> {
+    const sharedItemsKeys = this.itemManager.getSharedItemsKeysForGroup(groupUuid)
+
+    if (sharedItemsKeys.length > 0) {
+      await this.itemManager.setItemsDirty(sharedItemsKeys)
     }
   }
 
