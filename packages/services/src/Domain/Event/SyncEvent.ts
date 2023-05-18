@@ -1,3 +1,5 @@
+import { GroupUserKeyServerHash } from '@standardnotes/responses'
+
 /* istanbul ignore file */
 export enum SyncEvent {
   /**
@@ -24,3 +26,5 @@ export enum SyncEvent {
   SyncRequestsIntegrityCheck = 'sync:requests-integrity-check',
   ReceivedGroupKeys = 'received-group-keys',
 }
+
+export type SyncEventReceivedGroupKeysData = GroupUserKeyServerHash[]

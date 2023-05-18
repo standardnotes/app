@@ -78,6 +78,7 @@ import {
   isFullEntryLoadChunkResponse,
   isChunkFullEntry,
   ItemsServerInterface,
+  SyncEventReceivedGroupKeysData,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -944,7 +945,9 @@ export class SNSyncService
 
     const historyMap = this.historyService.getHistoryMapCopy()
 
-    const groupKeys = response.groupKeys ? await this.protocolService.handleRetrievedGroupKeys(response.groupKeys) : []
+    if (response.groupKeys) {
+      await this.notifyEvent(SyncEvent.ReceivedGroupKeys, response.groupKeys as SyncEventReceivedGroupKeysData)
+    }
 
     const resolver = new ServerSyncResponseResolver(
       {
@@ -995,10 +998,6 @@ export class SNSyncService
       uploadedPayloads: operation.payloads,
       options: operation.options,
     })
-
-    if (groupKeys.length > 0) {
-      void this.notifyEvent(SyncEvent.ReceivedGroupKeys, groupKeys)
-    }
   }
 
   private async processServerPayloads(

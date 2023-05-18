@@ -2,8 +2,8 @@ import { ItemContent } from '../../Abstract/Content/ItemContent'
 
 export type ContactContentSpecialized = {
   name: string
-  publicKey: string
   userUuid: string
+  publicKey: string
   trusted: boolean
 }
 

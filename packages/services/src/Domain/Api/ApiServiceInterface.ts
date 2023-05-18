@@ -15,6 +15,7 @@ export enum ApiServiceEvent {
 export type MetaReceivedData = {
   userUuid: string
   userRoles: Role[]
+  userPublicKey?: string
 }
 
 export type SessionRefreshedData = {

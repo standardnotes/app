@@ -25,6 +25,7 @@ import {
   InternalEventInterface,
   ApiServiceEvent,
   SessionRefreshedData,
+  MetaReceivedData,
 } from '@standardnotes/services'
 import { Base64String } from '@standardnotes/sncrypto-common'
 import {
@@ -117,6 +118,42 @@ export class SNSessionManager
     if (event.type === ApiServiceEvent.SessionRefreshed) {
       this.httpService.setSession((event.payload as SessionRefreshedData).session)
     }
+
+    if (event.type === ApiServiceEvent.MetaReceived) {
+      const { userPublicKey } = event.payload as MetaReceivedData
+      if (userPublicKey !== this.user?.publicKey) {
+        void this.handleServerPublicKeyChangedEvent()
+      }
+    }
+  }
+
+  private async handleServerPublicKeyChangedEvent(): Promise<void> {
+    const user = this.getSureUser()
+    const pkcCredentialsResponse = await this.userApiService.getAccountPkcCredentials(user.uuid)
+
+    if (isErrorResponse(pkcCredentialsResponse)) {
+      console.error('Could not fetch new PKC credentials')
+      return
+    }
+
+    const { public_key, encrypted_private_key } = pkcCredentialsResponse.data
+
+    const rootKey = this.protocolService.getRootKey()
+
+    if (!rootKey) {
+      throw new Error('Root key not available')
+    }
+
+    const decryptedPrivateKey = this.protocolService.decryptPrivateKeyWithRootKey(rootKey, encrypted_private_key)
+    if (decryptedPrivateKey) {
+      this.diskStorageService.setValue(StorageKey.AccountDecryptedPrivateKey, decryptedPrivateKey)
+
+      user.publicKey = public_key
+      user.encryptedPrivateKey = encrypted_private_key
+
+      this.memoizeUser(user)
+      this.diskStorageService.setValue(StorageKey.User, user)
+    }
   }
 
   override deinit(): void {
@@ -138,18 +175,19 @@ export class SNSessionManager
     }
   }
 
-  private setUser(user?: User) {
+  private memoizeUser(user?: User) {
     this.user = user
+
     this.apiService.setUser(user)
   }
 
   async initializeFromDisk() {
-    this.setUser(this.diskStorageService.getValue(StorageKey.User))
+    this.memoizeUser(this.diskStorageService.getValue(StorageKey.User))
 
     if (!this.user) {
       const legacyUuidLookup = this.diskStorageService.getValue<string>(StorageKey.LegacyUuid)
       if (legacyUuidLookup) {
-        this.setUser({ uuid: legacyUuidLookup, email: legacyUuidLookup })
+        this.memoizeUser({ uuid: legacyUuidLookup, email: legacyUuidLookup })
       }
     }
 
@@ -204,7 +242,7 @@ export class SNSessionManager
     return this.session.isReadOnly()
   }
 
-  public getSureUser() {
+  public getSureUser(): User {
     return this.user as User
   }
 
@@ -213,7 +251,8 @@ export class SNSessionManager
   }
 
   public async signOut() {
-    this.setUser(undefined)
+    this.memoizeUser(undefined)
+
     const session = this.apiService.getSession()
     if (session && session instanceof Session) {
       await this.apiService.signOut()
@@ -685,17 +724,24 @@ export class SNSessionManager
   ) {
     await this.protocolService.setRootKey(rootKey, wrappingKey)
 
-    this.setUser(user)
-
     if (user.encryptedPrivateKey) {
       const decryptedPrivateKey = this.protocolService.decryptPrivateKeyWithRootKey(rootKey, user.encryptedPrivateKey)
-      this.diskStorageService.setValue(StorageKey.AccountDecryptedPrivateKey, decryptedPrivateKey)
+      if (decryptedPrivateKey) {
+        this.diskStorageService.setValue(StorageKey.AccountDecryptedPrivateKey, decryptedPrivateKey)
+      } else {
+        /** If failed to decrypt, do not trust keypair information */
+        user.publicKey = undefined
+        user.encryptedPrivateKey = undefined
+      }
+    } else {
+      user.publicKey = undefined
+      user.encryptedPrivateKey = undefined
     }
 
+    this.memoizeUser(user)
     this.diskStorageService.setValue(StorageKey.User, user)
 
     void this.apiService.setHost(host)
-
     this.httpService.setHost(host)
 
     this.setSession(session)

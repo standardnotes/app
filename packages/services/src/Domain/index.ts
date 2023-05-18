@@ -13,9 +13,13 @@ export * from './Authenticator/AuthenticatorClientInterface'
 export * from './Authenticator/AuthenticatorManager'
 export * from './Backups/BackupService'
 export * from './Challenge'
+
 export * from './Component/ComponentManagerInterface'
 export * from './Component/ComponentViewerError'
 export * from './Component/ComponentViewerInterface'
+
+export * from './Contacts/ContactServiceInterface'
+
 export * from './Device/DatabaseItemMetadata'
 export * from './Device/DatabaseLoadOptions'
 export * from './Device/DatabaseLoadSorter'

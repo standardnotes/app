@@ -22,7 +22,8 @@ export type GetGroupUsersResponse = {
 export type UpdateKeysForGroupMembersKeysParam = {
   userUuid: string
   encryptedGroupKey: string
-  semderPublicKey: string
+  senderKeypairId: string
+  senderPublicKey: string
 }[]
 
 export interface GroupsServerInterface {

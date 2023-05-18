@@ -14,6 +14,7 @@ import { UserRequestServerInterface } from '../../Server/UserRequest/UserRequest
 
 import { UserApiOperations } from './UserApiOperations'
 import { UserApiServiceInterface } from './UserApiServiceInterface'
+import { UserGetPkcCredentialsResponse } from '../../Response/User/UserGetPkcCredentialsResponse'
 
 export class UserApiService implements UserApiServiceInterface {
   private operationsInProgress: Map<UserApiOperations, boolean>
@@ -34,7 +35,21 @@ export class UserApiService implements UserApiServiceInterface {
 
       return response
     } catch (error) {
-      throw new ApiCallError(ErrorMessage.GenericRegistrationFail)
+      throw new ApiCallError(ErrorMessage.GenericFail)
+    }
+  }
+
+  async getAccountPkcCredentials(userUuid: string): Promise<HttpResponse<UserGetPkcCredentialsResponse>> {
+    this.lockOperation(UserApiOperations.GettingPkcCredentials)
+
+    try {
+      const response = await this.userServer.getPkcCredentials(userUuid)
+
+      this.unlockOperation(UserApiOperations.GettingPkcCredentials)
+
+      return response
+    } catch (error) {
+      throw new ApiCallError(ErrorMessage.GenericFail)
     }
   }
 

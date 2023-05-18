@@ -20,11 +20,12 @@ import {
   SessionsClientInterface,
   SyncEvent,
   SyncServiceInterface,
+  ContactServiceInterface,
+  SyncEventReceivedGroupKeysData,
 } from '@standardnotes/services'
-import { ContactContent, ContactInterface, DecryptedItemInterface, FillItemContent } from '@standardnotes/models'
+import { ContactInterface, DecryptedItemInterface } from '@standardnotes/models'
 import { GroupServiceEvent, GroupServiceInterface } from './GroupServiceInterface'
-import { EncryptionProviderInterface, GroupKey, GroupKeyInterface } from '@standardnotes/encryption'
-import { ContentType } from '@standardnotes/common'
+import { EncryptionProviderInterface, GroupKey } from '@standardnotes/encryption'
 
 export class GroupService extends AbstractService<GroupServiceEvent> implements GroupServiceInterface {
   private groupsServer: GroupsServerInterface
@@ -36,18 +37,53 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
     private items: ItemManagerInterface,
     private encryption: EncryptionProviderInterface,
     private session: SessionsClientInterface,
+    private contacts: ContactServiceInterface,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
     this.groupsServer = new GroupsServer(http)
-    this.syncEventDisposer = sync.addEventObserver((event, data) => {
+    this.syncEventDisposer = sync.addEventObserver(async (event, data) => {
       if (event === SyncEvent.ReceivedGroupKeys) {
-        const groupKeys = data as GroupKeyInterface[]
-        const groupIds = groupKeys.map((groupKey) => groupKey.groupUuid)
-
-        void this.syncGroupsFromScratch(groupIds)
+        await this.handleReceivedGroupKeysSyncEvent(data as SyncEventReceivedGroupKeysData)
       }
     })
+  }
+
+  private async handleReceivedGroupKeysSyncEvent(data: SyncEventReceivedGroupKeysData): Promise<void> {
+    const incomingUserKeys = data as SyncEventReceivedGroupKeysData
+
+    const untrusted: GroupUserKeyServerHash[] = []
+    const trusted: GroupUserKeyServerHash[] = []
+
+    for (const userKey of incomingUserKeys) {
+      const isSenderTrustedSelf =
+        userKey.sender_uuid === this.user.uuid && userKey.sender_public_key === this.userPublicKey
+      if (isSenderTrustedSelf) {
+        trusted.push(userKey)
+        continue
+      }
+
+      const contact = this.contacts.findContact(userKey.sender_uuid)
+      if (!contact || contact.publicKey !== userKey.sender_public_key) {
+        untrusted.push(userKey)
+        continue
+      }
+
+      trusted.push(userKey)
+    }
+
+    await this.encryption.persistTrustedRemoteRetrievedGroupKeys(trusted)
+
+    const groupIdsNeedingSync = trusted.map((groupKey) => groupKey.group_uuid)
+    void this.syncGroupsFromScratch(groupIdsNeedingSync)
+
+    if (untrusted.length > 0) {
+      void this.promptUserForUntrustedUserKeys(untrusted)
+    }
+  }
+
+  private async promptUserForUntrustedUserKeys(_untrusted: GroupUserKeyServerHash[]): Promise<void> {
+    throw new Error('Method promptUserForUntrustedUserKeys not implemented')
   }
 
   private async syncGroupsFromScratch(groupUuids: string[]): Promise<void> {
@@ -112,32 +148,6 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
     await this.sync.sync()
 
     return group
-  }
-
-  async createContact(params: {
-    name: string
-    publicKey: string
-    userUuid: string
-    trusted: boolean
-  }): Promise<ContactInterface> {
-    const content: ContactContent = FillItemContent<ContactContent>({
-      name: params.name,
-      publicKey: params.publicKey,
-      userUuid: params.userUuid,
-      trusted: params.trusted,
-    })
-    const contactTemplate = this.items.createTemplateItem<ContactContent, ContactInterface>(
-      ContentType.Contact,
-      content,
-    )
-
-    const contact = await this.items.insertItem<ContactInterface>(contactTemplate)
-
-    return contact
-  }
-
-  findContact(userUuid: string): ContactInterface | undefined {
-    return this.items.getItems<ContactInterface>(ContentType.Contact).filter((item) => item.userUuid === userUuid)[0]
   }
 
   async addContactToGroup(
@@ -230,7 +240,7 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
         continue
       }
 
-      const contact = this.findContact(user.user_uuid)
+      const contact = this.contacts.findContact(user.user_uuid)
       if (!contact) {
         throw new Error('Cannot rotate group key; contact not found')
       }
@@ -244,7 +254,8 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
       updatedKeys.push({
         userUuid: user.user_uuid,
         encryptedGroupKey,
-        semderPublicKey: this.userPublicKey,
+        senderKeypairId: this.userKeypairId,
+        senderPublicKey: this.userPublicKey,
       })
     }
 
@@ -279,6 +290,7 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
     ;(this.items as unknown) = undefined
     ;(this.session as unknown) = undefined
     ;(this.groupsServer as unknown) = undefined
+    ;(this.contacts as unknown) = undefined
     this.syncEventDisposer()
   }
 }

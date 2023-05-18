@@ -5,6 +5,7 @@ import { HttpResponse } from '@standardnotes/responses'
 import { UserDeletionResponseBody } from '../../Response/User/UserDeletionResponseBody'
 import { UserRegistrationResponseBody } from '../../Response/User/UserRegistrationResponseBody'
 import { UserRequestResponseBody } from '../../Response/UserRequest/UserRequestResponseBody'
+import { UserGetPkcCredentialsResponse } from '../../Response/User/UserGetPkcCredentialsResponse'
 
 export interface UserApiServiceInterface {
   register(registerDTO: {
@@ -20,4 +21,5 @@ export interface UserApiServiceInterface {
     requestType: UserRequestType
   }): Promise<HttpResponse<UserRequestResponseBody>>
   deleteAccount(userUuid: string): Promise<HttpResponse<UserDeletionResponseBody>>
+  getAccountPkcCredentials(userUuid: string): Promise<HttpResponse<UserGetPkcCredentialsResponse>>
 }

@@ -174,8 +174,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.storageService.getValue<string>(StorageKey.AccountDecryptedPrivateKey)
   }
 
-  async handleRetrievedGroupKeys(hashes: GroupUserKeyServerHash[]): Promise<GroupKeyInterface[]> {
-    if (hashes.length === 0) {
+  async persistTrustedRemoteRetrievedGroupKeys(userKeys: GroupUserKeyServerHash[]): Promise<GroupKeyInterface[]> {
+    if (userKeys.length === 0) {
       return []
     }
 
@@ -184,12 +184,12 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       throw new Error('Private key not found')
     }
 
-    const keys: GroupKeyInterface[] = []
+    const processed: GroupKeyInterface[] = []
 
-    for (const hash of hashes) {
+    for (const userKey of userKeys) {
       const decryptedKey = this.decryptGroupKeyWithPrivateKey(
-        hash.encrypted_group_key,
-        hash.sender_public_key,
+        userKey.encrypted_group_key,
+        userKey.sender_public_key,
         privateKey,
       )
 
@@ -198,19 +198,19 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       }
 
       const groupKey = new GroupKey({
-        uuid: hash.uuid,
-        groupUuid: hash.group_uuid,
+        uuid: userKey.uuid,
+        groupUuid: userKey.group_uuid,
         key: decryptedKey,
-        updatedAtTimestamp: hash.updated_at_timestamp,
-        senderPublicKey: hash.sender_public_key,
-        keyVersion: this.operatorManager.defaultOperator().versionForEncryptedKey(hash.encrypted_group_key),
+        updatedAtTimestamp: userKey.updated_at_timestamp,
+        senderPublicKey: userKey.sender_public_key,
+        keyVersion: this.operatorManager.defaultOperator().versionForEncryptedKey(userKey.encrypted_group_key),
       })
 
       this.persistGroupKey(groupKey)
-      keys.push(groupKey)
+      processed.push(groupKey)
     }
 
-    return keys
+    return processed
   }
 
   persistGroupKey(groupKey: GroupKeyInterface): void {

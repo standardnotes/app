@@ -6,17 +6,15 @@ import { ContactInterface } from './ContactInterface'
 
 export class Contact extends DecryptedItem<ContactContent> implements ContactInterface {
   readonly name: string
-  readonly publicKey: string
   readonly userUuid: string
-  readonly trusted: boolean
+  readonly publicKey: string
 
   constructor(payload: DecryptedPayloadInterface<ContactContent>) {
     super(payload)
 
     this.name = this.content.name
-    this.publicKey = this.content.publicKey
     this.userUuid = this.content.userUuid
-    this.trusted = this.content.trusted
+    this.publicKey = this.content.publicKey
   }
 
   override strategyWhenConflictingWithItem(

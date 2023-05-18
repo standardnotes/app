@@ -59,7 +59,7 @@ export interface EncryptionProviderInterface {
   getDecryptedPrivateKey(): string | undefined
   getGroupKey(groupUuid: string): GroupKeyInterface | undefined
   persistGroupKey(groupKey: GroupKeyInterface): void
-  handleRetrievedGroupKeys(hashes: GroupUserKeyServerHash[]): Promise<GroupKeyInterface[]>
+  persistTrustedRemoteRetrievedGroupKeys(userKeys: GroupUserKeyServerHash[]): Promise<GroupKeyInterface[]>
   createSharedItemsKey(groupUuid: string): SharedItemsKeyInterface
   createGroupKeyString(): { key: string; version: ProtocolVersion }
   generateKeyPair(): PkcKeyPair
