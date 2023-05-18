@@ -10,6 +10,7 @@ type Props = {
     pinned: ListableContentItem['pinned']
     starred: ListableContentItem['starred']
   }
+  hideIcon?: boolean
   hasFiles?: boolean
   hasBorder?: boolean
   isFileBackedUp?: boolean
@@ -18,6 +19,7 @@ type Props = {
 
 const ListItemFlagIcons: FunctionComponent<Props> = ({
   item,
+  hideIcon = false,
   hasFiles = false,
   hasBorder = true,
   isFileBackedUp = false,
@@ -40,12 +42,17 @@ const ListItemFlagIcons: FunctionComponent<Props> = ({
           <Icon ariaLabel="Archived" type="archive" className="text-accessory-tint-3" size="medium" />
         </span>
       )}
+      {hideIcon && item.pinned && (
+        <span className="ml-1.5 flex items-center" title="Pinned">
+          <Icon ariaLabel="Pinned" type="pin-filled" className="text-info" size="medium" />
+        </span>
+      )}
       {hasFiles && (
         <span className="ml-1.5 flex items-center" title="Files">
           <Icon ariaLabel="Files" type="attachment-file" className="text-info" size="medium" />
         </span>
       )}
-      {item.starred && (
+      {hideIcon && item.starred && (
         <span className="ml-1.5 flex items-center" title="Starred">
           <Icon ariaLabel="Starred" type="star-filled" className="text-warning" size="medium" />
         </span>
