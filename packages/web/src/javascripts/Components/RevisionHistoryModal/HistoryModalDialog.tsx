@@ -18,10 +18,7 @@ const HistoryModalDialog = forwardRef(({ children, onDismiss }: Props, ref: Forw
       store={dialog}
       aria-label="Note revision history"
       ref={ref}
-      backdropProps={{
-        className: '!z-modal',
-      }}
-      className="h-full w-full"
+      className="fixed top-0 left-0 z-modal h-full w-full"
     >
       <div
         className="absolute z-0 h-full w-full bg-passive-5 opacity-0 md:opacity-75"
