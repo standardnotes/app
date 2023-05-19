@@ -52,7 +52,7 @@ const ListItemFlagIcons: FunctionComponent<Props> = ({
           <Icon ariaLabel="Files" type="attachment-file" className="text-info" size="medium" />
         </span>
       )}
-      {hideIcon && item.starred && (
+      {item.starred && (
         <span className="ml-1.5 flex items-center" title="Starred">
           <Icon ariaLabel="Starred" type="star-filled" className="text-warning" size="medium" />
         </span>

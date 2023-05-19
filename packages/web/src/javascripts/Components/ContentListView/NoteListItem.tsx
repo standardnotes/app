@@ -89,11 +89,6 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
               <Icon type="pin-filled" size="custom" className="h-3 w-3" />
             </div>
           )}
-          {item.starred && (
-            <div className="rounded-full bg-warning p-1 text-info-contrast">
-              <Icon type="star-filled" size="custom" className="h-3 w-3" />
-            </div>
-          )}
           <Icon type={icon} className={`text-accessory-tint-${tint}`} />
         </div>
       ) : (
