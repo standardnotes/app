@@ -279,6 +279,14 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
+    it('should reupload all group users keys for me when my globak keypair changes', async () => {
+
+    })
+
+    it('should reupload encrypted private key when changing my password', async () => {
+
+    })
+
     it('should remove group member', () => {})
 
     it('changing a groups key should reencrypt the group key for all users', async () => {})

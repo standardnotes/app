@@ -25,8 +25,9 @@ export type GetManyGroupUserKeysResponse = {
 
 export type UpdateKeysForGroupMembersKeysParam = {
   userUuid: string
-  encryptedGroupKey: string
   senderPublicKey: string
+  recipientPublicKey: string
+  encryptedGroupKey: string
 }[]
 
 export interface GroupsServerInterface {
@@ -38,8 +39,9 @@ export interface GroupsServerInterface {
   addUserToGroup(params: {
     groupUuid: string
     inviteeUuid: string
-    encryptedGroupKey: string
     senderPublicKey: string
+    recipientPublicKey: string
+    encryptedGroupKey: string
     permissions: GroupPermission
   }): Promise<HttpResponse<AddUserToGroupResponse>>
 
@@ -53,6 +55,8 @@ export interface GroupsServerInterface {
   }): Promise<HttpResponse<boolean>>
 
   getGroupUsers(params: { groupUuid: string }): Promise<HttpResponse<GetGroupUsersResponse>>
+
+  getAllUserKeysForCurrentUser(): Promise<HttpResponse<GetManyGroupUserKeysResponse>>
 
   getReceivedUserKeysBySender(params: { senderUuid: string }): Promise<HttpResponse<GetManyGroupUserKeysResponse>>
 }

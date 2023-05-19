@@ -372,6 +372,40 @@ export class SNApiService
     return response
   }
 
+  async changePkcCredentials(parameters: {
+    userUuid: UuidString
+    newPublicKey: string
+    newEncryptedPrivateKey: string
+  }): Promise<HttpResponse<ChangeCredentialsResponse>> {
+    if (this.changing) {
+      return this.createErrorResponse(API_MESSAGE_CHANGE_CREDENTIALS_IN_PROGRESS, HttpStatusCode.BadRequest)
+    }
+    const preprocessingError = this.preprocessingError()
+    if (preprocessingError) {
+      return preprocessingError
+    }
+
+    this.changing = true
+
+    const path = Paths.v1.changePkcCredentials(parameters.userUuid)
+    const params = this.params({
+      new_public_key: parameters.newPublicKey,
+      new_encrypted_private_key: parameters.newEncryptedPrivateKey,
+    })
+
+    const response = await this.httpService.put<ChangeCredentialsResponse>(path, params, this.getSessionAccessToken())
+
+    this.changing = false
+
+    if (isErrorResponse(response)) {
+      return this.errorResponseWithFallbackMessage(response, API_MESSAGE_GENERIC_CHANGE_CREDENTIALS_FAIL)
+    }
+
+    this.processSuccessResponseForMetaBody(response)
+
+    return response
+  }
+
   async sync(
     payloads: ServerSyncPushContextualPayload[],
     lastSyncToken: string | undefined,

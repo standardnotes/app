@@ -27,14 +27,16 @@ export class GroupsServer implements GroupsServerInterface {
   addUserToGroup(params: {
     groupUuid: string
     inviteeUuid: string
-    encryptedGroupKey: string
     senderPublicKey: string
+    recipientPublicKey: string
+    encryptedGroupKey: string
     permissions: GroupPermission
   }): Promise<HttpResponse<AddUserToGroupResponse>> {
     return this.httpService.post(SharingPaths.addUserToGroup(params.groupUuid), {
       invitee_uuid: params.inviteeUuid,
-      encrypted_group_key: params.encryptedGroupKey,
       sender_public_key: params.senderPublicKey,
+      recipient_public_key: params.recipientPublicKey,
+      encrypted_group_key: params.encryptedGroupKey,
       permissions: params.permissions,
     })
   }
@@ -58,6 +60,10 @@ export class GroupsServer implements GroupsServerInterface {
 
   getGroupUsers(params: { groupUuid: string }): Promise<HttpResponse<GetGroupUsersResponse>> {
     return this.httpService.get(SharingPaths.getGroupUsers(params.groupUuid))
+  }
+
+  getAllUserKeysForCurrentUser(): Promise<HttpResponse<GetManyGroupUserKeysResponse>> {
+    return this.httpService.get(SharingPaths.getAllUserKeysForCurrentUser())
   }
 
   getReceivedUserKeysBySender(params: { senderUuid: string }): Promise<HttpResponse<GetManyGroupUserKeysResponse>> {

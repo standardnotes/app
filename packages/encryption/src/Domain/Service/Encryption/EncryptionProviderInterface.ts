@@ -59,6 +59,7 @@ export interface EncryptionProviderInterface {
   getDecryptedPrivateKey(): string | undefined
   getGroupKey(groupUuid: string): GroupKeyInterface | undefined
   persistGroupKey(groupKey: GroupKeyInterface): void
+  decryptGroupKeyWithPrivateKey(encryptedGroupKey: string, senderPublicKey: string, privateKey: string): string | null
   persistTrustedRemoteRetrievedGroupKeys(
     userKeys: GroupUserKeyServerHash[],
   ): Promise<{ inserted: GroupKeyInterface[]; changed: GroupKeyInterface[] }>

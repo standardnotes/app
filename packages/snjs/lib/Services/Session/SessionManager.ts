@@ -75,6 +75,14 @@ const cleanedEmailString = (email: string) => {
 export enum SessionEvent {
   Restored = 'SessionRestored',
   Revoked = 'SessionRevoked',
+  PkcChangeDetected = 'PkcChangeDetected',
+}
+
+export type SessionEventPkChangeDetectedData = {
+  previousPublicKey?: string
+  previousDecryptedPrivateKey?: string
+  newPublicKey: string
+  newDecryptedPrivateKey: string
 }
 
 /**
@@ -129,6 +137,9 @@ export class SNSessionManager
 
   private async handleServerPublicKeyChangedEvent(): Promise<void> {
     const user = this.getSureUser()
+    const previousPublicKey = user.publicKey
+    const previousDecryptedPrivateKey = this.diskStorageService.getValue<string>(StorageKey.AccountDecryptedPrivateKey)
+
     const pkcCredentialsResponse = await this.userApiService.getAccountPkcCredentials(user.uuid)
 
     if (isErrorResponse(pkcCredentialsResponse)) {
@@ -153,6 +164,15 @@ export class SNSessionManager
 
       this.memoizeUser(user)
       this.diskStorageService.setValue(StorageKey.User, user)
+
+      const eventData: SessionEventPkChangeDetectedData = {
+        previousPublicKey,
+        previousDecryptedPrivateKey,
+        newPublicKey: public_key,
+        newDecryptedPrivateKey: decryptedPrivateKey,
+      }
+
+      await this.notifyEventSync(SessionEvent.PkcChangeDetected, eventData)
     }
   }
 
@@ -230,6 +250,10 @@ export class SNSessionManager
     return this.user
   }
 
+  public getSureUser(): User {
+    return this.user as User
+  }
+
   isCurrentSessionReadOnly(): boolean | undefined {
     if (this.session === undefined) {
       return undefined
@@ -240,10 +264,6 @@ export class SNSessionManager
     }
 
     return this.session.isReadOnly()
-  }
-
-  public getSureUser(): User {
-    return this.user as User
   }
 
   public getSession() {
@@ -643,7 +663,7 @@ export class SNSessionManager
       newEncryptedPrivateKey = this.protocolService.encryptPrivateKeyWithRootKey(parameters.newRootKey, privateKey)
     }
 
-    const userUuid = this.user!.uuid
+    const userUuid = this.getSureUser().uuid
     const response = await this.apiService.changeCredentials({
       userUuid,
       currentServerPassword: parameters.currentServerPassword,
@@ -654,6 +674,34 @@ export class SNSessionManager
     })
 
     return this.processChangeCredentialsResponse(response, parameters.newRootKey, parameters.wrappingKey)
+  }
+
+  public async rotateKeyPair(): Promise<boolean> {
+    const rootKey = this.protocolService.getRootKey()
+    if (!rootKey) {
+      throw Error('Cannot rotate key pair without root key')
+    }
+
+    const { publicKey, privateKey } = this.protocolService.generateKeyPair()
+    const encryptedPrivateKey = this.protocolService.encryptPrivateKeyWithRootKey(rootKey, privateKey)
+
+    const userUuid = this.getSureUser().uuid
+    const response = await this.apiService.changePkcCredentials({
+      userUuid,
+      newPublicKey: publicKey,
+      newEncryptedPrivateKey: encryptedPrivateKey,
+    })
+
+    if (isErrorResponse(response)) {
+      return false
+    }
+
+    if (response.data.user) {
+      this.persistUserInfoChange(response.data.user)
+      return true
+    }
+
+    return false
   }
 
   public async getSessionsList(): Promise<HttpResponse<SessionListEntry[]>> {
@@ -715,16 +763,13 @@ export class SNSessionManager
     await this.signIn(sharePayload.email, sharePayload.password, false, true)
   }
 
-  private async populateSession(
-    rootKey: SNRootKey,
-    user: User,
-    session: Session | LegacySession,
-    host: string,
-    wrappingKey?: SNRootKey,
-  ) {
-    await this.protocolService.setRootKey(rootKey, wrappingKey)
-
+  private persistUserInfoChange(user: User) {
     if (user.encryptedPrivateKey) {
+      const rootKey = this.protocolService.getRootKey()
+      if (!rootKey) {
+        throw Error('Cannot persist user info change without root key')
+      }
+
       const decryptedPrivateKey = this.protocolService.decryptPrivateKeyWithRootKey(rootKey, user.encryptedPrivateKey)
       if (decryptedPrivateKey) {
         this.diskStorageService.setValue(StorageKey.AccountDecryptedPrivateKey, decryptedPrivateKey)
@@ -740,6 +785,18 @@ export class SNSessionManager
 
     this.memoizeUser(user)
     this.diskStorageService.setValue(StorageKey.User, user)
+  }
+
+  private async populateSession(
+    rootKey: SNRootKey,
+    user: User,
+    session: Session | LegacySession,
+    host: string,
+    wrappingKey?: SNRootKey,
+  ) {
+    await this.protocolService.setRootKey(rootKey, wrappingKey)
+
+    this.persistUserInfoChange(user)
 
     void this.apiService.setHost(host)
     this.httpService.setHost(host)

@@ -5,7 +5,7 @@ import {
   SyncServiceInterface,
   ContactServiceInterface,
 } from '@standardnotes/services'
-import { ContactContent, ContactInterface, FillItemContent } from '@standardnotes/models'
+import { ContactContent, ContactContentSpecialized, ContactInterface, FillItemContent } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 
 export class ContactService extends AbstractService implements ContactServiceInterface {
@@ -23,17 +23,17 @@ export class ContactService extends AbstractService implements ContactServiceInt
     userUuid: string
     trusted: boolean
   }): Promise<ContactInterface> {
-    const content: ContactContent = FillItemContent<ContactContent>({
+    const content: ContactContentSpecialized = {
       name: params.name,
       publicKey: params.publicKey,
       userUuid: params.userUuid,
-    })
-    const contactTemplate = this.items.createTemplateItem<ContactContent, ContactInterface>(
-      ContentType.Contact,
-      content,
-    )
+    }
 
-    const contact = await this.items.insertItem<ContactInterface>(contactTemplate)
+    const contact = this.items.createItem<ContactInterface>(
+      ContentType.Contact,
+      FillItemContent<ContactContent>(content),
+      true,
+    )
 
     await this.sync.sync()
 

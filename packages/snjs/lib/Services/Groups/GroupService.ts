@@ -22,13 +22,28 @@ import {
   SyncServiceInterface,
   ContactServiceInterface,
   SyncEventReceivedGroupKeysData,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
 } from '@standardnotes/services'
-import { ContactInterface, DecryptedItemInterface, PayloadEmitSource } from '@standardnotes/models'
+import {
+  ContactInterface,
+  DecryptedItemInterface,
+  FillItemContent,
+  KeypairArchiveContent,
+  KeypairArchiveContentSpecialized,
+  KeypairArchiveInterface,
+  PayloadEmitSource,
+  Predicate,
+} from '@standardnotes/models'
 import { GroupServiceEvent, GroupServiceInterface } from './GroupServiceInterface'
 import { EncryptionProviderInterface, GroupKey } from '@standardnotes/encryption'
 import { ContentType } from '@standardnotes/common'
+import { SessionEvent, SessionEventPkChangeDetectedData } from '../Api'
 
-export class GroupService extends AbstractService<GroupServiceEvent> implements GroupServiceInterface {
+export class GroupService
+  extends AbstractService<GroupServiceEvent>
+  implements GroupServiceInterface, InternalEventHandlerInterface
+{
   private groupsServer: GroupsServerInterface
   private syncEventDisposer: () => void
   private itemsEventDisposer: () => void
@@ -43,6 +58,8 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
+    eventBus.addEventHandler(this, SessionEvent.PkcChangeDetected)
+
     this.groupsServer = new GroupsServer(http)
     this.syncEventDisposer = sync.addEventObserver(async (event, data) => {
       if (event === SyncEvent.ReceivedGroupKeys) {
@@ -54,6 +71,74 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
         void this.handleUpdatedContacts(inserted)
       }
     })
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    if (event.type === SessionEvent.PkcChangeDetected) {
+      await this.handlePkcChangeDetectedEvent(event.payload as SessionEventPkChangeDetectedData)
+    }
+  }
+
+  private async handlePkcChangeDetectedEvent(data: SessionEventPkChangeDetectedData): Promise<void> {
+    const { previousPublicKey, previousDecryptedPrivateKey, newPublicKey, newDecryptedPrivateKey } = data
+
+    if (previousPublicKey && previousDecryptedPrivateKey) {
+      const keypairArchiveContent: KeypairArchiveContentSpecialized = {
+        publicKey: previousPublicKey,
+        privateKey: previousDecryptedPrivateKey,
+      }
+
+      await this.items.createItem<KeypairArchiveInterface>(
+        ContentType.KeypairArchive,
+        FillItemContent<KeypairArchiveContent>(keypairArchiveContent),
+        true,
+      )
+    }
+
+    const getAllUserKeysResponse = await this.groupsServer.getAllUserKeysForCurrentUser()
+
+    if (isErrorResponse(getAllUserKeysResponse)) {
+      console.error('Failed to get all user keys for current user')
+      return
+    }
+
+    const allUserKeys = getAllUserKeysResponse.data.groupUserKeys
+
+    for (const userKey of allUserKeys) {
+      const isEncryptedWithNewPublicKey = userKey.recipient_public_key === newPublicKey
+      if (isEncryptedWithNewPublicKey) {
+        continue
+      }
+
+      const isEncryptedWithPreviousPublicKey = userKey.recipient_public_key === previousPublicKey
+      let privateKeyToUse: string | undefined
+      if (isEncryptedWithPreviousPublicKey) {
+        privateKeyToUse = previousDecryptedPrivateKey
+      } else {
+        const keypairArchive = this.items.itemsMatchingPredicate<KeypairArchiveInterface>(
+          ContentType.KeypairArchive,
+          new Predicate<KeypairArchiveInterface>('publicKey', '=', userKey.recipient_public_key),
+        )[0]
+
+        if (keypairArchive) {
+          privateKeyToUse = keypairArchive.privateKey
+        }
+      }
+
+      if (!privateKeyToUse) {
+        console.error('Failed to find private key for user key', userKey)
+        continue
+      }
+
+      const decryptedKey = this.encryption.decryptGroupKeyWithPrivateKey(
+        userKey.encrypted_group_key,
+        userKey.sender_public_key,
+        privateKeyToUse,
+      )
+    }
+
+    /** If they are not encrypted with our current public key, reencrypt them */
+    /** Upload all changed group user keys */
   }
 
   private async handleUpdatedContacts(contacts: ContactInterface[]): Promise<void> {
@@ -203,6 +288,7 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
       groupUuid: group.uuid,
       inviteeUuid: contact.userUuid,
       senderPublicKey: this.userPublicKey,
+      recipientPublicKey: contact.publicKey,
       encryptedGroupKey,
       permissions,
     })
@@ -286,8 +372,9 @@ export class GroupService extends AbstractService<GroupServiceEvent> implements 
 
       updatedKeys.push({
         userUuid: user.user_uuid,
-        encryptedGroupKey,
         senderPublicKey: this.userPublicKey,
+        recipientPublicKey: contact.publicKey,
+        encryptedGroupKey,
       })
     }
 

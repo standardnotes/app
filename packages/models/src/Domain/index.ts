@@ -80,6 +80,11 @@ export * from './Syncable/Contact/ContactMutator'
 export * from './Syncable/Contact/ContactContent'
 export * from './Syncable/Contact/ContactInterface'
 
+export * from './Syncable/KeypairArchive/KeypairArchive'
+export * from './Syncable/KeypairArchive/KeypairArchiveMutator'
+export * from './Syncable/KeypairArchive/KeypairArchiveContent'
+export * from './Syncable/KeypairArchive/KeypairArchiveInterface'
+
 export * from './Syncable/SharedItemsKey/SharedItemsKeyInterface'
 export * from './Syncable/SharedItemsKey/SharedItemsKeyMutatorInterface'
 
