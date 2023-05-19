@@ -7,6 +7,9 @@ export * from './Authenticator/AuthenticatorServerInterface'
 export * from './Revision/RevisionServer'
 export * from './Revision/RevisionServerInterface'
 
+export * from './Contact/ContactServer'
+export * from './Contact/ContactServerInterface'
+
 export * from './Group/GroupsServer'
 export * from './Group/GroupsServerInterface'
 export * from './Group/GroupPermission'

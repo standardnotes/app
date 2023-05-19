@@ -23,7 +23,7 @@ export type GetManyGroupUserKeysResponse = {
   groupUserKeys: GroupUserKeyServerHash[]
 }
 
-export type UpdateKeysForGroupMembersKeysParam = {
+export type UpdateKeysRequestParam = {
   userUuid: string
   senderPublicKey: string
   recipientPublicKey: string
@@ -49,9 +49,14 @@ export interface GroupsServerInterface {
 
   removeUserFromGroup(params: { groupUuid: string; userUuid: string }): Promise<HttpResponse<boolean>>
 
+  updateAllUserKeysRelatedToUser(params: {
+    userUuid: string
+    updatedKeys: UpdateKeysRequestParam
+  }): Promise<HttpResponse<boolean>>
+
   updateKeysForAllGroupMembers(params: {
     groupUuid: string
-    updatedKeys: UpdateKeysForGroupMembersKeysParam
+    updatedKeys: UpdateKeysRequestParam
   }): Promise<HttpResponse<boolean>>
 
   getGroupUsers(params: { groupUuid: string }): Promise<HttpResponse<GetGroupUsersResponse>>

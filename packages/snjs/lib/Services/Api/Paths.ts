@@ -10,7 +10,6 @@ const FilesPaths = {
 
 const UserPaths = {
   changeCredentials: (userUuid: string) => `/v1/users/${userUuid}/attributes/credentials`,
-  changePkcCredentials: (userUuid: string) => `/v1/users/${userUuid}/attributes/credentials/pkc`,
   deleteAccount: (userUuid: string) => `/v1/users/${userUuid}`,
   keyParams: '/v1/login-params',
   refreshSession: '/v1/sessions/refresh',

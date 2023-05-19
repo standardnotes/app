@@ -6,7 +6,7 @@ import {
   GetGroupUsersResponse,
   GetManyGroupUserKeysResponse,
   GroupsServerInterface,
-  UpdateKeysForGroupMembersKeysParam,
+  UpdateKeysRequestParam,
 } from './GroupsServerInterface'
 import { SharingPaths } from './Paths'
 import { GroupPermission } from './GroupPermission'
@@ -51,9 +51,18 @@ export class GroupsServer implements GroupsServerInterface {
 
   updateKeysForAllGroupMembers(params: {
     groupUuid: string
-    updatedKeys: UpdateKeysForGroupMembersKeysParam
+    updatedKeys: UpdateKeysRequestParam
   }): Promise<HttpResponse<boolean>> {
     return this.httpService.patch(SharingPaths.updateKeysForAllGroupMembers(params.groupUuid), {
+      updated_keys: params.updatedKeys,
+    })
+  }
+
+  updateAllUserKeysRelatedToUser(params: {
+    userUuid: string
+    updatedKeys: UpdateKeysRequestParam
+  }): Promise<HttpResponse<boolean>> {
+    return this.httpService.patch(SharingPaths.updateAllKeysRelatedToUser(params.userUuid), {
       updated_keys: params.updatedKeys,
     })
   }

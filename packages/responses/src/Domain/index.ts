@@ -24,6 +24,8 @@ export * from './Files/DownloadFileChunkResponse'
 export * from './Files/StartUploadSessionResponse'
 export * from './Files/UploadFileChunkResponse'
 
+export * from './Contact/ContactServerHash'
+
 export * from './Groups/GroupUserKeyServerHash'
 export * from './Groups/GroupServerHash'
 export * from './Groups/GroupUserListingServerHash'

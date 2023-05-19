@@ -79,6 +79,7 @@ import {
   isChunkFullEntry,
   ItemsServerInterface,
   SyncEventReceivedGroupKeysData,
+  SyncEventReceivedContactsData,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -950,6 +951,10 @@ export class SNSyncService
 
     if (response.groupKeys) {
       await this.notifyEventSync(SyncEvent.ReceivedGroupKeys, response.groupKeys as SyncEventReceivedGroupKeysData)
+    }
+
+    if (response.contacts) {
+      await this.notifyEventSync(SyncEvent.ReceivedContacts, response.contacts as SyncEventReceivedContactsData)
     }
 
     const resolver = new ServerSyncResponseResolver(

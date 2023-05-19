@@ -1,37 +1,74 @@
+import { isErrorResponse } from '@standardnotes/responses'
+import { ContactServerInterface, HttpServiceInterface, ContactServer } from '@standardnotes/api'
 import {
   AbstractService,
   InternalEventBusInterface,
+  InternalEventHandlerInterface,
+  InternalEventInterface,
   ItemManagerInterface,
+  SyncEvent,
   SyncServiceInterface,
-  ContactServiceInterface,
 } from '@standardnotes/services'
-import { ContactContent, ContactContentSpecialized, ContactInterface, FillItemContent } from '@standardnotes/models'
+import {
+  TrustedContactContent,
+  TrustedContactContentSpecialized,
+  TrustedContactInterface,
+  FillItemContent,
+  Predicate,
+} from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 
-export class ContactService extends AbstractService implements ContactServiceInterface {
+export class ContactService extends AbstractService implements InternalEventHandlerInterface {
+  private contactServer: ContactServerInterface
+
   constructor(
+    private http: HttpServiceInterface,
     private sync: SyncServiceInterface,
     private items: ItemManagerInterface,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
+
+    eventBus.addEventHandler(this, SyncEvent.ReceivedContacts)
+
+    this.contactServer = new ContactServer(this.http)
+  }
+
+  async handleEvent(event: InternalEventInterface): Promise<void> {
+    switch (event.type) {
+      case SyncEvent.ReceivedContacts:
+        return this.handleReceivedRemoteContactsEvent()
+    }
+  }
+
+  private async handleReceivedRemoteContactsEvent(): Promise<void> {
+    // TODO: Prompt user whether they want to trust the new credentials
   }
 
   async createContact(params: {
     name: string
     publicKey: string
     userUuid: string
-    trusted: boolean
-  }): Promise<ContactInterface> {
-    const content: ContactContentSpecialized = {
-      name: params.name,
-      publicKey: params.publicKey,
-      userUuid: params.userUuid,
+  }): Promise<TrustedContactInterface | undefined> {
+    const createResponse = await this.contactServer.createContact({
+      contactUuid: params.userUuid,
+      contactPublicKey: params.publicKey,
+    })
+
+    if (isErrorResponse(createResponse)) {
+      return undefined
     }
 
-    const contact = this.items.createItem<ContactInterface>(
-      ContentType.Contact,
-      FillItemContent<ContactContent>(content),
+    const content: TrustedContactContentSpecialized = {
+      name: params.name,
+      contactPublicKey: params.publicKey,
+      contactUserUuid: params.userUuid,
+      contactItemUuid: createResponse.data.contact.uuid,
+    }
+
+    const contact = this.items.createItem<TrustedContactInterface>(
+      ContentType.TrustedContact,
+      FillItemContent<TrustedContactContent>(content),
       true,
     )
 
@@ -40,8 +77,11 @@ export class ContactService extends AbstractService implements ContactServiceInt
     return contact
   }
 
-  findContact(userUuid: string): ContactInterface | undefined {
-    return this.items.getItems<ContactInterface>(ContentType.Contact).filter((item) => item.userUuid === userUuid)[0]
+  findContact(userUuid: string): TrustedContactInterface | undefined {
+    return this.items.itemsMatchingPredicate<TrustedContactInterface>(
+      ContentType.TrustedContact,
+      new Predicate<TrustedContactInterface>('contactUserUuid', '=', userUuid),
+    )[0]
   }
 
   override deinit(): void {

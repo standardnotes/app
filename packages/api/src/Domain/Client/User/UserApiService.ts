@@ -14,7 +14,7 @@ import { UserRequestServerInterface } from '../../Server/UserRequest/UserRequest
 
 import { UserApiOperations } from './UserApiOperations'
 import { UserApiServiceInterface } from './UserApiServiceInterface'
-import { UserGetPkcCredentialsResponse } from '../../Response/User/UserGetPkcCredentialsResponse'
+import { UserGetUserResponse } from '../../Response/User/UserGetPkcCredentialsResponse'
 
 export class UserApiService implements UserApiServiceInterface {
   private operationsInProgress: Map<UserApiOperations, boolean>
@@ -39,13 +39,13 @@ export class UserApiService implements UserApiServiceInterface {
     }
   }
 
-  async getAccountPkcCredentials(userUuid: string): Promise<HttpResponse<UserGetPkcCredentialsResponse>> {
-    this.lockOperation(UserApiOperations.GettingPkcCredentials)
+  async getCurrentUser(userUuid: string): Promise<HttpResponse<UserGetUserResponse>> {
+    this.lockOperation(UserApiOperations.GettingUser)
 
     try {
-      const response = await this.userServer.getPkcCredentials(userUuid)
+      const response = await this.userServer.getCurrentUser(userUuid)
 
-      this.unlockOperation(UserApiOperations.GettingPkcCredentials)
+      this.unlockOperation(UserApiOperations.GettingUser)
 
       return response
     } catch (error) {

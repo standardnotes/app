@@ -34,10 +34,8 @@ import { DeletedItem } from '../../Abstract/Item/Implementations/DeletedItem'
 import { EncryptedItemInterface } from '../../Abstract/Item/Interfaces/EncryptedItem'
 import { DeletedItemInterface } from '../../Abstract/Item/Interfaces/DeletedItem'
 import { SmartViewMutator } from '../../Syncable/SmartView'
-import { Contact } from '../../Syncable/Contact/Contact'
-import { ContactMutator } from '../../Syncable/Contact/ContactMutator'
-import { KeypairArchive } from '../../Syncable/KeypairArchive/KeypairArchive'
-import { KeypairArchiveMutator } from '../../Syncable/KeypairArchive/KeypairArchiveMutator'
+import { TrustedContact } from '../../Syncable/TrustedContact/TrustedContact'
+import { TrustedContactMutator } from '../../Syncable/TrustedContact/TrustedContactMutator'
 
 type ItemClass<C extends ItemContent = ItemContent> = new (payload: DecryptedPayloadInterface<C>) => DecryptedItem<C>
 
@@ -57,11 +55,10 @@ const ContentTypeClassMapping: Partial<Record<ContentType, MappingEntry>> = {
     mutatorClass: ActionsExtensionMutator,
   },
   [ContentType.Component]: { itemClass: SNComponent, mutatorClass: ComponentMutator },
-  [ContentType.Contact]: { itemClass: Contact, mutatorClass: ContactMutator },
+  [ContentType.TrustedContact]: { itemClass: TrustedContact, mutatorClass: TrustedContactMutator },
   [ContentType.Editor]: { itemClass: SNEditor },
   [ContentType.ExtensionRepo]: { itemClass: SNFeatureRepo },
   [ContentType.File]: { itemClass: FileItem, mutatorClass: FileMutator },
-  [ContentType.KeypairArchive]: { itemClass: KeypairArchive, mutatorClass: KeypairArchiveMutator },
   [ContentType.Note]: { itemClass: SNNote, mutatorClass: NoteMutator },
   [ContentType.SmartView]: { itemClass: SmartView, mutatorClass: SmartViewMutator },
   [ContentType.Tag]: { itemClass: SNTag, mutatorClass: TagMutator },

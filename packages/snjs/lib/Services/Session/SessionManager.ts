@@ -25,7 +25,6 @@ import {
   InternalEventInterface,
   ApiServiceEvent,
   SessionRefreshedData,
-  MetaReceivedData,
 } from '@standardnotes/services'
 import { Base64String } from '@standardnotes/sncrypto-common'
 import {
@@ -56,7 +55,7 @@ import { DiskStorageService } from '../Storage/DiskStorageService'
 import { SNWebSocketsService } from '../Api/WebsocketsService'
 import { Strings } from '@Lib/Strings'
 import { UuidString } from '@Lib/Types/UuidString'
-import { ChallengeService } from '../Challenge'
+import { ChallengeResponse, ChallengeService } from '../Challenge'
 import {
   ApiCallError,
   ErrorMessage,
@@ -75,14 +74,14 @@ const cleanedEmailString = (email: string) => {
 export enum SessionEvent {
   Restored = 'SessionRestored',
   Revoked = 'SessionRevoked',
-  PkcChangeDetected = 'PkcChangeDetected',
+  SuccessfullyChangedCredentials = 'SuccessfullyChangedCredentials',
 }
 
-export type SessionEventPkChangeDetectedData = {
+export type SuccessfullyChangedCredentialsEventData = {
   previousPublicKey?: string
-  previousDecryptedPrivateKey?: string
+  previousPrivateKey?: string
   newPublicKey: string
-  newDecryptedPrivateKey: string
+  newPrivateKey: string
 }
 
 /**
@@ -125,54 +124,6 @@ export class SNSessionManager
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === ApiServiceEvent.SessionRefreshed) {
       this.httpService.setSession((event.payload as SessionRefreshedData).session)
-    }
-
-    if (event.type === ApiServiceEvent.MetaReceived) {
-      const { userPublicKey } = event.payload as MetaReceivedData
-      if (userPublicKey !== this.user?.publicKey) {
-        void this.handleServerPublicKeyChangedEvent()
-      }
-    }
-  }
-
-  private async handleServerPublicKeyChangedEvent(): Promise<void> {
-    const user = this.getSureUser()
-    const previousPublicKey = user.publicKey
-    const previousDecryptedPrivateKey = this.diskStorageService.getValue<string>(StorageKey.AccountDecryptedPrivateKey)
-
-    const pkcCredentialsResponse = await this.userApiService.getAccountPkcCredentials(user.uuid)
-
-    if (isErrorResponse(pkcCredentialsResponse)) {
-      console.error('Could not fetch new PKC credentials')
-      return
-    }
-
-    const { public_key, encrypted_private_key } = pkcCredentialsResponse.data
-
-    const rootKey = this.protocolService.getRootKey()
-
-    if (!rootKey) {
-      throw new Error('Root key not available')
-    }
-
-    const decryptedPrivateKey = this.protocolService.decryptPrivateKeyWithRootKey(rootKey, encrypted_private_key)
-    if (decryptedPrivateKey) {
-      this.diskStorageService.setValue(StorageKey.AccountDecryptedPrivateKey, decryptedPrivateKey)
-
-      user.publicKey = public_key
-      user.encryptedPrivateKey = encrypted_private_key
-
-      this.memoizeUser(user)
-      this.diskStorageService.setValue(StorageKey.User, user)
-
-      const eventData: SessionEventPkChangeDetectedData = {
-        previousPublicKey,
-        previousDecryptedPrivateKey,
-        newPublicKey: public_key,
-        newDecryptedPrivateKey: decryptedPrivateKey,
-      }
-
-      await this.notifyEventSync(SessionEvent.PkcChangeDetected, eventData)
     }
   }
 
@@ -326,7 +277,11 @@ export class SNSessionManager
             currentKeyParams?.version,
           )
           if (isErrorResponse(response)) {
-            this.challengeService.setValidationStatusForChallenge(challenge, challengeResponse!.values[1], false)
+            this.challengeService.setValidationStatusForChallenge(
+              challenge,
+              (challengeResponse as ChallengeResponse).values[1],
+              false,
+            )
             onResponse?.(response)
           } else {
             resolve()
@@ -553,7 +508,7 @@ export class SNSessionManager
         response: paramsResult.response,
       }
     }
-    const keyParams = paramsResult.keyParams!
+    const keyParams = paramsResult.keyParams as SNRootKeyParams
     if (!this.protocolService.supportedVersions().includes(keyParams.version)) {
       if (this.protocolService.isVersionNewerThanLibraryVersion(keyParams.version)) {
         return {
@@ -631,7 +586,7 @@ export class SNSessionManager
 
     const signInResponse = await this.apiService.signIn({
       email,
-      serverPassword: rootKey.serverPassword!,
+      serverPassword: rootKey.serverPassword as string,
       ephemeral,
     })
 
@@ -657,51 +612,42 @@ export class SNSessionManager
     wrappingKey?: SNRootKey
     newEmail?: string
   }): Promise<SessionManagerResponse> {
-    const privateKey = this.diskStorageService.getValue<string>(StorageKey.AccountDecryptedPrivateKey)
-    let newEncryptedPrivateKey: string | undefined
-    if (privateKey) {
-      newEncryptedPrivateKey = this.protocolService.encryptPrivateKeyWithRootKey(parameters.newRootKey, privateKey)
-    }
+    const user = this.getSureUser()
+    const previousPublicKey = user.publicKey
+    const previousPrivateKey = this.diskStorageService.getValue<string>(StorageKey.AccountDecryptedPrivateKey)
+
+    const { publicKey: newPublicKey, privateKey: newPrivateKey } = this.protocolService.generateKeyPair()
+    const encryptedPrivateKey = this.protocolService.encryptPrivateKeyWithRootKey(parameters.newRootKey, newPrivateKey)
 
     const userUuid = this.getSureUser().uuid
-    const response = await this.apiService.changeCredentials({
+    const rawResponse = await this.apiService.changeCredentials({
       userUuid,
       currentServerPassword: parameters.currentServerPassword,
-      newServerPassword: parameters.newRootKey.serverPassword!,
+      newServerPassword: parameters.newRootKey.serverPassword as string,
       newKeyParams: parameters.newRootKey.keyParams,
       newEmail: parameters.newEmail,
-      newEncryptedPrivateKey,
-    })
-
-    return this.processChangeCredentialsResponse(response, parameters.newRootKey, parameters.wrappingKey)
-  }
-
-  public async rotateKeyPair(): Promise<boolean> {
-    const rootKey = this.protocolService.getRootKey()
-    if (!rootKey) {
-      throw Error('Cannot rotate key pair without root key')
-    }
-
-    const { publicKey, privateKey } = this.protocolService.generateKeyPair()
-    const encryptedPrivateKey = this.protocolService.encryptPrivateKeyWithRootKey(rootKey, privateKey)
-
-    const userUuid = this.getSureUser().uuid
-    const response = await this.apiService.changePkcCredentials({
-      userUuid,
-      newPublicKey: publicKey,
+      newPublicKey: newPublicKey,
       newEncryptedPrivateKey: encryptedPrivateKey,
     })
 
-    if (isErrorResponse(response)) {
-      return false
+    const processedResponse = await this.processChangeCredentialsResponse(
+      rawResponse,
+      parameters.newRootKey,
+      parameters.wrappingKey,
+    )
+
+    if (!isErrorResponse(rawResponse)) {
+      const eventData: SuccessfullyChangedCredentialsEventData = {
+        previousPublicKey,
+        previousPrivateKey,
+        newPublicKey,
+        newPrivateKey,
+      }
+
+      void this.notifyEvent(SessionEvent.SuccessfullyChangedCredentials, eventData)
     }
 
-    if (response.data.user) {
-      this.persistUserInfoChange(response.data.user)
-      return true
-    }
-
-    return false
+    return processedResponse
   }
 
   public async getSessionsList(): Promise<HttpResponse<SessionListEntry[]>> {

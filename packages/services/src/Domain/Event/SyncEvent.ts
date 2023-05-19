@@ -1,4 +1,4 @@
-import { GroupUserKeyServerHash } from '@standardnotes/responses'
+import { ContactServerHash, GroupUserKeyServerHash } from '@standardnotes/responses'
 
 /* istanbul ignore file */
 export enum SyncEvent {
@@ -25,6 +25,8 @@ export enum SyncEvent {
   DatabaseReadError = 'database-read-error',
   SyncRequestsIntegrityCheck = 'sync:requests-integrity-check',
   ReceivedGroupKeys = 'received-group-keys',
+  ReceivedContacts = 'received-contacts',
 }
 
 export type SyncEventReceivedGroupKeysData = GroupUserKeyServerHash[]
+export type SyncEventReceivedContactsData = ContactServerHash[]

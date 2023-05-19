@@ -12,6 +12,7 @@ import {
   GroupsServerInterface,
   GroupPermission,
   UpdateKeysForGroupMembersKeysParam,
+  UpdateKeysRequestParam,
 } from '@standardnotes/api'
 import {
   AbstractService,
@@ -25,20 +26,11 @@ import {
   InternalEventHandlerInterface,
   InternalEventInterface,
 } from '@standardnotes/services'
-import {
-  ContactInterface,
-  DecryptedItemInterface,
-  FillItemContent,
-  KeypairArchiveContent,
-  KeypairArchiveContentSpecialized,
-  KeypairArchiveInterface,
-  PayloadEmitSource,
-  Predicate,
-} from '@standardnotes/models'
+import { DecryptedItemInterface, PayloadEmitSource, TrustedContactInterface } from '@standardnotes/models'
 import { GroupServiceEvent, GroupServiceInterface } from './GroupServiceInterface'
 import { EncryptionProviderInterface, GroupKey } from '@standardnotes/encryption'
 import { ContentType } from '@standardnotes/common'
-import { SessionEvent, SessionEventPkChangeDetectedData } from '../Api'
+import { SessionEvent, SuccessfullyChangedCredentialsEventData } from '../Api'
 
 export class GroupService
   extends AbstractService<GroupServiceEvent>
@@ -58,105 +50,109 @@ export class GroupService
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
-    eventBus.addEventHandler(this, SessionEvent.PkcChangeDetected)
+    eventBus.addEventHandler(this, SessionEvent.SuccessfullyChangedCredentials)
 
     this.groupsServer = new GroupsServer(http)
     this.syncEventDisposer = sync.addEventObserver(async (event, data) => {
       if (event === SyncEvent.ReceivedGroupKeys) {
-        await this.handleReceivedGroupKeys(data as SyncEventReceivedGroupKeysData)
+        await this.handleRemoteReceivedGroupKeys(data as SyncEventReceivedGroupKeysData)
       }
     })
-    this.itemsEventDisposer = items.addObserver<ContactInterface>(ContentType.Contact, ({ inserted, source }) => {
-      if (source === PayloadEmitSource.LocalChanged && inserted.length > 0) {
-        void this.handleUpdatedContacts(inserted)
-      }
-    })
+    this.itemsEventDisposer = items.addObserver<TrustedContactInterface>(
+      ContentType.TrustedContact,
+      ({ inserted, source }) => {
+        if (source === PayloadEmitSource.LocalChanged && inserted.length > 0) {
+          void this.handleCreationOfNewTrustedContacts(inserted)
+        }
+      },
+    )
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === SessionEvent.PkcChangeDetected) {
-      await this.handlePkcChangeDetectedEvent(event.payload as SessionEventPkChangeDetectedData)
+    if (event.type === SessionEvent.SuccessfullyChangedCredentials) {
+      await this.handleSuccessfullyChangedCredentialsEvent(event.payload as SuccessfullyChangedCredentialsEventData)
     }
   }
 
-  private async handlePkcChangeDetectedEvent(data: SessionEventPkChangeDetectedData): Promise<void> {
-    const { previousPublicKey, previousDecryptedPrivateKey, newPublicKey, newDecryptedPrivateKey } = data
-
-    if (previousPublicKey && previousDecryptedPrivateKey) {
-      const keypairArchiveContent: KeypairArchiveContentSpecialized = {
-        publicKey: previousPublicKey,
-        privateKey: previousDecryptedPrivateKey,
-      }
-
-      await this.items.createItem<KeypairArchiveInterface>(
-        ContentType.KeypairArchive,
-        FillItemContent<KeypairArchiveContent>(keypairArchiveContent),
-        true,
-      )
-    }
+  /**
+   * When the local client initiates a change of credentials, it is also responsible for reencrypting all user
+   * group keys that are addressed to the current user, and that the current user has addressed for others.
+   */
+  private async handleSuccessfullyChangedCredentialsEvent(
+    data: SuccessfullyChangedCredentialsEventData,
+  ): Promise<void> {
+    const { previousPublicKey, previousPrivateKey, newPublicKey, newPrivateKey } = data
 
     const getAllUserKeysResponse = await this.groupsServer.getAllUserKeysForCurrentUser()
-
     if (isErrorResponse(getAllUserKeysResponse)) {
       console.error('Failed to get all user keys for current user')
       return
     }
 
-    const allUserKeys = getAllUserKeysResponse.data.groupUserKeys
+    const updatedValues: UpdateKeysRequestParam = []
 
+    const allUserKeys = getAllUserKeysResponse.data.groupUserKeys
     for (const userKey of allUserKeys) {
+      const userKeyType = userKey.user_uuid === this.user.uuid ? 'recipient' : 'sender'
       const isEncryptedWithNewPublicKey = userKey.recipient_public_key === newPublicKey
       if (isEncryptedWithNewPublicKey) {
         continue
       }
 
       const isEncryptedWithPreviousPublicKey = userKey.recipient_public_key === previousPublicKey
-      let privateKeyToUse: string | undefined
-      if (isEncryptedWithPreviousPublicKey) {
-        privateKeyToUse = previousDecryptedPrivateKey
-      } else {
-        const keypairArchive = this.items.itemsMatchingPredicate<KeypairArchiveInterface>(
-          ContentType.KeypairArchive,
-          new Predicate<KeypairArchiveInterface>('publicKey', '=', userKey.recipient_public_key),
-        )[0]
-
-        if (keypairArchive) {
-          privateKeyToUse = keypairArchive.privateKey
-        }
-      }
-
-      if (!privateKeyToUse) {
-        console.error('Failed to find private key for user key', userKey)
+      if (!isEncryptedWithPreviousPublicKey || !previousPrivateKey) {
+        console.error('User key is not encrypted with either current or previous public key', userKey)
         continue
       }
 
-      const decryptedKey = this.encryption.decryptGroupKeyWithPrivateKey(
+      const decryptedGroupKey = this.encryption.decryptGroupKeyWithPrivateKey(
         userKey.encrypted_group_key,
         userKey.sender_public_key,
-        privateKeyToUse,
+        previousPrivateKey,
       )
-    }
 
-    /** If they are not encrypted with our current public key, reencrypt them */
-    /** Upload all changed group user keys */
+      if (!decryptedGroupKey) {
+        console.error('Failed to decrypt group key', userKey)
+        continue
+      }
+
+      const publicKeyToUse = userKeyType === 'recipient' ? newPublicKey : userKey.recipient_public_key
+
+      const newEncryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
+        decryptedGroupKey,
+        newPrivateKey,
+        publicKeyToUse,
+      )
+
+      updatedValues.push({
+        userUuid: userKey.user_uuid,
+        senderPublicKey: newPublicKey,
+        recipientPublicKey: ,
+        encryptedGroupKey,
+      })
+    }
   }
 
-  private async handleUpdatedContacts(contacts: ContactInterface[]): Promise<void> {
+  /**
+   * When new contacts are trusted, we want to go back out to the server and retrieve any pending
+   * invitations and keys from this user, so that we can now decrypt that information given we trust the contact.
+   */
+  private async handleCreationOfNewTrustedContacts(contacts: TrustedContactInterface[]): Promise<void> {
     for (const contact of contacts) {
-      const response = await this.groupsServer.getReceivedUserKeysBySender({ senderUuid: contact.userUuid })
+      const response = await this.groupsServer.getReceivedUserKeysBySender({ senderUuid: contact.contactUserUuid })
 
       if (isErrorResponse(response)) {
-        console.error('Failed to get received user keys by sender', contact.userUuid, response)
+        console.error('Failed to get received user keys by sender', contact.contactUserUuid, response)
         continue
       }
 
       const { groupUserKeys } = response.data
 
-      await this.handleReceivedGroupKeys(groupUserKeys)
+      await this.handleRemoteReceivedGroupKeys(groupUserKeys)
     }
   }
 
-  private async handleReceivedGroupKeys(incomingUserKeys: GroupUserKeyServerHash[]): Promise<void> {
+  private async handleRemoteReceivedGroupKeys(incomingUserKeys: GroupUserKeyServerHash[]): Promise<void> {
     const untrusted: GroupUserKeyServerHash[] = []
     const trusted: GroupUserKeyServerHash[] = []
 
@@ -168,8 +164,8 @@ export class GroupService
         continue
       }
 
-      const contact = this.contacts.findContact(userKey.sender_uuid)
-      if (!contact || contact.publicKey !== userKey.sender_public_key) {
+      const trustedContact = this.contacts.findContact(userKey.sender_uuid)
+      if (!trustedContact || trustedContact.publicKey !== userKey.sender_public_key) {
         untrusted.push(userKey)
         continue
       }
@@ -270,7 +266,7 @@ export class GroupService
 
   async addContactToGroup(
     group: GroupServerHash,
-    contact: ContactInterface,
+    contact: TrustedContactInterface,
     permissions: GroupPermission,
   ): Promise<GroupUserKeyServerHash | ClientDisplayableError> {
     const groupKey = this.encryption.getGroupKey(group.uuid)
@@ -281,14 +277,14 @@ export class GroupService
     const encryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
       groupKey.key,
       this.userDecryptedPrivateKey,
-      contact.publicKey,
+      contact.contactPublicKey,
     )
 
     const response = await this.groupsServer.addUserToGroup({
       groupUuid: group.uuid,
-      inviteeUuid: contact.userUuid,
+      inviteeUuid: contact.contactUserUuid,
       senderPublicKey: this.userPublicKey,
-      recipientPublicKey: contact.publicKey,
+      recipientPublicKey: contact.contactPublicKey,
       encryptedGroupKey,
       permissions,
     })

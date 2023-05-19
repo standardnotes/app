@@ -1,4 +1,5 @@
-export type UserGetPkcCredentialsResponse = {
+export type UserGetUserResponse = {
+  email: string
   public_key: string
   encrypted_private_key: string
 }

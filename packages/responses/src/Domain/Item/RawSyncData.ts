@@ -1,3 +1,4 @@
+import { ContactServerHash } from '../Contact/ContactServerHash'
 import { GroupUserKeyServerHash } from '../Groups/GroupUserKeyServerHash'
 import { ApiEndpointParam } from './ApiEndpointParam'
 import { ConflictParams } from './ConflictParams'
@@ -12,5 +13,6 @@ export type RawSyncData = {
   conflicts?: ConflictParams[]
   unsaved?: ConflictParams[]
   group_keys?: GroupUserKeyServerHash[]
+  contacts?: ContactServerHash[]
   status?: number
 }
