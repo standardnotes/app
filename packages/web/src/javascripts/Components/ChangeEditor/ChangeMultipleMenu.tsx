@@ -180,7 +180,7 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
           </Fragment>
         ))}
       </Menu>
-      <ModalOverlay isOpen={showSuperImporter}>
+      <ModalOverlay isOpen={showSuperImporter} close={closeCurrentSuperNoteImporter}>
         {confirmationQueue[0] && (
           <SuperNoteImporter
             note={confirmationQueue[0]}

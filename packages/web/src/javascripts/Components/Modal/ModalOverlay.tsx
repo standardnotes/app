@@ -7,13 +7,19 @@ type Props = {
   isOpen: boolean
   children: ReactNode
   animationVariant?: 'horizontal' | 'vertical'
+  close: () => void
 }
 
 const ModalOverlay = forwardRef(
-  ({ isOpen, children, animationVariant, ...props }: Props, ref: ForwardedRef<HTMLDivElement>) => {
+  ({ isOpen, children, animationVariant, close, ...props }: Props, ref: ForwardedRef<HTMLDivElement>) => {
     const [isMounted, setElement] = useModalAnimation(isOpen, animationVariant)
     const dialog = useDialogStore({
       open: isMounted,
+      setOpen: (open) => {
+        if (!open) {
+          close()
+        }
+      },
     })
 
     if (!isMounted) {

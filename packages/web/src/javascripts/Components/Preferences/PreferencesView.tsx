@@ -7,8 +7,6 @@ import { PreferencesProps } from './PreferencesProps'
 import { useAndroidBackHandler } from '@/NativeMobileWeb/useAndroidBackHandler'
 import Modal, { ModalAction } from '../Modal/Modal'
 import { classNames } from '@standardnotes/snjs'
-import { useCommandService } from '../CommandProvider'
-import { ESCAPE_COMMAND } from '@standardnotes/ui-services'
 import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import Icon from '../Icon/Icon'
@@ -20,8 +18,6 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
   userProvider,
   mfaProvider,
 }) => {
-  const commandService = useCommandService()
-
   const menu = useMemo(
     () => new PreferencesMenu(application, viewControllerManager.enableUnfinishedFeatures),
     [viewControllerManager.enableUnfinishedFeatures, application],
@@ -46,16 +42,6 @@ const PreferencesView: FunctionComponent<PreferencesProps> = ({
       }
     }
   }, [addAndroidBackHandler, closePreferences])
-
-  useEffect(() => {
-    return commandService.addCommandHandler({
-      command: ESCAPE_COMMAND,
-      onKeyDown: () => {
-        closePreferences()
-        return true
-      },
-    })
-  }, [commandService, closePreferences])
 
   const { hasTopInset } = useAvailableSafeAreaPadding()
 

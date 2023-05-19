@@ -234,7 +234,7 @@ export const SuperEditor: FunctionComponent<Props> = ({
             </BlocksEditorComposer>
           </FilesControllerProvider>
         </LinkingControllerProvider>
-        <ModalOverlay isOpen={showMarkdownPreview}>
+        <ModalOverlay isOpen={showMarkdownPreview} close={closeMarkdownPreview}>
           <SuperNoteMarkdownPreview note={note.current} closeDialog={closeMarkdownPreview} />
         </ModalOverlay>
       </ErrorBoundary>

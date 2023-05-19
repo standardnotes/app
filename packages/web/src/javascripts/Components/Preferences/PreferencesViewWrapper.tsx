@@ -51,6 +51,7 @@ const PreferencesViewWrapper: FunctionComponent<PreferencesViewWrapperProps> = (
       isOpen={viewControllerManager.preferencesController.isOpen}
       ref={setElement}
       animationVariant="horizontal"
+      close={viewControllerManager.preferencesController.closePreferences}
     >
       <PreferencesView
         closePreferences={viewControllerManager.preferencesController.closePreferences}

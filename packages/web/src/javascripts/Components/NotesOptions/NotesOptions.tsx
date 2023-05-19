@@ -413,7 +413,7 @@ const NotesOptions = ({
         </>
       ) : null}
 
-      <ModalOverlay isOpen={showExportSuperModal}>
+      <ModalOverlay isOpen={showExportSuperModal} close={closeSuperExportModal}>
         <SuperExportModal exportNotes={downloadSelectedItems} close={closeSuperExportModal} />
       </ModalOverlay>
     </>
