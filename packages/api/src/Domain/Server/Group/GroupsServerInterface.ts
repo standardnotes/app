@@ -1,67 +1,14 @@
-import {
-  HttpResponse,
-  GroupUserKeyServerHash,
-  GroupServerHash,
-  GroupUserListingServerHash,
-} from '@standardnotes/responses'
-import { GroupPermission } from './GroupPermission'
-
-export type CreateGroupResponse = {
-  group: GroupServerHash
-  groupUserKey: GroupUserKeyServerHash
-}
-
-export type AddUserToGroupResponse = {
-  groupUserKey: GroupUserKeyServerHash
-}
-
-export type GetGroupUsersResponse = {
-  users: GroupUserListingServerHash[]
-}
-
-export type GetManyGroupUserKeysResponse = {
-  groupUserKeys: GroupUserKeyServerHash[]
-}
-
-export type UpdateKeysRequestParam = {
-  userUuid: string
-  senderPublicKey: string
-  recipientPublicKey: string
-  encryptedGroupKey: string
-}[]
+import { HttpResponse } from '@standardnotes/responses'
+import { GetGroupUsersResponse } from '../../Response/Group/GetGroupUsersResponse'
+import { CreateGroupResponse } from '../../Response/Group/CreateGroupResponse'
+import { CreateGroupParams } from '../../Request/Group/CreateGroupParams'
 
 export interface GroupsServerInterface {
-  createGroup(params: {
-    creatorPublicKey: string
-    encryptedGroupKey: string
-  }): Promise<HttpResponse<CreateGroupResponse>>
-
-  addUserToGroup(params: {
-    groupUuid: string
-    inviteeUuid: string
-    senderPublicKey: string
-    recipientPublicKey: string
-    encryptedGroupKey: string
-    permissions: GroupPermission
-  }): Promise<HttpResponse<AddUserToGroupResponse>>
+  createGroup(params: CreateGroupParams): Promise<HttpResponse<CreateGroupResponse>>
 
   deleteGroup(params: { groupUuid: string }): Promise<HttpResponse<boolean>>
 
   removeUserFromGroup(params: { groupUuid: string; userUuid: string }): Promise<HttpResponse<boolean>>
 
-  updateAllUserKeysRelatedToUser(params: {
-    userUuid: string
-    updatedKeys: UpdateKeysRequestParam
-  }): Promise<HttpResponse<boolean>>
-
-  updateKeysForAllGroupMembers(params: {
-    groupUuid: string
-    updatedKeys: UpdateKeysRequestParam
-  }): Promise<HttpResponse<boolean>>
-
   getGroupUsers(params: { groupUuid: string }): Promise<HttpResponse<GetGroupUsersResponse>>
-
-  getAllUserKeysForCurrentUser(): Promise<HttpResponse<GetManyGroupUserKeysResponse>>
-
-  getReceivedUserKeysBySender(params: { senderUuid: string }): Promise<HttpResponse<GetManyGroupUserKeysResponse>>
 }

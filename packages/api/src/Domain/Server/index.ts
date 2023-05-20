@@ -14,8 +14,14 @@ export * from './Group/GroupsServer'
 export * from './Group/GroupsServerInterface'
 export * from './Group/GroupPermission'
 
+export * from './GroupUsers/GroupUsersServer'
+export * from './GroupUsers/GroupUsersServerInterface'
+
 export * from './Subscription/SubscriptionServer'
 export * from './Subscription/SubscriptionServerInterface'
+
+export * from './GroupInvites/GroupInvitesServer'
+export * from './GroupInvites/GroupInvitesServerInterface'
 
 export * from './User/UserServer'
 export * from './User/UserServerInterface'

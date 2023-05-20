@@ -204,7 +204,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
 
       const decryptedKey = this.decryptGroupKeyWithPrivateKey(
         userKey.encrypted_group_key,
-        userKey.sender_public_key,
+        userKey.inviter_public_key,
         privateKey,
       )
 
@@ -217,7 +217,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
         groupUuid: userKey.group_uuid,
         key: decryptedKey,
         updatedAtTimestamp: userKey.updated_at_timestamp,
-        senderPublicKey: userKey.sender_public_key,
+        senderPublicKey: userKey.inviter_public_key,
         keyVersion: this.operatorManager.defaultOperator().versionForEncryptedKey(userKey.encrypted_group_key),
       })
 

@@ -133,7 +133,7 @@ describe.only('groups', function () {
       expect(groupUser.group_uuid).to.equal(group.uuid)
       expect(groupUser.user_uuid).to.equal(contact.userUuid)
       expect(groupUser.encrypted_group_key).to.not.be.undefined
-      expect(groupUser.sender_public_key).to.equal(groupService.userPublicKey)
+      expect(groupUser.inviter_public_key).to.equal(groupService.userPublicKey)
       expect(groupUser.permissions).to.equal(GroupPermission.Write)
       expect(groupUser.updated_at_timestamp).to.not.be.undefined
 

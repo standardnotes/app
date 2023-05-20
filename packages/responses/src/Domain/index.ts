@@ -26,11 +26,12 @@ export * from './Files/UploadFileChunkResponse'
 
 export * from './Contact/ContactServerHash'
 
-export * from './Groups/GroupUserKeyServerHash'
-export * from './Groups/GroupServerHash'
-export * from './Groups/GroupUserListingServerHash'
-
 export * from './Http'
+
+export * from './Groups/GroupInviteType'
+export * from './Groups/GroupInviteServerHash'
+export * from './Groups/GroupUserServerHash'
+export * from './Groups/GroupServerHash'
 
 export * from './Item/ApiEndpointParam'
 export * from './Item/CheckIntegrityResponse'

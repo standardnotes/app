@@ -107,7 +107,7 @@ export class GroupService
 
       const decryptedGroupKey = this.encryption.decryptGroupKeyWithPrivateKey(
         userKey.encrypted_group_key,
-        userKey.sender_public_key,
+        userKey.inviter_public_key,
         previousPrivateKey,
       )
 
@@ -158,14 +158,14 @@ export class GroupService
 
     for (const userKey of incomingUserKeys) {
       const isSenderTrustedSelf =
-        userKey.sender_uuid === this.user.uuid && userKey.sender_public_key === this.userPublicKey
+        userKey.sender_uuid === this.user.uuid && userKey.inviter_public_key === this.userPublicKey
       if (isSenderTrustedSelf) {
         trusted.push(userKey)
         continue
       }
 
       const trustedContact = this.contacts.findContact(userKey.sender_uuid)
-      if (!trustedContact || trustedContact.publicKey !== userKey.sender_public_key) {
+      if (!trustedContact || trustedContact.publicKey !== userKey.inviter_public_key) {
         untrusted.push(userKey)
         continue
       }
@@ -251,7 +251,7 @@ export class GroupService
       groupUuid: group.uuid,
       key: key,
       updatedAtTimestamp: groupUserKey.updated_at_timestamp,
-      senderPublicKey: groupUserKey.sender_public_key,
+      senderPublicKey: groupUserKey.inviter_public_key,
       keyVersion: version,
     })
     this.encryption.persistGroupKey(groupKey)
@@ -280,7 +280,7 @@ export class GroupService
       contact.contactPublicKey,
     )
 
-    const response = await this.groupsServer.addUserToGroup({
+    const response = await this.groupsServer.inviteUserToGroup({
       groupUuid: group.uuid,
       inviteeUuid: contact.contactUserUuid,
       senderPublicKey: this.userPublicKey,

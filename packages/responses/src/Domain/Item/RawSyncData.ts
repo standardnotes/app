@@ -1,5 +1,5 @@
+import { GroupInviteServerHash } from './../Groups/GroupInviteServerHash'
 import { ContactServerHash } from '../Contact/ContactServerHash'
-import { GroupUserKeyServerHash } from '../Groups/GroupUserKeyServerHash'
 import { ApiEndpointParam } from './ApiEndpointParam'
 import { ConflictParams } from './ConflictParams'
 import { ServerItemResponse } from './ServerItemResponse'
@@ -12,7 +12,7 @@ export type RawSyncData = {
   saved_items?: ServerItemResponse[]
   conflicts?: ConflictParams[]
   unsaved?: ConflictParams[]
-  group_keys?: GroupUserKeyServerHash[]
+  group_invites?: GroupInviteServerHash[]
   contacts?: ContactServerHash[]
   status?: number
 }
