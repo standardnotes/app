@@ -12,7 +12,6 @@ export * from './Contact/ContactServerInterface'
 
 export * from './Group/GroupsServer'
 export * from './Group/GroupsServerInterface'
-export * from './Group/GroupPermission'
 
 export * from './GroupUsers/GroupUsersServer'
 export * from './GroupUsers/GroupUsersServerInterface'

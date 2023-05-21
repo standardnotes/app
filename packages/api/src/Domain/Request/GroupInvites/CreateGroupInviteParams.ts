@@ -1,5 +1,4 @@
-import { GroupInviteType } from '@standardnotes/responses'
-import { GroupPermission } from '../../Server/Group/GroupPermission'
+import { GroupInviteType, GroupPermission } from '@standardnotes/responses'
 
 export type CreateGroupInviteParams = {
   groupUuid: string

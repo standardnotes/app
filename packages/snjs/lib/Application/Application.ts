@@ -173,6 +173,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private filesBackupService?: FilesBackupService
   private groupService!: InternalServices.GroupServiceInterface
   private contactService!: ExternalServices.ContactServiceInterface
+  private groupStorageService!: ExternalServices.GroupStorageServiceInterface
   private declare sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>
   private declare legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>
   private declare authenticatorManager: AuthenticatorClientInterface
@@ -1196,6 +1197,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     this.createUseCases()
     this.createContactService()
+    this.createGroupStorageService()
     this.createGroupService()
   }
 
@@ -1255,6 +1257,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this._deleteRevision as unknown) = undefined
     ;(this.groupService as unknown) = undefined
     ;(this.contactService as unknown) = undefined
+    ;(this.groupStorageService as unknown) = undefined
 
     this.services = []
   }
@@ -1277,9 +1280,18 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createContactService(): void {
-    this.contactService = new InternalServices.ContactService(this.syncService, this.itemManager, this.internalEventBus)
+    this.contactService = new InternalServices.ContactService(
+      this.httpService,
+      this.syncService,
+      this.itemManager,
+      this.internalEventBus,
+    )
 
     this.services.push(this.contactService)
+  }
+
+  private createGroupStorageService(): void {
+    this.groupStorageService = new ExternalServices.GroupStorageService(this.storage)
   }
 
   private createGroupService(): void {
@@ -1290,6 +1302,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.protocolService,
       this.sessions,
       this.contactService,
+      this.groupStorageService,
       this.internalEventBus,
     )
 
@@ -1560,6 +1573,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.payloadManager,
       this.deviceInterface,
       this.diskStorageService,
+      this.groupStorageService,
       this.identifier,
       this.options.crypto,
       this.internalEventBus,
@@ -1623,6 +1637,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
             await this.handleRevokedSession()
             break
           }
+          case InternalServices.SessionEvent.SuccessfullyChangedCredentials:
+            break
           default: {
             Utils.assertUnreachable(event)
           }

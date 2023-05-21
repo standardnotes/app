@@ -1,4 +1,4 @@
-import { GroupPermission } from '../../Server/Group/GroupPermission'
+import { GroupPermission } from '@standardnotes/responses'
 
 export type UpdateGroupInviteParams = {
   groupUuid: string

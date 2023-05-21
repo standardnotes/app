@@ -45,7 +45,7 @@ export class HandleSuccessfullyChangedCredentials {
         continue
       }
 
-      const trustedContact = this.contacts.findContact(invite.user_uuid)
+      const trustedContact = this.contacts.findTrustedContact(invite.user_uuid)
 
       if (!trustedContact) {
         errors.push(ClientDisplayableError.FromString('Failed to find contact for invite'))

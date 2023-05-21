@@ -3,6 +3,7 @@ import {
   BackupFile,
   DecryptedPayloadInterface,
   EncryptedPayloadInterface,
+  GroupKeyInterface,
   ItemContent,
   ItemsKeyInterface,
   RootKeyInterface,
@@ -55,9 +56,13 @@ export interface EncryptionProviderInterface {
     version?: ProtocolVersion,
   ): Promise<RootKeyInterface>
 
-  setGroups(groups: GroupServerHash[]): void
+  getGroupKey(groupUuid: string): GroupKeyInterface | undefined
   getDecryptedPrivateKey(): string | undefined
-  decryptGroupKeyWithPrivateKey(encryptedGroupKey: string, senderPublicKey: string, privateKey: string): string | null
+  decryptGroupKeyWithPrivateKey(
+    encryptedGroupKey: string,
+    senderPublicKey: string,
+    privateKey: string,
+  ): { decryptedKey: string; keyVersion: ProtocolVersion } | null
   createSharedItemsKey(uuid: string, groupUuid: string): SharedItemsKeyInterface
   createGroupKeyString(): { key: string; version: ProtocolVersion }
   generateKeyPair(): PkcKeyPair

@@ -3,8 +3,9 @@ import { HttpServiceInterface } from '../../Http'
 import { GroupsServerInterface } from './GroupsServerInterface'
 import { CreateGroupParams } from '../../Request/Group/CreateGroupParams'
 import { GroupsPaths } from './Paths'
-import { GetGroupUsersResponse } from '../../Response/Group/GetGroupUsersResponse'
 import { CreateGroupResponse } from '../../Response/Group/CreateGroupResponse'
+import { UpdateGroupParams } from '../../Request/Group/UpdateGroupParams'
+import { UpdateGroupResponse } from '../../Response/Group/UpdateGroupResponse'
 
 export class GroupsServer implements GroupsServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
@@ -19,11 +20,9 @@ export class GroupsServer implements GroupsServerInterface {
     return this.httpService.delete(GroupsPaths.deleteGroup(params.groupUuid))
   }
 
-  removeUserFromGroup(params: { groupUuid: string; userUuid: string }): Promise<HttpResponse<boolean>> {
-    return this.httpService.delete(GroupsPaths.removeUserFromGroup(params.groupUuid, params.userUuid))
-  }
-
-  getGroupUsers(params: { groupUuid: string }): Promise<HttpResponse<GetGroupUsersResponse>> {
-    return this.httpService.get(GroupsPaths.getGroupUsers(params.groupUuid))
+  updateGroup(params: UpdateGroupParams): Promise<HttpResponse<UpdateGroupResponse>> {
+    return this.httpService.patch(GroupsPaths.updateGroup(params.groupUuid), {
+      specified_items_key_uuid: params.specifiedItemsKeyUuid,
+    })
   }
 }

@@ -32,6 +32,7 @@ export * from './Groups/GroupInviteType'
 export * from './Groups/GroupInviteServerHash'
 export * from './Groups/GroupUserServerHash'
 export * from './Groups/GroupServerHash'
+export * from './Groups/GroupPermission'
 
 export * from './Item/ApiEndpointParam'
 export * from './Item/CheckIntegrityResponse'

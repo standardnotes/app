@@ -20,6 +20,9 @@ export * from './Component/ComponentViewerInterface'
 
 export * from './Contacts/ContactServiceInterface'
 
+export * from './Groups/GroupStorageServiceInterface'
+export * from './Groups/GroupStorageService'
+
 export * from './Device/DatabaseItemMetadata'
 export * from './Device/DatabaseLoadOptions'
 export * from './Device/DatabaseLoadSorter'

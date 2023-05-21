@@ -1,4 +1,4 @@
-import { UuidGenerator } from '@standardnotes/utils'
+import { AddContactToGroupUseCase } from './UseCase/AddContactToGroup'
 import {
   ClientDisplayableError,
   GroupInviteServerHash,
@@ -6,13 +6,13 @@ import {
   User,
   isErrorResponse,
   GroupUserServerHash,
-  GroupInviteType,
+  isClientDisplayableError,
+  GroupPermission,
 } from '@standardnotes/responses'
 import {
   HttpServiceInterface,
   GroupsServer,
   GroupsServerInterface,
-  GroupPermission,
   GroupUsersServerInterface,
   GroupInvitesServerInterface,
   GroupUsersServer,
@@ -29,13 +29,9 @@ import {
   SyncEventReceivedGroupKeysData,
   InternalEventHandlerInterface,
   InternalEventInterface,
+  GroupStorageServiceInterface,
 } from '@standardnotes/services'
-import {
-  DecryptedItem,
-  DecryptedItemInterface,
-  PayloadEmitSource,
-  TrustedContactInterface,
-} from '@standardnotes/models'
+import { DecryptedItemInterface, PayloadEmitSource, TrustedContactInterface } from '@standardnotes/models'
 import { GroupServiceEvent, GroupServiceInterface } from './GroupServiceInterface'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ContentType } from '@standardnotes/common'
@@ -43,7 +39,9 @@ import { HandleSuccessfullyChangedCredentials } from './UseCase/HandleSuccessful
 import { SessionEvent } from '../Session/SessionEvent'
 import { SuccessfullyChangedCredentialsEventData } from '../Session/SuccessfullyChangedCredentialsEventData'
 import { HandleTrustedInboundInvites } from './UseCase/HandleTrustedInboundInvites'
-import { CreateGroupKeyUseCase } from './UseCase/CreateGroupKey'
+import { CreateGroupUseCase } from './UseCase/CreateGroup'
+import { RotateGroupKeyUseCase } from './UseCase/RotateGroupKey'
+import { GetGroupUsersUseCase } from './UseCase/GetGroupUsers'
 
 export class GroupService
   extends AbstractService<GroupServiceEvent>
@@ -63,6 +61,7 @@ export class GroupService
     private encryption: EncryptionProviderInterface,
     private session: SessionsClientInterface,
     private contacts: ContactServiceInterface,
+    private groupStorage: GroupStorageServiceInterface,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -119,8 +118,8 @@ export class GroupService
     const trusted: GroupInviteServerHash[] = []
 
     for (const invite of invites) {
-      const trustedContact = this.contacts.findContact(invite.inviter_uuid)
-      if (!trustedContact || trustedContact.publicKey !== invite.inviter_public_key) {
+      const trustedContact = this.contacts.findTrustedContact(invite.inviter_uuid)
+      if (!trustedContact || trustedContact.contactPublicKey !== invite.inviter_public_key) {
         untrusted.push(invite)
         continue
       }
@@ -195,44 +194,14 @@ export class GroupService
   }
 
   async createGroup(): Promise<GroupServerHash | ClientDisplayableError> {
-    const tempGroupUuid = UuidGenerator.GenerateUuid()
-    const sharedItemsKeyUuid = UuidGenerator.GenerateUuid()
-    const tempSharedItemsKey = this.encryption.createSharedItemsKey(sharedItemsKeyUuid, tempGroupUuid)
+    const createGroup = new CreateGroupUseCase(this.items, this.groupsServer, this.encryption)
+    const result = await createGroup.execute()
 
-    const response = await this.groupsServer.createGroup({
-      specifiedItemsKeyUuid: sharedItemsKeyUuid,
-    })
-
-    if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromError(response.data.error)
+    if (!isClientDisplayableError(result)) {
+      await this.sync.sync()
     }
 
-    const { group } = response.data
-    const groupUuid = group.uuid
-
-    const { key, version } = this.encryption.createGroupKeyString()
-    const createGroupKey = new CreateGroupKeyUseCase(
-      {
-        groupUuid: group.uuid,
-        groupKey: key,
-        keyVersion: version,
-      },
-      this.items,
-    )
-
-    await createGroupKey.execute()
-
-    const sharedItemsKey = new DecryptedItem(
-      tempSharedItemsKey.payload.copy({
-        group_uuid: groupUuid,
-      }),
-    )
-
-    await this.items.insertItem(sharedItemsKey)
-
-    await this.sync.sync()
-
-    return group
+    return result
   }
 
   async addContactToGroup(
@@ -240,31 +209,17 @@ export class GroupService
     contact: TrustedContactInterface,
     permissions: GroupPermission,
   ): Promise<GroupInviteServerHash | ClientDisplayableError> {
-    const groupKey = this.encryption.getGroupKey(group.uuid)
-    if (!groupKey) {
-      return ClientDisplayableError.FromString('Cannot add contact; group key not found')
-    }
+    const useCase = new AddContactToGroupUseCase(this.encryption, this.groupInvitesServer)
 
-    const encryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
-      groupKey.key,
-      this.userDecryptedPrivateKey,
-      contact.contactPublicKey,
-    )
-
-    const response = await this.groupInvitesServer.createInvite({
-      groupUuid: group.uuid,
-      inviteeUuid: contact.contactUserUuid,
+    const result = await useCase.execute({
+      inviterPrivateKey: this.userDecryptedPrivateKey,
       inviterPublicKey: this.userPublicKey,
-      encryptedGroupKey,
-      inviteType: GroupInviteType.Join,
+      group,
+      contact,
       permissions,
     })
 
-    if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromError(response.data.error)
-    }
-
-    return response.data.invite
+    return result
   }
 
   async addItemToGroup(group: GroupServerHash, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
@@ -288,7 +243,7 @@ export class GroupService
   }
 
   async removeUserFromGroup(groupUuid: string, userUuid: string): Promise<boolean> {
-    const response = await this.groupsServer.removeUserFromGroup({ groupUuid, userUuid })
+    const response = await this.groupUsersServer.deleteGroupUser({ groupUuid, userUuid })
 
     if (isErrorResponse(response)) {
       return false
@@ -298,74 +253,28 @@ export class GroupService
   }
 
   async getGroupUsers(groupUuid: string): Promise<GroupUserServerHash[] | undefined> {
-    const response = await this.groupsServer.getGroupUsers({ groupUuid })
+    const useCase = new GetGroupUsersUseCase(this.groupUsersServer)
 
-    if (isErrorResponse(response)) {
-      return undefined
-    }
-
-    return response.data.users
+    return useCase.execute({ groupUuid })
   }
 
   async rotateGroupKey(groupUuid: string): Promise<void> {
-    const users = await this.getGroupUsers(groupUuid)
-    if (!users) {
-      throw new Error('Cannot rotate group key; users not found')
-    }
+    const useCase = new RotateGroupKeyUseCase(
+      this.items,
+      this.encryption,
+      this.groupsServer,
+      this.groupInvitesServer,
+      this.groupUsersServer,
+      this.contacts,
+      this.groupStorage,
+    )
 
-    if (users.length === 0) {
-      return
-    }
-
-    const { key, version } = this.encryption.createGroupKeyString()
-
-    const updatedKeys: UpdateKeysForGroupMembersKeysParam = []
-
-    for (const user of users) {
-      if (user.user_uuid === this.user.uuid) {
-        continue
-      }
-
-      const contact = this.contacts.findContact(user.user_uuid)
-      if (!contact) {
-        throw new Error('Cannot rotate group key; contact not found')
-      }
-
-      const encryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
-        key,
-        this.userDecryptedPrivateKey,
-        contact.publicKey,
-      )
-
-      updatedKeys.push({
-        userUuid: user.user_uuid,
-        senderPublicKey: this.userPublicKey,
-        recipientPublicKey: contact.publicKey,
-        encryptedGroupKey,
-      })
-    }
-
-    const groupKey = this.encryption.getGroupKey(groupUuid)
-    if (!groupKey) {
-      throw new Error('Cannot rotate group key; group key not found')
-    }
-
-    const updatedGroupKey = new GroupKey({
-      ...groupKey,
-      key: key,
-      keyVersion: version,
-    })
-
-    this.encryption.persistGroupKey(updatedGroupKey)
-
-    await this.encryption.reencryptSharedItemsKeysForGroup(groupUuid)
-
-    await this.groupsServer.updateKeysForAllGroupMembers({
+    await useCase.execute({
       groupUuid,
-      updatedKeys,
+      inviterUuid: this.user.uuid,
+      inviterPrivateKey: this.userDecryptedPrivateKey,
+      inviterPublicKey: this.userPublicKey,
     })
-
-    await this.sync.sync()
   }
 
   override deinit(): void {

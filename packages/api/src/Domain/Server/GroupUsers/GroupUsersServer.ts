@@ -1,11 +1,11 @@
 import { HttpResponse } from '@standardnotes/responses'
 import { HttpServiceInterface } from '../../Http'
 import { GetGroupUsersRequestParams } from '../../Request/GroupUser/GetGroupUsersRequestParams'
-import { GetGroupUsersResponse } from '../../Response/Group/GetGroupUsersResponse'
 import { DeleteGroupUserRequestParams } from '../../Request/GroupUser/DeleteGroupUserRequestParams'
 import { DeleteGroupUserResponse } from '../../Response/GroupUsers/DeleteGroupUserResponse'
 import { GroupUsersServerInterface } from './GroupUsersServerInterface'
 import { GroupUsersPaths } from './Paths'
+import { GetGroupUsersResponse } from '../../Response/GroupUsers/GetGroupUsersResponse'
 
 export class GroupUsersServer implements GroupUsersServerInterface {
   constructor(private httpService: HttpServiceInterface) {}

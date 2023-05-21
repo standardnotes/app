@@ -1,13 +1,12 @@
-import { ContactInterface } from '@standardnotes/models'
+import { TrustedContactInterface } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 
 export interface ContactServiceInterface extends AbstractService {
-  createContact(params: {
+  createTrustedContact(params: {
     name: string
     publicKey: string
     userUuid: string
-    trusted: boolean
-  }): Promise<ContactInterface>
+  }): Promise<TrustedContactInterface | undefined>
 
-  findContact(userUuid: string): ContactInterface | undefined
+  findTrustedContact(userUuid: string): TrustedContactInterface | undefined
 }

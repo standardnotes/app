@@ -40,7 +40,7 @@ import {
   RootKeyInterface,
   SharedItemsKeyInterface,
 } from '@standardnotes/models'
-import { ClientDisplayableError, GroupServerHash } from '@standardnotes/responses'
+import { ClientDisplayableError } from '@standardnotes/responses'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   extendArray,
@@ -74,6 +74,7 @@ import { RootKeyEncryptionService } from './RootKeyEncryption'
 import { DecryptBackupFile } from './BackupFileDecryptor'
 import { EncryptionServiceEvent } from './EncryptionServiceEvent'
 import { StorageKey } from '../Storage/StorageKeys'
+import { GroupStorageServiceInterface } from '../Groups/GroupStorageServiceInterface'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -113,6 +114,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     private payloadManager: PayloadManagerInterface,
     public deviceInterface: DeviceInterface,
     private storageService: StorageServiceInterface,
+    private groupStorage: GroupStorageServiceInterface,
     private identifier: ApplicationIdentifier,
     public crypto: PureCryptoInterface,
     protected override internalEventBus: InternalEventBusInterface,
@@ -136,6 +138,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       this.deviceInterface,
       this.storageService,
       this.payloadManager,
+      this.groupStorage,
       this.identifier,
       this.internalEventBus,
     )
@@ -154,6 +157,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     ;(this.payloadManager as unknown) = undefined
     ;(this.deviceInterface as unknown) = undefined
     ;(this.storageService as unknown) = undefined
+    ;(this.groupStorage as unknown) = undefined
     ;(this.crypto as unknown) = undefined
     ;(this.operatorManager as unknown) = undefined
 
@@ -537,10 +541,25 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return encrypted
   }
 
-  decryptGroupKeyWithPrivateKey(encryptedGroupKey: string, senderPublicKey: string, privateKey: string): string | null {
-    const operator = this.operatorManager.defaultOperator()
-    const decrypted = operator.asymmetricDecryptKey(encryptedGroupKey, senderPublicKey, privateKey)
-    return decrypted
+  decryptGroupKeyWithPrivateKey(
+    encryptedGroupKey: string,
+    senderPublicKey: string,
+    privateKey: string,
+  ): { decryptedKey: string; keyVersion: ProtocolVersion } | null {
+    const defaultOperator = this.operatorManager.defaultOperator()
+    const version = defaultOperator.versionForEncryptedKey(encryptedGroupKey)
+
+    const keyOperator = this.operatorManager.operatorForVersion(version)
+    const decrypted = keyOperator.asymmetricDecryptKey(encryptedGroupKey, senderPublicKey, privateKey)
+
+    if (decrypted) {
+      return {
+        decryptedKey: decrypted,
+        keyVersion: version,
+      }
+    }
+
+    return null
   }
 
   public async decryptBackupFile(
@@ -850,9 +869,5 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     if (unsyncedKeys.length > 0) {
       void this.itemManager.setItemsDirty(unsyncedKeys)
     }
-  }
-
-  setGroups(groups: GroupServerHash[]): void {
-    this.rootKeyEncryption.setGroups(groups)
   }
 }

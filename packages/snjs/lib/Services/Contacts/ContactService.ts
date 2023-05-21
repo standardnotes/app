@@ -2,6 +2,7 @@ import { isErrorResponse } from '@standardnotes/responses'
 import { ContactServerInterface, HttpServiceInterface, ContactServer } from '@standardnotes/api'
 import {
   AbstractService,
+  ContactServiceInterface,
   InternalEventBusInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
@@ -18,7 +19,7 @@ import {
 } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 
-export class ContactService extends AbstractService implements InternalEventHandlerInterface {
+export class ContactService extends AbstractService implements ContactServiceInterface, InternalEventHandlerInterface {
   private contactServer: ContactServerInterface
 
   constructor(
@@ -45,7 +46,7 @@ export class ContactService extends AbstractService implements InternalEventHand
     // TODO: Prompt user whether they want to trust the new credentials
   }
 
-  async createContact(params: {
+  async createTrustedContact(params: {
     name: string
     publicKey: string
     userUuid: string
@@ -77,7 +78,7 @@ export class ContactService extends AbstractService implements InternalEventHand
     return contact
   }
 
-  findContact(userUuid: string): TrustedContactInterface | undefined {
+  findTrustedContact(userUuid: string): TrustedContactInterface | undefined {
     return this.items.itemsMatchingPredicate<TrustedContactInterface>(
       ContentType.TrustedContact,
       new Predicate<TrustedContactInterface>('contactUserUuid', '=', userUuid),

@@ -3,9 +3,9 @@ import {
   GroupServerHash,
   GroupInviteServerHash,
   GroupUserServerHash,
+  GroupPermission,
 } from '@standardnotes/responses'
 import { AbstractService } from '@standardnotes/services'
-import { GroupPermission } from '@standardnotes/api'
 import { TrustedContact, DecryptedItemInterface } from '@standardnotes/models'
 
 export enum GroupServiceEvent {

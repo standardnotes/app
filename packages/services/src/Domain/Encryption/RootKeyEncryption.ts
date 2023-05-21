@@ -43,6 +43,7 @@ import {
   NamespacedRootKeyInKeychain,
   PayloadEmitSource,
   PayloadTimestampDefaults,
+  Predicate,
   RootKeyContent,
   RootKeyInterface,
   SureFindPayload,
@@ -56,7 +57,7 @@ import { StorageKey } from '../Storage/StorageKeys'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { StorageValueModes } from '../Storage/StorageTypes'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
-import { GroupServerHash } from '@standardnotes/responses'
+import { GroupStorageServiceInterface } from '../Groups/GroupStorageServiceInterface'
 
 export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEvent> {
   private rootKey?: RootKeyInterface
@@ -69,6 +70,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     public deviceInterface: DeviceInterface,
     private storageService: StorageServiceInterface,
     private payloadManager: PayloadManagerInterface,
+    private groupStorage: GroupStorageServiceInterface,
     private identifier: ApplicationIdentifier,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
@@ -77,6 +79,12 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
 
   public override deinit(): void {
     ;(this.itemManager as unknown) = undefined
+    ;(this.operatorManager as unknown) = undefined
+    ;(this.deviceInterface as unknown) = undefined
+    ;(this.storageService as unknown) = undefined
+    ;(this.payloadManager as unknown) = undefined
+    ;(this.groupStorage as unknown) = undefined
+
     this.rootKey = undefined
     this.memoizedRootKeyParams = undefined
     super.deinit()
@@ -694,26 +702,10 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     return rollback
   }
 
-  setGroups(groups: GroupServerHash[]): void {
-    this.storageService.setValue(StorageKey.Groups, groups)
-  }
-
-  getGroups(): GroupServerHash[] {
-    const result = this.storageService.getValue<GroupServerHash[]>(StorageKey.Groups)
-    return result ? result : []
-  }
-
-  getGroup(groupUuid: string): GroupServerHash | undefined {
-    const groups = this.getGroups()
-    return groups.find((group) => group.uuid === groupUuid)
-  }
-
   getGroupKey(groupUuid: string): GroupKeyInterface | undefined {
-    const group = this.getGroup(groupUuid)
-    if (!group) {
-      return undefined
-    }
-
-    return this.itemManager.findItem<GroupKeyInterface>(group.specified_items_key_uuid)
+    return this.itemManager.itemsMatchingPredicate<GroupKeyInterface>(
+      ContentType.GroupKey,
+      new Predicate<GroupKeyInterface>('groupUuid', '=', groupUuid),
+    )[0]
   }
 }

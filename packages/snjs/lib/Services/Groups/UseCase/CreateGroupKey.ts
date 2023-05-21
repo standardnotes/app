@@ -3,20 +3,17 @@ import { ContentType, ProtocolVersion } from '@standardnotes/common'
 import { FillItemContent, GroupKeyContent, GroupKeyContentSpecialized, GroupKeyInterface } from '@standardnotes/models'
 
 export class CreateGroupKeyUseCase {
-  constructor(
-    private params: {
-      groupUuid: string
-      groupKey: string
-      keyVersion: ProtocolVersion
-    },
-    private items: ItemManagerInterface,
-  ) {}
+  constructor(private items: ItemManagerInterface) {}
 
-  async execute(): Promise<GroupKeyInterface> {
+  async execute(params: {
+    groupUuid: string
+    groupKey: string
+    keyVersion: ProtocolVersion
+  }): Promise<GroupKeyInterface> {
     const newGroupKeyContent: GroupKeyContentSpecialized = {
-      groupUuid: this.params.groupUuid,
-      groupKey: this.params.groupKey,
-      keyVersion: this.params.keyVersion,
+      groupUuid: params.groupUuid,
+      groupKey: params.groupKey,
+      keyVersion: params.keyVersion,
     }
 
     const newGroupKey = await this.items.createItem<GroupKeyInterface>(
