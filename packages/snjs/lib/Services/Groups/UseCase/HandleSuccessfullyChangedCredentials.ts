@@ -1,9 +1,7 @@
-import { ContentType } from '@standardnotes/common'
-import { GroupKeyInterface, Predicate } from '@standardnotes/models'
 import { GroupInvitesServerInterface } from '@standardnotes/api'
-import { ContactServiceInterface, ItemManagerInterface } from '@standardnotes/services'
+import { ContactServiceInterface } from '@standardnotes/services'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
-import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
+import { ClientDisplayableError, GroupInviteServerHash, isErrorResponse } from '@standardnotes/responses'
 import { SuccessfullyChangedCredentialsEventData } from '@Lib/Services/Session/SuccessfullyChangedCredentialsEventData'
 
 /**
@@ -13,7 +11,6 @@ import { SuccessfullyChangedCredentialsEventData } from '@Lib/Services/Session/S
 export class HandleSuccessfullyChangedCredentials {
   constructor(
     private groupInvitesServer: GroupInvitesServerInterface,
-    private items: ItemManagerInterface,
     private encryption: EncryptionProviderInterface,
     private contacts: ContactServiceInterface,
   ) {}
@@ -30,46 +27,61 @@ export class HandleSuccessfullyChangedCredentials {
 
     const outboundInvites = getOutboundInvitesResponse.data.invites
     for (const invite of outboundInvites) {
-      const isEncryptedWithNewPublicKey = invite.inviter_public_key === newPublicKey
-      if (isEncryptedWithNewPublicKey) {
-        continue
-      }
-
-      const groupKey = this.items.itemsMatchingPredicate<GroupKeyInterface>(
-        ContentType.GroupKey,
-        new Predicate<GroupKeyInterface>('groupUuid', '=', invite.group_uuid),
-      )[0]
-
-      if (!groupKey) {
-        errors.push(ClientDisplayableError.FromString('Failed to find group key for invite'))
-        continue
-      }
-
-      const trustedContact = this.contacts.findTrustedContact(invite.user_uuid)
-
-      if (!trustedContact) {
-        errors.push(ClientDisplayableError.FromString('Failed to find contact for invite'))
-        continue
-      }
-
-      const newEncryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
-        groupKey.groupKey,
+      const error = await this.updateInvite({
+        invite,
+        newPublicKey,
         newPrivateKey,
-        trustedContact.contactPublicKey,
-      )
-
-      const updateInviteResponse = await this.groupInvitesServer.updateInvite({
-        groupUuid: invite.group_uuid,
-        inviteUuid: invite.uuid,
-        inviterPublicKey: newPublicKey,
-        encryptedGroupKey: newEncryptedGroupKey,
       })
 
-      if (isErrorResponse(updateInviteResponse)) {
-        errors.push(ClientDisplayableError.FromString('Failed to update invite'))
+      if (error) {
+        errors.push(error)
       }
     }
 
     return errors
+  }
+
+  private async updateInvite({
+    invite,
+    newPublicKey,
+    newPrivateKey,
+  }: {
+    invite: GroupInviteServerHash
+    newPublicKey: string
+    newPrivateKey: string
+  }): Promise<ClientDisplayableError | undefined> {
+    const isEncryptedWithNewPublicKey = invite.inviter_public_key === newPublicKey
+    if (isEncryptedWithNewPublicKey) {
+      return undefined
+    }
+
+    const groupKey = this.encryption.getGroupKey(invite.group_uuid)
+    if (!groupKey) {
+      return ClientDisplayableError.FromString('Failed to find group key for invite')
+    }
+
+    const trustedContact = this.contacts.findTrustedContact(invite.user_uuid)
+    if (!trustedContact) {
+      return ClientDisplayableError.FromString('Failed to find contact for invite')
+    }
+
+    const newEncryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
+      groupKey.groupKey,
+      newPrivateKey,
+      trustedContact.contactPublicKey,
+    )
+
+    const updateInviteResponse = await this.groupInvitesServer.updateInvite({
+      groupUuid: invite.group_uuid,
+      inviteUuid: invite.uuid,
+      inviterPublicKey: newPublicKey,
+      encryptedGroupKey: newEncryptedGroupKey,
+    })
+
+    if (isErrorResponse(updateInviteResponse)) {
+      return ClientDisplayableError.FromString('Failed to update invite')
+    }
+
+    return undefined
   }
 }

@@ -38,7 +38,7 @@ import { ContentType } from '@standardnotes/common'
 import { HandleSuccessfullyChangedCredentials } from './UseCase/HandleSuccessfullyChangedCredentials'
 import { SessionEvent } from '../Session/SessionEvent'
 import { SuccessfullyChangedCredentialsEventData } from '../Session/SuccessfullyChangedCredentialsEventData'
-import { HandleTrustedInboundInvites } from './UseCase/HandleTrustedInboundInvites'
+import { AcceptInvites } from './UseCase/AcceptInvites'
 import { CreateGroupUseCase } from './UseCase/CreateGroup'
 import { RotateGroupKeyUseCase } from './UseCase/RotateGroupKey'
 import { GetGroupUsersUseCase } from './UseCase/GetGroupUsers'
@@ -88,12 +88,7 @@ export class GroupService
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === SessionEvent.SuccessfullyChangedCredentials) {
-      const handler = new HandleSuccessfullyChangedCredentials(
-        this.groupInvitesServer,
-        this.items,
-        this.encryption,
-        this.contacts,
-      )
+      const handler = new HandleSuccessfullyChangedCredentials(this.groupInvitesServer, this.encryption, this.contacts)
       await handler.execute(event.payload as SuccessfullyChangedCredentialsEventData)
     }
   }
@@ -114,29 +109,16 @@ export class GroupService
   }
 
   private async handleInboundInvites(invites: GroupInviteServerHash[]): Promise<void> {
-    const untrusted: GroupInviteServerHash[] = []
-    const trusted: GroupInviteServerHash[] = []
+    const { trusted, untrusted } = this.filterInboundInvites(invites)
 
-    for (const invite of invites) {
-      const trustedContact = this.contacts.findTrustedContact(invite.inviter_uuid)
-      if (!trustedContact || trustedContact.contactPublicKey !== invite.inviter_public_key) {
-        untrusted.push(invite)
-        continue
-      }
-
-      trusted.push(invite)
-    }
-
-    const handler = new HandleTrustedInboundInvites(
+    const handler = new AcceptInvites(
       this.userDecryptedPrivateKey,
       this.groupInvitesServer,
       this.items,
       this.encryption,
     )
-
     const { inserted, changed } = await handler.execute(trusted)
     const changedAndInserted = [...inserted, ...changed]
-
     if (changedAndInserted.length > 0) {
       await this.sync.sync()
     }
@@ -151,16 +133,36 @@ export class GroupService
     void this.syncGroupsFromScratch(groupIdsNeedingSyncFromScratch)
 
     if (untrusted.length > 0) {
-      await this.promptUserForUntrustedUserKeys(untrusted)
+      await this.promptUserForUntrustedInvites(untrusted)
     }
+  }
+
+  private filterInboundInvites(invites: GroupInviteServerHash[]): {
+    trusted: GroupInviteServerHash[]
+    untrusted: GroupInviteServerHash[]
+  } {
+    const untrusted: GroupInviteServerHash[] = []
+    const trusted: GroupInviteServerHash[] = []
+
+    for (const invite of invites) {
+      const trustedContact = this.contacts.findTrustedContact(invite.inviter_uuid)
+      if (!trustedContact || trustedContact.contactPublicKey !== invite.inviter_public_key) {
+        untrusted.push(invite)
+        continue
+      }
+
+      trusted.push(invite)
+    }
+
+    return { trusted, untrusted }
   }
 
   private async decryptErroredItemsForGroup(_groupUuid: string): Promise<void> {
     await this.encryption.decryptErroredPayloads()
   }
 
-  private async promptUserForUntrustedUserKeys(untrusted: GroupInviteServerHash[]): Promise<void> {
-    console.error('promptUserForUntrustedUserKeys', untrusted)
+  private async promptUserForUntrustedInvites(untrusted: GroupInviteServerHash[]): Promise<void> {
+    console.error('promptUserForUntrustedInvites', untrusted)
   }
 
   private async syncGroupsFromScratch(groupUuids: string[]): Promise<void> {
@@ -201,6 +203,8 @@ export class GroupService
       await this.sync.sync()
     }
 
+    await this.sync.sync()
+
     return result
   }
 
@@ -218,6 +222,8 @@ export class GroupService
       contact,
       permissions,
     })
+
+    await this.sync.sync()
 
     return result
   }
@@ -275,6 +281,8 @@ export class GroupService
       inviterPrivateKey: this.userDecryptedPrivateKey,
       inviterPublicKey: this.userPublicKey,
     })
+
+    await this.sync.sync()
   }
 
   override deinit(): void {

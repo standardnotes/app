@@ -11,7 +11,7 @@ import { CreateGroupKeyUseCase } from './CreateGroupKey'
  * 1. Accept the invite
  * 2. Create or update a GroupKey model with the decrypted value of the invite key
  */
-export class HandleTrustedInboundInvites {
+export class AcceptInvites {
   constructor(
     private privateKey: string,
     private groupInvitesServer: GroupInvitesServerInterface,

@@ -104,12 +104,12 @@ describe.only('groups', function () {
       const { contactContext, deinitContactContext } = await createContactContext()
 
       const contactContextCallPromise = new Promise((resolve) => {
-        contactContext.application.groupService.promptUserForUntrustedUserKeys = () => {
+        contactContext.application.groupService.promptUserForUntrustedInvites = () => {
           resolve()
         }
       })
 
-      const currentContextSpyCount = sinon.spy(groupService, 'promptUserForUntrustedUserKeys')
+      const currentContextSpyCount = sinon.spy(groupService, 'promptUserForUntrustedInvites')
 
       const contact = await createContactForUserOfContext(context, contactContext)
       await groupService.addContactToGroup(group, contact, GroupPermission.Write)
