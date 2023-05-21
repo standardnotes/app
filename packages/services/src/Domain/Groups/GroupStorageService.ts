@@ -10,6 +10,12 @@ export class GroupStorageService implements GroupStorageServiceInterface {
     this.storage.setValue(StorageKey.Groups, groups)
   }
 
+  updateGroups(groups: GroupServerHash[]): void {
+    for (const group of groups) {
+      this.setGroup(group)
+    }
+  }
+
   getGroups(): GroupServerHash[] {
     const result = this.storage.getValue<GroupServerHash[]>(StorageKey.Groups)
     return result ? result : []

@@ -4,6 +4,7 @@ import {
   ConflictType,
   ContactServerHash,
   GroupInviteServerHash,
+  GroupServerHash,
   HttpError,
   HttpResponse,
   isErrorResponse,
@@ -24,8 +25,9 @@ export class ServerSyncResponse {
   public readonly uuidConflictPayloads: FilteredServerItem[]
   public readonly dataConflictPayloads: FilteredServerItem[]
   public readonly rejectedPayloads: FilteredServerItem[]
-  readonly groupKeys: GroupInviteServerHash[]
+  readonly groupInvites: GroupInviteServerHash[]
   readonly contacts: ContactServerHash[]
+  readonly groups: GroupServerHash[]
 
   private successResponseData: RawSyncResponse | undefined
 
@@ -50,7 +52,9 @@ export class ServerSyncResponse {
 
     this.rejectedPayloads = FilterDisallowedRemotePayloadsAndMap(this.rawRejectedPayloads)
 
-    this.groupKeys = this.successResponseData?.group_keys || []
+    this.groups = this.successResponseData?.groups || []
+
+    this.groupInvites = this.successResponseData?.group_invites || []
 
     this.contacts = this.successResponseData?.contacts || []
 
@@ -92,7 +96,7 @@ export class ServerSyncResponse {
         return conflict.type === ConflictType.UuidConflict
       })
       .map((conflict) => {
-        return conflict.unsaved_item || conflict.item!
+        return conflict.unsaved_item || (conflict.item as ServerItemResponse)
       })
   }
 
@@ -102,7 +106,7 @@ export class ServerSyncResponse {
         return conflict.type === ConflictType.ConflictingData
       })
       .map((conflict) => {
-        return conflict.server_item || conflict.item!
+        return conflict.server_item || (conflict.item as ServerItemResponse)
       })
   }
 
@@ -116,7 +120,7 @@ export class ServerSyncResponse {
         )
       })
       .map((conflict) => {
-        return conflict.unsaved_item!
+        return conflict.unsaved_item as ServerItemResponse
       })
   }
 

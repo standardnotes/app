@@ -1,13 +1,15 @@
-import { isErrorResponse } from '@standardnotes/responses'
+import { ContactServerHash, isErrorResponse } from '@standardnotes/responses'
 import { ContactServerInterface, HttpServiceInterface, ContactServer } from '@standardnotes/api'
 import {
   AbstractService,
+  ContactServiceEvent,
   ContactServiceInterface,
   InternalEventBusInterface,
   InternalEventHandlerInterface,
   InternalEventInterface,
   ItemManagerInterface,
   SyncEvent,
+  SyncEventReceivedContactsData,
   SyncServiceInterface,
 } from '@standardnotes/services'
 import {
@@ -19,8 +21,12 @@ import {
 } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 
-export class ContactService extends AbstractService implements ContactServiceInterface, InternalEventHandlerInterface {
+export class ContactService
+  extends AbstractService<ContactServiceEvent>
+  implements ContactServiceInterface, InternalEventHandlerInterface
+{
   private contactServer: ContactServerInterface
+  private pendingContactRequests: Record<string, ContactServerHash> = {}
 
   constructor(
     private http: HttpServiceInterface,
@@ -38,12 +44,16 @@ export class ContactService extends AbstractService implements ContactServiceInt
   async handleEvent(event: InternalEventInterface): Promise<void> {
     switch (event.type) {
       case SyncEvent.ReceivedContacts:
-        return this.handleReceivedRemoteContactsEvent()
+        return this.handleReceivedRemoteContactsEvent(event.payload as SyncEventReceivedContactsData)
     }
   }
 
-  private async handleReceivedRemoteContactsEvent(): Promise<void> {
-    // TODO: Prompt user whether they want to trust the new credentials
+  private async handleReceivedRemoteContactsEvent(contacts: ContactServerHash[]): Promise<void> {
+    for (const contact of contacts) {
+      this.pendingContactRequests[contact.uuid] = contact
+    }
+
+    void this.notifyEvent(ContactServiceEvent.ReceivedContactRequests)
   }
 
   async createTrustedContact(params: {

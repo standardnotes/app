@@ -78,8 +78,9 @@ import {
   isFullEntryLoadChunkResponse,
   isChunkFullEntry,
   ItemsServerInterface,
-  SyncEventReceivedGroupKeysData,
+  SyncEventReceivedGroupInvitesData,
   SyncEventReceivedContactsData,
+  SyncEventReceivedGroupsData,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -949,8 +950,15 @@ export class SNSyncService
 
     const historyMap = this.historyService.getHistoryMapCopy()
 
-    if (response.groupKeys) {
-      await this.notifyEventSync(SyncEvent.ReceivedGroupKeys, response.groupKeys as SyncEventReceivedGroupKeysData)
+    if (response.groups) {
+      await this.notifyEventSync(SyncEvent.ReceivedGroups, response.groups as SyncEventReceivedGroupsData)
+    }
+
+    if (response.groupInvites) {
+      await this.notifyEventSync(
+        SyncEvent.ReceivedGroupInvites,
+        response.groupInvites as SyncEventReceivedGroupInvitesData,
+      )
     }
 
     if (response.contacts) {

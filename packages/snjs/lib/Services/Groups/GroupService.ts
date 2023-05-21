@@ -26,10 +26,11 @@ import {
   SyncEvent,
   SyncServiceInterface,
   ContactServiceInterface,
-  SyncEventReceivedGroupKeysData,
+  SyncEventReceivedGroupInvitesData,
   InternalEventHandlerInterface,
   InternalEventInterface,
   GroupStorageServiceInterface,
+  SyncEventReceivedGroupsData,
 } from '@standardnotes/services'
 import { DecryptedItemInterface, PayloadEmitSource, TrustedContactInterface } from '@standardnotes/models'
 import { GroupServiceEvent, GroupServiceInterface } from './GroupServiceInterface'
@@ -72,8 +73,11 @@ export class GroupService
     this.groupInvitesServer = new GroupInvitesServer(http)
 
     this.syncEventDisposer = sync.addEventObserver(async (event, data) => {
-      if (event === SyncEvent.ReceivedGroupKeys) {
-        await this.handleInboundInvites(data as SyncEventReceivedGroupKeysData)
+      if (event === SyncEvent.ReceivedGroupInvites) {
+        await this.handleInboundInvites(data as SyncEventReceivedGroupInvitesData)
+      }
+      if (event === SyncEvent.ReceivedGroups) {
+        await this.handleReceivedGroups(data as SyncEventReceivedGroupsData)
       }
     })
     this.itemsEventDisposer = items.addObserver<TrustedContactInterface>(
@@ -91,6 +95,10 @@ export class GroupService
       const handler = new HandleSuccessfullyChangedCredentials(this.groupInvitesServer, this.encryption, this.contacts)
       await handler.execute(event.payload as SuccessfullyChangedCredentialsEventData)
     }
+  }
+
+  async handleReceivedGroups(groups: GroupServerHash[]): Promise<void> {
+    this.groupStorage.updateGroups(groups)
   }
 
   /**
