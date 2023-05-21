@@ -11,8 +11,7 @@ export class GroupsServer implements GroupsServerInterface {
 
   createGroup(params: CreateGroupParams): Promise<HttpResponse<CreateGroupResponse>> {
     return this.httpService.post(GroupsPaths.createGroup, {
-      creator_public_key: params.creatorPublicKey,
-      encrypted_group_key: params.encryptedGroupKey,
+      specified_items_key_uuid: params.specifiedItemsKeyUuid,
     })
   }
 

@@ -24,8 +24,6 @@ import {
   ItemsKeyMutator,
   encryptPayload,
   decryptPayload,
-  GroupKeyInterface,
-  GroupKey,
   ItemContentTypeUsesGroupKeyEncryption,
 } from '@standardnotes/encryption'
 import {
@@ -37,6 +35,7 @@ import {
   EncryptedPayloadInterface,
   EncryptedTransferPayload,
   FillItemContentSpecialized,
+  GroupKeyInterface,
   ItemContent,
   ItemsKeyContent,
   ItemsKeyContentSpecialized,
@@ -53,10 +52,11 @@ import { DeviceInterface } from '../Device/DeviceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { AbstractService } from '../Service/AbstractService'
-import { StorageKey, storageKeyForGroupKey } from '../Storage/StorageKeys'
+import { StorageKey } from '../Storage/StorageKeys'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { StorageValueModes } from '../Storage/StorageTypes'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
+import { GroupServerHash } from '@standardnotes/responses'
 
 export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEvent> {
   private rootKey?: RootKeyInterface
@@ -694,12 +694,26 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     return rollback
   }
 
+  setGroups(groups: GroupServerHash[]): void {
+    this.storageService.setValue(StorageKey.Groups, groups)
+  }
+
+  getGroups(): GroupServerHash[] {
+    const result = this.storageService.getValue<GroupServerHash[]>(StorageKey.Groups)
+    return result ? result : []
+  }
+
+  getGroup(groupUuid: string): GroupServerHash | undefined {
+    const groups = this.getGroups()
+    return groups.find((group) => group.uuid === groupUuid)
+  }
+
   getGroupKey(groupUuid: string): GroupKeyInterface | undefined {
-    const hash = this.storageService.getValue<GroupKeyInterface>(storageKeyForGroupKey(groupUuid))
-    if (!hash) {
+    const group = this.getGroup(groupUuid)
+    if (!group) {
       return undefined
     }
 
-    return new GroupKey(hash)
+    return this.itemManager.findItem<GroupKeyInterface>(group.specified_items_key_uuid)
   }
 }

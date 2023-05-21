@@ -80,6 +80,11 @@ export * from './Syncable/TrustedContact/TrustedContactMutator'
 export * from './Syncable/TrustedContact/TrustedContactContent'
 export * from './Syncable/TrustedContact/TrustedContactInterface'
 
+export * from './Syncable/GroupKey/GroupKey'
+export * from './Syncable/GroupKey/GroupKeyMutator'
+export * from './Syncable/GroupKey/GroupKeyContent'
+export * from './Syncable/GroupKey/GroupKeyInterface'
+
 export * from './Syncable/SharedItemsKey/SharedItemsKeyInterface'
 export * from './Syncable/SharedItemsKey/SharedItemsKeyMutatorInterface'
 

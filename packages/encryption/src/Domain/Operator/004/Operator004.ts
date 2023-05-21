@@ -11,11 +11,11 @@ import {
   SharedItemsKeyInterface,
   SharedItemsKeyContent,
   DecryptedTransferPayload,
+  GroupKeyInterface,
+  isGroupKey,
 } from '@standardnotes/models'
 import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
 import * as Utils from '@standardnotes/utils'
-import { GroupKeyInterface } from './../../Keys/GroupKey/GroupKeyInterface'
-import { isGroupKey } from './../../Keys/GroupKey/GroupKey'
 import { V004Algorithm } from '../../Algorithm'
 import { isItemsKey } from '../../Keys/ItemsKey/ItemsKey'
 import {
@@ -91,7 +91,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return CreateDecryptedItemFromPayload(payload)
   }
 
-  public createSharedItemsKey(groupUuid: string): SharedItemsKeyInterface {
+  public createSharedItemsKey(uuid: string, groupUuid: string): SharedItemsKeyInterface {
     const key = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
     const content = FillItemContent<SharedItemsKeyContent>({
       itemsKey: key,
@@ -99,7 +99,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     })
 
     const transferPayload: DecryptedTransferPayload = {
-      uuid: Utils.UuidGenerator.GenerateUuid(),
+      uuid: uuid,
       content_type: ContentType.SharedItemsKey,
       group_uuid: groupUuid,
       content: content,

@@ -5,6 +5,7 @@ import {
   SharedItemsKeyInterface,
   DecryptedPayloadInterface,
   ItemContent,
+  GroupKeyInterface,
 } from '@standardnotes/models'
 import { SNRootKey } from '../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
@@ -14,7 +15,6 @@ import { LegacyAttachedData } from '../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../Types/RootKeyEncryptedAuthenticatedData'
 import { HexString, PkcKeyPair, Utf8String } from '@standardnotes/sncrypto-common'
 import { AsymmetricallyEncryptedKey, SymmetricallyEncryptedPrivateKey } from './Types'
-import { GroupKeyInterface } from '../Keys/GroupKey/GroupKeyInterface'
 
 /**w
  * An operator is responsible for performing crypto operations, such as generating keys
@@ -25,7 +25,7 @@ import { GroupKeyInterface } from '../Keys/GroupKey/GroupKeyInterface'
  */
 export interface OperatorCommon {
   createItemsKey(): ItemsKeyInterface
-  createSharedItemsKey(groupUuid: string): SharedItemsKeyInterface
+  createSharedItemsKey(uuid: string, groupUuid: string): SharedItemsKeyInterface
   /**
    * Returns encryption protocol display name
    */

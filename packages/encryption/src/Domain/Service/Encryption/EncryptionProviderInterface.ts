@@ -1,4 +1,3 @@
-import { GroupKeyInterface } from './../../Keys/GroupKey/GroupKeyInterface'
 import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
   BackupFile,
@@ -9,7 +8,7 @@ import {
   RootKeyInterface,
   SharedItemsKeyInterface,
 } from '@standardnotes/models'
-import { ClientDisplayableError, GroupUserKeyServerHash } from '@standardnotes/responses'
+import { ClientDisplayableError, GroupServerHash } from '@standardnotes/responses'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
 import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
 import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
@@ -56,23 +55,15 @@ export interface EncryptionProviderInterface {
     version?: ProtocolVersion,
   ): Promise<RootKeyInterface>
 
+  setGroups(groups: GroupServerHash[]): void
   getDecryptedPrivateKey(): string | undefined
-  getGroupKey(groupUuid: string): GroupKeyInterface | undefined
-  persistGroupKey(groupKey: GroupKeyInterface): void
   decryptGroupKeyWithPrivateKey(encryptedGroupKey: string, senderPublicKey: string, privateKey: string): string | null
-  persistTrustedRemoteRetrievedGroupKeys(
-    userKeys: GroupUserKeyServerHash[],
-  ): Promise<{ inserted: GroupKeyInterface[]; changed: GroupKeyInterface[] }>
-  createSharedItemsKey(groupUuid: string): SharedItemsKeyInterface
+  createSharedItemsKey(uuid: string, groupUuid: string): SharedItemsKeyInterface
   createGroupKeyString(): { key: string; version: ProtocolVersion }
   generateKeyPair(): PkcKeyPair
   encryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, privateKey: string): string
   decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | null
-  encryptGroupKeyWithRecipientPublicKey(
-    key: GroupKeyInterface['key'],
-    senderPrivateKey: string,
-    recipientPublicKey: string,
-  ): string
+  encryptGroupKeyWithRecipientPublicKey(key: string, senderPrivateKey: string, recipientPublicKey: string): string
 
   setNewRootKeyWrapper(wrappingKey: RootKeyInterface): Promise<void>
   removePasscode(): Promise<void>

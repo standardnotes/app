@@ -137,7 +137,7 @@ export class AppContext {
   resolveWhenGroupUserKeysResolved() {
     return new Promise((resolve) => {
       this.application.groupService.addEventObserver((eventName) => {
-        if (eventName === GroupServiceEvent.DidResolveRemoteGroupUserKeys) {
+        if (eventName === GroupServiceEvent.DidResolveRemoteGroupInvites) {
           resolve()
         }
       })

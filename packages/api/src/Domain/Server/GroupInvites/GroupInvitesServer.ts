@@ -1,28 +1,39 @@
 import { HttpResponse } from '@standardnotes/responses'
 import { HttpServiceInterface } from '../../Http'
-import { GroupInvitesServerInterface } from './GroupInvitesServerInterface'
-import { CreateGroupInviteParams } from '../../Request/GroupInvites/CreateGroupInviteParams'
-import { InviteUserToGroupResponse } from '../../Response/GroupInvites/InviteUserToGroupResponse'
-import { GroupInvitesPaths } from './Paths'
+
 import { AcceptInviteRequestParams } from '../../Request/GroupInvites/AcceptInviteRequestParams'
-import { DeclineInviteRequestParams } from '../../Request/GroupInvites/DeclineInviteRequestParams'
-import { GetGroupInvitesRequestParams } from '../../Request/GroupInvites/GetGroupInvitesRequestParams'
 import { AcceptInviteResponse } from '../../Response/GroupInvites/AcceptInviteResponse'
+import { CreateGroupInviteParams } from '../../Request/GroupInvites/CreateGroupInviteParams'
+import { CreateGroupInviteResponse } from '../../Response/GroupInvites/CreateGroupInviteResponse'
+import { DeclineInviteRequestParams } from '../../Request/GroupInvites/DeclineInviteRequestParams'
 import { DeclineInviteResponse } from '../../Response/GroupInvites/DeclineInviteResponse'
-import { GetUserInvitesResponse } from '../../Response/GroupInvites/GetUserInvitesResponse'
-import { GetGroupInvitesResponse } from '../../Response/GroupInvites/GetGroupInvitesResponse'
-import { DeleteInviteResponse } from '../../Response/GroupInvites/DeleteInviteResponse'
 import { DeleteInviteRequestParams } from '../../Request/GroupInvites/DeleteInviteRequestParams'
+import { DeleteInviteResponse } from '../../Response/GroupInvites/DeleteInviteResponse'
+import { GetGroupInvitesRequestParams } from '../../Request/GroupInvites/GetGroupInvitesRequestParams'
+import { GetGroupInvitesResponse } from '../../Response/GroupInvites/GetGroupInvitesResponse'
+import { GetUserInvitesResponse } from '../../Response/GroupInvites/GetUserInvitesResponse'
+import { GroupInvitesPaths } from './Paths'
+import { GroupInvitesServerInterface } from './GroupInvitesServerInterface'
+import { UpdateGroupInviteParams } from './../../Request/GroupInvites/UpdateGroupInviteParams'
+import { UpdateGroupInviteResponse } from '../../Response/GroupInvites/UpdateGroupInviteResponse'
 
 export class GroupInvitesServer implements GroupInvitesServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
 
-  createInvite(params: CreateGroupInviteParams): Promise<HttpResponse<InviteUserToGroupResponse>> {
+  createInvite(params: CreateGroupInviteParams): Promise<HttpResponse<CreateGroupInviteResponse>> {
     return this.httpService.post(GroupInvitesPaths.createInvite(params.groupUuid), {
       invitee_uuid: params.inviteeUuid,
       inviter_public_key: params.inviterPublicKey,
       encrypted_group_key: params.encryptedGroupKey,
       invite_type: params.inviteType,
+      permissions: params.permissions,
+    })
+  }
+
+  updateInvite(params: UpdateGroupInviteParams): Promise<HttpResponse<UpdateGroupInviteResponse>> {
+    return this.httpService.put(GroupInvitesPaths.updateInvite(params.groupUuid, params.inviteUuid), {
+      inviter_public_key: params.inviterPublicKey,
+      encrypted_group_key: params.encryptedGroupKey,
       permissions: params.permissions,
     })
   }
@@ -35,8 +46,12 @@ export class GroupInvitesServer implements GroupInvitesServerInterface {
     return this.httpService.post(GroupInvitesPaths.declineInvite(params.groupUuid, params.inviteUuid))
   }
 
-  getUserInvites(): Promise<HttpResponse<GetUserInvitesResponse>> {
-    return this.httpService.get(GroupInvitesPaths.getUserInvites())
+  getInboundUserInvites(): Promise<HttpResponse<GetUserInvitesResponse>> {
+    return this.httpService.get(GroupInvitesPaths.getInboundUserInvites())
+  }
+
+  getOutboundUserInvites(): Promise<HttpResponse<GetUserInvitesResponse>> {
+    return this.httpService.get(GroupInvitesPaths.getOutboundUserInvites())
   }
 
   getGroupInvites(params: GetGroupInvitesRequestParams): Promise<HttpResponse<GetGroupInvitesResponse>> {

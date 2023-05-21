@@ -1,5 +1,5 @@
 import { GroupInviteServerHash } from '@standardnotes/responses'
 
-export type InviteUserToGroupResponse = {
+export type UpdateGroupInviteResponse = {
   invite: GroupInviteServerHash
 }

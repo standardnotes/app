@@ -1,15 +1,15 @@
 import {
   ClientDisplayableError,
   GroupServerHash,
-  GroupUserKeyServerHash,
-  GroupUserListingServerHash,
+  GroupInviteServerHash,
+  GroupUserServerHash,
 } from '@standardnotes/responses'
 import { AbstractService } from '@standardnotes/services'
 import { GroupPermission } from '@standardnotes/api'
-import { Contact, DecryptedItemInterface } from '@standardnotes/models'
+import { TrustedContact, DecryptedItemInterface } from '@standardnotes/models'
 
 export enum GroupServiceEvent {
-  DidResolveRemoteGroupUserKeys = 'DidResolveRemoteGroupUserKeys',
+  DidResolveRemoteGroupInvites = 'DidResolveRemoteGroupInvites',
 }
 
 export interface GroupServiceInterface extends AbstractService<GroupServiceEvent> {
@@ -17,9 +17,9 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
 
   addContactToGroup(
     group: GroupServerHash,
-    contact: Contact,
+    contact: TrustedContact,
     permissions: GroupPermission,
-  ): Promise<GroupUserKeyServerHash | ClientDisplayableError>
+  ): Promise<GroupInviteServerHash | ClientDisplayableError>
 
   addItemToGroup(group: GroupServerHash, item: DecryptedItemInterface): Promise<DecryptedItemInterface>
 
@@ -27,7 +27,7 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
 
   removeUserFromGroup(groupUuid: string, userUuid: string): Promise<boolean>
 
-  getGroupUsers(groupUuid: string): Promise<GroupUserListingServerHash[] | undefined>
+  getGroupUsers(groupUuid: string): Promise<GroupUserServerHash[] | undefined>
 
   rotateGroupKey(groupUuid: string): Promise<void>
 }

@@ -5,9 +5,6 @@ export * from './Keys/ItemsKey/ItemsKey'
 export * from './Keys/ItemsKey/ItemsKeyMutator'
 export * from './Keys/ItemsKey/Registration'
 
-export * from './Keys/GroupKey/GroupKeyInterface'
-export * from './Keys/GroupKey/GroupKey'
-
 export * from './Keys/SharedItemsKey/SharedItemsKey'
 export * from './Keys/SharedItemsKey/SharedItemsKeyMutator'
 export * from './Keys/SharedItemsKey/Registration'

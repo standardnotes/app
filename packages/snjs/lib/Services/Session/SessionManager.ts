@@ -63,25 +63,14 @@ import {
   UserApiServiceInterface,
   UserRegistrationResponseBody,
 } from '@standardnotes/api'
+import { SuccessfullyChangedCredentialsEventData } from './SuccessfullyChangedCredentialsEventData'
+import { SessionEvent } from './SessionEvent'
 
 export const MINIMUM_PASSWORD_LENGTH = 8
 export const MissingAccountParams = 'missing-params'
 
 const cleanedEmailString = (email: string) => {
   return email.trim().toLowerCase()
-}
-
-export enum SessionEvent {
-  Restored = 'SessionRestored',
-  Revoked = 'SessionRevoked',
-  SuccessfullyChangedCredentials = 'SuccessfullyChangedCredentials',
-}
-
-export type SuccessfullyChangedCredentialsEventData = {
-  previousPublicKey?: string
-  previousPrivateKey?: string
-  newPublicKey: string
-  newPrivateKey: string
 }
 
 /**

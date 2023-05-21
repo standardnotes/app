@@ -9,8 +9,6 @@ import {
   findDefaultItemsKey,
   FindPayloadInDecryptionSplit,
   FindPayloadInEncryptionSplit,
-  GroupKey,
-  GroupKeyInterface,
   isErrorDecryptingParameters,
   ItemAuthenticatedData,
   KeyedDecryptionSplit,
@@ -34,6 +32,7 @@ import {
   DecryptedPayloadInterface,
   EncryptedPayload,
   EncryptedPayloadInterface,
+  GroupKeyInterface,
   isDecryptedPayload,
   isEncryptedPayload,
   ItemContent,
@@ -41,7 +40,7 @@ import {
   RootKeyInterface,
   SharedItemsKeyInterface,
 } from '@standardnotes/models'
-import { ClientDisplayableError, GroupUserKeyServerHash } from '@standardnotes/responses'
+import { ClientDisplayableError, GroupServerHash } from '@standardnotes/responses'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   extendArray,
@@ -71,11 +70,10 @@ import { DeviceInterface } from '../Device/DeviceInterface'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { SyncEvent } from '../Event/SyncEvent'
-import { DiagnosticInfo } from '../Diagnostics/ServiceDiagnostics'
 import { RootKeyEncryptionService } from './RootKeyEncryption'
 import { DecryptBackupFile } from './BackupFileDecryptor'
 import { EncryptionServiceEvent } from './EncryptionServiceEvent'
-import { StorageKey, storageKeyForGroupKey } from '../Storage/StorageKeys'
+import { StorageKey } from '../Storage/StorageKeys'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -173,68 +171,6 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
 
   getDecryptedPrivateKey(): string | undefined {
     return this.storageService.getValue<string>(StorageKey.AccountDecryptedPrivateKey)
-  }
-
-  async persistTrustedRemoteRetrievedGroupKeys(
-    userKeys: GroupUserKeyServerHash[],
-  ): Promise<{ inserted: GroupKeyInterface[]; changed: GroupKeyInterface[] }> {
-    if (userKeys.length === 0) {
-      return {
-        inserted: [],
-        changed: [],
-      }
-    }
-
-    const privateKey = this.getDecryptedPrivateKey()
-    if (!privateKey) {
-      throw new Error('Private key not found')
-    }
-
-    const inserted: GroupKeyInterface[] = []
-    const changed: GroupKeyInterface[] = []
-
-    for (const userKey of userKeys) {
-      const currentKey = this.getGroupKey(userKey.group_uuid)
-
-      const doesUserAlreadyHaveThisVersionOfKey =
-        currentKey && currentKey.updatedAtTimestamp === userKey.updated_at_timestamp
-      if (doesUserAlreadyHaveThisVersionOfKey) {
-        continue
-      }
-
-      const decryptedKey = this.decryptGroupKeyWithPrivateKey(
-        userKey.encrypted_group_key,
-        userKey.inviter_public_key,
-        privateKey,
-      )
-
-      if (!decryptedKey) {
-        throw new Error('Failed to decrypt group key')
-      }
-
-      const groupKey = new GroupKey({
-        uuid: userKey.uuid,
-        groupUuid: userKey.group_uuid,
-        key: decryptedKey,
-        updatedAtTimestamp: userKey.updated_at_timestamp,
-        senderPublicKey: userKey.inviter_public_key,
-        keyVersion: this.operatorManager.defaultOperator().versionForEncryptedKey(userKey.encrypted_group_key),
-      })
-
-      this.persistGroupKey(groupKey)
-
-      if (currentKey) {
-        changed.push(groupKey)
-      } else {
-        inserted.push(groupKey)
-      }
-    }
-
-    return { inserted, changed }
-  }
-
-  persistGroupKey(groupKey: GroupKeyInterface): void {
-    this.storageService.setValue(storageKeyForGroupKey(groupKey.groupUuid), groupKey)
   }
 
   public async initialize() {
@@ -573,8 +509,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.rootKeyEncryption.getGroupKey(groupUuid)
   }
 
-  createSharedItemsKey(groupUuid: string): SharedItemsKeyInterface {
-    return this.operatorManager.defaultOperator().createSharedItemsKey(groupUuid)
+  createSharedItemsKey(uuid: string, groupUuid: string): SharedItemsKeyInterface {
+    return this.operatorManager.defaultOperator().createSharedItemsKey(uuid, groupUuid)
   }
 
   public generateKeyPair(): PkcKeyPair {
@@ -595,11 +531,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return decrypted
   }
 
-  encryptGroupKeyWithRecipientPublicKey(
-    key: GroupKeyInterface['key'],
-    senderPrivateKey: string,
-    recipientPublicKey: string,
-  ): string {
+  encryptGroupKeyWithRecipientPublicKey(key: string, senderPrivateKey: string, recipientPublicKey: string): string {
     const operator = this.operatorManager.defaultOperator()
     const encrypted = operator.asymmetricEncryptKey(key, senderPrivateKey, recipientPublicKey)
     return encrypted
@@ -920,22 +852,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     }
   }
 
-  override async getDiagnostics(): Promise<DiagnosticInfo | undefined> {
-    return {
-      encryption: {
-        getLatestVersion: this.getLatestVersion(),
-        hasAccount: this.hasAccount(),
-        hasRootKeyEncryptionSource: this.hasRootKeyEncryptionSource(),
-        getUserVersion: this.getUserVersion(),
-        upgradeAvailable: await this.upgradeAvailable(),
-        accountUpgradeAvailable: this.accountUpgradeAvailable(),
-        passcodeUpgradeAvailable: await this.passcodeUpgradeAvailable(),
-        hasPasscode: this.hasPasscode(),
-        isPasscodeLocked: await this.isPasscodeLocked(),
-        needsNewRootKeyBasedItemsKey: this.needsNewRootKeyBasedItemsKey(),
-        ...(await this.itemsEncryption.getDiagnostics()),
-        ...(await this.rootKeyEncryption.getDiagnostics()),
-      },
-    }
+  setGroups(groups: GroupServerHash[]): void {
+    this.rootKeyEncryption.setGroups(groups)
   }
 }

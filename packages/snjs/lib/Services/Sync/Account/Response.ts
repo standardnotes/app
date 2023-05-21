@@ -3,7 +3,7 @@ import {
   ConflictParams,
   ConflictType,
   ContactServerHash,
-  GroupUserKeyServerHash,
+  GroupInviteServerHash,
   HttpError,
   HttpResponse,
   isErrorResponse,
@@ -24,7 +24,7 @@ export class ServerSyncResponse {
   public readonly uuidConflictPayloads: FilteredServerItem[]
   public readonly dataConflictPayloads: FilteredServerItem[]
   public readonly rejectedPayloads: FilteredServerItem[]
-  readonly groupKeys: GroupUserKeyServerHash[]
+  readonly groupKeys: GroupInviteServerHash[]
   readonly contacts: ContactServerHash[]
 
   private successResponseData: RawSyncResponse | undefined
