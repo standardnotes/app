@@ -5,7 +5,7 @@ export function applicationEventForSyncEvent(syncEvent: SyncEvent) {
   return (
     {
       [SyncEvent.SyncCompletedWithAllItemsUploaded]: ApplicationEvent.CompletedFullSync,
-      [SyncEvent.SingleRoundTripSyncCompleted]: ApplicationEvent.CompletedIncrementalSync,
+      [SyncEvent.PaginatedSyncRequestCompleted]: ApplicationEvent.CompletedIncrementalSync,
       [SyncEvent.SyncError]: ApplicationEvent.FailedSync,
       [SyncEvent.SyncTakingTooLong]: ApplicationEvent.HighLatencySync,
       [SyncEvent.EnterOutOfSync]: ApplicationEvent.EnteredOutOfSync,

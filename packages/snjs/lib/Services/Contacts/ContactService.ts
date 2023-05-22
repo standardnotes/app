@@ -67,13 +67,14 @@ export class ContactService
     })
 
     if (isErrorResponse(createResponse)) {
+      console.error('Failed to create contact', createResponse)
       return undefined
     }
 
     const content: TrustedContactContentSpecialized = {
       name: params.name,
-      contactPublicKey: params.publicKey,
-      contactUserUuid: params.userUuid,
+      publicKey: params.publicKey,
+      userUuid: params.userUuid,
       contactItemUuid: createResponse.data.contact.uuid,
     }
 
@@ -88,10 +89,14 @@ export class ContactService
     return contact
   }
 
+  getAllContacts(): TrustedContactInterface[] {
+    return this.items.getItems(ContentType.TrustedContact)
+  }
+
   findTrustedContact(userUuid: string): TrustedContactInterface | undefined {
     return this.items.itemsMatchingPredicate<TrustedContactInterface>(
       ContentType.TrustedContact,
-      new Predicate<TrustedContactInterface>('contactUserUuid', '=', userUuid),
+      new Predicate<TrustedContactInterface>('userUuid', '=', userUuid),
     )[0]
   }
 

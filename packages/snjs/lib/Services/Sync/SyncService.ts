@@ -922,7 +922,7 @@ export class SNSyncService
 
     this.opStatus.clearError()
 
-    await this.notifyEvent(SyncEvent.SingleRoundTripSyncCompleted, response)
+    await this.notifyEvent(SyncEvent.PaginatedSyncRequestCompleted, response)
   }
 
   private handleErrorServerResponse(response: ServerSyncResponse) {
@@ -1009,7 +1009,7 @@ export class SNSyncService
       ])
     }
 
-    await this.notifyEvent(SyncEvent.SingleRoundTripSyncCompleted, {
+    await this.notifyEvent(SyncEvent.PaginatedSyncRequestCompleted, {
       ...response,
       uploadedPayloads: operation.payloads,
       options: operation.options,

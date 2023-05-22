@@ -31,13 +31,13 @@ export class AddContactToGroupUseCase {
     const encryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
       groupKey.groupKey,
       params.inviterPrivateKey,
-      params.contact.contactPublicKey,
+      params.contact.publicKey,
     )
 
     const createInviteUseCase = new CreateGroupInviteUseCase(this.groupInvitesServer)
     const createInviteResult = await createInviteUseCase.execute({
       groupUuid: params.group.uuid,
-      inviteeUuid: params.contact.contactUserUuid,
+      inviteeUuid: params.contact.userUuid,
       inviterPublicKey: params.inviterPublicKey,
       encryptedGroupKey,
       inviteType: GroupInviteType.Join,

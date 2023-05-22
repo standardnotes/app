@@ -192,7 +192,7 @@ describe('singletons', function () {
       if (!beginCheckingResponse) {
         return
       }
-      if (!didCompleteRelevantSync && eventName === SyncEvent.SingleRoundTripSyncCompleted) {
+      if (!didCompleteRelevantSync && eventName === SyncEvent.PaginatedSyncRequestCompleted) {
         didCompleteRelevantSync = true
         const saved = data.savedPayloads
         expect(saved.length).to.equal(1)

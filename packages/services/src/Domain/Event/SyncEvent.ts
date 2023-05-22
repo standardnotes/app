@@ -9,7 +9,7 @@ export enum SyncEvent {
    */
   SyncCompletedWithAllItemsUploaded = 'SyncCompletedWithAllItemsUploaded',
   SyncCompletedWithAllItemsUploadedAndDownloaded = 'SyncCompletedWithAllItemsUploadedAndDownloaded',
-  SingleRoundTripSyncCompleted = 'SingleRoundTripSyncCompleted',
+  PaginatedSyncRequestCompleted = 'PaginatedSyncRequestCompleted',
   SyncDidBeginProcessing = 'sync:did-begin-processing',
   DownloadFirstSyncCompleted = 'sync:download-first-completed',
   SyncTakingTooLong = 'sync:taking-too-long',

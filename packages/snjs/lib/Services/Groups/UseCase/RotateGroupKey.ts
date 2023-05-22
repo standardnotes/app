@@ -110,13 +110,13 @@ export class RotateGroupKeyUseCase {
       const encryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
         params.groupKey,
         params.inviterPrivateKey,
-        trustedContact.contactPublicKey,
+        trustedContact.publicKey,
       )
 
       const createInviteUseCase = new CreateGroupInviteUseCase(this.groupInvitesServer)
       const createInviteResult = await createInviteUseCase.execute({
         groupUuid: params.groupUuid,
-        inviteeUuid: trustedContact.contactUserUuid,
+        inviteeUuid: trustedContact.userUuid,
         inviterPublicKey: params.inviterPublicKey,
         encryptedGroupKey,
         inviteType: GroupInviteType.KeyChange,

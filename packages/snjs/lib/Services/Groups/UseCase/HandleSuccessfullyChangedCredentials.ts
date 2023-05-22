@@ -68,7 +68,7 @@ export class HandleSuccessfullyChangedCredentials {
     const newEncryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
       groupKey.groupKey,
       newPrivateKey,
-      trustedContact.contactPublicKey,
+      trustedContact.publicKey,
     )
 
     const updateInviteResponse = await this.groupInvitesServer.updateInvite({

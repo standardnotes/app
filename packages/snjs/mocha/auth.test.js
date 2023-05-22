@@ -262,7 +262,7 @@ describe('basic auth', function () {
       if (!didCompleteDownloadFirstSync) {
         return
       }
-      if (!didCompletePostDownloadFirstSync && eventName === SyncEvent.SingleRoundTripSyncCompleted) {
+      if (!didCompletePostDownloadFirstSync && eventName === SyncEvent.PaginatedSyncRequestCompleted) {
         didCompletePostDownloadFirstSync = true
         /** Should be in sync */
         outOfSync = this.application.syncService.isOutOfSync()

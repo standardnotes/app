@@ -222,7 +222,7 @@ describe('online syncing', function () {
     this.application = await Factory.signOutApplicationAndReturnNew(this.application)
     const promise = new Promise((resolve) => {
       this.application.syncService.addEventObserver(async (event) => {
-        if (event === SyncEvent.SingleRoundTripSyncCompleted) {
+        if (event === SyncEvent.PaginatedSyncRequestCompleted) {
           const note = this.application.items.findItem(originalNote.uuid)
           if (note) {
             expect(note.dirty).to.not.be.ok
@@ -457,7 +457,7 @@ describe('online syncing', function () {
       if (!beginCheckingResponse) {
         return
       }
-      if (!didCompleteRelevantSync && eventName === SyncEvent.SingleRoundTripSyncCompleted) {
+      if (!didCompleteRelevantSync && eventName === SyncEvent.PaginatedSyncRequestCompleted) {
         didCompleteRelevantSync = true
         const response = data
         const matching = response.savedPayloads.find((p) => p.uuid === note.uuid)
@@ -487,7 +487,7 @@ describe('online syncing', function () {
       if (!beginCheckingResponse) {
         return
       }
-      if (!didCompleteRelevantSync && eventName === SyncEvent.SingleRoundTripSyncCompleted) {
+      if (!didCompleteRelevantSync && eventName === SyncEvent.PaginatedSyncRequestCompleted) {
         didCompleteRelevantSync = true
         const response = data
         const matching = response.savedPayloads.find((p) => p.uuid === note.uuid)

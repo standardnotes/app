@@ -12,5 +12,7 @@ export interface ContactServiceInterface extends AbstractService<ContactServiceE
     userUuid: string
   }): Promise<TrustedContactInterface | undefined>
 
+  getAllContacts(): TrustedContactInterface[]
+
   findTrustedContact(userUuid: string): TrustedContactInterface | undefined
 }
