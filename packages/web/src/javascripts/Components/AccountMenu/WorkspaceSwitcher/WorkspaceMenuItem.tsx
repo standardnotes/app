@@ -30,6 +30,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
 }) => {
   const [isRenaming, setIsRenaming] = useState(false)
   const [inputValue, setInputValue] = useState(descriptor.label)
+  const itemRef = useRef<HTMLButtonElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -44,7 +45,8 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
 
   const handleInputKeyDown: KeyboardEventHandler = useCallback((event) => {
     if (event.key === KeyboardKey.Enter) {
-      inputRef.current?.blur()
+      event.preventDefault()
+      itemRef.current?.focus()
     }
   }, [])
 
@@ -55,7 +57,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
 
   return (
     <div className="relative">
-      <MenuRadioButtonItem className="overflow-hidden" onClick={onClick} checked={descriptor.primary}>
+      <MenuRadioButtonItem ref={itemRef} className="overflow-hidden" onClick={onClick} checked={descriptor.primary}>
         <div className="ml-2 flex w-full items-center justify-between gap-3 overflow-hidden">
           {!isRenaming && <div className="overflow-hidden text-ellipsis">{descriptor.label}</div>}
           {descriptor.primary && !hideOptions && (
