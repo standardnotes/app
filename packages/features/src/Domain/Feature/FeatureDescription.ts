@@ -13,7 +13,7 @@ type RoleFields = {
 
   /** Statically populated. Non-influencing; used as a reference by other static consumers (such as email service) */
   availableInSubscriptions: SubscriptionName[]
-  availableInRoles?: string[]
+  availableInRoles: string[]
 }
 
 export type BaseFeatureDescription = RoleFields & {
