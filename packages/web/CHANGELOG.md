@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.160.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.5...@standardnotes/web@3.160.6) (2023-05-22)
+
+### Bug Fixes
+
+* Fixed issue where empty new line in Super would create extra new lines when converting to Markdown ([799945b](https://github.com/standardnotes/app/commit/799945b167b1660751c97895467e83982e5cdda3))
+
 ## [3.160.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.4...@standardnotes/web@3.160.5) (2023-05-19)
 
 **Note:** Version bump only for package @standardnotes/web
