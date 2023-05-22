@@ -32,19 +32,14 @@ import {
   GroupStorageServiceInterface,
   SyncEventReceivedGroupsData,
 } from '@standardnotes/services'
-import {
-  DecryptedItemInterface,
-  GroupKeyInterface,
-  PayloadEmitSource,
-  TrustedContactInterface,
-} from '@standardnotes/models'
+import { DecryptedItemInterface, PayloadEmitSource, TrustedContactInterface } from '@standardnotes/models'
 import { GroupServiceEvent, GroupServiceInterface } from './GroupServiceInterface'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ContentType } from '@standardnotes/common'
 import { HandleSuccessfullyChangedCredentials } from './UseCase/HandleSuccessfullyChangedCredentials'
 import { SessionEvent } from '../Session/SessionEvent'
 import { SuccessfullyChangedCredentialsEventData } from '../Session/SuccessfullyChangedCredentialsEventData'
-import { AcceptInvites } from './UseCase/AcceptInvites'
+import { AcceptInvite } from './UseCase/AcceptInvite'
 import { CreateGroupUseCase } from './UseCase/CreateGroup'
 import { RotateGroupKeyUseCase } from './UseCase/RotateGroupKey'
 import { GetGroupUsersUseCase } from './UseCase/GetGroupUsers'
@@ -59,6 +54,8 @@ export class GroupService
 
   private syncEventDisposer: () => void
   private itemsEventDisposer: () => void
+
+  private readonly pendingInvites: Record<string, GroupInviteServerHash> = {}
 
   constructor(
     private http: HttpServiceInterface,
@@ -79,7 +76,7 @@ export class GroupService
 
     this.syncEventDisposer = sync.addEventObserver(async (event, data) => {
       if (event === SyncEvent.ReceivedGroupInvites) {
-        await this.handleAllInboundInvites(data as SyncEventReceivedGroupInvitesData)
+        await this.processInboundInvites(data as SyncEventReceivedGroupInvitesData)
       }
       if (event === SyncEvent.ReceivedGroups) {
         await this.handleReceivedGroups(data as SyncEventReceivedGroupsData)
@@ -106,107 +103,71 @@ export class GroupService
     this.groupStorage.updateGroups(groups)
   }
 
-  /**
-   * When new contacts are trusted, we want to go back out to the server and retrieve any pending
-   * invites from this user, so that we can now decrypt that information given we trust the contact.
-   */
-  private async handleCreationOfNewTrustedContacts(_contacts: TrustedContactInterface[]): Promise<void> {
-    const invites = await this.getInboundInvites()
-
-    if (isClientDisplayableError(invites)) {
-      return
-    }
-
-    await this.handleAllInboundInvites([...invites.trusted, ...invites.untrusted])
+  public getPendingInvites(): GroupInviteServerHash[] {
+    return Object.values(this.pendingInvites)
   }
 
-  public async getInboundInvites(): Promise<
-    | {
-        trusted: GroupInviteServerHash[]
-        untrusted: GroupInviteServerHash[]
-      }
-    | ClientDisplayableError
-  > {
+  private async handleCreationOfNewTrustedContacts(_contacts: TrustedContactInterface[]): Promise<void> {
+    await this.downloadInboundInvites()
+  }
+
+  public async downloadInboundInvites(): Promise<ClientDisplayableError | void> {
     const response = await this.groupInvitesServer.getInboundUserInvites()
 
     if (isErrorResponse(response)) {
       return ClientDisplayableError.FromString(`Failed to get inbound user invites ${response}`)
     }
 
-    return this.filterInboundInvites(response.data.invites)
+    await this.processInboundInvites(response.data.invites)
   }
 
-  private async handleAllInboundInvites(invites: GroupInviteServerHash[]): Promise<void> {
-    const { trusted, untrusted } = this.filterInboundInvites(invites)
-
-    const { inserted, changed } = await this.acceptInvites(trusted)
-
-    const changedAndInsertedGroupKeys = [...inserted, ...changed]
-    if (changedAndInsertedGroupKeys.length > 0) {
-      void this.sync.sync()
-    }
-
-    for (const key of changedAndInsertedGroupKeys) {
-      await this.decryptErroredItemsForGroup(key.groupUuid)
-    }
-
-    const groupIdsNeedingSyncFromScratch = inserted.map((groupKey) => groupKey.groupUuid)
-    void this.syncGroupsFromScratch(groupIdsNeedingSyncFromScratch)
-
-    if (untrusted.length > 0) {
-      await this.promptUserForUntrustedInvites(untrusted)
+  private async processInboundInvites(invites: GroupInviteServerHash[]): Promise<void> {
+    for (const invite of invites) {
+      this.pendingInvites[invite.uuid] = invite
     }
 
     await this.notifyEventSync(GroupServiceEvent.DidResolveRemoteGroupInvites)
   }
 
-  async acceptInvites(
-    invites: GroupInviteServerHash[],
-  ): Promise<{ inserted: GroupKeyInterface[]; changed: GroupKeyInterface[]; errored: GroupInviteServerHash[] }> {
-    const handler = new AcceptInvites(
-      this.userDecryptedPrivateKey,
-      this.groupInvitesServer,
-      this.items,
-      this.encryption,
-    )
-
-    return handler.execute(invites)
-  }
-
-  private filterInboundInvites(invites: GroupInviteServerHash[]): {
-    trusted: GroupInviteServerHash[]
-    untrusted: GroupInviteServerHash[]
-  } {
-    const untrusted: GroupInviteServerHash[] = []
-    const trusted: GroupInviteServerHash[] = []
-
-    for (const invite of invites) {
-      const trustedContact = this.contacts.findTrustedContact(invite.inviter_uuid)
-      if (!trustedContact || trustedContact.publicKey !== invite.inviter_public_key) {
-        untrusted.push(invite)
-        continue
-      }
-
-      trusted.push(invite)
+  async acceptInvite(invite: GroupInviteServerHash): Promise<boolean> {
+    if (!this.isInviteTrusted(invite)) {
+      return false
     }
 
-    return { trusted, untrusted }
+    const handler = new AcceptInvite(this.userDecryptedPrivateKey, this.groupInvitesServer, this.items, this.encryption)
+
+    const result = await handler.execute(invite)
+
+    if (result === 'errored') {
+      return false
+    }
+
+    void this.sync.sync()
+
+    await this.decryptErroredItemsForGroup(invite.group_uuid)
+
+    if (result === 'inserted') {
+      void this.syncGroupFromScratch(invite.group_uuid)
+    }
+
+    return true
+  }
+
+  public isInviteTrusted(invite: GroupInviteServerHash): boolean {
+    const trustedContact = this.contacts.findTrustedContact(invite.inviter_uuid)
+    return !!trustedContact && trustedContact.publicKey === invite.inviter_public_key
   }
 
   private async decryptErroredItemsForGroup(_groupUuid: string): Promise<void> {
     await this.encryption.decryptErroredPayloads()
   }
 
-  private async promptUserForUntrustedInvites(untrusted: GroupInviteServerHash[]): Promise<void> {
-    console.error('promptUserForUntrustedInvites', untrusted)
-  }
-
-  private async syncGroupsFromScratch(groupUuids: string[]): Promise<void> {
-    if (groupUuids.length === 0) {
+  private async syncGroupFromScratch(groupUuid: string): Promise<void> {
+    if (groupUuid.length === 0) {
       return
     }
 
-    await this.sync.syncGroupsFromScratch(groupUuids)
+    await this.sync.syncGroupsFromScratch([groupUuid])
   }
 
   get user(): User {

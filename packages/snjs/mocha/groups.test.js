@@ -11,6 +11,48 @@ describe.only('groups', function () {
   let groupService
   let contactService
 
+  const createContactContext = async () => {
+    const contactContext = await Factory.createAppContextWithRealCrypto()
+    await contactContext.launch()
+    await contactContext.register()
+
+    return {
+      contactContext,
+      deinitContactContext: contactContext.deinit.bind(contactContext),
+    }
+  }
+
+  const createContactForUserOfContext = async (contextAddingNewContact, contextImportingContactInfoFrom) => {
+    const contact = await contextAddingNewContact.application.contactService.createTrustedContact({
+      name: 'John Doe',
+      publicKey: contextImportingContactInfoFrom.application.groupService.userPublicKey,
+      userUuid: contextImportingContactInfoFrom.userUuid,
+    })
+
+    return contact
+  }
+
+  const acceptAllInvites = async (inContext) => {
+    const invites = inContext.groupService.getPendingInvites()
+    for (const invite of invites) {
+      const result = await inContext.groupService.acceptInvite(invite)
+      expect(result).to.be.true
+    }
+  }
+
+  const createGroupWithAcceptedInvite = async () => {
+    const group = await groupService.createGroup()
+    const { contactContext, deinitContactContext } = await createContactContext()
+    const contact = await createContactForUserOfContext(context, contactContext)
+    await groupService.inviteContactToGroup(group, contact, GroupPermission.Write)
+    await contactContext.sync()
+
+    await createContactForUserOfContext(contactContext, context)
+    await acceptAllInvites(contactContext)
+
+    return { group, contact, contactContext, deinitContactContext }
+  }
+
   afterEach(async function () {
     await Factory.safeDeinit(application)
     localStorage.clear()
@@ -50,41 +92,14 @@ describe.only('groups', function () {
       expect(contact.userUuid).to.equal('123')
     })
 
+    it('performing a sync should download new contact changes', async () => {})
+
+    it('contact changes should be pending and untrusted until accepted by the user', async () => {})
+
     it('should mark a contact as untrusted when their public key changes', async () => {})
   })
 
   describe('groups', () => {
-    const createContactContext = async () => {
-      const contactContext = await Factory.createAppContextWithRealCrypto()
-      await contactContext.launch()
-      await contactContext.register()
-
-      return {
-        contactContext,
-        deinitContactContext: contactContext.deinit.bind(contactContext),
-      }
-    }
-
-    const createContactForUserOfContext = async (contextAddingNewContact, contextImportingContactInfoFrom) => {
-      const contact = await contextAddingNewContact.application.contactService.createTrustedContact({
-        name: 'John Doe',
-        publicKey: contextImportingContactInfoFrom.application.groupService.userPublicKey,
-        userUuid: contextImportingContactInfoFrom.userUuid,
-      })
-
-      return contact
-    }
-
-    const createGroupWithInvitedContact = async () => {
-      const group = await groupService.createGroup()
-      const { contactContext, deinitContactContext } = await createContactContext()
-      const contact = await createContactForUserOfContext(context, contactContext)
-      await groupService.inviteContactToGroup(group, contact, GroupPermission.Write)
-      await contactContext.sync()
-
-      return { group, contact, contactContext, deinitContactContext }
-    }
-
     it('should create a group', async () => {
       const group = await groupService.createGroup()
       expect(group).to.not.be.undefined
@@ -95,47 +110,6 @@ describe.only('groups', function () {
       const sharedItemsKey = sharedItemsKeys[0]
       expect(sharedItemsKey instanceof SharedItemsKey).to.be.true
       expect(sharedItemsKey.group_uuid).to.equal(group.uuid)
-    })
-
-    it('adding a contact to a group should be trusted to current context and untrusted to other context', async () => {
-      const group = await groupService.createGroup()
-      const { contactContext, deinitContactContext } = await createContactContext()
-
-      const contactContextCallPromise = new Promise((resolve) => {
-        contactContext.application.groupService.promptUserForUntrustedInvites = () => {
-          resolve()
-        }
-      })
-
-      const currentContextSpyCount = sinon.spy(groupService, 'promptUserForUntrustedInvites')
-
-      const contact = await createContactForUserOfContext(context, contactContext)
-      await groupService.inviteContactToGroup(group, contact, GroupPermission.Write)
-      await contactContext.sync()
-
-      expect(currentContextSpyCount.callCount).to.equal(0)
-
-      await contactContextCallPromise
-
-      await deinitContactContext()
-    })
-
-    it('should add contact to group', async () => {
-      const group = await groupService.createGroup()
-      const { contactContext, deinitContactContext } = await createContactContext()
-      const contact = await createContactForUserOfContext(context, contactContext)
-
-      const groupUser = await groupService.inviteContactToGroup(group, contact, GroupPermission.Write)
-
-      expect(groupUser).to.not.be.undefined
-      expect(groupUser.group_uuid).to.equal(group.uuid)
-      expect(groupUser.user_uuid).to.equal(contact.userUuid)
-      expect(groupUser.encrypted_group_key).to.not.be.undefined
-      expect(groupUser.inviter_public_key).to.equal(groupService.userPublicKey)
-      expect(groupUser.permissions).to.equal(GroupPermission.Write)
-      expect(groupUser.updated_at_timestamp).to.not.be.undefined
-
-      await deinitContactContext()
     })
 
     it('should add item to group', async () => {
@@ -150,7 +124,7 @@ describe.only('groups', function () {
 
     it('should add item to group with contact', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const { group, deinitContactContext } = await createGroupWithInvitedContact()
+      const { group, deinitContactContext } = await createGroupWithAcceptedInvite()
 
       await groupService.addItemToGroup(group, note)
 
@@ -175,6 +149,7 @@ describe.only('groups', function () {
       const promise = contactContext.awaitNextSyncGroupFromScratchEvent()
       contactContext.unlockSyncing()
       await contactContext.sync()
+      await acceptAllInvites(contactContext)
       await promise
 
       const receivedItemsKey = contactContext.application.items.getSharedItemsKeysForGroup(group.uuid)[0]
@@ -187,10 +162,6 @@ describe.only('groups', function () {
 
       await deinitContactContext()
     })
-
-    it('received invites from untrusted contact should not be trusted', async () => {})
-
-    it('received invites from contact who becomes trusted after receipt of invite should be trusted', async () => {})
 
     it('should sync a group from scratch after accepting a group invitation', async () => {
       const group = await groupService.createGroup()
@@ -212,6 +183,7 @@ describe.only('groups', function () {
       /** Contact should now sync and expect to find note */
       const promise = contactContext.awaitNextSyncGroupFromScratchEvent()
       await contactContext.sync()
+      await acceptAllInvites(contactContext)
       await promise
 
       const receivedNote = contactContext.application.items.findItem(note.uuid)
@@ -222,14 +194,84 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
-    it('should reupload all group users keys for me when my globak keypair changes', async () => {})
+    it('should remove group member', () => {})
+  })
+
+  describe('invites', () => {
+    it('should invite contact to group', async () => {
+      const group = await groupService.createGroup()
+      const { contactContext, deinitContactContext } = await createContactContext()
+      const contact = await createContactForUserOfContext(context, contactContext)
+
+      const groupInvite = await groupService.inviteContactToGroup(group, contact, GroupPermission.Write)
+
+      expect(groupInvite).to.not.be.undefined
+      expect(groupInvite.group_uuid).to.equal(group.uuid)
+      expect(groupInvite.user_uuid).to.equal(contact.userUuid)
+      expect(groupInvite.encrypted_group_key).to.not.be.undefined
+      expect(groupInvite.inviter_public_key).to.equal(groupService.userPublicKey)
+      expect(groupInvite.permissions).to.equal(GroupPermission.Write)
+      expect(groupInvite.updated_at_timestamp).to.not.be.undefined
+
+      await deinitContactContext()
+    })
+
+    it('received invites from untrusted contact should not be trusted', async () => {
+      await context.createSyncedNote('foo', 'bar')
+      const { contactContext, deinitContactContext } = await createContactContext()
+      const group = await groupService.createGroup()
+
+      const currentContextContact = await createContactForUserOfContext(context, contactContext)
+      await groupService.inviteContactToGroup(group, currentContextContact, GroupPermission.Write)
+
+      await contactContext.groupService.downloadInboundInvites()
+      expect(contactContext.groupService.isInviteTrusted(contactContext.groupService.getPendingInvites()[0])).to.be
+        .false
+
+      await deinitContactContext()
+    })
+
+    it('received invites from contact who becomes trusted after receipt of invite should be trusted', async () => {
+      await context.createSyncedNote('foo', 'bar')
+      const { contactContext, deinitContactContext } = await createContactContext()
+      const group = await groupService.createGroup()
+
+      const currentContextContact = await createContactForUserOfContext(context, contactContext)
+      await groupService.inviteContactToGroup(group, currentContextContact, GroupPermission.Write)
+
+      await contactContext.groupService.downloadInboundInvites()
+      expect(contactContext.groupService.isInviteTrusted(contactContext.groupService.getPendingInvites()[0])).to.be
+        .false
+
+      await createContactForUserOfContext(contactContext, context)
+
+      expect(contactContext.groupService.isInviteTrusted(contactContext.groupService.getPendingInvites()[0])).to.be.true
+
+      await deinitContactContext()
+    })
+  })
+
+  describe('permissions', () => {
+    it('non-admin user should not be able to create or update shared items keys with the server', () => {})
+
+    it("writer user should not be able to change an item using an items key that does not match the group's specified items key", () => {})
+
+    it('read user should not be able to make changes to items', () => {})
+  })
+
+  describe('user credentials change', () => {
+    it('should reupload all outbound invites when inviter keypair changes', async () => {})
 
     it('should reupload encrypted private key when changing my password', async () => {})
+  })
 
-    it('should remove group member', () => {})
+  describe('group key rotation', () => {
+    it("rotating a group's key should send a key-change invite to all members", async () => {})
 
-    it('changing a groups key should reencrypt the group key for all users', async () => {})
+    it("rotating a group's key should reupload all outbound invites for that group", async () => {})
 
-    it('should rotate key after removing group member', () => {})
+    it('should rotate group key after removing group member', () => {})
+
+    it('should not process inbound key-change invites if the public key of the invite does not match contact public key', () => {})
   })
 })

@@ -49,6 +49,10 @@ export class AppContext {
     )
   }
 
+  get groupService() {
+    return this.application.groupService
+  }
+
   ignoreChallenges() {
     this.ignoringChallenges = true
   }

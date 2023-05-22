@@ -6,7 +6,7 @@ import {
   GroupPermission,
 } from '@standardnotes/responses'
 import { AbstractService } from '@standardnotes/services'
-import { TrustedContact, DecryptedItemInterface, GroupKeyInterface } from '@standardnotes/models'
+import { TrustedContact, DecryptedItemInterface } from '@standardnotes/models'
 
 export enum GroupServiceEvent {
   DidResolveRemoteGroupInvites = 'DidResolveRemoteGroupInvites',
@@ -27,17 +27,11 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
 
   removeUserFromGroup(groupUuid: string, userUuid: string): Promise<boolean>
 
-  getInboundInvites(): Promise<
-    | {
-        trusted: GroupInviteServerHash[]
-        untrusted: GroupInviteServerHash[]
-      }
-    | ClientDisplayableError
-  >
+  downloadInboundInvites(): Promise<ClientDisplayableError | void>
 
-  acceptInvites(
-    invites: GroupInviteServerHash[],
-  ): Promise<{ inserted: GroupKeyInterface[]; changed: GroupKeyInterface[]; errored: GroupInviteServerHash[] }>
+  acceptInvite(invite: GroupInviteServerHash): Promise<boolean>
+
+  getPendingInvites(): GroupInviteServerHash[]
 
   getGroupUsers(groupUuid: string): Promise<GroupUserServerHash[] | undefined>
 

@@ -6,12 +6,7 @@ import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { GroupInviteServerHash } from '@standardnotes/responses'
 import { CreateGroupKeyUseCase } from './CreateGroupKey'
 
-/**
- * When new invites are received, we want to:
- * 1. Accept the invite
- * 2. Create or update a GroupKey model with the decrypted value of the invite key
- */
-export class AcceptInvites {
+export class AcceptInvite {
   constructor(
     private privateKey: string,
     private groupInvitesServer: GroupInvitesServerInterface,
@@ -19,49 +14,26 @@ export class AcceptInvites {
     private encryption: EncryptionProviderInterface,
   ) {}
 
-  async execute(
-    invites: GroupInviteServerHash[],
-  ): Promise<{ inserted: GroupKeyInterface[]; changed: GroupKeyInterface[]; errored: GroupInviteServerHash[] }> {
-    if (invites.length === 0) {
-      return {
-        inserted: [],
-        changed: [],
-        errored: [],
-      }
+  async execute(invite: GroupInviteServerHash): Promise<'inserted' | 'changed' | 'errored'> {
+    const decryptionResult = this.encryption.decryptGroupKeyWithPrivateKey(
+      invite.encrypted_group_key,
+      invite.inviter_public_key,
+      this.privateKey,
+    )
+
+    if (!decryptionResult) {
+      return 'errored'
     }
 
-    const inserted: GroupKeyInterface[] = []
-    const changed: GroupKeyInterface[] = []
-    const errored: GroupInviteServerHash[] = []
+    const { modificationType } = await this.createOrUpdateGroupKey(
+      invite,
+      decryptionResult.decryptedKey,
+      decryptionResult.keyVersion,
+    )
 
-    for (const invite of invites) {
-      const decryptionResult = this.encryption.decryptGroupKeyWithPrivateKey(
-        invite.encrypted_group_key,
-        invite.inviter_public_key,
-        this.privateKey,
-      )
+    await this.groupInvitesServer.acceptInvite({ groupUuid: invite.group_uuid, inviteUuid: invite.uuid })
 
-      if (!decryptionResult) {
-        errored.push(invite)
-        continue
-      }
-
-      const { groupKey, modificationType } = await this.createOrUpdateGroupKey(
-        invite,
-        decryptionResult.decryptedKey,
-        decryptionResult.keyVersion,
-      )
-
-      if (modificationType === 'changed') {
-        changed.push(groupKey)
-      } else {
-        inserted.push(groupKey)
-      }
-
-      await this.groupInvitesServer.acceptInvite({ groupUuid: invite.group_uuid, inviteUuid: invite.uuid })
-    }
-
-    return { inserted, changed, errored }
+    return modificationType
   }
 
   private async createOrUpdateGroupKey(
