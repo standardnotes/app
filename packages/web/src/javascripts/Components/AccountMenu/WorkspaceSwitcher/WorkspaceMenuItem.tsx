@@ -44,8 +44,9 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
   }, [])
 
   const handleInputKeyDown: KeyboardEventHandler = useCallback((event) => {
-    if (event.key === KeyboardKey.Enter) {
+    if (event.key === KeyboardKey.Enter || event.key === KeyboardKey.Escape) {
       event.preventDefault()
+      event.stopPropagation()
       itemRef.current?.focus()
     }
   }, [])
