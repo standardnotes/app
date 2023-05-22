@@ -1,6 +1,7 @@
 import { FunctionComponent } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { ListableContentItem } from './Types/ListableContentItem'
+import { classNames } from '@standardnotes/snjs'
 
 type Props = {
   item: {
@@ -10,7 +11,6 @@ type Props = {
     pinned: ListableContentItem['pinned']
     starred: ListableContentItem['starred']
   }
-  hideIcon?: boolean
   hasFiles?: boolean
   hasBorder?: boolean
   isFileBackedUp?: boolean
@@ -19,14 +19,13 @@ type Props = {
 
 const ListItemFlagIcons: FunctionComponent<Props> = ({
   item,
-  hideIcon = false,
   hasFiles = false,
   hasBorder = true,
   isFileBackedUp = false,
   className,
 }) => {
   return (
-    <div className={`flex items-start ${hasBorder && 'border-b border-solid border-border'} ${className} pl-0`}>
+    <div className={classNames('flex items-start pl-0', hasBorder && 'border-b border-solid border-border', className)}>
       {item.locked && (
         <span className="flex items-center" title="Editing Disabled">
           <Icon ariaLabel="Editing Disabled" type="pencil-off" className="text-info" size="medium" />
@@ -40,11 +39,6 @@ const ListItemFlagIcons: FunctionComponent<Props> = ({
       {item.archived && (
         <span className="ml-1.5 flex items-center" title="Archived">
           <Icon ariaLabel="Archived" type="archive" className="text-accessory-tint-3" size="medium" />
-        </span>
-      )}
-      {hideIcon && item.pinned && (
-        <span className="ml-1.5 flex items-center" title="Pinned">
-          <Icon ariaLabel="Pinned" type="pin-filled" className="text-info" size="medium" />
         </span>
       )}
       {hasFiles && (

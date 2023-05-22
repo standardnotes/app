@@ -85,11 +85,6 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
       {!hideIcon ? (
         <div className="mr-0 flex flex-col items-center justify-between gap-2 p-4 pr-4">
           <Icon type={icon} className={`text-accessory-tint-${tint}`} />
-          {item.pinned && (
-            <div className="rounded-full bg-info p-1 text-info-contrast">
-              <Icon type="pin-filled" size="custom" className="h-3 w-3" />
-            </div>
-          )}
         </div>
       ) : (
         <div className="pr-4" />
@@ -101,13 +96,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
         <ListItemTags hideTags={hideTags} tags={tags} />
         <ListItemConflictIndicator item={item} />
       </div>
-      <ListItemFlagIcons
-        className="p-4"
-        item={item}
-        hideIcon={hideIcon}
-        hasFiles={hasFiles}
-        hasBorder={hasOffsetBorder}
-      />
+      <ListItemFlagIcons className="p-4" item={item} hasFiles={hasFiles} hasBorder={hasOffsetBorder} />
     </div>
   )
 }
