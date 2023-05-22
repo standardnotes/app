@@ -29,6 +29,8 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
 
   downloadInboundInvites(): Promise<ClientDisplayableError | void>
 
+  getOutboundInvites(): Promise<GroupInviteServerHash[] | ClientDisplayableError>
+
   acceptInvite(invite: GroupInviteServerHash): Promise<boolean>
 
   getPendingInvites(): GroupInviteServerHash[]

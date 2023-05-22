@@ -41,6 +41,13 @@ describe.only('groups', function () {
   }
 
   const createGroupWithAcceptedInvite = async () => {
+    const { group, contact, contactContext, deinitContactContext } = await createGroupWithUnacceptedButTrustedInvite()
+    await acceptAllInvites(contactContext)
+
+    return { group, contact, contactContext, deinitContactContext }
+  }
+
+  const createGroupWithUnacceptedButTrustedInvite = async () => {
     const group = await groupService.createGroup()
     const { contactContext, deinitContactContext } = await createContactContext()
     const contact = await createContactForUserOfContext(context, contactContext)
@@ -48,7 +55,6 @@ describe.only('groups', function () {
     await contactContext.sync()
 
     await createContactForUserOfContext(contactContext, context)
-    await acceptAllInvites(contactContext)
 
     return { group, contact, contactContext, deinitContactContext }
   }
@@ -75,6 +81,29 @@ describe.only('groups', function () {
     it('should create keypair during registration', () => {
       expect(groupService.userPublicKey).to.not.be.undefined
       expect(groupService.userDecryptedPrivateKey).to.not.be.undefined
+    })
+
+    it('should rotate keypair during password change', async () => {
+      const oldPublicKey = groupService.userPublicKey
+      const oldPrivateKey = groupService.userDecryptedPrivateKey
+
+      await context.changePassword('new_password')
+
+      expect(groupService.userPublicKey).to.not.be.undefined
+      expect(groupService.userDecryptedPrivateKey).to.not.be.undefined
+      expect(groupService.userPublicKey).to.not.equal(oldPublicKey)
+      expect(groupService.userDecryptedPrivateKey).to.not.equal(oldPrivateKey)
+    })
+
+    it('should reupload encrypted private key when changing my password', async () => {
+      const oldEncryptedPrivateKey = groupService.userEncryptedPrivateKey
+
+      await context.changePassword('new_password')
+
+      const user = await context.application.sessions.getUserFromServer()
+
+      expect(user.encrypted_private_key).to.not.be.undefined
+      expect(user.encrypted_private_key).to.not.equal(oldEncryptedPrivateKey)
     })
   })
 
@@ -251,27 +280,97 @@ describe.only('groups', function () {
     })
   })
 
+  describe.only('user credentials change', () => {
+    it('should reupload all outbound invites when inviter keypair changes', async () => {
+      const group = await groupService.createGroup()
+      const { contactContext, deinitContactContext } = await createContactContext()
+      const contact = await createContactForUserOfContext(context, contactContext)
+      await groupService.inviteContactToGroup(group, contact, GroupPermission.Write)
+
+      const groupInvite = contactContext.groupService.getPendingInvites()[0]
+      expect(groupInvite.inviter_public_key).to.equal(groupService.userPublicKey)
+
+      await context.changePassword('new-password')
+      await context.sync()
+      await contactContext.sync()
+
+      const updatedGroupInvite = contactContext.groupService.getPendingInvites()[0]
+      expect(updatedGroupInvite.inviter_public_key).to.equal(groupService.userPublicKey)
+
+      await deinitContactContext()
+    })
+  })
+
+  describe('group key rotation', () => {
+    it("rotating a group's key should send a key-change invite to all members", async () => {
+      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+      await groupService.rotateGroupKey(group)
+
+      const outboundInvites = await groupService.getOutboundInvites()
+      const keyChangeInvite = outboundInvites[0]
+
+      expect(keyChangeInvite).to.not.be.undefined
+      expect(keyChangeInvite.group_uuid).to.equal(group.uuid)
+      expect(keyChangeInvite.user_uuid).to.equal(contactContext.userUuid)
+      expect(keyChangeInvite.encrypted_group_key).to.not.be.undefined
+      expect(keyChangeInvite.inviter_public_key).to.equal(groupService.userPublicKey)
+      expect(keyChangeInvite.inviteType).to.equal('key-change')
+
+      await deinitContactContext()
+    })
+
+    it("rotating a group's key with a pending join invite should update that invite rather than creating a key-change invite ", async () => {
+      const { group, deinitContactContext } = await createGroupWithUnacceptedButTrustedInvite()
+
+      const originalOutboundInvites = await groupService.getOutboundInvites()
+      expect(originalOutboundInvites.length).to.equal(1)
+      const originalEncGroupKey = originalOutboundInvites[0].encrypted_group_key
+
+      await groupService.rotateGroupKey(group)
+
+      const updatedOutboundInvites = await groupService.getOutboundInvites()
+      expect(updatedOutboundInvites.length).to.equal(1)
+
+      const joinInvite = updatedOutboundInvites[0]
+      expect(joinInvite.inviteType).to.equal('join')
+      expect(joinInvite.encrypted_group_key).to.not.be.undefined
+      expect(joinInvite.encrypted_group_key).to.not.equal(originalEncGroupKey)
+
+      await deinitContactContext()
+    })
+
+    it('should update both pending join and key-change invites instead of creating new ones', async () => {
+      const { group, deinitContactContext } = await createGroupWithAcceptedInvite()
+
+      const thirdParty = await createContactContext()
+      const thirdPartyContact = await createContactForUserOfContext(context, thirdParty.contactContext)
+      await groupService.inviteContactToGroup(group, thirdPartyContact, GroupPermission.Write)
+
+      const originalOutboundInvites = await groupService.getOutboundInvites()
+      expect(originalOutboundInvites.length).to.equal(2)
+
+      await groupService.rotateGroupKey(group)
+
+      const updatedOutboundInvites = await groupService.getOutboundInvites()
+      expect(updatedOutboundInvites.length).to.equal(2)
+
+      expect(updatedOutboundInvites[0].inviteType).to.equal('join')
+      expect(updatedOutboundInvites[1].inviteType).to.equal('join')
+
+      await deinitContactContext()
+      await thirdParty.deinitContactContext()
+    })
+
+    it('should rotate group key after removing group member', () => {})
+
+    it('should not process inbound key-change invites if the public key of the invite does not match contact public key', () => {})
+  })
+
   describe('permissions', () => {
     it('non-admin user should not be able to create or update shared items keys with the server', () => {})
 
     it("writer user should not be able to change an item using an items key that does not match the group's specified items key", () => {})
 
     it('read user should not be able to make changes to items', () => {})
-  })
-
-  describe('user credentials change', () => {
-    it('should reupload all outbound invites when inviter keypair changes', async () => {})
-
-    it('should reupload encrypted private key when changing my password', async () => {})
-  })
-
-  describe('group key rotation', () => {
-    it("rotating a group's key should send a key-change invite to all members", async () => {})
-
-    it("rotating a group's key should reupload all outbound invites for that group", async () => {})
-
-    it('should rotate group key after removing group member', () => {})
-
-    it('should not process inbound key-change invites if the public key of the invite does not match contact public key', () => {})
   })
 })

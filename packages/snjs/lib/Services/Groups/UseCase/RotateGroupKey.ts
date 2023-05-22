@@ -7,18 +7,14 @@ import {
   GroupInviteType,
   GroupServerHash,
   isClientDisplayableError,
+  isErrorResponse,
 } from '@standardnotes/responses'
 import { GroupInvitesServerInterface, GroupUsersServerInterface, GroupsServerInterface } from '@standardnotes/api'
 import { GetGroupUsersUseCase } from './GetGroupUsers'
-import { CreateGroupInviteUseCase } from './CreateInvite'
+import { CreateGroupInviteUseCase } from './CreateGroupInvite'
 import { UpdateGroupUseCase } from './UpdateGroup'
+import { UpdateGroupInviteUseCase } from './UpdateGroupInvite'
 
-/**
- * When the user rotates the group key, we need to:
- * 1. Update our group key value
- * 2. Create a new shared items key and update the group specified items key
- * 2. Get all group users and send them a key-change invite
- */
 export class RotateGroupKeyUseCase {
   constructor(
     private items: ItemManagerInterface,
@@ -48,7 +44,7 @@ export class RotateGroupKeyUseCase {
 
     await this.encryption.reencryptSharedItemsKeysForGroup(params.groupUuid)
 
-    const inviteErrors = await this.sendKeyChangeInviteToAllGroupUsers({
+    const inviteErrors = await this.sendKeyChangeInviteToAcceptedGroupMembers({
       groupKey: updatedGroupKey.groupKey,
       groupUuid: params.groupUuid,
       inviterUuid: params.inviterUuid,
@@ -56,9 +52,16 @@ export class RotateGroupKeyUseCase {
       inviterPublicKey: params.inviterPublicKey,
     })
 
-    if (inviteErrors) {
-      errors.push(...inviteErrors)
-    }
+    const reuploadErrors = await this.reuploadExistingInvites({
+      groupKey: updatedGroupKey.groupKey,
+      groupUuid: params.groupUuid,
+      inviterUuid: params.inviterUuid,
+      inviterPrivateKey: params.inviterPrivateKey,
+      inviterPublicKey: params.inviterPublicKey,
+    })
+
+    errors.push(...inviteErrors)
+    errors.push(...reuploadErrors)
 
     return errors
   }
@@ -78,20 +81,69 @@ export class RotateGroupKeyUseCase {
     return updatedGroupKey
   }
 
-  private async sendKeyChangeInviteToAllGroupUsers(params: {
+  private async reuploadExistingInvites(params: {
     groupKey: string
     groupUuid: string
     inviterUuid: string
     inviterPrivateKey: string
     inviterPublicKey: string
-  }): Promise<undefined | ClientDisplayableError[]> {
+  }): Promise<ClientDisplayableError[]> {
+    const response = await this.groupInvitesServer.getOutboundUserInvites()
+
+    if (isErrorResponse(response)) {
+      return [ClientDisplayableError.FromString(`Failed to get outbound user invites ${response}`)]
+    }
+
+    const invites = response.data.invites
+
+    const existingGroupInvites = invites.filter((invite) => invite.group_uuid === params.groupUuid)
+
+    const errors: ClientDisplayableError[] = []
+
+    for (const invite of existingGroupInvites) {
+      const encryptedGroupKey = this.getEncryptedGroupKeyForRecipient({
+        groupKey: params.groupKey,
+        inviterPrivateKey: params.inviterPrivateKey,
+        recipientUuid: invite.user_uuid,
+      })
+
+      if (!encryptedGroupKey) {
+        errors.push(ClientDisplayableError.FromString(`Failed to encrypt group key for user ${invite.user_uuid}`))
+        continue
+      }
+
+      const updateInviteUseCase = new UpdateGroupInviteUseCase(this.groupInvitesServer)
+      const updateInviteResult = await updateInviteUseCase.execute({
+        groupUuid: params.groupUuid,
+        inviteUuid: invite.user_uuid,
+        inviterPublicKey: params.inviterPublicKey,
+        encryptedGroupKey,
+        inviteType: invite.invite_type,
+        permissions: invite.permissions,
+      })
+
+      if (isClientDisplayableError(updateInviteResult)) {
+        errors.push(updateInviteResult)
+      }
+    }
+
+    return errors
+  }
+
+  private async sendKeyChangeInviteToAcceptedGroupMembers(params: {
+    groupKey: string
+    groupUuid: string
+    inviterUuid: string
+    inviterPrivateKey: string
+    inviterPublicKey: string
+  }): Promise<ClientDisplayableError[]> {
     const getUsersUseCase = new GetGroupUsersUseCase(this.groupUsersServer)
     const users = await getUsersUseCase.execute({ groupUuid: params.groupUuid })
     if (!users) {
       return [ClientDisplayableError.FromString('Cannot rotate group key; users not found')]
     }
     if (users.length === 0) {
-      return
+      return []
     }
 
     const errors: ClientDisplayableError[] = []
@@ -101,22 +153,21 @@ export class RotateGroupKeyUseCase {
         continue
       }
 
-      const trustedContact = this.contacts.findTrustedContact(user.user_uuid)
-      if (!trustedContact) {
-        errors.push(ClientDisplayableError.FromString('Cannot send key-change invite; contact not found'))
+      const encryptedGroupKey = this.getEncryptedGroupKeyForRecipient({
+        groupKey: params.groupKey,
+        inviterPrivateKey: params.inviterPrivateKey,
+        recipientUuid: user.user_uuid,
+      })
+
+      if (!encryptedGroupKey) {
+        errors.push(ClientDisplayableError.FromString(`Failed to encrypt group key for user ${user.user_uuid}`))
         continue
       }
-
-      const encryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
-        params.groupKey,
-        params.inviterPrivateKey,
-        trustedContact.publicKey,
-      )
 
       const createInviteUseCase = new CreateGroupInviteUseCase(this.groupInvitesServer)
       const createInviteResult = await createInviteUseCase.execute({
         groupUuid: params.groupUuid,
-        inviteeUuid: trustedContact.userUuid,
+        inviteeUuid: user.user_uuid,
         inviterPublicKey: params.inviterPublicKey,
         encryptedGroupKey,
         inviteType: GroupInviteType.KeyChange,
@@ -129,6 +180,23 @@ export class RotateGroupKeyUseCase {
     }
 
     return errors
+  }
+
+  private getEncryptedGroupKeyForRecipient(params: {
+    groupKey: string
+    inviterPrivateKey: string
+    recipientUuid: string
+  }): string | undefined {
+    const trustedContact = this.contacts.findTrustedContact(params.recipientUuid)
+    if (!trustedContact) {
+      return
+    }
+
+    return this.encryption.encryptGroupKeyWithRecipientPublicKey(
+      params.groupKey,
+      params.inviterPrivateKey,
+      trustedContact.publicKey,
+    )
   }
 
   private async updateGroupSharedItemsKey(groupUuid: string): Promise<ClientDisplayableError | GroupServerHash> {

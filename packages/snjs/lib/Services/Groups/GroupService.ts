@@ -121,6 +121,16 @@ export class GroupService
     await this.processInboundInvites(response.data.invites)
   }
 
+  public async getOutboundInvites(): Promise<GroupInviteServerHash[] | ClientDisplayableError> {
+    const response = await this.groupInvitesServer.getOutboundUserInvites()
+
+    if (isErrorResponse(response)) {
+      return ClientDisplayableError.FromString(`Failed to get outbound user invites ${response}`)
+    }
+
+    return response.data.invites
+  }
+
   private async processInboundInvites(invites: GroupInviteServerHash[]): Promise<void> {
     for (const invite of invites) {
       this.pendingInvites[invite.uuid] = invite

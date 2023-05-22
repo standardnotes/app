@@ -1,4 +1,5 @@
 import { GroupInviteType } from './GroupInviteType'
+import { GroupPermission } from './GroupPermission'
 
 export type GroupInviteServerHash = {
   uuid: string
@@ -8,7 +9,7 @@ export type GroupInviteServerHash = {
   inviter_public_key: string
   encrypted_group_key: string
   invite_type: GroupInviteType
-  permissions: string
+  permissions: GroupPermission
   created_at_timestamp: number
   updated_at_timestamp: number
 }

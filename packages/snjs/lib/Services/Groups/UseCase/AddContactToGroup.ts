@@ -8,7 +8,7 @@ import {
 } from '@standardnotes/responses'
 import { TrustedContactInterface } from '@standardnotes/models'
 import { GroupInvitesServerInterface } from '@standardnotes/api'
-import { CreateGroupInviteUseCase } from './CreateInvite'
+import { CreateGroupInviteUseCase } from './CreateGroupInvite'
 
 export class AddContactToGroupUseCase {
   constructor(

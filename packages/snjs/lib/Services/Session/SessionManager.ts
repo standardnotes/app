@@ -141,6 +141,16 @@ export class SNSessionManager
     this.apiService.setUser(user)
   }
 
+  public async getUserFromServer(): Promise<User | undefined> {
+    const response = await this.userApiService.getCurrentUser(this.getSureUser().uuid)
+
+    if (isErrorResponse(response)) {
+      return undefined
+    }
+
+    return response.data as User
+  }
+
   async initializeFromDisk() {
     this.memoizeUser(this.diskStorageService.getValue(StorageKey.User))
 
@@ -601,10 +611,6 @@ export class SNSessionManager
     wrappingKey?: SNRootKey
     newEmail?: string
   }): Promise<SessionManagerResponse> {
-    const user = this.getSureUser()
-    const previousPublicKey = user.publicKey
-    const previousPrivateKey = this.diskStorageService.getValue<string>(StorageKey.AccountDecryptedPrivateKey)
-
     const { publicKey: newPublicKey, privateKey: newPrivateKey } = this.protocolService.generateKeyPair()
     const encryptedPrivateKey = this.protocolService.encryptPrivateKeyWithRootKey(parameters.newRootKey, newPrivateKey)
 
@@ -627,8 +633,6 @@ export class SNSessionManager
 
     if (!isErrorResponse(rawResponse)) {
       const eventData: SuccessfullyChangedCredentialsEventData = {
-        previousPublicKey,
-        previousPrivateKey,
         newPublicKey,
         newPrivateKey,
       }
