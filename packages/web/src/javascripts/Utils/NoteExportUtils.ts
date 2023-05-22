@@ -1,5 +1,5 @@
 import { WebApplication } from '@/Application/WebApplication'
-import { InvisibleSuperConverter } from '@/Components/SuperEditor/Tools/InvisibleMarkdownConverter'
+import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { NoteType, PrefKey, SNNote } from '@standardnotes/snjs'
 
@@ -43,7 +43,7 @@ export const getNoteBlob = (application: WebApplication, note: SNNote) => {
       break
   }
   const content =
-    note.noteType === NoteType.Super ? new InvisibleSuperConverter().convertString(note.text, format) : note.text
+    note.noteType === NoteType.Super ? new HeadlessSuperConverter().convertString(note.text, format) : note.text
   const blob = new Blob([content], {
     type,
   })

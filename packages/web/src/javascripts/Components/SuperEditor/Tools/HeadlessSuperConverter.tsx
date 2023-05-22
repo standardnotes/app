@@ -1,13 +1,13 @@
 import { createHeadlessEditor } from '@lexical/headless'
 import { $convertToMarkdownString } from '@lexical/markdown'
 import { SuperConverterServiceInterface } from '@standardnotes/snjs'
-import { LexicalEditor } from 'lexical'
+import { $nodesOfType, LexicalEditor, ParagraphNode } from 'lexical'
 import BlocksEditorTheme from '../Lexical/Theme/Theme'
 import { BlockEditorNodes } from '../Lexical/Nodes/AllNodes'
 import { MarkdownTransformers } from '../MarkdownTransformers'
 import { $generateHtmlFromNodes } from '@lexical/html'
 
-export class InvisibleSuperConverter implements SuperConverterServiceInterface {
+export class HeadlessSuperConverter implements SuperConverterServiceInterface {
   private editor: LexicalEditor
 
   constructor() {
@@ -33,9 +33,16 @@ export class InvisibleSuperConverter implements SuperConverterServiceInterface {
       () => {
         switch (format) {
           case 'txt':
-          case 'md':
+          case 'md': {
+            const paragraphs = $nodesOfType(ParagraphNode)
+            for (const paragraph of paragraphs) {
+              if (paragraph.isEmpty()) {
+                paragraph.remove()
+              }
+            }
             content = $convertToMarkdownString(MarkdownTransformers)
             break
+          }
           case 'html':
             content = $generateHtmlFromNodes(this.editor)
             break

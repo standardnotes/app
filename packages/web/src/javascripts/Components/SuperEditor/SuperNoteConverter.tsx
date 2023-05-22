@@ -6,7 +6,7 @@ import Icon from '../Icon/Icon'
 import Modal, { ModalAction } from '../Modal/Modal'
 import { EditorMenuItem } from '../NotesOptions/EditorMenuItem'
 import { NoteViewController } from '../NoteView/Controller/NoteViewController'
-import { InvisibleSuperConverter } from './Tools/InvisibleMarkdownConverter'
+import { HeadlessSuperConverter } from './Tools/HeadlessSuperConverter'
 
 const SuperNoteConverter = ({
   note,
@@ -47,7 +47,7 @@ const SuperNoteConverter = ({
       return note.text
     }
 
-    return new InvisibleSuperConverter().convertString(note.text, format)
+    return new HeadlessSuperConverter().convertString(note.text, format)
   }, [format, note])
 
   const componentViewer = useMemo(() => {
