@@ -394,6 +394,10 @@ export class AppContext {
     return this.application.sessions.user.uuid
   }
 
+  sleep(seconds) {
+    return Utils.sleep(seconds)
+  }
+
   async publicMockSubscriptionPurchaseEvent() {
     await Events.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: this.email,

@@ -31,7 +31,7 @@ export class GroupInvitesServer implements GroupInvitesServerInterface {
   }
 
   updateInvite(params: UpdateGroupInviteParams): Promise<HttpResponse<UpdateGroupInviteResponse>> {
-    return this.httpService.put(GroupInvitesPaths.updateInvite(params.groupUuid, params.inviteUuid), {
+    return this.httpService.patch(GroupInvitesPaths.updateInvite(params.groupUuid, params.inviteUuid), {
       inviter_public_key: params.inviterPublicKey,
       encrypted_group_key: params.encryptedGroupKey,
       permissions: params.permissions,

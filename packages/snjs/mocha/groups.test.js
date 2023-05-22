@@ -280,18 +280,20 @@ describe.only('groups', function () {
     })
   })
 
-  describe.only('user credentials change', () => {
+  describe('user credentials change', () => {
     it('should reupload all outbound invites when inviter keypair changes', async () => {
       const group = await groupService.createGroup()
       const { contactContext, deinitContactContext } = await createContactContext()
       const contact = await createContactForUserOfContext(context, contactContext)
       await groupService.inviteContactToGroup(group, contact, GroupPermission.Write)
+      await contactContext.sync()
 
       const groupInvite = contactContext.groupService.getPendingInvites()[0]
       expect(groupInvite.inviter_public_key).to.equal(groupService.userPublicKey)
 
       await context.changePassword('new-password')
       await context.sync()
+
       await contactContext.sync()
 
       const updatedGroupInvite = contactContext.groupService.getPendingInvites()[0]
@@ -302,7 +304,7 @@ describe.only('groups', function () {
   })
 
   describe('group key rotation', () => {
-    it("rotating a group's key should send a key-change invite to all members", async () => {
+    it.only("rotating a group's key should send a key-change invite to all members", async () => {
       const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
       await groupService.rotateGroupKey(group)
 
