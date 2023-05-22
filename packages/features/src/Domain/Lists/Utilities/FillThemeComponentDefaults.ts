@@ -2,7 +2,7 @@ import { ContentType } from '@standardnotes/common'
 import { ThemeFeatureDescription } from '../../Feature/FeatureDescription'
 import { ComponentArea } from '../../Component/ComponentArea'
 
-type RequiredThemeFields = Pick<ThemeFeatureDescription, 'availableInSubscriptions'>
+type RequiredThemeFields = Pick<ThemeFeatureDescription, 'availableInRoles'>
 
 export function FillThemeComponentDefaults(
   theme: Partial<ThemeFeatureDescription> & RequiredThemeFields,
