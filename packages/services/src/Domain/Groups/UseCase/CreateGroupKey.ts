@@ -1,4 +1,4 @@
-import { ItemManagerInterface } from '@standardnotes/services'
+import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { ContentType } from '@standardnotes/common'
 import { FillItemContent, GroupKeyContent, GroupKeyContentSpecialized, GroupKeyInterface } from '@standardnotes/models'
 

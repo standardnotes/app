@@ -20,21 +20,6 @@ import {
   GroupInvitesServer,
 } from '@standardnotes/api'
 import {
-  AbstractService,
-  InternalEventBusInterface,
-  ItemManagerInterface,
-  SessionsClientInterface,
-  SyncEvent,
-  SyncServiceInterface,
-  ContactServiceInterface,
-  SyncEventReceivedGroupInvitesData,
-  InternalEventHandlerInterface,
-  InternalEventInterface,
-  GroupStorageServiceInterface,
-  SyncEventReceivedGroupsData,
-  SessionEvent,
-} from '@standardnotes/services'
-import {
   DecryptedItemInterface,
   GroupKeyInterface,
   PayloadEmitSource,
@@ -50,6 +35,17 @@ import { CreateGroupUseCase } from './UseCase/CreateGroup'
 import { RotateGroupKeyUseCase } from './UseCase/RotateGroupKey'
 import { GetGroupUsersUseCase } from './UseCase/GetGroupUsers'
 import { RemoveGroupMemberUseCase } from './UseCase/RemoveGroupMember'
+import { AbstractService } from '../Service/AbstractService'
+import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
+import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
+import { ItemManagerInterface } from '../Item/ItemManagerInterface'
+import { SessionsClientInterface } from '../Session/SessionsClientInterface'
+import { ContactServiceInterface } from '../Contacts/ContactServiceInterface'
+import { GroupStorageServiceInterface } from './GroupStorageServiceInterface'
+import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
+import { SyncEvent, SyncEventReceivedGroupInvitesData, SyncEventReceivedGroupsData } from '../Event/SyncEvent'
+import { SessionEvent } from '../Session/SessionEvent'
+import { InternalEventInterface } from '../Internal/InternalEventInterface'
 
 export class GroupService
   extends AbstractService<GroupServiceEvent>

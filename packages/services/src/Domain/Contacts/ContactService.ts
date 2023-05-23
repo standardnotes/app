@@ -2,19 +2,6 @@ import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { ContactServerHash, isErrorResponse } from '@standardnotes/responses'
 import { ContactServerInterface, HttpServiceInterface, ContactServer } from '@standardnotes/api'
 import {
-  AbstractService,
-  ContactServiceEvent,
-  ContactServiceInterface,
-  InternalEventBusInterface,
-  InternalEventHandlerInterface,
-  InternalEventInterface,
-  ItemManagerInterface,
-  SessionsClientInterface,
-  SyncEvent,
-  SyncEventReceivedContactsData,
-  SyncServiceInterface,
-} from '@standardnotes/services'
-import {
   TrustedContactContent,
   TrustedContactContentSpecialized,
   TrustedContactInterface,
@@ -23,6 +10,15 @@ import {
   TrustedContactMutator,
 } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
+import { AbstractService } from '../Service/AbstractService'
+import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
+import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
+import { ItemManagerInterface } from '../Item/ItemManagerInterface'
+import { SessionsClientInterface } from '../Session/SessionsClientInterface'
+import { ContactServiceEvent, ContactServiceInterface } from '../Contacts/ContactServiceInterface'
+import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
+import { SyncEvent, SyncEventReceivedContactsData } from '../Event/SyncEvent'
+import { InternalEventInterface } from '../Internal/InternalEventInterface'
 
 export class ContactService
   extends AbstractService<ContactServiceEvent>

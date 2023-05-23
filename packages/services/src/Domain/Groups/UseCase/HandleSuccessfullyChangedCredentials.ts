@@ -1,8 +1,8 @@
 import { GroupInvitesServerInterface } from '@standardnotes/api'
-import { ContactServiceInterface } from '@standardnotes/services'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ClientDisplayableError, GroupInviteServerHash, isErrorResponse } from '@standardnotes/responses'
-import { SuccessfullyChangedCredentialsEventData } from '@Lib/Services/Session/SuccessfullyChangedCredentialsEventData'
+import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
+import { SuccessfullyChangedCredentialsEventData } from '../../Session/SuccessfullyChangedCredentialsEventData'
 
 /**
  * When the local client initiates a change of credentials, it is also responsible for

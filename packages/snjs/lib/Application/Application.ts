@@ -171,7 +171,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private integrityService!: ExternalServices.IntegrityService
   private statusService!: ExternalServices.StatusService
   private filesBackupService?: FilesBackupService
-  private groupService!: InternalServices.GroupServiceInterface
+  private groupService!: ExternalServices.GroupServiceInterface
   private contactService!: ExternalServices.ContactServiceInterface
   private groupStorageService!: ExternalServices.GroupStorageServiceInterface
   private declare sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>
@@ -1280,7 +1280,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createContactService(): void {
-    this.contactService = new InternalServices.ContactService(
+    this.contactService = new ExternalServices.ContactService(
       this.httpService,
       this.syncService,
       this.itemManager,
@@ -1297,7 +1297,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   }
 
   private createGroupService(): void {
-    this.groupService = new InternalServices.GroupService(
+    this.groupService = new ExternalServices.GroupService(
       this.httpService,
       this.syncService,
       this.itemManager,
@@ -1624,7 +1624,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.serviceObservers.push(
       this.sessionManager.addEventObserver(async (event) => {
         switch (event) {
-          case InternalServices.SessionEvent.Restored: {
+          case ExternalServices.SessionEvent.Restored: {
             void (async () => {
               await this.sync.sync({ sourceDescription: 'Session restored pre key creation' })
               if (this.protocolService.needsNewRootKeyBasedItemsKey()) {
@@ -1635,11 +1635,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
             })()
             break
           }
-          case InternalServices.SessionEvent.Revoked: {
+          case ExternalServices.SessionEvent.Revoked: {
             await this.handleRevokedSession()
             break
           }
-          case InternalServices.SessionEvent.SuccessfullyChangedCredentials:
+          case ExternalServices.SessionEvent.SuccessfullyChangedCredentials:
             break
           default: {
             Utils.assertUnreachable(event)

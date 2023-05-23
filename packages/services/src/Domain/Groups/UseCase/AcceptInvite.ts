@@ -1,9 +1,9 @@
 import { GroupKeyContentSpecialized, GroupKeyInterface, GroupKeyMutator } from '@standardnotes/models'
 import { GroupInvitesServerInterface } from '@standardnotes/api'
-import { ItemManagerInterface } from '@standardnotes/services'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { GroupInviteServerHash } from '@standardnotes/responses'
 import { CreateGroupKeyUseCase } from './CreateGroupKey'
+import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 
 export class AcceptInvite {
   constructor(

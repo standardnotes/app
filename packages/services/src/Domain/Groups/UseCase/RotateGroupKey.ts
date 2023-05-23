@@ -1,6 +1,5 @@
 import { UuidGenerator } from '@standardnotes/utils'
 import { GroupKeyContentSpecialized, GroupKeyInterface, GroupKeyMutator } from '@standardnotes/models'
-import { ContactServiceInterface, GroupStorageServiceInterface, ItemManagerInterface } from '@standardnotes/services'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import {
   ClientDisplayableError,
@@ -14,6 +13,9 @@ import { GetGroupUsersUseCase } from './GetGroupUsers'
 import { CreateGroupInviteUseCase } from './CreateGroupInvite'
 import { UpdateGroupUseCase } from './UpdateGroup'
 import { UpdateGroupInviteUseCase } from './UpdateGroupInvite'
+import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
+import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
+import { GroupStorageServiceInterface } from '../GroupStorageServiceInterface'
 
 export class RotateGroupKeyUseCase {
   constructor(

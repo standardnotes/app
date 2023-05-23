@@ -26,6 +26,7 @@ import {
   ApiServiceEvent,
   SessionRefreshedData,
   SessionEvent,
+  SuccessfullyChangedCredentialsEventData,
 } from '@standardnotes/services'
 import { Base64String } from '@standardnotes/sncrypto-common'
 import {
@@ -64,7 +65,6 @@ import {
   UserApiServiceInterface,
   UserRegistrationResponseBody,
 } from '@standardnotes/api'
-import { SuccessfullyChangedCredentialsEventData } from './SuccessfullyChangedCredentialsEventData'
 
 export const MINIMUM_PASSWORD_LENGTH = 8
 export const MissingAccountParams = 'missing-params'

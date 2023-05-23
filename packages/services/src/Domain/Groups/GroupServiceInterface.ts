@@ -5,8 +5,8 @@ import {
   GroupUserServerHash,
   GroupPermission,
 } from '@standardnotes/responses'
-import { AbstractService } from '@standardnotes/services'
 import { TrustedContact, DecryptedItemInterface } from '@standardnotes/models'
+import { AbstractService } from '../Service/AbstractService'
 
 export enum GroupServiceEvent {
   DidResolveRemoteGroupInvites = 'DidResolveRemoteGroupInvites',

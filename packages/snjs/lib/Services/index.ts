@@ -16,12 +16,6 @@ export * from './Preferences/PreferencesService'
 export * from './Protection'
 export * from './Session'
 export * from './Settings'
-
-export * from './Groups/GroupService'
-export * from './Groups/GroupServiceInterface'
-
-export * from './Contacts/ContactService'
-
 export * from './Singleton/SingletonManager'
 export * from './Storage/DiskStorageService'
 export * from './Sync'

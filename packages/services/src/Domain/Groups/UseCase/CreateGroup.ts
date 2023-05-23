@@ -1,9 +1,9 @@
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { UuidGenerator } from '@standardnotes/utils'
 import { ClientDisplayableError, GroupServerHash, isErrorResponse } from '@standardnotes/responses'
-import { ItemManagerInterface } from '@standardnotes/services'
 import { GroupsServerInterface } from '@standardnotes/api'
 import { CreateGroupKeyUseCase } from './CreateGroupKey'
+import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 
 export class CreateGroupUseCase {
   constructor(
