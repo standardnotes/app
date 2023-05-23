@@ -3,7 +3,7 @@ import { TrustedContactContent } from './TrustedContactContent'
 
 export interface TrustedContactInterface extends DecryptedItemInterface<TrustedContactContent> {
   contactItemUuid: string
-  userUuid: string
+  contactUuid: string
   publicKey: string
   name: string
 }

@@ -61,6 +61,18 @@ export class AppContext {
     return this.application.protocolService
   }
 
+  get contacts() {
+    return this.application.contactService
+  }
+
+  get publicKey() {
+    return this.groupService.userPublicKey
+  }
+
+  get privateKey() {
+    return this.groupService.userPrivateKey
+  }
+
   ignoreChallenges() {
     this.ignoringChallenges = true
   }

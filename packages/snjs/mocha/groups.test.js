@@ -22,11 +22,11 @@ describe.only('groups', function () {
     }
   }
 
-  const createContactForUserOfContext = async (contextAddingNewContact, contextImportingContactInfoFrom) => {
+  const createTrustedContactForUserOfContext = async (contextAddingNewContact, contextImportingContactInfoFrom) => {
     const contact = await contextAddingNewContact.application.contactService.createTrustedContact({
       name: 'John Doe',
       publicKey: contextImportingContactInfoFrom.application.groupService.userPublicKey,
-      userUuid: contextImportingContactInfoFrom.userUuid,
+      contactUuid: contextImportingContactInfoFrom.userUuid,
     })
 
     return contact
@@ -54,11 +54,11 @@ describe.only('groups', function () {
   const createGroupWithUnacceptedButTrustedInvite = async (permissions = GroupPermission.Write) => {
     const group = await groupService.createGroup()
     const { contactContext, deinitContactContext } = await createContactContext()
-    const contact = await createContactForUserOfContext(context, contactContext)
+    const contact = await createTrustedContactForUserOfContext(context, contactContext)
     await groupService.inviteContactToGroup(group, contact, permissions)
     await contactContext.sync()
 
-    await createContactForUserOfContext(contactContext, context)
+    await createTrustedContactForUserOfContext(contactContext, context)
 
     return { group, contact, contactContext, deinitContactContext }
   }
@@ -116,20 +116,57 @@ describe.only('groups', function () {
       const contact = await contactService.createTrustedContact({
         name: 'John Doe',
         publicKey: 'my_public_key',
-        userUuid: '123',
+        contactUuid: '123',
       })
 
       expect(contact).to.not.be.undefined
       expect(contact.name).to.equal('John Doe')
       expect(contact.publicKey).to.equal('my_public_key')
-      expect(contact.userUuid).to.equal('123')
+      expect(contact.contactUuid).to.equal('123')
     })
 
-    it('performing a sync should download new contact changes', async () => {})
+    it('performing a sync should download new contact changes and keep them pending', async () => {
+      const { contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+      const originalContact = context.contacts.findTrustedContact(contactContext.userUuid)
 
-    it('contact changes should be pending and untrusted until accepted by the user', async () => {})
+      await contactContext.changePassword('new_password')
+      await context.sync()
 
-    it('should mark a contact as untrusted when their public key changes', async () => {})
+      const pendingRequests = context.contacts.getPendingContactRequests()
+      expect(pendingRequests.length).to.equal(1)
+      expect(pendingRequests[0].contact_public_key).to.not.equal(originalContact.contactPublicKey)
+      expect(pendingRequests[0].contact_public_key).to.equal(contactContext.publicKey)
+
+      const unchangedTrustedContent = context.contacts.findTrustedContact(contactContext.userUuid)
+      expect(originalContact.contactPublicKey).to.equal(unchangedTrustedContent.contactPublicKey)
+      expect(unchangedTrustedContent.contactPublicKey).to.not.equal(pendingRequests[0].contact_public_key)
+
+      await deinitContactContext()
+    })
+
+    it('should update trusted contact model when accepting incoming contact change', async () => {
+      const { contactContext, deinitContactContext } = await createContactContext()
+      await createTrustedContactForUserOfContext(context, contactContext)
+      await createTrustedContactForUserOfContext(contactContext, context)
+
+      const originalContactRecord = context.contacts.findTrustedContact(contactContext.userUuid)
+
+      await contactContext.changePassword('new_password')
+      await context.sync()
+
+      const pendingRequests = context.contacts.getPendingContactRequests()
+      expect(pendingRequests.length).to.equal(1)
+      expect(pendingRequests[0].contact_public_key).to.equal(contactContext.publicKey)
+
+      await context.contacts.trustServerContact(pendingRequests[0])
+
+      const updatedContactRecord = context.contacts.findTrustedContact(contactContext.userUuid)
+      expect(updatedContactRecord).to.not.be.undefined
+      expect(updatedContactRecord.publicKey).to.not.equal(originalContactRecord.publicKey)
+      expect(updatedContactRecord.publicKey).to.equal(contactContext.publicKey)
+
+      await deinitContactContext()
+    })
   })
 
   describe('groups', () => {
@@ -176,8 +213,8 @@ describe.only('groups', function () {
 
       /** Invite a contact */
       const { contactContext, deinitContactContext } = await createContactContext()
-      const contact = await createContactForUserOfContext(context, contactContext)
-      await createContactForUserOfContext(contactContext, context)
+      const contact = await createTrustedContactForUserOfContext(context, contactContext)
+      await createTrustedContactForUserOfContext(contactContext, context)
 
       /** Sync the contact context so that they wouldn't naturally receive changes made before this point */
       await contactContext.sync()
@@ -221,8 +258,8 @@ describe.only('groups', function () {
       const { contactContext, deinitContactContext } = await createContactContext()
       const group = await groupService.createGroup()
 
-      await createContactForUserOfContext(contactContext, context)
-      const currentContextContact = await createContactForUserOfContext(context, contactContext)
+      await createTrustedContactForUserOfContext(contactContext, context)
+      const currentContextContact = await createTrustedContactForUserOfContext(context, contactContext)
 
       contactContext.lockSyncing()
       await groupService.inviteContactToGroup(group, currentContextContact, GroupPermission.Write)
@@ -268,13 +305,13 @@ describe.only('groups', function () {
     it('should invite contact to group', async () => {
       const group = await groupService.createGroup()
       const { contactContext, deinitContactContext } = await createContactContext()
-      const contact = await createContactForUserOfContext(context, contactContext)
+      const contact = await createTrustedContactForUserOfContext(context, contactContext)
 
       const groupInvite = await groupService.inviteContactToGroup(group, contact, GroupPermission.Write)
 
       expect(groupInvite).to.not.be.undefined
       expect(groupInvite.group_uuid).to.equal(group.uuid)
-      expect(groupInvite.user_uuid).to.equal(contact.userUuid)
+      expect(groupInvite.user_uuid).to.equal(contact.contactUuid)
       expect(groupInvite.encrypted_group_data).to.not.be.undefined
       expect(groupInvite.inviter_public_key).to.equal(groupService.userPublicKey)
       expect(groupInvite.permissions).to.equal(GroupPermission.Write)
@@ -288,7 +325,7 @@ describe.only('groups', function () {
       const { contactContext, deinitContactContext } = await createContactContext()
       const group = await groupService.createGroup()
 
-      const currentContextContact = await createContactForUserOfContext(context, contactContext)
+      const currentContextContact = await createTrustedContactForUserOfContext(context, contactContext)
       await groupService.inviteContactToGroup(group, currentContextContact, GroupPermission.Write)
 
       await contactContext.groupService.downloadInboundInvites()
@@ -303,14 +340,14 @@ describe.only('groups', function () {
       const { contactContext, deinitContactContext } = await createContactContext()
       const group = await groupService.createGroup()
 
-      const currentContextContact = await createContactForUserOfContext(context, contactContext)
+      const currentContextContact = await createTrustedContactForUserOfContext(context, contactContext)
       await groupService.inviteContactToGroup(group, currentContextContact, GroupPermission.Write)
 
       await contactContext.groupService.downloadInboundInvites()
       expect(contactContext.groupService.isInviteTrusted(contactContext.groupService.getPendingInvites()[0])).to.be
         .false
 
-      await createContactForUserOfContext(contactContext, context)
+      await createTrustedContactForUserOfContext(contactContext, context)
 
       expect(contactContext.groupService.isInviteTrusted(contactContext.groupService.getPendingInvites()[0])).to.be.true
 
@@ -322,7 +359,7 @@ describe.only('groups', function () {
     it('should reupload all outbound invites when inviter keypair changes', async () => {
       const group = await groupService.createGroup()
       const { contactContext, deinitContactContext } = await createContactContext()
-      const contact = await createContactForUserOfContext(context, contactContext)
+      const contact = await createTrustedContactForUserOfContext(context, contactContext)
       await groupService.inviteContactToGroup(group, contact, GroupPermission.Write)
       await contactContext.sync()
 
@@ -387,7 +424,7 @@ describe.only('groups', function () {
       contactContext.lockSyncing()
 
       const thirdParty = await createContactContext()
-      const thirdPartyContact = await createContactForUserOfContext(context, thirdParty.contactContext)
+      const thirdPartyContact = await createTrustedContactForUserOfContext(context, thirdParty.contactContext)
       await groupService.inviteContactToGroup(group, thirdPartyContact, GroupPermission.Write)
 
       const originalOutboundInvites = await groupService.getOutboundInvites()

@@ -6,7 +6,7 @@ import { TrustedContactInterface } from './TrustedContactInterface'
 
 export class TrustedContact extends DecryptedItem<TrustedContactContent> implements TrustedContactInterface {
   contactItemUuid: string
-  userUuid: string
+  contactUuid: string
   publicKey: string
   name: string
 
@@ -14,7 +14,7 @@ export class TrustedContact extends DecryptedItem<TrustedContactContent> impleme
     super(payload)
 
     this.contactItemUuid = payload.content.contactItemUuid
-    this.userUuid = payload.content.userUuid
+    this.contactUuid = payload.content.contactUuid
     this.publicKey = payload.content.publicKey
     this.name = payload.content.name
   }

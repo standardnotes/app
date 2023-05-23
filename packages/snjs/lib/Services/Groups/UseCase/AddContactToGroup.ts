@@ -37,7 +37,7 @@ export class AddContactToGroupUseCase {
     const createInviteUseCase = new CreateGroupInviteUseCase(this.groupInvitesServer)
     const createInviteResult = await createInviteUseCase.execute({
       groupUuid: params.group.uuid,
-      inviteeUuid: params.contact.userUuid,
+      inviteeUuid: params.contact.contactUuid,
       inviterPublicKey: params.inviterPublicKey,
       encryptedGroupData,
       inviteType: GroupInviteType.Join,

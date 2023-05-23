@@ -18,6 +18,7 @@ import {
   TrustedContactInterface,
   FillItemContent,
   Predicate,
+  TrustedContactMutator,
 } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 
@@ -56,13 +57,39 @@ export class ContactService
     void this.notifyEvent(ContactServiceEvent.ReceivedContactRequests)
   }
 
+  public getPendingContactRequests(): ContactServerHash[] {
+    return Object.values(this.pendingContactRequests)
+  }
+
+  async trustServerContact(serverContact: ContactServerHash, name?: string): Promise<void> {
+    const existingContact = this.findTrustedContact(serverContact.contact_uuid)
+    if (existingContact) {
+      await this.items.changeItem<TrustedContactMutator>(existingContact, (mutator) => {
+        mutator.publicKey = serverContact.contact_public_key
+        if (name) {
+          mutator.name = name
+        }
+      })
+
+      await this.sync.sync()
+    } else {
+      await this.createTrustedContact({
+        name: name ?? '',
+        publicKey: serverContact.contact_public_key,
+        contactUuid: serverContact.contact_uuid,
+      })
+    }
+
+    delete this.pendingContactRequests[serverContact.uuid]
+  }
+
   async createTrustedContact(params: {
     name: string
     publicKey: string
-    userUuid: string
+    contactUuid: string
   }): Promise<TrustedContactInterface | undefined> {
     const createResponse = await this.contactServer.createContact({
-      contactUuid: params.userUuid,
+      contactUuid: params.contactUuid,
       contactPublicKey: params.publicKey,
     })
 
@@ -74,7 +101,7 @@ export class ContactService
     const content: TrustedContactContentSpecialized = {
       name: params.name,
       publicKey: params.publicKey,
-      userUuid: params.userUuid,
+      contactUuid: params.contactUuid,
       contactItemUuid: createResponse.data.contact.uuid,
     }
 
@@ -96,7 +123,7 @@ export class ContactService
   findTrustedContact(userUuid: string): TrustedContactInterface | undefined {
     return this.items.itemsMatchingPredicate<TrustedContactInterface>(
       ContentType.TrustedContact,
-      new Predicate<TrustedContactInterface>('userUuid', '=', userUuid),
+      new Predicate<TrustedContactInterface>('contactUuid', '=', userUuid),
     )[0]
   }
 
