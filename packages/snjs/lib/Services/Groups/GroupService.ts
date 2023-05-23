@@ -32,6 +32,7 @@ import {
   InternalEventInterface,
   GroupStorageServiceInterface,
   SyncEventReceivedGroupsData,
+  SessionEvent,
 } from '@standardnotes/services'
 import {
   DecryptedItemInterface,
@@ -43,7 +44,6 @@ import { GroupServiceEvent, GroupServiceInterface } from './GroupServiceInterfac
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ContentType } from '@standardnotes/common'
 import { HandleSuccessfullyChangedCredentials } from './UseCase/HandleSuccessfullyChangedCredentials'
-import { SessionEvent } from '../Session/SessionEvent'
 import { SuccessfullyChangedCredentialsEventData } from '../Session/SuccessfullyChangedCredentialsEventData'
 import { AcceptInvite } from './UseCase/AcceptInvite'
 import { CreateGroupUseCase } from './UseCase/CreateGroup'

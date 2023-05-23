@@ -79,8 +79,11 @@ export * from './Revision/RevisionClientInterface'
 export * from './Revision/RevisionManager'
 export * from './Service/AbstractService'
 export * from './Service/ServiceInterface'
+
 export * from './Session/SessionManagerResponse'
 export * from './Session/SessionsClientInterface'
+export * from './Session/SessionEvent'
+
 export * from './Status/StatusService'
 export * from './Status/StatusServiceInterface'
 export * from './Storage/InMemoryStore'
