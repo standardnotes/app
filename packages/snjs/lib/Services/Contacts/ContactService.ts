@@ -1,3 +1,4 @@
+import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { ContactServerHash, isErrorResponse } from '@standardnotes/responses'
 import { ContactServerInterface, HttpServiceInterface, ContactServer } from '@standardnotes/api'
 import {
@@ -8,6 +9,7 @@ import {
   InternalEventHandlerInterface,
   InternalEventInterface,
   ItemManagerInterface,
+  SessionsClientInterface,
   SyncEvent,
   SyncEventReceivedContactsData,
   SyncServiceInterface,
@@ -33,6 +35,8 @@ export class ContactService
     private http: HttpServiceInterface,
     private sync: SyncServiceInterface,
     private items: ItemManagerInterface,
+    private session: SessionsClientInterface,
+    private crypto: PureCryptoInterface,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -40,6 +44,30 @@ export class ContactService
     eventBus.addEventHandler(this, SyncEvent.ReceivedContacts)
 
     this.contactServer = new ContactServer(this.http)
+  }
+
+  public getCollaborationID(): string {
+    const version = '1'
+    const string = `${version}:${this.session.getSureUser().uuid}:${this.session.getPublicKey()}`
+    return this.crypto.base64Encode(string)
+  }
+
+  public parseCollaborationID(collaborationID: string): { version: string; userUuid: string; userPublicKey: string } {
+    const decoded = this.crypto.base64Decode(collaborationID)
+    const [version, userUuid, userPublicKey] = decoded.split(':')
+    return { version, userUuid, userPublicKey }
+  }
+
+  public addTrustedContactFromCollaborationID(
+    collaborationID: string,
+    name?: string,
+  ): Promise<TrustedContactInterface | undefined> {
+    const { userUuid, userPublicKey } = this.parseCollaborationID(collaborationID)
+    return this.createTrustedContact({
+      name: name ?? '',
+      publicKey: userPublicKey,
+      contactUuid: userUuid,
+    })
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {

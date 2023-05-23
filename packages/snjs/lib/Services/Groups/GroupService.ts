@@ -223,12 +223,7 @@ export class GroupService
   }
 
   get userPublicKey(): string {
-    const key = this.user.publicKey
-    if (!key) {
-      throw new Error('User public key not found')
-    }
-
-    return key
+    return this.session.getPublicKey()
   }
 
   get userDecryptedPrivateKey(): string {

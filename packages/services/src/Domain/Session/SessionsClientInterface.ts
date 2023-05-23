@@ -22,6 +22,7 @@ export interface SessionsClientInterface {
   ): Promise<SessionManagerResponse>
   isSignedIn(): boolean
   getSureUser(): User
+  getPublicKey(): string
   bypassChecksAndSignInWithRootKey(
     email: string,
     rootKey: RootKeyInterface,

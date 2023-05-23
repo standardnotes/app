@@ -204,6 +204,15 @@ export class SNSessionManager
     return this.user as User
   }
 
+  public getPublicKey(): string {
+    const key = this.getSureUser().publicKey
+    if (!key) {
+      throw new Error('User public key not found')
+    }
+
+    return key
+  }
+
   isCurrentSessionReadOnly(): boolean | undefined {
     if (this.session === undefined) {
       return undefined
