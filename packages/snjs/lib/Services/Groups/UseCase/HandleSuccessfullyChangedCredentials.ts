@@ -65,8 +65,8 @@ export class HandleSuccessfullyChangedCredentials {
       return ClientDisplayableError.FromString('Failed to find contact for invite')
     }
 
-    const newEncryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
-      groupKey.groupKey,
+    const newEncryptedGroupData = this.encryption.encryptGroupDataWithRecipientPublicKey(
+      groupKey.content,
       newPrivateKey,
       trustedContact.publicKey,
     )
@@ -75,7 +75,7 @@ export class HandleSuccessfullyChangedCredentials {
       groupUuid: invite.group_uuid,
       inviteUuid: invite.uuid,
       inviterPublicKey: newPublicKey,
-      encryptedGroupKey: newEncryptedGroupKey,
+      encryptedGroupData: newEncryptedGroupData,
     })
 
     if (isErrorResponse(updateInviteResponse)) {

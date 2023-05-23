@@ -222,7 +222,6 @@ export class SNApiService
       void this.notifyEvent(ApiServiceEvent.MetaReceived, {
         userUuid: meta.auth.userUuid,
         userRoles: meta.auth.roles,
-        userPublicKey: meta.auth.publicKey,
       })
     }
 

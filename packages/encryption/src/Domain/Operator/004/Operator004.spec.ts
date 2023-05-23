@@ -109,40 +109,40 @@ describe('operator 004', () => {
     expect(result).toEqual({ privateKey: 'private-key', publicKey: 'public-key', keyType: 'x25519' })
   })
 
-  it('should asymmetricEncryptKey', () => {
+  it('should asymmetricEncrypt', () => {
     const senderKeypair = operator.generateKeyPair()
     const recipientKeypair = operator.generateKeyPair()
 
     const plaintext = 'foo'
 
-    const result = operator.asymmetricEncryptKey(plaintext, senderKeypair.privateKey, recipientKeypair.publicKey)
+    const result = operator.asymmetricEncrypt(plaintext, senderKeypair.privateKey, recipientKeypair.publicKey)
 
     expect(result).toEqual(`${'005_KeyAsym'}:random-string:<e>foo<e>`)
   })
 
-  it('should asymmetricDecryptKey', () => {
+  it('should asymmetricDecrypt', () => {
     const senderKeypair = operator.generateKeyPair()
     const recipientKeypair = operator.generateKeyPair()
     const plaintext = 'foo'
-    const ciphertext = operator.asymmetricEncryptKey(plaintext, senderKeypair.privateKey, recipientKeypair.publicKey)
-    const decrypted = operator.asymmetricDecryptKey(ciphertext, senderKeypair.publicKey, recipientKeypair.privateKey)
+    const ciphertext = operator.asymmetricEncrypt(plaintext, senderKeypair.privateKey, recipientKeypair.publicKey)
+    const decrypted = operator.asymmetricDecrypt(ciphertext, senderKeypair.publicKey, recipientKeypair.privateKey)
 
     expect(decrypted).toEqual('foo')
   })
 
-  it('should symmetricEncryptPrivateKey', () => {
+  it('should symmetricEncrypt', () => {
     const keypair = operator.generateKeyPair()
     const symmetricKey = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    const encryptedKey = operator.symmetricEncryptPrivateKey(keypair.privateKey, symmetricKey)
+    const encryptedKey = operator.symmetricEncrypt(keypair.privateKey, symmetricKey)
 
     expect(encryptedKey).toEqual(`${'005_KeySym'}:random-string:<e>${keypair.privateKey}<e>`)
   })
 
-  it('should symmetricDecryptPrivateKey', () => {
+  it('should symmetricDecrypt', () => {
     const keypair = operator.generateKeyPair()
     const symmetricKey = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    const encryptedKey = operator.symmetricEncryptPrivateKey(keypair.privateKey, symmetricKey)
-    const decryptedKey = operator.symmetricDecryptPrivateKey(encryptedKey, symmetricKey)
+    const encryptedKey = operator.symmetricEncrypt(keypair.privateKey, symmetricKey)
+    const decryptedKey = operator.symmetricDecrypt(encryptedKey, symmetricKey)
 
     expect(decryptedKey).toEqual(keypair.privateKey)
   })

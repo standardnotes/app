@@ -32,6 +32,7 @@ import {
   DecryptedPayloadInterface,
   EncryptedPayload,
   EncryptedPayloadInterface,
+  GroupKeyContentSpecialized,
   GroupKeyInterface,
   isDecryptedPayload,
   isEncryptedPayload,
@@ -505,8 +506,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.rootKeyEncryption.createRootKey(identifier, password, origination, version)
   }
 
-  createGroupKeyString(): { key: string; version: ProtocolVersion } {
-    return this.operatorManager.defaultOperator().createGroupKeyString()
+  createGroupKeyData(groupUuid: string): GroupKeyContentSpecialized {
+    return this.operatorManager.defaultOperator().createGroupKeyData(groupUuid)
   }
 
   getGroupKey(groupUuid: string): GroupKeyInterface | undefined {
@@ -525,38 +526,39 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
 
   encryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, privateKey: string): string {
     const operator = this.operatorManager.defaultOperator()
-    const encrypted = operator.symmetricEncryptPrivateKey(privateKey, rootKey.masterKey)
+    const encrypted = operator.symmetricEncrypt(privateKey, rootKey.masterKey)
     return encrypted
   }
 
   decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | null {
     const operator = this.operatorManager.defaultOperator()
-    const decrypted = operator.symmetricDecryptPrivateKey(encryptedPrivateKey, rootKey.masterKey)
+    const decrypted = operator.symmetricDecrypt(encryptedPrivateKey, rootKey.masterKey)
     return decrypted
   }
 
-  encryptGroupKeyWithRecipientPublicKey(key: string, senderPrivateKey: string, recipientPublicKey: string): string {
+  encryptGroupDataWithRecipientPublicKey(
+    data: GroupKeyContentSpecialized,
+    senderPrivateKey: string,
+    recipientPublicKey: string,
+  ): string {
     const operator = this.operatorManager.defaultOperator()
-    const encrypted = operator.asymmetricEncryptKey(key, senderPrivateKey, recipientPublicKey)
+    const encrypted = operator.asymmetricEncrypt(JSON.stringify(data), senderPrivateKey, recipientPublicKey)
     return encrypted
   }
 
-  decryptGroupKeyWithPrivateKey(
-    encryptedGroupKey: string,
+  decryptGroupDataWithPrivateKey(
+    encryptedGroupData: string,
     senderPublicKey: string,
     privateKey: string,
-  ): { decryptedKey: string; keyVersion: ProtocolVersion } | null {
+  ): GroupKeyContentSpecialized | null {
     const defaultOperator = this.operatorManager.defaultOperator()
-    const version = defaultOperator.versionForEncryptedKey(encryptedGroupKey)
+    const version = defaultOperator.versionForEncryptedString(encryptedGroupData)
 
     const keyOperator = this.operatorManager.operatorForVersion(version)
-    const decrypted = keyOperator.asymmetricDecryptKey(encryptedGroupKey, senderPublicKey, privateKey)
+    const decrypted = keyOperator.asymmetricDecrypt(encryptedGroupData, senderPublicKey, privateKey)
 
     if (decrypted) {
-      return {
-        decryptedKey: decrypted,
-        keyVersion: version,
-      }
+      return JSON.parse(decrypted)
     }
 
     return null

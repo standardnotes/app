@@ -1,5 +1,5 @@
 import { UuidGenerator } from '@standardnotes/utils'
-import { GroupKeyInterface, GroupKeyMutator } from '@standardnotes/models'
+import { GroupKeyContentSpecialized, GroupKeyInterface, GroupKeyMutator } from '@standardnotes/models'
 import { ContactServiceInterface, GroupStorageServiceInterface, ItemManagerInterface } from '@standardnotes/services'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import {
@@ -36,7 +36,10 @@ export class RotateGroupKeyUseCase {
 
     const errors: ClientDisplayableError[] = []
 
-    const updateGroupSharedItemsKeyResult = await this.updateGroupSharedItemsKey(params.groupUuid)
+    const updateGroupSharedItemsKeyResult = await this.updateGroupSharedItemsKey({
+      groupUuid: params.groupUuid,
+      groupKeyTimestamp: updatedGroupKey.keyTimestamp,
+    })
 
     if (isClientDisplayableError(updateGroupSharedItemsKeyResult)) {
       errors.push(updateGroupSharedItemsKeyResult)
@@ -44,45 +47,43 @@ export class RotateGroupKeyUseCase {
 
     await this.encryption.reencryptSharedItemsKeysForGroup(params.groupUuid)
 
-    const inviteErrors = await this.sendKeyChangeInviteToAcceptedGroupMembers({
-      groupKey: updatedGroupKey.groupKey,
-      groupUuid: params.groupUuid,
-      inviterUuid: params.inviterUuid,
-      inviterPrivateKey: params.inviterPrivateKey,
-      inviterPublicKey: params.inviterPublicKey,
-    })
-
     const reuploadErrors = await this.reuploadExistingInvites({
-      groupKey: updatedGroupKey.groupKey,
+      groupData: updatedGroupKey.content,
       groupUuid: params.groupUuid,
       inviterUuid: params.inviterUuid,
       inviterPrivateKey: params.inviterPrivateKey,
       inviterPublicKey: params.inviterPublicKey,
     })
-
-    errors.push(...inviteErrors)
     errors.push(...reuploadErrors)
+
+    const inviteErrors = await this.sendKeyChangeInviteToAcceptedGroupMembers({
+      groupData: updatedGroupKey.content,
+      groupUuid: params.groupUuid,
+      inviterUuid: params.inviterUuid,
+      inviterPrivateKey: params.inviterPrivateKey,
+      inviterPublicKey: params.inviterPublicKey,
+    })
+    errors.push(...inviteErrors)
 
     return errors
   }
 
   private async changeGroupKey(groupUuid: string): Promise<GroupKeyInterface> {
-    const { key, version } = this.encryption.createGroupKeyString()
     const groupKey = this.encryption.getGroupKey(groupUuid)
     if (!groupKey) {
       throw new Error('Cannot rotate group key; group key not found')
     }
 
+    const groupKeyContent = this.encryption.createGroupKeyData(groupUuid)
     const updatedGroupKey = await this.items.changeItem<GroupKeyMutator, GroupKeyInterface>(groupKey, (mutator) => {
-      mutator.groupKey = key
-      mutator.keyVersion = version
+      mutator.content = groupKeyContent
     })
 
     return updatedGroupKey
   }
 
   private async reuploadExistingInvites(params: {
-    groupKey: string
+    groupData: GroupKeyContentSpecialized
     groupUuid: string
     inviterUuid: string
     inviterPrivateKey: string
@@ -101,13 +102,13 @@ export class RotateGroupKeyUseCase {
     const errors: ClientDisplayableError[] = []
 
     for (const invite of existingGroupInvites) {
-      const encryptedGroupKey = this.getEncryptedGroupKeyForRecipient({
-        groupKey: params.groupKey,
+      const encryptedGroupData = this.getEncryptedGroupDataForRecipient({
+        groupData: params.groupData,
         inviterPrivateKey: params.inviterPrivateKey,
         recipientUuid: invite.user_uuid,
       })
 
-      if (!encryptedGroupKey) {
+      if (!encryptedGroupData) {
         errors.push(ClientDisplayableError.FromString(`Failed to encrypt group key for user ${invite.user_uuid}`))
         continue
       }
@@ -115,9 +116,9 @@ export class RotateGroupKeyUseCase {
       const updateInviteUseCase = new UpdateGroupInviteUseCase(this.groupInvitesServer)
       const updateInviteResult = await updateInviteUseCase.execute({
         groupUuid: params.groupUuid,
-        inviteUuid: invite.user_uuid,
+        inviteUuid: invite.uuid,
         inviterPublicKey: params.inviterPublicKey,
-        encryptedGroupKey,
+        encryptedGroupData,
         inviteType: invite.invite_type,
         permissions: invite.permissions,
       })
@@ -131,7 +132,7 @@ export class RotateGroupKeyUseCase {
   }
 
   private async sendKeyChangeInviteToAcceptedGroupMembers(params: {
-    groupKey: string
+    groupData: GroupKeyContentSpecialized
     groupUuid: string
     inviterUuid: string
     inviterPrivateKey: string
@@ -153,13 +154,13 @@ export class RotateGroupKeyUseCase {
         continue
       }
 
-      const encryptedGroupKey = this.getEncryptedGroupKeyForRecipient({
-        groupKey: params.groupKey,
+      const encryptedGroupData = this.getEncryptedGroupDataForRecipient({
+        groupData: params.groupData,
         inviterPrivateKey: params.inviterPrivateKey,
         recipientUuid: user.user_uuid,
       })
 
-      if (!encryptedGroupKey) {
+      if (!encryptedGroupData) {
         errors.push(ClientDisplayableError.FromString(`Failed to encrypt group key for user ${user.user_uuid}`))
         continue
       }
@@ -169,7 +170,7 @@ export class RotateGroupKeyUseCase {
         groupUuid: params.groupUuid,
         inviteeUuid: user.user_uuid,
         inviterPublicKey: params.inviterPublicKey,
-        encryptedGroupKey,
+        encryptedGroupData,
         inviteType: GroupInviteType.KeyChange,
         permissions: user.permissions,
       })
@@ -182,8 +183,8 @@ export class RotateGroupKeyUseCase {
     return errors
   }
 
-  private getEncryptedGroupKeyForRecipient(params: {
-    groupKey: string
+  private getEncryptedGroupDataForRecipient(params: {
+    groupData: GroupKeyContentSpecialized
     inviterPrivateKey: string
     recipientUuid: string
   }): string | undefined {
@@ -192,21 +193,25 @@ export class RotateGroupKeyUseCase {
       return
     }
 
-    return this.encryption.encryptGroupKeyWithRecipientPublicKey(
-      params.groupKey,
+    return this.encryption.encryptGroupDataWithRecipientPublicKey(
+      params.groupData,
       params.inviterPrivateKey,
       trustedContact.publicKey,
     )
   }
 
-  private async updateGroupSharedItemsKey(groupUuid: string): Promise<ClientDisplayableError | GroupServerHash> {
+  private async updateGroupSharedItemsKey(params: {
+    groupUuid: string
+    groupKeyTimestamp: number
+  }): Promise<ClientDisplayableError | GroupServerHash> {
     const newItemsKeyUuid = UuidGenerator.GenerateUuid()
-    const newItemsKey = this.encryption.createSharedItemsKey(newItemsKeyUuid, groupUuid)
+    const newItemsKey = this.encryption.createSharedItemsKey(newItemsKeyUuid, params.groupUuid)
     await this.items.insertItem(newItemsKey)
 
     const updateGroupUseCase = new UpdateGroupUseCase(this.groupsServer)
     const updateResult = await updateGroupUseCase.execute({
-      groupUuid,
+      groupUuid: params.groupUuid,
+      groupKeyTimestamp: params.groupKeyTimestamp,
       specifiedItemsKeyUuid: newItemsKey.uuid,
     })
 

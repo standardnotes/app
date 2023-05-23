@@ -1,6 +1,6 @@
 /* istanbul ignore file */
 
-import { DecryptedPayloadInterface, FullyFormedPayloadInterface } from '@standardnotes/models'
+import { FullyFormedPayloadInterface } from '@standardnotes/models'
 import { SyncOptions } from './SyncOptions'
 import { AbstractService } from '../Service/AbstractService'
 import { SyncEvent } from '../Event/SyncEvent'
@@ -13,6 +13,5 @@ export interface SyncServiceInterface extends AbstractService<SyncEvent> {
   persistPayloads(payloads: FullyFormedPayloadInterface[]): Promise<void>
   lockSyncing(): void
   unlockSyncing(): void
-  getItemAndContentKey(uuid: string): Promise<{ payload: DecryptedPayloadInterface; contentKey: string } | undefined>
   syncGroupsFromScratch(groupUuids: string[]): Promise<void>
 }

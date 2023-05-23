@@ -13,6 +13,7 @@ import {
   DecryptedTransferPayload,
   GroupKeyInterface,
   isGroupKey,
+  GroupKeyContentSpecialized,
 } from '@standardnotes/models'
 import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
 import * as Utils from '@standardnotes/utils'
@@ -32,7 +33,7 @@ import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
 import { SynchronousOperator } from '../OperatorInterface'
 import { isSharedItemsKey } from '../../Keys/SharedItemsKey/SharedItemsKey'
-import { AsymmetricallyEncryptedKey, SymmetricallyEncryptedPrivateKey } from '../Types'
+import { AsymmetricallyEncryptedString, SymmetricallyEncryptedString } from '../Types'
 
 type V004StringComponents = [version: string, nonce: string, ciphertext: string, authenticatedData: string]
 
@@ -43,9 +44,9 @@ type V004Components = {
   authenticatedData: V004StringComponents[3]
 }
 
-const SymmetricCiphertextPrefix = `${ProtocolVersion.V004}_KeySym`
-const AsymmetricCiphertextPrefix = `${ProtocolVersion.V004}_KeyAsym`
-const AsymmetricAnonymousCiphertextPrefix = `${ProtocolVersion.V004}_KeyAsymAnon`
+const SymmetricCiphertextPrefix = `${ProtocolVersion.V004}_Sym`
+const AsymmetricCiphertextPrefix = `${ProtocolVersion.V004}_Asym`
+const AsymmetricAnonymousCiphertextPrefix = `${ProtocolVersion.V004}_AsymAnon`
 
 const PARTITION_CHARACTER = ':'
 
@@ -73,8 +74,13 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return response
   }
 
-  public createGroupKeyString(): { key: string; version: ProtocolVersion } {
-    return { key: this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength), version: ProtocolVersion.V004 }
+  public createGroupKeyData(groupUuid: string): GroupKeyContentSpecialized {
+    return {
+      groupUuid: groupUuid,
+      groupKey: this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength),
+      keyTimestamp: new Date().getTime(),
+      keyVersion: ProtocolVersion.V004,
+    }
   }
 
   /**
@@ -336,7 +342,6 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       return {
         uuid: encrypted.uuid,
         content: JSON.parse(content),
-        contentKey,
       }
     }
   }
@@ -367,24 +372,29 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return this.crypto.sodiumCryptoBoxGenerateKeypair()
   }
 
-  asymmetricEncryptKey(
-    keyToEncrypt: HexString,
+  asymmetricEncrypt(
+    stringToEncrypt: HexString,
     senderSecretKey: HexString,
     recipientPublicKey: HexString,
-  ): AsymmetricallyEncryptedKey {
+  ): AsymmetricallyEncryptedString {
     const nonce = this.crypto.generateRandomKey(V004Algorithm.AsymmetricEncryptionNonceLength)
 
-    const ciphertext = this.crypto.sodiumCryptoBoxEasyEncrypt(keyToEncrypt, nonce, senderSecretKey, recipientPublicKey)
+    const ciphertext = this.crypto.sodiumCryptoBoxEasyEncrypt(
+      stringToEncrypt,
+      nonce,
+      senderSecretKey,
+      recipientPublicKey,
+    )
 
     return [AsymmetricCiphertextPrefix, nonce, ciphertext].join(':')
   }
 
-  asymmetricDecryptKey(
-    keyToDecrypt: AsymmetricallyEncryptedKey,
+  asymmetricDecrypt(
+    stringToDecrypt: AsymmetricallyEncryptedString,
     senderPublicKey: HexString,
     recipientSecretKey: HexString,
   ): Utf8String {
-    const components = keyToDecrypt.split(':')
+    const components = stringToDecrypt.split(':')
 
     const nonce = components[1]
     const keyString = components[2]
@@ -392,45 +402,42 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return this.crypto.sodiumCryptoBoxEasyDecrypt(keyString, nonce, senderPublicKey, recipientSecretKey)
   }
 
-  asymmetricAnonymousEncryptKey(keyToEncrypt: HexString, recipientPublicKey: HexString): AsymmetricallyEncryptedKey {
-    const ciphertext = this.crypto.sodiumCryptoBoxAnonymousEncrypt(keyToEncrypt, recipientPublicKey)
+  asymmetricAnonymousEncrypt(stringToEncrypt: HexString, recipientPublicKey: HexString): AsymmetricallyEncryptedString {
+    const ciphertext = this.crypto.sodiumCryptoBoxAnonymousEncrypt(stringToEncrypt, recipientPublicKey)
 
     return [AsymmetricAnonymousCiphertextPrefix, ciphertext].join(':')
   }
 
-  asymmetricAnonymousDecryptKey(
-    keyToDecrypt: AsymmetricallyEncryptedKey,
+  asymmetricAnonymousDecrypt(
+    stringToDecrypt: AsymmetricallyEncryptedString,
     recipientPublicKey: HexString,
     recipientSecretKey: HexString,
   ): Utf8String {
-    const components = keyToDecrypt.split(':')
+    const components = stringToDecrypt.split(':')
 
     const ciphertext = components[1]
 
     return this.crypto.sodiumCryptoBoxAnonymousDecrypt(ciphertext, recipientPublicKey, recipientSecretKey)
   }
 
-  symmetricEncryptPrivateKey(privateKey: HexString, symmetricKey: HexString): SymmetricallyEncryptedPrivateKey {
+  symmetricEncrypt(stringToEncrypt: HexString, symmetricKey: HexString): SymmetricallyEncryptedString {
     if (symmetricKey.length !== 64) {
       throw new Error('Symmetric key length must be 256 bits')
     }
 
     const nonce = this.crypto.generateRandomKey(V004Algorithm.SymmetricEncryptionNonceLength)
 
-    const encryptedKey = this.crypto.xchacha20Encrypt(privateKey, nonce, symmetricKey)
+    const encryptedKey = this.crypto.xchacha20Encrypt(stringToEncrypt, nonce, symmetricKey)
 
     return [SymmetricCiphertextPrefix, nonce, encryptedKey].join(':')
   }
 
-  symmetricDecryptPrivateKey(
-    encryptedPrivateKey: SymmetricallyEncryptedPrivateKey,
-    symmetricKey: HexString,
-  ): HexString | null {
+  symmetricDecrypt(stringToDecrypt: SymmetricallyEncryptedString, symmetricKey: HexString): HexString | null {
     if (symmetricKey.length !== 64) {
       throw new Error('Symmetric key length must be 256 bits')
     }
 
-    const components = encryptedPrivateKey.split(':')
+    const components = stringToDecrypt.split(':')
 
     const nonce = components[1]
     const keyString = components[2]
@@ -438,7 +445,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return this.crypto.xchacha20Decrypt(keyString, nonce, symmetricKey)
   }
 
-  versionForEncryptedKey(encryptedKey: string): ProtocolVersion {
+  versionForEncryptedString(encryptedKey: string): ProtocolVersion {
     const firstComponent = encryptedKey.split(':')[0]
     const version = firstComponent.split('_')[0]
     return version as ProtocolVersion

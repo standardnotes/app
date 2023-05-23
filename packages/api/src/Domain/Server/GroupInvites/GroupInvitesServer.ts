@@ -24,7 +24,7 @@ export class GroupInvitesServer implements GroupInvitesServerInterface {
     return this.httpService.post(GroupInvitesPaths.createInvite(params.groupUuid), {
       invitee_uuid: params.inviteeUuid,
       inviter_public_key: params.inviterPublicKey,
-      encrypted_group_key: params.encryptedGroupKey,
+      encrypted_group_data: params.encryptedGroupData,
       invite_type: params.inviteType,
       permissions: params.permissions,
     })
@@ -33,7 +33,7 @@ export class GroupInvitesServer implements GroupInvitesServerInterface {
   updateInvite(params: UpdateGroupInviteParams): Promise<HttpResponse<UpdateGroupInviteResponse>> {
     return this.httpService.patch(GroupInvitesPaths.updateInvite(params.groupUuid, params.inviteUuid), {
       inviter_public_key: params.inviterPublicKey,
-      encrypted_group_key: params.encryptedGroupKey,
+      encrypted_group_data: params.encryptedGroupData,
       permissions: params.permissions,
     })
   }

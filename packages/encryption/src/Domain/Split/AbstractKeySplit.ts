@@ -1,11 +1,11 @@
 import {
   DecryptedPayloadInterface,
   EncryptedPayloadInterface,
+  GroupKeyInterface,
   ItemsKeyInterface,
   RootKeyInterface,
   SharedItemsKeyInterface,
 } from '@standardnotes/models'
-import { GroupKeyInterface } from '../Keys/GroupKey/GroupKeyInterface'
 
 export interface AbstractKeySplit<T = EncryptedPayloadInterface | DecryptedPayloadInterface> {
   usesRootKey?: {

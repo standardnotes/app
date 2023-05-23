@@ -1,5 +1,3 @@
-import { DecryptedItemMutator, SharedItemsKeyContent, ItemsKeyMutatorInterface } from '@standardnotes/models'
+import { DecryptedItemMutator, SharedItemsKeyContent } from '@standardnotes/models'
 
-export class SharedItemsKeyMutator
-  extends DecryptedItemMutator<SharedItemsKeyContent>
-  implements ItemsKeyMutatorInterface {}
+export class SharedItemsKeyMutator extends DecryptedItemMutator<SharedItemsKeyContent> {}

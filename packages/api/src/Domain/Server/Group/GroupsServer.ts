@@ -12,7 +12,9 @@ export class GroupsServer implements GroupsServerInterface {
 
   createGroup(params: CreateGroupParams): Promise<HttpResponse<CreateGroupResponse>> {
     return this.httpService.post(GroupsPaths.createGroup, {
+      group_uuid: params.groupUuid,
       specified_items_key_uuid: params.specifiedItemsKeyUuid,
+      group_key_timestamp: params.groupKeyTimestamp,
     })
   }
 
@@ -23,6 +25,7 @@ export class GroupsServer implements GroupsServerInterface {
   updateGroup(params: UpdateGroupParams): Promise<HttpResponse<UpdateGroupResponse>> {
     return this.httpService.patch(GroupsPaths.updateGroup(params.groupUuid), {
       specified_items_key_uuid: params.specifiedItemsKeyUuid,
+      group_key_timestamp: params.groupKeyTimestamp,
     })
   }
 }

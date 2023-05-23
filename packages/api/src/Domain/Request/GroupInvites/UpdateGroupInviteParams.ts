@@ -4,6 +4,6 @@ export type UpdateGroupInviteParams = {
   groupUuid: string
   inviteUuid: string
   inviterPublicKey: string
-  encryptedGroupKey: string
+  encryptedGroupData: string
   permissions?: GroupPermission
 }

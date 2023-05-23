@@ -703,9 +703,15 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
   }
 
   getGroupKey(groupUuid: string): GroupKeyInterface | undefined {
-    return this.itemManager.itemsMatchingPredicate<GroupKeyInterface>(
+    const keys = this.itemManager.itemsMatchingPredicate<GroupKeyInterface>(
       ContentType.GroupKey,
       new Predicate<GroupKeyInterface>('groupUuid', '=', groupUuid),
-    )[0]
+    )
+
+    if (keys.length > 1) {
+      throw Error('Multiple group keys found for group uuid')
+    }
+
+    return keys[0]
   }
 }

@@ -6,6 +6,7 @@ import {
   DecryptedPayloadInterface,
   ItemContent,
   GroupKeyInterface,
+  GroupKeyContentSpecialized,
 } from '@standardnotes/models'
 import { SNRootKey } from '../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
@@ -14,7 +15,7 @@ import { ItemAuthenticatedData } from '../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../Types/RootKeyEncryptedAuthenticatedData'
 import { HexString, PkcKeyPair, Utf8String } from '@standardnotes/sncrypto-common'
-import { AsymmetricallyEncryptedKey, SymmetricallyEncryptedPrivateKey } from './Types'
+import { AsymmetricallyEncryptedString, SymmetricallyEncryptedString } from './Types'
 
 /**w
  * An operator is responsible for performing crypto operations, such as generating keys
@@ -55,38 +56,35 @@ export interface OperatorCommon {
    */
   createRootKey(identifier: string, password: string, origination: KeyParamsOrigination): Promise<SNRootKey>
 
-  createGroupKeyString(): { key: string; version: ProtocolVersion }
+  createGroupKeyData(groupUuid: string): GroupKeyContentSpecialized
 
   generateKeyPair(): PkcKeyPair
 
-  asymmetricEncryptKey(
-    keyToEncrypt: HexString,
+  asymmetricEncrypt(
+    stringToEncrypt: string,
     senderSecretKey: HexString,
     recipientPublicKey: HexString,
-  ): AsymmetricallyEncryptedKey
+  ): AsymmetricallyEncryptedString
 
-  asymmetricDecryptKey(
-    keyToDecrypt: AsymmetricallyEncryptedKey,
+  asymmetricDecrypt(
+    stringToDecrypt: AsymmetricallyEncryptedString,
     senderPublicKey: HexString,
     recipientSecretKey: HexString,
   ): Utf8String
 
-  asymmetricAnonymousEncryptKey(keyToEncrypt: HexString, recipientPublicKey: HexString): AsymmetricallyEncryptedKey
+  asymmetricAnonymousEncrypt(stringToEncrypt: HexString, recipientPublicKey: HexString): AsymmetricallyEncryptedString
 
-  asymmetricAnonymousDecryptKey(
-    keyToDecrypt: AsymmetricallyEncryptedKey,
+  asymmetricAnonymousDecrypt(
+    stringToDecrypt: AsymmetricallyEncryptedString,
     recipientPublicKey: HexString,
     recipientSecretKey: HexString,
   ): Utf8String
 
-  symmetricEncryptPrivateKey(privateKey: HexString, symmetricKey: HexString): SymmetricallyEncryptedPrivateKey
+  symmetricEncrypt(stringToEncrypt: string, symmetricKey: HexString): SymmetricallyEncryptedString
 
-  symmetricDecryptPrivateKey(
-    encryptedPrivateKey: SymmetricallyEncryptedPrivateKey,
-    symmetricKey: HexString,
-  ): HexString | null
+  symmetricDecrypt(stringToDecrypt: SymmetricallyEncryptedString, symmetricKey: HexString): HexString | null
 
-  versionForEncryptedKey(encryptedKey: string): ProtocolVersion
+  versionForEncryptedString(encryptedString: string): ProtocolVersion
 }
 
 export interface SynchronousOperator extends OperatorCommon {

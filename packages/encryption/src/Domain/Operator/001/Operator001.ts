@@ -4,10 +4,12 @@ import {
   DecryptedPayload,
   DecryptedPayloadInterface,
   FillItemContent,
+  GroupKeyContentSpecialized,
   ItemContent,
   ItemsKeyContent,
   ItemsKeyInterface,
   PayloadTimestampDefaults,
+  SharedItemsKeyInterface,
 } from '@standardnotes/models'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { firstHalfOfString, secondHalfOfString, splitString, UuidGenerator } from '@standardnotes/utils'
@@ -178,7 +180,6 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
       return {
         uuid: encrypted.uuid,
         content: JSON.parse(content),
-        contentKey: itemKey,
       }
     }
   }
@@ -214,35 +215,47 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
     })
   }
 
+  createSharedItemsKey(_uuid: string, _groupUuid: string): SharedItemsKeyInterface {
+    throw new Error('Method not implemented.')
+  }
+
+  createGroupKeyData(_groupUuid: string): GroupKeyContentSpecialized {
+    throw new Error('Method not implemented.')
+  }
+
+  versionForEncryptedString(_encryptedString: string): ProtocolVersion {
+    throw new Error('Method not implemented.')
+  }
+
   generateKeyPair(): PkcKeyPair {
     throw new Error('Method not implemented.')
   }
 
-  asymmetricEncryptKey(_keyToEncrypt: string, _senderSecretKey: string, _recipientPublicKey: string): string {
+  asymmetricEncrypt(_stringToEncrypt: string, _senderSecretKey: string, _recipientPublicKey: string): string {
     throw new Error('Method not implemented.')
   }
 
-  asymmetricDecryptKey(_keyToDecrypt: string, _senderPublicKey: string, _recipientSecretKey: string): string {
+  asymmetricDecrypt(_stringToDecrypt: string, _senderPublicKey: string, _recipientSecretKey: string): string {
     throw new Error('Method not implemented.')
   }
 
-  asymmetricAnonymousEncryptKey(_keyToEncrypt: string, _recipientPublicKey: string): string {
+  asymmetricAnonymousEncrypt(_stringToEncrypt: string, _recipientPublicKey: string): string {
     throw new Error('Method not implemented.')
   }
 
-  asymmetricAnonymousDecryptKey(
-    _keyToDecrypt: string,
+  asymmetricAnonymousDecrypt(
+    _stringToDecrypt: string,
     _recipientPublicKey: string,
     _recipientSecretKey: string,
   ): string {
     throw new Error('Method not implemented.')
   }
 
-  symmetricEncryptPrivateKey(_privateKey: string, _symmetricKey: string): string {
+  symmetricEncrypt(_privateKey: string, _symmetricKey: string): string {
     throw new Error('Method not implemented.')
   }
 
-  symmetricDecryptPrivateKey(_encryptedPrivateKey: string, _symmetricKey: string): string | null {
+  symmetricDecrypt(_encryptedPrivateKey: string, _symmetricKey: string): string | null {
     throw new Error('Method not implemented.')
   }
 }

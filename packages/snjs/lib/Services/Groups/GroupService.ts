@@ -136,7 +136,21 @@ export class GroupService
       this.pendingInvites[invite.uuid] = invite
     }
 
+    await this.automaticallyAcceptTrustedKeyChangeInvites()
+
     await this.notifyEventSync(GroupServiceEvent.DidResolveRemoteGroupInvites)
+  }
+
+  private async automaticallyAcceptTrustedKeyChangeInvites(): Promise<void> {
+    const trustedKeyChangeInvites = this.getPendingInvites().filter((invite) => {
+      return this.isInviteTrusted(invite) && invite.invite_type === 'key-change'
+    })
+
+    if (trustedKeyChangeInvites.length > 0) {
+      for (const invite of trustedKeyChangeInvites) {
+        await this.acceptInvite(invite)
+      }
+    }
   }
 
   async acceptInvite(invite: GroupInviteServerHash): Promise<boolean> {
@@ -209,8 +223,6 @@ export class GroupService
     if (!isClientDisplayableError(result)) {
       await this.sync.sync()
     }
-
-    await this.sync.sync()
 
     return result
   }

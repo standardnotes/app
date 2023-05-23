@@ -28,8 +28,8 @@ export class AddContactToGroupUseCase {
       return ClientDisplayableError.FromString('Cannot add contact; group key not found')
     }
 
-    const encryptedGroupKey = this.encryption.encryptGroupKeyWithRecipientPublicKey(
-      groupKey.groupKey,
+    const encryptedGroupData = this.encryption.encryptGroupDataWithRecipientPublicKey(
+      groupKey.content,
       params.inviterPrivateKey,
       params.contact.publicKey,
     )
@@ -39,7 +39,7 @@ export class AddContactToGroupUseCase {
       groupUuid: params.group.uuid,
       inviteeUuid: params.contact.userUuid,
       inviterPublicKey: params.inviterPublicKey,
-      encryptedGroupKey,
+      encryptedGroupData,
       inviteType: GroupInviteType.Join,
       permissions: params.permissions,
     })

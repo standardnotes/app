@@ -3,13 +3,14 @@ import {
   BackupFile,
   DecryptedPayloadInterface,
   EncryptedPayloadInterface,
+  GroupKeyContentSpecialized,
   GroupKeyInterface,
   ItemContent,
   ItemsKeyInterface,
   RootKeyInterface,
   SharedItemsKeyInterface,
 } from '@standardnotes/models'
-import { ClientDisplayableError, GroupServerHash } from '@standardnotes/responses'
+import { ClientDisplayableError } from '@standardnotes/responses'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
 import { KeyedDecryptionSplit } from '../../Split/KeyedDecryptionSplit'
 import { KeyedEncryptionSplit } from '../../Split/KeyedEncryptionSplit'
@@ -58,17 +59,21 @@ export interface EncryptionProviderInterface {
 
   getGroupKey(groupUuid: string): GroupKeyInterface | undefined
   getDecryptedPrivateKey(): string | undefined
-  decryptGroupKeyWithPrivateKey(
-    encryptedGroupKey: string,
-    senderPublicKey: string,
-    privateKey: string,
-  ): { decryptedKey: string; keyVersion: ProtocolVersion } | null
   createSharedItemsKey(uuid: string, groupUuid: string): SharedItemsKeyInterface
-  createGroupKeyString(): { key: string; version: ProtocolVersion }
+  createGroupKeyData(groupUuid: string): GroupKeyContentSpecialized
   generateKeyPair(): PkcKeyPair
   encryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, privateKey: string): string
   decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | null
-  encryptGroupKeyWithRecipientPublicKey(key: string, senderPrivateKey: string, recipientPublicKey: string): string
+  decryptGroupDataWithPrivateKey(
+    encryptedGroupData: string,
+    senderPublicKey: string,
+    privateKey: string,
+  ): GroupKeyContentSpecialized | null
+  encryptGroupDataWithRecipientPublicKey(
+    data: GroupKeyContentSpecialized,
+    senderPrivateKey: string,
+    recipientPublicKey: string,
+  ): string
 
   setNewRootKeyWrapper(wrappingKey: RootKeyInterface): Promise<void>
   removePasscode(): Promise<void>

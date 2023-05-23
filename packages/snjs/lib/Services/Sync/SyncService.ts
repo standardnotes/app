@@ -1,4 +1,3 @@
-import { isErrorResponse } from '@standardnotes/responses'
 import { log, LoggingDomain } from './../../Logging'
 import { AccountSyncOperation } from '@Lib/Services/Sync/Account/Operation'
 import { ContentType } from '@standardnotes/common'
@@ -55,7 +54,6 @@ import {
   getIncrementedDirtyIndex,
   getCurrentDirtyIndex,
   ItemContent,
-  isErrorDecryptingPayload,
   SharedItemsKeyContent,
   SharedItemsKeyInterface,
 } from '@standardnotes/models'
@@ -77,7 +75,6 @@ import {
   DeviceInterface,
   isFullEntryLoadChunkResponse,
   isChunkFullEntry,
-  ItemsServerInterface,
   SyncEventReceivedGroupInvitesData,
   SyncEventReceivedContactsData,
   SyncEventReceivedGroupsData,
@@ -86,7 +83,6 @@ import { OfflineSyncResponse } from './Offline/Response'
 import {
   CreateDecryptionSplitWithKeyLookup,
   CreateEncryptionSplitWithKeyLookup,
-  isErrorDecryptingParameters,
   KeyedDecryptionSplit,
   SplitPayloadsByEncryptionType,
 } from '@standardnotes/encryption'
@@ -150,7 +146,6 @@ export class SNSyncService
     private payloadManager: PayloadManager,
     private apiService: SNApiService,
     private historyService: SNHistoryManager,
-    private itemApi: ItemsServerInterface,
     private device: DeviceInterface,
     private identifier: string,
     private readonly options: ApplicationSyncOptions,
@@ -217,34 +212,6 @@ export class SNSyncService
 
   public getSyncStatus(): SyncOpStatus {
     return this.opStatus
-  }
-
-  public async getItemAndContentKey(
-    uuid: string,
-  ): Promise<{ payload: DecryptedPayloadInterface; contentKey: string } | undefined> {
-    const itemResponse = await this.itemApi.getSingleItem(uuid)
-    if (itemResponse.data == undefined || isErrorResponse(itemResponse) || !('item' in itemResponse.data)) {
-      return undefined
-    }
-
-    const item = itemResponse.data.item
-
-    const receivedPayloads = FilterDisallowedRemotePayloadsAndMap([item]).map((rawPayload) => {
-      return CreatePayloadFromRawServerItem(rawPayload, PayloadSource.RemoteRetrieved)
-    })
-
-    const payloadSplit = CreateNonDecryptedPayloadSplit(receivedPayloads)
-
-    const { parameters, payload } = await this.protocolService.decryptPayloadWithKeyLookup(payloadSplit.encrypted[0])
-
-    if (isErrorDecryptingParameters(parameters) || isErrorDecryptingPayload(payload)) {
-      return undefined
-    }
-
-    return {
-      payload,
-      contentKey: parameters.contentKey,
-    }
   }
 
   /**

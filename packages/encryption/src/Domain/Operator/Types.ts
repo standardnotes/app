@@ -1,4 +1,4 @@
 import { Base64String } from '@standardnotes/sncrypto-common'
 
-export type AsymmetricallyEncryptedKey = Base64String
-export type SymmetricallyEncryptedPrivateKey = Base64String
+export type AsymmetricallyEncryptedString = Base64String
+export type SymmetricallyEncryptedString = Base64String

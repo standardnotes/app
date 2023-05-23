@@ -1,5 +1,4 @@
-import { ProtocolVersion } from '@standardnotes/common'
-import { GroupKeyInterface, GroupKeyMutator } from '@standardnotes/models'
+import { GroupKeyContentSpecialized, GroupKeyInterface, GroupKeyMutator } from '@standardnotes/models'
 import { GroupInvitesServerInterface } from '@standardnotes/api'
 import { ItemManagerInterface } from '@standardnotes/services'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
@@ -15,8 +14,8 @@ export class AcceptInvite {
   ) {}
 
   async execute(invite: GroupInviteServerHash): Promise<'inserted' | 'changed' | 'errored'> {
-    const decryptionResult = this.encryption.decryptGroupKeyWithPrivateKey(
-      invite.encrypted_group_key,
+    const decryptionResult = this.encryption.decryptGroupDataWithPrivateKey(
+      invite.encrypted_group_data,
       invite.inviter_public_key,
       this.privateKey,
     )
@@ -25,11 +24,7 @@ export class AcceptInvite {
       return 'errored'
     }
 
-    const { modificationType } = await this.createOrUpdateGroupKey(
-      invite,
-      decryptionResult.decryptedKey,
-      decryptionResult.keyVersion,
-    )
+    const { modificationType } = await this.createOrUpdateGroupKey(invite, decryptionResult)
 
     await this.groupInvitesServer.acceptInvite({ groupUuid: invite.group_uuid, inviteUuid: invite.uuid })
 
@@ -38,8 +33,7 @@ export class AcceptInvite {
 
   private async createOrUpdateGroupKey(
     invite: GroupInviteServerHash,
-    decryptedKey: string,
-    keyVersion: ProtocolVersion,
+    decryptedKeyData: GroupKeyContentSpecialized,
   ): Promise<{ groupKey: GroupKeyInterface; modificationType: 'inserted' | 'changed' }> {
     const existingGroupKey = this.encryption.getGroupKey(invite.group_uuid)
 
@@ -47,20 +41,15 @@ export class AcceptInvite {
       const updatedItem = await this.items.changeItem<GroupKeyMutator, GroupKeyInterface>(
         existingGroupKey,
         (mutator) => {
-          mutator.groupKey = decryptedKey
+          mutator.content = decryptedKeyData
         },
       )
+
       return { modificationType: 'changed', groupKey: updatedItem }
     }
 
     const createGroupKey = new CreateGroupKeyUseCase(this.items)
-
-    const newGroupKey = await createGroupKey.execute({
-      groupUuid: invite.group_uuid,
-      groupKey: decryptedKey,
-      keyVersion,
-    })
-
+    const newGroupKey = await createGroupKey.execute(decryptedKeyData)
     return { modificationType: 'inserted', groupKey: newGroupKey }
   }
 }

@@ -9,13 +9,13 @@ import {
   StandardException,
   encryptPayload,
   decryptPayload,
-  GroupKeyInterface,
 } from '@standardnotes/encryption'
 import {
   DecryptedPayload,
   DecryptedPayloadInterface,
   EncryptedPayload,
   EncryptedPayloadInterface,
+  GroupKeyInterface,
   isEncryptedPayload,
   ItemContent,
   ItemsKeyInterface,

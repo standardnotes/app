@@ -14,7 +14,7 @@ export class UpdateGroupInviteUseCase {
     groupUuid: string
     inviteUuid: string
     inviterPublicKey: string
-    encryptedGroupKey: string
+    encryptedGroupData: string
     inviteType: GroupInviteType
     permissions: GroupPermission
   }): Promise<GroupInviteServerHash | ClientDisplayableError> {
@@ -22,7 +22,7 @@ export class UpdateGroupInviteUseCase {
       groupUuid: params.groupUuid,
       inviteUuid: params.inviteUuid,
       inviterPublicKey: params.inviterPublicKey,
-      encryptedGroupKey: params.encryptedGroupKey,
+      encryptedGroupData: params.encryptedGroupData,
       permissions: params.permissions,
     })
 
