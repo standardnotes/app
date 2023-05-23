@@ -14,7 +14,14 @@ const AlertDialog = ({
   })
 
   return (
-    <Dialog store={dialog} role="alertdialog" className="fixed top-0 left-0 z-modal h-full w-full">
+    <Dialog
+      store={dialog}
+      role="alertdialog"
+      className="fixed top-0 left-0 z-modal h-full w-full"
+      modal={false}
+      portal={true}
+      preventBodyScroll={true}
+    >
       <div
         className="absolute z-0 h-full w-full bg-passive-5 opacity-25 md:opacity-75"
         role="presentation"

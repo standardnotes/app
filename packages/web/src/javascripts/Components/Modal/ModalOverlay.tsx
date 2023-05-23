@@ -32,11 +32,9 @@ const ModalOverlay = forwardRef(
         className="fixed top-0 left-0 z-modal h-full w-full"
         ref={mergeRefs([setElement, ref])}
         store={dialog}
-        getPersistentElements={() =>
-          Array.from(document.querySelectorAll('[role="dialog"], [role="alertdialog"]')).map((el) => {
-            return el.parentElement ? el.parentElement : el
-          })
-        }
+        modal={false}
+        portal={true}
+        preventBodyScroll={true}
         {...props}
       >
         {children}
