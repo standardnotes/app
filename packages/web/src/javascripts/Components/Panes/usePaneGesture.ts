@@ -98,6 +98,8 @@ export const usePaneSwipeGesture = (
     }
 
     const touchStartListener = (event: TouchEvent) => {
+      startX = 0
+      clientX = 0
       scrollContainerAxis = null
       canceled = false
 
