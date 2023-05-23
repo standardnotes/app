@@ -376,6 +376,14 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.challengeService
   }
 
+  public get groups(): ExternalServices.GroupServiceInterface {
+    return this.groupService
+  }
+
+  public get contacts(): ExternalServices.ContactServiceInterface {
+    return this.contactService
+  }
+
   public computePrivateUsername(username: string): Promise<string | undefined> {
     return ComputePrivateUsername(this.options.crypto, username)
   }

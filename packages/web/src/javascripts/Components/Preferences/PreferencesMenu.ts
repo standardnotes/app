@@ -24,6 +24,7 @@ const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'account', label: 'Account', icon: 'user' },
   { id: 'general', label: 'General', icon: 'settings' },
   { id: 'security', label: 'Security', icon: 'security' },
+  { id: 'collaboration', label: 'Collaboration', icon: 'share' },
   { id: 'backups', label: 'Backups', icon: 'restore' },
   { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
@@ -38,6 +39,7 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'account', label: 'Account', icon: 'user' },
   { id: 'general', label: 'General', icon: 'settings' },
   { id: 'security', label: 'Security', icon: 'security' },
+  { id: 'collaboration', label: 'Collaboration', icon: 'share' },
   { id: 'backups', label: 'Backups', icon: 'restore' },
   { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
@@ -45,7 +47,7 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
 ]
 
 export class PreferencesMenu {
-  private _selectedPane: PreferenceId = 'account'
+  private _selectedPane: PreferenceId = 'collaboration'
   private _menu: PreferencesMenuItem[]
   private _extensionLatestVersions: PackageProvider = new PackageProvider(new Map())
 

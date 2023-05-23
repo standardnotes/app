@@ -7,13 +7,22 @@ export enum ContactServiceEvent {
 }
 
 export interface ContactServiceInterface extends AbstractService<ContactServiceEvent> {
+  getCollaborationID(): string
+
+  addTrustedContactFromCollaborationID(
+    collaborationID: string,
+    name?: string,
+  ): Promise<TrustedContactInterface | undefined>
+
+  getPendingContactRequests(): ContactServerHash[]
+
+  trustServerContact(serverContact: ContactServerHash, name?: string): Promise<void>
+
   createTrustedContact(params: {
     name: string
     publicKey: string
     contactUuid: string
   }): Promise<TrustedContactInterface | undefined>
-
-  trustServerContact(serverContact: ContactServerHash, name?: string): Promise<void>
 
   getAllContacts(): TrustedContactInterface[]
 

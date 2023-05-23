@@ -5,7 +5,7 @@ import {
   GroupUserServerHash,
   GroupPermission,
 } from '@standardnotes/responses'
-import { TrustedContact, DecryptedItemInterface } from '@standardnotes/models'
+import { TrustedContact, DecryptedItemInterface, GroupKeyInterface } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 
 export enum GroupServiceEvent {
@@ -14,6 +14,10 @@ export enum GroupServiceEvent {
 
 export interface GroupServiceInterface extends AbstractService<GroupServiceEvent> {
   createGroup(): Promise<GroupServerHash | ClientDisplayableError>
+
+  getGroups(): GroupServerHash[]
+
+  getGroupKey(groupUuid: string): GroupKeyInterface | undefined
 
   inviteContactToGroup(
     group: GroupServerHash,

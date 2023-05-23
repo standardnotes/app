@@ -106,6 +106,10 @@ export class GroupService
     this.groupStorage.updateGroups(groups)
   }
 
+  public getGroups(): GroupServerHash[] {
+    return this.groupStorage.getGroups()
+  }
+
   public getPendingInvites(): GroupInviteServerHash[] {
     return Object.values(this.pendingInvites)
   }
