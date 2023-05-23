@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.160.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.8...@standardnotes/web@3.160.9) (2023-05-23)
+
+### Bug Fixes
+
+* Fixed issue where some dialogs would become unresponsive ([1d7079e](https://github.com/standardnotes/app/commit/1d7079e90cf5c4de57a77b408a7b2d399a4a6a38))
+
 ## [3.160.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.7...@standardnotes/web@3.160.8) (2023-05-22)
 
 **Note:** Version bump only for package @standardnotes/web

@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "3.160.9",
+      "title": "[3.160.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.8...@standardnotes/web@3.160.9) (2023-05-23)",
+      "date": null,
+      "body": "### Bug Fixes\n\n* Fixed issue where some dialogs would become unresponsive ([1d7079e](https://github.com/standardnotes/app/commit/1d7079e90cf5c4de57a77b408a7b2d399a4a6a38))",
+      "parsed": {
+        "_": [
+          "Fixed issue where some dialogs would become unresponsive (1d7079e)"
+        ],
+        "Bug Fixes": [
+          "Fixed issue where some dialogs would become unresponsive (1d7079e)"
+        ]
+      }
+    },
+    {
       "version": "3.160.8",
       "title": "[3.160.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.7...@standardnotes/web@3.160.8) (2023-05-22)",
       "date": null,
