@@ -1,4 +1,4 @@
-import { sanitizeHtmlString, SNNote } from '@standardnotes/snjs'
+import { classNames, sanitizeHtmlString, SNNote } from '@standardnotes/snjs'
 import { FunctionComponent } from 'react'
 
 type Props = {
@@ -13,7 +13,12 @@ const ListItemNotePreviewText: FunctionComponent<Props> = ({ item, hidePreview, 
   }
 
   return (
-    <div className={`overflow-hidden overflow-ellipsis text-base lg:text-sm ${item.archived ? 'opacity-60' : ''}`}>
+    <div
+      className={classNames(
+        'overflow-hidden overflow-ellipsis text-base lg:text-sm',
+        item.archived ? 'opacity-60' : '',
+      )}
+    >
       {item.preview_html && (
         <div
           className="my-1"

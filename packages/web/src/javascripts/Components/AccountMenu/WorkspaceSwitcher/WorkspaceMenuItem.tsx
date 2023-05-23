@@ -30,6 +30,7 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
 }) => {
   const [isRenaming, setIsRenaming] = useState(false)
   const [inputValue, setInputValue] = useState(descriptor.label)
+  const itemRef = useRef<HTMLButtonElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -43,8 +44,10 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
   }, [])
 
   const handleInputKeyDown: KeyboardEventHandler = useCallback((event) => {
-    if (event.key === KeyboardKey.Enter) {
-      inputRef.current?.blur()
+    if (event.key === KeyboardKey.Enter || event.key === KeyboardKey.Escape) {
+      event.preventDefault()
+      event.stopPropagation()
+      itemRef.current?.focus()
     }
   }, [])
 
@@ -55,18 +58,14 @@ const WorkspaceMenuItem: FunctionComponent<Props> = ({
 
   return (
     <div className="relative">
-      <MenuRadioButtonItem
-        className="flex w-full cursor-pointer items-center border-0 bg-transparent px-3 py-2 text-left text-mobile-menu-item text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none md:text-tablet-menu-item lg:text-menu-item"
-        onClick={onClick}
-        checked={descriptor.primary}
-      >
-        <div className="ml-2 flex w-full items-center justify-between">
-          {!isRenaming && <div>{descriptor.label}</div>}
+      <MenuRadioButtonItem ref={itemRef} className="overflow-hidden" onClick={onClick} checked={descriptor.primary}>
+        <div className="ml-2 flex w-full items-center justify-between gap-3 overflow-hidden">
+          {!isRenaming && <div className="overflow-hidden text-ellipsis">{descriptor.label}</div>}
           {descriptor.primary && !hideOptions && (
-            <div className="flex items-center">
+            <div className="flex items-center gap-3">
               <a
                 role="button"
-                className="mr-3 flex h-5 w-5 cursor-pointer items-center justify-center border-0 bg-transparent p-0 hover:bg-contrast"
+                className="flex h-5 w-5 cursor-pointer items-center justify-center border-0 bg-transparent p-0 hover:bg-contrast"
                 onClick={(e) => {
                   e.stopPropagation()
                   setIsRenaming((isRenaming) => !isRenaming)

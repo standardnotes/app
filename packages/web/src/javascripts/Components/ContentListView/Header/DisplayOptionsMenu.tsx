@@ -29,6 +29,57 @@ import { PaneLayout } from '@/Controllers/PaneController/PaneLayout'
 
 const DailyEntryModeEnabled = true
 
+const SortIcon = ({ enabled, reverse }: { enabled: boolean; reverse: boolean | undefined }) => {
+  if (!enabled) {
+    return null
+  }
+  return (
+    <Icon
+      type={reverse ? 'arrows-sort-up' : 'arrows-sort-down'}
+      className="h-6 w-6 text-neutral md:h-5 md:w-6"
+      size="custom"
+    />
+  )
+}
+
+const TabButton: FunctionComponent<{
+  label: string
+  mode: PreferenceMode
+  icon?: VectorIconNameOrEmoji
+  currentMode: PreferenceMode
+  setCurrentMode: (mode: PreferenceMode) => void
+}> = ({ mode, label, icon, currentMode, setCurrentMode }) => {
+  const isSelected = currentMode === mode
+
+  return (
+    <button
+      className={classNames(
+        'relative cursor-pointer rounded-full border-2 border-solid border-transparent py-1 px-2 text-mobile-menu-item focus:shadow-none md:py-0 lg:text-sm',
+        isSelected
+          ? 'bg-info text-info-contrast'
+          : 'bg-transparent text-text hover:bg-info-backdrop focus:bg-info-backdrop',
+      )}
+      onClick={() => {
+        setCurrentMode(mode)
+      }}
+    >
+      <div className="flex items-center justify-center">
+        {icon && (
+          <Icon
+            size="custom"
+            type={icon as IconType}
+            className={classNames(
+              'mr-1 h-4.5 w-4.5 cursor-pointer md:h-3.5 md:w-3.5',
+              isSelected ? 'text-info-contrast' : 'text-neutral',
+            )}
+          />
+        )}
+        <div>{label}</div>
+      </div>
+    </button>
+  )
+}
+
 const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
   application,
   isOpen,
@@ -227,39 +278,6 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
     }
   }, [preferences.useTableView, changePreferences, paneController])
 
-  const TabButton: FunctionComponent<{
-    label: string
-    mode: PreferenceMode
-    icon?: VectorIconNameOrEmoji
-  }> = ({ mode, label, icon }) => {
-    const isSelected = currentMode === mode
-
-    return (
-      <button
-        className={classNames(
-          'relative cursor-pointer rounded-full border-2 border-solid border-transparent px-2 text-base focus:shadow-none lg:text-sm',
-          isSelected
-            ? 'bg-info text-info-contrast'
-            : 'bg-transparent text-text hover:bg-info-backdrop focus:bg-info-backdrop',
-        )}
-        onClick={() => {
-          setCurrentMode(mode)
-        }}
-      >
-        <div className="flex items-center justify-center">
-          {icon && (
-            <Icon
-              size="small"
-              type={icon as IconType}
-              className={classNames('mr-1 cursor-pointer', isSelected ? 'text-info-contrast' : 'text-neutral')}
-            />
-          )}
-          <div>{label}</div>
-        </div>
-      </button>
-    )
-  }
-
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const isTableViewEnabled = Boolean(isFilesSmartView || preferences.useTableView)
   const shouldHideNonApplicableOptions = isTableViewEnabled && !isMobileScreen
@@ -269,8 +287,14 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
       <div className="my-1 px-3 text-base font-semibold uppercase text-text lg:text-xs">Preferences for</div>
       <div className={classNames('mt-1.5 flex w-full justify-between px-3', !controlsDisabled && 'mb-3')}>
         <div className="flex items-center gap-1.5">
-          <TabButton label="Global" mode="global" />
-          <TabButton label={selectedTag.title} icon={selectedTag.iconString} mode="tag" />
+          <TabButton label="Global" mode="global" currentMode={currentMode} setCurrentMode={setCurrentMode} />
+          <TabButton
+            label={selectedTag.title}
+            icon={selectedTag.iconString}
+            mode="tag"
+            currentMode={currentMode}
+            setCurrentMode={setCurrentMode}
+          />
         </div>
         {currentMode === 'tag' && (
           <button className="text-base lg:text-sm" onClick={resetTagPreferences}>
@@ -301,15 +325,9 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         onClick={toggleSortByDateModified}
         checked={preferences.sortBy === CollectionSort.UpdatedAt}
       >
-        <div className="ml-2 flex flex-grow items-center justify-between">
+        <div className="ml-1 flex flex-grow items-center justify-between md:ml-2">
           <span>Date modified</span>
-          {preferences.sortBy === CollectionSort.UpdatedAt ? (
-            preferences.sortReverse ? (
-              <Icon type="arrows-sort-up" className="text-neutral" />
-            ) : (
-              <Icon type="arrows-sort-down" className="text-neutral" />
-            )
-          ) : null}
+          <SortIcon enabled={preferences.sortBy === CollectionSort.UpdatedAt} reverse={preferences.sortReverse} />
         </div>
       </MenuRadioButtonItem>
       <MenuRadioButtonItem
@@ -318,15 +336,9 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         onClick={toggleSortByCreationDate}
         checked={preferences.sortBy === CollectionSort.CreatedAt}
       >
-        <div className="ml-2 flex flex-grow items-center justify-between">
+        <div className="ml-1 flex flex-grow items-center justify-between md:ml-2">
           <span>Creation date</span>
-          {preferences.sortBy === CollectionSort.CreatedAt ? (
-            preferences.sortReverse ? (
-              <Icon type="arrows-sort-up" className="text-neutral" />
-            ) : (
-              <Icon type="arrows-sort-down" className="text-neutral" />
-            )
-          ) : null}
+          <SortIcon enabled={preferences.sortBy === CollectionSort.CreatedAt} reverse={preferences.sortReverse} />
         </div>
       </MenuRadioButtonItem>
       <MenuRadioButtonItem
@@ -335,15 +347,9 @@ const DisplayOptionsMenu: FunctionComponent<DisplayOptionsMenuProps> = ({
         onClick={toggleSortByTitle}
         checked={preferences.sortBy === CollectionSort.Title}
       >
-        <div className="ml-2 flex flex-grow items-center justify-between">
+        <div className="ml-1 flex flex-grow items-center justify-between md:ml-2">
           <span>Title</span>
-          {preferences.sortBy === CollectionSort.Title ? (
-            preferences.sortReverse ? (
-              <Icon type="arrows-sort-up" className="text-neutral" />
-            ) : (
-              <Icon type="arrows-sort-down" className="text-neutral" />
-            )
-          ) : null}
+          <SortIcon enabled={preferences.sortBy === CollectionSort.Title} reverse={preferences.sortReverse} />
         </div>
       </MenuRadioButtonItem>
       <>

@@ -16,6 +16,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const syncServerHostName = urlParams.get('sync_server_host_name') ?? 'syncing-server-proxy';
     const bail = urlParams.get('bail') === 'false' ? false : true;
+    const skipPaidFeatures = urlParams.get('skip_paid_features') === 'true' ? true : false;
 
     Object.assign(window, SNCrypto);
 
@@ -29,9 +30,14 @@
       console.error(error);
     };
 
-    mocha.setup('bdd');
-    mocha.timeout(5000);
-    mocha.bail(bail);
+    mocha.setup({
+      ui: 'bdd',
+      timeout: 5000,
+      bail: bail,
+    });
+    if (skipPaidFeatures) {
+      mocha.grep('@paidfeature').invert();
+    }
   </script>
   <script type="module" src="memory.test.js"></script>
   <script type="module" src="protocol.test.js"></script>

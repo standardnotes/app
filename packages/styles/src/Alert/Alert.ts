@@ -111,14 +111,16 @@ export class SKAlert {
           </button>
          </div>`
       : ''
-    const messageTemplate = this.text ? `<p class='sk-p text-base lg:text-sm'>${this.text}</p>` : ''
+    const messageTemplate = this.text
+      ? `<p class='sk-p text-base lg:text-sm' style="max-width: 100%; overflow: hidden; text-overflow: ellipsis;">${this.text}</p>`
+      : ''
 
     const template = `
       <div class="sk-modal">
         <div class="sk-modal-background"></div>
         <div class="sk-modal-content">
           <div class="sn-component">
-            <div class="sk-panel" style='max-width: 500px;'>
+            <div class="sk-panel" style='max-width: min(95vw, 500px);'>
               <div class="sk-panel-content" ${panelStyle}>
                 <div class="sk-panel-section">
                   ${titleTemplate}

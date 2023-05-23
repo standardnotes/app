@@ -5,6 +5,7 @@ import {
   EditorLineHeight,
   EditorFontSize,
   EditorLineWidth,
+  PrefValue,
 } from '@standardnotes/models'
 import { FeatureIdentifier } from '@standardnotes/snjs'
 
@@ -36,5 +37,13 @@ export const PrefDefaults = {
   [PrefKey.NewNoteTitleFormat]: NewNoteTitleFormat.CurrentDateAndTime,
   [PrefKey.CustomNoteTitleFormat]: 'YYYY-MM-DD [at] hh:mm A',
   [PrefKey.UpdateSavingStatusIndicator]: true,
-  [PrefKey.DarkMode]: false,
-} as const
+  [PrefKey.PaneGesturesEnabled]: true,
+  [PrefKey.MomentsDefaultTagUuid]: undefined,
+  [PrefKey.ClipperDefaultTagUuid]: undefined,
+  [PrefKey.DefaultEditorIdentifier]: FeatureIdentifier.PlainEditor,
+  [PrefKey.SuperNoteExportFormat]: 'json',
+  [PrefKey.SystemViewPreferences]: {},
+  [PrefKey.AuthenticatorNames]: '',
+} satisfies {
+  [key in PrefKey]: PrefValue[key]
+}

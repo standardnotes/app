@@ -9,16 +9,16 @@ import {
   SUPER_EXPORT_JSON,
   SUPER_EXPORT_MARKDOWN,
 } from '@standardnotes/ui-services'
-import { useCallback, useEffect } from 'react'
-import { $convertToMarkdownString } from '@lexical/markdown'
-import { MarkdownTransformers } from '../../MarkdownTransformers'
-import { $generateHtmlFromNodes } from '@lexical/html'
+import { useCallback, useEffect, useRef } from 'react'
 import { useCommandService } from '@/Components/CommandProvider'
+import { HeadlessSuperConverter } from '../../Tools/HeadlessSuperConverter'
 
 export const ExportPlugin = () => {
   const application = useApplication()
   const [editor] = useLexicalComposerContext()
   const commandService = useCommandService()
+
+  const converter = useRef(new HeadlessSuperConverter())
 
   const downloadData = useCallback(
     (data: Blob, fileName: string) => {
@@ -38,7 +38,7 @@ export const ExportPlugin = () => {
 
   const exportJson = useCallback(
     (title: string) => {
-      const content = JSON.stringify(editor.toJSON())
+      const content = converter.current.convertString(JSON.stringify(editor.getEditorState()), 'json')
       const blob = new Blob([content], { type: 'application/json' })
       downloadData(blob, `${sanitizeFileName(title)}.json`)
     },
@@ -47,22 +47,18 @@ export const ExportPlugin = () => {
 
   const exportMarkdown = useCallback(
     (title: string) => {
-      editor.getEditorState().read(() => {
-        const content = $convertToMarkdownString(MarkdownTransformers)
-        const blob = new Blob([content], { type: 'text/markdown' })
-        downloadData(blob, `${sanitizeFileName(title)}.md`)
-      })
+      const content = converter.current.convertString(JSON.stringify(editor.getEditorState()), 'md')
+      const blob = new Blob([content], { type: 'text/markdown' })
+      downloadData(blob, `${sanitizeFileName(title)}.md`)
     },
     [downloadData, editor],
   )
 
   const exportHtml = useCallback(
     (title: string) => {
-      editor.getEditorState().read(() => {
-        const content = $generateHtmlFromNodes(editor)
-        const blob = new Blob([content], { type: 'text/html' })
-        downloadData(blob, `${sanitizeFileName(title)}.html`)
-      })
+      const content = converter.current.convertString(JSON.stringify(editor.getEditorState()), 'html')
+      const blob = new Blob([content], { type: 'text/html' })
+      downloadData(blob, `${sanitizeFileName(title)}.html`)
     },
     [downloadData, editor],
   )

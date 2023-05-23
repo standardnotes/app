@@ -36,6 +36,7 @@ import MenuItem from '../Menu/MenuItem'
 import ModalOverlay from '../Modal/ModalOverlay'
 import SuperExportModal from './SuperExportModal'
 import { useApplication } from '../ApplicationProvider'
+import { MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -134,7 +135,10 @@ const NotesOptions = ({
   }, [application, notes])
 
   const closeMenuAndToggleNotesList = useCallback(() => {
-    toggleAppPane(AppPaneId.Items)
+    const isMobileScreen = matchMedia(MutuallyExclusiveMediaQueryBreakpoints.sm).matches
+    if (isMobileScreen) {
+      toggleAppPane(AppPaneId.Items)
+    }
     closeMenu()
   }, [closeMenu, toggleAppPane])
 
@@ -409,7 +413,7 @@ const NotesOptions = ({
         </>
       ) : null}
 
-      <ModalOverlay isOpen={showExportSuperModal}>
+      <ModalOverlay isOpen={showExportSuperModal} close={closeSuperExportModal}>
         <SuperExportModal exportNotes={downloadSelectedItems} close={closeSuperExportModal} />
       </ModalOverlay>
     </>

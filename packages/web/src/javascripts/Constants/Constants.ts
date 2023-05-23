@@ -38,7 +38,7 @@ export const SuperEditorMetadata: EditorMetadata = {
   name: 'Super',
   icon: 'file-doc',
   subtleIcon: 'format-align-left',
-  iconClassName: 'text-accessory-tint-4',
+  iconClassName: 'text-accessory-tint-1',
   iconTintNumber: 1,
 }
 

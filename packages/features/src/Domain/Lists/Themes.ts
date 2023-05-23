@@ -2,12 +2,10 @@ import { ThemeFeatureDescription } from '../Feature/FeatureDescription'
 import { PermissionName } from '../Permission/PermissionName'
 import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
 import { FillThemeComponentDefaults } from './Utilities/FillThemeComponentDefaults'
-import { SubscriptionName } from '@standardnotes/common'
 import { RoleName } from '@standardnotes/domain-core'
 
 export function themes(): ThemeFeatureDescription[] {
   const midnight: ThemeFeatureDescription = FillThemeComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     name: 'Midnight',
     identifier: FeatureIdentifier.MidnightTheme,
     permission_name: PermissionName.MidnightTheme,
@@ -22,7 +20,6 @@ export function themes(): ThemeFeatureDescription[] {
   })
 
   const futura: ThemeFeatureDescription = FillThemeComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
     name: 'Futura',
     identifier: FeatureIdentifier.FuturaTheme,
@@ -37,7 +34,6 @@ export function themes(): ThemeFeatureDescription[] {
   })
 
   const solarizedDark: ThemeFeatureDescription = FillThemeComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
     name: 'Solarized Dark',
     identifier: FeatureIdentifier.SolarizedDarkTheme,
@@ -52,7 +48,6 @@ export function themes(): ThemeFeatureDescription[] {
   })
 
   const autobiography: ThemeFeatureDescription = FillThemeComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
     name: 'Autobiography',
     identifier: FeatureIdentifier.AutobiographyTheme,
@@ -66,7 +61,7 @@ export function themes(): ThemeFeatureDescription[] {
   })
 
   const dark: ThemeFeatureDescription = FillThemeComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
+    availableInRoles: [RoleName.NAMES.CoreUser, RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
     name: 'Dark',
     identifier: FeatureIdentifier.DarkTheme,
     permission_name: PermissionName.FocusedTheme,
@@ -81,7 +76,6 @@ export function themes(): ThemeFeatureDescription[] {
   })
 
   const titanium: ThemeFeatureDescription = FillThemeComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
     name: 'Titanium',
     identifier: FeatureIdentifier.TitaniumTheme,
@@ -95,7 +89,6 @@ export function themes(): ThemeFeatureDescription[] {
   })
 
   const dynamic: ThemeFeatureDescription = FillThemeComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
     name: 'Dynamic Panels',
     identifier: FeatureIdentifier.DynamicTheme,

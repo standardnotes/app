@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/web",
-  "version": "3.158.4",
+  "version": "3.160.10",
   "license": "AGPL-3.0-or-later",
   "main": "dist/app.js",
   "author": "Standard Notes",
@@ -27,7 +27,7 @@
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@babel/plugin-transform-react-jsx": "^7.19.0",
     "@babel/preset-env": "*",
-    "@babel/preset-typescript": "^7.18.6",
+    "@babel/preset-typescript": "^7.21.5",
     "@lexical/react": "0.10.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@simplewebauthn/browser": "^7.1.0",
@@ -62,13 +62,13 @@
     "@types/wicg-file-system-access": "^2020.9.5",
     "@zip.js/zip.js": "^2.6.60",
     "autoprefixer": "^10.4.13",
-    "babel-loader": "^9.1.0",
+    "babel-loader": "^9.1.2",
     "circular-dependency-plugin": "^5.2.2",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "*",
     "dayjs": "^1.11.7",
     "dotenv": "^16.0.3",
-    "eslint": "^8.29.0",
+    "eslint": "*",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-react": "^7.31.11",
     "eslint-plugin-react-hooks": "^4.6.0",
@@ -107,9 +107,8 @@
     "app/**/*.{js,ts,jsx,tsx,css,md}": "prettier --write"
   },
   "dependencies": {
-    "@ariakit/react": "^0.1.2",
+    "@ariakit/react": "^0.2.1",
     "@lexical/headless": "0.10.0",
-    "@radix-ui/react-slot": "^1.0.1",
-    "contactjs": "2.1.5"
+    "@radix-ui/react-slot": "^1.0.1"
   }
 }

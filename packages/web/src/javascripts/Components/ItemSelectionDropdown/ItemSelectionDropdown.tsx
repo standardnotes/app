@@ -1,6 +1,13 @@
 import { doesItemMatchSearchQuery } from '@/Utils/Items/Search/doesItemMatchSearchQuery'
-import { Combobox, ComboboxItem, ComboboxPopover, useComboboxStore, VisuallyHidden } from '@ariakit/react'
-import { ContentType, DecryptedItem, naturalSort } from '@standardnotes/snjs'
+import {
+  Combobox,
+  ComboboxItem,
+  ComboboxPopover,
+  ComboboxStoreProps,
+  useComboboxStore,
+  VisuallyHidden,
+} from '@ariakit/react'
+import { classNames, ContentType, DecryptedItem, naturalSort } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { useDeferredValue, useEffect, useState } from 'react'
 import { useApplication } from '../ApplicationProvider'
@@ -10,13 +17,25 @@ type Props = {
   contentTypes: ContentType[]
   placeholder: string
   onSelection: (item: DecryptedItem) => void
+  className?: {
+    input?: string
+    popover?: string
+  }
+  comboboxProps?: ComboboxStoreProps
 }
 
-const ItemSelectionDropdown = ({ contentTypes, placeholder, onSelection }: Props) => {
+const ItemSelectionDropdown = ({ contentTypes, placeholder, onSelection, comboboxProps, className = {} }: Props) => {
   const application = useApplication()
 
-  const combobox = useComboboxStore()
+  const combobox = useComboboxStore(comboboxProps)
   const value = combobox.useState('value')
+  const open = combobox.useState('open')
+  useEffect(() => {
+    if (value.length < 1 && open) {
+      combobox.setOpen(false)
+    }
+  }, [combobox, open, value.length])
+
   const searchQuery = useDeferredValue(value)
   const [items, setItems] = useState<DecryptedItem[]>([])
 
@@ -30,17 +49,21 @@ const ItemSelectionDropdown = ({ contentTypes, placeholder, onSelection }: Props
 
   return (
     <div>
-      <label>
-        <VisuallyHidden>Select an item</VisuallyHidden>
-        <Combobox
-          store={combobox}
-          placeholder={placeholder}
-          className="h-7 w-70 bg-transparent text-sm text-text focus:border-b-2 focus:border-info focus:shadow-none focus:outline-none lg:text-xs"
-        />
-      </label>
+      <VisuallyHidden>Select an item</VisuallyHidden>
+      <Combobox
+        store={combobox}
+        placeholder={placeholder}
+        className={classNames(
+          'h-7 w-70 bg-transparent text-sm text-text focus:border-b-2 focus:border-info focus:shadow-none focus:outline-none lg:text-xs',
+          className.input,
+        )}
+      />
       <ComboboxPopover
         store={combobox}
-        className="z-dropdown-menu max-h-[var(--popover-available-height)] w-[var(--popover-anchor-width)] overflow-y-auto rounded bg-default py-2 shadow-main"
+        className={classNames(
+          'z-dropdown-menu max-h-[var(--popover-available-height)] w-[var(--popover-anchor-width)] overflow-y-auto rounded bg-default py-2 shadow-main',
+          className.popover,
+        )}
       >
         {items.length > 0 ? (
           items.map((item) => (

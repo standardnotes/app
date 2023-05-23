@@ -1,7 +1,6 @@
 import { FeatureDescription } from '../Feature/FeatureDescription'
 import { PermissionName } from '../Permission/PermissionName'
 import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
-import { SubscriptionName } from '@standardnotes/common'
 import { RoleName } from '@standardnotes/domain-core'
 import { themes } from './Themes'
 import { editors } from './Editors'
@@ -12,7 +11,6 @@ export function clientFeatures(): FeatureDescription[] {
     ...editors(),
     {
       name: 'Tag Nesting',
-      availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
       identifier: FeatureIdentifier.TagNesting,
       permission_name: PermissionName.TagNesting,
@@ -21,7 +19,6 @@ export function clientFeatures(): FeatureDescription[] {
     {
       name: 'Super Notes',
       identifier: FeatureIdentifier.SuperEditor,
-      availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
       permission_name: PermissionName.SuperEditor,
       description:
@@ -29,7 +26,6 @@ export function clientFeatures(): FeatureDescription[] {
     },
     {
       name: 'Smart Filters',
-      availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
       identifier: FeatureIdentifier.SmartFilters,
       permission_name: PermissionName.SmartFilters,
@@ -37,7 +33,6 @@ export function clientFeatures(): FeatureDescription[] {
     },
     {
       name: 'Encrypted files',
-      availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
       identifier: FeatureIdentifier.Files,
       permission_name: PermissionName.Files,
@@ -45,7 +40,6 @@ export function clientFeatures(): FeatureDescription[] {
     },
     {
       name: 'Extension',
-      availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
       availableInRoles: [RoleName.NAMES.PlusUser, RoleName.NAMES.ProUser],
       identifier: FeatureIdentifier.Extension,
       permission_name: PermissionName.Extension,

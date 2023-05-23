@@ -1,4 +1,4 @@
-import { ContentType, SubscriptionName } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import {
   EditorFeatureDescription,
   IframeComponentFeatureDescription,
@@ -14,7 +14,6 @@ import { RoleName } from '@standardnotes/domain-core'
 
 export function GetDeprecatedFeatures(): FeatureDescription[] {
   const bold: EditorFeatureDescription = FillEditorComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     name: 'Alternative Rich Text',
     identifier: FeatureIdentifier.DeprecatedBoldEditor,
     note_type: NoteType.RichText,
@@ -42,7 +41,6 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
   })
 
   const markdownBasic: EditorFeatureDescription = FillEditorComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     name: 'Basic Markdown',
     identifier: FeatureIdentifier.DeprecatedMarkdownBasicEditor,
     note_type: NoteType.Markdown,
@@ -56,7 +54,6 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
   })
 
   const markdownAlt: EditorFeatureDescription = FillEditorComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     name: 'Markdown Alternative',
     identifier: FeatureIdentifier.DeprecatedMarkdownVisualEditor,
     note_type: NoteType.Markdown,
@@ -71,7 +68,6 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
   })
 
   const markdownMinimist: EditorFeatureDescription = FillEditorComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     name: 'Minimal Markdown',
     identifier: FeatureIdentifier.DeprecatedMarkdownMinimistEditor,
     note_type: NoteType.Markdown,
@@ -86,7 +82,6 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
   })
 
   const markdownMath: EditorFeatureDescription = FillEditorComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     name: 'Markdown with Math',
     identifier: FeatureIdentifier.DeprecatedMarkdownMathEditor,
     spellcheckControl: true,
@@ -101,7 +96,6 @@ export function GetDeprecatedFeatures(): FeatureDescription[] {
   })
 
   const filesafe: IframeComponentFeatureDescription = FillEditorComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     name: 'FileSafe',
     identifier: FeatureIdentifier.DeprecatedFileSafe,
     component_permissions: [

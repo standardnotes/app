@@ -14,7 +14,14 @@ const AlertDialog = ({
   })
 
   return (
-    <Dialog store={dialog} role="alertdialog" className="h-full w-full" backdropProps={{ className: '!z-modal' }}>
+    <Dialog
+      store={dialog}
+      role="alertdialog"
+      className="fixed top-0 left-0 z-modal h-full w-full"
+      modal={false}
+      portal={true}
+      preventBodyScroll={true}
+    >
       <div
         className="absolute z-0 h-full w-full bg-passive-5 opacity-25 md:opacity-75"
         role="presentation"
@@ -22,7 +29,7 @@ const AlertDialog = ({
       />
       <div
         className={classNames(
-          'absolute top-1/2 left-1/2 z-[1] -translate-x-1/2 -translate-y-1/2 rounded border border-border bg-default px-6 py-5 shadow-xl',
+          'absolute top-1/2 left-1/2 z-[1] w-[95vw] -translate-x-1/2 -translate-y-1/2 rounded border border-border bg-default px-6 py-5 shadow-xl md:w-auto',
           !className?.includes('max-w-') && 'max-w-[600px]',
           className,
         )}

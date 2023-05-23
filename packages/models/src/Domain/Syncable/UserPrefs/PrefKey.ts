@@ -28,19 +28,9 @@ export enum PrefKey {
   AutoLightThemeIdentifier = 'autoLightThemeIdentifier',
   AutoDarkThemeIdentifier = 'autoDarkThemeIdentifier',
   NoteAddToParentFolders = 'noteAddToParentFolders',
-  MobileSortNotesBy = 'mobileSortBy',
-  MobileSortNotesReverse = 'mobileSortReverse',
-  MobileNotesHideNotePreview = 'mobileHideNotePreview',
-  MobileNotesHideDate = 'mobileHideDate',
-  MobileNotesHideTags = 'mobileHideTags',
-  MobileLastExportDate = 'mobileLastExportDate',
-  MobileDoNotShowAgainUnsupportedEditors = 'mobileDoNotShowAgainUnsupportedEditors',
-  MobileSelectedTagUuid = 'mobileSelectedTagUuid',
-  MobileNotesHideEditorIcon = 'mobileHideEditorIcon',
   NewNoteTitleFormat = 'newNoteTitleFormat',
   CustomNoteTitleFormat = 'customNoteTitleFormat',
   UpdateSavingStatusIndicator = 'updateSavingStatusIndicator',
-  DarkMode = 'darkMode',
   DefaultEditorIdentifier = 'defaultEditorIdentifier',
   MomentsDefaultTagUuid = 'momentsDefaultTagUuid',
   ClipperDefaultTagUuid = 'clipperDefaultTagUuid',
@@ -103,22 +93,12 @@ export type PrefValue = {
   [PrefKey.AutoLightThemeIdentifier]: FeatureIdentifier | 'Default' | 'Dark'
   [PrefKey.AutoDarkThemeIdentifier]: FeatureIdentifier | 'Default' | 'Dark'
   [PrefKey.NoteAddToParentFolders]: boolean
-  [PrefKey.MobileSortNotesBy]: CollectionSortProperty
-  [PrefKey.MobileSortNotesReverse]: boolean
-  [PrefKey.MobileNotesHideNotePreview]: boolean
-  [PrefKey.MobileNotesHideDate]: boolean
-  [PrefKey.MobileNotesHideTags]: boolean
-  [PrefKey.MobileLastExportDate]: Date | undefined
-  [PrefKey.MobileDoNotShowAgainUnsupportedEditors]: boolean
-  [PrefKey.MobileSelectedTagUuid]: string | undefined
-  [PrefKey.MobileNotesHideEditorIcon]: boolean
   [PrefKey.NewNoteTitleFormat]: NewNoteTitleFormat
   [PrefKey.CustomNoteTitleFormat]: string
   [PrefKey.EditorLineHeight]: EditorLineHeight
   [PrefKey.EditorLineWidth]: EditorLineWidth
   [PrefKey.EditorFontSize]: EditorFontSize
   [PrefKey.UpdateSavingStatusIndicator]: boolean
-  [PrefKey.DarkMode]: boolean
   [PrefKey.DefaultEditorIdentifier]: EditorIdentifier
   [PrefKey.MomentsDefaultTagUuid]: string | undefined
   [PrefKey.ClipperDefaultTagUuid]: string | undefined

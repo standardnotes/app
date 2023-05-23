@@ -162,7 +162,9 @@ const MobileToolbarPlugin = () => {
     const handleFocus = () => setIsInEditor(true)
     const handleBlur = (event: FocusEvent) => {
       const elementToBeFocused = event.relatedTarget as Node
-      if (toolbarRef.current?.contains(elementToBeFocused) || elementToBeFocused === backspaceButtonRef.current) {
+      const toolbarContainsElementToFocus = toolbarRef.current && toolbarRef.current.contains(elementToBeFocused)
+      const willFocusBackspaceButton = backspaceButtonRef.current && elementToBeFocused === backspaceButtonRef.current
+      if (toolbarContainsElementToFocus || willFocusBackspaceButton) {
         return
       }
       setIsInEditor(false)

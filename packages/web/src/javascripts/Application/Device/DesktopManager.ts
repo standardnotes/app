@@ -1,4 +1,4 @@
-import { InvisibleSuperConverter } from '@/Components/SuperEditor/Tools/InvisibleMarkdownConverter'
+import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
 import {
   SNComponent,
   ComponentMutator,
@@ -40,7 +40,7 @@ export class DesktopManager
   ) {
     super(application, new InternalEventBus())
 
-    const markdownConverter = new InvisibleSuperConverter()
+    const markdownConverter = new HeadlessSuperConverter()
     backups.setSuperConverter(markdownConverter)
   }
 

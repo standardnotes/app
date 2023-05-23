@@ -76,7 +76,7 @@ const U2FView: FunctionComponent<Props> = ({ application, userProvider }) => {
           </PreferencesSegment>
         )}
       </PreferencesGroup>
-      <ModalOverlay isOpen={showDeviceAddingModal}>
+      <ModalOverlay isOpen={showDeviceAddingModal} close={() => setShowDeviceAddingModal(false)}>
         <U2FAddDeviceView
           onDeviceAddingModalToggle={setShowDeviceAddingModal}
           onDeviceAdded={loadAuthenticatorDevices}

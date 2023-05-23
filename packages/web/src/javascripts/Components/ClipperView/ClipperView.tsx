@@ -1,6 +1,5 @@
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { SNLogoFull } from '@standardnotes/icons'
 import { useCallback, useEffect, useState } from 'react'
 import { AccountMenuPane } from '../AccountMenu/AccountMenuPane'
 import MenuPaneSelector from '../AccountMenu/MenuPaneSelector'
@@ -37,12 +36,6 @@ import ItemSelectionDropdown from '../ItemSelectionDropdown/ItemSelectionDropdow
 import LinkedItemBubble from '../LinkedItems/LinkedItemBubble'
 import StyledTooltip from '../StyledTooltip/StyledTooltip'
 import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
-
-const Header = () => (
-  <div className="flex items-center border-b border-border p-1 px-3 py-2 text-base font-semibold text-info-contrast">
-    <SNLogoFull className="h-7" />
-  </div>
-)
 
 const ClipperView = ({
   viewControllerManager,
@@ -88,8 +81,9 @@ const ClipperView = ({
     })
   }, [application])
 
-  const defaultTagId = usePreference<string>(PrefKey.ClipperDefaultTagUuid)
+  const defaultTagId = usePreference(PrefKey.ClipperDefaultTagUuid)
   const [defaultTag, setDefaultTag] = useState<SNTag | undefined>()
+  const defaultTagRef = useStateRef(defaultTag)
 
   useEffect(() => {
     if (!defaultTagId) {
@@ -204,7 +198,11 @@ const ClipperView = ({
           type: 'image/png',
         })
 
-        viewControllerManager.filesController.uploadNewFile(file).catch(console.error)
+        const uploadedFile = await viewControllerManager.filesController.uploadNewFile(file).catch(console.error)
+
+        if (uploadedFile && defaultTagRef.current) {
+          await application.linkingController.linkItems(uploadedFile, defaultTagRef.current)
+        }
 
         return
       }
@@ -221,8 +219,8 @@ const ClipperView = ({
 
       const insertedNote = await application.items.insertItem(note)
 
-      if (defaultTag) {
-        await application.linkingController.linkItems(insertedNote, defaultTag)
+      if (defaultTagRef.current) {
+        await application.linkingController.linkItems(insertedNote, defaultTagRef.current)
       }
 
       setClippedNote(insertedNote as SNNote)
@@ -241,7 +239,7 @@ const ClipperView = ({
     application.linkingController,
     application.sync,
     clipPayload,
-    defaultTag,
+    defaultTagRef,
     isEntitledRef,
     viewControllerManager.filesController,
   ])
@@ -257,107 +255,73 @@ const ClipperView = ({
 
   if (user && !isEntitledToExtension) {
     return (
-      <>
-        <Header />
-        <div className="px-3 py-3">
-          <div
-            className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-[50%] bg-contrast"
-            aria-hidden={true}
-          >
-            <Icon className={`h-12 w-12 ${PremiumFeatureIconClass}`} size={'custom'} type={PremiumFeatureIconName} />
-          </div>
-          <div className="mb-1 text-center text-lg font-bold">Enable Advanced Features</div>
-          <div className="mb-3 text-center">
-            To take advantage of <span className="font-semibold">Web Clipper</span> and other advanced features, upgrade
-            your current plan.
-          </div>
-          <Button className="mb-2" fullWidth primary onClick={upgradePlan}>
-            Upgrade
-          </Button>
-          <Button fullWidth onClick={showSignOutConfirmation}>
-            Sign out
-          </Button>
+      <div className="px-3 py-3">
+        <div
+          className="mx-auto mb-5 flex h-24 w-24 items-center justify-center rounded-[50%] bg-contrast"
+          aria-hidden={true}
+        >
+          <Icon className={`h-12 w-12 ${PremiumFeatureIconClass}`} size={'custom'} type={PremiumFeatureIconName} />
         </div>
-      </>
+        <div className="mb-1 text-center text-lg font-bold">Enable Advanced Features</div>
+        <div className="mb-3 text-center">
+          To take advantage of <span className="font-semibold">Web Clipper</span> and other advanced features, upgrade
+          your current plan.
+        </div>
+        <Button className="mb-2" fullWidth primary onClick={upgradePlan}>
+          Upgrade
+        </Button>
+        <Button fullWidth onClick={showSignOutConfirmation}>
+          Sign out
+        </Button>
+      </div>
     )
   }
 
   if (clippedNote) {
     return (
-      <>
-        <Header />
-        <ClippedNoteView
-          note={clippedNote}
-          key={clippedNote.uuid}
-          linkingController={viewControllerManager.linkingController}
-          clearClip={clearClip}
-          isFirefoxPopup={isFirefoxPopup}
-        />
-      </>
+      <ClippedNoteView
+        note={clippedNote}
+        key={clippedNote.uuid}
+        linkingController={viewControllerManager.linkingController}
+        clearClip={clearClip}
+        isFirefoxPopup={isFirefoxPopup}
+      />
     )
   }
 
   if (!user) {
-    return (
-      <>
-        <Header />
-        {menuPane ? (
-          <div className="py-1">
-            <MenuPaneSelector
-              viewControllerManager={viewControllerManager}
-              application={application}
-              mainApplicationGroup={applicationGroup}
-              menuPane={menuPane}
-              setMenuPane={setMenuPane}
-              closeMenu={() => setMenuPane(undefined)}
-            />
-          </div>
-        ) : (
-          <Menu a11yLabel="User account menu" isOpen={true}>
-            <MenuItem onClick={activateRegisterPane}>
-              <Icon type="user" className="mr-2 h-6 w-6 text-neutral md:h-5 md:w-5" />
-              Create free account
-            </MenuItem>
-            <MenuItem onClick={activateSignInPane}>
-              <Icon type="signIn" className="mr-2 h-6 w-6 text-neutral md:h-5 md:w-5" />
-              Sign in
-            </MenuItem>
-          </Menu>
-        )}
-      </>
+    return menuPane ? (
+      <div className="py-1">
+        <MenuPaneSelector
+          viewControllerManager={viewControllerManager}
+          application={application}
+          mainApplicationGroup={applicationGroup}
+          menuPane={menuPane}
+          setMenuPane={setMenuPane}
+          closeMenu={() => setMenuPane(undefined)}
+        />
+      </div>
+    ) : (
+      <Menu a11yLabel="User account menu" isOpen={true}>
+        <MenuItem onClick={activateRegisterPane}>
+          <Icon type="user" className="mr-2 h-6 w-6 text-neutral md:h-5 md:w-5" />
+          Create free account
+        </MenuItem>
+        <MenuItem onClick={activateSignInPane}>
+          <Icon type="signIn" className="mr-2 h-6 w-6 text-neutral md:h-5 md:w-5" />
+          Sign in
+        </MenuItem>
+      </Menu>
     )
   }
 
   return (
-    <>
-      <Header />
-      <div>
-        <Menu a11yLabel="Extension menu" isOpen={true} className="pb-1">
+    <div className="bg-contrast p-3">
+      <Menu a11yLabel="Extension menu" isOpen={true} className="rounded border border-border bg-default">
+        {hasSelection && (
           <MenuItem
-            onClick={async () => {
-              const payload = await sendMessageToActiveTab({ type: RuntimeMessageTypes.GetFullPage })
-              if (!payload) {
-                return
-              }
-              setClipPayload(payload)
-            }}
-          >
-            {isScreenshotMode ? 'Capture visible' : 'Clip full page'}
-          </MenuItem>
-          <MenuItem
+            className="border-b border-border"
             disabled={isScreenshotMode}
-            onClick={async () => {
-              const payload = await sendMessageToActiveTab({ type: RuntimeMessageTypes.GetArticle })
-              if (!payload) {
-                return
-              }
-              setClipPayload(payload)
-            }}
-          >
-            Clip article
-          </MenuItem>
-          <MenuItem
-            disabled={!hasSelection || isScreenshotMode}
             onClick={async () => {
               const payload = await sendMessageToActiveTab({ type: RuntimeMessageTypes.GetSelection })
               if (!payload) {
@@ -366,65 +330,97 @@ const ClipperView = ({
               setClipPayload(payload)
             }}
           >
+            <Icon type="paragraph" className="mr-2 text-info" />
             Clip text selection
           </MenuItem>
-          <MenuItem
-            onClick={async () => {
-              void sendMessageToActiveTab({ type: RuntimeMessageTypes.StartNodeSelection })
-              window.close()
-            }}
-          >
-            Select elements to {isScreenshotMode ? 'capture' : 'clip'}
-          </MenuItem>
-          <MenuSwitchButtonItem
-            checked={isScreenshotMode}
-            onChange={function (checked: boolean): void {
-              setIsScreenshotMode(checked)
-            }}
-            className="flex-row-reverse gap-2"
-          >
-            Clip as screenshot
-          </MenuSwitchButtonItem>
-          <div className="border-t border-border px-3 py-3 text-base text-foreground">
-            <div className="flex items-center justify-between">
-              <div className="font-medium">Default tag</div>
-              {defaultTag && (
-                <StyledTooltip label="Remove default tag" gutter={2}>
-                  <button className="rounded-full p-1 hover:bg-contrast hover:text-info" onClick={unselectTag}>
-                    <Icon type="clear-circle-filled" />
-                  </button>
-                </StyledTooltip>
-              )}
+        )}
+        <MenuItem
+          onClick={async () => {
+            const payload = await sendMessageToActiveTab({ type: RuntimeMessageTypes.GetFullPage })
+            if (!payload) {
+              return
+            }
+            setClipPayload(payload)
+          }}
+        >
+          <Icon type="notes-filled" className="mr-2 text-info" />
+          {isScreenshotMode ? 'Capture visible' : 'Clip full page'}
+        </MenuItem>
+        <MenuItem
+          disabled={isScreenshotMode}
+          onClick={async () => {
+            const payload = await sendMessageToActiveTab({ type: RuntimeMessageTypes.GetArticle })
+            if (!payload) {
+              return
+            }
+            setClipPayload(payload)
+          }}
+        >
+          <Icon type="rich-text" className="mr-2 text-info" />
+          Clip article
+        </MenuItem>
+        <MenuItem
+          onClick={async () => {
+            void sendMessageToActiveTab({ type: RuntimeMessageTypes.StartNodeSelection })
+            window.close()
+          }}
+        >
+          <Icon type="dashboard" className="mr-2 text-info" />
+          Select elements to {isScreenshotMode ? 'capture' : 'clip'}
+        </MenuItem>
+        <MenuSwitchButtonItem
+          checked={isScreenshotMode}
+          onChange={function (checked: boolean): void {
+            setIsScreenshotMode(checked)
+          }}
+          className="flex-row-reverse gap-2"
+          forceDesktopStyle={true}
+        >
+          Clip as screenshot
+        </MenuSwitchButtonItem>
+        <div className="border-t border-border px-3 py-3  text-foreground">
+          {defaultTag && (
+            <div className="flex items-center justify-between text-base">
+              <LinkedItemBubble
+                className="m-1 mr-2 min-w-0"
+                link={createLinkFromItem(defaultTag, 'linked')}
+                unlinkItem={unselectTag}
+                isBidirectional={false}
+              />
+              <StyledTooltip label="Remove default tag" gutter={2}>
+                <button
+                  className="rounded-full p-1 text-neutral hover:bg-contrast hover:text-info"
+                  onClick={unselectTag}
+                >
+                  <Icon type="clear-circle-filled" />
+                </button>
+              </StyledTooltip>
             </div>
-            {defaultTag && (
-              <div>
-                <LinkedItemBubble
-                  className="m-1 mr-2"
-                  link={createLinkFromItem(defaultTag, 'linked')}
-                  unlinkItem={unselectTag}
-                  isBidirectional={false}
-                  inlineFlex={true}
-                />
-              </div>
-            )}
-            <ItemSelectionDropdown
-              onSelection={selectTag}
-              placeholder="Select tag to save clipped notes to..."
-              contentTypes={[ContentType.Tag]}
-            />
-          </div>
-          <div className="border-t border-border px-3 pt-3 pb-1 text-base text-foreground">
-            <div>You're signed in as:</div>
-            <div className="wrap my-0.5 font-bold">{user.email}</div>
-            <span className="text-neutral">{application.getHost()}</span>
-          </div>
-          <MenuItem onClick={showSignOutConfirmation}>
-            <Icon type="signOut" className="mr-2 h-6 w-6 text-neutral" />
-            Sign out
-          </MenuItem>
-        </Menu>
-      </div>
-    </>
+          )}
+          <ItemSelectionDropdown
+            onSelection={selectTag}
+            placeholder="Select tag to save clipped notes to..."
+            contentTypes={[ContentType.Tag]}
+            className={{
+              input: 'text-[0.85rem]',
+            }}
+            comboboxProps={{
+              placement: 'top',
+            }}
+          />
+        </div>
+        <div className="flex items-center border-t border-border text-foreground">
+          <Icon type="user" className="mx-2" />
+          <div className="flex-grow py-2 text-sm font-semibold">{user.email}</div>
+          <button
+            className="flex-shrink-0 border-l border-border py-2 px-2 hover:bg-info-backdrop focus:bg-info-backdrop focus:shadow-none focus:outline-none"
+            onClick={showSignOutConfirmation}
+          >
+            <Icon type="signOut" className="text-neutral" />
+          </button>
+        </div>
+      </Menu>
+    </div>
   )
 }
 

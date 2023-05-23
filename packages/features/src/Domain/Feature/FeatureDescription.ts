@@ -1,5 +1,5 @@
 import { ComponentPermission } from '../Component/ComponentPermission'
-import { ContentType, SubscriptionName } from '@standardnotes/common'
+import { ContentType } from '@standardnotes/common'
 import { ComponentArea } from '../Component/ComponentArea'
 import { PermissionName } from '../Permission/PermissionName'
 import { FeatureIdentifier } from './FeatureIdentifier'
@@ -12,8 +12,7 @@ type RoleFields = {
   role_name?: string
 
   /** Statically populated. Non-influencing; used as a reference by other static consumers (such as email service) */
-  availableInSubscriptions: SubscriptionName[]
-  availableInRoles?: string[]
+  availableInRoles: string[]
 }
 
 export type BaseFeatureDescription = RoleFields & {

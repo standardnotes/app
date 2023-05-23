@@ -69,6 +69,7 @@ type State = {
   syncTakingTooLong: boolean
   monospaceFont?: boolean
   plainEditorFocused?: boolean
+  paneGestureEnabled?: boolean
 
   updateSavingIndicator?: boolean
   editorFeatureIdentifier?: string
@@ -676,6 +677,11 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       PrefDefaults[PrefKey.UpdateSavingStatusIndicator],
     )
 
+    const paneGestureEnabled = this.application.getPreference(
+      PrefKey.PaneGesturesEnabled,
+      PrefDefaults[PrefKey.PaneGesturesEnabled],
+    )
+
     await this.reloadSpellcheck()
 
     this.reloadLineWidth()
@@ -683,6 +689,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.setState({
       monospaceFont,
       updateSavingIndicator,
+      paneGestureEnabled,
     })
 
     reloadFont(monospaceFont)
@@ -853,6 +860,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                   />
                   <ChangeEditorButton
                     viewControllerManager={this.viewControllerManager}
+                    noteViewController={this.controller}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
                   <PinNoteButton
@@ -893,7 +901,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           ref={this.editorContentRef}
         >
           {editorMode === 'component' && this.state.editorComponentViewer && (
-            <div className="component-view flex-grow">
+            <div className="component-view relative flex-grow">
+              {this.state.paneGestureEnabled && <div className="absolute top-0 left-0 h-full w-[20px] md:hidden" />}
               <ComponentView
                 key={this.state.editorComponentViewer.identifier}
                 componentViewer={this.state.editorComponentViewer}

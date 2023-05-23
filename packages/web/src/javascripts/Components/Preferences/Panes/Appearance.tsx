@@ -90,22 +90,24 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
     setUseDeviceSettings(!useDeviceSettings)
   }
 
-  const changeAutoLightTheme = (value: string, item: DropdownItem) => {
-    if (item.icon === PremiumFeatureIconName) {
+  const changeAutoLightTheme = (value: string) => {
+    const item = themeItems.find((item) => item.value === value)
+    if (item && item.icon === PremiumFeatureIconName) {
       premiumModal.activate(`${item.label} theme`)
-    } else {
-      application.setPreference(PrefKey.AutoLightThemeIdentifier, value as FeatureIdentifier).catch(console.error)
-      setAutoLightTheme(value)
+      return
     }
+    application.setPreference(PrefKey.AutoLightThemeIdentifier, value as FeatureIdentifier).catch(console.error)
+    setAutoLightTheme(value)
   }
 
-  const changeAutoDarkTheme = (value: string, item: DropdownItem) => {
-    if (item.icon === PremiumFeatureIconName) {
+  const changeAutoDarkTheme = (value: string) => {
+    const item = themeItems.find((item) => item.value === value)
+    if (item && item.icon === PremiumFeatureIconName) {
       premiumModal.activate(`${item.label} theme`)
-    } else {
-      application.setPreference(PrefKey.AutoDarkThemeIdentifier, value as FeatureIdentifier).catch(console.error)
-      setAutoDarkTheme(value)
+      return
     }
+    application.setPreference(PrefKey.AutoDarkThemeIdentifier, value as FeatureIdentifier).catch(console.error)
+    setAutoDarkTheme(value)
   }
 
   return (
@@ -114,7 +116,7 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
         <PreferencesSegment>
           <Title>Themes</Title>
           <div className="mt-2">
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between gap-2 md:items-center">
               <div className="flex flex-col">
                 <Subtitle>Use system color scheme</Subtitle>
                 <Text>Automatically change active theme based on your system settings.</Text>

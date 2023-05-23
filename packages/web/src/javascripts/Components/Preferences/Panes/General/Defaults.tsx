@@ -44,7 +44,7 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
         <Title>Defaults</Title>
         {application.platform === Platform.Android && (
           <>
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between gap-2 md:items-center">
               <div className="flex flex-col">
                 <Subtitle>Always ask before closing app (Android)</Subtitle>
                 <Text>Whether a confirmation dialog should be shown before closing the app.</Text>
@@ -54,7 +54,7 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
             <HorizontalSeparator classes="my-4" />
           </>
         )}
-        <div className="flex items-center justify-between">
+        <div className="flex justify-between gap-2 md:items-center">
           <div className="flex flex-col">
             <Subtitle>Spellcheck</Subtitle>
             <Text>
@@ -65,7 +65,7 @@ const Defaults: FunctionComponent<Props> = ({ application }) => {
           <Switch onChange={toggleSpellcheck} checked={spellcheck} />
         </div>
         <HorizontalSeparator classes="my-4" />
-        <div className="flex items-center justify-between">
+        <div className="flex justify-between gap-2 md:items-center">
           <div className="flex flex-col">
             <Subtitle>Add all parent tags when adding a nested tag to a note</Subtitle>
             <Text>When enabled, adding a nested tag to a note will automatically add all associated parent tags.</Text>

@@ -285,7 +285,11 @@ FilePreviewModal.displayName = 'FilePreviewModal'
 
 const FilePreviewModalWrapper: FunctionComponent<Props> = ({ application, viewControllerManager }) => {
   return (
-    <ModalOverlay aria-label="File preview modal" isOpen={viewControllerManager.filePreviewModalController.isOpen}>
+    <ModalOverlay
+      aria-label="File preview modal"
+      isOpen={viewControllerManager.filePreviewModalController.isOpen}
+      close={viewControllerManager.filePreviewModalController.dismiss}
+    >
       <FilePreviewModal application={application} viewControllerManager={viewControllerManager} />
     </ModalOverlay>
   )

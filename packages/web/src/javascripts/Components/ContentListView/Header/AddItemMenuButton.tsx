@@ -108,10 +108,10 @@ const AddItemMenuButton = ({
           </MenuItem>
         </Menu>
       </Popover>
-      <ModalOverlay isOpen={captureType === 'photo'}>
+      <ModalOverlay isOpen={captureType === 'photo'} close={closeCaptureModal}>
         <PhotoCaptureModal filesController={filesController} close={closeCaptureModal} />
       </ModalOverlay>
-      <ModalOverlay isOpen={captureType === 'video'}>
+      <ModalOverlay isOpen={captureType === 'video'} close={closeCaptureModal}>
         <VideoCaptureModal filesController={filesController} close={closeCaptureModal} />
       </ModalOverlay>
     </>

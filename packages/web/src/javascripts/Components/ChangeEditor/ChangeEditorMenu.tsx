@@ -255,7 +255,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
             )
           })}
       </Menu>
-      <ModalOverlay isOpen={showSuperNoteImporter}>
+      <ModalOverlay isOpen={showSuperNoteImporter} close={closeSuperNoteImporter}>
         {note && (
           <SuperNoteImporter
             note={note}
@@ -265,7 +265,7 @@ const ChangeEditorMenu: FunctionComponent<ChangeEditorMenuProps> = ({
           />
         )}
       </ModalOverlay>
-      <ModalOverlay isOpen={showSuperNoteConverter}>
+      <ModalOverlay isOpen={showSuperNoteConverter} close={closeSuperNoteConverter}>
         {note && pendingConversionItem && (
           <SuperNoteConverter
             note={note}

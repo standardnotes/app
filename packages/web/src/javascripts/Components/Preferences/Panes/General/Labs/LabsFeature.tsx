@@ -10,7 +10,7 @@ type Props = {
 
 const LabsFeature = ({ name, description, toggleFeature, isEnabled }: Props) => {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex justify-between gap-2 md:items-center">
       <div className="flex flex-col">
         <Subtitle>{name}</Subtitle>
         <Text>{description}</Text>

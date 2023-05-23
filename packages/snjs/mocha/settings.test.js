@@ -116,7 +116,7 @@ describe('settings service', function () {
     expect(settings.getSettingValue(SettingName.create(SettingName.NAMES.MfaSecret).getValue())).to.not.be.ok
   })
 
-  it('reads a subscription setting', async () => {
+  it('reads a subscription setting - @paidfeature', async () => {
     await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
       userEmail: context.email,
       subscriptionId: subscriptionId++,
@@ -139,7 +139,7 @@ describe('settings service', function () {
     expect(setting).to.be.a('string')
   })
 
-  it('persist irreplaceable subscription settings between subsequent subscriptions', async () => {
+  it('persist irreplaceable subscription settings between subsequent subscriptions - @paidfeature', async () => {
     await reInitializeApplicationWithRealCrypto()
 
     await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {

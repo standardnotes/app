@@ -122,7 +122,7 @@ const EmailBackups = ({ application }: Props) => {
           <Text>How often to receive backups.</Text>
           <div className="mt-2">
             {isLoading ? (
-              <Spinner className="h-4 w-4" />
+              <Spinner className="h-5 w-5 flex-shrink-0" />
             ) : (
               <Dropdown
                 label="Select email frequency"
@@ -134,12 +134,12 @@ const EmailBackups = ({ application }: Props) => {
           </div>
           <HorizontalSeparator classes="my-4" />
           <Subtitle>Email preferences</Subtitle>
-          <div className="flex items-center justify-between">
+          <div className="flex justify-between gap-2 md:items-center">
             <div className="flex flex-col">
               <Text>Receive a notification email if an email backup fails.</Text>
             </div>
             {isLoading ? (
-              <Spinner className="h-4 w-4" />
+              <Spinner className="h-5 w-5 flex-shrink-0" />
             ) : (
               <Switch onChange={toggleMuteFailedBackupEmails} checked={!isFailedBackupEmailMuted} />
             )}

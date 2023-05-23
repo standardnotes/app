@@ -16,12 +16,6 @@
   }
 }
 
-.sn-accordion-arrow-icon {
-  &[data-is-expanded='true'] {
-    transform: rotate(180deg);
-  }
-}
-
 .accordion-contents-container {
   transition: all 0.23s ease-out;
   transform-origin: top;

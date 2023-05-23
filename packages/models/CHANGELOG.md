@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.45.5](https://github.com/standardnotes/app/compare/@standardnotes/models@1.45.4...@standardnotes/models@1.45.5) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.45.4](https://github.com/standardnotes/app/compare/@standardnotes/models@1.45.3...@standardnotes/models@1.45.4) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.45.3](https://github.com/standardnotes/app/compare/@standardnotes/models@1.45.2...@standardnotes/models@1.45.3) (2023-05-12)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.45.2](https://github.com/standardnotes/app/compare/@standardnotes/models@1.45.1...@standardnotes/models@1.45.2) (2023-05-11)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.45.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.45.0...@standardnotes/models@1.45.1) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/models
+
 # [1.45.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.44.3...@standardnotes/models@1.45.0) (2023-05-04)
 
 ### Features

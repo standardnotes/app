@@ -183,11 +183,11 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
               <div className="flex items-center gap-2">
                 <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(true)} checked={isBackupEncrypted} />
-                  <span className="text-sm font-medium">Encrypted</span>
+                  <span className="text-base font-medium md:text-sm">Encrypted</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(false)} checked={!isBackupEncrypted} />
-                  <span className="text-sm font-medium">Decrypted</span>
+                  <span className="text-base font-medium md:text-sm">Decrypted</span>
                 </label>
               </div>
             </form>
