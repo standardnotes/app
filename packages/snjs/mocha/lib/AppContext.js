@@ -53,6 +53,14 @@ export class AppContext {
     return this.application.groupService
   }
 
+  get items() {
+    return this.application.items
+  }
+
+  get encryption() {
+    return this.application.protocolService
+  }
+
   ignoreChallenges() {
     this.ignoringChallenges = true
   }
@@ -215,6 +223,16 @@ export class AppContext {
       if (event === SyncEvent.PaginatedSyncRequestCompleted) {
         callback(data.uploadedPayloads)
       }
+    })
+  }
+
+  resolveWithRejectedPayloads() {
+    return new Promise((resolve) => {
+      this.application.syncService.addEventObserver((event, data) => {
+        if (event === SyncEvent.PaginatedSyncRequestCompleted) {
+          resolve(data.rejectedPayloads)
+        }
+      })
     })
   }
 

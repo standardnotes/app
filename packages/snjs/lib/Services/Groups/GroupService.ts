@@ -1,3 +1,4 @@
+import { UpdateGroupUseCase } from './UseCase/UpdateGroup'
 import { AddContactToGroupUseCase } from './UseCase/AddContactToGroup'
 import {
   ClientDisplayableError,
@@ -32,7 +33,12 @@ import {
   GroupStorageServiceInterface,
   SyncEventReceivedGroupsData,
 } from '@standardnotes/services'
-import { DecryptedItemInterface, PayloadEmitSource, TrustedContactInterface } from '@standardnotes/models'
+import {
+  DecryptedItemInterface,
+  GroupKeyInterface,
+  PayloadEmitSource,
+  TrustedContactInterface,
+} from '@standardnotes/models'
 import { GroupServiceEvent, GroupServiceInterface } from './GroupServiceInterface'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ContentType } from '@standardnotes/common'
@@ -43,6 +49,7 @@ import { AcceptInvite } from './UseCase/AcceptInvite'
 import { CreateGroupUseCase } from './UseCase/CreateGroup'
 import { RotateGroupKeyUseCase } from './UseCase/RotateGroupKey'
 import { GetGroupUsersUseCase } from './UseCase/GetGroupUsers'
+import { RemoveGroupMemberUseCase } from './UseCase/RemoveGroupMember'
 
 export class GroupService
   extends AbstractService<GroupServiceEvent>
@@ -132,6 +139,10 @@ export class GroupService
   }
 
   private async processInboundInvites(invites: GroupInviteServerHash[]): Promise<void> {
+    if (invites.length === 0) {
+      return
+    }
+
     for (const invite of invites) {
       this.pendingInvites[invite.uuid] = invite
     }
@@ -153,14 +164,27 @@ export class GroupService
     }
   }
 
+  async updateGroup(
+    groupUuid: string,
+    params: { specifiedItemsKeyUuid: string; groupKeyTimestamp: number },
+  ): Promise<GroupServerHash | ClientDisplayableError> {
+    const updateGroupUseCase = new UpdateGroupUseCase(this.groupsServer)
+
+    return updateGroupUseCase.execute({
+      groupUuid: groupUuid,
+      groupKeyTimestamp: params.groupKeyTimestamp,
+      specifiedItemsKeyUuid: params.specifiedItemsKeyUuid,
+    })
+  }
+
   async acceptInvite(invite: GroupInviteServerHash): Promise<boolean> {
     if (!this.isInviteTrusted(invite)) {
       return false
     }
 
-    const handler = new AcceptInvite(this.userDecryptedPrivateKey, this.groupInvitesServer, this.items, this.encryption)
+    const useCase = new AcceptInvite(this.userDecryptedPrivateKey, this.groupInvitesServer, this.items, this.encryption)
 
-    const result = await handler.execute(invite)
+    const result = await useCase.execute(invite)
 
     if (result === 'errored') {
       return false
@@ -267,20 +291,26 @@ export class GroupService
     return true
   }
 
-  async removeUserFromGroup(groupUuid: string, userUuid: string): Promise<boolean> {
-    const response = await this.groupUsersServer.deleteGroupUser({ groupUuid, userUuid })
+  async removeUserFromGroup(groupUuid: string, memberUuid: string): Promise<ClientDisplayableError | void> {
+    const useCase = new RemoveGroupMemberUseCase(this.groupUsersServer)
 
-    if (isErrorResponse(response)) {
-      return false
+    const result = await useCase.execute({ groupUuid, memberUuid })
+
+    if (isClientDisplayableError(result)) {
+      return result
     }
 
-    return true
+    await this.rotateGroupKey(groupUuid)
   }
 
   async getGroupUsers(groupUuid: string): Promise<GroupUserServerHash[] | undefined> {
     const useCase = new GetGroupUsersUseCase(this.groupUsersServer)
 
     return useCase.execute({ groupUuid })
+  }
+
+  getGroupKey(groupUuid: string): GroupKeyInterface | undefined {
+    return this.encryption.getGroupKey(groupUuid)
   }
 
   async rotateGroupKey(groupUuid: string): Promise<void> {

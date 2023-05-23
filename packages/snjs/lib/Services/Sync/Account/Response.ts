@@ -20,11 +20,11 @@ import {
 import { deepFreeze } from '@standardnotes/utils'
 
 export class ServerSyncResponse {
-  public readonly savedPayloads: ServerSyncSavedContextualPayload[]
-  public readonly retrievedPayloads: FilteredServerItem[]
-  public readonly uuidConflictPayloads: FilteredServerItem[]
-  public readonly dataConflictPayloads: FilteredServerItem[]
-  public readonly rejectedPayloads: FilteredServerItem[]
+  readonly savedPayloads: ServerSyncSavedContextualPayload[]
+  readonly retrievedPayloads: FilteredServerItem[]
+  readonly uuidConflictPayloads: FilteredServerItem[]
+  readonly dataConflictPayloads: FilteredServerItem[]
+  readonly rejectedPayloads: FilteredServerItem[]
   readonly groupInvites: GroupInviteServerHash[]
   readonly contacts: ContactServerHash[]
   readonly groups: GroupServerHash[]

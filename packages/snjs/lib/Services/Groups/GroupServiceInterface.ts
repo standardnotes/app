@@ -25,7 +25,7 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
 
   deleteGroup(groupUuid: string): Promise<boolean>
 
-  removeUserFromGroup(groupUuid: string, userUuid: string): Promise<boolean>
+  removeUserFromGroup(groupUuid: string, userUuid: string): Promise<ClientDisplayableError | void>
 
   downloadInboundInvites(): Promise<ClientDisplayableError | void>
 

@@ -40,18 +40,22 @@ describe.only('groups', function () {
     }
   }
 
-  const createGroupWithAcceptedInvite = async () => {
-    const { group, contact, contactContext, deinitContactContext } = await createGroupWithUnacceptedButTrustedInvite()
+  const createGroupWithAcceptedInvite = async (permissions = GroupPermission.Write) => {
+    const { group, contact, contactContext, deinitContactContext } = await createGroupWithUnacceptedButTrustedInvite(
+      permissions,
+    )
     await acceptAllInvites(contactContext)
+
+    await contactContext.awaitNextSyncGroupFromScratchEvent()
 
     return { group, contact, contactContext, deinitContactContext }
   }
 
-  const createGroupWithUnacceptedButTrustedInvite = async () => {
+  const createGroupWithUnacceptedButTrustedInvite = async (permissions = GroupPermission.Write) => {
     const group = await groupService.createGroup()
     const { contactContext, deinitContactContext } = await createContactContext()
     const contact = await createContactForUserOfContext(context, contactContext)
-    await groupService.inviteContactToGroup(group, contact, GroupPermission.Write)
+    await groupService.inviteContactToGroup(group, contact, permissions)
     await contactContext.sync()
 
     await createContactForUserOfContext(contactContext, context)
@@ -163,35 +167,6 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
-    it('received items from previously trusted contact should be decrypted', async () => {
-      const note = await context.createSyncedNote('foo', 'bar')
-      const { contactContext, deinitContactContext } = await createContactContext()
-      const group = await groupService.createGroup()
-
-      await createContactForUserOfContext(contactContext, context)
-      const currentContextContact = await createContactForUserOfContext(context, contactContext)
-
-      contactContext.lockSyncing()
-      await groupService.inviteContactToGroup(group, currentContextContact, GroupPermission.Write)
-      await groupService.addItemToGroup(group, note)
-
-      const promise = contactContext.awaitNextSyncGroupFromScratchEvent()
-      contactContext.unlockSyncing()
-      await contactContext.sync()
-      await acceptAllInvites(contactContext)
-      await promise
-
-      const receivedItemsKey = contactContext.application.items.getSharedItemsKeysForGroup(group.uuid)[0]
-      expect(receivedItemsKey).to.not.be.undefined
-      expect(receivedItemsKey.itemsKey).to.not.be.undefined
-
-      const receivedNote = contactContext.application.items.findItem(note.uuid)
-      expect(receivedNote.title).to.equal('foo')
-      expect(receivedNote.text).to.equal(note.text)
-
-      await deinitContactContext()
-    })
-
     it('should sync a group from scratch after accepting a group invitation', async () => {
       const group = await groupService.createGroup()
 
@@ -223,7 +198,70 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
-    it('should remove group member', () => {})
+    it('should remove group member', async () => {
+      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+
+      const originalGroupUsers = await groupService.getGroupUsers(group.uuid)
+      expect(originalGroupUsers.length).to.equal(2)
+
+      const result = await groupService.removeUserFromGroup(group.uuid, contactContext.userUuid)
+
+      expect(isClientDisplayableError(result)).to.be.false
+
+      const updatedGroupUsers = await groupService.getGroupUsers(group.uuid)
+      expect(updatedGroupUsers.length).to.equal(1)
+
+      await deinitContactContext()
+    })
+  })
+
+  describe('collaboration', () => {
+    it('received items from previously trusted contact should be decrypted', async () => {
+      const note = await context.createSyncedNote('foo', 'bar')
+      const { contactContext, deinitContactContext } = await createContactContext()
+      const group = await groupService.createGroup()
+
+      await createContactForUserOfContext(contactContext, context)
+      const currentContextContact = await createContactForUserOfContext(context, contactContext)
+
+      contactContext.lockSyncing()
+      await groupService.inviteContactToGroup(group, currentContextContact, GroupPermission.Write)
+      await groupService.addItemToGroup(group, note)
+
+      const promise = contactContext.awaitNextSyncGroupFromScratchEvent()
+      contactContext.unlockSyncing()
+      await contactContext.sync()
+      await acceptAllInvites(contactContext)
+      await promise
+
+      const receivedItemsKey = contactContext.application.items.getSharedItemsKeysForGroup(group.uuid)[0]
+      expect(receivedItemsKey).to.not.be.undefined
+      expect(receivedItemsKey.itemsKey).to.not.be.undefined
+
+      const receivedNote = contactContext.application.items.findItem(note.uuid)
+      expect(receivedNote.title).to.equal('foo')
+      expect(receivedNote.text).to.equal(note.text)
+
+      await deinitContactContext()
+    })
+
+    it('group creator should receive changes from other members', async () => {
+      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+      const note = await context.createSyncedNote('foo', 'bar')
+      await groupService.addItemToGroup(group, note)
+      await contactContext.sync()
+
+      await contactContext.items.changeItem({ uuid: note.uuid }, (mutator) => {
+        mutator.title = 'new title'
+      })
+      await contactContext.sync()
+      await context.sync()
+
+      const receivedNote = context.application.items.findItem(note.uuid)
+      expect(receivedNote.title).to.equal('new title')
+
+      await deinitContactContext()
+    })
   })
 
   describe('invites', () => {
@@ -360,29 +398,177 @@ describe.only('groups', function () {
       const updatedOutboundInvites = await groupService.getOutboundInvites()
       expect(updatedOutboundInvites.length).to.equal(2)
 
-      expect(updatedOutboundInvites[0].invite_type).to.equal('key-change')
-      expect(updatedOutboundInvites[1].invite_type).to.equal('join')
+      expect(updatedOutboundInvites.find((invite) => invite.invite_type === 'join')).to.not.be.undefined
+      expect(updatedOutboundInvites.find((invite) => invite.invite_type === 'key-change')).to.not.be.undefined
 
       await deinitContactContext()
       await thirdParty.deinitContactContext()
     })
 
-    it('key change invites should be automatically accepted by trusted contacts', async () => {})
+    it('key change invites should be automatically accepted by trusted contacts', async () => {
+      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+      contactContext.lockSyncing()
 
-    it('should rotate group key after removing group member', () => {})
+      await groupService.rotateGroupKey(group.uuid)
 
-    it('should not process inbound key-change invites if the public key of the invite does not match contact public key', () => {})
+      const acceptInviteSpy = sinon.spy(contactContext.groupService, 'acceptInvite')
 
-    it('should keep group key with greater keyTimestamp if conflict', () => {})
+      contactContext.unlockSyncing()
+      await contactContext.sync()
+
+      expect(acceptInviteSpy.callCount).to.equal(1)
+
+      await deinitContactContext()
+    })
+
+    it('should rotate group key after removing group member', async () => {
+      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+
+      const originalGroupKey = groupService.getGroupKey(group.uuid)
+
+      await groupService.removeUserFromGroup(group.uuid, contactContext.userUuid)
+
+      const newGroupKey = groupService.getGroupKey(group.uuid)
+
+      expect(newGroupKey.keyTimestamp).to.be.greaterThan(originalGroupKey.keyTimestamp)
+      expect(newGroupKey.groupKey).to.not.equal(originalGroupKey.groupKey)
+
+      await deinitContactContext()
+    })
+
+    it('should keep group key with greater keyTimestamp if conflict', async () => {
+      const group = await groupService.createGroup()
+      const groupKey = groupService.getGroupKey(group.uuid)
+
+      const otherClient = await Factory.createAppContextWithRealCrypto()
+      await otherClient.launch()
+      otherClient.email = context.email
+      otherClient.password = context.password
+      await otherClient.signIn(context.email, context.password)
+
+      context.lockSyncing()
+      otherClient.lockSyncing()
+
+      const olderTimestamp = groupKey.keyTimestamp + 1
+      const newerTimestamp = groupKey.keyTimestamp + 2
+
+      await context.application.items.changeItem(groupKey, (mutator) => {
+        mutator.content = {
+          groupKey: 'new-group-key',
+          keyTimestamp: olderTimestamp,
+        }
+      })
+
+      const otherGroupKey = otherClient.groupService.getGroupKey(group.uuid)
+      await otherClient.application.items.changeItem(otherGroupKey, (mutator) => {
+        mutator.content = {
+          groupKey: 'new-group-key',
+          keyTimestamp: newerTimestamp,
+        }
+      })
+
+      context.unlockSyncing()
+      otherClient.unlockSyncing()
+
+      await otherClient.sync()
+      await context.sync()
+
+      expect(context.items.getItems(ContentType.GroupKey).length).to.equal(1)
+      expect(otherClient.items.getItems(ContentType.GroupKey).length).to.equal(1)
+
+      const groupKeyAfterSync = context.groupService.getGroupKey(group.uuid)
+      const otherGroupKeyAfterSync = otherClient.groupService.getGroupKey(group.uuid)
+
+      expect(groupKeyAfterSync.keyTimestamp).to.equal(otherGroupKeyAfterSync.keyTimestamp)
+      expect(groupKeyAfterSync.groupKey).to.equal(otherGroupKeyAfterSync.groupKey)
+      expect(groupKeyAfterSync.keyTimestamp).to.equal(newerTimestamp)
+      expect(otherGroupKeyAfterSync.keyTimestamp).to.equal(newerTimestamp)
+
+      await otherClient.deinit()
+    })
   })
 
-  describe('permissions', () => {
-    it('should not be able to update a group with a keyTimestamp lower than the current one', () => {})
+  describe('permissions', async () => {
+    it('should not be able to update a group with a keyTimestamp lower than the current one', async () => {
+      const group = await groupService.createGroup()
+      const groupKey = groupService.getGroupKey(group.uuid)
 
-    it('non-admin user should not be able to create or update shared items keys with the server', () => {})
+      const result = await groupService.updateGroup(group.uuid, {
+        groupKeyTimestamp: groupKey.keyTimestamp - 1,
+        specifiedItemsKeyUuid: '123',
+      })
 
-    it("writer user should not be able to change an item using an items key that does not match the group's specified items key", () => {})
+      expect(isClientDisplayableError(result)).to.be.true
+    })
 
-    it('read user should not be able to make changes to items', () => {})
+    it('non-admin user should not be able to create or update shared items keys with the server', async () => {
+      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+
+      const sharedItemsKey = contactContext.items.getSharedItemsKeysForGroup(group.uuid)[0]
+
+      await contactContext.items.changeItem(sharedItemsKey, () => {})
+      const promise = contactContext.resolveWithRejectedPayloads()
+      await contactContext.sync()
+
+      const rejectedPayloads = await promise
+
+      expect(rejectedPayloads.length).to.equal(1)
+      expect(rejectedPayloads[0].content_type).to.equal(ContentType.SharedItemsKey)
+
+      await deinitContactContext()
+    })
+
+    it("group user should not be able to change an item using an items key that does not match the group's specified items key", async () => {
+      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+
+      const note = await context.createSyncedNote('foo', 'bar')
+      await groupService.addItemToGroup(group, note)
+      await contactContext.sync()
+
+      const newItemsKeyUuid = UuidGenerator.GenerateUuid()
+      const newItemsKey = contactContext.encryption.createSharedItemsKey(newItemsKeyUuid, group.uuid)
+      await contactContext.items.insertItem(newItemsKey)
+
+      const contactGroup = contactContext.groupService.groupStorage.getGroup(group.uuid)
+      contactContext.groupService.groupStorage.setGroup(group.uuid, {
+        ...contactGroup,
+        specifiedItemsKeyUuid: newItemsKeyUuid,
+      })
+
+      await contactContext.items.changeItem({ uuid: note.uuid }, (mutator) => {
+        mutator.title = 'new title'
+      })
+
+      const promise = contactContext.resolveWithRejectedPayloads()
+      await contactContext.sync()
+      const rejectedPayloads = await promise
+
+      expect(rejectedPayloads.length).to.equal(2)
+      expect(rejectedPayloads.find((payload) => payload.content_type === ContentType.Note)).to.not.be.undefined
+      expect(rejectedPayloads.find((payload) => payload.content_type === ContentType.SharedItemsKey)).to.not.be
+        .undefined
+
+      await deinitContactContext()
+    })
+
+    it('read user should not be able to make changes to items', async () => {
+      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite(GroupPermission.Read)
+      const note = await context.createSyncedNote('foo', 'bar')
+      await groupService.addItemToGroup(group, note)
+      await contactContext.sync()
+
+      await contactContext.items.changeItem({ uuid: note.uuid }, (mutator) => {
+        mutator.title = 'new title'
+      })
+
+      const promise = contactContext.resolveWithRejectedPayloads()
+      await contactContext.sync()
+      const rejectedPayloads = await promise
+
+      expect(rejectedPayloads.length).to.equal(1)
+      expect(rejectedPayloads[0].content_type).to.equal(ContentType.Note)
+
+      await deinitContactContext()
+    })
   })
 })

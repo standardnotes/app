@@ -36,7 +36,7 @@ export class RotateGroupKeyUseCase {
 
     const errors: ClientDisplayableError[] = []
 
-    const updateGroupSharedItemsKeyResult = await this.updateGroupSharedItemsKey({
+    const updateGroupSharedItemsKeyResult = await this.createNewSharedItemsKey({
       groupUuid: params.groupUuid,
       groupKeyTimestamp: updatedGroupKey.keyTimestamp,
     })
@@ -200,7 +200,7 @@ export class RotateGroupKeyUseCase {
     )
   }
 
-  private async updateGroupSharedItemsKey(params: {
+  private async createNewSharedItemsKey(params: {
     groupUuid: string
     groupKeyTimestamp: number
   }): Promise<ClientDisplayableError | GroupServerHash> {
