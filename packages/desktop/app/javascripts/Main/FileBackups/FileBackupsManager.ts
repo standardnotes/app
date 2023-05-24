@@ -74,7 +74,7 @@ export class FilesBackupManager implements FileBackupsDevice {
 
     await ensureDirectoryExists(newLocation)
 
-    const legacyMappingLocation = `${legacyLocation}/info.json`
+    const legacyMappingLocation = path.join(legacyLocation, 'info.json')
     const newMappingLocation = this.getFileBackupsMappingFilePath(newLocation)
     await ensureDirectoryExists(path.dirname(newMappingLocation))
     if (existsSync(legacyMappingLocation)) {
@@ -108,7 +108,7 @@ export class FilesBackupManager implements FileBackupsDevice {
     }
 
     const LegacyTextBackupsDirectory = 'Standard Notes Backups'
-    return `${Paths.homeDir}/${LegacyTextBackupsDirectory}`
+    return path.join(Paths.homeDir, LegacyTextBackupsDirectory)
   }
 
   public async presentDirectoryPickerForLocationChangeAndTransferOld(
@@ -133,7 +133,7 @@ export class FilesBackupManager implements FileBackupsDevice {
   }
 
   private getFileBackupsMappingFilePath(backupsLocation: string): string {
-    return `${backupsLocation}/.settings/info.json`
+    return path.join(backupsLocation, '.settings', 'info.json')
   }
 
   private async getFileBackupsMappingFileFromDisk(backupsLocation: string): Promise<FileBackupsMapping | undefined> {
@@ -178,9 +178,9 @@ export class FilesBackupManager implements FileBackupsDevice {
       url: string
     },
   ): Promise<'success' | 'failed'> {
-    const fileDir = `${location}/${uuid}`
-    const metaFilePath = `${fileDir}/${FileBackupsConstantsV1.MetadataFileName}`
-    const binaryPath = `${fileDir}/${FileBackupsConstantsV1.BinaryFileName}`
+    const fileDir = path.join(location, uuid)
+    const metaFilePath = path.join(fileDir, FileBackupsConstantsV1.MetadataFileName)
+    const binaryPath = path.join(fileDir, FileBackupsConstantsV1.BinaryFileName)
 
     await ensureDirectoryExists(fileDir)
 
@@ -270,7 +270,7 @@ export class FilesBackupManager implements FileBackupsDevice {
   }
 
   private getPlaintextMappingFilePath(location: string): string {
-    return `${location}/.settings/info.json`
+    return path.join(location, '.settings', 'info.json')
   }
 
   private async getPlaintextMappingFileFromDisk(location: string): Promise<PlaintextBackupsMapping | undefined> {
