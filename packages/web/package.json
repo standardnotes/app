@@ -28,7 +28,7 @@
     "@babel/plugin-transform-react-jsx": "^7.19.0",
     "@babel/preset-env": "*",
     "@babel/preset-typescript": "^7.21.5",
-    "@lexical/react": "0.10.0",
+    "@lexical/react": "0.11.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.10",
     "@simplewebauthn/browser": "^7.1.0",
     "@standardnotes/authenticator": "^2.4.0",
@@ -75,7 +75,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.3.1",
     "jest-environment-jsdom": "^29.3.1",
-    "lexical": "0.10.0",
+    "lexical": "0.11.0",
     "lint-staged": ">=13",
     "mini-css-extract-plugin": "^2.7.2",
     "minimatch": "^5.1.1",
@@ -108,7 +108,7 @@
   },
   "dependencies": {
     "@ariakit/react": "^0.2.1",
-    "@lexical/headless": "0.10.0",
+    "@lexical/headless": "0.11.0",
     "@radix-ui/react-slot": "^1.0.1"
   }
 }
