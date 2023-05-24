@@ -370,16 +370,22 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     const encryptable: DecryptedPayloadInterface[] = []
     const unencryptable: DecryptedPayloadInterface[] = []
 
-    const split = Encryption.SplitPayloadsByEncryptionType(decrypted)
-    if (split.itemsKeyEncryption) {
-      extendArray(encryptable, split.itemsKeyEncryption)
+    const { rootKeyEncryption, groupKeyEncryption, itemsKeyEncryption } =
+      Encryption.SplitPayloadsByEncryptionType(decrypted)
+
+    if (itemsKeyEncryption) {
+      extendArray(encryptable, itemsKeyEncryption)
     }
 
-    if (split.rootKeyEncryption) {
+    if (groupKeyEncryption) {
+      extendArray(encryptable, groupKeyEncryption)
+    }
+
+    if (rootKeyEncryption) {
       if (!rootKeyEncryptionAvailable) {
-        extendArray(unencryptable, split.rootKeyEncryption)
+        extendArray(unencryptable, rootKeyEncryption)
       } else {
-        extendArray(encryptable, split.rootKeyEncryption)
+        extendArray(encryptable, rootKeyEncryption)
       }
     }
 

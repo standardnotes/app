@@ -12,13 +12,20 @@ export class CreateGroupUseCase {
     private encryption: EncryptionProviderInterface,
   ) {}
 
-  async execute(): Promise<GroupServerHash | ClientDisplayableError> {
+  async execute(dto: {
+    groupName?: string
+    groupDescription?: string
+  }): Promise<GroupServerHash | ClientDisplayableError> {
     const groupUuid = UuidGenerator.GenerateUuid()
     const sharedItemsKey = this.encryption.createSharedItemsKey(UuidGenerator.GenerateUuid(), groupUuid)
 
     const groupKeyContent = this.encryption.createGroupKeyData(groupUuid)
     const createGroupKey = new CreateGroupKeyUseCase(this.items)
-    await createGroupKey.execute(groupKeyContent)
+    await createGroupKey.execute({
+      ...groupKeyContent,
+      groupName: dto.groupName,
+      groupDescription: dto.groupDescription,
+    })
 
     const response = await this.groupsServer.createGroup({
       groupUuid,

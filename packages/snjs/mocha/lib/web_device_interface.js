@@ -65,29 +65,45 @@ export default class WebDeviceInterface {
 
   async getDatabaseLoadChunks(options, identifier) {
     const entries = await this.getAllDatabaseEntries(identifier)
-    const sorted = GetSortedPayloadsByPriority(entries, options)
+    const {
+      itemsKeyPayloads,
+      groupKeyPayloads,
+      sharedItemsKeyPayloads,
+      contentTypePriorityPayloads,
+      remainingPayloads,
+    } = GetSortedPayloadsByPriority(entries, options)
 
     const itemsKeysChunk = {
-      entries: sorted.itemsKeyPayloads,
+      entries: itemsKeyPayloads,
+    }
+
+    const groupKeysChunk = {
+      entries: groupKeyPayloads,
+    }
+
+    const sharedItemsKeysChunk = {
+      entries: sharedItemsKeyPayloads,
     }
 
     const contentTypePriorityChunk = {
-      entries: sorted.contentTypePriorityPayloads,
+      entries: contentTypePriorityPayloads,
     }
 
     const remainingPayloadsChunks = []
-    for (let i = 0; i < sorted.remainingPayloads.length; i += options.batchSize) {
+    for (let i = 0; i < remainingPayloads.length; i += options.batchSize) {
       remainingPayloadsChunks.push({
-        entries: sorted.remainingPayloads.slice(i, i + options.batchSize),
+        entries: remainingPayloads.slice(i, i + options.batchSize),
       })
     }
 
     const result = {
       fullEntries: {
         itemsKeys: itemsKeysChunk,
+        groupKeys: groupKeysChunk,
+        sharedItemsKeys: sharedItemsKeysChunk,
         remainingChunks: [contentTypePriorityChunk, ...remainingPayloadsChunks],
       },
-      remainingChunksItemCount: sorted.contentTypePriorityPayloads.length + sorted.remainingPayloads.length,
+      remainingChunksItemCount: contentTypePriorityPayloads.length + remainingPayloads.length,
     }
 
     return result

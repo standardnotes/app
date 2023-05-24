@@ -268,7 +268,24 @@ describe.only('groups', function () {
     })
   })
 
-  describe('collaboration', () => {
+  describe.only('client timing', () => {
+    it('should load data in the correct order at startup to allow shared items and their keys to decrypt', async () => {
+      const appIdentifier = context.identifier
+      const group = await groupService.createGroup()
+      const note = await context.createSyncedNote('foo', 'bar')
+      await groupService.addItemToGroup(group, note)
+      await context.deinit()
+
+      const recreatedContext = await Factory.createAppContextWithRealCrypto(appIdentifier)
+      await recreatedContext.launch()
+
+      const updatedNote = recreatedContext.application.items.findItem(note.uuid)
+      expect(updatedNote.title).to.equal('foo')
+      expect(updatedNote.text).to.equal('bar')
+    })
+  })
+
+  describe('item collaboration', () => {
     it('received items from previously trusted contact should be decrypted', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
       const { contactContext, deinitContactContext } = await createContactContext()

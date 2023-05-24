@@ -13,7 +13,7 @@ export enum GroupServiceEvent {
 }
 
 export interface GroupServiceInterface extends AbstractService<GroupServiceEvent> {
-  createGroup(): Promise<GroupServerHash | ClientDisplayableError>
+  createGroup(name?: string, description?: string): Promise<GroupServerHash | ClientDisplayableError>
 
   reloadGroups(): Promise<GroupServerHash[] | ClientDisplayableError>
 

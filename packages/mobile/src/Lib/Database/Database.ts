@@ -84,17 +84,31 @@ export class Database implements DatabaseInterface {
       metadataItems = this.metadataStore.runMigration(allEntries)
     }
 
-    const sorted = GetSortedPayloadsByPriority(metadataItems, options)
+    const {
+      itemsKeyPayloads,
+      groupKeyPayloads,
+      sharedItemsKeyPayloads,
+      contentTypePriorityPayloads,
+      remainingPayloads,
+    } = GetSortedPayloadsByPriority(metadataItems, options)
 
     const itemsKeysChunk: DatabaseKeysLoadChunk = {
-      keys: sorted.itemsKeyPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid)),
+      keys: itemsKeyPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid)),
+    }
+
+    const groupKeysChunk: DatabaseKeysLoadChunk = {
+      keys: groupKeyPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid)),
+    }
+
+    const sharedItemsKeysChunk: DatabaseKeysLoadChunk = {
+      keys: sharedItemsKeyPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid)),
     }
 
     const contentTypePriorityChunk: DatabaseKeysLoadChunk = {
-      keys: sorted.contentTypePriorityPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid)),
+      keys: contentTypePriorityPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid)),
     }
 
-    const remainingKeys = sorted.remainingPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid))
+    const remainingKeys = remainingPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid))
 
     const remainingKeysChunks: DatabaseKeysLoadChunk[] = []
     for (let i = 0; i < remainingKeys.length; i += options.batchSize) {
@@ -106,9 +120,11 @@ export class Database implements DatabaseInterface {
     const result: DatabaseKeysLoadChunkResponse = {
       keys: {
         itemsKeys: itemsKeysChunk,
+        groupKeys: groupKeysChunk,
+        sharedItemsKeys: sharedItemsKeysChunk,
         remainingChunks: [contentTypePriorityChunk, ...remainingKeysChunks],
       },
-      remainingChunksItemCount: sorted.contentTypePriorityPayloads.length + sorted.remainingPayloads.length,
+      remainingChunksItemCount: contentTypePriorityPayloads.length + remainingPayloads.length,
     }
 
     return result

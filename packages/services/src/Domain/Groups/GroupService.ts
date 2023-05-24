@@ -104,11 +104,6 @@ export class GroupService
 
   async handleReceivedGroups(groups: GroupServerHash[]): Promise<void> {
     this.groupStorage.updateGroups(groups)
-
-    // for (const group of groups) {
-    //   const sharedItemsKeys = this.items.getSharedItemsKeysForGroup(group.uuid)
-    //   console.log('handleReceivedGroups > sharedItemsKeys:', sharedItemsKeys)
-    // }
   }
 
   public async reloadGroups(): Promise<GroupServerHash[] | ClientDisplayableError> {
@@ -260,9 +255,12 @@ export class GroupService
     return key
   }
 
-  async createGroup(): Promise<GroupServerHash | ClientDisplayableError> {
+  async createGroup(name?: string, description?: string): Promise<GroupServerHash | ClientDisplayableError> {
     const createGroup = new CreateGroupUseCase(this.items, this.groupsServer, this.encryption)
-    const result = await createGroup.execute()
+    const result = await createGroup.execute({
+      groupName: name,
+      groupDescription: description,
+    })
 
     if (!isClientDisplayableError(result)) {
       await this.sync.sync()

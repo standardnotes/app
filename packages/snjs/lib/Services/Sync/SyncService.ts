@@ -56,6 +56,7 @@ import {
   ItemContent,
   SharedItemsKeyContent,
   SharedItemsKeyInterface,
+  FullyFormedTransferPayload,
 } from '@standardnotes/models'
 import {
   AbstractService,
@@ -133,6 +134,8 @@ export class SNSyncService
   /** Content types appearing first are always mapped first */
   private readonly localLoadPriorty = [
     ContentType.ItemsKey,
+    ContentType.GroupKey,
+    ContentType.SharedItemsKey,
     ContentType.UserPrefs,
     ContentType.Component,
     ContentType.Theme,
@@ -227,29 +230,21 @@ export class SNSyncService
     return this.databaseLoaded
   }
 
-  private async processItemsKeysFirstDuringDatabaseLoad(
-    itemsKeysPayloads: FullyFormedPayloadInterface[],
-  ): Promise<void> {
-    if (itemsKeysPayloads.length === 0) {
+  private async processPriorityItemsForDatabaseLoad(items: FullyFormedPayloadInterface[]): Promise<void> {
+    if (items.length === 0) {
       return
     }
 
-    const encryptedItemsKeysPayloads = itemsKeysPayloads.filter(isEncryptedPayload)
+    const encryptedPayloads = items.filter(isEncryptedPayload)
+    const alreadyDecryptedPayloads = items.filter(isDecryptedPayload) as DecryptedPayloadInterface<ItemsKeyContent>[]
 
-    const originallyDecryptedItemsKeysPayloads = itemsKeysPayloads.filter(
-      isDecryptedPayload,
-    ) as DecryptedPayloadInterface<ItemsKeyContent>[]
+    const encryptionSplit = SplitPayloadsByEncryptionType(encryptedPayloads)
+    const decryptionSplit = CreateDecryptionSplitWithKeyLookup(encryptionSplit)
 
-    const itemsKeysSplit: KeyedDecryptionSplit = {
-      usesRootKeyWithKeyLookup: {
-        items: encryptedItemsKeysPayloads,
-      },
-    }
-
-    const newlyDecryptedItemsKeys = await this.protocolService.decryptSplit(itemsKeysSplit)
+    const newlyDecryptedPayloads = await this.protocolService.decryptSplit(decryptionSplit)
 
     await this.payloadManager.emitPayloads(
-      [...originallyDecryptedItemsKeysPayloads, ...newlyDecryptedItemsKeys],
+      [...alreadyDecryptedPayloads, ...newlyDecryptedPayloads],
       PayloadEmitSource.LocalDatabaseLoaded,
     )
   }
@@ -274,18 +269,28 @@ export class SNSyncService
       ? chunks.fullEntries.itemsKeys.entries
       : await this.device.getDatabaseEntries(this.identifier, chunks.keys.itemsKeys.keys)
 
-    const itemsKeyPayloads = itemsKeyEntries
-      .map((entry) => {
-        try {
-          return CreatePayload(entry, PayloadSource.Constructor)
-        } catch (e) {
-          console.error('Creating payload failed', e)
-          return undefined
-        }
-      })
-      .filter(isNotUndefined)
+    const groupKeyEntries = isFullEntryLoadChunkResponse(chunks)
+      ? chunks.fullEntries.groupKeys.entries
+      : await this.device.getDatabaseEntries(this.identifier, chunks.keys.groupKeys.keys)
 
-    await this.processItemsKeysFirstDuringDatabaseLoad(itemsKeyPayloads)
+    const sharedItemsKeyEntries = isFullEntryLoadChunkResponse(chunks)
+      ? chunks.fullEntries.sharedItemsKeys.entries
+      : await this.device.getDatabaseEntries(this.identifier, chunks.keys.sharedItemsKeys.keys)
+
+    const createPayloadFromEntry = (entry: FullyFormedTransferPayload) => {
+      try {
+        return CreatePayload(entry, PayloadSource.Constructor)
+      } catch (e) {
+        console.error('Creating payload failed', e)
+        return undefined
+      }
+    }
+
+    await this.processPriorityItemsForDatabaseLoad(itemsKeyEntries.map(createPayloadFromEntry).filter(isNotUndefined))
+    await this.processPriorityItemsForDatabaseLoad(groupKeyEntries.map(createPayloadFromEntry).filter(isNotUndefined))
+    await this.processPriorityItemsForDatabaseLoad(
+      sharedItemsKeyEntries.map(createPayloadFromEntry).filter(isNotUndefined),
+    )
 
     /**
      * Map in batches to give interface a chance to update. Note that total decryption

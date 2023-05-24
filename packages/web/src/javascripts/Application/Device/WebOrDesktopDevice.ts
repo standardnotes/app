@@ -108,29 +108,46 @@ export abstract class WebOrDesktopDevice implements WebOrDesktopDeviceInterface 
     identifier: string,
   ): Promise<DatabaseFullEntryLoadChunkResponse> {
     const entries = await this.getAllDatabaseEntries(identifier)
-    const sorted = GetSortedPayloadsByPriority(entries, options)
+
+    const {
+      itemsKeyPayloads,
+      groupKeyPayloads,
+      sharedItemsKeyPayloads,
+      contentTypePriorityPayloads,
+      remainingPayloads,
+    } = GetSortedPayloadsByPriority(entries, options)
 
     const itemsKeysChunk: DatabaseFullEntryLoadChunk = {
-      entries: sorted.itemsKeyPayloads,
+      entries: itemsKeyPayloads,
+    }
+
+    const groupKeysChunk: DatabaseFullEntryLoadChunk = {
+      entries: groupKeyPayloads,
+    }
+
+    const sharedItemsKeysChunk: DatabaseFullEntryLoadChunk = {
+      entries: sharedItemsKeyPayloads,
     }
 
     const contentTypePriorityChunk: DatabaseFullEntryLoadChunk = {
-      entries: sorted.contentTypePriorityPayloads,
+      entries: contentTypePriorityPayloads,
     }
 
     const remainingPayloadsChunks: DatabaseFullEntryLoadChunk[] = []
-    for (let i = 0; i < sorted.remainingPayloads.length; i += options.batchSize) {
+    for (let i = 0; i < remainingPayloads.length; i += options.batchSize) {
       remainingPayloadsChunks.push({
-        entries: sorted.remainingPayloads.slice(i, i + options.batchSize),
+        entries: remainingPayloads.slice(i, i + options.batchSize),
       })
     }
 
     const result: DatabaseFullEntryLoadChunkResponse = {
       fullEntries: {
         itemsKeys: itemsKeysChunk,
+        groupKeys: groupKeysChunk,
+        sharedItemsKeys: sharedItemsKeysChunk,
         remainingChunks: [contentTypePriorityChunk, ...remainingPayloadsChunks],
       },
-      remainingChunksItemCount: sorted.contentTypePriorityPayloads.length + sorted.remainingPayloads.length,
+      remainingChunksItemCount: contentTypePriorityPayloads.length + remainingPayloads.length,
     }
 
     return result
