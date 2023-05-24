@@ -61,4 +61,8 @@ export class GroupInvitesServer implements GroupInvitesServerInterface {
   deleteInvite(params: DeleteInviteRequestParams): Promise<HttpResponse<DeleteInviteResponse>> {
     return this.httpService.delete(GroupInvitesPaths.deleteInvite(params.groupUuid, params.inviteUuid))
   }
+
+  deleteAllInboundInvites(): Promise<HttpResponse<{ success: boolean }>> {
+    return this.httpService.delete(GroupInvitesPaths.deleteAllInboundInvites)
+  }
 }

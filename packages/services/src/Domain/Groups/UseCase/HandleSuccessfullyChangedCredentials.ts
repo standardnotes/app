@@ -16,8 +16,19 @@ export class HandleSuccessfullyChangedCredentials {
   ) {}
 
   async execute(data: SuccessfullyChangedCredentialsEventData): Promise<ClientDisplayableError[]> {
-    const { newPublicKey, newPrivateKey } = data
+    await this.contacts.refreshAllContactsAfterPublicKeyChange()
 
+    await this.groupInvitesServer.deleteAllInboundInvites()
+
+    const errors = await this.updateAllInvites(data)
+
+    return errors
+  }
+
+  private async updateAllInvites(params: {
+    newPublicKey: string
+    newPrivateKey: string
+  }): Promise<ClientDisplayableError[]> {
     const getOutboundInvitesResponse = await this.groupInvitesServer.getOutboundUserInvites()
     if (isErrorResponse(getOutboundInvitesResponse)) {
       return [ClientDisplayableError.FromString('Failed to get outbound user invites for current user')]
@@ -29,8 +40,8 @@ export class HandleSuccessfullyChangedCredentials {
     for (const invite of outboundInvites) {
       const error = await this.updateInvite({
         invite,
-        newPublicKey,
-        newPrivateKey,
+        newPublicKey: params.newPublicKey,
+        newPrivateKey: params.newPrivateKey,
       })
 
       if (error) {

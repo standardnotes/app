@@ -29,4 +29,6 @@ export interface GroupInvitesServerInterface {
   getGroupInvites(params: GetGroupInvitesRequestParams): Promise<HttpResponse<GetGroupInvitesResponse>>
 
   deleteInvite(params: DeleteInviteRequestParams): Promise<HttpResponse<DeleteInviteResponse>>
+
+  deleteAllInboundInvites(): Promise<HttpResponse<{ success: boolean }>>
 }

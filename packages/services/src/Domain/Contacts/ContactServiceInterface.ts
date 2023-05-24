@@ -1,20 +1,26 @@
 import { TrustedContactInterface } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
-import { ContactServerHash } from '@standardnotes/responses'
+import { ContactServerHash, GroupInviteServerHash } from '@standardnotes/responses'
 
 export enum ContactServiceEvent {
   ReceivedContactRequests = 'ReceivedContactRequests',
 }
 
 export interface ContactServiceInterface extends AbstractService<ContactServiceEvent> {
+  isCollaborationEnabled(): boolean
+
+  enableCollaboration(): Promise<void>
+
   getCollaborationID(): string
+
+  getCollaborationIDFromInvite(invite: GroupInviteServerHash): string
 
   addTrustedContactFromCollaborationID(
     collaborationID: string,
     name?: string,
   ): Promise<TrustedContactInterface | undefined>
 
-  getPendingContactRequests(): ContactServerHash[]
+  getServerContacts(): ContactServerHash[]
 
   trustServerContact(serverContact: ContactServerHash, name?: string): Promise<void>
 
@@ -27,4 +33,6 @@ export interface ContactServiceInterface extends AbstractService<ContactServiceE
   getAllContacts(): TrustedContactInterface[]
 
   findTrustedContact(userUuid: string): TrustedContactInterface | undefined
+
+  refreshAllContactsAfterPublicKeyChange(): Promise<void>
 }

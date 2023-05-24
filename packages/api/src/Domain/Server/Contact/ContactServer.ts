@@ -16,7 +16,11 @@ export class ContactServer implements ContactServerInterface {
     })
   }
 
-  deleteContact(params: { uuid: string }): Promise<HttpResponse<boolean>> {
+  deleteContact(params: { uuid: string }): Promise<HttpResponse<{ success: boolean }>> {
     return this.httpService.delete(ContactPaths.deleteContact(params.uuid))
+  }
+
+  refreshAllContactsAfterPublicKeyChange(): Promise<HttpResponse<{ success: boolean }>> {
+    return this.httpService.post(ContactPaths.refreshAll)
   }
 }

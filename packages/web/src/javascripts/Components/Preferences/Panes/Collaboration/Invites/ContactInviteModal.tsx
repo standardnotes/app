@@ -8,10 +8,11 @@ type Props = {
   onCloseDialog: () => void
 }
 
-const GroupContactInviteModal: FunctionComponent<Props> = ({ group, onCloseDialog }) => {
+const ContactInviteModal: FunctionComponent<Props> = ({ group, onCloseDialog }) => {
   const application = useApplication()
 
-  const [selectedContacts] = useState<TrustedContactInterface[]>([])
+  const [selectedContacts, setSelectedContacts] = useState<TrustedContactInterface[]>([])
+
   const contacts = application.contacts.getAllContacts()
 
   const handleDialogClose = useCallback(() => {
@@ -29,12 +30,14 @@ const GroupContactInviteModal: FunctionComponent<Props> = ({ group, onCloseDialo
     (contact: TrustedContactInterface) => {
       if (selectedContacts.includes(contact)) {
         const index = selectedContacts.indexOf(contact)
-        selectedContacts.splice(index, 1)
+        const updatedContacts = [...selectedContacts]
+        updatedContacts.splice(index, 1)
+        setSelectedContacts(updatedContacts)
       } else {
-        selectedContacts.push(contact)
+        setSelectedContacts([...selectedContacts, contact])
       }
     },
-    [selectedContacts],
+    [selectedContacts, setSelectedContacts],
   )
 
   const modalActions = useMemo(
@@ -63,8 +66,17 @@ const GroupContactInviteModal: FunctionComponent<Props> = ({ group, onCloseDialo
             {contacts.map((contact) => {
               return (
                 <div key={contact.uuid} onClick={() => toggleContact(contact)}>
-                  {contact.name}
-                  Selected: {selectedContacts.includes(contact) ? 'true' : 'false'}
+                  <div>
+                    <input
+                      type="checkbox"
+                      checked={selectedContacts.includes(contact)}
+                      onChange={() => toggleContact(contact)}
+                    />
+                  </div>
+                  <div>
+                    {contact.name}
+                    {contact.contactUuid}
+                  </div>
                 </div>
               )
             })}
@@ -75,4 +87,4 @@ const GroupContactInviteModal: FunctionComponent<Props> = ({ group, onCloseDialo
   )
 }
 
-export default GroupContactInviteModal
+export default ContactInviteModal

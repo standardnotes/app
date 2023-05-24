@@ -109,6 +109,10 @@ describe.only('groups', function () {
       expect(user.encrypted_private_key).to.not.be.undefined
       expect(user.encrypted_private_key).to.not.equal(oldEncryptedPrivateKey)
     })
+
+    it('should allow option to enable collaboration for previously signed registered accounts', async () => {
+      console.error('TODO: Implement test case.')
+    })
   })
 
   describe('contacts', () => {
@@ -129,17 +133,21 @@ describe.only('groups', function () {
       const { contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
       const originalContact = context.contacts.findTrustedContact(contactContext.userUuid)
 
+      const oldPublicKey = contactContext.publicKey
       await contactContext.changePassword('new_password')
       await context.sync()
+      const newPublicKey = contactContext.publicKey
 
-      const pendingRequests = context.contacts.getPendingContactRequests()
-      expect(pendingRequests.length).to.equal(1)
-      expect(pendingRequests[0].contact_public_key).to.not.equal(originalContact.contactPublicKey)
-      expect(pendingRequests[0].contact_public_key).to.equal(contactContext.publicKey)
+      expect(oldPublicKey).to.not.equal(newPublicKey)
+
+      const serverContacts = context.contacts.getServerContacts()
+      expect(serverContacts.length).to.equal(1)
+      expect(serverContacts[0].contact_public_key).to.not.equal(originalContact.publicKey)
+      expect(serverContacts[0].contact_public_key).to.equal(contactContext.publicKey)
 
       const unchangedTrustedContent = context.contacts.findTrustedContact(contactContext.userUuid)
-      expect(originalContact.contactPublicKey).to.equal(unchangedTrustedContent.contactPublicKey)
-      expect(unchangedTrustedContent.contactPublicKey).to.not.equal(pendingRequests[0].contact_public_key)
+      expect(originalContact.publicKey).to.equal(unchangedTrustedContent.publicKey)
+      expect(unchangedTrustedContent.publicKey).to.not.equal(serverContacts[0].contact_public_key)
 
       await deinitContactContext()
     })
@@ -154,7 +162,7 @@ describe.only('groups', function () {
       await contactContext.changePassword('new_password')
       await context.sync()
 
-      const pendingRequests = context.contacts.getPendingContactRequests()
+      const pendingRequests = context.contacts.getServerContacts()
       expect(pendingRequests.length).to.equal(1)
       expect(pendingRequests[0].contact_public_key).to.equal(contactContext.publicKey)
 
@@ -250,6 +258,14 @@ describe.only('groups', function () {
 
       await deinitContactContext()
     })
+
+    it('should return invited to groups when fetching groups from server', async () => {
+      console.error('TODO: Implement test case.')
+    })
+
+    it('should delete a group and remove item associations', async () => {
+      console.error('TODO: Implement test case.')
+    })
   })
 
   describe('collaboration', () => {
@@ -299,6 +315,8 @@ describe.only('groups', function () {
 
       await deinitContactContext()
     })
+
+    it('should remove an item from a group', async () => {})
   })
 
   describe('invites', () => {

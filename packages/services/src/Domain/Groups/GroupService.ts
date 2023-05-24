@@ -104,6 +104,25 @@ export class GroupService
 
   async handleReceivedGroups(groups: GroupServerHash[]): Promise<void> {
     this.groupStorage.updateGroups(groups)
+
+    // for (const group of groups) {
+    //   const sharedItemsKeys = this.items.getSharedItemsKeysForGroup(group.uuid)
+    //   console.log('handleReceivedGroups > sharedItemsKeys:', sharedItemsKeys)
+    // }
+  }
+
+  public async reloadGroups(): Promise<GroupServerHash[] | ClientDisplayableError> {
+    const response = await this.groupsServer.getGroups()
+
+    if (isErrorResponse(response)) {
+      return ClientDisplayableError.FromString(`Failed to get groups ${response}`)
+    }
+
+    const groups = response.data.groups
+
+    await this.handleReceivedGroups(groups)
+
+    return groups
   }
 
   public getGroups(): GroupServerHash[] {
@@ -190,6 +209,8 @@ export class GroupService
       return false
     }
 
+    delete this.pendingInvites[invite.uuid]
+
     void this.sync.sync()
 
     await this.decryptErroredItemsForGroup(invite.group_uuid)
@@ -223,7 +244,11 @@ export class GroupService
   }
 
   get userPublicKey(): string {
-    return this.session.getPublicKey()
+    const publicKey = this.session.getPublicKey()
+    if (!publicKey) {
+      throw new Error('Public key not found')
+    }
+    return publicKey
   }
 
   get userDecryptedPrivateKey(): string {
@@ -269,6 +294,16 @@ export class GroupService
   async addItemToGroup(group: GroupServerHash, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
     await this.items.changeItem(item, (mutator) => {
       mutator.group_uuid = group.uuid
+    })
+
+    await this.sync.sync()
+
+    return this.items.findSureItem(item.uuid)
+  }
+
+  async removeItemFromItsGroup(item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
+    await this.items.changeItem(item, (mutator) => {
+      mutator.group_uuid = undefined
     })
 
     await this.sync.sync()

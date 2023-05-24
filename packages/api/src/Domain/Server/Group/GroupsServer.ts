@@ -6,9 +6,14 @@ import { GroupsPaths } from './Paths'
 import { CreateGroupResponse } from '../../Response/Group/CreateGroupResponse'
 import { UpdateGroupParams } from '../../Request/Group/UpdateGroupParams'
 import { UpdateGroupResponse } from '../../Response/Group/UpdateGroupResponse'
+import { GetGroupsResponse } from '../../Response/Group/GetGroupsResponse'
 
 export class GroupsServer implements GroupsServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
+
+  getGroups(): Promise<HttpResponse<GetGroupsResponse>> {
+    return this.httpService.get(GroupsPaths.getGroups)
+  }
 
   createGroup(params: CreateGroupParams): Promise<HttpResponse<CreateGroupResponse>> {
     return this.httpService.post(GroupsPaths.createGroup, {

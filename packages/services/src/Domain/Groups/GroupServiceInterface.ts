@@ -15,6 +15,8 @@ export enum GroupServiceEvent {
 export interface GroupServiceInterface extends AbstractService<GroupServiceEvent> {
   createGroup(): Promise<GroupServerHash | ClientDisplayableError>
 
+  reloadGroups(): Promise<GroupServerHash[] | ClientDisplayableError>
+
   getGroups(): GroupServerHash[]
 
   getGroupKey(groupUuid: string): GroupKeyInterface | undefined
@@ -27,6 +29,8 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
 
   addItemToGroup(group: GroupServerHash, item: DecryptedItemInterface): Promise<DecryptedItemInterface>
 
+  removeItemFromItsGroup(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
+
   deleteGroup(groupUuid: string): Promise<boolean>
 
   removeUserFromGroup(groupUuid: string, userUuid: string): Promise<ClientDisplayableError | void>
@@ -34,6 +38,8 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
   downloadInboundInvites(): Promise<ClientDisplayableError | void>
 
   getOutboundInvites(): Promise<GroupInviteServerHash[] | ClientDisplayableError>
+
+  isInviteTrusted(invite: GroupInviteServerHash): boolean
 
   acceptInvite(invite: GroupInviteServerHash): Promise<boolean>
 

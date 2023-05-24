@@ -1,5 +1,5 @@
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { ContactServerHash, isErrorResponse } from '@standardnotes/responses'
+import { ContactServerHash, GroupInviteServerHash, isErrorResponse } from '@standardnotes/responses'
 import { ContactServerInterface, HttpServiceInterface, ContactServer } from '@standardnotes/api'
 import {
   TrustedContactContent,
@@ -25,7 +25,7 @@ export class ContactService
   implements ContactServiceInterface, InternalEventHandlerInterface
 {
   private contactServer: ContactServerInterface
-  private pendingContactRequests: Record<string, ContactServerHash> = {}
+  private serverContacts: Record<string, ContactServerHash> = {}
 
   constructor(
     private http: HttpServiceInterface,
@@ -42,9 +42,31 @@ export class ContactService
     this.contactServer = new ContactServer(this.http)
   }
 
+  public isCollaborationEnabled(): boolean {
+    return !!this.session.getPublicKey()
+  }
+
+  public enableCollaboration(): Promise<void> {}
+
+  public async refreshAllContactsAfterPublicKeyChange(): Promise<void> {
+    await this.contactServer.refreshAllContactsAfterPublicKeyChange()
+  }
+
   public getCollaborationID(): string {
+    const publicKey = this.session.getPublicKey()
+    if (!publicKey) {
+      throw new Error('Collaboration not enabled')
+    }
+
+    return this.buildCollaborationId({
+      userUuid: this.session.getSureUser().uuid,
+      userPublicKey: publicKey,
+    })
+  }
+
+  private buildCollaborationId(params: { userUuid: string; userPublicKey: string }): string {
     const version = '1'
-    const string = `${version}:${this.session.getSureUser().uuid}:${this.session.getPublicKey()}`
+    const string = `${version}:${params.userUuid}:${params.userPublicKey}`
     return this.crypto.base64Encode(string)
   }
 
@@ -52,6 +74,13 @@ export class ContactService
     const decoded = this.crypto.base64Decode(collaborationID)
     const [version, userUuid, userPublicKey] = decoded.split(':')
     return { version, userUuid, userPublicKey }
+  }
+
+  public getCollaborationIDFromInvite(invite: GroupInviteServerHash): string {
+    return this.buildCollaborationId({
+      userUuid: invite.inviter_uuid,
+      userPublicKey: invite.inviter_public_key,
+    })
   }
 
   public addTrustedContactFromCollaborationID(
@@ -75,14 +104,14 @@ export class ContactService
 
   private async handleReceivedRemoteContactsEvent(contacts: ContactServerHash[]): Promise<void> {
     for (const contact of contacts) {
-      this.pendingContactRequests[contact.uuid] = contact
+      this.serverContacts[contact.uuid] = contact
     }
 
     void this.notifyEvent(ContactServiceEvent.ReceivedContactRequests)
   }
 
-  public getPendingContactRequests(): ContactServerHash[] {
-    return Object.values(this.pendingContactRequests)
+  public getServerContacts(): ContactServerHash[] {
+    return Object.values(this.serverContacts)
   }
 
   async trustServerContact(serverContact: ContactServerHash, name?: string): Promise<void> {
@@ -104,7 +133,7 @@ export class ContactService
       })
     }
 
-    delete this.pendingContactRequests[serverContact.uuid]
+    delete this.serverContacts[serverContact.uuid]
   }
 
   async createTrustedContact(params: {

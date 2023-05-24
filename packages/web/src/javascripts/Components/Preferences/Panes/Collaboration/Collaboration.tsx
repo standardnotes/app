@@ -7,7 +7,7 @@ import ContactItem from './Contacts/ContactItem'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import AddContact from './Contacts/AddContact'
 import { useCallback, useEffect, useState } from 'react'
-import { GroupInviteServerHash, GroupServerHash } from '@standardnotes/snjs'
+import { GroupInviteServerHash, GroupServerHash, isClientDisplayableError } from '@standardnotes/snjs'
 import GroupItem from './Groups/GroupItem'
 import Button from '@/Components/Button/Button'
 import InviteItem from './Invites/InviteItem'
@@ -25,28 +25,35 @@ const Collaboration = () => {
   const contactService = application.contacts
   const contacts = contactService.getAllContacts()
 
-  useEffect(() => {
-    const fetchGroups = async () => {
-      await application.sync.sync()
-      const groups = groupService.getGroups()
+  const fetchGroups = useCallback(async () => {
+    const groups = await application.groups.reloadGroups()
+    if (!isClientDisplayableError(groups)) {
       setGroups(groups)
     }
-
-    void fetchGroups()
-  }, [application.sync, groupService])
+  }, [application.groups])
 
   useEffect(() => {
-    const fetchInvites = async () => {
-      await application.sync.sync()
-      const invites = groupService.getPendingInvites()
-      setInvites(invites)
-    }
-    void fetchInvites()
-  }, [application.sync, groupService])
+    void fetchGroups()
+  }, [fetchGroups])
 
-  const createNewGroup = useCallback(() => {
-    void groupService.createGroup()
+  const fetchInvites = useCallback(async () => {
+    await groupService.downloadInboundInvites()
+    const invites = groupService.getPendingInvites()
+    setInvites(invites)
   }, [groupService])
+
+  useEffect(() => {
+    void fetchInvites()
+  }, [application.sync, fetchInvites, groupService])
+
+  const createNewGroup = useCallback(async () => {
+    await groupService.createGroup()
+    await fetchGroups()
+  }, [fetchGroups, groupService])
+
+  const createNewContact = useCallback(() => {
+    setIsAddContactModalOpen(true)
+  }, [])
 
   return (
     <>
@@ -73,6 +80,9 @@ const Collaboration = () => {
               return <ContactItem contact={contact} key={contact.uuid} />
             })}
           </div>
+          <div className="mt-2.5 flex flex-row">
+            <Button label="Add New Contact" className={'mr-3 text-xs'} onClick={createNewContact} />
+          </div>
         </PreferencesSegment>
       </PreferencesGroup>
 
@@ -94,12 +104,21 @@ const Collaboration = () => {
         <PreferencesSegment>
           <Title>CollaborationID</Title>
           <Subtitle>Share your CollaborationID with collaborators to join their groups.</Subtitle>
-          <div className="my-2 flex flex-col"></div>
-          <div className="mt-2.5 flex flex-row">
-            <code>
-              <pre>{contactService.getCollaborationID()}</pre>
-            </code>
-          </div>
+          {contactService.isCollaborationEnabled() ? (
+            <div className="mt-2.5 flex flex-row">
+              <code>
+                <pre>{contactService.getCollaborationID()}</pre>
+              </code>
+            </div>
+          ) : (
+            <div className="mt-2.5 flex flex-row">
+              <Button
+                label="Enable Collaboration"
+                className={'mr-3 text-xs'}
+                onClick={() => contactService.enableCollaboration()}
+              />
+            </div>
+          )}
         </PreferencesSegment>
       </PreferencesGroup>
     </>
