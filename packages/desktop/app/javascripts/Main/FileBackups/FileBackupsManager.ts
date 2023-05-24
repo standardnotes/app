@@ -8,7 +8,7 @@ import {
   DesktopWatchedDirectoriesChange,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { AppState } from 'app/AppState'
-import { promises as fs } from 'fs'
+import { promises as fs, existsSync } from 'fs'
 import { WebContents, shell } from 'electron'
 import { StoreKeys } from '../Store/StoreKeys'
 import path from 'path'
@@ -77,7 +77,9 @@ export class FilesBackupManager implements FileBackupsDevice {
     const legacyMappingLocation = `${legacyLocation}/info.json`
     const newMappingLocation = this.getFileBackupsMappingFilePath(newLocation)
     await ensureDirectoryExists(path.dirname(newMappingLocation))
-    await moveFile(legacyMappingLocation, newMappingLocation)
+    if (existsSync(legacyMappingLocation)) {
+      await moveFile(legacyMappingLocation, newMappingLocation)
+    }
 
     await moveDirContents(legacyLocation, newLocation)
   }
