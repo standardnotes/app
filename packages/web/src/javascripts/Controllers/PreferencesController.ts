@@ -7,7 +7,7 @@ import { WebApplication } from '@/Application/WebApplication'
 const DEFAULT_PANE: PreferenceId = 'collaboration'
 
 export class PreferencesController extends AbstractViewController {
-  private _open = true
+  private _open = false
   currentPane: PreferenceId = DEFAULT_PANE
 
   constructor(application: WebApplication, eventBus: InternalEventBus) {

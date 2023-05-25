@@ -647,6 +647,40 @@ export class SNSessionManager
     return processedResponse
   }
 
+  isUserMissingKeypair(): boolean {
+    const hasPublicKey = this.getPublicKey() != undefined
+    return !hasPublicKey
+  }
+
+  async updateAccountWithFirstTimeKeypair(): Promise<boolean> {
+    if (!this.isUserMissingKeypair()) {
+      throw Error('Cannot update account with first time keypair if user already has a keypair')
+    }
+
+    const rootKey = this.protocolService.getSureRootKey()
+    const { publicKey, privateKey } = this.protocolService.generateKeyPair()
+    const encryptedPrivateKey = this.protocolService.encryptPrivateKeyWithRootKey(rootKey, privateKey)
+
+    const response = await this.userApiService.updateUser({
+      userUuid: this.getSureUser().uuid,
+      publicKey,
+      encryptedPrivateKey,
+    })
+
+    if (isErrorResponse(response)) {
+      return false
+    }
+
+    const user = this.getSureUser()
+    user.publicKey = publicKey
+    this.memoizeUser(user)
+    this.diskStorageService.setValue(StorageKey.User, user)
+
+    this.diskStorageService.setValue(StorageKey.AccountDecryptedPrivateKey, privateKey)
+
+    return true
+  }
+
   public async getSessionsList(): Promise<HttpResponse<SessionListEntry[]>> {
     const response = await this.apiService.getSessionsList()
 

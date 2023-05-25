@@ -22,7 +22,6 @@ export interface SessionsClientInterface {
   ): Promise<SessionManagerResponse>
   isSignedIn(): boolean
   getSureUser(): User
-  getPublicKey(): string | undefined
   bypassChecksAndSignInWithRootKey(
     email: string,
     rootKey: RootKeyInterface,
@@ -44,4 +43,8 @@ export interface SessionsClientInterface {
     rootKey: SNRootKey
     wrappingKey?: SNRootKey
   }): Promise<void>
+
+  getPublicKey(): string | undefined
+  isUserMissingKeypair(): boolean
+  updateAccountWithFirstTimeKeypair(): Promise<boolean>
 }

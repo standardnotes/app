@@ -51,6 +51,14 @@ describe.only('groups', function () {
     return { group, contact, contactContext, deinitContactContext }
   }
 
+  const createGroupWithAcceptedInviteAndNote = async (permissions = GroupPermission.Write) => {
+    const { group, contactContext, contact, deinitContactContext } = await createGroupWithAcceptedInvite(permissions)
+    const note = await context.createSyncedNote('foo', 'bar')
+    await groupService.addItemToGroup(group, note)
+    await contactContext.sync()
+    return { group, note, contact, contactContext, deinitContactContext }
+  }
+
   const createGroupWithUnacceptedButTrustedInvite = async (permissions = GroupPermission.Write) => {
     const group = await groupService.createGroup()
     const { contactContext, deinitContactContext } = await createContactContext()
@@ -81,10 +89,25 @@ describe.only('groups', function () {
     contactService = application.contactService
   })
 
-  describe('registration', () => {
+  describe('authentication', () => {
     it('should create keypair during registration', () => {
       expect(groupService.userPublicKey).to.not.be.undefined
       expect(groupService.userDecryptedPrivateKey).to.not.be.undefined
+    })
+
+    it('should populate keypair during sign in', async () => {
+      const email = context.email
+      const password = context.password
+      await context.signout()
+
+      const recreatedContext = await Factory.createAppContextWithRealCrypto()
+      await recreatedContext.launch()
+      recreatedContext.email = email
+      recreatedContext.password = password
+      await recreatedContext.signIn()
+
+      expect(recreatedContext.groupService.userPublicKey).to.not.be.undefined
+      expect(recreatedContext.groupService.userDecryptedPrivateKey).to.not.be.undefined
     })
 
     it('should rotate keypair during password change', async () => {
@@ -110,8 +133,31 @@ describe.only('groups', function () {
       expect(user.encrypted_private_key).to.not.equal(oldEncryptedPrivateKey)
     })
 
-    it('should allow option to enable collaboration for previously signed registered accounts', async () => {
-      console.error('TODO: Implement test case.')
+    it('should allow option to enable collaboration for previously signed in accounts', async () => {
+      const newContext = await Factory.createAppContextWithRealCrypto()
+      await newContext.launch()
+
+      const objectToSpy = newContext.application.sessions.userApiService
+
+      sinon.stub(objectToSpy, 'register').callsFake(async (params) => {
+        const modifiedParams = {
+          ...params,
+          publicKey: undefined,
+          encryptedPrivateKey: undefined,
+        }
+
+        objectToSpy.register.restore()
+        const result = await objectToSpy.register(modifiedParams)
+        return result
+      })
+
+      await newContext.register()
+
+      expect(newContext.application.sessions.isUserMissingKeypair()).to.be.true
+
+      await newContext.application.sessions.updateAccountWithFirstTimeKeypair()
+
+      expect(newContext.application.sessions.isUserMissingKeypair()).to.be.false
     })
   })
 
@@ -260,15 +306,32 @@ describe.only('groups', function () {
     })
 
     it('should return invited to groups when fetching groups from server', async () => {
-      console.error('TODO: Implement test case.')
+      const { contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+
+      const groups = await contactContext.groupService.reloadGroups()
+
+      expect(groups.length).to.equal(1)
+
+      await deinitContactContext()
     })
 
     it('should delete a group and remove item associations', async () => {
-      console.error('TODO: Implement test case.')
+      const { group, note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+
+      await groupService.deleteGroup(group.uuid)
+
+      const originatorNote = context.application.items.findItem(note.uuid)
+      expect(originatorNote.group_uuid).to.not.be.ok
+
+      /** Contact should not be able to receive new changes, and thus will have the last copy of the note with its group_uuid intact */
+      const contactNote = contactContext.application.items.findItem(note.uuid)
+      expect(contactNote.group_uuid).to.not.be.undefined
+
+      await deinitContactContext()
     })
   })
 
-  describe.only('client timing', () => {
+  describe('client timing', () => {
     it('should load data in the correct order at startup to allow shared items and their keys to decrypt', async () => {
       const appIdentifier = context.identifier
       const group = await groupService.createGroup()
@@ -333,7 +396,78 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
-    it('should remove an item from a group', async () => {})
+    it('should remove an item from a group; collaborator should no longer receive changes', async () => {
+      const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+
+      await context.groupService.removeItemFromItsGroup(note)
+
+      await context.changeNoteTitleAndSync(note, 'new title')
+
+      const receivedNote = contactContext.application.items.findItem(note.uuid)
+
+      expect(receivedNote).to.not.be.undefined
+      expect(receivedNote.title).to.not.equal('new title')
+      expect(receivedNote.title).to.equal(note.title)
+
+      await deinitContactContext()
+    })
+
+    it('should remove item from collaborated account when it is deleted permanently', async () => {
+      const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+
+      await context.items.setItemToBeDeleted(note)
+      await context.sync()
+      await contactContext.sync()
+
+      const originatorNote = context.application.items.findItem(note.uuid)
+      expect(originatorNote).to.be.undefined
+
+      const collaboratorNote = contactContext.application.items.findItem(note.uuid)
+      expect(collaboratorNote).to.be.undefined
+
+      await deinitContactContext()
+    })
+
+    it('attempting to delete a note received by and already deleted by another person should not cause infinite conflicts', async () => {
+      const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+
+      await context.items.setItemToBeDeleted(note)
+      await contactContext.items.setItemToBeDeleted(note)
+
+      await context.sync()
+      await contactContext.sync()
+
+      const originatorNote = context.application.items.findItem(note.uuid)
+      expect(originatorNote).to.be.undefined
+
+      const collaboratorNote = contactContext.application.items.findItem(note.uuid)
+      expect(collaboratorNote).to.be.undefined
+
+      await deinitContactContext()
+    })
+
+    it('conflicts created should be associated with the group', async () => {
+      const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+
+      await context.changeNoteTitle(note, 'new title first client')
+      await contactContext.changeNoteTitle(note, 'new title second client')
+
+      await context.sync()
+      await contactContext.sync()
+      await context.sync()
+
+      const originatorNotes = context.items.getDisplayableNotes()
+      expect(originatorNotes.length).to.equal(2)
+      expect(originatorNotes.find((note) => !!note.duplicate_of)).to.not.be.undefined
+
+      const collaboratorNotes = contactContext.items.getDisplayableNotes()
+      expect(collaboratorNotes.length).to.equal(2)
+      expect(collaboratorNotes.find((note) => !!note.duplicate_of)).to.not.be.undefined
+
+      await deinitContactContext()
+    })
+
+    it('irresolvable uuid conflicts should be capped to prevent infinite recursion', async () => {})
   })
 
   describe('invites', () => {

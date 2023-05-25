@@ -111,4 +111,5 @@ export interface ItemManagerInterface extends AbstractService {
   ): I[]
   findItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T | undefined
   findSureItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T
+  itemsBelongingToGroup(groupUuid: string): DecryptedItemInterface[]
 }

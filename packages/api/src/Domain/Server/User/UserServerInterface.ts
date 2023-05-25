@@ -11,6 +11,5 @@ export interface UserServerInterface {
   register(params: UserRegistrationRequestParams): Promise<HttpResponse<UserRegistrationResponseBody>>
   deleteAccount(params: UserDeletionRequestParams): Promise<HttpResponse<UserDeletionResponseBody>>
   update(params: UserUpdateRequestParams): Promise<HttpResponse<UserUpdateResponse>>
-  update(params: UserUpdateRequestParams): Promise<HttpResponse<UserUpdateResponse>>
   getCurrentUser(userUuid: string): Promise<HttpResponse<UserGetUserResponse>>
 }

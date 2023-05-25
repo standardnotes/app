@@ -8,7 +8,6 @@ import {
   ItemsServerInterface,
   StorageKey,
   ApiServiceEvent,
-  DiagnosticInfo,
   KeyValueStoreInterface,
   API_MESSAGE_GENERIC_SYNC_FAIL,
   API_MESSAGE_GENERIC_TOKEN_REFRESH_FAIL,
@@ -103,7 +102,6 @@ export class SNApiService
 {
   private session: Session | LegacySession | null
   public user?: User
-  private registering = false
   private authenticating = false
   private changing = false
   private refreshingSession = false
@@ -908,20 +906,5 @@ export class SNApiService
     }
 
     return this.session.accessToken
-  }
-
-  override getDiagnostics(): Promise<DiagnosticInfo | undefined> {
-    return Promise.resolve({
-      api: {
-        hasSession: this.session != undefined,
-        user: this.user,
-        registering: this.registering,
-        authenticating: this.authenticating,
-        changing: this.changing,
-        refreshingSession: this.refreshingSession,
-        filesHost: this.filesHost,
-        host: this.host,
-      },
-    })
   }
 }

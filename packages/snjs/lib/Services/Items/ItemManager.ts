@@ -1408,4 +1408,8 @@ export class ItemManager
       ? ItemRelationshipDirection.BReferencesA
       : ItemRelationshipDirection.NoRelationship
   }
+
+  itemsBelongingToGroup(groupUuid: string): Models.DecryptedItemInterface[] {
+    return this.items.filter((item) => item.group_uuid === groupUuid)
+  }
 }

@@ -680,8 +680,12 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   /**
    * Returns the in-memory root key value.
    */
-  public getRootKey() {
+  public getRootKey(): RootKeyInterface | undefined {
     return this.rootKeyEncryption.getRootKey()
+  }
+
+  public getSureRootKey(): RootKeyInterface {
+    return this.rootKeyEncryption.getRootKey() as RootKeyInterface
   }
 
   /**

@@ -254,7 +254,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       }
     } else if (ItemContentTypeUsesGroupKeyEncryption(payload.content_type)) {
       if (!isGroupKey(key)) {
-        throw Error('Attempting to use non-group key for group item.')
+        throw Error(`Attempting to use non-group key ${key.content_type} for item content type ${payload.content_type}`)
       }
       return baseData
     } else {

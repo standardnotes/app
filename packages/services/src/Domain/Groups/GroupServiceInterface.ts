@@ -31,11 +31,13 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
 
   removeItemFromItsGroup(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
 
+  removeItemFromItsGroup(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
+
   deleteGroup(groupUuid: string): Promise<boolean>
 
   removeUserFromGroup(groupUuid: string, userUuid: string): Promise<ClientDisplayableError | void>
 
-  downloadInboundInvites(): Promise<ClientDisplayableError | void>
+  downloadInboundInvites(): Promise<ClientDisplayableError | GroupInviteServerHash[]>
 
   getOutboundInvites(): Promise<GroupInviteServerHash[] | ClientDisplayableError>
 

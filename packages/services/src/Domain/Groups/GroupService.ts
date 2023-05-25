@@ -46,6 +46,9 @@ import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface
 import { SyncEvent, SyncEventReceivedGroupInvitesData, SyncEventReceivedGroupsData } from '../Event/SyncEvent'
 import { SessionEvent } from '../Session/SessionEvent'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
+import { RemoveItemFromGroupUseCase } from './UseCase/RemoveItemFromGroup'
+import { DeleteGroupUseCase } from './UseCase/DeleteGroup'
+import { AddItemToGroupUseCase } from './UseCase/AddItemToGroup'
 
 export class GroupService
   extends AbstractService<GroupServiceEvent>
@@ -132,7 +135,7 @@ export class GroupService
     await this.downloadInboundInvites()
   }
 
-  public async downloadInboundInvites(): Promise<ClientDisplayableError | void> {
+  public async downloadInboundInvites(): Promise<ClientDisplayableError | GroupInviteServerHash[]> {
     const response = await this.groupInvitesServer.getInboundUserInvites()
 
     if (isErrorResponse(response)) {
@@ -140,6 +143,8 @@ export class GroupService
     }
 
     await this.processInboundInvites(response.data.invites)
+
+    return response.data.invites
   }
 
   public async getOutboundInvites(): Promise<GroupInviteServerHash[] | ClientDisplayableError> {
@@ -290,9 +295,8 @@ export class GroupService
   }
 
   async addItemToGroup(group: GroupServerHash, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
-    await this.items.changeItem(item, (mutator) => {
-      mutator.group_uuid = group.uuid
-    })
+    const useCase = new AddItemToGroupUseCase(this.items)
+    await useCase.execute({ groupUuid: group.uuid, item })
 
     await this.sync.sync()
 
@@ -300,9 +304,8 @@ export class GroupService
   }
 
   async removeItemFromItsGroup(item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
-    await this.items.changeItem(item, (mutator) => {
-      mutator.group_uuid = undefined
-    })
+    const useCase = new RemoveItemFromGroupUseCase(this.items)
+    await useCase.execute({ item })
 
     await this.sync.sync()
 
@@ -310,18 +313,19 @@ export class GroupService
   }
 
   async deleteGroup(groupUuid: string): Promise<boolean> {
-    const response = await this.groupsServer.deleteGroup({ groupUuid })
+    const useCase = new DeleteGroupUseCase(this.items, this.groupsServer)
+    const error = await useCase.execute({ groupUuid })
 
-    if (isErrorResponse(response)) {
+    if (isClientDisplayableError(error)) {
       return false
     }
 
+    await this.sync.sync()
     return true
   }
 
   async removeUserFromGroup(groupUuid: string, memberUuid: string): Promise<ClientDisplayableError | void> {
     const useCase = new RemoveGroupMemberUseCase(this.groupUsersServer)
-
     const result = await useCase.execute({ groupUuid, memberUuid })
 
     if (isClientDisplayableError(result)) {
@@ -333,7 +337,6 @@ export class GroupService
 
   async getGroupUsers(groupUuid: string): Promise<GroupUserServerHash[] | undefined> {
     const useCase = new GetGroupUsersUseCase(this.groupUsersServer)
-
     return useCase.execute({ groupUuid })
   }
 

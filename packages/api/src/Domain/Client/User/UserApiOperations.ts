@@ -3,4 +3,5 @@ export enum UserApiOperations {
   SubmittingRequest,
   DeletingAccount,
   GettingUser,
+  UpdatingUser,
 }

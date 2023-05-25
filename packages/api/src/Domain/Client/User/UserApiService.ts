@@ -15,6 +15,7 @@ import { UserRequestServerInterface } from '../../Server/UserRequest/UserRequest
 import { UserApiOperations } from './UserApiOperations'
 import { UserApiServiceInterface } from './UserApiServiceInterface'
 import { UserGetUserResponse } from '../../Response/User/UserGetPkcCredentialsResponse'
+import { UserUpdateResponse } from '../../Response/User/UserUpdateResponse'
 
 export class UserApiService implements UserApiServiceInterface {
   private operationsInProgress: Map<UserApiOperations, boolean>
@@ -99,6 +100,29 @@ export class UserApiService implements UserApiServiceInterface {
       return response
     } catch (error) {
       throw new ApiCallError(ErrorMessage.GenericRegistrationFail)
+    }
+  }
+
+  async updateUser(updateDTO: {
+    userUuid: string
+    publicKey: string
+    encryptedPrivateKey: string
+  }): Promise<HttpResponse<UserUpdateResponse>> {
+    this.lockOperation(UserApiOperations.UpdatingUser)
+
+    try {
+      const response = await this.userServer.update({
+        [ApiEndpointParam.ApiVersion]: ApiVersion.v0,
+        user_uuid: updateDTO.userUuid,
+        public_key: updateDTO.publicKey,
+        encrypted_private_key: updateDTO.encryptedPrivateKey,
+      })
+
+      this.unlockOperation(UserApiOperations.UpdatingUser)
+
+      return response
+    } catch (error) {
+      throw new ApiCallError(ErrorMessage.GenericFail)
     }
   }
 

@@ -22,7 +22,7 @@ export class UserServer implements UserServerInterface {
   }
 
   async update(params: UserUpdateRequestParams): Promise<HttpResponse<UserUpdateResponse>> {
-    return this.httpService.patch(Paths.v1.updateAccount(params.userUuid), params)
+    return this.httpService.patch(Paths.v1.updateAccount(params.user_uuid), params)
   }
 
   async getCurrentUser(userUuid: string): Promise<HttpResponse<UserGetUserResponse>> {

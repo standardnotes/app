@@ -46,7 +46,9 @@ export class ContactService
     return !!this.session.getPublicKey()
   }
 
-  public enableCollaboration(): Promise<void> {}
+  public async enableCollaboration(): Promise<void> {
+    await this.session.updateAccountWithFirstTimeKeypair()
+  }
 
   public async refreshAllContactsAfterPublicKeyChange(): Promise<void> {
     await this.contactServer.refreshAllContactsAfterPublicKeyChange()

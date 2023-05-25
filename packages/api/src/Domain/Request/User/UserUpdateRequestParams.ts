@@ -1,10 +1,9 @@
-import { AnyKeyParamsContent } from '@standardnotes/common'
 import { ApiEndpointParam } from '@standardnotes/responses'
 import { ApiVersion } from '../../Api/ApiVersion'
 
-export type UserUpdateRequestParams = AnyKeyParamsContent & {
+export type UserUpdateRequestParams = {
   [ApiEndpointParam.ApiVersion]: ApiVersion.v0
-  userUuid: string
-  publicKey?: string
-  encryptedPrivateKey?: string
+  user_uuid: string
+  public_key?: string
+  encrypted_private_key?: string
 }
