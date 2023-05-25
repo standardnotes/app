@@ -2,44 +2,52 @@ import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 're
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { GroupInviteServerHash, TrustedContactInterface } from '@standardnotes/snjs'
 
 type Props = {
-  fromInvite?: GroupInviteServerHash
+  existingGroupUuid?: string
   onCloseDialog: () => void
-  onAddContact?: (contact: TrustedContactInterface) => void
 }
 
-const AddContact: FunctionComponent<Props> = ({ onCloseDialog, fromInvite, onAddContact }) => {
+const EditGroupModal: FunctionComponent<Props> = ({ onCloseDialog, existingGroupUuid }) => {
   const application = useApplication()
 
-  const [collaborationID, setCollaborationID] = useState<string>('')
   const [name, setName] = useState<string>('')
+  const [description, setDescription] = useState<string>('')
+
+  useEffect(() => {
+    if (existingGroupUuid) {
+      const groupInfo = application.groups.getGroupInfo(existingGroupUuid)
+
+      setName(groupInfo?.groupName ?? '')
+      setDescription(groupInfo?.groupDescription ?? '')
+    }
+  }, [application.groups, existingGroupUuid])
 
   const handleDialogClose = useCallback(() => {
     onCloseDialog()
   }, [onCloseDialog])
 
-  useEffect(() => {
-    if (fromInvite) {
-      setCollaborationID(application.contacts.getCollaborationIDFromInvite(fromInvite))
-    }
-  }, [application.contacts, fromInvite])
-
   const handleSubmit = useCallback(async () => {
-    const contact = await application.contacts.addTrustedContactFromCollaborationID(collaborationID, name)
-    if (contact) {
-      onAddContact?.(contact)
+    if (existingGroupUuid) {
+      await application.groups.changeGroupMetadata(existingGroupUuid, {
+        name: name,
+        description: description,
+      })
       handleDialogClose()
     } else {
-      void application.alertService.alert('Unable to create contact. Please try again.')
+      const group = await application.groups.createGroup(name, description)
+      if (group) {
+        handleDialogClose()
+      } else {
+        void application.alertService.alert('Unable to create group. Please try again.')
+      }
     }
-  }, [application.contacts, application.alertService, collaborationID, name, onAddContact, handleDialogClose])
+  }, [existingGroupUuid, application.groups, application.alertService, name, description, handleDialogClose])
 
   const modalActions = useMemo(
     (): ModalAction[] => [
       {
-        label: 'Add Contact',
+        label: existingGroupUuid ? 'Save Group' : 'Create Group',
         onClick: handleSubmit,
         type: 'primary',
         mobileSlot: 'right',
@@ -51,7 +59,7 @@ const AddContact: FunctionComponent<Props> = ({ onCloseDialog, fromInvite, onAdd
         mobileSlot: 'left',
       },
     ],
-    [handleDialogClose, handleSubmit],
+    [existingGroupUuid, handleDialogClose, handleSubmit],
   )
 
   return (
@@ -60,14 +68,14 @@ const AddContact: FunctionComponent<Props> = ({ onCloseDialog, fromInvite, onAdd
         <div className="flex w-full flex-col">
           <div className="mb-3">
             <label className="mb-1 block font-bold" htmlFor="invite-email-input">
-              CollaborationID
+              Group info
             </label>
 
             <DecoratedInput
               className={{ container: 'mt-4' }}
-              id="invite-name-input"
+              id="group-name-input"
               value={name}
-              placeholder="Contact Name"
+              placeholder="Group Name"
               onChange={(value) => {
                 setName(value)
               }}
@@ -75,18 +83,13 @@ const AddContact: FunctionComponent<Props> = ({ onCloseDialog, fromInvite, onAdd
 
             <DecoratedInput
               className={{ container: 'mt-4' }}
-              id="invite-email-input"
-              value={collaborationID}
-              placeholder="Contact CollaborationID"
+              id="group-email-input"
+              value={description}
+              placeholder="Group description"
               onChange={(value) => {
-                setCollaborationID(value)
+                setDescription(value)
               }}
             />
-
-            <p className="mt-4">
-              Ask your contact for their Standard Notes CollaborationID via secure email or chat. Then, enter it here to
-              add them as a contact.
-            </p>
           </div>
         </div>
       </div>
@@ -94,4 +97,4 @@ const AddContact: FunctionComponent<Props> = ({ onCloseDialog, fromInvite, onAdd
   )
 }
 
-export default AddContact
+export default EditGroupModal

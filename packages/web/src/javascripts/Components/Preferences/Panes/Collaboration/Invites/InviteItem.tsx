@@ -4,7 +4,7 @@ import Icon from '@/Components/Icon/Icon'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import { GroupInviteServerHash } from '@standardnotes/snjs'
 import { useCallback, useState } from 'react'
-import AddContact from '../Contacts/AddContact'
+import EditContactModal from '../Contacts/EditContactModal'
 
 type Props = {
   invite: GroupInviteServerHash
@@ -29,7 +29,7 @@ const InviteItem = ({ invite }: Props) => {
   return (
     <>
       <ModalOverlay isOpen={isAddContactModalOpen} close={closeAddContactModal}>
-        <AddContact fromInvite={invite} onCloseDialog={closeAddContactModal} />
+        <EditContactModal fromInvite={invite} onCloseDialog={closeAddContactModal} />
       </ModalOverlay>
 
       <div className="flex items-center gap-2 py-1.5">

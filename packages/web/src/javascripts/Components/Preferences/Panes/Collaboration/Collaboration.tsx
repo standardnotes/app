@@ -5,25 +5,35 @@ import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/P
 import { useApplication } from '@/Components/ApplicationProvider'
 import ContactItem from './Contacts/ContactItem'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
-import AddContact from './Contacts/AddContact'
+import EditContactModal from './Contacts/EditContactModal'
 import { useCallback, useEffect, useState } from 'react'
-import { GroupInviteServerHash, GroupServerHash, isClientDisplayableError } from '@standardnotes/snjs'
+import {
+  ContactServiceEvent,
+  GroupInviteServerHash,
+  GroupServerHash,
+  TrustedContactInterface,
+  isClientDisplayableError,
+} from '@standardnotes/snjs'
 import GroupItem from './Groups/GroupItem'
 import Button from '@/Components/Button/Button'
 import InviteItem from './Invites/InviteItem'
+import EditGroupModal from './Groups/EditGroupModal'
 
 const Collaboration = () => {
-  const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false)
   const application = useApplication()
 
   const [groups, setGroups] = useState<GroupServerHash[]>([])
   const [invites, setInvites] = useState<GroupInviteServerHash[]>([])
+  const [contacts, setContacts] = useState<TrustedContactInterface[]>([])
 
+  const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false)
   const closeAddContactModal = () => setIsAddContactModalOpen(false)
+
+  const [isGroupModalOpen, setIsGroupModalOpen] = useState(false)
+  const closeGroupModal = () => setIsGroupModalOpen(false)
 
   const groupService = application.groups
   const contactService = application.contacts
-  const contacts = contactService.getAllContacts()
 
   const fetchGroups = useCallback(async () => {
     const groups = await application.groups.reloadGroups()
@@ -32,19 +42,16 @@ const Collaboration = () => {
     }
   }, [application.groups])
 
-  useEffect(() => {
-    void fetchGroups()
-  }, [fetchGroups])
-
   const fetchInvites = useCallback(async () => {
     await groupService.downloadInboundInvites()
     const invites = groupService.getPendingInvites()
     setInvites(invites)
   }, [groupService])
 
-  useEffect(() => {
-    void fetchInvites()
-  }, [application.sync, fetchInvites, groupService])
+  const fetchContacts = useCallback(async () => {
+    const contacts = contactService.getAllContacts()
+    setContacts(contacts)
+  }, [contactService])
 
   const createNewGroup = useCallback(async () => {
     await groupService.createGroup()
@@ -55,10 +62,28 @@ const Collaboration = () => {
     setIsAddContactModalOpen(true)
   }, [])
 
+  useEffect(() => {
+    return contactService.addEventObserver((event) => {
+      if (event === ContactServiceEvent.ContactsChanged) {
+        void fetchContacts()
+      }
+    })
+  }, [contactService, fetchContacts])
+
+  useEffect(() => {
+    void fetchGroups()
+    void fetchInvites()
+    void fetchContacts()
+  }, [fetchContacts, fetchGroups, fetchInvites])
+
   return (
     <>
       <ModalOverlay isOpen={isAddContactModalOpen} close={closeAddContactModal}>
-        <AddContact onCloseDialog={closeAddContactModal} />
+        <EditContactModal onCloseDialog={closeAddContactModal} />
+      </ModalOverlay>
+
+      <ModalOverlay isOpen={isGroupModalOpen} close={closeGroupModal}>
+        <EditGroupModal onCloseDialog={closeGroupModal} />
       </ModalOverlay>
 
       <PreferencesGroup>

@@ -795,5 +795,17 @@ describe.only('groups', function () {
 
       await deinitContactContext()
     })
+
+    it('should be able to remove an item from a group as a write user if the item belongs to me', async () => {
+      console.error('TODO - implement test case')
+    })
+
+    it('should not be able to remove an item from a group as a write user if the item belongs to someone else', async () => {
+      console.error('TODO - implement test case')
+    })
+
+    it('should be able to remove an item from a group as an admin user if the item belongs to someone else', async () => {
+      console.error('TODO - implement test case')
+    })
   })
 })

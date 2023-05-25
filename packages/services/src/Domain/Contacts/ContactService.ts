@@ -110,6 +110,7 @@ export class ContactService
     }
 
     void this.notifyEvent(ContactServiceEvent.ReceivedContactRequests)
+    void this.notifyEvent(ContactServiceEvent.ContactsChanged)
   }
 
   public getServerContacts(): ContactServerHash[] {
@@ -135,7 +136,29 @@ export class ContactService
       })
     }
 
+    void this.notifyEvent(ContactServiceEvent.ContactsChanged)
+
     delete this.serverContacts[serverContact.uuid]
+  }
+
+  async editTrustedContact(
+    contact: TrustedContactInterface,
+    params: { name: string; collaborationID: string },
+  ): Promise<void> {
+    await this.items.changeItem<TrustedContactMutator>(contact, (mutator) => {
+      mutator.name = params.name
+      if (params.collaborationID) {
+        const { userPublicKey, userUuid } = this.parseCollaborationID(params.collaborationID)
+        if (userUuid !== contact.contactUuid) {
+          throw new Error("Collaboration ID's user uuid does not match contact UUID")
+        }
+        mutator.publicKey = userPublicKey
+      }
+    })
+
+    void this.notifyEvent(ContactServiceEvent.ContactsChanged)
+
+    await this.sync.sync()
   }
 
   async createTrustedContact(params: {
@@ -166,6 +189,8 @@ export class ContactService
       true,
     )
 
+    void this.notifyEvent(ContactServiceEvent.ContactsChanged)
+
     await this.sync.sync()
 
     return contact
@@ -180,6 +205,17 @@ export class ContactService
       ContentType.TrustedContact,
       new Predicate<TrustedContactInterface>('contactUuid', '=', userUuid),
     )[0]
+  }
+
+  getContactItem(contactItemUuid: string): TrustedContactInterface | undefined {
+    return this.items.findItem(contactItemUuid)
+  }
+
+  getCollaborationIDForTrustedContact(contact: TrustedContactInterface): string {
+    return this.buildCollaborationId({
+      userUuid: contact.content.contactUuid,
+      userPublicKey: contact.content.publicKey,
+    })
   }
 
   override deinit(): void {
