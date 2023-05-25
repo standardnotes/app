@@ -541,6 +541,33 @@ describe.only('groups', function () {
 
       await deinitContactContext()
     })
+
+    it('received items should contain the uuid of the contact who sent the item', async () => {
+      const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+
+      const receivedNote = contactContext.application.items.findItem(note.uuid)
+      expect(receivedNote).to.not.be.undefined
+      expect(receivedNote.user_uuid).to.equal(context.userUuid)
+
+      await deinitContactContext()
+    })
+
+    it('items should contain the uuid of the last person who edited it', async () => {
+      const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+
+      const receivedNote = contactContext.application.items.findItem(note.uuid)
+      expect(receivedNote.last_edited_by_uuid).to.not.be.undefined
+      expect(receivedNote.last_edited_by_uuid).to.equal(context.userUuid)
+
+      await contactContext.changeNoteTitleAndSync(receivedNote, 'new title')
+      await context.sync()
+
+      const updatedNote = context.application.items.findItem(note.uuid)
+      expect(updatedNote.last_edited_by_uuid).to.not.be.undefined
+      expect(updatedNote.last_edited_by_uuid).to.equal(contactContext.userUuid)
+
+      await deinitContactContext()
+    })
   })
 
   describe('user credentials change', () => {

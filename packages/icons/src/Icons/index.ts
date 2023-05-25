@@ -91,6 +91,7 @@ import FullscreenExitIcon from './ic-fullscreen-exit.svg'
 import FullscreenIcon from './ic-fullscreen.svg'
 import GiftOutlineIcon from './ic-gift-outline.svg'
 import GoogleKeepIcon from './ic-gkeep.svg'
+import GroupIcon from './ic-group.svg'
 import HashtagFilledIcon from './ic-hashtag-filled.svg'
 import HashtagIcon from './ic-hashtag.svg'
 import HashtagOffIcon from './ic-hashtag-off.svg'
@@ -300,6 +301,7 @@ export {
   FullscreenExitIcon,
   FullscreenIcon,
   GiftOutlineIcon,
+  GroupIcon,
   HashtagFilledIcon,
   HashtagIcon,
   HashtagOffIcon,

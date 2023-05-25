@@ -408,6 +408,30 @@ export class GroupService
     await this.sync.sync()
   }
 
+  isItemInCollaborativeGroup(item: DecryptedItemInterface): boolean {
+    return item.group_uuid !== undefined
+  }
+
+  getItemLastEditedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined {
+    if (!item.last_edited_by_uuid) {
+      return undefined
+    }
+
+    const contact = this.contacts.findTrustedContact(item.last_edited_by_uuid)
+
+    return contact
+  }
+
+  getItemSharedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined {
+    if (!item.user_uuid || item.user_uuid === this.user.uuid) {
+      return undefined
+    }
+
+    const contact = this.contacts.findTrustedContact(item.user_uuid)
+
+    return contact
+  }
+
   override deinit(): void {
     super.deinit()
     ;(this.http as unknown) = undefined

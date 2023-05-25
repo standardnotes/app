@@ -10,6 +10,7 @@ import {
   DecryptedItemInterface,
   GroupKeyInterface,
   GroupKeyContentSpecialized,
+  TrustedContactInterface,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { GroupServiceEvent } from './GroupServiceEvent'
@@ -35,6 +36,9 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
   addItemToGroup(group: GroupServerHash, item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   removeItemFromItsGroup(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   removeItemFromItsGroup(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
+  getItemLastEditedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined
+  getItemSharedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined
+  isItemInCollaborativeGroup(item: DecryptedItemInterface): boolean
 
   downloadInboundInvites(): Promise<ClientDisplayableError | GroupInviteServerHash[]>
   getOutboundInvites(): Promise<GroupInviteServerHash[] | ClientDisplayableError>

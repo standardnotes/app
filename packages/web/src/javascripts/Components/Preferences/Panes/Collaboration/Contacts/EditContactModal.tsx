@@ -83,14 +83,14 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
   )
 
   return (
-    <Modal title="Add New Contact" close={handleDialogClose} actions={modalActions}>
-      <div className="px-4.5 py-4">
+    <Modal
+      title={editContactUuid ? 'Edit Contact' : 'Add New Contact'}
+      close={handleDialogClose}
+      actions={modalActions}
+    >
+      <div className="px-4.5 pt-4 pb-1.5">
         <div className="flex w-full flex-col">
           <div className="mb-3">
-            <label className="mb-1 block font-bold" htmlFor="invite-email-input">
-              CollaborationID
-            </label>
-
             <DecoratedInput
               className={{ container: 'mt-4' }}
               id="invite-name-input"

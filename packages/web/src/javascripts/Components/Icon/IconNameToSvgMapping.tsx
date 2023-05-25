@@ -93,6 +93,7 @@ export const IconNameToSvgMapping = {
   file: icons.FileIcon,
   folder: icons.FolderIcon,
   gkeep: icons.GoogleKeepIcon,
+  group: icons.GroupIcon,
   hashtag: icons.HashtagIcon,
   help: icons.HelpIcon,
   history: icons.HistoryIcon,

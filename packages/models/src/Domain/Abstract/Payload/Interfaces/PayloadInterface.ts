@@ -28,6 +28,8 @@ export interface PayloadInterface<T extends TransferPayload = TransferPayload, C
 
   readonly duplicate_of?: string
   readonly group_uuid?: string
+  readonly user_uuid?: string
+  readonly last_edited_by_uuid?: string
 
   /**
    * "Ejected" means a payload for

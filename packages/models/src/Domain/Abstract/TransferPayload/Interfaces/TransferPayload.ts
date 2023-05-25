@@ -21,4 +21,6 @@ export interface TransferPayload<C extends ItemContent = ItemContent> {
 
   duplicate_of?: string
   group_uuid?: string
+  user_uuid?: string
+  last_edited_by_uuid?: string
 }

@@ -34,6 +34,8 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
 
   readonly duplicate_of?: string
   readonly group_uuid?: string
+  readonly user_uuid?: string
+  readonly last_edited_by_uuid?: string
 
   constructor(rawPayload: T, source = PayloadSource.Constructor) {
     this.source = source
@@ -65,6 +67,8 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
     this.globalDirtyIndexAtLastSync = rawPayload.globalDirtyIndexAtLastSync
 
     this.group_uuid = rawPayload.group_uuid
+    this.user_uuid = rawPayload.user_uuid
+    this.last_edited_by_uuid = rawPayload.last_edited_by_uuid
 
     const timeToAllowSubclassesToFinishConstruction = 0
     setTimeout(() => {
@@ -89,6 +93,8 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
       lastSyncBegan: this.lastSyncBegan,
       lastSyncEnd: this.lastSyncEnd,
       group_uuid: this.group_uuid,
+      user_uuid: this.user_uuid,
+      last_edited_by_uuid: this.last_edited_by_uuid,
     }
 
     return comprehensive

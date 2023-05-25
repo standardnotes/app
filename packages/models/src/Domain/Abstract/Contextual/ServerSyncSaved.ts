@@ -17,6 +17,7 @@ export interface ServerSyncSavedContextualPayload {
   updated_at: Date
   uuid: string
   group_uuid?: string
+  last_edited_by_uuid?: string
 }
 
 export function CreateServerSyncSavedPayload(from: FilteredServerItem): ServerSyncSavedContextualPayload {
@@ -29,5 +30,6 @@ export function CreateServerSyncSavedPayload(from: FilteredServerItem): ServerSy
     updated_at: from.updated_at,
     uuid: from.uuid,
     group_uuid: from.group_uuid,
+    last_edited_by_uuid: from.last_edited_by_uuid,
   }
 }

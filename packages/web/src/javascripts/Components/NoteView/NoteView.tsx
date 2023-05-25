@@ -45,6 +45,7 @@ import { SuperEditorContentId } from '../SuperEditor/Constants'
 import { NoteViewController } from './Controller/NoteViewController'
 import { PlainEditor, PlainEditorInterface } from './PlainEditor/PlainEditor'
 import { EditorMargins, EditorMaxWidths } from '../EditorWidthSelectionModal/EditorWidths'
+import CollaborationInfoHUD from './CollaborationInfo'
 
 const MinimumStatusDuration = 400
 
@@ -70,7 +71,7 @@ type State = {
   monospaceFont?: boolean
   plainEditorFocused?: boolean
   paneGestureEnabled?: boolean
-
+  noteLastEditedByUuid?: string
   updateSavingIndicator?: boolean
   editorFeatureIdentifier?: string
   noteType?: NoteType
@@ -254,6 +255,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     if (title !== this.state.editorTitle) {
       this.setState({
         editorTitle: title,
+      })
+    }
+
+    if (note.last_edited_by_uuid !== this.state.noteLastEditedByUuid) {
+      this.setState({
+        noteLastEditedByUuid: note.last_edited_by_uuid,
       })
     }
 
@@ -852,6 +859,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               </div>
               {renderHeaderOptions && (
                 <div className="note-view-options-buttons flex items-center gap-3">
+                  <CollaborationInfoHUD item={this.note} />
                   <LinkedItemsButton
                     filesController={this.viewControllerManager.filesController}
                     linkingController={this.viewControllerManager.linkingController}
