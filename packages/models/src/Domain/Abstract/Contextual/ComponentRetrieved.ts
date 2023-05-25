@@ -20,6 +20,5 @@ export function CreateComponentRetrievedContextPayload(
     created_at: fromPayload.created_at,
     deleted: false,
     uuid: fromPayload.uuid,
-    group_uuid: fromPayload.group_uuid,
   }
 }

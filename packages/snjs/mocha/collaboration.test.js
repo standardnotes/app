@@ -412,7 +412,7 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
-    it('should remove item from collaborated account when it is deleted permanently', async () => {
+    it('should remove item from collaborated account when item is deleted permanently', async () => {
       const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
 
       await context.items.setItemToBeDeleted(note)
@@ -466,8 +466,6 @@ describe.only('groups', function () {
 
       await deinitContactContext()
     })
-
-    it('irresolvable uuid conflicts should be capped to prevent infinite recursion', async () => {})
   })
 
   describe('invites', () => {

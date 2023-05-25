@@ -46,5 +46,6 @@ export function CreateDeletedServerSyncPushPayload(
     updated_at: fromPayload.updated_at,
     uuid: fromPayload.uuid,
     content: undefined,
+    group_uuid: fromPayload.group_uuid,
   }
 }
