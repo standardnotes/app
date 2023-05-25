@@ -5,19 +5,19 @@ export type ButtonStyle = 'default' | 'contrast' | 'neutral' | 'info' | 'warning
 const getColorsForNormalVariant = (style: ButtonStyle) => {
   switch (style) {
     case 'default':
-      return 'bg-passive-5 text-text'
+      return 'bg-normal-button text-text'
     case 'contrast':
-      return 'bg-passive-5 text-contrast'
+      return 'bg-normal-button text-contrast'
     case 'neutral':
-      return 'bg-passive-5 text-neutral'
+      return 'bg-normal-button text-neutral'
     case 'info':
-      return 'bg-passive-5 text-info'
+      return 'bg-normal-button text-info'
     case 'warning':
-      return 'bg-passive-5 text-warning'
+      return 'bg-normal-button text-warning'
     case 'danger':
-      return 'bg-passive-5 text-danger'
+      return 'bg-normal-button text-danger'
     case 'success':
-      return 'bg-passive-5 text-success'
+      return 'bg-normal-button text-success'
   }
 }
 
