@@ -21,11 +21,13 @@ import {
 } from '@standardnotes/api'
 import {
   DecryptedItemInterface,
+  GroupKeyContentSpecialized,
   GroupKeyInterface,
   PayloadEmitSource,
   TrustedContactInterface,
 } from '@standardnotes/models'
-import { GroupServiceEvent, GroupServiceInterface } from './GroupServiceInterface'
+import { GroupServiceInterface } from './GroupServiceInterface'
+import { GroupServiceEvent } from './GroupServiceEvent'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ContentType } from '@standardnotes/common'
 import { HandleSuccessfullyChangedCredentials } from './UseCase/HandleSuccessfullyChangedCredentials'
@@ -49,6 +51,7 @@ import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { RemoveItemFromGroupUseCase } from './UseCase/RemoveItemFromGroup'
 import { DeleteGroupUseCase } from './UseCase/DeleteGroup'
 import { AddItemToGroupUseCase } from './UseCase/AddItemToGroup'
+import { ChangeGroupMetadataUsecase } from './UseCase/ChangeGroupMetadata'
 
 export class GroupService
   extends AbstractService<GroupServiceEvent>
@@ -181,19 +184,6 @@ export class GroupService
         await this.acceptInvite(invite)
       }
     }
-  }
-
-  async updateGroup(
-    groupUuid: string,
-    params: { specifiedItemsKeyUuid: string; groupKeyTimestamp: number },
-  ): Promise<GroupServerHash | ClientDisplayableError> {
-    const updateGroupUseCase = new UpdateGroupUseCase(this.groupsServer)
-
-    return updateGroupUseCase.execute({
-      groupUuid: groupUuid,
-      groupKeyTimestamp: params.groupKeyTimestamp,
-      specifiedItemsKeyUuid: params.specifiedItemsKeyUuid,
-    })
   }
 
   async acceptInvite(invite: GroupInviteServerHash): Promise<boolean> {
@@ -342,6 +332,59 @@ export class GroupService
 
   getGroupKey(groupUuid: string): GroupKeyInterface | undefined {
     return this.encryption.getGroupKey(groupUuid)
+  }
+
+  getGroupInfoForItem(item: DecryptedItemInterface): GroupKeyContentSpecialized | undefined {
+    if (!item.group_uuid) {
+      return undefined
+    }
+
+    return this.getGroupInfo(item.group_uuid)
+  }
+
+  getGroupInfo(groupUuid: string): GroupKeyContentSpecialized | undefined {
+    return this.getGroupKey(groupUuid)?.content
+  }
+
+  async updateGroup(
+    groupUuid: string,
+    params: { specifiedItemsKeyUuid: string; groupKeyTimestamp: number },
+  ): Promise<GroupServerHash | ClientDisplayableError> {
+    const updateGroupUseCase = new UpdateGroupUseCase(this.groupsServer)
+
+    return updateGroupUseCase.execute({
+      groupUuid: groupUuid,
+      groupKeyTimestamp: params.groupKeyTimestamp,
+      specifiedItemsKeyUuid: params.specifiedItemsKeyUuid,
+    })
+  }
+
+  async changeGroupMetadata(
+    groupUuid: string,
+    params: { name: string; description: string },
+  ): Promise<ClientDisplayableError[] | undefined> {
+    const changeGroupMetadataUseCase = new ChangeGroupMetadataUsecase(
+      this.items,
+      this.encryption,
+      this.groupInvitesServer,
+      this.groupUsersServer,
+      this.contacts,
+    )
+
+    const result = await changeGroupMetadataUseCase.execute({
+      groupUuid,
+      groupName: params.name,
+      groupDescription: params.description,
+      inviterUuid: this.user.uuid,
+      inviterPrivateKey: this.userDecryptedPrivateKey,
+      inviterPublicKey: this.userPublicKey,
+    })
+
+    if (!result || result.length === 0) {
+      await this.sync.sync()
+    }
+
+    return result
   }
 
   async rotateGroupKey(groupUuid: string): Promise<void> {

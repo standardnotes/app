@@ -80,6 +80,7 @@ export const IconNameToSvgMapping = {
   check: icons.CheckIcon,
   close: icons.CloseIcon,
   code: icons.CodeIcon,
+  comment: icons.FeedbackIcon,
   copy: icons.CopyIcon,
   dashboard: icons.DashboardIcon,
   diamond: icons.DiamondIcon,

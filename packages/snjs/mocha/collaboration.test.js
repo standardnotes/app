@@ -329,6 +329,27 @@ describe.only('groups', function () {
 
       await deinitContactContext()
     })
+
+    it('should update group name and description', async () => {
+      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+
+      await groupService.changeGroupMetadata(group.uuid, {
+        name: 'new group name',
+        description: 'new group description',
+      })
+
+      const groupInfo = groupService.getGroupInfo(group.uuid)
+      expect(groupInfo.groupName).to.equal('new group name')
+      expect(groupInfo.groupDescription).to.equal('new group description')
+
+      await contactContext.sync()
+
+      const contactGroupInfo = contactContext.groupService.getGroupInfo(group.uuid)
+      expect(contactGroupInfo.groupName).to.equal('new group name')
+      expect(contactGroupInfo.groupDescription).to.equal('new group description')
+
+      await deinitContactContext()
+    })
   })
 
   describe('client timing', () => {

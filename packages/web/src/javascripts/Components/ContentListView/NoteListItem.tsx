@@ -13,6 +13,7 @@ import { ListItemTitle } from './ListItemTitle'
 import { log, LoggingDomain } from '@/Logging'
 import { classNames } from '@standardnotes/utils'
 import { getIconAndTintForNoteType } from '@/Utils/Items/Icons/getIconAndTintForNoteType'
+import ListItemGroupInfo from './ListItemGroupInfo'
 
 const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
   application,
@@ -95,6 +96,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
         <ListItemMetadata item={item} hideDate={hideDate} sortBy={sortBy} />
         <ListItemTags hideTags={hideTags} tags={tags} />
         <ListItemConflictIndicator item={item} />
+        <ListItemGroupInfo item={item} />
       </div>
       <ListItemFlagIcons className="p-4" item={item} hasFiles={hasFiles} hasBorder={hasOffsetBorder} />
     </div>
