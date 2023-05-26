@@ -74,5 +74,7 @@ export function computeFiltersForDisplayOptions(
     filters.push((item) => itemMatchesQuery(item, query, collection))
   }
 
+  filters.push((item) => !item.conflictOf)
+
   return filters
 }

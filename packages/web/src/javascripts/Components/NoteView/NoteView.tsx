@@ -9,7 +9,7 @@ import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { StringDeleteNote, STRING_DELETE_LOCKED_ATTEMPT, STRING_DELETE_PLACEHOLDER_ATTEMPT } from '@/Constants/Strings'
 import { log, LoggingDomain } from '@/Logging'
 import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
-import { classNames } from '@standardnotes/utils'
+import { classNames, pluralize } from '@standardnotes/utils'
 import {
   ApplicationEvent,
   ComponentArea,
@@ -45,6 +45,9 @@ import { SuperEditorContentId } from '../SuperEditor/Constants'
 import { NoteViewController } from './Controller/NoteViewController'
 import { PlainEditor, PlainEditorInterface } from './PlainEditor/PlainEditor'
 import { EditorMargins, EditorMaxWidths } from '../EditorWidthSelectionModal/EditorWidths'
+import Button from '../Button/Button'
+import ModalOverlay from '../Modal/ModalOverlay'
+import ConflictedNotesModal from './ConflictedNotesModal'
 
 const MinimumStatusDuration = 400
 
@@ -74,6 +77,9 @@ type State = {
   updateSavingIndicator?: boolean
   editorFeatureIdentifier?: string
   noteType?: NoteType
+
+  conflictedNotes: Set<SNNote>
+  showConflictResolutionModal: boolean
 }
 
 class NoteView extends AbstractComponent<NoteViewProps, State> {
@@ -84,6 +90,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
   private removeTrashKeyObserver?: () => void
   private removeComponentStreamObserver?: () => void
+  private removeNoteStreamObserver?: () => void
   private removeComponentManagerObserver?: () => void
   private removeInnerNoteObserver?: () => void
 
@@ -120,6 +127,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       syncTakingTooLong: false,
       editorFeatureIdentifier: this.controller.item.editorIdentifier,
       noteType: this.controller.item.noteType,
+      conflictedNotes: new Set(),
+      showConflictResolutionModal: false,
     }
 
     this.noteViewElementRef = createRef<HTMLDivElement>()
@@ -132,6 +141,9 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
     this.removeComponentStreamObserver?.()
     ;(this.removeComponentStreamObserver as unknown) = undefined
+
+    this.removeNoteStreamObserver?.()
+    ;(this.removeNoteStreamObserver as unknown) = undefined
 
     this.removeInnerNoteObserver?.()
     ;(this.removeInnerNoteObserver as unknown) = undefined
@@ -418,6 +430,47 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       await this.reloadStackComponents()
       this.debounceReloadEditorComponent()
     })
+
+    this.removeNoteStreamObserver = this.application.streamItems(
+      ContentType.Note,
+      async ({ inserted, changed, removed }) => {
+        const insertedOrChanged = inserted.concat(changed)
+
+        for (const note of insertedOrChanged) {
+          if (!(note instanceof SNNote)) {
+            continue
+          }
+
+          if (note.conflictOf === this.note.uuid) {
+            this.setState((state) => ({
+              conflictedNotes: state.conflictedNotes.add(note),
+            }))
+          } else {
+            this.setState((state) => {
+              const conflictedNotes = new Set(state.conflictedNotes)
+              conflictedNotes.delete(note)
+              return {
+                conflictedNotes,
+              }
+            })
+          }
+        }
+
+        for (const note of removed) {
+          if (!(note instanceof SNNote)) {
+            continue
+          }
+
+          this.setState((state) => {
+            const conflictedNotes = new Set(state.conflictedNotes)
+            conflictedNotes.delete(note)
+            return {
+              conflictedNotes,
+            }
+          })
+        }
+      },
+    )
   }
 
   private createComponentViewer(component: SNComponent) {
@@ -776,6 +829,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     this.setState({ plainEditorFocused: false })
   }
 
+  toggleConflictResolutionModal = () => {
+    this.setState((state) => ({
+      showConflictResolutionModal: !state.showConflictResolutionModal,
+    }))
+  }
+
   override render() {
     if (this.controller.dealloced) {
       return null
@@ -850,6 +909,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                   updateSavingIndicator={this.state.updateSavingIndicator}
                 />
               </div>
+              {this.state.conflictedNotes.size > 0 && (
+                <Button primary colorStyle="danger" small onClick={this.toggleConflictResolutionModal}>
+                  {this.state.conflictedNotes.size}{' '}
+                  {pluralize(this.state.conflictedNotes.size, 'conflict', 'conflicts')}
+                </Button>
+              )}
               {renderHeaderOptions && (
                 <div className="note-view-options-buttons flex items-center gap-3">
                   <LinkedItemsButton
@@ -979,6 +1044,14 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             })}
           </div>
         </div>
+
+        <ModalOverlay isOpen={this.state.showConflictResolutionModal} close={this.toggleConflictResolutionModal}>
+          <ConflictedNotesModal
+            currentNote={this.note}
+            conflictedNotes={this.state.conflictedNotes}
+            close={this.toggleConflictResolutionModal}
+          />
+        </ModalOverlay>
       </div>
     )
   }

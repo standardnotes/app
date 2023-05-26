@@ -109,9 +109,9 @@ export class NoteSyncController {
       params.isUserModified,
     )
 
-    void this.application.sync.sync().then(() => {
+    /* void this.application.sync.sync().then(() => {
       params.onRemoteSyncComplete?.()
-    })
+    }) */
 
     params.onLocalPropagationComplete?.()
   }
