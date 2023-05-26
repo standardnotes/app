@@ -1,6 +1,6 @@
 import { ReactNativeToWebEvent } from '@standardnotes/snjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Keyboard, Platform, Text, View } from 'react-native'
+import { Button, Keyboard, Platform, requireNativeComponent, Text, View } from 'react-native'
 import VersionInfo from 'react-native-version-info'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
 import { OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTypes'
@@ -9,6 +9,8 @@ import { AppStateObserverService } from './AppStateObserverService'
 import { ColorSchemeObserverService } from './ColorSchemeObserverService'
 import { MobileDevice, MobileDeviceEvent } from './Lib/MobileDevice'
 import { IsDev } from './Lib/Utils'
+
+const CustomWebView = requireNativeComponent('CustomWebView')
 
 const LoggingEnabled = IsDev
 
@@ -354,6 +356,9 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
        * This is needed to prevent the keyboard from pushing the webview up and down when it appears and disappears.
        */
       scrollEnabled={false}
+      nativeConfig={{
+        component: CustomWebView,
+      }}
     />
   )
 }
