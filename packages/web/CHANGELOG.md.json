@@ -1,6 +1,72 @@
 {
   "versions": [
     {
+      "version": "3.160.16",
+      "title": "[3.160.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.15...@standardnotes/web@3.160.16) (2023-05-26)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.160.15",
+      "title": "[3.160.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.14...@standardnotes/web@3.160.15) (2023-05-25)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.160.14",
+      "title": "[3.160.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.13...@standardnotes/web@3.160.14) (2023-05-25)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.160.13",
+      "title": "[3.160.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.12...@standardnotes/web@3.160.13) (2023-05-24)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.160.12",
+      "title": "[3.160.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.11...@standardnotes/web@3.160.12) (2023-05-24)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
+      "version": "3.160.11",
+      "title": "[3.160.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.10...@standardnotes/web@3.160.11) (2023-05-24)",
+      "date": null,
+      "body": "**Note:** Version bump only for package @standardnotes/web",
+      "parsed": {
+        "_": [
+          "Note: Version bump only for package @standardnotes/web"
+        ]
+      }
+    },
+    {
       "version": "3.160.10",
       "title": "[3.160.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.9...@standardnotes/web@3.160.10) (2023-05-23)",
       "date": null,

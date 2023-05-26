@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.4.317](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.4.316...@standardnotes/releases@1.4.317) (2023-05-26)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.4.316](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.4.315...@standardnotes/releases@1.4.316) (2023-05-25)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.4.315](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.4.314...@standardnotes/releases@1.4.315) (2023-05-25)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.4.314](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.4.313...@standardnotes/releases@1.4.314) (2023-05-24)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.4.313](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.4.312...@standardnotes/releases@1.4.313) (2023-05-24)
+
+**Note:** Version bump only for package @standardnotes/releases
+
+## [1.4.312](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.4.311...@standardnotes/releases@1.4.312) (2023-05-24)
+
+**Note:** Version bump only for package @standardnotes/releases
+
 ## [1.4.311](https://github.com/standardnotes/app/compare/@standardnotes/releases@1.4.310...@standardnotes/releases@1.4.311) (2023-05-23)
 
 **Note:** Version bump only for package @standardnotes/releases
