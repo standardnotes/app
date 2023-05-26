@@ -41,11 +41,13 @@ import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
 import { log, LoggingDomain } from '../Logging'
+import { GroupsServer, GroupsServerInterface, HttpServiceInterface } from '@standardnotes/api'
 
 const OneHundredMb = 100 * 1_000_000
 
 export class FileService extends AbstractService implements FilesClientInterface {
   private encryptedCache: FileMemoryCache = new FileMemoryCache(OneHundredMb)
+  private groupsServer: GroupsServerInterface
 
   constructor(
     private api: FilesApiInterface,
@@ -53,12 +55,14 @@ export class FileService extends AbstractService implements FilesClientInterface
     private syncService: SyncServiceInterface,
     private encryptor: EncryptionProviderInterface,
     private challengor: ChallengeServiceInterface,
+    http: HttpServiceInterface,
     private alertService: AlertService,
     private crypto: PureCryptoInterface,
     protected override internalEventBus: InternalEventBusInterface,
     private backupsService?: BackupServiceInterface,
   ) {
     super(internalEventBus)
+    this.groupsServer = new GroupsServer(http)
   }
 
   override deinit(): void {
@@ -215,7 +219,7 @@ export class FileService extends AbstractService implements FilesClientInterface
 
       let cacheEntryAggregate = new Uint8Array()
 
-      const operation = new DownloadAndDecryptFileOperation(file, this.crypto, this.api)
+      const operation = new DownloadAndDecryptFileOperation(file, this.crypto, this.api, 'own')
 
       const result = await operation.run(async ({ decrypted, encrypted, progress }): Promise<void> => {
         if (addToCache) {
@@ -232,6 +236,42 @@ export class FileService extends AbstractService implements FilesClientInterface
     }
   }
 
+  public async downloadForeignGroupFile(
+    file: FileItem,
+    onDecryptedBytes: (decryptedBytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
+  ): Promise<ClientDisplayableError | undefined> {
+    const groupUuid = file.group_uuid
+    if (!groupUuid) {
+      return new ClientDisplayableError('Group UUID not found')
+    }
+
+    log(LoggingDomain.FilesService, 'Downloading group file from network')
+
+    const valetTokenResponse = await this.groupsServer.createForeignFileReadValetToken({
+      groupUuid: groupUuid,
+      fileUuid: file.uuid,
+      remoteIdentifier: file.remoteIdentifier,
+    })
+
+    if (isErrorResponse(valetTokenResponse)) {
+      return new ClientDisplayableError('Could not create valet token')
+    }
+
+    const operation = new DownloadAndDecryptFileOperation(
+      file,
+      this.crypto,
+      this.api,
+      'group',
+      valetTokenResponse.data.valetToken,
+    )
+
+    const result = await operation.run(async ({ decrypted, progress }): Promise<void> => {
+      return onDecryptedBytes(decrypted.decryptedBytes, progress)
+    })
+
+    return result.error
+  }
+
   public async downloadSharedFile(
     file: FileItem,
     valetToken: string,
@@ -239,7 +279,7 @@ export class FileService extends AbstractService implements FilesClientInterface
   ): Promise<ClientDisplayableError | undefined> {
     log(LoggingDomain.FilesService, 'Downloading shared file from network')
 
-    const operation = new DownloadAndDecryptFileOperation(file, this.crypto, this.api, valetToken)
+    const operation = new DownloadAndDecryptFileOperation(file, this.crypto, this.api, 'link', valetToken)
 
     const result = await operation.run(async ({ decrypted, progress }): Promise<void> => {
       return onDecryptedBytes(decrypted.decryptedBytes, progress)

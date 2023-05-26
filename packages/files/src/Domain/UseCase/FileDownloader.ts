@@ -3,6 +3,7 @@ import { FileDownloadProgress } from '../Types/FileDownloadProgress'
 import { Deferred } from '@standardnotes/utils'
 import { FileContent } from '@standardnotes/models'
 import { FilesApiInterface } from '../Api/FilesApiInterface'
+import { DownloadFileType } from '../Api/DownloadFileType'
 
 export type AbortSignal = 'aborted'
 export type AbortFunction = () => void
@@ -25,7 +26,8 @@ export class FileDownloader {
       remoteIdentifier: FileContent['remoteIdentifier']
     },
     private readonly api: FilesApiInterface,
-    private readonly sharedValetToken?: string,
+    private readonly downloadType: DownloadFileType,
+    private readonly valetToken?: string,
   ) {}
 
   private getProgress(): FileDownloadProgress {
@@ -41,8 +43,8 @@ export class FileDownloader {
   }
 
   public async run(onEncryptedBytes: OnEncryptedBytes): Promise<FileDownloaderResult> {
-    if (this.sharedValetToken) {
-      return this.performDownload(this.sharedValetToken, onEncryptedBytes)
+    if (this.valetToken) {
+      return this.performDownload(this.valetToken, onEncryptedBytes)
     }
 
     const tokenResult = await this.getValetToken()
@@ -80,7 +82,7 @@ export class FileDownloader {
       valetToken,
       contentRangeStart: startRange,
       onBytesReceived: onRemoteBytesReceived,
-      isSharedDownload: !!this.sharedValetToken,
+      downloadType: this.downloadType,
     })
 
     const result = await Promise.race([this.abortDeferred.promise, downloadPromise])

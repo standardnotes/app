@@ -8,15 +8,15 @@ import { FileSystemNoSelection } from '../Api/FileSystemNoSelection'
 import { FileBackupMetadataFile } from '../Device/FileBackupMetadataFile'
 
 export interface FilesClientInterface {
-  beginNewFileUpload(sizeInBytes: number): Promise<EncryptAndUploadFileOperation | ClientDisplayableError>
+  minimumChunkSize(): number
 
+  beginNewFileUpload(sizeInBytes: number): Promise<EncryptAndUploadFileOperation | ClientDisplayableError>
   pushBytesForUpload(
     operation: EncryptAndUploadFileOperation,
     bytes: Uint8Array,
     chunkId: number,
     isFinalChunk: boolean,
   ): Promise<ClientDisplayableError | undefined>
-
   finishUpload(
     operation: EncryptAndUploadFileOperation,
     fileMetadata: FileMetadata,
@@ -26,29 +26,27 @@ export interface FilesClientInterface {
     file: FileItem,
     onDecryptedBytes: (bytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
   ): Promise<ClientDisplayableError | undefined>
-
   downloadSharedFile(
     file: FileItem,
     valetToken: string,
     onDecryptedBytes: (decryptedBytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
   ): Promise<ClientDisplayableError | undefined>
+  downloadForeignGroupFile(
+    file: FileItem,
+    onDecryptedBytes: (decryptedBytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
+  ): Promise<ClientDisplayableError | undefined>
 
   deleteFile(file: FileItem): Promise<ClientDisplayableError | undefined>
 
-  minimumChunkSize(): number
-
-  isFileNameFileBackupRelated(name: string): 'metadata' | 'binary' | false
-
-  decryptBackupMetadataFile(metdataFile: FileBackupMetadataFile): Promise<FileItem | undefined>
-
   selectFile(fileSystem: FileSystemApi): Promise<FileHandleRead | FileSystemNoSelection>
 
+  isFileNameFileBackupRelated(name: string): 'metadata' | 'binary' | false
+  decryptBackupMetadataFile(metdataFile: FileBackupMetadataFile): Promise<FileItem | undefined>
   readBackupFileAndSaveDecrypted(
     fileHandle: FileHandleRead,
     file: FileItem,
     fileSystem: FileSystemApi,
   ): Promise<'success' | 'aborted' | 'failed'>
-
   readBackupFileBytesDecrypted(
     fileHandle: FileHandleRead,
     file: FileItem,

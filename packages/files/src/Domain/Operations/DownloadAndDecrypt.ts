@@ -7,6 +7,7 @@ import { FileContent } from '@standardnotes/models'
 import { FilesApiInterface } from '../Api/FilesApiInterface'
 import { DecryptedBytes } from '../Types/DecryptedBytes'
 import { EncryptedBytes } from '../Types/EncryptedBytes'
+import { DownloadFileType } from '../Api/DownloadFileType'
 
 export type DownloadAndDecryptResult = { success: boolean; error?: ClientDisplayableError; aborted?: boolean }
 
@@ -28,9 +29,10 @@ export class DownloadAndDecryptFileOperation {
     },
     private readonly crypto: PureCryptoInterface,
     private readonly api: FilesApiInterface,
-    sharedValetToken?: string,
+    downloadType: DownloadFileType,
+    valetToken?: string,
   ) {
-    this.downloader = new FileDownloader(this.file, this.api, sharedValetToken)
+    this.downloader = new FileDownloader(this.file, this.api, downloadType, valetToken)
   }
 
   private createDecryptor(): FileDecryptor {

@@ -65,6 +65,10 @@ export class AppContext {
     return this.application.contactService
   }
 
+  get files() {
+    return this.application.fileService
+  }
+
   get publicKey() {
     return this.groupService.userPublicKey
   }
@@ -444,6 +448,7 @@ export class AppContext {
       billingFrequency: 12,
       payAmount: 59.0,
     })
+
     await Utils.sleep(2)
   }
 }

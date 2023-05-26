@@ -1,4 +1,5 @@
 import * as Factory from './lib/factory.js'
+import * as Files from './lib/Files.js'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
@@ -833,6 +834,31 @@ describe.only('groups', function () {
 
     it('should be able to remove an item from a group as an admin user if the item belongs to someone else', async () => {
       console.error('TODO - implement test case')
+    })
+  })
+
+  describe.only('files', () => {
+    beforeEach(async () => {
+      await context.publicMockSubscriptionPurchaseEvent()
+    })
+
+    it('should be able to download and decrypt shared file', async () => {
+      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+      const response = await fetch('/mocha/assets/small_file.md')
+      const buffer = new Uint8Array(await response.arrayBuffer())
+      const file = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
+
+      await groupService.addItemToGroup(group, file)
+      await contactContext.sync()
+
+      const sharedFile = contactContext.items.findItem(file.uuid)
+      expect(sharedFile).to.not.be.undefined
+      expect(sharedFile.remoteIdentifier).to.equal(file.remoteIdentifier)
+
+      const downloadedBytes = await Files.downloadGroupFile(contactContext.files, sharedFile)
+      expect(downloadedBytes).to.eql(buffer)
+
+      await deinitContactContext()
     })
   })
 })

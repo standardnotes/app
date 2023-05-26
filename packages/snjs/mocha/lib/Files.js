@@ -32,6 +32,20 @@ export async function downloadFile(fileService, file) {
   return receivedBytes
 }
 
+export async function downloadGroupFile(fileService, file) {
+  let receivedBytes = new Uint8Array()
+
+  const error = await fileService.downloadForeignGroupFile(file, (decryptedBytes) => {
+    receivedBytes = new Uint8Array([...receivedBytes, ...decryptedBytes])
+  })
+
+  if (error) {
+    throw new Error('Could not download group file', error.text)
+  }
+
+  return receivedBytes
+}
+
 export async function downloadSharedFile(fileService, file, valetToken) {
   let receivedBytes = new Uint8Array()
 

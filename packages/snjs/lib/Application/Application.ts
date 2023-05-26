@@ -1339,6 +1339,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.syncService,
       this.protocolService,
       this.challengeService,
+      this.httpService,
       this.alertService,
       this.options.crypto,
       this.internalEventBus,

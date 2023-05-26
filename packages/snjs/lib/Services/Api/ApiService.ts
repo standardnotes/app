@@ -29,7 +29,7 @@ import {
   API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS,
   ApiServiceEventData,
 } from '@standardnotes/services'
-import { DownloadFileParams, FilesApiInterface } from '@standardnotes/files'
+import { DownloadFileParams, DownloadFileType, FilesApiInterface } from '@standardnotes/files'
 import { ServerSyncPushContextualPayload, SNFeatureRepo } from '@standardnotes/models'
 import {
   User,
@@ -785,19 +785,27 @@ export class SNApiService
     return response.data.success
   }
 
-  public getFilesDownloadUrl(shared?: boolean): string {
-    return joinPaths(this.getFilesHost(), shared ? Paths.v1.downloadSharedFileChunk : Paths.v1.downloadFileChunk)
+  public getFilesDownloadUrl(downloadType: DownloadFileType): string {
+    if (downloadType === 'own') {
+      return joinPaths(this.getFilesHost(), Paths.v1.downloadFileChunk)
+    } else if (downloadType === 'link') {
+      return joinPaths(this.getFilesHost(), Paths.v1.downloadSharedFileChunk)
+    } else if (downloadType === 'group') {
+      return joinPaths(this.getFilesHost(), Paths.v1.downloadGroupFileChunk)
+    } else {
+      throw Error('Invalid download type')
+    }
   }
 
   public async downloadFile({
     file,
     chunkIndex,
     valetToken,
-    isSharedDownload,
+    downloadType,
     contentRangeStart,
     onBytesReceived,
   }: DownloadFileParams): Promise<ClientDisplayableError | undefined> {
-    const url = this.getFilesDownloadUrl(isSharedDownload)
+    const url = this.getFilesDownloadUrl(downloadType)
     const pullChunkSize = file.encryptedChunkSizes[chunkIndex]
 
     const request: HttpRequest = {
@@ -814,12 +822,13 @@ export class SNApiService
       responseType: 'arraybuffer',
     }
 
-    const response = isSharedDownload
-      ? await this.httpService.runHttp<DownloadFileChunkResponse>(request)
-      : await this.tokenRefreshableRequest<DownloadFileChunkResponse>({
-          ...request,
-          fallbackErrorMessage: Strings.Network.Files.FailedDownloadFileChunk,
-        })
+    const response =
+      downloadType === 'link'
+        ? await this.httpService.runHttp<DownloadFileChunkResponse>(request)
+        : await this.tokenRefreshableRequest<DownloadFileChunkResponse>({
+            ...request,
+            fallbackErrorMessage: Strings.Network.Files.FailedDownloadFileChunk,
+          })
 
     if (isErrorResponse(response)) {
       return new ClientDisplayableError(response.data?.error?.message as string)
@@ -848,7 +857,7 @@ export class SNApiService
         file,
         chunkIndex: ++chunkIndex,
         valetToken,
-        isSharedDownload,
+        downloadType,
         contentRangeStart: rangeStart + pullChunkSize,
         onBytesReceived,
       })

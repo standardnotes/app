@@ -4,6 +4,7 @@ const FilesPaths = {
   deleteFile: '/v1/files',
   downloadFileChunk: '/v1/files',
   downloadSharedFileChunk: '/v1/sharing/files',
+  downloadGroupFileChunk: '/v1/groups/files',
   startUploadSession: '/v1/files/upload/create-session',
   uploadFileChunk: '/v1/files/upload/chunk',
 }

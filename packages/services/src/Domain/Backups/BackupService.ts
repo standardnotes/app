@@ -526,9 +526,11 @@ export class FilesBackupService extends AbstractService implements BackupService
 
     const metaFileAsString = JSON.stringify(metaFile, null, 2)
 
+    const downloadType = !file.user_uuid || file.user_uuid === this.session.getSureUser().uuid ? 'own' : 'group'
+
     const result = await this.device.saveFilesBackupsFile(location, file.uuid, metaFileAsString, {
       chunkSizes: file.encryptedChunkSizes,
-      url: this.api.getFilesDownloadUrl(),
+      url: this.api.getFilesDownloadUrl(downloadType),
       valetToken: token,
     })
 
