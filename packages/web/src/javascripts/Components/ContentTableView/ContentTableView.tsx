@@ -39,6 +39,7 @@ import { HistoryModalController } from '@/Controllers/NoteHistory/HistoryModalCo
 import { useItemLinks } from '@/Hooks/useItemLinks'
 import { ItemLink } from '@/Utils/Items/Search/ItemLink'
 import { ItemListController } from '@/Controllers/ItemList/ItemListController'
+import ListItemCollaborationInfo from '../ContentListView/ListItemCollaborationInfo'
 
 const ContextMenuCell = ({
   items,
@@ -213,6 +214,7 @@ const ItemNameCell = ({ item, hideIcon }: { item: DecryptedItemInterface; hideIc
         )}
       </span>
       <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium">{item.title}</span>
+      <ListItemCollaborationInfo item={item} />
       {item.protected && (
         <span className="flex items-center" title="File is protected">
           <Icon ariaLabel="File is protected" type="lock-filled" className="h-3.5 w-3.5 text-passive-1" size="custom" />

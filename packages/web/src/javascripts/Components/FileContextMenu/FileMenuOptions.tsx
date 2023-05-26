@@ -15,6 +15,8 @@ import AddTagOption from '../NotesOptions/AddTagOption'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 import { LinkingController } from '@/Controllers/LinkingController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
+import AddToGroupOption from '../NotesOptions/AddToGroupOption'
+import { iconClass } from '../NotesOptions/ClassNames'
 
 type Props = {
   closeMenu: () => void
@@ -96,6 +98,7 @@ const FileMenuOptions: FunctionComponent<Props> = ({
         selectedItems={selectedFiles}
         iconClassName={`text-neutral mr-2 ${MenuItemIconSize}`}
       />
+      <AddToGroupOption iconClassName={iconClass} selectedItems={selectedFiles} />
       <MenuSwitchButtonItem
         checked={hasProtectedFiles}
         onChange={(hasProtectedFiles) => {

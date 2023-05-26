@@ -10,7 +10,11 @@ import { SessionManagerResponse } from './SessionManagerResponse'
 export interface SessionsClientInterface {
   getWorkspaceDisplayIdentifier(): string
   populateSessionFromDemoShareToken(token: Base64String): Promise<void>
+
   getUser(): User | undefined
+  get userUuid(): string
+  getSureUser(): User
+
   isCurrentSessionReadOnly(): boolean | undefined
   register(email: string, password: string, ephemeral: boolean): Promise<UserRegistrationResponseBody>
   signIn(
@@ -21,7 +25,6 @@ export interface SessionsClientInterface {
     minAllowedVersion?: ProtocolVersion,
   ): Promise<SessionManagerResponse>
   isSignedIn(): boolean
-  getSureUser(): User
   bypassChecksAndSignInWithRootKey(
     email: string,
     rootKey: RootKeyInterface,

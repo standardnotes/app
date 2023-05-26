@@ -1,10 +1,10 @@
 import { FunctionComponent } from 'react'
-import { ListableContentItem } from './Types/ListableContentItem'
 import { useApplication } from '../ApplicationProvider'
 import Icon from '../Icon/Icon'
+import { DecryptedItemInterface } from '@standardnotes/snjs'
 
 type Props = {
-  item: ListableContentItem
+  item: DecryptedItemInterface
 }
 
 const ListItemCollaborationInfo: FunctionComponent<Props> = ({ item }) => {

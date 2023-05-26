@@ -42,6 +42,7 @@ import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
 import { log, LoggingDomain } from '../Logging'
 import { GroupsServer, GroupsServerInterface, HttpServiceInterface } from '@standardnotes/api'
+import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 
 const OneHundredMb = 100 * 1_000_000
 
@@ -55,6 +56,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     private syncService: SyncServiceInterface,
     private encryptor: EncryptionProviderInterface,
     private challengor: ChallengeServiceInterface,
+    private sessions: SessionsClientInterface,
     http: HttpServiceInterface,
     private alertService: AlertService,
     private crypto: PureCryptoInterface,
@@ -76,6 +78,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     ;(this.syncService as unknown) = undefined
     ;(this.alertService as unknown) = undefined
     ;(this.challengor as unknown) = undefined
+    ;(this.sessions as unknown) = undefined
     ;(this.crypto as unknown) = undefined
   }
 
@@ -182,6 +185,10 @@ export class FileService extends AbstractService implements FilesClientInterface
     file: FileItem,
     onDecryptedBytes: (decryptedBytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
   ): Promise<ClientDisplayableError | undefined> {
+    if (file.group_uuid && file.user_uuid !== this.sessions.userUuid) {
+      return this.downloadForeignGroupFile(file, onDecryptedBytes)
+    }
+
     const cachedBytes = this.encryptedCache.get(file.uuid)
 
     if (cachedBytes) {

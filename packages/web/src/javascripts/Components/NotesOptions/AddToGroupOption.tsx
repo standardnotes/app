@@ -74,7 +74,7 @@ const AddToGroupOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
         ref={buttonRef}
       >
         <div className="flex items-center">
-          <Icon type="share" className={iconClassName} />
+          <Icon type="group" className={iconClassName} />
           Add to shared group
         </div>
         <Icon type="chevron-right" className="text-neutral" />

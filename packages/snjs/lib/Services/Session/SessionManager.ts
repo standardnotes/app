@@ -208,6 +208,16 @@ export class SNSessionManager
     return this.getUser()?.publicKey
   }
 
+  public get userUuid(): string {
+    const user = this.getUser()
+
+    if (!user) {
+      throw Error('Attempting to access userUuid when user is undefined')
+    }
+
+    return user.uuid
+  }
+
   isCurrentSessionReadOnly(): boolean | undefined {
     if (this.session === undefined) {
       return undefined
