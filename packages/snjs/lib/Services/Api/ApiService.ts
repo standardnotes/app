@@ -788,8 +788,6 @@ export class SNApiService
   public getFilesDownloadUrl(downloadType: DownloadFileType): string {
     if (downloadType === 'own') {
       return joinPaths(this.getFilesHost(), Paths.v1.downloadFileChunk)
-    } else if (downloadType === 'link') {
-      return joinPaths(this.getFilesHost(), Paths.v1.downloadSharedFileChunk)
     } else if (downloadType === 'group') {
       return joinPaths(this.getFilesHost(), Paths.v1.downloadGroupFileChunk)
     } else {
@@ -822,13 +820,10 @@ export class SNApiService
       responseType: 'arraybuffer',
     }
 
-    const response =
-      downloadType === 'link'
-        ? await this.httpService.runHttp<DownloadFileChunkResponse>(request)
-        : await this.tokenRefreshableRequest<DownloadFileChunkResponse>({
-            ...request,
-            fallbackErrorMessage: Strings.Network.Files.FailedDownloadFileChunk,
-          })
+    const response = await this.tokenRefreshableRequest<DownloadFileChunkResponse>({
+      ...request,
+      fallbackErrorMessage: Strings.Network.Files.FailedDownloadFileChunk,
+    })
 
     if (isErrorResponse(response)) {
       return new ClientDisplayableError(response.data?.error?.message as string)

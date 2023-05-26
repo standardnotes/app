@@ -1,1 +1,1 @@
-export type DownloadFileType = 'own' | 'group' | 'link'
+export type DownloadFileType = 'own' | 'group'

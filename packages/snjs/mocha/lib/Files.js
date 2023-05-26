@@ -45,17 +45,3 @@ export async function downloadGroupFile(fileService, file) {
 
   return receivedBytes
 }
-
-export async function downloadSharedFile(fileService, file, valetToken) {
-  let receivedBytes = new Uint8Array()
-
-  const error = await fileService.downloadSharedFile(file, valetToken, (decryptedBytes) => {
-    receivedBytes = new Uint8Array([...receivedBytes, ...decryptedBytes])
-  })
-
-  if (error) {
-    throw new Error('Could not download shared file', error.text)
-  }
-
-  return receivedBytes
-}

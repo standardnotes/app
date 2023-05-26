@@ -26,11 +26,6 @@ export interface FilesClientInterface {
     file: FileItem,
     onDecryptedBytes: (bytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
   ): Promise<ClientDisplayableError | undefined>
-  downloadSharedFile(
-    file: FileItem,
-    valetToken: string,
-    onDecryptedBytes: (decryptedBytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
-  ): Promise<ClientDisplayableError | undefined>
   downloadForeignGroupFile(
     file: FileItem,
     onDecryptedBytes: (decryptedBytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
