@@ -28,6 +28,7 @@ export * from './Contacts/ContactService'
 
 export * from './Groups/GroupService'
 export * from './Groups/GroupServiceInterface'
+export * from './Groups/GroupServiceEvent'
 
 export * from './Groups/GroupStorageServiceInterface'
 export * from './Groups/GroupStorageService'

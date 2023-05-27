@@ -530,10 +530,10 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return encrypted
   }
 
-  decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | null {
+  decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | undefined {
     const operator = this.operatorManager.defaultOperator()
     const decrypted = operator.symmetricDecrypt(encryptedPrivateKey, rootKey.masterKey)
-    return decrypted
+    return decrypted ?? undefined
   }
 
   encryptGroupDataWithRecipientPublicKey(
@@ -550,7 +550,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     encryptedGroupData: string,
     senderPublicKey: string,
     privateKey: string,
-  ): GroupKeyContentSpecialized | null {
+  ): GroupKeyContentSpecialized | undefined {
     const defaultOperator = this.operatorManager.defaultOperator()
     const version = defaultOperator.versionForEncryptedString(encryptedGroupData)
 
@@ -561,7 +561,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       return JSON.parse(decrypted)
     }
 
-    return null
+    return undefined
   }
 
   public async decryptBackupFile(

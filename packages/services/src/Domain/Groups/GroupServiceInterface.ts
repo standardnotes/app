@@ -24,6 +24,7 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
   getGroupKey(groupUuid: string): GroupKeyInterface | undefined
   getGroupInfoForItem(item: DecryptedItemInterface): GroupKeyContentSpecialized | undefined
   getGroupInfo(groupUuid: string): GroupKeyContentSpecialized | undefined
+  isUserGroupAdmin(groupUuid: string): boolean
 
   inviteContactToGroup(
     group: GroupServerHash,
@@ -31,7 +32,9 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
     permissions: GroupPermission,
   ): Promise<GroupInviteServerHash | ClientDisplayableError>
   removeUserFromGroup(groupUuid: string, userUuid: string): Promise<ClientDisplayableError | void>
+  leaveGroup(groupUuid: string): Promise<ClientDisplayableError | void>
   getGroupUsers(groupUuid: string): Promise<GroupUserServerHash[] | undefined>
+  isGroupUserOwnUser(user: GroupUserServerHash): boolean
 
   addItemToGroup(group: GroupServerHash, item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   removeItemFromItsGroup(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
@@ -41,10 +44,13 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
   isItemInCollaborativeGroup(item: DecryptedItemInterface): boolean
 
   downloadInboundInvites(): Promise<ClientDisplayableError | GroupInviteServerHash[]>
-  getOutboundInvites(): Promise<GroupInviteServerHash[] | ClientDisplayableError>
-  isInviteTrusted(invite: GroupInviteServerHash): boolean
+  getOutboundInvites(groupUuid?: string): Promise<GroupInviteServerHash[] | ClientDisplayableError>
+  getTrustedSenderOfInvite(invite: GroupInviteServerHash): TrustedContactInterface | undefined
   acceptInvite(invite: GroupInviteServerHash): Promise<boolean>
-  getPendingInvites(): GroupInviteServerHash[]
+  getInviteData(invite: GroupInviteServerHash): GroupKeyContentSpecialized | undefined
+  getCachedInboundInvites(): GroupInviteServerHash[]
+  getInvitableContactsForGroup(group: GroupServerHash): Promise<TrustedContactInterface[]>
+  deleteInvite(invite: GroupInviteServerHash): Promise<ClientDisplayableError | void>
 
   rotateGroupKey(groupUuid: string): Promise<void>
   changeGroupMetadata(

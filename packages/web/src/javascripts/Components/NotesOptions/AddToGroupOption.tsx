@@ -31,11 +31,6 @@ const AddToGroupOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
     void reloadGroups()
   }, [application.groups])
 
-  const getGroupData = (group: GroupServerHash) => {
-    const groupKey = application.groups.getGroupKey(group.uuid)
-    return groupKey
-  }
-
   const [isOpen, setIsOpen] = useState(false)
 
   const toggleMenu = useCallback(() => {
@@ -90,24 +85,26 @@ const AddToGroupOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
         overrideZIndex="z-modal"
       >
         <Menu a11yLabel="Group selection menu" isOpen={isOpen}>
-          {groups.map((group) => (
-            <MenuItem
-              key={group.uuid}
-              onClick={() => {
-                doesGroupContainItems(group) ? void removeItemsFromGroup() : void addItemsToGroup(group)
-              }}
-            >
-              <span
-                className={classNames(
-                  'overflow-hidden overflow-ellipsis whitespace-nowrap',
-                  doesGroupContainItems(group) ? 'font-bold' : '',
-                )}
+          {groups.map((group) => {
+            const groupData = application.groups.getGroupInfo(group.uuid)
+            return (
+              <MenuItem
+                key={group.uuid}
+                onClick={() => {
+                  doesGroupContainItems(group) ? void removeItemsFromGroup() : void addItemsToGroup(group)
+                }}
               >
-                Group UUID: {group.uuid}
-                Group Name: {getGroupData(group)?.groupName}
-              </span>
-            </MenuItem>
-          ))}
+                <span
+                  className={classNames(
+                    'overflow-hidden overflow-ellipsis whitespace-nowrap',
+                    doesGroupContainItems(group) ? 'font-bold' : '',
+                  )}
+                >
+                  {groupData?.groupName || group.uuid}
+                </span>
+              </MenuItem>
+            )
+          })}
         </Menu>
       </Popover>
     </div>

@@ -18,6 +18,7 @@ import GroupItem from './Groups/GroupItem'
 import Button from '@/Components/Button/Button'
 import InviteItem from './Invites/InviteItem'
 import EditGroupModal from './Groups/EditGroupModal'
+import { GroupServiceEvent } from '@standardnotes/services'
 
 const Collaboration = () => {
   const application = useApplication()
@@ -44,7 +45,7 @@ const Collaboration = () => {
 
   const fetchInvites = useCallback(async () => {
     await groupService.downloadInboundInvites()
-    const invites = groupService.getPendingInvites()
+    const invites = groupService.getCachedInboundInvites()
     setInvites(invites)
   }, [groupService])
 
@@ -54,9 +55,8 @@ const Collaboration = () => {
   }, [contactService])
 
   const createNewGroup = useCallback(async () => {
-    await groupService.createGroup()
-    await fetchGroups()
-  }, [fetchGroups, groupService])
+    setIsGroupModalOpen(true)
+  }, [])
 
   const createNewContact = useCallback(() => {
     setIsAddContactModalOpen(true)
@@ -69,6 +69,15 @@ const Collaboration = () => {
       }
     })
   }, [contactService, fetchContacts])
+
+  useEffect(() => {
+    return groupService.addEventObserver((event) => {
+      if (event === GroupServiceEvent.GroupsChanged) {
+        void fetchGroups()
+        void fetchInvites()
+      }
+    })
+  }, [fetchGroups, fetchInvites, groupService])
 
   useEffect(() => {
     void fetchGroups()
@@ -88,7 +97,7 @@ const Collaboration = () => {
 
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Invites</Title>
+          <Title>Incoming Invites</Title>
           <div className="my-2 flex flex-col">
             {invites.map((invite) => {
               return <InviteItem invite={invite} key={invite.uuid} />

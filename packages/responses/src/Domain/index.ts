@@ -44,11 +44,6 @@ export * from './Item/RawSyncResponse'
 export * from './Item/ServerItemResponse'
 export * from './Item/IntegrityPayload'
 
-export * from './Sharing/ItemSharePostResponse'
-export * from './Sharing/GetUserItemSharesResponse'
-export * from './Sharing/GetSharedItemResponse'
-export * from './Sharing/SharedItemsUserShare'
-
 export * from './Listed/ActionResponse'
 export * from './Listed/ListedAccount'
 export * from './Listed/ListedAccountInfo'

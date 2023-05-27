@@ -11,7 +11,7 @@ export class RemoveGroupMemberUseCase {
     })
 
     if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromString(`Failed to get outbound user invites ${response}`)
+      return ClientDisplayableError.FromString(`Failed to remove group user ${response}`)
     }
   }
 }

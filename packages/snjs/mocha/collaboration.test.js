@@ -34,7 +34,7 @@ describe.only('groups', function () {
   }
 
   const acceptAllInvites = async (inContext) => {
-    const invites = inContext.groupService.getPendingInvites()
+    const invites = inContext.groupService.getCachedInboundInvites()
     for (const invite of invites) {
       const result = await inContext.groupService.acceptInvite(invite)
       expect(result).to.be.true
@@ -222,6 +222,10 @@ describe.only('groups', function () {
 
       await deinitContactContext()
     })
+
+    it('should delete contact', async () => {
+      console.error('TODO: implement test case')
+    })
   })
 
   describe('groups', () => {
@@ -306,6 +310,18 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
+    it('non-admin user should not be able to invite user', async () => {
+      console.error('TODO: implement test case')
+    })
+
+    it('should leave group', async () => {
+      console.error('TODO: implement test case')
+    })
+
+    it('after leaving group, attempting to sync previously group item should not result in infinite upload/conflict cycle', async () => {
+      console.error('TODO: implement test case')
+    })
+
     it('should return invited to groups when fetching groups from server', async () => {
       const { contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
 
@@ -314,6 +330,10 @@ describe.only('groups', function () {
       expect(groups.length).to.equal(1)
 
       await deinitContactContext()
+    })
+
+    it('canceling an invite should remove it from recipient pending invites', async () => {
+      console.error('TODO: implement test case')
     })
 
     it('should delete a group and remove item associations', async () => {
@@ -518,8 +538,9 @@ describe.only('groups', function () {
       await groupService.inviteContactToGroup(group, currentContextContact, GroupPermission.Write)
 
       await contactContext.groupService.downloadInboundInvites()
-      expect(contactContext.groupService.isInviteTrusted(contactContext.groupService.getPendingInvites()[0])).to.be
-        .false
+      expect(
+        contactContext.groupService.getTrustedSenderOfInvite(contactContext.groupService.getCachedInboundInvites()[0]),
+      ).to.be.undefined
 
       await deinitContactContext()
     })
@@ -533,12 +554,15 @@ describe.only('groups', function () {
       await groupService.inviteContactToGroup(group, currentContextContact, GroupPermission.Write)
 
       await contactContext.groupService.downloadInboundInvites()
-      expect(contactContext.groupService.isInviteTrusted(contactContext.groupService.getPendingInvites()[0])).to.be
-        .false
+      expect(
+        contactContext.groupService.getTrustedSenderOfInvite(contactContext.groupService.getCachedInboundInvites()[0]),
+      ).to.be.undefined
 
       await createTrustedContactForUserOfContext(contactContext, context)
 
-      expect(contactContext.groupService.isInviteTrusted(contactContext.groupService.getPendingInvites()[0])).to.be.true
+      expect(
+        contactContext.groupService.getTrustedSenderOfInvite(contactContext.groupService.getCachedInboundInvites()[0]),
+      ).to.not.be.undefined
 
       await deinitContactContext()
     })
@@ -579,7 +603,7 @@ describe.only('groups', function () {
       await groupService.inviteContactToGroup(group, contact, GroupPermission.Write)
       await contactContext.sync()
 
-      const groupInvite = contactContext.groupService.getPendingInvites()[0]
+      const groupInvite = contactContext.groupService.getCachedInboundInvites()[0]
       expect(groupInvite.inviter_public_key).to.equal(groupService.userPublicKey)
 
       await context.changePassword('new-password')
@@ -587,7 +611,7 @@ describe.only('groups', function () {
 
       await contactContext.sync()
 
-      const updatedGroupInvite = contactContext.groupService.getPendingInvites()[0]
+      const updatedGroupInvite = contactContext.groupService.getCachedInboundInvites()[0]
       expect(updatedGroupInvite.inviter_public_key).to.equal(groupService.userPublicKey)
 
       await deinitContactContext()

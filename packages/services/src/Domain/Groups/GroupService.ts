@@ -64,7 +64,7 @@ export class GroupService
   private syncEventDisposer: () => void
   private itemsEventDisposer: () => void
 
-  private readonly pendingInvites: Record<string, GroupInviteServerHash> = {}
+  private pendingInvites: Record<string, GroupInviteServerHash> = {}
 
   constructor(
     private http: HttpServiceInterface,
@@ -86,9 +86,11 @@ export class GroupService
     this.syncEventDisposer = sync.addEventObserver(async (event, data) => {
       if (event === SyncEvent.ReceivedGroupInvites) {
         await this.processInboundInvites(data as SyncEventReceivedGroupInvitesData)
+        this.notifyGroupsChangedEvent()
       }
       if (event === SyncEvent.ReceivedGroups) {
         await this.handleReceivedGroups(data as SyncEventReceivedGroupsData)
+        this.notifyGroupsChangedEvent()
       }
     })
     this.itemsEventDisposer = items.addObserver<TrustedContactInterface>(
@@ -99,6 +101,10 @@ export class GroupService
         }
       },
     )
+  }
+
+  private notifyGroupsChangedEvent(): void {
+    void this.notifyEvent(GroupServiceEvent.GroupsChanged)
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
@@ -130,8 +136,26 @@ export class GroupService
     return this.groupStorage.getGroups()
   }
 
-  public getPendingInvites(): GroupInviteServerHash[] {
+  public getGroup(groupUuid: string): GroupServerHash | undefined {
+    return this.groupStorage.getGroup(groupUuid)
+  }
+
+  public getCachedInboundInvites(): GroupInviteServerHash[] {
     return Object.values(this.pendingInvites)
+  }
+
+  public isUserGroupAdmin(groupUuid: string): boolean {
+    const group = this.getGroup(groupUuid)
+
+    if (!group) {
+      return false
+    }
+
+    return group.user_uuid === this.session.userUuid
+  }
+
+  public isGroupUserOwnUser(user: GroupUserServerHash): boolean {
+    return user.user_uuid === this.session.userUuid
   }
 
   private async handleCreationOfNewTrustedContacts(_contacts: TrustedContactInterface[]): Promise<void> {
@@ -145,19 +169,38 @@ export class GroupService
       return ClientDisplayableError.FromString(`Failed to get inbound user invites ${response}`)
     }
 
+    this.pendingInvites = {}
+
     await this.processInboundInvites(response.data.invites)
 
     return response.data.invites
   }
 
-  public async getOutboundInvites(): Promise<GroupInviteServerHash[] | ClientDisplayableError> {
+  public async getOutboundInvites(groupUuid?: string): Promise<GroupInviteServerHash[] | ClientDisplayableError> {
     const response = await this.groupInvitesServer.getOutboundUserInvites()
 
     if (isErrorResponse(response)) {
       return ClientDisplayableError.FromString(`Failed to get outbound user invites ${response}`)
     }
 
+    if (groupUuid) {
+      return response.data.invites.filter((invite) => invite.group_uuid === groupUuid)
+    }
+
     return response.data.invites
+  }
+
+  public async deleteInvite(invite: GroupInviteServerHash): Promise<ClientDisplayableError | void> {
+    const response = await this.groupInvitesServer.deleteInvite({
+      groupUuid: invite.group_uuid,
+      inviteUuid: invite.uuid,
+    })
+
+    if (isErrorResponse(response)) {
+      return ClientDisplayableError.FromString(`Failed to delete invite ${response}`)
+    }
+
+    delete this.pendingInvites[invite.uuid]
   }
 
   private async processInboundInvites(invites: GroupInviteServerHash[]): Promise<void> {
@@ -175,8 +218,8 @@ export class GroupService
   }
 
   private async automaticallyAcceptTrustedKeyChangeInvites(): Promise<void> {
-    const trustedKeyChangeInvites = this.getPendingInvites().filter((invite) => {
-      return this.isInviteTrusted(invite) && invite.invite_type === 'key-change'
+    const trustedKeyChangeInvites = this.getCachedInboundInvites().filter((invite) => {
+      return this.getTrustedSenderOfInvite(invite) && invite.invite_type === 'key-change'
     })
 
     if (trustedKeyChangeInvites.length > 0) {
@@ -187,7 +230,7 @@ export class GroupService
   }
 
   async acceptInvite(invite: GroupInviteServerHash): Promise<boolean> {
-    if (!this.isInviteTrusted(invite)) {
+    if (!this.getTrustedSenderOfInvite(invite)) {
       return false
     }
 
@@ -212,9 +255,12 @@ export class GroupService
     return true
   }
 
-  public isInviteTrusted(invite: GroupInviteServerHash): boolean {
+  public getTrustedSenderOfInvite(invite: GroupInviteServerHash): TrustedContactInterface | undefined {
     const trustedContact = this.contacts.findTrustedContact(invite.inviter_uuid)
-    return !!trustedContact && trustedContact.publicKey === invite.inviter_public_key
+    if (trustedContact && trustedContact.publicKey === invite.inviter_public_key) {
+      return trustedContact
+    }
+    return undefined
   }
 
   private async decryptErroredItemsForGroup(_groupUuid: string): Promise<void> {
@@ -257,11 +303,26 @@ export class GroupService
       groupDescription: description,
     })
 
+    this.notifyGroupsChangedEvent()
+
     if (!isClientDisplayableError(result)) {
       await this.sync.sync()
     }
 
     return result
+  }
+
+  public async getInvitableContactsForGroup(group: GroupServerHash): Promise<TrustedContactInterface[]> {
+    const users = await this.getGroupUsers(group.uuid)
+    if (!users) {
+      return []
+    }
+
+    const contacts = this.contacts.getAllContacts()
+    return contacts.filter((contact) => {
+      const isContactAlreadyInGroup = users.some((user) => user.user_uuid === contact.contactUuid)
+      return !isContactAlreadyInGroup
+    })
   }
 
   async inviteContactToGroup(
@@ -279,9 +340,19 @@ export class GroupService
       permissions,
     })
 
+    this.notifyGroupsChangedEvent()
+
     await this.sync.sync()
 
     return result
+  }
+
+  public getInviteData(invite: GroupInviteServerHash): GroupKeyContentSpecialized | undefined {
+    return this.encryption.decryptGroupDataWithPrivateKey(
+      invite.encrypted_group_data,
+      invite.inviter_public_key,
+      this.userDecryptedPrivateKey,
+    )
   }
 
   async addItemToGroup(group: GroupServerHash, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
@@ -310,11 +381,17 @@ export class GroupService
       return false
     }
 
+    this.notifyGroupsChangedEvent()
+
     await this.sync.sync()
     return true
   }
 
   async removeUserFromGroup(groupUuid: string, memberUuid: string): Promise<ClientDisplayableError | void> {
+    if (!this.isUserGroupAdmin(groupUuid)) {
+      throw new Error('Only group admins can remove users')
+    }
+
     const useCase = new RemoveGroupMemberUseCase(this.groupUsersServer)
     const result = await useCase.execute({ groupUuid, memberUuid })
 
@@ -322,7 +399,31 @@ export class GroupService
       return result
     }
 
+    this.notifyGroupsChangedEvent()
+
     await this.rotateGroupKey(groupUuid)
+  }
+
+  async leaveGroup(groupUuid: string): Promise<ClientDisplayableError | void> {
+    const group = this.getGroup(groupUuid)
+    if (!group) {
+      throw new Error('Group not found')
+    }
+
+    if (group.user_uuid === this.user.uuid) {
+      throw new Error('Cannot leave group as owner')
+    }
+
+    const response = await this.groupUsersServer.deleteGroupUser({
+      groupUuid: groupUuid,
+      userUuid: this.user.uuid,
+    })
+
+    if (isErrorResponse(response)) {
+      return ClientDisplayableError.FromString(`Failed to leave group ${response}`)
+    }
+
+    this.notifyGroupsChangedEvent()
   }
 
   async getGroupUsers(groupUuid: string): Promise<GroupUserServerHash[] | undefined> {
@@ -352,11 +453,15 @@ export class GroupService
   ): Promise<GroupServerHash | ClientDisplayableError> {
     const updateGroupUseCase = new UpdateGroupUseCase(this.groupsServer)
 
-    return updateGroupUseCase.execute({
+    const result = await updateGroupUseCase.execute({
       groupUuid: groupUuid,
       groupKeyTimestamp: params.groupKeyTimestamp,
       specifiedItemsKeyUuid: params.specifiedItemsKeyUuid,
     })
+
+    this.notifyGroupsChangedEvent()
+
+    return result
   }
 
   async changeGroupMetadata(
@@ -382,6 +487,7 @@ export class GroupService
 
     if (!result || result.length === 0) {
       await this.sync.sync()
+      this.notifyGroupsChangedEvent()
     }
 
     return result
@@ -404,6 +510,8 @@ export class GroupService
       inviterPrivateKey: this.userDecryptedPrivateKey,
       inviterPublicKey: this.userPublicKey,
     })
+
+    this.notifyGroupsChangedEvent()
 
     await this.sync.sync()
   }

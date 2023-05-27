@@ -1,6 +1,6 @@
 import { TrustedContactInterface } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
-import { ContactServerHash, GroupInviteServerHash } from '@standardnotes/responses'
+import { ContactServerHash, GroupInviteServerHash, GroupUserServerHash } from '@standardnotes/responses'
 
 export enum ContactServiceEvent {
   ReceivedContactRequests = 'ReceivedContactRequests',
@@ -27,10 +27,13 @@ export interface ContactServiceInterface extends AbstractService<ContactServiceE
     contactUuid: string
   }): Promise<TrustedContactInterface | undefined>
   editTrustedContact(contact: TrustedContactInterface, params: { name: string; collaborationID: string }): Promise<void>
+  deleteContact(contact: TrustedContactInterface): Promise<void>
 
   getAllContacts(): TrustedContactInterface[]
-  getContactItem(contactItemUuid: string): TrustedContactInterface | undefined
+  getContactItem(serverUuid: string): TrustedContactInterface | undefined
   findTrustedContact(userUuid: string): TrustedContactInterface | undefined
+  findTrustedContactForServerUser(user: GroupUserServerHash): TrustedContactInterface | undefined
+  findTrustedContactForInvite(invite: GroupInviteServerHash): TrustedContactInterface | undefined
 
   refreshAllContactsAfterPublicKeyChange(): Promise<void>
 }

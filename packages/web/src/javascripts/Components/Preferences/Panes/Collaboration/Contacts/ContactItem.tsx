@@ -3,7 +3,7 @@ import Icon from '@/Components/Icon/Icon'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
 import { TrustedContactInterface } from '@standardnotes/snjs'
 import EditContactModal from './EditContactModal'
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 import { useApplication } from '@/Components/ApplicationProvider'
 
 type Props = {
@@ -17,6 +17,10 @@ const ContactItem = ({ contact }: Props) => {
   const closeContactModal = () => setIsContactModalOpen(false)
 
   const collaborationID = application.contacts.getCollaborationIDForTrustedContact(contact)
+
+  const deleteContact = useCallback(async () => {
+    void application.contacts.deleteContact(contact)
+  }, [application.contacts, contact])
 
   return (
     <>
@@ -32,6 +36,7 @@ const ContactItem = ({ contact }: Props) => {
 
           <div className="mt-2.5 flex flex-row">
             <Button label="Edit" className={'mr-3 text-xs'} onClick={() => setIsContactModalOpen(true)} />
+            <Button label="Delete" className={'mr-3 text-xs'} onClick={deleteContact} />
           </div>
         </div>
       </div>

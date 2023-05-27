@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, useMemo, useState } from 'react'
+import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import { useApplication } from '@/Components/ApplicationProvider'
 import { GroupPermission, GroupServerHash, TrustedContactInterface } from '@standardnotes/snjs'
@@ -12,8 +12,15 @@ const ContactInviteModal: FunctionComponent<Props> = ({ group, onCloseDialog }) 
   const application = useApplication()
 
   const [selectedContacts, setSelectedContacts] = useState<TrustedContactInterface[]>([])
+  const [contacts, setContacts] = useState<TrustedContactInterface[]>([])
 
-  const contacts = application.contacts.getAllContacts()
+  useEffect(() => {
+    const loadContacts = async () => {
+      const contacts = await application.groups.getInvitableContactsForGroup(group)
+      setContacts(contacts)
+    }
+    void loadContacts()
+  }, [application.groups, group])
 
   const handleDialogClose = useCallback(() => {
     onCloseDialog()

@@ -1,5 +1,10 @@
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { ContactServerHash, GroupInviteServerHash, isErrorResponse } from '@standardnotes/responses'
+import {
+  ContactServerHash,
+  GroupInviteServerHash,
+  GroupUserServerHash,
+  isErrorResponse,
+} from '@standardnotes/responses'
 import { ContactServerInterface, HttpServiceInterface, ContactServer } from '@standardnotes/api'
 import {
   TrustedContactContent,
@@ -180,7 +185,7 @@ export class ContactService
       name: params.name,
       publicKey: params.publicKey,
       contactUuid: params.contactUuid,
-      contactItemUuid: createResponse.data.contact.uuid,
+      serverUuid: createResponse.data.contact.uuid,
     }
 
     const contact = this.items.createItem<TrustedContactInterface>(
@@ -196,6 +201,16 @@ export class ContactService
     return contact
   }
 
+  async deleteContact(contact: TrustedContactInterface): Promise<void> {
+    await this.items.setItemToBeDeleted(contact)
+
+    await this.contactServer.deleteContact({ uuid: contact.serverUuid })
+
+    await this.sync.sync()
+
+    void this.notifyEvent(ContactServiceEvent.ContactsChanged)
+  }
+
   getAllContacts(): TrustedContactInterface[] {
     return this.items.getItems(ContentType.TrustedContact)
   }
@@ -207,8 +222,16 @@ export class ContactService
     )[0]
   }
 
-  getContactItem(contactItemUuid: string): TrustedContactInterface | undefined {
-    return this.items.findItem(contactItemUuid)
+  findTrustedContactForServerUser(user: GroupUserServerHash): TrustedContactInterface | undefined {
+    return this.findTrustedContact(user.user_uuid)
+  }
+
+  findTrustedContactForInvite(invite: GroupInviteServerHash): TrustedContactInterface | undefined {
+    return this.findTrustedContact(invite.user_uuid)
+  }
+
+  getContactItem(serverUuid: string): TrustedContactInterface | undefined {
+    return this.items.findItem(serverUuid)
   }
 
   getCollaborationIDForTrustedContact(contact: TrustedContactInterface): string {

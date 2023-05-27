@@ -63,12 +63,12 @@ export interface EncryptionProviderInterface {
   createGroupKeyData(groupUuid: string): GroupKeyContentSpecialized
   generateKeyPair(): PkcKeyPair
   encryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, privateKey: string): string
-  decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | null
+  decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | undefined
   decryptGroupDataWithPrivateKey(
     encryptedGroupData: string,
     senderPublicKey: string,
     privateKey: string,
-  ): GroupKeyContentSpecialized | null
+  ): GroupKeyContentSpecialized | undefined
   encryptGroupDataWithRecipientPublicKey(
     data: GroupKeyContentSpecialized,
     senderPrivateKey: string,
