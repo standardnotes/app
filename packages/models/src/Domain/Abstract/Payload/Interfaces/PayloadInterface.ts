@@ -30,6 +30,7 @@ export interface PayloadInterface<T extends TransferPayload = TransferPayload, C
   readonly vault_uuid?: string
   readonly user_uuid?: string
   readonly last_edited_by_uuid?: string
+  readonly created_by_uuid?: string
 
   /**
    * "Ejected" means a payload for

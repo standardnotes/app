@@ -69,7 +69,7 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
         ref={buttonRef}
       >
         <div className="flex items-center">
-          <Icon type="vault" className={iconClassName} />
+          <Icon type="safe-square" className={iconClassName} />
           Move to vault
         </div>
         <Icon type="chevron-right" className="text-neutral" />

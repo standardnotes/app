@@ -15,4 +15,5 @@ export interface ServerItemResponse {
   vault_uuid?: string
   user_uuid?: string
   last_edited_by_uuid?: string
+  created_by_uuid?: string
 }

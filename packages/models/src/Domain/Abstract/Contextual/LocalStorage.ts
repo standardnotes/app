@@ -71,6 +71,7 @@ export function CreateEncryptedLocalStorageContextPayload(
     user_uuid: fromPayload.user_uuid,
     vault_uuid: fromPayload.vault_uuid,
     last_edited_by_uuid: fromPayload.last_edited_by_uuid,
+    created_by_uuid: fromPayload.created_by_uuid,
   }
 }
 
@@ -91,6 +92,7 @@ export function CreateDecryptedLocalStorageContextPayload(
     user_uuid: fromPayload.user_uuid,
     vault_uuid: fromPayload.vault_uuid,
     last_edited_by_uuid: fromPayload.last_edited_by_uuid,
+    created_by_uuid: fromPayload.created_by_uuid,
   }
 }
 
@@ -111,5 +113,6 @@ export function CreateDeletedLocalStorageContextPayload(
     user_uuid: fromPayload.user_uuid,
     vault_uuid: fromPayload.vault_uuid,
     last_edited_by_uuid: fromPayload.last_edited_by_uuid,
+    created_by_uuid: fromPayload.created_by_uuid,
   }
 }

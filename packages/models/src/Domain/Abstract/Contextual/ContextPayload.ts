@@ -9,4 +9,5 @@ export interface ContextPayload<C extends ItemContent = ItemContent> {
   vault_uuid?: string
   user_uuid?: string
   last_edited_by_uuid?: string
+  created_by_uuid?: string
 }

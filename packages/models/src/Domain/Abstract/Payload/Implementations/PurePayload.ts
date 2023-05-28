@@ -36,6 +36,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
   readonly vault_uuid?: string
   readonly user_uuid?: string
   readonly last_edited_by_uuid?: string
+  readonly created_by_uuid?: string
 
   constructor(rawPayload: T, source = PayloadSource.Constructor) {
     this.source = source
@@ -69,6 +70,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
     this.vault_uuid = rawPayload.vault_uuid
     this.user_uuid = rawPayload.user_uuid
     this.last_edited_by_uuid = rawPayload.last_edited_by_uuid
+    this.created_by_uuid = rawPayload.created_by_uuid
 
     const timeToAllowSubclassesToFinishConstruction = 0
     setTimeout(() => {
@@ -95,6 +97,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
       vault_uuid: this.vault_uuid,
       user_uuid: this.user_uuid,
       last_edited_by_uuid: this.last_edited_by_uuid,
+      created_by_uuid: this.created_by_uuid,
     }
 
     return comprehensive

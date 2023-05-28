@@ -24,7 +24,7 @@ const CollaborationInfoHUD: FunctionComponent<Props> = ({ item }) => {
   return (
     <div className="flex flex-wrap items-start gap-2">
       <div title="Vault name" className={'flex rounded bg-success py-1 px-1.5 text-success-contrast'}>
-        <Icon ariaLabel="Shared in vault" type="vault" className="mr-1 text-info-contrast" size="medium" />
+        <Icon ariaLabel="Shared in vault" type="safe-square" className="mr-1 text-info-contrast" size="medium" />
         <span className="mr-auto overflow-hidden text-ellipsis text-xs">{vaultInfo.vaultName}</span>
       </div>
 

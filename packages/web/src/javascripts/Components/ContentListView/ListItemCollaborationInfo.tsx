@@ -22,7 +22,7 @@ const ListItemCollaborationInfo: FunctionComponent<Props> = ({ item }) => {
     <div className="mt-0.5 flex flex-wrap items-center gap-2">
       <div className={'mt-2 rounded bg-success py-1 px-1.5 text-danger-contrast'}>
         <span className="flex items-center" title="Shared in vault">
-          <Icon ariaLabel="Shared in vault" type="vault" className="mr-1 text-info-contrast" size="medium" />
+          <Icon ariaLabel="Shared in vault" type="safe-square" className="mr-1 text-info-contrast" size="medium" />
           <div className="text-center text-xs font-bold">{vaultNameDisplay}</div>
         </span>
       </div>

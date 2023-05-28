@@ -580,7 +580,7 @@ describe.only('vaults', function () {
 
       const receivedNote = contactContext.application.items.findItem(note.uuid)
       expect(receivedNote).to.not.be.undefined
-      expect(receivedNote.user_uuid).to.equal(context.userUuid)
+      expect(receivedNote.created_by_uuid).to.equal(context.userUuid)
 
       await deinitContactContext()
     })
