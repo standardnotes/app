@@ -1,8 +1,8 @@
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
   ContactServerHash,
-  GroupInviteServerHash,
-  GroupUserServerHash,
+  VaultInviteServerHash,
+  VaultUserServerHash,
   isErrorResponse,
 } from '@standardnotes/responses'
 import { ContactServerInterface, HttpServiceInterface, ContactServer } from '@standardnotes/api'
@@ -83,7 +83,7 @@ export class ContactService
     return { version, userUuid, userPublicKey }
   }
 
-  public getCollaborationIDFromInvite(invite: GroupInviteServerHash): string {
+  public getCollaborationIDFromInvite(invite: VaultInviteServerHash): string {
     return this.buildCollaborationId({
       userUuid: invite.inviter_uuid,
       userPublicKey: invite.inviter_public_key,
@@ -222,11 +222,11 @@ export class ContactService
     )[0]
   }
 
-  findTrustedContactForServerUser(user: GroupUserServerHash): TrustedContactInterface | undefined {
+  findTrustedContactForServerUser(user: VaultUserServerHash): TrustedContactInterface | undefined {
     return this.findTrustedContact(user.user_uuid)
   }
 
-  findTrustedContactForInvite(invite: GroupInviteServerHash): TrustedContactInterface | undefined {
+  findTrustedContactForInvite(invite: VaultInviteServerHash): TrustedContactInterface | undefined {
     return this.findTrustedContact(invite.user_uuid)
   }
 

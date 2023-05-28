@@ -323,9 +323,9 @@ export class ItemManager
     }
   }
 
-  public getSharedItemsKeysForGroup(groupUuid: string): Models.SharedItemsKeyInterface[] {
-    return this.getItems<Models.SharedItemsKeyInterface>(ContentType.SharedItemsKey).filter(
-      (key) => key.group_uuid === groupUuid,
+  public getVaultItemsKeysForVault(vaultUuid: string): Models.VaultItemsKeyInterface[] {
+    return this.getItems<Models.VaultItemsKeyInterface>(ContentType.VaultItemsKey).filter(
+      (key) => key.vault_uuid === vaultUuid,
     )
   }
 
@@ -1409,7 +1409,7 @@ export class ItemManager
       : ItemRelationshipDirection.NoRelationship
   }
 
-  itemsBelongingToGroup(groupUuid: string): Models.DecryptedItemInterface[] {
-    return this.items.filter((item) => item.group_uuid === groupUuid)
+  itemsBelongingToVault(vaultUuid: string): Models.DecryptedItemInterface[] {
+    return this.items.filter((item) => item.vault_uuid === vaultUuid)
   }
 }

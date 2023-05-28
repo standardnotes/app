@@ -4,12 +4,12 @@ import * as Files from './lib/Files.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.only('groups', function () {
+describe.only('vaults', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let application
   let context
-  let groupService
+  let vaultService
   let contactService
 
   const createContactContext = async () => {
@@ -26,7 +26,7 @@ describe.only('groups', function () {
   const createTrustedContactForUserOfContext = async (contextAddingNewContact, contextImportingContactInfoFrom) => {
     const contact = await contextAddingNewContact.application.contactService.createTrustedContact({
       name: 'John Doe',
-      publicKey: contextImportingContactInfoFrom.application.groupService.userPublicKey,
+      publicKey: contextImportingContactInfoFrom.application.vaultService.userPublicKey,
       contactUuid: contextImportingContactInfoFrom.userUuid,
     })
 
@@ -34,42 +34,42 @@ describe.only('groups', function () {
   }
 
   const acceptAllInvites = async (inContext) => {
-    const invites = inContext.groupService.getCachedInboundInvites()
+    const invites = inContext.vaultService.getCachedInboundInvites()
     for (const invite of invites) {
-      const result = await inContext.groupService.acceptInvite(invite)
+      const result = await inContext.vaultService.acceptInvite(invite)
       expect(result).to.be.true
     }
   }
 
-  const createGroupWithAcceptedInvite = async (permissions = GroupPermission.Write) => {
-    const { group, contact, contactContext, deinitContactContext } = await createGroupWithUnacceptedButTrustedInvite(
+  const createVaultWithAcceptedInvite = async (permissions = VaultPermission.Write) => {
+    const { vault, contact, contactContext, deinitContactContext } = await createVaultWithUnacceptedButTrustedInvite(
       permissions,
     )
     await acceptAllInvites(contactContext)
 
-    await contactContext.awaitNextSyncGroupFromScratchEvent()
+    await contactContext.awaitNextSyncVaultFromScratchEvent()
 
-    return { group, contact, contactContext, deinitContactContext }
+    return { vault, contact, contactContext, deinitContactContext }
   }
 
-  const createGroupWithAcceptedInviteAndNote = async (permissions = GroupPermission.Write) => {
-    const { group, contactContext, contact, deinitContactContext } = await createGroupWithAcceptedInvite(permissions)
+  const createVaultWithAcceptedInviteAndNote = async (permissions = VaultPermission.Write) => {
+    const { vault, contactContext, contact, deinitContactContext } = await createVaultWithAcceptedInvite(permissions)
     const note = await context.createSyncedNote('foo', 'bar')
-    await groupService.addItemToGroup(group, note)
+    await vaultService.addItemToVault(vault, note)
     await contactContext.sync()
-    return { group, note, contact, contactContext, deinitContactContext }
+    return { vault, note, contact, contactContext, deinitContactContext }
   }
 
-  const createGroupWithUnacceptedButTrustedInvite = async (permissions = GroupPermission.Write) => {
-    const group = await groupService.createGroup()
+  const createVaultWithUnacceptedButTrustedInvite = async (permissions = VaultPermission.Write) => {
+    const vault = await vaultService.createVault()
     const { contactContext, deinitContactContext } = await createContactContext()
     const contact = await createTrustedContactForUserOfContext(context, contactContext)
-    await groupService.inviteContactToGroup(group, contact, permissions)
+    await vaultService.inviteContactToVault(vault, contact, permissions)
     await contactContext.sync()
 
     await createTrustedContactForUserOfContext(contactContext, context)
 
-    return { group, contact, contactContext, deinitContactContext }
+    return { vault, contact, contactContext, deinitContactContext }
   }
 
   afterEach(async function () {
@@ -86,14 +86,14 @@ describe.only('groups', function () {
     await context.register()
 
     application = context.application
-    groupService = application.groupService
+    vaultService = application.vaultService
     contactService = application.contactService
   })
 
   describe('authentication', () => {
     it('should create keypair during registration', () => {
-      expect(groupService.userPublicKey).to.not.be.undefined
-      expect(groupService.userDecryptedPrivateKey).to.not.be.undefined
+      expect(vaultService.userPublicKey).to.not.be.undefined
+      expect(vaultService.userDecryptedPrivateKey).to.not.be.undefined
     })
 
     it('should populate keypair during sign in', async () => {
@@ -107,24 +107,24 @@ describe.only('groups', function () {
       recreatedContext.password = password
       await recreatedContext.signIn()
 
-      expect(recreatedContext.groupService.userPublicKey).to.not.be.undefined
-      expect(recreatedContext.groupService.userDecryptedPrivateKey).to.not.be.undefined
+      expect(recreatedContext.vaultService.userPublicKey).to.not.be.undefined
+      expect(recreatedContext.vaultService.userDecryptedPrivateKey).to.not.be.undefined
     })
 
     it('should rotate keypair during password change', async () => {
-      const oldPublicKey = groupService.userPublicKey
-      const oldPrivateKey = groupService.userDecryptedPrivateKey
+      const oldPublicKey = vaultService.userPublicKey
+      const oldPrivateKey = vaultService.userDecryptedPrivateKey
 
       await context.changePassword('new_password')
 
-      expect(groupService.userPublicKey).to.not.be.undefined
-      expect(groupService.userDecryptedPrivateKey).to.not.be.undefined
-      expect(groupService.userPublicKey).to.not.equal(oldPublicKey)
-      expect(groupService.userDecryptedPrivateKey).to.not.equal(oldPrivateKey)
+      expect(vaultService.userPublicKey).to.not.be.undefined
+      expect(vaultService.userDecryptedPrivateKey).to.not.be.undefined
+      expect(vaultService.userPublicKey).to.not.equal(oldPublicKey)
+      expect(vaultService.userDecryptedPrivateKey).to.not.equal(oldPrivateKey)
     })
 
     it('should reupload encrypted private key when changing my password', async () => {
-      const oldEncryptedPrivateKey = groupService.userEncryptedPrivateKey
+      const oldEncryptedPrivateKey = vaultService.userEncryptedPrivateKey
 
       await context.changePassword('new_password')
 
@@ -177,7 +177,7 @@ describe.only('groups', function () {
     })
 
     it('performing a sync should download new contact changes and keep them pending', async () => {
-      const { contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+      const { contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
       const originalContact = context.contacts.findTrustedContact(contactContext.userUuid)
 
       const oldPublicKey = contactContext.publicKey
@@ -228,47 +228,47 @@ describe.only('groups', function () {
     })
   })
 
-  describe('groups', () => {
-    it('should create a group', async () => {
-      const group = await groupService.createGroup()
-      expect(group).to.not.be.undefined
+  describe('vaults', () => {
+    it('should create a vault', async () => {
+      const vault = await vaultService.createVault()
+      expect(vault).to.not.be.undefined
 
-      const sharedItemsKeys = application.items.getSharedItemsKeysForGroup(group.uuid)
-      expect(sharedItemsKeys.length).to.equal(1)
+      const vaultItemsKeys = application.items.getVaultItemsKeysForVault(vault.uuid)
+      expect(vaultItemsKeys.length).to.equal(1)
 
-      const sharedItemsKey = sharedItemsKeys[0]
-      expect(sharedItemsKey instanceof SharedItemsKey).to.be.true
-      expect(sharedItemsKey.group_uuid).to.equal(group.uuid)
+      const vaultItemsKey = vaultItemsKeys[0]
+      expect(vaultItemsKey instanceof VaultItemsKey).to.be.true
+      expect(vaultItemsKey.vault_uuid).to.equal(vault.uuid)
     })
 
-    it('should add item to group', async () => {
+    it('should add item to vault', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const group = await groupService.createGroup()
+      const vault = await vaultService.createVault()
 
-      await groupService.addItemToGroup(group, note)
+      await vaultService.addItemToVault(vault, note)
 
       const updatedNote = application.items.findItem(note.uuid)
-      expect(updatedNote.group_uuid).to.equal(group.uuid)
+      expect(updatedNote.vault_uuid).to.equal(vault.uuid)
     })
 
-    it('should add item to group with contact', async () => {
+    it('should add item to vault with contact', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const { group, deinitContactContext } = await createGroupWithAcceptedInvite()
+      const { vault, deinitContactContext } = await createVaultWithAcceptedInvite()
 
-      await groupService.addItemToGroup(group, note)
+      await vaultService.addItemToVault(vault, note)
 
       const updatedNote = application.items.findItem(note.uuid)
-      expect(updatedNote.group_uuid).to.equal(group.uuid)
+      expect(updatedNote.vault_uuid).to.equal(vault.uuid)
 
       await deinitContactContext()
     })
 
-    it('should sync a group from scratch after accepting a group invitation', async () => {
-      const group = await groupService.createGroup()
+    it('should sync a vault from scratch after accepting a vault invitation', async () => {
+      const vault = await vaultService.createVault()
 
-      /** Create an item and add it to the group */
+      /** Create an item and add it to the vault */
       const note = await context.createSyncedNote('foo', 'bar')
-      await groupService.addItemToGroup(group, note)
+      await vaultService.addItemToVault(vault, note)
 
       /** Invite a contact */
       const { contactContext, deinitContactContext } = await createContactContext()
@@ -278,10 +278,10 @@ describe.only('groups', function () {
       /** Sync the contact context so that they wouldn't naturally receive changes made before this point */
       await contactContext.sync()
 
-      await groupService.inviteContactToGroup(group, contact, GroupPermission.Write)
+      await vaultService.inviteContactToVault(vault, contact, VaultPermission.Write)
 
       /** Contact should now sync and expect to find note */
-      const promise = contactContext.awaitNextSyncGroupFromScratchEvent()
+      const promise = contactContext.awaitNextSyncVaultFromScratchEvent()
       await contactContext.sync()
       await acceptAllInvites(contactContext)
       await promise
@@ -294,18 +294,18 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
-    it('should remove group member', async () => {
-      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+    it('should remove vault member', async () => {
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
 
-      const originalGroupUsers = await groupService.getGroupUsers(group.uuid)
-      expect(originalGroupUsers.length).to.equal(2)
+      const originalVaultUsers = await vaultService.getVaultUsers(vault.uuid)
+      expect(originalVaultUsers.length).to.equal(2)
 
-      const result = await groupService.removeUserFromGroup(group.uuid, contactContext.userUuid)
+      const result = await vaultService.removeUserFromVault(vault.uuid, contactContext.userUuid)
 
       expect(isClientDisplayableError(result)).to.be.false
 
-      const updatedGroupUsers = await groupService.getGroupUsers(group.uuid)
-      expect(updatedGroupUsers.length).to.equal(1)
+      const updatedVaultUsers = await vaultService.getVaultUsers(vault.uuid)
+      expect(updatedVaultUsers.length).to.equal(1)
 
       await deinitContactContext()
     })
@@ -314,20 +314,28 @@ describe.only('groups', function () {
       console.error('TODO: implement test case')
     })
 
-    it('should leave group', async () => {
+    it('should leave vault', async () => {
       console.error('TODO: implement test case')
     })
 
-    it('after leaving group, attempting to sync previously group item should not result in infinite upload/conflict cycle', async () => {
+    it('after leaving vault, attempting to sync previously vault item should not result in infinite upload/conflict cycle', async () => {
       console.error('TODO: implement test case')
     })
 
-    it('should return invited to groups when fetching groups from server', async () => {
-      const { contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+    it('leaving a vault should not remove any of the vault items from the server', async () => {
 
-      const groups = await contactContext.groupService.reloadGroups()
+    })
 
-      expect(groups.length).to.equal(1)
+    it('an item added to a vault should not have a user_uuid', async () => {
+
+    })
+
+    it('should return invited to vaults when fetching vaults from server', async () => {
+      const { contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
+
+      const vaults = await contactContext.vaultService.reloadVaults()
+
+      expect(vaults.length).to.equal(1)
 
       await deinitContactContext()
     })
@@ -336,38 +344,38 @@ describe.only('groups', function () {
       console.error('TODO: implement test case')
     })
 
-    it('should delete a group and remove item associations', async () => {
-      const { group, note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+    it('should delete a vault and remove item associations', async () => {
+      const { vault, note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
 
-      await groupService.deleteGroup(group.uuid)
+      await vaultService.deleteVault(vault.uuid)
 
       const originatorNote = context.application.items.findItem(note.uuid)
-      expect(originatorNote.group_uuid).to.not.be.ok
+      expect(originatorNote.vault_uuid).to.not.be.ok
 
-      /** Contact should not be able to receive new changes, and thus will have the last copy of the note with its group_uuid intact */
+      /** Contact should not be able to receive new changes, and thus will have the last copy of the note with its vault_uuid intact */
       const contactNote = contactContext.application.items.findItem(note.uuid)
-      expect(contactNote.group_uuid).to.not.be.undefined
+      expect(contactNote.vault_uuid).to.not.be.undefined
 
       await deinitContactContext()
     })
 
-    it('should update group name and description', async () => {
-      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+    it('should update vault name and description', async () => {
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
 
-      await groupService.changeGroupMetadata(group.uuid, {
-        name: 'new group name',
-        description: 'new group description',
+      await vaultService.changeVaultMetadata(vault.uuid, {
+        name: 'new vault name',
+        description: 'new vault description',
       })
 
-      const groupInfo = groupService.getGroupInfo(group.uuid)
-      expect(groupInfo.groupName).to.equal('new group name')
-      expect(groupInfo.groupDescription).to.equal('new group description')
+      const vaultInfo = vaultService.getVaultInfo(vault.uuid)
+      expect(vaultInfo.vaultName).to.equal('new vault name')
+      expect(vaultInfo.vaultDescription).to.equal('new vault description')
 
       await contactContext.sync()
 
-      const contactGroupInfo = contactContext.groupService.getGroupInfo(group.uuid)
-      expect(contactGroupInfo.groupName).to.equal('new group name')
-      expect(contactGroupInfo.groupDescription).to.equal('new group description')
+      const contactVaultInfo = contactContext.vaultService.getVaultInfo(vault.uuid)
+      expect(contactVaultInfo.vaultName).to.equal('new vault name')
+      expect(contactVaultInfo.vaultDescription).to.equal('new vault description')
 
       await deinitContactContext()
     })
@@ -376,9 +384,9 @@ describe.only('groups', function () {
   describe('client timing', () => {
     it('should load data in the correct order at startup to allow shared items and their keys to decrypt', async () => {
       const appIdentifier = context.identifier
-      const group = await groupService.createGroup()
+      const vault = await vaultService.createVault()
       const note = await context.createSyncedNote('foo', 'bar')
-      await groupService.addItemToGroup(group, note)
+      await vaultService.addItemToVault(vault, note)
       await context.deinit()
 
       const recreatedContext = await Factory.createAppContextWithRealCrypto(appIdentifier)
@@ -394,22 +402,22 @@ describe.only('groups', function () {
     it('received items from previously trusted contact should be decrypted', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
       const { contactContext, deinitContactContext } = await createContactContext()
-      const group = await groupService.createGroup()
+      const vault = await vaultService.createVault()
 
       await createTrustedContactForUserOfContext(contactContext, context)
       const currentContextContact = await createTrustedContactForUserOfContext(context, contactContext)
 
       contactContext.lockSyncing()
-      await groupService.inviteContactToGroup(group, currentContextContact, GroupPermission.Write)
-      await groupService.addItemToGroup(group, note)
+      await vaultService.inviteContactToVault(vault, currentContextContact, VaultPermission.Write)
+      await vaultService.addItemToVault(vault, note)
 
-      const promise = contactContext.awaitNextSyncGroupFromScratchEvent()
+      const promise = contactContext.awaitNextSyncVaultFromScratchEvent()
       contactContext.unlockSyncing()
       await contactContext.sync()
       await acceptAllInvites(contactContext)
       await promise
 
-      const receivedItemsKey = contactContext.application.items.getSharedItemsKeysForGroup(group.uuid)[0]
+      const receivedItemsKey = contactContext.application.items.getVaultItemsKeysForVault(vault.uuid)[0]
       expect(receivedItemsKey).to.not.be.undefined
       expect(receivedItemsKey.itemsKey).to.not.be.undefined
 
@@ -420,10 +428,10 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
-    it('group creator should receive changes from other members', async () => {
-      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+    it('vault creator should receive changes from other members', async () => {
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
       const note = await context.createSyncedNote('foo', 'bar')
-      await groupService.addItemToGroup(group, note)
+      await vaultService.addItemToVault(vault, note)
       await contactContext.sync()
 
       await contactContext.items.changeItem({ uuid: note.uuid }, (mutator) => {
@@ -438,10 +446,10 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
-    it('should remove an item from a group; collaborator should no longer receive changes', async () => {
-      const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+    it('should remove an item from a vault; collaborator should no longer receive changes', async () => {
+      const { note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
 
-      await context.groupService.removeItemFromItsGroup(note)
+      await context.vaultService.removeItemFromItsVault(note)
 
       await context.changeNoteTitleAndSync(note, 'new title')
 
@@ -455,7 +463,7 @@ describe.only('groups', function () {
     })
 
     it('should remove item from collaborated account when item is deleted permanently', async () => {
-      const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+      const { note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
 
       await context.items.setItemToBeDeleted(note)
       await context.sync()
@@ -471,7 +479,7 @@ describe.only('groups', function () {
     })
 
     it('attempting to delete a note received by and already deleted by another person should not cause infinite conflicts', async () => {
-      const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+      const { note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
 
       await context.items.setItemToBeDeleted(note)
       await contactContext.items.setItemToBeDeleted(note)
@@ -488,8 +496,8 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
-    it('conflicts created should be associated with the group', async () => {
-      const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+    it('conflicts created should be associated with the vault', async () => {
+      const { note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
 
       await context.changeNoteTitle(note, 'new title first client')
       await contactContext.changeNoteTitle(note, 'new title second client')
@@ -511,20 +519,20 @@ describe.only('groups', function () {
   })
 
   describe('invites', () => {
-    it('should invite contact to group', async () => {
-      const group = await groupService.createGroup()
+    it('should invite contact to vault', async () => {
+      const vault = await vaultService.createVault()
       const { contactContext, deinitContactContext } = await createContactContext()
       const contact = await createTrustedContactForUserOfContext(context, contactContext)
 
-      const groupInvite = await groupService.inviteContactToGroup(group, contact, GroupPermission.Write)
+      const vaultInvite = await vaultService.inviteContactToVault(vault, contact, VaultPermission.Write)
 
-      expect(groupInvite).to.not.be.undefined
-      expect(groupInvite.group_uuid).to.equal(group.uuid)
-      expect(groupInvite.user_uuid).to.equal(contact.contactUuid)
-      expect(groupInvite.encrypted_group_data).to.not.be.undefined
-      expect(groupInvite.inviter_public_key).to.equal(groupService.userPublicKey)
-      expect(groupInvite.permissions).to.equal(GroupPermission.Write)
-      expect(groupInvite.updated_at_timestamp).to.not.be.undefined
+      expect(vaultInvite).to.not.be.undefined
+      expect(vaultInvite.vault_uuid).to.equal(vault.uuid)
+      expect(vaultInvite.user_uuid).to.equal(contact.contactUuid)
+      expect(vaultInvite.encrypted_vault_data).to.not.be.undefined
+      expect(vaultInvite.inviter_public_key).to.equal(vaultService.userPublicKey)
+      expect(vaultInvite.permissions).to.equal(VaultPermission.Write)
+      expect(vaultInvite.updated_at_timestamp).to.not.be.undefined
 
       await deinitContactContext()
     })
@@ -532,14 +540,14 @@ describe.only('groups', function () {
     it('received invites from untrusted contact should not be trusted', async () => {
       await context.createSyncedNote('foo', 'bar')
       const { contactContext, deinitContactContext } = await createContactContext()
-      const group = await groupService.createGroup()
+      const vault = await vaultService.createVault()
 
       const currentContextContact = await createTrustedContactForUserOfContext(context, contactContext)
-      await groupService.inviteContactToGroup(group, currentContextContact, GroupPermission.Write)
+      await vaultService.inviteContactToVault(vault, currentContextContact, VaultPermission.Write)
 
-      await contactContext.groupService.downloadInboundInvites()
+      await contactContext.vaultService.downloadInboundInvites()
       expect(
-        contactContext.groupService.getTrustedSenderOfInvite(contactContext.groupService.getCachedInboundInvites()[0]),
+        contactContext.vaultService.getTrustedSenderOfInvite(contactContext.vaultService.getCachedInboundInvites()[0]),
       ).to.be.undefined
 
       await deinitContactContext()
@@ -548,27 +556,27 @@ describe.only('groups', function () {
     it('received invites from contact who becomes trusted after receipt of invite should be trusted', async () => {
       await context.createSyncedNote('foo', 'bar')
       const { contactContext, deinitContactContext } = await createContactContext()
-      const group = await groupService.createGroup()
+      const vault = await vaultService.createVault()
 
       const currentContextContact = await createTrustedContactForUserOfContext(context, contactContext)
-      await groupService.inviteContactToGroup(group, currentContextContact, GroupPermission.Write)
+      await vaultService.inviteContactToVault(vault, currentContextContact, VaultPermission.Write)
 
-      await contactContext.groupService.downloadInboundInvites()
+      await contactContext.vaultService.downloadInboundInvites()
       expect(
-        contactContext.groupService.getTrustedSenderOfInvite(contactContext.groupService.getCachedInboundInvites()[0]),
+        contactContext.vaultService.getTrustedSenderOfInvite(contactContext.vaultService.getCachedInboundInvites()[0]),
       ).to.be.undefined
 
       await createTrustedContactForUserOfContext(contactContext, context)
 
       expect(
-        contactContext.groupService.getTrustedSenderOfInvite(contactContext.groupService.getCachedInboundInvites()[0]),
+        contactContext.vaultService.getTrustedSenderOfInvite(contactContext.vaultService.getCachedInboundInvites()[0]),
       ).to.not.be.undefined
 
       await deinitContactContext()
     })
 
     it('received items should contain the uuid of the contact who sent the item', async () => {
-      const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+      const { note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
 
       const receivedNote = contactContext.application.items.findItem(note.uuid)
       expect(receivedNote).to.not.be.undefined
@@ -578,7 +586,7 @@ describe.only('groups', function () {
     })
 
     it('items should contain the uuid of the last person who edited it', async () => {
-      const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+      const { note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
 
       const receivedNote = contactContext.application.items.findItem(note.uuid)
       expect(receivedNote.last_edited_by_uuid).to.not.be.undefined
@@ -597,82 +605,82 @@ describe.only('groups', function () {
 
   describe('user credentials change', () => {
     it('should reupload all outbound invites when inviter keypair changes', async () => {
-      const group = await groupService.createGroup()
+      const vault = await vaultService.createVault()
       const { contactContext, deinitContactContext } = await createContactContext()
       const contact = await createTrustedContactForUserOfContext(context, contactContext)
-      await groupService.inviteContactToGroup(group, contact, GroupPermission.Write)
+      await vaultService.inviteContactToVault(vault, contact, VaultPermission.Write)
       await contactContext.sync()
 
-      const groupInvite = contactContext.groupService.getCachedInboundInvites()[0]
-      expect(groupInvite.inviter_public_key).to.equal(groupService.userPublicKey)
+      const vaultInvite = contactContext.vaultService.getCachedInboundInvites()[0]
+      expect(vaultInvite.inviter_public_key).to.equal(vaultService.userPublicKey)
 
       await context.changePassword('new-password')
       await context.sync()
 
       await contactContext.sync()
 
-      const updatedGroupInvite = contactContext.groupService.getCachedInboundInvites()[0]
-      expect(updatedGroupInvite.inviter_public_key).to.equal(groupService.userPublicKey)
+      const updatedVaultInvite = contactContext.vaultService.getCachedInboundInvites()[0]
+      expect(updatedVaultInvite.inviter_public_key).to.equal(vaultService.userPublicKey)
 
       await deinitContactContext()
     })
   })
 
-  describe('group key rotation', () => {
-    it("rotating a group's key should send a key-change invite to all members", async () => {
-      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+  describe('vault key rotation', () => {
+    it("rotating a vault's key should send a key-change invite to all members", async () => {
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
       contactContext.lockSyncing()
 
-      await groupService.rotateGroupKey(group.uuid)
+      await vaultService.rotateVaultKey(vault.uuid)
 
-      const outboundInvites = await groupService.getOutboundInvites()
+      const outboundInvites = await vaultService.getOutboundInvites()
       const keyChangeInvite = outboundInvites[0]
 
       expect(keyChangeInvite).to.not.be.undefined
-      expect(keyChangeInvite.group_uuid).to.equal(group.uuid)
+      expect(keyChangeInvite.vault_uuid).to.equal(vault.uuid)
       expect(keyChangeInvite.user_uuid).to.equal(contactContext.userUuid)
-      expect(keyChangeInvite.encrypted_group_data).to.not.be.undefined
-      expect(keyChangeInvite.inviter_public_key).to.equal(groupService.userPublicKey)
+      expect(keyChangeInvite.encrypted_vault_data).to.not.be.undefined
+      expect(keyChangeInvite.inviter_public_key).to.equal(vaultService.userPublicKey)
       expect(keyChangeInvite.invite_type).to.equal('key-change')
 
       await deinitContactContext()
     })
 
-    it("rotating a group's key with a pending join invite should update that invite rather than creating a key-change invite ", async () => {
-      const { group, contactContext, deinitContactContext } = await createGroupWithUnacceptedButTrustedInvite()
+    it("rotating a vault's key with a pending join invite should update that invite rather than creating a key-change invite ", async () => {
+      const { vault, contactContext, deinitContactContext } = await createVaultWithUnacceptedButTrustedInvite()
       contactContext.lockSyncing()
 
-      const originalOutboundInvites = await groupService.getOutboundInvites()
+      const originalOutboundInvites = await vaultService.getOutboundInvites()
       expect(originalOutboundInvites.length).to.equal(1)
-      const originalEncGroupData = originalOutboundInvites[0].encrypted_group_data
+      const originalEncVaultData = originalOutboundInvites[0].encrypted_vault_data
 
-      await groupService.rotateGroupKey(group.uuid)
+      await vaultService.rotateVaultKey(vault.uuid)
 
-      const updatedOutboundInvites = await groupService.getOutboundInvites()
+      const updatedOutboundInvites = await vaultService.getOutboundInvites()
       expect(updatedOutboundInvites.length).to.equal(1)
 
       const joinInvite = updatedOutboundInvites[0]
       expect(joinInvite.invite_type).to.equal('join')
-      expect(joinInvite.encrypted_group_data).to.not.be.undefined
-      expect(joinInvite.encrypted_group_data).to.not.equal(originalEncGroupData)
+      expect(joinInvite.encrypted_vault_data).to.not.be.undefined
+      expect(joinInvite.encrypted_vault_data).to.not.equal(originalEncVaultData)
 
       await deinitContactContext()
     })
 
     it('should update both pending join and key-change invites instead of creating new ones', async () => {
-      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
       contactContext.lockSyncing()
 
       const thirdParty = await createContactContext()
       const thirdPartyContact = await createTrustedContactForUserOfContext(context, thirdParty.contactContext)
-      await groupService.inviteContactToGroup(group, thirdPartyContact, GroupPermission.Write)
+      await vaultService.inviteContactToVault(vault, thirdPartyContact, VaultPermission.Write)
 
-      const originalOutboundInvites = await groupService.getOutboundInvites()
+      const originalOutboundInvites = await vaultService.getOutboundInvites()
       expect(originalOutboundInvites.length).to.equal(1)
 
-      await groupService.rotateGroupKey(group.uuid)
+      await vaultService.rotateVaultKey(vault.uuid)
 
-      const updatedOutboundInvites = await groupService.getOutboundInvites()
+      const updatedOutboundInvites = await vaultService.getOutboundInvites()
       expect(updatedOutboundInvites.length).to.equal(2)
 
       expect(updatedOutboundInvites.find((invite) => invite.invite_type === 'join')).to.not.be.undefined
@@ -683,12 +691,12 @@ describe.only('groups', function () {
     })
 
     it('key change invites should be automatically accepted by trusted contacts', async () => {
-      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
       contactContext.lockSyncing()
 
-      await groupService.rotateGroupKey(group.uuid)
+      await vaultService.rotateVaultKey(vault.uuid)
 
-      const acceptInviteSpy = sinon.spy(contactContext.groupService, 'acceptInvite')
+      const acceptInviteSpy = sinon.spy(contactContext.vaultService, 'acceptInvite')
 
       contactContext.unlockSyncing()
       await contactContext.sync()
@@ -698,24 +706,24 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
-    it('should rotate group key after removing group member', async () => {
-      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+    it('should rotate vault key after removing vault member', async () => {
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
 
-      const originalGroupKey = groupService.getGroupKey(group.uuid)
+      const originalVaultKey = vaultService.getVaultKey(vault.uuid)
 
-      await groupService.removeUserFromGroup(group.uuid, contactContext.userUuid)
+      await vaultService.removeUserFromVault(vault.uuid, contactContext.userUuid)
 
-      const newGroupKey = groupService.getGroupKey(group.uuid)
+      const newVaultKey = vaultService.getVaultKey(vault.uuid)
 
-      expect(newGroupKey.keyTimestamp).to.be.greaterThan(originalGroupKey.keyTimestamp)
-      expect(newGroupKey.groupKey).to.not.equal(originalGroupKey.groupKey)
+      expect(newVaultKey.keyTimestamp).to.be.greaterThan(originalVaultKey.keyTimestamp)
+      expect(newVaultKey.vaultKey).to.not.equal(originalVaultKey.vaultKey)
 
       await deinitContactContext()
     })
 
-    it('should keep group key with greater keyTimestamp if conflict', async () => {
-      const group = await groupService.createGroup()
-      const groupKey = groupService.getGroupKey(group.uuid)
+    it('should keep vault key with greater keyTimestamp if conflict', async () => {
+      const vault = await vaultService.createVault()
+      const vaultKey = vaultService.getVaultKey(vault.uuid)
 
       const otherClient = await Factory.createAppContextWithRealCrypto()
       await otherClient.launch()
@@ -726,20 +734,20 @@ describe.only('groups', function () {
       context.lockSyncing()
       otherClient.lockSyncing()
 
-      const olderTimestamp = groupKey.keyTimestamp + 1
-      const newerTimestamp = groupKey.keyTimestamp + 2
+      const olderTimestamp = vaultKey.keyTimestamp + 1
+      const newerTimestamp = vaultKey.keyTimestamp + 2
 
-      await context.application.items.changeItem(groupKey, (mutator) => {
+      await context.application.items.changeItem(vaultKey, (mutator) => {
         mutator.content = {
-          groupKey: 'new-group-key',
+          vaultKey: 'new-vault-key',
           keyTimestamp: olderTimestamp,
         }
       })
 
-      const otherGroupKey = otherClient.groupService.getGroupKey(group.uuid)
-      await otherClient.application.items.changeItem(otherGroupKey, (mutator) => {
+      const otherVaultKey = otherClient.vaultService.getVaultKey(vault.uuid)
+      await otherClient.application.items.changeItem(otherVaultKey, (mutator) => {
         mutator.content = {
-          groupKey: 'new-group-key',
+          vaultKey: 'new-vault-key',
           keyTimestamp: newerTimestamp,
         }
       })
@@ -750,28 +758,28 @@ describe.only('groups', function () {
       await otherClient.sync()
       await context.sync()
 
-      expect(context.items.getItems(ContentType.GroupKey).length).to.equal(1)
-      expect(otherClient.items.getItems(ContentType.GroupKey).length).to.equal(1)
+      expect(context.items.getItems(ContentType.VaultKey).length).to.equal(1)
+      expect(otherClient.items.getItems(ContentType.VaultKey).length).to.equal(1)
 
-      const groupKeyAfterSync = context.groupService.getGroupKey(group.uuid)
-      const otherGroupKeyAfterSync = otherClient.groupService.getGroupKey(group.uuid)
+      const vaultKeyAfterSync = context.vaultService.getVaultKey(vault.uuid)
+      const otherVaultKeyAfterSync = otherClient.vaultService.getVaultKey(vault.uuid)
 
-      expect(groupKeyAfterSync.keyTimestamp).to.equal(otherGroupKeyAfterSync.keyTimestamp)
-      expect(groupKeyAfterSync.groupKey).to.equal(otherGroupKeyAfterSync.groupKey)
-      expect(groupKeyAfterSync.keyTimestamp).to.equal(newerTimestamp)
-      expect(otherGroupKeyAfterSync.keyTimestamp).to.equal(newerTimestamp)
+      expect(vaultKeyAfterSync.keyTimestamp).to.equal(otherVaultKeyAfterSync.keyTimestamp)
+      expect(vaultKeyAfterSync.vaultKey).to.equal(otherVaultKeyAfterSync.vaultKey)
+      expect(vaultKeyAfterSync.keyTimestamp).to.equal(newerTimestamp)
+      expect(otherVaultKeyAfterSync.keyTimestamp).to.equal(newerTimestamp)
 
       await otherClient.deinit()
     })
   })
 
   describe('permissions', async () => {
-    it('should not be able to update a group with a keyTimestamp lower than the current one', async () => {
-      const group = await groupService.createGroup()
-      const groupKey = groupService.getGroupKey(group.uuid)
+    it('should not be able to update a vault with a keyTimestamp lower than the current one', async () => {
+      const vault = await vaultService.createVault()
+      const vaultKey = vaultService.getVaultKey(vault.uuid)
 
-      const result = await groupService.updateGroup(group.uuid, {
-        groupKeyTimestamp: groupKey.keyTimestamp - 1,
+      const result = await vaultService.updateVault(vault.uuid, {
+        vaultKeyTimestamp: vaultKey.keyTimestamp - 1,
         specifiedItemsKeyUuid: '123',
       })
 
@@ -779,36 +787,36 @@ describe.only('groups', function () {
     })
 
     it('non-admin user should not be able to create or update shared items keys with the server', async () => {
-      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
 
-      const sharedItemsKey = contactContext.items.getSharedItemsKeysForGroup(group.uuid)[0]
+      const vaultItemsKey = contactContext.items.getVaultItemsKeysForVault(vault.uuid)[0]
 
-      await contactContext.items.changeItem(sharedItemsKey, () => {})
+      await contactContext.items.changeItem(vaultItemsKey, () => {})
       const promise = contactContext.resolveWithRejectedPayloads()
       await contactContext.sync()
 
       const rejectedPayloads = await promise
 
       expect(rejectedPayloads.length).to.equal(1)
-      expect(rejectedPayloads[0].content_type).to.equal(ContentType.SharedItemsKey)
+      expect(rejectedPayloads[0].content_type).to.equal(ContentType.VaultItemsKey)
 
       await deinitContactContext()
     })
 
-    it("group user should not be able to change an item using an items key that does not match the group's specified items key", async () => {
-      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+    it("vault user should not be able to change an item using an items key that does not match the vault's specified items key", async () => {
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
 
       const note = await context.createSyncedNote('foo', 'bar')
-      await groupService.addItemToGroup(group, note)
+      await vaultService.addItemToVault(vault, note)
       await contactContext.sync()
 
       const newItemsKeyUuid = UuidGenerator.GenerateUuid()
-      const newItemsKey = contactContext.encryption.createSharedItemsKey(newItemsKeyUuid, group.uuid)
+      const newItemsKey = contactContext.encryption.createVaultItemsKey(newItemsKeyUuid, vault.uuid)
       await contactContext.items.insertItem(newItemsKey)
 
-      const contactGroup = contactContext.groupService.groupStorage.getGroup(group.uuid)
-      contactContext.groupService.groupStorage.setGroup(group.uuid, {
-        ...contactGroup,
+      const contactVault = contactContext.vaultService.vaultStorage.getVault(vault.uuid)
+      contactContext.vaultService.vaultStorage.setVault(vault.uuid, {
+        ...contactVault,
         specifiedItemsKeyUuid: newItemsKeyUuid,
       })
 
@@ -822,16 +830,16 @@ describe.only('groups', function () {
 
       expect(rejectedPayloads.length).to.equal(2)
       expect(rejectedPayloads.find((payload) => payload.content_type === ContentType.Note)).to.not.be.undefined
-      expect(rejectedPayloads.find((payload) => payload.content_type === ContentType.SharedItemsKey)).to.not.be
+      expect(rejectedPayloads.find((payload) => payload.content_type === ContentType.VaultItemsKey)).to.not.be
         .undefined
 
       await deinitContactContext()
     })
 
     it('read user should not be able to make changes to items', async () => {
-      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite(GroupPermission.Read)
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite(VaultPermission.Read)
       const note = await context.createSyncedNote('foo', 'bar')
-      await groupService.addItemToGroup(group, note)
+      await vaultService.addItemToVault(vault, note)
       await contactContext.sync()
 
       await contactContext.items.changeItem({ uuid: note.uuid }, (mutator) => {
@@ -848,15 +856,15 @@ describe.only('groups', function () {
       await deinitContactContext()
     })
 
-    it('should be able to remove an item from a group as a write user if the item belongs to me', async () => {
+    it('should be able to remove an item from a vault as a write user if the item belongs to me', async () => {
       console.error('TODO - implement test case')
     })
 
-    it('should not be able to remove an item from a group as a write user if the item belongs to someone else', async () => {
+    it('should not be able to remove an item from a vault as a write user if the item belongs to someone else', async () => {
       console.error('TODO - implement test case')
     })
 
-    it('should be able to remove an item from a group as an admin user if the item belongs to someone else', async () => {
+    it('should be able to remove an item from a vault as an admin user if the item belongs to someone else', async () => {
       console.error('TODO - implement test case')
     })
   })
@@ -867,19 +875,19 @@ describe.only('groups', function () {
     })
 
     it('should be able to download and decrypt shared file', async () => {
-      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
       const response = await fetch('/mocha/assets/small_file.md')
       const buffer = new Uint8Array(await response.arrayBuffer())
       const file = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
 
-      await groupService.addItemToGroup(group, file)
+      await vaultService.addItemToVault(vault, file)
       await contactContext.sync()
 
       const sharedFile = contactContext.items.findItem(file.uuid)
       expect(sharedFile).to.not.be.undefined
       expect(sharedFile.remoteIdentifier).to.equal(file.remoteIdentifier)
 
-      const downloadedBytes = await Files.downloadGroupFile(contactContext.files, sharedFile)
+      const downloadedBytes = await Files.downloadVaultFile(contactContext.files, sharedFile)
       expect(downloadedBytes).to.eql(buffer)
 
       await deinitContactContext()

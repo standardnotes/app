@@ -3,7 +3,7 @@ const FilesPaths = {
   createFileValetToken: '/v1/files/valet-tokens',
   deleteFile: '/v1/files',
   downloadFileChunk: '/v1/files',
-  downloadGroupFileChunk: '/v1/groups/files',
+  downloadVaultFileChunk: '/v1/vaults/files',
   startUploadSession: '/v1/files/upload/create-session',
   uploadFileChunk: '/v1/files/upload/chunk',
 }

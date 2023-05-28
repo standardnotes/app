@@ -19,7 +19,7 @@ export function CreateEncryptedBackupFileContextPayload(
     updated_at_timestamp: fromPayload.updated_at_timestamp,
     updated_at: fromPayload.updated_at,
     uuid: fromPayload.uuid,
-    group_uuid: fromPayload.group_uuid,
+    vault_uuid: fromPayload.vault_uuid,
   }
 }
 
@@ -36,6 +36,6 @@ export function CreateDecryptedBackupFileContextPayload(
     updated_at_timestamp: fromPayload.updated_at_timestamp,
     updated_at: fromPayload.updated_at,
     uuid: fromPayload.uuid,
-    group_uuid: fromPayload.group_uuid,
+    vault_uuid: fromPayload.vault_uuid,
   }
 }

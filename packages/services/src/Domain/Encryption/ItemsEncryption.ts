@@ -15,12 +15,12 @@ import {
   DecryptedPayloadInterface,
   EncryptedPayload,
   EncryptedPayloadInterface,
-  GroupKeyInterface,
+  VaultKeyInterface,
   isEncryptedPayload,
   ItemContent,
   ItemsKeyInterface,
   PayloadEmitSource,
-  SharedItemsKeyInterface,
+  VaultItemsKeyInterface,
   SureFindPayload,
 } from '@standardnotes/models'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
@@ -75,11 +75,11 @@ export class ItemsEncryptionService extends AbstractService {
 
   public itemsKeyForEncryptedPayload(
     payload: EncryptedPayloadInterface,
-  ): ItemsKeyInterface | SharedItemsKeyInterface | undefined {
+  ): ItemsKeyInterface | VaultItemsKeyInterface | undefined {
     const itemsKeys = this.getItemsKeys()
-    const sharedItemsKeys = this.itemManager.getItems<SharedItemsKeyInterface>(ContentType.SharedItemsKey)
+    const vaultItemsKeys = this.itemManager.getItems<VaultItemsKeyInterface>(ContentType.VaultItemsKey)
 
-    return [...itemsKeys, ...sharedItemsKeys].find(
+    return [...itemsKeys, ...vaultItemsKeys].find(
       (key) => key.uuid === payload.items_key_id || key.duplicateOf === payload.items_key_id,
     )
   }
@@ -90,13 +90,13 @@ export class ItemsEncryptionService extends AbstractService {
 
   private keyToUseForItemEncryption(
     payload: DecryptedPayloadInterface,
-  ): ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | StandardException {
-    if (payload.group_uuid) {
-      const associatedSharedItemsKeys = this.itemManager
-        .getSharedItemsKeysForGroup(payload.group_uuid)
+  ): ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface | StandardException {
+    if (payload.vault_uuid) {
+      const associatedVaultItemsKeys = this.itemManager
+        .getVaultItemsKeysForVault(payload.vault_uuid)
         .sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
 
-      const sharedKey = associatedSharedItemsKeys[0]
+      const sharedKey = associatedVaultItemsKeys[0]
 
       if (!sharedKey) {
         return new StandardException('Cannot find shared items key to use for encryption')
@@ -130,7 +130,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   private keyToUseForDecryptionOfPayload(
     payload: EncryptedPayloadInterface,
-  ): ItemsKeyInterface | SharedItemsKeyInterface | undefined {
+  ): ItemsKeyInterface | VaultItemsKeyInterface | undefined {
     if (payload.items_key_id) {
       const itemsKey = this.itemsKeyForEncryptedPayload(payload)
       return itemsKey
@@ -152,7 +152,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async encryptPayload(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface,
+    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface,
   ): Promise<EncryptedParameters> {
     if (isEncryptedPayload(payload)) {
       throw Error('Attempting to encrypt already encrypted payload.')
@@ -169,7 +169,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async encryptPayloads(
     payloads: DecryptedPayloadInterface[],
-    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface,
+    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface,
   ): Promise<EncryptedParameters[]> {
     return Promise.all(payloads.map((payload) => this.encryptPayload(payload, key)))
   }
@@ -196,7 +196,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async decryptPayload<C extends ItemContent = ItemContent>(
     payload: EncryptedPayloadInterface,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface,
+    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     if (!payload.content) {
       return {
@@ -216,14 +216,14 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async decryptPayloads<C extends ItemContent = ItemContent>(
     payloads: EncryptedPayloadInterface[],
-    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface,
+    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface,
   ): Promise<(DecryptedParameters<C> | ErrorDecryptingParameters)[]> {
     return Promise.all(payloads.map((payload) => this.decryptPayload<C>(payload, key)))
   }
 
   public async decryptErroredItemPayloads(): Promise<void> {
     const payloads = this.payloadManager.invalidPayloads.filter(
-      (i) => ![ContentType.ItemsKey, ContentType.SharedItemsKey].includes(i.content_type),
+      (i) => ![ContentType.ItemsKey, ContentType.VaultItemsKey].includes(i.content_type),
     )
     if (payloads.length === 0) {
       return

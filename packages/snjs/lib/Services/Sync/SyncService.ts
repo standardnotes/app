@@ -54,8 +54,8 @@ import {
   getIncrementedDirtyIndex,
   getCurrentDirtyIndex,
   ItemContent,
-  SharedItemsKeyContent,
-  SharedItemsKeyInterface,
+  VaultItemsKeyContent,
+  VaultItemsKeyInterface,
   FullyFormedTransferPayload,
 } from '@standardnotes/models'
 import {
@@ -76,9 +76,9 @@ import {
   DeviceInterface,
   isFullEntryLoadChunkResponse,
   isChunkFullEntry,
-  SyncEventReceivedGroupInvitesData,
+  SyncEventReceivedVaultInvitesData,
   SyncEventReceivedContactsData,
-  SyncEventReceivedGroupsData,
+  SyncEventReceivedVaultsData,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -134,8 +134,8 @@ export class SNSyncService
   /** Content types appearing first are always mapped first */
   private readonly localLoadPriorty = [
     ContentType.ItemsKey,
-    ContentType.GroupKey,
-    ContentType.SharedItemsKey,
+    ContentType.VaultKey,
+    ContentType.VaultItemsKey,
     ContentType.UserPrefs,
     ContentType.Component,
     ContentType.Theme,
@@ -269,13 +269,13 @@ export class SNSyncService
       ? chunks.fullEntries.itemsKeys.entries
       : await this.device.getDatabaseEntries(this.identifier, chunks.keys.itemsKeys.keys)
 
-    const groupKeyEntries = isFullEntryLoadChunkResponse(chunks)
-      ? chunks.fullEntries.groupKeys.entries
-      : await this.device.getDatabaseEntries(this.identifier, chunks.keys.groupKeys.keys)
+    const vaultKeyEntries = isFullEntryLoadChunkResponse(chunks)
+      ? chunks.fullEntries.vaultKeys.entries
+      : await this.device.getDatabaseEntries(this.identifier, chunks.keys.vaultKeys.keys)
 
-    const sharedItemsKeyEntries = isFullEntryLoadChunkResponse(chunks)
-      ? chunks.fullEntries.sharedItemsKeys.entries
-      : await this.device.getDatabaseEntries(this.identifier, chunks.keys.sharedItemsKeys.keys)
+    const vaultItemsKeyEntries = isFullEntryLoadChunkResponse(chunks)
+      ? chunks.fullEntries.vaultItemsKeys.entries
+      : await this.device.getDatabaseEntries(this.identifier, chunks.keys.vaultItemsKeys.keys)
 
     const createPayloadFromEntry = (entry: FullyFormedTransferPayload) => {
       try {
@@ -287,9 +287,9 @@ export class SNSyncService
     }
 
     await this.processPriorityItemsForDatabaseLoad(itemsKeyEntries.map(createPayloadFromEntry).filter(isNotUndefined))
-    await this.processPriorityItemsForDatabaseLoad(groupKeyEntries.map(createPayloadFromEntry).filter(isNotUndefined))
+    await this.processPriorityItemsForDatabaseLoad(vaultKeyEntries.map(createPayloadFromEntry).filter(isNotUndefined))
     await this.processPriorityItemsForDatabaseLoad(
-      sharedItemsKeyEntries.map(createPayloadFromEntry).filter(isNotUndefined),
+      vaultItemsKeyEntries.map(createPayloadFromEntry).filter(isNotUndefined),
     )
 
     /**
@@ -732,11 +732,11 @@ export class SNSyncService
     mode: SyncMode = SyncMode.Default,
   ) {
     const syncToken =
-      options.groupUuids && options.groupUuids.length > 0 && options.syncGroupsFromScratch
+      options.vaultUuids && options.vaultUuids.length > 0 && options.syncVaultsFromScratch
         ? undefined
         : await this.getLastSyncToken()
     const paginationToken =
-      options.groupUuids && options.syncGroupsFromScratch ? undefined : await this.getPaginationToken()
+      options.vaultUuids && options.syncVaultsFromScratch ? undefined : await this.getPaginationToken()
 
     const operation = new AccountSyncOperation(
       payloads,
@@ -763,7 +763,7 @@ export class SNSyncService
       {
         syncToken,
         paginationToken,
-        groupUuids: options.groupUuids,
+        vaultUuids: options.vaultUuids,
       },
     )
 
@@ -922,14 +922,14 @@ export class SNSyncService
 
     const historyMap = this.historyService.getHistoryMapCopy()
 
-    if (response.groups) {
-      await this.notifyEventSync(SyncEvent.ReceivedGroups, response.groups as SyncEventReceivedGroupsData)
+    if (response.vaults) {
+      await this.notifyEventSync(SyncEvent.ReceivedVaults, response.vaults as SyncEventReceivedVaultsData)
     }
 
-    if (response.groupInvites) {
+    if (response.vaultInvites) {
       await this.notifyEventSync(
-        SyncEvent.ReceivedGroupInvites,
-        response.groupInvites as SyncEventReceivedGroupInvitesData,
+        SyncEvent.ReceivedVaultInvites,
+        response.vaultInvites as SyncEventReceivedVaultInvitesData,
       )
     }
 
@@ -974,7 +974,7 @@ export class SNSyncService
       await this.persistPayloads(payloadsToPersist)
     }
 
-    if (!operation.options.groupUuids) {
+    if (!operation.options.vaultUuids) {
       await Promise.all([
         this.setLastSyncToken(response.lastSyncToken as string),
         this.setPaginationToken(response.paginationToken as string),
@@ -998,7 +998,7 @@ export class SNSyncService
 
     const results: FullyFormedPayloadInterface[] = [...deleted]
 
-    const { rootKeyEncryption, itemsKeyEncryption, groupKeyEncryption } = SplitPayloadsByEncryptionType(encrypted)
+    const { rootKeyEncryption, itemsKeyEncryption, vaultKeyEncryption } = SplitPayloadsByEncryptionType(encrypted)
 
     const { results: rootKeyDecryptionResults, map: processedItemsKeys } = await this.decryptServerItemsKeys(
       rootKeyEncryption || [],
@@ -1006,15 +1006,15 @@ export class SNSyncService
 
     extendArray(results, rootKeyDecryptionResults)
 
-    const { results: groupKeyDecryptionResults, map: processedSharedItemsKeys } =
-      await this.decryptServerSharedItemsKeys(groupKeyEncryption || [])
+    const { results: vaultKeyDecryptionResults, map: processedVaultItemsKeys } =
+      await this.decryptServerVaultItemsKeys(vaultKeyEncryption || [])
 
-    extendArray(results, groupKeyDecryptionResults)
+    extendArray(results, vaultKeyDecryptionResults)
 
     if (itemsKeyEncryption) {
       const decryptionResults = await this.decryptProcessedServerPayloads(itemsKeyEncryption, {
         ...processedItemsKeys,
-        ...processedSharedItemsKeys,
+        ...processedVaultItemsKeys,
       })
       extendArray(results, decryptionResults)
     }
@@ -1052,8 +1052,8 @@ export class SNSyncService
     }
   }
 
-  private async decryptServerSharedItemsKeys(payloads: EncryptedPayloadInterface[]) {
-    const map: Record<UuidString, DecryptedPayloadInterface<SharedItemsKeyContent>> = {}
+  private async decryptServerVaultItemsKeys(payloads: EncryptedPayloadInterface[]) {
+    const map: Record<UuidString, DecryptedPayloadInterface<VaultItemsKeyContent>> = {}
 
     if (payloads.length === 0) {
       return {
@@ -1062,16 +1062,16 @@ export class SNSyncService
       }
     }
 
-    const groupKeySplit: KeyedDecryptionSplit = {
-      usesGroupKeyWithKeyLookup: {
+    const vaultKeySplit: KeyedDecryptionSplit = {
+      usesVaultKeyWithKeyLookup: {
         items: payloads,
       },
     }
 
-    const results = await this.protocolService.decryptSplit<SharedItemsKeyContent>(groupKeySplit)
+    const results = await this.protocolService.decryptSplit<VaultItemsKeyContent>(vaultKeySplit)
 
     results.forEach((result) => {
-      if (isDecryptedPayload<SharedItemsKeyContent>(result) && result.content_type === ContentType.SharedItemsKey) {
+      if (isDecryptedPayload<VaultItemsKeyContent>(result) && result.content_type === ContentType.VaultItemsKey) {
         map[result.uuid] = result
       }
     })
@@ -1084,16 +1084,16 @@ export class SNSyncService
 
   private async decryptProcessedServerPayloads(
     payloads: EncryptedPayloadInterface[],
-    map: Record<UuidString, DecryptedPayloadInterface<ItemsKeyContent | SharedItemsKeyContent>>,
+    map: Record<UuidString, DecryptedPayloadInterface<ItemsKeyContent | VaultItemsKeyContent>>,
   ): Promise<(EncryptedPayloadInterface | DecryptedPayloadInterface)[]> {
     return Promise.all(
       payloads.map(async (encrypted) => {
         const previouslyProcessedItemsKey:
-          | DecryptedPayloadInterface<ItemsKeyContent | SharedItemsKeyContent>
+          | DecryptedPayloadInterface<ItemsKeyContent | VaultItemsKeyContent>
           | undefined = map[encrypted.items_key_id as string]
 
         const itemsKey = previouslyProcessedItemsKey
-          ? (CreateDecryptedItemFromPayload(previouslyProcessedItemsKey) as ItemsKeyInterface | SharedItemsKeyInterface)
+          ? (CreateDecryptedItemFromPayload(previouslyProcessedItemsKey) as ItemsKeyInterface | VaultItemsKeyInterface)
           : undefined
 
         const keyedSplit: KeyedDecryptionSplit = {}
@@ -1317,10 +1317,10 @@ export class SNSyncService
     await this.persistPayloads(emit.emits)
   }
 
-  async syncGroupsFromScratch(groupUuids: string[]): Promise<void> {
+  async syncVaultsFromScratch(vaultUuids: string[]): Promise<void> {
     await this.sync({
-      groupUuids,
-      syncGroupsFromScratch: true,
+      vaultUuids,
+      syncVaultsFromScratch: true,
       queueStrategy: SyncQueueStrategy.ForceSpawnNew,
       awaitAll: true,
     })

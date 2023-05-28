@@ -3,8 +3,8 @@ import {
   ConflictParams,
   ConflictType,
   ContactServerHash,
-  GroupInviteServerHash,
-  GroupServerHash,
+  VaultInviteServerHash,
+  VaultServerHash,
   HttpError,
   HttpResponse,
   isErrorResponse,
@@ -25,9 +25,9 @@ export class ServerSyncResponse {
   readonly uuidConflictPayloads: FilteredServerItem[]
   readonly dataConflictPayloads: FilteredServerItem[]
   readonly rejectedPayloads: FilteredServerItem[]
-  readonly groupInvites: GroupInviteServerHash[]
+  readonly vaultInvites: VaultInviteServerHash[]
   readonly contacts: ContactServerHash[]
-  readonly groups: GroupServerHash[]
+  readonly vaults: VaultServerHash[]
 
   private successResponseData: RawSyncResponse | undefined
 
@@ -52,9 +52,9 @@ export class ServerSyncResponse {
 
     this.rejectedPayloads = FilterDisallowedRemotePayloadsAndMap(this.rawRejectedPayloads)
 
-    this.groups = this.successResponseData?.groups || []
+    this.vaults = this.successResponseData?.vaults || []
 
-    this.groupInvites = this.successResponseData?.group_invites || []
+    this.vaultInvites = this.successResponseData?.vault_invites || []
 
     this.contacts = this.successResponseData?.contacts || []
 

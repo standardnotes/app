@@ -41,14 +41,14 @@ import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
 import { log, LoggingDomain } from '../Logging'
-import { GroupsServer, GroupsServerInterface, HttpServiceInterface } from '@standardnotes/api'
+import { VaultsServer, VaultsServerInterface, HttpServiceInterface } from '@standardnotes/api'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 
 const OneHundredMb = 100 * 1_000_000
 
 export class FileService extends AbstractService implements FilesClientInterface {
   private encryptedCache: FileMemoryCache = new FileMemoryCache(OneHundredMb)
-  private groupsServer: GroupsServerInterface
+  private vaultsServer: VaultsServerInterface
 
   constructor(
     private api: FilesApiInterface,
@@ -64,7 +64,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     private backupsService?: BackupServiceInterface,
   ) {
     super(internalEventBus)
-    this.groupsServer = new GroupsServer(http)
+    this.vaultsServer = new VaultsServer(http)
   }
 
   override deinit(): void {
@@ -185,8 +185,8 @@ export class FileService extends AbstractService implements FilesClientInterface
     file: FileItem,
     onDecryptedBytes: (decryptedBytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
   ): Promise<ClientDisplayableError | undefined> {
-    if (file.group_uuid && file.user_uuid !== this.sessions.userUuid) {
-      return this.downloadForeignGroupFile(file, onDecryptedBytes)
+    if (file.vault_uuid && file.user_uuid !== this.sessions.userUuid) {
+      return this.downloadForeignVaultFile(file, onDecryptedBytes)
     }
 
     const cachedBytes = this.encryptedCache.get(file.uuid)
@@ -243,19 +243,19 @@ export class FileService extends AbstractService implements FilesClientInterface
     }
   }
 
-  public async downloadForeignGroupFile(
+  public async downloadForeignVaultFile(
     file: FileItem,
     onDecryptedBytes: (decryptedBytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
   ): Promise<ClientDisplayableError | undefined> {
-    const groupUuid = file.group_uuid
-    if (!groupUuid) {
-      return new ClientDisplayableError('Group UUID not found')
+    const vaultUuid = file.vault_uuid
+    if (!vaultUuid) {
+      return new ClientDisplayableError('Vault UUID not found')
     }
 
-    log(LoggingDomain.FilesService, 'Downloading group file from network')
+    log(LoggingDomain.FilesService, 'Downloading vault file from network')
 
-    const valetTokenResponse = await this.groupsServer.createForeignFileReadValetToken({
-      groupUuid: groupUuid,
+    const valetTokenResponse = await this.vaultsServer.createForeignFileReadValetToken({
+      vaultUuid: vaultUuid,
       fileUuid: file.uuid,
       remoteIdentifier: file.remoteIdentifier,
     })
@@ -268,7 +268,7 @@ export class FileService extends AbstractService implements FilesClientInterface
       file,
       this.crypto,
       this.api,
-      'group',
+      'vault',
       valetTokenResponse.data.valetToken,
     )
 

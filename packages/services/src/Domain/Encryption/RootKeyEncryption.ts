@@ -24,7 +24,7 @@ import {
   ItemsKeyMutator,
   encryptPayload,
   decryptPayload,
-  ItemContentTypeUsesGroupKeyEncryption,
+  ItemContentTypeUsesVaultKeyEncryption,
 } from '@standardnotes/encryption'
 import {
   CreateDecryptedItemFromPayload,
@@ -35,7 +35,7 @@ import {
   EncryptedPayloadInterface,
   EncryptedTransferPayload,
   FillItemContentSpecialized,
-  GroupKeyInterface,
+  VaultKeyInterface,
   ItemContent,
   ItemsKeyContent,
   ItemsKeyContentSpecialized,
@@ -57,7 +57,7 @@ import { StorageKey } from '../Storage/StorageKeys'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { StorageValueModes } from '../Storage/StorageTypes'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
-import { GroupStorageServiceInterface } from '../Groups/GroupStorageServiceInterface'
+import { VaultStorageServiceInterface } from '../Vaults/VaultStorageServiceInterface'
 
 export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEvent> {
   private rootKey?: RootKeyInterface
@@ -70,7 +70,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     public deviceInterface: DeviceInterface,
     private storageService: StorageServiceInterface,
     private payloadManager: PayloadManagerInterface,
-    private groupStorage: GroupStorageServiceInterface,
+    private vaultStorage: VaultStorageServiceInterface,
     private identifier: ApplicationIdentifier,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
@@ -83,7 +83,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     ;(this.deviceInterface as unknown) = undefined
     ;(this.storageService as unknown) = undefined
     ;(this.payloadManager as unknown) = undefined
-    ;(this.groupStorage as unknown) = undefined
+    ;(this.vaultStorage as unknown) = undefined
 
     this.rootKey = undefined
     this.memoizedRootKeyParams = undefined
@@ -504,12 +504,12 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
   }
 
   private async encrypPayloadWithKeyLookup(payload: DecryptedPayloadInterface): Promise<EncryptedParameters> {
-    let key: RootKeyInterface | GroupKeyInterface | undefined
-    if (payload.group_uuid) {
-      if (!ItemContentTypeUsesGroupKeyEncryption(payload.content_type)) {
-        throw Error('Attempting to decrypt payload that is not a shared items key with group key.')
+    let key: RootKeyInterface | VaultKeyInterface | undefined
+    if (payload.vault_uuid) {
+      if (!ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
+        throw Error('Attempting to decrypt payload that is not a shared items key with vault key.')
       }
-      key = this.getGroupKey(payload.group_uuid)
+      key = this.getVaultKey(payload.vault_uuid)
     } else {
       key = this.getRootKey()
     }
@@ -527,24 +527,24 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
 
   public async encryptPayload(
     payload: DecryptedPayloadInterface,
-    key: RootKeyInterface | GroupKeyInterface,
+    key: RootKeyInterface | VaultKeyInterface,
   ): Promise<EncryptedParameters> {
     return encryptPayload(payload, key, this.operatorManager)
   }
 
-  public async encryptPayloads(payloads: DecryptedPayloadInterface[], key: RootKeyInterface | GroupKeyInterface) {
+  public async encryptPayloads(payloads: DecryptedPayloadInterface[], key: RootKeyInterface | VaultKeyInterface) {
     return Promise.all(payloads.map((payload) => this.encryptPayload(payload, key)))
   }
 
   public async decryptPayloadWithKeyLookup<C extends ItemContent = ItemContent>(
     payload: EncryptedPayloadInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
-    let key: RootKeyInterface | GroupKeyInterface | undefined
-    if (payload.group_uuid) {
-      if (!ItemContentTypeUsesGroupKeyEncryption(payload.content_type)) {
-        throw Error('Attempting to decrypt payload that is not a shared items key with group key.')
+    let key: RootKeyInterface | VaultKeyInterface | undefined
+    if (payload.vault_uuid) {
+      if (!ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
+        throw Error('Attempting to decrypt payload that is not a shared items key with vault key.')
       }
-      key = this.getGroupKey(payload.group_uuid)
+      key = this.getVaultKey(payload.vault_uuid)
     } else {
       key = this.getRootKey()
     }
@@ -562,7 +562,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
 
   public async decryptPayload<C extends ItemContent = ItemContent>(
     payload: EncryptedPayloadInterface,
-    key: RootKeyInterface | GroupKeyInterface,
+    key: RootKeyInterface | VaultKeyInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     return decryptPayload(payload, key, this.operatorManager)
   }
@@ -575,14 +575,14 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
 
   public async decryptPayloads<C extends ItemContent = ItemContent>(
     payloads: EncryptedPayloadInterface[],
-    key: RootKeyInterface | GroupKeyInterface,
+    key: RootKeyInterface | VaultKeyInterface,
   ): Promise<(DecryptedParameters<C> | ErrorDecryptingParameters)[]> {
     return Promise.all(payloads.map((payload) => this.decryptPayload<C>(payload, key)))
   }
 
   public async decryptErroredRootPayloads(): Promise<void> {
     const payloads = this.payloadManager.invalidPayloads.filter((i) =>
-      [ContentType.ItemsKey, ContentType.SharedItemsKey].includes(i.content_type),
+      [ContentType.ItemsKey, ContentType.VaultItemsKey].includes(i.content_type),
     )
     if (payloads.length === 0) {
       return
@@ -626,14 +626,14 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
   }
 
   /**
-   * When the group key changes, we must re-encrypt all shared items
-   * keys with this new group key (by simply re-syncing).
+   * When the vault key changes, we must re-encrypt all shared items
+   * keys with this new vault key (by simply re-syncing).
    */
-  public async reencryptSharedItemsKeysForGroup(groupUuid: string): Promise<void> {
-    const sharedItemsKeys = this.itemManager.getSharedItemsKeysForGroup(groupUuid)
+  public async reencryptVaultItemsKeysForVault(vaultUuid: string): Promise<void> {
+    const vaultItemsKeys = this.itemManager.getVaultItemsKeysForVault(vaultUuid)
 
-    if (sharedItemsKeys.length > 0) {
-      await this.itemManager.setItemsDirty(sharedItemsKeys)
+    if (vaultItemsKeys.length > 0) {
+      await this.itemManager.setItemsDirty(vaultItemsKeys)
     }
   }
 
@@ -702,14 +702,14 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     return rollback
   }
 
-  getGroupKey(groupUuid: string): GroupKeyInterface | undefined {
-    const keys = this.itemManager.itemsMatchingPredicate<GroupKeyInterface>(
-      ContentType.GroupKey,
-      new Predicate<GroupKeyInterface>('groupUuid', '=', groupUuid),
+  getVaultKey(vaultUuid: string): VaultKeyInterface | undefined {
+    const keys = this.itemManager.itemsMatchingPredicate<VaultKeyInterface>(
+      ContentType.VaultKey,
+      new Predicate<VaultKeyInterface>('vaultUuid', '=', vaultUuid),
     )
 
     if (keys.length > 1) {
-      throw Error('Multiple group keys found for group uuid')
+      throw Error('Multiple vault keys found for vault uuid')
     }
 
     return keys[0]

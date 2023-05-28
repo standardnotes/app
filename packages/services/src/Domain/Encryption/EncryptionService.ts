@@ -32,14 +32,14 @@ import {
   DecryptedPayloadInterface,
   EncryptedPayload,
   EncryptedPayloadInterface,
-  GroupKeyContentSpecialized,
-  GroupKeyInterface,
+  VaultKeyContentSpecialized,
+  VaultKeyInterface,
   isDecryptedPayload,
   isEncryptedPayload,
   ItemContent,
   ItemsKeyInterface,
   RootKeyInterface,
-  SharedItemsKeyInterface,
+  VaultItemsKeyInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -75,7 +75,7 @@ import { RootKeyEncryptionService } from './RootKeyEncryption'
 import { DecryptBackupFile } from './BackupFileDecryptor'
 import { EncryptionServiceEvent } from './EncryptionServiceEvent'
 import { StorageKey } from '../Storage/StorageKeys'
-import { GroupStorageServiceInterface } from '../Groups/GroupStorageServiceInterface'
+import { VaultStorageServiceInterface } from '../Vaults/VaultStorageServiceInterface'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -115,7 +115,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     private payloadManager: PayloadManagerInterface,
     public deviceInterface: DeviceInterface,
     private storageService: StorageServiceInterface,
-    private groupStorage: GroupStorageServiceInterface,
+    private vaultStorage: VaultStorageServiceInterface,
     private identifier: ApplicationIdentifier,
     public crypto: PureCryptoInterface,
     protected override internalEventBus: InternalEventBusInterface,
@@ -139,7 +139,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       this.deviceInterface,
       this.storageService,
       this.payloadManager,
-      this.groupStorage,
+      this.vaultStorage,
       this.identifier,
       this.internalEventBus,
     )
@@ -158,7 +158,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     ;(this.payloadManager as unknown) = undefined
     ;(this.deviceInterface as unknown) = undefined
     ;(this.storageService as unknown) = undefined
-    ;(this.groupStorage as unknown) = undefined
+    ;(this.vaultStorage as unknown) = undefined
     ;(this.crypto as unknown) = undefined
     ;(this.operatorManager as unknown) = undefined
 
@@ -229,8 +229,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     await this.rootKeyEncryption.reencryptItemsKeys()
   }
 
-  public reencryptSharedItemsKeysForGroup(groupUuid: string): Promise<void> {
-    return this.rootKeyEncryption.reencryptSharedItemsKeysForGroup(groupUuid)
+  public reencryptVaultItemsKeysForVault(vaultUuid: string): Promise<void> {
+    return this.rootKeyEncryption.reencryptVaultItemsKeysForVault(vaultUuid)
   }
 
   public async createNewItemsKeyWithRollback(): Promise<() => Promise<void>> {
@@ -244,7 +244,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
 
   public itemsKeyForEncryptedPayload(
     payload: EncryptedPayloadInterface,
-  ): ItemsKeyInterface | SharedItemsKeyInterface | undefined {
+  ): ItemsKeyInterface | VaultItemsKeyInterface | undefined {
     return this.itemsEncryption.itemsKeyForEncryptedPayload(payload)
   }
 
@@ -265,10 +265,10 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     const {
       usesRootKey,
       usesItemsKey,
-      usesGroupKey,
+      usesVaultKey,
       usesRootKeyWithKeyLookup,
       usesItemsKeyWithKeyLookup,
-      usesGroupKeyWithKeyLookup,
+      usesVaultKeyWithKeyLookup,
     } = split
 
     if (usesRootKey) {
@@ -279,15 +279,15 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       const rootKeyEncrypted = await this.rootKeyEncryption.encryptPayloadsWithKeyLookup(usesRootKeyWithKeyLookup.items)
       extendArray(allEncryptedParams, rootKeyEncrypted)
     }
-    if (usesGroupKey) {
-      const groupKeyEncrypted = await this.rootKeyEncryption.encryptPayloads(usesGroupKey.items, usesGroupKey.key)
-      extendArray(allEncryptedParams, groupKeyEncrypted)
+    if (usesVaultKey) {
+      const vaultKeyEncrypted = await this.rootKeyEncryption.encryptPayloads(usesVaultKey.items, usesVaultKey.key)
+      extendArray(allEncryptedParams, vaultKeyEncrypted)
     }
-    if (usesGroupKeyWithKeyLookup) {
-      const groupKeyEncrypted = await this.rootKeyEncryption.encryptPayloadsWithKeyLookup(
-        usesGroupKeyWithKeyLookup.items,
+    if (usesVaultKeyWithKeyLookup) {
+      const vaultKeyEncrypted = await this.rootKeyEncryption.encryptPayloadsWithKeyLookup(
+        usesVaultKeyWithKeyLookup.items,
       )
-      extendArray(allEncryptedParams, groupKeyEncrypted)
+      extendArray(allEncryptedParams, vaultKeyEncrypted)
     }
 
     if (usesItemsKey) {
@@ -330,10 +330,10 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     const {
       usesRootKey,
       usesItemsKey,
-      usesGroupKey,
+      usesVaultKey,
       usesRootKeyWithKeyLookup,
       usesItemsKeyWithKeyLookup,
-      usesGroupKeyWithKeyLookup,
+      usesVaultKeyWithKeyLookup,
     } = split
 
     if (usesRootKey) {
@@ -347,15 +347,15 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       )
       extendArray(resultParams, rootKeyDecrypted)
     }
-    if (usesGroupKey) {
-      const groupKeyDecrypted = await this.rootKeyEncryption.decryptPayloads<C>(usesGroupKey.items, usesGroupKey.key)
-      extendArray(resultParams, groupKeyDecrypted)
+    if (usesVaultKey) {
+      const vaultKeyDecrypted = await this.rootKeyEncryption.decryptPayloads<C>(usesVaultKey.items, usesVaultKey.key)
+      extendArray(resultParams, vaultKeyDecrypted)
     }
-    if (usesGroupKeyWithKeyLookup) {
-      const groupKeyDecrypted = await this.rootKeyEncryption.decryptPayloadsWithKeyLookup<C>(
-        usesGroupKeyWithKeyLookup.items,
+    if (usesVaultKeyWithKeyLookup) {
+      const vaultKeyDecrypted = await this.rootKeyEncryption.decryptPayloadsWithKeyLookup<C>(
+        usesVaultKeyWithKeyLookup.items,
       )
-      extendArray(resultParams, groupKeyDecrypted)
+      extendArray(resultParams, vaultKeyDecrypted)
     }
 
     if (usesItemsKey) {
@@ -506,16 +506,16 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.rootKeyEncryption.createRootKey(identifier, password, origination, version)
   }
 
-  createGroupKeyData(groupUuid: string): GroupKeyContentSpecialized {
-    return this.operatorManager.defaultOperator().createGroupKeyData(groupUuid)
+  createVaultKeyData(vaultUuid: string): VaultKeyContentSpecialized {
+    return this.operatorManager.defaultOperator().createVaultKeyData(vaultUuid)
   }
 
-  getGroupKey(groupUuid: string): GroupKeyInterface | undefined {
-    return this.rootKeyEncryption.getGroupKey(groupUuid)
+  getVaultKey(vaultUuid: string): VaultKeyInterface | undefined {
+    return this.rootKeyEncryption.getVaultKey(vaultUuid)
   }
 
-  createSharedItemsKey(uuid: string, groupUuid: string): SharedItemsKeyInterface {
-    return this.operatorManager.defaultOperator().createSharedItemsKey(uuid, groupUuid)
+  createVaultItemsKey(uuid: string, vaultUuid: string): VaultItemsKeyInterface {
+    return this.operatorManager.defaultOperator().createVaultItemsKey(uuid, vaultUuid)
   }
 
   public generateKeyPair(): PkcKeyPair {
@@ -536,8 +536,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return decrypted ?? undefined
   }
 
-  encryptGroupDataWithRecipientPublicKey(
-    data: GroupKeyContentSpecialized,
+  encryptVaultDataWithRecipientPublicKey(
+    data: VaultKeyContentSpecialized,
     senderPrivateKey: string,
     recipientPublicKey: string,
   ): string {
@@ -546,16 +546,16 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return encrypted
   }
 
-  decryptGroupDataWithPrivateKey(
-    encryptedGroupData: string,
+  decryptVaultDataWithPrivateKey(
+    encryptedVaultData: string,
     senderPublicKey: string,
     privateKey: string,
-  ): GroupKeyContentSpecialized | undefined {
+  ): VaultKeyContentSpecialized | undefined {
     const defaultOperator = this.operatorManager.defaultOperator()
-    const version = defaultOperator.versionForEncryptedString(encryptedGroupData)
+    const version = defaultOperator.versionForEncryptedString(encryptedVaultData)
 
     const keyOperator = this.operatorManager.operatorForVersion(version)
-    const decrypted = keyOperator.asymmetricDecrypt(encryptedGroupData, senderPublicKey, privateKey)
+    const decrypted = keyOperator.asymmetricDecrypt(encryptedVaultData, senderPublicKey, privateKey)
 
     if (decrypted) {
       return JSON.parse(decrypted)

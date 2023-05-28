@@ -5,9 +5,9 @@ export * from './Keys/ItemsKey/ItemsKey'
 export * from './Keys/ItemsKey/ItemsKeyMutator'
 export * from './Keys/ItemsKey/Registration'
 
-export * from './Keys/SharedItemsKey/SharedItemsKey'
-export * from './Keys/SharedItemsKey/SharedItemsKeyMutator'
-export * from './Keys/SharedItemsKey/Registration'
+export * from './Keys/VaultItemsKey/VaultItemsKey'
+export * from './Keys/VaultItemsKey/VaultItemsKeyMutator'
+export * from './Keys/VaultItemsKey/Registration'
 
 export * from './Keys/RootKey/Functions'
 export * from './Keys/RootKey/KeyParamsFunctions'

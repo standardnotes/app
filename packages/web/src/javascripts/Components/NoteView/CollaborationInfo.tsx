@@ -10,22 +10,22 @@ type Props = {
 const CollaborationInfoHUD: FunctionComponent<Props> = ({ item }) => {
   const application = useApplication()
 
-  const itemIsShared = application.groups.isItemInCollaborativeGroup(item)
+  const itemIsShared = application.vaults.isItemInCollaborativeVault(item)
   if (!itemIsShared) {
     return null
   }
 
-  const lastEditedBy = application.groups.getItemLastEditedBy(item)
-  const groupInfo = application.groups.getGroupInfoForItem(item)
-  if (!groupInfo) {
+  const lastEditedBy = application.vaults.getItemLastEditedBy(item)
+  const vaultInfo = application.vaults.getVaultInfoForItem(item)
+  if (!vaultInfo) {
     return null
   }
 
   return (
     <div className="flex flex-wrap items-start gap-2">
-      <div title="Group name" className={'flex rounded bg-success py-1 px-1.5 text-success-contrast'}>
-        <Icon ariaLabel="Shared in group" type="group" className="mr-1 text-info-contrast" size="medium" />
-        <span className="mr-auto overflow-hidden text-ellipsis text-xs">{groupInfo.groupName}</span>
+      <div title="Vault name" className={'flex rounded bg-success py-1 px-1.5 text-success-contrast'}>
+        <Icon ariaLabel="Shared in vault" type="vault" className="mr-1 text-info-contrast" size="medium" />
+        <span className="mr-auto overflow-hidden text-ellipsis text-xs">{vaultInfo.vaultName}</span>
       </div>
 
       {lastEditedBy && (

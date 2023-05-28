@@ -27,7 +27,7 @@ export interface PayloadInterface<T extends TransferPayload = TransferPayload, C
   readonly lastSyncEnd?: Date
 
   readonly duplicate_of?: string
-  readonly group_uuid?: string
+  readonly vault_uuid?: string
   readonly user_uuid?: string
   readonly last_edited_by_uuid?: string
 

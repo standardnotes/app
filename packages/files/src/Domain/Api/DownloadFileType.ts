@@ -1,1 +1,1 @@
-export type DownloadFileType = 'own' | 'group'
+export type DownloadFileType = 'own' | 'vault'

@@ -9,21 +9,21 @@ type Props = {
 
 const ListItemCollaborationInfo: FunctionComponent<Props> = ({ item }) => {
   const application = useApplication()
-  const groupInfo = application.groups.getGroupInfoForItem(item)
+  const vaultInfo = application.vaults.getVaultInfoForItem(item)
 
-  if (!groupInfo) {
+  if (!vaultInfo) {
     return null
   }
 
-  const groupNameDisplay = groupInfo.groupName || groupInfo.groupUuid.split('-')[0]
-  const sharedByContact = application.groups.getItemSharedBy(item)
+  const vaultNameDisplay = vaultInfo.vaultName || vaultInfo.vaultUuid.split('-')[0]
+  const sharedByContact = application.vaults.getItemSharedBy(item)
 
   return (
     <div className="mt-0.5 flex flex-wrap items-center gap-2">
       <div className={'mt-2 rounded bg-success py-1 px-1.5 text-danger-contrast'}>
-        <span className="flex items-center" title="Shared in group">
-          <Icon ariaLabel="Shared in group" type="group" className="mr-1 text-info-contrast" size="medium" />
-          <div className="text-center text-xs font-bold">{groupNameDisplay}</div>
+        <span className="flex items-center" title="Shared in vault">
+          <Icon ariaLabel="Shared in vault" type="vault" className="mr-1 text-info-contrast" size="medium" />
+          <div className="text-center text-xs font-bold">{vaultNameDisplay}</div>
         </span>
       </div>
 

@@ -1,4 +1,4 @@
-import { ContactServerHash, GroupInviteServerHash, GroupServerHash } from '@standardnotes/responses'
+import { ContactServerHash, VaultInviteServerHash, VaultServerHash } from '@standardnotes/responses'
 
 /* istanbul ignore file */
 export enum SyncEvent {
@@ -24,11 +24,11 @@ export enum SyncEvent {
   DatabaseWriteError = 'database-write-error',
   DatabaseReadError = 'database-read-error',
   SyncRequestsIntegrityCheck = 'sync:requests-integrity-check',
-  ReceivedGroups = 'received-groups',
-  ReceivedGroupInvites = 'received-group-invites',
+  ReceivedVaults = 'received-vaults',
+  ReceivedVaultInvites = 'received-vault-invites',
   ReceivedContacts = 'received-contacts',
 }
 
-export type SyncEventReceivedGroupsData = GroupServerHash[]
-export type SyncEventReceivedGroupInvitesData = GroupInviteServerHash[]
+export type SyncEventReceivedVaultsData = VaultServerHash[]
+export type SyncEventReceivedVaultInvitesData = VaultInviteServerHash[]
 export type SyncEventReceivedContactsData = ContactServerHash[]

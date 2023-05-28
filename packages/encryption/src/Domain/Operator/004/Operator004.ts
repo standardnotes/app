@@ -8,12 +8,12 @@ import {
   PayloadTimestampDefaults,
   DecryptedPayload,
   DecryptedPayloadInterface,
-  SharedItemsKeyInterface,
-  SharedItemsKeyContent,
+  VaultItemsKeyInterface,
+  VaultItemsKeyContent,
   DecryptedTransferPayload,
-  GroupKeyInterface,
-  isGroupKey,
-  GroupKeyContentSpecialized,
+  VaultKeyInterface,
+  isVaultKey,
+  VaultKeyContentSpecialized,
 } from '@standardnotes/models'
 import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
 import * as Utils from '@standardnotes/utils'
@@ -22,7 +22,7 @@ import { isItemsKey } from '../../Keys/ItemsKey/ItemsKey'
 import {
   ContentTypeUsesRootKeyEncryption,
   CreateNewRootKey,
-  ItemContentTypeUsesGroupKeyEncryption,
+  ItemContentTypeUsesVaultKeyEncryption,
 } from '../../Keys/RootKey/Functions'
 import { Create004KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
 import { SNRootKey } from '../../Keys/RootKey/RootKey'
@@ -32,7 +32,7 @@ import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
 import { SynchronousOperator } from '../OperatorInterface'
-import { isSharedItemsKey } from '../../Keys/SharedItemsKey/SharedItemsKey'
+import { isVaultItemsKey } from '../../Keys/VaultItemsKey/VaultItemsKey'
 import { AsymmetricallyEncryptedString, SymmetricallyEncryptedString } from '../Types'
 
 type V004StringComponents = [version: string, nonce: string, ciphertext: string, authenticatedData: string]
@@ -74,10 +74,10 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return response
   }
 
-  public createGroupKeyData(groupUuid: string): GroupKeyContentSpecialized {
+  public createVaultKeyData(vaultUuid: string): VaultKeyContentSpecialized {
     return {
-      groupUuid: groupUuid,
-      groupKey: this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength),
+      vaultUuid: vaultUuid,
+      vaultKey: this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength),
       keyTimestamp: new Date().getTime(),
       keyVersion: ProtocolVersion.V004,
     }
@@ -97,17 +97,17 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return CreateDecryptedItemFromPayload(payload)
   }
 
-  public createSharedItemsKey(uuid: string, groupUuid: string): SharedItemsKeyInterface {
+  public createVaultItemsKey(uuid: string, vaultUuid: string): VaultItemsKeyInterface {
     const key = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
-    const content = FillItemContent<SharedItemsKeyContent>({
+    const content = FillItemContent<VaultItemsKeyContent>({
       itemsKey: key,
       version: ProtocolVersion.V004,
     })
 
     const transferPayload: DecryptedTransferPayload = {
       uuid: uuid,
-      content_type: ContentType.SharedItemsKey,
-      group_uuid: groupUuid,
+      content_type: ContentType.VaultItemsKey,
+      vault_uuid: vaultUuid,
       content: content,
       dirty: true,
       ...PayloadTimestampDefaults(),
@@ -241,7 +241,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
    */
   private generateAuthenticatedDataForPayload(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | SNRootKey,
+    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface | SNRootKey,
   ): ItemAuthenticatedData | RootKeyEncryptedAuthenticatedData {
     const baseData: ItemAuthenticatedData = {
       u: payload.uuid,
@@ -252,13 +252,13 @@ export class SNProtocolOperator004 implements SynchronousOperator {
         ...baseData,
         kp: (key as SNRootKey).keyParams.content,
       }
-    } else if (ItemContentTypeUsesGroupKeyEncryption(payload.content_type)) {
-      if (!isGroupKey(key)) {
-        throw Error(`Attempting to use non-group key ${key.content_type} for item content type ${payload.content_type}`)
+    } else if (ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
+      if (!isVaultKey(key)) {
+        throw Error(`Attempting to use non-vault key ${key.content_type} for item content type ${payload.content_type}`)
       }
       return baseData
     } else {
-      if (!isItemsKey(key) && !isSharedItemsKey(key)) {
+      if (!isItemsKey(key) && !isVaultItemsKey(key)) {
         throw Error('Attempting to use non-items key for regular item.')
       }
       return baseData
@@ -282,7 +282,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
 
   public generateEncryptedParametersSync(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | SNRootKey,
+    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface | SNRootKey,
   ): EncryptedParameters {
     const contentKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
     const contentPlaintext = JSON.stringify(payload.content)
@@ -292,7 +292,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
 
     return {
       uuid: payload.uuid,
-      items_key_id: isItemsKey(key) || isSharedItemsKey(key) ? key.uuid : undefined,
+      items_key_id: isItemsKey(key) || isVaultItemsKey(key) ? key.uuid : undefined,
       content: encryptedContentString,
       enc_item_key: encryptedContentKey,
       version: this.version,
@@ -301,7 +301,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
 
   public generateDecryptedParametersSync<C extends ItemContent = ItemContent>(
     encrypted: EncryptedParameters,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | SNRootKey,
+    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface | SNRootKey,
   ): DecryptedParameters<C> | ErrorDecryptingParameters {
     const contentKeyComponents = this.deconstructEncryptedPayloadString(encrypted.enc_item_key)
     const authenticatedData = this.stringToAuthenticatedData(contentKeyComponents.authenticatedData, {

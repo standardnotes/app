@@ -50,6 +50,6 @@ export function ItemContentTypeUsesRootKeyEncryption(contentType: ContentType): 
   return contentType === ContentType.ItemsKey
 }
 
-export function ItemContentTypeUsesGroupKeyEncryption(contentType: ContentType): boolean {
-  return contentType === ContentType.SharedItemsKey
+export function ItemContentTypeUsesVaultKeyEncryption(contentType: ContentType): boolean {
+  return contentType === ContentType.VaultItemsKey
 }

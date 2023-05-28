@@ -4,12 +4,12 @@ import {
   DecryptedPayload,
   DecryptedPayloadInterface,
   FillItemContent,
-  GroupKeyContentSpecialized,
+  VaultKeyContentSpecialized,
   ItemContent,
   ItemsKeyContent,
   ItemsKeyInterface,
   PayloadTimestampDefaults,
-  SharedItemsKeyInterface,
+  VaultItemsKeyInterface,
 } from '@standardnotes/models'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { firstHalfOfString, secondHalfOfString, splitString, UuidGenerator } from '@standardnotes/utils'
@@ -215,11 +215,11 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
     })
   }
 
-  createSharedItemsKey(_uuid: string, _groupUuid: string): SharedItemsKeyInterface {
+  createVaultItemsKey(_uuid: string, _vaultUuid: string): VaultItemsKeyInterface {
     throw new Error('Method not implemented.')
   }
 
-  createGroupKeyData(_groupUuid: string): GroupKeyContentSpecialized {
+  createVaultKeyData(_vaultUuid: string): VaultKeyContentSpecialized {
     throw new Error('Method not implemented.')
   }
 

@@ -374,7 +374,7 @@ export class SNApiService
     lastSyncToken: string | undefined,
     paginationToken: string | undefined,
     limit: number,
-    groupUuids?: string[],
+    vaultUuids?: string[],
   ): Promise<HttpResponse<RawSyncResponse>> {
     const preprocessingError = this.preprocessingError()
     if (preprocessingError) {
@@ -386,7 +386,7 @@ export class SNApiService
       [ApiEndpointParam.LastSyncToken]: lastSyncToken,
       [ApiEndpointParam.PaginationToken]: paginationToken,
       [ApiEndpointParam.SyncDlLimit]: limit,
-      [ApiEndpointParam.GroupUiuds]: groupUuids,
+      [ApiEndpointParam.VaultUiuds]: vaultUuids,
     })
     const response = await this.httpService.post<RawSyncResponse>(path, params, this.getSessionAccessToken())
 
@@ -788,8 +788,8 @@ export class SNApiService
   public getFilesDownloadUrl(downloadType: DownloadFileType): string {
     if (downloadType === 'own') {
       return joinPaths(this.getFilesHost(), Paths.v1.downloadFileChunk)
-    } else if (downloadType === 'group') {
-      return joinPaths(this.getFilesHost(), Paths.v1.downloadGroupFileChunk)
+    } else if (downloadType === 'vault') {
+      return joinPaths(this.getFilesHost(), Paths.v1.downloadVaultFileChunk)
     } else {
       throw Error('Invalid download type')
     }

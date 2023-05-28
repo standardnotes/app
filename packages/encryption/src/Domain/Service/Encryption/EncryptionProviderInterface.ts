@@ -3,12 +3,12 @@ import {
   BackupFile,
   DecryptedPayloadInterface,
   EncryptedPayloadInterface,
-  GroupKeyContentSpecialized,
-  GroupKeyInterface,
+  VaultKeyContentSpecialized,
+  VaultKeyInterface,
   ItemContent,
   ItemsKeyInterface,
   RootKeyInterface,
-  SharedItemsKeyInterface,
+  VaultItemsKeyInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
@@ -57,20 +57,20 @@ export interface EncryptionProviderInterface {
     version?: ProtocolVersion,
   ): Promise<RootKeyInterface>
 
-  getGroupKey(groupUuid: string): GroupKeyInterface | undefined
+  getVaultKey(vaultUuid: string): VaultKeyInterface | undefined
   getDecryptedPrivateKey(): string | undefined
-  createSharedItemsKey(uuid: string, groupUuid: string): SharedItemsKeyInterface
-  createGroupKeyData(groupUuid: string): GroupKeyContentSpecialized
+  createVaultItemsKey(uuid: string, vaultUuid: string): VaultItemsKeyInterface
+  createVaultKeyData(vaultUuid: string): VaultKeyContentSpecialized
   generateKeyPair(): PkcKeyPair
   encryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, privateKey: string): string
   decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | undefined
-  decryptGroupDataWithPrivateKey(
-    encryptedGroupData: string,
+  decryptVaultDataWithPrivateKey(
+    encryptedVaultData: string,
     senderPublicKey: string,
     privateKey: string,
-  ): GroupKeyContentSpecialized | undefined
-  encryptGroupDataWithRecipientPublicKey(
-    data: GroupKeyContentSpecialized,
+  ): VaultKeyContentSpecialized | undefined
+  encryptVaultDataWithRecipientPublicKey(
+    data: VaultKeyContentSpecialized,
     senderPrivateKey: string,
     recipientPublicKey: string,
   ): string
@@ -90,7 +90,7 @@ export interface EncryptionProviderInterface {
   >
   createNewItemsKeyWithRollback(): Promise<() => Promise<void>>
   reencryptItemsKeys(): Promise<void>
-  reencryptSharedItemsKeysForGroup(groupUuid: string): Promise<void>
+  reencryptVaultItemsKeysForVault(vaultUuid: string): Promise<void>
   getSureDefaultItemsKey(): ItemsKeyInterface
   getRootKeyParams(): Promise<SNRootKeyParams | undefined>
   getEmbeddedPayloadAuthenticatedData(

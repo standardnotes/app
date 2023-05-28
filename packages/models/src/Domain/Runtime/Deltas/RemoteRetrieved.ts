@@ -36,7 +36,7 @@ export class DeltaRemoteRetrieved implements SyncDeltaInterface {
      * or if the item is locally dirty, filter it out of retrieved_items, and add to potential conflicts.
      */
     for (const apply of this.applyCollection.all()) {
-      if (apply.content_type === ContentType.ItemsKey || apply.content_type === ContentType.SharedItemsKey) {
+      if (apply.content_type === ContentType.ItemsKey || apply.content_type === ContentType.VaultItemsKey) {
         const itemsKeyDeltaEmit = new ItemsKeyDelta(this.baseCollection, [apply]).result()
 
         extendSyncDelta(result, itemsKeyDeltaEmit)

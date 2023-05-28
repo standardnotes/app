@@ -1,9 +1,9 @@
-import { GroupInviteServerHash } from './../Groups/GroupInviteServerHash'
+import { VaultInviteServerHash } from '../Vaults/VaultInviteServerHash'
 import { ContactServerHash } from '../Contact/ContactServerHash'
 import { ApiEndpointParam } from './ApiEndpointParam'
 import { ConflictParams } from './ConflictParams'
 import { ServerItemResponse } from './ServerItemResponse'
-import { GroupServerHash } from '../Groups/GroupServerHash'
+import { VaultServerHash } from '../Vaults/VaultServerHash'
 
 export type RawSyncData = {
   error?: unknown
@@ -13,8 +13,8 @@ export type RawSyncData = {
   saved_items?: ServerItemResponse[]
   conflicts?: ConflictParams[]
   unsaved?: ConflictParams[]
-  groups?: GroupServerHash[]
-  group_invites?: GroupInviteServerHash[]
+  vaults?: VaultServerHash[]
+  vault_invites?: VaultInviteServerHash[]
   contacts?: ContactServerHash[]
   status?: number
 }

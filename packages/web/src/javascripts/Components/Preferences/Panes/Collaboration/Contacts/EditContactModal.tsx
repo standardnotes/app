@@ -2,10 +2,10 @@ import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 're
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { GroupInviteServerHash, TrustedContactInterface } from '@standardnotes/snjs'
+import { VaultInviteServerHash, TrustedContactInterface } from '@standardnotes/snjs'
 
 type Props = {
-  fromInvite?: GroupInviteServerHash
+  fromInvite?: VaultInviteServerHash
   editContactUuid?: string
   onCloseDialog: () => void
   onAddContact?: (contact: TrustedContactInterface) => void
@@ -39,7 +39,7 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
       setName(contact.name)
       setCollaborationID(application.contacts.getCollaborationIDForTrustedContact(contact))
     }
-  }, [application.contacts, application.groups, editContactUuid])
+  }, [application.contacts, application.vaults, editContactUuid])
 
   const handleSubmit = useCallback(async () => {
     if (editingContact) {

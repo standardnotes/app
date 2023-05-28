@@ -2,6 +2,6 @@ import { DecryptedPayloadInterface, EncryptedPayloadInterface } from '@standardn
 
 export interface EncryptionTypeSplit<T = EncryptedPayloadInterface | DecryptedPayloadInterface> {
   rootKeyEncryption?: T[]
-  groupKeyEncryption?: T[]
+  vaultKeyEncryption?: T[]
   itemsKeyEncryption?: T[]
 }

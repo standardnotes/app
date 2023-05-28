@@ -26,7 +26,7 @@ export interface FilesClientInterface {
     file: FileItem,
     onDecryptedBytes: (bytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
   ): Promise<ClientDisplayableError | undefined>
-  downloadForeignGroupFile(
+  downloadForeignVaultFile(
     file: FileItem,
     onDecryptedBytes: (decryptedBytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
   ): Promise<ClientDisplayableError | undefined>

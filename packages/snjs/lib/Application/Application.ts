@@ -171,9 +171,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private integrityService!: ExternalServices.IntegrityService
   private statusService!: ExternalServices.StatusService
   private filesBackupService?: FilesBackupService
-  private groupService!: ExternalServices.GroupServiceInterface
+  private vaultService!: ExternalServices.VaultServiceInterface
   private contactService!: ExternalServices.ContactServiceInterface
-  private groupStorageService!: ExternalServices.GroupStorageServiceInterface
+  private vaultStorageService!: ExternalServices.VaultStorageServiceInterface
   private declare sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>
   private declare legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>
   private declare authenticatorManager: AuthenticatorClientInterface
@@ -376,8 +376,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.challengeService
   }
 
-  public get groups(): ExternalServices.GroupServiceInterface {
-    return this.groupService
+  public get vaults(): ExternalServices.VaultServiceInterface {
+    return this.vaultService
   }
 
   public get contacts(): ExternalServices.ContactServiceInterface {
@@ -1205,8 +1205,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     this.createUseCases()
     this.createContactService()
-    this.createGroupStorageService()
-    this.createGroupService()
+    this.createVaultStorageService()
+    this.createVaultService()
   }
 
   private clearServices() {
@@ -1263,9 +1263,9 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this._listRevisions as unknown) = undefined
     ;(this._getRevision as unknown) = undefined
     ;(this._deleteRevision as unknown) = undefined
-    ;(this.groupService as unknown) = undefined
+    ;(this.vaultService as unknown) = undefined
     ;(this.contactService as unknown) = undefined
-    ;(this.groupStorageService as unknown) = undefined
+    ;(this.vaultStorageService as unknown) = undefined
 
     this.services = []
   }
@@ -1300,23 +1300,23 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.services.push(this.contactService)
   }
 
-  private createGroupStorageService(): void {
-    this.groupStorageService = new ExternalServices.GroupStorageService(this.storage)
+  private createVaultStorageService(): void {
+    this.vaultStorageService = new ExternalServices.VaultStorageService(this.storage)
   }
 
-  private createGroupService(): void {
-    this.groupService = new ExternalServices.GroupService(
+  private createVaultService(): void {
+    this.vaultService = new ExternalServices.VaultService(
       this.httpService,
       this.syncService,
       this.itemManager,
       this.protocolService,
       this.sessions,
       this.contactService,
-      this.groupStorageService,
+      this.vaultStorageService,
       this.internalEventBus,
     )
 
-    this.services.push(this.groupService)
+    this.services.push(this.vaultService)
   }
 
   private createListedService(): void {
@@ -1585,7 +1585,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.payloadManager,
       this.deviceInterface,
       this.diskStorageService,
-      this.groupStorageService,
+      this.vaultStorageService,
       this.identifier,
       this.options.crypto,
       this.internalEventBus,

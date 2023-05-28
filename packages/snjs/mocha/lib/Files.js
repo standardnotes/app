@@ -32,15 +32,15 @@ export async function downloadFile(fileService, file) {
   return receivedBytes
 }
 
-export async function downloadGroupFile(fileService, file) {
+export async function downloadVaultFile(fileService, file) {
   let receivedBytes = new Uint8Array()
 
-  const error = await fileService.downloadForeignGroupFile(file, (decryptedBytes) => {
+  const error = await fileService.downloadForeignVaultFile(file, (decryptedBytes) => {
     receivedBytes = new Uint8Array([...receivedBytes, ...decryptedBytes])
   })
 
   if (error) {
-    throw new Error('Could not download group file', error.text)
+    throw new Error('Could not download vault file', error.text)
   }
 
   return receivedBytes

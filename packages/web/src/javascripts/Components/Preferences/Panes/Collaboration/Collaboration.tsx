@@ -9,53 +9,53 @@ import EditContactModal from './Contacts/EditContactModal'
 import { useCallback, useEffect, useState } from 'react'
 import {
   ContactServiceEvent,
-  GroupInviteServerHash,
-  GroupServerHash,
+  VaultInviteServerHash,
+  VaultServerHash,
   TrustedContactInterface,
   isClientDisplayableError,
 } from '@standardnotes/snjs'
-import GroupItem from './Groups/GroupItem'
+import VaultItem from './Vaults/VaultItem'
 import Button from '@/Components/Button/Button'
 import InviteItem from './Invites/InviteItem'
-import EditGroupModal from './Groups/EditGroupModal'
-import { GroupServiceEvent } from '@standardnotes/services'
+import EditVaultModal from './Vaults/EditVaultModal'
+import { VaultServiceEvent } from '@standardnotes/services'
 
 const Collaboration = () => {
   const application = useApplication()
 
-  const [groups, setGroups] = useState<GroupServerHash[]>([])
-  const [invites, setInvites] = useState<GroupInviteServerHash[]>([])
+  const [vaults, setVaults] = useState<VaultServerHash[]>([])
+  const [invites, setInvites] = useState<VaultInviteServerHash[]>([])
   const [contacts, setContacts] = useState<TrustedContactInterface[]>([])
 
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false)
   const closeAddContactModal = () => setIsAddContactModalOpen(false)
 
-  const [isGroupModalOpen, setIsGroupModalOpen] = useState(false)
-  const closeGroupModal = () => setIsGroupModalOpen(false)
+  const [isVaultModalOpen, setIsVaultModalOpen] = useState(false)
+  const closeVaultModal = () => setIsVaultModalOpen(false)
 
-  const groupService = application.groups
+  const vaultService = application.vaults
   const contactService = application.contacts
 
-  const fetchGroups = useCallback(async () => {
-    const groups = await application.groups.reloadGroups()
-    if (!isClientDisplayableError(groups)) {
-      setGroups(groups)
+  const fetchVaults = useCallback(async () => {
+    const vaults = await application.vaults.reloadVaults()
+    if (!isClientDisplayableError(vaults)) {
+      setVaults(vaults)
     }
-  }, [application.groups])
+  }, [application.vaults])
 
   const fetchInvites = useCallback(async () => {
-    await groupService.downloadInboundInvites()
-    const invites = groupService.getCachedInboundInvites()
+    await vaultService.downloadInboundInvites()
+    const invites = vaultService.getCachedInboundInvites()
     setInvites(invites)
-  }, [groupService])
+  }, [vaultService])
 
   const fetchContacts = useCallback(async () => {
     const contacts = contactService.getAllContacts()
     setContacts(contacts)
   }, [contactService])
 
-  const createNewGroup = useCallback(async () => {
-    setIsGroupModalOpen(true)
+  const createNewVault = useCallback(async () => {
+    setIsVaultModalOpen(true)
   }, [])
 
   const createNewContact = useCallback(() => {
@@ -71,19 +71,19 @@ const Collaboration = () => {
   }, [contactService, fetchContacts])
 
   useEffect(() => {
-    return groupService.addEventObserver((event) => {
-      if (event === GroupServiceEvent.GroupsChanged) {
-        void fetchGroups()
+    return vaultService.addEventObserver((event) => {
+      if (event === VaultServiceEvent.VaultsChanged) {
+        void fetchVaults()
         void fetchInvites()
       }
     })
-  }, [fetchGroups, fetchInvites, groupService])
+  }, [fetchVaults, fetchInvites, vaultService])
 
   useEffect(() => {
-    void fetchGroups()
+    void fetchVaults()
     void fetchInvites()
     void fetchContacts()
-  }, [fetchContacts, fetchGroups, fetchInvites])
+  }, [fetchContacts, fetchVaults, fetchInvites])
 
   return (
     <>
@@ -91,8 +91,8 @@ const Collaboration = () => {
         <EditContactModal onCloseDialog={closeAddContactModal} />
       </ModalOverlay>
 
-      <ModalOverlay isOpen={isGroupModalOpen} close={closeGroupModal}>
-        <EditGroupModal onCloseDialog={closeGroupModal} />
+      <ModalOverlay isOpen={isVaultModalOpen} close={closeVaultModal}>
+        <EditVaultModal onCloseDialog={closeVaultModal} />
       </ModalOverlay>
 
       <PreferencesGroup>
@@ -122,14 +122,14 @@ const Collaboration = () => {
 
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Groups</Title>
+          <Title>Vaults</Title>
           <div className="my-2 flex flex-col">
-            {groups.map((group) => {
-              return <GroupItem group={group} key={group.uuid} />
+            {vaults.map((vault) => {
+              return <VaultItem vault={vault} key={vault.uuid} />
             })}
           </div>
           <div className="mt-2.5 flex flex-row">
-            <Button label="Create New Group" className={'mr-3 text-xs'} onClick={createNewGroup} />
+            <Button label="Create New Vault" className={'mr-3 text-xs'} onClick={createNewVault} />
           </div>
         </PreferencesSegment>
       </PreferencesGroup>
@@ -137,7 +137,7 @@ const Collaboration = () => {
       <PreferencesGroup>
         <PreferencesSegment>
           <Title>CollaborationID</Title>
-          <Subtitle>Share your CollaborationID with collaborators to join their groups.</Subtitle>
+          <Subtitle>Share your CollaborationID with collaborators to join their vaults.</Subtitle>
           {contactService.isCollaborationEnabled() ? (
             <div className="mt-2.5 flex flex-row">
               <code>

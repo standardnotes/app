@@ -43,8 +43,8 @@ export abstract class GenericItem<P extends PayloadInterface = PayloadInterface>
     return this.payload.created_at
   }
 
-  get group_uuid(): string | undefined {
-    return this.payload.group_uuid
+  get vault_uuid(): string | undefined {
+    return this.payload.vault_uuid
   }
 
   get user_uuid(): string | undefined {

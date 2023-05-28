@@ -2,11 +2,11 @@ import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
   ItemsKeyInterface,
   RootKeyInterface,
-  SharedItemsKeyInterface,
+  VaultItemsKeyInterface,
   DecryptedPayloadInterface,
   ItemContent,
-  GroupKeyInterface,
-  GroupKeyContentSpecialized,
+  VaultKeyInterface,
+  VaultKeyContentSpecialized,
 } from '@standardnotes/models'
 import { SNRootKey } from '../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
@@ -26,7 +26,7 @@ import { AsymmetricallyEncryptedString, SymmetricallyEncryptedString } from './T
  */
 export interface OperatorCommon {
   createItemsKey(): ItemsKeyInterface
-  createSharedItemsKey(uuid: string, groupUuid: string): SharedItemsKeyInterface
+  createVaultItemsKey(uuid: string, vaultUuid: string): VaultItemsKeyInterface
   /**
    * Returns encryption protocol display name
    */
@@ -56,7 +56,7 @@ export interface OperatorCommon {
    */
   createRootKey(identifier: string, password: string, origination: KeyParamsOrigination): Promise<SNRootKey>
 
-  createGroupKeyData(groupUuid: string): GroupKeyContentSpecialized
+  createVaultKeyData(vaultUuid: string): VaultKeyContentSpecialized
 
   generateKeyPair(): PkcKeyPair
 
@@ -97,12 +97,12 @@ export interface SynchronousOperator extends OperatorCommon {
    */
   generateEncryptedParametersSync(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | RootKeyInterface,
+    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface | RootKeyInterface,
   ): EncryptedParameters
 
   generateDecryptedParametersSync<C extends ItemContent = ItemContent>(
     encrypted: EncryptedParameters,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | RootKeyInterface,
+    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface | RootKeyInterface,
   ): DecryptedParameters<C> | ErrorDecryptingParameters
 }
 
@@ -116,11 +116,11 @@ export interface AsynchronousOperator extends OperatorCommon {
    */
   generateEncryptedParametersAsync(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | RootKeyInterface,
+    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface | RootKeyInterface,
   ): Promise<EncryptedParameters>
 
   generateDecryptedParametersAsync<C extends ItemContent = ItemContent>(
     encrypted: EncryptedParameters,
-    key: ItemsKeyInterface | SharedItemsKeyInterface | GroupKeyInterface | RootKeyInterface,
+    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface | RootKeyInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters>
 }

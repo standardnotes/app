@@ -49,8 +49,8 @@ export class AppContext {
     )
   }
 
-  get groupService() {
-    return this.application.groupService
+  get vaultService() {
+    return this.application.vaultService
   }
 
   get items() {
@@ -70,11 +70,11 @@ export class AppContext {
   }
 
   get publicKey() {
-    return this.groupService.userPublicKey
+    return this.vaultService.userPublicKey
   }
 
   get privateKey() {
-    return this.groupService.userPrivateKey
+    return this.vaultService.userPrivateKey
   }
 
   ignoreChallenges() {
@@ -162,10 +162,10 @@ export class AppContext {
     })
   }
 
-  resolveWhenGroupUserKeysResolved() {
+  resolveWhenVaultUserKeysResolved() {
     return new Promise((resolve) => {
-      this.application.groupService.addEventObserver((eventName) => {
-        if (eventName === GroupServiceEvent.DidResolveRemoteGroupInvites) {
+      this.application.vaultService.addEventObserver((eventName) => {
+        if (eventName === VaultServiceEvent.DidResolveRemoteVaultInvites) {
           resolve()
         }
       })
@@ -223,10 +223,10 @@ export class AppContext {
     })
   }
 
-  awaitNextSyncGroupFromScratchEvent() {
+  awaitNextSyncVaultFromScratchEvent() {
     return new Promise((resolve) => {
       const removeObserver = this.application.syncService.addEventObserver((event, data) => {
-        if (event === SyncEvent.PaginatedSyncRequestCompleted && data?.options?.groupUuids) {
+        if (event === SyncEvent.PaginatedSyncRequestCompleted && data?.options?.vaultUuids) {
           removeObserver()
           resolve(data)
         }

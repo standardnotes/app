@@ -33,7 +33,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
   readonly lastSyncEnd?: Date
 
   readonly duplicate_of?: string
-  readonly group_uuid?: string
+  readonly vault_uuid?: string
   readonly user_uuid?: string
   readonly last_edited_by_uuid?: string
 
@@ -66,7 +66,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
     this.dirtyIndex = rawPayload.dirtyIndex
     this.globalDirtyIndexAtLastSync = rawPayload.globalDirtyIndexAtLastSync
 
-    this.group_uuid = rawPayload.group_uuid
+    this.vault_uuid = rawPayload.vault_uuid
     this.user_uuid = rawPayload.user_uuid
     this.last_edited_by_uuid = rawPayload.last_edited_by_uuid
 
@@ -92,7 +92,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
       globalDirtyIndexAtLastSync: this.globalDirtyIndexAtLastSync,
       lastSyncBegan: this.lastSyncBegan,
       lastSyncEnd: this.lastSyncEnd,
-      group_uuid: this.group_uuid,
+      vault_uuid: this.vault_uuid,
       user_uuid: this.user_uuid,
       last_edited_by_uuid: this.last_edited_by_uuid,
     }

@@ -86,8 +86,8 @@ export class Database implements DatabaseInterface {
 
     const {
       itemsKeyPayloads,
-      groupKeyPayloads,
-      sharedItemsKeyPayloads,
+      vaultKeyPayloads,
+      vaultItemsKeyPayloads,
       contentTypePriorityPayloads,
       remainingPayloads,
     } = GetSortedPayloadsByPriority(metadataItems, options)
@@ -96,12 +96,12 @@ export class Database implements DatabaseInterface {
       keys: itemsKeyPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid)),
     }
 
-    const groupKeysChunk: DatabaseKeysLoadChunk = {
-      keys: groupKeyPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid)),
+    const vaultKeysChunk: DatabaseKeysLoadChunk = {
+      keys: vaultKeyPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid)),
     }
 
-    const sharedItemsKeysChunk: DatabaseKeysLoadChunk = {
-      keys: sharedItemsKeyPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid)),
+    const vaultItemsKeysChunk: DatabaseKeysLoadChunk = {
+      keys: vaultItemsKeyPayloads.map((item) => this.databaseKeyForPayloadId(item.uuid)),
     }
 
     const contentTypePriorityChunk: DatabaseKeysLoadChunk = {
@@ -120,8 +120,8 @@ export class Database implements DatabaseInterface {
     const result: DatabaseKeysLoadChunkResponse = {
       keys: {
         itemsKeys: itemsKeysChunk,
-        groupKeys: groupKeysChunk,
-        sharedItemsKeys: sharedItemsKeysChunk,
+        vaultKeys: vaultKeysChunk,
+        vaultItemsKeys: vaultItemsKeysChunk,
         remainingChunks: [contentTypePriorityChunk, ...remainingKeysChunks],
       },
       remainingChunksItemCount: contentTypePriorityPayloads.length + remainingPayloads.length,

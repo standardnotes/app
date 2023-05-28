@@ -26,12 +26,12 @@ export * from './Component/ComponentViewerInterface'
 export * from './Contacts/ContactServiceInterface'
 export * from './Contacts/ContactService'
 
-export * from './Groups/GroupService'
-export * from './Groups/GroupServiceInterface'
-export * from './Groups/GroupServiceEvent'
+export * from './Vaults/VaultService'
+export * from './Vaults/VaultServiceInterface'
+export * from './Vaults/VaultServiceEvent'
 
-export * from './Groups/GroupStorageServiceInterface'
-export * from './Groups/GroupStorageService'
+export * from './Vaults/VaultStorageServiceInterface'
+export * from './Vaults/VaultStorageService'
 
 export * from './Device/DatabaseItemMetadata'
 export * from './Device/DatabaseLoadOptions'

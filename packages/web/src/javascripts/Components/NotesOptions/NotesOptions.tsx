@@ -37,7 +37,7 @@ import ModalOverlay from '../Modal/ModalOverlay'
 import SuperExportModal from './SuperExportModal'
 import { useApplication } from '../ApplicationProvider'
 import { MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
-import AddToGroupOption from './AddToGroupOption'
+import AddToVaultOption from './AddToVaultOption'
 
 const iconSize = MenuItemIconSize
 const iconClassDanger = `text-danger mr-2 ${iconSize}`
@@ -249,7 +249,7 @@ const NotesOptions = ({
           linkingController={linkingController}
         />
       )}
-      <AddToGroupOption iconClassName={iconClass} selectedItems={notes} />
+      <AddToVaultOption iconClassName={iconClass} selectedItems={notes} />
       <MenuItem
         onClick={() => {
           notesController.setStarSelectedNotes(!starred)
