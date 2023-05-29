@@ -356,6 +356,7 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
        * This is needed to prevent the keyboard from pushing the webview up and down when it appears and disappears.
        */
       scrollEnabled={false}
+      overScrollMode="never"
       nativeConfig={Platform.select({
         android: {
           component: CustomWebView,
