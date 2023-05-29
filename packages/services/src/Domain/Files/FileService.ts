@@ -1,4 +1,9 @@
-import { ClientDisplayableError, ValetTokenOperation, isErrorResponse } from '@standardnotes/responses'
+import {
+  ClientDisplayableError,
+  ValetTokenOperation,
+  isClientDisplayableError,
+  isErrorResponse,
+} from '@standardnotes/responses'
 import { ContentType } from '@standardnotes/common'
 import {
   FileItem,
@@ -41,7 +46,7 @@ import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
 import { log, LoggingDomain } from '../Logging'
-import { VaultsServer, VaultsServerInterface, HttpServiceInterface } from '@standardnotes/api'
+import { VaultsServer, VaultsServerInterface, HttpServiceInterface, VaultMoveType } from '@standardnotes/api'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 
 const OneHundredMb = 100 * 1_000_000
@@ -94,23 +99,26 @@ export class FileService extends AbstractService implements FilesClientInterface
     return this.api.createUserFileValetToken(remoteIdentifier, operation, unencryptedFileSizeForUpload)
   }
 
-  private async createVaultValetToken(
-    vaultUuid: string,
-    remoteIdentifier: string,
-    operation: ValetTokenOperation,
-    fileUuidRequiredForExistingFiles?: string,
-    unencryptedFileSizeForUpload?: number | undefined,
-  ): Promise<string | ClientDisplayableError> {
-    if (operation !== 'write' && !fileUuidRequiredForExistingFiles) {
+  private async createVaultValetToken(params: {
+    vaultUuid: string
+    remoteIdentifier: string
+    operation: ValetTokenOperation
+    fileUuidRequiredForExistingFiles?: string
+    unencryptedFileSizeForUpload?: number | undefined
+    moveOperationType?: VaultMoveType
+    vaultToVaultMoveTargetUuid?: string
+  }): Promise<string | ClientDisplayableError> {
+    if (params.operation !== 'write' && !params.fileUuidRequiredForExistingFiles) {
       throw new Error('File UUID is required for for non-write operations')
     }
 
     const valetTokenResponse = await this.vaultsServer.createVaultFileValetToken({
-      vaultUuid: vaultUuid,
-      fileUuid: fileUuidRequiredForExistingFiles,
-      remoteIdentifier: remoteIdentifier,
-      operation: operation,
-      unencryptedFileSize: unencryptedFileSizeForUpload,
+      vaultUuid: params.vaultUuid,
+      fileUuid: params.fileUuidRequiredForExistingFiles,
+      remoteIdentifier: params.remoteIdentifier,
+      operation: params.operation,
+      unencryptedFileSize: params.unencryptedFileSizeForUpload,
+      moveOperationType: params.moveOperationType,
     })
 
     if (isErrorResponse(valetTokenResponse)) {
@@ -120,13 +128,62 @@ export class FileService extends AbstractService implements FilesClientInterface
     return valetTokenResponse.data.valetToken
   }
 
+  public async moveFileToVault(file: FileItem, vaultUuid: string): Promise<void | ClientDisplayableError> {
+    const valetToken = await this.createVaultValetToken({
+      vaultUuid,
+      remoteIdentifier: file.remoteIdentifier,
+      operation: 'move',
+      fileUuidRequiredForExistingFiles: file.uuid,
+      moveOperationType: 'user-to-vault',
+    })
+
+    if (isClientDisplayableError(valetToken)) {
+      return valetToken
+    }
+
+    const moveResult = await this.api.moveFile(valetToken)
+
+    if (!moveResult) {
+      return new ClientDisplayableError('Could not move file')
+    }
+  }
+
+  public async moveFileOutOfVault(file: FileItem): Promise<void | ClientDisplayableError> {
+    if (!file.vault_uuid) {
+      return new ClientDisplayableError('File is not in a vault')
+    }
+
+    const valetToken = await this.createVaultValetToken({
+      vaultUuid: file.vault_uuid,
+      remoteIdentifier: file.remoteIdentifier,
+      operation: 'move',
+      fileUuidRequiredForExistingFiles: file.uuid,
+      moveOperationType: 'vault-to-user',
+    })
+
+    if (isClientDisplayableError(valetToken)) {
+      return valetToken
+    }
+
+    const moveResult = await this.api.moveFile(valetToken)
+
+    if (!moveResult) {
+      return new ClientDisplayableError('Could not move file')
+    }
+  }
+
   public async beginNewFileUpload(
     sizeInBytes: number,
     vaultUuid?: string,
   ): Promise<EncryptAndUploadFileOperation | ClientDisplayableError> {
     const remoteIdentifier = UuidGenerator.GenerateUuid()
     const valetTokenResult = vaultUuid
-      ? await this.createVaultValetToken(vaultUuid, remoteIdentifier, 'write', undefined, sizeInBytes)
+      ? await this.createVaultValetToken({
+          vaultUuid,
+          remoteIdentifier,
+          operation: 'write',
+          unencryptedFileSizeForUpload: sizeInBytes,
+        })
       : await this.createUserValetToken(remoteIdentifier, 'write', sizeInBytes)
 
     if (valetTokenResult instanceof ClientDisplayableError) {
@@ -270,7 +327,12 @@ export class FileService extends AbstractService implements FilesClientInterface
       let cacheEntryAggregate = new Uint8Array()
 
       const tokenResult = file.vault_uuid
-        ? await this.createVaultValetToken(file.vault_uuid, file.remoteIdentifier, 'read', file.uuid)
+        ? await this.createVaultValetToken({
+            vaultUuid: file.vault_uuid,
+            remoteIdentifier: file.remoteIdentifier,
+            operation: 'read',
+            fileUuidRequiredForExistingFiles: file.uuid,
+          })
         : await this.createUserValetToken(file.remoteIdentifier, 'read')
 
       if (tokenResult instanceof ClientDisplayableError) {
@@ -298,7 +360,12 @@ export class FileService extends AbstractService implements FilesClientInterface
     this.encryptedCache.remove(file.uuid)
 
     const tokenResult = file.vault_uuid
-      ? await this.createVaultValetToken(file.vault_uuid, file.remoteIdentifier, 'delete', file.uuid)
+      ? await this.createVaultValetToken({
+          vaultUuid: file.vault_uuid,
+          remoteIdentifier: file.remoteIdentifier,
+          operation: 'delete',
+          fileUuidRequiredForExistingFiles: file.uuid,
+        })
       : await this.createUserValetToken(file.remoteIdentifier, 'delete')
 
     if (tokenResult instanceof ClientDisplayableError) {

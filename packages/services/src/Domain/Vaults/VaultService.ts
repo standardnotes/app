@@ -52,6 +52,7 @@ import { RemoveItemFromVaultUseCase } from './UseCase/RemoveItemFromVault'
 import { DeleteVaultUseCase } from './UseCase/DeleteVault'
 import { AddItemToVaultUseCase } from './UseCase/AddItemToVault'
 import { ChangeVaultMetadataUsecase } from './UseCase/ChangeVaultMetadata'
+import { FilesClientInterface } from '@standardnotes/files'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent>
@@ -74,6 +75,7 @@ export class VaultService
     private session: SessionsClientInterface,
     private contacts: ContactServiceInterface,
     private vaultStorage: VaultStorageServiceInterface,
+    private files: FilesClientInterface,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -356,19 +358,15 @@ export class VaultService
   }
 
   async addItemToVault(vault: VaultServerHash, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
-    const useCase = new AddItemToVaultUseCase(this.items)
+    const useCase = new AddItemToVaultUseCase(this.items, this.sync, this.files)
     await useCase.execute({ vaultUuid: vault.uuid, item })
-
-    await this.sync.sync()
 
     return this.items.findSureItem(item.uuid)
   }
 
   async removeItemFromItsVault(item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
-    const useCase = new RemoveItemFromVaultUseCase(this.items)
+    const useCase = new RemoveItemFromVaultUseCase(this.items, this.sync, this.files)
     await useCase.execute({ item })
-
-    await this.sync.sync()
 
     return this.items.findSureItem(item.uuid)
   }
@@ -549,6 +547,7 @@ export class VaultService
     ;(this.session as unknown) = undefined
     ;(this.vaultsServer as unknown) = undefined
     ;(this.contacts as unknown) = undefined
+    ;(this.files as unknown) = undefined
     this.syncEventDisposer()
     this.itemsEventDisposer()
   }

@@ -1,13 +1,26 @@
+import { SyncServiceInterface } from '@standardnotes/services'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { DecryptedItemInterface } from '@standardnotes/models'
+import { DecryptedItemInterface, FileItem } from '@standardnotes/models'
+import { FilesClientInterface } from '@standardnotes/files'
+import { ContentType } from '@standardnotes/common'
 
 export class RemoveItemFromVaultUseCase {
-  constructor(private items: ItemManagerInterface) {}
+  constructor(
+    private items: ItemManagerInterface,
+    private sync: SyncServiceInterface,
+    private files: FilesClientInterface,
+  ) {}
 
   async execute(dto: { item: DecryptedItemInterface }): Promise<ClientDisplayableError | void> {
     await this.items.changeItem(dto.item, (mutator) => {
       mutator.vault_uuid = undefined
     })
+
+    await this.sync.sync()
+
+    if (dto.item.content_type === ContentType.File) {
+      await this.files.moveFileOutOfVault(dto.item as FileItem)
+    }
   }
 }

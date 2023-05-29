@@ -959,6 +959,50 @@ describe.only('vaults', function () {
       await deinitContactContext()
     })
 
-    it('should be able to move a user file to a vault', async () => {})
+    it('should be able to download recently moved vault file as collaborator', async () => {
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
+      const response = await fetch('/mocha/assets/small_file.md')
+      const buffer = new Uint8Array(await response.arrayBuffer())
+      const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
+      const addedFile = await vaultService.addItemToVault(vault, uploadedFile)
+
+      await contactContext.sync()
+
+      const sharedFile = contactContext.items.findItem(addedFile.uuid)
+      expect(sharedFile).to.not.be.undefined
+      expect(sharedFile.remoteIdentifier).to.equal(addedFile.remoteIdentifier)
+
+      const downloadedBytes = await Files.downloadFile(contactContext.files, sharedFile)
+      expect(downloadedBytes).to.eql(buffer)
+
+      await deinitContactContext()
+    })
+
+    it('should be able to move a user file to a vault', async () => {
+      const response = await fetch('/mocha/assets/small_file.md')
+      const buffer = new Uint8Array(await response.arrayBuffer())
+
+      const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
+
+      const vault = await vaultService.createVault()
+      const addedFile = await vaultService.addItemToVault(vault, uploadedFile)
+
+      const downloadedBytes = await Files.downloadFile(context.files, addedFile)
+      expect(downloadedBytes).to.eql(buffer)
+    })
+
+    it('should be able to move a file out of its vault', async () => {
+      const response = await fetch('/mocha/assets/small_file.md')
+      const buffer = new Uint8Array(await response.arrayBuffer())
+
+      const vault = await vaultService.createVault()
+      const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, vault.uuid)
+
+      const removedFile = await vaultService.removeItemFromItsVault(uploadedFile)
+      expect(removedFile.vault_uuid).to.not.be.ok
+
+      const downloadedBytes = await Files.downloadFile(context.files, removedFile)
+      expect(downloadedBytes).to.eql(buffer)
+    })
   })
 })

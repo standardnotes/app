@@ -1,4 +1,5 @@
 import { ValetTokenOperation } from '@standardnotes/responses'
+import { VaultMoveType } from './VaultMoveType'
 
 export type CreateVaultValetTokenParams = {
   vaultUuid: string
@@ -6,4 +7,6 @@ export type CreateVaultValetTokenParams = {
   remoteIdentifier: string
   operation: ValetTokenOperation
   unencryptedFileSize?: number
+  moveOperationType?: VaultMoveType
+  vaultToVaultMoveTargetUuid?: string
 }

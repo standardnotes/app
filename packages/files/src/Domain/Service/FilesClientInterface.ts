@@ -32,6 +32,9 @@ export interface FilesClientInterface {
 
   deleteFile(file: FileItem): Promise<ClientDisplayableError | undefined>
 
+  moveFileToVault(file: FileItem, vaultUuid: string): Promise<void | ClientDisplayableError>
+  moveFileOutOfVault(file: FileItem): Promise<void | ClientDisplayableError>
+
   selectFile(fileSystem: FileSystemApi): Promise<FileHandleRead | FileSystemNoSelection>
 
   isFileNameFileBackupRelated(name: string): 'metadata' | 'binary' | false

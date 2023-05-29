@@ -72,6 +72,7 @@ import {
   HttpSuccessResponse,
   isErrorResponse,
   ValetTokenOperation,
+  MoveFileResponse,
 } from '@standardnotes/responses'
 import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
 import { HttpServiceInterface } from '@standardnotes/api'
@@ -796,6 +797,23 @@ export class SNApiService
     )
 
     const response = await this.tokenRefreshableRequest<CloseUploadSessionResponse>({
+      verb: HttpVerb.Post,
+      url,
+      customHeaders: [{ key: 'x-valet-token', value: valetToken }],
+      fallbackErrorMessage: Strings.Network.Files.FailedCloseUploadSession,
+    })
+
+    if (isErrorResponse(response)) {
+      return false
+    }
+
+    return response.data.success
+  }
+
+  public async moveFile(valetToken: string): Promise<boolean> {
+    const url = joinPaths(this.getFilesHost(), Paths.v1.moveFile)
+
+    const response = await this.tokenRefreshableRequest<MoveFileResponse>({
       verb: HttpVerb.Post,
       url,
       customHeaders: [{ key: 'x-valet-token', value: valetToken }],

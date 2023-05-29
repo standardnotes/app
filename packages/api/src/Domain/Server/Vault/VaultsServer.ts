@@ -42,6 +42,8 @@ export class VaultsServer implements VaultsServerInterface {
       remote_identifier: params.remoteIdentifier,
       operation: params.operation,
       unencrypted_file_size: params.unencryptedFileSize,
+      move_operation_type: params.moveOperationType,
+      vault_to_vault_move_target_uuid: params.vaultToVaultMoveTargetUuid,
     })
   }
 }

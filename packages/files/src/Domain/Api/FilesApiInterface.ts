@@ -30,6 +30,8 @@ export interface FilesApiInterface {
 
   downloadFile(params: DownloadFileParams): Promise<ClientDisplayableError | undefined>
 
+  moveFile(valetToken: string): Promise<boolean>
+
   deleteFile(valetToken: string, ownershipType: FileOwnershipType): Promise<HttpResponse>
 
   getFilesDownloadUrl(ownershipType: FileOwnershipType): string

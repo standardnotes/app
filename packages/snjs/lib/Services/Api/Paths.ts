@@ -14,6 +14,7 @@ const VaultFilesPaths = {
   downloadVaultFileChunk: '/v1/vault/files',
   startVaultUploadSession: '/v1/vault/files/upload/create-session',
   uploadVaultFileChunk: '/v1/vault/files/upload/chunk',
+  moveFile: '/v1/vault/files/move',
 }
 
 const UserPaths = {
