@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.160.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.16...@standardnotes/web@3.160.17) (2023-05-29)
+
+### Bug Fixes
+
+* Fixed issue on Android where pressing backspace in Super notes would delete characters on both side of the cursor ([#2336](https://github.com/standardnotes/app/issues/2336)) ([0cb73b5](https://github.com/standardnotes/app/commit/0cb73b5d18ece035e2fce904c859d548b8657053))
+
 ## [3.160.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.15...@standardnotes/web@3.160.16) (2023-05-26)
 
 **Note:** Version bump only for package @standardnotes/web
