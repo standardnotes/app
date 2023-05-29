@@ -52,7 +52,7 @@ describe('files', function () {
     await setup({ fakeCrypto: true, subscription: true })
 
     const remoteIdentifier = Utils.generateUuid()
-    const token = await application.apiService.createFileValetToken(remoteIdentifier, 'write')
+    const token = await application.apiService.createUserFileValetToken(remoteIdentifier, 'write')
 
     expect(token.length).to.be.above(0)
   })
@@ -61,7 +61,7 @@ describe('files', function () {
     await setup({ fakeCrypto: true, subscription: false })
 
     const remoteIdentifier = Utils.generateUuid()
-    const tokenOrError = await application.apiService.createFileValetToken(remoteIdentifier, 'write')
+    const tokenOrError = await application.apiService.createUserFileValetToken(remoteIdentifier, 'write')
 
     expect(tokenOrError.tag).to.equal('no-subscription')
   })
@@ -88,7 +88,7 @@ describe('files', function () {
     await Factory.sleep(2)
 
     const remoteIdentifier = Utils.generateUuid()
-    const tokenOrError = await application.apiService.createFileValetToken(remoteIdentifier, 'write')
+    const tokenOrError = await application.apiService.createUserFileValetToken(remoteIdentifier, 'write')
 
     expect(tokenOrError.tag).to.equal('expired-subscription')
   })
@@ -96,12 +96,12 @@ describe('files', function () {
   it('creating two upload sessions successively should succeed - @paidfeature', async function () {
     await setup({ fakeCrypto: true, subscription: true })
 
-    const firstToken = await application.apiService.createFileValetToken(Utils.generateUuid(), 'write')
+    const firstToken = await application.apiService.createUserFileValetToken(Utils.generateUuid(), 'write')
     const firstSession = await application.apiService.startUploadSession(firstToken)
 
     expect(firstSession.uploadId).to.be.ok
 
-    const secondToken = await application.apiService.createFileValetToken(Utils.generateUuid(), 'write')
+    const secondToken = await application.apiService.createUserFileValetToken(Utils.generateUuid(), 'write')
     const secondSession = await application.apiService.startUploadSession(secondToken)
 
     expect(secondSession.uploadId).to.be.ok

@@ -1,23 +1,36 @@
-import { StartUploadSessionResponse, HttpResponse, ClientDisplayableError } from '@standardnotes/responses'
+import {
+  StartUploadSessionResponse,
+  HttpResponse,
+  ClientDisplayableError,
+  ValetTokenOperation,
+} from '@standardnotes/responses'
 import { DownloadFileParams } from './DownloadFileParams'
-import { DownloadFileType } from './DownloadFileType'
+import { FileOwnershipType } from './FileOwnershipType'
 
 export interface FilesApiInterface {
-  startUploadSession(apiToken: string): Promise<HttpResponse<StartUploadSessionResponse>>
-
-  uploadFileBytes(apiToken: string, chunkId: number, encryptedBytes: Uint8Array): Promise<boolean>
-
-  closeUploadSession(apiToken: string): Promise<boolean>
-
-  downloadFile(params: DownloadFileParams): Promise<ClientDisplayableError | undefined>
-
-  deleteFile(apiToken: string): Promise<HttpResponse>
-
-  createFileValetToken(
+  createUserFileValetToken(
     remoteIdentifier: string,
-    operation: 'write' | 'read' | 'delete',
+    operation: ValetTokenOperation,
     unencryptedFileSize?: number,
   ): Promise<string | ClientDisplayableError>
 
-  getFilesDownloadUrl(downloadType: DownloadFileType): string
+  startUploadSession(
+    valetToken: string,
+    ownershipType: FileOwnershipType,
+  ): Promise<HttpResponse<StartUploadSessionResponse>>
+
+  uploadFileBytes(
+    valetToken: string,
+    ownershipType: FileOwnershipType,
+    chunkId: number,
+    encryptedBytes: Uint8Array,
+  ): Promise<boolean>
+
+  closeUploadSession(valetToken: string, ownershipType: FileOwnershipType): Promise<boolean>
+
+  downloadFile(params: DownloadFileParams): Promise<ClientDisplayableError | undefined>
+
+  deleteFile(valetToken: string, ownershipType: FileOwnershipType): Promise<HttpResponse>
+
+  getFilesDownloadUrl(ownershipType: FileOwnershipType): string
 }

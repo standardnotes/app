@@ -36,12 +36,12 @@ export class VaultsServer implements VaultsServerInterface {
     })
   }
 
-  createForeignFileReadValetToken(
-    params: CreateVaultValetTokenParams,
-  ): Promise<HttpResponse<CreateVaultValetTokenResponse>> {
-    return this.httpService.post(VaultsPaths.createFileValetToken(params.vaultUuid), {
+  createVaultFileValetToken(params: CreateVaultValetTokenParams): Promise<HttpResponse<CreateVaultValetTokenResponse>> {
+    return this.httpService.post(VaultsPaths.createVaultFileValetToken(params.vaultUuid), {
       file_uuid: params.fileUuid,
       remote_identifier: params.remoteIdentifier,
+      operation: params.operation,
+      unencrypted_file_size: params.unencryptedFileSize,
     })
   }
 }

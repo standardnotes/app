@@ -32,7 +32,7 @@ describe('backup service', () => {
   beforeEach(() => {
     apiService = {} as jest.Mocked<ApiServiceInterface>
     apiService.addEventObserver = jest.fn()
-    apiService.createFileValetToken = jest.fn()
+    apiService.createUserFileValetToken = jest.fn()
     apiService.downloadFile = jest.fn()
     apiService.deleteFile = jest.fn().mockReturnValue({})
 

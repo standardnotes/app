@@ -789,11 +789,13 @@ export class ItemManager
     contentType: ContentType,
     content: C,
     needsSync = false,
+    vaultUuid?: string,
   ): Promise<T> {
     const payload = new Models.DecryptedPayload<C>({
       uuid: UuidGenerator.GenerateUuid(),
       content_type: contentType,
       content: Models.FillItemContent<C>(content),
+      vault_uuid: vaultUuid,
       dirty: needsSync,
       ...Models.PayloadTimestampDefaults(),
     })

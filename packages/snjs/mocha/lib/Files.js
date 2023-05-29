@@ -1,5 +1,5 @@
-export async function uploadFile(fileService, buffer, name, ext, chunkSize) {
-  const operation = await fileService.beginNewFileUpload(buffer.byteLength)
+export async function uploadFile(fileService, buffer, name, ext, chunkSize, vaultUuid) {
+  const operation = await fileService.beginNewFileUpload(buffer.byteLength, vaultUuid)
 
   let chunkId = 1
   for (let i = 0; i < buffer.length; i += chunkSize) {
@@ -27,20 +27,6 @@ export async function downloadFile(fileService, file) {
 
   if (error) {
     throw new Error('Could not download file', error.text)
-  }
-
-  return receivedBytes
-}
-
-export async function downloadVaultFile(fileService, file) {
-  let receivedBytes = new Uint8Array()
-
-  const error = await fileService.downloadForeignVaultFile(file, (decryptedBytes) => {
-    receivedBytes = new Uint8Array([...receivedBytes, ...decryptedBytes])
-  })
-
-  if (error) {
-    throw new Error('Could not download vault file', error.text)
   }
 
   return receivedBytes

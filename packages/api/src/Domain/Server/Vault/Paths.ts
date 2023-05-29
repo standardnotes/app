@@ -3,5 +3,5 @@ export const VaultsPaths = {
   createVault: '/v1/vaults',
   deleteVault: (vaultUuid: string) => `/v1/vaults/${vaultUuid}`,
   updateVault: (vaultUuid: string) => `/v1/vaults/${vaultUuid}`,
-  createFileValetToken: (vaultUuid: string) => `/v1/vaults/${vaultUuid}/valet-tokens`,
+  createVaultFileValetToken: (vaultUuid: string) => `/v1/vaults/${vaultUuid}/valet-tokens`,
 }

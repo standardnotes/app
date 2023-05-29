@@ -3,7 +3,6 @@ import { FileDownloadProgress } from '../Types/FileDownloadProgress'
 import { Deferred } from '@standardnotes/utils'
 import { FileContent } from '@standardnotes/models'
 import { FilesApiInterface } from '../Api/FilesApiInterface'
-import { DownloadFileType } from '../Api/DownloadFileType'
 
 export type AbortSignal = 'aborted'
 export type AbortFunction = () => void
@@ -22,12 +21,13 @@ export class FileDownloader {
 
   constructor(
     private file: {
+      uuid: string
+      vault_uuid: string | undefined
       encryptedChunkSizes: FileContent['encryptedChunkSizes']
       remoteIdentifier: FileContent['remoteIdentifier']
     },
     private readonly api: FilesApiInterface,
-    private readonly downloadType: DownloadFileType,
-    private readonly valetToken?: string,
+    private readonly valetToken: string,
   ) {}
 
   private getProgress(): FileDownloadProgress {
@@ -43,26 +43,10 @@ export class FileDownloader {
   }
 
   public async run(onEncryptedBytes: OnEncryptedBytes): Promise<FileDownloaderResult> {
-    if (this.valetToken) {
-      return this.performDownload(this.valetToken, onEncryptedBytes)
-    }
-
-    const tokenResult = await this.getValetToken()
-
-    if (tokenResult instanceof ClientDisplayableError) {
-      return tokenResult
-    }
-
-    return this.performDownload(tokenResult, onEncryptedBytes)
+    return this.performDownload(onEncryptedBytes)
   }
 
-  private async getValetToken(): Promise<string | ClientDisplayableError> {
-    const tokenResult = await this.api.createFileValetToken(this.file.remoteIdentifier, 'read')
-
-    return tokenResult
-  }
-
-  private async performDownload(valetToken: string, onEncryptedBytes: OnEncryptedBytes): Promise<FileDownloaderResult> {
+  private async performDownload(onEncryptedBytes: OnEncryptedBytes): Promise<FileDownloaderResult> {
     const chunkIndex = 0
     const startRange = 0
 
@@ -79,10 +63,10 @@ export class FileDownloader {
     const downloadPromise = this.api.downloadFile({
       file: this.file,
       chunkIndex,
-      valetToken,
+      valetToken: this.valetToken,
       contentRangeStart: startRange,
       onBytesReceived: onRemoteBytesReceived,
-      downloadType: this.downloadType,
+      ownershipType: this.file.vault_uuid ? 'vault' : 'user',
     })
 
     const result = await Promise.race([this.abortDeferred.promise, downloadPromise])

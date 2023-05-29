@@ -505,7 +505,7 @@ export class FilesBackupService extends AbstractService implements BackupService
       },
     })
 
-    const token = await this.api.createFileValetToken(file.remoteIdentifier, 'read')
+    const token = await this.api.createUserFileValetToken(file.remoteIdentifier, 'read')
 
     if (token instanceof ClientDisplayableError) {
       this.status.removeMessage(messageId)

@@ -10,7 +10,10 @@ import { FileBackupMetadataFile } from '../Device/FileBackupMetadataFile'
 export interface FilesClientInterface {
   minimumChunkSize(): number
 
-  beginNewFileUpload(sizeInBytes: number): Promise<EncryptAndUploadFileOperation | ClientDisplayableError>
+  beginNewFileUpload(
+    sizeInBytes: number,
+    vaultUuid?: string,
+  ): Promise<EncryptAndUploadFileOperation | ClientDisplayableError>
   pushBytesForUpload(
     operation: EncryptAndUploadFileOperation,
     bytes: Uint8Array,
@@ -25,10 +28,6 @@ export interface FilesClientInterface {
   downloadFile(
     file: FileItem,
     onDecryptedBytes: (bytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
-  ): Promise<ClientDisplayableError | undefined>
-  downloadForeignVaultFile(
-    file: FileItem,
-    onDecryptedBytes: (decryptedBytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
   ): Promise<ClientDisplayableError | undefined>
 
   deleteFile(file: FileItem): Promise<ClientDisplayableError | undefined>

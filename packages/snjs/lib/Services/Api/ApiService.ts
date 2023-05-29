@@ -29,7 +29,7 @@ import {
   API_MESSAGE_TOKEN_REFRESH_IN_PROGRESS,
   ApiServiceEventData,
 } from '@standardnotes/services'
-import { DownloadFileParams, DownloadFileType, FilesApiInterface } from '@standardnotes/files'
+import { DownloadFileParams, FileOwnershipType, FilesApiInterface } from '@standardnotes/files'
 import { ServerSyncPushContextualPayload, SNFeatureRepo } from '@standardnotes/models'
 import {
   User,
@@ -71,6 +71,7 @@ import {
   HttpErrorResponse,
   HttpSuccessResponse,
   isErrorResponse,
+  ValetTokenOperation,
 } from '@standardnotes/responses'
 import { LegacySession, MapperInterface, Session, SessionToken } from '@standardnotes/domain-core'
 import { HttpServiceInterface } from '@standardnotes/api'
@@ -690,12 +691,12 @@ export class SNApiService
     })
   }
 
-  public async createFileValetToken(
+  public async createUserFileValetToken(
     remoteIdentifier: string,
-    operation: 'write' | 'read' | 'delete',
+    operation: ValetTokenOperation,
     unencryptedFileSize?: number,
   ): Promise<string | ClientDisplayableError> {
-    const url = joinPaths(this.host, Paths.v1.createFileValetToken)
+    const url = joinPaths(this.host, Paths.v1.createUserFileValetToken)
 
     const params: CreateValetTokenPayload = {
       operation,
@@ -721,40 +722,60 @@ export class SNApiService
     return response.data?.valetToken
   }
 
-  public async startUploadSession(apiToken: string): Promise<HttpResponse<StartUploadSessionResponse>> {
-    const url = joinPaths(this.getFilesHost(), Paths.v1.startUploadSession)
+  public async startUploadSession(
+    valetToken: string,
+    ownershipType: FileOwnershipType,
+  ): Promise<HttpResponse<StartUploadSessionResponse>> {
+    const url = joinPaths(
+      this.getFilesHost(),
+      ownershipType === 'user' ? Paths.v1.startUploadSession : Paths.v1.startVaultUploadSession,
+    )
 
     return this.tokenRefreshableRequest({
       verb: HttpVerb.Post,
       url,
-      customHeaders: [{ key: 'x-valet-token', value: apiToken }],
+      customHeaders: [{ key: 'x-valet-token', value: valetToken }],
       fallbackErrorMessage: Strings.Network.Files.FailedStartUploadSession,
     })
   }
 
-  public async deleteFile(apiToken: string): Promise<HttpResponse<StartUploadSessionResponse>> {
-    const url = joinPaths(this.getFilesHost(), Paths.v1.deleteFile)
+  public async deleteFile(
+    valetToken: string,
+    ownershipType: FileOwnershipType,
+  ): Promise<HttpResponse<StartUploadSessionResponse>> {
+    const url = joinPaths(
+      this.getFilesHost(),
+      ownershipType === 'user' ? Paths.v1.deleteFile : Paths.v1.deleteVaultFile,
+    )
 
     return this.tokenRefreshableRequest({
       verb: HttpVerb.Delete,
       url,
-      customHeaders: [{ key: 'x-valet-token', value: apiToken }],
+      customHeaders: [{ key: 'x-valet-token', value: valetToken }],
       fallbackErrorMessage: Strings.Network.Files.FailedDeleteFile,
     })
   }
 
-  public async uploadFileBytes(apiToken: string, chunkId: number, encryptedBytes: Uint8Array): Promise<boolean> {
+  public async uploadFileBytes(
+    valetToken: string,
+    ownershipType: FileOwnershipType,
+    chunkId: number,
+    encryptedBytes: Uint8Array,
+  ): Promise<boolean> {
     if (chunkId === 0) {
       throw Error('chunkId must start with 1')
     }
-    const url = joinPaths(this.getFilesHost(), Paths.v1.uploadFileChunk)
+    const url = joinPaths(
+      this.getFilesHost(),
+      ownershipType === 'user' ? Paths.v1.uploadFileChunk : Paths.v1.uploadVaultFileChunk,
+    )
 
     const response = await this.tokenRefreshableRequest<UploadFileChunkResponse>({
       verb: HttpVerb.Post,
       url,
       rawBytes: encryptedBytes,
       customHeaders: [
-        { key: 'x-valet-token', value: apiToken },
+        { key: 'x-valet-token', value: valetToken },
         { key: 'x-chunk-id', value: chunkId.toString() },
         { key: 'Content-Type', value: 'application/octet-stream' },
       ],
@@ -768,13 +789,16 @@ export class SNApiService
     return response.data.success
   }
 
-  public async closeUploadSession(apiToken: string): Promise<boolean> {
-    const url = joinPaths(this.getFilesHost(), Paths.v1.closeUploadSession)
+  public async closeUploadSession(valetToken: string, ownershipType: FileOwnershipType): Promise<boolean> {
+    const url = joinPaths(
+      this.getFilesHost(),
+      ownershipType === 'user' ? Paths.v1.closeUploadSession : Paths.v1.closeVaultUploadSession,
+    )
 
     const response = await this.tokenRefreshableRequest<CloseUploadSessionResponse>({
       verb: HttpVerb.Post,
       url,
-      customHeaders: [{ key: 'x-valet-token', value: apiToken }],
+      customHeaders: [{ key: 'x-valet-token', value: valetToken }],
       fallbackErrorMessage: Strings.Network.Files.FailedCloseUploadSession,
     })
 
@@ -785,10 +809,10 @@ export class SNApiService
     return response.data.success
   }
 
-  public getFilesDownloadUrl(downloadType: DownloadFileType): string {
-    if (downloadType === 'own') {
+  public getFilesDownloadUrl(ownershipType: FileOwnershipType): string {
+    if (ownershipType === 'user') {
       return joinPaths(this.getFilesHost(), Paths.v1.downloadFileChunk)
-    } else if (downloadType === 'vault') {
+    } else if (ownershipType === 'vault') {
       return joinPaths(this.getFilesHost(), Paths.v1.downloadVaultFileChunk)
     } else {
       throw Error('Invalid download type')
@@ -799,11 +823,11 @@ export class SNApiService
     file,
     chunkIndex,
     valetToken,
-    downloadType,
+    ownershipType,
     contentRangeStart,
     onBytesReceived,
   }: DownloadFileParams): Promise<ClientDisplayableError | undefined> {
-    const url = this.getFilesDownloadUrl(downloadType)
+    const url = this.getFilesDownloadUrl(ownershipType)
     const pullChunkSize = file.encryptedChunkSizes[chunkIndex]
 
     const request: HttpRequest = {
@@ -852,7 +876,7 @@ export class SNApiService
         file,
         chunkIndex: ++chunkIndex,
         valetToken,
-        downloadType,
+        ownershipType,
         contentRangeStart: rangeStart + pullChunkSize,
         onBytesReceived,
       })

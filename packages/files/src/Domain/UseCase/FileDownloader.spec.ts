@@ -14,7 +14,7 @@ describe('file downloader', () => {
 
   beforeEach(() => {
     apiService = {} as jest.Mocked<FilesApiInterface>
-    apiService.createFileValetToken = jest.fn()
+    apiService.createUserFileValetToken = jest.fn()
     apiService.downloadFile = jest
       .fn()
       .mockImplementation(

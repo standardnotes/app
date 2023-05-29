@@ -23,6 +23,7 @@ export * from './Files/CreateValetTokenResponseData'
 export * from './Files/DownloadFileChunkResponse'
 export * from './Files/StartUploadSessionResponse'
 export * from './Files/UploadFileChunkResponse'
+export * from './Files/ValetTokenOperation'
 
 export * from './Contact/ContactServerHash'
 

@@ -50,7 +50,7 @@ describe('download and decrypt', () => {
 
   beforeEach(() => {
     apiService = {} as jest.Mocked<FilesApiInterface>
-    apiService.createFileValetToken = jest.fn()
+    apiService.createUserFileValetToken = jest.fn()
     downloadChunksOfSize(5)
 
     crypto = {} as jest.Mocked<PureCryptoInterface>

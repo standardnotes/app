@@ -1,4 +1,4 @@
-import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
+import { ClientDisplayableError, ValetTokenOperation, isErrorResponse } from '@standardnotes/responses'
 import { ContentType } from '@standardnotes/common'
 import {
   FileItem,
@@ -86,14 +86,51 @@ export class FileService extends AbstractService implements FilesClientInterface
     return 5_000_000
   }
 
+  private async createUserValetToken(
+    remoteIdentifier: string,
+    operation: ValetTokenOperation,
+    unencryptedFileSizeForUpload?: number | undefined,
+  ): Promise<string | ClientDisplayableError> {
+    return this.api.createUserFileValetToken(remoteIdentifier, operation, unencryptedFileSizeForUpload)
+  }
+
+  private async createVaultValetToken(
+    vaultUuid: string,
+    remoteIdentifier: string,
+    operation: ValetTokenOperation,
+    fileUuidRequiredForExistingFiles?: string,
+    unencryptedFileSizeForUpload?: number | undefined,
+  ): Promise<string | ClientDisplayableError> {
+    if (operation !== 'write' && !fileUuidRequiredForExistingFiles) {
+      throw new Error('File UUID is required for for non-write operations')
+    }
+
+    const valetTokenResponse = await this.vaultsServer.createVaultFileValetToken({
+      vaultUuid: vaultUuid,
+      fileUuid: fileUuidRequiredForExistingFiles,
+      remoteIdentifier: remoteIdentifier,
+      operation: operation,
+      unencryptedFileSize: unencryptedFileSizeForUpload,
+    })
+
+    if (isErrorResponse(valetTokenResponse)) {
+      return new ClientDisplayableError('Could not create valet token')
+    }
+
+    return valetTokenResponse.data.valetToken
+  }
+
   public async beginNewFileUpload(
     sizeInBytes: number,
+    vaultUuid?: string,
   ): Promise<EncryptAndUploadFileOperation | ClientDisplayableError> {
     const remoteIdentifier = UuidGenerator.GenerateUuid()
-    const tokenResult = await this.api.createFileValetToken(remoteIdentifier, 'write', sizeInBytes)
+    const valetTokenResult = vaultUuid
+      ? await this.createVaultValetToken(vaultUuid, remoteIdentifier, 'write', undefined, sizeInBytes)
+      : await this.createUserValetToken(remoteIdentifier, 'write', sizeInBytes)
 
-    if (tokenResult instanceof ClientDisplayableError) {
-      return tokenResult
+    if (valetTokenResult instanceof ClientDisplayableError) {
+      return valetTokenResult
     }
 
     const key = this.crypto.generateRandomKey(FileProtocolV1Constants.KeySize)
@@ -104,9 +141,15 @@ export class FileService extends AbstractService implements FilesClientInterface
       decryptedSize: sizeInBytes,
     }
 
-    const uploadOperation = new EncryptAndUploadFileOperation(fileParams, tokenResult, this.crypto, this.api)
+    const uploadOperation = new EncryptAndUploadFileOperation(
+      fileParams,
+      valetTokenResult,
+      this.crypto,
+      this.api,
+      vaultUuid,
+    )
 
-    const uploadSessionStarted = await this.api.startUploadSession(tokenResult)
+    const uploadSessionStarted = await this.api.startUploadSession(valetTokenResult, vaultUuid ? 'vault' : 'user')
 
     if (isErrorResponse(uploadSessionStarted) || !uploadSessionStarted.data.uploadId) {
       return new ClientDisplayableError('Could not start upload session')
@@ -134,7 +177,10 @@ export class FileService extends AbstractService implements FilesClientInterface
     operation: EncryptAndUploadFileOperation,
     fileMetadata: FileMetadata,
   ): Promise<FileItem | ClientDisplayableError> {
-    const uploadSessionClosed = await this.api.closeUploadSession(operation.getApiToken())
+    const uploadSessionClosed = await this.api.closeUploadSession(
+      operation.getValetToken(),
+      operation.vaultUuid ? 'vault' : 'user',
+    )
 
     if (!uploadSessionClosed) {
       return new ClientDisplayableError('Could not close upload session')
@@ -156,6 +202,7 @@ export class FileService extends AbstractService implements FilesClientInterface
       ContentType.File,
       FillItemContentSpecialized(fileContent),
       true,
+      operation.vaultUuid,
     )
 
     await this.syncService.sync()
@@ -185,10 +232,6 @@ export class FileService extends AbstractService implements FilesClientInterface
     file: FileItem,
     onDecryptedBytes: (decryptedBytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
   ): Promise<ClientDisplayableError | undefined> {
-    if (file.vault_uuid && file.user_uuid !== this.sessions.userUuid) {
-      return this.downloadForeignVaultFile(file, onDecryptedBytes)
-    }
-
     const cachedBytes = this.encryptedCache.get(file.uuid)
 
     if (cachedBytes) {
@@ -226,7 +269,15 @@ export class FileService extends AbstractService implements FilesClientInterface
 
       let cacheEntryAggregate = new Uint8Array()
 
-      const operation = new DownloadAndDecryptFileOperation(file, this.crypto, this.api, 'own')
+      const tokenResult = file.vault_uuid
+        ? await this.createVaultValetToken(file.vault_uuid, file.remoteIdentifier, 'read', file.uuid)
+        : await this.createUserValetToken(file.remoteIdentifier, 'read')
+
+      if (tokenResult instanceof ClientDisplayableError) {
+        return tokenResult
+      }
+
+      const operation = new DownloadAndDecryptFileOperation(file, this.crypto, this.api, tokenResult)
 
       const result = await operation.run(async ({ decrypted, encrypted, progress }): Promise<void> => {
         if (addToCache) {
@@ -243,52 +294,18 @@ export class FileService extends AbstractService implements FilesClientInterface
     }
   }
 
-  public async downloadForeignVaultFile(
-    file: FileItem,
-    onDecryptedBytes: (decryptedBytes: Uint8Array, progress: FileDownloadProgress) => Promise<void>,
-  ): Promise<ClientDisplayableError | undefined> {
-    const vaultUuid = file.vault_uuid
-    if (!vaultUuid) {
-      return new ClientDisplayableError('Vault UUID not found')
-    }
-
-    log(LoggingDomain.FilesService, 'Downloading vault file from network')
-
-    const valetTokenResponse = await this.vaultsServer.createForeignFileReadValetToken({
-      vaultUuid: vaultUuid,
-      fileUuid: file.uuid,
-      remoteIdentifier: file.remoteIdentifier,
-    })
-
-    if (isErrorResponse(valetTokenResponse)) {
-      return new ClientDisplayableError('Could not create valet token')
-    }
-
-    const operation = new DownloadAndDecryptFileOperation(
-      file,
-      this.crypto,
-      this.api,
-      'vault',
-      valetTokenResponse.data.valetToken,
-    )
-
-    const result = await operation.run(async ({ decrypted, progress }): Promise<void> => {
-      return onDecryptedBytes(decrypted.decryptedBytes, progress)
-    })
-
-    return result.error
-  }
-
   public async deleteFile(file: FileItem): Promise<ClientDisplayableError | undefined> {
     this.encryptedCache.remove(file.uuid)
 
-    const tokenResult = await this.api.createFileValetToken(file.remoteIdentifier, 'delete')
+    const tokenResult = file.vault_uuid
+      ? await this.createVaultValetToken(file.vault_uuid, file.remoteIdentifier, 'delete', file.uuid)
+      : await this.createUserValetToken(file.remoteIdentifier, 'delete')
 
     if (tokenResult instanceof ClientDisplayableError) {
       return tokenResult
     }
 
-    const result = await this.api.deleteFile(tokenResult)
+    const result = await this.api.deleteFile(tokenResult, file.vault_uuid ? 'vault' : 'user')
 
     if (result.data?.error) {
       const deleteAnyway = await this.alertService.confirm(

@@ -322,13 +322,9 @@ describe.only('vaults', function () {
       console.error('TODO: implement test case')
     })
 
-    it('leaving a vault should not remove any of the vault items from the server', async () => {
+    it('leaving a vault should not remove any of the vault items from the server', async () => {})
 
-    })
-
-    it('an item added to a vault should not have a user_uuid', async () => {
-
-    })
+    it('an item added to a vault should not have a user_uuid', async () => {})
 
     it('should return invited to vaults when fetching vaults from server', async () => {
       const { contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
@@ -830,8 +826,7 @@ describe.only('vaults', function () {
 
       expect(rejectedPayloads.length).to.equal(2)
       expect(rejectedPayloads.find((payload) => payload.content_type === ContentType.Note)).to.not.be.undefined
-      expect(rejectedPayloads.find((payload) => payload.content_type === ContentType.VaultItemsKey)).to.not.be
-        .undefined
+      expect(rejectedPayloads.find((payload) => payload.content_type === ContentType.VaultItemsKey)).to.not.be.undefined
 
       await deinitContactContext()
     })
@@ -874,23 +869,96 @@ describe.only('vaults', function () {
       await context.publicMockSubscriptionPurchaseEvent()
     })
 
-    it('should be able to download and decrypt shared file', async () => {
+    it('should be able to upload and download file to vault as owner', async () => {
+      const vault = await vaultService.createVault()
+      const response = await fetch('/mocha/assets/small_file.md')
+      const buffer = new Uint8Array(await response.arrayBuffer())
+      const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, vault.uuid)
+
+      const file = context.items.findItem(uploadedFile.uuid)
+      expect(file).to.not.be.undefined
+      expect(file.remoteIdentifier).to.equal(file.remoteIdentifier)
+      expect(file.vault_uuid).to.equal(vault.uuid)
+
+      const downloadedBytes = await Files.downloadFile(context.files, file)
+      expect(downloadedBytes).to.eql(buffer)
+    })
+
+    it('should be able to download vault file as collaborator', async () => {
       const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
       const response = await fetch('/mocha/assets/small_file.md')
       const buffer = new Uint8Array(await response.arrayBuffer())
-      const file = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
+      const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, vault.uuid)
 
-      await vaultService.addItemToVault(vault, file)
       await contactContext.sync()
 
-      const sharedFile = contactContext.items.findItem(file.uuid)
+      const sharedFile = contactContext.items.findItem(uploadedFile.uuid)
       expect(sharedFile).to.not.be.undefined
-      expect(sharedFile.remoteIdentifier).to.equal(file.remoteIdentifier)
+      expect(sharedFile.remoteIdentifier).to.equal(uploadedFile.remoteIdentifier)
 
-      const downloadedBytes = await Files.downloadVaultFile(contactContext.files, sharedFile)
+      const downloadedBytes = await Files.downloadFile(contactContext.files, sharedFile)
       expect(downloadedBytes).to.eql(buffer)
 
       await deinitContactContext()
     })
+
+    it('should be able to upload vault file as collaborator', async () => {
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
+      const response = await fetch('/mocha/assets/small_file.md')
+      const buffer = new Uint8Array(await response.arrayBuffer())
+
+      const uploadedFile = await Files.uploadFile(contactContext.files, buffer, 'my-file', 'md', 1000, vault.uuid)
+
+      await context.sync()
+
+      const file = context.items.findItem(uploadedFile.uuid)
+      expect(file).to.not.be.undefined
+      expect(file.remoteIdentifier).to.equal(file.remoteIdentifier)
+
+      const downloadedBytes = await Files.downloadFile(context.files, file)
+      expect(downloadedBytes).to.eql(buffer)
+
+      await deinitContactContext()
+    })
+
+    it('should be able to delete vault file as write user', async () => {
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite(VaultPermission.Write)
+      const response = await fetch('/mocha/assets/small_file.md')
+      const buffer = new Uint8Array(await response.arrayBuffer())
+
+      const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, vault.uuid)
+
+      await contactContext.sync()
+
+      const file = contactContext.items.findItem(uploadedFile.uuid)
+      const result = await contactContext.files.deleteFile(file)
+      expect(result).to.be.undefined
+
+      const foundFile = contactContext.items.findItem(file.uuid)
+      expect(foundFile).to.be.undefined
+
+      await deinitContactContext()
+    })
+
+    it('should not be able to delete vault file as read user', async () => {
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite(VaultPermission.Read)
+      const response = await fetch('/mocha/assets/small_file.md')
+      const buffer = new Uint8Array(await response.arrayBuffer())
+
+      const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, vault.uuid)
+
+      await contactContext.sync()
+
+      const file = contactContext.items.findItem(uploadedFile.uuid)
+      const result = await contactContext.files.deleteFile(file)
+      expect(isClientDisplayableError(result)).to.be.true
+
+      const foundFile = contactContext.items.findItem(file.uuid)
+      expect(foundFile).to.not.be.undefined
+
+      await deinitContactContext()
+    })
+
+    it('should be able to move a user file to a vault', async () => {})
   })
 })

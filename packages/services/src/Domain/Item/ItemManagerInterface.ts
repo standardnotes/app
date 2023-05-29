@@ -61,6 +61,7 @@ export interface ItemManagerInterface extends AbstractService {
     contentType: ContentType,
     content: C,
     needsSync?: boolean,
+    vaultUuid?: string,
   ): Promise<T>
   createTemplateItem<
     C extends ItemContent = ItemContent,

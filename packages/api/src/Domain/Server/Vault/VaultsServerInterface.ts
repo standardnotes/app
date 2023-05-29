@@ -16,7 +16,5 @@ export interface VaultsServerInterface {
 
   deleteVault(params: { vaultUuid: string }): Promise<HttpResponse<boolean>>
 
-  createForeignFileReadValetToken(
-    params: CreateVaultValetTokenParams,
-  ): Promise<HttpResponse<CreateVaultValetTokenResponse>>
+  createVaultFileValetToken(params: CreateVaultValetTokenParams): Promise<HttpResponse<CreateVaultValetTokenResponse>>
 }
