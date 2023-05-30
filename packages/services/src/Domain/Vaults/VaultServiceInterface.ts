@@ -37,8 +37,8 @@ export interface VaultServiceInterface extends AbstractService<VaultServiceEvent
   isVaultUserOwnUser(user: VaultUserServerHash): boolean
 
   addItemToVault(vault: VaultServerHash, item: DecryptedItemInterface): Promise<DecryptedItemInterface>
-  removeItemFromItsVault(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
-  removeItemFromItsVault(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
+  moveItemFromVaultToUser(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
+  moveItemFromVaultToUser(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   getItemLastEditedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined
   getItemSharedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined
   isItemInCollaborativeVault(item: DecryptedItemInterface): boolean

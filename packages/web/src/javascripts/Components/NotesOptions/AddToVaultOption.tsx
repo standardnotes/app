@@ -48,7 +48,7 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
 
   const removeItemsFromVault = useCallback(async () => {
     for (const item of selectedItems) {
-      await application.vaults.removeItemFromItsVault(item)
+      await application.vaults.moveItemFromVaultToUser(item)
     }
   }, [application.vaults, selectedItems])
 

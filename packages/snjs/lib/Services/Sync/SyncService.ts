@@ -1,3 +1,4 @@
+import { ConflictParams, ConflictType } from '@standardnotes/responses'
 import { log, LoggingDomain } from './../../Logging'
 import { AccountSyncOperation } from '@Lib/Services/Sync/Account/Operation'
 import { ContentType } from '@standardnotes/common'
@@ -89,6 +90,7 @@ import {
 } from '@standardnotes/encryption'
 import { CreatePayloadFromRawServerItem } from './Account/Utilities'
 import { ApplicationSyncOptions } from '@Lib/Application/Options/OptionalOptions'
+import { DecryptedServerConflictMap, TrustedServerConflictMap } from './Account/ServerConflictMap'
 
 const DEFAULT_MAJOR_CHANGE_THRESHOLD = 15
 const INVALID_SESSION_RESPONSE_STATUS = 401
@@ -941,15 +943,7 @@ export class SNSyncService
       {
         retrievedPayloads: await this.processServerPayloads(response.retrievedPayloads, PayloadSource.RemoteRetrieved),
         savedPayloads: response.savedPayloads,
-        uuidConflictPayloads: await this.processServerPayloads(
-          response.uuidConflictPayloads,
-          PayloadSource.RemoteRetrieved,
-        ),
-        dataConflictPayloads: await this.processServerPayloads(
-          response.dataConflictPayloads,
-          PayloadSource.RemoteRetrieved,
-        ),
-        rejectedPayloads: await this.processServerPayloads(response.rejectedPayloads, PayloadSource.RemoteRetrieved),
+        conflicts: await this.decryptServerConflicts(response.conflicts),
       },
       masterCollection,
       operation.payloadsSavedOrSaving,
@@ -988,6 +982,57 @@ export class SNSyncService
     })
   }
 
+  private async decryptServerConflicts(conflictMap: TrustedServerConflictMap): Promise<DecryptedServerConflictMap> {
+    const decrypted: DecryptedServerConflictMap = {}
+
+    for (const conflictType of Object.keys(conflictMap)) {
+      const conflictsForType = conflictMap[conflictType as ConflictType]
+      if (!conflictsForType) {
+        continue
+      }
+
+      if (!decrypted[conflictType as ConflictType]) {
+        decrypted[conflictType as ConflictType] = []
+      }
+
+      const decryptedConflictsForType = decrypted[conflictType as ConflictType]
+      if (!decryptedConflictsForType) {
+        throw Error('Decrypted conflicts for type should exist')
+      }
+
+      for (const conflict of conflictsForType) {
+        const decryptedUnsavedItem = conflict.unsaved_item
+          ? await this.processServerPayload(conflict.unsaved_item, PayloadSource.RemoteRetrieved)
+          : undefined
+
+        const decryptedServerItem = conflict.server_item
+          ? await this.processServerPayload(conflict.server_item, PayloadSource.RemoteRetrieved)
+          : undefined
+
+        const decryptedEntry: ConflictParams<FullyFormedPayloadInterface> = <
+          ConflictParams<FullyFormedPayloadInterface>
+        >{
+          type: conflict.type,
+          unsaved_item: decryptedUnsavedItem,
+          server_item: decryptedServerItem,
+        }
+
+        decryptedConflictsForType.push(decryptedEntry)
+      }
+    }
+
+    return decrypted
+  }
+
+  private async processServerPayload(
+    item: FilteredServerItem,
+    source: PayloadSource,
+  ): Promise<FullyFormedPayloadInterface> {
+    const result = await this.processServerPayloads([item], source)
+
+    return result[0]
+  }
+
   private async processServerPayloads(
     items: FilteredServerItem[],
     source: PayloadSource,
@@ -1006,8 +1051,9 @@ export class SNSyncService
 
     extendArray(results, rootKeyDecryptionResults)
 
-    const { results: vaultKeyDecryptionResults, map: processedVaultItemsKeys } =
-      await this.decryptServerVaultItemsKeys(vaultKeyEncryption || [])
+    const { results: vaultKeyDecryptionResults, map: processedVaultItemsKeys } = await this.decryptServerVaultItemsKeys(
+      vaultKeyEncryption || [],
+    )
 
     extendArray(results, vaultKeyDecryptionResults)
 

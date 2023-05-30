@@ -445,7 +445,7 @@ describe.only('vaults', function () {
     it('should remove an item from a vault; collaborator should no longer receive changes', async () => {
       const { note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
 
-      await context.vaultService.removeItemFromItsVault(note)
+      await context.vaultService.moveItemFromVaultToUser(note)
 
       await context.changeNoteTitleAndSync(note, 'new title')
 
@@ -788,13 +788,13 @@ describe.only('vaults', function () {
       const vaultItemsKey = contactContext.items.getVaultItemsKeysForVault(vault.uuid)[0]
 
       await contactContext.items.changeItem(vaultItemsKey, () => {})
-      const promise = contactContext.resolveWithRejectedPayloads()
+      const promise = contactContext.resolveWithConflicts()
       await contactContext.sync()
 
-      const rejectedPayloads = await promise
+      const conflicts = await promise
 
-      expect(rejectedPayloads.length).to.equal(1)
-      expect(rejectedPayloads[0].content_type).to.equal(ContentType.VaultItemsKey)
+      expect(conflicts.length).to.equal(1)
+      expect(conflicts[0].unsaved_item).to.equal(ContentType.VaultItemsKey)
 
       await deinitContactContext()
     })
@@ -820,13 +820,14 @@ describe.only('vaults', function () {
         mutator.title = 'new title'
       })
 
-      const promise = contactContext.resolveWithRejectedPayloads()
+      const promise = contactContext.resolveWithConflicts()
       await contactContext.sync()
-      const rejectedPayloads = await promise
+      const conflicts = await promise
 
-      expect(rejectedPayloads.length).to.equal(2)
-      expect(rejectedPayloads.find((payload) => payload.content_type === ContentType.Note)).to.not.be.undefined
-      expect(rejectedPayloads.find((payload) => payload.content_type === ContentType.VaultItemsKey)).to.not.be.undefined
+      expect(conflicts.length).to.equal(2)
+      expect(conflicts.find((conflict) => conflict.unsaved_item.content_type === ContentType.Note)).to.not.be.undefined
+      expect(conflicts.find((conflict) => conflict.unsaved_item.content_type === ContentType.VaultItemsKey)).to.not.be
+        .undefined
 
       await deinitContactContext()
     })
@@ -841,25 +842,37 @@ describe.only('vaults', function () {
         mutator.title = 'new title'
       })
 
-      const promise = contactContext.resolveWithRejectedPayloads()
+      const promise = contactContext.resolveWithConflicts()
       await contactContext.sync()
-      const rejectedPayloads = await promise
+      const conflicts = await promise
 
-      expect(rejectedPayloads.length).to.equal(1)
-      expect(rejectedPayloads[0].content_type).to.equal(ContentType.Note)
+      expect(conflicts.length).to.equal(1)
+      expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
 
       await deinitContactContext()
     })
 
-    it('should be able to remove an item from a vault as a write user if the item belongs to me', async () => {
+    it('should be able to move item from vault to user as a write user if the item belongs to me', async () => {
       console.error('TODO - implement test case')
     })
 
-    it('should not be able to remove an item from a vault as a write user if the item belongs to someone else', async () => {
-      console.error('TODO - implement test case')
+    it.only('should not be able to move item from vault to user as a write user if the item belongs to someone else', async () => {
+      const { note, vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
+
+      const promise = contactContext.resolveWithConflicts()
+      await contactContext.vaultService.moveItemFromVaultToUser(note)
+      const conflicts = await promise
+
+      expect(conflicts.length).to.equal(1)
+      expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
+
+      const updatedNote = contactContext.items.findItem(note.uuid)
+      expect(updatedNote.vault_uuid).to.equal(vault.uuid)
+
+      await deinitContactContext()
     })
 
-    it('should be able to remove an item from a vault as an admin user if the item belongs to someone else', async () => {
+    it('should not be able to move item from vault to user as an admin user if the item belongs to someone else', async () => {
       console.error('TODO - implement test case')
     })
   })
@@ -998,7 +1011,7 @@ describe.only('vaults', function () {
       const vault = await vaultService.createVault()
       const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, vault.uuid)
 
-      const removedFile = await vaultService.removeItemFromItsVault(uploadedFile)
+      const removedFile = await vaultService.moveItemFromVaultToUser(uploadedFile)
       expect(removedFile.vault_uuid).to.not.be.ok
 
       const downloadedBytes = await Files.downloadFile(context.files, removedFile)

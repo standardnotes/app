@@ -148,7 +148,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     }
   }
 
-  public async moveFileOutOfVault(file: FileItem): Promise<void | ClientDisplayableError> {
+  public async moveFileFromVaultToUser(file: FileItem): Promise<void | ClientDisplayableError> {
     if (!file.vault_uuid) {
       return new ClientDisplayableError('File is not in a vault')
     }

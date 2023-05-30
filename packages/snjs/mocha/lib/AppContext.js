@@ -242,11 +242,11 @@ export class AppContext {
     })
   }
 
-  resolveWithRejectedPayloads() {
+  resolveWithConflicts() {
     return new Promise((resolve) => {
-      this.application.syncService.addEventObserver((event, data) => {
+      this.application.syncService.addEventObserver((event, response) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted) {
-          resolve(data.rejectedPayloads)
+          resolve(response.rawConflictObjects)
         }
       })
     })

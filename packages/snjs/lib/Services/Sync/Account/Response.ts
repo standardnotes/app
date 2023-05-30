@@ -1,7 +1,6 @@
 import {
   ApiEndpointParam,
   ConflictParams,
-  ConflictType,
   ContactServerHash,
   VaultInviteServerHash,
   VaultServerHash,
@@ -9,30 +8,36 @@ import {
   HttpResponse,
   isErrorResponse,
   RawSyncResponse,
-  ServerItemResponse,
 } from '@standardnotes/responses'
 import {
   FilterDisallowedRemotePayloadsAndMap,
   CreateServerSyncSavedPayload,
   ServerSyncSavedContextualPayload,
   FilteredServerItem,
+  TrustedConflictParams,
 } from '@standardnotes/models'
 import { deepFreeze } from '@standardnotes/utils'
+import { TrustedServerConflictMap } from './ServerConflictMap'
 
 export class ServerSyncResponse {
   readonly savedPayloads: ServerSyncSavedContextualPayload[]
   readonly retrievedPayloads: FilteredServerItem[]
-  readonly uuidConflictPayloads: FilteredServerItem[]
-  readonly dataConflictPayloads: FilteredServerItem[]
-  readonly rejectedPayloads: FilteredServerItem[]
-  readonly vaultInvites: VaultInviteServerHash[]
+  readonly conflicts: TrustedServerConflictMap
+
   readonly contacts: ContactServerHash[]
   readonly vaults: VaultServerHash[]
+  readonly vaultInvites: VaultInviteServerHash[]
+
+  private readonly rawConflictObjects: ConflictParams[]
 
   private successResponseData: RawSyncResponse | undefined
 
   constructor(public rawResponse: HttpResponse<RawSyncResponse>) {
     this.rawResponse = rawResponse
+
+    const conflicts = this.successResponseData?.conflicts || []
+    const legacyConflicts = this.successResponseData?.unsaved || []
+    this.rawConflictObjects = conflicts.concat(legacyConflicts)
 
     if (!isErrorResponse(rawResponse)) {
       this.successResponseData = rawResponse.data
@@ -46,11 +51,7 @@ export class ServerSyncResponse {
 
     this.retrievedPayloads = FilterDisallowedRemotePayloadsAndMap(this.successResponseData?.retrieved_items || [])
 
-    this.dataConflictPayloads = FilterDisallowedRemotePayloadsAndMap(this.rawDataConflictItems)
-
-    this.uuidConflictPayloads = FilterDisallowedRemotePayloadsAndMap(this.rawUuidConflictItems)
-
-    this.rejectedPayloads = FilterDisallowedRemotePayloadsAndMap(this.rawRejectedPayloads)
+    this.conflicts = this.filterConflicts()
 
     this.vaults = this.successResponseData?.vaults || []
 
@@ -59,6 +60,40 @@ export class ServerSyncResponse {
     this.contacts = this.successResponseData?.contacts || []
 
     deepFreeze(this)
+  }
+
+  private filterConflicts(): TrustedServerConflictMap {
+    const conflicts = this.rawConflictObjects
+    const trustedConflicts: TrustedServerConflictMap = {}
+
+    for (const conflict of conflicts) {
+      let serverItem: FilteredServerItem | undefined
+      let unsavedItem: FilteredServerItem | undefined
+
+      if (conflict.unsaved_item) {
+        unsavedItem = FilterDisallowedRemotePayloadsAndMap([conflict.unsaved_item])[0]
+      }
+
+      if (conflict.server_item) {
+        serverItem = FilterDisallowedRemotePayloadsAndMap([conflict.server_item])[0]
+      }
+
+      if (!trustedConflicts[conflict.type]) {
+        trustedConflicts[conflict.type] = []
+      }
+
+      const conflictArray = trustedConflicts[conflict.type]
+      if (conflictArray) {
+        const entry: TrustedConflictParams = <TrustedConflictParams>{
+          type: conflict.type,
+          server_item: serverItem,
+          unsaved_item: unsavedItem,
+        }
+        conflictArray.push(entry)
+      }
+    }
+
+    return trustedConflicts
   }
 
   public get error(): HttpError | undefined {
@@ -78,56 +113,9 @@ export class ServerSyncResponse {
   }
 
   public get numberOfItemsInvolved(): number {
-    return this.allFullyFormedPayloads.length
-  }
+    const allPayloads = [...this.retrievedPayloads, ...this.rawConflictObjects]
 
-  private get allFullyFormedPayloads(): FilteredServerItem[] {
-    return [
-      ...this.retrievedPayloads,
-      ...this.dataConflictPayloads,
-      ...this.uuidConflictPayloads,
-      ...this.rejectedPayloads,
-    ]
-  }
-
-  private get rawUuidConflictItems(): ServerItemResponse[] {
-    return this.rawConflictObjects
-      .filter((conflict) => {
-        return conflict.type === ConflictType.UuidConflict
-      })
-      .map((conflict) => {
-        return conflict.unsaved_item || (conflict.item as ServerItemResponse)
-      })
-  }
-
-  private get rawDataConflictItems(): ServerItemResponse[] {
-    return this.rawConflictObjects
-      .filter((conflict) => {
-        return conflict.type === ConflictType.ConflictingData
-      })
-      .map((conflict) => {
-        return conflict.server_item || (conflict.item as ServerItemResponse)
-      })
-  }
-
-  private get rawRejectedPayloads(): ServerItemResponse[] {
-    return this.rawConflictObjects
-      .filter((conflict) => {
-        return (
-          conflict.type === ConflictType.ContentTypeError ||
-          conflict.type === ConflictType.ContentError ||
-          conflict.type === ConflictType.ReadOnlyError
-        )
-      })
-      .map((conflict) => {
-        return conflict.unsaved_item as ServerItemResponse
-      })
-  }
-
-  private get rawConflictObjects(): ConflictParams[] {
-    const conflicts = this.successResponseData?.conflicts || []
-    const legacyConflicts = this.successResponseData?.unsaved || []
-    return conflicts.concat(legacyConflicts)
+    return allPayloads.length
   }
 
   public get hasError(): boolean {

@@ -1,7 +1,6 @@
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { VaultsServerInterface } from '@standardnotes/api'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { RemoveItemFromVaultUseCase } from './RemoveItemFromVault'
 import { DecryptedItemInterface } from '@standardnotes/models'
 
 export class DeleteVaultUseCase {
@@ -30,9 +29,6 @@ export class DeleteVaultUseCase {
   }
 
   async removeVaultFromItems(items: DecryptedItemInterface[]): Promise<void> {
-    for (const item of items) {
-      const useCase = new RemoveItemFromVaultUseCase(this.items)
-      await useCase.execute({ item })
-    }
+    await this.items.setItemsToBeDeleted(items)
   }
 }

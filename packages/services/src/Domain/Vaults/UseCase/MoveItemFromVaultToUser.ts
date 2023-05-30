@@ -5,7 +5,7 @@ import { DecryptedItemInterface, FileItem } from '@standardnotes/models'
 import { FilesClientInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/common'
 
-export class RemoveItemFromVaultUseCase {
+export class MoveItemFromVaultToUser {
   constructor(
     private items: ItemManagerInterface,
     private sync: SyncServiceInterface,
@@ -20,7 +20,7 @@ export class RemoveItemFromVaultUseCase {
     await this.sync.sync()
 
     if (dto.item.content_type === ContentType.File) {
-      await this.files.moveFileOutOfVault(dto.item as FileItem)
+      await this.files.moveFileFromVaultToUser(dto.item as FileItem)
     }
   }
 }

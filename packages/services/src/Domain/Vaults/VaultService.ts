@@ -48,7 +48,7 @@ import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface
 import { SyncEvent, SyncEventReceivedVaultInvitesData, SyncEventReceivedVaultsData } from '../Event/SyncEvent'
 import { SessionEvent } from '../Session/SessionEvent'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
-import { RemoveItemFromVaultUseCase } from './UseCase/RemoveItemFromVault'
+import { MoveItemFromVaultToUser } from './UseCase/MoveItemFromVaultToUser'
 import { DeleteVaultUseCase } from './UseCase/DeleteVault'
 import { AddItemToVaultUseCase } from './UseCase/AddItemToVault'
 import { ChangeVaultMetadataUsecase } from './UseCase/ChangeVaultMetadata'
@@ -364,8 +364,8 @@ export class VaultService
     return this.items.findSureItem(item.uuid)
   }
 
-  async removeItemFromItsVault(item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
-    const useCase = new RemoveItemFromVaultUseCase(this.items, this.sync, this.files)
+  async moveItemFromVaultToUser(item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
+    const useCase = new MoveItemFromVaultToUser(this.items, this.sync, this.files)
     await useCase.execute({ item })
 
     return this.items.findSureItem(item.uuid)
