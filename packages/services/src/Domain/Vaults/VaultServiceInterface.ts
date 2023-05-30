@@ -51,6 +51,7 @@ export interface VaultServiceInterface extends AbstractService<VaultServiceEvent
   getCachedInboundInvites(): VaultInviteServerHash[]
   getInvitableContactsForVault(vault: VaultServerHash): Promise<TrustedContactInterface[]>
   deleteInvite(invite: VaultInviteServerHash): Promise<ClientDisplayableError | void>
+  reloadRemovedVaults(): Promise<void>
 
   rotateVaultKey(vaultUuid: string): Promise<void>
   changeVaultMetadata(

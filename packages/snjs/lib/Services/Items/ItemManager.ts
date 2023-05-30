@@ -1350,13 +1350,18 @@ export class ItemManager
     this.payloadManager.resetState()
   }
 
-  public removeItemLocally(item: Models.DecryptedItemInterface | Models.DeletedItemInterface): void {
-    this.collection.discard([item])
-    this.payloadManager.removePayloadLocally(item.payload)
+  public removeItemLocally(item: Models.AnyItemInterface): void {
+    this.removeItemsLocally([item])
+  }
 
-    const delta = Models.CreateItemDelta({ discarded: [item] as Models.DeletedItemInterface[] })
+  public removeItemsLocally(items: Models.AnyItemInterface[]): void {
+    this.collection.discard(items)
+    this.payloadManager.removePayloadLocally(items.map((item) => item.payload))
+
+    const delta = Models.CreateItemDelta({ discarded: items as Models.DeletedItemInterface[] })
+    const affectedContentTypes = items.map((item) => item.content_type)
     for (const controller of this.allDisplayControllers) {
-      if (controller.contentTypes.some((ct) => ct === item.content_type)) {
+      if (controller.contentTypes.some((ct) => affectedContentTypes.includes(ct))) {
         controller.onCollectionChange(delta)
       }
     }

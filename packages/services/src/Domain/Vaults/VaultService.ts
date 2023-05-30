@@ -53,6 +53,7 @@ import { DeleteVaultUseCase } from './UseCase/DeleteVault'
 import { AddItemToVaultUseCase } from './UseCase/AddItemToVault'
 import { ChangeVaultMetadataUsecase } from './UseCase/ChangeVaultMetadata'
 import { FilesClientInterface } from '@standardnotes/files'
+import { ReloadRemovedUseCase } from './UseCase/ReloadRemovedVaults'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent>
@@ -103,6 +104,8 @@ export class VaultService
         }
       },
     )
+
+    void this.reloadRemovedVaults()
   }
 
   private notifyVaultsChangedEvent(): void {
@@ -255,6 +258,12 @@ export class VaultService
     }
 
     return true
+  }
+
+  public reloadRemovedVaults(): Promise<void> {
+    const useCase = new ReloadRemovedUseCase(this.vaultsServer, this.items)
+
+    return useCase.execute()
   }
 
   public getTrustedSenderOfInvite(invite: VaultInviteServerHash): TrustedContactInterface | undefined {

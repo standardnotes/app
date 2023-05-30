@@ -14,6 +14,8 @@ import {
   DecryptedPayload,
   SNTag,
   VaultItemsKeyInterface,
+  ItemInterface,
+  AnyItemInterface,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 
@@ -56,6 +58,7 @@ export interface ItemManagerInterface extends AbstractService {
   insertItem<T extends DecryptedItemInterface>(item: DecryptedItemInterface): Promise<T>
   emitItemFromPayload(payload: DecryptedPayloadInterface, source: PayloadEmitSource): Promise<DecryptedItemInterface>
   getItems<T extends DecryptedItemInterface>(contentType: ContentType | ContentType[]): T[]
+  allTrackedItems(): ItemInterface[]
   getDisplayableItemsKeys(): ItemsKeyInterface[]
   createItem<T extends DecryptedItemInterface, C extends ItemContent = ItemContent>(
     contentType: ContentType,
@@ -98,6 +101,7 @@ export interface ItemManagerInterface extends AbstractService {
   ): T[]
   subItemsMatchingPredicates<T extends DecryptedItemInterface>(items: T[], predicates: PredicateInterface<T>[]): T[]
   removeAllItemsFromMemory(): Promise<void>
+  removeItemsLocally(items: AnyItemInterface[]): void
   getDirtyItems(): (DecryptedItemInterface | DeletedItemInterface)[]
   getTagLongTitle(tag: SNTag): string
   getSortedTagsForItem(item: DecryptedItemInterface<ItemContent>): SNTag[]

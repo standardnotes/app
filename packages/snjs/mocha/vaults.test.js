@@ -318,8 +318,21 @@ describe.only('vaults', function () {
       console.error('TODO: implement test case')
     })
 
-    it('leaving or being removed from vault should remove vault items locally', async () => {
-      console.error('TODO: implement test case')
+    it.only('leaving or being removed from vault should remove vault items locally', async () => {
+      const { vault, note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
+
+      const contactNote = contactContext.application.items.findItem(note.uuid)
+      expect(contactNote).to.not.be.undefined
+
+      await context.vaultService.removeUserFromVault(vault.uuid, contactContext.userUuid)
+
+      await contactContext.sync()
+      await contactContext.vaultService.reloadRemovedVaults()
+
+      const updatedContactNote = contactContext.application.items.findItem(note.uuid)
+      expect(updatedContactNote).to.be.undefined
+
+      await deinitContactContext()
     })
 
     it('should return invited to vaults when fetching vaults from server', async () => {
@@ -941,7 +954,7 @@ describe.only('vaults', function () {
       console.error('TODO - implement test case')
     })
 
-    it.only('should handle VaultNotMemberError by duplicating item to user non-vault', async () => {
+    it('should handle VaultNotMemberError by duplicating item to user non-vault', async () => {
       const { vault, note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
 
       await context.vaultService.removeUserFromVault(vault.uuid, contactContext.userUuid)

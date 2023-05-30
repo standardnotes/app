@@ -300,7 +300,7 @@ export class PayloadManager extends AbstractService implements PayloadManagerInt
     return Uuids(payloads)
   }
 
-  public removePayloadLocally(payload: FullyFormedPayloadInterface) {
+  public removePayloadLocally(payload: FullyFormedPayloadInterface | FullyFormedPayloadInterface[]): void {
     this.collection.discard(payload)
   }
 

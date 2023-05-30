@@ -25,4 +25,6 @@ export interface PayloadManagerInterface {
   get nonDeletedItems(): FullyFormedPayloadInterface[]
 
   importPayloads(payloads: DecryptedPayloadInterface[], historyMap: HistoryMap): Promise<string[]>
+
+  removePayloadLocally(payload: FullyFormedPayloadInterface | FullyFormedPayloadInterface[]): void
 }

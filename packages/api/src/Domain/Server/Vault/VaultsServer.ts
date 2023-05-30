@@ -9,6 +9,7 @@ import { UpdateVaultResponse } from '../../Response/Vault/UpdateVaultResponse'
 import { GetVaultsResponse } from '../../Response/Vault/GetVaultsResponse'
 import { CreateVaultValetTokenResponse } from '../../Response/Vault/CreateVaultValetTokenResponse'
 import { CreateVaultValetTokenParams } from '../../Request/Vault/CreateVaultValetTokenParams'
+import { GetRemovedVaultsResponse } from '../../Response/Vault/GetRemovedVaults'
 
 export class VaultsServer implements VaultsServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
@@ -45,5 +46,9 @@ export class VaultsServer implements VaultsServerInterface {
       move_operation_type: params.moveOperationType,
       vault_to_vault_move_target_uuid: params.vaultToVaultMoveTargetUuid,
     })
+  }
+
+  getRemovedVaults(): Promise<HttpResponse<GetRemovedVaultsResponse>> {
+    return this.httpService.get(VaultsPaths.getRemovedVaults)
   }
 }

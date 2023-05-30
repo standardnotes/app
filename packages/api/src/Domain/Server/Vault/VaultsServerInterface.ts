@@ -6,6 +6,7 @@ import { UpdateVaultResponse } from '../../Response/Vault/UpdateVaultResponse'
 import { GetVaultsResponse } from '../../Response/Vault/GetVaultsResponse'
 import { CreateVaultValetTokenResponse } from '../../Response/Vault/CreateVaultValetTokenResponse'
 import { CreateVaultValetTokenParams } from '../../Request/Vault/CreateVaultValetTokenParams'
+import { GetRemovedVaultsResponse } from '../../Response/Vault/GetRemovedVaults'
 
 export interface VaultsServerInterface {
   getVaults(): Promise<HttpResponse<GetVaultsResponse>>
@@ -17,4 +18,6 @@ export interface VaultsServerInterface {
   deleteVault(params: { vaultUuid: string }): Promise<HttpResponse<boolean>>
 
   createVaultFileValetToken(params: CreateVaultValetTokenParams): Promise<HttpResponse<CreateVaultValetTokenResponse>>
+
+  getRemovedVaults(): Promise<HttpResponse<GetRemovedVaultsResponse>>
 }
