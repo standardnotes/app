@@ -28,6 +28,7 @@ import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
+import { VaultStorageServiceInterface } from '../Vaults/VaultStorageServiceInterface'
 
 export class ItemsEncryptionService extends AbstractService {
   private removeItemsObserver!: () => void
@@ -38,6 +39,7 @@ export class ItemsEncryptionService extends AbstractService {
     private payloadManager: PayloadManagerInterface,
     private storageService: StorageServiceInterface,
     private operatorManager: OperatorManager,
+    private vaultStorage: VaultStorageServiceInterface,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
@@ -92,17 +94,20 @@ export class ItemsEncryptionService extends AbstractService {
     payload: DecryptedPayloadInterface,
   ): ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface | StandardException {
     if (payload.vault_uuid) {
-      const associatedVaultItemsKeys = this.itemManager
-        .getVaultItemsKeysForVault(payload.vault_uuid)
-        .sort((a, b) => b.created_at.getTime() - a.created_at.getTime())
-
-      const sharedKey = associatedVaultItemsKeys[0]
-
-      if (!sharedKey) {
-        return new StandardException('Cannot find shared items key to use for encryption')
+      const vault = this.vaultStorage.getVault(payload.vault_uuid)
+      if (!vault) {
+        return new StandardException('Cannot find vault for item encryption')
       }
 
-      return sharedKey
+      const vaultItemsKey = this.itemManager
+        .getVaultItemsKeysForVault(payload.vault_uuid)
+        .find((key) => key.uuid === vault.specified_items_key_uuid)
+
+      if (!vaultItemsKey) {
+        return new StandardException('Cannot find vault items key to use for encryption')
+      }
+
+      return vaultItemsKey
     }
 
     const defaultKey = this.getDefaultItemsKey()

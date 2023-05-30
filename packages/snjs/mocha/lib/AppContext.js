@@ -234,11 +234,13 @@ export class AppContext {
     })
   }
 
-  callBackWithUploadedPayloads(callback) {
-    return this.application.syncService.addEventObserver((event, data) => {
-      if (event === SyncEvent.PaginatedSyncRequestCompleted) {
-        callback(data.uploadedPayloads)
-      }
+  resolveWithUploadedPayloads() {
+    return new Promise((resolve) => {
+      this.application.syncService.addEventObserver((event, data) => {
+        if (event === SyncEvent.PaginatedSyncRequestCompleted) {
+          resolve(data.uploadedPayloads)
+        }
+      })
     })
   }
 

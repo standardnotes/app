@@ -130,6 +130,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       payloadManager,
       storageService,
       this.operatorManager,
+      this.vaultStorage,
       internalEventBus,
     )
 

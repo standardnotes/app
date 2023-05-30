@@ -507,7 +507,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     let key: RootKeyInterface | VaultKeyInterface | undefined
     if (payload.vault_uuid) {
       if (!ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
-        throw Error('Attempting to decrypt payload that is not a shared items key with vault key.')
+        throw Error('Attempting to decrypt payload that is not a vault items key with vault key.')
       }
       key = this.getVaultKey(payload.vault_uuid)
     } else {
@@ -542,7 +542,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     let key: RootKeyInterface | VaultKeyInterface | undefined
     if (payload.vault_uuid) {
       if (!ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
-        throw Error('Attempting to decrypt payload that is not a shared items key with vault key.')
+        throw Error('Attempting to decrypt payload that is not a vault items key with vault key.')
       }
       key = this.getVaultKey(payload.vault_uuid)
     } else {
@@ -626,7 +626,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
   }
 
   /**
-   * When the vault key changes, we must re-encrypt all shared items
+   * When the vault key changes, we must re-encrypt all vault items
    * keys with this new vault key (by simply re-syncing).
    */
   public async reencryptVaultItemsKeysForVault(vaultUuid: string): Promise<void> {

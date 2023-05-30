@@ -12,7 +12,6 @@ import {
   conflictParamsHasServerItemAndUnsavedItem,
   conflictParamsHasOnlyServerItem,
   conflictParamsHasOnlyUnsavedItem,
-  ConflictVaultInvalidItemsKeyParams,
   ConflictType,
 } from '@standardnotes/responses'
 import { PayloadsByDuplicating } from '../../Utilities/Payload/PayloadsByDuplicating'
@@ -26,8 +25,16 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
   public result(): SyncDeltaEmit {
     const results: SyncResolvedPayload[] = []
 
+    const vaultErrors: ConflictType[] = [
+      ConflictType.VaultInsufficientPermissionsError,
+      ConflictType.VaultNotMemberError,
+      ConflictType.VaultNotFoundError,
+      ConflictType.VaultInvalidState,
+      ConflictType.VaultInvalidItemsKey,
+    ]
+
     for (const conflict of this.conflicts) {
-      if (conflict.type === ConflictType.VaultInvalidItemsKey) {
+      if (vaultErrors.includes(conflict.type)) {
         results.push(...this.handleVaultInvalidItemsKeyConflict(conflict))
       } else if (conflictParamsHasServerItemAndUnsavedItem(conflict)) {
         results.push(...this.getResultForConflictWithServerItemAndUnsavedItem(conflict))
@@ -45,12 +52,13 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
   }
 
   private handleVaultInvalidItemsKeyConflict(
-    conflict: ConflictVaultInvalidItemsKeyParams<FullyFormedPayloadInterface>,
+    conflict: ConflictParams<FullyFormedPayloadInterface>,
   ): SyncResolvedPayload[] {
     const base = this.baseCollection.find(conflict.unsaved_item.uuid)
     if (!base) {
       return []
     }
+
     if (conflict.server_item) {
       return this.resultByDuplicatingBasePayloadAsNonVaultedAndTakingServerPayloadAsCanonical(
         base,

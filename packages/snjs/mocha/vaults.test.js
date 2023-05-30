@@ -64,12 +64,12 @@ describe.only('vaults', function () {
     const vault = await vaultService.createVault()
     const { contactContext, deinitContactContext } = await createContactContext()
     const contact = await createTrustedContactForUserOfContext(context, contactContext)
-    await vaultService.inviteContactToVault(vault, contact, permissions)
+    const invite = await vaultService.inviteContactToVault(vault, contact, permissions)
     await contactContext.sync()
 
     await createTrustedContactForUserOfContext(contactContext, context)
 
-    return { vault, contact, contactContext, deinitContactContext }
+    return { vault, contact, contactContext, deinitContactContext, invite }
   }
 
   afterEach(async function () {
@@ -311,11 +311,50 @@ describe.only('vaults', function () {
     })
 
     it('non-admin user should not be able to invite user', async () => {
-      console.error('TODO: implement test case')
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
+
+      const thirdParty = await createContactContext()
+      const thirdPartyContact = await createTrustedContactForUserOfContext(contactContext, thirdParty.contactContext)
+      const result = await contactContext.vaultService.inviteContactToVault(
+        vault,
+        thirdPartyContact,
+        VaultPermission.Write,
+      )
+
+      expect(isClientDisplayableError(result)).to.be.true
+
+      await deinitContactContext()
     })
 
-    it('should leave vault', async () => {
-      console.error('TODO: implement test case')
+    it('should not be able to leave vault as creator', async () => {
+      const vault = await vaultService.createVault()
+
+      const result = await vaultService.removeUserFromVault(vault.uuid, context.userUuid)
+
+      expect(isClientDisplayableError(result)).to.be.true
+    })
+
+    it('should be able to leave vault as added admin', async () => {
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite(VaultPermission.Admin)
+
+      const result = await contactContext.vaultService.leaveVault(vault.uuid)
+
+      expect(isClientDisplayableError(result)).to.be.false
+
+      await deinitContactContext()
+    })
+
+    it('leaving a vault should remove its items locally', async () => {
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote(
+        VaultPermission.Admin,
+      )
+
+      await contactContext.vaultService.leaveVault(vault.uuid)
+
+      const updatedContactNote = contactContext.application.items.findItem(note.uuid)
+      expect(updatedContactNote).to.be.undefined
+
+      await deinitContactContext()
     })
 
     it.only('leaving or being removed from vault should remove vault items locally', async () => {
@@ -346,7 +385,17 @@ describe.only('vaults', function () {
     })
 
     it('canceling an invite should remove it from recipient pending invites', async () => {
-      console.error('TODO: implement test case')
+      const { invite, contactContext, deinitContactContext } = await createVaultWithUnacceptedButTrustedInvite()
+
+      const preInvites = await contactContext.vaultService.downloadInboundInvites()
+      expect(preInvites.length).to.equal(1)
+
+      await vaultService.deleteInvite(invite)
+
+      const postInvites = await contactContext.vaultService.downloadInboundInvites()
+      expect(postInvites.length).to.equal(0)
+
+      await deinitContactContext()
     })
 
     it('should update vault name and description', async () => {
@@ -372,7 +421,7 @@ describe.only('vaults', function () {
   })
 
   describe('client timing', () => {
-    it('should load data in the correct order at startup to allow shared items and their keys to decrypt', async () => {
+    it('should load data in the correct order at startup to allow vault items and their keys to decrypt', async () => {
       const appIdentifier = context.identifier
       const vault = await vaultService.createVault()
       const note = await context.createSyncedNote('foo', 'bar')
@@ -689,6 +738,19 @@ describe.only('vaults', function () {
       await deinitContactContext()
     })
 
+    it('rotating a vault key should create a new vault items key', async () => {
+      const vault = await vaultService.createVault()
+
+      const vaultItemsKey = context.items.getVaultItemsKeysForVault(vault.uuid)[0]
+
+      await vaultService.rotateVaultKey(vault.uuid)
+
+      const updatedVaultItemsKey = context.items.getVaultItemsKeysForVault(vault.uuid)[0]
+
+      expect(updatedVaultItemsKey).to.not.be.undefined
+      expect(updatedVaultItemsKey.uuid).to.not.equal(vaultItemsKey.uuid)
+    })
+
     it('should update both pending join and key-change invites instead of creating new ones', async () => {
       const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
       contactContext.lockSyncing()
@@ -808,7 +870,7 @@ describe.only('vaults', function () {
       expect(isClientDisplayableError(result)).to.be.true
     })
 
-    it('non-admin user should not be able to create or update shared items keys with the server', async () => {
+    it('non-admin user should not be able to create or update vault items keys with the server', async () => {
       const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
 
       const vaultItemsKey = contactContext.items.getVaultItemsKeysForVault(vault.uuid)[0]
@@ -946,12 +1008,34 @@ describe.only('vaults', function () {
   })
 
   describe('sync errors and conflicts', () => {
-    it('after leaving vault, attempting to sync previously vault item should not result in infinite upload/conflict cycle', async () => {
-      console.error('TODO: implement test case')
+    it('after leaving vault, attempting to sync previously vault item should result in VaultNotMemberError', async () => {
+      const { vault, note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
+
+      await context.vaultService.removeUserFromVault(vault.uuid, contactContext.userUuid)
+
+      const promise = contactContext.resolveWithConflicts()
+      await contactContext.changeNoteTitle(note, 'new title')
+      const conflicts = await promise
+
+      expect(conflicts.length).to.equal(1)
+      expect(conflicts[0].type).to.equal(ConflictType.VaultNotMemberError)
+      expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
+
+      await deinitContactContext()
     })
 
-    it('should handle VaultInsufficientPermissionsError by duplicating item to user non-vault', async () => {
-      console.error('TODO - implement test case')
+    it('attempting to modify note as read user should result in VaultInsufficientPermissionsError', async () => {
+      const { note, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite(VaultPermission.Read)
+
+      const promise = contactContext.resolveWithConflicts()
+      await contactContext.changeNoteTitle(note, 'new title')
+      const conflicts = await promise
+
+      expect(conflicts.length).to.equal(1)
+      expect(conflicts[0].type).to.equal(ConflictType.VaultInsufficientPermissionsError)
+      expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
+
+      await deinitContactContext()
     })
 
     it('should handle VaultNotMemberError by duplicating item to user non-vault', async () => {
@@ -971,16 +1055,98 @@ describe.only('vaults', function () {
       await deinitContactContext()
     })
 
-    it('should handle VaultNotFoundError by duplicating item to user non-vault', async () => {
-      console.error('TODO - implement test case')
+    it('attempting to save note to non-existent vault should result in VaultNotFoundError', async () => {
+      const vault = await vaultService.createVault()
+
+      await context.vaultService.deleteVault(vault.uuid)
+
+      const note = await context.createSyncedNote('foo', 'bar')
+
+      const promise = context.resolveWithConflicts()
+      await context.vaultService.addItemToVault(vault, note)
+      const conflicts = await promise
+
+      expect(conflicts.length).to.equal(1)
+      expect(conflicts[0].type).to.equal(ConflictType.VaultNotFoundError)
+      expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
     })
 
-    it('should handle VaultInvalidState by duplicating item to user non-vault', async () => {
-      console.error('TODO - implement test case')
+    it('attempting to add deleted item to vault should result in VaultInvalidState conflict', async () => {
+      const vault = await vaultService.createVault()
+
+      const note = await context.createSyncedNote('foo', 'bar')
+      await context.items.setItemToBeDeleted(note)
+      await context.sync()
+
+      const promise = context.resolveWithConflicts()
+      await context.vaultService.addItemToVault(vault, note)
+      const conflicts = await promise
+
+      expect(conflicts.length).to.equal(1)
+      expect(conflicts[0].type).to.equal(ConflictType.VaultInvalidStateError)
+      expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
     })
 
-    it('should handle VaultInvalidItemsKey by duplicating item to user non-vault', async () => {
-      console.error('TODO - implement test case')
+    it('attempting to save item using an old vault items key should result in VaultInvalidItemsKey conflict', async () => {
+      const vault = await vaultService.createVault()
+
+      const note = await context.createSyncedNote('foo', 'bar')
+      await context.vaultService.addItemToVault(vault, note)
+
+      const oldVaultItemsKey = context.items.getVaultItemsKeysForVault(vault.uuid)[0]
+
+      await context.vaultService.rotateVaultKey(vault.uuid)
+
+      await context.vaultService.handleReceivedVaults([
+        {
+          ...vault,
+          specified_items_key_uuid: oldVaultItemsKey.uuid,
+        },
+      ])
+
+      const promise = context.resolveWithConflicts()
+      await context.changeNoteTitleAndSync(note, 'new title')
+      const conflicts = await promise
+
+      expect(conflicts.length).to.equal(1)
+      expect(conflicts[0].type).to.equal(ConflictType.VaultInvalidItemsKeyError)
+      expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
+    })
+
+    it("should use the cached group's specified items key when choosing which key to encrypt vault items with", async () => {
+      const vault = await vaultService.createVault()
+
+      const firstVaultItemsKey = context.items.getVaultItemsKeysForVault(vault.uuid)[0]
+
+      const note = await context.createSyncedNote('foo', 'bar')
+      const firstPromise = context.resolveWithUploadedPayloads()
+      await context.vaultService.addItemToVault(vault, note)
+      const firstUploadedPayloads = await firstPromise
+
+      expect(firstUploadedPayloads[0].items_key_id).to.equal(firstVaultItemsKey.uuid)
+      expect(firstUploadedPayloads[0].items_key_id).to.equal(vault.specified_items_key_uuid)
+
+      await context.vaultService.rotateVaultKey(vault.uuid)
+      const secondVaultItemsKey = context.items.getVaultItemsKeysForVault(vault.uuid)[0]
+
+      const secondPromise = context.resolveWithUploadedPayloads()
+      await context.changeNoteTitleAndSync(note, 'new title')
+      const secondUploadedPayloads = await secondPromise
+
+      expect(secondUploadedPayloads[0].items_key_id).to.equal(secondVaultItemsKey.uuid)
+
+      await context.vaultService.handleReceivedVaults([
+        {
+          ...vault,
+          specified_items_key_uuid: firstVaultItemsKey.uuid,
+        },
+      ])
+
+      const thirdPromise = context.resolveWithUploadedPayloads()
+      await context.changeNoteTitleAndSync(note, 'third new title')
+      const thirdUploadedPayloads = await thirdPromise
+
+      expect(thirdUploadedPayloads[0].items_key_id).to.equal(firstVaultItemsKey.uuid)
     })
   })
 

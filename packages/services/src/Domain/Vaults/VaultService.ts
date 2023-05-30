@@ -54,6 +54,7 @@ import { AddItemToVaultUseCase } from './UseCase/AddItemToVault'
 import { ChangeVaultMetadataUsecase } from './UseCase/ChangeVaultMetadata'
 import { FilesClientInterface } from '@standardnotes/files'
 import { ReloadRemovedUseCase } from './UseCase/ReloadRemovedVaults'
+import { LeaveVaultUseCase } from './UseCase/LeaveVault'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent>
@@ -119,10 +120,6 @@ export class VaultService
     }
   }
 
-  async handleReceivedVaults(vaults: VaultServerHash[]): Promise<void> {
-    this.vaultStorage.updateVaults(vaults)
-  }
-
   public async reloadVaults(): Promise<VaultServerHash[] | ClientDisplayableError> {
     const response = await this.vaultsServer.getVaults()
 
@@ -135,6 +132,10 @@ export class VaultService
     await this.handleReceivedVaults(vaults)
 
     return vaults
+  }
+
+  async handleReceivedVaults(vaults: VaultServerHash[]): Promise<void> {
+    this.vaultStorage.updateVaults(vaults)
   }
 
   public getVaults(): VaultServerHash[] {
@@ -414,20 +415,18 @@ export class VaultService
   async leaveVault(vaultUuid: string): Promise<ClientDisplayableError | void> {
     const vault = this.getVault(vaultUuid)
     if (!vault) {
-      throw new Error('Vault not found')
+      return ClientDisplayableError.FromString('Vault not found')
     }
 
     if (vault.user_uuid === this.user.uuid) {
-      throw new Error('Cannot leave vault as owner')
+      return ClientDisplayableError.FromString('Cannot leave vault as owner')
     }
 
-    const response = await this.vaultUsersServer.deleteVaultUser({
-      vaultUuid: vaultUuid,
-      userUuid: this.user.uuid,
-    })
+    const useCase = new LeaveVaultUseCase(this.vaultUsersServer, this.items)
+    const result = await useCase.execute({ vaultUuid, userUuid: this.user.uuid })
 
-    if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromString(`Failed to leave vault ${response}`)
+    if (isClientDisplayableError(result)) {
+      return result
     }
 
     this.notifyVaultsChangedEvent()

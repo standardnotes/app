@@ -323,12 +323,6 @@ export class ItemManager
     }
   }
 
-  public getVaultItemsKeysForVault(vaultUuid: string): Models.VaultItemsKeyInterface[] {
-    return this.getItems<Models.VaultItemsKeyInterface>(ContentType.VaultItemsKey).filter(
-      (key) => key.vault_uuid === vaultUuid,
-    )
-  }
-
   /**
    * Returns the items that reference the given item, or an empty array if no results.
    */
@@ -1414,6 +1408,12 @@ export class ItemManager
       : itemBReferencesItemA
       ? ItemRelationshipDirection.BReferencesA
       : ItemRelationshipDirection.NoRelationship
+  }
+
+  public getVaultItemsKeysForVault(vaultUuid: string): Models.VaultItemsKeyInterface[] {
+    return this.getItems<Models.VaultItemsKeyInterface>(ContentType.VaultItemsKey).filter(
+      (key) => key.vault_uuid === vaultUuid,
+    )
   }
 
   itemsBelongingToVault(vaultUuid: string): Models.DecryptedItemInterface[] {
