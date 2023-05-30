@@ -318,13 +318,9 @@ describe.only('vaults', function () {
       console.error('TODO: implement test case')
     })
 
-    it('after leaving vault, attempting to sync previously vault item should not result in infinite upload/conflict cycle', async () => {
+    it('leaving or being removed from vault should remove vault items locally', async () => {
       console.error('TODO: implement test case')
     })
-
-    it('leaving a vault should not remove any of the vault items from the server', async () => {})
-
-    it('an item added to a vault should not have a user_uuid', async () => {})
 
     it('should return invited to vaults when fetching vaults from server', async () => {
       const { contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
@@ -937,51 +933,40 @@ describe.only('vaults', function () {
   })
 
   describe('sync errors and conflicts', () => {
-    it('should handle ConflictingData', async () => {
+    it('after leaving vault, attempting to sync previously vault item should not result in infinite upload/conflict cycle', async () => {
+      console.error('TODO: implement test case')
+    })
+
+    it('should handle VaultInsufficientPermissionsError by duplicating item to user non-vault', async () => {
       console.error('TODO - implement test case')
     })
 
-    it('should handle UuidConflict', async () => {
+    it.only('should handle VaultNotMemberError by duplicating item to user non-vault', async () => {
+      const { vault, note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
+
+      await context.vaultService.removeUserFromVault(vault.uuid, contactContext.userUuid)
+
+      await contactContext.changeNoteTitle(note, 'new title')
+
+      const notes = contactContext.notes
+
+      expec(notes.length).to.equal(1)
+      expect(notes[0].title).to.equal('new title')
+      expect(notes[0].vault_uuid).to.not.be.ok
+      expect(notes[0].duplicate_of).to.equal(note.uuid)
+
+      await deinitContactContext()
+    })
+
+    it('should handle VaultNotFoundError by duplicating item to user non-vault', async () => {
       console.error('TODO - implement test case')
     })
 
-    it('should handle ContentTypeError', async () => {
+    it('should handle VaultInvalidState by duplicating item to user non-vault', async () => {
       console.error('TODO - implement test case')
     })
 
-    it('should handle ContentError', async () => {
-      console.error('TODO - implement test case')
-    })
-
-    it('should handle ReadOnlyError', async () => {
-      console.error('TODO - implement test case')
-    })
-
-    it('should handle UuidError', async () => {
-      console.error('TODO - implement test case')
-    })
-
-    it('should handle SnjsVersionError', async () => {
-      console.error('TODO - implement test case')
-    })
-
-    it('should handle VaultInsufficientPermissionsError', async () => {
-      console.error('TODO - implement test case')
-    })
-
-    it('should handle VaultNotMemberError', async () => {
-      console.error('TODO - implement test case')
-    })
-
-    it('should handle VaultNotFoundError', async () => {
-      console.error('TODO - implement test case')
-    })
-
-    it('should handle VaultInvalidState', async () => {
-      console.error('TODO - implement test case')
-    })
-
-    it('should handle VaultInvalidItemsKey', async () => {
+    it('should handle VaultInvalidItemsKey by duplicating item to user non-vault', async () => {
       console.error('TODO - implement test case')
     })
   })

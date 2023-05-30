@@ -407,6 +407,10 @@ export class AppContext {
     return this.application.items.getDisplayableNotes().length
   }
 
+  get notes() {
+    return this.application.items.getDisplayableNotes()
+  }
+
   async createConflictedNotes(otherContext) {
     const note = await this.createSyncedNote()
 
