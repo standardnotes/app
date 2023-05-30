@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { getNoteBlob, getNoteFileName } from '@/Utils/NoteExportUtils'
 import { parseFileName } from '@standardnotes/filepicker'
 import { SNNote } from '@standardnotes/snjs'

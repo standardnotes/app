@@ -1,6 +1,6 @@
 import { action, makeAutoObservable, observable } from 'mobx'
 import { IconType } from '@standardnotes/snjs'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { PackageProvider } from './Panes/General/Advanced/Packages/Provider/PackageProvider'
 import { securityPrefsHasBubble } from './Panes/Security/securityPrefsHasBubble'
 import { PreferenceId } from '@standardnotes/ui-services'
@@ -44,7 +44,6 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'appearance', label: 'Appearance', icon: 'themes' },
   { id: 'listed', label: 'Listed', icon: 'listed' },
   { id: 'help-feedback', label: 'Help & feedback', icon: 'help' },
-  { id: 'filesend', label: 'FileSend', icon: 'open-in' },
 ]
 
 export class PreferencesMenu {

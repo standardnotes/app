@@ -1,6 +1,6 @@
 import Switch from '@/Components/Switch/Switch'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { LogSessionUserAgentOption, SettingName } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
@@ -77,7 +77,7 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
       <PreferencesSegment>
         <Title>Privacy</Title>
         <div>
-          <div className="flex items-center justify-between">
+          <div className="flex justify-between gap-2 md:items-center">
             <div className="flex flex-col">
               <Subtitle>Session user agent logging</Subtitle>
               <Text>
@@ -87,7 +87,7 @@ const Privacy: FunctionComponent<Props> = ({ application }: Props) => {
               </Text>
             </div>
             {isLoading ? (
-              <Spinner className="ml-2 flex-shrink-0" />
+              <Spinner className="h-5 w-5 flex-shrink-0" />
             ) : (
               <Switch
                 onChange={toggleSessionLogging}

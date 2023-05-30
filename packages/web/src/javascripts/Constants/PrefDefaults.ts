@@ -1,4 +1,12 @@
-import { PrefKey, CollectionSort, NewNoteTitleFormat, EditorLineHeight, EditorFontSize } from '@standardnotes/models'
+import {
+  PrefKey,
+  CollectionSort,
+  NewNoteTitleFormat,
+  EditorLineHeight,
+  EditorFontSize,
+  EditorLineWidth,
+  PrefValue,
+} from '@standardnotes/models'
 import { FeatureIdentifier } from '@standardnotes/snjs'
 
 export const PrefDefaults = {
@@ -10,6 +18,7 @@ export const PrefDefaults = {
   [PrefKey.EditorSpellcheck]: true,
   [PrefKey.EditorResizersEnabled]: false,
   [PrefKey.EditorLineHeight]: EditorLineHeight.Normal,
+  [PrefKey.EditorLineWidth]: EditorLineWidth.FullWidth,
   [PrefKey.EditorFontSize]: EditorFontSize.Normal,
   [PrefKey.SortNotesBy]: CollectionSort.CreatedAt,
   [PrefKey.SortNotesReverse]: false,
@@ -28,5 +37,13 @@ export const PrefDefaults = {
   [PrefKey.NewNoteTitleFormat]: NewNoteTitleFormat.CurrentDateAndTime,
   [PrefKey.CustomNoteTitleFormat]: 'YYYY-MM-DD [at] hh:mm A',
   [PrefKey.UpdateSavingStatusIndicator]: true,
-  [PrefKey.DarkMode]: false,
-} as const
+  [PrefKey.PaneGesturesEnabled]: true,
+  [PrefKey.MomentsDefaultTagUuid]: undefined,
+  [PrefKey.ClipperDefaultTagUuid]: undefined,
+  [PrefKey.DefaultEditorIdentifier]: FeatureIdentifier.PlainEditor,
+  [PrefKey.SuperNoteExportFormat]: 'json',
+  [PrefKey.SystemViewPreferences]: {},
+  [PrefKey.AuthenticatorNames]: '',
+} satisfies {
+  [key in PrefKey]: PrefValue[key]
+}

@@ -5,6 +5,8 @@ export const RuntimeMessageTypes = {
   GetFullPage: 'get-full-page',
   OpenPopupWithSelection: 'open-popup-with-selection',
   StartNodeSelection: 'start-node-selection',
+  ToggleScreenshotMode: 'toggle-screenshot-mode',
+  CaptureVisibleTab: 'capture-visible-tab',
 } as const
 
 export type RuntimeMessageType = typeof RuntimeMessageTypes[keyof typeof RuntimeMessageTypes]
@@ -15,6 +17,7 @@ export type ClipPayload = {
   title: string
   content: string
   url: string
+  isScreenshot?: boolean
 }
 
 export type RuntimeMessageReturnTypes = {
@@ -22,8 +25,10 @@ export type RuntimeMessageReturnTypes = {
   [RuntimeMessageTypes.GetSelection]: ClipPayload
   [RuntimeMessageTypes.HasSelection]: boolean
   [RuntimeMessageTypes.GetFullPage]: ClipPayload
+  [RuntimeMessageTypes.CaptureVisibleTab]: string
   [RuntimeMessageTypes.OpenPopupWithSelection]: void
   [RuntimeMessageTypes.StartNodeSelection]: void
+  [RuntimeMessageTypes.ToggleScreenshotMode]: void
 }
 
 export type RuntimeMessage =
@@ -32,5 +37,9 @@ export type RuntimeMessage =
       payload: ClipPayload
     }
   | {
-      type: Exclude<RuntimeMessageType, MessagesWithClipPayload>
+      type: typeof RuntimeMessageTypes.ToggleScreenshotMode
+      enabled: boolean
+    }
+  | {
+      type: Exclude<RuntimeMessageType, MessagesWithClipPayload | typeof RuntimeMessageTypes.ToggleScreenshotMode>
     }

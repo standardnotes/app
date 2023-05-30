@@ -61,7 +61,7 @@ export const LinkedItemsSectionItem = ({
         <div className="flex flex-grow items-center gap-4 py-2 pl-3 pr-12">
           <Icon type={icon} className={classNames('flex-shrink-0', className)} />
           <input
-            className="min-w-0 flex-grow text-sm"
+            className="min-w-0 flex-grow bg-default text-sm"
             defaultValue={title}
             onKeyDown={(event) => {
               if (event.key === KeyboardKey.Escape) {

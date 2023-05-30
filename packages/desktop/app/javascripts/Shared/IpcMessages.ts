@@ -1,10 +1,9 @@
 export enum MessageToWebApp {
   UpdateAvailable = 'update-available',
-  PerformAutomatedBackup = 'download-backup',
-  FinishedSavingBackup = 'finished-saving-backup',
   WindowBlurred = 'window-blurred',
   WindowFocused = 'window-focused',
   InstallComponentComplete = 'install-component-complete',
+  WatchedDirectoriesChanges = 'watched-directories-changes',
 }
 
 export enum MessageToMainProcess {

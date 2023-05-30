@@ -167,7 +167,13 @@ $content-horizontal-padding: 16px;
       }
     }
 
-    &:hover:not(.selected),
+    @media screen and (hover: hover) {
+      &:hover:not(.selected) {
+        background-color: var(--navigation-item-selected-background-color);
+      }
+    }
+
+    &:active,
     &.selected,
     &.is-drag-over {
       background-color: var(--navigation-item-selected-background-color);

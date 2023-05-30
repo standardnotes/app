@@ -9,7 +9,7 @@
 import './Collapsible.css'
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
-import { $findMatchingParent, mergeRegister } from '@lexical/utils'
+import { $findMatchingParent, mergeRegister, $insertNodeToNearestRoot } from '@lexical/utils'
 import {
   $createParagraphNode,
   $getNodeByKey,
@@ -24,6 +24,9 @@ import {
   DELETE_CHARACTER_COMMAND,
   INSERT_PARAGRAPH_COMMAND,
   KEY_ARROW_DOWN_COMMAND,
+  KEY_ARROW_LEFT_COMMAND,
+  KEY_ARROW_RIGHT_COMMAND,
+  KEY_ARROW_UP_COMMAND,
   NodeKey,
 } from 'lexical'
 import { useEffect } from 'react'
@@ -52,6 +55,49 @@ export default function CollapsiblePlugin(): JSX.Element | null {
       )
     }
 
+    const onEscapeUp = () => {
+      const selection = $getSelection()
+      if ($isRangeSelection(selection) && selection.isCollapsed() && selection.anchor.offset === 0) {
+        const container = $findMatchingParent(selection.anchor.getNode(), $isCollapsibleContainerNode)
+
+        if ($isCollapsibleContainerNode(container)) {
+          const parent = container.getParent()
+          if (
+            parent !== null &&
+            parent.getFirstChild() === container &&
+            selection.anchor.key === container.getFirstDescendant()?.getKey()
+          ) {
+            container.insertBefore($createParagraphNode())
+          }
+        }
+      }
+
+      return false
+    }
+
+    const onEscapeDown = () => {
+      const selection = $getSelection()
+      if ($isRangeSelection(selection) && selection.isCollapsed()) {
+        const container = $findMatchingParent(selection.anchor.getNode(), $isCollapsibleContainerNode)
+
+        if ($isCollapsibleContainerNode(container)) {
+          const parent = container.getParent()
+          if (parent !== null && parent.getLastChild() === container) {
+            const lastDescendant = container.getLastDescendant()
+            if (
+              lastDescendant !== null &&
+              selection.anchor.key === lastDescendant.getKey() &&
+              selection.anchor.offset === lastDescendant.getTextContentSize()
+            ) {
+              container.insertAfter($createParagraphNode())
+            }
+          }
+        }
+      }
+
+      return false
+    }
+
     return mergeRegister(
       // Structure enforcing transformers for each node type. In case nesting structure is not
       // "Container > Title + Content" it'll unwrap nodes and convert it back
@@ -61,7 +107,7 @@ export default function CollapsiblePlugin(): JSX.Element | null {
         if (!$isCollapsibleContainerNode(parent)) {
           const children = node.getChildren()
           for (const child of children) {
-            node.insertAfter(child)
+            node.insertBefore(child)
           }
           node.remove()
         }
@@ -76,7 +122,7 @@ export default function CollapsiblePlugin(): JSX.Element | null {
         const children = node.getChildren()
         if (children.length !== 2 || !$isCollapsibleTitleNode(children[0]) || !$isCollapsibleContentNode(children[1])) {
           for (const child of children) {
-            node.insertAfter(child)
+            node.insertBefore(child)
           }
           node.remove()
         }
@@ -109,32 +155,18 @@ export default function CollapsiblePlugin(): JSX.Element | null {
         },
         COMMAND_PRIORITY_LOW,
       ),
-      // When collapsible is the last child pressing down arrow will insert paragraph
+      // When collapsible is the last child pressing down/right arrow will insert paragraph
       // below it to allow adding more content. It's similar what $insertBlockNode
       // (mainly for decorators), except it'll always be possible to continue adding
       // new content even if trailing paragraph is accidentally deleted
-      editor.registerCommand(
-        KEY_ARROW_DOWN_COMMAND,
-        () => {
-          const selection = $getSelection()
-          if (!$isRangeSelection(selection) || !selection.isCollapsed()) {
-            return false
-          }
-
-          const container = $findMatchingParent(selection.anchor.getNode(), $isCollapsibleContainerNode)
-
-          if (container === null) {
-            return false
-          }
-
-          const parent = container.getParent()
-          if (parent !== null && parent.getLastChild() === container) {
-            parent.append($createParagraphNode())
-          }
-          return false
-        },
-        COMMAND_PRIORITY_LOW,
-      ),
+      editor.registerCommand(KEY_ARROW_DOWN_COMMAND, onEscapeDown, COMMAND_PRIORITY_LOW),
+      editor.registerCommand(KEY_ARROW_RIGHT_COMMAND, onEscapeDown, COMMAND_PRIORITY_LOW),
+      // When collapsible is the first child pressing up/left arrow will insert paragraph
+      // above it to allow adding more content. It's similar what $insertBlockNode
+      // (mainly for decorators), except it'll always be possible to continue adding
+      // new content even if leading paragraph is accidentally deleted
+      editor.registerCommand(KEY_ARROW_UP_COMMAND, onEscapeUp, COMMAND_PRIORITY_LOW),
+      editor.registerCommand(KEY_ARROW_LEFT_COMMAND, onEscapeUp, COMMAND_PRIORITY_LOW),
       // Handling CMD+Enter to toggle collapsible element collapsed state
       editor.registerCommand(
         INSERT_PARAGRAPH_COMMAND,
@@ -170,17 +202,14 @@ export default function CollapsiblePlugin(): JSX.Element | null {
         INSERT_COLLAPSIBLE_COMMAND,
         () => {
           editor.update(() => {
-            const selection = $getSelection()
-
-            if (!$isRangeSelection(selection)) {
-              return
-            }
-
             const title = $createCollapsibleTitleNode()
-            const content = $createCollapsibleContentNode().append($createParagraphNode())
-            const container = $createCollapsibleContainerNode(true).append(title, content)
-            selection.insertNodes([container])
-            title.selectStart()
+            $insertNodeToNearestRoot(
+              $createCollapsibleContainerNode(true).append(
+                title,
+                $createCollapsibleContentNode().append($createParagraphNode()),
+              ),
+            )
+            title.select()
           })
 
           return true

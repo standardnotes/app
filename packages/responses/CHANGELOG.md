@@ -3,6 +3,42 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.13.24](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.23...@standardnotes/responses@1.13.24) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.13.23](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.22...@standardnotes/responses@1.13.23) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.13.22](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.21...@standardnotes/responses@1.13.22) (2023-05-12)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.13.21](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.20...@standardnotes/responses@1.13.21) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.13.20](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.19...@standardnotes/responses@1.13.20) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.13.19](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.18...@standardnotes/responses@1.13.19) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.13.18](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.17...@standardnotes/responses@1.13.18) (2023-04-17)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.13.17](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.16...@standardnotes/responses@1.13.17) (2023-04-15)
+
+**Note:** Version bump only for package @standardnotes/responses
+
+## [1.13.16](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.15...@standardnotes/responses@1.13.16) (2023-04-14)
+
+**Note:** Version bump only for package @standardnotes/responses
+
 ## [1.13.15](https://github.com/standardnotes/app/compare/@standardnotes/responses@1.13.14...@standardnotes/responses@1.13.15) (2023-04-11)
 
 **Note:** Version bump only for package @standardnotes/responses

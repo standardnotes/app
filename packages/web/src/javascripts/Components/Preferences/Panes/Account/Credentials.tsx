@@ -1,6 +1,6 @@
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { dateToLocalizedString } from '@standardnotes/snjs'
@@ -58,12 +58,12 @@ const Credentials: FunctionComponent<Props> = ({ application }: Props) => {
             Current password was set on <span className="font-bold">{passwordCreatedOn}</span>
           </Text>
           <Button className="mt-3 min-w-20" label="Change password" onClick={presentPasswordWizard} />
-          <ModalOverlay isOpen={isChangeEmailDialogOpen} onDismiss={closeChangeEmailDialog}>
+          <ModalOverlay isOpen={isChangeEmailDialogOpen} close={closeChangeEmailDialog}>
             <ChangeEmail onCloseDialog={closeChangeEmailDialog} application={application} />
           </ModalOverlay>
         </PreferencesSegment>
       </PreferencesGroup>
-      <ModalOverlay isOpen={shouldShowPasswordWizard} onDismiss={dismissPasswordWizard}>
+      <ModalOverlay isOpen={shouldShowPasswordWizard} close={dismissPasswordWizard}>
         <PasswordWizard application={application} dismissModal={dismissPasswordWizard} />
       </ModalOverlay>
     </>

@@ -8,6 +8,7 @@ import { Base64String } from '@standardnotes/sncrypto-common'
 import { SessionManagerResponse } from './SessionManagerResponse'
 
 export interface SessionsClientInterface {
+  getWorkspaceDisplayIdentifier(): string
   populateSessionFromDemoShareToken(token: Base64String): Promise<void>
   getUser(): User | undefined
   isCurrentSessionReadOnly(): boolean | undefined

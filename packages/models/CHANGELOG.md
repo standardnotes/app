@@ -3,6 +3,62 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.45.5](https://github.com/standardnotes/app/compare/@standardnotes/models@1.45.4...@standardnotes/models@1.45.5) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.45.4](https://github.com/standardnotes/app/compare/@standardnotes/models@1.45.3...@standardnotes/models@1.45.4) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.45.3](https://github.com/standardnotes/app/compare/@standardnotes/models@1.45.2...@standardnotes/models@1.45.3) (2023-05-12)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.45.2](https://github.com/standardnotes/app/compare/@standardnotes/models@1.45.1...@standardnotes/models@1.45.2) (2023-05-11)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.45.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.45.0...@standardnotes/models@1.45.1) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/models
+
+# [1.45.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.44.3...@standardnotes/models@1.45.0) (2023-05-04)
+
+### Features
+
+* Replaced margin resizers with "Editor width" options. You can set it globally from Preferences > Appearance or per-note from the note options menu ([#2324](https://github.com/standardnotes/app/issues/2324)) ([9fbb845](https://github.com/standardnotes/app/commit/9fbb845b1d3b1ca6a4b064f3b63bdae1cf7777e8))
+
+## [1.44.3](https://github.com/standardnotes/app/compare/@standardnotes/models@1.44.2...@standardnotes/models@1.44.3) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.44.2](https://github.com/standardnotes/app/compare/@standardnotes/models@1.44.1...@standardnotes/models@1.44.2) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.44.1](https://github.com/standardnotes/app/compare/@standardnotes/models@1.44.0...@standardnotes/models@1.44.1) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/models
+
+# [1.44.0](https://github.com/standardnotes/app/compare/@standardnotes/models@1.43.16...@standardnotes/models@1.44.0) (2023-04-24)
+
+### Features
+
+* **clipper:** Added default tag setting to clipper ([2ce2b84](https://github.com/standardnotes/app/commit/2ce2b8410f5053f77d02b93dbb80aad5f33c728c))
+
+## [1.43.16](https://github.com/standardnotes/app/compare/@standardnotes/models@1.43.15...@standardnotes/models@1.43.16) (2023-04-17)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.43.15](https://github.com/standardnotes/app/compare/@standardnotes/models@1.43.14...@standardnotes/models@1.43.15) (2023-04-15)
+
+**Note:** Version bump only for package @standardnotes/models
+
+## [1.43.14](https://github.com/standardnotes/app/compare/@standardnotes/models@1.43.13...@standardnotes/models@1.43.14) (2023-04-14)
+
+**Note:** Version bump only for package @standardnotes/models
+
 ## [1.43.13](https://github.com/standardnotes/app/compare/@standardnotes/models@1.43.12...@standardnotes/models@1.43.13) (2023-04-11)
 
 **Note:** Version bump only for package @standardnotes/models

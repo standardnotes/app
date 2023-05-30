@@ -1,9 +1,12 @@
-import { $createParagraphNode, $getRoot, $insertNodes, LexicalNode } from 'lexical'
-import { $generateNodesFromDOM } from '../SuperEditor/Lexical/Utils/generateNodesFromDOM'
+import { $createParagraphNode, $getRoot, $insertNodes, $nodesOfType, LexicalNode } from 'lexical'
+import { $generateNodesFromDOM } from '@lexical/html'
 import { createHeadlessEditor } from '@lexical/headless'
 import { BlockEditorNodes } from '../SuperEditor/Lexical/Nodes/AllNodes'
 import BlocksEditorTheme from '../SuperEditor/Lexical/Theme/Theme'
 import { ClipPayload } from '@standardnotes/clipper/src/types/message'
+import { LinkNode } from '@lexical/link'
+
+const AbsoluteLinkRegExp = new RegExp('^(?:[a-z+]+:)?//', 'i')
 
 export const getSuperJSONFromClipPayload = async (clipPayload: ClipPayload) => {
   const editor = createHeadlessEditor({
@@ -13,6 +16,8 @@ export const getSuperJSONFromClipPayload = async (clipPayload: ClipPayload) => {
     onError: (error: Error) => console.error(error),
     nodes: [...BlockEditorNodes],
   })
+
+  const clipURL = new URL(clipPayload.url)
 
   await new Promise<void>((resolve) => {
     editor.update(() => {
@@ -28,6 +33,10 @@ export const getSuperJSONFromClipPayload = async (clipPayload: ClipPayload) => {
       )
       $getRoot().select()
       $insertNodes(clipSourceParagraphNode)
+
+      if (typeof clipPayload.content !== 'string') {
+        throw new Error('Clip payload content is not a string')
+      }
 
       const dom = parser.parseFromString(clipPayload.content, 'text/html')
       const generatedNodes = $generateNodesFromDOM(editor, dom)
@@ -50,6 +59,22 @@ export const getSuperJSONFromClipPayload = async (clipPayload: ClipPayload) => {
       })
       $getRoot().selectEnd()
       $insertNodes(nodesToInsert.concat($createParagraphNode()))
+
+      resolve()
+    })
+  })
+
+  await new Promise<void>((resolve) => {
+    editor.update(() => {
+      $nodesOfType(LinkNode).forEach((linkNode) => {
+        const url = linkNode.getURL()
+        const isAbsoluteLink = AbsoluteLinkRegExp.test(url)
+
+        if (!isAbsoluteLink) {
+          const fixedURL = new URL(url, clipURL)
+          linkNode.setURL(fixedURL.toString())
+        }
+      })
 
       resolve()
     })

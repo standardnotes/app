@@ -1,4 +1,3 @@
-import { action, makeObservable, observable } from 'mobx'
 import { MessageType } from '../test/TestIpcMessage'
 import { Store } from './javascripts/Main/Store/Store'
 import { StoreKeys } from './javascripts/Main/Store/StoreKeys'
@@ -14,7 +13,6 @@ export class AppState {
   readonly startUrl = Urls.indexHtml
   readonly isPrimaryInstance: boolean
   public willQuitApp = false
-  public lastBackupDate: number | null = null
   public windowState?: WindowState
   public deepLinkUrl?: string
   public readonly updates: UpdateState
@@ -28,11 +26,6 @@ export class AppState {
     this.lastRunVersion = this.store.get(StoreKeys.LastRunVersion) || 'unknown'
     this.store.set(StoreKeys.LastRunVersion, this.version)
 
-    makeObservable(this, {
-      lastBackupDate: observable,
-      setBackupCreationDate: action,
-    })
-
     this.updates = new UpdateState(this)
 
     if (isTesting()) {
@@ -44,9 +37,5 @@ export class AppState {
 
   public isRunningVersionForFirstTime(): boolean {
     return this.lastRunVersion !== this.version
-  }
-
-  setBackupCreationDate(date: number | null): void {
-    this.lastBackupDate = date
   }
 }

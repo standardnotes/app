@@ -1,14 +1,16 @@
 import { ReactNativeToWebEvent } from '@standardnotes/snjs'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Keyboard, Platform } from 'react-native'
+import { Button, Keyboard, Platform, requireNativeComponent, Text, View } from 'react-native'
 import VersionInfo from 'react-native-version-info'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
-import { OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTypes'
+import { NativeWebViewAndroid, OnShouldStartLoadWithRequest } from 'react-native-webview/lib/WebViewTypes'
 import { AndroidBackHandlerService } from './AndroidBackHandlerService'
 import { AppStateObserverService } from './AppStateObserverService'
 import { ColorSchemeObserverService } from './ColorSchemeObserverService'
 import { MobileDevice, MobileDeviceEvent } from './Lib/MobileDevice'
 import { IsDev } from './Lib/Utils'
+
+const CustomWebView: NativeWebViewAndroid = requireNativeComponent('CustomWebView')
 
 const LoggingEnabled = IsDev
 
@@ -33,6 +35,8 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
     () => new MobileDevice(stateService, androidBackHandlerService, colorSchemeService),
     [androidBackHandlerService, colorSchemeService, stateService],
   )
+
+  const [showAndroidWebviewUpdatePrompt, setShowAndroidWebviewUpdatePrompt] = useState(false)
 
   useEffect(() => {
     const removeStateServiceListener = stateService.addEventObserver((event: ReactNativeToWebEvent) => {
@@ -228,6 +232,10 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
 
   const onMessage = (event: WebViewMessageEvent) => {
     const message = event.nativeEvent.data
+    if (message === 'appLoadError' && Platform.OS === 'android') {
+      setShowAndroidWebviewUpdatePrompt(true)
+      return
+    }
     try {
       const functionData = JSON.parse(message)
       void onFunctionMessage(functionData.functionName, functionData.messageId, functionData.args)
@@ -277,6 +285,47 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
   const requireInlineMediaPlaybackForMomentsFeature = true
   const requireMediaUserInteractionForMomentsFeature = false
 
+  if (showAndroidWebviewUpdatePrompt) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'black',
+        }}
+      >
+        <Text
+          style={{
+            color: 'white',
+            fontSize: 20,
+            fontWeight: 'bold',
+            marginBottom: 20,
+          }}
+        >
+          Could not load app
+        </Text>
+        <Text
+          style={{
+            color: 'white',
+            fontSize: 16,
+            marginBottom: 20,
+            textAlign: 'center',
+          }}
+        >
+          Please make sure your Android System Webview is updated to the latest version
+        </Text>
+        <Button
+          title={'Update'}
+          onPress={() => {
+            setShowAndroidWebviewUpdatePrompt(false)
+            device.openUrl('https://play.google.com/store/apps/details?id=com.google.android.webview')
+          }}
+        />
+      </View>
+    )
+  }
+
   return (
     <WebView
       ref={webViewRef}
@@ -307,6 +356,12 @@ const MobileWebAppContents = ({ destroyAndReload }: { destroyAndReload: () => vo
        * This is needed to prevent the keyboard from pushing the webview up and down when it appears and disappears.
        */
       scrollEnabled={false}
+      overScrollMode="never"
+      nativeConfig={Platform.select({
+        android: {
+          component: CustomWebView,
+        },
+      })}
     />
   )
 }

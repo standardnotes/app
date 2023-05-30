@@ -11,9 +11,9 @@ import TabPanel from '../Tabs/TabPanel'
 import { useTabState } from '../Tabs/useTabState'
 import TabsContainer from '../Tabs/TabsContainer'
 import CopyableCodeBlock from '../Shared/CopyableCodeBlock'
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@reach/disclosure'
 import { classNames } from '@standardnotes/utils'
 import Modal, { ModalAction } from '../Modal/Modal'
+import { Disclosure, DisclosureContent, useDisclosureStore } from '@ariakit/react'
 
 type Props = {
   controller: AddSmartViewModalController
@@ -77,7 +77,8 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
   const [shouldShowIconPicker, setShouldShowIconPicker] = useState(false)
   const iconPickerButtonRef = useRef<HTMLButtonElement>(null)
 
-  const [shouldShowJsonExamples, setShouldShowJsonExamples] = useState(false)
+  const jsonExamplesDisclosure = useDisclosureStore()
+  const showingJsonExamples = jsonExamplesDisclosure.useState('open')
 
   const toggleIconPicker = () => {
     setShouldShowIconPicker((shouldShow) => !shouldShow)
@@ -181,7 +182,6 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
                   }}
                   platform={platform}
                   useIconGrid={true}
-                  portalDropdown={false}
                 />
               </div>
             </Popover>
@@ -224,22 +224,26 @@ const AddSmartViewModal = ({ controller, platform }: Props) => {
               </TabPanel>
             </TabsContainer>
             {tabState.activeTab === 'custom' && (
-              <Disclosure open={shouldShowJsonExamples} onChange={() => setShouldShowJsonExamples((show) => !show)}>
-                <div className="flex flex-col gap-1.5 rounded-md border-2 border-info-backdrop bg-info-backdrop py-3 px-4">
-                  <DisclosureButton className="flex items-center justify-between focus:shadow-none focus:outline-none">
-                    <div className="text-sm font-semibold">Examples</div>
-                    <Icon type={shouldShowJsonExamples ? 'chevron-up' : 'chevron-down'} />
-                  </DisclosureButton>
-                  <DisclosurePanel className={classNames(shouldShowJsonExamples && 'flex', 'flex-col gap-2.5')}>
-                    <div className="text-sm font-medium">1. List notes that are conflicted copies of another note:</div>
-                    <CopyableCodeBlock code={ConflictedNotesExampleCode} />
-                    <div className="text-sm font-medium">
-                      2. List notes that have the tag `todo` but not the tag `completed`:
-                    </div>
-                    <CopyableCodeBlock code={ComplexCompoundExampleCode} />
-                  </DisclosurePanel>
-                </div>
-              </Disclosure>
+              <div className="flex flex-col gap-1.5 rounded-md border-2 border-info-backdrop bg-info-backdrop py-3 px-4">
+                <Disclosure
+                  store={jsonExamplesDisclosure}
+                  className="flex items-center justify-between focus:shadow-none focus:outline-none"
+                >
+                  <div className="text-sm font-semibold">Examples</div>
+                  <Icon type={showingJsonExamples ? 'chevron-up' : 'chevron-down'} />
+                </Disclosure>
+                <DisclosureContent
+                  store={jsonExamplesDisclosure}
+                  className={classNames(showingJsonExamples && 'flex', 'flex-col gap-2.5')}
+                >
+                  <div className="text-sm font-medium">1. List notes that are conflicted copies of another note:</div>
+                  <CopyableCodeBlock code={ConflictedNotesExampleCode} />
+                  <div className="text-sm font-medium">
+                    2. List notes that have the tag `todo` but not the tag `completed`:
+                  </div>
+                  <CopyableCodeBlock code={ComplexCompoundExampleCode} />
+                </DisclosureContent>
+              </div>
             )}
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { InternalEventBus } from '@standardnotes/snjs'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { action, makeObservable, observable } from 'mobx'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 

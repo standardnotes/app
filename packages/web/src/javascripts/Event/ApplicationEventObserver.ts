@@ -21,7 +21,9 @@ import { SyncStatusController } from '@/Controllers/SyncStatusController'
 import { AccountMenuPane } from '@/Components/AccountMenu/AccountMenuPane'
 
 import { EventObserverInterface } from './EventObserverInterface'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
+
+export const JoinWorkspaceSuccessString = 'Successfully joined a shared subscription.'
 
 export class ApplicationEventObserver implements EventObserverInterface {
   constructor(
@@ -129,7 +131,7 @@ export class ApplicationEventObserver implements EventObserverInterface {
     this.toastService.hideToast(processingToastId)
 
     const toastType = acceptResult.success ? ToastType.Success : ToastType.Error
-    const toastMessage = acceptResult.success ? 'Successfully joined a shared subscription' : acceptResult.message
+    const toastMessage = acceptResult.success ? JoinWorkspaceSuccessString : acceptResult.message
 
     this.toastService.showToast(toastType, toastMessage)
 

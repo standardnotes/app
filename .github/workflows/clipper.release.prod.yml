@@ -91,6 +91,7 @@ jobs:
           name: "Clipper ${{ env.PACKAGE_VERSION }}"
           body: ${{ steps.release-notes.outputs.result }}
           draft: false
+          prerelease: true
           files: packages/clipper/artifacts/*
       - name: Publish to Chrome Web Store
         uses: trmcnvn/chrome-addon@v2

@@ -62,7 +62,7 @@ describe('files', function () {
     localStorage.clear()
   })
 
-  it('should create valet token from server', async function () {
+  it('should create valet token from server - @paidfeature', async function () {
     await setup({ fakeCrypto: true, subscription: true })
 
     const remoteIdentifier = Utils.generateUuid()
@@ -80,7 +80,7 @@ describe('files', function () {
     expect(tokenOrError.tag).to.equal('no-subscription')
   })
 
-  it('should not create valet token from server when user has an expired subscription', async function () {
+  it('should not create valet token from server when user has an expired subscription - @paidfeature', async function () {
     await setup({ fakeCrypto: true, subscription: false })
 
     await Factory.publishMockedEvent('SUBSCRIPTION_PURCHASED', {
@@ -107,7 +107,7 @@ describe('files', function () {
     expect(tokenOrError.tag).to.equal('expired-subscription')
   })
 
-  it('creating two upload sessions successively should succeed', async function () {
+  it('creating two upload sessions successively should succeed - @paidfeature', async function () {
     await setup({ fakeCrypto: true, subscription: true })
 
     const firstToken = await application.apiService.createFileValetToken(Utils.generateUuid(), 'write')
@@ -121,7 +121,7 @@ describe('files', function () {
     expect(secondSession.uploadId).to.be.ok
   })
 
-  it('should encrypt and upload small file', async function () {
+  it('should encrypt and upload small file - @paidfeature', async function () {
     await setup({ fakeCrypto: false, subscription: true })
 
     const response = await fetch('/packages/snjs/mocha/assets/small_file.md')
@@ -134,7 +134,7 @@ describe('files', function () {
     expect(downloadedBytes).to.eql(buffer)
   })
 
-  it('should encrypt and upload big file', async function () {
+  it('should encrypt and upload big file - @paidfeature', async function () {
     await setup({ fakeCrypto: false, subscription: true })
 
     const response = await fetch('/packages/snjs/mocha/assets/two_mb_file.md')
@@ -147,7 +147,7 @@ describe('files', function () {
     expect(downloadedBytes).to.eql(buffer)
   })
 
-  it('should delete file', async function () {
+  it('should delete file - @paidfeature', async function () {
     await setup({ fakeCrypto: false, subscription: true })
 
     const response = await fetch('/packages/snjs/mocha/assets/small_file.md')

@@ -68,49 +68,52 @@ export const getPositionedPopoverRect = (
   buttonRect: DOMRect,
   side: PopoverSide,
   align: PopoverAlignment,
+  offset?: number,
 ): DOMRect => {
   const { width, height } = popoverRect
 
   const positionPopoverRect = DOMRect.fromRect(popoverRect)
 
+  const finalOffset = offset ? offset : 0
+
   switch (side) {
     case 'top': {
-      positionPopoverRect.y = buttonRect.top - height
+      positionPopoverRect.y = buttonRect.top - height - finalOffset
       break
     }
     case 'bottom':
-      positionPopoverRect.y = buttonRect.bottom
+      positionPopoverRect.y = buttonRect.bottom + finalOffset
       break
     case 'left':
-      positionPopoverRect.x = buttonRect.left - width
+      positionPopoverRect.x = buttonRect.left - width - finalOffset
       break
     case 'right':
-      positionPopoverRect.x = buttonRect.right
+      positionPopoverRect.x = buttonRect.right + finalOffset
       break
   }
 
   if (side === 'top' || side === 'bottom') {
     switch (align) {
       case 'start':
-        positionPopoverRect.x = buttonRect.left
+        positionPopoverRect.x = buttonRect.left - finalOffset
         break
       case 'center':
-        positionPopoverRect.x = buttonRect.left - width / 2 + buttonRect.width / 2
+        positionPopoverRect.x = buttonRect.left - width / 2 + buttonRect.width / 2 - finalOffset
         break
       case 'end':
-        positionPopoverRect.x = buttonRect.right - width
+        positionPopoverRect.x = buttonRect.right - width + finalOffset
         break
     }
   } else {
     switch (align) {
       case 'start':
-        positionPopoverRect.y = buttonRect.top
+        positionPopoverRect.y = buttonRect.top - finalOffset
         break
       case 'center':
-        positionPopoverRect.y = buttonRect.top - height / 2 + buttonRect.height / 2
+        positionPopoverRect.y = buttonRect.top - height / 2 + buttonRect.height / 2 - finalOffset
         break
       case 'end':
-        positionPopoverRect.y = buttonRect.bottom - height
+        positionPopoverRect.y = buttonRect.bottom - height + finalOffset
         break
     }
   }

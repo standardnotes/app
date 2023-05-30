@@ -76,7 +76,7 @@ module.exports = (env) => {
            * Exclude all node_modules, except for those we need to run through our babel rules because
            * they may contain class properties and other ES6+ syntax.
            */
-          exclude: /node_modules\/(?!(@standardnotes\/common|@standardnotes\/domain-core|contactjs))/,
+          exclude: /node_modules\/(?!(@standardnotes\/common|@standardnotes\/domain-core|webextension-polyfill))/,
           use: [
             'babel-loader',
             {

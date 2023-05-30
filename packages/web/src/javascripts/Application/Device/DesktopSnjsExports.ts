@@ -12,4 +12,7 @@ export {
   FileDownloadProgress,
   DesktopServerManagerInterface,
   DesktopServerStatus,
+  PlaintextBackupsMapping,
+  DesktopWatchedDirectoriesChanges,
+  DesktopWatchedDirectoriesChange,
 } from '@standardnotes/snjs'

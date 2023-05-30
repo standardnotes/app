@@ -1,8 +1,12 @@
-import { DesktopClientRequiresWebMethods } from '@web/Application/Device/DesktopSnjsExports'
+import {
+  DesktopClientRequiresWebMethods,
+  DesktopWatchedDirectoriesChanges,
+} from '@web/Application/Device/DesktopSnjsExports'
 import { StartApplication } from '@web/Application/Device/StartApplication'
 import { IpcRendererEvent } from 'electron/renderer'
 import { CrossProcessBridge } from './CrossProcessBridge'
 import { DesktopDevice } from './DesktopDevice'
+import { ElectronMainEvents } from '../Shared/ElectronMainEvents'
 
 declare const DEFAULT_SYNC_SERVER: string
 declare const WEBSOCKET_URL: string
@@ -23,7 +27,7 @@ declare global {
     purchaseUrl: string
     startApplication: StartApplication
     zip: unknown
-    electronMainEvents: any
+    electronMainEvents: ElectronMainEvents
   }
 }
 
@@ -118,37 +122,32 @@ async function configureWindow(remoteBridge: CrossProcessBridge) {
     /* Use custom title bar. Take the sn-titlebar-height off of
     the app content height so its not overflowing */
     sheet.insertRule(
-      'body, [data-reach-dialog-overlay], [data-mobile-popover] { padding-top: var(--sn-desktop-titlebar-height) !important; }',
+      '[role="dialog"] { position: relative; height: calc(100vh - var(--sn-desktop-titlebar-height)) !important; margin-top: var(--sn-desktop-titlebar-height) !important; }',
       sheet.cssRules.length,
     )
     sheet.insertRule(
-      `.main-ui-view { height: calc(100vh - var(--sn-desktop-titlebar-height)) !important;
-        min-height: calc(100vh - var(--sn-desktop-titlebar-height)) !important; }`,
+      '[data-mobile-popover] { padding-top: var(--sn-desktop-titlebar-height) !important; }',
       sheet.cssRules.length,
     )
   }
 }
 
-window.electronMainEvents.handleUpdateAvailable(() => {
+window.electronMainEvents.setUpdateAvailableHandler(() => {
   window.webClient.updateAvailable()
 })
 
-window.electronMainEvents.handlePerformAutomatedBackup(() => {
-  void window.device.downloadBackup()
-})
-
-window.electronMainEvents.handleFinishedSavingBackup((_: IpcRendererEvent, data: { success: boolean }) => {
-  window.webClient.didFinishBackup(data.success)
-})
-
-window.electronMainEvents.handleWindowBlurred(() => {
+window.electronMainEvents.setWindowBlurredHandler(() => {
   window.webClient.windowLostFocus()
 })
 
-window.electronMainEvents.handleWindowFocused(() => {
+window.electronMainEvents.setWindowFocusedHandler(() => {
   window.webClient.windowGainedFocus()
 })
 
-window.electronMainEvents.handleInstallComponentComplete((_: IpcRendererEvent, data: any) => {
+window.electronMainEvents.setInstallComponentCompleteHandler((_: IpcRendererEvent, data: any) => {
   void window.webClient.onComponentInstallationComplete(data.component, undefined)
+})
+
+window.electronMainEvents.setWatchedDirectoriesChangeHandler((_: IpcRendererEvent, changes: unknown) => {
+  void window.webClient.handleWatchedDirectoriesChanges(changes as DesktopWatchedDirectoriesChanges)
 })

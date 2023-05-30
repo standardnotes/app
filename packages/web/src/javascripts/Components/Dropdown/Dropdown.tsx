@@ -1,19 +1,22 @@
-import { ListboxArrow, ListboxInput, ListboxList, ListboxPopover } from '@reach/listbox'
-import '@reach/listbox/styles.css'
-import { VisuallyHidden } from '@reach/visually-hidden'
-import { FunctionComponent } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { DropdownItem } from './DropdownItem'
-import StyledListboxButton from './StyledListboxButton'
-import StyledListboxOption from './StyledListboxOption'
 import { classNames } from '@standardnotes/snjs'
+import {
+  Select,
+  SelectItem,
+  SelectLabel,
+  SelectPopover,
+  SelectStoreProps,
+  useSelectStore,
+  VisuallyHidden,
+} from '@ariakit/react'
+import { KeyboardKey } from '@standardnotes/ui-services'
 
 type DropdownProps = {
-  id: string
   label: string
   items: DropdownItem[]
   value: string
-  onChange: (value: string, item: DropdownItem) => void
+  onChange: (value: string) => void
   disabled?: boolean
   classNameOverride?: {
     wrapper?: string
@@ -21,92 +24,86 @@ type DropdownProps = {
     popover?: string
   }
   fullWidth?: boolean
-  portal?: boolean
+  popoverPlacement?: SelectStoreProps['placement']
 }
 
-type ListboxButtonProps = DropdownItem & {
-  isExpanded: boolean
-}
-
-const CustomDropdownButton: FunctionComponent<ListboxButtonProps> = ({
+const Dropdown = ({
   label,
-  isExpanded,
-  icon,
-  iconClassName = '',
-}) => (
-  <>
-    <div className="flex items-center">
-      {icon ? (
-        <div className="mr-2 flex">
-          <Icon type={icon} className={iconClassName} size="small" />
-        </div>
-      ) : null}
-      <div className="text-base lg:text-sm">{label}</div>
-    </div>
-    <ListboxArrow className={`flex ${isExpanded ? 'rotate-180' : ''}`}>
-      <Icon type="menu-arrow-down" className="text-passive-1" size="small" />
-    </ListboxArrow>
-  </>
-)
-
-const Dropdown: FunctionComponent<DropdownProps> = ({
-  id,
-  label,
-  items,
   value,
   onChange,
+  items,
   disabled,
-  classNameOverride = {},
   fullWidth,
-  portal = true,
-}) => {
-  const labelId = `${id}-label`
+  classNameOverride = {},
+  popoverPlacement,
+}: DropdownProps) => {
+  const select = useSelectStore({
+    value,
+    setValue: onChange,
+    placement: popoverPlacement || 'top',
+  })
 
-  const handleChange = (value: string) => {
-    const selectedItem = items.find((item) => item.value === value) as DropdownItem
+  const isExpanded = select.useState('open')
 
-    onChange(value, selectedItem)
-  }
+  const currentItem = items.find((item) => item.value === value)
 
   return (
-    <div className={classNameOverride.wrapper}>
-      <VisuallyHidden id={labelId}>{label}</VisuallyHidden>
-      <ListboxInput value={value} onChange={handleChange} aria-labelledby={labelId} disabled={disabled}>
-        <StyledListboxButton
-          className={classNames('w-full', !fullWidth && 'md:w-fit', classNameOverride.button)}
-          children={({ value, label, isExpanded }) => {
-            const current = items.find((item) => item.value === value)
-            const icon = current ? current?.icon : null
-            const iconClassName = current ? current?.iconClassName : null
-            return CustomDropdownButton({
-              value: value ? value : label.toLowerCase(),
-              label,
-              isExpanded,
-              ...(icon ? { icon } : null),
-              ...(iconClassName ? { iconClassName } : null),
-            })
-          }}
-        />
-        <ListboxPopover
-          portal={portal}
-          className={classNames('sn-dropdown sn-dropdown-popover', classNameOverride.popover)}
-        >
-          <div className="sn-component">
-            <ListboxList>
-              {items.map((item) => (
-                <StyledListboxOption key={item.value} value={item.value} label={item.label} disabled={item.disabled}>
-                  {item.icon ? (
-                    <div className="mr-3 flex">
-                      <Icon type={item.icon} className={item.iconClassName ?? ''} size="small" />
-                    </div>
-                  ) : null}
-                  <div className="text-base lg:text-sm">{item.label}</div>
-                </StyledListboxOption>
-              ))}
-            </ListboxList>
-          </div>
-        </ListboxPopover>
-      </ListboxInput>
+    <div
+      className={classNameOverride.wrapper}
+      onKeyDown={(event) => {
+        if (event.key === KeyboardKey.Escape) {
+          event.stopPropagation()
+          select.toggle()
+        }
+      }}
+    >
+      <VisuallyHidden>
+        <SelectLabel store={select}>{label}</SelectLabel>
+      </VisuallyHidden>
+      <Select
+        className={classNames(
+          'flex w-full min-w-55 items-center justify-between rounded border border-border bg-default py-1.5 px-3.5 text-sm text-foreground',
+          disabled && 'opacity-50',
+          classNameOverride.button,
+          !fullWidth && 'md:w-fit',
+        )}
+        store={select}
+        disabled={disabled}
+      >
+        <div className="flex items-center">
+          {currentItem?.icon ? (
+            <div className="mr-2 flex">
+              <Icon type={currentItem.icon} className={currentItem.iconClassName ?? ''} size="small" />
+            </div>
+          ) : null}
+          <div className="text-base lg:text-sm">{currentItem?.label}</div>
+        </div>
+        <Icon type="chevron-down" size="normal" className={isExpanded ? 'rotate-180' : ''} />
+      </Select>
+      <SelectPopover
+        store={select}
+        className={classNames(
+          'z-dropdown-menu max-h-[var(--popover-available-height)] w-[var(--popover-anchor-width)] overflow-y-auto rounded border border-border bg-default py-1',
+          classNameOverride.popover,
+        )}
+        portal={false}
+      >
+        {items.map((item) => (
+          <SelectItem
+            className="flex cursor-pointer items-center bg-transparent py-1.5 px-3 text-sm text-text hover:bg-contrast hover:text-foreground [&[data-active-item]]:bg-info [&[data-active-item]]:text-info-contrast"
+            key={item.value}
+            value={item.value}
+            disabled={item.disabled}
+          >
+            {item.icon ? (
+              <div className="mr-3 flex">
+                <Icon type={item.icon} className={item.iconClassName ?? ''} size="small" />
+              </div>
+            ) : null}
+            <div className="text-base lg:text-sm">{item.label}</div>
+          </SelectItem>
+        ))}
+      </SelectPopover>
     </div>
   )
 }

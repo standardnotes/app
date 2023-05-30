@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { AndroidConfirmBeforeExitKey } from '@/Components/Preferences/Panes/General/Defaults'
 import { observer } from 'mobx-react-lite'
 import { createContext, memo, ReactNode, useCallback, useContext, useEffect } from 'react'

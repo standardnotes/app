@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { createRef } from 'react'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import DecoratedPasswordInput from '../Input/DecoratedPasswordInput'
@@ -153,7 +153,7 @@ class PasswordWizard extends AbstractComponent<Props, State> {
   }
 
   async processPasswordChange() {
-    await this.application.downloadBackup()
+    await this.application.performDesktopTextBackup()
 
     this.setState({
       lockContinue: true,

@@ -1,9 +1,5 @@
 export enum FeatureIdentifier {
-  CloudLink = 'org.standardnotes.cloudlink',
-  DailyDropboxBackup = 'org.standardnotes.daily-dropbox-backup',
   DailyEmailBackup = 'org.standardnotes.daily-email-backup',
-  DailyGDriveBackup = 'org.standardnotes.daily-gdrive-backup',
-  DailyOneDriveBackup = 'org.standardnotes.daily-onedrive-backup',
   Files = 'org.standardnotes.files',
   FilesLowStorageTier = 'org.standardnotes.files-low-storage-tier',
   FilesMaximumStorageTier = 'org.standardnotes.files-max-storage-tier',

@@ -24,7 +24,7 @@ export const Text: FunctionComponent<Props> = ({ children, className }) => (
 )
 
 const buttonClasses =
-  'block bg-default text-text rounded border-solid \
+  'block bg-passive-5 text-text rounded border-solid \
 border px-4 py-1.5 font-bold text-base lg:text-sm w-fit \
 focus:bg-contrast hover:bg-contrast border-border'
 

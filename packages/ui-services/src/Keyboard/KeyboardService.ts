@@ -1,5 +1,4 @@
 import { Environment, Platform } from '@standardnotes/snjs'
-import { removeFromArray } from '@standardnotes/utils'
 import { eventMatchesKeyAndModifiers } from './eventMatchesKeyAndModifiers'
 import { KeyboardCommand } from './KeyboardCommands'
 import { KeyboardKeyEvent } from './KeyboardKeyEvent'
@@ -10,7 +9,7 @@ import { getKeyboardShortcuts } from './getKeyboardShortcuts'
 
 export class KeyboardService {
   readonly activeModifiers = new Set<KeyboardModifier>()
-  private commandHandlers: KeyboardCommandHandler[] = []
+  private commandHandlers = new Set<KeyboardCommandHandler>()
   private commandMap = new Map<KeyboardCommand, KeyboardShortcut>()
 
   constructor(private platform: Platform, environment: Environment) {
@@ -29,7 +28,7 @@ export class KeyboardService {
   }
 
   public deinit() {
-    this.commandHandlers.length = 0
+    this.commandHandlers.clear()
     window.removeEventListener('keydown', this.handleKeyDown)
     window.removeEventListener('keyup', this.handleKeyUp)
     window.removeEventListener('blur', this.handleWindowBlur)
@@ -130,7 +129,7 @@ export class KeyboardService {
   private handleCommand(command: KeyboardCommand, event: KeyboardEvent, keyEvent: KeyboardKeyEvent): void {
     const target = event.target as HTMLElement
 
-    for (const observer of this.commandHandlers) {
+    for (const observer of Array.from(this.commandHandlers).reverse()) {
       if (observer.command !== command) {
         continue
       }
@@ -166,7 +165,7 @@ export class KeyboardService {
   }
 
   public triggerCommand(command: KeyboardCommand, data?: unknown): void {
-    for (const observer of this.commandHandlers) {
+    for (const observer of Array.from(this.commandHandlers).reverse()) {
       if (observer.command !== command) {
         continue
       }
@@ -186,13 +185,12 @@ export class KeyboardService {
   }
 
   addCommandHandler(observer: KeyboardCommandHandler): () => void {
-    this.commandHandlers.push(observer)
+    this.commandHandlers.add(observer)
 
-    const thislessObservers = this.commandHandlers
     return () => {
       observer.onKeyDown = undefined
       observer.onKeyDown = undefined
-      removeFromArray(thislessObservers, observer)
+      this.commandHandlers.delete(observer)
     }
   }
 

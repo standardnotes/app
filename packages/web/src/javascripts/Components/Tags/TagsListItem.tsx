@@ -3,7 +3,6 @@ import { FOCUSABLE_BUT_NOT_TABBABLE, TAG_FOLDERS_FEATURE_NAME } from '@/Constant
 import { KeyboardKey } from '@standardnotes/ui-services'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { NavigationController } from '@/Controllers/Navigation/NavigationController'
-import '@reach/tooltip/styles.css'
 import { IconType, SNTag } from '@standardnotes/snjs'
 import { computed } from 'mobx'
 import { observer } from 'mobx-react-lite'

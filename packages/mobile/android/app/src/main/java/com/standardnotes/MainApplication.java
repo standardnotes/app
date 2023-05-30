@@ -37,6 +37,9 @@ public class MainApplication extends Application implements ReactApplication {
       @SuppressWarnings("UnnecessaryLocalVariable")
       List<ReactPackage> packages = new PackageList(this).getPackages();
 
+      packages.add(new Fido2ApiPackage());
+      packages.add(new CustomWebViewPackage());
+
       return packages;
     }
 

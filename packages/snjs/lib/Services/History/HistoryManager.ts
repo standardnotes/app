@@ -5,7 +5,12 @@ import { DiskStorageService } from '@Lib/Services/Storage/DiskStorageService'
 import { UuidString } from '../../Types/UuidString'
 import * as Models from '@standardnotes/models'
 import { SNNote } from '@standardnotes/models'
-import { AbstractService, DeviceInterface, InternalEventBusInterface } from '@standardnotes/services'
+import {
+  AbstractService,
+  DeviceInterface,
+  HistoryServiceInterface,
+  InternalEventBusInterface,
+} from '@standardnotes/services'
 
 /** The amount of revisions per item above which should call for an optimization. */
 const DefaultItemRevisionsThreshold = 20
@@ -25,7 +30,7 @@ const LargeEntryDeltaThreshold = 25
  * 2. Remote server history. Entries are automatically added by the server and must be
  *    retrieved per item via an API call.
  */
-export class SNHistoryManager extends AbstractService {
+export class SNHistoryManager extends AbstractService implements HistoryServiceInterface {
   private removeChangeObserver: () => void
 
   /**

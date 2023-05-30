@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { MfaProps } from './Panes/Security/TwoFactorAuth/MfaProps'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 

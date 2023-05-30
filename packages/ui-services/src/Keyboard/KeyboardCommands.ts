@@ -37,3 +37,5 @@ export const SUPER_EXPORT_JSON = createKeyboardCommand('SUPER_EXPORT_JSON')
 export const SUPER_EXPORT_MARKDOWN = createKeyboardCommand('SUPER_EXPORT_MARKDOWN')
 export const SUPER_EXPORT_HTML = createKeyboardCommand('SUPER_EXPORT_HTML')
 export const OPEN_PREFERENCES_COMMAND = createKeyboardCommand('OPEN_PREFERENCES_COMMAND')
+
+export const CHANGE_EDITOR_WIDTH_COMMAND = createKeyboardCommand('CHANGE_EDITOR_WIDTH_COMMAND')

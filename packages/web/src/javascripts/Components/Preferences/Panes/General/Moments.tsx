@@ -1,5 +1,5 @@
 import { Pill, Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useCallback, useEffect, useState } from 'react'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
@@ -21,7 +21,7 @@ const Moments: FunctionComponent<Props> = ({ application }: Props) => {
   const momentsEnabled = application.momentsService.isEnabled
   const premiumModal = usePremiumModal()
 
-  const defaultTagId = usePreference<string>(PrefKey.MomentsDefaultTagUuid)
+  const defaultTagId = usePreference(PrefKey.MomentsDefaultTagUuid)
   const [defaultTag, setDefaultTag] = useState<SNTag | undefined>()
 
   useEffect(() => {
@@ -113,22 +113,16 @@ const Moments: FunctionComponent<Props> = ({ application }: Props) => {
           <div className="flex flex-col"></div>
           <PreferencesSegment>
             <Text>
-              Introducing Moments, a new feature in Standard Notes that lets you capture candid photos of yourself
-              throughout the day, right in the app. With Moments, you can create a visual record of your life, one photo
-              at a time.
+              Moments lets you capture photos of yourself throughout the day, creating a visual record of your life, one
+              photo at a time.
             </Text>
 
             <Text className="mt-3">
-              Moments uses your webcam or mobile selfie-cam to take a photo of you every half hour, ensuring that you
-              have a complete record of your day. And because all photos are end-to-end encrypted and stored in your
-              private account, you can trust that your memories are safe and secure.
+              Using your webcam or mobile selfie-cam, Moments takes a photo of you every half hour, keeping a complete
+              record of your day. All photos are end-to-end encrypted and stored in your private account. Enable Moments
+              on a per-device basis to get started.
             </Text>
 
-            <Text className="mt-3">
-              Whether you're working at your computer or capturing notes on the go from your mobile device, Moments is a
-              fun and easy way to document your life. Plus, with customizable photo intervals coming soon, you'll be
-              able to tailor Moments to your unique needs. Enable Moments on a per-device basis to get started.
-            </Text>
             <div className="mt-5 flex flex-row flex-wrap gap-3">
               <Button colorStyle="info" onClick={takePhoto}>
                 Capture Present Moment

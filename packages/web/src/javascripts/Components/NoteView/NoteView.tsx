@@ -2,20 +2,20 @@ import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import ChangeEditorButton from '@/Components/ChangeEditor/ChangeEditorButton'
 import ComponentView from '@/Components/ComponentView/ComponentView'
 import NotesOptionsPanel from '@/Components/NotesOptions/NotesOptionsPanel'
-import PanelResizer, { PanelResizeType, PanelSide } from '@/Components/PanelResizer/PanelResizer'
 import PinNoteButton from '@/Components/PinNoteButton/PinNoteButton'
 import ProtectedItemOverlay from '@/Components/ProtectedItemOverlay/ProtectedItemOverlay'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { StringDeleteNote, STRING_DELETE_LOCKED_ATTEMPT, STRING_DELETE_PLACEHOLDER_ATTEMPT } from '@/Constants/Strings'
 import { log, LoggingDomain } from '@/Logging'
-import { debounce, isDesktopApplication, isMobileScreen, isTabletOrMobileScreen } from '@/Utils'
+import { debounce, isDesktopApplication, isMobileScreen } from '@/Utils'
 import { classNames } from '@standardnotes/utils'
 import {
   ApplicationEvent,
   ComponentArea,
   ComponentViewerInterface,
   ContentType,
+  EditorLineWidth,
   isPayloadSourceInternalChange,
   isPayloadSourceRetrieved,
   NoteType,
@@ -26,7 +26,7 @@ import {
   SNNote,
 } from '@standardnotes/snjs'
 import { confirmDialog, DELETE_NOTE_KEYBOARD_COMMAND, KeyboardKey } from '@standardnotes/ui-services'
-import { ChangeEventHandler, createRef, KeyboardEventHandler, RefObject } from 'react'
+import { ChangeEventHandler, createRef, CSSProperties, KeyboardEventHandler, RefObject } from 'react'
 import { SuperEditor } from '../SuperEditor/SuperEditor'
 import IndicatorCircle from '../IndicatorCircle/IndicatorCircle'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
@@ -44,6 +44,7 @@ import {
 import { SuperEditorContentId } from '../SuperEditor/Constants'
 import { NoteViewController } from './Controller/NoteViewController'
 import { PlainEditor, PlainEditorInterface } from './PlainEditor/PlainEditor'
+import { EditorMargins, EditorMaxWidths } from '../EditorWidthSelectionModal/EditorWidths'
 
 const MinimumStatusDuration = 400
 
@@ -58,7 +59,7 @@ type State = {
   editorStateDidLoad: boolean
   editorTitle: string
   isDesktop?: boolean
-  marginResizersEnabled?: boolean
+  editorLineWidth: EditorLineWidth
   noteLocked: boolean
   noteStatus?: NoteStatus
   saveError?: boolean
@@ -68,10 +69,7 @@ type State = {
   syncTakingTooLong: boolean
   monospaceFont?: boolean
   plainEditorFocused?: boolean
-  leftResizerWidth: number
-  leftResizerOffset: number
-  rightResizerWidth: number
-  rightResizerOffset: number
+  paneGestureEnabled?: boolean
 
   updateSavingIndicator?: boolean
   editorFeatureIdentifier?: string
@@ -112,6 +110,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       availableStackComponents: [],
       editorStateDidLoad: false,
       editorTitle: '',
+      editorLineWidth: PrefDefaults[PrefKey.EditorLineWidth],
       isDesktop: isDesktopApplication(),
       noteStatus: undefined,
       noteLocked: this.controller.item.locked,
@@ -119,10 +118,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       spellcheck: true,
       stackComponentViewers: [],
       syncTakingTooLong: false,
-      leftResizerWidth: 0,
-      leftResizerOffset: 0,
-      rightResizerWidth: 0,
-      rightResizerOffset: 0,
       editorFeatureIdentifier: this.controller.item.editorIdentifier,
       noteType: this.controller.item.noteType,
     }
@@ -279,6 +274,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     }
 
     this.reloadSpellcheck().catch(console.error)
+
+    this.reloadLineWidth()
 
     const isTemplateNoteInsertedToBeInteractableWithEditor = source === PayloadEmitSource.LocalInserted && note.dirty
     if (isTemplateNoteInsertedToBeInteractableWithEditor) {
@@ -660,6 +657,14 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
     }
   }
 
+  reloadLineWidth() {
+    const editorLineWidth = this.viewControllerManager.notesController.getEditorWidthForNote(this.note)
+
+    this.setState({
+      editorLineWidth,
+    })
+  }
+
   async reloadPreferences() {
     log(LoggingDomain.NoteView, 'Reload preferences')
     const monospaceFont = this.application.getPreference(
@@ -667,41 +672,27 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       PrefDefaults[PrefKey.EditorMonospaceEnabled],
     )
 
-    const marginResizersEnabled =
-      !isTabletOrMobileScreen() &&
-      this.application.getPreference(PrefKey.EditorResizersEnabled, PrefDefaults[PrefKey.EditorResizersEnabled])
-
     const updateSavingIndicator = this.application.getPreference(
       PrefKey.UpdateSavingStatusIndicator,
       PrefDefaults[PrefKey.UpdateSavingStatusIndicator],
     )
 
+    const paneGestureEnabled = this.application.getPreference(
+      PrefKey.PaneGesturesEnabled,
+      PrefDefaults[PrefKey.PaneGesturesEnabled],
+    )
+
     await this.reloadSpellcheck()
+
+    this.reloadLineWidth()
 
     this.setState({
       monospaceFont,
-      marginResizersEnabled,
       updateSavingIndicator,
+      paneGestureEnabled,
     })
 
     reloadFont(monospaceFont)
-
-    if (marginResizersEnabled) {
-      const width = this.application.getPreference(PrefKey.EditorWidth, PrefDefaults[PrefKey.EditorWidth])
-      if (width != null) {
-        this.setState({
-          leftResizerWidth: width,
-          rightResizerWidth: width,
-        })
-      }
-      const left = this.application.getPreference(PrefKey.EditorLeft, PrefDefaults[PrefKey.EditorLeft])
-      if (left != null) {
-        this.setState({
-          leftResizerOffset: left,
-          rightResizerOffset: left,
-        })
-      }
-    }
   }
 
   async reloadStackComponents() {
@@ -869,6 +860,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                   />
                   <ChangeEditorButton
                     viewControllerManager={this.viewControllerManager}
+                    noteViewController={this.controller}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
                   <PinNoteButton
@@ -896,26 +888,21 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
 
         <div
           id={ElementIds.EditorContent}
-          className={`${ElementIds.EditorContent} z-editor-content overflow-auto`}
+          className={classNames(
+            ElementIds.EditorContent,
+            'z-editor-content overflow-auto [&>*]:mx-[var(--editor-margin)] [&>*]:max-w-[var(--editor-max-width)]',
+          )}
+          style={
+            {
+              '--editor-margin': EditorMargins[this.state.editorLineWidth],
+              '--editor-max-width': EditorMaxWidths[this.state.editorLineWidth],
+            } as CSSProperties
+          }
           ref={this.editorContentRef}
         >
-          {this.state.marginResizersEnabled && this.editorContentRef.current ? (
-            <PanelResizer
-              minWidth={300}
-              hoverable={true}
-              collapsable={false}
-              panel={this.editorContentRef.current}
-              side={PanelSide.Left}
-              type={PanelResizeType.OffsetAndWidth}
-              left={this.state.leftResizerOffset}
-              width={this.state.leftResizerWidth}
-              resizeFinishCallback={this.onPanelResizeFinish}
-              modifyElementWidth={true}
-            />
-          ) : null}
-
           {editorMode === 'component' && this.state.editorComponentViewer && (
-            <div className="component-view flex-grow">
+            <div className="component-view relative flex-grow">
+              {this.state.paneGestureEnabled && <div className="absolute top-0 left-0 h-full w-[20px] md:hidden" />}
               <ComponentView
                 key={this.state.editorComponentViewer.identifier}
                 componentViewer={this.state.editorComponentViewer}
@@ -950,21 +937,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
               />
             </div>
           )}
-
-          {this.state.marginResizersEnabled && this.editorContentRef.current ? (
-            <PanelResizer
-              minWidth={300}
-              hoverable={true}
-              collapsable={false}
-              panel={this.editorContentRef.current}
-              side={PanelSide.Right}
-              type={PanelResizeType.OffsetAndWidth}
-              left={this.state.rightResizerOffset}
-              width={this.state.rightResizerWidth}
-              resizeFinishCallback={this.onPanelResizeFinish}
-              modifyElementWidth={true}
-            />
-          ) : null}
         </div>
 
         <div id="editor-pane-component-stack">

@@ -1,32 +1,31 @@
 import fs from 'fs'
-import path from 'path'
-import { BackupsDirectoryName } from '../Backups/BackupsManager'
 import { Language } from '../SpellcheckerManager'
 import { FileDoesNotExist } from '../Utils/FileUtils'
-import { ensureIsBoolean, isBoolean, isDev, isTesting } from '../Utils/Utils'
+import { ensureIsBoolean, isBoolean } from '../Utils/Utils'
 import { StoreData, StoreKeys } from './StoreKeys'
-import { app, logError } from './Store'
+import { logError } from './Store'
 
 export function createSanitizedStoreData(data: any = {}): StoreData {
   return {
     [StoreKeys.MenuBarVisible]: ensureIsBoolean(data[StoreKeys.MenuBarVisible], true),
     [StoreKeys.UseSystemMenuBar]: ensureIsBoolean(data[StoreKeys.UseSystemMenuBar], false),
-    [StoreKeys.BackupsDisabled]: ensureIsBoolean(data[StoreKeys.BackupsDisabled], false),
     [StoreKeys.MinimizeToTray]: ensureIsBoolean(data[StoreKeys.MinimizeToTray], false),
     [StoreKeys.EnableAutoUpdate]: ensureIsBoolean(data[StoreKeys.EnableAutoUpdate], true),
     [StoreKeys.UseNativeKeychain]: isBoolean(data[StoreKeys.UseNativeKeychain])
       ? data[StoreKeys.UseNativeKeychain]
       : null,
     [StoreKeys.ExtServerHost]: data[StoreKeys.ExtServerHost],
-    [StoreKeys.BackupsLocation]: sanitizeBackupsLocation(data[StoreKeys.BackupsLocation]),
     [StoreKeys.ZoomFactor]: sanitizeZoomFactor(data[StoreKeys.ZoomFactor]),
     [StoreKeys.SelectedSpellCheckerLanguageCodes]: sanitizeSpellCheckerLanguageCodes(
       data[StoreKeys.SelectedSpellCheckerLanguageCodes],
     ),
-    [StoreKeys.FileBackupsEnabled]: ensureIsBoolean(data[StoreKeys.FileBackupsEnabled], false),
-    [StoreKeys.FileBackupsLocation]: data[StoreKeys.FileBackupsLocation],
     [StoreKeys.LastRunVersion]: data[StoreKeys.LastRunVersion],
     [StoreKeys.DesktopServerDataLocation]: data[StoreKeys.DesktopServerDataLocation],
+
+    [StoreKeys.LegacyTextBackupsLocation]: data[StoreKeys.LegacyTextBackupsLocation],
+    [StoreKeys.LegacyTextBackupsDisabled]: data[StoreKeys.LegacyTextBackupsDisabled],
+    [StoreKeys.LegacyFileBackupsEnabled]: data[StoreKeys.LegacyFileBackupsEnabled],
+    [StoreKeys.LegacyFileBackupsLocation]: data[StoreKeys.LegacyFileBackupsLocation],
   }
 }
 function sanitizeZoomFactor(factor?: any): number {
@@ -36,29 +35,7 @@ function sanitizeZoomFactor(factor?: any): number {
     return 1
   }
 }
-function sanitizeBackupsLocation(location?: unknown): string {
-  const defaultPath = path.join(
-    isTesting() ? app.getPath('userData') : isDev() ? app.getPath('documents') : app.getPath('home'),
-    BackupsDirectoryName,
-  )
 
-  if (typeof location !== 'string') {
-    return defaultPath
-  }
-
-  try {
-    const stat = fs.lstatSync(location)
-    if (stat.isDirectory()) {
-      return location
-    }
-    /** Path points to something other than a directory */
-    return defaultPath
-  } catch (e) {
-    /** Path does not point to a valid directory */
-    logError(e)
-    return defaultPath
-  }
-}
 function sanitizeSpellCheckerLanguageCodes(languages?: unknown): Set<Language> | null {
   if (!languages) {
     return null

@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import Button from '@/Components/Button/Button'
 import { ContentType, isSystemView, SmartView } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
@@ -89,12 +89,12 @@ const SmartViews = ({ application, featuresController }: Props) => {
           )}
         </PreferencesSegment>
       </PreferencesGroup>
-      <ModalOverlay isOpen={!!editSmartViewModalController.view} onDismiss={editSmartViewModalController.closeDialog}>
+      <ModalOverlay isOpen={!!editSmartViewModalController.view} close={editSmartViewModalController.closeDialog}>
         <EditSmartViewModal controller={editSmartViewModalController} platform={application.platform} />
       </ModalOverlay>
       <ModalOverlay
         isOpen={addSmartViewModalController.isAddingSmartView}
-        onDismiss={addSmartViewModalController.closeModal}
+        close={addSmartViewModalController.closeModal}
       >
         <AddSmartViewModal controller={addSmartViewModalController} platform={application.platform} />
       </ModalOverlay>

@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ChallengePrompt } from '@standardnotes/services'
 import { RefObject, useState } from 'react'
 import Button from '../Button/Button'

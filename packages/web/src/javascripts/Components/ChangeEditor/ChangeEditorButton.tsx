@@ -7,13 +7,20 @@ import RoundIconButton from '../Button/RoundIconButton'
 import { getIconAndTintForNoteType } from '@/Utils/Items/Icons/getIconAndTintForNoteType'
 import { CHANGE_EDITOR_COMMAND, keyboardStringForShortcut } from '@standardnotes/ui-services'
 import { useApplication } from '../ApplicationProvider'
+import { NoteViewController } from '../NoteView/Controller/NoteViewController'
+import { noteTypeForEditorIdentifier } from '@standardnotes/snjs'
 
 type Props = {
   viewControllerManager: ViewControllerManager
+  noteViewController?: NoteViewController
   onClickPreprocessing?: () => Promise<void>
 }
 
-const ChangeEditorButton: FunctionComponent<Props> = ({ viewControllerManager, onClickPreprocessing }: Props) => {
+const ChangeEditorButton: FunctionComponent<Props> = ({
+  viewControllerManager,
+  noteViewController,
+  onClickPreprocessing,
+}: Props) => {
   const application = useApplication()
 
   const note = viewControllerManager.notesController.firstSelectedNote
@@ -23,10 +30,18 @@ const ChangeEditorButton: FunctionComponent<Props> = ({ viewControllerManager, o
   const [selectedEditor, setSelectedEditor] = useState(() => {
     return note ? application.componentManager.editorForNote(note) : undefined
   })
-  const [selectedEditorIcon, selectedEditorIconTint] = getIconAndTintForNoteType(
-    note?.noteType || selectedEditor?.package_info.note_type,
-    true,
-  )
+  const noteType = noteViewController?.isTemplateNote
+    ? noteTypeForEditorIdentifier(
+        application.geDefaultEditorIdentifier(
+          noteViewController.templateNoteOptions?.tag
+            ? application.items.findItem(noteViewController.templateNoteOptions.tag)
+            : undefined,
+        ),
+      )
+    : note
+    ? note.noteType
+    : selectedEditor?.package_info.note_type
+  const [selectedEditorIcon, selectedEditorIconTint] = getIconAndTintForNoteType(noteType, true)
   const [isClickOutsideDisabled, setIsClickOutsideDisabled] = useState(false)
 
   const toggleMenu = useCallback(async () => {
@@ -36,10 +51,6 @@ const ChangeEditorButton: FunctionComponent<Props> = ({ viewControllerManager, o
     }
     setIsOpen(willMenuOpen)
   }, [onClickPreprocessing, isOpen])
-
-  const disableClickOutside = useCallback(() => {
-    setIsClickOutsideDisabled(true)
-  }, [])
 
   useEffect(() => {
     return application.keyboardService.addCommandHandler({
@@ -76,7 +87,7 @@ const ChangeEditorButton: FunctionComponent<Props> = ({ viewControllerManager, o
           application={application}
           isVisible={isOpen}
           note={note}
-          handleDisableClickoutsideRequest={disableClickOutside}
+          setDisableClickOutside={setIsClickOutsideDisabled}
           closeMenu={() => {
             setIsOpen(false)
           }}

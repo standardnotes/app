@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/snjs",
-  "version": "2.166.20",
+  "version": "2.168.18",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -29,7 +29,7 @@
     "lint:eslint": "eslint --ext .ts lib/",
     "lint:fix": "eslint --fix --ext .ts lib/",
     "lint:tsc": "tsc --noEmit --emitDeclarationOnly false --project lib/tsconfig.json",
-    "test": "jest --coverage",
+    "test": "jest",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand"
   },
   "devDependencies": {
@@ -37,7 +37,7 @@
     "@babel/preset-env": "*",
     "@standardnotes/api": "workspace:*",
     "@standardnotes/common": "^1.46.6",
-    "@standardnotes/domain-core": "^1.11.3",
+    "@standardnotes/domain-core": "^1.12.0",
     "@standardnotes/domain-events": "^2.108.1",
     "@standardnotes/encryption": "workspace:*",
     "@standardnotes/features": "workspace:*",

@@ -1,8 +1,7 @@
 import { SNApiService } from '../Api/ApiService'
 import { SettingsGateway } from './SettingsGateway'
 import { SNSessionManager } from '../Session/SessionManager'
-import { CloudProvider, EmailBackupFrequency, SettingName } from '@standardnotes/settings'
-import { ExtensionsServerURL } from '@Lib/Hosts'
+import { EmailBackupFrequency, SettingName } from '@standardnotes/settings'
 import { AbstractService, InternalEventBusInterface } from '@standardnotes/services'
 import { SettingsClientInterface } from './SettingsClientInterface'
 
@@ -12,12 +11,6 @@ export class SNSettingsService extends AbstractService implements SettingsClient
     [EmailBackupFrequency.Disabled]: 'No email backups',
     [EmailBackupFrequency.Daily]: 'Daily',
     [EmailBackupFrequency.Weekly]: 'Weekly',
-  }
-
-  private cloudProviderIntegrationUrlEndpoints = {
-    [CloudProvider.Dropbox]: 'dropbox',
-    [CloudProvider.Google]: 'gdrive',
-    [CloudProvider.OneDrive]: 'onedrive',
   }
 
   constructor(
@@ -58,11 +51,6 @@ export class SNSettingsService extends AbstractService implements SettingsClient
 
   getEmailBackupFrequencyOptionLabel(frequency: EmailBackupFrequency): string {
     return this.frequencyOptionsLabels[frequency]
-  }
-
-  getCloudProviderIntegrationUrl(cloudProviderName: CloudProvider): string {
-    const { Prod } = ExtensionsServerURL
-    return `${Prod}/${this.cloudProviderIntegrationUrlEndpoints[cloudProviderName]}?redirect_url=${Prod}/components/cloudlink?`
   }
 
   override deinit(): void {

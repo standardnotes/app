@@ -1,7 +1,7 @@
 import { ReactNode, createContext, useContext, memo } from 'react'
 
 import { observer } from 'mobx-react-lite'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 
 const ApplicationContext = createContext<WebApplication | undefined>(undefined)
 

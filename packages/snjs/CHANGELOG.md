@@ -3,6 +3,120 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.168.18](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.17...@standardnotes/snjs@2.168.18) (2023-05-26)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.17](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.16...@standardnotes/snjs@2.168.17) (2023-05-25)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.16](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.15...@standardnotes/snjs@2.168.16) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.15](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.14...@standardnotes/snjs@2.168.15) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.14](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.13...@standardnotes/snjs@2.168.14) (2023-05-19)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.13](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.12...@standardnotes/snjs@2.168.13) (2023-05-18)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.12](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.11...@standardnotes/snjs@2.168.12) (2023-05-18)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.11](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.10...@standardnotes/snjs@2.168.11) (2023-05-16)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.10](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.9...@standardnotes/snjs@2.168.10) (2023-05-16)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.9](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.8...@standardnotes/snjs@2.168.9) (2023-05-12)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.8](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.7...@standardnotes/snjs@2.168.8) (2023-05-11)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.7](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.6...@standardnotes/snjs@2.168.7) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.6](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.5...@standardnotes/snjs@2.168.6) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.4...@standardnotes/snjs@2.168.5) (2023-05-05)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.3...@standardnotes/snjs@2.168.4) (2023-05-04)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.2...@standardnotes/snjs@2.168.3) (2023-05-04)
+
+### Bug Fixes
+
+* workspace names now default to account email after signing in. It can later be changed from the workspace switcher menu. ([8385b4e](https://github.com/standardnotes/app/commit/8385b4e89fa0fc3204532adda9d085d9c0fd7996))
+
+## [2.168.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.1...@standardnotes/snjs@2.168.2) (2023-05-03)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.0...@standardnotes/snjs@2.168.1) (2023-05-02)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+# [2.168.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.167.5...@standardnotes/snjs@2.168.0) (2023-05-02)
+
+### Features
+
+* Automatic plaintext backup option in Preferences > Backups will backup your notes and tags into plaintext, unencrypted folders on your computer. In addition, automatic encrypted text backups preference management has moved from the top-level menu in the desktop app to Preferences > Backups. ([#2322](https://github.com/standardnotes/app/issues/2322)) ([7e3db49](https://github.com/standardnotes/app/commit/7e3db49322034aa644c3c99ccf9a5f1b508583aa))
+
+## [2.167.5](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.167.4...@standardnotes/snjs@2.167.5) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.167.4](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.167.3...@standardnotes/snjs@2.167.4) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.167.3](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.167.2...@standardnotes/snjs@2.167.3) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.167.2](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.167.1...@standardnotes/snjs@2.167.2) (2023-04-24)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.167.1](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.167.0...@standardnotes/snjs@2.167.1) (2023-04-20)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+# [2.167.0](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.22...@standardnotes/snjs@2.167.0) (2023-04-17)
+
+### Features
+
+* **mobile:** add U2F support for Android devices ([#2311](https://github.com/standardnotes/app/issues/2311)) ([725f55f](https://github.com/standardnotes/app/commit/725f55fca794b86c245742837af7e4370cebd68c))
+
+## [2.166.22](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.21...@standardnotes/snjs@2.166.22) (2023-04-15)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.166.21](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.20...@standardnotes/snjs@2.166.21) (2023-04-14)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
 ## [2.166.20](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.166.19...@standardnotes/snjs@2.166.20) (2023-04-11)
 
 **Note:** Version bump only for package @standardnotes/snjs

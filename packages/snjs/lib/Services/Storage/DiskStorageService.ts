@@ -19,7 +19,6 @@ import {
   DeletedPayloadInterface,
   PayloadTimestampDefaults,
   LocalStorageEncryptedContextualPayload,
-  Environment,
   FullyFormedTransferPayload,
 } from '@standardnotes/models'
 
@@ -37,7 +36,6 @@ export class DiskStorageService extends Services.AbstractService implements Serv
   private encryptionProvider!: Encryption.EncryptionProviderInterface
   private storagePersistable = false
   private persistencePolicy!: Services.StoragePersistencePolicies
-  private encryptionPolicy!: Services.StorageEncryptionPolicy
   private needsPersist = false
   private currentPersistPromise?: Promise<Services.StorageValuesObject>
 
@@ -46,12 +44,10 @@ export class DiskStorageService extends Services.AbstractService implements Serv
   constructor(
     private deviceInterface: Services.DeviceInterface,
     private identifier: string,
-    private environment: Environment,
     protected override internalEventBus: Services.InternalEventBusInterface,
   ) {
     super(internalEventBus)
     void this.setPersistencePolicy(Services.StoragePersistencePolicies.Default)
-    void this.setEncryptionPolicy(Services.StorageEncryptionPolicy.Default, false)
   }
 
   public provideEncryptionProvider(provider: Encryption.EncryptionProviderInterface): void {
@@ -73,11 +69,6 @@ export class DiskStorageService extends Services.AbstractService implements Serv
       if (this.needsPersist) {
         void this.persistValuesToDisk()
       }
-    } else if (stage === Services.ApplicationStage.StorageDecrypted_09) {
-      const persistedPolicy = await this.getValue(Services.StorageKey.StorageEncryptionPolicy)
-      if (persistedPolicy) {
-        void this.setEncryptionPolicy(persistedPolicy as Services.StorageEncryptionPolicy, false)
-      }
     }
   }
 
@@ -89,21 +80,6 @@ export class DiskStorageService extends Services.AbstractService implements Serv
       await this.deviceInterface.removeAllDatabaseEntries(this.identifier)
       await this.deviceInterface.removeRawStorageValuesForIdentifier(this.identifier)
       await this.clearAllPayloads()
-    }
-  }
-
-  public setEncryptionPolicy(encryptionPolicy: Services.StorageEncryptionPolicy, persist = true): void {
-    if (
-      encryptionPolicy === Services.StorageEncryptionPolicy.Disabled &&
-      ![Environment.Mobile].includes(this.environment)
-    ) {
-      throw Error('Disabling storage encryption is only available on mobile.')
-    }
-
-    this.encryptionPolicy = encryptionPolicy
-
-    if (persist) {
-      this.setValue(Services.StorageKey.StorageEncryptionPolicy, encryptionPolicy)
     }
   }
 
@@ -331,10 +307,6 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     }
   }
 
-  public getStorageEncryptionPolicy() {
-    return this.encryptionPolicy
-  }
-
   /**
    * Default persistence key. Platforms can override as needed.
    */
@@ -395,36 +367,29 @@ export class DiskStorageService extends Services.AbstractService implements Serv
 
     const { encrypted, decrypted, deleted, discardable } = CreatePayloadSplitWithDiscardables(payloads)
 
-    const encryptionEnabled = this.encryptionPolicy === Services.StorageEncryptionPolicy.Default
     const rootKeyEncryptionAvailable = this.encryptionProvider.hasRootKeyEncryptionSource()
 
     const encryptable: DecryptedPayloadInterface[] = []
     const unencryptable: DecryptedPayloadInterface[] = []
 
-    if (encryptionEnabled) {
-      const split = Encryption.SplitPayloadsByEncryptionType(decrypted)
+    const split = Encryption.SplitPayloadsByEncryptionType(decrypted)
+    if (split.itemsKeyEncryption) {
+      extendArray(encryptable, split.itemsKeyEncryption)
+    }
 
-      if (split.itemsKeyEncryption) {
-        extendArray(encryptable, split.itemsKeyEncryption)
+    if (split.rootKeyEncryption) {
+      if (!rootKeyEncryptionAvailable) {
+        extendArray(unencryptable, split.rootKeyEncryption)
+      } else {
+        extendArray(encryptable, split.rootKeyEncryption)
       }
-
-      if (split.rootKeyEncryption) {
-        if (!rootKeyEncryptionAvailable) {
-          extendArray(unencryptable, split.rootKeyEncryption)
-        } else {
-          extendArray(encryptable, split.rootKeyEncryption)
-        }
-      }
-    } else {
-      extendArray(unencryptable, encryptable)
-      extendArray(unencryptable, decrypted)
     }
 
     await this.deletePayloads(discardable)
 
-    const split = Encryption.SplitPayloadsByEncryptionType(encryptable)
+    const encryptableSplit = Encryption.SplitPayloadsByEncryptionType(encryptable)
 
-    const keyLookupSplit = Encryption.CreateEncryptionSplitWithKeyLookup(split)
+    const keyLookupSplit = Encryption.CreateEncryptionSplitWithKeyLookup(encryptableSplit)
 
     const encryptedResults = await this.encryptionProvider.encryptSplit(keyLookupSplit)
 
@@ -480,7 +445,6 @@ export class DiskStorageService extends Services.AbstractService implements Serv
       storage: {
         storagePersistable: this.storagePersistable,
         persistencePolicy: Services.StoragePersistencePolicies[this.persistencePolicy],
-        encryptionPolicy: Services.StorageEncryptionPolicy[this.encryptionPolicy],
         needsPersist: this.needsPersist,
         currentPersistPromise: this.currentPersistPromise != undefined,
         isStorageWrapped: this.isStorageWrapped(),

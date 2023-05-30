@@ -8,7 +8,7 @@ import TwoFactorDescription from './TwoFactorDescription'
 import TwoFactorSwitch from './TwoFactorSwitch'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import RecoveryCodeBanner from '@/Components/RecoveryCodeBanner/RecoveryCodeBanner'
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
@@ -91,14 +91,12 @@ const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application }) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <div className="flex flex-row items-center">
+          <div className="flex flex-row gap-2 md:items-center">
             <div className="flex flex-grow flex-col">
               <TwoFactorTitle auth={auth} />
               <TwoFactorDescription auth={auth} />
             </div>
-            <div className="flex min-w-15 flex-col items-center justify-center">
-              <TwoFactorSwitch auth={auth} />
-            </div>
+            <TwoFactorSwitch auth={auth} />
           </div>
         </PreferencesSegment>
 
@@ -115,7 +113,7 @@ const TwoFactorAuthView: FunctionComponent<Props> = ({ auth, application }) => {
           </PreferencesSegment>
         )}
       </PreferencesGroup>
-      <ModalOverlay isOpen={shouldShowActivationModal} onDismiss={closeActivationModal}>
+      <ModalOverlay isOpen={shouldShowActivationModal} close={closeActivationModal}>
         <Modal title={activationModalTitle} close={closeActivationModal} actions={activationModalActions}>
           {shouldShowActivationModal && <TwoFactorActivationView activation={auth.status} />}
         </Modal>

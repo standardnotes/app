@@ -3,7 +3,7 @@ import { ContentType } from '@standardnotes/common'
 import { EditorFeatureDescription } from '../../Feature/FeatureDescription'
 import { ComponentArea } from '../../Component/ComponentArea'
 
-export type RequiredEditorFields = Pick<EditorFeatureDescription, 'availableInSubscriptions'>
+export type RequiredEditorFields = Pick<EditorFeatureDescription, 'availableInRoles'>
 
 export function FillEditorComponentDefaults(
   component: Partial<EditorFeatureDescription> & RequiredEditorFields,

@@ -3,6 +3,74 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.15.8](https://github.com/standardnotes/app/compare/@standardnotes/files@1.15.7...@standardnotes/files@1.15.8) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.15.7](https://github.com/standardnotes/app/compare/@standardnotes/files@1.15.6...@standardnotes/files@1.15.7) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.15.6](https://github.com/standardnotes/app/compare/@standardnotes/files@1.15.5...@standardnotes/files@1.15.6) (2023-05-12)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.15.5](https://github.com/standardnotes/app/compare/@standardnotes/files@1.15.4...@standardnotes/files@1.15.5) (2023-05-11)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.15.4](https://github.com/standardnotes/app/compare/@standardnotes/files@1.15.3...@standardnotes/files@1.15.4) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.15.3](https://github.com/standardnotes/app/compare/@standardnotes/files@1.15.2...@standardnotes/files@1.15.3) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.15.2](https://github.com/standardnotes/app/compare/@standardnotes/files@1.15.1...@standardnotes/files@1.15.2) (2023-05-04)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.15.1](https://github.com/standardnotes/app/compare/@standardnotes/files@1.15.0...@standardnotes/files@1.15.1) (2023-05-02)
+
+### Bug Fixes
+
+* automatically convert Super notes to Markdown for the Plaintext Backups feature ([75ecf4c](https://github.com/standardnotes/app/commit/75ecf4c393a6bc0ab2d6bf50dcbee21cef520746))
+
+# [1.15.0](https://github.com/standardnotes/app/compare/@standardnotes/files@1.14.47...@standardnotes/files@1.15.0) (2023-05-02)
+
+### Features
+
+* Automatic plaintext backup option in Preferences > Backups will backup your notes and tags into plaintext, unencrypted folders on your computer. In addition, automatic encrypted text backups preference management has moved from the top-level menu in the desktop app to Preferences > Backups. ([#2322](https://github.com/standardnotes/app/issues/2322)) ([7e3db49](https://github.com/standardnotes/app/commit/7e3db49322034aa644c3c99ccf9a5f1b508583aa))
+
+## [1.14.47](https://github.com/standardnotes/app/compare/@standardnotes/files@1.14.46...@standardnotes/files@1.14.47) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.14.46](https://github.com/standardnotes/app/compare/@standardnotes/files@1.14.45...@standardnotes/files@1.14.46) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.14.45](https://github.com/standardnotes/app/compare/@standardnotes/files@1.14.44...@standardnotes/files@1.14.45) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.14.44](https://github.com/standardnotes/app/compare/@standardnotes/files@1.14.43...@standardnotes/files@1.14.44) (2023-04-24)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.14.43](https://github.com/standardnotes/app/compare/@standardnotes/files@1.14.42...@standardnotes/files@1.14.43) (2023-04-17)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.14.42](https://github.com/standardnotes/app/compare/@standardnotes/files@1.14.41...@standardnotes/files@1.14.42) (2023-04-15)
+
+**Note:** Version bump only for package @standardnotes/files
+
+## [1.14.41](https://github.com/standardnotes/app/compare/@standardnotes/files@1.14.40...@standardnotes/files@1.14.41) (2023-04-14)
+
+**Note:** Version bump only for package @standardnotes/files
+
 ## [1.14.40](https://github.com/standardnotes/app/compare/@standardnotes/files@1.14.39...@standardnotes/files@1.14.40) (2023-04-11)
 
 **Note:** Version bump only for package @standardnotes/files

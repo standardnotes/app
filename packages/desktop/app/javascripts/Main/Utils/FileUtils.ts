@@ -29,10 +29,10 @@ export function debouncedJSONDiskWriter(durationMs: number, location: string, da
   }, durationMs)
 }
 
-export async function openDirectoryPicker(): Promise<string | undefined> {
+export async function openDirectoryPicker(buttonLabel?: string): Promise<string | undefined> {
   const result = await dialog.showOpenDialog({
     properties: ['openDirectory', 'showHiddenFiles', 'createDirectory'],
-    buttonLabel: 'Move Here',
+    buttonLabel: buttonLabel,
   })
 
   return result.filePaths[0]
@@ -66,6 +66,7 @@ export function writeJSONFileSync(filepath: string, data: unknown): void {
   fs.writeFileSync(filepath, JSON.stringify(data, null, 2), 'utf8')
 }
 
+/** Creates the directory if it doesn't exist. */
 export async function ensureDirectoryExists(dirPath: string): Promise<void> {
   try {
     const stat = await fs.promises.lstat(dirPath)
@@ -262,13 +263,21 @@ export async function moveFiles(sources: string[], destDir: string): Promise<voi
   return Promise.all(sources.map((fileName) => moveFile(fileName, path.join(destDir, path.basename(fileName)))))
 }
 
-async function moveFile(source: PathLike, destination: PathLike) {
+export async function moveFile(source: PathLike, destination: PathLike) {
   try {
     await fs.promises.rename(source, destination)
   } catch (_error) {
     /** Fall back to copying and then deleting. */
     await fs.promises.copyFile(source, destination, fs.constants.COPYFILE_FICLONE_FORCE)
     await fs.promises.unlink(source)
+  }
+}
+
+export async function deleteFileIfExists(filePath: PathLike): Promise<void> {
+  try {
+    await deleteFile(filePath)
+  } catch {
+    return
   }
 }
 

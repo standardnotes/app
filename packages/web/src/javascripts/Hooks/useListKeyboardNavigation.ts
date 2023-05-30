@@ -56,6 +56,13 @@ export const useListKeyboardNavigation = (
 
   const keyDownHandler = useCallback(
     (e: KeyboardEvent) => {
+      const isFocusInInput = document.activeElement?.tagName === 'INPUT'
+      const isFocusInListbox = !!document.activeElement?.closest('[role="listbox"]')
+
+      if (isFocusInInput || isFocusInListbox) {
+        return
+      }
+
       if (e.key === KeyboardKey.Up || e.key === KeyboardKey.Down) {
         e.preventDefault()
       } else {
@@ -89,16 +96,16 @@ export const useListKeyboardNavigation = (
 
     const selectedItemIndex = Array.from(items).findIndex((item) => item.dataset.selected)
     let indexToFocus = selectedItemIndex > -1 ? selectedItemIndex : initialFocus
-    indexToFocus = getNextFocusableIndex(indexToFocus, items)
+    indexToFocus = getNextFocusableIndex(indexToFocus - 1, items)
 
-    setTimeout(() => {
-      focusItemWithIndex(indexToFocus, items)
-    }, FIRST_ITEM_FOCUS_TIMEOUT)
+    focusItemWithIndex(indexToFocus, items)
   }, [container, focusItemWithIndex, getNextFocusableIndex, initialFocus])
 
   useEffect(() => {
     if (shouldAutoFocus) {
-      setInitialFocus()
+      setTimeout(() => {
+        setInitialFocus()
+      }, FIRST_ITEM_FOCUS_TIMEOUT)
     }
   }, [setInitialFocus, shouldAutoFocus])
 

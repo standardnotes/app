@@ -156,7 +156,7 @@ export function createSpellcheckerManager(
     const firstOutlier = session.availableSpellCheckerLanguages.find(
       (language, index) => availableSpellCheckerLanguages[index] !== language,
     )
-    throw new Error(`Found unsupported language code: ${firstOutlier}`)
+    console.error(`Found unsupported language code: ${firstOutlier}`)
   }
 
   setSpellcheckerLanguages()

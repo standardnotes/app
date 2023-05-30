@@ -1,11 +1,11 @@
-import { WebApplication } from '@/Application/Application'
-import { memo, useCallback, useMemo, useRef, useState } from 'react'
+import { WebApplication } from '@/Application/WebApplication'
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Icon from '../../Icon/Icon'
 import { classNames } from '@standardnotes/utils'
 import Popover from '@/Components/Popover/Popover'
 import DisplayOptionsMenu from './DisplayOptionsMenu'
 import { NavigationMenuButton } from '@/Components/NavigationMenu/NavigationMenu'
-import { isTag, VectorIconNameOrEmoji } from '@standardnotes/snjs'
+import { ApplicationEvent, isTag, VectorIconNameOrEmoji } from '@standardnotes/snjs'
 import RoundIconButton from '@/Components/Button/RoundIconButton'
 import { AnyTag } from '@/Controllers/Navigation/AnyTagType'
 import { MediaQueryBreakpoints, MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
@@ -52,6 +52,38 @@ const ContentListHeader = ({
   const matchesMd = useMediaQuery(MediaQueryBreakpoints.md)
   const isTouchScreen = !useMediaQuery(MediaQueryBreakpoints.pointerFine)
   const isTablet = matchesMd && isTouchScreen
+
+  const [syncSubtitle, setSyncSubtitle] = useState('')
+  const showSyncSubtitle = isMobileScreen && !!syncSubtitle
+
+  useEffect(() => {
+    return application.addEventObserver(async (event) => {
+      if (event === ApplicationEvent.CompletedInitialSync) {
+        setSyncSubtitle('')
+        return
+      }
+
+      const syncStatus = application.sync.getSyncStatus()
+      const { localDataDone, localDataCurrent, localDataTotal } = syncStatus.getStats()
+
+      if (event === ApplicationEvent.SyncStatusChanged) {
+        setSyncSubtitle(
+          syncStatus.syncInProgress && !application.sync.completedOnlineDownloadFirstSync ? 'Syncing...' : '',
+        )
+        return
+      }
+
+      if (event === ApplicationEvent.LocalDataIncrementalLoad || event === ApplicationEvent.LocalDataLoaded) {
+        if (localDataDone) {
+          setSyncSubtitle('')
+          return
+        }
+
+        setSyncSubtitle(`Loading ${localDataCurrent}/${localDataTotal} items...`)
+        return
+      }
+    })
+  }, [application])
 
   const [showDisplayOptionsMenu, setShowDisplayOptionsMenu] = useState(false)
 
@@ -114,31 +146,38 @@ const ContentListHeader = ({
   const FolderName = useMemo(() => {
     return (
       <div className="flex min-w-0 flex-grow flex-col break-words pt-1 lg:pt-0">
-        <div className={`flex min-w-0 flex-grow flex-row ${!optionsSubtitle ? 'items-center' : ''}`}>
+        <div
+          className={classNames(
+            'flex min-w-0 flex-grow flex-row',
+            !optionsSubtitle && !showSyncSubtitle ? 'items-center' : '',
+          )}
+        >
           {icon && (
             <Icon
               type={icon}
-              size={'custom'}
-              className={` ml-0.5 mr-1.5 h-7 w-7 text-2xl text-neutral lg:h-6 lg:w-6 lg:text-lg ${
-                optionsSubtitle ? 'mt-1' : ''
-              }`}
+              size="custom"
+              className={classNames(
+                'ml-0.5 mr-1.5 h-7 w-7 flex-shrink-0 text-2xl text-neutral lg:h-6 lg:w-6 lg:text-lg',
+                optionsSubtitle && 'md:mt-0.5',
+              )}
             />
           )}
           <div className="flex min-w-0 flex-grow flex-col break-words">
-            <div className=" text-2xl font-semibold text-text md:text-lg">{panelTitle}</div>
+            <div className="text-2xl font-semibold text-text md:text-lg">{panelTitle}</div>
+            {showSyncSubtitle && <div className="-mt-1 text-xs text-passive-0 md:mt-0">{syncSubtitle}</div>}
             {optionsSubtitle && <div className="text-xs text-passive-0">{optionsSubtitle}</div>}
           </div>
         </div>
       </div>
     )
-  }, [optionsSubtitle, icon, panelTitle])
+  }, [optionsSubtitle, showSyncSubtitle, icon, panelTitle, syncSubtitle])
 
   const PhoneAndDesktopLayout = useMemo(() => {
     return (
       <div className={'flex w-full justify-between md:flex'}>
         <NavigationMenuButton />
         {FolderName}
-        <div className="flex items-center gap-3">
+        <div className="flex items-start gap-3 md:items-center">
           {SearchBarButton}
           {OptionsMenu}
           {AddButton}

@@ -1,4 +1,3 @@
-import { isDesktopApplication } from '@/Utils'
 import { alertDialog, sanitizeFileName } from '@standardnotes/ui-services'
 import {
   STRING_IMPORT_SUCCESS,
@@ -12,10 +11,10 @@ import {
 } from '@/Constants/Strings'
 import { BackupFile } from '@standardnotes/snjs'
 import { ChangeEventHandler, MouseEventHandler, useCallback, useEffect, useRef, useState } from 'react'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
-import { Title, Text, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
+import { Title, Subtitle } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
@@ -176,26 +175,19 @@ const DataBackups = ({ application, viewControllerManager }: Props) => {
     <>
       <PreferencesGroup>
         <PreferencesSegment>
-          <Title>Data Backups</Title>
-
-          {isDesktopApplication() && (
-            <Text className="mb-3">
-              Backups are automatically created on desktop and can be managed via the "Backups" top-level menu.
-            </Text>
-          )}
-
-          <Subtitle>Download a backup of all your data</Subtitle>
+          <Title>Data backups</Title>
+          <Subtitle>Download a backup of all your text-based data</Subtitle>
 
           {isEncryptionEnabled && (
             <form className="sk-panel-form sk-panel-row">
               <div className="flex items-center gap-2">
                 <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(true)} checked={isBackupEncrypted} />
-                  <span className="text-sm font-medium">Encrypted</span>
+                  <span className="text-base font-medium md:text-sm">Encrypted</span>
                 </label>
                 <label className="flex items-center gap-2">
                   <input type="radio" onChange={() => setIsBackupEncrypted(false)} checked={!isBackupEncrypted} />
-                  <span className="text-sm font-medium">Decrypted</span>
+                  <span className="text-base font-medium md:text-sm">Decrypted</span>
                 </label>
               </div>
             </form>

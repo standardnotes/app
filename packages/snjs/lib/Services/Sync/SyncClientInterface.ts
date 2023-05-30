@@ -12,4 +12,6 @@ export interface SyncClientInterface
   getSyncStatus(): SyncOpStatus
   lockSyncing(): void
   unlockSyncing(): void
+
+  completedOnlineDownloadFirstSync: boolean
 }

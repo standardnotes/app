@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 
 const isBackupRelatedFile = (item: DataTransferItem, application: WebApplication): boolean => {
   const fileName = item.getAsFile()?.name || ''

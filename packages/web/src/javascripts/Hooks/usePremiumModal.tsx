@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import { FunctionComponent, createContext, useCallback, useContext, ReactNode } from 'react'
 import PremiumFeaturesModal from '@/Components/PremiumFeaturesModal/PremiumFeaturesModal'

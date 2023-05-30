@@ -3,11 +3,16 @@ import { Readability } from '@mozilla/readability'
 import { RuntimeMessage, RuntimeMessageTypes } from '../types/message'
 
 let isSelectingNodeForClipping = false
+let isScreenshotMode = false
 
 runtime.onMessage.addListener(async (message: RuntimeMessage) => {
   switch (message.type) {
     case RuntimeMessageTypes.StartNodeSelection: {
       isSelectingNodeForClipping = true
+      return
+    }
+    case RuntimeMessageTypes.ToggleScreenshotMode: {
+      isScreenshotMode = message.enabled
       return
     }
     case RuntimeMessageTypes.HasSelection: {
@@ -40,6 +45,13 @@ runtime.onMessage.addListener(async (message: RuntimeMessage) => {
       return { title: document.title, content: result.innerHTML, url: window.location.href }
     }
     case RuntimeMessageTypes.GetFullPage: {
+      if (isScreenshotMode) {
+        const content = await runtime.sendMessage({
+          type: RuntimeMessageTypes.CaptureVisibleTab,
+        })
+        return { title: document.title, content: content, url: window.location.href, isScreenshot: true }
+      }
+
       return { title: document.title, content: document.body.innerHTML, url: window.location.href }
     }
     case RuntimeMessageTypes.GetArticle: {
@@ -90,7 +102,56 @@ const disableNodeSelection = () => {
   nodeOverlayElement.style.visibility = 'hidden'
 }
 
-window.addEventListener('click', (event) => {
+const imageFromBase64 = (base64: string) => {
+  return new Promise<HTMLImageElement>((resolve, reject) => {
+    const image = new Image()
+    image.onload = () => {
+      resolve(image)
+    }
+    image.onerror = reject
+    image.src = base64
+  })
+}
+
+const toPng = async (element: HTMLElement) => {
+  const visibleTab: string = await runtime.sendMessage({
+    type: RuntimeMessageTypes.CaptureVisibleTab,
+  })
+
+  const image = await imageFromBase64(visibleTab)
+
+  const canvas = document.createElement('canvas')
+
+  canvas.width = image.width
+  canvas.height = image.height
+
+  const context = canvas.getContext('2d')
+
+  if (!context) {
+    throw new Error('Could not get canvas context')
+  }
+
+  context.drawImage(image, 0, 0)
+
+  const elementRect = element.getBoundingClientRect()
+
+  const x = elementRect.x
+  const y = elementRect.y
+
+  const width = elementRect.width
+  const height = elementRect.height
+
+  const imageData = context.getImageData(x, y, width, height)
+
+  canvas.width = width
+  canvas.height = height
+
+  context.putImageData(imageData, 0, 0)
+
+  return canvas.toDataURL('image/png')
+}
+
+window.addEventListener('click', async (event) => {
   if (!isSelectingNodeForClipping) {
     return
   }
@@ -102,10 +163,10 @@ window.addEventListener('click', (event) => {
     return
   }
   const title = document.title
-  const content = target.outerHTML
+  const content = isScreenshotMode ? await toPng(target) : target.outerHTML
   void runtime.sendMessage({
     type: RuntimeMessageTypes.OpenPopupWithSelection,
-    payload: { title, content, url: window.location.href },
+    payload: { title, content, url: window.location.href, isScreenshot: isScreenshotMode },
   } as RuntimeMessage)
 })
 

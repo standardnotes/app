@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { STRING_EDIT_LOCKED_ATTEMPT } from '@/Constants/Strings'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import { createEditorMenuGroups } from '@/Utils/createEditorMenuGroups'
@@ -180,12 +180,12 @@ const ChangeMultipleMenu = ({ application, notes, setDisableClickOutside }: Prop
           </Fragment>
         ))}
       </Menu>
-      <ModalOverlay isOpen={showSuperImporter} onDismiss={closeCurrentSuperNoteImporter}>
+      <ModalOverlay isOpen={showSuperImporter} close={closeCurrentSuperNoteImporter}>
         {confirmationQueue[0] && (
           <SuperNoteImporter
             note={confirmationQueue[0]}
             application={application}
-            onConvertComplete={handleSuperNoteConversionCompletion}
+            onComplete={handleSuperNoteConversionCompletion}
             closeDialog={closeCurrentSuperNoteImporter}
           />
         )}

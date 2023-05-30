@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { UserProvider } from '@/Components/Preferences/Providers'
 
 export interface U2FProps {

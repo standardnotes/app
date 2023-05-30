@@ -5,6 +5,7 @@ import { TranslateFromTopAnimation, TranslateToTopAnimation } from '@/Constants/
 import { useLifecycleAnimation } from '@/Hooks/useLifecycleAnimation'
 import { ArrowDownIcon, ArrowUpIcon, CloseIcon, ArrowRightIcon } from '@standardnotes/icons'
 import {
+  KeyboardKey,
   keyboardStringForShortcut,
   SUPER_SEARCH_TOGGLE_CASE_SENSITIVE,
   SUPER_SEARCH_TOGGLE_REPLACE_MODE,
@@ -71,7 +72,7 @@ export const SearchDialog = ({ open, closeDialog }: { open: boolean; closeDialog
       <div
         className="flex flex-col gap-2 py-2 px-2"
         onKeyDown={(event) => {
-          if (event.key === 'Escape') {
+          if (event.key === KeyboardKey.Escape) {
             closeDialog()
           }
         }}

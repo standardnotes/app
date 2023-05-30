@@ -1,6 +1,6 @@
 import { FunctionComponent } from 'react'
 import OfflineSubscription from '@/Components/Preferences/Panes/General/Advanced/OfflineSubscription'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import PackagesPreferencesSection from '@/Components/Preferences/Panes/General/Advanced/Packages/Section'
@@ -19,7 +19,7 @@ const Advanced: FunctionComponent<Props> = ({ application, viewControllerManager
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <AccordionItem title={'Advanced Options'}>
+        <AccordionItem title={'Advanced options'}>
           <div className="flex flex-row items-center">
             <div className="flex max-w-full flex-grow flex-col">
               <OfflineSubscription application={application} viewControllerManager={viewControllerManager} />

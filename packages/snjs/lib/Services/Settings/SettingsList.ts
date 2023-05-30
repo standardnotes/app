@@ -1,13 +1,9 @@
 import { SettingData } from '@standardnotes/responses'
 import {
-  OneDriveBackupFrequency,
   MuteSignInEmailsOption,
   MuteFailedCloudBackupsEmailsOption,
   MuteFailedBackupsEmailsOption,
-  CloudProvider,
-  DropboxBackupFrequency,
   EmailBackupFrequency,
-  GoogleDriveBackupFrequency,
   ListedAuthorSecretsData,
   LogSessionUserAgentOption,
   SettingName,
@@ -15,17 +11,13 @@ import {
 } from '@standardnotes/settings'
 
 type SettingType =
-  | CloudProvider
-  | DropboxBackupFrequency
   | EmailBackupFrequency
-  | GoogleDriveBackupFrequency
   | ListedAuthorSecretsData
   | LogSessionUserAgentOption
   | MuteFailedBackupsEmailsOption
   | MuteFailedCloudBackupsEmailsOption
   | MuteSignInEmailsOption
   | MuteMarketingEmailsOption
-  | OneDriveBackupFrequency
 
 export class SettingsList {
   private map: Partial<Record<string, SettingData>> = {}

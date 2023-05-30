@@ -1,8 +1,8 @@
-import { ApplicationEvent, PrefKey, PrefValue } from '@standardnotes/snjs'
-import { useEffect, useState } from 'react'
+import { PrefKey, PrefValue } from '@standardnotes/snjs'
 import { useApplication } from '../ApplicationProvider'
 import Dropdown from '../Dropdown/Dropdown'
 import Modal from '../Modal/Modal'
+import usePreference from '@/Hooks/usePreference'
 
 type Props = {
   exportNotes: () => void
@@ -11,14 +11,7 @@ type Props = {
 
 const SuperExportModal = ({ exportNotes, close }: Props) => {
   const application = useApplication()
-  const [superNoteExportFormat, setSuperNoteExportFormat] = useState<PrefValue[PrefKey.SuperNoteExportFormat]>(
-    () => application.getPreference(PrefKey.SuperNoteExportFormat) || 'json',
-  )
-  useEffect(() => {
-    return application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
-      setSuperNoteExportFormat(application.getPreference(PrefKey.SuperNoteExportFormat) || 'json')
-    })
-  }, [application, superNoteExportFormat])
+  const superNoteExportFormat = usePreference(PrefKey.SuperNoteExportFormat)
 
   return (
     <Modal
@@ -47,7 +40,6 @@ const SuperExportModal = ({ exportNotes, close }: Props) => {
           We detected your selection includes Super notes. How do you want to export them?
         </div>
         <Dropdown
-          id="export-format-dropdown"
           label="Super notes export format"
           items={[
             { label: 'Keep as Super', value: 'json' },
@@ -61,7 +53,6 @@ const SuperExportModal = ({ exportNotes, close }: Props) => {
               value as PrefValue[PrefKey.SuperNoteExportFormat],
             )
           }}
-          portal={false}
         />
       </div>
       <div className="text-passive-0">

@@ -15,7 +15,7 @@ export const getPlaintextFontSize = (key: EditorFontSize): string => {
     Small: 'text-editor',
     Normal: 'text-lg',
     Medium: 'text-xl',
-    Large: 'text-xl2',
+    Large: 'text-2xl',
   }
 
   const tabletMapping: Record<EditorFontSize, string> = {
@@ -23,7 +23,7 @@ export const getPlaintextFontSize = (key: EditorFontSize): string => {
     Small: 'text-editor',
     Normal: 'text-base',
     Medium: 'text-xl',
-    Large: 'text-xl2',
+    Large: 'text-2xl',
   }
 
   if (isTabletScreen()) {

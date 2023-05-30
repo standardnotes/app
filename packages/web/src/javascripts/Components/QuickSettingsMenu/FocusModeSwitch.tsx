@@ -1,10 +1,8 @@
-import { WebApplication } from '@/Application/Application'
-import { FunctionComponent, MouseEventHandler, useCallback, useMemo } from 'react'
-import Switch from '@/Components/Switch/Switch'
+import { WebApplication } from '@/Application/WebApplication'
+import { FunctionComponent, useCallback, useMemo } from 'react'
 import { isMobileScreen } from '@/Utils'
 import { TOGGLE_FOCUS_MODE_COMMAND } from '@standardnotes/ui-services'
-import { KeyboardShortcutIndicator } from '../KeyboardShortcutIndicator/KeyboardShortcutIndicator'
-import MenuItem from '../Menu/MenuItem'
+import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 
 type Props = {
   application: WebApplication
@@ -14,15 +12,10 @@ type Props = {
 }
 
 const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggle, onClose, isEnabled }) => {
-  const toggle: MouseEventHandler = useCallback(
-    (e) => {
-      e.preventDefault()
-
-      onToggle(!isEnabled)
-      onClose()
-    },
-    [onToggle, isEnabled, onClose],
-  )
+  const toggle = useCallback(() => {
+    onToggle(!isEnabled)
+    onClose()
+  }, [onToggle, isEnabled, onClose])
 
   const shortcut = useMemo(
     () => application.keyboardService.keyboardShortcutForCommand(TOGGLE_FOCUS_MODE_COMMAND),
@@ -36,13 +29,9 @@ const FocusModeSwitch: FunctionComponent<Props> = ({ application, onToggle, onCl
   }
 
   return (
-    <MenuItem onClick={toggle}>
-      <div className="flex items-center">Focus Mode</div>
-      <div className="ml-auto flex">
-        {shortcut && <KeyboardShortcutIndicator className="mr-2" shortcut={shortcut} />}
-        <Switch className="px-0" checked={isEnabled} />
-      </div>
-    </MenuItem>
+    <MenuSwitchButtonItem onChange={toggle} shortcut={shortcut} checked={isEnabled}>
+      Focus Mode
+    </MenuSwitchButtonItem>
   )
 }
 

@@ -53,10 +53,6 @@ export function updates() {
   return str().updates
 }
 
-export function backups() {
-  return str().backups
-}
-
 function stringsForLocale(locale: string): Strings {
   if (locale === 'en' || locale.startsWith('en-')) {
     return createEnglishStrings()

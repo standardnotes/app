@@ -3,7 +3,7 @@ chai.use(chaiAsPromised)
 const expect = chai.expect
 
 describe('migrations', () => {
-  const allMigrations = ['2.0.15', '2.7.0', '2.20.0', '2.36.0', '2.42.0']
+  const allMigrations = ['2.0.15', '2.7.0', '2.20.0', '2.36.0', '2.42.0', '2.167.6', '2.168.6']
 
   beforeEach(async () => {
     localStorage.clear()

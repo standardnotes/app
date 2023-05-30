@@ -50,7 +50,7 @@ const SearchButton = ({ itemListController }: Props) => {
           setIsSearchBarVisible(!isSearchBarVisible)
         }}
         icon={isSearchBarVisible ? 'close' : 'search'}
-        label="Display options menu"
+        label="Search"
       />
     </>
   )

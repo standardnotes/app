@@ -49,7 +49,7 @@ const NotesOptionsPanel = ({
         togglePopover={toggleMenu}
         anchorElement={buttonRef.current}
         open={isOpen}
-        className="select-none md:pt-2"
+        className="select-none pt-2"
       >
         <Menu a11yLabel="Note options menu" isOpen={isOpen}>
           <NotesOptions

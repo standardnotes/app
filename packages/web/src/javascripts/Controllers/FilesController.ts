@@ -23,10 +23,11 @@ import {
   FileItem,
   InternalEventBus,
   isFile,
+  Platform,
 } from '@standardnotes/snjs'
 import { addToast, dismissToast, ToastType, updateToast } from '@standardnotes/toast'
 import { action, makeObservable, observable, reaction } from 'mobx'
-import { WebApplication } from '../Application/Application'
+import { WebApplication } from '../Application/WebApplication'
 import { AbstractViewController } from './Abstract/AbstractViewController'
 import { NotesController } from './NotesController/NotesController'
 import { downloadOrShareBlobBasedOnPlatform } from '@/Utils/DownloadOrShareBasedOnPlatform'
@@ -246,7 +247,7 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
     }
   }
 
-  public async downloadFile(file: FileItem): Promise<void> {
+  private async downloadFile(file: FileItem): Promise<void> {
     let downloadingToastId = ''
 
     try {
@@ -498,6 +499,27 @@ export class FilesController extends AbstractViewController<FilesControllerEvent
   }
 
   downloadFiles = async (files: FileItem[]) => {
-    await Promise.all(files.map((file) => this.downloadFile(file)))
+    if (this.application.platform === Platform.MacDesktop) {
+      for (const file of files) {
+        await this.handleFileAction({
+          type: FileItemActionType.DownloadFile,
+          payload: {
+            file,
+          },
+        })
+      }
+      return
+    }
+
+    await Promise.all(
+      files.map((file) =>
+        this.handleFileAction({
+          type: FileItemActionType.DownloadFile,
+          payload: {
+            file,
+          },
+        }),
+      ),
+    )
   }
 }

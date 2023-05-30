@@ -3,7 +3,7 @@ import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import PreferencesPane from '../PreferencesComponents/PreferencesPane'
 import PreferencesGroup from '../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../PreferencesComponents/PreferencesSegment'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { MouseEventHandler } from 'react'
 
 const HelpAndFeedback = ({ application }: { application: WebApplication }) => {

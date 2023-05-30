@@ -3,7 +3,7 @@ import { DropdownItem } from '@/Components/Dropdown/DropdownItem'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import {
   ContentType,
   FeatureIdentifier,
@@ -90,22 +90,24 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
     setUseDeviceSettings(!useDeviceSettings)
   }
 
-  const changeAutoLightTheme = (value: string, item: DropdownItem) => {
-    if (item.icon === PremiumFeatureIconName) {
+  const changeAutoLightTheme = (value: string) => {
+    const item = themeItems.find((item) => item.value === value)
+    if (item && item.icon === PremiumFeatureIconName) {
       premiumModal.activate(`${item.label} theme`)
-    } else {
-      application.setPreference(PrefKey.AutoLightThemeIdentifier, value as FeatureIdentifier).catch(console.error)
-      setAutoLightTheme(value)
+      return
     }
+    application.setPreference(PrefKey.AutoLightThemeIdentifier, value as FeatureIdentifier).catch(console.error)
+    setAutoLightTheme(value)
   }
 
-  const changeAutoDarkTheme = (value: string, item: DropdownItem) => {
-    if (item.icon === PremiumFeatureIconName) {
+  const changeAutoDarkTheme = (value: string) => {
+    const item = themeItems.find((item) => item.value === value)
+    if (item && item.icon === PremiumFeatureIconName) {
       premiumModal.activate(`${item.label} theme`)
-    } else {
-      application.setPreference(PrefKey.AutoDarkThemeIdentifier, value as FeatureIdentifier).catch(console.error)
-      setAutoDarkTheme(value)
+      return
     }
+    application.setPreference(PrefKey.AutoDarkThemeIdentifier, value as FeatureIdentifier).catch(console.error)
+    setAutoDarkTheme(value)
   }
 
   return (
@@ -114,7 +116,7 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
         <PreferencesSegment>
           <Title>Themes</Title>
           <div className="mt-2">
-            <div className="flex items-center justify-between">
+            <div className="flex justify-between gap-2 md:items-center">
               <div className="flex flex-col">
                 <Subtitle>Use system color scheme</Subtitle>
                 <Text>Automatically change active theme based on your system settings.</Text>
@@ -127,15 +129,11 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
               <Text>Theme to be used for system light mode:</Text>
               <div className="mt-2">
                 <Dropdown
-                  id="auto-light-theme-dropdown"
                   label="Select the automatic light theme"
                   items={themeItems}
                   value={autoLightTheme}
                   onChange={changeAutoLightTheme}
                   disabled={!useDeviceSettings}
-                  classNameOverride={{
-                    popover: '!z-modal',
-                  }}
                 />
               </div>
             </div>
@@ -145,15 +143,11 @@ const Appearance: FunctionComponent<Props> = ({ application }) => {
               <Text>Theme to be used for system dark mode:</Text>
               <div className="mt-2">
                 <Dropdown
-                  id="auto-dark-theme-dropdown"
                   label="Select the automatic dark theme"
                   items={themeItems}
                   value={autoDarkTheme}
                   onChange={changeAutoDarkTheme}
                   disabled={!useDeviceSettings}
-                  classNameOverride={{
-                    popover: '!z-modal',
-                  }}
                 />
               </div>
             </div>

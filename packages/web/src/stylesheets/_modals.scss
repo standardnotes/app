@@ -143,8 +143,8 @@
   }
 }
 
-[data-reach-dialog-overlay],
-[data-mobile-popover] {
+[data-mobile-popover],
+[role='dialog'] {
   max-height: none;
   max-height: var(--ios-viewport-height, none);
 }

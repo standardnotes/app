@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 
 type Props = {

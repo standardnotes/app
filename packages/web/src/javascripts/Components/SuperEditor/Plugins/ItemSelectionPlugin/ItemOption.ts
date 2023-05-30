@@ -1,7 +1,7 @@
-import { TypeaheadOption } from '@lexical/react/LexicalTypeaheadMenuPlugin'
+import { MenuOption } from '@lexical/react/LexicalTypeaheadMenuPlugin'
 import { LinkableItem } from '@/Utils/Items/Search/LinkableItem'
 
-export class ItemOption extends TypeaheadOption {
+export class ItemOption extends MenuOption {
   constructor(
     public item: LinkableItem | undefined,
     public label: string,

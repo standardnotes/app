@@ -1,5 +1,5 @@
 import { FunctionComponent, useCallback, useMemo, useState } from 'react'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { useBeforeUnload } from '@/Hooks/useBeforeUnload'
 import ChangeEmailForm from './ChangeEmailForm'
 import ChangeEmailSuccess from './ChangeEmailSuccess'
@@ -58,7 +58,7 @@ const ChangeEmail: FunctionComponent<Props> = ({ onCloseDialog, application }) =
   }
 
   const processEmailChange = useCallback(async () => {
-    await application.downloadBackup()
+    await application.performDesktopTextBackup()
 
     setLockContinue(true)
 

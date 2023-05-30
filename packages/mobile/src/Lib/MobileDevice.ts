@@ -25,6 +25,7 @@ import {
   AppStateStatus,
   ColorSchemeName,
   Linking,
+  NativeModules,
   PermissionsAndroid,
   Platform,
   StatusBar,
@@ -85,6 +86,26 @@ export class MobileDevice implements MobileDeviceInterface {
 
   removeApplication(_application: ApplicationInterface): void {
     throw new Error('Method not implemented.')
+  }
+
+  async authenticateWithU2F(authenticationOptionsJSONString: string): Promise<Record<string, unknown> | null> {
+    const { Fido2ApiModule } = NativeModules
+
+    if (!Fido2ApiModule) {
+      this.consoleLog('Fido2ApiModule is not available')
+
+      return null
+    }
+
+    try {
+      const response = await Fido2ApiModule.promptForU2FAuthentication(authenticationOptionsJSONString)
+
+      return response
+    } catch (error) {
+      this.consoleLog(`Fido2ApiModule.authenticateWithU2F error: ${(error as Error).message}`)
+
+      return null
+    }
   }
 
   purchaseSubscriptionIAP(plan: AppleIAPProductId): Promise<AppleIAPReceipt | undefined> {
@@ -410,29 +431,13 @@ export class MobileDevice implements MobileDeviceInterface {
     return `${directory}/${filename}`
   }
 
-  async hasStoragePermissionOnAndroid(): Promise<boolean> {
-    if (Platform.OS !== 'android') {
-      return true
-    }
-    const grantedStatus = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)
-    if (grantedStatus === PermissionsAndroid.RESULTS.GRANTED) {
-      return true
-    }
-    Alert.alert(
-      'Storage permissions are required in order to download files. Please accept the permissions prompt and try again.',
-    )
-    return false
-  }
-
   async downloadBase64AsFile(
     base64: string,
     filename: string,
     saveInTempLocation = false,
   ): Promise<string | undefined> {
-    const isGrantedStoragePermissionOnAndroid = await this.hasStoragePermissionOnAndroid()
-
-    if (!isGrantedStoragePermissionOnAndroid) {
-      return
+    if (Platform.OS === 'android') {
+      await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE)
     }
 
     try {

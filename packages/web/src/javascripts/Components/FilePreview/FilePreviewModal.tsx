@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { FunctionComponent, KeyboardEventHandler, useCallback, useMemo, useRef, useState } from 'react'
 import { getFileIconComponent } from './getFileIconComponent'
 import Icon from '@/Components/Icon/Icon'
@@ -286,11 +286,9 @@ FilePreviewModal.displayName = 'FilePreviewModal'
 const FilePreviewModalWrapper: FunctionComponent<Props> = ({ application, viewControllerManager }) => {
   return (
     <ModalOverlay
-      className="sn-component p-0"
       aria-label="File preview modal"
       isOpen={viewControllerManager.filePreviewModalController.isOpen}
-      onDismiss={viewControllerManager.filePreviewModalController.dismiss}
-      dangerouslyBypassScrollLock
+      close={viewControllerManager.filePreviewModalController.dismiss}
     >
       <FilePreviewModal application={application} viewControllerManager={viewControllerManager} />
     </ModalOverlay>

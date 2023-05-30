@@ -3,7 +3,7 @@ import { observer } from 'mobx-react-lite'
 import { FunctionComponent, useState } from 'react'
 
 import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import PreferencesGroup from '@/Components/Preferences/PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '@/Components/Preferences/PreferencesComponents/PreferencesSegment'
@@ -39,7 +39,7 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
       <PreferencesSegment>
         <div className="flex flex-row items-center">
           <div className="flex flex-grow flex-col">
-            <Title className="mb-2">Subscription Sharing</Title>
+            <Title className="mb-2">Subscription sharing</Title>
             {isSubscriptionSharingFeatureAvailable ? (
               <div>
                 <SharingStatusText subscriptionState={subscriptionState} />
@@ -48,7 +48,7 @@ const SubscriptionSharing: FunctionComponent<Props> = ({ application, viewContro
                 {!subscriptionState.allInvitationsUsed && (
                   <Button className="min-w-20" label="Invite" onClick={() => setIsInviteDialogOpen(true)} />
                 )}
-                <ModalOverlay isOpen={isInviteDialogOpen} onDismiss={closeInviteDialog}>
+                <ModalOverlay isOpen={isInviteDialogOpen} close={closeInviteDialog}>
                   <Invite
                     onCloseDialog={closeInviteDialog}
                     application={application}

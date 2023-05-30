@@ -3,6 +3,58 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.38](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.37...@standardnotes/encryption@1.21.38) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.37](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.36...@standardnotes/encryption@1.21.37) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.36](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.35...@standardnotes/encryption@1.21.36) (2023-05-12)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.35](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.34...@standardnotes/encryption@1.21.35) (2023-05-11)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.34](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.33...@standardnotes/encryption@1.21.34) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.33](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.32...@standardnotes/encryption@1.21.33) (2023-05-04)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.32](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.31...@standardnotes/encryption@1.21.32) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.31](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.30...@standardnotes/encryption@1.21.31) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.30](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.29...@standardnotes/encryption@1.21.30) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.29](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.28...@standardnotes/encryption@1.21.29) (2023-04-24)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.28](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.27...@standardnotes/encryption@1.21.28) (2023-04-17)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.27](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.26...@standardnotes/encryption@1.21.27) (2023-04-15)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
+## [1.21.26](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.25...@standardnotes/encryption@1.21.26) (2023-04-14)
+
+**Note:** Version bump only for package @standardnotes/encryption
+
 ## [1.21.25](https://github.com/standardnotes/app/compare/@standardnotes/encryption@1.21.24...@standardnotes/encryption@1.21.25) (2023-04-11)
 
 **Note:** Version bump only for package @standardnotes/encryption

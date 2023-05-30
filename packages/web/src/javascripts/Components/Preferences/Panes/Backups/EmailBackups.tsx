@@ -1,7 +1,7 @@
 import { convertStringifiedBooleanToBoolean, isDesktopApplication } from '@/Utils'
 import { STRING_FAILED_TO_UPDATE_USER_SETTING } from '@/Constants/Strings'
 import { useCallback, useEffect, useState } from 'react'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { observer } from 'mobx-react-lite'
 import { Subtitle, Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
 import Dropdown from '@/Components/Dropdown/Dropdown'
@@ -110,7 +110,7 @@ const EmailBackups = ({ application }: Props) => {
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Email Backups</Title>
+        <Title>Email backups</Title>
         {!isDesktopApplication() && (
           <Text className="mb-3">
             Receive daily encrypted email backups of all your notes directly in your email inbox.
@@ -118,32 +118,28 @@ const EmailBackups = ({ application }: Props) => {
         )}
 
         <div className={`${!hasAccount ? 'pointer-events-none cursor-default opacity-50' : ''}`}>
-          <Subtitle>Email frequency</Subtitle>
+          <Subtitle>Frequency</Subtitle>
           <Text>How often to receive backups.</Text>
           <div className="mt-2">
             {isLoading ? (
-              <Spinner className="h-4 w-4" />
+              <Spinner className="h-5 w-5 flex-shrink-0" />
             ) : (
               <Dropdown
-                id="def-editor-dropdown"
                 label="Select email frequency"
                 items={emailFrequencyOptions}
                 value={emailFrequency}
                 onChange={handleEmailFrequencyChange}
-                classNameOverride={{
-                  popover: '!z-modal',
-                }}
               />
             )}
           </div>
           <HorizontalSeparator classes="my-4" />
           <Subtitle>Email preferences</Subtitle>
-          <div className="flex items-center justify-between">
+          <div className="flex justify-between gap-2 md:items-center">
             <div className="flex flex-col">
               <Text>Receive a notification email if an email backup fails.</Text>
             </div>
             {isLoading ? (
-              <Spinner className="h-4 w-4" />
+              <Spinner className="h-5 w-5 flex-shrink-0" />
             ) : (
               <Switch onChange={toggleMuteFailedBackupEmails} checked={!isFailedBackupEmailMuted} />
             )}

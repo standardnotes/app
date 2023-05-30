@@ -1,10 +1,9 @@
-import { ApplicationGroup } from '@/Application/ApplicationGroup'
-import { WebApplication } from '@/Application/Application'
+import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
+import { WebApplication } from '@/Application/WebApplication'
 import { Component } from 'react'
 import ApplicationView from '@/Components/ApplicationView/ApplicationView'
 import { WebOrDesktopDevice } from '@/Application/Device/WebOrDesktopDevice'
 import { ApplicationGroupEvent, ApplicationGroupEventData, DeinitSource } from '@standardnotes/snjs'
-import { DialogContent, DialogOverlay } from '@reach/dialog'
 import { getPlatformString, isDesktopApplication } from '@/Utils'
 import DeallocateHandler from '../DeallocateHandler/DeallocateHandler'
 
@@ -23,9 +22,23 @@ type State = {
   deviceDestroyed?: boolean
 }
 
+const renderDialog = (message: string) => {
+  return (
+    <div className="flex h-full w-full items-center justify-center bg-passive-5" role="alert">
+      <div
+        className={
+          'challenge-modal shadow-overlay-light relative flex max-w-125 flex-col items-center rounded border border-solid border-border bg-default p-6'
+        }
+      >
+        <div className="text-base lg:text-xs">{message}</div>
+      </div>
+    </div>
+  )
+}
+
 class ApplicationGroupView extends Component<Props, State> {
   applicationObserverRemover?: () => void
-  private group?: ApplicationGroup
+  private group?: WebApplicationGroup
   private application?: WebApplication
 
   constructor(props: Props) {
@@ -39,7 +52,7 @@ class ApplicationGroupView extends Component<Props, State> {
       return
     }
 
-    this.group = new ApplicationGroup(props.server, props.device, props.websocketUrl)
+    this.group = new WebApplicationGroup(props.server, props.device, props.websocketUrl)
 
     window.mainApplicationGroup = this.group
 
@@ -83,21 +96,6 @@ class ApplicationGroupView extends Component<Props, State> {
   }
 
   override render() {
-    const renderDialog = (message: string) => {
-      return (
-        <DialogOverlay className={'sn-component challenge-modal-overlay'}>
-          <DialogContent
-            aria-label="Switching workspace"
-            className={
-              'challenge-modal shadow-overlay-light relative flex flex-col items-center rounded border border-solid border-border bg-default p-8'
-            }
-          >
-            <div className="text-base lg:text-xs">{message}</div>
-          </DialogContent>
-        </DialogOverlay>
-      )
-    }
-
     if (this.state.deviceDestroyed) {
       const message = `Secure memory has destroyed this application instance. ${
         isDesktopApplication()

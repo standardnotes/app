@@ -1,33 +1,44 @@
 import { mergeRefs } from '@/Hooks/mergeRefs'
-import { DialogOverlay, DialogOverlayProps } from '@reach/dialog'
-import { classNames } from '@standardnotes/snjs'
+import { Dialog, useDialogStore } from '@ariakit/react'
 import { ForwardedRef, forwardRef, ReactNode } from 'react'
 import { useModalAnimation } from '../Modal/useModalAnimation'
 
 type Props = {
   isOpen: boolean
-  onDismiss?: () => void
   children: ReactNode
-  className?: string
-} & DialogOverlayProps
+  animationVariant?: 'horizontal' | 'vertical'
+  close: () => void
+}
 
 const ModalOverlay = forwardRef(
-  ({ isOpen, onDismiss, children, className, ...props }: Props, ref: ForwardedRef<HTMLDivElement>) => {
-    const [isMounted, setElement] = useModalAnimation(isOpen)
+  ({ isOpen, children, animationVariant, close, ...props }: Props, ref: ForwardedRef<HTMLDivElement>) => {
+    const [isMounted, setElement] = useModalAnimation(isOpen, animationVariant)
+    const dialog = useDialogStore({
+      open: isMounted,
+      setOpen: (open) => {
+        if (!open) {
+          close()
+        }
+      },
+    })
 
     if (!isMounted) {
       return null
     }
 
     return (
-      <DialogOverlay
-        className={classNames('p-0 md:px-0 md:opacity-100', className)}
-        onDismiss={onDismiss}
+      <Dialog
+        tabIndex={0}
+        className="fixed top-0 left-0 z-modal h-full w-full"
         ref={mergeRefs([setElement, ref])}
+        store={dialog}
+        modal={false}
+        portal={true}
+        preventBodyScroll={true}
         {...props}
       >
         {children}
-      </DialogOverlay>
+      </Dialog>
     )
   },
 )

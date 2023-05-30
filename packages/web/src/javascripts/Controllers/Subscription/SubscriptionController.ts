@@ -9,7 +9,7 @@ import {
   SubscriptionClientInterface,
 } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable, runInAction } from 'mobx'
-import { WebApplication } from '../../Application/Application'
+import { WebApplication } from '../../Application/WebApplication'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { AvailableSubscriptions } from './AvailableSubscriptionsType'
 import { Subscription } from './SubscriptionType'

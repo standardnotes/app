@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { NotesController } from '@/Controllers/NotesController/NotesController'
 import { useRef, useState } from 'react'
 import RoundIconButton from '../Button/RoundIconButton'

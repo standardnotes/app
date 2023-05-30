@@ -1,16 +1,17 @@
 import { observer } from 'mobx-react-lite'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { useCallback, FunctionComponent, KeyboardEventHandler } from 'react'
-import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { AccountMenuPane } from './AccountMenuPane'
 import MenuPaneSelector from './MenuPaneSelector'
+import { KeyboardKey } from '@standardnotes/ui-services'
 
 export type AccountMenuProps = {
   viewControllerManager: ViewControllerManager
   application: WebApplication
   onClickOutside: () => void
-  mainApplicationGroup: ApplicationGroup
+  mainApplicationGroup: WebApplicationGroup
 }
 
 const AccountMenu: FunctionComponent<AccountMenuProps> = ({
@@ -33,16 +34,14 @@ const AccountMenu: FunctionComponent<AccountMenuProps> = ({
 
   const handleKeyDown: KeyboardEventHandler<HTMLDivElement> = useCallback(
     (event) => {
-      switch (event.key) {
-        case 'Escape':
-          if (currentPane === AccountMenuPane.GeneralMenu) {
-            closeAccountMenu()
-          } else if (currentPane === AccountMenuPane.ConfirmPassword) {
-            setCurrentPane(AccountMenuPane.Register)
-          } else {
-            setCurrentPane(AccountMenuPane.GeneralMenu)
-          }
-          break
+      if (event.key === KeyboardKey.Escape) {
+        if (currentPane === AccountMenuPane.GeneralMenu) {
+          closeAccountMenu()
+        } else if (currentPane === AccountMenuPane.ConfirmPassword) {
+          setCurrentPane(AccountMenuPane.Register)
+        } else {
+          setCurrentPane(AccountMenuPane.GeneralMenu)
+        }
       }
     },
     [closeAccountMenu, currentPane, setCurrentPane],

@@ -1,13 +1,15 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import Dropdown from '@/Components/Dropdown/Dropdown'
+import Icon from '@/Components/Icon/Icon'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import Switch from '@/Components/Switch/Switch'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
-import { EditorFontSize, EditorLineHeight, PrefKey } from '@standardnotes/snjs'
-import { useMemo, useState } from 'react'
+import { ApplicationEvent, EditorFontSize, EditorLineHeight, EditorLineWidth, PrefKey } from '@standardnotes/snjs'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Subtitle, Title, Text } from '../../PreferencesComponents/Content'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
+import { CHANGE_EDITOR_WIDTH_COMMAND } from '@standardnotes/ui-services'
 
 type Props = {
   application: WebApplication
@@ -59,29 +61,26 @@ const EditorDefaults = ({ application }: Props) => {
     [],
   )
 
-  const [marginResizers, setMarginResizers] = useState(() =>
-    application.getPreference(PrefKey.EditorResizersEnabled, PrefDefaults[PrefKey.EditorResizersEnabled]),
+  const [editorWidth, setEditorWidth] = useState(() =>
+    application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth]),
   )
 
-  const toggleMarginResizers = () => {
-    setMarginResizers(!marginResizers)
-    application.setPreference(PrefKey.EditorResizersEnabled, !marginResizers).catch(console.error)
-  }
+  const toggleEditorWidthModal = useCallback(() => {
+    application.keyboardService.triggerCommand(CHANGE_EDITOR_WIDTH_COMMAND, true)
+  }, [application.keyboardService])
+
+  useEffect(() => {
+    return application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
+      setEditorWidth(application.getPreference(PrefKey.EditorLineWidth, PrefDefaults[PrefKey.EditorLineWidth]))
+    })
+  }, [application])
 
   return (
     <PreferencesGroup>
       <PreferencesSegment>
-        <Title>Editor Appearance</Title>
+        <Title>Editor appearance</Title>
         <div className="mt-2">
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col">
-              <Subtitle>Margin Resizers</Subtitle>
-              <Text>Allows left and right editor margins to be resized.</Text>
-            </div>
-            <Switch onChange={toggleMarginResizers} checked={marginResizers} />
-          </div>
-          <HorizontalSeparator classes="my-4" />
-          <div className="flex items-center justify-between">
+          <div className="flex justify-between gap-2 md:items-center">
             <div className="flex flex-col">
               <Subtitle>Monospace Font</Subtitle>
               <Text>Toggles the font style in plaintext and Super notes</Text>
@@ -94,14 +93,10 @@ const EditorDefaults = ({ application }: Props) => {
             <Text>Sets the font size in plaintext and Super notes</Text>
             <div className="mt-2">
               <Dropdown
-                id="def-font-size"
                 label="Select the font size for plaintext notes"
                 items={fontSizeDropdownOptions}
                 value={fontSize}
                 onChange={handleFontSizeChange}
-                classNameOverride={{
-                  popover: '!z-modal',
-                }}
               />
             </div>
           </div>
@@ -111,15 +106,25 @@ const EditorDefaults = ({ application }: Props) => {
             <Text>Sets the line height (leading) in plaintext and Super notes</Text>
             <div className="mt-2">
               <Dropdown
-                id="def-line-height"
                 label="Select the line height for plaintext notes"
                 items={lineHeightDropdownOptions}
                 value={lineHeight}
                 onChange={handleLineHeightChange}
-                classNameOverride={{
-                  popover: '!z-modal',
-                }}
               />
+            </div>
+          </div>
+          <HorizontalSeparator classes="my-4" />
+          <div>
+            <Subtitle>Editor width</Subtitle>
+            <Text>Sets the max editor width for all notes</Text>
+            <div className="mt-2">
+              <button
+                className="flex w-full min-w-55 items-center justify-between rounded border border-border bg-default py-1.5 px-3.5 text-left text-base text-foreground md:w-fit lg:text-sm"
+                onClick={toggleEditorWidthModal}
+              >
+                {editorWidth === EditorLineWidth.FullWidth ? 'Full width' : editorWidth}
+                <Icon type="chevron-down" size="normal" />
+              </button>
             </div>
           </div>
         </div>

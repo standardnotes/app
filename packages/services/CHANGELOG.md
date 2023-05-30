@@ -3,6 +3,90 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.59.10](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.9...@standardnotes/services@1.59.10) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.59.9](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.8...@standardnotes/services@1.59.9) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.59.8](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.7...@standardnotes/services@1.59.8) (2023-05-12)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.59.7](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.6...@standardnotes/services@1.59.7) (2023-05-11)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.59.6](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.5...@standardnotes/services@1.59.6) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.59.5](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.4...@standardnotes/services@1.59.5) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.59.4](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.3...@standardnotes/services@1.59.4) (2023-05-04)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.59.3](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.2...@standardnotes/services@1.59.3) (2023-05-04)
+
+### Bug Fixes
+
+* workspace names now default to account email after signing in. It can later be changed from the workspace switcher menu. ([8385b4e](https://github.com/standardnotes/app/commit/8385b4e89fa0fc3204532adda9d085d9c0fd7996))
+
+## [1.59.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.1...@standardnotes/services@1.59.2) (2023-05-03)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.59.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.0...@standardnotes/services@1.59.1) (2023-05-02)
+
+### Bug Fixes
+
+* automatically convert Super notes to Markdown for the Plaintext Backups feature ([75ecf4c](https://github.com/standardnotes/app/commit/75ecf4c393a6bc0ab2d6bf50dcbee21cef520746))
+
+# [1.59.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.58.5...@standardnotes/services@1.59.0) (2023-05-02)
+
+### Features
+
+* Automatic plaintext backup option in Preferences > Backups will backup your notes and tags into plaintext, unencrypted folders on your computer. In addition, automatic encrypted text backups preference management has moved from the top-level menu in the desktop app to Preferences > Backups. ([#2322](https://github.com/standardnotes/app/issues/2322)) ([7e3db49](https://github.com/standardnotes/app/commit/7e3db49322034aa644c3c99ccf9a5f1b508583aa))
+
+## [1.58.5](https://github.com/standardnotes/app/compare/@standardnotes/services@1.58.4...@standardnotes/services@1.58.5) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.58.4](https://github.com/standardnotes/app/compare/@standardnotes/services@1.58.3...@standardnotes/services@1.58.4) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.58.3](https://github.com/standardnotes/app/compare/@standardnotes/services@1.58.2...@standardnotes/services@1.58.3) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.58.2](https://github.com/standardnotes/app/compare/@standardnotes/services@1.58.1...@standardnotes/services@1.58.2) (2023-04-24)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.58.1](https://github.com/standardnotes/app/compare/@standardnotes/services@1.58.0...@standardnotes/services@1.58.1) (2023-04-20)
+
+**Note:** Version bump only for package @standardnotes/services
+
+# [1.58.0](https://github.com/standardnotes/app/compare/@standardnotes/services@1.57.15...@standardnotes/services@1.58.0) (2023-04-17)
+
+### Features
+
+* **mobile:** add U2F support for Android devices ([#2311](https://github.com/standardnotes/app/issues/2311)) ([725f55f](https://github.com/standardnotes/app/commit/725f55fca794b86c245742837af7e4370cebd68c))
+
+## [1.57.15](https://github.com/standardnotes/app/compare/@standardnotes/services@1.57.14...@standardnotes/services@1.57.15) (2023-04-15)
+
+**Note:** Version bump only for package @standardnotes/services
+
+## [1.57.14](https://github.com/standardnotes/app/compare/@standardnotes/services@1.57.13...@standardnotes/services@1.57.14) (2023-04-14)
+
+**Note:** Version bump only for package @standardnotes/services
+
 ## [1.57.13](https://github.com/standardnotes/app/compare/@standardnotes/services@1.57.12...@standardnotes/services@1.57.13) (2023-04-11)
 
 **Note:** Version bump only for package @standardnotes/services

@@ -1,23 +1,10 @@
 import { DecryptedTransferPayload } from '@standardnotes/models'
-import { FileBackupsDevice } from '@standardnotes/files'
-import { DesktopServerManagerInterface } from './DesktopServerManagerInterface'
+import { DesktopWatchedDirectoriesChanges, FileBackupsDevice } from '@standardnotes/files'
 
-export interface WebClientRequiresDesktopMethods extends FileBackupsDevice, DesktopServerManagerInterface {
-  localBackupsCount(): Promise<number>
-
-  viewlocalBackups(): void
-
-  deleteLocalBackups(): Promise<void>
-
+export interface WebClientRequiresDesktopMethods extends FileBackupsDevice {
   syncComponents(payloads: unknown[]): void
 
-  onMajorDataChange(): void
-
-  onInitialDataLoad(): void
-
   onSearch(text?: string): void
-
-  downloadBackup(): void | Promise<void>
 
   get extensionsServerHost(): string
 
@@ -33,9 +20,5 @@ export interface DesktopClientRequiresWebMethods {
 
   onComponentInstallationComplete(componentData: DecryptedTransferPayload, error: unknown): Promise<void>
 
-  requestBackupFile(): Promise<string | undefined>
-
-  didBeginBackup(): void
-
-  didFinishBackup(success: boolean): void
+  handleWatchedDirectoriesChanges(changes: DesktopWatchedDirectoriesChanges): Promise<void>
 }

@@ -4,32 +4,36 @@ export enum StoreKeys {
   ExtServerHost = 'extServerHost',
   UseSystemMenuBar = 'useSystemMenuBar',
   MenuBarVisible = 'isMenuBarVisible',
-  BackupsLocation = 'backupsLocation',
-  BackupsDisabled = 'backupsDisabled',
   MinimizeToTray = 'minimizeToTray',
   EnableAutoUpdate = 'enableAutoUpdates',
   ZoomFactor = 'zoomFactor',
   SelectedSpellCheckerLanguageCodes = 'selectedSpellCheckerLanguageCodes',
   UseNativeKeychain = 'useNativeKeychain',
-  FileBackupsEnabled = 'fileBackupsEnabled',
-  FileBackupsLocation = 'fileBackupsLocation',
   LastRunVersion = 'LastRunVersion',
   DesktopServerDataLocation = 'DesktopServerDataLocation',
+
+  LegacyTextBackupsLocation = 'backupsLocation',
+  LegacyTextBackupsDisabled = 'backupsDisabled',
+
+  LegacyFileBackupsEnabled = 'fileBackupsEnabled',
+  LegacyFileBackupsLocation = 'fileBackupsLocation',
 }
 
 export interface StoreData {
   [StoreKeys.ExtServerHost]: string
   [StoreKeys.UseSystemMenuBar]: boolean
   [StoreKeys.MenuBarVisible]: boolean
-  [StoreKeys.BackupsLocation]: string
-  [StoreKeys.BackupsDisabled]: boolean
   [StoreKeys.MinimizeToTray]: boolean
   [StoreKeys.EnableAutoUpdate]: boolean
   [StoreKeys.UseNativeKeychain]: boolean | null
   [StoreKeys.ZoomFactor]: number
   [StoreKeys.SelectedSpellCheckerLanguageCodes]: Set<Language> | null
-  [StoreKeys.FileBackupsEnabled]: boolean
-  [StoreKeys.FileBackupsLocation]: string
   [StoreKeys.LastRunVersion]: string
   [StoreKeys.DesktopServerDataLocation]: string
+
+  [StoreKeys.LegacyTextBackupsLocation]: string
+  [StoreKeys.LegacyTextBackupsDisabled]: boolean
+
+  [StoreKeys.LegacyFileBackupsEnabled]: boolean
+  [StoreKeys.LegacyFileBackupsLocation]: string
 }

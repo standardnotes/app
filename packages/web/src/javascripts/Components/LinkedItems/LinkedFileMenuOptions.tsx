@@ -1,4 +1,3 @@
-import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import { FilesController } from '@/Controllers/FilesController'
 import { FileItem } from '@standardnotes/snjs'
 import { useState } from 'react'
@@ -6,8 +5,8 @@ import { FileItemActionType } from '../AttachedFilesPopover/PopoverFileItemActio
 import { FileContextMenuBackupOption } from '../FileContextMenu/FileContextMenuBackupOption'
 import Icon from '../Icon/Icon'
 import MenuItem from '../Menu/MenuItem'
+import MenuSwitchButtonItem from '../Menu/MenuSwitchButtonItem'
 import HorizontalSeparator from '../Shared/HorizontalSeparator'
-import Switch from '../Switch/Switch'
 
 type Props = {
   file: FileItem
@@ -37,9 +36,10 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
         Preview file
       </MenuItem>
       <HorizontalSeparator classes="my-1" />
-      <MenuItem
+      <MenuSwitchButtonItem
         className="justify-between"
-        onClick={() => {
+        checked={isFileProtected}
+        onChange={() => {
           handleFileAction({
             type: FileItemActionType.ToggleFileProtection,
             payload: { file },
@@ -49,12 +49,9 @@ const LinkedFileMenuOptions = ({ file, closeMenu, handleFileAction, setIsRenamin
           }).catch(console.error)
         }}
       >
-        <span className="flex items-center">
-          <Icon type="lock" className="mr-2 text-neutral" />
-          Password protect
-        </span>
-        <Switch className="pointer-events-none px-0" tabIndex={FOCUSABLE_BUT_NOT_TABBABLE} checked={isFileProtected} />
-      </MenuItem>
+        <Icon type="lock" className="mr-2 text-neutral" />
+        Password protect
+      </MenuSwitchButtonItem>
       <HorizontalSeparator classes="my-1" />
       <MenuItem
         onClick={() => {

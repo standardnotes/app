@@ -1,7 +1,8 @@
-import { ForwardedRef, forwardRef, MouseEventHandler } from 'react'
+import { ComponentPropsWithoutRef, ForwardedRef, forwardRef, MouseEventHandler } from 'react'
 import Icon from '@/Components/Icon/Icon'
 import { IconType } from '@standardnotes/snjs'
 import { classNames } from '@standardnotes/utils'
+import StyledTooltip from '../StyledTooltip/StyledTooltip'
 
 type Props = {
   onClick: () => void
@@ -10,30 +11,35 @@ type Props = {
   iconClassName?: string
   label: string
   id?: string
-}
+} & ComponentPropsWithoutRef<'button'>
 
 const RoundIconButton = forwardRef(
-  ({ onClick, className, icon: iconType, iconClassName, id, label }: Props, ref: ForwardedRef<HTMLButtonElement>) => {
+  (
+    { onClick, className, icon: iconType, iconClassName, id, label, ...props }: Props,
+    ref: ForwardedRef<HTMLButtonElement>,
+  ) => {
     const click: MouseEventHandler = (e) => {
       e.preventDefault()
       onClick()
     }
     return (
-      <button
-        className={classNames(
-          'bg-text-padding m-0 flex h-10 min-w-10 cursor-pointer items-center justify-center rounded-full border',
-          'border-solid border-border bg-clip-padding text-neutral hover:bg-contrast hover:text-text focus:bg-contrast',
-          'focus:text-text focus:outline-none focus:ring-info md:h-8 md:min-w-8',
-          className,
-        )}
-        onClick={click}
-        ref={ref}
-        id={id}
-        title={label}
-        aria-label={label}
-      >
-        <Icon type={iconType} className={iconClassName} />
-      </button>
+      <StyledTooltip label={label}>
+        <button
+          className={classNames(
+            'bg-text-padding m-0 flex h-10 min-w-10 cursor-pointer items-center justify-center rounded-full border',
+            'border-solid border-border bg-clip-padding text-neutral hover:bg-contrast hover:text-text focus:bg-contrast',
+            'focus:text-text focus:outline-none focus:ring-info md:h-8 md:min-w-8',
+            className,
+          )}
+          onClick={click}
+          ref={ref}
+          id={id}
+          aria-label={label}
+          {...props}
+        >
+          <Icon type={iconType} className={iconClassName} />
+        </button>
+      </StyledTooltip>
     )
   },
 )

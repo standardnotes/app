@@ -1,49 +1,54 @@
-import { CustomCheckboxContainer, CustomCheckboxInput, CustomCheckboxInputProps } from '@reach/checkbox'
-import { FunctionComponent, useState } from 'react'
-import { SwitchProps } from './SwitchProps'
+import { Checkbox, VisuallyHidden } from '@ariakit/react'
+import { classNames } from '@standardnotes/snjs'
 
-const Switch: FunctionComponent<SwitchProps> = (props: SwitchProps) => {
-  const [checkedState, setChecked] = useState(props.checked || false)
-  const checked = props.checked ?? checkedState
-  const className = props.className ?? ''
-
-  const isDisabled = !!props.disabled
-  const isActive = checked && !isDisabled
+const Switch = ({
+  checked,
+  onChange,
+  className,
+  disabled = false,
+  tabIndex,
+  forceDesktopStyle,
+}: {
+  checked: boolean
+  onChange: (checked: boolean) => void
+  className?: string
+  disabled?: boolean
+  tabIndex?: number
+  forceDesktopStyle?: boolean
+}) => {
+  const isActive = checked && !disabled
 
   return (
     <label
-      className={`sn-component flex cursor-pointer items-center justify-between px-3 ${className} ${
-        isDisabled ? 'opacity-50' : ''
-      }`}
-      {...(props.role ? { role: props.role } : {})}
+      className={classNames(
+        'relative box-content inline-block flex-shrink-0 cursor-pointer rounded-full border-2 border-solid border-transparent bg-clip-padding transition-colors duration-150 ease-out',
+        'ring-2 ring-transparent focus-within:border-default focus-within:shadow-none focus-within:outline-none focus-within:ring-info',
+        disabled ? 'opacity-50' : '',
+        isActive ? 'bg-info' : 'bg-neutral',
+        forceDesktopStyle ? 'h-4.5 w-8' : 'h-7 w-12 md:h-4.5 md:w-8',
+        className,
+      )}
     >
-      {props.children}
-      <CustomCheckboxContainer
-        checked={checked}
-        onChange={(event) => {
-          setChecked(event.target.checked)
-          props.onChange?.(event.target.checked)
-        }}
-        className={`relative box-content inline-block h-4.5 w-8 cursor-pointer rounded-full border-2 border-solid border-transparent bg-clip-padding transition-colors duration-150 ease-out focus-within:border-default focus-within:shadow-none focus-within:outline-none focus-within:ring-info ${
-          isActive ? 'bg-info' : 'bg-neutral'
-        }`}
-        disabled={props.disabled}
-      >
-        <CustomCheckboxInput
-          {...({
-            ...props,
-            className:
-              'absolute top-0 left-0 m-0 p-0 w-full h-full opacity-0 z-[1] shadow-none outline-none cursor-pointer',
-            children: undefined,
-          } as CustomCheckboxInputProps)}
+      <VisuallyHidden>
+        <Checkbox
+          checked={checked}
+          onChange={(event) => {
+            onChange(event.target.checked)
+          }}
+          tabIndex={tabIndex}
         />
-        <span
-          aria-hidden
-          className={`absolute left-[2px] top-1/2 block h-3.5 w-3.5 -translate-y-1/2 rounded-full bg-default transition-transform duration-150 ease-out ${
-            checked ? 'translate-x-[calc(2rem-1.125rem)]' : ''
-          }`}
-        />
-      </CustomCheckboxContainer>
+      </VisuallyHidden>
+      <div
+        className={classNames(
+          'absolute top-1/2 block -translate-y-1/2 rounded-full bg-default transition-transform duration-150 ease-out',
+          forceDesktopStyle ? 'left-[2px] h-3.5 w-3.5' : 'left-[0.15rem] h-6 w-6 md:left-[2px] md:h-3.5 md:w-3.5',
+          checked
+            ? forceDesktopStyle
+              ? 'translate-x-[calc(2rem-1.125rem)]'
+              : 'translate-x-[calc(3.25rem-1.5rem-0.5rem)] md:translate-x-[calc(2rem-1.125rem)]'
+            : '',
+        )}
+      />
     </label>
   )
 }

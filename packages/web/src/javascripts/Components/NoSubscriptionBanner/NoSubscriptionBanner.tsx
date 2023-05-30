@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { classNames } from '@standardnotes/utils'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'

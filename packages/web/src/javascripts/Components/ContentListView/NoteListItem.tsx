@@ -74,7 +74,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
     <div
       ref={listItemRef}
       className={classNames(
-        'content-list-item text-tex flex w-full cursor-pointer items-stretch',
+        'content-list-item flex w-full cursor-pointer items-stretch text-text',
         selected && `selected border-l-2 border-solid border-accessory-tint-${tint}`,
         isPreviousItemTiled && 'mt-3 border-t border-solid border-t-border',
         isNextItemTiled && 'mb-3 border-b border-solid border-b-border',
@@ -83,7 +83,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
       onClick={onClick}
     >
       {!hideIcon ? (
-        <div className="mr-0 flex flex-col items-center justify-between p-4 pr-4">
+        <div className="mr-0 flex flex-col items-center justify-between gap-2 p-4 pr-4">
           <Icon type={icon} className={`text-accessory-tint-${tint}`} />
         </div>
       ) : (

@@ -66,12 +66,10 @@ jobs:
             packages/mobile/android/app/build/outputs/apk/prod/release/app-prod-release.apk
 
   ios:
-    env:
-      ITMSTRANSPORTER_FORCE_ITMS_PACKAGE_UPLOAD: true
     defaults:
       run:
         working-directory: packages/mobile
-    runs-on: macos-11
+    runs-on: macos-latest
     timeout-minutes: 90
     steps:
       - name: Checkout code

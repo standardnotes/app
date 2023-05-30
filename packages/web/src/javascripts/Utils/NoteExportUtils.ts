@@ -1,5 +1,6 @@
-import { WebApplication } from '@/Application/Application'
-import { exportSuperNote } from '@/Components/SuperEditor/SuperNoteExporter'
+import { WebApplication } from '@/Application/WebApplication'
+import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { NoteType, PrefKey, SNNote } from '@standardnotes/snjs'
 
 export const getNoteFormat = (application: WebApplication, note: SNNote) => {
@@ -8,7 +9,10 @@ export const getNoteFormat = (application: WebApplication, note: SNNote) => {
   const isSuperNote = note.noteType === NoteType.Super
 
   if (isSuperNote) {
-    const superNoteExportFormatPref = application.getPreference(PrefKey.SuperNoteExportFormat) || 'json'
+    const superNoteExportFormatPref = application.getPreference(
+      PrefKey.SuperNoteExportFormat,
+      PrefDefaults[PrefKey.SuperNoteExportFormat],
+    )
 
     return superNoteExportFormatPref
   }
@@ -38,7 +42,8 @@ export const getNoteBlob = (application: WebApplication, note: SNNote) => {
       type = 'text/plain'
       break
   }
-  const content = note.noteType === NoteType.Super ? exportSuperNote(note, format) : note.text
+  const content =
+    note.noteType === NoteType.Super ? new HeadlessSuperConverter().convertString(note.text, format) : note.text
   const blob = new Blob([content], {
     type,
   })

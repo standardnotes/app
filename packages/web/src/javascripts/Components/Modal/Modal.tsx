@@ -1,6 +1,5 @@
 import { useMediaQuery, MutuallyExclusiveMediaQueryBreakpoints } from '@/Hooks/useMediaQuery'
-import { isIOS } from '@/Utils'
-import { DialogContent } from '@reach/dialog'
+import { useAvailableSafeAreaPadding } from '@/Hooks/useSafeAreaPadding'
 import { classNames } from '@standardnotes/snjs'
 import { ReactNode, useMemo, useRef, useState } from 'react'
 import Button from '../Button/Button'
@@ -26,6 +25,7 @@ type Props = {
   className?: {
     content?: string
     description?: string
+    backdrop?: string
   }
   customHeader?: ReactNode
   disableCustomHeader?: boolean
@@ -92,24 +92,30 @@ const Modal = ({
   const [showAdvanced, setShowAdvanced] = useState(false)
   const advancedOptionRef = useRef<HTMLButtonElement>(null)
 
+  const { hasTopInset, hasBottomInset } = useAvailableSafeAreaPadding()
+
   return (
     <>
       <ModalAndroidBackHandler close={close} />
-      <DialogContent
-        tabIndex={0}
+      <div
+        className={classNames('absolute z-0 h-full w-full bg-passive-5 opacity-0 md:opacity-75', className?.backdrop)}
+        role="presentation"
+        onClick={close}
+      />
+      <div
         className={classNames(
-          'm-0 flex h-full w-full flex-col border-solid border-border bg-default p-0 md:h-auto md:max-h-[85vh] md:w-160 md:rounded md:border md:shadow-main',
-          className.content,
+          'absolute z-[1] m-0 flex h-full w-full flex-col border-solid border-border bg-default p-0 md:h-auto md:max-h-[85vh] md:w-160 md:rounded md:border md:shadow-main',
+          'md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:transform',
+          className?.content,
         )}
-        aria-label={title}
       >
         {customHeader && !disableCustomHeader ? (
           customHeader
         ) : (
           <div
             className={classNames(
-              'flex w-full flex-shrink-0 items-center justify-between rounded-t border-b border-solid border-border bg-default text-text md:px-4.5 md:py-3',
-              isIOS() ? 'px-2 pt-safe-top pb-1.5' : 'py-1.5 px-2',
+              'flex w-full flex-shrink-0 select-none items-center justify-between rounded-t border-b border-solid border-border bg-default px-2 text-text md:px-4.5 md:py-3',
+              hasTopInset ? 'pt-safe-top pb-1.5' : 'py-1.5',
             )}
           >
             <MobileModalHeader className="flex-row items-center justify-between md:flex md:gap-0">
@@ -196,7 +202,7 @@ const Modal = ({
               <div
                 className={classNames(
                   'hidden items-center justify-start gap-3 border-t border-border py-2 px-2.5 md:flex md:px-4 md:py-4',
-                  isIOS() && 'pb-safe-bottom',
+                  hasBottomInset && 'pb-safe-bottom',
                 )}
               >
                 {sortedActions.map((action, index) => (
@@ -218,7 +224,7 @@ const Modal = ({
                 ))}
               </div>
             )}
-      </DialogContent>
+      </div>
     </>
   )
 }

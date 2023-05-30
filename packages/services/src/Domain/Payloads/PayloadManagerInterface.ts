@@ -3,6 +3,8 @@ import {
   EncryptedPayloadInterface,
   FullyFormedPayloadInterface,
   PayloadEmitSource,
+  DecryptedPayloadInterface,
+  HistoryMap,
 } from '@standardnotes/models'
 import { IntegrityPayload } from '@standardnotes/responses'
 
@@ -21,4 +23,6 @@ export interface PayloadManagerInterface {
    * Returns a detached array of all items which are not deleted
    */
   get nonDeletedItems(): FullyFormedPayloadInterface[]
+
+  importPayloads(payloads: DecryptedPayloadInterface[], historyMap: HistoryMap): Promise<string[]>
 }

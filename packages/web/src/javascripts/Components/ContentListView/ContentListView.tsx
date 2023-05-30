@@ -7,9 +7,9 @@ import {
   SEARCH_KEYBOARD_COMMAND,
   SELECT_ALL_ITEMS_KEYBOARD_COMMAND,
 } from '@standardnotes/ui-services'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { PANEL_NAME_NOTES } from '@/Constants/Constants'
-import { FileItem, PrefKey, WebAppEvent } from '@standardnotes/snjs'
+import { FileItem, Platform, PrefKey, WebAppEvent } from '@standardnotes/snjs'
 import { observer } from 'mobx-react-lite'
 import { forwardRef, useCallback, useEffect, useMemo } from 'react'
 import ContentList from '@/Components/ContentListView/ContentList'
@@ -305,7 +305,9 @@ const ContentListView = forwardRef<HTMLDivElement, Props>(
       }
     }, [selectedUuids, innerRef, isCurrentNoteTemplate, renderedItems, panes])
 
-    const [setElement] = usePaneSwipeGesture('right', () => setPaneLayout(PaneLayout.TagSelection))
+    const [setElement] = usePaneSwipeGesture('right', () => setPaneLayout(PaneLayout.TagSelection), {
+      requiresStartFromEdge: application.platform !== Platform.Android,
+    })
 
     return (
       <div

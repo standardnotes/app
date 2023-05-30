@@ -2,7 +2,7 @@ import { InternalEventBus } from '@standardnotes/snjs'
 import { action, computed, makeObservable, observable } from 'mobx'
 import { PreferenceId, RootQueryParam } from '@standardnotes/ui-services'
 import { AbstractViewController } from './Abstract/AbstractViewController'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 
 const DEFAULT_PANE: PreferenceId = 'server'
 

@@ -3,6 +3,60 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.26.10](https://github.com/standardnotes/app/compare/@standardnotes/api@1.26.9...@standardnotes/api@1.26.10) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/api
+
+## [1.26.9](https://github.com/standardnotes/app/compare/@standardnotes/api@1.26.8...@standardnotes/api@1.26.9) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/api
+
+## [1.26.8](https://github.com/standardnotes/app/compare/@standardnotes/api@1.26.7...@standardnotes/api@1.26.8) (2023-05-12)
+
+**Note:** Version bump only for package @standardnotes/api
+
+## [1.26.7](https://github.com/standardnotes/app/compare/@standardnotes/api@1.26.6...@standardnotes/api@1.26.7) (2023-05-11)
+
+**Note:** Version bump only for package @standardnotes/api
+
+## [1.26.6](https://github.com/standardnotes/app/compare/@standardnotes/api@1.26.5...@standardnotes/api@1.26.6) (2023-05-08)
+
+**Note:** Version bump only for package @standardnotes/api
+
+## [1.26.5](https://github.com/standardnotes/app/compare/@standardnotes/api@1.26.4...@standardnotes/api@1.26.5) (2023-05-04)
+
+**Note:** Version bump only for package @standardnotes/api
+
+## [1.26.4](https://github.com/standardnotes/app/compare/@standardnotes/api@1.26.3...@standardnotes/api@1.26.4) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/api
+
+## [1.26.3](https://github.com/standardnotes/app/compare/@standardnotes/api@1.26.2...@standardnotes/api@1.26.3) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/api
+
+## [1.26.2](https://github.com/standardnotes/app/compare/@standardnotes/api@1.26.1...@standardnotes/api@1.26.2) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/api
+
+## [1.26.1](https://github.com/standardnotes/app/compare/@standardnotes/api@1.26.0...@standardnotes/api@1.26.1) (2023-04-24)
+
+**Note:** Version bump only for package @standardnotes/api
+
+# [1.26.0](https://github.com/standardnotes/app/compare/@standardnotes/api@1.25.14...@standardnotes/api@1.26.0) (2023-04-17)
+
+### Features
+
+* **mobile:** add U2F support for Android devices ([#2311](https://github.com/standardnotes/app/issues/2311)) ([725f55f](https://github.com/standardnotes/app/commit/725f55fca794b86c245742837af7e4370cebd68c))
+
+## [1.25.14](https://github.com/standardnotes/app/compare/@standardnotes/api@1.25.13...@standardnotes/api@1.25.14) (2023-04-15)
+
+**Note:** Version bump only for package @standardnotes/api
+
+## [1.25.13](https://github.com/standardnotes/app/compare/@standardnotes/api@1.25.12...@standardnotes/api@1.25.13) (2023-04-14)
+
+**Note:** Version bump only for package @standardnotes/api
+
 ## [1.25.12](https://github.com/standardnotes/app/compare/@standardnotes/api@1.25.11...@standardnotes/api@1.25.12) (2023-04-11)
 
 **Note:** Version bump only for package @standardnotes/api

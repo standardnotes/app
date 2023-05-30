@@ -1,7 +1,7 @@
 import { FunctionComponent, ReactNode, useState } from 'react'
 import { LinkButton, Text } from '@/Components/Preferences/PreferencesComponents/Content'
 import Button from '@/Components/Button/Button'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 
 type Props = {
   application: WebApplication

@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { FeaturesController } from '@/Controllers/FeaturesController'
 import { SubscriptionController } from '@/Controllers/Subscription/SubscriptionController'
 import { observer } from 'mobx-react-lite'

@@ -1,26 +1,23 @@
+import { ImportModalController } from '@/Controllers/ImportModalController'
 import { ClassicFileReader } from '@standardnotes/filepicker'
 import { NoteImportType } from '@standardnotes/ui-services'
+import { observer } from 'mobx-react-lite'
 import { useCallback } from 'react'
 import Button from '../Button/Button'
 import Icon from '../Icon/Icon'
-import { ImportModalAction } from './Types'
 
 type Props = {
-  dispatch: React.Dispatch<ImportModalAction>
+  setFiles: ImportModalController['setFiles']
 }
 
-const ImportModalInitialPage = ({ dispatch }: Props) => {
+const ImportModalInitialPage = ({ setFiles }: Props) => {
   const selectFiles = useCallback(
     async (service?: NoteImportType) => {
       const files = await ClassicFileReader.selectFiles()
 
-      dispatch({
-        type: 'setFiles',
-        files,
-        service,
-      })
+      setFiles(files, service)
     },
-    [dispatch],
+    [setFiles],
   )
 
   return (
@@ -33,10 +30,7 @@ const ImportModalInitialPage = ({ dispatch }: Props) => {
         onDrop={(e) => {
           e.preventDefault()
           const files = Array.from(e.dataTransfer.files)
-          dispatch({
-            type: 'setFiles',
-            files,
-          })
+          setFiles(files)
         }}
       >
         <div className="text-lg font-semibold">Drag and drop files to auto-detect and import</div>
@@ -90,4 +84,4 @@ const ImportModalInitialPage = ({ dispatch }: Props) => {
   )
 }
 
-export default ImportModalInitialPage
+export default observer(ImportModalInitialPage)

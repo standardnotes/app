@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.59.5](https://github.com/standardnotes/app/compare/@standardnotes/features@1.59.4...@standardnotes/features@1.59.5) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/features
+
+## [1.59.4](https://github.com/standardnotes/app/compare/@standardnotes/features@1.59.3...@standardnotes/features@1.59.4) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/features
+
+## [1.59.3](https://github.com/standardnotes/app/compare/@standardnotes/features@1.59.2...@standardnotes/features@1.59.3) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/features
+
+## [1.59.2](https://github.com/standardnotes/app/compare/@standardnotes/features@1.59.1...@standardnotes/features@1.59.2) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/features
+
+## [1.59.1](https://github.com/standardnotes/app/compare/@standardnotes/features@1.59.0...@standardnotes/features@1.59.1) (2023-04-26)
+
+**Note:** Version bump only for package @standardnotes/features
+
+# [1.59.0](https://github.com/standardnotes/app/compare/@standardnotes/features@1.58.16...@standardnotes/features@1.59.0) (2023-04-17)
+
+### Features
+
+* **mobile:** add U2F support for Android devices ([#2311](https://github.com/standardnotes/app/issues/2311)) ([725f55f](https://github.com/standardnotes/app/commit/725f55fca794b86c245742837af7e4370cebd68c))
+
+## [1.58.16](https://github.com/standardnotes/app/compare/@standardnotes/features@1.58.15...@standardnotes/features@1.58.16) (2023-04-15)
+
+**Note:** Version bump only for package @standardnotes/features
+
+## [1.58.15](https://github.com/standardnotes/app/compare/@standardnotes/features@1.58.14...@standardnotes/features@1.58.15) (2023-04-14)
+
+**Note:** Version bump only for package @standardnotes/features
+
 ## [1.58.14](https://github.com/standardnotes/app/compare/@standardnotes/features@1.58.13...@standardnotes/features@1.58.14) (2023-04-11)
 
 **Note:** Version bump only for package @standardnotes/features

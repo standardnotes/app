@@ -1,4 +1,4 @@
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ViewControllerManager } from '@/Controllers/ViewControllerManager'
 import { observer } from 'mobx-react-lite'
 import Icon from '@/Components/Icon/Icon'
@@ -10,7 +10,7 @@ import Menu from '@/Components/Menu/Menu'
 import MenuItem from '@/Components/Menu/MenuItem'
 import MenuItemSeparator from '@/Components/Menu/MenuItemSeparator'
 import WorkspaceSwitcherOption from './WorkspaceSwitcher/WorkspaceSwitcherOption'
-import { ApplicationGroup } from '@/Application/ApplicationGroup'
+import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { formatLastSyncDate } from '@/Utils/DateUtils'
 import Spinner from '@/Components/Spinner/Spinner'
 import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
@@ -18,7 +18,7 @@ import { MenuItemIconSize } from '@/Constants/TailwindClassNames'
 type Props = {
   viewControllerManager: ViewControllerManager
   application: WebApplication
-  mainApplicationGroup: ApplicationGroup
+  mainApplicationGroup: WebApplicationGroup
   setMenuPane: (pane: AccountMenuPane) => void
   closeMenu: () => void
 }
@@ -165,7 +165,12 @@ const GeneralAccountMenu: FunctionComponent<Props> = ({
             </MenuItem>
           </>
         )}
-        <MenuItem onClick={() => viewControllerManager.isImportModalVisible.set(true)}>
+        <MenuItem
+          onClick={() => {
+            viewControllerManager.importModalController.setIsVisible(true)
+            viewControllerManager.accountMenuController.closeAccountMenu()
+          }}
+        >
           <Icon type="archive" className={iconClassName} />
           Import
         </MenuItem>

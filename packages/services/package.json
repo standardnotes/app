@@ -1,6 +1,6 @@
 {
   "name": "@standardnotes/services",
-  "version": "1.57.13",
+  "version": "1.59.10",
   "engines": {
     "node": ">=16.0.0 <17.0.0"
   },
@@ -18,8 +18,9 @@
   "dependencies": {
     "@standardnotes/api": "workspace:^",
     "@standardnotes/common": "^1.46.4",
-    "@standardnotes/domain-core": "^1.11.3",
+    "@standardnotes/domain-core": "^1.12.0",
     "@standardnotes/encryption": "workspace:^",
+    "@standardnotes/features": "workspace:^",
     "@standardnotes/files": "workspace:^",
     "@standardnotes/models": "workspace:^",
     "@standardnotes/responses": "workspace:*",

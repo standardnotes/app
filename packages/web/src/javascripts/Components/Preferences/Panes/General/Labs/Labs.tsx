@@ -1,5 +1,5 @@
 import { Text, Title } from '@/Components/Preferences/PreferencesComponents/Content'
-import { WebApplication } from '@/Application/Application'
+import { WebApplication } from '@/Application/WebApplication'
 import { ApplicationEvent, FeatureIdentifier, FeatureStatus, FindNativeFeature, PrefKey } from '@standardnotes/snjs'
 import { Fragment, FunctionComponent, useCallback, useEffect, useState } from 'react'
 import { usePremiumModal } from '@/Hooks/usePremiumModal'
@@ -8,6 +8,7 @@ import PreferencesSegment from '../../../PreferencesComponents/PreferencesSegmen
 import LabsFeature from './LabsFeature'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
+import { PrefDefaults } from '@/Constants/PrefDefaults'
 
 type ExperimentalFeatureItem = {
   identifier: FeatureIdentifier
@@ -30,11 +31,13 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
   const [experimentalFeatures, setExperimentalFeatures] = useState<ExperimentalFeatureItem[]>([])
 
   const [isPaneGesturesEnabled, setIsPaneGesturesEnabled] = useState(() =>
-    application.getPreference(PrefKey.PaneGesturesEnabled, false),
+    application.getPreference(PrefKey.PaneGesturesEnabled, PrefDefaults[PrefKey.PaneGesturesEnabled]),
   )
   useEffect(() => {
     return application.addSingleEventObserver(ApplicationEvent.PreferencesChanged, async () => {
-      setIsPaneGesturesEnabled(application.getPreference(PrefKey.PaneGesturesEnabled, false))
+      setIsPaneGesturesEnabled(
+        application.getPreference(PrefKey.PaneGesturesEnabled, PrefDefaults[PrefKey.PaneGesturesEnabled]),
+      )
     })
   }, [application])
 
@@ -59,13 +62,14 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
   const premiumModal = usePremiumModal()
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+  const canShowPaneGesturesOption = isMobileScreen && typeof isPaneGesturesEnabled === 'boolean'
 
   return (
     <PreferencesGroup>
       <PreferencesSegment>
         <Title>Labs</Title>
         <div>
-          {isMobileScreen && (
+          {canShowPaneGesturesOption && (
             <LabsFeature
               name="Pane switch gestures"
               description="Allows using gestures to navigate"
@@ -100,7 +104,7 @@ const LabsPane: FunctionComponent<Props> = ({ application }) => {
               </Fragment>
             )
           })}
-          {(experimentalFeatures.length === 0 || typeof isPaneGesturesEnabled === 'boolean') && (
+          {experimentalFeatures.length === 0 && !canShowPaneGesturesOption && (
             <div className="flex items-center justify-between">
               <div className="flex flex-col">
                 <Text>No experimental features available.</Text>

@@ -42,6 +42,7 @@ export const IconNameToSvgMapping = {
   'hashtag-off': icons.HashtagOffIcon,
   'keyboard-close': icons.KeyboardCloseIcon,
   'link-off': icons.LinkOffIcon,
+  'line-width': icons.LineWidthIcon,
   'list-bulleted': icons.ListBulleted,
   'list-numbered': icons.ListNumbered,
   'lock-filled': icons.LockFilledIcon,

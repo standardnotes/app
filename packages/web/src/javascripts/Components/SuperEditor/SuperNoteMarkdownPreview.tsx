@@ -6,6 +6,7 @@ import { copyTextToClipboard } from '../../Utils/copyTextToClipboard'
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import { BlocksEditor } from './BlocksEditor'
 import { BlocksEditorComposer } from './BlocksEditorComposer'
+import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 
 type Props = {
   note: SNNote
@@ -28,6 +29,8 @@ export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ note, close
     setMarkdown(markdown)
   }, [])
 
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
   const modalActions: ModalAction[] = useMemo(
     () => [
       {
@@ -36,8 +39,15 @@ export const SuperNoteMarkdownPreview: FunctionComponent<Props> = ({ note, close
         onClick: copy,
         mobileSlot: 'left',
       },
+      {
+        label: 'Done',
+        type: 'cancel',
+        onClick: closeDialog,
+        mobileSlot: 'right',
+        hidden: !isMobileScreen,
+      },
     ],
-    [copy, didCopy],
+    [closeDialog, copy, didCopy, isMobileScreen],
   )
 
   return (

@@ -2,7 +2,7 @@ import { LoggingDomain, log } from '@/Logging'
 import { loadPurchaseFlowUrl } from '@/Components/PurchaseFlow/PurchaseFlowFunctions'
 import { InternalEventBus, AppleIAPProductId } from '@standardnotes/snjs'
 import { action, makeObservable, observable } from 'mobx'
-import { WebApplication } from '../../Application/Application'
+import { WebApplication } from '../../Application/WebApplication'
 import { AbstractViewController } from '../Abstract/AbstractViewController'
 import { PurchaseFlowPane } from './PurchaseFlowPane'
 
