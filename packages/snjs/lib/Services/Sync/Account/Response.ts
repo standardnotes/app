@@ -35,13 +35,13 @@ export class ServerSyncResponse {
   constructor(public rawResponse: HttpResponse<RawSyncResponse>) {
     this.rawResponse = rawResponse
 
-    const conflicts = this.successResponseData?.conflicts || []
-    const legacyConflicts = this.successResponseData?.unsaved || []
-    this.rawConflictObjects = conflicts.concat(legacyConflicts)
-
     if (!isErrorResponse(rawResponse)) {
       this.successResponseData = rawResponse.data
     }
+
+    const conflicts = this.successResponseData?.conflicts || []
+    const legacyConflicts = this.successResponseData?.unsaved || []
+    this.rawConflictObjects = conflicts.concat(legacyConflicts)
 
     this.savedPayloads = FilterDisallowedRemotePayloadsAndMap(this.successResponseData?.saved_items || []).map(
       (rawItem) => {

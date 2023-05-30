@@ -83,6 +83,7 @@ export type ConflictVaultInvalidStateParams<T = ServerItemResponse> = BaseConfli
 export type ConflictVaultInvalidItemsKeyParams<T = ServerItemResponse> = BaseConflictParams<T> & {
   type: ConflictType.VaultInvalidItemsKey
   unsaved_item: T
+  server_item?: T
 }
 
 export function conflictParamsHasServerItemAndUnsavedItem<T = ServerItemResponse>(

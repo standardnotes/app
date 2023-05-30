@@ -340,21 +340,6 @@ describe.only('vaults', function () {
       console.error('TODO: implement test case')
     })
 
-    it('should delete a vault and remove item associations', async () => {
-      const { vault, note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
-
-      await vaultService.deleteVault(vault.uuid)
-
-      const originatorNote = context.application.items.findItem(note.uuid)
-      expect(originatorNote.vault_uuid).to.not.be.ok
-
-      /** Contact should not be able to receive new changes, and thus will have the last copy of the note with its vault_uuid intact */
-      const contactNote = contactContext.application.items.findItem(note.uuid)
-      expect(contactNote.vault_uuid).to.not.be.undefined
-
-      await deinitContactContext()
-    })
-
     it('should update vault name and description', async () => {
       const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
 
@@ -458,7 +443,30 @@ describe.only('vaults', function () {
       await deinitContactContext()
     })
 
-    it('should remove item from collaborated account when item is deleted permanently', async () => {
+    it('conflicts created should be associated with the vault', async () => {
+      const { note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
+
+      await context.changeNoteTitle(note, 'new title first client')
+      await contactContext.changeNoteTitle(note, 'new title second client')
+
+      await context.sync()
+      await contactContext.sync()
+      await context.sync()
+
+      const originatorNotes = context.items.getDisplayableNotes()
+      expect(originatorNotes.length).to.equal(2)
+      expect(originatorNotes.find((note) => !!note.duplicate_of)).to.not.be.undefined
+
+      const collaboratorNotes = contactContext.items.getDisplayableNotes()
+      expect(collaboratorNotes.length).to.equal(2)
+      expect(collaboratorNotes.find((note) => !!note.duplicate_of)).to.not.be.undefined
+
+      await deinitContactContext()
+    })
+  })
+
+  describe('deletion', () => {
+    it('should remove item from vault when item is deleted permanently', async () => {
       const { note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
 
       await context.items.setItemToBeDeleted(note)
@@ -492,23 +500,32 @@ describe.only('vaults', function () {
       await deinitContactContext()
     })
 
-    it('conflicts created should be associated with the vault', async () => {
-      const { note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
+    it('should delete a vault and remove item associations', async () => {
+      const { vault, note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
 
-      await context.changeNoteTitle(note, 'new title first client')
-      await contactContext.changeNoteTitle(note, 'new title second client')
+      await vaultService.deleteVault(vault.uuid)
 
-      await context.sync()
+      const originatorNote = context.application.items.findItem(note.uuid)
+      expect(originatorNote.vault_uuid).to.not.be.ok
+
+      /** Contact should not be able to receive new changes, and thus will have the last copy of the note with its vault_uuid intact */
+      const contactNote = contactContext.application.items.findItem(note.uuid)
+      expect(contactNote.vault_uuid).to.not.be.undefined
+
+      await deinitContactContext()
+    })
+
+    it('deleting a vault should delete all its items', async () => {
+      const { vault, note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
+
+      await vaultService.deleteVault(vault.uuid)
       await contactContext.sync()
-      await context.sync()
 
-      const originatorNotes = context.items.getDisplayableNotes()
-      expect(originatorNotes.length).to.equal(2)
-      expect(originatorNotes.find((note) => !!note.duplicate_of)).to.not.be.undefined
+      const originatorNote = context.application.items.findItem(note.uuid)
+      expect(originatorNote).to.be.undefined
 
-      const collaboratorNotes = contactContext.items.getDisplayableNotes()
-      expect(collaboratorNotes.length).to.equal(2)
-      expect(collaboratorNotes.find((note) => !!note.duplicate_of)).to.not.be.undefined
+      const contactNote = contactContext.application.items.findItem(note.uuid)
+      expect(contactNote).to.be.undefined
 
       await deinitContactContext()
     })
@@ -853,10 +870,28 @@ describe.only('vaults', function () {
     })
 
     it('should be able to move item from vault to user as a write user if the item belongs to me', async () => {
-      console.error('TODO - implement test case')
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
+
+      const note = await contactContext.createSyncedNote('foo', 'bar')
+      await contactContext.vaultService.addItemToVault(vault, note)
+      await contactContext.sync()
+
+      const promise = contactContext.resolveWithConflicts()
+      await contactContext.vaultService.moveItemFromVaultToUser(note)
+      const conflicts = await promise
+
+      expect(conflicts.length).to.equal(0)
+
+      const duplicateNote = contactContext.findDuplicateNote(note.uuid)
+      expect(duplicateNote).to.be.undefined
+
+      const existingNote = contactContext.items.findItem(note.uuid)
+      expect(existingNote.vault_uuid).to.not.be.ok
+
+      await deinitContactContext()
     })
 
-    it.only('should not be able to move item from vault to user as a write user if the item belongs to someone else', async () => {
+    it('should create a non-vaulted copy if attempting to move item from vault to user and item belongs to someone else', async () => {
       const { note, vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
 
       const promise = contactContext.resolveWithConflicts()
@@ -866,18 +901,102 @@ describe.only('vaults', function () {
       expect(conflicts.length).to.equal(1)
       expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
 
-      const updatedNote = contactContext.items.findItem(note.uuid)
-      expect(updatedNote.vault_uuid).to.equal(vault.uuid)
+      const duplicateNote = contactContext.findDuplicateNote(note.uuid)
+      expect(duplicateNote).to.not.be.undefined
+      expect(duplicateNote.vault_uuid).to.not.be.ok
+
+      const existingNote = contactContext.items.findItem(note.uuid)
+      expect(existingNote.vault_uuid).to.equal(vault.uuid)
 
       await deinitContactContext()
     })
 
-    it('should not be able to move item from vault to user as an admin user if the item belongs to someone else', async () => {
+    it('should created a non-vaulted copy if admin attempts to move item from vault to user if the item belongs to someone else', async () => {
+      const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
+
+      const note = await contactContext.createSyncedNote('foo', 'bar')
+      await contactContext.vaultService.addItemToVault(vault, note)
+      await context.sync()
+
+      const promise = context.resolveWithConflicts()
+      await context.vaultService.moveItemFromVaultToUser(note)
+      const conflicts = await promise
+
+      expect(conflicts.length).to.equal(1)
+      expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
+
+      const duplicateNote = context.findDuplicateNote(note.uuid)
+      expect(duplicateNote).to.not.be.undefined
+      expect(duplicateNote.vault_uuid).to.not.be.ok
+
+      const existingNote = context.items.findItem(note.uuid)
+      expect(existingNote.vault_uuid).to.equal(vault.uuid)
+
+      await deinitContactContext()
+    })
+  })
+
+  describe('sync errors and conflicts', () => {
+    it('should handle ConflictingData', async () => {
+      console.error('TODO - implement test case')
+    })
+
+    it('should handle UuidConflict', async () => {
+      console.error('TODO - implement test case')
+    })
+
+    it('should handle ContentTypeError', async () => {
+      console.error('TODO - implement test case')
+    })
+
+    it('should handle ContentError', async () => {
+      console.error('TODO - implement test case')
+    })
+
+    it('should handle ReadOnlyError', async () => {
+      console.error('TODO - implement test case')
+    })
+
+    it('should handle UuidError', async () => {
+      console.error('TODO - implement test case')
+    })
+
+    it('should handle SnjsVersionError', async () => {
+      console.error('TODO - implement test case')
+    })
+
+    it('should handle VaultInsufficientPermissionsError', async () => {
+      console.error('TODO - implement test case')
+    })
+
+    it('should handle VaultNotMemberError', async () => {
+      console.error('TODO - implement test case')
+    })
+
+    it('should handle VaultNotFoundError', async () => {
+      console.error('TODO - implement test case')
+    })
+
+    it('should handle VaultInvalidState', async () => {
+      console.error('TODO - implement test case')
+    })
+
+    it('should handle VaultInvalidItemsKey', async () => {
       console.error('TODO - implement test case')
     })
   })
 
-  describe.only('files', () => {
+  describe('offline vaults', () => {
+    it('should be able to create an offline vault', async () => {
+      console.error('TODO - implement test case')
+    })
+
+    it('offline vaults should part to online vaults after signing in or registering', async () => {
+      console.error('TODO - implement test case')
+    })
+  })
+
+  describe('files', () => {
     beforeEach(async () => {
       await context.publicMockSubscriptionPurchaseEvent()
     })

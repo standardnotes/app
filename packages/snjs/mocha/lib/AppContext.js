@@ -424,6 +424,11 @@ export class AppContext {
     }
   }
 
+  findDuplicateNote(duplicateOfUuid) {
+    const items = this.items.getDisplayableNotes()
+    return items.find((note) => note.duplicateOf === duplicateOfUuid)
+  }
+
   get userUuid() {
     return this.application.sessions.user.uuid
   }

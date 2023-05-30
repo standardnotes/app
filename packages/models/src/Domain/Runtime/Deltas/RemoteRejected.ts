@@ -12,6 +12,8 @@ import {
   conflictParamsHasServerItemAndUnsavedItem,
   conflictParamsHasOnlyServerItem,
   conflictParamsHasOnlyUnsavedItem,
+  ConflictVaultInvalidItemsKeyParams,
+  ConflictType,
 } from '@standardnotes/responses'
 import { PayloadsByDuplicating } from '../../Utilities/Payload/PayloadsByDuplicating'
 
@@ -25,7 +27,9 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
     const results: SyncResolvedPayload[] = []
 
     for (const conflict of this.conflicts) {
-      if (conflictParamsHasServerItemAndUnsavedItem(conflict)) {
+      if (conflict.type === ConflictType.VaultInvalidItemsKey) {
+        results.push(...this.handleVaultInvalidItemsKeyConflict(conflict))
+      } else if (conflictParamsHasServerItemAndUnsavedItem(conflict)) {
         results.push(...this.getResultForConflictWithServerItemAndUnsavedItem(conflict))
       } else if (conflictParamsHasOnlyServerItem(conflict)) {
         results.push(...this.getResultForConflictWithOnlyServerItem(conflict))
@@ -37,6 +41,23 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
     return {
       emits: results,
       source: PayloadEmitSource.RemoteSaved,
+    }
+  }
+
+  private handleVaultInvalidItemsKeyConflict(
+    conflict: ConflictVaultInvalidItemsKeyParams<FullyFormedPayloadInterface>,
+  ): SyncResolvedPayload[] {
+    const base = this.baseCollection.find(conflict.unsaved_item.uuid)
+    if (!base) {
+      return []
+    }
+    if (conflict.server_item) {
+      return this.resultByDuplicatingBasePayloadAsNonVaultedAndTakingServerPayloadAsCanonical(
+        base,
+        conflict.server_item,
+      )
+    } else {
+      return this.resultByDuplicatingBasePayloadAsNonVaulted(base)
     }
   }
 
@@ -102,5 +123,43 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
     )
 
     return duplicateBasePayloadIntoNewUuid.concat([takeServerPayloadAsCanonical])
+  }
+
+  private resultByDuplicatingBasePayloadAsNonVaultedAndTakingServerPayloadAsCanonical(
+    basePayload: FullyFormedPayloadInterface,
+    serverPayload: FullyFormedPayloadInterface,
+  ): SyncResolvedPayload[] {
+    const duplicateBasePayloadIntoNewUuid = PayloadsByDuplicating({
+      payload: basePayload.copy({
+        vault_uuid: undefined,
+      }),
+      baseCollection: this.baseCollection,
+      isConflict: true,
+      source: serverPayload.source,
+    })
+
+    const takeServerPayloadAsCanonical = serverPayload.copyAsSyncResolved(
+      {
+        lastSyncBegan: basePayload.lastSyncBegan,
+        dirty: false,
+        lastSyncEnd: new Date(),
+      },
+      serverPayload.source,
+    )
+
+    return duplicateBasePayloadIntoNewUuid.concat([takeServerPayloadAsCanonical])
+  }
+
+  private resultByDuplicatingBasePayloadAsNonVaulted(basePayload: FullyFormedPayloadInterface): SyncResolvedPayload[] {
+    const duplicateBasePayloadWithoutVault = PayloadsByDuplicating({
+      payload: basePayload.copy({
+        vault_uuid: undefined,
+      }),
+      baseCollection: this.baseCollection,
+      isConflict: true,
+      source: basePayload.source,
+    })
+
+    return duplicateBasePayloadWithoutVault
   }
 }
