@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.53.51](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.53.50...@standardnotes/mobile@3.53.51) (2023-05-30)
+
+**Note:** Version bump only for package @standardnotes/mobile
+
+## [3.53.50](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.53.49...@standardnotes/mobile@3.53.50) (2023-05-29)
+
+### Bug Fixes
+
+* Fixed issue on Android where pressing backspace in Super notes would delete characters on both side of the cursor ([#2336](https://github.com/standardnotes/app/issues/2336)) ([0cb73b5](https://github.com/standardnotes/app/commit/0cb73b5d18ece035e2fce904c859d548b8657053))
+
 ## [3.53.49](https://github.com/standardnotes/app/compare/@standardnotes/mobile@3.53.48...@standardnotes/mobile@3.53.49) (2023-05-26)
 
 **Note:** Version bump only for package @standardnotes/mobile
