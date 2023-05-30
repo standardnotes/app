@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.160.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.17...@standardnotes/web@3.160.18) (2023-05-30)
+
+### Bug Fixes
+
+* Fixed issue where pane gestures on Android would break scroll in a daily journal tag ([39414e6](https://github.com/standardnotes/app/commit/39414e6caba4830192a54ea9553bcda36959c9bf))
+
 ## [3.160.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.16...@standardnotes/web@3.160.17) (2023-05-29)
 
 ### Bug Fixes
