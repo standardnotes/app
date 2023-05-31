@@ -147,7 +147,7 @@ export class FilesBackupService extends AbstractService implements BackupService
   private async automaticallyEnableTextBackupsIfPreferenceNotSet(): Promise<void> {
     if (this.storage.getValue(StorageKey.TextBackupsEnabled) == undefined) {
       this.storage.setValue(StorageKey.TextBackupsEnabled, true)
-      const location = `${await this.device.getUserDocumentsDirectory()}/${this.prependWorkspacePathForPath(
+      const location = `${await this.device.getUserDocumentsDirectory()}/${await this.prependWorkspacePathForPath(
         TextBackupsDirectoryName,
       )}`
       this.storage.setValue(StorageKey.TextBackupsLocation, location)
