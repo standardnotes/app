@@ -2,7 +2,7 @@ import { VaultKeyContentSpecialized, VaultKeyInterface, VaultKeyMutator } from '
 import { VaultInvitesServerInterface } from '@standardnotes/api'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { VaultInviteServerHash } from '@standardnotes/responses'
-import { CreateVaultKeyUseCase } from './CreateVaultKey'
+import { CreateVaultKeyUseCase } from '../../Vaults/UseCase/CreateVaultKey'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 
 export class AcceptInvite {

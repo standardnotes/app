@@ -58,6 +58,10 @@ export class HttpService implements HttpServiceInterface {
   }
 
   async get<T>(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>> {
+    if (!this.host) {
+      throw new Error('Attempting to make network request before host is set')
+    }
+
     return this.runHttp({
       url: joinPaths(this.host, path),
       params,
@@ -76,6 +80,10 @@ export class HttpService implements HttpServiceInterface {
   }
 
   async post<T>(path: string, params?: HttpRequestParams, authentication?: string): Promise<HttpResponse<T>> {
+    if (!this.host) {
+      throw new Error('Attempting to make network request before host is set')
+    }
+
     return this.runHttp({
       url: joinPaths(this.host, path),
       params,

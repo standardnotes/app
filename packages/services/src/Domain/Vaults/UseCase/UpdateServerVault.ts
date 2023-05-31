@@ -1,14 +1,15 @@
-import { ClientDisplayableError, VaultServerHash, isErrorResponse } from '@standardnotes/responses'
+import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import { VaultsServerInterface } from '@standardnotes/api'
+import { VaultInterface, VaultInterfaceFromServerHash } from '@standardnotes/models'
 
-export class UpdateVaultUseCase {
+export class UpdateServerVaultUseCase {
   constructor(private vaultsServer: VaultsServerInterface) {}
 
   async execute(params: {
     vaultUuid: string
     specifiedItemsKeyUuid: string
     vaultKeyTimestamp: number
-  }): Promise<VaultServerHash | ClientDisplayableError> {
+  }): Promise<VaultInterface | ClientDisplayableError> {
     const response = await this.vaultsServer.updateVault({
       vaultUuid: params.vaultUuid,
       specifiedItemsKeyUuid: params.specifiedItemsKeyUuid,
@@ -19,6 +20,6 @@ export class UpdateVaultUseCase {
       return ClientDisplayableError.FromError(response.data.error)
     }
 
-    return response.data.vault
+    return VaultInterfaceFromServerHash(response.data.vault)
   }
 }

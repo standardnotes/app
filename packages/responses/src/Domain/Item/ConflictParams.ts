@@ -69,12 +69,6 @@ export type ConflictVaultInsufficientPermissionsErrorParams<T = ServerItemRespon
   unsaved_item: T
 }
 
-export type ConflictVaultNotFoundErrorParams<T = ServerItemResponse> = BaseConflictParams<T> & {
-  type: ConflictType.VaultNotFoundError
-  server_item: never
-  unsaved_item: T
-}
-
 export type ConflictVaultInvalidStateParams<T = ServerItemResponse> = BaseConflictParams<T> & {
   type: ConflictType.VaultInvalidState
   unsaved_item: T
@@ -113,6 +107,5 @@ export type ConflictParams<T = ServerItemResponse> =
   | ConflictUuidErrorParams<T>
   | ConflictVaultNotMemberErrorParams<T>
   | ConflictVaultInsufficientPermissionsErrorParams<T>
-  | ConflictVaultNotFoundErrorParams<T>
   | ConflictVaultInvalidStateParams<T>
   | ConflictVaultInvalidItemsKeyParams<T>

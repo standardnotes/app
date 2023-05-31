@@ -1159,7 +1159,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createMappers()
     this.createPayloadManager()
     this.createItemManager()
+
     this.createDiskStorageManager()
+    this.createVaultStorageService()
+
     this.createInMemoryStorageManager()
     this.createProtocolService()
     this.diskStorageService.provideEncryptionProvider(this.protocolService)
@@ -1205,7 +1208,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
     this.createUseCases()
     this.createContactService()
-    this.createVaultStorageService()
     this.createVaultService()
   }
 

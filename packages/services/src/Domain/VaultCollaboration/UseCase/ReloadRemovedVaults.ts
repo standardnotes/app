@@ -1,7 +1,7 @@
 import { isErrorResponse } from '@standardnotes/responses'
 import { VaultsServerInterface } from '@standardnotes/api'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { RemoveVaultItemsLocallyUseCase } from './RemoveVaultItemsLocally'
+import { RemoveVaultItemsLocallyUseCase } from '../../Vaults/UseCase/RemoveVaultItemsLocally'
 
 export class ReloadRemovedUseCase {
   constructor(private vaultServer: VaultsServerInterface, private items: ItemManagerInterface) {}

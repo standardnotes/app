@@ -10,7 +10,7 @@ import { useCallback, useEffect, useState } from 'react'
 import {
   ContactServiceEvent,
   VaultInviteServerHash,
-  VaultServerHash,
+  VaultInterface,
   TrustedContactInterface,
   isClientDisplayableError,
 } from '@standardnotes/snjs'
@@ -23,7 +23,7 @@ import { VaultServiceEvent } from '@standardnotes/services'
 const Collaboration = () => {
   const application = useApplication()
 
-  const [vaults, setVaults] = useState<VaultServerHash[]>([])
+  const [vaults, setVaults] = useState<VaultInterface[]>([])
   const [invites, setInvites] = useState<VaultInviteServerHash[]>([])
   const [contacts, setContacts] = useState<TrustedContactInterface[]>([])
 

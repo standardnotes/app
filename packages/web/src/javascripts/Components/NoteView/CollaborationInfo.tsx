@@ -10,7 +10,7 @@ type Props = {
 const CollaborationInfoHUD: FunctionComponent<Props> = ({ item }) => {
   const application = useApplication()
 
-  const itemIsShared = application.vaults.isItemInCollaborativeVault(item)
+  const itemIsShared = application.vaults.isItemInVault(item)
   if (!itemIsShared) {
     return null
   }

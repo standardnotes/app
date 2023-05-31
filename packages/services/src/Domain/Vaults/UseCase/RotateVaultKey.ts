@@ -1,11 +1,10 @@
 import { UuidGenerator } from '@standardnotes/utils'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
-import { ClientDisplayableError, VaultServerHash, isClientDisplayableError } from '@standardnotes/responses'
-import { VaultInvitesServerInterface, VaultUsersServerInterface, VaultsServerInterface } from '@standardnotes/api'
-import { UpdateVaultUseCase } from './UpdateVault'
+import { ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
+import { VaultsServerInterface } from '@standardnotes/api'
+import { UpdateServerVaultUseCase } from './UpdateServerVault'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
-import { VaultStorageServiceInterface } from '../VaultStorageServiceInterface'
+import { VaultStorageServiceInterface } from '../../VaultStorage/VaultStorageServiceInterface'
 import { ChangeVaultKeyDataUseCase } from './ChangeVaultKeyData'
 
 export class RotateVaultKeyUseCase {
@@ -13,18 +12,10 @@ export class RotateVaultKeyUseCase {
     private items: ItemManagerInterface,
     private encryption: EncryptionProviderInterface,
     private vaultsServer: VaultsServerInterface,
-    private vaultInvitesServer: VaultInvitesServerInterface,
-    private vaultUsersServer: VaultUsersServerInterface,
-    private contacts: ContactServiceInterface,
     private vaultStorage: VaultStorageServiceInterface,
   ) {}
 
-  async execute(params: {
-    vaultUuid: string
-    inviterUuid: string
-    inviterPrivateKey: string
-    inviterPublicKey: string
-  }): Promise<undefined | ClientDisplayableError[]> {
+  async execute(params: { vaultUuid: string; online: boolean }): Promise<undefined | ClientDisplayableError[]> {
     const vaultKey = this.encryption.getVaultKey(params.vaultUuid)
     if (!vaultKey) {
       throw new Error('Cannot rotate vault key; vault key not found')
@@ -35,6 +26,7 @@ export class RotateVaultKeyUseCase {
     const errors: ClientDisplayableError[] = []
 
     const updateVaultVaultItemsKeyResult = await this.createNewVaultItemsKey({
+      online: params.online,
       vaultUuid: params.vaultUuid,
       vaultKeyTimestamp: newVaultContent.keyTimestamp,
     })
@@ -45,48 +37,43 @@ export class RotateVaultKeyUseCase {
 
     await this.encryption.reencryptVaultItemsKeysForVault(params.vaultUuid)
 
-    const changeVaultDataUseCase = new ChangeVaultKeyDataUseCase(
-      this.items,
-      this.encryption,
-      this.vaultInvitesServer,
-      this.vaultUsersServer,
-      this.contacts,
-    )
-
-    const changeVaultDataErrors = await changeVaultDataUseCase.execute({
+    const changeVaultDataUseCase = new ChangeVaultKeyDataUseCase(this.items, this.encryption)
+    await changeVaultDataUseCase.execute({
       vaultUuid: params.vaultUuid,
       newVaultData: newVaultContent,
-      inviterUuid: params.inviterUuid,
-      inviterPrivateKey: params.inviterPrivateKey,
-      inviterPublicKey: params.inviterPublicKey,
     })
-
-    errors.push(...changeVaultDataErrors)
 
     return errors
   }
 
   private async createNewVaultItemsKey(params: {
+    online: boolean
     vaultUuid: string
     vaultKeyTimestamp: number
-  }): Promise<ClientDisplayableError | VaultServerHash> {
+  }): Promise<ClientDisplayableError | void> {
     const newItemsKeyUuid = UuidGenerator.GenerateUuid()
     const newItemsKey = this.encryption.createVaultItemsKey(newItemsKeyUuid, params.vaultUuid)
     await this.items.insertItem(newItemsKey)
 
-    const updateVaultUseCase = new UpdateVaultUseCase(this.vaultsServer)
-    const updateResult = await updateVaultUseCase.execute({
-      vaultUuid: params.vaultUuid,
-      vaultKeyTimestamp: params.vaultKeyTimestamp,
-      specifiedItemsKeyUuid: newItemsKey.uuid,
-    })
+    if (params.online) {
+      const updateVaultUseCase = new UpdateServerVaultUseCase(this.vaultsServer)
+      const updateResult = await updateVaultUseCase.execute({
+        vaultUuid: params.vaultUuid,
+        vaultKeyTimestamp: params.vaultKeyTimestamp,
+        specifiedItemsKeyUuid: newItemsKey.uuid,
+      })
 
-    if (isClientDisplayableError(updateResult)) {
-      return updateResult
+      if (isClientDisplayableError(updateResult)) {
+        return updateResult
+      }
+
+      this.vaultStorage.setVault(updateResult)
+    } else {
+      this.vaultStorage.setVault({
+        uuid: params.vaultUuid,
+        vaultKeyTimestamp: params.vaultKeyTimestamp,
+        specifiedItemsKeyUuid: newItemsKey.uuid,
+      })
     }
-
-    this.vaultStorage.setVault(updateResult)
-
-    return updateResult
   }
 }

@@ -4,10 +4,10 @@ import { VaultUsersServerInterface } from '@standardnotes/api'
 export class RemoveVaultMemberUseCase {
   constructor(private vaultUserServer: VaultUsersServerInterface) {}
 
-  async execute(params: { vaultUuid: string; memberUuid: string }): Promise<ClientDisplayableError | void> {
+  async execute(params: { vaultUuid: string; userUuid: string }): Promise<ClientDisplayableError | void> {
     const response = await this.vaultUserServer.deleteVaultUser({
       vaultUuid: params.vaultUuid,
-      userUuid: params.memberUuid,
+      userUuid: params.userUuid,
     })
 
     if (isErrorResponse(response)) {

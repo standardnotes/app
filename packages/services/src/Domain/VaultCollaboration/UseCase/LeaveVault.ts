@@ -1,6 +1,6 @@
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import { VaultUsersServerInterface } from '@standardnotes/api'
-import { RemoveVaultItemsLocallyUseCase } from './RemoveVaultItemsLocally'
+import { RemoveVaultItemsLocallyUseCase } from '../../Vaults/UseCase/RemoveVaultItemsLocally'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 
 export class LeaveVaultUseCase {

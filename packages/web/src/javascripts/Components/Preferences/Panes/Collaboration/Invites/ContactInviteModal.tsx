@@ -1,10 +1,10 @@
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { VaultPermission, VaultServerHash, TrustedContactInterface } from '@standardnotes/snjs'
+import { VaultPermission, VaultInterface, TrustedContactInterface } from '@standardnotes/snjs'
 
 type Props = {
-  vault: VaultServerHash
+  vault: VaultInterface
   onCloseDialog: () => void
 }
 

@@ -57,7 +57,7 @@ import { StorageKey } from '../Storage/StorageKeys'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { StorageValueModes } from '../Storage/StorageTypes'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
-import { VaultStorageServiceInterface } from '../Vaults/VaultStorageServiceInterface'
+import { VaultStorageServiceInterface } from '../VaultStorage/VaultStorageServiceInterface'
 
 export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEvent> {
   private rootKey?: RootKeyInterface

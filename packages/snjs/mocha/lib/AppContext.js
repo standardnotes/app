@@ -65,6 +65,10 @@ export class AppContext {
     return this.application.contactService
   }
 
+  get collaboration() {
+    return this.vaultService.collaboration
+  }
+
   get files() {
     return this.application.fileService
   }
@@ -164,8 +168,8 @@ export class AppContext {
 
   resolveWhenVaultUserKeysResolved() {
     return new Promise((resolve) => {
-      this.application.vaultService.addEventObserver((eventName) => {
-        if (eventName === VaultServiceEvent.DidResolveRemoteVaultInvites) {
+      this.application.vaultService.collaboration.addEventObserver((eventName) => {
+        if (eventName === VaultCollaborationServiceEvent.VaultCollaborationStatusChanged) {
           resolve()
         }
       })
@@ -366,7 +370,7 @@ export class AppContext {
     })
   }
 
-  async createSyncedNote(title, text) {
+  async createSyncedNote(title = 'foo', text = 'bar') {
     const payload = createNotePayload(title, text)
     const item = await this.application.items.emitItemFromPayload(payload, PayloadEmitSource.LocalChanged)
     await this.application.items.setItemDirty(item)

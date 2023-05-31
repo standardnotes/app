@@ -28,7 +28,7 @@ import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
-import { VaultStorageServiceInterface } from '../Vaults/VaultStorageServiceInterface'
+import { VaultStorageServiceInterface } from '../VaultStorage/VaultStorageServiceInterface'
 
 export class ItemsEncryptionService extends AbstractService {
   private removeItemsObserver!: () => void
@@ -101,7 +101,7 @@ export class ItemsEncryptionService extends AbstractService {
 
       const vaultItemsKey = this.itemManager
         .getVaultItemsKeysForVault(payload.vault_uuid)
-        .find((key) => key.uuid === vault.specified_items_key_uuid)
+        .find((key) => key.uuid === vault.specifiedItemsKeyUuid)
 
       if (!vaultItemsKey) {
         return new StandardException('Cannot find vault items key to use for encryption')

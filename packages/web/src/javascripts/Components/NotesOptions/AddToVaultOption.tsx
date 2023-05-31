@@ -3,7 +3,7 @@ import { FunctionComponent, useCallback, useEffect, useRef, useState } from 'rea
 import Icon from '@/Components/Icon/Icon'
 import { KeyboardKey } from '@standardnotes/ui-services'
 import Popover from '../Popover/Popover'
-import { classNames, DecryptedItemInterface, VaultServerHash, isClientDisplayableError } from '@standardnotes/snjs'
+import { classNames, DecryptedItemInterface, VaultInterface, isClientDisplayableError } from '@standardnotes/snjs'
 import { useApplication } from '../ApplicationProvider'
 import MenuItem from '../Menu/MenuItem'
 import Menu from '../Menu/Menu'
@@ -18,7 +18,7 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
   const menuContainerRef = useRef<HTMLDivElement>(null)
   const buttonRef = useRef<HTMLButtonElement>(null)
 
-  const [vaults, setVaults] = useState<VaultServerHash[]>([])
+  const [vaults, setVaults] = useState<VaultInterface[]>([])
 
   useEffect(() => {
     const reloadVaults = async () => {
@@ -38,7 +38,7 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
   }, [])
 
   const addItemsToVault = useCallback(
-    async (vault: VaultServerHash) => {
+    async (vault: VaultInterface) => {
       for (const item of selectedItems) {
         await application.vaults.addItemToVault(vault, item)
       }
@@ -52,7 +52,7 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
     }
   }, [application.vaults, selectedItems])
 
-  const doesVaultContainItems = (vault: VaultServerHash) => {
+  const doesVaultContainItems = (vault: VaultInterface) => {
     return selectedItems.every((item) => item.vault_uuid === vault.uuid)
   }
 

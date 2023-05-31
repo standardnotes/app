@@ -8,7 +8,6 @@ export enum ConflictType {
   SnjsVersionError = 'snjs_version_error',
   VaultInsufficientPermissionsError = 'vault_insufficient_permissions_error',
   VaultNotMemberError = 'vault_not_member_error',
-  VaultNotFoundError = 'vault_not_found_error',
   VaultInvalidState = 'vault_invalid_state',
   VaultInvalidItemsKey = 'vault_invalid_items_key',
 }

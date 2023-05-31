@@ -91,7 +91,6 @@ export class ServerSyncResponseResolver {
       ...this.getConflictsForType(ConflictType.SnjsVersionError),
       ...this.getConflictsForType(ConflictType.VaultInsufficientPermissionsError),
       ...this.getConflictsForType(ConflictType.VaultNotMemberError),
-      ...this.getConflictsForType(ConflictType.VaultNotFoundError),
       ...this.getConflictsForType(ConflictType.VaultInvalidState),
       ...this.getConflictsForType(ConflictType.VaultInvalidItemsKey),
     ]

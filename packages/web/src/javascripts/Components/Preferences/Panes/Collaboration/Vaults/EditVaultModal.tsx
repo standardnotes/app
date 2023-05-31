@@ -51,7 +51,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
 
   const handleSubmit = useCallback(async () => {
     if (existingVaultUuid) {
-      await application.vaults.changeVaultMetadata(existingVaultUuid, {
+      await application.vaults.changeVaultNameAndDescription(existingVaultUuid, {
         name: name,
         description: description,
       })

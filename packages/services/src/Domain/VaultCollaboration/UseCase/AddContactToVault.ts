@@ -3,10 +3,9 @@ import {
   ClientDisplayableError,
   VaultInviteServerHash,
   VaultInviteType,
-  VaultServerHash,
   VaultPermission,
 } from '@standardnotes/responses'
-import { TrustedContactInterface } from '@standardnotes/models'
+import { TrustedContactInterface, VaultInterface } from '@standardnotes/models'
 import { VaultInvitesServerInterface } from '@standardnotes/api'
 import { CreateVaultInviteUseCase } from './CreateVaultInvite'
 
@@ -19,7 +18,7 @@ export class AddContactToVaultUseCase {
   async execute(params: {
     inviterPrivateKey: string
     inviterPublicKey: string
-    vault: VaultServerHash
+    vault: VaultInterface
     contact: TrustedContactInterface
     permissions: VaultPermission
   }): Promise<VaultInviteServerHash | ClientDisplayableError> {

@@ -2,13 +2,13 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
-import { VaultServerHash } from '@standardnotes/snjs'
+import { VaultInterface } from '@standardnotes/snjs'
 import { useCallback, useState } from 'react'
 import ContactInviteModal from '../Invites/ContactInviteModal'
 import EditVaultModal from './EditVaultModal'
 
 type Props = {
-  vault: VaultServerHash
+  vault: VaultInterface
 }
 
 const VaultItem = ({ vault }: Props) => {

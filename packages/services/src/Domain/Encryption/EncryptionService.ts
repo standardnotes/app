@@ -75,7 +75,7 @@ import { RootKeyEncryptionService } from './RootKeyEncryption'
 import { DecryptBackupFile } from './BackupFileDecryptor'
 import { EncryptionServiceEvent } from './EncryptionServiceEvent'
 import { StorageKey } from '../Storage/StorageKeys'
-import { VaultStorageServiceInterface } from '../Vaults/VaultStorageServiceInterface'
+import { VaultStorageServiceInterface } from '../VaultStorage/VaultStorageServiceInterface'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -115,7 +115,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     private payloadManager: PayloadManagerInterface,
     public deviceInterface: DeviceInterface,
     private storageService: StorageServiceInterface,
-    private vaultStorage: VaultStorageServiceInterface,
+    vaultStorage: VaultStorageServiceInterface,
     private identifier: ApplicationIdentifier,
     public crypto: PureCryptoInterface,
     protected override internalEventBus: InternalEventBusInterface,
@@ -130,7 +130,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       payloadManager,
       storageService,
       this.operatorManager,
-      this.vaultStorage,
+      vaultStorage,
       internalEventBus,
     )
 
@@ -140,7 +140,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       this.deviceInterface,
       this.storageService,
       this.payloadManager,
-      this.vaultStorage,
+      vaultStorage,
       this.identifier,
       this.internalEventBus,
     )
@@ -159,7 +159,6 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     ;(this.payloadManager as unknown) = undefined
     ;(this.deviceInterface as unknown) = undefined
     ;(this.storageService as unknown) = undefined
-    ;(this.vaultStorage as unknown) = undefined
     ;(this.crypto as unknown) = undefined
     ;(this.operatorManager as unknown) = undefined
 

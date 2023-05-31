@@ -1,16 +1,17 @@
-import * as Factory from './lib/factory.js'
-import * as Files from './lib/Files.js'
+import * as Factory from '../lib/factory.js'
+import * as Files from '../lib/Files.js'
 
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.only('vaults', function () {
+describe('vault collaboration', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let application
   let context
   let vaultService
   let contactService
+  let collaboration
 
   const createContactContext = async () => {
     const contactContext = await Factory.createAppContextWithRealCrypto()
@@ -26,7 +27,7 @@ describe.only('vaults', function () {
   const createTrustedContactForUserOfContext = async (contextAddingNewContact, contextImportingContactInfoFrom) => {
     const contact = await contextAddingNewContact.application.contactService.createTrustedContact({
       name: 'John Doe',
-      publicKey: contextImportingContactInfoFrom.application.vaultService.userPublicKey,
+      publicKey: contextImportingContactInfoFrom.collaboration.userPublicKey,
       contactUuid: contextImportingContactInfoFrom.userUuid,
     })
 
@@ -34,9 +35,9 @@ describe.only('vaults', function () {
   }
 
   const acceptAllInvites = async (inContext) => {
-    const invites = inContext.vaultService.getCachedInboundInvites()
+    const invites = inContext.collaboration.getCachedInboundInvites()
     for (const invite of invites) {
-      const result = await inContext.vaultService.acceptInvite(invite)
+      const result = await inContext.collaboration.acceptInvite(invite)
       expect(result).to.be.true
     }
   }
@@ -64,7 +65,7 @@ describe.only('vaults', function () {
     const vault = await vaultService.createVault()
     const { contactContext, deinitContactContext } = await createContactContext()
     const contact = await createTrustedContactForUserOfContext(context, contactContext)
-    const invite = await vaultService.inviteContactToVault(vault, contact, permissions)
+    const invite = await collaboration.inviteContactToVault(vault, contact, permissions)
     await contactContext.sync()
 
     await createTrustedContactForUserOfContext(contactContext, context)
@@ -88,6 +89,7 @@ describe.only('vaults', function () {
     application = context.application
     vaultService = application.vaultService
     contactService = application.contactService
+    collaboration = vaultService.collaboration
   })
 
   describe('authentication', () => {
@@ -229,28 +231,6 @@ describe.only('vaults', function () {
   })
 
   describe('vaults', () => {
-    it('should create a vault', async () => {
-      const vault = await vaultService.createVault()
-      expect(vault).to.not.be.undefined
-
-      const vaultItemsKeys = application.items.getVaultItemsKeysForVault(vault.uuid)
-      expect(vaultItemsKeys.length).to.equal(1)
-
-      const vaultItemsKey = vaultItemsKeys[0]
-      expect(vaultItemsKey instanceof VaultItemsKey).to.be.true
-      expect(vaultItemsKey.vault_uuid).to.equal(vault.uuid)
-    })
-
-    it('should add item to vault', async () => {
-      const note = await context.createSyncedNote('foo', 'bar')
-      const vault = await vaultService.createVault()
-
-      await vaultService.addItemToVault(vault, note)
-
-      const updatedNote = application.items.findItem(note.uuid)
-      expect(updatedNote.vault_uuid).to.equal(vault.uuid)
-    })
-
     it('should add item to vault with contact', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
       const { vault, deinitContactContext } = await createVaultWithAcceptedInvite()
@@ -278,7 +258,7 @@ describe.only('vaults', function () {
       /** Sync the contact context so that they wouldn't naturally receive changes made before this point */
       await contactContext.sync()
 
-      await vaultService.inviteContactToVault(vault, contact, VaultPermission.Write)
+      await collaboration.inviteContactToVault(vault, contact, VaultPermission.Write)
 
       /** Contact should now sync and expect to find note */
       const promise = contactContext.awaitNextSyncVaultFromScratchEvent()
@@ -297,14 +277,14 @@ describe.only('vaults', function () {
     it('should remove vault member', async () => {
       const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
 
-      const originalVaultUsers = await vaultService.getVaultUsers(vault.uuid)
+      const originalVaultUsers = await collaboration.getVaultUsers(vault.uuid)
       expect(originalVaultUsers.length).to.equal(2)
 
-      const result = await vaultService.removeUserFromVault(vault.uuid, contactContext.userUuid)
+      const result = await collaboration.removeUserFromVault(vault.uuid, contactContext.userUuid)
 
       expect(isClientDisplayableError(result)).to.be.false
 
-      const updatedVaultUsers = await vaultService.getVaultUsers(vault.uuid)
+      const updatedVaultUsers = await collaboration.getVaultUsers(vault.uuid)
       expect(updatedVaultUsers.length).to.equal(1)
 
       await deinitContactContext()
@@ -315,7 +295,7 @@ describe.only('vaults', function () {
 
       const thirdParty = await createContactContext()
       const thirdPartyContact = await createTrustedContactForUserOfContext(contactContext, thirdParty.contactContext)
-      const result = await contactContext.vaultService.inviteContactToVault(
+      const result = await contactContext.collaboration.inviteContactToVault(
         vault,
         thirdPartyContact,
         VaultPermission.Write,
@@ -329,7 +309,7 @@ describe.only('vaults', function () {
     it('should not be able to leave vault as creator', async () => {
       const vault = await vaultService.createVault()
 
-      const result = await vaultService.removeUserFromVault(vault.uuid, context.userUuid)
+      const result = await collaboration.removeUserFromVault(vault.uuid, context.userUuid)
 
       expect(isClientDisplayableError(result)).to.be.true
     })
@@ -337,7 +317,7 @@ describe.only('vaults', function () {
     it('should be able to leave vault as added admin', async () => {
       const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite(VaultPermission.Admin)
 
-      const result = await contactContext.vaultService.leaveVault(vault.uuid)
+      const result = await contactContext.collaboration.leaveVault(vault.uuid)
 
       expect(isClientDisplayableError(result)).to.be.false
 
@@ -349,7 +329,7 @@ describe.only('vaults', function () {
         VaultPermission.Admin,
       )
 
-      await contactContext.vaultService.leaveVault(vault.uuid)
+      await contactContext.collaboration.leaveVault(vault.uuid)
 
       const updatedContactNote = contactContext.application.items.findItem(note.uuid)
       expect(updatedContactNote).to.be.undefined
@@ -357,16 +337,16 @@ describe.only('vaults', function () {
       await deinitContactContext()
     })
 
-    it.only('leaving or being removed from vault should remove vault items locally', async () => {
+    it('leaving or being removed from vault should remove vault items locally', async () => {
       const { vault, note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
 
       const contactNote = contactContext.application.items.findItem(note.uuid)
       expect(contactNote).to.not.be.undefined
 
-      await context.vaultService.removeUserFromVault(vault.uuid, contactContext.userUuid)
+      await context.collaboration.removeUserFromVault(vault.uuid, contactContext.userUuid)
 
       await contactContext.sync()
-      await contactContext.vaultService.reloadRemovedVaults()
+      await contactContext.collaboration.reloadRemovedVaults()
 
       const updatedContactNote = contactContext.application.items.findItem(note.uuid)
       expect(updatedContactNote).to.be.undefined
@@ -387,12 +367,12 @@ describe.only('vaults', function () {
     it('canceling an invite should remove it from recipient pending invites', async () => {
       const { invite, contactContext, deinitContactContext } = await createVaultWithUnacceptedButTrustedInvite()
 
-      const preInvites = await contactContext.vaultService.downloadInboundInvites()
+      const preInvites = await contactContext.collaboration.downloadInboundInvites()
       expect(preInvites.length).to.equal(1)
 
-      await vaultService.deleteInvite(invite)
+      await collaboration.deleteInvite(invite)
 
-      const postInvites = await contactContext.vaultService.downloadInboundInvites()
+      const postInvites = await contactContext.collaboration.downloadInboundInvites()
       expect(postInvites.length).to.equal(0)
 
       await deinitContactContext()
@@ -401,7 +381,7 @@ describe.only('vaults', function () {
     it('should update vault name and description', async () => {
       const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
 
-      await vaultService.changeVaultMetadata(vault.uuid, {
+      await vaultService.changeVaultNameAndDescription(vault.uuid, {
         name: 'new vault name',
         description: 'new vault description',
       })
@@ -420,23 +400,6 @@ describe.only('vaults', function () {
     })
   })
 
-  describe('client timing', () => {
-    it('should load data in the correct order at startup to allow vault items and their keys to decrypt', async () => {
-      const appIdentifier = context.identifier
-      const vault = await vaultService.createVault()
-      const note = await context.createSyncedNote('foo', 'bar')
-      await vaultService.addItemToVault(vault, note)
-      await context.deinit()
-
-      const recreatedContext = await Factory.createAppContextWithRealCrypto(appIdentifier)
-      await recreatedContext.launch()
-
-      const updatedNote = recreatedContext.application.items.findItem(note.uuid)
-      expect(updatedNote.title).to.equal('foo')
-      expect(updatedNote.text).to.equal('bar')
-    })
-  })
-
   describe('item collaboration', () => {
     it('received items from previously trusted contact should be decrypted', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
@@ -447,7 +410,7 @@ describe.only('vaults', function () {
       const currentContextContact = await createTrustedContactForUserOfContext(context, contactContext)
 
       contactContext.lockSyncing()
-      await vaultService.inviteContactToVault(vault, currentContextContact, VaultPermission.Write)
+      await collaboration.inviteContactToVault(vault, currentContextContact, VaultPermission.Write)
       await vaultService.addItemToVault(vault, note)
 
       const promise = contactContext.awaitNextSyncVaultFromScratchEvent()
@@ -595,13 +558,13 @@ describe.only('vaults', function () {
       const { contactContext, deinitContactContext } = await createContactContext()
       const contact = await createTrustedContactForUserOfContext(context, contactContext)
 
-      const vaultInvite = await vaultService.inviteContactToVault(vault, contact, VaultPermission.Write)
+      const vaultInvite = await collaboration.inviteContactToVault(vault, contact, VaultPermission.Write)
 
       expect(vaultInvite).to.not.be.undefined
       expect(vaultInvite.vault_uuid).to.equal(vault.uuid)
       expect(vaultInvite.user_uuid).to.equal(contact.contactUuid)
       expect(vaultInvite.encrypted_vault_data).to.not.be.undefined
-      expect(vaultInvite.inviter_public_key).to.equal(vaultService.userPublicKey)
+      expect(vaultInvite.inviter_public_key).to.equal(collaboration.userPublicKey)
       expect(vaultInvite.permissions).to.equal(VaultPermission.Write)
       expect(vaultInvite.updated_at_timestamp).to.not.be.undefined
 
@@ -614,11 +577,13 @@ describe.only('vaults', function () {
       const vault = await vaultService.createVault()
 
       const currentContextContact = await createTrustedContactForUserOfContext(context, contactContext)
-      await vaultService.inviteContactToVault(vault, currentContextContact, VaultPermission.Write)
+      await collaboration.inviteContactToVault(vault, currentContextContact, VaultPermission.Write)
 
-      await contactContext.vaultService.downloadInboundInvites()
+      await contactContext.collaboration.downloadInboundInvites()
       expect(
-        contactContext.vaultService.getTrustedSenderOfInvite(contactContext.vaultService.getCachedInboundInvites()[0]),
+        contactContext.collaboration.getTrustedSenderOfInvite(
+          contactContext.collaboration.getCachedInboundInvites()[0],
+        ),
       ).to.be.undefined
 
       await deinitContactContext()
@@ -630,17 +595,21 @@ describe.only('vaults', function () {
       const vault = await vaultService.createVault()
 
       const currentContextContact = await createTrustedContactForUserOfContext(context, contactContext)
-      await vaultService.inviteContactToVault(vault, currentContextContact, VaultPermission.Write)
+      await collaboration.inviteContactToVault(vault, currentContextContact, VaultPermission.Write)
 
-      await contactContext.vaultService.downloadInboundInvites()
+      await contactContext.collaboration.downloadInboundInvites()
       expect(
-        contactContext.vaultService.getTrustedSenderOfInvite(contactContext.vaultService.getCachedInboundInvites()[0]),
+        contactContext.collaboration.getTrustedSenderOfInvite(
+          contactContext.collaboration.getCachedInboundInvites()[0],
+        ),
       ).to.be.undefined
 
       await createTrustedContactForUserOfContext(contactContext, context)
 
       expect(
-        contactContext.vaultService.getTrustedSenderOfInvite(contactContext.vaultService.getCachedInboundInvites()[0]),
+        contactContext.collaboration.getTrustedSenderOfInvite(
+          contactContext.collaboration.getCachedInboundInvites()[0],
+        ),
       ).to.not.be.undefined
 
       await deinitContactContext()
@@ -679,19 +648,19 @@ describe.only('vaults', function () {
       const vault = await vaultService.createVault()
       const { contactContext, deinitContactContext } = await createContactContext()
       const contact = await createTrustedContactForUserOfContext(context, contactContext)
-      await vaultService.inviteContactToVault(vault, contact, VaultPermission.Write)
+      await collaboration.inviteContactToVault(vault, contact, VaultPermission.Write)
       await contactContext.sync()
 
-      const vaultInvite = contactContext.vaultService.getCachedInboundInvites()[0]
-      expect(vaultInvite.inviter_public_key).to.equal(vaultService.userPublicKey)
+      const vaultInvite = contactContext.collaboration.getCachedInboundInvites()[0]
+      expect(vaultInvite.inviter_public_key).to.equal(collaboration.userPublicKey)
 
       await context.changePassword('new-password')
       await context.sync()
 
       await contactContext.sync()
 
-      const updatedVaultInvite = contactContext.vaultService.getCachedInboundInvites()[0]
-      expect(updatedVaultInvite.inviter_public_key).to.equal(vaultService.userPublicKey)
+      const updatedVaultInvite = contactContext.collaboration.getCachedInboundInvites()[0]
+      expect(updatedVaultInvite.inviter_public_key).to.equal(collaboration.userPublicKey)
 
       await deinitContactContext()
     })
@@ -704,14 +673,14 @@ describe.only('vaults', function () {
 
       await vaultService.rotateVaultKey(vault.uuid)
 
-      const outboundInvites = await vaultService.getOutboundInvites()
+      const outboundInvites = await collaboration.getOutboundInvites()
       const keyChangeInvite = outboundInvites[0]
 
       expect(keyChangeInvite).to.not.be.undefined
       expect(keyChangeInvite.vault_uuid).to.equal(vault.uuid)
       expect(keyChangeInvite.user_uuid).to.equal(contactContext.userUuid)
       expect(keyChangeInvite.encrypted_vault_data).to.not.be.undefined
-      expect(keyChangeInvite.inviter_public_key).to.equal(vaultService.userPublicKey)
+      expect(keyChangeInvite.inviter_public_key).to.equal(collaboration.userPublicKey)
       expect(keyChangeInvite.invite_type).to.equal('key-change')
 
       await deinitContactContext()
@@ -721,13 +690,13 @@ describe.only('vaults', function () {
       const { vault, contactContext, deinitContactContext } = await createVaultWithUnacceptedButTrustedInvite()
       contactContext.lockSyncing()
 
-      const originalOutboundInvites = await vaultService.getOutboundInvites()
+      const originalOutboundInvites = await collaboration.getOutboundInvites()
       expect(originalOutboundInvites.length).to.equal(1)
       const originalEncVaultData = originalOutboundInvites[0].encrypted_vault_data
 
       await vaultService.rotateVaultKey(vault.uuid)
 
-      const updatedOutboundInvites = await vaultService.getOutboundInvites()
+      const updatedOutboundInvites = await collaboration.getOutboundInvites()
       expect(updatedOutboundInvites.length).to.equal(1)
 
       const joinInvite = updatedOutboundInvites[0]
@@ -738,33 +707,20 @@ describe.only('vaults', function () {
       await deinitContactContext()
     })
 
-    it('rotating a vault key should create a new vault items key', async () => {
-      const vault = await vaultService.createVault()
-
-      const vaultItemsKey = context.items.getVaultItemsKeysForVault(vault.uuid)[0]
-
-      await vaultService.rotateVaultKey(vault.uuid)
-
-      const updatedVaultItemsKey = context.items.getVaultItemsKeysForVault(vault.uuid)[0]
-
-      expect(updatedVaultItemsKey).to.not.be.undefined
-      expect(updatedVaultItemsKey.uuid).to.not.equal(vaultItemsKey.uuid)
-    })
-
     it('should update both pending join and key-change invites instead of creating new ones', async () => {
       const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
       contactContext.lockSyncing()
 
       const thirdParty = await createContactContext()
       const thirdPartyContact = await createTrustedContactForUserOfContext(context, thirdParty.contactContext)
-      await vaultService.inviteContactToVault(vault, thirdPartyContact, VaultPermission.Write)
+      await collaboration.inviteContactToVault(vault, thirdPartyContact, VaultPermission.Write)
 
-      const originalOutboundInvites = await vaultService.getOutboundInvites()
+      const originalOutboundInvites = await collaboration.getOutboundInvites()
       expect(originalOutboundInvites.length).to.equal(1)
 
       await vaultService.rotateVaultKey(vault.uuid)
 
-      const updatedOutboundInvites = await vaultService.getOutboundInvites()
+      const updatedOutboundInvites = await collaboration.getOutboundInvites()
       expect(updatedOutboundInvites.length).to.equal(2)
 
       expect(updatedOutboundInvites.find((invite) => invite.invite_type === 'join')).to.not.be.undefined
@@ -780,7 +736,7 @@ describe.only('vaults', function () {
 
       await vaultService.rotateVaultKey(vault.uuid)
 
-      const acceptInviteSpy = sinon.spy(contactContext.vaultService, 'acceptInvite')
+      const acceptInviteSpy = sinon.spy(contactContext.collaboration, 'acceptInvite')
 
       contactContext.unlockSyncing()
       await contactContext.sync()
@@ -795,7 +751,7 @@ describe.only('vaults', function () {
 
       const originalVaultKey = vaultService.getVaultKey(vault.uuid)
 
-      await vaultService.removeUserFromVault(vault.uuid, contactContext.userUuid)
+      await collaboration.removeUserFromVault(vault.uuid, contactContext.userUuid)
 
       const newVaultKey = vaultService.getVaultKey(vault.uuid)
 
@@ -804,72 +760,9 @@ describe.only('vaults', function () {
 
       await deinitContactContext()
     })
-
-    it('should keep vault key with greater keyTimestamp if conflict', async () => {
-      const vault = await vaultService.createVault()
-      const vaultKey = vaultService.getVaultKey(vault.uuid)
-
-      const otherClient = await Factory.createAppContextWithRealCrypto()
-      await otherClient.launch()
-      otherClient.email = context.email
-      otherClient.password = context.password
-      await otherClient.signIn(context.email, context.password)
-
-      context.lockSyncing()
-      otherClient.lockSyncing()
-
-      const olderTimestamp = vaultKey.keyTimestamp + 1
-      const newerTimestamp = vaultKey.keyTimestamp + 2
-
-      await context.application.items.changeItem(vaultKey, (mutator) => {
-        mutator.content = {
-          vaultKey: 'new-vault-key',
-          keyTimestamp: olderTimestamp,
-        }
-      })
-
-      const otherVaultKey = otherClient.vaultService.getVaultKey(vault.uuid)
-      await otherClient.application.items.changeItem(otherVaultKey, (mutator) => {
-        mutator.content = {
-          vaultKey: 'new-vault-key',
-          keyTimestamp: newerTimestamp,
-        }
-      })
-
-      context.unlockSyncing()
-      otherClient.unlockSyncing()
-
-      await otherClient.sync()
-      await context.sync()
-
-      expect(context.items.getItems(ContentType.VaultKey).length).to.equal(1)
-      expect(otherClient.items.getItems(ContentType.VaultKey).length).to.equal(1)
-
-      const vaultKeyAfterSync = context.vaultService.getVaultKey(vault.uuid)
-      const otherVaultKeyAfterSync = otherClient.vaultService.getVaultKey(vault.uuid)
-
-      expect(vaultKeyAfterSync.keyTimestamp).to.equal(otherVaultKeyAfterSync.keyTimestamp)
-      expect(vaultKeyAfterSync.vaultKey).to.equal(otherVaultKeyAfterSync.vaultKey)
-      expect(vaultKeyAfterSync.keyTimestamp).to.equal(newerTimestamp)
-      expect(otherVaultKeyAfterSync.keyTimestamp).to.equal(newerTimestamp)
-
-      await otherClient.deinit()
-    })
   })
 
   describe('permissions', async () => {
-    it('should not be able to update a vault with a keyTimestamp lower than the current one', async () => {
-      const vault = await vaultService.createVault()
-      const vaultKey = vaultService.getVaultKey(vault.uuid)
-
-      const result = await vaultService.updateVault(vault.uuid, {
-        vaultKeyTimestamp: vaultKey.keyTimestamp - 1,
-        specifiedItemsKeyUuid: '123',
-      })
-
-      expect(isClientDisplayableError(result)).to.be.true
-    })
-
     it('non-admin user should not be able to create or update vault items keys with the server', async () => {
       const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
 
@@ -1011,7 +904,7 @@ describe.only('vaults', function () {
     it('after leaving vault, attempting to sync previously vault item should result in VaultNotMemberError', async () => {
       const { vault, note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
 
-      await context.vaultService.removeUserFromVault(vault.uuid, contactContext.userUuid)
+      await context.collaboration.removeUserFromVault(vault.uuid, contactContext.userUuid)
 
       const promise = contactContext.resolveWithConflicts()
       await contactContext.changeNoteTitle(note, 'new title')
@@ -1041,7 +934,7 @@ describe.only('vaults', function () {
     it('should handle VaultNotMemberError by duplicating item to user non-vault', async () => {
       const { vault, note, contactContext, deinitContactContext } = await createVaultWithAcceptedInviteAndNote()
 
-      await context.vaultService.removeUserFromVault(vault.uuid, contactContext.userUuid)
+      await context.collaboration.removeUserFromVault(vault.uuid, contactContext.userUuid)
 
       await contactContext.changeNoteTitle(note, 'new title')
 
@@ -1054,130 +947,11 @@ describe.only('vaults', function () {
 
       await deinitContactContext()
     })
-
-    it('attempting to save note to non-existent vault should result in VaultNotFoundError', async () => {
-      const vault = await vaultService.createVault()
-
-      await context.vaultService.deleteVault(vault.uuid)
-
-      const note = await context.createSyncedNote('foo', 'bar')
-
-      const promise = context.resolveWithConflicts()
-      await context.vaultService.addItemToVault(vault, note)
-      const conflicts = await promise
-
-      expect(conflicts.length).to.equal(1)
-      expect(conflicts[0].type).to.equal(ConflictType.VaultNotFoundError)
-      expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
-    })
-
-    it('attempting to add deleted item to vault should result in VaultInvalidState conflict', async () => {
-      const vault = await vaultService.createVault()
-
-      const note = await context.createSyncedNote('foo', 'bar')
-      await context.items.setItemToBeDeleted(note)
-      await context.sync()
-
-      const promise = context.resolveWithConflicts()
-      await context.vaultService.addItemToVault(vault, note)
-      const conflicts = await promise
-
-      expect(conflicts.length).to.equal(1)
-      expect(conflicts[0].type).to.equal(ConflictType.VaultInvalidStateError)
-      expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
-    })
-
-    it('attempting to save item using an old vault items key should result in VaultInvalidItemsKey conflict', async () => {
-      const vault = await vaultService.createVault()
-
-      const note = await context.createSyncedNote('foo', 'bar')
-      await context.vaultService.addItemToVault(vault, note)
-
-      const oldVaultItemsKey = context.items.getVaultItemsKeysForVault(vault.uuid)[0]
-
-      await context.vaultService.rotateVaultKey(vault.uuid)
-
-      await context.vaultService.handleReceivedVaults([
-        {
-          ...vault,
-          specified_items_key_uuid: oldVaultItemsKey.uuid,
-        },
-      ])
-
-      const promise = context.resolveWithConflicts()
-      await context.changeNoteTitleAndSync(note, 'new title')
-      const conflicts = await promise
-
-      expect(conflicts.length).to.equal(1)
-      expect(conflicts[0].type).to.equal(ConflictType.VaultInvalidItemsKeyError)
-      expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
-    })
-
-    it("should use the cached group's specified items key when choosing which key to encrypt vault items with", async () => {
-      const vault = await vaultService.createVault()
-
-      const firstVaultItemsKey = context.items.getVaultItemsKeysForVault(vault.uuid)[0]
-
-      const note = await context.createSyncedNote('foo', 'bar')
-      const firstPromise = context.resolveWithUploadedPayloads()
-      await context.vaultService.addItemToVault(vault, note)
-      const firstUploadedPayloads = await firstPromise
-
-      expect(firstUploadedPayloads[0].items_key_id).to.equal(firstVaultItemsKey.uuid)
-      expect(firstUploadedPayloads[0].items_key_id).to.equal(vault.specified_items_key_uuid)
-
-      await context.vaultService.rotateVaultKey(vault.uuid)
-      const secondVaultItemsKey = context.items.getVaultItemsKeysForVault(vault.uuid)[0]
-
-      const secondPromise = context.resolveWithUploadedPayloads()
-      await context.changeNoteTitleAndSync(note, 'new title')
-      const secondUploadedPayloads = await secondPromise
-
-      expect(secondUploadedPayloads[0].items_key_id).to.equal(secondVaultItemsKey.uuid)
-
-      await context.vaultService.handleReceivedVaults([
-        {
-          ...vault,
-          specified_items_key_uuid: firstVaultItemsKey.uuid,
-        },
-      ])
-
-      const thirdPromise = context.resolveWithUploadedPayloads()
-      await context.changeNoteTitleAndSync(note, 'third new title')
-      const thirdUploadedPayloads = await thirdPromise
-
-      expect(thirdUploadedPayloads[0].items_key_id).to.equal(firstVaultItemsKey.uuid)
-    })
-  })
-
-  describe('offline vaults', () => {
-    it('should be able to create an offline vault', async () => {
-      console.error('TODO - implement test case')
-    })
-
-    it('offline vaults should part to online vaults after signing in or registering', async () => {
-      console.error('TODO - implement test case')
-    })
   })
 
   describe('files', () => {
     beforeEach(async () => {
       await context.publicMockSubscriptionPurchaseEvent()
-    })
-
-    it('should be able to upload and download file to vault as owner', async () => {
-      const vault = await vaultService.createVault()
-      const response = await fetch('/mocha/assets/small_file.md')
-      const buffer = new Uint8Array(await response.arrayBuffer())
-      const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, vault.uuid)
-
-      const file = context.items.findItem(uploadedFile.uuid)
-      expect(file).to.not.be.undefined
-      expect(file.remoteIdentifier).to.equal(file.remoteIdentifier)
-      expect(file.vault_uuid).to.equal(vault.uuid)
-
-      const downloadedBytes = await Files.downloadFile(context.files, file)
-      expect(downloadedBytes).to.eql(buffer)
     })
 
     it('should be able to download vault file as collaborator', async () => {
@@ -1274,31 +1048,8 @@ describe.only('vaults', function () {
       await deinitContactContext()
     })
 
-    it('should be able to move a user file to a vault', async () => {
-      const response = await fetch('/mocha/assets/small_file.md')
-      const buffer = new Uint8Array(await response.arrayBuffer())
-
-      const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
-
-      const vault = await vaultService.createVault()
-      const addedFile = await vaultService.addItemToVault(vault, uploadedFile)
-
-      const downloadedBytes = await Files.downloadFile(context.files, addedFile)
-      expect(downloadedBytes).to.eql(buffer)
-    })
-
-    it('should be able to move a file out of its vault', async () => {
-      const response = await fetch('/mocha/assets/small_file.md')
-      const buffer = new Uint8Array(await response.arrayBuffer())
-
-      const vault = await vaultService.createVault()
-      const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, vault.uuid)
-
-      const removedFile = await vaultService.moveItemFromVaultToUser(uploadedFile)
-      expect(removedFile.vault_uuid).to.not.be.ok
-
-      const downloadedBytes = await Files.downloadFile(context.files, removedFile)
-      expect(downloadedBytes).to.eql(buffer)
+    it('should not be able to download file after being removed from vault', async () => {
+      console.error('TODO: implement test case')
     })
   })
 })
