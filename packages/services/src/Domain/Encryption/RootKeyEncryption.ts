@@ -505,9 +505,11 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
 
   private async encrypPayloadWithKeyLookup(payload: DecryptedPayloadInterface): Promise<EncryptedParameters> {
     let key: RootKeyInterface | VaultKeyInterface | undefined
-    if (payload.vault_uuid) {
-      if (!ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
-        throw Error('Attempting to decrypt payload that is not a vault items key with vault key.')
+    if (payload.vault_uuid || ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
+      if (!payload.vault_uuid) {
+        throw Error(
+          `Attempting to encrypt vault payload ${payload.content_type} but the payload is missing a vault uuid`,
+        )
       }
       key = this.getVaultKey(payload.vault_uuid)
     } else {

@@ -34,6 +34,7 @@ import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedA
 import { SynchronousOperator } from '../OperatorInterface'
 import { isVaultItemsKey } from '../../Keys/VaultItemsKey/VaultItemsKey'
 import { AsymmetricallyEncryptedString, SymmetricallyEncryptedString } from '../Types'
+import { VaultItemsKeyAuthenticatedData } from '../../Types/VaultItemsKeyAuthenticatedData'
 
 type V004StringComponents = [version: string, nonce: string, ciphertext: string, authenticatedData: string]
 
@@ -169,7 +170,12 @@ export class SNProtocolOperator004 implements SynchronousOperator {
    * @param authenticatedData - JavaScript object (will be stringified) representing
                 'Additional authenticated data': data you want to be included in authentication.
    */
-  encryptString004(plaintext: string, rawKey: string, nonce: string, authenticatedData: ItemAuthenticatedData) {
+  encryptString004(
+    plaintext: string,
+    rawKey: string,
+    nonce: string,
+    authenticatedData: ItemAuthenticatedData | VaultItemsKeyAuthenticatedData,
+  ) {
     if (!nonce) {
       throw 'encryptString null nonce'
     }
@@ -198,7 +204,11 @@ export class SNProtocolOperator004 implements SynchronousOperator {
    * @param plaintext  The plaintext text to decrypt.
    * @param rawKey  The key to use to encrypt the plaintext.
    */
-  generateEncryptedProtocolString(plaintext: string, rawKey: string, authenticatedData: ItemAuthenticatedData) {
+  generateEncryptedProtocolString(
+    plaintext: string,
+    rawKey: string,
+    authenticatedData: ItemAuthenticatedData | VaultItemsKeyAuthenticatedData,
+  ) {
     const nonce = this.generateEncryptionNonce()
 
     const ciphertext = this.encryptString004(plaintext, rawKey, nonce, authenticatedData)
@@ -242,7 +252,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
   private generateAuthenticatedDataForPayload(
     payload: DecryptedPayloadInterface,
     key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface | SNRootKey,
-  ): ItemAuthenticatedData | RootKeyEncryptedAuthenticatedData {
+  ): ItemAuthenticatedData | RootKeyEncryptedAuthenticatedData | VaultItemsKeyAuthenticatedData {
     const baseData: ItemAuthenticatedData = {
       u: payload.uuid,
       v: ProtocolVersion.V004,
@@ -256,7 +266,11 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       if (!isVaultKey(key)) {
         throw Error(`Attempting to use non-vault key ${key.content_type} for item content type ${payload.content_type}`)
       }
-      return baseData
+      return {
+        ...baseData,
+        vaultKeyTimestamp: key.keyTimestamp,
+        vaultKeyVersion: key.keyVersion,
+      }
     } else {
       if (!isItemsKey(key) && !isVaultItemsKey(key)) {
         throw Error('Attempting to use non-items key for regular item.')
@@ -265,7 +279,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     }
   }
 
-  private authenticatedDataToString(attachedData: ItemAuthenticatedData) {
+  private authenticatedDataToString(attachedData: ItemAuthenticatedData | VaultItemsKeyAuthenticatedData) {
     return this.crypto.base64Encode(JSON.stringify(Utils.sortedCopy(Utils.omitUndefinedCopy(attachedData))))
   }
 

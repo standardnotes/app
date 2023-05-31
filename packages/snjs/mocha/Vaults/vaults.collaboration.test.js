@@ -357,7 +357,7 @@ describe('vault collaboration', function () {
     it('should return invited to vaults when fetching vaults from server', async () => {
       const { contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
 
-      const vaults = await contactContext.vaultService.reloadVaults()
+      const vaults = await contactContext.vaultService.reloadRemoteVaults()
 
       expect(vaults.length).to.equal(1)
 

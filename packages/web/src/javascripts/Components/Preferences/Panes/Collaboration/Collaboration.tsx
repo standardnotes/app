@@ -37,7 +37,7 @@ const Collaboration = () => {
   const contactService = application.contacts
 
   const fetchVaults = useCallback(async () => {
-    const vaults = await application.vaults.reloadVaults()
+    const vaults = await application.vaults.reloadRemoteVaults()
     if (!isClientDisplayableError(vaults)) {
       setVaults(vaults)
     }

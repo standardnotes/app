@@ -26,7 +26,7 @@ export class VaultItemsKey extends DecryptedItem<VaultItemsKeyContent> implement
     this.itemsKey = this.payload.content.itemsKey
   }
 
-  /** Do not duplicate items keys. Always keep original */
+  /** Do not duplicate vault items keys. Always keep original */
   override strategyWhenConflictingWithItem(
     _item: DecryptedItemInterface,
     _previousRevision?: HistoryEntryInterface,

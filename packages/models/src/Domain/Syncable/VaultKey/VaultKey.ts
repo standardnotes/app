@@ -34,6 +34,7 @@ export class VaultKey extends DecryptedItem<VaultKeyContent> implements VaultKey
   ): ConflictStrategy {
     const baseKeyTimestamp = this.keyTimestamp
     const incomingKeyTimestamp = item.keyTimestamp
+
     return incomingKeyTimestamp > baseKeyTimestamp ? ConflictStrategy.KeepApply : ConflictStrategy.KeepBase
   }
 

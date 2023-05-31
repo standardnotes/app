@@ -31,7 +31,7 @@ import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { ContactServiceInterface } from '../Contacts/ContactServiceInterface'
 import { VaultStorageServiceInterface } from '../VaultStorage/VaultStorageServiceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
-import { SyncEvent, SyncEventReceivedVaultsData } from '../Event/SyncEvent'
+import { SyncEvent, SyncEventReceivedRemoteVaultsData } from '../Event/SyncEvent'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { MoveItemFromVaultToUser } from './UseCase/MoveItemFromVaultToUser'
 import { DeleteVaultUseCase } from './UseCase/DeleteVault'
@@ -81,8 +81,8 @@ export class VaultService
     )
 
     this.syncEventDisposer = sync.addEventObserver(async (event, data) => {
-      if (event === SyncEvent.ReceivedVaults) {
-        await this.handleReceivedVaults(data as SyncEventReceivedVaultsData)
+      if (event === SyncEvent.ReceivedRemoteVaults) {
+        await this.handleIncomingRemoteVaults(data as SyncEventReceivedRemoteVaultsData)
         this.notifyVaultsChangedEvent()
       }
     })
@@ -96,15 +96,15 @@ export class VaultService
     if (event.type === VaultCollaborationServiceEvent.VaultCollaborationStatusChanged) {
       this.notifyVaultsChangedEvent()
     } else if (event.type === VaultCollaborationServiceEvent.VaultMemberRemoved) {
-      await this.handleVaultMemberRemovedEvent((event.payload as VaultCollaborationServiceEventPayload).vaultUuid)
+      await this.handleRemoteVaultMemberRemovedEvent((event.payload as VaultCollaborationServiceEventPayload).vaultUuid)
     }
   }
 
-  private async handleVaultMemberRemovedEvent(vaultUuid: string): Promise<void> {
+  private async handleRemoteVaultMemberRemovedEvent(vaultUuid: string): Promise<void> {
     await this.rotateVaultKey(vaultUuid)
   }
 
-  public async reloadVaults(): Promise<VaultInterface[] | ClientDisplayableError> {
+  public async reloadRemoteVaults(): Promise<VaultInterface[] | ClientDisplayableError> {
     const response = await this.vaultsServer.getVaults()
 
     if (isErrorResponse(response)) {
@@ -113,12 +113,12 @@ export class VaultService
 
     const serverVaults = response.data.vaults
 
-    const vaults = await this.handleReceivedVaults(serverVaults)
+    const vaults = await this.handleIncomingRemoteVaults(serverVaults)
 
     return vaults
   }
 
-  async handleReceivedVaults(serverHashes: VaultServerHash[]): Promise<VaultInterface[]> {
+  async handleIncomingRemoteVaults(serverHashes: VaultServerHash[]): Promise<VaultInterface[]> {
     const vaults = serverHashes.map((serverHash) => VaultInterfaceFromServerHash(serverHash))
 
     this.vaultStorage.updateVaults(vaults)
@@ -126,30 +126,8 @@ export class VaultService
     return vaults
   }
 
-  public getVaults(): VaultInterface[] {
-    return this.vaultStorage.getVaults()
-  }
-
-  public getVault(vaultUuid: string): VaultInterface | undefined {
-    return this.vaultStorage.getVault(vaultUuid)
-  }
-
-  public isUserVaultAdmin(vaultUuid: string): boolean {
-    const vault = this.getVault(vaultUuid)
-
-    if (!vault || !vault.userUuid) {
-      return false
-    }
-
-    return vault.userUuid === this.session.userUuid
-  }
-
-  public isVaultUserOwnUser(user: VaultUserServerHash): boolean {
-    return user.user_uuid === this.session.userUuid
-  }
-
   async createVault(name?: string, description?: string): Promise<VaultInterface | ClientDisplayableError> {
-    const createVault = new CreateVaultUseCase(this.items, this.vaultsServer, this.encryption)
+    const createVault = new CreateVaultUseCase(this.items, this.vaultsServer, this.vaultStorage, this.encryption)
     const result = await createVault.execute({
       online: this.session.isSignedIn(),
       vaultName: name,
@@ -194,23 +172,7 @@ export class VaultService
     return true
   }
 
-  getVaultKey(vaultUuid: string): VaultKeyInterface | undefined {
-    return this.encryption.getVaultKey(vaultUuid)
-  }
-
-  getVaultInfoForItem(item: DecryptedItemInterface): VaultKeyContentSpecialized | undefined {
-    if (!item.vault_uuid) {
-      return undefined
-    }
-
-    return this.getVaultInfo(item.vault_uuid)
-  }
-
-  getVaultInfo(vaultUuid: string): VaultKeyContentSpecialized | undefined {
-    return this.getVaultKey(vaultUuid)?.content
-  }
-
-  async updateServerVaultWithNewKeyInformation(
+  async updateRemoteVaultWithNewKeyInformation(
     vaultUuid: string,
     params: { specifiedItemsKeyUuid: string; vaultKeyTimestamp: number },
   ): Promise<VaultInterface | ClientDisplayableError> {
@@ -267,6 +229,44 @@ export class VaultService
 
     await this.collaboration.updateInvitesAfterVaultDataChange(vaultUuid)
     await this.sync.sync()
+  }
+
+  public getVaults(): VaultInterface[] {
+    return this.vaultStorage.getVaults()
+  }
+
+  public getVault(vaultUuid: string): VaultInterface | undefined {
+    return this.vaultStorage.getVault(vaultUuid)
+  }
+
+  public isUserVaultAdmin(vaultUuid: string): boolean {
+    const vault = this.getVault(vaultUuid)
+
+    if (!vault || !vault.userUuid) {
+      return false
+    }
+
+    return vault.userUuid === this.session.userUuid
+  }
+
+  public isVaultUserOwnUser(user: VaultUserServerHash): boolean {
+    return user.user_uuid === this.session.userUuid
+  }
+
+  getVaultKey(vaultUuid: string): VaultKeyInterface | undefined {
+    return this.encryption.getVaultKey(vaultUuid)
+  }
+
+  getVaultInfoForItem(item: DecryptedItemInterface): VaultKeyContentSpecialized | undefined {
+    if (!item.vault_uuid) {
+      return undefined
+    }
+
+    return this.getVaultInfo(item.vault_uuid)
+  }
+
+  getVaultInfo(vaultUuid: string): VaultKeyContentSpecialized | undefined {
+    return this.getVaultKey(vaultUuid)?.content
   }
 
   isItemInVault(item: DecryptedItemInterface): boolean {

@@ -10,7 +10,7 @@ import { VaultServiceEvent } from './VaultServiceEvent'
 
 export interface VaultServiceInterface extends AbstractService<VaultServiceEvent> {
   createVault(name?: string, description?: string): Promise<VaultInterface | ClientDisplayableError>
-  reloadVaults(): Promise<VaultInterface[] | ClientDisplayableError>
+  reloadRemoteVaults(): Promise<VaultInterface[] | ClientDisplayableError>
   getVaults(): VaultInterface[]
   deleteVault(vaultUuid: string): Promise<boolean>
 

@@ -24,11 +24,11 @@ export enum SyncEvent {
   DatabaseWriteError = 'database-write-error',
   DatabaseReadError = 'database-read-error',
   SyncRequestsIntegrityCheck = 'sync:requests-integrity-check',
-  ReceivedVaults = 'received-vaults',
+  ReceivedRemoteVaults = 'received-vaults',
   ReceivedVaultInvites = 'received-vault-invites',
   ReceivedContacts = 'received-contacts',
 }
 
-export type SyncEventReceivedVaultsData = VaultServerHash[]
+export type SyncEventReceivedRemoteVaultsData = VaultServerHash[]
 export type SyncEventReceivedVaultInvitesData = VaultInviteServerHash[]
 export type SyncEventReceivedContactsData = ContactServerHash[]

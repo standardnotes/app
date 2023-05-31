@@ -4,7 +4,7 @@ import * as Files from '../lib/Files.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.only('vaults', function () {
+describe('vaults', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let application
@@ -138,7 +138,7 @@ describe.only('vaults', function () {
       const vault = await vaultService.createVault()
       const vaultKey = vaultService.getVaultKey(vault.uuid)
 
-      const result = await vaultService.updateServerVaultWithNewKeyInformation(vault.uuid, {
+      const result = await vaultService.updateRemoteVaultWithNewKeyInformation(vault.uuid, {
         vaultKeyTimestamp: vaultKey.keyTimestamp - 1,
         specifiedItemsKeyUuid: '123',
       })
@@ -146,7 +146,7 @@ describe.only('vaults', function () {
       expect(isClientDisplayableError(result)).to.be.true
     })
 
-    it.only('attempting to save note to non-existent vault should result in VaultNotMemberError conflict', async () => {
+    it('attempting to save note to non-existent vault should result in VaultNotMemberError conflict', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
 
       const promise = context.resolveWithConflicts()
@@ -197,7 +197,7 @@ describe.only('vaults', function () {
 
       await context.vaultService.rotateVaultKey(vault.uuid)
 
-      await context.vaultService.handleReceivedVaults([
+      await context.vaultService.handleReceivedRemoteVaults([
         {
           ...vault,
           specified_items_key_uuid: oldVaultItemsKey.uuid,
@@ -235,7 +235,7 @@ describe.only('vaults', function () {
 
       expect(secondUploadedPayloads[0].items_key_id).to.equal(secondVaultItemsKey.uuid)
 
-      await context.vaultService.handleReceivedVaults([
+      await context.vaultService.handleReceivedRemoteVaults([
         {
           ...vault,
           specified_items_key_uuid: firstVaultItemsKey.uuid,

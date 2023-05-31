@@ -21,14 +21,14 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
   const [vaults, setVaults] = useState<VaultInterface[]>([])
 
   useEffect(() => {
-    const reloadVaults = async () => {
-      const vaults = await application.vaults.reloadVaults()
+    const reloadRemoteVaults = async () => {
+      const vaults = await application.vaults.reloadRemoteVaults()
       if (!isClientDisplayableError(vaults)) {
         setVaults(vaults)
       }
     }
     setVaults(application.vaults.getVaults())
-    void reloadVaults()
+    void reloadRemoteVaults()
   }, [application.vaults])
 
   const [isOpen, setIsOpen] = useState(false)

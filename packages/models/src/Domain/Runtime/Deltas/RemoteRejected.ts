@@ -15,6 +15,7 @@ import {
   ConflictType,
 } from '@standardnotes/responses'
 import { PayloadsByDuplicating } from '../../Utilities/Payload/PayloadsByDuplicating'
+import { ContentType } from '@standardnotes/common'
 
 export class DeltaRemoteRejected implements SyncDeltaInterface {
   constructor(
@@ -34,7 +35,7 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
 
     for (const conflict of this.conflicts) {
       if (vaultErrors.includes(conflict.type)) {
-        results.push(...this.handleVaultInvalidItemsKeyConflict(conflict))
+        results.push(...this.handleVaultError(conflict))
       } else if (conflictParamsHasServerItemAndUnsavedItem(conflict)) {
         results.push(...this.getResultForConflictWithServerItemAndUnsavedItem(conflict))
       } else if (conflictParamsHasOnlyServerItem(conflict)) {
@@ -50,12 +51,14 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
     }
   }
 
-  private handleVaultInvalidItemsKeyConflict(
-    conflict: ConflictParams<FullyFormedPayloadInterface>,
-  ): SyncResolvedPayload[] {
+  private handleVaultError(conflict: ConflictParams<FullyFormedPayloadInterface>): SyncResolvedPayload[] {
     const base = this.baseCollection.find(conflict.unsaved_item.uuid)
     if (!base) {
       return []
+    }
+
+    if (base.content_type === ContentType.VaultItemsKey) {
+      return this.discardChangesOfBasePayload(base)
     }
 
     if (conflict.server_item) {
@@ -64,8 +67,20 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
         conflict.server_item,
       )
     } else {
-      return this.resultByDuplicatingBasePayloadAsNonVaulted(base)
+      return this.resultByDuplicatingBasePayloadAsNonVaultedAndDiscardingChangesOfOriginal(base)
     }
+  }
+
+  private discardChangesOfBasePayload(base: FullyFormedPayloadInterface): SyncResolvedPayload[] {
+    const undirtiedPayload = base.copyAsSyncResolved(
+      {
+        dirty: false,
+        lastSyncEnd: new Date(),
+      },
+      PayloadSource.RemoteSaved,
+    )
+
+    return [undirtiedPayload]
   }
 
   private getResultForConflictWithOnlyUnsavedItem(
@@ -157,7 +172,9 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
     return duplicateBasePayloadIntoNewUuid.concat([takeServerPayloadAsCanonical])
   }
 
-  private resultByDuplicatingBasePayloadAsNonVaulted(basePayload: FullyFormedPayloadInterface): SyncResolvedPayload[] {
+  private resultByDuplicatingBasePayloadAsNonVaultedAndDiscardingChangesOfOriginal(
+    basePayload: FullyFormedPayloadInterface,
+  ): SyncResolvedPayload[] {
     const duplicateBasePayloadWithoutVault = PayloadsByDuplicating({
       payload: basePayload.copy({
         vault_uuid: undefined,
@@ -167,6 +184,6 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
       source: basePayload.source,
     })
 
-    return duplicateBasePayloadWithoutVault
+    return [...duplicateBasePayloadWithoutVault, ...this.discardChangesOfBasePayload(basePayload)]
   }
 }

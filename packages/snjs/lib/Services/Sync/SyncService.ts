@@ -79,7 +79,7 @@ import {
   isChunkFullEntry,
   SyncEventReceivedVaultInvitesData,
   SyncEventReceivedContactsData,
-  SyncEventReceivedVaultsData,
+  SyncEventReceivedRemoteVaultsData,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -925,7 +925,7 @@ export class SNSyncService
     const historyMap = this.historyService.getHistoryMapCopy()
 
     if (response.vaults) {
-      await this.notifyEventSync(SyncEvent.ReceivedVaults, response.vaults as SyncEventReceivedVaultsData)
+      await this.notifyEventSync(SyncEvent.ReceivedRemoteVaults, response.vaults as SyncEventReceivedRemoteVaultsData)
     }
 
     if (response.vaultInvites) {

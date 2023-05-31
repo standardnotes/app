@@ -4,12 +4,19 @@ import { ClientDisplayableError, isErrorResponse } from '@standardnotes/response
 import { VaultsServerInterface } from '@standardnotes/api'
 import { CreateVaultKeyUseCase } from './CreateVaultKey'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { VaultInterface, VaultInterfaceFromServerHash } from '@standardnotes/models'
+import {
+  VaultInterface,
+  VaultInterfaceFromServerHash,
+  VaultItemsKeyInterface,
+  VaultKeyContentSpecialized,
+} from '@standardnotes/models'
+import { VaultStorageServiceInterface } from '../../VaultStorage/VaultStorageServiceInterface'
 
 export class CreateVaultUseCase {
   constructor(
     private items: ItemManagerInterface,
     private vaultsServer: VaultsServerInterface,
+    private vaultStorage: VaultStorageServiceInterface,
     private encryption: EncryptionProviderInterface,
   ) {}
 
@@ -29,25 +36,59 @@ export class CreateVaultUseCase {
     })
 
     if (dto.online) {
-      const response = await this.vaultsServer.createVault({
+      return this.createOnlineVault({
         vaultUuid,
-        vaultKeyTimestamp: vaultKeyContent.keyTimestamp,
-        specifiedItemsKeyUuid: vaultItemsKey.uuid,
+        vaultKeyContent,
+        vaultItemsKey,
       })
-
-      if (isErrorResponse(response)) {
-        return ClientDisplayableError.FromError(response.data.error)
-      }
-
-      await this.items.insertItem(vaultItemsKey)
-
-      return VaultInterfaceFromServerHash(response.data.vault)
     } else {
-      return {
-        uuid: vaultUuid,
-        specifiedItemsKeyUuid: vaultItemsKey.uuid,
-        vaultKeyTimestamp: vaultKeyContent.keyTimestamp,
-      }
+      return this.createOfflineVault({
+        vaultUuid,
+        vaultKeyContent,
+        vaultItemsKey,
+      })
     }
+  }
+
+  private async createOnlineVault(params: {
+    vaultUuid: string
+    vaultKeyContent: VaultKeyContentSpecialized
+    vaultItemsKey: VaultItemsKeyInterface
+  }): Promise<VaultInterface | ClientDisplayableError> {
+    const response = await this.vaultsServer.createVault({
+      vaultUuid: params.vaultUuid,
+      vaultKeyTimestamp: params.vaultKeyContent.keyTimestamp,
+      specifiedItemsKeyUuid: params.vaultItemsKey.uuid,
+    })
+
+    if (isErrorResponse(response)) {
+      return ClientDisplayableError.FromError(response.data.error)
+    }
+
+    await this.items.insertItem(params.vaultItemsKey)
+
+    const vault = VaultInterfaceFromServerHash(response.data.vault)
+
+    this.vaultStorage.setVault(vault)
+
+    return vault
+  }
+
+  private async createOfflineVault(params: {
+    vaultUuid: string
+    vaultKeyContent: VaultKeyContentSpecialized
+    vaultItemsKey: VaultItemsKeyInterface
+  }): Promise<VaultInterface> {
+    await this.items.insertItem(params.vaultItemsKey)
+
+    const vault: VaultInterface = {
+      uuid: params.vaultUuid,
+      specifiedItemsKeyUuid: params.vaultItemsKey.uuid,
+      vaultKeyTimestamp: params.vaultKeyContent.keyTimestamp,
+    }
+
+    this.vaultStorage.setVault(vault)
+
+    return vault
   }
 }
