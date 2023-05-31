@@ -89,10 +89,9 @@ export class ServerSyncResponseResolver {
       ...this.getConflictsForType(ConflictType.ReadOnlyError),
       ...this.getConflictsForType(ConflictType.UuidError),
       ...this.getConflictsForType(ConflictType.SnjsVersionError),
-      ...this.getConflictsForType(ConflictType.VaultInsufficientPermissionsError),
-      ...this.getConflictsForType(ConflictType.VaultNotMemberError),
-      ...this.getConflictsForType(ConflictType.VaultInvalidState),
-      ...this.getConflictsForType(ConflictType.VaultInvalidItemsKey),
+      ...this.getConflictsForType(ConflictType.GroupInsufficientPermissionsError),
+      ...this.getConflictsForType(ConflictType.GroupNotMemberError),
+      ...this.getConflictsForType(ConflictType.GroupInvalidItemsKey),
     ]
 
     const delta = new DeltaRemoteRejected(this.baseCollection, conflicts)

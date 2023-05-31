@@ -3,8 +3,7 @@ import {
   BackupFile,
   DecryptedPayloadInterface,
   EncryptedPayloadInterface,
-  VaultKeyContentSpecialized,
-  VaultKeyInterface,
+  VaultKeyCopyContentSpecialized,
   ItemContent,
   ItemsKeyInterface,
   RootKeyInterface,
@@ -57,23 +56,24 @@ export interface EncryptionProviderInterface {
     version?: ProtocolVersion,
   ): Promise<RootKeyInterface>
 
-  getVaultKey(vaultUuid: string): VaultKeyInterface | undefined
   getDecryptedPrivateKey(): string | undefined
-  createVaultItemsKey(uuid: string, vaultUuid: string): VaultItemsKeyInterface
-  createVaultKeyData(vaultUuid: string): VaultKeyContentSpecialized
+  createVaultItemsKey(uuid: string, vaultSystemIdentifier: string): VaultItemsKeyInterface
+  createVaultKeyData(vaultSystemIdentifier: string): VaultKeyCopyContentSpecialized
   generateKeyPair(): PkcKeyPair
+
   encryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, privateKey: string): string
   decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | undefined
-  decryptVaultDataWithPrivateKey(
-    encryptedVaultData: string,
-    senderPublicKey: string,
-    privateKey: string,
-  ): VaultKeyContentSpecialized | undefined
-  encryptVaultDataWithRecipientPublicKey(
-    data: VaultKeyContentSpecialized,
+
+  encryptVaultKeyContentWithRecipientPublicKey(
+    content: VaultKeyCopyContentSpecialized,
     senderPrivateKey: string,
     recipientPublicKey: string,
   ): string
+  decryptVaultKeyContentWithPrivateKey(
+    encryptedVaultKeyContent: string,
+    senderPublicKey: string,
+    privateKey: string,
+  ): VaultKeyCopyContentSpecialized | undefined
 
   setNewRootKeyWrapper(wrappingKey: RootKeyInterface): Promise<void>
   removePasscode(): Promise<void>
@@ -90,7 +90,7 @@ export interface EncryptionProviderInterface {
   >
   createNewItemsKeyWithRollback(): Promise<() => Promise<void>>
   reencryptItemsKeys(): Promise<void>
-  reencryptVaultItemsKeysForVault(vaultUuid: string): Promise<void>
+  reencryptVaultItemsKeysForVault(vaultSystemIdentifier: string): Promise<void>
   getSureDefaultItemsKey(): ItemsKeyInterface
   getRootKeyParams(): Promise<SNRootKeyParams | undefined>
   getEmbeddedPayloadAuthenticatedData(

@@ -4,7 +4,7 @@ import {
   DecryptedPayload,
   DecryptedPayloadInterface,
   FillItemContent,
-  VaultKeyContentSpecialized,
+  VaultKeyCopyContentSpecialized,
   ItemContent,
   ItemsKeyContent,
   ItemsKeyInterface,
@@ -215,11 +215,11 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
     })
   }
 
-  createVaultItemsKey(_uuid: string, _vaultUuid: string): VaultItemsKeyInterface {
+  createVaultItemsKey(_uuid: string, _vaultSystemIdentifier: string): VaultItemsKeyInterface {
     throw new Error('Method not implemented.')
   }
 
-  createVaultKeyData(_vaultUuid: string): VaultKeyContentSpecialized {
+  createVaultKeyData(_vaultSystemIdentifier: string): VaultKeyCopyContentSpecialized {
     throw new Error('Method not implemented.')
   }
 

@@ -34,7 +34,7 @@ describe.only('offline vaults', function () {
     expect(vault.specifiedItemsKeyUuid).to.not.be.undefined
     expect(vault.vaultKeyTimestamp).to.not.be.undefined
 
-    const vaultItemsKey = context.items.getVaultItemsKeysForVault(vault.uuid)[0]
+    const vaultItemsKey = context.items.getAllVaultItemsKeysForVault(vault.uuid)[0]
     expect(vaultItemsKey).to.not.be.undefined
     expect(vaultItemsKey.uuid).to.equal(vault.specifiedItemsKeyUuid)
   })
@@ -46,7 +46,7 @@ describe.only('offline vaults', function () {
     await vaultService.addItemToVault(vault, item)
 
     const updatedItem = context.items.findItem(item.uuid)
-    expect(updatedItem.vault_uuid).to.equal(vault.uuid)
+    expect(updatedItem.vault_system_identifier).to.equal(vault.uuid)
   })
 
   it('should load data in the correct order at startup to allow vault items and their keys to decrypt', async () => {
@@ -89,7 +89,7 @@ describe.only('offline vaults', function () {
       const updatedNote = recreatedContext.application.items.findItem(note.uuid)
       expect(updatedNote.title).to.equal('foo')
       expect(updatedNote.text).to.equal('bar')
-      expect(updatedNote.vault_uuid).to.equal(vault.uuid)
+      expect(updatedNote.vault_system_identifier).to.equal(vault.uuid)
     })
 
     it('should alternate uuid of vault if attempting to create a server one fails', async () => {})

@@ -1,7 +1,7 @@
 import { UuidGenerator } from '@standardnotes/utils'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
-import { VaultsServerInterface } from '@standardnotes/api'
+import { GroupsServerInterface } from '@standardnotes/api'
 import { UpdateServerVaultUseCase } from './UpdateServerVault'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { VaultStorageServiceInterface } from '../../VaultStorage/VaultStorageServiceInterface'
@@ -11,12 +11,12 @@ export class RotateVaultKeyUseCase {
   constructor(
     private items: ItemManagerInterface,
     private encryption: EncryptionProviderInterface,
-    private vaultsServer: VaultsServerInterface,
+    private vaultsServer: GroupsServerInterface,
     private vaultStorage: VaultStorageServiceInterface,
   ) {}
 
-  async execute(params: { vaultUuid: string; online: boolean }): Promise<undefined | ClientDisplayableError[]> {
-    const vaultKey = this.encryption.getVaultKey(params.vaultUuid)
+  async execute(params: { vaultSystemIdentifier: string; online: boolean }): Promise<undefined | ClientDisplayableError[]> {
+    const vaultKey = this.items.getPrimarySyncedVaultKeyCopy(params.vaultUuid)
     if (!vaultKey) {
       throw new Error('Cannot rotate vault key; vault key not found')
     }
@@ -27,7 +27,7 @@ export class RotateVaultKeyUseCase {
 
     const updateVaultVaultItemsKeyResult = await this.createNewVaultItemsKey({
       online: params.online,
-      vaultUuid: params.vaultUuid,
+      vaultSystemIdentifier: params.vaultUuid,
       vaultKeyTimestamp: newVaultContent.keyTimestamp,
     })
 
@@ -39,7 +39,7 @@ export class RotateVaultKeyUseCase {
 
     const changeVaultDataUseCase = new ChangeVaultKeyDataUseCase(this.items, this.encryption)
     await changeVaultDataUseCase.execute({
-      vaultUuid: params.vaultUuid,
+      vaultSystemIdentifier: params.vaultUuid,
       newVaultData: newVaultContent,
     })
 
@@ -48,7 +48,7 @@ export class RotateVaultKeyUseCase {
 
   private async createNewVaultItemsKey(params: {
     online: boolean
-    vaultUuid: string
+    vaultSystemIdentifier: string
     vaultKeyTimestamp: number
   }): Promise<ClientDisplayableError | void> {
     const newItemsKeyUuid = UuidGenerator.GenerateUuid()
@@ -58,7 +58,7 @@ export class RotateVaultKeyUseCase {
     if (params.online) {
       const updateVaultUseCase = new UpdateServerVaultUseCase(this.vaultsServer)
       const updateResult = await updateVaultUseCase.execute({
-        vaultUuid: params.vaultUuid,
+        vaultSystemIdentifier: params.vaultUuid,
         vaultKeyTimestamp: params.vaultKeyTimestamp,
         specifiedItemsKeyUuid: newItemsKey.uuid,
       })

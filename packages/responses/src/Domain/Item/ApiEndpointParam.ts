@@ -4,5 +4,5 @@ export enum ApiEndpointParam {
   SyncDlLimit = 'limit',
   SyncPayloads = 'items',
   ApiVersion = 'api',
-  VaultUiuds = 'vault_uuids',
+  GroupUiuds = 'group_uuids',
 }

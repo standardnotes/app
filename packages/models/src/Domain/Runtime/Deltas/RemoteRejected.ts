@@ -27,10 +27,9 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
     const results: SyncResolvedPayload[] = []
 
     const vaultErrors: ConflictType[] = [
-      ConflictType.VaultInsufficientPermissionsError,
-      ConflictType.VaultNotMemberError,
-      ConflictType.VaultInvalidState,
-      ConflictType.VaultInvalidItemsKey,
+      ConflictType.GroupInsufficientPermissionsError,
+      ConflictType.GroupNotMemberError,
+      ConflictType.GroupInvalidItemsKey,
     ]
 
     for (const conflict of this.conflicts) {
@@ -153,7 +152,7 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
   ): SyncResolvedPayload[] {
     const duplicateBasePayloadIntoNewUuid = PayloadsByDuplicating({
       payload: basePayload.copy({
-        vault_uuid: undefined,
+        vault_system_identifier: undefined,
       }),
       baseCollection: this.baseCollection,
       isConflict: true,
@@ -177,7 +176,7 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
   ): SyncResolvedPayload[] {
     const duplicateBasePayloadWithoutVault = PayloadsByDuplicating({
       payload: basePayload.copy({
-        vault_uuid: undefined,
+        vault_system_identifier: undefined,
       }),
       baseCollection: this.baseCollection,
       isConflict: true,

@@ -1,17 +1,17 @@
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
-import { VaultsServerInterface } from '@standardnotes/api'
+import { GroupsServerInterface } from '@standardnotes/api'
 import { VaultInterface, VaultInterfaceFromServerHash } from '@standardnotes/models'
 
 export class UpdateServerVaultUseCase {
-  constructor(private vaultsServer: VaultsServerInterface) {}
+  constructor(private vaultsServer: GroupsServerInterface) {}
 
   async execute(params: {
-    vaultUuid: string
+    vaultSystemIdentifier: string
     specifiedItemsKeyUuid: string
     vaultKeyTimestamp: number
   }): Promise<VaultInterface | ClientDisplayableError> {
     const response = await this.vaultsServer.updateVault({
-      vaultUuid: params.vaultUuid,
+      vaultSystemIdentifier: params.vaultUuid,
       specifiedItemsKeyUuid: params.specifiedItemsKeyUuid,
       vaultKeyTimestamp: params.vaultKeyTimestamp,
     })

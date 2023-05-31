@@ -12,9 +12,9 @@ export class AddItemToVaultUseCase {
     private files: FilesClientInterface,
   ) {}
 
-  async execute(dto: { item: DecryptedItemInterface; vaultUuid: string }): Promise<ClientDisplayableError | void> {
+  async execute(dto: { item: DecryptedItemInterface; vaultSystemIdentifier: string }): Promise<ClientDisplayableError | void> {
     await this.items.changeItem(dto.item, (mutator) => {
-      mutator.vault_uuid = dto.vaultUuid
+      mutator.vault_system_identifier = dto.vaultUuid
     })
 
     await this.sync.sync()

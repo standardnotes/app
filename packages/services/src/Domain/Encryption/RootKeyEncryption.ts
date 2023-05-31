@@ -35,7 +35,7 @@ import {
   EncryptedPayloadInterface,
   EncryptedTransferPayload,
   FillItemContentSpecialized,
-  VaultKeyInterface,
+  VaultKeyCopyInterface,
   ItemContent,
   ItemsKeyContent,
   ItemsKeyContentSpecialized,
@@ -43,7 +43,6 @@ import {
   NamespacedRootKeyInKeychain,
   PayloadEmitSource,
   PayloadTimestampDefaults,
-  Predicate,
   RootKeyContent,
   RootKeyInterface,
   SureFindPayload,
@@ -57,7 +56,6 @@ import { StorageKey } from '../Storage/StorageKeys'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { StorageValueModes } from '../Storage/StorageTypes'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
-import { VaultStorageServiceInterface } from '../VaultStorage/VaultStorageServiceInterface'
 
 export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEvent> {
   private rootKey?: RootKeyInterface
@@ -65,12 +63,11 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
   public memoizedRootKeyParams?: SNRootKeyParams
 
   constructor(
-    private itemManager: ItemManagerInterface,
+    private items: ItemManagerInterface,
     private operatorManager: OperatorManager,
     public deviceInterface: DeviceInterface,
     private storageService: StorageServiceInterface,
     private payloadManager: PayloadManagerInterface,
-    private vaultStorage: VaultStorageServiceInterface,
     private identifier: ApplicationIdentifier,
     protected override internalEventBus: InternalEventBusInterface,
   ) {
@@ -78,12 +75,11 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
   }
 
   public override deinit(): void {
-    ;(this.itemManager as unknown) = undefined
+    ;(this.items as unknown) = undefined
     ;(this.operatorManager as unknown) = undefined
     ;(this.deviceInterface as unknown) = undefined
     ;(this.storageService as unknown) = undefined
     ;(this.payloadManager as unknown) = undefined
-    ;(this.vaultStorage as unknown) = undefined
 
     this.rootKey = undefined
     this.memoizedRootKeyParams = undefined
@@ -500,18 +496,18 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
   }
 
   private getItemsKeys() {
-    return this.itemManager.getDisplayableItemsKeys()
+    return this.items.getDisplayableItemsKeys()
   }
 
   private async encrypPayloadWithKeyLookup(payload: DecryptedPayloadInterface): Promise<EncryptedParameters> {
-    let key: RootKeyInterface | VaultKeyInterface | undefined
-    if (payload.vault_uuid || ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
-      if (!payload.vault_uuid) {
+    let key: RootKeyInterface | VaultKeyCopyInterface | undefined
+    if (payload.vault_system_identifier || ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
+      if (!payload.vault_system_identifier) {
         throw Error(
           `Attempting to encrypt vault payload ${payload.content_type} but the payload is missing a vault uuid`,
         )
       }
-      key = this.getVaultKey(payload.vault_uuid)
+      key = this.items.getPrimarySyncedVaultKeyCopy(payload.vault_system_identifier)
     } else {
       key = this.getRootKey()
     }
@@ -529,24 +525,24 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
 
   public async encryptPayload(
     payload: DecryptedPayloadInterface,
-    key: RootKeyInterface | VaultKeyInterface,
+    key: RootKeyInterface | VaultKeyCopyInterface,
   ): Promise<EncryptedParameters> {
     return encryptPayload(payload, key, this.operatorManager)
   }
 
-  public async encryptPayloads(payloads: DecryptedPayloadInterface[], key: RootKeyInterface | VaultKeyInterface) {
+  public async encryptPayloads(payloads: DecryptedPayloadInterface[], key: RootKeyInterface | VaultKeyCopyInterface) {
     return Promise.all(payloads.map((payload) => this.encryptPayload(payload, key)))
   }
 
   public async decryptPayloadWithKeyLookup<C extends ItemContent = ItemContent>(
     payload: EncryptedPayloadInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
-    let key: RootKeyInterface | VaultKeyInterface | undefined
-    if (payload.vault_uuid) {
+    let key: RootKeyInterface | VaultKeyCopyInterface | undefined
+    if (payload.vault_system_identifier) {
       if (!ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
         throw Error('Attempting to decrypt payload that is not a vault items key with vault key.')
       }
-      key = this.getVaultKey(payload.vault_uuid)
+      key = this.items.getPrimarySyncedVaultKeyCopy(payload.vault_system_identifier)
     } else {
       key = this.getRootKey()
     }
@@ -564,7 +560,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
 
   public async decryptPayload<C extends ItemContent = ItemContent>(
     payload: EncryptedPayloadInterface,
-    key: RootKeyInterface | VaultKeyInterface,
+    key: RootKeyInterface | VaultKeyCopyInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     return decryptPayload(payload, key, this.operatorManager)
   }
@@ -577,7 +573,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
 
   public async decryptPayloads<C extends ItemContent = ItemContent>(
     payloads: EncryptedPayloadInterface[],
-    key: RootKeyInterface | VaultKeyInterface,
+    key: RootKeyInterface | VaultKeyCopyInterface,
   ): Promise<(DecryptedParameters<C> | ErrorDecryptingParameters)[]> {
     return Promise.all(payloads.map((payload) => this.decryptPayload<C>(payload, key)))
   }
@@ -623,7 +619,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
        * Re-encrypting items keys is called by consumers who have specific flows who
        * will sync on their own timing
        */
-      await this.itemManager.setItemsDirty(itemsKeys)
+      await this.items.setItemsDirty(itemsKeys)
     }
   }
 
@@ -631,11 +627,11 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
    * When the vault key changes, we must re-encrypt all vault items
    * keys with this new vault key (by simply re-syncing).
    */
-  public async reencryptVaultItemsKeysForVault(vaultUuid: string): Promise<void> {
-    const vaultItemsKeys = this.itemManager.getVaultItemsKeysForVault(vaultUuid)
+  public async reencryptVaultItemsKeysForVault(vaultSystemIdentifier: string): Promise<void> {
+    const vaultItemsKeys = this.items.getAllVaultItemsKeysForVault(vaultSystemIdentifier)
 
     if (vaultItemsKeys.length > 0) {
-      await this.itemManager.setItemsDirty(vaultItemsKeys)
+      await this.items.setItemsDirty(vaultItemsKeys)
     }
   }
 
@@ -673,14 +669,14 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     })
 
     for (const key of defaultKeys) {
-      await this.itemManager.changeItemsKey(key, (mutator) => {
+      await this.items.changeItemsKey(key, (mutator) => {
         mutator.isDefault = false
       })
     }
 
-    const itemsKey = (await this.itemManager.insertItem(itemTemplate)) as ItemsKeyInterface
+    const itemsKey = (await this.items.insertItem(itemTemplate)) as ItemsKeyInterface
 
-    await this.itemManager.changeItemsKey(itemsKey, (mutator) => {
+    await this.items.changeItemsKey(itemsKey, (mutator) => {
       mutator.isDefault = true
     })
 
@@ -692,28 +688,15 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     const newDefaultItemsKey = await this.createNewDefaultItemsKey()
 
     const rollback = async () => {
-      await this.itemManager.setItemToBeDeleted(newDefaultItemsKey)
+      await this.items.setItemToBeDeleted(newDefaultItemsKey)
 
       if (currentDefaultItemsKey) {
-        await this.itemManager.changeItem<ItemsKeyMutator>(currentDefaultItemsKey, (mutator) => {
+        await this.items.changeItem<ItemsKeyMutator>(currentDefaultItemsKey, (mutator) => {
           mutator.isDefault = true
         })
       }
     }
 
     return rollback
-  }
-
-  getVaultKey(vaultUuid: string): VaultKeyInterface | undefined {
-    const keys = this.itemManager.itemsMatchingPredicate<VaultKeyInterface>(
-      ContentType.VaultKey,
-      new Predicate<VaultKeyInterface>('vaultUuid', '=', vaultUuid),
-    )
-
-    if (keys.length > 1) {
-      throw Error('Multiple vault keys found for vault uuid')
-    }
-
-    return keys[0]
   }
 }

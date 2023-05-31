@@ -53,7 +53,7 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
   }, [application.vaults, selectedItems])
 
   const doesVaultContainItems = (vault: VaultInterface) => {
-    return selectedItems.every((item) => item.vault_uuid === vault.uuid)
+    return selectedItems.every((item) => item.vault_system_identifier === vault.uuid)
   }
 
   return (
@@ -86,7 +86,7 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
       >
         <Menu a11yLabel="Vault selection menu" isOpen={isOpen}>
           {vaults.map((vault) => {
-            const vaultData = application.vaults.getVaultInfo(vault.uuid)
+            const vaultKeyData = application.vaults.getVaultInfo(vault.uuid)
             return (
               <MenuItem
                 key={vault.uuid}
@@ -100,7 +100,7 @@ const AddToVaultOption: FunctionComponent<Props> = ({ iconClassName, selectedIte
                     doesVaultContainItems(vault) ? 'font-bold' : '',
                   )}
                 >
-                  {vaultData?.vaultName || vault.uuid}
+                  {vaultKeyData?.vaultName || vault.uuid}
                 </span>
               </MenuItem>
             )

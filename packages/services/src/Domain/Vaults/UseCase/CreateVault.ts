@@ -1,21 +1,21 @@
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { UuidGenerator } from '@standardnotes/utils'
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
-import { VaultsServerInterface } from '@standardnotes/api'
+import { GroupsServerInterface } from '@standardnotes/api'
 import { CreateVaultKeyUseCase } from './CreateVaultKey'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import {
   VaultInterface,
   VaultInterfaceFromServerHash,
   VaultItemsKeyInterface,
-  VaultKeyContentSpecialized,
+  VaultKeyCopyContentSpecialized,
 } from '@standardnotes/models'
 import { VaultStorageServiceInterface } from '../../VaultStorage/VaultStorageServiceInterface'
 
 export class CreateVaultUseCase {
   constructor(
     private items: ItemManagerInterface,
-    private vaultsServer: VaultsServerInterface,
+    private vaultsServer: GroupsServerInterface,
     private vaultStorage: VaultStorageServiceInterface,
     private encryption: EncryptionProviderInterface,
   ) {}
@@ -51,12 +51,12 @@ export class CreateVaultUseCase {
   }
 
   private async createOnlineVault(params: {
-    vaultUuid: string
-    vaultKeyContent: VaultKeyContentSpecialized
+    vaultSystemIdentifier: string
+    vaultKeyContent: VaultKeyCopyContentSpecialized
     vaultItemsKey: VaultItemsKeyInterface
   }): Promise<VaultInterface | ClientDisplayableError> {
     const response = await this.vaultsServer.createVault({
-      vaultUuid: params.vaultUuid,
+      vaultSystemIdentifier: params.vaultUuid,
       vaultKeyTimestamp: params.vaultKeyContent.keyTimestamp,
       specifiedItemsKeyUuid: params.vaultItemsKey.uuid,
     })
@@ -75,8 +75,8 @@ export class CreateVaultUseCase {
   }
 
   private async createOfflineVault(params: {
-    vaultUuid: string
-    vaultKeyContent: VaultKeyContentSpecialized
+    vaultSystemIdentifier: string
+    vaultKeyContent: VaultKeyCopyContentSpecialized
     vaultItemsKey: VaultItemsKeyInterface
   }): Promise<VaultInterface> {
     await this.items.insertItem(params.vaultItemsKey)

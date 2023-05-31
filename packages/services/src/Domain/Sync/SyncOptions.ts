@@ -20,8 +20,9 @@ export type SyncOptions = {
    */
   onPresyncSave?: () => void
 
-  /** If supplied, the sync will be exclusive to items in these vaults */
-  vaultUuids?: string[]
-  /** If true and vaultUuid is present, excludes sending global syncToken as part of request */
-  syncVaultsFromScratch?: boolean
+  /** If supplied, the sync will be exclusive to items in these groups */
+  groupUuids?: string[]
+
+  /** If true and groupUuids is present, excludes sending global syncToken as part of request */
+  syncGroupsFromScratch?: boolean
 }

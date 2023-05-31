@@ -1,7 +1,7 @@
 import {
   DecryptedPayloadInterface,
   EncryptedPayloadInterface,
-  VaultKeyInterface,
+  VaultKeyCopyInterface,
   ItemsKeyInterface,
   RootKeyInterface,
   VaultItemsKeyInterface,
@@ -14,7 +14,7 @@ export interface AbstractKeySplit<T = EncryptedPayloadInterface | DecryptedPaylo
   }
   usesVaultKey?: {
     items: T[]
-    key: VaultKeyInterface
+    key: VaultKeyCopyInterface
   }
   usesItemsKey?: {
     items: T[]

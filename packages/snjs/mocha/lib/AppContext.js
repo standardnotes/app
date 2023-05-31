@@ -166,10 +166,10 @@ export class AppContext {
     })
   }
 
-  resolveWhenVaultUserKeysResolved() {
+  resolveWhenGroupUserKeysResolved() {
     return new Promise((resolve) => {
       this.application.vaultService.collaboration.addEventObserver((eventName) => {
-        if (eventName === VaultCollaborationServiceEvent.VaultCollaborationStatusChanged) {
+        if (eventName === GroupServiceEvent.GroupStatusChanged) {
           resolve()
         }
       })

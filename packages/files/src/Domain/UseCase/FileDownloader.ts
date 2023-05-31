@@ -22,7 +22,7 @@ export class FileDownloader {
   constructor(
     private file: {
       uuid: string
-      vault_uuid: string | undefined
+      vault_system_identifier: string | undefined
       encryptedChunkSizes: FileContent['encryptedChunkSizes']
       remoteIdentifier: FileContent['remoteIdentifier']
     },
@@ -66,7 +66,7 @@ export class FileDownloader {
       valetToken: this.valetToken,
       contentRangeStart: startRange,
       onBytesReceived: onRemoteBytesReceived,
-      ownershipType: this.file.vault_uuid ? 'vault' : 'user',
+      ownershipType: this.file.vault_system_identifier ? 'vault' : 'user',
     })
 
     const result = await Promise.race([this.abortDeferred.promise, downloadPromise])

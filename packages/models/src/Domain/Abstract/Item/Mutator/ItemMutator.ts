@@ -51,9 +51,9 @@ export class ItemMutator<
     })
   }
 
-  public set vault_uuid(vaultUuid: string | undefined) {
+  public set vault_system_identifier(vaultSystemIdentifier: string | undefined) {
     this.immutablePayload = this.immutablePayload.copy({
-      vault_uuid: vaultUuid,
+      vault_system_identifier: vaultUuid,
     })
   }
 

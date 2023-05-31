@@ -6,8 +6,10 @@ export interface ContextPayload<C extends ItemContent = ItemContent> {
   content_type: ContentType
   content: C | string | undefined
   deleted: boolean
-  vault_uuid?: string
+
   user_uuid?: string
+  vault_system_identifier?: string
+
+  group_uuid?: string
   last_edited_by_uuid?: string
-  created_by_uuid?: string
 }

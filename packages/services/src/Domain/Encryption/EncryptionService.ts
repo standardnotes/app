@@ -32,8 +32,7 @@ import {
   DecryptedPayloadInterface,
   EncryptedPayload,
   EncryptedPayloadInterface,
-  VaultKeyContentSpecialized,
-  VaultKeyInterface,
+  VaultKeyCopyContentSpecialized,
   isDecryptedPayload,
   isEncryptedPayload,
   ItemContent,
@@ -75,7 +74,6 @@ import { RootKeyEncryptionService } from './RootKeyEncryption'
 import { DecryptBackupFile } from './BackupFileDecryptor'
 import { EncryptionServiceEvent } from './EncryptionServiceEvent'
 import { StorageKey } from '../Storage/StorageKeys'
-import { VaultStorageServiceInterface } from '../VaultStorage/VaultStorageServiceInterface'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -115,7 +113,6 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     private payloadManager: PayloadManagerInterface,
     public deviceInterface: DeviceInterface,
     private storageService: StorageServiceInterface,
-    vaultStorage: VaultStorageServiceInterface,
     private identifier: ApplicationIdentifier,
     public crypto: PureCryptoInterface,
     protected override internalEventBus: InternalEventBusInterface,
@@ -130,7 +127,6 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       payloadManager,
       storageService,
       this.operatorManager,
-      vaultStorage,
       internalEventBus,
     )
 
@@ -140,7 +136,6 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       this.deviceInterface,
       this.storageService,
       this.payloadManager,
-      vaultStorage,
       this.identifier,
       this.internalEventBus,
     )
@@ -229,8 +224,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     await this.rootKeyEncryption.reencryptItemsKeys()
   }
 
-  public reencryptVaultItemsKeysForVault(vaultUuid: string): Promise<void> {
-    return this.rootKeyEncryption.reencryptVaultItemsKeysForVault(vaultUuid)
+  public reencryptVaultItemsKeysForVault(vaultSystemIdentifier: string): Promise<void> {
+    return this.rootKeyEncryption.reencryptVaultItemsKeysForVault(vaultSystemIdentifier)
   }
 
   public async createNewItemsKeyWithRollback(): Promise<() => Promise<void>> {
@@ -506,16 +501,12 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.rootKeyEncryption.createRootKey(identifier, password, origination, version)
   }
 
-  createVaultKeyData(vaultUuid: string): VaultKeyContentSpecialized {
-    return this.operatorManager.defaultOperator().createVaultKeyData(vaultUuid)
+  createVaultKeyData(vaultSystemIdentifier: string): VaultKeyCopyContentSpecialized {
+    return this.operatorManager.defaultOperator().createVaultKeyData(vaultSystemIdentifier)
   }
 
-  getVaultKey(vaultUuid: string): VaultKeyInterface | undefined {
-    return this.rootKeyEncryption.getVaultKey(vaultUuid)
-  }
-
-  createVaultItemsKey(uuid: string, vaultUuid: string): VaultItemsKeyInterface {
-    return this.operatorManager.defaultOperator().createVaultItemsKey(uuid, vaultUuid)
+  createVaultItemsKey(uuid: string, vaultSystemIdentifier: string): VaultItemsKeyInterface {
+    return this.operatorManager.defaultOperator().createVaultItemsKey(uuid, vaultSystemIdentifier)
   }
 
   public generateKeyPair(): PkcKeyPair {
@@ -536,8 +527,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return decrypted ?? undefined
   }
 
-  encryptVaultDataWithRecipientPublicKey(
-    data: VaultKeyContentSpecialized,
+  encryptVaultKeyContentWithRecipientPublicKey(
+    data: VaultKeyCopyContentSpecialized,
     senderPrivateKey: string,
     recipientPublicKey: string,
   ): string {
@@ -546,16 +537,16 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return encrypted
   }
 
-  decryptVaultDataWithPrivateKey(
-    encryptedVaultData: string,
+  decryptVaultKeyContentWithPrivateKey(
+    encryptedVaultKeyContent: string,
     senderPublicKey: string,
     privateKey: string,
-  ): VaultKeyContentSpecialized | undefined {
+  ): VaultKeyCopyContentSpecialized | undefined {
     const defaultOperator = this.operatorManager.defaultOperator()
-    const version = defaultOperator.versionForEncryptedString(encryptedVaultData)
+    const version = defaultOperator.versionForEncryptedString(encryptedVaultKeyContent)
 
     const keyOperator = this.operatorManager.operatorForVersion(version)
-    const decrypted = keyOperator.asymmetricDecrypt(encryptedVaultData, senderPublicKey, privateKey)
+    const decrypted = keyOperator.asymmetricDecrypt(encryptedVaultKeyContent, senderPublicKey, privateKey)
 
     if (decrypted) {
       return JSON.parse(decrypted)

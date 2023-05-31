@@ -30,9 +30,6 @@ export * from './Vaults/VaultService'
 export * from './Vaults/VaultServiceInterface'
 export * from './Vaults/VaultServiceEvent'
 
-export * from './VaultStorage/VaultStorageServiceInterface'
-export * from './VaultStorage/VaultStorageService'
-
 export * from './Device/DatabaseItemMetadata'
 export * from './Device/DatabaseLoadOptions'
 export * from './Device/DatabaseLoadSorter'

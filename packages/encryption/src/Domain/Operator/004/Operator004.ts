@@ -1,19 +1,19 @@
 import { ContentType, KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
   CreateDecryptedItemFromPayload,
-  FillItemContent,
   ItemContent,
-  ItemsKeyContent,
   ItemsKeyInterface,
   PayloadTimestampDefaults,
   DecryptedPayload,
   DecryptedPayloadInterface,
   VaultItemsKeyInterface,
-  VaultItemsKeyContent,
   DecryptedTransferPayload,
-  VaultKeyInterface,
+  VaultKeyCopyInterface,
   isVaultKey,
-  VaultKeyContentSpecialized,
+  VaultKeyCopyContentSpecialized,
+  VaultItemsKeyContentSpecialized,
+  FillItemContentSpecialized,
+  ItemsKeyContentSpecialized,
 } from '@standardnotes/models'
 import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
 import * as Utils from '@standardnotes/utils'
@@ -68,16 +68,16 @@ export class SNProtocolOperator004 implements SynchronousOperator {
 
   private generateNewItemsKeyContent() {
     const itemsKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
-    const response = FillItemContent<ItemsKeyContent>({
+    const response = FillItemContentSpecialized<ItemsKeyContentSpecialized>({
       itemsKey: itemsKey,
       version: ProtocolVersion.V004,
     })
     return response
   }
 
-  public createVaultKeyData(vaultUuid: string): VaultKeyContentSpecialized {
+  public createVaultKeyData(vaultSystemIdentifier: string): VaultKeyCopyContentSpecialized {
     return {
-      vaultUuid: vaultUuid,
+      vaultSystemIdentifier,
       vaultKey: this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength),
       keyTimestamp: new Date().getTime(),
       keyVersion: ProtocolVersion.V004,
@@ -98,17 +98,18 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return CreateDecryptedItemFromPayload(payload)
   }
 
-  public createVaultItemsKey(uuid: string, vaultUuid: string): VaultItemsKeyInterface {
+  public createVaultItemsKey(uuid: string, vaultSystemIdentifier: string): VaultItemsKeyInterface {
     const key = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
-    const content = FillItemContent<VaultItemsKeyContent>({
+    const content = FillItemContentSpecialized<VaultItemsKeyContentSpecialized>({
       itemsKey: key,
+      keyTimestamp: new Date().getTime(),
       version: ProtocolVersion.V004,
     })
 
     const transferPayload: DecryptedTransferPayload = {
       uuid: uuid,
       content_type: ContentType.VaultItemsKey,
-      vault_uuid: vaultUuid,
+      vault_system_identifier: vaultSystemIdentifier,
       content: content,
       dirty: true,
       ...PayloadTimestampDefaults(),
@@ -251,7 +252,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
    */
   private generateAuthenticatedDataForPayload(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface | SNRootKey,
+    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface | SNRootKey,
   ): ItemAuthenticatedData | RootKeyEncryptedAuthenticatedData | VaultItemsKeyAuthenticatedData {
     const baseData: ItemAuthenticatedData = {
       u: payload.uuid,
@@ -296,7 +297,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
 
   public generateEncryptedParametersSync(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface | SNRootKey,
+    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface | SNRootKey,
   ): EncryptedParameters {
     const contentKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
     const contentPlaintext = JSON.stringify(payload.content)
@@ -315,7 +316,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
 
   public generateDecryptedParametersSync<C extends ItemContent = ItemContent>(
     encrypted: EncryptedParameters,
-    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface | SNRootKey,
+    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface | SNRootKey,
   ): DecryptedParameters<C> | ErrorDecryptingParameters {
     const contentKeyComponents = this.deconstructEncryptedPayloadString(encrypted.enc_item_key)
     const authenticatedData = this.stringToAuthenticatedData(contentKeyComponents.authenticatedData, {

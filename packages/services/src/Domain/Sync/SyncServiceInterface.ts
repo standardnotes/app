@@ -13,5 +13,5 @@ export interface SyncServiceInterface extends AbstractService<SyncEvent> {
   persistPayloads(payloads: FullyFormedPayloadInterface[]): Promise<void>
   lockSyncing(): void
   unlockSyncing(): void
-  syncVaultsFromScratch(vaultUuids: string[]): Promise<void>
+  syncGroupsFromScratch(groupUuids: string[]): Promise<void>
 }

@@ -17,11 +17,14 @@ export function isVaultItemsKey(x: unknown): x is VaultItemsKeyInterface {
  * A key used to encrypt other items. Items keys are synced and persisted.
  */
 export class VaultItemsKey extends DecryptedItem<VaultItemsKeyContent> implements VaultItemsKeyInterface {
+  keyTimestamp: number
   keyVersion: ProtocolVersion
   itemsKey: string
 
   constructor(payload: DecryptedPayloadInterface<VaultItemsKeyContent>) {
     super(payload)
+
+    this.keyTimestamp = payload.content.keyTimestamp
     this.keyVersion = payload.content.version
     this.itemsKey = this.payload.content.itemsKey
   }

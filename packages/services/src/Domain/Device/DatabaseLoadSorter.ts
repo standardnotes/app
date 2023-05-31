@@ -97,7 +97,7 @@ export function GetSortedPayloadsByPriority<T extends DatabaseItemMetadata = Dat
   for (let index = 0; index < payloads.length; index++) {
     const payload = payloads[index]
 
-    if (payload.content_type === ContentType.VaultKey) {
+    if (payload.content_type === ContentType.VaultKeyCopy) {
       vaultKeyPayloads.push(payload)
     } else if (payload.content_type === ContentType.VaultItemsKey) {
       vaultItemsKeyPayloads.push(payload)

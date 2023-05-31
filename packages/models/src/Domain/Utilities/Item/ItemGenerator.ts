@@ -36,8 +36,8 @@ import { DeletedItemInterface } from '../../Abstract/Item/Interfaces/DeletedItem
 import { SmartViewMutator } from '../../Syncable/SmartView'
 import { TrustedContact } from '../../Syncable/TrustedContact/TrustedContact'
 import { TrustedContactMutator } from '../../Syncable/TrustedContact/TrustedContactMutator'
-import { VaultKey } from '../../Syncable/VaultKey/VaultKey'
-import { VaultKeyMutator } from '../../Syncable/VaultKey/VaultKeyMutator'
+import { VaultKeyCopy } from '../../Syncable/VaultKeyCopy/VaultKeyCopy'
+import { VaultKeyMutator } from '../../Syncable/VaultKeyCopy/VaultKeyCopyMutator'
 
 type ItemClass<C extends ItemContent = ItemContent> = new (payload: DecryptedPayloadInterface<C>) => DecryptedItem<C>
 
@@ -57,7 +57,7 @@ const ContentTypeClassMapping: Partial<Record<ContentType, MappingEntry>> = {
     mutatorClass: ActionsExtensionMutator,
   },
   [ContentType.Component]: { itemClass: SNComponent, mutatorClass: ComponentMutator },
-  [ContentType.VaultKey]: { itemClass: VaultKey, mutatorClass: VaultKeyMutator },
+  [ContentType.VaultKeyCopy]: { itemClass: VaultKeyCopy, mutatorClass: VaultKeyMutator },
   [ContentType.TrustedContact]: { itemClass: TrustedContact, mutatorClass: TrustedContactMutator },
   [ContentType.Editor]: { itemClass: SNEditor },
   [ContentType.ExtensionRepo]: { itemClass: SNFeatureRepo },

@@ -32,12 +32,12 @@ describe('vaults', function () {
     const vault = await vaultService.createVault()
     expect(vault).to.not.be.undefined
 
-    const vaultItemsKeys = application.items.getVaultItemsKeysForVault(vault.uuid)
+    const vaultItemsKeys = application.items.getAllVaultItemsKeysForVault(vault.uuid)
     expect(vaultItemsKeys.length).to.equal(1)
 
     const vaultItemsKey = vaultItemsKeys[0]
     expect(vaultItemsKey instanceof VaultItemsKey).to.be.true
-    expect(vaultItemsKey.vault_uuid).to.equal(vault.uuid)
+    expect(vaultItemsKey.vault_system_identifier).to.equal(vault.uuid)
   })
 
   it('should add item to vault', async () => {
@@ -47,7 +47,7 @@ describe('vaults', function () {
     await vaultService.addItemToVault(vault, note)
 
     const updatedNote = application.items.findItem(note.uuid)
-    expect(updatedNote.vault_uuid).to.equal(vault.uuid)
+    expect(updatedNote.vault_system_identifier).to.equal(vault.uuid)
   })
 
   describe('client timing', () => {
@@ -71,11 +71,11 @@ describe('vaults', function () {
     it('rotating a vault key should create a new vault items key', async () => {
       const vault = await vaultService.createVault()
 
-      const vaultItemsKey = context.items.getVaultItemsKeysForVault(vault.uuid)[0]
+      const vaultItemsKey = context.items.getAllVaultItemsKeysForVault(vault.uuid)[0]
 
       await vaultService.rotateVaultKey(vault.uuid)
 
-      const updatedVaultItemsKey = context.items.getVaultItemsKeysForVault(vault.uuid)[0]
+      const updatedVaultItemsKey = context.items.getAllVaultItemsKeysForVault(vault.uuid)[0]
 
       expect(updatedVaultItemsKey).to.not.be.undefined
       expect(updatedVaultItemsKey.uuid).to.not.equal(vaultItemsKey.uuid)
@@ -83,7 +83,7 @@ describe('vaults', function () {
 
     it('should keep vault key with greater keyTimestamp if conflict', async () => {
       const vault = await vaultService.createVault()
-      const vaultKey = vaultService.getVaultKey(vault.uuid)
+      const vaultKey = vaultService.getPrimarySyncedVaultKeyCopy(vault.uuid)
 
       const otherClient = await Factory.createAppContextWithRealCrypto()
       await otherClient.launch()
@@ -104,7 +104,7 @@ describe('vaults', function () {
         }
       })
 
-      const otherVaultKey = otherClient.vaultService.getVaultKey(vault.uuid)
+      const otherVaultKey = otherClient.vaultService.getPrimarySyncedVaultKeyCopy(vault.uuid)
       await otherClient.application.items.changeItem(otherVaultKey, (mutator) => {
         mutator.content = {
           vaultKey: 'new-vault-key',
@@ -118,11 +118,11 @@ describe('vaults', function () {
       await otherClient.sync()
       await context.sync()
 
-      expect(context.items.getItems(ContentType.VaultKey).length).to.equal(1)
-      expect(otherClient.items.getItems(ContentType.VaultKey).length).to.equal(1)
+      expect(context.items.getItems(ContentType.VaultKeyCopy).length).to.equal(1)
+      expect(otherClient.items.getItems(ContentType.VaultKeyCopy).length).to.equal(1)
 
-      const vaultKeyAfterSync = context.vaultService.getVaultKey(vault.uuid)
-      const otherVaultKeyAfterSync = otherClient.vaultService.getVaultKey(vault.uuid)
+      const vaultKeyAfterSync = context.vaultService.getPrimarySyncedVaultKeyCopy(vault.uuid)
+      const otherVaultKeyAfterSync = otherClient.vaultService.getPrimarySyncedVaultKeyCopy(vault.uuid)
 
       expect(vaultKeyAfterSync.keyTimestamp).to.equal(otherVaultKeyAfterSync.keyTimestamp)
       expect(vaultKeyAfterSync.vaultKey).to.equal(otherVaultKeyAfterSync.vaultKey)
@@ -136,7 +136,7 @@ describe('vaults', function () {
   describe('permissions', async () => {
     it('should not be able to update a vault with a keyTimestamp lower than the current one', async () => {
       const vault = await vaultService.createVault()
-      const vaultKey = vaultService.getVaultKey(vault.uuid)
+      const vaultKey = vaultService.getPrimarySyncedVaultKeyCopy(vault.uuid)
 
       const result = await vaultService.updateRemoteVaultWithNewKeyInformation(vault.uuid, {
         vaultKeyTimestamp: vaultKey.keyTimestamp - 1,
@@ -146,7 +146,7 @@ describe('vaults', function () {
       expect(isClientDisplayableError(result)).to.be.true
     })
 
-    it('attempting to save note to non-existent vault should result in VaultNotMemberError conflict', async () => {
+    it('attempting to save note to non-existent vault should result in GroupNotMemberError conflict', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
 
       const promise = context.resolveWithConflicts()
@@ -157,7 +157,7 @@ describe('vaults', function () {
 
         const payloads = await objectToSpy.payloadsByPreparingForServer(params)
         for (const payload of payloads) {
-          payload.vault_uuid = 'non-existent-vault-uuid-123'
+          payload.vault_system_identifier = 'non-existent-vault-uuid-123'
         }
 
         return payloads
@@ -167,33 +167,17 @@ describe('vaults', function () {
       const conflicts = await promise
 
       expect(conflicts.length).to.equal(1)
-      expect(conflicts[0].type).to.equal(ConflictType.VaultNotMemberError)
+      expect(conflicts[0].type).to.equal(ConflictType.GroupNotMemberError)
       expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
     })
 
-    it('attempting to add deleted item to vault should result in VaultInvalidState conflict', async () => {
-      const vault = await vaultService.createVault()
-
-      const note = await context.createSyncedNote('foo', 'bar')
-      await context.items.setItemToBeDeleted(note)
-      await context.sync()
-
-      const promise = context.resolveWithConflicts()
-      await context.vaultService.addItemToVault(vault, note)
-      const conflicts = await promise
-
-      expect(conflicts.length).to.equal(1)
-      expect(conflicts[0].type).to.equal(ConflictType.VaultInvalidStateError)
-      expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
-    })
-
-    it('attempting to save item using an old vault items key should result in VaultInvalidItemsKey conflict', async () => {
+    it('attempting to save item using an old vault items key should result in GroupInvalidItemsKey conflict', async () => {
       const vault = await vaultService.createVault()
 
       const note = await context.createSyncedNote('foo', 'bar')
       await context.vaultService.addItemToVault(vault, note)
 
-      const oldVaultItemsKey = context.items.getVaultItemsKeysForVault(vault.uuid)[0]
+      const oldVaultItemsKey = context.items.getAllVaultItemsKeysForVault(vault.uuid)[0]
 
       await context.vaultService.rotateVaultKey(vault.uuid)
 
@@ -209,14 +193,14 @@ describe('vaults', function () {
       const conflicts = await promise
 
       expect(conflicts.length).to.equal(1)
-      expect(conflicts[0].type).to.equal(ConflictType.VaultInvalidItemsKeyError)
+      expect(conflicts[0].type).to.equal(ConflictType.GroupInvalidItemsKeyError)
       expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
     })
 
     it("should use the cached group's specified items key when choosing which key to encrypt vault items with", async () => {
       const vault = await vaultService.createVault()
 
-      const firstVaultItemsKey = context.items.getVaultItemsKeysForVault(vault.uuid)[0]
+      const firstVaultItemsKey = context.items.getAllVaultItemsKeysForVault(vault.uuid)[0]
 
       const note = await context.createSyncedNote('foo', 'bar')
       const firstPromise = context.resolveWithUploadedPayloads()
@@ -227,7 +211,7 @@ describe('vaults', function () {
       expect(firstUploadedPayloads[0].items_key_id).to.equal(vault.specified_items_key_uuid)
 
       await context.vaultService.rotateVaultKey(vault.uuid)
-      const secondVaultItemsKey = context.items.getVaultItemsKeysForVault(vault.uuid)[0]
+      const secondVaultItemsKey = context.items.getAllVaultItemsKeysForVault(vault.uuid)[0]
 
       const secondPromise = context.resolveWithUploadedPayloads()
       await context.changeNoteTitleAndSync(note, 'new title')
@@ -264,7 +248,7 @@ describe('vaults', function () {
       const file = context.items.findItem(uploadedFile.uuid)
       expect(file).to.not.be.undefined
       expect(file.remoteIdentifier).to.equal(file.remoteIdentifier)
-      expect(file.vault_uuid).to.equal(vault.uuid)
+      expect(file.vault_system_identifier).to.equal(vault.uuid)
 
       const downloadedBytes = await Files.downloadFile(context.files, file)
       expect(downloadedBytes).to.eql(buffer)
@@ -291,7 +275,7 @@ describe('vaults', function () {
       const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, vault.uuid)
 
       const removedFile = await vaultService.moveItemFromVaultToUser(uploadedFile)
-      expect(removedFile.vault_uuid).to.not.be.ok
+      expect(removedFile.vault_system_identifier).to.not.be.ok
 
       const downloadedBytes = await Files.downloadFile(context.files, removedFile)
       expect(downloadedBytes).to.eql(buffer)

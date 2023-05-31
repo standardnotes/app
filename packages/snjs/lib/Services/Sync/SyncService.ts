@@ -77,7 +77,7 @@ import {
   DeviceInterface,
   isFullEntryLoadChunkResponse,
   isChunkFullEntry,
-  SyncEventReceivedVaultInvitesData,
+  SyncEventReceivedGroupInvitesData,
   SyncEventReceivedContactsData,
   SyncEventReceivedRemoteVaultsData,
 } from '@standardnotes/services'
@@ -136,7 +136,7 @@ export class SNSyncService
   /** Content types appearing first are always mapped first */
   private readonly localLoadPriorty = [
     ContentType.ItemsKey,
-    ContentType.VaultKey,
+    ContentType.VaultKeyCopy,
     ContentType.VaultItemsKey,
     ContentType.UserPrefs,
     ContentType.Component,
@@ -734,11 +734,11 @@ export class SNSyncService
     mode: SyncMode = SyncMode.Default,
   ) {
     const syncToken =
-      options.vaultUuids && options.vaultUuids.length > 0 && options.syncVaultsFromScratch
+      options.groupUuids && options.groupUuids.length > 0 && options.syncGroupsFromScratch
         ? undefined
         : await this.getLastSyncToken()
     const paginationToken =
-      options.vaultUuids && options.syncVaultsFromScratch ? undefined : await this.getPaginationToken()
+      options.groupUuids && options.syncGroupsFromScratch ? undefined : await this.getPaginationToken()
 
     const operation = new AccountSyncOperation(
       payloads,
@@ -765,7 +765,7 @@ export class SNSyncService
       {
         syncToken,
         paginationToken,
-        vaultUuids: options.vaultUuids,
+        vaultUuids: options.groupUuids,
       },
     )
 
@@ -930,8 +930,8 @@ export class SNSyncService
 
     if (response.vaultInvites) {
       await this.notifyEventSync(
-        SyncEvent.ReceivedVaultInvites,
-        response.vaultInvites as SyncEventReceivedVaultInvitesData,
+        SyncEvent.ReceivedGroupInvites,
+        response.vaultInvites as SyncEventReceivedGroupInvitesData,
       )
     }
 
@@ -1363,10 +1363,10 @@ export class SNSyncService
     await this.persistPayloads(emit.emits)
   }
 
-  async syncVaultsFromScratch(vaultUuids: string[]): Promise<void> {
+  async syncGroupsFromScratch(vaultUuids: string[]): Promise<void> {
     await this.sync({
-      vaultUuids,
-      syncVaultsFromScratch: true,
+      groupUuids: vaultUuids,
+      syncGroupsFromScratch: true,
       queueStrategy: SyncQueueStrategy.ForceSpawnNew,
       awaitAll: true,
     })

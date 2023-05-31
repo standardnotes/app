@@ -5,7 +5,7 @@ import {
   ItemContent,
   EncryptedPayloadInterface,
   VaultItemsKeyInterface,
-  VaultKeyInterface,
+  VaultKeyCopyInterface,
 } from '@standardnotes/models'
 import {
   DecryptedParameters,
@@ -18,7 +18,7 @@ import { OperatorManager } from './OperatorManager'
 
 export async function encryptPayload(
   payload: DecryptedPayloadInterface,
-  key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface | RootKeyInterface,
+  key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface | RootKeyInterface,
   operatorManager: OperatorManager,
 ): Promise<EncryptedParameters> {
   const operator = operatorManager.operatorForVersion(key.keyVersion)
@@ -39,7 +39,7 @@ export async function encryptPayload(
 
 export async function decryptPayload<C extends ItemContent = ItemContent>(
   payload: EncryptedPayloadInterface,
-  key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyInterface | RootKeyInterface,
+  key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface | RootKeyInterface,
   operatorManager: OperatorManager,
 ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
   const operator = operatorManager.operatorForVersion(payload.version)

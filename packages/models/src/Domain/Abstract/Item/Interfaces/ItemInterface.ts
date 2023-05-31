@@ -14,10 +14,10 @@ export interface ItemInterface<P extends PayloadInterface = PayloadInterface> {
   readonly updatedAtString?: string
 
   uuid: string
-  get vault_uuid(): string | undefined
+  get vault_system_identifier(): string | undefined
   get user_uuid(): string | undefined
   get last_edited_by_uuid(): string | undefined
-  get created_by_uuid(): string | undefined
+  get group_uuid(): string | undefined
 
   content_type: ContentType
   created_at: Date

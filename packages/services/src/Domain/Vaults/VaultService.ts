@@ -1,20 +1,17 @@
-import {
-  VaultCollaborationServiceEvent,
-  VaultCollaborationServiceEventPayload,
-} from './../VaultCollaboration/VaultCollaborationServiceEvent'
+import { GroupServiceEvent, GroupServiceEventPayload } from './../Group/GroupServiceEvent'
 import { UpdateServerVaultUseCase } from './UseCase/UpdateServerVault'
 import {
   ClientDisplayableError,
-  VaultServerHash,
+  GroupServerHash,
   isErrorResponse,
-  VaultUserServerHash,
+  GroupUserServerHash,
   isClientDisplayableError,
 } from '@standardnotes/responses'
-import { HttpServiceInterface, VaultsServer, VaultsServerInterface } from '@standardnotes/api'
+import { HttpServiceInterface, GroupsServer, GroupsServerInterface } from '@standardnotes/api'
 import {
   DecryptedItemInterface,
-  VaultKeyContentSpecialized,
-  VaultKeyInterface,
+  VaultKeyCopyContentSpecialized,
+  VaultKeyCopyInterface,
   VaultInterface,
   VaultInterfaceFromServerHash,
 } from '@standardnotes/models'
@@ -29,7 +26,6 @@ import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { ContactServiceInterface } from '../Contacts/ContactServiceInterface'
-import { VaultStorageServiceInterface } from '../VaultStorage/VaultStorageServiceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { SyncEvent, SyncEventReceivedRemoteVaultsData } from '../Event/SyncEvent'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
@@ -37,16 +33,16 @@ import { MoveItemFromVaultToUser } from './UseCase/MoveItemFromVaultToUser'
 import { DeleteVaultUseCase } from './UseCase/DeleteVault'
 import { AddItemToVaultUseCase } from './UseCase/AddItemToVault'
 import { FilesClientInterface } from '@standardnotes/files'
-import { VaultCollaborationServiceInterface } from '../VaultCollaboration/VaultCollaborationServiceInterface'
-import { VaultCollaborationService } from '../VaultCollaboration/VaultCollaborationService'
+import { GroupServiceInterface } from '../Group/GroupServiceInterface'
+import { GroupService } from '../Group/GroupService'
 import { ChangeVaultKeyDataUseCase } from './UseCase/ChangeVaultKeyData'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent>
   implements VaultServiceInterface, InternalEventHandlerInterface
 {
-  public readonly collaboration: VaultCollaborationServiceInterface
-  private vaultsServer: VaultsServerInterface
+  public readonly collaboration: GroupServiceInterface
+  private vaultsServer: GroupsServerInterface
   private syncEventDisposer: () => void
 
   constructor(
@@ -56,18 +52,17 @@ export class VaultService
     private encryption: EncryptionProviderInterface,
     private session: SessionsClientInterface,
     private contacts: ContactServiceInterface,
-    private vaultStorage: VaultStorageServiceInterface,
     private files: FilesClientInterface,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
 
-    eventBus.addEventHandler(this, VaultCollaborationServiceEvent.VaultCollaborationStatusChanged)
-    eventBus.addEventHandler(this, VaultCollaborationServiceEvent.VaultMemberRemoved)
+    eventBus.addEventHandler(this, GroupServiceEvent.GroupStatusChanged)
+    eventBus.addEventHandler(this, GroupServiceEvent.GroupMemberRemoved)
 
-    this.vaultsServer = new VaultsServer(http)
+    this.vaultsServer = new GroupsServer(http)
 
-    this.collaboration = new VaultCollaborationService(
+    this.collaboration = new GroupService(
       http,
       sync,
       items,
@@ -93,14 +88,14 @@ export class VaultService
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === VaultCollaborationServiceEvent.VaultCollaborationStatusChanged) {
+    if (event.type === GroupServiceEvent.GroupStatusChanged) {
       this.notifyVaultsChangedEvent()
-    } else if (event.type === VaultCollaborationServiceEvent.VaultMemberRemoved) {
-      await this.handleRemoteVaultMemberRemovedEvent((event.payload as VaultCollaborationServiceEventPayload).vaultUuid)
+    } else if (event.type === GroupServiceEvent.GroupMemberRemoved) {
+      await this.handleRemoteGroupMemberRemovedEvent((event.payload as GroupServiceEventPayload).vaultUuid)
     }
   }
 
-  private async handleRemoteVaultMemberRemovedEvent(vaultUuid: string): Promise<void> {
+  private async handleRemoteGroupMemberRemovedEvent(vaultSystemIdentifier: string): Promise<void> {
     await this.rotateVaultKey(vaultUuid)
   }
 
@@ -118,7 +113,7 @@ export class VaultService
     return vaults
   }
 
-  async handleIncomingRemoteVaults(serverHashes: VaultServerHash[]): Promise<VaultInterface[]> {
+  async handleIncomingRemoteVaults(serverHashes: GroupServerHash[]): Promise<VaultInterface[]> {
     const vaults = serverHashes.map((serverHash) => VaultInterfaceFromServerHash(serverHash))
 
     this.vaultStorage.updateVaults(vaults)
@@ -146,7 +141,7 @@ export class VaultService
 
   async addItemToVault(vault: VaultInterface, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
     const useCase = new AddItemToVaultUseCase(this.items, this.sync, this.files)
-    await useCase.execute({ vaultUuid: vault.uuid, item })
+    await useCase.execute({ vaultSystemIdentifier: vault.uuid, item })
 
     return this.items.findSureItem(item.uuid)
   }
@@ -158,7 +153,7 @@ export class VaultService
     return this.items.findSureItem(item.uuid)
   }
 
-  async deleteVault(vaultUuid: string): Promise<boolean> {
+  async deleteVault(vaultSystemIdentifier: string): Promise<boolean> {
     const useCase = new DeleteVaultUseCase(this.items, this.vaultsServer)
     const error = await useCase.execute({ vaultUuid })
 
@@ -173,12 +168,12 @@ export class VaultService
   }
 
   async updateRemoteVaultWithNewKeyInformation(
-    vaultUuid: string,
+    vaultSystemIdentifier: string,
     params: { specifiedItemsKeyUuid: string; vaultKeyTimestamp: number },
   ): Promise<VaultInterface | ClientDisplayableError> {
     const useCase = new UpdateServerVaultUseCase(this.vaultsServer)
     const result = await useCase.execute({
-      vaultUuid: vaultUuid,
+      vaultSystemIdentifier: vaultUuid,
       vaultKeyTimestamp: params.vaultKeyTimestamp,
       specifiedItemsKeyUuid: params.specifiedItemsKeyUuid,
     })
@@ -189,15 +184,15 @@ export class VaultService
   }
 
   async changeVaultNameAndDescription(
-    vaultUuid: string,
+    vaultSystemIdentifier: string,
     params: { name: string; description: string },
-  ): Promise<VaultKeyInterface> {
-    const vaultKey = this.encryption.getVaultKey(vaultUuid)
+  ): Promise<VaultKeyCopyInterface> {
+    const vaultKey = this.items.getPrimarySyncedVaultKeyCopy(vaultUuid)
     if (!vaultKey) {
       throw new Error('Cannot change vault metadata; vault key not found')
     }
 
-    const newVaultContent: VaultKeyContentSpecialized = {
+    const newVaultContent: VaultKeyCopyContentSpecialized = {
       ...vaultKey.content,
       vaultName: params.name,
       vaultDescription: params.description,
@@ -205,7 +200,7 @@ export class VaultService
 
     const changeVaultDataUseCase = new ChangeVaultKeyDataUseCase(this.items, this.encryption)
     const updatedKey = await changeVaultDataUseCase.execute({
-      vaultUuid: vaultUuid,
+      vaultSystemIdentifier: vaultUuid,
       newVaultData: newVaultContent,
     })
 
@@ -213,12 +208,12 @@ export class VaultService
 
     this.notifyVaultsChangedEvent()
 
-    await this.collaboration.updateInvitesAfterVaultDataChange(vaultUuid)
+    await this.collaboration.updateInvitesAfterVaultKeyDataChange(vaultUuid)
 
     return updatedKey
   }
 
-  async rotateVaultKey(vaultUuid: string): Promise<void> {
+  async rotateVaultKey(vaultSystemIdentifier: string): Promise<void> {
     const useCase = new RotateVaultKeyUseCase(this.items, this.encryption, this.vaultsServer, this.vaultStorage)
     await useCase.execute({
       online: this.session.isSignedIn(),
@@ -227,7 +222,7 @@ export class VaultService
 
     this.notifyVaultsChangedEvent()
 
-    await this.collaboration.updateInvitesAfterVaultDataChange(vaultUuid)
+    await this.collaboration.updateInvitesAfterVaultKeyDataChange(vaultUuid)
     await this.sync.sync()
   }
 
@@ -235,11 +230,11 @@ export class VaultService
     return this.vaultStorage.getVaults()
   }
 
-  public getVault(vaultUuid: string): VaultInterface | undefined {
+  public getVault(vaultSystemIdentifier: string): VaultInterface | undefined {
     return this.vaultStorage.getVault(vaultUuid)
   }
 
-  public isUserVaultAdmin(vaultUuid: string): boolean {
+  public isUserGroupAdmin(vaultSystemIdentifier: string): boolean {
     const vault = this.getVault(vaultUuid)
 
     if (!vault || !vault.userUuid) {
@@ -249,28 +244,28 @@ export class VaultService
     return vault.userUuid === this.session.userUuid
   }
 
-  public isVaultUserOwnUser(user: VaultUserServerHash): boolean {
+  public isGroupUserOwnUser(user: GroupUserServerHash): boolean {
     return user.user_uuid === this.session.userUuid
   }
 
-  getVaultKey(vaultUuid: string): VaultKeyInterface | undefined {
-    return this.encryption.getVaultKey(vaultUuid)
+  getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier: string): VaultKeyCopyInterface | undefined {
+    return this.items.getPrimarySyncedVaultKeyCopy(vaultUuid)
   }
 
-  getVaultInfoForItem(item: DecryptedItemInterface): VaultKeyContentSpecialized | undefined {
-    if (!item.vault_uuid) {
+  getVaultInfoForItem(item: DecryptedItemInterface): VaultKeyCopyContentSpecialized | undefined {
+    if (!item.vault_system_identifier) {
       return undefined
     }
 
-    return this.getVaultInfo(item.vault_uuid)
+    return this.getVaultInfo(item.vault_system_identifier)
   }
 
-  getVaultInfo(vaultUuid: string): VaultKeyContentSpecialized | undefined {
-    return this.getVaultKey(vaultUuid)?.content
+  getVaultInfo(vaultSystemIdentifier: string): VaultKeyCopyContentSpecialized | undefined {
+    return this.getPrimarySyncedVaultKeyCopy(vaultUuid)?.content
   }
 
   isItemInVault(item: DecryptedItemInterface): boolean {
-    return item.vault_uuid !== undefined
+    return item.vault_system_identifier !== undefined
   }
 
   override deinit(): void {

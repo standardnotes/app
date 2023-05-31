@@ -46,14 +46,14 @@ import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
 import { log, LoggingDomain } from '../Logging'
-import { VaultsServer, VaultsServerInterface, HttpServiceInterface, VaultMoveType } from '@standardnotes/api'
+import { GroupsServer, GroupsServerInterface, HttpServiceInterface, VaultMoveType } from '@standardnotes/api'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 
 const OneHundredMb = 100 * 1_000_000
 
 export class FileService extends AbstractService implements FilesClientInterface {
   private encryptedCache: FileMemoryCache = new FileMemoryCache(OneHundredMb)
-  private vaultsServer: VaultsServerInterface
+  private vaultsServer: GroupsServerInterface
 
   constructor(
     private api: FilesApiInterface,
@@ -69,7 +69,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     private backupsService?: BackupServiceInterface,
   ) {
     super(internalEventBus)
-    this.vaultsServer = new VaultsServer(http)
+    this.vaultsServer = new GroupsServer(http)
   }
 
   override deinit(): void {
@@ -100,7 +100,7 @@ export class FileService extends AbstractService implements FilesClientInterface
   }
 
   private async createVaultValetToken(params: {
-    vaultUuid: string
+    vaultSystemIdentifier: string
     remoteIdentifier: string
     operation: ValetTokenOperation
     fileUuidRequiredForExistingFiles?: string
@@ -113,7 +113,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     }
 
     const valetTokenResponse = await this.vaultsServer.createVaultFileValetToken({
-      vaultUuid: params.vaultUuid,
+      vaultSystemIdentifier: params.vaultUuid,
       fileUuid: params.fileUuidRequiredForExistingFiles,
       remoteIdentifier: params.remoteIdentifier,
       operation: params.operation,
@@ -128,7 +128,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     return valetTokenResponse.data.valetToken
   }
 
-  public async moveFileToVault(file: FileItem, vaultUuid: string): Promise<void | ClientDisplayableError> {
+  public async moveFileToVault(file: FileItem, vaultSystemIdentifier: string): Promise<void | ClientDisplayableError> {
     const valetToken = await this.createVaultValetToken({
       vaultUuid,
       remoteIdentifier: file.remoteIdentifier,
@@ -149,12 +149,12 @@ export class FileService extends AbstractService implements FilesClientInterface
   }
 
   public async moveFileFromVaultToUser(file: FileItem): Promise<void | ClientDisplayableError> {
-    if (!file.vault_uuid) {
+    if (!file.vault_system_identifier) {
       return new ClientDisplayableError('File is not in a vault')
     }
 
     const valetToken = await this.createVaultValetToken({
-      vaultUuid: file.vault_uuid,
+      vaultSystemIdentifier: file.vault_system_identifier,
       remoteIdentifier: file.remoteIdentifier,
       operation: 'move',
       fileUuidRequiredForExistingFiles: file.uuid,
@@ -326,9 +326,9 @@ export class FileService extends AbstractService implements FilesClientInterface
 
       let cacheEntryAggregate = new Uint8Array()
 
-      const tokenResult = file.vault_uuid
+      const tokenResult = file.vault_system_identifier
         ? await this.createVaultValetToken({
-            vaultUuid: file.vault_uuid,
+            vaultSystemIdentifier: file.vault_system_identifier,
             remoteIdentifier: file.remoteIdentifier,
             operation: 'read',
             fileUuidRequiredForExistingFiles: file.uuid,
@@ -359,9 +359,9 @@ export class FileService extends AbstractService implements FilesClientInterface
   public async deleteFile(file: FileItem): Promise<ClientDisplayableError | undefined> {
     this.encryptedCache.remove(file.uuid)
 
-    const tokenResult = file.vault_uuid
+    const tokenResult = file.vault_system_identifier
       ? await this.createVaultValetToken({
-          vaultUuid: file.vault_uuid,
+          vaultSystemIdentifier: file.vault_system_identifier,
           remoteIdentifier: file.remoteIdentifier,
           operation: 'delete',
           fileUuidRequiredForExistingFiles: file.uuid,
@@ -372,7 +372,7 @@ export class FileService extends AbstractService implements FilesClientInterface
       return tokenResult
     }
 
-    const result = await this.api.deleteFile(tokenResult, file.vault_uuid ? 'vault' : 'user')
+    const result = await this.api.deleteFile(tokenResult, file.vault_system_identifier ? 'vault' : 'user')
 
     if (result.data?.error) {
       const deleteAnyway = await this.alertService.confirm(

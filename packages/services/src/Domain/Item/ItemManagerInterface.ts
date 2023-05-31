@@ -16,6 +16,7 @@ import {
   VaultItemsKeyInterface,
   ItemInterface,
   AnyItemInterface,
+  VaultKeyCopyInterface,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 
@@ -109,12 +110,19 @@ export interface ItemManagerInterface extends AbstractService {
     itemToLookupUuidFor: { uuid: string },
     contentType?: ContentType,
   ): I[]
-  getVaultItemsKeysForVault(vaultUuid: string): VaultItemsKeyInterface[]
   referencesForItem<I extends DecryptedItemInterface = DecryptedItemInterface>(
     itemToLookupUuidFor: DecryptedItemInterface,
     contentType?: ContentType,
   ): I[]
   findItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T | undefined
   findSureItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T
-  itemsBelongingToVault(vaultUuid: string): DecryptedItemInterface[]
+
+  getAllVaultItemsKeysForVault(vaultSystemIdentifier: string): VaultItemsKeyInterface[]
+  getPrimaryVaultItemsKeyForVault(vaultSystemIdentifier: string): VaultItemsKeyInterface
+  getSyncedVaultKeyCopyMatchingTimestamp(
+    vaultSystemIdentifier: string,
+    timestamp: number,
+  ): VaultKeyCopyInterface | undefined
+  getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier: string): VaultKeyCopyInterface | undefined
+  itemsBelongingToVaultSystem(vaultSystemIdentifier: string): DecryptedItemInterface[]
 }

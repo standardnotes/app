@@ -13,7 +13,7 @@ type Props = {
 
 const VaultItem = ({ vault }: Props) => {
   const application = useApplication()
-  const vaultKey = application.vaults.getVaultKey(vault.uuid)
+  const vaultKey = application.vaults.getPrimarySyncedVaultKeyCopy(vault.uuid)
 
   const [isInviteModalOpen, setIsAddContactModalOpen] = useState(false)
   const closeInviteModal = () => setIsAddContactModalOpen(false)
@@ -21,7 +21,7 @@ const VaultItem = ({ vault }: Props) => {
   const [isVaultModalOpen, setIsVaultModalOpen] = useState(false)
   const closeVaultModal = () => setIsVaultModalOpen(false)
 
-  const isAdmin = application.vaults.isUserVaultAdmin(vault.uuid)
+  const isAdmin = application.vaults.isUserGroupAdmin(vault.uuid)
 
   const deleteVault = useCallback(async () => {
     const success = await application.vaults.deleteVault(vault.uuid)
@@ -30,8 +30,8 @@ const VaultItem = ({ vault }: Props) => {
     }
   }, [application.alertService, application.vaults, vault.uuid])
 
-  const leaveVault = useCallback(async () => {
-    const success = await application.vaults.leaveVault(vault.uuid)
+  const leaveGroup = useCallback(async () => {
+    const success = await application.vaults.leaveGroup(vault.uuid)
     if (!success) {
       void application.alertService.alert('Unable to leave vault. Please try again.')
     }
@@ -62,7 +62,7 @@ const VaultItem = ({ vault }: Props) => {
             <Button label="Edit" className={'mr-3 text-xs'} onClick={() => setIsVaultModalOpen(true)} />
             <Button label="Invite Contacts" className={'mr-3 text-xs'} onClick={() => setIsAddContactModalOpen(true)} />
             {isAdmin && <Button label="Delete Vault" className={'mr-3 text-xs'} onClick={deleteVault} />}
-            {!isAdmin && <Button label="Leave Vault" className={'mr-3 text-xs'} onClick={leaveVault} />}
+            {!isAdmin && <Button label="Leave Vault" className={'mr-3 text-xs'} onClick={leaveGroup} />}
           </div>
         </div>
       </div>

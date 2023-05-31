@@ -32,7 +32,7 @@ export interface FilesClientInterface {
 
   deleteFile(file: FileItem): Promise<ClientDisplayableError | undefined>
 
-  moveFileToVault(file: FileItem, vaultUuid: string): Promise<void | ClientDisplayableError>
+  moveFileToVault(file: FileItem, vaultSystemIdentifier: string): Promise<void | ClientDisplayableError>
   moveFileFromVaultToUser(file: FileItem): Promise<void | ClientDisplayableError>
 
   selectFile(fileSystem: FileSystemApi): Promise<FileHandleRead | FileSystemNoSelection>

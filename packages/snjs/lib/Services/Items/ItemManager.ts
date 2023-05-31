@@ -789,7 +789,7 @@ export class ItemManager
       uuid: UuidGenerator.GenerateUuid(),
       content_type: contentType,
       content: Models.FillItemContent<C>(content),
-      vault_uuid: vaultUuid,
+      vault_system_identifier: vaultUuid,
       dirty: needsSync,
       ...Models.PayloadTimestampDefaults(),
     })
@@ -1410,13 +1410,49 @@ export class ItemManager
       : ItemRelationshipDirection.NoRelationship
   }
 
-  public getVaultItemsKeysForVault(vaultUuid: string): Models.VaultItemsKeyInterface[] {
+  public getAllVaultItemsKeysForVault(vaultSystemIdentifier: string): Models.VaultItemsKeyInterface[] {
     return this.getItems<Models.VaultItemsKeyInterface>(ContentType.VaultItemsKey).filter(
-      (key) => key.vault_uuid === vaultUuid,
+      (key) => key.vault_system_identifier === vaultSystemIdentifier,
     )
   }
 
-  itemsBelongingToVault(vaultUuid: string): Models.DecryptedItemInterface[] {
-    return this.items.filter((item) => item.vault_uuid === vaultUuid)
+  public getPrimaryVaultItemsKeyForVault(vaultSystemIdentifier: string): Models.VaultItemsKeyInterface {
+    const allKeys = this.getAllVaultItemsKeysForVault(vaultSystemIdentifier)
+
+    const sortedByNewestFirst = allKeys.sort((a, b) => b.keyTimestamp - a.keyTimestamp)
+    return sortedByNewestFirst[0]
+  }
+
+  getSyncedVaultKeyCopyMatchingTimestamp(
+    vaultSystemIdentifier: string,
+    timestamp: number,
+  ): Models.VaultKeyCopyInterface | undefined {
+    const keys = this.itemsMatchingPredicate<Models.VaultKeyCopyInterface>(
+      ContentType.VaultKeyCopy,
+      new Models.CompoundPredicate('and', [
+        new Models.Predicate<Models.VaultKeyCopyInterface>('vaultSystemIdentifier', '=', vaultSystemIdentifier),
+        new Models.Predicate<Models.VaultKeyCopyInterface>('keyTimestamp', '=', timestamp),
+      ]),
+    )
+
+    if (keys.length > 1) {
+      throw new Error('Multiple synced vault keys found for timestamp')
+    }
+
+    return keys[0]
+  }
+
+  getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier: string): Models.VaultKeyCopyInterface | undefined {
+    const keys = this.itemsMatchingPredicate<Models.VaultKeyCopyInterface>(
+      ContentType.VaultKeyCopy,
+      new Models.Predicate<Models.VaultKeyCopyInterface>('vaultSystemIdentifier', '=', vaultSystemIdentifier),
+    )
+
+    const sortedByNewestFirst = keys.sort((a, b) => b.keyTimestamp - a.keyTimestamp)
+    return sortedByNewestFirst[0]
+  }
+
+  itemsBelongingToVaultSystem(vaultSystemIdentifier: string): Models.DecryptedItemInterface[] {
+    return this.items.filter((item) => item.vault_system_identifier === vaultSystemIdentifier)
   }
 }

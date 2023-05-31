@@ -1,8 +1,8 @@
-import { ClientDisplayableError, VaultUserServerHash } from '@standardnotes/responses'
+import { ClientDisplayableError, GroupUserServerHash } from '@standardnotes/responses'
 import {
   DecryptedItemInterface,
-  VaultKeyInterface,
-  VaultKeyContentSpecialized,
+  VaultKeyCopyInterface,
+  VaultKeyCopyContentSpecialized,
   VaultInterface,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
@@ -12,21 +12,21 @@ export interface VaultServiceInterface extends AbstractService<VaultServiceEvent
   createVault(name?: string, description?: string): Promise<VaultInterface | ClientDisplayableError>
   reloadRemoteVaults(): Promise<VaultInterface[] | ClientDisplayableError>
   getVaults(): VaultInterface[]
-  deleteVault(vaultUuid: string): Promise<boolean>
+  deleteVault(vaultSystemIdentifier: string): Promise<boolean>
 
-  getVaultKey(vaultUuid: string): VaultKeyInterface | undefined
-  getVaultInfoForItem(item: DecryptedItemInterface): VaultKeyContentSpecialized | undefined
-  getVaultInfo(vaultUuid: string): VaultKeyContentSpecialized | undefined
-  isUserVaultAdmin(vaultUuid: string): boolean
-  isVaultUserOwnUser(user: VaultUserServerHash): boolean
+  getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier: string): VaultKeyCopyInterface | undefined
+  getVaultInfoForItem(item: DecryptedItemInterface): VaultKeyCopyContentSpecialized | undefined
+  getVaultInfo(vaultSystemIdentifier: string): VaultKeyCopyContentSpecialized | undefined
+  isUserGroupAdmin(vaultSystemIdentifier: string): boolean
+  isGroupUserOwnUser(user: GroupUserServerHash): boolean
 
   addItemToVault(vault: VaultInterface, item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   moveItemFromVaultToUser(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   isItemInVault(item: DecryptedItemInterface): boolean
 
-  rotateVaultKey(vaultUuid: string): Promise<void>
+  rotateVaultKey(vaultSystemIdentifier: string): Promise<void>
   changeVaultNameAndDescription(
-    vaultUuid: string,
+    vaultSystemIdentifier: string,
     params: { name: string; description: string },
-  ): Promise<VaultKeyInterface>
+  ): Promise<VaultKeyCopyInterface>
 }

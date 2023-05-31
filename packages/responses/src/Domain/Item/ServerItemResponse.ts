@@ -12,8 +12,8 @@ export interface ServerItemResponse {
   updated_at_timestamp: number
   updated_at: Date
   uuid: string
-  vault_uuid?: string
-  user_uuid?: string
+  user_uuid: string
+  group_uuid?: string
+  vault_system_identifier?: string
   last_edited_by_uuid?: string
-  created_by_uuid?: string
 }

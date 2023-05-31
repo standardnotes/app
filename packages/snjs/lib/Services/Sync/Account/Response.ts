@@ -2,8 +2,8 @@ import {
   ApiEndpointParam,
   ConflictParams,
   ContactServerHash,
-  VaultInviteServerHash,
-  VaultServerHash,
+  GroupInviteServerHash,
+  GroupServerHash,
   HttpError,
   HttpResponse,
   isErrorResponse,
@@ -25,8 +25,8 @@ export class ServerSyncResponse {
   readonly conflicts: TrustedServerConflictMap
 
   readonly contacts: ContactServerHash[]
-  readonly vaults: VaultServerHash[]
-  readonly vaultInvites: VaultInviteServerHash[]
+  readonly vaults: GroupServerHash[]
+  readonly vaultInvites: GroupInviteServerHash[]
 
   private readonly rawConflictObjects: ConflictParams[]
 
