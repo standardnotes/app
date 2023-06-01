@@ -40,7 +40,7 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
   deleteInvite(invite: GroupInviteServerHash): Promise<ClientDisplayableError | void>
   reloadRemovedVaults(): Promise<void>
 
-  updateInvitesAfterVaultKeyDataChange(params: {
+  updateInvitesAfterVaultKeyChange(params: {
     vaultSystemIdentifier: string
     groupUuid: string
   }): Promise<ClientDisplayableError[]>

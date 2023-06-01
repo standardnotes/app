@@ -376,7 +376,7 @@ export class SNApiService
     lastSyncToken: string | undefined,
     paginationToken: string | undefined,
     limit: number,
-    vaultUuids?: string[],
+    groupUuids?: string[],
   ): Promise<HttpResponse<RawSyncResponse>> {
     const preprocessingError = this.preprocessingError()
     if (preprocessingError) {
@@ -388,7 +388,7 @@ export class SNApiService
       [ApiEndpointParam.LastSyncToken]: lastSyncToken,
       [ApiEndpointParam.PaginationToken]: paginationToken,
       [ApiEndpointParam.SyncDlLimit]: limit,
-      [ApiEndpointParam.VaultUiuds]: vaultUuids,
+      [ApiEndpointParam.GroupUiuds]: groupUuids,
     })
     const response = await this.httpService.post<RawSyncResponse>(path, params, this.getSessionAccessToken())
 
@@ -729,7 +729,7 @@ export class SNApiService
   ): Promise<HttpResponse<StartUploadSessionResponse>> {
     const url = joinPaths(
       this.getFilesHost(),
-      ownershipType === 'user' ? Paths.v1.startUploadSession : Paths.v1.startVaultUploadSession,
+      ownershipType === 'user' ? Paths.v1.startUploadSession : Paths.v1.startGroupUploadSession,
     )
 
     return this.tokenRefreshableRequest({
@@ -746,7 +746,7 @@ export class SNApiService
   ): Promise<HttpResponse<StartUploadSessionResponse>> {
     const url = joinPaths(
       this.getFilesHost(),
-      ownershipType === 'user' ? Paths.v1.deleteFile : Paths.v1.deleteVaultFile,
+      ownershipType === 'user' ? Paths.v1.deleteFile : Paths.v1.deleteGroupFile,
     )
 
     return this.tokenRefreshableRequest({
@@ -768,7 +768,7 @@ export class SNApiService
     }
     const url = joinPaths(
       this.getFilesHost(),
-      ownershipType === 'user' ? Paths.v1.uploadFileChunk : Paths.v1.uploadVaultFileChunk,
+      ownershipType === 'user' ? Paths.v1.uploadFileChunk : Paths.v1.uploadGroupFileChunk,
     )
 
     const response = await this.tokenRefreshableRequest<UploadFileChunkResponse>({
@@ -793,7 +793,7 @@ export class SNApiService
   public async closeUploadSession(valetToken: string, ownershipType: FileOwnershipType): Promise<boolean> {
     const url = joinPaths(
       this.getFilesHost(),
-      ownershipType === 'user' ? Paths.v1.closeUploadSession : Paths.v1.closeVaultUploadSession,
+      ownershipType === 'user' ? Paths.v1.closeUploadSession : Paths.v1.closeGroupUploadSession,
     )
 
     const response = await this.tokenRefreshableRequest<CloseUploadSessionResponse>({
@@ -830,8 +830,8 @@ export class SNApiService
   public getFilesDownloadUrl(ownershipType: FileOwnershipType): string {
     if (ownershipType === 'user') {
       return joinPaths(this.getFilesHost(), Paths.v1.downloadFileChunk)
-    } else if (ownershipType === 'vault') {
-      return joinPaths(this.getFilesHost(), Paths.v1.downloadVaultFileChunk)
+    } else if (ownershipType === 'group') {
+      return joinPaths(this.getFilesHost(), Paths.v1.downloadGroupFileChunk)
     } else {
       throw Error('Invalid download type')
     }

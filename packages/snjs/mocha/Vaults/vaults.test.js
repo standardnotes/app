@@ -138,8 +138,8 @@ describe('vaults', function () {
       const vault = await vaultService.createVault()
       const vaultKey = vaultService.getPrimarySyncedVaultKeyCopy(vault.uuid)
 
-      const result = await vaultService.updateRemoteVaultWithNewKeyInformation(vault.uuid, {
-        vaultKeyTimestamp: vaultKey.keyTimestamp - 1,
+      const result = await vaultService.groupService.updateGroup({
+        groupUuid: 'todo',,
         specifiedItemsKeyUuid: '123',
       })
 
@@ -181,7 +181,7 @@ describe('vaults', function () {
 
       await context.vaultService.rotateVaultKey(vault.uuid)
 
-      await context.vaultService.handleReceivedRemoteVaults([
+      await context.vaultService.handleReceivedRemoteGroups([
         {
           ...vault,
           specified_items_key_uuid: oldVaultItemsKey.uuid,
@@ -219,7 +219,7 @@ describe('vaults', function () {
 
       expect(secondUploadedPayloads[0].items_key_id).to.equal(secondVaultItemsKey.uuid)
 
-      await context.vaultService.handleReceivedRemoteVaults([
+      await context.vaultService.handleReceivedRemoteGroups([
         {
           ...vault,
           specified_items_key_uuid: firstVaultItemsKey.uuid,

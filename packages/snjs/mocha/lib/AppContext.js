@@ -230,7 +230,7 @@ export class AppContext {
   awaitNextSyncVaultFromScratchEvent() {
     return new Promise((resolve) => {
       const removeObserver = this.application.syncService.addEventObserver((event, data) => {
-        if (event === SyncEvent.PaginatedSyncRequestCompleted && data?.options?.vaultUuids) {
+        if (event === SyncEvent.PaginatedSyncRequestCompleted && data?.options?.groupUuids) {
           removeObserver()
           resolve(data)
         }

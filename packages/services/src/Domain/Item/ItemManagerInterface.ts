@@ -119,6 +119,7 @@ export interface ItemManagerInterface extends AbstractService {
 
   getAllVaultItemsKeysForVault(vaultSystemIdentifier: string): VaultItemsKeyInterface[]
   getPrimaryVaultItemsKeyForVault(vaultSystemIdentifier: string): VaultItemsKeyInterface
+  getAllSyncedVaultKeyCopiesForVault(vaultSystemIdentifier: string): VaultKeyCopyInterface[]
   getSyncedVaultKeyCopyMatchingTimestamp(
     vaultSystemIdentifier: string,
     timestamp: number,

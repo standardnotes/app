@@ -3,6 +3,7 @@ import { PayloadInterface } from '../../Payload'
 import { ItemInterface } from '../Interfaces/ItemInterface'
 import { TransferPayload } from '../../TransferPayload'
 import { getIncrementedDirtyIndex } from '../../../Runtime/DirtyCounter/DirtyCounter'
+import { ContentType } from '@standardnotes/common'
 
 /**
  * An item mutator takes in an item, and an operation, and returns the resulting payload.
@@ -52,8 +53,12 @@ export class ItemMutator<
   }
 
   public set vault_system_identifier(vaultSystemIdentifier: string | undefined) {
+    if (this.immutableItem.content_type === ContentType.VaultKeyCopy) {
+      throw new Error('Cannot set vault_system_identifier on a vault key copy')
+    }
+
     this.immutablePayload = this.immutablePayload.copy({
-      vault_system_identifier: vaultUuid,
+      vault_system_identifier: vaultSystemIdentifier,
     })
   }
 

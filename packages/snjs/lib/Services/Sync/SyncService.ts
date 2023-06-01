@@ -79,7 +79,7 @@ import {
   isChunkFullEntry,
   SyncEventReceivedGroupInvitesData,
   SyncEventReceivedContactsData,
-  SyncEventReceivedRemoteVaultsData,
+  SyncEventReceivedRemoteGroupsData,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -765,7 +765,7 @@ export class SNSyncService
       {
         syncToken,
         paginationToken,
-        vaultUuids: options.groupUuids,
+        groupUuids: options.groupUuids,
       },
     )
 
@@ -925,7 +925,7 @@ export class SNSyncService
     const historyMap = this.historyService.getHistoryMapCopy()
 
     if (response.vaults) {
-      await this.notifyEventSync(SyncEvent.ReceivedRemoteVaults, response.vaults as SyncEventReceivedRemoteVaultsData)
+      await this.notifyEventSync(SyncEvent.ReceivedRemoteGroups, response.vaults as SyncEventReceivedRemoteGroupsData)
     }
 
     if (response.vaultInvites) {
@@ -968,7 +968,7 @@ export class SNSyncService
       await this.persistPayloads(payloadsToPersist)
     }
 
-    if (!operation.options.vaultUuids) {
+    if (!operation.options.groupUuids) {
       await Promise.all([
         this.setLastSyncToken(response.lastSyncToken as string),
         this.setPaginationToken(response.paginationToken as string),
@@ -1363,9 +1363,9 @@ export class SNSyncService
     await this.persistPayloads(emit.emits)
   }
 
-  async syncGroupsFromScratch(vaultUuids: string[]): Promise<void> {
+  async syncGroupsFromScratch(groupUuids: string[]): Promise<void> {
     await this.sync({
-      groupUuids: vaultUuids,
+      groupUuids: groupUuids,
       syncGroupsFromScratch: true,
       queueStrategy: SyncQueueStrategy.ForceSpawnNew,
       awaitAll: true,

@@ -67,6 +67,10 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
     this.dirtyIndex = rawPayload.dirtyIndex
     this.globalDirtyIndexAtLastSync = rawPayload.globalDirtyIndexAtLastSync
 
+    if (rawPayload.vault_system_identifier && rawPayload.content_type === ContentType.VaultKeyCopy) {
+      throw new Error('Vault key copy payload should not have vault system identifier')
+    }
+
     this.vault_system_identifier = rawPayload.vault_system_identifier
     this.user_uuid = rawPayload.user_uuid
     this.last_edited_by_uuid = rawPayload.last_edited_by_uuid

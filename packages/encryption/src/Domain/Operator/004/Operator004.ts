@@ -75,12 +75,16 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return response
   }
 
-  public createVaultKeyData(vaultSystemIdentifier: string): VaultKeyCopyContentSpecialized {
+  public createVaultKeyContent(params: {
+    vaultSystemIdentifier: string
+    vaultName: string
+  }): VaultKeyCopyContentSpecialized {
     return {
-      vaultSystemIdentifier,
+      vaultSystemIdentifier: params.vaultSystemIdentifier,
       vaultKey: this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength),
       keyTimestamp: new Date().getTime(),
       keyVersion: ProtocolVersion.V004,
+      vaultName: params.vaultName,
     }
   }
 
@@ -258,6 +262,11 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       u: payload.uuid,
       v: ProtocolVersion.V004,
     }
+
+    if (payload.vault_system_identifier) {
+      baseData.vsi = payload.vault_system_identifier
+    }
+
     if (ContentTypeUsesRootKeyEncryption(payload.content_type)) {
       return {
         ...baseData,

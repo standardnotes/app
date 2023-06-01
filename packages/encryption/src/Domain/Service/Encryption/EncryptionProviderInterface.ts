@@ -58,7 +58,7 @@ export interface EncryptionProviderInterface {
 
   getDecryptedPrivateKey(): string | undefined
   createVaultItemsKey(uuid: string, vaultSystemIdentifier: string): VaultItemsKeyInterface
-  createVaultKeyData(vaultSystemIdentifier: string): VaultKeyCopyContentSpecialized
+  createVaultKeyContent(params: { vaultSystemIdentifier: string; vaultName: string }): VaultKeyCopyContentSpecialized
   generateKeyPair(): PkcKeyPair
 
   encryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, privateKey: string): string

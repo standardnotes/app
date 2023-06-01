@@ -53,9 +53,9 @@ export class ServerSyncResponse {
 
     this.conflicts = this.filterConflicts()
 
-    this.vaults = this.successResponseData?.vaults || []
+    this.vaults = this.successResponseData?.groups || []
 
-    this.vaultInvites = this.successResponseData?.vault_invites || []
+    this.vaultInvites = this.successResponseData?.group_invites || []
 
     this.contacts = this.successResponseData?.contacts || []
 

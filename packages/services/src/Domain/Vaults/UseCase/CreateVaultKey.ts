@@ -1,6 +1,11 @@
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { ContentType } from '@standardnotes/common'
-import { FillItemContent, VaultKeyCopyContent, VaultKeyCopyContentSpecialized, VaultKeyCopyInterface } from '@standardnotes/models'
+import {
+  FillItemContent,
+  VaultKeyCopyContent,
+  VaultKeyCopyContentSpecialized,
+  VaultKeyCopyInterface,
+} from '@standardnotes/models'
 
 export class CreateVaultKeyUseCase {
   constructor(private items: ItemManagerInterface) {}
@@ -8,7 +13,7 @@ export class CreateVaultKeyUseCase {
   async execute(content: VaultKeyCopyContentSpecialized): Promise<VaultKeyCopyInterface> {
     const newVaultKey = await this.items.createItem<VaultKeyCopyInterface>(
       ContentType.VaultKeyCopy,
-      FillItemContent<VaultKeyContent>(content),
+      FillItemContent<VaultKeyCopyContent>(content),
       true,
     )
 

@@ -1,4 +1,4 @@
-import { ServerItemResponse, ConflictParams } from '@standardnotes/responses'
+import { ServerItemResponse } from '@standardnotes/responses'
 import { isCorruptTransferPayload, isEncryptedTransferPayload } from '../TransferPayload'
 
 export interface FilteredServerItem extends ServerItemResponse {
@@ -23,5 +23,3 @@ export function isRemotePayloadAllowed(payload: ServerItemResponse): boolean {
 
   return isEncryptedTransferPayload(payload) || payload.content == undefined
 }
-
-export type TrustedConflictParams = ConflictParams<FilteredServerItem>

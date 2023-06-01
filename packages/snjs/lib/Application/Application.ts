@@ -149,6 +149,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare subscriptionManager: SubscriptionClientInterface
   private declare webSocketApiService: WebSocketApiServiceInterface
   private declare webSocketServer: WebSocketServerInterface
+
   private sessionManager!: InternalServices.SNSessionManager
   private syncService!: InternalServices.SNSyncService
   private challengeService!: InternalServices.ChallengeService
@@ -173,7 +174,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private filesBackupService?: FilesBackupService
   private vaultService!: ExternalServices.VaultServiceInterface
   private contactService!: ExternalServices.ContactServiceInterface
-  private vaultStorageService!: ExternalServices.VaultStorageServiceInterface
+  private groupService!: ExternalServices.GroupServiceInterface
+
   private declare sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>
   private declare legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>
   private declare authenticatorManager: AuthenticatorClientInterface
@@ -382,6 +384,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public get contacts(): ExternalServices.ContactServiceInterface {
     return this.contactService
+  }
+
+  public get groups(): ExternalServices.GroupServiceInterface {
+    return this.groupService
   }
 
   public computePrivateUsername(username: string): Promise<string | undefined> {
@@ -1161,7 +1167,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createItemManager()
 
     this.createDiskStorageManager()
-    this.createVaultStorageService()
 
     this.createInMemoryStorageManager()
     this.createProtocolService()
@@ -1209,6 +1214,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createUseCases()
     this.createContactService()
     this.createVaultService()
+    this.createGroupService()
   }
 
   private clearServices() {
@@ -1267,7 +1273,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this._deleteRevision as unknown) = undefined
     ;(this.vaultService as unknown) = undefined
     ;(this.contactService as unknown) = undefined
-    ;(this.vaultStorageService as unknown) = undefined
+    ;(this.groupService as unknown) = undefined
 
     this.services = []
   }
@@ -1302,20 +1308,26 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.services.push(this.contactService)
   }
 
-  private createVaultStorageService(): void {
-    this.vaultStorageService = new ExternalServices.VaultStorageService(this.storage)
-  }
-
-  private createVaultService(): void {
-    this.vaultService = new ExternalServices.VaultService(
+  private createGroupService(): void {
+    this.groupService = new ExternalServices.GroupService(
       this.httpService,
       this.syncService,
       this.itemManager,
       this.protocolService,
       this.sessions,
       this.contactService,
-      this.vaultStorageService,
       this.files,
+      this.storage,
+      this.internalEventBus,
+    )
+    this.services.push(this.groupService)
+  }
+
+  private createVaultService(): void {
+    this.vaultService = new ExternalServices.VaultService(
+      this.syncService,
+      this.itemManager,
+      this.protocolService,
       this.internalEventBus,
     )
 
@@ -1588,7 +1600,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.payloadManager,
       this.deviceInterface,
       this.diskStorageService,
-      this.vaultStorageService,
       this.identifier,
       this.options.crypto,
       this.internalEventBus,

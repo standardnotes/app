@@ -25,7 +25,7 @@ export class EncryptAndUploadFileOperation {
     private valetToken: string,
     private crypto: PureCryptoInterface,
     private api: FilesApiInterface,
-    public readonly vaultUuid?: string,
+    public readonly groupUuid?: string,
   ) {
     this.encryptor = new FileEncryptor(file, this.crypto)
     this.uploader = new FileUploader(this.api)
@@ -82,7 +82,7 @@ export class EncryptAndUploadFileOperation {
   private async uploadBytes(encryptedBytes: Uint8Array, chunkId: number): Promise<boolean> {
     const success = await this.uploader.uploadBytes(
       encryptedBytes,
-      this.vaultUuid ? 'vault' : 'user',
+      this.groupUuid ? 'group' : 'user',
       chunkId,
       this.valetToken,
     )

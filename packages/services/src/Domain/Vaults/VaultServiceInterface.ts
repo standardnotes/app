@@ -1,26 +1,19 @@
-import { ClientDisplayableError, GroupUserServerHash } from '@standardnotes/responses'
-import {
-  DecryptedItemInterface,
-  VaultKeyCopyInterface,
-  VaultKeyCopyContentSpecialized,
-  VaultInterface,
-} from '@standardnotes/models'
+import { ClientDisplayableError } from '@standardnotes/responses'
+import { DecryptedItemInterface, VaultKeyCopyInterface, VaultKeyCopyContentSpecialized } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { VaultServiceEvent } from './VaultServiceEvent'
+import { VaultDisplayListing } from './VaultDisplayListing'
 
 export interface VaultServiceInterface extends AbstractService<VaultServiceEvent> {
-  createVault(name?: string, description?: string): Promise<VaultInterface | ClientDisplayableError>
-  reloadRemoteVaults(): Promise<VaultInterface[] | ClientDisplayableError>
-  getVaults(): VaultInterface[]
+  createVault(name?: string, description?: string): Promise<string | ClientDisplayableError>
+  getVaultDisplayListings(): VaultDisplayListing[]
   deleteVault(vaultSystemIdentifier: string): Promise<boolean>
 
   getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier: string): VaultKeyCopyInterface | undefined
   getVaultInfoForItem(item: DecryptedItemInterface): VaultKeyCopyContentSpecialized | undefined
   getVaultInfo(vaultSystemIdentifier: string): VaultKeyCopyContentSpecialized | undefined
-  isUserGroupAdmin(vaultSystemIdentifier: string): boolean
-  isGroupUserOwnUser(user: GroupUserServerHash): boolean
 
-  addItemToVault(vault: VaultInterface, item: DecryptedItemInterface): Promise<DecryptedItemInterface>
+  addItemToVault(vaultSystemIdentifier: string, item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   moveItemFromVaultToUser(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   isItemInVault(item: DecryptedItemInterface): boolean
 

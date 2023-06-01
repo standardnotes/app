@@ -501,8 +501,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.rootKeyEncryption.createRootKey(identifier, password, origination, version)
   }
 
-  createVaultKeyData(vaultSystemIdentifier: string): VaultKeyCopyContentSpecialized {
-    return this.operatorManager.defaultOperator().createVaultKeyData(vaultSystemIdentifier)
+  createVaultKeyContent(params: { vaultSystemIdentifier: string; vaultName: string }): VaultKeyCopyContentSpecialized {
+    return this.operatorManager.defaultOperator().createVaultKeyContent(params)
   }
 
   createVaultItemsKey(uuid: string, vaultSystemIdentifier: string): VaultItemsKeyInterface {

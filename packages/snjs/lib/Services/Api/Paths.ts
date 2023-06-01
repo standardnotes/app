@@ -8,13 +8,13 @@ const FilesPaths = {
   uploadFileChunk: '/v1/files/upload/chunk',
 }
 
-const VaultFilesPaths = {
-  closeVaultUploadSession: '/v1/vault/files/upload/close-session',
-  deleteVaultFile: '/v1/vault/files',
-  downloadVaultFileChunk: '/v1/vault/files',
-  startVaultUploadSession: '/v1/vault/files/upload/create-session',
-  uploadVaultFileChunk: '/v1/vault/files/upload/chunk',
-  moveFile: '/v1/vault/files/move',
+const GroupFilesPaths = {
+  closeGroupUploadSession: '/v1/group/files/upload/close-session',
+  deleteGroupFile: '/v1/group/files',
+  downloadGroupFileChunk: '/v1/group/files',
+  startGroupUploadSession: '/v1/group/files/upload/create-session',
+  uploadGroupFileChunk: '/v1/group/files/upload/chunk',
+  moveFile: '/v1/group/files/move',
 }
 
 const UserPaths = {
@@ -68,7 +68,7 @@ const ListedPaths = {
 export const Paths = {
   v1: {
     ...FilesPaths,
-    ...VaultFilesPaths,
+    ...GroupFilesPaths,
     ...ItemsPaths,
     ...ListedPaths,
     ...SettingsPaths,

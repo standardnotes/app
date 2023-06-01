@@ -14,7 +14,7 @@ import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 export class AddContactToGroupUseCase {
   constructor(
     private encryption: EncryptionProviderInterface,
-    private vaultInvitesServer: GroupInvitesServerInterface,
+    private groupInviteServer: GroupInvitesServerInterface,
     private items: ItemManagerInterface,
   ) {}
 
@@ -36,9 +36,9 @@ export class AddContactToGroupUseCase {
       params.contact.publicKey,
     )
 
-    const createInviteUseCase = new CreateGroupInviteUseCase(this.vaultInvitesServer)
+    const createInviteUseCase = new CreateGroupInviteUseCase(this.groupInviteServer)
     const createInviteResult = await createInviteUseCase.execute({
-      vaultSystemIdentifier: params.group.vault_system_identifier,
+      groupUuid: params.group.uuid,
       inviteeUuid: params.contact.contactUuid,
       inviterPublicKey: params.inviterPublicKey,
       encryptedVaultKeyContent,

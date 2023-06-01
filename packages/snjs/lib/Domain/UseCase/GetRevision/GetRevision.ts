@@ -1,3 +1,4 @@
+import { ServerItemResponse } from '@standardnotes/responses'
 import { RevisionClientInterface } from '@standardnotes/services'
 import { Result, UseCaseInterface, Uuid } from '@standardnotes/domain-core'
 import {
@@ -50,6 +51,7 @@ export class GetRevision implements UseCaseInterface<HistoryEntry> {
       content_type: revision.content_type as ContentType,
       updated_at: new Date(revision.updated_at),
       created_at: new Date(revision.created_at),
+      vault_system_identifier: revision.vault_system_identifier ?? undefined,
       waitingForKey: false,
       errorDecrypting: false,
     })
@@ -67,7 +69,7 @@ export class GetRevision implements UseCaseInterface<HistoryEntry> {
       uuid: sourceItemUuid || revision.item_uuid,
     })
 
-    if (!isRemotePayloadAllowed(payload)) {
+    if (!isRemotePayloadAllowed(payload as ServerItemResponse)) {
       return Result.fail(`Remote payload is disallowed: ${JSON.stringify(payload)}`)
     }
 

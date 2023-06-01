@@ -12,7 +12,7 @@ export function isVaultKey(x: { content_type: ContentType }): x is VaultKeyCopy 
 export class VaultKeyCopy extends DecryptedItem<VaultKeyCopyContent> implements VaultKeyCopyInterface {
   vaultSystemIdentifier: string
 
-  vaultName?: string
+  vaultName: string
   vaultDescription?: string
 
   key: string
@@ -22,7 +22,7 @@ export class VaultKeyCopy extends DecryptedItem<VaultKeyCopyContent> implements 
   constructor(payload: DecryptedPayloadInterface<VaultKeyCopyContent>) {
     super(payload)
 
-    this.vaultSystemIdentifier = payload.content.vaultUuid
+    this.vaultSystemIdentifier = payload.content.vaultSystemIdentifier
 
     this.vaultName = payload.content.vaultName
     this.vaultDescription = payload.content.vaultDescription
@@ -44,5 +44,9 @@ export class VaultKeyCopy extends DecryptedItem<VaultKeyCopyContent> implements 
 
   get itemsKey(): string {
     return this.key
+  }
+
+  override get vault_system_identifier(): undefined {
+    throw new Error('VaultKeyCopy cannot have a vault_system_identifier')
   }
 }

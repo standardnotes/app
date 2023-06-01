@@ -1423,6 +1423,15 @@ export class ItemManager
     return sortedByNewestFirst[0]
   }
 
+  getAllSyncedVaultKeyCopiesForVault(vaultSystemIdentifier: string): Models.VaultKeyCopyInterface[] {
+    const keys = this.itemsMatchingPredicate<Models.VaultKeyCopyInterface>(
+      ContentType.VaultKeyCopy,
+      new Models.Predicate<Models.VaultKeyCopyInterface>('vaultSystemIdentifier', '=', vaultSystemIdentifier),
+    )
+
+    return keys
+  }
+
   getSyncedVaultKeyCopyMatchingTimestamp(
     vaultSystemIdentifier: string,
     timestamp: number,

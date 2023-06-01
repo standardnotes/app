@@ -66,7 +66,7 @@ export class FileDownloader {
       valetToken: this.valetToken,
       contentRangeStart: startRange,
       onBytesReceived: onRemoteBytesReceived,
-      ownershipType: this.file.vault_system_identifier ? 'vault' : 'user',
+      ownershipType: this.file.vault_system_identifier ? 'group' : 'user',
     })
 
     const result = await Promise.race([this.abortDeferred.promise, downloadPromise])

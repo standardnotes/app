@@ -1,1 +1,1 @@
-export type FileOwnershipType = 'user' | 'vault'
+export type FileOwnershipType = 'user' | 'group'

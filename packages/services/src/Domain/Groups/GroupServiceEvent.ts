@@ -5,4 +5,5 @@ export enum GroupServiceEvent {
 
 export type GroupServiceEventPayload = {
   groupUuid: string
+  vaultSystemIdentifier: string
 }

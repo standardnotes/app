@@ -56,7 +56,7 @@ export interface OperatorCommon {
    */
   createRootKey(identifier: string, password: string, origination: KeyParamsOrigination): Promise<SNRootKey>
 
-  createVaultKeyData(vaultSystemIdentifier: string): VaultKeyCopyContentSpecialized
+  createVaultKeyContent(params: { vaultSystemIdentifier: string; vaultName: string }): VaultKeyCopyContentSpecialized
 
   generateKeyPair(): PkcKeyPair
 
