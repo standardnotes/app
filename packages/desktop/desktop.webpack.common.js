@@ -67,6 +67,7 @@ module.exports = function ({ onlyTranspileTypescript = false, experimentalFeatur
     module: moduleConfig,
     externals: {
       keytar: 'commonjs keytar',
+      '@standardnotes/home-server': 'standard notes home server',
     },
     optimization: {
       minimizer: [

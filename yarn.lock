@@ -5794,7 +5794,7 @@ __metadata:
     "@standardnotes/models": 1.34.3
     "@standardnotes/sncrypto-common": 1.13.0
     "@standardnotes/snjs": 2.147.2
-  checksum: c8478582b49b7f4134eeee29e97385dfd92842072ccec8de7038fb51c2b90fd24f017818a35a3e0f0ea071974c36167fec96d0bdf0184d442644538796dfc257
+  checksum: 2c030920190c67e1bcf166d07c29595d27e0e55fe6036f9441ed145146a9c12fd1291d15f5aea4b79c5462d940caab95b6e7571668b72b9b15cc8a988b859f02
   languageName: node
   linkType: hard
 
@@ -5819,7 +5819,6 @@ __metadata:
     "@babel/preset-env": "*"
     "@electron/remote": ^2.0.9
     "@standardnotes/electron-clear-data": 1.1.1
-    "@standardnotes/home-server": ^1.7.4
     "@standardnotes/web": "workspace:*"
     "@types/fs-extra": ^11.0.1
     "@types/lodash": ^4.14.189
@@ -5929,7 +5928,7 @@ __metadata:
     "@standardnotes/component-relay": "standardnotes/component-relay#839ff5db9bc92db9d42cad8d202ddc4df729597d"
     "@standardnotes/models": 1.34.3
     "@standardnotes/snjs": 2.147.2
-  checksum: c59d160a86e9c40c10f20d15a0df8874a8305bd4ae281fad8729fbf9bd714667b3849c78e3a28f18c12127e23bb9e4834139c0501505822662b51c19c9ddf343
+  checksum: a96658846fe6a9039b8efac3131f83a10772db6e8ac4bce520d575adb1b3ccafdd510d2b7640884af387efced9c1ffd8dc88ce46eb1da72d28dff96fd0f33655
   languageName: node
   linkType: hard
 
@@ -6140,6 +6139,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@standardnotes/inner-desktop@workspace:packages/desktop/app"
   dependencies:
+    "@standardnotes/home-server": ^1.7.4
     keytar: ^7.9.0
   languageName: unknown
   linkType: soft
@@ -11471,7 +11471,7 @@ __metadata:
   dependencies:
     "@standardnotes/sncrypto-web": ^1.6.1
     "@standardnotes/snjs": ^2.41.1
-  checksum: 868e763833fb49475ed2cfc58b51e6244b67e26a5b346af333b03d4134707983d973fdcaa62f5eaa31fb3eba1196371c60a27b7e1c5832907e5784434a8863ea
+  checksum: b669f0d476fe772a6957154def42b55e08992bfd850ece2428159a1f9ca04163620ac2f77f56f21d794ce35848607b97ff9205c144e8a35eb91dcc2bfeb1de20
   languageName: node
   linkType: hard
 
@@ -21605,14 +21605,14 @@ __metadata:
   resolution: "react-native-fingerprint-scanner@https://github.com/standardnotes/react-native-fingerprint-scanner.git#commit=b55d1c0ca627a87a130f758603f12911fbac200f"
   peerDependencies:
     react-native: ">=0.60 <1.0.0"
-  checksum: 2c86f2987773b5350ae58a2cfd890a9dc2702713015d3a8a44878092c6852710dd323c048c681838930a8c08f85d6a8239e0eb8a1bff14957422e2ad05d1deed
+  checksum: 09cb56fd775c825ddeba661ecb5e3120d61a377e22b7c478bf298acf3cc2337c7ce42de4081e5fc3b6b91fad2b2df55b593c953d12a95ab95188fdd6ff271dd3
   languageName: node
   linkType: hard
 
 "react-native-flag-secure-android@standardnotes/react-native-flag-secure-android#cb08e74583c22a5d912842459b35ebbbb4bcd852":
   version: 1.0.0
   resolution: "react-native-flag-secure-android@https://github.com/standardnotes/react-native-flag-secure-android.git#commit=cb08e74583c22a5d912842459b35ebbbb4bcd852"
-  checksum: be11d81c04500028335f3faac189f5f1544faa28c40a6ba6b6aa5c6cc5e0f054b1c794ce25a75eb97386f1c9b2279360dd6a3d0b7b93572ff0fd39fa51d9dfb4
+  checksum: ca25b555e2a263f7768a93c38ad50acd46bca9a0d31aaedf888f34ee9bc4477597dd3c469c3ccceb49da5a054069b138248f97f3a070bc70e0b532e336614732
   languageName: node
   linkType: hard
 
@@ -21654,7 +21654,7 @@ __metadata:
 "react-native-keychain@standardnotes/react-native-keychain#d277d360494cbd02be4accb4a360772a8e0e97b6":
   version: 8.0.0
   resolution: "react-native-keychain@https://github.com/standardnotes/react-native-keychain.git#commit=d277d360494cbd02be4accb4a360772a8e0e97b6"
-  checksum: a8a1484446a24db4f90bc72ba7b22a4637cc4f75421f9b3c30b22bfe753c2c349a165dc848cb0ed4508f64f96e5d2220e41aae57647629d9a70aff933152e8df
+  checksum: acb4ac59670828828a136c02c1b4573ed7dcfa7957ee402d8a47406db139ef58b04757d802eff1fdf402657afba0b248f8036f71a4f5689b8ecd4ed113788182
   languageName: node
   linkType: hard
 
@@ -21674,7 +21674,7 @@ __metadata:
   peerDependencies:
     react: ^16.13.1
     react-native: ^0.62.0
-  checksum: 6bb939d8eb10bab5cb0c0ad07340a5f873132ab6c0938f28dc0c7cb6a2055d3fdba26c91e9e4d0fb3ad893e16dd3030f20b6b3f5081e89266b2c27134e4f94ff
+  checksum: fc04e8484b0df07e223a5db25736f7a4ced5e423269d1b09b1d7e791524b121c0dfd1e76290844ce4507eaba6e1b003ed3bf8c10ceeffb62eaea7f85aa7366a9
   languageName: node
   linkType: hard
 

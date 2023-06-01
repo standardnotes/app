@@ -5,6 +5,7 @@ import { shell } from 'electron'
 import { moveDirectory, openDirectoryPicker } from '../Utils/FileUtils'
 import { Paths } from '../Types/Paths'
 import { CommandService, CreateCommand } from './CommandService'
+import { HomeServerInterface } from '@standardnotes/home-server'
 
 const path = require('path')
 const fs = require('fs')
@@ -15,7 +16,7 @@ const DataDirectoryName = 'notes'
 export class LocalServiceManager implements DesktopServerManagerInterface {
   private commandService = new CommandService()
 
-  constructor(private appState: AppState) {}
+  constructor(private appState: AppState, private homeServer: HomeServerInterface) {}
 
   private getLocalIP() {
     const interfaces = os.networkInterfaces()
@@ -73,16 +74,11 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
   }
 
   async desktopServerStop(): Promise<void> {
-    const dataDir = await this.desktopServerGetDataDirectory()
-
-    await this.commandService.runCommand(CreateCommand('docker compose down'), dataDir)
+    await this.homeServer.stop()
   }
 
   async desktopServerRestart(): Promise<void> {
-    const dataDir = await this.desktopServerGetDataDirectory()
-
-    await this.commandService.runCommand(CreateCommand('docker compose down'), dataDir)
-    await this.commandService.runCommand(CreateCommand('docker compose up -d'), dataDir)
+    await this.homeServer.restart()
   }
 
   async desktopServerStatus(): Promise<DesktopServerStatus> {
@@ -187,10 +183,7 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
   }
 
   async desktopServerStart(): Promise<void> {
-    const notesDir = await this.desktopServerGetDataDirectory()
-
-    await this.commandService.runCommand(CreateCommand('docker compose pull'), notesDir)
-    await this.commandService.runCommand(CreateCommand('docker compose up -d'), notesDir)
+    await this.homeServer.start()
   }
 
   getDocumentsDir() {

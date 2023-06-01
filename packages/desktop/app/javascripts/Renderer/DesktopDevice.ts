@@ -4,9 +4,9 @@ import {
   RawKeychainValue,
   FileBackupReadToken,
   FileBackupReadChunkResponse,
-  DesktopServerStatus,
   FileBackupsMapping,
   PlaintextBackupsMapping,
+  DesktopServerManagerInterface,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { WebOrDesktopDevice } from '@web/Application/Device/WebOrDesktopDevice'
 import { Component } from '../Main/Packages/PackageManagerInterface'
@@ -26,44 +26,8 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     super(appVersion)
   }
 
-  desktopServerStart(): Promise<void> {
-    return this.remoteBridge.desktopServerStart()
-  }
-
-  desktopServerStop(): Promise<void> {
-    return this.remoteBridge.desktopServerStop()
-  }
-
-  desktopServerGetLogs(): Promise<string[]> {
-    return this.remoteBridge.desktopServerGetLogs()
-  }
-
-  desktopServerClearLogs(): Promise<void> {
-    return this.remoteBridge.desktopServerClearLogs()
-  }
-
-  desktopServerRestart(): Promise<void> {
-    return this.remoteBridge.desktopServerRestart()
-  }
-
-  desktopServerStatus(): Promise<DesktopServerStatus> {
-    return this.remoteBridge.desktopServerStatus()
-  }
-
-  desktopServerInstall(): Promise<void> {
-    return this.remoteBridge.desktopServerInstall()
-  }
-
-  desktopServerChangeDataDirectory(): Promise<string | undefined> {
-    return this.remoteBridge.desktopServerChangeDataDirectory()
-  }
-
-  desktopServerGetDataDirectory(): Promise<string> {
-    return this.remoteBridge.desktopServerGetDataDirectory()
-  }
-
-  desktopServerOpenDataDirectory(): Promise<void> {
-    return this.remoteBridge.desktopServerOpenDataDirectory()
+  get desktopServerManager(): DesktopServerManagerInterface {
+    return this.remoteBridge.desktopServerManager
   }
 
   openLocation(path: string): Promise<void> {

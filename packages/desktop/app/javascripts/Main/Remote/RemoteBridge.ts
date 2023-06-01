@@ -11,7 +11,6 @@ import {
   FileBackupReadToken,
   FileBackupReadChunkResponse,
   DesktopServerManagerInterface,
-  DesktopServerStatus,
   PlaintextBackupsMapping,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { app, BrowserWindow } from 'electron'
@@ -39,6 +38,10 @@ export class RemoteBridge implements CrossProcessBridge {
     private desktopServer: DesktopServerManagerInterface,
   ) {}
 
+  get desktopServerManager(): DesktopServerManagerInterface {
+    return this.desktopServer
+  }
+
   get exposableValue(): CrossProcessBridge {
     return {
       extServerHost: this.extServerHost,
@@ -47,6 +50,7 @@ export class RemoteBridge implements CrossProcessBridge {
       appVersion: this.appVersion,
       useSystemMenuBar: this.useSystemMenuBar,
       rendererPath: this.rendererPath,
+      desktopServerManager: this.desktopServerManager,
       closeWindow: this.closeWindow.bind(this),
       minimizeWindow: this.minimizeWindow.bind(this),
       maximizeWindow: this.maximizeWindow.bind(this),
@@ -66,16 +70,6 @@ export class RemoteBridge implements CrossProcessBridge {
       getFileBackupReadToken: this.getFileBackupReadToken.bind(this),
       readNextChunk: this.readNextChunk.bind(this),
       askForMediaAccess: this.askForMediaAccess.bind(this),
-      desktopServerStart: this.desktopServerStart.bind(this),
-      desktopServerStop: this.desktopServerStop.bind(this),
-      desktopServerRestart: this.desktopServerRestart.bind(this),
-      desktopServerStatus: this.desktopServerStatus.bind(this),
-      desktopServerChangeDataDirectory: this.desktopServerChangeDataDirectory.bind(this),
-      desktopServerGetDataDirectory: this.desktopServerGetDataDirectory.bind(this),
-      desktopServerOpenDataDirectory: this.desktopServerOpenDataDirectory.bind(this),
-      desktopServerInstall: this.desktopServerInstall.bind(this),
-      desktopServerGetLogs: this.desktopServerGetLogs.bind(this),
-      desktopServerClearLogs: this.desktopServerClearLogs.bind(this),
       wasLegacyTextBackupsExplicitlyDisabled: this.wasLegacyTextBackupsExplicitlyDisabled.bind(this),
       getLegacyTextBackupsLocation: this.getLegacyTextBackupsLocation.bind(this),
       saveTextBackupData: this.saveTextBackupData.bind(this),
@@ -255,45 +249,5 @@ export class RemoteBridge implements CrossProcessBridge {
 
   askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean> {
     return this.media.askForMediaAccess(type)
-  }
-
-  desktopServerStart(): Promise<void> {
-    return this.desktopServer.desktopServerStart()
-  }
-
-  desktopServerStop(): Promise<void> {
-    return this.desktopServer.desktopServerStop()
-  }
-
-  desktopServerRestart(): Promise<void> {
-    return this.desktopServer.desktopServerRestart()
-  }
-
-  desktopServerStatus(): Promise<DesktopServerStatus> {
-    return this.desktopServer.desktopServerStatus()
-  }
-
-  desktopServerChangeDataDirectory(): Promise<string | undefined> {
-    return this.desktopServer.desktopServerChangeDataDirectory()
-  }
-
-  desktopServerGetDataDirectory(): Promise<string> {
-    return this.desktopServer.desktopServerGetDataDirectory()
-  }
-
-  desktopServerOpenDataDirectory(): Promise<void> {
-    return this.desktopServer.desktopServerOpenDataDirectory()
-  }
-
-  desktopServerInstall(): Promise<void> {
-    return this.desktopServer.desktopServerInstall()
-  }
-
-  desktopServerGetLogs(): Promise<string[]> {
-    return this.desktopServer.desktopServerGetLogs()
-  }
-
-  desktopServerClearLogs(): Promise<void> {
-    return this.desktopServer.desktopServerClearLogs()
   }
 }

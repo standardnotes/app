@@ -25,6 +25,7 @@ import { handleTestMessage, send } from './Utils/Testing'
 import { isTesting, lowercaseDriveLetter } from './Utils/Utils'
 import { initializeZoomManager } from './ZoomManager'
 import { LocalServiceManager } from './LocalServer/LocalServerManager'
+import { HomeServer } from '@standardnotes/home-server'
 
 const WINDOW_DEFAULT_WIDTH = 1100
 const WINDOW_DEFAULT_HEIGHT = 800
@@ -202,8 +203,9 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
   const trayManager = createTrayManager(window, appState.store)
   const spellcheckerManager = createSpellcheckerManager(appState.store, window.webContents, appLocale)
   const mediaManager = new MediaManager()
+  const homeServer = new HomeServer()
 
-  const localServerManager = new LocalServiceManager(appState)
+  const localServerManager = new LocalServiceManager(appState, homeServer)
 
   if (isTesting()) {
     handleTestMessage(MessageType.SpellCheckerManager, () => spellcheckerManager)
