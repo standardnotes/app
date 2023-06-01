@@ -2,7 +2,7 @@ import { ClientDisplayableError, isErrorResponse } from '@standardnotes/response
 import { UuidGenerator } from '@standardnotes/utils'
 import { SNApplication, SyncEvent } from '@Lib/Application'
 import { LoggingDomain, log } from '@Lib/Logging'
-import { FileItem, PayloadEmitSource, PayloadsByAlternatingUuid, PayloadsByDuplicating } from '@standardnotes/models'
+import { FileItem, PayloadEmitSource, PayloadsByAlternatingUuid } from '@standardnotes/models'
 import { ApplicationEvent, DeinitMode, DeinitSource } from '@standardnotes/services'
 import { ContentType } from '@standardnotes/common'
 import { FileDownloader, FileUploader } from '@standardnotes/files'
@@ -28,7 +28,7 @@ export class AccountMigrationService {
     ;(this.applicationImportingTo as unknown) = undefined
   }
 
-  async importAccount(email: string, password: string, server: string) {
+  async importAccount(email: string, password: string, server: string): Promise<ClientDisplayableError | void> {
     log(LoggingDomain.AccountMigration, 'Importing account')
     const identifier = UuidGenerator.GenerateUuid()
     const device = this.applicationImportingTo.deviceInterface
