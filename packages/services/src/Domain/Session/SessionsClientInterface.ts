@@ -47,7 +47,7 @@ export interface SessionsClientInterface {
     wrappingKey?: SNRootKey
   }): Promise<void>
 
-  getPublicKey(): string | undefined
+  getPublicKey(): string
   isUserMissingKeypair(): boolean
   updateAccountWithFirstTimeKeypair(): Promise<boolean>
 }

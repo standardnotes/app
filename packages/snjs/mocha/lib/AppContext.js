@@ -53,6 +53,10 @@ export class AppContext {
     return this.application.vaultService
   }
 
+  get sessions() {
+    return this.application.sessions
+  }
+
   get items() {
     return this.application.items
   }
@@ -74,11 +78,11 @@ export class AppContext {
   }
 
   get publicKey() {
-    return this.vaults.userPublicKey
+    return this.sessions.getPublicKey()
   }
 
   get privateKey() {
-    return this.vaults.userPrivateKey
+    return this.encryption.getDecryptedPrivateKey()
   }
 
   ignoreChallenges() {

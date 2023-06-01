@@ -3,7 +3,6 @@ import { AddContactToGroupUseCase } from './UseCase/AddContactToGroup'
 import {
   ClientDisplayableError,
   GroupInviteServerHash,
-  User,
   isErrorResponse,
   GroupUserServerHash,
   isClientDisplayableError,
@@ -343,7 +342,12 @@ export class GroupService
       return false
     }
 
-    const useCase = new AcceptInvite(this.userDecryptedPrivateKey, this.groupInvitesServer, this.items, this.encryption)
+    const useCase = new AcceptInvite(
+      this.encryption.getDecryptedPrivateKey(),
+      this.groupInvitesServer,
+      this.items,
+      this.encryption,
+    )
     const result = await useCase.execute(invite)
     if (result === 'errored') {
       return false
@@ -385,28 +389,6 @@ export class GroupService
 
   private async syncGroupFromScratch(groupUuid: string): Promise<void> {
     await this.sync.syncGroupsFromScratch([groupUuid])
-  }
-
-  get user(): User {
-    return this.session.getSureUser()
-  }
-
-  get userPublicKey(): string {
-    const publicKey = this.session.getPublicKey()
-    if (!publicKey) {
-      throw new Error('Public key not found')
-    }
-
-    return publicKey
-  }
-
-  get userDecryptedPrivateKey(): string {
-    const key = this.encryption.getDecryptedPrivateKey()
-    if (!key) {
-      throw new Error('Decrypted private key not found')
-    }
-
-    return key
   }
 
   public async getInvitableContactsForGroup(groupUuid: string): Promise<TrustedContactInterface[]> {
@@ -453,8 +435,8 @@ export class GroupService
   ): Promise<GroupInviteServerHash | ClientDisplayableError> {
     const useCase = new AddContactToGroupUseCase(this.encryption, this.groupInvitesServer, this.items)
     const result = await useCase.execute({
-      inviterPrivateKey: this.userDecryptedPrivateKey,
-      inviterPublicKey: this.userPublicKey,
+      inviterPrivateKey: this.encryption.getDecryptedPrivateKey(),
+      inviterPublicKey: this.session.getPublicKey(),
       group,
       contact,
       permissions,
@@ -471,7 +453,7 @@ export class GroupService
     return this.encryption.decryptVaultKeyContentWithPrivateKey(
       invite.encrypted_vault_key_content,
       invite.inviter_public_key,
-      this.userDecryptedPrivateKey,
+      this.encryption.getDecryptedPrivateKey(),
     )
   }
 
@@ -498,7 +480,7 @@ export class GroupService
 
   async leaveGroup(groupUuid: string): Promise<ClientDisplayableError | void> {
     const useCase = new LeaveVaultUseCase(this.groupUsersServer, this.items)
-    const result = await useCase.execute({ groupUuid, userUuid: this.user.uuid })
+    const result = await useCase.execute({ groupUuid, userUuid: this.session.getSureUser().uuid })
 
     if (isClientDisplayableError(result)) {
       return result
@@ -523,7 +505,7 @@ export class GroupService
   }
 
   getItemSharedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined {
-    if (!item.user_uuid || item.user_uuid === this.user.uuid) {
+    if (!item.user_uuid || item.user_uuid === this.session.getSureUser().uuid) {
       return undefined
     }
 
@@ -547,9 +529,9 @@ export class GroupService
     return useCase.execute({
       vaultSystemIdentifier: params.vaultSystemIdentifier,
       groupUuid: params.groupUuid,
-      inviterUuid: this.user.uuid,
-      inviterPrivateKey: this.userDecryptedPrivateKey,
-      inviterPublicKey: this.userPublicKey,
+      inviterUuid: this.session.getSureUser().uuid,
+      inviterPrivateKey: this.encryption.getDecryptedPrivateKey(),
+      inviterPublicKey: this.session.getPublicKey(),
     })
   }
 

@@ -3,7 +3,7 @@ import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.only('vaults', function () {
+describe('vaults', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let application

@@ -204,8 +204,22 @@ export class SNSessionManager
     return this.user as User
   }
 
-  public getPublicKey(): string | undefined {
-    return this.getUser()?.publicKey
+  isUserMissingKeypair(): boolean {
+    const user = this.getUser()
+
+    if (!user) {
+      throw Error('Attempting to access user public key when user is undefined')
+    }
+
+    return !user.publicKey
+  }
+
+  public getPublicKey(): string {
+    const user = this.getUser()
+    if (!user || !user.publicKey) {
+      throw Error('Attempting to access publicKey when user is undefined')
+    }
+    return user.publicKey
   }
 
   public get userUuid(): string {
@@ -655,11 +669,6 @@ export class SNSessionManager
     }
 
     return processedResponse
-  }
-
-  isUserMissingKeypair(): boolean {
-    const hasPublicKey = this.getPublicKey() != undefined
-    return !hasPublicKey
   }
 
   async updateAccountWithFirstTimeKeypair(): Promise<boolean> {

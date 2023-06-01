@@ -169,8 +169,13 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     super.deinit()
   }
 
-  getDecryptedPrivateKey(): string | undefined {
-    return this.storageService.getValue<string>(StorageKey.AccountDecryptedPrivateKey)
+  getDecryptedPrivateKey(): string {
+    const result = this.storageService.getValue<string>(StorageKey.AccountDecryptedPrivateKey)
+    if (!result) {
+      throw new Error('Decrypted private key not found')
+    }
+
+    return result
   }
 
   public async initialize() {
