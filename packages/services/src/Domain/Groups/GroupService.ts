@@ -11,12 +11,12 @@ import {
 } from '@standardnotes/responses'
 import {
   HttpServiceInterface,
-  GroupsServerInterface,
+  GroupServerInterface,
   GroupUsersServerInterface,
   GroupInvitesServerInterface,
   GroupUsersServer,
   GroupInvitesServer,
-  GroupsServer,
+  GroupServer,
 } from '@standardnotes/api'
 import {
   DecryptedItemInterface,
@@ -61,7 +61,7 @@ export class GroupService
   extends AbstractService<GroupServiceEvent, GroupServiceEventPayload>
   implements GroupServiceInterface, InternalEventHandlerInterface
 {
-  private groupServer: GroupsServerInterface
+  private groupServer: GroupServerInterface
   private groupUsersServer: GroupUsersServerInterface
   private groupInvitesServer: GroupInvitesServerInterface
 
@@ -85,7 +85,7 @@ export class GroupService
     eventBus.addEventHandler(this, SessionEvent.SuccessfullyChangedCredentials)
 
     this.groupsCache = new GroupCacheService(storage)
-    this.groupServer = new GroupsServer(http)
+    this.groupServer = new GroupServer(http)
     this.groupUsersServer = new GroupUsersServer(http)
     this.groupInvitesServer = new GroupInvitesServer(http)
 
@@ -110,7 +110,7 @@ export class GroupService
 
     this.eventDisposers.push(
       items.addObserver(ContentType.Any, ({ inserted, changed, source }) => {
-        if (source !== PayloadEmitSource.LocalChanged) {
+        if (source !== PayloadEmitSource.RemoteSaved) {
           return
         }
 
@@ -199,11 +199,7 @@ export class GroupService
     }
   }
 
-  public getGroupSharingVaultSystemIdentifier(vaultSystemIdentifier: string): GroupServerHash | undefined {
-    return this.groupsCache.getGroupForVaultSystemIdentifier(vaultSystemIdentifier)
-  }
-
-  public override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
+  override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
     if (stage === ApplicationStage.Launched_10) {
       void this.reloadRemovedVaults()
     }
@@ -220,6 +216,26 @@ export class GroupService
       )
       await handler.execute(event.payload as SuccessfullyChangedCredentialsEventData)
     }
+  }
+
+  async createGroup(params: { vaultSystemIdentifier: string }): Promise<GroupServerHash | ClientDisplayableError> {
+    const vaultItemsKey = this.items.getPrimaryVaultItemsKeyForVault(params.vaultSystemIdentifier)
+    if (!vaultItemsKey) {
+      return ClientDisplayableError.FromString(`No vault items key found for vault ${params.vaultSystemIdentifier}`)
+    }
+
+    const result = await this.groupServer.createGroup({
+      vaultSystemIdentifier: params.vaultSystemIdentifier,
+      specifiedItemsKeyUuid: vaultItemsKey.uuid,
+    })
+
+    if (isErrorResponse(result)) {
+      return ClientDisplayableError.FromString(`Failed to create group ${result}`)
+    }
+
+    this.groupsCache.setGroup(result.data.group)
+
+    return result.data.group
   }
 
   public async reloadRemoteGroups(): Promise<GroupServerHash[] | ClientDisplayableError> {
@@ -405,7 +421,7 @@ export class GroupService
   }
 
   public async addItemToGroup(groupUuid: string, item: DecryptedItemInterface): Promise<void | ClientDisplayableError> {
-    const useCase = new AddItemToGroupUseCase(this.groupServer, this.files)
+    const useCase = new AddItemToGroupUseCase(this.groupServer, this.files, this.items)
     const result = await useCase.execute({
       item: item,
       groupUuid: groupUuid,
@@ -419,7 +435,7 @@ export class GroupService
       throw new Error('Item does not have a group uuid')
     }
 
-    const useCase = new RemoveItemFromGroupUseCase(this.groupServer, this.files)
+    const useCase = new RemoveItemFromGroupUseCase(this.groupServer, this.files, this.items)
     const result = await useCase.execute({
       item: item,
       groupUuid: item.group_uuid,

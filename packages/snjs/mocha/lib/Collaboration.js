@@ -28,6 +28,8 @@ export const acceptAllInvites = async (inContext) => {
   const invites = inContext.groups.getCachedInboundInvites()
   for (const invite of invites) {
     const result = await inContext.groups.acceptInvite(invite)
-    expect(result).to.be.true
+    if (!result) {
+      throw new Error('[e2e] Failed to accept invite')
+    }
   }
 }

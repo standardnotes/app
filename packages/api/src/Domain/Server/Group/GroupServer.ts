@@ -1,6 +1,6 @@
 import { HttpResponse } from '@standardnotes/responses'
 import { HttpServiceInterface } from '../../Http'
-import { GroupsServerInterface } from './GroupsServerInterface'
+import { GroupServerInterface } from './GroupServerInterface'
 import { CreateGroupParams } from '../../Request/Group/CreateGroupParams'
 import { GroupsPaths } from './Paths'
 import { CreateGroupResponse } from '../../Response/Group/CreateGroupResponse'
@@ -15,7 +15,7 @@ import { AddItemToGroupResponse } from '../../Response/Group/AddItemToGroupRespo
 import { RemoveItemFromGroupParams } from '../../Request/Group/RemoveItemFromGroup'
 import { RemoveItemFromGroupResponse } from '../../Response/Group/RemoveItemFromGroupResponse'
 
-export class GroupsServer implements GroupsServerInterface {
+export class GroupServer implements GroupServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
 
   getGroups(): Promise<HttpResponse<GetGroupsResponse>> {

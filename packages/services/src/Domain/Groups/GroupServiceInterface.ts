@@ -15,7 +15,7 @@ import { AbstractService } from '../Service/AbstractService'
 import { GroupServiceEvent, GroupServiceEventPayload } from './GroupServiceEvent'
 
 export interface GroupServiceInterface extends AbstractService<GroupServiceEvent, GroupServiceEventPayload> {
-  isUserGroupAdmin(vaultSystemIdentifier: string): boolean
+  createGroup(params: { vaultSystemIdentifier: string }): Promise<GroupServerHash | ClientDisplayableError>
 
   inviteContactToGroup(
     group: GroupServerHash,
@@ -26,6 +26,7 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
   leaveGroup(groupUuid: string): Promise<ClientDisplayableError | void>
   getGroupUsers(vaultSystemIdentifier: string): Promise<GroupUserServerHash[] | undefined>
   isGroupUserOwnUser(user: GroupUserServerHash): boolean
+  isUserGroupAdmin(vaultSystemIdentifier: string): boolean
 
   getItemLastEditedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined
   getItemSharedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined

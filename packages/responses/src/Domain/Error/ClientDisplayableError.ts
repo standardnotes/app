@@ -1,3 +1,5 @@
+import { HttpErrorResponse } from '../Http'
+
 export class ClientDisplayableError {
   constructor(public text: string, public title?: string, public tag?: string) {
     console.error('Client Displayable Error:', text, title || '', tag || '')
@@ -9,6 +11,10 @@ export class ClientDisplayableError {
 
   static FromString(text: string) {
     return new ClientDisplayableError(text)
+  }
+
+  static FromNetworkError(error: HttpErrorResponse) {
+    return new ClientDisplayableError(error.data.error.message)
   }
 }
 

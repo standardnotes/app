@@ -13,38 +13,6 @@ describe('groups', function () {
   let vaults
   let groups
 
-  const createGroupWithAcceptedInvite = async (permissions = GroupPermission.Write) => {
-    const { vaultSystemIdentifier, contact, contactContext, deinitContactContext } =
-      await createGroupWithUnacceptedButTrustedInvite(permissions)
-
-    await Collaboration.acceptAllInvites(contactContext)
-
-    await contactContext.awaitNextSyncVaultFromScratchEvent()
-
-    return { vaultSystemIdentifier, contact, contactContext, deinitContactContext }
-  }
-
-  const createGroupWithAcceptedInviteAndNote = async (permissions = GroupPermission.Write) => {
-    const { vaultSystemIdentifier, contactContext, contact, deinitContactContext } =
-      await createGroupWithAcceptedInvite(permissions)
-    const note = await context.createSyncedNote('foo', 'bar')
-    await vaults.addItemToVault(vaultSystemIdentifier, note)
-    await contactContext.sync()
-    return { vaultSystemIdentifier, note, contact, contactContext, deinitContactContext }
-  }
-
-  const createGroupWithUnacceptedButTrustedInvite = async (permissions = GroupPermission.Write) => {
-    const vaultSystemIdentifier = await vaults.createVault()
-    const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
-    const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
-    const invite = await groups.inviteContactToGroup(vault, contact, permissions)
-    await contactContext.sync()
-
-    await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
-
-    return { vaultSystemIdentifier, contact, contactContext, deinitContactContext, invite }
-  }
-
   afterEach(async function () {
     await Factory.safeDeinit(application)
     localStorage.clear()
@@ -60,12 +28,65 @@ describe('groups', function () {
 
     application = context.application
     vaults = application.vaults
-    contactService = application.contactService
     groups = context.groups
   })
 
-  describe('vaults', () => {
-    it('should add item to vault with contact', async () => {
+  const createGroupWithAcceptedInvite = async (permissions = GroupPermission.Write) => {
+    const { vaultSystemIdentifier, group, contact, contactContext, deinitContactContext } =
+      await createGroupWithUnacceptedButTrustedInvite(permissions)
+
+    await Collaboration.acceptAllInvites(contactContext)
+
+    await contactContext.awaitNextSyncVaultFromScratchEvent()
+
+    return { vaultSystemIdentifier, group, contact, contactContext, deinitContactContext }
+  }
+
+  const createGroupWithAcceptedInviteAndNote = async (permissions = GroupPermission.Write) => {
+    const { vaultSystemIdentifier, group, contactContext, contact, deinitContactContext } =
+      await createGroupWithAcceptedInvite(permissions)
+    const note = await context.createSyncedNote('foo', 'bar')
+    await vaults.addItemToVault(vaultSystemIdentifier, note)
+    await contactContext.sync()
+    return { vaultSystemIdentifier, group, note, contact, contactContext, deinitContactContext }
+  }
+
+  const createGroupWithUnacceptedButTrustedInvite = async (permissions = GroupPermission.Write) => {
+    const vaultSystemIdentifier = await vaults.createVault()
+    const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
+    const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
+    const group = await groups.createGroup({ vaultSystemIdentifier })
+
+    const invite = await groups.inviteContactToGroup(group, contact, permissions)
+    await contactContext.sync()
+
+    await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
+
+    return { vaultSystemIdentifier, group, contact, contactContext, deinitContactContext, invite }
+  }
+
+  const createVaultAndGroup = async () => {
+    const vaultSystemIdentifier = await vaults.createVault()
+    const group = await groups.createGroup({ vaultSystemIdentifier })
+    return { vaultSystemIdentifier, group }
+  }
+
+  describe('shared vaults via groups', () => {
+    it.only('should add item to group with no other members', async () => {
+      const note = await context.createSyncedNote('foo', 'bar')
+
+      const { vaultSystemIdentifier, group } = await createVaultAndGroup()
+
+      const promise = context.resolveWhenItemCompletesAddingToGroup(note)
+      await vaults.addItemToVault(vaultSystemIdentifier, note)
+      await promise
+
+      const updatedNote = application.items.findItem(note.uuid)
+      expect(updatedNote.vault_system_identifier).to.equal(vaultSystemIdentifier)
+      expect(updatedNote.group_uuid).to.equal(group.uuid)
+    })
+
+    it('should add item to group with contact', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
       const { vaultSystemIdentifier, deinitContactContext } = await createGroupWithAcceptedInvite()
 

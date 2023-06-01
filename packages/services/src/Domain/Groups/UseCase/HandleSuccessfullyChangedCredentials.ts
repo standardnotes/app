@@ -1,4 +1,4 @@
-import { GroupInvitesServerInterface, GroupsServerInterface } from '@standardnotes/api'
+import { GroupInvitesServerInterface, GroupServerInterface } from '@standardnotes/api'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import {
   ClientDisplayableError,
@@ -16,7 +16,7 @@ import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
  */
 export class HandleSuccessfullyChangedCredentials {
   constructor(
-    private groupServer: GroupsServerInterface,
+    private groupServer: GroupServerInterface,
     private groupInvitesServer: GroupInvitesServerInterface,
     private encryption: EncryptionProviderInterface,
     private contacts: ContactServiceInterface,

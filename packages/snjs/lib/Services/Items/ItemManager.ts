@@ -8,7 +8,6 @@ import * as Models from '@standardnotes/models'
 import * as Services from '@standardnotes/services'
 import { PayloadManagerChangeData } from '../Payloads'
 import { ItemsClientInterface, ItemRelationshipDirection } from '@standardnotes/services'
-import { CollectionSort, DecryptedItemInterface, ItemContent, SmartViewDefaultIconName } from '@standardnotes/models'
 
 type ItemsChangeObserver<I extends Models.DecryptedItemInterface = Models.DecryptedItemInterface> = {
   contentType: ContentType[]
@@ -169,7 +168,7 @@ export class ItemManager
       },
     }
 
-    if (updatedOptions.sortBy === CollectionSort.Title) {
+    if (updatedOptions.sortBy === Models.CollectionSort.Title) {
       updatedOptions.sortDirection = updatedOptions.sortDirection === 'asc' ? 'dsc' : 'asc'
     }
 
@@ -1167,7 +1166,10 @@ export class ItemManager
     })
   }
 
-  public async unlinkItems(itemA: DecryptedItemInterface<ItemContent>, itemB: DecryptedItemInterface<ItemContent>) {
+  public async unlinkItems(
+    itemA: Models.DecryptedItemInterface<Models.ItemContent>,
+    itemB: Models.DecryptedItemInterface<Models.ItemContent>,
+  ) {
     const relationshipDirection = this.relationshipDirectionBetweenItems(itemA, itemB)
 
     if (relationshipDirection === ItemRelationshipDirection.NoRelationship) {
@@ -1187,7 +1189,7 @@ export class ItemManager
    * @param item - The item whose tags will be returned
    * @returns Array containing tags associated with an item
    */
-  public getSortedTagsForItem(item: DecryptedItemInterface<ItemContent>): Models.SNTag[] {
+  public getSortedTagsForItem(item: Models.DecryptedItemInterface<Models.ItemContent>): Models.SNTag[] {
     return naturalSort(
       this.itemsReferencingItem(item).filter((ref) => {
         return ref?.content_type === ContentType.Tag
@@ -1226,7 +1228,7 @@ export class ItemManager
       Models.FillItemContent({
         title,
         predicate: predicate.toJson(),
-        iconString: iconString || SmartViewDefaultIconName,
+        iconString: iconString || Models.SmartViewDefaultIconName,
       } as Models.SmartViewContent),
       true,
     ) as Promise<Models.SmartView>

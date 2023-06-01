@@ -262,6 +262,34 @@ export class AppContext {
     })
   }
 
+  resolveWhenItemCompletesAddingToGroup(targetItem) {
+    return new Promise((resolve) => {
+      const objectToSpy = this.groups
+      sinon.stub(objectToSpy, 'addItemToGroup').callsFake(async (groupUuid, item) => {
+        objectToSpy.addItemToGroup.restore()
+        const result = await objectToSpy.addItemToGroup(groupUuid, item)
+        if (item.uuid === targetItem.uuid) {
+          resolve()
+        }
+        return result
+      })
+    })
+  }
+
+  resolveWhenItemCompletesRemovingFromGroup(targetItem) {
+    return new Promise((resolve) => {
+      const objectToSpy = this.groups
+      sinon.stub(objectToSpy, 'removeItemFromGroup').callsFake(async (item) => {
+        objectToSpy.removeItemFromGroup.restore()
+        const result = await objectToSpy.removeItemFromGroup(item)
+        if (item.uuid === targetItem.uuid) {
+          resolve()
+        }
+        return result
+      })
+    })
+  }
+
   awaitUserPrefsSingletonCreation() {
     const preferences = this.application.preferencesService.preferences
     if (preferences) {

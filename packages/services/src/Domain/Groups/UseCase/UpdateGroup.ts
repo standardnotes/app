@@ -1,8 +1,8 @@
 import { ClientDisplayableError, GroupServerHash, isErrorResponse } from '@standardnotes/responses'
-import { GroupsServerInterface } from '@standardnotes/api'
+import { GroupServerInterface } from '@standardnotes/api'
 
 export class UpdateGroupUseCase {
-  constructor(private groupServer: GroupsServerInterface) {}
+  constructor(private groupServer: GroupServerInterface) {}
 
   async execute(params: {
     groupUuid: string

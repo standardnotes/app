@@ -46,14 +46,14 @@ import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
 import { log, LoggingDomain } from '../Logging'
-import { GroupMoveType, GroupsServer, GroupsServerInterface, HttpServiceInterface } from '@standardnotes/api'
+import { GroupMoveType, GroupServer, GroupServerInterface, HttpServiceInterface } from '@standardnotes/api'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 
 const OneHundredMb = 100 * 1_000_000
 
 export class FileService extends AbstractService implements FilesClientInterface {
   private encryptedCache: FileMemoryCache = new FileMemoryCache(OneHundredMb)
-  private groupServer: GroupsServerInterface
+  private groupServer: GroupServerInterface
 
   constructor(
     private api: FilesApiInterface,
@@ -69,7 +69,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     private backupsService?: BackupServiceInterface,
   ) {
     super(internalEventBus)
-    this.groupServer = new GroupsServer(http)
+    this.groupServer = new GroupServer(http)
   }
 
   override deinit(): void {
@@ -128,7 +128,7 @@ export class FileService extends AbstractService implements FilesClientInterface
   }
 
   public async moveFileToGroup(file: FileItem, groupUuid: string): Promise<void | ClientDisplayableError> {
-    const valetToken = await this.createGroupValetToken({
+    const valetTokenResult = await this.createGroupValetToken({
       groupUuid,
       remoteIdentifier: file.remoteIdentifier,
       operation: 'move',
@@ -136,11 +136,11 @@ export class FileService extends AbstractService implements FilesClientInterface
       moveOperationType: 'user-to-group',
     })
 
-    if (isClientDisplayableError(valetToken)) {
-      return valetToken
+    if (isClientDisplayableError(valetTokenResult)) {
+      return valetTokenResult
     }
 
-    const moveResult = await this.api.moveFile(valetToken)
+    const moveResult = await this.api.moveFile(valetTokenResult)
 
     if (!moveResult) {
       return new ClientDisplayableError('Could not move file')
@@ -152,7 +152,7 @@ export class FileService extends AbstractService implements FilesClientInterface
       return new ClientDisplayableError('File is not in a group')
     }
 
-    const valetToken = await this.createGroupValetToken({
+    const valetTokenResult = await this.createGroupValetToken({
       groupUuid: file.group_uuid,
       remoteIdentifier: file.remoteIdentifier,
       operation: 'move',
@@ -160,11 +160,11 @@ export class FileService extends AbstractService implements FilesClientInterface
       moveOperationType: 'group-to-user',
     })
 
-    if (isClientDisplayableError(valetToken)) {
-      return valetToken
+    if (isClientDisplayableError(valetTokenResult)) {
+      return valetTokenResult
     }
 
-    const moveResult = await this.api.moveFile(valetToken)
+    const moveResult = await this.api.moveFile(valetTokenResult)
 
     if (!moveResult) {
       return new ClientDisplayableError('Could not move file')

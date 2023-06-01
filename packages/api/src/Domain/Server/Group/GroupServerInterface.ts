@@ -12,7 +12,7 @@ import { AddItemToGroupResponse } from '../../Response/Group/AddItemToGroupRespo
 import { RemoveItemFromGroupParams } from '../../Request/Group/RemoveItemFromGroup'
 import { RemoveItemFromGroupResponse } from '../../Response/Group/RemoveItemFromGroupResponse'
 
-export interface GroupsServerInterface {
+export interface GroupServerInterface {
   getGroups(): Promise<HttpResponse<GetGroupsResponse>>
   getRemovedGroups(): Promise<HttpResponse<GetRemovedGroupsResponse>>
 

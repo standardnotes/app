@@ -10,8 +10,8 @@ export * from './Revision/RevisionServerInterface'
 export * from './Contact/ContactServer'
 export * from './Contact/ContactServerInterface'
 
-export * from './Group/GroupsServer'
-export * from './Group/GroupsServerInterface'
+export * from './Group/GroupServer'
+export * from './Group/GroupServerInterface'
 
 export * from './GroupUsers/GroupUsersServer'
 export * from './GroupUsers/GroupUsersServerInterface'
