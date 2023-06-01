@@ -763,6 +763,105 @@ describe('vault collaboration', function () {
   })
 
   describe('permissions', async () => {
+    it('should not be able to update a vault with a keyTimestamp lower than the current one', async () => {
+      const vault = await vaultService.createVault()
+      const vaultKey = vaultService.getPrimarySyncedVaultKeyCopy(vault.uuid)
+
+      const result = await vaultService.groupService.updateGroup({
+        groupUuid: 'todo',
+        specifiedItemsKeyUuid: '123',
+      })
+
+      expect(isClientDisplayableError(result)).to.be.true
+    })
+
+    it('attempting to save note to non-existent vault should result in GroupNotMemberError conflict', async () => {
+      const note = await context.createSyncedNote('foo', 'bar')
+
+      const promise = context.resolveWithConflicts()
+      const objectToSpy = application.sync
+
+      sinon.stub(objectToSpy, 'payloadsByPreparingForServer').callsFake(async (params) => {
+        objectToSpy.payloadsByPreparingForServer.restore()
+
+        const payloads = await objectToSpy.payloadsByPreparingForServer(params)
+        for (const payload of payloads) {
+          payload.vault_system_identifier = 'non-existent-vault-uuid-123'
+        }
+
+        return payloads
+      })
+
+      await context.changeNoteTitleAndSync(note, 'new-title')
+      const conflicts = await promise
+
+      expect(conflicts.length).to.equal(1)
+      expect(conflicts[0].type).to.equal(ConflictType.GroupNotMemberError)
+      expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
+    })
+
+    it('attempting to save item using an old vault items key should result in GroupInvalidItemsKey conflict', async () => {
+      const vault = await vaultService.createVault()
+
+      const note = await context.createSyncedNote('foo', 'bar')
+      await context.vaultService.addItemToVault(vault, note)
+
+      const oldVaultItemsKey = context.items.getAllVaultItemsKeysForVault(vault.uuid)[0]
+
+      await context.vaultService.rotateVaultKey(vault.uuid)
+
+      await context.vaultService.handleReceivedRemoteGroups([
+        {
+          ...vault,
+          specified_items_key_uuid: oldVaultItemsKey.uuid,
+        },
+      ])
+
+      const promise = context.resolveWithConflicts()
+      await context.changeNoteTitleAndSync(note, 'new title')
+      const conflicts = await promise
+
+      expect(conflicts.length).to.equal(1)
+      expect(conflicts[0].type).to.equal(ConflictType.GroupInvalidItemsKeyError)
+      expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
+    })
+
+    it("should use the cached group's specified items key when choosing which key to encrypt vault items with", async () => {
+      const vault = await vaultService.createVault()
+
+      const firstVaultItemsKey = context.items.getAllVaultItemsKeysForVault(vault.uuid)[0]
+
+      const note = await context.createSyncedNote('foo', 'bar')
+      const firstPromise = context.resolveWithUploadedPayloads()
+      await context.vaultService.addItemToVault(vault, note)
+      const firstUploadedPayloads = await firstPromise
+
+      expect(firstUploadedPayloads[0].items_key_id).to.equal(firstVaultItemsKey.uuid)
+      expect(firstUploadedPayloads[0].items_key_id).to.equal(vault.specified_items_key_uuid)
+
+      await context.vaultService.rotateVaultKey(vault.uuid)
+      const secondVaultItemsKey = context.items.getAllVaultItemsKeysForVault(vault.uuid)[0]
+
+      const secondPromise = context.resolveWithUploadedPayloads()
+      await context.changeNoteTitleAndSync(note, 'new title')
+      const secondUploadedPayloads = await secondPromise
+
+      expect(secondUploadedPayloads[0].items_key_id).to.equal(secondVaultItemsKey.uuid)
+
+      await context.vaultService.handleReceivedRemoteGroups([
+        {
+          ...vault,
+          specified_items_key_uuid: firstVaultItemsKey.uuid,
+        },
+      ])
+
+      const thirdPromise = context.resolveWithUploadedPayloads()
+      await context.changeNoteTitleAndSync(note, 'third new title')
+      const thirdUploadedPayloads = await thirdPromise
+
+      expect(thirdUploadedPayloads[0].items_key_id).to.equal(firstVaultItemsKey.uuid)
+    })
+
     it('non-admin user should not be able to create or update vault items keys with the server', async () => {
       const { vault, contactContext, deinitContactContext } = await createVaultWithAcceptedInvite()
 
@@ -952,6 +1051,48 @@ describe('vault collaboration', function () {
   describe('files', () => {
     beforeEach(async () => {
       await context.publicMockSubscriptionPurchaseEvent()
+    })
+
+    it('should be able to upload and download file to vault as owner', async () => {
+      const vault = await vaultService.createVault()
+      const response = await fetch('/mocha/assets/small_file.md')
+      const buffer = new Uint8Array(await response.arrayBuffer())
+      const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, vault.uuid)
+
+      const file = context.items.findItem(uploadedFile.uuid)
+      expect(file).to.not.be.undefined
+      expect(file.remoteIdentifier).to.equal(file.remoteIdentifier)
+      expect(file.vault_system_identifier).to.equal(vault.uuid)
+
+      const downloadedBytes = await Files.downloadFile(context.files, file)
+      expect(downloadedBytes).to.eql(buffer)
+    })
+
+    it('should be able to move a user file to a vault', async () => {
+      const response = await fetch('/mocha/assets/small_file.md')
+      const buffer = new Uint8Array(await response.arrayBuffer())
+
+      const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
+
+      const vault = await vaultService.createVault()
+      const addedFile = await vaultService.addItemToVault(vault, uploadedFile)
+
+      const downloadedBytes = await Files.downloadFile(context.files, addedFile)
+      expect(downloadedBytes).to.eql(buffer)
+    })
+
+    it('should be able to move a file out of its vault', async () => {
+      const response = await fetch('/mocha/assets/small_file.md')
+      const buffer = new Uint8Array(await response.arrayBuffer())
+
+      const vault = await vaultService.createVault()
+      const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, vault.uuid)
+
+      const removedFile = await vaultService.moveItemFromVaultToUser(uploadedFile)
+      expect(removedFile.vault_system_identifier).to.not.be.ok
+
+      const downloadedBytes = await Files.downloadFile(context.files, removedFile)
+      expect(downloadedBytes).to.eql(buffer)
     })
 
     it('should be able to download vault file as collaborator', async () => {
