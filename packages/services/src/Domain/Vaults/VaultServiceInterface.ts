@@ -9,7 +9,6 @@ export interface VaultServiceInterface extends AbstractService<VaultServiceEvent
   getVaultDisplayListings(): VaultDisplayListing[]
   deleteVault(vaultSystemIdentifier: string): Promise<boolean>
 
-  getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier: string): VaultKeyCopyInterface | undefined
   getVaultInfoForItem(item: DecryptedItemInterface): VaultKeyCopyContentSpecialized | undefined
   getVaultInfo(vaultSystemIdentifier: string): VaultKeyCopyContentSpecialized | undefined
 

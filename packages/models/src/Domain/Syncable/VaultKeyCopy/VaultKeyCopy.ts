@@ -27,7 +27,7 @@ export class VaultKeyCopy extends DecryptedItem<VaultKeyCopyContent> implements 
     this.vaultName = payload.content.vaultName
     this.vaultDescription = payload.content.vaultDescription
 
-    this.key = payload.content.vaultKey
+    this.key = payload.content.key
     this.keyTimestamp = payload.content.keyTimestamp
     this.keyVersion = payload.content.keyVersion
   }
@@ -47,6 +47,6 @@ export class VaultKeyCopy extends DecryptedItem<VaultKeyCopyContent> implements 
   }
 
   override get vault_system_identifier(): undefined {
-    throw new Error('VaultKeyCopy cannot have a vault_system_identifier')
+    return undefined
   }
 }

@@ -125,7 +125,7 @@ const Collaboration = () => {
           <Title>Vaults</Title>
           <div className="my-2 flex flex-col">
             {vaults.map((vault) => {
-              return <VaultItem vault={vault} key={vault.uuid} />
+              return <VaultItem vault={vault} key={vaultSystemIdentifier} />
             })}
           </div>
           <div className="mt-2.5 flex flex-row">

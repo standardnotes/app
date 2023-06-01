@@ -176,11 +176,13 @@ export class GroupService
   }
 
   private async automaticallyAddOrRemoveItemsFromGroupAfterChanges(items: DecryptedItemInterface[]): Promise<void> {
+    let needsSync = false
     for (const item of items) {
       if (item.vault_system_identifier && !item.group_uuid) {
         const group = this.groupsCache.getGroupForVaultSystemIdentifier(item.vault_system_identifier)
         if (group) {
           await this.addItemToGroup(group.uuid, item)
+          needsSync = true
         }
       }
 
@@ -188,11 +190,14 @@ export class GroupService
         const group = this.groupsCache.getGroup(item.group_uuid)
         if (group) {
           await this.removeItemFromGroup(item)
+          needsSync = true
         }
       }
     }
 
-    await this.sync.sync()
+    if (needsSync) {
+      await this.sync.sync()
+    }
   }
 
   public getGroupSharingVaultSystemIdentifier(vaultSystemIdentifier: string): GroupServerHash | undefined {
@@ -357,9 +362,12 @@ export class GroupService
     return true
   }
 
-  public reloadRemovedVaults(): Promise<void> {
-    const useCase = new ReloadRemovedUseCase(this.groupServer, this.items)
+  public async reloadRemovedVaults(): Promise<void> {
+    if (!this.session.isSignedIn()) {
+      return
+    }
 
+    const useCase = new ReloadRemovedUseCase(this.groupServer, this.items)
     return useCase.execute()
   }
 

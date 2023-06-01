@@ -22,8 +22,8 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
     contact: TrustedContact,
     permissions: GroupPermission,
   ): Promise<GroupInviteServerHash | ClientDisplayableError>
-  removeUserFromGroup(vaultSystemIdentifier: string, userUuid: string): Promise<ClientDisplayableError | void>
-  leaveGroup(vaultSystemIdentifier: string): Promise<ClientDisplayableError | void>
+  removeUserFromGroup(groupUuid: string, userUuid: string): Promise<ClientDisplayableError | void>
+  leaveGroup(groupUuid: string): Promise<ClientDisplayableError | void>
   getGroupUsers(vaultSystemIdentifier: string): Promise<GroupUserServerHash[] | undefined>
   isGroupUserOwnUser(user: GroupUserServerHash): boolean
 

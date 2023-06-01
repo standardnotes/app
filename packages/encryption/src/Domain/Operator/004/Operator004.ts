@@ -81,7 +81,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
   }): VaultKeyCopyContentSpecialized {
     return {
       vaultSystemIdentifier: params.vaultSystemIdentifier,
-      vaultKey: this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength),
+      key: this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength),
       keyTimestamp: new Date().getTime(),
       keyVersion: ProtocolVersion.V004,
       vaultName: params.vaultName,

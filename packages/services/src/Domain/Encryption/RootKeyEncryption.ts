@@ -504,7 +504,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     if (payload.vault_system_identifier || ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
       if (!payload.vault_system_identifier) {
         throw Error(
-          `Attempting to encrypt vault payload ${payload.content_type} but the payload is missing a vault uuid`,
+          `Attempting to encrypt vaulted payload ${payload.content_type} but the payload is missing a vault_system_identifier`,
         )
       }
       key = this.items.getPrimarySyncedVaultKeyCopy(payload.vault_system_identifier)

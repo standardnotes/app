@@ -8,14 +8,14 @@ export class RotateVaultKeyUseCase {
   constructor(private items: ItemManagerInterface, private encryption: EncryptionProviderInterface) {}
 
   async execute(params: { vaultSystemIdentifier: string }): Promise<undefined | ClientDisplayableError[]> {
-    const vaultKey = this.items.getPrimarySyncedVaultKeyCopy(params.vaultSystemIdentifier)
-    if (!vaultKey) {
+    const vaultKeyCopy = this.items.getPrimarySyncedVaultKeyCopy(params.vaultSystemIdentifier)
+    if (!vaultKeyCopy) {
       throw new Error('Cannot rotate vault key; vault key not found')
     }
 
     const newVaultKeyContent = this.encryption.createVaultKeyContent({
       vaultSystemIdentifier: params.vaultSystemIdentifier,
-      vaultName: vaultKey.vaultName,
+      vaultName: vaultKeyCopy.vaultName,
     })
     const createVaultKey = new CreateVaultKeyUseCase(this.items)
     await createVaultKey.execute(newVaultKeyContent)

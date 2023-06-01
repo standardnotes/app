@@ -13,7 +13,7 @@ type Props = {
 
 const VaultItem = ({ vault }: Props) => {
   const application = useApplication()
-  const vaultKey = application.vaults.getPrimarySyncedVaultKeyCopy(vault.uuid)
+  const vaultKeyCopy = application.vaults.getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier)
 
   const [isInviteModalOpen, setIsAddContactModalOpen] = useState(false)
   const closeInviteModal = () => setIsAddContactModalOpen(false)
@@ -21,23 +21,23 @@ const VaultItem = ({ vault }: Props) => {
   const [isVaultModalOpen, setIsVaultModalOpen] = useState(false)
   const closeVaultModal = () => setIsVaultModalOpen(false)
 
-  const isAdmin = application.vaults.isUserGroupAdmin(vault.uuid)
+  const isAdmin = application.vaults.isUserGroupAdmin(vaultSystemIdentifier)
 
   const deleteVault = useCallback(async () => {
-    const success = await application.vaults.deleteVault(vault.uuid)
+    const success = await application.vaults.deleteVault(vaultSystemIdentifier)
     if (!success) {
       void application.alertService.alert('Unable to delete vault. Please try again.')
     }
-  }, [application.alertService, application.vaults, vault.uuid])
+  }, [application.alertService, application.vaults, vaultSystemIdentifier])
 
   const leaveGroup = useCallback(async () => {
-    const success = await application.vaults.leaveGroup(vault.uuid)
+    const success = await application.vaults.leaveGroup(groupUuid)
     if (!success) {
       void application.alertService.alert('Unable to leave vault. Please try again.')
     }
-  }, [application.alertService, application.vaults, vault.uuid])
+  }, [application.alertService, application.vaults, vaultSystemIdentifier])
 
-  if (!vaultKey) {
+  if (!vaultKeyCopy) {
     return <div>Unable to locate vault information.</div>
   }
 
@@ -48,15 +48,15 @@ const VaultItem = ({ vault }: Props) => {
       </ModalOverlay>
 
       <ModalOverlay isOpen={isVaultModalOpen} close={closeVaultModal}>
-        <EditVaultModal existingVaultUuid={vault.uuid} onCloseDialog={closeVaultModal} />
+        <EditVaultModal existingVaultUuid={vaultSystemIdentifier} onCloseDialog={closeVaultModal} />
       </ModalOverlay>
 
       <div className="bg-gray-100 flex flex-row gap-3.5 rounded-lg py-2.5 px-3.5 shadow-md">
         <Icon type={'safe-square'} size="custom" className="mt-2.5 h-5.5 w-5.5 flex-shrink-0" />
         <div className="flex flex-col gap-2 py-1.5">
-          <span className="mr-auto overflow-hidden text-ellipsis text-base font-bold">{vaultKey.vaultName}</span>
-          <span className="mr-auto overflow-hidden text-ellipsis text-sm">{vaultKey.vaultDescription}</span>
-          <span className="mr-auto overflow-hidden text-ellipsis text-sm">Vault ID: {vault.uuid}</span>
+          <span className="mr-auto overflow-hidden text-ellipsis text-base font-bold">{vaultKeyCopy.vaultName}</span>
+          <span className="mr-auto overflow-hidden text-ellipsis text-sm">{vaultKeyCopy.vaultDescription}</span>
+          <span className="mr-auto overflow-hidden text-ellipsis text-sm">Vault ID: {vaultSystemIdentifier}</span>
 
           <div className="mt-2.5 flex flex-row">
             <Button label="Edit" className={'mr-3 text-xs'} onClick={() => setIsVaultModalOpen(true)} />

@@ -5,7 +5,8 @@ export type VaultKeyCopyContentSpecialized = {
   vaultSystemIdentifier: string
   vaultName: string
   vaultDescription?: string
-  vaultKey: string
+
+  key: string
   keyTimestamp: number
   keyVersion: ProtocolVersion
 }

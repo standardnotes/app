@@ -87,8 +87,8 @@ export class HandleSuccessfullyChangedCredentials {
       return undefined
     }
 
-    const vaultKey = this.items.getPrimarySyncedVaultKeyCopy(params.group.vault_system_identifier)
-    if (!vaultKey) {
+    const vaultKeyCopy = this.items.getPrimarySyncedVaultKeyCopy(params.group.vault_system_identifier)
+    if (!vaultKeyCopy) {
       return ClientDisplayableError.FromString('Failed to find vault key for invite')
     }
 
@@ -98,7 +98,7 @@ export class HandleSuccessfullyChangedCredentials {
     }
 
     const newEncryptedVaultData = this.encryption.encryptVaultKeyContentWithRecipientPublicKey(
-      vaultKey.content,
+      vaultKeyCopy.content,
       params.newPrivateKey,
       trustedContact.publicKey,
     )

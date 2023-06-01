@@ -25,13 +25,13 @@ export class AddContactToGroupUseCase {
     contact: TrustedContactInterface
     permissions: GroupPermission
   }): Promise<GroupInviteServerHash | ClientDisplayableError> {
-    const vaultKey = this.items.getPrimarySyncedVaultKeyCopy(params.group.vault_system_identifier)
-    if (!vaultKey) {
+    const vaultKeyCopy = this.items.getPrimarySyncedVaultKeyCopy(params.group.vault_system_identifier)
+    if (!vaultKeyCopy) {
       return ClientDisplayableError.FromString('Cannot add contact; vault key not found')
     }
 
     const encryptedVaultKeyContent = this.encryption.encryptVaultKeyContentWithRecipientPublicKey(
-      vaultKey.content,
+      vaultKeyCopy.content,
       params.inviterPrivateKey,
       params.contact.publicKey,
     )

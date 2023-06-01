@@ -49,7 +49,7 @@ export class AppContext {
     )
   }
 
-  get vaultService() {
+  get vaults() {
     return this.application.vaultService
   }
 
@@ -65,8 +65,8 @@ export class AppContext {
     return this.application.contactService
   }
 
-  get collaboration() {
-    return this.vaultService.collaboration
+  get groups() {
+    return this.application.groupService
   }
 
   get files() {
@@ -74,11 +74,11 @@ export class AppContext {
   }
 
   get publicKey() {
-    return this.vaultService.userPublicKey
+    return this.vaults.userPublicKey
   }
 
   get privateKey() {
-    return this.vaultService.userPrivateKey
+    return this.vaults.userPrivateKey
   }
 
   ignoreChallenges() {

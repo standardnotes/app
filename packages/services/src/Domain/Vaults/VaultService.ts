@@ -58,15 +58,15 @@ export class VaultService
   getVaultDisplayListings(): VaultDisplayListing[] {
     const vaultKeyCopies = this.items.getItems<VaultKeyCopyInterface>(ContentType.VaultKeyCopy)
     const primaries: Record<string, VaultKeyCopyInterface> = {}
-    for (const vaultKey of vaultKeyCopies) {
-      if (!vaultKey.vault_system_identifier) {
+    for (const vaultKeyCopy of vaultKeyCopies) {
+      if (!vaultKeyCopy.vault_system_identifier) {
         throw new Error('Vault key copy does not have vault system identifier')
       }
-      const primary = this.items.getPrimarySyncedVaultKeyCopy(vaultKey.vault_system_identifier)
+      const primary = this.items.getPrimarySyncedVaultKeyCopy(vaultKeyCopy.vault_system_identifier)
       if (!primary) {
         throw new Error('Vault key copy does not have primary')
       }
-      primaries[vaultKey.vault_system_identifier] = primary
+      primaries[vaultKeyCopy.vault_system_identifier] = primary
     }
 
     return Object.values(primaries).map((primary) => {
@@ -128,15 +128,18 @@ export class VaultService
     vaultSystemIdentifier: string,
     params: { name: string; description?: string },
   ): Promise<VaultKeyCopyInterface> {
-    const vaultKey = this.items.getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier)
-    if (!vaultKey) {
+    const vaultKeyCopy = this.items.getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier)
+    if (!vaultKeyCopy) {
       throw new Error('Cannot change vault metadata; vault key not found')
     }
 
-    const updatedVaultKey = await this.items.changeItem<VaultKeyMutator, VaultKeyCopyInterface>(vaultKey, (mutator) => {
-      mutator.vaultName = params.name
-      mutator.vaultDescription = params.description
-    })
+    const updatedVaultKey = await this.items.changeItem<VaultKeyMutator, VaultKeyCopyInterface>(
+      vaultKeyCopy,
+      (mutator) => {
+        mutator.vaultName = params.name
+        mutator.vaultDescription = params.description
+      },
+    )
 
     await this.sync.sync()
 
@@ -156,10 +159,6 @@ export class VaultService
     await this.sync.sync()
   }
 
-  getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier: string): VaultKeyCopyInterface | undefined {
-    return this.items.getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier)
-  }
-
   getVaultInfoForItem(item: DecryptedItemInterface): VaultKeyCopyContentSpecialized | undefined {
     if (!item.vault_system_identifier) {
       return undefined
@@ -169,7 +168,7 @@ export class VaultService
   }
 
   getVaultInfo(vaultSystemIdentifier: string): VaultKeyCopyContentSpecialized | undefined {
-    return this.getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier)?.content
+    return this.items.getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier)?.content
   }
 
   isItemInVault(item: DecryptedItemInterface): boolean {
