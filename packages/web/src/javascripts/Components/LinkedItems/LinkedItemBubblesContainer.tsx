@@ -18,9 +18,10 @@ type Props = {
   linkingController: LinkingController
   item: DecryptedItemInterface
   hideToggle?: boolean
+  readonly?: boolean
 }
 
-const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = false }: Props) => {
+const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = false, readonly = false }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
   const commandService = useCommandService()
@@ -113,18 +114,23 @@ const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = fals
   const nonVisibleItems = itemsToDisplay.length - visibleItems.length
 
   const [canShowContainerToggle, setCanShowContainerToggle] = useState(false)
-  const linkInputRef = useRef<HTMLInputElement>(null)
   const linkContainerRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     const container = linkContainerRef.current
-    const linkInput = linkInputRef.current
-
-    if (!container || !linkInput) {
+    if (!container) {
       return
     }
 
     const resizeObserver = new ResizeObserver(() => {
-      if (container.clientHeight > linkInput.clientHeight) {
+      const firstChild = container.firstElementChild
+      if (!firstChild) {
+        return
+      }
+
+      const threshold = firstChild.clientHeight + 4
+      const didWrap = container.clientHeight > threshold
+
+      if (didWrap) {
         setCanShowContainerToggle(true)
       } else {
         setCanShowContainerToggle(false)
@@ -167,18 +173,20 @@ const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = fals
             focusedId={focusedId}
             setFocusedId={setFocusedId}
             isBidirectional={isItemBidirectionallyLinked(link)}
+            readonly={readonly}
           />
         ))}
         {isCollapsed && nonVisibleItems > 0 && <span className="flex-shrink-0">and {nonVisibleItems} more...</span>}
-        <ItemLinkAutocompleteInput
-          focusedId={focusedId}
-          linkingController={linkingController}
-          focusPreviousItem={focusPreviousItem}
-          setFocusedId={setFocusedId}
-          hoverLabel={`Focus input to add a link (${shortcut})`}
-          item={item}
-          ref={linkInputRef}
-        />
+        {!readonly && (
+          <ItemLinkAutocompleteInput
+            focusedId={focusedId}
+            linkingController={linkingController}
+            focusPreviousItem={focusPreviousItem}
+            setFocusedId={setFocusedId}
+            hoverLabel={`Focus input to add a link (${shortcut})`}
+            item={item}
+          />
+        )}
       </div>
       {itemsToDisplay.length > 0 && !shouldHideToggle && (
         <RoundIconButton
@@ -188,6 +196,7 @@ const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = fals
             setIsCollapsed((isCollapsed) => !isCollapsed)
           }}
           icon={isCollapsed ? 'chevron-down' : 'chevron-left'}
+          className="ml-2"
         />
       )}
     </div>

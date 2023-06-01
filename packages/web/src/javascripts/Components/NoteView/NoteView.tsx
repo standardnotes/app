@@ -47,7 +47,7 @@ import { PlainEditor, PlainEditorInterface } from './PlainEditor/PlainEditor'
 import { EditorMargins, EditorMaxWidths } from '../EditorWidthSelectionModal/EditorWidths'
 import Button from '../Button/Button'
 import ModalOverlay from '../Modal/ModalOverlay'
-import ConflictedNotesModal from './ConflictedNotesModal'
+import NoteConflictResolutionModal from './NoteConflictResolutionModal'
 
 const MinimumStatusDuration = 400
 
@@ -1046,7 +1046,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         </div>
 
         <ModalOverlay isOpen={this.state.showConflictResolutionModal} close={this.toggleConflictResolutionModal}>
-          <ConflictedNotesModal
+          <NoteConflictResolutionModal
             currentNote={this.note}
             conflictedNotes={this.state.conflictedNotes}
             close={this.toggleConflictResolutionModal}

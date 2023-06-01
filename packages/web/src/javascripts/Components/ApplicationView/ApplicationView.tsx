@@ -143,7 +143,7 @@ const ApplicationView: FunctionComponent<Props> = ({ application, mainApplicatio
     const removeObserver = application.addWebEventObserver(async (eventName) => {
       if (eventName === WebAppEvent.WindowDidFocus) {
         if (!(await application.isLocked())) {
-          // application.sync.sync().catch(console.error)
+          application.sync.sync().catch(console.error)
         }
       }
     })
