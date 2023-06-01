@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.59.11](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.10...@standardnotes/services@1.59.11) (2023-05-31)
+
+### Bug Fixes
+
+* **desktop:** Fixed issue where local backup location would default to "[object Promise]" ([7d691aa](https://github.com/standardnotes/app/commit/7d691aa409af3636ad795491b8b817d9eb7a980d))
+
 ## [1.59.10](https://github.com/standardnotes/app/compare/@standardnotes/services@1.59.9...@standardnotes/services@1.59.10) (2023-05-22)
 
 **Note:** Version bump only for package @standardnotes/services

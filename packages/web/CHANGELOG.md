@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.160.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.18...@standardnotes/web@3.160.19) (2023-05-31)
+
+### Bug Fixes
+
+* **desktop:** Fixed issue where local backup location would default to "[object Promise]" ([7d691aa](https://github.com/standardnotes/app/commit/7d691aa409af3636ad795491b8b817d9eb7a980d))
+
 ## [3.160.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.17...@standardnotes/web@3.160.18) (2023-05-30)
 
 ### Bug Fixes
