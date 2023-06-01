@@ -192,7 +192,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   private eventHandlers: ApplicationObserver[] = []
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private services: ExternalServices.ServiceInterface<any, any>[] = []
+  private services: ExternalServices.ApplicationServiceInterface<any, any>[] = []
   private streamRemovers: ObserverRemover[] = []
   private serviceObservers: ObserverRemover[] = []
   private managedSubscribers: ObserverRemover[] = []

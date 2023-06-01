@@ -1,7 +1,6 @@
 import { SettingData } from '@standardnotes/responses'
 import {
   MuteSignInEmailsOption,
-  MuteFailedCloudBackupsEmailsOption,
   MuteFailedBackupsEmailsOption,
   EmailBackupFrequency,
   ListedAuthorSecretsData,
@@ -15,7 +14,6 @@ type SettingType =
   | ListedAuthorSecretsData
   | LogSessionUserAgentOption
   | MuteFailedBackupsEmailsOption
-  | MuteFailedCloudBackupsEmailsOption
   | MuteSignInEmailsOption
   | MuteMarketingEmailsOption
 

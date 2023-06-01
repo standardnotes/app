@@ -385,6 +385,10 @@ export class FilesBackupManager implements FileBackupsDevice {
       const watcher = fs.watch(backupsDirectory, { recursive: true })
       for await (const event of watcher) {
         const { eventType, filename } = event
+        if (!filename) {
+          continue
+        }
+
         if (eventType !== 'change' && eventType !== 'rename') {
           continue
         }

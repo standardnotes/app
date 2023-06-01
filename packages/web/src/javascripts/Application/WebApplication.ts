@@ -84,8 +84,12 @@ export class WebApplication extends SNApplication implements WebApplicationInter
         deviceInterface.environment === Environment.Mobile ? 250 : ApplicationOptionsDefaults.sleepBetweenBatches,
       allowMultipleSelection: deviceInterface.environment !== Environment.Mobile,
       allowNoteSelectionStatePersistence: deviceInterface.environment !== Environment.Mobile,
-      u2fAuthenticatorRegistrationPromptFunction: startRegistration,
-      u2fAuthenticatorVerificationPromptFunction: startAuthentication,
+      u2fAuthenticatorRegistrationPromptFunction: startRegistration as unknown as (
+        registrationOptions: Record<string, unknown>,
+      ) => Promise<Record<string, unknown>>,
+      u2fAuthenticatorVerificationPromptFunction: startAuthentication as unknown as (
+        authenticationOptions: Record<string, unknown>,
+      ) => Promise<Record<string, unknown>>,
     })
 
     makeObservable(this, {

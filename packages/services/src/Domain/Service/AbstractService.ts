@@ -2,14 +2,14 @@
 
 import { log, removeFromArray } from '@standardnotes/utils'
 import { EventObserver } from '../Event/EventObserver'
-import { ServiceInterface } from './ServiceInterface'
+import { ApplicationServiceInterface } from './ApplicationServiceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { ApplicationStage } from '../Application/ApplicationStage'
 import { InternalEventPublishStrategy } from '../Internal/InternalEventPublishStrategy'
 import { DiagnosticInfo } from '../Diagnostics/ServiceDiagnostics'
 
 export abstract class AbstractService<EventName = string, EventData = undefined>
-  implements ServiceInterface<EventName, EventData>
+  implements ApplicationServiceInterface<EventName, EventData>
 {
   private eventObservers: EventObserver<EventName, EventData>[] = []
   public loggingEnabled = false
