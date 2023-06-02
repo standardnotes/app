@@ -43,7 +43,7 @@ const ConflictListItem = ({
         <RadioIndicator checked={isSelected} className="mr-2" />
         <div className="font-semibold">{title}</div>
       </div>
-      <NoteAttributes application={application} note={note} className="!p-0" />
+      <NoteAttributes application={application} note={note} className="!p-0" hideReadTime />
     </button>
   )
 }

@@ -7,8 +7,9 @@ import { countNoteAttributes } from './Utils/countNoteAttributes'
 export const NoteAttributes: FunctionComponent<{
   application: SNApplication
   note: SNNote
+  hideReadTime?: boolean
   className?: string
-}> = ({ application, note, className }) => {
+}> = ({ application, note, hideReadTime = false, className }) => {
   const { words, characters, paragraphs } = useMemo(() => countNoteAttributes(note.text), [note.text])
 
   const readTime = useMemo(() => (typeof words === 'number' ? calculateReadTime(words) : 'N/A'), [words])
@@ -27,9 +28,11 @@ export const NoteAttributes: FunctionComponent<{
           <div className="mb-1">
             {words} words · {characters} characters · {paragraphs} paragraphs
           </div>
-          <div className="mb-1">
-            <span className="font-semibold">Read time:</span> {readTime}
-          </div>
+          {!hideReadTime && (
+            <div className="mb-1">
+              <span className="font-semibold">Read time:</span> {readTime}
+            </div>
+          )}
         </>
       ) : null}
       <div className="mb-1">
