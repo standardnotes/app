@@ -78,7 +78,7 @@ type State = {
   editorFeatureIdentifier?: string
   noteType?: NoteType
 
-  conflictedNotes: Set<SNNote>
+  conflictedNotes: SNNote[]
   showConflictResolutionModal: boolean
 }
 
@@ -127,7 +127,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
       syncTakingTooLong: false,
       editorFeatureIdentifier: this.controller.item.editorIdentifier,
       noteType: this.controller.item.noteType,
-      conflictedNotes: new Set(),
+      conflictedNotes: [],
       showConflictResolutionModal: false,
     }
 
@@ -441,16 +441,16 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             continue
           }
 
-          if (note.conflictOf === this.note.uuid) {
+          if (note.conflictOf === this.note.uuid && !note.trashed) {
             this.setState((state) => ({
-              conflictedNotes: state.conflictedNotes.add(note),
+              conflictedNotes: state.conflictedNotes
+                .filter((conflictedNote) => conflictedNote.uuid !== note.uuid)
+                .concat([note]),
             }))
           } else {
             this.setState((state) => {
-              const conflictedNotes = new Set(state.conflictedNotes)
-              conflictedNotes.delete(note)
               return {
-                conflictedNotes,
+                conflictedNotes: state.conflictedNotes.filter((conflictedNote) => conflictedNote.uuid !== note.uuid),
               }
             })
           }
@@ -462,10 +462,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
           }
 
           this.setState((state) => {
-            const conflictedNotes = new Set(state.conflictedNotes)
-            conflictedNotes.delete(note)
             return {
-              conflictedNotes,
+              conflictedNotes: state.conflictedNotes.filter((conflictedNote) => conflictedNote.uuid !== note.uuid),
             }
           })
         }
@@ -909,10 +907,10 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                   updateSavingIndicator={this.state.updateSavingIndicator}
                 />
               </div>
-              {this.state.conflictedNotes.size > 0 && (
+              {this.state.conflictedNotes.length > 0 && (
                 <Button primary colorStyle="danger" small onClick={this.toggleConflictResolutionModal}>
-                  {this.state.conflictedNotes.size}{' '}
-                  {pluralize(this.state.conflictedNotes.size, 'conflict', 'conflicts')}
+                  {this.state.conflictedNotes.length}{' '}
+                  {pluralize(this.state.conflictedNotes.length, 'conflict', 'conflicts')}
                 </Button>
               )}
               {renderHeaderOptions && (

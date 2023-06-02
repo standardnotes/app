@@ -1,6 +1,6 @@
 import { ContentType, NoteType, SNNote, classNames } from '@standardnotes/snjs'
 import Modal, { ModalAction } from '../Modal/Modal'
-import { ReactNode, useEffect, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import RadioIndicator from '../Radio/RadioIndicator'
@@ -11,6 +11,8 @@ import { BlocksEditor } from '../SuperEditor/BlocksEditor'
 import { BlocksEditorComposer } from '../SuperEditor/BlocksEditorComposer'
 import { useLinkingController } from '@/Controllers/LinkingControllerProvider'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
+import { StringUtils, Strings } from '@/Constants/Strings'
+import { confirmDialog } from '@standardnotes/ui-services'
 
 const ListItem = ({
   children,
@@ -117,9 +119,10 @@ const NoteConflictResolutionModal = ({
   close,
 }: {
   currentNote: SNNote
-  conflictedNotes: Set<SNNote>
+  conflictedNotes: SNNote[]
   close: () => void
 }) => {
+  const application = useApplication()
   const [selectedVersion, setSelectedVersion] = useState(currentNote.uuid)
 
   const selectedNote = useMemo(() => {
@@ -129,6 +132,31 @@ const NoteConflictResolutionModal = ({
 
     return [...conflictedNotes].find((note) => note.uuid === selectedVersion)
   }, [conflictedNotes, currentNote, selectedVersion])
+
+  const trashSelectedNote = useCallback(async () => {
+    if (!selectedNote) {
+      return
+    }
+
+    const confirmDialogTitle = Strings.trashItemsTitle
+    const confirmDialogText = StringUtils.deleteNotes(false, 1, `'${selectedNote.title}'`)
+
+    if (
+      await confirmDialog({
+        title: confirmDialogTitle,
+        text: confirmDialogText,
+        confirmButtonStyle: 'danger',
+      })
+    ) {
+      await application.mutator
+        .changeItem(selectedNote, (mutator) => {
+          mutator.trashed = true
+          mutator.conflictOf = undefined
+        })
+        .catch(console.error)
+      setSelectedVersion(currentNote.uuid)
+    }
+  }, [application.mutator, currentNote.uuid, selectedNote])
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const actions = useMemo(
@@ -140,13 +168,19 @@ const NoteConflictResolutionModal = ({
         mobileSlot: 'left',
       },
       {
+        label: 'Delete',
+        onClick: trashSelectedNote,
+        type: 'destructive',
+        mobileSlot: 'left',
+      },
+      {
         label: isMobileScreen ? 'Choose' : 'Choose version',
         onClick: close,
         type: 'primary',
         mobileSlot: 'right',
       },
     ],
-    [close, isMobileScreen],
+    [close, isMobileScreen, trashSelectedNote],
   )
 
   return (
