@@ -30,9 +30,11 @@ const ItemSelectionDropdown = ({ contentTypes, placeholder, onSelection, combobo
   const combobox = useComboboxStore(comboboxProps)
   const value = combobox.useState('value')
   const open = combobox.useState('open')
-  if (value.length < 1 && open) {
-    combobox.setOpen(false)
-  }
+  useEffect(() => {
+    if (value.length < 1 && open) {
+      combobox.setOpen(false)
+    }
+  }, [combobox, open, value.length])
 
   const searchQuery = useDeferredValue(value)
   const [items, setItems] = useState<DecryptedItem[]>([])

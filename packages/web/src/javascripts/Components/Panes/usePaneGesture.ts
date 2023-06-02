@@ -36,8 +36,12 @@ const supportsPassive = (() => {
 export const usePaneSwipeGesture = (
   direction: 'left' | 'right',
   onSwipeEnd: (element: HTMLElement) => void,
-  gesture: 'pan' | 'swipe' = 'pan',
+  options?: {
+    gesture?: 'swipe' | 'pan'
+    requiresStartFromEdge?: boolean
+  },
 ) => {
+  const { gesture = 'pan', requiresStartFromEdge = true } = options || {}
   const application = useApplication()
 
   const underlayElementRef = useRef<HTMLElement | null>(null)
@@ -74,12 +78,15 @@ export const usePaneSwipeGesture = (
     underlayElementRef.current = element.parentElement?.querySelector(`[data-pane-underlay="${element.id}"]`) || null
 
     let startX = 0
+    let startTimestamp = Date.now()
     let clientX = 0
+    let moveTimestamp = startTimestamp
     let closestScrollContainer: HTMLElement | null
     let scrollContainerAxis: 'x' | 'y' | null = null
+    let scrollContainerInitialOverflowY: string | null = null
     let canceled = false
 
-    const TouchMoveThreshold = 25
+    const TouchMoveThreshold = requiresStartFromEdge ? 25 : 45
     const TouchStartThreshold = direction === 'right' ? 25 : window.innerWidth - 25
     const SwipeFinishThreshold = window.innerWidth / 2.5
 
@@ -94,22 +101,29 @@ export const usePaneSwipeGesture = (
     }
 
     const touchStartListener = (event: TouchEvent) => {
+      startX = 0
+      clientX = 0
+      startTimestamp = Date.now()
+      moveTimestamp = startTimestamp
       scrollContainerAxis = null
+      scrollContainerInitialOverflowY = null
       canceled = false
 
       const touch = event.touches[0]
       startX = touch.clientX
 
-      if (
+      const isStartOutOfThreshold =
         (direction === 'right' && startX > TouchStartThreshold) ||
         (direction === 'left' && startX < TouchStartThreshold)
-      ) {
+
+      if (isStartOutOfThreshold && requiresStartFromEdge) {
         canceled = true
         return
       }
 
       closestScrollContainer = getScrollParent(event.target as HTMLElement)
       if (closestScrollContainer) {
+        scrollContainerInitialOverflowY = closestScrollContainer.style.overflowY
         closestScrollContainer.addEventListener('scroll', scrollListener, supportsPassive ? { passive: true } : false)
 
         if (closestScrollContainer.scrollWidth > closestScrollContainer.clientWidth) {
@@ -186,15 +200,23 @@ export const usePaneSwipeGesture = (
 
       const touch = event.touches[0]
       clientX = touch.clientX
+      moveTimestamp = Date.now()
 
       const deltaX = clientX - startX
 
-      if (Math.abs(deltaX) < TouchMoveThreshold) {
+      if (deltaX < TouchMoveThreshold) {
         return
       }
 
-      if (closestScrollContainer && closestScrollContainer.style.overflowY !== 'hidden') {
+      const timestampDelta = moveTimestamp - startTimestamp
+      const canDisableScroll = requiresStartFromEdge || (timestampDelta > 150 && clientX > TouchStartThreshold)
+
+      if (closestScrollContainer && closestScrollContainer.style.overflowY !== 'hidden' && canDisableScroll) {
         closestScrollContainer.style.overflowY = 'hidden'
+      }
+
+      if (document.activeElement) {
+        ;(document.activeElement as HTMLElement).blur()
       }
 
       if (adjustedGesture === 'pan') {
@@ -230,7 +252,9 @@ export const usePaneSwipeGesture = (
     const touchEndListener = () => {
       if (closestScrollContainer) {
         closestScrollContainer.removeEventListener('scroll', scrollListener)
-        closestScrollContainer.style.overflowY = ''
+        if (closestScrollContainer.style.overflowY === 'hidden') {
+          closestScrollContainer.style.overflowY = scrollContainerInitialOverflowY || ''
+        }
       }
 
       if (canceled) {
@@ -265,7 +289,7 @@ export const usePaneSwipeGesture = (
       element.removeEventListener('touchend', touchEndListener)
       disposeUnderlay()
     }
-  }, [direction, element, isMobileScreen, onSwipeEndRef, isEnabled, adjustedGesture])
+  }, [direction, element, isMobileScreen, onSwipeEndRef, isEnabled, adjustedGesture, requiresStartFromEdge])
 
   return [setElement]
 }

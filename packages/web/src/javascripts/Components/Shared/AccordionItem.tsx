@@ -1,6 +1,7 @@
 import { FunctionComponent, ReactNode, useRef, useState } from 'react'
 import { ArrowDownCheckmarkIcon } from '@standardnotes/icons'
 import { Title } from '@/Components/Preferences/PreferencesComponents/Content'
+import { classNames } from '@standardnotes/snjs'
 
 type Props = {
   title: string | JSX.Element
@@ -21,12 +22,7 @@ const AccordionItem: FunctionComponent<Props> = ({ title, className = '', childr
         }}
       >
         <Title>{title}</Title>
-        <ArrowDownCheckmarkIcon
-          className="sn-accordion-arrow-icon"
-          width={20}
-          height={20}
-          data-is-expanded={isExpanded}
-        />
+        <ArrowDownCheckmarkIcon className={classNames('h-5 w-5 text-info', isExpanded && 'rotate-180')} />
       </div>
       <div className={'accordion-contents-container cursor-auto'} data-is-expanded={isExpanded} ref={elementRef}>
         {children}

@@ -1,8 +1,8 @@
 import { LexicalIconName } from '@/Components/Icon/LexicalIcons'
-import { TypeaheadOption } from '@lexical/react/LexicalTypeaheadMenuPlugin'
+import { MenuOption } from '@lexical/react/LexicalTypeaheadMenuPlugin'
 import { IconType } from '@standardnotes/snjs'
 
-export class BlockPickerOption extends TypeaheadOption {
+export class BlockPickerOption extends MenuOption {
   title: string
   iconName: IconType | LexicalIconName
   keywords: Array<string>

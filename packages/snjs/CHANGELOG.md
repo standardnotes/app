@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.168.19](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.18...@standardnotes/snjs@2.168.19) (2023-05-31)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.18](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.17...@standardnotes/snjs@2.168.18) (2023-05-26)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.17](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.16...@standardnotes/snjs@2.168.17) (2023-05-25)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.16](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.15...@standardnotes/snjs@2.168.16) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.15](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.14...@standardnotes/snjs@2.168.15) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.14](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.13...@standardnotes/snjs@2.168.14) (2023-05-19)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.13](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.12...@standardnotes/snjs@2.168.13) (2023-05-18)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.12](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.11...@standardnotes/snjs@2.168.12) (2023-05-18)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.11](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.10...@standardnotes/snjs@2.168.11) (2023-05-16)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.10](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.9...@standardnotes/snjs@2.168.10) (2023-05-16)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
+## [2.168.9](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.8...@standardnotes/snjs@2.168.9) (2023-05-12)
+
+**Note:** Version bump only for package @standardnotes/snjs
+
 ## [2.168.8](https://github.com/standardnotes/app/compare/@standardnotes/snjs@2.168.7...@standardnotes/snjs@2.168.8) (2023-05-11)
 
 **Note:** Version bump only for package @standardnotes/snjs

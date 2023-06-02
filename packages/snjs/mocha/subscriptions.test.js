@@ -49,7 +49,7 @@ describe('subscriptions', function () {
     await Factory.sleep(2)
   })
 
-  it('should invite a user by email to a shared subscription', async () => {
+  it('should invite a user by email to a shared subscription - @paidfeature', async () => {
     await subscriptionManager.inviteToSubscription('test@test.te')
 
     const existingInvites = await subscriptionManager.listSubscriptionInvitations()
@@ -59,7 +59,7 @@ describe('subscriptions', function () {
     expect(newlyCreatedInvite.status).to.equal('sent')
   })
 
-  it('should not invite a user by email if the limit of shared subscription is breached', async () => {
+  it('should not invite a user by email if the limit of shared subscription is breached - @paidfeature', async () => {
     await subscriptionManager.inviteToSubscription('test1@test.te')
     await subscriptionManager.inviteToSubscription('test2@test.te')
     await subscriptionManager.inviteToSubscription('test3@test.te')
@@ -77,7 +77,7 @@ describe('subscriptions', function () {
     expect(existingInvites.length).to.equal(5)
   })
 
-  it('should cancel a user invitation to a shared subscription', async () => {
+  it('should cancel a user invitation to a shared subscription - @paidfeature', async () => {
     await subscriptionManager.inviteToSubscription('test@test.te')
     await subscriptionManager.inviteToSubscription('test2@test.te')
 
@@ -96,7 +96,7 @@ describe('subscriptions', function () {
     expect(existingInvites.filter(invite => invite.status === 'canceled').length).to.equal(1)
   })
 
-  it('should invite a user by email if the limit of shared subscription is restored', async () => {
+  it('should invite a user by email if the limit of shared subscription is restored - @paidfeature', async () => {
     await subscriptionManager.inviteToSubscription('test1@test.te')
     await subscriptionManager.inviteToSubscription('test2@test.te')
     await subscriptionManager.inviteToSubscription('test3@test.te')

@@ -1,4 +1,3 @@
-import { SubscriptionName } from '@standardnotes/common'
 import { EditorFeatureDescription } from '../Feature/FeatureDescription'
 import { PermissionName } from '../Permission/PermissionName'
 import { FeatureIdentifier } from '../Feature/FeatureIdentifier'
@@ -8,7 +7,6 @@ import { RoleName } from '@standardnotes/domain-core'
 
 export function editors(): EditorFeatureDescription[] {
   const code: EditorFeatureDescription = FillEditorComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     name: 'Code',
     spellcheckControl: true,
     identifier: FeatureIdentifier.CodeEditor,
@@ -25,7 +23,6 @@ export function editors(): EditorFeatureDescription[] {
   })
 
   const plus: EditorFeatureDescription = FillEditorComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     name: 'Rich Text',
     note_type: NoteType.RichText,
     file_type: 'html',
@@ -39,7 +36,6 @@ export function editors(): EditorFeatureDescription[] {
   })
 
   const markdown: EditorFeatureDescription = FillEditorComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     name: 'Markdown',
     identifier: FeatureIdentifier.MarkdownProEditor,
     note_type: NoteType.Markdown,
@@ -53,7 +49,6 @@ export function editors(): EditorFeatureDescription[] {
   })
 
   const task: EditorFeatureDescription = FillEditorComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     name: 'Checklist',
     identifier: FeatureIdentifier.TaskEditor,
     note_type: NoteType.Task,
@@ -68,7 +63,6 @@ export function editors(): EditorFeatureDescription[] {
   })
 
   const tokenvault: EditorFeatureDescription = FillEditorComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     name: 'Authenticator',
     note_type: NoteType.Authentication,
     file_type: 'json',
@@ -82,7 +76,6 @@ export function editors(): EditorFeatureDescription[] {
   })
 
   const spreadsheets: EditorFeatureDescription = FillEditorComponentDefaults({
-    availableInSubscriptions: [SubscriptionName.PlusPlan, SubscriptionName.ProPlan],
     name: 'Spreadsheet',
     identifier: FeatureIdentifier.SheetsEditor,
     note_type: NoteType.Spreadsheet,

@@ -130,7 +130,7 @@ const NoteListItem: FunctionComponent<DisplayableListItemProps<SNNote>> = ({
       }}
     >
       {!hideIcon ? (
-        <div className="mr-0 flex flex-col items-center justify-between p-4 pr-4">
+        <div className="mr-0 flex flex-col items-center justify-between gap-2 p-4 pr-4">
           <Icon type={icon} className={`text-accessory-tint-${tint}`} />
         </div>
       ) : (

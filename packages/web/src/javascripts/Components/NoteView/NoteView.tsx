@@ -860,6 +860,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                   />
                   <ChangeEditorButton
                     viewControllerManager={this.viewControllerManager}
+                    noteViewController={this.controller}
                     onClickPreprocessing={this.ensureNoteIsInsertedBeforeUIAction}
                   />
                   <PinNoteButton

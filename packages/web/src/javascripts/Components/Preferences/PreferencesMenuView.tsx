@@ -30,7 +30,7 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
   return (
     <div
       className={classNames(
-        'border-t border-border bg-default px-5 pt-2 md:border-0 md:bg-contrast md:px-0 md:py-0',
+        'border-b border-border bg-default px-5 pt-2 md:border-0 md:bg-contrast md:px-0 md:py-0',
         hasBottomInset ? 'pb-safe-bottom' : 'pb-2 md:pb-0',
       )}
     >
@@ -60,7 +60,7 @@ const PreferencesMenuView: FunctionComponent<Props> = ({ menu }) => {
             wrapper: 'relative',
             button: 'focus:outline-none focus:shadow-none focus:ring-none',
           }}
-          popoverPlacement="top"
+          popoverPlacement="bottom"
         />
       </div>
     </div>

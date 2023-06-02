@@ -80,7 +80,7 @@ const EditorDefaults = ({ application }: Props) => {
       <PreferencesSegment>
         <Title>Editor appearance</Title>
         <div className="mt-2">
-          <div className="flex items-center justify-between">
+          <div className="flex justify-between gap-2 md:items-center">
             <div className="flex flex-col">
               <Subtitle>Monospace Font</Subtitle>
               <Text>Toggles the font style in plaintext and Super notes</Text>

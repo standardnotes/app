@@ -374,6 +374,7 @@ const ClipperView = ({
             setIsScreenshotMode(checked)
           }}
           className="flex-row-reverse gap-2"
+          forceDesktopStyle={true}
         >
           Clip as screenshot
         </MenuSwitchButtonItem>

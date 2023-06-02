@@ -5,19 +5,19 @@ export type ButtonStyle = 'default' | 'contrast' | 'neutral' | 'info' | 'warning
 const getColorsForNormalVariant = (style: ButtonStyle) => {
   switch (style) {
     case 'default':
-      return 'bg-default text-text'
+      return 'bg-normal-button text-text'
     case 'contrast':
-      return 'bg-default text-contrast'
+      return 'bg-normal-button text-contrast'
     case 'neutral':
-      return 'bg-default text-neutral'
+      return 'bg-normal-button text-neutral'
     case 'info':
-      return 'bg-default text-info'
+      return 'bg-normal-button text-info'
     case 'warning':
-      return 'bg-default text-warning'
+      return 'bg-normal-button text-warning'
     case 'danger':
-      return 'bg-default text-danger'
+      return 'bg-normal-button text-danger'
     case 'success':
-      return 'bg-default text-success'
+      return 'bg-normal-button text-success'
   }
 }
 
@@ -59,7 +59,7 @@ const getClassName = (
 
   let focusHoverStates = primary
     ? 'hover:brightness-125 focus:outline-none focus:brightness-125'
-    : 'focus:bg-contrast focus:outline-none hover:bg-contrast'
+    : 'focus:bg-contrast focus:outline-none hover:border-info hover:text-info hover:bg-contrast'
 
   if (disabled) {
     colors = primary ? 'bg-passive-2 text-info-contrast' : 'bg-default text-passive-2'

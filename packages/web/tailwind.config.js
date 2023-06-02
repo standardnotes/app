@@ -143,6 +143,7 @@ module.exports = {
       'accessory-tint-4': 'var(--sn-stylekit-accessory-tint-color-4)',
       'accessory-tint-5': 'var(--sn-stylekit-accessory-tint-color-5)',
       'accessory-tint-6': 'var(--sn-stylekit-accessory-tint-color-6)',
+      'normal-button': 'var(--normal-button-background-color)',
     },
   },
   safelist: [

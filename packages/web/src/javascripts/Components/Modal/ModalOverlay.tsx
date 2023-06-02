@@ -6,14 +6,20 @@ import { useModalAnimation } from '../Modal/useModalAnimation'
 type Props = {
   isOpen: boolean
   children: ReactNode
-  portal?: boolean
+  animationVariant?: 'horizontal' | 'vertical'
+  close: () => void
 }
 
 const ModalOverlay = forwardRef(
-  ({ isOpen, children, portal = true, ...props }: Props, ref: ForwardedRef<HTMLDivElement>) => {
-    const [isMounted, setElement] = useModalAnimation(isOpen)
+  ({ isOpen, children, animationVariant, close, ...props }: Props, ref: ForwardedRef<HTMLDivElement>) => {
+    const [isMounted, setElement] = useModalAnimation(isOpen, animationVariant)
     const dialog = useDialogStore({
       open: isMounted,
+      setOpen: (open) => {
+        if (!open) {
+          close()
+        }
+      },
     })
 
     if (!isMounted) {
@@ -23,16 +29,12 @@ const ModalOverlay = forwardRef(
     return (
       <Dialog
         tabIndex={0}
-        className="h-full w-full"
-        backdropProps={{
-          className: '!z-modal',
-          style: {
-            position: !portal ? 'absolute' : 'fixed',
-          },
-        }}
+        className="fixed top-0 left-0 z-modal h-full w-full"
         ref={mergeRefs([setElement, ref])}
         store={dialog}
-        portal={portal}
+        modal={false}
+        portal={true}
+        preventBodyScroll={true}
         {...props}
       >
         {children}

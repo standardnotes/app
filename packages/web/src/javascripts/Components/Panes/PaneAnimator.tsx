@@ -64,7 +64,7 @@ export async function animatePaneExitTransitionOffscreenToTheRight(elementId: st
  * a Daily Notebook tag from navigation whereby two pane animations are simulatensouly triggered (the items panel, then
  * the editor panel), causing Safari to get tripped up.
  */
-function performSafariAnimationFix(element: HTMLElement): void {
+export function performSafariAnimationFix(element: HTMLElement): void {
   const isSafari = /Safari/.test(navigator.userAgent) || /AppleWebKit/.test(navigator.userAgent)
   if (!isSafari) {
     return

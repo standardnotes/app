@@ -8,7 +8,7 @@ import RadioButtonGroup from '../RadioButtonGroup/RadioButtonGroup'
 import { EditorMargins, EditorMaxWidths } from './EditorWidths'
 import { useApplication } from '../ApplicationProvider'
 import ModalOverlay from '../Modal/ModalOverlay'
-import { CHANGE_EDITOR_WIDTH_COMMAND, ESCAPE_COMMAND } from '@standardnotes/ui-services'
+import { CHANGE_EDITOR_WIDTH_COMMAND } from '@standardnotes/ui-services'
 import { PrefDefaults } from '@/Constants/PrefDefaults'
 import { observer } from 'mobx-react-lite'
 import Switch from '../Switch/Switch'
@@ -37,7 +37,6 @@ const EditorWidthSelectionModal = ({
   close: () => void
   note: SNNote | undefined
 }) => {
-  const application = useApplication()
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
 
   const [value, setValue] = useState<EditorLineWidth>(() => initialValue)
@@ -87,16 +86,6 @@ const EditorWidthSelectionModal = ({
     ],
     [accept, close],
   )
-
-  useEffect(() => {
-    return application.keyboardService.addCommandHandler({
-      command: ESCAPE_COMMAND,
-      onKeyDown() {
-        close()
-        return true
-      },
-    })
-  }, [application.keyboardService, close])
 
   const DynamicMargin = (
     <div className="text-center text-sm text-passive-2">
@@ -207,7 +196,7 @@ const EditorWidthSelectionModalWrapper = () => {
   }, [application, toggle])
 
   return (
-    <ModalOverlay isOpen={isOpen}>
+    <ModalOverlay isOpen={isOpen} close={toggle}>
       <EditorWidthSelectionModal initialValue={lineWidth} handleChange={setLineWidth} close={toggle} note={note} />
     </ModalOverlay>
   )

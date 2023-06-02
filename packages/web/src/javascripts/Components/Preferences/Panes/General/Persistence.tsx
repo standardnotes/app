@@ -29,7 +29,7 @@ const Persistence = ({ application }: Props) => {
     <PreferencesGroup>
       <PreferencesSegment>
         <Title className="mb-2">When opening the app, show...</Title>
-        <label className="mb-2 flex items-center gap-2 text-sm font-medium">
+        <label className="mb-2 flex items-center gap-2 text-base font-medium md:text-sm">
           <StyledRadioInput
             name="state-persistence"
             checked={!shouldPersistNoteState}
@@ -39,7 +39,7 @@ const Persistence = ({ application }: Props) => {
           />
           The first note in the list
         </label>
-        <label className="flex items-center gap-2 text-sm font-medium">
+        <label className="flex items-center gap-2 text-base font-medium md:text-sm">
           <StyledRadioInput
             name="state-persistence"
             checked={!!shouldPersistNoteState}

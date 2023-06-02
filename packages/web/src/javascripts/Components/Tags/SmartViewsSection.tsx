@@ -54,10 +54,13 @@ const SmartViewsSection: FunctionComponent<Props> = ({ application, navigationCo
         featuresController={featuresController}
         setEditingSmartView={editSmartViewModalController.setView}
       />
-      <ModalOverlay isOpen={!!editSmartViewModalController.view}>
+      <ModalOverlay isOpen={!!editSmartViewModalController.view} close={editSmartViewModalController.closeDialog}>
         <EditSmartViewModal controller={editSmartViewModalController} platform={application.platform} />
       </ModalOverlay>
-      <ModalOverlay isOpen={addSmartViewModalController.isAddingSmartView}>
+      <ModalOverlay
+        isOpen={addSmartViewModalController.isAddingSmartView}
+        close={addSmartViewModalController.closeModal}
+      >
         <AddSmartViewModal controller={addSmartViewModalController} platform={application.platform} />
       </ModalOverlay>
     </section>

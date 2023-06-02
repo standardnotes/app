@@ -110,7 +110,7 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
       <PreferencesSegment>
         <Title>Email</Title>
         <div>
-          <div className="flex items-center justify-between">
+          <div className="flex items-start justify-between gap-2 md:items-center">
             <div className="flex flex-col">
               <Subtitle>Mute sign-in notification emails</Subtitle>
               {isMuteSignInEmailsFeatureAvailable ? (
@@ -132,7 +132,7 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
               )}
             </div>
             {isLoading ? (
-              <Spinner className="ml-2 flex-shrink-0" />
+              <Spinner className="h-5 w-5 flex-shrink-0" />
             ) : (
               isMuteSignInEmailsFeatureAvailable && (
                 <Switch
@@ -143,13 +143,13 @@ const Email: FunctionComponent<Props> = ({ application }: Props) => {
             )}
           </div>
           <HorizontalSeparator classes="my-4" />
-          <div className="flex items-center justify-between">
+          <div className="flex items-start justify-between gap-2 md:items-center">
             <div className="flex flex-col">
               <Subtitle>Mute marketing notification emails</Subtitle>
               <Text>Disables email notifications with special deals and promotions.</Text>
             </div>
             {isLoading ? (
-              <Spinner className="ml-2 flex-shrink-0" />
+              <Spinner className="h-5 w-5 flex-shrink-0" />
             ) : (
               <Switch
                 onChange={toggleMuteMarketingEmails}

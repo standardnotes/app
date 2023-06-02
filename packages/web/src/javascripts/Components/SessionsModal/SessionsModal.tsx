@@ -212,7 +212,10 @@ const SessionsModal: FunctionComponent<{
   application: WebApplication
 }> = ({ viewControllerManager, application }) => {
   return (
-    <ModalOverlay isOpen={viewControllerManager.isSessionsModalVisible}>
+    <ModalOverlay
+      isOpen={viewControllerManager.isSessionsModalVisible}
+      close={viewControllerManager.closeSessionsModal}
+    >
       <SessionsModalContent application={application} viewControllerManager={viewControllerManager} />
     </ModalOverlay>
   )

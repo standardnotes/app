@@ -46,4 +46,5 @@
   --sn-stylekit-scrollbar-thumb-color: var(--sn-stylekit-info-color);
   --sn-stylekit-menu-border: 1px solid #424242;
   --navigation-item-selected-background-color: var(--background-color);
+  --normal-button-background-color: var(--sn-stylekit-passive-color-5);
 }

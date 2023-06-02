@@ -3,6 +3,138 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.160.19](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.18...@standardnotes/web@3.160.19) (2023-05-31)
+
+### Bug Fixes
+
+* **desktop:** Fixed issue where local backup location would default to "[object Promise]" ([7d691aa](https://github.com/standardnotes/app/commit/7d691aa409af3636ad795491b8b817d9eb7a980d))
+
+## [3.160.18](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.17...@standardnotes/web@3.160.18) (2023-05-30)
+
+### Bug Fixes
+
+* Fixed issue where pane gestures on Android would break scroll in a daily journal tag ([39414e6](https://github.com/standardnotes/app/commit/39414e6caba4830192a54ea9553bcda36959c9bf))
+
+## [3.160.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.16...@standardnotes/web@3.160.17) (2023-05-29)
+
+### Bug Fixes
+
+* Fixed issue on Android where pressing backspace in Super notes would delete characters on both side of the cursor ([#2336](https://github.com/standardnotes/app/issues/2336)) ([0cb73b5](https://github.com/standardnotes/app/commit/0cb73b5d18ece035e2fce904c859d548b8657053))
+
+## [3.160.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.15...@standardnotes/web@3.160.16) (2023-05-26)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.160.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.14...@standardnotes/web@3.160.15) (2023-05-25)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.160.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.13...@standardnotes/web@3.160.14) (2023-05-25)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.160.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.12...@standardnotes/web@3.160.13) (2023-05-24)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.160.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.11...@standardnotes/web@3.160.12) (2023-05-24)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.160.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.10...@standardnotes/web@3.160.11) (2023-05-24)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.160.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.9...@standardnotes/web@3.160.10) (2023-05-23)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.160.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.8...@standardnotes/web@3.160.9) (2023-05-23)
+
+### Bug Fixes
+
+* Fixed issue where some dialogs would become unresponsive ([1d7079e](https://github.com/standardnotes/app/commit/1d7079e90cf5c4de57a77b408a7b2d399a4a6a38))
+
+## [3.160.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.7...@standardnotes/web@3.160.8) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.160.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.6...@standardnotes/web@3.160.7) (2023-05-22)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.160.6](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.5...@standardnotes/web@3.160.6) (2023-05-22)
+
+### Bug Fixes
+
+* Fixed issue where empty new line in Super would create extra new lines when converting to Markdown ([799945b](https://github.com/standardnotes/app/commit/799945b167b1660751c97895467e83982e5cdda3))
+
+## [3.160.5](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.4...@standardnotes/web@3.160.5) (2023-05-19)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.160.4](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.3...@standardnotes/web@3.160.4) (2023-05-18)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.160.3](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.2...@standardnotes/web@3.160.3) (2023-05-18)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.160.2](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.1...@standardnotes/web@3.160.2) (2023-05-18)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.160.1](https://github.com/standardnotes/app/compare/@standardnotes/web@3.160.0...@standardnotes/web@3.160.1) (2023-05-18)
+
+**Note:** Version bump only for package @standardnotes/web
+
+# [3.160.0](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.17...@standardnotes/web@3.160.0) (2023-05-17)
+
+### Features
+
+* Preferences view layout on mobile has been updated, and can be dismissed by swiping from the right ([e5c580d](https://github.com/standardnotes/app/commit/e5c580deab14a5fb8bea59560d230c22ccc307d4))
+
+## [3.159.17](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.16...@standardnotes/web@3.159.17) (2023-05-16)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.159.16](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.15...@standardnotes/web@3.159.16) (2023-05-16)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.159.15](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.14...@standardnotes/web@3.159.15) (2023-05-16)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.159.14](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.13...@standardnotes/web@3.159.14) (2023-05-16)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.159.13](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.12...@standardnotes/web@3.159.13) (2023-05-16)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.159.12](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.11...@standardnotes/web@3.159.12) (2023-05-15)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.159.11](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.10...@standardnotes/web@3.159.11) (2023-05-15)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.159.10](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.9...@standardnotes/web@3.159.10) (2023-05-15)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.159.9](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.8...@standardnotes/web@3.159.9) (2023-05-12)
+
+**Note:** Version bump only for package @standardnotes/web
+
+## [3.159.8](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.7...@standardnotes/web@3.159.8) (2023-05-12)
+
+**Note:** Version bump only for package @standardnotes/web
+
 ## [3.159.7](https://github.com/standardnotes/app/compare/@standardnotes/web@3.159.6...@standardnotes/web@3.159.7) (2023-05-12)
 
 ### Bug Fixes
