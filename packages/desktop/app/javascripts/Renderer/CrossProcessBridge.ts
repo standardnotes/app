@@ -1,14 +1,13 @@
-import { DesktopServerManagerInterface, FileBackupsDevice } from '@web/Application/Device/DesktopSnjsExports'
+import { FileBackupsDevice, DesktopServerManagerInterface } from '@web/Application/Device/DesktopSnjsExports'
 import { Component } from '../Main/Packages/PackageManagerInterface'
 
-export interface CrossProcessBridge extends FileBackupsDevice {
+export interface CrossProcessBridge extends FileBackupsDevice, DesktopServerManagerInterface {
   get extServerHost(): string
   get useNativeKeychain(): boolean
   get rendererPath(): string
   get isMacOS(): boolean
   get appVersion(): string
   get useSystemMenuBar(): boolean
-  get desktopServerManager(): DesktopServerManagerInterface
   closeWindow(): void
   minimizeWindow(): void
   maximizeWindow(): void

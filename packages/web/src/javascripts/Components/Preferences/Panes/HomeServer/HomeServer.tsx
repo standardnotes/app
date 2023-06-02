@@ -12,7 +12,6 @@ import AccountMigration from './AccountMigration'
 const DesktopServer = () => {
   const application = useApplication()
   const desktopDevice = application.desktopDevice
-  const desktopServerManager = desktopDevice ? desktopDevice.desktopServerManager : undefined
   const [status, setStatus] = useState<DesktopServerStatus>()
   const [showLogs, setShowLogs] = useState(false)
   const [logs, setLogs] = useState<string[]>([])
@@ -20,11 +19,11 @@ const DesktopServer = () => {
   const [isAtBottom, setIsAtBottom] = useState(true)
 
   const refreshStatus = useCallback(async () => {
-    if (desktopServerManager) {
-      const result = await desktopServerManager.desktopServerStatus()
+    if (desktopDevice) {
+      const result = await desktopDevice.desktopServerStatus()
       setStatus(result)
     }
-  }, [desktopServerManager])
+  }, [desktopDevice])
 
   useEffect(() => {
     void refreshStatus()
@@ -33,14 +32,14 @@ const DesktopServer = () => {
   useEffect(() => {
     if (showLogs) {
       const interval = setInterval(async () => {
-        if (desktopServerManager) {
-          const result = await desktopServerManager.desktopServerGetLogs()
+        if (desktopDevice) {
+          const result = await desktopDevice.desktopServerGetLogs()
           setLogs(result)
         }
       }, 1000)
       return () => clearInterval(interval)
     }
-  }, [showLogs, desktopServerManager])
+  }, [showLogs, desktopDevice])
 
   const handleShowLogs = () => {
     setShowLogs(!showLogs)
@@ -109,13 +108,13 @@ const DesktopServer = () => {
   }, [status])
 
   const onMoveDirectory = useCallback(() => {
-    if (!desktopServerManager || status?.status == 'on') {
+    if (!desktopDevice || status?.status == 'on') {
       void application.alertService.alert('Please stop the server before changing the data directory.')
       return
     }
 
-    void desktopServerManager.desktopServerChangeDataDirectory()
-  }, [desktopServerManager, status?.status, application])
+    void desktopDevice.desktopServerChangeDataDirectory()
+  }, [desktopDevice, status?.status, application])
 
   return (
     <PreferencesPane>
@@ -125,11 +124,11 @@ const DesktopServer = () => {
             <Title>Home Server</Title>
             {status ? getStatusString() : <Text>Status unavailable</Text>}
             <div className="mt-3 flex flex-row flex-wrap gap-3">
-              <Button label="Install" onClick={() => desktopServerManager?.desktopServerInstall()} />
-              <Button label="Start" onClick={() => desktopServerManager?.desktopServerStart()} />
-              <Button label="Stop" onClick={() => desktopServerManager?.desktopServerStop()} />
-              <Button label="Restart" onClick={() => desktopServerManager?.desktopServerRestart()} />
-              <Button label="Open Data" onClick={() => desktopServerManager?.desktopServerOpenDataDirectory()} />
+              <Button label="Install" onClick={() => desktopDevice.desktopServerInstall()} />
+              <Button label="Start" onClick={() => desktopDevice.desktopServerStart()} />
+              <Button label="Stop" onClick={() => desktopDevice.desktopServerStop()} />
+              <Button label="Restart" onClick={() => desktopDevice.desktopServerRestart()} />
+              <Button label="Open Data" onClick={() => desktopDevice.desktopServerOpenDataDirectory()} />
               <Button label="Change Data Location" onClick={onMoveDirectory} />
               <Button label="Refresh Status" onClick={() => refreshStatus()} />
               <Button label={showLogs ? 'Hide Logs' : 'Show Logs'} onClick={handleShowLogs} />
@@ -145,7 +144,7 @@ const DesktopServer = () => {
                   value={logs.join('\n')}
                 />
                 <HorizontalSeparator classes="mb-3" />
-                <Button label="Clear" onClick={() => desktopServerManager?.desktopServerClearLogs()} />
+                <Button label="Clear" onClick={() => desktopDevice.desktopServerClearLogs()} />
               </div>
             )}
             <div className="h-2 w-full" />

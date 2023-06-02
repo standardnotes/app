@@ -183,7 +183,11 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
   }
 
   async desktopServerStart(): Promise<void> {
-    await this.homeServer.start()
+    await this.homeServer.start({
+      environment: {
+        DB_TYPE: 'sqlite',
+      },
+    })
   }
 
   getDocumentsDir() {
