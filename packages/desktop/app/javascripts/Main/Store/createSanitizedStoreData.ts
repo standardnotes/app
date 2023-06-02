@@ -20,7 +20,13 @@ export function createSanitizedStoreData(data: any = {}): StoreData {
       data[StoreKeys.SelectedSpellCheckerLanguageCodes],
     ),
     [StoreKeys.LastRunVersion]: data[StoreKeys.LastRunVersion],
+
+    [StoreKeys.DesktopServerAuthJWTSecret]: data[StoreKeys.DesktopServerAuthJWTSecret],
     [StoreKeys.DesktopServerDataLocation]: data[StoreKeys.DesktopServerDataLocation],
+    [StoreKeys.DesktopServerEncryptionServerKey]: data[StoreKeys.DesktopServerEncryptionServerKey],
+    [StoreKeys.DesktopServerJWTSecret]: data[StoreKeys.DesktopServerJWTSecret],
+    [StoreKeys.DesktopServerPseudoKeyParamsKey]: data[StoreKeys.DesktopServerPseudoKeyParamsKey],
+    [StoreKeys.DesktopServerValetTokenSecret]: data[StoreKeys.DesktopServerValetTokenSecret],
 
     [StoreKeys.LegacyTextBackupsLocation]: data[StoreKeys.LegacyTextBackupsLocation],
     [StoreKeys.LegacyTextBackupsDisabled]: data[StoreKeys.LegacyTextBackupsDisabled],

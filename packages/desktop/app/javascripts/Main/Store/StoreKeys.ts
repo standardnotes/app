@@ -10,7 +10,13 @@ export enum StoreKeys {
   SelectedSpellCheckerLanguageCodes = 'selectedSpellCheckerLanguageCodes',
   UseNativeKeychain = 'useNativeKeychain',
   LastRunVersion = 'LastRunVersion',
+
+  DesktopServerAuthJWTSecret = 'DesktopServerAuthJWTSecret',
   DesktopServerDataLocation = 'DesktopServerDataLocation',
+  DesktopServerEncryptionServerKey = 'DesktopServerEncryptionServerKey',
+  DesktopServerJWTSecret = 'DesktopServerJWTSecret',
+  DesktopServerPseudoKeyParamsKey = 'DesktopServerPseudoKeyParamsKey',
+  DesktopServerValetTokenSecret = 'DesktopServerValetTokenSecret',
 
   LegacyTextBackupsLocation = 'backupsLocation',
   LegacyTextBackupsDisabled = 'backupsDisabled',
@@ -29,7 +35,13 @@ export interface StoreData {
   [StoreKeys.ZoomFactor]: number
   [StoreKeys.SelectedSpellCheckerLanguageCodes]: Set<Language> | null
   [StoreKeys.LastRunVersion]: string
+
+  [StoreKeys.DesktopServerAuthJWTSecret]: string
   [StoreKeys.DesktopServerDataLocation]: string
+  [StoreKeys.DesktopServerEncryptionServerKey]: string
+  [StoreKeys.DesktopServerJWTSecret]: string
+  [StoreKeys.DesktopServerPseudoKeyParamsKey]: string
+  [StoreKeys.DesktopServerValetTokenSecret]: string
 
   [StoreKeys.LegacyTextBackupsLocation]: string
   [StoreKeys.LegacyTextBackupsDisabled]: boolean

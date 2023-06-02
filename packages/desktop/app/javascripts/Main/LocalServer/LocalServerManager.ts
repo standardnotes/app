@@ -183,9 +183,31 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
   }
 
   async desktopServerStart(): Promise<void> {
+    const jwtSecret = this.appState.store.get(StoreKeys.DesktopServerJWTSecret) ?? this.generateRandomKey(32)
+    const authJwtSecret = this.appState.store.get(StoreKeys.DesktopServerAuthJWTSecret) ?? this.generateRandomKey(32)
+    const encryptionServerKey =
+      this.appState.store.get(StoreKeys.DesktopServerEncryptionServerKey) ?? this.generateRandomKey(32)
+    const pseudoKeyParamsKey =
+      this.appState.store.get(StoreKeys.DesktopServerPseudoKeyParamsKey) ?? this.generateRandomKey(32)
+    const valetTokenSecret =
+      this.appState.store.get(StoreKeys.DesktopServerValetTokenSecret) ?? this.generateRandomKey(32)
+
+    this.appState.store.set(StoreKeys.DesktopServerJWTSecret, jwtSecret)
+    this.appState.store.set(StoreKeys.DesktopServerAuthJWTSecret, authJwtSecret)
+    this.appState.store.set(StoreKeys.DesktopServerEncryptionServerKey, encryptionServerKey)
+    this.appState.store.set(StoreKeys.DesktopServerPseudoKeyParamsKey, pseudoKeyParamsKey)
+    this.appState.store.set(StoreKeys.DesktopServerValetTokenSecret, valetTokenSecret)
+
     await this.homeServer.start({
       environment: {
-        DB_TYPE: 'sqlite',
+        JWT_SECRET: jwtSecret,
+        AUTH_JWT_SECRET: authJwtSecret,
+        ENCRYPTION_SERVER_KEY: encryptionServerKey,
+        PSEUDO_KEY_PARAMS_KEY: pseudoKeyParamsKey,
+        VALET_TOKEN_SECRET: valetTokenSecret,
+        FILES_SERVER_URL: `http://${this.getLocalIP()}`,
+        LOG_LEVEL: 'info',
+        VERSION: 'desktop',
       },
     })
   }
