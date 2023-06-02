@@ -9,10 +9,9 @@ export interface DesktopServerManagerInterface {
   desktopServerStop(): Promise<void>
   desktopServerRestart(): Promise<void>
   desktopServerStatus(): Promise<DesktopServerStatus>
-  desktopServerInstall(): Promise<void>
   desktopServerChangeDataDirectory(): Promise<string | undefined>
   desktopServerGetDataDirectory(): Promise<string>
   desktopServerOpenDataDirectory(): Promise<void>
-  desktopServerGetLogs(): Promise<string[]>
-  desktopServerClearLogs(): Promise<void>
+  desktopServerListenOnLogs(callback: (data: string) => void): void
+  desktopServerStopListeningOnLogs(): void
 }

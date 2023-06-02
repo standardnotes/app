@@ -77,9 +77,8 @@ export class RemoteBridge implements CrossProcessBridge {
       desktopServerChangeDataDirectory: this.desktopServerChangeDataDirectory.bind(this),
       desktopServerGetDataDirectory: this.desktopServerGetDataDirectory.bind(this),
       desktopServerOpenDataDirectory: this.desktopServerOpenDataDirectory.bind(this),
-      desktopServerInstall: this.desktopServerInstall.bind(this),
-      desktopServerGetLogs: this.desktopServerGetLogs.bind(this),
-      desktopServerClearLogs: this.desktopServerClearLogs.bind(this),
+      desktopServerListenOnLogs: this.desktopServerListenOnLogs.bind(this),
+      desktopServerStopListeningOnLogs: this.desktopServerStopListeningOnLogs.bind(this),
       wasLegacyTextBackupsExplicitlyDisabled: this.wasLegacyTextBackupsExplicitlyDisabled.bind(this),
       getLegacyTextBackupsLocation: this.getLegacyTextBackupsLocation.bind(this),
       saveTextBackupData: this.saveTextBackupData.bind(this),
@@ -288,15 +287,11 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.desktopServer.desktopServerOpenDataDirectory()
   }
 
-  desktopServerInstall(): Promise<void> {
-    return this.desktopServer.desktopServerInstall()
+  desktopServerListenOnLogs(callback: (data: string) => void): void {
+    this.desktopServer.desktopServerListenOnLogs(callback)
   }
 
-  desktopServerGetLogs(): Promise<string[]> {
-    return this.desktopServer.desktopServerGetLogs()
-  }
-
-  desktopServerClearLogs(): Promise<void> {
-    return this.desktopServer.desktopServerClearLogs()
+  desktopServerStopListeningOnLogs(): void {
+    this.desktopServer.desktopServerStopListeningOnLogs()
   }
 }

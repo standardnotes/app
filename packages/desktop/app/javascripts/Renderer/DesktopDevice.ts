@@ -34,12 +34,12 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.desktopServerStop()
   }
 
-  desktopServerGetLogs(): Promise<string[]> {
-    return this.remoteBridge.desktopServerGetLogs()
+  desktopServerListenOnLogs(callback: (data: string) => void): void {
+    this.remoteBridge.desktopServerListenOnLogs(callback)
   }
 
-  desktopServerClearLogs(): Promise<void> {
-    return this.remoteBridge.desktopServerClearLogs()
+  desktopServerStopListeningOnLogs(): void {
+    this.remoteBridge.desktopServerStopListeningOnLogs()
   }
 
   desktopServerRestart(): Promise<void> {
@@ -48,10 +48,6 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
 
   desktopServerStatus(): Promise<DesktopServerStatus> {
     return this.remoteBridge.desktopServerStatus()
-  }
-
-  desktopServerInstall(): Promise<void> {
-    return this.remoteBridge.desktopServerInstall()
   }
 
   desktopServerChangeDataDirectory(): Promise<string | undefined> {

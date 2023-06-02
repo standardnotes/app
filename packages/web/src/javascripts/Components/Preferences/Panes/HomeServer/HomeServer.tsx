@@ -31,18 +31,22 @@ const DesktopServer = () => {
 
   useEffect(() => {
     if (showLogs) {
-      const interval = setInterval(async () => {
-        if (desktopDevice) {
-          const result = await desktopDevice.desktopServerGetLogs()
-          setLogs(result)
-        }
-      }, 1000)
-      return () => clearInterval(interval)
+      desktopDevice.desktopServerListenOnLogs((data) => {
+        setLogs((logs) => [...logs, ...data])
+      })
     }
   }, [showLogs, desktopDevice])
 
   const handleShowLogs = () => {
+    if (!showLogs) {
+      desktopDevice.desktopServerStopListeningOnLogs()
+    }
+
     setShowLogs(!showLogs)
+  }
+
+  const clearLogs = () => {
+    setLogs([])
   }
 
   function isTextareaScrolledToBottom(textarea: HTMLTextAreaElement) {
@@ -124,7 +128,6 @@ const DesktopServer = () => {
             <Title>Home Server</Title>
             {status ? getStatusString() : <Text>Status unavailable</Text>}
             <div className="mt-3 flex flex-row flex-wrap gap-3">
-              <Button label="Install" onClick={() => desktopDevice.desktopServerInstall()} />
               <Button label="Start" onClick={() => desktopDevice.desktopServerStart()} />
               <Button label="Stop" onClick={() => desktopDevice.desktopServerStop()} />
               <Button label="Restart" onClick={() => desktopDevice.desktopServerRestart()} />
@@ -144,7 +147,7 @@ const DesktopServer = () => {
                   value={logs.join('\n')}
                 />
                 <HorizontalSeparator classes="mb-3" />
-                <Button label="Clear" onClick={() => desktopDevice.desktopServerClearLogs()} />
+                <Button label="Clear" onClick={() => clearLogs()} />
               </div>
             )}
             <div className="h-2 w-full" />

@@ -4,11 +4,10 @@ import { StoreKeys } from '../Store/StoreKeys'
 import { shell } from 'electron'
 import { moveDirectory, openDirectoryPicker } from '../Utils/FileUtils'
 import { Paths } from '../Types/Paths'
-import { CommandService, CreateCommand } from './CommandService'
+import { CommandService } from './CommandService'
 import { HomeServerInterface } from '@standardnotes/home-server'
 
 const path = require('path')
-const fs = require('fs')
 const os = require('os')
 
 const DataDirectoryName = 'notes'
@@ -30,12 +29,16 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
     }
   }
 
-  desktopServerGetLogs(): Promise<string[]> {
-    return Promise.resolve(this.commandService.getLogs())
+  desktopServerListenOnLogs(callback: (data: string) => void): void {
+    const logStream = this.homeServer.logs()
+
+    logStream.on('log', callback)
   }
 
-  desktopServerClearLogs(): Promise<void> {
-    return Promise.resolve(this.commandService.clearLogs())
+  desktopServerStopListeningOnLogs(): void {
+    const logStream = this.homeServer.logs()
+
+    logStream.removeAllListeners('log')
   }
 
   async desktopServerChangeDataDirectory(): Promise<string | undefined> {
@@ -78,7 +81,8 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
   }
 
   async desktopServerRestart(): Promise<void> {
-    await this.homeServer.restart()
+    await this.desktopServerStop()
+    await this.desktopServerStart()
   }
 
   async desktopServerStatus(): Promise<DesktopServerStatus> {
@@ -93,73 +97,6 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
 
   private generateRandomKey(length: number): string {
     return require('crypto').randomBytes(length).toString('hex')
-  }
-
-  async desktopServerInstall(): Promise<void> {
-    const notesDir = await this.desktopServerGetDataDirectory()
-    if (!fs.existsSync(notesDir)) {
-      fs.mkdirSync(notesDir)
-    }
-
-    await this.commandService.runCommand(
-      CreateCommand(
-        'curl -o localstack_bootstrap.sh https://raw.githubusercontent.com/standardnotes/server/main/docker/localstack_bootstrap.sh',
-      ),
-      notesDir,
-    )
-
-    await this.commandService.runCommand(CreateCommand('chmod +x localstack_bootstrap.sh'), notesDir)
-
-    await this.commandService.runCommand(
-      CreateCommand(
-        'curl -o docker-compose.yml https://raw.githubusercontent.com/standardnotes/server/main/docker-compose.example.yml',
-      ),
-      notesDir,
-    )
-
-    const dockerComposeFilePath = path.join(notesDir, 'docker-compose.yml')
-    const dockerComposeFileContents = fs.readFileSync(dockerComposeFilePath, 'utf8')
-
-    const dbPassword = this.generateRandomKey(32)
-    const updatedDockerComposeFileContents = dockerComposeFileContents.replace(
-      /(MYSQL_(ROOT_)?PASSWORD=)(.*)$/gm,
-      `$1${dbPassword}`,
-    )
-
-    fs.writeFileSync(dockerComposeFilePath, updatedDockerComposeFileContents)
-
-    await this.commandService.runCommand(
-      CreateCommand('curl -o .env https://raw.githubusercontent.com/standardnotes/server/main/.env.sample'),
-      notesDir,
-    )
-
-    const envFilePath = path.join(notesDir, '.env')
-    const envFileContents = fs.readFileSync(envFilePath, 'utf8') as string
-
-    const updatedEnvFileContents = envFileContents
-      .split('\n')
-      .map((line) => {
-        const keyMatch = line.match(/^([A-Z_]+)=(.*)$/)
-        if (
-          keyMatch &&
-          ['AUTH_JWT_SECRET', 'AUTH_SERVER_ENCRYPTION_SERVER_KEY', 'VALET_TOKEN_SECRET', 'DB_PASSWORD'].includes(
-            keyMatch[1],
-          )
-        ) {
-          if (keyMatch[1] === 'DB_PASSWORD') {
-            return `${keyMatch[1]}=${dbPassword}`
-          } else {
-            const keyLength = 32
-            const randomKey = this.generateRandomKey(keyLength)
-            return `${keyMatch[1]}=${randomKey}`
-          }
-        } else {
-          return line
-        }
-      })
-      .join('\n')
-
-    fs.writeFileSync(envFilePath, updatedEnvFileContents)
   }
 
   async desktopServerStart(): Promise<void> {
@@ -187,7 +124,7 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
         ENCRYPTION_SERVER_KEY: encryptionServerKey,
         PSEUDO_KEY_PARAMS_KEY: pseudoKeyParamsKey,
         VALET_TOKEN_SECRET: valetTokenSecret,
-        FILES_SERVER_URL: `http://${this.getLocalIP()}`,
+        FILES_SERVER_URL: `http://${this.getLocalIP()}:${this.appState.store.get(StoreKeys.DesktopServerPort)}`,
         LOG_LEVEL: 'info',
         VERSION: 'desktop',
         PORT: port.toString(),
