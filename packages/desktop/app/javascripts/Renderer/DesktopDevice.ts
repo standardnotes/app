@@ -50,18 +50,6 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.desktopServerStatus()
   }
 
-  desktopServerChangeDataDirectory(): Promise<string | undefined> {
-    return this.remoteBridge.desktopServerChangeDataDirectory()
-  }
-
-  desktopServerGetDataDirectory(): Promise<string> {
-    return this.remoteBridge.desktopServerGetDataDirectory()
-  }
-
-  desktopServerOpenDataDirectory(): Promise<void> {
-    return this.remoteBridge.desktopServerOpenDataDirectory()
-  }
-
   openLocation(path: string): Promise<void> {
     return this.remoteBridge.openLocation(path)
   }

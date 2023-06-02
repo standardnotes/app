@@ -1,16 +1,11 @@
 import { AppState } from './../../../AppState'
 import { DesktopServerManagerInterface, DesktopServerStatus } from '@web/Application/Device/DesktopSnjsExports'
 import { StoreKeys } from '../Store/StoreKeys'
-import { shell } from 'electron'
-import { moveDirectory, openDirectoryPicker } from '../Utils/FileUtils'
 import { Paths } from '../Types/Paths'
 import { CommandService } from './CommandService'
 import { HomeServerInterface } from '@standardnotes/home-server'
 
-const path = require('path')
 const os = require('os')
-
-const DataDirectoryName = 'notes'
 
 export class LocalServiceManager implements DesktopServerManagerInterface {
   private commandService = new CommandService()
@@ -39,41 +34,6 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
     const logStream = this.homeServer.logs()
 
     logStream.removeAllListeners('data')
-  }
-
-  async desktopServerChangeDataDirectory(): Promise<string | undefined> {
-    const destination = await openDirectoryPicker()
-
-    if (!destination) {
-      return undefined
-    }
-
-    const newPath = path.join(destination, DataDirectoryName)
-
-    const oldPath = await this.desktopServerGetDataDirectory()
-
-    if (oldPath) {
-      await moveDirectory(oldPath, newPath)
-    }
-
-    this.appState.store.set(StoreKeys.DesktopServerDataLocation, newPath)
-
-    return newPath
-  }
-
-  desktopServerGetDataDirectory(): Promise<string> {
-    const persistedValue = this.appState.store.get(StoreKeys.DesktopServerDataLocation)
-    return Promise.resolve(persistedValue ?? this.getDefaultDataDirectory())
-  }
-
-  private getDefaultDataDirectory(): string {
-    return path.join(this.getDocumentsDir(), DataDirectoryName)
-  }
-
-  async desktopServerOpenDataDirectory(): Promise<void> {
-    const location = await this.desktopServerGetDataDirectory()
-
-    void shell.openPath(location)
   }
 
   async desktopServerStop(): Promise<void> {

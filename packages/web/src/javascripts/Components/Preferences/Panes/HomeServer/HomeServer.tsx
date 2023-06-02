@@ -111,15 +111,6 @@ const DesktopServer = () => {
     }
   }, [status])
 
-  const onMoveDirectory = useCallback(() => {
-    if (!desktopDevice || status?.status == 'on') {
-      void application.alertService.alert('Please stop the server before changing the data directory.')
-      return
-    }
-
-    void desktopDevice.desktopServerChangeDataDirectory()
-  }, [desktopDevice, status?.status, application])
-
   return (
     <PreferencesPane>
       {desktopDevice && (
@@ -131,8 +122,6 @@ const DesktopServer = () => {
               <Button label="Start" onClick={() => desktopDevice.desktopServerStart()} />
               <Button label="Stop" onClick={() => desktopDevice.desktopServerStop()} />
               <Button label="Restart" onClick={() => desktopDevice.desktopServerRestart()} />
-              <Button label="Open Data" onClick={() => desktopDevice.desktopServerOpenDataDirectory()} />
-              <Button label="Change Data Location" onClick={onMoveDirectory} />
               <Button label="Refresh Status" onClick={() => refreshStatus()} />
               <Button label={showLogs ? 'Hide Logs' : 'Show Logs'} onClick={handleShowLogs} />
             </div>
