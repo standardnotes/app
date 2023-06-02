@@ -912,7 +912,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 <Button
                   className="flex items-center"
                   primary
-                  colorStyle="danger"
+                  colorStyle="warning"
                   small
                   onClick={this.toggleConflictResolutionModal}
                 >
