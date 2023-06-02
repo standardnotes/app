@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite'
 import ItemLinkAutocompleteInput from './ItemLinkAutocompleteInput'
 import { LinkingController } from '@/Controllers/LinkingController'
 import LinkedItemBubble from './LinkedItemBubble'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useResponsiveAppPane } from '../Panes/ResponsivePaneProvider'
 import { ElementIds } from '@/Constants/ElementIDs'
 import { classNames } from '@standardnotes/utils'
@@ -19,9 +19,19 @@ type Props = {
   item: DecryptedItemInterface
   hideToggle?: boolean
   readonly?: boolean
+  className?: {
+    base?: string
+    withToggle?: string
+  }
 }
 
-const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = false, readonly = false }: Props) => {
+const LinkedItemBubblesContainer = ({
+  item,
+  linkingController,
+  hideToggle = false,
+  readonly = false,
+  className = {},
+}: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
   const commandService = useCommandService()
@@ -114,9 +124,9 @@ const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = fals
   const nonVisibleItems = itemsToDisplay.length - visibleItems.length
 
   const [canShowContainerToggle, setCanShowContainerToggle] = useState(false)
-  const linkContainerRef = useRef<HTMLDivElement>(null)
+  const [linkContainer, setLinkContainer] = useState<HTMLDivElement | null>(null)
   useEffect(() => {
-    const container = linkContainerRef.current
+    const container = linkContainer
     if (!container) {
       return
     }
@@ -137,21 +147,26 @@ const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = fals
       }
     })
 
-    resizeObserver.observe(linkContainerRef.current)
+    resizeObserver.observe(container)
 
     return () => {
       resizeObserver.disconnect()
     }
-  }, [])
+  }, [linkContainer])
 
   const shouldHideToggle = hideToggle || (!canShowContainerToggle && !isCollapsed)
+
+  if (readonly && itemsToDisplay.length === 0) {
+    return null
+  }
 
   return (
     <div
       className={classNames(
         'flex w-full justify-between',
-        itemsToDisplay.length > 0 && !shouldHideToggle && 'pt-2',
+        itemsToDisplay.length > 0 && !shouldHideToggle ? 'pt-2 ' + className.withToggle : undefined,
         isCollapsed ? 'gap-4' : 'gap-1',
+        className.base,
       )}
     >
       <div
@@ -160,7 +175,7 @@ const LinkedItemBubblesContainer = ({ item, linkingController, hideToggle = fals
           allItemsLinkedToItem.length || notesLinkingToItem.length ? 'mt-1' : 'mt-0.5',
           isCollapsed ? 'overflow-hidden' : 'flex-wrap',
         )}
-        ref={linkContainerRef}
+        ref={setLinkContainer}
       >
         {visibleItems.map((link) => (
           <LinkedItemBubble

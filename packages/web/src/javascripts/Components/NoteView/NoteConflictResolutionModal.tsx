@@ -70,9 +70,12 @@ const NoteContent = ({ note }: { note: SNNote }) => {
       <div className="w-full px-4 pt-4 text-base font-bold">
         <div className="title">{note.title}</div>
       </div>
-      <div className="px-4 py-2">
-        <LinkedItemBubblesContainer item={note} linkingController={linkingController} readonly />
-      </div>
+      <LinkedItemBubblesContainer
+        item={note}
+        linkingController={linkingController}
+        readonly
+        className={{ base: 'mt-2 px-4', withToggle: '!mt-1 !pt-0' }}
+      />
       {componentViewer ? (
         <div className="component-view">
           <ComponentView key={componentViewer.identifier} componentViewer={componentViewer} application={application} />
@@ -83,14 +86,14 @@ const NoteContent = ({ note }: { note: SNNote }) => {
             <BlocksEditorComposer readonly initialValue={note.text}>
               <BlocksEditor
                 readonly
-                className="blocks-editor relative h-full resize-none p-4 pt-0 text-base focus:shadow-none focus:outline-none"
+                className="blocks-editor relative h-full resize-none p-4 text-base focus:shadow-none focus:outline-none"
                 spellcheck={note.spellcheck}
               ></BlocksEditor>
             </BlocksEditorComposer>
           </div>
         </ErrorBoundary>
       ) : (
-        <div className="relative min-h-0 flex-grow overflow-hidden">
+        <div className="relative mt-3 min-h-0 flex-grow overflow-hidden">
           {note.text.length ? (
             <textarea
               readOnly={true}
