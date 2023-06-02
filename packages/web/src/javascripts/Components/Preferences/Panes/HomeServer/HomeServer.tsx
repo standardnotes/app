@@ -31,8 +31,8 @@ const DesktopServer = () => {
 
   useEffect(() => {
     if (showLogs) {
-      desktopDevice.desktopServerListenOnLogs((data) => {
-        setLogs((logs) => [...logs, ...data])
+      desktopDevice.desktopServerListenOnLogs((data: Buffer) => {
+        setLogs((logs) => [...logs, new TextDecoder().decode(data)])
       })
     }
   }, [showLogs, desktopDevice])

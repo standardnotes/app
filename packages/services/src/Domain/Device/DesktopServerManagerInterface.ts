@@ -12,6 +12,6 @@ export interface DesktopServerManagerInterface {
   desktopServerChangeDataDirectory(): Promise<string | undefined>
   desktopServerGetDataDirectory(): Promise<string>
   desktopServerOpenDataDirectory(): Promise<void>
-  desktopServerListenOnLogs(callback: (data: string) => void): void
+  desktopServerListenOnLogs(callback: (data: Buffer) => void): void
   desktopServerStopListeningOnLogs(): void
 }

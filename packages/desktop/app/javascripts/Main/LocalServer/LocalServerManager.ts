@@ -29,16 +29,16 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
     }
   }
 
-  desktopServerListenOnLogs(callback: (data: string) => void): void {
+  desktopServerListenOnLogs(callback: (data: Buffer) => void): void {
     const logStream = this.homeServer.logs()
 
-    logStream.on('log', callback)
+    logStream.on('data', callback)
   }
 
   desktopServerStopListeningOnLogs(): void {
     const logStream = this.homeServer.logs()
 
-    logStream.removeAllListeners('log')
+    logStream.removeAllListeners('data')
   }
 
   async desktopServerChangeDataDirectory(): Promise<string | undefined> {
