@@ -1,6 +1,6 @@
 import { ContentType, NoteType, SNNote, classNames } from '@standardnotes/snjs'
 import Modal, { ModalAction } from '../Modal/Modal'
-import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
 import RadioIndicator from '../Radio/RadioIndicator'
@@ -13,6 +13,7 @@ import { useLinkingController } from '@/Controllers/LinkingControllerProvider'
 import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContainer'
 import { StringUtils, Strings } from '@/Constants/Strings'
 import { confirmDialog } from '@standardnotes/ui-services'
+import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 
 const ListItem = ({
   children,
@@ -122,41 +123,65 @@ const NoteConflictResolutionModal = ({
   conflictedNotes: SNNote[]
   close: () => void
 }) => {
+  const allVersions = useMemo(() => [currentNote].concat(conflictedNotes), [conflictedNotes, currentNote])
+
   const application = useApplication()
   const [selectedVersion, setSelectedVersion] = useState(currentNote.uuid)
 
   const selectedNote = useMemo(() => {
-    if (selectedVersion === currentNote.uuid) {
-      return currentNote
-    }
+    return allVersions.find((note) => note.uuid === selectedVersion)
+  }, [allVersions, selectedVersion])
 
-    return [...conflictedNotes].find((note) => note.uuid === selectedVersion)
-  }, [conflictedNotes, currentNote, selectedVersion])
+  const trashNote = useCallback(
+    async (note: SNNote, silent = false) => {
+      const confirmDialogTitle = Strings.trashItemsTitle
+      const confirmDialogText = StringUtils.deleteNotes(false, 1, `'${note.title}'`)
+
+      if (
+        silent ||
+        (await confirmDialog({
+          title: confirmDialogTitle,
+          text: confirmDialogText,
+          confirmButtonStyle: 'danger',
+        }))
+      ) {
+        await application.mutator
+          .changeItem(note, (mutator) => {
+            mutator.trashed = true
+            mutator.conflictOf = undefined
+          })
+          .catch(console.error)
+        setSelectedVersion(currentNote.uuid)
+      }
+    },
+    [application.mutator, currentNote.uuid],
+  )
 
   const trashSelectedNote = useCallback(async () => {
     if (!selectedNote) {
       return
     }
 
-    const confirmDialogTitle = Strings.trashItemsTitle
-    const confirmDialogText = StringUtils.deleteNotes(false, 1, `'${selectedNote.title}'`)
+    trashNote(selectedNote).catch(console.error)
+  }, [selectedNote, trashNote])
+
+  const keepOnlySelectedNote = useCallback(async () => {
+    if (!selectedNote) {
+      return
+    }
 
     if (
       await confirmDialog({
-        title: confirmDialogTitle,
-        text: confirmDialogText,
+        title: 'Keep only selected version?',
+        text: 'This will keep only the selected version and move all other versions to the trash. Are you sure?',
         confirmButtonStyle: 'danger',
       })
     ) {
-      await application.mutator
-        .changeItem(selectedNote, (mutator) => {
-          mutator.trashed = true
-          mutator.conflictOf = undefined
-        })
-        .catch(console.error)
-      setSelectedVersion(currentNote.uuid)
+      const notesToTrash = allVersions.filter((note) => note.uuid !== selectedNote.uuid)
+      await Promise.all(notesToTrash.map((note) => trashNote(note, true)))
+      close()
     }
-  }, [application.mutator, currentNote.uuid, selectedNote])
+  }, [allVersions, close, selectedNote, trashNote])
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const actions = useMemo(
@@ -168,20 +193,23 @@ const NoteConflictResolutionModal = ({
         mobileSlot: 'left',
       },
       {
-        label: 'Delete',
+        label: 'Trash selected',
         onClick: trashSelectedNote,
         type: 'destructive',
         mobileSlot: 'left',
       },
       {
-        label: isMobileScreen ? 'Choose' : 'Choose version',
-        onClick: close,
+        label: isMobileScreen ? 'Keep' : 'Keep only selected',
+        onClick: keepOnlySelectedNote,
         type: 'primary',
         mobileSlot: 'right',
       },
     ],
-    [close, isMobileScreen, trashSelectedNote],
+    [close, isMobileScreen, keepOnlySelectedNote, trashSelectedNote],
   )
+
+  const listRef = useRef<HTMLDivElement>(null)
+  useListKeyboardNavigation(listRef)
 
   return (
     <Modal
@@ -193,20 +221,14 @@ const NoteConflictResolutionModal = ({
       actions={actions}
       close={close}
     >
-      <div className="w-full border-r border-border py-1.5 md:flex md:w-auto md:min-w-60 md:flex-col">
-        <ListItem
-          isSelected={selectedVersion === currentNote.uuid}
-          onClick={() => setSelectedVersion(currentNote.uuid)}
-        >
-          Current version
-        </ListItem>
-        {[...conflictedNotes].map((note, index) => (
+      <div className="w-full border-r border-border py-1.5 md:flex md:w-auto md:min-w-60 md:flex-col" ref={listRef}>
+        {allVersions.map((note, index) => (
           <ListItem
             isSelected={selectedVersion === note.uuid}
             onClick={() => setSelectedVersion(note.uuid)}
             key={note.uuid}
           >
-            Version {index + 1}
+            {index === 0 ? 'Current version' : `Version ${index + 1}`}
           </ListItem>
         ))}
       </div>
