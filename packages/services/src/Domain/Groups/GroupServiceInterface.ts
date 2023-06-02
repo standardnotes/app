@@ -25,8 +25,8 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
   removeUserFromGroup(groupUuid: string, userUuid: string): Promise<ClientDisplayableError | void>
   leaveGroup(groupUuid: string): Promise<ClientDisplayableError | void>
   getGroupUsers(vaultSystemIdentifier: string): Promise<GroupUserServerHash[] | undefined>
-  isGroupUserOwnUser(user: GroupUserServerHash): boolean
-  isUserGroupAdmin(vaultSystemIdentifier: string): boolean
+  isGroupUserGroupOwner(user: GroupUserServerHash): boolean
+  isCurrentUserGroupAdmin(groupUuid: string, userUuid: string): boolean
 
   getItemLastEditedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined
   getItemSharedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined
@@ -39,7 +39,7 @@ export interface GroupServiceInterface extends AbstractService<GroupServiceEvent
   getCachedInboundInvites(): GroupInviteServerHash[]
   getInvitableContactsForGroup(groupUuid: string): Promise<TrustedContactInterface[]>
   deleteInvite(invite: GroupInviteServerHash): Promise<ClientDisplayableError | void>
-  reloadRemovedVaults(): Promise<void>
+  reloadRemovedGroups(): Promise<void>
 
   updateInvitesAfterVaultKeyChange(params: {
     vaultSystemIdentifier: string

@@ -7,7 +7,7 @@ export class GroupCacheService implements GroupCacheServiceInterface {
   constructor(private storage: StorageServiceInterface) {}
 
   setGroups(groups: GroupServerHash[]): void {
-    this.storage.setValue(StorageKey.GroupsCache, groups)
+    this.storage.setValue(StorageKey.GroupCache, groups)
   }
 
   updateGroups(groups: GroupServerHash[]): void {
@@ -17,7 +17,7 @@ export class GroupCacheService implements GroupCacheServiceInterface {
   }
 
   getGroups(): GroupServerHash[] {
-    const result = this.storage.getValue<GroupServerHash[]>(StorageKey.GroupsCache)
+    const result = this.storage.getValue<GroupServerHash[]>(StorageKey.GroupCache)
     return result ? result : []
   }
 

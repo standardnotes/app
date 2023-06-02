@@ -153,6 +153,7 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
     const duplicateBasePayloadIntoNewUuid = PayloadsByDuplicating({
       payload: basePayload.copy({
         vault_system_identifier: undefined,
+        group_uuid: undefined,
       }),
       baseCollection: this.baseCollection,
       isConflict: true,
@@ -177,6 +178,7 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
     const duplicateBasePayloadWithoutVault = PayloadsByDuplicating({
       payload: basePayload.copy({
         vault_system_identifier: undefined,
+        group_uuid: undefined,
       }),
       baseCollection: this.baseCollection,
       isConflict: true,

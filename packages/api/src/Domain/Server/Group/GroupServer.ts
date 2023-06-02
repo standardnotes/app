@@ -61,7 +61,7 @@ export class GroupServer implements GroupServerInterface {
   }
 
   removeItemFromGroup(params: RemoveItemFromGroupParams): Promise<HttpResponse<RemoveItemFromGroupResponse>> {
-    return this.httpService.delete(GroupsPaths.addItemToGroup(params.groupUuid), {
+    return this.httpService.delete(GroupsPaths.removeItemFromGroup(params.groupUuid), {
       item_uuid: params.itemUuid,
     })
   }

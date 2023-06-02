@@ -141,7 +141,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
             <div className="mb-3">
               <div className="mb-3 text-lg">Vault Members</div>
               {members.map((member) => {
-                if (application.vaults.isGroupUserOwnUser(member)) {
+                if (application.vaults.isGroupUserGroupOwner(member)) {
                   return null
                 }
 

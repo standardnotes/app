@@ -48,7 +48,7 @@ export enum StorageKey {
   FileBackupsEnabled = 'file_backups_enabled',
   FileBackupsLocation = 'file_backups_location',
   AccountDecryptedPrivateKey = 'account_decrypted_private_key',
-  GroupsCache = 'groups_cache',
+  GroupCache = 'group_cache',
 }
 
 export enum NonwrappedStorageKey {

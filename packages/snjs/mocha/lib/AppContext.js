@@ -231,7 +231,7 @@ export class AppContext {
     })
   }
 
-  awaitNextSyncVaultFromScratchEvent() {
+  awaitNextSyncGroupFromScratchEvent() {
     return new Promise((resolve) => {
       const removeObserver = this.application.syncService.addEventObserver((event, data) => {
         if (event === SyncEvent.PaginatedSyncRequestCompleted && data?.options?.groupUuids) {
@@ -262,13 +262,26 @@ export class AppContext {
     })
   }
 
+  resolveWhenSavedSyncPayloadsIncludesItemUuid(uuid) {
+    return new Promise((resolve) => {
+      this.application.syncService.addEventObserver((event, response) => {
+        if (event === SyncEvent.PaginatedSyncRequestCompleted) {
+          const savedPayload = response.savedPayloads.find((payload) => payload.uuid === uuid)
+          if (savedPayload) {
+            resolve()
+          }
+        }
+      })
+    })
+  }
+
   resolveWhenItemCompletesAddingToGroup(targetItem) {
     return new Promise((resolve) => {
       const objectToSpy = this.groups
       sinon.stub(objectToSpy, 'addItemToGroup').callsFake(async (groupUuid, item) => {
         objectToSpy.addItemToGroup.restore()
         const result = await objectToSpy.addItemToGroup(groupUuid, item)
-        if (item.uuid === targetItem.uuid) {
+        if (!targetItem || item.uuid === targetItem.uuid) {
           resolve()
         }
         return result
@@ -283,6 +296,20 @@ export class AppContext {
         objectToSpy.removeItemFromGroup.restore()
         const result = await objectToSpy.removeItemFromGroup(item)
         if (item.uuid === targetItem.uuid) {
+          resolve()
+        }
+        return result
+      })
+    })
+  }
+
+  resolveWhenGroupChangeInvitesAreSent(groupUuid) {
+    return new Promise((resolve) => {
+      const objectToSpy = this.groups
+      sinon.stub(objectToSpy, 'updateInvitesAfterVaultKeyChange').callsFake(async (params) => {
+        objectToSpy.updateInvitesAfterVaultKeyChange.restore()
+        const result = await objectToSpy.updateInvitesAfterVaultKeyChange(params)
+        if (params.groupUuid === groupUuid) {
           resolve()
         }
         return result

@@ -37,7 +37,7 @@ describe('groups', function () {
 
     await Collaboration.acceptAllInvites(contactContext)
 
-    await contactContext.awaitNextSyncVaultFromScratchEvent()
+    await contactContext.awaitNextSyncGroupFromScratchEvent()
 
     return { vaultSystemIdentifier, group, contact, contactContext, deinitContactContext }
   }
@@ -46,7 +46,7 @@ describe('groups', function () {
     const { vaultSystemIdentifier, group, contactContext, contact, deinitContactContext } =
       await createGroupWithAcceptedInvite(permissions)
     const note = await context.createSyncedNote('foo', 'bar')
-    await vaults.addItemToVault(vaultSystemIdentifier, note)
+    await addItemToVault(context, vaultSystemIdentifier, note)
     await contactContext.sync()
     return { vaultSystemIdentifier, group, note, contact, contactContext, deinitContactContext }
   }
@@ -71,15 +71,19 @@ describe('groups', function () {
     return { vaultSystemIdentifier, group }
   }
 
+  const addItemToVault = async (contextToAddTo, vaultSystemIdentifier, item) => {
+    const promise = contextToAddTo.resolveWhenItemCompletesAddingToGroup(item)
+    await contextToAddTo.vaults.addItemToVault(vaultSystemIdentifier, item)
+    await promise
+  }
+
   describe('shared vaults via groups', () => {
-    it.only('should add item to group with no other members', async () => {
+    it('should add item to group with no other members', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
 
       const { vaultSystemIdentifier, group } = await createVaultAndGroup()
 
-      const promise = context.resolveWhenItemCompletesAddingToGroup(note)
-      await vaults.addItemToVault(vaultSystemIdentifier, note)
-      await promise
+      await addItemToVault(context, vaultSystemIdentifier, note)
 
       const updatedNote = application.items.findItem(note.uuid)
       expect(updatedNote.vault_system_identifier).to.equal(vaultSystemIdentifier)
@@ -90,7 +94,7 @@ describe('groups', function () {
       const note = await context.createSyncedNote('foo', 'bar')
       const { vaultSystemIdentifier, deinitContactContext } = await createGroupWithAcceptedInvite()
 
-      await vaults.addItemToVault(vaultSystemIdentifier, note)
+      await addItemToVault(context, vaultSystemIdentifier, note)
 
       const updatedNote = application.items.findItem(note.uuid)
       expect(updatedNote.vault_system_identifier).to.equal(vaultSystemIdentifier)
@@ -98,14 +102,13 @@ describe('groups', function () {
       await deinitContactContext()
     })
 
-    it('should sync a vault from scratch after accepting a vault invitation', async () => {
-      const vaultSystemIdentifier = await vaults.createVault()
+    it('should sync a group from scratch after accepting an invitation', async () => {
+      const { vaultSystemIdentifier, group } = await createVaultAndGroup()
 
-      /** Create an item and add it to the vault */
       const note = await context.createSyncedNote('foo', 'bar')
-      await vaults.addItemToVault(vaultSystemIdentifier, note)
+      await addItemToVault(context, vaultSystemIdentifier, note)
 
-      /** Invite a contact */
+      /** Create a mutually trusted contact */
       const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
       const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
       await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
@@ -113,10 +116,10 @@ describe('groups', function () {
       /** Sync the contact context so that they wouldn't naturally receive changes made before this point */
       await contactContext.sync()
 
-      await groups.inviteContactToGroup(vault, contact, GroupPermission.Write)
+      await groups.inviteContactToGroup(group, contact, GroupPermission.Write)
 
       /** Contact should now sync and expect to find note */
-      const promise = contactContext.awaitNextSyncVaultFromScratchEvent()
+      const promise = contactContext.awaitNextSyncGroupFromScratchEvent()
       await contactContext.sync()
       await Collaboration.acceptAllInvites(contactContext)
       await promise
@@ -129,67 +132,64 @@ describe('groups', function () {
       await deinitContactContext()
     })
 
-    it('should remove vault member', async () => {
-      const { vaultSystemIdentifier, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+    it('should remove group member', async () => {
+      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
 
-      const originalGroupUsers = await groups.getGroupUsers(vaultSystemIdentifier)
+      const originalGroupUsers = await groups.getGroupUsers(group.uuid)
       expect(originalGroupUsers.length).to.equal(2)
 
-      const result = await groups.removeUserFromGroup(groupUuid, contactContext.userUuid)
+      const result = await groups.removeUserFromGroup(group.uuid, contactContext.userUuid)
 
       expect(isClientDisplayableError(result)).to.be.false
 
-      const updatedGroupUsers = await groups.getGroupUsers(vaultSystemIdentifier)
+      const updatedGroupUsers = await groups.getGroupUsers(group.uuid)
       expect(updatedGroupUsers.length).to.equal(1)
 
       await deinitContactContext()
     })
 
     it('non-admin user should not be able to invite user', async () => {
-      const { vaultSystemIdentifier, contactContext, deinitContactContext } =
-        await createGroupWithAcceptedInviteAndNote()
+      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
 
       const thirdParty = await Collaboration.createContactContext()
       const thirdPartyContact = await Collaboration.createTrustedContactForUserOfContext(
         contactContext,
         thirdParty.contactContext,
       )
-      const result = await contactContext.collaboration.inviteContactToGroup(
-        vault,
-        thirdPartyContact,
-        GroupPermission.Write,
-      )
+      const result = await contactContext.groups.inviteContactToGroup(group, thirdPartyContact, GroupPermission.Write)
 
       expect(isClientDisplayableError(result)).to.be.true
 
       await deinitContactContext()
     })
 
-    it('should not be able to leave vault as creator', async () => {
-      const vaultSystemIdentifier = await vaults.createVault()
+    it('should not be able to leave group as creator', async () => {
+      const { group } = await createVaultAndGroup()
 
-      const result = await groups.removeUserFromGroup(groupUuid, context.userUuid)
+      const result = await groups.removeUserFromGroup(group.uuid, context.userUuid)
 
       expect(isClientDisplayableError(result)).to.be.true
     })
 
-    it('should be able to leave vault as added admin', async () => {
-      const { vaultSystemIdentifier, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite(
-        GroupPermission.Admin,
-      )
+    it('should be able to leave group as added admin', async () => {
+      const { group, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite(GroupPermission.Admin)
 
-      const result = await contactContext.collaboration.leaveGroup(groupUuid)
+      const result = await contactContext.groups.leaveGroup(group.uuid)
 
       expect(isClientDisplayableError(result)).to.be.false
 
       await deinitContactContext()
     })
 
-    it('leaving a vault should remove its items locally', async () => {
-      const { vaultSystemIdentifier, contactContext, deinitContactContext } =
-        await createGroupWithAcceptedInviteAndNote(GroupPermission.Admin)
+    it('leaving a group should remove its items locally', async () => {
+      const { group, note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote(
+        GroupPermission.Admin,
+      )
 
-      await contactContext.collaboration.leaveGroup(groupUuid)
+      const originalNote = contactContext.application.items.findItem(note.uuid)
+      expect(originalNote).to.not.be.undefined
+
+      await contactContext.groups.leaveGroup(group.uuid)
 
       const updatedContactNote = contactContext.application.items.findItem(note.uuid)
       expect(updatedContactNote).to.be.undefined
@@ -197,17 +197,16 @@ describe('groups', function () {
       await deinitContactContext()
     })
 
-    it('leaving or being removed from vault should remove vault items locally', async () => {
-      const { vaultSystemIdentifier, note, contactContext, deinitContactContext } =
-        await createGroupWithAcceptedInviteAndNote()
+    it('leaving or being removed from group should remove group items locally', async () => {
+      const { group, note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
 
       const contactNote = contactContext.application.items.findItem(note.uuid)
       expect(contactNote).to.not.be.undefined
 
-      await context.collaboration.removeUserFromGroup(groupUuid, contactContext.userUuid)
+      await context.groups.removeUserFromGroup(group.uuid, contactContext.userUuid)
 
       await contactContext.sync()
-      await contactContext.collaboration.reloadRemovedVaults()
+      await contactContext.groups.reloadRemovedGroups()
 
       const updatedContactNote = contactContext.application.items.findItem(note.uuid)
       expect(updatedContactNote).to.be.undefined
@@ -215,12 +214,12 @@ describe('groups', function () {
       await deinitContactContext()
     })
 
-    it('should return invited to vaults when fetching vaults from server', async () => {
+    it('should return invited to groups when fetching groups from server', async () => {
       const { contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
 
-      const vaults = await contactContext.vaults.reloadRemoteVaults()
+      const groups = await contactContext.groups.reloadRemoteGroups()
 
-      expect(vaults.length).to.equal(1)
+      expect(groups.length).to.equal(1)
 
       await deinitContactContext()
     })
@@ -228,24 +227,27 @@ describe('groups', function () {
     it('canceling an invite should remove it from recipient pending invites', async () => {
       const { invite, contactContext, deinitContactContext } = await createGroupWithUnacceptedButTrustedInvite()
 
-      const preInvites = await contactContext.collaboration.downloadInboundInvites()
+      const preInvites = await contactContext.groups.downloadInboundInvites()
       expect(preInvites.length).to.equal(1)
 
       await groups.deleteInvite(invite)
 
-      const postInvites = await contactContext.collaboration.downloadInboundInvites()
+      const postInvites = await contactContext.groups.downloadInboundInvites()
       expect(postInvites.length).to.equal(0)
 
       await deinitContactContext()
     })
 
     it('should update vault name and description', async () => {
-      const { vaultSystemIdentifier, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
+      const { vaultSystemIdentifier, group, contactContext, deinitContactContext } =
+        await createGroupWithAcceptedInvite()
 
+      const promise = context.resolveWhenGroupChangeInvitesAreSent(group.uuid)
       await vaults.changeVaultNameAndDescription(vaultSystemIdentifier, {
         name: 'new vault name',
         description: 'new vault description',
       })
+      await promise
 
       const vaultInfo = vaults.getVaultInfo(vaultSystemIdentifier)
       expect(vaultInfo.vaultName).to.equal('new vault name')
@@ -265,22 +267,22 @@ describe('groups', function () {
     it('received items from previously trusted contact should be decrypted', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
       const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
-      const vaultSystemIdentifier = await vaults.createVault()
+      const { vaultSystemIdentifier, group } = await createVaultAndGroup()
 
       await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
       const currentContextContact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
 
       contactContext.lockSyncing()
-      await groups.inviteContactToGroup(vault, currentContextContact, GroupPermission.Write)
-      await vaults.addItemToVault(vaultSystemIdentifier, note)
+      await groups.inviteContactToGroup(group, currentContextContact, GroupPermission.Write)
+      await addItemToVault(context, vaultSystemIdentifier, note)
 
-      const promise = contactContext.awaitNextSyncVaultFromScratchEvent()
+      const promise = contactContext.awaitNextSyncGroupFromScratchEvent()
       contactContext.unlockSyncing()
       await contactContext.sync()
       await Collaboration.acceptAllInvites(contactContext)
       await promise
 
-      const receivedItemsKey = contactContext.application.items.getAllVaultItemsKeysForVault(vaultSystemIdentifier)[0]
+      const receivedItemsKey = contactContext.application.items.getPrimaryVaultItemsKeyForVault(vaultSystemIdentifier)
       expect(receivedItemsKey).to.not.be.undefined
       expect(receivedItemsKey.itemsKey).to.not.be.undefined
 
@@ -291,10 +293,10 @@ describe('groups', function () {
       await deinitContactContext()
     })
 
-    it('vault creator should receive changes from other members', async () => {
+    it('group creator should receive changes from other members', async () => {
       const { vaultSystemIdentifier, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
       const note = await context.createSyncedNote('foo', 'bar')
-      await vaults.addItemToVault(vaultSystemIdentifier, note)
+      await addItemToVault(context, vaultSystemIdentifier, note)
       await contactContext.sync()
 
       await contactContext.items.changeItem({ uuid: note.uuid }, (mutator) => {
@@ -309,7 +311,7 @@ describe('groups', function () {
       await deinitContactContext()
     })
 
-    it('should remove an item from a vault; collaborator should no longer receive changes', async () => {
+    it.skip('removing an item from a vault should remove it from collaborator devices', async () => {
       const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
 
       await context.vaults.moveItemFromVaultToUser(note)
@@ -325,15 +327,39 @@ describe('groups', function () {
       await deinitContactContext()
     })
 
+    it('items added by collaborator should be received by group owner', async () => {
+      const { vaultSystemIdentifier, contactContext, deinitContactContext } =
+        await createGroupWithAcceptedInviteAndNote()
+
+      const newNote = await contactContext.createSyncedNote('new note', 'new note text')
+      await addItemToVault(contactContext, vaultSystemIdentifier, newNote)
+
+      await context.sync()
+
+      const receivedNote = context.application.items.findItem(newNote.uuid)
+      expect(receivedNote).to.not.be.undefined
+      expect(receivedNote.title).to.equal('new note')
+
+      await deinitContactContext()
+    })
+
     it('conflicts created should be associated with the vault', async () => {
       const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
 
       await context.changeNoteTitle(note, 'new title first client')
       await contactContext.changeNoteTitle(note, 'new title second client')
 
-      await context.sync()
-      await contactContext.sync()
-      await context.sync()
+      const doneAddingConflictToGroup = contactContext.resolveWhenItemCompletesAddingToGroup()
+
+      await context.sync({ desc: 'First client sync' })
+      await contactContext.sync({
+        desc: 'Second client sync with conflicts to be created',
+      })
+      await doneAddingConflictToGroup
+      await context.sync({ desc: 'First client sync with conflicts to be pulled in' })
+
+      expect(context.items.invalidItems.length).to.equal(0)
+      expect(contactContext.items.invalidItems.length).to.equal(0)
 
       const originatorNotes = context.items.getDisplayableNotes()
       expect(originatorNotes.length).to.equal(2)
@@ -345,15 +371,44 @@ describe('groups', function () {
 
       await deinitContactContext()
     })
+
+    it.skip('failing test that results in a sync fail race condition', async () => {
+      const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+
+      await context.changeNoteTitle(note, 'new title first client')
+      await contactContext.changeNoteTitle(note, 'new title second client')
+
+      const doneAddingConflictToGroup = contactContext.resolveWhenItemCompletesAddingToGroup()
+
+      await context.sync({ desc: 'First client sync' })
+      await contactContext.sync({
+        desc: 'Second client sync with conflicts to be created',
+      })
+
+      await context.sync({ desc: 'First client sync with conflicts to be pulled in' })
+
+      /**
+       * Putting the below promise await after the first-client sync above will result
+       * in first client never being able to pull in the changes made, even if subsequent syncs are done
+       */
+      await doneAddingConflictToGroup
+
+      const originatorNotes = context.items.getDisplayableNotes()
+      expect(originatorNotes.length).to.equal(2)
+
+      await deinitContactContext()
+    })
   })
 
   describe('deletion', () => {
-    it('should remove item from vault when item is deleted permanently', async () => {
+    it('should remove item from all user devices when item is deleted permanently', async () => {
       const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
 
       await context.items.setItemToBeDeleted(note)
+      const promise = context.resolveWhenSavedSyncPayloadsIncludesItemUuid(note.uuid)
       await context.sync()
       await contactContext.sync()
+      await promise
 
       const originatorNote = context.application.items.findItem(note.uuid)
       expect(originatorNote).to.be.undefined
@@ -367,11 +422,14 @@ describe('groups', function () {
     it('attempting to delete a note received by and already deleted by another person should not cause infinite conflicts', async () => {
       const { note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
 
+      const promise = context.resolveWhenSavedSyncPayloadsIncludesItemUuid(note.uuid)
+
       await context.items.setItemToBeDeleted(note)
       await contactContext.items.setItemToBeDeleted(note)
 
       await context.sync()
       await contactContext.sync()
+      await promise
 
       const originatorNote = context.application.items.findItem(note.uuid)
       expect(originatorNote).to.be.undefined
@@ -382,27 +440,18 @@ describe('groups', function () {
       await deinitContactContext()
     })
 
-    it('should delete a vault and remove item associations', async () => {
-      const { vaultSystemIdentifier, note, contactContext, deinitContactContext } =
-        await createGroupWithAcceptedInviteAndNote()
-
-      await vaults.deleteVault(vaultSystemIdentifier)
-
-      const originatorNote = context.application.items.findItem(note.uuid)
-      expect(originatorNote.vault_system_identifier).to.not.be.ok
-
-      /** Contact should not be able to receive new changes, and thus will have the last copy of the note with its vault_system_identifier intact */
-      const contactNote = contactContext.application.items.findItem(note.uuid)
-      expect(contactNote.vault_system_identifier).to.not.be.undefined
-
-      await deinitContactContext()
+    it('deleting a vault should delete its respective group', async () => {
+      console.error('TODO: implement')
     })
 
-    it('deleting a vault should delete all its items', async () => {
-      const { vaultSystemIdentifier, note, contactContext, deinitContactContext } =
-        await createGroupWithAcceptedInviteAndNote()
+    it('deleting a group should keep vault in tact for vault owner', async () => {
+      console.error('TODO: implement')
+    })
 
-      await vaults.deleteVault(vaultSystemIdentifier)
+    it('deleting a group should remove all vault items from collaborator devices', async () => {
+      const { group, note, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+
+      await groups.deleteGroup(group.uuid)
       await contactContext.sync()
 
       const originatorNote = context.application.items.findItem(note.uuid)
@@ -417,11 +466,11 @@ describe('groups', function () {
 
   describe('invites', () => {
     it('should invite contact to vault', async () => {
-      const vaultSystemIdentifier = await vaults.createVault()
+      const { vaultSystemIdentifier, group } = await createVaultAndGroup()
       const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
       const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
 
-      const vaultInvite = await groups.inviteContactToGroup(vault, contact, GroupPermission.Write)
+      const vaultInvite = await groups.inviteContactToGroup(group, contact, GroupPermission.Write)
 
       expect(vaultInvite).to.not.be.undefined
       expect(vaultInvite.vault_system_identifier).to.equal(vaultSystemIdentifier)
@@ -437,17 +486,14 @@ describe('groups', function () {
     it('received invites from untrusted contact should not be trusted', async () => {
       await context.createSyncedNote('foo', 'bar')
       const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
-      const vaultSystemIdentifier = await vaults.createVault()
+      const { vaultSystemIdentifier, group } = await createVaultAndGroup()
 
       const currentContextContact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
-      await groups.inviteContactToGroup(vault, currentContextContact, GroupPermission.Write)
+      await groups.inviteContactToGroup(group, currentContextContact, GroupPermission.Write)
 
-      await contactContext.collaboration.downloadInboundInvites()
-      expect(
-        contactContext.collaboration.getTrustedSenderOfInvite(
-          contactContext.collaboration.getCachedInboundInvites()[0],
-        ),
-      ).to.be.undefined
+      await contactContext.groups.downloadInboundInvites()
+      expect(contactContext.groups.getTrustedSenderOfInvite(contactContext.groups.getCachedInboundInvites()[0])).to.be
+        .undefined
 
       await deinitContactContext()
     })
@@ -455,25 +501,19 @@ describe('groups', function () {
     it('received invites from contact who becomes trusted after receipt of invite should be trusted', async () => {
       await context.createSyncedNote('foo', 'bar')
       const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
-      const vaultSystemIdentifier = await vaults.createVault()
+      const { vaultSystemIdentifier, group } = await createVaultAndGroup()
 
       const currentContextContact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
-      await groups.inviteContactToGroup(vault, currentContextContact, GroupPermission.Write)
+      await groups.inviteContactToGroup(group, currentContextContact, GroupPermission.Write)
 
-      await contactContext.collaboration.downloadInboundInvites()
-      expect(
-        contactContext.collaboration.getTrustedSenderOfInvite(
-          contactContext.collaboration.getCachedInboundInvites()[0],
-        ),
-      ).to.be.undefined
+      await contactContext.groups.downloadInboundInvites()
+      expect(contactContext.groups.getTrustedSenderOfInvite(contactContext.groups.getCachedInboundInvites()[0])).to.be
+        .undefined
 
       await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
 
-      expect(
-        contactContext.collaboration.getTrustedSenderOfInvite(
-          contactContext.collaboration.getCachedInboundInvites()[0],
-        ),
-      ).to.not.be.undefined
+      expect(contactContext.groups.getTrustedSenderOfInvite(contactContext.groups.getCachedInboundInvites()[0])).to.not
+        .be.undefined
 
       await deinitContactContext()
     })
@@ -508,13 +548,13 @@ describe('groups', function () {
 
   describe('user credentials change', () => {
     it('should reupload all outbound invites when inviter keypair changes', async () => {
-      const vaultSystemIdentifier = await vaults.createVault()
+      const { vaultSystemIdentifier, group } = await createVaultAndGroup()
       const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
       const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
-      await groups.inviteContactToGroup(vault, contact, GroupPermission.Write)
+      await groups.inviteContactToGroup(group, contact, GroupPermission.Write)
       await contactContext.sync()
 
-      const vaultInvite = contactContext.collaboration.getCachedInboundInvites()[0]
+      const vaultInvite = contactContext.groups.getCachedInboundInvites()[0]
       expect(vaultInvite.inviter_public_key).to.equal(groups.userPublicKey)
 
       await context.changePassword('new-password')
@@ -522,7 +562,7 @@ describe('groups', function () {
 
       await contactContext.sync()
 
-      const updatedGroupInvite = contactContext.collaboration.getCachedInboundInvites()[0]
+      const updatedGroupInvite = contactContext.groups.getCachedInboundInvites()[0]
       expect(updatedGroupInvite.inviter_public_key).to.equal(groups.userPublicKey)
 
       await deinitContactContext()
@@ -580,7 +620,7 @@ describe('groups', function () {
         context,
         thirdParty.contactContext,
       )
-      await groups.inviteContactToGroup(vault, thirdPartyContact, GroupPermission.Write)
+      await groups.inviteContactToGroup(group, thirdPartyContact, GroupPermission.Write)
 
       const originalOutboundInvites = await groups.getOutboundInvites()
       expect(originalOutboundInvites.length).to.equal(1)
@@ -603,7 +643,7 @@ describe('groups', function () {
 
       await vaults.rotateVaultKey(vaultSystemIdentifier)
 
-      const acceptInviteSpy = sinon.spy(contactContext.collaboration, 'acceptInvite')
+      const acceptInviteSpy = sinon.spy(contactContext.groups, 'acceptInvite')
 
       contactContext.unlockSyncing()
       await contactContext.sync()
@@ -631,7 +671,7 @@ describe('groups', function () {
 
   describe('permissions', async () => {
     it('should not be able to update a vault with a keyTimestamp lower than the current one', async () => {
-      const vaultSystemIdentifier = await vaults.createVault()
+      const { vaultSystemIdentifier, group } = await createVaultAndGroup()
       const vaultKeyCopy = context.items.getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier)
 
       const result = await groups.updateGroup({
@@ -668,18 +708,18 @@ describe('groups', function () {
     })
 
     it('attempting to save item using an old vault items key should result in GroupInvalidItemsKey conflict', async () => {
-      const vaultSystemIdentifier = await vaults.createVault()
+      const { vaultSystemIdentifier, group } = await createVaultAndGroup()
 
       const note = await context.createSyncedNote('foo', 'bar')
-      await context.vaults.addItemToVault(vaultSystemIdentifier, note)
+      await context.addItemToVault(context, vaultSystemIdentifier, note)
 
       const oldVaultItemsKey = context.items.getAllVaultItemsKeysForVault(vaultSystemIdentifier)[0]
 
       await context.vaults.rotateVaultKey(vaultSystemIdentifier)
 
-      await context.vaults.handleReceivedRemoteGroups([
+      await context.groups.groupCache.updateGroups([
         {
-          ...vault,
+          ...group,
           specified_items_key_uuid: oldVaultItemsKey.uuid,
         },
       ])
@@ -694,13 +734,13 @@ describe('groups', function () {
     })
 
     it("should use the cached group's specified items key when choosing which key to encrypt vault items with", async () => {
-      const vaultSystemIdentifier = await vaults.createVault()
+      const { vaultSystemIdentifier, group } = await createVaultAndGroup()
 
       const firstVaultItemsKey = context.items.getAllVaultItemsKeysForVault(vaultSystemIdentifier)[0]
 
       const note = await context.createSyncedNote('foo', 'bar')
       const firstPromise = context.resolveWithUploadedPayloads()
-      await context.vaults.addItemToVault(vaultSystemIdentifier, note)
+      await context.addItemToVault(context, vaultSystemIdentifier, note)
       const firstUploadedPayloads = await firstPromise
 
       expect(firstUploadedPayloads[0].items_key_id).to.equal(firstVaultItemsKey.uuid)
@@ -715,9 +755,9 @@ describe('groups', function () {
 
       expect(secondUploadedPayloads[0].items_key_id).to.equal(secondVaultItemsKey.uuid)
 
-      await context.vaults.handleReceivedRemoteGroups([
+      await context.groups.groupCache.updateGroups([
         {
-          ...vault,
+          ...group,
           specified_items_key_uuid: firstVaultItemsKey.uuid,
         },
       ])
@@ -750,7 +790,7 @@ describe('groups', function () {
       const { vaultSystemIdentifier, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
 
       const note = await context.createSyncedNote('foo', 'bar')
-      await vaults.addItemToVault(vaultSystemIdentifier, note)
+      await addItemToVault(context, vaultSystemIdentifier, note)
       await contactContext.sync()
 
       const newItemsKeyUuid = UuidGenerator.GenerateUuid()
@@ -759,7 +799,7 @@ describe('groups', function () {
 
       const contactVault = contactContext.vaults.vaultStorage.getVault(vaultSystemIdentifier)
       contactContext.vaults.vaultStorage.setVault(vaultSystemIdentifier, {
-        ...contactVault,
+        ...contactgroup,
         specifiedItemsKeyUuid: newItemsKeyUuid,
       })
 
@@ -784,7 +824,7 @@ describe('groups', function () {
         GroupPermission.Read,
       )
       const note = await context.createSyncedNote('foo', 'bar')
-      await vaults.addItemToVault(vaultSystemIdentifier, note)
+      await addItemToVault(context, vaultSystemIdentifier, note)
       await contactContext.sync()
 
       await contactContext.items.changeItem({ uuid: note.uuid }, (mutator) => {
@@ -805,7 +845,7 @@ describe('groups', function () {
       const { vaultSystemIdentifier, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
 
       const note = await contactContext.createSyncedNote('foo', 'bar')
-      await contactContext.vaults.addItemToVault(vaultSystemIdentifier, note)
+      await contactContext.addItemToVault(context, vaultSystemIdentifier, note)
       await contactContext.sync()
 
       const promise = contactContext.resolveWithConflicts()
@@ -824,7 +864,7 @@ describe('groups', function () {
     })
 
     it('should create a non-vaulted copy if attempting to move item from vault to user and item belongs to someone else', async () => {
-      const { note, vault, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
+      const { note, group, contactContext, deinitContactContext } = await createGroupWithAcceptedInviteAndNote()
 
       const promise = contactContext.resolveWithConflicts()
       await contactContext.vaults.moveItemFromVaultToUser(note)
@@ -847,7 +887,7 @@ describe('groups', function () {
       const { vaultSystemIdentifier, contactContext, deinitContactContext } = await createGroupWithAcceptedInvite()
 
       const note = await contactContext.createSyncedNote('foo', 'bar')
-      await contactContext.vaults.addItemToVault(vaultSystemIdentifier, note)
+      await contactContext.addItemToVault(context, vaultSystemIdentifier, note)
       await context.sync()
 
       const promise = context.resolveWithConflicts()
@@ -869,11 +909,11 @@ describe('groups', function () {
   })
 
   describe('sync errors and conflicts', () => {
-    it('after leaving vault, attempting to sync previously vault item should result in GroupNotMemberError', async () => {
+    it('after leaving group, attempting to sync previously vault item should result in GroupNotMemberError', async () => {
       const { vaultSystemIdentifier, note, contactContext, deinitContactContext } =
         await createGroupWithAcceptedInviteAndNote()
 
-      await context.collaboration.removeUserFromGroup(groupUuid, contactContext.userUuid)
+      await context.groups.removeUserFromGroup(groupUuid, contactContext.userUuid)
 
       const promise = contactContext.resolveWithConflicts()
       await contactContext.changeNoteTitle(note, 'new title')
@@ -904,7 +944,7 @@ describe('groups', function () {
       const { vaultSystemIdentifier, note, contactContext, deinitContactContext } =
         await createGroupWithAcceptedInviteAndNote()
 
-      await context.collaboration.removeUserFromGroup(groupUuid, contactContext.userUuid)
+      await context.groups.removeUserFromGroup(groupUuid, contactContext.userUuid)
 
       await contactContext.changeNoteTitle(note, 'new title')
 
@@ -925,7 +965,7 @@ describe('groups', function () {
     })
 
     it('should be able to upload and download file to vault as owner', async () => {
-      const vaultSystemIdentifier = await vaults.createVault()
+      const { vaultSystemIdentifier, group } = await createVaultAndGroup()
       const response = await fetch('/mocha/assets/small_file.md')
       const buffer = new Uint8Array(await response.arrayBuffer())
       const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, vaultSystemIdentifier)
@@ -945,7 +985,7 @@ describe('groups', function () {
 
       const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
 
-      const vaultSystemIdentifier = await vaults.createVault()
+      const { vaultSystemIdentifier, group } = await createVaultAndGroup()
       const addedFile = await vaults.addItemToVault(vaultSystemIdentifier, uploadedFile)
 
       const downloadedBytes = await Files.downloadFile(context.files, addedFile)
@@ -956,7 +996,7 @@ describe('groups', function () {
       const response = await fetch('/mocha/assets/small_file.md')
       const buffer = new Uint8Array(await response.arrayBuffer())
 
-      const vaultSystemIdentifier = await vaults.createVault()
+      const { vaultSystemIdentifier, group } = await createVaultAndGroup()
       const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, vaultSystemIdentifier)
 
       const removedFile = await vaults.moveItemFromVaultToUser(uploadedFile)

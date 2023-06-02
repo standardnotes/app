@@ -68,7 +68,7 @@ export class GroupService
   private eventDisposers: (() => void)[] = []
 
   private pendingInvites: Record<string, GroupInviteServerHash> = {}
-  private groupsCache: GroupCacheServiceInterface
+  private groupCache: GroupCacheServiceInterface
 
   constructor(
     http: HttpServiceInterface,
@@ -84,7 +84,7 @@ export class GroupService
     super(eventBus)
     eventBus.addEventHandler(this, SessionEvent.SuccessfullyChangedCredentials)
 
-    this.groupsCache = new GroupCacheService(storage)
+    this.groupCache = new GroupCacheService(storage)
     this.groupServer = new GroupServer(http)
     this.groupUsersServer = new GroupUsersServer(http)
     this.groupInvitesServer = new GroupInvitesServer(http)
@@ -94,7 +94,7 @@ export class GroupService
         if (event === SyncEvent.ReceivedGroupInvites) {
           await this.processInboundInvites(data as SyncEventReceivedGroupInvitesData)
         } else if (event === SyncEvent.ReceivedRemoteGroups) {
-          this.groupsCache.updateGroups(data as SyncEventReceivedRemoteGroupsData)
+          this.groupCache.updateGroups(data as SyncEventReceivedRemoteGroupsData)
           void this.notifyEvent(GroupServiceEvent.GroupStatusChanged)
         }
       }),
@@ -140,68 +140,9 @@ export class GroupService
     )
   }
 
-  private async handleInsertionOfNewVaultItemsKeys(vaultItemsKeys: VaultItemsKeyInterface[]): Promise<void> {
-    for (const vaultItemsKey of vaultItemsKeys) {
-      if (!vaultItemsKey.vault_system_identifier) {
-        throw new Error('Vault items key does not have a vault system identifier')
-      }
-
-      const group = this.groupsCache.getGroupForVaultSystemIdentifier(vaultItemsKey.vault_system_identifier)
-      if (group) {
-        const primaryVaultItemsKey = this.items.getPrimaryVaultItemsKeyForVault(vaultItemsKey.vault_system_identifier)
-        const updateGroupUseCase = new UpdateGroupUseCase(this.groupServer)
-        const updateResult = await updateGroupUseCase.execute({
-          groupUuid: group.uuid,
-          specifiedItemsKeyUuid: primaryVaultItemsKey.uuid,
-        })
-
-        if (!isClientDisplayableError(updateResult)) {
-          this.groupsCache.setGroup(updateResult)
-        }
-      }
-    }
-  }
-
-  private async handleChangeInVaultKeys(changed: VaultKeyCopyInterface[]): Promise<void> {
-    for (const changedKey of changed) {
-      const group = this.groupsCache.getGroupForVaultSystemIdentifier(changedKey.vaultSystemIdentifier)
-      if (group) {
-        await this.updateInvitesAfterVaultKeyChange({
-          vaultSystemIdentifier: changedKey.vaultSystemIdentifier,
-          groupUuid: group.uuid,
-        })
-      }
-    }
-  }
-
-  private async automaticallyAddOrRemoveItemsFromGroupAfterChanges(items: DecryptedItemInterface[]): Promise<void> {
-    let needsSync = false
-    for (const item of items) {
-      if (item.vault_system_identifier && !item.group_uuid) {
-        const group = this.groupsCache.getGroupForVaultSystemIdentifier(item.vault_system_identifier)
-        if (group) {
-          await this.addItemToGroup(group.uuid, item)
-          needsSync = true
-        }
-      }
-
-      if (!item.vault_system_identifier && item.group_uuid) {
-        const group = this.groupsCache.getGroup(item.group_uuid)
-        if (group) {
-          await this.removeItemFromGroup(item)
-          needsSync = true
-        }
-      }
-    }
-
-    if (needsSync) {
-      await this.sync.sync()
-    }
-  }
-
   override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
     if (stage === ApplicationStage.Launched_10) {
-      void this.reloadRemovedVaults()
+      void this.reloadRemovedGroups()
     }
   }
 
@@ -215,6 +156,84 @@ export class GroupService
         this.items,
       )
       await handler.execute(event.payload as SuccessfullyChangedCredentialsEventData)
+    }
+  }
+
+  private async handleInsertionOfNewVaultItemsKeys(vaultItemsKeys: VaultItemsKeyInterface[]): Promise<void> {
+    for (const vaultItemsKey of vaultItemsKeys) {
+      if (!vaultItemsKey.vault_system_identifier) {
+        throw new Error('Vault items key does not have a vault system identifier')
+      }
+
+      const group = this.groupCache.getGroupForVaultSystemIdentifier(vaultItemsKey.vault_system_identifier)
+      if (group) {
+        const primaryVaultItemsKey = this.items.getPrimaryVaultItemsKeyForVault(vaultItemsKey.vault_system_identifier)
+        const updateGroupUseCase = new UpdateGroupUseCase(this.groupServer)
+        const updateResult = await updateGroupUseCase.execute({
+          groupUuid: group.uuid,
+          specifiedItemsKeyUuid: primaryVaultItemsKey.uuid,
+        })
+
+        if (!isClientDisplayableError(updateResult)) {
+          this.groupCache.setGroup(updateResult)
+        }
+      }
+    }
+  }
+
+  private async handleChangeInVaultKeys(changed: VaultKeyCopyInterface[]): Promise<void> {
+    const handledVaults = new Set()
+
+    for (const changedKey of changed) {
+      if (handledVaults.has(changedKey.vaultSystemIdentifier)) {
+        continue
+      }
+
+      const group = this.groupCache.getGroupForVaultSystemIdentifier(changedKey.vaultSystemIdentifier)
+      if (!group) {
+        continue
+      }
+
+      if (!this.isCurrentUserGroupOwner(group.uuid)) {
+        continue
+      }
+
+      const primaryKey = this.items.getPrimarySyncedVaultKeyCopy(changedKey.vaultSystemIdentifier)
+      if (changedKey.uuid !== primaryKey?.uuid) {
+        continue
+      }
+
+      handledVaults.add(changedKey.vaultSystemIdentifier)
+
+      await this.updateInvitesAfterVaultKeyChange({
+        vaultSystemIdentifier: changedKey.vaultSystemIdentifier,
+        groupUuid: group.uuid,
+      })
+    }
+  }
+
+  private async automaticallyAddOrRemoveItemsFromGroupAfterChanges(items: DecryptedItemInterface[]): Promise<void> {
+    let needsSync = false
+    for (const item of items) {
+      if (item.vault_system_identifier && !item.group_uuid) {
+        const group = this.groupCache.getGroupForVaultSystemIdentifier(item.vault_system_identifier)
+        if (group) {
+          await this.addItemToGroup(group.uuid, item)
+          needsSync = true
+        }
+      }
+
+      if (!item.vault_system_identifier && item.group_uuid) {
+        const group = this.groupCache.getGroup(item.group_uuid)
+        if (group) {
+          await this.removeItemFromGroup(item)
+          needsSync = true
+        }
+      }
+    }
+
+    if (needsSync) {
+      await this.sync.sync()
     }
   }
 
@@ -233,9 +252,16 @@ export class GroupService
       return ClientDisplayableError.FromString(`Failed to create group ${result}`)
     }
 
-    this.groupsCache.setGroup(result.data.group)
+    const group = result.data.group
 
-    return result.data.group
+    this.groupCache.setGroup(group)
+
+    const vaultItems = this.items.itemsBelongingToVaultSystem(params.vaultSystemIdentifier)
+    for (const vaultItem of vaultItems) {
+      await this.addItemToGroup(group.uuid, vaultItem)
+    }
+
+    return group
   }
 
   public async reloadRemoteGroups(): Promise<GroupServerHash[] | ClientDisplayableError> {
@@ -247,7 +273,7 @@ export class GroupService
 
     const groups = response.data.groups
 
-    this.groupsCache.updateGroups(groups)
+    this.groupCache.updateGroups(groups)
 
     return groups
   }
@@ -256,15 +282,19 @@ export class GroupService
     return Object.values(this.pendingInvites)
   }
 
-  /**
-   * @TODO
-   */
-  public isUserGroupAdmin(_userUuid: string): boolean {
-    return false
+  public isCurrentUserGroupAdmin(groupUuid: string): boolean {
+    const group = this.groupCache.getGroup(groupUuid)
+    return group != undefined && group.user_uuid === this.session.userUuid
   }
 
-  public isGroupUserOwnUser(user: GroupUserServerHash): boolean {
-    return user.user_uuid === this.session.userUuid
+  public isCurrentUserGroupOwner(groupUuid: string): boolean {
+    const group = this.groupCache.getGroup(groupUuid)
+    return group != undefined && group.user_uuid === this.session.userUuid
+  }
+
+  public isGroupUserGroupOwner(user: GroupUserServerHash): boolean {
+    const group = this.groupCache.getGroup(user.group_uuid)
+    return group != undefined && group.user_uuid === user.user_uuid
   }
 
   private async handleCreationOfNewTrustedContacts(_contacts: TrustedContactInterface[]): Promise<void> {
@@ -382,7 +412,7 @@ export class GroupService
     return true
   }
 
-  public async reloadRemovedVaults(): Promise<void> {
+  public async reloadRemovedGroups(): Promise<void> {
     if (!this.session.isSignedIn()) {
       return
     }
@@ -474,7 +504,7 @@ export class GroupService
   }
 
   async removeUserFromGroup(groupUuid: string, userUuid: string): Promise<ClientDisplayableError | void> {
-    if (!this.isUserGroupAdmin(groupUuid)) {
+    if (!this.isCurrentUserGroupAdmin(groupUuid)) {
       throw new Error('Only vault admins can remove users')
     }
 
@@ -486,7 +516,7 @@ export class GroupService
 
     void this.notifyCollaborationStatusChanged()
 
-    const vaultSystemIdentifier = this.groupsCache.getVaultSystemIdentifierForGroup(groupUuid)
+    const vaultSystemIdentifier = this.groupCache.getVaultSystemIdentifierForGroup(groupUuid)
     if (!vaultSystemIdentifier) {
       throw new Error('Vault system identifier not found')
     }

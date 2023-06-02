@@ -214,6 +214,17 @@ describe('vaults', function () {
 
         await otherClient.deinit()
       })
+
+      it('deleting a vault should delete all its items', async () => {
+        const vaultSystemIdentifier = await vaults.createVault()
+        const note = await context.createSyncedNote('foo', 'bar')
+        await vaults.addItemToVault(vaultSystemIdentifier, note)
+
+        await vaults.deleteVault(vaultSystemIdentifier)
+
+        const updatedNote = context.application.items.findItem(note.uuid)
+        expect(updatedNote).to.be.undefined
+      })
     })
   })
 })

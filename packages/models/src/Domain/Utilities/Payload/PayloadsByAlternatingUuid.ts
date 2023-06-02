@@ -28,6 +28,10 @@ export function PayloadsByAlternatingUuid<P extends DecryptedPayloadInterface = 
    */
   const copy = payload.copyAsSyncResolved({
     uuid: UuidGenerator.GenerateUuid(),
+
+    /** Only the server can set group_uuid */
+    group_uuid: undefined,
+
     dirty: true,
     dirtyIndex: getIncrementedDirtyIndex(),
     lastSyncBegan: undefined,

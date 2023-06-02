@@ -11,7 +11,7 @@ export class RemoveVaultMemberUseCase {
     })
 
     if (isErrorResponse(response)) {
-      return ClientDisplayableError.FromString(`Failed to remove vault user ${response}`)
+      return ClientDisplayableError.FromNetworkError(response)
     }
   }
 }
