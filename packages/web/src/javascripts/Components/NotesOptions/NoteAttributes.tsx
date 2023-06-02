@@ -1,5 +1,5 @@
 import { useMemo, FunctionComponent } from 'react'
-import { SNApplication, SNNote } from '@standardnotes/snjs'
+import { SNApplication, SNNote, classNames } from '@standardnotes/snjs'
 import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { calculateReadTime } from './Utils/calculateReadTime'
 import { countNoteAttributes } from './Utils/countNoteAttributes'
@@ -7,7 +7,8 @@ import { countNoteAttributes } from './Utils/countNoteAttributes'
 export const NoteAttributes: FunctionComponent<{
   application: SNApplication
   note: SNNote
-}> = ({ application, note }) => {
+  className?: string
+}> = ({ application, note, className }) => {
   const { words, characters, paragraphs } = useMemo(() => countNoteAttributes(note.text), [note.text])
 
   const readTime = useMemo(() => (typeof words === 'number' ? calculateReadTime(words) : 'N/A'), [words])
@@ -20,7 +21,7 @@ export const NoteAttributes: FunctionComponent<{
   const format = editor?.package_info?.file_type || 'txt'
 
   return (
-    <div className="select-text px-3 py-1.5 text-sm font-medium text-neutral lg:text-xs">
+    <div className={classNames('select-text px-3 py-1.5 text-sm font-medium text-neutral lg:text-xs', className)}>
       {typeof words === 'number' && (format === 'txt' || format === 'md') ? (
         <>
           <div className="mb-1">

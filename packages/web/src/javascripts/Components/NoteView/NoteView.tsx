@@ -48,6 +48,7 @@ import { EditorMargins, EditorMaxWidths } from '../EditorWidthSelectionModal/Edi
 import Button from '../Button/Button'
 import ModalOverlay from '../Modal/ModalOverlay'
 import NoteConflictResolutionModal from './NoteConflictResolutionModal'
+import Icon from '../Icon/Icon'
 
 const MinimumStatusDuration = 400
 
@@ -908,7 +909,14 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                 />
               </div>
               {this.state.conflictedNotes.length > 0 && (
-                <Button primary colorStyle="danger" small onClick={this.toggleConflictResolutionModal}>
+                <Button
+                  className="flex items-center"
+                  primary
+                  colorStyle="danger"
+                  small
+                  onClick={this.toggleConflictResolutionModal}
+                >
+                  <Icon type="merge" size="small" className="mr-2" />
                   {this.state.conflictedNotes.length}{' '}
                   {pluralize(this.state.conflictedNotes.length, 'conflict', 'conflicts')}
                 </Button>
