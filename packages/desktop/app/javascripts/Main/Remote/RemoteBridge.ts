@@ -287,7 +287,7 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.desktopServer.desktopServerOpenDataDirectory()
   }
 
-  desktopServerListenOnLogs(callback: (data: string) => void): void {
+  desktopServerListenOnLogs(callback: (data: Buffer) => void): void {
     this.desktopServer.desktopServerListenOnLogs(callback)
   }
 

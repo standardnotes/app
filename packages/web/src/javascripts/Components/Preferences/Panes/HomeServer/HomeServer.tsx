@@ -31,7 +31,7 @@ const DesktopServer = () => {
 
   useEffect(() => {
     if (showLogs) {
-      desktopDevice.desktopServerListenOnLogs((data: Buffer) => {
+      desktopDevice?.desktopServerListenOnLogs((data: Buffer) => {
         setLogs((logs) => [...logs, new TextDecoder().decode(data)])
       })
     }
@@ -39,7 +39,7 @@ const DesktopServer = () => {
 
   const handleShowLogs = () => {
     if (!showLogs) {
-      desktopDevice.desktopServerStopListeningOnLogs()
+      desktopDevice?.desktopServerStopListeningOnLogs()
     }
 
     setShowLogs(!showLogs)

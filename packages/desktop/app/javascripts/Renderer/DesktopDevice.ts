@@ -34,7 +34,7 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.desktopServerStop()
   }
 
-  desktopServerListenOnLogs(callback: (data: string) => void): void {
+  desktopServerListenOnLogs(callback: (data: Buffer) => void): void {
     this.remoteBridge.desktopServerListenOnLogs(callback)
   }
 
