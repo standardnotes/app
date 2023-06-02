@@ -27,6 +27,7 @@ export function createSanitizedStoreData(data: any = {}): StoreData {
     [StoreKeys.DesktopServerJWTSecret]: data[StoreKeys.DesktopServerJWTSecret],
     [StoreKeys.DesktopServerPseudoKeyParamsKey]: data[StoreKeys.DesktopServerPseudoKeyParamsKey],
     [StoreKeys.DesktopServerValetTokenSecret]: data[StoreKeys.DesktopServerValetTokenSecret],
+    [StoreKeys.DesktopServerPort]: data[StoreKeys.DesktopServerPort],
 
     [StoreKeys.LegacyTextBackupsLocation]: data[StoreKeys.LegacyTextBackupsLocation],
     [StoreKeys.LegacyTextBackupsDisabled]: data[StoreKeys.LegacyTextBackupsDisabled],

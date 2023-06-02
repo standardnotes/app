@@ -17,6 +17,7 @@ export enum StoreKeys {
   DesktopServerJWTSecret = 'DesktopServerJWTSecret',
   DesktopServerPseudoKeyParamsKey = 'DesktopServerPseudoKeyParamsKey',
   DesktopServerValetTokenSecret = 'DesktopServerValetTokenSecret',
+  DesktopServerPort = 'DesktopServerPort',
 
   LegacyTextBackupsLocation = 'backupsLocation',
   LegacyTextBackupsDisabled = 'backupsDisabled',
@@ -42,6 +43,7 @@ export interface StoreData {
   [StoreKeys.DesktopServerJWTSecret]: string
   [StoreKeys.DesktopServerPseudoKeyParamsKey]: string
   [StoreKeys.DesktopServerValetTokenSecret]: string
+  [StoreKeys.DesktopServerPort]: number
 
   [StoreKeys.LegacyTextBackupsLocation]: string
   [StoreKeys.LegacyTextBackupsDisabled]: boolean

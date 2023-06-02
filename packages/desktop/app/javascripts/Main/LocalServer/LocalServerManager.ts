@@ -82,33 +82,13 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
   }
 
   async desktopServerStatus(): Promise<DesktopServerStatus> {
-    const dataDir = await this.desktopServerGetDataDirectory()
+    const isHomeServerRunning = await this.homeServer.isRunning()
 
-    try {
-      const { output } = await this.commandService.runCommand(CreateCommand('docker compose ps'), dataDir)
+    const url = isHomeServerRunning
+      ? `http://${this.getLocalIP()}:${this.appState.store.get(StoreKeys.DesktopServerPort)}`
+      : undefined
 
-      const lines = output
-        .split('\n')
-        .slice(1)
-        .map((line) => line.trim().split(/\s+/))
-
-      const serviceStatuses = lines
-        .filter((parts) => parts.length > 1)
-        .map(([name, _command, _service, status, ports]) => ({ name, status, ports }))
-
-      if (serviceStatuses.length > 0 && serviceStatuses.every((service) => service.status.includes('running'))) {
-        const httpService = serviceStatuses.find((service) => service.name === 'server_self_hosted')
-        const httpPort = httpService?.ports.split('->')[0].split(':')[1]
-        const url = `http://${this.getLocalIP()}:${httpPort}`
-        return { status: 'on', url: url }
-      } else if (serviceStatuses.some((service) => service.status === 'running')) {
-        return { status: 'error', message: output }
-      } else {
-        return { status: 'off' }
-      }
-    } catch (e) {
-      return { status: 'error', message: (e as Error).message }
-    }
+    return { status: isHomeServerRunning ? 'on' : 'off', url }
   }
 
   private generateRandomKey(length: number): string {
@@ -191,12 +171,14 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
       this.appState.store.get(StoreKeys.DesktopServerPseudoKeyParamsKey) ?? this.generateRandomKey(32)
     const valetTokenSecret =
       this.appState.store.get(StoreKeys.DesktopServerValetTokenSecret) ?? this.generateRandomKey(32)
+    const port = this.appState.store.get(StoreKeys.DesktopServerPort) ?? 3000
 
     this.appState.store.set(StoreKeys.DesktopServerJWTSecret, jwtSecret)
     this.appState.store.set(StoreKeys.DesktopServerAuthJWTSecret, authJwtSecret)
     this.appState.store.set(StoreKeys.DesktopServerEncryptionServerKey, encryptionServerKey)
     this.appState.store.set(StoreKeys.DesktopServerPseudoKeyParamsKey, pseudoKeyParamsKey)
     this.appState.store.set(StoreKeys.DesktopServerValetTokenSecret, valetTokenSecret)
+    this.appState.store.set(StoreKeys.DesktopServerPort, port)
 
     await this.homeServer.start({
       environment: {
@@ -208,6 +190,7 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
         FILES_SERVER_URL: `http://${this.getLocalIP()}`,
         LOG_LEVEL: 'info',
         VERSION: 'desktop',
+        PORT: port.toString(),
       },
     })
   }
