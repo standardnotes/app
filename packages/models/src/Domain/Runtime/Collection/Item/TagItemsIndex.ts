@@ -18,7 +18,7 @@ export class TagItemsIndex implements SNIndex {
 
   private isItemCountable = (item: ItemInterface) => {
     if (isDecryptedItem(item)) {
-      return !item.archived && !item.trashed
+      return !item.archived && !item.trashed && !item.conflictOf
     }
     return false
   }
