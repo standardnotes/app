@@ -6,5 +6,5 @@ type KeySystemIdentifier = string
 export type ItemAuthenticatedData = {
   u: UserUuid
   v: ProtocolVersion
-  vsi?: KeySystemIdentifier
+  ksi?: KeySystemIdentifier
 }

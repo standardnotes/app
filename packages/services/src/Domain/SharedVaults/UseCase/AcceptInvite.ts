@@ -1,8 +1,12 @@
-import { VaultKeyCopyContentSpecialized, VaultKeyCopyInterface, VaultKeyMutator } from '@standardnotes/models'
+import {
+  KeySystemRootKeyContentSpecialized,
+  KeySystemRootKeyInterface,
+  KeySystemRootKeyMutator,
+} from '@standardnotes/models'
 import { SharedVaultInvitesServerInterface } from '@standardnotes/api'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { SharedVaultInviteServerHash } from '@standardnotes/responses'
-import { CreateVaultKeyUseCase } from '../../Vaults/UseCase/CreateVaultKey'
+import { CreateKeySystemRootKeyUseCase } from '../../Vaults/UseCase/CreateKeySystemRootKey'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 
 export class AcceptInvite {
@@ -14,7 +18,7 @@ export class AcceptInvite {
   ) {}
 
   async execute(invite: SharedVaultInviteServerHash): Promise<'inserted' | 'changed' | 'errored'> {
-    const decryptionResult = this.encryption.decryptVaultKeyContentWithPrivateKey(
+    const decryptionResult = this.encryption.decryptKeySystemRootKeyContentWithPrivateKey(
       invite.encrypted_vault_key_content,
       invite.inviter_public_key,
       this.privateKey,
@@ -24,7 +28,7 @@ export class AcceptInvite {
       return 'errored'
     }
 
-    const { modificationType } = await this.createOrUpdateVaultKey(decryptionResult)
+    const { modificationType } = await this.createOrUpdateKeySystemRootKey(decryptionResult)
 
     await this.vaultInvitesServer.acceptInvite({
       sharedVaultUuid: invite.shared_vault_uuid,
@@ -34,28 +38,28 @@ export class AcceptInvite {
     return modificationType
   }
 
-  private async createOrUpdateVaultKey(
-    decryptedKeyContent: VaultKeyCopyContentSpecialized,
-  ): Promise<{ vaultKey: VaultKeyCopyInterface; modificationType: 'inserted' | 'changed' }> {
-    const existingVaultKey = this.items.getSyncedVaultKeyCopyMatchingTimestamp(
-      decryptedKeyContent.keySystemIdentifier,
+  private async createOrUpdateKeySystemRootKey(
+    decryptedKeyContent: KeySystemRootKeyContentSpecialized,
+  ): Promise<{ keySystemRootKey: KeySystemRootKeyInterface; modificationType: 'inserted' | 'changed' }> {
+    const existingKeySystemRootKey = this.items.getKeySystemRootKeyMatchingTimestamp(
+      decryptedKeyContent.systemIdentifier,
       decryptedKeyContent.keyTimestamp,
     )
 
-    if (existingVaultKey) {
-      const updatedItem = await this.items.changeItem<VaultKeyMutator, VaultKeyCopyInterface>(
-        existingVaultKey,
+    if (existingKeySystemRootKey) {
+      const updatedItem = await this.items.changeItem<KeySystemRootKeyMutator, KeySystemRootKeyInterface>(
+        existingKeySystemRootKey,
         (mutator) => {
-          mutator.vaultName = decryptedKeyContent.vaultName
-          mutator.vaultDescription = decryptedKeyContent.vaultDescription
+          mutator.vaultName = decryptedKeyContent.systemName
+          mutator.vaultDescription = decryptedKeyContent.systemDescription
         },
       )
 
-      return { modificationType: 'changed', vaultKey: updatedItem }
+      return { modificationType: 'changed', keySystemRootKey: updatedItem }
     } else {
-      const createVaultKey = new CreateVaultKeyUseCase(this.items)
-      const newVaultKey = await createVaultKey.execute(decryptedKeyContent)
-      return { modificationType: 'inserted', vaultKey: newVaultKey }
+      const createKeySystemRootKey = new CreateKeySystemRootKeyUseCase(this.items)
+      const newKeySystemRootKey = await createKeySystemRootKey.execute(decryptedKeyContent)
+      return { modificationType: 'inserted', keySystemRootKey: newKeySystemRootKey }
     }
   }
 }

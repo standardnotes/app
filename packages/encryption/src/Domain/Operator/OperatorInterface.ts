@@ -2,11 +2,11 @@ import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
 import {
   ItemsKeyInterface,
   RootKeyInterface,
-  VaultItemsKeyInterface,
+  KeySystemItemsKeyInterface,
   DecryptedPayloadInterface,
   ItemContent,
-  VaultKeyCopyInterface,
-  VaultKeyCopyContentSpecialized,
+  KeySystemRootKeyInterface,
+  KeySystemRootKeyContentSpecialized,
   KeySystemIdentifier,
 } from '@standardnotes/models'
 import { SNRootKey } from '../Keys/RootKey/RootKey'
@@ -27,7 +27,7 @@ import { AsymmetricallyEncryptedString, SymmetricallyEncryptedString } from './T
  */
 export interface OperatorCommon {
   createItemsKey(): ItemsKeyInterface
-  createVaultItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): VaultItemsKeyInterface
+  createKeySystemItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface
   /**
    * Returns encryption protocol display name
    */
@@ -57,10 +57,10 @@ export interface OperatorCommon {
    */
   createRootKey(identifier: string, password: string, origination: KeyParamsOrigination): Promise<SNRootKey>
 
-  createVaultKeyContent(params: {
-    keySystemIdentifier: KeySystemIdentifier
-    vaultName: string
-  }): VaultKeyCopyContentSpecialized
+  createKeySystemRootKeyContent(params: {
+    systemIdentifier: KeySystemIdentifier
+    systemName: string
+  }): KeySystemRootKeyContentSpecialized
 
   generateKeyPair(): PkcKeyPair
 
@@ -101,12 +101,12 @@ export interface SynchronousOperator extends OperatorCommon {
    */
   generateEncryptedParametersSync(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface | RootKeyInterface,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): EncryptedParameters
 
   generateDecryptedParametersSync<C extends ItemContent = ItemContent>(
     encrypted: EncryptedParameters,
-    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface | RootKeyInterface,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): DecryptedParameters<C> | ErrorDecryptingParameters
 }
 
@@ -120,11 +120,11 @@ export interface AsynchronousOperator extends OperatorCommon {
    */
   generateEncryptedParametersAsync(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface | RootKeyInterface,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): Promise<EncryptedParameters>
 
   generateDecryptedParametersAsync<C extends ItemContent = ItemContent>(
     encrypted: EncryptedParameters,
-    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface | RootKeyInterface,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters>
 }

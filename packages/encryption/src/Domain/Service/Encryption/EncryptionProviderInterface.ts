@@ -3,12 +3,12 @@ import {
   BackupFile,
   DecryptedPayloadInterface,
   EncryptedPayloadInterface,
-  VaultKeyCopyContentSpecialized,
+  KeySystemRootKeyContentSpecialized,
   ItemContent,
   ItemsKeyInterface,
   RootKeyInterface,
   KeySystemIdentifier,
-  VaultItemsKeyInterface,
+  KeySystemItemsKeyInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
@@ -58,26 +58,26 @@ export interface EncryptionProviderInterface {
   ): Promise<RootKeyInterface>
 
   getDecryptedPrivateKey(): string
-  createVaultItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): VaultItemsKeyInterface
-  createVaultKeyContent(params: {
-    keySystemIdentifier: KeySystemIdentifier
-    vaultName: string
-  }): VaultKeyCopyContentSpecialized
+  createKeySystemItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface
+  createKeySystemRootKeyContent(params: {
+    systemIdentifier: KeySystemIdentifier
+    systemName: string
+  }): KeySystemRootKeyContentSpecialized
   generateKeyPair(): PkcKeyPair
 
   encryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, privateKey: string): string
   decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | undefined
 
-  encryptVaultKeyContentWithRecipientPublicKey(
-    content: VaultKeyCopyContentSpecialized,
+  encryptKeySystemRootKeyContentWithRecipientPublicKey(
+    content: KeySystemRootKeyContentSpecialized,
     senderPrivateKey: string,
     recipientPublicKey: string,
   ): string
-  decryptVaultKeyContentWithPrivateKey(
-    encryptedVaultKeyContent: string,
+  decryptKeySystemRootKeyContentWithPrivateKey(
+    encryptedKeySystemRootKeyContent: string,
     senderPublicKey: string,
     privateKey: string,
-  ): VaultKeyCopyContentSpecialized | undefined
+  ): KeySystemRootKeyContentSpecialized | undefined
 
   setNewRootKeyWrapper(wrappingKey: RootKeyInterface): Promise<void>
   removePasscode(): Promise<void>
@@ -94,7 +94,7 @@ export interface EncryptionProviderInterface {
   >
   createNewItemsKeyWithRollback(): Promise<() => Promise<void>>
   reencryptItemsKeys(): Promise<void>
-  reencryptVaultItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void>
+  reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void>
   getSureDefaultItemsKey(): ItemsKeyInterface
   getRootKeyParams(): Promise<SNRootKeyParams | undefined>
   getEmbeddedPayloadAuthenticatedData(

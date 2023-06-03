@@ -67,8 +67,8 @@ export default class WebDeviceInterface {
     const entries = await this.getAllDatabaseEntries(identifier)
     const {
       itemsKeyPayloads,
-      vaultKeyPayloads,
-      vaultItemsKeyPayloads,
+      keySystemRootKeyPayloads,
+      keySystemItemsKeyPayloads,
       contentTypePriorityPayloads,
       remainingPayloads,
     } = GetSortedPayloadsByPriority(entries, options)
@@ -77,12 +77,12 @@ export default class WebDeviceInterface {
       entries: itemsKeyPayloads,
     }
 
-    const vaultKeysChunk = {
-      entries: vaultKeyPayloads,
+    const keySystemRootKeysChunk = {
+      entries: keySystemRootKeyPayloads,
     }
 
-    const vaultItemsKeysChunk = {
-      entries: vaultItemsKeyPayloads,
+    const keySystemItemsKeysChunk = {
+      entries: keySystemItemsKeyPayloads,
     }
 
     const contentTypePriorityChunk = {
@@ -99,8 +99,8 @@ export default class WebDeviceInterface {
     const result = {
       fullEntries: {
         itemsKeys: itemsKeysChunk,
-        vaultKeys: vaultKeysChunk,
-        vaultItemsKeys: vaultItemsKeysChunk,
+        keySystemRootKeys: keySystemRootKeysChunk,
+        keySystemItemsKeys: keySystemItemsKeysChunk,
         remainingChunks: [contentTypePriorityChunk, ...remainingPayloadsChunks],
       },
       remainingChunksItemCount: contentTypePriorityPayloads.length + remainingPayloads.length,

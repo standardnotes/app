@@ -15,12 +15,12 @@ import {
   DecryptedPayloadInterface,
   EncryptedPayload,
   EncryptedPayloadInterface,
-  VaultKeyCopyInterface,
+  KeySystemRootKeyInterface,
   isEncryptedPayload,
   ItemContent,
   ItemsKeyInterface,
   PayloadEmitSource,
-  VaultItemsKeyInterface,
+  KeySystemItemsKeyInterface,
   SureFindPayload,
 } from '@standardnotes/models'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
@@ -75,11 +75,11 @@ export class ItemsEncryptionService extends AbstractService {
 
   public itemsKeyForEncryptedPayload(
     payload: EncryptedPayloadInterface,
-  ): ItemsKeyInterface | VaultItemsKeyInterface | undefined {
+  ): ItemsKeyInterface | KeySystemItemsKeyInterface | undefined {
     const itemsKeys = this.getItemsKeys()
-    const vaultItemsKeys = this.itemManager.getItems<VaultItemsKeyInterface>(ContentType.VaultItemsKey)
+    const keySystemItemsKeys = this.itemManager.getItems<KeySystemItemsKeyInterface>(ContentType.KeySystemItemsKey)
 
-    return [...itemsKeys, ...vaultItemsKeys].find(
+    return [...itemsKeys, ...keySystemItemsKeys].find(
       (key) => key.uuid === payload.items_key_id || key.duplicateOf === payload.items_key_id,
     )
   }
@@ -90,15 +90,15 @@ export class ItemsEncryptionService extends AbstractService {
 
   private keyToUseForItemEncryption(
     payload: DecryptedPayloadInterface,
-  ): ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface | StandardException {
+  ): ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | StandardException {
     if (payload.key_system_identifier) {
-      const vaultItemsKey = this.itemManager.getPrimaryVaultItemsKeyForVault(payload.key_system_identifier)
+      const keySystemItemsKey = this.itemManager.getPrimaryKeySystemItemsKey(payload.key_system_identifier)
 
-      if (!vaultItemsKey) {
+      if (!keySystemItemsKey) {
         return new StandardException('Cannot find vault items key to use for encryption')
       }
 
-      return vaultItemsKey
+      return keySystemItemsKey
     }
 
     const defaultKey = this.getDefaultItemsKey()
@@ -126,7 +126,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   private keyToUseForDecryptionOfPayload(
     payload: EncryptedPayloadInterface,
-  ): ItemsKeyInterface | VaultItemsKeyInterface | undefined {
+  ): ItemsKeyInterface | KeySystemItemsKeyInterface | undefined {
     if (payload.items_key_id) {
       const itemsKey = this.itemsKeyForEncryptedPayload(payload)
       return itemsKey
@@ -148,7 +148,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async encryptPayload(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface,
   ): Promise<EncryptedParameters> {
     if (isEncryptedPayload(payload)) {
       throw Error('Attempting to encrypt already encrypted payload.')
@@ -165,7 +165,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async encryptPayloads(
     payloads: DecryptedPayloadInterface[],
-    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface,
   ): Promise<EncryptedParameters[]> {
     return Promise.all(payloads.map((payload) => this.encryptPayload(payload, key)))
   }
@@ -192,7 +192,7 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async decryptPayload<C extends ItemContent = ItemContent>(
     payload: EncryptedPayloadInterface,
-    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     if (!payload.content) {
       return {
@@ -212,14 +212,14 @@ export class ItemsEncryptionService extends AbstractService {
 
   public async decryptPayloads<C extends ItemContent = ItemContent>(
     payloads: EncryptedPayloadInterface[],
-    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface,
   ): Promise<(DecryptedParameters<C> | ErrorDecryptingParameters)[]> {
     return Promise.all(payloads.map((payload) => this.decryptPayload<C>(payload, key)))
   }
 
   public async decryptErroredItemPayloads(): Promise<void> {
     const payloads = this.payloadManager.invalidPayloads.filter(
-      (i) => ![ContentType.ItemsKey, ContentType.VaultItemsKey].includes(i.content_type),
+      (i) => ![ContentType.ItemsKey, ContentType.KeySystemItemsKey].includes(i.content_type),
     )
     if (payloads.length === 0) {
       return

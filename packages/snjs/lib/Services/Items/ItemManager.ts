@@ -1412,41 +1412,37 @@ export class ItemManager
       : ItemRelationshipDirection.NoRelationship
   }
 
-  public getAllVaultItemsKeysForVault(
-    keySystemIdentifier: Models.KeySystemIdentifier,
-  ): Models.VaultItemsKeyInterface[] {
-    return this.getItems<Models.VaultItemsKeyInterface>(ContentType.VaultItemsKey).filter(
-      (key) => key.key_system_identifier === keySystemIdentifier,
+  public getKeySystemItemsKeys(systemIdentifier: Models.KeySystemIdentifier): Models.KeySystemItemsKeyInterface[] {
+    return this.getItems<Models.KeySystemItemsKeyInterface>(ContentType.KeySystemItemsKey).filter(
+      (key) => key.key_system_identifier === systemIdentifier,
     )
   }
 
-  public getPrimaryVaultItemsKeyForVault(
-    keySystemIdentifier: Models.KeySystemIdentifier,
-  ): Models.VaultItemsKeyInterface {
-    const allKeys = this.getAllVaultItemsKeysForVault(keySystemIdentifier)
+  public getPrimaryKeySystemItemsKey(systemIdentifier: Models.KeySystemIdentifier): Models.KeySystemItemsKeyInterface {
+    const allKeys = this.getKeySystemItemsKeys(systemIdentifier)
 
     const sortedByNewestFirst = allKeys.sort((a, b) => b.keyTimestamp - a.keyTimestamp)
     return sortedByNewestFirst[0]
   }
 
-  getAllSyncedVaultKeyCopiesForVault(keySystemIdentifier: Models.KeySystemIdentifier): Models.VaultKeyCopyInterface[] {
-    const keys = this.itemsMatchingPredicate<Models.VaultKeyCopyInterface>(
-      ContentType.VaultKeyCopy,
-      new Models.Predicate<Models.VaultKeyCopyInterface>('keySystemIdentifier', '=', keySystemIdentifier),
+  getAllKeySystemRootKeysForVault(systemIdentifier: Models.KeySystemIdentifier): Models.KeySystemRootKeyInterface[] {
+    const keys = this.itemsMatchingPredicate<Models.KeySystemRootKeyInterface>(
+      ContentType.KeySystemRootKey,
+      new Models.Predicate<Models.KeySystemRootKeyInterface>('systemIdentifier', '=', systemIdentifier),
     )
 
     return keys
   }
 
-  getSyncedVaultKeyCopyMatchingTimestamp(
-    keySystemIdentifier: Models.KeySystemIdentifier,
+  getKeySystemRootKeyMatchingTimestamp(
+    systemIdentifier: Models.KeySystemIdentifier,
     timestamp: number,
-  ): Models.VaultKeyCopyInterface | undefined {
-    const keys = this.itemsMatchingPredicate<Models.VaultKeyCopyInterface>(
-      ContentType.VaultKeyCopy,
+  ): Models.KeySystemRootKeyInterface | undefined {
+    const keys = this.itemsMatchingPredicate<Models.KeySystemRootKeyInterface>(
+      ContentType.KeySystemRootKey,
       new Models.CompoundPredicate('and', [
-        new Models.Predicate<Models.VaultKeyCopyInterface>('keySystemIdentifier', '=', keySystemIdentifier),
-        new Models.Predicate<Models.VaultKeyCopyInterface>('keyTimestamp', '=', timestamp),
+        new Models.Predicate<Models.KeySystemRootKeyInterface>('systemIdentifier', '=', systemIdentifier),
+        new Models.Predicate<Models.KeySystemRootKeyInterface>('keyTimestamp', '=', timestamp),
       ]),
     )
 
@@ -1457,19 +1453,19 @@ export class ItemManager
     return keys[0]
   }
 
-  getPrimarySyncedVaultKeyCopy(
-    keySystemIdentifier: Models.KeySystemIdentifier,
-  ): Models.VaultKeyCopyInterface | undefined {
-    const keys = this.itemsMatchingPredicate<Models.VaultKeyCopyInterface>(
-      ContentType.VaultKeyCopy,
-      new Models.Predicate<Models.VaultKeyCopyInterface>('keySystemIdentifier', '=', keySystemIdentifier),
+  getPrimaryKeySystemRootKey(
+    systemIdentifier: Models.KeySystemIdentifier,
+  ): Models.KeySystemRootKeyInterface | undefined {
+    const keys = this.itemsMatchingPredicate<Models.KeySystemRootKeyInterface>(
+      ContentType.KeySystemRootKey,
+      new Models.Predicate<Models.KeySystemRootKeyInterface>('systemIdentifier', '=', systemIdentifier),
     )
 
     const sortedByNewestFirst = keys.sort((a, b) => b.keyTimestamp - a.keyTimestamp)
     return sortedByNewestFirst[0]
   }
 
-  itemsBelongingToKeySystem(keySystemIdentifier: Models.KeySystemIdentifier): Models.DecryptedItemInterface[] {
-    return this.items.filter((item) => item.key_system_identifier === keySystemIdentifier)
+  itemsBelongingToKeySystem(systemIdentifier: Models.KeySystemIdentifier): Models.DecryptedItemInterface[] {
+    return this.items.filter((item) => item.key_system_identifier === systemIdentifier)
   }
 }

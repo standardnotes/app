@@ -8,7 +8,7 @@ import {
 import {
   TrustedContact,
   DecryptedItemInterface,
-  VaultKeyCopyContentSpecialized,
+  KeySystemRootKeyContentSpecialized,
   TrustedContactInterface,
   KeySystemIdentifier,
 } from '@standardnotes/models'
@@ -43,13 +43,12 @@ export interface SharedVaultServiceInterface
   getOutboundInvites(vaultUuid?: string): Promise<SharedVaultInviteServerHash[] | ClientDisplayableError>
   getTrustedSenderOfInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined
   acceptInvite(invite: SharedVaultInviteServerHash): Promise<boolean>
-  getInviteData(invite: SharedVaultInviteServerHash): VaultKeyCopyContentSpecialized | undefined
+  getInviteData(invite: SharedVaultInviteServerHash): KeySystemRootKeyContentSpecialized | undefined
   getCachedInboundInvites(): SharedVaultInviteServerHash[]
   getInvitableContactsForSharedVault(sharedVaultUuid: string): Promise<TrustedContactInterface[]>
   deleteInvite(invite: SharedVaultInviteServerHash): Promise<ClientDisplayableError | void>
-  reloadRemovedSharedVaults(): Promise<void>
 
-  updateInvitesAfterVaultKeyChange(params: {
+  updateInvitesAfterKeySystemRootKeyChange(params: {
     keySystemIdentifier: KeySystemIdentifier
     sharedVaultUuid: string
   }): Promise<ClientDisplayableError[]>

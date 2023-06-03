@@ -6,7 +6,9 @@ export class RemoveSharedVaultItemsLocallyUseCase {
 
   async execute(dto: { sharedVaultUuids: string[] }): Promise<void> {
     const items = this.items.allTrackedItems()
-    const itemsToRemove = items.filter((item) => item.shared_vault_uuid && dto.sharedVaultUuids.includes(item.shared_vault_uuid))
+    const itemsToRemove = items.filter(
+      (item) => item.shared_vault_uuid && dto.sharedVaultUuids.includes(item.shared_vault_uuid),
+    )
     this.items.removeItemsLocally(itemsToRemove as AnyItemInterface[])
   }
 }

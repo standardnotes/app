@@ -24,7 +24,7 @@ import {
   ItemsKeyMutator,
   encryptPayload,
   decryptPayload,
-  ItemContentTypeUsesVaultKeyEncryption,
+  ItemContentTypeUsesKeySystemRootKeyEncryption,
 } from '@standardnotes/encryption'
 import {
   CreateDecryptedItemFromPayload,
@@ -35,7 +35,7 @@ import {
   EncryptedPayloadInterface,
   EncryptedTransferPayload,
   FillItemContentSpecialized,
-  VaultKeyCopyInterface,
+  KeySystemRootKeyInterface,
   ItemContent,
   ItemsKeyContent,
   ItemsKeyContentSpecialized,
@@ -501,14 +501,14 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
   }
 
   private async encrypPayloadWithKeyLookup(payload: DecryptedPayloadInterface): Promise<EncryptedParameters> {
-    let key: RootKeyInterface | VaultKeyCopyInterface | undefined
-    if (payload.key_system_identifier || ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
+    let key: RootKeyInterface | KeySystemRootKeyInterface | undefined
+    if (payload.key_system_identifier || ItemContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
       if (!payload.key_system_identifier) {
         throw Error(
           `Attempting to encrypt vaulted payload ${payload.content_type} but the payload is missing a key_system_identifier`,
         )
       }
-      key = this.items.getPrimarySyncedVaultKeyCopy(payload.key_system_identifier)
+      key = this.items.getPrimaryKeySystemRootKey(payload.key_system_identifier)
     } else {
       key = this.getRootKey()
     }
@@ -526,24 +526,27 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
 
   public async encryptPayload(
     payload: DecryptedPayloadInterface,
-    key: RootKeyInterface | VaultKeyCopyInterface,
+    key: RootKeyInterface | KeySystemRootKeyInterface,
   ): Promise<EncryptedParameters> {
     return encryptPayload(payload, key, this.operatorManager)
   }
 
-  public async encryptPayloads(payloads: DecryptedPayloadInterface[], key: RootKeyInterface | VaultKeyCopyInterface) {
+  public async encryptPayloads(
+    payloads: DecryptedPayloadInterface[],
+    key: RootKeyInterface | KeySystemRootKeyInterface,
+  ) {
     return Promise.all(payloads.map((payload) => this.encryptPayload(payload, key)))
   }
 
   public async decryptPayloadWithKeyLookup<C extends ItemContent = ItemContent>(
     payload: EncryptedPayloadInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
-    let key: RootKeyInterface | VaultKeyCopyInterface | undefined
+    let key: RootKeyInterface | KeySystemRootKeyInterface | undefined
     if (payload.key_system_identifier) {
-      if (!ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
+      if (!ItemContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
         throw Error('Attempting to decrypt payload that is not a vault items key with vault key.')
       }
-      key = this.items.getPrimarySyncedVaultKeyCopy(payload.key_system_identifier)
+      key = this.items.getPrimaryKeySystemRootKey(payload.key_system_identifier)
     } else {
       key = this.getRootKey()
     }
@@ -561,7 +564,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
 
   public async decryptPayload<C extends ItemContent = ItemContent>(
     payload: EncryptedPayloadInterface,
-    key: RootKeyInterface | VaultKeyCopyInterface,
+    key: RootKeyInterface | KeySystemRootKeyInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     return decryptPayload(payload, key, this.operatorManager)
   }
@@ -574,14 +577,14 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
 
   public async decryptPayloads<C extends ItemContent = ItemContent>(
     payloads: EncryptedPayloadInterface[],
-    key: RootKeyInterface | VaultKeyCopyInterface,
+    key: RootKeyInterface | KeySystemRootKeyInterface,
   ): Promise<(DecryptedParameters<C> | ErrorDecryptingParameters)[]> {
     return Promise.all(payloads.map((payload) => this.decryptPayload<C>(payload, key)))
   }
 
   public async decryptErroredRootPayloads(): Promise<void> {
     const payloads = this.payloadManager.invalidPayloads.filter((i) =>
-      [ContentType.ItemsKey, ContentType.VaultItemsKey].includes(i.content_type),
+      [ContentType.ItemsKey, ContentType.KeySystemItemsKey].includes(i.content_type),
     )
     if (payloads.length === 0) {
       return
@@ -628,11 +631,11 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
    * When the vault key changes, we must re-encrypt all vault items
    * keys with this new vault key (by simply re-syncing).
    */
-  public async reencryptVaultItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
-    const vaultItemsKeys = this.items.getAllVaultItemsKeysForVault(keySystemIdentifier)
+  public async reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
+    const keySystemItemsKeys = this.items.getKeySystemItemsKeys(keySystemIdentifier)
 
-    if (vaultItemsKeys.length > 0) {
-      await this.items.setItemsDirty(vaultItemsKeys)
+    if (keySystemItemsKeys.length > 0) {
+      await this.items.setItemsDirty(keySystemItemsKeys)
     }
   }
 

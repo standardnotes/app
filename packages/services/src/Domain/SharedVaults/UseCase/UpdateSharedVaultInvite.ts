@@ -14,7 +14,7 @@ export class UpdateSharedVaultInviteUseCase {
     sharedVaultUuid: string
     inviteUuid: string
     inviterPublicKey: string
-    encryptedVaultKeyContent: string
+    encryptedKeySystemRootKeyContent: string
     inviteType: SharedVaultInviteType
     permissions: SharedVaultPermission
   }): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
@@ -22,7 +22,7 @@ export class UpdateSharedVaultInviteUseCase {
       sharedVaultUuid: params.sharedVaultUuid,
       inviteUuid: params.inviteUuid,
       inviterPublicKey: params.inviterPublicKey,
-      encryptedVaultKeyContent: params.encryptedVaultKeyContent,
+      encryptedKeySystemRootKeyContent: params.encryptedKeySystemRootKeyContent,
       permissions: params.permissions,
     })
 

@@ -9,7 +9,6 @@ import { UpdateSharedVaultResponse } from '../../Response/SharedVault/UpdateShar
 import { GetSharedVaultsResponse } from '../../Response/SharedVault/GetSharedVaultsResponse'
 import { CreateSharedVaultValetTokenResponse } from '../../Response/SharedVault/CreateSharedVaultValetTokenResponse'
 import { CreateSharedVaultValetTokenParams } from '../../Request/SharedVault/CreateSharedVaultValetTokenParams'
-import { GetRemovedSharedVaultsResponse } from '../../Response/SharedVault/GetRemovedSharedVaults'
 
 export class SharedVaultServer implements SharedVaultServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
@@ -45,9 +44,5 @@ export class SharedVaultServer implements SharedVaultServerInterface {
       move_operation_type: params.moveOperationType,
       shared_vault_to_shared_vault_move_target_uuid: params.sharedVaultToSharedVaultMoveTargetUuid,
     })
-  }
-
-  getRemovedSharedVaults(): Promise<HttpResponse<GetRemovedSharedVaultsResponse>> {
-    return this.httpService.get(SharedVaultsPaths.getRemovedSharedVaults)
   }
 }

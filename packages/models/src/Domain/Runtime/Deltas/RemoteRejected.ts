@@ -57,7 +57,7 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
       return []
     }
 
-    if (base.content_type === ContentType.VaultItemsKey) {
+    if (base.content_type === ContentType.KeySystemItemsKey) {
       return this.discardChangesOfBasePayload(base)
     }
 

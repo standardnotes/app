@@ -1,16 +1,15 @@
 import { ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
 import {
   DecryptedItemInterface,
-  VaultKeyCopyContentSpecialized,
-  VaultKeyCopyInterface,
-  VaultKeyMutator,
+  KeySystemRootKeyContentSpecialized,
+  KeySystemRootKeyInterface,
+  KeySystemRootKeyMutator,
   KeySystemIdentifier,
 } from '@standardnotes/models'
 import { VaultServiceInterface } from './VaultServiceInterface'
 import { VaultServiceEvent } from './VaultServiceEvent'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { CreateVaultUseCase } from './UseCase/CreateVault'
-import { RotateVaultKeyUseCase } from './UseCase/RotateVaultKey'
 import { AbstractService } from '../Service/AbstractService'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
@@ -23,6 +22,7 @@ import { AddItemToVaultUseCase } from './UseCase/AddItemToVault'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from '../SharedVaults/SharedVaultServiceEvent'
 import { VaultDisplayListing } from './VaultDisplayListing'
 import { ContentType } from '@standardnotes/common'
+import { RotateKeySystemRootKeyUseCase } from './UseCase/RotateKeySystemRootKey'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent>
@@ -55,31 +55,31 @@ export class VaultService
   }
 
   private async handleSharedVaultMemberRemovedEvent(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
-    await this.rotateVaultKey(keySystemIdentifier)
+    await this.rotateKeySystemRootKey(keySystemIdentifier)
   }
 
   getVaultDisplayListings(): VaultDisplayListing[] {
-    const primaries: Record<string, VaultKeyCopyInterface> = {}
+    const primaries: Record<string, KeySystemRootKeyInterface> = {}
 
-    const vaultKeyCopies = this.items.getItems<VaultKeyCopyInterface>(ContentType.VaultKeyCopy)
-    for (const vaultKeyCopy of vaultKeyCopies) {
-      if (!vaultKeyCopy.key_system_identifier) {
-        throw new Error('Vault key copy does not have vault system identifier')
+    const keySystemRootKeys = this.items.getItems<KeySystemRootKeyInterface>(ContentType.KeySystemRootKey)
+    for (const keySystemRootKey of keySystemRootKeys) {
+      if (!keySystemRootKey.key_system_identifier) {
+        throw new Error('Key system root key copy does not have vault system identifier')
       }
 
-      const primary = this.items.getPrimarySyncedVaultKeyCopy(vaultKeyCopy.key_system_identifier)
+      const primary = this.items.getPrimaryKeySystemRootKey(keySystemRootKey.key_system_identifier)
       if (!primary) {
-        throw new Error('Vault key copy does not have primary')
+        throw new Error('Key system does not have primary root key')
       }
 
-      primaries[vaultKeyCopy.key_system_identifier] = primary
+      primaries[keySystemRootKey.key_system_identifier] = primary
     }
 
     return Object.values(primaries).map((primary) => {
       const listing: VaultDisplayListing = {
-        keySystemIdentifier: primary.keySystemIdentifier,
-        name: primary.vaultName,
-        description: primary.vaultDescription,
+        systemIdentifier: primary.systemIdentifier,
+        name: primary.systemName,
+        description: primary.systemDescription,
       }
       return listing
     })
@@ -136,17 +136,17 @@ export class VaultService
   async changeVaultNameAndDescription(
     keySystemIdentifier: KeySystemIdentifier,
     params: { name: string; description?: string },
-  ): Promise<VaultKeyCopyInterface> {
-    const vaultKeyCopy = this.items.getPrimarySyncedVaultKeyCopy(keySystemIdentifier)
-    if (!vaultKeyCopy) {
+  ): Promise<KeySystemRootKeyInterface> {
+    const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
+    if (!keySystemRootKey) {
       throw new Error('Cannot change vault metadata; vault key not found')
     }
 
-    const updatedVaultKey = await this.items.changeItem<VaultKeyMutator, VaultKeyCopyInterface>(
-      vaultKeyCopy,
+    const updatedKeySystemRootKey = await this.items.changeItem<KeySystemRootKeyMutator, KeySystemRootKeyInterface>(
+      keySystemRootKey,
       (mutator) => {
-        mutator.vaultName = params.name
-        mutator.vaultDescription = params.description
+        mutator.systemName = params.name
+        mutator.systemDescription = params.description
       },
     )
 
@@ -154,11 +154,11 @@ export class VaultService
 
     this.notifyVaultsChangedEvent()
 
-    return updatedVaultKey
+    return updatedKeySystemRootKey
   }
 
-  async rotateVaultKey(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
-    const useCase = new RotateVaultKeyUseCase(this.items, this.encryption)
+  async rotateKeySystemRootKey(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
+    const useCase = new RotateKeySystemRootKeyUseCase(this.items, this.encryption)
     await useCase.execute({
       keySystemIdentifier,
     })
@@ -168,7 +168,7 @@ export class VaultService
     await this.sync.sync()
   }
 
-  getVaultInfoForItem(item: DecryptedItemInterface): VaultKeyCopyContentSpecialized | undefined {
+  getVaultInfoForItem(item: DecryptedItemInterface): KeySystemRootKeyContentSpecialized | undefined {
     if (!item.key_system_identifier) {
       return undefined
     }
@@ -176,8 +176,8 @@ export class VaultService
     return this.getVaultInfo(item.key_system_identifier)
   }
 
-  getVaultInfo(keySystemIdentifier: KeySystemIdentifier): VaultKeyCopyContentSpecialized | undefined {
-    return this.items.getPrimarySyncedVaultKeyCopy(keySystemIdentifier)?.content
+  getVaultInfo(keySystemIdentifier: KeySystemIdentifier): KeySystemRootKeyContentSpecialized | undefined {
+    return this.items.getPrimaryKeySystemRootKey(keySystemIdentifier)?.content
   }
 
   isItemInVault(item: DecryptedItemInterface): boolean {

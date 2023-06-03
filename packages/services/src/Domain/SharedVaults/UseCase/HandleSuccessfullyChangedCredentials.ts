@@ -87,8 +87,8 @@ export class HandleSuccessfullyChangedCredentials {
       return undefined
     }
 
-    const vaultKeyCopy = this.items.getPrimarySyncedVaultKeyCopy(params.sharedVault.key_system_identifier)
-    if (!vaultKeyCopy) {
+    const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(params.sharedVault.key_system_identifier)
+    if (!keySystemRootKey) {
       return ClientDisplayableError.FromString('Failed to find vault key for invite')
     }
 
@@ -97,8 +97,8 @@ export class HandleSuccessfullyChangedCredentials {
       return ClientDisplayableError.FromString('Failed to find contact for invite')
     }
 
-    const newEncryptedVaultData = this.encryption.encryptVaultKeyContentWithRecipientPublicKey(
-      vaultKeyCopy.content,
+    const newEncryptedVaultData = this.encryption.encryptKeySystemRootKeyContentWithRecipientPublicKey(
+      keySystemRootKey.content,
       params.newPrivateKey,
       trustedContact.publicKey,
     )
@@ -107,7 +107,7 @@ export class HandleSuccessfullyChangedCredentials {
       sharedVaultUuid: params.invite.shared_vault_uuid,
       inviteUuid: params.invite.uuid,
       inviterPublicKey: params.newPublicKey,
-      encryptedVaultKeyContent: newEncryptedVaultData,
+      encryptedKeySystemRootKeyContent: newEncryptedVaultData,
     })
 
     if (isErrorResponse(updateInviteResponse)) {

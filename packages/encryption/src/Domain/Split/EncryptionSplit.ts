@@ -12,8 +12,8 @@ export function CreateEncryptionSplitWithKeyLookup(
     result.usesRootKeyWithKeyLookup = { items: payloadSplit.rootKeyEncryption }
   }
 
-  if (payloadSplit.vaultKeyEncryption) {
-    result.usesVaultKeyWithKeyLookup = { items: payloadSplit.vaultKeyEncryption }
+  if (payloadSplit.keySystemRootKeyEncryption) {
+    result.usesKeySystemRootKeyWithKeyLookup = { items: payloadSplit.keySystemRootKeyEncryption }
   }
 
   if (payloadSplit.itemsKeyEncryption) {
@@ -32,8 +32,8 @@ export function CreateDecryptionSplitWithKeyLookup(
     result.usesRootKeyWithKeyLookup = { items: payloadSplit.rootKeyEncryption }
   }
 
-  if (payloadSplit.vaultKeyEncryption) {
-    result.usesVaultKeyWithKeyLookup = { items: payloadSplit.vaultKeyEncryption }
+  if (payloadSplit.keySystemRootKeyEncryption) {
+    result.usesKeySystemRootKeyWithKeyLookup = { items: payloadSplit.keySystemRootKeyEncryption }
   }
 
   if (payloadSplit.itemsKeyEncryption) {
@@ -54,9 +54,9 @@ export function FindPayloadInEncryptionSplit(uuid: string, split: KeyedEncryptio
     return inUsesRootKey
   }
 
-  const inUsesVaultKey = split.usesVaultKey?.items.find((item) => item.uuid === uuid)
-  if (inUsesVaultKey) {
-    return inUsesVaultKey
+  const inUsesKeySystemRootKey = split.usesKeySystemRootKey?.items.find((item) => item.uuid === uuid)
+  if (inUsesKeySystemRootKey) {
+    return inUsesKeySystemRootKey
   }
 
   const inUsesItemsKeyWithKeyLookup = split.usesItemsKeyWithKeyLookup?.items.find((item) => item.uuid === uuid)
@@ -69,9 +69,11 @@ export function FindPayloadInEncryptionSplit(uuid: string, split: KeyedEncryptio
     return inUsesRootKeyWithKeyLookup
   }
 
-  const inUsesVaultKeyWithKeyLookup = split.usesVaultKeyWithKeyLookup?.items.find((item) => item.uuid === uuid)
-  if (inUsesVaultKeyWithKeyLookup) {
-    return inUsesVaultKeyWithKeyLookup
+  const inUsesKeySystemRootKeyWithKeyLookup = split.usesKeySystemRootKeyWithKeyLookup?.items.find(
+    (item) => item.uuid === uuid,
+  )
+  if (inUsesKeySystemRootKeyWithKeyLookup) {
+    return inUsesKeySystemRootKeyWithKeyLookup
   }
 
   throw Error('Cannot find payload in encryption split')
@@ -88,9 +90,9 @@ export function FindPayloadInDecryptionSplit(uuid: string, split: KeyedDecryptio
     return inUsesRootKey
   }
 
-  const inUsesVaultKey = split.usesVaultKey?.items.find((item) => item.uuid === uuid)
-  if (inUsesVaultKey) {
-    return inUsesVaultKey
+  const inUsesKeySystemRootKey = split.usesKeySystemRootKey?.items.find((item) => item.uuid === uuid)
+  if (inUsesKeySystemRootKey) {
+    return inUsesKeySystemRootKey
   }
 
   const inUsesItemsKeyWithKeyLookup = split.usesItemsKeyWithKeyLookup?.items.find((item) => item.uuid === uuid)
@@ -103,9 +105,11 @@ export function FindPayloadInDecryptionSplit(uuid: string, split: KeyedDecryptio
     return inUsesRootKeyWithKeyLookup
   }
 
-  const inUsesVaultKeyWithKeyLookup = split.usesVaultKeyWithKeyLookup?.items.find((item) => item.uuid === uuid)
-  if (inUsesVaultKeyWithKeyLookup) {
-    return inUsesVaultKeyWithKeyLookup
+  const inUsesKeySystemRootKeyWithKeyLookup = split.usesKeySystemRootKeyWithKeyLookup?.items.find(
+    (item) => item.uuid === uuid,
+  )
+  if (inUsesKeySystemRootKeyWithKeyLookup) {
+    return inUsesKeySystemRootKeyWithKeyLookup
   }
 
   throw Error('Cannot find payload in encryption split')

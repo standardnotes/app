@@ -6,11 +6,9 @@ import { UpdateSharedVaultResponse } from '../../Response/SharedVault/UpdateShar
 import { GetSharedVaultsResponse } from '../../Response/SharedVault/GetSharedVaultsResponse'
 import { CreateSharedVaultValetTokenResponse } from '../../Response/SharedVault/CreateSharedVaultValetTokenResponse'
 import { CreateSharedVaultValetTokenParams } from '../../Request/SharedVault/CreateSharedVaultValetTokenParams'
-import { GetRemovedSharedVaultsResponse } from '../../Response/SharedVault/GetRemovedSharedVaults'
 
 export interface SharedVaultServerInterface {
   getSharedVaults(): Promise<HttpResponse<GetSharedVaultsResponse>>
-  getRemovedSharedVaults(): Promise<HttpResponse<GetRemovedSharedVaultsResponse>>
 
   createSharedVault(params: CreateSharedVaultParams): Promise<HttpResponse<CreateSharedVaultResponse>>
   updateSharedVault(params: UpdateSharedVaultParams): Promise<HttpResponse<UpdateSharedVaultResponse>>

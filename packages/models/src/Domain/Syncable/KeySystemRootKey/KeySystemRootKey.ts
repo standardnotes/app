@@ -2,31 +2,30 @@ import { ContentType, ProtocolVersion } from '@standardnotes/common'
 import { ConflictStrategy, DecryptedItem } from '../../Abstract/Item'
 import { DecryptedPayloadInterface } from '../../Abstract/Payload'
 import { HistoryEntryInterface } from '../../Runtime/History'
-import { VaultKeyCopyContent } from './VaultKeyCopyContent'
-import { VaultKeyCopyInterface } from './VaultKeyCopyInterface'
-import { KeySystemIdentifier } from '../../Utilities/Vault/KeySystemIdentifier'
+import { KeySystemRootKeyContent } from './KeySystemRootKeyContent'
+import { KeySystemRootKeyInterface } from './KeySystemRootKeyInterface'
+import { KeySystemIdentifier } from './KeySystemIdentifier'
 
-export function isVaultKey(x: { content_type: ContentType }): x is VaultKeyCopy {
-  return x.content_type === ContentType.VaultKeyCopy
+export function isKeySystemRootKey(x: { content_type: ContentType }): x is KeySystemRootKey {
+  return x.content_type === ContentType.KeySystemRootKey
 }
 
-export class VaultKeyCopy extends DecryptedItem<VaultKeyCopyContent> implements VaultKeyCopyInterface {
-  keySystemIdentifier: KeySystemIdentifier
+export class KeySystemRootKey extends DecryptedItem<KeySystemRootKeyContent> implements KeySystemRootKeyInterface {
+  systemIdentifier: KeySystemIdentifier
 
-  vaultName: string
-  vaultDescription?: string
+  systemName: string
+  systemDescription?: string
 
   key: string
   keyTimestamp: number
   keyVersion: ProtocolVersion
 
-  constructor(payload: DecryptedPayloadInterface<VaultKeyCopyContent>) {
+  constructor(payload: DecryptedPayloadInterface<KeySystemRootKeyContent>) {
     super(payload)
 
-    this.keySystemIdentifier = payload.content.keySystemIdentifier
-
-    this.vaultName = payload.content.vaultName
-    this.vaultDescription = payload.content.vaultDescription
+    this.systemIdentifier = payload.content.systemIdentifier
+    this.systemName = payload.content.systemName
+    this.systemDescription = payload.content.systemDescription
 
     this.key = payload.content.key
     this.keyTimestamp = payload.content.keyTimestamp
@@ -34,7 +33,7 @@ export class VaultKeyCopy extends DecryptedItem<VaultKeyCopyContent> implements 
   }
 
   override strategyWhenConflictingWithItem(
-    item: VaultKeyCopy,
+    item: KeySystemRootKey,
     _previousRevision?: HistoryEntryInterface,
   ): ConflictStrategy {
     const baseKeyTimestamp = this.keyTimestamp

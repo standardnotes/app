@@ -32,13 +32,13 @@ import {
   DecryptedPayloadInterface,
   EncryptedPayload,
   EncryptedPayloadInterface,
-  VaultKeyCopyContentSpecialized,
+  KeySystemRootKeyContentSpecialized,
   isDecryptedPayload,
   isEncryptedPayload,
   ItemContent,
   ItemsKeyInterface,
   RootKeyInterface,
-  VaultItemsKeyInterface,
+  KeySystemItemsKeyInterface,
   KeySystemIdentifier,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
@@ -230,8 +230,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     await this.rootKeyEncryption.reencryptItemsKeys()
   }
 
-  public reencryptVaultItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
-    return this.rootKeyEncryption.reencryptVaultItemsKeysForVault(keySystemIdentifier)
+  public reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
+    return this.rootKeyEncryption.reencryptKeySystemItemsKeysForVault(keySystemIdentifier)
   }
 
   public async createNewItemsKeyWithRollback(): Promise<() => Promise<void>> {
@@ -245,7 +245,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
 
   public itemsKeyForEncryptedPayload(
     payload: EncryptedPayloadInterface,
-  ): ItemsKeyInterface | VaultItemsKeyInterface | undefined {
+  ): ItemsKeyInterface | KeySystemItemsKeyInterface | undefined {
     return this.itemsEncryption.itemsKeyForEncryptedPayload(payload)
   }
 
@@ -266,10 +266,10 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     const {
       usesRootKey,
       usesItemsKey,
-      usesVaultKey,
+      usesKeySystemRootKey,
       usesRootKeyWithKeyLookup,
       usesItemsKeyWithKeyLookup,
-      usesVaultKeyWithKeyLookup,
+      usesKeySystemRootKeyWithKeyLookup,
     } = split
 
     if (usesRootKey) {
@@ -280,15 +280,18 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       const rootKeyEncrypted = await this.rootKeyEncryption.encryptPayloadsWithKeyLookup(usesRootKeyWithKeyLookup.items)
       extendArray(allEncryptedParams, rootKeyEncrypted)
     }
-    if (usesVaultKey) {
-      const vaultKeyEncrypted = await this.rootKeyEncryption.encryptPayloads(usesVaultKey.items, usesVaultKey.key)
-      extendArray(allEncryptedParams, vaultKeyEncrypted)
-    }
-    if (usesVaultKeyWithKeyLookup) {
-      const vaultKeyEncrypted = await this.rootKeyEncryption.encryptPayloadsWithKeyLookup(
-        usesVaultKeyWithKeyLookup.items,
+    if (usesKeySystemRootKey) {
+      const keySystemRootKeyEncrypted = await this.rootKeyEncryption.encryptPayloads(
+        usesKeySystemRootKey.items,
+        usesKeySystemRootKey.key,
       )
-      extendArray(allEncryptedParams, vaultKeyEncrypted)
+      extendArray(allEncryptedParams, keySystemRootKeyEncrypted)
+    }
+    if (usesKeySystemRootKeyWithKeyLookup) {
+      const keySystemRootKeyEncrypted = await this.rootKeyEncryption.encryptPayloadsWithKeyLookup(
+        usesKeySystemRootKeyWithKeyLookup.items,
+      )
+      extendArray(allEncryptedParams, keySystemRootKeyEncrypted)
     }
 
     if (usesItemsKey) {
@@ -331,10 +334,10 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     const {
       usesRootKey,
       usesItemsKey,
-      usesVaultKey,
+      usesKeySystemRootKey,
       usesRootKeyWithKeyLookup,
       usesItemsKeyWithKeyLookup,
-      usesVaultKeyWithKeyLookup,
+      usesKeySystemRootKeyWithKeyLookup,
     } = split
 
     if (usesRootKey) {
@@ -348,15 +351,18 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       )
       extendArray(resultParams, rootKeyDecrypted)
     }
-    if (usesVaultKey) {
-      const vaultKeyDecrypted = await this.rootKeyEncryption.decryptPayloads<C>(usesVaultKey.items, usesVaultKey.key)
-      extendArray(resultParams, vaultKeyDecrypted)
-    }
-    if (usesVaultKeyWithKeyLookup) {
-      const vaultKeyDecrypted = await this.rootKeyEncryption.decryptPayloadsWithKeyLookup<C>(
-        usesVaultKeyWithKeyLookup.items,
+    if (usesKeySystemRootKey) {
+      const keySystemRootKeyDecrypted = await this.rootKeyEncryption.decryptPayloads<C>(
+        usesKeySystemRootKey.items,
+        usesKeySystemRootKey.key,
       )
-      extendArray(resultParams, vaultKeyDecrypted)
+      extendArray(resultParams, keySystemRootKeyDecrypted)
+    }
+    if (usesKeySystemRootKeyWithKeyLookup) {
+      const keySystemRootKeyDecrypted = await this.rootKeyEncryption.decryptPayloadsWithKeyLookup<C>(
+        usesKeySystemRootKeyWithKeyLookup.items,
+      )
+      extendArray(resultParams, keySystemRootKeyDecrypted)
     }
 
     if (usesItemsKey) {
@@ -507,15 +513,15 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.rootKeyEncryption.createRootKey(identifier, password, origination, version)
   }
 
-  createVaultKeyContent(params: {
-    keySystemIdentifier: KeySystemIdentifier
-    vaultName: string
-  }): VaultKeyCopyContentSpecialized {
-    return this.operatorManager.defaultOperator().createVaultKeyContent(params)
+  createKeySystemRootKeyContent(params: {
+    systemIdentifier: KeySystemIdentifier
+    systemName: string
+  }): KeySystemRootKeyContentSpecialized {
+    return this.operatorManager.defaultOperator().createKeySystemRootKeyContent(params)
   }
 
-  createVaultItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): VaultItemsKeyInterface {
-    return this.operatorManager.defaultOperator().createVaultItemsKey(uuid, keySystemIdentifier)
+  createKeySystemItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface {
+    return this.operatorManager.defaultOperator().createKeySystemItemsKey(uuid, keySystemIdentifier)
   }
 
   public generateKeyPair(): PkcKeyPair {
@@ -536,8 +542,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return decrypted ?? undefined
   }
 
-  encryptVaultKeyContentWithRecipientPublicKey(
-    data: VaultKeyCopyContentSpecialized,
+  encryptKeySystemRootKeyContentWithRecipientPublicKey(
+    data: KeySystemRootKeyContentSpecialized,
     senderPrivateKey: string,
     recipientPublicKey: string,
   ): string {
@@ -546,16 +552,16 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return encrypted
   }
 
-  decryptVaultKeyContentWithPrivateKey(
-    encryptedVaultKeyContent: string,
+  decryptKeySystemRootKeyContentWithPrivateKey(
+    encryptedKeySystemRootKeyContent: string,
     senderPublicKey: string,
     privateKey: string,
-  ): VaultKeyCopyContentSpecialized | undefined {
+  ): KeySystemRootKeyContentSpecialized | undefined {
     const defaultOperator = this.operatorManager.defaultOperator()
-    const version = defaultOperator.versionForEncryptedString(encryptedVaultKeyContent)
+    const version = defaultOperator.versionForEncryptedString(encryptedKeySystemRootKeyContent)
 
     const keyOperator = this.operatorManager.operatorForVersion(version)
-    const decrypted = keyOperator.asymmetricDecrypt(encryptedVaultKeyContent, senderPublicKey, privateKey)
+    const decrypted = keyOperator.asymmetricDecrypt(encryptedKeySystemRootKeyContent, senderPublicKey, privateKey)
 
     if (decrypted) {
       return JSON.parse(decrypted)

@@ -6,12 +6,12 @@ import {
   PayloadTimestampDefaults,
   DecryptedPayload,
   DecryptedPayloadInterface,
-  VaultItemsKeyInterface,
+  KeySystemItemsKeyInterface,
   DecryptedTransferPayload,
-  VaultKeyCopyInterface,
-  isVaultKey,
-  VaultKeyCopyContentSpecialized,
-  VaultItemsKeyContentSpecialized,
+  KeySystemRootKeyInterface,
+  isKeySystemRootKey,
+  KeySystemRootKeyContentSpecialized,
+  KeySystemItemsKeyContentSpecialized,
   FillItemContentSpecialized,
   ItemsKeyContentSpecialized,
   KeySystemIdentifier,
@@ -23,7 +23,7 @@ import { isItemsKey } from '../../Keys/ItemsKey/ItemsKey'
 import {
   ContentTypeUsesRootKeyEncryption,
   CreateNewRootKey,
-  ItemContentTypeUsesVaultKeyEncryption,
+  ItemContentTypeUsesKeySystemRootKeyEncryption,
 } from '../../Keys/RootKey/Functions'
 import { Create004KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
 import { SNRootKey } from '../../Keys/RootKey/RootKey'
@@ -33,9 +33,9 @@ import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
 import { SynchronousOperator } from '../OperatorInterface'
-import { isVaultItemsKey } from '../../Keys/VaultItemsKey/VaultItemsKey'
+import { isKeySystemItemsKey } from '../../Keys/KeySystemItemsKey/KeySystemItemsKey'
 import { AsymmetricallyEncryptedString, SymmetricallyEncryptedString } from '../Types'
-import { VaultItemsKeyAuthenticatedData } from '../../Types/VaultItemsKeyAuthenticatedData'
+import { KeySystemItemsKeyAuthenticatedData } from '../../Types/KeySystemItemsKeyAuthenticatedData'
 
 type V004StringComponents = [version: string, nonce: string, ciphertext: string, authenticatedData: string]
 
@@ -76,16 +76,16 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return response
   }
 
-  public createVaultKeyContent(params: {
-    keySystemIdentifier: KeySystemIdentifier
-    vaultName: string
-  }): VaultKeyCopyContentSpecialized {
+  public createKeySystemRootKeyContent(params: {
+    systemIdentifier: KeySystemIdentifier
+    systemName: string
+  }): KeySystemRootKeyContentSpecialized {
     return {
-      keySystemIdentifier: params.keySystemIdentifier,
+      systemName: params.systemName,
+      systemIdentifier: params.systemIdentifier,
       key: this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength),
       keyTimestamp: new Date().getTime(),
       keyVersion: ProtocolVersion.V004,
-      vaultName: params.vaultName,
     }
   }
 
@@ -103,9 +103,9 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return CreateDecryptedItemFromPayload(payload)
   }
 
-  public createVaultItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): VaultItemsKeyInterface {
+  public createKeySystemItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface {
     const key = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
-    const content = FillItemContentSpecialized<VaultItemsKeyContentSpecialized>({
+    const content = FillItemContentSpecialized<KeySystemItemsKeyContentSpecialized>({
       itemsKey: key,
       keyTimestamp: new Date().getTime(),
       version: ProtocolVersion.V004,
@@ -113,7 +113,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
 
     const transferPayload: DecryptedTransferPayload = {
       uuid: uuid,
-      content_type: ContentType.VaultItemsKey,
+      content_type: ContentType.KeySystemItemsKey,
       key_system_identifier: keySystemIdentifier,
       content: content,
       dirty: true,
@@ -180,7 +180,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     plaintext: string,
     rawKey: string,
     nonce: string,
-    authenticatedData: ItemAuthenticatedData | VaultItemsKeyAuthenticatedData,
+    authenticatedData: ItemAuthenticatedData | KeySystemItemsKeyAuthenticatedData,
   ) {
     if (!nonce) {
       throw 'encryptString null nonce'
@@ -213,7 +213,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
   generateEncryptedProtocolString(
     plaintext: string,
     rawKey: string,
-    authenticatedData: ItemAuthenticatedData | VaultItemsKeyAuthenticatedData,
+    authenticatedData: ItemAuthenticatedData | KeySystemItemsKeyAuthenticatedData,
   ) {
     const nonce = this.generateEncryptionNonce()
 
@@ -257,15 +257,15 @@ export class SNProtocolOperator004 implements SynchronousOperator {
    */
   private generateAuthenticatedDataForPayload(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface | SNRootKey,
-  ): ItemAuthenticatedData | RootKeyEncryptedAuthenticatedData | VaultItemsKeyAuthenticatedData {
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | SNRootKey,
+  ): ItemAuthenticatedData | RootKeyEncryptedAuthenticatedData | KeySystemItemsKeyAuthenticatedData {
     const baseData: ItemAuthenticatedData = {
       u: payload.uuid,
       v: ProtocolVersion.V004,
     }
 
     if (payload.key_system_identifier) {
-      baseData.vsi = payload.key_system_identifier
+      baseData.ksi = payload.key_system_identifier
     }
 
     if (ContentTypeUsesRootKeyEncryption(payload.content_type)) {
@@ -273,24 +273,24 @@ export class SNProtocolOperator004 implements SynchronousOperator {
         ...baseData,
         kp: (key as SNRootKey).keyParams.content,
       }
-    } else if (ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
-      if (!isVaultKey(key)) {
+    } else if (ItemContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
+      if (!isKeySystemRootKey(key)) {
         throw Error(`Attempting to use non-vault key ${key.content_type} for item content type ${payload.content_type}`)
       }
       return {
         ...baseData,
-        vaultKeyTimestamp: key.keyTimestamp,
-        vaultKeyVersion: key.keyVersion,
+        keySystemRootKeyTimestamp: key.keyTimestamp,
+        keySystemRootKeyVersion: key.keyVersion,
       }
     } else {
-      if (!isItemsKey(key) && !isVaultItemsKey(key)) {
+      if (!isItemsKey(key) && !isKeySystemItemsKey(key)) {
         throw Error('Attempting to use non-items key for regular item.')
       }
       return baseData
     }
   }
 
-  private authenticatedDataToString(attachedData: ItemAuthenticatedData | VaultItemsKeyAuthenticatedData) {
+  private authenticatedDataToString(attachedData: ItemAuthenticatedData | KeySystemItemsKeyAuthenticatedData) {
     return this.crypto.base64Encode(JSON.stringify(Utils.sortedCopy(Utils.omitUndefinedCopy(attachedData))))
   }
 
@@ -307,7 +307,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
 
   public generateEncryptedParametersSync(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface | SNRootKey,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | SNRootKey,
   ): EncryptedParameters {
     const contentKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
     const contentPlaintext = JSON.stringify(payload.content)
@@ -317,7 +317,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
 
     return {
       uuid: payload.uuid,
-      items_key_id: isItemsKey(key) || isVaultItemsKey(key) ? key.uuid : undefined,
+      items_key_id: isItemsKey(key) || isKeySystemItemsKey(key) ? key.uuid : undefined,
       content: encryptedContentString,
       enc_item_key: encryptedContentKey,
       version: this.version,
@@ -326,7 +326,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
 
   public generateDecryptedParametersSync<C extends ItemContent = ItemContent>(
     encrypted: EncryptedParameters,
-    key: ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface | SNRootKey,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | SNRootKey,
   ): DecryptedParameters<C> | ErrorDecryptingParameters {
     const contentKeyComponents = this.deconstructEncryptedPayloadString(encrypted.enc_item_key)
     const authenticatedData = this.stringToAuthenticatedData(contentKeyComponents.authenticatedData, {

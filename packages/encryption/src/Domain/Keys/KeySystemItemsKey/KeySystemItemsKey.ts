@@ -5,23 +5,23 @@ import {
   DecryptedItemInterface,
   DecryptedPayloadInterface,
   HistoryEntryInterface,
-  VaultItemsKeyContent,
-  VaultItemsKeyInterface,
+  KeySystemItemsKeyContent,
+  KeySystemItemsKeyInterface,
 } from '@standardnotes/models'
 
-export function isVaultItemsKey(x: unknown): x is VaultItemsKeyInterface {
-  return (x as VaultItemsKeyInterface).content_type === ContentType.VaultItemsKey
+export function isKeySystemItemsKey(x: unknown): x is KeySystemItemsKeyInterface {
+  return (x as KeySystemItemsKeyInterface).content_type === ContentType.KeySystemItemsKey
 }
 
 /**
  * A key used to encrypt other items. Items keys are synced and persisted.
  */
-export class VaultItemsKey extends DecryptedItem<VaultItemsKeyContent> implements VaultItemsKeyInterface {
+export class KeySystemItemsKey extends DecryptedItem<KeySystemItemsKeyContent> implements KeySystemItemsKeyInterface {
   keyTimestamp: number
   keyVersion: ProtocolVersion
   itemsKey: string
 
-  constructor(payload: DecryptedPayloadInterface<VaultItemsKeyContent>) {
+  constructor(payload: DecryptedPayloadInterface<KeySystemItemsKeyContent>) {
     super(payload)
 
     this.keyTimestamp = payload.content.keyTimestamp

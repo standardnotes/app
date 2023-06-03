@@ -13,10 +13,10 @@ import {
   PredicateInterface,
   DecryptedPayload,
   SNTag,
-  VaultItemsKeyInterface,
+  KeySystemItemsKeyInterface,
   ItemInterface,
   AnyItemInterface,
-  VaultKeyCopyInterface,
+  KeySystemRootKeyInterface,
   KeySystemIdentifier,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
@@ -118,13 +118,13 @@ export interface ItemManagerInterface extends AbstractService {
   findItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T | undefined
   findSureItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T
 
-  getAllVaultItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): VaultItemsKeyInterface[]
-  getPrimaryVaultItemsKeyForVault(keySystemIdentifier: KeySystemIdentifier): VaultItemsKeyInterface
-  getAllSyncedVaultKeyCopiesForVault(keySystemIdentifier: KeySystemIdentifier): VaultKeyCopyInterface[]
-  getSyncedVaultKeyCopyMatchingTimestamp(
-    keySystemIdentifier: KeySystemIdentifier,
+  getKeySystemItemsKeys(systemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface[]
+  getPrimaryKeySystemItemsKey(systemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface
+  getAllKeySystemRootKeysForVault(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface[]
+  getKeySystemRootKeyMatchingTimestamp(
+    systemIdentifier: KeySystemIdentifier,
     timestamp: number,
-  ): VaultKeyCopyInterface | undefined
-  getPrimarySyncedVaultKeyCopy(keySystemIdentifier: KeySystemIdentifier): VaultKeyCopyInterface | undefined
-  itemsBelongingToKeySystem(keySystemIdentifier: KeySystemIdentifier): DecryptedItemInterface[]
+  ): KeySystemRootKeyInterface | undefined
+  getPrimaryKeySystemRootKey(systemIdentifier: KeySystemIdentifier): KeySystemRootKeyInterface | undefined
+  itemsBelongingToKeySystem(systemIdentifier: KeySystemIdentifier): DecryptedItemInterface[]
 }

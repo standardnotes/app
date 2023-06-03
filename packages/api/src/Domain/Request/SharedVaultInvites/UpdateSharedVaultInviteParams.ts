@@ -4,6 +4,6 @@ export type UpdateSharedVaultInviteParams = {
   sharedVaultUuid: string
   inviteUuid: string
   inviterPublicKey: string
-  encryptedVaultKeyContent: string
+  encryptedKeySystemRootKeyContent: string
   permissions?: SharedVaultPermission
 }

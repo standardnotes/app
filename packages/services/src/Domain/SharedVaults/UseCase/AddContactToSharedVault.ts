@@ -25,13 +25,13 @@ export class AddContactToSharedVaultUseCase {
     contact: TrustedContactInterface
     permissions: SharedVaultPermission
   }): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
-    const vaultKeyCopy = this.items.getPrimarySyncedVaultKeyCopy(params.sharedVault.key_system_identifier)
-    if (!vaultKeyCopy) {
+    const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(params.sharedVault.key_system_identifier)
+    if (!keySystemRootKey) {
       return ClientDisplayableError.FromString('Cannot add contact; vault key not found')
     }
 
-    const encryptedVaultKeyContent = this.encryption.encryptVaultKeyContentWithRecipientPublicKey(
-      vaultKeyCopy.content,
+    const encryptedKeySystemRootKeyContent = this.encryption.encryptKeySystemRootKeyContentWithRecipientPublicKey(
+      keySystemRootKey.content,
       params.inviterPrivateKey,
       params.contact.publicKey,
     )
@@ -41,7 +41,7 @@ export class AddContactToSharedVaultUseCase {
       sharedVaultUuid: params.sharedVault.uuid,
       inviteeUuid: params.contact.contactUuid,
       inviterPublicKey: params.inviterPublicKey,
-      encryptedVaultKeyContent,
+      encryptedKeySystemRootKeyContent,
       inviteType: SharedVaultInviteType.Join,
       permissions: params.permissions,
     })

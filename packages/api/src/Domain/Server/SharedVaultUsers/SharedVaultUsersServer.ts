@@ -14,7 +14,9 @@ export class SharedVaultUsersServer implements SharedVaultUsersServerInterface {
     return this.httpService.get(SharedVaultUsersPaths.getSharedVaultUsers(params.sharedVaultUuid))
   }
 
-  deleteSharedVaultUser(params: DeleteSharedVaultUserRequestParams): Promise<HttpResponse<DeleteSharedVaultUserResponse>> {
+  deleteSharedVaultUser(
+    params: DeleteSharedVaultUserRequestParams,
+  ): Promise<HttpResponse<DeleteSharedVaultUserResponse>> {
     return this.httpService.delete(SharedVaultUsersPaths.deleteSharedVaultUser(params.sharedVaultUuid, params.userUuid))
   }
 }

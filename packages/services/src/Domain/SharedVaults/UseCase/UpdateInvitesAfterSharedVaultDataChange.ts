@@ -1,4 +1,4 @@
-import { KeySystemIdentifier, VaultKeyCopyContentSpecialized } from '@standardnotes/models'
+import { KeySystemIdentifier, KeySystemRootKeyContentSpecialized } from '@standardnotes/models'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import {
   ClientDisplayableError,
@@ -29,8 +29,8 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
     inviterPrivateKey: string
     inviterPublicKey: string
   }): Promise<ClientDisplayableError[]> {
-    const vaultKeyCopy = this.items.getPrimarySyncedVaultKeyCopy(params.keySystemIdentifier)
-    if (!vaultKeyCopy) {
+    const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(params.keySystemIdentifier)
+    if (!keySystemRootKey) {
       throw new Error(`Vault key not found for keySystemIdentifier ${params.keySystemIdentifier}`)
     }
 
@@ -38,7 +38,7 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
 
     const reuploadErrors = await this.reuploadExistingInvites({
       sharedVaultUuid: params.sharedVaultUuid,
-      vaultKeyData: vaultKeyCopy.content,
+      keySystemRootKeyData: keySystemRootKey.content,
       inviterUuid: params.inviterUuid,
       inviterPrivateKey: params.inviterPrivateKey,
       inviterPublicKey: params.inviterPublicKey,
@@ -47,7 +47,7 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
 
     const inviteErrors = await this.sendKeyChangeInviteToAcceptedVaultMembers({
       sharedVaultUuid: params.sharedVaultUuid,
-      vaultKeyData: vaultKeyCopy.content,
+      keySystemRootKeyData: keySystemRootKey.content,
       inviterUuid: params.inviterUuid,
       inviterPrivateKey: params.inviterPrivateKey,
       inviterPublicKey: params.inviterPublicKey,
@@ -59,7 +59,7 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
 
   private async reuploadExistingInvites(params: {
     sharedVaultUuid: string
-    vaultKeyData: VaultKeyCopyContentSpecialized
+    keySystemRootKeyData: KeySystemRootKeyContentSpecialized
     inviterUuid: string
     inviterPrivateKey: string
     inviterPublicKey: string
@@ -77,13 +77,13 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
     const errors: ClientDisplayableError[] = []
 
     for (const invite of existingSharedVaultInvites) {
-      const encryptedVaultKeyContent = this.getEncryptedVaultDataForRecipient({
-        vaultKeyData: params.vaultKeyData,
+      const encryptedKeySystemRootKeyContent = this.getEncryptedVaultDataForRecipient({
+        keySystemRootKeyData: params.keySystemRootKeyData,
         inviterPrivateKey: params.inviterPrivateKey,
         recipientUuid: invite.user_uuid,
       })
 
-      if (!encryptedVaultKeyContent) {
+      if (!encryptedKeySystemRootKeyContent) {
         errors.push(ClientDisplayableError.FromString(`Failed to encrypt vault key for user ${invite.user_uuid}`))
         continue
       }
@@ -93,7 +93,7 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
         sharedVaultUuid: params.sharedVaultUuid,
         inviteUuid: invite.uuid,
         inviterPublicKey: params.inviterPublicKey,
-        encryptedVaultKeyContent,
+        encryptedKeySystemRootKeyContent,
         inviteType: invite.invite_type,
         permissions: invite.permissions,
       })
@@ -108,7 +108,7 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
 
   private async sendKeyChangeInviteToAcceptedVaultMembers(params: {
     sharedVaultUuid: string
-    vaultKeyData: VaultKeyCopyContentSpecialized
+    keySystemRootKeyData: KeySystemRootKeyContentSpecialized
     inviterUuid: string
     inviterPrivateKey: string
     inviterPublicKey: string
@@ -129,13 +129,13 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
         continue
       }
 
-      const encryptedVaultKeyContent = this.getEncryptedVaultDataForRecipient({
-        vaultKeyData: params.vaultKeyData,
+      const encryptedKeySystemRootKeyContent = this.getEncryptedVaultDataForRecipient({
+        keySystemRootKeyData: params.keySystemRootKeyData,
         inviterPrivateKey: params.inviterPrivateKey,
         recipientUuid: user.user_uuid,
       })
 
-      if (!encryptedVaultKeyContent) {
+      if (!encryptedKeySystemRootKeyContent) {
         errors.push(ClientDisplayableError.FromString(`Failed to encrypt vault key for user ${user.user_uuid}`))
         continue
       }
@@ -145,7 +145,7 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
         sharedVaultUuid: params.sharedVaultUuid,
         inviteeUuid: user.user_uuid,
         inviterPublicKey: params.inviterPublicKey,
-        encryptedVaultKeyContent,
+        encryptedKeySystemRootKeyContent,
         inviteType: SharedVaultInviteType.KeyChange,
         permissions: user.permissions,
       })
@@ -159,7 +159,7 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
   }
 
   private getEncryptedVaultDataForRecipient(params: {
-    vaultKeyData: VaultKeyCopyContentSpecialized
+    keySystemRootKeyData: KeySystemRootKeyContentSpecialized
     inviterPrivateKey: string
     recipientUuid: string
   }): string | undefined {
@@ -168,8 +168,8 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
       return
     }
 
-    return this.encryption.encryptVaultKeyContentWithRecipientPublicKey(
-      params.vaultKeyData,
+    return this.encryption.encryptKeySystemRootKeyContentWithRecipientPublicKey(
+      params.keySystemRootKeyData,
       params.inviterPrivateKey,
       trustedContact.publicKey,
     )

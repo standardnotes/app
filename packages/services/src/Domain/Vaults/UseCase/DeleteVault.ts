@@ -6,11 +6,11 @@ export class DeleteVaultUseCase {
   constructor(private items: ItemManagerInterface) {}
 
   async execute(dto: { keySystemIdentifier: KeySystemIdentifier }): Promise<ClientDisplayableError | void> {
-    const vaultItemsKeys = this.items.getAllVaultItemsKeysForVault(dto.keySystemIdentifier)
-    await this.items.setItemsToBeDeleted(vaultItemsKeys)
+    const keySystemItemsKeys = this.items.getKeySystemItemsKeys(dto.keySystemIdentifier)
+    await this.items.setItemsToBeDeleted(keySystemItemsKeys)
 
-    const vaultKeyCopies = this.items.getAllSyncedVaultKeyCopiesForVault(dto.keySystemIdentifier)
-    await this.items.setItemsToBeDeleted(vaultKeyCopies)
+    const keySystemRootKeys = this.items.getAllKeySystemRootKeysForVault(dto.keySystemIdentifier)
+    await this.items.setItemsToBeDeleted(keySystemRootKeys)
 
     const vaultItems = this.items.itemsBelongingToKeySystem(dto.keySystemIdentifier)
     await this.items.setItemsToBeDeleted(vaultItems)

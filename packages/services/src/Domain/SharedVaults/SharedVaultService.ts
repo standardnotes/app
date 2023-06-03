@@ -20,11 +20,11 @@ import {
 } from '@standardnotes/api'
 import {
   DecryptedItemInterface,
-  VaultKeyCopyContentSpecialized,
+  KeySystemRootKeyContentSpecialized,
   PayloadEmitSource,
   TrustedContactInterface,
-  VaultKeyCopyInterface,
-  VaultItemsKeyInterface,
+  KeySystemRootKeyInterface,
+  KeySystemItemsKeyInterface,
   KeySystemIdentifier,
 } from '@standardnotes/models'
 import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
@@ -47,10 +47,8 @@ import { SyncEvent, SyncEventReceivedSharedVaultInvitesData } from '../Event/Syn
 import { SessionEvent } from '../Session/SessionEvent'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { FilesClientInterface } from '@standardnotes/files'
-import { ReloadRemovedUseCase } from './UseCase/ReloadRemovedSharedVault'
 import { LeaveVaultUseCase } from './UseCase/LeaveSharedVault'
 import { UpdateInvitesAfterSharedVaultDataChangeUseCase } from './UseCase/UpdateInvitesAfterSharedVaultDataChange'
-import { ApplicationStage } from '../Application/ApplicationStage'
 import { SharedVaultCacheServiceInterface } from './SharedVaultCacheServiceInterface'
 import { UpdateSharedVaultUseCase } from './UseCase/UpdateSharedVault'
 import { AddItemToSharedVaultUseCase } from './UseCase/AddItemToSharedVault'
@@ -112,30 +110,24 @@ export class SharedVaultService
     )
 
     this.eventDisposers.push(
-      items.addObserver<VaultKeyCopyInterface>(ContentType.VaultKeyCopy, ({ changed, source }) => {
+      items.addObserver<KeySystemRootKeyInterface>(ContentType.KeySystemRootKey, ({ changed, source }) => {
         if (source !== PayloadEmitSource.LocalChanged) {
           return
         }
 
-        void this.handleChangeInVaultKeys(changed)
+        void this.handleChangeInKeySystemRootKeys(changed)
       }),
     )
 
     this.eventDisposers.push(
-      items.addObserver<VaultItemsKeyInterface>(ContentType.VaultItemsKey, ({ inserted, source }) => {
+      items.addObserver<KeySystemItemsKeyInterface>(ContentType.KeySystemItemsKey, ({ inserted, source }) => {
         if (source !== PayloadEmitSource.LocalInserted) {
           return
         }
 
-        void this.handleInsertionOfNewVaultItemsKeys(inserted)
+        void this.handleInsertionOfNewKeySystemItemsKeys(inserted)
       }),
     )
-  }
-
-  override async handleApplicationStage(stage: ApplicationStage): Promise<void> {
-    if (stage === ApplicationStage.Launched_10) {
-      void this.reloadRemovedSharedVaults()
-    }
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
@@ -151,22 +143,24 @@ export class SharedVaultService
     }
   }
 
-  private async handleInsertionOfNewVaultItemsKeys(vaultItemsKeys: VaultItemsKeyInterface[]): Promise<void> {
-    for (const vaultItemsKey of vaultItemsKeys) {
-      if (!vaultItemsKey.key_system_identifier) {
+  private async handleInsertionOfNewKeySystemItemsKeys(
+    keySystemItemsKeys: KeySystemItemsKeyInterface[],
+  ): Promise<void> {
+    for (const keySystemItemsKey of keySystemItemsKeys) {
+      if (!keySystemItemsKey.key_system_identifier) {
         throw new Error('Vault items key does not have a vault system identifier')
       }
 
       const sharedVault = this.sharedVaultCache.getSharedVaultForKeySystemIdentifier(
-        vaultItemsKey.key_system_identifier,
+        keySystemItemsKey.key_system_identifier,
       )
 
       if (sharedVault) {
-        const primaryVaultItemsKey = this.items.getPrimaryVaultItemsKeyForVault(vaultItemsKey.key_system_identifier)
+        const primaryKeySystemItemsKey = this.items.getPrimaryKeySystemItemsKey(keySystemItemsKey.key_system_identifier)
         const updateSharedVaultUseCase = new UpdateSharedVaultUseCase(this.sharedVaultServer)
         const updateResult = await updateSharedVaultUseCase.execute({
           sharedVaultUuid: sharedVault.uuid,
-          specifiedItemsKeyUuid: primaryVaultItemsKey.uuid,
+          specifiedItemsKeyUuid: primaryKeySystemItemsKey.uuid,
         })
 
         if (!isClientDisplayableError(updateResult)) {
@@ -176,15 +170,15 @@ export class SharedVaultService
     }
   }
 
-  private async handleChangeInVaultKeys(changed: VaultKeyCopyInterface[]): Promise<void> {
+  private async handleChangeInKeySystemRootKeys(changed: KeySystemRootKeyInterface[]): Promise<void> {
     const handledVaults = new Set()
 
     for (const changedKey of changed) {
-      if (handledVaults.has(changedKey.keySystemIdentifier)) {
+      if (handledVaults.has(changedKey.systemIdentifier)) {
         continue
       }
 
-      const sharedVault = this.sharedVaultCache.getSharedVaultForKeySystemIdentifier(changedKey.keySystemIdentifier)
+      const sharedVault = this.sharedVaultCache.getSharedVaultForKeySystemIdentifier(changedKey.systemIdentifier)
       if (!sharedVault) {
         continue
       }
@@ -193,15 +187,15 @@ export class SharedVaultService
         continue
       }
 
-      const primaryKey = this.items.getPrimarySyncedVaultKeyCopy(changedKey.keySystemIdentifier)
+      const primaryKey = this.items.getPrimaryKeySystemRootKey(changedKey.systemIdentifier)
       if (changedKey.uuid !== primaryKey?.uuid) {
         continue
       }
 
-      handledVaults.add(changedKey.keySystemIdentifier)
+      handledVaults.add(changedKey.systemIdentifier)
 
-      await this.updateInvitesAfterVaultKeyChange({
-        keySystemIdentifier: changedKey.keySystemIdentifier,
+      await this.updateInvitesAfterKeySystemRootKeyChange({
+        keySystemIdentifier: changedKey.systemIdentifier,
         sharedVaultUuid: sharedVault.uuid,
       })
     }
@@ -213,13 +207,13 @@ export class SharedVaultService
       return keySystemIdentifier
     }
 
-    const vaultItemsKey = this.items.getPrimaryVaultItemsKeyForVault(keySystemIdentifier)
-    if (!vaultItemsKey) {
+    const keySystemItemsKey = this.items.getPrimaryKeySystemItemsKey(keySystemIdentifier)
+    if (!keySystemItemsKey) {
       return ClientDisplayableError.FromString(`No vault items key found for vault ${keySystemIdentifier}`)
     }
 
     const result = await this.sharedVaultServer.createSharedVault({
-      specifiedItemsKeyUuid: vaultItemsKey.uuid,
+      specifiedItemsKeyUuid: keySystemItemsKey.uuid,
     })
 
     if (isErrorResponse(result)) {
@@ -388,15 +382,6 @@ export class SharedVaultService
     return true
   }
 
-  public async reloadRemovedSharedVaults(): Promise<void> {
-    if (!this.session.isSignedIn()) {
-      return
-    }
-
-    const useCase = new ReloadRemovedUseCase(this.sharedVaultServer, this.items)
-    return useCase.execute()
-  }
-
   public getTrustedSenderOfInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined {
     const trustedContact = this.contacts.findTrustedContact(invite.inviter_uuid)
     if (trustedContact && trustedContact.publicKey === invite.inviter_public_key) {
@@ -467,8 +452,8 @@ export class SharedVaultService
     return result
   }
 
-  public getInviteData(invite: SharedVaultInviteServerHash): VaultKeyCopyContentSpecialized | undefined {
-    return this.encryption.decryptVaultKeyContentWithPrivateKey(
+  public getInviteData(invite: SharedVaultInviteServerHash): KeySystemRootKeyContentSpecialized | undefined {
+    return this.encryption.decryptKeySystemRootKeyContentWithPrivateKey(
       invite.encrypted_vault_key_content,
       invite.inviter_public_key,
       this.encryption.getDecryptedPrivateKey(),
@@ -535,7 +520,7 @@ export class SharedVaultService
     return contact
   }
 
-  public updateInvitesAfterVaultKeyChange(params: {
+  public updateInvitesAfterKeySystemRootKeyChange(params: {
     keySystemIdentifier: KeySystemIdentifier
     sharedVaultUuid: string
   }): Promise<ClientDisplayableError[]> {

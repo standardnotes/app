@@ -306,9 +306,9 @@ export class AppContext {
   resolveWhenSharedVaultChangeInvitesAreSent(sharedVaultUuid) {
     return new Promise((resolve) => {
       const objectToSpy = this.sharedVaults
-      sinon.stub(objectToSpy, 'updateInvitesAfterVaultKeyChange').callsFake(async (params) => {
-        objectToSpy.updateInvitesAfterVaultKeyChange.restore()
-        const result = await objectToSpy.updateInvitesAfterVaultKeyChange(params)
+      sinon.stub(objectToSpy, 'updateInvitesAfterKeySystemRootKeyChange').callsFake(async (params) => {
+        objectToSpy.updateInvitesAfterKeySystemRootKeyChange.restore()
+        const result = await objectToSpy.updateInvitesAfterKeySystemRootKeyChange(params)
         if (params.sharedVaultUuid === sharedVaultUuid) {
           resolve()
         }

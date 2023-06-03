@@ -21,7 +21,9 @@ export interface SharedVaultInvitesServerInterface {
 
   getInboundUserInvites(): Promise<HttpResponse<GetUserInvitesResponse>>
   getOutboundUserInvites(): Promise<HttpResponse<GetUserInvitesResponse>>
-  getSharedVaultInvites(params: GetSharedVaultInvitesRequestParams): Promise<HttpResponse<GetSharedVaultInvitesResponse>>
+  getSharedVaultInvites(
+    params: GetSharedVaultInvitesRequestParams,
+  ): Promise<HttpResponse<GetSharedVaultInvitesResponse>>
 
   deleteInvite(params: DeleteInviteRequestParams): Promise<HttpResponse<DeleteInviteResponse>>
   deleteAllInboundInvites(): Promise<HttpResponse<{ success: boolean }>>

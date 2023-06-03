@@ -10,7 +10,7 @@ import {
   ContentTypeUsesRootKeyEncryption,
   CreateAnyKeyParams,
   isItemsKey,
-  isVaultItemsKey,
+  isKeySystemItemsKey,
   SNItemsKey,
   SNRootKey,
   SNRootKeyParams,
@@ -30,7 +30,7 @@ import {
   ItemsKeyContent,
   ItemsKeyInterface,
   PayloadInterface,
-  VaultItemsKeyInterface,
+  KeySystemItemsKeyInterface,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { extendArray } from '@standardnotes/utils'
@@ -122,8 +122,8 @@ function findKeyToUseForPayload(
   protocolService: EncryptionService,
   keyParams?: SNRootKeyParams,
   fallbackRootKey?: SNRootKey,
-): ItemsKeyInterface | SNRootKey | VaultItemsKeyInterface | undefined {
-  let itemsKey: ItemsKeyInterface | SNRootKey | VaultItemsKeyInterface | undefined
+): ItemsKeyInterface | SNRootKey | KeySystemItemsKeyInterface | undefined {
+  let itemsKey: ItemsKeyInterface | SNRootKey | KeySystemItemsKeyInterface | undefined
 
   if (payload.items_key_id) {
     itemsKey = protocolService.itemsKeyForEncryptedPayload(payload)
@@ -187,7 +187,7 @@ async function decryptWithItemsKeys(
         continue
       }
 
-      if (isItemsKey(key) || isVaultItemsKey(key)) {
+      if (isItemsKey(key) || isKeySystemItemsKey(key)) {
         const decryptedPayload = await protocolService.decryptSplitSingle({
           usesItemsKey: {
             items: [encryptedPayload],

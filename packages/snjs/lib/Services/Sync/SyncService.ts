@@ -55,8 +55,8 @@ import {
   getIncrementedDirtyIndex,
   getCurrentDirtyIndex,
   ItemContent,
-  VaultItemsKeyContent,
-  VaultItemsKeyInterface,
+  KeySystemItemsKeyContent,
+  KeySystemItemsKeyInterface,
   FullyFormedTransferPayload,
 } from '@standardnotes/models'
 import {
@@ -136,8 +136,8 @@ export class SNSyncService
   /** Content types appearing first are always mapped first */
   private readonly localLoadPriorty = [
     ContentType.ItemsKey,
-    ContentType.VaultKeyCopy,
-    ContentType.VaultItemsKey,
+    ContentType.KeySystemRootKey,
+    ContentType.KeySystemItemsKey,
     ContentType.UserPrefs,
     ContentType.Component,
     ContentType.Theme,
@@ -271,13 +271,13 @@ export class SNSyncService
       ? chunks.fullEntries.itemsKeys.entries
       : await this.device.getDatabaseEntries(this.identifier, chunks.keys.itemsKeys.keys)
 
-    const vaultKeyEntries = isFullEntryLoadChunkResponse(chunks)
-      ? chunks.fullEntries.vaultKeys.entries
-      : await this.device.getDatabaseEntries(this.identifier, chunks.keys.vaultKeys.keys)
+    const keySystemRootKeyEntries = isFullEntryLoadChunkResponse(chunks)
+      ? chunks.fullEntries.keySystemRootKeys.entries
+      : await this.device.getDatabaseEntries(this.identifier, chunks.keys.keySystemRootKeys.keys)
 
-    const vaultItemsKeyEntries = isFullEntryLoadChunkResponse(chunks)
-      ? chunks.fullEntries.vaultItemsKeys.entries
-      : await this.device.getDatabaseEntries(this.identifier, chunks.keys.vaultItemsKeys.keys)
+    const keySystemItemsKeyEntries = isFullEntryLoadChunkResponse(chunks)
+      ? chunks.fullEntries.keySystemItemsKeys.entries
+      : await this.device.getDatabaseEntries(this.identifier, chunks.keys.keySystemItemsKeys.keys)
 
     const createPayloadFromEntry = (entry: FullyFormedTransferPayload) => {
       try {
@@ -289,9 +289,11 @@ export class SNSyncService
     }
 
     await this.processPriorityItemsForDatabaseLoad(itemsKeyEntries.map(createPayloadFromEntry).filter(isNotUndefined))
-    await this.processPriorityItemsForDatabaseLoad(vaultKeyEntries.map(createPayloadFromEntry).filter(isNotUndefined))
     await this.processPriorityItemsForDatabaseLoad(
-      vaultItemsKeyEntries.map(createPayloadFromEntry).filter(isNotUndefined),
+      keySystemRootKeyEntries.map(createPayloadFromEntry).filter(isNotUndefined),
+    )
+    await this.processPriorityItemsForDatabaseLoad(
+      keySystemItemsKeyEntries.map(createPayloadFromEntry).filter(isNotUndefined),
     )
 
     /**
@@ -925,7 +927,10 @@ export class SNSyncService
     const historyMap = this.historyService.getHistoryMapCopy()
 
     if (response.vaults) {
-      await this.notifyEventSync(SyncEvent.ReceivedRemoteSharedVaults, response.vaults as SyncEventReceivedRemoteSharedVaultsData)
+      await this.notifyEventSync(
+        SyncEvent.ReceivedRemoteSharedVaults,
+        response.vaults as SyncEventReceivedRemoteSharedVaultsData,
+      )
     }
 
     if (response.vaultInvites) {
@@ -1043,7 +1048,8 @@ export class SNSyncService
 
     const results: FullyFormedPayloadInterface[] = [...deleted]
 
-    const { rootKeyEncryption, itemsKeyEncryption, vaultKeyEncryption } = SplitPayloadsByEncryptionType(encrypted)
+    const { rootKeyEncryption, itemsKeyEncryption, keySystemRootKeyEncryption } =
+      SplitPayloadsByEncryptionType(encrypted)
 
     const { results: rootKeyDecryptionResults, map: processedItemsKeys } = await this.decryptServerItemsKeys(
       rootKeyEncryption || [],
@@ -1051,16 +1057,15 @@ export class SNSyncService
 
     extendArray(results, rootKeyDecryptionResults)
 
-    const { results: vaultKeyDecryptionResults, map: processedVaultItemsKeys } = await this.decryptServerVaultItemsKeys(
-      vaultKeyEncryption || [],
-    )
+    const { results: keySystemRootKeyDecryptionResults, map: processedKeySystemItemsKeys } =
+      await this.decryptServerKeySystemItemsKeys(keySystemRootKeyEncryption || [])
 
-    extendArray(results, vaultKeyDecryptionResults)
+    extendArray(results, keySystemRootKeyDecryptionResults)
 
     if (itemsKeyEncryption) {
       const decryptionResults = await this.decryptProcessedServerPayloads(itemsKeyEncryption, {
         ...processedItemsKeys,
-        ...processedVaultItemsKeys,
+        ...processedKeySystemItemsKeys,
       })
       extendArray(results, decryptionResults)
     }
@@ -1098,8 +1103,8 @@ export class SNSyncService
     }
   }
 
-  private async decryptServerVaultItemsKeys(payloads: EncryptedPayloadInterface[]) {
-    const map: Record<UuidString, DecryptedPayloadInterface<VaultItemsKeyContent>> = {}
+  private async decryptServerKeySystemItemsKeys(payloads: EncryptedPayloadInterface[]) {
+    const map: Record<UuidString, DecryptedPayloadInterface<KeySystemItemsKeyContent>> = {}
 
     if (payloads.length === 0) {
       return {
@@ -1108,16 +1113,19 @@ export class SNSyncService
       }
     }
 
-    const vaultKeySplit: KeyedDecryptionSplit = {
-      usesVaultKeyWithKeyLookup: {
+    const keySystemRootKeySplit: KeyedDecryptionSplit = {
+      usesKeySystemRootKeyWithKeyLookup: {
         items: payloads,
       },
     }
 
-    const results = await this.protocolService.decryptSplit<VaultItemsKeyContent>(vaultKeySplit)
+    const results = await this.protocolService.decryptSplit<KeySystemItemsKeyContent>(keySystemRootKeySplit)
 
     results.forEach((result) => {
-      if (isDecryptedPayload<VaultItemsKeyContent>(result) && result.content_type === ContentType.VaultItemsKey) {
+      if (
+        isDecryptedPayload<KeySystemItemsKeyContent>(result) &&
+        result.content_type === ContentType.KeySystemItemsKey
+      ) {
         map[result.uuid] = result
       }
     })
@@ -1130,16 +1138,18 @@ export class SNSyncService
 
   private async decryptProcessedServerPayloads(
     payloads: EncryptedPayloadInterface[],
-    map: Record<UuidString, DecryptedPayloadInterface<ItemsKeyContent | VaultItemsKeyContent>>,
+    map: Record<UuidString, DecryptedPayloadInterface<ItemsKeyContent | KeySystemItemsKeyContent>>,
   ): Promise<(EncryptedPayloadInterface | DecryptedPayloadInterface)[]> {
     return Promise.all(
       payloads.map(async (encrypted) => {
         const previouslyProcessedItemsKey:
-          | DecryptedPayloadInterface<ItemsKeyContent | VaultItemsKeyContent>
+          | DecryptedPayloadInterface<ItemsKeyContent | KeySystemItemsKeyContent>
           | undefined = map[encrypted.items_key_id as string]
 
         const itemsKey = previouslyProcessedItemsKey
-          ? (CreateDecryptedItemFromPayload(previouslyProcessedItemsKey) as ItemsKeyInterface | VaultItemsKeyInterface)
+          ? (CreateDecryptedItemFromPayload(previouslyProcessedItemsKey) as
+              | ItemsKeyInterface
+              | KeySystemItemsKeyInterface)
           : undefined
 
         const keyedSplit: KeyedDecryptionSplit = {}

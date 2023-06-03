@@ -4,12 +4,12 @@ import {
   DecryptedPayload,
   DecryptedPayloadInterface,
   FillItemContent,
-  VaultKeyCopyContentSpecialized,
+  KeySystemRootKeyContentSpecialized,
   ItemContent,
   ItemsKeyContent,
   ItemsKeyInterface,
   PayloadTimestampDefaults,
-  VaultItemsKeyInterface,
+  KeySystemItemsKeyInterface,
   KeySystemIdentifier,
 } from '@standardnotes/models'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -216,14 +216,14 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
     })
   }
 
-  createVaultItemsKey(_uuid: string, _keySystemIdentifier: KeySystemIdentifier): VaultItemsKeyInterface {
+  createKeySystemItemsKey(_uuid: string, _keySystemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface {
     throw new Error('Method not implemented.')
   }
 
-  createVaultKeyContent(_params: {
+  createKeySystemRootKeyContent(_params: {
     keySystemIdentifier: KeySystemIdentifier
     vaultName: string
-  }): VaultKeyCopyContentSpecialized {
+  }): KeySystemRootKeyContentSpecialized {
     throw new Error('Method not implemented.')
   }
 

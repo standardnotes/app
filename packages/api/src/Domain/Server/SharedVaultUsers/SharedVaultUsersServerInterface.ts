@@ -7,5 +7,7 @@ import { GetSharedVaultUsersResponse } from '../../Response/SharedVaultUsers/Get
 export interface SharedVaultUsersServerInterface {
   getSharedVaultUsers(params: GetSharedVaultUsersRequestParams): Promise<HttpResponse<GetSharedVaultUsersResponse>>
 
-  deleteSharedVaultUser(params: DeleteSharedVaultUserRequestParams): Promise<HttpResponse<DeleteSharedVaultUserResponse>>
+  deleteSharedVaultUser(
+    params: DeleteSharedVaultUserRequestParams,
+  ): Promise<HttpResponse<DeleteSharedVaultUserResponse>>
 }

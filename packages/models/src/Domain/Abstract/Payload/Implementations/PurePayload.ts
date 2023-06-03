@@ -67,7 +67,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
     this.dirtyIndex = rawPayload.dirtyIndex
     this.globalDirtyIndexAtLastSync = rawPayload.globalDirtyIndexAtLastSync
 
-    if (rawPayload.key_system_identifier && rawPayload.content_type === ContentType.VaultKeyCopy) {
+    if (rawPayload.key_system_identifier && rawPayload.content_type === ContentType.KeySystemRootKey) {
       throw new Error('Vault key copy payload should not have vault system identifier')
     }
 

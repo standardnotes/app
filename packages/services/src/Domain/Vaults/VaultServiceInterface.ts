@@ -1,8 +1,8 @@
 import { ClientDisplayableError } from '@standardnotes/responses'
 import {
   DecryptedItemInterface,
-  VaultKeyCopyInterface,
-  VaultKeyCopyContentSpecialized,
+  KeySystemRootKeyInterface,
+  KeySystemRootKeyContentSpecialized,
   KeySystemIdentifier,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
@@ -14,8 +14,8 @@ export interface VaultServiceInterface extends AbstractService<VaultServiceEvent
   getVaultDisplayListings(): VaultDisplayListing[]
   deleteVault(keySystemIdentifier: KeySystemIdentifier): Promise<boolean>
 
-  getVaultInfoForItem(item: DecryptedItemInterface): VaultKeyCopyContentSpecialized | undefined
-  getVaultInfo(keySystemIdentifier: KeySystemIdentifier): VaultKeyCopyContentSpecialized | undefined
+  getVaultInfoForItem(item: DecryptedItemInterface): KeySystemRootKeyContentSpecialized | undefined
+  getVaultInfo(keySystemIdentifier: KeySystemIdentifier): KeySystemRootKeyContentSpecialized | undefined
 
   addItemToVault(
     keySystemIdentifier: KeySystemIdentifier,
@@ -24,9 +24,9 @@ export interface VaultServiceInterface extends AbstractService<VaultServiceEvent
   removeItemFromVault(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   isItemInVault(item: DecryptedItemInterface): boolean
 
-  rotateVaultKey(keySystemIdentifier: KeySystemIdentifier): Promise<void>
+  rotateKeySystemRootKey(keySystemIdentifier: KeySystemIdentifier): Promise<void>
   changeVaultNameAndDescription(
     keySystemIdentifier: KeySystemIdentifier,
     params: { name: string; description: string },
-  ): Promise<VaultKeyCopyInterface>
+  ): Promise<KeySystemRootKeyInterface>
 }

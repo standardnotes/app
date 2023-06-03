@@ -83,24 +83,24 @@ export function GetSortedPayloadsByPriority<T extends DatabaseItemMetadata = Dat
   options: DatabaseLoadOptions,
 ): {
   itemsKeyPayloads: T[]
-  vaultKeyPayloads: T[]
-  vaultItemsKeyPayloads: T[]
+  keySystemRootKeyPayloads: T[]
+  keySystemItemsKeyPayloads: T[]
   contentTypePriorityPayloads: T[]
   remainingPayloads: T[]
 } {
   const itemsKeyPayloads: T[] = []
-  const vaultKeyPayloads: T[] = []
-  const vaultItemsKeyPayloads: T[] = []
+  const keySystemRootKeyPayloads: T[] = []
+  const keySystemItemsKeyPayloads: T[] = []
   const contentTypePriorityPayloads: T[] = []
   const remainingPayloads: T[] = []
 
   for (let index = 0; index < payloads.length; index++) {
     const payload = payloads[index]
 
-    if (payload.content_type === ContentType.VaultKeyCopy) {
-      vaultKeyPayloads.push(payload)
-    } else if (payload.content_type === ContentType.VaultItemsKey) {
-      vaultItemsKeyPayloads.push(payload)
+    if (payload.content_type === ContentType.KeySystemRootKey) {
+      keySystemRootKeyPayloads.push(payload)
+    } else if (payload.content_type === ContentType.KeySystemItemsKey) {
+      keySystemItemsKeyPayloads.push(payload)
     } else if (payload.content_type === ContentType.ItemsKey) {
       itemsKeyPayloads.push(payload)
     } else if (options.contentTypePriority.includes(payload.content_type)) {
@@ -112,8 +112,8 @@ export function GetSortedPayloadsByPriority<T extends DatabaseItemMetadata = Dat
 
   return {
     itemsKeyPayloads,
-    vaultKeyPayloads,
-    vaultItemsKeyPayloads,
+    keySystemRootKeyPayloads,
+    keySystemItemsKeyPayloads,
     contentTypePriorityPayloads: SortPayloadsByRecentAndContentPriority(
       contentTypePriorityPayloads,
       options.contentTypePriority,

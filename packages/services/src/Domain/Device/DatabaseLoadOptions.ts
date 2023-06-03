@@ -18,8 +18,8 @@ export function isChunkFullEntry(
 export type DatabaseKeysLoadChunkResponse = {
   keys: {
     itemsKeys: DatabaseKeysLoadChunk
-    vaultKeys: DatabaseKeysLoadChunk
-    vaultItemsKeys: DatabaseKeysLoadChunk
+    keySystemRootKeys: DatabaseKeysLoadChunk
+    keySystemItemsKeys: DatabaseKeysLoadChunk
     remainingChunks: DatabaseKeysLoadChunk[]
   }
   remainingChunksItemCount: number
@@ -28,8 +28,8 @@ export type DatabaseKeysLoadChunkResponse = {
 export type DatabaseFullEntryLoadChunkResponse = {
   fullEntries: {
     itemsKeys: DatabaseFullEntryLoadChunk
-    vaultKeys: DatabaseFullEntryLoadChunk
-    vaultItemsKeys: DatabaseFullEntryLoadChunk
+    keySystemRootKeys: DatabaseFullEntryLoadChunk
+    keySystemItemsKeys: DatabaseFullEntryLoadChunk
     remainingChunks: DatabaseFullEntryLoadChunk[]
   }
   remainingChunksItemCount: number

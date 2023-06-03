@@ -1,10 +1,10 @@
 import {
   DecryptedPayloadInterface,
   EncryptedPayloadInterface,
-  VaultKeyCopyInterface,
+  KeySystemRootKeyInterface,
   ItemsKeyInterface,
   RootKeyInterface,
-  VaultItemsKeyInterface,
+  KeySystemItemsKeyInterface,
 } from '@standardnotes/models'
 
 export interface AbstractKeySplit<T = EncryptedPayloadInterface | DecryptedPayloadInterface> {
@@ -12,18 +12,18 @@ export interface AbstractKeySplit<T = EncryptedPayloadInterface | DecryptedPaylo
     items: T[]
     key: RootKeyInterface
   }
-  usesVaultKey?: {
+  usesKeySystemRootKey?: {
     items: T[]
-    key: VaultKeyCopyInterface
+    key: KeySystemRootKeyInterface
   }
   usesItemsKey?: {
     items: T[]
-    key: ItemsKeyInterface | VaultItemsKeyInterface
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface
   }
   usesRootKeyWithKeyLookup?: {
     items: T[]
   }
-  usesVaultKeyWithKeyLookup?: {
+  usesKeySystemRootKeyWithKeyLookup?: {
     items: T[]
   }
   usesItemsKeyWithKeyLookup?: {

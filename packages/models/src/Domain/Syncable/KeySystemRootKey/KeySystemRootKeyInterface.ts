@@ -1,13 +1,12 @@
 import { ProtocolVersion } from '@standardnotes/common'
 import { DecryptedItemInterface } from '../../Abstract/Item/Interfaces/DecryptedItem'
-import { VaultKeyCopyContent } from './VaultKeyCopyContent'
-import { KeySystemIdentifier } from '../../Utilities/Vault/KeySystemIdentifier'
+import { KeySystemRootKeyContent } from './KeySystemRootKeyContent'
+import { KeySystemIdentifier } from './KeySystemIdentifier'
 
-export interface VaultKeyCopyInterface extends DecryptedItemInterface<VaultKeyCopyContent> {
-  keySystemIdentifier: KeySystemIdentifier
-
-  vaultName: string
-  vaultDescription?: string
+export interface KeySystemRootKeyInterface extends DecryptedItemInterface<KeySystemRootKeyContent> {
+  systemIdentifier: KeySystemIdentifier
+  systemName: string
+  systemDescription?: string
 
   key: string
   keyTimestamp: number

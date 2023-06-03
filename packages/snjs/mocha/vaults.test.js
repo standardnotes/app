@@ -3,7 +3,7 @@ import * as Factory from './lib/factory.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.only('vaults', function () {
+describe('vaults', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let application
@@ -33,11 +33,11 @@ describe.only('vaults', function () {
       expect(keySystemIdentifier).to.not.be.undefined
       expect(typeof keySystemIdentifier).to.equal('string')
 
-      const vaultItemsKey = context.items.getPrimaryVaultItemsKeyForVault(keySystemIdentifier)
-      expect(vaultItemsKey).to.not.be.undefined
-      expect(vaultItemsKey.key_system_identifier).to.equal(keySystemIdentifier)
-      expect(vaultItemsKey.keyTimestamp).to.not.be.undefined
-      expect(vaultItemsKey.keyVersion).to.not.be.undefined
+      const keySystemItemsKey = context.items.getPrimaryKeySystemItemsKey(keySystemIdentifier)
+      expect(keySystemItemsKey).to.not.be.undefined
+      expect(keySystemItemsKey.key_system_identifier).to.equal(keySystemIdentifier)
+      expect(keySystemItemsKey.keyTimestamp).to.not.be.undefined
+      expect(keySystemItemsKey.keyVersion).to.not.be.undefined
     })
 
     it('should add item to offline vault', async () => {
@@ -119,12 +119,12 @@ describe.only('vaults', function () {
       const keySystemIdentifier = await vaults.createVault()
       expect(keySystemIdentifier).to.not.be.undefined
 
-      const vaultItemsKeys = application.items.getAllVaultItemsKeysForVault(keySystemIdentifier)
-      expect(vaultItemsKeys.length).to.equal(1)
+      const keySystemItemsKeys = application.items.getKeySystemItemsKeys(keySystemIdentifier)
+      expect(keySystemItemsKeys.length).to.equal(1)
 
-      const vaultItemsKey = vaultItemsKeys[0]
-      expect(vaultItemsKey instanceof VaultItemsKey).to.be.true
-      expect(vaultItemsKey.key_system_identifier).to.equal(keySystemIdentifier)
+      const keySystemItemsKey = keySystemItemsKeys[0]
+      expect(keySystemItemsKey instanceof KeySystemItemsKey).to.be.true
+      expect(keySystemItemsKey.key_system_identifier).to.equal(keySystemIdentifier)
     })
 
     it('should add item to vault', async () => {
@@ -158,19 +158,19 @@ describe.only('vaults', function () {
       it('rotating a vault key should create a new vault items key', async () => {
         const keySystemIdentifier = await vaults.createVault()
 
-        const vaultItemsKey = context.items.getAllVaultItemsKeysForVault(keySystemIdentifier)[0]
+        const keySystemItemsKey = context.items.getKeySystemItemsKeys(keySystemIdentifier)[0]
 
-        await vaults.rotateVaultKey(keySystemIdentifier)
+        await vaults.rotateKeySystemRootKey(keySystemIdentifier)
 
-        const updatedVaultItemsKey = context.items.getAllVaultItemsKeysForVault(keySystemIdentifier)[0]
+        const updatedKeySystemItemsKey = context.items.getKeySystemItemsKeys(keySystemIdentifier)[0]
 
-        expect(updatedVaultItemsKey).to.not.be.undefined
-        expect(updatedVaultItemsKey.uuid).to.not.equal(vaultItemsKey.uuid)
+        expect(updatedKeySystemItemsKey).to.not.be.undefined
+        expect(updatedKeySystemItemsKey.uuid).to.not.equal(keySystemItemsKey.uuid)
       })
 
       it('should keep vault key copy with greater keyTimestamp if conflict', async () => {
         const keySystemIdentifier = await vaults.createVault()
-        const vaultKeyCopy = context.items.getPrimarySyncedVaultKeyCopy(keySystemIdentifier)
+        const keySystemRootKey = context.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
 
         const otherClient = await Factory.createAppContextWithRealCrypto()
         await otherClient.launch()
@@ -181,16 +181,16 @@ describe.only('vaults', function () {
         context.lockSyncing()
         otherClient.lockSyncing()
 
-        const olderTimestamp = vaultKeyCopy.keyTimestamp + 1
-        const newerTimestamp = vaultKeyCopy.keyTimestamp + 2
+        const olderTimestamp = keySystemRootKey.keyTimestamp + 1
+        const newerTimestamp = keySystemRootKey.keyTimestamp + 2
 
-        await context.application.items.changeItem(vaultKeyCopy, (mutator) => {
+        await context.application.items.changeItem(keySystemRootKey, (mutator) => {
           mutator.mutableContent.key = 'new-vault-key'
           mutator.mutableContent.keyTimestamp = olderTimestamp
         })
 
-        const otherVaultKey = otherClient.items.getPrimarySyncedVaultKeyCopy(keySystemIdentifier)
-        await otherClient.application.items.changeItem(otherVaultKey, (mutator) => {
+        const otherKeySystemRootKey = otherClient.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
+        await otherClient.application.items.changeItem(otherKeySystemRootKey, (mutator) => {
           mutator.mutableContent.key = 'new-vault-key'
           mutator.mutableContent.keyTimestamp = newerTimestamp
         })
@@ -201,16 +201,16 @@ describe.only('vaults', function () {
         await otherClient.sync()
         await context.sync()
 
-        expect(context.items.getItems(ContentType.VaultKeyCopy).length).to.equal(1)
-        expect(otherClient.items.getItems(ContentType.VaultKeyCopy).length).to.equal(1)
+        expect(context.items.getItems(ContentType.KeySystemRootKey).length).to.equal(1)
+        expect(otherClient.items.getItems(ContentType.KeySystemRootKey).length).to.equal(1)
 
-        const vaultKeyAfterSync = context.items.getPrimarySyncedVaultKeyCopy(keySystemIdentifier)
-        const otherVaultKeyAfterSync = otherClient.items.getPrimarySyncedVaultKeyCopy(keySystemIdentifier)
+        const keySystemRootKeyAfterSync = context.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
+        const otherKeySystemRootKeyAfterSync = otherClient.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
 
-        expect(vaultKeyAfterSync.keyTimestamp).to.equal(otherVaultKeyAfterSync.keyTimestamp)
-        expect(vaultKeyAfterSync.key).to.equal(otherVaultKeyAfterSync.key)
-        expect(vaultKeyAfterSync.keyTimestamp).to.equal(newerTimestamp)
-        expect(otherVaultKeyAfterSync.keyTimestamp).to.equal(newerTimestamp)
+        expect(keySystemRootKeyAfterSync.keyTimestamp).to.equal(otherKeySystemRootKeyAfterSync.keyTimestamp)
+        expect(keySystemRootKeyAfterSync.key).to.equal(otherKeySystemRootKeyAfterSync.key)
+        expect(keySystemRootKeyAfterSync.keyTimestamp).to.equal(newerTimestamp)
+        expect(otherKeySystemRootKeyAfterSync.keyTimestamp).to.equal(newerTimestamp)
 
         await otherClient.deinit()
       })

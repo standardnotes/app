@@ -288,7 +288,7 @@ describe('sharedVaults', function () {
       await Collaboration.acceptAllInvites(contactContext)
       await promise
 
-      const receivedItemsKey = contactContext.application.items.getPrimaryVaultItemsKeyForVault(keySystemIdentifier)
+      const receivedItemsKey = contactContext.application.items.getPrimaryKeySystemItemsKey(keySystemIdentifier)
       expect(receivedItemsKey).to.not.be.undefined
       expect(receivedItemsKey.itemsKey).to.not.be.undefined
 
@@ -590,7 +590,7 @@ describe('sharedVaults', function () {
         await createSharedVaultWithAcceptedInvite()
       contactContext.lockSyncing()
 
-      await vaults.rotateVaultKey(keySystemIdentifier)
+      await vaults.rotateKeySystemRootKey(keySystemIdentifier)
 
       const outboundInvites = await sharedVaults.getOutboundInvites()
       const keyChangeInvite = outboundInvites[0]
@@ -614,7 +614,7 @@ describe('sharedVaults', function () {
       expect(originalOutboundInvites.length).to.equal(1)
       const originalEncVaultData = originalOutboundInvites[0].encrypted_vault_key_content
 
-      await vaults.rotateVaultKey(keySystemIdentifier)
+      await vaults.rotateKeySystemRootKey(keySystemIdentifier)
 
       const updatedOutboundInvites = await sharedVaults.getOutboundInvites()
       expect(updatedOutboundInvites.length).to.equal(1)
@@ -642,7 +642,7 @@ describe('sharedVaults', function () {
       const originalOutboundInvites = await sharedVaults.getOutboundInvites()
       expect(originalOutboundInvites.length).to.equal(1)
 
-      await vaults.rotateVaultKey(keySystemIdentifier)
+      await vaults.rotateKeySystemRootKey(keySystemIdentifier)
 
       const updatedOutboundInvites = await sharedVaults.getOutboundInvites()
       expect(updatedOutboundInvites.length).to.equal(2)
@@ -659,7 +659,7 @@ describe('sharedVaults', function () {
         await createSharedVaultWithAcceptedInvite()
       contactContext.lockSyncing()
 
-      await vaults.rotateVaultKey(keySystemIdentifier)
+      await vaults.rotateKeySystemRootKey(keySystemIdentifier)
 
       const acceptInviteSpy = sinon.spy(contactContext.sharedVaults, 'acceptInvite')
 
@@ -675,14 +675,14 @@ describe('sharedVaults', function () {
       const { keySystemIdentifier, contactContext, deinitContactContext } =
         await createSharedVaultWithAcceptedInvite()
 
-      const originalVaultKey = context.items.getPrimarySyncedVaultKeyCopy(keySystemIdentifier)
+      const originalKeySystemRootKey = context.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
 
       await sharedVaults.removeUserFromSharedVault(sharedVaultUuid, contactContext.userUuid)
 
-      const newVaultKey = context.items.getPrimarySyncedVaultKeyCopy(keySystemIdentifier)
+      const newKeySystemRootKey = context.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
 
-      expect(newVaultKey.keyTimestamp).to.be.greaterThan(originalVaultKey.keyTimestamp)
-      expect(newVaultKey.key).to.not.equal(originalVaultKey.key)
+      expect(newKeySystemRootKey.keyTimestamp).to.be.greaterThan(originalKeySystemRootKey.keyTimestamp)
+      expect(newKeySystemRootKey.key).to.not.equal(originalKeySystemRootKey.key)
 
       await deinitContactContext()
     })
@@ -691,7 +691,7 @@ describe('sharedVaults', function () {
   describe('permissions', async () => {
     it('should not be able to update a vault with a keyTimestamp lower than the current one', async () => {
       const { keySystemIdentifier, sharedVault } = await createVaultAndSharedVault()
-      const vaultKeyCopy = context.items.getPrimarySyncedVaultKeyCopy(keySystemIdentifier)
+      const keySystemRootKey = context.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
 
       const result = await sharedVaults.updateSharedVault({
         sharedVaultUuid: 'todo',
@@ -732,14 +732,14 @@ describe('sharedVaults', function () {
       const note = await context.createSyncedNote('foo', 'bar')
       await context.addItemToVault(context, keySystemIdentifier, note)
 
-      const oldVaultItemsKey = context.items.getAllVaultItemsKeysForVault(keySystemIdentifier)[0]
+      const oldKeySystemItemsKey = context.items.getKeySystemItemsKeys(keySystemIdentifier)[0]
 
-      await context.vaults.rotateVaultKey(keySystemIdentifier)
+      await context.vaults.rotateKeySystemRootKey(keySystemIdentifier)
 
       await context.sharedVaults.sharedVaultCache.updateSharedVaults([
         {
           ...sharedVault,
-          specified_items_key_uuid: oldVaultItemsKey.uuid,
+          specified_items_key_uuid: oldKeySystemItemsKey.uuid,
         },
       ])
 
@@ -755,29 +755,29 @@ describe('sharedVaults', function () {
     it("should use the cached sharedVault's specified items key when choosing which key to encrypt vault items with", async () => {
       const { keySystemIdentifier, sharedVault } = await createVaultAndSharedVault()
 
-      const firstVaultItemsKey = context.items.getAllVaultItemsKeysForVault(keySystemIdentifier)[0]
+      const firstKeySystemItemsKey = context.items.getKeySystemItemsKeys(keySystemIdentifier)[0]
 
       const note = await context.createSyncedNote('foo', 'bar')
       const firstPromise = context.resolveWithUploadedPayloads()
       await context.addItemToVault(context, keySystemIdentifier, note)
       const firstUploadedPayloads = await firstPromise
 
-      expect(firstUploadedPayloads[0].items_key_id).to.equal(firstVaultItemsKey.uuid)
+      expect(firstUploadedPayloads[0].items_key_id).to.equal(firstKeySystemItemsKey.uuid)
       expect(firstUploadedPayloads[0].items_key_id).to.equal(vault.specified_items_key_uuid)
 
-      await context.vaults.rotateVaultKey(keySystemIdentifier)
-      const secondVaultItemsKey = context.items.getAllVaultItemsKeysForVault(keySystemIdentifier)[0]
+      await context.vaults.rotateKeySystemRootKey(keySystemIdentifier)
+      const secondKeySystemItemsKey = context.items.getKeySystemItemsKeys(keySystemIdentifier)[0]
 
       const secondPromise = context.resolveWithUploadedPayloads()
       await context.changeNoteTitleAndSync(note, 'new title')
       const secondUploadedPayloads = await secondPromise
 
-      expect(secondUploadedPayloads[0].items_key_id).to.equal(secondVaultItemsKey.uuid)
+      expect(secondUploadedPayloads[0].items_key_id).to.equal(secondKeySystemItemsKey.uuid)
 
       await context.sharedVaults.sharedVaultCache.updateSharedVaults([
         {
           ...sharedVault,
-          specified_items_key_uuid: firstVaultItemsKey.uuid,
+          specified_items_key_uuid: firstKeySystemItemsKey.uuid,
         },
       ])
 
@@ -785,23 +785,23 @@ describe('sharedVaults', function () {
       await context.changeNoteTitleAndSync(note, 'third new title')
       const thirdUploadedPayloads = await thirdPromise
 
-      expect(thirdUploadedPayloads[0].items_key_id).to.equal(firstVaultItemsKey.uuid)
+      expect(thirdUploadedPayloads[0].items_key_id).to.equal(firstKeySystemItemsKey.uuid)
     })
 
     it('non-admin user should not be able to create or update vault items keys with the server', async () => {
       const { keySystemIdentifier, contactContext, deinitContactContext } =
         await createSharedVaultWithAcceptedInvite()
 
-      const vaultItemsKey = contactContext.items.getAllVaultItemsKeysForVault(keySystemIdentifier)[0]
+      const keySystemItemsKey = contactContext.items.getKeySystemItemsKeys(keySystemIdentifier)[0]
 
-      await contactContext.items.changeItem(vaultItemsKey, () => {})
+      await contactContext.items.changeItem(keySystemItemsKey, () => {})
       const promise = contactContext.resolveWithConflicts()
       await contactContext.sync()
 
       const conflicts = await promise
 
       expect(conflicts.length).to.equal(1)
-      expect(conflicts[0].unsaved_item).to.equal(ContentType.VaultItemsKey)
+      expect(conflicts[0].unsaved_item).to.equal(ContentType.KeySystemItemsKey)
 
       await deinitContactContext()
     })
@@ -815,7 +815,7 @@ describe('sharedVaults', function () {
       await contactContext.sync()
 
       const newItemsKeyUuid = UuidGenerator.GenerateUuid()
-      const newItemsKey = contactContext.encryption.createVaultItemsKey(newItemsKeyUuid, keySystemIdentifier)
+      const newItemsKey = contactContext.encryption.createKeySystemItemsKey(newItemsKeyUuid, keySystemIdentifier)
       await contactContext.items.insertItem(newItemsKey)
 
       const contactVault = contactContext.vaults.vaultStorage.getVault(keySystemIdentifier)
@@ -834,7 +834,7 @@ describe('sharedVaults', function () {
 
       expect(conflicts.length).to.equal(2)
       expect(conflicts.find((conflict) => conflict.unsaved_item.content_type === ContentType.Note)).to.not.be.undefined
-      expect(conflicts.find((conflict) => conflict.unsaved_item.content_type === ContentType.VaultItemsKey)).to.not.be
+      expect(conflicts.find((conflict) => conflict.unsaved_item.content_type === ContentType.KeySystemItemsKey)).to.not.be
         .undefined
 
       await deinitContactContext()
