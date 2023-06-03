@@ -1447,7 +1447,7 @@ export class ItemManager
     )
 
     if (keys.length > 1) {
-      throw new Error('Multiple synced vault keys found for timestamp')
+      throw new Error('Multiple synced key system root keys found for timestamp')
     }
 
     return keys[0]

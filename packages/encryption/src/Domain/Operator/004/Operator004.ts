@@ -275,7 +275,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       }
     } else if (ItemContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
       if (!isKeySystemRootKey(key)) {
-        throw Error(`Attempting to use non-vault key ${key.content_type} for item content type ${payload.content_type}`)
+        throw Error(`Attempting to use non-key system root key ${key.content_type} for item content type ${payload.content_type}`)
       }
       return {
         ...baseData,

@@ -84,7 +84,7 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
       })
 
       if (!encryptedKeySystemRootKeyContent) {
-        errors.push(ClientDisplayableError.FromString(`Failed to encrypt vault key for user ${invite.user_uuid}`))
+        errors.push(ClientDisplayableError.FromString(`Failed to encrypt key system root key for user ${invite.user_uuid}`))
         continue
       }
 
@@ -116,7 +116,7 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
     const getUsersUseCase = new GetSharedVaultUsersUseCase(this.vaultUsersServer)
     const users = await getUsersUseCase.execute({ sharedVaultUuid: params.sharedVaultUuid })
     if (!users) {
-      return [ClientDisplayableError.FromString('Cannot rotate vault key; users not found')]
+      return [ClientDisplayableError.FromString('Cannot rotate key system root key; users not found')]
     }
     if (users.length === 0) {
       return []
@@ -136,7 +136,7 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
       })
 
       if (!encryptedKeySystemRootKeyContent) {
-        errors.push(ClientDisplayableError.FromString(`Failed to encrypt vault key for user ${user.user_uuid}`))
+        errors.push(ClientDisplayableError.FromString(`Failed to encrypt key system root key for user ${user.user_uuid}`))
         continue
       }
 

@@ -139,7 +139,7 @@ export class VaultService
   ): Promise<KeySystemRootKeyInterface> {
     const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
     if (!keySystemRootKey) {
-      throw new Error('Cannot change vault metadata; vault key not found')
+      throw new Error('Cannot change vault metadata; key system root key not found')
     }
 
     const updatedKeySystemRootKey = await this.items.changeItem<KeySystemRootKeyMutator, KeySystemRootKeyInterface>(

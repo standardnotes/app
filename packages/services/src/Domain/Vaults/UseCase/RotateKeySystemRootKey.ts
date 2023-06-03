@@ -11,7 +11,7 @@ export class RotateKeySystemRootKeyUseCase {
   async execute(params: { keySystemIdentifier: KeySystemIdentifier }): Promise<undefined | ClientDisplayableError[]> {
     const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(params.keySystemIdentifier)
     if (!keySystemRootKey) {
-      throw new Error('Cannot rotate vault key; vault key not found')
+      throw new Error('Cannot rotate key system root key; key system root key not found')
     }
 
     const newKeySystemRootKeyContent = this.encryption.createKeySystemRootKeyContent({

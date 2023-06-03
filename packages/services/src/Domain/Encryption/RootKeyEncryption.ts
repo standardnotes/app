@@ -544,7 +544,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     let key: RootKeyInterface | KeySystemRootKeyInterface | undefined
     if (payload.key_system_identifier) {
       if (!ItemContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
-        throw Error('Attempting to decrypt payload that is not a vault items key with vault key.')
+        throw Error('Attempting to decrypt payload that is not a vault items key with key system root key.')
       }
       key = this.items.getPrimaryKeySystemRootKey(payload.key_system_identifier)
     } else {
@@ -628,8 +628,8 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
   }
 
   /**
-   * When the vault key changes, we must re-encrypt all vault items
-   * keys with this new vault key (by simply re-syncing).
+   * When the key system root key changes, we must re-encrypt all vault items
+   * keys with this new key system root key (by simply re-syncing).
    */
   public async reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
     const keySystemItemsKeys = this.items.getKeySystemItemsKeys(keySystemIdentifier)

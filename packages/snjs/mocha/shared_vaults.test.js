@@ -584,7 +584,7 @@ describe('sharedVaults', function () {
     })
   })
 
-  describe('vault key rotation', () => {
+  describe('key system root key rotation', () => {
     it("rotating a vault's key should send a key-change invite to all members", async () => {
       const { keySystemIdentifier, contactContext, deinitContactContext } =
         await createSharedVaultWithAcceptedInvite()
@@ -671,7 +671,7 @@ describe('sharedVaults', function () {
       await deinitContactContext()
     })
 
-    it('should rotate vault key after removing vault member', async () => {
+    it('should rotate key system root key after removing vault member', async () => {
       const { keySystemIdentifier, contactContext, deinitContactContext } =
         await createSharedVaultWithAcceptedInvite()
 

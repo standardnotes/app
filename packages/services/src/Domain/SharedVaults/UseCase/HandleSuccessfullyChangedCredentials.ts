@@ -89,7 +89,7 @@ export class HandleSuccessfullyChangedCredentials {
 
     const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(params.sharedVault.key_system_identifier)
     if (!keySystemRootKey) {
-      return ClientDisplayableError.FromString('Failed to find vault key for invite')
+      return ClientDisplayableError.FromString('Failed to find key system root key for invite')
     }
 
     const trustedContact = this.contacts.findTrustedContact(params.invite.user_uuid)

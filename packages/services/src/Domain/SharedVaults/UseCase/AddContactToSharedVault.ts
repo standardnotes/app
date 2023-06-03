@@ -27,7 +27,7 @@ export class AddContactToSharedVaultUseCase {
   }): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
     const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(params.sharedVault.key_system_identifier)
     if (!keySystemRootKey) {
-      return ClientDisplayableError.FromString('Cannot add contact; vault key not found')
+      return ClientDisplayableError.FromString('Cannot add contact; key system root key not found')
     }
 
     const encryptedKeySystemRootKeyContent = this.encryption.encryptKeySystemRootKeyContentWithRecipientPublicKey(

@@ -55,7 +55,7 @@ export class ItemMutator<
 
   public set key_system_identifier(keySystemIdentifier: KeySystemIdentifier | undefined) {
     if (this.immutableItem.content_type === ContentType.KeySystemRootKey) {
-      throw new Error('Cannot set key_system_identifier on a vault key copy')
+      throw new Error('Cannot set key_system_identifier on a key system root key')
     }
 
     this.immutablePayload = this.immutablePayload.copy({
@@ -65,7 +65,7 @@ export class ItemMutator<
 
   public set shared_vault_uuid(sharedVaultUuid: string | undefined) {
     if (this.immutableItem.content_type === ContentType.KeySystemRootKey) {
-      throw new Error('Cannot set shared_vault_uuid on a vault key copy')
+      throw new Error('Cannot set shared_vault_uuid on a key system root key')
     }
 
     this.immutablePayload = this.immutablePayload.copy({

@@ -6,12 +6,11 @@ const expect = chai.expect
 describe('vaults', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
-  let application
   let context
   let vaults
 
   afterEach(async function () {
-    await Factory.safeDeinit(application)
+    await context.deinit()
     localStorage.clear()
   })
 
@@ -22,7 +21,6 @@ describe('vaults', function () {
 
     await context.launch()
 
-    application = context.application
     vaults = context.vaults
   })
 
@@ -60,9 +58,11 @@ describe('vaults', function () {
       const recreatedContext = await Factory.createAppContextWithRealCrypto(appIdentifier)
       await recreatedContext.launch()
 
-      const updatedNote = recreatedContext.application.items.findItem(note.uuid)
+      const updatedNote = recreatedContext.items.findItem(note.uuid)
       expect(updatedNote.title).to.equal('foo')
       expect(updatedNote.text).to.equal('bar')
+
+      await recreatedContext.deinit()
     })
 
     describe('porting from offline to online', () => {
@@ -83,10 +83,12 @@ describe('vaults', function () {
         const notes = recreatedContext.notes
         expect(notes.length).to.equal(1)
 
-        const updatedNote = recreatedContext.application.items.findItem(note.uuid)
+        const updatedNote = recreatedContext.items.findItem(note.uuid)
         expect(updatedNote.title).to.equal('foo')
         expect(updatedNote.text).to.equal('bar')
         expect(updatedNote.key_system_identifier).to.equal(keySystemIdentifier)
+
+        await recreatedContext.deinit()
       })
 
       it('should decrypt vault items', async () => {
@@ -103,9 +105,11 @@ describe('vaults', function () {
         const recreatedContext = await Factory.createAppContextWithRealCrypto(appIdentifier)
         await recreatedContext.launch()
 
-        const updatedNote = recreatedContext.application.items.findItem(note.uuid)
+        const updatedNote = recreatedContext.items.findItem(note.uuid)
         expect(updatedNote.title).to.equal('foo')
         expect(updatedNote.text).to.equal('bar')
+
+        await recreatedContext.deinit()
       })
     })
   })
@@ -119,7 +123,7 @@ describe('vaults', function () {
       const keySystemIdentifier = await vaults.createVault()
       expect(keySystemIdentifier).to.not.be.undefined
 
-      const keySystemItemsKeys = application.items.getKeySystemItemsKeys(keySystemIdentifier)
+      const keySystemItemsKeys = context.items.getKeySystemItemsKeys(keySystemIdentifier)
       expect(keySystemItemsKeys.length).to.equal(1)
 
       const keySystemItemsKey = keySystemItemsKeys[0]
@@ -133,7 +137,7 @@ describe('vaults', function () {
 
       await vaults.addItemToVault(keySystemIdentifier, note)
 
-      const updatedNote = application.items.findItem(note.uuid)
+      const updatedNote = context.items.findItem(note.uuid)
       expect(updatedNote.key_system_identifier).to.equal(keySystemIdentifier)
     })
 
@@ -148,14 +152,16 @@ describe('vaults', function () {
         const recreatedContext = await Factory.createAppContextWithRealCrypto(appIdentifier)
         await recreatedContext.launch()
 
-        const updatedNote = recreatedContext.application.items.findItem(note.uuid)
+        const updatedNote = recreatedContext.items.findItem(note.uuid)
         expect(updatedNote.title).to.equal('foo')
         expect(updatedNote.text).to.equal('bar')
+
+        await recreatedContext.deinit()
       })
     })
 
-    describe('vault key rotation', () => {
-      it('rotating a vault key should create a new vault items key', async () => {
+    describe('key system root key rotation', () => {
+      it('rotating a key system root key should create a new vault items key', async () => {
         const keySystemIdentifier = await vaults.createVault()
 
         const keySystemItemsKey = context.items.getKeySystemItemsKeys(keySystemIdentifier)[0]
@@ -168,7 +174,7 @@ describe('vaults', function () {
         expect(updatedKeySystemItemsKey.uuid).to.not.equal(keySystemItemsKey.uuid)
       })
 
-      it('should keep vault key copy with greater keyTimestamp if conflict', async () => {
+      it('should keep key system root key with greater keyTimestamp if conflict', async () => {
         const keySystemIdentifier = await vaults.createVault()
         const keySystemRootKey = context.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
 
@@ -184,13 +190,13 @@ describe('vaults', function () {
         const olderTimestamp = keySystemRootKey.keyTimestamp + 1
         const newerTimestamp = keySystemRootKey.keyTimestamp + 2
 
-        await context.application.items.changeItem(keySystemRootKey, (mutator) => {
+        await context.items.changeItem(keySystemRootKey, (mutator) => {
           mutator.mutableContent.key = 'new-vault-key'
           mutator.mutableContent.keyTimestamp = olderTimestamp
         })
 
         const otherKeySystemRootKey = otherClient.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
-        await otherClient.application.items.changeItem(otherKeySystemRootKey, (mutator) => {
+        await otherClient.items.changeItem(otherKeySystemRootKey, (mutator) => {
           mutator.mutableContent.key = 'new-vault-key'
           mutator.mutableContent.keyTimestamp = newerTimestamp
         })
@@ -222,7 +228,7 @@ describe('vaults', function () {
 
         await vaults.deleteVault(keySystemIdentifier)
 
-        const updatedNote = context.application.items.findItem(note.uuid)
+        const updatedNote = context.items.findItem(note.uuid)
         expect(updatedNote).to.be.undefined
       })
     })
