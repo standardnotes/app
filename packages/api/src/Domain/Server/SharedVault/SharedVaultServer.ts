@@ -10,10 +10,6 @@ import { GetSharedVaultsResponse } from '../../Response/SharedVault/GetSharedVau
 import { CreateSharedVaultValetTokenResponse } from '../../Response/SharedVault/CreateSharedVaultValetTokenResponse'
 import { CreateSharedVaultValetTokenParams } from '../../Request/SharedVault/CreateSharedVaultValetTokenParams'
 import { GetRemovedSharedVaultsResponse } from '../../Response/SharedVault/GetRemovedSharedVaults'
-import { AddItemToSharedVaultRequestParams } from '../../Request/SharedVault/AddItemToSharedVault'
-import { AddItemToSharedVaultResponse } from '../../Response/SharedVault/AddItemToSharedVaultResponse'
-import { RemoveItemFromSharedVaultParams } from '../../Request/SharedVault/RemoveItemFromSharedVault'
-import { RemoveItemFromSharedVaultResponse } from '../../Response/SharedVault/RemoveItemFromSharedVaultResponse'
 
 export class SharedVaultServer implements SharedVaultServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
@@ -24,7 +20,6 @@ export class SharedVaultServer implements SharedVaultServerInterface {
 
   createSharedVault(params: CreateSharedVaultParams): Promise<HttpResponse<CreateSharedVaultResponse>> {
     return this.httpService.post(SharedVaultsPaths.createSharedVault, {
-      key_system_identifier: params.keySystemIdentifier,
       specified_items_key_uuid: params.specifiedItemsKeyUuid,
     })
   }
@@ -54,19 +49,5 @@ export class SharedVaultServer implements SharedVaultServerInterface {
 
   getRemovedSharedVaults(): Promise<HttpResponse<GetRemovedSharedVaultsResponse>> {
     return this.httpService.get(SharedVaultsPaths.getRemovedSharedVaults)
-  }
-
-  addItemToSharedVault(params: AddItemToSharedVaultRequestParams): Promise<HttpResponse<AddItemToSharedVaultResponse>> {
-    return this.httpService.post(SharedVaultsPaths.addItemToSharedVault(params.sharedVaultUuid), {
-      item_uuid: params.itemUuid,
-    })
-  }
-
-  removeItemFromSharedVault(
-    params: RemoveItemFromSharedVaultParams,
-  ): Promise<HttpResponse<RemoveItemFromSharedVaultResponse>> {
-    return this.httpService.delete(SharedVaultsPaths.removeItemFromSharedVault(params.sharedVaultUuid), {
-      item_uuid: params.itemUuid,
-    })
   }
 }

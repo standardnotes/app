@@ -63,6 +63,16 @@ export class ItemMutator<
     })
   }
 
+  public set shared_vault_uuid(sharedVaultUuid: string | undefined) {
+    if (this.immutableItem.content_type === ContentType.VaultKeyCopy) {
+      throw new Error('Cannot set shared_vault_uuid on a vault key copy')
+    }
+
+    this.immutablePayload = this.immutablePayload.copy({
+      shared_vault_uuid: sharedVaultUuid,
+    })
+  }
+
   public set errorDecrypting(_: boolean) {
     throw Error('This method is no longer implemented')
   }

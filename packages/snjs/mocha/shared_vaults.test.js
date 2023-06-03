@@ -321,7 +321,7 @@ describe('sharedVaults', function () {
     it.skip('removing an item from a vault should remove it from collaborator devices', async () => {
       const { note, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInviteAndNote()
 
-      await context.vaults.moveItemFromVaultToUser(note)
+      await context.vaults.removeItemFromVault(note)
 
       await context.changeNoteTitleAndSync(note, 'new title')
 
@@ -871,7 +871,7 @@ describe('sharedVaults', function () {
       await contactContext.sync()
 
       const promise = contactContext.resolveWithConflicts()
-      await contactContext.vaults.moveItemFromVaultToUser(note)
+      await contactContext.vaults.removeItemFromVault(note)
       const conflicts = await promise
 
       expect(conflicts.length).to.equal(0)
@@ -890,7 +890,7 @@ describe('sharedVaults', function () {
         await createSharedVaultWithAcceptedInviteAndNote()
 
       const promise = contactContext.resolveWithConflicts()
-      await contactContext.vaults.moveItemFromVaultToUser(note)
+      await contactContext.vaults.removeItemFromVault(note)
       const conflicts = await promise
 
       expect(conflicts.length).to.equal(1)
@@ -915,7 +915,7 @@ describe('sharedVaults', function () {
       await context.sync()
 
       const promise = context.resolveWithConflicts()
-      await context.vaults.moveItemFromVaultToUser(note)
+      await context.vaults.removeItemFromVault(note)
       const conflicts = await promise
 
       expect(conflicts.length).to.equal(1)
@@ -1025,7 +1025,7 @@ describe('sharedVaults', function () {
       const { keySystemIdentifier, sharedVault } = await createVaultAndSharedVault()
       const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, keySystemIdentifier)
 
-      const removedFile = await vaults.moveItemFromVaultToUser(uploadedFile)
+      const removedFile = await vaults.removeItemFromVault(uploadedFile)
       expect(removedFile.key_system_identifier).to.not.be.ok
 
       const downloadedBytes = await Files.downloadFile(context.files, removedFile)

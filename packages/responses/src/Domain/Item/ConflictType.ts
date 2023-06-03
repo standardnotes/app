@@ -10,5 +10,6 @@ export enum ConflictType {
 
   SharedVaultInsufficientPermissionsError = 'shared_vault_insufficient_permissions_error',
   SharedVaultNotMemberError = 'shared_vault_not_member_error',
+  SharedVaultInvalidState = 'shared_vault_invalid_state',
   SharedVaultInvalidItemsKey = 'shared_vault_invalid_items_key',
 }

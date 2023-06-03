@@ -30,6 +30,7 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
       ConflictType.SharedVaultInsufficientPermissionsError,
       ConflictType.SharedVaultNotMemberError,
       ConflictType.SharedVaultInvalidItemsKey,
+      ConflictType.SharedVaultInvalidState,
     ]
 
     for (const conflict of this.conflicts) {

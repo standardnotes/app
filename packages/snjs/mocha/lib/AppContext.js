@@ -278,10 +278,10 @@ export class AppContext {
   resolveWhenItemCompletesAddingToSharedVault(targetItem) {
     return new Promise((resolve) => {
       const objectToSpy = this.sharedVaults
-      sinon.stub(objectToSpy, 'addItemToSharedVault').callsFake(async (sharedVaultUuid, item) => {
+      sinon.stub(objectToSpy, 'addItemToSharedVault').callsFake(async (params) => {
         objectToSpy.addItemToSharedVault.restore()
-        const result = await objectToSpy.addItemToSharedVault(sharedVaultUuid, item)
-        if (!targetItem || item.uuid === targetItem.uuid) {
+        const result = await objectToSpy.addItemToSharedVault(params)
+        if (!targetItem || params.item.uuid === targetItem.uuid) {
           resolve()
         }
         return result

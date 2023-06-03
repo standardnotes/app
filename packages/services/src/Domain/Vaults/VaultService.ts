@@ -59,16 +59,19 @@ export class VaultService
   }
 
   getVaultDisplayListings(): VaultDisplayListing[] {
-    const vaultKeyCopies = this.items.getItems<VaultKeyCopyInterface>(ContentType.VaultKeyCopy)
     const primaries: Record<string, VaultKeyCopyInterface> = {}
+
+    const vaultKeyCopies = this.items.getItems<VaultKeyCopyInterface>(ContentType.VaultKeyCopy)
     for (const vaultKeyCopy of vaultKeyCopies) {
       if (!vaultKeyCopy.key_system_identifier) {
         throw new Error('Vault key copy does not have vault system identifier')
       }
+
       const primary = this.items.getPrimarySyncedVaultKeyCopy(vaultKeyCopy.key_system_identifier)
       if (!primary) {
         throw new Error('Vault key copy does not have primary')
       }
+
       primaries[vaultKeyCopy.key_system_identifier] = primary
     }
 
@@ -109,7 +112,7 @@ export class VaultService
     return this.items.findSureItem(item.uuid)
   }
 
-  async moveItemFromVaultToUser(item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
+  async removeItemFromVault(item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
     const useCase = new RemoveItemFromVault(this.items, this.sync)
     await useCase.execute({ item })
 

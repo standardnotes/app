@@ -10,13 +10,14 @@ import {
   DecryptedItemInterface,
   VaultKeyCopyContentSpecialized,
   TrustedContactInterface,
+  KeySystemIdentifier,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
 
 export interface SharedVaultServiceInterface
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload> {
-  createSharedVault(params: { keySystemIdentifier: KeySystemIdentifier }): Promise<SharedVaultServerHash | ClientDisplayableError>
+  createSharedVault(name: string, description?: string): Promise<SharedVaultServerHash | ClientDisplayableError>
 
   inviteContactToSharedVault(
     sharedVault: SharedVaultServerHash,
@@ -29,6 +30,12 @@ export interface SharedVaultServiceInterface
   isSharedVaultUserSharedVaultOwner(user: SharedVaultUserServerHash): boolean
   isCurrentUserSharedVaultAdmin(sharedVaultUuid: string, userUuid: string): boolean
 
+  addItemToSharedVault(params: {
+    item: DecryptedItemInterface
+    keySystemIdentifier: KeySystemIdentifier
+    sharedVaultUuid: string
+  }): Promise<void>
+  removeItemFromSharedVault(item: DecryptedItemInterface): Promise<void>
   getItemLastEditedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined
   getItemSharedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined
 

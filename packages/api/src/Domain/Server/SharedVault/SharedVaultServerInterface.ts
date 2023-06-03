@@ -7,10 +7,6 @@ import { GetSharedVaultsResponse } from '../../Response/SharedVault/GetSharedVau
 import { CreateSharedVaultValetTokenResponse } from '../../Response/SharedVault/CreateSharedVaultValetTokenResponse'
 import { CreateSharedVaultValetTokenParams } from '../../Request/SharedVault/CreateSharedVaultValetTokenParams'
 import { GetRemovedSharedVaultsResponse } from '../../Response/SharedVault/GetRemovedSharedVaults'
-import { AddItemToSharedVaultRequestParams } from '../../Request/SharedVault/AddItemToSharedVault'
-import { AddItemToSharedVaultResponse } from '../../Response/SharedVault/AddItemToSharedVaultResponse'
-import { RemoveItemFromSharedVaultParams } from '../../Request/SharedVault/RemoveItemFromSharedVault'
-import { RemoveItemFromSharedVaultResponse } from '../../Response/SharedVault/RemoveItemFromSharedVaultResponse'
 
 export interface SharedVaultServerInterface {
   getSharedVaults(): Promise<HttpResponse<GetSharedVaultsResponse>>
@@ -20,8 +16,7 @@ export interface SharedVaultServerInterface {
   updateSharedVault(params: UpdateSharedVaultParams): Promise<HttpResponse<UpdateSharedVaultResponse>>
   deleteSharedVault(params: { sharedVaultUuid: string }): Promise<HttpResponse<boolean>>
 
-  addItemToSharedVault(params: AddItemToSharedVaultRequestParams): Promise<HttpResponse<AddItemToSharedVaultResponse>>
-  removeItemFromSharedVault(params: RemoveItemFromSharedVaultParams): Promise<HttpResponse<RemoveItemFromSharedVaultResponse>>
-
-  createSharedVaultFileValetToken(params: CreateSharedVaultValetTokenParams): Promise<HttpResponse<CreateSharedVaultValetTokenResponse>>
+  createSharedVaultFileValetToken(
+    params: CreateSharedVaultValetTokenParams,
+  ): Promise<HttpResponse<CreateSharedVaultValetTokenResponse>>
 }
