@@ -26,9 +26,9 @@ export * from './Component/ComponentViewerInterface'
 export * from './Contacts/ContactServiceInterface'
 export * from './Contacts/ContactService'
 
-export * from './Groups/GroupServiceInterface'
-export * from './Groups/GroupService'
-export * from './Groups/GroupServiceEvent'
+export * from './SharedVaults/SharedVaultServiceInterface'
+export * from './SharedVaults/SharedVaultService'
+export * from './SharedVaults/SharedVaultServiceEvent'
 
 export * from './Vaults/VaultService'
 export * from './Vaults/VaultServiceInterface'

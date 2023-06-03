@@ -4,14 +4,14 @@ import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 export class DeleteVaultUseCase {
   constructor(private items: ItemManagerInterface) {}
 
-  async execute(dto: { vaultSystemIdentifier: string }): Promise<ClientDisplayableError | void> {
-    const vaultItemsKeys = this.items.getAllVaultItemsKeysForVault(dto.vaultSystemIdentifier)
+  async execute(dto: { keySystemIdentifier: string }): Promise<ClientDisplayableError | void> {
+    const vaultItemsKeys = this.items.getAllVaultItemsKeysForVault(dto.keySystemIdentifier)
     await this.items.setItemsToBeDeleted(vaultItemsKeys)
 
-    const vaultKeyCopies = this.items.getAllSyncedVaultKeyCopiesForVault(dto.vaultSystemIdentifier)
+    const vaultKeyCopies = this.items.getAllSyncedVaultKeyCopiesForVault(dto.keySystemIdentifier)
     await this.items.setItemsToBeDeleted(vaultKeyCopies)
 
-    const vaultItems = this.items.itemsBelongingToVaultSystem(dto.vaultSystemIdentifier)
+    const vaultItems = this.items.itemsBelongingToKeySystem(dto.keySystemIdentifier)
     await this.items.setItemsToBeDeleted(vaultItems)
   }
 }

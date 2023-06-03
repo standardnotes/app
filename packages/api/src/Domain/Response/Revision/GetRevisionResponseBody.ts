@@ -8,8 +8,8 @@ export interface GetRevisionResponseBody {
     enc_item_key: string | null
     auth_hash: string | null
     user_uuid: string
-    vault_system_identifier: string | null
-    group_uuid: string | null
+    key_system_identifier: string | null
+    shared_vault_uuid: string | null
     created_at: string
     updated_at: string
   }

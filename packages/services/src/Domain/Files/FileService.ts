@@ -46,14 +46,19 @@ import { AbstractService } from '../Service/AbstractService'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { DecryptItemsKeyWithUserFallback } from '../Encryption/Functions'
 import { log, LoggingDomain } from '../Logging'
-import { GroupMoveType, GroupServer, GroupServerInterface, HttpServiceInterface } from '@standardnotes/api'
+import {
+  SharedVaultMoveType,
+  SharedVaultServer,
+  SharedVaultServerInterface,
+  HttpServiceInterface,
+} from '@standardnotes/api'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 
 const OneHundredMb = 100 * 1_000_000
 
 export class FileService extends AbstractService implements FilesClientInterface {
   private encryptedCache: FileMemoryCache = new FileMemoryCache(OneHundredMb)
-  private groupServer: GroupServerInterface
+  private sharedVault: SharedVaultServerInterface
 
   constructor(
     private api: FilesApiInterface,
@@ -69,7 +74,7 @@ export class FileService extends AbstractService implements FilesClientInterface
     private backupsService?: BackupServiceInterface,
   ) {
     super(internalEventBus)
-    this.groupServer = new GroupServer(http)
+    this.sharedVault = new SharedVaultServer(http)
   }
 
   override deinit(): void {
@@ -99,20 +104,20 @@ export class FileService extends AbstractService implements FilesClientInterface
     return this.api.createUserFileValetToken(remoteIdentifier, operation, unencryptedFileSizeForUpload)
   }
 
-  private async createGroupValetToken(params: {
-    groupUuid: string
+  private async createSharedVaultValetToken(params: {
+    sharedVaultUuid: string
     remoteIdentifier: string
     operation: ValetTokenOperation
     fileUuidRequiredForExistingFiles?: string
     unencryptedFileSizeForUpload?: number | undefined
-    moveOperationType?: GroupMoveType
+    moveOperationType?: SharedVaultMoveType
   }): Promise<string | ClientDisplayableError> {
     if (params.operation !== 'write' && !params.fileUuidRequiredForExistingFiles) {
       throw new Error('File UUID is required for for non-write operations')
     }
 
-    const valetTokenResponse = await this.groupServer.createGroupFileValetToken({
-      groupUuid: params.groupUuid,
+    const valetTokenResponse = await this.sharedVault.createSharedVaultFileValetToken({
+      sharedVaultUuid: params.sharedVaultUuid,
       fileUuid: params.fileUuidRequiredForExistingFiles,
       remoteIdentifier: params.remoteIdentifier,
       operation: params.operation,
@@ -127,13 +132,13 @@ export class FileService extends AbstractService implements FilesClientInterface
     return valetTokenResponse.data.valetToken
   }
 
-  public async moveFileToGroup(file: FileItem, groupUuid: string): Promise<void | ClientDisplayableError> {
-    const valetTokenResult = await this.createGroupValetToken({
-      groupUuid,
+  public async moveFileToSharedVault(file: FileItem, sharedVaultUuid: string): Promise<void | ClientDisplayableError> {
+    const valetTokenResult = await this.createSharedVaultValetToken({
+      sharedVaultUuid,
       remoteIdentifier: file.remoteIdentifier,
       operation: 'move',
       fileUuidRequiredForExistingFiles: file.uuid,
-      moveOperationType: 'user-to-group',
+      moveOperationType: 'user-to-shared-vault',
     })
 
     if (isClientDisplayableError(valetTokenResult)) {
@@ -147,17 +152,17 @@ export class FileService extends AbstractService implements FilesClientInterface
     }
   }
 
-  public async moveFileOutOfGroup(file: FileItem): Promise<void | ClientDisplayableError> {
-    if (!file.group_uuid) {
-      return new ClientDisplayableError('File is not in a group')
+  public async moveFileOutOfSharedVault(file: FileItem): Promise<void | ClientDisplayableError> {
+    if (!file.shared_vault_uuid) {
+      return new ClientDisplayableError('File is not in a shared vault')
     }
 
-    const valetTokenResult = await this.createGroupValetToken({
-      groupUuid: file.group_uuid,
+    const valetTokenResult = await this.createSharedVaultValetToken({
+      sharedVaultUuid: file.shared_vault_uuid,
       remoteIdentifier: file.remoteIdentifier,
       operation: 'move',
       fileUuidRequiredForExistingFiles: file.uuid,
-      moveOperationType: 'group-to-user',
+      moveOperationType: 'shared-vault-to-user',
     })
 
     if (isClientDisplayableError(valetTokenResult)) {
@@ -173,12 +178,12 @@ export class FileService extends AbstractService implements FilesClientInterface
 
   public async beginNewFileUpload(
     sizeInBytes: number,
-    groupUuid?: string,
+    sharedVaultUuid?: string,
   ): Promise<EncryptAndUploadFileOperation | ClientDisplayableError> {
     const remoteIdentifier = UuidGenerator.GenerateUuid()
-    const valetTokenResult = groupUuid
-      ? await this.createGroupValetToken({
-          groupUuid,
+    const valetTokenResult = sharedVaultUuid
+      ? await this.createSharedVaultValetToken({
+          sharedVaultUuid,
           remoteIdentifier,
           operation: 'write',
           unencryptedFileSizeForUpload: sizeInBytes,
@@ -202,10 +207,13 @@ export class FileService extends AbstractService implements FilesClientInterface
       valetTokenResult,
       this.crypto,
       this.api,
-      groupUuid,
+      sharedVaultUuid,
     )
 
-    const uploadSessionStarted = await this.api.startUploadSession(valetTokenResult, groupUuid ? 'group' : 'user')
+    const uploadSessionStarted = await this.api.startUploadSession(
+      valetTokenResult,
+      sharedVaultUuid ? 'shared-vault' : 'user',
+    )
 
     if (isErrorResponse(uploadSessionStarted) || !uploadSessionStarted.data.uploadId) {
       return new ClientDisplayableError('Could not start upload session')
@@ -235,7 +243,7 @@ export class FileService extends AbstractService implements FilesClientInterface
   ): Promise<FileItem | ClientDisplayableError> {
     const uploadSessionClosed = await this.api.closeUploadSession(
       operation.getValetToken(),
-      operation.groupUuid ? 'group' : 'user',
+      operation.sharedVaultUuid ? 'shared-vault' : 'user',
     )
 
     if (!uploadSessionClosed) {
@@ -258,7 +266,7 @@ export class FileService extends AbstractService implements FilesClientInterface
       ContentType.File,
       FillItemContentSpecialized(fileContent),
       true,
-      operation.groupUuid,
+      operation.sharedVaultUuid,
     )
 
     await this.syncService.sync()
@@ -325,9 +333,9 @@ export class FileService extends AbstractService implements FilesClientInterface
 
       let cacheEntryAggregate = new Uint8Array()
 
-      const tokenResult = file.group_uuid
-        ? await this.createGroupValetToken({
-            groupUuid: file.group_uuid,
+      const tokenResult = file.shared_vault_uuid
+        ? await this.createSharedVaultValetToken({
+            sharedVaultUuid: file.shared_vault_uuid,
             remoteIdentifier: file.remoteIdentifier,
             operation: 'read',
             fileUuidRequiredForExistingFiles: file.uuid,
@@ -358,9 +366,9 @@ export class FileService extends AbstractService implements FilesClientInterface
   public async deleteFile(file: FileItem): Promise<ClientDisplayableError | undefined> {
     this.encryptedCache.remove(file.uuid)
 
-    const tokenResult = file.group_uuid
-      ? await this.createGroupValetToken({
-          groupUuid: file.group_uuid,
+    const tokenResult = file.shared_vault_uuid
+      ? await this.createSharedVaultValetToken({
+          sharedVaultUuid: file.shared_vault_uuid,
           remoteIdentifier: file.remoteIdentifier,
           operation: 'delete',
           fileUuidRequiredForExistingFiles: file.uuid,
@@ -371,7 +379,7 @@ export class FileService extends AbstractService implements FilesClientInterface
       return tokenResult
     }
 
-    const result = await this.api.deleteFile(tokenResult, file.group_uuid ? 'group' : 'user')
+    const result = await this.api.deleteFile(tokenResult, file.shared_vault_uuid ? 'shared-vault' : 'user')
 
     if (result.data?.error) {
       const deleteAnyway = await this.alertService.confirm(

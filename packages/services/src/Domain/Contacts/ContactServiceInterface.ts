@@ -1,6 +1,6 @@
 import { TrustedContactInterface } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
-import { ContactServerHash, GroupInviteServerHash, GroupUserServerHash } from '@standardnotes/responses'
+import { ContactServerHash, SharedVaultInviteServerHash, SharedVaultUserServerHash } from '@standardnotes/responses'
 
 export enum ContactServiceEvent {
   ReceivedContactRequests = 'ReceivedContactRequests',
@@ -11,7 +11,7 @@ export interface ContactServiceInterface extends AbstractService<ContactServiceE
   isCollaborationEnabled(): boolean
   enableCollaboration(): Promise<void>
   getCollaborationID(): string
-  getCollaborationIDFromInvite(invite: GroupInviteServerHash): string
+  getCollaborationIDFromInvite(invite: SharedVaultInviteServerHash): string
   addTrustedContactFromCollaborationID(
     collaborationID: string,
     name?: string,
@@ -32,8 +32,8 @@ export interface ContactServiceInterface extends AbstractService<ContactServiceE
   getAllContacts(): TrustedContactInterface[]
   getContactItem(serverUuid: string): TrustedContactInterface | undefined
   findTrustedContact(userUuid: string): TrustedContactInterface | undefined
-  findTrustedContactForServerUser(user: GroupUserServerHash): TrustedContactInterface | undefined
-  findTrustedContactForInvite(invite: GroupInviteServerHash): TrustedContactInterface | undefined
+  findTrustedContactForServerUser(user: SharedVaultUserServerHash): TrustedContactInterface | undefined
+  findTrustedContactForInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined
 
   refreshAllContactsAfterPublicKeyChange(): Promise<void>
 }

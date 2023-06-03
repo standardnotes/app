@@ -69,8 +69,8 @@ export class AppContext {
     return this.application.contactService
   }
 
-  get groups() {
-    return this.application.groupService
+  get sharedVaults() {
+    return this.application.sharedVaultService
   }
 
   get files() {
@@ -170,10 +170,10 @@ export class AppContext {
     })
   }
 
-  resolveWhenGroupUserKeysResolved() {
+  resolveWhenSharedVaultUserKeysResolved() {
     return new Promise((resolve) => {
       this.application.vaultService.collaboration.addEventObserver((eventName) => {
-        if (eventName === GroupServiceEvent.GroupStatusChanged) {
+        if (eventName === SharedVaultServiceEvent.SharedVaultStatusChanged) {
           resolve()
         }
       })
@@ -231,10 +231,10 @@ export class AppContext {
     })
   }
 
-  awaitNextSyncGroupFromScratchEvent() {
+  awaitNextSyncSharedVaultFromScratchEvent() {
     return new Promise((resolve) => {
       const removeObserver = this.application.syncService.addEventObserver((event, data) => {
-        if (event === SyncEvent.PaginatedSyncRequestCompleted && data?.options?.groupUuids) {
+        if (event === SyncEvent.PaginatedSyncRequestCompleted && data?.options?.sharedVaultUuids) {
           removeObserver()
           resolve(data)
         }
@@ -275,12 +275,12 @@ export class AppContext {
     })
   }
 
-  resolveWhenItemCompletesAddingToGroup(targetItem) {
+  resolveWhenItemCompletesAddingToSharedVault(targetItem) {
     return new Promise((resolve) => {
-      const objectToSpy = this.groups
-      sinon.stub(objectToSpy, 'addItemToGroup').callsFake(async (groupUuid, item) => {
-        objectToSpy.addItemToGroup.restore()
-        const result = await objectToSpy.addItemToGroup(groupUuid, item)
+      const objectToSpy = this.sharedVaults
+      sinon.stub(objectToSpy, 'addItemToSharedVault').callsFake(async (sharedVaultUuid, item) => {
+        objectToSpy.addItemToSharedVault.restore()
+        const result = await objectToSpy.addItemToSharedVault(sharedVaultUuid, item)
         if (!targetItem || item.uuid === targetItem.uuid) {
           resolve()
         }
@@ -289,12 +289,12 @@ export class AppContext {
     })
   }
 
-  resolveWhenItemCompletesRemovingFromGroup(targetItem) {
+  resolveWhenItemCompletesRemovingFromSharedVault(targetItem) {
     return new Promise((resolve) => {
-      const objectToSpy = this.groups
-      sinon.stub(objectToSpy, 'removeItemFromGroup').callsFake(async (item) => {
-        objectToSpy.removeItemFromGroup.restore()
-        const result = await objectToSpy.removeItemFromGroup(item)
+      const objectToSpy = this.sharedVaults
+      sinon.stub(objectToSpy, 'removeItemFromSharedVault').callsFake(async (item) => {
+        objectToSpy.removeItemFromSharedVault.restore()
+        const result = await objectToSpy.removeItemFromSharedVault(item)
         if (item.uuid === targetItem.uuid) {
           resolve()
         }
@@ -303,13 +303,13 @@ export class AppContext {
     })
   }
 
-  resolveWhenGroupChangeInvitesAreSent(groupUuid) {
+  resolveWhenSharedVaultChangeInvitesAreSent(sharedVaultUuid) {
     return new Promise((resolve) => {
-      const objectToSpy = this.groups
+      const objectToSpy = this.sharedVaults
       sinon.stub(objectToSpy, 'updateInvitesAfterVaultKeyChange').callsFake(async (params) => {
         objectToSpy.updateInvitesAfterVaultKeyChange.restore()
         const result = await objectToSpy.updateInvitesAfterVaultKeyChange(params)
-        if (params.groupUuid === groupUuid) {
+        if (params.sharedVaultUuid === sharedVaultUuid) {
           resolve()
         }
         return result

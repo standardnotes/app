@@ -2,8 +2,8 @@ import {
   ApiEndpointParam,
   ConflictParams,
   ContactServerHash,
-  GroupInviteServerHash,
-  GroupServerHash,
+  SharedVaultInviteServerHash,
+  SharedVaultServerHash,
   HttpError,
   HttpResponse,
   isErrorResponse,
@@ -25,8 +25,8 @@ export class ServerSyncResponse {
   readonly conflicts: TrustedServerConflictMap
 
   readonly contacts: ContactServerHash[]
-  readonly vaults: GroupServerHash[]
-  readonly vaultInvites: GroupInviteServerHash[]
+  readonly vaults: SharedVaultServerHash[]
+  readonly vaultInvites: SharedVaultInviteServerHash[]
 
   private readonly rawConflictObjects: ConflictParams[]
 
@@ -53,9 +53,9 @@ export class ServerSyncResponse {
 
     this.conflicts = this.filterConflicts()
 
-    this.vaults = this.successResponseData?.groups || []
+    this.vaults = this.successResponseData?.shared_vaults || []
 
-    this.vaultInvites = this.successResponseData?.group_invites || []
+    this.vaultInvites = this.successResponseData?.shared_vault_invites || []
 
     this.contacts = this.successResponseData?.contacts || []
 

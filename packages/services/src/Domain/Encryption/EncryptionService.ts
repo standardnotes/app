@@ -229,8 +229,8 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     await this.rootKeyEncryption.reencryptItemsKeys()
   }
 
-  public reencryptVaultItemsKeysForVault(vaultSystemIdentifier: string): Promise<void> {
-    return this.rootKeyEncryption.reencryptVaultItemsKeysForVault(vaultSystemIdentifier)
+  public reencryptVaultItemsKeysForVault(keySystemIdentifier: string): Promise<void> {
+    return this.rootKeyEncryption.reencryptVaultItemsKeysForVault(keySystemIdentifier)
   }
 
   public async createNewItemsKeyWithRollback(): Promise<() => Promise<void>> {
@@ -506,12 +506,12 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.rootKeyEncryption.createRootKey(identifier, password, origination, version)
   }
 
-  createVaultKeyContent(params: { vaultSystemIdentifier: string; vaultName: string }): VaultKeyCopyContentSpecialized {
+  createVaultKeyContent(params: { keySystemIdentifier: string; vaultName: string }): VaultKeyCopyContentSpecialized {
     return this.operatorManager.defaultOperator().createVaultKeyContent(params)
   }
 
-  createVaultItemsKey(uuid: string, vaultSystemIdentifier: string): VaultItemsKeyInterface {
-    return this.operatorManager.defaultOperator().createVaultItemsKey(uuid, vaultSystemIdentifier)
+  createVaultItemsKey(uuid: string, keySystemIdentifier: string): VaultItemsKeyInterface {
+    return this.operatorManager.defaultOperator().createVaultItemsKey(uuid, keySystemIdentifier)
   }
 
   public generateKeyPair(): PkcKeyPair {

@@ -501,13 +501,13 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
 
   private async encrypPayloadWithKeyLookup(payload: DecryptedPayloadInterface): Promise<EncryptedParameters> {
     let key: RootKeyInterface | VaultKeyCopyInterface | undefined
-    if (payload.vault_system_identifier || ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
-      if (!payload.vault_system_identifier) {
+    if (payload.key_system_identifier || ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
+      if (!payload.key_system_identifier) {
         throw Error(
-          `Attempting to encrypt vaulted payload ${payload.content_type} but the payload is missing a vault_system_identifier`,
+          `Attempting to encrypt vaulted payload ${payload.content_type} but the payload is missing a key_system_identifier`,
         )
       }
-      key = this.items.getPrimarySyncedVaultKeyCopy(payload.vault_system_identifier)
+      key = this.items.getPrimarySyncedVaultKeyCopy(payload.key_system_identifier)
     } else {
       key = this.getRootKey()
     }
@@ -538,11 +538,11 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     payload: EncryptedPayloadInterface,
   ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters> {
     let key: RootKeyInterface | VaultKeyCopyInterface | undefined
-    if (payload.vault_system_identifier) {
+    if (payload.key_system_identifier) {
       if (!ItemContentTypeUsesVaultKeyEncryption(payload.content_type)) {
         throw Error('Attempting to decrypt payload that is not a vault items key with vault key.')
       }
-      key = this.items.getPrimarySyncedVaultKeyCopy(payload.vault_system_identifier)
+      key = this.items.getPrimarySyncedVaultKeyCopy(payload.key_system_identifier)
     } else {
       key = this.getRootKey()
     }
@@ -627,8 +627,8 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
    * When the vault key changes, we must re-encrypt all vault items
    * keys with this new vault key (by simply re-syncing).
    */
-  public async reencryptVaultItemsKeysForVault(vaultSystemIdentifier: string): Promise<void> {
-    const vaultItemsKeys = this.items.getAllVaultItemsKeysForVault(vaultSystemIdentifier)
+  public async reencryptVaultItemsKeysForVault(keySystemIdentifier: string): Promise<void> {
+    const vaultItemsKeys = this.items.getAllVaultItemsKeysForVault(keySystemIdentifier)
 
     if (vaultItemsKeys.length > 0) {
       await this.items.setItemsDirty(vaultItemsKeys)

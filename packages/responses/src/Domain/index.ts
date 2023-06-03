@@ -30,11 +30,11 @@ export * from './Contact/ContactServerHash'
 
 export * from './Http'
 
-export * from './Groups/GroupInviteType'
-export * from './Groups/GroupInviteServerHash'
-export * from './Groups/GroupUserServerHash'
-export * from './Groups/GroupServerHash'
-export * from './Groups/GroupPermission'
+export * from './SharedVaults/SharedVaultInviteType'
+export * from './SharedVaults/SharedVaultInviteServerHash'
+export * from './SharedVaults/SharedVaultUserServerHash'
+export * from './SharedVaults/SharedVaultServerHash'
+export * from './SharedVaults/SharedVaultPermission'
 
 export * from './Item/ApiEndpointParam'
 export * from './Item/CheckIntegrityResponse'

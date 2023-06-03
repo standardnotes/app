@@ -13,7 +13,7 @@ export interface ServerItemResponse {
   updated_at: Date
   uuid: string
   user_uuid: string
-  group_uuid?: string
-  vault_system_identifier?: string
+  shared_vault_uuid?: string
+  key_system_identifier?: string
   last_edited_by_uuid?: string
 }

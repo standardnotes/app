@@ -174,7 +174,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private filesBackupService?: FilesBackupService
   private vaultService!: ExternalServices.VaultServiceInterface
   private contactService!: ExternalServices.ContactServiceInterface
-  private groupService!: ExternalServices.GroupServiceInterface
+  private sharedVaultService!: ExternalServices.SharedVaultServiceInterface
 
   private declare sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>
   private declare legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>
@@ -386,8 +386,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     return this.contactService
   }
 
-  public get groups(): ExternalServices.GroupServiceInterface {
-    return this.groupService
+  public get sharedVaults(): ExternalServices.SharedVaultServiceInterface {
+    return this.sharedVaultService
   }
 
   public computePrivateUsername(username: string): Promise<string | undefined> {
@@ -1214,7 +1214,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createUseCases()
     this.createContactService()
     this.createVaultService()
-    this.createGroupService()
+    this.createSharedVaultService()
   }
 
   private clearServices() {
@@ -1273,7 +1273,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this._deleteRevision as unknown) = undefined
     ;(this.vaultService as unknown) = undefined
     ;(this.contactService as unknown) = undefined
-    ;(this.groupService as unknown) = undefined
+    ;(this.sharedVaultService as unknown) = undefined
 
     this.services = []
   }
@@ -1308,8 +1308,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.services.push(this.contactService)
   }
 
-  private createGroupService(): void {
-    this.groupService = new ExternalServices.GroupService(
+  private createSharedVaultService(): void {
+    this.sharedVaultService = new ExternalServices.SharedVaultService(
       this.httpService,
       this.syncService,
       this.itemManager,
@@ -1320,7 +1320,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.storage,
       this.internalEventBus,
     )
-    this.services.push(this.groupService)
+    this.services.push(this.sharedVaultService)
   }
 
   private createVaultService(): void {

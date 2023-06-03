@@ -8,9 +8,9 @@ export class CreateVaultUseCase {
   constructor(private items: ItemManagerInterface, private encryption: EncryptionProviderInterface) {}
 
   async execute(dto: { vaultName: string; vaultDescription?: string }): Promise<string | ClientDisplayableError> {
-    const vaultSystemIdentifier = UuidGenerator.GenerateUuid()
-    const vaultItemsKey = this.encryption.createVaultItemsKey(UuidGenerator.GenerateUuid(), vaultSystemIdentifier)
-    const vaultKeyContent = this.encryption.createVaultKeyContent({ vaultSystemIdentifier, vaultName: dto.vaultName })
+    const keySystemIdentifier = UuidGenerator.GenerateUuid()
+    const vaultItemsKey = this.encryption.createVaultItemsKey(UuidGenerator.GenerateUuid(), keySystemIdentifier)
+    const vaultKeyContent = this.encryption.createVaultKeyContent({ keySystemIdentifier, vaultName: dto.vaultName })
 
     const createVaultKey = new CreateVaultKeyUseCase(this.items)
     await createVaultKey.execute({
@@ -20,6 +20,6 @@ export class CreateVaultUseCase {
 
     await this.items.insertItem(vaultItemsKey)
 
-    return vaultSystemIdentifier
+    return keySystemIdentifier
   }
 }

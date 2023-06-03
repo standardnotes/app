@@ -10,17 +10,17 @@ export * from './Revision/RevisionServerInterface'
 export * from './Contact/ContactServer'
 export * from './Contact/ContactServerInterface'
 
-export * from './Group/GroupServer'
-export * from './Group/GroupServerInterface'
+export * from './SharedVault/SharedVaultServer'
+export * from './SharedVault/SharedVaultServerInterface'
 
-export * from './GroupUsers/GroupUsersServer'
-export * from './GroupUsers/GroupUsersServerInterface'
+export * from './SharedVaultUsers/SharedVaultUsersServer'
+export * from './SharedVaultUsers/SharedVaultUsersServerInterface'
 
 export * from './Subscription/SubscriptionServer'
 export * from './Subscription/SubscriptionServerInterface'
 
-export * from './GroupInvites/GroupInvitesServer'
-export * from './GroupInvites/GroupInvitesServerInterface'
+export * from './SharedVaultInvites/SharedVaultInvitesServer'
+export * from './SharedVaultInvites/SharedVaultInvitesServerInterface'
 
 export * from './User/UserServer'
 export * from './User/UserServerInterface'

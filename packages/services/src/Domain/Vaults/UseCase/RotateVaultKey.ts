@@ -7,14 +7,14 @@ import { CreateVaultKeyUseCase } from './CreateVaultKey'
 export class RotateVaultKeyUseCase {
   constructor(private items: ItemManagerInterface, private encryption: EncryptionProviderInterface) {}
 
-  async execute(params: { vaultSystemIdentifier: string }): Promise<undefined | ClientDisplayableError[]> {
-    const vaultKeyCopy = this.items.getPrimarySyncedVaultKeyCopy(params.vaultSystemIdentifier)
+  async execute(params: { keySystemIdentifier: string }): Promise<undefined | ClientDisplayableError[]> {
+    const vaultKeyCopy = this.items.getPrimarySyncedVaultKeyCopy(params.keySystemIdentifier)
     if (!vaultKeyCopy) {
       throw new Error('Cannot rotate vault key; vault key not found')
     }
 
     const newVaultKeyContent = this.encryption.createVaultKeyContent({
-      vaultSystemIdentifier: params.vaultSystemIdentifier,
+      keySystemIdentifier: params.keySystemIdentifier,
       vaultName: vaultKeyCopy.vaultName,
     })
     const createVaultKey = new CreateVaultKeyUseCase(this.items)
@@ -23,7 +23,7 @@ export class RotateVaultKeyUseCase {
     const errors: ClientDisplayableError[] = []
 
     const updateVaultVaultItemsKeyResult = await this.createNewVaultItemsKey({
-      vaultSystemIdentifier: params.vaultSystemIdentifier,
+      keySystemIdentifier: params.keySystemIdentifier,
       vaultKeyTimestamp: newVaultKeyContent.keyTimestamp,
     })
 
@@ -31,17 +31,17 @@ export class RotateVaultKeyUseCase {
       errors.push(updateVaultVaultItemsKeyResult)
     }
 
-    await this.encryption.reencryptVaultItemsKeysForVault(params.vaultSystemIdentifier)
+    await this.encryption.reencryptVaultItemsKeysForVault(params.keySystemIdentifier)
 
     return errors
   }
 
   private async createNewVaultItemsKey(params: {
-    vaultSystemIdentifier: string
+    keySystemIdentifier: string
     vaultKeyTimestamp: number
   }): Promise<ClientDisplayableError | void> {
     const newItemsKeyUuid = UuidGenerator.GenerateUuid()
-    const newItemsKey = this.encryption.createVaultItemsKey(newItemsKeyUuid, params.vaultSystemIdentifier)
+    const newItemsKey = this.encryption.createVaultItemsKey(newItemsKeyUuid, params.keySystemIdentifier)
     await this.items.insertItem(newItemsKey)
   }
 }

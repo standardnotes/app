@@ -57,8 +57,8 @@ export interface EncryptionProviderInterface {
   ): Promise<RootKeyInterface>
 
   getDecryptedPrivateKey(): string
-  createVaultItemsKey(uuid: string, vaultSystemIdentifier: string): VaultItemsKeyInterface
-  createVaultKeyContent(params: { vaultSystemIdentifier: string; vaultName: string }): VaultKeyCopyContentSpecialized
+  createVaultItemsKey(uuid: string, keySystemIdentifier: string): VaultItemsKeyInterface
+  createVaultKeyContent(params: { keySystemIdentifier: string; vaultName: string }): VaultKeyCopyContentSpecialized
   generateKeyPair(): PkcKeyPair
 
   encryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, privateKey: string): string
@@ -90,7 +90,7 @@ export interface EncryptionProviderInterface {
   >
   createNewItemsKeyWithRollback(): Promise<() => Promise<void>>
   reencryptItemsKeys(): Promise<void>
-  reencryptVaultItemsKeysForVault(vaultSystemIdentifier: string): Promise<void>
+  reencryptVaultItemsKeysForVault(keySystemIdentifier: string): Promise<void>
   getSureDefaultItemsKey(): ItemsKeyInterface
   getRootKeyParams(): Promise<SNRootKeyParams | undefined>
   getEmbeddedPayloadAuthenticatedData(

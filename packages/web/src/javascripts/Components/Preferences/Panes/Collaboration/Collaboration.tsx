@@ -9,7 +9,7 @@ import EditContactModal from './Contacts/EditContactModal'
 import { useCallback, useEffect, useState } from 'react'
 import {
   ContactServiceEvent,
-  GroupInviteServerHash,
+  SharedVaultInviteServerHash,
   VaultInterface,
   TrustedContactInterface,
   isClientDisplayableError,
@@ -24,7 +24,7 @@ const Collaboration = () => {
   const application = useApplication()
 
   const [vaults, setVaults] = useState<VaultInterface[]>([])
-  const [invites, setInvites] = useState<GroupInviteServerHash[]>([])
+  const [invites, setInvites] = useState<SharedVaultInviteServerHash[]>([])
   const [contacts, setContacts] = useState<TrustedContactInterface[]>([])
 
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false)

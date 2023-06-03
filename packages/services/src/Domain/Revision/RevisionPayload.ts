@@ -9,6 +9,6 @@ export type RevisionPayload = {
   created_at: string
   updated_at: string
   user_uuid: string
-  vault_system_identifier: string | null
-  group_uuid: string | null
+  key_system_identifier: string | null
+  shared_vault_uuid: string | null
 }

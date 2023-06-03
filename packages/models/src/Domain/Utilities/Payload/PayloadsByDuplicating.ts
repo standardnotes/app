@@ -26,8 +26,8 @@ export function PayloadsByDuplicating<C extends ItemContent = ItemContent>(dto: 
   const override = {
     uuid: UuidGenerator.GenerateUuid(),
 
-    /** Only the server can set group_uuid */
-    group_uuid: undefined,
+    /** Only the server can set shared_vault_uuid */
+    shared_vault_uuid: undefined,
 
     dirty: true,
     dirtyIndex: getIncrementedDirtyIndex(),

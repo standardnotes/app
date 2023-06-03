@@ -77,9 +77,9 @@ import {
   DeviceInterface,
   isFullEntryLoadChunkResponse,
   isChunkFullEntry,
-  SyncEventReceivedGroupInvitesData,
+  SyncEventReceivedSharedVaultInvitesData,
   SyncEventReceivedContactsData,
-  SyncEventReceivedRemoteGroupsData,
+  SyncEventReceivedRemoteSharedVaultsData,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -734,11 +734,11 @@ export class SNSyncService
     mode: SyncMode = SyncMode.Default,
   ) {
     const syncToken =
-      options.groupUuids && options.groupUuids.length > 0 && options.syncGroupsFromScratch
+      options.sharedVaultUuids && options.sharedVaultUuids.length > 0 && options.syncSharedVaultsFromScratch
         ? undefined
         : await this.getLastSyncToken()
     const paginationToken =
-      options.groupUuids && options.syncGroupsFromScratch ? undefined : await this.getPaginationToken()
+      options.sharedVaultUuids && options.syncSharedVaultsFromScratch ? undefined : await this.getPaginationToken()
 
     const operation = new AccountSyncOperation(
       payloads,
@@ -765,7 +765,7 @@ export class SNSyncService
       {
         syncToken,
         paginationToken,
-        groupUuids: options.groupUuids,
+        sharedVaultUuids: options.sharedVaultUuids,
       },
     )
 
@@ -925,13 +925,13 @@ export class SNSyncService
     const historyMap = this.historyService.getHistoryMapCopy()
 
     if (response.vaults) {
-      await this.notifyEventSync(SyncEvent.ReceivedRemoteGroups, response.vaults as SyncEventReceivedRemoteGroupsData)
+      await this.notifyEventSync(SyncEvent.ReceivedRemoteSharedVaults, response.vaults as SyncEventReceivedRemoteSharedVaultsData)
     }
 
     if (response.vaultInvites) {
       await this.notifyEventSync(
-        SyncEvent.ReceivedGroupInvites,
-        response.vaultInvites as SyncEventReceivedGroupInvitesData,
+        SyncEvent.ReceivedSharedVaultInvites,
+        response.vaultInvites as SyncEventReceivedSharedVaultInvitesData,
       )
     }
 
@@ -968,7 +968,7 @@ export class SNSyncService
       await this.persistPayloads(payloadsToPersist)
     }
 
-    if (!operation.options.groupUuids) {
+    if (!operation.options.sharedVaultUuids) {
       await Promise.all([
         this.setLastSyncToken(response.lastSyncToken as string),
         this.setPaginationToken(response.paginationToken as string),
@@ -1363,10 +1363,10 @@ export class SNSyncService
     await this.persistPayloads(emit.emits)
   }
 
-  async syncGroupsFromScratch(groupUuids: string[]): Promise<void> {
+  async syncSharedVaultsFromScratch(sharedVaultUuids: string[]): Promise<void> {
     await this.sync({
-      groupUuids: groupUuids,
-      syncGroupsFromScratch: true,
+      sharedVaultUuids: sharedVaultUuids,
+      syncSharedVaultsFromScratch: true,
       queueStrategy: SyncQueueStrategy.ForceSpawnNew,
       awaitAll: true,
     })

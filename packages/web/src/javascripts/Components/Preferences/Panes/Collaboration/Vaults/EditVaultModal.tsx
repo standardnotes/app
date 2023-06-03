@@ -2,7 +2,7 @@ import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 're
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { GroupInviteServerHash, GroupUserServerHash, isClientDisplayableError } from '@standardnotes/snjs'
+import { SharedVaultInviteServerHash, SharedVaultUserServerHash, isClientDisplayableError } from '@standardnotes/snjs'
 import Icon from '@/Components/Icon/Icon'
 import Button from '@/Components/Button/Button'
 
@@ -16,8 +16,8 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
 
   const [name, setName] = useState<string>('')
   const [description, setDescription] = useState<string>('')
-  const [members, setMembers] = useState<GroupUserServerHash[]>([])
-  const [invites, setInvites] = useState<GroupInviteServerHash[]>([])
+  const [members, setMembers] = useState<SharedVaultUserServerHash[]>([])
+  const [invites, setInvites] = useState<SharedVaultInviteServerHash[]>([])
   const [isAdmin, setIsAdmin] = useState<boolean>(false)
 
   const reloadVaultInfo = useCallback(async () => {
@@ -27,7 +27,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
       setDescription(vaultInfo?.vaultDescription ?? '')
       setIsAdmin(application.vaults.isUserGroupAdmin(existingVaultUuid))
 
-      const users = await application.vaults.getGroupUsers(existingVaultUuid)
+      const users = await application.vaults.getSharedVaultUsers(existingVaultUuid)
       if (users) {
         setMembers(users)
       }
@@ -67,7 +67,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
   }, [existingVaultUuid, application.vaults, application.alertService, name, description, handleDialogClose])
 
   const removeMemberFromVault = useCallback(
-    async (member: GroupUserServerHash) => {
+    async (member: SharedVaultUserServerHash) => {
       if (existingVaultUuid) {
         await application.vaults.removeUserFromGroup(existingVaultUuid, member.uuid)
         await reloadVaultInfo()
@@ -77,7 +77,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
   )
 
   const deleteInvite = useCallback(
-    async (invite: GroupInviteServerHash) => {
+    async (invite: SharedVaultInviteServerHash) => {
       await application.vaults.deleteInvite(invite)
       await reloadVaultInfo()
     },
@@ -141,7 +141,7 @@ const EditVaultModal: FunctionComponent<Props> = ({ onCloseDialog, existingVault
             <div className="mb-3">
               <div className="mb-3 text-lg">Vault Members</div>
               {members.map((member) => {
-                if (application.vaults.isGroupUserGroupOwner(member)) {
+                if (application.vaults.isSharedVaultUserGroupOwner(member)) {
                   return null
                 }
 

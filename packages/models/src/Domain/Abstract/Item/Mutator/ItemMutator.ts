@@ -52,13 +52,13 @@ export class ItemMutator<
     })
   }
 
-  public set vault_system_identifier(vaultSystemIdentifier: string | undefined) {
+  public set key_system_identifier(keySystemIdentifier: string | undefined) {
     if (this.immutableItem.content_type === ContentType.VaultKeyCopy) {
-      throw new Error('Cannot set vault_system_identifier on a vault key copy')
+      throw new Error('Cannot set key_system_identifier on a vault key copy')
     }
 
     this.immutablePayload = this.immutablePayload.copy({
-      vault_system_identifier: vaultSystemIdentifier,
+      key_system_identifier: keySystemIdentifier,
     })
   }
 

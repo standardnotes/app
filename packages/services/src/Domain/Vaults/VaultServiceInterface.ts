@@ -7,18 +7,18 @@ import { VaultDisplayListing } from './VaultDisplayListing'
 export interface VaultServiceInterface extends AbstractService<VaultServiceEvent> {
   createVault(name?: string, description?: string): Promise<string | ClientDisplayableError>
   getVaultDisplayListings(): VaultDisplayListing[]
-  deleteVault(vaultSystemIdentifier: string): Promise<boolean>
+  deleteVault(keySystemIdentifier: string): Promise<boolean>
 
   getVaultInfoForItem(item: DecryptedItemInterface): VaultKeyCopyContentSpecialized | undefined
-  getVaultInfo(vaultSystemIdentifier: string): VaultKeyCopyContentSpecialized | undefined
+  getVaultInfo(keySystemIdentifier: string): VaultKeyCopyContentSpecialized | undefined
 
-  addItemToVault(vaultSystemIdentifier: string, item: DecryptedItemInterface): Promise<DecryptedItemInterface>
+  addItemToVault(keySystemIdentifier: string, item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   moveItemFromVaultToUser(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   isItemInVault(item: DecryptedItemInterface): boolean
 
-  rotateVaultKey(vaultSystemIdentifier: string): Promise<void>
+  rotateVaultKey(keySystemIdentifier: string): Promise<void>
   changeVaultNameAndDescription(
-    vaultSystemIdentifier: string,
+    keySystemIdentifier: string,
     params: { name: string; description: string },
   ): Promise<VaultKeyCopyInterface>
 }

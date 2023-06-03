@@ -2,10 +2,10 @@ import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 're
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { GroupInviteServerHash, TrustedContactInterface } from '@standardnotes/snjs'
+import { SharedVaultInviteServerHash, TrustedContactInterface } from '@standardnotes/snjs'
 
 type Props = {
-  fromInvite?: GroupInviteServerHash
+  fromInvite?: SharedVaultInviteServerHash
   editContactUuid?: string
   onCloseDialog: () => void
   onAddContact?: (contact: TrustedContactInterface) => void

@@ -76,11 +76,11 @@ export class SNProtocolOperator004 implements SynchronousOperator {
   }
 
   public createVaultKeyContent(params: {
-    vaultSystemIdentifier: string
+    keySystemIdentifier: string
     vaultName: string
   }): VaultKeyCopyContentSpecialized {
     return {
-      vaultSystemIdentifier: params.vaultSystemIdentifier,
+      keySystemIdentifier: params.keySystemIdentifier,
       key: this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength),
       keyTimestamp: new Date().getTime(),
       keyVersion: ProtocolVersion.V004,
@@ -102,7 +102,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return CreateDecryptedItemFromPayload(payload)
   }
 
-  public createVaultItemsKey(uuid: string, vaultSystemIdentifier: string): VaultItemsKeyInterface {
+  public createVaultItemsKey(uuid: string, keySystemIdentifier: string): VaultItemsKeyInterface {
     const key = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
     const content = FillItemContentSpecialized<VaultItemsKeyContentSpecialized>({
       itemsKey: key,
@@ -113,7 +113,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     const transferPayload: DecryptedTransferPayload = {
       uuid: uuid,
       content_type: ContentType.VaultItemsKey,
-      vault_system_identifier: vaultSystemIdentifier,
+      key_system_identifier: keySystemIdentifier,
       content: content,
       dirty: true,
       ...PayloadTimestampDefaults(),
@@ -263,8 +263,8 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       v: ProtocolVersion.V004,
     }
 
-    if (payload.vault_system_identifier) {
-      baseData.vsi = payload.vault_system_identifier
+    if (payload.key_system_identifier) {
+      baseData.vsi = payload.key_system_identifier
     }
 
     if (ContentTypeUsesRootKeyEncryption(payload.content_type)) {

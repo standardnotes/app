@@ -12,7 +12,7 @@ export interface FilesClientInterface {
 
   beginNewFileUpload(
     sizeInBytes: number,
-    groupUuid?: string,
+    sharedVaultUuid?: string,
   ): Promise<EncryptAndUploadFileOperation | ClientDisplayableError>
   pushBytesForUpload(
     operation: EncryptAndUploadFileOperation,
@@ -32,8 +32,8 @@ export interface FilesClientInterface {
 
   deleteFile(file: FileItem): Promise<ClientDisplayableError | undefined>
 
-  moveFileToGroup(file: FileItem, groupUuid: string): Promise<void | ClientDisplayableError>
-  moveFileOutOfGroup(file: FileItem): Promise<void | ClientDisplayableError>
+  moveFileToSharedVault(file: FileItem, sharedVaultUuid: string): Promise<void | ClientDisplayableError>
+  moveFileOutOfSharedVault(file: FileItem): Promise<void | ClientDisplayableError>
 
   selectFile(fileSystem: FileSystemApi): Promise<FileHandleRead | FileSystemNoSelection>
 

@@ -8,7 +8,7 @@ export enum ConflictType {
 
   SnjsVersionError = 'snjs_version_error',
 
-  GroupInsufficientPermissionsError = 'group_insufficient_permissions_error',
-  GroupNotMemberError = 'group_not_member_error',
-  GroupInvalidItemsKey = 'group_invalid_items_key',
+  SharedVaultInsufficientPermissionsError = 'shared_vault_insufficient_permissions_error',
+  SharedVaultNotMemberError = 'shared_vault_not_member_error',
+  SharedVaultInvalidItemsKey = 'shared_vault_invalid_items_key',
 }

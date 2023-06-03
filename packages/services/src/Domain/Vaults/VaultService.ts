@@ -19,7 +19,7 @@ import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { RemoveItemFromVault } from './UseCase/RemoveItemFromVault'
 import { DeleteVaultUseCase } from './UseCase/DeleteVault'
 import { AddItemToVaultUseCase } from './UseCase/AddItemToVault'
-import { GroupServiceEvent, GroupServiceEventPayload } from '../Groups/GroupServiceEvent'
+import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from '../SharedVaults/SharedVaultServiceEvent'
 import { VaultDisplayListing } from './VaultDisplayListing'
 import { ContentType } from '@standardnotes/common'
 
@@ -35,8 +35,8 @@ export class VaultService
   ) {
     super(eventBus)
 
-    eventBus.addEventHandler(this, GroupServiceEvent.GroupStatusChanged)
-    eventBus.addEventHandler(this, GroupServiceEvent.GroupMemberRemoved)
+    eventBus.addEventHandler(this, SharedVaultServiceEvent.SharedVaultStatusChanged)
+    eventBus.addEventHandler(this, SharedVaultServiceEvent.SharedVaultMemberRemoved)
   }
 
   private notifyVaultsChangedEvent(): void {
@@ -44,34 +44,36 @@ export class VaultService
   }
 
   async handleEvent(event: InternalEventInterface): Promise<void> {
-    if (event.type === GroupServiceEvent.GroupStatusChanged) {
+    if (event.type === SharedVaultServiceEvent.SharedVaultStatusChanged) {
       this.notifyVaultsChangedEvent()
-    } else if (event.type === GroupServiceEvent.GroupMemberRemoved) {
-      await this.handleGroupMemberRemovedEvent((event.payload as GroupServiceEventPayload).vaultSystemIdentifier)
+    } else if (event.type === SharedVaultServiceEvent.SharedVaultMemberRemoved) {
+      await this.handleSharedVaultMemberRemovedEvent(
+        (event.payload as SharedVaultServiceEventPayload).keySystemIdentifier,
+      )
     }
   }
 
-  private async handleGroupMemberRemovedEvent(vaultSystemIdentifier: string): Promise<void> {
-    await this.rotateVaultKey(vaultSystemIdentifier)
+  private async handleSharedVaultMemberRemovedEvent(keySystemIdentifier: string): Promise<void> {
+    await this.rotateVaultKey(keySystemIdentifier)
   }
 
   getVaultDisplayListings(): VaultDisplayListing[] {
     const vaultKeyCopies = this.items.getItems<VaultKeyCopyInterface>(ContentType.VaultKeyCopy)
     const primaries: Record<string, VaultKeyCopyInterface> = {}
     for (const vaultKeyCopy of vaultKeyCopies) {
-      if (!vaultKeyCopy.vault_system_identifier) {
+      if (!vaultKeyCopy.key_system_identifier) {
         throw new Error('Vault key copy does not have vault system identifier')
       }
-      const primary = this.items.getPrimarySyncedVaultKeyCopy(vaultKeyCopy.vault_system_identifier)
+      const primary = this.items.getPrimarySyncedVaultKeyCopy(vaultKeyCopy.key_system_identifier)
       if (!primary) {
         throw new Error('Vault key copy does not have primary')
       }
-      primaries[vaultKeyCopy.vault_system_identifier] = primary
+      primaries[vaultKeyCopy.key_system_identifier] = primary
     }
 
     return Object.values(primaries).map((primary) => {
       const listing: VaultDisplayListing = {
-        vaultSystemIdentifier: primary.vaultSystemIdentifier,
+        keySystemIdentifier: primary.keySystemIdentifier,
         name: primary.vaultName,
         description: primary.vaultDescription,
       }
@@ -96,9 +98,9 @@ export class VaultService
     }
   }
 
-  async addItemToVault(vaultSystemIdentifier: string, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
+  async addItemToVault(keySystemIdentifier: string, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
     const useCase = new AddItemToVaultUseCase(this.items, this.sync)
-    await useCase.execute({ vaultSystemIdentifier, item })
+    await useCase.execute({ keySystemIdentifier, item })
 
     return this.items.findSureItem(item.uuid)
   }
@@ -110,9 +112,9 @@ export class VaultService
     return this.items.findSureItem(item.uuid)
   }
 
-  async deleteVault(vaultSystemIdentifier: string): Promise<boolean> {
+  async deleteVault(keySystemIdentifier: string): Promise<boolean> {
     const useCase = new DeleteVaultUseCase(this.items)
-    const error = await useCase.execute({ vaultSystemIdentifier })
+    const error = await useCase.execute({ keySystemIdentifier })
 
     if (isClientDisplayableError(error)) {
       return false
@@ -125,10 +127,10 @@ export class VaultService
   }
 
   async changeVaultNameAndDescription(
-    vaultSystemIdentifier: string,
+    keySystemIdentifier: string,
     params: { name: string; description?: string },
   ): Promise<VaultKeyCopyInterface> {
-    const vaultKeyCopy = this.items.getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier)
+    const vaultKeyCopy = this.items.getPrimarySyncedVaultKeyCopy(keySystemIdentifier)
     if (!vaultKeyCopy) {
       throw new Error('Cannot change vault metadata; vault key not found')
     }
@@ -148,10 +150,10 @@ export class VaultService
     return updatedVaultKey
   }
 
-  async rotateVaultKey(vaultSystemIdentifier: string): Promise<void> {
+  async rotateVaultKey(keySystemIdentifier: string): Promise<void> {
     const useCase = new RotateVaultKeyUseCase(this.items, this.encryption)
     await useCase.execute({
-      vaultSystemIdentifier,
+      keySystemIdentifier,
     })
 
     this.notifyVaultsChangedEvent()
@@ -160,19 +162,19 @@ export class VaultService
   }
 
   getVaultInfoForItem(item: DecryptedItemInterface): VaultKeyCopyContentSpecialized | undefined {
-    if (!item.vault_system_identifier) {
+    if (!item.key_system_identifier) {
       return undefined
     }
 
-    return this.getVaultInfo(item.vault_system_identifier)
+    return this.getVaultInfo(item.key_system_identifier)
   }
 
-  getVaultInfo(vaultSystemIdentifier: string): VaultKeyCopyContentSpecialized | undefined {
-    return this.items.getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier)?.content
+  getVaultInfo(keySystemIdentifier: string): VaultKeyCopyContentSpecialized | undefined {
+    return this.items.getPrimarySyncedVaultKeyCopy(keySystemIdentifier)?.content
   }
 
   isItemInVault(item: DecryptedItemInterface): boolean {
-    return item.vault_system_identifier !== undefined
+    return item.key_system_identifier !== undefined
   }
 
   override deinit(): void {

@@ -8,7 +8,7 @@ export class RemoveItemFromVault {
 
   async execute(dto: { item: DecryptedItemInterface }): Promise<ClientDisplayableError | void> {
     await this.items.changeItem(dto.item, (mutator) => {
-      mutator.vault_system_identifier = undefined
+      mutator.key_system_identifier = undefined
     })
 
     await this.sync.sync()

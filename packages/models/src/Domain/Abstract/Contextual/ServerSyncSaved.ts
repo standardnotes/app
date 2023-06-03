@@ -16,7 +16,7 @@ export interface ServerSyncSavedContextualPayload {
   updated_at_timestamp: number
   updated_at: Date
   uuid: string
-  vault_system_identifier?: string
+  key_system_identifier?: string
   last_edited_by_uuid?: string
 }
 
@@ -29,7 +29,7 @@ export function CreateServerSyncSavedPayload(from: FilteredServerItem): ServerSy
     updated_at_timestamp: from.updated_at_timestamp,
     updated_at: from.updated_at,
     uuid: from.uuid,
-    vault_system_identifier: from.vault_system_identifier,
+    key_system_identifier: from.key_system_identifier,
     last_edited_by_uuid: from.last_edited_by_uuid,
   }
 }

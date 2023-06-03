@@ -2,12 +2,12 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import Button from '@/Components/Button/Button'
 import Icon from '@/Components/Icon/Icon'
 import ModalOverlay from '@/Components/Modal/ModalOverlay'
-import { GroupInviteServerHash, GroupInviteType } from '@standardnotes/snjs'
+import { SharedVaultInviteServerHash, SharedVaultInviteType } from '@standardnotes/snjs'
 import { useCallback, useState } from 'react'
 import EditContactModal from '../Contacts/EditContactModal'
 
 type Props = {
-  invite: GroupInviteServerHash
+  invite: SharedVaultInviteServerHash
 }
 
 const InviteItem = ({ invite }: Props) => {
@@ -44,7 +44,7 @@ const InviteItem = ({ invite }: Props) => {
           <span className="mr-auto overflow-hidden text-ellipsis text-sm">
             Sender CollaborationID: {collaborationId}
           </span>
-          {invite.invite_type === GroupInviteType.KeyChange && (
+          {invite.invite_type === SharedVaultInviteType.KeyChange && (
             <span className="mr-auto overflow-hidden text-ellipsis text-sm">Invite Type: Vault Information Change</span>
           )}
 

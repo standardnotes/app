@@ -51,7 +51,7 @@ export class GetRevision implements UseCaseInterface<HistoryEntry> {
       content_type: revision.content_type as ContentType,
       updated_at: new Date(revision.updated_at),
       created_at: new Date(revision.created_at),
-      vault_system_identifier: revision.vault_system_identifier ?? undefined,
+      key_system_identifier: revision.key_system_identifier ?? undefined,
       waitingForKey: false,
       errorDecrypting: false,
     })

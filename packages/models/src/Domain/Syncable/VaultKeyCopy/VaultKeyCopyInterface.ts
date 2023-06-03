@@ -3,7 +3,7 @@ import { DecryptedItemInterface } from '../../Abstract/Item/Interfaces/Decrypted
 import { VaultKeyCopyContent } from './VaultKeyCopyContent'
 
 export interface VaultKeyCopyInterface extends DecryptedItemInterface<VaultKeyCopyContent> {
-  vaultSystemIdentifier: string
+  keySystemIdentifier: string
 
   vaultName: string
   vaultDescription?: string
@@ -17,8 +17,8 @@ export interface VaultKeyCopyInterface extends DecryptedItemInterface<VaultKeyCo
   /**
    * Vault key copies pertain to a vault system, but they are not actually encrypted inside a vault system, but rather
    * saved as a normal item in the user's account. An item's vauly_system_identifier tells the cryptographic system which
-   * keys to use to encrypt, but a vaultCopy's vaultSystemIdentifier is just a reference to that identifier that doesn't
+   * keys to use to encrypt, but a vaultCopy's keySystemIdentifier is just a reference to that identifier that doesn't
    * bind the item to a specific vault system's cryptographic keys.
    */
-  get vault_system_identifier(): undefined
+  get key_system_identifier(): undefined
 }

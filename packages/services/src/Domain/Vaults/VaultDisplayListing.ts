@@ -1,5 +1,5 @@
 export type VaultDisplayListing = {
-  vaultSystemIdentifier: string
+  keySystemIdentifier: string
   name: string
   description?: string
 }

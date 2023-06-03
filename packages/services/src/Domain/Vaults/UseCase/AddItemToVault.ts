@@ -8,10 +8,10 @@ export class AddItemToVaultUseCase {
 
   async execute(dto: {
     item: DecryptedItemInterface
-    vaultSystemIdentifier: string
+    keySystemIdentifier: string
   }): Promise<ClientDisplayableError | void> {
     await this.items.changeItem(dto.item, (mutator) => {
-      mutator.vault_system_identifier = dto.vaultSystemIdentifier
+      mutator.key_system_identifier = dto.keySystemIdentifier
     })
 
     await this.sync.sync()

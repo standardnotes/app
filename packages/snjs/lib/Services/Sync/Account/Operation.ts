@@ -27,7 +27,7 @@ export class AccountSyncOperation {
     public readonly options: {
       syncToken?: string
       paginationToken?: string
-      groupUuids?: string[]
+      sharedVaultUuids?: string[]
     },
   ) {
     this.pendingPayloads = payloads.slice()
@@ -58,7 +58,7 @@ export class AccountSyncOperation {
       this.options.syncToken,
       this.options.paginationToken,
       this.downLimit,
-      this.options.groupUuids,
+      this.options.sharedVaultUuids,
     )
 
     const response = new ServerSyncResponse(rawResponse)

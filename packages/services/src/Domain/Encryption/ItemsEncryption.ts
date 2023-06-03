@@ -91,8 +91,8 @@ export class ItemsEncryptionService extends AbstractService {
   private keyToUseForItemEncryption(
     payload: DecryptedPayloadInterface,
   ): ItemsKeyInterface | VaultItemsKeyInterface | VaultKeyCopyInterface | StandardException {
-    if (payload.vault_system_identifier) {
-      const vaultItemsKey = this.itemManager.getPrimaryVaultItemsKeyForVault(payload.vault_system_identifier)
+    if (payload.key_system_identifier) {
+      const vaultItemsKey = this.itemManager.getPrimaryVaultItemsKeyForVault(payload.key_system_identifier)
 
       if (!vaultItemsKey) {
         return new StandardException('Cannot find vault items key to use for encryption')

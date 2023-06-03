@@ -58,19 +58,19 @@ export type ConflictUuidErrorParams<T = ServerItemResponse> = BaseConflictParams
   unsaved_item: T
 }
 
-export type ConflictGroupNotMemberErrorParams<T = ServerItemResponse> = BaseConflictParams<T> & {
-  type: ConflictType.GroupNotMemberError
+export type ConflictSharedVaultNotMemberErrorParams<T = ServerItemResponse> = BaseConflictParams<T> & {
+  type: ConflictType.SharedVaultNotMemberError
   server_item: never
   unsaved_item: T
 }
 
-export type ConflictGroupInsufficientPermissionsErrorParams<T = ServerItemResponse> = BaseConflictParams<T> & {
-  type: ConflictType.GroupInsufficientPermissionsError
+export type ConflictSharedVaultInsufficientPermissionsErrorParams<T = ServerItemResponse> = BaseConflictParams<T> & {
+  type: ConflictType.SharedVaultInsufficientPermissionsError
   unsaved_item: T
 }
 
-export type ConflictGroupInvalidItemsKeyParams<T = ServerItemResponse> = BaseConflictParams<T> & {
-  type: ConflictType.GroupInvalidItemsKey
+export type ConflictSharedVaultInvalidItemsKeyParams<T = ServerItemResponse> = BaseConflictParams<T> & {
+  type: ConflictType.SharedVaultInvalidItemsKey
   unsaved_item: T
   server_item?: T
 }
@@ -100,6 +100,6 @@ export type ConflictParams<T = ServerItemResponse> =
   | ConflictContentErrorParams<T>
   | ConflictReadOnlyErrorParams<T>
   | ConflictUuidErrorParams<T>
-  | ConflictGroupNotMemberErrorParams<T>
-  | ConflictGroupInsufficientPermissionsErrorParams<T>
-  | ConflictGroupInvalidItemsKeyParams<T>
+  | ConflictSharedVaultNotMemberErrorParams<T>
+  | ConflictSharedVaultInsufficientPermissionsErrorParams<T>
+  | ConflictSharedVaultInvalidItemsKeyParams<T>

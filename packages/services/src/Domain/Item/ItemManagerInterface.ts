@@ -117,13 +117,13 @@ export interface ItemManagerInterface extends AbstractService {
   findItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T | undefined
   findSureItem<T extends DecryptedItemInterface = DecryptedItemInterface>(uuid: string): T
 
-  getAllVaultItemsKeysForVault(vaultSystemIdentifier: string): VaultItemsKeyInterface[]
-  getPrimaryVaultItemsKeyForVault(vaultSystemIdentifier: string): VaultItemsKeyInterface
-  getAllSyncedVaultKeyCopiesForVault(vaultSystemIdentifier: string): VaultKeyCopyInterface[]
+  getAllVaultItemsKeysForVault(keySystemIdentifier: string): VaultItemsKeyInterface[]
+  getPrimaryVaultItemsKeyForVault(keySystemIdentifier: string): VaultItemsKeyInterface
+  getAllSyncedVaultKeyCopiesForVault(keySystemIdentifier: string): VaultKeyCopyInterface[]
   getSyncedVaultKeyCopyMatchingTimestamp(
-    vaultSystemIdentifier: string,
+    keySystemIdentifier: string,
     timestamp: number,
   ): VaultKeyCopyInterface | undefined
-  getPrimarySyncedVaultKeyCopy(vaultSystemIdentifier: string): VaultKeyCopyInterface | undefined
-  itemsBelongingToVaultSystem(vaultSystemIdentifier: string): DecryptedItemInterface[]
+  getPrimarySyncedVaultKeyCopy(keySystemIdentifier: string): VaultKeyCopyInterface | undefined
+  itemsBelongingToKeySystem(keySystemIdentifier: string): DecryptedItemInterface[]
 }

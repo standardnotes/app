@@ -26,7 +26,7 @@ import { AsymmetricallyEncryptedString, SymmetricallyEncryptedString } from './T
  */
 export interface OperatorCommon {
   createItemsKey(): ItemsKeyInterface
-  createVaultItemsKey(uuid: string, vaultSystemIdentifier: string): VaultItemsKeyInterface
+  createVaultItemsKey(uuid: string, keySystemIdentifier: string): VaultItemsKeyInterface
   /**
    * Returns encryption protocol display name
    */
@@ -56,7 +56,7 @@ export interface OperatorCommon {
    */
   createRootKey(identifier: string, password: string, origination: KeyParamsOrigination): Promise<SNRootKey>
 
-  createVaultKeyContent(params: { vaultSystemIdentifier: string; vaultName: string }): VaultKeyCopyContentSpecialized
+  createVaultKeyContent(params: { keySystemIdentifier: string; vaultName: string }): VaultKeyCopyContentSpecialized
 
   generateKeyPair(): PkcKeyPair
 

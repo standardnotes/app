@@ -215,11 +215,11 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
     })
   }
 
-  createVaultItemsKey(_uuid: string, _vaultSystemIdentifier: string): VaultItemsKeyInterface {
+  createVaultItemsKey(_uuid: string, _keySystemIdentifier: string): VaultItemsKeyInterface {
     throw new Error('Method not implemented.')
   }
 
-  createVaultKeyContent(_params: { vaultSystemIdentifier: string; vaultName: string }): VaultKeyCopyContentSpecialized {
+  createVaultKeyContent(_params: { keySystemIdentifier: string; vaultName: string }): VaultKeyCopyContentSpecialized {
     throw new Error('Method not implemented.')
   }
 

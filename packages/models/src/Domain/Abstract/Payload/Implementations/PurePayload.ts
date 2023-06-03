@@ -34,8 +34,8 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
 
   readonly duplicate_of?: string
   readonly user_uuid?: string
-  readonly vault_system_identifier?: string
-  readonly group_uuid?: string
+  readonly key_system_identifier?: string
+  readonly shared_vault_uuid?: string
   readonly last_edited_by_uuid?: string
 
   constructor(rawPayload: T, source = PayloadSource.Constructor) {
@@ -67,14 +67,14 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
     this.dirtyIndex = rawPayload.dirtyIndex
     this.globalDirtyIndexAtLastSync = rawPayload.globalDirtyIndexAtLastSync
 
-    if (rawPayload.vault_system_identifier && rawPayload.content_type === ContentType.VaultKeyCopy) {
+    if (rawPayload.key_system_identifier && rawPayload.content_type === ContentType.VaultKeyCopy) {
       throw new Error('Vault key copy payload should not have vault system identifier')
     }
 
-    this.vault_system_identifier = rawPayload.vault_system_identifier
+    this.key_system_identifier = rawPayload.key_system_identifier
     this.user_uuid = rawPayload.user_uuid
     this.last_edited_by_uuid = rawPayload.last_edited_by_uuid
-    this.group_uuid = rawPayload.group_uuid
+    this.shared_vault_uuid = rawPayload.shared_vault_uuid
 
     const timeToAllowSubclassesToFinishConstruction = 0
     setTimeout(() => {
@@ -98,10 +98,10 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
       globalDirtyIndexAtLastSync: this.globalDirtyIndexAtLastSync,
       lastSyncBegan: this.lastSyncBegan,
       lastSyncEnd: this.lastSyncEnd,
-      vault_system_identifier: this.vault_system_identifier,
+      key_system_identifier: this.key_system_identifier,
       user_uuid: this.user_uuid,
       last_edited_by_uuid: this.last_edited_by_uuid,
-      group_uuid: this.group_uuid,
+      shared_vault_uuid: this.shared_vault_uuid,
     }
 
     return comprehensive

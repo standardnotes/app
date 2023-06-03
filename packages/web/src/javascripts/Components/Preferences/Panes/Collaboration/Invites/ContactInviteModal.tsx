@@ -1,7 +1,7 @@
 import { FunctionComponent, useCallback, useEffect, useMemo, useState } from 'react'
 import Modal, { ModalAction } from '@/Components/Modal/Modal'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { GroupPermission, VaultInterface, TrustedContactInterface } from '@standardnotes/snjs'
+import { SharedVaultPermission, VaultInterface, TrustedContactInterface } from '@standardnotes/snjs'
 
 type Props = {
   vault: VaultInterface
@@ -28,7 +28,7 @@ const ContactInviteModal: FunctionComponent<Props> = ({ vault, onCloseDialog }) 
 
   const inviteSelectedContacts = useCallback(async () => {
     for (const contact of selectedContacts) {
-      await application.vaults.inviteContactToGroup(vault, contact, GroupPermission.Write)
+      await application.vaults.inviteContactToGroup(vault, contact, SharedVaultPermission.Write)
     }
     handleDialogClose()
   }, [application.vaults, vault, handleDialogClose, selectedContacts])
