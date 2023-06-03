@@ -4,13 +4,14 @@ import { DecryptedPayloadInterface } from '../../Abstract/Payload'
 import { HistoryEntryInterface } from '../../Runtime/History'
 import { VaultKeyCopyContent } from './VaultKeyCopyContent'
 import { VaultKeyCopyInterface } from './VaultKeyCopyInterface'
+import { KeySystemIdentifier } from '../../Utilities/Vault/KeySystemIdentifier'
 
 export function isVaultKey(x: { content_type: ContentType }): x is VaultKeyCopy {
   return x.content_type === ContentType.VaultKeyCopy
 }
 
 export class VaultKeyCopy extends DecryptedItem<VaultKeyCopyContent> implements VaultKeyCopyInterface {
-  keySystemIdentifier: string
+  keySystemIdentifier: KeySystemIdentifier
 
   vaultName: string
   vaultDescription?: string

@@ -4,6 +4,7 @@ import {
   VaultKeyCopyContentSpecialized,
   VaultKeyCopyInterface,
   VaultKeyMutator,
+  KeySystemIdentifier,
 } from '@standardnotes/models'
 import { VaultServiceInterface } from './VaultServiceInterface'
 import { VaultServiceEvent } from './VaultServiceEvent'
@@ -53,7 +54,7 @@ export class VaultService
     }
   }
 
-  private async handleSharedVaultMemberRemovedEvent(keySystemIdentifier: string): Promise<void> {
+  private async handleSharedVaultMemberRemovedEvent(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
     await this.rotateVaultKey(keySystemIdentifier)
   }
 
@@ -81,7 +82,7 @@ export class VaultService
     })
   }
 
-  async createVault(name: string, description?: string): Promise<string | ClientDisplayableError> {
+  async createVault(name: string, description?: string): Promise<KeySystemIdentifier | ClientDisplayableError> {
     const createVault = new CreateVaultUseCase(this.items, this.encryption)
     const result = await createVault.execute({
       vaultName: name,
@@ -98,7 +99,10 @@ export class VaultService
     }
   }
 
-  async addItemToVault(keySystemIdentifier: string, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
+  async addItemToVault(
+    keySystemIdentifier: KeySystemIdentifier,
+    item: DecryptedItemInterface,
+  ): Promise<DecryptedItemInterface> {
     const useCase = new AddItemToVaultUseCase(this.items, this.sync)
     await useCase.execute({ keySystemIdentifier, item })
 
@@ -112,7 +116,7 @@ export class VaultService
     return this.items.findSureItem(item.uuid)
   }
 
-  async deleteVault(keySystemIdentifier: string): Promise<boolean> {
+  async deleteVault(keySystemIdentifier: KeySystemIdentifier): Promise<boolean> {
     const useCase = new DeleteVaultUseCase(this.items)
     const error = await useCase.execute({ keySystemIdentifier })
 
@@ -127,7 +131,7 @@ export class VaultService
   }
 
   async changeVaultNameAndDescription(
-    keySystemIdentifier: string,
+    keySystemIdentifier: KeySystemIdentifier,
     params: { name: string; description?: string },
   ): Promise<VaultKeyCopyInterface> {
     const vaultKeyCopy = this.items.getPrimarySyncedVaultKeyCopy(keySystemIdentifier)
@@ -150,7 +154,7 @@ export class VaultService
     return updatedVaultKey
   }
 
-  async rotateVaultKey(keySystemIdentifier: string): Promise<void> {
+  async rotateVaultKey(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
     const useCase = new RotateVaultKeyUseCase(this.items, this.encryption)
     await useCase.execute({
       keySystemIdentifier,
@@ -169,7 +173,7 @@ export class VaultService
     return this.getVaultInfo(item.key_system_identifier)
   }
 
-  getVaultInfo(keySystemIdentifier: string): VaultKeyCopyContentSpecialized | undefined {
+  getVaultInfo(keySystemIdentifier: KeySystemIdentifier): VaultKeyCopyContentSpecialized | undefined {
     return this.items.getPrimarySyncedVaultKeyCopy(keySystemIdentifier)?.content
   }
 

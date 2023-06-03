@@ -1412,20 +1412,24 @@ export class ItemManager
       : ItemRelationshipDirection.NoRelationship
   }
 
-  public getAllVaultItemsKeysForVault(keySystemIdentifier: string): Models.VaultItemsKeyInterface[] {
+  public getAllVaultItemsKeysForVault(
+    keySystemIdentifier: Models.KeySystemIdentifier,
+  ): Models.VaultItemsKeyInterface[] {
     return this.getItems<Models.VaultItemsKeyInterface>(ContentType.VaultItemsKey).filter(
       (key) => key.key_system_identifier === keySystemIdentifier,
     )
   }
 
-  public getPrimaryVaultItemsKeyForVault(keySystemIdentifier: string): Models.VaultItemsKeyInterface {
+  public getPrimaryVaultItemsKeyForVault(
+    keySystemIdentifier: Models.KeySystemIdentifier,
+  ): Models.VaultItemsKeyInterface {
     const allKeys = this.getAllVaultItemsKeysForVault(keySystemIdentifier)
 
     const sortedByNewestFirst = allKeys.sort((a, b) => b.keyTimestamp - a.keyTimestamp)
     return sortedByNewestFirst[0]
   }
 
-  getAllSyncedVaultKeyCopiesForVault(keySystemIdentifier: string): Models.VaultKeyCopyInterface[] {
+  getAllSyncedVaultKeyCopiesForVault(keySystemIdentifier: Models.KeySystemIdentifier): Models.VaultKeyCopyInterface[] {
     const keys = this.itemsMatchingPredicate<Models.VaultKeyCopyInterface>(
       ContentType.VaultKeyCopy,
       new Models.Predicate<Models.VaultKeyCopyInterface>('keySystemIdentifier', '=', keySystemIdentifier),
@@ -1435,7 +1439,7 @@ export class ItemManager
   }
 
   getSyncedVaultKeyCopyMatchingTimestamp(
-    keySystemIdentifier: string,
+    keySystemIdentifier: Models.KeySystemIdentifier,
     timestamp: number,
   ): Models.VaultKeyCopyInterface | undefined {
     const keys = this.itemsMatchingPredicate<Models.VaultKeyCopyInterface>(
@@ -1453,7 +1457,9 @@ export class ItemManager
     return keys[0]
   }
 
-  getPrimarySyncedVaultKeyCopy(keySystemIdentifier: string): Models.VaultKeyCopyInterface | undefined {
+  getPrimarySyncedVaultKeyCopy(
+    keySystemIdentifier: Models.KeySystemIdentifier,
+  ): Models.VaultKeyCopyInterface | undefined {
     const keys = this.itemsMatchingPredicate<Models.VaultKeyCopyInterface>(
       ContentType.VaultKeyCopy,
       new Models.Predicate<Models.VaultKeyCopyInterface>('keySystemIdentifier', '=', keySystemIdentifier),
@@ -1463,7 +1469,7 @@ export class ItemManager
     return sortedByNewestFirst[0]
   }
 
-  itemsBelongingToKeySystem(keySystemIdentifier: string): Models.DecryptedItemInterface[] {
+  itemsBelongingToKeySystem(keySystemIdentifier: Models.KeySystemIdentifier): Models.DecryptedItemInterface[] {
     return this.items.filter((item) => item.key_system_identifier === keySystemIdentifier)
   }
 }

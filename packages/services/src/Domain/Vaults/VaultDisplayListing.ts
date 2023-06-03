@@ -1,5 +1,7 @@
+import { KeySystemIdentifier } from '@standardnotes/models'
+
 export type VaultDisplayListing = {
-  keySystemIdentifier: string
+  keySystemIdentifier: KeySystemIdentifier
   name: string
   description?: string
 }

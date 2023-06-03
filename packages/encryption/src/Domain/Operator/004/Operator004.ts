@@ -14,6 +14,7 @@ import {
   VaultItemsKeyContentSpecialized,
   FillItemContentSpecialized,
   ItemsKeyContentSpecialized,
+  KeySystemIdentifier,
 } from '@standardnotes/models'
 import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
 import * as Utils from '@standardnotes/utils'
@@ -76,7 +77,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
   }
 
   public createVaultKeyContent(params: {
-    keySystemIdentifier: string
+    keySystemIdentifier: KeySystemIdentifier
     vaultName: string
   }): VaultKeyCopyContentSpecialized {
     return {
@@ -102,7 +103,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return CreateDecryptedItemFromPayload(payload)
   }
 
-  public createVaultItemsKey(uuid: string, keySystemIdentifier: string): VaultItemsKeyInterface {
+  public createVaultItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): VaultItemsKeyInterface {
     const key = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
     const content = FillItemContentSpecialized<VaultItemsKeyContentSpecialized>({
       itemsKey: key,

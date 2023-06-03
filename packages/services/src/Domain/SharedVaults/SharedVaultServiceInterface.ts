@@ -16,7 +16,7 @@ import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './Share
 
 export interface SharedVaultServiceInterface
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload> {
-  createSharedVault(params: { keySystemIdentifier: string }): Promise<SharedVaultServerHash | ClientDisplayableError>
+  createSharedVault(params: { keySystemIdentifier: KeySystemIdentifier }): Promise<SharedVaultServerHash | ClientDisplayableError>
 
   inviteContactToSharedVault(
     sharedVault: SharedVaultServerHash,
@@ -25,7 +25,7 @@ export interface SharedVaultServiceInterface
   ): Promise<SharedVaultInviteServerHash | ClientDisplayableError>
   removeUserFromSharedVault(sharedVaultUuid: string, userUuid: string): Promise<ClientDisplayableError | void>
   leaveSharedVault(sharedVaultUuid: string): Promise<ClientDisplayableError | void>
-  getSharedVaultUsers(keySystemIdentifier: string): Promise<SharedVaultUserServerHash[] | undefined>
+  getSharedVaultUsers(keySystemIdentifier: KeySystemIdentifier): Promise<SharedVaultUserServerHash[] | undefined>
   isSharedVaultUserSharedVaultOwner(user: SharedVaultUserServerHash): boolean
   isCurrentUserSharedVaultAdmin(sharedVaultUuid: string, userUuid: string): boolean
 
@@ -43,7 +43,7 @@ export interface SharedVaultServiceInterface
   reloadRemovedSharedVaults(): Promise<void>
 
   updateInvitesAfterVaultKeyChange(params: {
-    keySystemIdentifier: string
+    keySystemIdentifier: KeySystemIdentifier
     sharedVaultUuid: string
   }): Promise<ClientDisplayableError[]>
 }

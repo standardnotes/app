@@ -3,11 +3,12 @@ import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { CreateVaultKeyUseCase } from './CreateVaultKey'
+import { KeySystemIdentifier } from '@standardnotes/models'
 
 export class RotateVaultKeyUseCase {
   constructor(private items: ItemManagerInterface, private encryption: EncryptionProviderInterface) {}
 
-  async execute(params: { keySystemIdentifier: string }): Promise<undefined | ClientDisplayableError[]> {
+  async execute(params: { keySystemIdentifier: KeySystemIdentifier }): Promise<undefined | ClientDisplayableError[]> {
     const vaultKeyCopy = this.items.getPrimarySyncedVaultKeyCopy(params.keySystemIdentifier)
     if (!vaultKeyCopy) {
       throw new Error('Cannot rotate vault key; vault key not found')
@@ -37,7 +38,7 @@ export class RotateVaultKeyUseCase {
   }
 
   private async createNewVaultItemsKey(params: {
-    keySystemIdentifier: string
+    keySystemIdentifier: KeySystemIdentifier
     vaultKeyTimestamp: number
   }): Promise<ClientDisplayableError | void> {
     const newItemsKeyUuid = UuidGenerator.GenerateUuid()

@@ -4,6 +4,7 @@ import { ItemInterface } from '../Interfaces/ItemInterface'
 import { TransferPayload } from '../../TransferPayload'
 import { getIncrementedDirtyIndex } from '../../../Runtime/DirtyCounter/DirtyCounter'
 import { ContentType } from '@standardnotes/common'
+import { KeySystemIdentifier } from '../../../Utilities/Vault/KeySystemIdentifier'
 
 /**
  * An item mutator takes in an item, and an operation, and returns the resulting payload.
@@ -52,7 +53,7 @@ export class ItemMutator<
     })
   }
 
-  public set key_system_identifier(keySystemIdentifier: string | undefined) {
+  public set key_system_identifier(keySystemIdentifier: KeySystemIdentifier | undefined) {
     if (this.immutableItem.content_type === ContentType.VaultKeyCopy) {
       throw new Error('Cannot set key_system_identifier on a vault key copy')
     }

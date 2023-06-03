@@ -7,6 +7,7 @@ import {
   ItemContent,
   VaultKeyCopyInterface,
   VaultKeyCopyContentSpecialized,
+  KeySystemIdentifier,
 } from '@standardnotes/models'
 import { SNRootKey } from '../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
@@ -26,7 +27,7 @@ import { AsymmetricallyEncryptedString, SymmetricallyEncryptedString } from './T
  */
 export interface OperatorCommon {
   createItemsKey(): ItemsKeyInterface
-  createVaultItemsKey(uuid: string, keySystemIdentifier: string): VaultItemsKeyInterface
+  createVaultItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): VaultItemsKeyInterface
   /**
    * Returns encryption protocol display name
    */
@@ -56,7 +57,10 @@ export interface OperatorCommon {
    */
   createRootKey(identifier: string, password: string, origination: KeyParamsOrigination): Promise<SNRootKey>
 
-  createVaultKeyContent(params: { keySystemIdentifier: string; vaultName: string }): VaultKeyCopyContentSpecialized
+  createVaultKeyContent(params: {
+    keySystemIdentifier: KeySystemIdentifier
+    vaultName: string
+  }): VaultKeyCopyContentSpecialized
 
   generateKeyPair(): PkcKeyPair
 

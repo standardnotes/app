@@ -25,6 +25,7 @@ import {
   TrustedContactInterface,
   VaultKeyCopyInterface,
   VaultItemsKeyInterface,
+  KeySystemIdentifier,
 } from '@standardnotes/models'
 import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
@@ -242,7 +243,7 @@ export class SharedVaultService
   }
 
   async createSharedVault(params: {
-    keySystemIdentifier: string
+    keySystemIdentifier: KeySystemIdentifier
   }): Promise<SharedVaultServerHash | ClientDisplayableError> {
     const vaultItemsKey = this.items.getPrimaryVaultItemsKeyForVault(params.keySystemIdentifier)
     if (!vaultItemsKey) {
@@ -575,7 +576,7 @@ export class SharedVaultService
   }
 
   public updateInvitesAfterVaultKeyChange(params: {
-    keySystemIdentifier: string
+    keySystemIdentifier: KeySystemIdentifier
     sharedVaultUuid: string
   }): Promise<ClientDisplayableError[]> {
     const useCase = new UpdateInvitesAfterSharedVaultDataChangeUseCase(

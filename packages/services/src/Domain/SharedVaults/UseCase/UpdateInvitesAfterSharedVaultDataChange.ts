@@ -1,4 +1,4 @@
-import { VaultKeyCopyContentSpecialized } from '@standardnotes/models'
+import { KeySystemIdentifier, VaultKeyCopyContentSpecialized } from '@standardnotes/models'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import {
   ClientDisplayableError,
@@ -23,7 +23,7 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
   ) {}
 
   async execute(params: {
-    keySystemIdentifier: string
+    keySystemIdentifier: KeySystemIdentifier
     sharedVaultUuid: string
     inviterUuid: string
     inviterPrivateKey: string

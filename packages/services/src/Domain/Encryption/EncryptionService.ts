@@ -39,6 +39,7 @@ import {
   ItemsKeyInterface,
   RootKeyInterface,
   VaultItemsKeyInterface,
+  KeySystemIdentifier,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -229,7 +230,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     await this.rootKeyEncryption.reencryptItemsKeys()
   }
 
-  public reencryptVaultItemsKeysForVault(keySystemIdentifier: string): Promise<void> {
+  public reencryptVaultItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
     return this.rootKeyEncryption.reencryptVaultItemsKeysForVault(keySystemIdentifier)
   }
 
@@ -506,11 +507,14 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.rootKeyEncryption.createRootKey(identifier, password, origination, version)
   }
 
-  createVaultKeyContent(params: { keySystemIdentifier: string; vaultName: string }): VaultKeyCopyContentSpecialized {
+  createVaultKeyContent(params: {
+    keySystemIdentifier: KeySystemIdentifier
+    vaultName: string
+  }): VaultKeyCopyContentSpecialized {
     return this.operatorManager.defaultOperator().createVaultKeyContent(params)
   }
 
-  createVaultItemsKey(uuid: string, keySystemIdentifier: string): VaultItemsKeyInterface {
+  createVaultItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): VaultItemsKeyInterface {
     return this.operatorManager.defaultOperator().createVaultItemsKey(uuid, keySystemIdentifier)
   }
 

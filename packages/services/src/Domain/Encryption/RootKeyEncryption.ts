@@ -46,6 +46,7 @@ import {
   RootKeyContent,
   RootKeyInterface,
   SureFindPayload,
+  KeySystemIdentifier,
 } from '@standardnotes/models'
 import { UuidGenerator } from '@standardnotes/utils'
 import { DeviceInterface } from '../Device/DeviceInterface'
@@ -627,7 +628,7 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
    * When the vault key changes, we must re-encrypt all vault items
    * keys with this new vault key (by simply re-syncing).
    */
-  public async reencryptVaultItemsKeysForVault(keySystemIdentifier: string): Promise<void> {
+  public async reencryptVaultItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
     const vaultItemsKeys = this.items.getAllVaultItemsKeysForVault(keySystemIdentifier)
 
     if (vaultItemsKeys.length > 0) {

@@ -1,3 +1,5 @@
+import { KeySystemIdentifier } from '@standardnotes/models'
+
 export enum SharedVaultServiceEvent {
   SharedVaultStatusChanged = 'SharedVaultStatusChanged',
   SharedVaultMemberRemoved = 'SharedVaultMemberRemoved',
@@ -5,5 +7,5 @@ export enum SharedVaultServiceEvent {
 
 export type SharedVaultServiceEventPayload = {
   sharedVaultUuid: string
-  keySystemIdentifier: string
+  keySystemIdentifier: KeySystemIdentifier
 }
