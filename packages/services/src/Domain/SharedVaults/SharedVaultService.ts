@@ -257,10 +257,16 @@ export class SharedVaultService
   }
 
   public isCurrentUserSharedVaultAdmin(sharedVault: SharedVaultDisplayListing): boolean {
+    if (!sharedVault.ownerUserUuid) {
+      throw new Error(`Shared vault ${sharedVault.sharedVaultUuid} does not have an owner user uuid`)
+    }
     return sharedVault.ownerUserUuid === this.session.userUuid
   }
 
   public isCurrentUserSharedVaultOwner(sharedVault: SharedVaultDisplayListing): boolean {
+    if (!sharedVault.ownerUserUuid) {
+      throw new Error(`Shared vault ${sharedVault.sharedVaultUuid} does not have an owner user uuid`)
+    }
     return sharedVault.ownerUserUuid === this.session.userUuid
   }
 
@@ -325,6 +331,11 @@ export class SharedVaultService
     }
 
     delete this.pendingInvites[invite.uuid]
+  }
+
+  public deleteSharedVault(sharedVault: SharedVaultDisplayListing): Promise<ClientDisplayableError | void> {
+    const useCase = new DeleteSharedVaultUseCase(this.sharedVaultServer)
+    return useCase.execute(sharedVault.sharedVaultUuid)
   }
 
   private async processInboundInvites(invites: SharedVaultInviteServerHash[]): Promise<void> {

@@ -138,9 +138,9 @@ export class VaultService
     return this.items.findSureItem(item.uuid)
   }
 
-  async deleteVault(keySystemIdentifier: KeySystemIdentifier): Promise<boolean> {
+  async deleteVault(vault: VaultDisplayListing): Promise<boolean> {
     const useCase = new DeleteVaultUseCase(this.items)
-    const error = await useCase.execute({ keySystemIdentifier })
+    const error = await useCase.execute(vault)
 
     if (isClientDisplayableError(error)) {
       return false

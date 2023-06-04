@@ -275,6 +275,19 @@ export class AppContext {
     })
   }
 
+  resolveWhenSavedSyncPayloadsIncludesItemThatIsDuplicatedOf(uuid) {
+    return new Promise((resolve) => {
+      this.application.syncService.addEventObserver((event, response) => {
+        if (event === SyncEvent.PaginatedSyncRequestCompleted) {
+          const savedPayload = response.savedPayloads.find((payload) => payload.duplicate_of === uuid)
+          if (savedPayload) {
+            resolve()
+          }
+        }
+      })
+    })
+  }
+
   resolveWhenItemCompletesAddingToVault(targetItem) {
     return new Promise((resolve) => {
       const objectToSpy = this.vaults
@@ -309,7 +322,7 @@ export class AppContext {
       sinon.stub(objectToSpy, 'updateInvitesAfterKeySystemRootKeyChange').callsFake(async (params) => {
         objectToSpy.updateInvitesAfterKeySystemRootKeyChange.restore()
         const result = await objectToSpy.updateInvitesAfterKeySystemRootKeyChange(params)
-        if (params.sharedVaultUuid === sharedVaultUuid) {
+        if (params.sharedVault.sharedVaultUuid === sharedVaultUuid) {
           resolve()
         }
         return result

@@ -8,7 +8,7 @@ export interface VaultServiceInterface extends AbstractService<VaultServiceEvent
   createVault(name: string, description?: string): Promise<VaultDisplayListing | ClientDisplayableError>
   getVaults(): VaultDisplayListing[]
   getVault(keySystemIdentifier: KeySystemIdentifier): VaultDisplayListing | undefined
-  deleteVault(keySystemIdentifier: KeySystemIdentifier): Promise<boolean>
+  deleteVault(vault: VaultDisplayListing): Promise<boolean>
 
   addItemToVault(vault: VaultDisplayListing, item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   removeItemFromVault(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
