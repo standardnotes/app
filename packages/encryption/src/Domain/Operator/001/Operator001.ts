@@ -221,8 +221,8 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
   }
 
   createKeySystemRootKeyContent(_params: {
-    keySystemIdentifier: KeySystemIdentifier
-    vaultName: string
+    systemIdentifier: KeySystemIdentifier
+    systemName: string
   }): KeySystemRootKeyContentSpecialized {
     throw new Error('Method not implemented.')
   }

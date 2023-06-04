@@ -1,7 +1,6 @@
 import { ClientDisplayableError, isClientDisplayableError } from '@standardnotes/responses'
 import {
   DecryptedItemInterface,
-  KeySystemRootKeyContentSpecialized,
   KeySystemRootKeyInterface,
   KeySystemRootKeyMutator,
   KeySystemIdentifier,
@@ -186,18 +185,6 @@ export class VaultService
     this.notifyVaultsChangedEvent()
 
     await this.sync.sync()
-  }
-
-  getVaultInfoForItem(item: DecryptedItemInterface): KeySystemRootKeyContentSpecialized | undefined {
-    if (!item.key_system_identifier) {
-      return undefined
-    }
-
-    return this.getVaultInfo(item.key_system_identifier)
-  }
-
-  getVaultInfo(keySystemIdentifier: KeySystemIdentifier): KeySystemRootKeyContentSpecialized | undefined {
-    return this.items.getPrimaryKeySystemRootKey(keySystemIdentifier)?.content
   }
 
   isItemInVault(item: DecryptedItemInterface): boolean {

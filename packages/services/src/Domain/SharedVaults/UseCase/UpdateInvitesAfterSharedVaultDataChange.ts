@@ -84,7 +84,9 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
       })
 
       if (!encryptedKeySystemRootKeyContent) {
-        errors.push(ClientDisplayableError.FromString(`Failed to encrypt key system root key for user ${invite.user_uuid}`))
+        errors.push(
+          ClientDisplayableError.FromString(`Failed to encrypt key system root key for user ${invite.user_uuid}`),
+        )
         continue
       }
 
@@ -136,7 +138,9 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
       })
 
       if (!encryptedKeySystemRootKeyContent) {
-        errors.push(ClientDisplayableError.FromString(`Failed to encrypt key system root key for user ${user.user_uuid}`))
+        errors.push(
+          ClientDisplayableError.FromString(`Failed to encrypt key system root key for user ${user.user_uuid}`),
+        )
         continue
       }
 

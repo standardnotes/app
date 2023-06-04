@@ -6,7 +6,6 @@ import {
   SharedVaultUserServerHash,
   isClientDisplayableError,
   SharedVaultPermission,
-  SharedVaultServerHash,
 } from '@standardnotes/responses'
 import {
   HttpServiceInterface,
@@ -50,8 +49,11 @@ import { LeaveVaultUseCase } from './UseCase/LeaveSharedVault'
 import { UpdateInvitesAfterSharedVaultDataChangeUseCase } from './UseCase/UpdateInvitesAfterSharedVaultDataChange'
 import { UpdateSharedVaultUseCase } from './UseCase/UpdateSharedVault'
 import { VaultServiceInterface } from '../Vaults/VaultServiceInterface'
-import { assert } from '@standardnotes/utils'
-import { VaultDisplayListing } from '../Vaults/VaultDisplayListing'
+import {
+  SharedVaultDisplayListing,
+  VaultDisplayListing,
+  isSharedVaultDisplayListing,
+} from '../Vaults/VaultDisplayListing'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -125,13 +127,15 @@ export class SharedVaultService
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === SessionEvent.SuccessfullyChangedCredentials) {
       const handler = new HandleSuccessfullyChangedCredentials(
-        this.sharedVaultServer,
         this.sharedVaultInvitesServer,
         this.encryption,
         this.contacts,
         this.items,
       )
-      await handler.execute(event.payload as SuccessfullyChangedCredentialsEventData)
+      await handler.execute({
+        sharedVaults: this.getAllSharedVaults(),
+        eventData: event.payload as SuccessfullyChangedCredentialsEventData,
+      })
     }
   }
 
@@ -150,16 +154,16 @@ export class SharedVaultService
 
       handledKeySystems.add(keySystemItemsKey.key_system_identifier)
 
-      const vault = this.vaults.getVault(keySystemItemsKey.key_system_identifier)
-      if (!vault) {
+      const sharedVault = this.findSharedVault(keySystemItemsKey.key_system_identifier)
+      if (!sharedVault) {
         continue
       }
 
-      if (vault.sharedVaultUuid) {
+      if (sharedVault.sharedVaultUuid) {
         const primaryKeySystemItemsKey = this.items.getPrimaryKeySystemItemsKey(keySystemItemsKey.key_system_identifier)
         const updateSharedVaultUseCase = new UpdateSharedVaultUseCase(this.sharedVaultServer)
         await updateSharedVaultUseCase.execute({
-          sharedVaultUuid: vault.sharedVaultUuid,
+          sharedVaultUuid: sharedVault.sharedVaultUuid,
           specifiedItemsKeyUuid: primaryKeySystemItemsKey.uuid,
         })
       }
@@ -175,11 +179,11 @@ export class SharedVaultService
       }
 
       const vault = this.vaults.getVault(changedRootKey.systemIdentifier)
-      if (!vault || !vault.sharedVaultUuid) {
+      if (!vault || !isSharedVaultDisplayListing(vault)) {
         continue
       }
 
-      if (!this.isCurrentUserSharedVaultOwner(vault.sharedVaultUuid)) {
+      if (!this.isCurrentUserSharedVaultOwner(vault)) {
         continue
       }
 
@@ -192,58 +196,72 @@ export class SharedVaultService
 
       await this.updateInvitesAfterKeySystemRootKeyChange({
         keySystemIdentifier: changedRootKey.systemIdentifier,
-        sharedVaultUuid: vault.sharedVaultUuid,
+        sharedVault: vault,
       })
     }
   }
 
   async createSharedVault(name: string, description?: string): Promise<VaultDisplayListing | ClientDisplayableError> {
-    const keySystemIdentifier = await this.vaults.createVault(name, description)
-    if (isClientDisplayableError(keySystemIdentifier)) {
-      return keySystemIdentifier
+    const privateVault = await this.vaults.createVault(name, description)
+    if (isClientDisplayableError(privateVault)) {
+      return privateVault
     }
 
-    const keySystemItemsKey = this.items.getPrimaryKeySystemItemsKey(keySystemIdentifier)
+    const keySystemItemsKey = this.items.getPrimaryKeySystemItemsKey(privateVault.systemIdentifier)
     if (!keySystemItemsKey) {
-      return ClientDisplayableError.FromString(`No vault items key found for vault ${keySystemIdentifier}`)
+      return ClientDisplayableError.FromString(`No vault items key found for vault ${privateVault.systemIdentifier}`)
     }
 
     const result = await this.sharedVaultServer.createSharedVault({
       specifiedItemsKeyUuid: keySystemItemsKey.uuid,
-      keySystemIdentifier,
+      keySystemIdentifier: privateVault.systemIdentifier,
     })
 
     if (isErrorResponse(result)) {
       return ClientDisplayableError.FromString(`Failed to create shared vault ${result}`)
     }
 
-    const vault = this.vaults.getVault(keySystemIdentifier)
-    assert(vault)
-
-    const vaultItems = this.items.itemsBelongingToKeySystem(keySystemIdentifier)
-    for (const item of vaultItems) {
-      await this.vaults.addItemToVault(vault, item)
+    const sharedVault: SharedVaultDisplayListing = {
+      ...privateVault,
+      sharedVaultUuid: result.data.sharedVault.uuid,
+      ownerUserUuid: result.data.sharedVault.user_uuid,
     }
 
-    return vault
+    const vaultItems = this.items.itemsBelongingToKeySystem(sharedVault.systemIdentifier)
+    for (const item of vaultItems) {
+      await this.vaults.addItemToVault(sharedVault, item)
+    }
+
+    return this.findSureSharedVault(sharedVault.sharedVaultUuid)
   }
 
   public getCachedInboundInvites(): SharedVaultInviteServerHash[] {
     return Object.values(this.pendingInvites)
   }
 
-  private findSharedVault(sharedVaultUuid: string): VaultDisplayListing | undefined {
-    return this.vaults.getVaults().find((vault) => vault.sharedVaultUuid === sharedVaultUuid)
+  private getAllSharedVaults(): SharedVaultDisplayListing[] {
+    return this.vaults.getVaults().filter(isSharedVaultDisplayListing)
   }
 
-  public isCurrentUserSharedVaultAdmin(sharedVaultUuid: string): boolean {
-    const vault = this.findSharedVault(sharedVaultUuid)
-    return vault != undefined && vault.ownerUserUuid === this.session.userUuid
+  private findSharedVault(sharedVaultUuid: string): SharedVaultDisplayListing | undefined {
+    return this.getAllSharedVaults().find((vault) => vault.sharedVaultUuid === sharedVaultUuid)
   }
 
-  public isCurrentUserSharedVaultOwner(sharedVaultUuid: string): boolean {
+  private findSureSharedVault(sharedVaultUuid: string): SharedVaultDisplayListing {
     const vault = this.findSharedVault(sharedVaultUuid)
-    return vault != undefined && vault.ownerUserUuid === this.session.userUuid
+    if (!vault) {
+      throw new Error(`Could not find shared vault ${sharedVaultUuid}`)
+    }
+
+    return vault
+  }
+
+  public isCurrentUserSharedVaultAdmin(sharedVault: SharedVaultDisplayListing): boolean {
+    return sharedVault.ownerUserUuid === this.session.userUuid
+  }
+
+  public isCurrentUserSharedVaultOwner(sharedVault: SharedVaultDisplayListing): boolean {
+    return sharedVault.ownerUserUuid === this.session.userUuid
   }
 
   public isSharedVaultUserSharedVaultOwner(user: SharedVaultUserServerHash): boolean {
@@ -286,12 +304,12 @@ export class SharedVaultService
   }
 
   public async updateSharedVaultSpecifiedItemsKey(params: {
-    sharedVaultUuid: string
+    sharedVault: SharedVaultDisplayListing
     specifiedItemsKeyUuid: string
-  }): Promise<SharedVaultServerHash | ClientDisplayableError> {
+  }): Promise<ClientDisplayableError | void> {
     const useCase = new UpdateSharedVaultUseCase(this.sharedVaultServer)
     return useCase.execute({
-      sharedVaultUuid: params.sharedVaultUuid,
+      sharedVaultUuid: params.sharedVault.sharedVaultUuid,
       specifiedItemsKeyUuid: params.specifiedItemsKeyUuid,
     })
   }
@@ -362,7 +380,7 @@ export class SharedVaultService
     await this.decryptErroredItemsAfterInviteAccept()
 
     if (result === 'inserted') {
-      void this.syncSharedVaultFromScratch(invite.shared_vault_uuid)
+      await this.sync.syncSharedVaultsFromScratch([invite.shared_vault_uuid])
     }
 
     return true
@@ -380,12 +398,10 @@ export class SharedVaultService
     await this.encryption.decryptErroredPayloads()
   }
 
-  private async syncSharedVaultFromScratch(sharedVaultUuid: string): Promise<void> {
-    await this.sync.syncSharedVaultsFromScratch([sharedVaultUuid])
-  }
-
-  public async getInvitableContactsForSharedVault(sharedVaultUuid: string): Promise<TrustedContactInterface[]> {
-    const users = await this.getSharedVaultUsers(sharedVaultUuid)
+  public async getInvitableContactsForSharedVault(
+    sharedVault: SharedVaultDisplayListing,
+  ): Promise<TrustedContactInterface[]> {
+    const users = await this.getSharedVaultUsers(sharedVault)
     if (!users) {
       return []
     }
@@ -398,7 +414,7 @@ export class SharedVaultService
   }
 
   async inviteContactToSharedVault(
-    sharedVault: SharedVaultServerHash,
+    sharedVault: SharedVaultDisplayListing,
     contact: TrustedContactInterface,
     permissions: SharedVaultPermission,
   ): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
@@ -426,30 +442,31 @@ export class SharedVaultService
     )
   }
 
-  async removeUserFromSharedVault(sharedVaultUuid: string, userUuid: string): Promise<ClientDisplayableError | void> {
-    if (!this.isCurrentUserSharedVaultAdmin(sharedVaultUuid)) {
+  async removeUserFromSharedVault(
+    sharedVault: SharedVaultDisplayListing,
+    userUuid: string,
+  ): Promise<ClientDisplayableError | void> {
+    if (!this.isCurrentUserSharedVaultAdmin(sharedVault)) {
       throw new Error('Only vault admins can remove users')
     }
 
     const useCase = new RemoveVaultMemberUseCase(this.sharedVaultUsersServer)
-    const result = await useCase.execute({ sharedVaultUuid, userUuid })
+    const result = await useCase.execute({ sharedVaultUuid: sharedVault.sharedVaultUuid, userUuid })
     if (isClientDisplayableError(result)) {
       return result
     }
 
     void this.notifyCollaborationStatusChanged()
 
-    const vault = this.findSharedVault(sharedVaultUuid)
-    if (!vault) {
-      throw new Error('Could not find shared vault')
-    }
-
-    await this.vaults.rotateKeySystemRootKey(sharedVaultUuid)
+    await this.vaults.rotateKeySystemRootKey(sharedVault.systemIdentifier)
   }
 
-  async leaveSharedVault(sharedVaultUuid: string): Promise<ClientDisplayableError | void> {
+  async leaveSharedVault(sharedVault: SharedVaultDisplayListing): Promise<ClientDisplayableError | void> {
     const useCase = new LeaveVaultUseCase(this.sharedVaultUsersServer, this.items)
-    const result = await useCase.execute({ sharedVaultUuid, userUuid: this.session.getSureUser().uuid })
+    const result = await useCase.execute({
+      sharedVaultUuid: sharedVault.sharedVaultUuid,
+      userUuid: this.session.getSureUser().uuid,
+    })
 
     if (isClientDisplayableError(result)) {
       return result
@@ -458,9 +475,9 @@ export class SharedVaultService
     void this.notifyCollaborationStatusChanged()
   }
 
-  async getSharedVaultUsers(sharedVaultUuid: string): Promise<SharedVaultUserServerHash[] | undefined> {
+  async getSharedVaultUsers(sharedVault: SharedVaultDisplayListing): Promise<SharedVaultUserServerHash[] | undefined> {
     const useCase = new GetSharedVaultUsersUseCase(this.sharedVaultUsersServer)
-    return useCase.execute({ sharedVaultUuid })
+    return useCase.execute({ sharedVaultUuid: sharedVault.sharedVaultUuid })
   }
 
   getItemLastEditedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined {
@@ -485,7 +502,7 @@ export class SharedVaultService
 
   public updateInvitesAfterKeySystemRootKeyChange(params: {
     keySystemIdentifier: KeySystemIdentifier
-    sharedVaultUuid: string
+    sharedVault: SharedVaultDisplayListing
   }): Promise<ClientDisplayableError[]> {
     const useCase = new UpdateInvitesAfterSharedVaultDataChangeUseCase(
       this.encryption,
@@ -497,7 +514,7 @@ export class SharedVaultService
 
     return useCase.execute({
       keySystemIdentifier: params.keySystemIdentifier,
-      sharedVaultUuid: params.sharedVaultUuid,
+      sharedVaultUuid: params.sharedVault.sharedVaultUuid,
       inviterUuid: this.session.getSureUser().uuid,
       inviterPrivateKey: this.encryption.getDecryptedPrivateKey(),
       inviterPublicKey: this.session.getPublicKey(),

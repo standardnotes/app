@@ -10,15 +10,15 @@ export class CreateVaultUseCase {
   async execute(dto: { vaultName: string; vaultDescription?: string }): Promise<string | ClientDisplayableError> {
     const keySystemIdentifier = UuidGenerator.GenerateUuid()
     const keySystemItemsKey = this.encryption.createKeySystemItemsKey(UuidGenerator.GenerateUuid(), keySystemIdentifier)
+
+    const createKeySystemRootKey = new CreateKeySystemRootKeyUseCase(this.items)
     const keySystemRootKeyContent = this.encryption.createKeySystemRootKeyContent({
       systemIdentifier: keySystemIdentifier,
       systemName: dto.vaultName,
     })
-
-    const createKeySystemRootKey = new CreateKeySystemRootKeyUseCase(this.items)
     await createKeySystemRootKey.execute({
       ...keySystemRootKeyContent,
-      vaultDescription: dto.vaultDescription,
+      systemDescription: dto.vaultDescription,
     })
 
     await this.items.insertItem(keySystemItemsKey)

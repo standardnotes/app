@@ -30,6 +30,7 @@ export function CreateEncryptedServerSyncPushPayload(
     items_key_id: fromPayload.items_key_id,
     auth_hash: fromPayload.auth_hash,
     key_system_identifier: fromPayload.key_system_identifier,
+    shared_vault_uuid: fromPayload.shared_vault_uuid,
   }
 }
 
@@ -47,5 +48,6 @@ export function CreateDeletedServerSyncPushPayload(
     uuid: fromPayload.uuid,
     content: undefined,
     key_system_identifier: fromPayload.key_system_identifier,
+    shared_vault_uuid: fromPayload.shared_vault_uuid,
   }
 }

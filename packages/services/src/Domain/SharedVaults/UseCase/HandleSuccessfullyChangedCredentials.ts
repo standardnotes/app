@@ -1,14 +1,10 @@
-import { SharedVaultInvitesServerInterface, SharedVaultServerInterface } from '@standardnotes/api'
+import { SharedVaultInvitesServerInterface } from '@standardnotes/api'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
-import {
-  ClientDisplayableError,
-  SharedVaultInviteServerHash,
-  SharedVaultServerHash,
-  isErrorResponse,
-} from '@standardnotes/responses'
+import { ClientDisplayableError, SharedVaultInviteServerHash, isErrorResponse } from '@standardnotes/responses'
 import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { SuccessfullyChangedCredentialsEventData } from '../../Session/SuccessfullyChangedCredentialsEventData'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
+import { SharedVaultDisplayListing } from '../../Vaults/VaultDisplayListing'
 
 /**
  * When the local client initiates a change of credentials, it is also responsible for
@@ -16,35 +12,32 @@ import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
  */
 export class HandleSuccessfullyChangedCredentials {
   constructor(
-    private sharedVault: SharedVaultServerInterface,
     private sharedVaultInvitesServer: SharedVaultInvitesServerInterface,
     private encryption: EncryptionProviderInterface,
     private contacts: ContactServiceInterface,
     private items: ItemManagerInterface,
   ) {}
 
-  async execute(data: SuccessfullyChangedCredentialsEventData): Promise<ClientDisplayableError[]> {
+  async execute(dto: {
+    eventData: SuccessfullyChangedCredentialsEventData
+    sharedVaults: SharedVaultDisplayListing[]
+  }): Promise<ClientDisplayableError[]> {
     await this.contacts.refreshAllContactsAfterPublicKeyChange()
-
     await this.sharedVaultInvitesServer.deleteAllInboundInvites()
 
-    const errors = await this.updateAllOutboundInvites(data)
-
+    const errors = await this.updateAllOutboundInvites({
+      newPublicKey: dto.eventData.newPublicKey,
+      newPrivateKey: dto.eventData.newPrivateKey,
+      sharedVaults: dto.sharedVaults,
+    })
     return errors
   }
 
   private async updateAllOutboundInvites(params: {
     newPublicKey: string
     newPrivateKey: string
+    sharedVaults: SharedVaultDisplayListing[]
   }): Promise<ClientDisplayableError[]> {
-    const sharedVaultsResponse = await this.sharedVault.getSharedVaults()
-
-    if (isErrorResponse(sharedVaultsResponse)) {
-      return [ClientDisplayableError.FromString('Failed to get sharedVaults current user')]
-    }
-
-    const sharedVaults = sharedVaultsResponse.data.sharedVaults
-
     const getOutboundInvitesResponse = await this.sharedVaultInvitesServer.getOutboundUserInvites()
 
     if (isErrorResponse(getOutboundInvitesResponse)) {
@@ -55,7 +48,9 @@ export class HandleSuccessfullyChangedCredentials {
 
     const outboundInvites = getOutboundInvitesResponse.data.invites
     for (const invite of outboundInvites) {
-      const sharedVault = sharedVaults.find((g) => g.uuid === invite.shared_vault_uuid)
+      const sharedVault = params.sharedVaults.find(
+        (sharedVault) => sharedVault.sharedVaultUuid === invite.shared_vault_uuid,
+      )
       if (!sharedVault) {
         errors.push(ClientDisplayableError.FromString('Failed to find sharedVault for invite'))
         continue
@@ -78,7 +73,7 @@ export class HandleSuccessfullyChangedCredentials {
 
   private async updateInvite(params: {
     invite: SharedVaultInviteServerHash
-    sharedVault: SharedVaultServerHash
+    sharedVault: SharedVaultDisplayListing
     newPublicKey: string
     newPrivateKey: string
   }): Promise<ClientDisplayableError | undefined> {
@@ -87,7 +82,7 @@ export class HandleSuccessfullyChangedCredentials {
       return undefined
     }
 
-    const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(params.sharedVault.key_system_identifier)
+    const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(params.sharedVault.systemIdentifier)
     if (!keySystemRootKey) {
       return ClientDisplayableError.FromString('Failed to find key system root key for invite')
     }

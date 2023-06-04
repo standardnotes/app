@@ -50,8 +50,8 @@ export class AcceptInvite {
       const updatedItem = await this.items.changeItem<KeySystemRootKeyMutator, KeySystemRootKeyInterface>(
         existingKeySystemRootKey,
         (mutator) => {
-          mutator.vaultName = decryptedKeyContent.systemName
-          mutator.vaultDescription = decryptedKeyContent.systemDescription
+          mutator.systemName = decryptedKeyContent.systemName
+          mutator.systemDescription = decryptedKeyContent.systemDescription
         },
       )
 

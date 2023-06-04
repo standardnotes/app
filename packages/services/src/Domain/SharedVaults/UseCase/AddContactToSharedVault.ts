@@ -4,12 +4,12 @@ import {
   SharedVaultInviteServerHash,
   SharedVaultInviteType,
   SharedVaultPermission,
-  SharedVaultServerHash,
 } from '@standardnotes/responses'
 import { TrustedContactInterface } from '@standardnotes/models'
 import { SharedVaultInvitesServerInterface } from '@standardnotes/api'
 import { CreateSharedVaultInviteUseCase } from './CreateSharedVaultInvite'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
+import { SharedVaultDisplayListing } from '../../Vaults/VaultDisplayListing'
 
 export class AddContactToSharedVaultUseCase {
   constructor(
@@ -21,11 +21,11 @@ export class AddContactToSharedVaultUseCase {
   async execute(params: {
     inviterPrivateKey: string
     inviterPublicKey: string
-    sharedVault: SharedVaultServerHash
+    sharedVault: SharedVaultDisplayListing
     contact: TrustedContactInterface
     permissions: SharedVaultPermission
   }): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
-    const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(params.sharedVault.key_system_identifier)
+    const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(params.sharedVault.systemIdentifier)
     if (!keySystemRootKey) {
       return ClientDisplayableError.FromString('Cannot add contact; key system root key not found')
     }
@@ -38,7 +38,7 @@ export class AddContactToSharedVaultUseCase {
 
     const createInviteUseCase = new CreateSharedVaultInviteUseCase(this.sharedVaultInviteServer)
     const createInviteResult = await createInviteUseCase.execute({
-      sharedVaultUuid: params.sharedVault.uuid,
+      sharedVaultUuid: params.sharedVault.sharedVaultUuid,
       inviteeUuid: params.contact.contactUuid,
       inviterPublicKey: params.inviterPublicKey,
       encryptedKeySystemRootKeyContent,

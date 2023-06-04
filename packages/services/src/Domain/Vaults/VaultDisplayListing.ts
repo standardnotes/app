@@ -1,9 +1,7 @@
 import { KeySystemIdentifier } from '@standardnotes/models'
 
-export type VaultDisplayListing = {
+type CommonVaultDisplayListing = {
   systemIdentifier: KeySystemIdentifier
-  sharedVaultUuid?: string
-  ownerUserUuid?: string
   decrypted?: {
     name: string
     description?: string
@@ -12,3 +10,14 @@ export type VaultDisplayListing = {
     label: string
   }
 }
+
+export type SharedVaultDisplayListing = CommonVaultDisplayListing & {
+  sharedVaultUuid: string
+  ownerUserUuid: string
+}
+
+export function isSharedVaultDisplayListing(vault: VaultDisplayListing): vault is SharedVaultDisplayListing {
+  return 'sharedVaultUuid' in vault
+}
+
+export type VaultDisplayListing = CommonVaultDisplayListing | SharedVaultDisplayListing

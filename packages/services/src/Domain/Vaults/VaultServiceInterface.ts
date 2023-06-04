@@ -1,10 +1,5 @@
 import { ClientDisplayableError } from '@standardnotes/responses'
-import {
-  DecryptedItemInterface,
-  KeySystemRootKeyInterface,
-  KeySystemRootKeyContentSpecialized,
-  KeySystemIdentifier,
-} from '@standardnotes/models'
+import { DecryptedItemInterface, KeySystemRootKeyInterface, KeySystemIdentifier } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { VaultServiceEvent } from './VaultServiceEvent'
 import { VaultDisplayListing } from './VaultDisplayListing'
@@ -14,9 +9,6 @@ export interface VaultServiceInterface extends AbstractService<VaultServiceEvent
   getVaults(): VaultDisplayListing[]
   getVault(keySystemIdentifier: KeySystemIdentifier): VaultDisplayListing | undefined
   deleteVault(keySystemIdentifier: KeySystemIdentifier): Promise<boolean>
-
-  getVaultInfoForItem(item: DecryptedItemInterface): KeySystemRootKeyContentSpecialized | undefined
-  getVaultInfo(keySystemIdentifier: KeySystemIdentifier): KeySystemRootKeyContentSpecialized | undefined
 
   addItemToVault(vault: VaultDisplayListing, item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   removeItemFromVault(item: DecryptedItemInterface): Promise<DecryptedItemInterface>

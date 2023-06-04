@@ -2,7 +2,7 @@ import { SyncServiceInterface } from '@standardnotes/services'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
 import { DecryptedItemInterface, FileItem } from '@standardnotes/models'
-import { VaultDisplayListing } from '../VaultDisplayListing'
+import { VaultDisplayListing, isSharedVaultDisplayListing } from '../VaultDisplayListing'
 import { FilesClientInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/common'
 
@@ -19,12 +19,12 @@ export class AddItemToVaultUseCase {
   }): Promise<ClientDisplayableError | void> {
     await this.items.changeItem(dto.item, (mutator) => {
       mutator.key_system_identifier = dto.vault.systemIdentifier
-      mutator.shared_vault_uuid = dto.vault.sharedVaultUuid
+      mutator.shared_vault_uuid = isSharedVaultDisplayListing(dto.vault) ? dto.vault.sharedVaultUuid : undefined
     })
 
     await this.sync.sync()
 
-    if (dto.item.content_type === ContentType.File && dto.vault.sharedVaultUuid) {
+    if (dto.item.content_type === ContentType.File && isSharedVaultDisplayListing(dto.vault)) {
       await this.files.moveFileToSharedVault(dto.item as FileItem, dto.vault.sharedVaultUuid)
     }
   }

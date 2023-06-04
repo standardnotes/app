@@ -1,4 +1,4 @@
-import { ClientDisplayableError, SharedVaultServerHash, isErrorResponse } from '@standardnotes/responses'
+import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import { SharedVaultServerInterface } from '@standardnotes/api'
 
 export class UpdateSharedVaultUseCase {
@@ -7,7 +7,7 @@ export class UpdateSharedVaultUseCase {
   async execute(params: {
     sharedVaultUuid: string
     specifiedItemsKeyUuid: string
-  }): Promise<SharedVaultServerHash | ClientDisplayableError> {
+  }): Promise<ClientDisplayableError | void> {
     const response = await this.sharedVault.updateSharedVault({
       sharedVaultUuid: params.sharedVaultUuid,
       specifiedItemsKeyUuid: params.specifiedItemsKeyUuid,
@@ -16,7 +16,5 @@ export class UpdateSharedVaultUseCase {
     if (isErrorResponse(response)) {
       return ClientDisplayableError.FromError(response.data.error)
     }
-
-    return response.data.sharedVault
   }
 }
