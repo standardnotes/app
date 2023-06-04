@@ -4,7 +4,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('shared vault deletion', function () {
+describe.only('shared vault deletion', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
@@ -67,11 +67,11 @@ describe('shared vault deletion', function () {
     await deinitContactContext()
   })
 
-  it.only('deleting a shared vault should remove all vault items from collaborator devices', async () => {
+  it('deleting a shared vault should remove all vault items from collaborator devices', async () => {
     const { sharedVault, note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
-    await sharedVaults.deleteSharedVault(sharedVault.sharedVaultUuid)
+    await sharedVaults.deleteSharedVault(sharedVault)
     await contactContext.sync()
 
     const originatorNote = context.items.findItem(note.uuid)
@@ -83,7 +83,7 @@ describe('shared vault deletion', function () {
     await deinitContactContext()
   })
 
-  it.only('leaving or being removed from shared vault should remove shared vault items locally', async () => {
+  it('being removed from shared vault should remove shared vault items locally', async () => {
     const { sharedVault, note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
@@ -93,7 +93,6 @@ describe('shared vault deletion', function () {
     await context.sharedVaults.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
 
     await contactContext.sync()
-    await contactContext.sharedVaults.reloadRemovedSharedVaults()
 
     const updatedContactNote = contactContext.items.findItem(note.uuid)
     expect(updatedContactNote).to.be.undefined

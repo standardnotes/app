@@ -8,6 +8,7 @@ import {
   HttpResponse,
   isErrorResponse,
   RawSyncResponse,
+  UserEventServerHash,
 } from '@standardnotes/responses'
 import {
   FilterDisallowedRemotePayloadsAndMap,
@@ -27,6 +28,7 @@ export class ServerSyncResponse {
   readonly contacts: ContactServerHash[]
   readonly vaults: SharedVaultServerHash[]
   readonly vaultInvites: SharedVaultInviteServerHash[]
+  readonly userEvents: UserEventServerHash[]
 
   private readonly rawConflictObjects: ConflictParams[]
 
@@ -58,6 +60,8 @@ export class ServerSyncResponse {
     this.vaultInvites = this.successResponseData?.shared_vault_invites || []
 
     this.contacts = this.successResponseData?.contacts || []
+
+    this.userEvents = this.successResponseData?.user_events || []
 
     deepFreeze(this)
   }

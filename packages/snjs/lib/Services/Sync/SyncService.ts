@@ -80,6 +80,7 @@ import {
   SyncEventReceivedSharedVaultInvitesData,
   SyncEventReceivedContactsData,
   SyncEventReceivedRemoteSharedVaultsData,
+  SyncEventReceivedUserEventsData,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -925,6 +926,10 @@ export class SNSyncService
     const masterCollection = this.payloadManager.getMasterCollection()
 
     const historyMap = this.historyService.getHistoryMapCopy()
+
+    if (response.userEvents) {
+      await this.notifyEventSync(SyncEvent.ReceivedUserEvents, response.userEvents as SyncEventReceivedUserEventsData)
+    }
 
     if (response.vaults) {
       await this.notifyEventSync(

@@ -175,6 +175,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private vaultService!: ExternalServices.VaultServiceInterface
   private contactService!: ExternalServices.ContactServiceInterface
   private sharedVaultService!: ExternalServices.SharedVaultServiceInterface
+  private userEventService!: ExternalServices.UserEventService
 
   private declare sessionStorageMapper: MapperInterface<Session, Record<string, unknown>>
   private declare legacySessionStorageMapper: MapperInterface<LegacySession, Record<string, unknown>>
@@ -1167,6 +1168,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createItemManager()
 
     this.createDiskStorageManager()
+    this.createUserEventService()
 
     this.createInMemoryStorageManager()
     this.createProtocolService()
@@ -1274,6 +1276,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.vaultService as unknown) = undefined
     ;(this.contactService as unknown) = undefined
     ;(this.sharedVaultService as unknown) = undefined
+    ;(this.userEventService as unknown) = undefined
 
     this.services = []
   }
@@ -1293,6 +1296,11 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private clearInternalEventBus(): void {
     this.internalEventBus.deinit()
     ;(this.internalEventBus as unknown) = undefined
+  }
+
+  private createUserEventService(): void {
+    this.userEventService = new ExternalServices.UserEventService(this.internalEventBus)
+    this.services.push(this.userEventService)
   }
 
   private createContactService(): void {

@@ -17,6 +17,7 @@ import { SharedVaultDisplayListing, VaultDisplayListing } from '../Vaults/VaultD
 export interface SharedVaultServiceInterface
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload> {
   createSharedVault(name: string, description?: string): Promise<VaultDisplayListing | ClientDisplayableError>
+  deleteSharedVault(sharedVault: SharedVaultDisplayListing): Promise<ClientDisplayableError | void>
 
   inviteContactToSharedVault(
     sharedVault: SharedVaultDisplayListing,

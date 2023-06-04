@@ -4,6 +4,7 @@ import { ApiEndpointParam } from './ApiEndpointParam'
 import { ConflictParams } from './ConflictParams'
 import { ServerItemResponse } from './ServerItemResponse'
 import { SharedVaultServerHash } from '../SharedVaults/SharedVaultServerHash'
+import { UserEventServerHash } from '../UserEvent/UserEventServerHash'
 
 export type RawSyncData = {
   error?: unknown
@@ -15,6 +16,7 @@ export type RawSyncData = {
   unsaved?: ConflictParams[]
   shared_vaults?: SharedVaultServerHash[]
   shared_vault_invites?: SharedVaultInviteServerHash[]
+  user_events?: UserEventServerHash[]
   contacts?: ContactServerHash[]
   status?: number
 }

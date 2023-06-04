@@ -5,7 +5,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.only('shared vault permissions', function () {
+describe('shared vault permissions', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context

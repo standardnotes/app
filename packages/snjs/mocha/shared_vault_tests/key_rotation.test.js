@@ -5,7 +5,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.only('shared vaults key rotation', function () {
+describe('shared vaults key rotation', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context

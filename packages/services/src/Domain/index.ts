@@ -137,3 +137,6 @@ export * from './Sync/SyncSource'
 export * from './User/UserClientInterface'
 export * from './User/UserClientInterface'
 export * from './User/UserService'
+
+export * from './UserEvent/UserEventService'
+export * from './UserEvent/UserEventServiceEvent'

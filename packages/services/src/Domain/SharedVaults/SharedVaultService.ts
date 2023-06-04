@@ -6,6 +6,7 @@ import {
   SharedVaultUserServerHash,
   isClientDisplayableError,
   SharedVaultPermission,
+  UserEventType,
 } from '@standardnotes/responses'
 import {
   HttpServiceInterface,
@@ -54,6 +55,9 @@ import {
   VaultDisplayListing,
   isSharedVaultDisplayListing,
 } from '../Vaults/VaultDisplayListing'
+import { UserEventServiceEvent, UserEventServiceEventPayload } from '../UserEvent/UserEventServiceEvent'
+import { RemoveSharedVaultItemsLocallyUseCase } from './UseCase/RemoveSharedVaultItemsLocally'
+import { DeleteSharedVaultUseCase } from './UseCase/DeleteSharedVault'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -80,6 +84,7 @@ export class SharedVaultService
   ) {
     super(eventBus)
     eventBus.addEventHandler(this, SessionEvent.SuccessfullyChangedCredentials)
+    eventBus.addEventHandler(this, UserEventServiceEvent.UserEventReceived)
 
     this.sharedVaultServer = new SharedVaultServer(http)
     this.sharedVaultUsersServer = new SharedVaultUsersServer(http)
@@ -136,6 +141,20 @@ export class SharedVaultService
         sharedVaults: this.getAllSharedVaults(),
         eventData: event.payload as SuccessfullyChangedCredentialsEventData,
       })
+    } else if (event.type === UserEventServiceEvent.UserEventReceived) {
+      await this.handleUserEvent(event.payload as UserEventServiceEventPayload)
+    }
+  }
+
+  private async handleUserEvent(event: UserEventServiceEventPayload): Promise<void> {
+    if (event.eventPayload.eventType === UserEventType.RemovedFromSharedVault) {
+      const useCase = new RemoveSharedVaultItemsLocallyUseCase(this.items)
+      await useCase.execute({ sharedVaultUuids: [event.eventPayload.sharedVaultUuid] })
+    } else if (event.eventPayload.eventType === UserEventType.SharedVaultItemRemoved) {
+      const item = this.items.findItem(event.eventPayload.itemUuid)
+      if (item) {
+        this.items.removeItemsLocally([item])
+      }
     }
   }
 
@@ -333,9 +352,9 @@ export class SharedVaultService
     delete this.pendingInvites[invite.uuid]
   }
 
-  public deleteSharedVault(sharedVault: SharedVaultDisplayListing): Promise<ClientDisplayableError | void> {
-    const useCase = new DeleteSharedVaultUseCase(this.sharedVaultServer)
-    return useCase.execute(sharedVault.sharedVaultUuid)
+  public async deleteSharedVault(sharedVault: SharedVaultDisplayListing): Promise<ClientDisplayableError | void> {
+    const useCase = new DeleteSharedVaultUseCase(this.sharedVaultServer, this.items, this.sync)
+    return useCase.execute({ sharedVault })
   }
 
   private async processInboundInvites(invites: SharedVaultInviteServerHash[]): Promise<void> {

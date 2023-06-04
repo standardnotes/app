@@ -1,4 +1,9 @@
-import { ContactServerHash, SharedVaultInviteServerHash, SharedVaultServerHash } from '@standardnotes/responses'
+import {
+  ContactServerHash,
+  SharedVaultInviteServerHash,
+  SharedVaultServerHash,
+  UserEventServerHash,
+} from '@standardnotes/responses'
 
 /* istanbul ignore file */
 export enum SyncEvent {
@@ -26,9 +31,11 @@ export enum SyncEvent {
   SyncRequestsIntegrityCheck = 'sync:requests-integrity-check',
   ReceivedRemoteSharedVaults = 'received-shared-vaults',
   ReceivedSharedVaultInvites = 'received-shared-vault-invites',
+  ReceivedUserEvents = 'received-user-events',
   ReceivedContacts = 'received-contacts',
 }
 
 export type SyncEventReceivedRemoteSharedVaultsData = SharedVaultServerHash[]
 export type SyncEventReceivedSharedVaultInvitesData = SharedVaultInviteServerHash[]
 export type SyncEventReceivedContactsData = ContactServerHash[]
+export type SyncEventReceivedUserEventsData = UserEventServerHash[]
