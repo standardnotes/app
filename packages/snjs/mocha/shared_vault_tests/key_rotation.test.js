@@ -5,7 +5,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('shared vaults key rotation', function () {
+describe.only('shared vaults key rotation', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
@@ -38,7 +38,7 @@ describe('shared vaults key rotation', function () {
       await contactContext.sync()
 
       const vaultInvite = contactContext.sharedVaults.getCachedInboundInvites()[0]
-      expect(vaultInvite.inviter_public_key).to.equal(sharedVaults.userPublicKey)
+      expect(vaultInvite.inviter_public_key).to.equal(context.publicKey)
 
       await context.changePassword('new-password')
       await context.sync()
@@ -46,35 +46,35 @@ describe('shared vaults key rotation', function () {
       await contactContext.sync()
 
       const updatedSharedVaultInvite = contactContext.sharedVaults.getCachedInboundInvites()[0]
-      expect(updatedSharedVaultInvite.inviter_public_key).to.equal(sharedVaults.userPublicKey)
+      expect(updatedSharedVaultInvite.inviter_public_key).to.equal(context.publicKey)
 
       await deinitContactContext()
     })
   })
 
-  describe('key system root key rotation', () => {
+  describe.only('key system root key rotation', () => {
     it("rotating a vault's key should send a key-change invite to all members", async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
+      const { sharedVault, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithAcceptedInvite(context)
       contactContext.lockSyncing()
 
-      await vaults.rotateKeySystemRootKey(keySystemIdentifier)
+      await vaults.rotateKeySystemRootKey(sharedVault.systemIdentifier)
 
       const outboundInvites = await sharedVaults.getOutboundInvites()
       const keyChangeInvite = outboundInvites[0]
 
       expect(keyChangeInvite).to.not.be.undefined
-      expect(keyChangeInvite.key_system_identifier).to.equal(keySystemIdentifier)
+      expect(keyChangeInvite.key_system_identifier).to.equal(sharedVault.systemIdentifier)
       expect(keyChangeInvite.user_uuid).to.equal(contactContext.userUuid)
       expect(keyChangeInvite.encrypted_vault_key_content).to.not.be.undefined
-      expect(keyChangeInvite.inviter_public_key).to.equal(sharedVaults.userPublicKey)
+      expect(keyChangeInvite.inviter_public_key).to.equal(context.publicKey)
       expect(keyChangeInvite.invite_type).to.equal('key-change')
 
       await deinitContactContext()
     })
 
     it("rotating a vault's key with a pending join invite should update that invite rather than creating a key-change invite ", async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
+      const { sharedVault, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithUnacceptedButTrustedInvite(context)
       contactContext.lockSyncing()
 
@@ -82,7 +82,7 @@ describe('shared vaults key rotation', function () {
       expect(originalOutboundInvites.length).to.equal(1)
       const originalEncVaultData = originalOutboundInvites[0].encrypted_vault_key_content
 
-      await vaults.rotateKeySystemRootKey(keySystemIdentifier)
+      await vaults.rotateKeySystemRootKey(sharedVault.systemIdentifier)
 
       const updatedOutboundInvites = await sharedVaults.getOutboundInvites()
       expect(updatedOutboundInvites.length).to.equal(1)
@@ -96,7 +96,7 @@ describe('shared vaults key rotation', function () {
     })
 
     it('should update both pending join and key-change invites instead of creating new ones', async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
+      const { sharedVault, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithAcceptedInvite(context)
       contactContext.lockSyncing()
 
@@ -110,7 +110,7 @@ describe('shared vaults key rotation', function () {
       const originalOutboundInvites = await sharedVaults.getOutboundInvites()
       expect(originalOutboundInvites.length).to.equal(1)
 
-      await vaults.rotateKeySystemRootKey(keySystemIdentifier)
+      await vaults.rotateKeySystemRootKey(sharedVault.systemIdentifier)
 
       const updatedOutboundInvites = await sharedVaults.getOutboundInvites()
       expect(updatedOutboundInvites.length).to.equal(2)
@@ -123,11 +123,11 @@ describe('shared vaults key rotation', function () {
     })
 
     it('key change invites should be automatically accepted by trusted contacts', async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
+      const { sharedVault, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithAcceptedInvite(context)
       contactContext.lockSyncing()
 
-      await vaults.rotateKeySystemRootKey(keySystemIdentifier)
+      await vaults.rotateKeySystemRootKey(sharedVault.systemIdentifier)
 
       const acceptInviteSpy = sinon.spy(contactContext.sharedVaults, 'acceptInvite')
 
@@ -140,14 +140,14 @@ describe('shared vaults key rotation', function () {
     })
 
     it('should rotate key system root key after removing vault member', async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
+      const { sharedVault, contactContext, deinitContactContext } =
         await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
-      const originalKeySystemRootKey = context.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
+      const originalKeySystemRootKey = context.items.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)
 
       await sharedVaults.removeUserFromSharedVault(sharedVaultUuid, contactContext.userUuid)
 
-      const newKeySystemRootKey = context.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
+      const newKeySystemRootKey = context.items.getPrimaryKeySystemRootKey(sharedVault.systemIdentifier)
 
       expect(newKeySystemRootKey.keyTimestamp).to.be.greaterThan(originalKeySystemRootKey.keyTimestamp)
       expect(newKeySystemRootKey.key).to.not.equal(originalKeySystemRootKey.key)

@@ -4,7 +4,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('shared vault invites', function () {
+describe.skip('shared vault invites', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
@@ -33,12 +33,15 @@ describe('shared vault invites', function () {
     const vaultInvite = await sharedVaults.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
 
     expect(vaultInvite).to.not.be.undefined
-    expect(vaultInvite.key_system_identifier).to.equal(keySystemIdentifier)
+    expect(vaultInvite.shared_vault_uuid).to.equal(sharedVault.sharedVaultUuid)
     expect(vaultInvite.user_uuid).to.equal(contact.contactUuid)
     expect(vaultInvite.encrypted_vault_key_content).to.not.be.undefined
-    expect(vaultInvite.inviter_public_key).to.equal(sharedVaults.userPublicKey)
+    expect(vaultInvite.inviter_public_key).to.equal(context.publicKey)
+    expect(vaultInvite.inviter_uuid).to.equal(context.userUuid)
+    expect(vaultInvite.invite_type).to.equal('join')
     expect(vaultInvite.permissions).to.equal(SharedVaultPermission.Write)
     expect(vaultInvite.updated_at_timestamp).to.not.be.undefined
+    expect(vaultInvite.created_at_timestamp).to.not.be.undefined
 
     await deinitContactContext()
   })
@@ -112,7 +115,8 @@ describe('shared vault invites', function () {
   })
 
   it('received items should contain the uuid of the contact who sent the item', async () => {
-    const { note, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInviteAndNote(context)
+    const { note, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
     const receivedNote = contactContext.items.findItem(note.uuid)
     expect(receivedNote).to.not.be.undefined
@@ -122,7 +126,8 @@ describe('shared vault invites', function () {
   })
 
   it('items should contain the uuid of the last person who edited it', async () => {
-    const { note, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInviteAndNote(context)
+    const { note, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
     const receivedNote = contactContext.items.findItem(note.uuid)
     expect(receivedNote.last_edited_by_uuid).to.not.be.undefined

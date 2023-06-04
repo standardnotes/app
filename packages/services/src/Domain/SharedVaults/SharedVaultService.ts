@@ -109,22 +109,22 @@ export class SharedVaultService
     )
 
     this.eventDisposers.push(
-      items.addObserver<KeySystemRootKeyInterface>(ContentType.KeySystemRootKey, ({ changed, source }) => {
+      items.addObserver<KeySystemRootKeyInterface>(ContentType.KeySystemRootKey, async ({ changed, source }) => {
         if (source !== PayloadEmitSource.LocalChanged) {
           return
         }
 
-        void this.handleChangeInKeySystemRootKeys(changed)
+        await this.handleChangeInKeySystemRootKeys(changed)
       }),
     )
 
     this.eventDisposers.push(
-      items.addObserver<KeySystemItemsKeyInterface>(ContentType.KeySystemItemsKey, ({ inserted, source }) => {
+      items.addObserver<KeySystemItemsKeyInterface>(ContentType.KeySystemItemsKey, async ({ inserted, source }) => {
         if (source !== PayloadEmitSource.LocalInserted) {
           return
         }
 
-        void this.updatedSharedVaultSpecifiedItemsKeyAfterInsertionOfNewKeySystemItemsKeys(inserted)
+        await this.updatedSharedVaultSpecifiedItemsKeyAfterInsertionOfNewKeySystemItemsKeys(inserted)
       }),
     )
   }
