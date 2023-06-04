@@ -1318,7 +1318,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.contactService,
       this.files,
       this.vaults,
-      this.storage,
       this.internalEventBus,
     )
     this.services.push(this.sharedVaultService)
@@ -1329,6 +1328,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.syncService,
       this.itemManager,
       this.protocolService,
+      this.files,
       this.internalEventBus,
     )
 

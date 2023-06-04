@@ -275,13 +275,13 @@ export class AppContext {
     })
   }
 
-  resolveWhenItemCompletesAddingToSharedVault(targetItem) {
+  resolveWhenItemCompletesAddingToVault(targetItem) {
     return new Promise((resolve) => {
-      const objectToSpy = this.sharedVaults
-      sinon.stub(objectToSpy, 'addItemToSharedVault').callsFake(async (params) => {
-        objectToSpy.addItemToSharedVault.restore()
-        const result = await objectToSpy.addItemToSharedVault(params)
-        if (!targetItem || params.item.uuid === targetItem.uuid) {
+      const objectToSpy = this.vaults
+      sinon.stub(objectToSpy, 'addItemToVault').callsFake(async (vault, item) => {
+        objectToSpy.addItemToVault.restore()
+        const result = await objectToSpy.addItemToVault(vault, item)
+        if (!targetItem || item.uuid === targetItem.uuid) {
           resolve()
         }
         return result
@@ -289,12 +289,12 @@ export class AppContext {
     })
   }
 
-  resolveWhenItemCompletesRemovingFromSharedVault(targetItem) {
+  resolveWhenItemCompletesRemovingFromVault(targetItem) {
     return new Promise((resolve) => {
-      const objectToSpy = this.sharedVaults
-      sinon.stub(objectToSpy, 'removeItemFromSharedVault').callsFake(async (item) => {
-        objectToSpy.removeItemFromSharedVault.restore()
-        const result = await objectToSpy.removeItemFromSharedVault(item)
+      const objectToSpy = this.vaults
+      sinon.stub(objectToSpy, 'removeItemFromVault').callsFake(async (item) => {
+        objectToSpy.removeItemFromVault.restore()
+        const result = await objectToSpy.removeItemFromVault(item)
         if (item.uuid === targetItem.uuid) {
           resolve()
         }

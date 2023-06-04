@@ -1412,6 +1412,12 @@ export class ItemManager
       : ItemRelationshipDirection.NoRelationship
   }
 
+  public getAllKeySystemItemsKeys(): (Models.KeySystemItemsKeyInterface | Models.EncryptedItemInterface)[] {
+    const decryptedItems = this.getItems<Models.KeySystemItemsKeyInterface>(ContentType.KeySystemItemsKey)
+    const encryptedItems = this.invalidItems.filter((item) => item.content_type === ContentType.KeySystemItemsKey)
+    return [...decryptedItems, ...encryptedItems]
+  }
+
   public getKeySystemItemsKeys(systemIdentifier: Models.KeySystemIdentifier): Models.KeySystemItemsKeyInterface[] {
     return this.getItems<Models.KeySystemItemsKeyInterface>(ContentType.KeySystemItemsKey).filter(
       (key) => key.key_system_identifier === systemIdentifier,

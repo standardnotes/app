@@ -5,6 +5,7 @@ import {
   KeySystemRootKeyInterface,
   KeySystemRootKeyMutator,
   KeySystemIdentifier,
+  isDecryptedItem,
 } from '@standardnotes/models'
 import { VaultServiceInterface } from './VaultServiceInterface'
 import { VaultServiceEvent } from './VaultServiceEvent'
@@ -19,10 +20,10 @@ import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { RemoveItemFromVault } from './UseCase/RemoveItemFromVault'
 import { DeleteVaultUseCase } from './UseCase/DeleteVault'
 import { AddItemToVaultUseCase } from './UseCase/AddItemToVault'
-import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from '../SharedVaults/SharedVaultServiceEvent'
+import { SharedVaultServiceEvent } from '../SharedVaults/SharedVaultServiceEvent'
 import { VaultDisplayListing } from './VaultDisplayListing'
-import { ContentType } from '@standardnotes/common'
 import { RotateKeySystemRootKeyUseCase } from './UseCase/RotateKeySystemRootKey'
+import { FilesClientInterface } from '@standardnotes/files'
 
 export class VaultService
   extends AbstractService<VaultServiceEvent>
@@ -32,12 +33,12 @@ export class VaultService
     private sync: SyncServiceInterface,
     private items: ItemManagerInterface,
     private encryption: EncryptionProviderInterface,
+    private files: FilesClientInterface,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
 
     eventBus.addEventHandler(this, SharedVaultServiceEvent.SharedVaultStatusChanged)
-    eventBus.addEventHandler(this, SharedVaultServiceEvent.SharedVaultMemberRemoved)
   }
 
   private notifyVaultsChangedEvent(): void {
@@ -47,45 +48,69 @@ export class VaultService
   async handleEvent(event: InternalEventInterface): Promise<void> {
     if (event.type === SharedVaultServiceEvent.SharedVaultStatusChanged) {
       this.notifyVaultsChangedEvent()
-    } else if (event.type === SharedVaultServiceEvent.SharedVaultMemberRemoved) {
-      await this.handleSharedVaultMemberRemovedEvent(
-        (event.payload as SharedVaultServiceEventPayload).keySystemIdentifier,
-      )
     }
   }
 
-  private async handleSharedVaultMemberRemovedEvent(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
-    await this.rotateKeySystemRootKey(keySystemIdentifier)
-  }
+  getVaults(): VaultDisplayListing[] {
+    const listings: VaultDisplayListing[] = []
+    const handledIdentifiers = new Set()
+    const keySystemItemsKeys = this.items.getAllKeySystemItemsKeys()
 
-  getVaultDisplayListings(): VaultDisplayListing[] {
-    const primaries: Record<string, KeySystemRootKeyInterface> = {}
-
-    const keySystemRootKeys = this.items.getItems<KeySystemRootKeyInterface>(ContentType.KeySystemRootKey)
-    for (const keySystemRootKey of keySystemRootKeys) {
-      if (!keySystemRootKey.key_system_identifier) {
-        throw new Error('Key system root key copy does not have vault system identifier')
+    for (const keySystemItemsKey of keySystemItemsKeys) {
+      const systemIdentifier = keySystemItemsKey.key_system_identifier
+      if (!systemIdentifier) {
+        throw new Error('Key system items key does not have vault system identifier')
       }
 
-      const primary = this.items.getPrimaryKeySystemRootKey(keySystemRootKey.key_system_identifier)
-      if (!primary) {
-        throw new Error('Key system does not have primary root key')
+      if (handledIdentifiers.has(systemIdentifier)) {
+        continue
       }
 
-      primaries[keySystemRootKey.key_system_identifier] = primary
+      handledIdentifiers.add(systemIdentifier)
+
+      if (isDecryptedItem(keySystemItemsKey)) {
+        const primaryRootKey = this.items.getPrimaryKeySystemRootKey(systemIdentifier)
+        if (!primaryRootKey) {
+          throw new Error('Key system does not have primary items key')
+        }
+        listings.push({
+          systemIdentifier,
+          sharedVaultUuid: keySystemItemsKey.shared_vault_uuid,
+          ownerUserUuid: keySystemItemsKey.user_uuid,
+          decrypted: {
+            name: primaryRootKey.systemName,
+            description: primaryRootKey.systemDescription,
+          },
+        })
+      } else {
+        listings.push({
+          systemIdentifier,
+          sharedVaultUuid: keySystemItemsKey.shared_vault_uuid,
+          ownerUserUuid: keySystemItemsKey.user_uuid,
+          encrypted: {
+            label: systemIdentifier,
+          },
+        })
+      }
     }
 
-    return Object.values(primaries).map((primary) => {
-      const listing: VaultDisplayListing = {
-        systemIdentifier: primary.systemIdentifier,
-        name: primary.systemName,
-        description: primary.systemDescription,
-      }
-      return listing
-    })
+    return listings
   }
 
-  async createVault(name: string, description?: string): Promise<KeySystemIdentifier | ClientDisplayableError> {
+  public getVault(keySystemIdentifier: KeySystemIdentifier): VaultDisplayListing | undefined {
+    const listings = this.getVaults()
+    return listings.find((listing) => listing.systemIdentifier === keySystemIdentifier)
+  }
+
+  public getSureVault(keySystemIdentifier: KeySystemIdentifier): VaultDisplayListing {
+    const vault = this.getVault(keySystemIdentifier)
+    if (!vault) {
+      throw new Error('Vault not found')
+    }
+    return vault
+  }
+
+  async createVault(name: string, description?: string): Promise<VaultDisplayListing | ClientDisplayableError> {
     const createVault = new CreateVaultUseCase(this.items, this.encryption)
     const result = await createVault.execute({
       vaultName: name,
@@ -96,26 +121,21 @@ export class VaultService
 
     if (!isClientDisplayableError(result)) {
       await this.sync.sync()
-      return result
+      return this.getSureVault(result)
     } else {
       return result
     }
   }
 
-  async addItemToVault(
-    keySystemIdentifier: KeySystemIdentifier,
-    item: DecryptedItemInterface,
-  ): Promise<DecryptedItemInterface> {
-    const useCase = new AddItemToVaultUseCase(this.items, this.sync)
-    await useCase.execute({ keySystemIdentifier, item })
-
+  async addItemToVault(vault: VaultDisplayListing, item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
+    const useCase = new AddItemToVaultUseCase(this.items, this.sync, this.files)
+    await useCase.execute({ vault, item })
     return this.items.findSureItem(item.uuid)
   }
 
   async removeItemFromVault(item: DecryptedItemInterface): Promise<DecryptedItemInterface> {
-    const useCase = new RemoveItemFromVault(this.items, this.sync)
+    const useCase = new RemoveItemFromVault(this.items, this.sync, this.files)
     await useCase.execute({ item })
-
     return this.items.findSureItem(item.uuid)
   }
 

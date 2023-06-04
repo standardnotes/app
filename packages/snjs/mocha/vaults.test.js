@@ -26,33 +26,33 @@ describe('vaults', function () {
 
   describe('offline', function () {
     it('should be able to create an offline vault', async () => {
-      const keySystemIdentifier = await vaults.createVault()
+      const vault = await vaults.createVault()
 
-      expect(keySystemIdentifier).to.not.be.undefined
-      expect(typeof keySystemIdentifier).to.equal('string')
+      expect(vault.systemIdentifier).to.not.be.undefined
+      expect(typeof vault.systemIdentifier).to.equal('string')
 
-      const keySystemItemsKey = context.items.getPrimaryKeySystemItemsKey(keySystemIdentifier)
+      const keySystemItemsKey = context.items.getPrimaryKeySystemItemsKey(vault.systemIdentifier)
       expect(keySystemItemsKey).to.not.be.undefined
-      expect(keySystemItemsKey.key_system_identifier).to.equal(keySystemIdentifier)
+      expect(keySystemItemsKey.key_system_identifier).to.equal(vault.systemIdentifier)
       expect(keySystemItemsKey.keyTimestamp).to.not.be.undefined
       expect(keySystemItemsKey.keyVersion).to.not.be.undefined
     })
 
     it('should add item to offline vault', async () => {
-      const keySystemIdentifier = await vaults.createVault()
+      const vault = await vaults.createVault()
       const item = await context.createSyncedNote()
 
-      await vaults.addItemToVault(keySystemIdentifier, item)
+      await vaults.addItemToVault(vault, item)
 
       const updatedItem = context.items.findItem(item.uuid)
-      expect(updatedItem.key_system_identifier).to.equal(keySystemIdentifier)
+      expect(updatedItem.key_system_identifier).to.equal(vault.systemIdentifier)
     })
 
     it('should load data in the correct order at startup to allow vault items and their keys to decrypt', async () => {
       const appIdentifier = context.identifier
-      const keySystemIdentifier = await vaults.createVault()
+      const vault = await vaults.createVault()
       const note = await context.createSyncedNote('foo', 'bar')
-      await vaults.addItemToVault(keySystemIdentifier, note)
+      await vaults.addItemToVault(vault, note)
       await context.deinit()
 
       const recreatedContext = await Factory.createAppContextWithRealCrypto(appIdentifier)
@@ -68,9 +68,9 @@ describe('vaults', function () {
     describe('porting from offline to online', () => {
       it('should maintain vault system identifiers across items after registration', async () => {
         const appIdentifier = context.identifier
-        const keySystemIdentifier = await vaults.createVault()
+        const vault = await vaults.createVault()
         const note = await context.createSyncedNote('foo', 'bar')
-        await vaults.addItemToVault(keySystemIdentifier, note)
+        await vaults.addItemToVault(vault, note)
 
         await context.register()
         await context.sync()
@@ -86,16 +86,16 @@ describe('vaults', function () {
         const updatedNote = recreatedContext.items.findItem(note.uuid)
         expect(updatedNote.title).to.equal('foo')
         expect(updatedNote.text).to.equal('bar')
-        expect(updatedNote.key_system_identifier).to.equal(keySystemIdentifier)
+        expect(updatedNote.key_system_identifier).to.equal(vault.systemIdentifier)
 
         await recreatedContext.deinit()
       })
 
       it('should decrypt vault items', async () => {
         const appIdentifier = context.identifier
-        const keySystemIdentifier = await vaults.createVault()
+        const vault = await vaults.createVault()
         const note = await context.createSyncedNote('foo', 'bar')
-        await vaults.addItemToVault(keySystemIdentifier, note)
+        await vaults.addItemToVault(vault, note)
 
         await context.register()
         await context.sync()
@@ -120,33 +120,33 @@ describe('vaults', function () {
     })
 
     it('should create a vault', async () => {
-      const keySystemIdentifier = await vaults.createVault()
-      expect(keySystemIdentifier).to.not.be.undefined
+      const vault = await vaults.createVault()
+      expect(vault).to.not.be.undefined
 
-      const keySystemItemsKeys = context.items.getKeySystemItemsKeys(keySystemIdentifier)
+      const keySystemItemsKeys = context.items.getKeySystemItemsKeys(vault.systemIdentifier)
       expect(keySystemItemsKeys.length).to.equal(1)
 
       const keySystemItemsKey = keySystemItemsKeys[0]
       expect(keySystemItemsKey instanceof KeySystemItemsKey).to.be.true
-      expect(keySystemItemsKey.key_system_identifier).to.equal(keySystemIdentifier)
+      expect(keySystemItemsKey.key_system_identifier).to.equal(vault.systemIdentifier)
     })
 
     it('should add item to vault', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
-      const keySystemIdentifier = await vaults.createVault()
+      const vault = await vaults.createVault()
 
-      await vaults.addItemToVault(keySystemIdentifier, note)
+      await vaults.addItemToVault(vault, note)
 
       const updatedNote = context.items.findItem(note.uuid)
-      expect(updatedNote.key_system_identifier).to.equal(keySystemIdentifier)
+      expect(updatedNote.key_system_identifier).to.equal(vault.systemIdentifier)
     })
 
     describe('client timing', () => {
       it('should load data in the correct order at startup to allow vault items and their keys to decrypt', async () => {
         const appIdentifier = context.identifier
-        const keySystemIdentifier = await vaults.createVault()
+        const vault = await vaults.createVault()
         const note = await context.createSyncedNote('foo', 'bar')
-        await vaults.addItemToVault(keySystemIdentifier, note)
+        await vaults.addItemToVault(vault, note)
         await context.deinit()
 
         const recreatedContext = await Factory.createAppContextWithRealCrypto(appIdentifier)
@@ -162,21 +162,21 @@ describe('vaults', function () {
 
     describe('key system root key rotation', () => {
       it('rotating a key system root key should create a new vault items key', async () => {
-        const keySystemIdentifier = await vaults.createVault()
+        const vault = await vaults.createVault()
 
-        const keySystemItemsKey = context.items.getKeySystemItemsKeys(keySystemIdentifier)[0]
+        const keySystemItemsKey = context.items.getKeySystemItemsKeys(vault.systemIdentifier)[0]
 
-        await vaults.rotateKeySystemRootKey(keySystemIdentifier)
+        await vaults.rotateKeySystemRootKey(vault.systemIdentifier)
 
-        const updatedKeySystemItemsKey = context.items.getKeySystemItemsKeys(keySystemIdentifier)[0]
+        const updatedKeySystemItemsKey = context.items.getKeySystemItemsKeys(vault.systemIdentifier)[0]
 
         expect(updatedKeySystemItemsKey).to.not.be.undefined
         expect(updatedKeySystemItemsKey.uuid).to.not.equal(keySystemItemsKey.uuid)
       })
 
       it('should keep key system root key with greater keyTimestamp if conflict', async () => {
-        const keySystemIdentifier = await vaults.createVault()
-        const keySystemRootKey = context.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
+        const vault = await vaults.createVault()
+        const keySystemRootKey = context.items.getPrimaryKeySystemRootKey(vault.systemIdentifier)
 
         const otherClient = await Factory.createAppContextWithRealCrypto()
         await otherClient.launch()
@@ -195,7 +195,7 @@ describe('vaults', function () {
           mutator.mutableContent.keyTimestamp = olderTimestamp
         })
 
-        const otherKeySystemRootKey = otherClient.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
+        const otherKeySystemRootKey = otherClient.items.getPrimaryKeySystemRootKey(vault.systemIdentifier)
         await otherClient.items.changeItem(otherKeySystemRootKey, (mutator) => {
           mutator.mutableContent.key = 'new-vault-key'
           mutator.mutableContent.keyTimestamp = newerTimestamp
@@ -210,8 +210,8 @@ describe('vaults', function () {
         expect(context.items.getItems(ContentType.KeySystemRootKey).length).to.equal(1)
         expect(otherClient.items.getItems(ContentType.KeySystemRootKey).length).to.equal(1)
 
-        const keySystemRootKeyAfterSync = context.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
-        const otherKeySystemRootKeyAfterSync = otherClient.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
+        const keySystemRootKeyAfterSync = context.items.getPrimaryKeySystemRootKey(vault.systemIdentifier)
+        const otherKeySystemRootKeyAfterSync = otherClient.items.getPrimaryKeySystemRootKey(vault.systemIdentifier)
 
         expect(keySystemRootKeyAfterSync.keyTimestamp).to.equal(otherKeySystemRootKeyAfterSync.keyTimestamp)
         expect(keySystemRootKeyAfterSync.key).to.equal(otherKeySystemRootKeyAfterSync.key)
@@ -222,11 +222,11 @@ describe('vaults', function () {
       })
 
       it('deleting a vault should delete all its items', async () => {
-        const keySystemIdentifier = await vaults.createVault()
+        const vault = await vaults.createVault()
         const note = await context.createSyncedNote('foo', 'bar')
-        await vaults.addItemToVault(keySystemIdentifier, note)
+        await vaults.addItemToVault(vault, note)
 
-        await vaults.deleteVault(keySystemIdentifier)
+        await vaults.deleteVault(vault.systemIdentifier)
 
         const updatedNote = context.items.findItem(note.uuid)
         expect(updatedNote).to.be.undefined

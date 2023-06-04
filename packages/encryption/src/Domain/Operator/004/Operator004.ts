@@ -268,6 +268,10 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       baseData.ksi = payload.key_system_identifier
     }
 
+    if (payload.shared_vault_uuid) {
+      baseData.svu = payload.shared_vault_uuid
+    }
+
     if (ContentTypeUsesRootKeyEncryption(payload.content_type)) {
       return {
         ...baseData,
@@ -275,12 +279,14 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       }
     } else if (ItemContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
       if (!isKeySystemRootKey(key)) {
-        throw Error(`Attempting to use non-key system root key ${key.content_type} for item content type ${payload.content_type}`)
+        throw Error(
+          `Attempting to use non-key system root key ${key.content_type} for item content type ${payload.content_type}`,
+        )
       }
       return {
         ...baseData,
-        keySystemRootKeyTimestamp: key.keyTimestamp,
-        keySystemRootKeyVersion: key.keyVersion,
+        keyTimestamp: key.keyTimestamp,
+        keyVersion: key.keyVersion,
       }
     } else {
       if (!isItemsKey(key) && !isKeySystemItemsKey(key)) {

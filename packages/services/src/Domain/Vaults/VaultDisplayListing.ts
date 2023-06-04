@@ -2,6 +2,13 @@ import { KeySystemIdentifier } from '@standardnotes/models'
 
 export type VaultDisplayListing = {
   systemIdentifier: KeySystemIdentifier
-  name: string
-  description?: string
+  sharedVaultUuid?: string
+  ownerUserUuid?: string
+  decrypted?: {
+    name: string
+    description?: string
+  }
+  encrypted?: {
+    label: string
+  }
 }

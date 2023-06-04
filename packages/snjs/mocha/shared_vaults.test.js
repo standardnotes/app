@@ -5,7 +5,7 @@ import * as Collaboration from './lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('sharedVaults', function () {
+describe('shared vaults', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let application
@@ -32,23 +32,24 @@ describe('sharedVaults', function () {
   })
 
   const createSharedVaultWithAcceptedInvite = async (permissions = SharedVaultPermission.Write) => {
-    const { keySystemIdentifier, sharedVault, contact, contactContext, deinitContactContext } =
+    const { sharedVault, contact, contactContext, deinitContactContext } =
       await createSharedVaultWithUnacceptedButTrustedInvite(permissions)
 
     await Collaboration.acceptAllInvites(contactContext)
 
     await contactContext.awaitNextSyncSharedVaultFromScratchEvent()
 
-    return { keySystemIdentifier, sharedVault, contact, contactContext, deinitContactContext }
+    return { sharedVault, contact, contactContext, deinitContactContext }
   }
 
   const createSharedVaultWithAcceptedInviteAndNote = async (permissions = SharedVaultPermission.Write) => {
-    const { keySystemIdentifier, sharedVault, contactContext, contact, deinitContactContext } =
-      await createSharedVaultWithAcceptedInvite(permissions)
+    const { sharedVault, contactContext, contact, deinitContactContext } = await createSharedVaultWithAcceptedInvite(
+      permissions,
+    )
     const note = await context.createSyncedNote('foo', 'bar')
-    await addItemToVault(context, keySystemIdentifier, note)
+    await addItemToVault(context, sharedVault, note)
     await contactContext.sync()
-    return { keySystemIdentifier, sharedVault, note, contact, contactContext, deinitContactContext }
+    return { sharedVault, note, contact, contactContext, deinitContactContext }
   }
 
   const createSharedVaultWithUnacceptedButTrustedInvite = async (permissions = SharedVaultPermission.Write) => {
@@ -62,225 +63,211 @@ describe('sharedVaults', function () {
 
     await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
 
-    return { keySystemIdentifier, sharedVault, contact, contactContext, deinitContactContext, invite }
+    return { sharedVault, contact, contactContext, deinitContactContext, invite }
   }
 
-  const createVaultAndSharedVault = async () => {
-    const keySystemIdentifier = await vaults.createVault()
-    const sharedVault = await sharedVaults.createSharedVault({ keySystemIdentifier })
-    return { keySystemIdentifier, sharedVault }
+  const createSharedVault = async () => {
+    const sharedVault = await sharedVaults.createSharedVault('My Shared Vault')
+    return sharedVault
   }
 
-  const addItemToVault = async (contextToAddTo, keySystemIdentifier, item) => {
-    const promise = contextToAddTo.resolveWhenItemCompletesAddingToSharedVault(item)
-    await contextToAddTo.vaults.addItemToVault(keySystemIdentifier, item)
+  const addItemToVault = async (contextToAddTo, sharedVault, item) => {
+    const promise = contextToAddTo.resolveWhenItemCompletesAddingToVault(item)
+    await contextToAddTo.sharedVaults.addItemToVault(sharedVault, item)
     await promise
   }
 
-  describe('shared vaults via sharedVaults', () => {
-    it('should add item to sharedVault with no other members', async () => {
-      const note = await context.createSyncedNote('foo', 'bar')
+  it('should add item to shared vault with no other members', async () => {
+    const note = await context.createSyncedNote('foo', 'bar')
 
-      const { keySystemIdentifier, sharedVault } = await createVaultAndSharedVault()
+    const sharedVault = await createSharedVault()
 
-      await addItemToVault(context, keySystemIdentifier, note)
+    await addItemToVault(context, sharedVault, note)
 
-      const updatedNote = application.items.findItem(note.uuid)
-      expect(updatedNote.key_system_identifier).to.equal(keySystemIdentifier)
-      expect(updatedNote.shared_vault_uuid).to.equal(sharedVault.uuid)
+    const updatedNote = application.items.findItem(note.uuid)
+    expect(updatedNote.key_system_identifier).to.equal(keySystemIdentifier)
+    expect(updatedNote.shared_vault_uuid).to.equal(sharedVault.uuid)
+  })
+
+  it('should add item to shared vault with contact', async () => {
+    const note = await context.createSyncedNote('foo', 'bar')
+    const { sharedVault, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
+
+    await addItemToVault(context, sharedVault, note)
+
+    const updatedNote = application.items.findItem(note.uuid)
+    expect(updatedNote.key_system_identifier).to.equal(sharedVault.key_system_identifier)
+
+    await deinitContactContext()
+  })
+
+  it('should sync a sharedVault from scratch after accepting an invitation', async () => {
+    const sharedVault = await createSharedVault()
+
+    const note = await context.createSyncedNote('foo', 'bar')
+    await addItemToVault(context, sharedVault, note)
+
+    /** Create a mutually trusted contact */
+    const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
+    const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
+    await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
+
+    /** Sync the contact context so that they wouldn't naturally receive changes made before this point */
+    await contactContext.sync()
+
+    await sharedVaults.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
+
+    /** Contact should now sync and expect to find note */
+    const promise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
+    await contactContext.sync()
+    await Collaboration.acceptAllInvites(contactContext)
+    await promise
+
+    const receivedNote = contactContext.application.items.findItem(note.uuid)
+    expect(receivedNote).to.not.be.undefined
+    expect(receivedNote.title).to.equal('foo')
+    expect(receivedNote.text).to.equal(note.text)
+
+    await deinitContactContext()
+  })
+
+  it('should remove sharedVault member', async () => {
+    const { sharedVault, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
+
+    const originalSharedVaultUsers = await sharedVaults.getSharedVaultUsers(sharedVault.uuid)
+    expect(originalSharedVaultUsers.length).to.equal(2)
+
+    const result = await sharedVaults.removeUserFromSharedVault(sharedVault.uuid, contactContext.userUuid)
+
+    expect(isClientDisplayableError(result)).to.be.false
+
+    const updatedSharedVaultUsers = await sharedVaults.getSharedVaultUsers(sharedVault.uuid)
+    expect(updatedSharedVaultUsers.length).to.equal(1)
+
+    await deinitContactContext()
+  })
+
+  it('non-admin user should not be able to invite user', async () => {
+    const { sharedVault, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInviteAndNote()
+
+    const thirdParty = await Collaboration.createContactContext()
+    const thirdPartyContact = await Collaboration.createTrustedContactForUserOfContext(
+      contactContext,
+      thirdParty.contactContext,
+    )
+    const result = await contactContext.sharedVaults.inviteContactToSharedVault(
+      sharedVault,
+      thirdPartyContact,
+      SharedVaultPermission.Write,
+    )
+
+    expect(isClientDisplayableError(result)).to.be.true
+
+    await deinitContactContext()
+  })
+
+  it('should not be able to leave sharedVault as creator', async () => {
+    const { sharedVault } = await createSharedVault()
+
+    const result = await sharedVaults.removeUserFromSharedVault(sharedVault.uuid, context.userUuid)
+
+    expect(isClientDisplayableError(result)).to.be.true
+  })
+
+  it('should be able to leave sharedVault as added admin', async () => {
+    const { sharedVault, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite(
+      SharedVaultPermission.Admin,
+    )
+
+    const result = await contactContext.sharedVaults.leaveSharedVault(sharedVault.uuid)
+
+    expect(isClientDisplayableError(result)).to.be.false
+
+    await deinitContactContext()
+  })
+
+  it('leaving a sharedVault should remove its items locally', async () => {
+    const { sharedVault, note, contactContext, deinitContactContext } =
+      await createSharedVaultWithAcceptedInviteAndNote(SharedVaultPermission.Admin)
+
+    const originalNote = contactContext.application.items.findItem(note.uuid)
+    expect(originalNote).to.not.be.undefined
+
+    await contactContext.sharedVaults.leaveSharedVault(sharedVault.uuid)
+
+    const updatedContactNote = contactContext.application.items.findItem(note.uuid)
+    expect(updatedContactNote).to.be.undefined
+
+    await deinitContactContext()
+  })
+
+  it('leaving or being removed from sharedVault should remove sharedVault items locally', async () => {
+    const { sharedVault, note, contactContext, deinitContactContext } =
+      await createSharedVaultWithAcceptedInviteAndNote()
+
+    const contactNote = contactContext.application.items.findItem(note.uuid)
+    expect(contactNote).to.not.be.undefined
+
+    await context.sharedVaults.removeUserFromSharedVault(sharedVault.uuid, contactContext.userUuid)
+
+    await contactContext.sync()
+    await contactContext.sharedVaults.reloadRemovedSharedVaults()
+
+    const updatedContactNote = contactContext.application.items.findItem(note.uuid)
+    expect(updatedContactNote).to.be.undefined
+
+    await deinitContactContext()
+  })
+
+  it('canceling an invite should remove it from recipient pending invites', async () => {
+    const { invite, contactContext, deinitContactContext } = await createSharedVaultWithUnacceptedButTrustedInvite()
+
+    const preInvites = await contactContext.sharedVaults.downloadInboundInvites()
+    expect(preInvites.length).to.equal(1)
+
+    await sharedVaults.deleteInvite(invite)
+
+    const postInvites = await contactContext.sharedVaults.downloadInboundInvites()
+    expect(postInvites.length).to.equal(0)
+
+    await deinitContactContext()
+  })
+
+  it('should update vault name and description', async () => {
+    const { sharedVault, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
+
+    const promise = context.resolveWhenSharedVaultChangeInvitesAreSent(sharedVault.uuid)
+    await vaults.changeVaultNameAndDescription(sharedVault.key_system_identifier, {
+      name: 'new vault name',
+      description: 'new vault description',
     })
+    await promise
 
-    it('should add item to sharedVault with contact', async () => {
-      const note = await context.createSyncedNote('foo', 'bar')
-      const { keySystemIdentifier, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
+    const vaultInfo = vaults.getVaultInfo(sharedVault.key_system_identifier)
+    expect(vaultInfo.vaultName).to.equal('new vault name')
+    expect(vaultInfo.vaultDescription).to.equal('new vault description')
 
-      await addItemToVault(context, keySystemIdentifier, note)
+    await contactContext.sync()
 
-      const updatedNote = application.items.findItem(note.uuid)
-      expect(updatedNote.key_system_identifier).to.equal(keySystemIdentifier)
+    const contactVaultInfo = contactContext.vaults.getVaultInfo(sharedVault.key_system_identifier)
+    expect(contactVaultInfo.vaultName).to.equal('new vault name')
+    expect(contactVaultInfo.vaultDescription).to.equal('new vault description')
 
-      await deinitContactContext()
-    })
-
-    it('should sync a sharedVault from scratch after accepting an invitation', async () => {
-      const { keySystemIdentifier, sharedVault } = await createVaultAndSharedVault()
-
-      const note = await context.createSyncedNote('foo', 'bar')
-      await addItemToVault(context, keySystemIdentifier, note)
-
-      /** Create a mutually trusted contact */
-      const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
-      const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
-      await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
-
-      /** Sync the contact context so that they wouldn't naturally receive changes made before this point */
-      await contactContext.sync()
-
-      await sharedVaults.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
-
-      /** Contact should now sync and expect to find note */
-      const promise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
-      await contactContext.sync()
-      await Collaboration.acceptAllInvites(contactContext)
-      await promise
-
-      const receivedNote = contactContext.application.items.findItem(note.uuid)
-      expect(receivedNote).to.not.be.undefined
-      expect(receivedNote.title).to.equal('foo')
-      expect(receivedNote.text).to.equal(note.text)
-
-      await deinitContactContext()
-    })
-
-    it('should remove sharedVault member', async () => {
-      const { sharedVault, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
-
-      const originalSharedVaultUsers = await sharedVaults.getSharedVaultUsers(sharedVault.uuid)
-      expect(originalSharedVaultUsers.length).to.equal(2)
-
-      const result = await sharedVaults.removeUserFromSharedVault(sharedVault.uuid, contactContext.userUuid)
-
-      expect(isClientDisplayableError(result)).to.be.false
-
-      const updatedSharedVaultUsers = await sharedVaults.getSharedVaultUsers(sharedVault.uuid)
-      expect(updatedSharedVaultUsers.length).to.equal(1)
-
-      await deinitContactContext()
-    })
-
-    it('non-admin user should not be able to invite user', async () => {
-      const { sharedVault, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInviteAndNote()
-
-      const thirdParty = await Collaboration.createContactContext()
-      const thirdPartyContact = await Collaboration.createTrustedContactForUserOfContext(
-        contactContext,
-        thirdParty.contactContext,
-      )
-      const result = await contactContext.sharedVaults.inviteContactToSharedVault(
-        sharedVault,
-        thirdPartyContact,
-        SharedVaultPermission.Write,
-      )
-
-      expect(isClientDisplayableError(result)).to.be.true
-
-      await deinitContactContext()
-    })
-
-    it('should not be able to leave sharedVault as creator', async () => {
-      const { sharedVault } = await createVaultAndSharedVault()
-
-      const result = await sharedVaults.removeUserFromSharedVault(sharedVault.uuid, context.userUuid)
-
-      expect(isClientDisplayableError(result)).to.be.true
-    })
-
-    it('should be able to leave sharedVault as added admin', async () => {
-      const { sharedVault, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite(
-        SharedVaultPermission.Admin,
-      )
-
-      const result = await contactContext.sharedVaults.leaveSharedVault(sharedVault.uuid)
-
-      expect(isClientDisplayableError(result)).to.be.false
-
-      await deinitContactContext()
-    })
-
-    it('leaving a sharedVault should remove its items locally', async () => {
-      const { sharedVault, note, contactContext, deinitContactContext } =
-        await createSharedVaultWithAcceptedInviteAndNote(SharedVaultPermission.Admin)
-
-      const originalNote = contactContext.application.items.findItem(note.uuid)
-      expect(originalNote).to.not.be.undefined
-
-      await contactContext.sharedVaults.leaveSharedVault(sharedVault.uuid)
-
-      const updatedContactNote = contactContext.application.items.findItem(note.uuid)
-      expect(updatedContactNote).to.be.undefined
-
-      await deinitContactContext()
-    })
-
-    it('leaving or being removed from sharedVault should remove sharedVault items locally', async () => {
-      const { sharedVault, note, contactContext, deinitContactContext } =
-        await createSharedVaultWithAcceptedInviteAndNote()
-
-      const contactNote = contactContext.application.items.findItem(note.uuid)
-      expect(contactNote).to.not.be.undefined
-
-      await context.sharedVaults.removeUserFromSharedVault(sharedVault.uuid, contactContext.userUuid)
-
-      await contactContext.sync()
-      await contactContext.sharedVaults.reloadRemovedSharedVaults()
-
-      const updatedContactNote = contactContext.application.items.findItem(note.uuid)
-      expect(updatedContactNote).to.be.undefined
-
-      await deinitContactContext()
-    })
-
-    it('should return invited to sharedVaults when fetching sharedVaults from server', async () => {
-      const { contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
-
-      const sharedVaults = await contactContext.sharedVaults.reloadRemoteSharedVaults()
-
-      expect(sharedVaults.length).to.equal(1)
-
-      await deinitContactContext()
-    })
-
-    it('canceling an invite should remove it from recipient pending invites', async () => {
-      const { invite, contactContext, deinitContactContext } = await createSharedVaultWithUnacceptedButTrustedInvite()
-
-      const preInvites = await contactContext.sharedVaults.downloadInboundInvites()
-      expect(preInvites.length).to.equal(1)
-
-      await sharedVaults.deleteInvite(invite)
-
-      const postInvites = await contactContext.sharedVaults.downloadInboundInvites()
-      expect(postInvites.length).to.equal(0)
-
-      await deinitContactContext()
-    })
-
-    it('should update vault name and description', async () => {
-      const { keySystemIdentifier, sharedVault, contactContext, deinitContactContext } =
-        await createSharedVaultWithAcceptedInvite()
-
-      const promise = context.resolveWhenSharedVaultChangeInvitesAreSent(sharedVault.uuid)
-      await vaults.changeVaultNameAndDescription(keySystemIdentifier, {
-        name: 'new vault name',
-        description: 'new vault description',
-      })
-      await promise
-
-      const vaultInfo = vaults.getVaultInfo(keySystemIdentifier)
-      expect(vaultInfo.vaultName).to.equal('new vault name')
-      expect(vaultInfo.vaultDescription).to.equal('new vault description')
-
-      await contactContext.sync()
-
-      const contactVaultInfo = contactContext.vaults.getVaultInfo(keySystemIdentifier)
-      expect(contactVaultInfo.vaultName).to.equal('new vault name')
-      expect(contactVaultInfo.vaultDescription).to.equal('new vault description')
-
-      await deinitContactContext()
-    })
+    await deinitContactContext()
   })
 
   describe('item collaboration', () => {
     it('received items from previously trusted contact should be decrypted', async () => {
       const note = await context.createSyncedNote('foo', 'bar')
       const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
-      const { keySystemIdentifier, sharedVault } = await createVaultAndSharedVault()
+      const sharedVault = await createSharedVault()
 
       await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
       const currentContextContact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
 
       contactContext.lockSyncing()
       await sharedVaults.inviteContactToSharedVault(sharedVault, currentContextContact, SharedVaultPermission.Write)
-      await addItemToVault(context, keySystemIdentifier, note)
+      await addItemToVault(context, sharedVault, note)
 
       const promise = contactContext.awaitNextSyncSharedVaultFromScratchEvent()
       contactContext.unlockSyncing()
@@ -300,10 +287,9 @@ describe('sharedVaults', function () {
     })
 
     it('sharedVault creator should receive changes from other members', async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
-        await createSharedVaultWithAcceptedInvite()
+      const { keySystemIdentifier, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
       const note = await context.createSyncedNote('foo', 'bar')
-      await addItemToVault(context, keySystemIdentifier, note)
+      await addItemToVault(context, sharedVault, note)
       await contactContext.sync()
 
       await contactContext.items.changeItem({ uuid: note.uuid }, (mutator) => {
@@ -356,7 +342,7 @@ describe('sharedVaults', function () {
       await context.changeNoteTitle(note, 'new title first client')
       await contactContext.changeNoteTitle(note, 'new title second client')
 
-      const doneAddingConflictToSharedVault = contactContext.resolveWhenItemCompletesAddingToSharedVault()
+      const doneAddingConflictToSharedVault = contactContext.resolveWhenItemCompletesAddingToVault()
 
       await context.sync({ desc: 'First client sync' })
       await contactContext.sync({
@@ -385,7 +371,7 @@ describe('sharedVaults', function () {
       await context.changeNoteTitle(note, 'new title first client')
       await contactContext.changeNoteTitle(note, 'new title second client')
 
-      const doneAddingConflictToSharedVault = contactContext.resolveWhenItemCompletesAddingToSharedVault()
+      const doneAddingConflictToSharedVault = contactContext.resolveWhenItemCompletesAddingToVault()
 
       await context.sync({ desc: 'First client sync' })
       await contactContext.sync({
@@ -474,7 +460,7 @@ describe('sharedVaults', function () {
 
   describe('invites', () => {
     it('should invite contact to vault', async () => {
-      const { keySystemIdentifier, sharedVault } = await createVaultAndSharedVault()
+      const sharedVault = await createSharedVault()
       const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
       const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
 
@@ -498,7 +484,7 @@ describe('sharedVaults', function () {
     it('received invites from untrusted contact should not be trusted', async () => {
       await context.createSyncedNote('foo', 'bar')
       const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
-      const { keySystemIdentifier, sharedVault } = await createVaultAndSharedVault()
+      const sharedVault = await createSharedVault()
 
       const currentContextContact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
       await sharedVaults.inviteContactToSharedVault(sharedVault, currentContextContact, SharedVaultPermission.Write)
@@ -514,7 +500,7 @@ describe('sharedVaults', function () {
     it('received invites from contact who becomes trusted after receipt of invite should be trusted', async () => {
       await context.createSyncedNote('foo', 'bar')
       const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
-      const { keySystemIdentifier, sharedVault } = await createVaultAndSharedVault()
+      const sharedVault = await createSharedVault()
 
       const currentContextContact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
       await sharedVaults.inviteContactToSharedVault(sharedVault, currentContextContact, SharedVaultPermission.Write)
@@ -563,7 +549,7 @@ describe('sharedVaults', function () {
 
   describe('user credentials change', () => {
     it('should reupload all outbound invites when inviter keypair changes', async () => {
-      const { keySystemIdentifier, sharedVault } = await createVaultAndSharedVault()
+      const sharedVault = await createSharedVault()
       const { contactContext, deinitContactContext } = await Collaboration.createContactContext()
       const contact = await Collaboration.createTrustedContactForUserOfContext(context, contactContext)
       await sharedVaults.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
@@ -586,8 +572,7 @@ describe('sharedVaults', function () {
 
   describe('key system root key rotation', () => {
     it("rotating a vault's key should send a key-change invite to all members", async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
-        await createSharedVaultWithAcceptedInvite()
+      const { keySystemIdentifier, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
       contactContext.lockSyncing()
 
       await vaults.rotateKeySystemRootKey(keySystemIdentifier)
@@ -628,8 +613,7 @@ describe('sharedVaults', function () {
     })
 
     it('should update both pending join and key-change invites instead of creating new ones', async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
-        await createSharedVaultWithAcceptedInvite()
+      const { keySystemIdentifier, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
       contactContext.lockSyncing()
 
       const thirdParty = await Collaboration.createContactContext()
@@ -655,8 +639,7 @@ describe('sharedVaults', function () {
     })
 
     it('key change invites should be automatically accepted by trusted contacts', async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
-        await createSharedVaultWithAcceptedInvite()
+      const { keySystemIdentifier, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
       contactContext.lockSyncing()
 
       await vaults.rotateKeySystemRootKey(keySystemIdentifier)
@@ -672,8 +655,7 @@ describe('sharedVaults', function () {
     })
 
     it('should rotate key system root key after removing vault member', async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
-        await createSharedVaultWithAcceptedInvite()
+      const { keySystemIdentifier, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
 
       const originalKeySystemRootKey = context.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
 
@@ -690,7 +672,7 @@ describe('sharedVaults', function () {
 
   describe('permissions', async () => {
     it('should not be able to update a vault with a keyTimestamp lower than the current one', async () => {
-      const { keySystemIdentifier, sharedVault } = await createVaultAndSharedVault()
+      const sharedVault = await createSharedVault()
       const keySystemRootKey = context.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
 
       const result = await sharedVaults.updateSharedVault({
@@ -727,7 +709,7 @@ describe('sharedVaults', function () {
     })
 
     it('attempting to save item using an old vault items key should result in SharedVaultInvalidItemsKey conflict', async () => {
-      const { keySystemIdentifier, sharedVault } = await createVaultAndSharedVault()
+      const sharedVault = await createSharedVault()
 
       const note = await context.createSyncedNote('foo', 'bar')
       await context.addItemToVault(context, keySystemIdentifier, note)
@@ -753,7 +735,7 @@ describe('sharedVaults', function () {
     })
 
     it("should use the cached sharedVault's specified items key when choosing which key to encrypt vault items with", async () => {
-      const { keySystemIdentifier, sharedVault } = await createVaultAndSharedVault()
+      const sharedVault = await createSharedVault()
 
       const firstKeySystemItemsKey = context.items.getKeySystemItemsKeys(keySystemIdentifier)[0]
 
@@ -789,8 +771,7 @@ describe('sharedVaults', function () {
     })
 
     it('non-admin user should not be able to create or update vault items keys with the server', async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
-        await createSharedVaultWithAcceptedInvite()
+      const { keySystemIdentifier, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
 
       const keySystemItemsKey = contactContext.items.getKeySystemItemsKeys(keySystemIdentifier)[0]
 
@@ -807,11 +788,10 @@ describe('sharedVaults', function () {
     })
 
     it("vault user should not be able to change an item using an items key that does not match the vault's specified items key", async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
-        await createSharedVaultWithAcceptedInvite()
+      const { keySystemIdentifier, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
 
       const note = await context.createSyncedNote('foo', 'bar')
-      await addItemToVault(context, keySystemIdentifier, note)
+      await addItemToVault(context, sharedVault, note)
       await contactContext.sync()
 
       const newItemsKeyUuid = UuidGenerator.GenerateUuid()
@@ -834,8 +814,8 @@ describe('sharedVaults', function () {
 
       expect(conflicts.length).to.equal(2)
       expect(conflicts.find((conflict) => conflict.unsaved_item.content_type === ContentType.Note)).to.not.be.undefined
-      expect(conflicts.find((conflict) => conflict.unsaved_item.content_type === ContentType.KeySystemItemsKey)).to.not.be
-        .undefined
+      expect(conflicts.find((conflict) => conflict.unsaved_item.content_type === ContentType.KeySystemItemsKey)).to.not
+        .be.undefined
 
       await deinitContactContext()
     })
@@ -845,7 +825,7 @@ describe('sharedVaults', function () {
         SharedVaultPermission.Read,
       )
       const note = await context.createSyncedNote('foo', 'bar')
-      await addItemToVault(context, keySystemIdentifier, note)
+      await addItemToVault(context, sharedVault, note)
       await contactContext.sync()
 
       await contactContext.items.changeItem({ uuid: note.uuid }, (mutator) => {
@@ -863,8 +843,7 @@ describe('sharedVaults', function () {
     })
 
     it('should be able to move item from vault to user as a write user if the item belongs to me', async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
-        await createSharedVaultWithAcceptedInvite()
+      const { keySystemIdentifier, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
 
       const note = await contactContext.createSyncedNote('foo', 'bar')
       await contactContext.addItemToVault(context, keySystemIdentifier, note)
@@ -907,8 +886,7 @@ describe('sharedVaults', function () {
     })
 
     it('should created a non-vaulted copy if admin attempts to move item from vault to user if the item belongs to someone else', async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
-        await createSharedVaultWithAcceptedInvite()
+      const { keySystemIdentifier, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
 
       const note = await contactContext.createSyncedNote('foo', 'bar')
       await contactContext.addItemToVault(context, keySystemIdentifier, note)
@@ -991,7 +969,7 @@ describe('sharedVaults', function () {
     })
 
     it('should be able to upload and download file to vault as owner', async () => {
-      const { keySystemIdentifier, sharedVault } = await createVaultAndSharedVault()
+      const sharedVault = await createSharedVault()
       const response = await fetch('/mocha/assets/small_file.md')
       const buffer = new Uint8Array(await response.arrayBuffer())
       const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, keySystemIdentifier)
@@ -1011,7 +989,7 @@ describe('sharedVaults', function () {
 
       const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
 
-      const { keySystemIdentifier, sharedVault } = await createVaultAndSharedVault()
+      const sharedVault = await createSharedVault()
       const addedFile = await vaults.addItemToVault(keySystemIdentifier, uploadedFile)
 
       const downloadedBytes = await Files.downloadFile(context.files, addedFile)
@@ -1022,7 +1000,7 @@ describe('sharedVaults', function () {
       const response = await fetch('/mocha/assets/small_file.md')
       const buffer = new Uint8Array(await response.arrayBuffer())
 
-      const { keySystemIdentifier, sharedVault } = await createVaultAndSharedVault()
+      const sharedVault = await createSharedVault()
       const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, keySystemIdentifier)
 
       const removedFile = await vaults.removeItemFromVault(uploadedFile)
@@ -1033,8 +1011,7 @@ describe('sharedVaults', function () {
     })
 
     it('should be able to download vault file as collaborator', async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
-        await createSharedVaultWithAcceptedInvite()
+      const { keySystemIdentifier, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
       const response = await fetch('/mocha/assets/small_file.md')
       const buffer = new Uint8Array(await response.arrayBuffer())
       const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, keySystemIdentifier)
@@ -1052,8 +1029,7 @@ describe('sharedVaults', function () {
     })
 
     it('should be able to upload vault file as collaborator', async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
-        await createSharedVaultWithAcceptedInvite()
+      const { keySystemIdentifier, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
       const response = await fetch('/mocha/assets/small_file.md')
       const buffer = new Uint8Array(await response.arrayBuffer())
 
@@ -1121,8 +1097,7 @@ describe('sharedVaults', function () {
     })
 
     it('should be able to download recently moved vault file as collaborator', async () => {
-      const { keySystemIdentifier, contactContext, deinitContactContext } =
-        await createSharedVaultWithAcceptedInvite()
+      const { keySystemIdentifier, contactContext, deinitContactContext } = await createSharedVaultWithAcceptedInvite()
       const response = await fetch('/mocha/assets/small_file.md')
       const buffer = new Uint8Array(await response.arrayBuffer())
       const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
