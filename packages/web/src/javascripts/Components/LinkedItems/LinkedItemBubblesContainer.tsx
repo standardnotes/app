@@ -23,6 +23,7 @@ type Props = {
     base?: string
     withToggle?: string
   }
+  isCollapsedByDefault?: boolean
 }
 
 const LinkedItemBubblesContainer = ({
@@ -31,6 +32,7 @@ const LinkedItemBubblesContainer = ({
   hideToggle = false,
   readonly = false,
   className = {},
+  isCollapsedByDefault = false,
 }: Props) => {
   const { toggleAppPane } = useResponsiveAppPane()
 
@@ -117,7 +119,7 @@ const LinkedItemBubblesContainer = ({
     )
   }
 
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [isCollapsed, setIsCollapsed] = useState(() => isCollapsedByDefault)
 
   const itemsToDisplay = allItemsLinkedToItem.concat(notesLinkingToItem).concat(filesLinkingToItem)
   const visibleItems = isCollapsed ? itemsToDisplay.slice(0, 5) : itemsToDisplay
@@ -163,7 +165,7 @@ const LinkedItemBubblesContainer = ({
   return (
     <div
       className={classNames(
-        'flex w-full justify-between',
+        'flex w-full flex-wrap justify-between md:flex-nowrap',
         itemsToDisplay.length > 0 && !shouldHideToggle ? 'pt-2 ' + className.withToggle : undefined,
         isCollapsed ? 'gap-4' : 'gap-1',
         className.base,
@@ -171,9 +173,10 @@ const LinkedItemBubblesContainer = ({
     >
       <div
         className={classNames(
-          'note-view-linking-container flex min-w-80 max-w-full items-center gap-2 bg-transparent md:-mr-2',
+          'note-view-linking-container flex min-w-80 max-w-full items-center gap-2 bg-transparent',
           allItemsLinkedToItem.length || notesLinkingToItem.length ? 'mt-1' : 'mt-0.5',
           isCollapsed ? 'overflow-hidden' : 'flex-wrap',
+          !shouldHideToggle && 'mr-2',
         )}
         ref={setLinkContainer}
       >
@@ -211,7 +214,6 @@ const LinkedItemBubblesContainer = ({
             setIsCollapsed((isCollapsed) => !isCollapsed)
           }}
           icon={isCollapsed ? 'chevron-down' : 'chevron-left'}
-          className="ml-2"
         />
       )}
     </div>

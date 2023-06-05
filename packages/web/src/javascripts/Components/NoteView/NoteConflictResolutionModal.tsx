@@ -52,6 +52,8 @@ const NoteContent = ({ note }: { note: SNNote }) => {
   const application = useApplication()
   const linkingController = useLinkingController()
 
+  const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
+
   const componentViewer = useMemo(() => {
     const editorForCurrentNote = note ? application.componentManager.editorForNote(note) : undefined
 
@@ -77,7 +79,7 @@ const NoteContent = ({ note }: { note: SNNote }) => {
   }, [application, componentViewer])
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
+    <div className="flex h-full flex-grow flex-col overflow-hidden">
       <div className="w-full px-4 pt-4 text-base font-bold">
         <div className="title">{note.title}</div>
       </div>
@@ -86,6 +88,7 @@ const NoteContent = ({ note }: { note: SNNote }) => {
         linkingController={linkingController}
         readonly
         className={{ base: 'mt-2 px-4', withToggle: '!mt-1 !pt-0' }}
+        isCollapsedByDefault={isMobileScreen}
       />
       {componentViewer ? (
         <div className="component-view">
@@ -219,31 +222,65 @@ const NoteConflictResolutionModal = ({
   const listRef = useRef<HTMLDivElement>(null)
   useListKeyboardNavigation(listRef)
 
+  const [selectedMobileTab, setSelectedMobileTab] = useState<'list' | 'content'>('list')
+
   return (
     <Modal
       title="Resolve conflicts"
       className={{
         content: 'md:h-full md:w-[70vw]',
-        description: 'flex',
+        description: 'flex flex-col md:flex-row',
       }}
       actions={actions}
       close={close}
     >
+      <div className="flex border-b border-border md:hidden">
+        <button
+          className={classNames(
+            'relative cursor-pointer border-0 bg-default px-3 py-2.5 text-sm focus:shadow-inner',
+            selectedMobileTab === 'list' ? 'font-medium text-info shadow-bottom' : 'text-text',
+          )}
+          onClick={() => {
+            setSelectedMobileTab('list')
+          }}
+        >
+          List
+        </button>
+        <button
+          className={classNames(
+            'relative cursor-pointer border-0 bg-default px-3 py-2.5 text-sm focus:shadow-inner',
+            selectedMobileTab === 'content' ? 'font-medium text-info shadow-bottom' : 'text-text',
+          )}
+          onClick={() => {
+            setSelectedMobileTab('content')
+          }}
+        >
+          Content
+        </button>
+      </div>
       <div
-        className="w-full overflow-y-auto border-r border-border py-1.5 md:flex md:w-auto md:min-w-60 md:flex-col"
+        className={classNames(
+          'w-full overflow-y-auto border-r border-border py-1.5 md:flex md:w-auto md:min-w-60 md:flex-col',
+          selectedMobileTab !== 'list' && 'hidden md:flex',
+        )}
         ref={listRef}
       >
         {allVersions.map((note, index) => (
           <ConflictListItem
             isSelected={selectedVersion === note.uuid}
-            onClick={() => setSelectedVersion(note.uuid)}
+            onClick={() => {
+              setSelectedVersion(note.uuid)
+              setSelectedMobileTab('content')
+            }}
             key={note.uuid}
             title={index === 0 ? 'Current version' : `Version ${index + 1}`}
             note={note}
           />
         ))}
       </div>
-      <div className="flex-grow">{selectedNote && <NoteContent note={selectedNote} />}</div>
+      <div className={classNames('w-full flex-grow', selectedMobileTab === 'content' ? 'flex' : 'hidden md:flex')}>
+        {selectedNote && <NoteContent note={selectedNote} />}
+      </div>
     </Modal>
   )
 }

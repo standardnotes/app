@@ -861,6 +861,8 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         ? 'component'
         : 'plain'
 
+    const shouldShowConflictsButton = this.state.conflictedNotes.length > 0
+
     return (
       <div aria-label="Note" className="section editor sn-component h-full md:max-h-full" ref={this.noteViewElementRef}>
         {this.note && (
@@ -884,7 +886,12 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
             id="editor-title-bar"
             className="content-title-bar section-title-bar z-editor-title-bar w-full bg-default pt-4"
           >
-            <div className="mb-2 flex flex-wrap items-start justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-4 xl:items-center">
+            <div
+              className={classNames(
+                'mb-2 flex flex-wrap justify-between gap-2 md:mb-0 md:flex-nowrap md:gap-4 xl:items-center',
+                shouldShowConflictsButton ? 'items-center' : 'items-start',
+              )}
+            >
               <div className={classNames(this.state.noteLocked && 'locked', 'flex flex-grow items-center')}>
                 <MobileItemsListButton />
                 <div className="title flex-grow overflow-auto">
@@ -908,7 +915,7 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
                   updateSavingIndicator={this.state.updateSavingIndicator}
                 />
               </div>
-              {this.state.conflictedNotes.length > 0 && (
+              {shouldShowConflictsButton && (
                 <Button
                   className="flex items-center"
                   primary
