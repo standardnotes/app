@@ -2,14 +2,11 @@ import { AppState } from './../../../AppState'
 import { DesktopServerManagerInterface, DesktopServerStatus } from '@web/Application/Device/DesktopSnjsExports'
 import { StoreKeys } from '../Store/StoreKeys'
 import { Paths } from '../Types/Paths'
-import { CommandService } from './CommandService'
 import { HomeServerInterface } from '@standardnotes/home-server'
 
 const os = require('os')
 
 export class LocalServiceManager implements DesktopServerManagerInterface {
-  private commandService = new CommandService()
-
   constructor(private appState: AppState, private homeServer: HomeServerInterface) {}
 
   private getLocalIP() {
