@@ -9,10 +9,11 @@ import {
   KeySystemRootKeyContentSpecialized,
   TrustedContactInterface,
   KeySystemIdentifier,
+  SharedVaultDisplayListing,
+  VaultDisplayListing,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
-import { SharedVaultDisplayListing, VaultDisplayListing } from '../Vaults/VaultDisplayListing'
 
 export interface SharedVaultServiceInterface
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload> {

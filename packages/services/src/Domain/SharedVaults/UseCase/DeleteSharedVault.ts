@@ -1,7 +1,7 @@
 import { ClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
 import { SharedVaultServerInterface } from '@standardnotes/api'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { SharedVaultDisplayListing } from '../../Vaults/VaultDisplayListing'
+import { SharedVaultDisplayListing } from '@standardnotes/models'
 import { SyncServiceInterface } from '../../Sync/SyncServiceInterface'
 
 export class DeleteSharedVaultUseCase {

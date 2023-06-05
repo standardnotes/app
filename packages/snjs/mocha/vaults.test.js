@@ -226,7 +226,7 @@ describe('vaults', function () {
         const note = await context.createSyncedNote('foo', 'bar')
         await vaults.addItemToVault(vault, note)
 
-        await vaults.deleteVault(vault.systemIdentifier)
+        await vaults.deleteVault(vault)
 
         const updatedNote = context.items.findItem(note.uuid)
         expect(updatedNote).to.be.undefined

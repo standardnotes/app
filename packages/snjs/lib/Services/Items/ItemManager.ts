@@ -782,13 +782,14 @@ export class ItemManager
     contentType: ContentType,
     content: C,
     needsSync = false,
-    vaultUuid?: string,
+    vault?: Models.VaultDisplayListing,
   ): Promise<T> {
     const payload = new Models.DecryptedPayload<C>({
       uuid: UuidGenerator.GenerateUuid(),
       content_type: contentType,
       content: Models.FillItemContent<C>(content),
-      key_system_identifier: vaultUuid,
+      key_system_identifier: vault?.systemIdentifier,
+      shared_vault_uuid: vault && Models.isSharedVaultDisplayListing(vault) ? vault.sharedVaultUuid : undefined,
       dirty: needsSync,
       ...Models.PayloadTimestampDefaults(),
     })

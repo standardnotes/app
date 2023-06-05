@@ -4,7 +4,7 @@ import { ClientDisplayableError, SharedVaultInviteServerHash, isErrorResponse } 
 import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { SuccessfullyChangedCredentialsEventData } from '../../Session/SuccessfullyChangedCredentialsEventData'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { SharedVaultDisplayListing } from '../../Vaults/VaultDisplayListing'
+import { SharedVaultDisplayListing } from '@standardnotes/models'
 
 /**
  * When the local client initiates a change of credentials, it is also responsible for

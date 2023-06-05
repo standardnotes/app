@@ -1,8 +1,12 @@
 import { ClientDisplayableError } from '@standardnotes/responses'
-import { DecryptedItemInterface, KeySystemRootKeyInterface, KeySystemIdentifier } from '@standardnotes/models'
+import {
+  DecryptedItemInterface,
+  KeySystemRootKeyInterface,
+  KeySystemIdentifier,
+  VaultDisplayListing,
+} from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { VaultServiceEvent, VaultServiceEventPayload } from './VaultServiceEvent'
-import { VaultDisplayListing } from './VaultDisplayListing'
 
 export interface VaultServiceInterface
   extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]> {

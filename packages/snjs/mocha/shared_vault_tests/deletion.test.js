@@ -4,7 +4,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.skip('shared vault deletion', function () {
+describe('shared vault deletion', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context

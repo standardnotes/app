@@ -1,5 +1,5 @@
-export async function uploadFile(fileService, buffer, name, ext, chunkSize, vaultUuid) {
-  const operation = await fileService.beginNewFileUpload(buffer.byteLength, vaultUuid)
+export async function uploadFile(fileService, buffer, name, ext, chunkSize, vault) {
+  const operation = await fileService.beginNewFileUpload(buffer.byteLength, vault)
 
   let chunkId = 1
   for (let i = 0; i < buffer.length; i += chunkSize) {

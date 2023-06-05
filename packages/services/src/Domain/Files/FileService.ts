@@ -14,6 +14,9 @@ import {
   FileContent,
   EncryptedPayload,
   isEncryptedPayload,
+  VaultDisplayListing,
+  isSharedVaultDisplayListing,
+  SharedVaultDisplayListing,
 } from '@standardnotes/models'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { spaceSeparatedStrings, UuidGenerator } from '@standardnotes/utils'
@@ -132,9 +135,12 @@ export class FileService extends AbstractService implements FilesClientInterface
     return valetTokenResponse.data.valetToken
   }
 
-  public async moveFileToSharedVault(file: FileItem, sharedVaultUuid: string): Promise<void | ClientDisplayableError> {
+  public async moveFileToSharedVault(
+    file: FileItem,
+    sharedVault: SharedVaultDisplayListing,
+  ): Promise<void | ClientDisplayableError> {
     const valetTokenResult = await this.createSharedVaultValetToken({
-      sharedVaultUuid,
+      sharedVaultUuid: sharedVault.sharedVaultUuid,
       remoteIdentifier: file.remoteIdentifier,
       operation: 'move',
       fileUuidRequiredForExistingFiles: file.uuid,
@@ -178,17 +184,18 @@ export class FileService extends AbstractService implements FilesClientInterface
 
   public async beginNewFileUpload(
     sizeInBytes: number,
-    sharedVaultUuid?: string,
+    vault?: VaultDisplayListing,
   ): Promise<EncryptAndUploadFileOperation | ClientDisplayableError> {
     const remoteIdentifier = UuidGenerator.GenerateUuid()
-    const valetTokenResult = sharedVaultUuid
-      ? await this.createSharedVaultValetToken({
-          sharedVaultUuid,
-          remoteIdentifier,
-          operation: 'write',
-          unencryptedFileSizeForUpload: sizeInBytes,
-        })
-      : await this.createUserValetToken(remoteIdentifier, 'write', sizeInBytes)
+    const valetTokenResult =
+      vault && isSharedVaultDisplayListing(vault)
+        ? await this.createSharedVaultValetToken({
+            sharedVaultUuid: vault.sharedVaultUuid,
+            remoteIdentifier,
+            operation: 'write',
+            unencryptedFileSizeForUpload: sizeInBytes,
+          })
+        : await this.createUserValetToken(remoteIdentifier, 'write', sizeInBytes)
 
     if (valetTokenResult instanceof ClientDisplayableError) {
       return valetTokenResult
@@ -207,12 +214,12 @@ export class FileService extends AbstractService implements FilesClientInterface
       valetTokenResult,
       this.crypto,
       this.api,
-      sharedVaultUuid,
+      vault,
     )
 
     const uploadSessionStarted = await this.api.startUploadSession(
       valetTokenResult,
-      sharedVaultUuid ? 'shared-vault' : 'user',
+      vault && isSharedVaultDisplayListing(vault) ? 'shared-vault' : 'user',
     )
 
     if (isErrorResponse(uploadSessionStarted) || !uploadSessionStarted.data.uploadId) {
@@ -243,7 +250,7 @@ export class FileService extends AbstractService implements FilesClientInterface
   ): Promise<FileItem | ClientDisplayableError> {
     const uploadSessionClosed = await this.api.closeUploadSession(
       operation.getValetToken(),
-      operation.sharedVaultUuid ? 'shared-vault' : 'user',
+      operation.vault && isSharedVaultDisplayListing(operation.vault) ? 'shared-vault' : 'user',
     )
 
     if (!uploadSessionClosed) {
@@ -266,7 +273,7 @@ export class FileService extends AbstractService implements FilesClientInterface
       ContentType.File,
       FillItemContentSpecialized(fileContent),
       true,
-      operation.sharedVaultUuid,
+      operation.vault,
     )
 
     await this.syncService.sync()

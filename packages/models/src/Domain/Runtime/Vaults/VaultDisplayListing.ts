@@ -1,4 +1,4 @@
-import { KeySystemIdentifier } from '@standardnotes/models'
+import { KeySystemIdentifier } from '../../Syncable/KeySystemRootKey/KeySystemIdentifier'
 
 type CommonVaultDisplayListing = {
   systemIdentifier: KeySystemIdentifier

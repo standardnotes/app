@@ -24,6 +24,9 @@ import {
   TrustedContactInterface,
   KeySystemItemsKeyInterface,
   KeySystemIdentifier,
+  SharedVaultDisplayListing,
+  VaultDisplayListing,
+  isSharedVaultDisplayListing,
 } from '@standardnotes/models'
 import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
@@ -49,11 +52,6 @@ import { LeaveVaultUseCase } from './UseCase/LeaveSharedVault'
 import { UpdateInvitesAfterSharedVaultDataChangeUseCase } from './UseCase/UpdateInvitesAfterSharedVaultDataChange'
 import { UpdateSharedVaultUseCase } from './UseCase/UpdateSharedVault'
 import { VaultServiceInterface } from '../Vaults/VaultServiceInterface'
-import {
-  SharedVaultDisplayListing,
-  VaultDisplayListing,
-  isSharedVaultDisplayListing,
-} from '../Vaults/VaultDisplayListing'
 import { UserEventServiceEvent, UserEventServiceEventPayload } from '../UserEvent/UserEventServiceEvent'
 import { RemoveSharedVaultItemsLocallyUseCase } from './UseCase/RemoveSharedVaultItemsLocally'
 import { DeleteSharedVaultUseCase } from './UseCase/DeleteSharedVault'

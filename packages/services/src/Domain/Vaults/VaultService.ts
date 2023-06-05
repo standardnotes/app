@@ -5,6 +5,7 @@ import {
   KeySystemRootKeyMutator,
   KeySystemIdentifier,
   isDecryptedItem,
+  VaultDisplayListing,
 } from '@standardnotes/models'
 import { VaultServiceInterface } from './VaultServiceInterface'
 import { VaultServiceEvent, VaultServiceEventPayload } from './VaultServiceEvent'
@@ -20,7 +21,7 @@ import { RemoveItemFromVault } from './UseCase/RemoveItemFromVault'
 import { DeleteVaultUseCase } from './UseCase/DeleteVault'
 import { AddItemToVaultUseCase } from './UseCase/AddItemToVault'
 import { SharedVaultServiceEvent } from '../SharedVaults/SharedVaultServiceEvent'
-import { VaultDisplayListing } from './VaultDisplayListing'
+
 import { RotateKeySystemRootKeyUseCase } from './UseCase/RotateKeySystemRootKey'
 import { FilesClientInterface } from '@standardnotes/files'
 

@@ -4,7 +4,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.skip('shared vaults conflicts', function () {
+describe('shared vault conflicts', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context

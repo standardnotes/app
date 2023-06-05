@@ -5,11 +5,10 @@ import {
   SharedVaultInviteType,
   SharedVaultPermission,
 } from '@standardnotes/responses'
-import { TrustedContactInterface } from '@standardnotes/models'
+import { TrustedContactInterface, SharedVaultDisplayListing } from '@standardnotes/models'
 import { SharedVaultInvitesServerInterface } from '@standardnotes/api'
 import { CreateSharedVaultInviteUseCase } from './CreateSharedVaultInvite'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { SharedVaultDisplayListing } from '../../Vaults/VaultDisplayListing'
 
 export class AddContactToSharedVaultUseCase {
   constructor(

@@ -25,9 +25,6 @@ describe('shared vault files', function () {
     await context.register()
 
     vaults = context.vaults
-  })
-
-  beforeEach(async () => {
     await context.publicMockSubscriptionPurchaseEvent()
   })
 
@@ -35,12 +32,12 @@ describe('shared vault files', function () {
     const sharedVault = await Collaboration.createSharedVault(context)
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
-    const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, keySystemIdentifier)
+    const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, sharedVault)
 
     const file = context.items.findItem(uploadedFile.uuid)
     expect(file).to.not.be.undefined
     expect(file.remoteIdentifier).to.equal(file.remoteIdentifier)
-    expect(file.key_system_identifier).to.equal(keySystemIdentifier)
+    expect(file.key_system_identifier).to.equal(sharedVault.systemIdentifier)
 
     const downloadedBytes = await Files.downloadFile(context.files, file)
     expect(downloadedBytes).to.eql(buffer)
@@ -53,7 +50,7 @@ describe('shared vault files', function () {
     const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
 
     const sharedVault = await Collaboration.createSharedVault(context)
-    const addedFile = await vaults.addItemToVault(keySystemIdentifier, uploadedFile)
+    const addedFile = await vaults.addItemToVault(sharedVault, uploadedFile)
 
     const downloadedBytes = await Files.downloadFile(context.files, addedFile)
     expect(downloadedBytes).to.eql(buffer)
@@ -64,7 +61,7 @@ describe('shared vault files', function () {
     const buffer = new Uint8Array(await response.arrayBuffer())
 
     const sharedVault = await Collaboration.createSharedVault(context)
-    const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, keySystemIdentifier)
+    const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, sharedVault)
 
     const removedFile = await vaults.removeItemFromVault(uploadedFile)
     expect(removedFile.key_system_identifier).to.not.be.ok
@@ -74,11 +71,11 @@ describe('shared vault files', function () {
   })
 
   it('should be able to download vault file as collaborator', async () => {
-    const { keySystemIdentifier, contactContext, deinitContactContext } =
+    const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
-    const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, keySystemIdentifier)
+    const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, sharedVault)
 
     await contactContext.sync()
 
@@ -93,19 +90,12 @@ describe('shared vault files', function () {
   })
 
   it('should be able to upload vault file as collaborator', async () => {
-    const { keySystemIdentifier, contactContext, deinitContactContext } =
+    const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
 
-    const uploadedFile = await Files.uploadFile(
-      contactContext.files,
-      buffer,
-      'my-file',
-      'md',
-      1000,
-      keySystemIdentifier,
-    )
+    const uploadedFile = await Files.uploadFile(contactContext.files, buffer, 'my-file', 'md', 1000, sharedVault)
 
     await context.sync()
 
@@ -120,12 +110,12 @@ describe('shared vault files', function () {
   })
 
   it('should be able to delete vault file as write user', async () => {
-    const { keySystemIdentifier, contactContext, deinitContactContext } =
+    const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultPermission.Write)
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
 
-    const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, keySystemIdentifier)
+    const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, sharedVault)
 
     await contactContext.sync()
 
@@ -140,12 +130,12 @@ describe('shared vault files', function () {
   })
 
   it('should not be able to delete vault file as read user', async () => {
-    const { keySystemIdentifier, contactContext, deinitContactContext } =
+    const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context, SharedVaultPermission.Read)
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
 
-    const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, keySystemIdentifier)
+    const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, sharedVault)
 
     await contactContext.sync()
 
@@ -160,12 +150,12 @@ describe('shared vault files', function () {
   })
 
   it('should be able to download recently moved vault file as collaborator', async () => {
-    const { keySystemIdentifier, contactContext, deinitContactContext } =
+    const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
     const response = await fetch('/mocha/assets/small_file.md')
     const buffer = new Uint8Array(await response.arrayBuffer())
     const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000)
-    const addedFile = await vaults.addItemToVault(keySystemIdentifier, uploadedFile)
+    const addedFile = await vaults.addItemToVault(sharedVault, uploadedFile)
 
     await contactContext.sync()
 
@@ -180,6 +170,18 @@ describe('shared vault files', function () {
   })
 
   it('should not be able to download file after being removed from vault', async () => {
-    console.error('TODO: implement test case')
+    const { sharedVault, contactContext, deinitContactContext } =
+      await Collaboration.createSharedVaultWithAcceptedInvite(context)
+    const response = await fetch('/mocha/assets/small_file.md')
+    const buffer = new Uint8Array(await response.arrayBuffer())
+    const uploadedFile = await Files.uploadFile(context.files, buffer, 'my-file', 'md', 1000, sharedVault)
+    await contactContext.sync()
+
+    await context.sharedVaults.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
+
+    const file = contactContext.items.findItem(uploadedFile.uuid)
+    await Factory.expectThrowsAsync(() => Files.downloadFile(contactContext.files, file), 'Could not download file')
+
+    await deinitContactContext()
   })
 })

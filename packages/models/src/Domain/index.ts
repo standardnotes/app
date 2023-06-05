@@ -62,6 +62,7 @@ export * from './Runtime/Predicate/NotPredicate'
 export * from './Runtime/Predicate/Operator'
 export * from './Runtime/Predicate/Predicate'
 export * from './Runtime/Predicate/Utils'
+export * from './Runtime/Vaults/VaultDisplayListing'
 
 export * from './Syncable/ActionsExtension'
 export * from './Syncable/Component'

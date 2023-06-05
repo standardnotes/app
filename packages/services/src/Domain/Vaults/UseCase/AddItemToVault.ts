@@ -1,8 +1,12 @@
 import { SyncServiceInterface } from '@standardnotes/services'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { DecryptedItemInterface, FileItem } from '@standardnotes/models'
-import { VaultDisplayListing, isSharedVaultDisplayListing } from '../VaultDisplayListing'
+import {
+  DecryptedItemInterface,
+  FileItem,
+  VaultDisplayListing,
+  isSharedVaultDisplayListing,
+} from '@standardnotes/models'
 import { FilesClientInterface } from '@standardnotes/files'
 import { ContentType } from '@standardnotes/common'
 
@@ -25,7 +29,7 @@ export class AddItemToVaultUseCase {
     await this.sync.sync()
 
     if (dto.item.content_type === ContentType.File && isSharedVaultDisplayListing(dto.vault)) {
-      await this.files.moveFileToSharedVault(dto.item as FileItem, dto.vault.sharedVaultUuid)
+      await this.files.moveFileToSharedVault(dto.item as FileItem, dto.vault)
     }
   }
 }
