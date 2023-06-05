@@ -4,9 +4,9 @@ import {
   RawKeychainValue,
   FileBackupReadToken,
   FileBackupReadChunkResponse,
-  DesktopServerStatus,
   FileBackupsMapping,
   PlaintextBackupsMapping,
+  HomeServerStatus,
 } from '@web/Application/Device/DesktopSnjsExports'
 import { WebOrDesktopDevice } from '@web/Application/Device/WebOrDesktopDevice'
 import { Component } from '../Main/Packages/PackageManagerInterface'
@@ -26,28 +26,28 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     super(appVersion)
   }
 
-  desktopServerStart(): Promise<void> {
-    return this.remoteBridge.desktopServerStart()
+  startServer(): Promise<void> {
+    return this.remoteBridge.startServer()
   }
 
-  desktopServerStop(): Promise<void> {
-    return this.remoteBridge.desktopServerStop()
+  stopServer(): Promise<void> {
+    return this.remoteBridge.stopServer()
   }
 
-  desktopServerListenOnLogs(callback: (data: Buffer) => void): void {
-    this.remoteBridge.desktopServerListenOnLogs(callback)
+  listenOnServerLogs(callback: (data: Buffer) => void): void {
+    this.remoteBridge.listenOnServerLogs(callback)
   }
 
-  desktopServerStopListeningOnLogs(): void {
-    this.remoteBridge.desktopServerStopListeningOnLogs()
+  stopListeningOnServerLogs(): void {
+    this.remoteBridge.stopListeningOnServerLogs()
   }
 
-  desktopServerRestart(): Promise<void> {
-    return this.remoteBridge.desktopServerRestart()
+  restartServer(): Promise<void> {
+    return this.remoteBridge.restartServer()
   }
 
-  desktopServerStatus(): Promise<DesktopServerStatus> {
-    return this.remoteBridge.desktopServerStatus()
+  serverStatus(): Promise<HomeServerStatus> {
+    return this.remoteBridge.serverStatus()
   }
 
   openLocation(path: string): Promise<void> {

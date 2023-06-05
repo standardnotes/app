@@ -24,7 +24,7 @@ import { checkForUpdate, setupUpdates } from './UpdateManager'
 import { handleTestMessage, send } from './Utils/Testing'
 import { isTesting, lowercaseDriveLetter } from './Utils/Utils'
 import { initializeZoomManager } from './ZoomManager'
-import { LocalServiceManager } from './LocalServer/LocalServerManager'
+import { HomeServerManager } from './HomeServer/HomeServerManager'
 import { HomeServer } from '@standardnotes/home-server'
 
 const WINDOW_DEFAULT_WIDTH = 1100
@@ -74,7 +74,7 @@ export async function createWindowState({
     services.menuManager,
     services.fileBackupsManager,
     services.mediaManager,
-    services.localServerManager,
+    services.homeServerManager,
   )
 
   const shouldOpenUrl = (url: string) => url.startsWith('http') || url.startsWith('mailto')
@@ -205,7 +205,7 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
   const mediaManager = new MediaManager()
   const homeServer = new HomeServer()
 
-  const localServerManager = new LocalServiceManager(appState, homeServer)
+  const homeServerManager = new HomeServerManager(appState, homeServer)
 
   if (isTesting()) {
     handleTestMessage(MessageType.SpellCheckerManager, () => spellcheckerManager)
@@ -230,7 +230,7 @@ async function createWindowServices(window: Electron.BrowserWindow, appState: Ap
     searchManager,
     fileBackupsManager,
     mediaManager,
-    localServerManager,
+    homeServerManager,
   }
 }
 

@@ -1,9 +1,10 @@
 import { Environment } from '@standardnotes/models'
 
+import { HomeServerManagerInterface } from '../HomeServer/HomeServerManagerInterface'
+
 import { WebClientRequiresDesktopMethods } from './DesktopWebCommunication'
 import { DeviceInterface } from './DeviceInterface'
 import { WebOrDesktopDeviceInterface } from './WebOrDesktopDeviceInterface'
-import { DesktopServerManagerInterface } from './DesktopServerManagerInterface'
 
 /* istanbul ignore file */
 
@@ -14,6 +15,6 @@ export function isDesktopDevice(x: DeviceInterface): x is DesktopDeviceInterface
 export interface DesktopDeviceInterface
   extends WebOrDesktopDeviceInterface,
     WebClientRequiresDesktopMethods,
-    DesktopServerManagerInterface {
+    HomeServerManagerInterface {
   environment: Environment.Desktop
 }

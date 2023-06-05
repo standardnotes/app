@@ -6,13 +6,13 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import Button from '@/Components/Button/Button'
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import HorizontalSeparator from '@/Components/Shared/HorizontalSeparator'
-import { DesktopServerStatus } from '@standardnotes/snjs'
+import { HomeServerStatus } from '@standardnotes/snjs'
 import AccountMigration from './AccountMigration'
 
-const DesktopServer = () => {
+const HomeServer = () => {
   const application = useApplication()
   const desktopDevice = application.desktopDevice
-  const [status, setStatus] = useState<DesktopServerStatus>()
+  const [status, setStatus] = useState<HomeServerStatus>()
   const [showLogs, setShowLogs] = useState(false)
   const [logs, setLogs] = useState<string[]>([])
   const logsTextarea = useRef<HTMLTextAreaElement>(null)
@@ -20,7 +20,7 @@ const DesktopServer = () => {
 
   const refreshStatus = useCallback(async () => {
     if (desktopDevice) {
-      const result = await desktopDevice.desktopServerStatus()
+      const result = await desktopDevice.serverStatus()
       setStatus(result)
     }
   }, [desktopDevice])
@@ -31,7 +31,7 @@ const DesktopServer = () => {
 
   useEffect(() => {
     if (showLogs) {
-      desktopDevice?.desktopServerListenOnLogs((data: Buffer) => {
+      desktopDevice?.listenOnServerLogs((data: Buffer) => {
         setLogs((logs) => [...logs, new TextDecoder().decode(data)])
       })
     }
@@ -39,7 +39,7 @@ const DesktopServer = () => {
 
   const handleShowLogs = () => {
     if (!showLogs) {
-      desktopDevice?.desktopServerStopListeningOnLogs()
+      desktopDevice?.stopListeningOnServerLogs()
     }
 
     setShowLogs(!showLogs)
@@ -102,12 +102,8 @@ const DesktopServer = () => {
           {'.'}
         </Text>
       )
-    } else if (status.status === 'error') {
-      return <Text>Error: {status.message}</Text>
     } else if (status.status === 'off') {
-      return <Text>Not started {status.message ? `:${status.message}` : ''}</Text>
-    } else {
-      return <Text>Unknown: {status.message}</Text>
+      return <Text>Not started</Text>
     }
   }, [status])
 
@@ -119,9 +115,9 @@ const DesktopServer = () => {
             <Title>Home Server</Title>
             {status ? getStatusString() : <Text>Status unavailable</Text>}
             <div className="mt-3 flex flex-row flex-wrap gap-3">
-              <Button label="Start" onClick={() => desktopDevice.desktopServerStart()} />
-              <Button label="Stop" onClick={() => desktopDevice.desktopServerStop()} />
-              <Button label="Restart" onClick={() => desktopDevice.desktopServerRestart()} />
+              <Button label="Start" onClick={() => desktopDevice.startServer()} />
+              <Button label="Stop" onClick={() => desktopDevice.stopServer()} />
+              <Button label="Restart" onClick={() => desktopDevice.restartServer()} />
               <Button label="Refresh Status" onClick={() => refreshStatus()} />
               <Button label={showLogs ? 'Hide Logs' : 'Show Logs'} onClick={handleShowLogs} />
             </div>
@@ -206,4 +202,4 @@ const DesktopServer = () => {
   )
 }
 
-export default DesktopServer
+export default HomeServer

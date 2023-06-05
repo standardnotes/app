@@ -22,7 +22,7 @@ interface SelectableMenuItem extends PreferencesMenuItem {
 const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'whats-new', label: "What's New", icon: 'asterisk' },
   { id: 'account', label: 'Account', icon: 'user' },
-  { id: 'server', label: 'Home Server', icon: 'folder' },
+  { id: 'home-server', label: 'Home Server', icon: 'folder' },
   { id: 'general', label: 'General', icon: 'settings' },
   { id: 'security', label: 'Security', icon: 'security' },
   { id: 'backups', label: 'Backups', icon: 'restore' },
@@ -37,7 +37,7 @@ const PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
 const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
   { id: 'whats-new', label: "What's New", icon: 'asterisk' },
   { id: 'account', label: 'Account', icon: 'user' },
-  { id: 'server', label: 'Home Server', icon: 'folder' },
+  { id: 'home-server', label: 'Home Server', icon: 'folder' },
   { id: 'general', label: 'General', icon: 'settings' },
   { id: 'security', label: 'Security', icon: 'security' },
   { id: 'backups', label: 'Backups', icon: 'restore' },
@@ -47,7 +47,7 @@ const READY_PREFERENCES_MENU_ITEMS: PreferencesMenuItem[] = [
 ]
 
 export class PreferencesMenu {
-  private _selectedPane: PreferenceId = 'server'
+  private _selectedPane: PreferenceId = 'account'
   private _menu: PreferencesMenuItem[]
   private _extensionLatestVersions: PackageProvider = new PackageProvider(new Map())
 

@@ -11,13 +11,13 @@ export enum StoreKeys {
   UseNativeKeychain = 'useNativeKeychain',
   LastRunVersion = 'LastRunVersion',
 
-  DesktopServerAuthJWTSecret = 'DesktopServerAuthJWTSecret',
-  DesktopServerDataLocation = 'DesktopServerDataLocation',
-  DesktopServerEncryptionServerKey = 'DesktopServerEncryptionServerKey',
-  DesktopServerJWTSecret = 'DesktopServerJWTSecret',
-  DesktopServerPseudoKeyParamsKey = 'DesktopServerPseudoKeyParamsKey',
-  DesktopServerValetTokenSecret = 'DesktopServerValetTokenSecret',
-  DesktopServerPort = 'DesktopServerPort',
+  HomeServerAuthJWTSecret = 'HomeServerAuthJWTSecret',
+  HomeServerDataLocation = 'HomeServerDataLocation',
+  HomeServerEncryptionServerKey = 'HomeServerEncryptionServerKey',
+  HomeServerJWTSecret = 'HomeServerJWTSecret',
+  HomeServerPseudoKeyParamsKey = 'HomeServerPseudoKeyParamsKey',
+  HomeServerValetTokenSecret = 'HomeServerValetTokenSecret',
+  HomeServerPort = 'HomeServerPort',
 
   LegacyTextBackupsLocation = 'backupsLocation',
   LegacyTextBackupsDisabled = 'backupsDisabled',
@@ -37,13 +37,13 @@ export interface StoreData {
   [StoreKeys.SelectedSpellCheckerLanguageCodes]: Set<Language> | null
   [StoreKeys.LastRunVersion]: string
 
-  [StoreKeys.DesktopServerAuthJWTSecret]: string
-  [StoreKeys.DesktopServerDataLocation]: string
-  [StoreKeys.DesktopServerEncryptionServerKey]: string
-  [StoreKeys.DesktopServerJWTSecret]: string
-  [StoreKeys.DesktopServerPseudoKeyParamsKey]: string
-  [StoreKeys.DesktopServerValetTokenSecret]: string
-  [StoreKeys.DesktopServerPort]: number
+  [StoreKeys.HomeServerAuthJWTSecret]: string
+  [StoreKeys.HomeServerDataLocation]: string
+  [StoreKeys.HomeServerEncryptionServerKey]: string
+  [StoreKeys.HomeServerJWTSecret]: string
+  [StoreKeys.HomeServerPseudoKeyParamsKey]: string
+  [StoreKeys.HomeServerValetTokenSecret]: string
+  [StoreKeys.HomeServerPort]: number
 
   [StoreKeys.LegacyTextBackupsLocation]: string
   [StoreKeys.LegacyTextBackupsDisabled]: boolean
