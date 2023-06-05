@@ -93,9 +93,8 @@ export class ItemsEncryptionService extends AbstractService {
   ): ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | StandardException {
     if (payload.key_system_identifier) {
       const keySystemItemsKey = this.itemManager.getPrimaryKeySystemItemsKey(payload.key_system_identifier)
-
       if (!keySystemItemsKey) {
-        return new StandardException('Cannot find vault items key to use for encryption')
+        return new StandardException('Cannot find key system items key to use for encryption')
       }
 
       return keySystemItemsKey

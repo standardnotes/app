@@ -1,10 +1,11 @@
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { DecryptedItemInterface, KeySystemRootKeyInterface, KeySystemIdentifier } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
-import { VaultServiceEvent } from './VaultServiceEvent'
+import { VaultServiceEvent, VaultServiceEventPayload } from './VaultServiceEvent'
 import { VaultDisplayListing } from './VaultDisplayListing'
 
-export interface VaultServiceInterface extends AbstractService<VaultServiceEvent> {
+export interface VaultServiceInterface
+  extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]> {
   createVault(name: string, description?: string): Promise<VaultDisplayListing | ClientDisplayableError>
   getVaults(): VaultDisplayListing[]
   getVault(keySystemIdentifier: KeySystemIdentifier): VaultDisplayListing | undefined

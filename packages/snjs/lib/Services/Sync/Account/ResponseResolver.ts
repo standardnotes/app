@@ -88,14 +88,15 @@ export class ServerSyncResponseResolver {
       ...this.getConflictsForType(ConflictType.ContentError),
       ...this.getConflictsForType(ConflictType.ReadOnlyError),
       ...this.getConflictsForType(ConflictType.UuidError),
-      ...this.getConflictsForType(ConflictType.SnjsVersionError),
+      ...this.getConflictsForType(ConflictType.SharedVaultSnjsVersionError),
       ...this.getConflictsForType(ConflictType.SharedVaultInsufficientPermissionsError),
       ...this.getConflictsForType(ConflictType.SharedVaultNotMemberError),
+      ...this.getConflictsForType(ConflictType.SharedVaultInvalidState),
       ...this.getConflictsForType(ConflictType.SharedVaultInvalidItemsKey),
     ]
 
     const delta = new DeltaRemoteRejected(this.baseCollection, conflicts)
-
-    return delta.result()
+    const result = delta.result()
+    return result
   }
 }

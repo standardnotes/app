@@ -316,6 +316,20 @@ export class AppContext {
     })
   }
 
+  resolveWhenSharedVaultKeyRotationInvitesGetSent(targetSystemIdentifier) {
+    return new Promise((resolve) => {
+      const objectToSpy = this.sharedVaults
+      sinon.stub(objectToSpy, 'handleChangeInKeySystemRootKey').callsFake(async (systemIdentifier) => {
+        objectToSpy.handleChangeInKeySystemRootKey.restore()
+        const result = await objectToSpy.handleChangeInKeySystemRootKey(systemIdentifier)
+        if (systemIdentifier === targetSystemIdentifier) {
+          resolve()
+        }
+        return result
+      })
+    })
+  }
+
   resolveWhenSharedVaultChangeInvitesAreSent(sharedVaultUuid) {
     return new Promise((resolve) => {
       const objectToSpy = this.sharedVaults
@@ -517,6 +531,10 @@ export class AppContext {
 
   sleep(seconds) {
     return Utils.sleep(seconds)
+  }
+
+  anticpiateConsoleError(message, _reason) {
+    console.warn('Anticipating a console error with message:', message)
   }
 
   async publicMockSubscriptionPurchaseEvent() {

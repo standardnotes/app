@@ -6,8 +6,7 @@ export enum ConflictType {
   ReadOnlyError = 'readonly_error',
   UuidError = 'uuid_error',
 
-  SnjsVersionError = 'snjs_version_error',
-
+  SharedVaultSnjsVersionError = 'shared_vault_snjs_version_error',
   SharedVaultInsufficientPermissionsError = 'shared_vault_insufficient_permissions_error',
   SharedVaultNotMemberError = 'shared_vault_not_member_error',
   SharedVaultInvalidState = 'shared_vault_invalid_state',

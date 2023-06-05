@@ -7,7 +7,7 @@ import {
   isDecryptedItem,
 } from '@standardnotes/models'
 import { VaultServiceInterface } from './VaultServiceInterface'
-import { VaultServiceEvent } from './VaultServiceEvent'
+import { VaultServiceEvent, VaultServiceEventPayload } from './VaultServiceEvent'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { CreateVaultUseCase } from './UseCase/CreateVault'
 import { AbstractService } from '../Service/AbstractService'
@@ -25,7 +25,7 @@ import { RotateKeySystemRootKeyUseCase } from './UseCase/RotateKeySystemRootKey'
 import { FilesClientInterface } from '@standardnotes/files'
 
 export class VaultService
-  extends AbstractService<VaultServiceEvent>
+  extends AbstractService<VaultServiceEvent, VaultServiceEventPayload[VaultServiceEvent]>
   implements VaultServiceInterface, InternalEventHandlerInterface
 {
   constructor(
@@ -169,6 +169,8 @@ export class VaultService
       },
     )
 
+    await this.notifyEventSync(VaultServiceEvent.VaultRootKeyChanged, { systemIdentifier: keySystemIdentifier })
+
     await this.sync.sync()
 
     this.notifyVaultsChangedEvent()
@@ -183,6 +185,8 @@ export class VaultService
     })
 
     this.notifyVaultsChangedEvent()
+
+    await this.notifyEventSync(VaultServiceEvent.VaultRootKeyChanged, { systemIdentifier: keySystemIdentifier })
 
     await this.sync.sync()
   }

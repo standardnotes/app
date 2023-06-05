@@ -84,6 +84,13 @@ export const createSharedVault = async (context) => {
   return sharedVault
 }
 
+export const createSharedVaultWithNote = async (context) => {
+  const sharedVault = await createSharedVault(context)
+  const note = await context.createSyncedNote()
+  await addItemToVault(context, sharedVault, note)
+  return { sharedVault, note }
+}
+
 export const addItemToVault = async (context, sharedVault, item) => {
   const promise = context.resolveWhenItemCompletesAddingToVault(item)
   await context.vaults.addItemToVault(sharedVault, item)

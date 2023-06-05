@@ -1,9 +1,9 @@
 import { PayloadSource } from '../../Abstract/Payload/Types/PayloadSource'
-import { FullyFormedPayloadInterface, PayloadEmitSource } from '../../Abstract/Payload'
+import { DeletedPayload, FullyFormedPayloadInterface, PayloadEmitSource } from '../../Abstract/Payload'
 import { ImmutablePayloadCollection } from '../Collection/Payload/ImmutablePayloadCollection'
 import { SyncDeltaEmit } from './Abstract/DeltaEmit'
 import { SyncDeltaInterface } from './Abstract/SyncDeltaInterface'
-import { SyncResolvedPayload } from './Utilities/SyncResolvedPayload'
+import { BuildSyncResolvedParams, SyncResolvedPayload } from './Utilities/SyncResolvedPayload'
 import {
   ConflictParams,
   ConflictParamsWithServerItem,
@@ -31,6 +31,7 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
       ConflictType.SharedVaultNotMemberError,
       ConflictType.SharedVaultInvalidItemsKey,
       ConflictType.SharedVaultInvalidState,
+      ConflictType.SharedVaultSnjsVersionError,
     ]
 
     for (const conflict of this.conflicts) {
@@ -55,6 +56,10 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
     const base = this.baseCollection.find(conflict.unsaved_item.uuid)
     if (!base) {
       return []
+    }
+
+    if (conflict.type === ConflictType.SharedVaultNotMemberError) {
+      return this.resultByDuplicatingBasePayloadAsNonVaultedAndRemovingBaseItemLocally(base)
     }
 
     if (base.content_type === ContentType.KeySystemItemsKey) {
@@ -187,5 +192,36 @@ export class DeltaRemoteRejected implements SyncDeltaInterface {
     })
 
     return [...duplicateBasePayloadWithoutVault, ...this.discardChangesOfBasePayload(basePayload)]
+  }
+
+  private resultByDuplicatingBasePayloadAsNonVaultedAndRemovingBaseItemLocally(
+    basePayload: FullyFormedPayloadInterface,
+  ): SyncResolvedPayload[] {
+    const duplicateBasePayloadWithoutVault = PayloadsByDuplicating({
+      payload: basePayload.copy({
+        key_system_identifier: undefined,
+        shared_vault_uuid: undefined,
+      }),
+      baseCollection: this.baseCollection,
+      isConflict: true,
+      source: basePayload.source,
+    })
+
+    const locallyDeletedBasePayload = new DeletedPayload(
+      {
+        ...basePayload,
+        content: undefined,
+        deleted: true,
+        key_system_identifier: undefined,
+        shared_vault_uuid: undefined,
+        ...BuildSyncResolvedParams({
+          dirty: false,
+          lastSyncEnd: new Date(),
+        }),
+      },
+      PayloadSource.RemoteSaved,
+    )
+
+    return [...duplicateBasePayloadWithoutVault, locallyDeletedBasePayload as SyncResolvedPayload]
   }
 }

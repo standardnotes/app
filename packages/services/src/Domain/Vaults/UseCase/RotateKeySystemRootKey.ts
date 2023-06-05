@@ -23,13 +23,13 @@ export class RotateKeySystemRootKeyUseCase {
 
     const errors: ClientDisplayableError[] = []
 
-    const updateKeySystemRootKeySystemItemsKeyResult = await this.createNewKeySystemItemsKey({
+    const updateKeySystemItemsKeyResult = await this.createNewKeySystemItemsKey({
       keySystemIdentifier: params.keySystemIdentifier,
       keySystemRootKeyTimestamp: newKeySystemRootKeyContent.keyTimestamp,
     })
 
-    if (isClientDisplayableError(updateKeySystemRootKeySystemItemsKeyResult)) {
-      errors.push(updateKeySystemRootKeySystemItemsKeyResult)
+    if (isClientDisplayableError(updateKeySystemItemsKeyResult)) {
+      errors.push(updateKeySystemItemsKeyResult)
     }
 
     await this.encryption.reencryptKeySystemItemsKeysForVault(params.keySystemIdentifier)

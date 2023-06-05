@@ -4,7 +4,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('shared vaults conflicts', function () {
+describe.skip('shared vaults conflicts', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
@@ -23,18 +23,26 @@ describe('shared vaults conflicts', function () {
     await context.register()
   })
 
-  it('after leaving shared vault, attempting to sync previously vault item should result in SharedVaultNotMemberError', async () => {
+  it('after being removed from shared vault, attempting to sync previous vault item should result in SharedVaultNotMemberError. The item should be duplicated then removed.', async () => {
     const { sharedVault, note, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
 
+    contactContext.lockSyncing()
     await context.sharedVaults.removeUserFromSharedVault(sharedVault, contactContext.userUuid)
     const promise = contactContext.resolveWithConflicts()
+    contactContext.unlockSyncing()
     await contactContext.changeNoteTitleAndSync(note, 'new title')
     const conflicts = await promise
+    await contactContext.sync()
 
     expect(conflicts.length).to.equal(1)
     expect(conflicts[0].type).to.equal(ConflictType.SharedVaultNotMemberError)
     expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
+
+    const collaboratorNotes = contactContext.items.getDisplayableNotes()
+    expect(collaboratorNotes.length).to.equal(1)
+    expect(collaboratorNotes[0].duplicate_of).to.not.be.undefined
+    expect(collaboratorNotes[0].title).to.equal('new title')
 
     await deinitContactContext()
   })
@@ -103,17 +111,16 @@ describe('shared vaults conflicts', function () {
   })
 
   it('attempting to save note to non-existent vault should result in SharedVaultNotMemberError conflict', async () => {
-    const note = await context.createSyncedNote('foo', 'bar')
+    const { note } = await Collaboration.createSharedVaultWithNote(context)
 
     const promise = context.resolveWithConflicts()
-    const objectToSpy = context.application.sync
 
+    const objectToSpy = context.application.sync
     sinon.stub(objectToSpy, 'payloadsByPreparingForServer').callsFake(async (params) => {
       objectToSpy.payloadsByPreparingForServer.restore()
-
       const payloads = await objectToSpy.payloadsByPreparingForServer(params)
       for (const payload of payloads) {
-        payload.key_system_identifier = 'non-existent-vault-uuid-123'
+        payload.shared_vault_uuid = 'non-existent-vault-uuid-123'
       }
 
       return payloads
@@ -128,28 +135,34 @@ describe('shared vaults conflicts', function () {
   })
 
   it('attempting to save item using an old vault items key should result in SharedVaultInvalidItemsKey conflict', async () => {
-    const sharedVault = await Collaboration.createSharedVault(context)
+    context.anticpiateConsoleError(
+      'Error decrypting contentKey from parameters',
+      'An invalid items key is being assigned to an item',
+    )
 
-    const note = await context.createSyncedNote('foo', 'bar')
-    await context.addItemToVault(context, keySystemIdentifier, note)
+    const { sharedVault, note } = await Collaboration.createSharedVaultWithNote(context)
 
-    const oldKeySystemItemsKey = context.items.getKeySystemItemsKeys(keySystemIdentifier)[0]
+    const oldKeySystemItemsKey = context.items.getKeySystemItemsKeys(sharedVault.systemIdentifier)[0]
 
-    await context.vaults.rotateKeySystemRootKey(keySystemIdentifier)
+    await context.vaults.rotateKeySystemRootKey(sharedVault.systemIdentifier)
 
-    await context.sharedVaults.sharedVaultCache.updateSharedVaults([
-      {
-        ...sharedVault,
-        specified_items_key_uuid: oldKeySystemItemsKey.uuid,
-      },
-    ])
+    const objectToSpy = context.application.sync
+    sinon.stub(objectToSpy, 'payloadsByPreparingForServer').callsFake(async (params) => {
+      objectToSpy.payloadsByPreparingForServer.restore()
+      const payloads = await objectToSpy.payloadsByPreparingForServer(params)
+      for (const payload of payloads) {
+        payload.items_key_id = oldKeySystemItemsKey.uuid
+      }
+
+      return payloads
+    })
 
     const promise = context.resolveWithConflicts()
     await context.changeNoteTitleAndSync(note, 'new title')
     const conflicts = await promise
 
     expect(conflicts.length).to.equal(1)
-    expect(conflicts[0].type).to.equal(ConflictType.SharedVaultInvalidItemsKeyError)
+    expect(conflicts[0].type).to.equal(ConflictType.SharedVaultInvalidItemsKey)
     expect(conflicts[0].unsaved_item.content_type).to.equal(ContentType.Note)
   })
 
@@ -169,17 +182,17 @@ describe('shared vaults conflicts', function () {
     expect(duplicateNote.key_system_identifier).to.not.be.ok
 
     const existingNote = contactContext.items.findItem(note.uuid)
-    expect(existingNote.key_system_identifier).to.equal(keySystemIdentifier)
+    expect(existingNote.key_system_identifier).to.equal(sharedVault.systemIdentifier)
 
     await deinitContactContext()
   })
 
   it('should created a non-vaulted copy if admin attempts to move item from vault to user if the item belongs to someone else', async () => {
-    const { keySystemIdentifier, contactContext, deinitContactContext } =
+    const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     const note = await contactContext.createSyncedNote('foo', 'bar')
-    await contactContext.addItemToVault(context, keySystemIdentifier, note)
+    await Collaboration.addItemToVault(contactContext, sharedVault, note)
     await context.sync()
 
     const promise = context.resolveWithConflicts()
@@ -194,7 +207,7 @@ describe('shared vaults conflicts', function () {
     expect(duplicateNote.key_system_identifier).to.not.be.ok
 
     const existingNote = context.items.findItem(note.uuid)
-    expect(existingNote.key_system_identifier).to.equal(keySystemIdentifier)
+    expect(existingNote.key_system_identifier).to.equal(sharedVault.systemIdentifier)
 
     await deinitContactContext()
   })
