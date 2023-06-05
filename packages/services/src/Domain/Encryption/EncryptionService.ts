@@ -179,6 +179,15 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return result
   }
 
+  getDecryptedSigningPrivateKey(): string {
+    const result = this.storageService.getValue<string>(StorageKey.AccountDecryptedSigningPrivateKey)
+    if (!result) {
+      throw new Error('Decrypted signing private key not found')
+    }
+
+    return result
+  }
+
   public async initialize() {
     await this.rootKeyEncryption.initialize()
   }
@@ -527,6 +536,12 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   public generateKeyPair(): PkcKeyPair {
     const operator = this.operatorManager.defaultOperator()
     const keypair = operator.generateKeyPair()
+    return keypair
+  }
+
+  public generateSigningKeyPair(): PkcKeyPair {
+    const operator = this.operatorManager.defaultOperator()
+    const keypair = operator.generateSigningKeyPair()
     return keypair
   }
 

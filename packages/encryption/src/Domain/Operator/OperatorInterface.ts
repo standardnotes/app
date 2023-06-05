@@ -15,7 +15,7 @@ import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } f
 import { ItemAuthenticatedData } from '../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../Types/RootKeyEncryptedAuthenticatedData'
-import { HexString, PkcKeyPair, Utf8String } from '@standardnotes/sncrypto-common'
+import { Base64String, HexString, PkcKeyPair, Utf8String } from '@standardnotes/sncrypto-common'
 import { AsymmetricallyEncryptedString, SymmetricallyEncryptedString } from './Types'
 
 /**w
@@ -26,14 +26,15 @@ import { AsymmetricallyEncryptedString, SymmetricallyEncryptedString } from './T
  * across all versions appear in this generic parent class.
  */
 export interface OperatorCommon {
-  createItemsKey(): ItemsKeyInterface
-  createKeySystemItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface
   /**
    * Returns encryption protocol display name
    */
   getEncryptionDisplayName(): string
 
   readonly version: string
+
+  createItemsKey(): ItemsKeyInterface
+  createKeySystemItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface
 
   /**
    * Returns the payload's authenticated data. The passed payload must be in a
@@ -63,21 +64,22 @@ export interface OperatorCommon {
   }): KeySystemRootKeyContentSpecialized
 
   generateKeyPair(): PkcKeyPair
-
   asymmetricEncrypt(
     stringToEncrypt: string,
     senderSecretKey: HexString,
     recipientPublicKey: HexString,
   ): AsymmetricallyEncryptedString
-
   asymmetricDecrypt(
     stringToDecrypt: AsymmetricallyEncryptedString,
     senderPublicKey: HexString,
     recipientSecretKey: HexString,
   ): Utf8String
 
-  symmetricEncrypt(stringToEncrypt: string, symmetricKey: HexString): SymmetricallyEncryptedString
+  generateSigningKeyPair(): PkcKeyPair
+  asymmetricSign(stringToSign: Utf8String, secretSigningKey: HexString): Base64String
+  asymmetricVerify(stringToVerify: Utf8String, signature: Base64String, publicSigningKey: HexString): boolean
 
+  symmetricEncrypt(stringToEncrypt: string, symmetricKey: HexString): SymmetricallyEncryptedString
   symmetricDecrypt(stringToDecrypt: SymmetricallyEncryptedString, symmetricKey: HexString): HexString | null
 
   versionForEncryptedString(encryptedString: string): ProtocolVersion

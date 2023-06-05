@@ -16,16 +16,22 @@ export interface UserApiServiceInterface {
     ephemeral: boolean
     publicKey: string
     encryptedPrivateKey: string
+    signingPublicKey: string
+    encryptedSigningPrivateKey: string
   }): Promise<HttpResponse<UserRegistrationResponseBody>>
-  submitUserRequest(dto: {
-    userUuid: string
-    requestType: UserRequestType
-  }): Promise<HttpResponse<UserRequestResponseBody>>
-  deleteAccount(userUuid: string): Promise<HttpResponse<UserDeletionResponseBody>>
-  getCurrentUser(userUuid: string): Promise<HttpResponse<UserGetUserResponse>>
   updateUser(updateDTO: {
     userUuid: string
     publicKey: string
     encryptedPrivateKey: string
+    signingPublicKey: string
+    encryptedSigningPrivateKey: string
   }): Promise<HttpResponse<UserUpdateResponse>>
+
+  submitUserRequest(dto: {
+    userUuid: string
+    requestType: UserRequestType
+  }): Promise<HttpResponse<UserRequestResponseBody>>
+
+  deleteAccount(userUuid: string): Promise<HttpResponse<UserDeletionResponseBody>>
+  getCurrentUser(userUuid: string): Promise<HttpResponse<UserGetUserResponse>>
 }

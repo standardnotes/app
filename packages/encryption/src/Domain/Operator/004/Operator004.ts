@@ -16,7 +16,7 @@ import {
   ItemsKeyContentSpecialized,
   KeySystemIdentifier,
 } from '@standardnotes/models'
-import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
+import { Base64String, HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
 import * as Utils from '@standardnotes/utils'
 import { V004Algorithm } from '../../Algorithm'
 import { isItemsKey } from '../../Keys/ItemsKey/ItemsKey'
@@ -430,6 +430,18 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     const keyString = components[2]
 
     return this.crypto.sodiumCryptoBoxEasyDecrypt(keyString, nonce, senderPublicKey, recipientSecretKey)
+  }
+
+  generateSigningKeyPair(): PkcKeyPair {
+    return this.crypto.sodiumCryptoSignGenerateKeypair()
+  }
+
+  asymmetricSign(stringToSign: Utf8String, secretSigningKey: HexString): Base64String {
+    return this.crypto.sodiumCryptoSign(stringToSign, secretSigningKey)
+  }
+
+  asymmetricVerify(stringToVerify: Utf8String, signature: Base64String, publicSigningKey: HexString): boolean {
+    return this.crypto.sodiumCryptoSignVerify(stringToVerify, signature, publicSigningKey)
   }
 
   symmetricEncrypt(stringToEncrypt: HexString, symmetricKey: HexString): SymmetricallyEncryptedString {

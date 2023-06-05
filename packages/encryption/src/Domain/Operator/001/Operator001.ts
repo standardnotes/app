@@ -243,6 +243,18 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
     throw new Error('Method not implemented.')
   }
 
+  generateSigningKeyPair(): PkcKeyPair {
+    throw new Error('Method not implemented.')
+  }
+
+  asymmetricSign(_stringToSign: string, _secretSigningKey: string): string {
+    throw new Error('Method not implemented.')
+  }
+
+  asymmetricVerify(_stringToVerify: string, _signature: string, _publicSigningKey: string): boolean {
+    throw new Error('Method not implemented.')
+  }
+
   symmetricEncrypt(_privateKey: string, _symmetricKey: string): string {
     throw new Error('Method not implemented.')
   }

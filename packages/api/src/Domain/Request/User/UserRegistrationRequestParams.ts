@@ -4,10 +4,12 @@ import { ApiVersion } from '../../Api/ApiVersion'
 
 export type UserRegistrationRequestParams = AnyKeyParamsContent & {
   [ApiEndpointParam.ApiVersion]: ApiVersion.v0
+  [additionalParam: string]: unknown
   password: string
   email: string
   ephemeral: boolean
-  [additionalParam: string]: unknown
-  public_key?: string
-  encrypted_private_key?: string
+  public_key: string
+  encrypted_private_key: string
+  signing_public_key: string
+  encrypted_signing_private_key: string
 }

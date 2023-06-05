@@ -85,6 +85,14 @@ export class AppContext {
     return this.encryption.getDecryptedPrivateKey()
   }
 
+  get encryptedPrivateKey() {
+    return this.application.storage.getValue(StorageKey.AccountDecryptedPrivateKey)
+  }
+
+  get encryptedSigningPrivateKey() {
+    return this.application.storage.getValue(StorageKey.AccountDecryptedSigningPrivateKey)
+  }
+
   ignoreChallenges() {
     this.ignoringChallenges = true
   }

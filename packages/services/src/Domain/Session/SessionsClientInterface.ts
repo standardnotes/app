@@ -48,6 +48,7 @@ export interface SessionsClientInterface {
   }): Promise<void>
 
   getPublicKey(): string
+  getSigningPublicKey(): string
   isUserMissingKeypair(): boolean
   updateAccountWithFirstTimeKeypair(): Promise<boolean>
 }

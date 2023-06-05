@@ -58,12 +58,16 @@ export interface EncryptionProviderInterface {
   ): Promise<RootKeyInterface>
 
   getDecryptedPrivateKey(): string
+  getDecryptedSigningPrivateKey(): string
+
   createKeySystemItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface
   createKeySystemRootKeyContent(params: {
     systemIdentifier: KeySystemIdentifier
     systemName: string
   }): KeySystemRootKeyContentSpecialized
+
   generateKeyPair(): PkcKeyPair
+  generateSigningKeyPair(): PkcKeyPair
 
   encryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, privateKey: string): string
   decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | undefined

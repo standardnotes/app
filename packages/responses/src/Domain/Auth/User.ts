@@ -3,4 +3,6 @@ export type User = {
   email: string
   publicKey?: string
   encryptedPrivateKey?: string
+  signingPublicKey?: string
+  encryptedSigningPrivateKey?: string
 }

@@ -222,6 +222,14 @@ export class SNSessionManager
     return user.publicKey
   }
 
+  public getSigningPublicKey(): string {
+    const user = this.getUser()
+    if (!user || !user.signingPublicKey) {
+      throw Error('Attempting to access signingKey when user is undefined')
+    }
+    return user.signingPublicKey
+  }
+
   public get userUuid(): string {
     const user = this.getUser()
 
@@ -417,16 +425,24 @@ export class SNSessionManager
     const serverPassword = rootKey.serverPassword as string
     const keyParams = rootKey.keyParams
 
-    const { publicKey, privateKey } = this.protocolService.generateKeyPair()
-    const encryptedPrivateKey = this.protocolService.encryptPrivateKeyWithRootKey(rootKey, privateKey)
+    const encryptionKeyPair = this.protocolService.generateKeyPair()
+    const encryptedPrivateKey = this.protocolService.encryptPrivateKeyWithRootKey(rootKey, encryptionKeyPair.privateKey)
+
+    const signingKeyPair = this.protocolService.generateSigningKeyPair()
+    const encryptedSigningPrivateKey = this.protocolService.encryptPrivateKeyWithRootKey(
+      rootKey,
+      signingKeyPair.privateKey,
+    )
 
     const registerResponse = await this.userApiService.register({
       email,
       serverPassword,
       keyParams,
       ephemeral,
-      publicKey,
+      publicKey: encryptionKeyPair.publicKey,
       encryptedPrivateKey,
+      signingPublicKey: signingKeyPair.publicKey,
+      encryptedSigningPrivateKey,
     })
 
     if ('error' in registerResponse.data) {
@@ -677,13 +693,22 @@ export class SNSessionManager
     }
 
     const rootKey = this.protocolService.getSureRootKey()
-    const { publicKey, privateKey } = this.protocolService.generateKeyPair()
-    const encryptedPrivateKey = this.protocolService.encryptPrivateKeyWithRootKey(rootKey, privateKey)
+
+    const encryptionKeyPair = this.protocolService.generateKeyPair()
+    const encryptedPrivateKey = this.protocolService.encryptPrivateKeyWithRootKey(rootKey, encryptionKeyPair.privateKey)
+
+    const signingKeyPair = this.protocolService.generateSigningKeyPair()
+    const encryptedSigningPrivateKey = this.protocolService.encryptPrivateKeyWithRootKey(
+      rootKey,
+      signingKeyPair.privateKey,
+    )
 
     const response = await this.userApiService.updateUser({
       userUuid: this.getSureUser().uuid,
-      publicKey,
+      publicKey: encryptionKeyPair.publicKey,
       encryptedPrivateKey,
+      signingPublicKey: signingKeyPair.publicKey,
+      encryptedSigningPrivateKey,
     })
 
     if (isErrorResponse(response)) {
@@ -691,11 +716,14 @@ export class SNSessionManager
     }
 
     const user = this.getSureUser()
-    user.publicKey = publicKey
+    user.publicKey = encryptionKeyPair.publicKey
+    user.signingPublicKey = signingKeyPair.publicKey
+
     this.memoizeUser(user)
     this.diskStorageService.setValue(StorageKey.User, user)
 
-    this.diskStorageService.setValue(StorageKey.AccountDecryptedPrivateKey, privateKey)
+    this.diskStorageService.setValue(StorageKey.AccountDecryptedPrivateKey, encryptionKeyPair.privateKey)
+    this.diskStorageService.setValue(StorageKey.AccountDecryptedSigningPrivateKey, signingKeyPair.privateKey)
 
     return true
   }
@@ -760,12 +788,12 @@ export class SNSessionManager
   }
 
   private persistUserInfoChange(user: User) {
-    if (user.encryptedPrivateKey) {
-      const rootKey = this.protocolService.getRootKey()
-      if (!rootKey) {
-        throw Error('Cannot persist user info change without root key')
-      }
+    const rootKey = this.protocolService.getRootKey()
+    if (!rootKey) {
+      throw Error('Cannot persist user info change without root key')
+    }
 
+    if (user.encryptedPrivateKey) {
       const decryptedPrivateKey = this.protocolService.decryptPrivateKeyWithRootKey(rootKey, user.encryptedPrivateKey)
       if (decryptedPrivateKey) {
         this.diskStorageService.setValue(StorageKey.AccountDecryptedPrivateKey, decryptedPrivateKey)
@@ -777,6 +805,23 @@ export class SNSessionManager
     } else {
       user.publicKey = undefined
       user.encryptedPrivateKey = undefined
+    }
+
+    if (user.encryptedSigningPrivateKey) {
+      const decryptedSigningPrivateKey = this.protocolService.decryptPrivateKeyWithRootKey(
+        rootKey,
+        user.encryptedSigningPrivateKey,
+      )
+      if (decryptedSigningPrivateKey) {
+        this.diskStorageService.setValue(StorageKey.AccountDecryptedSigningPrivateKey, decryptedSigningPrivateKey)
+      } else {
+        /** If failed to decrypt, do not trust keypair information */
+        user.signingPublicKey = undefined
+        user.encryptedSigningPrivateKey = undefined
+      }
+    } else {
+      user.signingPublicKey = undefined
+      user.encryptedSigningPrivateKey = undefined
     }
 
     this.memoizeUser(user)

@@ -81,6 +81,8 @@ export class UserApiService implements UserApiServiceInterface {
     ephemeral: boolean
     publicKey: string
     encryptedPrivateKey: string
+    signingPublicKey: string
+    encryptedSigningPrivateKey: string
   }): Promise<HttpResponse<UserRegistrationResponseBody>> {
     this.lockOperation(UserApiOperations.Registering)
 
@@ -92,6 +94,8 @@ export class UserApiService implements UserApiServiceInterface {
         ephemeral: registerDTO.ephemeral,
         public_key: registerDTO.publicKey,
         encrypted_private_key: registerDTO.encryptedPrivateKey,
+        signing_public_key: registerDTO.signingPublicKey,
+        encrypted_signing_private_key: registerDTO.encryptedSigningPrivateKey,
         ...registerDTO.keyParams.getPortableValue(),
       })
 
@@ -107,6 +111,8 @@ export class UserApiService implements UserApiServiceInterface {
     userUuid: string
     publicKey: string
     encryptedPrivateKey: string
+    signingPublicKey: string
+    encryptedSigningPrivateKey: string
   }): Promise<HttpResponse<UserUpdateResponse>> {
     this.lockOperation(UserApiOperations.UpdatingUser)
 
@@ -116,6 +122,8 @@ export class UserApiService implements UserApiServiceInterface {
         user_uuid: updateDTO.userUuid,
         public_key: updateDTO.publicKey,
         encrypted_private_key: updateDTO.encryptedPrivateKey,
+        signing_public_key: updateDTO.signingPublicKey,
+        encrypted_signing_private_key: updateDTO.encryptedSigningPrivateKey,
       })
 
       this.unlockOperation(UserApiOperations.UpdatingUser)

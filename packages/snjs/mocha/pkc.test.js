@@ -30,6 +30,9 @@ describe('public key cryptography', function () {
   it('should create keypair during registration', () => {
     expect(sessions.getPublicKey()).to.not.be.undefined
     expect(encryption.getDecryptedPrivateKey()).to.not.be.undefined
+
+    expect(sessions.getSigningPublicKey()).to.not.be.undefined
+    expect(encryption.getDecryptedSigningPrivateKey()).to.not.be.undefined
   })
 
   it('should populate keypair during sign in', async () => {
@@ -45,11 +48,17 @@ describe('public key cryptography', function () {
 
     expect(recreatedContext.sessions.getPublicKey()).to.not.be.undefined
     expect(recreatedContext.encryption.getDecryptedPrivateKey()).to.not.be.undefined
+
+    expect(recreatedContext.sessions.getSigningPublicKey()).to.not.be.undefined
+    expect(recreatedContext.encryption.getDecryptedSigningPrivateKey()).to.not.be.undefined
   })
 
   it('should rotate keypair during password change', async () => {
     const oldPublicKey = sessions.getPublicKey()
     const oldPrivateKey = encryption.getDecryptedPrivateKey()
+
+    const oldSigningPublicKey = sessions.getSigningPublicKey()
+    const oldSigningPrivateKey = encryption.getDecryptedSigningPrivateKey()
 
     await context.changePassword('new_password')
 
@@ -57,10 +66,19 @@ describe('public key cryptography', function () {
     expect(encryption.getDecryptedPrivateKey()).to.not.be.undefined
     expect(sessions.getPublicKey()).to.not.equal(oldPublicKey)
     expect(encryption.getDecryptedPrivateKey()).to.not.equal(oldPrivateKey)
+
+    expect(sessions.getSigningPublicKey()).to.not.be.undefined
+    expect(encryption.getDecryptedSigningPrivateKey()).to.not.be.undefined
+    expect(sessions.getSigningPublicKey()).to.not.equal(oldSigningPublicKey)
+    expect(encryption.getDecryptedSigningPrivateKey()).to.not.equal(oldSigningPrivateKey)
   })
 
   it('should reupload encrypted private key when changing my password', async () => {
-    const oldEncryptedPrivateKey = sessions.userEncryptedPrivateKey
+    const oldEncryptedPrivateKey = context.userEncryptedPrivateKey
+    const oldEncryptedSigningPrivateKey = context.userEncryptedSigningPrivateKey
+
+    expect(oldEncryptedPrivateKey).to.not.be.undefined
+    expect(oldEncryptedSigningPrivateKey).to.not.be.undefined
 
     await context.changePassword('new_password')
 
@@ -68,6 +86,9 @@ describe('public key cryptography', function () {
 
     expect(user.encrypted_private_key).to.not.be.undefined
     expect(user.encrypted_private_key).to.not.equal(oldEncryptedPrivateKey)
+
+    expect(user.encrypted_signing_key).to.not.be.undefined
+    expect(user.encrypted_signing_key).to.not.equal(oldEncryptedSigningPrivateKey)
   })
 
   it('should allow option to enable collaboration for previously signed in accounts', async () => {
@@ -81,6 +102,8 @@ describe('public key cryptography', function () {
         ...params,
         publicKey: undefined,
         encryptedPrivateKey: undefined,
+        signingPublicKey: undefined,
+        encryptedSigningPrivateKey: undefined,
       }
 
       objectToSpy.register.restore()

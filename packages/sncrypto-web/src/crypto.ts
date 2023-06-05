@@ -389,6 +389,29 @@ export class SNWebCrypto implements PureCryptoInterface {
     return result
   }
 
+  sodiumCryptoSignGenerateKeypair(): PkcKeyPair {
+    const result = sodium.crypto_sign_keypair()
+
+    const publicKey = Utils.arrayBufferToHexString(result.publicKey)
+    const privateKey = Utils.arrayBufferToHexString(result.privateKey)
+
+    return { publicKey, privateKey, keyType: result.keyType }
+  }
+
+  sodiumCryptoSign(message: Utf8String, secretKey: HexString): Base64String {
+    const result = sodium.crypto_sign_detached(message, Utils.hexStringToArrayBuffer(secretKey))
+
+    return Utils.arrayBufferToBase64(result)
+  }
+
+  sodiumCryptoSignVerify(message: Utf8String, signature: Base64String, publicKey: HexString): boolean {
+    return sodium.crypto_sign_verify_detached(
+      Utils.base64ToArrayBuffer(signature),
+      message,
+      Utils.hexStringToArrayBuffer(publicKey),
+    )
+  }
+
   /**
    * Generates a random secret for TOTP authentication
    *

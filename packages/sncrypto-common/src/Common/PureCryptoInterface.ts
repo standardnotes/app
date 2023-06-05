@@ -149,6 +149,12 @@ export interface PureCryptoInterface {
     recipientSecretKey: HexString,
   ): Utf8String
 
+  sodiumCryptoSignGenerateKeypair(): PkcKeyPair
+
+  sodiumCryptoSign(message: Utf8String, secretKey: HexString): Base64String
+
+  sodiumCryptoSignVerify(message: Utf8String, signature: Base64String, publicKey: HexString): boolean
+
   /**
    * Converts a plain string into base64
    * @param text - A plain string
