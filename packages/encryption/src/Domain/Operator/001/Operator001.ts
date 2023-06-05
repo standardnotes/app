@@ -243,18 +243,6 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
     throw new Error('Method not implemented.')
   }
 
-  asymmetricAnonymousEncrypt(_stringToEncrypt: string, _recipientPublicKey: string): string {
-    throw new Error('Method not implemented.')
-  }
-
-  asymmetricAnonymousDecrypt(
-    _stringToDecrypt: string,
-    _recipientPublicKey: string,
-    _recipientSecretKey: string,
-  ): string {
-    throw new Error('Method not implemented.')
-  }
-
   symmetricEncrypt(_privateKey: string, _symmetricKey: string): string {
     throw new Error('Method not implemented.')
   }

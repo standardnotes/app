@@ -389,27 +389,6 @@ export class SNWebCrypto implements PureCryptoInterface {
     return result
   }
 
-  sodiumCryptoBoxAnonymousEncrypt(message: Utf8String, recipientPublicKey: HexString): Base64String {
-    const result = sodium.crypto_box_seal(message, Utils.hexStringToArrayBuffer(recipientPublicKey))
-
-    return Utils.arrayBufferToBase64(result)
-  }
-
-  sodiumCryptoBoxAnonymousDecrypt(
-    ciphertext: Base64String,
-    recipientPublicKey: HexString,
-    recipientSecretKey: HexString,
-  ): Utf8String {
-    const result = sodium.crypto_box_seal_open(
-      Utils.base64ToArrayBuffer(ciphertext),
-      Utils.hexStringToArrayBuffer(recipientPublicKey),
-      Utils.hexStringToArrayBuffer(recipientSecretKey),
-      'text',
-    )
-
-    return result
-  }
-
   /**
    * Generates a random secret for TOTP authentication
    *

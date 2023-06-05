@@ -135,14 +135,6 @@ export interface PureCryptoInterface {
 
   sodiumCryptoBoxGenerateKeypair(): PkcKeyPair
 
-  sodiumCryptoBoxAnonymousEncrypt(message: Utf8String, recipientPublicKey: HexString): Base64String
-
-  sodiumCryptoBoxAnonymousDecrypt(
-    ciphertext: Base64String,
-    recipientPublicKey: HexString,
-    recipientSecretKey: HexString,
-  ): Utf8String
-
   sodiumCryptoBoxEasyEncrypt(
     message: Utf8String,
     nonce: HexString,

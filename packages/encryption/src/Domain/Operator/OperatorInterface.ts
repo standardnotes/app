@@ -76,14 +76,6 @@ export interface OperatorCommon {
     recipientSecretKey: HexString,
   ): Utf8String
 
-  asymmetricAnonymousEncrypt(stringToEncrypt: HexString, recipientPublicKey: HexString): AsymmetricallyEncryptedString
-
-  asymmetricAnonymousDecrypt(
-    stringToDecrypt: AsymmetricallyEncryptedString,
-    recipientPublicKey: HexString,
-    recipientSecretKey: HexString,
-  ): Utf8String
-
   symmetricEncrypt(stringToEncrypt: string, symmetricKey: HexString): SymmetricallyEncryptedString
 
   symmetricDecrypt(stringToDecrypt: SymmetricallyEncryptedString, symmetricKey: HexString): HexString | null

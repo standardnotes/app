@@ -48,7 +48,6 @@ type V004Components = {
 
 const SymmetricCiphertextPrefix = `${ProtocolVersion.V004}_Sym`
 const AsymmetricCiphertextPrefix = `${ProtocolVersion.V004}_Asym`
-const AsymmetricAnonymousCiphertextPrefix = `${ProtocolVersion.V004}_AsymAnon`
 
 const PARTITION_CHARACTER = ':'
 
@@ -431,24 +430,6 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     const keyString = components[2]
 
     return this.crypto.sodiumCryptoBoxEasyDecrypt(keyString, nonce, senderPublicKey, recipientSecretKey)
-  }
-
-  asymmetricAnonymousEncrypt(stringToEncrypt: HexString, recipientPublicKey: HexString): AsymmetricallyEncryptedString {
-    const ciphertext = this.crypto.sodiumCryptoBoxAnonymousEncrypt(stringToEncrypt, recipientPublicKey)
-
-    return [AsymmetricAnonymousCiphertextPrefix, ciphertext].join(':')
-  }
-
-  asymmetricAnonymousDecrypt(
-    stringToDecrypt: AsymmetricallyEncryptedString,
-    recipientPublicKey: HexString,
-    recipientSecretKey: HexString,
-  ): Utf8String {
-    const components = stringToDecrypt.split(':')
-
-    const ciphertext = components[1]
-
-    return this.crypto.sodiumCryptoBoxAnonymousDecrypt(ciphertext, recipientPublicKey, recipientSecretKey)
   }
 
   symmetricEncrypt(stringToEncrypt: HexString, symmetricKey: HexString): SymmetricallyEncryptedString {
