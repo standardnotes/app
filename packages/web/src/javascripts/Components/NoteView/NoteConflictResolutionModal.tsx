@@ -33,8 +33,8 @@ const ConflictListItem = ({
     <button
       tabIndex={FOCUSABLE_BUT_NOT_TABBABLE}
       className={classNames(
-        'flex w-full cursor-pointer flex-col border-0 bg-transparent px-3 py-2.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none',
-        isSelected ? 'border-l-2 border-info bg-info-backdrop' : '',
+        'flex w-full cursor-pointer flex-col border-l-2 bg-transparent px-3 py-2.5 text-left text-sm text-text hover:bg-contrast hover:text-foreground focus:bg-info-backdrop focus:shadow-none',
+        isSelected ? 'border-info bg-info-backdrop' : 'border-transparent',
       )}
       onClick={onClick}
       data-selected={isSelected}
