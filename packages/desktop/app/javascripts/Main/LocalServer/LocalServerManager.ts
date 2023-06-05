@@ -65,7 +65,7 @@ export class LocalServiceManager implements DesktopServerManagerInterface {
       this.appState.store.get(StoreKeys.DesktopServerPseudoKeyParamsKey) ?? this.generateRandomKey(32)
     const valetTokenSecret =
       this.appState.store.get(StoreKeys.DesktopServerValetTokenSecret) ?? this.generateRandomKey(32)
-    const port = this.appState.store.get(StoreKeys.DesktopServerPort) ?? 3000
+    const port = this.appState.store.get(StoreKeys.DesktopServerPort) ?? 3127
 
     this.appState.store.set(StoreKeys.DesktopServerJWTSecret, jwtSecret)
     this.appState.store.set(StoreKeys.DesktopServerAuthJWTSecret, authJwtSecret)
