@@ -1,5 +1,6 @@
 import { DecryptedTransferPayload } from '@standardnotes/models'
 import { DesktopWatchedDirectoriesChanges, FileBackupsDevice } from '@standardnotes/files'
+import { HomeServerEnvironmentConfiguration } from '../HomeServer/HomeServerEnvironmentConfiguration'
 
 export interface WebClientRequiresDesktopMethods extends FileBackupsDevice {
   syncComponents(payloads: unknown[]): void
@@ -9,6 +10,8 @@ export interface WebClientRequiresDesktopMethods extends FileBackupsDevice {
   get extensionsServerHost(): string
 
   askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean>
+
+  setHomeServerConfiguration(configurationJSONString: string): Promise<void>
 }
 
 export interface DesktopClientRequiresWebMethods {
@@ -21,4 +24,6 @@ export interface DesktopClientRequiresWebMethods {
   onComponentInstallationComplete(componentData: DecryptedTransferPayload, error: unknown): Promise<void>
 
   handleWatchedDirectoriesChanges(changes: DesktopWatchedDirectoriesChanges): Promise<void>
+
+  handleHomeServerConfigurationChanged(config: HomeServerEnvironmentConfiguration): Promise<void>
 }

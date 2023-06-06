@@ -19,6 +19,9 @@ process.once('loaded', function () {
 
     setInstallComponentCompleteHandler: (handler: MainEventHandler) =>
       ipcRenderer.on(MessageToWebApp.InstallComponentComplete, handler),
+
+    setHomeServerConfigurationChangedHandler: (handler: MainEventHandler) =>
+      ipcRenderer.on(MessageToWebApp.HomeServerConfigurationChanged, handler),
   }
 
   contextBridge.exposeInMainWorld('electronMainEvents', mainEvents)

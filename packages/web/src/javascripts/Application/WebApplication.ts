@@ -109,7 +109,7 @@ export class WebApplication extends SNApplication implements WebApplicationInter
       ? undefined
       : new AutolockService(this, this.internalEventBus)
     this.webServices.desktopService = isDesktopDevice(deviceInterface)
-      ? new DesktopManager(this, deviceInterface, this.fileBackups as BackupServiceInterface)
+      ? new DesktopManager(this, deviceInterface, this.fileBackups as BackupServiceInterface, this.storage)
       : undefined
     this.webServices.viewControllerManager = new ViewControllerManager(this, deviceInterface)
     this.webServices.changelogService = new ChangelogService(this.environment, this.storage)

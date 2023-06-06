@@ -64,10 +64,17 @@ export class DiskStorageService extends Services.AbstractService implements Serv
   override async handleApplicationStage(stage: Services.ApplicationStage) {
     await super.handleApplicationStage(stage)
 
-    if (stage === Services.ApplicationStage.Launched_10) {
-      this.storagePersistable = true
-      if (this.needsPersist) {
-        void this.persistValuesToDisk()
+    switch (stage) {
+      case Services.ApplicationStage.Launched_10:
+        this.storagePersistable = true
+        if (this.needsPersist) {
+          void this.persistValuesToDisk()
+        }
+        break
+      case Services.ApplicationStage.StorageDecrypted_09: {
+        // To-Do: send the home server configuration to desktop device here
+
+        break
       }
     }
   }

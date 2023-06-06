@@ -1,12 +1,23 @@
-import { AppState } from '../../../AppState'
 import { HomeServerManagerInterface, HomeServerStatus } from '@web/Application/Device/DesktopSnjsExports'
-import { StoreKeys } from '../Store/StoreKeys'
 import { HomeServerInterface } from '@standardnotes/home-server'
+import { WebContents } from 'electron'
+import { MessageToWebApp } from '../../Shared/IpcMessages'
+import { HomeServerEnvironmentConfiguration } from '@standardnotes/services'
 
 const os = require('os')
 
 export class HomeServerManager implements HomeServerManagerInterface {
-  constructor(private appState: AppState, private homeServer: HomeServerInterface) {}
+  private homeServerConfiguration: HomeServerEnvironmentConfiguration | undefined
+
+  constructor(private homeServer: HomeServerInterface, private webContents: WebContents) {}
+
+  async setHomeServerConfiguration(configurationJSONString: string): Promise<void> {
+    try {
+      this.homeServerConfiguration = JSON.parse(configurationJSONString)
+    } catch (error) {
+      console.error(`Could not parse home server configuration: ${(error as Error).message}`)
+    }
+  }
 
   listenOnServerLogs(callback: (data: Buffer) => void): void {
     const logStream = this.homeServer.logs()
@@ -32,29 +43,23 @@ export class HomeServerManager implements HomeServerManagerInterface {
   async serverStatus(): Promise<HomeServerStatus> {
     const isHomeServerRunning = await this.homeServer.isRunning()
 
-    const url = isHomeServerRunning
-      ? `http://${this.getLocalIP()}:${this.appState.store.get(StoreKeys.HomeServerPort)}`
-      : undefined
+    if (!isHomeServerRunning) {
+      return { status: 'off' }
+    }
 
-    return { status: isHomeServerRunning ? 'on' : 'off', url }
+    return {
+      status: 'on',
+      url: `http://${this.getLocalIP()}:${(this.homeServerConfiguration as HomeServerEnvironmentConfiguration).port}`,
+    }
   }
 
   async startServer(): Promise<void> {
-    const jwtSecret = this.appState.store.get(StoreKeys.HomeServerJWTSecret) ?? this.generateRandomKey(32)
-    const authJwtSecret = this.appState.store.get(StoreKeys.HomeServerAuthJWTSecret) ?? this.generateRandomKey(32)
-    const encryptionServerKey =
-      this.appState.store.get(StoreKeys.HomeServerEncryptionServerKey) ?? this.generateRandomKey(32)
-    const pseudoKeyParamsKey =
-      this.appState.store.get(StoreKeys.HomeServerPseudoKeyParamsKey) ?? this.generateRandomKey(32)
-    const valetTokenSecret = this.appState.store.get(StoreKeys.HomeServerValetTokenSecret) ?? this.generateRandomKey(32)
-    const port = this.appState.store.get(StoreKeys.HomeServerPort) ?? 3127
+    if (!this.homeServerConfiguration) {
+      this.homeServerConfiguration = this.generateHomeServerConfiguration()
+    }
 
-    this.appState.store.set(StoreKeys.HomeServerJWTSecret, jwtSecret)
-    this.appState.store.set(StoreKeys.HomeServerAuthJWTSecret, authJwtSecret)
-    this.appState.store.set(StoreKeys.HomeServerEncryptionServerKey, encryptionServerKey)
-    this.appState.store.set(StoreKeys.HomeServerPseudoKeyParamsKey, pseudoKeyParamsKey)
-    this.appState.store.set(StoreKeys.HomeServerValetTokenSecret, valetTokenSecret)
-    this.appState.store.set(StoreKeys.HomeServerPort, port)
+    const { jwtSecret, authJwtSecret, encryptionServerKey, pseudoKeyParamsKey, valetTokenSecret, port } =
+      this.homeServerConfiguration
 
     await this.homeServer.start({
       environment: {
@@ -63,7 +68,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
         ENCRYPTION_SERVER_KEY: encryptionServerKey,
         PSEUDO_KEY_PARAMS_KEY: pseudoKeyParamsKey,
         VALET_TOKEN_SECRET: valetTokenSecret,
-        FILES_SERVER_URL: `http://${this.getLocalIP()}:${this.appState.store.get(StoreKeys.HomeServerPort)}`,
+        FILES_SERVER_URL: `http://${this.getLocalIP()}:${port}`,
         LOG_LEVEL: 'info',
         VERSION: 'desktop',
         PORT: port.toString(),
@@ -85,5 +90,27 @@ export class HomeServerManager implements HomeServerManagerInterface {
         }
       }
     }
+  }
+
+  private generateHomeServerConfiguration(): HomeServerEnvironmentConfiguration {
+    const jwtSecret = this.generateRandomKey(32)
+    const authJwtSecret = this.generateRandomKey(32)
+    const encryptionServerKey = this.generateRandomKey(32)
+    const pseudoKeyParamsKey = this.generateRandomKey(32)
+    const valetTokenSecret = this.generateRandomKey(32)
+    const port = 3127
+
+    const configuration: HomeServerEnvironmentConfiguration = {
+      jwtSecret,
+      authJwtSecret,
+      encryptionServerKey,
+      pseudoKeyParamsKey,
+      valetTokenSecret,
+      port,
+    }
+
+    this.webContents.send(MessageToWebApp.HomeServerConfigurationChanged, configuration)
+
+    return configuration
   }
 }
