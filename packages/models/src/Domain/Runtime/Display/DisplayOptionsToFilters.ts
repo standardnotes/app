@@ -10,8 +10,9 @@ import { FilterDisplayOptions } from './DisplayOptions'
 export function computeUnifiedFilterForDisplayOptions(
   options: FilterDisplayOptions,
   collection: ReferenceLookupCollection,
+  additionalFilters: ItemFilter[] = [],
 ): ItemFilter {
-  const filters = computeFiltersForDisplayOptions(options, collection)
+  const filters = computeFiltersForDisplayOptions(options, collection).concat(additionalFilters)
 
   return (item: SearchableDecryptedItem) => {
     return itemPassesFilters(item, filters)
