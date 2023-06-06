@@ -154,5 +154,5 @@ window.electronMainEvents.setWatchedDirectoriesChangeHandler((_: IpcRendererEven
 })
 
 window.electronMainEvents.setHomeServerConfigurationChangedHandler((_: IpcRendererEvent, config: any) => {
-  void window.webClient.handleHomeServerConfigurationChanged(config as HomeServerEnvironmentConfiguration)
+  void window.webClient.handleHomeServerConfigurationChanged(config as string)
 })

@@ -20,6 +20,7 @@ import {
   PayloadTimestampDefaults,
   LocalStorageEncryptedContextualPayload,
   FullyFormedTransferPayload,
+  Environment,
 } from '@standardnotes/models'
 
 /**
@@ -72,8 +73,18 @@ export class DiskStorageService extends Services.AbstractService implements Serv
         }
         break
       case Services.ApplicationStage.StorageDecrypted_09: {
-        // To-Do: send the home server configuration to desktop device here
+        const isDesktopEnvironment = this.deviceInterface.environment === Environment.Desktop
+        if (isDesktopEnvironment) {
+          const homeServerConfiguration = this.getValue(Services.StorageKey.HomeServerEnvironmentConfiguration) as
+            | string
+            | undefined
 
+          if (homeServerConfiguration !== undefined) {
+            await (this.deviceInterface as Services.DesktopDeviceInterface).setHomeServerConfiguration(
+              homeServerConfiguration,
+            )
+          }
+        }
         break
       }
     }

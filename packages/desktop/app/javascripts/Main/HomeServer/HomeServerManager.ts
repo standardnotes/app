@@ -109,7 +109,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
       port,
     }
 
-    this.webContents.send(MessageToWebApp.HomeServerConfigurationChanged, configuration)
+    this.webContents.send(MessageToWebApp.HomeServerConfigurationChanged, JSON.stringify(configuration))
 
     return configuration
   }

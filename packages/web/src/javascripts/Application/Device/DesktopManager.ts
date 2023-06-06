@@ -1,5 +1,5 @@
 import { HeadlessSuperConverter } from '@/Components/SuperEditor/Tools/HeadlessSuperConverter'
-import { HomeServerEnvironmentConfiguration, StorageKey, StorageServiceInterface } from '@standardnotes/services'
+import { StorageKey, StorageServiceInterface } from '@standardnotes/services'
 import {
   SNComponent,
   ComponentMutator,
@@ -50,8 +50,8 @@ export class DesktopManager
     void this.backups.importWatchedDirectoryChanges(changes)
   }
 
-  async handleHomeServerConfigurationChanged(config: HomeServerEnvironmentConfiguration): Promise<void> {
-    this.storageService.setValue(StorageKey.HomeServerEnvironmentConfiguration, config)
+  async handleHomeServerConfigurationChanged(configJSON: string): Promise<void> {
+    this.storageService.setValue(StorageKey.HomeServerEnvironmentConfiguration, configJSON)
   }
 
   beginTextBackupsTimer() {

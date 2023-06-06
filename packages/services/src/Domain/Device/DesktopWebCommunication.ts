@@ -1,6 +1,5 @@
 import { DecryptedTransferPayload } from '@standardnotes/models'
 import { DesktopWatchedDirectoriesChanges, FileBackupsDevice } from '@standardnotes/files'
-import { HomeServerEnvironmentConfiguration } from '../HomeServer/HomeServerEnvironmentConfiguration'
 
 export interface WebClientRequiresDesktopMethods extends FileBackupsDevice {
   syncComponents(payloads: unknown[]): void
@@ -25,5 +24,5 @@ export interface DesktopClientRequiresWebMethods {
 
   handleWatchedDirectoriesChanges(changes: DesktopWatchedDirectoriesChanges): Promise<void>
 
-  handleHomeServerConfigurationChanged(config: HomeServerEnvironmentConfiguration): Promise<void>
+  handleHomeServerConfigurationChanged(configJSON: string): Promise<void>
 }
