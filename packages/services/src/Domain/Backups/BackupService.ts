@@ -147,9 +147,10 @@ export class FilesBackupService extends AbstractService implements BackupService
   private async automaticallyEnableTextBackupsIfPreferenceNotSet(): Promise<void> {
     if (this.storage.getValue(StorageKey.TextBackupsEnabled) == undefined) {
       this.storage.setValue(StorageKey.TextBackupsEnabled, true)
-      const location = `${await this.device.getUserDocumentsDirectory()}/${await this.prependWorkspacePathForPath(
-        TextBackupsDirectoryName,
-      )}`
+      const location = await this.device.joinPaths(
+        await this.device.getUserDocumentsDirectory(),
+        await this.prependWorkspacePathForPath(TextBackupsDirectoryName),
+      )
       this.storage.setValue(StorageKey.TextBackupsLocation, location)
     }
   }
@@ -378,13 +379,16 @@ export class FilesBackupService extends AbstractService implements BackupService
     return record
   }
 
-  public getFileBackupAbsolutePath(record: FileBackupRecord): string {
+  public getFileBackupAbsolutePath(record: FileBackupRecord): Promise<string> {
     const location = this.getFilesBackupsLocation()
-    return `${location}/${record.relativePath}`
+    if (!location) {
+      throw new ClientDisplayableError('No files backups location set')
+    }
+    return this.device.joinPaths(location, record.relativePath)
   }
 
   public async openFileBackup(record: FileBackupRecord): Promise<void> {
-    const location = this.getFileBackupAbsolutePath(record)
+    const location = await this.getFileBackupAbsolutePath(record)
     await this.device.openLocation(location)
   }
 
@@ -459,7 +463,13 @@ export class FilesBackupService extends AbstractService implements BackupService
       return 'failed'
     }
 
-    const path = `${this.getFilesBackupsLocation()}/${fileBackup.relativePath}/${fileBackup.binaryFileName}`
+    const fileBackupsLocation = await this.getFilesBackupsLocation()
+
+    if (!fileBackupsLocation) {
+      return 'failed'
+    }
+
+    const path = await this.device.joinPaths(fileBackupsLocation, fileBackup.relativePath, fileBackup.binaryFileName)
     const token = await this.device.getFileBackupReadToken(path)
 
     let readMore = true
