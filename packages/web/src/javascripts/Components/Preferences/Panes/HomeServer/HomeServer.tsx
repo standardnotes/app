@@ -45,6 +45,22 @@ const HomeServer = () => {
     setShowLogs(!showLogs)
   }
 
+  const handleStartServer = useCallback(async () => {
+    await desktopDevice?.startServer()
+    await refreshStatus()
+  }, [refreshStatus, desktopDevice])
+
+  const handleStopServer = useCallback(async () => {
+    await desktopDevice?.stopServer()
+    await refreshStatus()
+  }, [refreshStatus, desktopDevice])
+
+  const handleRestartServer = useCallback(async () => {
+    await desktopDevice?.stopServer()
+    await desktopDevice?.startServer()
+    await refreshStatus()
+  }, [refreshStatus, desktopDevice])
+
   const clearLogs = () => {
     setLogs([])
   }
@@ -115,10 +131,9 @@ const HomeServer = () => {
             <Title>Home Server</Title>
             {status ? getStatusString() : <Text>Status unavailable</Text>}
             <div className="mt-3 flex flex-row flex-wrap gap-3">
-              <Button label="Start" onClick={() => desktopDevice.startServer()} />
-              <Button label="Stop" onClick={() => desktopDevice.stopServer()} />
-              <Button label="Restart" onClick={() => desktopDevice.restartServer()} />
-              <Button label="Refresh Status" onClick={() => refreshStatus()} />
+              <Button disabled={status?.status === 'on'} label="Start" onClick={handleStartServer} />
+              <Button disabled={status?.status === 'off'} label="Stop" onClick={handleStopServer} />
+              <Button label="Restart" onClick={handleRestartServer} />
               <Button label={showLogs ? 'Hide Logs' : 'Show Logs'} onClick={handleShowLogs} />
             </div>
 
