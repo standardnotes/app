@@ -463,7 +463,7 @@ export class FilesBackupService extends AbstractService implements BackupService
       return 'failed'
     }
 
-    const fileBackupsLocation = await this.getFilesBackupsLocation()
+    const fileBackupsLocation = this.getFilesBackupsLocation()
 
     if (!fileBackupsLocation) {
       return 'failed'
