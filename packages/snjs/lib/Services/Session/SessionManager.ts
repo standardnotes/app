@@ -28,7 +28,7 @@ import {
   SessionEvent,
   SuccessfullyChangedCredentialsEventData,
 } from '@standardnotes/services'
-import { Base64String } from '@standardnotes/sncrypto-common'
+import { Base64String, PkcKeyPair } from '@standardnotes/sncrypto-common'
 import {
   ClientDisplayableError,
   SessionBody,
@@ -204,7 +204,7 @@ export class SNSessionManager
     return this.user as User
   }
 
-  isUserMissingKeypair(): boolean {
+  isUserMissingKeyPair(): boolean {
     const user = this.getUser()
 
     if (!user) {
@@ -687,8 +687,8 @@ export class SNSessionManager
     return processedResponse
   }
 
-  async updateAccountWithFirstTimeKeypair(): Promise<boolean> {
-    if (!this.isUserMissingKeypair()) {
+  async updateAccountWithFirstTimeKeyPair(): Promise<boolean> {
+    if (!this.isUserMissingKeyPair()) {
       throw Error('Cannot update account with first time keypair if user already has a keypair')
     }
 
@@ -722,8 +722,8 @@ export class SNSessionManager
     this.memoizeUser(user)
     this.diskStorageService.setValue(StorageKey.User, user)
 
-    this.diskStorageService.setValue(StorageKey.AccountDecryptedPrivateKey, encryptionKeyPair.privateKey)
-    this.diskStorageService.setValue(StorageKey.AccountDecryptedSigningPrivateKey, signingKeyPair.privateKey)
+    this.diskStorageService.setValue(StorageKey.AccountKeyPair, encryptionKeyPair)
+    this.diskStorageService.setValue(StorageKey.AccountSigningKeyPair, signingKeyPair)
 
     return true
   }
@@ -796,7 +796,10 @@ export class SNSessionManager
     if (user.encryptedPrivateKey) {
       const decryptedPrivateKey = this.protocolService.decryptPrivateKeyWithRootKey(rootKey, user.encryptedPrivateKey)
       if (decryptedPrivateKey) {
-        this.diskStorageService.setValue(StorageKey.AccountDecryptedPrivateKey, decryptedPrivateKey)
+        this.diskStorageService.setValue<PkcKeyPair>(StorageKey.AccountKeyPair, {
+          privateKey: decryptedPrivateKey,
+          publicKey: user.publicKey as string,
+        })
       } else {
         /** If failed to decrypt, do not trust keypair information */
         user.publicKey = undefined
@@ -813,7 +816,10 @@ export class SNSessionManager
         user.encryptedSigningPrivateKey,
       )
       if (decryptedSigningPrivateKey) {
-        this.diskStorageService.setValue(StorageKey.AccountDecryptedSigningPrivateKey, decryptedSigningPrivateKey)
+        this.diskStorageService.setValue<PkcKeyPair>(StorageKey.AccountSigningKeyPair, {
+          privateKey: decryptedSigningPrivateKey,
+          publicKey: user.signingPublicKey as string,
+        })
       } else {
         /** If failed to decrypt, do not trust keypair information */
         user.signingPublicKey = undefined

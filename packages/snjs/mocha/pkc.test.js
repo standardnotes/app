@@ -29,10 +29,10 @@ describe('public key cryptography', function () {
 
   it('should create keypair during registration', () => {
     expect(sessions.getPublicKey()).to.not.be.undefined
-    expect(encryption.getDecryptedPrivateKey()).to.not.be.undefined
+    expect(encryption.getKeyPair().privateKey).to.not.be.undefined
 
     expect(sessions.getSigningPublicKey()).to.not.be.undefined
-    expect(encryption.getDecryptedSigningPrivateKey()).to.not.be.undefined
+    expect(encryption.getSigningKeyPair().privateKey).to.not.be.undefined
   })
 
   it('should populate keypair during sign in', async () => {
@@ -47,30 +47,30 @@ describe('public key cryptography', function () {
     await recreatedContext.signIn()
 
     expect(recreatedContext.sessions.getPublicKey()).to.not.be.undefined
-    expect(recreatedContext.encryption.getDecryptedPrivateKey()).to.not.be.undefined
+    expect(recreatedContext.encryption.getKeyPair().privateKey).to.not.be.undefined
 
     expect(recreatedContext.sessions.getSigningPublicKey()).to.not.be.undefined
-    expect(recreatedContext.encryption.getDecryptedSigningPrivateKey()).to.not.be.undefined
+    expect(recreatedContext.encryption.getSigningKeyPair().privateKey).to.not.be.undefined
   })
 
   it('should rotate keypair during password change', async () => {
     const oldPublicKey = sessions.getPublicKey()
-    const oldPrivateKey = encryption.getDecryptedPrivateKey()
+    const oldPrivateKey = encryption.getKeyPair().privateKey
 
     const oldSigningPublicKey = sessions.getSigningPublicKey()
-    const oldSigningPrivateKey = encryption.getDecryptedSigningPrivateKey()
+    const oldSigningPrivateKey = encryption.getSigningKeyPair().privateKey
 
     await context.changePassword('new_password')
 
     expect(sessions.getPublicKey()).to.not.be.undefined
-    expect(encryption.getDecryptedPrivateKey()).to.not.be.undefined
+    expect(encryption.getKeyPair().privateKey).to.not.be.undefined
     expect(sessions.getPublicKey()).to.not.equal(oldPublicKey)
-    expect(encryption.getDecryptedPrivateKey()).to.not.equal(oldPrivateKey)
+    expect(encryption.getKeyPair().privateKey).to.not.equal(oldPrivateKey)
 
     expect(sessions.getSigningPublicKey()).to.not.be.undefined
-    expect(encryption.getDecryptedSigningPrivateKey()).to.not.be.undefined
+    expect(encryption.getSigningKeyPair().privateKey).to.not.be.undefined
     expect(sessions.getSigningPublicKey()).to.not.equal(oldSigningPublicKey)
-    expect(encryption.getDecryptedSigningPrivateKey()).to.not.equal(oldSigningPrivateKey)
+    expect(encryption.getSigningKeyPair().privateKey).to.not.equal(oldSigningPrivateKey)
   })
 
   it('should reupload encrypted private key when changing my password', async () => {
@@ -113,10 +113,10 @@ describe('public key cryptography', function () {
 
     await newContext.register()
 
-    expect(newContext.application.sessions.isUserMissingKeypair()).to.be.true
+    expect(newContext.application.sessions.isUserMissingKeyPair()).to.be.true
 
-    await newContext.application.sessions.updateAccountWithFirstTimeKeypair()
+    await newContext.application.sessions.updateAccountWithFirstTimeKeyPair()
 
-    expect(newContext.application.sessions.isUserMissingKeypair()).to.be.false
+    expect(newContext.application.sessions.isUserMissingKeyPair()).to.be.false
   })
 })

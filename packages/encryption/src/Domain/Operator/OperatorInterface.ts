@@ -96,6 +96,7 @@ export interface SynchronousOperator extends OperatorCommon {
   generateEncryptedParametersSync(
     payload: DecryptedPayloadInterface,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
+    signingKeyPair?: PkcKeyPair,
   ): EncryptedParameters
 
   generateDecryptedParametersSync<C extends ItemContent = ItemContent>(
@@ -115,6 +116,7 @@ export interface AsynchronousOperator extends OperatorCommon {
   generateEncryptedParametersAsync(
     payload: DecryptedPayloadInterface,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
+    signingKeyPair?: PkcKeyPair,
   ): Promise<EncryptedParameters>
 
   generateDecryptedParametersAsync<C extends ItemContent = ItemContent>(

@@ -70,8 +70,8 @@ export function CreateEncryptedLocalStorageContextPayload(
     waitingForKey: fromPayload.waitingForKey,
     user_uuid: fromPayload.user_uuid,
     key_system_identifier: fromPayload.key_system_identifier,
-    last_edited_by_uuid: fromPayload.last_edited_by_uuid,
     shared_vault_uuid: fromPayload.shared_vault_uuid,
+    last_edited_by_uuid: fromPayload.last_edited_by_uuid,
   }
 }
 
@@ -91,8 +91,8 @@ export function CreateDecryptedLocalStorageContextPayload(
     dirty: useBoolean(fromPayload.dirty, false),
     user_uuid: fromPayload.user_uuid,
     key_system_identifier: fromPayload.key_system_identifier,
-    last_edited_by_uuid: fromPayload.last_edited_by_uuid,
     shared_vault_uuid: fromPayload.shared_vault_uuid,
+    last_edited_by_uuid: fromPayload.last_edited_by_uuid,
   }
 }
 
@@ -112,7 +112,7 @@ export function CreateDeletedLocalStorageContextPayload(
     uuid: fromPayload.uuid,
     user_uuid: fromPayload.user_uuid,
     key_system_identifier: fromPayload.key_system_identifier,
-    last_edited_by_uuid: fromPayload.last_edited_by_uuid,
     shared_vault_uuid: fromPayload.shared_vault_uuid,
+    last_edited_by_uuid: fromPayload.last_edited_by_uuid,
   }
 }

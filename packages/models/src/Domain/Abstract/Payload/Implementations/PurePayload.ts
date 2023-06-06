@@ -37,6 +37,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
   readonly key_system_identifier?: string
   readonly shared_vault_uuid?: string
   readonly last_edited_by_uuid?: string
+  readonly signatureVerified?: boolean
 
   constructor(rawPayload: T, source = PayloadSource.Constructor) {
     this.source = source
@@ -71,10 +72,11 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
       throw new Error('Vault key copy payload should not have vault system identifier')
     }
 
-    this.key_system_identifier = rawPayload.key_system_identifier
     this.user_uuid = rawPayload.user_uuid
-    this.last_edited_by_uuid = rawPayload.last_edited_by_uuid
+    this.key_system_identifier = rawPayload.key_system_identifier
     this.shared_vault_uuid = rawPayload.shared_vault_uuid
+    this.last_edited_by_uuid = rawPayload.last_edited_by_uuid
+    this.signatureVerified = rawPayload.signatureVerified
 
     const timeToAllowSubclassesToFinishConstruction = 0
     setTimeout(() => {
@@ -100,8 +102,9 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
       lastSyncEnd: this.lastSyncEnd,
       key_system_identifier: this.key_system_identifier,
       user_uuid: this.user_uuid,
-      last_edited_by_uuid: this.last_edited_by_uuid,
       shared_vault_uuid: this.shared_vault_uuid,
+      last_edited_by_uuid: this.last_edited_by_uuid,
+      signatureVerified: this.signatureVerified,
     }
 
     return comprehensive

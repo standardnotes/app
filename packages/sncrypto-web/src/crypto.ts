@@ -344,13 +344,13 @@ export class SNWebCrypto implements PureCryptoInterface {
     return result
   }
 
-  public sodiumCryptoBoxGenerateKeypair(): PkcKeyPair {
+  public sodiumCryptoBoxGenerateKeyPair(): PkcKeyPair {
     const result = sodium.crypto_box_keypair()
 
     const publicKey = Utils.arrayBufferToHexString(result.publicKey)
     const privateKey = Utils.arrayBufferToHexString(result.privateKey)
 
-    return { publicKey, privateKey, keyType: result.keyType }
+    return { publicKey, privateKey }
   }
 
   /**
@@ -389,13 +389,13 @@ export class SNWebCrypto implements PureCryptoInterface {
     return result
   }
 
-  sodiumCryptoSignGenerateKeypair(): PkcKeyPair {
+  sodiumCryptoSignGenerateKeyPair(): PkcKeyPair {
     const result = sodium.crypto_sign_keypair()
 
     const publicKey = Utils.arrayBufferToHexString(result.publicKey)
     const privateKey = Utils.arrayBufferToHexString(result.privateKey)
 
-    return { publicKey, privateKey, keyType: result.keyType }
+    return { publicKey, privateKey }
   }
 
   sodiumCryptoSign(message: Utf8String, secretKey: HexString): Base64String {

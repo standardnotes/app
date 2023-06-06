@@ -140,6 +140,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       this.identifier,
       this.internalEventBus,
     )
+
     this.rootKeyObserverDisposer = this.rootKeyEncryption.addEventObserver((event) => {
       this.itemsEncryption.userVersion = this.getUserVersion()
       if (event === RootKeyServiceEvent.RootKeyStatusChanged) {
@@ -170,22 +171,26 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     super.deinit()
   }
 
-  getDecryptedPrivateKey(): string {
-    const result = this.storageService.getValue<string>(StorageKey.AccountDecryptedPrivateKey)
+  getKeyPair(): PkcKeyPair {
+    const result = this.storageService.getValue<PkcKeyPair>(StorageKey.AccountKeyPair)
     if (!result) {
-      throw new Error('Decrypted private key not found')
+      throw new Error('Account keypair not found')
     }
 
     return result
   }
 
-  getDecryptedSigningPrivateKey(): string {
-    const result = this.storageService.getValue<string>(StorageKey.AccountDecryptedSigningPrivateKey)
+  getSigningKeyPair(): PkcKeyPair {
+    const result = this.storageService.getValue<PkcKeyPair>(StorageKey.AccountSigningKeyPair)
     if (!result) {
-      throw new Error('Decrypted signing private key not found')
+      throw new Error('Account signing keypair not found')
     }
 
     return result
+  }
+
+  hasSigningKeyPair(): boolean {
+    return !!this.storageService.getValue(StorageKey.AccountSigningKeyPair)
   }
 
   public async initialize() {
@@ -281,35 +286,56 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       usesKeySystemRootKeyWithKeyLookup,
     } = split
 
+    const signingKeyPair = this.hasSigningKeyPair() ? this.getSigningKeyPair() : undefined
+
     if (usesRootKey) {
-      const rootKeyEncrypted = await this.rootKeyEncryption.encryptPayloads(usesRootKey.items, usesRootKey.key)
+      const rootKeyEncrypted = await this.rootKeyEncryption.encryptPayloads(
+        usesRootKey.items,
+        usesRootKey.key,
+        signingKeyPair,
+      )
       extendArray(allEncryptedParams, rootKeyEncrypted)
     }
+
     if (usesRootKeyWithKeyLookup) {
-      const rootKeyEncrypted = await this.rootKeyEncryption.encryptPayloadsWithKeyLookup(usesRootKeyWithKeyLookup.items)
+      const rootKeyEncrypted = await this.rootKeyEncryption.encryptPayloadsWithKeyLookup(
+        usesRootKeyWithKeyLookup.items,
+        signingKeyPair,
+      )
       extendArray(allEncryptedParams, rootKeyEncrypted)
     }
+
     if (usesKeySystemRootKey) {
       const keySystemRootKeyEncrypted = await this.rootKeyEncryption.encryptPayloads(
         usesKeySystemRootKey.items,
         usesKeySystemRootKey.key,
+        signingKeyPair,
       )
       extendArray(allEncryptedParams, keySystemRootKeyEncrypted)
     }
+
     if (usesKeySystemRootKeyWithKeyLookup) {
       const keySystemRootKeyEncrypted = await this.rootKeyEncryption.encryptPayloadsWithKeyLookup(
         usesKeySystemRootKeyWithKeyLookup.items,
+        signingKeyPair,
       )
       extendArray(allEncryptedParams, keySystemRootKeyEncrypted)
     }
 
     if (usesItemsKey) {
-      const itemsKeyEncrypted = await this.itemsEncryption.encryptPayloads(usesItemsKey.items, usesItemsKey.key)
+      const itemsKeyEncrypted = await this.itemsEncryption.encryptPayloads(
+        usesItemsKey.items,
+        usesItemsKey.key,
+        signingKeyPair,
+      )
       extendArray(allEncryptedParams, itemsKeyEncrypted)
     }
 
     if (usesItemsKeyWithKeyLookup) {
-      const itemsKeyEncrypted = await this.itemsEncryption.encryptPayloadsWithKeyLookup(usesItemsKeyWithKeyLookup.items)
+      const itemsKeyEncrypted = await this.itemsEncryption.encryptPayloadsWithKeyLookup(
+        usesItemsKeyWithKeyLookup.items,
+        signingKeyPair,
+      )
       extendArray(allEncryptedParams, itemsKeyEncrypted)
     }
 

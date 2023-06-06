@@ -374,7 +374,7 @@ export class SharedVaultService
     }
 
     const useCase = new AcceptInvite(
-      this.encryption.getDecryptedPrivateKey(),
+      this.encryption.getKeyPair().privateKey,
       this.sharedVaultInvitesServer,
       this.items,
       this.encryption,
@@ -431,7 +431,7 @@ export class SharedVaultService
   ): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
     const useCase = new AddContactToSharedVaultUseCase(this.encryption, this.sharedVaultInvitesServer, this.items)
     const result = await useCase.execute({
-      inviterPrivateKey: this.encryption.getDecryptedPrivateKey(),
+      inviterPrivateKey: this.encryption.getKeyPair().privateKey,
       inviterPublicKey: this.session.getPublicKey(),
       sharedVault,
       contact,
@@ -449,7 +449,7 @@ export class SharedVaultService
     return this.encryption.decryptKeySystemRootKeyContentWithPrivateKey(
       invite.encrypted_vault_key_content,
       invite.inviter_public_key,
-      this.encryption.getDecryptedPrivateKey(),
+      this.encryption.getKeyPair().privateKey,
     )
   }
 
@@ -527,7 +527,7 @@ export class SharedVaultService
       keySystemIdentifier: params.keySystemIdentifier,
       sharedVaultUuid: params.sharedVault.sharedVaultUuid,
       inviterUuid: this.session.getSureUser().uuid,
-      inviterPrivateKey: this.encryption.getDecryptedPrivateKey(),
+      inviterPrivateKey: this.encryption.getKeyPair().privateKey,
       inviterPublicKey: this.session.getPublicKey(),
     })
   }

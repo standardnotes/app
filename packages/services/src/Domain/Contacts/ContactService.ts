@@ -52,7 +52,7 @@ export class ContactService
   }
 
   public async enableCollaboration(): Promise<void> {
-    await this.session.updateAccountWithFirstTimeKeypair()
+    await this.session.updateAccountWithFirstTimeKeyPair()
   }
 
   public async refreshAllContactsAfterPublicKeyChange(): Promise<void> {

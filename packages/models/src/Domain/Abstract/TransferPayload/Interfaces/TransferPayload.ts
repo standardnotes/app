@@ -21,8 +21,11 @@ export interface TransferPayload<C extends ItemContent = ItemContent> {
 
   duplicate_of?: string
   user_uuid?: string
-  key_system_identifier?: string
 
+  key_system_identifier?: string
   shared_vault_uuid?: string
+
   last_edited_by_uuid?: string
+
+  signatureVerified?: boolean
 }

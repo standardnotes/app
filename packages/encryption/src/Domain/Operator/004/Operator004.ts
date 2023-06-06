@@ -36,20 +36,31 @@ import { SynchronousOperator } from '../OperatorInterface'
 import { isKeySystemItemsKey } from '../../Keys/KeySystemItemsKey/KeySystemItemsKey'
 import { AsymmetricallyEncryptedString, SymmetricallyEncryptedString } from '../Types'
 import { KeySystemItemsKeyAuthenticatedData } from '../../Types/KeySystemItemsKeyAuthenticatedData'
+import { ItemAdditionalData } from '../../Types/ItemAdditionalData'
 
-type V004StringComponents = [version: string, nonce: string, ciphertext: string, authenticatedData: string]
+type V004StringComponents = [
+  version: string,
+  nonce: string,
+  ciphertext: string,
+  authenticatedData: string,
+  additionalData: string,
+]
 
 type V004Components = {
   version: V004StringComponents[0]
   nonce: V004StringComponents[1]
   ciphertext: V004StringComponents[2]
   authenticatedData: V004StringComponents[3]
+  additionalData: V004StringComponents[4]
 }
 
 const SymmetricCiphertextPrefix = `${ProtocolVersion.V004}_Sym`
 const AsymmetricCiphertextPrefix = `${ProtocolVersion.V004}_Asym`
 
 const PARTITION_CHARACTER = ':'
+
+/** Base64 encoding of JSON.stringify({}) */
+const EmptyAdditionalDataString = 'e30='
 
 export class SNProtocolOperator004 implements SynchronousOperator {
   protected readonly crypto: PureCryptoInterface
@@ -213,16 +224,30 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     plaintext: string,
     rawKey: string,
     authenticatedData: ItemAuthenticatedData | KeySystemItemsKeyAuthenticatedData,
+    signingKeyPair?: PkcKeyPair,
   ) {
     const nonce = this.generateEncryptionNonce()
 
     const ciphertext = this.encryptString004(plaintext, rawKey, nonce, authenticatedData)
+
+    let additionalData: ItemAdditionalData
+    if (signingKeyPair) {
+      additionalData = {
+        signing: {
+          publicKey: signingKeyPair.publicKey,
+          signature: this.crypto.sodiumCryptoSign(ciphertext, signingKeyPair.privateKey),
+        },
+      }
+    } else {
+      additionalData = {}
+    }
 
     const components: V004StringComponents = [
       ProtocolVersion.V004 as string,
       nonce,
       ciphertext,
       this.authenticatedDataToString(authenticatedData),
+      this.additionalDataToString(additionalData),
     ]
 
     return components.join(PARTITION_CHARACTER)
@@ -236,6 +261,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       nonce: components[1],
       ciphertext: components[2],
       authenticatedData: components[3],
+      additionalData: components[4] ?? EmptyAdditionalDataString,
     }
   }
 
@@ -295,8 +321,12 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     }
   }
 
-  private authenticatedDataToString(attachedData: ItemAuthenticatedData | KeySystemItemsKeyAuthenticatedData) {
+  private authenticatedDataToString(attachedData: ItemAuthenticatedData | KeySystemItemsKeyAuthenticatedData): string {
     return this.crypto.base64Encode(JSON.stringify(Utils.sortedCopy(Utils.omitUndefinedCopy(attachedData))))
+  }
+
+  private additionalDataToString(additionalData: ItemAdditionalData): string {
+    return this.crypto.base64Encode(JSON.stringify(Utils.sortedCopy(Utils.omitUndefinedCopy(additionalData))))
   }
 
   private stringToAuthenticatedData(
@@ -310,15 +340,32 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     })
   }
 
+  private stringToAdditionalData(rawAdditionalData: string): ItemAdditionalData {
+    return JSON.parse(this.crypto.base64Decode(rawAdditionalData))
+  }
+
   public generateEncryptedParametersSync(
     payload: DecryptedPayloadInterface,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | SNRootKey,
+    signingKeyPair?: PkcKeyPair,
   ): EncryptedParameters {
-    const contentKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
-    const contentPlaintext = JSON.stringify(payload.content)
     const authenticatedData = this.generateAuthenticatedDataForPayload(payload, key)
-    const encryptedContentString = this.generateEncryptedProtocolString(contentPlaintext, contentKey, authenticatedData)
-    const encryptedContentKey = this.generateEncryptedProtocolString(contentKey, key.itemsKey, authenticatedData)
+
+    const contentKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
+    const encryptedContentKey = this.generateEncryptedProtocolString(
+      contentKey,
+      key.itemsKey,
+      authenticatedData,
+      signingKeyPair,
+    )
+
+    const contentPlaintext = JSON.stringify(payload.content)
+    const encryptedContentString = this.generateEncryptedProtocolString(
+      contentPlaintext,
+      contentKey,
+      authenticatedData,
+      signingKeyPair,
+    )
 
     return {
       uuid: payload.uuid,
@@ -334,12 +381,12 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | SNRootKey,
   ): DecryptedParameters<C> | ErrorDecryptingParameters {
     const contentKeyComponents = this.deconstructEncryptedPayloadString(encrypted.enc_item_key)
-    const authenticatedData = this.stringToAuthenticatedData(contentKeyComponents.authenticatedData, {
+    const contentKeyAuthenticatedData = this.stringToAuthenticatedData(contentKeyComponents.authenticatedData, {
       u: encrypted.uuid,
       v: encrypted.version,
     })
 
-    const useAuthenticatedString = this.authenticatedDataToString(authenticatedData)
+    const useAuthenticatedString = this.authenticatedDataToString(contentKeyAuthenticatedData)
     const contentKey = this.decryptString004(
       contentKeyComponents.ciphertext,
       key.itemsKey,
@@ -356,6 +403,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     }
 
     const contentComponents = this.deconstructEncryptedPayloadString(encrypted.content)
+
     const content = this.decryptString004(
       contentComponents.ciphertext,
       contentKey,
@@ -368,11 +416,31 @@ export class SNProtocolOperator004 implements SynchronousOperator {
         uuid: encrypted.uuid,
         errorDecrypting: true,
       }
-    } else {
-      return {
-        uuid: encrypted.uuid,
-        content: JSON.parse(content),
-      }
+    }
+
+    const contentKeyAdditionalData = this.stringToAdditionalData(contentKeyComponents.additionalData)
+    const contentAdditionalData = this.stringToAdditionalData(contentComponents.additionalData)
+
+    const contentKeySignatureVerified = contentKeyAdditionalData.signing
+      ? this.crypto.sodiumCryptoSignVerify(
+          contentKeyComponents.ciphertext,
+          contentKeyAdditionalData.signing.signature,
+          contentKeyAdditionalData.signing.publicKey,
+        )
+      : undefined
+
+    const contentSignatureVerified = contentAdditionalData.signing
+      ? this.crypto.sodiumCryptoSignVerify(
+          contentComponents.ciphertext,
+          contentAdditionalData.signing.signature,
+          contentAdditionalData.signing.publicKey,
+        )
+      : undefined
+
+    return {
+      uuid: encrypted.uuid,
+      content: JSON.parse(content),
+      signatureVerified: contentKeySignatureVerified && contentSignatureVerified,
     }
   }
 
@@ -399,7 +467,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
   }
 
   generateKeyPair(): PkcKeyPair {
-    return this.crypto.sodiumCryptoBoxGenerateKeypair()
+    return this.crypto.sodiumCryptoBoxGenerateKeyPair()
   }
 
   asymmetricEncrypt(
@@ -433,7 +501,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
   }
 
   generateSigningKeyPair(): PkcKeyPair {
-    return this.crypto.sodiumCryptoSignGenerateKeypair()
+    return this.crypto.sodiumCryptoSignGenerateKeyPair()
   }
 
   asymmetricSign(stringToSign: Utf8String, secretSigningKey: HexString): Base64String {

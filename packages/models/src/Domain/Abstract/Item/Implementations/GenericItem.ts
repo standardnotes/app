@@ -51,12 +51,16 @@ export abstract class GenericItem<P extends PayloadInterface = PayloadInterface>
     return this.payload.user_uuid
   }
 
+  get shared_vault_uuid(): string | undefined {
+    return this.payload.shared_vault_uuid
+  }
+
   get last_edited_by_uuid(): string | undefined {
     return this.payload.last_edited_by_uuid
   }
 
-  get shared_vault_uuid(): string | undefined {
-    return this.payload.shared_vault_uuid
+  get signatureVerified(): boolean | undefined {
+    return this.payload.signatureVerified
   }
 
   /**

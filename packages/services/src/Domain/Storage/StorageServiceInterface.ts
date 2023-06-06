@@ -12,7 +12,7 @@ export interface StorageServiceInterface {
   canDecryptWithKey(key: RootKeyInterface): Promise<boolean>
   savePayload(payload: PayloadInterface): Promise<void>
   savePayloads(decryptedPayloads: PayloadInterface[]): Promise<void>
-  setValue(key: string, value: unknown, mode?: StorageValueModes): void
+  setValue<T>(key: string, value: T, mode?: StorageValueModes): void
   removeValue(key: string, mode?: StorageValueModes): Promise<void>
   setPersistencePolicy(persistencePolicy: StoragePersistencePolicies): Promise<void>
   clearAllData(): Promise<void>

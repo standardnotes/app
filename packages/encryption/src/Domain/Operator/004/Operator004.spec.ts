@@ -30,7 +30,7 @@ describe('operator 004', () => {
     crypto.generateRandomKey = jest.fn().mockImplementation(() => {
       return 'random-string'
     })
-    crypto.sodiumCryptoBoxGenerateKeypair = jest.fn().mockImplementation(() => {
+    crypto.sodiumCryptoBoxGenerateKeyPair = jest.fn().mockImplementation(() => {
       return { privateKey: 'private-key', publicKey: 'public-key', keyType: 'x25519' }
     })
     crypto.sodiumCryptoBoxEasyEncrypt = jest.fn().mockImplementation((text: string) => {
@@ -110,22 +110,22 @@ describe('operator 004', () => {
   })
 
   it('should asymmetricEncrypt', () => {
-    const senderKeypair = operator.generateKeyPair()
-    const recipientKeypair = operator.generateKeyPair()
+    const senderKeyPair = operator.generateKeyPair()
+    const recipientKeyPair = operator.generateKeyPair()
 
     const plaintext = 'foo'
 
-    const result = operator.asymmetricEncrypt(plaintext, senderKeypair.privateKey, recipientKeypair.publicKey)
+    const result = operator.asymmetricEncrypt(plaintext, senderKeyPair.privateKey, recipientKeyPair.publicKey)
 
     expect(result).toEqual(`${'005_KeyAsym'}:random-string:<e>foo<e>`)
   })
 
   it('should asymmetricDecrypt', () => {
-    const senderKeypair = operator.generateKeyPair()
-    const recipientKeypair = operator.generateKeyPair()
+    const senderKeyPair = operator.generateKeyPair()
+    const recipientKeyPair = operator.generateKeyPair()
     const plaintext = 'foo'
-    const ciphertext = operator.asymmetricEncrypt(plaintext, senderKeypair.privateKey, recipientKeypair.publicKey)
-    const decrypted = operator.asymmetricDecrypt(ciphertext, senderKeypair.publicKey, recipientKeypair.privateKey)
+    const ciphertext = operator.asymmetricEncrypt(plaintext, senderKeyPair.privateKey, recipientKeyPair.publicKey)
+    const decrypted = operator.asymmetricDecrypt(ciphertext, senderKeyPair.publicKey, recipientKeyPair.privateKey)
 
     expect(decrypted).toEqual('foo')
   })

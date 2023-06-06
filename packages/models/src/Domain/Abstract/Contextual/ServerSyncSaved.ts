@@ -17,10 +17,10 @@ export interface ServerSyncSavedContextualPayload {
   updated_at: Date
   uuid: string
   key_system_identifier?: string
-  last_edited_by_uuid?: string
   shared_vault_uuid?: string
   user_uuid: string
   duplicate_of?: string
+  last_edited_by_uuid?: string
 }
 
 export function CreateServerSyncSavedPayload(from: FilteredServerItem): ServerSyncSavedContextualPayload {
@@ -34,8 +34,8 @@ export function CreateServerSyncSavedPayload(from: FilteredServerItem): ServerSy
     uuid: from.uuid,
     key_system_identifier: from.key_system_identifier,
     shared_vault_uuid: from.shared_vault_uuid,
-    last_edited_by_uuid: from.last_edited_by_uuid,
     user_uuid: from.user_uuid,
     duplicate_of: from.duplicate_of,
+    last_edited_by_uuid: from.last_edited_by_uuid,
   }
 }

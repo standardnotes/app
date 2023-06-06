@@ -10,13 +10,13 @@ import { DecryptedPayloadInterface } from '../../Payload/Interfaces/DecryptedPay
 import { ItemInterface } from '../Interfaces/ItemInterface'
 import { getIncrementedDirtyIndex } from '../../../Runtime/DirtyCounter/DirtyCounter'
 
-export class DecryptedItemMutator<C extends ItemContent = ItemContent> extends ItemMutator<
-  DecryptedPayloadInterface<C>,
-  DecryptedItemInterface<C>
-> {
+export class DecryptedItemMutator<
+  C extends ItemContent = ItemContent,
+  I extends DecryptedItemInterface<C> = DecryptedItemInterface<C>,
+> extends ItemMutator<DecryptedPayloadInterface<C>, I> {
   protected mutableContent: C
 
-  constructor(item: DecryptedItemInterface<C>, type: MutationType) {
+  constructor(item: I, type: MutationType) {
     super(item, type)
 
     const mutableCopy = Copy(this.immutablePayload.content)

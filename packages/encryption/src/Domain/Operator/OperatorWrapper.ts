@@ -15,19 +15,21 @@ import {
 } from '../Types/EncryptedParameters'
 import { isAsyncOperator } from './Functions'
 import { OperatorManager } from './OperatorManager'
+import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
 export async function encryptPayload(
   payload: DecryptedPayloadInterface,
   key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   operatorManager: OperatorManager,
+  signingKeyPair?: PkcKeyPair,
 ): Promise<EncryptedParameters> {
   const operator = operatorManager.operatorForVersion(key.keyVersion)
   let encryptionParameters
 
   if (isAsyncOperator(operator)) {
-    encryptionParameters = await operator.generateEncryptedParametersAsync(payload, key)
+    encryptionParameters = await operator.generateEncryptedParametersAsync(payload, key, signingKeyPair)
   } else {
-    encryptionParameters = operator.generateEncryptedParametersSync(payload, key)
+    encryptionParameters = operator.generateEncryptedParametersSync(payload, key, signingKeyPair)
   }
 
   if (!encryptionParameters) {

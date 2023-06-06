@@ -1,12 +1,21 @@
 import { DecryptedItemMutator } from '../../Abstract/Item'
 import { TrustedContactContent } from './TrustedContactContent'
+import { TrustedContactInterface } from './TrustedContactInterface'
+import { TrustedContactPublicKey } from './TrustedContactPublicKey'
 
-export class TrustedContactMutator extends DecryptedItemMutator<TrustedContactContent> {
+export class TrustedContactMutator extends DecryptedItemMutator<TrustedContactContent, TrustedContactInterface> {
   set name(newName: string) {
     this.mutableContent.name = newName
   }
 
-  set publicKey(newPublicKey: string) {
-    this.mutableContent.publicKey = newPublicKey
+  addPublicKey(params: { encryption: string; signing: string }): void {
+    const newKey = new TrustedContactPublicKey(
+      params.encryption,
+      params.signing,
+      new Date(),
+      this.immutableItem.publicKey,
+    )
+
+    this.mutableContent.publicKey = newKey
   }
 }

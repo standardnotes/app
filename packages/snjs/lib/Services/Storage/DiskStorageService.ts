@@ -252,7 +252,7 @@ export class DiskStorageService extends Services.AbstractService implements Serv
     return rawContent as Services.StorageValuesObject
   }
 
-  public setValue(key: string, value: unknown, mode = Services.StorageValueModes.Default): void {
+  public setValue<T>(key: string, value: T, mode = Services.StorageValueModes.Default): void {
     this.setValueWithNoPersist(key, value, mode)
 
     void this.persistValuesToDisk()

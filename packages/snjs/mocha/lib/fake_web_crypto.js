@@ -135,6 +135,10 @@ export default class FakeWebCrypto {
     return data.plaintext
   }
 
+  sodiumCryptoBoxGenerateKeyPair() {
+    return { publicKey: this.randomString(64), privateKey: this.randomString(64) }
+  }
+
   sodiumCryptoBoxEasyEncrypt(message, nonce, senderSecretKey, recipientPublicKey) {
     const data = {
       message,
@@ -158,8 +162,20 @@ export default class FakeWebCrypto {
     return data.message
   }
 
-  sodiumCryptoBoxGenerateKeypair() {
-    return { publicKey: this.randomString(64), privateKey: this.randomString(64), keyType: 'x25519' }
+  sodiumCryptoSignGenerateKeyPair() {
+    return { publicKey: this.randomString(64), privateKey: this.randomString(64) }
+  }
+
+  sodiumCryptoSign(message, secretKey) {
+    const data = {
+      message,
+      secretKey,
+    }
+    return btoa(JSON.stringify(data))
+  }
+
+  sodiumCryptoSignVerify(message, signature, publicKey) {
+    return true
   }
 
   generateOtpSecret() {

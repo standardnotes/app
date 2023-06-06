@@ -57,6 +57,7 @@ import { StorageKey } from '../Storage/StorageKeys'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 import { StorageValueModes } from '../Storage/StorageTypes'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
+import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
 export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEvent> {
   private rootKey?: RootKeyInterface
@@ -500,7 +501,10 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     return this.items.getDisplayableItemsKeys()
   }
 
-  private async encrypPayloadWithKeyLookup(payload: DecryptedPayloadInterface): Promise<EncryptedParameters> {
+  private async encrypPayloadWithKeyLookup(
+    payload: DecryptedPayloadInterface,
+    signingKeyPair?: PkcKeyPair,
+  ): Promise<EncryptedParameters> {
     let key: RootKeyInterface | KeySystemRootKeyInterface | undefined
     if (payload.key_system_identifier || ItemContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
       if (!payload.key_system_identifier) {
@@ -517,25 +521,30 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
       throw Error('Attempting root key encryption with no root key')
     }
 
-    return this.encryptPayload(payload, key)
+    return this.encryptPayload(payload, key, signingKeyPair)
   }
 
-  public async encryptPayloadsWithKeyLookup(payloads: DecryptedPayloadInterface[]): Promise<EncryptedParameters[]> {
-    return Promise.all(payloads.map((payload) => this.encrypPayloadWithKeyLookup(payload)))
+  public async encryptPayloadsWithKeyLookup(
+    payloads: DecryptedPayloadInterface[],
+    signingKeyPair?: PkcKeyPair,
+  ): Promise<EncryptedParameters[]> {
+    return Promise.all(payloads.map((payload) => this.encrypPayloadWithKeyLookup(payload, signingKeyPair)))
   }
 
   public async encryptPayload(
     payload: DecryptedPayloadInterface,
     key: RootKeyInterface | KeySystemRootKeyInterface,
+    signingKeyPair?: PkcKeyPair,
   ): Promise<EncryptedParameters> {
-    return encryptPayload(payload, key, this.operatorManager)
+    return encryptPayload(payload, key, this.operatorManager, signingKeyPair)
   }
 
   public async encryptPayloads(
     payloads: DecryptedPayloadInterface[],
     key: RootKeyInterface | KeySystemRootKeyInterface,
+    signingKeyPair?: PkcKeyPair,
   ) {
-    return Promise.all(payloads.map((payload) => this.encryptPayload(payload, key)))
+    return Promise.all(payloads.map((payload) => this.encryptPayload(payload, key, signingKeyPair)))
   }
 
   public async decryptPayloadWithKeyLookup<C extends ItemContent = ItemContent>(

@@ -27,10 +27,12 @@ export interface PayloadInterface<T extends TransferPayload = TransferPayload, C
   readonly lastSyncEnd?: Date
 
   readonly duplicate_of?: string
+
+  readonly user_uuid?: string
   readonly key_system_identifier?: string
   readonly shared_vault_uuid?: string
-  readonly user_uuid?: string
   readonly last_edited_by_uuid?: string
+  readonly signatureVerified?: boolean
 
   /**
    * "Ejected" means a payload for

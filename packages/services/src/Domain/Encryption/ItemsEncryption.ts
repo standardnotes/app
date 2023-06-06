@@ -28,6 +28,7 @@ import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { PayloadManagerInterface } from '../Payloads/PayloadManagerInterface'
 import { AbstractService } from '../Service/AbstractService'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
+import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
 export class ItemsEncryptionService extends AbstractService {
   private removeItemsObserver!: () => void
@@ -135,19 +136,23 @@ export class ItemsEncryptionService extends AbstractService {
     return defaultKey
   }
 
-  public async encryptPayloadWithKeyLookup(payload: DecryptedPayloadInterface): Promise<EncryptedParameters> {
+  public async encryptPayloadWithKeyLookup(
+    payload: DecryptedPayloadInterface,
+    signingKeyPair?: PkcKeyPair,
+  ): Promise<EncryptedParameters> {
     const key = this.keyToUseForItemEncryption(payload)
 
     if (key instanceof StandardException) {
       throw Error(key.message)
     }
 
-    return this.encryptPayload(payload, key)
+    return this.encryptPayload(payload, key, signingKeyPair)
   }
 
   public async encryptPayload(
     payload: DecryptedPayloadInterface,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface,
+    signingKeyPair?: PkcKeyPair,
   ): Promise<EncryptedParameters> {
     if (isEncryptedPayload(payload)) {
       throw Error('Attempting to encrypt already encrypted payload.')
@@ -159,18 +164,22 @@ export class ItemsEncryptionService extends AbstractService {
       throw Error('Attempting to encrypt payload with no UuidGenerator.')
     }
 
-    return encryptPayload(payload, key, this.operatorManager)
+    return encryptPayload(payload, key, this.operatorManager, signingKeyPair)
   }
 
   public async encryptPayloads(
     payloads: DecryptedPayloadInterface[],
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface,
+    signingKeyPair?: PkcKeyPair,
   ): Promise<EncryptedParameters[]> {
-    return Promise.all(payloads.map((payload) => this.encryptPayload(payload, key)))
+    return Promise.all(payloads.map((payload) => this.encryptPayload(payload, key, signingKeyPair)))
   }
 
-  public async encryptPayloadsWithKeyLookup(payloads: DecryptedPayloadInterface[]): Promise<EncryptedParameters[]> {
-    return Promise.all(payloads.map((payload) => this.encryptPayloadWithKeyLookup(payload)))
+  public async encryptPayloadsWithKeyLookup(
+    payloads: DecryptedPayloadInterface[],
+    signingKeyPair?: PkcKeyPair,
+  ): Promise<EncryptedParameters[]> {
+    return Promise.all(payloads.map((payload) => this.encryptPayloadWithKeyLookup(payload, signingKeyPair)))
   }
 
   public async decryptPayloadWithKeyLookup<C extends ItemContent = ItemContent>(

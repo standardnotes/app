@@ -133,7 +133,7 @@ export interface PureCryptoInterface {
     assocData: Utf8String,
   ): { message: Uint8Array; tag: SodiumConstant } | false
 
-  sodiumCryptoBoxGenerateKeypair(): PkcKeyPair
+  sodiumCryptoBoxGenerateKeyPair(): PkcKeyPair
 
   sodiumCryptoBoxEasyEncrypt(
     message: Utf8String,
@@ -149,7 +149,7 @@ export interface PureCryptoInterface {
     recipientSecretKey: HexString,
   ): Utf8String
 
-  sodiumCryptoSignGenerateKeypair(): PkcKeyPair
+  sodiumCryptoSignGenerateKeyPair(): PkcKeyPair
 
   sodiumCryptoSign(message: Utf8String, secretKey: HexString): Base64String
 

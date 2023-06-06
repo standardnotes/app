@@ -16,8 +16,9 @@ export interface ItemInterface<P extends PayloadInterface = PayloadInterface> {
   uuid: string
   get key_system_identifier(): string | undefined
   get user_uuid(): string | undefined
-  get last_edited_by_uuid(): string | undefined
   get shared_vault_uuid(): string | undefined
+  get last_edited_by_uuid(): string | undefined
+  get signatureVerified(): boolean | undefined
 
   content_type: ContentType
   created_at: Date
