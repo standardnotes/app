@@ -11,6 +11,8 @@ import {
   PayloadTimestampDefaults,
   KeySystemItemsKeyInterface,
   KeySystemIdentifier,
+  KeySystemRootKeyInterface,
+  RootKeyInterface,
 } from '@standardnotes/models'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { firstHalfOfString, secondHalfOfString, splitString, UuidGenerator } from '@standardnotes/utils'
@@ -24,7 +26,7 @@ import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } f
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
-import { AsynchronousOperator } from '../OperatorInterface'
+import { OperatorInterface } from '../OperatorInterface'
 
 const NO_IV = '00000000000000000000000000000000'
 
@@ -32,7 +34,7 @@ const NO_IV = '00000000000000000000000000000000'
  * @deprecated
  * A legacy operator no longer used to generate new accounts
  */
-export class SNProtocolOperator001 implements AsynchronousOperator {
+export class SNProtocolOperator001 implements OperatorInterface {
   protected readonly crypto: PureCryptoInterface
 
   constructor(crypto: PureCryptoInterface) {
@@ -227,39 +229,40 @@ export class SNProtocolOperator001 implements AsynchronousOperator {
     throw new Error('Method not implemented.')
   }
 
-  versionForEncryptedString(_encryptedString: string): ProtocolVersion {
+  versionForAsymmetricallyEncryptedString(_encryptedString: string): ProtocolVersion {
     throw new Error('Method not implemented.')
   }
 
-  generateKeyPair(): PkcKeyPair {
+  generateEncryptedParametersSync(
+    _payload: DecryptedPayloadInterface<ItemContent>,
+    _key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
+    _signingKeyPair?: PkcKeyPair | undefined,
+  ): EncryptedParameters {
     throw new Error('Method not implemented.')
   }
 
-  asymmetricEncrypt(_stringToEncrypt: string, _senderSecretKey: string, _recipientPublicKey: string): string {
+  generateDecryptedParametersSync<C extends ItemContent = ItemContent>(
+    _encrypted: EncryptedParameters,
+    _key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
+  ): ErrorDecryptingParameters | DecryptedParameters<C> {
     throw new Error('Method not implemented.')
   }
 
-  asymmetricDecrypt(_stringToDecrypt: string, _senderPublicKey: string, _recipientSecretKey: string): string {
+  asymmetricEncrypt(_dto: {
+    stringToEncrypt: string
+    senderSecretKey: string
+    senderSigningKeyPair: PkcKeyPair
+    recipientPublicKey: string
+  }): string {
     throw new Error('Method not implemented.')
   }
 
-  generateSigningKeyPair(): PkcKeyPair {
-    throw new Error('Method not implemented.')
-  }
-
-  asymmetricSign(_stringToSign: string, _secretSigningKey: string): string {
-    throw new Error('Method not implemented.')
-  }
-
-  asymmetricVerify(_stringToVerify: string, _signature: string, _publicSigningKey: string): boolean {
-    throw new Error('Method not implemented.')
-  }
-
-  symmetricEncrypt(_privateKey: string, _symmetricKey: string): string {
-    throw new Error('Method not implemented.')
-  }
-
-  symmetricDecrypt(_encryptedPrivateKey: string, _symmetricKey: string): string | null {
+  asymmetricDecrypt(_dto: {
+    stringToDecrypt: string
+    senderPublicKey: string
+    senderSigningPublicKey: string
+    recipientSecretKey: string
+  }): { plaintext: string; signatureVerified: boolean } | null {
     throw new Error('Method not implemented.')
   }
 }

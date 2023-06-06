@@ -15,16 +15,12 @@ export interface UserApiServiceInterface {
     keyParams: RootKeyParamsInterface
     ephemeral: boolean
     publicKey: string
-    encryptedPrivateKey: string
     signingPublicKey: string
-    encryptedSigningPrivateKey: string
   }): Promise<HttpResponse<UserRegistrationResponseBody>>
   updateUser(updateDTO: {
     userUuid: string
     publicKey: string
-    encryptedPrivateKey: string
     signingPublicKey: string
-    encryptedSigningPrivateKey: string
   }): Promise<HttpResponse<UserUpdateResponse>>
 
   submitUserRequest(dto: {

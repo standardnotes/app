@@ -340,6 +340,20 @@ export class UserService
     }
   }
 
+  async updateAccountWithFirstTimeKeyPair(): Promise<{
+    success?: true
+    canceled?: true
+    error?: { message: string }
+  }> {
+    if (!this.sessionManager.isUserMissingKeyPair()) {
+      throw Error('Cannot update account with first time keypair if user already has a keypair')
+    }
+
+    const result = await this.performProtocolUpgrade()
+
+    return result
+  }
+
   public async performProtocolUpgrade(): Promise<{
     success?: true
     canceled?: true

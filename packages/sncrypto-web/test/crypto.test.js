@@ -259,15 +259,17 @@ describe('crypto operations', async function () {
   })
 
   it('pkc crypto_box_easy keypair generation', async function () {
-    const keypair = await webCrypto.sodiumCryptoBoxGenerateKeyPair()
+    const seed = await webCrypto.generateRandomKey(32)
+    const keypair = await webCrypto.sodiumCryptoBoxSeedKeypair(seed)
     expect(keypair.keyType).to.equal('x25519')
     expect(keypair.publicKey.length).to.equal(64)
     expect(keypair.privateKey.length).to.equal(64)
   })
 
   it('pkc crypto_box_easy encrypt/decrypt', async function () {
-    const senderKeyPair = await webCrypto.sodiumCryptoBoxGenerateKeyPair()
-    const recipientKeyPair = await webCrypto.sodiumCryptoBoxGenerateKeyPair()
+    const seed = await webCrypto.generateRandomKey(32)
+    const senderKeyPair = await webCrypto.sodiumCryptoBoxSeedKeypair(seed)
+    const recipientKeyPair = await webCrypto.sodiumCryptoBoxSeedKeypair(seed)
 
     const nonce = await webCrypto.generateRandomKey(192)
     const plaintext = 'hello world 🌍'

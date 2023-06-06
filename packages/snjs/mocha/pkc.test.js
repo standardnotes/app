@@ -73,7 +73,7 @@ describe('public key cryptography', function () {
     expect(encryption.getSigningKeyPair().privateKey).to.not.equal(oldSigningPrivateKey)
   })
 
-  it('should reupload encrypted private key when changing my password', async () => {
+  it('should reupload public keys when changing my password', async () => {
     const oldEncryptedPrivateKey = context.userEncryptedPrivateKey
     const oldEncryptedSigningPrivateKey = context.userEncryptedSigningPrivateKey
 
@@ -84,11 +84,11 @@ describe('public key cryptography', function () {
 
     const user = await context.application.sessions.getUserFromServer()
 
-    expect(user.encrypted_private_key).to.not.be.undefined
-    expect(user.encrypted_private_key).to.not.equal(oldEncryptedPrivateKey)
+    expect(user.public_key).to.not.be.undefined
+    expect(user.public_key).to.not.equal(oldEncryptedPrivateKey)
 
-    expect(user.encrypted_signing_key).to.not.be.undefined
-    expect(user.encrypted_signing_key).to.not.equal(oldEncryptedSigningPrivateKey)
+    expect(user.signing_public_key).to.not.be.undefined
+    expect(user.signing_public_key).to.not.equal(oldEncryptedSigningPrivateKey)
   })
 
   it('should allow option to enable collaboration for previously signed in accounts', async () => {
@@ -115,7 +115,7 @@ describe('public key cryptography', function () {
 
     expect(newContext.application.sessions.isUserMissingKeyPair()).to.be.true
 
-    await newContext.application.sessions.updateAccountWithFirstTimeKeyPair()
+    await newContext.application.user.updateAccountWithFirstTimeKeyPair()
 
     expect(newContext.application.sessions.isUserMissingKeyPair()).to.be.false
   })

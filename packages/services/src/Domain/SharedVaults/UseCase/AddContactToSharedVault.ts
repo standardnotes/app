@@ -29,7 +29,7 @@ export class AddContactToSharedVaultUseCase {
       return ClientDisplayableError.FromString('Cannot add contact; key system root key not found')
     }
 
-    const encryptedKeySystemRootKeyContent = this.encryption.encryptKeySystemRootKeyContentWithRecipientPublicKey(
+    const encryptedKeySystemRootKeyContent = this.encryption.asymmetricallyEncryptSharedVaultMessage(
       keySystemRootKey.content,
       params.inviterPrivateKey,
       params.contact.publicKey,

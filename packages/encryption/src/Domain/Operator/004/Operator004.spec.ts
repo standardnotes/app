@@ -30,9 +30,6 @@ describe('operator 004', () => {
     crypto.generateRandomKey = jest.fn().mockImplementation(() => {
       return 'random-string'
     })
-    crypto.sodiumCryptoBoxGenerateKeyPair = jest.fn().mockImplementation(() => {
-      return { privateKey: 'private-key', publicKey: 'public-key', keyType: 'x25519' }
-    })
     crypto.sodiumCryptoBoxEasyEncrypt = jest.fn().mockImplementation((text: string) => {
       return `<e>${text}<e>`
     })
@@ -101,49 +98,5 @@ describe('operator 004', () => {
       enc_item_key: '004:random-string:<e>random-string<e>:eyJ1IjoiMTIzIiwidiI6IjAwNCJ9',
       version: '004',
     })
-  })
-
-  it('should generateKeyPair', () => {
-    const result = operator.generateKeyPair()
-
-    expect(result).toEqual({ privateKey: 'private-key', publicKey: 'public-key', keyType: 'x25519' })
-  })
-
-  it('should asymmetricEncrypt', () => {
-    const senderKeyPair = operator.generateKeyPair()
-    const recipientKeyPair = operator.generateKeyPair()
-
-    const plaintext = 'foo'
-
-    const result = operator.asymmetricEncrypt(plaintext, senderKeyPair.privateKey, recipientKeyPair.publicKey)
-
-    expect(result).toEqual(`${'005_KeyAsym'}:random-string:<e>foo<e>`)
-  })
-
-  it('should asymmetricDecrypt', () => {
-    const senderKeyPair = operator.generateKeyPair()
-    const recipientKeyPair = operator.generateKeyPair()
-    const plaintext = 'foo'
-    const ciphertext = operator.asymmetricEncrypt(plaintext, senderKeyPair.privateKey, recipientKeyPair.publicKey)
-    const decrypted = operator.asymmetricDecrypt(ciphertext, senderKeyPair.publicKey, recipientKeyPair.privateKey)
-
-    expect(decrypted).toEqual('foo')
-  })
-
-  it('should symmetricEncrypt', () => {
-    const keypair = operator.generateKeyPair()
-    const symmetricKey = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    const encryptedKey = operator.symmetricEncrypt(keypair.privateKey, symmetricKey)
-
-    expect(encryptedKey).toEqual(`${'005_KeySym'}:random-string:<e>${keypair.privateKey}<e>`)
-  })
-
-  it('should symmetricDecrypt', () => {
-    const keypair = operator.generateKeyPair()
-    const symmetricKey = 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'
-    const encryptedKey = operator.symmetricEncrypt(keypair.privateKey, symmetricKey)
-    const decryptedKey = operator.symmetricDecrypt(encryptedKey, symmetricKey)
-
-    expect(decryptedKey).toEqual(keypair.privateKey)
   })
 })

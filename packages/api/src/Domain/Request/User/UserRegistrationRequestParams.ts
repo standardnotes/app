@@ -9,7 +9,5 @@ export type UserRegistrationRequestParams = AnyKeyParamsContent & {
   email: string
   ephemeral: boolean
   public_key: string
-  encrypted_private_key: string
   signing_public_key: string
-  encrypted_signing_private_key: string
 }

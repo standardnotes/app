@@ -18,7 +18,7 @@ export class AcceptInvite {
   ) {}
 
   async execute(invite: SharedVaultInviteServerHash): Promise<'inserted' | 'changed' | 'errored'> {
-    const decryptionResult = this.encryption.decryptKeySystemRootKeyContentWithPrivateKey(
+    const decryptionResult = this.encryption.asymmetricallyDecryptSharedVaultMessage(
       invite.encrypted_vault_key_content,
       invite.inviter_public_key,
       this.privateKey,

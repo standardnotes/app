@@ -667,13 +667,13 @@ describe('key recovery service', function () {
     const stored = (await appA.deviceInterface.getAllDatabaseEntries(appA.identifier)).find(
       (payload) => payload.uuid === newDefaultKey.uuid,
     )
-    const storedParams = await appA.protocolService.getKeyEmbeddedKeyParams(new EncryptedPayload(stored))
+    const storedParams = await appA.protocolService.getKeyEmbeddedKeyParamsFromItemsKey(new EncryptedPayload(stored))
 
     const correctStored = (await appB.deviceInterface.getAllDatabaseEntries(appB.identifier)).find(
       (payload) => payload.uuid === newDefaultKey.uuid,
     )
 
-    const correctParams = await appB.protocolService.getKeyEmbeddedKeyParams(new EncryptedPayload(correctStored))
+    const correctParams = await appB.protocolService.getKeyEmbeddedKeyParamsFromItemsKey(new EncryptedPayload(correctStored))
 
     expect(storedParams).to.eql(correctParams)
 

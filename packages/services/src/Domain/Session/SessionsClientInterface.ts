@@ -50,5 +50,4 @@ export interface SessionsClientInterface {
   getPublicKey(): string
   getSigningPublicKey(): string
   isUserMissingKeyPair(): boolean
-  updateAccountWithFirstTimeKeyPair(): Promise<boolean>
 }

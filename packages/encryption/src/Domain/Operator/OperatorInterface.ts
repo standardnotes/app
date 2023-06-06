@@ -9,14 +9,13 @@ import {
   KeySystemRootKeyContentSpecialized,
   KeySystemIdentifier,
 } from '@standardnotes/models'
-import { SNRootKey } from '../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../Keys/RootKey/RootKeyParams'
 import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } from '../Types/EncryptedParameters'
 import { ItemAuthenticatedData } from '../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../Types/RootKeyEncryptedAuthenticatedData'
-import { Base64String, HexString, PkcKeyPair, Utf8String } from '@standardnotes/sncrypto-common'
-import { AsymmetricallyEncryptedString, SymmetricallyEncryptedString } from './Types'
+import { HexString, PkcKeyPair } from '@standardnotes/sncrypto-common'
+import { AsymmetricallyEncryptedString } from './Types'
 
 /**w
  * An operator is responsible for performing crypto operations, such as generating keys
@@ -25,7 +24,7 @@ import { AsymmetricallyEncryptedString, SymmetricallyEncryptedString } from './T
  * Each operator is versioned according to the protocol version. Functions that are common
  * across all versions appear in this generic parent class.
  */
-export interface OperatorCommon {
+export interface OperatorInterface {
   /**
    * Returns encryption protocol display name
    */
@@ -48,7 +47,7 @@ export interface OperatorCommon {
    * Computes a root key given a password and previous keyParams
    * @param password - Plain string representing raw user password
    */
-  computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<SNRootKey>
+  computeRootKey<K extends RootKeyInterface>(password: string, keyParams: SNRootKeyParams): Promise<K>
 
   /**
    * Creates a new root key given an identifier and a user password
@@ -56,36 +55,17 @@ export interface OperatorCommon {
    *    for the user
    * @param password - Plain string representing raw user password
    */
-  createRootKey(identifier: string, password: string, origination: KeyParamsOrigination): Promise<SNRootKey>
+  createRootKey<K extends RootKeyInterface>(
+    identifier: string,
+    password: string,
+    origination: KeyParamsOrigination,
+  ): Promise<K>
 
   createKeySystemRootKeyContent(params: {
     systemIdentifier: KeySystemIdentifier
     systemName: string
   }): KeySystemRootKeyContentSpecialized
 
-  generateKeyPair(): PkcKeyPair
-  asymmetricEncrypt(
-    stringToEncrypt: string,
-    senderSecretKey: HexString,
-    recipientPublicKey: HexString,
-  ): AsymmetricallyEncryptedString
-  asymmetricDecrypt(
-    stringToDecrypt: AsymmetricallyEncryptedString,
-    senderPublicKey: HexString,
-    recipientSecretKey: HexString,
-  ): Utf8String
-
-  generateSigningKeyPair(): PkcKeyPair
-  asymmetricSign(stringToSign: Utf8String, secretSigningKey: HexString): Base64String
-  asymmetricVerify(stringToVerify: Utf8String, signature: Base64String, publicSigningKey: HexString): boolean
-
-  symmetricEncrypt(stringToEncrypt: string, symmetricKey: HexString): SymmetricallyEncryptedString
-  symmetricDecrypt(stringToDecrypt: SymmetricallyEncryptedString, symmetricKey: HexString): HexString | null
-
-  versionForEncryptedString(encryptedString: string): ProtocolVersion
-}
-
-export interface SynchronousOperator extends OperatorCommon {
   /**
    * Converts a bare payload into an encrypted one in the desired format.
    * @param payload - The non-encrypted payload object to encrypt
@@ -103,24 +83,19 @@ export interface SynchronousOperator extends OperatorCommon {
     encrypted: EncryptedParameters,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): DecryptedParameters<C> | ErrorDecryptingParameters
-}
 
-export interface AsynchronousOperator extends OperatorCommon {
-  /**
-   * Converts a bare payload into an encrypted one in the desired format.
-   * @param payload - The non-encrypted payload object to encrypt
-   * @param key - The key to use to encrypt the payload. Can be either
-   *  a RootKey (when encrypting payloads that require root key encryption, such as encrypting
-   * items keys), or an ItemsKey (if encrypted regular items)
-   */
-  generateEncryptedParametersAsync(
-    payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
-    signingKeyPair?: PkcKeyPair,
-  ): Promise<EncryptedParameters>
+  asymmetricEncrypt(dto: {
+    stringToEncrypt: HexString
+    senderSecretKey: HexString
+    senderSigningKeyPair: PkcKeyPair
+    recipientPublicKey: HexString
+  }): AsymmetricallyEncryptedString
+  asymmetricDecrypt(dto: {
+    stringToDecrypt: AsymmetricallyEncryptedString
+    senderPublicKey: HexString
+    senderSigningPublicKey: HexString
+    recipientSecretKey: HexString
+  }): { plaintext: HexString; signatureVerified: boolean } | null
 
-  generateDecryptedParametersAsync<C extends ItemContent = ItemContent>(
-    encrypted: EncryptedParameters,
-    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
-  ): Promise<DecryptedParameters<C> | ErrorDecryptingParameters>
+  versionForAsymmetricallyEncryptedString(encryptedString: string): ProtocolVersion
 }

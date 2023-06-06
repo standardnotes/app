@@ -344,15 +344,6 @@ export class SNWebCrypto implements PureCryptoInterface {
     return result
   }
 
-  public sodiumCryptoBoxGenerateKeyPair(): PkcKeyPair {
-    const result = sodium.crypto_box_keypair()
-
-    const publicKey = Utils.arrayBufferToHexString(result.publicKey)
-    const privateKey = Utils.arrayBufferToHexString(result.privateKey)
-
-    return { publicKey, privateKey }
-  }
-
   /**
    * https://doc.libsodium.org/public-key_cryptography/authenticated_encryption
    */
@@ -389,8 +380,17 @@ export class SNWebCrypto implements PureCryptoInterface {
     return result
   }
 
-  sodiumCryptoSignGenerateKeyPair(): PkcKeyPair {
-    const result = sodium.crypto_sign_keypair()
+  sodiumCryptoBoxSeedKeypair(seed: HexString): PkcKeyPair {
+    const result = sodium.crypto_box_seed_keypair(Utils.hexStringToArrayBuffer(seed))
+
+    const publicKey = Utils.arrayBufferToHexString(result.publicKey)
+    const privateKey = Utils.arrayBufferToHexString(result.privateKey)
+
+    return { publicKey, privateKey }
+  }
+
+  sodiumCryptoSignSeedKeypair(seed: HexString): PkcKeyPair {
+    const result = sodium.crypto_sign_seed_keypair(Utils.hexStringToArrayBuffer(seed))
 
     const publicKey = Utils.arrayBufferToHexString(result.publicKey)
     const privateKey = Utils.arrayBufferToHexString(result.privateKey)
@@ -410,6 +410,21 @@ export class SNWebCrypto implements PureCryptoInterface {
       message,
       Utils.hexStringToArrayBuffer(publicKey),
     )
+  }
+
+  sodiumCryptoKdfDeriveFromKey(key: HexString, subkeyNumber: number, subkeyLength: number, context: string): HexString {
+    if (context.length !== 8) {
+      throw new Error('Context must be 8 bytes')
+    }
+
+    const result = sodium.crypto_kdf_derive_from_key(
+      subkeyLength,
+      subkeyNumber,
+      context,
+      Utils.hexStringToArrayBuffer(key),
+    )
+
+    return Utils.arrayBufferToHexString(result)
   }
 
   /**

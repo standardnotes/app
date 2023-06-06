@@ -92,7 +92,7 @@ export class HandleSuccessfullyChangedCredentials {
       return ClientDisplayableError.FromString('Failed to find contact for invite')
     }
 
-    const newEncryptedVaultData = this.encryption.encryptKeySystemRootKeyContentWithRecipientPublicKey(
+    const newEncryptedVaultData = this.encryption.asymmetricallyEncryptSharedVaultMessage(
       keySystemRootKey.content,
       params.newPrivateKey,
       trustedContact.publicKey,

@@ -172,7 +172,7 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
       return
     }
 
-    return this.encryption.encryptKeySystemRootKeyContentWithRecipientPublicKey(
+    return this.encryption.asymmetricallyEncryptSharedVaultMessage(
       params.keySystemRootKeyData,
       params.inviterPrivateKey,
       trustedContact.publicKey,

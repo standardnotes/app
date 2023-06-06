@@ -50,4 +50,9 @@ export interface UserClientInterface extends AbstractService<AccountEvent, Accou
   signOut(force?: boolean, source?: DeinitSource): Promise<void>
   submitUserRequest(requestType: UserRequestType): Promise<boolean>
   populateSessionFromDemoShareToken(token: Base64String): Promise<void>
+  updateAccountWithFirstTimeKeyPair(): Promise<{
+    success?: true
+    canceled?: true
+    error?: { message: string }
+  }>
 }

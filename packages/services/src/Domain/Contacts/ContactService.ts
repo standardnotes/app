@@ -24,6 +24,7 @@ import { ContactServiceEvent, ContactServiceInterface } from '../Contacts/Contac
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { SyncEvent, SyncEventReceivedContactsData } from '../Event/SyncEvent'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
+import { UserClientInterface } from '../User/UserClientInterface'
 
 export class ContactService
   extends AbstractService<ContactServiceEvent>
@@ -38,6 +39,7 @@ export class ContactService
     private items: ItemManagerInterface,
     private session: SessionsClientInterface,
     private crypto: PureCryptoInterface,
+    private user: UserClientInterface,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -52,7 +54,7 @@ export class ContactService
   }
 
   public async enableCollaboration(): Promise<void> {
-    await this.session.updateAccountWithFirstTimeKeyPair()
+    await this.user.updateAccountWithFirstTimeKeyPair()
   }
 
   public async refreshAllContactsAfterPublicKeyChange(): Promise<void> {

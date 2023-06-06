@@ -13,7 +13,6 @@ import {
   encryptedParametersFromPayload,
   ErrorDecryptingParameters,
 } from '../Types/EncryptedParameters'
-import { isAsyncOperator } from './Functions'
 import { OperatorManager } from './OperatorManager'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
@@ -24,13 +23,7 @@ export async function encryptPayload(
   signingKeyPair?: PkcKeyPair,
 ): Promise<EncryptedParameters> {
   const operator = operatorManager.operatorForVersion(key.keyVersion)
-  let encryptionParameters
-
-  if (isAsyncOperator(operator)) {
-    encryptionParameters = await operator.generateEncryptedParametersAsync(payload, key, signingKeyPair)
-  } else {
-    encryptionParameters = operator.generateEncryptedParametersSync(payload, key, signingKeyPair)
-  }
+  const encryptionParameters = operator.generateEncryptedParametersSync(payload, key, signingKeyPair)
 
   if (!encryptionParameters) {
     throw 'Unable to generate encryption parameters'
@@ -47,11 +40,7 @@ export async function decryptPayload<C extends ItemContent = ItemContent>(
   const operator = operatorManager.operatorForVersion(payload.version)
 
   try {
-    if (isAsyncOperator(operator)) {
-      return await operator.generateDecryptedParametersAsync(encryptedParametersFromPayload(payload), key)
-    } else {
-      return operator.generateDecryptedParametersSync(encryptedParametersFromPayload(payload), key)
-    }
+    return operator.generateDecryptedParametersSync(encryptedParametersFromPayload(payload), key)
   } catch (e) {
     console.error('Error decrypting payload', payload, e)
     return {

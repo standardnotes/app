@@ -15,8 +15,9 @@ import {
   FillItemContentSpecialized,
   ItemsKeyContentSpecialized,
   KeySystemIdentifier,
+  RootKeyInterface,
 } from '@standardnotes/models'
-import { Base64String, HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
+import { HexString, PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import * as Utils from '@standardnotes/utils'
 import { V004Algorithm } from '../../Algorithm'
 import { isItemsKey } from '../../Keys/ItemsKey/ItemsKey'
@@ -32,37 +33,28 @@ import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } f
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
-import { SynchronousOperator } from '../OperatorInterface'
+import { OperatorInterface } from '../OperatorInterface'
 import { isKeySystemItemsKey } from '../../Keys/KeySystemItemsKey/KeySystemItemsKey'
-import { AsymmetricallyEncryptedString, SymmetricallyEncryptedString } from '../Types'
+import { AsymmetricallyEncryptedString } from '../Types'
 import { KeySystemItemsKeyAuthenticatedData } from '../../Types/KeySystemItemsKeyAuthenticatedData'
-import { ItemAdditionalData } from '../../Types/ItemAdditionalData'
-
-type V004StringComponents = [
-  version: string,
-  nonce: string,
-  ciphertext: string,
-  authenticatedData: string,
-  additionalData: string,
-]
-
-type V004Components = {
-  version: V004StringComponents[0]
-  nonce: V004StringComponents[1]
-  ciphertext: V004StringComponents[2]
-  authenticatedData: V004StringComponents[3]
-  additionalData: V004StringComponents[4]
-}
-
-const SymmetricCiphertextPrefix = `${ProtocolVersion.V004}_Sym`
-const AsymmetricCiphertextPrefix = `${ProtocolVersion.V004}_Asym`
+import {
+  AsymmetricAdditionalData,
+  EncryptionAdditionalData,
+  SymmetricItemAdditionalData,
+} from '../../Types/ItemAdditionalData'
+import {
+  V004AsymmetricCiphertextPrefix,
+  V004AsymmetricStringComponents,
+  V004Components,
+  V004StringComponents,
+} from './V004Algorithm'
 
 const PARTITION_CHARACTER = ':'
 
 /** Base64 encoding of JSON.stringify({}) */
 const EmptyAdditionalDataString = 'e30='
 
-export class SNProtocolOperator004 implements SynchronousOperator {
+export class SNProtocolOperator004 implements OperatorInterface {
   protected readonly crypto: PureCryptoInterface
 
   constructor(crypto: PureCryptoInterface) {
@@ -153,7 +145,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
    * @param password - Plain string representing raw user password
    * @param keyParams - KeyParams object
    */
-  public async computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<SNRootKey> {
+  public async computeRootKey<K extends RootKeyInterface>(password: string, keyParams: SNRootKeyParams): Promise<K> {
     return this.deriveKey(password, keyParams)
   }
 
@@ -162,11 +154,11 @@ export class SNProtocolOperator004 implements SynchronousOperator {
    * @param identifier - Plain string representing a unique identifier
    * @param password - Plain string representing raw user password
    */
-  public async createRootKey(
+  public async createRootKey<K extends RootKeyInterface>(
     identifier: string,
     password: string,
     origination: KeyParamsOrigination,
-  ): Promise<SNRootKey> {
+  ): Promise<K> {
     const version = ProtocolVersion.V004
     const seed = this.crypto.generateRandomKey(V004Algorithm.ArgonSaltSeedLength)
     const keyParams = Create004KeyParams({
@@ -176,7 +168,49 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       origination: origination,
       created: `${Date.now()}`,
     })
-    return this.deriveKey(password, keyParams)
+
+    const rootKey = await this.deriveKey<K>(password, keyParams)
+    return rootKey
+  }
+
+  private async deriveKey<K extends RootKeyInterface>(password: string, keyParams: SNRootKeyParams): Promise<K> {
+    const salt = await this.generateSalt004(keyParams.content004.identifier, keyParams.content004.pw_nonce)
+    const derivedKey = this.crypto.argon2(
+      password,
+      salt,
+      V004Algorithm.ArgonIterations,
+      V004Algorithm.ArgonMemLimit,
+      V004Algorithm.ArgonOutputKeyBytes,
+    )
+
+    const partitions = Utils.splitString(derivedKey, 2)
+    const masterKey = partitions[0]
+    const serverPassword = partitions[1]
+
+    const encryptionKeyPairSeed = this.crypto.sodiumCryptoKdfDeriveFromKey(
+      masterKey,
+      V004Algorithm.EncryptionKeyPairSubKeyNumber,
+      V004Algorithm.EncryptionKeyPairSubKeyLength,
+      V004Algorithm.EncryptionKeyPairSubKeyContext,
+    )
+    const encryptionKeyPair = this.crypto.sodiumCryptoBoxSeedKeypair(encryptionKeyPairSeed)
+
+    const signingKeyPairSeed = this.crypto.sodiumCryptoKdfDeriveFromKey(
+      masterKey,
+      V004Algorithm.SigningKeyPairSubKeyNumber,
+      V004Algorithm.SigningKeyPairSubKeyLength,
+      V004Algorithm.SigningKeyPairSubKeyContext,
+    )
+    const signingKeyPair = this.crypto.sodiumCryptoSignSeedKeypair(signingKeyPairSeed)
+
+    return CreateNewRootKey<K>({
+      masterKey,
+      serverPassword,
+      version: ProtocolVersion.V004,
+      keyParams: keyParams.getPortableValue(),
+      encryptionKeyPair,
+      signingKeyPair,
+    })
   }
 
   /**
@@ -191,7 +225,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     rawKey: string,
     nonce: string,
     authenticatedData: ItemAuthenticatedData | KeySystemItemsKeyAuthenticatedData,
-  ) {
+  ): string {
     if (!nonce) {
       throw 'encryptString null nonce'
     }
@@ -208,7 +242,12 @@ export class SNProtocolOperator004 implements SynchronousOperator {
    * @param rawAuthenticatedData String representing
                 'Additional authenticated data' - data you want to be included in authentication.
    */
-  private decryptString004(ciphertext: string, rawKey: string, nonce: string, rawAuthenticatedData: string) {
+  private decryptString004(
+    ciphertext: string,
+    rawKey: string,
+    nonce: string,
+    rawAuthenticatedData: string,
+  ): string | null {
     return this.crypto.xchacha20Decrypt(ciphertext, nonce, rawKey, rawAuthenticatedData)
   }
 
@@ -230,7 +269,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
 
     const ciphertext = this.encryptString004(plaintext, rawKey, nonce, authenticatedData)
 
-    let additionalData: ItemAdditionalData
+    let additionalData: SymmetricItemAdditionalData
     if (signingKeyPair) {
       additionalData = {
         signing: {
@@ -325,7 +364,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     return this.crypto.base64Encode(JSON.stringify(Utils.sortedCopy(Utils.omitUndefinedCopy(attachedData))))
   }
 
-  private additionalDataToString(additionalData: ItemAdditionalData): string {
+  private additionalDataToString(additionalData: EncryptionAdditionalData): string {
     return this.crypto.base64Encode(JSON.stringify(Utils.sortedCopy(Utils.omitUndefinedCopy(additionalData))))
   }
 
@@ -340,7 +379,7 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     })
   }
 
-  private stringToAdditionalData(rawAdditionalData: string): ItemAdditionalData {
+  private stringToAdditionalData<A>(rawAdditionalData: string): A {
     return JSON.parse(this.crypto.base64Decode(rawAdditionalData))
   }
 
@@ -418,8 +457,12 @@ export class SNProtocolOperator004 implements SynchronousOperator {
       }
     }
 
-    const contentKeyAdditionalData = this.stringToAdditionalData(contentKeyComponents.additionalData)
-    const contentAdditionalData = this.stringToAdditionalData(contentComponents.additionalData)
+    const contentKeyAdditionalData = this.stringToAdditionalData<SymmetricItemAdditionalData>(
+      contentKeyComponents.additionalData,
+    )
+    const contentAdditionalData = this.stringToAdditionalData<SymmetricItemAdditionalData>(
+      contentComponents.additionalData,
+    )
 
     const contentKeySignatureVerified = contentKeyAdditionalData.signing
       ? this.crypto.sodiumCryptoSignVerify(
@@ -444,102 +487,74 @@ export class SNProtocolOperator004 implements SynchronousOperator {
     }
   }
 
-  private async deriveKey(password: string, keyParams: SNRootKeyParams): Promise<SNRootKey> {
-    const salt = await this.generateSalt004(keyParams.content004.identifier, keyParams.content004.pw_nonce)
-    const derivedKey = this.crypto.argon2(
-      password,
-      salt,
-      V004Algorithm.ArgonIterations,
-      V004Algorithm.ArgonMemLimit,
-      V004Algorithm.ArgonOutputKeyBytes,
-    )
-
-    const partitions = Utils.splitString(derivedKey, 2)
-    const masterKey = partitions[0]
-    const serverPassword = partitions[1]
-
-    return CreateNewRootKey({
-      masterKey,
-      serverPassword,
-      version: ProtocolVersion.V004,
-      keyParams: keyParams.getPortableValue(),
-    })
-  }
-
-  generateKeyPair(): PkcKeyPair {
-    return this.crypto.sodiumCryptoBoxGenerateKeyPair()
-  }
-
-  asymmetricEncrypt(
-    stringToEncrypt: HexString,
-    senderSecretKey: HexString,
-    recipientPublicKey: HexString,
-  ): AsymmetricallyEncryptedString {
+  asymmetricEncrypt(dto: {
+    stringToEncrypt: HexString
+    senderSecretKey: HexString
+    senderSigningKeyPair: PkcKeyPair
+    recipientPublicKey: HexString
+  }): AsymmetricallyEncryptedString {
     const nonce = this.crypto.generateRandomKey(V004Algorithm.AsymmetricEncryptionNonceLength)
 
     const ciphertext = this.crypto.sodiumCryptoBoxEasyEncrypt(
-      stringToEncrypt,
+      dto.stringToEncrypt,
       nonce,
-      senderSecretKey,
-      recipientPublicKey,
+      dto.senderSecretKey,
+      dto.recipientPublicKey,
     )
 
-    return [AsymmetricCiphertextPrefix, nonce, ciphertext].join(':')
+    const additionalData = this.additionalDataToString({
+      signing: {
+        publicKey: dto.senderSigningKeyPair.publicKey,
+        signature: this.crypto.sodiumCryptoSign(ciphertext, dto.senderSigningKeyPair.privateKey),
+      },
+    })
+
+    const components: V004AsymmetricStringComponents = [
+      V004AsymmetricCiphertextPrefix,
+      nonce,
+      ciphertext,
+      additionalData,
+    ]
+
+    return components.join(':')
   }
 
-  asymmetricDecrypt(
-    stringToDecrypt: AsymmetricallyEncryptedString,
-    senderPublicKey: HexString,
-    recipientSecretKey: HexString,
-  ): Utf8String {
-    const components = stringToDecrypt.split(':')
+  asymmetricDecrypt(dto: {
+    stringToDecrypt: AsymmetricallyEncryptedString
+    senderPublicKey: HexString
+    senderSigningPublicKey: HexString
+    recipientSecretKey: HexString
+  }): { plaintext: HexString; signatureVerified: boolean } | null {
+    const [_, nonce, ciphertext, additionalDataString] = <V004AsymmetricStringComponents>dto.stringToDecrypt.split(':')
 
-    const nonce = components[1]
-    const keyString = components[2]
+    try {
+      const plaintext = this.crypto.sodiumCryptoBoxEasyDecrypt(
+        ciphertext,
+        nonce,
+        dto.senderPublicKey,
+        dto.recipientSecretKey,
+      )
 
-    return this.crypto.sodiumCryptoBoxEasyDecrypt(keyString, nonce, senderPublicKey, recipientSecretKey)
-  }
+      const additionalData = this.stringToAdditionalData<AsymmetricAdditionalData>(additionalDataString)
 
-  generateSigningKeyPair(): PkcKeyPair {
-    return this.crypto.sodiumCryptoSignGenerateKeyPair()
-  }
+      const signatureVerified = this.crypto.sodiumCryptoSignVerify(
+        ciphertext,
+        additionalData.signing.signature,
+        additionalData.signing.publicKey,
+      )
 
-  asymmetricSign(stringToSign: Utf8String, secretSigningKey: HexString): Base64String {
-    return this.crypto.sodiumCryptoSign(stringToSign, secretSigningKey)
-  }
-
-  asymmetricVerify(stringToVerify: Utf8String, signature: Base64String, publicSigningKey: HexString): boolean {
-    return this.crypto.sodiumCryptoSignVerify(stringToVerify, signature, publicSigningKey)
-  }
-
-  symmetricEncrypt(stringToEncrypt: HexString, symmetricKey: HexString): SymmetricallyEncryptedString {
-    if (symmetricKey.length !== 64) {
-      throw new Error('Symmetric key length must be 256 bits')
+      return {
+        plaintext,
+        signatureVerified,
+      }
+    } catch (error) {
+      return null
     }
-
-    const nonce = this.crypto.generateRandomKey(V004Algorithm.SymmetricEncryptionNonceLength)
-
-    const encryptedKey = this.crypto.xchacha20Encrypt(stringToEncrypt, nonce, symmetricKey)
-
-    return [SymmetricCiphertextPrefix, nonce, encryptedKey].join(':')
   }
 
-  symmetricDecrypt(stringToDecrypt: SymmetricallyEncryptedString, symmetricKey: HexString): HexString | null {
-    if (symmetricKey.length !== 64) {
-      throw new Error('Symmetric key length must be 256 bits')
-    }
-
-    const components = stringToDecrypt.split(':')
-
-    const nonce = components[1]
-    const keyString = components[2]
-
-    return this.crypto.xchacha20Decrypt(keyString, nonce, symmetricKey)
-  }
-
-  versionForEncryptedString(encryptedKey: string): ProtocolVersion {
-    const firstComponent = encryptedKey.split(':')[0]
-    const version = firstComponent.split('_')[0]
+  versionForAsymmetricallyEncryptedString(string: string): ProtocolVersion {
+    const [versionPrefix] = <V004AsymmetricStringComponents>string.split(':')
+    const version = versionPrefix.split('_')[0]
     return version as ProtocolVersion
   }
 }

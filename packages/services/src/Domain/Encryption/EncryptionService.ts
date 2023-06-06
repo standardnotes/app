@@ -74,7 +74,6 @@ import { SyncEvent } from '../Event/SyncEvent'
 import { RootKeyEncryptionService } from './RootKeyEncryption'
 import { DecryptBackupFile } from './BackupFileDecryptor'
 import { EncryptionServiceEvent } from './EncryptionServiceEvent'
-import { StorageKey } from '../Storage/StorageKeys'
 
 /**
  * The encryption service is responsible for the encryption and decryption of payloads, and
@@ -172,25 +171,27 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   }
 
   getKeyPair(): PkcKeyPair {
-    const result = this.storageService.getValue<PkcKeyPair>(StorageKey.AccountKeyPair)
-    if (!result) {
+    const rootKey = this.getRootKey()
+
+    if (!rootKey?.encryptionKeyPair) {
       throw new Error('Account keypair not found')
     }
 
-    return result
+    return rootKey.encryptionKeyPair
   }
 
   getSigningKeyPair(): PkcKeyPair {
-    const result = this.storageService.getValue<PkcKeyPair>(StorageKey.AccountSigningKeyPair)
-    if (!result) {
-      throw new Error('Account signing keypair not found')
+    const rootKey = this.getRootKey()
+
+    if (!rootKey?.signingKeyPair) {
+      throw new Error('Account keypair not found')
     }
 
-    return result
+    return rootKey.signingKeyPair
   }
 
   hasSigningKeyPair(): boolean {
-    return !!this.storageService.getValue(StorageKey.AccountSigningKeyPair)
+    return !!this.getRootKey()?.signingKeyPair
   }
 
   public async initialize() {
@@ -532,19 +533,19 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
    * Computes a root key given a password and key params.
    * Delegates computation to respective protocol operator.
    */
-  public async computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<RootKeyInterface> {
+  public async computeRootKey<K extends RootKeyInterface>(password: string, keyParams: SNRootKeyParams): Promise<K> {
     return this.rootKeyEncryption.computeRootKey(password, keyParams)
   }
 
   /**
    * Creates a root key using the latest protocol version
    */
-  public async createRootKey(
+  public async createRootKey<K extends RootKeyInterface>(
     identifier: string,
     password: string,
     origination: KeyParamsOrigination,
     version?: ProtocolVersion,
-  ) {
+  ): Promise<K> {
     return this.rootKeyEncryption.createRootKey(identifier, password, origination, version)
   }
 
@@ -559,56 +560,47 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.operatorManager.defaultOperator().createKeySystemItemsKey(uuid, keySystemIdentifier)
   }
 
-  public generateKeyPair(): PkcKeyPair {
+  asymmetricallyEncryptSharedVaultMessage(dto: {
+    data: KeySystemRootKeyContentSpecialized
+    senderPrivateKey: string
+    senderSigningKeyPair: PkcKeyPair
+    recipientPublicKey: string
+  }): string {
     const operator = this.operatorManager.defaultOperator()
-    const keypair = operator.generateKeyPair()
-    return keypair
-  }
-
-  public generateSigningKeyPair(): PkcKeyPair {
-    const operator = this.operatorManager.defaultOperator()
-    const keypair = operator.generateSigningKeyPair()
-    return keypair
-  }
-
-  encryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, privateKey: string): string {
-    const operator = this.operatorManager.defaultOperator()
-    const encrypted = operator.symmetricEncrypt(privateKey, rootKey.masterKey)
+    const encrypted = operator.asymmetricEncrypt({
+      stringToEncrypt: JSON.stringify(dto.data),
+      senderSecretKey: dto.senderPrivateKey,
+      senderSigningKeyPair: dto.senderSigningKeyPair,
+      recipientPublicKey: dto.recipientPublicKey,
+    })
     return encrypted
   }
 
-  decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | undefined {
-    const operator = this.operatorManager.defaultOperator()
-    const decrypted = operator.symmetricDecrypt(encryptedPrivateKey, rootKey.masterKey)
-    return decrypted ?? undefined
-  }
-
-  encryptKeySystemRootKeyContentWithRecipientPublicKey(
-    data: KeySystemRootKeyContentSpecialized,
-    senderPrivateKey: string,
-    recipientPublicKey: string,
-  ): string {
-    const operator = this.operatorManager.defaultOperator()
-    const encrypted = operator.asymmetricEncrypt(JSON.stringify(data), senderPrivateKey, recipientPublicKey)
-    return encrypted
-  }
-
-  decryptKeySystemRootKeyContentWithPrivateKey(
-    encryptedKeySystemRootKeyContent: string,
-    senderPublicKey: string,
-    privateKey: string,
-  ): KeySystemRootKeyContentSpecialized | undefined {
+  asymmetricallyDecryptSharedVaultMessage(dto: {
+    encryptedString: string
+    senderPublicKey: string
+    senderSigningPublicKey: string
+    privateKey: string
+  }): { data: KeySystemRootKeyContentSpecialized; signatureVerified: boolean } | null {
     const defaultOperator = this.operatorManager.defaultOperator()
-    const version = defaultOperator.versionForEncryptedString(encryptedKeySystemRootKeyContent)
+    const version = defaultOperator.versionForAsymmetricallyEncryptedString(dto.encryptedString)
 
     const keyOperator = this.operatorManager.operatorForVersion(version)
-    const decrypted = keyOperator.asymmetricDecrypt(encryptedKeySystemRootKeyContent, senderPublicKey, privateKey)
+    const decryptedResult = keyOperator.asymmetricDecrypt({
+      stringToDecrypt: dto.encryptedString,
+      senderPublicKey: dto.senderPublicKey,
+      senderSigningPublicKey: dto.senderSigningPublicKey,
+      recipientSecretKey: dto.privateKey,
+    })
 
-    if (decrypted) {
-      return JSON.parse(decrypted)
+    if (decryptedResult) {
+      return {
+        data: JSON.parse(decryptedResult.plaintext),
+        signatureVerified: decryptedResult.signatureVerified,
+      }
     }
 
-    return undefined
+    return null
   }
 
   public async decryptBackupFile(
@@ -679,7 +671,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return (await this.rootKeyEncryption.hasRootKeyWrapper()) && this.rootKeyEncryption.getRootKey() == undefined
   }
 
-  public async getRootKeyParams() {
+  public getRootKeyParams() {
     return this.rootKeyEncryption.getRootKeyParams()
   }
 
@@ -720,7 +712,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     await this.rootKeyEncryption.removeRootKeyWrapper()
   }
 
-  public async setRootKey(key: SNRootKey, wrappingKey?: SNRootKey) {
+  public async setRootKey(key: RootKeyInterface, wrappingKey?: SNRootKey) {
     await this.rootKeyEncryption.setRootKey(key, wrappingKey)
   }
 
@@ -763,7 +755,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   }
 
   /** Returns the key params attached to this key's encrypted payload */
-  public getKeyEmbeddedKeyParams(key: EncryptedPayloadInterface): SNRootKeyParams | undefined {
+  public getKeyEmbeddedKeyParamsFromItemsKey(key: EncryptedPayloadInterface): SNRootKeyParams | undefined {
     const authenticatedData = this.getEmbeddedPayloadAuthenticatedData(key)
     if (!authenticatedData) {
       return undefined

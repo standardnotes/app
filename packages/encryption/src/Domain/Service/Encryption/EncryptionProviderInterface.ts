@@ -34,55 +34,24 @@ export interface EncryptionProviderInterface {
   >(
     split: KeyedDecryptionSplit,
   ): Promise<(P | EncryptedPayloadInterface)[]>
-  hasRootKeyEncryptionSource(): boolean
-  getKeyEmbeddedKeyParams(key: EncryptedPayloadInterface): SNRootKeyParams | undefined
-  computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<RootKeyInterface>
+
+  getEmbeddedPayloadAuthenticatedData(
+    payload: EncryptedPayloadInterface,
+  ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined
+  getKeyEmbeddedKeyParamsFromItemsKey(key: EncryptedPayloadInterface): SNRootKeyParams | undefined
+
   supportedVersions(): ProtocolVersion[]
   isVersionNewerThanLibraryVersion(version: ProtocolVersion): boolean
   platformSupportsKeyDerivation(keyParams: SNRootKeyParams): boolean
-  computeWrappingKey(passcode: string): Promise<RootKeyInterface>
-  getUserVersion(): ProtocolVersion | undefined
+
   decryptBackupFile(
     file: BackupFile,
     password?: string,
   ): Promise<ClientDisplayableError | (EncryptedPayloadInterface | DecryptedPayloadInterface)[]>
+
+  getUserVersion(): ProtocolVersion | undefined
   hasAccount(): boolean
-  decryptErroredPayloads(): Promise<void>
-  deleteWorkspaceSpecificKeyStateFromDevice(): Promise<void>
   hasPasscode(): boolean
-  createRootKey(
-    identifier: string,
-    password: string,
-    origination: KeyParamsOrigination,
-    version?: ProtocolVersion,
-  ): Promise<RootKeyInterface>
-
-  createKeySystemItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface
-  createKeySystemRootKeyContent(params: {
-    systemIdentifier: KeySystemIdentifier
-    systemName: string
-  }): KeySystemRootKeyContentSpecialized
-
-  getKeyPair(): PkcKeyPair
-  getSigningKeyPair(): PkcKeyPair
-  generateKeyPair(): PkcKeyPair
-  generateSigningKeyPair(): PkcKeyPair
-
-  encryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, privateKey: string): string
-  decryptPrivateKeyWithRootKey(rootKey: RootKeyInterface, encryptedPrivateKey: string): string | undefined
-
-  encryptKeySystemRootKeyContentWithRecipientPublicKey(
-    content: KeySystemRootKeyContentSpecialized,
-    senderPrivateKey: string,
-    recipientPublicKey: string,
-  ): string
-  decryptKeySystemRootKeyContentWithPrivateKey(
-    encryptedKeySystemRootKeyContent: string,
-    senderPublicKey: string,
-    privateKey: string,
-  ): KeySystemRootKeyContentSpecialized | undefined
-
-  setNewRootKeyWrapper(wrappingKey: RootKeyInterface): Promise<void>
   removePasscode(): Promise<void>
   validateAccountPassword(password: string): Promise<
     | {
@@ -95,12 +64,47 @@ export interface EncryptionProviderInterface {
         valid: boolean
       }
   >
+
+  decryptErroredPayloads(): Promise<void>
+  deleteWorkspaceSpecificKeyStateFromDevice(): Promise<void>
+
+  computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<RootKeyInterface>
+  computeWrappingKey(passcode: string): Promise<RootKeyInterface>
+  hasRootKeyEncryptionSource(): boolean
+  createRootKey<K extends RootKeyInterface>(
+    identifier: string,
+    password: string,
+    origination: KeyParamsOrigination,
+    version?: ProtocolVersion,
+  ): Promise<K>
+  getRootKeyParams(): SNRootKeyParams | undefined
+  setNewRootKeyWrapper(wrappingKey: RootKeyInterface): Promise<void>
+
+  createKeySystemItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface
+  createKeySystemRootKeyContent(params: {
+    systemIdentifier: KeySystemIdentifier
+    systemName: string
+  }): KeySystemRootKeyContentSpecialized
+
   createNewItemsKeyWithRollback(): Promise<() => Promise<void>>
   reencryptItemsKeys(): Promise<void>
-  reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void>
   getSureDefaultItemsKey(): ItemsKeyInterface
-  getRootKeyParams(): Promise<SNRootKeyParams | undefined>
-  getEmbeddedPayloadAuthenticatedData(
-    payload: EncryptedPayloadInterface,
-  ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined
+
+  reencryptKeySystemItemsKeysForVault(keySystemIdentifier: KeySystemIdentifier): Promise<void>
+
+  getKeyPair(): PkcKeyPair
+  getSigningKeyPair(): PkcKeyPair
+
+  asymmetricallyEncryptSharedVaultMessage(dto: {
+    data: KeySystemRootKeyContentSpecialized
+    senderPrivateKey: string
+    senderSigningKeyPair: PkcKeyPair
+    recipientPublicKey: string
+  }): string
+  asymmetricallyDecryptSharedVaultMessage(dto: {
+    encryptedString: string
+    senderPublicKey: string
+    senderSigningPublicKey: string
+    privateKey: string
+  }): { data: KeySystemRootKeyContentSpecialized; signatureVerified: boolean } | null
 }

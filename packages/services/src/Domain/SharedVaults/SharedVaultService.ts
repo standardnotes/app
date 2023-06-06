@@ -446,7 +446,7 @@ export class SharedVaultService
   }
 
   public getInviteData(invite: SharedVaultInviteServerHash): KeySystemRootKeyContentSpecialized | undefined {
-    return this.encryption.decryptKeySystemRootKeyContentWithPrivateKey(
+    return this.encryption.asymmetricallyDecryptSharedVaultMessage(
       invite.encrypted_vault_key_content,
       invite.inviter_public_key,
       this.encryption.getKeyPair().privateKey,

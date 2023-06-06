@@ -112,7 +112,7 @@ export class ChallengeService extends AbstractService implements ChallengeServic
     return value.value as string
   }
 
-  async promptForAccountPassword(): Promise<boolean> {
+  async promptForAccountPassword(): Promise<string | null> {
     if (!this.protocolService.hasAccount()) {
       throw Error('Requiring account password for challenge with no account')
     }
@@ -126,11 +126,7 @@ export class ChallengeService extends AbstractService implements ChallengeServic
       ),
     )
 
-    if (response) {
-      return true
-    } else {
-      return false
-    }
+    return response?.getValueForType(ChallengeValidation.AccountPassword)?.value as string
   }
 
   /**

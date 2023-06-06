@@ -204,11 +204,8 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     })
   }
 
-  public async getRootKeyWrapperKeyParams(): Promise<SNRootKeyParams | undefined> {
-    const rawKeyParams = await this.storageService.getValue(
-      StorageKey.RootKeyWrapperKeyParams,
-      StorageValueModes.Nonwrapped,
-    )
+  public getRootKeyWrapperKeyParams(): SNRootKeyParams | undefined {
+    const rawKeyParams = this.storageService.getValue(StorageKey.RootKeyWrapperKeyParams, StorageValueModes.Nonwrapped)
 
     if (!rawKeyParams) {
       return undefined
@@ -217,11 +214,11 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     return CreateAnyKeyParams(rawKeyParams as AnyKeyParamsContent)
   }
 
-  public async getSureRootKeyWrapperKeyParams() {
-    return this.getRootKeyWrapperKeyParams() as Promise<SNRootKeyParams>
+  public getSureRootKeyWrapperKeyParams() {
+    return this.getRootKeyWrapperKeyParams() as SNRootKeyParams
   }
 
-  public async getRootKeyParams(): Promise<SNRootKeyParams | undefined> {
+  public getRootKeyParams(): SNRootKeyParams | undefined {
     if (this.keyMode === KeyMode.WrapperOnly) {
       return this.getRootKeyWrapperKeyParams()
     } else if (this.keyMode === KeyMode.RootKeyOnly || this.keyMode === KeyMode.RootKeyPlusWrapper) {
@@ -233,22 +230,22 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     }
   }
 
-  public async getSureRootKeyParams(): Promise<SNRootKeyParams> {
-    return this.getRootKeyParams() as Promise<SNRootKeyParams>
+  public getSureRootKeyParams(): SNRootKeyParams {
+    return this.getRootKeyParams() as SNRootKeyParams
   }
 
-  public async computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<RootKeyInterface> {
+  public async computeRootKey<K extends RootKeyInterface>(password: string, keyParams: SNRootKeyParams): Promise<K> {
     const version = keyParams.version
     const operator = this.operatorManager.operatorForVersion(version)
     return operator.computeRootKey(password, keyParams)
   }
 
-  public async createRootKey(
+  public async createRootKey<K extends RootKeyInterface>(
     identifier: string,
     password: string,
     origination: KeyParamsOrigination,
     version?: ProtocolVersion,
-  ) {
+  ): Promise<K> {
     const operator = version ? this.operatorManager.operatorForVersion(version) : this.operatorManager.defaultOperator()
     return operator.createRootKey(identifier, password, origination)
   }
@@ -302,8 +299,8 @@ export class RootKeyEncryptionService extends AbstractService<RootKeyServiceEven
     }
   }
 
-  private async recomputeAccountKeyParams(): Promise<SNRootKeyParams | undefined> {
-    const rawKeyParams = await this.storageService.getValue(StorageKey.RootKeyParams, StorageValueModes.Nonwrapped)
+  private recomputeAccountKeyParams(): SNRootKeyParams | undefined {
+    const rawKeyParams = this.storageService.getValue(StorageKey.RootKeyParams, StorageValueModes.Nonwrapped)
 
     if (!rawKeyParams) {
       return
