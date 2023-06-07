@@ -15,6 +15,8 @@ export interface WebClientRequiresDesktopMethods extends FileBackupsDevice {
   setHomeServerDataLocation(location: string): Promise<void>
 
   startServer(): Promise<void>
+
+  stopServer(): Promise<void>
 }
 
 export interface DesktopClientRequiresWebMethods {
@@ -29,4 +31,6 @@ export interface DesktopClientRequiresWebMethods {
   handleWatchedDirectoriesChanges(changes: DesktopWatchedDirectoriesChanges): Promise<void>
 
   handleHomeServerConfigurationChanged(configJSON: string): Promise<void>
+
+  handleHomeServerStarted(serverUrl: string): Promise<void>
 }

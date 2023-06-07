@@ -54,6 +54,10 @@ export class DesktopManager
     this.storageService.setValue(StorageKey.HomeServerEnvironmentConfiguration, configJSON)
   }
 
+  async handleHomeServerStarted(serverUrl: string): Promise<void> {
+    await this.application.setCustomHost(serverUrl)
+  }
+
   beginTextBackupsTimer() {
     if (this.textBackupsInterval) {
       clearInterval(this.textBackupsInterval)

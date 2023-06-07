@@ -7,7 +7,6 @@ import { IpcRendererEvent } from 'electron/renderer'
 import { CrossProcessBridge } from './CrossProcessBridge'
 import { DesktopDevice } from './DesktopDevice'
 import { ElectronMainEvents } from '../Shared/ElectronMainEvents'
-import { HomeServerEnvironmentConfiguration } from '@standardnotes/services'
 
 declare const DEFAULT_SYNC_SERVER: string
 declare const WEBSOCKET_URL: string
@@ -153,6 +152,10 @@ window.electronMainEvents.setWatchedDirectoriesChangeHandler((_: IpcRendererEven
   void window.webClient.handleWatchedDirectoriesChanges(changes as DesktopWatchedDirectoriesChanges)
 })
 
-window.electronMainEvents.setHomeServerConfigurationChangedHandler((_: IpcRendererEvent, config: any) => {
+window.electronMainEvents.setHomeServerConfigurationChangedHandler((_: IpcRendererEvent, config: unknown) => {
   void window.webClient.handleHomeServerConfigurationChanged(config as string)
+})
+
+window.electronMainEvents.setHomeServerStartedHandler((_: IpcRendererEvent, serverUrl: unknown) => {
+  void window.webClient.handleHomeServerStarted(serverUrl as string)
 })

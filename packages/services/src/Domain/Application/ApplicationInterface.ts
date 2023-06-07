@@ -45,6 +45,7 @@ export interface ApplicationInterface {
     stream: ItemStream<I>,
   ): () => void
   hasAccount(): boolean
+  setCustomHost(host: string): Promise<void>
   get features(): FeaturesClientInterface
   get componentManager(): ComponentManagerInterface
   get items(): ItemsClientInterface

@@ -58,7 +58,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
     return {
       status: 'on',
-      url: `http://${this.getLocalIP()}:${(this.homeServerConfiguration as HomeServerEnvironmentConfiguration).port}`,
+      url: this.getServerUrl(),
     }
   }
 
@@ -82,12 +82,14 @@ export class HomeServerManager implements HomeServerManagerInterface {
         ENCRYPTION_SERVER_KEY: encryptionServerKey,
         PSEUDO_KEY_PARAMS_KEY: pseudoKeyParamsKey,
         VALET_TOKEN_SECRET: valetTokenSecret,
-        FILES_SERVER_URL: `http://${this.getLocalIP()}:${port}`,
+        FILES_SERVER_URL: this.getServerUrl(),
         LOG_LEVEL: 'info',
         VERSION: 'desktop',
         PORT: port.toString(),
       },
     })
+
+    this.webContents.send(MessageToWebApp.HomeServerStarted, this.getServerUrl())
   }
 
   private generateRandomKey(length: number): string {
@@ -126,5 +128,9 @@ export class HomeServerManager implements HomeServerManagerInterface {
     this.webContents.send(MessageToWebApp.HomeServerConfigurationChanged, JSON.stringify(configuration))
 
     return configuration
+  }
+
+  private getServerUrl(): string {
+    return `http://${this.getLocalIP()}:${(this.homeServerConfiguration as HomeServerEnvironmentConfiguration).port}`
   }
 }

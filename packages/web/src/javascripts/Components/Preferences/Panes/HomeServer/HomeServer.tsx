@@ -16,7 +16,7 @@ const HomeServer = () => {
 
   const toggleHomeServer = useCallback(async () => {
     if (homeServerEnabled) {
-      homeServerService.disableHomeServer()
+      await homeServerService.disableHomeServer()
     } else {
       await homeServerService.enableHomeServer()
     }

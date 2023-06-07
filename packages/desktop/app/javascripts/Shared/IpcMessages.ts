@@ -5,6 +5,7 @@ export enum MessageToWebApp {
   InstallComponentComplete = 'install-component-complete',
   WatchedDirectoriesChanges = 'watched-directories-changes',
   HomeServerConfigurationChanged = 'home-server-configuration-changed',
+  HomeServerStarted = 'home-server-started',
 }
 
 export enum MessageToMainProcess {
