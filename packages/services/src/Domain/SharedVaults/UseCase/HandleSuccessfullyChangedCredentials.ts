@@ -24,6 +24,7 @@ export class HandleSuccessfullyChangedCredentials {
     sharedVaults: SharedVaultDisplayListing[]
   }): Promise<ClientDisplayableError[]> {
     await this.contacts.refreshAllContactsAfterPublicKeyChange()
+
     await this.sharedVaultInvitesServer.deleteAllInboundInvites()
 
     const errors = await this.updateAllOutboundInvites({

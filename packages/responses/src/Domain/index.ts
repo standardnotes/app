@@ -30,11 +30,12 @@ export * from './Contact/ContactServerHash'
 
 export * from './Http'
 
-export * from './SharedVaults/SharedVaultInviteType'
 export * from './SharedVaults/SharedVaultInviteServerHash'
 export * from './SharedVaults/SharedVaultUserServerHash'
 export * from './SharedVaults/SharedVaultServerHash'
 export * from './SharedVaults/SharedVaultPermission'
+
+export * from './AsymmetricMessage/AsymmetricMessageServerHash'
 
 export * from './Item/ApiEndpointParam'
 export * from './Item/CheckIntegrityResponse'

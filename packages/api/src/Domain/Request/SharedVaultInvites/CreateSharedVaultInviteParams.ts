@@ -1,10 +1,9 @@
-import { SharedVaultInviteType, SharedVaultPermission } from '@standardnotes/responses'
+import { SharedVaultPermission } from '@standardnotes/responses'
 
 export type CreateSharedVaultInviteParams = {
   sharedVaultUuid: string
-  inviteeUuid: string
-  inviterPublicKey: string
+  recipientUuid: string
+  senderPublicKey: string
   encryptedMessage: string
-  inviteType: SharedVaultInviteType
   permissions: SharedVaultPermission
 }
