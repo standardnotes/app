@@ -20,7 +20,6 @@ import {
   PayloadTimestampDefaults,
   LocalStorageEncryptedContextualPayload,
   FullyFormedTransferPayload,
-  Environment,
 } from '@standardnotes/models'
 
 /**
@@ -65,27 +64,10 @@ export class DiskStorageService extends Services.AbstractService implements Serv
   override async handleApplicationStage(stage: Services.ApplicationStage) {
     await super.handleApplicationStage(stage)
 
-    switch (stage) {
-      case Services.ApplicationStage.Launched_10:
-        this.storagePersistable = true
-        if (this.needsPersist) {
-          void this.persistValuesToDisk()
-        }
-        break
-      case Services.ApplicationStage.StorageDecrypted_09: {
-        const isDesktopEnvironment = this.deviceInterface.environment === Environment.Desktop
-        if (isDesktopEnvironment) {
-          const homeServerConfiguration = this.getValue(Services.StorageKey.HomeServerEnvironmentConfiguration) as
-            | string
-            | undefined
-
-          if (homeServerConfiguration !== undefined) {
-            await (this.deviceInterface as Services.DesktopDeviceInterface).setHomeServerConfiguration(
-              homeServerConfiguration,
-            )
-          }
-        }
-        break
+    if (stage === Services.ApplicationStage.Launched_10) {
+      this.storagePersistable = true
+      if (this.needsPersist) {
+        void this.persistValuesToDisk()
       }
     }
   }

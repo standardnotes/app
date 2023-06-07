@@ -85,7 +85,7 @@ import { ClientDisplayableError, SessionListEntry } from '@standardnotes/respons
 
 import { SnjsVersion } from './../Version'
 import { SNLog } from '../Log'
-import { ChallengeResponse, ListedClientInterface } from '../Services'
+import { ChallengeResponse, HomeServerService, ListedClientInterface } from '../Services'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
 import { LegacySession, MapperInterface, Session } from '@standardnotes/domain-core'
@@ -176,6 +176,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare authenticatorManager: AuthenticatorClientInterface
   private declare authManager: AuthClientInterface
   private declare revisionManager: RevisionClientInterface
+  private declare homeServerService: InternalServices.HomeServerService
 
   private declare _signInWithRecoveryCodes: SignInWithRecoveryCodes
   private declare _getRecoveryCodes: GetRecoveryCodes
@@ -1191,6 +1192,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createAuthenticatorManager()
     this.createAuthManager()
     this.createRevisionManager()
+    this.createHomeServerService()
 
     this.createUseCases()
   }
@@ -1240,6 +1242,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     ;(this.authenticatorManager as unknown) = undefined
     ;(this.authManager as unknown) = undefined
     ;(this.revisionManager as unknown) = undefined
+    ;(this.homeServerService as unknown) = undefined
     ;(this._signInWithRecoveryCodes as unknown) = undefined
     ;(this._getRecoveryCodes as unknown) = undefined
     ;(this._addAuthenticator as unknown) = undefined
@@ -1522,6 +1525,12 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.internalEventBus,
     )
     this.services.push(this.diskStorageService)
+  }
+
+  private createHomeServerService() {
+    this.homeServerService = new HomeServerService(this.deviceInterface, this.diskStorageService, this.internalEventBus)
+
+    this.services.push(this.homeServerService)
   }
 
   private createInMemoryStorageManager() {
