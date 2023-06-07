@@ -27,7 +27,7 @@ export const createTrustedContactForUserOfContext = async (
 export const acceptAllInvites = async (context) => {
   const invites = context.sharedVaults.getCachedInboundInvites()
   for (const invite of invites) {
-    const result = await context.sharedVaults.acceptInvite(invite)
+    const result = await context.sharedVaults.acceptTrustedRootKeyInvite(invite)
     if (!result) {
       throw new Error('[e2e] Failed to accept invite')
     }

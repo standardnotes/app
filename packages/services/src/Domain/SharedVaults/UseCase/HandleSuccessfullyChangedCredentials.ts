@@ -4,7 +4,8 @@ import { ClientDisplayableError, SharedVaultInviteServerHash, isErrorResponse } 
 import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { SuccessfullyChangedCredentialsEventData } from '../../Session/SuccessfullyChangedCredentialsEventData'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { SharedVaultDisplayListing } from '@standardnotes/models'
+import { SharedVaultDisplayListing, SharedVaultMessageType } from '@standardnotes/models'
+import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
 /**
  * When the local client initiates a change of credentials, it is also responsible for
@@ -26,16 +27,16 @@ export class HandleSuccessfullyChangedCredentials {
     await this.sharedVaultInvitesServer.deleteAllInboundInvites()
 
     const errors = await this.updateAllOutboundInvites({
-      newPublicKey: dto.eventData.newPublicKey,
-      newPrivateKey: dto.eventData.newPrivateKey,
       sharedVaults: dto.sharedVaults,
+      newKeyPair: dto.eventData.newKeyPair,
+      newSigningKeyPair: dto.eventData.newSigningKeyPair,
     })
     return errors
   }
 
   private async updateAllOutboundInvites(params: {
-    newPublicKey: string
-    newPrivateKey: string
+    newKeyPair: PkcKeyPair
+    newSigningKeyPair: PkcKeyPair
     sharedVaults: SharedVaultDisplayListing[]
   }): Promise<ClientDisplayableError[]> {
     const getOutboundInvitesResponse = await this.sharedVaultInvitesServer.getOutboundUserInvites()
@@ -59,8 +60,8 @@ export class HandleSuccessfullyChangedCredentials {
       const error = await this.updateInvite({
         sharedVault,
         invite,
-        newPublicKey: params.newPublicKey,
-        newPrivateKey: params.newPrivateKey,
+        newKeyPair: params.newKeyPair,
+        newSigningKeyPair: params.newSigningKeyPair,
       })
 
       if (error) {
@@ -74,11 +75,11 @@ export class HandleSuccessfullyChangedCredentials {
   private async updateInvite(params: {
     invite: SharedVaultInviteServerHash
     sharedVault: SharedVaultDisplayListing
-    newPublicKey: string
-    newPrivateKey: string
+    newKeyPair: PkcKeyPair
+    newSigningKeyPair: PkcKeyPair
   }): Promise<ClientDisplayableError | undefined> {
-    const isEncryptedWithNewPublicKey = params.invite.inviter_public_key === params.newPublicKey
-    if (isEncryptedWithNewPublicKey) {
+    const isAlreadyEncryptedWithNewPublicKey = params.invite.sender_public_key === params.newKeyPair.publicKey
+    if (isAlreadyEncryptedWithNewPublicKey) {
       return undefined
     }
 
@@ -92,17 +93,18 @@ export class HandleSuccessfullyChangedCredentials {
       return ClientDisplayableError.FromString('Failed to find contact for invite')
     }
 
-    const newEncryptedVaultData = this.encryption.asymmetricallyEncryptSharedVaultMessage(
-      keySystemRootKey.content,
-      params.newPrivateKey,
-      trustedContact.publicKey,
-    )
+    const newEncryptedVaultData = this.encryption.asymmetricallyEncryptSharedVaultMessage({
+      message: { type: SharedVaultMessageType.RootKey, data: keySystemRootKey.content },
+      senderPrivateKey: params.newKeyPair.privateKey,
+      senderSigningKeyPair: params.newSigningKeyPair,
+      recipientPublicKey: trustedContact.publicKey.encryption,
+    })
 
     const updateInviteResponse = await this.sharedVaultInvitesServer.updateInvite({
       sharedVaultUuid: params.invite.shared_vault_uuid,
       inviteUuid: params.invite.uuid,
-      inviterPublicKey: params.newPublicKey,
-      encryptedKeySystemRootKeyContent: newEncryptedVaultData,
+      inviterPublicKey: params.newKeyPair.publicKey,
+      encryptedMessage: newEncryptedVaultData,
     })
 
     if (isErrorResponse(updateInviteResponse)) {

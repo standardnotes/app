@@ -14,8 +14,8 @@ const InviteItem = ({ invite }: Props) => {
   const application = useApplication()
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false)
 
-  const trustedSender = application.vaults.getTrustedSenderOfInvite(invite)
-  const inviteData = application.vaults.getInviteData(invite)
+  const isTrusted = application.vaults.isInviteTrusted(invite)
+  const inviteData = application.vaults.getInviteDataMessageAndTrustStatus(invite)
 
   const addAsTrustedContact = useCallback(() => {
     setIsAddContactModalOpen(true)
@@ -49,7 +49,7 @@ const InviteItem = ({ invite }: Props) => {
           )}
 
           <div className="mt-2.5 flex flex-row">
-            {trustedSender ? (
+            {isTrusted ? (
               <Button label="Accept Invite" className={'mr-3 text-xs'} onClick={acceptInvite} />
             ) : (
               <div>

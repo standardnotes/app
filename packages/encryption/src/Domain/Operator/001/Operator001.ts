@@ -73,11 +73,11 @@ export class SNProtocolOperator001 implements OperatorInterface {
     return CreateDecryptedItemFromPayload(payload)
   }
 
-  public async createRootKey(
+  public async createRootKey<K extends RootKeyInterface>(
     identifier: string,
     password: string,
     origination: KeyParamsOrigination,
-  ): Promise<SNRootKey> {
+  ): Promise<K> {
     const pwCost = V001Algorithm.PbkdfMinCost as number
     const pwNonce = this.crypto.generateRandomKey(V001Algorithm.SaltSeedLength)
     const pwSalt = await this.crypto.unsafeSha1(identifier + 'SN' + pwNonce)
@@ -101,7 +101,7 @@ export class SNProtocolOperator001 implements OperatorInterface {
     return undefined
   }
 
-  public async computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<SNRootKey> {
+  public async computeRootKey<K extends RootKeyInterface>(password: string, keyParams: SNRootKeyParams): Promise<K> {
     return this.deriveKey(password, keyParams)
   }
 
@@ -196,7 +196,7 @@ export class SNProtocolOperator001 implements OperatorInterface {
     }
   }
 
-  protected async deriveKey(password: string, keyParams: SNRootKeyParams): Promise<SNRootKey> {
+  protected async deriveKey<K extends RootKeyInterface>(password: string, keyParams: SNRootKeyParams): Promise<K> {
     const derivedKey = await this.crypto.pbkdf2(
       password,
       keyParams.content001.pw_salt,
@@ -210,7 +210,7 @@ export class SNProtocolOperator001 implements OperatorInterface {
 
     const partitions = splitString(derivedKey, 2)
 
-    return CreateNewRootKey({
+    return CreateNewRootKey<K>({
       serverPassword: partitions[0],
       masterKey: partitions[1],
       version: ProtocolVersion.V001,
@@ -260,9 +260,12 @@ export class SNProtocolOperator001 implements OperatorInterface {
   asymmetricDecrypt(_dto: {
     stringToDecrypt: string
     senderPublicKey: string
-    senderSigningPublicKey: string
     recipientSecretKey: string
-  }): { plaintext: string; signatureVerified: boolean } | null {
+  }): { plaintext: string; signatureVerified: boolean; signaturePublicKey: string } | null {
+    throw new Error('Method not implemented.')
+  }
+
+  getSignerPublicKeyFromAsymmetricallyEncryptedString(_string: string): string {
     throw new Error('Method not implemented.')
   }
 }

@@ -6,11 +6,12 @@ import {
 } from '@standardnotes/responses'
 import {
   DecryptedItemInterface,
-  KeySystemRootKeyContentSpecialized,
   TrustedContactInterface,
   KeySystemIdentifier,
   SharedVaultDisplayListing,
   VaultDisplayListing,
+  SharedVaultMessage,
+  SharedVaultMessageRootKey,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
@@ -39,9 +40,14 @@ export interface SharedVaultServiceInterface
 
   downloadInboundInvites(): Promise<ClientDisplayableError | SharedVaultInviteServerHash[]>
   getOutboundInvites(vaultUuid?: string): Promise<SharedVaultInviteServerHash[] | ClientDisplayableError>
-  getTrustedSenderOfInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined
-  acceptInvite(invite: SharedVaultInviteServerHash): Promise<boolean>
-  getInviteData(invite: SharedVaultInviteServerHash): KeySystemRootKeyContentSpecialized | undefined
+  isInviteTrusted(invite: SharedVaultInviteServerHash): Promise<boolean>
+  acceptTrustedRootKeyInvite(
+    invite: SharedVaultInviteServerHash,
+    decryptedMessage: SharedVaultMessageRootKey,
+  ): Promise<void>
+  getInviteDataMessageAndTrustStatus(
+    invite: SharedVaultInviteServerHash,
+  ): { trusted: boolean; message: SharedVaultMessage } | undefined
   getCachedInboundInvites(): SharedVaultInviteServerHash[]
   getInvitableContactsForSharedVault(sharedVault: SharedVaultDisplayListing): Promise<TrustedContactInterface[]>
   deleteInvite(invite: SharedVaultInviteServerHash): Promise<ClientDisplayableError | void>

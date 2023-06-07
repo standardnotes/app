@@ -71,13 +71,13 @@ const ContentTypeClassMapping: Partial<Record<ContentType, MappingEntry>> = {
 
 export function CreateDecryptedMutatorForItem<
   I extends DecryptedItemInterface,
-  M extends DecryptedItemMutator = DecryptedItemMutator,
+  M extends DecryptedItemMutator<ItemContent, I> = DecryptedItemMutator<ItemContent, I>,
 >(item: I, type: MutationType): M {
   const lookupValue = ContentTypeClassMapping[item.content_type]?.mutatorClass
   if (lookupValue) {
     return new lookupValue(item, type) as M
   } else {
-    return new DecryptedItemMutator(item, type) as M
+    return new DecryptedItemMutator<ItemContent, I>(item, type) as M
   }
 }
 

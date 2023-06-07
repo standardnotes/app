@@ -2,10 +2,12 @@ import { DecryptedItemInterface } from '../../Abstract/Item/Interfaces/Decrypted
 import { TrustedContactContent } from './TrustedContactContent'
 import { TrustedContactPublicKeyInterface } from './TrustedContactPublicKeyInterface'
 
-export type FindPublicKeyResult = {
-  publicKey: TrustedContactPublicKeyInterface
-  current: boolean
-} | null
+export type FindPublicKeyResult =
+  | {
+      publicKey: TrustedContactPublicKeyInterface
+      current: boolean
+    }
+  | undefined
 
 export interface TrustedContactInterface extends DecryptedItemInterface<TrustedContactContent> {
   name: string

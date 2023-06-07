@@ -1310,6 +1310,8 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
       this.itemManager,
       this.sessionManager,
       this.options.crypto,
+      this.user,
+      this.protocolService,
       this.internalEventBus,
     )
 

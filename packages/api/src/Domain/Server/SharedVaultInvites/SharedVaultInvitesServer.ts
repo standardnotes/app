@@ -23,8 +23,8 @@ export class SharedVaultInvitesServer implements SharedVaultInvitesServerInterfa
   createInvite(params: CreateSharedVaultInviteParams): Promise<HttpResponse<CreateSharedVaultInviteResponse>> {
     return this.httpService.post(SharedVaultInvitesPaths.createInvite(params.sharedVaultUuid), {
       invitee_uuid: params.inviteeUuid,
-      inviter_public_key: params.inviterPublicKey,
-      encrypted_vault_key_content: params.encryptedKeySystemRootKeyContent,
+      sender_public_key: params.inviterPublicKey,
+      encrypted_message: params.encryptedMessage,
       invite_type: params.inviteType,
       permissions: params.permissions,
     })
@@ -32,8 +32,8 @@ export class SharedVaultInvitesServer implements SharedVaultInvitesServerInterfa
 
   updateInvite(params: UpdateSharedVaultInviteParams): Promise<HttpResponse<UpdateSharedVaultInviteResponse>> {
     return this.httpService.patch(SharedVaultInvitesPaths.updateInvite(params.sharedVaultUuid, params.inviteUuid), {
-      inviter_public_key: params.inviterPublicKey,
-      encrypted_vault_key_content: params.encryptedKeySystemRootKeyContent,
+      sender_public_key: params.inviterPublicKey,
+      encrypted_message: params.encryptedMessage,
       permissions: params.permissions,
     })
   }

@@ -657,10 +657,8 @@ export class SNSessionManager
 
     if (!isErrorResponse(rawResponse)) {
       const eventData: SuccessfullyChangedCredentialsEventData = {
-        newPublicKey: parameters.newRootKey.encryptionKeyPair.publicKey,
-        newPrivateKey: parameters.newRootKey.encryptionKeyPair.privateKey,
-        newSigningPublicKey: parameters.newRootKey.signingKeyPair.publicKey,
-        newSigningPrivateKey: parameters.newRootKey.signingKeyPair.privateKey,
+        newKeyPair: parameters.newRootKey.encryptionKeyPair,
+        newSigningKeyPair: parameters.newRootKey.signingKeyPair,
       }
 
       void this.notifyEvent(SessionEvent.SuccessfullyChangedCredentials, eventData)

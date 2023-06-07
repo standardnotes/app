@@ -50,11 +50,11 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
     return Models.CreateDecryptedItemFromPayload(payload)
   }
 
-  public override async createRootKey(
+  public override async createRootKey<K extends Models.RootKeyInterface>(
     identifier: string,
     password: string,
     origination: Common.KeyParamsOrigination,
-  ): Promise<SNRootKey> {
+  ): Promise<K> {
     const pwCost = Utils.lastElement(V002Algorithm.PbkdfCostsUsed) as number
     const pwNonce = this.crypto.generateRandomKey(V002Algorithm.SaltSeedLength)
     const pwSalt = await this.crypto.unsafeSha1(identifier + ':' + pwNonce)
@@ -77,7 +77,10 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
    * may have had costs of 5000, and others of 101000. Therefore, when computing
    * the root key, we must use the value returned by the server.
    */
-  public override async computeRootKey(password: string, keyParams: SNRootKeyParams): Promise<SNRootKey> {
+  public override async computeRootKey<K extends Models.RootKeyInterface>(
+    password: string,
+    keyParams: SNRootKeyParams,
+  ): Promise<K> {
     return this.deriveKey(password, keyParams)
   }
 
@@ -256,7 +259,10 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
     }
   }
 
-  protected override async deriveKey(password: string, keyParams: SNRootKeyParams): Promise<SNRootKey> {
+  protected override async deriveKey<K extends Models.RootKeyInterface>(
+    password: string,
+    keyParams: SNRootKeyParams,
+  ): Promise<K> {
     const derivedKey = await this.crypto.pbkdf2(
       password,
       keyParams.content002.pw_salt,
@@ -270,7 +276,7 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
 
     const partitions = Utils.splitString(derivedKey, 3)
 
-    return CreateNewRootKey({
+    return CreateNewRootKey<K>({
       serverPassword: partitions[0],
       masterKey: partitions[1],
       dataAuthenticationKey: partitions[2],

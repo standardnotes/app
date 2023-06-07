@@ -13,6 +13,7 @@ import {
   FillItemContent,
   Predicate,
   TrustedContactMutator,
+  TrustedContactPublicKey,
 } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 import { AbstractService } from '../Service/AbstractService'
@@ -25,6 +26,10 @@ import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface
 import { SyncEvent, SyncEventReceivedContactsData } from '../Event/SyncEvent'
 import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { UserClientInterface } from '../User/UserClientInterface'
+import { CollaborationIDData } from './CollaborationID'
+import { EncryptionProviderInterface } from '@standardnotes/encryption'
+
+const Version1CollaborationId = '1'
 
 export class ContactService
   extends AbstractService<ContactServiceEvent>
@@ -40,6 +45,7 @@ export class ContactService
     private session: SessionsClientInterface,
     private crypto: PureCryptoInterface,
     private user: UserClientInterface,
+    private encryption: EncryptionProviderInterface,
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
@@ -68,27 +74,33 @@ export class ContactService
     }
 
     return this.buildCollaborationId({
+      version: Version1CollaborationId,
       userUuid: this.session.getSureUser().uuid,
-      userPublicKey: publicKey,
+      publicKey,
+      signingPublicKey: this.session.getSigningPublicKey(),
     })
   }
 
-  private buildCollaborationId(params: { userUuid: string; userPublicKey: string }): string {
-    const version = '1'
-    const string = `${version}:${params.userUuid}:${params.userPublicKey}`
+  private buildCollaborationId(params: CollaborationIDData): string {
+    const string = `${params.version}:${params.userUuid}:${params.publicKey}:${params.signingPublicKey}`
     return this.crypto.base64Encode(string)
   }
 
-  public parseCollaborationID(collaborationID: string): { version: string; userUuid: string; userPublicKey: string } {
+  public parseCollaborationID(collaborationID: string): CollaborationIDData {
     const decoded = this.crypto.base64Decode(collaborationID)
-    const [version, userUuid, userPublicKey] = decoded.split(':')
-    return { version, userUuid, userPublicKey }
+    const [version, userUuid, publicKey, signingPublicKey] = decoded.split(':')
+    return { version, userUuid, publicKey, signingPublicKey }
   }
 
   public getCollaborationIDFromInvite(invite: SharedVaultInviteServerHash): string {
+    const signingPublicKey = this.encryption.getSignerPublicKeyFromAsymmetricallyEncryptedString(
+      invite.encrypted_message,
+    )
     return this.buildCollaborationId({
+      version: Version1CollaborationId,
       userUuid: invite.inviter_uuid,
-      userPublicKey: invite.inviter_public_key,
+      publicKey: invite.sender_public_key,
+      signingPublicKey: signingPublicKey,
     })
   }
 
@@ -96,11 +108,12 @@ export class ContactService
     collaborationID: string,
     name?: string,
   ): Promise<TrustedContactInterface | undefined> {
-    const { userUuid, userPublicKey } = this.parseCollaborationID(collaborationID)
+    const { userUuid, publicKey, signingPublicKey } = this.parseCollaborationID(collaborationID)
     return this.createTrustedContact({
       name: name ?? '',
-      publicKey: userPublicKey,
       contactUuid: userUuid,
+      publicKey,
+      signingPublicKey,
     })
   }
 
@@ -128,7 +141,10 @@ export class ContactService
     const existingContact = this.findTrustedContact(serverContact.contact_uuid)
     if (existingContact) {
       await this.items.changeItem<TrustedContactMutator>(existingContact, (mutator) => {
-        mutator.publicKey = serverContact.contact_public_key
+        mutator.addPublicKey({
+          encryption: serverContact.contact_public_key,
+          signing: serverContact.contact_signing_public_key,
+        })
         if (name) {
           mutator.name = name
         }
@@ -138,8 +154,9 @@ export class ContactService
     } else {
       await this.createTrustedContact({
         name: name ?? '',
-        publicKey: serverContact.contact_public_key,
         contactUuid: serverContact.contact_uuid,
+        publicKey: serverContact.contact_public_key,
+        signingPublicKey: serverContact.contact_signing_public_key,
       })
     }
 
@@ -152,14 +169,19 @@ export class ContactService
     contact: TrustedContactInterface,
     params: { name: string; collaborationID: string },
   ): Promise<void> {
+    const { publicKey, signingPublicKey, userUuid } = this.parseCollaborationID(params.collaborationID)
+    if (userUuid !== contact.contactUuid) {
+      throw new Error("Collaboration ID's user uuid does not match contact UUID")
+    }
+
     await this.items.changeItem<TrustedContactMutator>(contact, (mutator) => {
       mutator.name = params.name
-      if (params.collaborationID) {
-        const { userPublicKey, userUuid } = this.parseCollaborationID(params.collaborationID)
-        if (userUuid !== contact.contactUuid) {
-          throw new Error("Collaboration ID's user uuid does not match contact UUID")
-        }
-        mutator.publicKey = userPublicKey
+
+      if (publicKey !== contact.publicKey.encryption || signingPublicKey !== contact.publicKey.signing) {
+        mutator.addPublicKey({
+          encryption: publicKey,
+          signing: signingPublicKey,
+        })
       }
     })
 
@@ -170,8 +192,9 @@ export class ContactService
 
   async createTrustedContact(params: {
     name: string
-    publicKey: string
     contactUuid: string
+    publicKey: string
+    signingPublicKey: string
   }): Promise<TrustedContactInterface | undefined> {
     const createResponse = await this.contactServer.createContact({
       contactUuid: params.contactUuid,
@@ -185,7 +208,11 @@ export class ContactService
 
     const content: TrustedContactContentSpecialized = {
       name: params.name,
-      publicKey: params.publicKey,
+      publicKey: TrustedContactPublicKey.FromJson({
+        encryption: params.publicKey,
+        signing: params.signingPublicKey,
+        timestamp: new Date(),
+      }),
       contactUuid: params.contactUuid,
       serverUuid: createResponse.data.contact.uuid,
     }
@@ -238,8 +265,10 @@ export class ContactService
 
   getCollaborationIDForTrustedContact(contact: TrustedContactInterface): string {
     return this.buildCollaborationId({
+      version: Version1CollaborationId,
       userUuid: contact.content.contactUuid,
-      userPublicKey: contact.content.publicKey,
+      publicKey: contact.content.publicKey.encryption,
+      signingPublicKey: contact.content.publicKey.signing,
     })
   }
 

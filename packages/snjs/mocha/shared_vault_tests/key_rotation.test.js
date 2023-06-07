@@ -36,7 +36,7 @@ describe('shared vault key rotation', function () {
     await contactContext.sync()
 
     const vaultInvite = contactContext.sharedVaults.getCachedInboundInvites()[0]
-    expect(vaultInvite.inviter_public_key).to.equal(context.publicKey)
+    expect(vaultInvite.sender_public_key).to.equal(context.publicKey)
 
     await context.changePassword('new-password')
     await context.sync()
@@ -44,7 +44,7 @@ describe('shared vault key rotation', function () {
     await contactContext.sync()
 
     const updatedSharedVaultInvite = contactContext.sharedVaults.getCachedInboundInvites()[0]
-    expect(updatedSharedVaultInvite.inviter_public_key).to.equal(context.publicKey)
+    expect(updatedSharedVaultInvite.sender_public_key).to.equal(context.publicKey)
 
     await deinitContactContext()
   })
@@ -64,8 +64,8 @@ describe('shared vault key rotation', function () {
     const keyChangeInvite = outboundInvites[0]
     expect(keyChangeInvite).to.not.be.undefined
     expect(keyChangeInvite.user_uuid).to.equal(contactContext.userUuid)
-    expect(keyChangeInvite.encrypted_vault_key_content).to.not.be.undefined
-    expect(keyChangeInvite.inviter_public_key).to.equal(context.publicKey)
+    expect(keyChangeInvite.encrypted_message).to.not.be.undefined
+    expect(keyChangeInvite.sender_public_key).to.equal(context.publicKey)
     expect(keyChangeInvite.invite_type).to.equal('key-change')
 
     await deinitContactContext()
@@ -78,7 +78,7 @@ describe('shared vault key rotation', function () {
 
     const originalOutboundInvites = await sharedVaults.getOutboundInvites()
     expect(originalOutboundInvites.length).to.equal(1)
-    const originalEncVaultData = originalOutboundInvites[0].encrypted_vault_key_content
+    const originalEncVaultData = originalOutboundInvites[0].encrypted_message
 
     const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault.systemIdentifier)
     await vaults.rotateKeySystemRootKey(sharedVault.systemIdentifier)
@@ -89,8 +89,8 @@ describe('shared vault key rotation', function () {
 
     const joinInvite = updatedOutboundInvites[0]
     expect(joinInvite.invite_type).to.equal('join')
-    expect(joinInvite.encrypted_vault_key_content).to.not.be.undefined
-    expect(joinInvite.encrypted_vault_key_content).to.not.equal(originalEncVaultData)
+    expect(joinInvite.encrypted_message).to.not.be.undefined
+    expect(joinInvite.encrypted_message).to.not.equal(originalEncVaultData)
 
     await deinitContactContext()
   })

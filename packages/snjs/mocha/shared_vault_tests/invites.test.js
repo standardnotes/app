@@ -35,8 +35,8 @@ describe('shared vault invites', function () {
     expect(vaultInvite).to.not.be.undefined
     expect(vaultInvite.shared_vault_uuid).to.equal(sharedVault.sharedVaultUuid)
     expect(vaultInvite.user_uuid).to.equal(contact.contactUuid)
-    expect(vaultInvite.encrypted_vault_key_content).to.not.be.undefined
-    expect(vaultInvite.inviter_public_key).to.equal(context.publicKey)
+    expect(vaultInvite.encrypted_message).to.not.be.undefined
+    expect(vaultInvite.sender_public_key).to.equal(context.publicKey)
     expect(vaultInvite.inviter_uuid).to.equal(context.userUuid)
     expect(vaultInvite.invite_type).to.equal('join')
     expect(vaultInvite.permissions).to.equal(SharedVaultPermission.Write)
@@ -85,9 +85,8 @@ describe('shared vault invites', function () {
     await sharedVaults.inviteContactToSharedVault(sharedVault, currentContextContact, SharedVaultPermission.Write)
 
     await contactContext.sharedVaults.downloadInboundInvites()
-    expect(
-      contactContext.sharedVaults.getTrustedSenderOfInvite(contactContext.sharedVaults.getCachedInboundInvites()[0]),
-    ).to.be.undefined
+    expect(contactContext.sharedVaults.isInviteTrusted(contactContext.sharedVaults.getCachedInboundInvites()[0])).to.be
+      .false
 
     await deinitContactContext()
   })
@@ -102,14 +101,14 @@ describe('shared vault invites', function () {
 
     await contactContext.sharedVaults.downloadInboundInvites()
     expect(
-      contactContext.sharedVaults.getTrustedSenderOfInvite(contactContext.sharedVaults.getCachedInboundInvites()[0]),
-    ).to.be.undefined
+      contactContext.sharedVaults.isInviteTrusted(contactContext.sharedVaults.getCachedInboundInvites()[0]),
+    ).to.be.false
 
     await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
 
     expect(
-      contactContext.sharedVaults.getTrustedSenderOfInvite(contactContext.sharedVaults.getCachedInboundInvites()[0]),
-    ).to.not.be.undefined
+      contactContext.sharedVaults.isInviteTrusted(contactContext.sharedVaults.getCachedInboundInvites()[0]),
+    ).to.be.true
 
     await deinitContactContext()
   })

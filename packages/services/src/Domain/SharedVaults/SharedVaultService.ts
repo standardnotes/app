@@ -1,4 +1,4 @@
-import { AddContactToSharedVaultUseCase } from './UseCase/AddContactToSharedVault'
+import { InviteContactToSharedVaultUseCase } from './UseCase/InviteContactToSharedVault'
 import {
   ClientDisplayableError,
   SharedVaultInviteServerHash,
@@ -19,7 +19,6 @@ import {
 } from '@standardnotes/api'
 import {
   DecryptedItemInterface,
-  KeySystemRootKeyContentSpecialized,
   PayloadEmitSource,
   TrustedContactInterface,
   KeySystemItemsKeyInterface,
@@ -27,6 +26,8 @@ import {
   SharedVaultDisplayListing,
   VaultDisplayListing,
   isSharedVaultDisplayListing,
+  SharedVaultMessage,
+  SharedVaultMessageRootKey,
 } from '@standardnotes/models'
 import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
@@ -34,7 +35,6 @@ import { EncryptionProviderInterface } from '@standardnotes/encryption'
 import { ContentType } from '@standardnotes/common'
 import { HandleSuccessfullyChangedCredentials } from './UseCase/HandleSuccessfullyChangedCredentials'
 import { SuccessfullyChangedCredentialsEventData } from '../Session/SuccessfullyChangedCredentialsEventData'
-import { AcceptInvite } from './UseCase/AcceptInvite'
 import { GetSharedVaultUsersUseCase } from './UseCase/GetSharedVaultUsers'
 import { RemoveVaultMemberUseCase } from './UseCase/RemoveSharedVaultMember'
 import { AbstractService } from '../Service/AbstractService'
@@ -56,6 +56,8 @@ import { UserEventServiceEvent, UserEventServiceEventPayload } from '../UserEven
 import { RemoveSharedVaultItemsLocallyUseCase } from './UseCase/RemoveSharedVaultItemsLocally'
 import { DeleteSharedVaultUseCase } from './UseCase/DeleteSharedVault'
 import { VaultServiceEvent, VaultServiceEventPayload } from '../Vaults/VaultServiceEvent'
+import { AcceptTrustedRootKeyInvite } from './UseCase/AcceptTrustedRootKeyInvite'
+import { GetInviteTrustedMessage } from './UseCase/GetInviteTrustedMessage'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -357,32 +359,31 @@ export class SharedVaultService
   }
 
   private async automaticallyAcceptTrustedKeyChangeInvites(): Promise<void> {
-    const trustedKeyChangeInvites = this.getCachedInboundInvites().filter((invite) => {
-      return this.getTrustedSenderOfInvite(invite) && invite.invite_type === 'key-change'
+    const rootKeyInvites = this.getCachedInboundInvites().filter((invite) => {
+      return invite.invite_type === 'key-change'
     })
 
-    if (trustedKeyChangeInvites.length > 0) {
-      for (const invite of trustedKeyChangeInvites) {
-        await this.acceptInvite(invite)
+    for (const invite of rootKeyInvites) {
+      const useCase = new GetInviteTrustedMessage<SharedVaultMessageRootKey>(this.encryption, this.contacts)
+      const message = useCase.execute({ invite, privateKey: this.encryption.getKeyPair().privateKey })
+      if (message) {
+        await this.acceptTrustedRootKeyInvite(invite, message)
       }
     }
   }
 
-  async acceptInvite(invite: SharedVaultInviteServerHash): Promise<boolean> {
-    if (!this.getTrustedSenderOfInvite(invite)) {
-      return false
-    }
+  public async isInviteTrusted(invite: SharedVaultInviteServerHash): Promise<boolean> {
+    const useCase = new GetInviteTrustedMessage<SharedVaultMessageRootKey>(this.encryption, this.contacts)
+    const message = useCase.execute({ invite, privateKey: this.encryption.getKeyPair().privateKey })
+    return message != undefined
+  }
 
-    const useCase = new AcceptInvite(
-      this.encryption.getKeyPair().privateKey,
-      this.sharedVaultInvitesServer,
-      this.items,
-      this.encryption,
-    )
-    const result = await useCase.execute(invite)
-    if (result === 'errored') {
-      return false
-    }
+  async acceptTrustedRootKeyInvite(
+    invite: SharedVaultInviteServerHash,
+    decryptedMessage: SharedVaultMessageRootKey,
+  ): Promise<void> {
+    const useCase = new AcceptTrustedRootKeyInvite(this.sharedVaultInvitesServer, this.items)
+    const result = await useCase.execute({ invite, decryptedMessage })
 
     delete this.pendingInvites[invite.uuid]
 
@@ -393,16 +394,6 @@ export class SharedVaultService
     if (result === 'inserted') {
       await this.sync.syncSharedVaultsFromScratch([invite.shared_vault_uuid])
     }
-
-    return true
-  }
-
-  public getTrustedSenderOfInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined {
-    const trustedContact = this.contacts.findTrustedContact(invite.inviter_uuid)
-    if (trustedContact && trustedContact.publicKey === invite.inviter_public_key) {
-      return trustedContact
-    }
-    return undefined
   }
 
   private async decryptErroredItemsAfterInviteAccept(): Promise<void> {
@@ -429,10 +420,10 @@ export class SharedVaultService
     contact: TrustedContactInterface,
     permissions: SharedVaultPermission,
   ): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
-    const useCase = new AddContactToSharedVaultUseCase(this.encryption, this.sharedVaultInvitesServer, this.items)
+    const useCase = new InviteContactToSharedVaultUseCase(this.encryption, this.sharedVaultInvitesServer, this.items)
     const result = await useCase.execute({
-      inviterPrivateKey: this.encryption.getKeyPair().privateKey,
-      inviterPublicKey: this.session.getPublicKey(),
+      inviterKeyPair: this.encryption.getKeyPair(),
+      inviterSigningKeyPair: this.encryption.getSigningKeyPair(),
       sharedVault,
       contact,
       permissions,
@@ -445,12 +436,27 @@ export class SharedVaultService
     return result
   }
 
-  public getInviteData(invite: SharedVaultInviteServerHash): KeySystemRootKeyContentSpecialized | undefined {
-    return this.encryption.asymmetricallyDecryptSharedVaultMessage(
-      invite.encrypted_vault_key_content,
-      invite.inviter_public_key,
-      this.encryption.getKeyPair().privateKey,
-    )
+  public getInviteDataMessageAndTrustStatus(
+    invite: SharedVaultInviteServerHash,
+  ): { trusted: boolean; message: SharedVaultMessage } | undefined {
+    const useCase = new GetInviteTrustedMessage<SharedVaultMessageRootKey>(this.encryption, this.contacts)
+    const trustedMessage = useCase.execute({ invite, privateKey: this.encryption.getKeyPair().privateKey })
+    if (trustedMessage) {
+      return { trusted: true, message: trustedMessage }
+    }
+
+    const untrustedMessageResult = this.encryption.asymmetricallyDecryptSharedVaultMessage({
+      encryptedString: invite.encrypted_message,
+      senderPublicKey: invite.sender_public_key,
+      privateKey: this.encryption.getKeyPair().privateKey,
+      trustedSenderSigningPublicKey: undefined,
+    })
+
+    if (untrustedMessageResult) {
+      return { trusted: false, message: untrustedMessageResult.message }
+    }
+
+    return undefined
   }
 
   async removeUserFromSharedVault(
@@ -527,8 +533,8 @@ export class SharedVaultService
       keySystemIdentifier: params.keySystemIdentifier,
       sharedVaultUuid: params.sharedVault.sharedVaultUuid,
       inviterUuid: this.session.getSureUser().uuid,
-      inviterPrivateKey: this.encryption.getKeyPair().privateKey,
-      inviterPublicKey: this.session.getPublicKey(),
+      inviterEncryptionKeyPair: this.encryption.getKeyPair(),
+      inviterSigningKeyPair: this.encryption.getSigningKeyPair(),
     })
   }
 

@@ -40,6 +40,7 @@ import {
   RootKeyInterface,
   KeySystemItemsKeyInterface,
   KeySystemIdentifier,
+  SharedVaultMessage,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
@@ -561,14 +562,14 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   }
 
   asymmetricallyEncryptSharedVaultMessage(dto: {
-    data: KeySystemRootKeyContentSpecialized
+    message: SharedVaultMessage
     senderPrivateKey: string
     senderSigningKeyPair: PkcKeyPair
     recipientPublicKey: string
   }): string {
     const operator = this.operatorManager.defaultOperator()
     const encrypted = operator.asymmetricEncrypt({
-      stringToEncrypt: JSON.stringify(dto.data),
+      stringToEncrypt: JSON.stringify(dto.message),
       senderSecretKey: dto.senderPrivateKey,
       senderSigningKeyPair: dto.senderSigningKeyPair,
       recipientPublicKey: dto.recipientPublicKey,
@@ -579,28 +580,37 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
   asymmetricallyDecryptSharedVaultMessage(dto: {
     encryptedString: string
     senderPublicKey: string
-    senderSigningPublicKey: string
+    trustedSenderSigningPublicKey: string | undefined
     privateKey: string
-  }): { data: KeySystemRootKeyContentSpecialized; signatureVerified: boolean } | null {
+  }): { message: SharedVaultMessage; signatureVerified: boolean } | undefined {
     const defaultOperator = this.operatorManager.defaultOperator()
     const version = defaultOperator.versionForAsymmetricallyEncryptedString(dto.encryptedString)
-
     const keyOperator = this.operatorManager.operatorForVersion(version)
     const decryptedResult = keyOperator.asymmetricDecrypt({
       stringToDecrypt: dto.encryptedString,
       senderPublicKey: dto.senderPublicKey,
-      senderSigningPublicKey: dto.senderSigningPublicKey,
       recipientSecretKey: dto.privateKey,
     })
 
     if (decryptedResult) {
       return {
-        data: JSON.parse(decryptedResult.plaintext),
-        signatureVerified: decryptedResult.signatureVerified,
+        message: JSON.parse(decryptedResult.plaintext),
+        signatureVerified:
+          dto.trustedSenderSigningPublicKey == undefined
+            ? false
+            : decryptedResult.signatureVerified &&
+              decryptedResult.signaturePublicKey === dto.trustedSenderSigningPublicKey,
       }
     }
 
-    return null
+    return undefined
+  }
+
+  getSignerPublicKeyFromAsymmetricallyEncryptedString(string: string): string {
+    const defaultOperator = this.operatorManager.defaultOperator()
+    const version = defaultOperator.versionForAsymmetricallyEncryptedString(string)
+    const keyOperator = this.operatorManager.operatorForVersion(version)
+    return keyOperator.getSignerPublicKeyFromAsymmetricallyEncryptedString(string)
   }
 
   public async decryptBackupFile(

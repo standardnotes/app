@@ -9,6 +9,7 @@ import {
   RootKeyInterface,
   KeySystemIdentifier,
   KeySystemItemsKeyInterface,
+  SharedVaultMessage,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
@@ -96,7 +97,7 @@ export interface EncryptionProviderInterface {
   getSigningKeyPair(): PkcKeyPair
 
   asymmetricallyEncryptSharedVaultMessage(dto: {
-    data: KeySystemRootKeyContentSpecialized
+    message: SharedVaultMessage
     senderPrivateKey: string
     senderSigningKeyPair: PkcKeyPair
     recipientPublicKey: string
@@ -104,7 +105,8 @@ export interface EncryptionProviderInterface {
   asymmetricallyDecryptSharedVaultMessage(dto: {
     encryptedString: string
     senderPublicKey: string
-    senderSigningPublicKey: string
+    trustedSenderSigningPublicKey: string | undefined
     privateKey: string
-  }): { data: KeySystemRootKeyContentSpecialized; signatureVerified: boolean } | null
+  }): { message: SharedVaultMessage; signatureVerified: boolean } | undefined
+  getSignerPublicKeyFromAsymmetricallyEncryptedString(string: string): string
 }

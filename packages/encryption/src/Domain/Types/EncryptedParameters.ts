@@ -16,6 +16,7 @@ export type DecryptedParameters<C extends ItemContent = ItemContent> = {
   uuid: string
   content: C
   signatureVerified?: boolean
+  signaturePublicKey?: string
 }
 
 export type ErrorDecryptingParameters = {

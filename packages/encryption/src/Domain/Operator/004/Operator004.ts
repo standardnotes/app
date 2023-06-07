@@ -522,9 +522,8 @@ export class SNProtocolOperator004 implements OperatorInterface {
   asymmetricDecrypt(dto: {
     stringToDecrypt: AsymmetricallyEncryptedString
     senderPublicKey: HexString
-    senderSigningPublicKey: HexString
     recipientSecretKey: HexString
-  }): { plaintext: HexString; signatureVerified: boolean } | null {
+  }): { plaintext: HexString; signatureVerified: boolean; signaturePublicKey: string } | null {
     const [_, nonce, ciphertext, additionalDataString] = <V004AsymmetricStringComponents>dto.stringToDecrypt.split(':')
 
     try {
@@ -546,10 +545,17 @@ export class SNProtocolOperator004 implements OperatorInterface {
       return {
         plaintext,
         signatureVerified,
+        signaturePublicKey: additionalData.signing.publicKey,
       }
     } catch (error) {
       return null
     }
+  }
+
+  getSignerPublicKeyFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): HexString {
+    const [_, __, ___, additionalDataString] = <V004AsymmetricStringComponents>string.split(':')
+    const additionalData = this.stringToAdditionalData<AsymmetricAdditionalData>(additionalDataString)
+    return additionalData.signing.publicKey
   }
 
   versionForAsymmetricallyEncryptedString(string: string): ProtocolVersion {

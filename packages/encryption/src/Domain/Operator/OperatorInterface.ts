@@ -93,9 +93,9 @@ export interface OperatorInterface {
   asymmetricDecrypt(dto: {
     stringToDecrypt: AsymmetricallyEncryptedString
     senderPublicKey: HexString
-    senderSigningPublicKey: HexString
     recipientSecretKey: HexString
-  }): { plaintext: HexString; signatureVerified: boolean } | null
+  }): { plaintext: HexString; signatureVerified: boolean; signaturePublicKey: string } | null
+  getSignerPublicKeyFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): HexString
 
   versionForAsymmetricallyEncryptedString(encryptedString: string): ProtocolVersion
 }

@@ -27,7 +27,7 @@ export class TrustedContact extends DecryptedItem<TrustedContactContent> impleme
   }): FindPublicKeyResult {
     const publicKey = this.publicKey.findPublicKey(params)
     if (!publicKey) {
-      return null
+      return undefined
     }
 
     return {

@@ -1,7 +1,6 @@
-export type SuccessfullyChangedCredentialsEventData = {
-  newPublicKey: string
-  newPrivateKey: string
+import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
-  newSigningPublicKey: string
-  newSigningPrivateKey: string
+export type SuccessfullyChangedCredentialsEventData = {
+  newKeyPair: PkcKeyPair
+  newSigningKeyPair: PkcKeyPair
 }

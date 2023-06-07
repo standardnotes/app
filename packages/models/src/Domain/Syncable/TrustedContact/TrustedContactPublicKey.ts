@@ -1,17 +1,15 @@
-import { TrustedContactPublicKeyInterface } from './TrustedContactPublicKeyInterface'
+import {
+  TrustedContactPublicKeyInterface,
+  TrustedContactPublicKeyJsonInterface,
+} from './TrustedContactPublicKeyInterface'
 
 export class TrustedContactPublicKey implements TrustedContactPublicKeyInterface {
   encryption: string
   signing: string
   timestamp: Date
-  previousKey: TrustedContactPublicKey | null
+  previousKey?: TrustedContactPublicKey
 
-  constructor(
-    encryption: string,
-    signing: string,
-    timestamp: Date,
-    previousKey: TrustedContactPublicKey | null = null,
-  ) {
+  constructor(encryption: string, signing: string, timestamp: Date, previousKey: TrustedContactPublicKey | undefined) {
     this.encryption = encryption
     this.signing = signing
     this.timestamp = timestamp
@@ -21,7 +19,7 @@ export class TrustedContactPublicKey implements TrustedContactPublicKeyInterface
   public findPublicKey(params: {
     targetEncryptionPublicKey: string
     targetSigningPublicKey: string
-  }): TrustedContactPublicKeyInterface | null {
+  }): TrustedContactPublicKeyInterface | undefined {
     if (this.encryption === params.targetEncryptionPublicKey && this.signing === params.targetSigningPublicKey) {
       return this
     }
@@ -30,15 +28,15 @@ export class TrustedContactPublicKey implements TrustedContactPublicKeyInterface
       return this.previousKey.findPublicKey(params)
     }
 
-    return null
+    return undefined
   }
 
-  static FromJson(json: TrustedContactPublicKeyInterface): TrustedContactPublicKeyInterface {
+  static FromJson(json: TrustedContactPublicKeyJsonInterface): TrustedContactPublicKeyInterface {
     return new TrustedContactPublicKey(
       json.encryption,
       json.signing,
       new Date(json.timestamp),
-      json.previousKey ? TrustedContactPublicKey.FromJson(json.previousKey) : null,
+      json.previousKey ? TrustedContactPublicKey.FromJson(json.previousKey) : undefined,
     )
   }
 }
