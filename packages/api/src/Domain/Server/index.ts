@@ -7,8 +7,8 @@ export * from './Authenticator/AuthenticatorServerInterface'
 export * from './Revision/RevisionServer'
 export * from './Revision/RevisionServerInterface'
 
-export * from './Contact/ContactServer'
-export * from './Contact/ContactServerInterface'
+export * from './AsymmetricMessage/AsymmetricMessagesServer'
+export * from './AsymmetricMessage/AsymmetricMessagesServerInterface'
 
 export * from './SharedVault/SharedVaultServer'
 export * from './SharedVault/SharedVaultServerInterface'
