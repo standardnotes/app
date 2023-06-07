@@ -17,6 +17,7 @@ import { DeinitMode } from './DeinitMode'
 import { DeinitSource } from './DeinitSource'
 import { UserClientInterface } from '../User/UserClientInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
+import { HomeServerServiceInterface } from '../HomeServer/HomeServerServiceInterface'
 
 export interface ApplicationInterface {
   deinit(mode: DeinitMode, source: DeinitSource): void
@@ -53,6 +54,7 @@ export interface ApplicationInterface {
   get subscriptions(): SubscriptionClientInterface
   get fileBackups(): BackupServiceInterface | undefined
   get sessions(): SessionsClientInterface
+  get homeServer(): HomeServerServiceInterface
   readonly identifier: ApplicationIdentifier
   readonly platform: Platform
   deviceInterface: DeviceInterface

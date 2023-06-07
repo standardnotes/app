@@ -1,13 +1,18 @@
-import { HomeServerManagerInterface, HomeServerStatus } from '@web/Application/Device/DesktopSnjsExports'
+import {
+  HomeServerManagerInterface,
+  HomeServerStatus,
+  HomeServerEnvironmentConfiguration,
+} from '@web/Application/Device/DesktopSnjsExports'
 import { HomeServerInterface } from '@standardnotes/home-server'
+
 import { WebContents } from 'electron'
 import { MessageToWebApp } from '../../Shared/IpcMessages'
-import { HomeServerEnvironmentConfiguration } from '@standardnotes/services'
 
 const os = require('os')
 
 export class HomeServerManager implements HomeServerManagerInterface {
   private homeServerConfiguration: HomeServerEnvironmentConfiguration | undefined
+  private homeServerDataLocation: string | undefined
 
   constructor(private homeServer: HomeServerInterface, private webContents: WebContents) {}
 
@@ -17,6 +22,10 @@ export class HomeServerManager implements HomeServerManagerInterface {
     } catch (error) {
       console.error(`Could not parse home server configuration: ${(error as Error).message}`)
     }
+  }
+
+  async setHomeServerDataLocation(location: string): Promise<void> {
+    this.homeServerDataLocation = location
   }
 
   listenOnServerLogs(callback: (data: Buffer) => void): void {
@@ -58,10 +67,15 @@ export class HomeServerManager implements HomeServerManagerInterface {
       this.homeServerConfiguration = this.generateHomeServerConfiguration()
     }
 
+    if (!this.homeServerDataLocation) {
+      return
+    }
+
     const { jwtSecret, authJwtSecret, encryptionServerKey, pseudoKeyParamsKey, valetTokenSecret, port } =
       this.homeServerConfiguration
 
     await this.homeServer.start({
+      dataDirectoryPath: this.homeServerDataLocation,
       environment: {
         JWT_SECRET: jwtSecret,
         AUTH_JWT_SECRET: authJwtSecret,

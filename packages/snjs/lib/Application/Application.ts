@@ -85,7 +85,7 @@ import { ClientDisplayableError, SessionListEntry } from '@standardnotes/respons
 
 import { SnjsVersion } from './../Version'
 import { SNLog } from '../Log'
-import { ChallengeResponse, HomeServerService, ListedClientInterface } from '../Services'
+import { ChallengeResponse, ListedClientInterface } from '../Services'
 import { ApplicationConstructorOptions, FullyResolvedApplicationOptions } from './Options/ApplicationOptions'
 import { ApplicationOptionsDefaults } from './Options/Defaults'
 import { LegacySession, MapperInterface, Session } from '@standardnotes/domain-core'
@@ -176,7 +176,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
   private declare authenticatorManager: AuthenticatorClientInterface
   private declare authManager: AuthClientInterface
   private declare revisionManager: RevisionClientInterface
-  private declare homeServerService: InternalServices.HomeServerService
+  private declare homeServerService: ExternalServices.HomeServerService
 
   private declare _signInWithRecoveryCodes: SignInWithRecoveryCodes
   private declare _getRecoveryCodes: GetRecoveryCodes
@@ -372,6 +372,10 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   public get challenges(): ExternalServices.ChallengeServiceInterface {
     return this.challengeService
+  }
+
+  get homeServer(): ExternalServices.HomeServerServiceInterface {
+    return this.homeServerService
   }
 
   public computePrivateUsername(username: string): Promise<string | undefined> {
@@ -1181,6 +1185,7 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createStatusService()
     if (isDesktopDevice(this.deviceInterface)) {
       this.createFilesBackupService(this.deviceInterface)
+      this.createHomeServerService(this.deviceInterface)
     }
     this.createMigrationService()
     this.createFileService()
@@ -1192,7 +1197,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.createAuthenticatorManager()
     this.createAuthManager()
     this.createRevisionManager()
-    this.createHomeServerService()
 
     this.createUseCases()
   }
@@ -1527,8 +1531,13 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
     this.services.push(this.diskStorageService)
   }
 
-  private createHomeServerService() {
-    this.homeServerService = new HomeServerService(this.deviceInterface, this.diskStorageService, this.internalEventBus)
+  private createHomeServerService(device: ExternalServices.DesktopDeviceInterface) {
+    this.homeServerService = new ExternalServices.HomeServerService(
+      device,
+      device,
+      this.diskStorageService,
+      this.internalEventBus,
+    )
 
     this.services.push(this.homeServerService)
   }

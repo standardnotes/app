@@ -47,7 +47,9 @@ export enum StorageKey {
   PlaintextBackupsLocation = 'plaintext_backups_location',
   FileBackupsEnabled = 'file_backups_enabled',
   FileBackupsLocation = 'file_backups_location',
-  HomeServerEnvironmentConfiguration = 'home-server-environment-configuration',
+  HomeServerEnabled = 'home_server_enabled',
+  HomeServerEnvironmentConfiguration = 'home_server_environment_configuration',
+  HomeServerDataLocation = 'home_serve_data_location',
 }
 
 export enum NonwrappedStorageKey {

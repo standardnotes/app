@@ -87,6 +87,7 @@ export class RemoteBridge implements CrossProcessBridge {
       monitorPlaintextBackupsLocationForChanges: this.monitorPlaintextBackupsLocationForChanges.bind(this),
       joinPaths: this.joinPaths.bind(this),
       setHomeServerConfiguration: this.setHomeServerConfiguration.bind(this),
+      setHomeServerDataLocation: this.setHomeServerDataLocation.bind(this),
     }
   }
 
@@ -280,5 +281,9 @@ export class RemoteBridge implements CrossProcessBridge {
 
   async setHomeServerConfiguration(configurationJSONString: string): Promise<void> {
     return this.homeServerManager.setHomeServerConfiguration(configurationJSONString)
+  }
+
+  async setHomeServerDataLocation(location: string): Promise<void> {
+    return this.homeServerManager.setHomeServerDataLocation(location)
   }
 }

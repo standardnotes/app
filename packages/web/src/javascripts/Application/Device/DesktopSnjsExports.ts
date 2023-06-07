@@ -15,4 +15,5 @@ export {
   PlaintextBackupsMapping,
   DesktopWatchedDirectoriesChanges,
   DesktopWatchedDirectoriesChange,
+  HomeServerEnvironmentConfiguration,
 } from '@standardnotes/snjs'

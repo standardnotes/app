@@ -11,6 +11,10 @@ export interface WebClientRequiresDesktopMethods extends FileBackupsDevice {
   askForMediaAccess(type: 'camera' | 'microphone'): Promise<boolean>
 
   setHomeServerConfiguration(configurationJSONString: string): Promise<void>
+
+  setHomeServerDataLocation(location: string): Promise<void>
+
+  startServer(): Promise<void>
 }
 
 export interface DesktopClientRequiresWebMethods {

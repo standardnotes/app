@@ -30,6 +30,10 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.setHomeServerConfiguration(configurationJSONString)
   }
 
+  async setHomeServerDataLocation(location: string): Promise<void> {
+    return this.remoteBridge.setHomeServerDataLocation(location)
+  }
+
   startServer(): Promise<void> {
     return this.remoteBridge.startServer()
   }
