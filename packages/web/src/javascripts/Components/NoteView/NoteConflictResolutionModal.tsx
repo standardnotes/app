@@ -190,9 +190,14 @@ const NoteConflictResolutionModal = ({
     ) {
       const notesToTrash = allVersions.filter((note) => note.uuid !== selectedNote.uuid)
       await Promise.all(notesToTrash.map((note) => trashNote(note, true)))
+      await application.mutator.changeItem(selectedNote, (mutator) => {
+        mutator.conflictOf = undefined
+      })
+      void application.getViewControllerManager().selectionController.selectItem(selectedNote.uuid, true)
+      void application.sync.sync()
       close()
     }
-  }, [allVersions, close, selectedNote, trashNote])
+  }, [allVersions, application, close, selectedNote, trashNote])
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const actions = useMemo(
