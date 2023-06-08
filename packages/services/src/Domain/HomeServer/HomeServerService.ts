@@ -12,7 +12,7 @@ import { HomeServerServiceInterface } from './HomeServerServiceInterface'
 import { HomeServerEnvironmentConfiguration } from './HomeServerEnvironmentConfiguration'
 
 export class HomeServerService extends AbstractService implements HomeServerServiceInterface {
-  private readonly HOME_SERVER_DATA_DIRECTORY_NAME = 'Standard Notes Homer Server'
+  private readonly HOME_SERVER_DATA_DIRECTORY_NAME = 'Standard Notes Home Server'
 
   constructor(
     private desktopDevice: DesktopDeviceInterface,
