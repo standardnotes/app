@@ -187,6 +187,8 @@ export abstract class Collection<
         const conflictOf = element.content.conflict_of
         if (conflictOf) {
           this.conflictMap.establishRelationship(conflictOf, element.uuid)
+        } else if (this.conflictMap.getInverseRelationships(element.uuid).length > 0) {
+          this.conflictMap.removeFromMap(element.uuid)
         }
 
         this.referenceMap.setAllRelationships(
