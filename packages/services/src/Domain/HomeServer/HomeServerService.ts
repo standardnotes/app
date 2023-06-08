@@ -9,6 +9,7 @@ import { StorageKey } from '../Storage/StorageKeys'
 import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 
 import { HomeServerServiceInterface } from './HomeServerServiceInterface'
+import { HomeServerEnvironmentConfiguration } from './HomeServerEnvironmentConfiguration'
 
 export class HomeServerService extends AbstractService implements HomeServerServiceInterface {
   private readonly HOME_SERVER_DATA_DIRECTORY_NAME = 'Standard Notes Homer Server'
@@ -20,6 +21,21 @@ export class HomeServerService extends AbstractService implements HomeServerServ
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
+  }
+
+  getLastServerErrorMessage(): string | undefined {
+    return this.desktopDevice.getLastServerErrorMessage()
+  }
+
+  async restartHomeServer(): Promise<void> {
+    await this.desktopDevice.stopServer()
+    await this.desktopDevice.startServer()
+  }
+
+  async setHomeServerConfiguration(config: HomeServerEnvironmentConfiguration): Promise<void> {
+    this.storageService.setValue(StorageKey.HomeServerEnvironmentConfiguration, JSON.stringify(config))
+
+    await this.setHomeServerConfigurationOnTheDevice()
   }
 
   override deinit() {
@@ -46,6 +62,15 @@ export class HomeServerService extends AbstractService implements HomeServerServ
     this.storageService.setValue(StorageKey.HomeServerEnabled, false)
 
     await this.desktopDevice.stopServer()
+  }
+
+  getHomeServerConfiguration(): HomeServerEnvironmentConfiguration | undefined {
+    const config = this.storageService.getValue(StorageKey.HomeServerEnvironmentConfiguration)
+    if (!config) {
+      return undefined
+    }
+
+    return JSON.parse(config as string) as HomeServerEnvironmentConfiguration
   }
 
   async changeHomeServerDataLocation(): Promise<string | undefined> {

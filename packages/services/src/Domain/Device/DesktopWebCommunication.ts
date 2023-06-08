@@ -17,6 +17,8 @@ export interface WebClientRequiresDesktopMethods extends FileBackupsDevice {
   startServer(): Promise<void>
 
   stopServer(): Promise<void>
+
+  getLastServerErrorMessage(): string | undefined
 }
 
 export interface DesktopClientRequiresWebMethods {

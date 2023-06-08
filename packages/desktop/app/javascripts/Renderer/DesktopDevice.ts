@@ -26,6 +26,10 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     super(appVersion)
   }
 
+  getLastServerErrorMessage(): string | undefined {
+    return this.remoteBridge.getLastServerErrorMessage()
+  }
+
   async setHomeServerConfiguration(configurationJSONString: string): Promise<void> {
     return this.remoteBridge.setHomeServerConfiguration(configurationJSONString)
   }

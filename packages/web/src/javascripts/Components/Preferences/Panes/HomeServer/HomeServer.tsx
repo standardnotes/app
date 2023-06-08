@@ -3,25 +3,38 @@ import PreferencesPane from '../../PreferencesComponents/PreferencesPane'
 import PreferencesGroup from '../../PreferencesComponents/PreferencesGroup'
 import PreferencesSegment from '../../PreferencesComponents/PreferencesSegment'
 import { useApplication } from '@/Components/ApplicationProvider'
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import AccountMigration from './AccountMigration'
 import Switch from '@/Components/Switch/Switch'
 import HomeServerSettings from './HomeServerSettings'
+import EnvironmentConfiguration from './EnvironmentConfiguration'
 
 const HomeServer = () => {
   const application = useApplication()
   const desktopDevice = application.desktopDevice
   const homeServerService = application.homeServer
   const [homeServerEnabled, setHomeServerEnabled] = useState(homeServerService.isHomeServerEnabled())
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const lastErrorMessage = homeServerService.getLastServerErrorMessage()
+    if (lastErrorMessage) {
+      setError(lastErrorMessage)
+    }
+  }, [homeServerService, setError])
 
   const toggleHomeServer = useCallback(async () => {
-    if (homeServerEnabled) {
-      await homeServerService.disableHomeServer()
-    } else {
-      await homeServerService.enableHomeServer()
-    }
+    try {
+      if (homeServerEnabled) {
+        await homeServerService.disableHomeServer()
+      } else {
+        await homeServerService.enableHomeServer()
+      }
 
-    setHomeServerEnabled(homeServerService.isHomeServerEnabled())
+      setHomeServerEnabled(homeServerService.isHomeServerEnabled())
+    } catch (error) {
+      setError((error as Error).message)
+    }
   }, [homeServerEnabled, homeServerService])
 
   return (
@@ -36,10 +49,13 @@ const HomeServer = () => {
               </div>
               <Switch onChange={toggleHomeServer} checked={homeServerEnabled} />
             </div>
+            {error && <Text className="text-error mt-3">{error}</Text>}
             {homeServerEnabled && <HomeServerSettings />}
           </PreferencesSegment>
         </PreferencesGroup>
       )}
+
+      {homeServerEnabled && <EnvironmentConfiguration />}
 
       <PreferencesGroup>
         <Title>Remote Access</Title>

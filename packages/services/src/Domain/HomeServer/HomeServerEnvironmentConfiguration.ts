@@ -5,4 +5,5 @@ export interface HomeServerEnvironmentConfiguration {
   pseudoKeyParamsKey: string
   valetTokenSecret: string
   port: number
+  logLevel?: string
 }

@@ -13,8 +13,13 @@ const os = require('os')
 export class HomeServerManager implements HomeServerManagerInterface {
   private homeServerConfiguration: HomeServerEnvironmentConfiguration | undefined
   private homeServerDataLocation: string | undefined
+  private lastError: Error | undefined
 
   constructor(private homeServer: HomeServerInterface, private webContents: WebContents) {}
+
+  getHomeServerConfiguration(): HomeServerEnvironmentConfiguration | undefined {
+    return this.homeServerConfiguration
+  }
 
   async setHomeServerConfiguration(configurationJSONString: string): Promise<void> {
     try {
@@ -63,33 +68,41 @@ export class HomeServerManager implements HomeServerManagerInterface {
   }
 
   async startServer(): Promise<void> {
-    if (!this.homeServerConfiguration) {
-      this.homeServerConfiguration = this.generateHomeServerConfiguration()
+    try {
+      if (!this.homeServerConfiguration) {
+        this.homeServerConfiguration = this.generateHomeServerConfiguration()
+      }
+
+      if (!this.homeServerDataLocation) {
+        return
+      }
+
+      const { jwtSecret, authJwtSecret, encryptionServerKey, pseudoKeyParamsKey, valetTokenSecret, port, logLevel } =
+        this.homeServerConfiguration
+
+      await this.homeServer.start({
+        dataDirectoryPath: this.homeServerDataLocation,
+        environment: {
+          JWT_SECRET: jwtSecret,
+          AUTH_JWT_SECRET: authJwtSecret,
+          ENCRYPTION_SERVER_KEY: encryptionServerKey,
+          PSEUDO_KEY_PARAMS_KEY: pseudoKeyParamsKey,
+          VALET_TOKEN_SECRET: valetTokenSecret,
+          FILES_SERVER_URL: this.getServerUrl(),
+          LOG_LEVEL: logLevel ?? 'info',
+          VERSION: 'desktop',
+          PORT: port.toString(),
+        },
+      })
+
+      this.webContents.send(MessageToWebApp.HomeServerStarted, this.getServerUrl())
+
+      this.lastError = undefined
+    } catch (error) {
+      console.error(`Could not start home server: ${(error as Error).message}`)
+
+      this.lastError = error as Error
     }
-
-    if (!this.homeServerDataLocation) {
-      return
-    }
-
-    const { jwtSecret, authJwtSecret, encryptionServerKey, pseudoKeyParamsKey, valetTokenSecret, port } =
-      this.homeServerConfiguration
-
-    await this.homeServer.start({
-      dataDirectoryPath: this.homeServerDataLocation,
-      environment: {
-        JWT_SECRET: jwtSecret,
-        AUTH_JWT_SECRET: authJwtSecret,
-        ENCRYPTION_SERVER_KEY: encryptionServerKey,
-        PSEUDO_KEY_PARAMS_KEY: pseudoKeyParamsKey,
-        VALET_TOKEN_SECRET: valetTokenSecret,
-        FILES_SERVER_URL: this.getServerUrl(),
-        LOG_LEVEL: 'info',
-        VERSION: 'desktop',
-        PORT: port.toString(),
-      },
-    })
-
-    this.webContents.send(MessageToWebApp.HomeServerStarted, this.getServerUrl())
   }
 
   private generateRandomKey(length: number): string {
@@ -132,5 +145,9 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
   private getServerUrl(): string {
     return `http://${this.getLocalIP()}:${(this.homeServerConfiguration as HomeServerEnvironmentConfiguration).port}`
+  }
+
+  getLastServerErrorMessage(): string | undefined {
+    return this.lastError?.message
   }
 }

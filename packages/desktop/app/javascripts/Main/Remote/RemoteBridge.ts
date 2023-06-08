@@ -88,6 +88,7 @@ export class RemoteBridge implements CrossProcessBridge {
       joinPaths: this.joinPaths.bind(this),
       setHomeServerConfiguration: this.setHomeServerConfiguration.bind(this),
       setHomeServerDataLocation: this.setHomeServerDataLocation.bind(this),
+      getLastServerErrorMessage: this.getLastServerErrorMessage.bind(this),
     }
   }
 
@@ -285,5 +286,9 @@ export class RemoteBridge implements CrossProcessBridge {
 
   async setHomeServerDataLocation(location: string): Promise<void> {
     return this.homeServerManager.setHomeServerDataLocation(location)
+  }
+
+  getLastServerErrorMessage(): string | undefined {
+    return this.homeServerManager.getLastServerErrorMessage()
   }
 }

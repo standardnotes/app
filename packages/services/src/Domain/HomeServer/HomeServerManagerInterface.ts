@@ -9,4 +9,5 @@ export interface HomeServerManagerInterface {
   serverStatus(): Promise<HomeServerStatus>
   listenOnServerLogs(callback: (data: Buffer) => void): void
   stopListeningOnServerLogs(): void
+  getLastServerErrorMessage(): string | undefined
 }
