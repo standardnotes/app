@@ -1,7 +1,6 @@
 import {
   ApiEndpointParam,
   ConflictParams,
-  ContactServerHash,
   SharedVaultInviteServerHash,
   SharedVaultServerHash,
   HttpError,
@@ -9,6 +8,7 @@ import {
   isErrorResponse,
   RawSyncResponse,
   UserEventServerHash,
+  AsymmetricMessageServerHash,
 } from '@standardnotes/responses'
 import {
   FilterDisallowedRemotePayloadsAndMap,
@@ -25,7 +25,7 @@ export class ServerSyncResponse {
   readonly retrievedPayloads: FilteredServerItem[]
   readonly conflicts: TrustedServerConflictMap
 
-  readonly contacts: ContactServerHash[]
+  readonly asymmetricMessages: AsymmetricMessageServerHash[]
   readonly vaults: SharedVaultServerHash[]
   readonly vaultInvites: SharedVaultInviteServerHash[]
   readonly userEvents: UserEventServerHash[]
@@ -59,7 +59,7 @@ export class ServerSyncResponse {
 
     this.vaultInvites = this.successResponseData?.shared_vault_invites || []
 
-    this.contacts = this.successResponseData?.contacts || []
+    this.asymmetricMessages = this.successResponseData?.asymmetric_messages || []
 
     this.userEvents = this.successResponseData?.user_events || []
 

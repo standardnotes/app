@@ -1,29 +1,26 @@
 import {
   ClientDisplayableError,
   SharedVaultInviteServerHash,
-  SharedVaultInviteType,
   isErrorResponse,
   SharedVaultPermission,
 } from '@standardnotes/responses'
 import { SharedVaultInvitesServerInterface } from '@standardnotes/api'
 
-export class CreateSharedVaultInviteUseCase {
+export class SendSharedVaultInviteUseCase {
   constructor(private vaultInvitesServer: SharedVaultInvitesServerInterface) {}
 
   async execute(params: {
     sharedVaultUuid: string
-    inviteeUuid: string
-    inviterPublicKey: string
+    recipientUuid: string
+    senderPublicKey: string
     encryptedMessage: string
-    inviteType: SharedVaultInviteType
     permissions: SharedVaultPermission
   }): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
     const response = await this.vaultInvitesServer.createInvite({
       sharedVaultUuid: params.sharedVaultUuid,
-      inviteeUuid: params.inviteeUuid,
-      inviterPublicKey: params.inviterPublicKey,
+      recipientUuid: params.recipientUuid,
+      senderPublicKey: params.senderPublicKey,
       encryptedMessage: params.encryptedMessage,
-      inviteType: params.inviteType,
       permissions: params.permissions,
     })
 

@@ -6,11 +6,11 @@ import { AsymmetricMessagesPaths } from './Paths'
 import { UpdateAsymmetricMessageParams } from '../../Request/AsymmetricMessage/UpdateAsymmetricMessageParams'
 import { UpdateAsymmetricMessageResponse } from '../../Response/AsymmetricMessage/UpdateAsymmetricMessageResponse'
 import { GetUserAsymmetricMessagesResponse } from '../../Response/AsymmetricMessage/GetUserAsymmetricMessagesResponse'
-import { AsymmetricMessagesServerInterface } from './AsymmetricMessagesServerInterface'
+import { AsymmetricMessageServerInterface } from './AsymmetricMessageServerInterface'
 import { DeleteAsymmetricMessageRequestParams } from '../../Request/AsymmetricMessage/DeleteAsymmetricMessageRequestParams'
 import { DeleteAsymmetricMessageResponse } from '../../Response/AsymmetricMessage/DeleteAsymmetricMessageResponse'
 
-export class AsymmetricMessageServer implements AsymmetricMessagesServerInterface {
+export class AsymmetricMessageServer implements AsymmetricMessageServerInterface {
   constructor(private httpService: HttpServiceInterface) {}
 
   createMessage(params: CreateAsymmetricMessageParams): Promise<HttpResponse<CreateAsymmetricMessageResponse>> {

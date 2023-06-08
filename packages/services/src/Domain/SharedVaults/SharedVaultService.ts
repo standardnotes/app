@@ -1,3 +1,4 @@
+import { SendSharedVaultRootKeyChangedMessageToAll } from './UseCase/SendSharedVaultRootKeyChangedMessageToAll'
 import { InviteContactToSharedVaultUseCase } from './UseCase/InviteContactToSharedVault'
 import {
   ClientDisplayableError,
@@ -16,6 +17,8 @@ import {
   SharedVaultUsersServer,
   SharedVaultInvitesServer,
   SharedVaultServer,
+  AsymmetricMessageServerInterface,
+  AsymmetricMessageServer,
 } from '@standardnotes/api'
 import {
   DecryptedItemInterface,
@@ -26,8 +29,8 @@ import {
   SharedVaultDisplayListing,
   VaultDisplayListing,
   isSharedVaultDisplayListing,
-  SharedVaultMessage,
-  SharedVaultMessageRootKey,
+  AsymmetricMessageSharedVaultRootKeyChanged,
+  AsymmetricMessagePayload,
 } from '@standardnotes/models'
 import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
@@ -56,8 +59,10 @@ import { UserEventServiceEvent, UserEventServiceEventPayload } from '../UserEven
 import { RemoveSharedVaultItemsLocallyUseCase } from './UseCase/RemoveSharedVaultItemsLocally'
 import { DeleteSharedVaultUseCase } from './UseCase/DeleteSharedVault'
 import { VaultServiceEvent, VaultServiceEventPayload } from '../Vaults/VaultServiceEvent'
-import { AcceptTrustedRootKeyInvite } from './UseCase/AcceptTrustedRootKeyInvite'
-import { GetInviteTrustedMessage } from './UseCase/GetInviteTrustedMessage'
+import { AcceptTrustedSharedVaultInvite } from './UseCase/AcceptTrustedSharedVaultInvite'
+import { GetAsymmetricMessageTrustedPayload } from '../AsymmetricMessage/UseCase/GetAsymmetricMessageTrustedPayload'
+import { PendingSharedVaultInviteRecord } from './PendingSharedVaultInviteRecord'
+import { GetAsymmetricMessageUntrustedPayload } from '../AsymmetricMessage/UseCase/GetAsymmetricMessageUntrustedPayload'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -66,10 +71,11 @@ export class SharedVaultService
   private sharedVaultServer: SharedVaultServerInterface
   private sharedVaultUsersServer: SharedVaultUsersServerInterface
   private sharedVaultInvitesServer: SharedVaultInvitesServerInterface
+  private messageServer: AsymmetricMessageServerInterface
 
   private eventDisposers: (() => void)[] = []
 
-  private pendingInvites: Record<string, SharedVaultInviteServerHash> = {}
+  private pendingInvites: Record<string, PendingSharedVaultInviteRecord> = {}
 
   constructor(
     http: HttpServiceInterface,
@@ -90,6 +96,7 @@ export class SharedVaultService
     this.sharedVaultServer = new SharedVaultServer(http)
     this.sharedVaultUsersServer = new SharedVaultUsersServer(http)
     this.sharedVaultInvitesServer = new SharedVaultInvitesServer(http)
+    this.messageServer = new AsymmetricMessageServer(http)
 
     this.eventDisposers.push(
       sync.addEventObserver(async (event, data) => {
@@ -197,7 +204,7 @@ export class SharedVaultService
       sharedVault: vault,
     })
 
-    await this.updateInvitesAfterKeySystemRootKeyChange({
+    await this.updateInvitesAndShareKeyAfterKeySystemRootKeyChange({
       keySystemIdentifier: systemIdentifier,
       sharedVault: vault,
     })
@@ -237,7 +244,7 @@ export class SharedVaultService
     return this.findSureSharedVault(sharedVault.sharedVaultUuid)
   }
 
-  public getCachedInboundInvites(): SharedVaultInviteServerHash[] {
+  public getCachedPendingInvites(): PendingSharedVaultInviteRecord[] {
     return Object.values(this.pendingInvites)
   }
 
@@ -346,10 +353,42 @@ export class SharedVaultService
     }
 
     for (const invite of invites) {
-      this.pendingInvites[invite.uuid] = invite
-    }
+      const trustedMessageUseCase = new GetAsymmetricMessageTrustedPayload<AsymmetricMessageSharedVaultRootKeyChanged>(
+        this.encryption,
+        this.contacts,
+      )
 
-    await this.automaticallyAcceptTrustedKeyChangeInvites()
+      const trustedMessage = trustedMessageUseCase.execute({
+        message: invite,
+        privateKey: this.encryption.getKeyPair().privateKey,
+      })
+
+      if (trustedMessage) {
+        this.pendingInvites[invite.uuid] = {
+          invite,
+          message: trustedMessage,
+          trusted: true,
+        }
+
+        continue
+      }
+
+      const untrustedMessageUseCase =
+        new GetAsymmetricMessageUntrustedPayload<AsymmetricMessageSharedVaultRootKeyChanged>(this.encryption)
+
+      const untrustedMessage = untrustedMessageUseCase.execute({
+        message: invite,
+        privateKey: this.encryption.getKeyPair().privateKey,
+      })
+
+      if (untrustedMessage) {
+        this.pendingInvites[invite.uuid] = {
+          invite,
+          message: untrustedMessage,
+          trusted: false,
+        }
+      }
+    }
 
     await this.notifyCollaborationStatusChanged()
   }
@@ -358,41 +397,31 @@ export class SharedVaultService
     await this.notifyEventSync(SharedVaultServiceEvent.SharedVaultStatusChanged)
   }
 
-  private async automaticallyAcceptTrustedKeyChangeInvites(): Promise<void> {
-    const rootKeyInvites = this.getCachedInboundInvites().filter((invite) => {
-      return invite.invite_type === 'key-change'
-    })
-
-    for (const invite of rootKeyInvites) {
-      const useCase = new GetInviteTrustedMessage<SharedVaultMessageRootKey>(this.encryption, this.contacts)
-      const message = useCase.execute({ invite, privateKey: this.encryption.getKeyPair().privateKey })
-      if (message) {
-        await this.acceptTrustedRootKeyInvite(invite, message)
-      }
-    }
-  }
-
   public async isInviteTrusted(invite: SharedVaultInviteServerHash): Promise<boolean> {
-    const useCase = new GetInviteTrustedMessage<SharedVaultMessageRootKey>(this.encryption, this.contacts)
-    const message = useCase.execute({ invite, privateKey: this.encryption.getKeyPair().privateKey })
+    const useCase = new GetAsymmetricMessageTrustedPayload<AsymmetricMessageSharedVaultRootKeyChanged>(
+      this.encryption,
+      this.contacts,
+    )
+    const message = useCase.execute({ message: invite, privateKey: this.encryption.getKeyPair().privateKey })
     return message != undefined
   }
 
-  async acceptTrustedRootKeyInvite(
-    invite: SharedVaultInviteServerHash,
-    decryptedMessage: SharedVaultMessageRootKey,
-  ): Promise<void> {
-    const useCase = new AcceptTrustedRootKeyInvite(this.sharedVaultInvitesServer, this.items)
-    const result = await useCase.execute({ invite, decryptedMessage })
+  async acceptPendingSharedVaultInvite(pendingInvite: PendingSharedVaultInviteRecord): Promise<void> {
+    if (!pendingInvite.trusted) {
+      throw new Error('Cannot accept untrusted invite')
+    }
 
-    delete this.pendingInvites[invite.uuid]
+    const useCase = new AcceptTrustedSharedVaultInvite(this.sharedVaultInvitesServer, this.items, this.sync)
+    const result = await useCase.execute({ invite: pendingInvite.invite, message: pendingInvite.message })
+
+    delete this.pendingInvites[pendingInvite.invite.uuid]
 
     void this.sync.sync()
 
     await this.decryptErroredItemsAfterInviteAccept()
 
     if (result === 'inserted') {
-      await this.sync.syncSharedVaultsFromScratch([invite.shared_vault_uuid])
+      await this.sync.syncSharedVaultsFromScratch([pendingInvite.invite.shared_vault_uuid])
     }
   }
 
@@ -422,8 +451,8 @@ export class SharedVaultService
   ): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
     const useCase = new InviteContactToSharedVaultUseCase(this.encryption, this.sharedVaultInvitesServer, this.items)
     const result = await useCase.execute({
-      inviterKeyPair: this.encryption.getKeyPair(),
-      inviterSigningKeyPair: this.encryption.getSigningKeyPair(),
+      senderKeyPair: this.encryption.getKeyPair(),
+      senderSigningKeyPair: this.encryption.getSigningKeyPair(),
       sharedVault,
       contact,
       permissions,
@@ -438,14 +467,17 @@ export class SharedVaultService
 
   public getInviteDataMessageAndTrustStatus(
     invite: SharedVaultInviteServerHash,
-  ): { trusted: boolean; message: SharedVaultMessage } | undefined {
-    const useCase = new GetInviteTrustedMessage<SharedVaultMessageRootKey>(this.encryption, this.contacts)
-    const trustedMessage = useCase.execute({ invite, privateKey: this.encryption.getKeyPair().privateKey })
+  ): { trusted: boolean; message: AsymmetricMessagePayload } | undefined {
+    const useCase = new GetAsymmetricMessageTrustedPayload<AsymmetricMessageSharedVaultRootKeyChanged>(
+      this.encryption,
+      this.contacts,
+    )
+    const trustedMessage = useCase.execute({ message: invite, privateKey: this.encryption.getKeyPair().privateKey })
     if (trustedMessage) {
       return { trusted: true, message: trustedMessage }
     }
 
-    const untrustedMessageResult = this.encryption.asymmetricallyDecryptSharedVaultMessage({
+    const untrustedMessageResult = this.encryption.asymmetricallyDecryptMessage({
       encryptedString: invite.encrypted_message,
       senderPublicKey: invite.sender_public_key,
       privateKey: this.encryption.getKeyPair().privateKey,
@@ -517,25 +549,47 @@ export class SharedVaultService
     return contact
   }
 
-  public updateInvitesAfterKeySystemRootKeyChange(params: {
+  private async updateInvitesAndShareKeyAfterKeySystemRootKeyChange(params: {
     keySystemIdentifier: KeySystemIdentifier
     sharedVault: SharedVaultDisplayListing
   }): Promise<ClientDisplayableError[]> {
-    const useCase = new UpdateInvitesAfterSharedVaultDataChangeUseCase(
+    const errors: ClientDisplayableError[] = []
+    const updatePendingInvitesUseCase = new UpdateInvitesAfterSharedVaultDataChangeUseCase(
       this.encryption,
       this.sharedVaultInvitesServer,
-      this.sharedVaultUsersServer,
       this.contacts,
       this.items,
     )
 
-    return useCase.execute({
+    const updateExistingResults = await updatePendingInvitesUseCase.execute({
       keySystemIdentifier: params.keySystemIdentifier,
       sharedVaultUuid: params.sharedVault.sharedVaultUuid,
-      inviterUuid: this.session.getSureUser().uuid,
-      inviterEncryptionKeyPair: this.encryption.getKeyPair(),
-      inviterSigningKeyPair: this.encryption.getSigningKeyPair(),
+      senderUuid: this.session.getSureUser().uuid,
+      senderEncryptionKeyPair: this.encryption.getKeyPair(),
+      senderSigningKeyPair: this.encryption.getSigningKeyPair(),
     })
+
+    errors.push(...updateExistingResults)
+
+    const shareKeyUseCase = new SendSharedVaultRootKeyChangedMessageToAll(
+      this.encryption,
+      this.sharedVaultUsersServer,
+      this.contacts,
+      this.items,
+      this.messageServer,
+    )
+
+    const shareKeyResults = await shareKeyUseCase.execute({
+      keySystemIdentifier: params.keySystemIdentifier,
+      sharedVaultUuid: params.sharedVault.sharedVaultUuid,
+      senderUuid: this.session.getSureUser().uuid,
+      senderEncryptionKeyPair: this.encryption.getKeyPair(),
+      senderSigningKeyPair: this.encryption.getSigningKeyPair(),
+    })
+
+    errors.push(...shareKeyResults)
+
+    return errors
   }
 
   override deinit(): void {

@@ -8,7 +8,6 @@ import { TrustedContactPublicKeyInterface } from './TrustedContactPublicKeyInter
 
 export class TrustedContact extends DecryptedItem<TrustedContactContent> implements TrustedContactInterface {
   name: string
-  serverUuid: string
   contactUuid: string
   publicKey: TrustedContactPublicKeyInterface
 
@@ -16,7 +15,6 @@ export class TrustedContact extends DecryptedItem<TrustedContactContent> impleme
     super(payload)
 
     this.name = payload.content.name
-    this.serverUuid = payload.content.serverUuid
     this.contactUuid = payload.content.contactUuid
     this.publicKey = TrustedContactPublicKey.FromJson(payload.content.publicKey)
   }

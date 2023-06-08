@@ -63,7 +63,7 @@ export * from './Runtime/Predicate/Operator'
 export * from './Runtime/Predicate/Predicate'
 export * from './Runtime/Predicate/Utils'
 export * from './Runtime/Vaults/VaultDisplayListing'
-export * from './Runtime/Vaults/SharedVaultMessage'
+export * from './Runtime/AsymmetricMessage/AsymmetricMessage'
 
 export * from './Syncable/ActionsExtension'
 export * from './Syncable/Component'

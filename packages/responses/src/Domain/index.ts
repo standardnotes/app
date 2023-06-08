@@ -26,8 +26,6 @@ export * from './Files/UploadFileChunkResponse'
 export * from './Files/MoveFileResponse'
 export * from './Files/ValetTokenOperation'
 
-export * from './Contact/ContactServerHash'
-
 export * from './Http'
 
 export * from './SharedVaults/SharedVaultInviteServerHash'

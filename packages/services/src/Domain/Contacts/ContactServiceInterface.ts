@@ -1,9 +1,8 @@
-import { TrustedContactInterface } from '@standardnotes/models'
+import { TrustedContactContentSpecialized, TrustedContactInterface } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
-import { ContactServerHash, SharedVaultInviteServerHash, SharedVaultUserServerHash } from '@standardnotes/responses'
+import { SharedVaultInviteServerHash, SharedVaultUserServerHash } from '@standardnotes/responses'
 
 export enum ContactServiceEvent {
-  ReceivedContactRequests = 'ReceivedContactRequests',
   ContactsChanged = 'ContactsChanged',
 }
 
@@ -18,22 +17,21 @@ export interface ContactServiceInterface extends AbstractService<ContactServiceE
   ): Promise<TrustedContactInterface | undefined>
   getCollaborationIDForTrustedContact(contact: TrustedContactInterface): string
 
-  getServerContacts(): ContactServerHash[]
-  trustServerContact(serverContact: ContactServerHash, name?: string): Promise<void>
-
-  createTrustedContact(params: {
-    name: string
-    publicKey: string
+  createOrEditTrustedContact(params: {
     contactUuid: string
+    name?: string
+    publicKey: string
+    signingPublicKey: string
   }): Promise<TrustedContactInterface | undefined>
-  editTrustedContact(contact: TrustedContactInterface, params: { name: string; collaborationID: string }): Promise<void>
+  createOrUpdateTrustedContactFromContactShare(data: TrustedContactContentSpecialized): Promise<TrustedContactInterface>
+  editTrustedContactFromCollaborationID(
+    contact: TrustedContactInterface,
+    params: { name: string; collaborationID: string },
+  ): Promise<TrustedContactInterface>
   deleteContact(contact: TrustedContactInterface): Promise<void>
 
   getAllContacts(): TrustedContactInterface[]
-  getContactItem(serverUuid: string): TrustedContactInterface | undefined
   findTrustedContact(userUuid: string): TrustedContactInterface | undefined
   findTrustedContactForServerUser(user: SharedVaultUserServerHash): TrustedContactInterface | undefined
   findTrustedContactForInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined
-
-  refreshAllContactsAfterPublicKeyChange(): Promise<void>
 }

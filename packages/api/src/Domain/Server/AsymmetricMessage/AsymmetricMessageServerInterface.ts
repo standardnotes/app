@@ -7,7 +7,7 @@ import { GetUserAsymmetricMessagesResponse } from '../../Response/AsymmetricMess
 import { DeleteAsymmetricMessageRequestParams } from '../../Request/AsymmetricMessage/DeleteAsymmetricMessageRequestParams'
 import { DeleteAsymmetricMessageResponse } from '../../Response/AsymmetricMessage/DeleteAsymmetricMessageResponse'
 
-export interface AsymmetricMessagesServerInterface {
+export interface AsymmetricMessageServerInterface {
   createMessage(params: CreateAsymmetricMessageParams): Promise<HttpResponse<CreateAsymmetricMessageResponse>>
   updateMessage(params: UpdateAsymmetricMessageParams): Promise<HttpResponse<UpdateAsymmetricMessageResponse>>
 

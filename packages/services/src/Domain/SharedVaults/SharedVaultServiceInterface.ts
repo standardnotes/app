@@ -7,14 +7,13 @@ import {
 import {
   DecryptedItemInterface,
   TrustedContactInterface,
-  KeySystemIdentifier,
   SharedVaultDisplayListing,
   VaultDisplayListing,
-  SharedVaultMessage,
-  SharedVaultMessageRootKey,
+  AsymmetricMessagePayload,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
+import { PendingSharedVaultInviteRecord } from './PendingSharedVaultInviteRecord'
 
 export interface SharedVaultServiceInterface
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload> {
@@ -41,19 +40,11 @@ export interface SharedVaultServiceInterface
   downloadInboundInvites(): Promise<ClientDisplayableError | SharedVaultInviteServerHash[]>
   getOutboundInvites(vaultUuid?: string): Promise<SharedVaultInviteServerHash[] | ClientDisplayableError>
   isInviteTrusted(invite: SharedVaultInviteServerHash): Promise<boolean>
-  acceptTrustedRootKeyInvite(
-    invite: SharedVaultInviteServerHash,
-    decryptedMessage: SharedVaultMessageRootKey,
-  ): Promise<void>
+  acceptPendingSharedVaultInvite(pendingInvite: PendingSharedVaultInviteRecord): Promise<void>
   getInviteDataMessageAndTrustStatus(
     invite: SharedVaultInviteServerHash,
-  ): { trusted: boolean; message: SharedVaultMessage } | undefined
-  getCachedInboundInvites(): SharedVaultInviteServerHash[]
+  ): { trusted: boolean; message: AsymmetricMessagePayload } | undefined
+  getCachedPendingInvites(): PendingSharedVaultInviteRecord[]
   getInvitableContactsForSharedVault(sharedVault: SharedVaultDisplayListing): Promise<TrustedContactInterface[]>
   deleteInvite(invite: SharedVaultInviteServerHash): Promise<ClientDisplayableError | void>
-
-  updateInvitesAfterKeySystemRootKeyChange(params: {
-    keySystemIdentifier: KeySystemIdentifier
-    sharedVault: SharedVaultDisplayListing
-  }): Promise<ClientDisplayableError[]>
 }

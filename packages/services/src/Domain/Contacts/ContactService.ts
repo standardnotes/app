@@ -1,11 +1,6 @@
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import {
-  ContactServerHash,
-  SharedVaultInviteServerHash,
-  SharedVaultUserServerHash,
-  isErrorResponse,
-} from '@standardnotes/responses'
-import { ContactServerInterface, HttpServiceInterface, ContactServer } from '@standardnotes/api'
+import { SharedVaultInviteServerHash, SharedVaultUserServerHash } from '@standardnotes/responses'
+import { HttpServiceInterface } from '@standardnotes/api'
 import {
   TrustedContactContent,
   TrustedContactContentSpecialized,
@@ -17,27 +12,19 @@ import {
 } from '@standardnotes/models'
 import { ContentType } from '@standardnotes/common'
 import { AbstractService } from '../Service/AbstractService'
-import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
 import { SyncServiceInterface } from '../Sync/SyncServiceInterface'
 import { ItemManagerInterface } from '../Item/ItemManagerInterface'
 import { SessionsClientInterface } from '../Session/SessionsClientInterface'
 import { ContactServiceEvent, ContactServiceInterface } from '../Contacts/ContactServiceInterface'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
-import { SyncEvent, SyncEventReceivedContactsData } from '../Event/SyncEvent'
-import { InternalEventInterface } from '../Internal/InternalEventInterface'
 import { UserClientInterface } from '../User/UserClientInterface'
 import { CollaborationIDData } from './CollaborationID'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 
 const Version1CollaborationId = '1'
+const UnknownContactName = 'No name contact'
 
-export class ContactService
-  extends AbstractService<ContactServiceEvent>
-  implements ContactServiceInterface, InternalEventHandlerInterface
-{
-  private contactServer: ContactServerInterface
-  private serverContacts: Record<string, ContactServerHash> = {}
-
+export class ContactService extends AbstractService<ContactServiceEvent> implements ContactServiceInterface {
   constructor(
     private http: HttpServiceInterface,
     private sync: SyncServiceInterface,
@@ -49,10 +36,6 @@ export class ContactService
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
-
-    eventBus.addEventHandler(this, SyncEvent.ReceivedContacts)
-
-    this.contactServer = new ContactServer(this.http)
   }
 
   public isCollaborationEnabled(): boolean {
@@ -61,10 +44,6 @@ export class ContactService
 
   public async enableCollaboration(): Promise<void> {
     await this.user.updateAccountWithFirstTimeKeyPair()
-  }
-
-  public async refreshAllContactsAfterPublicKeyChange(): Promise<void> {
-    await this.contactServer.refreshAllContactsAfterPublicKeyChange()
   }
 
   public getCollaborationID(): string {
@@ -98,7 +77,7 @@ export class ContactService
     )
     return this.buildCollaborationId({
       version: Version1CollaborationId,
-      userUuid: invite.inviter_uuid,
+      userUuid: invite.sender_uuid,
       publicKey: invite.sender_public_key,
       signingPublicKey: signingPublicKey,
     })
@@ -109,7 +88,7 @@ export class ContactService
     name?: string,
   ): Promise<TrustedContactInterface | undefined> {
     const { userUuid, publicKey, signingPublicKey } = this.parseCollaborationID(collaborationID)
-    return this.createTrustedContact({
+    return this.createOrEditTrustedContact({
       name: name ?? '',
       contactUuid: userUuid,
       publicKey,
@@ -117,107 +96,111 @@ export class ContactService
     })
   }
 
-  async handleEvent(event: InternalEventInterface): Promise<void> {
-    switch (event.type) {
-      case SyncEvent.ReceivedContacts:
-        return this.handleReceivedRemoteContactsEvent(event.payload as SyncEventReceivedContactsData)
-    }
-  }
-
-  private async handleReceivedRemoteContactsEvent(contacts: ContactServerHash[]): Promise<void> {
-    for (const contact of contacts) {
-      this.serverContacts[contact.uuid] = contact
-    }
-
-    void this.notifyEvent(ContactServiceEvent.ReceivedContactRequests)
-    void this.notifyEvent(ContactServiceEvent.ContactsChanged)
-  }
-
-  public getServerContacts(): ContactServerHash[] {
-    return Object.values(this.serverContacts)
-  }
-
-  async trustServerContact(serverContact: ContactServerHash, name?: string): Promise<void> {
-    const existingContact = this.findTrustedContact(serverContact.contact_uuid)
-    if (existingContact) {
-      await this.items.changeItem<TrustedContactMutator>(existingContact, (mutator) => {
-        mutator.addPublicKey({
-          encryption: serverContact.contact_public_key,
-          signing: serverContact.contact_signing_public_key,
-        })
-        if (name) {
-          mutator.name = name
-        }
-      })
-
-      await this.sync.sync()
-    } else {
-      await this.createTrustedContact({
-        name: name ?? '',
-        contactUuid: serverContact.contact_uuid,
-        publicKey: serverContact.contact_public_key,
-        signingPublicKey: serverContact.contact_signing_public_key,
-      })
-    }
-
-    void this.notifyEvent(ContactServiceEvent.ContactsChanged)
-
-    delete this.serverContacts[serverContact.uuid]
-  }
-
-  async editTrustedContact(
+  async editTrustedContactFromCollaborationID(
     contact: TrustedContactInterface,
     params: { name: string; collaborationID: string },
-  ): Promise<void> {
+  ): Promise<TrustedContactInterface> {
     const { publicKey, signingPublicKey, userUuid } = this.parseCollaborationID(params.collaborationID)
     if (userUuid !== contact.contactUuid) {
       throw new Error("Collaboration ID's user uuid does not match contact UUID")
     }
 
-    await this.items.changeItem<TrustedContactMutator>(contact, (mutator) => {
-      mutator.name = params.name
+    const updatedContact = await this.items.changeItem<TrustedContactMutator, TrustedContactInterface>(
+      contact,
+      (mutator) => {
+        mutator.name = params.name
 
-      if (publicKey !== contact.publicKey.encryption || signingPublicKey !== contact.publicKey.signing) {
-        mutator.addPublicKey({
-          encryption: publicKey,
-          signing: signingPublicKey,
-        })
-      }
-    })
+        if (publicKey !== contact.publicKey.encryption || signingPublicKey !== contact.publicKey.signing) {
+          mutator.addPublicKey({
+            encryption: publicKey,
+            signing: signingPublicKey,
+          })
+        }
+      },
+    )
 
     void this.notifyEvent(ContactServiceEvent.ContactsChanged)
 
     await this.sync.sync()
+
+    return updatedContact
   }
 
-  async createTrustedContact(params: {
-    name: string
+  async updateTrustedContact(
+    contact: TrustedContactInterface,
+    params: { name: string; publicKey: string; signingPublicKey: string },
+  ): Promise<TrustedContactInterface> {
+    const updatedContact = await this.items.changeItem<TrustedContactMutator, TrustedContactInterface>(
+      contact,
+      (mutator) => {
+        mutator.name = params.name
+
+        if (
+          params.publicKey !== contact.publicKey.encryption ||
+          params.signingPublicKey !== contact.publicKey.signing
+        ) {
+          mutator.addPublicKey({
+            encryption: params.publicKey,
+            signing: params.signingPublicKey,
+          })
+        }
+      },
+    )
+
+    void this.notifyEvent(ContactServiceEvent.ContactsChanged)
+
+    await this.sync.sync()
+
+    return updatedContact
+  }
+
+  async createOrUpdateTrustedContactFromContactShare(
+    data: TrustedContactContentSpecialized,
+  ): Promise<TrustedContactInterface> {
+    let contact = this.findTrustedContact(data.contactUuid)
+    if (contact) {
+      contact = await this.items.changeItem<TrustedContactMutator, TrustedContactInterface>(contact, (mutator) => {
+        mutator.name = data.name
+        mutator.replacePublicKey(data.publicKey)
+      })
+    } else {
+      contact = await this.items.createItem<TrustedContactInterface>(
+        ContentType.TrustedContact,
+        FillItemContent<TrustedContactContent>(data),
+        true,
+      )
+    }
+
+    void this.notifyEvent(ContactServiceEvent.ContactsChanged)
+
+    await this.sync.sync()
+
+    return contact
+  }
+
+  async createOrEditTrustedContact(params: {
+    name?: string
     contactUuid: string
     publicKey: string
     signingPublicKey: string
   }): Promise<TrustedContactInterface | undefined> {
-    const createResponse = await this.contactServer.createContact({
-      contactUuid: params.contactUuid,
-      contactPublicKey: params.publicKey,
-    })
-
-    if (isErrorResponse(createResponse)) {
-      console.error('Failed to create contact', createResponse)
-      return undefined
+    const existingContact = this.findTrustedContact(params.contactUuid)
+    if (existingContact) {
+      await this.updateTrustedContact(existingContact, { ...params, name: params.name ?? existingContact.name })
+      return existingContact
     }
 
     const content: TrustedContactContentSpecialized = {
-      name: params.name,
+      name: params.name ?? UnknownContactName,
       publicKey: TrustedContactPublicKey.FromJson({
         encryption: params.publicKey,
         signing: params.signingPublicKey,
         timestamp: new Date(),
       }),
       contactUuid: params.contactUuid,
-      serverUuid: createResponse.data.contact.uuid,
     }
 
-    const contact = this.items.createItem<TrustedContactInterface>(
+    const contact = await this.items.createItem<TrustedContactInterface>(
       ContentType.TrustedContact,
       FillItemContent<TrustedContactContent>(content),
       true,
@@ -232,8 +215,6 @@ export class ContactService
 
   async deleteContact(contact: TrustedContactInterface): Promise<void> {
     await this.items.setItemToBeDeleted(contact)
-
-    await this.contactServer.deleteContact({ uuid: contact.serverUuid })
 
     await this.sync.sync()
 
@@ -257,10 +238,6 @@ export class ContactService
 
   findTrustedContactForInvite(invite: SharedVaultInviteServerHash): TrustedContactInterface | undefined {
     return this.findTrustedContact(invite.user_uuid)
-  }
-
-  getContactItem(serverUuid: string): TrustedContactInterface | undefined {
-    return this.items.findItem(serverUuid)
   }
 
   getCollaborationIDForTrustedContact(contact: TrustedContactInterface): string {

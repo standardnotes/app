@@ -78,9 +78,9 @@ import {
   isFullEntryLoadChunkResponse,
   isChunkFullEntry,
   SyncEventReceivedSharedVaultInvitesData,
-  SyncEventReceivedContactsData,
   SyncEventReceivedRemoteSharedVaultsData,
   SyncEventReceivedUserEventsData,
+  SyncEventReceivedAsymmetricMessagesData,
 } from '@standardnotes/services'
 import { OfflineSyncResponse } from './Offline/Response'
 import {
@@ -931,6 +931,13 @@ export class SNSyncService
       await this.notifyEventSync(SyncEvent.ReceivedUserEvents, response.userEvents as SyncEventReceivedUserEventsData)
     }
 
+    if (response.asymmetricMessages) {
+      await this.notifyEventSync(
+        SyncEvent.ReceivedAsymmetricMessages,
+        response.asymmetricMessages as SyncEventReceivedAsymmetricMessagesData,
+      )
+    }
+
     if (response.vaults) {
       await this.notifyEventSync(
         SyncEvent.ReceivedRemoteSharedVaults,
@@ -943,10 +950,6 @@ export class SNSyncService
         SyncEvent.ReceivedSharedVaultInvites,
         response.vaultInvites as SyncEventReceivedSharedVaultInvitesData,
       )
-    }
-
-    if (response.contacts) {
-      await this.notifyEventSync(SyncEvent.ReceivedContacts, response.contacts as SyncEventReceivedContactsData)
     }
 
     const resolver = new ServerSyncResponseResolver(

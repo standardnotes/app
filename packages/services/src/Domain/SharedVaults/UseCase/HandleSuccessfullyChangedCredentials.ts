@@ -4,12 +4,13 @@ import { ClientDisplayableError, SharedVaultInviteServerHash, isErrorResponse } 
 import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { SuccessfullyChangedCredentialsEventData } from '../../Session/SuccessfullyChangedCredentialsEventData'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
-import { SharedVaultDisplayListing, SharedVaultMessageType } from '@standardnotes/models'
+import { SharedVaultDisplayListing, AsymmetricMessagePayloadType } from '@standardnotes/models'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
 /**
  * When the local client initiates a change of credentials, it is also responsible for
- * reencrypting invites the user has addressed for others.
+ * reencrypting invites the user has addressed for others. It must also delete any
+ * invites, as they are encrypted with the old key and will become no longer valid.
  */
 export class HandleSuccessfullyChangedCredentials {
   constructor(
@@ -23,8 +24,6 @@ export class HandleSuccessfullyChangedCredentials {
     eventData: SuccessfullyChangedCredentialsEventData
     sharedVaults: SharedVaultDisplayListing[]
   }): Promise<ClientDisplayableError[]> {
-    await this.contacts.refreshAllContactsAfterPublicKeyChange()
-
     await this.sharedVaultInvitesServer.deleteAllInboundInvites()
 
     const errors = await this.updateAllOutboundInvites({
@@ -58,7 +57,7 @@ export class HandleSuccessfullyChangedCredentials {
         continue
       }
 
-      const error = await this.updateInvite({
+      const error = await this.updateOutboundInvite({
         sharedVault,
         invite,
         newKeyPair: params.newKeyPair,
@@ -73,7 +72,7 @@ export class HandleSuccessfullyChangedCredentials {
     return errors
   }
 
-  private async updateInvite(params: {
+  private async updateOutboundInvite(params: {
     invite: SharedVaultInviteServerHash
     sharedVault: SharedVaultDisplayListing
     newKeyPair: PkcKeyPair
@@ -94,8 +93,8 @@ export class HandleSuccessfullyChangedCredentials {
       return ClientDisplayableError.FromString('Failed to find contact for invite')
     }
 
-    const newEncryptedVaultData = this.encryption.asymmetricallyEncryptSharedVaultMessage({
-      message: { type: SharedVaultMessageType.RootKey, data: keySystemRootKey.content },
+    const newEncryptedVaultData = this.encryption.asymmetricallyEncryptMessage({
+      message: { type: AsymmetricMessagePayloadType.SharedVaultRootKeyChanged, data: keySystemRootKey.content },
       senderPrivateKey: params.newKeyPair.privateKey,
       senderSigningKeyPair: params.newSigningKeyPair,
       recipientPublicKey: trustedContact.publicKey.encryption,
@@ -104,7 +103,7 @@ export class HandleSuccessfullyChangedCredentials {
     const updateInviteResponse = await this.sharedVaultInvitesServer.updateInvite({
       sharedVaultUuid: params.invite.shared_vault_uuid,
       inviteUuid: params.invite.uuid,
-      inviterPublicKey: params.newKeyPair.publicKey,
+      senderPublicKey: params.newKeyPair.publicKey,
       encryptedMessage: newEncryptedVaultData,
     })
 

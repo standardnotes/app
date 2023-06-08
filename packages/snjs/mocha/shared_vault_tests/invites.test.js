@@ -85,7 +85,7 @@ describe('shared vault invites', function () {
     await sharedVaults.inviteContactToSharedVault(sharedVault, currentContextContact, SharedVaultPermission.Write)
 
     await contactContext.sharedVaults.downloadInboundInvites()
-    expect(contactContext.sharedVaults.isInviteTrusted(contactContext.sharedVaults.getCachedInboundInvites()[0])).to.be
+    expect(contactContext.sharedVaults.isInviteTrusted(contactContext.sharedVaults.getCachedPendingInvites()[0])).to.be
       .false
 
     await deinitContactContext()
@@ -101,13 +101,13 @@ describe('shared vault invites', function () {
 
     await contactContext.sharedVaults.downloadInboundInvites()
     expect(
-      contactContext.sharedVaults.isInviteTrusted(contactContext.sharedVaults.getCachedInboundInvites()[0]),
+      contactContext.sharedVaults.isInviteTrusted(contactContext.sharedVaults.getCachedPendingInvites()[0]),
     ).to.be.false
 
     await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
 
     expect(
-      contactContext.sharedVaults.isInviteTrusted(contactContext.sharedVaults.getCachedInboundInvites()[0]),
+      contactContext.sharedVaults.isInviteTrusted(contactContext.sharedVaults.getCachedPendingInvites()[0]),
     ).to.be.true
 
     await deinitContactContext()

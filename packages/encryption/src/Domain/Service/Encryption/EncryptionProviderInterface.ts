@@ -9,7 +9,7 @@ import {
   RootKeyInterface,
   KeySystemIdentifier,
   KeySystemItemsKeyInterface,
-  SharedVaultMessage,
+  AsymmetricMessagePayload,
 } from '@standardnotes/models'
 import { ClientDisplayableError } from '@standardnotes/responses'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
@@ -19,6 +19,16 @@ import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
+
+export type AsymmetricallyDecryptMessageResult = {
+  message: AsymmetricMessagePayload
+  signing: {
+    builtInSignaturePasses: boolean
+    builtInSignaturePublicKey: string
+    trustedSenderVerificationPerformed: boolean
+    trustedSenderSignaturePasses: boolean
+  }
+}
 
 export interface EncryptionProviderInterface {
   encryptSplitSingle(split: KeyedEncryptionSplit): Promise<EncryptedPayloadInterface>
@@ -96,17 +106,17 @@ export interface EncryptionProviderInterface {
   getKeyPair(): PkcKeyPair
   getSigningKeyPair(): PkcKeyPair
 
-  asymmetricallyEncryptSharedVaultMessage(dto: {
-    message: SharedVaultMessage
+  asymmetricallyEncryptMessage(dto: {
+    message: AsymmetricMessagePayload
     senderPrivateKey: string
     senderSigningKeyPair: PkcKeyPair
     recipientPublicKey: string
   }): string
-  asymmetricallyDecryptSharedVaultMessage(dto: {
+  asymmetricallyDecryptMessage(dto: {
     encryptedString: string
     senderPublicKey: string
     trustedSenderSigningPublicKey: string | undefined
     privateKey: string
-  }): { message: SharedVaultMessage; signatureVerified: boolean } | undefined
+  }): AsymmetricallyDecryptMessageResult | undefined
   getSignerPublicKeyFromAsymmetricallyEncryptedString(string: string): string
 }

@@ -3,7 +3,6 @@ import { TrustedContactPublicKeyInterface } from './TrustedContactPublicKeyInter
 
 export type TrustedContactContentSpecialized = {
   name: string
-  serverUuid: string
   contactUuid: string
   publicKey: TrustedContactPublicKeyInterface
 }

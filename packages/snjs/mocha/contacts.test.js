@@ -24,7 +24,7 @@ describe('contacts', function () {
   })
 
   it('should create contact', async () => {
-    const contact = await context.contacts.createTrustedContact({
+    const contact = await context.contacts.createOrEditTrustedContact({
       name: 'John Doe',
       publicKey: 'my_public_key',
       contactUuid: '123',

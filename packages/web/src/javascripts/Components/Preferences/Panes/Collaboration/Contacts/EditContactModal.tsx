@@ -43,7 +43,7 @@ const EditContactModal: FunctionComponent<Props> = ({ onCloseDialog, fromInvite,
 
   const handleSubmit = useCallback(async () => {
     if (editingContact) {
-      void application.contacts.editTrustedContact(editingContact, { name, collaborationID })
+      void application.contacts.editTrustedContactFromCollaborationID(editingContact, { name, collaborationID })
       handleDialogClose()
     } else {
       const contact = await application.contacts.addTrustedContactFromCollaborationID(collaborationID, name)

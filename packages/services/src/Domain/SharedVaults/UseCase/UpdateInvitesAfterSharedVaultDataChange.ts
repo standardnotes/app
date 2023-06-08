@@ -1,19 +1,12 @@
 import {
+  AsymmetricMessagePayload,
+  AsymmetricMessagePayloadType,
   KeySystemIdentifier,
   KeySystemRootKeyContentSpecialized,
-  SharedVaultMessage,
-  SharedVaultMessageType,
 } from '@standardnotes/models'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
-import {
-  ClientDisplayableError,
-  SharedVaultInviteType,
-  isClientDisplayableError,
-  isErrorResponse,
-} from '@standardnotes/responses'
-import { SharedVaultInvitesServerInterface, SharedVaultUsersServerInterface } from '@standardnotes/api'
-import { GetSharedVaultUsersUseCase } from './GetSharedVaultUsers'
-import { CreateSharedVaultInviteUseCase } from './CreateSharedVaultInvite'
+import { ClientDisplayableError, isClientDisplayableError, isErrorResponse } from '@standardnotes/responses'
+import { SharedVaultInvitesServerInterface } from '@standardnotes/api'
 import { UpdateSharedVaultInviteUseCase } from './UpdateSharedVaultInvite'
 import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { ItemManagerInterface } from '../../Item/ItemManagerInterface'
@@ -23,7 +16,6 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
   constructor(
     private encryption: EncryptionProviderInterface,
     private vaultInvitesServer: SharedVaultInvitesServerInterface,
-    private vaultUsersServer: SharedVaultUsersServerInterface,
     private contacts: ContactServiceInterface,
     private items: ItemManagerInterface,
   ) {}
@@ -31,9 +23,9 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
   async execute(params: {
     keySystemIdentifier: KeySystemIdentifier
     sharedVaultUuid: string
-    inviterUuid: string
-    inviterEncryptionKeyPair: PkcKeyPair
-    inviterSigningKeyPair: PkcKeyPair
+    senderUuid: string
+    senderEncryptionKeyPair: PkcKeyPair
+    senderSigningKeyPair: PkcKeyPair
   }): Promise<ClientDisplayableError[]> {
     const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(params.keySystemIdentifier)
     if (!keySystemRootKey) {
@@ -45,20 +37,11 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
     const reuploadErrors = await this.reuploadExistingInvites({
       sharedVaultUuid: params.sharedVaultUuid,
       keySystemRootKeyData: keySystemRootKey.content,
-      inviterUuid: params.inviterUuid,
-      inviterEncryptionKeyPair: params.inviterEncryptionKeyPair,
-      inviterSigningKeyPair: params.inviterSigningKeyPair,
+      senderUuid: params.senderUuid,
+      senderEncryptionKeyPair: params.senderEncryptionKeyPair,
+      senderSigningKeyPair: params.senderSigningKeyPair,
     })
     errors.push(...reuploadErrors)
-
-    const inviteErrors = await this.sendKeyChangeInviteToAcceptedVaultMembers({
-      sharedVaultUuid: params.sharedVaultUuid,
-      keySystemRootKeyData: keySystemRootKey.content,
-      inviterUuid: params.inviterUuid,
-      inviterEncryptionKeyPair: params.inviterEncryptionKeyPair,
-      inviterSigningKeyPair: params.inviterSigningKeyPair,
-    })
-    errors.push(...inviteErrors)
 
     return errors
   }
@@ -66,9 +49,9 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
   private async reuploadExistingInvites(params: {
     sharedVaultUuid: string
     keySystemRootKeyData: KeySystemRootKeyContentSpecialized
-    inviterUuid: string
-    inviterEncryptionKeyPair: PkcKeyPair
-    inviterSigningKeyPair: PkcKeyPair
+    senderUuid: string
+    senderEncryptionKeyPair: PkcKeyPair
+    senderSigningKeyPair: PkcKeyPair
   }): Promise<ClientDisplayableError[]> {
     const response = await this.vaultInvitesServer.getOutboundUserInvites()
 
@@ -84,9 +67,9 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
 
     for (const invite of existingSharedVaultInvites) {
       const encryptedMessage = this.encryptVaultMessageForRecipient({
-        message: { type: SharedVaultMessageType.RootKey, data: params.keySystemRootKeyData },
-        inviterPrivateKey: params.inviterEncryptionKeyPair.privateKey,
-        inviterSigningKeyPair: params.inviterSigningKeyPair,
+        message: { type: AsymmetricMessagePayloadType.SharedVaultRootKeyChanged, data: params.keySystemRootKeyData },
+        inviterPrivateKey: params.senderEncryptionKeyPair.privateKey,
+        senderSigningKeyPair: params.senderSigningKeyPair,
         recipientUuid: invite.user_uuid,
       })
 
@@ -101,9 +84,8 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
       const updateInviteResult = await updateInviteUseCase.execute({
         sharedVaultUuid: params.sharedVaultUuid,
         inviteUuid: invite.uuid,
-        inviterPublicKey: params.inviterEncryptionKeyPair.publicKey,
+        senderPublicKey: params.senderEncryptionKeyPair.publicKey,
         encryptedMessage,
-        inviteType: invite.invite_type,
         permissions: invite.permissions,
       })
 
@@ -115,65 +97,10 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
     return errors
   }
 
-  private async sendKeyChangeInviteToAcceptedVaultMembers(params: {
-    sharedVaultUuid: string
-    keySystemRootKeyData: KeySystemRootKeyContentSpecialized
-    inviterUuid: string
-    inviterEncryptionKeyPair: PkcKeyPair
-    inviterSigningKeyPair: PkcKeyPair
-  }): Promise<ClientDisplayableError[]> {
-    const getUsersUseCase = new GetSharedVaultUsersUseCase(this.vaultUsersServer)
-    const users = await getUsersUseCase.execute({ sharedVaultUuid: params.sharedVaultUuid })
-    if (!users) {
-      return [ClientDisplayableError.FromString('Cannot rotate key system root key; users not found')]
-    }
-    if (users.length === 0) {
-      return []
-    }
-
-    const errors: ClientDisplayableError[] = []
-
-    for (const user of users) {
-      if (user.user_uuid === params.inviterUuid) {
-        continue
-      }
-
-      const encryptedMessage = this.encryptVaultMessageForRecipient({
-        message: { type: SharedVaultMessageType.RootKey, data: params.keySystemRootKeyData },
-        inviterPrivateKey: params.inviterEncryptionKeyPair.privateKey,
-        inviterSigningKeyPair: params.inviterSigningKeyPair,
-        recipientUuid: user.user_uuid,
-      })
-
-      if (!encryptedMessage) {
-        errors.push(
-          ClientDisplayableError.FromString(`Failed to encrypt key system root key for user ${user.user_uuid}`),
-        )
-        continue
-      }
-
-      const createInviteUseCase = new CreateSharedVaultInviteUseCase(this.vaultInvitesServer)
-      const createInviteResult = await createInviteUseCase.execute({
-        sharedVaultUuid: params.sharedVaultUuid,
-        inviteeUuid: user.user_uuid,
-        inviterPublicKey: params.inviterEncryptionKeyPair.publicKey,
-        encryptedMessage,
-        inviteType: SharedVaultInviteType.KeyChange,
-        permissions: user.permissions,
-      })
-
-      if (isClientDisplayableError(createInviteResult)) {
-        errors.push(createInviteResult)
-      }
-    }
-
-    return errors
-  }
-
   private encryptVaultMessageForRecipient(params: {
-    message: SharedVaultMessage
+    message: AsymmetricMessagePayload
     inviterPrivateKey: string
-    inviterSigningKeyPair: PkcKeyPair
+    senderSigningKeyPair: PkcKeyPair
     recipientUuid: string
   }): string | undefined {
     const trustedContact = this.contacts.findTrustedContact(params.recipientUuid)
@@ -181,10 +108,10 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
       return
     }
 
-    return this.encryption.asymmetricallyEncryptSharedVaultMessage({
+    return this.encryption.asymmetricallyEncryptMessage({
       message: params.message,
       senderPrivateKey: params.inviterPrivateKey,
-      senderSigningKeyPair: params.inviterSigningKeyPair,
+      senderSigningKeyPair: params.senderSigningKeyPair,
       recipientPublicKey: trustedContact.publicKey.encryption,
     })
   }

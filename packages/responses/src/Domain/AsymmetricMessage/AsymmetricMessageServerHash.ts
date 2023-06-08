@@ -1,4 +1,4 @@
-export type AsymmetricMessageServerHash = {
+export interface AsymmetricMessageServerHash {
   uuid: string
   user_uuid: string
   sender_uuid: string

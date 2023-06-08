@@ -11,7 +11,6 @@ export type FindPublicKeyResult =
 
 export interface TrustedContactInterface extends DecryptedItemInterface<TrustedContactContent> {
   name: string
-  serverUuid: string
   contactUuid: string
   publicKey: TrustedContactPublicKeyInterface
 

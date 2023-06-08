@@ -1,5 +1,5 @@
 import {
-  ContactServerHash,
+  AsymmetricMessageServerHash,
   SharedVaultInviteServerHash,
   SharedVaultServerHash,
   UserEventServerHash,
@@ -32,10 +32,10 @@ export enum SyncEvent {
   ReceivedRemoteSharedVaults = 'received-shared-vaults',
   ReceivedSharedVaultInvites = 'received-shared-vault-invites',
   ReceivedUserEvents = 'received-user-events',
-  ReceivedContacts = 'received-contacts',
+  ReceivedAsymmetricMessages = 'received-asymmetric-messages',
 }
 
 export type SyncEventReceivedRemoteSharedVaultsData = SharedVaultServerHash[]
 export type SyncEventReceivedSharedVaultInvitesData = SharedVaultInviteServerHash[]
-export type SyncEventReceivedContactsData = ContactServerHash[]
+export type SyncEventReceivedAsymmetricMessagesData = AsymmetricMessageServerHash[]
 export type SyncEventReceivedUserEventsData = UserEventServerHash[]

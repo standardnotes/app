@@ -35,7 +35,7 @@ describe('shared vault key rotation', function () {
     await sharedVaults.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
     await contactContext.sync()
 
-    const vaultInvite = contactContext.sharedVaults.getCachedInboundInvites()[0]
+    const vaultInvite = contactContext.sharedVaults.getCachedPendingInvites()[0]
     expect(vaultInvite.sender_public_key).to.equal(context.publicKey)
 
     await context.changePassword('new-password')
@@ -43,7 +43,7 @@ describe('shared vault key rotation', function () {
 
     await contactContext.sync()
 
-    const updatedSharedVaultInvite = contactContext.sharedVaults.getCachedInboundInvites()[0]
+    const updatedSharedVaultInvite = contactContext.sharedVaults.getCachedPendingInvites()[0]
     expect(updatedSharedVaultInvite.sender_public_key).to.equal(context.publicKey)
 
     await deinitContactContext()
