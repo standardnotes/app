@@ -167,4 +167,6 @@ export interface ItemsClientInterface {
     predicate: PredicateInterface<T>,
     iconString?: string,
   ): Promise<SmartView>
+
+  conflictsCount(): number
 }
