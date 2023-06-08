@@ -17,7 +17,8 @@ export class InviteContactToSharedVaultUseCase {
     senderKeyPair: PkcKeyPair
     senderSigningKeyPair: PkcKeyPair
     sharedVault: SharedVaultDisplayListing
-    contact: TrustedContactInterface
+    sharedVaultContacts: TrustedContactInterface[]
+    recipient: TrustedContactInterface
     permissions: SharedVaultPermission
   }): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
     const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(params.sharedVault.systemIdentifier)
@@ -26,16 +27,22 @@ export class InviteContactToSharedVaultUseCase {
     }
 
     const encryptedMessage = this.encryption.asymmetricallyEncryptMessage({
-      message: { type: AsymmetricMessagePayloadType.SharedVaultRootKeyChanged, data: keySystemRootKey.content },
+      message: {
+        type: AsymmetricMessagePayloadType.SharedVaultInvite,
+        data: {
+          rootKey: keySystemRootKey.content,
+          trustedContacts: params.sharedVaultContacts.map((contact) => contact.content),
+        },
+      },
       senderPrivateKey: params.senderKeyPair.privateKey,
       senderSigningKeyPair: params.senderSigningKeyPair,
-      recipientPublicKey: params.contact.publicKey.encryption,
+      recipientPublicKey: params.recipient.publicKey.encryption,
     })
 
     const createInviteUseCase = new SendSharedVaultInviteUseCase(this.sharedVaultInviteServer)
     const createInviteResult = await createInviteUseCase.execute({
       sharedVaultUuid: params.sharedVault.sharedVaultUuid,
-      recipientUuid: params.contact.contactUuid,
+      recipientUuid: params.recipient.contactUuid,
       senderPublicKey: params.senderKeyPair.publicKey,
       encryptedMessage,
       permissions: params.permissions,

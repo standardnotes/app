@@ -1,6 +1,5 @@
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { SharedVaultInviteServerHash, SharedVaultUserServerHash } from '@standardnotes/responses'
-import { HttpServiceInterface } from '@standardnotes/api'
 import {
   TrustedContactContent,
   TrustedContactContentSpecialized,
@@ -22,11 +21,10 @@ import { CollaborationIDData } from './CollaborationID'
 import { EncryptionProviderInterface } from '@standardnotes/encryption'
 
 const Version1CollaborationId = '1'
-const UnknownContactName = 'No name contact'
+const UnknownContactName = 'Unnamed contact'
 
 export class ContactService extends AbstractService<ContactServiceEvent> implements ContactServiceInterface {
   constructor(
-    private http: HttpServiceInterface,
     private sync: SyncServiceInterface,
     private items: ItemManagerInterface,
     private session: SessionsClientInterface,
@@ -134,7 +132,6 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
       contact,
       (mutator) => {
         mutator.name = params.name
-
         if (
           params.publicKey !== contact.publicKey.encryption ||
           params.signingPublicKey !== contact.publicKey.signing

@@ -63,6 +63,8 @@ import { AcceptTrustedSharedVaultInvite } from './UseCase/AcceptTrustedSharedVau
 import { GetAsymmetricMessageTrustedPayload } from '../AsymmetricMessage/UseCase/GetAsymmetricMessageTrustedPayload'
 import { PendingSharedVaultInviteRecord } from './PendingSharedVaultInviteRecord'
 import { GetAsymmetricMessageUntrustedPayload } from '../AsymmetricMessage/UseCase/GetAsymmetricMessageUntrustedPayload'
+import { isNotUndefined } from '@standardnotes/utils'
+import { ShareContactWithUserAdministeredSharedVaultUseCase } from './UseCase/ShareContactWithUserAdministeredSharedVaultUseCase'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -89,6 +91,7 @@ export class SharedVaultService
     eventBus: InternalEventBusInterface,
   ) {
     super(eventBus)
+
     eventBus.addEventHandler(this, SessionEvent.SuccessfullyChangedCredentials)
     eventBus.addEventHandler(this, UserEventServiceEvent.UserEventReceived)
     eventBus.addEventHandler(this, VaultServiceEvent.VaultRootKeyChanged)
@@ -109,9 +112,12 @@ export class SharedVaultService
     )
 
     this.eventDisposers.push(
-      items.addObserver<TrustedContactInterface>(ContentType.TrustedContact, ({ inserted, source }) => {
+      items.addObserver<TrustedContactInterface>(ContentType.TrustedContact, ({ changed, inserted, source }) => {
         if (source === PayloadEmitSource.LocalChanged && inserted.length > 0) {
           void this.handleCreationOfNewTrustedContacts(inserted)
+        }
+        if (source === PayloadEmitSource.RemoteSaved && changed.length > 0) {
+          void this.handleTrustedContactsChange(changed)
         }
       }),
     )
@@ -288,6 +294,12 @@ export class SharedVaultService
     await this.downloadInboundInvites()
   }
 
+  private async handleTrustedContactsChange(contacts: TrustedContactInterface[]): Promise<void> {
+    for (const contact of contacts) {
+      await this.shareContactWithUserAdministeredSharedVaults(contact)
+    }
+  }
+
   public async downloadInboundInvites(): Promise<ClientDisplayableError | SharedVaultInviteServerHash[]> {
     const response = await this.sharedVaultInvitesServer.getInboundUserInvites()
 
@@ -444,17 +456,31 @@ export class SharedVaultService
     })
   }
 
+  private async getSharedVaultContacts(sharedVault: SharedVaultDisplayListing): Promise<TrustedContactInterface[]> {
+    const users = await this.getSharedVaultUsers(sharedVault)
+    if (!users) {
+      return []
+    }
+
+    const contacts = users.map((user) => this.contacts.findTrustedContact(user.user_uuid)).filter(isNotUndefined)
+    return contacts
+  }
+
   async inviteContactToSharedVault(
     sharedVault: SharedVaultDisplayListing,
     contact: TrustedContactInterface,
     permissions: SharedVaultPermission,
   ): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
+    const sharedVaultContacts = await this.getSharedVaultContacts(sharedVault)
+
     const useCase = new InviteContactToSharedVaultUseCase(this.encryption, this.sharedVaultInvitesServer, this.items)
+
     const result = await useCase.execute({
       senderKeyPair: this.encryption.getKeyPair(),
       senderSigningKeyPair: this.encryption.getSigningKeyPair(),
       sharedVault,
-      contact,
+      recipient: contact,
+      sharedVaultContacts,
       permissions,
     })
 
@@ -527,6 +553,31 @@ export class SharedVaultService
   async getSharedVaultUsers(sharedVault: SharedVaultDisplayListing): Promise<SharedVaultUserServerHash[] | undefined> {
     const useCase = new GetSharedVaultUsersUseCase(this.sharedVaultUsersServer)
     return useCase.execute({ sharedVaultUuid: sharedVault.sharedVaultUuid })
+  }
+
+  private async shareContactWithUserAdministeredSharedVaults(contact: TrustedContactInterface): Promise<void> {
+    const sharedVaults = this.getAllSharedVaults()
+
+    const useCase = new ShareContactWithUserAdministeredSharedVaultUseCase(
+      this.contacts,
+      this.encryption,
+      this.sharedVaultUsersServer,
+      this.messageServer,
+    )
+
+    for (const vault of sharedVaults) {
+      if (!this.isCurrentUserSharedVaultAdmin(vault)) {
+        continue
+      }
+
+      await useCase.execute({
+        senderKeyPair: this.encryption.getKeyPair(),
+        senderSigningKeyPair: this.encryption.getSigningKeyPair(),
+        sharedVault: vault,
+        contactToShare: contact,
+        senderUserUuid: this.session.getSureUser().uuid,
+      })
+    }
   }
 
   getItemLastEditedBy(item: DecryptedItemInterface): TrustedContactInterface | undefined {
