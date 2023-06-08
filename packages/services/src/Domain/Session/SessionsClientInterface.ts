@@ -11,6 +11,7 @@ export interface SessionsClientInterface {
   getWorkspaceDisplayIdentifier(): string
   populateSessionFromDemoShareToken(token: Base64String): Promise<void>
   getUser(): User | undefined
+  isSignedIn(): boolean
   isCurrentSessionReadOnly(): boolean | undefined
   register(email: string, password: string, ephemeral: boolean): Promise<UserRegistrationResponseBody>
   signIn(

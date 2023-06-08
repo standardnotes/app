@@ -55,7 +55,10 @@ export class DesktopManager
   }
 
   async handleHomeServerStarted(serverUrl: string): Promise<void> {
-    await this.application.setCustomHost(serverUrl)
+    const userIsSignedIn = this.application.sessions.isSignedIn()
+    if (!userIsSignedIn) {
+      await this.application.setCustomHost(serverUrl)
+    }
   }
 
   beginTextBackupsTimer() {
