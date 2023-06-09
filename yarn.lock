@@ -5666,9 +5666,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/auth-server@npm:^1.118.0":
-  version: 1.118.0
-  resolution: "@standardnotes/auth-server@npm:1.118.0"
+"@standardnotes/auth-server@npm:^1.119.0":
+  version: 1.119.0
+  resolution: "@standardnotes/auth-server@npm:1.119.0"
   dependencies:
     "@aws-sdk/client-sns": ^3.332.0
     "@aws-sdk/client-sqs": ^3.332.0
@@ -5717,7 +5717,7 @@ __metadata:
       optional: true
     newrelic:
       optional: true
-  checksum: 2b43efedc49d956fa8ca46cf4378c60562c059da3d45bad45c59562157d051d33f7e167383ce74322d09bd8af8aeda49adf8c12f645e21e77f6864db966097f2
+  checksum: 24ca53a19f31e98eb877ea71d04210b3f5edcd8ded3de552edd68ec3f7eb1baa66c6adf95084f810f1c1758628b354611caea316b575eef4c718a028a118c7aa
   languageName: node
   linkType: hard
 
@@ -5835,7 +5835,7 @@ __metadata:
     "@babel/preset-env": "*"
     "@electron/remote": ^2.0.9
     "@standardnotes/electron-clear-data": 1.1.1
-    "@standardnotes/home-server": ^1.10.0
+    "@standardnotes/home-server": ^1.11.0
     "@standardnotes/web": "workspace:*"
     "@types/fs-extra": ^11.0.1
     "@types/lodash": ^4.14.189
@@ -6113,12 +6113,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/home-server@npm:^1.10.0":
-  version: 1.10.0
-  resolution: "@standardnotes/home-server@npm:1.10.0"
+"@standardnotes/home-server@npm:^1.11.0":
+  version: 1.11.0
+  resolution: "@standardnotes/home-server@npm:1.11.0"
   dependencies:
     "@standardnotes/api-gateway": ^1.64.0
-    "@standardnotes/auth-server": ^1.118.0
+    "@standardnotes/auth-server": ^1.119.0
     "@standardnotes/domain-core": ^1.18.0
     "@standardnotes/domain-events-infra": ^1.12.5
     "@standardnotes/files-server": ^1.18.0
@@ -6134,7 +6134,7 @@ __metadata:
     prettyjson: ^1.2.5
     reflect-metadata: 0.1.13
     winston: ^3.8.1
-  checksum: 21d6f4b5605efb39257984dd0d02a7b3bd086969104eeb9f9c66a85f6027c9c0bbb48cae558086aa140b43a646b4c03a914a80680b955635462800fe26b962bd
+  checksum: 589fa58e98ed40700636de0d231e68677b85217503d2c6d3f098c672d18d9660d26e3a39ea8fcb86cfd9ccb0c9e60f9820b6ceb86d2c3304dd0e75201228a4b1
   languageName: node
   linkType: hard
 
