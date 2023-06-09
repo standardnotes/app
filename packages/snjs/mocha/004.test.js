@@ -104,8 +104,8 @@ describe('004 protocol operations', function () {
   it('can decrypt encrypted params', async function () {
     const payload = Factory.createNotePayload()
     const key = await protocol004.createItemsKey()
-    const params = await protocol004.generateEncryptedParametersSync(payload, key)
-    const decrypted = await protocol004.generateDecryptedParametersSync(params, key)
+    const params = await protocol004.generateEncryptedParameters(payload, key)
+    const decrypted = await protocol004.generateDecryptedParameters(params, key)
     expect(decrypted.errorDecrypting).to.not.be.ok
     expect(decrypted.content).to.eql(payload.content)
   })
@@ -113,9 +113,9 @@ describe('004 protocol operations', function () {
   it('modifying the uuid of the payload should fail to decrypt', async function () {
     const payload = Factory.createNotePayload()
     const key = await protocol004.createItemsKey()
-    const params = await protocol004.generateEncryptedParametersSync(payload, key)
+    const params = await protocol004.generateEncryptedParameters(payload, key)
     params.uuid = 'foo'
-    const result = await protocol004.generateDecryptedParametersSync(params, key)
+    const result = await protocol004.generateDecryptedParameters(params, key)
     expect(result.errorDecrypting).to.equal(true)
   })
 })

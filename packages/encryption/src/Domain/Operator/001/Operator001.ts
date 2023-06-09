@@ -95,7 +95,7 @@ export class SNProtocolOperator001 implements OperatorInterface {
     return this.deriveKey(password, keyParams)
   }
 
-  public getPayloadAuthenticatedData(
+  public getPayloadAuthenticatedDataForExternalUse(
     _encrypted: EncryptedParameters,
   ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined {
     return undefined
@@ -233,7 +233,7 @@ export class SNProtocolOperator001 implements OperatorInterface {
     throw new Error('Method not implemented.')
   }
 
-  generateEncryptedParametersSync(
+  generateEncryptedParameters(
     _payload: DecryptedPayloadInterface<ItemContent>,
     _key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
     _signingKeyPair?: PkcKeyPair | undefined,
@@ -241,7 +241,7 @@ export class SNProtocolOperator001 implements OperatorInterface {
     throw new Error('Method not implemented.')
   }
 
-  generateDecryptedParametersSync<C extends ItemContent = ItemContent>(
+  generateDecryptedParameters<C extends ItemContent = ItemContent>(
     _encrypted: EncryptedParameters,
     _key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): ErrorDecryptingParameters | DecryptedParameters<C> {

@@ -39,7 +39,7 @@ export interface OperatorInterface {
    * Returns the payload's authenticated data. The passed payload must be in a
    * non-decrypted, ciphertext state.
    */
-  getPayloadAuthenticatedData(
+  getPayloadAuthenticatedDataForExternalUse(
     encrypted: EncryptedParameters,
   ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined
 
@@ -73,13 +73,13 @@ export interface OperatorInterface {
    *  a RootKey (when encrypting payloads that require root key encryption, such as encrypting
    * items keys), or an ItemsKey (if encrypted regular items)
    */
-  generateEncryptedParametersSync(
+  generateEncryptedParameters(
     payload: DecryptedPayloadInterface,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
     signingKeyPair?: PkcKeyPair,
   ): EncryptedParameters
 
-  generateDecryptedParametersSync<C extends ItemContent = ItemContent>(
+  generateDecryptedParameters<C extends ItemContent = ItemContent>(
     encrypted: EncryptedParameters,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): DecryptedParameters<C> | ErrorDecryptingParameters

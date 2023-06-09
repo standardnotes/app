@@ -69,7 +69,7 @@ describe('operator 004', () => {
     })
   })
 
-  it('should generateEncryptedParametersSync', () => {
+  it('should generateEncryptedParameters', () => {
     const payload = {
       uuid: '123',
       content_type: ContentType.Note,
@@ -89,7 +89,7 @@ describe('operator 004', () => {
       }),
     )
 
-    const result = operator.generateEncryptedParametersSync(payload, key)
+    const result = operator.generateEncryptedParameters(payload, key)
 
     expect(result).toEqual({
       uuid: '123',

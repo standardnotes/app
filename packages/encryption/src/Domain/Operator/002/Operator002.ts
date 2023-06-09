@@ -144,7 +144,7 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
     return this.decryptString002(contentCiphertext, encryptionKey, iv)
   }
 
-  public override getPayloadAuthenticatedData(
+  public override getPayloadAuthenticatedDataForExternalUse(
     encrypted: EncryptedParameters,
   ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined {
     const itemKeyComponents = this.encryptionComponentsFromString002(encrypted.enc_item_key)

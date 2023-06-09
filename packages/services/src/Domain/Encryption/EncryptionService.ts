@@ -775,7 +775,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       return undefined
     }
     const operator = this.operatorManager.operatorForVersion(version)
-    const authenticatedData = operator.getPayloadAuthenticatedData(encryptedParametersFromPayload(payload))
+    const authenticatedData = operator.getPayloadAuthenticatedDataForExternalUse(encryptedParametersFromPayload(payload))
     return authenticatedData
   }
 

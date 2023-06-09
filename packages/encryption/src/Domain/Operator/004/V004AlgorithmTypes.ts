@@ -1,3 +1,6 @@
+export const V004AsymmetricCiphertextPrefix = '004_Asym'
+export const V004PartitionCharacter = ':'
+
 export type V004StringComponents = [
   version: string,
   nonce: string,
@@ -13,8 +16,6 @@ export type V004Components = {
   authenticatedData: V004StringComponents[3]
   signingData: V004StringComponents[4]
 }
-
-export const V004AsymmetricCiphertextPrefix = '004_Asym'
 
 export type V004AsymmetricStringComponents = [
   version: typeof V004AsymmetricCiphertextPrefix,
