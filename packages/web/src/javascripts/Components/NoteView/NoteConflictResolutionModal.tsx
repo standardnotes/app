@@ -279,7 +279,7 @@ const NoteConflictResolutionModal = ({
               if (event.ctrlKey || event.metaKey) {
                 setSelectedVersions((versions) => {
                   if (!versions.includes(note.uuid)) {
-                    return versions.slice(1).concat(note.uuid)
+                    return versions.length > 1 ? versions.slice(1).concat(note.uuid) : versions.concat(note.uuid)
                   }
 
                   return versions.length > 1 ? versions.filter((version) => version !== note.uuid) : versions
@@ -303,7 +303,7 @@ const NoteConflictResolutionModal = ({
         style={!isMobileScreen ? { gridTemplateColumns: `repeat(${selectedNotes.length}, 1fr)` } : undefined}
       >
         {selectedNotes.map((note) => (
-          <NoteContent note={note} />
+          <NoteContent note={note} key={note.uuid} />
         ))}
       </div>
     </Modal>
