@@ -1,5 +1,6 @@
 import { ContentType } from '@standardnotes/common'
 import { ItemContent } from '../../Content/ItemContent'
+import { ClientSignaturePayload } from '../../../Runtime/Encryption/ClientSignaturePayload'
 
 export interface TransferPayload<C extends ItemContent = ItemContent> {
   uuid: string
@@ -15,6 +16,8 @@ export interface TransferPayload<C extends ItemContent = ItemContent> {
   dirtyIndex?: number
   globalDirtyIndexAtLastSync?: number
   dirty?: boolean
+  encryptedClientSignaturePayload?: string
+  decryptedClientSignaturePayload?: ClientSignaturePayload
 
   lastSyncBegan?: Date
   lastSyncEnd?: Date
@@ -22,8 +25,8 @@ export interface TransferPayload<C extends ItemContent = ItemContent> {
   duplicate_of?: string
   user_uuid?: string
 
-  key_system_identifier?: string
-  shared_vault_uuid?: string
+  key_system_identifier: string | undefined
+  shared_vault_uuid: string | undefined
 
   last_edited_by_uuid?: string
 

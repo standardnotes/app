@@ -16,8 +16,8 @@ export interface ServerSyncSavedContextualPayload {
   updated_at_timestamp: number
   updated_at: Date
   uuid: string
-  key_system_identifier?: string
-  shared_vault_uuid?: string
+  key_system_identifier: string | undefined
+  shared_vault_uuid: string | undefined
   user_uuid: string
   duplicate_of?: string
   last_edited_by_uuid?: string

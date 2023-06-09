@@ -16,6 +16,7 @@ import {
   ItemsKeyContentSpecialized,
   KeySystemIdentifier,
   RootKeyInterface,
+  ClientSignaturePayload,
 } from '@standardnotes/models'
 import { HexString, PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import * as Utils from '@standardnotes/utils'
@@ -27,7 +28,6 @@ import {
   ItemContentTypeUsesKeySystemRootKeyEncryption,
 } from '../../Keys/RootKey/Functions'
 import { Create004KeyParams } from '../../Keys/RootKey/KeyParamsFunctions'
-import { SNRootKey } from '../../Keys/RootKey/RootKey'
 import { SNRootKeyParams } from '../../Keys/RootKey/RootKeyParams'
 import { DecryptedParameters, EncryptedParameters, ErrorDecryptingParameters } from '../../Types/EncryptedParameters'
 import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
@@ -38,10 +38,11 @@ import { isKeySystemItemsKey } from '../../Keys/KeySystemItemsKey/KeySystemItems
 import { AsymmetricallyEncryptedString } from '../Types'
 import { KeySystemItemsKeyAuthenticatedData } from '../../Types/KeySystemItemsKeyAuthenticatedData'
 import {
-  AsymmetricAdditionalData,
-  EncryptionAdditionalData,
-  SymmetricItemAdditionalData,
-} from '../../Types/ItemAdditionalData'
+  AsymmetricSigningPayload,
+  SigningPayload,
+  SymmetricItemSigningPayload,
+  SigningPayloadEmbeddedData,
+} from '../../Types/EncryptionSigningData'
 import {
   V004AsymmetricCiphertextPrefix,
   V004AsymmetricStringComponents,
@@ -52,7 +53,7 @@ import {
 const PARTITION_CHARACTER = ':'
 
 /** Base64 encoding of JSON.stringify({}) */
-const EmptyAdditionalDataString = 'e30='
+const EmptySigningDataString = 'e30='
 
 export class SNProtocolOperator004 implements OperatorInterface {
   protected readonly crypto: PureCryptoInterface
@@ -100,6 +101,8 @@ export class SNProtocolOperator004 implements OperatorInterface {
       uuid: Utils.UuidGenerator.GenerateUuid(),
       content_type: ContentType.ItemsKey,
       content: this.generateNewItemsKeyContent(),
+      key_system_identifier: undefined,
+      shared_vault_uuid: undefined,
       ...PayloadTimestampDefaults(),
     })
     return CreateDecryptedItemFromPayload(payload)
@@ -117,6 +120,7 @@ export class SNProtocolOperator004 implements OperatorInterface {
       uuid: uuid,
       content_type: ContentType.KeySystemItemsKey,
       key_system_identifier: keySystemIdentifier,
+      shared_vault_uuid: undefined,
       content: content,
       dirty: true,
       ...PayloadTimestampDefaults(),
@@ -255,38 +259,26 @@ export class SNProtocolOperator004 implements OperatorInterface {
     return this.crypto.generateRandomKey(V004Algorithm.EncryptionNonceLength)
   }
 
-  /**
-   * @param plaintext  The plaintext text to decrypt.
-   * @param rawKey  The key to use to encrypt the plaintext.
-   */
+  private hashString(_string: string): string {
+    throw 'Not implemented'
+  }
+
   generateEncryptedProtocolString(
     plaintext: string,
     rawKey: string,
     authenticatedData: ItemAuthenticatedData | KeySystemItemsKeyAuthenticatedData,
-    signingKeyPair?: PkcKeyPair,
-  ) {
+    signingData: SymmetricItemSigningPayload,
+  ): string {
     const nonce = this.generateEncryptionNonce()
 
     const ciphertext = this.encryptString004(plaintext, rawKey, nonce, authenticatedData)
-
-    let additionalData: SymmetricItemAdditionalData
-    if (signingKeyPair) {
-      additionalData = {
-        signing: {
-          publicKey: signingKeyPair.publicKey,
-          signature: this.crypto.sodiumCryptoSign(ciphertext, signingKeyPair.privateKey),
-        },
-      }
-    } else {
-      additionalData = {}
-    }
 
     const components: V004StringComponents = [
       ProtocolVersion.V004 as string,
       nonce,
       ciphertext,
       this.authenticatedDataToString(authenticatedData),
-      this.additionalDataToString(additionalData),
+      this.signingDataToString(signingData),
     ]
 
     return components.join(PARTITION_CHARACTER)
@@ -300,7 +292,7 @@ export class SNProtocolOperator004 implements OperatorInterface {
       nonce: components[1],
       ciphertext: components[2],
       authenticatedData: components[3],
-      additionalData: components[4] ?? EmptyAdditionalDataString,
+      signingData: components[4] ?? EmptySigningDataString,
     }
   }
 
@@ -309,7 +301,12 @@ export class SNProtocolOperator004 implements OperatorInterface {
   ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined {
     const itemKeyComponents = this.deconstructEncryptedPayloadString(encrypted.enc_item_key)
     const authenticatedDataString = itemKeyComponents.authenticatedData
-    const result = this.stringToAuthenticatedData(authenticatedDataString)
+    const result = this.stringToAuthenticatedData(authenticatedDataString, {
+      u: encrypted.uuid,
+      v: encrypted.version,
+      ksi: encrypted.key_system_identifier,
+      svu: encrypted.shared_vault_uuid,
+    })
 
     return result
   }
@@ -321,7 +318,7 @@ export class SNProtocolOperator004 implements OperatorInterface {
    */
   private generateAuthenticatedDataForPayload(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | SNRootKey,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): ItemAuthenticatedData | RootKeyEncryptedAuthenticatedData | KeySystemItemsKeyAuthenticatedData {
     const baseData: ItemAuthenticatedData = {
       u: payload.uuid,
@@ -339,7 +336,7 @@ export class SNProtocolOperator004 implements OperatorInterface {
     if (ContentTypeUsesRootKeyEncryption(payload.content_type)) {
       return {
         ...baseData,
-        kp: (key as SNRootKey).keyParams.content,
+        kp: (key as RootKeyInterface).keyParams.content,
       }
     } else if (ItemContentTypeUsesKeySystemRootKeyEncryption(payload.content_type)) {
       if (!isKeySystemRootKey(key)) {
@@ -364,13 +361,13 @@ export class SNProtocolOperator004 implements OperatorInterface {
     return this.crypto.base64Encode(JSON.stringify(Utils.sortedCopy(Utils.omitUndefinedCopy(attachedData))))
   }
 
-  private additionalDataToString(additionalData: EncryptionAdditionalData): string {
-    return this.crypto.base64Encode(JSON.stringify(Utils.sortedCopy(Utils.omitUndefinedCopy(additionalData))))
+  private signingDataToString(signingData: SigningPayload): string {
+    return this.crypto.base64Encode(JSON.stringify(Utils.sortedCopy(Utils.omitUndefinedCopy(signingData))))
   }
 
   private stringToAuthenticatedData(
     rawAuthenticatedData: string,
-    override?: Partial<ItemAuthenticatedData>,
+    override: ItemAuthenticatedData,
   ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData {
     const base = JSON.parse(this.crypto.base64Decode(rawAuthenticatedData))
     return Utils.sortedCopy({
@@ -379,58 +376,152 @@ export class SNProtocolOperator004 implements OperatorInterface {
     })
   }
 
-  private stringToAdditionalData<A>(rawAdditionalData: string): A {
-    return JSON.parse(this.crypto.base64Decode(rawAdditionalData))
+  private stringToSigningData<A>(rawSigningData: string): A {
+    return JSON.parse(this.crypto.base64Decode(rawSigningData))
   }
 
   public generateEncryptedParametersSync(
     payload: DecryptedPayloadInterface,
-    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | SNRootKey,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
     signingKeyPair?: PkcKeyPair,
   ): EncryptedParameters {
-    const authenticatedData = this.generateAuthenticatedDataForPayload(payload, key)
+    if (this.doesPayloadRequireSigning(payload) && !signingKeyPair) {
+      throw Error('Payload requires signing but no signing key pair was provided.')
+    }
+
+    const commonAuthenticatedData = this.generateAuthenticatedDataForPayload(payload, key)
 
     const contentKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
+
+    const contentKeyDoesNotNeedToMaintainPersistentSignatures = undefined
+    const contentKeySigningDataResult = this.generateSymmetricPlaintextSigningData(
+      contentKey,
+      contentKeyDoesNotNeedToMaintainPersistentSignatures,
+      signingKeyPair,
+    )
     const encryptedContentKey = this.generateEncryptedProtocolString(
       contentKey,
       key.itemsKey,
-      authenticatedData,
-      signingKeyPair,
+      commonAuthenticatedData,
+      contentKeySigningDataResult.signingData,
     )
 
     const contentPlaintext = JSON.stringify(payload.content)
+    const contentSigningDataResult = this.generateSymmetricPlaintextSigningData(
+      contentPlaintext,
+      payload.decryptedClientSignaturePayload,
+      signingKeyPair,
+    )
     const encryptedContentString = this.generateEncryptedProtocolString(
       contentPlaintext,
       contentKey,
-      authenticatedData,
-      signingKeyPair,
+      commonAuthenticatedData,
+      contentSigningDataResult.signingData,
     )
+
+    const encryptedClientSignaturePayload = contentSigningDataResult.signingData.embeddedValue
+      ? this.generateEncryptedClientContentSignaturePayload(
+          contentSigningDataResult.signingData.embeddedValue,
+          contentSigningDataResult.plaintextHash,
+          contentKey,
+          commonAuthenticatedData,
+        )
+      : undefined
 
     return {
       uuid: payload.uuid,
+      content_type: payload.content_type,
       items_key_id: isItemsKey(key) || isKeySystemItemsKey(key) ? key.uuid : undefined,
       content: encryptedContentString,
       enc_item_key: encryptedContentKey,
       version: this.version,
+      encryptedClientSignaturePayload,
+    }
+  }
+
+  private generateEncryptedClientContentSignaturePayload(
+    contentSigningData: SigningPayloadEmbeddedData,
+    contentHash: string,
+    contentKey: string,
+    commonAuthenticatedData: ItemAuthenticatedData,
+  ): string {
+    const clientSignaturePayload: ClientSignaturePayload = {
+      plaintextHash: contentHash,
+      signature: contentSigningData.signature,
+      signerPublicKey: contentSigningData.publicKey,
+    }
+
+    const nullSigningDataForClientOnlyEncryptedString = {}
+    const encryptedClientSignaturePayload = this.generateEncryptedProtocolString(
+      JSON.stringify(clientSignaturePayload),
+      contentKey,
+      commonAuthenticatedData,
+      nullSigningDataForClientOnlyEncryptedString,
+    )
+
+    return encryptedClientSignaturePayload
+  }
+
+  private generateSymmetricPlaintextSigningData(
+    payloadPlaintext: string,
+    existingSignaturePayload: ClientSignaturePayload | undefined,
+    signingKeyPair: PkcKeyPair | undefined,
+  ): { signingData: SymmetricItemSigningPayload; plaintextHash: string } {
+    const plaintextHash = this.hashString(payloadPlaintext)
+
+    if (existingSignaturePayload) {
+      const needsNewSignature = plaintextHash !== existingSignaturePayload.plaintextHash
+      if (!needsNewSignature) {
+        return {
+          signingData: {
+            embeddedValue: {
+              publicKey: existingSignaturePayload.signerPublicKey,
+              signature: existingSignaturePayload.signature,
+            },
+          },
+          plaintextHash,
+        }
+      }
+    }
+
+    if (!signingKeyPair) {
+      return {
+        signingData: {},
+        plaintextHash,
+      }
+    }
+
+    return {
+      signingData: {
+        embeddedValue: {
+          publicKey: signingKeyPair.publicKey,
+          signature: this.crypto.sodiumCryptoSign(plaintextHash, signingKeyPair.privateKey),
+        },
+      },
+      plaintextHash,
     }
   }
 
   public generateDecryptedParametersSync<C extends ItemContent = ItemContent>(
     encrypted: EncryptedParameters,
-    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | SNRootKey,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): DecryptedParameters<C> | ErrorDecryptingParameters {
     const contentKeyComponents = this.deconstructEncryptedPayloadString(encrypted.enc_item_key)
+
     const contentKeyAuthenticatedData = this.stringToAuthenticatedData(contentKeyComponents.authenticatedData, {
       u: encrypted.uuid,
       v: encrypted.version,
+      ksi: encrypted.key_system_identifier,
+      svu: encrypted.shared_vault_uuid,
     })
 
-    const useAuthenticatedString = this.authenticatedDataToString(contentKeyAuthenticatedData)
+    const commonAuthenticatedDataString = this.authenticatedDataToString(contentKeyAuthenticatedData)
+
     const contentKey = this.decryptString004(
       contentKeyComponents.ciphertext,
       key.itemsKey,
       contentKeyComponents.nonce,
-      useAuthenticatedString,
+      commonAuthenticatedDataString,
     )
 
     if (!contentKey) {
@@ -447,7 +538,7 @@ export class SNProtocolOperator004 implements OperatorInterface {
       contentComponents.ciphertext,
       contentKey,
       contentComponents.nonce,
-      useAuthenticatedString,
+      commonAuthenticatedDataString,
     )
 
     if (!content) {
@@ -457,33 +548,98 @@ export class SNProtocolOperator004 implements OperatorInterface {
       }
     }
 
-    const contentKeyAdditionalData = this.stringToAdditionalData<SymmetricItemAdditionalData>(
-      contentKeyComponents.additionalData,
-    )
-    const contentAdditionalData = this.stringToAdditionalData<SymmetricItemAdditionalData>(
-      contentComponents.additionalData,
-    )
+    let decryptedClientSignaturePayload: ClientSignaturePayload | undefined
+    if (encrypted.encryptedClientSignaturePayload) {
+      const signaturePayloadComponents = this.deconstructEncryptedPayloadString(
+        encrypted.encryptedClientSignaturePayload,
+      )
 
-    const contentKeySignatureVerified = contentKeyAdditionalData.signing
-      ? this.crypto.sodiumCryptoSignVerify(
-          contentKeyComponents.ciphertext,
-          contentKeyAdditionalData.signing.signature,
-          contentKeyAdditionalData.signing.publicKey,
-        )
-      : undefined
+      const decryptedClientSignatureString = this.decryptString004(
+        signaturePayloadComponents.ciphertext,
+        contentKey,
+        signaturePayloadComponents.nonce,
+        commonAuthenticatedDataString,
+      )
 
-    const contentSignatureVerified = contentAdditionalData.signing
-      ? this.crypto.sodiumCryptoSignVerify(
-          contentComponents.ciphertext,
-          contentAdditionalData.signing.signature,
-          contentAdditionalData.signing.publicKey,
-        )
-      : undefined
+      if (decryptedClientSignatureString) {
+        decryptedClientSignaturePayload = JSON.parse(decryptedClientSignatureString)
+      }
+    }
+
+    const signatureVerificationResult = this.performSigningVerificationForSymmtetricallyEncryptedItem(
+      encrypted,
+      contentKeyComponents,
+      contentComponents,
+    )
 
     return {
       uuid: encrypted.uuid,
       content: JSON.parse(content),
-      signatureVerified: contentKeySignatureVerified && contentSignatureVerified,
+      signature: signatureVerificationResult,
+      decryptedClientSignaturePayload,
+    }
+  }
+
+  private doesPayloadRequireSigning(payload: { key_system_identifier?: string; shared_vault_uuid?: string }) {
+    return payload.key_system_identifier != undefined || payload.shared_vault_uuid != undefined
+  }
+
+  private performSigningVerificationForSymmtetricallyEncryptedItem(
+    encrypted: EncryptedParameters,
+    contentKeyComponents: V004Components,
+    contentComponents: V004Components,
+  ): DecryptedParameters['signature'] {
+    const contentKeySigningPayload = this.stringToSigningData<SymmetricItemSigningPayload>(
+      contentKeyComponents.signingData,
+    )
+
+    const contentSigningPayload = this.stringToSigningData<SymmetricItemSigningPayload>(contentComponents.signingData)
+
+    const verificationRequired = this.doesPayloadRequireSigning(encrypted)
+
+    if (!contentKeySigningPayload.embeddedValue || !contentSigningPayload.embeddedValue) {
+      if (verificationRequired) {
+        return {
+          required: true,
+          result: {
+            passes: false,
+            publicKey: '',
+          },
+        }
+      }
+      return {
+        required: false,
+      }
+    }
+
+    if (contentKeySigningPayload.embeddedValue.publicKey !== contentSigningPayload.embeddedValue.publicKey) {
+      return {
+        required: verificationRequired,
+        result: {
+          passes: false,
+          publicKey: '',
+        },
+      }
+    }
+
+    const contentKeySignatureVerified = this.crypto.sodiumCryptoSignVerify(
+      contentKeyComponents.ciphertext,
+      contentKeySigningPayload.embeddedValue.signature,
+      contentKeySigningPayload.embeddedValue.publicKey,
+    )
+
+    const contentSignatureVerified = this.crypto.sodiumCryptoSignVerify(
+      contentComponents.ciphertext,
+      contentSigningPayload.embeddedValue.signature,
+      contentSigningPayload.embeddedValue.publicKey,
+    )
+
+    return {
+      required: verificationRequired,
+      result: {
+        passes: contentKeySignatureVerified && contentSignatureVerified,
+        publicKey: contentKeySigningPayload.embeddedValue.publicKey,
+      },
     }
   }
 
@@ -502,19 +658,14 @@ export class SNProtocolOperator004 implements OperatorInterface {
       dto.recipientPublicKey,
     )
 
-    const additionalData = this.additionalDataToString({
-      signing: {
+    const signingData = this.signingDataToString({
+      embeddedValue: {
         publicKey: dto.senderSigningKeyPair.publicKey,
         signature: this.crypto.sodiumCryptoSign(ciphertext, dto.senderSigningKeyPair.privateKey),
       },
     })
 
-    const components: V004AsymmetricStringComponents = [
-      V004AsymmetricCiphertextPrefix,
-      nonce,
-      ciphertext,
-      additionalData,
-    ]
+    const components: V004AsymmetricStringComponents = [V004AsymmetricCiphertextPrefix, nonce, ciphertext, signingData]
 
     return components.join(':')
   }
@@ -524,7 +675,7 @@ export class SNProtocolOperator004 implements OperatorInterface {
     senderPublicKey: HexString
     recipientSecretKey: HexString
   }): { plaintext: HexString; signatureVerified: boolean; signaturePublicKey: string } | null {
-    const [_, nonce, ciphertext, additionalDataString] = <V004AsymmetricStringComponents>dto.stringToDecrypt.split(':')
+    const [_, nonce, ciphertext, signingDataString] = <V004AsymmetricStringComponents>dto.stringToDecrypt.split(':')
 
     try {
       const plaintext = this.crypto.sodiumCryptoBoxEasyDecrypt(
@@ -534,18 +685,18 @@ export class SNProtocolOperator004 implements OperatorInterface {
         dto.recipientSecretKey,
       )
 
-      const additionalData = this.stringToAdditionalData<AsymmetricAdditionalData>(additionalDataString)
+      const signingData = this.stringToSigningData<AsymmetricSigningPayload>(signingDataString)
 
       const signatureVerified = this.crypto.sodiumCryptoSignVerify(
         ciphertext,
-        additionalData.signing.signature,
-        additionalData.signing.publicKey,
+        signingData.embeddedValue.signature,
+        signingData.embeddedValue.publicKey,
       )
 
       return {
         plaintext,
         signatureVerified,
-        signaturePublicKey: additionalData.signing.publicKey,
+        signaturePublicKey: signingData.embeddedValue.publicKey,
       }
     } catch (error) {
       return null
@@ -553,9 +704,9 @@ export class SNProtocolOperator004 implements OperatorInterface {
   }
 
   getSignerPublicKeyFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): HexString {
-    const [_, __, ___, additionalDataString] = <V004AsymmetricStringComponents>string.split(':')
-    const additionalData = this.stringToAdditionalData<AsymmetricAdditionalData>(additionalDataString)
-    return additionalData.signing.publicKey
+    const [_, __, ___, signingDataString] = <V004AsymmetricStringComponents>string.split(':')
+    const signingData = this.stringToSigningData<AsymmetricSigningPayload>(signingDataString)
+    return signingData.embeddedValue.publicKey
   }
 
   versionForAsymmetricallyEncryptedString(string: string): ProtocolVersion {

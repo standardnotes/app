@@ -41,9 +41,6 @@ export interface SharedVaultServiceInterface
   getOutboundInvites(vaultUuid?: string): Promise<SharedVaultInviteServerHash[] | ClientDisplayableError>
   isInviteTrusted(invite: SharedVaultInviteServerHash): Promise<boolean>
   acceptPendingSharedVaultInvite(pendingInvite: PendingSharedVaultInviteRecord): Promise<void>
-  getInviteDataMessageAndTrustStatus(
-    invite: SharedVaultInviteServerHash,
-  ): { trusted: boolean; message: AsymmetricMessagePayload } | undefined
   getCachedPendingInvites(): PendingSharedVaultInviteRecord[]
   getInvitableContactsForSharedVault(sharedVault: SharedVaultDisplayListing): Promise<TrustedContactInterface[]>
   deleteInvite(invite: SharedVaultInviteServerHash): Promise<ClientDisplayableError | void>

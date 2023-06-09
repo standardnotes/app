@@ -30,7 +30,6 @@ import {
   VaultDisplayListing,
   isSharedVaultDisplayListing,
   AsymmetricMessageSharedVaultRootKeyChanged,
-  AsymmetricMessagePayload,
 } from '@standardnotes/models'
 import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'
@@ -489,32 +488,6 @@ export class SharedVaultService
     await this.sync.sync()
 
     return result
-  }
-
-  public getInviteDataMessageAndTrustStatus(
-    invite: SharedVaultInviteServerHash,
-  ): { trusted: boolean; message: AsymmetricMessagePayload } | undefined {
-    const useCase = new GetAsymmetricMessageTrustedPayload<AsymmetricMessageSharedVaultRootKeyChanged>(
-      this.encryption,
-      this.contacts,
-    )
-    const trustedMessage = useCase.execute({ message: invite, privateKey: this.encryption.getKeyPair().privateKey })
-    if (trustedMessage) {
-      return { trusted: true, message: trustedMessage }
-    }
-
-    const untrustedMessageResult = this.encryption.asymmetricallyDecryptMessage({
-      encryptedString: invite.encrypted_message,
-      senderPublicKey: invite.sender_public_key,
-      privateKey: this.encryption.getKeyPair().privateKey,
-      trustedSenderSigningPublicKey: undefined,
-    })
-
-    if (untrustedMessageResult) {
-      return { trusted: false, message: untrustedMessageResult.message }
-    }
-
-    return undefined
   }
 
   async removeUserFromSharedVault(

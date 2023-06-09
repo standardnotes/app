@@ -46,6 +46,14 @@ describe('shared vault invites', function () {
     await deinitContactContext()
   })
 
+  it('invites from trusted contact should be pending as trusted', async () => {})
+
+  it('invites from untrusted contact should be pending as untrusted', async () => {})
+
+  it('invite should include delegated trusted contacts', async () => {
+    console.error('TODO')
+  })
+
   it('should sync a shared vault from scratch after accepting an invitation', async () => {
     const sharedVault = await Collaboration.createSharedVault(context)
 
@@ -100,15 +108,13 @@ describe('shared vault invites', function () {
     await sharedVaults.inviteContactToSharedVault(sharedVault, currentContextContact, SharedVaultPermission.Write)
 
     await contactContext.sharedVaults.downloadInboundInvites()
-    expect(
-      contactContext.sharedVaults.isInviteTrusted(contactContext.sharedVaults.getCachedPendingInvites()[0]),
-    ).to.be.false
+    expect(contactContext.sharedVaults.isInviteTrusted(contactContext.sharedVaults.getCachedPendingInvites()[0])).to.be
+      .false
 
     await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
 
-    expect(
-      contactContext.sharedVaults.isInviteTrusted(contactContext.sharedVaults.getCachedPendingInvites()[0]),
-    ).to.be.true
+    expect(contactContext.sharedVaults.isInviteTrusted(contactContext.sharedVaults.getCachedPendingInvites()[0])).to.be
+      .true
 
     await deinitContactContext()
   })

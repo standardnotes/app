@@ -8,8 +8,8 @@ export interface ContextPayload<C extends ItemContent = ItemContent> {
   deleted: boolean
 
   user_uuid?: string
-  key_system_identifier?: string
+  key_system_identifier: string | undefined
 
-  shared_vault_uuid?: string
+  shared_vault_uuid: string | undefined
   last_edited_by_uuid?: string
 }

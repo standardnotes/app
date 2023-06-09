@@ -64,6 +64,7 @@ export * from './Runtime/Predicate/Predicate'
 export * from './Runtime/Predicate/Utils'
 export * from './Runtime/Vaults/VaultDisplayListing'
 export * from './Runtime/AsymmetricMessage/AsymmetricMessage'
+export * from './Runtime/Encryption/ClientSignaturePayload'
 
 export * from './Syncable/ActionsExtension'
 export * from './Syncable/Component'
