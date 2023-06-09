@@ -1,9 +1,8 @@
 import { ContentType, NoteType, SNNote, classNames } from '@standardnotes/snjs'
 import Modal, { ModalAction } from '../Modal/Modal'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { MouseEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { MutuallyExclusiveMediaQueryBreakpoints, useMediaQuery } from '@/Hooks/useMediaQuery'
 import { FOCUSABLE_BUT_NOT_TABBABLE } from '@/Constants/Constants'
-import RadioIndicator from '../Radio/RadioIndicator'
 import { useApplication } from '../ApplicationProvider'
 import ComponentView from '../ComponentView/ComponentView'
 import { ErrorBoundary } from '@/Utils/ErrorBoundary'
@@ -15,6 +14,7 @@ import { StringUtils, Strings } from '@/Constants/Strings'
 import { confirmDialog } from '@standardnotes/ui-services'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
 import { NoteAttributes } from '../NotesOptions/NoteAttributes'
+import CheckIndicator from '../Checkbox/CheckIndicator'
 
 const ConflictListItem = ({
   isSelected,
@@ -23,7 +23,7 @@ const ConflictListItem = ({
   note,
 }: {
   isSelected: boolean
-  onClick: () => void
+  onClick: MouseEventHandler<HTMLButtonElement>
   title: string
   note: SNNote
 }) => {
@@ -39,8 +39,8 @@ const ConflictListItem = ({
       onClick={onClick}
       data-selected={isSelected}
     >
-      <div className="mb-1.5 flex items-center">
-        <RadioIndicator checked={isSelected} className="mr-2" />
+      <div className="mb-1.5 flex items-center gap-2">
+        <CheckIndicator checked={isSelected} />
         <div className="font-semibold">{title}</div>
       </div>
       <NoteAttributes application={application} note={note} className="!p-0" hideReadTime />
@@ -137,11 +137,11 @@ const NoteConflictResolutionModal = ({
   const allVersions = useMemo(() => [currentNote].concat(conflictedNotes), [conflictedNotes, currentNote])
 
   const application = useApplication()
-  const [selectedVersion, setSelectedVersion] = useState(currentNote.uuid)
+  const [selectedVersions, setSelectedVersions] = useState([currentNote.uuid])
 
-  const selectedNote = useMemo(() => {
-    return allVersions.find((note) => note.uuid === selectedVersion)
-  }, [allVersions, selectedVersion])
+  const selectedNotes = useMemo(() => {
+    return allVersions.filter((note) => selectedVersions.includes(note.uuid))
+  }, [allVersions, selectedVersions])
 
   const trashNote = useCallback(
     async (note: SNNote, silent = false) => {
@@ -162,22 +162,22 @@ const NoteConflictResolutionModal = ({
             mutator.conflictOf = undefined
           })
           .catch(console.error)
-        setSelectedVersion(currentNote.uuid)
+        setSelectedVersions([allVersions[0].uuid])
       }
     },
-    [application.mutator, currentNote.uuid],
+    [allVersions, application.mutator],
   )
 
   const trashSelectedNote = useCallback(async () => {
-    if (!selectedNote) {
+    if (selectedNotes.length !== 1) {
       return
     }
 
-    trashNote(selectedNote).catch(console.error)
-  }, [selectedNote, trashNote])
+    trashNote(selectedNotes[0]).catch(console.error)
+  }, [selectedNotes, trashNote])
 
   const keepOnlySelectedNote = useCallback(async () => {
-    if (!selectedNote) {
+    if (selectedNotes.length !== 1) {
       return
     }
 
@@ -188,16 +188,16 @@ const NoteConflictResolutionModal = ({
         confirmButtonStyle: 'danger',
       })
     ) {
-      const notesToTrash = allVersions.filter((note) => note.uuid !== selectedNote.uuid)
+      const notesToTrash = allVersions.filter((note) => note.uuid !== selectedNotes[0].uuid)
       await Promise.all(notesToTrash.map((note) => trashNote(note, true)))
-      await application.mutator.changeItem(selectedNote, (mutator) => {
+      await application.mutator.changeItem(selectedNotes[0], (mutator) => {
         mutator.conflictOf = undefined
       })
-      void application.getViewControllerManager().selectionController.selectItem(selectedNote.uuid, true)
+      void application.getViewControllerManager().selectionController.selectItem(selectedNotes[0].uuid, true)
       void application.sync.sync()
       close()
     }
-  }, [allVersions, application, close, selectedNote, trashNote])
+  }, [allVersions, application, close, selectedNotes, trashNote])
 
   const isMobileScreen = useMediaQuery(MutuallyExclusiveMediaQueryBreakpoints.sm)
   const actions = useMemo(
@@ -213,15 +213,17 @@ const NoteConflictResolutionModal = ({
         onClick: trashSelectedNote,
         type: 'destructive',
         mobileSlot: 'left',
+        hidden: selectedNotes.length !== 1,
       },
       {
         label: isMobileScreen ? 'Keep' : 'Keep only selected',
         onClick: keepOnlySelectedNote,
         type: 'primary',
         mobileSlot: 'right',
+        hidden: selectedNotes.length !== 1,
       },
     ],
-    [close, isMobileScreen, keepOnlySelectedNote, trashSelectedNote],
+    [close, isMobileScreen, keepOnlySelectedNote, selectedNotes.length, trashSelectedNote],
   )
 
   const listRef = useRef<HTMLDivElement>(null)
@@ -272,9 +274,19 @@ const NoteConflictResolutionModal = ({
       >
         {allVersions.map((note, index) => (
           <ConflictListItem
-            isSelected={selectedVersion === note.uuid}
-            onClick={() => {
-              setSelectedVersion(note.uuid)
+            isSelected={selectedVersions.includes(note.uuid)}
+            onClick={(event) => {
+              if (event.ctrlKey || event.metaKey) {
+                setSelectedVersions((versions) => {
+                  if (!versions.includes(note.uuid)) {
+                    return versions.slice(1).concat(note.uuid)
+                  }
+
+                  return versions.length > 1 ? versions.filter((version) => version !== note.uuid) : versions
+                })
+              } else {
+                setSelectedVersions([note.uuid])
+              }
               setSelectedMobileTab('content')
             }}
             key={note.uuid}
@@ -283,8 +295,16 @@ const NoteConflictResolutionModal = ({
           />
         ))}
       </div>
-      <div className={classNames('w-full flex-grow', selectedMobileTab === 'content' ? 'flex' : 'hidden md:flex')}>
-        {selectedNote && <NoteContent note={selectedNote} />}
+      <div
+        className={classNames(
+          'w-full flex-grow divide-x divide-border',
+          isMobileScreen ? (selectedMobileTab === 'content' ? 'flex' : 'hidden md:flex') : 'grid grid-rows-1',
+        )}
+        style={!isMobileScreen ? { gridTemplateColumns: `repeat(${selectedNotes.length}, 1fr)` } : undefined}
+      >
+        {selectedNotes.map((note) => (
+          <NoteContent note={note} />
+        ))}
       </div>
     </Modal>
   )
