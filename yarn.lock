@@ -5835,7 +5835,7 @@ __metadata:
     "@babel/preset-env": "*"
     "@electron/remote": ^2.0.9
     "@standardnotes/electron-clear-data": 1.1.1
-    "@standardnotes/home-server": ^1.11.1
+    "@standardnotes/home-server": ^1.11.2
     "@standardnotes/web": "workspace:*"
     "@types/fs-extra": ^11.0.1
     "@types/lodash": ^4.14.189
@@ -6037,9 +6037,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/files-server@npm:^1.18.0":
-  version: 1.18.0
-  resolution: "@standardnotes/files-server@npm:1.18.0"
+"@standardnotes/files-server@npm:^1.18.1":
+  version: 1.18.1
+  resolution: "@standardnotes/files-server@npm:1.18.1"
   dependencies:
     "@aws-sdk/client-s3": ^3.332.0
     "@aws-sdk/client-sns": ^3.332.0
@@ -6074,7 +6074,7 @@ __metadata:
       optional: true
     newrelic:
       optional: true
-  checksum: 5961500960fca756fa9b5df96e6117c1201d2b7add5595f9bf84cefccba01d24d9db5bff78222ecb5df57b33bf48f6c3f7e3561cecbf7e544a3969c2a30e78eb
+  checksum: 34beb187673a5e5bb029db1e87e0dd01331be929a12ad7d020aef6924488f66f3a2b43572bd622906a8b802d9bf2730b5b6ebbc470c98189cc0f4a145c5a5647
   languageName: node
   linkType: hard
 
@@ -6113,15 +6113,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/home-server@npm:^1.11.1":
-  version: 1.11.1
-  resolution: "@standardnotes/home-server@npm:1.11.1"
+"@standardnotes/home-server@npm:^1.11.2":
+  version: 1.11.2
+  resolution: "@standardnotes/home-server@npm:1.11.2"
   dependencies:
     "@standardnotes/api-gateway": ^1.64.1
     "@standardnotes/auth-server": ^1.119.1
     "@standardnotes/domain-core": ^1.18.0
     "@standardnotes/domain-events-infra": ^1.12.5
-    "@standardnotes/files-server": ^1.18.0
+    "@standardnotes/files-server": ^1.18.1
     "@standardnotes/revisions-server": ^1.23.0
     "@standardnotes/syncing-server": ^1.44.0
     cors: 2.8.5
@@ -6134,7 +6134,7 @@ __metadata:
     prettyjson: ^1.2.5
     reflect-metadata: 0.1.13
     winston: ^3.8.1
-  checksum: ff17fb12777402a797a7dd3395ce208dbddee855fa74aab1d1916e0429bddfdaca87419f563beaa30d1f86865a92553d73ab47472c5dbf784867b8f97294c41a
+  checksum: 84019c82ac9a45e45be91d70f58638207c4d4812d53f0c6b632d5136ee26960abd3638b19bcb454a3d2a02e28650d47811429c58618dc57c7bf9e84b0012b86c
   languageName: node
   linkType: hard
 
