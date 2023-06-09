@@ -5576,9 +5576,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/api-gateway@npm:^1.64.0":
-  version: 1.64.0
-  resolution: "@standardnotes/api-gateway@npm:1.64.0"
+"@standardnotes/api-gateway@npm:^1.64.1":
+  version: 1.64.1
+  resolution: "@standardnotes/api-gateway@npm:1.64.1"
   dependencies:
     "@newrelic/winston-enricher": ^4.0.1
     "@standardnotes/domain-core": ^1.18.0
@@ -5608,7 +5608,7 @@ __metadata:
       optional: true
     newrelic:
       optional: true
-  checksum: 0884f12feffaf8007f4409f10ca5ec79392cafbe9ed20462a1052c274cf205825830d4886027d5cc9d77d7b80708d7aa2ef410288deac50b9a51c61a42eab48f
+  checksum: ee4d51b826bafdb68230790db792b87d52bc6025cb9bf816c5204de2fa037500b683859fdda0bf4c78baff62c2499b406e0b9f7cdd09e063f6affd8e4d18fdd1
   languageName: node
   linkType: hard
 
@@ -5666,9 +5666,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@standardnotes/auth-server@npm:^1.119.0":
-  version: 1.119.0
-  resolution: "@standardnotes/auth-server@npm:1.119.0"
+"@standardnotes/auth-server@npm:^1.119.1":
+  version: 1.119.1
+  resolution: "@standardnotes/auth-server@npm:1.119.1"
   dependencies:
     "@aws-sdk/client-sns": ^3.332.0
     "@aws-sdk/client-sqs": ^3.332.0
@@ -5717,7 +5717,7 @@ __metadata:
       optional: true
     newrelic:
       optional: true
-  checksum: 24ca53a19f31e98eb877ea71d04210b3f5edcd8ded3de552edd68ec3f7eb1baa66c6adf95084f810f1c1758628b354611caea316b575eef4c718a028a118c7aa
+  checksum: 8f19a7b778dfcf3e0907fbae0c284804d7b5b3019e744ec3d7bba70a1abdfcb6459bb86ba1bb031d705eb1a36ee25bf927bf07b3fadc5fc9f8c7ba780bd4821b
   languageName: node
   linkType: hard
 
@@ -5835,7 +5835,7 @@ __metadata:
     "@babel/preset-env": "*"
     "@electron/remote": ^2.0.9
     "@standardnotes/electron-clear-data": 1.1.1
-    "@standardnotes/home-server": ^1.11.0
+    "@standardnotes/home-server": ^1.11.1
     "@standardnotes/web": "workspace:*"
     "@types/fs-extra": ^11.0.1
     "@types/lodash": ^4.14.189
@@ -6113,12 +6113,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@standardnotes/home-server@npm:^1.11.0":
-  version: 1.11.0
-  resolution: "@standardnotes/home-server@npm:1.11.0"
+"@standardnotes/home-server@npm:^1.11.1":
+  version: 1.11.1
+  resolution: "@standardnotes/home-server@npm:1.11.1"
   dependencies:
-    "@standardnotes/api-gateway": ^1.64.0
-    "@standardnotes/auth-server": ^1.119.0
+    "@standardnotes/api-gateway": ^1.64.1
+    "@standardnotes/auth-server": ^1.119.1
     "@standardnotes/domain-core": ^1.18.0
     "@standardnotes/domain-events-infra": ^1.12.5
     "@standardnotes/files-server": ^1.18.0
@@ -6134,7 +6134,7 @@ __metadata:
     prettyjson: ^1.2.5
     reflect-metadata: 0.1.13
     winston: ^3.8.1
-  checksum: 589fa58e98ed40700636de0d231e68677b85217503d2c6d3f098c672d18d9660d26e3a39ea8fcb86cfd9ccb0c9e60f9820b6ceb86d2c3304dd0e75201228a4b1
+  checksum: ff17fb12777402a797a7dd3395ce208dbddee855fa74aab1d1916e0429bddfdaca87419f563beaa30d1f86865a92553d73ab47472c5dbf784867b8f97294c41a
   languageName: node
   linkType: hard
 

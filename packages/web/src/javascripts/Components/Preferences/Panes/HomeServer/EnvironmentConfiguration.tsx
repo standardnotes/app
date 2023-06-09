@@ -6,7 +6,7 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import { Subtitle } from '../../PreferencesComponents/Content'
 import DecoratedInput from '@/Components/Input/DecoratedInput'
 import Button from '@/Components/Button/Button'
-import { useRef } from 'react'
+import { useCallback, useRef, useState } from 'react'
 
 const EnvironmentConfiguration = () => {
   const application = useApplication()
@@ -20,6 +20,26 @@ const EnvironmentConfiguration = () => {
   const valetTokenSecretInputRef = useRef<HTMLInputElement>(null)
   const portInputRef = useRef<HTMLInputElement>(null)
   const logLevelInputRef = useRef<HTMLInputElement>(null)
+
+  const [valuesChanged, setValuesChanged] = useState(false)
+
+  const checkValues = useCallback(() => {
+    if (!homeServerConfiguration) {
+      return
+    }
+
+    const anyOfTheValuesHaveChanged =
+      homeServerConfiguration.authJwtSecret !== authJWTInputRef.current?.value ||
+      homeServerConfiguration.jwtSecret !== jwtInputRef.current?.value ||
+      homeServerConfiguration.encryptionServerKey !== encryptionServerKeyInputRef.current?.value ||
+      homeServerConfiguration.pseudoKeyParamsKey !== pseudoParamsKeyInputRef.current?.value ||
+      homeServerConfiguration.valetTokenSecret !== valetTokenSecretInputRef.current?.value ||
+      homeServerConfiguration.port !==
+        parseInt(portInputRef.current?.value || homeServerConfiguration.port.toString()) ||
+      homeServerConfiguration.logLevel !== logLevelInputRef.current?.value
+
+    setValuesChanged(anyOfTheValuesHaveChanged)
+  }, [homeServerConfiguration])
 
   const handleConfigurationChange = () => {
     if (!homeServerConfiguration) {
@@ -37,9 +57,11 @@ const EnvironmentConfiguration = () => {
     homeServerConfiguration.port = parseInt(portInputRef.current?.value || homeServerConfiguration.port.toString())
     homeServerConfiguration.logLevel = logLevelInputRef.current?.value || homeServerConfiguration.logLevel
 
-    homeServerService.setHomeServerConfiguration(homeServerConfiguration)
+    void homeServerService.setHomeServerConfiguration(homeServerConfiguration)
 
-    homeServerService.restartHomeServer()
+    void homeServerService.restartHomeServer()
+
+    setValuesChanged(false)
   }
 
   return (
@@ -55,6 +77,7 @@ const EnvironmentConfiguration = () => {
                     placeholder={'Auth JWT Secret'}
                     defaultValue={homeServerConfiguration?.authJwtSecret}
                     ref={authJWTInputRef}
+                    onChange={checkValues}
                   />
                 </div>
               </PreferencesSegment>
@@ -65,6 +88,7 @@ const EnvironmentConfiguration = () => {
                     placeholder={'JWT Secret'}
                     defaultValue={homeServerConfiguration?.jwtSecret}
                     ref={jwtInputRef}
+                    onChange={checkValues}
                   />
                 </div>
               </PreferencesSegment>
@@ -75,6 +99,7 @@ const EnvironmentConfiguration = () => {
                     placeholder={'Encryption Server Key'}
                     defaultValue={homeServerConfiguration?.encryptionServerKey}
                     ref={encryptionServerKeyInputRef}
+                    onChange={checkValues}
                   />
                 </div>
               </PreferencesSegment>
@@ -85,6 +110,7 @@ const EnvironmentConfiguration = () => {
                     placeholder={'Pseudo Params Key'}
                     defaultValue={homeServerConfiguration?.pseudoKeyParamsKey}
                     ref={pseudoParamsKeyInputRef}
+                    onChange={checkValues}
                   />
                 </div>
               </PreferencesSegment>
@@ -95,6 +121,7 @@ const EnvironmentConfiguration = () => {
                     placeholder={'Valet Token Secret'}
                     defaultValue={homeServerConfiguration?.valetTokenSecret}
                     ref={valetTokenSecretInputRef}
+                    onChange={checkValues}
                   />
                 </div>
               </PreferencesSegment>
@@ -105,6 +132,7 @@ const EnvironmentConfiguration = () => {
                     placeholder={'Port'}
                     defaultValue={homeServerConfiguration?.port.toString()}
                     ref={portInputRef}
+                    onChange={checkValues}
                   />
                 </div>
               </PreferencesSegment>
@@ -115,12 +143,15 @@ const EnvironmentConfiguration = () => {
                     placeholder={'Log Level'}
                     defaultValue={homeServerConfiguration?.logLevel}
                     ref={logLevelInputRef}
+                    onChange={checkValues}
                   />
                 </div>
               </PreferencesSegment>
             </div>
           </div>
-          <Button className="mt-3 min-w-20" primary label="Apply & Restart" onClick={handleConfigurationChange} />
+          {valuesChanged && (
+            <Button className="mt-3 min-w-20" primary label="Apply & Restart" onClick={handleConfigurationChange} />
+          )}
         </AccordionItem>
       </PreferencesSegment>
     </PreferencesGroup>
