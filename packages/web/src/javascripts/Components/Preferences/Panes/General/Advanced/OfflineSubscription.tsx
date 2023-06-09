@@ -33,15 +33,37 @@ const OfflineSubscription: FunctionComponent<Props> = ({ application }) => {
   const handleSubscriptionCodeSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
 
+    const homeServer = application.homeServer
+
+    const homeServerEnabled = homeServer.isHomeServerEnabled()
+    const homeServerIsRunning = await homeServer.isHomeServerRunning()
+
+    if (homeServerEnabled) {
+      if (!homeServerIsRunning) {
+        await application.alertService.alert('Please start your home server before activating offline features.')
+
+        return
+      }
+
+      const serverActivationResult = await homeServer.activatePremiumFeatures(application.getUser()?.email as string)
+      if (serverActivationResult.isFailed()) {
+        await application.alertService.alert(serverActivationResult.getError())
+
+        return
+      }
+    }
+
     const result = await application.features.setOfflineFeaturesCode(activationCode)
 
     if (result instanceof ClientDisplayableError) {
       await application.alertService.alert(result.text)
-    } else {
-      setIsSuccessfullyActivated(true)
-      setHasUserPreviouslyStoredCode(true)
-      setIsSuccessfullyRemoved(false)
+
+      return
     }
+
+    setIsSuccessfullyActivated(true)
+    setHasUserPreviouslyStoredCode(true)
+    setIsSuccessfullyRemoved(false)
   }
 
   const handleRemoveOfflineKey = async () => {

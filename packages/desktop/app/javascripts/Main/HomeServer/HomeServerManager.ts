@@ -14,8 +14,21 @@ export class HomeServerManager implements HomeServerManagerInterface {
   private homeServerConfiguration: HomeServerEnvironmentConfiguration | undefined
   private homeServerDataLocation: string | undefined
   private lastError: Error | undefined
+  private logs: string[] = []
+
+  private readonly LOGS_BUFFER_SIZE = 1000
 
   constructor(private homeServer: HomeServerInterface, private webContents: WebContents) {}
+
+  async activatePremiumFeatures(username: string): Promise<string | null> {
+    const result = await this.homeServer.activatePremiumFeatures(username)
+
+    if (result.isFailed()) {
+      return result.getError()
+    }
+
+    return null
+  }
 
   getHomeServerConfiguration(): HomeServerEnvironmentConfiguration | undefined {
     return this.homeServerConfiguration
@@ -31,18 +44,6 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
   async setHomeServerDataLocation(location: string): Promise<void> {
     this.homeServerDataLocation = location
-  }
-
-  listenOnServerLogs(callback: (data: Buffer) => void): void {
-    const logStream = this.homeServer.logs()
-
-    logStream.on('data', callback)
-  }
-
-  stopListeningOnServerLogs(): void {
-    const logStream = this.homeServer.logs()
-
-    logStream.removeAllListeners('data')
   }
 
   async stopServer(): Promise<void> {
@@ -69,6 +70,9 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
   async startServer(): Promise<void> {
     try {
+      this.lastError = undefined
+      this.logs = []
+
       if (!this.homeServerConfiguration) {
         this.homeServerConfiguration = this.generateHomeServerConfiguration()
       }
@@ -97,11 +101,24 @@ export class HomeServerManager implements HomeServerManagerInterface {
 
       this.webContents.send(MessageToWebApp.HomeServerStarted, this.getServerUrl())
 
-      this.lastError = undefined
+      const logStream = this.homeServer.logs()
+      logStream.on('data', this.appendLogs.bind(this))
     } catch (error) {
       console.error(`Could not start home server: ${(error as Error).message}`)
 
       this.lastError = error as Error
+    }
+  }
+
+  async getServerLogs(): Promise<string[]> {
+    return this.logs
+  }
+
+  private appendLogs(log: Uint8Array): void {
+    this.logs.push(new TextDecoder().decode(log))
+
+    if (this.logs.length > this.LOGS_BUFFER_SIZE) {
+      this.logs.shift()
     }
   }
 

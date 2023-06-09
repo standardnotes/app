@@ -26,6 +26,14 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     super(appVersion)
   }
 
+  async isServerRunning(): Promise<boolean> {
+    return this.remoteBridge.isServerRunning()
+  }
+
+  async activatePremiumFeatures(username: string): Promise<string | null> {
+    return this.remoteBridge.activatePremiumFeatures(username)
+  }
+
   getLastServerErrorMessage(): string | undefined {
     return this.remoteBridge.getLastServerErrorMessage()
   }
@@ -46,12 +54,8 @@ export class DesktopDevice extends WebOrDesktopDevice implements DesktopDeviceIn
     return this.remoteBridge.stopServer()
   }
 
-  listenOnServerLogs(callback: (data: Buffer) => void): void {
-    this.remoteBridge.listenOnServerLogs(callback)
-  }
-
-  stopListeningOnServerLogs(): void {
-    this.remoteBridge.stopListeningOnServerLogs()
+  getServerLogs(): Promise<string[]> {
+    return this.remoteBridge.getServerLogs()
   }
 
   restartServer(): Promise<void> {

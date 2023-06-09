@@ -7,7 +7,7 @@ export interface HomeServerManagerInterface {
   stopServer(): Promise<void>
   restartServer(): Promise<void>
   serverStatus(): Promise<HomeServerStatus>
-  listenOnServerLogs(callback: (data: Buffer) => void): void
-  stopListeningOnServerLogs(): void
   getLastServerErrorMessage(): string | undefined
+  activatePremiumFeatures(username: string): Promise<string | null>
+  getServerLogs(): Promise<string[]>
 }

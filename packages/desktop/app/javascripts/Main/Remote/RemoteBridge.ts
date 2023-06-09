@@ -70,8 +70,6 @@ export class RemoteBridge implements CrossProcessBridge {
       stopServer: this.stopServer.bind(this),
       restartServer: this.restartServer.bind(this),
       serverStatus: this.serverStatus.bind(this),
-      listenOnServerLogs: this.listenOnServerLogs.bind(this),
-      stopListeningOnServerLogs: this.stopListeningOnServerLogs.bind(this),
       wasLegacyTextBackupsExplicitlyDisabled: this.wasLegacyTextBackupsExplicitlyDisabled.bind(this),
       getLegacyTextBackupsLocation: this.getLegacyTextBackupsLocation.bind(this),
       saveTextBackupData: this.saveTextBackupData.bind(this),
@@ -89,6 +87,9 @@ export class RemoteBridge implements CrossProcessBridge {
       setHomeServerConfiguration: this.setHomeServerConfiguration.bind(this),
       setHomeServerDataLocation: this.setHomeServerDataLocation.bind(this),
       getLastServerErrorMessage: this.getLastServerErrorMessage.bind(this),
+      activatePremiumFeatures: this.activatePremiumFeatures.bind(this),
+      isServerRunning: this.isServerRunning.bind(this),
+      getServerLogs: this.getServerLogs.bind(this),
     }
   }
 
@@ -272,14 +273,6 @@ export class RemoteBridge implements CrossProcessBridge {
     return this.homeServerManager.serverStatus()
   }
 
-  listenOnServerLogs(callback: (data: Buffer) => void): void {
-    this.homeServerManager.listenOnServerLogs(callback)
-  }
-
-  stopListeningOnServerLogs(): void {
-    this.homeServerManager.stopListeningOnServerLogs()
-  }
-
   async setHomeServerConfiguration(configurationJSONString: string): Promise<void> {
     return this.homeServerManager.setHomeServerConfiguration(configurationJSONString)
   }
@@ -290,5 +283,19 @@ export class RemoteBridge implements CrossProcessBridge {
 
   getLastServerErrorMessage(): string | undefined {
     return this.homeServerManager.getLastServerErrorMessage()
+  }
+
+  async activatePremiumFeatures(username: string): Promise<string | null> {
+    return this.homeServerManager.activatePremiumFeatures(username)
+  }
+
+  async isServerRunning(): Promise<boolean> {
+    const status = await this.homeServerManager.serverStatus()
+
+    return status.status === 'on'
+  }
+
+  async getServerLogs(): Promise<string[]> {
+    return this.homeServerManager.getServerLogs()
   }
 }

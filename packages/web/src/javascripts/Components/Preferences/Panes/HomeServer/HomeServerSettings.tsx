@@ -6,11 +6,15 @@ import { useApplication } from '@/Components/ApplicationProvider'
 import { HomeServerStatus } from '@standardnotes/snjs'
 import EncryptionStatusItem from '../Security/EncryptionStatusItem'
 import Icon from '@/Components/Icon/Icon'
+import OfflineSubscription from '../General/Advanced/OfflineSubscription'
 
 const HomeServerSettings = () => {
   const application = useApplication()
   const desktopDevice = application.desktopDevice
   const homeServerService = application.homeServer
+  const featuresService = application.features
+  const sessionsService = application.sessions
+  const viewControllerManager = application.getViewControllerManager()
 
   const logsTextarea = useRef<HTMLTextAreaElement>(null)
   const [isAtBottom, setIsAtBottom] = useState(true)
@@ -18,6 +22,42 @@ const HomeServerSettings = () => {
   const [logs, setLogs] = useState<string[]>([])
   const [status, setStatus] = useState<HomeServerStatus>()
   const [homeServerDataLocation, setHomeServerDataLocation] = useState(homeServerService.getHomeServerDataLocation())
+  const [isAPremiumUser, setIsAPremiumUser] = useState(false)
+  const [isSignedIn, setIsSignedIn] = useState(false)
+  const [showOfflineSubscriptionActivation, setShowOfflineSubscriptionActivation] = useState(false)
+  const [logsIntervalRef, setLogsIntervalRef] = useState<NodeJS.Timer | null>(null)
+
+  const refreshStatus = useCallback(async () => {
+    if (desktopDevice) {
+      const result = await desktopDevice.serverStatus()
+      setStatus(result)
+    }
+  }, [desktopDevice])
+
+  const setupLogsRefresh = useCallback(async () => {
+    if (logsIntervalRef !== null) {
+      clearInterval(logsIntervalRef)
+    }
+
+    if (!desktopDevice) {
+      return
+    }
+
+    setLogs(await desktopDevice.getServerLogs())
+
+    const interval = setInterval(async () => {
+      setLogs(await desktopDevice.getServerLogs())
+    }, 5000)
+    setLogsIntervalRef(interval)
+  }, [desktopDevice, logsIntervalRef])
+
+  useEffect(() => {
+    setIsAPremiumUser(featuresService.hasOfflineRepo())
+
+    setIsSignedIn(sessionsService.isSignedIn())
+
+    void refreshStatus()
+  }, [featuresService, sessionsService, desktopDevice, showLogs, refreshStatus])
 
   const changeHomeServerDataLocation = useCallback(async () => {
     await desktopDevice?.stopServer()
@@ -30,35 +70,19 @@ const HomeServerSettings = () => {
     await homeServerService.openHomeServerDataLocation()
   }, [homeServerService])
 
-  const refreshStatus = useCallback(async () => {
-    if (desktopDevice) {
-      const result = await desktopDevice.serverStatus()
-      setStatus(result)
-    }
-  }, [desktopDevice])
-
-  useEffect(() => {
-    void refreshStatus()
-  }, [refreshStatus])
-
-  useEffect(() => {
-    if (showLogs) {
-      desktopDevice?.listenOnServerLogs((data: Buffer) => {
-        setLogs((logs) => [...logs, new TextDecoder().decode(data)])
-      })
-    }
-  }, [showLogs, desktopDevice])
-
   const handleShowLogs = () => {
-    if (!showLogs) {
-      desktopDevice?.stopListeningOnServerLogs()
+    const newValueForShowingLogs = !showLogs
+
+    if (newValueForShowingLogs) {
+      void setupLogsRefresh()
+    } else {
+      if (logsIntervalRef) {
+        clearInterval(logsIntervalRef)
+        setLogsIntervalRef(null)
+      }
     }
 
-    setShowLogs(!showLogs)
-  }
-
-  const clearLogs = () => {
-    setLogs([])
+    setShowLogs(newValueForShowingLogs)
   }
 
   function isTextareaScrolledToBottom(textarea: HTMLTextAreaElement) {
@@ -142,6 +166,20 @@ const HomeServerSettings = () => {
 
       <HorizontalSeparator classes="my-4" />
 
+      {isSignedIn && !isAPremiumUser && (
+        <div className="mt-3 flex flex-row flex-wrap gap-3">
+          <Button
+            label="Activate Premium Features"
+            onClick={() => {
+              setShowOfflineSubscriptionActivation(true)
+            }}
+          />
+        </div>
+      )}
+      {showOfflineSubscriptionActivation && (
+        <OfflineSubscription application={application} viewControllerManager={viewControllerManager} />
+      )}
+
       <div className="mt-3 flex flex-row flex-wrap gap-3">
         <Button label={showLogs ? 'Hide Logs' : 'Show Logs'} onClick={handleShowLogs} />
       </div>
@@ -155,7 +193,6 @@ const HomeServerSettings = () => {
             value={logs.join('\n')}
           />
           <HorizontalSeparator classes="mb-3" />
-          <Button label="Clear" onClick={() => clearLogs()} />
         </div>
       )}
       <div className="h-2 w-full" />

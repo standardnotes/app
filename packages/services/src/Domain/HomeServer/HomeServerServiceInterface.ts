@@ -1,6 +1,10 @@
+import { Result } from '@standardnotes/domain-core'
+
 import { HomeServerEnvironmentConfiguration } from './HomeServerEnvironmentConfiguration'
 
 export interface HomeServerServiceInterface {
+  activatePremiumFeatures(username: string): Promise<Result<string>>
+  isHomeServerRunning(): Promise<boolean>
   isHomeServerEnabled(): boolean
   getHomeServerDataLocation(): string | undefined
   enableHomeServer(): Promise<void>

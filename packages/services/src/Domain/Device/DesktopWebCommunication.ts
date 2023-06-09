@@ -18,6 +18,12 @@ export interface WebClientRequiresDesktopMethods extends FileBackupsDevice {
 
   stopServer(): Promise<void>
 
+  isServerRunning(): Promise<boolean>
+
+  activatePremiumFeatures(username: string): Promise<string | null>
+
+  getServerLogs(): Promise<string[]>
+
   getLastServerErrorMessage(): string | undefined
 }
 

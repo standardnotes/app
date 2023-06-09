@@ -10,6 +10,7 @@ import { StorageServiceInterface } from '../Storage/StorageServiceInterface'
 
 import { HomeServerServiceInterface } from './HomeServerServiceInterface'
 import { HomeServerEnvironmentConfiguration } from './HomeServerEnvironmentConfiguration'
+import { Result } from '@standardnotes/domain-core'
 
 export class HomeServerService extends AbstractService implements HomeServerServiceInterface {
   private readonly HOME_SERVER_DATA_DIRECTORY_NAME = 'Standard Notes Home Server'
@@ -21,6 +22,20 @@ export class HomeServerService extends AbstractService implements HomeServerServ
     protected override internalEventBus: InternalEventBusInterface,
   ) {
     super(internalEventBus)
+  }
+
+  async isHomeServerRunning(): Promise<boolean> {
+    return this.desktopDevice.isServerRunning()
+  }
+
+  async activatePremiumFeatures(username: string): Promise<Result<string>> {
+    const result = await this.desktopDevice.activatePremiumFeatures(username)
+
+    if (result !== null) {
+      return Result.fail(result)
+    }
+
+    return Result.ok('Premium features activated')
   }
 
   getLastServerErrorMessage(): string | undefined {
