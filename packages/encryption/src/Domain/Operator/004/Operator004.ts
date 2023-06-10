@@ -154,7 +154,7 @@ export class SNProtocolOperator004 implements OperatorInterface {
     const [_, __, ___, signingDataString] = <V004AsymmetricStringComponents>string.split(':')
     const parseBase64Usecase = new ParseConsistentBase64JsonPayloadUseCase(this.crypto)
     const signingData = parseBase64Usecase.execute<AsymmetricSigningPayload>(signingDataString)
-    return signingData.embeddedValue.publicKey
+    return signingData.data.publicKey
   }
 
   versionForAsymmetricallyEncryptedString(string: string): ProtocolVersion {

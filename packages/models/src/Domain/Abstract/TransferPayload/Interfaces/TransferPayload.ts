@@ -1,6 +1,6 @@
 import { ContentType } from '@standardnotes/common'
 import { ItemContent } from '../../Content/ItemContent'
-import { ClientSignaturePayload } from '../../../Runtime/Encryption/ClientSignaturePayload'
+import { ClientRawSigningData } from '../../../Runtime/Encryption/ClientRawSigningData'
 
 export interface TransferPayload<C extends ItemContent = ItemContent> {
   uuid: string
@@ -16,8 +16,8 @@ export interface TransferPayload<C extends ItemContent = ItemContent> {
   dirtyIndex?: number
   globalDirtyIndexAtLastSync?: number
   dirty?: boolean
-  encryptedClientSignaturePayload?: string
-  decryptedClientSignaturePayload?: ClientSignaturePayload
+  encryptedRawSigningData?: string
+  decryptedClientRawSigningData?: ClientRawSigningData
 
   lastSyncBegan?: Date
   lastSyncEnd?: Date

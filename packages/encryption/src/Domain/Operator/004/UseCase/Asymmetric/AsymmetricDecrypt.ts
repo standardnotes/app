@@ -28,14 +28,14 @@ export class AsymmetricDecryptUseCase {
 
       const signatureVerified = this.crypto.sodiumCryptoSignVerify(
         ciphertext,
-        signingData.embeddedValue.signature,
-        signingData.embeddedValue.publicKey,
+        signingData.data.signature,
+        signingData.data.publicKey,
       )
 
       return {
         plaintext,
         signatureVerified,
-        signaturePublicKey: signingData.embeddedValue.publicKey,
+        signaturePublicKey: signingData.data.publicKey,
       }
     } catch (error) {
       return null

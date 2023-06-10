@@ -4,11 +4,11 @@ export type SigningPayloadEmbeddedData = {
 }
 
 export type SymmetricItemSigningPayload = {
-  embeddedValue?: SigningPayloadEmbeddedData | undefined
+  data?: SigningPayloadEmbeddedData | undefined
 }
 
 export type AsymmetricSigningPayload = {
-  embeddedValue: SigningPayloadEmbeddedData
+  data: SigningPayloadEmbeddedData
 }
 
 export type SigningPayload = SymmetricItemSigningPayload | AsymmetricSigningPayload

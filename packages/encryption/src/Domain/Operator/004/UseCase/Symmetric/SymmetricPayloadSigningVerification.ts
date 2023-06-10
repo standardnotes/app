@@ -22,7 +22,7 @@ export class SymmetricPayloadSigningVerificationUseCase {
 
     const verificationRequired = doesPayloadRequireSigning(encrypted)
 
-    if (!contentKeySigningPayload.embeddedValue || !contentSigningPayload.embeddedValue) {
+    if (!contentKeySigningPayload.data || !contentSigningPayload.data) {
       if (verificationRequired) {
         return {
           required: true,
@@ -37,7 +37,7 @@ export class SymmetricPayloadSigningVerificationUseCase {
       }
     }
 
-    if (contentKeySigningPayload.embeddedValue.publicKey !== contentSigningPayload.embeddedValue.publicKey) {
+    if (contentKeySigningPayload.data.publicKey !== contentSigningPayload.data.publicKey) {
       return {
         required: verificationRequired,
         result: {
@@ -49,21 +49,21 @@ export class SymmetricPayloadSigningVerificationUseCase {
 
     const contentKeySignatureVerified = this.crypto.sodiumCryptoSignVerify(
       contentKeyComponents.ciphertext,
-      contentKeySigningPayload.embeddedValue.signature,
-      contentKeySigningPayload.embeddedValue.publicKey,
+      contentKeySigningPayload.data.signature,
+      contentKeySigningPayload.data.publicKey,
     )
 
     const contentSignatureVerified = this.crypto.sodiumCryptoSignVerify(
       contentComponents.ciphertext,
-      contentSigningPayload.embeddedValue.signature,
-      contentSigningPayload.embeddedValue.publicKey,
+      contentSigningPayload.data.signature,
+      contentSigningPayload.data.publicKey,
     )
 
     return {
       required: verificationRequired,
       result: {
         passes: contentKeySignatureVerified && contentSignatureVerified,
-        publicKey: contentKeySigningPayload.embeddedValue.publicKey,
+        publicKey: contentKeySigningPayload.data.publicKey,
       },
     }
   }

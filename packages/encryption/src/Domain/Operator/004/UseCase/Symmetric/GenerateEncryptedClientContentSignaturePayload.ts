@@ -2,35 +2,42 @@ import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { CreateConsistentBase64JsonPayloadUseCase } from '../Utils/CreateConsistentBase64JsonPayload'
 import { SigningPayloadEmbeddedData } from '../../../../Types/EncryptionSigningData'
 import { ItemAuthenticatedData } from '../../../../Types/ItemAuthenticatedData'
-import { ClientSignaturePayload } from '@standardnotes/models'
+import { ClientRawSigningData } from '@standardnotes/models'
 import { GenerateEncryptedProtocolStringUseCase } from './GenerateEncryptedProtocolString'
 
-export class GenerateEncryptedClientContentSignaturePayload {
+export class GeneratePersistentClientSignature {
+  private generateProtocolStringUseCase = new GenerateEncryptedProtocolStringUseCase(this.crypto)
+  private base64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
+
   constructor(private readonly crypto: PureCryptoInterface) {}
 
   execute(
     contentSigningData: SigningPayloadEmbeddedData,
+    existingSignaturePayload: ClientRawSigningData | undefined,
     contentHash: string,
     contentKey: string,
     commonAuthenticatedData: ItemAuthenticatedData,
   ): string {
-    const clientSignaturePayload: ClientSignaturePayload = {
+    let clientSignaturePayload: ClientRawSigningData = {
       plaintextHash: contentHash,
       signature: contentSigningData.signature,
       signerPublicKey: contentSigningData.publicKey,
     }
 
-    const generateProtocolStringUseCase = new GenerateEncryptedProtocolStringUseCase(this.crypto)
-    const base64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
+    if (existingSignaturePayload) {
+      const needsNewSignature = contentHash !== existingSignaturePayload.plaintextHash
+      if (!needsNewSignature) {
+        clientSignaturePayload = existingSignaturePayload
+      }
+    }
 
     const nullSigningDataForClientOnlyEncryptedString = {}
-    const encryptedClientSignaturePayload = generateProtocolStringUseCase.execute(
+
+    return this.generateProtocolStringUseCase.execute(
       JSON.stringify(clientSignaturePayload),
       contentKey,
-      base64DataUsecase.execute(commonAuthenticatedData),
-      base64DataUsecase.execute(nullSigningDataForClientOnlyEncryptedString),
+      this.base64DataUsecase.execute(commonAuthenticatedData),
+      this.base64DataUsecase.execute(nullSigningDataForClientOnlyEncryptedString),
     )
-
-    return encryptedClientSignaturePayload
   }
 }

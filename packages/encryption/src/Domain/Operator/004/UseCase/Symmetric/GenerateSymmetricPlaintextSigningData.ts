@@ -1,4 +1,3 @@
-import { ClientSignaturePayload } from '@standardnotes/models'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { SymmetricItemSigningPayload } from '../../../../Types/EncryptionSigningData'
 import { HashStringUseCase } from '../Hash/HashString'
@@ -8,37 +7,21 @@ export class GenerateSymmetricPlaintextSigningDataUseCase {
 
   execute(
     payloadPlaintext: string,
-    existingSignaturePayload: ClientSignaturePayload | undefined,
     signingKeyPair: PkcKeyPair | undefined,
-  ): { signingData: SymmetricItemSigningPayload; plaintextHash: string } {
+  ): { signingPayload: SymmetricItemSigningPayload; plaintextHash: string } {
     const hashUseCase = new HashStringUseCase(this.crypto)
     const plaintextHash = hashUseCase.execute(payloadPlaintext)
 
-    if (existingSignaturePayload) {
-      const needsNewSignature = plaintextHash !== existingSignaturePayload.plaintextHash
-      if (!needsNewSignature) {
-        return {
-          signingData: {
-            embeddedValue: {
-              publicKey: existingSignaturePayload.signerPublicKey,
-              signature: existingSignaturePayload.signature,
-            },
-          },
-          plaintextHash,
-        }
-      }
-    }
-
     if (!signingKeyPair) {
       return {
-        signingData: {},
+        signingPayload: {},
         plaintextHash,
       }
     }
 
     return {
-      signingData: {
-        embeddedValue: {
+      signingPayload: {
+        data: {
           publicKey: signingKeyPair.publicKey,
           signature: this.crypto.sodiumCryptoSign(plaintextHash, signingKeyPair.privateKey),
         },

@@ -1,7 +1,7 @@
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { deconstructEncryptedPayloadString } from "../../V004AlgorithmHelpers"
+import { deconstructEncryptedPayloadString } from '../../V004AlgorithmHelpers'
 import {
-  ClientSignaturePayload,
+  ClientRawSigningData,
   DecryptedParameters,
   EncryptedParameters,
   ErrorDecryptingParameters,
@@ -70,9 +70,9 @@ export class GenerateDecryptedParametersUseCase {
       }
     }
 
-    let decryptedClientSignaturePayload: ClientSignaturePayload | undefined
-    if (encrypted.encryptedClientSignaturePayload) {
-      const signaturePayloadComponents = deconstructEncryptedPayloadString(encrypted.encryptedClientSignaturePayload)
+    let decryptedClientRawSigningData: ClientRawSigningData | undefined
+    if (encrypted.encryptedRawSigningData) {
+      const signaturePayloadComponents = deconstructEncryptedPayloadString(encrypted.encryptedRawSigningData)
 
       const decryptedClientSignatureString = this.crypto.xchacha20Decrypt(
         signaturePayloadComponents.ciphertext,
@@ -82,7 +82,7 @@ export class GenerateDecryptedParametersUseCase {
       )
 
       if (decryptedClientSignatureString) {
-        decryptedClientSignaturePayload = JSON.parse(decryptedClientSignatureString)
+        decryptedClientRawSigningData = JSON.parse(decryptedClientSignatureString)
       }
     }
 
@@ -98,7 +98,7 @@ export class GenerateDecryptedParametersUseCase {
       uuid: encrypted.uuid,
       content: JSON.parse(content),
       signature: signatureVerificationResult,
-      decryptedClientSignaturePayload,
+      decryptedClientRawSigningData,
     }
   }
 }

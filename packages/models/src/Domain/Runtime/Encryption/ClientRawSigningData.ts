@@ -1,4 +1,4 @@
-export type ClientSignaturePayload = {
+export type ClientRawSigningData = {
   plaintextHash: string
   signature: string
   signerPublicKey: string

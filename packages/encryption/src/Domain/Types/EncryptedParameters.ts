@@ -1,5 +1,5 @@
 import { ContentType, ProtocolVersion } from '@standardnotes/common'
-import { EncryptedPayloadInterface, ItemContent, ClientSignaturePayload } from '@standardnotes/models'
+import { EncryptedPayloadInterface, ItemContent, ClientRawSigningData } from '@standardnotes/models'
 
 export type EncryptedParameters = {
   uuid: string
@@ -8,7 +8,7 @@ export type EncryptedParameters = {
   items_key_id: string | undefined
   enc_item_key: string
   version: ProtocolVersion
-  encryptedClientSignaturePayload?: string
+  encryptedRawSigningData?: string
   key_system_identifier?: string
   shared_vault_uuid?: string
 
@@ -19,7 +19,7 @@ export type EncryptedParameters = {
 export type DecryptedParameters<C extends ItemContent = ItemContent> = {
   uuid: string
   content: C
-  decryptedClientSignaturePayload?: ClientSignaturePayload
+  decryptedClientRawSigningData?: ClientRawSigningData
   signature:
     | {
         required: true
@@ -58,6 +58,6 @@ export function encryptedParametersFromPayload(payload: EncryptedPayloadInterfac
     enc_item_key: payload.enc_item_key as string,
     version: payload.version,
     auth_hash: payload.auth_hash,
-    encryptedClientSignaturePayload: payload.encryptedClientSignaturePayload,
+    encryptedRawSigningData: payload.encryptedRawSigningData,
   }
 }
