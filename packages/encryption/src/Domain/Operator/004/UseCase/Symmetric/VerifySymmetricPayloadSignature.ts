@@ -1,29 +1,37 @@
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { V004Components } from '../../V004AlgorithmTypes'
 import { doesPayloadRequireSigning } from '../../V004AlgorithmHelpers'
 import { ParseConsistentBase64JsonPayloadUseCase } from '../Utils/ParseConsistentBase64JsonPayload'
 import { SymmetricItemSigningPayload } from '../../../../Types/EncryptionSigningData'
 import { DecryptedParameters, EncryptedParameters } from '../../../../Types/EncryptedParameters'
+import { HashStringUseCase } from '../Hash/HashString'
 
-export class SymmetricPayloadSigningVerificationUseCase {
+export class VerifySymmetricPayloadSignatureUseCase {
   private parseBase64Usecase = new ParseConsistentBase64JsonPayloadUseCase(this.crypto)
+  private hashUseCase = new HashStringUseCase(this.crypto)
 
   constructor(private readonly crypto: PureCryptoInterface) {}
 
   execute(
-    encrypted: EncryptedParameters,
-    contentKeyComponents: V004Components,
-    contentComponents: V004Components,
+    payload: EncryptedParameters,
+    payloadEncryptionKey: string,
+    contentKeyParameters: {
+      signingData: string
+      plaintext: string
+    },
+    contentParameters: {
+      signingData: string
+      plaintext: string
+    },
   ): DecryptedParameters['signature'] {
     const contentKeySigningPayload = this.parseBase64Usecase.execute<SymmetricItemSigningPayload>(
-      contentKeyComponents.signingData,
+      contentKeyParameters.signingData,
     )
 
     const contentSigningPayload = this.parseBase64Usecase.execute<SymmetricItemSigningPayload>(
-      contentComponents.signingData,
+      contentParameters.signingData,
     )
 
-    const verificationRequired = doesPayloadRequireSigning(encrypted)
+    const verificationRequired = doesPayloadRequireSigning(payload)
 
     if (!contentKeySigningPayload.data || !contentSigningPayload.data) {
       if (verificationRequired) {
@@ -50,14 +58,16 @@ export class SymmetricPayloadSigningVerificationUseCase {
       }
     }
 
+    const contentKeyHash = this.hashUseCase.execute(contentKeyParameters.plaintext, payloadEncryptionKey)
     const contentKeySignatureVerified = this.crypto.sodiumCryptoSignVerify(
-      contentKeyComponents.ciphertext,
+      contentKeyHash,
       contentKeySigningPayload.data.signature,
       contentKeySigningPayload.data.publicKey,
     )
 
+    const contentHash = this.hashUseCase.execute(contentParameters.plaintext, payloadEncryptionKey)
     const contentSignatureVerified = this.crypto.sodiumCryptoSignVerify(
-      contentComponents.ciphertext,
+      contentHash,
       contentSigningPayload.data.signature,
       contentSigningPayload.data.publicKey,
     )

@@ -41,7 +41,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
   readonly signatureVerified?: boolean
 
   readonly encryptedRawSigningData?: string
-  readonly decryptedClientRawSigningData?: ClientRawSigningData
+  readonly rawSigningDataClientOnly?: ClientRawSigningData
 
   constructor(rawPayload: T, source = PayloadSource.Constructor) {
     this.source = source
@@ -83,7 +83,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
 
     this.signatureVerified = rawPayload.signatureVerified
     this.encryptedRawSigningData = rawPayload.encryptedRawSigningData
-    this.decryptedClientRawSigningData = rawPayload.decryptedClientRawSigningData
+    this.rawSigningDataClientOnly = rawPayload.rawSigningDataClientOnly
 
     const timeToAllowSubclassesToFinishConstruction = 0
     setTimeout(() => {
@@ -113,7 +113,7 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
       last_edited_by_uuid: this.last_edited_by_uuid,
       signatureVerified: this.signatureVerified,
       encryptedRawSigningData: this.encryptedRawSigningData,
-      decryptedClientRawSigningData: this.decryptedClientRawSigningData,
+      rawSigningDataClientOnly: this.rawSigningDataClientOnly,
     }
 
     return comprehensive

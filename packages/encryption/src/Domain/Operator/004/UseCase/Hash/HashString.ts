@@ -1,11 +1,9 @@
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 
 export class HashStringUseCase {
-  constructor(_crypto: PureCryptoInterface) {
-    throw new Error('Method not implemented.')
-  }
+  constructor(private readonly crypto: PureCryptoInterface) {}
 
-  execute(_string: string): string {
-    throw new Error('Method not implemented.')
+  execute(string: string, key: string): string {
+    return this.crypto.sodiumCryptoGenericHash(string, key)
   }
 }

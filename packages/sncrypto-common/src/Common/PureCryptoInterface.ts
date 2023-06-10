@@ -154,6 +154,8 @@ export interface PureCryptoInterface {
 
   sodiumCryptoKdfDeriveFromKey(key: HexString, subkeyNumber: number, subkeyLength: number, context: string): HexString
 
+  sodiumCryptoGenericHash(message: Utf8String, key?: HexString): HexString
+
   /**
    * Converts a plain string into base64
    * @param text - A plain string

@@ -67,5 +67,9 @@ export function getMockedCrypto(): PureCryptoInterface {
       return computedSignature === signature
     })
 
+  crypto.sodiumCryptoGenericHash = jest.fn().mockImplementation((message: string, key: string) => {
+    return `hash-${message}-${key}`
+  })
+
   return crypto
 }

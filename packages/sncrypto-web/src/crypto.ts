@@ -427,6 +427,16 @@ export class SNWebCrypto implements PureCryptoInterface {
     return Utils.arrayBufferToHexString(result)
   }
 
+  sodiumCryptoGenericHash(message: string, key?: HexString): HexString {
+    const result = sodium.crypto_generichash(
+      sodium.crypto_generichash_BYTES,
+      message,
+      key ? Utils.hexStringToArrayBuffer(key) : null,
+    )
+
+    return Utils.arrayBufferToHexString(result)
+  }
+
   /**
    * Generates a random secret for TOTP authentication
    *

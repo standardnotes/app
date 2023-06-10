@@ -17,7 +17,7 @@ export interface TransferPayload<C extends ItemContent = ItemContent> {
   globalDirtyIndexAtLastSync?: number
   dirty?: boolean
   encryptedRawSigningData?: string
-  decryptedClientRawSigningData?: ClientRawSigningData
+  rawSigningDataClientOnly?: ClientRawSigningData
 
   lastSyncBegan?: Date
   lastSyncEnd?: Date

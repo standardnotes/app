@@ -2,16 +2,17 @@ import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { SymmetricItemSigningPayload } from '../../../../Types/EncryptionSigningData'
 import { HashStringUseCase } from '../Hash/HashString'
 
-export class GenerateSymmetricPlaintextSigningDataUseCase {
+export class GenerateSymmetricSigningDataUseCase {
   private hashUseCase = new HashStringUseCase(this.crypto)
 
   constructor(private readonly crypto: PureCryptoInterface) {}
 
   execute(
     payloadPlaintext: string,
+    payloadEncryptionKey: string,
     signingKeyPair: PkcKeyPair | undefined,
   ): { signingPayload: SymmetricItemSigningPayload; plaintextHash: string } {
-    const plaintextHash = this.hashUseCase.execute(payloadPlaintext)
+    const plaintextHash = this.hashUseCase.execute(payloadPlaintext, payloadEncryptionKey)
 
     if (!signingKeyPair) {
       return {

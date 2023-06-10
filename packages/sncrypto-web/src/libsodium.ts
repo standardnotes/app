@@ -7,6 +7,7 @@ export {
   crypto_box_keypair,
   crypto_box_open_easy,
   crypto_box_seed_keypair,
+  crypto_generichash,
   crypto_kdf_derive_from_key,
   crypto_pwhash_ALG_DEFAULT,
   crypto_pwhash,
@@ -25,6 +26,7 @@ export {
   to_base64,
   to_hex,
   to_string,
+  crypto_generichash_BYTES,
 } from 'libsodium-wrappers'
 
 export type { StateAddress } from 'libsodium-wrappers'

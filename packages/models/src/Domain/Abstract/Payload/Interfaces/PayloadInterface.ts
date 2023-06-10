@@ -23,8 +23,7 @@ export interface PayloadInterface<T extends TransferPayload = TransferPayload, C
   readonly dirtyIndex?: number
   readonly globalDirtyIndexAtLastSync?: number
   readonly dirty?: boolean
-  readonly encryptedRawSigningData?: string
-  readonly decryptedClientRawSigningData?: ClientRawSigningData
+  readonly rawSigningDataClientOnly?: ClientRawSigningData
   readonly signatureVerified?: boolean
 
   readonly lastSyncBegan?: Date

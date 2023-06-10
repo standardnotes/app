@@ -1,6 +1,7 @@
 import { ProtocolVersion } from '@standardnotes/common'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import {
+  ClientRawSigningData,
   DecryptedPayloadInterface,
   ItemsKeyInterface,
   KeySystemItemsKeyInterface,
@@ -12,8 +13,8 @@ import { doesPayloadRequireSigning } from '../../V004AlgorithmHelpers'
 import { EncryptedParameters } from '../../../../Types/EncryptedParameters'
 import { GenerateAuthenticatedDataForPayloadUseCase } from './GenerateAuthenticatedDataForPayload'
 import { GenerateEncryptedProtocolStringUseCase } from './GenerateEncryptedProtocolString'
-import { GeneratePersistentClientSignature } from './GenerateEncryptedClientContentSignaturePayload'
-import { GenerateSymmetricPlaintextSigningDataUseCase } from './GenerateSymmetricPlaintextSigningData'
+import { GeneratePersistentClientSignature } from './GeneratePersistentClientSignature'
+import { GenerateSymmetricSigningDataUseCase } from './GenerateSymmetricPlaintextSigningData'
 import { isItemsKey } from '../../../../Keys/ItemsKey/ItemsKey'
 import { isKeySystemItemsKey } from '../../../../Keys/KeySystemItemsKey/KeySystemItemsKey'
 import { ItemAuthenticatedData } from '../../../../Types/ItemAuthenticatedData'
@@ -22,9 +23,9 @@ import { V004Algorithm } from '../../../../Algorithm'
 export class GenerateEncryptedParametersUseCase {
   private generateProtocolStringUseCase = new GenerateEncryptedProtocolStringUseCase(this.crypto)
   private generateAuthenticatedDataUseCase = new GenerateAuthenticatedDataForPayloadUseCase()
-  private generateSigningDataUseCase = new GenerateSymmetricPlaintextSigningDataUseCase(this.crypto)
+  private generateSigningDataUseCase = new GenerateSymmetricSigningDataUseCase(this.crypto)
   private base64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
-  private generatePersistentClientSignatureUseCase = new GeneratePersistentClientSignature(this.crypto)
+  private generatePersistentClientSignatureUseCase = new GeneratePersistentClientSignature()
 
   constructor(private readonly crypto: PureCryptoInterface) {}
 
@@ -47,6 +48,7 @@ export class GenerateEncryptedParametersUseCase {
 
     const { encryptedContent, persistentClientSignature } = this.generateEncryptedContentAndPersistentClientSignature(
       payload,
+      key,
       contentKey,
       commonAuthenticatedData,
       signingKeyPair,
@@ -59,22 +61,27 @@ export class GenerateEncryptedParametersUseCase {
       content: encryptedContent,
       enc_item_key: encryptedContentKey,
       version: ProtocolVersion.V004,
-      encryptedRawSigningData: persistentClientSignature,
+      rawSigningDataClientOnly: persistentClientSignature,
     }
   }
 
   private generateEncryptedContentAndPersistentClientSignature(
     payload: DecryptedPayloadInterface,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
     contentKey: string,
     commonAuthenticatedData: ItemAuthenticatedData,
     signingKeyPair?: PkcKeyPair,
   ): {
     encryptedContent: string
-    persistentClientSignature: string | undefined
+    persistentClientSignature: ClientRawSigningData | undefined
   } {
     const content = JSON.stringify(payload.content)
 
-    const { signingPayload, plaintextHash } = this.generateSigningDataUseCase.execute(content, signingKeyPair)
+    const { signingPayload, plaintextHash } = this.generateSigningDataUseCase.execute(
+      content,
+      key.itemsKey,
+      signingKeyPair,
+    )
 
     const encryptedContent = this.generateProtocolStringUseCase.execute(
       content,
@@ -87,10 +94,8 @@ export class GenerateEncryptedParametersUseCase {
       ? undefined
       : this.generatePersistentClientSignatureUseCase.execute(
           signingPayload.data,
-          payload.decryptedClientRawSigningData,
+          payload.rawSigningDataClientOnly,
           plaintextHash,
-          contentKey,
-          commonAuthenticatedData,
         )
 
     return {
@@ -106,7 +111,7 @@ export class GenerateEncryptedParametersUseCase {
   ) {
     const contentKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
 
-    const { signingPayload } = this.generateSigningDataUseCase.execute(contentKey, signingKeyPair)
+    const { signingPayload } = this.generateSigningDataUseCase.execute(contentKey, key.itemsKey, signingKeyPair)
 
     const encryptedContentKey = this.generateProtocolStringUseCase.execute(
       contentKey,
