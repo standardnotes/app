@@ -1,11 +1,13 @@
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { V004Components } from '../../V004AlgorithmTypes'
-import { doesPayloadRequireSigning } from "../../V004AlgorithmHelpers"
+import { doesPayloadRequireSigning } from '../../V004AlgorithmHelpers'
 import { ParseConsistentBase64JsonPayloadUseCase } from '../Utils/ParseConsistentBase64JsonPayload'
 import { SymmetricItemSigningPayload } from '../../../../Types/EncryptionSigningData'
 import { DecryptedParameters, EncryptedParameters } from '../../../../Types/EncryptedParameters'
 
 export class SymmetricPayloadSigningVerificationUseCase {
+  private parseBase64Usecase = new ParseConsistentBase64JsonPayloadUseCase(this.crypto)
+
   constructor(private readonly crypto: PureCryptoInterface) {}
 
   execute(
@@ -13,12 +15,13 @@ export class SymmetricPayloadSigningVerificationUseCase {
     contentKeyComponents: V004Components,
     contentComponents: V004Components,
   ): DecryptedParameters['signature'] {
-    const parseBase64Usecase = new ParseConsistentBase64JsonPayloadUseCase(this.crypto)
-    const contentKeySigningPayload = parseBase64Usecase.execute<SymmetricItemSigningPayload>(
+    const contentKeySigningPayload = this.parseBase64Usecase.execute<SymmetricItemSigningPayload>(
       contentKeyComponents.signingData,
     )
 
-    const contentSigningPayload = parseBase64Usecase.execute<SymmetricItemSigningPayload>(contentComponents.signingData)
+    const contentSigningPayload = this.parseBase64Usecase.execute<SymmetricItemSigningPayload>(
+      contentComponents.signingData,
+    )
 
     const verificationRequired = doesPayloadRequireSigning(encrypted)
 

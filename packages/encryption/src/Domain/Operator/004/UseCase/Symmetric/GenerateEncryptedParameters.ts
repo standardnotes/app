@@ -1,5 +1,5 @@
+import { ProtocolVersion } from '@standardnotes/common'
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { doesPayloadRequireSigning } from '../../V004AlgorithmHelpers'
 import {
   DecryptedPayloadInterface,
   ItemsKeyInterface,
@@ -8,16 +8,16 @@ import {
   RootKeyInterface,
 } from '@standardnotes/models'
 import { CreateConsistentBase64JsonPayloadUseCase } from '../Utils/CreateConsistentBase64JsonPayload'
-import { GenerateEncryptedProtocolStringUseCase } from './GenerateEncryptedProtocolString'
-import { GenerateAuthenticatedDataForPayloadUseCase } from './GenerateAuthenticatedDataForPayload'
-import { GenerateSymmetricPlaintextSigningDataUseCase } from './GenerateSymmetricPlaintextSigningData'
-import { GeneratePersistentClientSignature } from './GenerateEncryptedClientContentSignaturePayload'
+import { doesPayloadRequireSigning } from '../../V004AlgorithmHelpers'
 import { EncryptedParameters } from '../../../../Types/EncryptedParameters'
-import { V004Algorithm } from '../../../../Algorithm'
-import { isKeySystemItemsKey } from '../../../../Keys/KeySystemItemsKey/KeySystemItemsKey'
+import { GenerateAuthenticatedDataForPayloadUseCase } from './GenerateAuthenticatedDataForPayload'
+import { GenerateEncryptedProtocolStringUseCase } from './GenerateEncryptedProtocolString'
+import { GeneratePersistentClientSignature } from './GenerateEncryptedClientContentSignaturePayload'
+import { GenerateSymmetricPlaintextSigningDataUseCase } from './GenerateSymmetricPlaintextSigningData'
 import { isItemsKey } from '../../../../Keys/ItemsKey/ItemsKey'
-import { ProtocolVersion } from '@standardnotes/common'
+import { isKeySystemItemsKey } from '../../../../Keys/KeySystemItemsKey/KeySystemItemsKey'
 import { ItemAuthenticatedData } from '../../../../Types/ItemAuthenticatedData'
+import { V004Algorithm } from '../../../../Algorithm'
 
 export class GenerateEncryptedParametersUseCase {
   private generateProtocolStringUseCase = new GenerateEncryptedProtocolStringUseCase(this.crypto)

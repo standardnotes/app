@@ -16,16 +16,116 @@ import { CreateConsistentBase64JsonPayloadUseCase } from '../Utils/CreateConsist
 import { SymmetricPayloadSigningVerificationUseCase } from './SymmetricPayloadSigningVerification'
 
 export class GenerateDecryptedParametersUseCase {
+  private base64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
+  private stringToAuthenticatedDataUseCase = new StringToAuthenticatedDataUseCase(this.crypto)
+  private signingVerificationUseCase = new SymmetricPayloadSigningVerificationUseCase(this.crypto)
+
   constructor(private readonly crypto: PureCryptoInterface) {}
 
   execute<C extends ItemContent = ItemContent>(
     encrypted: EncryptedParameters,
     key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   ): DecryptedParameters<C> | ErrorDecryptingParameters {
+    const contentKeyResult = this.decryptContentKey(encrypted, key)
+    if (!contentKeyResult) {
+      console.error('Error decrypting contentKey from parameters', encrypted)
+      return {
+        uuid: encrypted.uuid,
+        errorDecrypting: true,
+      }
+    }
+
+    const contentResult = this.decryptContent(encrypted, contentKeyResult.contentKey)
+    if (!contentResult) {
+      return {
+        uuid: encrypted.uuid,
+        errorDecrypting: true,
+      }
+    }
+
+    const signatureVerificationResult = this.signingVerificationUseCase.execute(
+      encrypted,
+      contentKeyResult.components,
+      contentResult.components,
+    )
+
+    const clientRawSigningData = encrypted.encryptedRawSigningData
+      ? this.decryptClientRawSigningData(
+          encrypted.encryptedRawSigningData,
+          contentKeyResult.contentKey,
+          contentResult.authenticatedDataString,
+        )
+      : undefined
+
+    return {
+      uuid: encrypted.uuid,
+      content: JSON.parse(contentResult.content),
+      signature: signatureVerificationResult,
+      decryptedClientRawSigningData: clientRawSigningData,
+    }
+  }
+
+  decryptClientRawSigningData(
+    encryptedRawSigningData: string,
+    contentKey: string,
+    contentAuthenticatedData: string,
+  ): ClientRawSigningData | undefined {
+    const signaturePayloadComponents = deconstructEncryptedPayloadString(encryptedRawSigningData)
+
+    const decryptedClientSignatureString = this.crypto.xchacha20Decrypt(
+      signaturePayloadComponents.ciphertext,
+      signaturePayloadComponents.nonce,
+      contentKey,
+      contentAuthenticatedData,
+    )
+
+    if (decryptedClientSignatureString) {
+      return JSON.parse(decryptedClientSignatureString)
+    }
+
+    return undefined
+  }
+
+  private decryptContent(encrypted: EncryptedParameters, contentKey: string) {
+    const contentComponents = deconstructEncryptedPayloadString(encrypted.content)
+
+    const contentAuthenticatedData = this.stringToAuthenticatedDataUseCase.execute(
+      contentComponents.authenticatedData,
+      {
+        u: encrypted.uuid,
+        v: encrypted.version,
+        ksi: encrypted.key_system_identifier,
+        svu: encrypted.shared_vault_uuid,
+      },
+    )
+
+    const authenticatedDataString = this.base64DataUsecase.execute(contentAuthenticatedData)
+
+    const content = this.crypto.xchacha20Decrypt(
+      contentComponents.ciphertext,
+      contentComponents.nonce,
+      contentKey,
+      authenticatedDataString,
+    )
+
+    if (!content) {
+      return null
+    }
+
+    return {
+      content,
+      components: contentComponents,
+      authenticatedDataString,
+    }
+  }
+
+  private decryptContentKey(
+    encrypted: EncryptedParameters,
+    key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
+  ) {
     const contentKeyComponents = deconstructEncryptedPayloadString(encrypted.enc_item_key)
 
-    const stringToAuthenticatedDataUseCase = new StringToAuthenticatedDataUseCase(this.crypto)
-    const contentKeyAuthenticatedData = stringToAuthenticatedDataUseCase.execute(
+    const contentKeyAuthenticatedData = this.stringToAuthenticatedDataUseCase.execute(
       contentKeyComponents.authenticatedData,
       {
         u: encrypted.uuid,
@@ -35,70 +135,23 @@ export class GenerateDecryptedParametersUseCase {
       },
     )
 
-    const base64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
-
-    const commonAuthenticatedDataString = base64DataUsecase.execute(contentKeyAuthenticatedData)
+    const authenticatedDataString = this.base64DataUsecase.execute(contentKeyAuthenticatedData)
 
     const contentKey = this.crypto.xchacha20Decrypt(
       contentKeyComponents.ciphertext,
       contentKeyComponents.nonce,
       key.itemsKey,
-      commonAuthenticatedDataString,
+      authenticatedDataString,
     )
 
     if (!contentKey) {
-      console.error('Error decrypting contentKey from parameters', encrypted)
-      return {
-        uuid: encrypted.uuid,
-        errorDecrypting: true,
-      }
+      return null
     }
-
-    const contentComponents = deconstructEncryptedPayloadString(encrypted.content)
-
-    const content = this.crypto.xchacha20Decrypt(
-      contentComponents.ciphertext,
-      contentComponents.nonce,
-      contentKey,
-      commonAuthenticatedDataString,
-    )
-
-    if (!content) {
-      return {
-        uuid: encrypted.uuid,
-        errorDecrypting: true,
-      }
-    }
-
-    let decryptedClientRawSigningData: ClientRawSigningData | undefined
-    if (encrypted.encryptedRawSigningData) {
-      const signaturePayloadComponents = deconstructEncryptedPayloadString(encrypted.encryptedRawSigningData)
-
-      const decryptedClientSignatureString = this.crypto.xchacha20Decrypt(
-        signaturePayloadComponents.ciphertext,
-        signaturePayloadComponents.nonce,
-        contentKey,
-        commonAuthenticatedDataString,
-      )
-
-      if (decryptedClientSignatureString) {
-        decryptedClientRawSigningData = JSON.parse(decryptedClientSignatureString)
-      }
-    }
-
-    const signingVerificationUseCase = new SymmetricPayloadSigningVerificationUseCase(this.crypto)
-
-    const signatureVerificationResult = signingVerificationUseCase.execute(
-      encrypted,
-      contentKeyComponents,
-      contentComponents,
-    )
 
     return {
-      uuid: encrypted.uuid,
-      content: JSON.parse(content),
-      signature: signatureVerificationResult,
-      decryptedClientRawSigningData,
+      contentKey,
+      components: contentKeyComponents,
+      authenticatedDataString,
     }
   }
 }

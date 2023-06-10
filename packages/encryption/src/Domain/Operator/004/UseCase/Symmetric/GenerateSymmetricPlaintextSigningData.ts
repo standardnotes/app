@@ -3,14 +3,15 @@ import { SymmetricItemSigningPayload } from '../../../../Types/EncryptionSigning
 import { HashStringUseCase } from '../Hash/HashString'
 
 export class GenerateSymmetricPlaintextSigningDataUseCase {
+  private hashUseCase = new HashStringUseCase(this.crypto)
+
   constructor(private readonly crypto: PureCryptoInterface) {}
 
   execute(
     payloadPlaintext: string,
     signingKeyPair: PkcKeyPair | undefined,
   ): { signingPayload: SymmetricItemSigningPayload; plaintextHash: string } {
-    const hashUseCase = new HashStringUseCase(this.crypto)
-    const plaintextHash = hashUseCase.execute(payloadPlaintext)
+    const plaintextHash = this.hashUseCase.execute(payloadPlaintext)
 
     if (!signingKeyPair) {
       return {
