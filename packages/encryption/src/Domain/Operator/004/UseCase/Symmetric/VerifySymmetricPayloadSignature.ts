@@ -2,7 +2,7 @@ import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { doesPayloadRequireSigning } from '../../V004AlgorithmHelpers'
 import { ParseConsistentBase64JsonPayloadUseCase } from '../Utils/ParseConsistentBase64JsonPayload'
 import { SymmetricItemSigningPayload } from '../../../../Types/EncryptionSigningData'
-import { DecryptedParameters, EncryptedParameters } from '../../../../Types/EncryptedParameters'
+import { DecryptedParameters } from '../../../../Types/EncryptedParameters'
 import { HashStringUseCase } from '../Hash/HashString'
 
 export class VerifySymmetricPayloadSignatureUseCase {
@@ -12,7 +12,7 @@ export class VerifySymmetricPayloadSignatureUseCase {
   constructor(private readonly crypto: PureCryptoInterface) {}
 
   execute(
-    payload: EncryptedParameters,
+    payload: { key_system_identifier?: string; shared_vault_uuid?: string },
     payloadEncryptionKey: string,
     contentKeyParameters: {
       signingData: string
@@ -58,26 +58,34 @@ export class VerifySymmetricPayloadSignatureUseCase {
       }
     }
 
-    const contentKeyHash = this.hashUseCase.execute(contentKeyParameters.plaintext, payloadEncryptionKey)
-    const contentKeySignatureVerified = this.crypto.sodiumCryptoSignVerify(
-      contentKeyHash,
+    const commonPublicKey = contentKeySigningPayload.data.publicKey
+
+    const contentKeySignatureVerified = this.verifySignature(
+      contentKeyParameters.plaintext,
       contentKeySigningPayload.data.signature,
-      contentKeySigningPayload.data.publicKey,
+      commonPublicKey,
+      payloadEncryptionKey,
     )
 
-    const contentHash = this.hashUseCase.execute(contentParameters.plaintext, payloadEncryptionKey)
-    const contentSignatureVerified = this.crypto.sodiumCryptoSignVerify(
-      contentHash,
+    const contentSignatureVerified = this.verifySignature(
+      contentParameters.plaintext,
       contentSigningPayload.data.signature,
-      contentSigningPayload.data.publicKey,
+      commonPublicKey,
+      payloadEncryptionKey,
     )
 
     return {
       required: verificationRequired,
       result: {
         passes: contentKeySignatureVerified && contentSignatureVerified,
-        publicKey: contentKeySigningPayload.data.publicKey,
+        publicKey: commonPublicKey,
       },
     }
+  }
+
+  private verifySignature(plaintext: string, signature: string, publicKey: string, payloadEncryptionKey: string) {
+    const hash = this.hashUseCase.execute(plaintext, payloadEncryptionKey)
+
+    return this.crypto.sodiumCryptoSignVerify(hash, signature, publicKey)
   }
 }

@@ -52,7 +52,8 @@ export function getMockedCrypto(): PureCryptoInterface {
     })
 
   crypto.sodiumCryptoSign = jest.fn().mockImplementation((message: string, privateKey: string) => {
-    return `signature-${message}-${privateKey}`
+    const signature = `signature|m=${message}|pk=${privateKey}`
+    return signature
   })
 
   crypto.sodiumCryptoSignSeedKeypair = jest.fn().mockImplementation((seed: string) => {
@@ -62,7 +63,9 @@ export function getMockedCrypto(): PureCryptoInterface {
   crypto.sodiumCryptoSignVerify = jest
     .fn()
     .mockImplementation((message: string, signature: string, publicKey: string) => {
-      const privateKey = publicKey.split(':')[1]
+      const keyComponents = publicKey.split(':')
+      const privateKeyComponent = keyComponents[1]
+      const privateKey = `${privateKeyComponent}:${keyComponents[0]}`
       const computedSignature = crypto.sodiumCryptoSign(message, privateKey)
       return computedSignature === signature
     })
