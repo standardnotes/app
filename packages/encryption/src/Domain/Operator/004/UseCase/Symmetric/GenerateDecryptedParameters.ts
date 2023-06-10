@@ -2,18 +2,20 @@ import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { deconstructEncryptedPayloadString } from '../../V004AlgorithmHelpers'
 import {
   ClientRawSigningData,
-  DecryptedParameters,
-  EncryptedParameters,
-  ErrorDecryptingParameters,
   ItemContent,
   ItemsKeyInterface,
   KeySystemItemsKeyInterface,
   KeySystemRootKeyInterface,
   RootKeyInterface,
-} from '@standardnotes/snjs'
+} from '@standardnotes/models'
 import { StringToAuthenticatedDataUseCase } from '../Utils/StringToAuthenticatedData'
 import { CreateConsistentBase64JsonPayloadUseCase } from '../Utils/CreateConsistentBase64JsonPayload'
 import { SymmetricPayloadSigningVerificationUseCase } from './SymmetricPayloadSigningVerification'
+import {
+  DecryptedParameters,
+  EncryptedParameters,
+  ErrorDecryptingParameters,
+} from '../../../../Types/EncryptedParameters'
 
 export class GenerateDecryptedParametersUseCase {
   private base64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
@@ -65,7 +67,7 @@ export class GenerateDecryptedParametersUseCase {
     }
   }
 
-  decryptClientRawSigningData(
+  private decryptClientRawSigningData(
     encryptedRawSigningData: string,
     contentKey: string,
     contentAuthenticatedData: string,

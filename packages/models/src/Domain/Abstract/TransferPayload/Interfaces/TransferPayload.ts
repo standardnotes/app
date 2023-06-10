@@ -25,8 +25,8 @@ export interface TransferPayload<C extends ItemContent = ItemContent> {
   duplicate_of?: string
   user_uuid?: string
 
-  key_system_identifier: string | undefined
-  shared_vault_uuid: string | undefined
+  key_system_identifier?: string | undefined
+  shared_vault_uuid?: string | undefined
 
   last_edited_by_uuid?: string
 

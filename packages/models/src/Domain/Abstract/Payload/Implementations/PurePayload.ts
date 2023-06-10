@@ -5,6 +5,7 @@ import { PayloadSource } from '../Types/PayloadSource'
 import { TransferPayload } from '../../TransferPayload/Interfaces/TransferPayload'
 import { ItemContent } from '../../Content/ItemContent'
 import { SyncResolvedParams, SyncResolvedPayload } from '../../../Runtime/Deltas/Utilities/SyncResolvedPayload'
+import { ClientRawSigningData } from '../../../Runtime/Encryption/ClientRawSigningData'
 
 type RequiredKeepUndefined<T> = { [K in keyof T]-?: [T[K]] } extends infer U
   ? U extends Record<keyof U, [unknown]>
@@ -34,10 +35,13 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
 
   readonly duplicate_of?: string
   readonly user_uuid?: string
-  readonly key_system_identifier: string | undefined
-  readonly shared_vault_uuid: string | undefined
+  readonly key_system_identifier?: string | undefined
+  readonly shared_vault_uuid?: string | undefined
   readonly last_edited_by_uuid?: string
   readonly signatureVerified?: boolean
+
+  readonly encryptedRawSigningData?: string
+  readonly decryptedClientRawSigningData?: ClientRawSigningData
 
   constructor(rawPayload: T, source = PayloadSource.Constructor) {
     this.source = source
@@ -76,7 +80,10 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
     this.key_system_identifier = rawPayload.key_system_identifier
     this.shared_vault_uuid = rawPayload.shared_vault_uuid
     this.last_edited_by_uuid = rawPayload.last_edited_by_uuid
+
     this.signatureVerified = rawPayload.signatureVerified
+    this.encryptedRawSigningData = rawPayload.encryptedRawSigningData
+    this.decryptedClientRawSigningData = rawPayload.decryptedClientRawSigningData
 
     const timeToAllowSubclassesToFinishConstruction = 0
     setTimeout(() => {
@@ -105,6 +112,8 @@ export abstract class PurePayload<T extends TransferPayload<C>, C extends ItemCo
       shared_vault_uuid: this.shared_vault_uuid,
       last_edited_by_uuid: this.last_edited_by_uuid,
       signatureVerified: this.signatureVerified,
+      encryptedRawSigningData: this.encryptedRawSigningData,
+      decryptedClientRawSigningData: this.decryptedClientRawSigningData,
     }
 
     return comprehensive

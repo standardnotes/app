@@ -1,5 +1,7 @@
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { ItemAuthenticatedData, RootKeyEncryptedAuthenticatedData, sortedCopy } from '@standardnotes/snjs'
+import { sortedCopy } from '@standardnotes/utils'
+import { RootKeyEncryptedAuthenticatedData } from './../../../../Types/RootKeyEncryptedAuthenticatedData'
+import { ItemAuthenticatedData } from './../../../../Types/ItemAuthenticatedData'
 
 export class StringToAuthenticatedDataUseCase {
   constructor(private readonly crypto: PureCryptoInterface) {}

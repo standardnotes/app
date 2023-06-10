@@ -9,7 +9,6 @@ import {
   TrustedContactInterface,
   SharedVaultDisplayListing,
   VaultDisplayListing,
-  AsymmetricMessagePayload,
 } from '@standardnotes/models'
 import { AbstractService } from '../Service/AbstractService'
 import { SharedVaultServiceEvent, SharedVaultServiceEventPayload } from './SharedVaultServiceEvent'

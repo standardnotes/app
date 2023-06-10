@@ -1,0 +1,71 @@
+import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
+
+export function getMockedCrypto(): PureCryptoInterface {
+  const crypto = {} as jest.Mocked<PureCryptoInterface>
+
+  const mockGenerateKeyPair = (seed: string) => {
+    const publicKey = `public-key-${seed}`
+    const privateKey = `private-key-${seed}`
+
+    return {
+      publicKey: `${publicKey}:${privateKey}`,
+      privateKey: `${privateKey}:${publicKey}`,
+    }
+  }
+
+  crypto.base64Encode = jest.fn().mockImplementation((text: string) => {
+    return `base64-${text}`
+  })
+
+  crypto.base64Decode = jest.fn().mockImplementation((text: string) => {
+    return text.split('base64-')[1]
+  })
+
+  crypto.xchacha20Encrypt = jest.fn().mockImplementation((text: string) => {
+    return `<e>${text}<e>`
+  })
+
+  crypto.xchacha20Decrypt = jest.fn().mockImplementation((text: string) => {
+    return text.split('<e>')[1]
+  })
+
+  crypto.generateRandomKey = jest.fn().mockImplementation(() => {
+    return 'random-string'
+  })
+
+  crypto.sodiumCryptoBoxEasyEncrypt = jest.fn().mockImplementation((text: string) => {
+    return `<e>${text}<e>`
+  })
+
+  crypto.sodiumCryptoBoxEasyDecrypt = jest.fn().mockImplementation((text: string) => {
+    return text.split('<e>')[1]
+  })
+
+  crypto.sodiumCryptoBoxSeedKeypair = jest.fn().mockImplementation((seed: string) => {
+    return mockGenerateKeyPair(seed)
+  })
+
+  crypto.sodiumCryptoKdfDeriveFromKey = jest
+    .fn()
+    .mockImplementation((key: string, subkeyNumber: number, subkeyLength: number, context: string) => {
+      return `subkey-${key}-${subkeyNumber}-${subkeyLength}-${context}`
+    })
+
+  crypto.sodiumCryptoSign = jest.fn().mockImplementation((message: string, privateKey: string) => {
+    return `signature-${message}-${privateKey}`
+  })
+
+  crypto.sodiumCryptoSignSeedKeypair = jest.fn().mockImplementation((seed: string) => {
+    return mockGenerateKeyPair(seed)
+  })
+
+  crypto.sodiumCryptoSignVerify = jest
+    .fn()
+    .mockImplementation((message: string, signature: string, publicKey: string) => {
+      const privateKey = publicKey.split(':')[1]
+      const computedSignature = crypto.sodiumCryptoSign(message, privateKey)
+      return computedSignature === signature
+    })
+
+  return crypto
+}

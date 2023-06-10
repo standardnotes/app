@@ -192,6 +192,7 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
 
     return {
       uuid: payload.uuid,
+      content_type: payload.content_type,
       items_key_id: isItemsKey(key) ? key.uuid : undefined,
       content: ciphertext,
       enc_item_key: encItemKey,
@@ -255,6 +256,7 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
       return {
         uuid: encrypted.uuid,
         content: JSON.parse(content),
+        signature: { required: false },
       }
     }
   }

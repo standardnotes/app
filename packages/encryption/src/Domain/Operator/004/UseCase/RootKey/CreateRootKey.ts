@@ -2,8 +2,8 @@ import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { V004Algorithm } from '../../../../Algorithm'
 import { RootKeyInterface } from '@standardnotes/models'
 import { KeyParamsOrigination, ProtocolVersion } from '@standardnotes/common'
-import { Create004KeyParams } from '@standardnotes/snjs'
 import { DeriveRootKeyUseCase } from './DeriveRootKey'
+import { Create004KeyParams } from '../../../../Keys/RootKey/KeyParamsFunctions'
 
 export class CreateRootKeyUseCase {
   constructor(private readonly crypto: PureCryptoInterface) {}

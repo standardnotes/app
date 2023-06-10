@@ -25,6 +25,7 @@ export interface PayloadInterface<T extends TransferPayload = TransferPayload, C
   readonly dirty?: boolean
   readonly encryptedRawSigningData?: string
   readonly decryptedClientRawSigningData?: ClientRawSigningData
+  readonly signatureVerified?: boolean
 
   readonly lastSyncBegan?: Date
   readonly lastSyncEnd?: Date
@@ -32,10 +33,9 @@ export interface PayloadInterface<T extends TransferPayload = TransferPayload, C
   readonly duplicate_of?: string
 
   readonly user_uuid?: string
-  readonly key_system_identifier: string | undefined
-  readonly shared_vault_uuid: string | undefined
+  readonly key_system_identifier?: string | undefined
+  readonly shared_vault_uuid?: string | undefined
   readonly last_edited_by_uuid?: string
-  readonly signatureVerified?: boolean
 
   /**
    * "Ejected" means a payload for
