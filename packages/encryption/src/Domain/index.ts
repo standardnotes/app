@@ -26,6 +26,8 @@ export * from './Operator/Functions'
 export * from './Operator/OperatorInterface'
 export * from './Operator/OperatorManager'
 export * from './Operator/OperatorWrapper'
+export * from './Operator/PublicKeySet'
+
 export * from './Service/Encryption/EncryptionProviderInterface'
 export * from './Service/Functions'
 export * from './Service/RootKey/KeyMode'

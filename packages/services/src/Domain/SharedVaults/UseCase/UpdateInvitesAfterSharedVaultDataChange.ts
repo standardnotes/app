@@ -84,7 +84,6 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
       const updateInviteResult = await updateInviteUseCase.execute({
         sharedVaultUuid: params.sharedVaultUuid,
         inviteUuid: invite.uuid,
-        senderPublicKey: params.senderEncryptionKeyPair.publicKey,
         encryptedMessage,
         permissions: invite.permissions,
       })

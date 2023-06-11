@@ -78,11 +78,6 @@ export class HandleSuccessfullyChangedCredentials {
     newKeyPair: PkcKeyPair
     newSigningKeyPair: PkcKeyPair
   }): Promise<ClientDisplayableError | undefined> {
-    const isAlreadyEncryptedWithNewPublicKey = params.invite.sender_public_key === params.newKeyPair.publicKey
-    if (isAlreadyEncryptedWithNewPublicKey) {
-      return undefined
-    }
-
     const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(params.sharedVault.systemIdentifier)
     if (!keySystemRootKey) {
       return ClientDisplayableError.FromString('Failed to find key system root key for invite')
@@ -103,7 +98,6 @@ export class HandleSuccessfullyChangedCredentials {
     const updateInviteResponse = await this.sharedVaultInvitesServer.updateInvite({
       sharedVaultUuid: params.invite.shared_vault_uuid,
       inviteUuid: params.invite.uuid,
-      senderPublicKey: params.newKeyPair.publicKey,
       encryptedMessage: newEncryptedVaultData,
     })
 

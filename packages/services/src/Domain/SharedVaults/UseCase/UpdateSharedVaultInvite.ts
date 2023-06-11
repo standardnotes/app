@@ -12,14 +12,12 @@ export class UpdateSharedVaultInviteUseCase {
   async execute(params: {
     sharedVaultUuid: string
     inviteUuid: string
-    senderPublicKey: string
     encryptedMessage: string
     permissions: SharedVaultPermission
   }): Promise<SharedVaultInviteServerHash | ClientDisplayableError> {
     const response = await this.vaultInvitesServer.updateInvite({
       sharedVaultUuid: params.sharedVaultUuid,
       inviteUuid: params.inviteUuid,
-      senderPublicKey: params.senderPublicKey,
       encryptedMessage: params.encryptedMessage,
       permissions: params.permissions,
     })

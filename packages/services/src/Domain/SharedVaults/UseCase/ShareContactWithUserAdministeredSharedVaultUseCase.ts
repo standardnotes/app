@@ -58,7 +58,6 @@ export class ShareContactWithUserAdministeredSharedVaultUseCase {
 
       await messageSendUseCase.execute({
         recipientUuid: vaultUserAsContact.contactUuid,
-        senderPublicKey: params.senderKeyPair.publicKey,
         encryptedMessage,
       })
     }

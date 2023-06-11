@@ -16,14 +16,12 @@ export class AsymmetricMessageServer implements AsymmetricMessageServerInterface
   createMessage(params: CreateAsymmetricMessageParams): Promise<HttpResponse<CreateAsymmetricMessageResponse>> {
     return this.httpService.post(AsymmetricMessagesPaths.createMessage, {
       recipient_uuid: params.recipientUuid,
-      sender_public_key: params.senderPublicKey,
       encrypted_message: params.encryptedMessage,
     })
   }
 
   updateMessage(params: UpdateAsymmetricMessageParams): Promise<HttpResponse<UpdateAsymmetricMessageResponse>> {
     return this.httpService.patch(AsymmetricMessagesPaths.updateMessage(params.messageUuid), {
-      sender_public_key: params.senderPublicKey,
       encrypted_message: params.encryptedMessage,
     })
   }

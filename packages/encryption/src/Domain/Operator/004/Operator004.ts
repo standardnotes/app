@@ -36,6 +36,7 @@ import { CreateRootKeyUseCase } from './UseCase/RootKey/CreateRootKey'
 import { UuidGenerator } from '@standardnotes/utils'
 import { CreateKeySystemItemsKeyUseCase } from './UseCase/KeySystem/CreateKeySystemItemsKey'
 import { AsymmetricDecryptResult } from '../AsymmetricDecryptResult'
+import { PublicKeySet } from '../PublicKeySet'
 
 export class SNProtocolOperator004 implements OperatorInterface {
   constructor(protected readonly crypto: PureCryptoInterface) {}
@@ -144,18 +145,20 @@ export class SNProtocolOperator004 implements OperatorInterface {
 
   asymmetricDecrypt(dto: {
     stringToDecrypt: AsymmetricallyEncryptedString
-    senderPublicKey: HexString
     recipientSecretKey: HexString
   }): AsymmetricDecryptResult | null {
     const usecase = new AsymmetricDecryptUseCase(this.crypto)
     return usecase.execute(dto)
   }
 
-  getSignerPublicKeyFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): HexString {
-    const [_, __, ___, signingDataString] = <V004AsymmetricStringComponents>string.split(':')
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PublicKeySet {
+    const [_, __, ___, additionalDataString] = <V004AsymmetricStringComponents>string.split(':')
     const parseBase64Usecase = new ParseConsistentBase64JsonPayloadUseCase(this.crypto)
-    const signingData = parseBase64Usecase.execute<AsymmetricItemAdditionalData>(signingDataString)
-    return signingData.signingData.publicKey
+    const additionalData = parseBase64Usecase.execute<AsymmetricItemAdditionalData>(additionalDataString)
+    return {
+      encryption: additionalData.senderPublicKey,
+      signing: additionalData.signingData.publicKey,
+    }
   }
 
   versionForAsymmetricallyEncryptedString(string: string): ProtocolVersion {

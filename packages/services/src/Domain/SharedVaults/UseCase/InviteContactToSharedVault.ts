@@ -43,7 +43,6 @@ export class InviteContactToSharedVaultUseCase {
     const createInviteResult = await createInviteUseCase.execute({
       sharedVaultUuid: params.sharedVault.sharedVaultUuid,
       recipientUuid: params.recipient.contactUuid,
-      senderPublicKey: params.senderKeyPair.publicKey,
       encryptedMessage,
       permissions: params.permissions,
     })

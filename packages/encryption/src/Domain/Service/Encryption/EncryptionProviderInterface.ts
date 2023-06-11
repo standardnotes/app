@@ -19,6 +19,7 @@ import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
 import { PkcKeyPair } from '@standardnotes/sncrypto-common'
+import { PublicKeySet } from '../../Operator/PublicKeySet'
 
 export type AsymmetricallyDecryptMessageResult = {
   message: AsymmetricMessagePayload
@@ -118,5 +119,5 @@ export interface EncryptionProviderInterface {
     trustedSenderSigningPublicKey: string | undefined
     privateKey: string
   }): AsymmetricallyDecryptMessageResult | undefined
-  getSignerPublicKeyFromAsymmetricallyEncryptedString(string: string): string
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: string): PublicKeySet
 }

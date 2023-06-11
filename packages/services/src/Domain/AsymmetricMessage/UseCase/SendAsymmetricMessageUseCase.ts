@@ -6,12 +6,10 @@ export class SendAsymmetricMessageUseCase {
 
   async execute(params: {
     recipientUuid: string
-    senderPublicKey: string
     encryptedMessage: string
   }): Promise<AsymmetricMessageServerHash | ClientDisplayableError> {
     const response = await this.messageServer.createMessage({
       recipientUuid: params.recipientUuid,
-      senderPublicKey: params.senderPublicKey,
       encryptedMessage: params.encryptedMessage,
     })
 

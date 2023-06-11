@@ -70,14 +70,14 @@ export class ContactService extends AbstractService<ContactServiceEvent> impleme
   }
 
   public getCollaborationIDFromInvite(invite: SharedVaultInviteServerHash): string {
-    const signingPublicKey = this.encryption.getSignerPublicKeyFromAsymmetricallyEncryptedString(
+    const publicKeySet = this.encryption.getSenderPublicKeySetFromAsymmetricallyEncryptedString(
       invite.encrypted_message,
     )
     return this.buildCollaborationId({
       version: Version1CollaborationId,
       userUuid: invite.sender_uuid,
-      publicKey: invite.sender_public_key,
-      signingPublicKey: signingPublicKey,
+      publicKey: publicKeySet.encryption,
+      signingPublicKey: publicKeySet.signing,
     })
   }
 

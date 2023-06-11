@@ -24,6 +24,7 @@ import {
   SplitPayloadsByEncryptionType,
   V001Algorithm,
   V002Algorithm,
+  PublicKeySet,
 } from '@standardnotes/encryption'
 import {
   BackupFile,
@@ -620,11 +621,12 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     }
   }
 
-  getSignerPublicKeyFromAsymmetricallyEncryptedString(string: string): string {
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: string): PublicKeySet {
     const defaultOperator = this.operatorManager.defaultOperator()
     const version = defaultOperator.versionForAsymmetricallyEncryptedString(string)
+
     const keyOperator = this.operatorManager.operatorForVersion(version)
-    return keyOperator.getSignerPublicKeyFromAsymmetricallyEncryptedString(string)
+    return keyOperator.getSenderPublicKeySetFromAsymmetricallyEncryptedString(string)
   }
 
   public async decryptBackupFile(

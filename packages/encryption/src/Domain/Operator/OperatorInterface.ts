@@ -17,6 +17,7 @@ import { RootKeyEncryptedAuthenticatedData } from '../Types/RootKeyEncryptedAuth
 import { HexString, PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { AsymmetricallyEncryptedString } from './Types'
 import { AsymmetricDecryptResult } from './AsymmetricDecryptResult'
+import { PublicKeySet } from './PublicKeySet'
 
 /**w
  * An operator is responsible for performing crypto operations, such as generating keys
@@ -95,7 +96,7 @@ export interface OperatorInterface {
     stringToDecrypt: AsymmetricallyEncryptedString
     recipientSecretKey: HexString
   }): AsymmetricDecryptResult | null
-  getSignerPublicKeyFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): HexString
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): PublicKeySet
 
   versionForAsymmetricallyEncryptedString(encryptedString: string): ProtocolVersion
 }

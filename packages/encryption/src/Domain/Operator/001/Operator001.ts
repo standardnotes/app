@@ -27,6 +27,8 @@ import { ItemAuthenticatedData } from '../../Types/ItemAuthenticatedData'
 import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
 import { OperatorInterface } from '../OperatorInterface'
+import { PublicKeySet } from '../PublicKeySet'
+import { AsymmetricDecryptResult } from '../AsymmetricDecryptResult'
 
 const NO_IV = '00000000000000000000000000000000'
 
@@ -252,22 +254,18 @@ export class SNProtocolOperator001 implements OperatorInterface {
 
   asymmetricEncrypt(_dto: {
     stringToEncrypt: string
-    senderSecretKey: string
+    senderKeyPair: PkcKeyPair
     senderSigningKeyPair: PkcKeyPair
     recipientPublicKey: string
   }): string {
     throw new Error('Method not implemented.')
   }
 
-  asymmetricDecrypt(_dto: {
-    stringToDecrypt: string
-    senderPublicKey: string
-    recipientSecretKey: string
-  }): { plaintext: string; signatureVerified: boolean; signaturePublicKey: string } | null {
+  asymmetricDecrypt(_dto: { stringToDecrypt: string; recipientSecretKey: string }): AsymmetricDecryptResult | null {
     throw new Error('Method not implemented.')
   }
 
-  getSignerPublicKeyFromAsymmetricallyEncryptedString(_string: string): string {
+  getSenderPublicKeySetFromAsymmetricallyEncryptedString(_string: string): PublicKeySet {
     throw new Error('Method not implemented.')
   }
 }
