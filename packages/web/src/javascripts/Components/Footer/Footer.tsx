@@ -401,32 +401,6 @@ class Footer extends AbstractComponent<Props, State> {
             )}
           </div>
           <div className="center max-h-full overflow-hidden px-4">
-            <button
-              onClick={() => {
-                const selectedNote = this.application.getViewControllerManager().notesController.firstSelectedNote
-
-                if (!selectedNote) {
-                  return
-                }
-
-                // const item = this.application.items.createTemplateItem<NoteContent, SNNote>(ContentType.Note, {
-                //   ...selectedNote.content,
-                //   conflict_of: selectedNote.uuid,
-                // })
-
-                // void this.application.items.insertItem(item).then(() => this.application.sync.sync())
-
-                this.application.mutator
-                  .duplicateItem(selectedNote, {
-                    text: selectedNote.content.text + '\n' + Math.random(),
-                    conflict_of: selectedNote.uuid,
-                  })
-                  .then(() => this.application.sync.sync())
-                  .catch(console.error)
-              }}
-            >
-              Add conflict
-            </button>
             {this.state.arbitraryStatusMessage && (
               <div className="relative z-footer-bar-item max-h-full select-none items-center overflow-hidden text-ellipsis whitespace-nowrap text-xs font-bold text-neutral">
                 {this.state.arbitraryStatusMessage}
