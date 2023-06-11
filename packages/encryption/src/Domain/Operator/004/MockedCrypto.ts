@@ -13,20 +13,29 @@ export function getMockedCrypto(): PureCryptoInterface {
     }
   }
 
+  const replaceColonsToAvoidJSONConflicts = (text: string) => {
+    return text.replace(/:/g, '|')
+  }
+
+  const undoReplaceColonsToAvoidJSONConflicts = (text: string) => {
+    return text.replace(/\|/g, ':')
+  }
+
   crypto.base64Encode = jest.fn().mockImplementation((text: string) => {
-    return `base64-${text}`
+    return `base64-${replaceColonsToAvoidJSONConflicts(text)}`
   })
 
   crypto.base64Decode = jest.fn().mockImplementation((text: string) => {
-    return text.split('base64-')[1]
+    const decodedText = text.split('base64-')[1]
+    return undoReplaceColonsToAvoidJSONConflicts(decodedText)
   })
 
   crypto.xchacha20Encrypt = jest.fn().mockImplementation((text: string) => {
-    return `<e>${text}<e>`
+    return `<e>${replaceColonsToAvoidJSONConflicts(text)}<e>`
   })
 
   crypto.xchacha20Decrypt = jest.fn().mockImplementation((text: string) => {
-    return text.split('<e>')[1]
+    return undoReplaceColonsToAvoidJSONConflicts(text.split('<e>')[1])
   })
 
   crypto.generateRandomKey = jest.fn().mockImplementation(() => {
@@ -34,11 +43,11 @@ export function getMockedCrypto(): PureCryptoInterface {
   })
 
   crypto.sodiumCryptoBoxEasyEncrypt = jest.fn().mockImplementation((text: string) => {
-    return `<e>${text}<e>`
+    return `<e>${replaceColonsToAvoidJSONConflicts(text)}<e>`
   })
 
   crypto.sodiumCryptoBoxEasyDecrypt = jest.fn().mockImplementation((text: string) => {
-    return text.split('<e>')[1]
+    return undoReplaceColonsToAvoidJSONConflicts(text.split('<e>')[1])
   })
 
   crypto.sodiumCryptoBoxSeedKeypair = jest.fn().mockImplementation((seed: string) => {
@@ -52,7 +61,7 @@ export function getMockedCrypto(): PureCryptoInterface {
     })
 
   crypto.sodiumCryptoSign = jest.fn().mockImplementation((message: string, privateKey: string) => {
-    const signature = `signature|m=${message}|pk=${privateKey}`
+    const signature = `signature:m=${message}:pk=${privateKey}`
     return signature
   })
 

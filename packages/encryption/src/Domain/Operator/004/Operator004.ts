@@ -31,7 +31,7 @@ import { AsymmetricDecryptUseCase } from './UseCase/Asymmetric/AsymmetricDecrypt
 import { GenerateDecryptedParametersUseCase } from './UseCase/Symmetric/GenerateDecryptedParameters'
 import { GenerateEncryptedParametersUseCase } from './UseCase/Symmetric/GenerateEncryptedParameters'
 import { DeriveRootKeyUseCase } from './UseCase/RootKey/DeriveRootKey'
-import { GetPayloadAuthenticatedDataUseCase } from './UseCase/Symmetric/GetPayloadAuthenticatedData'
+import { GetPayloadAuthenticatedDataDetachedUseCase } from './UseCase/Symmetric/GetPayloadAuthenticatedDataDetached'
 import { CreateRootKeyUseCase } from './UseCase/RootKey/CreateRootKey'
 import { UuidGenerator } from '@standardnotes/utils'
 import { CreateKeySystemItemsKeyUseCase } from './UseCase/KeySystem/CreateKeySystemItemsKey'
@@ -110,7 +110,7 @@ export class SNProtocolOperator004 implements OperatorInterface {
   public getPayloadAuthenticatedDataForExternalUse(
     encrypted: EncryptedParameters,
   ): RootKeyEncryptedAuthenticatedData | ItemAuthenticatedData | LegacyAttachedData | undefined {
-    const usecase = new GetPayloadAuthenticatedDataUseCase(this.crypto)
+    const usecase = new GetPayloadAuthenticatedDataDetachedUseCase(this.crypto)
     return usecase.execute(encrypted)
   }
 

@@ -6,7 +6,7 @@ import { V004Algorithm } from '../../../../Algorithm'
 export class GenerateEncryptedProtocolStringUseCase {
   constructor(private readonly crypto: PureCryptoInterface) {}
 
-  execute(plaintext: string, rawKey: string, authenticatedData: string, signingData: string): string {
+  execute(plaintext: string, rawKey: string, authenticatedData: string, additionalData: string): string {
     const nonce = this.crypto.generateRandomKey(V004Algorithm.EncryptionNonceLength)
 
     const ciphertext = this.encryptString(plaintext, rawKey, nonce, authenticatedData)
@@ -16,7 +16,7 @@ export class GenerateEncryptedProtocolStringUseCase {
       nonce,
       ciphertext,
       authenticatedData,
-      signingData,
+      additionalData,
     ]
 
     return components.join(V004PartitionCharacter)

@@ -6,7 +6,7 @@ import { LegacyAttachedData } from '../../../../Types/LegacyAttachedData'
 import { deconstructEncryptedPayloadString } from '../../V004AlgorithmHelpers'
 import { StringToAuthenticatedDataUseCase } from '../Utils/StringToAuthenticatedData'
 
-export class GetPayloadAuthenticatedDataUseCase {
+export class GetPayloadAuthenticatedDataDetachedUseCase {
   private stringToAuthenticatedDataUseCase = new StringToAuthenticatedDataUseCase(this.crypto)
 
   constructor(private readonly crypto: PureCryptoInterface) {}
