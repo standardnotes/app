@@ -4,12 +4,7 @@ import { formatDateForContextMenu } from '@/Utils/DateUtils'
 import { calculateReadTime } from './Utils/calculateReadTime'
 import { countNoteAttributes } from './Utils/countNoteAttributes'
 
-export const NoteAttributes: FunctionComponent<{
-  application: SNApplication
-  note: SNNote
-  hideReadTime?: boolean
-  className?: string
-}> = ({ application, note, hideReadTime = false, className }) => {
+export const useNoteAttributes = (application: SNApplication, note: SNNote) => {
   const { words, characters, paragraphs } = useMemo(() => countNoteAttributes(note.text), [note.text])
 
   const readTime = useMemo(() => (typeof words === 'number' ? calculateReadTime(words) : 'N/A'), [words])
@@ -21,6 +16,27 @@ export const NoteAttributes: FunctionComponent<{
   const editor = application.componentManager.editorForNote(note)
   const format = editor?.package_info?.file_type || 'txt'
 
+  return {
+    words,
+    characters,
+    paragraphs,
+    readTime,
+    dateLastModified,
+    dateCreated,
+    format,
+  }
+}
+
+export const NoteAttributes: FunctionComponent<{
+  application: SNApplication
+  note: SNNote
+  className?: string
+}> = ({ application, note, className }) => {
+  const { words, characters, paragraphs, readTime, dateLastModified, dateCreated, format } = useNoteAttributes(
+    application,
+    note,
+  )
+
   return (
     <div className={classNames('select-text px-3 py-1.5 text-sm font-medium text-neutral lg:text-xs', className)}>
       {typeof words === 'number' && (format === 'txt' || format === 'md') ? (
@@ -28,11 +44,9 @@ export const NoteAttributes: FunctionComponent<{
           <div className="mb-1">
             {words} words · {characters} characters · {paragraphs} paragraphs
           </div>
-          {!hideReadTime && (
-            <div className="mb-1">
-              <span className="font-semibold">Read time:</span> {readTime}
-            </div>
-          )}
+          <div className="mb-1">
+            <span className="font-semibold">Read time:</span> {readTime}
+          </div>
         </>
       ) : null}
       <div className="mb-1">

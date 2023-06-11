@@ -46,6 +46,7 @@ const Popover = ({
   disableMobileFullscreenTakeover,
   maxHeight,
   portal,
+  offset,
 }: Props) => {
   const popoverId = useRef(UuidGenerator.GenerateUuid())
 
@@ -126,6 +127,7 @@ const Popover = ({
         title={title}
         togglePopover={togglePopover}
         portal={portal}
+        offset={offset}
       >
         {children}
       </PositionedPopoverContent>

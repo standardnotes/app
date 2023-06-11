@@ -13,8 +13,22 @@ import LinkedItemBubblesContainer from '../LinkedItems/LinkedItemBubblesContaine
 import { StringUtils, Strings } from '@/Constants/Strings'
 import { confirmDialog } from '@standardnotes/ui-services'
 import { useListKeyboardNavigation } from '@/Hooks/useListKeyboardNavigation'
-import { NoteAttributes } from '../NotesOptions/NoteAttributes'
+import { useNoteAttributes } from '../NotesOptions/NoteAttributes'
 import CheckIndicator from '../Checkbox/CheckIndicator'
+import ModalDialogButtons from '../Modal/ModalDialogButtons'
+import {
+  Select,
+  SelectArrow,
+  SelectItem,
+  SelectList,
+  Toolbar,
+  ToolbarItem,
+  useSelectStore,
+  useToolbarStore,
+} from '@ariakit/react'
+import Popover from '../Popover/Popover'
+import Icon from '../Icon/Icon'
+import Button from '../Button/Button'
 
 const ConflictListItem = ({
   isSelected,
@@ -28,6 +42,7 @@ const ConflictListItem = ({
   note: SNNote
 }) => {
   const application = useApplication()
+  const { words, characters, paragraphs, dateLastModified, dateCreated, format } = useNoteAttributes(application, note)
 
   return (
     <button
@@ -43,7 +58,22 @@ const ConflictListItem = ({
         <CheckIndicator checked={isSelected} />
         <div className="font-semibold">{title}</div>
       </div>
-      <NoteAttributes application={application} note={note} className="!p-0" hideReadTime />
+      <div className="text-sm text-neutral lg:text-xs">
+        {typeof words === 'number' && (format === 'txt' || format === 'md') ? (
+          <div className="mb-1">
+            {words} words · {characters} characters · {paragraphs} paragraphs
+          </div>
+        ) : null}
+        <div className="mb-1">
+          <div className="mb-0.5 font-semibold">Last modified</div> {dateLastModified}
+        </div>
+        <div className="mb-1">
+          <div className="mb-0.5 font-semibold">Created</div> {dateCreated}
+        </div>
+        <div>
+          <div className="mb-0.5 font-semibold">Note ID</div> {note.uuid}
+        </div>
+      </div>
     </button>
   )
 }
@@ -124,6 +154,8 @@ const NoteContent = ({ note }: { note: SNNote }) => {
     </div>
   )
 }
+
+type ConflictAction = 'move-to-trash' | 'delete-permanently'
 
 const NoteConflictResolutionModal = ({
   currentNote,
@@ -208,28 +240,23 @@ const NoteConflictResolutionModal = ({
         type: 'cancel',
         mobileSlot: 'left',
       },
-      {
-        label: 'Move selected to trash',
-        onClick: trashSelectedNote,
-        type: 'destructive',
-        mobileSlot: 'left',
-        hidden: selectedNotes.length !== 1,
-      },
-      {
-        label: isMobileScreen ? 'Keep' : 'Keep only selected',
-        onClick: keepOnlySelectedNote,
-        type: 'primary',
-        mobileSlot: 'right',
-        hidden: selectedNotes.length !== 1,
-      },
     ],
-    [close, isMobileScreen, keepOnlySelectedNote, selectedNotes.length, trashSelectedNote],
+    [close],
   )
 
   const listRef = useRef<HTMLDivElement>(null)
   useListKeyboardNavigation(listRef)
 
   const [selectedMobileTab, setSelectedMobileTab] = useState<'list' | 'content'>('list')
+
+  const toolbarStore = useToolbarStore()
+  const [selectedAction, setSelectionAction] = useState<ConflictAction>('move-to-trash')
+  const selectStore = useSelectStore({
+    value: selectedAction,
+    setValue: (value) => setSelectionAction(value as ConflictAction),
+  })
+  const isSelectOpen = selectStore.useState('open')
+  const [selectAnchor, setSelectAnchor] = useState<HTMLButtonElement | null>(null)
 
   return (
     <Modal
@@ -240,6 +267,66 @@ const NoteConflictResolutionModal = ({
       }}
       actions={actions}
       close={close}
+      customFooter={
+        <ModalDialogButtons>
+          <Button className="mr-auto" onClick={close}>
+            Cancel
+          </Button>
+          {selectedNotes.length === 1 && (
+            <Toolbar className="flex items-stretch text-info-contrast" store={toolbarStore}>
+              <ToolbarItem
+                onClick={() => {
+                  if (selectedAction === 'move-to-trash') {
+                    trashSelectedNote().catch(console.error)
+                  } else {
+                    keepOnlySelectedNote().catch(console.error)
+                  }
+                }}
+                className="rounded rounded-r-none bg-info px-3 py-1.5 text-base font-bold hover:brightness-110 focus-visible:brightness-110 lg:text-sm"
+              >
+                Keep selected, {selectedAction === 'move-to-trash' ? 'trash others' : 'delete others'}
+              </ToolbarItem>
+              <Select
+                ref={setSelectAnchor}
+                render={
+                  <ToolbarItem className="rounded rounded-l-none border-l border-border bg-info py-1.5 px-3 hover:brightness-110 focus-visible:brightness-110">
+                    <SelectArrow />
+                  </ToolbarItem>
+                }
+                store={selectStore}
+              />
+              <Popover
+                title="Conflict options"
+                open={isSelectOpen}
+                anchorElement={selectAnchor}
+                className="z-modal py-1"
+                offset={0}
+              >
+                <SelectList className="cursor-pointer" store={selectStore}>
+                  <SelectItem className="px-2.5 py-1.5 hover:bg-contrast" value="move-to-trash">
+                    <div className="flex items-center gap-1 font-bold">
+                      {selectedAction === 'move-to-trash' && <Icon type="check-bold" size="small" />}
+                      Move others to trash
+                    </div>
+                    <div className="text-neutral">
+                      Only the selected version will be kept; others will be moved to trash.
+                    </div>
+                  </SelectItem>
+                  <SelectItem className="px-2.5 py-1.5 hover:bg-contrast" value="delete-permanently">
+                    <div className="flex items-center gap-1 font-bold">
+                      {selectedAction === 'delete-permanently' && <Icon type="check-bold" size="small" />}
+                      Delete others permanently
+                    </div>
+                    <div className="text-neutral">
+                      Only the selected version will be kept; others will be deleted permanently.
+                    </div>
+                  </SelectItem>
+                </SelectList>
+              </Popover>
+            </Toolbar>
+          )}
+        </ModalDialogButtons>
+      }
     >
       <div className="flex border-b border-border md:hidden">
         <button
@@ -297,7 +384,7 @@ const NoteConflictResolutionModal = ({
       </div>
       <div
         className={classNames(
-          'w-full flex-grow divide-x divide-border',
+          'w-full flex-grow divide-x divide-border pb-0.5',
           isMobileScreen ? (selectedMobileTab === 'content' ? 'flex' : 'hidden md:flex') : 'grid grid-rows-1',
         )}
         style={!isMobileScreen ? { gridTemplateColumns: `repeat(${selectedNotes.length}, 1fr)` } : undefined}

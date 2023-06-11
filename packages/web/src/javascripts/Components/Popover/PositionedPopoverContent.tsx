@@ -25,6 +25,7 @@ const PositionedPopoverContent = ({
   disableMobileFullscreenTakeover,
   maxHeight,
   portal = true,
+  offset,
 }: PopoverContentProps) => {
   const [popoverElement, setPopoverElement] = useState<HTMLDivElement | null>(null)
   const popoverRect = useAutoElementRect(popoverElement)
@@ -47,6 +48,7 @@ const PositionedPopoverContent = ({
     side,
     disableMobileFullscreenTakeover: disableMobileFullscreenTakeover,
     maxHeightFunction: maxHeight,
+    offset,
   })
 
   usePopoverCloseOnClickOutside({

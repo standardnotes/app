@@ -125,7 +125,7 @@ const LinkedItemBubblesContainer = ({
   const visibleItems = isCollapsed ? itemsToDisplay.slice(0, 5) : itemsToDisplay
   const nonVisibleItems = itemsToDisplay.length - visibleItems.length
 
-  const [canShowContainerToggle, setCanShowContainerToggle] = useState(false)
+  const [canShowContainerToggle, setCanShowContainerToggle] = useState(true)
   const [linkContainer, setLinkContainer] = useState<HTMLDivElement | null>(null)
   useEffect(() => {
     const container = linkContainer
