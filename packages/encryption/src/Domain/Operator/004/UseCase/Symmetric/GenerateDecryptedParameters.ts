@@ -48,11 +48,11 @@ export class GenerateDecryptedParametersUseCase {
       encrypted,
       key.itemsKey,
       {
-        signingData: contentKeyResult.components.signingData,
+        additionalData: contentKeyResult.components.additionalData,
         plaintext: contentKeyResult.contentKey,
       },
       {
-        signingData: contentResult.components.signingData,
+        additionalData: contentResult.components.additionalData,
         plaintext: contentResult.content,
       },
     )

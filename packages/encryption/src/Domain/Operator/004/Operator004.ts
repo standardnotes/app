@@ -23,7 +23,7 @@ import { LegacyAttachedData } from '../../Types/LegacyAttachedData'
 import { RootKeyEncryptedAuthenticatedData } from '../../Types/RootKeyEncryptedAuthenticatedData'
 import { OperatorInterface } from '../OperatorInterface'
 import { AsymmetricallyEncryptedString } from '../Types'
-import { AsymmetricSigningPayload } from '../../Types/EncryptionSigningData'
+import { AsymmetricItemAdditionalData } from '../../Types/EncryptionAdditionalData'
 import { V004AsymmetricStringComponents } from './V004AlgorithmTypes'
 import { AsymmetricEncryptUseCase } from './UseCase/Asymmetric/AsymmetricEncrypt'
 import { ParseConsistentBase64JsonPayloadUseCase } from './UseCase/Utils/ParseConsistentBase64JsonPayload'
@@ -153,8 +153,8 @@ export class SNProtocolOperator004 implements OperatorInterface {
   getSignerPublicKeyFromAsymmetricallyEncryptedString(string: AsymmetricallyEncryptedString): HexString {
     const [_, __, ___, signingDataString] = <V004AsymmetricStringComponents>string.split(':')
     const parseBase64Usecase = new ParseConsistentBase64JsonPayloadUseCase(this.crypto)
-    const signingData = parseBase64Usecase.execute<AsymmetricSigningPayload>(signingDataString)
-    return signingData.data.publicKey
+    const signingData = parseBase64Usecase.execute<AsymmetricItemAdditionalData>(signingDataString)
+    return signingData.signingData.publicKey
   }
 
   versionForAsymmetricallyEncryptedString(string: string): ProtocolVersion {

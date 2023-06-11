@@ -4,7 +4,7 @@ import * as Utils from '@standardnotes/utils'
 export class CreateConsistentBase64JsonPayloadUseCase {
   constructor(private readonly crypto: PureCryptoInterface) {}
 
-  execute(jsonObject: unknown): Base64String {
+  execute<T>(jsonObject: T): Base64String {
     return this.crypto.base64Encode(JSON.stringify(Utils.sortedCopy(Utils.omitUndefinedCopy(jsonObject))))
   }
 }

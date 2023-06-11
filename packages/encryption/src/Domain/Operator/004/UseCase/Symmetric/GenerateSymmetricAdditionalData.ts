@@ -1,8 +1,8 @@
 import { PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
-import { SymmetricItemSigningPayload } from '../../../../Types/EncryptionSigningData'
+import { AdditionalData } from '../../../../Types/EncryptionAdditionalData'
 import { HashStringUseCase } from '../Hash/HashString'
 
-export class GenerateSymmetricSigningDataUseCase {
+export class GenerateSymmetricAdditionalDataUseCase {
   private hashUseCase = new HashStringUseCase(this.crypto)
 
   constructor(private readonly crypto: PureCryptoInterface) {}
@@ -10,22 +10,24 @@ export class GenerateSymmetricSigningDataUseCase {
   execute(
     payloadPlaintext: string,
     payloadEncryptionKey: string,
-    signingKeyPair: PkcKeyPair | undefined,
-  ): { signingPayload: SymmetricItemSigningPayload; plaintextHash: string } {
+    signingKeyPair?: PkcKeyPair,
+  ): { additionalData: AdditionalData; plaintextHash: string } {
     const plaintextHash = this.hashUseCase.execute(payloadPlaintext, payloadEncryptionKey)
 
     if (!signingKeyPair) {
       return {
-        signingPayload: {},
+        additionalData: {},
         plaintextHash,
       }
     }
 
+    const signature = this.crypto.sodiumCryptoSign(plaintextHash, signingKeyPair.privateKey)
+
     return {
-      signingPayload: {
-        data: {
+      additionalData: {
+        signingData: {
           publicKey: signingKeyPair.publicKey,
-          signature: this.crypto.sodiumCryptoSign(plaintextHash, signingKeyPair.privateKey),
+          signature,
         },
       },
       plaintextHash,

@@ -6,7 +6,7 @@ export function doesPayloadRequireSigning(payload: { key_system_identifier?: str
 
 export function deconstructEncryptedPayloadString(payloadString: string): V004Components {
   /** Base64 encoding of JSON.stringify({}) */
-  const EmptySigningDataString = 'e30='
+  const EmptyAdditionalDataString = 'e30='
 
   const components = payloadString.split(V004PartitionCharacter) as V004StringComponents
 
@@ -15,6 +15,6 @@ export function deconstructEncryptedPayloadString(payloadString: string): V004Co
     nonce: components[1],
     ciphertext: components[2],
     authenticatedData: components[3],
-    signingData: components[4] ?? EmptySigningDataString,
+    additionalData: components[4] ?? EmptyAdditionalDataString,
   }
 }

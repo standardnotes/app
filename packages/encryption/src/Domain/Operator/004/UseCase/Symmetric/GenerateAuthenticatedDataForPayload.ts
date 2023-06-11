@@ -19,7 +19,7 @@ import { isKeySystemItemsKey } from '../../../../Keys/KeySystemItemsKey/KeySyste
 
 /**
  * For items that are encrypted with a root key, we append the root key's key params, so
- * that in the event the client/user loses a reference to their root key, they may still
+ * that in the event the user loses a reference to their root key, they may still
  * decrypt data by regenerating the key based on the attached key params.
  */
 export class GenerateAuthenticatedDataForPayloadUseCase {

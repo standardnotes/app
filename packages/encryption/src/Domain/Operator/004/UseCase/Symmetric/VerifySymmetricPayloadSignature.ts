@@ -1,7 +1,7 @@
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { doesPayloadRequireSigning } from '../../V004AlgorithmHelpers'
 import { ParseConsistentBase64JsonPayloadUseCase } from '../Utils/ParseConsistentBase64JsonPayload'
-import { SymmetricItemSigningPayload } from '../../../../Types/EncryptionSigningData'
+import { SymmetricItemAdditionalData } from '../../../../Types/EncryptionAdditionalData'
 import { DecryptedParameters } from '../../../../Types/EncryptedParameters'
 import { HashStringUseCase } from '../Hash/HashString'
 
@@ -15,25 +15,25 @@ export class VerifySymmetricPayloadSignatureUseCase {
     payload: { key_system_identifier?: string; shared_vault_uuid?: string },
     payloadEncryptionKey: string,
     contentKeyParameters: {
-      signingData: string
+      additionalData: string
       plaintext: string
     },
     contentParameters: {
-      signingData: string
+      additionalData: string
       plaintext: string
     },
   ): DecryptedParameters['signature'] {
-    const contentKeySigningPayload = this.parseBase64Usecase.execute<SymmetricItemSigningPayload>(
-      contentKeyParameters.signingData,
+    const contentKeyAdditionalData = this.parseBase64Usecase.execute<SymmetricItemAdditionalData>(
+      contentKeyParameters.additionalData,
     )
 
-    const contentSigningPayload = this.parseBase64Usecase.execute<SymmetricItemSigningPayload>(
-      contentParameters.signingData,
+    const contentAdditionalData = this.parseBase64Usecase.execute<SymmetricItemAdditionalData>(
+      contentParameters.additionalData,
     )
 
     const verificationRequired = doesPayloadRequireSigning(payload)
 
-    if (!contentKeySigningPayload.data || !contentSigningPayload.data) {
+    if (!contentKeyAdditionalData.signingData || !contentAdditionalData.signingData) {
       if (verificationRequired) {
         return {
           required: true,
@@ -48,7 +48,7 @@ export class VerifySymmetricPayloadSignatureUseCase {
       }
     }
 
-    if (contentKeySigningPayload.data.publicKey !== contentSigningPayload.data.publicKey) {
+    if (contentKeyAdditionalData.signingData.publicKey !== contentAdditionalData.signingData.publicKey) {
       return {
         required: verificationRequired,
         result: {
@@ -58,18 +58,18 @@ export class VerifySymmetricPayloadSignatureUseCase {
       }
     }
 
-    const commonPublicKey = contentKeySigningPayload.data.publicKey
+    const commonPublicKey = contentKeyAdditionalData.signingData.publicKey
 
     const contentKeySignatureVerified = this.verifySignature(
       contentKeyParameters.plaintext,
-      contentKeySigningPayload.data.signature,
+      contentKeyAdditionalData.signingData.signature,
       commonPublicKey,
       payloadEncryptionKey,
     )
 
     const contentSignatureVerified = this.verifySignature(
       contentParameters.plaintext,
-      contentSigningPayload.data.signature,
+      contentAdditionalData.signingData.signature,
       commonPublicKey,
       payloadEncryptionKey,
     )

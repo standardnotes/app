@@ -1,9 +1,9 @@
-import { SigningPayloadEmbeddedData } from '../../../../Types/EncryptionSigningData'
+import { SigningData } from '../../../../Types/EncryptionAdditionalData'
 import { ClientRawSigningData } from '@standardnotes/models'
 
-export class GeneratePersistentClientSignature {
+export class GenerateRawClientSigningDataUseCase {
   execute(
-    contentSigningData: SigningPayloadEmbeddedData,
+    contentSigningData: SigningData,
     previousRawSigningData: ClientRawSigningData | undefined,
     newContentHash: string,
   ): ClientRawSigningData {

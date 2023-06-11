@@ -13,19 +13,20 @@ import { doesPayloadRequireSigning } from '../../V004AlgorithmHelpers'
 import { EncryptedParameters } from '../../../../Types/EncryptedParameters'
 import { GenerateAuthenticatedDataForPayloadUseCase } from './GenerateAuthenticatedDataForPayload'
 import { GenerateEncryptedProtocolStringUseCase } from './GenerateEncryptedProtocolString'
-import { GeneratePersistentClientSignature } from './GeneratePersistentClientSignature'
-import { GenerateSymmetricSigningDataUseCase } from './GenerateSymmetricSigningData'
+import { GenerateRawClientSigningDataUseCase } from './GenerateRawClientSigningData'
+import { GenerateSymmetricAdditionalDataUseCase } from './GenerateSymmetricAdditionalData'
 import { isItemsKey } from '../../../../Keys/ItemsKey/ItemsKey'
 import { isKeySystemItemsKey } from '../../../../Keys/KeySystemItemsKey/KeySystemItemsKey'
 import { ItemAuthenticatedData } from '../../../../Types/ItemAuthenticatedData'
 import { V004Algorithm } from '../../../../Algorithm'
+import { AdditionalData } from '../../../../Types/EncryptionAdditionalData'
 
 export class GenerateEncryptedParametersUseCase {
   private generateProtocolStringUseCase = new GenerateEncryptedProtocolStringUseCase(this.crypto)
   private generateAuthenticatedDataUseCase = new GenerateAuthenticatedDataForPayloadUseCase()
-  private generateSigningDataUseCase = new GenerateSymmetricSigningDataUseCase(this.crypto)
-  private base64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
-  private generatePersistentClientSignatureUseCase = new GeneratePersistentClientSignature()
+  private generateAdditionalDataUseCase = new GenerateSymmetricAdditionalDataUseCase(this.crypto)
+  private encodeBase64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
+  private generatePersistentClientSignatureUseCase = new GenerateRawClientSigningDataUseCase()
 
   constructor(private readonly crypto: PureCryptoInterface) {}
 
@@ -77,7 +78,7 @@ export class GenerateEncryptedParametersUseCase {
   } {
     const content = JSON.stringify(payload.content)
 
-    const { signingPayload, plaintextHash } = this.generateSigningDataUseCase.execute(
+    const { additionalData, plaintextHash } = this.generateAdditionalDataUseCase.execute(
       content,
       key.itemsKey,
       signingKeyPair,
@@ -86,17 +87,17 @@ export class GenerateEncryptedParametersUseCase {
     const encryptedContent = this.generateProtocolStringUseCase.execute(
       content,
       contentKey,
-      this.base64DataUsecase.execute(commonAuthenticatedData),
-      this.base64DataUsecase.execute(signingPayload),
+      this.encodeBase64DataUsecase.execute<ItemAuthenticatedData>(commonAuthenticatedData),
+      this.encodeBase64DataUsecase.execute<AdditionalData>(additionalData),
     )
 
-    const persistentClientSignature = !signingPayload.data
-      ? undefined
-      : this.generatePersistentClientSignatureUseCase.execute(
-          signingPayload.data,
+    const persistentClientSignature = additionalData.signingData
+      ? this.generatePersistentClientSignatureUseCase.execute(
+          additionalData.signingData,
           payload.rawSigningDataClientOnly,
           plaintextHash,
         )
+      : undefined
 
     return {
       encryptedContent,
@@ -111,13 +112,13 @@ export class GenerateEncryptedParametersUseCase {
   ) {
     const contentKey = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
 
-    const { signingPayload } = this.generateSigningDataUseCase.execute(contentKey, key.itemsKey, signingKeyPair)
+    const { additionalData } = this.generateAdditionalDataUseCase.execute(contentKey, key.itemsKey, signingKeyPair)
 
     const encryptedContentKey = this.generateProtocolStringUseCase.execute(
       contentKey,
       key.itemsKey,
-      this.base64DataUsecase.execute(commonAuthenticatedData),
-      this.base64DataUsecase.execute(signingPayload),
+      this.encodeBase64DataUsecase.execute<ItemAuthenticatedData>(commonAuthenticatedData),
+      this.encodeBase64DataUsecase.execute<AdditionalData>(additionalData),
     )
 
     return {

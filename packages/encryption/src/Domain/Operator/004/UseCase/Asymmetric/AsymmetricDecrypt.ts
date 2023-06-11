@@ -2,7 +2,7 @@ import { HexString, PureCryptoInterface } from '@standardnotes/sncrypto-common'
 import { AsymmetricallyEncryptedString } from '../../../Types'
 import { V004AsymmetricStringComponents } from '../../V004AlgorithmTypes'
 import { ParseConsistentBase64JsonPayloadUseCase } from '../Utils/ParseConsistentBase64JsonPayload'
-import { AsymmetricSigningPayload } from '../../../../Types/EncryptionSigningData'
+import { AsymmetricItemAdditionalData } from '../../../../Types/EncryptionAdditionalData'
 
 export class AsymmetricDecryptUseCase {
   constructor(private readonly crypto: PureCryptoInterface) {}
@@ -24,18 +24,18 @@ export class AsymmetricDecryptUseCase {
 
       const parseBase64Usecase = new ParseConsistentBase64JsonPayloadUseCase(this.crypto)
 
-      const signingData = parseBase64Usecase.execute<AsymmetricSigningPayload>(signingDataString)
+      const signingData = parseBase64Usecase.execute<AsymmetricItemAdditionalData>(signingDataString)
 
       const signatureVerified = this.crypto.sodiumCryptoSignVerify(
         ciphertext,
-        signingData.data.signature,
-        signingData.data.publicKey,
+        signingData.signingData.signature,
+        signingData.signingData.publicKey,
       )
 
       return {
         plaintext,
         signatureVerified,
-        signaturePublicKey: signingData.data.publicKey,
+        signaturePublicKey: signingData.signingData.publicKey,
       }
     } catch (error) {
       return null

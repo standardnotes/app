@@ -1,10 +1,11 @@
+import { EncryptedParameters } from './../../../../Types/EncryptedParameters'
 import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 
 import { getMockedCrypto } from '../../MockedCrypto'
 import { VerifySymmetricPayloadSignatureUseCase } from './VerifySymmetricPayloadSignature'
-import { EncryptedParameters } from '@standardnotes/snjs'
-import { GenerateSymmetricSigningDataUseCase } from './GenerateSymmetricSigningData'
+import { GenerateSymmetricAdditionalDataUseCase } from './GenerateSymmetricAdditionalData'
 import { CreateConsistentBase64JsonPayloadUseCase } from '../Utils/CreateConsistentBase64JsonPayload'
+import { doesPayloadRequireSigning } from '../../V004AlgorithmHelpers'
 
 describe('generate symmetric signing data usecase', () => {
   let crypto: PureCryptoInterface
@@ -13,6 +14,29 @@ describe('generate symmetric signing data usecase', () => {
   beforeEach(() => {
     crypto = getMockedCrypto()
     usecase = new VerifySymmetricPayloadSignatureUseCase(crypto)
+  })
+
+  it('payload with key system identifier or shared vault uuid should require signature', () => {
+    const payload: Partial<EncryptedParameters> = {
+      key_system_identifier: '123',
+    }
+
+    expect(doesPayloadRequireSigning(payload)).toBe(true)
+
+    const payloadTwo: Partial<EncryptedParameters> = {
+      shared_vault_uuid: '456',
+    }
+
+    expect(doesPayloadRequireSigning(payloadTwo)).toBe(true)
+  })
+
+  it('payload without key system identifier or shared vault uuid should not require signature', () => {
+    const payload: Partial<EncryptedParameters> = {
+      key_system_identifier: undefined,
+      shared_vault_uuid: undefined,
+    }
+
+    expect(doesPayloadRequireSigning(payload)).toBe(false)
   })
 
   it('signature should be verified with correct parameters', () => {
@@ -25,10 +49,18 @@ describe('generate symmetric signing data usecase', () => {
     const contentKey = 'contentkeysecret'
 
     const keypair = crypto.sodiumCryptoSignSeedKeypair('seedling')
-    const generateSigningDataUseCase = new GenerateSymmetricSigningDataUseCase(crypto)
+    const generateAdditionalDataUseCase = new GenerateSymmetricAdditionalDataUseCase(crypto)
 
-    const contentSigningData = generateSigningDataUseCase.execute(content, payloadEncryptionKey, keypair)
-    const contentKeySigningData = generateSigningDataUseCase.execute(contentKey, payloadEncryptionKey, keypair)
+    const contentAdditionalDataResultResult = generateAdditionalDataUseCase.execute(
+      content,
+      payloadEncryptionKey,
+      keypair,
+    )
+    const contentKeyAdditionalDataResultResult = generateAdditionalDataUseCase.execute(
+      contentKey,
+      payloadEncryptionKey,
+      keypair,
+    )
 
     const encodeUseCase = new CreateConsistentBase64JsonPayloadUseCase(crypto)
 
@@ -36,11 +68,11 @@ describe('generate symmetric signing data usecase', () => {
       payload,
       payloadEncryptionKey,
       {
-        signingData: encodeUseCase.execute(contentKeySigningData.signingPayload),
+        additionalData: encodeUseCase.execute(contentKeyAdditionalDataResultResult.additionalData),
         plaintext: contentKey,
       },
       {
-        signingData: encodeUseCase.execute(contentSigningData.signingPayload),
+        additionalData: encodeUseCase.execute(contentAdditionalDataResultResult.additionalData),
         plaintext: content,
       },
     )
@@ -63,10 +95,14 @@ describe('generate symmetric signing data usecase', () => {
     const content = 'contentplaintext'
     const contentKey = 'contentkeysecret'
 
-    const generateSigningDataUseCase = new GenerateSymmetricSigningDataUseCase(crypto)
+    const generateAdditionalDataUseCase = new GenerateSymmetricAdditionalDataUseCase(crypto)
 
-    const contentSigningData = generateSigningDataUseCase.execute(content, payloadEncryptionKey, undefined)
-    const contentKeySigningData = generateSigningDataUseCase.execute(contentKey, payloadEncryptionKey, undefined)
+    const contentAdditionalDataResult = generateAdditionalDataUseCase.execute(content, payloadEncryptionKey, undefined)
+    const contentKeyAdditionalDataResult = generateAdditionalDataUseCase.execute(
+      contentKey,
+      payloadEncryptionKey,
+      undefined,
+    )
 
     const encodeUseCase = new CreateConsistentBase64JsonPayloadUseCase(crypto)
 
@@ -74,11 +110,11 @@ describe('generate symmetric signing data usecase', () => {
       payloadWithOptionalSigning,
       payloadEncryptionKey,
       {
-        signingData: encodeUseCase.execute(contentKeySigningData.signingPayload),
+        additionalData: encodeUseCase.execute(contentKeyAdditionalDataResult.additionalData),
         plaintext: contentKey,
       },
       {
-        signingData: encodeUseCase.execute(contentSigningData.signingPayload),
+        additionalData: encodeUseCase.execute(contentAdditionalDataResult.additionalData),
         plaintext: content,
       },
     )
@@ -97,10 +133,14 @@ describe('generate symmetric signing data usecase', () => {
     const content = 'contentplaintext'
     const contentKey = 'contentkeysecret'
 
-    const generateSigningDataUseCase = new GenerateSymmetricSigningDataUseCase(crypto)
+    const generateAdditionalDataUseCase = new GenerateSymmetricAdditionalDataUseCase(crypto)
 
-    const contentSigningData = generateSigningDataUseCase.execute(content, payloadEncryptionKey, undefined)
-    const contentKeySigningData = generateSigningDataUseCase.execute(contentKey, payloadEncryptionKey, undefined)
+    const contentAdditionalDataResult = generateAdditionalDataUseCase.execute(content, payloadEncryptionKey, undefined)
+    const contentKeyAdditionalDataResult = generateAdditionalDataUseCase.execute(
+      contentKey,
+      payloadEncryptionKey,
+      undefined,
+    )
 
     const encodeUseCase = new CreateConsistentBase64JsonPayloadUseCase(crypto)
 
@@ -108,11 +148,11 @@ describe('generate symmetric signing data usecase', () => {
       payloadWithRequiredSigning,
       payloadEncryptionKey,
       {
-        signingData: encodeUseCase.execute(contentKeySigningData.signingPayload),
+        additionalData: encodeUseCase.execute(contentKeyAdditionalDataResult.additionalData),
         plaintext: contentKey,
       },
       {
-        signingData: encodeUseCase.execute(contentSigningData.signingPayload),
+        additionalData: encodeUseCase.execute(contentAdditionalDataResult.additionalData),
         plaintext: content,
       },
     )
@@ -137,10 +177,14 @@ describe('generate symmetric signing data usecase', () => {
 
     const contentKeyPair = crypto.sodiumCryptoSignSeedKeypair('contentseed')
     const contentKeyKeyPair = crypto.sodiumCryptoSignSeedKeypair('contentkeyseed')
-    const generateSigningDataUseCase = new GenerateSymmetricSigningDataUseCase(crypto)
+    const generateAdditionalDataUseCase = new GenerateSymmetricAdditionalDataUseCase(crypto)
 
-    const contentSigningData = generateSigningDataUseCase.execute(content, payloadEncryptionKey, contentKeyPair)
-    const contentKeySigningData = generateSigningDataUseCase.execute(
+    const contentAdditionalDataResult = generateAdditionalDataUseCase.execute(
+      content,
+      payloadEncryptionKey,
+      contentKeyPair,
+    )
+    const contentKeyAdditionalDataResult = generateAdditionalDataUseCase.execute(
       contentKey,
       payloadEncryptionKey,
       contentKeyKeyPair,
@@ -152,11 +196,11 @@ describe('generate symmetric signing data usecase', () => {
       payload,
       payloadEncryptionKey,
       {
-        signingData: encodeUseCase.execute(contentKeySigningData.signingPayload),
+        additionalData: encodeUseCase.execute(contentKeyAdditionalDataResult.additionalData),
         plaintext: contentKey,
       },
       {
-        signingData: encodeUseCase.execute(contentSigningData.signingPayload),
+        additionalData: encodeUseCase.execute(contentAdditionalDataResult.additionalData),
         plaintext: content,
       },
     )

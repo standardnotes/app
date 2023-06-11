@@ -3,7 +3,7 @@ import { PureCryptoInterface } from '@standardnotes/sncrypto-common'
 
 import { ItemAuthenticatedData } from './../../../../Types/ItemAuthenticatedData'
 import { GenerateEncryptedProtocolStringUseCase } from './GenerateEncryptedProtocolString'
-import { SigningPayload } from '../../../../Types/EncryptionSigningData'
+import { AdditionalData } from '../../../../Types/EncryptionAdditionalData'
 import { getMockedCrypto } from '../../MockedCrypto'
 
 describe('generate encrypted protocol string', () => {
@@ -21,7 +21,7 @@ describe('generate encrypted protocol string', () => {
       v: ProtocolVersion.V004,
     }
 
-    const signingData: SigningPayload = {}
+    const signingData: AdditionalData = {}
 
     const nonce = 'noncy'
     crypto.generateRandomKey = jest.fn().mockReturnValue(nonce)
