@@ -5,6 +5,8 @@ import { ParseConsistentBase64JsonPayloadUseCase } from '../Utils/ParseConsisten
 import { AsymmetricItemAdditionalData } from '../../../../Types/EncryptionAdditionalData'
 
 export class AsymmetricDecryptUseCase {
+  private parseBase64Usecase = new ParseConsistentBase64JsonPayloadUseCase(this.crypto)
+
   constructor(private readonly crypto: PureCryptoInterface) {}
 
   execute(dto: {
@@ -12,7 +14,7 @@ export class AsymmetricDecryptUseCase {
     senderPublicKey: HexString
     recipientSecretKey: HexString
   }): { plaintext: HexString; signatureVerified: boolean; signaturePublicKey: string } | null {
-    const [_, nonce, ciphertext, signingDataString] = <V004AsymmetricStringComponents>dto.stringToDecrypt.split(':')
+    const [_, nonce, ciphertext, additionalDataString] = <V004AsymmetricStringComponents>dto.stringToDecrypt.split(':')
 
     try {
       const plaintext = this.crypto.sodiumCryptoBoxEasyDecrypt(
@@ -22,20 +24,18 @@ export class AsymmetricDecryptUseCase {
         dto.recipientSecretKey,
       )
 
-      const parseBase64Usecase = new ParseConsistentBase64JsonPayloadUseCase(this.crypto)
-
-      const signingData = parseBase64Usecase.execute<AsymmetricItemAdditionalData>(signingDataString)
+      const additionalData = this.parseBase64Usecase.execute<AsymmetricItemAdditionalData>(additionalDataString)
 
       const signatureVerified = this.crypto.sodiumCryptoSignVerify(
         ciphertext,
-        signingData.signingData.signature,
-        signingData.signingData.publicKey,
+        additionalData.signingData.signature,
+        additionalData.signingData.publicKey,
       )
 
       return {
         plaintext,
         signatureVerified,
-        signaturePublicKey: signingData.signingData.publicKey,
+        signaturePublicKey: additionalData.signingData.publicKey,
       }
     } catch (error) {
       return null

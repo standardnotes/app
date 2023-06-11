@@ -132,7 +132,7 @@ export class SNProtocolOperator004 implements OperatorInterface {
   }
 
   public asymmetricEncrypt(dto: {
-    stringToEncrypt: HexString
+    stringToEncrypt: Utf8String
     senderSecretKey: HexString
     senderSigningKeyPair: PkcKeyPair
     recipientPublicKey: HexString

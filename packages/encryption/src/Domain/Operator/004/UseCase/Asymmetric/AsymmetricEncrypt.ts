@@ -1,14 +1,17 @@
-import { HexString, PkcKeyPair, PureCryptoInterface } from '@standardnotes/sncrypto-common'
+import { HexString, PkcKeyPair, PureCryptoInterface, Utf8String } from '@standardnotes/sncrypto-common'
 import { AsymmetricallyEncryptedString } from '../../../Types'
 import { V004Algorithm } from '../../../../Algorithm'
 import { V004AsymmetricCiphertextPrefix, V004AsymmetricStringComponents } from '../../V004AlgorithmTypes'
 import { CreateConsistentBase64JsonPayloadUseCase } from '../Utils/CreateConsistentBase64JsonPayload'
+import { AsymmetricItemAdditionalData } from '../../../../Types/EncryptionAdditionalData'
 
 export class AsymmetricEncryptUseCase {
+  private base64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
+
   constructor(private readonly crypto: PureCryptoInterface) {}
 
   execute(dto: {
-    stringToEncrypt: HexString
+    stringToEncrypt: Utf8String
     senderSecretKey: HexString
     senderSigningKeyPair: PkcKeyPair
     recipientPublicKey: HexString
@@ -22,20 +25,18 @@ export class AsymmetricEncryptUseCase {
       dto.recipientPublicKey,
     )
 
-    const base64DataUsecase = new CreateConsistentBase64JsonPayloadUseCase(this.crypto)
-
-    const signingDataString = base64DataUsecase.execute({
-      embeddedValue: {
+    const additionalData: AsymmetricItemAdditionalData = {
+      signingData: {
         publicKey: dto.senderSigningKeyPair.publicKey,
         signature: this.crypto.sodiumCryptoSign(ciphertext, dto.senderSigningKeyPair.privateKey),
       },
-    })
+    }
 
     const components: V004AsymmetricStringComponents = [
       V004AsymmetricCiphertextPrefix,
       nonce,
       ciphertext,
-      signingDataString,
+      this.base64DataUsecase.execute(additionalData),
     ]
 
     return components.join(':')
