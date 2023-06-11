@@ -25,7 +25,7 @@ describe('asymmetric encrypt use case', () => {
 
     const result = usecase.execute({
       stringToEncrypt: 'foobar',
-      senderSecretKey: encryptionKeyPair.privateKey,
+      senderKeyPair: encryptionKeyPair,
       senderSigningKeyPair: signingKeyPair,
       recipientPublicKey: recipientKeyPair.publicKey,
     })
@@ -40,5 +40,6 @@ describe('asymmetric encrypt use case', () => {
     const additionalData = parseBase64Usecase.execute<AsymmetricItemAdditionalData>(additionalDataString)
     expect(additionalData.signingData.publicKey).toEqual(signingKeyPair.publicKey)
     expect(additionalData.signingData.signature).toEqual(expect.any(String))
+    expect(additionalData.senderPublicKey).toEqual(encryptionKeyPair.publicKey)
   })
 })

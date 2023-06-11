@@ -29,7 +29,7 @@ export class SendOwnContactChangeMessage {
 
     const encryptedMessage = this.encryption.asymmetricallyEncryptMessage({
       message: message,
-      senderPrivateKey: params.senderOldKeyPair.privateKey,
+      senderKeyPair: params.senderOldKeyPair,
       senderSigningKeyPair: params.senderOldSigningKeyPair,
       recipientPublicKey: params.contact.publicKey.encryption,
     })

@@ -12,7 +12,7 @@ export class AsymmetricEncryptUseCase {
 
   execute(dto: {
     stringToEncrypt: Utf8String
-    senderSecretKey: HexString
+    senderKeyPair: PkcKeyPair
     senderSigningKeyPair: PkcKeyPair
     recipientPublicKey: HexString
   }): AsymmetricallyEncryptedString {
@@ -21,7 +21,7 @@ export class AsymmetricEncryptUseCase {
     const ciphertext = this.crypto.sodiumCryptoBoxEasyEncrypt(
       dto.stringToEncrypt,
       nonce,
-      dto.senderSecretKey,
+      dto.senderKeyPair.privateKey,
       dto.recipientPublicKey,
     )
 
@@ -30,6 +30,7 @@ export class AsymmetricEncryptUseCase {
         publicKey: dto.senderSigningKeyPair.publicKey,
         signature: this.crypto.sodiumCryptoSign(ciphertext, dto.senderSigningKeyPair.privateKey),
       },
+      senderPublicKey: dto.senderKeyPair.publicKey,
     }
 
     const components: V004AsymmetricStringComponents = [

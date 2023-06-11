@@ -35,6 +35,7 @@ import { GetPayloadAuthenticatedDataDetachedUseCase } from './UseCase/Symmetric/
 import { CreateRootKeyUseCase } from './UseCase/RootKey/CreateRootKey'
 import { UuidGenerator } from '@standardnotes/utils'
 import { CreateKeySystemItemsKeyUseCase } from './UseCase/KeySystem/CreateKeySystemItemsKey'
+import { AsymmetricDecryptResult } from '../AsymmetricDecryptResult'
 
 export class SNProtocolOperator004 implements OperatorInterface {
   constructor(protected readonly crypto: PureCryptoInterface) {}
@@ -133,7 +134,7 @@ export class SNProtocolOperator004 implements OperatorInterface {
 
   public asymmetricEncrypt(dto: {
     stringToEncrypt: Utf8String
-    senderSecretKey: HexString
+    senderKeyPair: PkcKeyPair
     senderSigningKeyPair: PkcKeyPair
     recipientPublicKey: HexString
   }): AsymmetricallyEncryptedString {
@@ -145,7 +146,7 @@ export class SNProtocolOperator004 implements OperatorInterface {
     stringToDecrypt: AsymmetricallyEncryptedString
     senderPublicKey: HexString
     recipientSecretKey: HexString
-  }): { plaintext: HexString; signatureVerified: boolean; signaturePublicKey: string } | null {
+  }): AsymmetricDecryptResult | null {
     const usecase = new AsymmetricDecryptUseCase(this.crypto)
     return usecase.execute(dto)
   }

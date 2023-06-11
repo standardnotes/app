@@ -37,7 +37,7 @@ export class SendSharedVaultRootKeyChangeMessage {
 
     const encryptedMessage = this.encryption.asymmetricallyEncryptMessage({
       message: message,
-      senderPrivateKey: params.senderKeyPair.privateKey,
+      senderKeyPair: params.senderKeyPair,
       senderSigningKeyPair: params.senderSigningKeyPair,
       recipientPublicKey: params.contact.publicKey.encryption,
     })

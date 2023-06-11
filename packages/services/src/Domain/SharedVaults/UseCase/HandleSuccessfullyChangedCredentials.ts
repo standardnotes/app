@@ -95,7 +95,7 @@ export class HandleSuccessfullyChangedCredentials {
 
     const newEncryptedVaultData = this.encryption.asymmetricallyEncryptMessage({
       message: { type: AsymmetricMessagePayloadType.SharedVaultRootKeyChanged, data: keySystemRootKey.content },
-      senderPrivateKey: params.newKeyPair.privateKey,
+      senderKeyPair: params.newKeyPair,
       senderSigningKeyPair: params.newSigningKeyPair,
       recipientPublicKey: trustedContact.publicKey.encryption,
     })

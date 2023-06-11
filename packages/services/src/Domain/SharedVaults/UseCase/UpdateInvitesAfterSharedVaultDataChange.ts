@@ -68,7 +68,7 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
     for (const invite of existingSharedVaultInvites) {
       const encryptedMessage = this.encryptVaultMessageForRecipient({
         message: { type: AsymmetricMessagePayloadType.SharedVaultRootKeyChanged, data: params.keySystemRootKeyData },
-        inviterPrivateKey: params.senderEncryptionKeyPair.privateKey,
+        senderKeyPair: params.senderEncryptionKeyPair,
         senderSigningKeyPair: params.senderSigningKeyPair,
         recipientUuid: invite.user_uuid,
       })
@@ -99,7 +99,7 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
 
   private encryptVaultMessageForRecipient(params: {
     message: AsymmetricMessagePayload
-    inviterPrivateKey: string
+    senderKeyPair: PkcKeyPair
     senderSigningKeyPair: PkcKeyPair
     recipientUuid: string
   }): string | undefined {
@@ -110,7 +110,7 @@ export class UpdateInvitesAfterSharedVaultDataChangeUseCase {
 
     return this.encryption.asymmetricallyEncryptMessage({
       message: params.message,
-      senderPrivateKey: params.inviterPrivateKey,
+      senderKeyPair: params.senderKeyPair,
       senderSigningKeyPair: params.senderSigningKeyPair,
       recipientPublicKey: trustedContact.publicKey.encryption,
     })

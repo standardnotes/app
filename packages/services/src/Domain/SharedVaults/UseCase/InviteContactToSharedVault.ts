@@ -34,7 +34,7 @@ export class InviteContactToSharedVaultUseCase {
           trustedContacts: params.sharedVaultContacts.map((contact) => contact.content),
         },
       },
-      senderPrivateKey: params.senderKeyPair.privateKey,
+      senderKeyPair: params.senderKeyPair,
       senderSigningKeyPair: params.senderSigningKeyPair,
       recipientPublicKey: params.recipient.publicKey.encryption,
     })

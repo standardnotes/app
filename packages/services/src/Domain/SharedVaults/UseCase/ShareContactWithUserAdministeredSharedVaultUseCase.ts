@@ -51,7 +51,7 @@ export class ShareContactWithUserAdministeredSharedVaultUseCase {
           type: AsymmetricMessagePayloadType.ContactShare,
           data: params.contactToShare.content,
         },
-        senderPrivateKey: params.senderKeyPair.privateKey,
+        senderKeyPair: params.senderKeyPair,
         senderSigningKeyPair: params.senderSigningKeyPair,
         recipientPublicKey: vaultUserAsContact.publicKey.encryption,
       })

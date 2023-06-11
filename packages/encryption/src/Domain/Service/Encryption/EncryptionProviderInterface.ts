@@ -22,6 +22,7 @@ import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 
 export type AsymmetricallyDecryptMessageResult = {
   message: AsymmetricMessagePayload
+  senderPublicKey: string
   signing: {
     builtInSignaturePasses: boolean
     builtInSignaturePublicKey: string
@@ -108,13 +109,12 @@ export interface EncryptionProviderInterface {
 
   asymmetricallyEncryptMessage(dto: {
     message: AsymmetricMessagePayload
-    senderPrivateKey: string
+    senderKeyPair: PkcKeyPair
     senderSigningKeyPair: PkcKeyPair
     recipientPublicKey: string
   }): string
   asymmetricallyDecryptMessage(dto: {
     encryptedString: string
-    senderPublicKey: string
     trustedSenderSigningPublicKey: string | undefined
     privateKey: string
   }): AsymmetricallyDecryptMessageResult | undefined

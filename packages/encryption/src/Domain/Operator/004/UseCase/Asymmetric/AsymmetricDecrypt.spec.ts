@@ -25,7 +25,7 @@ describe('asymmetric decrypt use case', () => {
 
     const result = encryptUsecase.execute({
       stringToEncrypt: 'foobar',
-      senderSecretKey: senderKeyPair.privateKey,
+      senderKeyPair: senderKeyPair,
       senderSigningKeyPair: senderSigningKeyPair,
       recipientPublicKey: recipientKeyPair.publicKey,
     })
@@ -38,7 +38,6 @@ describe('asymmetric decrypt use case', () => {
 
     const decrypted = usecase.execute({
       stringToDecrypt: encryptedString,
-      senderPublicKey: senderKeyPair.publicKey,
       recipientSecretKey: recipientKeyPair.privateKey,
     })
 
@@ -46,6 +45,7 @@ describe('asymmetric decrypt use case', () => {
       plaintext: 'foobar',
       signatureVerified: true,
       signaturePublicKey: senderSigningKeyPair.publicKey,
+      senderPublicKey: senderKeyPair.publicKey,
     })
   })
 
@@ -59,6 +59,7 @@ describe('asymmetric decrypt use case', () => {
         publicKey: senderSigningKeyPair.publicKey,
         signature: 'corrupt',
       },
+      senderPublicKey: senderKeyPair.publicKey,
     }
 
     const corruptedAdditionalDataString = crypto.base64Encode(JSON.stringify(corruptAdditionalData))
@@ -67,7 +68,6 @@ describe('asymmetric decrypt use case', () => {
 
     const decrypted = usecase.execute({
       stringToDecrypt: corruptEncryptedString,
-      senderPublicKey: senderKeyPair.publicKey,
       recipientSecretKey: recipientKeyPair.privateKey,
     })
 
@@ -75,6 +75,7 @@ describe('asymmetric decrypt use case', () => {
       plaintext: 'foobar',
       signatureVerified: false,
       signaturePublicKey: senderSigningKeyPair.publicKey,
+      senderPublicKey: senderKeyPair.publicKey,
     })
   })
 })

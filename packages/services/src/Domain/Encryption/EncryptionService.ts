@@ -564,14 +564,14 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
 
   asymmetricallyEncryptMessage(dto: {
     message: AsymmetricMessagePayload
-    senderPrivateKey: string
+    senderKeyPair: PkcKeyPair
     senderSigningKeyPair: PkcKeyPair
     recipientPublicKey: string
   }): string {
     const operator = this.operatorManager.defaultOperator()
     const encrypted = operator.asymmetricEncrypt({
       stringToEncrypt: JSON.stringify(dto.message),
-      senderSecretKey: dto.senderPrivateKey,
+      senderKeyPair: dto.senderKeyPair,
       senderSigningKeyPair: dto.senderSigningKeyPair,
       recipientPublicKey: dto.recipientPublicKey,
     })
@@ -580,7 +580,6 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
 
   asymmetricallyDecryptMessage(dto: {
     encryptedString: string
-    senderPublicKey: string
     trustedSenderSigningPublicKey: string | undefined
     privateKey: string
   }): AsymmetricallyDecryptMessageResult | undefined {
@@ -589,7 +588,6 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     const keyOperator = this.operatorManager.operatorForVersion(version)
     const decryptedResult = keyOperator.asymmetricDecrypt({
       stringToDecrypt: dto.encryptedString,
-      senderPublicKey: dto.senderPublicKey,
       recipientSecretKey: dto.privateKey,
     })
 
@@ -609,6 +607,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
 
     return {
       message: JSON.parse(decryptedResult.plaintext),
+      senderPublicKey: decryptedResult.senderPublicKey,
       signing: {
         builtInSignaturePasses: decryptedResult.signatureVerified,
         builtInSignaturePublicKey: decryptedResult.signaturePublicKey,
@@ -775,7 +774,9 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
       return undefined
     }
     const operator = this.operatorManager.operatorForVersion(version)
-    const authenticatedData = operator.getPayloadAuthenticatedDataForExternalUse(encryptedParametersFromPayload(payload))
+    const authenticatedData = operator.getPayloadAuthenticatedDataForExternalUse(
+      encryptedParametersFromPayload(payload),
+    )
     return authenticatedData
   }
 
