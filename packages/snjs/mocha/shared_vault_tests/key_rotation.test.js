@@ -53,7 +53,7 @@ describe.only('shared vault key rotation', function () {
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
     contactContext.lockSyncing()
 
-    const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault.systemIdentifier)
+    const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
     await vaults.rotateVaultRootKey(sharedVault)
     await promise
 
@@ -77,7 +77,7 @@ describe.only('shared vault key rotation', function () {
     expect(originalOutboundInvites.length).to.equal(1)
     const originalInviteMessage = originalOutboundInvites[0].encrypted_message
 
-    const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault.systemIdentifier)
+    const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
     await vaults.rotateVaultRootKey(sharedVault)
     await promise
 
@@ -112,7 +112,7 @@ describe.only('shared vault key rotation', function () {
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
     contactContext.lockSyncing()
 
-    const firstPromise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault.systemIdentifier)
+    const firstPromise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
     await vaults.rotateVaultRootKey(sharedVault)
     await firstPromise
 
@@ -120,7 +120,7 @@ describe.only('shared vault key rotation', function () {
     expect(asymmetricMessageAfterFirstChange.length).to.equal(1)
     const messageAfterFirstChange = asymmetricMessageAfterFirstChange[0]
 
-    const secondPromise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault.systemIdentifier)
+    const secondPromise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
     await vaults.rotateVaultRootKey(sharedVault)
     await secondPromise
 
@@ -129,6 +129,7 @@ describe.only('shared vault key rotation', function () {
     const messageAfterSecondChange = asymmetricMessageAfterSecondChange[0]
 
     expect(messageAfterSecondChange.encrypted_message).to.not.equal(messageAfterFirstChange.encrypted_message)
+    expect(messageAfterSecondChange.uuid).to.not.equal(messageAfterFirstChange.uuid)
 
     await deinitContactContext()
   })
@@ -138,7 +139,7 @@ describe.only('shared vault key rotation', function () {
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
     contactContext.lockSyncing()
 
-    const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault.systemIdentifier)
+    const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault)
     await vaults.rotateVaultRootKey(sharedVault)
     await promise
 

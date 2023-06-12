@@ -324,13 +324,13 @@ export class AppContext {
     })
   }
 
-  resolveWhenSharedVaultKeyRotationInvitesGetSent(targetSystemIdentifier) {
+  resolveWhenSharedVaultKeyRotationInvitesGetSent(targetVault) {
     return new Promise((resolve) => {
       const objectToSpy = this.sharedVaults
-      sinon.stub(objectToSpy, 'handleChangeInVaultRootKey').callsFake(async (systemIdentifier) => {
+      sinon.stub(objectToSpy, 'handleChangeInVaultRootKey').callsFake(async (vault) => {
         objectToSpy.handleChangeInVaultRootKey.restore()
-        const result = await objectToSpy.handleChangeInVaultRootKey(systemIdentifier)
-        if (systemIdentifier === targetSystemIdentifier) {
+        const result = await objectToSpy.handleChangeInVaultRootKey(vault)
+        if (vault.systemIdentifier === targetVault.systemIdentifier) {
           resolve()
         }
         return result
