@@ -14,7 +14,7 @@ const InviteItem = ({ invite }: Props) => {
   const application = useApplication()
   const [isAddContactModalOpen, setIsAddContactModalOpen] = useState(false)
 
-  const isTrusted = application.vaults.isInviteTrusted(invite)
+  const isTrusted = application.vaults.isInviteRecordTrusted(invite)
   const inviteData = application.vaults.getInviteDataMessageAndTrustStatus(invite)
 
   const addAsTrustedContact = useCallback(() => {

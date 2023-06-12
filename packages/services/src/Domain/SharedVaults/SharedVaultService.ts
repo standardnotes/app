@@ -29,7 +29,6 @@ import {
   SharedVaultDisplayListing,
   VaultDisplayListing,
   isSharedVaultDisplayListing,
-  AsymmetricMessageSharedVaultRootKeyChanged,
   AsymmetricMessageSharedVaultInvite,
 } from '@standardnotes/models'
 import { SharedVaultServiceInterface } from './SharedVaultServiceInterface'
@@ -295,6 +294,8 @@ export class SharedVaultService
   }
 
   private async handleTrustedContactsChange(contacts: TrustedContactInterface[]): Promise<void> {
+    await this.reprocessCachedInvitesTrustStatusAfterTrustedContactsChange()
+
     for (const contact of contacts) {
       await this.shareContactWithUserAdministeredSharedVaults(contact)
     }
@@ -359,6 +360,31 @@ export class SharedVaultService
     return useCase.execute({ sharedVault })
   }
 
+  private async reprocessCachedInvitesTrustStatusAfterTrustedContactsChange(): Promise<void> {
+    const cachedInvites = this.getCachedPendingInviteRecords()
+
+    for (const record of cachedInvites) {
+      if (record.trusted) {
+        continue
+      }
+
+      const trustedMessageUseCase = new GetAsymmetricMessageTrustedPayload<AsymmetricMessageSharedVaultInvite>(
+        this.encryption,
+        this.contacts,
+      )
+
+      const trustedMessage = trustedMessageUseCase.execute({
+        message: record.invite,
+        privateKey: this.encryption.getKeyPair().privateKey,
+      })
+
+      if (trustedMessage) {
+        record.message = trustedMessage
+        record.trusted = true
+      }
+    }
+  }
+
   private async processInboundInvites(invites: SharedVaultInviteServerHash[]): Promise<void> {
     if (invites.length === 0) {
       return
@@ -408,15 +434,6 @@ export class SharedVaultService
 
   private async notifyCollaborationStatusChanged(): Promise<void> {
     await this.notifyEventSync(SharedVaultServiceEvent.SharedVaultStatusChanged)
-  }
-
-  public async isInviteTrusted(invite: SharedVaultInviteServerHash): Promise<boolean> {
-    const useCase = new GetAsymmetricMessageTrustedPayload<AsymmetricMessageSharedVaultRootKeyChanged>(
-      this.encryption,
-      this.contacts,
-    )
-    const message = useCase.execute({ message: invite, privateKey: this.encryption.getKeyPair().privateKey })
-    return message != undefined
   }
 
   async acceptPendingSharedVaultInvite(pendingInvite: PendingSharedVaultInviteRecord): Promise<void> {

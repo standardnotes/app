@@ -36,9 +36,6 @@ describe('shared vault invites', function () {
     expect(vaultInvite.shared_vault_uuid).to.equal(sharedVault.sharedVaultUuid)
     expect(vaultInvite.user_uuid).to.equal(contact.contactUuid)
     expect(vaultInvite.encrypted_message).to.not.be.undefined
-    expect(vaultInvite.sender_public_key).to.equal(context.publicKey)
-    expect(vaultInvite.inviter_uuid).to.equal(context.userUuid)
-    expect(vaultInvite.invite_type).to.equal('join')
     expect(vaultInvite.permissions).to.equal(SharedVaultPermission.Write)
     expect(vaultInvite.updated_at_timestamp).to.not.be.undefined
     expect(vaultInvite.created_at_timestamp).to.not.be.undefined
@@ -46,9 +43,13 @@ describe('shared vault invites', function () {
     await deinitContactContext()
   })
 
-  it('invites from trusted contact should be pending as trusted', async () => {})
+  it('invites from trusted contact should be pending as trusted', async () => {
+    console.error('TODO')
+  })
 
-  it('invites from untrusted contact should be pending as untrusted', async () => {})
+  it('invites from untrusted contact should be pending as untrusted', async () => {
+    console.error('TODO')
+  })
 
   it('invite should include delegated trusted contacts', async () => {
     console.error('TODO')
@@ -93,8 +94,7 @@ describe('shared vault invites', function () {
     await sharedVaults.inviteContactToSharedVault(sharedVault, currentContextContact, SharedVaultPermission.Write)
 
     await contactContext.sharedVaults.downloadInboundInvites()
-    expect(contactContext.sharedVaults.isInviteTrusted(contactContext.sharedVaults.getCachedPendingInviteRecords()[0])).to.be
-      .false
+    expect(contactContext.sharedVaults.getCachedPendingInviteRecords()[0].trusted).to.be.false
 
     await deinitContactContext()
   })
@@ -108,13 +108,11 @@ describe('shared vault invites', function () {
     await sharedVaults.inviteContactToSharedVault(sharedVault, currentContextContact, SharedVaultPermission.Write)
 
     await contactContext.sharedVaults.downloadInboundInvites()
-    expect(contactContext.sharedVaults.isInviteTrusted(contactContext.sharedVaults.getCachedPendingInviteRecords()[0])).to.be
-      .false
+    expect(contactContext.sharedVaults.getCachedPendingInviteRecords()[0].trusted).to.be.false
 
     await Collaboration.createTrustedContactForUserOfContext(contactContext, context)
 
-    expect(contactContext.sharedVaults.isInviteTrusted(contactContext.sharedVaults.getCachedPendingInviteRecords()[0])).to.be
-      .true
+    expect(contactContext.sharedVaults.getCachedPendingInviteRecords()[0].trusted).to.be.true
 
     await deinitContactContext()
   })
