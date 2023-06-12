@@ -205,6 +205,9 @@ export abstract class Collection<
 
       if (element.deleted) {
         this.nondeletedIndex.delete(element.uuid)
+        if (this.conflictMap.getInverseRelationships(element.uuid).length > 0) {
+          this.conflictMap.removeFromMap(element.uuid)
+        }
       } else {
         this.nondeletedIndex.add(element.uuid)
       }

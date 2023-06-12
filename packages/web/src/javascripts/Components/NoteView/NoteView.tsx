@@ -458,10 +458,6 @@ class NoteView extends AbstractComponent<NoteViewProps, State> {
         }
 
         for (const note of removed) {
-          if (!(note instanceof SNNote)) {
-            continue
-          }
-
           this.setState((state) => {
             return {
               conflictedNotes: state.conflictedNotes.filter((conflictedNote) => conflictedNote.uuid !== note.uuid),
