@@ -77,6 +77,10 @@ export class AppContext {
     return this.application.fileService
   }
 
+  get asymmetric() {
+    return this.application.asymmetricMessageService
+  }
+
   get publicKey() {
     return this.sessions.getPublicKey()
   }

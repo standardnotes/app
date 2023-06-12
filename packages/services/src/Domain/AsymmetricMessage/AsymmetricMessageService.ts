@@ -1,5 +1,5 @@
 import { ContactServiceInterface } from './../Contacts/ContactServiceInterface'
-import { AsymmetricMessageServerHash } from '@standardnotes/responses'
+import { AsymmetricMessageServerHash, ClientDisplayableError } from '@standardnotes/responses'
 import { SyncEvent, SyncEventReceivedAsymmetricMessagesData } from '../Event/SyncEvent'
 import { InternalEventBusInterface } from '../Internal/InternalEventBusInterface'
 import { InternalEventHandlerInterface } from '../Internal/InternalEventHandlerInterface'
@@ -20,6 +20,7 @@ import { SessionEvent } from '../Session/SessionEvent'
 import { AsymmetricMessageServer, HttpServiceInterface } from '@standardnotes/api'
 import { SuccessfullyChangedCredentialsEventData } from '../Session/SuccessfullyChangedCredentialsEventData'
 import { SendOwnContactChangeMessage } from './UseCase/SendOwnContactChangeMessage'
+import { GetOutboundAsymmetricMessages } from './UseCase/GetOutboundAsymmetricMessages'
 
 export class AsymmetricMessageService extends AbstractService implements InternalEventHandlerInterface {
   private messageServer: AsymmetricMessageServer
@@ -49,6 +50,11 @@ export class AsymmetricMessageService extends AbstractService implements Interna
     if (event.type === SyncEvent.ReceivedAsymmetricMessages) {
       void this.handleRemoteReceivedAsymmetricMessages(event.payload as SyncEventReceivedAsymmetricMessagesData)
     }
+  }
+
+  public async getOutboundMessages(): Promise<AsymmetricMessageServerHash[] | ClientDisplayableError> {
+    const usecase = new GetOutboundAsymmetricMessages(this.messageServer)
+    return usecase.execute()
   }
 
   async sendOwnContactChangeEventToAllContacts(data: SuccessfullyChangedCredentialsEventData): Promise<void> {

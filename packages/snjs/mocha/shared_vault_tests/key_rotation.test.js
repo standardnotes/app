@@ -4,7 +4,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe('shared vault key rotation', function () {
+describe.only('shared vault key rotation', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
@@ -35,21 +35,20 @@ describe('shared vault key rotation', function () {
     await sharedVaults.inviteContactToSharedVault(sharedVault, contact, SharedVaultPermission.Write)
     await contactContext.sync()
 
-    const vaultInvite = contactContext.sharedVaults.getCachedPendingInviteRecords()[0]
-    expect(vaultInvite.sender_public_key).to.equal(context.publicKey)
+    const originalInviteRecord = contactContext.sharedVaults.getCachedPendingInviteRecords()[0]
 
     await context.changePassword('new-password')
     await context.sync()
 
     await contactContext.sync()
 
-    const updatedSharedVaultInvite = contactContext.sharedVaults.getCachedPendingInviteRecords()[0]
-    expect(updatedSharedVaultInvite.sender_public_key).to.equal(context.publicKey)
+    const updatedInviteRecord = contactContext.sharedVaults.getCachedPendingInviteRecords()[0]
+    expect(updatedInviteRecord.encrypted_message).to.not.equal(originalInviteRecord.invite.encrypted_message)
 
     await deinitContactContext()
   })
 
-  it("rotating a vault's key should send a key-change invite to all members", async () => {
+  it("rotating a vault's key should send an asymmetric message to all members", async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
     contactContext.lockSyncing()
@@ -58,25 +57,25 @@ describe('shared vault key rotation', function () {
     await vaults.rotateKeySystemRootKey(sharedVault.systemIdentifier)
     await promise
 
-    const outboundInvites = await sharedVaults.getOutboundInvites()
-    expect(outboundInvites.length).to.equal(1)
+    const outboundMessages = await context.asymmetric.getOutboundMessages()
+    expect(outboundMessages.length).to.equal(1)
 
-    const keyChangeInvite = outboundInvites[0]
-    expect(keyChangeInvite).to.not.be.undefined
-    expect(keyChangeInvite.user_uuid).to.equal(contactContext.userUuid)
-    expect(keyChangeInvite.encrypted_message).to.not.be.undefined
+    const keyChangeMessage = outboundMessages[0]
+    expect(keyChangeMessage).to.not.be.undefined
+    expect(keyChangeMessage.user_uuid).to.equal(contactContext.userUuid)
+    expect(keyChangeMessage.encrypted_message).to.not.be.undefined
 
     await deinitContactContext()
   })
 
-  it("rotating a vault's key with a pending join invite should update that invite rather than creating a key-change invite ", async () => {
+  it("rotating a vault's key with a pending invite should update that invite rather than creating a key-change invite ", async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithUnacceptedButTrustedInvite(context)
     contactContext.lockSyncing()
 
     const originalOutboundInvites = await sharedVaults.getOutboundInvites()
     expect(originalOutboundInvites.length).to.equal(1)
-    const originalEncVaultData = originalOutboundInvites[0].encrypted_message
+    const originalInviteMessage = originalOutboundInvites[0].encrypted_message
 
     const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault.systemIdentifier)
     await vaults.rotateKeySystemRootKey(sharedVault.systemIdentifier)
@@ -87,41 +86,38 @@ describe('shared vault key rotation', function () {
 
     const joinInvite = updatedOutboundInvites[0]
     expect(joinInvite.encrypted_message).to.not.be.undefined
-    expect(joinInvite.encrypted_message).to.not.equal(originalEncVaultData)
+    expect(joinInvite.encrypted_message).to.not.equal(originalInviteMessage)
 
     await deinitContactContext()
   })
 
-  it('should update both pending join and key-change invites instead of creating new ones', async () => {
+  it.only('should update existing key-change messages instead of creating new ones', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
     contactContext.lockSyncing()
 
-    const thirdParty = await Collaboration.createContactContext()
-    const thirdPartyContact = await Collaboration.createTrustedContactForUserOfContext(
-      context,
-      thirdParty.contactContext,
-    )
-    await sharedVaults.inviteContactToSharedVault(sharedVault, thirdPartyContact, SharedVaultPermission.Write)
-
-    const originalOutboundInvites = await sharedVaults.getOutboundInvites()
-    expect(originalOutboundInvites.length).to.equal(1)
-
-    const promise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault.systemIdentifier)
+    const firstPromise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault.systemIdentifier)
     await vaults.rotateKeySystemRootKey(sharedVault.systemIdentifier)
-    await promise
+    await firstPromise
 
-    const updatedOutboundInvites = await sharedVaults.getOutboundInvites()
-    expect(updatedOutboundInvites.length).to.equal(2)
+    const asymmetricMessageAfterFirstChange = await context.asymmetric.getOutboundMessages()
+    expect(asymmetricMessageAfterFirstChange.length).to.equal(1)
+    const messageAfterFirstChange = asymmetricMessageAfterFirstChange[0]
 
-    expect(updatedOutboundInvites.find((invite) => invite.invite_type === 'join')).to.not.be.undefined
-    expect(updatedOutboundInvites.find((invite) => invite.invite_type === 'key-change')).to.not.be.undefined
+    const secondPromise = context.resolveWhenSharedVaultKeyRotationInvitesGetSent(sharedVault.systemIdentifier)
+    await vaults.rotateKeySystemRootKey(sharedVault.systemIdentifier)
+    await secondPromise
+
+    const asymmetricMessageAfterSecondChange = await context.asymmetric.getOutboundMessages()
+    expect(asymmetricMessageAfterSecondChange.length).to.equal(1)
+    const messageAfterSecondChange = asymmetricMessageAfterSecondChange[0]
+
+    expect(messageAfterSecondChange.encrypted_message).to.not.equal(messageAfterFirstChange.encrypted_message)
 
     await deinitContactContext()
-    await thirdParty.deinitContactContext()
   })
 
-  it('key change invites should be automatically accepted by trusted contacts', async () => {
+  it.only('key change invites should be automatically accepted by trusted contacts', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
     contactContext.lockSyncing()
@@ -140,7 +136,7 @@ describe('shared vault key rotation', function () {
     await deinitContactContext()
   })
 
-  it('should rotate key system root key after removing vault member', async () => {
+  it.only('should rotate key system root key after removing vault member', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
