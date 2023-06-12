@@ -290,7 +290,7 @@ const NoteConflictResolutionModal = ({
                 ref={setSelectAnchor}
                 render={
                   <ToolbarItem className="rounded rounded-l-none border-l border-border bg-info py-1.5 px-3 hover:brightness-110 focus-visible:brightness-110">
-                    <SelectArrow />
+                    <SelectArrow className={isSelectOpen ? 'block rotate-180' : ''} />
                   </ToolbarItem>
                 }
                 store={selectStore}
