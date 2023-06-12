@@ -8,6 +8,7 @@ import AccountMigration from './AccountMigration'
 import Switch from '@/Components/Switch/Switch'
 import HomeServerSettings from './HomeServerSettings'
 import EnvironmentConfiguration from './EnvironmentConfiguration'
+import DatabaseConfiguration from './DatabaseConfiguration'
 
 const HomeServer = () => {
   const application = useApplication()
@@ -49,13 +50,18 @@ const HomeServer = () => {
               </div>
               <Switch onChange={toggleHomeServer} checked={homeServerEnabled} />
             </div>
-            {error && <Text className="text-error mt-3">{error}</Text>}
+            {error && <Text className="bg-danger text-danger-contrast">Error: {error}</Text>}
             {homeServerEnabled && <HomeServerSettings />}
           </PreferencesSegment>
         </PreferencesGroup>
       )}
 
-      {homeServerEnabled && <EnvironmentConfiguration />}
+      {homeServerEnabled && (
+        <>
+          <EnvironmentConfiguration />
+          <DatabaseConfiguration />
+        </>
+      )}
 
       <PreferencesGroup>
         <Title>Remote Access</Title>

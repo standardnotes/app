@@ -6,4 +6,12 @@ export interface HomeServerEnvironmentConfiguration {
   valetTokenSecret: string
   port: number
   logLevel?: string
+  databaseEngine: 'sqlite' | 'mysql'
+  mysqlConfiguration?: {
+    host: string
+    port: number
+    username: string
+    password: string
+    database: string
+  }
 }

@@ -37,6 +37,8 @@ export class HomeServerManager implements HomeServerManagerInterface {
   async setHomeServerConfiguration(configurationJSONString: string): Promise<void> {
     try {
       this.homeServerConfiguration = JSON.parse(configurationJSONString)
+
+      this.webContents.send(MessageToWebApp.HomeServerConfigurationChanged, configurationJSONString)
     } catch (error) {
       console.error(`Could not parse home server configuration: ${(error as Error).message}`)
     }
@@ -81,22 +83,44 @@ export class HomeServerManager implements HomeServerManagerInterface {
         return
       }
 
-      const { jwtSecret, authJwtSecret, encryptionServerKey, pseudoKeyParamsKey, valetTokenSecret, port, logLevel } =
-        this.homeServerConfiguration
+      const {
+        jwtSecret,
+        authJwtSecret,
+        encryptionServerKey,
+        pseudoKeyParamsKey,
+        valetTokenSecret,
+        port,
+        logLevel,
+        databaseEngine,
+        mysqlConfiguration,
+      } = this.homeServerConfiguration
+
+      const environment: { [name: string]: string } = {
+        JWT_SECRET: jwtSecret,
+        AUTH_JWT_SECRET: authJwtSecret,
+        ENCRYPTION_SERVER_KEY: encryptionServerKey,
+        PSEUDO_KEY_PARAMS_KEY: pseudoKeyParamsKey,
+        VALET_TOKEN_SECRET: valetTokenSecret,
+        FILES_SERVER_URL: this.getServerUrl(),
+        LOG_LEVEL: logLevel ?? 'info',
+        VERSION: 'desktop',
+        PORT: port.toString(),
+        DB_TYPE: databaseEngine,
+      }
+
+      if (mysqlConfiguration !== undefined) {
+        environment.DB_HOST = mysqlConfiguration.host
+        if (mysqlConfiguration.port) {
+          environment.DB_PORT = mysqlConfiguration.port.toString()
+        }
+        environment.DB_USERNAME = mysqlConfiguration.username
+        environment.DB_PASSWORD = mysqlConfiguration.password
+        environment.DB_DATABASE = mysqlConfiguration.database
+      }
 
       await this.homeServer.start({
         dataDirectoryPath: this.homeServerDataLocation,
-        environment: {
-          JWT_SECRET: jwtSecret,
-          AUTH_JWT_SECRET: authJwtSecret,
-          ENCRYPTION_SERVER_KEY: encryptionServerKey,
-          PSEUDO_KEY_PARAMS_KEY: pseudoKeyParamsKey,
-          VALET_TOKEN_SECRET: valetTokenSecret,
-          FILES_SERVER_URL: this.getServerUrl(),
-          LOG_LEVEL: logLevel ?? 'info',
-          VERSION: 'desktop',
-          PORT: port.toString(),
-        },
+        environment,
       })
 
       this.webContents.send(MessageToWebApp.HomeServerStarted, this.getServerUrl())
@@ -153,6 +177,7 @@ export class HomeServerManager implements HomeServerManagerInterface {
       pseudoKeyParamsKey,
       valetTokenSecret,
       port,
+      databaseEngine: 'sqlite',
     }
 
     this.webContents.send(MessageToWebApp.HomeServerConfigurationChanged, JSON.stringify(configuration))
