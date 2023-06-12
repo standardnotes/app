@@ -280,14 +280,14 @@ const NoteConflictResolutionModal = ({
       close={close}
       customFooter={
         <ModalDialogButtons>
-          <Button className="mr-auto" onClick={close} disabled={isPerformingAction}>
+          <Button className="mr-auto hidden md:inline-block" onClick={close} disabled={isPerformingAction}>
             Cancel
           </Button>
           {selectedNotes.length === 1 && (
-            <Toolbar className="flex items-stretch text-info-contrast" store={toolbarStore}>
+            <Toolbar className="flex w-full items-stretch text-info-contrast md:w-auto" store={toolbarStore}>
               <ToolbarItem
                 onClick={keepOnlySelectedNote}
-                className="rounded rounded-r-none bg-info px-3 py-1.5 text-base font-bold hover:brightness-110 focus-visible:brightness-110 lg:text-sm"
+                className="flex-grow rounded rounded-r-none bg-info px-3 py-1.5 text-base font-bold hover:brightness-110 focus-visible:brightness-110 lg:text-sm"
                 disabled={isPerformingAction}
               >
                 {isPerformingAction ? (
