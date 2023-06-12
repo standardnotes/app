@@ -20,7 +20,7 @@ export async function encryptPayload(
   payload: DecryptedPayloadInterface,
   key: ItemsKeyInterface | KeySystemItemsKeyInterface | KeySystemRootKeyInterface | RootKeyInterface,
   operatorManager: OperatorManager,
-  signingKeyPair?: PkcKeyPair,
+  signingKeyPair: PkcKeyPair | undefined,
 ): Promise<EncryptedParameters> {
   const operator = operatorManager.operatorForVersion(key.keyVersion)
   const encryptionParameters = operator.generateEncryptedParameters(payload, key, signingKeyPair)

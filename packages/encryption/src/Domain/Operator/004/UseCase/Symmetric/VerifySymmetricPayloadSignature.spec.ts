@@ -16,18 +16,20 @@ describe('generate symmetric signing data usecase', () => {
     usecase = new VerifySymmetricPayloadSignatureUseCase(crypto)
   })
 
-  it('payload with key system identifier or shared vault uuid should require signature', () => {
+  it('payload with shared vault uuid should require signature', () => {
+    const payload: Partial<EncryptedParameters> = {
+      shared_vault_uuid: '456',
+    }
+
+    expect(doesPayloadRequireSigning(payload)).toBe(true)
+  })
+
+  it('payload with key system identifier only should not require signature', () => {
     const payload: Partial<EncryptedParameters> = {
       key_system_identifier: '123',
     }
 
-    expect(doesPayloadRequireSigning(payload)).toBe(true)
-
-    const payloadTwo: Partial<EncryptedParameters> = {
-      shared_vault_uuid: '456',
-    }
-
-    expect(doesPayloadRequireSigning(payloadTwo)).toBe(true)
+    expect(doesPayloadRequireSigning(payload)).toBe(false)
   })
 
   it('payload without key system identifier or shared vault uuid should not require signature', () => {

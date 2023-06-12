@@ -197,6 +197,8 @@ export class SNProtocolOperator002 extends SNProtocolOperator001 {
       content: ciphertext,
       enc_item_key: encItemKey,
       version: this.version,
+      key_system_identifier: payload.key_system_identifier,
+      shared_vault_uuid: payload.shared_vault_uuid,
     }
   }
 

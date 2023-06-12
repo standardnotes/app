@@ -1,7 +1,7 @@
 import { V004Components, V004PartitionCharacter, V004StringComponents } from './V004AlgorithmTypes'
 
-export function doesPayloadRequireSigning(payload: { key_system_identifier?: string; shared_vault_uuid?: string }) {
-  return payload.key_system_identifier != undefined || payload.shared_vault_uuid != undefined
+export function doesPayloadRequireSigning(payload: { shared_vault_uuid?: string }) {
+  return payload.shared_vault_uuid != undefined
 }
 
 export function deconstructEncryptedPayloadString(payloadString: string): V004Components {

@@ -17,7 +17,7 @@ export type SharedVaultDisplayListing = CommonVaultDisplayListing & {
 }
 
 export function isSharedVaultDisplayListing(vault: VaultDisplayListing): vault is SharedVaultDisplayListing {
-  return 'sharedVaultUuid' in vault
+  return 'sharedVaultUuid' in vault && vault.sharedVaultUuid != undefined
 }
 
 export type VaultDisplayListing = CommonVaultDisplayListing | SharedVaultDisplayListing

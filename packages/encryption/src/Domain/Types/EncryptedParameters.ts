@@ -13,9 +13,9 @@ export type EncryptedParameters = {
   items_key_id: string | undefined
   enc_item_key: string
   version: ProtocolVersion
+  key_system_identifier: string | undefined
+  shared_vault_uuid: string | undefined
   rawSigningDataClientOnly?: ClientRawSigningData
-  key_system_identifier?: string
-  shared_vault_uuid?: string
 
   /** @deprecated */
   auth_hash?: string
@@ -67,6 +67,8 @@ export function encryptedParametersFromPayload(payload: EncryptedPayloadInterfac
     enc_item_key: payload.enc_item_key as string,
     version: payload.version,
     auth_hash: payload.auth_hash,
+    key_system_identifier: payload.key_system_identifier,
+    shared_vault_uuid: payload.shared_vault_uuid,
     rawSigningDataClientOnly: payload.rawSigningDataClientOnly,
   }
 }

@@ -62,6 +62,8 @@ export class GenerateEncryptedParametersUseCase {
       content: encryptedContent,
       enc_item_key: encryptedContentKey,
       version: ProtocolVersion.V004,
+      key_system_identifier: payload.key_system_identifier,
+      shared_vault_uuid: payload.shared_vault_uuid,
       rawSigningDataClientOnly: persistentClientSignature,
     }
   }

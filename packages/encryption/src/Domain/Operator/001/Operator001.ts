@@ -145,6 +145,8 @@ export class SNProtocolOperator001 implements OperatorInterface {
       enc_item_key: encItemKey,
       auth_hash: authHash,
       version: this.version,
+      key_system_identifier: payload.key_system_identifier,
+      shared_vault_uuid: payload.shared_vault_uuid,
     }
   }
 
