@@ -2,14 +2,7 @@ import { WebApplication } from '@/Application/WebApplication'
 import { WebApplicationGroup } from '@/Application/WebApplicationGroup'
 import { AbstractComponent } from '@/Components/Abstract/PureComponent'
 import { destroyAllObjectProperties, preventRefreshing } from '@/Utils'
-import {
-  ApplicationEvent,
-  ApplicationDescriptor,
-  WebAppEvent,
-  NoteContent,
-  SNNote,
-  ContentType,
-} from '@standardnotes/snjs'
+import { ApplicationEvent, ApplicationDescriptor, WebAppEvent } from '@standardnotes/snjs'
 import {
   STRING_NEW_UPDATE_READY,
   STRING_CONFIRM_APP_QUIT_DURING_UPGRADE,
