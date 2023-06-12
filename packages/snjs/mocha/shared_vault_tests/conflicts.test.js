@@ -111,6 +111,10 @@ describe('shared vault conflicts', function () {
   })
 
   it('attempting to save note to non-existent vault should result in SharedVaultNotMemberError conflict', async () => {
+    context.anticipateConsoleError(
+      'Error decrypting contentKey from parameters',
+      'An invalid shared vault uuid is being assigned to an item',
+    )
     const { note } = await Collaboration.createSharedVaultWithNote(context)
 
     const promise = context.resolveWithConflicts()
@@ -135,7 +139,7 @@ describe('shared vault conflicts', function () {
   })
 
   it('attempting to save item using an old vault items key should result in SharedVaultInvalidItemsKey conflict', async () => {
-    context.anticpiateConsoleError(
+    context.anticipateConsoleError(
       'Error decrypting contentKey from parameters',
       'An invalid items key is being assigned to an item',
     )

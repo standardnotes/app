@@ -27,7 +27,7 @@ describe('shared vault permissions', function () {
   })
 
   it('non-admin user should not be able to invite user', async () => {
-    context.anticpiateConsoleError('Could not create invite')
+    context.anticipateConsoleError('Could not create invite')
 
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInviteAndNote(context)
@@ -49,7 +49,7 @@ describe('shared vault permissions', function () {
   })
 
   it('should not be able to leave shared vault as creator', async () => {
-    context.anticpiateConsoleError('Could not delete user')
+    context.anticipateConsoleError('Could not delete user')
 
     const sharedVault = await Collaboration.createSharedVault(context)
 

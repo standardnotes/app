@@ -4,7 +4,7 @@ import * as Collaboration from '../lib/Collaboration.js'
 chai.use(chaiAsPromised)
 const expect = chai.expect
 
-describe.only('shared vault key rotation', function () {
+describe('shared vault key rotation', function () {
   this.timeout(Factory.TwentySecondTimeout)
 
   let context
@@ -107,7 +107,7 @@ describe.only('shared vault key rotation', function () {
     }
   })
 
-  it.only('should update existing key-change messages instead of creating new ones', async () => {
+  it('should update existing key-change messages instead of creating new ones', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
     contactContext.lockSyncing()
@@ -134,7 +134,7 @@ describe.only('shared vault key rotation', function () {
     await deinitContactContext()
   })
 
-  it('key change invites should be automatically accepted by trusted contacts', async () => {
+  it('key change messages should be automatically processed by trusted contacts', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
     contactContext.lockSyncing()
@@ -143,17 +143,17 @@ describe.only('shared vault key rotation', function () {
     await vaults.rotateVaultRootKey(sharedVault)
     await promise
 
-    const acceptInviteSpy = sinon.spy(contactContext.sharedVaults, 'acceptInvite')
+    const acceptMessage = sinon.spy(contactContext.asymmetric, 'handleTrustedSharedVaultRootKeyChangedMessage')
 
     contactContext.unlockSyncing()
     await contactContext.sync()
 
-    expect(acceptInviteSpy.callCount).to.equal(1)
+    expect(acceptMessage.callCount).to.equal(1)
 
     await deinitContactContext()
   })
 
-  it.only('should rotate key system root key after removing vault member', async () => {
+  it('should rotate key system root key after removing vault member', async () => {
     const { sharedVault, contactContext, deinitContactContext } =
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 

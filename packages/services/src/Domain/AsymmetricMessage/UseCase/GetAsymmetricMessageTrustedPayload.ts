@@ -18,7 +18,11 @@ export class GetAsymmetricMessageTrustedPayload<M extends AsymmetricMessagePaylo
       privateKey: dto.privateKey,
     })
 
-    if (!decryptionResult || !decryptionResult.signing.trustedSenderSignaturePasses) {
+    if (!decryptionResult) {
+      return undefined
+    }
+
+    if (!decryptionResult.signing.trustedSenderSignaturePasses) {
       return undefined
     }
 

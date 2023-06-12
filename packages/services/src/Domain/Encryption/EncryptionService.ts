@@ -173,6 +173,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     super.deinit()
   }
 
+  /** @throws */
   getKeyPair(): PkcKeyPair {
     const rootKey = this.getRootKey()
 
@@ -183,6 +184,7 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return rootKey.encryptionKeyPair
   }
 
+  /** @throws */
   getSigningKeyPair(): PkcKeyPair {
     const rootKey = this.getRootKey()
 

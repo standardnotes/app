@@ -58,6 +58,10 @@ export class AsymmetricMessageService extends AbstractService implements Interna
   }
 
   async sendOwnContactChangeEventToAllContacts(data: SuccessfullyChangedCredentialsEventData): Promise<void> {
+    if (!data.oldKeyPair || !data.oldSigningKeyPair) {
+      return
+    }
+
     const useCase = new SendOwnContactChangeMessage(this.encryption, this.messageServer)
 
     const contacts = this.contacts.getAllContacts()

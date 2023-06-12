@@ -573,7 +573,7 @@ export class UserService
 
     const user = this.sessionManager.getUser() as User
     const currentEmail = user.email
-    const rootKeys = await this.recomputeRootKeysForCredentialChange({
+    const { currentRootKey, newRootKey } = await this.recomputeRootKeysForCredentialChange({
       currentPassword: parameters.currentPassword,
       currentEmail,
       origination: parameters.origination,
@@ -585,8 +585,8 @@ export class UserService
 
     /** Now, change the credentials on the server. Roll back on failure */
     const { response } = await this.sessionManager.changeCredentials({
-      currentServerPassword: rootKeys.currentRootKey.serverPassword as string,
-      newRootKey: rootKeys.newRootKey,
+      currentServerPassword: currentRootKey.serverPassword as string,
+      newRootKey: newRootKey,
       wrappingKey,
       newEmail: parameters.newEmail,
     })
@@ -606,8 +606,8 @@ export class UserService
 
     if (!itemsKeyWasSynced) {
       await this.sessionManager.changeCredentials({
-        currentServerPassword: rootKeys.newRootKey.serverPassword as string,
-        newRootKey: rootKeys.currentRootKey,
+        currentServerPassword: newRootKey.serverPassword as string,
+        newRootKey: currentRootKey,
         wrappingKey,
       })
       await this.protocolService.reencryptItemsKeys()

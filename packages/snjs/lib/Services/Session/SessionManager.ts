@@ -28,7 +28,7 @@ import {
   SessionEvent,
   SuccessfullyChangedCredentialsEventData,
 } from '@standardnotes/services'
-import { Base64String } from '@standardnotes/sncrypto-common'
+import { Base64String, PkcKeyPair } from '@standardnotes/sncrypto-common'
 import {
   ClientDisplayableError,
   SessionBody,
@@ -206,9 +206,9 @@ export class SNSessionManager
 
   isUserMissingKeyPair(): boolean {
     try {
-      return !!this.getPublicKey()
+      return this.getPublicKey() == undefined
     } catch (error) {
-      return false
+      return true
     }
   }
 
@@ -649,8 +649,15 @@ export class SNSessionManager
       newSigningPublicKey: parameters.newRootKey.signingKeyPair.publicKey,
     })
 
-    const oldKeyPair = this.protocolService.getKeyPair()
-    const oldSigningKeyPair = this.protocolService.getSigningKeyPair()
+    let oldKeyPair: PkcKeyPair | undefined
+    let oldSigningKeyPair: PkcKeyPair | undefined
+
+    try {
+      oldKeyPair = this.protocolService.getKeyPair()
+      oldSigningKeyPair = this.protocolService.getSigningKeyPair()
+    } catch (error) {
+      void error
+    }
 
     const processedResponse = await this.processChangeCredentialsResponse(
       rawResponse,

@@ -541,7 +541,7 @@ export class AppContext {
     return Utils.sleep(seconds)
   }
 
-  anticpiateConsoleError(message, _reason) {
+  anticipateConsoleError(message, _reason) {
     console.warn('Anticipating a console error with message:', message)
   }
 

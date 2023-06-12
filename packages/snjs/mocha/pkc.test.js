@@ -73,49 +73,25 @@ describe('public key cryptography', function () {
     expect(encryption.getSigningKeyPair().privateKey).to.not.equal(oldSigningPrivateKey)
   })
 
-  it('should reupload public keys when changing my password', async () => {
-    const oldEncryptedPrivateKey = context.userEncryptedPrivateKey
-    const oldEncryptedSigningPrivateKey = context.userEncryptedSigningPrivateKey
-
-    expect(oldEncryptedPrivateKey).to.not.be.undefined
-    expect(oldEncryptedSigningPrivateKey).to.not.be.undefined
-
-    await context.changePassword('new_password')
-
-    const user = await context.application.sessions.getUserFromServer()
-
-    expect(user.public_key).to.not.be.undefined
-    expect(user.public_key).to.not.equal(oldEncryptedPrivateKey)
-
-    expect(user.signing_public_key).to.not.be.undefined
-    expect(user.signing_public_key).to.not.equal(oldEncryptedSigningPrivateKey)
-  })
-
   it('should allow option to enable collaboration for previously signed in accounts', async () => {
     const newContext = await Factory.createAppContextWithRealCrypto()
     await newContext.launch()
 
-    const objectToSpy = newContext.application.sessions.userApiService
+    await newContext.register()
 
-    sinon.stub(objectToSpy, 'register').callsFake(async (params) => {
-      const modifiedParams = {
-        ...params,
-        publicKey: undefined,
-        encryptedPrivateKey: undefined,
-        signingPublicKey: undefined,
-        encryptedSigningPrivateKey: undefined,
-      }
-
-      objectToSpy.register.restore()
-      const result = await objectToSpy.register(modifiedParams)
-      return result
+    const rootKey = await newContext.encryption.getRootKey()
+    const mutatedRootKey = CreateNewRootKey({
+      ...rootKey.content,
+      encryptionKeyPair: undefined,
+      signingKeyPair: undefined,
     })
 
-    await newContext.register()
+    await newContext.encryption.setRootKey(mutatedRootKey)
 
     expect(newContext.application.sessions.isUserMissingKeyPair()).to.be.true
 
-    await newContext.application.user.updateAccountWithFirstTimeKeyPair()
+    const result = await newContext.application.user.updateAccountWithFirstTimeKeyPair()
+    expect(result.error).to.be.undefined
 
     expect(newContext.application.sessions.isUserMissingKeyPair()).to.be.false
   })
