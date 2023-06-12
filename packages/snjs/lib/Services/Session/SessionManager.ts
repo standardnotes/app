@@ -649,6 +649,9 @@ export class SNSessionManager
       newSigningPublicKey: parameters.newRootKey.signingKeyPair.publicKey,
     })
 
+    const oldKeyPair = this.protocolService.getKeyPair()
+    const oldSigningKeyPair = this.protocolService.getSigningKeyPair()
+
     const processedResponse = await this.processChangeCredentialsResponse(
       rawResponse,
       parameters.newRootKey,
@@ -657,6 +660,8 @@ export class SNSessionManager
 
     if (!isErrorResponse(rawResponse)) {
       const eventData: SuccessfullyChangedCredentialsEventData = {
+        oldKeyPair,
+        oldSigningKeyPair,
         newKeyPair: parameters.newRootKey.encryptionKeyPair,
         newSigningKeyPair: parameters.newRootKey.signingKeyPair,
       }

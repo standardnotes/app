@@ -1,5 +1,10 @@
 import { ContentType, ProtocolVersion } from '@standardnotes/common'
-import { EncryptedPayloadInterface, ItemContent, ClientRawSigningData } from '@standardnotes/models'
+import {
+  EncryptedPayloadInterface,
+  ItemContent,
+  ClientRawSigningData,
+  DecryptedPayloadInterface,
+} from '@standardnotes/models'
 
 export type EncryptedParameters = {
   uuid: string
@@ -43,7 +48,12 @@ export type ErrorDecryptingParameters = {
 }
 
 export function isErrorDecryptingParameters(
-  x: EncryptedParameters | DecryptedParameters | ErrorDecryptingParameters,
+  x:
+    | EncryptedParameters
+    | DecryptedParameters
+    | ErrorDecryptingParameters
+    | DecryptedPayloadInterface
+    | EncryptedPayloadInterface,
 ): x is ErrorDecryptingParameters {
   return (x as ErrorDecryptingParameters).errorDecrypting
 }

@@ -18,6 +18,7 @@
     "@standardnotes/common": "^1.46.6",
     "@standardnotes/features": "workspace:^",
     "@standardnotes/filepicker": "workspace:^",
+    "@standardnotes/models": "workspace:^",
     "@standardnotes/services": "workspace:^",
     "@standardnotes/styles": "workspace:^",
     "@standardnotes/toast": "workspace:^",

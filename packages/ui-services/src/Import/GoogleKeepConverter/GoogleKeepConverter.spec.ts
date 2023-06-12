@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 
-import { WebApplicationInterface } from '@standardnotes/snjs'
+import { WebApplicationInterface } from '@standardnotes/services'
 import { jsonTestData, htmlTestData } from './testData'
 import { GoogleKeepConverter } from './GoogleKeepConverter'
 

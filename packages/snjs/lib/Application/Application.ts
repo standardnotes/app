@@ -1305,7 +1305,6 @@ export class SNApplication implements ApplicationInterface, AppGroupManagedAppli
 
   private createContactService(): void {
     this.contactService = new ExternalServices.ContactService(
-      this.httpService,
       this.syncService,
       this.itemManager,
       this.sessionManager,
