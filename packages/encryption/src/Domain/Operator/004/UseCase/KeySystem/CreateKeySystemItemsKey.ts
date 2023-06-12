@@ -15,7 +15,11 @@ import { ContentType, ProtocolVersion } from '@standardnotes/common'
 export class CreateKeySystemItemsKeyUseCase {
   constructor(private readonly crypto: PureCryptoInterface) {}
 
-  execute(uuid: string, keySystemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface {
+  execute(
+    uuid: string,
+    keySystemIdentifier: KeySystemIdentifier,
+    sharedVaultUuid: string | undefined,
+  ): KeySystemItemsKeyInterface {
     const key = this.crypto.generateRandomKey(V004Algorithm.EncryptionKeyLength)
     const content = FillItemContentSpecialized<KeySystemItemsKeyContentSpecialized>({
       itemsKey: key,
@@ -27,7 +31,7 @@ export class CreateKeySystemItemsKeyUseCase {
       uuid: uuid,
       content_type: ContentType.KeySystemItemsKey,
       key_system_identifier: keySystemIdentifier,
-      shared_vault_uuid: undefined,
+      shared_vault_uuid: sharedVaultUuid,
       content: content,
       dirty: true,
       ...PayloadTimestampDefaults(),

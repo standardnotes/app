@@ -166,7 +166,7 @@ describe('vaults', function () {
 
         const keySystemItemsKey = context.items.getKeySystemItemsKeys(vault.systemIdentifier)[0]
 
-        await vaults.rotateKeySystemRootKey(vault.systemIdentifier)
+        await vaults.rotateVaultRootKey(vault)
 
         const updatedKeySystemItemsKey = context.items.getKeySystemItemsKeys(vault.systemIdentifier)[0]
 

@@ -559,8 +559,12 @@ export class EncryptionService extends AbstractService<EncryptionServiceEvent> i
     return this.operatorManager.defaultOperator().createKeySystemRootKeyContent(params)
   }
 
-  createKeySystemItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface {
-    return this.operatorManager.defaultOperator().createKeySystemItemsKey(uuid, keySystemIdentifier)
+  createKeySystemItemsKey(
+    uuid: string,
+    keySystemIdentifier: KeySystemIdentifier,
+    sharedVaultUuid: string | undefined,
+  ): KeySystemItemsKeyInterface {
+    return this.operatorManager.defaultOperator().createKeySystemItemsKey(uuid, keySystemIdentifier, sharedVaultUuid)
   }
 
   asymmetricallyEncryptMessage(dto: {

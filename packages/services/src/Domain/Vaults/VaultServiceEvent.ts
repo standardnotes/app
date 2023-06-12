@@ -1,4 +1,4 @@
-import { KeySystemIdentifier } from '@standardnotes/models'
+import { VaultDisplayListing } from '@standardnotes/models'
 
 export enum VaultServiceEvent {
   VaultsChanged = 'VaultsChanged',
@@ -8,6 +8,6 @@ export enum VaultServiceEvent {
 export type VaultServiceEventPayload = {
   [VaultServiceEvent.VaultsChanged]: undefined
   [VaultServiceEvent.VaultRootKeyChanged]: {
-    systemIdentifier: KeySystemIdentifier
+    vault: VaultDisplayListing
   }
 }

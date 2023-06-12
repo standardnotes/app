@@ -6,7 +6,7 @@ import { PkcKeyPair } from '@standardnotes/sncrypto-common'
 import { ContactServiceInterface } from '../../Contacts/ContactServiceInterface'
 import { SendAsymmetricMessageUseCase } from '../../AsymmetricMessage/UseCase/SendAsymmetricMessageUseCase'
 
-export class ShareContactWithUserAdministeredSharedVaultUseCase {
+export class ShareContactWithAllMembersOfSharedVaultUseCase {
   constructor(
     private contacts: ContactServiceInterface,
     private encryption: EncryptionProviderInterface,
@@ -59,6 +59,7 @@ export class ShareContactWithUserAdministeredSharedVaultUseCase {
       await messageSendUseCase.execute({
         recipientUuid: vaultUserAsContact.contactUuid,
         encryptedMessage,
+        replaceabilityIdentifier: undefined,
       })
     }
   }

@@ -42,10 +42,13 @@ export class SendSharedVaultRootKeyChangeMessage {
       recipientPublicKey: params.contact.publicKey.encryption,
     })
 
+    const replaceabilityIdentifier = `${AsymmetricMessagePayloadType.SharedVaultRootKeyChanged}:${params.sharedVaultUuid}:${params.keySystemIdentifier}`
+
     const sendMessageUseCase = new SendAsymmetricMessageUseCase(this.messageServer)
     const sendMessageResult = await sendMessageUseCase.execute({
       recipientUuid: params.contact.contactUuid,
       encryptedMessage,
+      replaceabilityIdentifier,
     })
 
     return sendMessageResult

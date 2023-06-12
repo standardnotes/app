@@ -19,9 +19,9 @@ export interface VaultServiceInterface
   removeItemFromVault(item: DecryptedItemInterface): Promise<DecryptedItemInterface>
   isItemInVault(item: DecryptedItemInterface): boolean
 
-  rotateKeySystemRootKey(keySystemIdentifier: KeySystemIdentifier): Promise<void>
+  rotateVaultRootKey(vault: VaultDisplayListing): Promise<void>
   changeVaultNameAndDescription(
-    keySystemIdentifier: KeySystemIdentifier,
+    vault: VaultDisplayListing,
     params: { name: string; description: string },
   ): Promise<KeySystemRootKeyInterface>
 }

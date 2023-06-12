@@ -93,7 +93,11 @@ export interface EncryptionProviderInterface {
   getRootKeyParams(): SNRootKeyParams | undefined
   setNewRootKeyWrapper(wrappingKey: RootKeyInterface): Promise<void>
 
-  createKeySystemItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface
+  createKeySystemItemsKey(
+    uuid: string,
+    keySystemIdentifier: KeySystemIdentifier,
+    sharedVaultUuid: string | undefined,
+  ): KeySystemItemsKeyInterface
   createKeySystemRootKeyContent(params: {
     systemIdentifier: KeySystemIdentifier
     systemName: string

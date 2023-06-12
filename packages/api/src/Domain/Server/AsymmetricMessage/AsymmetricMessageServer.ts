@@ -3,8 +3,6 @@ import { HttpServiceInterface } from '../../Http'
 import { CreateAsymmetricMessageParams } from '../../Request/AsymmetricMessage/CreateAsymmetricMessageParams'
 import { CreateAsymmetricMessageResponse } from '../../Response/AsymmetricMessage/CreateAsymmetricMessageResponse'
 import { AsymmetricMessagesPaths } from './Paths'
-import { UpdateAsymmetricMessageParams } from '../../Request/AsymmetricMessage/UpdateAsymmetricMessageParams'
-import { UpdateAsymmetricMessageResponse } from '../../Response/AsymmetricMessage/UpdateAsymmetricMessageResponse'
 import { GetUserAsymmetricMessagesResponse } from '../../Response/AsymmetricMessage/GetUserAsymmetricMessagesResponse'
 import { AsymmetricMessageServerInterface } from './AsymmetricMessageServerInterface'
 import { DeleteAsymmetricMessageRequestParams } from '../../Request/AsymmetricMessage/DeleteAsymmetricMessageRequestParams'
@@ -17,12 +15,7 @@ export class AsymmetricMessageServer implements AsymmetricMessageServerInterface
     return this.httpService.post(AsymmetricMessagesPaths.createMessage, {
       recipient_uuid: params.recipientUuid,
       encrypted_message: params.encryptedMessage,
-    })
-  }
-
-  updateMessage(params: UpdateAsymmetricMessageParams): Promise<HttpResponse<UpdateAsymmetricMessageResponse>> {
-    return this.httpService.patch(AsymmetricMessagesPaths.updateMessage(params.messageUuid), {
-      encrypted_message: params.encryptedMessage,
+      replaceability_identifier: params.replaceabilityIdentifier,
     })
   }
 

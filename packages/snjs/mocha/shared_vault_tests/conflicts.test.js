@@ -144,7 +144,7 @@ describe('shared vault conflicts', function () {
 
     const oldKeySystemItemsKey = context.items.getKeySystemItemsKeys(sharedVault.systemIdentifier)[0]
 
-    await context.vaults.rotateKeySystemRootKey(sharedVault.systemIdentifier)
+    await context.vaults.rotateVaultRootKey(sharedVault)
 
     const objectToSpy = context.application.sync
     sinon.stub(objectToSpy, 'payloadsByPreparingForServer').callsFake(async (params) => {

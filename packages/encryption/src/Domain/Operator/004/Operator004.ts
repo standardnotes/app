@@ -87,9 +87,13 @@ export class SNProtocolOperator004 implements OperatorInterface {
     return CreateDecryptedItemFromPayload(payload)
   }
 
-  public createKeySystemItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface {
+  public createKeySystemItemsKey(
+    uuid: string,
+    keySystemIdentifier: KeySystemIdentifier,
+    sharedVaultUuid: string | undefined,
+  ): KeySystemItemsKeyInterface {
     const usecase = new CreateKeySystemItemsKeyUseCase(this.crypto)
-    return usecase.execute(uuid, keySystemIdentifier)
+    return usecase.execute(uuid, keySystemIdentifier, sharedVaultUuid)
   }
 
   public async computeRootKey<K extends RootKeyInterface>(

@@ -31,7 +31,7 @@ describe('shared vaults', function () {
       await Collaboration.createSharedVaultWithAcceptedInvite(context)
 
     const promise = context.resolveWhenSharedVaultChangeInvitesAreSent(sharedVault.sharedVaultUuid)
-    await vaults.changeVaultNameAndDescription(sharedVault.systemIdentifier, {
+    await vaults.changeVaultNameAndDescription(sharedVault, {
       name: 'new vault name',
       description: 'new vault description',
     })

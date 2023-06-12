@@ -35,7 +35,11 @@ export interface OperatorInterface {
   readonly version: string
 
   createItemsKey(): ItemsKeyInterface
-  createKeySystemItemsKey(uuid: string, keySystemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface
+  createKeySystemItemsKey(
+    uuid: string,
+    keySystemIdentifier: KeySystemIdentifier,
+    sharedVaultUuid: string | undefined,
+  ): KeySystemItemsKeyInterface
 
   /**
    * Returns the payload's authenticated data. The passed payload must be in a

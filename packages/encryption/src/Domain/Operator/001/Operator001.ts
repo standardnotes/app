@@ -224,7 +224,11 @@ export class SNProtocolOperator001 implements OperatorInterface {
     })
   }
 
-  createKeySystemItemsKey(_uuid: string, _keySystemIdentifier: KeySystemIdentifier): KeySystemItemsKeyInterface {
+  createKeySystemItemsKey(
+    _uuid: string,
+    _keySystemIdentifier: KeySystemIdentifier,
+    _sharedVaultUuid: string | undefined,
+  ): KeySystemItemsKeyInterface {
     throw new Error('Method not implemented.')
   }
 

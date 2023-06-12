@@ -38,6 +38,7 @@ export class SendOwnContactChangeMessage {
     const sendMessageResult = await sendMessageUseCase.execute({
       recipientUuid: params.contact.contactUuid,
       encryptedMessage,
+      replaceabilityIdentifier: undefined,
     })
 
     return sendMessageResult

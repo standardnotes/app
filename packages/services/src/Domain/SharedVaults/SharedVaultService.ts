@@ -63,7 +63,7 @@ import { GetAsymmetricMessageTrustedPayload } from '../AsymmetricMessage/UseCase
 import { PendingSharedVaultInviteRecord } from './PendingSharedVaultInviteRecord'
 import { GetAsymmetricMessageUntrustedPayload } from '../AsymmetricMessage/UseCase/GetAsymmetricMessageUntrustedPayload'
 import { isNotUndefined } from '@standardnotes/utils'
-import { ShareContactWithUserAdministeredSharedVaultUseCase } from './UseCase/ShareContactWithUserAdministeredSharedVaultUseCase'
+import { ShareContactWithAllMembersOfSharedVaultUseCase } from './UseCase/ShareContactWithAllMembersOfSharedVault'
 
 export class SharedVaultService
   extends AbstractService<SharedVaultServiceEvent, SharedVaultServiceEventPayload>
@@ -148,7 +148,7 @@ export class SharedVaultService
       await this.handleUserEvent(event.payload as UserEventServiceEventPayload)
     } else if (event.type === VaultServiceEvent.VaultRootKeyChanged) {
       const payload = event.payload as VaultServiceEventPayload[VaultServiceEvent.VaultRootKeyChanged]
-      await this.handleChangeInKeySystemRootKey(payload.systemIdentifier)
+      await this.handleChangeInVaultRootKey(payload.vault)
     }
   }
 
@@ -195,9 +195,8 @@ export class SharedVaultService
     }
   }
 
-  private async handleChangeInKeySystemRootKey(systemIdentifier: KeySystemIdentifier): Promise<void> {
-    const vault = this.vaults.getVault(systemIdentifier)
-    if (!vault || !isSharedVaultDisplayListing(vault)) {
+  private async handleChangeInVaultRootKey(vault: VaultDisplayListing): Promise<void> {
+    if (!isSharedVaultDisplayListing(vault)) {
       return
     }
 
@@ -210,7 +209,7 @@ export class SharedVaultService
     })
 
     await this.updateInvitesAndShareKeyAfterKeySystemRootKeyChange({
-      keySystemIdentifier: systemIdentifier,
+      keySystemIdentifier: vault.systemIdentifier,
       sharedVault: vault,
     })
   }
@@ -530,7 +529,7 @@ export class SharedVaultService
 
     void this.notifyCollaborationStatusChanged()
 
-    await this.vaults.rotateKeySystemRootKey(sharedVault.systemIdentifier)
+    await this.vaults.rotateVaultRootKey(sharedVault)
   }
 
   async leaveSharedVault(sharedVault: SharedVaultDisplayListing): Promise<ClientDisplayableError | void> {
@@ -555,7 +554,7 @@ export class SharedVaultService
   private async shareContactWithUserAdministeredSharedVaults(contact: TrustedContactInterface): Promise<void> {
     const sharedVaults = this.getAllSharedVaults()
 
-    const useCase = new ShareContactWithUserAdministeredSharedVaultUseCase(
+    const useCase = new ShareContactWithAllMembersOfSharedVaultUseCase(
       this.contacts,
       this.encryption,
       this.sharedVaultUsersServer,

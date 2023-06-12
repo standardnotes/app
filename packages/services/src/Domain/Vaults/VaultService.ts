@@ -6,6 +6,7 @@ import {
   KeySystemIdentifier,
   isDecryptedItem,
   VaultDisplayListing,
+  isSharedVaultDisplayListing,
 } from '@standardnotes/models'
 import { VaultServiceInterface } from './VaultServiceInterface'
 import { VaultServiceEvent, VaultServiceEventPayload } from './VaultServiceEvent'
@@ -154,10 +155,10 @@ export class VaultService
   }
 
   async changeVaultNameAndDescription(
-    keySystemIdentifier: KeySystemIdentifier,
+    vault: VaultDisplayListing,
     params: { name: string; description?: string },
   ): Promise<KeySystemRootKeyInterface> {
-    const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(keySystemIdentifier)
+    const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(vault.systemIdentifier)
     if (!keySystemRootKey) {
       throw new Error('Cannot change vault metadata; key system root key not found')
     }
@@ -170,7 +171,7 @@ export class VaultService
       },
     )
 
-    await this.notifyEventSync(VaultServiceEvent.VaultRootKeyChanged, { systemIdentifier: keySystemIdentifier })
+    await this.notifyEventSync(VaultServiceEvent.VaultRootKeyChanged, { vault })
 
     await this.sync.sync()
 
@@ -179,15 +180,16 @@ export class VaultService
     return updatedKeySystemRootKey
   }
 
-  async rotateKeySystemRootKey(keySystemIdentifier: KeySystemIdentifier): Promise<void> {
+  async rotateVaultRootKey(vault: VaultDisplayListing): Promise<void> {
     const useCase = new RotateKeySystemRootKeyUseCase(this.items, this.encryption)
     await useCase.execute({
-      keySystemIdentifier,
+      keySystemIdentifier: vault.systemIdentifier,
+      sharedVaultUuid: isSharedVaultDisplayListing(vault) ? vault.sharedVaultUuid : undefined,
     })
 
     this.notifyVaultsChangedEvent()
 
-    await this.notifyEventSync(VaultServiceEvent.VaultRootKeyChanged, { systemIdentifier: keySystemIdentifier })
+    await this.notifyEventSync(VaultServiceEvent.VaultRootKeyChanged, { vault })
 
     await this.sync.sync()
   }

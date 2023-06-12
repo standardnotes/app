@@ -8,7 +8,10 @@ import { KeySystemIdentifier } from '@standardnotes/models'
 export class RotateKeySystemRootKeyUseCase {
   constructor(private items: ItemManagerInterface, private encryption: EncryptionProviderInterface) {}
 
-  async execute(params: { keySystemIdentifier: KeySystemIdentifier }): Promise<undefined | ClientDisplayableError[]> {
+  async execute(params: {
+    keySystemIdentifier: KeySystemIdentifier
+    sharedVaultUuid: string | undefined
+  }): Promise<undefined | ClientDisplayableError[]> {
     const keySystemRootKey = this.items.getPrimaryKeySystemRootKey(params.keySystemIdentifier)
     if (!keySystemRootKey) {
       throw new Error('Cannot rotate key system root key; key system root key not found')
@@ -26,6 +29,7 @@ export class RotateKeySystemRootKeyUseCase {
     const updateKeySystemItemsKeyResult = await this.createNewKeySystemItemsKey({
       keySystemIdentifier: params.keySystemIdentifier,
       keySystemRootKeyTimestamp: newKeySystemRootKeyContent.keyTimestamp,
+      sharedVaultUuid: params.sharedVaultUuid,
     })
 
     if (isClientDisplayableError(updateKeySystemItemsKeyResult)) {
@@ -40,9 +44,14 @@ export class RotateKeySystemRootKeyUseCase {
   private async createNewKeySystemItemsKey(params: {
     keySystemIdentifier: KeySystemIdentifier
     keySystemRootKeyTimestamp: number
+    sharedVaultUuid: string | undefined
   }): Promise<ClientDisplayableError | void> {
     const newItemsKeyUuid = UuidGenerator.GenerateUuid()
-    const newItemsKey = this.encryption.createKeySystemItemsKey(newItemsKeyUuid, params.keySystemIdentifier)
+    const newItemsKey = this.encryption.createKeySystemItemsKey(
+      newItemsKeyUuid,
+      params.keySystemIdentifier,
+      params.sharedVaultUuid,
+    )
     await this.items.insertItem(newItemsKey)
   }
 }
